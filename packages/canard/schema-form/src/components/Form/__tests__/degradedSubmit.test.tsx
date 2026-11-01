@@ -13,6 +13,43 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+it('DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery', async () => {
+  const ref = createRef<FormHandle>();
+  const onError = vi.fn();
+  const host = vi.fn();
+  vi.stubGlobal('reportError', host);
+  render(
+    <FormCore
+      ref={ref}
+      jsonSchema={{
+        type: 'string',
+        controls: { derived: '(() => { throw new Error("degraded") })()' },
+      }}
+      onError={onError}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </FormCore>,
+  );
+  onError.mockClear();
+  host.mockClear();
+  const handler = new Error('degraded consumer');
+  onError.mockImplementationOnce(() => {
+    throw handler;
+  });
+  await expect(ref.current!.submit()).rejects.toMatchObject({
+    code: FormErrorCode.MultipleErrors,
+    details: {
+      errors: [
+        expect.objectContaining({ code: FormErrorCode.SubmitWhileDegraded }),
+        handler,
+      ],
+    },
+  });
+  expect(onError).toHaveBeenCalledOnce();
+  expect(host).not.toHaveBeenCalled();
+});
+
 it('DR-11 explicit validate on a degraded form already reports an execution rejection once', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();

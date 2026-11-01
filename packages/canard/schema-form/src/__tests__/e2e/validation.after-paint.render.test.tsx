@@ -12,6 +12,7 @@ import {
 } from '@/schema-form';
 
 import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
+import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
 import { isValidationPending } from '../helpers/isValidationPending';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 import { settleValidation } from '../helpers/settleValidation';
@@ -21,8 +22,150 @@ const schema = { type: 'string' } as const;
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
+
+it.each(['mount', 'reset', 'setValue'] as const)(
+  'DR-13 assigns sibling errors after a pre-slot %s request with one verdict',
+  async (operation) => {
+    const clock = createValidationFrameClock();
+    const ref = createRef<FormHandle>();
+    const validate = vi.fn(() => [
+      { dataPath: '/a', message: 'a' },
+      { dataPath: '/b', message: 'b' },
+    ]);
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: { a: { type: 'string' }, b: { type: 'string' } },
+        }}
+        defaultValue={{ a: 'a', b: 'b' }}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+        validationMode={ValidationMode.OnChange}
+      >
+        <span />
+      </Form>,
+    );
+    if (operation === 'reset') {
+      await act(async () => {
+        clock.frame();
+        await clock.task();
+      });
+      validate.mockClear();
+      act(() => ref.current!.reset());
+    }
+    act(() => {
+      if (operation === 'setValue')
+        ref.current!.findNode('/a')!.setValue('changed');
+      else ref.current!.findNode('/a')!.resetSubtree();
+    });
+    await act(async () => {
+      clock.frame();
+      await clock.task();
+      clock.frame();
+      await clock.task();
+    });
+    expect(validate).toHaveBeenCalledOnce();
+    expect(ref.current!.node!.globalErrors).toHaveLength(2);
+    expect(ref.current!.findNode('/a')!.errors).toHaveLength(1);
+    expect(ref.current!.findNode('/b')!.errors).toHaveLength(1);
+  },
+);
+
+it('DR-13 OnRequest-only subtree reset never starts an automatic verdict', async () => {
+  const clock = createValidationFrameClock();
+  const ref = createRef<FormHandle>();
+  const validate = vi.fn(() => []);
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'object', properties: { a: { type: 'string' } } }}
+      defaultValue={{ a: 'a' }}
+      validationMode={ValidationMode.OnRequest}
+      validatorFactory={{
+        compile: () => validate,
+        compileGuard: () => () => true,
+      }}
+    >
+      <span />
+    </Form>,
+  );
+  act(() => ref.current!.findNode('/a')!.resetSubtree());
+  await act(async () => {
+    clock.frame();
+    await clock.task();
+    clock.frame();
+    await clock.task();
+  });
+  expect(validate).not.toHaveBeenCalled();
+});
+
+it.each(['slot', 'cadence'] as const)(
+  'DR-13 A1 retains the superseded async root targets (%s)',
+  async (source) => {
+    const clock = createValidationFrameClock();
+    const ref = createRef<FormHandle>();
+    const completions: (() => void)[] = [];
+    const issues = [
+      { dataPath: '/a', message: 'a' },
+      { dataPath: '/b', message: 'b' },
+    ];
+    const validate = vi.fn(
+      () =>
+        new Promise<typeof issues>((resolve) => {
+          completions.push(() => resolve(issues));
+        }),
+    );
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: { a: { type: 'string' }, b: { type: 'string' } },
+        }}
+        defaultValue={{ a: 'a', b: 'b' }}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+      >
+        <span />
+      </Form>,
+    );
+    if (source === 'cadence')
+      act(() => ref.current!.findNode('/a')!.resetSubtree());
+    await act(async () => {
+      clock.frame();
+      await clock.task();
+    });
+    expect(validate).toHaveBeenCalledOnce();
+    act(() => ref.current!.findNode('/a')!.resetSubtree());
+    await act(async () => {
+      completions.shift()!();
+      await clock.task();
+      clock.frame();
+      await clock.task();
+      clock.frame();
+      await clock.task();
+    });
+    expect(validate).toHaveBeenCalledTimes(2);
+    await act(async () => {
+      completions.shift()!();
+      await clock.task();
+      clock.frame();
+      await clock.task();
+    });
+    expect(ref.current!.node!.globalErrors).toHaveLength(2);
+    expect(ref.current!.findNode('/b')!.errors).toHaveLength(1);
+  },
+);
 
 describe('frame-backed Form validation', () => {
   it('IR-6 (h mount) replacing a root before its slot validates only the replacement', async () => {

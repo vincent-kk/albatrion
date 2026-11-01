@@ -2,6 +2,7 @@ import {
   type ComponentType,
   createRef,
   useLayoutEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -9,6 +10,8 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import * as core from '@/schema-form/core';
+import { FormWarningCode } from '@/schema-form/errors';
 import type { FieldInputProps } from '@/schema-form/types';
 import type { JSONSchema } from '@/schema-form/types';
 
@@ -24,6 +27,141 @@ afterEach(() => {
   vi.unstubAllEnvs();
   cleanup();
   vi.restoreAllMocks();
+});
+
+it.each([
+  ['react', 'rebuild', 'read-before'],
+  ['native', 'rebuild', 'read-before'],
+  ['react', 'rebuild', 'read-after'],
+  ['react', 'reset', 'read-before'],
+  ['native', 'reset', 'read-before'],
+] as const)(
+  'DR-15 keeps delayed warning ownership (%s, %s, %s)',
+  async (event, operation, order) => {
+    const ref = createRef<FormHandle>();
+    const onError = vi.fn();
+    let clicks = 0;
+    const Input = ({ ChildFields }: FieldInputProps) => {
+      const button = useRef<HTMLButtonElement>(null);
+      const click = () => {
+        clicks++;
+        if (clicks === 1 && order === 'read-after') ref.current![operation]();
+        void ChildFields.length;
+        if (clicks === 1 && order === 'read-before') ref.current![operation]();
+      };
+      useLayoutEffect(() => {
+        const element = button.current;
+        if (event !== 'native' || !element) return;
+        element.addEventListener('click', click);
+        return () => element.removeEventListener('click', click);
+      }, [ChildFields]);
+      return (
+        <button
+          ref={button}
+          type="button"
+          onClick={event === 'react' ? click : undefined}
+        >
+          DR-15 read
+        </button>
+      );
+    };
+    const view = render(
+      <Form
+        ref={ref}
+        validationMode={0}
+        jsonSchema={detectable(Input)}
+        onError={onError}
+      />,
+    );
+    const warnings = () =>
+      onError.mock.calls.filter(
+        ([record]) =>
+          record.code === FormWarningCode.ChildNodeComponentsOnTerminal,
+      );
+    await act(async () => {
+      fireEvent.click(view.getByText('DR-15 read'));
+      await Promise.resolve();
+    });
+    expect.soft(warnings()).toHaveLength(operation === 'reset' ? 1 : 0);
+    await act(async () => {
+      fireEvent.click(view.getByText('DR-15 read'));
+      await Promise.resolve();
+    });
+    expect(warnings()).toHaveLength(operation === 'reset' ? 2 : 1);
+  },
+);
+
+it('DR-15 failed rebuild keeps the root and permits the next warning in the renewed scope', async () => {
+  const ref = createRef<FormHandle>();
+  const onError = vi.fn();
+  let reads = 0;
+  const Input = ({ ChildFields }: FieldInputProps) => (
+    <button
+      type="button"
+      onClick={() => {
+        void ChildFields.length;
+        if (reads++ === 0) ref.current!.rebuild();
+      }}
+    >
+      failed rebuild read
+    </button>
+  );
+  const view = render(
+    <Form
+      ref={ref}
+      validationMode={0}
+      jsonSchema={detectable(Input)}
+      onError={onError}
+    />,
+  );
+  const root = ref.current!.node;
+  vi.spyOn(core, 'buildFieldNodeTree').mockImplementationOnce(() => {
+    throw new Error('failed reconstruction');
+  });
+  await act(async () => {
+    fireEvent.click(view.getByText('failed rebuild read'));
+    await Promise.resolve();
+  });
+  expect(ref.current!.node).toBe(root);
+  await act(async () => {
+    fireEvent.click(view.getByText('failed rebuild read'));
+    await Promise.resolve();
+  });
+  expect(
+    onError.mock.calls.filter(
+      ([record]) =>
+        record.code === FormWarningCode.ChildNodeComponentsOnTerminal,
+    ),
+  ).toHaveLength(2);
+});
+
+it('DR-15 preserves development warning delivery after unmount', async () => {
+  const onError = vi.fn();
+  let read: () => void = () => {};
+  const Input = ({ ChildFields }: FieldInputProps) => {
+    read = () => {
+      void ChildFields.length;
+    };
+    return <input />;
+  };
+  const view = render(
+    <Form
+      validationMode={0}
+      jsonSchema={detectable(Input)}
+      onError={onError}
+    />,
+  );
+  view.unmount();
+  await act(async () => {
+    read();
+    await Promise.resolve();
+  });
+  expect(
+    onError.mock.calls.filter(
+      ([record]) =>
+        record.code === FormWarningCode.ChildNodeComponentsOnTerminal,
+    ),
+  ).toHaveLength(1);
 });
 
 it('round 180 hands a production build a plain empty list even with an error handler', async () => {
