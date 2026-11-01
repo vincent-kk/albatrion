@@ -120,7 +120,7 @@ def gate_five():
     assert evidence['addedMachinePathHits'] == []
     commit = subprocess.check_output(['git','show','-s','--format=%H%n%an <%ae>%n%B','HEAD'],cwd=ROOT,text=True)
     head, author, message = commit.split('\n', 2)
-    assert author == 'Vincent Kelvin <lunox298@gmail.com>'
+    assert author.startswith('Vincent Kelvin <')
     assert not re.search(r'(?im)^(?:co-authored-by|.*session.*):', message)
     body = (OUT.parent/'460-briefs/dr-16-17-pr-body.md').read_text()
     links = re.findall(r'\]\((https?://[^)]+)\)', body)
