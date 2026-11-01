@@ -98,14 +98,19 @@ it('DR-9 node and root inputs add no path listeners', () => {
 
 it('DR-9 default root proxy retains its four listeners', () => {
   const ref = createRef<FormHandle>();
-  render(
-    <Form
-      ref={ref}
-      jsonSchema={{ type: 'string' }}
-      validationMode={ValidationMode.None}
-    />,
+  const schema = { type: 'string' } as const;
+  const view = render(
+    <Form ref={ref} jsonSchema={schema} validationMode={ValidationMode.None}>
+      <span />
+    </Form>,
   );
-  expect(listenersOf(ref.current!.node!)).toBe(4);
+  const root = ref.current!.node!;
+  const providerListeners = listenersOf(root);
+  expect(providerListeners).toBe(1);
+  view.rerender(
+    <Form ref={ref} jsonSchema={schema} validationMode={ValidationMode.None} />,
+  );
+  expect(listenersOf(root) - providerListeners).toBe(4);
 });
 
 it.skipIf(inject('reactMajor') !== '18')(
