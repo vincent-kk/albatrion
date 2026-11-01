@@ -1,0 +1,12 @@
+diff --git a/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchResetForm.ts b/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchResetForm.ts
+index 4783d2f0b..ef907d70d 100644
+--- a/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchResetForm.ts
++++ b/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchResetForm.ts
+@@ -29,7 +29,6 @@ export const dispatchResetForm = <Self extends FieldNodeRecord<Self>>(
+   clearWarningKeys(root.runtime);
+   root.runtime.validationUnavailable = false;
+   root.runtime.validationCompileReported = false;
+-  root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
+   root.runtime.deferLoadValidation = settings.deferValidation === true;
+   if (settings.deferValidation) {
+     root.runtime.validationPendingTargets = undefined;

@@ -31,5 +31,10 @@
   "scratchCreated": false,
   "scratchRemoved": [],
   "scratchLeftovers": [],
-  "trackedBuildOutputChanges": []
+  "trackedBuildOutputChanges": [],
+  "initialAuditTemporaryPathOmission": {
+    "found": 1,
+    "correctedFile": "command-gates-initial.json",
+    "correction": "Round b audit includes temporary absolute paths in plain and decompressed gzip contents; the original audit omitted this pattern."
+  }
 }

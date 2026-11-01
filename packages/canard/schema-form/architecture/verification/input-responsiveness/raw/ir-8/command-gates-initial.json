@@ -19,7 +19,7 @@
   },
   {
     "gate": "unit",
-    "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=/tmp/ir8-gate-unit.json",
+    "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=<temporary>/ir8-gate-unit.json",
     "exitCode": 1,
     "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir8-gate-unit.json\n"
   }
