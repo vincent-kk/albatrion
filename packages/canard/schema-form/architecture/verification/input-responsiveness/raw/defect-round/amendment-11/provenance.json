@@ -1,0 +1,27 @@
+{
+  "productBase": "3f08c0dadbd0866fc919ffec41e26eda6d966de9",
+  "testCommit": "f1a4df3eaeb02f58dba1845041444c2f4632db28",
+  "testSha256": {
+    "packages/canard/schema-form/src/__tests__/e2e/validation.target-handoff.render.test.tsx": "a8b1cee203943b3cd0109ef6fea0384cea0f2b97b548ba8a3fda08072728c33a",
+    "packages/canard/schema-form/src/providers/FormErrorContext/__tests__/captureBundles.test.ts": "1625b544f7e299191dcad4b254811b1c4acb63b4a6ada6b3ca06bca43776ca25"
+  },
+  "runs": {
+    "am11-verified-red": {
+      "passed": 24,
+      "failed": 1,
+      "filteredOrSkipped": 0
+    },
+    "am11-identity-mutation": {
+      "passed": 0,
+      "failed": 6,
+      "filteredOrSkipped": 14
+    },
+    "am11-focused-green": {
+      "passed": 29,
+      "failed": 0,
+      "filteredOrSkipped": 0
+    }
+  },
+  "mutation": "Removed running-object identity guards in cadence resolve/reject and explicit-root finally; restored before green.",
+  "retirementProbe": "Each owner case asserts the successor object survives R1, R3 assigns the sibling, completion removes the record, and rebuild/dispose clears it immediately."
+}

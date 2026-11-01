@@ -20,7 +20,7 @@ onError는 insertion effect로 갱신되어 숨김 commit에서도 최신이며 
 
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
-`capture(error, origin, componentStack?, path?)`는 origin을 필수로 받습니다. 렌더 경계는 render, 네이티브 제출은 submit, 생성·flush·reset 실패는 load를 넘깁니다. 이미 보고한 오류와 onError가 던진 객체는 다시 기록하지 않습니다. MultipleErrors의 오류 배열이 비어 있지 않고 모든 index에 이미 보고한 객체 또는 핸들러 예외 객체가 있으면 capture 기록을 생략합니다. 빈 배열·hole·미지 객체·primitive가 있으면 보고합니다. 렌더 capture에서 생략한 bundle 또는 핸들러 예외의 RENDER_FAILED 기록·componentStack은 onError에 도달하지 않는 ERROR-023 항목 2 우선 제한입니다. 경고 scope는 origin과 독립적이며 recordScopes는 버퍼 기록의 원래 root·scope만 보존합니다.
+`capture(error, origin, componentStack?, path?)`는 origin을 필수로 받습니다. 렌더 경계는 render, 네이티브 제출은 submit, 생성·flush·reset 실패는 load를 넘깁니다. 이미 보고한 오류와 onError가 던진 객체는 다시 기록하지 않습니다. MultipleErrors의 오류 배열이 비어 있지 않고 모든 own index에 이미 보고한 객체 또는 핸들러 예외 객체가 있으면 capture 기록을 생략합니다. 빈 배열·상속된 index를 포함한 hole·미지 객체·primitive가 있으면 보고합니다. 렌더 capture에서 생략한 bundle 또는 핸들러 예외의 RENDER_FAILED 기록·componentStack은 onError에 도달하지 않는 ERROR-023 항목 2 우선 제한입니다. 경고 scope는 origin과 독립적이며 recordScopes는 버퍼 기록의 원래 root·scope만 보존합니다.
 
 ## Acceptance Criteria
 

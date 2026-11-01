@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 /** Recognize a nonempty dense bundle consisting only of previously reported objects.
  * @param errors - Candidate bundle contents.
@@ -12,6 +13,7 @@ export const isReportedFailureBundle = (
 ): boolean => {
   if (!isArray(errors) || errors.length === 0) return false;
   for (let index = 0; index < errors.length; index++) {
+    if (!hasOwnProperty(errors, index)) return false;
     const failure: unknown = errors[index];
     if (
       failure === null ||
