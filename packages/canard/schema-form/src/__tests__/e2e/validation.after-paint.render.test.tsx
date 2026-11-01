@@ -113,9 +113,10 @@ describe('frame-backed Form validation', () => {
     expect(onValidate).toHaveBeenCalledExactlyOnceWith([]);
   });
 
-  it('IR-6 (c) reports a mount compile failure once as rejected and validate still rejects', async () => {
+  it('IR-6 (c) reports a load compile failure once as sink and validate still rejects', async () => {
     const ref = createRef<FormHandle>();
     const onError = vi.fn();
+    const sink = observeErrorSink();
     render(
       <Form
         ref={ref}
@@ -136,12 +137,13 @@ describe('frame-backed Form validation', () => {
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
-      surface: 'rejected',
+      surface: 'sink',
     });
     await expect(ref.current!.validate()).rejects.toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
     });
     expect(onError).toHaveBeenCalledTimes(1);
+    expect(sink.errors()).toHaveLength(1);
   });
 
   it('IR-6 (c-i) does not recapture a compile failure after a child passive validate', async () => {

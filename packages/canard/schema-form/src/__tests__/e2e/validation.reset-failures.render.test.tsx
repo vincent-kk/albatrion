@@ -13,12 +13,13 @@ import {
 
 import { hideCommittedForm } from '../helpers/hideCommittedForm';
 import { observeErrorSink } from '../helpers/observeErrorSink';
+import { settleValidation } from '../helpers/settleValidation';
 
 afterEach(cleanup);
 
 it.each([false, true])(
   'IR-7 round b adoption compile failure delivers its reset record (hidden=%s)',
-  (hidden) => {
+  async (hidden) => {
     const sink = observeErrorSink();
     const onError = vi.fn();
     const onChange = vi.fn();
@@ -57,18 +58,19 @@ it.each([false, true])(
         thrown = error;
       }
     });
-    expect(thrown).toMatchObject({
-      code: FormErrorCode.ValidatorCompileFailed,
-    });
+    expect(thrown).toBeUndefined();
+    expect(onError).not.toHaveBeenCalled();
+    await settleValidation(() => handle.node);
     expect(onError).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         code: FormErrorCode.ValidatorCompileFailed,
+        surface: 'sink',
       }),
     );
     act(() => oldRoot?.setValue('late'));
     expect(onChange).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);
-    expect(sink.errors()).toEqual([]);
+    expect(sink.errors()).toHaveLength(1);
   },
 );
 

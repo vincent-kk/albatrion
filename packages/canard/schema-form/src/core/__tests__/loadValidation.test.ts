@@ -23,6 +23,8 @@ it('T7 core-only default mount and reset retain their automatic OnChange verdict
   reloadFieldNodeForm(root, 'reset');
   clock.frame();
   await clock.task();
+  clock.frame();
+  await clock.task();
   expect(validate).toHaveBeenCalledExactlyOnceWith('reset');
   vi.useRealTimers();
   vi.unstubAllGlobals();

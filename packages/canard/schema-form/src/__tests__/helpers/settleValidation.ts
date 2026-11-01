@@ -4,7 +4,7 @@ import { advanceValidationFrame } from './advanceValidationFrame';
 import { readFieldNodeRuntime } from './readFieldNodeRuntime';
 
 /** Await write validation and eligibility-history releases, including verdict-triggered writes.
- * An asynchronous mount verdict does not set write-pending: await its onValidate/error or explicit completion promise separately.
+ * Load verdicts, including reset, run in the load slot. An asynchronous load verdict does not set write-pending: await its onValidate/error or explicit completion promise separately.
  * @param current - Root or resolver retaining the current root across replacements/unmounts.
  * @returns Completion when no write verdict or unreleased eligibility history remains.
  * @throws When a validator or write cascade does not settle within the bounded rounds. */

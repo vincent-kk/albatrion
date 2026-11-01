@@ -4,6 +4,7 @@ import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import {
   adoptFieldNodeChain,
+  dispatchLoadValidation,
   dispatchMount,
   dispatchValidate,
 } from '@/schema-form/core/engine/write';
@@ -88,7 +89,7 @@ describe('same schema id trees', () => {
     }
   });
 
-  it('VALIDATE-046 (iii) keeps the old chain intact when rebuilt-root compilation fails', () => {
+  it('VALIDATE-046 (iii) adopts without compiling and reports duplicate failure at the load entry', () => {
     const first = { $id: 'urn:atomic', type: 'string' };
     const second = { $id: 'urn:atomic', type: 'number' };
     const validator: Validator = {
@@ -105,13 +106,16 @@ describe('same schema id trees', () => {
     readValidationEntry(validator, first);
     const next = createDispatchTree(second, undefined, validator);
     previous.runtime.entryDepth = 1;
-    expect(() => adoptFieldNodeChain(previous.root, next.root)).toThrow(
-      'Whole-schema validation could not be compiled',
+    expect(() => adoptFieldNodeChain(previous.root, next.root)).not.toThrow();
+    expect(previous.runtime.adoptedRoot).toBe(next.root);
+    const report = vi.fn();
+    next.runtime.reportValidationFailure = report;
+    expect(dispatchLoadValidation(next.root)).toBe(false);
+    expect(report).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        details: expect.objectContaining({ reason: 'duplicateSchemaId' }),
+      }),
     );
-    expect(previous.runtime.entryDepth).toBe(1);
-    expect(previous.runtime.adoptedRoot).toBeUndefined();
-    expect(previous.root.emit).toBe('retained');
-    expect(next.runtime.chainRoot).toBeUndefined();
   });
 
   it('VALIDATE-046 (iii) adopts a separately compiled same-id replacement', async () => {

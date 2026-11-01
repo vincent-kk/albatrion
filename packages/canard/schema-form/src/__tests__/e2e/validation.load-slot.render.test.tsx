@@ -182,20 +182,14 @@ it.each([
     await releaseSlots();
     view.rerender(
       hideCommittedForm(
-        element(
-          operation === 'validator' ? initial : replacement,
-          operation === 'validator' ? good : bad,
-        ),
+        element(operation === 'validator' ? initial : replacement, good),
         false,
       ),
     );
     if (hidden)
       view.rerender(
         hideCommittedForm(
-          element(
-            operation === 'validator' ? initial : replacement,
-            operation === 'validator' ? good : bad,
-          ),
+          element(operation === 'validator' ? initial : replacement, good),
           true,
         ),
       );
