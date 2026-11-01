@@ -72,3 +72,30 @@ it.each([
     );
   },
 );
+
+it('DR-14 amendment 11 captures a missing own index inherited from a prototype', () => {
+  const service = createFormErrorService();
+  const onError = vi.fn();
+  service.onError = onError;
+  const known = new Error('already reported');
+  service.report({
+    level: 'error',
+    code: FormErrorCode.ValidatorThrew,
+    message: known.message,
+    origin: 'validate',
+    error: known,
+  });
+  onError.mockClear();
+  const errors = new Array(1);
+  Object.setPrototypeOf(errors, { 0: known });
+  const error = { code: FormErrorCode.MultipleErrors, details: { errors } };
+  service.capture(error, 'render', 'inherited-index renderer stack');
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({
+      code: FormErrorCode.RenderFailed,
+      origin: 'render',
+      componentStack: 'inherited-index renderer stack',
+      error,
+    }),
+  );
+});

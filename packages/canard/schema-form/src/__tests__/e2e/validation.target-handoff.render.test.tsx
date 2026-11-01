@@ -170,3 +170,41 @@ it('DR-13 gate preserves the pre-existing caller-only superseded subtree verdict
   await f.complete(2);
   expect(f.ref.current!.findNode('/a')!.errors).toHaveLength(1);
 });
+
+it.each(['cadence-resolve', 'cadence-reject', 'root-resolve'] as const)(
+  'DR-13 amendment 11 keeps the successor identity after %s and clears it on completion and dispose',
+  async (owner) => {
+    const f = mountAsync();
+    await f.frames();
+    await f.complete(0, undefined, []);
+    const root = f.ref.current!.node!;
+    const runtime = Reflect.get(root, 'runtime');
+    let explicit: Promise<unknown> | undefined;
+    if (owner === 'root-resolve') explicit = f.ref.current!.validate();
+    else act(() => f.ref.current!.findNode('/a')!.resetSubtree());
+    await f.frames();
+    act(() => f.ref.current!.findNode('/b')!.resetSubtree());
+    await f.frames();
+    const successor = runtime.validationRunning;
+    expect(successor).toBeDefined();
+    await f.complete(
+      1,
+      owner === 'cadence-reject' ? new Error('older cadence') : undefined,
+    );
+    if (explicit) await explicit;
+    expect(runtime.validationRunning).toBe(successor);
+    act(() => f.ref.current!.findNode('/a')!.resetSubtree());
+    await f.frames();
+    await f.complete(3);
+    expect(f.ref.current!.findNode('/b')!.errors).toHaveLength(1);
+    await f.complete(2);
+    expect(runtime.validationRunning).toBeUndefined();
+    act(() => f.ref.current!.findNode('/a')!.resetSubtree());
+    await f.frames();
+    expect(runtime.validationRunning).toBeDefined();
+    act(() => f.ref.current!.rebuild());
+    expect(root.disposed).toBe(true);
+    expect(runtime.validationRunning).toBeUndefined();
+    await f.complete(4);
+  },
+);
