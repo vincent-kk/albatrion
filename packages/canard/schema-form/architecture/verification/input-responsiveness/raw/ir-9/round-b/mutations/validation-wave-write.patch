@@ -1,0 +1,9 @@
+--- src/core/engine/write/utils/chain/deliverValidationWave.ts
++++ src/core/engine/write/utils/chain/deliverValidationWave.ts
+@@ -33,5 +33,5 @@
+       issues,
+     );
+   runtime.validationListChanged = undefined;
+-  flushQueuedEvents(node.rootNode, false, 'validate');
++  flushQueuedEvents(node.rootNode, false, 'write');
+ };

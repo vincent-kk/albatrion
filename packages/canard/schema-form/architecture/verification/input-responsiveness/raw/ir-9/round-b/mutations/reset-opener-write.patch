@@ -1,0 +1,11 @@
+--- src/core/engine/write/utils/entry/dispatchResetForm.ts
++++ src/core/engine/write/utils/entry/dispatchResetForm.ts
+@@ -25,7 +25,7 @@
+   option: WriteOption = WriteOption.Overwrite,
+   settings: { deferValidation?: boolean } = NO_RESET_SETTINGS,
+ ): void => {
+-  if (!enterFieldNodeChain(root, 'load')) return;
++  if (!enterFieldNodeChain(root, 'write')) return;
+   clearWarningKeys(root.runtime);
+   root.runtime.validationUnavailable = false;
+   root.runtime.validationCompileReported = false;

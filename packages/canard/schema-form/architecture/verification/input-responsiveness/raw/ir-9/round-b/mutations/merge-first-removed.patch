@@ -1,0 +1,11 @@
+--- src/core/engine/write/utils/report/collectChainRecords.ts
++++ src/core/engine/write/utils/report/collectChainRecords.ts
+@@ -43,7 +43,7 @@
+         record.schemaPath === error.details.schemaPath,
+     );
+     if (existing && error instanceof SchemaFormError) {
+-      if (!merged.has(existing)) {
++      if (true) {
+         existing.error = error;
+         existing.details = error.details;
+         merged.add(existing);

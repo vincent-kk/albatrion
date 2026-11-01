@@ -1,0 +1,8 @@
+--- src/core/surface/utils/binding/batchFieldNodeLoad.ts
++++ src/core/surface/utils/binding/batchFieldNodeLoad.ts
+@@ -9,4 +9,4 @@
+  * @returns Nothing; dispatch delivers and rethrows collected failures
+  */
+ export const batchFieldNodeLoad = (root: FieldNode, run: () => void): void =>
+-  dispatchBatch(requireRuntimeFieldNode(root, true), run, 'load');
++  dispatchBatch(requireRuntimeFieldNode(root, true), run, 'write');
