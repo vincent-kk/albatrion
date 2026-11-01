@@ -91,7 +91,13 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return [];
   }
-  if (runtime.validationStamp !== stamp) return result;
+  if (runtime.validationStamp !== stamp) {
+    if (node === node.rootNode && runtime.validationPending) {
+      (runtime.validationPendingTargets ??= new Set()).add(node);
+      runtime.validationCadence?.request();
+    }
+    return result;
+  }
   if ((runtime.commitNumber ?? 0) !== commit) {
     if (node === node.rootNode) {
       if ((runtime.validationMode ?? 0) & ValidationMode.OnChange)

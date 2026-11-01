@@ -10,6 +10,7 @@ import { reportErrorToHost } from './reportErrorToHost';
 /** Create an instance reporter; React supplies the current callback through onError. */
 export const createFormErrorService = (): FormErrorService => {
   const seen = new WeakSet<object>();
+  const handlerFailures = new WeakSet<object>();
   const warnings = new WeakMap<object, Set<string>>();
   let reportScope: object | undefined;
   let delivering = false;
@@ -52,12 +53,19 @@ export const createFormErrorService = (): FormErrorService => {
           else deliver();
         } else if (process.env.NODE_ENV !== 'production')
           console.warn(record.message, record);
+      } catch (error) {
+        if (error && typeof error === 'object') handlerFailures.add(error);
+        throw error;
       } finally {
         delivering = false;
       }
     },
     capture(error, origin, componentStack, path) {
-      if (error && typeof error === 'object' && seen.has(error)) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        (seen.has(error) || handlerFailures.has(error))
+      ) {
         if (componentStack !== undefined) seen.delete(error);
         return;
       }
@@ -66,6 +74,17 @@ export const createFormErrorService = (): FormErrorService => {
         details?: FormErrorRecord['details'];
         message?: string;
       }>;
+      if (
+        domain?.code === FormErrorCode.MultipleErrors &&
+        Array.isArray(domain.details?.errors) &&
+        domain.details.errors.every(
+          (failure: unknown) =>
+            failure !== null &&
+            typeof failure === 'object' &&
+            (seen.has(failure) || handlerFailures.has(failure)),
+        )
+      )
+        return;
       try {
         service.report({
           level: 'error',

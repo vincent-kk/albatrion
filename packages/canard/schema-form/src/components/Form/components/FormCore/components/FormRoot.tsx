@@ -31,6 +31,7 @@ import type { AttachedFilesMap } from '@/schema-form/types';
 import type { FormHandle } from '../types/handle';
 import type { FormProps } from '../types/props';
 import { createChildren } from '../utils/createChildren';
+import { reportSubmitFailure } from '../utils/reportSubmitFailure';
 import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
@@ -43,11 +44,9 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const reporter = useFormErrorContext();
   const [showError, setShowError] = useState(props.showError);
   const onReset = useHandle(() => setShowError(props.showError));
-  const submit = useHandle(() =>
-    submitForm(
-      binding.current.root,
-      props.onSubmit,
-      (error) => reporter?.capture(error, 'submit'),
+  const submit = useHandle((native = false) =>
+    submitForm(binding.current.root, props.onSubmit, (error) =>
+      reportSubmitFailure(reporter, error, native),
     ),
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
@@ -55,7 +54,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     async (event: SyntheticEvent) => {
       event.preventDefault();
       try {
-        await handleSubmit();
+        await handleSubmit(true);
       } catch (error) {
         reportErrorToHost(error);
       }

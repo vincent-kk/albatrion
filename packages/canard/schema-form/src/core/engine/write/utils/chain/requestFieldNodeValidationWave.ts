@@ -1,10 +1,13 @@
 import type { FieldNodeRecord } from '../../../record';
-import { requestFieldNodeValidation } from '../../../validation';
+import {
+  hasFieldNodeValidationRequest,
+  requestFieldNodeValidation,
+} from '../../../validation';
 import { ensureValidationFailureReporter } from '../report/ensureValidationFailureReporter';
 import { deliverValidationWave } from './deliverValidationWave';
 
 /** Request an automatic verdict using the write domain's common delivery and failure surfaces.
- * @param node - Root or subtree scope needing the newest verdict.
+ * @param node - Requested scope; widened to the root while its load verdict is owed.
  * @returns Nothing; the cadence owns when this request runs. */
 export const requestFieldNodeValidationWave = <
   Self extends FieldNodeRecord<Self>,
@@ -13,7 +16,11 @@ export const requestFieldNodeValidationWave = <
 ): void => {
   const runtime = node.rootNode.runtime;
   ensureValidationFailureReporter(runtime);
-  requestFieldNodeValidation(node, (issues, commit) =>
-    deliverValidationWave(node, issues, commit),
+  const scope =
+    node !== node.rootNode && !hasFieldNodeValidationRequest(node)
+      ? node.rootNode
+      : node;
+  requestFieldNodeValidation(scope, (issues, commit) =>
+    deliverValidationWave(scope, issues, commit),
   );
 };
