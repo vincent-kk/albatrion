@@ -1102,3 +1102,13 @@ architecture의 텍스트 2762개와 gzip 2925개를 감사해 지정된 세 경
 감사 스크립트와 manifest 및 원장 전체 출력은 실행 scratch의 `dr-6/`에 보관합니다. 도구는 `inventory.py`, `redact.py`, `audit.py`, `gates.py`이며 코드·manifest 자체는 커밋하지 않습니다. 제품 전체 시험·빌드·FCA를 이번 기록 치환의 통과 증거로 주장하지 않습니다. 제품 소스·시험·벤치 하네스·manifest·lockfile 변경은 0입니다.
 
 이 README의 노트 추가 전 SHA-256은 `db704c0ce65987fd9035fe93ea527aa0981c04e5856489dac2652ca2d6d114ee`입니다. 노트가 자신의 최종 해시를 포함하는 순환을 피하기 위해 노트 추가 후 파일 SHA-256은 최종 HEAD에 고정한 별도 PR 본문에 기록합니다. 해시 표의 297개 경로 치환 파일은 이 자기 참조 예외와 무관하게 모두 이전·이후 값이 위에 명시돼 있습니다.
+
+### 정정: master와 같은 힙 스냅숏 세 파일 삭제(2026-11-02)
+
+소유자가 범위를 묻는 질문에 "트리에서 삭제 (권장)"라고 답해(앞선 답 "이번에 전부 정리"), master와 바이트가 같던 힙 스냅숏 세 파일을 비식별화하지 않고 트리에서 지웠습니다. 커밋 이력은 다시 쓰지 않았습니다.
+
+- 삭제한 파일은 `packages/aileron/benchmark-form/results/heap-array-100-2026-05-29T02-24-15-340Z.heapsnapshot`, `packages/aileron/benchmark-form/results/heap-array-100-2026-05-29T04-30-05-172Z.heapsnapshot`, `packages/aileron/benchmark-form/results/heap-array-100-2026-05-29T05-56-17-988Z.heapsnapshot`입니다. 세 파일을 이름으로 참조하는 파일은 없습니다.
+- 위 SHA-256 교정표에서 이 세 파일 행의 새 값은 트리에 남은 파일을 가리키지 않습니다. 이전 값은 커밋 이력에 남은 원본의 해시로 그대로 유효합니다.
+- 삭제 뒤 트리에 남은 비식별화 파일은 297개가 아니라 294개이고, 치환은 35467건이 아니라 24064건입니다. 범주별로 repo 10819건이 769건, home 1138건이 22건, node-home 22782건이 22557건, scratch 689건이 677건이 되며, agent-home 10건과 tmp 29건은 같습니다.
+- `packages/aileron/benchmark-form/.gitignore`에 `*.heapsnapshot` 규칙을 넣어 힙 스냅숏을 다시 커밋하지 않게 했습니다.
+- 세 파일의 원본은 2026-05-29 커밋 `06f5d32f5`부터 master 이력에 남습니다.
