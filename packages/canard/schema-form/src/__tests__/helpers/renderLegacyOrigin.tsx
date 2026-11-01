@@ -7,8 +7,8 @@ import {
   Form,
   type FormHandle,
   type FormProps,
-  ValidationMode,
-} from '@/schema-form';
+} from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 
 /** Render the public Form through React 18's legacy root with a single load warning. */
 export const renderLegacyOrigin = () => {
