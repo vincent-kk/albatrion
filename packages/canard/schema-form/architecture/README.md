@@ -80,3 +80,10 @@ D1 구현 여부·virtualization 기본값·IR-5 수정 수락은 모두 소유�
 소유자는 D1을 지금 구현하고 버전은 바꾸지 않으며 virtualization 기본 off와 IR-5 수정을 유지하도록 결정했습니다. 앞의 마감 당시 소유자 대기 기록은 이력으로 보존합니다. 쓰기·OnChange 마운트의 다음 화면 뒤 검증, 즉시 validate/제출 유지와 하위 트리 판정 보존은 [D1 구현](plan/input-responsiveness/design.md#d1-구현--ir-6-2026-10-31) 및 VALIDATE-052를 따릅니다. 루트 PR #508 병합은 D1 편입 뒤 Vincent가 직접 하며 round-466 소유자 답변 기록은 이 PR에 포함하지 않습니다.
 
 IR-6 연속 입력 결정(2026-10-31): D1 쓰기는 선행·프레임 이월·후행과 마지막 자동 실행 기준100ms 상한을 사용하며, 시간 정책은 한 도메인 없는 경계에 모읍니다. 마운트는 일회성 슬롯이고 정식 성능 검증은 아직 시작하지 않았습니다(VALIDATE-052).
+
+
+## 466라운드 마감 보충(2026-11-02)
+
+465라운드 뒤 Vincent는 D1 구현·virtualization 기본 off·IR-5 유지와 버전 불변을 수락했습니다. IR-6~IR-9(#509–512), 결함 라운드(#513), 단일 마감 측정(#514), DR-6 기록 정리·heap 트리 삭제(#515), DR-16/17 중첩 묶음·host 잎 전달과 Amendment16 입력 안전성(#516)을 반영했습니다. [466라운드 닫기](reviews/round-466-closing.md)와 [소유자 원문·기존 원문 연결](reviews/round-466-owner-answers.md)을 최신 결정으로 읽습니다. 수치·FAIL·한계 정본은 [IR-6 결과](verification/input-responsiveness/ir-6-results.md), [IR-7 결과](verification/input-responsiveness/ir-7-results.md), [IR-8 결과](verification/input-responsiveness/ir-8-results.md), [IR-9 결과](verification/input-responsiveness/ir-9-results.md), [결함 결과](verification/input-responsiveness/defect-round-results.md), [마감 측정](verification/input-responsiveness/closing-results.md), [DR-6 정리·관문 노트](ledger/checks/README.md), [DR-16/17 결과](verification/input-responsiveness/dr-16-17-results.md)와 [Amendment16 결과](verification/input-responsiveness/dr-16-17-am16-results.md)입니다. 마감 C0–C4·C6·C7은 PASS, C5 rebuild callDuration은 FAIL이며 Vincent의71번 수용을 별도로 기록하고 재측정하지 않습니다.
+
+버전 번호와 릴리스 결정은 Vincent의 몫입니다. 단계 루트 #508은 입력 응답성 가지에서 08 검토·성능 가지로 가며,70·74번은 이 병합에 한해 코디네이터에게 조건부 권한을 줍니다. DR-16 고침·마감 기록 및 전체 기능·독립 검토·원장·성능 조건(71번의 해당 C5 수용 포함)을 확인한 뒤 코디네이터가 병합하고 보고합니다. 아직 병합됐다는 실행 보고는 아닙니다. #508 뒤 상태 어휘 단계에는 최종 is 접두사 boolean 이름·isPresent·isDivergent, Edited/EditedTouched와 투명 lazy memo 설계를 예약하며 코드 변경은 그 단계에서 진행합니다. 완료 작업공간은 진행 중 정리하고 남은 원격 가지 삭제는72번에 따라 #508 뒤 수행합니다.

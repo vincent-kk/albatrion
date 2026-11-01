@@ -488,3 +488,8 @@ yarn workspace @aileron/benchmark-form check:browser-results --stage=closing --a
 ```
 
 정본은 [complete.json.gz](raw/closing/browser/main/complete.json.gz), [pages.json.gz](raw/closing/browser/main/pages.json.gz), plain start/formal-start 및 clean-build-record.json입니다. 모든 시도는 한 번의 승인·완료 창이며 실패/부분 창은 없습니다. [archive-manifest.json](raw/closing/browser/main/archive-manifest.json)이 보존 파일 해시를 기록합니다. 재측정과 push는 하지 않았습니다.
+
+
+## 466라운드 운영 기록 정정 — push와 #514 병합(2026-11-02)
+
+위의 "재측정과 push는 하지 않았습니다" 또는 "push하지 않습니다"는 그 기록을 쓴 시점의 작업 범위입니다. 이후 코디네이터가 마감 측정 가지를 push했고 PR [#514](https://github.com/vincent-kk/albatrion/pull/514)가 단계 가지에 squash `960bcd79a09c2d54a1f0e0585f3ba3544a287e34`로 병합됐습니다. 이는 코디네이터가 보고한 운영 사실과 PR의 mergeCommit을 대조한 정정입니다. 기존 줄·정식 창·원시·C5 FAIL과71번 수용은 그대로 보존하며 재측정은 하지 않았습니다. 현재 마감 기록 워커는 push하지 않습니다. 근거는 `reviews/round-466-closing.md`의466C-09·15입니다.

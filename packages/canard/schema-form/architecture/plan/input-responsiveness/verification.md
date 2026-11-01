@@ -377,3 +377,8 @@ raw checker는 재현에 통과했고 등록 판정은 C0–C4·C6·C7 PASS, C5 
 rebuild 추적에서 F의 로드 검증 토큰·after-frame 예약, load-origin batch와 교체 load reported/retired 상태 관리라는 실제 추가 작업을 확인했습니다. 개별 작업별 시간을 분리한 profile은 없으므로 상한 전체를 그 추가 작업에 귀속하지 않습니다. paired-bootstrap 꼬리 witness는 B 11.625ms·F 13.0000000596ms이고 10,000개 draw 중 835개가 1.10을 넘습니다. 위치 불균형도 그대로 기록합니다. 이 결과와 다섯 등록 진단·전체 비교 상한 (1.05,1.10] 20개 원인은 closing-results.md와 formal 증거에 보존합니다.
 
 start-*.json과 formal-start.json은 압축하지 않고 clean-build-record.json은 formal 결과 디렉터리에 둡니다. 같은 자료를 checker로 재현하고 preregisteredCommit 기준 경로 감사를 실행합니다. 증거를 커밋한 최종 head에 PR 본문을 고정하며 push하지 않습니다.
+
+
+## 466라운드 운영 기록 정정 — push와 #514 병합(2026-11-02)
+
+위의 "재측정과 push는 하지 않았습니다" 또는 "push하지 않습니다"는 그 기록을 쓴 시점의 작업 범위입니다. 이후 코디네이터가 마감 측정 가지를 push했고 PR [#514](https://github.com/vincent-kk/albatrion/pull/514)가 단계 가지에 squash `960bcd79a09c2d54a1f0e0585f3ba3544a287e34`로 병합됐습니다. 이는 코디네이터가 보고한 운영 사실과 PR의 mergeCommit을 대조한 정정입니다. 기존 줄·정식 창·원시·C5 FAIL과71번 수용은 그대로 보존하며 재측정은 하지 않았습니다. 현재 마감 기록 워커는 push하지 않습니다. 근거는 `reviews/round-466-closing.md`의466C-09·15입니다.
