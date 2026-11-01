@@ -72,7 +72,13 @@ it.each([false, true])(
       }),
     );
     act(() => {
-      expect(() => oldRoot?.setValue('late')).toThrow();
+      let late: unknown;
+      try {
+        oldRoot?.setValue('late');
+      } catch (error) {
+        late = error;
+      }
+      expect(late).toMatchObject({ code: FormErrorCode.DisposedNodeWrite });
     });
     expect(onChange).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);

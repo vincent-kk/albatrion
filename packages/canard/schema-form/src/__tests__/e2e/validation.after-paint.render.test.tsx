@@ -416,6 +416,8 @@ it('T10 write then same-schema reset drops the earlier request and validates the
     ref.current!.setValue('typed');
     ref.current!.reset();
   });
+  expect(isValidationPending(ref.current!.node!)).toBe(false);
+  expect(validate).not.toHaveBeenCalled();
   await settleValidation(() => ref.current?.node);
   expect(validate).toHaveBeenCalledExactlyOnceWith('default');
 });
@@ -431,6 +433,7 @@ it('T11 a deferred reset without a validator releases the earlier pending hold',
     ref.current!.setValue('typed');
     ref.current!.reset();
   });
+  expect(isValidationPending(ref.current!.node!)).toBe(false);
   await settleValidation(() => ref.current?.node);
   expect(isValidationPending(ref.current!.node!)).toBe(false);
 });

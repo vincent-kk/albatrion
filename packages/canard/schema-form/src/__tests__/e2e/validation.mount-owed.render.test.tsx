@@ -272,7 +272,13 @@ it('IR-6 W4 a compile onError failure reaches the host once without recapture', 
     await called;
     await new Promise<void>((resolve) => setImmediate(resolve));
   });
-  expect(onError).toHaveBeenCalledTimes(1);
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({ surface: 'sink' }),
+  );
+  const compileFailure: unknown = onError.mock.calls[0][0].error;
+  expect(
+    sink.errors().filter((error) => error === compileFailure),
+  ).toHaveLength(1);
   expect(sink.errors().filter((error) => error === handler)).toHaveLength(1);
 });
 

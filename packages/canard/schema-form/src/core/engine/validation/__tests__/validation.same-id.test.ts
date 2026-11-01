@@ -164,4 +164,21 @@ describe('same schema id trees', () => {
       details: { reason: 'duplicateSchemaId' },
     });
   });
+  it('round b a later retained root does not relabel a cached non-id duplicate failure', async () => {
+    const first = { $id: 'urn:later-retain', type: 'string' };
+    const later = { $id: 'urn:later-retain', type: 'number' };
+    const validator: Validator = {
+      compile: () => {
+        throw new Error('duplicate keyword declaration');
+      },
+      compileGuard: () => () => true,
+    };
+    readValidationEntry(validator, first);
+    retainValidationRoot(validator, later);
+    const tree = createDispatchTree(first, undefined, validator);
+    await expect(dispatchValidate(tree.root)).rejects.not.toHaveProperty(
+      'details.reason',
+    );
+    releaseValidationRoot(validator, later);
+  });
 });

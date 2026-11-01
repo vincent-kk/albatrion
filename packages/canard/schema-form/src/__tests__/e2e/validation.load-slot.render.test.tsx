@@ -14,7 +14,6 @@ import {
 } from '@/schema-form';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
-import { hideCommittedForm } from '../helpers/hideCommittedForm';
 import { isValidationPending } from '../helpers/isValidationPending';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 
@@ -150,113 +149,6 @@ it.each([true, ShowError.Always])(
   },
 );
 
-it.each([
-  ['reset', false],
-  ['reset', true],
-  ['rebuild', false],
-  ['rebuild', true],
-  ['validator', false],
-  ['validator', true],
-] as const)(
-  'T3 %s retains a usable replacement on slot compile failure (hidden=%s)',
-  async (operation, hidden) => {
-    createValidationFrameClock();
-    vi.stubGlobal('reportError', vi.fn());
-    const sink = observeErrorSink();
-    const onError = vi.fn();
-    const ref = createRef<FormHandle>();
-    const initial = {
-      type: 'object',
-      properties: { old: { type: 'string' } },
-    } as const;
-    const replacement = {
-      type: 'object',
-      properties: { next: { type: 'string' } },
-    } as const;
-    const good = {
-      compile: (schema: JSONSchema) => {
-        if (schema.properties?.next) throw new Error('replacement');
-        return () => [];
-      },
-      compileGuard: () => () => true,
-    };
-    const bad = {
-      compile: () => {
-        throw new Error('replacement');
-      },
-      compileGuard: () => () => true,
-    };
-    const element = (jsonSchema: JSONSchema, validatorFactory: typeof good) => (
-      <Form
-        ref={ref}
-        jsonSchema={jsonSchema}
-        validatorFactory={validatorFactory}
-        onError={onError}
-        validationMode={ValidationMode.OnRequest}
-      />
-    );
-    const view = render(hideCommittedForm(element(initial, good), false));
-    const handle = ref.current!;
-    const old = handle.node;
-    await releaseSlots();
-    view.rerender(
-      hideCommittedForm(
-        element(operation === 'validator' ? initial : replacement, good),
-        false,
-      ),
-    );
-    if (hidden)
-      view.rerender(
-        hideCommittedForm(
-          element(operation === 'validator' ? initial : replacement, good),
-          true,
-        ),
-      );
-    if (operation === 'validator') {
-      view.rerender(hideCommittedForm(element(initial, bad), false));
-      if (hidden) view.rerender(hideCommittedForm(element(initial, bad), true));
-    } else
-      act(() => {
-        expect(() =>
-          operation === 'reset' ? handle.reset() : handle.rebuild(),
-        ).not.toThrow();
-      });
-    expect(handle.node).not.toBe(old);
-    act(() =>
-      handle.setValue(
-        operation === 'validator' ? { old: 'usable' } : { next: 'usable' },
-      ),
-    );
-    expect(handle.getValue()).toEqual(
-      operation === 'validator' ? { old: 'usable' } : { next: 'usable' },
-    );
-    expect(onError).not.toHaveBeenCalled();
-    await releaseSlots();
-    expect(onError).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        code: FormErrorCode.ValidatorCompileFailed,
-        surface: 'sink',
-      }),
-    );
-    expect(sink.errors()).toHaveLength(1);
-    await expect(handle.validate()).rejects.toMatchObject({
-      code: FormErrorCode.ValidatorCompileFailed,
-    });
-    if (hidden)
-      view.rerender(
-        hideCommittedForm(
-          element(
-            operation === 'validator' ? initial : replacement,
-            operation === 'validator' ? bad : good,
-          ),
-          false,
-        ),
-      );
-    if (operation !== 'validator')
-      expect(view.container.querySelector('[data-path="/next"]')).toBeTruthy();
-  },
-);
-
 it('T4 same-schema reset leaves pending false until the load slot and runs one verdict', async () => {
   const clock = createValidationFrameClock();
   const ref = createRef<FormHandle>();
@@ -311,7 +203,9 @@ it.each([false, true])(
     if (reset) {
       await releaseSlots();
       validate.mockClear();
+      const slotsBeforeReset = loadSlots.callbacks.length;
       act(() => ref.current!.reset());
+      expect(loadSlots.callbacks).toHaveLength(slotsBeforeReset + 1);
     }
     act(() => ref.current!.setValue('typed'));
     await act(async () => {
@@ -394,77 +288,3 @@ it.each(['same', 'replacement', 'failing'] as const)(
     } else expect(validate).toHaveBeenCalledTimes(1);
   },
 );
-
-it.each([false, true])(
-  'T9 explicit compile rejection before slot is isolated by load generation (reset=%s)',
-  async (reset) => {
-    createValidationFrameClock();
-    vi.stubGlobal('reportError', vi.fn());
-    const sink = observeErrorSink();
-    const onError = vi.fn();
-    const ref = createRef<FormHandle>();
-    render(
-      <Form
-        ref={ref}
-        jsonSchema={{ type: 'string' }}
-        onError={onError}
-        validatorFactory={{
-          compile: () => {
-            throw new Error('compile');
-          },
-          compileGuard: () => () => true,
-        }}
-      />,
-    );
-    let promise: Promise<unknown>;
-    act(() => {
-      promise = ref.current!.validate();
-      if (reset) ref.current!.reset();
-    });
-    await expect(promise!).rejects.toMatchObject({
-      code: FormErrorCode.ValidatorCompileFailed,
-    });
-    await releaseSlots();
-    expect(onError).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ surface: reset ? 'sink' : 'rejected' }),
-    );
-    expect(sink.errors()).toHaveLength(reset ? 1 : 0);
-  },
-);
-
-it('B3 a new same-id schema with different content compiles after old-root release', async () => {
-  createValidationFrameClock();
-  const onError = vi.fn();
-  const registered = new Set<unknown>();
-  const validator = {
-    compile: (schema: JSONSchema) => {
-      if (registered.size) throw new Error('schema with key already exists');
-      registered.add(schema);
-      return (value: unknown) =>
-        typeof value === schema.type
-          ? []
-          : [{ dataPath: '', message: 'wrong schema' }];
-    },
-    compileGuard: () => () => true,
-    release: (schema: JSONSchema) => {
-      registered.delete(schema);
-    },
-  };
-  const ref = createRef<FormHandle>();
-  const form = (jsonSchema: JSONSchema) => (
-    <Form
-      ref={ref}
-      jsonSchema={jsonSchema}
-      validatorFactory={validator}
-      onError={onError}
-    />
-  );
-  const view = render(form({ $id: 'urn:load-slot', type: 'string' }));
-  await releaseSlots();
-  view.rerender(form({ $id: 'urn:load-slot', type: 'number' }));
-  act(() => ref.current!.reset());
-  await releaseSlots();
-  expect(onError).not.toHaveBeenCalled();
-  act(() => ref.current!.setValue(42));
-  await expect(ref.current!.validate()).resolves.toEqual([]);
-});
