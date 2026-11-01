@@ -7,7 +7,7 @@
 
 ## API Contracts
 
-- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다. 미룬 로드 시작은 이전 요청을 버리고 pending true→false 정착으로 reveal hold를 해제한다.
+- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다. 미룬 로드 시작은 이전 요청을 버리고 pending true→false 정착으로 reveal hold를 해제한다.
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 - H lifetime: 예약 generation 이하의 node/policy entry만 drop하고 빈 노드 이력을 제거한다. pending인 drop은 아무것도 제거하지 않고 owed/token을 지운다. 남은 이력의 재예약까지 끝낸 뒤 release version을 증가시키고 복사한 release listeners를 마지막에 통지하여 listener의 새 기록이 독립 예약을 만든다. settle은 true→false에서 listener 전에 전체 해제하며 unavailable의 기존 정착 경로도 유지한다. 미룬 로드 시작은 이전 요청을 버리고 pending true→false 정착으로 reveal hold를 해제한다.
 - 수락한 explicit root verdict는 route 뒤 deliverValidationWave 전에 정확히 한 번 release한다. pending이면 settleFieldNodeValidation이 해제하고 아니면 전체 release를 직접 호출한다. listener의 재진입 쓰기가 기록한 새 이력은 두 번째 release로 지우지 않는다. 폐기는 release listener를 settle 전에 비워 조용히 전체 해제한다.

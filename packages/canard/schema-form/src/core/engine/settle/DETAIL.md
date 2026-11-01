@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 고정 HEAD 차등 시험은 원래 revision과 값·사건·순서를 보존한다. 상태 이름 변경 뒤에도 현재 observer가 pinned 노드의 원래 필드를 읽도록, 해당 observer 소스의 node.is 접두사 다섯 접근만 pinned 빌드에서 옛 필드 철자로 대응시킨다. 관측 키는 현재 이름이며 제품 별칭이나 기준 재생성을 하지 않는다.
+
 - 루트 static-first load와 loadScope가 root인 settlement commit의 끝에서 `loadBaseline` 박스에 최종 root.emit 참조를 한 번 저장한다. 하위 reset과 쓰기는 baseline을 옮기지 않는다. `readFieldNodeIsDivergent`는 현재 루트 출력과 기준 출력에서 같은 cached path를 두 번 읽고 Object.is 입력 키로 sameValue 결과를 메모한다. unset·detached는 false이며 커밋 전 실패는 기준을 유지한다. 커밋 뒤 보고한 오류는 degraded 출력으로 baseline을 갱신한다.
 
 - 청사진의 hasWatch=false가 전체 선언의 watch 부재를 증명하면 나감 포착은 watch helper·파생 witness·값 메모를 만들거나 기존 빈 메모를 바꾸지 않습니다. nonempty watch가 가능한 폼은 기존 마지막 커밋 읽기 포착·이전 메모 제거를 유지합니다. 판정은 나감에만 O(1)로 추가되며 일반 watch 읽기와 일반 쓰기 경로는 그대로입니다. 새 상주 구조는 없고 나감마다 불필요한 watch 준비를 줄입니다.

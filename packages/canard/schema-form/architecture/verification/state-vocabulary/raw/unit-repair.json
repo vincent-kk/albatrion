@@ -1,0 +1,29 @@
+{
+  "unitFirstRun": {
+    "passed": 4212,
+    "failed": 11,
+    "missingRuntimeBundle": "ajv6"
+  },
+  "causes": [
+    "reveal history expected enabled instead of isPresent",
+    "shared current observer read is-prefixed fields from a pinned pre-rename revision",
+    "four direct module spies require exact named import-model bridges",
+    "ajv6 and then ajv8 runtime dist absent"
+  ],
+  "repairs": [
+    "keep the pinned product unchanged; adapt only shared observer reads at pinned build time",
+    "rename reveal observation expectations",
+    "assert exactly four spy importer-target pairs",
+    "build all ajv plugin runtime bundles"
+  ],
+  "focusedAfterCodeRepair": {
+    "passed": 19,
+    "failed": 0,
+    "missingRuntimeBundle": "ajv8; resolved by build"
+  },
+  "unitFinal": {
+    "passed": 4226,
+    "failed": 0,
+    "todo": 1
+  }
+}

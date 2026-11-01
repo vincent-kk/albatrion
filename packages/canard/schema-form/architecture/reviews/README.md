@@ -196,3 +196,7 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 
 
 입력 응답성 마감 검사 보충(2026-10-31): 원장 과거 경로를 보존하도록 승인된 benchmark-form 재현 도구 수리도 마감에 포함했습니다. 현재 diff의 추가줄 감사는 명시적 audit-base에서만 실행하며 원시 기본 재현과 분리합니다. benchmark 시험·lint·browser typecheck를 별도로 검증합니다. 토큰 잔여는 편집 전399→최종398로, 수치 앞의 L 표기가 옛 L0 토큰과 어휘상 일치한1건이며 의미적 해소로 주장하지 않습니다. 기존 plan-links 문제1과 doc미인용66은 유지합니다. 상세는 `round-465-closing.md` 465C-11과 마감 결과입니다.
+
+## 467라운드 상태 어휘 구현
+
+466 뒤 다음 빈 번호 467에서 #508 병합 기준 위의 상태 어휘 변경을 기록합니다. 소유자 최종 이름과 지연 읽기는 round-467-owner-answers.md·round-467-closing.md, 계약은 ../plan/state-vocabulary/design.md, 실행 증거는 ../verification/state-vocabulary/results.md를 따릅니다. 성능 창과 독립 최종 검토는 코디네이터의 후속이며 다음 라운드는468입니다.

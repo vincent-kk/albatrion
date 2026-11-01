@@ -90,9 +90,9 @@
 | `setExternalErrors(errors)` | method | `dispatch.dispatchSetExternalErrors` | EVENT-045, SURFACE-053 |
 | `clearExternalErrors()` | method | `dispatch.dispatchClearExternalErrors` | EVENT-045, SURFACE-053 |
 | `state` | getter/setter | 레코드의 `interactionState` 읽기; 쓰기는 `dispatch.dispatchSetState` | EVENT-012·067, NODE-010 |
-| `isEdited` | getter | `state[FieldNodeState.Edited]`의 truthiness이며 `UpdateState`에서 다시 읽는다. |
-| `isTouched` | getter | `state[FieldNodeState.Touched]`의 truthiness이며 `UpdateState`에서 다시 읽는다. |
-| `isDivergent` | getter | 마지막 루트 로드 커밋 출력과 현재 폼 출력의 같은 경로 값을 비교한다. |
+| `isEdited` | getter | `state[FieldNodeState.Edited]`의 truthiness이며 `UpdateState`에서 다시 읽는다. | NODE-067 |
+| `isTouched` | getter | `state[FieldNodeState.Touched]`의 truthiness이며 `UpdateState`에서 다시 읽는다. | NODE-067 |
+| `isDivergent` | getter | 마지막 루트 로드 커밋 출력과 현재 폼 출력의 같은 경로 값을 비교한다. | VALUE-044·NODE-067 |
 | `setState(state)` | method | `dispatch.dispatchSetState` | EVENT-012·067, SURFACE-053 |
 | `globalState` | getter | 트리 런타임의 키별 참 노드 수에서 유도된 현재 `globalState` 읽기; 떼어진 참조도 같은 런타임을 읽음 | EVENT-062, SURFACE-053, NODE-044, 43C-01 |
 | `globalErrors` | getter | 루트의 전체 검증 오류 목록 | VALIDATE-043, SURFACE-053 |

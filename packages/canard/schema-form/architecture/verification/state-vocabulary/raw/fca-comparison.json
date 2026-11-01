@@ -1,0 +1,27 @@
+{
+  "findings": {
+    "base": 566,
+    "head": 566,
+    "new": [],
+    "removed": []
+  },
+  "diagnostics": {
+    "base": 306,
+    "head": 306,
+    "new": [],
+    "removed": []
+  },
+  "verification": {
+    "base": 30,
+    "head": 30,
+    "new": [],
+    "removed": []
+  },
+  "verdict": "FAIL with indeterminate dependency axes; zero new findings or diagnostics",
+  "scope": "whole repository",
+  "base": "212967e0f1d2a044d40b9c090420b6b54a33d078",
+  "snapshots": {
+    "head": "8e7f03b2013a9d523db848e21bb268fff1c76f8208ec8a11066768fb57590bff",
+    "base": "3265a2061b55683705cda145de16b7c7655423fc654a417e5bb7decf27c6f22d"
+  }
+}
