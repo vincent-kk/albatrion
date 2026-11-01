@@ -7,7 +7,7 @@
 ## API Contracts
 
 - H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
-- 자동 로드 컴파일 실패는 공통 슬롯에서 sink와 호스트에 한 번 보고하며 명시적 검증의 rejected는 유지한다.
+- 자동 로드 컴파일 실패는 공통 슬롯에서 origin validate로 한 번 보고하고 호스트에 한 번 보내며 명시적 검증의 프로미스 거부는 유지한다.
 - P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 은퇴 뒤의 engine 기록에 호스트 보고를 추가하지 않고 기존 reportOwnerlessError를 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
 
 - R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportErrorToHost로 보낸 뒤 나머지 기록·binding 교체를 계속합니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
@@ -49,7 +49,7 @@
 - L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다. 개발 StrictMode replay도 React가 hide/show로 모델링하므로 비멱등 자식 layout 쓰기가 replay에서 전달되며 production 렌더는 영향을 받지 않습니다.
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
 
-- 루트 교체 reset의 옛 load는 batch try/catch 뒤 은퇴한다. adoption은 컴파일하지 않으며 새 트리를 유지한다. 다음 프레임 뒤 슬롯의 컴파일 실패는 onError sink 한 번과 host 한 번이다. never-prepared build 오류 이관·handler 격리 규칙은 유지한다.
+- 루트 교체 reset의 옛 load는 batch try/catch 뒤 은퇴한다. adoption은 컴파일하지 않으며 새 트리를 유지한다. 다음 프레임 뒤 슬롯의 컴파일 실패는 onError origin validate 한 번과 host 한 번이다. never-prepared build 오류 이관·handler 격리 규칙은 유지한다.
 
 ### onError origin
 

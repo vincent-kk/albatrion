@@ -935,6 +935,22 @@ Errors from `@canard/schema-form` reach you in three places:
 | `submit()` (`FormHandle.submit`, `useFormSubmit`) | Rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails, and with a `SchemaFormError` (`FormErrorCode.SubmitWhileDegraded`) when the form's diagnostics are degraded |
 | `registerPlugin` | Throws an `UnhandledError` (`FormErrorCode.RegisterPlugin`) |
 
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
 Four error classes, each with its own guard: `isJSONSchemaError` (the schema cannot become a form), `isSchemaFormError` (runtime failures of a form instance), `isValidationError` (submission rejected by validation), `isUnhandledError` (failures outside a form instance). The classes are siblings checked with `instanceof`, so at most one guard matches; an error thrown by your own code or a plugin matches none. Every error carries `code` (`'<GROUP>.<CODE>'`, for example `'SCHEMA_FORM_ERROR.RENDER_FAILED'`), `group`, `specific` and `details`.
 
 **Compare `code` with the `FormErrorCode` and `FormWarningCode` constants, not with string literals.** The constants are the only supply path for these values: if a code is renamed inside the package, a handler that uses the constant follows the change or fails to compile, while a literal keeps compiling and silently never matches again. Both are object enums with a matching union type, so `FormErrorCode` also types a variable that holds any error code.
@@ -1533,22 +1549,3 @@ MIT License
 ## Version
 
 Current: See package.json
-
-
-## onError record origin
-
-onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
-
-`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
-
-| origin | Operation |
-| --- | --- |
-| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
-| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
-| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
-| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
-| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
-
-The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
-
-`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

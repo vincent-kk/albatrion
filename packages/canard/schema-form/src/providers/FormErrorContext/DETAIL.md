@@ -6,7 +6,7 @@ ERROR-026과 ERROR-110–117은 루트 경계 바깥에 인스턴스 단위 보�
 
 ## API Contracts
 
-- R-g: 현재 form-level load마다 별도 private warning scope를 소유한다. 이전 load에서 옮겨 온 기록은 원래 scope에서 dedup하며 현재 load와 합치지 않는다. scope는 buffered records가 보유하는 동안만 유지하고 공개 FormErrorRecord 모양·sink·오류 identity dedup은 바꾸지 않는다(ERROR-204).
+- R-g: 현재 form-level load마다 별도 private warning scope를 소유한다. 이전 load에서 옮겨 온 기록은 원래 scope에서 dedup하며 현재 load와 합치지 않는다. scope는 buffered records가 보유하는 동안만 유지하고 경고 scope는 공개 origin과 독립적이며 호스트 싱크·오류 identity dedup은 유지한다(ERROR-204).
 
 onError는 insertion effect로 갱신되어 숨김 commit에서도 최신이며 루트의 prepared/retired 판단은 RootNodeContext가 소유합니다.
 

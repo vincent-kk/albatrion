@@ -955,6 +955,22 @@ function ProfileForm() {
 }
 ```
 
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
 `onError` receives every error and warning record of the form instance; `submit()` rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails. The full code list is in [SPECIFICATION — Error Handling](./docs/en/SPECIFICATION.md#error-handling).
 
 ---
@@ -2732,22 +2748,3 @@ All loads (first mount, same-schema reset, root replacement, rebuild and validat
 Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
 
 Known limits: the hook's React-only `disabled` argument reveals at once; state/enabled renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/enabled/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.
-
-
-## onError record origin
-
-onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
-
-`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
-
-| origin | Operation |
-| --- | --- |
-| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
-| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
-| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
-| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
-| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
-
-The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
-
-`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

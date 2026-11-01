@@ -933,6 +933,22 @@ presentation: {
 | `submit()`(`FormHandle.submit`, `useFormSubmit`) | 검증이 실패하면 `ValidationError`(`FormErrorCode.SchemaValidationFailed`)로, 폼 진단이 degraded이면 `SchemaFormError`(`FormErrorCode.SubmitWhileDegraded`)로 거부 |
 | `registerPlugin` | `UnhandledError`(`FormErrorCode.RegisterPlugin`)를 던짐 |
 
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
 오류 클래스는 넷이며 각자 가드가 있습니다: `isJSONSchemaError`(스키마로 폼을 만들 수 없음), `isSchemaFormError`(폼 인스턴스의 실행 중 실패), `isValidationError`(검증이 제출을 거부), `isUnhandledError`(폼 인스턴스 밖의 실패). 네 클래스는 서로 형제이고 가드는 `instanceof`로 판정하므로 맞는 가드는 많아야 하나이며, 사용자 코드나 플러그인이 던진 오류에는 아무것도 맞지 않습니다. 모든 오류는 `code`(`'<GROUP>.<CODE>'`, 예: `'SCHEMA_FORM_ERROR.RENDER_FAILED'`), `group`, `specific`, `details`를 가집니다.
 
 **`code`는 문자열 리터럴이 아니라 `FormErrorCode`·`FormWarningCode` 상수와 비교하십시오.** 이 값들은 상수로만 조달됩니다. 패키지 안에서 코드 이름이 바뀌면 상수를 쓴 처리기는 함께 바뀌거나 컴파일 오류로 알려 주지만, 리터럴은 계속 컴파일되면서 조용히 더는 맞지 않게 됩니다. 둘 다 같은 이름의 union 형을 가진 object enum이므로, `FormErrorCode`는 아무 오류 코드나 담는 변수의 형으로도 쓸 수 있습니다.
@@ -1531,22 +1547,3 @@ MIT License
 ## 버전
 
 현재: package.json 참조
-
-
-## onError record origin
-
-onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
-
-`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
-
-| origin | 연산 |
-| --- | --- |
-| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
-| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
-| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
-| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
-| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
-
-사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
-
-`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

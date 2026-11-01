@@ -34,7 +34,7 @@
 
 ## API Contracts
 
-- `dispatchLoadValidation(root): boolean`은 사슬을 열지 않는 로드 검증 진입점이다. None·unavailable·검증기 없음은 false이며 나머지는 전체 스키마를 준비한다. 컴파일 실패만 failValidationCompile로 unavailable·정착·로드별 sink 보고하고, 다른 실패는 reporter에 보낸다. OnChange이며 현재 로드 이후 요청이 없을 때만 true를 반환한다.
+- `dispatchLoadValidation(root): boolean`은 사슬을 열지 않는 로드 검증 진입점이다. None·unavailable·검증기 없음은 false이며 나머지는 전체 스키마를 준비한다. 컴파일 실패만 failValidationCompile로 unavailable·정착·로드별 origin validate 보고하고, 다른 실패는 reporter에 보낸다. OnChange이며 현재 로드 이후 요청이 없을 때만 true를 반환한다.
 - 모든 mount·form reset은 validationStamp를 증가시키고 finally의 사슬 종료 직전에 validationLoadStamp를 기록한다. deferred reset은 이전 pending을 정착한다. dispatchValidate의 오래된 로드 컴파일 실패는 caller에만 거부하고 현재 로드의 flag·보고를 바꾸지 않는다.
 
 - 수락한 명시적 root 판정은 route 뒤 pending이면 settle, 아니면 전체 release를 수행하여 한 번만 해제하고 배달한다. release listener가 여는 새 쓰기의 이력은 보존한다.
