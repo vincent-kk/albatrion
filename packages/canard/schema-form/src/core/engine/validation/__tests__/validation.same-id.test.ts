@@ -141,7 +141,7 @@ describe('same schema id trees', () => {
     expect(await dispatchValidate(previous.root)).toEqual([]);
     expect(await dispatchValidate(next.root)).toEqual([]);
   });
-  it('B2 preserves duplicateSchemaId from compile time after the competing root is released', async () => {
+  it('B2 preserves duplicateSchemaId after a failed retry once the competing root is released', async () => {
     const first = { $id: 'urn:compile-time', type: 'string' };
     const second = { $id: 'urn:compile-time', type: 'number' };
     const validator: Validator = {
