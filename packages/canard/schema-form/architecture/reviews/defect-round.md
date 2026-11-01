@@ -25,3 +25,9 @@
   - 【추론】 DR-10·DR-12: validator 교체 또는 pending reset 재대조 뒤 errors effect는 렌더가 보유한 옛 root가 아니라 store.load.root의 현행 root에 적용한다. 같은 errors 배열 재적용은 기존 조기 반환을 따른다. replacement reset의 applyFormErrors는 이전 root 유무와 무관하게 load origin으로 호출하며 자체 batch 사슬의 listener 실패도 load로 보고한다. 오류 배열 내용·경로별 배정과 caller throw·호스트 전달 규칙은 바꾸지 않는다.
 
 F1은 공개 SPECIFICATION의 ValidatorCompileFailed 셀을 IR-9의 origin validate 및 자동 host·명시적 rejection으로 정정합니다. F2는 OnChange만 오류 표시를 hold하고 다른 mode는 live 조건을 따른다는 공개 주석 세 곳의 정정이며 형·행동 변경이 아닙니다. 존재하지 않는 onReady는 현행 Provider 문서에서 제거합니다. DR-11은 재현과 ERROR-019 항목 3·4의 대조 결과를 코디네이터에게 보고하고 결정을 기다립니다.
+
+
+## Amendment 6 — DR-11
+
+- **DR-11 (ERROR-019 항목 3·4)**
+  - 【추론】 DR-11: degraded 폼의 명시적 submit은 ERROR-019 항목 3과 4에 따라 거부 직전에 origin submit의 onError 기록을 한 번 전달하고 caller에게 SUBMIT_WHILE_DEGRADED로 거부하며 host에는 보내지 않는다. native submit은 같은 원인 기록 한 번과 host 한 번을 유지하고 이미 보고한 거부 객체의 capture는 seen으로 중복 제거한다. 검증 오류가 아닌 submitForm 거부는 두 통로 모두 같은 보고 콜백을 사용한다. degraded 폼의 명시적 validate에서 검증기 실행 실패는 이미 origin validate로 한 번 보고한 뒤 caller에게 거부하므로 그대로 유지한다.

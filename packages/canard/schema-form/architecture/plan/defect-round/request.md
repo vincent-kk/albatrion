@@ -22,3 +22,8 @@ VALIDATE-021·046·052, ERROR-019·201·023과 ADR 0004를 보충합니다. DR-4
 ## Amendment 5
 
 DR-10은 inline errors 배열과 validator 교체 및 같은 batch reset·schema 변경의 stale root 쓰기를 재현한 뒤 errors effect를 store.load.root로 바꿉니다. DR-12는 reset의 applyFormErrors에 load origin을 명시하며 no-root recovery listener 기록으로 확인합니다. F1의 origin 문구·F2의 공개 주석 세 곳·존재하지 않는 onReady를 정정합니다. F2는 공개 선언의 주석만 승인된 차이이며 형은 유지합니다. DR-11은 두 React에서 non-native degraded submit의 caller rejection·onError0·host0과 native onError1(origin submit)·host1을 확인했으며 ERROR-019 항목 3·4 및 IR-9 정의를 코디네이터에게 보고하고 결정을 기다립니다.
+
+
+## Amendment 6
+
+DR-11은 ERROR-019 항목 3·4의 결함으로 수정합니다. 명시적 degraded submit은 onError 1(origin submit)·host 0·caller rejection이며 native는 onError 1·host 1입니다. degraded validate의 실행 실패는 이미 onError 1(origin validate)·caller rejection이므로 그대로 둡니다. 최종 결과는 push 없이 로컬 HEAD로 코디네이터에게 인계합니다.
