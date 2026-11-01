@@ -134,6 +134,7 @@ it('DR-8 keeps no-root recovery listener failures inside applyFormErrors own cha
   expect(onError).toHaveBeenCalledOnce();
   expect(onError.mock.calls[0][0]).toMatchObject({
     code: FormErrorCode.ListenerThrew,
+    origin: 'load',
   });
   expect(host).not.toHaveBeenCalled();
 });
