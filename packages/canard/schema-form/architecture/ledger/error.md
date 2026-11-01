@@ -642,6 +642,7 @@
   > - 부른 쪽이 없는 자리(커밋 뒤 이펙트, 마이크로태스크, `componentDidCatch`, 네이티브 submit): 원래 사건의 싱크는 그대로 부르고, 핸들러의 예외는 싱크로 한 번 보내며, 남은 기록의 전달은 계속한다. `componentDidCatch` 밖으로 예외를 내보내지 않으므로 호스트의 바운더리가 화면을 내리지 않는다.
   > - 핸들러 자신의 예외는 `onError`에 다시 보내지 않는다(재귀가 없다).
   > - async 핸들러가 거부하면, 반환값을 무시한다는 규칙에 따라 그것은 호스트 자신의 프로미스이므로 폼이 잡지 않는다.
+- 보충: 없음
 - 보충:
   > 편집자 결정(DR-14): "【추론】 DR-14: onError가 던진 객체를 handlerFailures에 보존한다. capture는 이미 보고한 객체·핸들러 예외 객체를 다시 보고하지 않으며 MultipleErrors의 모든 원소가 이 두 집합의 객체일 때도 기록을 생략한다. 미지 객체·primitive 원소는 보고한다. native submit의 컴파일 실패는 원인 onError 한 번과 bundle host 한 번이다. render capture가 이 bundle 또는 핸들러 예외를 생략하면 RENDER_FAILED 기록과 componentStack도 onError에 없으며 D9와 같이 ERROR-023 항목 2가 우선한다. degraded 명시적 submit은 report 통로로 원인을 보고하고 핸들러 예외가 있으면 [SubmitWhileDegraded, 핸들러 예외]로 caller에게 거부하며 host에는 보내지 않는다." (`reviews/defect-round.md:41`)
 - 상태: 현행
