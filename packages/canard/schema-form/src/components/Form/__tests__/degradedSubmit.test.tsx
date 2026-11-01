@@ -13,6 +13,45 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+it('DR-11 gate native degraded submit forwards one rejection bundle when onError throws', async () => {
+  const onError = vi.fn();
+  const host = vi.fn();
+  vi.stubGlobal('reportError', host);
+  const view = render(
+    <FormCore
+      jsonSchema={{
+        type: 'string',
+        controls: { derived: '(() => { throw new Error("degraded") })()' },
+      }}
+      validationMode={ValidationMode.None}
+      onError={onError}
+    >
+      <span />
+    </FormCore>,
+  );
+  onError.mockClear();
+  host.mockClear();
+  const handler = new Error('native degraded handler');
+  onError.mockImplementationOnce(() => {
+    throw handler;
+  });
+  await act(async () => {
+    fireEvent.submit(view.container.querySelector('form')!);
+  });
+  expect(onError).toHaveBeenCalledOnce();
+  expect(host).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({
+      code: FormErrorCode.MultipleErrors,
+      details: {
+        errors: [
+          expect.objectContaining({ code: FormErrorCode.SubmitWhileDegraded }),
+          handler,
+        ],
+      },
+    }),
+  );
+});
+
 it('DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();

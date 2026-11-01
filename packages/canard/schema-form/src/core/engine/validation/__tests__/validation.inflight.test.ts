@@ -24,9 +24,67 @@ it('DR-1 leaves committed counts unchanged and releases its pin after a verdict'
   const count = ledger.counts.get(schema);
   const pending = runFieldNodeValidation(root);
   expect(ledger.counts.get(schema)).toBe(count);
+  expect(ledger.inflight.get(schema)).toBe(1);
   resolve();
   await expect(pending).resolves.toEqual([]);
   expect(ledger.counts.get(schema)).toBe(count);
+  expect(ledger.inflight.has(schema)).toBe(false);
+});
+
+it('DR-1 gate removes the in-flight key after a rejected run', async () => {
+  let reject: (error: Error) => void = () => {};
+  const validator = {
+    compile: () => () =>
+      new Promise<[]>((_, fail) => {
+        reject = fail;
+      }),
+    compileGuard: () => () => true,
+  };
+  const schema = { type: 'string' };
+  const { root } = createDispatchTree(schema, undefined, validator);
+  const pending = runFieldNodeValidation(root);
+  const ledger = recentReleaseList(validator);
+  expect(ledger.inflight.get(schema)).toBe(1);
+  reject(new Error('validator rejected'));
+  await expect(pending).rejects.toThrow();
+  expect(ledger.inflight.has(schema)).toBe(false);
+});
+
+it('DR-1 gate retains an installing guard-read root while all older recent roots are pinned', async () => {
+  const completions: (() => void)[] = [];
+  const released: unknown[] = [];
+  const validator = {
+    compile: () => () =>
+      new Promise<[]>((done) => {
+        completions.push(() => done([]));
+      }),
+    compileGuard: () => () => true,
+    release: (copy: unknown) => {
+      released.push(copy);
+    },
+  };
+  const pending = Array.from({ length: 8 }, (_, index) => {
+    const schema = { type: 'string', title: `pinned-${index}` };
+    retainValidationRoot(validator, schema);
+    const { root } = createDispatchTree(schema, undefined, validator);
+    const run = runFieldNodeValidation(root);
+    releaseValidationRoot(validator, schema);
+    return run;
+  });
+  const installing = {
+    type: 'object',
+    if: { type: 'object' },
+    then: { title: 'guard branch' },
+  };
+  const entry = readValidationEntry(validator, installing);
+  const ledger = recentReleaseList(validator);
+  expect.soft(ledger.counts.get(installing)).toBe(0);
+  expect.soft(ledger.recent).toContain(installing);
+  for (const complete of completions) complete();
+  await Promise.all(pending);
+  for (let index = 0; index < 10; index++)
+    readValidationEntry(validator, { type: 'string', title: `later-${index}` });
+  expect(released.filter((copy) => copy === entry.copy)).toHaveLength(1);
 });
 
 it('DR-1 validates without creating a lifetime for an absent validator', async () => {

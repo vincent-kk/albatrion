@@ -1,5 +1,6 @@
 import {
   type ComponentType,
+  StrictMode,
   createRef,
   useCallback,
   useLayoutEffect,
@@ -8,11 +9,15 @@ import {
 } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, expect, inject, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import * as core from '@/schema-form/core';
 import { FormWarningCode } from '@/schema-form/errors';
+import {
+  type FormErrorService,
+  useFormErrorContext,
+} from '@/schema-form/providers/FormErrorContext';
 import type { FieldInputProps } from '@/schema-form/types';
 import type { JSONSchema } from '@/schema-form/types';
 
@@ -41,15 +46,20 @@ it.each([
   async (event, operation, order) => {
     const ref = createRef<FormHandle>();
     const onError = vi.fn();
+    let service: FormErrorService | undefined;
+    const readScopes: object[] = [];
     let clicks = 0;
     const Input = ({ ChildFields }: FieldInputProps) => {
+      const reporter = useFormErrorContext();
+      service = reporter;
       const button = useRef<HTMLButtonElement>(null);
       const click = useCallback(() => {
         clicks++;
         if (clicks === 1 && order === 'read-after') ref.current![operation]();
+        readScopes.push(reporter!.warningScope);
         void ChildFields.length;
         if (clicks === 1 && order === 'read-before') ref.current![operation]();
-      }, [ChildFields]);
+      }, [ChildFields, reporter]);
       useLayoutEffect(() => {
         const element = button.current;
         if (event !== 'native' || !element) return;
@@ -67,13 +77,17 @@ it.each([
       );
     };
     const view = render(
-      <Form
-        ref={ref}
-        validationMode={0}
-        jsonSchema={detectable(Input)}
-        onError={onError}
-      />,
+      <StrictMode>
+        <Form
+          ref={ref}
+          validationMode={0}
+          jsonSchema={detectable(Input)}
+          onError={onError}
+        />
+      </StrictMode>,
     );
+    if (!service) throw new Error('Expected instance reporter');
+    const reports = vi.spyOn(service, 'reportInLoad');
     const warnings = () =>
       onError.mock.calls.filter(
         ([record]) =>
@@ -89,6 +103,65 @@ it.each([
       await Promise.resolve();
     });
     expect(warnings()).toHaveLength(operation === 'reset' ? 2 : 1);
+    expect(reports.mock.calls.map(([, scope]) => scope)).toEqual(
+      operation === 'reset' ? readScopes : [readScopes[1]],
+    );
+  },
+);
+
+it.skipIf(inject('reactMajor') !== '18')(
+  'DR-15 gate legacy root preserves each original warning scope under StrictMode',
+  async () => {
+    for (const operation of ['reset', 'rebuild'] as const) {
+      const ref = createRef<FormHandle>();
+      const onError = vi.fn();
+      const scopes: object[] = [];
+      let service: FormErrorService | undefined;
+      let clicks = 0;
+      const Input = ({ ChildFields }: FieldInputProps) => {
+        const reporter = useFormErrorContext();
+        service = reporter;
+        return (
+          <button
+            type="button"
+            onClick={() => {
+              scopes.push(reporter!.warningScope);
+              void ChildFields.length;
+              if (clicks++ === 0) ref.current![operation]();
+            }}
+          >
+            legacy scope read
+          </button>
+        );
+      };
+      const view = render(
+        <StrictMode>
+          <Form
+            ref={ref}
+            jsonSchema={detectable(Input)}
+            validationMode={0}
+            onError={onError}
+          />
+        </StrictMode>,
+        { legacyRoot: true },
+      );
+      if (!service) throw new Error('Expected reporter');
+      const reports = vi.spyOn(service, 'reportInLoad');
+      await act(async () => {
+        fireEvent.click(view.getByText('legacy scope read'));
+        await Promise.resolve();
+      });
+      expect(onError).toHaveBeenCalledTimes(operation === 'reset' ? 1 : 0);
+      await act(async () => {
+        fireEvent.click(view.getByText('legacy scope read'));
+        await Promise.resolve();
+      });
+      expect(onError).toHaveBeenCalledTimes(operation === 'reset' ? 2 : 1);
+      expect(reports.mock.calls.map(([, scope]) => scope)).toEqual(
+        operation === 'reset' ? scopes : [scopes[1]],
+      );
+      view.unmount();
+    }
   },
 );
 

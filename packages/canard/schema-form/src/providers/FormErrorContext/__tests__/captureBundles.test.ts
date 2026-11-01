@@ -52,3 +52,23 @@ it('DR-14 captures a bundle containing an unseen object', () => {
   expect(onError).toHaveBeenCalledTimes(2);
   expect(onError.mock.calls[1][0].error).toBe(bundle);
 });
+
+it.each([
+  ['empty', []],
+  ['sparse', Array(2)],
+] as const)(
+  'DR-14 gate captures empty or sparse bundles with a render stack (%s)',
+  (_label, errors) => {
+    const service = createFormErrorService();
+    service.onError = vi.fn();
+    const error = { code: FormErrorCode.MultipleErrors, details: { errors } };
+    service.capture(error, 'render', 'renderer component stack');
+    expect(service.onError).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        code: FormErrorCode.RenderFailed,
+        componentStack: 'renderer component stack',
+        error,
+      }),
+    );
+  },
+);
