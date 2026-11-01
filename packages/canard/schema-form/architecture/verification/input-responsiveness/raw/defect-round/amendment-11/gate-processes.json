@@ -1,0 +1,53 @@
+{
+  "sourceCommit": "7d99e354e",
+  "testCommit": "f1a4df3ea",
+  "method": "Fresh required gate process exits and an extra build for the new lib import. Focused evidence is reused for identical source/test bytes; prior results are retained separately.",
+  "processes": {
+    "lint": {
+      "cmd": "yarn workspace @canard/schema-form lint --max-warnings 0",
+      "exit_code": 0,
+      "outputTail": ""
+    },
+    "typecheck": {
+      "cmd": "yarn workspace @canard/schema-form typecheck",
+      "exit_code": 0,
+      "outputTail": ""
+    },
+    "build": {
+      "cmd": "yarn workspace @canard/schema-form build",
+      "exit_code": 0,
+      "outputTail": "DEVELOPMENT_FLAG_OK reads=48 flags=49 pure=548\nGATE_SELECTION_DIST_OK {\"name\":\"index.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":889957,\"sha256\":\"24a0f3a2c5e763b7521c283210f20dac0f35afc43580df40b44ecb580cd30ce7\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.node.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":889161,\"sha256\":\"213cbaa4aed0511d48da039969959ff32a85d626a7cba376e8e56f70e2d6449c\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.cjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":911178,\"sha256\":\"a03c7ffd10b251f96a5cd30afa19b2d1a761509854dfe37bc0170b7f4bbef3b0\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4526}\nFixed 2432 imports in 1138 .d.ts files.\n✓ agents-hashes.json written: 14 file(s) → <checkout>/packages/canard/schema-form/dist/agents-hashes.json\n"
+    },
+    "unit": {
+      "cmd": "yarn workspace @canard/schema-form test --run --project unit --maxWorkers 4 --reporter=json --outputFile=<scratch>/am11-final-unit.json",
+      "exit_code": 0,
+      "outputTail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <scratch>/am11-final-unit.json\n"
+    },
+    "render": {
+      "cmd": "yarn workspace @canard/schema-form test --run --project render --maxWorkers 4 --reporter=json --outputFile=<scratch>/am11-final-render.json",
+      "exit_code": 0,
+      "outputTail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <scratch>/am11-final-render.json\n"
+    },
+    "react18": {
+      "cmd": "yarn workspace @canard/schema-form test --run --project react18 --maxWorkers 4 --reporter=json --outputFile=<scratch>/am11-final-react18.json",
+      "exit_code": 0,
+      "outputTail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <scratch>/am11-final-react18.json\n"
+    },
+    "verify": {
+      "cmd": "yarn workspace @canard/schema-form test:verify --run --maxWorkers 4 --reporter=json --outputFile=<scratch>/am11-final-verify.json",
+      "exit_code": 0,
+      "outputTail": "JSON report written to <scratch>/am11-final-verify.json\n"
+    },
+    "importModel": {
+      "cmd": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<scratch>/am11-final-import-model.json",
+      "exit_code": 0,
+      "outputTail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <scratch>/am11-final-import-model.json\n"
+    },
+    "focused": {
+      "exit_code": 0,
+      "evidence": "am11-focused-green.json.gz",
+      "reused": true,
+      "reason": "Identical source/test bytes; actual focused run completed with 29 passed and process exit 0."
+    }
+  }
+}

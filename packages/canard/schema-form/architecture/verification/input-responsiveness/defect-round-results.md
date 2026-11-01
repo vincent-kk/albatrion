@@ -124,3 +124,32 @@ native degraded submit의 throwing onError는 DR-11에서 두 host 호출을 하
 최종 PR 본문은 위 보충과 새 raw에 최종 HEAD 고정 링크를 제공하며 검토 범위·지침·남은 한계를 명시합니다. 슬롯과 native host 형태의 통일은 코디네이터가 단계 마감 때 소유자에게 올릴 결정입니다.
 
 공개 표면 평가기의 새 private 필드 검사와 공개 도달 주석 비교는 [실행 소스와 해시](raw/defect-round/results-gates/declaration-checker-sources.json.gz)도 보존했습니다. 상대 경로로 함께 풀고 baseline·candidate package·출력 JSON을 인자로 실행할 수 있습니다.
+
+
+## Amendment 11 — 네 P3 수정
+
+앞선 결과는 그대로 보존합니다. 상속된 이미 보고한 오류를 index0에서 읽을 수 있는 sparse 배열은 own index가 없어 hole이므로 capture를 생략하지 않습니다. 수정 전 inherited-index 시험은 RENDER_FAILED가0회여서 red였고 hasOwnProperty 검사 뒤 한 번 보고합니다. 실행 cleanup 정체성은 기존 구현을 유지하며 R1 resolve·R1 reject·명시적 root owner 각각 R2 진행 중 R1 정착 뒤에도 R3가 형제 대상을 받는지, 완료 뒤 기록이 없는지, rebuild의 dispose가 즉시 기록을 비우는지 단언합니다.
+
+[f1a4df3ea 시험 텍스트 해시와 재현](raw/defect-round/amendment-11/provenance.json)에 base3f08c0dad의 inherited red1·guard24, 정체성 조건 제거 변이6실패(세 owner·두 React), 원복 및 집중29통과를 보존했습니다. 두 원장 항목의 header 정리는 Amendment 11의 명시적 예외입니다. 3f08c0dad 대비 항목마다 header 두 줄씩, 총 네 줄을 제거하며 결정·인용문과 나머지 bytes는 그대로입니다. 원래779713587 대비 삭제된 기존 header는 두 줄이며 승인된 정리로 따로 기록합니다. Provider 두 문서는 explicit validate/submit이 슬롯을 거치지 않고 즉시 시작한다는 정확한 문구로 정정했습니다.
+
+
+### Amendment 11 최종 관문
+
+최신 소스 `7d99e354e`·시험 `f1a4df3ea`에서 Amendment 11의 지정 관문을 실행했습니다. 새 lib import 확인을 위한 build도 추가했습니다. 동일 source/test bytes의 집중29통과 증거를 재사용하며 새 전체 검사는 아래에 구분합니다.
+
+| 관문 | 결과·증거 |
+| --- | --- |
+| lint·typecheck | exit0·경고0. [프로세스](raw/defect-round/amendment-11/gate-processes.json) |
+| 추가 build | exit0·DEVELOPMENT_FLAG_OK·세 runtime bundle GATE_SELECTION_DIST_OK. 생성 dist는 ignored이며 추적하는 산출물 변경0 |
+| focused | 29통과·실패0. [JSON](raw/defect-round/amendment-11/am11-focused-green.json.gz) |
+| unit | 4118통과·실패0·skip0·todo1. [JSON](raw/defect-round/amendment-11/am11-final-unit.json.gz) |
+| render / React19 | 1007통과·실패0·skip7·todo0. [JSON](raw/defect-round/amendment-11/am11-final-render.json.gz) |
+| react18 | 1005통과·실패0·skip9·todo0. [JSON](raw/defect-round/amendment-11/am11-final-react18.json.gz) |
+| verify-unit·verify-render | 5169통과·실패0·skip7·todo1. [JSON](raw/defect-round/amendment-11/am11-final-verify.json.gz) |
+| import-model | 2통과·실패0·skip0·todo0. [JSON](raw/defect-round/amendment-11/am11-final-import-model.json.gz) |
+| FCA | 신규 finding/diagnostic0, 기존 indeterminate·실패26 유지. 현재 source facts를 갱신하여 원래 기준 및 직전 결과와 비교. [비교](raw/defect-round/amendment-11/fca-comparison.json) |
+| 원장 | sup-check·verbatim-check·ref-check 및 전체 검사 완료. 보충3640 유지·인용 불일치0·해석실패0·17영역 누락/오분류0. 기존 plan 문제1·doc 미인용66 유지. [요약](raw/defect-round/amendment-11/ledger-final-summary.json) |
+| 헤더 예외 | VALIDATE-052·ERROR-028 각각 중복 header2줄만 삭제. 3f08c0dad 대비 삭제4줄이며 두 파일의 나머지 bytes·결정·인용은 동일. 원래 기준 대비 승인된 header 삭제2줄은 별도 집계 |
+| 머신 경로·공개 source·skip | 새 텍스트와 모든 raw/gzip 경로0·새 위험 product 단언0·index/version 변경0·기존 skip/todo 불변. [감사](raw/defect-round/amendment-11/final-audits.json) |
+
+공개 entry/types source와 이전 결과는 유지했습니다. 직전 Storybook·production·공개97/916 비교는 해당 시점 기록으로 보존합니다. 이번 dispatch에서 scratch worktree·브랜치를 새로 만들지 않았으며 최종 PR 본문은 새 보충에 최종 HEAD 고정 링크를 제공합니다. 기존 슬롯/native host 형태 통일의 단계 마감 결정도 그대로 남습니다.

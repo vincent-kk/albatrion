@@ -61,3 +61,10 @@ F4는 공개 batch 또는 walk 안의 중간 상태가 별도 이력이 아니�
   - 【추론】 DR-9-R2: 이전 추가 비용 0 표현은 경로 탐색과 리스너 배달에 한정한다. node와 root 입력에는 추가 경로 탐색·리스너 배달이 없으며 렌더마다 상수 시간 snapshot hook 하나가 있다. 경로 프록시의 container 리스너·사건 필터·재탐색 비용과 기본 root 네 리스너는 유지한다. tracker나 강제 rerender가 없는 probe도 구조 변경만으로 현행 노드를 읽는다.
 
 DR-15의 기존 읽기 scope 소유 규칙은 StrictMode와 React18 legacy root에서 원래 scope별 reportInLoad 횟수로 확인합니다. 현재 명세는 검증기 실패 origin validate와 degraded 제출 origin submit, 알려진 bundle·handler capture 예외를 구별합니다. 기존 결과·결정 줄은 보존하며 뒤의 결과 보충이 이전 검증의 범위를 대체합니다.
+
+
+## Amendment 11 — P3 관문 보충
+
+상속된 배열 index는 own index가 없으므로 hole입니다. DR-14의 dense bundle 검사는 common-utils/lib의 hasOwnProperty로 각 index를 읽기 전에 소유 여부를 확인합니다. DR-13은 기존 객체 정체성 cleanup 계약을 바꾸지 않고 resolve·reject cadence와 명시적 root 소유자의 R1→R2→R1 정착→R3 인계 및 완료·즉시 dispose 제거를 추가 단언합니다. 조건 제거 변이는 세 경로·두 React에서 실패해야 합니다.
+
+Amendment 11의 명시적 예외로 VALIDATE-052와 ERROR-028의 중복 보충 헤더 세 줄을 한 줄로 정리합니다. 각 항목의 두 header 줄만 지우며 결정·인용문은 바꾸지 않습니다. 두 Provider DETAIL은 explicit validate/submit이 슬롯 없이 즉시 시작함과 validate/submit origin을 명시합니다.
