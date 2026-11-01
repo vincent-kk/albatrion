@@ -65,7 +65,7 @@ Storybook 항목(`report.md` 끝 절, 잘리지 않은 전문):
 - 코어 창(UTC): 2026-10-22T19:48:16.834Z ~ 2026-10-22T19:56:35.917Z, 새 측정 프로세스 282개, 유지 표본 28,200개.
 - React 창(UTC): 2026-10-22T19:56:59.573Z ~ 2026-10-22T20:46:47.710Z, canonical 2개와 DOM 보조 2개의 프로세스.
 - 코어 스냅샷의 프로세스 수: processes-after 992, processes-before 991, processes-r1 991, processes-r2 992, processes-r3 995. React 스냅샷의 프로세스 수는 출력이 잘려 앞부분(before-canonical 991)만 복구하였다.
-- 코어는 production(`NODE_ENV=production`) 번들을 Node 26으로 실행하였다. 측정에 고정한 Node는 이 시리즈의 앞선 창들에서 `/opt/homebrew/bin/node` v26.12.0이었으나, 443b 창의 `environment.json`은 복구하지 못해 정확한 버전은 확인하지 못했다.
+- 코어는 production(`NODE_ENV=production`) 번들을 Node 26으로 실행하였다. 측정에 고정한 Node는 이 시리즈의 앞선 창들에서 `{node-home}/bin/node` v26.12.0이었으나, 443b 창의 `environment.json`은 복구하지 못해 정확한 버전은 확인하지 못했다.
 
 ## 코어(Node 26 production)
 

@@ -181,3 +181,18 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 불변 라운드 기록이 인용한 SHA는 [cited-commits.tsv](../_archive/branches/cited-commits.tsv)에서 찾습니다. 기존 reviews 기록66개(이전 라운드64개와 대기열·제안서2개)는 끝의 덧붙임까지 원상 복구했으며 내용·줄 번호를 바꾸지 않습니다.
 
 원격 PR head로 닿는 커밋은 색인하지 않으며 https://github.com/vincent-kk/albatrion/commit/<SHA> 주소로 열립니다.
+
+
+465라운드(2026-10-30~31)에 입력 응답성 단계를 기록으로 닫았습니다. IR-0(#500)은 실제 브라우저 기준선을 세웠고 IR-1(#501)은 보유의 eager compile·개발 guard-free 준비를 고쳤으며 작업당 예산은 독립 검토 뒤 미채택했습니다. IR-1b(#502)는 실제 production21/21을 복구했고 IR-2(#503)는 flat-2000 처리19.1ms의 D1 발동·200키 중2개 꼬리와 CPU 상태 귀속을 공개했습니다. IR-3(#504)는 사전 정상+5% 규칙 실패로 AJV8 sync-first를 채택하지 않았습니다. IR-4(#505)의 대형 폼 지침·SSR 결함 핀 뒤 IR-5(#506)는 서버 DOM·추가 렌더0·실제 입력 노출 원장을 고쳤고 round3 비용 여섯 행이1.02이내입니다. 원문과 결정은 `round-465-owner-answers.md`·`round-465-closing.md`, 종합 표는 `../verification/input-responsiveness/closing-results.md`입니다. 앞의 초기 다음 라운드 표기는 과거 기록으로 두며 현재 다음 라운드는466입니다.
+
+## 입력 응답성 단계 마감 상태
+
+- **제품 끝과 가지.** 제품 끝은 `814d21ad4`(#506)이고 단계 가지는 `feat/schema-form-input-responsiveness`입니다. 기준은08가지 `5d1348ed1`, 마감 문서 가지는 `docs/schema-form-input-responsiveness-closing`입니다. 제품 끝까지7커밋·7개 squash PR이며 마감 문서는 별도입니다. architecture 밖 제품 차분은0으로 유지합니다.
+- **열린 PR과 예정 순서.** 2026-10-31의 원격 목록 확인 시 열린 PR은 #445(08→1.0.0-beta)·우산초안#344(1.0.0-beta→master)뿐입니다. 코디네이터가 마감 문서 PR(이 문서 가지→입력 응답성 가지)을 열고 독립 관문 뒤 반영한 다음 입력 응답성 루트 PR(입력 응답성→08)을 준비합니다. 아직 생성·병합 전인 두 PR은 완료로 쓰지 않습니다. 단계 루트 PR의 병합과 버전 번호는 운영 원칙1대로 Vincent가 직접 합니다.
+- **남은 소유자 항목.** D1을 이번 단계에서 만들지 않음·virtualization 기본 off 유지·IR-5 수정 유지가 코디네이터 권고이며 세 가지 모두 소유자 대기입니다. IR-5는 코디네이터 권고로 구현·편입됐으며 루트 병합 전 거절할 수 있습니다. 버전·루트 병합·#445·#344와 새 지시 뒤9단계도 소유자 몫입니다.
+- **검증과 한계.** IR-5 최종 unit4012·render/react18 각783·verify4839·Storybook251·엄격production21 및 lint/typecheck/build가 통과했습니다. 공개 export 추가·제거0, 도달 선언308개 의미차이0, props JSDoc 한 곳의 주석 차이만 공개 표면에 남습니다. FCA 새 finding·diagnostic0이지만 기존 절대FAIL/indeterminate는 유지합니다. 이 마감의 새 실행은 원시 재현6명령과 원장·문서 감사입니다. 기존 plan-links 문제1·tokens잔여399·doc미인용66은 고치지 않습니다.
+- **이월.** array-1000 첫 프레임, count-only/시간 reveal, if 가드 전체 compile(G), 수천 자식 reconcile의 tearing-safe 설계, CPU 공변량, layout containment 안내의 적용 범위, hydration 때 준비만 한 자식의 나중 첫 렌더 게이트 생략, 기존 결함 다섯, AJV typing-mix 절대 규칙과 과거 NODE_ENV=test의 production 기록 구분을 남깁니다. 주소·수치는 마감 결과에 있습니다.
+- **소유자가 정리할 작업대.** `ir-0-browser-baseline`, `ir-1-mount-budget`, `ir-1b-production-gate`, `ir-2-heavy-validation`, `ir-3-ajv8-sync-first`, `ir-4-large-form-guidance`, `ir-5-hydration-safe`입니다. 필요한 근거는 단계 결과와 원시에 보존되어 있으며 이 마감 작업자는 작업대·가지를 삭제하지 않습니다.
+
+
+입력 응답성 마감 검사 보충(2026-10-31): 원장 과거 경로를 보존하도록 승인된 benchmark-form 재현 도구 수리도 마감에 포함했습니다. 현재 diff의 추가줄 감사는 명시적 audit-base에서만 실행하며 원시 기본 재현과 분리합니다. benchmark 시험·lint·browser typecheck를 별도로 검증합니다. 토큰 잔여는 편집 전399→최종398로, 수치 앞의 L 표기가 옛 L0 토큰과 어휘상 일치한1건이며 의미적 해소로 주장하지 않습니다. 기존 plan-links 문제1과 doc미인용66은 유지합니다. 상세는 `round-465-closing.md` 465C-11과 마감 결과입니다.

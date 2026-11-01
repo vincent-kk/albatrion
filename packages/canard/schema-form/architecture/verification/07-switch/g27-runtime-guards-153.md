@@ -4,12 +4,12 @@ React 판정은 **ADOPT**, Core 판정은 **ADOPT**입니다. 현재 HEAD와 미
 
 ## 실행 환경과 입력
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`
+- 작업 트리: `{repo}`
 - 기준 HEAD: `035da3fb4780bde968bcda23c6f590cfdededd33`
 - 후보: 현재 미커밋 blueprint 가드 변경 및 새 가드 파일
-- Node 실제 경로: `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`
+- Node 실제 경로: `{node-home}/versions/node/v26.11.1/bin/node`
 - Node: `v26.11.1`; V8: `14.6.202.34-node.37`; macOS 26.6.2 arm64
-- 산출물: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-153`
+- 산출물: `{scratch}/session-153`
 - 측정기: 기존 run-session-131.mjs 및 기존 단일 번들 worker; 블록 24 요청/축소 8, 예열 20, 표본 41, 폼 1, swap 없음
 - 선행: profile-139a-session.md, profile-139b-session.md, harness-131.md 및 요청된 번들/보고 도구
 
@@ -28,10 +28,10 @@ React main은 139a/139b와 같은 두 행 묶음으로 나누었습니다. 변�
 launch-measurement.mjs가 measure-parts.mjs를 백그라운드로 시작했습니다. 컨트롤러가 실행한 정확한 Node 명령과 argv는 controller-state.json의 각 부분에 보존했습니다. 공통 옵션은 아래와 같습니다.
 
 ```sh
-NODE153=/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node
-OUT153=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-153
-SCRATCH153=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad
-TOOLS153=/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools
+NODE153={node-home}/versions/node/v26.11.1/bin/node
+OUT153={scratch}/session-153
+SCRATCH153={scratch}
+TOOLS153=packages/canard/schema-form/architecture/verification/07-switch/tools
 "$NODE153" "$OUT153/launch-measurement.mjs"
 "$NODE153" "$OUT153/status.mjs"
 
@@ -45,8 +45,8 @@ TOOLS153=/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/
 
 | 부분 | --rows | A/A |
 | --- | --- | --- |
-| react-main-a | /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-153/react-main-a.rows.json | 136i |
-| react-main-b | /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-153/react-main-b.rows.json | 136i |
+| react-main-a | {scratch}/session-153/react-main-a.rows.json | 136i |
+| react-main-b | {scratch}/session-153/react-main-b.rows.json | 136i |
 | react-array-1000 | react-129-array-1000 | 132c |
 | react-nested-d5 | react-129-nested-d5 | 132d |
 | core | core-129 | 132a |

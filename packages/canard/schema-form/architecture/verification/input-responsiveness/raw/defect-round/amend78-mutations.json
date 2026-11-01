@@ -1,0 +1,75 @@
+{
+  "mutations": {
+    "dr13-scope-mutation": {
+      "passed": 1,
+      "failed": 2,
+      "filterExcluded": 18,
+      "failedCases": [
+        "DR-13 assigns sibling errors after a pre-slot mount request with one verdict",
+        "DR-13 assigns sibling errors after a pre-slot reset request with one verdict"
+      ],
+      "report": "dr13-scope-mutation.json.gz"
+    },
+    "dr13-async-mutation": {
+      "passed": 1,
+      "failed": 1,
+      "filterExcluded": 19,
+      "failedCases": [
+        "DR-13 A1 retains the superseded async root targets (cadence)"
+      ],
+      "report": "dr13-async-mutation.json.gz"
+    },
+    "dr13-slot-mutation": {
+      "passed": 1,
+      "failed": 1,
+      "filterExcluded": 19,
+      "failedCases": [
+        "DR-13 A1 retains the superseded async root targets (slot)"
+      ],
+      "report": "dr13-slot-mutation.json.gz"
+    },
+    "dr14-mutation": {
+      "passed": 1,
+      "failed": 2,
+      "filterExcluded": 13,
+      "failedCases": [
+        "DR-14 drops a known failure bundle and a bare handler exception during capture",
+        "DR-14 native submit reports only the compile failure when onError throws"
+      ],
+      "report": "dr14-mutation.json.gz"
+    },
+    "dr15-retire-mutation": {
+      "passed": 2,
+      "failed": 3,
+      "filterExcluded": 8,
+      "failedCases": [
+        "DR-15 keeps delayed warning ownership (react, rebuild, read-before)",
+        "DR-15 keeps delayed warning ownership (native, rebuild, read-before)",
+        "DR-15 keeps delayed warning ownership (react, rebuild, read-after)"
+      ],
+      "report": "dr15-retire-mutation.json.gz"
+    },
+    "dr15-scope-mutation": {
+      "passed": 3,
+      "failed": 2,
+      "filterExcluded": 8,
+      "failedCases": [
+        "DR-15 keeps delayed warning ownership (react, reset, read-before)",
+        "DR-15 keeps delayed warning ownership (native, reset, read-before)"
+      ],
+      "report": "dr15-scope-mutation.json.gz"
+    },
+    "dr11-interaction-mutation": {
+      "passed": 0,
+      "failed": 1,
+      "filterExcluded": 2,
+      "failedCases": [
+        "DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery"
+      ],
+      "report": "dr11-interaction-mutation.json.gz"
+    }
+  },
+  "restored": true,
+  "sourceCommit": "4f07e5195",
+  "testDependencyCorrection": "DR-15 callback dependency only, exact-base final text at 3c328d108; final render/react18 gates cover that text."
+}

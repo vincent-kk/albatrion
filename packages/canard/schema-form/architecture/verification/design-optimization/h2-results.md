@@ -14,11 +14,11 @@
 | 1,000 | 7 | 3 | 4 | 0 |
 | 4,000 | 7 | 3 | 4 | 0 |
 
-최종 새 시험을 원본 소스에 다시 적용하여 비교 상한 3에서 세 번 실패했고(`/private/tmp/448-h2/red-steady.log`), 수정 뒤 네 시험이 모두 통과했습니다. 다른 시험은 파생 중간값 되돌림과 형제의 injectTo 변경 뒤에도 변하지 않은 조상의 공개 value·outputValue, children·schema·active 및 값 revision이 유지됨을 확인합니다. 기존 시험 단언과 golden은 바꾸지 않았습니다.
+최종 새 시험을 원본 소스에 다시 적용하여 비교 상한 3에서 세 번 실패했고(`{scratch}/448-h2/red-steady.log`), 수정 뒤 네 시험이 모두 통과했습니다. 다른 시험은 파생 중간값 되돌림과 형제의 injectTo 변경 뒤에도 변하지 않은 조상의 공개 value·outputValue, children·schema·active 및 값 revision이 유지됨을 확인합니다. 기존 시험 단언과 golden은 바꾸지 않았습니다.
 
 ## 남은 열거의 출처 — D2 인계
 
-마운트 직후 첫 쓰기는 전체 키 열거가 7→3회로 줄지만 0은 아닙니다. 남은 3회는 `assembleObject.ts:229`의 STABLE_SHAPES cold 불일치에서 이전 값 키를 한 번 열거하고, 그 fallback을 받는 `updateOutput.ts:72`가 `sameValue`의 왼쪽·오른쪽 키를 두 번 열거하는 비용입니다. 키 스택 증거는 `/private/tmp/448-h2/keys-stack.log`이며 한 번 준비 쓰기 뒤에는 이 불일치가 사라집니다.
+마운트 직후 첫 쓰기는 전체 키 열거가 7→3회로 줄지만 0은 아닙니다. 남은 3회는 `assembleObject.ts:229`의 STABLE_SHAPES cold 불일치에서 이전 값 키를 한 번 열거하고, 그 fallback을 받는 `updateOutput.ts:72`가 `sameValue`의 왼쪽·오른쪽 키를 두 번 열거하는 비용입니다. 키 스택 증거는 `{scratch}/448-h2/keys-stack.log`이며 한 번 준비 쓰기 뒤에는 이 불일치가 사라집니다.
 
 코디네이터가 Object.keys 0의 판정을 이 준비 뒤 steady 쓰기로 명시 승인했습니다. 성능 합격은 20회 예열하는 탐침으로 판정합니다. 첫 쓰기의 cold 행 캐시 비용은 범위를 넓히지 않고 D2 인계 목록에 남깁니다. assembleObject·updateOutput 제품 코드는 바꾸지 않았습니다.
 
@@ -32,13 +32,13 @@
 
 - 승인 창 시작은 `2026-10-26T17:57:16Z`입니다. 코디네이터가 처음 보낸 `18:06:00Z`는 당시 미래 시각이어서 확인을 요청했고, 실제 build 시작 시각으로 정정 승인받았습니다. 다른 워커는 이 창에서 무거운 명령을 중단했습니다.
 - 지정된 tools 작업 트리는 D3의 `feat/schema-form-app-cache@b29738f6a`로 바뀌어 dist SHA256 `a76e1c71537b992968adb000094221ef2b4b48a62c14f24f64134aad037633f6`에 replayBlueprintDiagnostics·CacheManager·createCacheDomain 코드가 들어 있었습니다. 이 번들은 기준선으로 사용하지 않았습니다.
-- 이전에 같은 tools/dist에서 읽기 전용 복사해 보존한 `/private/tmp/448-h1/base/` 원본을 `/private/tmp/448-h2/base/`로 복원했습니다. 기준선 `8d5c5dba1`의 SHA256은 `a396cf65e154187e33647e034429e323d66357133867bc6ea254861c098dcca6`이며, 작업 기준 `bc0fb3d0a`는 문서만 추가하여 제품 바이트가 같습니다. 이 교정도 코디네이터가 승인했습니다. tools 작업 트리는 수정하지 않았습니다.
+- 이전에 같은 tools/dist에서 읽기 전용 복사해 보존한 `{scratch}/448-h1/base/` 원본을 `{scratch}/448-h2/base/`로 복원했습니다. 기준선 `8d5c5dba1`의 SHA256은 `a396cf65e154187e33647e034429e323d66357133867bc6ea254861c098dcca6`이며, 작업 기준 `bc0fb3d0a`는 문서만 추가하여 제품 바이트가 같습니다. 이 교정도 코디네이터가 승인했습니다. tools 작업 트리는 수정하지 않았습니다.
 - 수정 후 제품 소스는 `cefd48080`, 문서를 포함한 측정 HEAD는 `7c31e0847`, 번들 SHA256은 `48b9433f3690d817ede0187d4cf03b1d762760fc1ad782914eb88833ddfc9803`입니다.
 - Node `v26.12.1` production, 20회 예열·100표본·독립 프로세스 3개, 같은 프로세스의 0.16.1 AB/BA 쌍입니다. 세 실행 최소값의 중앙값과 최댓값−최솟값 폭을 보고합니다.
 
 ## 같은 창 전후 탐침
 
-실행 ID는 `20261026T1759-7c31e08-h2-before` / `20261026T1800-7c31e08-h2-after`입니다. 원시 `results.json`·`rows.md`·프로세스 환경과 세 반복은 `/private/tmp/claude-501/perf-runs/`의 해당 디렉터리에 있습니다. 별도 판정 자료는 `/private/tmp/448-h2/measurement-summary.json`입니다.
+실행 ID는 `20261026T1759-7c31e08-h2-before` / `20261026T1800-7c31e08-h2-after`입니다. 원시 `results.json`·`rows.md`·프로세스 환경과 세 반복은 `{scratch}/perf-runs/`의 해당 디렉터리에 있습니다. 별도 판정 자료는 `{scratch}/448-h2/measurement-summary.json`입니다.
 
 | 행 | N | 전 ms | 전 폭 ms | 후 ms | 후 폭 ms | 개선 % |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -55,7 +55,7 @@
 
 ## 최종 관문
 
-모든 제품 검사는 같은 소스 `cefd48080`로 수행했습니다. 명령 접두는 `yarn workspace @canard/schema-form`, 로그 기준 디렉터리는 `/private/tmp/448-h2/`입니다. 다섯 프로젝트는 동시에 돌리지 않고 하나씩 실행했습니다.
+모든 제품 검사는 같은 소스 `cefd48080`로 수행했습니다. 명령 접두는 `yarn workspace @canard/schema-form`, 로그 기준 디렉터리는 `{scratch}/448-h2/`입니다. 다섯 프로젝트는 동시에 돌리지 않고 하나씩 실행했습니다.
 
 | 관문 | 결과 | 로그 |
 | --- | --- | --- |
@@ -72,6 +72,6 @@
 
 새 시험의 원본 실패와 수정 후 통과는 `red-steady.log`·`green-steady.log`에 있습니다. 기존 시험 파일·단언·golden은 하나도 고치지 않았습니다. 바퀴의 참조 복원은 그대로 두었고 비바퀴 경로에 남길 별도 children·active 복원은 없었습니다. terminal 루트의 schema 선택 및 변경 캡처도 그대로입니다. 기존 비교 코퍼스가 모두 원본 단언으로 통과했습니다.
 
-FCA 전체 scan/validate는 기존 범위 밖 문서·순환·경계·시험 사례 수 문제로 `indeterminate`입니다(378 findings, reported failed 14, skipped 308). 바뀐 settle 파일의 오류는 없고, 기존 동적 gate-wheel 시험표의 사례 수 경고가 남습니다. 새 시험은 정확한 4사례·제한 위반 0으로 확인했습니다. 전체 validate artifact는 `/Users/Vincent/.codex/plugins/filid/artifacts/fractal_inspect/d6a4eb3d5cd4baf0cef2a732b0d77dd8d61349688127ebdc205df86257ae5288.json`이며 저장소 전체 통과로 부르지 않습니다.
+FCA 전체 scan/validate는 기존 범위 밖 문서·순환·경계·시험 사례 수 문제로 `indeterminate`입니다(378 findings, reported failed 14, skipped 308). 바뀐 settle 파일의 오류는 없고, 기존 동적 gate-wheel 시험표의 사례 수 경고가 남습니다. 새 시험은 정확한 4사례·제한 위반 0으로 확인했습니다. 전체 validate artifact는 `{agent-home}/plugins/filid/artifacts/fractal_inspect/d6a4eb3d5cd4baf0cef2a732b0d77dd8d61349688127ebdc205df86257ae5288.json`이며 저장소 전체 통과로 부르지 않습니다.
 
 seiri 계획·gate ledger는 작업 전용 `.seiri/tasks/h2-preserve-references/`에 두었습니다. 상세 로그와 판정 자료를 ledger에 연결했고 PR 생성 뒤 독립 검토를 코디네이터에게 인계합니다. 전체 canonical 행·독립 Node/Bun 벤치·React equivalent·B2 힙·플러그인 일곱의 확대 관문은 이 한정 작업에서 실행하지 않았습니다. H2의 지정 잎 탐침 기준과 제품 관문 통과를 보고하며 단계 전체 채택을 주장하지 않습니다.

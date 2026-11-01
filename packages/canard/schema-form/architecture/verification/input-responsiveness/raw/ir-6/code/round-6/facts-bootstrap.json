@@ -1,0 +1,31 @@
+{
+  "extractor": "filid-facts 0.14.1 (installed local bundle)",
+  "scopeSource": "default",
+  "resolutionEpoch": "sha256:09db3a24b886a9c1f60be2e8b7476315c7ddebf80d8b3d9b8120f561d1ff3d9d",
+  "initial": {
+    "covered": 1753,
+    "missing": 11,
+    "needsResolution": 1742
+  },
+  "submit": {
+    "resolutionEpoch": "sha256:09db3a24b886a9c1f60be2e8b7476315c7ddebf80d8b3d9b8120f561d1ff3d9d",
+    "accepted": 1753,
+    "removed": 0,
+    "rejectedRecords": 0,
+    "rejectedClaims": 0,
+    "epochMoved": false,
+    "openedItems": 0,
+    "closedItems": 0,
+    "removedAdjudicatedItems": 0,
+    "attestationsPending": 0,
+    "attestationsConfirmed": 0,
+    "attestationDismissals": 0
+  },
+  "final": {
+    "exact": 1753,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0
+  }
+}

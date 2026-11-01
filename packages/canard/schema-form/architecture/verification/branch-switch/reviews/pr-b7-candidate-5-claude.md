@@ -24,7 +24,7 @@
 5. **결과 문서 — 갖춤.**
    - `architecture/verification/branch-switch/b7-results.md:379`의 "후보 5" 절에는 결함 표, 실패 먼저, 관문, 알려진 한계, 비용 문장이 있습니다. 402행의 한계 문장은 명세 문장과 같습니다.
    - 406행의 "최종 후보(rebase)" 절에는 기준 A, rebase 직후 머리, 최종 제품 B, 충돌 파일 목록, 삭제된 literal-star 필드를 되살리지 않았다는 확인, 관문 표, 배달 비교, 미실행 측정 창이 있습니다. 첫머리 문단(3행)은 후보 1의 창을 최종 rebase 검증과 구분하도록 고쳐졌습니다.
-6. **기계 로컬 경로 — 없음.** `941398ea7..ba0db9a42`에서 더해진 모든 줄(raw JSON 포함)에서 `/Users/`, `/private/`, `/tmp/`, `/var/folders`, `/home/`, 사용자 이름, scratchpad를 찾았고 하나도 나오지 않았습니다. `gates.json`의 명령 필드는 저장소 기준 `yarn workspace …` 형태입니다.
+6. **기계 로컬 경로 — 없음.** `941398ea7..ba0db9a42`에서 더해진 모든 줄(raw JSON 포함)에서 `{home}/`, `{tmp}/`, `{scratch}/`, `{tmp}`, `{home}/`, 사용자 이름, scratchpad를 찾았고 하나도 나오지 않았습니다. `gates.json`의 명령 필드는 저장소 기준 `yarn workspace …` 형태입니다.
 
 ## rebase 충돌 해결
 

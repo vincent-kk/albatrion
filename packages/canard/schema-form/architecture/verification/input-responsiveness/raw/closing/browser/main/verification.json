@@ -1,0 +1,21 @@
+{
+  "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=closing --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "exitCode": 0,
+  "output": [
+    "BROWSER_CHANGES_AUDIT_OK base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe newMachinePaths=0",
+    "CLOSING_RAW_REPRODUCED samples=950 gates=C0:PASS,C1:PASS,C2:PASS,C3:PASS,C4:PASS,C5:FAIL,C6:PASS,C7:PASS validatorWork=PASS"
+  ],
+  "reusedCodeChecks": {
+    "source": "packages/aileron/benchmark-form/results/closing-prepared-2a/checks.json",
+    "testFiles": 20,
+    "tests": 132,
+    "browserTypecheck": "PASS",
+    "lintWarnings": 0,
+    "reason": "No product, harness, fixture or registered decision code changed after the verified preparation head."
+  },
+  "sourceEditsAfterWindow": false,
+  "decisionEditsAfterWindow": false,
+  "ownerAcceptance": 71,
+  "formalWindowRestarts": 0,
+  "pushes": 0
+}

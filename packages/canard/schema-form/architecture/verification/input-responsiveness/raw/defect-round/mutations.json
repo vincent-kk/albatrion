@@ -1,0 +1,29 @@
+{
+  "mutations": [
+    {
+      "defect": "DR-1",
+      "file": "src/core/engine/validation/utils/run/runFieldNodeValidation.ts",
+      "originalSha256": "84be716429151680534100f0c12b1e3c66abdeba469519ecac23595706945ac1",
+      "mutantSha256": "f682be3e725b190573ce0c364ec856b85854a330202f5ec7012f92a70b7e1c04",
+      "failedTests": 1,
+      "restored": true
+    },
+    {
+      "defect": "DR-2",
+      "file": "src/providers/RootNodeContext/utils/reportLoadValidationFailure.ts",
+      "originalSha256": "816ce6331184da49cff9ca1b99e3ca4ae2fe724e3a890ecbb638e656a7965156",
+      "mutantSha256": "ddd771498b46cbd781ae9d572d647a923406fa9a19747570cb710f44cb1f4976",
+      "failedTests": 1,
+      "restored": true
+    },
+    {
+      "defect": "DR-3",
+      "file": "src/core/engine/validation/utils/cache/retryValidationEntry.ts",
+      "originalSha256": "c64b3983d1ca780c1435882cc2c3ca57c46ba01508e2dec614760c253ff3eb94",
+      "mutantSha256": "f26efe88982490794278b22bc891e7163a35adc2495f8f8c55c54e422e554af7",
+      "failedTests": 2,
+      "restored": true
+    }
+  ],
+  "restoredGreen": "dr123-regression-green.json.gz"
+}

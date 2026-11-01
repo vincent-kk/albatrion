@@ -1,0 +1,28 @@
+{
+  "state": "smoke-complete",
+  "ruleVersion": "closing-v3-amendment-6",
+  "rulesSha256": "cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430",
+  "preregisteredCommit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "toolCommit": "61e4442f1aac15edd9e8d68a66b0dac522934389",
+  "finalStageCommit": "5df0bf2adb53e9764432a6e34de9c84b84e12da5",
+  "smoke": {
+    "startedAt": "2026-11-01T12:28:49.980Z",
+    "endedAt": "2026-11-01T12:38:22.785Z",
+    "rows": 24,
+    "pages": 95,
+    "pagesPerLane": {
+      "L": 23,
+      "B": 24,
+      "S": 24,
+      "F": 24
+    },
+    "keptPerRowLane": 1,
+    "discardedPerRowLane": 1,
+    "operations": 150,
+    "validatorWorkChecks": 9,
+    "validatorWorkStatus": "PASS",
+    "exceptions": [],
+    "nodeIdentityAndMetricReproduction": "PASS"
+  },
+  "formalWindows": 0
+}

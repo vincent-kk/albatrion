@@ -2,7 +2,7 @@
 
 기준은 HEAD `6b5758ec8`입니다. 고침 명세는 [branch-regression-diagnosis-122.md](branch-regression-diagnosis-122.md)의 F1~F4이고, 편집자의 답은 120라운드 닫기 문서의 덧붙임(Q122)입니다. 제품 변경은 세션 scratchpad(아래 S)의 패치로만 남겼고, 작업 트리에는 측정기 도구 파일과 이 문서만 남겼습니다. git 쓰기, 설치, 시간 측정은 하지 않았습니다. 측정기의 짧은 시험 실행(표본 5개)만 했습니다.
 
-S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+S는 `{scratch}`입니다.
 
 ## 패치
 

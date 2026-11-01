@@ -1,0 +1,17 @@
+{
+  "base": "779713587",
+  "testCommit": "cf09a5dab8cad036a1cbb496c49b028b9e7c07f3",
+  "testSha256": {
+    "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/resetFailure.boundary.test.tsx": "97e341439bae7be979fbbee610e4f2b7eac3e7582835185ad5af4fc2127946f2",
+    "packages/canard/schema-form/src/components/FieldProxy/__tests__/pathReuse.test.tsx": "1ba791ebeea6e2b8895810483f1acfadbda6a5cfa4d8e5b14b344f8a0391b408",
+    "packages/canard/schema-form/src/core/surface/__tests__/settlementReads.test.tsx": "a3954a1a6c34114e0e8c6b81a1416e99fb9a3d56c0725fe3f878f5a33e4bc1af"
+  },
+  "report": "dr5-base.json.gz",
+  "normalization": "Checkout prefix removed from report names and stacks; assertions unchanged.",
+  "results": {
+    "D4": "reproduced",
+    "D5": "reproduced",
+    "D6": "not reproduced",
+    "D7": "not reproduced"
+  }
+}

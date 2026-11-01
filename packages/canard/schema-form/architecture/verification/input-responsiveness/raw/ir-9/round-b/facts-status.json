@@ -1,0 +1,24 @@
+{
+  "status": "ok",
+  "summary": {
+    "projectState": "ready",
+    "resolutionEpoch": "sha256:86fb92573f12f86638400ca00b816a57c20d8936d9dd30828e634583af526227",
+    "coveredFiles": 1775,
+    "exact": 1775,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0,
+    "unsupported": 175,
+    "unadjudicatedItems": 0,
+    "pendingAttestations": 0,
+    "attestationRequirement": "Attestation is how a file settles when no tool can settle it: one filid reports as tool-error, one whose claims are rejected in a way re-extraction reproduces, or one still uncertain after every item is judged. An attested record is an ordinary FileFacts record with provenance.tier set to attested: it still binds to the file contentHash, every reference string must be in the file, and every resolved path must be valid. Two things are added. Every line that looks like a reference must be accounted for — by a reference that quotes it, or by an entry in nonReferences: { line, reason } — and a refusal names the lines that are not. And one submission never settles a file: the record is held unconfirmed until a DIFFERENT actor, reading the same bytes independently, submits the same set of references and resolutions.",
+    "scopeSource": "default",
+    "outputRequirement": "Extraction output was outside the project tree.",
+    "extractionList": {
+      "count": 0,
+      "unrepresentable": 0
+    }
+  },
+  "diagnostics": []
+}

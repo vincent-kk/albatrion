@@ -5,20 +5,33 @@ import type { FormErrorRecord } from '@/schema-form/errors';
 import { FormErrorCode } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../type';
-import { reportErrorToHost } from './reportErrorToHost';
+import { isReportedFailureBundle } from './isReportedFailureBundle';
+import { reportFailureToHost } from './reportFailureToHost';
 
 /** Create an instance reporter; React supplies the current callback through onError. */
 export const createFormErrorService = (): FormErrorService => {
   const seen = new WeakSet<object>();
-  const warnings = new Set<string>();
+  const handlerFailures = new WeakSet<object>();
+  const warnings = new WeakMap<object, Set<string>>();
+  let reportScope: object | undefined;
   let delivering = false;
   const service: FormErrorService = {
     hasConsumer: () =>
       !!service.onError || process.env.NODE_ENV !== 'production',
     load: 0,
+    warningScope: {},
+    reportInLoad(record, scope) {
+      const previous = reportScope;
+      reportScope = scope;
+      try {
+        service.report(record);
+      } finally {
+        reportScope = previous;
+      }
+    },
     beginLoad: () => {
       service.load++;
-      warnings.clear();
+      service.warningScope = {};
     },
     report(record) {
       if (delivering) return;
@@ -27,8 +40,11 @@ export const createFormErrorService = (): FormErrorService => {
       }
       if (record.level === 'warning') {
         const key = JSON.stringify([record.code, record.path]);
-        if (warnings.has(key)) return;
-        warnings.add(key);
+        const scope = reportScope ?? service.warningScope;
+        let keys = warnings.get(scope);
+        if (!keys) warnings.set(scope, (keys = new Set()));
+        if (keys.has(key)) return;
+        keys.add(key);
       }
       delivering = true;
       try {
@@ -38,36 +54,64 @@ export const createFormErrorService = (): FormErrorService => {
           else deliver();
         } else if (process.env.NODE_ENV !== 'production')
           console.warn(record.message, record);
+      } catch (error) {
+        if (error && typeof error === 'object') handlerFailures.add(error);
+        throw error;
       } finally {
         delivering = false;
       }
     },
-    capture(error, componentStack, surface = 'sink', path) {
-      if (error && typeof error === 'object' && seen.has(error)) {
+    capture(error, origin, componentStack, path) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        (seen.has(error) || handlerFailures.has(error))
+      ) {
         if (componentStack !== undefined) seen.delete(error);
         return;
       }
-      const domain = error as Nullable<{
-        code?: FormErrorRecord['code'];
-        details?: FormErrorRecord['details'];
-        message?: string;
-      }>;
+      let record: FormErrorRecord;
       try {
-        service.report({
+        const domain = error as Nullable<{
+          code?: FormErrorRecord['code'];
+          details?: FormErrorRecord['details'];
+          message?: string;
+        }>;
+        const code = domain?.code;
+        const details = domain?.details;
+        if (
+          code === FormErrorCode.MultipleErrors &&
+          isReportedFailureBundle(details?.errors, seen, handlerFailures)
+        )
+          return;
+        record = {
           level: 'error',
           code:
             componentStack !== undefined
               ? FormErrorCode.RenderFailed
-              : (domain?.code ?? FormErrorCode.RenderFailed),
+              : (code ?? FormErrorCode.RenderFailed),
           message: domain?.message ?? String(error),
           error,
           ...(path !== undefined ? { path } : {}),
-          details: domain?.details,
-          surface,
+          details,
+          origin,
           ...(componentStack !== undefined ? { componentStack } : {}),
-        });
+        };
+      } catch {
+        record = {
+          level: 'error',
+          code: FormErrorCode.RenderFailed,
+          message: 'Unable to inspect captured failure',
+          error,
+          origin,
+          ...(path !== undefined ? { path } : {}),
+          ...(componentStack !== undefined ? { componentStack } : {}),
+        };
+      }
+      try {
+        service.report(record);
       } catch (handlerError) {
-        reportErrorToHost(handlerError);
+        reportFailureToHost(handlerError);
       }
     },
   };

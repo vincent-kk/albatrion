@@ -182,7 +182,7 @@ describe('array entry integration', () => {
     expect(records).toEqual([
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
-        surface: 'thrown',
+        origin: 'write',
       }),
     ]);
   });

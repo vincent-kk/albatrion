@@ -1,0 +1,31 @@
+{
+  "testedCommit": "4a86b8da5088042763e239e77cf8ab54bb35ab4f",
+  "approval": "msg_241ca3e19a1b",
+  "testTextUnmodified": true,
+  "tests": {
+    "src/components/FieldProxy/__tests__/errorReveal.lifecycle.test.tsx": "b99fce4ed8dbf15be8bccfc5fe6eaffbd8d96cde030c29993926105149b8e450",
+    "src/providers/FieldRendererContext/__tests__/visibility.mount-release.test.tsx": "4433d5c1aa1369aa85cb2423fa3a1f8324866dc9c10e3808086cbcecb83d5dc2"
+  },
+  "failures": {
+    "render": [
+      {
+        "title": "non-candidate mount release adds no display render (hydrate=false)",
+        "line": 110
+      },
+      {
+        "title": "non-candidate mount release adds no display render (hydrate=true)",
+        "line": 110
+      }
+    ],
+    "react18": [
+      {
+        "title": "non-candidate mount release adds no display render (hydrate=false)",
+        "line": 110
+      },
+      {
+        "title": "non-candidate mount release adds no display render (hydrate=true)",
+        "line": 110
+      }
+    ]
+  }
+}

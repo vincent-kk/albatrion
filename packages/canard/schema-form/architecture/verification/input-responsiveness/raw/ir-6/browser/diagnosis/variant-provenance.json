@@ -1,0 +1,45 @@
+{
+  "diagnosticOnly": true,
+  "scratchHead": "f113566a353d567e1f807daac96f212d8e77c079",
+  "productCodeCommitted": false,
+  "V1": {
+    "description": "facd inline visibility in three displays; no hold; diagnostic control only",
+    "productSha256": "b37cd9ddd16a6a101a5d3ba6d5e88488ab64cee8fa21da4e666d2f336bd67e85"
+  },
+  "V2": {
+    "base": "f113566a353d567e1f807daac96f212d8e77c079",
+    "diagnosticOnly": true,
+    "variant": "V2 reducer/passive, candidate-only subscription, every reveal read skipped for false live conditions",
+    "changedSource": {
+      "packages/canard/schema-form/src/providers/FieldRendererContext/hooks/useErrorVisibility.ts": "c26bc7adf9fd6afa3cd435deaa32ea1277e8b2ca1afa52b41524872f1dcce9e0"
+    }
+  },
+  "V3": {
+    "description": "pure live-false fast path, reducer in display, null child subscribes only while candidate; child-errors retains V2 hook",
+    "changedSources": {
+      "packages/canard/schema-form/src/components/FieldProxy/FieldProxy.tsx": "18024e75b9560e8e2df37bdde197ba7f2c6f91580cc0bdf1ca19f8c8cf2920e8",
+      "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx": "dd9994fdab0de144b4180e38687875df1d61dc60e3e8694bd2cf7e14326712aa",
+      "packages/canard/schema-form/src/providers/FieldRendererContext/hooks/useErrorVisibility.ts": "c26bc7adf9fd6afa3cd435deaa32ea1277e8b2ca1afa52b41524872f1dcce9e0",
+      "packages/canard/schema-form/src/providers/FieldRendererContext/index.ts": "3d679c9318fc722699f290408ad1557ce0d999d37533e5edd4f284f0b3c7c9d8",
+      "packages/canard/schema-form/src/providers/FieldRendererContext/utils/readErrorVisibility.ts": "6fbe8a110dac8914dc625105f4e77bdfa60798945f26ef6267a7ff85c6f4b945",
+      "packages/canard/schema-form/src/providers/FieldRendererContext/components/ErrorVisibilitySubscriber.tsx": "b6e7c8e55a60e54aa8e1e35aca0568a834a671d1e87d8e5a5a21cf90b5ed43e1"
+    }
+  },
+  "focusedV3": {
+    "files": 2,
+    "passed": 15,
+    "failed": 0,
+    "existingPending": 1,
+    "fullConcurrencyEquivalenceProven": false
+  },
+  "mainProductDiffSince394e": "",
+  "formalRawDiffSince394e": "",
+  "liveFalseFastPath": "V2 and V3 select only eligible nodes before policy/baseline/version reads; no child subscriber is mounted when false",
+  "focusedV2": {
+    "files": 2,
+    "passed": 15,
+    "failed": 0,
+    "existingPending": 1,
+    "fullConcurrencyEquivalenceProven": false
+  }
+}

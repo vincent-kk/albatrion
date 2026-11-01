@@ -1,0 +1,16 @@
+{
+  "rootTraceCount": 97,
+  "rootsSelectingRuntime": 73,
+  "rootsWithoutRuntime": 24,
+  "unsafeRuntimeExposures": [],
+  "unresolvedAliases": [],
+  "selectedProperty": "FieldNodeRuntime<unknown>['diagnostics']",
+  "changedInternalMembersChecked": [
+    "validationQueued",
+    "validationCadence",
+    "validationRun",
+    "validationPending",
+    "validationSettleListeners",
+    "validationPendingEntryStamp"
+  ]
+}

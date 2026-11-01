@@ -1,7 +1,7 @@
 # B1 게이트 판정 통일 독립 검토 의견서 (Part 1: 코드, 동등성, 시험)
 
 - **검토 범위**: `a8e61d155..925c97019` (`packages/canard/schema-form`)
-- **작업 트리**: `/Users/Vincent/Workspace/albatrion/branch-switch-b1`
+- **작업 트리**: `branch-switch-b1`
 - **대상 브랜치**: `perf/schema-form-b1-gate-predicate`
 - **제품 Head**: `38e405d6b` / **문서 Head**: `925c97019` / **Base**: `a8e61d155`
 - **검토자**: Antigravity (독립 읽기 전용 검토자)

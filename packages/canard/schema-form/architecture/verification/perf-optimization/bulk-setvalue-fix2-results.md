@@ -60,7 +60,7 @@ skip은 Vitest 설정 안에 `SCHEMA_FORM_GATE_WHEEL_MODE = 'skip'`을 임시로
 
 ## 성능 측정 19행
 
-조정자가 승인한 창은 2026-10-22 04:37:24–04:47:56 UTC입니다. `/opt/homebrew/bin/node` v26.12.0, NODE_ENV=production, 20회 예열·100개 표본, 자식 프로세스 1개씩의 조건으로 603개 자식을 실행했습니다. A와 A′는 같은 기준 dist이며 B는 후보 dist입니다. 기준 index.node.mjs의 SHA256은 `cdcc40fe0da4992fdd95b646aa5fe83f14a8a1e44f115313a7ef45ee814f19cb`입니다.
+조정자가 승인한 창은 2026-10-22 04:37:24–04:47:56 UTC입니다. `{node-home}/bin/node` v26.12.0, NODE_ENV=production, 20회 예열·100개 표본, 자식 프로세스 1개씩의 조건으로 603개 자식을 실행했습니다. A와 A′는 같은 기준 dist이며 B는 후보 dist입니다. 기준 index.node.mjs의 SHA256은 `cdcc40fe0da4992fdd95b646aa5fe83f14a8a1e44f115313a7ef45ee814f19cb`입니다.
 
 각 라운드의 100표본 최솟값을 사용합니다. 초기 3라운드에서 A의 대표값이 1ms 미만인 12행은 추가 12라운드를 실행했고 추가 라운드만으로 판정했습니다. 아래 A/A′/B는 사용한 라운드 최솟값의 중앙값이며 단위는 ms입니다. 판정은 기존 442C 방식의 A↔A′ 잡음과 라운드 편차를 사용합니다. 변화율만으로 빠름·느림을 판정하지 않습니다.
 

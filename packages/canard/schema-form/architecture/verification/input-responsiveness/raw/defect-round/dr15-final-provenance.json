@@ -1,0 +1,14 @@
+{
+  "baseCommit": "779713587405b73abdd778df874fe21b726bac56",
+  "testCommit": "3c328d108b02692c849643da0afa9f04ed50d3cd",
+  "testSha256": {
+    "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/__tests__/terminalChildren.test.tsx": "bac0809f4238928b2566a8c2ede132e0988774649b64b9655f3fe6249c162550"
+  },
+  "report": "dr15-final-callback-base.json.gz",
+  "counts": {
+    "numPassedTests": 2,
+    "numFailedTests": 12,
+    "numPendingTests": 12
+  },
+  "note": "Final hook dependency stabilization; 12 defect failures and 2 unmount guards pass, 12 existing cases excluded by name filter."
+}

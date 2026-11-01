@@ -4,11 +4,11 @@
 
 ## 지표, 환경, 재현
 
-측정 기기는 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0입니다. 런타임은 Node.js 26.10.0/V8과 `/opt/homebrew/bin/bun` 1.4.2/JSC입니다. 이 문서의 벤치 실행은 서로 겹치지 않게 순차적으로 진행했습니다. 패키지 루트에서 다음 명령을 실행합니다.
+측정 기기는 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0입니다. 런타임은 Node.js 26.10.0/V8과 `{node-home}/bin/bun` 1.4.2/JSC입니다. 이 문서의 벤치 실행은 서로 겹치지 않게 순차적으로 진행했습니다. 패키지 루트에서 다음 명령을 실행합니다.
 
 ```sh
 node --import tsx bench/node-and-settle.bench.ts
-/opt/homebrew/bin/bun bench/node-and-settle.bench.ts
+{node-home}/bin/bun bench/node-and-settle.bench.ts
 ```
 
 `B1`은 혼합 10,000노드의 `value`·`type` 읽기, `B2`는 5,001노드 전체 트리의 잔존 힙/노드, `B3`는 숨은 맵 또는 구조, `B4`는 정착 읽기 자리의 수신자 레이아웃 대리값입니다. `B5`는 50필드 중 숫자 키 하나를 쓰고 루트 값을 관찰하는 처리량, `B6`는 청사진 준비 후 혼합 10,000노드의 생성·초기 로드 시간입니다. `18C-15`·`18C-67`·`18C-81`은 각각 활성 조각 수, 잠복 원본의 조상 깊이, 루트로 옮긴 게이트 수에 따른 비용입니다. 시간 측정은 새/레거시 각 100표본(준비 20회, `B6` 준비 5회), `B2`는 7표본 중앙값입니다. 처리량은 `1000/meanMs`입니다. 두 엔진은 한 프로세스에서 같은 입력을 받습니다. 전체 아홉 행의 기준선과 판정은 [bench-report.md](./bench-report.md)에 있습니다. `bench:baseline`의 `results/baseline.json`은 React/UI 작업과 입력·완료점이 달라 이 코어 수치와 직접 나누지 않습니다.

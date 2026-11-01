@@ -73,6 +73,15 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'revisionNodes'
     | 'queuedNonSettleEvents'
     | 'validationPendingTargets'
+    | 'validationRunning'
+    | 'revealBaselineNodes'
+    | 'revealPolicy'
+    | 'revealWriteSequence'
+    | 'revealReleaseVersion'
+    | 'revealReleaseListeners'
+    | 'revealBaselineGeneration'
+    | 'revealDropOwed'
+    | 'revealDropTask'
     | 'validator'
   >,
   SeededRuntimeFields
@@ -178,6 +187,7 @@ export function fieldNodeFactory(
       () =>
         `Validator dialect ${validator.dialect} differs from schema ${authoredSchema.$schema}`,
       {
+        origin: 'load',
         schemaPath: '#/$schema',
         details: {
           dialect: validator.dialect,
@@ -195,7 +205,18 @@ export function fieldNodeFactory(
     validator &&
     process.env.NODE_ENV !== 'production' &&
     analysis.schema !== null &&
-    typeof analysis.schema === 'object'
+    typeof analysis.schema === 'object' &&
+    analysis.nodes.some(
+      (node) =>
+        node.declarations.some((declaration) =>
+          declaration.gates.some((gate) => gate.kind === 'if'),
+        ) ||
+        node.childEntries.some((child) =>
+          child.declarations.some((declaration) =>
+            declaration.gates.some((gate) => gate.kind === 'if'),
+          ),
+        ),
+    )
   )
     compileEntryGuards(
       readValidationEntry(validator, analysis.schema),

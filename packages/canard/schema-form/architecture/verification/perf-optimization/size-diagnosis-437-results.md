@@ -8,8 +8,8 @@ nested 마운트에는 깊어지는 스키마 경로의 반복 인코딩이라�
 
 ## 판과 환경
 
-- 메인 작업 경로는 `/Users/Vincent/Workspace/albatrion`입니다. HEAD와 `origin/feat/schema-form-08-review-and-perf`는 모두 `5604f719a11c2a578a247789ee288346f4be5955`였습니다. 제품 판의 끝은 `d9f4eb975`입니다.
-- 측정 Node는 `/opt/homebrew/bin/node`의 `v26.12.0`이었고, 빌드 Node는 `v24.20.0`, Bun은 `1.4.3`이었습니다. Bun은 환경 기록에만 사용하였으며 측정 런타임은 Node였습니다.
+- 메인 작업 경로는 `{repo}`입니다. HEAD와 `origin/feat/schema-form-08-review-and-perf`는 모두 `5604f719a11c2a578a247789ee288346f4be5955`였습니다. 제품 판의 끝은 `d9f4eb975`입니다.
+- 측정 Node는 `{node-home}/bin/node`의 `v26.12.0`이었고, 빌드 Node는 `v24.20.0`, Bun은 `1.4.3`이었습니다. Bun은 환경 기록에만 사용하였으며 측정 런타임은 Node였습니다.
 - 지정 명령 `yarn workspaces foreach --from @canard/schema-form --recursive --topological-dev run build`가 종료 코드 0으로 완료되었습니다. 빌드는 한 번 수행하였습니다.
 - E4 ESM SHA256은 `9f454b919583029329d5e9d7f85efa2dc842274b5aa74b53de9f6c6134665f70`입니다. E0 0.16.1 ESM SHA256은 `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46`입니다. 두 값 모두 브리프와 일치하였습니다.
 - 증거의 기준 경로는 `.seiri/tasks/size-diagnosis-437/`이며, 이하에서는 이 경로를 `<ns>`라고 부릅니다. E4 원본 dist는 `<ns>/dist-E4/`에 복사하였습니다. 원본 제품 번들에 계측을 추가하지 않았습니다.

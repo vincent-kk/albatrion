@@ -122,7 +122,7 @@ engine API 전후 caller와 engine이 보관한 이전 컨테이너의 제자리
 | --- | --- |
 | `yarn workspace @canard/schema-form typecheck` | exit0 |
 | `yarn workspace @canard/schema-form lint` | exit0 |
-| `yarn workspace @canard/schema-form test --run --reporter=default --reporter=json --outputFile=/Users/Vincent/Workspace/albatrion/l3e-direct-ownership/.seiri/tasks/itemless-declarations/run-task_b9d615956067/test-corrected.vitest.json` | 763파일/4851pass/1todo/0fail |
+| `yarn workspace @canard/schema-form test --run --reporter=default --reporter=json --outputFile=l3e-direct-ownership/.seiri/tasks/itemless-declarations/run-task_b9d615956067/test-corrected.vitest.json` | 763파일/4851pass/1todo/0fail |
 | `yarn workspace @canard/schema-form build` | exit0,추적 build 차등0 |
 
 unit/render/react18/production/storybook(chromium)이 실제 포함됐고 story suite는100개입니다. 기존 todo/expectation은 그대로입니다. 사전 memo의 사후 직접 재조회 단언은 가드 틈 보완으로 추가한 뒤 이 네 게이트와 두 dist 전체 비교를 재실행했습니다. 앞선 red의 threshold/해석 module과8사례는 유지했습니다.

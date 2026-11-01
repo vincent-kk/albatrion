@@ -1,5 +1,5 @@
 --- profile-114-g26/report.mjs	2026-10-07 16:37:56
-+++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-136k-layer-report.mjs	2026-10-11 14:45:13
++++ {scratch}/profile-136k-layer-report.mjs	2026-10-11 14:45:13
 @@ -4,9 +4,9 @@
  import path from 'node:path';
  import { fileURLToPath } from 'node:url';
@@ -7,8 +7,8 @@
 -const directory = path.dirname(fileURLToPath(import.meta.url));
 -const evidenceDirectory = path.dirname(directory);
 -const head = 'af3cd579b892393de3693f737afe68cfce3993f8';
-+const directory = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k-layer';
-+const evidenceDirectory = '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch';
++const directory = '{scratch}/session-136k-layer';
++const evidenceDirectory = 'packages/canard/schema-form/architecture/verification/07-switch';
 +const head = 'f4e6aeb1b9abc9e8db5c2a4b26de023b4fe6b16f';
  const fixtures = ['sample-0', 'sample-1', 'sample-2', 'sample-3',
    'flat-50', 'flat-100', 'flat-500', 'nested-d3-f4', 'nested-d5-f4',

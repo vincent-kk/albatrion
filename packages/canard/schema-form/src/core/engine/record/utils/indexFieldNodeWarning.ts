@@ -3,7 +3,7 @@ import {
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
-import type { FormErrorRecord } from '../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../errors';
 import type { FieldNodeRuntime } from '../types/runtime';
 
 /**
@@ -19,7 +19,7 @@ export const indexFieldNodeWarning = <Self>(
   runtime: FieldNodeRuntime<Self>,
   key: string,
   path?: string,
-  record?: FormErrorRecord,
+  record?: PendingFormErrorRecord,
   remove = false,
 ): void => {
   if (remove) {

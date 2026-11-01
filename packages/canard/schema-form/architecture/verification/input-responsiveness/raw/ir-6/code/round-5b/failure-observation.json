@@ -1,0 +1,392 @@
+{
+  "reviewBaseline": "b40bb47e5d44f4ebf0e6e0f4d13a48a28a987463",
+  "olderBaseline": "07c4d5d9333dba196e791266badcae127fcd8a25",
+  "note": "Final transition fixtures keep validator identity stable and use the actual custom Form.Render renderer; suspended policy input consumes the public child-errors hook to force context render. Characterizations are retained as passes; the two-target positive control tests a deliberate removal from otherwise correct reviewed code.",
+  "observations": [
+    {
+      "artifact": "b40-red-unit.json.gz",
+      "passed": 4,
+      "failed": 10,
+      "cases": [
+        {
+          "name": "IR-6 R-a automatic commit-only discard keeps pending and delivers the newest context verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 R-a an asynchronous initial explicit mount verdict requeues OnChange even without an earlier hold",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 R-a equal-content setValue preserves emit while a changed commit still owes a current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H commit-only retry preserves both root and subtree request targets",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H separate standalone writes retain every pre-change state in generation order",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H an intermediate hide within one batch coalesces to its painted entry",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H a subtree walk shares one sequence across its standalone state writes",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H later nodes do not extend the first node past its captured release generation",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H setState schedules a release even when its listener throws",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H setSubtreeState schedules a release even when its listener throws",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H clearState schedules a release even when its listener throws",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 D accepted root validation releases quiet history without a frame",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H a release listener can record and schedule its own fresh drop",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H disposal clears release listeners before settling and stays silent",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "07-red-unit.json.gz",
+      "passed": 4,
+      "failed": 10,
+      "cases": [
+        {
+          "name": "IR-6 R-a automatic commit-only discard keeps pending and delivers the newest context verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a an asynchronous initial explicit mount verdict requeues OnChange even without an earlier hold",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a equal-content setValue preserves emit while a changed commit still owes a current verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H commit-only retry preserves both root and subtree request targets",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H separate standalone writes retain every pre-change state in generation order",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H an intermediate hide within one batch coalesces to its painted entry",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H a subtree walk shares one sequence across its standalone state writes",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H later nodes do not extend the first node past its captured release generation",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H setState schedules a release even when its listener throws",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H setSubtreeState schedules a release even when its listener throws",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H clearState schedules a release even when its listener throws",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 D accepted root validation releases quiet history without a frame",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a release listener can record and schedule its own fresh drop",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H disposal clears release listeners before settling and stays silent",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "final-b40-red-render.json.gz",
+      "passed": 3,
+      "failed": 10,
+      "cases": [
+        {
+          "name": "IR-6 H Dirty resetInteraction then a new character never displays too short beneath abc",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H a quiet reveal stays hidden until its release",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H standalone ErrorVisible off then on never restores an earlier pending verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H one batch hides and re-reveals without losing an eligible painted error",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 D root validate releases a quiet reveal before any frame and preserves it through a write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H committed showError before clearState retains an eligible error during a pending write",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H limit v a same-handler policy reveal and clearState counts the unpainted combination",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H provider policy changes hold a pending previous verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H transition layout normalization never exposes the old verdict to a same-commit paint probe",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H blur stays hidden at both frame callbacks and releases after the second task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H root rebuild commits its policy before a pending handle reveal",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a suspended policy render cannot replace the committed engine policy",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H same-commit transition reveal stays hidden before a child layout normalizes",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "final-b40-red-react18.json.gz",
+      "passed": 3,
+      "failed": 10,
+      "cases": [
+        {
+          "name": "IR-6 H Dirty resetInteraction then a new character never displays too short beneath abc",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H a quiet reveal stays hidden until its release",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H standalone ErrorVisible off then on never restores an earlier pending verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H one batch hides and re-reveals without losing an eligible painted error",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 D root validate releases a quiet reveal before any frame and preserves it through a write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H committed showError before clearState retains an eligible error during a pending write",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H limit v a same-handler policy reveal and clearState counts the unpainted combination",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H provider policy changes hold a pending previous verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H transition layout normalization never exposes the old verdict to a same-commit paint probe",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H blur stays hidden at both frame callbacks and releases after the second task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H root rebuild commits its policy before a pending handle reveal",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a suspended policy render cannot replace the committed engine policy",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H same-commit transition reveal stays hidden before a child layout normalizes",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "final-07-red-render.json.gz",
+      "passed": 7,
+      "failed": 6,
+      "cases": [
+        {
+          "name": "IR-6 H Dirty resetInteraction then a new character never displays too short beneath abc",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a quiet reveal stays hidden until its release",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H standalone ErrorVisible off then on never restores an earlier pending verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H one batch hides and re-reveals without losing an eligible painted error",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 D root validate releases a quiet reveal before any frame and preserves it through a write",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H committed showError before clearState retains an eligible error during a pending write",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H limit v a same-handler policy reveal and clearState counts the unpainted combination",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H provider policy changes hold a pending previous verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H transition layout normalization never exposes the old verdict to a same-commit paint probe",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H blur stays hidden at both frame callbacks and releases after the second task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H root rebuild commits its policy before a pending handle reveal",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a suspended policy render cannot replace the committed engine policy",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H same-commit transition reveal stays hidden before a child layout normalizes",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "final-07-red-react18.json.gz",
+      "passed": 7,
+      "failed": 6,
+      "cases": [
+        {
+          "name": "IR-6 H Dirty resetInteraction then a new character never displays too short beneath abc",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a quiet reveal stays hidden until its release",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H standalone ErrorVisible off then on never restores an earlier pending verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H one batch hides and re-reveals without losing an eligible painted error",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 D root validate releases a quiet reveal before any frame and preserves it through a write",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H committed showError before clearState retains an eligible error during a pending write",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H limit v a same-handler policy reveal and clearState counts the unpainted combination",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H provider policy changes hold a pending previous verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H transition layout normalization never exposes the old verdict to a same-commit paint probe",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H blur stays hidden at both frame callbacks and releases after the second task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H root rebuild commits its policy before a pending handle reveal",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H a suspended policy render cannot replace the committed engine policy",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 H same-commit transition reveal stays hidden before a child layout normalizes",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "two-target-positive.json.gz",
+      "passed": 0,
+      "failed": 1,
+      "cases": [
+        {
+          "name": "IR-6 R-a automatic commit-only discard keeps pending and delivers the newest context verdict",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 R-a an asynchronous initial explicit mount verdict requeues OnChange even without an earlier hold",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 R-a equal-content setValue preserves emit while a changed commit still owes a current verdict",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 H commit-only retry preserves both root and subtree request targets",
+          "status": "failed"
+        }
+      ]
+    }
+  ]
+}

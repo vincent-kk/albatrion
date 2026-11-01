@@ -21,7 +21,7 @@ const run = Number(runText), warmup = 12, sampleCount = 101;
 assert([1, 2, 3].includes(run));
 assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
   'ccfecf1b43ce1c648246722e2174db81ec17487f');
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 assert.equal(typeof globalThis.gc, 'function');
 const render = lane.startsWith('react');
 const traced = lane !== 'react';

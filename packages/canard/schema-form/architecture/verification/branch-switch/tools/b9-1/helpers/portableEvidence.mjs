@@ -4,9 +4,9 @@ import { isArray } from '@winglet/common-utils/filter';
 export function portableEvidence(value) {
   if (typeof value === 'string')
     return value
-      .replace(/\/Users\/[^/\s]+/g, '<home>')
-      .replace(/\/private\/tmp\//g, '<scratch>/')
-      .replace(/\/var\/folders\/[^\s"']+/g, '<temporary>');
+      .replace(/{home}\/[^/\s]+/g, '<home>')
+      .replace(/{scratch}\//g, '<scratch>/')
+      .replace(/{tmp}\/[^\s"']+/g, '<temporary>');
   if (isArray(value)) return value.map(portableEvidence);
   if (value && typeof value === 'object')
     return Object.fromEntries(

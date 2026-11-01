@@ -1,0 +1,72 @@
+{
+  "architecture/adr/0009-performance-budget-and-benchmarks.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/adr/0004-validator-plugin-compile-guard.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/adr/0010-branch-conventions.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/adr/0008-event-system.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/adr/0001-validator-input-invariant.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/adr/0007-settle-cycle.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/adr/0014-error-policy.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/design/03-settle-and-events.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/design/05-validation-and-errors.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  },
+  "architecture/design/07-landing-and-tests.md": {
+    "restoredStillTrueLines": [
+      "마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).",
+      "if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052)."
+    ],
+    "mergedPrefixUnchanged": true
+  }
+}

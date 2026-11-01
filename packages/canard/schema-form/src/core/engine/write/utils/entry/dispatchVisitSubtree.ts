@@ -1,4 +1,5 @@
 import { visitFieldNodes } from '../../../navigation';
+import { advanceFieldNodeRevealSequence } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { captureChainError } from '../chain/captureChainError';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -19,6 +20,7 @@ export const dispatchVisitSubtree = <Self extends FieldNodeRecord<Self>>(
   visitor: (node: Self) => boolean | void,
 ): void => {
   const runtime = resolveFieldNodeChainRoot(node.rootNode).runtime;
+  advanceFieldNodeRevealSequence(node);
   runtime.visitDepth = (runtime.visitDepth ?? 0) + 1;
   try {
     visitFieldNodes(node, visitor);

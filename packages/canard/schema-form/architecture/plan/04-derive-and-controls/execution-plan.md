@@ -271,7 +271,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 ### U9 벤치
 
 - 원장: TEST-071, 18C-50 (다), SETTLE-043, TEST-027, `reviews/round-27-owner-answers.md:7-11`, 28C-06.
-- 새 스크립트 `PKG/bench/derive-and-controls.bench.ts`에 두 행을 둔다: `TEST-071-element`(객체 원천 `injectTo`, 원소 1만 개의 터미널 객체와 터미널 배열에서 원소 하나 쓰기의 에지 비교 비용, 원소 크기 두 가지), `TEST-071-whole`(통째 교체의 비교 비용, 전체 크기 두 가지). 03처럼 같은 입력으로 `(cd packages/canard/schema-form && node --import tsx bench/derive-and-controls.bench.ts)`와 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/derive-and-controls.bench.ts)`를 각각 돌린다.
+- 새 스크립트 `PKG/bench/derive-and-controls.bench.ts`에 두 행을 둔다: `TEST-071-element`(객체 원천 `injectTo`, 원소 1만 개의 터미널 객체와 터미널 배열에서 원소 하나 쓰기의 에지 비교 비용, 원소 크기 두 가지), `TEST-071-whole`(통째 교체의 비교 비용, 전체 크기 두 가지). 03처럼 같은 입력으로 `(cd packages/canard/schema-form && node --import tsx bench/derive-and-controls.bench.ts)`와 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/derive-and-controls.bench.ts)`를 각각 돌린다.
 - 보고: TEST-027 절차대로 `ARCH/verification/04-derive-and-controls/performance.md`에 첫 열이 `TEST-071-element`·`TEST-071-whole`인 두 행, 두 엔진의 명령·수치·판정(I17의 선, 28C-06)을 적는다. 계획서 `verification.md`는 고치지 않는다. 03의 `bench/node-and-settle.bench.ts`도 다시 돌려 B5·B6의 04 뒤 값을 `ARCH/verification/03-node-and-settle/performance.md`의 개선 이력 표 아래 기록으로 남긴다(판정 아님, 라운드 27 답 8·11행).
 - 실패 처리(28C-06): 참조가 같은 원소에서 내려가지 않는 지름길이 없으면 18C-50·SETTLE-043 기제의 결함이라 고친다(구현이지 최적화가 아님). 지름길이 있는데 선을 넘으면 최적화하지 않고 까닭을 `performance.md`에 적어 소유자 수용을 받는다(27라운드). 다른 느린 수치는 기록만 한다.
 - 완료: G17(보고서 행과 명령), G18(판정 또는 소유자 수용, 수동).
@@ -386,15 +386,15 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 ## 8. 검증 명령(저장소 루트)
 
-03 §8의 명령을 그대로 쓴다(2026-09-30 확인: vitest 프로젝트 `unit`·`render`·`storybook`, `ledger/checks/plan-links.mjs`, `/opt/homebrew/bin/bun`, `@aileron/benchmark-form`의 `guard:check`가 있다).
+03 §8의 명령을 그대로 쓴다(2026-09-30 확인: vitest 프로젝트 `unit`·`render`·`storybook`, `ledger/checks/plan-links.mjs`, `{node-home}/bin/bun`, `@aileron/benchmark-form`의 `guard:check`가 있다).
 
 - 단위 범위: `(cd packages/canard/schema-form && npx vitest run --project unit <경로>)`
 - 패키지 unit·render: `(cd packages/canard/schema-form && npx vitest run --project unit --project render)`
 - lint·typecheck: `(cd packages/canard/schema-form && npx eslint "src/**/*.{ts,tsx}" && npx tsc --noEmit --composite false --rootDir . -p tsconfig.json)`
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md | tail -1)`
-- 04 벤치: `(cd packages/canard/schema-form && node --import tsx bench/derive-and-controls.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/derive-and-controls.bench.ts)`
-- 03 벤치 기록 재측정: `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/node-and-settle.bench.ts)`
+- 04 벤치: `(cd packages/canard/schema-form && node --import tsx bench/derive-and-controls.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/derive-and-controls.bench.ts)`
+- 03 벤치 기록 재측정: `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/node-and-settle.bench.ts)`
 - 공개 `<Form>` 가드: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 
 ## 9. 리뷰 기록

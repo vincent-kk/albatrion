@@ -1,0 +1,16 @@
+{
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/deriveStageClosingValidatorWork.ts": "9467d9d07da73bd228efcbdcfa3f4ec7bfcadb17117568d56d952bff204f4c72",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/checkStageClosingIntegrity.ts": "e6c404f5db5e4cac455f9f81881cdf8fc9cd5e47c92a1d17a1c2ad20b90cb0ae",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/isStageClosingDecisionFile.ts": "16322bd4974099d32eb850fada4501f450e0504e78abdddf8e5f536e54854bcf",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/decideStageClosingGates.ts": "0d2a4c5d4e20ee2dbe4bd078be9392b853ae2cb09c364e127483a2a6e5768a33",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/readStageClosingMetrics.ts": "f647047cb9c453722ffc01689c8bd7093c2225c75a8b3e86ed21713b51776e20",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/checkStageClosingBuildRecord.ts": "6d808e2018444c9846d7089aa7ecbffecffbe3bff100b155df809c8e8c325086",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/registeredStageClosingRules.ts": "cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/validatorWork.test.ts": "c795adb482371bb0db78afd765a3cbf5ba13dc5fad75884a50d339aacb9b382f",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingExpandedScope.test.ts": "a6106e3d994b14660db511f322f9ccbcf6f88ef375cd84925c82e881f931beb2",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/decideStageClosingOperationFrame.test.ts": "b90bd9deb1cbae3b66724c19d9cd7b194a81e24c0c7be6f573570e46c61f4379",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/readStageClosingMetrics.test.ts": "72eed1eecafb3550d20897e88777058a6662e52b059781dbae35c8a015cb2a17",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingBuildRecord.test.ts": "77a8de493080a0604653e45f7ea4c34ee4ac72407889314433578446c4c4d78e",
+  "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/fixtures/createClosingIntegrityFixture.ts": "e7342ebb55e78e6bfad9c0baf8dbecbd254ce6be4b25687373504d5f257a73d3",
+  "packages/canard/schema-form/architecture/plan/input-responsiveness/verification.md": "1ba90b3b8e868a349b05f40cfd88d50c9ad96fda305e596efbb4f1ba39159044"
+}

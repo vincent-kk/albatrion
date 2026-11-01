@@ -20,7 +20,7 @@
 
 새 계수 시험은 flat·nested·무판별 oneOf·재귀 ref·가상 fields에서 무호출을 확인하고, root·oneOf 자식·참조·가상 선언의 fields·discriminator에서는 정확히 한 번 호출됨을 확인합니다. 꺼진 oneOf 자식의 없는 대상도 정적 오류로 남습니다. 기존 판별·없는 대상 오류 시험은 기대값 그대로 통과했습니다. 별도 차등 시험은 기존 59종 코퍼스·경계 fixture를 진단 끔/켬으로 실행하고, 시험 spy가 build 뒤 검증 증거를 강제로 켠 실행과 노드·선언·정규화·진단·경고·오류를 비교했습니다. 제품 시험 전용 스위치는 없습니다.
 
-원본 prepare.mjs·cases.mjs·compare.mjs·readiness.mjs는 변경하지 않았습니다. Node v24.20.0과 Bun 1.4.3 각각 58장면의 source·A·B 174이력·174비교에서 차이는 0건입니다. 런타임별 standalone 네 사례와 잘못된 모듈·캐시·SHA 음성 대조 10명령도 예상 종료와 일치하며 `OBSERVATION_IDENTITY_READY`를 확인했습니다. 관측 Node와 별도로 시간 측정은 지정한 /opt/homebrew/bin/node v26.12.0을 사용했습니다.
+원본 prepare.mjs·cases.mjs·compare.mjs·readiness.mjs는 변경하지 않았습니다. Node v24.20.0과 Bun 1.4.3 각각 58장면의 source·A·B 174이력·174비교에서 차이는 0건입니다. 런타임별 standalone 네 사례와 잘못된 모듈·캐시·SHA 음성 대조 10명령도 예상 종료와 일치하며 `OBSERVATION_IDENTITY_READY`를 확인했습니다. 관측 Node와 별도로 시간 측정은 지정한 {node-home}/bin/node v26.12.0을 사용했습니다.
 
 ## 변이 검증
 

@@ -1,0 +1,190 @@
+[
+  {
+    "id": "m16-drop-nested",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "7edc217e1c1ce6cf845f6113702967a84999aca703e6877d1d3bfe5751bf733c"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-drop-nested-unit.json",
+      "render": "m16-drop-nested-render.json",
+      "react18": "m16-drop-nested-react18.json"
+    },
+    "exits": {
+      "unit": 1,
+      "render": 1,
+      "react18": 1
+    }
+  },
+  {
+    "id": "m16-all-bundles-known",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "d99d567315927ad6527bea45f2f41634392c0f039b205bdc320920316691ed67"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-all-bundles-known-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m16-revisit-known",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "e017f13be6bc98ffa620f15e46f2abc86c51d87a01e2fb1c4281691733b4c8d1"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-revisit-known-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m16-no-visited",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "a437fa7ad96d5907571486a1768f3db1481bfaee7df5cb7b32582c0dc9a8b872"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-no-visited-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m16-duck-type",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "129b123a0e53d15de84282dd6bd3c4c87a8360ac799d61eabf59427b6fdac557"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-duck-type-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m16-recursive-unsafe",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "88ab8b6b2b6d23c8c8aed96a4ed5ff3733c76ce117f599701fa92162db8b903c"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-recursive-unsafe-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m17-form-root-raw",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/components/Form/components/FormCore/components/FormRoot.tsx": "620c2be902ada15282c84c93854cec0dfeee280676905953d7b28a58211e7b7a"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/components/Form/components/FormCore/components/FormRoot.tsx": "5f9cd25d7dca404000adea510fbff8473473ef4d46b8025872ecb10530d64fea"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/components/Form/components/FormCore/components/FormRoot.tsx": "620c2be902ada15282c84c93854cec0dfeee280676905953d7b28a58211e7b7a"
+    },
+    "reports": {
+      "render": "m17-form-root-raw-render.json",
+      "react18": "m17-form-root-raw-react18.json"
+    },
+    "exits": {
+      "render": 1,
+      "react18": 1
+    }
+  },
+  {
+    "id": "m17-engine-original-raw",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/deliverChainRecords.ts": "c6f387305bacfd2a56fa78917b8e1cd35004a39f3d07106b68a1c6d2c57b27d4"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/deliverChainRecords.ts": "577cb99f998fac3e23975a23ffa105764dc72b452e119d6341f2f278e6a4278f"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/deliverChainRecords.ts": "c6f387305bacfd2a56fa78917b8e1cd35004a39f3d07106b68a1c6d2c57b27d4"
+    },
+    "reports": {
+      "render": "m17-engine-original-raw-render.json",
+      "react18": "m17-engine-original-raw-react18.json"
+    },
+    "exits": {
+      "render": 1,
+      "react18": 1
+    }
+  },
+  {
+    "id": "m17-no-root-seed",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "a4d74c1644237a5231b75603fa15669289c5d08f716c3e4c4bdd6e4b52176529"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "2aad7358d40691e1310bf2825fbeca0c50862b11dc1c9d0ec3fb7b733a7e3b74"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "a4d74c1644237a5231b75603fa15669289c5d08f716c3e4c4bdd6e4b52176529"
+    },
+    "reports": {
+      "unit": "m17-no-root-seed-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m17-naive-list",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "a4d74c1644237a5231b75603fa15669289c5d08f716c3e4c4bdd6e4b52176529"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "f6e1139ae67eb94a9318f78b7b444f1dcd02a7b7ef1c572751b3d5014300d30f"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "a4d74c1644237a5231b75603fa15669289c5d08f716c3e4c4bdd6e4b52176529"
+    },
+    "reports": {
+      "unit": "m17-naive-list-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  }
+]

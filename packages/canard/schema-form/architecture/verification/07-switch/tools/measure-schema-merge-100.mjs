@@ -14,7 +14,7 @@ const results = path.join(directory, 'schema-merge-100');
 const expectedHead = '371dcaa45818eb326367cb2be84640d5fbaecca1';
 const operations = [['nested-d5-f4', 'mount'], ['flat-500', 'mount'], ['oneOf-20', 'mount'],
   ['sample-0', 'mount'], ['sample-0', 'later'], ['nested-d5-f4', 'later']];
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 assert(['--all', '--summarize', '--finalize', '--build', '--build-worker', '--paired-worker',
   '--count-worker'].includes(process.argv[2]), 'Only the worktree-local paired workflow is supported');
 

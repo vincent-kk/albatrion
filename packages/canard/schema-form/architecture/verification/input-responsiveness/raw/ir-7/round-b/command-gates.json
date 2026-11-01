@@ -1,0 +1,62 @@
+[
+  {
+    "gate": "lint",
+    "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "gate": "typecheck",
+    "command": "yarn workspace @canard/schema-form typecheck",
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "gate": "build",
+    "command": "yarn workspace @canard/schema-form build",
+    "exitCode": 0,
+    "output": "🧹 Clean slate: dist directory cleared\n<DIR>/index.mjs  chunk │ size: 880.28 kB\n<DIR>/index.cjs  chunk │ size: 901.41 kB\n<DIR>/index.node.mjs  chunk │ size: 879.49 kB\n\n✔ rolldown v1.2.0 Finished in 112.51 ms\nDEVELOPMENT_FLAG_OK reads=48 flags=49 pure=543\nGATE_SELECTION_DIST_OK {\"name\":\"index.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":880282,\"sha256\":\"b65113379c360aa4d3e30a26b7c33a457f50faff395fcf5ebc5d88902614c494\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.node.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":879486,\"sha256\":\"bed277eb6d7ce0374919dc31c7b9baad57dd5dd2a042ba485304a45673e06f66\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.cjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":901407,\"sha256\":\"8f6764a1d301b0cd9933ba99e1b97a6f837b826c44b7840afaede1a0f2913385\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4526}\nFixed 2407 imports in 1125 .d.ts files.\n✓ agents-hashes.json written: 14 file(s) → packages/canard/schema-form/dist/agents-hashes.json\n"
+  },
+  {
+    "gate": "unit",
+    "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=<temporary>/ir7b-gate-unit.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir7b-gate-unit.json\n"
+  },
+  {
+    "gate": "render",
+    "command": "yarn workspace @canard/schema-form test --run --project render --reporter=json --outputFile=<temporary>/ir7b-gate-render.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir7b-gate-render.json\n"
+  },
+  {
+    "gate": "react18",
+    "command": "yarn workspace @canard/schema-form test --run --project react18 --reporter=json --outputFile=<temporary>/ir7b-gate-react18.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir7b-gate-react18.json\n"
+  },
+  {
+    "gate": "verify",
+    "command": "yarn workspace @canard/schema-form test:verify --run --reporter=json --outputFile=<temporary>/ir7b-gate-verify.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir7b-gate-verify.json\n"
+  },
+  {
+    "gate": "storybook",
+    "command": "yarn workspace @canard/schema-form test --run --project storybook --reporter=json --outputFile=<temporary>/ir7b-gate-storybook.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir7b-gate-storybook.json\n"
+  },
+  {
+    "gate": "production",
+    "command": "yarn workspace @canard/schema-form test:production --reporter=json --outputFile=<temporary>/ir7b-gate-production.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\n\n RUN  v3.2.6 packages/canard/schema-form\n\n···stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths\n107COUNT path-strings fast escaping=2 names=2\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name\n107COUNT path-strings general escaping=2 names=2\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays\n106COUNT empty-fragment keyword-array-check=0\n\n·····stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'nested-d5-f4'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"nested-d5-f4\",\"mode\":\"production\",\"distinct\":1706}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'flat-500'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"flat-500\",\"mode\":\"production\",\"distinct\":502}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'oneOf-20'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"oneOf-20\",\"mode\":\"production\",\"distinct\":111}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'sample-0'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"sample-0\",\"mode\":\"production\",\"distinct\":5}\n\n·············\n\n Test Files  10 passed (10)\n      Tests  21 passed (21)\n   Start at  02:53:49\n   Duration  3.62s (transform 3.55s, setup 0ms, collect 12.97s, tests 631ms, environment 2.41s, prepare 668ms)\n\nJSON report written to <temporary>/ir7b-gate-production.json\n"
+  },
+  {
+    "gate": "import-model",
+    "command": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<temporary>/ir7b-gate-import-model.json",
+    "exitCode": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir7b-gate-import-model.json\n"
+  }
+]

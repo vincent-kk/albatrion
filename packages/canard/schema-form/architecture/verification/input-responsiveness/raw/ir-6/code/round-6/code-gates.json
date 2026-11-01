@@ -1,0 +1,135 @@
+{
+  "productCommit": "61e28eb44ad451663adac7fab185f95053f09815",
+  "contracts": [
+    "ee1b4e824",
+    "a2d97e6b6"
+  ],
+  "results": {
+    "unit": {
+      "files": 619,
+      "passed": 4089,
+      "failed": 0,
+      "pending": 0,
+      "todo": 1
+    },
+    "render": {
+      "files": 154,
+      "passed": 882,
+      "failed": 0,
+      "pending": 2,
+      "todo": 0
+    },
+    "react18": {
+      "files": 154,
+      "passed": 881,
+      "failed": 0,
+      "pending": 3,
+      "todo": 0
+    },
+    "verify": {
+      "files": 778,
+      "passed": 5015,
+      "failed": 0,
+      "pending": 2,
+      "todo": 1
+    },
+    "storybook": {
+      "files": 101,
+      "passed": 254,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0
+    },
+    "production": {
+      "files": 10,
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0
+    },
+    "lifecycle-render": {
+      "files": 1,
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0
+    },
+    "lifecycle-react18": {
+      "files": 1,
+      "passed": 2,
+      "failed": 0,
+      "pending": 1,
+      "todo": 0
+    }
+  },
+  "sourceFileCount": 2885,
+  "importModelPassedCases": 2,
+  "artifactHashes": {
+    "preliminary-fca-validate.json.gz": "0599512acdba5e8dc9c0b9b6d8b615428b027f5c50e2f897e039043cf06d4792",
+    "final-verify.json.gz": "30770125da2aebc7cd6fc6330e639e0a72121206f0e50f2c13854f99a6c613d3",
+    "final-unit.json.gz": "8bd34f097858f24ff84333b65248d8585f6614f8bb8a107a2670b98d1e37c7df",
+    "red-mount-render.json.gz": "b5e04ae50e487c94a6393bf1e8eee343be058380df38b144b6221724c65f9692",
+    "verbatim-check.txt.gz": "d2e5011a2f7802ce948a2dc8d1d7916d46bfea479a36929f33d39f939e3d2431",
+    "final-lifecycle-render.json.gz": "e78772cb66e7122411e9f0962ffb7fe75392f6f15103a151c360614ab01827a9",
+    "fca-final-validate.json.gz": "9e003aecebbeadb8ee9be9bd5b1206b23d30c29767b736cf687131a03d511462",
+    "red-fragment-render.json.gz": "1defbaa93fff374345db63955c7e3d4601545bc82a93413517b8c0edeedbdf0f",
+    "final-render.json.gz": "e13cbd6324b324e3ba265ebc95fb3044e5a11544d13eae4140397cd316a88324",
+    "final-lifecycle-react18.json.gz": "b2e6629d248fea9236d10318088175958e6ae7a12122dcbf47f0d242ab68ff58",
+    "final-storybook.json.gz": "b68e073fadb457b3b25eb98d7f85327e689e1aa10c0689358791f6b0e04c604b",
+    "evaluated-restored.json.gz": "9bf22390b5858e2f03adb5faedc5bcf728d6157ea2d6e71e71aca3885634622f",
+    "red-mount-react18.json.gz": "f574fc4465b9401b3450644e4f327009f655e0a3ee7842022f66a0eff39958bb",
+    "final-react18.json.gz": "0f71b4e93a7a3b1e78ca4fb1b604d0d83061465ba820f6ac140aad76f35431a9",
+    "sup-check.txt.gz": "9ea4e6824b26f61a0f6b1b9daba9d0cf92464ddf699f23f0c5cf7bda0dfdb96a",
+    "preliminary-unit.json.gz": "d77b6ca8af024634f852784e8ca9799ae181c07d97b85246f4e94a1b25a270dd",
+    "source-hashes.json.gz": "097b6d24bdc82f84b387eb8db457b91fd9a37ca52c68306403d33e0be361504a",
+    "ref-check.txt.gz": "0b337158939a6afcc9d29b5603efd2a4a99a89645d5b3dd696565f7364768f28",
+    "red-fragment-react18.json.gz": "094bec61e5a93fa78c3c63ef8dddd9505d9894f580bbaad4a242b59a99978d6a",
+    "evaluated-public-declarations.json.gz": "9bf22390b5858e2f03adb5faedc5bcf728d6157ea2d6e71e71aca3885634622f",
+    "final-production.json.gz": "f1f2314684bff89af50501a62d4db9ff5e116a813210aadad1afa1979ac8ccd8",
+    "evaluated-positive.json.gz": "28f174cd69beb475313db6713569e7af88f216cbd8b8ef67a01f1337d119d300",
+    "red-catchup-react18.json.gz": "dbb3a212c3137dfe7cb11e177591f4d26f1e4cf421185ddfbdd7528337578974",
+    "conservative-public-declarations.json.gz": "ae2527d55983583f97198bc564b1c6a0565aed1c4e18d0ddc3248d77cbaf0a1d",
+    "red-catchup-render.json.gz": "193096db363522c3d9dd468b597c6b2933799de1ff645f405c03f262b830c9be",
+    "doc-coverage.txt.gz": "cc050ee823219ac5744086c8a1c4ff18651e5f17ba3cd5875ed961581d27463a",
+    "preliminary-fca-validate-full.json.gz": "d5fc33022d98425efcf0ee68319c914d65d711ff50d7d21b7b6f67a292b02a90",
+    "../round-6b/preliminary-import-model-unit.json.gz": "1e35c475f888e25cebf53983cdc6031c0f70cfbd8d8569108c5b6330321c70db",
+    "../round-6b/final-unit.json.gz": "8bd34f097858f24ff84333b65248d8585f6614f8bb8a107a2670b98d1e37c7df",
+    "../round-6b/verbatim-check.txt.gz": "d2e5011a2f7802ce948a2dc8d1d7916d46bfea479a36929f33d39f939e3d2431",
+    "../round-6b/import-model.json.gz": "8eb3e0ead8898b76d5b6a9245bacc72974faf897e29bd4f3ff7793561861b0b0",
+    "../round-6b/fca-final-validate.json.gz": "650b2e16b009269c002e2ca7fd79ea558e2d25b137f25ee4a999ec0d6a03df11",
+    "../round-6b/final-render.json.gz": "e13cbd6324b324e3ba265ebc95fb3044e5a11544d13eae4140397cd316a88324",
+    "../round-6b/final-react18.json.gz": "0f71b4e93a7a3b1e78ca4fb1b604d0d83061465ba820f6ac140aad76f35431a9",
+    "../round-6b/sup-check.txt.gz": "9ea4e6824b26f61a0f6b1b9daba9d0cf92464ddf699f23f0c5cf7bda0dfdb96a",
+    "../round-6b/ref-check.txt.gz": "0b337158939a6afcc9d29b5603efd2a4a99a89645d5b3dd696565f7364768f28",
+    "../round-6b/doc-coverage.txt.gz": "cc050ee823219ac5744086c8a1c4ff18651e5f17ba3cd5875ed961581d27463a"
+  },
+  "runtimeBundles": {
+    "index.mjs": {
+      "sha256": "689ff1a17f4247316179e617eeb9b9b34db86d8d96b780f14c6a38d20b5c5bd0",
+      "bytes": 880607
+    },
+    "index.node.mjs": {
+      "sha256": "e954d3f19b093a031f44b7e7768822b27f117a14007afd800a32bc45efa78e2f",
+      "bytes": 879811
+    },
+    "index.cjs": {
+      "sha256": "a0e742867535553b2ffc834debf13d4d262859286e63593e2716ec96f0ec71fd",
+      "bytes": 901732
+    }
+  },
+  "typeOnlyTestBridge": "Final lifecycle-render/react18 recheck the exact final root/runtime identity assertions after the full suites; other test sources are unchanged.",
+  "preliminaryUnitExcluded": "preliminary-unit overlapped a preliminary typecheck; final-unit is the separate serial run.",
+  "formalWindowStarted": false,
+  "candidateHead6b": "b8eeae5b79e14f8afbe6012f407c8a341c1cd6ad",
+  "round6b": {
+    "approval": "msg_62fb3cce52c2 / msg_241ca3e19a1b",
+    "scope": "lint/typecheck/build/unit/render/react18/importModel/FCA/ledger/path; runtime bundle bytes unchanged",
+    "reusedResults": [
+      "verify",
+      "storybook",
+      "production",
+      "public declarations"
+    ],
+    "reuseReason": "No functional product change; identical three runtime bundle bytes. Full6b unit/render/react18 cover final test/helper changes; remaining accepted round6 evidence remains applicable."
+  }
+}

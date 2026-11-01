@@ -17,21 +17,21 @@ F-C는 FormContents의 네이티브 제출 함수를 useCallback으로 고정합
 Plan: 이 기록의 구현 계획을 사용합니다.
 
 - [x] G1: 네 변경의 계수 시험이 HEAD에서 고유 이유로 실패하고 개별·결합 후보에서 통과합니다.
-      CHECK: `node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fbx-diag/check-evidence.mjs counts`
+      CHECK: `node {scratch}/fbx-diag/check-evidence.mjs counts`
       EXPECT: `COUNTS_VERIFIED`
       EVIDENCE: COUNTS_VERIFIED (exit 0)
 - [x] G2: 지정된 할당·보유량·생존량과 304행 touch-count의 원자료가 유효합니다.
-      CHECK: `node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fbx-diag/check-evidence.mjs probes`
+      CHECK: `node {scratch}/fbx-diag/check-evidence.mjs probes`
       EXPECT: `PROBES_VERIFIED`
       EVIDENCE: PROBES_VERIFIED (exit 0)
 - [x] G3: 다섯 지정 명령이 모두 성공하고 제한 밖의 저장소 파일은 변경되지 않습니다.
-      CHECK: `node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fbx-diag/check-evidence.mjs final`
+      CHECK: `node {scratch}/fbx-diag/check-evidence.mjs final`
       EXPECT: `FINAL_VERIFIED`
       EVIDENCE: FINAL_VERIFIED (exit 0)
 
 ## 구현·검증 결과를 이어서 기록합니다.
 
-PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다. 제품 변경은 src의 17개 파일에만 작성하였으며 D에서는 이 기록만 추가하였습니다. 설치, add, commit, stash, 시간 판정은 수행하지 않았습니다. 모든 명령의 종료를 기다렸고 프로세스는 자연 종료하였습니다. 각 실행은 8분 이내에 끝났으며 모든 할당·보유량·scavenge 실행의 부모와 탐침은 `$HOME/.nvm/versions/node/v26.11.1/bin/node`를 순차 사용하였습니다.
+PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `{scratch}`입니다. 제품 변경은 src의 17개 파일에만 작성하였으며 D에서는 이 기록만 추가하였습니다. 설치, add, commit, stash, 시간 판정은 수행하지 않았습니다. 모든 명령의 종료를 기다렸고 프로세스는 자연 종료하였습니다. 각 실행은 8분 이내에 끝났으며 모든 할당·보유량·scavenge 실행의 부모와 탐침은 `$HOME/.nvm/versions/node/v26.11.1/bin/node`를 순차 사용하였습니다.
 
 ## 각 변경의 파일과 동작을 기록합니다.
 

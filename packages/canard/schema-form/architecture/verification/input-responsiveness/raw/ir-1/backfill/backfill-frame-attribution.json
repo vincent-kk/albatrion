@@ -1,0 +1,86 @@
+[
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "fullMountLongestFrame": 0,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "fullMountLongestFrame": 61.30000001192093,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "fullMountLongestFrame": 0,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "fullMountLongestFrame": 0,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "fullMountLongestFrame": 0,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "fullMountLongestFrame": 0,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "fullMountLongestFrame": 63.80000001192093,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "fullMountLongestFrame": 69.19999998807907,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "fullMountLongestFrame": 57.60000002384186,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "fullMountLongestFrame": 59,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "fullMountLongestFrame": 59.09999996423721,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "fullMountLongestFrame": 56,
+    "afterEagerLongestFrame": null,
+    "afterEagerLongFrameCount": 0
+  }
+]

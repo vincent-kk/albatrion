@@ -1,0 +1,10 @@
+{
+  "method": "Re-evaluate the same public-selected declaration graph with TypeScript printer removeComments=false.",
+  "publicExports": 97,
+  "reachableFiles": 55,
+  "signatures": 917,
+  "commentPreservingDifferences": {
+    "added": [],
+    "removed": []
+  }
+}

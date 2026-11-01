@@ -2,7 +2,7 @@
 
 **2의 최종 판정은 ADOPT이고, 2 위의 F3는 REJECT입니다.** 2의 105C-01 회귀 12행은 모두 124C-01의 네 조건을 충족했습니다. F3의 회귀 20행은 지시된 고정 분기 축의 유의한 이득 합계가 0µs여서 교환 규칙을 충족하지 못했습니다.
 
-작업 트리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`이며, HEAD는 `f8f86f4d3347b194602d123b132281f7ff642560`입니다. 시작 시 작업 트리는 깨끗했습니다. Git 쓰기·설치·제품 코드 변경 없이 제공된 번들을 측정하고 이 보고서와 측정 산출물을 작성했습니다. 모든 Node 실행은 `/opt/homebrew/bin/node`의 v26.10.0를 사용했으며, 실제 바이너리는 `/opt/homebrew/Cellar/node/26.10.0_2/bin/node`였습니다. V8은 14.6.202.34-node.35이고 CPU는 Apple M1 Max, 메모리는 64GiB였습니다.
+작업 트리는 `{repo}`이며, HEAD는 `f8f86f4d3347b194602d123b132281f7ff642560`입니다. 시작 시 작업 트리는 깨끗했습니다. Git 쓰기·설치·제품 코드 변경 없이 제공된 번들을 측정하고 이 보고서와 측정 산출물을 작성했습니다. 모든 Node 실행은 `{node-home}/bin/node`의 v26.10.0를 사용했으며, 실제 바이너리는 `{node-home}/Cellar/node/26.10.0_2/bin/node`였습니다. V8은 14.6.202.34-node.35이고 CPU는 Apple M1 Max, 메모리는 64GiB였습니다.
 
 세션 시작 시간은 2026-10-08 12:39:46 KST입니다. 원시 측정 프로세스는 2026-10-08 12:43:39 KST부터 2026-10-08 14:51:43 KST까지 실행했습니다. 최종 검증 시각과 전체 경과 시간은 [검증 기록](profile-126b-session/session-verification.json)에 보존합니다.
 

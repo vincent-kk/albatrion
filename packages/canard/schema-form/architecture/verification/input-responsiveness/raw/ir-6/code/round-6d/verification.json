@@ -1,0 +1,54 @@
+{
+  "base": "233155be66fdd8e2d8238bc2e4d2f8a6357c4ea1",
+  "task": "task_8f4256f78bcd",
+  "dispatch": "ctx_dc53170852df",
+  "newWindow": false,
+  "checks": [
+    {
+      "command": "test --reporter=json",
+      "exitCode": 0,
+      "files": 8,
+      "passed": 61,
+      "failed": 0
+    },
+    {
+      "command": "lint --max-warnings=0",
+      "exitCode": 0,
+      "warnings": 0
+    },
+    {
+      "command": "typecheck:browser",
+      "exitCode": 0
+    },
+    {
+      "command": "check:browser-results --stage=ir-6 --audit-base=facd72a71",
+      "exitCode": 0,
+      "stdout": "BROWSER_CHANGES_AUDIT_OK base=facd72a71 newMachinePaths=0\nIR6_RAW_REPRODUCED suite=main samples=540 gates=G1:PASS,G2:FAIL,G3:PASS,G4:PASS,G5:PASS,G6:PASS,G8:FAIL\nIR6_RAW_REPRODUCED suite=round-6 samples=540 gates=G1:PASS,G2:PASS,G3:PASS,G4:PASS,G5:PASS,G6:PASS,G8:PASS\n"
+    }
+  ],
+  "capturedAt": "2026-10-31T16:10:52.008652+00:00",
+  "sourceProofCutoff": "2026-10-31T15:19:10Z",
+  "cutoffCommitTime": "2026-11-01T00:19:10+09:00",
+  "files": {
+    "benchmark-tests.json.gz": {
+      "bytes": 3195,
+      "sha256": "7d74419f941f5640604984ae0a6ad15b6cdd5b823370b57ab809ac9b718f2d5f"
+    },
+    "cpu-window-proof.json": {
+      "bytes": 1408,
+      "sha256": "5b58c2d3594a48e6c25627444d8255fbaec31915a38a192320f7523a920bf1f1"
+    },
+    "red-provenance.json": {
+      "bytes": 551,
+      "sha256": "ecef451a6062586197093c2e1b9037ab4c1f27cbd608886d6e292b1133fa9361"
+    },
+    "red.json.gz": {
+      "bytes": 1182,
+      "sha256": "cf2dd08b784bafd5c303b7329ab732c686768a7909914a98443d63f7e823e312"
+    },
+    "scope-audit.json": {
+      "bytes": 541,
+      "sha256": "ee898d8b1136cf7a11ecc74db2aa073da056ea60464e9409d3408f520e1b9bd9"
+    }
+  }
+}

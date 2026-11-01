@@ -17,7 +17,7 @@
 **측정**
 
 - 조용한 창 2026-10-15T11:01:58Z–11:02:57Z. 정상 상태 레인, 표본 100, 두 판을 번갈아 두 바퀴 돌린 중앙값의 중앙값입니다. Node v26.11.1, Bun 1.4.3.
-- 원본은 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/448b7d0a-b9df-485a-b3b6-4666d6a02181/scratchpad/l1b-ab/out9/`(저장소에 넣지 않음)입니다.
+- 원본은 `{scratch}/l1b-ab/out9/`(저장소에 넣지 않음)입니다.
 
 **같은 관측 상태까지 잽니다(369라운드)**
 

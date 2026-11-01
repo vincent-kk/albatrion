@@ -1,5 +1,5 @@
 /*
- * 사용법(stage-07 루트, /opt/homebrew/bin/node):
+ * 사용법(stage-07 루트, {node-home}/bin/node):
  *   node <이 파일> --prepare [--prefix=fap]
  *   node <이 파일> --pair AA array-100 1 [--processes=2] [--warmup=20] [--samples=101] [--old-wait] [--tag=<이름>]
  *   node <이 파일> --pair change array-100 1
@@ -27,10 +27,10 @@ const tool = fileURLToPath(import.meta.url);
 const directory = path.dirname(tool);
 const repo = path.resolve(directory, '../../../../../../..');
 const pkg = path.join(repo, 'packages/canard/schema-form');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
+const scratch = '{scratch}';
 const bundles = path.join(scratch, 'bundles');
-assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
-assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('/opt/homebrew/bin/node'), 'Timing runs use /opt/homebrew/bin/node');
+assert.equal(repo, '{repo}');
+assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('{node-home}/bin/node'), 'Timing runs use {node-home}/bin/node');
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const prefix = flag('prefix', 'fap');
 assert.match(prefix, /^[a-z0-9]+$/);

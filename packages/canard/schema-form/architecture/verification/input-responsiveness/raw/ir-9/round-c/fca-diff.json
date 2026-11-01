@@ -1,0 +1,25 @@
+{
+  "baseline": "0920ad9c5",
+  "snapshotHash": "01b5ed7286f0da1b80a922de04a766c6be13028e3c9388b8b2376182da08b6d7",
+  "finding_baseline": 201,
+  "finding_candidate": 201,
+  "new_findings": [],
+  "removed_findings": [],
+  "canonical_failed": 12,
+  "canonical_skipped": 1,
+  "certainty": "indeterminate",
+  "diagnostics_unchanged": true,
+  "diagnostic_counts": {
+    "detail-document-contract": 175,
+    "intent-document-contract": 1
+  },
+  "facts": {
+    "exact": 1775,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0
+  },
+  "consolidated_result": "FAIL (existing canonical violations); indeterminate analysis retained",
+  "diagnostic_next_actions": "Full portable diagnostics retained; existing unrelated repairs handed to coordinator."
+}

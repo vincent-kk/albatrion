@@ -1,0 +1,22 @@
+{
+  "ref-check": {
+    "command": "node ledger/checks/ref-check.mjs ledger/README.md ledger/blueprint.md ledger/controls.md ledger/error.md ledger/event.md ledger/fragment.md ledger/goal.md ledger/landing.md ledger/node.md ledger/process.md ledger/react.md ledger/schema.md ledger/settle.md ledger/surface.md ledger/test.md ledger/validate.md ledger/value.md ledger/write.md",
+    "exitCode": 0,
+    "summary": "items 1416, problems 0"
+  },
+  "verbatim-check": {
+    "command": "node ledger/checks/verbatim-check.mjs . ledger/README.md ledger/blueprint.md ledger/controls.md ledger/error.md ledger/event.md ledger/fragment.md ledger/goal.md ledger/landing.md ledger/node.md ledger/process.md ledger/react.md ledger/schema.md ledger/settle.md ledger/surface.md ledger/test.md ledger/validate.md ledger/value.md ledger/write.md",
+    "exitCode": 0,
+    "summary": "items 1416, fragments 327, items with non-verbatim decision lines 0"
+  },
+  "sup-check": {
+    "command": "node ledger/checks/sup-check.mjs . ledger/README.md ledger/blueprint.md ledger/controls.md ledger/error.md ledger/event.md ledger/fragment.md ledger/goal.md ledger/landing.md ledger/node.md ledger/process.md ledger/react.md ledger/schema.md ledger/settle.md ledger/surface.md ledger/test.md ledger/validate.md ledger/value.md ledger/write.md",
+    "exitCode": 0,
+    "summary": "supplement and conflict quotes 3584, not verbatim at cited lines 0, unparsed 0"
+  },
+  "doc-coverage": {
+    "command": "node ledger/checks/doc-coverage.mjs adr/0001-validator-input-invariant.md adr/0002-guard-fragment-model.md adr/0003-group-namespace.md adr/0004-validator-plugin-compile-guard.md adr/0005-blueprint-analysis-and-node-sharing.md adr/0006-single-value-ownership.md adr/0007-settle-cycle.md adr/0008-event-system.md adr/0009-performance-budget-and-benchmarks.md adr/0010-branch-conventions.md adr/0011-branch-node-composition.md adr/0012-fe-overlay.md adr/0013-core-does-not-rewrite-values.md adr/0014-error-policy.md adr/0015-union-leaf.md adr/0016-fill-timing-and-full-replace-write.md adr/0017-narrowing-intersection.md design/00-goals-and-values.md design/01-schema-to-blueprint.md design/02-node-and-value.md design/03-settle-and-events.md design/04-controls.md design/05-validation-and-errors.md design/06-react-and-surface.md design/07-landing-and-tests.md -- ledger/README.md ledger/blueprint.md ledger/controls.md ledger/error.md ledger/event.md ledger/fragment.md ledger/goal.md ledger/landing.md ledger/node.md ledger/process.md ledger/react.md ledger/schema.md ledger/settle.md ledger/surface.md ledger/test.md ledger/validate.md ledger/value.md ledger/write.md",
+    "exitCode": 0,
+    "summary": "docs 25, items in scope 1144, uncited 66, bad ids 0, missing tokens 0, untagged sentences 0, stale exemptions 0, problems 66"
+  }
+}

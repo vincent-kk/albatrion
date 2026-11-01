@@ -44,13 +44,13 @@ it.each(['insert', 'replace'] as const)(
       expect(root.inactiveValues).toEqual([]);
       destination = '/items/1';
     }
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setImmediate(resolve));
     const revision = root.revision();
     const commit = Reflect.get(runtime, 'commitNumber');
     const delivered = vi.fn();
     const unsubscribe = root.subscribe(delivered);
     ref.setValue('x');
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setImmediate(resolve));
     unsubscribe();
     expect(delivered).not.toHaveBeenCalled();
     expect(root.revision()).toBe(revision);

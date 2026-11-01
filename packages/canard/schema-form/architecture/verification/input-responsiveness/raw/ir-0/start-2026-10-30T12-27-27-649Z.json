@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-30T12:27:27.649Z",
+  "samples": 0,
+  "approved": true,
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      36974,
+      36948,
+      36945,
+      93028,
+      92797,
+      92762,
+      80848
+    ]
+  },
+  "quiet": {
+    "startedAt": "2026-10-30T12:26:57.501Z",
+    "endedAt": "2026-10-30T12:27:27.649Z",
+    "durationSeconds": 30.143089166,
+    "top": [
+      {
+        "pid": 394,
+        "name": "mds",
+        "cpuPercent": 22.559068058854947
+      },
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 13.601791035487226
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 6.933595918090467
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.137393516007837
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 5.971518015577476
+      },
+      {
+        "pid": 404,
+        "name": "contextstored",
+        "cpuPercent": 3.8483116100406454
+      },
+      {
+        "pid": 36418,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.4833855090882686
+      },
+      {
+        "pid": 34070,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.4170353089151604
+      },
+      {
+        "pid": 30610,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.3838602088286027
+      },
+      {
+        "pid": 36110,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.28433490856894
+      }
+    ],
+    "heavy": [],
+    "totalPercent": 131.40657144283037
+  }
+}

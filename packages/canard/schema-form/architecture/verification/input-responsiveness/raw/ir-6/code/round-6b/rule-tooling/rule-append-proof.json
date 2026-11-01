@@ -1,0 +1,15 @@
+{
+  "priorBytes": 15513,
+  "priorSha256": "58063d36217b174eb6174d47bc905ed229ff527b98bde193a60307ef56af40e4",
+  "newSha256": "b5d4ed67d66b7eb7ce9d37521bfe27f55858eb71b7890f22a25ee5f17b666f93",
+  "existingBytesUnchanged": true,
+  "appendedBlocksVerbatim": true,
+  "order": [
+    "G2",
+    "G8"
+  ],
+  "blockSha256": [
+    "f1365acec858a5872bacd835a88eba5df27a70dfab23d13fd556094e01342c95",
+    "069fc1ef2cbbf1c0172c8947693fcf478272065ab3f7c9ae9c09ce33d2905533"
+  ]
+}

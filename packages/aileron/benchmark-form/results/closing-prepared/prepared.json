@@ -1,0 +1,147 @@
+{
+  "phase": 1,
+  "state": "prepared",
+  "sourceCommit": "52253d1d1b91330e6dc76528871073f119ec837b",
+  "preregisteredCommit": "125a820ee6ad17fdd1338b2ebf11cee61bf987ab",
+  "ruleVersion": "closing-v1-amendment-2",
+  "rulesSha256": "bb019877f5a4f20b8871bfe8db4c38f1e1250b27886c8f71bb2944f67942cf6d",
+  "formalWindows": 0,
+  "smoke": {
+    "startedAt": "2026-11-01T09:21:41.213Z",
+    "endedAt": "2026-11-01T09:31:25.025Z",
+    "pages": 97,
+    "rows": 24,
+    "operations": 150,
+    "laneRows": {
+      "L": 23,
+      "B": 24,
+      "S": 24,
+      "F": 24,
+      "probe": 2
+    },
+    "slotOverlaps": 0,
+    "nodeIdentityAssertions": "PASS",
+    "rawReproduction": "PASS",
+    "machinePaths": 0
+  },
+  "checks": {
+    "benchmarkTests": {
+      "files": 13,
+      "tests": 83,
+      "status": "PASS",
+      "command": "yarn workspace @aileron/benchmark-form test"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser"
+    },
+    "lint": {
+      "status": "PASS",
+      "warnings": 0,
+      "command": "yarn workspace @aileron/benchmark-form lint --max-warnings=0"
+    },
+    "ir6Checker": {
+      "main": [
+        "PASS",
+        "FAIL",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "FAIL"
+      ],
+      "round6": [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS"
+      ],
+      "unchanged": true
+    },
+    "slotRegression": {
+      "before": "FAIL: 999.7ms < 1000ms",
+      "after": "PASS",
+      "fixCommit": "52253d1d1b91330e6dc76528871073f119ec837b"
+    }
+  },
+  "bundles": {
+    "L": {
+      "commit": "public-0.16.1",
+      "toolCommit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "product": {
+        "sha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46",
+        "bytes": 260013
+      },
+      "browser": {
+        "sha256": "49381d9ef4c823e0a9554b3f691e4497252540192a536611b55e2cb2b0cb6dc4",
+        "bytes": 1241802
+      }
+    },
+    "B": {
+      "commit": "5d1348ed16054efa1ec431945eb00472f4eef7f1",
+      "toolCommit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "product": {
+        "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d",
+        "bytes": 857033
+      },
+      "browser": {
+        "sha256": "94b3cf0d4c25f7a58ab0182c74ae4932c4a7254156a4ed7a59f1269e00aaa3a4",
+        "bytes": 1817436
+      }
+    },
+    "S": {
+      "commit": "facd72a71c44a798f5484827509073a27fb678a3",
+      "toolCommit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "product": {
+        "sha256": "26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d",
+        "bytes": 858166
+      },
+      "browser": {
+        "sha256": "73dd1687b6a841217d8fd0ae1c6a778161cb2daefb71df35e63aa15adc3c7fab",
+        "bytes": 1818439
+      }
+    },
+    "F": {
+      "commit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "toolCommit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "product": {
+        "sha256": "53c361d7bbdcbc92db5a3d8f74a27f2cd2eac6a65190f262c186df0d38f52e2f",
+        "bytes": 883304
+      },
+      "browser": {
+        "sha256": "02b07a7242705c3fe5532b2e2bcb80241712abcd83850d13fb79bed547779608",
+        "bytes": 1846109
+      }
+    },
+    "probe": {
+      "commit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "toolCommit": "52253d1d1b91330e6dc76528871073f119ec837b",
+      "product": {
+        "sha256": "862eb5f1012a62c676cd99f71915fdd6d6a355954740b1cdc30b366c1dc00e58",
+        "bytes": 883233
+      },
+      "browser": {
+        "sha256": "4fa5b7c9b8aaad73c80c3f94c00765ebc9b2153713907fedf983d049b94d7981",
+        "bytes": 1846045
+      }
+    }
+  },
+  "cleanup": {
+    "removedWorktrees": [
+      "closing-baseline-b",
+      "closing-baseline-s"
+    ],
+    "removedBranches": [
+      "measurement/closing-baseline-b",
+      "measurement/closing-baseline-s"
+    ],
+    "remainingCreatedWorktrees": [],
+    "remainingCreatedBranches": [],
+    "preExistingPrunableMetadata": [
+      "stage-c5d963b2d"
+    ]
+  }
+}

@@ -2,9 +2,9 @@
 
 /**
  * From the schema-form package directory:
- * /Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<ISO>
+ * {node-home}/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<ISO>
  * Builds the JS bundles directly with this Node executable and rolldown -c before running rows.
- * Raw results stay outside the repository under /private/tmp/claude-501/perf-runs/.
+ * Raw results stay outside the repository under {scratch}/perf-runs/.
  * --only=<row,row> selects the row IDs below, retaining their original order.
  * --legacy=<0.16.0|0.16.1> picks the release paired by the `--equivalent` rows (default 0.16.0, the M0 reproduction; M3 re-measures pass 0.16.1).
  * Standalone rows always compare against 0.16.0.
@@ -122,7 +122,7 @@ const buildNodeVersion = inspect(process.execPath, ['-v']);
 if (bunVersion !== '1.4.3') throw new Error('Bun 1.4.3 is required');
 const minute = startedAt.slice(0, 16).replace(/[-:]/g, '');
 const runId = `${minute}-${shortCommit}-${label}`;
-const runRoot = '/private/tmp/claude-501/perf-runs';
+const runRoot = '{scratch}/perf-runs';
 const runDir = path.join(runRoot, runId);
 
 /**

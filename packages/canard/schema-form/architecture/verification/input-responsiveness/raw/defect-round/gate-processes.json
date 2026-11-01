@@ -1,0 +1,54 @@
+{
+  "testedCommit": "3372c4f51",
+  "method": "Tool process exit statuses; command paths and output tails are normalized for publication.",
+  "lint": {
+    "cmd": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exit_code": 0,
+    "outputTail": ""
+  },
+  "typecheck": {
+    "cmd": "yarn workspace @canard/schema-form typecheck",
+    "exit_code": 0,
+    "outputTail": ""
+  },
+  "build": {
+    "cmd": "yarn workspace @canard/schema-form build",
+    "exit_code": 0,
+    "outputTail": "<DIR>/index.mjs  chunk │ size: 889.08 kB\n<DIR>/index.cjs  chunk │ size: 910.24 kB\n<DIR>/index.node.mjs  chunk │ size: 888.29 kB\n\n✔ rolldown v1.2.0 Finished in 132.05 ms\nDEVELOPMENT_FLAG_OK reads=48 flags=49 pure=548\nGATE_SELECTION_DIST_OK {\"name\":\"index.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":889083,\"sha256\":\"6e45e76a75403b00bc8b453197cb55391ebdd3b3e2952ee311f7ab54c1ae61c3\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.node.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":888287,\"sha256\":\"c0e365de8395f1dd7a59b0ae5c5aac80d25ebf7af007f01f1e85fd5c961bcb1d\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.cjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":910239,\"sha256\":\"f2eb3b46e21cf437e36937b6641c702fe1880c4325097a13c744f89601d7d7b1\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4526}\nFixed 2430 imports in 1138 .d.ts files.\n✓ agents-hashes.json written: 14 file(s) → <checkout>/packages/canard/schema-form/dist/agents-hashes.json\n"
+  },
+  "unit": {
+    "cmd": "yarn workspace @canard/schema-form test --run --project unit --maxWorkers 4 --reporter=json --outputFile=<scratch>/defect-final-unit-green.json",
+    "exit_code": 0,
+    "outputTail": "JSON report written to <scratch>/defect-final-unit-green.json\n"
+  },
+  "render": {
+    "cmd": "yarn workspace @canard/schema-form test --run --project render --maxWorkers 4 --reporter=json --outputFile=<scratch>/defect-final-render.json",
+    "exit_code": 0,
+    "outputTail": "JSON report written to <scratch>/defect-final-render.json\n"
+  },
+  "react18": {
+    "cmd": "yarn workspace @canard/schema-form test --run --project react18 --maxWorkers 4 --reporter=json --outputFile=<scratch>/defect-final-react18.json",
+    "exit_code": 0,
+    "outputTail": "JSON report written to <scratch>/defect-final-react18.json\n"
+  },
+  "verify": {
+    "cmd": "yarn workspace @canard/schema-form test:verify --run --maxWorkers 4 --reporter=json --outputFile=<scratch>/defect-final-verify.json",
+    "exit_code": 0,
+    "outputTail": "JSON report written to <scratch>/defect-final-verify.json\n"
+  },
+  "storybook": {
+    "cmd": "yarn workspace @canard/schema-form test --run --project storybook --reporter=json --outputFile=<scratch>/defect-final-storybook.json",
+    "exit_code": 0,
+    "outputTail": "JSON report written to <scratch>/defect-final-storybook.json\n"
+  },
+  "production": {
+    "cmd": "yarn workspace @canard/schema-form test:production --reporter=json --outputFile=<scratch>/defect-final-production.json",
+    "exit_code": 0,
+    "outputTail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\n\n RUN  v3.2.6 <checkout>/packages/canard/schema-form\n\n···stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths\n107COUNT path-strings fast escaping=2 names=2\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays\n106COUNT empty-fragment keyword-array-check=0\n\n·stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name\n107COUNT path-strings general escaping=2 names=2\n\n····stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'nested-d5-f4'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"nested-d5-f4\",\"mode\":\"production\",\"distinct\":1706}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'flat-500'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"flat-500\",\"mode\":\"production\",\"distinct\":502}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'oneOf-20'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"oneOf-20\",\"mode\":\"production\",\"distinct\":111}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'sample-0'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"sample-0\",\"mode\":\"production\",\"distinct\":5}\n\n·············\n\n Test Files  10 passed (10)\n      Tests  21 passed (21)\n   Start at  19:02:02\n   Duration  3.69s (transform 3.61s, setup 0ms, collect 12.98s, tests 630ms, environment 2.62s, prepare 728ms)\n\nJSON report written to <scratch>/defect-final-production.json\n"
+  },
+  "importModel": {
+    "cmd": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<scratch>/defect-final-import-model.json",
+    "exit_code": 0,
+    "outputTail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <scratch>/defect-final-import-model.json\n"
+  }
+}

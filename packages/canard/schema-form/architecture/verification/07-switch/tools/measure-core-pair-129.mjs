@@ -1,5 +1,5 @@
 /*
- * 사용법(stage-07 루트, /opt/homebrew/bin/node):
+ * 사용법(stage-07 루트, {node-home}/bin/node):
  *   node <이 파일> AA if-then off [--blocks=24] [--first-block=0] [--warmup=20] [--samples=41] [--no-gc] [--bundles=<디렉터리>]
  *     [--base-revision=<sha>] [--tag=<이름>]
  *   node <이 파일> head:2 oneOf-10 off --no-gc
@@ -27,8 +27,8 @@ import { measurementNode131 } from './measurement-node-131.mjs';
 const tool = fileURLToPath(import.meta.url);
 const directory = path.dirname(tool);
 const repo = path.resolve(directory, '../../../../../../..');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
-assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+const scratch = '{scratch}';
+assert.equal(repo, '{repo}');
 assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(measurementNode131), `Timing runs use ${measurementNode131}`);
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const hash = value => createHash('sha256').update(value).digest('hex');

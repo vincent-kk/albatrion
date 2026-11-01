@@ -1,5 +1,5 @@
 {
-  "executable": "/opt/homebrew/Cellar/node/26.12.1_1/bin/node",
+  "executable": "{node-home}/Cellar/node/26.12.1_1/bin/node",
   "args": [
     "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form/architecture/verification/design-optimization/tools/alternate.mjs",
     "--baseline-bundle=<scratch>/claude-501/perf-runs/20261029T1358-8d7d1a8-micro-hygiene.noindex/bundles/A/index.node.mjs",

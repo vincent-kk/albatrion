@@ -21,8 +21,8 @@
 파일·건수와 커밋을 집계할 때 실제 실행한 셸 명령은 다음과 같습니다. Python 안의 `rg` 호출이 파일을 고르고, 정규식이 호출 지점을 셉니다.
 
 ```sh
-cd /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07
-git -C /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07 rev-parse --short HEAD
+cd {repo}
+git -C {repo} rev-parse --short HEAD
 python3 - <<'PY'
 from pathlib import Path
 import re

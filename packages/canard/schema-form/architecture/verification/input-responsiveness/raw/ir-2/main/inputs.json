@@ -1,0 +1,54 @@
+{
+  "stage": "IR-1",
+  "preparedAt": "2026-10-30T16:57:22.734Z",
+  "lanes": [
+    "L",
+    "E1"
+  ],
+  "bundles": {
+    "L": {
+      "commit": "public-0.16.1",
+      "toolCommit": "317f215dc79d5a3892a9c2fbafceb18ccaa222dc",
+      "product": {
+        "sha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46",
+        "bytes": 260013
+      },
+      "browser": {
+        "sha256": "c01b4ec545b007a8797f07d1f40c8434a0a5f4dbcb743df700a9ed75f49efc90",
+        "bytes": 1246613
+      }
+    },
+    "E1": {
+      "commit": "317f215dc",
+      "toolCommit": "317f215dc79d5a3892a9c2fbafceb18ccaa222dc",
+      "product": {
+        "sha256": "3617ff8fe7f2f739803853dce86a1b4913a220b588712b2adf46b6a0a986aac4",
+        "bytes": 857292
+      },
+      "browser": {
+        "sha256": "679b84022e58d342a3ce78e8abcd6420a6b04bc5e0196c0d0eedf76c3da8377d",
+        "bytes": 1822221
+      }
+    }
+  },
+  "viewport": {
+    "width": 900,
+    "height": 700
+  },
+  "productionReact": true,
+  "versions": {
+    "node": "v26.12.1",
+    "react": "19.2.6",
+    "playwright": "1.58.0",
+    "esbuild": "0.25.9",
+    "ajv": "8.17.1"
+  },
+  "environment": {
+    "cpu": "Apple M1 Max",
+    "logicalCpus": 10,
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "27.0.0",
+    "memoryGiB": 64
+  }
+}

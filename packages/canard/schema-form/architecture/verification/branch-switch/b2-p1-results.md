@@ -107,9 +107,9 @@ Storybook은 후보의 두 직렬 shard에서 100파일·251사례를 모두 통
 
 ## 독립 검토와 원자료
 
-- 1부 antigravity 검토는 a8e61d155..91acbdb77에 PASS였고, 이후 발견한 메타데이터 보정과 두 후보의 보정과 미채택 결과는 2부의 별도 범위다. 2부 독립 검토와 PR 생성은 코디네이터에게 인계한다. 원문은 `/private/tmp/b2-p1-20261027/independent-review.md`와 `/private/tmp/claude-501/perf-runs/453-reviews/pr-b2-p1-antigravity.md`다.
-- 모든 정식 원자료 디렉터리는 `/private/tmp/b2-p1-20261027/measurement-paths.json`에 열거되어 있다. 공통 접두는 `/private/tmp/claude-501/perf-runs/20261027T1032-fa02e48-b2p1-`이며 A/B/A′의 core·probes·branches, A/B의 ledger를 포함한다.
-- `/private/tmp/b2-p1-20261027/`에 quiet-attempts/quiet-end, measurement-steps, judgement, 공식 TEST-073 로그, Node/Bun heap 로그, subscribed, SHA 증거, 배달 비교, 모든 검사 stdout/stderr, 후보 patch를 보존했다. Node 힙 로그에는 TSX module.register 사용의 DEP0205 경고가 JSON 뒤에 있어 첫 JSON 행을 파싱했으며 경고도 원문에 남겼다.
+- 1부 antigravity 검토는 a8e61d155..91acbdb77에 PASS였고, 이후 발견한 메타데이터 보정과 두 후보의 보정과 미채택 결과는 2부의 별도 범위다. 2부 독립 검토와 PR 생성은 코디네이터에게 인계한다. 원문은 `{scratch}/b2-p1-20261027/independent-review.md`와 `{scratch}/perf-runs/453-reviews/pr-b2-p1-antigravity.md`다.
+- 모든 정식 원자료 디렉터리는 `{scratch}/b2-p1-20261027/measurement-paths.json`에 열거되어 있다. 공통 접두는 `{scratch}/perf-runs/20261027T1032-fa02e48-b2p1-`이며 A/B/A′의 core·probes·branches, A/B의 ledger를 포함한다.
+- `{scratch}/b2-p1-20261027/`에 quiet-attempts/quiet-end, measurement-steps, judgement, 공식 TEST-073 로그, Node/Bun heap 로그, subscribed, SHA 증거, 배달 비교, 모든 검사 stdout/stderr, 후보 patch를 보존했다. Node 힙 로그에는 TSX module.register 사용의 DEP0205 경고가 JSON 뒤에 있어 첫 JSON 행을 파싱했으며 경고도 원문에 남겼다.
 - 정식 원자료의 표본 수·PID 독립성·bundle SHA·minima·단계 self 합·힙 7표본 중앙값을 `judge.py`에서 검증했다. 재분석만 수행했고 재측정하지 않았다.
 
 ## 후보 2 — 실제 증분 경로의 단일 창 결과
@@ -216,4 +216,4 @@ Node 관문은 통과했다. Bun 2,226.390 ≤ 2,224.794는 거짓이며 보고�
 
 공개 동결 배열을 매 쓰기에 즉시 유지하는 이 설계는 루트 호스트의 목록 길이에 비례하는 O(L) 복사를 피하지 못한다. 후보 2는 정상 증분 경로에서도 3 µs 목표를 충족하지 못했다. B2-P1b는 쓰기에서 Δ가 닿은 호스트를 dirty로 표시하고 첫 공개 읽기에서 동결 배열을 materialize한 뒤 다음 변경까지 같은 참조를 유지하는 별도 가설이다. 비접촉 호스트 identity·순서·동결·NODE-044를 보존해야 하며 이번 작업에는 구현하지 않았다. 이 후속 가설이 목표를 충족한다는 증거는 아직 없다.
 
-후보 2 원자료는 `/private/tmp/b2-p1-20261027/candidate2/measurement-paths.json`이 열거한다. 정식 접두는 `/private/tmp/claude-501/perf-runs/20261027T1124-2501849-b2p1-c2-`다. `judgement.json`, `test073-primary.log`, `test073-both.log`, `functional-summary.json`, `check-steps.json`, quiet 시작·종료 표본, delivery·SHA 증거와 `candidate.patch`를 같은 디렉터리에 보존했다. 후보 1 원자료는 변경하지 않았다. 2부 독립 검토와 PR 생성은 코디네이터가 수행한다.
+후보 2 원자료는 `{scratch}/b2-p1-20261027/candidate2/measurement-paths.json`이 열거한다. 정식 접두는 `{scratch}/perf-runs/20261027T1124-2501849-b2p1-c2-`다. `judgement.json`, `test073-primary.log`, `test073-both.log`, `functional-summary.json`, `check-steps.json`, quiet 시작·종료 표본, delivery·SHA 증거와 `candidate.patch`를 같은 디렉터리에 보존했다. 후보 1 원자료는 변경하지 않았다. 2부 독립 검토와 PR 생성은 코디네이터가 수행한다.

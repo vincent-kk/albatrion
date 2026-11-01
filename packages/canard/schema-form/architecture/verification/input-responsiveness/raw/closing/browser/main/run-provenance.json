@@ -1,0 +1,18 @@
+{
+  "preregisteredCommit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "toolCommit": "342d91df9e2be81c548670c77e53f2b2779fe9de",
+  "headBeforeRun": "342d91df9e2be81c548670c77e53f2b2779fe9de",
+  "headAfterWindow": "342d91df9e2be81c548670c77e53f2b2779fe9de",
+  "gitStatusBeforeRun": "clean",
+  "gitStatusImmediatelyAfterWindow": "clean",
+  "worktreeEditedDuringWindow": false,
+  "windowAttempts": 1,
+  "refusedAttempts": 0,
+  "crashedAttempts": 0,
+  "reruns": 0,
+  "startedAt": "2026-11-01T12:54:00.939Z",
+  "endedAt": "2026-11-01T13:56:03.762Z",
+  "keptPages": 950,
+  "keptOperations": 1500,
+  "ownerAcceptance": 71
+}

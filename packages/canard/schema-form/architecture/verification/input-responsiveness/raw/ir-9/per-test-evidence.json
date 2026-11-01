@@ -1,0 +1,2718 @@
+[
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "A1 reset through the handle reports reset-chain failures as load",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "A1 rebuild through the handle reports reset-chain failures as load",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "A1 validator through the handle reports reset-chain failures as load",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "T2 reset onChange nested writes retain the outer load origin",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "P3-4 a write node listener calling reset keeps write across adoption",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "P3-4 a validation-result listener failure carries validate",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "P3-4 standalone setState after a load never retains stale load origin",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.chain-origin.render.test.tsx",
+    "test": "P3-4 external errors at first commit use load and prop changes use write",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 construction warnings carry load and no exposure fields",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 public write listener errors carry write",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 throwing onChange carries write",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 explicit whole-schema compile failure carries validate",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 automatic load-slot compile failure carries validate",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 native submit owns SubmitWhileDegraded",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+    "test": "T1 T3 render boundary owns render and preserves error identity",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report clears an OnRequest report once while retaining an unchanged root",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report adds no OnRequest report when the last report is already empty",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report clears an OnChange report exactly once without duplicating the root event",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report clears the last report once when 'OnRequest' reset rebuilds the root",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report clears the last report once when 'OnChange' reset rebuilds the root",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report adds no OnRequest report when a rebuild follows an empty report",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report adds no OnRequest report when a rebuild precedes the first validation",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report does not report an empty list when the replacement root retains external errors",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report adds no report when validate() finds no errors after the errors prop was cleared",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report surfaces a replacement mount error when the empty report consumer also throws",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation-reset-report.test.tsx",
+    "test": "243C-01 reset validation report finishes a rebuild before the empty report reaches a throwing consumer",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (h mount) replacing a root before its slot validates only the replacement",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 a same-schema reset before the slot retains its owed newest verdict",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (c) compiles and validates only after the first frame",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (c) reports a load compile failure once as sink and validate still rejects",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (c-i) does not recapture a compile failure after a child passive validate",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (c-ii) keeps the first child layout-write failure on the sink surface",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 R2 a child layout write validates the newest commit exactly once",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 R2 an explicit root validation before the slot fulfills the mount obligation",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 R2 a subtree validation before the slot still owes one mount validation",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (d) StrictMode validates once after the frame",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-7 T3 unmount before the slot still validates once without an error record",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "frame-backed Form validation IR-6 (a,b) writes in one frame deliver the newest commit once",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "IR-6 settle waits through writes started by delivered validation callbacks",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "T10 write then same-schema reset drops the earlier request and validates the default once",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.after-paint.render.test.tsx",
+    "test": "T11 a deferred reset without a validator releases the earlier pending hold",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T3 reset retains a usable replacement on slot compile failure (hidden=false)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T3 reset retains a usable replacement on slot compile failure (hidden=true)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T3 rebuild retains a usable replacement on slot compile failure (hidden=false)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T3 rebuild retains a usable replacement on slot compile failure (hidden=true)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T3 validator retains a usable replacement on slot compile failure (hidden=false)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T3 validator retains a usable replacement on slot compile failure (hidden=true)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T9 explicit compile rejection before slot is isolated by load generation (reset=false)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "T9 explicit compile rejection before slot is isolated by load generation (reset=true)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "B3 a new same-id schema with different content compiles after old-root release",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "round b native submit reuses the slot compile rejection (mode=2)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+    "test": "round b native submit reuses the slot compile rejection (mode=1)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T1 OnRequest compiles only in the load slot (failure=false)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T1 OnRequest compiles only in the load slot (failure=true)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T2 Always defers compile and first verdict (policy=true)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T2 Always defers compile and first verdict (policy=1)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T4 same-schema reset leaves pending false until the load slot and runs one verdict",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T5 a write before the slot supersedes its verdict (reset=false)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T5 a write before the slot supersedes its verdict (reset=true)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T6 None never compiles across every guard-free load kind",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T8 superseded same slot does not enter the engine",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T8 superseded replacement slot does not enter the engine",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.load-slot.render.test.tsx",
+    "test": "T8 superseded failing slot does not enter the engine",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-always.render.test.tsx",
+    "test": "IR-6 Always renders the load verdict only after the slot (layout write=false)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-always.render.test.tsx",
+    "test": "IR-6 Always renders the load verdict only after the slot (layout write=true)",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-always.render.test.tsx",
+    "test": "IR-6 the default visibility keeps mount validation after its first frame",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-always.render.test.tsx",
+    "test": "IR-6 an Always layout-write compile failure releases pending and reports sink once",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-7 T2 mount validation runs while hidden and is not repeated on show",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-7 T3 R1 reports a layout-write compile failure while hidden",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-7 T3 V6 isolates onError at hidden chain end and delivers later records",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-7 T3 rebuild follows a failure already delivered while hidden",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-7 T3 W4 async mount rejection reports once while hidden",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-6 W4 a compile onError failure reaches the host once without recapture",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+    "test": "IR-7 T3 W5 hidden chain reports guard writes into the current form",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+    "test": "IR-7 round b adoption compile failure delivers its reset record (hidden=false)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+    "test": "IR-7 round b adoption compile failure delivers its reset record (hidden=true)",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+    "test": "IR-7 round b StrictMode replay delivers the non-idempotent child layout write once",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+    "test": "IR-7 round b failed build before first show retains exactly one root subscription",
+    "baseline": [
+      "passed",
+      "skipped"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "skipped"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+    "test": "IR-7 round b replacing an initially hidden failed load reports its construction error once",
+    "baseline": [
+      "passed",
+      "skipped"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "skipped"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+    "test": "IR-7 round c initially hidden validator replacement delivers its reset-chain compile record",
+    "baseline": [
+      "failed",
+      "skipped"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "skipped"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-025 settlement failure commits and notifies the caller value before throwing",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-025 compile failure rejects validation and submission",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-036 validatorFactory compiles validation and synchronous guards",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-039 same-schema reset retains nodes clears state and refreshes only inputs",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-039 changed-schema reset switches the handle before returning",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-041 OnRequest skips mount and reset validation while OnChange runs once",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-044 onError observes mismatch warnings without replacing the value",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-045 degraded diagnostics survive writes and subtree reset and reject submit",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-046 field render failures are isolated and reported with componentStack",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/__tests__/migration/form-lifecycle.test.tsx",
+    "test": "LANDING-140 input Merge retains its own DOM instance",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "ERROR-044 RENDER_FAILED preserves reporter, path, identity and sink for renderer",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "ERROR-044 RENDER_FAILED preserves reporter, path, identity and sink for formatError",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "ERROR-044 preserves console surfacing without a consumer for renderer",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "ERROR-044 preserves console surfacing without a consumer for formatError",
+    "baseline": [
+      "failed",
+      "failed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "112C-01 EVENT-039 keeps all boundaries mounted while Refresh re-keys only its input",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "112C-01 keeps a failed renderer boundary through Refresh and peer writes",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+    "test": "112C-01 keeps a failed formatError boundary through Refresh and peer writes",
+    "baseline": [
+      "passed",
+      "passed"
+    ],
+    "green": {
+      "render": [
+        "passed"
+      ],
+      "react18": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/__tests__/scenarios/array.source-b-structure.spec.ts",
+    "test": "array Source-B structure rollback 58C-01 restores caller structure and reports its single budget occurrence",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/__tests__/surfaceIndex.test.ts",
+    "test": "FieldNode PR-2 surface TEST-069 FieldNode index names the binding-only context channel",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/__tests__/validation-guard-integration.test.ts",
+    "test": "guard records at public entry boundaries ERROR-146 ERROR-153 warns once after mount with no validator, including an ungated tree",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/__tests__/validation-guard-integration.test.ts",
+    "test": "guard records at public entry boundaries ERROR-151 suppresses the missing-validator warning in None mode",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/__tests__/validation-guard-integration.test.ts",
+    "test": "guard records at public entry boundaries prepares every development if guard at tree construction before mount",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/__tests__/validation-guard-integration.test.ts",
+    "test": "guard records at public entry boundaries ERROR-041 dev compiles once and each consuming tree records after mount commit at sink",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/__tests__/validation-guard-integration.test.ts",
+    "test": "guard records at public entry boundaries ERROR-041 production skips unevaluated guards and reports first failure after commit",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/__tests__/validation-guard-integration.test.ts",
+    "test": "guard records at public entry boundaries VALIDATE-044 treats a Promise-returning guard as GUARD_FAILED",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.compile-failed.test.ts",
+    "test": "validator failures WRITE-099 ERROR-039 31C-03 reports an unvalidatable load once and resetSubtree does not clear it",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.compile-failed.test.ts",
+    "test": "validator failures ERROR-019 VALIDATE-042 rejects explicit validate when the validator throws",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.compile-failed.test.ts",
+    "test": "validator failures VALIDATE-048 compile failure preserves the original error in details",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.compile-failed.test.ts",
+    "test": "validator failures VALIDATE-045 reports explicit compile failure once in one form load",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.compile-failed.test.ts",
+    "test": "validator failures ERROR-039 reports an OnChange throw once before its ownerless sink",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.compile-failed.test.ts",
+    "test": "validator failures WRITE-099 rejects writes made by the asynchronous validation error observer",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution VALIDATE-006 VALIDATE-049 coalesces requests and discards a stale result",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution VALIDATE-008 None provides no verdict; OnRequest explicitly evaluates fresh input",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution VALIDATE-043 FRAGMENT-053 routes root and child issues without altering the verdict",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution EVENT-046 delivers the latest result after the synchronous chain in its own wave",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution EVENT-046 ERROR-019 reports a result-wave listener failure once to the sink",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution WRITE-093 VALIDATE-051 passes the emitted union value by reference",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution 18C-101 coalesces two scoped requests without losing either target",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.run.test.ts",
+    "test": "validation execution VALIDATE-008 leaves the verdict absent when no validator is selected",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees VALIDATE-045 releases an unmounted same-id root before compiling its replacement",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees VALIDATE-046 ERROR-201 keeps the older tree when a new root fails compilation",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees 31C-03 does not call an unrelated compile exception a duplicate-id collision",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees VALIDATE-046 (iii) adopts without compiling and reports duplicate failure at the load entry",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees VALIDATE-046 (iii) adopts a separately compiled same-id replacement",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees B2 preserves duplicateSchemaId from compile time after the competing root is released",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/validation/__tests__/validation.same-id.test.ts",
+    "test": "same schema id trees round b a later retained root does not relabel a cached non-id duplicate failure",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures 'gate then conflict' preserves all failures in occurrence order",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures 'two conflicts' preserves all failures in occurrence order",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures 'guard then budget' preserves all failures in occurrence order",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures keeps two distinct derived expression failures",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures keeps two distinct resetInteraction expression failures",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures keeps two distinct unsetOnInactive expression failures",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures keeps two distinct visible expression failures",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures keeps missing injection targets after an earlier conflict",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+    "test": "ERROR-004 ERROR-005 58C-01 all dispatch settlement failures throws a single non-gate error itself",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 35C-09 NODE-044 perished errors stay frozen after live error stores are pruned",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 33C-01 all five entries return settled synchronous results outside a batch",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 33C-01 exports all five entries; refused push returns the current length and the others undefined",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 EVENT-035 setValue then push reads marks and settles/onChanges once",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 later setValue overrides an earlier array mark",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 pop/remove return marked interpreted raw, including descendant marks",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 update/clear and terminal plans keep synchronous contracts",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 wrong-kind marks only push; other verbs leave the mark unchanged",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 35C-01 non-array errors reach onError with surface thrown",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 EVENT-017 non-array throws at chain end after prior marks commit",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 35C-02 EVENT-068 shifted item and descendant receive previous/current paths",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 35C-09 warning re-keying keeps one occurrence across feedback and prunes spent keys",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 33C-01 insert returns the settled length, and refused or out-of-range calls the current length",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 insert and remove mixed in one batch return call-site results and settle once",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.array-entry.test.ts",
+    "test": "array entry integration 62C-01 47C-02 batch insert on a marked non-array value follows push only at index 0",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.bundle.test.ts",
+    "test": "chain failure bundles ERROR-005 ERROR-017 preserves occurrence order and the original values",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.bundle.test.ts",
+    "test": "chain failure bundles ERROR-028 completes deliveries and bundles the handler failure behind the original",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.bundle.test.ts",
+    "test": "chain failure bundles ERROR-028 a warning-only handler failure is thrown once",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.bundle.test.ts",
+    "test": "chain failure bundles ERROR-028 ownerless delivery sinks handler failure once and continues",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.bundle.test.ts",
+    "test": "chain failure bundles ERROR-017 ERROR-023 keeps the first error and omits bundles from component records",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.bundle.test.ts",
+    "test": "chain failure bundles A5 keeps the first matching error in each collection and refreshes it in a later collection",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 55C-01 preserves a conflict before a later guard in errors and records",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 ERROR-041 bundles two guards in evaluation order and merges their records",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 ERROR-019 ERROR-041 preserves guard/expression order (expression first: false)",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 ERROR-019 ERROR-041 preserves guard/expression order (expression first: true)",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 ERROR-041 throws a single guard failure itself without an aggregate",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 ERROR-023 ERROR-041 throws both guards on a second write without new records",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.gate-failures.test.ts",
+    "test": "round 55 gate failure regression ERROR-005 ERROR-041 keeps the development mount pass as sink records without throwing",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-023 ERROR-041 retains the first bundled guard error in its stored record",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-017 ERROR-121 retains the location of a thrown expression",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-017 ERROR-121 keeps two same-location expression occurrences in a bundle",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-004 ERROR-019 ERROR-021 reports after delivery and onChange",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-022 ERROR-023 ERROR-099 ERROR-101 preserves raw callback exceptions per event",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-030 skips warning records and formatting without a consumer",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-030 allocates a record only after the consumer check",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-021 late observer receives only later entries",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-019 preserves an earlier listener failure before a later warning",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-021 ERROR-030 reports two active oneOf gates only with a consumer",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-019 ERROR-024 turns collected blueprint warnings into deferred records",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting WRITE-099 31C-02 checks whole non-JSON values only in development",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-022 preserves an undefined value thrown by a callback",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-019 converts a PR-1 blueprint failure diagnostic and its thrown value",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.report.test.ts",
+    "test": "chain error reporting ERROR-030 instruments warning and record allocation without a consumer",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.source-path.test.ts",
+    "test": "ERROR-017 ERROR-195 59C-01 automatic write source details keeps both shared-target 'INJECT_TARGET_MISSING' sources in errors and records",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.source-path.test.ts",
+    "test": "ERROR-017 ERROR-195 59C-01 automatic write source details keeps both shared-target 'INVALID_VIRTUAL_NODE_VALUES' sources in errors and records",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.source-path.test.ts",
+    "test": "ERROR-017 ERROR-195 59C-01 automatic write source details ERROR-195 59C-01 preserves a caller-origin write-shape error without sourcePath",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures ERROR-023 ERROR-041 reports a throwing guard in a standalone request once",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures EVENT-010 ERROR-004 31C-01 preserves a request failure after an earlier listener writes",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures EVENT-010 ERROR-004 31C-01 preserves a state failure before a later listener writes",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures EVENT-010 ERROR-004 reports a nested write failure once to its enclosing request",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures ERROR-004 ERROR-023 reports an onChange write listener failure once",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures ERROR-004 ERROR-023 reports a state listener failure inside onChange once",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures ERROR-004 preserves a request collector across an onChange nested entry",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures EVENT-034 ERROR-023 records the 26th onChange failure once",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures ERROR-019 keeps an earlier outer occurrence before a nested listener failure",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts",
+    "test": "standalone wave failures ERROR-019 gives a nested validation-result write the validate origin",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/providers/RootNodeContext/__tests__/bufferedRecords.test.ts",
+    "test": "IR-7 T3 a never-prepared replacement transfers its record origin and flushes once",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/providers/RootNodeContext/__tests__/constructionErrors.test.ts",
+    "test": "IR-7 round b replacement reports an unprepared construction failure once (already reported=false)",
+    "baseline": [
+      "failed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  },
+  {
+    "file": "src/providers/RootNodeContext/__tests__/constructionErrors.test.ts",
+    "test": "IR-7 round b replacement reports an unprepared construction failure once (already reported=true)",
+    "baseline": [
+      "passed"
+    ],
+    "green": {
+      "unit": [
+        "passed"
+      ]
+    }
+  }
+]

@@ -1,0 +1,280 @@
+{
+  "kind": "measured",
+  "startedAt": "2026-10-30T18:40:24.874Z",
+  "endedAt": "2026-10-30T18:40:39.710Z",
+  "node": "v24.20.0",
+  "arch": "arm64",
+  "ajv": "8.17.1",
+  "options": {
+    "allErrors": true,
+    "strictSchema": false,
+    "validateFormats": false,
+    "allowUnionTypes": true
+  },
+  "warmup": 1000,
+  "rounds": 21,
+  "calls": 250,
+  "samplesPerCell": 5250,
+  "cpu": {
+    "startedAt": "2026-10-30T18:39:54.718Z",
+    "endedAt": "2026-10-30T18:40:24.874Z",
+    "durationSeconds": 30.152249,
+    "top": [
+      {
+        "pid": 394,
+        "name": "mds",
+        "cpuPercent": 25.76922205703606
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 6.9314895880574126
+      },
+      {
+        "pid": 2496,
+        "name": "mdworker_shared",
+        "cpuPercent": 6.765664478294803
+      },
+      {
+        "pid": 99611,
+        "name": "mdworker_shared",
+        "cpuPercent": 6.566674346580248
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.434014258766204
+      },
+      {
+        "pid": 269,
+        "name": "mdworker_shared",
+        "cpuPercent": 6.235024127055994
+      },
+      {
+        "pid": 2492,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.936538929484166
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 5.903373907527879
+      },
+      {
+        "pid": 3595,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.8370438636268895
+      },
+      {
+        "pid": 189,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.140578402625953
+      }
+    ],
+    "heavy": [],
+    "excluded": [
+      3852,
+      1422,
+      521,
+      467,
+      80848
+    ]
+  },
+  "invalidRatio": 0.44270368108703423,
+  "validRatio": 1.0750000000285842,
+  "adopted": false,
+  "rows": [
+    {
+      "fixture": "flat-2000",
+      "mode": "sync",
+      "verdict": "valid",
+      "conversion": false,
+      "medianUs": 37.541999998211395,
+      "p95Us": 41.83300000295276
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "async",
+      "verdict": "valid",
+      "conversion": false,
+      "medianUs": 34.95899999688845,
+      "p95Us": 40.08299999986775
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "sync",
+      "verdict": "valid",
+      "conversion": true,
+      "medianUs": 37.62500000084401,
+      "p95Us": 40.08400000020629
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "async",
+      "verdict": "valid",
+      "conversion": true,
+      "medianUs": 34.99999999985448,
+      "p95Us": 40.000000000873115
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "sync",
+      "verdict": "invalid",
+      "conversion": false,
+      "medianUs": 37.58399999787798,
+      "p95Us": 39.791999999579275
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "async",
+      "verdict": "invalid",
+      "conversion": false,
+      "medianUs": 85.08299999812152,
+      "p95Us": 88.66599999601021
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "sync",
+      "verdict": "invalid",
+      "conversion": true,
+      "medianUs": 37.667000004148576,
+      "p95Us": 39.41599999961909
+    },
+    {
+      "fixture": "flat-2000",
+      "mode": "async",
+      "verdict": "invalid",
+      "conversion": true,
+      "medianUs": 85.08400000573602,
+      "p95Us": 89.33400000387337
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "sync",
+      "verdict": "valid",
+      "conversion": false,
+      "medianUs": 2.2079999980633147,
+      "p95Us": 25.41699999710545
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "async",
+      "verdict": "valid",
+      "conversion": false,
+      "medianUs": 3.166999995301012,
+      "p95Us": 4.50000000273576
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "sync",
+      "verdict": "valid",
+      "conversion": true,
+      "medianUs": 2.2080000053392723,
+      "p95Us": 25.292000005720183
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "async",
+      "verdict": "valid",
+      "conversion": true,
+      "medianUs": 3.166999995301012,
+      "p95Us": 5.666999997629318
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "sync",
+      "verdict": "invalid",
+      "conversion": false,
+      "medianUs": 2.209000005677808,
+      "p95Us": 26.000000005296897
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "async",
+      "verdict": "invalid",
+      "conversion": false,
+      "medianUs": 25.874999999359716,
+      "p95Us": 618.0420000018785
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "sync",
+      "verdict": "invalid",
+      "conversion": true,
+      "medianUs": 2.2499999977299012,
+      "p95Us": 31.95899999991525
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "mode": "async",
+      "verdict": "invalid",
+      "conversion": true,
+      "medianUs": 25.874999999359716,
+      "p95Us": 618.332999998529
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "sync",
+      "verdict": "valid",
+      "conversion": false,
+      "medianUs": 167.24999999860302,
+      "p95Us": 171.04099999414757
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "async",
+      "verdict": "valid",
+      "conversion": false,
+      "medianUs": 167.45800000353483,
+      "p95Us": 171.70799999439623
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "sync",
+      "verdict": "valid",
+      "conversion": true,
+      "medianUs": 167.62500000186265,
+      "p95Us": 174.99999999563443
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "async",
+      "verdict": "valid",
+      "conversion": true,
+      "medianUs": 167.20899999927497,
+      "p95Us": 172.87499999656575
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "sync",
+      "verdict": "invalid",
+      "conversion": false,
+      "medianUs": 164.1250000029686,
+      "p95Us": 167.79200000019046
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "async",
+      "verdict": "invalid",
+      "conversion": false,
+      "medianUs": 168.91699999541743,
+      "p95Us": 173.33399999915855
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "sync",
+      "verdict": "invalid",
+      "conversion": true,
+      "medianUs": 164.1250000029686,
+      "p95Us": 167.50000000320142
+    },
+    {
+      "fixture": "array-1000",
+      "mode": "async",
+      "verdict": "invalid",
+      "conversion": true,
+      "medianUs": 168.91700000269338,
+      "p95Us": 172.00000000593718
+    }
+  ]
+}

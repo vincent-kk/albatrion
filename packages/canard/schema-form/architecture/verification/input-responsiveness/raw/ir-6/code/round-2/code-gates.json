@@ -1,0 +1,183 @@
+{
+  "baseline": "facd72a71",
+  "reviewBaseline": "c0b2f169a",
+  "amendments": [
+    1,
+    2,
+    3
+  ],
+  "timedSamples": 0,
+  "runsSequential": true,
+  "testSummaryNote": "Vitest testResults counts files. React18 runs separately. Verify overlaps other projects. One todo predates IR-6. Production reran after final build. Only JSDoc additions followed the unit/render runs; verify ran against these comments and unchanged executable code.",
+  "gates": {
+    "unit": {
+      "files": 613,
+      "passed": 4041,
+      "failed": 0,
+      "todo": 1,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-unit.json.gz"
+    },
+    "render": {
+      "files": 137,
+      "passed": 799,
+      "failed": 0,
+      "todo": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-render.json.gz"
+    },
+    "react18": {
+      "files": 137,
+      "passed": 799,
+      "failed": 0,
+      "todo": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-react18.json.gz"
+    },
+    "verify": {
+      "files": 755,
+      "passed": 4884,
+      "failed": 0,
+      "todo": 1,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-verify.json.gz"
+    },
+    "storybook": {
+      "files": 100,
+      "passed": 251,
+      "failed": 0,
+      "todo": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-storybook.json.gz"
+    },
+    "production": {
+      "files": 10,
+      "passed": 21,
+      "failed": 0,
+      "exitCode": 0,
+      "finalBundle": true,
+      "distinctFreeze": {
+        "nested-d5-f4": 1706,
+        "flat-500": 502,
+        "oneOf-20": 111,
+        "sample-0": 5
+      }
+    },
+    "lint": {
+      "exitCode": 0
+    },
+    "typecheck": {
+      "exitCode": 0
+    },
+    "build": {
+      "exitCode": 0
+    },
+    "publicDeclarations": {
+      "exitCode": 0
+    },
+    "fca": {
+      "exitCode": 0,
+      "newFindings": 0,
+      "absoluteStatus": "indeterminate",
+      "baselineFindings": 202,
+      "candidateFindings": 202,
+      "diagnostics": 177,
+      "lineOnlyFindingMovements": 3,
+      "factsExact": 1699,
+      "unsupportedFacts": 175
+    },
+    "ledger": {
+      "exitCode": 0,
+      "refProblems": 0,
+      "nonVerbatim": 0,
+      "supplementNonVerbatim": 0,
+      "unparsedSupplements": 0,
+      "untaggedSentences": 0,
+      "coverageProblems": 66,
+      "preExistingUncited": 66
+    }
+  },
+  "sourceHashes": {
+    "src/__tests__/e2e/features-composite-tails.test.tsx": "88a2b92c79521887e3edd2a2610e644b3a76093df863d0b4ed5a622c30c3fea7",
+    "src/__tests__/e2e/features-derivation-consumer.test.tsx": "066edb7f24657957999dafd2ddb6ee72ff0c6c30907ee1809779492a570a3ea9",
+    "src/__tests__/e2e/features-handle-layout-consumer.test.tsx": "9b286ffab9053d377b5118fd4e02cbe74fa4bb0ae9bbbe0a314073d4b0c19124",
+    "src/__tests__/e2e/features-input-components-consumer.test.tsx": "207daf4cb3d9f450243bb2e60d6276dd54da3634612b25394efbd4e827b4cad7",
+    "src/__tests__/e2e/features-plugins-consumer.test.tsx": "5eec4649faa549bafc73a0334f76643abb28e121eef01ca04ea5fc76d2d5e0bd",
+    "src/__tests__/e2e/features-validation-state-display.test.tsx": "47083e34c6147e9f22969930da290a4e3debf58193f78d90105c80ad3ca42ee0",
+    "src/__tests__/e2e/validation-mount-calls.test.tsx": "921d26446ebdfb1807c97780b78c61c48230cb8578f0ef40c562e34eb26b0ce7",
+    "src/__tests__/e2e/validation-reset-report.test.tsx": "08b0fc233db1faf4b8324e264ffc2eebc79864186acf85cfa1c56b8a27072aa4",
+    "src/__tests__/e2e/validation-unchanged-result.test.tsx": "425fd4d6aa636cde899453fcb612023c455e68940a8a10aae5e5fc31862156b9",
+    "src/__tests__/e2e/validation.after-paint.render.test.tsx": "11d86c7b66a9672ab690b1e7308739ed7b23a9f08465a5a584c5368899e2147f",
+    "src/__tests__/e2e/validation.cadence.render.test.tsx": "c833078935bbafbf101d507ff2cef30808b83eb556113cb039d70b3a98a9fd76",
+    "src/__tests__/e2e/validation.mount-owed.render.test.tsx": "4283a8eba29fba0592730d4065a19019c34b37451e0cb5ceb4ae95bb758162d5",
+    "src/__tests__/helpers/createValidationFrameClock.ts": "7adb56879b8b9f39efee3c3daf30c24fda95dabf1077150876d3d93ff72f3c5d",
+    "src/__tests__/helpers/settleValidation.ts": "64685a3e77af9d0f23e544aee92d51b7b107eefeaf6f81350aee12c5f88db227",
+    "src/__tests__/renderForm.tsx": "9f48ad5179a786586753c21460cfb4147d27e17549b740811cee32cd67635b98",
+    "src/__tests__/scenarios/deferred-mount.strict.render.test.tsx": "1a1a7fbd77b763e3cbc1c731c29f6a040adecd7c84425bafacfa8dad8b367f64",
+    "src/__tests__/scenarios/refSchema-context-provider.render.test.tsx": "d11de341441e7d0e4639763a371dab0547a09b72ef9054c3044e0af5fda8893c",
+    "src/__tests__/scenarios/state-management.render.test.tsx": "9e3e2a475dcaa9d07ef1c2df441c53a879a23682cfa951f33579622b34fbb60c",
+    "src/__tests__/scenarios/validation.async-race.render.test.tsx": "cb28d3cac3d29c7c1475b8687d911487a671caf53fc1cc02f5bc5810af9c9e3a",
+    "src/components/Form/__tests__/Form.policies.test.tsx": "f3a71f5da3ef277eea4b7141e02f0581e7d390793844d5acb1fe9ddcaf6d4d46",
+    "src/core/__benchmarks__/render-delay.bench.ts": "015e6ad5a0595887d5f0690f0deee2016fbadc6db17219699ef8f2b1c0ec5f76",
+    "src/core/__tests__/dependencyDirection.test.ts": "016643ea442b01a426b4f54d06e0ebea49d6d83b299a766509431ab04c26a66e",
+    "src/core/__tests__/hostEntry.test.ts": "12afee614986c4b34bb89c2a814b02167b2a36fbcc1d18ffff4b870e8b275290",
+    "src/core/__tests__/remount-equivalence/helpers/checkCoreScene.ts": "ba42f5dd307f3ded083d1b1eb015ce7eed0ce88c59b2f22fac67fd55e090381e",
+    "src/core/__tests__/surfaceIndex.test.ts": "f91d9c897953df7147a30ccede55f052b956a7c53e1285f26af74bde6ccaff95",
+    "src/core/engine/__tests__/validation.after-paint.test.ts": "7f372b2df75bc35da73020ad465ab8456aa6dd0967f71996db18153ef638973a",
+    "src/core/engine/__tests__/validation.cadence.test.ts": "b1289a5b23f0cb7074283d6c6580767b9431cd76d68da3ba0ab7c9f10ba7ba58",
+    "src/core/engine/index.ts": "8d95bfe6d05d09adffb59a7034778a13ad805a070472d66c79e2c2da8e3ead28",
+    "src/core/engine/record/types/runtime.ts": "b1ee63d2d68a1bfed5117f1b6f1d4c07a92a29c1f2cf0f0218c1e839d821e0a0",
+    "src/core/engine/settle/__tests__/fixtures/compareSameValueWrite.ts": "18dbc7d2aa739ecba042fec3202149514cb9132019a4982eb3fe12aa3fa86412",
+    "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts": "c9daaabfeb9e5693939eb621518ab30a56a840a567d9a8335dcc6a90d54f0a05",
+    "src/core/engine/settle/utils/dispose/disposeFieldNodeTree.ts": "77721d0704d15cb6a4f0863bc2ca4646c97dd7a1bb4c983ff5a418b4ba96c65c",
+    "src/core/engine/validation/__tests__/validation.compile-failed.test.ts": "37b2fce3d41b572eb49e2d33f42d4f866994d5e11286ed04e27e32baa78c48e4",
+    "src/core/engine/validation/__tests__/validation.run.test.ts": "84c70b287231bcec2a28ed4bf645db9314598bb6de9464a9457b1cff5370fbbe",
+    "src/core/engine/validation/__tests__/validation.unchanged-result.test.ts": "ef1c2e3a08008bd0824f9a78b739d6f9e0bb0cd62a3f1fffa9a655a630b5be3a",
+    "src/core/engine/validation/index.ts": "97d5f5b112b374d8436cd8eb244e6d0a087c1ec8659adf33394bd0d8f277f0f8",
+    "src/core/engine/validation/utils/read/hasFieldNodeValidationRequest.ts": "e7d999b0ae300789aff576b556e360cfb5971ef271e1d860a78d2bf9728e7595",
+    "src/core/engine/validation/utils/run/requestFieldNodeValidation.ts": "1566b7337193cae1dd55f486cd8970abaad2ef7884ab0d6a4bf6e44c5ba5a172",
+    "src/core/engine/validationScheduling/__tests__/scheduleValidationSlot.test.ts": "8941912c279b47defc4755bbae53f834000f2063b18f53d9ec4cbb20d94c3288",
+    "src/core/engine/validationScheduling/__tests__/validationCadence.test.ts": "fb7060c18294f97465c5a03f41a741f06e8163ed53d943ef13d79cc8d54d426c",
+    "src/core/engine/validationScheduling/index.ts": "d43383e6af6a5a8e75225c5898b2f49d21e57826de17702f070b6ebe98f6d6f7",
+    "src/core/engine/validationScheduling/utils/constants.ts": "16f5dcc991693f3343af7dc5f21508def6a2e445734279f66f407d35a7c041ab",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/createValidationCadence.ts": "4f13a03e804a15f6e9da52c0cbcf92515fe16a46ce47050ebf5d7f6613bc0ed6",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/type.ts": "12509178769d5328bb0feee4986a27824e012c6ab82fb92b26cc99ce3bda96b2",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/utils/cancelValidationCadence.ts": "fdcc63124964d39f4103fab44b91634fb5e71b252246358dbac13725df48646d",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/utils/observeValidationCadenceFrame.ts": "4df2d89f009e543748998d5dd0dcaa4158e8252cf1ee2c2e2cf1671b9ed887b7",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/utils/requestValidationCadence.ts": "050b62543eaeb29e4d019f4d1e6f5780c87607fec1123a9ee4e14f3603a60b18",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/utils/runValidationCadence.ts": "5f666c404b9b3193d71ef569d536c8d2845f5b0943de9580fd016a2dd60df256",
+    "src/core/engine/validationScheduling/utils/createValidationCadence/utils/scheduleValidationCadenceFrame.ts": "4c0503676a9b16b1fcabd1d1a3d7544d3fc1ff3858566add563d7dc6329e3293",
+    "src/core/engine/validationScheduling/utils/frames/canScheduleValidationFrame.ts": "1090b41ed42f928a8ece9b3ae155437609b49ef52a6c1e90de5fd09fe0b0442f",
+    "src/core/engine/validationScheduling/utils/frames/queueValidationFrame.ts": "9b6f7b99040057a7ae6e4796bd4e93037b8eaac72fc5d3a6059f8ea250037c55",
+    "src/core/engine/validationScheduling/utils/frames/scheduleAfterValidationFrame.ts": "c1036122a32e6d95c4ff302ba05985ea06cb1d0dd183caca6fb3714d7301f02f",
+    "src/core/engine/validationScheduling/utils/scheduleValidationSlot.ts": "cb292adc78375ac209d99319d779ac475efdb35a2121a97ab1e09e49836fd873",
+    "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts": "c5f9a614ed6ac06c08a37fd607781ac6ce4a381baea94ad23a18fb7f7644ffd6",
+    "src/core/engine/write/utils/entry/dispatchValidate.ts": "36e7e3573f576f2f1953bf3c414ba8f263f71c945e9bb3c94f731b2b21e78a3e",
+    "src/core/index.ts": "31480e662ad481aa96bec725ff0302dd6fdc2d918933361c85c8a1b39bdc040b",
+    "src/core/surface/index.ts": "fd504522fa49a0b09437a0ade5982157ff5224e89ac7cb8614e33f196f4bfad6",
+    "src/core/surface/utils/binding/hasFieldNodeValidationRequest.ts": "df7b14719d9502b031d1bfee84ceecc5fd355c5b7845612fdafcbbad81916300",
+    "src/providers/RootNodeContext/components/RootNodeContextProvider.tsx": "ff0ee874f2874257e0aa53d79406caa76825a521a5b69ad822f1d47904d6edf4",
+    "src/providers/RootNodeContext/type.ts": "90abfa3cd5ddbd8780b3494a8ff295ac15b223df0dba37202f145a97c3a36172",
+    "src/providers/RootNodeContext/utils/scheduleMountValidation.ts": "137b192b3bf1d2893b7d27d02ac08dd9e28684d94ffe46f2310702cd2ac513a2",
+    "stories/components/scenario/createStoryScenarioAdapter.ts": "4f8d97d23b42e2be144ccac7c2e7d0573e9315e4b7672ba3980abe494c79c624",
+    "stories/features/events/subscription-kinds.stories.tsx": "e0b0fdfbf0b98a6c272891d528110e9c31e3020a1b6af5b28b30fc14b2e4fc6a"
+  },
+  "bundleHashes": {
+    "index.mjs": "95d635f89a89bd78d248b89bccbe14c225a06f0cd785c9c0e947d3b7ac288e08",
+    "index.node.mjs": "8b5814ad45d20bd9d64599d07b6137704a1129db7be865150e2b7b8f386e81df",
+    "index.cjs": "e9b66f52b1d67c7d4384b9909fb2bf5909f52199cb03ad8b476143c42f6ca93b"
+  },
+  "publicIndexSha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+  "declarations": {
+    "gate": "evaluated-public-declarations.json.gz",
+    "originalConservativeTrace": "public-declarations.json",
+    "positiveControl": "declaration-controls.json",
+    "approval": "msg_278fcc9f4950 / msg_f0f5dd4389d5"
+  },
+  "productCommit": "aceed2c95f11c647278dcd4e541688076b67b6a0"
+}

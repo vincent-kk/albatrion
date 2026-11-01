@@ -16,6 +16,8 @@ FieldRendererContext/
 
 ## Conventions
 
+- Resolve the rendered policy and compute renderer, input and child-error visibility from engine history; subscribe candidates to release versions without React visibility storage.
+
 - TypeScript와 React로 작성한다.
 - `checkShowError(condition?)` 함수는 `FieldNodeState.ErrorVisible`을 먼저 보고, 그다음 `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크를 평가한다.
 - 기본 showError는 `ShowError.DirtyTouched`다(dirty와 touched를 모두 만족할 때 표시한다).

@@ -77,18 +77,38 @@ describe('guard records at public entry boundaries', () => {
     dispatchMount(root, 'value');
     expect(report).not.toHaveBeenCalled();
   });
+  it('prepares every development if guard at tree construction before mount', () => {
+    vi.unstubAllEnvs();
+    const compile = vi.fn(() => () => null);
+    const compileGuard = vi.fn(() => () => true);
+    const validator: Validator = { compile, compileGuard };
+    createDispatchTree(
+      {
+        type: 'object',
+        allOf: [
+          { if: {}, then: { type: 'object' } },
+          { if: { type: 'object' }, then: { type: 'object' } },
+        ],
+      },
+      undefined,
+      validator,
+    );
+    expect(compile).toHaveBeenCalledTimes(1);
+    expect(compileGuard).toHaveBeenCalledTimes(2);
+  });
+
   it('ERROR-041 dev compiles once and each consuming tree records after mount commit at sink', () => {
     vi.unstubAllEnvs();
     const compileGuard = vi.fn(() => {
       throw new Error('bad guard');
     });
     const validator: Validator = { compile: () => () => null, compileGuard };
-    const seen: { code: string; surface?: string; commit?: number }[] = [];
+    const seen: { code: string; origin?: string; commit?: number }[] = [];
     for (let index = 0; index < 2; index += 1) {
       let commit = 0;
       const reporter = {
         hasConsumer: () => true,
-        report: (record: { code: string; surface?: string }) =>
+        report: (record: { code: string; origin?: string }) =>
           seen.push({ ...record, commit }),
       };
       const { root, runtime } = createDispatchTree(
@@ -98,7 +118,7 @@ describe('guard records at public entry boundaries', () => {
         reporter,
       );
       Object.defineProperty(reporter, 'report', {
-        value: (record: { code: string; surface?: string }) =>
+        value: (record: { code: string; origin?: string }) =>
           seen.push({ ...record, commit: runtime.commitNumber }),
       });
       dispatchMount(root, { enabled: true });
@@ -117,8 +137,8 @@ describe('guard records at public entry boundaries', () => {
     expect(
       seen.filter((record) => record.code === 'SCHEMA_FORM_ERROR.GUARD_FAILED'),
     ).toEqual([
-      expect.objectContaining({ surface: 'sink', commit: 1 }),
-      expect.objectContaining({ surface: 'sink', commit: 1 }),
+      expect.objectContaining({ origin: 'load', commit: 1 }),
+      expect.objectContaining({ origin: 'load', commit: 1 }),
     ]);
   });
 
@@ -128,10 +148,10 @@ describe('guard records at public entry boundaries', () => {
       throw new Error('bad guard');
     });
     const validator: Validator = { compile: () => () => null, compileGuard };
-    const records: { code: string; surface?: string; commit?: number }[] = [];
+    const records: { code: string; origin?: string; commit?: number }[] = [];
     const reporter = {
       hasConsumer: () => true,
-      report: (record: { code: string; surface?: string }) =>
+      report: (record: { code: string; origin?: string }) =>
         records.push(record),
     };
     const { root, runtime } = createDispatchTree(
@@ -150,7 +170,7 @@ describe('guard records at public entry boundaries', () => {
       records.filter(
         (record) => record.code === 'SCHEMA_FORM_ERROR.GUARD_FAILED',
       ),
-    ).toEqual([expect.objectContaining({ surface: 'thrown' })]);
+    ).toEqual([expect.objectContaining({ origin: 'load' })]);
     expect(runtime.commitNumber).toBeGreaterThan(0);
     expect(() => dispatchSetValue(root, { enabled: true })).toThrow();
     expect(() => dispatchSetValue(root, { enabled: false })).toThrow();
@@ -178,7 +198,7 @@ describe('guard records at public entry boundaries', () => {
     expect(report).toHaveBeenCalledWith(
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
-        surface: 'thrown',
+        origin: 'load',
       }),
     );
   });

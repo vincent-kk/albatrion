@@ -17,7 +17,7 @@ const repo = path.resolve(pkg, '../../..');
 const expectedHead = '4d2e54533dc8feaccb4742be9dd322e46d20be58';
 const measurementHead = process.argv.find(value => value.startsWith('--head='))?.slice(7) ?? expectedHead;
 assert.match(measurementHead, /^[a-f0-9]{40}$/);
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
 const warmup = 20, sampleCount = 101;

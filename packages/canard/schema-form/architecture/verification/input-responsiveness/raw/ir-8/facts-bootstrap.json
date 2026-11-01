@@ -1,0 +1,12 @@
+{
+  "coveredFiles": 1769,
+  "exact": 1769,
+  "missing": 0,
+  "needsResolution": 0,
+  "uncertain": 0,
+  "toolError": 0,
+  "unsupported": 175,
+  "pendingAttestations": 0,
+  "scopeSource": "default",
+  "source": "Bundled filid-facts extractor; accepted 1769 records with no rejected claims."
+}

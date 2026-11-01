@@ -3,7 +3,7 @@
 - **검토 커밋 범위**: `4f2001dcd..a04a40588`
 - **대상 패키지**: `packages/canard/schema-form`
 - **작업 브랜치**: `perf/schema-form-b2-p1b-lazy-inactive`
-- **작업 트리**: `/Users/Vincent/Workspace/albatrion/branch-switch-b2-p1`
+- **작업 트리**: `branch-switch-b2-p1`
 - **저장소 소유자**: Vincent
 - **검토자**: Antigravity (독립 읽기 전용 검토자)
 
@@ -13,7 +13,7 @@
 
 | 항목 | 판정(PASS/FAIL/주의) | 근거(path:line) |
 | :--- | :---: | :--- |
-| **1.1 공개 표면 불변** | PASS | `git diff 4f2001dcd..a04a40588 -- packages/canard/schema-form/src/public/` 및 `src/index.ts` 결과 변경 없음 (0 lines changed). `dist/index.d.ts` 빌드 결과 SHA256 불변 검증 완료 (`/private/tmp/b2-p1b-20261027/dts-diff.json`: `identical: true`, `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`). 배달 전후 비교(`run-c-differential.mjs` 72개 장면/323개 단계, `run-h5-public.mjs` 6개 장면/12개 단계) 차분 0건 확인 (`/private/tmp/b2-p1b-20261027/delivery.log:1-5`). |
+| **1.1 공개 표면 불변** | PASS | `git diff 4f2001dcd..a04a40588 -- packages/canard/schema-form/src/public/` 및 `src/index.ts` 결과 변경 없음 (0 lines changed). `dist/index.d.ts` 빌드 결과 SHA256 불변 검증 완료 (`{scratch}/b2-p1b-20261027/dts-diff.json`: `identical: true`, `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`). 배달 전후 비교(`run-c-differential.mjs` 72개 장면/323개 단계, `run-h5-public.mjs` 6개 장면/12개 단계) 차분 0건 확인 (`{scratch}/b2-p1b-20261027/delivery.log:1-5`). |
 | **1.2 시험 단언 보존 (증분 전용)** | PASS | `git diff 4f2001dcd..a04a40588 --stat -- '*.test.*'` 결과 신규 시험 3건(`settle.inactive-lazy-cost.test.ts` +57, `settle.inactive-lazy-fallback.test.ts` +104, `settle.inactive-lazy-generations.test.ts` +136), 픽스처 1건(`createInactiveLazyTree.ts` +27), 그림자 검증 설정(`setupDeriveShadowEvaluation.ts` +13)만 추가됨. 기존 시험 파일의 단언 수정 및 삭제 0건 (`grep '^-'` 검증 완료). #475 계약 시험(`settle.inactive-memo-contract.test.ts`) 변경 없이 그대로 유지됨. |
 | **1.3 계층 및 프랙탈 임포트 규칙** | PASS | `src/app` 임포트 전무. `record/types/runtime.ts:83`에서 정착 구현을 직접 참조하지 않고 `inactiveValuesState?: unknown;`으로 불투명하게 선언하여 의존성 역전 방지. `settle/` 내부 서브모듈 간 임포트는 프랙탈 규칙 준수. `utils/`는 상위/독립 organ으로 settle 내부를 임포트하지 않음. |
 | **1.4 DETAIL 선행 커밋 및 비용 모델/그림자 모드 명시** | PASS | 커밋 순서 검증 완료: `968052831`(record/DETAIL.md:64, settle/DETAIL.md:68-75) 및 `976c02e32`(engine/DETAIL.md:83) 문서 커밋이 구현 커밋 `a04a40588`보다 엄격히 선행. 쓰기 $O(\|\Delta\|)$ 표식 + 저널 + 상각 압축, 첫 읽기 $O(K \log K) + \text{미소비 }\Delta$, detached 토큰 직전 커밋 불변 세대 캡처 및 지연 getter, 저널 상한 $\max(2\cdot L, 512)$, `engineModes.inactiveValues === 'verify'` 그림자 비교 명시됨 (`settle/DETAIL.md:68-75`). |
@@ -31,8 +31,8 @@
 | **3.5 옛 토큰 보존 시 메모리 영향 명시** | PASS | 외부 사용자가 여러 압축 경계를 걸쳐 구 세대 토큰을 장기 보유하는 경우, 각 기준 세대의 $\sum L_b$ 및 고유 $\Delta$가 외부 참조에 의해 유지될 수 있음을 `record/DETAIL.md:64`, `settle/DETAIL.md:71` 및 ADR에 명시함. |
 | **4.1 그림자 검증 오라클 독립성** | PASS | `captureInactiveOracle.ts:9-25` 및 `verifyInactiveValuesMemo.ts:18-64`에서 `rebuildInactiveValuesMemo` 오라클은 `oracle.latentRaw`와 `oracle.latentRawMetadata`만을 기반으로 처음부터 전체 재구성하며, `InactiveValuesState`나 증분 저널 자료구조를 일절 참조하지 않음. |
 | **4.2 읽기 및 커밋 단위 전수 그림자 검증** | PASS | `engineModes.inactiveValues === 'verify'` 시: ① 매 커밋 후 `updateInactiveValuesMemo.ts:57`에서 전체 폼 재구성 오라클과 1:1 비교(배열, 길이, 동결, 엔트리 순서/값, 미변경 호스트 동일성), ② 매 읽기 시 `InactiveValuesState.ts:143, 180, 203`에서 `verifyInactiveRead.ts:22-81`을 통해 해당 세대의 재구성 오라클과 1:1 비교 수행. |
-| **4.3 검증 번들(test:verify) 무위반 통과** | PASS | `setupDeriveShadowEvaluation.ts:13, 33-41`을 통해 전역 활성화. 검증 스위트 실행 결과 424개 파일, 17,860회 커밋 비교, 327,929회 읽기 비교에서 위반 0건 확인 (`/private/tmp/b2-p1b-20261027/verify.log`). |
-| **5.1 시작 빌드 실패 단언 (Fail-First / Red-Green)** | PASS | 시작 빌드(`4f2001dcd`)에서 신규 시험 실행 시: ① `settle.inactive-lazy-cost.test.ts:47-49`의 8/80/256 브랜치 무관 항목 순회 및 배열 동결 할당 실패(각 6/78/254건 발생), ② `settle.inactive-lazy-generations.test.ts:62`의 이탈 시점 `/group` 즉시 읽기 차단 단언 실패, ③ `settle.inactive-lazy-generations.test.ts:132`의 상태/압축 단언 실패 확인 (`/private/tmp/b2-p1b-20261027/red.log:1-127`). HEAD(`a04a40588`)에서 모두 통과. |
+| **4.3 검증 번들(test:verify) 무위반 통과** | PASS | `setupDeriveShadowEvaluation.ts:13, 33-41`을 통해 전역 활성화. 검증 스위트 실행 결과 424개 파일, 17,860회 커밋 비교, 327,929회 읽기 비교에서 위반 0건 확인 (`{scratch}/b2-p1b-20261027/verify.log`). |
+| **5.1 시작 빌드 실패 단언 (Fail-First / Red-Green)** | PASS | 시작 빌드(`4f2001dcd`)에서 신규 시험 실행 시: ① `settle.inactive-lazy-cost.test.ts:47-49`의 8/80/256 브랜치 무관 항목 순회 및 배열 동결 할당 실패(각 6/78/254건 발생), ② `settle.inactive-lazy-generations.test.ts:62`의 이탈 시점 `/group` 즉시 읽기 차단 단언 실패, ③ `settle.inactive-lazy-generations.test.ts:132`의 상태/압축 단언 실패 확인 (`{scratch}/b2-p1b-20261027/red.log:1-127`). HEAD(`a04a40588`)에서 모두 통과. |
 | **5.2 핵심 계약 시험 망라성** | PASS | ① 무관 항목 find/sort 및 배열 할당 0건 검증 (`settle.inactive-lazy-cost.test.ts:15-57`), ② 지연 detached 캡처 (`settle.inactive-lazy-generations.test.ts:38-67`), ③ 참조 동일성 및 무관 호스트 불변 (`settle.inactive-lazy-generations.test.ts:69-97`), ④ Fallback 전체 경로 (`settle.inactive-lazy-fallback.test.ts:5-72`), ⑤ 저널 압축 및 구 토큰 보존 (`settle.inactive-lazy-generations.test.ts:99-136`), ⑥ N회 미읽기 후 읽기 동치성 (`settle.inactive-lazy-generations.test.ts:14-27`). |
 | **6.1 할당 규율 (Allocation Discipline)** | PASS | 쓰기 시점에는 새 공개 동결 배열 할당 전무(dirty 표식과 journal node만 생성). 읽기 시점에 호스트 단위로만 1회 동결 배열 생성 및 `WeakMap` 캐싱. 무관 호스트는 identity 체크로 할당 0. 페어 키 재사용 및 슬라이스 기반 호스트 탐색으로 경로 문자열 생성 최소화. |
 | **6.2 주석 및 커밋 규율** | PASS | 주석에 과거 시제, 폐기된 가설 언급, 세션 ID 전무. 오직 현재 명세 및 불변식만 기술. 커밋 작성자 및 메시지에 공동 저자나 세션 식별자 없음. |

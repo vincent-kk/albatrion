@@ -55,7 +55,7 @@ async function benchMount(mode: Mode, size: number) {
   root.render(
     <Form
       jsonSchema={schema as never}
-      CustomFieldRenderer={PassRenderer}
+      FieldRenderer={PassRenderer}
       onChange={() => {}}
       virtualization={virtualization as never}
     />,

@@ -20,6 +20,9 @@ import {
 
 import { createRenderValidator } from '../helpers/createRenderValidator';
 
+import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
+import { settleValidation } from '../helpers/settleValidation';
+
 // Consumer tails of the composite cases: each case loads its tailStart and runs the tail steps against the handle and DOM.
 // jsdom has no IntersectionObserver or idle callback; inert stubs keep placeholders deferred until a command reveals them.
 beforeEach(() => {
@@ -37,7 +40,7 @@ const frameMs = 50;
  * @param ms - Extra wait for timer-driven work such as the touched frame.
  * @returns Completion after the act scope.
  */
-const settle = (ms = 0) => act(async () => { await new Promise((resolve) => setTimeout(resolve, ms)); });
+const settle = (current: () => FormHandle['node'] | undefined, ms = 0) => act(async () => { await settleValidation(current); if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms)); });
 
 /**
  * Build a validator factory over the harness validator whose verdicts can be held until released.
@@ -57,6 +60,7 @@ const createHeldValidator = () => {
   };
   return {
     factory,
+    isHeld: () => held,
     hold: () => { held = true; },
     release: () => { held = false; pending.splice(0).forEach((resume) => resume()); },
   };
@@ -95,7 +99,7 @@ const runTail = async (item: CompositeCase) => {
   const { container, unmount } = render(<Host />);
   const node = (path: string) => ref.current!.findNode(path);
   try {
-    await settle();
+    await settle(() => ref.current?.node);
     for (const [index, step] of (item.tail ?? []).entries()) {
       const label = `${item.scenario.name} tail ${index} ${step.act}`;
       await runStep(step, { handle: ref.current!, node, container, held, submitted, stageProps }, label);
@@ -148,7 +152,8 @@ const runStep = async (step: CompositeTailStep, context: TailContext, label: str
       expect(submitted.at(-1), label).toEqual(step.submitted);
     }
   }
-  await settle(step.act === 'blur' ? frameMs : 0);
+  if (held.isHeld()) await advanceValidationFrame();
+  else await settle(() => handle.node, step.act === 'blur' ? frameMs : 0);
   if (step.act === 'values') for (const [path, value] of Object.entries(step.values)) expect(node(path)?.value, `${label} ${path}`).toEqual(value);
   if (step.act === 'states')
     for (const [path, expected] of Object.entries(step.states)) {

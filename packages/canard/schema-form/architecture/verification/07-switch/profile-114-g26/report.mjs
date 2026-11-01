@@ -243,7 +243,7 @@ export function buildReport() {
   add('```sh\nnode packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/measure-react.mjs --pair <fixture> <1|2|3>\nnode packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/measure-react.mjs --pair <oneOf-5|oneOf-10|oneOf-20> <1|2|3> --phases\nnode packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/measure-bundle.mjs\n```');
   add('타입 검사는 PKG 디렉터리에서 아래 명령을 3회 단독 실행합니다. 패키지 관리자 호출에는 파이프·리다이렉트·환경 변수 접두사가 없습니다.');
   add('```sh\nnpx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json\n```');
-  add('번들·소스맵·캐시는 저장소 안에 생성하지 않습니다. 번들 출력은 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`를 사용하며 cacheDir를 설정하지 않습니다.');
+  add('번들·소스맵·캐시는 저장소 안에 생성하지 않습니다. 번들 출력은 `{scratch}/bundles`를 사용하며 cacheDir를 설정하지 않습니다.');
   add('## 공식 코어 표');
   add('중앙값·배율·목표·성능 판정은 [111 최종 공식 표](profile-111-final.md)의 108개 표시 행을 사용합니다. 이 코어 측정의 기록 HEAD는 `23dcaec783ed85b2fd9032d6acfe313e18e5ec6d`이며, 여기서 HEAD 코어를 새로 측정했다고 주장하지 않습니다. `(가)`와 차이/잡음은 [113 독립 짝 검증](profile-113-paired.md)의 microtask·예약 완료·pre-sentinel 끝점으로 확인한 값을 사용합니다. 시간 단위는 µs이고, 첫 중앙값은 새 판, 둘째는 0.16.0입니다. 성능 합격과 소유자 수용 표시는 독립적인 열입니다.');
   add('고유 검사 ID는 104개이며 고정 전환 표의 마운트 4행은 일반 표와 공유합니다. `(가)`는 고유 ID 102개·표시 106행에서 통과하고, array-100/off/update와 array-100/off/update-first의 표시 2행에서 실패합니다. 이 2행은 독립 짝 회차 2의 −14.542µs 차이가 8.625µs 잡음을 넘어 실패합니다. 3.080× 미달과 소유자 수용(104라운드)은 유지하고, 짝 꼬리 jitter 분석은 112라운드 개선 항목입니다. 모든 고유 ID의 새 엔진 경계 예약·pending·tail 실행은 0회라는 전제를 사용합니다.');

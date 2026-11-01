@@ -40,6 +40,11 @@ const p95 = (a) => {
 const f = (n, w = 6) => n.toFixed(1).padStart(w);
 
 async function main() {
+  if (arg('mode', 'mount') === 'interaction') {
+    const { runInteractions } = await import('./interaction/runInteractions.ts');
+    await runInteractions(process.argv.slice(2));
+    return;
+  }
   const outdir = mkdtempSync(join(tmpdir(), 'sf-browser-bench-'));
   console.log('▸ bundling harness (esbuild, prod React)…');
   await build({

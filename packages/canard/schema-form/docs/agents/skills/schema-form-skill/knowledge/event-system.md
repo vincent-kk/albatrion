@@ -7,7 +7,7 @@ Every node publishes typed events (`FieldNodeEventType`). This file is the menta
 - A public write settles and commits synchronously. Listeners are notified when the outermost write returns, with the events of one write merged per node.
 - A write made inside a listener joins the same chain as its next wave and is also delivered before the outermost call returns. `onChange` runs once per outermost write, after the last wave.
 
-Consequence: after `setValue()` returns, values and controls state are current and can be read synchronously. Validation runs on a microtask, so `errors` are stale until it finishes.
+Consequence: after `setValue()` returns, values and controls state are current and can be read synchronously. Write-triggered validation runs once after the frame that renders the newest edit; several writes before that frame share one verdict. `errors`, `getErrors()`, `onValidate`, and error UI retain the previous verdict for at least that frame. Explicit `validate()` and submit start a fresh verdict immediately; submit awaits it. OnChange mount validation also follows the first frame. A subtree `validate()` preserves pending and in-flight whole-form write validation.
 
 ## setValue Synchronicity
 

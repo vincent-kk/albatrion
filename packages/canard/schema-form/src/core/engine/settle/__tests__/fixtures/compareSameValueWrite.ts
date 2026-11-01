@@ -74,7 +74,7 @@ export const compareSameValueWrite = async (
     dispatchMount(root, input, WriteOption.Overwrite);
     root.runtime.validationMode = ValidationMode.OnChange;
     prepare?.(root);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setImmediate(resolve));
     const history: unknown[] = [];
     const runMarks: WriteMarks[] = [];
     const admit = vi.spyOn(admission, 'admitsSameValueWrite');
@@ -104,7 +104,7 @@ export const compareSameValueWrite = async (
         } catch (error) {
           result = error;
         }
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await new Promise((resolve) => setImmediate(resolve));
         runMarks.push(first ?? { written: 0, shapeDirty: [] });
         const nodes = nodesOf(root);
         history.push({

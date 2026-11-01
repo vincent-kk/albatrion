@@ -79,7 +79,7 @@ root HEAD/origin08501d2bf2830f9d6c764017a082f0aa8cb29bc9, source282685f27aea0a82
 
 ## 수치 검산 수용·원장 검사와 진단의 실제 결과
 
-새수치검토 agy3.8 task_8ef8b7f78552/ctx_b899a082d25c의전체final cursor81584를읽고저장수치/해시범위만수용했습니다. 자체 /opt/homebrew/Cellar/node/26.12.0/bin/node v26.12.0의순수fs/crypto/assert/JSON계산으로136개median의원100표본재계산불일치0,13600samples,2720warmups,168preflight(136/16/16),56쌍,28바퀴쌍/12교차,양바퀴느림7·빠름9·정확0없음을확인했습니다. 위14장면의네비율과cohort scene-ratio median도모두일치했습니다. warmup은행별20정수/성공loop합이고개별시간원표본은없습니다. 네raw/manifest/runner해시와승인계보를대조했고자체제품/producer/제공driver/Git/gh/시간실행0입니다. private parser실패0으로보고했으며check exit1 codesign failure5/runtime metadata거절뒤추가IPC/우회0,전체final/idle뒤정확stop/release/closed·archive unavailable·성공worker_done없음을기록합니다.
+새수치검토 agy3.8 task_8ef8b7f78552/ctx_b899a082d25c의전체final cursor81584를읽고저장수치/해시범위만수용했습니다. 자체 {node-home}/Cellar/node/26.12.0/bin/node v26.12.0의순수fs/crypto/assert/JSON계산으로136개median의원100표본재계산불일치0,13600samples,2720warmups,168preflight(136/16/16),56쌍,28바퀴쌍/12교차,양바퀴느림7·빠름9·정확0없음을확인했습니다. 위14장면의네비율과cohort scene-ratio median도모두일치했습니다. warmup은행별20정수/성공loop합이고개별시간원표본은없습니다. 네raw/manifest/runner해시와승인계보를대조했고자체제품/producer/제공driver/Git/gh/시간실행0입니다. private parser실패0으로보고했으며check exit1 codesign failure5/runtime metadata거절뒤추가IPC/우회0,전체final/idle뒤정확stop/release/closed·archive unavailable·성공worker_done없음을기록합니다.
 
 검토자설명의JIT/순서때문이라는실증은인과미확정이므로채택하지않습니다. true B는여기서oracle도아니며source E가옛무타이머oracle이었고이번time에서는둘다실행하지않았습니다. 같은물리입력A의두슬롯과생성raw사본두파일을구별하고단순hash일치를같은물리파일의증명으로쓰지않습니다. legacy directroot의callback atEnd0→afterDrain1은동기완료미확정근거이지factory가Promise를반환한다는증거가아닙니다. reviewer의Git/refs문단은저장metadata검토이며새자체Git이아닙니다. 수치의독립일치는구현효과나옛악화의무해수용이아닙니다. 이한계를root msg_e92c392b31f9로진단worker에게전달했습니다.
 

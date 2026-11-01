@@ -1,6 +1,6 @@
 # F-B의 구현과 검증 결과를 기록합니다.
 
-2026년 10월 10일에 stage-07 작업 트리에서 React 입력 경계 변경 F-B를 구현하고 검증하였습니다. 시작과 종료 HEAD는 `e805074de8a9cb0c072a81284a166ab985a113be`이며 시작 작업 트리는 깨끗했습니다. PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+2026년 10월 10일에 stage-07 작업 트리에서 React 입력 경계 변경 F-B를 구현하고 검증하였습니다. 시작과 종료 HEAD는 `e805074de8a9cb0c072a81284a166ab985a113be`이며 시작 작업 트리는 깨끗했습니다. PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `{scratch}`입니다.
 
 먼저 `D/react-proxy-audit-121.md`의 F-B와 이탈 지점 3, `D/fd-implementation.md`, `D/fd-a500-diagnosis.md`, `D/fd-prime-implementation.md`, 현재 입력 경계 구현을 읽었습니다. PKG의 CLAUDE.md와 Error Isolation 절, seiri·filid 규칙, 소유 모듈의 INTENT·DETAIL을 확인하였습니다. 기존 F-A′가 사용하는 직접 ErrorBoundary를 유지하면서 generation 전달 층만 제거하였습니다.
 

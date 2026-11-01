@@ -21,8 +21,8 @@ UTC **2026-10-20T03:07:50.297Z → 2026-10-20T03:48:02.225Z**에 8회 실행을 
 
 | 항목 | 기록 |
 | --- | --- |
-| 작업 폴더 | `/Users/Vincent/Workspace/albatrion`입니다. |
-| 측정 Node | `v26.12.0`이며 `/opt/homebrew/bin/node`로 고정했습니다. 실제 실행 경로는 `/opt/homebrew/Cellar/node/26.12.0/bin/node`입니다. |
+| 작업 폴더 | `{repo}`입니다. |
+| 측정 Node | `v26.12.0`이며 `{node-home}/bin/node`로 고정했습니다. 실제 실행 경로는 `{node-home}/Cellar/node/26.12.0/bin/node`입니다. |
 | 빌드 드라이버·초기 readiness Node | `v24.20.0`이며 창 밖에서만 사용했습니다. 측정 Node로 네 readiness 조합을 다시 통과했습니다. |
 | Bun | `1.4.3`입니다. |
 | React | `19.2.6`입니다. |
@@ -255,7 +255,7 @@ form은 기존 `packages/aileron/benchmark-form`의 `--equivalent --mode=<core|r
 
 ## 근거와 한계
 
-원자료·실행 명령·환경·세 프로세스 스냅샷·러너·검산·해시는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/baseline-430/`의 `raw/`, `commands.json`, `environment.json`, `window.json`, `analysis.json`, `rows.md`, `comparison.md`, `validation.json`, `report.md`, `seal.json`에 보존했습니다. 봉인은 namespace의 모든 일반 파일과 symlink 자체의 크기·SHA-256을 기록하며 외부 symlink 대상은 순회하지 않습니다.
+원자료·실행 명령·환경·세 프로세스 스냅샷·러너·검산·해시는 `.seiri/tasks/baseline-430/`의 `raw/`, `commands.json`, `environment.json`, `window.json`, `analysis.json`, `rows.md`, `comparison.md`, `validation.json`, `report.md`, `seal.json`에 보존했습니다. 봉인은 namespace의 모든 일반 파일과 symlink 자체의 크기·SHA-256을 기록하며 외부 symlink 대상은 순회하지 않습니다.
 
 초기 미추적 브리프와 코디네이터가 작성한 `architecture/COORDINATOR-JUDGMENTS.md`는 승인된 사전 예외로 보존했습니다. 초기 Node 경로 차이 때문에 창 밖 readiness를 다시 실행했고 form 실행 네 번에는 `module.register()` 사용 중단 예정 경고가 기록되었습니다. 창 중 오케스트레이션 heartbeat·메일함 확인과 승인된 작은 로그 끝부분 열람만 측정 외 관리 작업으로 수행했습니다. render는 개발용 React·jsdom 측정이며 실제 브라우저 환경이나 production React의 측정으로 확장하지 않습니다. 원래 form 러너는 횟수 지표의 개별 표본을 raw에서 제외하므로 그 행의 중앙값은 원래 summary에 근거합니다.
 

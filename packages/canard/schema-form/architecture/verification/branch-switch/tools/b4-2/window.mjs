@@ -190,7 +190,7 @@ if (quiet.heavy.length) {
       );
       await run(
         'heap-bun-' + lane,
-        '/opt/homebrew/bin/bun',
+        '{node-home}/bin/bun',
         ['bench/legacy-compare/node-and-settle.bench.ts', '--heap-child'],
         packageDir,
       );

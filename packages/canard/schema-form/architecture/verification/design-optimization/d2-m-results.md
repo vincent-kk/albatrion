@@ -14,7 +14,7 @@ A=53d49ca94 dist/B=후보d1079e5c3/A′=같은 A,각20예열·100표본·독립3
 - 기준 node bundle SHA256 `3cd015751444657797806cd582d1b5ccc6df78a2ce366cca463801c4eb3d3d4a`는 저장 dist를 재사용했습니다.
 - 후보를 UTC `2026-10-27T02:55:47.202447+00:00`→`2026-10-27T02:56:06.219429+00:00`에 build했고 node bundle SHA256 `1fbbf2cb7c3d7a5584ae0abf9f13d29bf09e034c80ccb33324a18340e6025124`입니다. default ESM/CJS/d.ts를 포함한 네 entry 해시가 첫 측정과 전부 같습니다.
 - 실제 측정 시작 UTC `2026-10-27T02:57:01.442556+00:00`. Node `v26.12.1`, `NODE_ENV=production`, 추가 Node 최적화 플래그 없음.
-- 원자료 루트 `/private/tmp/claude-501/perf-runs/20261027T025522Z-d1079e5-d2-m-r2`. `measurements.json`에 명령·실제 시작/종료·원본과 복사본 해시를 기록했습니다.
+- 원자료 루트 `{scratch}/perf-runs/20261027T025522Z-d1079e5-d2-m-r2`. `measurements.json`에 명령·실제 시작/종료·원본과 복사본 해시를 기록했습니다.
 
 ## 측정 전 기기 확인
 
@@ -93,9 +93,9 @@ A=53d49ca94 dist/B=후보d1079e5c3/A′=같은 A,각20예열·100표본·독립3
 
 측정 창 종료 UTC `2026-10-27T03:02:00.840816+00:00`. 추가 측정은 하지 않았습니다. 각 라운드 원자료:
 
-- A: UTC `2026-10-27T02:57:01.741623+00:00`→`2026-10-27T02:58:37.103116+00:00`, `/private/tmp/claude-501/perf-runs/20261027T0257-53d49ca-d2-m-r2-A`, exit0.
-- B: UTC `2026-10-27T02:58:37.103485+00:00`→`2026-10-27T03:00:12.503007+00:00`, `/private/tmp/claude-501/perf-runs/20261027T0257-d1079e5-d2-m-r2-B`, exit0.
-- A-prime: UTC `2026-10-27T03:00:12.503613+00:00`→`2026-10-27T03:01:46.830292+00:00`, `/private/tmp/claude-501/perf-runs/20261027T0257-53d49ca-d2-m-r2-A-prime`, exit0.
+- A: UTC `2026-10-27T02:57:01.741623+00:00`→`2026-10-27T02:58:37.103116+00:00`, `{scratch}/perf-runs/20261027T0257-53d49ca-d2-m-r2-A`, exit0.
+- B: UTC `2026-10-27T02:58:37.103485+00:00`→`2026-10-27T03:00:12.503007+00:00`, `{scratch}/perf-runs/20261027T0257-d1079e5-d2-m-r2-B`, exit0.
+- A-prime: UTC `2026-10-27T03:00:12.503613+00:00`→`2026-10-27T03:01:46.830292+00:00`, `{scratch}/perf-runs/20261027T0257-53d49ca-d2-m-r2-A-prime`, exit0.
 
 ## 첫 측정 보고서 — 원문과 수치 보존
 
@@ -122,10 +122,10 @@ A=53d49ca94 dist/B=후보d1079e5c3/A′=같은 A,각20예열·100표본·독립3
 - A node bundle SHA256 `3cd015751444657797806cd582d1b5ccc6df78a2ce366cca463801c4eb3d3d4a`; B `1fbbf2cb7c3d7a5584ae0abf9f13d29bf09e034c80ccb33324a18340e6025124`.
 - 프로파일 시작 UTC `2026-10-27T01:22:27.130958+00:00`; 승인된 전체 검증·측정 창 시작 UTC `2026-10-27T02:06:34.283622+00:00`. 재빌드 UTC `2026-10-27T02:19:47.093378+00:00`.
 - Node `v26.12.1`, `NODE_ENV=production`, 추가 엔진 최적화 플래그 없음. legacy는 모든 timing row에서0.16.1이며 같은 프로세스의 AB/BA 교대쌍입니다.
-- 원자료 루트: `/private/tmp/claude-501/perf-runs/20261027T0122-53d49ca-d2-m-profile`.
-- A: UTC `2026-10-27T02:30:12.757570+00:00`→`2026-10-27T02:31:50.841583+00:00`, `/private/tmp/claude-501/perf-runs/20261027T0230-53d49ca-d2-m-A`, 종료0.
-- B: UTC `2026-10-27T02:31:50.841922+00:00`→`2026-10-27T02:33:28.410741+00:00`, `/private/tmp/claude-501/perf-runs/20261027T0230-d1079e5-d2-m-B`, 종료0.
-- A-prime: UTC `2026-10-27T02:33:28.411226+00:00`→`2026-10-27T02:35:07.693384+00:00`, `/private/tmp/claude-501/perf-runs/20261027T0230-53d49ca-d2-m-A-prime`, 종료0.
+- 원자료 루트: `{scratch}/perf-runs/20261027T0122-53d49ca-d2-m-profile`.
+- A: UTC `2026-10-27T02:30:12.757570+00:00`→`2026-10-27T02:31:50.841583+00:00`, `{scratch}/perf-runs/20261027T0230-53d49ca-d2-m-A`, 종료0.
+- B: UTC `2026-10-27T02:31:50.841922+00:00`→`2026-10-27T02:33:28.410741+00:00`, `{scratch}/perf-runs/20261027T0230-d1079e5-d2-m-B`, 종료0.
+- A-prime: UTC `2026-10-27T02:33:28.411226+00:00`→`2026-10-27T02:35:07.693384+00:00`, `{scratch}/perf-runs/20261027T0230-53d49ca-d2-m-A-prime`, 종료0.
 
 각42개,총126개의 독립 worker에서25,200개 엔진 표본을 수집했습니다. bundle 원본/계측 복사본·해시·commit·자식 플래그·순서·20/100/3·구독 배달·대표값/폭 계산을 별도 checker로 검증했습니다. 청사진은 canonical mount와 추가1k/2.5k/5k/10k mount의 측정 구간에 포함됩니다. 구독 두 행은1000명 구독의 wave와10회 단일 쓰기이며 배달 검사는 구간 밖입니다.
 
@@ -231,7 +231,7 @@ unit505파일3631통과/1todo,render128파일760통과,react18128파일760통과
 
 네트워크 복구 지시에 따라 원격 push와 필요한 PR 생성은 각각 최대1회만 시도합니다. 실패하면 재시도 없이 로컬 결과 해시와 `원격 게시 보류(네트워크)`를 코디네이터에 보고합니다. 독립 검토는 코디네이터가 배정합니다. 이 문서는 측정 후보와 판정의 증거이며 PR/최종 결과 커밋 식별자는 worker_done으로 별도 전달합니다.
 
-원자료와 재현명령: `/private/tmp/claude-501/perf-runs/20261027T0122-53d49ca-d2-m-profile/measurements.json`, `artifact-validation.json`, `b2/results.json`, `b2/summary.json`, `window-checks.json`, `profile-and-design.md`, `differential.json`, `public-differential.json`, `dts-differential.json`. 최초 실패 로그와 선형 snapshot의 red/green도 같은 루트에 보존했습니다.
+원자료와 재현명령: `{scratch}/perf-runs/20261027T0122-53d49ca-d2-m-profile/measurements.json`, `artifact-validation.json`, `b2/results.json`, `b2/summary.json`, `window-checks.json`, `profile-and-design.md`, `differential.json`, `public-differential.json`, `dts-differential.json`. 최초 실패 로그와 선형 snapshot의 red/green도 같은 루트에 보존했습니다.
 
 </details>
 

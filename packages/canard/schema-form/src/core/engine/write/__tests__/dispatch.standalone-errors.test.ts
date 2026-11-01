@@ -44,7 +44,7 @@ describe('standalone wave failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -81,7 +81,7 @@ describe('standalone wave failures', () => {
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
       error: failure,
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -118,7 +118,7 @@ describe('standalone wave failures', () => {
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
       error: failure,
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -155,7 +155,7 @@ describe('standalone wave failures', () => {
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
       error: failure,
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -193,7 +193,7 @@ describe('standalone wave failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       error: failure,
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -236,7 +236,7 @@ describe('standalone wave failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       error: failure,
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -281,7 +281,7 @@ describe('standalone wave failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       error: failure,
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -311,7 +311,7 @@ describe('standalone wave failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED',
-      surface: 'thrown',
+      origin: 'write',
     });
   });
 
@@ -351,7 +351,7 @@ describe('standalone wave failures', () => {
     ]);
   });
 
-  it('ERROR-019 gives a nested validation-result write the sink surface', async () => {
+  it('ERROR-019 gives a nested validation-result write the validate origin', async () => {
     const report = vi.fn();
     const sink = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     try {
@@ -389,11 +389,11 @@ describe('standalone wave failures', () => {
       });
 
       dispatchSetValue(a, 'after');
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(report.mock.calls[0][0]).toMatchObject({
         error: failure,
-        surface: 'sink',
+        origin: 'validate',
       });
       expect(sink).toHaveBeenCalledTimes(1);
     } finally {

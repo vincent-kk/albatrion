@@ -1,0 +1,239 @@
+{
+  "smoke": true,
+  "startedAt": "2026-10-30T21:23:17.909Z",
+  "endedAt": "2026-10-30T21:23:27.846Z",
+  "mode": "paired-relative-authorized-round3",
+  "warmup": 0,
+  "count": 1,
+  "chromium": "145.0.7632.6",
+  "inputs": {
+    "stage": "IR-5 round3 final",
+    "preparedAt": "2026-10-30T20:27:00.396Z",
+    "lanes": [
+      "E4",
+      "E5"
+    ],
+    "bundles": {
+      "E4": {
+        "commit": "be1a7986756bc326757d0d2055bd92010917ca7d",
+        "toolCommit": "7c91c45ee4a28d33d7ef96ce02221998a1354ee4",
+        "product": {
+          "sha256": "8de2fa64279e22af44bd368d1a68661082cd1feed3df8e2c3137f0536025a110",
+          "bytes": 857338
+        },
+        "browser": {
+          "sha256": "ee76aa887efa44f789bb2dd456d25b8b4c095b77e5ff0982efcb009f2ff81361",
+          "bytes": 1822346
+        }
+      },
+      "E5": {
+        "commit": "f7ab4800e1d4c11ec0138faec822ca64b3deaeef",
+        "toolCommit": "f7ab4800e1d4c11ec0138faec822ca64b3deaeef",
+        "product": {
+          "sha256": "26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d",
+          "bytes": 858166
+        },
+        "browser": {
+          "sha256": "c1c2272a7803f34ffcd82a3471f64c162948ae29d82d1033c66e8f28c6ec0532",
+          "bytes": 1823349
+        }
+      }
+    },
+    "viewport": {
+      "width": 900,
+      "height": 700
+    },
+    "productionReact": true,
+    "versions": {
+      "node": "v26.12.1",
+      "react": "19.2.6",
+      "playwright": "1.58.0",
+      "esbuild": "0.25.9",
+      "ajv": "8.17.1"
+    },
+    "environment": {
+      "cpu": "Apple M1 Max",
+      "logicalCpus": 10,
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "27.0.0",
+      "memoryGiB": 64
+    },
+    "reusedE4": "Same immutable E4 product/browser bytes as round2 windows",
+    "measurementRunnerSHA256": "e2d37066f1ab9d66fc8d96a479c5b497485ca65f604b642a187a1172b030b688"
+  },
+  "quiet": null,
+  "samples": [
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-off-E4-0.json",
+      "wallMs": 50.30000001192093,
+      "eagerPaintedMs": 50.200000047683716,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-off-E5-0.json",
+      "wallMs": 52.5,
+      "eagerPaintedMs": 52.299999952316284,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-on-E4-0.json",
+      "wallMs": 30.900000035762787,
+      "eagerPaintedMs": 30.600000023841858,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-on-E5-0.json",
+      "wallMs": 179.5,
+      "eagerPaintedMs": 31.299999952316284,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E4-0.json",
+      "wallMs": 88.39999997615814,
+      "eagerPaintedMs": 87.79999995231628,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E5-0.json",
+      "wallMs": 90.5,
+      "eagerPaintedMs": 90.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E4-0.json",
+      "wallMs": 90.60000002384186,
+      "eagerPaintedMs": 90.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E5-0.json",
+      "wallMs": 89.80000001192093,
+      "eagerPaintedMs": 89.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-off-E4-0.json",
+      "wallMs": 200,
+      "eagerPaintedMs": 196.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-off-E5-0.json",
+      "wallMs": 201.10000002384186,
+      "eagerPaintedMs": 197.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-on-E4-0.json",
+      "wallMs": 438,
+      "eagerPaintedMs": 57.40000003576279,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-on-E5-0.json",
+      "wallMs": 447.60000002384186,
+      "eagerPaintedMs": 58.30000001192093,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    }
+  ],
+  "warmups": [],
+  "rows": [
+    {
+      "id": "mount-flat-500-off",
+      "metric": "wallMs",
+      "E4": 50.30000001192093,
+      "E5": 52.5,
+      "ratio": 1.0437375743053217,
+      "pass": false
+    },
+    {
+      "id": "mount-flat-500-on",
+      "metric": "eagerPaintedMs",
+      "E4": 30.600000023841858,
+      "E5": 31.299999952316284,
+      "ratio": 1.0228758146382033,
+      "pass": false
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "metric": "wallMs",
+      "E4": 88.39999997615814,
+      "E5": 90.5,
+      "ratio": 1.0237556563847086,
+      "pass": false
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "metric": "eagerPaintedMs",
+      "E4": 90.10000002384186,
+      "E5": 89.30000001192093,
+      "ratio": 0.9911209765626056,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-off",
+      "metric": "wallMs",
+      "E4": 200,
+      "E5": 201.10000002384186,
+      "ratio": 1.0055000001192094,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-on",
+      "metric": "eagerPaintedMs",
+      "E4": 57.40000003576279,
+      "E5": 58.30000001192093,
+      "ratio": 1.0156794420835784,
+      "pass": true
+    }
+  ]
+}

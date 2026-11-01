@@ -1,0 +1,15 @@
+{
+  "base": "430cffef5",
+  "testFile": "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+  "testSha256": "320c5e1f0b88a543a9d91d881b67236d64a73f73a1967ba88c708165f977abf2",
+  "mutation": "Move retirement inside try after batch; failed adoption skips retirement.",
+  "projects": [
+    "render",
+    "react18"
+  ],
+  "failed": 4,
+  "passed": 0,
+  "filtered": 8,
+  "failure": "Late old-root setValue invokes onChange once; expected zero.",
+  "patchSha256": "d89bbd43363c187ed0466a6d7840349d2b343a69e58efc94edd779056d0abf91"
+}

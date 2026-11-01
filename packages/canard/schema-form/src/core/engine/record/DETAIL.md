@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- 로드 시작은 validationStamp를 증가시키며 finally의 사슬 종료 직전에 validationLoadStamp를 기록한다. 이 선택적 수는 로드 세대와 로드 이후 요청 비교를 소유한다. deferLoadValidation은 mount·form reset의 바인딩 슬롯 위임을 표시하며 노드 고정 칸은 늘리지 않는다.
+
+- X3/W3의 선택적 validationPendingEntryStamp는 pending을 false에서 true로 만든 사슬만 얻는 stamp이며 이미 pending인 사슬은 얻지 않는다. 이 marker는 실제 요청·무요청 종료·폐기에서 지운다. 노드 고정 칸이나 timing 상태가 아니다.
+
 
 - B12 인스턴스별 `inactiveListeners`는 선택적 Map(node → Set)으로 보유하며 재진입 복제에 넘기지 않습니다. 선택적 `resolvingInactiveValue` 표시는 동기 resolver 실행 동안만 참이며 노드 고정 칸을 추가하지 않습니다.
 
@@ -34,10 +38,18 @@
 
 - 경로 키 런타임 칸은 명시적인 PathKeyedMap·PathKeyedSet 형으로 선언하고 생성자가 색인을 소유한다. record와 settle의 공통 소유자 core의 보조 형을 소비하여 settle 역의존을 만들지 않는다. native Map·Set의 조회·열거 계약을 유지하고 값은 복제하지 않는다. 메모리 비용은 K개 항목과 경로 깊이 D에 O(KD) 키 참조, 유일한 prefix 문자열·부모 연결·숫자 radix 마디이다(NODE-045, SETTLE-017·047).
 
-- `blueprint < record < {종류 동작, navigation} < validation < derive < settle < dispatch < FieldNode`의 방향을 값 import와 `import type`에 똑같이 적용한다. `record`는 청사진의 선언 형만 소비하며 상위 엔진을 알지 않는다(NODE-016·045, LANDING-084).
+- `blueprint < record < {종류 동작, navigation} < validation < derive < settle < dispatch < FieldNode`의 방향을 값 import와 `import type`에 똑같이 적용한다. `record`는 청사진의 선언 형과 도메인 없는 예약 수명 형만 소비하며 상위 도메인 엔진을 알지 않는다(NODE-016·045, LANDING-084).
 - 고정 필드 집합은 모든 종류에 동일하다. 생성자는 선언 순서대로 필드에 대입하고 생성자·필드 초기화식에 노드별 객체·배열·함수 할당을 두지 않는다(NODE-004·010).
 
 ## API Contracts
+
+- H: recordFieldNodeRevealBaseline은 OnChange 상태·active·visible 변이 전에 state 참조·active&&visible·generation·sequence를 entries에 append한다. 같은 node/write sequence에서는 한 번만 기록한다. sequence는 entryDepth·visitDepth가 모두0인 공개 chain/state 진입과 outer visit 시작에서만 증가하며 열린 entry/walk 안에서는 증가하지 않는다.
+- 모든 append는 runtime generation을 증가시키고 pending=false이면 drop owed를 기록한다. 기록 노드 set·커밋 정책·정책 이력·release version/listener set은 선택적 runtime 자료다. record는 scheduling·validation·통지를 실행하거나 import하지 않는다. 생성자 고정 필드 순서와 공개 표면은 유지한다.
+- validationPending은 검증 실행 제어 자료이며 표시 구독의 snapshot이 아니다. 선택적 validationRunning은 최신 cadence 또는 명시적 root 실행이 아직 배정해야 할 stamp·ReadonlySet 대상을 보유하며, 후속 요청이 이를 인계하고 해당 실행의 객체 소유자가 정착 시 지운다. 하위 validate는 이 기록을 설정하거나 지우지 않는다. validationRun은 실제 시작 여부만 timing에 반환한다.
+
+- 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
+
+- 런타임은 도메인 없는 validationScheduling의 선택적 cadence 인스턴스(request/cancel)를 지연 보유한다. 노드 고정 칸은 늘리지 않고 record는 주기·검증을 실행하지 않는다. 루트 폐기에서 cancel하고 요청 큐 표시는 주기가 소유하므로 validationQueued 칸은 제거한다(IR-6 amendment3).
 
 - 결정 62 PR-2b의 선택적 `SettlementScratch.pendingExitPaths`는 호스트 경로 → 자식 경로 → 대기 키 개수의 색인입니다. `pendingExits`와 같은 수명을 가지며 첫 대기 퇴장 때만 지연 생성합니다. 정착 문맥은 같은 Map을 참조하며 scratch 해제는 존재할 때만 비웁니다. 다음 정착은 비워진 컨테이너를 재사용하고 대기 퇴장이 없는 정착에는 새 할당을 만들지 않습니다. record는 이 자료의 형만 소유하고 갱신은 settle이 수행합니다. 공간은 대기 경로 수에 비례하며 노드 고정 필드나 공개 패키지 표면은 늘리지 않습니다.
 
@@ -95,6 +107,10 @@
 - `revisionLedger`의 이름과 비트별 읽기를 유지하면서 배달된 노드의 카운터는 알려진 17개 비트의 조밀한 슬롯에 보관한다. 내부 `FieldNodeRevisionLedger`는 진입점에서 정착·dispatch에 제공하며 비트 접근자는 슬롯을 읽는다. 변경된 원장만 슬롯 사본과 새 원장으로 교체하므로 읽기가 보관한 이전 원장은 바뀌지 않는다. 빈 원장은 공유 동결 상수이며 노드 고정 필드는 늘지 않는다. 노드의 첫 배달은 공유 빈 원장에서 비트를 읽어 복사하지 않고 빈 슬롯에서 시작한다(빈 원장의 비트 읽기는 모두 `undefined`이므로 결과가 같다). 비트별 증가 시점과 `revision(mask)` 합은 리스너와 무관하게 동일하다(EVENT-001·007, 65C-01, I11 step 1).
 - 아직 전달하지 않은 배달 항목·비트별 페이로드/options 표와 커밋 비트 항목은 같은 대기열 안에서 갱신한다. dispatch가 파동을 전달하기 전에 표를 분리하므로 이미 리스너에게 건넨 사건·페이로드/options는 다음 표시가 수정하지 않는다. 마지막 정의된 값, 최초 삽입 순서와 개발 모드 페이로드 동결은 유지하며 반복 표시의 객체·표 복사를 없앤다(EVENT-004·006·007·023·024, 65C-01, I11 step 1).
 - 계산·상태 변경의 현장 기록은 감시 역색인이 있을 때만 `deliveryAffectedPaths`에 영향 경로를 더한다. 이 경로 작업 집합은 정착 커밋에서 소비/삭제하고 변경 노드의 관측 필드를 다시 읽어 경로 집합을 재구축하지 않는다. 경로 이동 목록과 형상 출입 사실은 그대로 감시 색인 조회에 합류한다. 정적 watch 선언 색인과 affected 조회는 유지한다(65C-02·03, 372C-02).
+
+### onError origin
+
+트리 런타임의 선택 chainOrigin은 load·write·validate의 열린 사슬/파동 출처입니다. chainOccurrences·pendingWarningRecords·guardFailureRecords는 origin이 선택적인 내부 대기 기록을 보유하며 최종 FormErrorReporter는 origin 필수 기록만 받습니다. 노드 고정 필드는 늘리지 않습니다.
 
 ## Acceptance Criteria
 

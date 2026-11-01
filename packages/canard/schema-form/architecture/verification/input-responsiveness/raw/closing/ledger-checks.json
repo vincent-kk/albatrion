@@ -1,0 +1,277 @@
+{
+  "baseline": [
+    {
+      "check": "verbatim",
+      "exit": 0,
+      "summary": "items 1415, fragments 327, items with non-verbatim decision lines 0"
+    },
+    {
+      "check": "sup",
+      "exit": 0,
+      "summary": "supplement and conflict quotes 3563, not verbatim at cited lines 0, unparsed 0"
+    },
+    {
+      "check": "ref",
+      "exit": 0,
+      "summary": "items 1415, problems 0"
+    },
+    {
+      "check": "owner",
+      "exit": 0,
+      "summary": "owner answers 712, cited 712, uncited 0"
+    },
+    {
+      "check": "bundle",
+      "exit": 0,
+      "summary": "{\"GOAL\":401,\"PROCESS\":686,\"REACT\":34,\"SCHEMA\":220,\"SETTLE\":405,\"BLUEPRINT\":171,\"VALUE\":198,\"VALIDATE\":155,\"FRAGMENT\":430,\"WRITE\":311,\"CONTROLS\":287,\"SURFACE\":250,\"LANDING\":343,\"TEST\":320,\"EVENT\":255,\"NODE\":165,\"ERROR\":391}"
+    },
+    {
+      "check": "sentence-GOAL",
+      "exit": 0,
+      "summary": "sentences 441, quoted 303, classified 138, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-SCHEMA",
+      "exit": 0,
+      "summary": "sentences 225, quoted 94, classified 131, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-CONTROLS",
+      "exit": 0,
+      "summary": "sentences 406, quoted 194, classified 212, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-BLUEPRINT",
+      "exit": 0,
+      "summary": "sentences 262, quoted 154, classified 108, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-FRAGMENT",
+      "exit": 0,
+      "summary": "sentences 555, quoted 257, classified 298, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-VALUE",
+      "exit": 0,
+      "summary": "sentences 219, quoted 116, classified 103, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-WRITE",
+      "exit": 0,
+      "summary": "sentences 555, quoted 303, classified 252, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-SETTLE",
+      "exit": 0,
+      "summary": "sentences 545, quoted 205, classified 340, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-EVENT",
+      "exit": 0,
+      "summary": "sentences 278, quoted 166, classified 112, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-VALIDATE",
+      "exit": 0,
+      "summary": "sentences 224, quoted 129, classified 95, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-ERROR",
+      "exit": 0,
+      "summary": "sentences 587, quoted 470, classified 117, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-NODE",
+      "exit": 0,
+      "summary": "sentences 272, quoted 177, classified 95, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-REACT",
+      "exit": 0,
+      "summary": "sentences 123, quoted 29, classified 94, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-SURFACE",
+      "exit": 0,
+      "summary": "sentences 220, quoted 109, classified 111, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-LANDING",
+      "exit": 0,
+      "summary": "sentences 363, quoted 210, classified 153, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-TEST",
+      "exit": 0,
+      "summary": "sentences 388, quoted 383, classified 5, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-PROCESS",
+      "exit": 0,
+      "summary": "sentences 726, quoted 233, classified 493, missing 0, bad classifications 0"
+    },
+    {
+      "check": "inventory",
+      "exit": 0,
+      "summary": "{\"distinctTokens\":2387,\"byKind\":{\"code\":1961,\"id\":216,\"number\":180,\"errorCode\":30}}"
+    },
+    {
+      "check": "tokens",
+      "exit": 0,
+      "summary": "{\"total\":2387,\"missing\":399}"
+    },
+    {
+      "check": "plan",
+      "exit": 0,
+      "summary": "plan docs 80, cited ids 573, PR-defining LANDING items 36, problems 1"
+    },
+    {
+      "check": "coverage",
+      "exit": 0,
+      "summary": "docs 25, items in scope 1143, uncited 66, bad ids 0, missing tokens 0, untagged sentences 0, stale exemptions 0, problems 66"
+    }
+  ],
+  "final": [
+    {
+      "check": "verbatim",
+      "exit": 0,
+      "summary": "items 1415, fragments 327, items with non-verbatim decision lines 0"
+    },
+    {
+      "check": "sup",
+      "exit": 0,
+      "summary": "supplement and conflict quotes 3582, not verbatim at cited lines 0, unparsed 0"
+    },
+    {
+      "check": "ref",
+      "exit": 0,
+      "summary": "items 1415, problems 0"
+    },
+    {
+      "check": "owner",
+      "exit": 0,
+      "summary": "owner answers 720, cited 720, uncited 0"
+    },
+    {
+      "check": "bundle",
+      "exit": 0,
+      "summary": "{\"GOAL\":401,\"PROCESS\":686,\"REACT\":34,\"SCHEMA\":220,\"SETTLE\":405,\"BLUEPRINT\":171,\"VALUE\":198,\"VALIDATE\":155,\"FRAGMENT\":430,\"WRITE\":311,\"CONTROLS\":287,\"SURFACE\":250,\"LANDING\":343,\"TEST\":320,\"EVENT\":255,\"NODE\":165,\"ERROR\":391}"
+    },
+    {
+      "check": "sentence-GOAL",
+      "exit": 0,
+      "summary": "sentences 441, quoted 303, classified 138, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-SCHEMA",
+      "exit": 0,
+      "summary": "sentences 225, quoted 94, classified 131, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-CONTROLS",
+      "exit": 0,
+      "summary": "sentences 406, quoted 194, classified 212, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-BLUEPRINT",
+      "exit": 0,
+      "summary": "sentences 262, quoted 154, classified 108, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-FRAGMENT",
+      "exit": 0,
+      "summary": "sentences 555, quoted 257, classified 298, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-VALUE",
+      "exit": 0,
+      "summary": "sentences 219, quoted 116, classified 103, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-WRITE",
+      "exit": 0,
+      "summary": "sentences 555, quoted 303, classified 252, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-SETTLE",
+      "exit": 0,
+      "summary": "sentences 545, quoted 205, classified 340, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-EVENT",
+      "exit": 0,
+      "summary": "sentences 278, quoted 166, classified 112, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-VALIDATE",
+      "exit": 0,
+      "summary": "sentences 224, quoted 129, classified 95, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-ERROR",
+      "exit": 0,
+      "summary": "sentences 587, quoted 470, classified 117, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-NODE",
+      "exit": 0,
+      "summary": "sentences 272, quoted 177, classified 95, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-REACT",
+      "exit": 0,
+      "summary": "sentences 123, quoted 29, classified 94, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-SURFACE",
+      "exit": 0,
+      "summary": "sentences 220, quoted 109, classified 111, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-LANDING",
+      "exit": 0,
+      "summary": "sentences 363, quoted 210, classified 153, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-TEST",
+      "exit": 0,
+      "summary": "sentences 388, quoted 383, classified 5, missing 0, bad classifications 0"
+    },
+    {
+      "check": "sentence-PROCESS",
+      "exit": 0,
+      "summary": "sentences 726, quoted 233, classified 493, missing 0, bad classifications 0"
+    },
+    {
+      "check": "inventory",
+      "exit": 0,
+      "summary": "{\"distinctTokens\":2387,\"byKind\":{\"code\":1961,\"id\":216,\"number\":180,\"errorCode\":30}}"
+    },
+    {
+      "check": "tokens",
+      "exit": 0,
+      "summary": "{\"total\":2387,\"missing\":398}"
+    },
+    {
+      "check": "plan",
+      "exit": 0,
+      "summary": "plan docs 80, cited ids 573, PR-defining LANDING items 36, problems 1"
+    },
+    {
+      "check": "coverage",
+      "exit": 0,
+      "summary": "docs 25, items in scope 1143, uncited 66, bad ids 0, missing tokens 0, untagged sentences 0, stale exemptions 0, problems 66"
+    }
+  ],
+  "comparison": {
+    "newOwnerAnswers": 8,
+    "newEditorDecisionSupplements": 11,
+    "newUncitedOwnerAnswers": 0,
+    "newPlanProblems": 0,
+    "preExistingPlanProblems": 1,
+    "preExistingDocCoverageUncited": 66,
+    "tokensBaseline": 399,
+    "tokensFinal": 398,
+    "tokenDifference": "L0 lexical match from L followed by decimal data; no semantic coverage claim"
+  }
+}

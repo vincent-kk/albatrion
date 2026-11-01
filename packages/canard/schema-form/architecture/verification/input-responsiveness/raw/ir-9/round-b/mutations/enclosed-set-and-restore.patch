@@ -1,0 +1,30 @@
+--- src/core/engine/write/utils/chain/startFieldNodeChain.ts
++++ src/core/engine/write/utils/chain/startFieldNodeChain.ts
+@@ -11,6 +11,7 @@
+   origin: 'load' | 'write',
+ ): void => {
+   const runtime = root.runtime;
++  const previousOrigin = runtime.chainOrigin;
+   runtime.enclosingChain =
+     runtime.chainErrors && runtime.chainOccurrences
+       ? {
+@@ -19,7 +20,8 @@
+           outer: runtime.enclosingChain,
+         }
+       : undefined;
+-  if (!runtime.enclosingChain) runtime.chainOrigin = origin;
++  runtime.chainOrigin = origin;
++  if (runtime.enclosingChain) Reflect.set(runtime.enclosingChain, 'savedOrigin', previousOrigin);
+   runtime.chainRoot = root;
+   runtime.chainInitialEmit = root.emit;
+   runtime.chainErrors = [];
+--- src/core/engine/write/utils/chain/exitFieldNodeChain.ts
++++ src/core/engine/write/utils/chain/exitFieldNodeChain.ts
+@@ -173,6 +173,7 @@
+     stale.chainOrigin = undefined;
+   }
+   if (enclosing) {
++    runtime.chainOrigin = Reflect.get(enclosing, 'savedOrigin');
+     enclosing.errors.push(...errors);
+     for (const record of pending)
+       enclosing.occurrences.push({ kind: 'record', record });

@@ -1,0 +1,4 @@
+{
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts": "accd7c14886caa479e4dfba73e52e6d66a1c543a405cce7b896d438cab8d4691",
+  "packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx": "de45007f6372c2d527fecadc086d289825d2c06692e9fc1dbbe20b3815867f3f"
+}

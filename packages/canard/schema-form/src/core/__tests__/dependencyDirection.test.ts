@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 /** Loaded by the unit suite; every non-test source edge is checked on each run. */
 const CORE = fileURLToPath(new URL('..', import.meta.url));
 const FRACTALS = [
+  'engine/validationScheduling',
   'engine/blueprint',
   'engine/record',
   'engine/behaviors',
@@ -28,6 +29,7 @@ const BEHAVIOR_KINDS = [
   'unionBehavior',
 ];
 const ORDER: Readonly<Record<string, number>> = {
+  'engine/validationScheduling': 0,
   'engine/blueprint': 0,
   'engine/record': 1,
   'engine/behaviors': 2,
@@ -225,6 +227,19 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     expect(
       reversed.map(
         ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
+  });
+
+  it('keeps the timing policy independent of validation-domain modules', () => {
+    const timing = 'engine/validationScheduling';
+    expect(files.some((file) => owner(file) === timing)).toBe(true);
+    expect(
+      edges.filter(
+        ({ source, target }) =>
+          owner(source) === timing &&
+          owner(target) !== null &&
+          owner(target) !== timing,
       ),
     ).toEqual([]);
   });

@@ -7,5 +7,5 @@
 - 닫는 항목: NODE-034(보충), SURFACE-053(보충), TEST-027(보충)
 - 결정:
   - 【추론】 (1)은 오류 경로의 원자성이라 새 동작이 옳고 소비자에게 더 안전하다. 꼬리는 전부 외부 오류 채널과 설정·문서라 쓰기 경로 측정과 독립이다.
-- 근거: verifier 보고(재현 탐침은 /tmp/claude-501/probe·probe2·probe4·build·lint); 170라운드 소유자 답; 204C-01; GOAL-010; 62C-01.
+- 근거: verifier 보고(재현 탐침은 {scratch}/probe·probe2·probe4·build·lint); 170라운드 소유자 답; 204C-01; GOAL-010; 62C-01.
 - 다음: 원장 관리자가 reviewer·fixy07에 알린다.

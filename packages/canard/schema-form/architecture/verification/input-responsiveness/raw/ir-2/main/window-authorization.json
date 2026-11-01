@@ -1,0 +1,8 @@
+{
+  "messageId": "msg_0c684478d068",
+  "subject": "window clear",
+  "at": "2026-10-30T17:11:52Z",
+  "body": "IR-1b has finished every test and build; start after 30 s quiet observation. Coordinator performs read-only checks until worker_done.",
+  "taskId": "task_64e81b2b9e6d",
+  "dispatchId": "ctx_ac8826e31b35"
+}

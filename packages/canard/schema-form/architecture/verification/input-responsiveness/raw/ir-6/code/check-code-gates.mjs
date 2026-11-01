@@ -1,0 +1,89 @@
+// Read captured gate receipts; source hashes bind the evidence to the verified files.
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import { gunzipSync } from 'node:zlib';
+
+const round = process.argv[2];
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5' || round === '--round=5b' || round === '--round=5c');
+const root = new URL(round ? `./round-${round.slice('--round='.length)}/` : './', import.meta.url);
+const packageRoot = new URL('../../../../../../', import.meta.url);
+const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));
+for (const [file, hash] of Object.entries(report.sourceHashes))
+  assert.equal(createHash('sha256').update(fs.readFileSync(new URL(file, packageRoot))).digest('hex'), hash, file);
+for (const [gate, result] of Object.entries(report.gates)) {
+  assert.equal(result.exitCode, 0, gate);
+  if (!result.artifact) continue;
+  const raw = JSON.parse(gunzipSync(fs.readFileSync(new URL(result.artifact, root))));
+  assert.equal(raw.success, true, gate);
+  assert.equal(raw.numFailedTests, 0, gate);
+  assert.equal(raw.testResults.length, result.files, gate);
+  assert.equal(raw.numPassedTests, result.passed, gate);
+  assert.equal(raw.numTodoTests, result.todo, gate);
+}
+const round2 = !!round;
+const declarationBytes = fs.readFileSync(new URL(round2 ? 'evaluated-public-declarations.json.gz' : 'public-declarations.json', root));
+const declarations = JSON.parse(round2 ? gunzipSync(declarationBytes) : declarationBytes);
+assert.equal(declarations.rootExportsEqual, true);
+assert.deepEqual(declarations.semanticDifferences, { added: [], removed: [] });
+assert.equal(declarations.indexByteDifference, false);
+if (round2) {
+  assert.deepEqual(declarations.unsafeRuntimeExposures, []);
+  assert.deepEqual(declarations.unresolvedAliases, []);
+  assert.equal(declarations.candidateRootTraces.length, 97);
+  const controls = JSON.parse(fs.readFileSync(new URL('declaration-controls.json', root)));
+  assert.equal(controls.positiveExitCode, 1);
+  assert.ok(controls.positiveDifferenceCounts.added + controls.positiveDifferenceCounts.removed > 0);
+  assert.equal(controls.restoreExitCode, 0);
+  assert.equal(controls.restored, true);
+  assert.deepEqual(controls.restoreDifferenceCounts, { added: 0, removed: 0 });
+}
+const fca = JSON.parse(fs.readFileSync(new URL('fca-diff.json', root)));
+for (const inspection of Object.values(fca.inspections)) {
+  assert.deepEqual(inspection.diagnostics, { added: [], removed: [] });
+  assert.deepEqual(inspection.findings, { added: [], removed: [] });
+}
+
+if (round === '--round=5' || round === '--round=5b' || round === '--round=5c') {
+  const comments = JSON.parse(fs.readFileSync(new URL('public-comments.json', root)));
+  const expectedFiles = [
+    'components/Form/components/FormCore/types/handle.d.ts',
+    'components/Form/components/FormCore/types/props.d.ts',
+    'core/engine/types/state.d.ts',
+    'types/field/fieldInput.d.ts',
+    'types/field/fieldRenderer.d.ts',
+  ];
+  assert.deepEqual(comments.changedFiles, expectedFiles);
+  assert.ok(comments.commentPreservingDifferences.added.length > 0);
+  assert.equal(comments.commentPreservingDifferences.added.length, comments.commentPreservingDifferences.removed.length);
+  for (const item of [...comments.commentPreservingDifferences.added, ...comments.commentPreservingDifferences.removed])
+    assert.ok(expectedFiles.includes(JSON.parse(item)[0]));
+  assert.equal(report.layoutEffectCost.arrayItemMount, 2);
+  assert.equal(report.layoutEffectCost.unchangedVisibilityOrdinaryInputWrite, 0);
+}
+if (round === '--round=5b' || round === '--round=5c') {
+  const parity = JSON.parse(fs.readFileSync(new URL('public-document-parity.json', root)));
+  assert.equal(parity.allTrue, true);
+  for (const checks of Object.values(parity.sixDocumentChecks))
+    assert.ok(Object.values(checks).every(Boolean));
+  const targets = JSON.parse(fs.readFileSync(new URL('two-target-controls.json', root)));
+  assert.equal(targets.positiveExitCode, 1);
+  assert.equal(targets.selectedFailed, 1);
+  assert.equal(targets.restored, true);
+  assert.equal(report.gates.lint.warnings, 0);
+}
+if (round === '--round=5c') {
+  const snapshots = JSON.parse(fs.readFileSync(new URL('candidate-snapshot-controls.json', root)));
+  assert.equal(snapshots.approval, 'msg_12043ec1b07c');
+  assert.equal(snapshots.approvalPending, false);
+  assert.equal(snapshots.finalApplied, true);
+  assert.equal(snapshots.originalFullRender.failed, 2);
+  assert.deepEqual(snapshots.probe, { passed: 2, failed: 0 });
+  const supplements = JSON.parse(fs.readFileSync(new URL('supplement-parity.json', root)));
+  assert.equal(Object.keys(supplements).length, 10);
+  for (const entry of Object.values(supplements)) {
+    assert.equal(entry.mergedPrefixUnchanged, true);
+    assert.equal(entry.restoredStillTrueLines.length, 2);
+  }
+}
+console.log('IR6_CODE_GATES_OK captured-results; performance-review-and-measurement-pending');

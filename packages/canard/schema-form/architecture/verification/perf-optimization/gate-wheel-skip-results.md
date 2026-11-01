@@ -32,7 +32,7 @@ typecheck·lint·다섯 프로젝트(unit·render·react18·production·storyboo
 
 검증자 보완 뒤 setup의 내부 스위치를 임시로 skip으로 바꾼 unit·render·react18 출하 모드 실행은 663파일·4,658시험 통과, 기존 todo 1개, 실패 0건, 종료 0입니다. setup은 실행 뒤 shadow로 복구했고 작업 트리의 깨끗함을 확인했습니다. 보완 후 typecheck·lint·전체 test·build 재실행도 모두 종료 0이며, 다섯 프로젝트의 772파일·4,929시험 통과, 기존 todo 1개, 실패 0건입니다. 명령과 원본 결과는 namespace의 amend/gates/와 amend/skip-mode.md에 보존했습니다.
 
-원본 prepare.mjs·cases.mjs·compare.mjs·readiness.mjs는 변경하지 않았습니다. Node v24.20.0과 Bun 1.4.3 각각 원래 58장면의 source·A·B 174이력과 174비교에서 차이는 0건이며, standalone 네 사례씩과 잘못된 모듈·캐시·SHA 음성 대조 10개도 예상대로 통과했습니다. readiness marker는 OBSERVATION_IDENTITY_READY입니다. 지정 측정 Node는 별도의 /opt/homebrew/bin/node v26.12.0이며 환경 파일에 구분했습니다.
+원본 prepare.mjs·cases.mjs·compare.mjs·readiness.mjs는 변경하지 않았습니다. Node v24.20.0과 Bun 1.4.3 각각 원래 58장면의 source·A·B 174이력과 174비교에서 차이는 0건이며, standalone 네 사례씩과 잘못된 모듈·캐시·SHA 음성 대조 10개도 예상대로 통과했습니다. readiness marker는 OBSERVATION_IDENTITY_READY입니다. 지정 측정 Node는 별도의 {node-home}/bin/node v26.12.0이며 환경 파일에 구분했습니다.
 
 그림자 모드는 P가 참이어도 다음 바퀴를 실제로 실행하여 스키마·자식·출력이 바뀌지 않고 자리별 게이트 값이 같음을 단언합니다. 전체 settle·시나리오와 전체 시험의 로그 누적 합계는 예측 3,481회, 실제 생략 73회, 무동작 확인 3,363회, 놓친 생략 39,589회, 비무동작 확인 0회입니다. record 모드의 예측 45회에는 실행 확인을 요구하지 않으므로 예측은 생략과 확인의 합과 다릅니다. 반복 이력과 모드별 실행을 포함한 합계이며 고유 장면 수가 아닙니다.
 

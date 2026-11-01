@@ -1,0 +1,227 @@
+{
+  "registeredDiagnosis": [
+    {
+      "id": "mount-flat-500-validate",
+      "metric": "eagerPainted",
+      "bound": 1.0563294969774275,
+      "reason": "ratio-in-diagnosis-band",
+      "differenceUpperBound": 4.6500000059604645,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "id": "mount-flat-500-onrequest",
+      "metric": "eagerPainted",
+      "bound": 1.0588599744434781,
+      "reason": "ratio-in-diagnosis-band",
+      "differenceUpperBound": 4.749999940395355,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "id": "mount-flat-500-always",
+      "metric": "eagerPainted",
+      "bound": 1.0500595938818136,
+      "reason": "ratio-in-diagnosis-band",
+      "differenceUpperBound": 4.199999928474426,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "id": "reset-flat-500-same",
+      "metric": "callDuration",
+      "bound": 1.073126143701579,
+      "reason": "ratio-in-diagnosis-band",
+      "differenceUpperBound": 1.0000000149011612,
+      "cause": "동일 트리 reload에 로드-origin batch와 슬롯 예약이 추가됐습니다. compile 0·validate 1은 같으며 추가 작업의 개별 시간은 분리되지 않았습니다(C2)."
+    },
+    {
+      "id": "validate-flat-500-settled",
+      "metric": "resolutionTime",
+      "bound": 1.3529411352216973,
+      "reason": "passes-difference-clause",
+      "differenceUpperBound": 0.15000000596046448,
+      "cause": "명시 validate의 Promise 경로에 검증 root pin/unpin과 결과 정규화가 있습니다. 중앙값은 모두 0.5ms이고 차이 상한은 0.15ms입니다(C3)."
+    }
+  ],
+  "allComparisonBands": [
+    {
+      "reference": "B",
+      "id": "type-flat-500-validate-nonburst",
+      "metric": "eagerPainted",
+      "upperBound": 1.051664752458824,
+      "differenceUpperBound": 4.549999952316284,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "B",
+      "id": "mount-flat-500-validate",
+      "metric": "eagerPainted",
+      "upperBound": 1.0563294969774275,
+      "differenceUpperBound": 4.6500000059604645,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "B",
+      "id": "mount-flat-500-onrequest",
+      "metric": "eagerPainted",
+      "upperBound": 1.0588599744434781,
+      "differenceUpperBound": 4.749999940395355,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "B",
+      "id": "mount-flat-500-always",
+      "metric": "eagerPainted",
+      "upperBound": 1.0500595938818136,
+      "differenceUpperBound": 4.199999928474426,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "B",
+      "id": "reset-flat-500-same",
+      "metric": "callDuration",
+      "upperBound": 1.073126143701579,
+      "differenceUpperBound": 1.0000000149011612,
+      "undefinedRatios": 0,
+      "cause": "동일 트리 reload에 로드-origin batch와 슬롯 예약이 추가됐습니다. compile 0·validate 1은 같으며 추가 작업의 개별 시간은 분리되지 않았습니다(C2)."
+    },
+    {
+      "reference": "B",
+      "id": "reset-flat-500-replace",
+      "metric": "eagerPainted",
+      "upperBound": 1.052505966295134,
+      "differenceUpperBound": 4.399999976158142,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "B",
+      "id": "validate-flat-500-settled",
+      "metric": "nextPainted",
+      "upperBound": 1.0924731172541136,
+      "differenceUpperBound": 1.074999988079071,
+      "undefinedRatios": 0,
+      "cause": "호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4)."
+    },
+    {
+      "reference": "S",
+      "id": "type-flat-500-validate-nonburst",
+      "metric": "eagerPainted",
+      "upperBound": 1.0532646045306207,
+      "differenceUpperBound": 4.649999976158142,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "S",
+      "id": "mount-flat-500-none",
+      "metric": "firstPainted",
+      "upperBound": 1.0555555555555556,
+      "differenceUpperBound": 2,
+      "undefinedRatios": 0,
+      "cause": "None은 F에서 compile을 생략합니다. 현재/이전 stage의 tree·DOM 구성과 첫 rAF 위상 차이가 남으며 이 구간만으로 함수별 비용은 확정할 수 없습니다(C6)."
+    },
+    {
+      "reference": "S",
+      "id": "mount-nested-d5-f4-none",
+      "metric": "firstPainted",
+      "upperBound": 1.054878049628152,
+      "differenceUpperBound": 3.6000000536441803,
+      "undefinedRatios": 0,
+      "cause": "None은 F에서 compile을 생략합니다. 현재/이전 stage의 tree·DOM 구성과 첫 rAF 위상 차이가 남으며 이 구간만으로 함수별 비용은 확정할 수 없습니다(C6)."
+    },
+    {
+      "reference": "S",
+      "id": "mount-flat-500-always",
+      "metric": "eagerPainted",
+      "upperBound": 1.054151624174568,
+      "differenceUpperBound": 4.499999970197678,
+      "undefinedRatios": 0,
+      "cause": "다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1)."
+    },
+    {
+      "reference": "S",
+      "id": "reset-flat-500-same",
+      "metric": "nextPainted",
+      "upperBound": 1.0612369867707614,
+      "differenceUpperBound": 2.499999985098839,
+      "undefinedRatios": 0,
+      "cause": "호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4)."
+    },
+    {
+      "reference": "S",
+      "id": "rebuild-flat-500",
+      "metric": "nextPainted",
+      "upperBound": 1.073333332935969,
+      "differenceUpperBound": 3.300000011920929,
+      "undefinedRatios": 0,
+      "cause": "호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4)."
+    },
+    {
+      "reference": "L",
+      "id": "type-flat-500-validate-burst",
+      "metric": "undelivered",
+      "upperBound": 1.0555555555555556,
+      "differenceUpperBound": 1,
+      "undefinedRatios": 0,
+      "cause": "burst의 여러 요청이 최신 검증으로 합쳐지는 cadence 경로입니다. B가 아닌 L 비교이며 입력 손실 판정은 아닙니다. 두 lane의 페이지 중앙값은 모두 18개입니다(C5)."
+    },
+    {
+      "reference": "L",
+      "id": "type-nested-d5-f4-validate-nonburst",
+      "metric": "arrivalP95",
+      "upperBound": 1.074204952176308,
+      "differenceUpperBound": 1.0500000715255737,
+      "undefinedRatios": 0,
+      "cause": "F의 write 검증은 프레임 뒤 cadence에서 실행됩니다. L과의 스케줄링 경로가 다르며 첫 키/비burst의 도착 차이가 약 1ms입니다(C5)."
+    },
+    {
+      "reference": "L",
+      "id": "type-nested-d5-f4-validate-burst",
+      "metric": "undelivered",
+      "upperBound": 1.0588235294117647,
+      "differenceUpperBound": 1,
+      "undefinedRatios": 0,
+      "cause": "burst의 여러 요청이 최신 검증으로 합쳐지는 cadence 경로입니다. B가 아닌 L 비교이며 입력 손실 판정은 아닙니다. 두 lane의 페이지 중앙값은 모두 18개입니다(C5)."
+    },
+    {
+      "reference": "L",
+      "id": "first-key-flat-2000-validate",
+      "metric": "arrivalP95",
+      "upperBound": 1.0879120860046816,
+      "differenceUpperBound": 0.7999999821186066,
+      "undefinedRatios": 0,
+      "cause": "F의 write 검증은 프레임 뒤 cadence에서 실행됩니다. L과의 스케줄링 경로가 다르며 첫 키/비burst의 도착 차이가 약 1ms입니다(C5)."
+    },
+    {
+      "reference": "L",
+      "id": "mount-array-1000-none",
+      "metric": "firstPainted",
+      "upperBound": 1.0981595089586722,
+      "differenceUpperBound": 11.900000035762787,
+      "undefinedRatios": 0,
+      "cause": "L은 공개 legacy 구현이고 F는 현재 노드·렌더 경로입니다. array None의 tree/DOM 구성 비용과 프레임 경계를 함께 재며 단일 변경의 원인 분리는 불가능합니다(C6)."
+    },
+    {
+      "reference": "L",
+      "id": "mount-array-1000-none",
+      "metric": "longestFrame",
+      "upperBound": 1.0681959084378287,
+      "differenceUpperBound": 11.000000059604645,
+      "undefinedRatios": 0,
+      "cause": "L은 공개 legacy 구현이고 F는 현재 노드·렌더 경로입니다. array None의 tree/DOM 구성 비용과 프레임 경계를 함께 재며 단일 변경의 원인 분리는 불가능합니다(C6)."
+    },
+    {
+      "reference": "L",
+      "id": "validate-flat-500-settled",
+      "metric": "nextPainted",
+      "upperBound": 1.0831556526068857,
+      "differenceUpperBound": 0.9749999940395355,
+      "undefinedRatios": 0,
+      "cause": "호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4)."
+    }
+  ],
+  "rebuildFailureCause": "The paired-bootstrap upper-tail witness has B 11.625ms and F 13.0000000596ms. F adds scheduling and load bookkeeping, while its point median is lower. No function-level profile isolates the cost; the registered FAIL is retained and the owner acceptance is separate."
+}

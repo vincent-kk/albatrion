@@ -1,0 +1,65 @@
+{
+  "stage": "closing",
+  "preregisteredCommit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "finalStageCommit": "5df0bf2adb53e9764432a6e34de9c84b84e12da5",
+  "toolCommit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "freshOrcaCheckouts": [
+    "B",
+    "S"
+  ],
+  "lanes": {
+    "B": {
+      "commit": "5d1348ed16054efa1ec431945eb00472f4eef7f1",
+      "cleanProductScope": true,
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build",
+      "startedAt": "2026-11-01T12:26:28.758Z",
+      "exitObservedAt": "2026-11-01T12:27:13.154Z",
+      "sourceTree": "e16c0334cb833fb21092c60086487be957e761f3",
+      "freshBuild": true,
+      "product": {
+        "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d",
+        "bytes": 857033
+      }
+    },
+    "S": {
+      "commit": "facd72a71c44a798f5484827509073a27fb678a3",
+      "cleanProductScope": true,
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build",
+      "startedAt": "2026-11-01T12:26:28.758Z",
+      "exitObservedAt": "2026-11-01T12:27:13.153Z",
+      "sourceTree": "0bddf38c905c54a00864eea7d3e7e23f1b9d339b",
+      "freshBuild": true,
+      "product": {
+        "sha256": "26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d",
+        "bytes": 858166
+      }
+    },
+    "F": {
+      "commit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+      "cleanProductScope": true,
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build",
+      "startedAt": "2026-11-01T12:26:28.758Z",
+      "exitObservedAt": "2026-11-01T12:27:13.159Z",
+      "sourceTree": "b41ba08fbe000c7a31e1d404ecd652dcd7921435",
+      "freshBuild": true,
+      "product": {
+        "sha256": "24a0f3a2c5e763b7521c283210f20dac0f35afc43580df40b44ecb580cd30ce7",
+        "bytes": 889957
+      }
+    }
+  },
+  "dependencies": "Existing local installed dependencies connected offline; no installs or fetched code. B/S and F product sources are clean pinned sources.",
+  "initialAttempts": {
+    "exitCodes": {
+      "B": 2,
+      "S": 2,
+      "F": 2
+    },
+    "failedStep": "typecheck after successful runtime/declaration generation",
+    "cause": "B/S lacked package-local AJV 8; F lacked local AJV 6/7 plugin declarations and resolved an ancestor checkout type surface.",
+    "resolution": "Connect existing package-local AJV 8 for B/S and build local AJV 6/7 plugins for F; rerun all three complete builds successfully."
+  }
+}

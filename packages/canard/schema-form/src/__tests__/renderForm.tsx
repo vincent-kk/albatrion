@@ -31,6 +31,7 @@ import { type JSONSchema } from '@/schema-form/types';
 import { createRenderScenarioAdapter } from './helpers/createRenderScenarioAdapter';
 import { createRenderValidator } from './helpers/createRenderValidator';
 import { observeErrorSink } from './helpers/observeErrorSink';
+import { settleValidation } from './helpers/settleValidation';
 
 /** The shared harness observes settled node state and committed React DOM. */
 export const setupValidatorPlugin = (): void => {
@@ -291,10 +292,11 @@ export const renderForm = async (
     await act(async () => {
       utils = render(element);
     });
-    // Engine settlement is synchronous; this wait drains React and host work.
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, initialFlushMs));
-    });
+    await settleValidation(() => ref.current?.node);
+    if (initialFlushMs > 0)
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, initialFlushMs));
+      });
   } else {
     // Skip the extra host wait while retaining the settled engine snapshot.
     act(() => {
@@ -305,9 +307,11 @@ export const renderForm = async (
   const container = utils.container;
 
   const flush = async (ms = 0) => {
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, ms));
-    });
+    await settleValidation(() => ref.current?.node);
+    if (ms > 0)
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, ms));
+      });
   };
 
   let unregister = () => {};
@@ -422,13 +426,13 @@ export const renderForm = async (
     setValue: async (value, option) => {
       await act(async () => {
         ref.current!.setValue(value, option as any);
-        await new Promise((r) => setTimeout(r, 0));
+        await settleValidation(() => ref.current?.node);
       });
     },
     reset: async () => {
       await act(async () => {
         ref.current?.reset();
-        await new Promise((r) => setTimeout(r, 0));
+        await settleValidation(() => ref.current?.node);
       });
     },
     validate: async () => {

@@ -1,0 +1,59 @@
+{
+  "sequence": "lint -> typecheck -> import-model -> unit -> origin files (render and react18) -> ledger checks -> FCA validate -> machine-path audit",
+  "gates": [
+    {
+      "gate": "lint",
+      "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+      "exitCode": 0
+    },
+    {
+      "gate": "typecheck",
+      "command": "yarn workspace @canard/schema-form typecheck",
+      "exitCode": 0
+    },
+    {
+      "gate": "import-model",
+      "command": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<scratch>/ir9c-gate-import-model.json",
+      "exitCode": 0
+    },
+    {
+      "gate": "unit",
+      "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=<scratch>/ir9c-gate-unit.json",
+      "exitCode": 0
+    },
+    {
+      "gate": "origins",
+      "command": "yarn workspace @canard/schema-form test --run --project render --project react18 onError.origins.render.test.tsx onError.chain-origin.render.test.tsx --reporter=json --outputFile=<scratch>/ir9c-gate-origins.json",
+      "exitCode": 0
+    },
+    {
+      "gate": "ledger",
+      "command": "node ledger/checks/{verbatim-check,sup-check,ref-check,owner-cited,plan-links,doc-coverage,bundle,sentence-check,tokens}.mjs (exact commands and logs in ledger-logs.json.gz)",
+      "exitCode": 0
+    },
+    {
+      "gate": "fca",
+      "tool": "fractal_inspect validate",
+      "scopes": [
+        "documents",
+        "nodes",
+        "entry-points",
+        "boundaries",
+        "dag",
+        "verification"
+      ],
+      "tool_call_succeeded": true,
+      "findings": 201,
+      "new_findings": 0,
+      "canonical_failed": 12,
+      "canonical_skipped": 1,
+      "certainty": "indeterminate"
+    },
+    {
+      "gate": "paths",
+      "command": "round c source/quote invariants and per-commit added text plus whole gzip snapshot audit",
+      "exitCode": 0,
+      "new_machine_paths": 0
+    }
+  ]
+}

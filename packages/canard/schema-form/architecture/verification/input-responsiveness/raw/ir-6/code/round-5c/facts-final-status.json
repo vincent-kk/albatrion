@@ -1,0 +1,19 @@
+{
+  "status": "ok",
+  "summary": {
+    "projectRoot": "package:",
+    "projectState": "ready",
+    "coveredFiles": 1750,
+    "exact": 1750,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0,
+    "unsupported": 175,
+    "unadjudicatedItems": 0,
+    "pendingAttestations": 0,
+    "resolutionEpoch": "sha256:4310e629831b12ea34ee3e4cacffa4afb7871a55a92795fcf7115080ee1d8f97",
+    "scopeSource": "default"
+  },
+  "diagnostics": []
+}

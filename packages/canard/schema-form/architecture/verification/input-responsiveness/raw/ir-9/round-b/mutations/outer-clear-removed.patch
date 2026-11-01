@@ -1,0 +1,10 @@
+--- src/core/engine/write/utils/chain/exitFieldNodeChain.ts
++++ src/core/engine/write/utils/chain/exitFieldNodeChain.ts
+@@ -193,7 +193,6 @@
+     true,
+     runtime.chainOrigin ?? 'write',
+   );
+-  runtime.chainOrigin = undefined;
+   const exposed = !errors.length
+     ? bundleChainErrors(handlerErrors)
+     : handlerErrors.length

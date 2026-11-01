@@ -1,0 +1,26 @@
+{
+  "import-model": {
+    "numTotalTests": 2,
+    "numPassedTests": 2,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "raw": "gate-import-model.json.gz"
+  },
+  "unit": {
+    "numTotalTests": 4102,
+    "numPassedTests": 4101,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 1,
+    "raw": "gate-unit.json.gz"
+  },
+  "origins": {
+    "numTotalTests": 48,
+    "numPassedTests": 45,
+    "numFailedTests": 0,
+    "numPendingTests": 3,
+    "numTodoTests": 0,
+    "raw": "gate-origins.json.gz"
+  }
+}

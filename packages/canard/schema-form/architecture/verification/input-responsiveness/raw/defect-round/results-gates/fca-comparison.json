@@ -1,0 +1,56 @@
+{
+  "baseline": {
+    "projectRoot": "<baseline>",
+    "snapshotHash": "e07a7f5f6711c67744f27b451b361a8465df01556d95ac41f8e6f353df35db48",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 566,
+    "passed": 5345,
+    "failed": 26,
+    "skipped": 308
+  },
+  "previousHead": {
+    "projectRoot": "<checkout>",
+    "snapshotHash": "d682de922128ca502ae93d1ac09ce3a1ae525fd3ebd772a6355db66bb9f967b5",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 564,
+    "passed": 5361,
+    "failed": 26,
+    "skipped": 308
+  },
+  "final": {
+    "projectRoot": "<checkout>",
+    "snapshotHash": "75a91d3d021c12efd9d5ee5534e85e06b007542bed90a093389951ea2a88cc62",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 564,
+    "passed": 5361,
+    "failed": 26,
+    "skipped": 308
+  },
+  "newFindings": [],
+  "newDiagnostics": [],
+  "method": "Reuse original 779713587 baseline with fully extracted facts; compare normalized rule and diagnostic evidence. Existing indeterminate axes remain indeterminate."
+}

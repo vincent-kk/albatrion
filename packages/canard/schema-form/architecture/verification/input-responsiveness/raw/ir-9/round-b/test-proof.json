@@ -1,0 +1,30 @@
+{
+  "product_commit": "e1079152a",
+  "test_commit": "7448a4b84",
+  "test_sha256": {
+    "packages/canard/schema-form/src/__tests__/e2e/onError.chain-origin.render.test.tsx": "5f2cbc98afe3a9b44290ab36dbae6bfbc08e658897f5a4f1ec5d705e05954c5b",
+    "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx": "b067233eb0eb556e0076af56493684a96b5cfef0411cdda516143fb06952a804",
+    "packages/canard/schema-form/src/__tests__/helpers/renderLegacyOrigin.tsx": "46c00923c37ddfb4778e0457ad1cfb5fc6146b64619dacf7ec25053382273a7c",
+    "packages/canard/schema-form/src/core/__tests__/adoption-delivery.test.ts": "5163a2b7ef9f18d57ba36d572f668b8ba90cc30e34b8cc043c4f6007cc26cdd3",
+    "packages/canard/schema-form/src/core/__tests__/onError.chain-origin.test.ts": "bd08454c91f51801f7d8761ce07c86d6d61d578ba214fc8d2718fd5589d3607b"
+  },
+  "targeted_green": {
+    "total": 74,
+    "passed": 71,
+    "failed": 0,
+    "authorized_legacy_skips": 3
+  },
+  "mutations_caught": 13,
+  "all_product_mutations_restored": true,
+  "caps": {
+    "onError.origins.render.test.tsx": 13,
+    "onError.chain-origin.render.test.tsx": 11,
+    "onError.chain-origin.test.ts": 6
+  },
+  "strict_mode_record_counts": {
+    "mount": 1,
+    "reset": 1,
+    "rebuild": 1
+  },
+  "strict_duplicate_records": 0
+}

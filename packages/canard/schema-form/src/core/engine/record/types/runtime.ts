@@ -1,9 +1,9 @@
 import type { Dictionary } from '@aileron/declare';
 
 import type {
-  FormErrorRecord,
   FormErrorReporter,
   FormWarningCode,
+  PendingFormErrorRecord,
 } from '../../../../errors';
 import type {
   Blueprint,
@@ -18,8 +18,9 @@ import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+import type { ValidationCadence } from '../../validationScheduling';
 import type { FieldNodeFactory } from './behavior';
-import type { FieldNodeDelivery } from './record';
+import type { FieldNodeDelivery, FieldNodeRecord } from './record';
 
 /** Tree-local reverse watch paths used by commit delivery marking. */
 interface FieldNodeWatchDeliveryIndex {
@@ -218,10 +219,12 @@ export interface FieldNodeRuntime<Self>
   chainInitialEmit?: unknown;
   /** Failures retained in occurrence order until the chain finishes. */
   chainErrors?: unknown[];
+  /** Outermost chain or standalone verdict-wave operation, cleared after delivery. */
+  chainOrigin?: 'load' | 'write' | 'validate';
   /** Error and warning occurrences in their actual chain order. */
   chainOccurrences?: (
     | { kind: 'error'; error: unknown }
-    | { kind: 'record'; record: FormErrorRecord }
+    | { kind: 'record'; record: PendingFormErrorRecord }
   )[];
   /**
    * Stack of enclosing chains' failure collections, innermost first; `outer` links the next.
@@ -263,8 +266,8 @@ export interface FieldNodeRuntime<Self>
     option: WriteOption;
     source?: 'input' | 'automatic';
   }[];
-  /** Mount defers validation until the binding's ready effect. */
-  deferMountValidation?: boolean;
+  /** Load defers validation until the binding's slot. */
+  deferLoadValidation?: boolean;
   /** External errors awaiting the replacement tree's first committed shape. */
   adoptedExternalErrors?: Map<string, readonly { dataPath: string }[]>;
   /** Reset scopes requiring validation even with an unchanged root emit. */
@@ -278,11 +281,11 @@ export interface FieldNodeRuntime<Self>
   /** Warning identities already reported for this tree. */
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */
-  pendingWarningRecords?: Map<string, FormErrorRecord>;
+  pendingWarningRecords?: Map<string, PendingFormErrorRecord>;
   /** Data-path ancestor to warning keys, for change-proportional moves/pruning. */
   warningKeysByPath?: Map<string, Set<string>>;
   /** Guard failures awaiting the current public entry's final delivery. */
-  guardFailureRecords?: Map<string, FormErrorRecord>;
+  guardFailureRecords?: Map<string, PendingFormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */
   reportedGuardFailures?: Set<string>;
   /** Development mount currently defers guard failures until its commit. */
@@ -299,6 +302,8 @@ export interface FieldNodeRuntime<Self>
   onStateChange?: () => void;
   /** Most recent validation request/result version. */
   validationStamp?: number;
+  /** Request stamp at the current load start; also identifies the load generation. */
+  validationLoadStamp?: number;
   /** Stamp of the latest queued write-triggered request. */
   validationRequestStamp?: number;
   /** Root external issues followed by the ordered whole-schema validator issues. */
@@ -315,10 +320,37 @@ export interface FieldNodeRuntime<Self>
   validationCompileReported?: boolean;
   /** Dispatcher-owned path for asynchronous execution and delivery failures. */
   reportValidationFailure?: (failure: unknown) => void;
-  /** True while one microtask is queued to run the latest request. */
-  validationQueued?: boolean;
-  /** Subtree scopes merged into the next one-per-commit validation run. */
+  /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
+  validationCadence?: ValidationCadence;
+  /** Latest domain callback selected by the cadence without inspecting its contents. */
+  validationRun?: () => boolean;
+  /** A write-triggered verdict is still pending. */
+  validationPending?: boolean;
+  /** Only occurrences that currently hold a reveal baseline. */
+  revealBaselineNodes?: Set<FieldNodeRecord<Self>>;
+  /** Committed Form policy and its unreleased prior committed values with their generations. */
+  revealPolicy?: {
+    value: unknown;
+    entries: { readonly value: unknown; readonly generation: number }[];
+  };
+  /** Public outer write/walk identity used to coalesce node snapshots. */
+  revealWriteSequence?: number;
+  /** Monotone notification snapshot for every eligibility-history release. */
+  revealReleaseVersion?: number;
+  /** Monotone generation shared by every node and policy history append. */
+  revealBaselineGeneration?: number;
+  /** A nonpending record owes a one-shot post-paint drop. */
+  revealDropOwed?: boolean;
+  /** Identity invalidates an obsolete drop without changing the timing slot contract. */
+  revealDropTask?: object;
+  /** Stamp owned by the active chain's pre-delivery pending record. */
+  validationPendingEntryStamp?: number;
+  /** Internal display listeners notified, from a copy, after every release. */
+  revealReleaseListeners?: Set<() => void>;
+  /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
+  /** Newest started cadence or root run still owing target routing; handed to its successor before supersession. */
+  validationRunning?: { stamp: number; targets: ReadonlySet<Self> };
   /** True after a routing replaced the routed list, until the validation wave publishes it. */
   validationListChanged?: boolean;
   /** Most recent result and its commit number. */

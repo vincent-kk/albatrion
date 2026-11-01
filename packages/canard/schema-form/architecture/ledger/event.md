@@ -505,6 +505,7 @@
 - 결정:
   > 예외 하나: 열린 진입 안에서 재생성 경로의 `reset`이 만든 새 루트는 옛 루트의 진입 깊이와 배치의 표시 구간, 그 사슬의 되먹임 파동 수·`onChange` 중첩 수·모아 둔 오류를 이어받고, 옛 루트의 최외곽 진입이 끝날 때 새 루트의 검증 요청과 `onChange`를 낸다. 옛 루트는 폐기되므로 표시된 쓰기를 정착하지 않고 파동도 검증 요청도 `onChange`도 내지 않으며, 새 루트의 커밋은 같은 자리의 쓰기가 받을 파동(§3, §2 규칙 4)에 합류한다(09 §2.6의 열째, 16라운드 스웜 수렴(편집자 결정)).
 - 보충: 없음
+  > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
 - 상태: 현행
 - 출처: `adr/0008-event-system.md:116#7-8`(정본), `adr/0008-event-system.md:8`, `09-landing-and-test-strategy.md:90`
 - 닫은 사람: 16라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:79,90`)
@@ -738,6 +739,8 @@
 - 보충:
   > 편집자 결정(207C-01): "【추론】 (a)는 두 항목이 서로 다른 층(발생·전달)을 적은 것이라 모순이 아니다. (b)는 설계 가치가 분명히 정한 방향(같은 값은 같은 참조)이고 성능에 직접 닿으므로 07b가 맞는 자리다." (`reviews/round-207-closing.md:9`)
   > 편집자 결정(218C-02): "【추론】 "같은 값은 같은 참조"는 배정 결과를 건너뛰어서가 아니라 같은 항목 객체로 다시 배정해 얻어야 트리 재배치와 분기 전환에서도 맞는다. 0.16.0의 조기 반환 결함을 그대로 옮기지 않는다." (`reviews/round-218-closing.md:16`)
+  > 편집자 결정(DR17C-01): "【추론】 DR-17(quote 75): 부른 쪽이 없는 실패는 host에 오류 하나씩 보낸다. SchemaFormError MultipleErrors 묶음(비어 있지 않은 배열·모든 index가 own)은 원소를 깊이 우선·원소 순서로 펼쳐 잎마다 한 번 보내고 같은 규칙의 중첩 묶음만 펼친다. 형식이 어긋난 묶음·다시 만난 묶음·그 밖의 값은 그대로 한 번 보낸다. 적용 자리는 native submit, load flush·reset의 load 오류와 핸들러 예외, capture의 핸들러 예외, 슬롯 판정, engine의 검증 결과 파동과 OnChange 실행 실패의 주인 없는 싱크이며 핸들러 예외가 묶음이면 그것도 원소별로 보낸다. 핸들러 예외가 원래 실패보다 먼저 host에 가는 자리(검증 결과 파동, OnChange 실행 실패, load flush)의 순서는 바꾸지 않는다. 렌더 경계가 잡은 값의 host 보고는 React와 경계의 기록이므로 던진 값 그대로이다. caller가 있는 validate()·submit()은 묶음 하나로 거부한다. DR-11-R2·DR-14의 bundle host 한 번과 ERROR-008·ERROR-028·EVENT-046의 싱크 한 번은 잎마다 한 번으로 읽는다." (`reviews/defect-round.md:85`)
+  > 편집자 결정(DR17C-02): "【추론】 DR-17-R2(Amendment 16): 호스트 잎 순회는 배열마다 정수 길이 1부터 2^32 − 1까지를 고정 범위로 점검한 뒤 마지막 길이의 동일성을 확인하고, 호출 전체에서 공유하는 원소 점검 예산 1,000,000개를 snapshot 전에 예약한다. 원소 읽기나 마지막 안정성 읽기가 실패해도 예약을 환불하지 않는다. 읽을 수 없는 값·유효하지 않거나 변한 길이·예산 초과·malformed·재방문 묶음은 그 값을 불투명한 잎 하나로 방문하므로 최종 sink도 묶음을 받을 수 있다. 앞 원소의 부분 전달은 없으며 이미 방문한 바깥 형제의 순서와 identity는 유지한다. handler bundle도 각 잎으로 보내고 검증 결과 파동·OnChange·load flush의 handler-first, native submit·slot의 원인 우선 및 caller 거부·render boundary의 원래 값은 유지한다. visit·sink callback이 던진 예외는 전파한다." (`reviews/defect-round.md:96`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:60-61,63`(정본), `reviews/round-16-owner-review.md:54`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:9` 3), 17라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:63`, 이 파동의 리스너 예외의 드러남)
@@ -1229,3 +1232,24 @@
 - 닫은 사람: 편집자 결정(447라운드, `reviews/round-447-closing.md` 447C-05)
 - 라운드: 447
 - 까닭: `reviews/round-447-closing.md:16`
+
+
+## IR-6 보충 — EVENT-028 (2026-10-31)
+
+EVENT-028의 검증 실행 시점에 관한 옛 문장은 VALIDATE-052와 [D1 구현](../plan/input-responsiveness/design.md#d1-구현--ir-6-2026-10-31)이 대체합니다. 요청 순서는 그대로이며 쓰기·OnChange 마운트의 실행은 다음 화면 뒤 최신 커밋 한 번으로 합칩니다. 명시적 validate와 제출은 즉시 실행합니다. 오류의 sink/rejected 표면과 호출 시점 환경 검사·owed·하위 트리 보존은 같은 구현 절을 따릅니다. TEST-036의 과거 측정 수치 자체는 고치지 않으며 슬롯은 검증 계산량을 줄이지 않습니다. 기존 원문과 줄 번호는 보존합니다.
+
+IR-6 연속 입력 보충(2026-10-31): 위 화면 뒤 실행은 선행·연속 프레임 이월·첫 무요청 프레임 뒤 후행과 마지막 자동 실행 시작 기준100ms 상한을 포함합니다. 시간 정책은 도메인 없는 validationScheduling이 소유하고 마운트는 일회성 슬롯을 유지합니다(VALIDATE-052, 소유자 원문18).
+
+
+## IR-7 보충 — EVENT-028 (2026-11-01)
+
+첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
+
+IR-6의 owed·hidden buffer·reconnect 제한은 대체합니다. 같은-schema hidden reset의 미결 질문은 chain 끝의 즉시 전달로 닫습니다. reset은 mount-time 기록 뒤 build-time 기록을 전달하고 handler마다 실패를 호스트로 격리하여 이후 기록과 새 binding 교체를 계속합니다. never-prepared 기록의 원래 root·warning scope와 첫 flush의 reported 가드는 유지합니다. REACT-007의 최초 mount settle·추측 렌더 무배달 규칙은 유지하며 show의 필드 layout 쓰기·경고만 show에 도착합니다(L3).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+
+근거: [IR-7 계획의 소유자 원문39–41](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01). 기존 원문·IR-6 보충은 역사 기록으로 보존하고 현재 계약은 이 보충이 대체합니다.

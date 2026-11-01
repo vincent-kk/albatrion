@@ -12,12 +12,12 @@ React 렌더·DOM 입력·사용자 대기 시간은 포함하지 않습니다.
 yarn install --immutable
 yarn workspaces foreach --from @canard/schema-form --recursive --topological-dev run build
 export NODE_ENV=production
-export D0_NODE=/opt/homebrew/bin/node             # Node 26; 실제 실행 버전은 JSON에 기록
+export D0_NODE={node-home}/bin/node             # Node 26; 실제 실행 버전은 JSON에 기록
 export D0_TOOLS=packages/canard/schema-form/architecture/verification/design-optimization/tools
 ```
 
 원시 표본, 번들 사본, 프로파일, 명령, 환경, stdout/stderr는 전부
-`/private/tmp/claude-501/perf-runs/<실행 ID>/`에 둡니다. 실행 ID는
+`{scratch}/perf-runs/<실행 ID>/`에 둡니다. 실행 ID는
 `<YYYYMMDD>T<HHMM>-<커밋 7자>-<표지>`이며 날짜는 UTC입니다.
 저장소에는 도구와 해석을 위한 요약만 커밋합니다. 기존 실행 디렉터리는 덮어쓰지 마십시오.
 소표본은 장치 검증용이며 정식 기준선이나 개선의 증거가 아닙니다.
@@ -60,7 +60,7 @@ flat·nested 형상과 `benchmark-form/fixtures/equivalent/branches.ts`의 판�
 초기 잎 수·활성 분기·분기 왕복 사전 점검과 매 연산 뒤 값 검사를 통과해야 표를 만듭니다.
 
 `--samples=N`, `--warmups=N`, `--runs=N`, `--label=표지`, `--only=행ID,행ID`,
-`--run-dir=/private/tmp/claude-501/perf-runs/<실행ID>`를 지원합니다.
+`--run-dir={scratch}/perf-runs/<실행ID>`를 지원합니다.
 `--runs=1`의 폭은 0이므로 반복 간 변동의 증거로 쓰지 않습니다.
 출력은 `rows.md`, `results.json`, `environment.json`, `engines.json` 및 행·반복별
 `.stdout`, `.stderr`, `.command.json`입니다. 환경에는 커밋, Node·OS·CPU, 번들 경로와
@@ -103,7 +103,7 @@ prepare하면 공개 0.16.1과도 비교할 수 있습니다. 코어 여덟 행�
 당시 장면을 유지하며 canonical 여덟 행과 섞어 비교하지 않습니다.
 
 ```sh
-export D0_RUN_DIR="/private/tmp/claude-501/perf-runs/$(date -u +%Y%m%dT%H%M)-$(git rev-parse --short=7 HEAD)-profile-smoke"
+export D0_RUN_DIR="{scratch}/perf-runs/$(date -u +%Y%m%dT%H%M)-$(git rev-parse --short=7 HEAD)-profile-smoke"
 export D0_PROFILE="$D0_TOOLS/profile"
 mkdir -p "$D0_RUN_DIR"
 NODE_ENV=production "$D0_NODE" "$D0_PROFILE/prepare.mjs" > "$D0_RUN_DIR/prepare.log"
@@ -214,12 +214,12 @@ validatorFactory로 넘겨도 같고, 그 판의 검증기는 이 조건을 형�
 즉시 실패하며, 각 guard 포인터가 준비 과정에서 정확히 한 번 컴파일되었는지도 확인합니다.
 
 ```sh
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/branch-switch.mjs \
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/branch-switch.mjs \
   --samples=3 --runs=1 --label=b0-smoke
 # 위 실행의 run-dir를 사용합니다. 원자료의 engines.json이 로더의 해석 기준입니다.
-/opt/homebrew/bin/node --import ./packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/register.mjs \
+{node-home}/bin/node --import ./packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/register.mjs \
   packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/checkBranchDevice.mjs \
-  /private/tmp/claude-501/perf-runs/<실제-smoke-ID>
+  {scratch}/perf-runs/<실제-smoke-ID>
 ```
 
 ### 정식 창과 단계 계측
@@ -229,10 +229,10 @@ AJV8은 `yarn workspace @canard/schema-form-ajv8-plugin build`로 별도 준비�
 코디네이터가 다른 시험·빌드·벤치·프로파일을 중지한 뒤 아래 창을 한 번 실행합니다.
 
 ```sh
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/runWindow.mjs \
-  /private/tmp/claude-501/perf-runs/<YYYYMMDD>T<HHMM>-b8db539-b0
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/reportLedger.mjs \
-  /private/tmp/claude-501/perf-runs/<동일-ID>
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/runWindow.mjs \
+  {scratch}/perf-runs/<YYYYMMDD>T<HHMM>-b8db539-b0
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/reportLedger.mjs \
+  {scratch}/perf-runs/<동일-ID>
 ```
 
 `runWindow`는 저장소 밖 `stages/scratch/`에 제품 `src`의 esbuild 번들 두 개를 먼저 만듭니다.

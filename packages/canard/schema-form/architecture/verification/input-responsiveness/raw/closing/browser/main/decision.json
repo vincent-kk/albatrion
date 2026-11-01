@@ -1,0 +1,2608 @@
+[
+  {
+    "id": "C0",
+    "status": "PASS",
+    "details": {
+      "lMedian": 7.024999991059303,
+      "lMedianSource": "event-median",
+      "fP95": 12,
+      "transferFactor": 1,
+      "transferredP95": 12,
+      "comparable": true,
+      "upperBound": 0.7111111084620158
+    }
+  },
+  {
+    "id": "C1",
+    "status": "PASS",
+    "details": [
+      {
+        "id": "type-flat-500-validate-nonburst",
+        "bound": {
+          "upperBound": 0.7105263104234045,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-flat-500-validate-burst",
+        "bound": {
+          "upperBound": 0.6428571519803026,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-array-1000-validate-nonburst",
+        "bound": {
+          "upperBound": 0.24271844632102627,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-array-1000-validate-burst",
+        "bound": {
+          "upperBound": 0.2272727285042282,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-nested-d5-f4-validate-nonburst",
+        "bound": {
+          "upperBound": 0.7407407440112288,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-nested-d5-f4-validate-burst",
+        "bound": {
+          "upperBound": 0.4782608515373476,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-flat-2000-validate-nonburst",
+        "bound": {
+          "upperBound": 0.49315068739219775,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      },
+      {
+        "id": "type-flat-2000-validate-burst",
+        "bound": {
+          "upperBound": 0.48275862706827344,
+          "differenceUpperBound": null,
+          "undefinedRatios": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "C2",
+    "status": "PASS",
+    "details": [
+      {
+        "id": "type-flat-500-validate-nonburst",
+        "F": {
+          "duration": 16,
+          "frames": 0
+        },
+        "B": {
+          "duration": 16,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-flat-500-validate-burst",
+        "F": {
+          "duration": 16,
+          "frames": 0
+        },
+        "B": {
+          "duration": 16,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-array-1000-validate-nonburst",
+        "F": {
+          "duration": 24,
+          "frames": 0
+        },
+        "B": {
+          "duration": 32,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-array-1000-validate-burst",
+        "F": {
+          "duration": 32,
+          "frames": 0
+        },
+        "B": {
+          "duration": 40,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-nested-d5-f4-validate-nonburst",
+        "F": {
+          "duration": 24,
+          "frames": 0
+        },
+        "B": {
+          "duration": 24,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-nested-d5-f4-validate-burst",
+        "F": {
+          "duration": 24,
+          "frames": 0
+        },
+        "B": {
+          "duration": 24,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-flat-2000-validate-nonburst",
+        "F": {
+          "duration": 24,
+          "frames": 0
+        },
+        "B": {
+          "duration": 24,
+          "frames": 0
+        }
+      },
+      {
+        "id": "type-flat-2000-validate-burst",
+        "F": {
+          "duration": 24,
+          "frames": 0
+        },
+        "B": {
+          "duration": 24,
+          "frames": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "C3",
+    "status": "PASS",
+    "details": [
+      {
+        "id": "type-flat-500-validate-nonburst",
+        "arrival": 10.899999976158142,
+        "keys": 200,
+        "undelivered": 0
+      },
+      {
+        "id": "type-array-1000-validate-nonburst",
+        "arrival": 23.399999976158142,
+        "keys": 200,
+        "undelivered": 0
+      },
+      {
+        "id": "type-nested-d5-f4-validate-nonburst",
+        "arrival": 16.100000023841858,
+        "keys": 200,
+        "undelivered": 0
+      },
+      {
+        "id": "type-flat-2000-validate-nonburst",
+        "arrival": 17.099999964237213,
+        "keys": 200,
+        "undelivered": 0
+      }
+    ]
+  },
+  {
+    "id": "C4",
+    "status": "PASS",
+    "details": [
+      {
+        "id": "mount-flat-500-validate",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5770958082700282,
+            "differenceUpperBound": -28.450000017881393,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0563294969774275,
+            "differenceUpperBound": 4.6500000059604645,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "nextPainted": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 32.349999994039536,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "longestFrame": {
+            "upperBound": 0,
+            "differenceUpperBound": -76.69999998807907,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 0,
+            "differenceUpperBound": -1,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 0,
+        "framesB": 10
+      },
+      {
+        "id": "mount-nested-d5-f4-validate",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.4972597736928583,
+            "differenceUpperBound": -68.7000000178814,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0278379210603141,
+            "differenceUpperBound": 4.499999940395355,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "nextPainted": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 157.60000002384186,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "longestFrame": {
+            "upperBound": 0.5580623755622519,
+            "differenceUpperBound": -66.69999998807907,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 2,
+            "differenceUpperBound": 1,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 20,
+        "framesB": 10
+      },
+      {
+        "id": "mount-array-1000-validate",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.9116153063729889,
+            "differenceUpperBound": -13.050000011920929,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0360862196566427,
+            "differenceUpperBound": 7.450000047683716,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "nextPainted": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 11.199999988079071,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "longestFrame": {
+            "upperBound": 0.9442318207249388,
+            "differenceUpperBound": -10.199999988079071,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 10,
+        "framesB": 10
+      },
+      {
+        "id": "mount-flat-500-onrequest",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5802837936320128,
+            "differenceUpperBound": -27.5,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0588599744434781,
+            "differenceUpperBound": 4.749999940395355,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "nextPainted": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 30.80000001192093,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "longestFrame": {
+            "upperBound": 0,
+            "differenceUpperBound": -74.75,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 0,
+            "differenceUpperBound": -1,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 0,
+        "framesB": 10
+      },
+      {
+        "id": "mount-flat-500-always",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5710102488022405,
+            "differenceUpperBound": -29.250000029802322,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0500595938818136,
+            "differenceUpperBound": 4.199999928474426,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "nextPainted": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 32.499999940395355,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "longestFrame": {
+            "upperBound": 0,
+            "differenceUpperBound": -77.60000002384186,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 0,
+            "differenceUpperBound": -1,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 1,
+        "framesB": 10
+      }
+    ]
+  },
+  {
+    "id": "C5",
+    "status": "FAIL",
+    "details": [
+      {
+        "id": "reset-flat-500-same",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5625920471501077,
+            "differenceUpperBound": -29.749999970197678,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0327771159783528,
+            "differenceUpperBound": 2.7500000298023224,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": 1.073126143701579,
+            "differenceUpperBound": 1.0000000149011612,
+            "undefinedRatios": 0
+          },
+          "nextPainted": {
+            "upperBound": 1.0261282666032683,
+            "differenceUpperBound": 1.100000023841858,
+            "undefinedRatios": 0
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 0.024999991059303284,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "longestFrame": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 1,
+        "framesB": 0
+      },
+      {
+        "id": "reset-flat-500-replace",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5601750545029154,
+            "differenceUpperBound": -30.100000143051147,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.052505966295134,
+            "differenceUpperBound": 4.399999976158142,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": 0.2911184196764477,
+            "differenceUpperBound": -21.25000001490116,
+            "undefinedRatios": 0
+          },
+          "nextPainted": {
+            "upperBound": 0.9875846498443281,
+            "differenceUpperBound": -0.8250000178813934,
+            "undefinedRatios": 0
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 17.250000029802322,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": 0.8304045772684222,
+            "differenceUpperBound": -10.250000029802322,
+            "undefinedRatios": 0
+          },
+          "longestFrame": {
+            "upperBound": 0.4148506860243137,
+            "differenceUpperBound": -35.92499998211861,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 0.5,
+            "differenceUpperBound": -0.5,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 38,
+        "framesB": 99
+      },
+      {
+        "id": "rebuild-flat-500",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5519765750220207,
+            "differenceUpperBound": -30.699999928474426,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0333730633220095,
+            "differenceUpperBound": 2.800000011920929,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": 1.1182795750197543,
+            "differenceUpperBound": 1.375,
+            "undefinedRatios": 0
+          },
+          "nextPainted": {
+            "upperBound": 1.041870582129817,
+            "differenceUpperBound": 1.925000011920929,
+            "undefinedRatios": 0
+          },
+          "resolutionTime": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "postPaintBusy": {
+            "upperBound": "+Infinity",
+            "differenceUpperBound": 0.1250000298023224,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "longestFrame": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 21,
+        "framesB": 17
+      },
+      {
+        "id": "validate-flat-500-settled",
+        "bounds": {
+          "handlerP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "eventProcessingP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "durationP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "arrivalP95": {
+            "upperBound": null,
+            "differenceUpperBound": null,
+            "undefinedRatios": 10000
+          },
+          "undelivered": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "firstPainted": {
+            "upperBound": 0.5637681164603302,
+            "differenceUpperBound": -29.650000035762787,
+            "undefinedRatios": 0
+          },
+          "eagerPainted": {
+            "upperBound": 1.0416164051757695,
+            "differenceUpperBound": 3.450000047683716,
+            "undefinedRatios": 0
+          },
+          "callDuration": {
+            "upperBound": 1.5000008940699914,
+            "differenceUpperBound": 0.10000014305114746,
+            "undefinedRatios": 0
+          },
+          "nextPainted": {
+            "upperBound": 1.0924731172541136,
+            "differenceUpperBound": 1.074999988079071,
+            "undefinedRatios": 0
+          },
+          "resolutionTime": {
+            "upperBound": 1.3529411352216973,
+            "differenceUpperBound": 0.15000000596046448,
+            "undefinedRatios": 0
+          },
+          "postPaintBusy": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "flooredLongestFrame": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "longestFrame": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          },
+          "longFrameCount": {
+            "upperBound": 1,
+            "differenceUpperBound": 0,
+            "undefinedRatios": 0
+          }
+        },
+        "framesF": 0,
+        "framesB": 0
+      }
+    ]
+  },
+  {
+    "id": "C6",
+    "status": "PASS",
+    "details": [
+      {
+        "startedAt": 516.1000000238419,
+        "endedAt": 1010.1000000238419,
+        "durationMs": 494,
+        "scriptMs": [
+          3.100000023841858,
+          0.6000000238418579,
+          0.699999988079071,
+          0.5,
+          0.5,
+          0.5999999642372131,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.5,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 508.19999998807907,
+        "endedAt": 1003.1999999880791,
+        "durationMs": 495,
+        "scriptMs": [
+          3,
+          0.7000000476837158,
+          0.5,
+          0.6000000238418579,
+          0.5,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.2999999523162842,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.5,
+          0.5,
+          0.5,
+          0.30000001192092896,
+          0.5,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.40000003576278687
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 502,
+        "endedAt": 997.3000000119209,
+        "durationMs": 495.30000001192093,
+        "scriptMs": [
+          3,
+          0.5,
+          0.699999988079071,
+          0.5999999642372131,
+          0.5,
+          0.699999988079071,
+          0.5999999642372131,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.2999999523162842,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.5
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 501.69999998807907,
+        "endedAt": 996.1999999880791,
+        "durationMs": 494.5,
+        "scriptMs": [
+          3.199999988079071,
+          0.7000000476837158,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5999999642372131,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.30000001192092896,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.30000001192092896
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 509.89999997615814,
+        "endedAt": 1006.3999999761581,
+        "durationMs": 496.5,
+        "scriptMs": [
+          3.199999988079071,
+          0.5999999642372131,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.30000001192092896,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.30000001192092896,
+          0.5,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.5
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 506.30000001192093,
+        "endedAt": 1003.5,
+        "durationMs": 497.19999998807907,
+        "scriptMs": [
+          3.100000023841858,
+          0.5999999642372131,
+          0.6000000238418579,
+          0.5,
+          0.6000000238418579,
+          0.5999999642372131,
+          0.5,
+          0.5999999642372131,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.699999988079071,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.2999999523162842,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.30000001192092896,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.5,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.2999999523162842,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 495.60000002384186,
+        "endedAt": 990.1999999880791,
+        "durationMs": 494.5999999642372,
+        "scriptMs": [
+          3.199999988079071,
+          0.699999988079071,
+          0.6000000238418579,
+          0.5999999642372131,
+          0.5,
+          0.5999999642372131,
+          0.5,
+          0.6000000238418579,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5999999642372131,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.2999999523162842,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.5,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.5,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.5,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.6000000238418579,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 504.39999997615814,
+        "endedAt": 995.3999999761581,
+        "durationMs": 491,
+        "scriptMs": [
+          3,
+          0.5999999642372131,
+          0.3999999761581421,
+          0.5999999642372131,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5999999642372131,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.5,
+          0.2999999523162842,
+          0.5,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.30000001192092896,
+          0.30000001192092896,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.30000001192092896,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.5,
+          0.5999999642372131,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.2999999523162842,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 505.7999999523163,
+        "endedAt": 1004.6999999880791,
+        "durationMs": 498.9000000357628,
+        "scriptMs": [
+          3.199999988079071,
+          0.5999999642372131,
+          0.6000000238418579,
+          0.699999988079071,
+          0.5,
+          0.5,
+          0.5,
+          0.6000000238418579,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.30000001192092896,
+          0.2999999523162842,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.5
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      },
+      {
+        "startedAt": 527.8999999761581,
+        "endedAt": 1019.6999999880791,
+        "durationMs": 491.80000001192093,
+        "scriptMs": [
+          2.800000011920929,
+          0.5999999642372131,
+          0.40000003576278687,
+          0.5,
+          0.5999999642372131,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.40000003576278687,
+          0.5,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.5,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.40000003576278687,
+          0.3999999761581421,
+          0.5,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.3999999761581421,
+          0.30000001192092896,
+          0.30000001192092896
+        ],
+        "writeFrames": 60,
+        "validationRuns": 6
+      }
+    ]
+  },
+  {
+    "id": "C7",
+    "status": "PASS",
+    "details": [
+      {
+        "id": "G1",
+        "status": "PASS",
+        "details": {
+          "lMedian": 7.024999991059303,
+          "lMedianSource": "event-median",
+          "fP95": 12,
+          "transferFactor": 1,
+          "transferredP95": 12,
+          "comparable": true,
+          "upperBound": 0.7272727252202257
+        }
+      },
+      {
+        "id": "G2",
+        "status": "PASS",
+        "details": {
+          "source": "all-handlers",
+          "rows": {
+            "type-flat-500-validate-nonburst": {
+              "upperBound": 0.6923076934833263,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-flat-500-validate-burst": {
+              "upperBound": 0.6428571793497831,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-array-1000-validate-nonburst": {
+              "upperBound": 0.23076922768319147,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-array-1000-validate-burst": {
+              "upperBound": 0.2222222222222222,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-nested-d5-f4-validate-nonburst": {
+              "upperBound": 0.8163265246542629,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-nested-d5-f4-validate-burst": {
+              "upperBound": 0.43999998569488524,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-flat-2000-validate-nonburst": {
+              "upperBound": 0.5070422551764829,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-flat-2000-validate-burst": {
+              "upperBound": 0.48275863699056887,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            }
+          },
+          "eventTimingReference": {
+            "type-flat-500-validate-nonburst": {
+              "upperBound": 0.8166666626930237,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-flat-500-validate-burst": {
+              "upperBound": 0.2888888915379842,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-array-1000-validate-nonburst": {
+              "upperBound": 0.3499999982970102,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-array-1000-validate-burst": {
+              "upperBound": 0.1910112351273184,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-nested-d5-f4-validate-nonburst": {
+              "upperBound": 0.5511811028795741,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-nested-d5-f4-validate-burst": {
+              "upperBound": 0.39534883978819446,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-flat-2000-validate-nonburst": {
+              "upperBound": 0.7272727252202257,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            },
+            "type-flat-2000-validate-burst": {
+              "upperBound": 0.8709677313914781,
+              "undefinedRatios": 0,
+              "fallbackResamples": {
+                "E": 0,
+                "F": 0
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": "G3",
+        "status": "PASS",
+        "details": [
+          {
+            "id": "type-flat-500-validate-nonburst",
+            "F": 16,
+            "E": 16,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-flat-500-validate-burst",
+            "F": 16,
+            "E": 16,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-array-1000-validate-nonburst",
+            "F": 24,
+            "E": 32,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-array-1000-validate-burst",
+            "F": 32,
+            "E": 40,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-nested-d5-f4-validate-nonburst",
+            "F": 24,
+            "E": 24,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-nested-d5-f4-validate-burst",
+            "F": 24,
+            "E": 24,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-flat-2000-validate-nonburst",
+            "F": 24,
+            "E": 24,
+            "framesF": 0,
+            "framesE": 0
+          },
+          {
+            "id": "type-flat-2000-validate-burst",
+            "F": 24,
+            "E": 16,
+            "framesF": 0,
+            "framesE": 0
+          }
+        ]
+      },
+      {
+        "id": "G4",
+        "status": "PASS",
+        "details": [
+          {
+            "id": "type-flat-500-validate-nonburst",
+            "arrivalP95": 10.899999976158142,
+            "undelivered": 0,
+            "keys": 200
+          },
+          {
+            "id": "type-array-1000-validate-nonburst",
+            "arrivalP95": 23.399999976158142,
+            "undelivered": 0,
+            "keys": 200
+          },
+          {
+            "id": "type-nested-d5-f4-validate-nonburst",
+            "arrivalP95": 16.100000023841858,
+            "undelivered": 0,
+            "keys": 200
+          },
+          {
+            "id": "type-flat-2000-validate-nonburst",
+            "arrivalP95": 17.099999964237213,
+            "undelivered": 0,
+            "keys": 200
+          }
+        ]
+      },
+      {
+        "id": "G5",
+        "status": "PASS",
+        "details": [
+          {
+            "id": "mount-flat-500-validate",
+            "F": 37.849999994039536,
+            "E": 68.94999998807907
+          },
+          {
+            "id": "mount-nested-d5-f4-validate",
+            "F": 66.2000000178814,
+            "E": 139.3499999642372
+          }
+        ]
+      },
+      {
+        "id": "G6",
+        "status": "PASS",
+        "details": [
+          {
+            "index": 0,
+            "startedAt": 516.1000000238419,
+            "endedAt": 1010.1000000238419,
+            "durationMs": 494,
+            "scriptMs": [
+              3.100000023841858,
+              0.6000000238418579,
+              0.699999988079071,
+              0.5,
+              0.5,
+              0.5999999642372131,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.5,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 1,
+            "startedAt": 508.19999998807907,
+            "endedAt": 1003.1999999880791,
+            "durationMs": 495,
+            "scriptMs": [
+              3,
+              0.7000000476837158,
+              0.5,
+              0.6000000238418579,
+              0.5,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.2999999523162842,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.5,
+              0.5,
+              0.5,
+              0.30000001192092896,
+              0.5,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.40000003576278687
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 2,
+            "startedAt": 502,
+            "endedAt": 997.3000000119209,
+            "durationMs": 495.30000001192093,
+            "scriptMs": [
+              3,
+              0.5,
+              0.699999988079071,
+              0.5999999642372131,
+              0.5,
+              0.699999988079071,
+              0.5999999642372131,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.2999999523162842,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.5
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 3,
+            "startedAt": 501.69999998807907,
+            "endedAt": 996.1999999880791,
+            "durationMs": 494.5,
+            "scriptMs": [
+              3.199999988079071,
+              0.7000000476837158,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5999999642372131,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.30000001192092896,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.30000001192092896
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 4,
+            "startedAt": 509.89999997615814,
+            "endedAt": 1006.3999999761581,
+            "durationMs": 496.5,
+            "scriptMs": [
+              3.199999988079071,
+              0.5999999642372131,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.30000001192092896,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.30000001192092896,
+              0.5,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.5
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 5,
+            "startedAt": 506.30000001192093,
+            "endedAt": 1003.5,
+            "durationMs": 497.19999998807907,
+            "scriptMs": [
+              3.100000023841858,
+              0.5999999642372131,
+              0.6000000238418579,
+              0.5,
+              0.6000000238418579,
+              0.5999999642372131,
+              0.5,
+              0.5999999642372131,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.699999988079071,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.2999999523162842,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.30000001192092896,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.5,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.2999999523162842,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 6,
+            "startedAt": 495.60000002384186,
+            "endedAt": 990.1999999880791,
+            "durationMs": 494.5999999642372,
+            "scriptMs": [
+              3.199999988079071,
+              0.699999988079071,
+              0.6000000238418579,
+              0.5999999642372131,
+              0.5,
+              0.5999999642372131,
+              0.5,
+              0.6000000238418579,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5999999642372131,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.2999999523162842,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.5,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.5,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.5,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.6000000238418579,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 7,
+            "startedAt": 504.39999997615814,
+            "endedAt": 995.3999999761581,
+            "durationMs": 491,
+            "scriptMs": [
+              3,
+              0.5999999642372131,
+              0.3999999761581421,
+              0.5999999642372131,
+              0.5,
+              0.5,
+              0.5,
+              0.5,
+              0.5999999642372131,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.5,
+              0.2999999523162842,
+              0.5,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.30000001192092896,
+              0.30000001192092896,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.30000001192092896,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.5,
+              0.5999999642372131,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.2999999523162842,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 8,
+            "startedAt": 505.7999999523163,
+            "endedAt": 1004.6999999880791,
+            "durationMs": 498.9000000357628,
+            "scriptMs": [
+              3.199999988079071,
+              0.5999999642372131,
+              0.6000000238418579,
+              0.699999988079071,
+              0.5,
+              0.5,
+              0.5,
+              0.6000000238418579,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.30000001192092896,
+              0.2999999523162842,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.5,
+              0.3999999761581421,
+              0.5,
+              0.5
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          },
+          {
+            "index": 9,
+            "startedAt": 527.8999999761581,
+            "endedAt": 1019.6999999880791,
+            "durationMs": 491.80000001192093,
+            "scriptMs": [
+              2.800000011920929,
+              0.5999999642372131,
+              0.40000003576278687,
+              0.5,
+              0.5999999642372131,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.5,
+              0.40000003576278687,
+              0.5,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.5,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.40000003576278687,
+              0.3999999761581421,
+              0.5,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.3999999761581421,
+              0.30000001192092896,
+              0.30000001192092896
+            ],
+            "writeFrames": 60,
+            "validationRuns": 6,
+            "limit": 7
+          }
+        ]
+      },
+      {
+        "id": "G8",
+        "status": "PASS",
+        "details": [
+          {
+            "id": "mount-array-1000-none",
+            "F": 133.5999999642372,
+            "E": 141.69999998807907
+          },
+          {
+            "id": "mount-array-1000-validate",
+            "F": 133,
+            "E": 156.60000002384186
+          }
+        ]
+      }
+    ]
+  }
+]

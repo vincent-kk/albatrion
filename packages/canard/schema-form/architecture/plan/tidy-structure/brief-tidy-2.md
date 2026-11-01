@@ -4,7 +4,7 @@
 
 ## 1. 자리
 
-- 워크트리 `/tmp/claude-501/stage-tidy-2`, 브랜치 `feat/schema-form-tidy-2`, base `1.0.0-beta`(정돈-1 병합 커밋 이후). PR base `1.0.0-beta`, squash 병합은 원장 관리자.
+- 워크트리 `{scratch}/stage-tidy-2`, 브랜치 `feat/schema-form-tidy-2`, base `1.0.0-beta`(정돈-1 병합 커밋 이후). PR base `1.0.0-beta`, squash 병합은 원장 관리자.
 - codex는 `.claude/`, settings, `architecture/`, `.filid/`를 건드리지 않는다. 커밋에 세션 ID·co-author 없음.
 
 ## 2. 규칙 (브리프의 모든 판단은 이 넷으로 한다)
@@ -18,7 +18,7 @@
 
 ### 3.1 시험 import 재작성 — U 254변
 
-- `lineage-audit.md`의 U 목록(`/tmp/claude-501/s3/lineage-audit.md` 표에서 verdict U)을 입력으로, D7 세 디렉터리를 제외한 전부를 내부 파일 직접 import로 바꾼다. 같은 fractal 안이면 상대 경로, 조상 organ이면 조상의 파일 경로(alias `@/schema-form/…` 허용).
+- `lineage-audit.md`의 U 목록(`{scratch}/s3/lineage-audit.md` 표에서 verdict U)을 입력으로, D7 세 디렉터리를 제외한 전부를 내부 파일 직접 import로 바꾼다. 같은 fractal 안이면 상대 경로, 조상 organ이면 조상의 파일 경로(alias `@/schema-form/…` 허용).
 - 재작성은 codemod로 한다(이름이 어느 파일에서 정의되는지는 TypeScript 컴파일러 API로 푼다). 손으로 고친 파일은 본문에 따로 적는다.
 
 ### 3.2 자식 내부를 읽는 시험 — D 52변
@@ -51,7 +51,7 @@
 
 ## 4. failing-first 신호
 
-- 모델 검사 스크립트(`/tmp/claude-501/s3/lineage.cjs`를 저장소 밖에서 재사용하거나 같은 논리로 다시 씀)를 시험으로 감싼다: `src/__tests__/` 아래에 "U(D7 제외)=0, D=0, S1=0" 단언 시험 하나를 먼저 넣어 빨갛게 만든 뒤 초록으로. 이 시험은 정돈 뒤에도 남아 회귀를 막는다(`dependencyDirection.test.ts`가 이미 비슷한 모양이면 거기에 더한다).
+- 모델 검사 스크립트(`{scratch}/s3/lineage.cjs`를 저장소 밖에서 재사용하거나 같은 논리로 다시 씀)를 시험으로 감싼다: `src/__tests__/` 아래에 "U(D7 제외)=0, D=0, S1=0" 단언 시험 하나를 먼저 넣어 빨갛게 만든 뒤 초록으로. 이 시험은 정돈 뒤에도 남아 회귀를 막는다(`dependencyDirection.test.ts`가 이미 비슷한 모양이면 거기에 더한다).
 - 공개 표면 열거 비교(정돈-1 산출물)를 같은 자리에 시험으로 고정한다.
 
 ## 5. 게이트

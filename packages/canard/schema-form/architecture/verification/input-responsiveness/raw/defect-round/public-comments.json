@@ -1,0 +1,34 @@
+{
+  "publicFiles": 55,
+  "changes": [
+    {
+      "file": "components/Form/components/FormCore/types/handle.d.ts",
+      "semanticEqual": true,
+      "added": [
+        "    /** Change the Form error policy. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. Only the OnChange validation mode holds errors; other modes follow the live condition. */"
+      ],
+      "removed": [
+        "    /** Change the Form error policy. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. */"
+      ]
+    },
+    {
+      "file": "components/Form/components/FormCore/types/props.d.ts",
+      "semanticEqual": true,
+      "added": [
+        "     * Only the OnChange validation mode holds errors; other modes follow the live condition."
+      ],
+      "removed": []
+    },
+    {
+      "file": "core/engine/types/state.d.ts",
+      "semanticEqual": true,
+      "added": [
+        "    /** Request validation messages for this node. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. Only the OnChange validation mode holds errors; other modes follow the live condition. */"
+      ],
+      "removed": [
+        "    /** Request validation messages for this node. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. */"
+      ]
+    }
+  ],
+  "onlyApprovedComments": true
+}

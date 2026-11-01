@@ -1,0 +1,1365 @@
+[
+  {
+    "at": "2026-10-30T13:52:28.300Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        13069,
+        13068,
+        13065,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T13:51:58.168Z",
+      "endedAt": "2026-10-30T13:52:28.299Z",
+      "durationSeconds": 30.127827917,
+      "top": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 92.1075361836547
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.19963972357055
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.14324344107641
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.513348159004561
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.804340510862167
+        },
+        {
+          "pid": 98359,
+          "name": "codex",
+          "cpuPercent": 3.883452876932451
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.1532309684518554
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 2.954079538862737
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.5225847747602765
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 2.4893928698285053
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 92.1075361836547
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.19963972357055
+        }
+      ],
+      "totalPercent": 212.4281915587061
+    }
+  },
+  {
+    "at": "2026-10-30T13:53:45.453Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        13497,
+        13481,
+        13478,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T13:53:15.289Z",
+      "endedAt": "2026-10-30T13:53:45.452Z",
+      "durationSeconds": 30.159171458,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.5567896041645
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 22.58019590983667
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 16.14765845534251
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.798760089863142
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.631481911846359
+        },
+        {
+          "pid": 13354,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.476250290496293
+        },
+        {
+          "pid": 13356,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.409935471377829
+        },
+        {
+          "pid": 13364,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.713629870633962
+        },
+        {
+          "pid": 13343,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.6141576419562664
+        },
+        {
+          "pid": 13352,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.6141576419562655
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.5567896041645
+        }
+      ],
+      "totalPercent": 220.33098652109064
+    }
+  },
+  {
+    "at": "2026-10-30T13:56:42.488Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        14312,
+        14311,
+        14305,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T13:56:12.345Z",
+      "endedAt": "2026-10-30T13:56:42.488Z",
+      "durationSeconds": 30.138992416,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 40.41276440792443
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 22.694852918735826
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 15.362159212539146
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 13.072766154944224
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.868179172774204
+        },
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 4.44606767706267
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.8820143150470763
+        },
+        {
+          "pid": 13357,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.7161162673952615
+        },
+        {
+          "pid": 13361,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.152062905379909
+        },
+        {
+          "pid": 13343,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.1188832958495953
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 40.41276440792443
+        }
+      ],
+      "totalPercent": 220.14670923364
+    }
+  },
+  {
+    "at": "2026-10-30T14:03:55.373Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        33540,
+        33537,
+        33534,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:03:25.193Z",
+      "endedAt": "2026-10-30T14:03:55.372Z",
+      "durationSeconds": 30.173416208,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.23983919613636
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 22.436968864682363
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 13.322985943284069
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.461300285259338
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.860343508107252
+        },
+        {
+          "pid": 1,
+          "name": "launchd",
+          "cpuPercent": 6.0317996061618135
+        },
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 4.076435997570101
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 3.3804591199373215
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.2810338517032056
+        },
+        {
+          "pid": 430,
+          "name": "notifyd",
+          "cpuPercent": 2.85019102269197
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.23983919613636
+        }
+      ],
+      "totalPercent": 147.18253874158404
+    }
+  },
+  {
+    "at": "2026-10-30T14:06:13.892Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        34468,
+        34467,
+        34464,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:05:43.755Z",
+      "endedAt": "2026-10-30T14:06:13.891Z",
+      "durationSeconds": 30.13208525,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.791471119648456
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.936749299486756
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 16.958667007622985
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.478392944942271
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.637443055820373
+        },
+        {
+          "pid": 34290,
+          "name": "mdworker_shared",
+          "cpuPercent": 5.343141659935402
+        },
+        {
+          "pid": 34332,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.679397354353363
+        },
+        {
+          "pid": 34334,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.6130229237951585
+        },
+        {
+          "pid": 34110,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.314337986283244
+        },
+        {
+          "pid": 34292,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.314337986283244
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.791471119648456
+        }
+      ],
+      "totalPercent": 219.6329907170886
+    }
+  },
+  {
+    "at": "2026-10-30T14:08:57.247Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        35005,
+        35001,
+        34998,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:08:27.113Z",
+      "endedAt": "2026-10-30T14:08:57.247Z",
+      "durationSeconds": 30.129100208,
+      "top": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 58.614428834853484
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 38.23545980620291
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.739779664116885
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.44643873899787
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 7.235529720271727
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.704481667408302
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.883288886567577
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.7216212709326055
+        },
+        {
+          "pid": 1,
+          "name": "launchd",
+          "cpuPercent": 2.6884307676218495
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 2.588859257712221
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 58.614428834853484
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 38.23545980620291
+        }
+      ],
+      "totalPercent": 190.57986997154111
+    }
+  },
+  {
+    "at": "2026-10-30T14:11:34.565Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        35592,
+        35590,
+        35587,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:11:04.393Z",
+      "endedAt": "2026-10-30T14:11:34.565Z",
+      "durationSeconds": 30.167396916999998,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 41.20342247028848
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.181807689873853
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 16.773074633914632
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.894715479437908
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.795415612555063
+        },
+        {
+          "pid": 35428,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.640771637844129
+        },
+        {
+          "pid": 35420,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.607623269002385
+        },
+        {
+          "pid": 35327,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.20984284290146
+        },
+        {
+          "pid": 35345,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.077249367534484
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.878359154484263
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 41.20342247028848
+        }
+      ],
+      "totalPercent": 219.4422017323284
+    }
+  },
+  {
+    "at": "2026-10-30T14:13:42.238Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        36053,
+        36052,
+        36049,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:13:12.076Z",
+      "endedAt": "2026-10-30T14:13:42.238Z",
+      "durationSeconds": 30.157871625,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.392700346098714
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 22.481692621769028
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 17.375231465796787
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.368246825839424
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.764403089738509
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 5.371731865380936
+        },
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 4.708555091881063
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.9790606410233624
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 3.249566190167169
+        },
+        {
+          "pid": 35529,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.249566190167109
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.392700346098714
+        }
+      ],
+      "totalPercent": 219.97573577111945
+    }
+  },
+  {
+    "at": "2026-10-30T14:16:04.257Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        36551,
+        36550,
+        36547,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:15:34.116Z",
+      "endedAt": "2026-10-30T14:16:04.256Z",
+      "durationSeconds": 30.13573375,
+      "top": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 49.575696825363316
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.75347041285564
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 20.805864731931347
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.44369900235132
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 10.054508793896003
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 7.06802103333893
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.9488004834145087
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 3.0196709579034375
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.8537549712078345
+        },
+        {
+          "pid": 726,
+          "name": "chronod",
+          "cpuPercent": 2.1569078270730215
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 49.575696825363316
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.75347041285564
+        }
+      ],
+      "totalPercent": 213.36795889365877
+    }
+  },
+  {
+    "at": "2026-10-30T14:18:20.296Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        37044,
+        37043,
+        37040,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:17:50.138Z",
+      "endedAt": "2026-10-30T14:18:20.296Z",
+      "durationSeconds": 30.152983583,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.99604207260152
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 23.115457151409146
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 17.278555489083075
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.303923390492287
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.765499654061995
+        },
+        {
+          "pid": 36942,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.9133772508843014
+        },
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 3.581735110984643
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 3.5485708969873415
+        },
+        {
+          "pid": 36927,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.515406682997763
+        },
+        {
+          "pid": 36926,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.382749827035582
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.99604207260152
+        }
+      ],
+      "totalPercent": 220.93999360502124
+    }
+  },
+  {
+    "at": "2026-10-30T14:20:40.858Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        37482,
+        37481,
+        37478,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:20:10.760Z",
+      "endedAt": "2026-10-30T14:20:40.857Z",
+      "durationSeconds": 30.093107874999998,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.942700667305
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.865471746327323
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 15.983726306970247
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.760396885395295
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.7789608453688945
+        },
+        {
+          "pid": 36940,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.513119243586934
+        },
+        {
+          "pid": 36937,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.346968242475024
+        },
+        {
+          "pid": 36943,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.247277641807876
+        },
+        {
+          "pid": 37003,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.114356840918349
+        },
+        {
+          "pid": 36948,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.0478964404735835
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.942700667305
+        }
+      ],
+      "totalPercent": 217.65781145661796
+    }
+  },
+  {
+    "at": "2026-10-30T14:22:30.370Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        37966,
+        37965,
+        37957,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:22:00.211Z",
+      "endedAt": "2026-10-30T14:22:30.370Z",
+      "durationSeconds": 30.154571792,
+      "top": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 45.266767819342064
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 38.43529956235349
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 30.509469885550978
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.68825359256146
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 11.805838347021107
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.533006051585866
+        },
+        {
+          "pid": 815,
+          "name": "deleted",
+          "cpuPercent": 5.604456968108412
+        },
+        {
+          "pid": 681,
+          "name": "cloudd",
+          "cpuPercent": 5.405482164506922
+        },
+        {
+          "pid": 496,
+          "name": "mobileassetd",
+          "cpuPercent": 3.7473588011616132
+        },
+        {
+          "pid": 1136,
+          "name": "installd",
+          "cpuPercent": 3.4820590630261674
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 45.266767819342064
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 38.43529956235349
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 30.509469885550978
+        }
+      ],
+      "totalPercent": 218.87228396162797
+    }
+  },
+  {
+    "at": "2026-10-30T14:24:55.326Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        38437,
+        38436,
+        38433,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:24:25.232Z",
+      "endedAt": "2026-10-30T14:24:55.325Z",
+      "durationSeconds": 30.088495542,
+      "top": [
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 55.270294178663256
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.815882396901145
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 20.705588258155583
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.064411778026018
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 7.0458823607172745
+        },
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 4.952058828990296
+        },
+        {
+          "pid": 38399,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.719411769916667
+        },
+        {
+          "pid": 38425,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.1211764751384985
+        },
+        {
+          "pid": 38395,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.788823533595072
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 3.7223529452860236
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 55.270294178663256
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.815882396901145
+        }
+      ],
+      "totalPercent": 220.28352965495975
+    }
+  },
+  {
+    "at": "2026-10-30T14:27:47.951Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        39725,
+        39724,
+        39721,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:27:17.813Z",
+      "endedAt": "2026-10-30T14:27:47.950Z",
+      "durationSeconds": 30.133051874999996,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.7238223650638
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 21.04001953170947
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 17.621846011577645
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.577551108071972
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.935905492314644
+        },
+        {
+          "pid": 39309,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.181454985797053
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 4.1482688351161245
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.8827796296689345
+        },
+        {
+          "pid": 39307,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.6504765749021915
+        },
+        {
+          "pid": 39299,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.6172904242212605
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 39.7238223650638
+        }
+      ],
+      "totalPercent": 188.96194197720266
+    }
+  },
+  {
+    "at": "2026-10-30T14:30:11.412Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        40191,
+        40190,
+        40187,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:29:41.243Z",
+      "endedAt": "2026-10-30T14:30:11.411Z",
+      "durationSeconds": 30.163891749999998,
+      "top": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 40.74407938425543
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 23.306011234441414
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 16.377197083657784
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.531539468874978
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.862509709144906
+        },
+        {
+          "pid": 39889,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.276636485409747
+        },
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 3.945114277246166
+        },
+        {
+          "pid": 39896,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.8788098356041854
+        },
+        {
+          "pid": 39893,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.8125053939699276
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.8125053939687215
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 40.74407938425543
+        }
+      ],
+      "totalPercent": 220.0975940049297
+    }
+  },
+  {
+    "at": "2026-10-30T14:32:34.962Z",
+    "samples": 0,
+    "approved": false,
+    "policy": {
+      "observationMs": 30000,
+      "maximumExternalPidPercent": 30,
+      "excluded": [
+        40646,
+        40645,
+        40642,
+        98359,
+        98066,
+        98036,
+        80848
+      ]
+    },
+    "quiet": {
+      "startedAt": "2026-10-30T14:32:04.827Z",
+      "endedAt": "2026-10-30T14:32:34.961Z",
+      "durationSeconds": 30.130522457999998,
+      "top": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 70.22778987485374
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 41.81806013342705
+        },
+        {
+          "pid": 706,
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 22.833988390312133
+        },
+        {
+          "pid": 73390,
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 12.213528673887902
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 7.766211167635591
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 7.201999245194283
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.186137914924326
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.323225562964145
+        },
+        {
+          "pid": 650,
+          "name": "ControlCenter",
+          "cpuPercent": 2.0909030066713528
+        },
+        {
+          "pid": 726,
+          "name": "chronod",
+          "cpuPercent": 1.8253915137609922
+        }
+      ],
+      "heavy": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 70.22778987485374
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 41.81806013342705
+        }
+      ],
+      "totalPercent": 194.38760174717476
+    }
+  }
+]

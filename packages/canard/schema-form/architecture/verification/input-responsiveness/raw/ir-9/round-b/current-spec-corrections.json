@@ -1,0 +1,55 @@
+{
+  "removed_record_value_hits": [
+    {
+      "file": "README.md",
+      "line": 2746,
+      "old": "reject with `rejected`",
+      "new": "reject; their record carries `origin: 'validate'`"
+    },
+    {
+      "file": "docs/QUICK_REFERENCE.md",
+      "line": 576,
+      "old": "실패하면 `rejected`로 거부합니다",
+      "new": "실패하면 거부하며 기록의 origin은 `validate`입니다"
+    },
+    {
+      "file": "docs/ko/SPECIFICATION.md",
+      "line": 880,
+      "old": "실패하면 `rejected`로 거부합니다",
+      "new": "실패하면 거부하며 기록의 origin은 `validate`입니다"
+    },
+    {
+      "file": "docs/en/SPECIFICATION.md",
+      "line": 882,
+      "old": "reject with `rejected`",
+      "new": "reject; their record carries `origin: 'validate'`"
+    },
+    {
+      "file": "docs/agents/skills/schema-form-skill/knowledge/validation-and-state.md",
+      "line": 11,
+      "old": "reject with `rejected`",
+      "new": "reject; their record carries `origin: 'validate'`"
+    },
+    {
+      "file": "docs/agents/skills/schema-form-skill/knowledge/arrays-and-scale.md",
+      "line": 154,
+      "old": "reject with `rejected`",
+      "new": "reject; their record carries `origin: 'validate'`"
+    },
+    {
+      "file": "src/providers/DETAIL.md",
+      "line": 13,
+      "old": "실패하면 `rejected`로 거부합니다",
+      "new": "실패하면 거부하며 기록의 origin은 `validate`입니다"
+    },
+    {
+      "file": "src/providers/RootNodeContext/DETAIL.md",
+      "line": 21,
+      "old": "실패하면 `rejected`로 거부합니다",
+      "new": "실패하면 거부하며 기록의 origin은 `validate`입니다"
+    }
+  ],
+  "remaining_vocabulary_hits": [],
+  "guard_rule": "가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write)",
+  "construction_rule": "트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다."
+}

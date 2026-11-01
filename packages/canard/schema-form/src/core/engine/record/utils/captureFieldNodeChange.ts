@@ -1,5 +1,6 @@
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import type { FieldNodeRecord } from '../types/record';
+import { recordFieldNodeRevealBaseline } from './recordFieldNodeRevealBaseline';
 
 /** Field decisions that contribute to one committed event kind. */
 const CHANGE_BITS = {
@@ -33,6 +34,8 @@ export const captureFieldNodeChange = <
 ): Value => {
   if (node[field] === value || !node.deliveryInitialized || node.detached)
     return value;
+  if (field === 'interactionState' || field === 'active' || field === 'visible')
+    recordFieldNodeRevealBaseline(node);
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
     switch (bit) {

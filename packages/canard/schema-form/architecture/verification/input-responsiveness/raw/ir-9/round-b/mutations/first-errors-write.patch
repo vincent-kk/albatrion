@@ -1,0 +1,11 @@
+--- src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
++++ src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+@@ -182,7 +182,7 @@
+         load.prepared = true;
+         flushRootLoad(load);
+         if (root) {
+-          applyFormErrors(root, load.props.errors, undefined, 'load');
++          applyFormErrors(root, load.props.errors, undefined, 'write');
+           scheduleLoadValidation(load, store);
+         }
+       } else load.prepared = true;

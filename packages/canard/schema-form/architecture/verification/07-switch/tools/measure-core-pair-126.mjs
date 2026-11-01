@@ -1,5 +1,5 @@
 /*
- * 사용법(stage-07 루트, /opt/homebrew/bin/node):
+ * 사용법(stage-07 루트, {node-home}/bin/node):
  *   node <이 파일> AA if-then off 1 [--processes=2] [--warmup=20] [--samples=101] [--no-gc-first] [--bundles=<디렉터리>] [--tag=<이름>]
  *   node <이 파일> head:1c oneOf-10 off 1
  * 측정 프로세스마다 c-<이름>.cjs 하나만 올립니다(measure-verdict-121.mjs --pair --single). 회차 r의 k번째 블록은
@@ -21,9 +21,9 @@ import { bootstrap, validationA121 } from './report-verdict-121.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(directory, '../../../../../../..');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
-assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
-assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('/opt/homebrew/bin/node'), 'Timing runs use /opt/homebrew/bin/node');
+const scratch = '{scratch}';
+assert.equal(repo, '{repo}');
+assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('{node-home}/bin/node'), 'Timing runs use {node-home}/bin/node');
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const percentile = (values, proportion) => values.toSorted((a, b) => a - b)[Math.ceil(values.length * proportion) - 1];

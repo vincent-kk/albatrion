@@ -1,0 +1,51 @@
+{
+  "baseline": "c5d963b2d (IR-7 round-d recorded final scan)",
+  "baseStatus": "indeterminate",
+  "candidateStatus": "indeterminate",
+  "baseSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "153698728273e3ad8e5ec6ba64400900455bb9f4ef7539c9988e429e5b03a490",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "candidateSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "d4c81dc377fa834e0f23e42864f01a6be4320007fac15e309b6fb865d9ee6e91",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 201,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "findings": {
+    "added": [],
+    "removed": [
+      {
+        "message": "Path token `core/engine/validation/utils/run/assertValidationRootReady.ts:9` in section \"엔진 캐시 인벤토리(D3b 계획)\" resolves to nothing from src/app/cache, its ancestors, or the project root — the reference has drifted or never existed.",
+        "path": "package:/src/app/cache/DETAIL.md",
+        "ruleId": "detail-document-contract",
+        "severity": "warning",
+        "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+      }
+    ]
+  }
+}

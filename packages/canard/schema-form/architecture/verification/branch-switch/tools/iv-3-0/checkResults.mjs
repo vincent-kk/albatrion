@@ -57,7 +57,7 @@ for (const name of fs.readdirSync(root).sort()) {
       : bytes.toString();
     assert.doesNotMatch(
       content,
-      /\/Users\/|\/private\/tmp\/|file:\/\/\//,
+      /{home}\/|{scratch}\/|file:\/\/\//,
       name + '/' + file,
     );
   }

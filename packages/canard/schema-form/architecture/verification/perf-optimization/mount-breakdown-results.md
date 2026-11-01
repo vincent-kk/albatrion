@@ -46,11 +46,11 @@
 | json-schema | `301f7709fe203772c80e050605874f17030f0dbe25847a7ceb3c584a5a5d6ff9` |
 | react-utils | `48c575ffcae6334a9f388c10932366977dcb60e5af443d5e7a3cd3716f0419f2` |
 
-원시 결과·사본·도구의 실제 경로는 `/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f`입니다. `preserved-evidence.json`은 기존 .seiri 및 bench/.results 원자료 138개의 보존 해시이고 창 후 전부 일치했습니다. `manifest.json`은 기준·dist·Winglet, `window.json`은 창·도구 해시·명령, `analysis.json`은 표를 재계산한 전정밀도 값입니다. `{baseline,coarse,detailed,counts}-{node,bun}-{1,2}.json`과 같은 이름의 `.err` 파일이 16개 실행의 stdout·stderr를 보존합니다.
+원시 결과·사본·도구의 실제 경로는 `{tmp}/mount-breakdown-task_7e0e67a1893f`입니다. `preserved-evidence.json`은 기존 .seiri 및 bench/.results 원자료 138개의 보존 해시이고 창 후 전부 일치했습니다. `manifest.json`은 기준·dist·Winglet, `window.json`은 창·도구 해시·명령, `analysis.json`은 표를 재계산한 전정밀도 값입니다. `{baseline,coarse,detailed,counts}-{node,bun}-{1,2}.json`과 같은 이름의 `.err` 파일이 16개 실행의 stdout·stderr를 보존합니다.
 
 실행 도구는 기존 first-batch/b-a2의 config·bench-common을 TMPDIR에 복사한 것입니다. config는 자기 작업 폴더와 실제 current 해시만 고정했습니다. schemaOf/fullCheck는 기존 terminal 프로브와 같도록 T0의 terminal 표기, array T의 items 선언, T0의 terminal 판별 세 곳만 맞췄습니다. core factory와 schema/input/recorder/fullCheck/drain은 기존 도구를 재사용했고 임시 run.mjs가 mount 구간과 원자료 보관을 조율합니다. `prepare.mjs`의 모든 치환은 복사본에만 적용됩니다.
 
-창 진입은 `/opt/homebrew/bin/node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/window.mjs`입니다. 이미 존재하는 사본과 manifest를 검토한 뒤에만 재현해야 하며, 기존 원시 파일 위로 다시 실행하지 말고 새 TMPDIR 실행 폴더를 사용합니다. window.mjs는 mode를 baseline→coarse→detailed→counts 순서로 돌리고, 각 mode에서 Node1→Bun1→Node2→Bun2를 직렬 실행합니다. 두 번째 바퀴는 `--reverse`로 판·장면 순서를 뒤집습니다. 개별 명령·바이너리 경로는 window.json의 commands 배열에 그대로 있습니다. Node/Bun correctness-only 사전 확인은 창 밖이며 성능 근거에서 제외했습니다.
+창 진입은 `{node-home}/bin/node {tmp}/mount-breakdown-task_7e0e67a1893f/window.mjs`입니다. 이미 존재하는 사본과 manifest를 검토한 뒤에만 재현해야 하며, 기존 원시 파일 위로 다시 실행하지 말고 새 TMPDIR 실행 폴더를 사용합니다. window.mjs는 mode를 baseline→coarse→detailed→counts 순서로 돌리고, 각 mode에서 Node1→Bun1→Node2→Bun2를 직렬 실행합니다. 두 번째 바퀴는 `--reverse`로 판·장면 순서를 뒤집습니다. 개별 명령·바이너리 경로는 window.json의 commands 배열에 그대로 있습니다. Node/Bun correctness-only 사전 확인은 창 밖이며 성능 근거에서 제외했습니다.
 
 TMPDIR는 영구 저장소가 아니며 원자료는 보고서 커밋에 포함하지 않습니다. 현재 재현 입력은 전부 존재하지만 TMPDIR가 정리되면 원자료·도구 해시만으로 표본을 복원할 수 없습니다. 기존 L3 원자료를 덮어쓰지 않았습니다.
 
@@ -105,7 +105,7 @@ T는 terminal, B0는 하위 선언 없음, 객체 B1은 k0만 선언, BN은 모�
 
 `legacy-completion-state.mjs`와 `legacy-completion-state-node.json`, `legacy-completion-state-bun.json`이 getter 접근 전후 상태를 보존합니다. 최초의 약한 확인인 `legacy-completion-{node,bun}.json`도 덮어쓰지 않았습니다. 이 후속 확인은 correctness-only이며 새로운 시간 창이나 시간 표본을 만들지 않았습니다. 이 범위에서 옛 판 시간/비율을 관측 완료 비교로 쓰지 않습니다. 이 결손 때문에 아래의 canonical 보정과 새 완료 경계 창을 추가했습니다. 사후 검사의 성공을 첫 창의 완료 비교 복구에 쓰지 않습니다.
 
-정확한 후속 명령은 `/opt/homebrew/bin/node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/legacy-completion-state.mjs`와 `bun /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/legacy-completion-state.mjs`이며 각각 Node v26.12.0·Bun 1.4.3에서 실행했습니다. 기존 run.mjs·window.mjs·prepare.mjs·계측 사본·원시 시간 표본은 고치지 않았고 측정 당시 window.json의 도구 해시가 그대로 재현됩니다. 이 scratch 상태 확인의 범위는 지원 12장면의 factory 반환 직후 상태·즉시 public 읽기·drain 후 상태·callback뿐이며, 이 확인의 경과 시간을 재거나 원래 표본에 더하지 않았습니다.
+정확한 후속 명령은 `{node-home}/bin/node {tmp}/mount-breakdown-task_7e0e67a1893f/legacy-completion-state.mjs`와 `bun {tmp}/mount-breakdown-task_7e0e67a1893f/legacy-completion-state.mjs`이며 각각 Node v26.12.0·Bun 1.4.3에서 실행했습니다. 기존 run.mjs·window.mjs·prepare.mjs·계측 사본·원시 시간 표본은 고치지 않았고 측정 당시 window.json의 도구 해시가 그대로 재현됩니다. 이 scratch 상태 확인의 범위는 지원 12장면의 factory 반환 직후 상태·즉시 public 읽기·drain 후 상태·callback뿐이며, 이 확인의 경과 시간을 재거나 원래 표본에 더하지 않았습니다.
 
 다음은 잃어버리지 않도록 남긴 **factory-only 참고 진단**입니다. 합성 완료 시간도, current와의 속도 비교도 아닙니다. 원래 analysis.json의 changePct는 이 factory-only 시간으로 계산한 값이므로 산술 검산 성공과 무관하게 완료 비교에서는 무효입니다. 아래에서는 그 비율을 다시 주장하지 않습니다.
 
@@ -151,8 +151,8 @@ T는 terminal, B0는 하위 선언 없음, 객체 B1은 k0만 선언, BN은 모�
 red는 실제 종료 코드 1로 `lazy-composition-at-clock-boundary`를 기록했고, 최종 green은 네 명령 모두 종료 코드 0입니다. 작업 폴더 루트에서 실행한 명령은 다음과 같습니다. Node는 v26.12.0의 native TypeScript를 사용했습니다.
 
 ```sh
-/opt/homebrew/bin/node packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs
-/opt/homebrew/bin/node packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs --surface=first-batch
+{node-home}/bin/node packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs
+{node-home}/bin/node packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs --surface=first-batch
 bun packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs
 bun packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs --surface=first-batch
 ```
@@ -206,7 +206,7 @@ ms는 **두 바퀴 중앙값의 평균 [최소–최대]**, ±%는 **바퀴마�
 
 지원 시간 표본 **11,200개**, 준비 **2,240회**, 지원 행 **112개**, 미지원 행 **16개**입니다. 값·자식·경로·순서·caller 불변·drain 안정성과 종료 직후 상태 검사는 11,200표본 모두 통과했습니다. B0 객체/1,000은 Node +1972.2%·Bun +239.1%, BN 객체/1,000은 +243.4%·+194.1%이지만 새 회귀 수용이나 제품 최적화 예상 절감률을 정하지 않습니다. 첫 창과의 차이도 보정의 성능 개선/악화로 계산하지 않습니다.
 
-새 원자료·도구·사본은 **`/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-completed-task_7e0e67a1893f`**에 있습니다. `complete-{node,bun}-{1,2}.json`과 `.err`, `window.json`, `manifest.json`, `analysis-completed.json`을 보존합니다. 창 진입 명령은 `/opt/homebrew/bin/node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-completed-task_7e0e67a1893f/window.mjs`이며 재현은 새 TMPDIR에서 해야 합니다. raw dist SHA는 위 표와 같습니다. source·canonical·Winglet 603개·기존 원자료 138개·첫 창 파일 58개 해시가 모두 유지됐습니다. **실제 실행 도구의 identity는 각 window.json.scriptHashes**이며, 첫 창 manifest의 준비 중 generated snapshot보다 실제 window 해시를 우선합니다.
+새 원자료·도구·사본은 **`{tmp}/mount-breakdown-completed-task_7e0e67a1893f`**에 있습니다. `complete-{node,bun}-{1,2}.json`과 `.err`, `window.json`, `manifest.json`, `analysis-completed.json`을 보존합니다. 창 진입 명령은 `{node-home}/bin/node {tmp}/mount-breakdown-completed-task_7e0e67a1893f/window.mjs`이며 재현은 새 TMPDIR에서 해야 합니다. raw dist SHA는 위 표와 같습니다. source·canonical·Winglet 603개·기존 원자료 138개·첫 창 파일 58개 해시가 모두 유지됐습니다. **실제 실행 도구의 identity는 각 window.json.scriptHashes**이며, 첫 창 manifest의 준비 중 generated snapshot보다 실제 window 해시를 우선합니다.
 
 ### 창 밖의 패키지 검사
 
@@ -219,7 +219,7 @@ yarn workspace @canard/schema-form test --run
 yarn workspace @canard/schema-form build
 ```
 
-원본 로그는 `/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-readiness-gates-task_7e0e67a1893f`이며 새 폴더의 `package-gates/`에도 복사했습니다. guard·loader의 Prettier check와 first-batch common의 Node syntax check도 통과했습니다. 모든 빌드·게이트는 측정 창 밖입니다.
+원본 로그는 `{tmp}/mount-readiness-gates-task_7e0e67a1893f`이며 새 폴더의 `package-gates/`에도 복사했습니다. guard·loader의 Prettier check와 first-batch common의 Node syntax check도 통과했습니다. 모든 빌드·게이트는 측정 창 밖입니다.
 
 ## 계측의 포괄·배타 합계와 유효 범위
 
@@ -368,7 +368,7 @@ BN의 repeated effective-schema 조회 수(객체 3N+5·배열 2N+5)는 현재 �
 
 첫 창 `analyze.mjs`·`analysis.json`·`report.mjs`·`validate.py`는 당시 결과와 함께 동결했습니다. 첫 창 17,600시간 표본·계수 확인 32개·준비 3,520회·미지원 16행, 계측 표본 6,400개의 배타 합 오차 0 ms·음수 remainder 0건이라는 증거는 유지합니다. 옛 판 factory-only 대비 비율은 산술이 맞아도 완료 비교로 무효입니다.
 
-새 창 `analyze-completed.mjs`는 median·바퀴 평균/범위/비율·관측 상태·callback·drain·source/canonical/Winglet/기존 증거/실행 도구 해시를 검산했고 실패 0건입니다. 별도 Python 검산은 raw samples에서 다시 median·평균·비율을 구해 새 완료 표 32행, 첫 창 current 32행·factory-only 진단 24행·계측 32행·포괄/배타 함수 16행·계수 8행을 대조했습니다. **수치 필드 1,104개·상대 링크 24개·red/중간 반례/green·해시 검사 통과, 오류 0건**입니다. 새 명령은 `python3 /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-completed-task_7e0e67a1893f/validate-completed.py`이며 동결 원본을 고치지 않습니다.
+새 창 `analyze-completed.mjs`는 median·바퀴 평균/범위/비율·관측 상태·callback·drain·source/canonical/Winglet/기존 증거/실행 도구 해시를 검산했고 실패 0건입니다. 별도 Python 검산은 raw samples에서 다시 median·평균·비율을 구해 새 완료 표 32행, 첫 창 current 32행·factory-only 진단 24행·계측 32행·포괄/배타 함수 16행·계수 8행을 대조했습니다. **수치 필드 1,104개·상대 링크 24개·red/중간 반례/green·해시 검사 통과, 오류 0건**입니다. 새 명령은 `python3 {tmp}/mount-breakdown-completed-task_7e0e67a1893f/validate-completed.py`이며 동결 원본을 고치지 않습니다.
 
 TMPDIR는 영구 보관소가 아니며 raw는 커밋에 넣지 않습니다. 정리되면 해시만으로 표본을 복원할 수 없습니다. 창을 합친 정밀도·신뢰구간이나 JIT/GC 비용 분리를 주장하지 않습니다. 첫 창의 분해 filter도 사후 보수적 해석 규칙일 뿐 통계/계약 gate가 아닙니다. 1 ms = 1000 µs이며 profiler 점유율을 생산 지연의 절감 ms로 환산하지 않습니다.
 
@@ -376,7 +376,7 @@ TMPDIR는 영구 보관소가 아니며 raw는 커밋에 넣지 않습니다. �
 
 고정 HEAD `d0300133765c1f0e5b7635ee5dbed0d7d2a76264`의 전체 Filid seam 판정은 **FAIL, 분석 완전성은 INDETERMINATE**입니다. snapshot summary·여섯 scope 구조 검사·전체 검증 문서 감사의 snapshot은 모두 `e216ba42c97f592b0810c4daba0218ee95b091b1a2d6600cf152d66cd4e14776`로 일치했습니다. 구조 raw 384건은 오류 24·경고 52·설정상 면제 info 308건이며, 검증 문서 위반 24건(오류 2·경고 22)은 구조 finding에 중복 포함됩니다. 중복 제거한 non-exempt finding은 76건이고 진단은 130건(detail-document-contract 33·intent-document-contract 20·unresolved-local-dependency 4·unowned-local-dependency 73)입니다. facts 2,596파일은 exact여도 미해결·소유자 없는 참조와 동적 case 수 때문에 의존·검증 축은 미확정입니다. 기존 finding을 이번에 고치거나 면제하지 않았습니다.
 
-기준과 같은 `.filid/config.json`의 `**/architecture`·`**/bench` ignore 때문에 PR의 다섯 변경 경로는 자동 구조·검증 감사에서 모두 제외됩니다. 수동으로 공개 `src/index.ts`·package exports 불변, 제품의 helper 소비 없음, first-batch 공통 도구의 내부 helper 직접 import와 guard의 기존 distEngine 배치를 확인했습니다. 이 확인은 자동 PASS가 아니며 standalone guard의 자동 verification role·case cap은 미판정입니다. 원본 감사·전체 finding·진단·기준 대조는 `/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/filid-seam-task_614c1ed6f279/filid-seam-report.md`에 보존했습니다. 이번 보완은 위 감사 뒤의 문서 변경뿐이며 전체 scan을 반복하지 않았습니다.
+기준과 같은 `.filid/config.json`의 `**/architecture`·`**/bench` ignore 때문에 PR의 다섯 변경 경로는 자동 구조·검증 감사에서 모두 제외됩니다. 수동으로 공개 `src/index.ts`·package exports 불변, 제품의 helper 소비 없음, first-batch 공통 도구의 내부 helper 직접 import와 guard의 기존 distEngine 배치를 확인했습니다. 이 확인은 자동 PASS가 아니며 standalone guard의 자동 verification role·case cap은 미판정입니다. 원본 감사·전체 finding·진단·기준 대조는 `{tmp}/filid-seam-task_614c1ed6f279/filid-seam-report.md`에 보존했습니다. 이번 보완은 위 감사 뒤의 문서 변경뿐이며 전체 scan을 반복하지 않았습니다.
 
 수치 검산 도구와 `validate-completed.py`는 구현자가 작성한 증거입니다. g4의 구조·계약·readiness 검토는 코드가 그대로인 범위의 근거로 재사용하되, 그 Python 재실행을 독립 수치 재계산으로 보지 않습니다. g4는 Git config 접근 거부로 commit metadata도 검증하지 못했습니다. 조정자가 받은 별도 g3.8 보완 검증은 자체 수치 계산의 일치를 보고했지만, gh·Git global config 접근 거부로 PR·commit metadata는 **UNVERIFIED**로 남겼습니다. 구현자의 정상 허용 경로 PR 위생 확인은 본인 근거이며 이를 독립 metadata 통과로 대체하지 않습니다. 최종 독립 승인이나 병합 준비 완료를 주장하지 않으며 남은 검증과 병합 판단은 조정자·소유자에게 남깁니다.
 

@@ -58,7 +58,7 @@ overlay의 남은 차이 행은 6개이며 empty@2에 생겼던 임시 구현의
 
 ## 측정 규약과 보존
 
-A=A′는 기준 dist, B는 구현 커밋의 dist이며 같은 export footer와 probe를 사용합니다. production /opt/homebrew/bin/node v26.12.0, warm-up 20·표본 100, 하위 프로세스 하나씩 실행하였습니다. 전 행 3라운드 뒤 최초 A 최소값의 중앙값이 1ms 미만인 14행만 12라운드를 추가합니다. 작은 행의 최종 표는 추가 라운드의 최소값 중앙값, 나머지는 최초 3라운드의 최소값 중앙값입니다.
+A=A′는 기준 dist, B는 구현 커밋의 dist이며 같은 export footer와 probe를 사용합니다. production {node-home}/bin/node v26.12.0, warm-up 20·표본 100, 하위 프로세스 하나씩 실행하였습니다. 전 행 3라운드 뒤 최초 A 최소값의 중앙값이 1ms 미만인 14행만 12라운드를 추가합니다. 작은 행의 최종 표는 추가 라운드의 최소값 중앙값, 나머지는 최초 3라운드의 최소값 중앙값입니다.
 
 gate-form-one-key 100·1000은 정본 probe-write-paths의 loader import만 바꾼 사본으로 실행합니다. 처음에는 .ts 사본의 CommonJS 해석으로 gate-form 실행이 실패하여 자료를 measure-attempt-1에 보존하였습니다. 코디네이터 승인 뒤 .mts로 교정하고 새 measure에서 모든 행을 처음부터 실행하였으며 실패 시도의 표본은 합치지 않았습니다.
 

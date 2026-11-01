@@ -1,0 +1,105 @@
+{
+  "unit": {
+    "files": 609,
+    "passed": 4012,
+    "todo": 1,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "render": {
+    "files": 134,
+    "passed": 783,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "react18": {
+    "files": 134,
+    "passed": 783,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "verify": {
+    "files": 748,
+    "passed": 4839,
+    "todo": 1,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "storybook": {
+    "files": 100,
+    "passed": 251,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "verify-unit": {
+    "files": 614,
+    "passed": 4056,
+    "todo": 1,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "verify-render": {
+    "files": 134,
+    "passed": 783,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "production": {
+    "files": 10,
+    "passed": 21,
+    "failed": 0,
+    "oneOf20DistinctFreeze": 111,
+    "exitCode": 0
+  },
+  "other": {
+    "lint": 0,
+    "typecheck": 0,
+    "build": 0,
+    "publicDeclarationFiles": 308,
+    "publicSemanticDiff": 0,
+    "publicCommentOnlyByteDiff": [
+      "components/Form/components/FormCore/types/props.d.ts"
+    ],
+    "publicUnresolved": 0,
+    "agentsHashesMatched": 14,
+    "measuredE5RuntimeSHA256": "26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d",
+    "FcaNewFindings": 0,
+    "FcaNewDiagnostics": 0,
+    "FcaAbsoluteVerdict": "FAIL",
+    "FcaToolStatus": "indeterminate"
+  },
+  "mountCost": {
+    "rulePass": true,
+    "failedRows": [],
+    "final": "round3-complete.json",
+    "superseded": [
+      "../ir-5-round2/round2-complete.json",
+      "../ir-5-round2/superseded-window-1/round2-complete.json"
+    ],
+    "mode": "paired-relative",
+    "rule": "off wallMs/on eagerPaintedMs E5median/E4median <=1.02",
+    "warmups": 36,
+    "freshPages": 120,
+    "sourceCommit": "f7ab4800e1d4c11ec0138faec822ca64b3deaeef"
+  },
+  "regression": {
+    "focusedPassed": 30,
+    "hydrationCasesPerProject": 12,
+    "hiddenModes": [
+      "client-only",
+      "after hydration"
+    ],
+    "preFixHiddenFailuresReact18": 2,
+    "fixedHiddenPassedPerProject": 2,
+    "suspenseProbeCommitsPerProject": 1,
+    "slotInputRenderCounts": {
+      "normal": "1→1",
+      "StrictMode": "2→2"
+    },
+    "arrayItemLibraryLayoutEffects": 2
+  }
+}

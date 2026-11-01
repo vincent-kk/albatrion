@@ -6,10 +6,12 @@ import { deliverChainRecords } from './deliverChainRecords';
  * Refuse reentrant writes while the tree is resolving an exit's retained value.
  * The bundle supplies NODE_ENV for development-only warning delivery.
  * @param node - Attempted write target in the resolving tree
+ * @param origin - Refused public entry operation
  * @returns Whether the caller must skip the entire operation and its callback
  */
 export const refuseInactiveResolverWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
+  origin: 'load' | 'write' = 'write',
 ): boolean => {
   if (!node.runtime.resolvingInactiveValue) return false;
   if (node.runtime.reportingErrors) return true;
@@ -27,6 +29,7 @@ export const refuseInactiveResolverWrite = <Self extends FieldNodeRecord<Self>>(
       ],
       undefined,
       false,
+      origin,
     );
   return true;
 };

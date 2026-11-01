@@ -19,7 +19,7 @@
 ## 실행 식별과 환경
 
 - 실행 ID: `20261026T1636-bc0fb3d-d3-cache`
-- 원자료 및 외부 계측 스크립트: `/private/tmp/claude-501/perf-runs/20261026T1636-bc0fb3d-d3-cache/`
+- 원자료 및 외부 계측 스크립트: `{scratch}/perf-runs/20261026T1636-bc0fb3d-d3-cache/`
 - 기준 가지 끝: `bc0fb3d0a` (제품 소스는 `8d5c5dba1`과 동일). 비교 대상은 이전/이후 workspace dist이며 npm판과의 비교가 아닙니다.
 - 구현 산출물 기준: `29223acb00a6b2e9d5421a19f4b401fb4f16bae3`의 코드. 이후 변경은 API 문서·검사·측정 기록과 시험 파일 끝 빈 줄 정리뿐입니다.
 - Apple M1 Max, macOS 27.0.1 arm64, Node v26.12.1, Yarn 4.12.0. 측정은 `NODE_ENV=production`입니다.

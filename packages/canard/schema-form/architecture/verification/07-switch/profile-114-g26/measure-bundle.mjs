@@ -11,7 +11,7 @@ const directory = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(directory, '../../../../../../..');
 assert.equal(process.cwd(), repo);
 const pkg = path.join(repo, 'packages/canard/schema-form');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
+const scratch = '{scratch}/bundles';
 const require = createRequire(path.join(pkg, 'package.json'));
 const { getBundleBuildOptions } = await import(pathToFileURL(path.join(repo,
   'packages/aileron/script/build/rolldown.bundle.mjs')).href);

@@ -75,7 +75,7 @@ M에 대한 기울기는 A `0.000388233`, A′ `0.000392428`, B `-0.000000916`ms
 | 공개 선언 | dist/index.d.ts 바이트 동일·94이름 snapshot 유지 | dts-diff.json, 기존 unit 공개 겉면 시험 |
 | 실패 시험 | 무관 잠복 값에서 기준판fast=false가 기대true에 실패; 후보4건 통과 | scope-final-red.log, unit 로그 |
 
-이전 증거 폴더는 `/private/tmp/claude-501/perf-runs/20261026T1830-bc0fb3d-h4/`입니다. 새 시험은 실제 branchless 배열 아이템 퇴장과 분리 참조 쓰기, 대상 아래·자기·조상 슬롯의 일반 경로를 확인합니다. 새 시험의 빈 배열 출력 기대는 기준판도 해당 필드를 생략함을 확인해 정정한 것이며 기준판 기존 단언은 바꾸지 않았습니다. 게이트가 있는 폼은 기존 branchless 가드 때문에 이 특화에 들어가지 않습니다.
+이전 증거 폴더는 `{scratch}/perf-runs/20261026T1830-bc0fb3d-h4/`입니다. 새 시험은 실제 branchless 배열 아이템 퇴장과 분리 참조 쓰기, 대상 아래·자기·조상 슬롯의 일반 경로를 확인합니다. 새 시험의 빈 배열 출력 기대는 기준판도 해당 필드를 생략함을 확인해 정정한 것이며 기준판 기존 단언은 바꾸지 않았습니다. 게이트가 있는 폼은 기존 branchless 가드 때문에 이 특화에 들어가지 않습니다.
 
 이전 전체 Filid는 raw 상태indeterminate, 기존 오류24건으로 통합FAIL이며 전체 통과가 아닙니다. 오류 경로는 모두 기준판 이후 변경0, 당시 수정한 구현·새 시험의 발견은0입니다(filid-scope-evidence.json). 제품 트리가 같으므로 이 기존 부채와 검증 한계를 그대로 공개합니다. 새 비제품 탐침은 문법 검사·배선 smoke·값 보존과 정식 표본 검사로 검증했습니다.
 
@@ -88,17 +88,17 @@ M에 대한 기울기는 A `0.000388233`, A′ `0.000392428`, B `-0.000000916`ms
 - Node v26.12.1, Apple M1 Max arm64, production. 번들은 재빌드하지 않고 보관본을 재사용했습니다.
 - A=A′ 원본SHA256: `a396cf65e154187e33647e034429e323d66357133867bc6ea254861c098dcca6`.
 - B 원본SHA256: `9ecf2fc205b623425892850e06c597edabb2b17643eec27faafa6480e6985936`.
-- 새 원자료: `/private/tmp/claude-501/perf-runs/20261026T2132-0ddc902-h4-m/` 및 `/private/tmp/claude-501/perf-runs/20261026T2148-6a6c040-h4-m-formal/`.
-- 원래 네 행: `/private/tmp/claude-501/perf-runs/20261026T1835-0ddc902-h4-latent-formal/`.
+- 새 원자료: `{scratch}/perf-runs/20261026T2132-0ddc902-h4-m/` 및 `{scratch}/perf-runs/20261026T2148-6a6c040-h4-m-formal/`.
+- 원래 네 행: `{scratch}/perf-runs/20261026T1835-0ddc902-h4-latent-formal/`.
 
 원래 도구가 새 M행을 측정 전에 거부함을 확인한 후 확장 도구 smoke를 통과시켰습니다. 정식12프로세스·3,600표본의 양수·유한 수치, 최솟값 재계산, 완전 라운드·순서 균형, A=A′ SHA 동일, leaf/root 값, 잠복 개수·전 항목 보존, schema 불변을 확인했습니다. 결과는 decision.json·commands.json·predetermined-rule.json·results.json과 원시 stdout/stderr·command.json에 있습니다. 번들과 원자료는 커밋하지 않았습니다.
 
 승인된 실제 시작 ISO를 `H4_QUIET_SINCE`에 지정한 뒤 실행합니다.
 
 ```sh
-NODE_ENV=production /opt/homebrew/bin/node \
+NODE_ENV=production {node-home}/bin/node \
   packages/canard/schema-form/architecture/verification/design-optimization/tools/probe-latent-leaf.mjs \
-  --before=/private/tmp/claude-501/perf-runs/20261026T1830-bc0fb3d-h4/before/index.node.mjs \
+  --before={scratch}/perf-runs/20261026T1830-bc0fb3d-h4/before/index.node.mjs \
   --only=latent-count-1,latent-count-100,latent-count-1000,latent-count-4000 \
   --samples=100 --warmups=20 --runs=3 \
   --quiet-since="$H4_QUIET_SINCE" --label=h4-m

@@ -1,0 +1,4257 @@
+{
+  "method": "Follow every root export through resolved aliases and declaration references. For FieldNodeRuntime indexed access, use the compiler-resolved literal key, compare the selected property declaration, and recursively follow its type; never substitute the entire runtime interface for one selected property. Any whole-runtime or changed-member exposure fails the gate.",
+  "publicExports": 97,
+  "rootExportsEqual": true,
+  "baselineReachableFiles": 55,
+  "candidateReachableFiles": 55,
+  "reachableSignatures": 916,
+  "semanticDifferences": {
+    "added": [],
+    "removed": []
+  },
+  "unsafeRuntimeExposures": [],
+  "unresolvedAliases": [],
+  "baselineRootTraces": [
+    {
+      "publicRoot": "SchemaFormPlugin",
+      "runtimeSelections": [
+        {
+          "path": [
+            "SchemaFormPlugin",
+            "alias:SchemaFormPlugin",
+            "app/plugin/type.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidatorPlugin",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ValidatorPlugin",
+            "alias:ValidatorPlugin",
+            "app/plugin/type.d.ts:JSONSchema",
+            "alias:JSONSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "registerPlugin",
+      "runtimeSelections": [
+        {
+          "path": [
+            "registerPlugin",
+            "alias:registerPlugin",
+            "app/plugin/utils/registerPlugin.d.ts:SchemaFormPlugin",
+            "alias:SchemaFormPlugin",
+            "app/plugin/type.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "Form",
+      "runtimeSelections": [
+        {
+          "path": [
+            "Form",
+            "alias:Form",
+            "components/Form/Form.d.ts:FormProps",
+            "alias:FormProps",
+            "components/Form/components/FormCore/types/props.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormChildrenProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormChildrenProps",
+            "alias:FormChildrenProps",
+            "components/Form/components/FormCore/types/props.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormErrorProps",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormFieldProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormFieldProps",
+            "alias:FormFieldProps",
+            "components/Form/components/FormField/types/props.d.ts:FormFieldProps",
+            "components/Form/components/FormField/types/props.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormHandle",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormHandle",
+            "alias:FormHandle",
+            "components/Form/components/FormCore/types/handle.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormInputProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormInputProps",
+            "alias:FormInputProps",
+            "components/Form/components/FormInput/types/props.d.ts:FormInputProps",
+            "components/Form/components/FormInput/types/props.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormLabelProps",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormProps",
+            "alias:FormProps",
+            "components/Form/components/FormCore/types/props.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormRenderProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormRenderProps",
+            "alias:FormRenderProps",
+            "components/Form/components/FormRender/types/props.d.ts:FormRenderProps",
+            "components/Form/components/FormRender/types/props.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isSchemaFormError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isJSONSchemaError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isUnhandledError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isValidationError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormErrorCode",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormWarningCode",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "JSONPointer",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationBackfill",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationOptions",
+      "runtimeSelections": [
+        {
+          "path": [
+            "VirtualizationOptions",
+            "alias:VirtualizationOptions",
+            "helpers/virtualization/resolveVirtualizationOptions/type.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationPlaceholderProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "VirtualizationPlaceholderProps",
+            "alias:VirtualizationPlaceholderProps",
+            "helpers/virtualization/resolveVirtualizationOptions/type.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationRootMargin",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InactiveValue",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InactiveValueResolver",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InactiveValueContext",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InferFieldNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "InferFieldNode",
+            "alias:InferFieldNode",
+            "core/surface/type.d.ts:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ArrayNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ArrayNode",
+            "alias:ArrayNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "BooleanNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "BooleanNode",
+            "alias:BooleanNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullNode",
+            "alias:NullNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NumberNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NumberNode",
+            "alias:NumberNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ObjectNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ObjectNode",
+            "alias:ObjectNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "StringNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "StringNode",
+            "alias:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "VirtualNode",
+            "alias:VirtualNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "UnionNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "UnionNode",
+            "alias:UnionNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "BranchNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "BranchNode",
+            "alias:BranchNode",
+            "core/surface/type.d.ts:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "TerminalNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "TerminalNode",
+            "alias:TerminalNode",
+            "core/surface/type.d.ts:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidationMode",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeEventType",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeRequestType",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeState",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "SetValueOption",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isArrayNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isArrayNode",
+            "alias:isArrayNode",
+            "core/surface/utils/guards.d.ts:ArrayNode",
+            "alias:ArrayNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isBooleanNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isBooleanNode",
+            "alias:isBooleanNode",
+            "core/surface/utils/guards.d.ts:BooleanNode",
+            "alias:BooleanNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isBranchNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isBranchNode",
+            "alias:isBranchNode",
+            "core/surface/utils/guards.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isNumberNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isNumberNode",
+            "alias:isNumberNode",
+            "core/surface/utils/guards.d.ts:NumberNode",
+            "alias:NumberNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isObjectNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isObjectNode",
+            "alias:isObjectNode",
+            "core/surface/utils/guards.d.ts:ObjectNode",
+            "alias:ObjectNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isFieldNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isFieldNode",
+            "alias:isFieldNode",
+            "core/surface/utils/guards.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isStringNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isStringNode",
+            "alias:isStringNode",
+            "core/surface/utils/guards.d.ts:StringNode",
+            "alias:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isTerminalNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isTerminalNode",
+            "alias:isTerminalNode",
+            "core/surface/utils/guards.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isVirtualNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isVirtualNode",
+            "alias:isVirtualNode",
+            "core/surface/utils/guards.d.ts:VirtualNode",
+            "alias:VirtualNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isUnionNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isUnionNode",
+            "alias:isUnionNode",
+            "core/surface/utils/guards.d.ts:UnionNode",
+            "alias:UnionNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ShowError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ChildFieldProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ChildFieldProps",
+            "alias:ChildFieldProps",
+            "types/field/fieldInput.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputDefinition",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputDefinition",
+            "alias:FieldInputDefinition",
+            "types/field/fieldInput.d.ts:FieldInputTestFn",
+            "types/field/fieldInput.d.ts:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputMap",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputMap",
+            "alias:FieldInputMap",
+            "types/field/fieldInput.d.ts:InferFieldInputProps",
+            "types/field/fieldInput.d.ts:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputPropsWithNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputPropsWithNode",
+            "alias:FieldInputPropsWithNode",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputPropsWithSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputPropsWithSchema",
+            "alias:FieldInputPropsWithSchema",
+            "types/field/fieldInput.d.ts:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputTestFn",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputTestFn",
+            "alias:FieldInputTestFn",
+            "types/field/fieldInput.d.ts:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputTestObject",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputTestObject",
+            "alias:FieldInputTestObject",
+            "types/field/fieldInput.d.ts:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormatError",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormatError",
+            "alias:FormatError",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputHint",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputHint",
+            "alias:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeType",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldNodeType",
+            "alias:FieldNodeType",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "JSONSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "JSONSchema",
+            "alias:JSONSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InferValueType",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InjectToHandler",
+      "runtimeSelections": [
+        {
+          "path": [
+            "InjectToHandler",
+            "alias:InjectToHandler",
+            "types/schema/injectTo.d.ts:InjectHandlerContext",
+            "types/schema/injectTo.d.ts:JSONSchema",
+            "alias:JSONSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidatorFactory",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidateFunction",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidationIssue",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldRendererProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/rolled/fieldRenderer.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableBooleanSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableBooleanSchema",
+            "alias:NonNullableBooleanSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableBooleanSchema",
+            "alias:NonNullableBooleanSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableBooleanSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableBooleanSchema",
+            "alias:NullableBooleanSchema",
+            "types/rolled/jsonSchema.d.ts:NullableBooleanSchema",
+            "alias:NullableBooleanSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "BooleanSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "BooleanSchema",
+            "alias:BooleanSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableBooleanSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableBooleanSchema",
+            "alias:NonNullableBooleanSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableNumberSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableNumberSchema",
+            "alias:NonNullableNumberSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableNumberSchema",
+            "alias:NonNullableNumberSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableNumberSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableNumberSchema",
+            "alias:NullableNumberSchema",
+            "types/rolled/jsonSchema.d.ts:NullableNumberSchema",
+            "alias:NullableNumberSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NumberSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NumberSchema",
+            "alias:NumberSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableNumberSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableNumberSchema",
+            "alias:NonNullableNumberSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableStringSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableStringSchema",
+            "alias:NonNullableStringSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableStringSchema",
+            "alias:NonNullableStringSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableStringSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableStringSchema",
+            "alias:NullableStringSchema",
+            "types/rolled/jsonSchema.d.ts:NullableStringSchema",
+            "alias:NullableStringSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "StringSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "StringSchema",
+            "alias:StringSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableStringSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableStringSchema",
+            "alias:NonNullableStringSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableArraySchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableArraySchema",
+            "alias:NonNullableArraySchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableArraySchema",
+            "alias:NonNullableArraySchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableArraySchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableArraySchema",
+            "alias:NullableArraySchema",
+            "types/rolled/jsonSchema.d.ts:NullableArraySchema",
+            "alias:NullableArraySchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ArraySchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ArraySchema",
+            "alias:ArraySchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableArraySchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableArraySchema",
+            "alias:NonNullableArraySchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableObjectSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableObjectSchema",
+            "alias:NonNullableObjectSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableObjectSchema",
+            "alias:NonNullableObjectSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableObjectSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableObjectSchema",
+            "alias:NullableObjectSchema",
+            "types/rolled/jsonSchema.d.ts:NullableObjectSchema",
+            "alias:NullableObjectSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ObjectSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ObjectSchema",
+            "alias:ObjectSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableObjectSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableObjectSchema",
+            "alias:NonNullableObjectSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullSchema",
+            "alias:NullSchema",
+            "types/rolled/jsonSchema.d.ts:NullSchema",
+            "alias:NullSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InferJSONSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "InferJSONSchema",
+            "alias:InferJSONSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNullSchema",
+            "types/rolled/jsonSchema.d.ts:NullSchema",
+            "alias:NullSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useFieldNodeTracker",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useFieldNodeTracker",
+            "alias:useFieldNodeTracker",
+            "hooks/fieldNode/useFieldNodeTracker.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useFieldNodeSubscribe",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useFieldNodeSubscribe",
+            "alias:useFieldNodeSubscribe",
+            "hooks/fieldNode/useFieldNodeSubscribe.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeSubscribeOptions",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldNodeSubscribeOptions",
+            "alias:FieldNodeSubscribeOptions",
+            "hooks/fieldNode/useFieldNodeSubscribe.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useChildFieldMap",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useChildFieldMap",
+            "alias:useChildFieldMap",
+            "hooks/fieldNode/useChildFieldMap.d.ts:ChildFieldMap",
+            "hooks/fieldNode/useChildFieldMap.d.ts:ChildFieldProps",
+            "alias:ChildFieldProps",
+            "types/field/fieldInput.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useChildFieldErrors",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useChildFieldErrors",
+            "alias:useChildFieldErrors",
+            "hooks/fieldNode/useChildFieldErrors.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useFormSubmit",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useFormSubmit",
+            "alias:useFormSubmit",
+            "hooks/form/useFormSubmit.d.ts:FormHandle",
+            "alias:FormHandle",
+            "components/Form/components/FormCore/types/handle.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormProvider",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormProvider",
+            "alias:FormProvider",
+            "providers/ExternalFormContext/components/ExternalFormContextProvider.d.ts:ExternalFormContextProviderProps",
+            "providers/ExternalFormContext/components/ExternalFormContextProvider.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormProviderProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormProviderProps",
+            "alias:FormProviderProps",
+            "providers/ExternalFormContext/components/ExternalFormContextProvider.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    }
+  ],
+  "candidateRootTraces": [
+    {
+      "publicRoot": "SchemaFormPlugin",
+      "runtimeSelections": [
+        {
+          "path": [
+            "SchemaFormPlugin",
+            "alias:SchemaFormPlugin",
+            "app/plugin/type.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidatorPlugin",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ValidatorPlugin",
+            "alias:ValidatorPlugin",
+            "app/plugin/type.d.ts:JSONSchema",
+            "alias:JSONSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "registerPlugin",
+      "runtimeSelections": [
+        {
+          "path": [
+            "registerPlugin",
+            "alias:registerPlugin",
+            "app/plugin/utils/registerPlugin.d.ts:SchemaFormPlugin",
+            "alias:SchemaFormPlugin",
+            "app/plugin/type.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "Form",
+      "runtimeSelections": [
+        {
+          "path": [
+            "Form",
+            "alias:Form",
+            "components/Form/Form.d.ts:FormProps",
+            "alias:FormProps",
+            "components/Form/components/FormCore/types/props.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormChildrenProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormChildrenProps",
+            "alias:FormChildrenProps",
+            "components/Form/components/FormCore/types/props.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormErrorProps",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormFieldProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormFieldProps",
+            "alias:FormFieldProps",
+            "components/Form/components/FormField/types/props.d.ts:FormFieldProps",
+            "components/Form/components/FormField/types/props.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormHandle",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormHandle",
+            "alias:FormHandle",
+            "components/Form/components/FormCore/types/handle.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormInputProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormInputProps",
+            "alias:FormInputProps",
+            "components/Form/components/FormInput/types/props.d.ts:FormInputProps",
+            "components/Form/components/FormInput/types/props.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormLabelProps",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormProps",
+            "alias:FormProps",
+            "components/Form/components/FormCore/types/props.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormRenderProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormRenderProps",
+            "alias:FormRenderProps",
+            "components/Form/components/FormRender/types/props.d.ts:FormRenderProps",
+            "components/Form/components/FormRender/types/props.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isSchemaFormError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isJSONSchemaError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isUnhandledError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isValidationError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormErrorCode",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormWarningCode",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "JSONPointer",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationBackfill",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationOptions",
+      "runtimeSelections": [
+        {
+          "path": [
+            "VirtualizationOptions",
+            "alias:VirtualizationOptions",
+            "helpers/virtualization/resolveVirtualizationOptions/type.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationPlaceholderProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "VirtualizationPlaceholderProps",
+            "alias:VirtualizationPlaceholderProps",
+            "helpers/virtualization/resolveVirtualizationOptions/type.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualizationRootMargin",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InactiveValue",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InactiveValueResolver",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InactiveValueContext",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InferFieldNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "InferFieldNode",
+            "alias:InferFieldNode",
+            "core/surface/type.d.ts:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ArrayNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ArrayNode",
+            "alias:ArrayNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "BooleanNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "BooleanNode",
+            "alias:BooleanNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullNode",
+            "alias:NullNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NumberNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NumberNode",
+            "alias:NumberNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ObjectNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ObjectNode",
+            "alias:ObjectNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "StringNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "StringNode",
+            "alias:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "VirtualNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "VirtualNode",
+            "alias:VirtualNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "UnionNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "UnionNode",
+            "alias:UnionNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "BranchNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "BranchNode",
+            "alias:BranchNode",
+            "core/surface/type.d.ts:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "TerminalNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "TerminalNode",
+            "alias:TerminalNode",
+            "core/surface/type.d.ts:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidationMode",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeEventType",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeRequestType",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeState",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "SetValueOption",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isArrayNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isArrayNode",
+            "alias:isArrayNode",
+            "core/surface/utils/guards.d.ts:ArrayNode",
+            "alias:ArrayNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isBooleanNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isBooleanNode",
+            "alias:isBooleanNode",
+            "core/surface/utils/guards.d.ts:BooleanNode",
+            "alias:BooleanNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isBranchNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isBranchNode",
+            "alias:isBranchNode",
+            "core/surface/utils/guards.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isNumberNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isNumberNode",
+            "alias:isNumberNode",
+            "core/surface/utils/guards.d.ts:NumberNode",
+            "alias:NumberNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isObjectNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isObjectNode",
+            "alias:isObjectNode",
+            "core/surface/utils/guards.d.ts:ObjectNode",
+            "alias:ObjectNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isFieldNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isFieldNode",
+            "alias:isFieldNode",
+            "core/surface/utils/guards.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isStringNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isStringNode",
+            "alias:isStringNode",
+            "core/surface/utils/guards.d.ts:StringNode",
+            "alias:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isTerminalNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isTerminalNode",
+            "alias:isTerminalNode",
+            "core/surface/utils/guards.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isVirtualNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isVirtualNode",
+            "alias:isVirtualNode",
+            "core/surface/utils/guards.d.ts:VirtualNode",
+            "alias:VirtualNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "isUnionNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "isUnionNode",
+            "alias:isUnionNode",
+            "core/surface/utils/guards.d.ts:UnionNode",
+            "alias:UnionNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ShowError",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ChildFieldProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ChildFieldProps",
+            "alias:ChildFieldProps",
+            "types/field/fieldInput.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputDefinition",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputDefinition",
+            "alias:FieldInputDefinition",
+            "types/field/fieldInput.d.ts:FieldInputTestFn",
+            "types/field/fieldInput.d.ts:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputMap",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputMap",
+            "alias:FieldInputMap",
+            "types/field/fieldInput.d.ts:InferFieldInputProps",
+            "types/field/fieldInput.d.ts:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputPropsWithNode",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputPropsWithNode",
+            "alias:FieldInputPropsWithNode",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputPropsWithSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputPropsWithSchema",
+            "alias:FieldInputPropsWithSchema",
+            "types/field/fieldInput.d.ts:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputTestFn",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputTestFn",
+            "alias:FieldInputTestFn",
+            "types/field/fieldInput.d.ts:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputTestObject",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputTestObject",
+            "alias:FieldInputTestObject",
+            "types/field/fieldInput.d.ts:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormatError",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormatError",
+            "alias:FormatError",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldInputHint",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldInputHint",
+            "alias:FieldInputHint",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeType",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldNodeType",
+            "alias:FieldNodeType",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "JSONSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "JSONSchema",
+            "alias:JSONSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InferValueType",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InjectToHandler",
+      "runtimeSelections": [
+        {
+          "path": [
+            "InjectToHandler",
+            "alias:InjectToHandler",
+            "types/schema/injectTo.d.ts:InjectHandlerContext",
+            "types/schema/injectTo.d.ts:JSONSchema",
+            "alias:JSONSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidatorFactory",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidateFunction",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ValidationIssue",
+      "runtimeSelections": [],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldRendererProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/rolled/fieldRenderer.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableBooleanSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableBooleanSchema",
+            "alias:NonNullableBooleanSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableBooleanSchema",
+            "alias:NonNullableBooleanSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableBooleanSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableBooleanSchema",
+            "alias:NullableBooleanSchema",
+            "types/rolled/jsonSchema.d.ts:NullableBooleanSchema",
+            "alias:NullableBooleanSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "BooleanSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "BooleanSchema",
+            "alias:BooleanSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableBooleanSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableBooleanSchema",
+            "alias:NonNullableBooleanSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableNumberSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableNumberSchema",
+            "alias:NonNullableNumberSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableNumberSchema",
+            "alias:NonNullableNumberSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableNumberSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableNumberSchema",
+            "alias:NullableNumberSchema",
+            "types/rolled/jsonSchema.d.ts:NullableNumberSchema",
+            "alias:NullableNumberSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NumberSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NumberSchema",
+            "alias:NumberSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableNumberSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableNumberSchema",
+            "alias:NonNullableNumberSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableStringSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableStringSchema",
+            "alias:NonNullableStringSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableStringSchema",
+            "alias:NonNullableStringSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableStringSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableStringSchema",
+            "alias:NullableStringSchema",
+            "types/rolled/jsonSchema.d.ts:NullableStringSchema",
+            "alias:NullableStringSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "StringSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "StringSchema",
+            "alias:StringSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableStringSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableStringSchema",
+            "alias:NonNullableStringSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableArraySchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableArraySchema",
+            "alias:NonNullableArraySchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableArraySchema",
+            "alias:NonNullableArraySchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableArraySchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableArraySchema",
+            "alias:NullableArraySchema",
+            "types/rolled/jsonSchema.d.ts:NullableArraySchema",
+            "alias:NullableArraySchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ArraySchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ArraySchema",
+            "alias:ArraySchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableArraySchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableArraySchema",
+            "alias:NonNullableArraySchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NonNullableObjectSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NonNullableObjectSchema",
+            "alias:NonNullableObjectSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableObjectSchema",
+            "alias:NonNullableObjectSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullableObjectSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullableObjectSchema",
+            "alias:NullableObjectSchema",
+            "types/rolled/jsonSchema.d.ts:NullableObjectSchema",
+            "alias:NullableObjectSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "ObjectSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "ObjectSchema",
+            "alias:ObjectSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNonNullableObjectSchema",
+            "types/rolled/jsonSchema.d.ts:NonNullableObjectSchema",
+            "alias:NonNullableObjectSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "NullSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "NullSchema",
+            "alias:NullSchema",
+            "types/rolled/jsonSchema.d.ts:NullSchema",
+            "alias:NullSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "InferJSONSchema",
+      "runtimeSelections": [
+        {
+          "path": [
+            "InferJSONSchema",
+            "alias:InferJSONSchema",
+            "types/rolled/jsonSchema.d.ts:RolledNullSchema",
+            "types/rolled/jsonSchema.d.ts:NullSchema",
+            "alias:NullSchema",
+            "types/schema/jsonSchema.d.ts:BasicSchema",
+            "types/schema/jsonSchema.d.ts:SchemaPresentation",
+            "types/schema/jsonSchema.d.ts:FieldInputProps",
+            "alias:FieldInputProps",
+            "types/field/fieldInput.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useFieldNodeTracker",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useFieldNodeTracker",
+            "alias:useFieldNodeTracker",
+            "hooks/fieldNode/useFieldNodeTracker.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useFieldNodeSubscribe",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useFieldNodeSubscribe",
+            "alias:useFieldNodeSubscribe",
+            "hooks/fieldNode/useFieldNodeSubscribe.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FieldNodeSubscribeOptions",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FieldNodeSubscribeOptions",
+            "alias:FieldNodeSubscribeOptions",
+            "hooks/fieldNode/useFieldNodeSubscribe.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useChildFieldMap",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useChildFieldMap",
+            "alias:useChildFieldMap",
+            "hooks/fieldNode/useChildFieldMap.d.ts:ChildFieldMap",
+            "hooks/fieldNode/useChildFieldMap.d.ts:ChildFieldProps",
+            "alias:ChildFieldProps",
+            "types/field/fieldInput.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useChildFieldErrors",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useChildFieldErrors",
+            "alias:useChildFieldErrors",
+            "hooks/fieldNode/useChildFieldErrors.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "useFormSubmit",
+      "runtimeSelections": [
+        {
+          "path": [
+            "useFormSubmit",
+            "alias:useFormSubmit",
+            "hooks/form/useFormSubmit.d.ts:FormHandle",
+            "alias:FormHandle",
+            "components/Form/components/FormCore/types/handle.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormProvider",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormProvider",
+            "alias:FormProvider",
+            "providers/ExternalFormContext/components/ExternalFormContextProvider.d.ts:ExternalFormContextProviderProps",
+            "providers/ExternalFormContext/components/ExternalFormContextProvider.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    },
+    {
+      "publicRoot": "FormProviderProps",
+      "runtimeSelections": [
+        {
+          "path": [
+            "FormProviderProps",
+            "alias:FormProviderProps",
+            "providers/ExternalFormContext/components/ExternalFormContextProvider.d.ts:FieldRendererProps",
+            "alias:FieldRendererProps",
+            "types/field/fieldRenderer.d.ts:FieldNode",
+            "alias:FieldNode",
+            "core/surface/type.d.ts:StringNode",
+            "core/surface/type.d.ts:NodeSurface",
+            "core/surface/type.d.ts:NodeDiagnostics",
+            "core/surface/type.d.ts:FieldNodeRuntime<unknown>['diagnostics']"
+          ],
+          "expression": "FieldNodeRuntime<unknown>['diagnostics']",
+          "selectedMembers": [
+            "diagnostics"
+          ],
+          "evaluatedType": "FieldNodeDiagnostics"
+        }
+      ],
+      "wholeRuntimePaths": [],
+      "exposedChangedMembers": [],
+      "cadenceExposed": false
+    }
+  ],
+  "indexByteDifference": false
+}

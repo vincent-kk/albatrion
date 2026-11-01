@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const d = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repo = path.resolve(d, '../../../../../..');
-const expected = '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07';
+const expected = '{repo}';
 assert.equal(fs.realpathSync(repo), expected);
 const require = createRequire(path.join(repo, 'package.json'));
 const ts = require('typescript');

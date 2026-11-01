@@ -1,0 +1,38 @@
+{
+  "headerNormalizations": [
+    {
+      "item": "VALIDATE-052",
+      "removedHeaderRows": 2,
+      "allOtherBytesUnchanged": true
+    },
+    {
+      "item": "ERROR-028",
+      "removedHeaderRows": 2,
+      "allOtherBytesUnchanged": true
+    }
+  ],
+  "approvedHeaderOnlyBaselineDeletions": 2,
+  "machinePathHits": [],
+  "newUnsafeProductAssertions": [],
+  "archiveDeletedLines": 2,
+  "publicIndexChanged": false,
+  "packageVersionChanged": false,
+  "existingSkipsAndTodosUnchanged": true,
+  "newConditionalSkip": [
+    {
+      "file": "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/__tests__/terminalChildren.test.tsx",
+      "before": [],
+      "after": [
+        "it.skipIf(inject('reactMajor') !== '18')("
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/hooks/__tests__/useFieldNode.paths.test.tsx",
+      "before": [],
+      "after": [
+        "it.skipIf(inject('reactMajor') !== '18')("
+      ]
+    }
+  ],
+  "note": "Two new React18 legacy-root cases are conditionally excluded on React19 as required by Amendments 4 and 9; no existing skip or todo changed. All raw and gzip files were decoded and searched."
+}

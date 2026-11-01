@@ -13,6 +13,6 @@
 
 ## 근거와 남은 것
 
-증거는 `reviews/round-450-owner-answers.md`, `verification/design-optimization/d2-m-results.md`(가지 `perf/schema-form-d2-mount-readers`), 독립 검토 판정(`/private/tmp/claude-501/perf-runs/446-reviews/`)이다. 진행 중인 것은 D2-M 재측정과 D3b-2(#470 위)이고, 그 뒤 D4가 남았다. 소유자 몫은 #470의 노드당 힙 수용이다.
+증거는 `reviews/round-450-owner-answers.md`, `verification/design-optimization/d2-m-results.md`(가지 `perf/schema-form-d2-mount-readers`), 독립 검토 판정(`{scratch}/perf-runs/446-reviews/`)이다. 진행 중인 것은 D2-M 재측정과 D3b-2(#470 위)이고, 그 뒤 D4가 남았다. 소유자 몫은 #470의 노드당 힙 수용이다.
 
 다음 라운드 번호는 451이다.

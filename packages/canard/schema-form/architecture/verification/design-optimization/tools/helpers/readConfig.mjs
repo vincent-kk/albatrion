@@ -50,15 +50,15 @@ export function readConfig(argv, toolsURL) {
   if (!/^[a-zA-Z0-9-]+$/.test(label)) throw new Error('Invalid label');
   const runId = `${new Date().toISOString().slice(0, 16).replace(/[-:]/g, '')}-${commit.slice(0, 7)}-${label}`;
   const runDir = path.resolve(
-    values['run-dir'] ?? `/private/tmp/claude-501/perf-runs/${runId}`,
+    values['run-dir'] ?? `{scratch}/perf-runs/${runId}`,
   );
   if (
-    !/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\/(?:pair|stages))?$/.test(
+    !/^{scratch}\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\/(?:pair|stages))?$/.test(
       runDir.replace(/\.noindex(?=\/(?:pair|stages)$|$)/, ''),
     )
   )
     throw new Error(
-      'Use /private/tmp/claude-501/perf-runs/<YYYYMMDD>T<HHMM>-<commit7>-<label>',
+      'Use {scratch}/perf-runs/<YYYYMMDD>T<HHMM>-<commit7>-<label>',
     );
   const quietSince = values['quiet-since'] ?? null;
   if (

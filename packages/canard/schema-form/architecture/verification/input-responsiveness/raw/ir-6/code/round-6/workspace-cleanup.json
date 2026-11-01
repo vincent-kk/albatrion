@@ -1,0 +1,24 @@
+{
+  "removedDirectories": [
+    "ir6-r6-red",
+    "ir6-r6-red-mount",
+    "ir6-r6-red-fragment",
+    "ir6-diag-display"
+  ],
+  "method": "bare orca worktree rm --worktree path:<scratch> --force --json",
+  "allRemovedDirectoriesAbsent": true,
+  "retainedDirectories": [
+    "ir6-lane-e",
+    "ir-6-validation-after-paint"
+  ],
+  "retainedBranch": "temp/ir6-diag-display",
+  "redBranchesAbsentAfterAsyncCleanup": true,
+  "retainedConfigKeys": {
+    "branch.temp/ir6-diag-display.base": "f113566a3",
+    "branch.vincent-kk/ir6-r6-red.base": "ee1b4e824",
+    "branch.vincent-kk/ir6-r6-red-mount.base": "ee1b4e824",
+    "branch.vincent-kk/ir6-r6-red-fragment.base": "ee1b4e824"
+  },
+  "workaroundsAttempted": false,
+  "diagnosticDataCommittedBeforeDisplayRemoval": "ff184c918"
+}

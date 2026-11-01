@@ -1,0 +1,58 @@
+{
+  "unit": {
+    "files": 619,
+    "passed": 4089,
+    "failed": 0,
+    "skipped": 0,
+    "todos": 1,
+    "pendingNames": []
+  },
+  "render": {
+    "files": 158,
+    "passed": 896,
+    "failed": 0,
+    "skipped": 2,
+    "todos": 0,
+    "pendingNames": []
+  },
+  "react18": {
+    "files": 158,
+    "passed": 892,
+    "failed": 0,
+    "skipped": 6,
+    "todos": 0,
+    "pendingNames": []
+  },
+  "verify": {
+    "files": 782,
+    "passed": 5029,
+    "failed": 0,
+    "skipped": 2,
+    "todos": 1,
+    "pendingNames": []
+  },
+  "storybook": {
+    "files": 101,
+    "passed": 254,
+    "failed": 0,
+    "skipped": 0,
+    "todos": 0,
+    "pendingNames": []
+  },
+  "production": {
+    "files": 10,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "todos": 0,
+    "pendingNames": []
+  },
+  "import-model": {
+    "files": 1,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "todos": 0,
+    "pendingNames": []
+  }
+}

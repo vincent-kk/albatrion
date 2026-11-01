@@ -1,0 +1,16 @@
+{
+  "files": 4,
+  "passed": 24,
+  "failed": 0,
+  "suspense": "normal it passed in React 18 and 19",
+  "renderCounts": {
+    "normal": {
+      "commit": 1,
+      "final": 1
+    },
+    "StrictMode": {
+      "commit": 2,
+      "final": 2
+    }
+  }
+}

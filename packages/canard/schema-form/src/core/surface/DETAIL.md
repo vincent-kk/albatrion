@@ -21,6 +21,10 @@
 
 ## API Contracts
 
+- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
+
+- `startFieldNodeLoadValidation(node)`는 surface가 공개 노드를 좁혀 engine의 `dispatchLoadValidation`을 호출하고 core가 재수출하는 로드 슬롯 바인딩이다. 요청 조회는 validation 내부에 남는다.
+
 - BLUEPRINT-052: buildFieldNodeTree accepts an optional caller-owned blueprint cache and forwards it to blueprint without importing app state. Per-tree warning collection and runtime ownership remain unchanged.
 
 - surface의 엔진 참조는 engine/index를 통해서만 도달하며 내부 엔진 파일을 직접 가져오지 않는다(07c 계획 9.2·9.3).
@@ -109,7 +113,7 @@
 | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | `buildFieldNodeTree(props)`                                   | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않는다                                                                                                         | 70C-01, VALIDATE-010      |
 | `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받는다                                                                                                                 | 69C-01·05, LANDING-041    |
-| `reloadFieldNodeForm(root, value, option?)`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다 | WRITE-015·043·045, 69C-03 |
+| `reloadFieldNodeForm(root, value, option?, { deferValidation? })`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다. deferValidation은 Provider의 공통 로드 슬롯에 판정을 위임하고 기본 core-only 호출은 사슬 끝 요청을 유지한다 | WRITE-015·043·045, 69C-03 |
 | `adoptFieldNodeTree(previousRoot, nextRoot)`                  | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기한다                                                                                                  | 69C-02·03, WRITE-046      |
 | `writeFieldNodeInput(node, value, option)`                    | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별한다                                                                                                      | REACT-009·010, 69C-01     |
 | `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                | WRITE-083, 69C-01         |
@@ -118,6 +122,10 @@
 | `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다                                                                               | REACT-033, 69C-01         |
 
 - 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸이다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 쓴다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남는다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
+
+### onError origin
+
+batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전용 통로이며 dispatchBatch에 load origin을 넘깁니다. FieldNode.batch는 write를 유지하고 중첩 호출은 바깥 origin을 따릅니다. core가 이름으로 재수출하며 src/index.ts에는 노출하지 않습니다.
 
 ## Acceptance Criteria
 
@@ -161,6 +169,14 @@
 
 - `visitSubtree`는 자기 자신부터 전위로, 형제는 `children` 순서로 방문한다. `false`를 돌려준 노드의 하위만 건너뛰고, 형상 밖 노드(꺼진 게이트의 노드)는 방문하지 않으며, 터미널은 잎이고, 참조로 두 번 닿는 같은 인스턴스는 한 번만 방문한다. 떼어진 시작 노드에서는 NODE-044의 구조 읽기 규칙대로 그 노드와 함께 떼어진 마지막 커밋의 하위를 걷는다.
 - 순회 안에서 쓰기가 없으면 사슬에 들어가지 않는다. 첫 쓰기에 묶음이 열리고 순회가 끝날 때 루트에서 한 번 정착하며, 순회 중 읽기는 직전 커밋 값이다. 바깥 `batch` 안에서는 그 묶음에 합류해 바깥 끝에서 정착한다. 리스너 안에서도 순회는 되며, 전달 중(리스너 안)의 쓰기는 평소 규칙대로 리스너 되먹임으로 세어지고 오류 관찰자 안의 쓰기는 `WriteInObserver`로 거부된다. 순회 안의 상태·외부 오류 진입은 데이터를 즉시 바꾸고 그 사건 전달만 순회 끝(바깥 `batch`가 있으면 그 끝)으로 미루며, 요청 진입의 전달도 같다. 순회 안의 `reset`은 `batch` 안에서처럼 그 로드를 즉시 정착한다(EVENT-015). visitor가 던지면 표시된 쓰기를 커밋한 뒤 그 오류를 다시 던진다(SURFACE-062).
+
+## Boundary Exemptions
+
+### `runtime/requireRuntimeFieldNode.ts` — 검증 전용 runtime bridge
+
+- **Consumers**: `src/__tests__/helpers/readFieldNodeRuntime.ts`, `src/__tests__/helpers/releaseFieldNodeRevealHistory.ts`
+- **Direct import**: `allowed`
+- **Reason**: H 제거된 pending 바인딩을 시험만을 위해 보존하지 않고 release 이력·committed policy와 pending을 함께 관찰해야 한다. 기존 비공개 runtime accessor를 검증 bridge만 직접 사용하며 패키지 표면은 넓히지 않는다. 공개 노드만 가진 mount 시험의 root release도 같은 runtime root를 얻어 기존 validation 진입점에 전달한다. 코디네이터 msg_29959ddbd70f·msg_241ca3e19a1b 승인에 따라 importModel은 이 두 importer와 해당 target의 정확한 목록만 예외로 검증한다.
 
 ## Last Updated
 

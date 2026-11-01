@@ -1,0 +1,25 @@
+{
+  "originalCandidateGetter": "node && candidate ? readFieldNodeRevealVersion(node) : 0",
+  "proposedCandidateGetter": "node && candidate ? readFieldNodeRevealVersion(node) + 1 : 0",
+  "originalSha256": "375b7ebe2e2c024f7aca91774cfce6b0d56ca374659624dd2fc45d0e298751d6",
+  "probeSha256": "1f30b383b632483794188e523195a9a946f0bb644778248191c6125fd979beec",
+  "failureArtifact": "pre-final-render-snapshot-audit.json.gz",
+  "focusedProbeArtifact": "candidate-snapshot-offset-positive.json.gz",
+  "failedCases": [
+    "IR-6 no validator releases external errors revealed by showError after a write",
+    "IR-6 compile failure releases a newly revealed external error"
+  ],
+  "originalFullRender": {
+    "passed": 876,
+    "failed": 2
+  },
+  "probe": {
+    "passed": 2,
+    "failed": 0
+  },
+  "restoredAfterProbe": true,
+  "approvalPending": false,
+  "reason": "Candidate version zero and non-candidate zero can coincide across the first release; the offset keeps the snapshot domains disjoint without changing engine version semantics.",
+  "approval": "msg_12043ec1b07c",
+  "finalApplied": true
+}

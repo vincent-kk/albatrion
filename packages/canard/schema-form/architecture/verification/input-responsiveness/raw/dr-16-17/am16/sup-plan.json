@@ -1,0 +1,19 @@
+[
+  {
+    "code": "DR16C-02",
+    "line": 93,
+    "targets": [
+      "ledger/error.md:ERROR-028"
+    ]
+  },
+  {
+    "code": "DR17C-02",
+    "line": 96,
+    "targets": [
+      "ledger/error.md:ERROR-008",
+      "ledger/error.md:ERROR-019",
+      "ledger/error.md:ERROR-028",
+      "ledger/event.md:EVENT-046"
+    ]
+  }
+]

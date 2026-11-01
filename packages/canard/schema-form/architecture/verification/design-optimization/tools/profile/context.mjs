@@ -10,7 +10,7 @@ if (Number(process.versions.node.split('.')[0]) !== 26)
 const runDir = process.env.D0_RUN_DIR;
 if (
   !runDir ||
-  !/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+$/.test(
+  !/^{scratch}\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+$/.test(
     runDir.replace(/\.noindex$/, ''),
   )
 )

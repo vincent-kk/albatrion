@@ -136,6 +136,8 @@
 - 보충:
   > "`onChange`·`onDiagnosticsChange`는 준비 전의 호출을 버린다(마운트 뒤의 `diagnostics`는 핸들로 읽는다)." (`09-landing-and-test-strategy.md:48`)
   > "`onChange`·`onDiagnosticsChange`는 마운트 동안의 호출을 오늘처럼 버린다." (`08-design-a-to-z.md:367`)
+  > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: 사슬을 연 최외곽 연산이 origin을 정하며 중첩·adoption에 보존한다. reset·rebuild·validator 교체와 최초 외부 errors 적용은 load, 공개 쓰기와 prop errors 변경은 write, 검증 컴파일·실행·판정 파동과 그 리스너는 validate, SubmitWhileDegraded와 native capture 최초 실패는 submit, 렌더 경계·ChildNodeComponentsOnTerminal은 render이다. write 리스너나 onChange의 reset은 write이며 reset의 중첩 쓰기는 load이다. 개발 warnDevelopmentIssue는 기록이 아니다." (`reviews/ir-9-onerror-origin.md:4`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:48#1-3`(정본), `08-design-a-to-z.md:367`, `adr/0014-error-policy.md:122-132`, `reviews/round-16-owner-review.md:33`
 - 닫은 사람: 편집자 결정(16라운드, `reviews/round-16-owner-review.md:33` 새로 정함), 17라운드 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:48`)
@@ -197,6 +199,8 @@
   > **유효 스키마를 따라간다.** `useFormTypeInput`의 메모 의존에 노드의 유효 스키마 참조를 더하고, `SchemaNodeProxy`는 유효 스키마 변경 비트를 구독한다(08 §14의 35행).
 - 보충:
   > "활성 조각 집합마다 메모해 같은 집합이면 같은 참조를 돌려주고, 재계산 목록에 든 노드만 다시 셈하며, 바뀌면 통지의 배달 집합에 든다." (`reviews/round-16-owner-review.md:31`)
+  > 편집자 결정(DR-9): "【추론】 DR-9: 경로 주소 바인딩은 경로 컨테이너들의 UpdateChildren을 따라 다시 해석한다. find는 현재 구조에 대한 조회다. useSyncExternalStore는 root부터 각 경로 prefix의 find 결과를 구독하고 unresolved prefix에서 멈춘다. 리스너는 사건 비트로 필터하며 변경 때 모두 해제·재탐색·재구독한 뒤 snapshot 변경을 통지한다. node 입력과 undefined 및 root로 해석되는 입력은 고정 snapshot과 no-op 구독이다. 기본 root proxy와 node-addressed children의 추가 구독·쓰기 비용은 0이며 root의 기존 네 리스너를 유지한다. 경로 프록시는 container마다 리스너 한 개와 사건마다 필터 호출 비용이 들고 wildcard는 첫 매치만 추적한다. identity 변경으로 Input이 remount되면 focus를 잃는 REACT-023 제한은 유지한다. 구독 직후 snapshot 재확인은 tearing을 막으며 재구독 리스너의 같은 wave 재호출은 허용한다." (`reviews/defect-round.md:19`)
+  > 편집자 결정(DR-9-R2): "【추론】 DR-9-R2: 이전 추가 비용 0 표현은 경로 탐색과 리스너 배달에 한정한다. node와 root 입력에는 추가 경로 탐색·리스너 배달이 없으며 렌더마다 상수 시간 snapshot hook 하나가 있다. 경로 프록시의 container 리스너·사건 필터·재탐색 비용과 기본 root 네 리스너는 유지한다. tracker나 강제 rerender가 없는 probe도 구조 변경만으로 현행 노드를 읽는다." (`reviews/defect-round.md:61`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:52`(정본), `reviews/round-16-owner-review.md:31,33`
 - 닫은 사람: 편집자 결정(16라운드, `reviews/round-16-owner-review.md:33` 새로 정함)
@@ -633,3 +637,33 @@
 - 까닭: `reviews/round-18-closing.md:2620-2625`
 - 충돌:
   > `reviews/round-18-closing.md:2578`의 "【추론】 규칙 A를 미리 보는 공개 함수는 지금 내보내지 않으며, 입력은 `valueTypeMismatch`로 결과를 보고, 함수를 나중에 더하는 것은 추가 변화다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
+
+
+## IR-7 보충 — REACT-007 (2026-11-01)
+
+첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
+
+IR-6의 owed·hidden buffer·reconnect 제한은 대체합니다. 같은-schema hidden reset의 미결 질문은 chain 끝의 즉시 전달로 닫습니다. reset은 mount-time 기록 뒤 build-time 기록을 전달하고 handler마다 실패를 호스트로 격리하여 이후 기록과 새 binding 교체를 계속합니다. never-prepared 기록의 원래 root·warning scope와 첫 flush의 reported 가드는 유지합니다. REACT-007의 최초 mount settle·추측 렌더 무배달 규칙은 유지하며 show의 필드 layout 쓰기·경고만 show에 도착합니다(L3).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+
+근거: [IR-7 계획의 소유자 원문39–41](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01). 기존 원문·IR-6 보충은 역사 기록으로 보존하고 현재 계약은 이 보충이 대체합니다.
+
+
+## IR-7 round b 보충 — REACT-007 (2026-11-01)
+
+reset의 옛 load 은퇴는 batch try/catch 뒤·최종 build 기록 flush 앞으로 옮깁니다. adoption 전 컴파일 실패를 포함한 reset 사슬의 옛 runtime 기록은 사슬 끝에 onError 한 번으로 전달하고 caller에 다시 던지며 호스트 sink는 0회로 유지하고, batch가 던져도 이후 은퇴합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 reported 가드로 한 번 capture·호스트 보고하며 새 reporter.root를 유지합니다. 첫 commit 구독은 이전 구독을 먼저 해제해 reset이 이전 load를 반환한 경우에도 한 구독만 남깁니다.
+
+L3에는 개발 StrictMode replay를 포함합니다: including the development StrictMode replay, which React models as a hide and show; production renders are unaffected. 비멱등 자식 mount layout 쓰기는 replay의 prepared load에서 onChange로 한 번 전달합니다. 최초 준비 전 쓰기는 계속 버립니다.
+
+T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
+
+근거: IR-7 독립 검토와 소유자 원문39–41을 따른 기존 전달 계약의 회귀 수정입니다. 과거 원문은 보존합니다.
+
+
+## IR-7 round c 보충 — REACT-007 (2026-11-01)
+
+never-prepared 이전 load의 기록 이관은 reset batch try/catch 뒤·은퇴 전에 수행합니다. reset 사슬의 새 기록도 이전 생성 기록과 함께 새 build 기록보다 먼저 원래 root·scope로 한 번 전달합니다. 소유자 원문39–41의 실행 시점 전달과 ERROR-026의 한 번 보고를 유지하며 첫 show의 실패 surface·호스트 표면은 stage 시험으로 고정합니다. prepared load의 명령형 reset은 기존 caller throw·onError1·host0을 유지하고 실패 뒤에도 은퇴하여 옛 root의 늦은 쓰기가 소비자에게 도착하지 않습니다.

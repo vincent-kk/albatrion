@@ -1,0 +1,8 @@
+{
+  "existingSkipTodoFailsChanges": 0,
+  "newReact19OnlySkips": 2,
+  "lines": [
+    "+  if (inject('reactMajor') !== '19') context.skip();",
+    "+  if (inject('reactMajor') !== '19') context.skip();"
+  ]
+}

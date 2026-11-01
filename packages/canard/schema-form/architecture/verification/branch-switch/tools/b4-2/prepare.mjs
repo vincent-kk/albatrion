@@ -103,7 +103,7 @@ fs.writeFileSync(
       preparedAt: new Date().toISOString(),
       environment: {
         node: process.version,
-        bun: execFileSync('/opt/homebrew/bin/bun', ['--version'], {
+        bun: execFileSync('{node-home}/bin/bun', ['--version'], {
           encoding: 'utf8',
         }).trim(),
         cpu: os.cpus()[0].model,

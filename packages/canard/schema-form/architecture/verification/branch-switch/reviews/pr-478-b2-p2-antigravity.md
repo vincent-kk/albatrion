@@ -3,7 +3,7 @@
 - **검토 범위**: `8d9d885bf..3d1efc587`
 - **대상 패키지**: `packages/canard/schema-form`
 - **대상 브랜치**: `perf/schema-form-b2-p2-host-preparation` → `feat/schema-form-branch-switch`
-- **작업 트리**: `/Users/Vincent/Workspace/albatrion/branch-switch-b2-p2`
+- **작업 트리**: `branch-switch-b2-p2`
 - **저장소 소유자**: Vincent
 - **검토자**: Antigravity (독립 읽기 전용 검토자)
 

@@ -43,7 +43,7 @@
 | 코어 쌍 장치 | canonical 행 여덟 — 마운트 oneOf-80·flat-1000·nested-d6-f4, 단일 입력 flat-1000·nested-d6-f4, 분기 전환 oneOf-80, 일괄 입력 flat-2000·nested-d6-f4. 픽스처 생성기는 `benchmark-form`의 `src/fixtures/scale-schemas.ts`와 `fixtures/equivalent/`를 따르고, 443b의 정의(oneOf는 판별자 왕복 2회, flat·nested는 잎 10회, 일괄은 루트 `setValue`로 모든 잎)를 지킨다. 프로세스마다 20회 예열 + 100표본, 세 실행 최소값의 중앙값, 폭은 최소값의 범위, Node 26 production, `dist/index.node.mjs` 대 npm `@canard/schema-form@0.16.1`의 `dist/index.mjs` |
 | 탐침 | 형제 0·100·1,000·4,000의 분기 전환, 게이트 있는 폼과 없는 폼의 잎 쓰기(형제 250·1k·4k·8k), 청사진 포함 마운트(1k·2.5k·5k·10k) |
 | 프로파일 도구 | `profile-446.md` 7절의 스크립트(prepare·run·analyze·tables·phases·callers·compare·count·heap·scale·leaf)를 세션 폴더에서 `tools/`로 옮기고, 저장소 밖 복사본의 맨 import를 다시 푸는 `hooks.mjs`를 포함 |
-| 기준선 | 단계 시작 커밋에서 세 속도 표(마운트·단일 입력·setValue 일괄, 운영 원칙 20)와 React 표(`benchmark-form --equivalent --mode=render`)를 조용한 창에서 잰다. 표는 `../../verification/design-optimization/baseline.md`, 원본은 git 밖 실행 디렉터리(`/private/tmp/claude-501/perf-runs/<실행 ID>/`, 성능 최적화 계획의 규칙) |
+| 기준선 | 단계 시작 커밋에서 세 속도 표(마운트·단일 입력·setValue 일괄, 운영 원칙 20)와 React 표(`benchmark-form --equivalent --mode=render`)를 조용한 창에서 잰다. 표는 `../../verification/design-optimization/baseline.md`, 원본은 git 밖 실행 디렉터리(`{scratch}/perf-runs/<실행 ID>/`, 성능 최적화 계획의 규칙) |
 | 결함 재현 시험(446C-07) | (가) 배열 splice 뒤 분리된 참조의 `setValue`가 옛 인덱스의 잠복 원본에 쓰이는지 — 게이트 필드가 있는 객체 배열에서 아이템 2의 필드를 나가게 하고 참조를 들고 `remove(0)` 뒤 `ref.setValue('x')`, 아이템 1·2의 필드를 다시 들이고 어느 아이템이 'x'를 받는지; (나) `routeValidationIssues.ts:40-45`가 나간 노드의 선언 id로 꺼진 union 분기의 이슈를 거르는지. 재현되면 이 단계의 수정 PR, 아니면 회귀 신호로 남긴다 |
 
 ### D1 국소 설계 수정 여섯 — 가설마다 PR 하나

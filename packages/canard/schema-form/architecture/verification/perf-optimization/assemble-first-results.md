@@ -134,7 +134,7 @@ A/A/B 창은 장면·dist·바퀴마다 프로세스를 하나씩 썼고, 그 �
 
 창 시각은 2026-10-20T05:38:35Z부터 2026-10-20T05:40:07Z까지입니다. 직전과 직후의 프로세스 목록은 `.seiri/tasks/assemble-first-432/interleaved/window.json`의 `before`와 `after`에 있고, 명령은 `ps -ax -o pid,ppid,%cpu,%mem,etime,command`입니다.
 
-환경은 Node v26.12.0(`/opt/homebrew/bin/node`)과 Bun 1.4.3(`/opt/homebrew/bin/bun`)입니다. 측정 시점 HEAD는 `5b8f3a0c96d0231a6f5aed83faa1202b70088b2e`입니다. `base.mjs`와 `aprime.mjs`의 SHA256은 `31cb314e41037ba0ec7de8f5bedfbb21959268ab8e2431477b56aadcfbd23cc7`로 같고 `cmp`는 차이가 없다고 보고했습니다. `candidate.mjs`의 SHA256은 `11efcc3302b099f53e5c4d485a0b1ecbeea70a729660ceae5ceba62d6c433195`입니다.
+환경은 Node v26.12.0(`{node-home}/bin/node`)과 Bun 1.4.3(`{node-home}/bin/bun`)입니다. 측정 시점 HEAD는 `5b8f3a0c96d0231a6f5aed83faa1202b70088b2e`입니다. `base.mjs`와 `aprime.mjs`의 SHA256은 `31cb314e41037ba0ec7de8f5bedfbb21959268ab8e2431477b56aadcfbd23cc7`로 같고 `cmp`는 차이가 없다고 보고했습니다. `candidate.mjs`의 SHA256은 `11efcc3302b099f53e5c4d485a0b1ecbeea70a729660ceae5ceba62d6c433195`입니다.
 
 단위는 ms입니다. 중앙값은 12개 값을 오름차순으로 둔 6번째와 7번째의 평균이고, 표의 중앙값은 그 값의 소수점 열 자리입니다. Δ(X/Y) = median(X) / median(Y) − 1, 실행 폭은 max / min − 1, B < A 와 B < A′ 는 같은 라운드끼리의 횟수입니다.
 
