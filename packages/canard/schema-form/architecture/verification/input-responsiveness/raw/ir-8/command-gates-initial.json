@@ -1,0 +1,26 @@
+[
+  {
+    "gate": "lint",
+    "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "gate": "typecheck",
+    "command": "yarn workspace @canard/schema-form typecheck",
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "gate": "build",
+    "command": "yarn workspace @canard/schema-form build",
+    "exitCode": 0,
+    "output": "🧹 Clean slate: dist directory cleared\n<DIR>/index.mjs  chunk │ size: 882.56 kB\n<DIR>/index.cjs  chunk │ size: 903.67 kB\n<DIR>/index.node.mjs  chunk │ size: 881.77 kB\n\n✔ rolldown v1.2.0 Finished in 118.99 ms\nDEVELOPMENT_FLAG_OK reads=48 flags=49 pure=543\nGATE_SELECTION_DIST_OK {\"name\":\"index.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":882563,\"sha256\":\"75c1cc8d4ccc07622d3d0dc70d0ec9f2065c9ddac9a3ecc67da86e31e9010ef6\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.node.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":881767,\"sha256\":\"6e17aedc724c1e6a487c67a3fc21cdf3d871095ee4a20d39b32db4264cf637ab\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.cjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":903666,\"sha256\":\"932be27627d23bda944eb81e47acac83779baf73d553c4b8d7f62b3591dbddec\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4526}\nFixed 2414 imports in 1129 .d.ts files.\n✓ agents-hashes.json written: 14 file(s) → packages/canard/schema-form/dist/agents-hashes.json\n"
+  },
+  {
+    "gate": "unit",
+    "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=/tmp/ir8-gate-unit.json",
+    "exitCode": 1,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <temporary>/ir8-gate-unit.json\n"
+  }
+]
