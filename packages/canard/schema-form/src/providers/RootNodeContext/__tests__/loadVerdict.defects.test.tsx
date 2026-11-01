@@ -10,9 +10,6 @@ import { createDuplicateIdValidator } from '@/schema-form/__tests__/fixtures/cre
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import * as core from '@/schema-form/core';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { readValidationEntry } from '@/schema-form/core/engine/validation/utils/cache/readValidationEntry';
-import { releaseValidationRoot } from '@/schema-form/core/engine/validation/utils/lifetime/releaseValidationRoot';
-import { retainValidationRoot } from '@/schema-form/core/engine/validation/utils/lifetime/retainValidationRoot';
 import { FormErrorCode, type FormErrorRecord } from '@/schema-form/errors';
 
 /** Slot delivery is captured at the existing core scheduling boundary. */
@@ -144,10 +141,18 @@ it('DR-1 pins an unmounted load verdict across nine unrelated root releases', as
   await releaseSlots();
   expect(started).toHaveBeenCalledOnce();
   for (let index = 0; index < 9; index++) {
-    const root = { type: 'string', title: `other-${index}` };
-    retainValidationRoot(validator, root);
-    readValidationEntry(validator, root);
-    releaseValidationRoot(validator, root);
+    const root = { type: 'string', title: `other-${index}` } as const;
+    const other = render(
+      <Form
+        jsonSchema={root}
+        validatorFactory={validator}
+        validationMode={core.ValidationMode.OnRequest}
+      >
+        <span />
+      </Form>,
+    );
+    await releaseSlots();
+    other.unmount();
   }
   const releasedBeforeSettle = release.mock.calls.some(
     ([copy]) => copy === held!,

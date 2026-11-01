@@ -1,7 +1,9 @@
 import { vi } from 'vitest';
 
-import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import type { Validator } from '@/schema-form/core/engine/validation';
+import type { Validator } from '@/schema-form/core';
+
+/** Copy accepted by the selected engine validator contract. */
+type BlueprintSchema = Parameters<Validator['compile']>[0];
 
 /** Build a duplicate-throwing registry whose guards never register copies.
  * @returns A validator and spies sharing registrations by string id. */
