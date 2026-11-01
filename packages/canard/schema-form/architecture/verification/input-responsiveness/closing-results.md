@@ -265,3 +265,226 @@ architecture README에 465라운드 마감 상태·제품 끝·단계 가지·�
 | doc-coverage | 미인용66·그 밖 문제0 | 기존과 같음 |
 
 새 인용·원문·계획 문제는0이며 tokens 잔여398을 유지합니다. 제품 끝 대비 architecture numstat에서 이 PR 전부터 존재한 파일의 삭제 줄은0입니다. 문서만 바뀌었으므로 직전 제품·benchmark 관문의 증거는 해당 입력에 한해 유효하며 새 제품 시험으로 주장하지 않습니다.
+
+
+<a id="formal-closing"></a>
+
+## 단계 마감 측정 — 최종 결과 (Amendments 1–8, 2026-11-01)
+
+**등록 판정은 C0–C4·C6·C7 PASS, C5 FAIL입니다.** C5 rebuild callDuration의 F/B bootstrap 상한은 1.118280으로 1.10을 넘습니다. 소유자는 Quote 71에서 이 FAIL을 단계 병합에 수용했습니다. 판정·규칙은 유지하고 재측정하지 않았습니다.
+
+### C5 판정과 소유자 수용
+
+| 항목 | 결과 |
+| --- | --- |
+| 등록 C5 | **FAIL** — rebuild callDuration U=1.11828 >1.10 |
+| 점 중앙값 | B 11.625ms, F 11.025ms (F/B 0.948387) |
+| 중앙값 차이 bootstrap 상한 | 1.375ms |
+| 소유자 결정 | Quote 71: #508 단계 병합에서 해당 FAIL 수용, 규칙 변경·재측정 없음 |
+
+> 음? 그건 명백하게 느려진게 아니니까 통과해도 되는거 아닌가? 명백하게 막 40프로씩 차이나는게 아니니까
+
+점 중앙값, 차이 상한과 10개 페이지의 비율 전용 판정이라는 설명 뒤 소유자의 확정 답변입니다.
+
+> 응 수용
+
+이 수용은 성능 판정의 숫자나 FAIL을 PASS로 바꾸지 않습니다. [원문 결정 기록](raw/closing/browser/main/owner-acceptance.json)을 별도로 보존합니다. 다른 단계 병합 조건의 충족 여부는 코디네이터의 전체 관문에 따릅니다.
+
+### 창과 고정 입력
+
+- 단일 창: 2026-11-01T12:54:00.939Z ~ 2026-11-01T13:56:03.762Z (UTC). 거절·충돌·재시작 0회.
+- preregisteredCommit: `ba49b312ca8aed6c69550bf068b3e72c6f40c0fe`; toolCommit: `342d91df9e2be81c548670c77e53f2b2779fe9de`.
+- 규칙: `closing-v3-amendment-6`, SHA-256 `cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430`.
+- 시작과 완료 직후 HEAD 및 clean 상태를 확인했습니다. CLOSING_WINDOW_COMPLETE 전 worktree 편집·커밋·다른 검증은 하지 않았습니다. 기존 동결 입력을 재준비하지 않았습니다.
+- 30초 preflight의 외부 PID 평균 CPU 30% 초과 항목은 0개입니다. 24행, warmup 3개 폐기·kept 10개/lane, typing 20키/page(200키/행·lane), kept page 950개·연산 1,500회입니다. L rebuild는 제외됩니다.
+- bootstrap: seed 20261031, 10,000회, 같은 페이지 index를 짝지어 재표집합니다. typing은 전체 handler wall-clock의 pooled p95, 나머지는 페이지 중앙값들의 중앙값 비율/차이입니다. 0/0 비율은 1, 0/양수는 +Infinity입니다.
+
+| lane | 제품 commit | product SHA-256 |
+| --- | --- | --- |
+| L | `public-0.16.1` | `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46` |
+| B | `5d1348ed16054efa1ec431945eb00472f4eef7f1` | `396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d` |
+| S | `facd72a71c44a798f5484827509073a27fb678a3` | `26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d` |
+| F | `ba49b312ca8aed6c69550bf068b3e72c6f40c0fe` | `24a0f3a2c5e763b7521c283210f20dac0f35afc43580df40b44ecb580cd30ce7` |
+
+F 제품 소스 tree는 최종 stage `5df0bf2adb53e9764432a6e34de9c84b84e12da5`와 같습니다. B/S는 새 clean Orca 체크아웃에서 빌드했고 입력과 clean-build 기록을 커밋한 뒤 체크아웃·브랜치를 제거했습니다. [build 기록](raw/closing/browser/main/clean-build-record.json), [inputs](raw/closing/browser/main/inputs.json), [plain formal-start](raw/closing/browser/main/formal-start.json), [plain 시작 시도](raw/closing/browser/main/start-2026-11-01T12-54-00-717Z.json)에 근거가 있습니다.
+
+### C0–C7
+
+| 판정 | 상태 | 근거 |
+| --- | --- | --- |
+| C0 | PASS | L 중앙값 7.025ms, 비교 가능 경계 8.03125ms 이하. 원본 G1 상한 0.711111. |
+| C1 | PASS | 8개 typing handler p95 비율 상한 0.227273–0.740741, 모두 ≤1.10. |
+| C2 | PASS | F duration p95 16–32ms, B 16–40ms. 모든 typing 긴 프레임 수는 B/F 모두 0. |
+| C3 | PASS | 모든 nonburst 200키 전달·미전달 0. arrival p95 최대 23.4ms ≤33.4ms. |
+| C4 | PASS | gated mount 다섯 행의 first/eager/최장 프레임 이중 조건 통과. None/if는 보고 전용. |
+| C5 | **FAIL** | rebuild callDuration U 1.118280 >1.10. 다른 절은 통과. Quote 71 수용은 위에 별도 기록. |
+| C6 | PASS | 10개 stream page 모두 validation runs 6회, 기간 491–498.9ms의 허용 7회 이하. 프레임 조건 통과. |
+| C7 | PASS | S 대비 변경 없는 원본 IR-6 round-6 G1–G6/G8 모두 PASS. |
+
+C4/C5의 vsync 조건은 U>1.10 및 차이 상한>8.35ms의 동시 성립입니다. C5 연산 프레임만 연산별 max(longestFrame,50ms)의 페이지 중앙값을 쓰며 차이 한계는 16.7ms입니다. callDuration은 비율 단독 조건을 유지합니다. 모든 절의 원시는 [decision.json](raw/closing/browser/main/decision.json)에 있습니다.
+
+#### 연산별 판정 수치
+
+| 행 | call B / F ms | call U | nextPainted U / 차이 U ms | floored frame U / 차이 U ms | resolution U / 차이 U ms |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| reset-flat-500-same | 13.825 / 13.975 | 1.073126 | 1.026128 / 1.1 | 1 / 0 | 미관측 / 미관측 |
+| reset-flat-500-replace | 30.75 / 8.1 | 0.291118 | 0.987585 / -0.825 | 0.830405 / -10.25 | 미관측 / 미관측 |
+| rebuild-flat-500 | 11.625 / 11.025 | 1.11828 | 1.041871 / 1.925 | 1 / 0 | 미관측 / 미관측 |
+| validate-flat-500-settled | 0.2 / 0.275 | 1.500001 | 1.092473 / 1.075 | 1 / 0 | 1.352941 / 0.15 |
+
+settled validate의 callDuration/nextPainted는 보고 전용입니다. 해결 시간 U 1.352941도 차이 U 0.15ms여서 등록된 이중 조건으로 PASS입니다. 연산의 원래 최장 프레임·횟수 및 C5 frame-total은 보고 전용으로 보존합니다.
+
+### Rebuild 원인 추적
+
+실제 추가된 동기 작업은 있습니다. F의 RootNodeContextProvider.reset은 매번 scheduleLoadValidation을 호출하여 토큰 객체와 after-frame 예약을 만듭니다. resetRootLoad는 load-origin batch를 사용하고 교체 load의 reported/retired 상태 및 버퍼 전달을 관리합니다. B와 공통인 blueprint cache 무효화→새 트리 구성→adopt/mount→구독 교체 경로도 그대로 실행합니다. 소스 차이는 [rebuild-source-trace.diff](raw/closing/browser/main/rebuild-source-trace.diff), 고정 소스 해시와 관측은 [cause-trace.json](raw/closing/browser/main/cause-trace.json)에 있습니다.
+
+추가 예약·관리 작업의 개별 시간을 분리한 CPU profile이나 제거 실험은 수행하지 않았습니다. 따라서 추가 작업이 없다고 결론 내리지 않으며, 1.118280 상한 전체가 특정 함수 때문에 발생했다고도 확정하지 않습니다. compile 평균은 B/F 모두 0, validate 평균은 모두 1이므로 추가 컴파일·검증 호출은 원인이 아닙니다.
+
+비율 상한을 만드는 재표집 witness는 B=11.625ms, F=13ms입니다. 10,000회 중 835회가 1.10을 넘습니다. 점 중앙값 비율 0.948387과 상한 1.118280이 다른 이유는 페이지별 짝 변동을 재표집한 분포의 상위 꼬리이기 때문입니다. [페이지 중앙값과 witness](raw/closing/browser/main/rebuild-tail-diagnosis.json)를 보존합니다.
+
+rebuild의 실행 위치는 B=[6,0,4,0], S/F=[2,5,3,0]으로 불균형합니다. 이것은 위치 효과를 분리하지 못하는 한계이며, 실패를 지우거나 재측정하는 근거로 사용하지 않습니다. 개별 추가 비용의 확정에는 별도 profile이 필요하다는 결과를 소유자 수용 결정과 함께 보고합니다.
+
+### Validator work
+
+| 행 | 단위/lane | compile 평균 B / F | validate 평균 B / F | F unattributed | 판정 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| mount-flat-500-validate | 10 | 1 / 1 | 1 / 1 | 0 | PASS |
+| mount-nested-d5-f4-validate | 10 | 1 / 1 | 1 / 1 | 0 | PASS |
+| mount-array-1000-validate | 10 | 1 / 1 | 1 / 1 | 0 | PASS |
+| mount-flat-500-onrequest | 10 | 1 / 1 | 0 / 0 | 0 | PASS |
+| mount-flat-500-always | 10 | 1 / 1 | 1 / 1 | 0 | PASS |
+| reset-flat-500-same | 100 | 0 / 0 | 1 / 1 | 0 | PASS |
+| reset-flat-500-replace | 100 | 1 / 1 | 1 / 1 | 0 | PASS |
+| rebuild-flat-500 | 100 | 0 / 0 | 1 / 1 | 0 | PASS |
+| validate-flat-500-settled | 100 | 0 / 0 | 1 / 1 | 0 | PASS |
+
+아홉 행 모두 F=B이고 예외 목록은 비어 있습니다. mount-array-1000-none은 IR-8 설계상 이 규칙에서 제외합니다. setup·late·모든 lane의 35개 행은 [validator-work.json](raw/closing/browser/main/validator-work.json)에 있습니다.
+
+### 등록 진단 목록과 원인
+
+| 행 / 지표 | 이유 | U | 차이 U ms | 원인 추적 |
+| --- | --- | ---: | ---: | --- |
+| mount-flat-500-validate / eagerPainted | ratio-in-diagnosis-band | 1.056329 | 4.65 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| mount-flat-500-onrequest / eagerPainted | ratio-in-diagnosis-band | 1.05886 | 4.75 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| mount-flat-500-always / eagerPainted | ratio-in-diagnosis-band | 1.05006 | 4.2 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| reset-flat-500-same / callDuration | ratio-in-diagnosis-band | 1.073126 | 1 | 동일 트리 reload에 로드-origin batch와 슬롯 예약이 추가됐습니다. compile 0·validate 1은 같으며 추가 작업의 개별 시간은 분리되지 않았습니다(C2). |
+| validate-flat-500-settled / resolutionTime | passes-difference-clause | 1.352941 | 0.15 | 명시 validate의 Promise 경로에 검증 root pin/unpin과 결과 정규화가 있습니다. 중앙값은 모두 0.5ms이고 차이 상한은 0.15ms입니다(C3). |
+
+C1: mountFixture의 eagerPainted는 DOM 관측 뒤 double-rAF 완료 시간이며 firstPainted와 다릅니다. typing/reset 행의 eagerPainted도 페이지 최초 mount의 지표이며 키 처리나 reset 호출 시간이 아닙니다. F의 최초 validator work 시작은 firstPainted 뒤 약 16.7–16.95ms, B는 firstPainted보다 약 29.9–31.35ms 앞입니다. 세 mount의 work duration은 B 28.15–30.25ms, F 30.35–32.05ms이고 각 compile/validate 수는 같습니다. F의 postPaintBusy는 30.35–32.05ms입니다. 로드 검증의 시점 이동과 예약·프레임 위상을 함께 측정합니다.
+
+C2: 같은 스키마 reset은 트리를 유지하며 reloadFieldNodeForm→batchFieldNodeLoad→slot 예약을 실행합니다. 점 차이 0.15ms와 차이 상한 1ms가 관측되지만 추가 예약/관리 비용의 개별 분해는 없습니다. C3: 명시 검증은 runFieldNodeValidation의 async 실행, pin/unpin, 결과 정규화와 dispatch 반환 Promise를 지납니다. C4: nextPainted는 double-rAF 위상 대기를 포함합니다. C5: burst의 latest-request cadence/coalescing과 다음 프레임 뒤 write 검증이 도착·미전달 지표에 영향을 줍니다. C6: None/legacy 비교는 별도 tree/DOM 구현과 프레임 경계를 함께 측정합니다. 이 코드 추적은 정확한 CPU 기여율을 측정한 profile로 대체하지 않습니다.
+
+원인 코드: `providers/RootNodeContext/{components/RootNodeContextProvider.tsx,utils/resetRootLoad.ts,utils/scheduleLoadValidation.ts}`; `core/engine/validation/utils/run/runFieldNodeValidation.ts`; `core/engine/validationScheduling`; harness `mountFixture.tsx`와 `runStageClosingOperations.ts`. 각 주소는 schema-form src 또는 benchmark-form interaction/helpers 기준입니다.
+
+### (1.05, 1.10]의 모든 비교 상한
+
+등록된 F/B gated 진단에 더해 보고 전용 및 F/S·F/L까지 포함한 20개 항목을 모두 적습니다. 이 항목들은 C5 FAIL을 대체하지 않습니다.
+
+| 비교 | 행 / 지표 | U | 차이 U | 원인·범위 |
+| --- | --- | ---: | ---: | --- |
+| F/B | type-flat-500-validate-nonburst / eagerPainted | 1.051665 | 4.55 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/B | mount-flat-500-validate / eagerPainted | 1.056329 | 4.65 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/B | mount-flat-500-onrequest / eagerPainted | 1.05886 | 4.75 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/B | mount-flat-500-always / eagerPainted | 1.05006 | 4.2 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/B | reset-flat-500-same / callDuration | 1.073126 | 1 | 동일 트리 reload에 로드-origin batch와 슬롯 예약이 추가됐습니다. compile 0·validate 1은 같으며 추가 작업의 개별 시간은 분리되지 않았습니다(C2). |
+| F/B | reset-flat-500-replace / eagerPainted | 1.052506 | 4.4 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/B | validate-flat-500-settled / nextPainted | 1.092473 | 1.075 | 호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4). |
+| F/S | type-flat-500-validate-nonburst / eagerPainted | 1.053265 | 4.65 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/S | mount-flat-500-none / firstPainted | 1.055556 | 2 | None은 F에서 compile을 생략합니다. 현재/이전 stage의 tree·DOM 구성과 첫 rAF 위상 차이가 남으며 이 구간만으로 함수별 비용은 확정할 수 없습니다(C6). |
+| F/S | mount-nested-d5-f4-none / firstPainted | 1.054878 | 3.6 | None은 F에서 compile을 생략합니다. 현재/이전 stage의 tree·DOM 구성과 첫 rAF 위상 차이가 남으며 이 구간만으로 함수별 비용은 확정할 수 없습니다(C6). |
+| F/S | mount-flat-500-always / eagerPainted | 1.054152 | 4.5 | 다음 프레임 뒤 로드 검증이 double-rAF 완료 구간에 포함됩니다. 호출 수 증가는 없고 작업 시점이 이동하며 프레임 위상 대기도 섞입니다(C1). |
+| F/S | reset-flat-500-same / nextPainted | 1.061237 | 2.5 | 호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4). |
+| F/S | rebuild-flat-500 / nextPainted | 1.073333 | 3.3 | 호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4). |
+| F/L | type-flat-500-validate-burst / undelivered | 1.055556 | 1 | burst의 여러 요청이 최신 검증으로 합쳐지는 cadence 경로입니다. B가 아닌 L 비교이며 입력 손실 판정은 아닙니다. 두 lane의 페이지 중앙값은 모두 18개입니다(C5). |
+| F/L | type-nested-d5-f4-validate-nonburst / arrivalP95 | 1.074205 | 1.05 | F의 write 검증은 프레임 뒤 cadence에서 실행됩니다. L과의 스케줄링 경로가 다르며 첫 키/비burst의 도착 차이가 약 1ms입니다(C5). |
+| F/L | type-nested-d5-f4-validate-burst / undelivered | 1.058824 | 1 | burst의 여러 요청이 최신 검증으로 합쳐지는 cadence 경로입니다. B가 아닌 L 비교이며 입력 손실 판정은 아닙니다. 두 lane의 페이지 중앙값은 모두 18개입니다(C5). |
+| F/L | first-key-flat-2000-validate / arrivalP95 | 1.087912 | 0.8 | F의 write 검증은 프레임 뒤 cadence에서 실행됩니다. L과의 스케줄링 경로가 다르며 첫 키/비burst의 도착 차이가 약 1ms입니다(C5). |
+| F/L | mount-array-1000-none / firstPainted | 1.09816 | 11.9 | L은 공개 legacy 구현이고 F는 현재 노드·렌더 경로입니다. array None의 tree/DOM 구성 비용과 프레임 경계를 함께 재며 단일 변경의 원인 분리는 불가능합니다(C6). |
+| F/L | mount-array-1000-none / longestFrame | 1.068196 | 11 | L은 공개 legacy 구현이고 F는 현재 노드·렌더 경로입니다. array None의 tree/DOM 구성 비용과 프레임 경계를 함께 재며 단일 변경의 원인 분리는 불가능합니다(C6). |
+| F/L | validate-flat-500-settled / nextPainted | 1.083156 | 0.975 | 호출 시작부터 double-rAF까지 측정하므로 동기 작업과 프레임 위상 대기가 함께 들어갑니다. 수 ms 차이를 개별 함수 비용으로 분리할 수 없습니다(C4). |
+
+### F/B·F/S·F/L 주요 비교
+
+typing/first-key는 pooled handler p95, mount는 firstPainted, reset/rebuild는 callDuration, settled validate는 resolutionTime, stream은 페이지 handler p95 중앙값을 요약합니다. 비교 상한은 각 지표의 등록 계산을 따릅니다.
+
+| 행 | 지표 | F 값 ms | F/B U | F/S U | F/L U |
+| --- | --- | ---: | ---: | ---: | ---: |
+| type-flat-500-validate-nonburst | processing | 2.7 | 0.710526 | 0.692308 | 1.35 |
+| type-flat-500-validate-burst | processing | 0.9 | 0.642857 | 0.642857 | 1 |
+| type-array-1000-validate-nonburst | processing | 2.5 | 0.242718 | 0.230769 | 0.277778 |
+| type-array-1000-validate-burst | processing | 1 | 0.227273 | 0.222222 | 0.27027 |
+| type-nested-d5-f4-validate-nonburst | processing | 4.1 | 0.740741 | 0.816327 | 3.333333 |
+| type-nested-d5-f4-validate-burst | processing | 1.1 | 0.478261 | 0.44 | 2.75 |
+| type-flat-2000-validate-nonburst | processing | 3.6 | 0.493151 | 0.507042 | 0.8 |
+| type-flat-2000-validate-burst | processing | 1.4 | 0.482759 | 0.482759 | 0.666667 |
+| mount-flat-500-validate | firstPainted | 37.85 | 0.577096 | 0.572474 | 0.579689 |
+| mount-nested-d5-f4-validate | firstPainted | 66.2 | 0.49726 | 0.492029 | 0.495053 |
+| mount-if-flat-500-validate | firstPainted | 103.8 | 1 | 0.991928 | 1.534267 |
+| first-key-flat-500-validate | processing | 3.5 | 0.921053 | 0.945946 | 2.058824 |
+| first-key-flat-2000-validate | processing | 4 | 0.816327 | 0.816327 | 1.111111 |
+| mount-flat-500-none | firstPainted | 37.55 | 0.58104 | 1.055556 | 1.311958 |
+| mount-nested-d5-f4-none | firstPainted | 66.25 | 0.523721 | 1.054878 | 1.320611 |
+| stream-flat-2000-validate | handlerP95 | 미관측 | 미관측 | 미관측 | 미관측 |
+| mount-array-1000-none | firstPainted | 133.6 | 0.920124 | 0.957846 | 1.09816 |
+| mount-array-1000-validate | firstPainted | 133 | 0.911615 | 0.860897 | 0.963415 |
+| mount-flat-500-onrequest | firstPainted | 37.4 | 0.580284 | 1.041667 | 0.568233 |
+| mount-flat-500-always | firstPainted | 37.75 | 0.57101 | 0.569094 | 0.586026 |
+| reset-flat-500-same | callDuration | 13.975 | 1.073126 | 1.111332 | 146.999965 |
+| reset-flat-500-replace | callDuration | 8.1 | 0.291118 | 0.294167 | 354.000336 |
+| rebuild-flat-500 | callDuration | 11.025 | 1.11828 | 1.209302 | 미관측 |
+| validate-flat-500-settled | resolutionTime | 0.5 | 1.352941 | 1.411765 | 1.111111 |
+
+L의 reset은 버전 증가에 따른 다른 트리 재구성이므로 같은 연산의 성능비로 해석하지 않습니다. L rebuild는 제외됩니다. 전체 지표·첫 연산·F/B·F/S·F/L 비율 및 차이 상한은 [tables.md](raw/closing/browser/main/tables.md)와 [comparisons.json](raw/closing/browser/main/comparisons.json)에 있습니다. 미관측을 통과로 바꾸지 않습니다.
+
+#### postPaintBusy 및 첫 연산
+
+postPaintBusy는 LoAF duration과 plugin compile/validate duration을 등록 구간에서 합산합니다. 중첩 작업은 이중 계상될 수 있으므로 CPU 점유율이나 순수 독점 실행 시간으로 해석하지 않습니다. 보고 전용입니다.
+
+| 행 | B postBusy ms | F postBusy ms | F 첫 call ms | F 첫 nextPainted ms |
+| --- | ---: | ---: | ---: | ---: |
+| mount-flat-500-validate | 0 | 31.7 | 미관측 | 미관측 |
+| mount-nested-d5-f4-validate | 0 | 153.55 | 미관측 | 미관측 |
+| mount-if-flat-500-validate | 0 | 1.9 | 미관측 | 미관측 |
+| mount-flat-500-none | 0 | 0 | 미관측 | 미관측 |
+| mount-nested-d5-f4-none | 0 | 0 | 미관측 | 미관측 |
+| mount-array-1000-none | 0 | 0 | 미관측 | 미관측 |
+| mount-array-1000-validate | 0 | 11.2 | 미관측 | 미관측 |
+| mount-flat-500-onrequest | 0 | 30.35 | 미관측 | 미관측 |
+| mount-flat-500-always | 0 | 32.05 | 미관측 | 미관측 |
+| reset-flat-500-same | 0 | 0 | 16.15 | 41.8 |
+| reset-flat-500-replace | 0 | 17.125 | 7.3 | 61.4 |
+| rebuild-flat-500 | 0 | 0.1 | 7.6 | 46.25 |
+| validate-flat-500-settled | 0 | 0 | 0.1 | 10.95 |
+
+### 실제 lane별 위치 횟수
+
+rebuild를 제외한 23개 행은 각각 아래 동일한 4-lane 분포입니다. rebuild는 L을 제외한 실제 실행 위치로 별도 계산했습니다. [rotation.json](raw/closing/browser/main/rotation.json)에 행별 전체 분포를 보존합니다.
+
+| 범위 | lane | 위치 1 | 위치 2 | 위치 3 | 위치 4 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 일반 23행 각각 | L | 3 | 2 | 3 | 2 |
+| 일반 23행 각각 | B | 3 | 3 | 2 | 2 |
+| 일반 23행 각각 | S | 2 | 3 | 2 | 3 |
+| 일반 23행 각각 | F | 2 | 2 | 3 | 3 |
+| rebuild | L | 0 | 0 | 0 | 0 |
+| rebuild | B | 6 | 0 | 4 | 0 |
+| rebuild | S | 2 | 5 | 3 | 0 |
+| rebuild | F | 2 | 5 | 3 | 0 |
+| 전체 합계 | L | 69 | 46 | 69 | 46 |
+| 전체 합계 | B | 75 | 69 | 50 | 46 |
+| 전체 합계 | S | 48 | 74 | 49 | 69 |
+| 전체 합계 | F | 48 | 51 | 72 | 69 |
+
+### D8·검증·보존
+
+D8은 CLOSED_BY_TRACE입니다. payload 생략에는 runtime listener 부재도 필요한데 mounted field는 구독하므로 revisionObserved latch만 제거해도 React form payload 생략에는 이득이 없습니다. probe lane은 실행하지 않았습니다.
+
+원시에서 모든 지표·판정·validator work·표가 checker로 재현됐습니다. Phase 2a의 20개 파일·132개 harness 테스트, browser typecheck와 lint 경고 0 증거를 같은 실행 코드에 재사용합니다. 정식 창 이후 제품·판정 코드·규칙·번들은 수정하지 않았습니다. 경로 감사와 압축 보존본 checker 결과는 함께 보존합니다.
+
+재현 명령(저장소 루트):
+
+```sh
+yarn workspace @aileron/benchmark-form check:browser-results --stage=closing --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe
+```
+
+정본은 [complete.json.gz](raw/closing/browser/main/complete.json.gz), [pages.json.gz](raw/closing/browser/main/pages.json.gz), plain start/formal-start 및 clean-build-record.json입니다. 모든 시도는 한 번의 승인·완료 창이며 실패/부분 창은 없습니다. [archive-manifest.json](raw/closing/browser/main/archive-manifest.json)이 보존 파일 해시를 기록합니다. 재측정과 push는 하지 않았습니다.

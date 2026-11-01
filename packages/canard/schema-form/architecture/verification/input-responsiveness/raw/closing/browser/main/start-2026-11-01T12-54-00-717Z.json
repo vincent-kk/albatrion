@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-01T12:54:00.717Z",
+  "samples": 0,
+  "approved": true,
+  "quiet": {
+    "startedAt": "2026-11-01T12:53:30.580Z",
+    "endedAt": "2026-11-01T12:54:00.716Z",
+    "durationSeconds": 30.131538708,
+    "top": [
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 10.88560405688743
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 8.363329946157075
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.70393908381493
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 3.418345176402117
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.887340100450941
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 2.4890862934951046
+      },
+      {
+        "pid": 80344,
+        "name": "Orca",
+        "cpuPercent": 2.389522841756146
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 1.858517765807988
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 1.2943248726215595
+      },
+      {
+        "pid": 820,
+        "name": "BetterTouchTool",
+        "cpuPercent": 1.194761420878073
+      }
+    ],
+    "heavy": [],
+    "totalPercent": 54.12932992923337
+  },
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      33479,
+      33478,
+      33475,
+      61096,
+      60826,
+      60795,
+      80848
+    ]
+  }
+}

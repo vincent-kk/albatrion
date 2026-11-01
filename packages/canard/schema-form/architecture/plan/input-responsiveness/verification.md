@@ -364,3 +364,16 @@ Phase 2a는 사전등록 커밋, fresh B/S 및 최종 stage 제품의 F 빌드, 
 경로 감사가 커밋된 inputs의 1MiB 초과 source-tree proof diff에서 ENOBUFS로 중단되는 문제를 발견했습니다. 신규 큰 tracked addition을 끝까지 검사하는 회귀 테스트로 먼저 재현한 뒤 git diff stdout 버퍼 상한을 32MiB로 늘렸습니다. 이는 경로 검사를 생략하지 않으며 상한 초과는 계속 실패합니다. 검사 조건·등록 규칙 값·제품·브라우저 번들과 수집한 smoke는 바꾸지 않습니다. 이 도구 보완 뒤 같은 저장 자료에 --smoke --write 및 경로 감사를 적용하며 브라우저 수집은 다시 실행하지 않습니다. 정식 창은 다음 go를 기다립니다.
 
 Phase 2a 최종 검증: 전체 benchmark-form 20개 파일·132개 테스트 통과, 브라우저 typecheck 통과, lint 경고 0개입니다. 압축 smoke 보존본도 checker로 재현했으며 --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe 경로 감사에서 신규 machine path는 0개입니다. 원래 1MiB 감사 버퍼에서 새 회귀 테스트가 ENOBUFS로 실패하고 보완 후 큰 입력 통과·끝의 machine path 거절을 모두 확인했습니다. 정식 창은 실행하지 않았습니다.
+
+
+### 단계 마감 측정 — Phase 2b 정식 결과와 Quote 71
+
+지정 toolCommit 342d91df9e2be81c548670c77e53f2b2779fe9de·clean 상태와 기존 동결 root에서 단일 창을 실행했습니다. 2026-11-01T12:54:00.939Z–13:56:03.762Z, 24행·950개 kept page·1,500회 연산이며 거절·충돌·재시작은 0회입니다. CLOSING_WINDOW_COMPLETE 전 worktree 편집·커밋은 없었습니다.
+
+raw checker는 재현에 통과했고 등록 판정은 C0–C4·C6·C7 PASS, C5 FAIL입니다. 유일한 실패는 rebuild callDuration F/B 비율 상한 1.1182795750197543 >1.10이며 점 중앙값은 B 11.625ms·F 11.025ms, 차이 상한은 1.375ms입니다. validator work 아홉 행은 F=B·F unattributed=0이고 예외는 없습니다.
+
+소유자 Quote 71 원문: “음? 그건 명백하게 느려진게 아니니까 통과해도 되는거 아닌가? 명백하게 막 40프로씩 차이나는게 아니니까”. 위 점 중앙값·차이 상한·비율 단독 판정 설명 뒤 확정 답변은 “응 수용”입니다. 소유자는 해당 C5 FAIL을 #508 단계 병합에 수용했습니다. 등록 FAIL과 수치는 그대로 두며 규칙·decision code 변경과 재측정은 하지 않습니다.
+
+rebuild 추적에서 F의 로드 검증 토큰·after-frame 예약, load-origin batch와 교체 load reported/retired 상태 관리라는 실제 추가 작업을 확인했습니다. 개별 작업별 시간을 분리한 profile은 없으므로 상한 전체를 그 추가 작업에 귀속하지 않습니다. paired-bootstrap 꼬리 witness는 B 11.625ms·F 13.0000000596ms이고 10,000개 draw 중 835개가 1.10을 넘습니다. 위치 불균형도 그대로 기록합니다. 이 결과와 다섯 등록 진단·전체 비교 상한 (1.05,1.10] 20개 원인은 closing-results.md와 formal 증거에 보존합니다.
+
+start-*.json과 formal-start.json은 압축하지 않고 clean-build-record.json은 formal 결과 디렉터리에 둡니다. 같은 자료를 checker로 재현하고 preregisteredCommit 기준 경로 감사를 실행합니다. 증거를 커밋한 최종 head에 PR 본문을 고정하며 push하지 않습니다.
