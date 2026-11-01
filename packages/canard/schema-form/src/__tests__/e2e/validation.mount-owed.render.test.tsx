@@ -8,6 +8,7 @@ import {
   type FieldInputProps,
   Form,
   FormErrorCode,
+  type FormErrorRecord,
   type FormHandle,
   ValidationMode,
 } from '@/schema-form';
@@ -252,7 +253,7 @@ it('IR-6 W4 a compile onError failure reaches the host once without recapture', 
   const called = new Promise<void>((resolve) => {
     first = resolve;
   });
-  const onError = vi.fn(() => {
+  const onError = vi.fn<(record: FormErrorRecord) => never>(() => {
     first();
     throw handler;
   });
