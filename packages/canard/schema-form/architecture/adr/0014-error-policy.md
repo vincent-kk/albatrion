@@ -1091,3 +1091,10 @@ ERROR-005·023: 오류 묶음은 throw 값으로만 남기고 개별 기록에�
 ERROR-017: `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
 
 ERROR-139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 함께 따릅니다.
+
+
+## IR-9 round b — origin corrections
+
+ERROR-041: 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write); 코덱스 교차 검토가 확인한 개발·운영 분기를 없애며 앞선 mount의 load 고정 설명을 대체합니다.
+
+ERROR-017: 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.

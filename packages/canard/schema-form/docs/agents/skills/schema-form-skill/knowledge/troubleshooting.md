@@ -82,6 +82,8 @@ onError is an event channel: it delivers the one record of each occurrence and d
 | `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
 | `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
 
+Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
+
 The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
 
 `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

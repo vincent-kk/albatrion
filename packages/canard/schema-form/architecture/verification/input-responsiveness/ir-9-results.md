@@ -24,7 +24,7 @@ onError is an event channel: it delivers the one record of each occurrence and d
 | `submit` | SubmitWhileDegraded와 native submit capture에서 처음 드러난 실패 |
 | `render` | RenderFailed 경계, ChildNodeComponentsOnTerminal 같은 렌더 계층 기록 |
 
-사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 열린 쓰기는 load이며, write의 노드 리스너나 폼 onChange가 부른 reset은 write입니다. 검증 결과 파동에서 리스너가 던지거나 안쪽 쓰기가 실패하면 validate입니다. 로드 뒤 독립 setState는 write이고, 첫 commit의 applyFormErrors는 load, errors prop 변경은 write입니다. submit 안의 dispatchValidate가 이미 보고한 실패는 validate를 유지합니다. 개발 warnDevelopmentIssue의 콘솔 경고는 기록이 아닙니다.
+사슬을 연 가장 바깥 연산이 origin을 정합니다. 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다. reset의 onChange 안에서 열린 쓰기는 load이며, write의 노드 리스너나 폼 onChange가 부른 reset은 write입니다. 검증 결과 파동에서 리스너가 던지거나 안쪽 쓰기가 실패하면 validate입니다. 로드 뒤 독립 setState는 write이고, 첫 commit의 applyFormErrors는 load, errors prop 변경은 write입니다. submit 안의 dispatchValidate가 이미 보고한 실패는 validate를 유지합니다. 개발 warnDevelopmentIssue의 콘솔 경고는 기록이 아닙니다.
 
 내부 batchFieldNodeLoad는 RootNodeContext가 소비하며 공개 FieldNode.batch는 write를 유지합니다. chainOrigin은 enclosing collector가 없는 opener만 설정하고 adoption으로 옮기며 최외곽 전달 뒤와 지나간 stale runtime에서 지웁니다. standalone flush는 write/validate를 임시 설정하고 finally에서 복원합니다. 버퍼 기록의 원래 root·warning lifetime은 recordScopes로 이름을 바꾸어 공개 origin과 구별했습니다.
 
@@ -37,7 +37,7 @@ onError is an event channel: it delivers the one record of each occurrence and d
 | dispatchMount·dispatchResetForm·dispatchBatch | load opener 또는 기본 write; 중첩은 기존 origin 보존 |
 | commitSettlement·selectNodeSchema | pending 기록에 선택 origin을 허용하고 사슬 끝에 확정 |
 | finishStaticFirstLoad·readStaticFirstWarning | static-first 경고도 같은 pending→delivery 경로 |
-| evaluateGate | mount guard 실패는 load; 다른 guard·warning은 사슬 origin |
+| evaluateGate | 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write) |
 | adoptFieldNodeChain | chainOrigin과 pending warning 인계, ResetRebuiltByReference도 해당 사슬에 합류 |
 | collectChainRecords | 호출별 merged Set으로 첫 error·details만 병합; record에 bundle 없음 |
 | exitFieldNodeChain·finishQueuedErrors | 현재 사슬/flush origin으로 collect와 deliver 호출 |
@@ -123,3 +123,10 @@ FormErrorOrigin과 batchFieldNodeLoad는 패키지 root index에서 내보내지
 [확장 감사](raw/ir-9/audit.json)는 모든 새 파일·추가 줄과 gzip을 해제한 전체 bytes를 검사합니다. 신규 기계 로컬 경로는 0이고 새 unsafe cast·non-null assertion 및 skip/todo/fails 변경도 0입니다. 기존 error/test 원장의 과거 경로 예시는 기준 줄 보존 요구에 따라 유지하며 신규 추가분과 분리합니다. 원장 도구가 출력한 과거 경로 예시는 raw log에서 portable 표기로 치환했습니다. 이 감사는 기존 원장 파일 전체가 경로 예시를 포함하지 않는다고 주장하지 않습니다.
 
 scratch worktree·branch를 만들지 않아 제거 대상과 잔여 모두 0입니다. 최종 통합과 독립 코드 검토는 coordinator에게 제품 범위·설계 Amendment 1·이 증거와 함께 인계합니다.
+
+
+## IR-9 round b — 결과 관문 보정
+
+선언 증거는 index 재수출 파일만 비교하던 한계를 고쳐 공개 심볼 폐포와 전체 emitter 선언 트리로 교체했습니다. applyFormErrors의 groups Map 순회는 기존 nodes push와 같은 삽입 순서를 사용하며 nodes 배열과 non-null assertion을 없앤 동작 보존 정리입니다. dispatchResetForm·dispatchValidate의 타입 주위 줄바꿈은 서식만 바뀌었고 createFormErrorRecord의 추가 overload는 명시 origin이 있는 완성 기록과 내부 pending 기록을 형으로 구별합니다.
+
+최초 IR-9의 mount guard는 항상 load라는 설명을 철회합니다. 가드 기록은 mount를 포함해 chainOrigin을 따르며 이 수정으로 개발·운영 모드의 origin 차이를 끝냅니다. 운영 모드는 이미 chainOrigin을 사용했습니다.
