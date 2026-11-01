@@ -479,6 +479,7 @@
   > 호스트는 `aggregate ?? error`의 동일성으로 전역 처리기와의 중복을 거를 수 있다. 다만 핸들러가 던져 부른 쪽이 있는 자리에서 새 묶음이 생기면, 이미 전달된 기록의 `aggregate ?? error`와 실제로 던진 값은 다르다(핸들러 결함의 경우다). 경고는 `BaseError` 인스턴스가 아닌 평범한 기록이다.
 - 보충:
   > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
+  > 편집자 결정(IR-9 round b): "【추론】 IR-9 round b: 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다. 새 runtime에서 트리를 만들고 DialectMismatch를 직접 보고하므로 생성은 별도 load 연산이다." (`reviews/ir-9-round-b.md:4`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:106-118`(정본), `08-design-a-to-z.md:359`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -487,7 +488,6 @@
 
   > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
-  > 편집자 결정(IR-9 round b): "【추론】 IR-9 round b: 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다. 새 runtime에서 트리를 만들고 DialectMismatch를 직접 보고하므로 생성은 별도 load 연산이다." (`reviews/ir-9-round-b.md:4`)
 
 ### ERROR-018 층과 level의 대응
 
@@ -849,6 +849,7 @@
   > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
   > 편집자 결정(55C-02): "【추론】 소비자가 `bind(instance)`로 넘긴 인스턴스의 설정은 VALIDATE-003대로 소비자의 책임이고 VALIDATE-033은 가드용 인스턴스가 `allErrors: false` 말고는 같은 설정을 따르게 했으므로, 플러그인이 가드 인스턴스에서 `strictTypes`·`strictRequired`를 몰래 끄는 것은 두 항목에 어긋난다; 그런 인스턴스에서 일부 가드가 컴파일에 실패하면 ERROR-041대로 그 게이트의 가드 실패(정착 오류, `onError` 기록)로 드러나고 전체 검증은 그대로이므로, "엄격 옵션을 켠 인스턴스를 바인딩하면 일부 `if` 가드가 컴파일에 실패해 그 게이트가 거짓이 될 수 있다(strict 모드는 기본이 아니다, VALIDATE-005)"를 플러그인 문서에 적는 문서화된 한계다. 두 가드 경로 모두 같다." (`reviews/round-55-closing.md:17`)
   > 소유자(126라운드, 조건부 분기의 최적화 기준): "이 케이스는 구판 폼엔 없는 기능이니까, 완전히 16.67ms 윈도우를 기반으로 최적화를 해야할거 같네. 지금 하자는건 아닌데 말이야" (`reviews/round-126-owner-answers.md:7`) — 검증기 가드로 켜지는 if/then/else 분기는 옛 판 대비 배율이 아니라 16.67 ms 프레임 예산의 절대 기준만으로 개선 단계에서 최적화한다(원장 관리자, 2026-10-08).
+  > 편집자 결정(IR-9 round b): "【추론】 IR-9 round b: 코덱스 교차 검토가 확인한 enclosed mount의 GUARD_FAILED 오류를 수정한다. 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write). Amendment 1의 mountingGuardPass이면 load로 고정한다는 문장은 이 결정이 대체하며 개발·운영의 origin 차이를 끝낸다." (`reviews/ir-9-round-b.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:218`(정본), `08-design-a-to-z.md:180`, `adr/0004-validator-plugin-compile-guard.md:9,46,78`, `08-design-a-to-z.md:345`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -857,7 +858,6 @@
 
   > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
-  > 편집자 결정(IR-9 round b): "【추론】 IR-9 round b: 코덱스 교차 검토가 확인한 enclosed mount의 GUARD_FAILED 오류를 수정한다. 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write). Amendment 1의 mountingGuardPass이면 load로 고정한다는 문장은 이 결정이 대체하며 개발·운영의 origin 차이를 끝낸다." (`reviews/ir-9-round-b.md:3`)
 
 ### ERROR-042 검증기 관련 이주 안내
 
