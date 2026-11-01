@@ -73,6 +73,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'revisionNodes'
     | 'queuedNonSettleEvents'
     | 'validationPendingTargets'
+    | 'validationRunning'
     | 'revealBaselineNodes'
     | 'revealPolicy'
     | 'revealWriteSequence'

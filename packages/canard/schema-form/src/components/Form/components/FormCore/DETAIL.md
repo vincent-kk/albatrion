@@ -21,7 +21,7 @@
 
 ### root-boundary — 경계와 보고기의 순서
 
-- 루트 렌더 오류는 fallback 안에 가두고, `onError`에 `RENDER_FAILED` 기록으로 한 번 전달합니다. 부모의 시험은 진입점의 `FormCore`를 직접 렌더해서 이를 확인합니다.
+- 루트 렌더 오류는 fallback 안에 가두고, `onError`에 `RENDER_FAILED` 기록으로 한 번 전달합니다. 단, 이미 보고한 원인·handler 객체만 담은 비어 있지 않은 dense bundle 또는 bare handler 예외의 capture는 생략하며 componentStack도 전달하지 않습니다. 부모의 시험은 진입점의 `FormCore`를 직접 렌더해서 이를 확인합니다.
 
 ## Boundary Exemptions
 

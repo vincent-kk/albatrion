@@ -19,6 +19,7 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   runtime.validationCadence?.cancel();
   runtime.validationCadence = undefined;
   runtime.validationRun = undefined;
+  runtime.validationRunning = undefined;
   runtime.revealReleaseListeners?.clear();
   settleFieldNodeValidation(root);
   releaseFieldNodeRevealHistory(root);

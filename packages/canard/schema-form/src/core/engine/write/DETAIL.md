@@ -40,7 +40,7 @@
 - 수락한 명시적 root 판정은 route 뒤 pending이면 settle, 아니면 전체 release를 수행하여 한 번만 해제하고 배달한다. release listener가 여는 새 쓰기의 이력은 보존한다.
 
 - H: 최외곽 chain 진입·standalone 상태 진입·outer visit는 record의 sequence를 한 번 전진시킨다. exit의 request 뒤와 standalone closeNonSettleEntry의 finally에서 !entryDepth일 때 drop을 예약한다. listener가 던져도 기록 수명은 예약된다. clearSubtreeState의 직접 {} 쓰기 전에도 기록한다.
-- H/D: 하위 트리 validate는 전체 release하거나 stamp를 올리지 않는다. 로드 판정이 남은 자동 하위 요청은 루트로 넓히며, 대체된 비동기 루트 판정은 그 대상을 pending에 되돌린다. commit-only 재요청과 호출 시점 반환 계약은 유지한다. requestFieldNodeValidationWave는 deliverValidationWave 옆의 chain 파일이며 두 소비자가 구체 파일로 사용한다.
+- H/D: 하위 트리 validate는 전체 release하거나 stamp를 올리지 않는다. 로드 판정이 남은 자동 하위 요청은 루트로 넓히며, 대체될 실행의 대상은 새 요청이 stamp를 올리기 전에 후속 pending으로 인계한다. 완료 시 다시 요청하지 않으며 명시적 하위 검증은 실행 소유 기록을 건드리지 않는다. commit-only 재요청과 호출 시점 반환 계약은 유지한다. requestFieldNodeValidationWave는 deliverValidationWave 옆의 chain 파일이며 두 소비자가 구체 파일로 사용한다.
 
 - W3: 공개 리스너 배달 전에 validation의 prepareFieldNodeValidation을 호출해 동기 flushSync·legacy render도 pending을 보게 한다. 종료는 같은 적격 조건으로 실제 요청을 만들고, 요청이 사라지면 기록한 entry stamp만 정착하여 더 최신 pending은 보존한다. state-only 사슬은 기존 다른 요청을 풀지 않는다.
 

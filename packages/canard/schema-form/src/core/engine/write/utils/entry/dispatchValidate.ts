@@ -41,6 +41,9 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     runtime.validationPendingTargets = undefined;
   } else runtime.validationStamp ??= 0;
   const stamp = runtime.validationStamp;
+  const running =
+    node === node.rootNode ? { stamp, targets: new Set([node]) } : undefined;
+  if (running) runtime.validationRunning = running;
   const commit = runtime.commitNumber ?? 0;
   const loadStamp = runtime.validationLoadStamp;
   let result: Nullable<readonly ValidationIssue[]>;
@@ -86,18 +89,15 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
         throw bundleChainErrors([failure, ...handlerErrors]);
     }
     throw failure;
+  } finally {
+    if (running && runtime.validationRunning === running)
+      runtime.validationRunning = undefined;
   }
   if (result === null) {
     if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return [];
   }
-  if (runtime.validationStamp !== stamp) {
-    if (node === node.rootNode && runtime.validationPending) {
-      (runtime.validationPendingTargets ??= new Set()).add(node);
-      runtime.validationCadence?.request();
-    }
-    return result;
-  }
+  if (runtime.validationStamp !== stamp) return result;
   if ((runtime.commitNumber ?? 0) !== commit) {
     if (node === node.rootNode) {
       if ((runtime.validationMode ?? 0) & ValidationMode.OnChange)

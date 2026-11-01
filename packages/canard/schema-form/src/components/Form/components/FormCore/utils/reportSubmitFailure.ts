@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 import type { FormErrorService } from '@/schema-form/providers/FormErrorContext';
 
@@ -30,5 +32,3 @@ export const reportSubmitFailure = (
     }
   } else if (native) reporter?.capture(error, 'submit');
 };
-import type { Optional } from '@aileron/declare';
-

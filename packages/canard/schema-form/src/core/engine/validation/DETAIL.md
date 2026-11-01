@@ -27,7 +27,7 @@
 - 화면 뒤 슬롯과 연속 입력 주기의 소유자는 형제 validationScheduling이다. 이 fractal은 createValidationCadence의 request를 매 검증 요청마다 호출하며 런타임이 처음 필요할 때 한 인스턴스를 만든다. clock은 이 도메인 경계에서 주입하고 스탬프·대기 대상·최신 커밋 검사·라우팅·배달은 이곳의 기존 실행 본문에 둔다. validationQueued는 다른 독자가 없어 제거한다(IR-6 amendment3).
 - 쓰기 주기는 idle 요청의 다음 프레임 뒤 선행 실행, 실행 이후 다음 프레임 watch, 연속 요청이 있으면 프레임마다 이월, 첫 무요청 프레임 뒤 후행 실행, 마지막 자동 실행 시작 기준100ms마다 상한 실행을 따른다. 모든 실행 뒤에는 watch로 돌아간다. 명시적 루트 validate가 carry 중 스탬프를 바꾸면 새 요청이 없는 다음 실행은 기존 스탬프 규칙으로 버린다. 마운트와 명시적 validate·제출은 이 주기를 거치지 않는다(IR-6 amendment3).
 
-- `hasFieldNodeValidationRequest(node)`는 `(validationStamp ?? 0) > (validationLoadStamp ?? 0)`으로 현재 로드 이후 쓰기 요청·명시적 루트 검증만 센다. 하위 검증은 세지 않는다. 로드 전체 판정이 남아 있으면 자동 하위 요청은 루트로 넓혀 전체 배정을 충족한다. 비동기 실행이 새 stamp로 대체되면 기존 targets를 pending에 되돌려 cadence가 최신 판정에 함께 배정한다. write 로드 진입점만 소비하고 surface 래퍼는 없다.
+- `hasFieldNodeValidationRequest(node)`는 `(validationStamp ?? 0) > (validationLoadStamp ?? 0)`으로 현재 로드 이후 쓰기 요청·명시적 루트 검증만 센다. 하위 검증은 세지 않는다. 로드 전체 판정이 남아 있으면 자동 하위 요청은 루트로 넓혀 전체 배정을 충족한다. 시작한 cadence 또는 명시적 root 실행은 validationRunning 객체에 stamp·targets를 보유한다. 새 자동 요청이 stamp를 올리기 전에 같은 stamp의 실행 대상을 pending에 인계하여 후속 한 실행이 배정한다. 완료 시 재삽입하지 않으며 실행이 정착하면 자신이 보유한 객체일 때만 지운다. 명시적 하위 검증은 이 객체를 설정하거나 지우지 않는다. write 로드 진입점만 소비하고 surface 래퍼는 없다.
 
 - 일회성 scheduleValidationSlot은 validationScheduling 진입점을 통해 engine·core가 명명 재수출한다. validation은 이를 재수출하는 facade를 두지 않으며 패키지 공개 표면은 늘리지 않는다(IR-6 amendment3).
 - `GuardFunction`은 동기 가드의 내부 형이며 validation index가 내보내지 않는다. core 시험 검증기는 engine index의 `Validator['compileGuard']` 반환형에서 가드 형을 유도한다. `readFieldNodeGuard`는 settle이 소비하는 validation 진입점 이름이며, engine과 core의 집계 index는 재수출하지 않는다.

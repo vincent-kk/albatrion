@@ -5,6 +5,7 @@ import type { FormErrorRecord } from '@/schema-form/errors';
 import { FormErrorCode } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../type';
+import { isReportedFailureBundle } from './isReportedFailureBundle';
 import { reportErrorToHost } from './reportErrorToHost';
 
 /** Create an instance reporter; React supplies the current callback through onError. */
@@ -76,13 +77,7 @@ export const createFormErrorService = (): FormErrorService => {
       }>;
       if (
         domain?.code === FormErrorCode.MultipleErrors &&
-        Array.isArray(domain.details?.errors) &&
-        domain.details.errors.every(
-          (failure: unknown) =>
-            failure !== null &&
-            typeof failure === 'object' &&
-            (seen.has(failure) || handlerFailures.has(failure)),
-        )
+        isReportedFailureBundle(domain.details?.errors, seen, handlerFailures)
       )
         return;
       try {
