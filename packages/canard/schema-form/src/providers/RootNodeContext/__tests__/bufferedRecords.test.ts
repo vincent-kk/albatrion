@@ -26,6 +26,7 @@ it('IR-7 T3 a never-prepared replacement transfers its record origin and flushes
   );
   const record: FormErrorRecord = {
     level: 'error',
+    origin: 'load',
     code: FormErrorCode.ValidatorThrew,
     message: 'first',
   };

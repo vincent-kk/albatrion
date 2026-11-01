@@ -351,7 +351,7 @@ describe('standalone wave failures', () => {
     ]);
   });
 
-  it('ERROR-019 gives a nested validation-result write the sink surface', async () => {
+  it('ERROR-019 gives a nested validation-result write the validate origin', async () => {
     const report = vi.fn();
     const sink = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     try {
@@ -393,7 +393,7 @@ describe('standalone wave failures', () => {
       expect(report).toHaveBeenCalledTimes(1);
       expect(report.mock.calls[0][0]).toMatchObject({
         error: failure,
-        origin: 'write',
+        origin: 'validate',
       });
       expect(sink).toHaveBeenCalledTimes(1);
     } finally {

@@ -191,14 +191,14 @@ it('P3-4 external errors at first commit use load and prop changes use write', (
   observeErrorSink();
   const onError = vi.fn<NonNullable<FormProps['onError']>>();
   const failure = new Error('external errors callback');
-  const form = (message: string) => (
+  const form = (message: string, fail = true) => (
     <Form
       jsonSchema={{ type: 'string' }}
       validationMode={ValidationMode.None}
       errors={[{ dataPath: '', message }]}
       onError={onError}
       onValidate={() => {
-        throw failure;
+        if (fail) throw failure;
       }}
     />
   );
@@ -206,8 +206,10 @@ it('P3-4 external errors at first commit use load and prop changes use write', (
   expect(onError).toHaveBeenCalledWith(
     expect.objectContaining({ origin: 'load', error: failure }),
   );
+  view.unmount();
+  const next = render(form('first', false));
   onError.mockClear();
-  view.rerender(form('second'));
+  next.rerender(form('second'));
   expect(onError).toHaveBeenCalledWith(
     expect.objectContaining({ origin: 'write', error: failure }),
   );

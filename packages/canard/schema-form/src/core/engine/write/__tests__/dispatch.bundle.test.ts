@@ -122,6 +122,7 @@ describe('chain failure bundles', () => {
         ],
         original,
         false,
+        'write',
       );
       expect(failures).toEqual([]);
       expect(seen).toEqual(['first', 'second']);
@@ -182,7 +183,7 @@ describe('chain failure bundles', () => {
       message: 'guard',
       schemaPath: '#/if',
       error: undefined as unknown,
-      details: undefined as unknown,
+      details: {},
     };
     const pending = [stored];
     collectChainRecords(

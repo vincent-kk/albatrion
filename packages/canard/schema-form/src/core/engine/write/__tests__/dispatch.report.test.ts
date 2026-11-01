@@ -126,7 +126,7 @@ describe('chain error reporting', () => {
     for (const [record] of report.mock.calls)
       expect(record).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
-        aggregate: caught,
+        origin: 'write',
       });
   });
 

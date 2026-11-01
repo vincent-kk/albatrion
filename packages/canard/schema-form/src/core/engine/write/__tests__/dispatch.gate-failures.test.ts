@@ -304,7 +304,7 @@ describe('round 55 gate failure regression', () => {
       for (const [record] of report.mock.calls)
         expect(record).toMatchObject({
           code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
-          origin: 'write',
+          origin: 'load',
         });
     } finally {
       vi.unstubAllEnvs();
