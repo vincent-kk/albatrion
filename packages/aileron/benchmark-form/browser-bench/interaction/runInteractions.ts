@@ -19,6 +19,7 @@ import { samplePage } from './helpers/samplePage';
 import { samplePageWithCpu } from './helpers/samplePageWithCpu';
 import { sampleValidationAfterPaintPage } from './helpers/sampleValidationAfterPaintPage';
 import { serializeEvidence } from './helpers/serializeEvidence';
+import { runStateVocabulary } from './helpers/stateVocabulary/runStateVocabulary';
 import { summarizePage } from './helpers/summarizePage';
 
 /**
@@ -41,6 +42,10 @@ export async function runInteractions(args: string[]) {
     ['prepare', 'smoke', 'run'].includes(options.action),
     '--action must be prepare, smoke, or run',
   );
+  if (options.stage === 'state-vocabulary') {
+    await runStateVocabulary(options);
+    return;
+  }
   if (options.stage === 'closing') {
     await runStageClosing(options);
     return;
