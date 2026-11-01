@@ -43,3 +43,21 @@ F1은 공개 SPECIFICATION의 ValidatorCompileFailed 셀을 IR-9의 origin valid
   - 【추론】 DR-15: 지연한 터미널 자식 읽기 경고는 읽을 때의 warning scope가 소유한다. microtask에서 reporter.root가 입력 자신의 root와 다르면 폐기한 load의 경고를 버린다. 같은 root reset은 원래 scope로 전달하여 새 load의 첫 읽기를 막지 않는다. rebuild 뒤 옛 입력 읽기도 버린다. 실패한 rebuild는 root를 유지하되 이미 새 scope를 시작하므로 다음 읽기가 다시 보고된다. unmount 뒤 개발용 경고는 기존처럼 마지막 onError에 도달한다.
 
 F4는 공개 batch 또는 walk 안의 중간 상태가 별도 이력이 아니며 쓰기 시퀀스의 첫 상태만 기록한다는 예외를 현행 설명에 정정합니다. 한 React batch 안의 서로 다른 공개 호출은 중간 상태를 기록합니다. 기존 기록은 보존합니다.
+
+
+## Amendment 9·10 — 결과 관문 뒤 정정
+
+- **DR-13-R2 (VALIDATE-052)**
+  - 【추론】 DR-13-R2: Amendment 7·8의 완료 시 기존 targets를 pending에 되돌린다는 규칙은 철회한다. 최신 cadence 또는 명시적 root 실행은 stamp와 ReadonlySet 대상을 validationRunning 객체에 보유한다. 새 자동 요청이 stamp를 올리기 전에 같은 stamp의 대상을 pending에 인계하여 후속 한 실행이 배정하며 선후 완료 순서와 이전 실행의 거부에 좌우되지 않는다. 각 실행은 정착·null·stale·commit 변경·거부에서 자신이 설정한 객체일 때만 지운다. 명시적 하위 검증은 설정하거나 지우지 않는다. commit-only 불일치는 stamp가 같아 기존 대상 재요청을 유지한다. 대체된 cadence 거부는 기준처럼 보고하지 않고 후속 실행이 판정을 소유한다. 슬롯이 사용하는 explicit root 거부는 superseded여도 onError와 host에 한 번씩 보고한다. 명시적 하위 validate가 쓰기에 대체되면 caller에게 판정을 반환하되 배정하지 않는 기존 제한은 기준과 현행에 모두 남는다.
+- **DR-1-R2 (VALIDATE-021)**
+  - 【추론】 DR-1-R2: 모든 기존 recent가 고정된 동안 구성의 readFieldNodeGuard가 아직 고정되지 않은 새 루트의 readValidationEntry를 부를 수 있다. 설치 중인 루트는 entry가 생기기 전 축출 후보에서 제외하여 counts와 recent에 유지하고 overflow를 허용한다. 핀 해제 뒤 후속 축출은 해당 copy를 정확히 한 번 해제한다. inflight 수는 실행 중 보이며 성공·거부 뒤 키가 제거되고 committed counts는 바뀌지 않는다. 같은 id 교체가 핀을 무시하는 제한과 unpin 뒤 다음 축출점까지 overflow가 남는 제한은 유지한다.
+- **DR-2-R2 (ERROR-019 / VALIDATE-052)**
+  - 【추론】 DR-2-R2: 슬롯 판정의 늦은 실패는 예약 시 붙잡은 load.retired가 참이면 host에 전달하지 않는다. schema 변경 reset·rebuild·validator 교체의 옛 load는 은퇴하며 소비자 기록도 버린다. slot token·stamp·root.disposed를 은퇴 신호로 쓰지 않는다. 같은 스키마 reset과 unmount는 load를 은퇴시키지 않으므로 늦은 ValidatorThrew를 onError 한 번과 host 한 번에 전달한다. 현행 load의 원본 및 bundle 원소 순서 전달은 유지한다.
+- **DR-14-R2 (ERROR-028)**
+  - 【추론】 DR-14-R2: capture 생략 대상 bundle은 비어 있지 않은 배열이며 모든 index가 seen 또는 handlerFailures의 객체여야 한다. 빈 배열·희소 배열의 hole·미지 객체·primitive를 포함하면 생략하지 않아 renderer의 RENDER_FAILED와 componentStack을 전달한다. 배열 판별은 common-utils의 isArray를 쓰고 index 순회로 확인한다. 알려진 dense bundle·bare handler 객체의 생략과 ERROR-023 항목 2 우선 제한은 유지한다.
+- **DR-11-R2 (ERROR-019 / ERROR-028)**
+  - 【추론】 DR-11-R2: native degraded submit에서 onError가 던지면 onError 한 번과 host 한 번이며 host는 [SubmitWhileDegraded, handler error] bundle을 받는다. caller가 있는 명시적 제출은 같은 bundle로 거부하고 host에는 보내지 않는다. 슬롯은 handler 오류를 IR-8부터, 첫 원인과 non-bundle 실패를 DR-2부터 원소별 순서로 host에 보낸다. native submit은 거부를 그대로 보낸다. validator 실패 bundle은 라운드 전부터 bundle 하나였고 degraded native handler 실패는 이전 handler·원인 두 호출에서 DR-11의 bundle 한 호출로 바뀌어 ERROR-028을 충족한다. 두 no-caller 통로의 host 형태 통일은 소유자 결정을 기다리며 코디네이터가 단계 마감 때 올린다.
+- **DR-9-R2 (REACT-012)**
+  - 【추론】 DR-9-R2: 이전 추가 비용 0 표현은 경로 탐색과 리스너 배달에 한정한다. node와 root 입력에는 추가 경로 탐색·리스너 배달이 없으며 렌더마다 상수 시간 snapshot hook 하나가 있다. 경로 프록시의 container 리스너·사건 필터·재탐색 비용과 기본 root 네 리스너는 유지한다. tracker나 강제 rerender가 없는 probe도 구조 변경만으로 현행 노드를 읽는다.
+
+DR-15의 기존 읽기 scope 소유 규칙은 StrictMode와 React18 legacy root에서 원래 scope별 reportInLoad 횟수로 확인합니다. 현재 명세는 검증기 실패 origin validate와 degraded 제출 origin submit, 알려진 bundle·handler capture 예외를 구별합니다. 기존 결과·결정 줄은 보존하며 뒤의 결과 보충이 이전 검증의 범위를 대체합니다.

@@ -45,3 +45,8 @@ DR-11은 ERROR-019 항목 3·4의 결함으로 수정합니다. 명시적 degrad
 ## Amendment 7·8 보충
 
 DR-13은 남은 로드 판정을 root 요청으로 충족하고 대체된 비동기 targets를 보존합니다. DR-14는 보고된 원인과 handler 예외만 담은 capture를 생략하며 degraded caller 거부는 bundle로 보존합니다. DR-15는 읽기 당시 scope와 입력 root의 수명을 지킵니다. 공개 batch/walk 이력 예외의 현행 문서를 정정합니다. IR-8의 쓰기 요청 root 가정은 [결정 보충](../../reviews/defect-round.md)으로 정정하며 기준 재현·React 두 버전·mutation·최종 관문으로 검증합니다.
+
+
+## Amendment 9·10 — 결과 관문 정정
+
+DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.

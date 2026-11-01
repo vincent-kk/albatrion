@@ -1,0 +1,28 @@
+{
+  "testCommit": "cd6f8c1a8bd4bd581c60ecfe0e61cdc50f6a2091",
+  "testSha256": {
+    "packages/canard/schema-form/src/__tests__/e2e/validation.target-handoff.render.test.tsx": "348c39d00bf6d6cf9eed64f35c7c7c2ed43a763bc5672efa24fe0cc7ad39badc",
+    "packages/canard/schema-form/src/components/FieldProxy/__tests__/pathReuse.test.tsx": "d49cd0dac41b0eb01777471d5e1d2a9e63a38c4f6b5f563245ce3c8cc7819cd9",
+    "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/__tests__/terminalChildren.test.tsx": "3673b1f023f39dd14a0de964decd43dad733888e124d78a8baf1979052736895",
+    "packages/canard/schema-form/src/components/Form/__tests__/degradedSubmit.test.tsx": "352e7587334d6dcc25ccc55ce33056b5f1b7c32d6fbfe92c549871d02a90cf30",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.inflight.test.ts": "b7329b3a64657a775368569b5a7d87c7e7af83f11b7ce724d0ab529f6d671c36",
+    "packages/canard/schema-form/src/providers/FormErrorContext/__tests__/captureBundles.test.ts": "be068748e93dc5f2903d61268addf9bab8bf610b5dcde2c86fa3ed18e970a5b0",
+    "packages/canard/schema-form/src/providers/FormErrorContext/__tests__/emptyBundle.render.test.tsx": "795bb78fbef9cc08869ec1607b223ba257c3412ec9c730b322a42ad11cdbb215",
+    "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/slotRetirement.test.tsx": "a2452bb68d73c28969d10952cb913ca92cb7868090d5131433fed31fc94561f4"
+  },
+  "runs": {
+    "amend910-base-red": {
+      "productCommit": "779713587405b73abdd778df874fe21b726bac56",
+      "passed": 31,
+      "failed": 41,
+      "skipped": 1
+    },
+    "amend910-head-final-red": {
+      "productCommit": "4e7e1b5f3c731f3f2b059f5181a0ac508d4fcc4a",
+      "passed": 51,
+      "failed": 21,
+      "skipped": 1
+    }
+  },
+  "note": "Cadence rejection is red on both product bases and both React majors. Guards intentionally remain green; the new legacy-root probe is excluded only on React19."
+}

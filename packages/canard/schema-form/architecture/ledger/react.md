@@ -200,6 +200,7 @@
 - 보충:
   > "활성 조각 집합마다 메모해 같은 집합이면 같은 참조를 돌려주고, 재계산 목록에 든 노드만 다시 셈하며, 바뀌면 통지의 배달 집합에 든다." (`reviews/round-16-owner-review.md:31`)
   > 편집자 결정(DR-9): "【추론】 DR-9: 경로 주소 바인딩은 경로 컨테이너들의 UpdateChildren을 따라 다시 해석한다. find는 현재 구조에 대한 조회다. useSyncExternalStore는 root부터 각 경로 prefix의 find 결과를 구독하고 unresolved prefix에서 멈춘다. 리스너는 사건 비트로 필터하며 변경 때 모두 해제·재탐색·재구독한 뒤 snapshot 변경을 통지한다. node 입력과 undefined 및 root로 해석되는 입력은 고정 snapshot과 no-op 구독이다. 기본 root proxy와 node-addressed children의 추가 구독·쓰기 비용은 0이며 root의 기존 네 리스너를 유지한다. 경로 프록시는 container마다 리스너 한 개와 사건마다 필터 호출 비용이 들고 wildcard는 첫 매치만 추적한다. identity 변경으로 Input이 remount되면 focus를 잃는 REACT-023 제한은 유지한다. 구독 직후 snapshot 재확인은 tearing을 막으며 재구독 리스너의 같은 wave 재호출은 허용한다." (`reviews/defect-round.md:19`)
+  > 편집자 결정(DR-9-R2): "【추론】 DR-9-R2: 이전 추가 비용 0 표현은 경로 탐색과 리스너 배달에 한정한다. node와 root 입력에는 추가 경로 탐색·리스너 배달이 없으며 렌더마다 상수 시간 snapshot hook 하나가 있다. 경로 프록시의 container 리스너·사건 필터·재탐색 비용과 기본 root 네 리스너는 유지한다. tracker나 강제 rerender가 없는 probe도 구조 변경만으로 현행 노드를 읽는다." (`reviews/defect-round.md:61`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:52`(정본), `reviews/round-16-owner-review.md:31,33`
 - 닫은 사람: 편집자 결정(16라운드, `reviews/round-16-owner-review.md:33` 새로 정함)

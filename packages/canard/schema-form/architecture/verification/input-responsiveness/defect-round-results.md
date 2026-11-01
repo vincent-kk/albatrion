@@ -74,3 +74,26 @@ F1은 SPECIFICATION 두 언어의 ValidatorCompileFailed 셀을 IR-9 origin·hos
 | 전달 | 최종 로컬 HEAD 고정 링크의 한국어 PR 본문을 코디네이터에게 인계합니다. 지시에 따라 push하지 않았습니다 |
 
 기존 원장·ADR·설계·계획 기록은 추가만 했으며 현행 INTENT·DETAIL·공개 명세·JSDoc은 정정했습니다. 머신 경로는 신규 자료에서 제거하고 JSON의 시험 단언은 유지했습니다. 재현 해시는 각 실행 당시 커밋 텍스트를 가리키며 이후 타입 보정은 별도 커밋·정확한 기준 재실행으로 보충했습니다.
+
+
+## Amendment 9·10 결과 관문 정정
+
+앞 표의 DR-13 완료 시 targets 재삽입 설명과 이전 최종 관문은 `4e7e1b5f3` 시점 기록으로 보존합니다. 새 설계는 실행이 끝날 때가 아니라 새 요청이 stamp를 올리기 전에 진행 중 실행의 대상을 후속 pending에 인계합니다. 실행 소유 객체는 그 cadence 또는 명시적 root 실행만 정착 때 지우며 하위 검증은 건드리지 않습니다. 완료 순서·거부에 따른 대상 유실과 중복 네 번째 실행을 닫습니다. 대체된 cadence 거부는 조용히 버리고 슬롯의 명시적 root 거부는 기존대로 onError·host에 한 번씩 보고합니다. 명시적 하위 validate가 쓰기에 대체되면 caller에게만 판정을 반환하는 기존 제한도 유지합니다.
+
+DR-1은 구성의 unpinned guard read가 설치 중인 새 루트를 recent/counts에서 제거하지 않게 고쳤습니다. DR-2는 예약 load.retired만 late slot host 억제에 사용하고 같은 스키마 reset·unmount의 보고는 유지합니다. DR-14는 빈·희소 bundle을 capture 생략에서 제외합니다. node/root의 비용 표현도 정정합니다. 추가 경로 탐색·리스너 배달은 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다.
+
+native degraded submit의 throwing onError는 DR-11에서 두 host 호출을 하나의 [원인, handler] bundle로 바꿉니다. validator bundle은 라운드 전부터 한 bundle이었으며 슬롯은 handler 오류를 IR-8부터, 첫 원인을 DR-2부터 원소별로 전달합니다. 두 통로의 형태를 통일하는 결정은 단계 마감 때 소유자에게 올립니다.
+
+정확한 새 시험은 `cd6f8c1a8`입니다. 제품 `4e7e1b5f3`에서51통과·21실패·새 legacy 조건부 skip1, 원래 `779713587`에서31통과·41실패·skip1을 보존했습니다. cadence 거부는 두 기준·두 React 모두 red입니다. [커밋 시험 해시와 기준 raw](raw/defect-round/results-gates/red-provenance.json)를 참조하십시오. 기존 A1과 OnRequest-only guard를 포함한 집중 회귀는114통과·실패0·React19에서 새 legacy case1만 제외입니다. DR-15는 StrictMode·React18 legacy root의 원래 warning scope별 횟수를 확인합니다.
+
+| 제거한 핵심 | 검출한 실패 |
+| --- | --- |
+| 요청 시점 handoff | 7 |
+| 설치 root 축출 제외 | 1 |
+| retired load host 억제 | 1 |
+| nonempty dense bundle 검사 | 4 |
+| unpin의 key 제거 | 3 |
+| 경로 구조 구독 | 1 |
+| 원래 warning scope | 5 |
+
+모든 변이는 원복했습니다. [새 변이 raw와 실패 이름](raw/defect-round/results-gates/mutations.json)에 보존합니다. 아래 새 최종 관문이 이전 표를 대체합니다.
