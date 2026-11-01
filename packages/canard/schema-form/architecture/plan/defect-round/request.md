@@ -27,3 +27,8 @@ DR-10은 inline errors 배열과 validator 교체 및 같은 batch reset·schema
 ## Amendment 6
 
 DR-11은 ERROR-019 항목 3·4의 결함으로 수정합니다. 명시적 degraded submit은 onError 1(origin submit)·host 0·caller rejection이며 native는 onError 1·host 1입니다. degraded validate의 실행 실패는 이미 onError 1(origin validate)·caller rejection이므로 그대로 둡니다. 최종 결과는 push 없이 로컬 HEAD로 코디네이터에게 인계합니다.
+
+
+## Amendment 7·8 보충
+
+DR-13은 남은 로드 판정을 root 요청으로 충족하고 대체된 비동기 targets를 보존합니다. DR-14는 보고된 원인과 handler 예외만 담은 capture를 생략하며 degraded caller 거부는 bundle로 보존합니다. DR-15는 읽기 당시 scope와 입력 root의 수명을 지킵니다. 공개 batch/walk 이력 예외의 현행 문서를 정정합니다. IR-8의 쓰기 요청 root 가정은 [결정 보충](../../reviews/defect-round.md)으로 정정하며 기준 재현·React 두 버전·mutation·최종 관문으로 검증합니다.

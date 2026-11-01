@@ -31,3 +31,15 @@ F1은 공개 SPECIFICATION의 ValidatorCompileFailed 셀을 IR-9의 origin valid
 
 - **DR-11 (ERROR-019 항목 3·4)**
   - 【추론】 DR-11: degraded 폼의 명시적 submit은 ERROR-019 항목 3과 4에 따라 거부 직전에 origin submit의 onError 기록을 한 번 전달하고 caller에게 SUBMIT_WHILE_DEGRADED로 거부하며 host에는 보내지 않는다. native submit은 같은 원인 기록 한 번과 host 한 번을 유지하고 이미 보고한 거부 객체의 capture는 seen으로 중복 제거한다. 검증 오류가 아닌 submitForm 거부는 두 통로 모두 같은 보고 콜백을 사용한다. degraded 폼의 명시적 validate에서 검증기 실행 실패는 이미 origin validate로 한 번 보고한 뒤 caller에게 거부하므로 그대로 유지한다.
+
+
+## Amendment 7·8 — 전체 판정과 보고 수명
+
+- **DR-13 (VALIDATE-052)**
+  - 【추론】 DR-13: 로드가 빚진 전체 판정은 루트 전체에 배정하는 요청만 충족한다. 로드 판정이 남아 있으면 자동 하위 요청을 루트로 넓혀 슬롯을 대체하고 검증기는 한 번 실행한다. None·OnRequest-only는 자동 요청하지 않으며 명시적 하위 validate는 stamp를 올리지 않는다. 비동기 슬롯 또는 cadence 루트 판정이 새 stamp에 대체되면 기존 targets를 pending에 되돌려 다음 cadence 판정에 함께 배정한다. 변경 setValue의 root 요청은 기준에서도 정상인 보호 시험이다. IR-8의 쓰기 요청이 항상 root라는 가정을 이 범위에서 정정한다.
+- **DR-14 (ERROR-028)**
+  - 【추론】 DR-14: onError가 던진 객체를 handlerFailures에 보존한다. capture는 이미 보고한 객체·핸들러 예외 객체를 다시 보고하지 않으며 MultipleErrors의 모든 원소가 이 두 집합의 객체일 때도 기록을 생략한다. 미지 객체·primitive 원소는 보고한다. native submit의 컴파일 실패는 원인 onError 한 번과 bundle host 한 번이다. render capture가 이 bundle 또는 핸들러 예외를 생략하면 RENDER_FAILED 기록과 componentStack도 onError에 없으며 D9와 같이 ERROR-023 항목 2가 우선한다. degraded 명시적 submit은 report 통로로 원인을 보고하고 핸들러 예외가 있으면 [SubmitWhileDegraded, 핸들러 예외]로 caller에게 거부하며 host에는 보내지 않는다.
+- **DR-15 (ERROR-202)**
+  - 【추론】 DR-15: 지연한 터미널 자식 읽기 경고는 읽을 때의 warning scope가 소유한다. microtask에서 reporter.root가 입력 자신의 root와 다르면 폐기한 load의 경고를 버린다. 같은 root reset은 원래 scope로 전달하여 새 load의 첫 읽기를 막지 않는다. rebuild 뒤 옛 입력 읽기도 버린다. 실패한 rebuild는 root를 유지하되 이미 새 scope를 시작하므로 다음 읽기가 다시 보고된다. unmount 뒤 개발용 경고는 기존처럼 마지막 onError에 도달한다.
+
+F4는 공개 batch 또는 walk 안의 중간 상태가 별도 이력이 아니며 쓰기 시퀀스의 첫 상태만 기록한다는 예외를 현행 설명에 정정합니다. 한 React batch 안의 서로 다른 공개 호출은 중간 상태를 기록합니다. 기존 기록은 보존합니다.

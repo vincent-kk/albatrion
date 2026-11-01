@@ -578,3 +578,8 @@ C1–C6와 Amendment 1 A1–A5·P3 전체를 적용합니다. src/index.ts·pack
 ## Defect round — Amendment 2 제품 라운드
 
 DR-1·DR-2·DR-3과 D9 제한은 [결함 설계](../defect-round/design.md)를 따릅니다. 기존 계획·측정 기록은 보존하며 D4·D5는 기준 재현 red 뒤 코디네이터 Amendment 3까지 수정하지 않습니다. D6·D7은 비재현 guard를 보존합니다. 측정과 기록 경로 정리는 별도 라운드입니다.
+
+
+## Amendment 7·8 보충
+
+DR-13은 남은 로드 판정을 root 요청으로 충족하고 대체된 비동기 targets를 보존합니다. DR-14는 보고된 원인과 handler 예외만 담은 capture를 생략하며 degraded caller 거부는 bundle로 보존합니다. DR-15는 읽기 당시 scope와 입력 root의 수명을 지킵니다. 공개 batch/walk 이력 예외의 현행 문서를 정정합니다. IR-8의 쓰기 요청 root 가정은 [결정 보충](../../reviews/defect-round.md)으로 정정하며 기준 재현·React 두 버전·mutation·최종 관문으로 검증합니다.
