@@ -1,0 +1,22 @@
+{
+  "tests": {
+    "command": "yarn workspace @aileron/benchmark-form test",
+    "exitCode": 0,
+    "summary": "20 files, 132 tests passed"
+  },
+  "typecheck": {
+    "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+    "exitCode": 0,
+    "summary": "PASS"
+  },
+  "lint": {
+    "command": "yarn workspace @aileron/benchmark-form lint --max-warnings=0",
+    "exitCode": 0,
+    "summary": "PASS"
+  },
+  "archive-check": {
+    "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=closing --root=results/closing-prepared-2a --smoke --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+    "exitCode": 0,
+    "summary": "BROWSER_CHANGES_AUDIT_OK base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe newMachinePaths=0\nCLOSING_SMOKE_REPRODUCED samples=95 validatorWork=PASS"
+  }
+}
