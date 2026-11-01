@@ -292,3 +292,5 @@ D8는 F의 revisionObserved latch를 제거한 이름 있는 probe 빌드로 fla
 `registeredStageClosingRules.ts`와 이 사전등록을 정식 창 전에 커밋합니다. inputs.json에 preregisteredCommit, ruleVersion, rulesSha256와 모든 제품/브라우저 해시를 기록합니다. checker의 `--stage=closing`은 저장한 raw에서 모든 수치와 판정을 재현해야 합니다. Phase 1 이후 prepared head·smoke 요약·규칙 SHA-256을 코디네이터에게 보고하고 중지합니다.
 
 C4에서 None/if mount는 보고 전용입니다. C7은 별도 회귀 방어로 원본 G8의 array None 조건까지 그대로 유지합니다. C0의 L 비교 가능성 경계는 원본 수식 `6.425 × 1.25 = 8.03125ms`를 변경하지 않으며 설계의 8.03ms는 표시 정밀도입니다. B/S 체크아웃을 제거한 뒤에는 제품 해시와 commit별 source tree proof가 검증된 고정 복사본을 재사용할 수 있습니다.
+
+C5 프레임 합산의 확정 해석: 각 kept page의 모든 연산 슬롯 안에 있는 50ms 이상 프레임을 행·lane별로 전부 합산하여 F ≤ B+1을 검사합니다. 연산별 프레임 수의 페이지 중앙값은 별도로 보고합니다. 시간 지표의 10회 중앙값 규칙은 이 명시적 프레임 총합을 대체하지 않습니다. 코디네이터가 정식 창 전에 이 해석을 확정했습니다.
