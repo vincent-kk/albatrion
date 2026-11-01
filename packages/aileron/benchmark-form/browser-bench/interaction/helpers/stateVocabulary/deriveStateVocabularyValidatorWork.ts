@@ -2,8 +2,9 @@ import cases from '../../../../fixtures/input-responsiveness/closing-cases.json'
 import type { StageClosingPage } from '../../stageClosingTypes';
 import { readStageClosingValidatorWorkPage } from '../stageClosing/readStageClosingValidatorWorkPage';
 import type { SampleResult } from '../summarizeResults';
+import { REGISTERED_STATE_VOCABULARY_RULES as rules } from './registeredStateVocabularyRules';
 
-/** Compare every row's deterministic validator counts, including setup and late work, with no exceptions. */
+/** Report every row and enforce validator equality on registered deterministic rows, including setup and late work. */
 export function deriveStateVocabularyValidatorWork(
   samples: SampleResult[],
   pages: Record<string, StageClosingPage>,
@@ -33,7 +34,7 @@ export function deriveStateVocabularyValidatorWork(
       };
     }),
   );
-  const checks = cases.map((id) => {
+  const checks = rules.validatorWorkRows.map((id) => {
     const B = rows.find((r) => r.id === id && r.lane === 'B'),
       F = rows.find((r) => r.id === id && r.lane === 'F');
     if (!B?.units || !F?.units) return { id, status: 'INDETERMINATE' };

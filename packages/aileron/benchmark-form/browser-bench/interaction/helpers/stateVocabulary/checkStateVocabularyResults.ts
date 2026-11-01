@@ -105,6 +105,13 @@ export function checkStateVocabularyResults(
       ]).includes('## 상태 어휘 단계 측정 — 측정 전 고정 규칙'),
     );
     assert.ok(
+      git([
+        'show',
+        inputs.preregisteredCommit + ':' + rules.verificationPath,
+      ]).includes(inputs.rulesSha256),
+      'Pre-registration document binds the approved rules sha256',
+    );
+    assert.ok(
       Date.parse(
         git(['show', '-s', '--format=%cI', inputs.preregisteredCommit]),
       ) <= Date.parse(attempt.quiet.startedAt),

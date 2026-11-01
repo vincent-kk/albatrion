@@ -1,10 +1,12 @@
 # 상태 어휘 단계 측정
 
+현재 적용 규칙은 아래 Amendment 1입니다. 개정 전 절과 충돌하는 조건은 Amendment 1이 대체하며, 사전 등록은 코디네이터의 go 전까지 고정되지 않습니다.
+
 ## 상태 어휘 단계 측정 — 측정 전 고정 규칙
 
 이 문서는 정식 측정 전에 고정합니다. `@aileron/benchmark-form`의 `--stage=state-vocabulary`를 사용하며, 규칙 버전은 `state-vocabulary-v1`입니다. closing의 `closing-v3-amendment-6`과 개정 7·8의 무결성 조건을 재사용합니다. `registeredStageClosingRules.ts`와 closing 도우미는 수정하지 않습니다.
 
-새 규칙 파일의 sha256은 `169ee6394c2c793a593127679713f26aa80f89aa6f274a96806284751be13618`입니다.
+새 규칙 파일의 sha256은 `db2a3baac3942b8372936a7a24fa57296bcdfbe29871a74e46d0e3d4cf568f0e`입니다.
 
 Vincent의 소유자 인용 70은 다음과 같습니다.
 
@@ -84,3 +86,26 @@ C0는 **NOT_APPLICABLE**로 보고합니다. C0는 public L 보정과 L 비교�
 `yarn workspace @aileron/benchmark-form check:browser-results --stage=state-vocabulary --root=<frozen-root> --write`로 raw에서 결과를 만들고, `--write` 없이 같은 명령으로 모든 결과를 재현합니다. smoke에는 `--smoke`를 추가합니다. 중복·누락 표본, 순서, 키 수, 작업 identity, postPaintBusy와 프레임 재계산, 보고 행 실행 여부, 고정 번들과 clean build 증거를 검사합니다. raw와 커밋 파일에는 기계의 로컬 경로를 남기지 않습니다.
 
 1단계 스모크는 두 레인을 시작 커밋 `61457653ae19dfb1f11b97e29355fa3cd6af8f24`의 동일한 임시 빌드로 수행합니다. 이는 수집·판정·재현 경로 검증이며 상태 어휘 성능에 대한 정식 판정이 아닙니다. 사전 등록 독립 검사는 코디네이터가 수행하며, go 전에는 정식 창을 열지 않습니다.
+
+## Amendment 1 — 사전 등록 검사 반영
+
+첫 사전 등록 검사에서 지적된 조건을 코디네이터가 채택한 수정 명세로 대체합니다. 위의 “이번 창의 두 ratio-only 절에는 측정 전에 1ms 차이 하한을 고정합니다.”는 다음 문장으로 대체합니다.
+
+ratio-only 두 절의 차이 하한을 측정 전에 고정합니다. C1은 handler 중앙값 차이 상한 1ms 또는 pooled handler p95 차이 상한 2.5ms, C5 callDuration은 4ms입니다. 1ms에서는 closing 정식 창 F 페이지로 만든 같은 빌드 모의 창의 92%가 FAIL이었고, 인용 71이 수용한 rebuild(상한 1.118, 차이 상한 1.375ms)도 FAIL이었습니다. 4ms의 같은 빌드 오탐은 2.2%, 세 행 모두 40% 느려질 때 검출은 100%입니다. 이 수치는 독립 검증자가 closing 정식 F 페이지로 수행한 시뮬레이션 결과이며 이번 단계의 정식 측정 결과가 아닙니다.
+
+다음 표가 위 표의 해당 행을 대체합니다. C2, C3, C5 paint·validate, C5 프레임과 C6은 그대로 유지합니다.
+
+| 게이트  | 적용 대상                                          | 차단 조건                                                                                                                |
+| ------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| C1      | 타이핑 8행 처리 시간                               | pooled handler p95 F/B 상한 > 1.10 **그리고** (handler 중앙값 차이 상한 > 1ms 또는 pooled handler p95 차이 상한 > 2.5ms) |
+| C4      | validate·onrequest·always mount 5행                | first-painted·eager-painted·페이지별 max(최장 프레임, 50ms) 각각의 F/B 상한 > 1.10 **그리고** 해당 차이 상한 > 8.35ms    |
+| C5 호출 | reset·rebuild 3행                                  | callDuration F/B 상한 > 1.10 **그리고** 차이 상한 > **4ms**                                                              |
+| SV-2    | 이산 작업 15행: mount 9행, first-key 2행, 작업 4행 | compile·validate 평균 또는 setup·late 작업 평균이 F ≠ B이거나 F에 unattributed 작업이 존재                               |
+
+타이핑 8행과 stream 행의 작업 수는 프레임 시점에 따른 병합으로 달라지므로 보고만 합니다. closing 정식 창 F 레인에서도 array-1000 nonburst와 burst 3행의 페이지별 횟수가 달랐습니다. 예외 목록은 없으며, 위 15행 전체에 F = B를 요구합니다. 모든 24행의 작업 수는 계속 표에 남깁니다. 15개 식별자는 새 규칙 파일의 `validatorWorkRows`이며 harness 식별자와 대조하여 존재를 확인했습니다.
+
+C1의 `processingTail`은 processing과 같은 F/B 비율 상한을 사용합니다. 차이 상한은 같은 seed·같은 paired page index를 재추출한 pooled F handler p95 − pooled B handler p95의 nearest-rank 95백분위입니다. 중앙값 절과 tail 절 중 하나가 FAIL이면 FAIL이며, FAIL 없이 필요한 값이 없으면 INDETERMINATE입니다. C4의 mount 프레임은 50ms 검출 경계에서 censor한 페이지 값으로 bootstrap합니다. unfloored 최장 프레임은 보고에 남깁니다.
+
+checker는 preregisteredCommit의 이 문서에 inputs의 rulesSha256이 적혀 있는지 확인합니다. 정식 시작 전 같은 root 스모크에서 F의 isDivergent 두 읽기가 실행되어 true였는지 확인하며, 아니면 창을 열지 않습니다. 이 검사는 CPU quiet 관측과 formal-start.json 기록보다 먼저 수행합니다. 임시 빌드 스모크의 getter skip은 허용하되 그 자료로 정식 창을 열 수는 없습니다.
+
+잔여 위험도 기록합니다. 독립 검증자의 동일 빌드 모의 창에서 개정 뒤 SV-1 FAIL은 약 4%였으며, 약 2.2%는 C5 callDuration, 약 1.7%는 replace nextPainted에서 발생했습니다. 결과는 정식 창의 실제 판정을 대신하지 않으며, 결과를 본 뒤 창을 재실행하거나 규칙을 변경하지 않습니다.

@@ -1,4 +1,4 @@
-/** Frozen state-vocabulary policy; closing-v3-amendment-6 supplies unchanged C2–C6 logic. */
+/** Registered B/F policy with processing-tail, censored-frame and deterministic-work thresholds. */
 export const REGISTERED_STATE_VOCABULARY_RULES = {
   stage: 'state-vocabulary',
   version: 'state-vocabulary-v1',
@@ -10,7 +10,26 @@ export const REGISTERED_STATE_VOCABULARY_RULES = {
   resamples: 10000,
   ratioLimit: 1.1,
   processingDifferenceMs: 1,
-  callDifferenceMs: 1,
+  callDifferenceMs: 4,
+  processingTailDifferenceMs: 2.5,
+  mountFrameFloorMs: 50,
+  validatorWorkRows: [
+    'mount-flat-500-validate',
+    'mount-nested-d5-f4-validate',
+    'mount-if-flat-500-validate',
+    'mount-flat-500-none',
+    'mount-nested-d5-f4-none',
+    'mount-array-1000-none',
+    'mount-array-1000-validate',
+    'mount-flat-500-onrequest',
+    'mount-flat-500-always',
+    'first-key-flat-500-validate',
+    'first-key-flat-2000-validate',
+    'reset-flat-500-same',
+    'reset-flat-500-replace',
+    'rebuild-flat-500',
+    'validate-flat-500-settled',
+  ],
   reportRows: ['is-divergent-flat-2000', 'heap-flat-2000-100-edits'],
   verificationPath:
     'packages/canard/schema-form/architecture/plan/state-vocabulary/measurement.md',
