@@ -1,0 +1,34 @@
+{
+  "baseline": "0624741a071c578f0cebc6daeda569dc1d4acbec",
+  "behaviorFiles": {
+    "src/providers/FieldRendererContext/hooks/useErrorVisibility.ts": {
+      "baseline": "3b3ce6ee885e8d0b67e73cd802592817cc8f6919148259daeabc8b2d72854a1f",
+      "candidate": "375b7ebe2e2c024f7aca91774cfce6b0d56ca374659624dd2fc45d0e298751d6"
+    },
+    "src/providers/FieldRendererContext/utils/resolveErrorVisibility.ts": {
+      "baseline": "a00f700a73e7cc08e93fd83d81b45cfb9f0fa0ab5ac383336e7e3941805d3ee4",
+      "candidate": "bf9abf3d00bc972b186c7803b6c1f2983150f3ed6910abdc438ebfc6422455bc"
+    },
+    "src/core/engine/write/utils/entry/dispatchValidate.ts": {
+      "baseline": "02be940721763812aa2a40e4e1a6fba78e07571aea15ee44c1288fea28e2bb0f",
+      "candidate": "67eacefe5673fe8467a272b87a73a6e7746eb5fe4488240824012412b660d28c"
+    }
+  },
+  "restored": true,
+  "fixtureCorrections": [
+    "Type-only global act-environment annotation and literal schema type",
+    "Mount test imports Form and field types through their owning module entry points to satisfy import model"
+  ],
+  "characterizations": [
+    "React18 mount/hydration equality approved msg_d101f539b310",
+    "Dirty resetInteraction both ErrorVisible toggle variants pass before the 5c changes"
+  ],
+  "postReplayFinalCorrections": [
+    {
+      "file": "src/providers/FieldRendererContext/hooks/useErrorVisibility.ts",
+      "approval": "msg_12043ec1b07c",
+      "change": "Use candidate version+1 and non-candidate0 to prevent first-release snapshot collision. Engine reader stays0 before first release.",
+      "finalSha256": "1f30b383b632483794188e523195a9a946f0bb644778248191c6125fd979beec"
+    }
+  ]
+}

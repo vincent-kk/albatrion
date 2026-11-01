@@ -1,0 +1,62 @@
+[
+  {
+    "cmd": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exit": 0,
+    "log": "gates/lint.log",
+    "tail": ""
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form typecheck",
+    "exit": 0,
+    "log": "gates/typecheck.log",
+    "tail": ""
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form build",
+    "exit": 0,
+    "log": "gates/build.log",
+    "tail": "🧹 Clean slate: dist directory cleared\n<DIR>/index.mjs  chunk │ size: 891.76 kB\n<DIR>/index.cjs  chunk │ size: 913.01 kB\n<DIR>/index.node.mjs  chunk │ size: 890.96 kB\n\n✔ rolldown v1.2.0 Finished in 133.96 ms\nDEVELOPMENT_FLAG_OK reads=48 flags=49 pure=550\nGATE_SELECTION_DIST_OK {\"name\":\"index.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":891756,\"sha256\":\"66dc736c2e5a933dfe8488529a3bf5953634401ff15869e827769350149ea8e9\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.node.mjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":890960,\"sha256\":\"f9c13c47f165ff8c58e279700af6c8a8c7cfb9a8e6345bc0c1bddb53c19db24f\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4464}\nGATE_SELECTION_DIST_OK {\"name\":\"index.cjs\",\"mode\":\"table\",\"sourceModel\":\"retained-slots\",\"bytes\":913008,\"sha256\":\"eddb220db6de62cfd8bf0c23be19b90af7d00a88aef62389810e2f4e0e8e2dbd\",\"verifyHelpers\":5,\"verifyHelperDeclarationBytes\":4526}\nFixed 2433 imports in 1138 .d.ts files.\n✓ agents-hashes.json written: 14 file(s) → <checkout>/packages/canard/schema-form/dist/agents-hashes.json\n"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project unit --reporter=dot --reporter=json --outputFile=<scratch>/gates/unit.json",
+    "exit": 0,
+    "log": "gates/unit.log"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project render --reporter=dot --reporter=json --outputFile=<scratch>/gates/render.json",
+    "exit": 0,
+    "log": "gates/render.log"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project react18 --reporter=dot --reporter=json --outputFile=<scratch>/gates/react18.json",
+    "exit": 0,
+    "log": "gates/react18.log"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project storybook --reporter=dot --reporter=json --outputFile=<scratch>/gates/storybook.json",
+    "exit": 0,
+    "log": "gates/storybook.log"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test:production --reporter=json --outputFile=<scratch>/gates/production.json",
+    "exit": 0,
+    "log": "gates/production.log",
+    "tail": "stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'nested-d5-f4'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"nested-d5-f4\",\"mode\":\"production\",\"distinct\":1706}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'flat-500'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"flat-500\",\"mode\":\"production\",\"distinct\":502}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'oneOf-20'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"oneOf-20\",\"mode\":\"production\",\"distinct\":111}\n\nstdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'sample-0'\nOWNED_INLINE_FREEZE_COUNTS {\"fixture\":\"sample-0\",\"mode\":\"production\",\"distinct\":5}\n\n·············\n\n Test Files  10 passed (10)\n      Tests  21 passed (21)\n   Start at  02:08:07\n   Duration  3.82s (transform 3.80s, setup 0ms, collect 13.43s, tests 654ms, environment 2.57s, prepare 676ms)\n\nJSON report written to <scratch>/gates/production.json\n"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project verify-unit --reporter=dot --reporter=json --outputFile=<scratch>/gates/verify-unit.json",
+    "exit": 0,
+    "log": "gates/verify-unit.log"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project verify-render --reporter=dot --reporter=json --outputFile=<scratch>/gates/verify-render.json",
+    "exit": 0,
+    "log": "gates/verify-render.log"
+  },
+  {
+    "cmd": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=dot --reporter=json --outputFile=<scratch>/gates/import-model.json",
+    "exit": 0,
+    "log": "gates/import-model.log",
+    "tail": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\n\n RUN  v3.2.6 <checkout>/packages/canard/schema-form\n\nstdout | src/__tests__/importModel.test.ts > keeps U outside D7, D and S1 import-model edges at zero\nIMPORT_MODEL_REVEAL_BRIDGE count=3\n\n··\n\n Test Files  1 passed (1)\n      Tests  2 passed (2)\n   Start at  02:11:36\n   Duration  1.76s (transform 33ms, setup 19ms, collect 189ms, tests 1.32s, environment 0ms, prepare 51ms)\n\nJSON report written to <scratch>/gates/import-model.json\n"
+  }
+]

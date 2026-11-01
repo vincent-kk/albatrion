@@ -1,6 +1,6 @@
 # 모델 기준 import 관계 전수 검사 (2026-10-14, 1.0.0-beta, `src` 안 3811개 변)
 
-> 294라운드 소유자 지시("그 원칙을 바탕으로 구조를 검사해봐")로 원장 관리자가 scout에 맡겨 돌렸다. 기준은 `fca-import-model.md`의 모델과 보강 다섯. 전체 변 표(3811행: importer:line, 종류, 소유 fractal, 대상, 관계, 대상 종류, 판정)는 `/tmp/claude-501/s3/lineage-audit.md`, 스크립트는 같은 디렉터리의 `lineage.cjs`·`rep.cjs`다. `__legacy__`·`bench`·`stories` 제외, 형 전용 import·재수출·동적 import 포함.
+> 294라운드 소유자 지시("그 원칙을 바탕으로 구조를 검사해봐")로 원장 관리자가 scout에 맡겨 돌렸다. 기준은 `fca-import-model.md`의 모델과 보강 다섯. 전체 변 표(3811행: importer:line, 종류, 소유 fractal, 대상, 관계, 대상 종류, 판정)는 `{scratch}/s3/lineage-audit.md`, 스크립트는 같은 디렉터리의 `lineage.cjs`·`rep.cjs`다. `__legacy__`·`bench`·`stories` 제외, 형 전용 import·재수출·동적 import 포함.
 
 ## 1. 판정 기호
 

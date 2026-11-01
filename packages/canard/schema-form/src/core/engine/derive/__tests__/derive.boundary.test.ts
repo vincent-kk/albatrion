@@ -6,7 +6,7 @@ import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
-import { getDeriveSourceNodes } from '../utils/evaluate/utils/getDeriveSourceNodes';
+import { getDeriveSourceNodes } from '../utils/evaluate/getDeriveSourceNodes';
 import { getDeriveRuleTable } from '../utils/rules/getDeriveRuleTable';
 
 // filid:contract derive-boundary

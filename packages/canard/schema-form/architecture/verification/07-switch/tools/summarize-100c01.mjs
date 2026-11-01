@@ -167,7 +167,7 @@ const report=[
   '- B·C는 새 process마다 H와 A/W를 번갈아 실행합니다. warmup 20, 101쌍 × 3회입니다. schema 준비·강제 GC는 시계 밖이며 끝점은 64 Promise turn 및 같은 check queue의 setImmediate sentinel입니다. 앞뒤 empty sentinel 101개의 중앙값 평균을 양쪽 시간에서 뺍니다. 음수 차이는 보존합니다.',
   '- N은 동일 HEAD control 세 run의 H−control 중앙값 차이 및 paired 중앙값 절댓값의 최댓값입니다. 세 run의 bound가 모두 N보다 크고 paired 중앙값 95% 구간 하한이 모두 0보다 클 때만 **잡음 초과**입니다. 101개 표본에서는 정렬한 41번째/61번째가 구간입니다. 연속 표본의 독립성은 보장되지 않아 구간보다 세 run 재현과 control을 우선합니다.',
   '- 제거는 측정 전용 in-memory build plugin에서 함수 body를 상수/무동작/상수 자료 재생으로 교체합니다. 조회·guard·유효한 그래프를 위한 재생 scaffold 비용은 남습니다. cold 분석에 한정한 병합·동결/형 판정 guard를 사용합니다. 결과가 바뀐 제거는 후속 마운트 작업도 달라질 수 있어 순수 함수 비용으로 해석하지 않습니다.',
-  '- 사용자 지정 작업 트리 외 제품·git 쓰기·설치·다른 에이전트는 사용하지 않았습니다. worker는 순차 실행하고 signal 없는 정상/예상 exit를 확인했습니다. esbuild는 stdin EOF를 받아 exit 0으로 끝났습니다. 원시 .cpuprofile만 지정 /private/tmp 위치에 보관하고 per-run 자료는 profile-100c01/ 아래에 둡니다.',
+  '- 사용자 지정 작업 트리 외 제품·git 쓰기·설치·다른 에이전트는 사용하지 않았습니다. worker는 순차 실행하고 signal 없는 정상/예상 exit를 확인했습니다. esbuild는 stdin EOF를 받아 exit 0으로 끝났습니다. 원시 .cpuprofile만 지정 {scratch} 위치에 보관하고 per-run 자료는 profile-100c01/ 아래에 둡니다.',
   '',
   '## A — 분석만의 표본 귀속',
   '',
@@ -240,7 +240,7 @@ cReport.push('','nested의 paired 중앙값은 0.550208, −0.755999, 0.579084 m
   'populateNodeChildren.ts와 blueprint/DETAIL.md 두 파일을 git show HEAD의 원래 내용과 바이트 비교해 같음을 확인했습니다. git 쓰기 없이 native patch로 복구했습니다. 지정 전체 검증 이후 제품·시험 동작은 변경하지 않았습니다. 계약을 복구하며 삭제한 임시 acceptance group의 시험 marker도 제거했습니다. 별도 에이전트 없이 직접 범위·불변성·정적 진단·계수·출력·최종 source hash를 검토했습니다.','',
   '| PKG 명령 | 결과 |','|---|---|');
 for(const row of verification.checks) cReport.push(`| \`${row.command}\` | ${row.id==='vitest'?'종료1; 425파일·3,207건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 각 2건, 총 4건만 실패':row.id==='isolation'?'종료0; LEGACY_ISOLATED: 1625 files checked':'종료0'} |`);
-cReport.push('','[A·B 보고서](profile-100c01.md), [A·B summary JSON](profile-100c01-summary.json), [C 판정·차등·계수·검증 JSON](profile-100c01/verdict.summary.json)에 근거를 보관했습니다. 모든 per-run 자료는 profile-100c01/에 있고 파일마다 5MB 이하입니다. .cpuprofile은 지정 /private/tmp 위치에만 보관하며 생성 번들과 map은 정리합니다. 설치·git 쓰기·다른 에이전트·강제 종료 없이 측정 worker를 순차 실행했습니다.','');
+cReport.push('','[A·B 보고서](profile-100c01.md), [A·B summary JSON](profile-100c01-summary.json), [C 판정·차등·계수·검증 JSON](profile-100c01/verdict.summary.json)에 근거를 보관했습니다. 모든 per-run 자료는 profile-100c01/에 있고 파일마다 5MB 이하입니다. .cpuprofile은 지정 {scratch} 위치에만 보관하며 생성 번들과 map은 정리합니다. 설치·git 쓰기·다른 에이전트·강제 종료 없이 측정 worker를 순차 실행했습니다.','');
 
 /** Emit a bounded native-file patch without exposing raw measurements to the model. */
 function emit() {

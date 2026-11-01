@@ -1,0 +1,32 @@
+{
+  "files": {
+    "prepare.mjs": "cf5823550f1634c443aecfe582dbec1f16c1e6ca26c2d814cc126546d2af2a82",
+    "window.mjs": "d1d7fea124e4fc98b65d8be7bcbfd7027b40408caa33c5c10e089bebb2b6e008",
+    "precheck.mjs": "a1f96d6f6c90f4da47eed042f0d24f7465944988804980ab264d0fabf8f1882f",
+    "guard-cost.mjs": "1b005c3d40acfbbbaaf4ae01b8c91352793bfd37f93589a39e222b735a5761fd",
+    "retention-bounds.mjs": "9dea5a9f9fce7d58a57f462c2a9a569658d8099f19dc6e1bff3471911f462398",
+    "welch.mjs": "b2c49ece87707a99f18f1bcb5eee60040eb0dbbe205acdb2f64d82803e332aaf",
+    "report.py": "caba346426e34b208bb8bdd66da95a3bb55cf12af5a48179bc03058a2bda7607",
+    "verify-artifacts.py": "291b30b91e208e20b7a3375b50c205195be31aaafa1fddc056a69c5f96c66367",
+    "verify-inputs.py": "482c4ef78bad7ddca64f2a9213c4f41855f56bd12267a51b1d7c0540f94d6cc4",
+    "check-stages.mjs": "2b293288acfef8b869052002c958fbc6bb0bfdf69553c8ea6f3d6327f207c4c7",
+    "root.txt": "4d9e80de35a6680391e79b57e07bf10afe7bf7f47229675cd0053f67d77c9d84",
+    "inputs.json": "2e76ec88a62221ad4288d58790cce973eddd79eefab113357afb27439434fa5e",
+    "preflight.json": "dd0e06542e32968369d588811cf72120af1274fae9c4668e7a08e597ad1f4a23",
+    "stage-hashes-before.json": "8cffb989d5714e694fe825ae2ed640059bc27214dfeb3171a60da5b6626dd2af",
+    "stage-untimed-load.json": "7bb0e6000ca336eae051af8bbe9d49519eb0728335f3faa1cd7add5bdd63dfb7",
+    "compat/buildStages.mjs": "17bc7cdcf22f30ef59be444fcd6547fd783c1fdd9acff6e584baab3c217a2520",
+    "compat/stages.mjs": "6eedfe558c58b931006f14f3469072d7a7d36773a15f96a3d601f542c4a9cfcd",
+    "compat/recorder.mjs": "d2b94f74b201b97451626be0a04e827c320f7c1085e18e22906d9e1a4879230c",
+    "compat/retention.mjs": "0691877db438b013fcb598d0fabc28a9f4a53790471b38239970a596666e1fd2"
+  },
+  "B3Source": "B3 external runner and compatibility scripts",
+  "adaptations": [
+    "Repository/archive/run paths and E commit SHA only for lane preparation and helper imports.",
+    "Coordinator-approved S=B3 compatibility builder / E=current B6 builder selection.",
+    "Window removes settled B3 lifecycle IDs and repeated polling; applies B6 per-process CPU rule with one attempt before formal start.",
+    "Report reuses the B3 calculations, writes raw/b5, omits automatic result-document generation, and scrubs local execution paths."
+  ],
+  "untouchedTimingLoop": true,
+  "untouchedGateThresholds": true
+}

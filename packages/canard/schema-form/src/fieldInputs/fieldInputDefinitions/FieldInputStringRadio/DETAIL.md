@@ -9,6 +9,8 @@
 - 선택지 id·label·묶음 규약은 문자열 checkbox 입력과 같습니다(`${path}-${index}`, `role="group"`, `aria-labelledby="label:${path}"`; 대기열 38, 276라운드).
 - `type.ts`는 이 입력의 문맥 형을 정의합니다.
 
+- `misfit` 값은 조작 요소에 `aria-invalid="true"`로 표시하며 노드 값은 바꾸지 않습니다(REACT-027, SURFACE-061).
+
 ## Acceptance Criteria
 
 ### radio-ids — 선택지 연결
@@ -17,4 +19,4 @@
 
 ## Last Updated
 
-2026-10-14: 소유자 구조 리뷰 넷째 손질(기본 입력을 입력마다 fractal로 분리).
+2026-10-26: 무효 값의 aria-invalid 표지와 노드 값 보존 계약을 명시합니다.

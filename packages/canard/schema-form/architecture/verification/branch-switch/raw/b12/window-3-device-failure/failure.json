@@ -1,0 +1,11 @@
+{
+  "candidate": "7af6a5d3caab4b05c29807865c321d73d822abb8",
+  "startedAt": "2026-10-28T21:02:27.340Z",
+  "endedAt": "2026-10-28T21:02:30.567Z",
+  "classification": "device-path-validation-failure",
+  "cause": "readConfig rejects .noindex root",
+  "exitCode": 1,
+  "completedComparisonProcesses": 0,
+  "formalMarkerPreserved": true,
+  "retried": false
+}

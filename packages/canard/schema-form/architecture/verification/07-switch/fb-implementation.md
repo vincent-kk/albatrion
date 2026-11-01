@@ -1,6 +1,6 @@
 # F-B의 구현과 검증 결과를 기록합니다.
 
-2026년 10월 10일에 stage-07 작업 트리에서 React 입력 경계 변경 F-B를 구현하고 검증하였습니다. 시작과 종료 HEAD는 `e805074de8a9cb0c072a81284a166ab985a113be`이며 시작 작업 트리는 깨끗했습니다. PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+2026년 10월 10일에 stage-07 작업 트리에서 React 입력 경계 변경 F-B를 구현하고 검증하였습니다. 시작과 종료 HEAD는 `e805074de8a9cb0c072a81284a166ab985a113be`이며 시작 작업 트리는 깨끗했습니다. PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `{scratch}`입니다.
 
 먼저 `D/react-proxy-audit-121.md`의 F-B와 이탈 지점 3, `D/fd-implementation.md`, `D/fd-a500-diagnosis.md`, `D/fd-prime-implementation.md`, 현재 입력 경계 구현을 읽었습니다. PKG의 CLAUDE.md와 Error Isolation 절, seiri·filid 규칙, 소유 모듈의 INTENT·DETAIL을 확인하였습니다. 기존 F-A′가 사용하는 직접 ErrorBoundary를 유지하면서 generation 전달 층만 제거하였습니다.
 
@@ -142,3 +142,5 @@ PKG/CLAUDE.md의 Error Isolation 설명은 계속 정확합니다. resolver의 �
 git add·commit·stash·checkout·restore·reset은 실행하지 않았고 설치도 하지 않았습니다. HEAD 원본을 native 파일 편집으로 복원하고 새 계수 시험을 삭제하였습니다. 복원 직후 `git diff --exit-code`가 종료 코드 0이었고 패치 단독 적용 검사도 통과하였습니다. 마지막에는 D/fb-implementation.md만 새 파일로 남깁니다.
 
 패키지 관리자 명령은 모두 단독 Bash 호출이며 파이프·리다이렉트·추가 shell 명령·환경 접두사를 붙이지 않았습니다. 모든 실행 명령과 자식 프로세스의 종료를 기다렸고 수동 종료하지 않았으며 단일 명령은 8분을 넘지 않았습니다. 별도 타이밍 측정 없이 요청한 보유량·쓰기당 할당과 런타임 작업 계수만 관측하였습니다. 패치·번들·manifest·프로브·계수 자료와 scratch 도구는 S에 보존하였습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `65f74e669e10`, `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

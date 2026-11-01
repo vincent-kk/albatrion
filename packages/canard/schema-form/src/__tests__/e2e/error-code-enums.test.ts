@@ -14,10 +14,20 @@ describe('root error and warning code enums', () => {
     expect(FormErrorCode.SchemaValidationFailed).toBe(
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
     );
-    expect(FormWarningCode.TypeMismatch).toBe(
-      'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+    expect(FormErrorCode.ReservedPropertyName).toBe(
+      'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
     );
-    expect(Object.keys(FormErrorCode)).toHaveLength(41);
-    expect(Object.keys(FormWarningCode)).toHaveLength(17);
+    expect(FormWarningCode.Misfit).toBe('SCHEMA_FORM_WARNING.MISFIT');
+    expect(Object.keys(FormErrorCode)).toHaveLength(42);
+    expect(FormWarningCode.DetachedNodeWrite).toBe(
+      'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
+    );
+    expect(FormWarningCode.InactiveValueWithUnsetOnInactive).toBe(
+      'SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE',
+    );
+    expect(FormWarningCode.WriteInInactiveResolver).toBe(
+      'SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER',
+    );
+    expect(Object.keys(FormWarningCode)).toHaveLength(20);
   });
 });

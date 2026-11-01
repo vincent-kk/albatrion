@@ -4,11 +4,12 @@
 
 ## ArrayNode Mutations
 
-Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FieldInput`. Methods: `push`, `pop`, `update`, `remove`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
+Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FieldInput`. Methods: `push`, `pop`, `update`, `remove`, `insert`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
 
 - `push(value?)` returns the array **length after the push** (a number, synchronously), not the new item's index. It is never refused: `maxItems` and `items: false` do not stop it, and validation reports the violation.
 - `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])`. `minItems` is a validation constraint only: the core never fills to it, at construction, on reset or on branch reactivation. To stop users going below the minimum, disable the remove control in the `FieldInput` (the built-in array input always shows it). The built-in array input also draws empty slots up to `minItems` in the UI only; a slot writes its position when the user types into it. On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
 - `remove(index)` removes one item by index.
+- `insert(index, value?)` inserts one item at an integer index in [0, length] and returns the new length; items from `index` on keep their nodes and keys and move back one position, `index === length` is exactly `push`, and a negative, fractional or larger index does nothing and returns the current length. On a host holding a non-array value, `insert(0, x)` behaves like `push(x)` and any other index does nothing.
 
 ## Array Output Filters (omitTrailing / omitEmpty)
 
@@ -116,12 +117,42 @@ Contract — each point matters:
 
 - **The node tree is always fully built.** `getValue()`, `setValue()`, validation, and submit behave identically whether a field is mounted or deferred.
 - **Defer-once**: a mounted field never returns to a placeholder.
-- **CSR only**: requires `IntersectionObserver`. Never enable in SSR/hydration apps — the server renders everything while the client gates, causing hydration mismatch. Without `IntersectionObserver` it silently disables (dev warning).
+- **SSR and hydration**: every field renders on the server and hydrates unchanged. Gating applies to branches and children added after hydration and requires `IntersectionObserver`. Browsers without it render eagerly with a development warning; the server does not warn.
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
+- Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
 - Benefit scales with form size; small forms gain nothing (hence opt-in).
 
 For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildFields`.
 
+## Input responsiveness at scale
+
+Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In IR-1, replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
+
+| Form | Off: eager paint / all revealed | On: eager paint / all revealed |
+| --- | ---: | ---: |
+| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
+| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
+| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. The default remains off.
+
+- **Validation:** cost grows with schema size. The desktop Chromium flat-2000 IR-2 diagnosis attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
+- **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
+- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. IR-0 E lane event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
+
 ## Expression Cost at Scale
 
 Heavy controls expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.
+
+
+## Validation timing
+
+`OnChange` writes run after the next frame; continuous input carries across active frames, with a trailing run after a quiet frame and a 100 ms cap measured from the last automatic run that actually started. A cap returns to watch. Debouncing belongs to `FieldInput`. Missing frame APIs or a hidden document use a macrotask fallback; a 100 ms stalled-frame timer races the frame-backed task so it runs once. Explicit `validate()` and submit start immediately, and submit awaits the verdict.
+
+An error shows only when eligible now and continuously eligible across every engine state, enabled value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. Within one public `batch()` or walk, only the first state of that write sequence enters history; intermediate states do not. Separate public calls inside one React batch still record their intermediate states. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
+
+All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `origin: 'validate'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject; their record carries `origin: 'validate'`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
+
+Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
+
+Known limits: the hook's React-only `disabled` argument reveals at once; state/enabled renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/enabled/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.

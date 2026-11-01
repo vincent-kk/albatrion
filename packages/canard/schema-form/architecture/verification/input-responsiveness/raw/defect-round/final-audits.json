@@ -1,0 +1,18 @@
+{
+  "machinePathHits": [],
+  "newUnsafeProductAssertions": [],
+  "archiveDeletedLines": 0,
+  "publicIndexChanged": false,
+  "packageVersionChanged": false,
+  "existingSkipsAndTodosUnchanged": true,
+  "newConditionalSkip": [
+    {
+      "file": "packages/canard/schema-form/src/hooks/__tests__/useFieldNode.paths.test.tsx",
+      "before": [],
+      "after": [
+        "it.skipIf(inject('reactMajor') !== '18')("
+      ]
+    }
+  ],
+  "note": "New React18 legacy-root case is conditionally excluded on React19 as required by Amendment 4; no existing skip or todo changed. All raw and gzip files were decoded and searched."
+}

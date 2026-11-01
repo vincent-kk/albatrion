@@ -10,11 +10,11 @@ gap 해소 여부의 기준은 round `151C-01`이 고정한 148 출발값입니�
 
 | 항목 | 확인값 |
 | --- | --- |
-| Node 실행 파일 | `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node` |
+| Node 실행 파일 | `{node-home}/versions/node/v26.11.1/bin/node` |
 | Node / V8 | `v26.11.1 / 14.6.202.34-node.37` |
 | CPU / 메모리 / OS | `Apple M1 Max / 68719476736 bytes / Darwin 25.6.0 arm64` |
 | React / react-dom / esbuild | `19.2.6 / 19.2.6 / 0.25.9` |
-| 읽기 전용 worktree | `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07` |
+| 읽기 전용 worktree | `{repo}` |
 | branch | `feat/schema-form-switch` |
 | HEAD | `e9c408980d76b3866d311c5923d7f745ac12b17a` |
 | 실제 src tree | `8b2586417a850450c32c23b0dd2b278725007811` |
@@ -28,8 +28,8 @@ HEAD 번들은 공식 `--prepare array-push-100 1 HEAD`로 committed blobs를 �
 | HEAD build 1: `builds/build-1.cjs` | 905727 | `ccbb5d0c5539f57e9eb81f1107b988024c18fdfad1028044572061c32d6f9106` |
 | HEAD build 2: `builds/build-2.cjs` | 905727 | `ccbb5d0c5539f57e9eb81f1107b988024c18fdfad1028044572061c32d6f9106` |
 | 최종 측정용 `react-official-head.cjs` | 905727 | `ccbb5d0c5539f57e9eb81f1107b988024c18fdfad1028044572061c32d6f9106` |
-| 실제 공개판 ESM: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@canard/schema-form_0.16.0/dist/index.mjs` | 247510 | `78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2` |
-| 공개판 CJS 참고: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@canard/schema-form_0.16.0/dist/index.cjs` | 257733 | `19b9be1d81803928ead079d7ef225c61dc71ba8fdb1cf3f19d8926ebd28c44e2` |
+| 실제 공개판 ESM: `node_modules/@canard/schema-form_0.16.0/dist/index.mjs` | 247510 | `78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2` |
+| 공개판 CJS 참고: `node_modules/@canard/schema-form_0.16.0/dist/index.cjs` | 257733 | `19b9be1d81803928ead079d7ef225c61dc71ba8fdb1cf3f19d8926ebd28c44e2` |
 
 esbuild service는 각 build에서 EOF로 종료했고 code 0 / signal null입니다. 공개판은 이미 설치된 `@canard/schema-form_0.16.0`을 사용했습니다. 외부 fetch·설치와 worktree 파일·Git 변경을 수행하지 않았습니다.
 
@@ -70,29 +70,29 @@ fixture·lane·metric·버전별 303표본을 pool했습니다. nearest-rank med
  import path from 'node:path';
  import { fileURLToPath, pathToFileURL } from 'node:url';
 
--import { instrumentRound93i } from "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/instrument-round-93i.mjs";
--import { instrumentCore } from "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/instrument-core.mjs";
+-import { instrumentRound93i } from "file://packages/canard/schema-form/architecture/verification/07-switch/tools/instrument-round-93i.mjs";
+-import { instrumentCore } from "file://packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/instrument-core.mjs";
 +import { instrumentRound93i } from "./instrument-round-93i.mjs";
 +import { instrumentCore } from "./instrument-core.mjs";
  import { performance } from 'node:perf_hooks';
 
- const directory = "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools";
+ const directory = "packages/canard/schema-form/architecture/verification/07-switch/tools";
 @@ -31,15 +31,15 @@
  const pkgRequire = createRequire(path.join(pkg, 'package.json'));
  const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
- assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+ assert.equal(repo, '{repo}');
 -assert.equal(head, '34b370eedcc293e704ad3a57c5a02612ddad200f');
 +assert.equal(head, 'e9c408980d76b3866d311c5923d7f745ac12b17a');
  assert.equal(process.version, 'v26.11.1');
- assert.equal(process.execPath, '/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node');
+ assert.equal(process.execPath, '{node-home}/versions/node/v26.11.1/bin/node');
  const started = performance.now();
  const lane = process.argv.includes('--old-wait') ? 'record' : 'immediate';
  const prepareOnly = process.argv.includes('--prepare');
  const calibrationOnly = process.argv.includes('--calibrate-all');
--const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-148/control/official-raw";
--const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-148/control/react-official-head.cjs";
-+const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/official-raw";
-+const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/react-official-head.cjs";
+-const rawDirectory = "{scratch}/g26-148/control/official-raw";
+-const bundleFile = "{scratch}/g26-148/control/react-official-head.cjs";
++const rawDirectory = "{scratch}/g26-156/official-raw";
++const bundleFile = "{scratch}/g26-156/react-official-head.cjs";
  fs.mkdirSync(rawDirectory, { recursive: true });
  const fixtureName = process.argv[3];
  const run = Number(process.argv[4]);
@@ -134,7 +134,7 @@ fixture·lane·metric·버전별 303표본을 pool했습니다. nearest-rank med
  const out = path.dirname(fileURLToPath(import.meta.url));
 -const scratch = path.resolve(out, '../..');
 +const scratch = path.resolve(out, '..');
- const repo = '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07';
+ const repo = '{repo}';
  const fixtures = ['array-push-100', 'array-replace-200', 'array-push-remove-100'];
  const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 ```
@@ -148,9 +148,9 @@ nogc 사본의 공식 사본 대비 전체 diff:
  const lane = process.argv.includes('--old-wait') ? 'record' : 'immediate';
  const prepareOnly = process.argv.includes('--prepare');
  const calibrationOnly = process.argv.includes('--calibrate-all');
--const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/official-raw";
-+const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/nogc-raw";
- const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/react-official-head.cjs";
+-const rawDirectory = "{scratch}/g26-156/official-raw";
++const rawDirectory = "{scratch}/g26-156/nogc-raw";
+ const bundleFile = "{scratch}/g26-156/react-official-head.cjs";
  fs.mkdirSync(rawDirectory, { recursive: true });
  const fixtureName = process.argv[3];
 @@ -254,7 +254,6 @@
@@ -170,46 +170,46 @@ nogc 사본의 공식 사본 대비 전체 diff:
 모든 Node script의 cwd는 아래 worktree이며 실행 파일은 지정된 Node입니다. `commands.json`에 측정 child의 `argv`, wrapper의 `wrapperArgv`, start/end, seconds, exitCode를 기록했습니다. 로그와 개별 command JSON은 `logs/`에 있습니다.
 
 ```sh
-cd /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node --check /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/driver.mjs
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/launch-driver.mjs
+cd {repo}
+{node-home}/versions/node/v26.11.1/bin/node --check {scratch}/g26-156/driver.mjs
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/launch-driver.mjs
 # launch-driver.mjs가 별도 process group으로 driver.mjs를 실행합니다.
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs prepare-build-1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --prepare array-push-100 1 HEAD
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs prepare-build-2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --prepare array-push-100 1 HEAD
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs calibration-immediate-0.16.0 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --calibrate-all 0.16.0
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs calibration-immediate-HEAD --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --calibrate-all HEAD
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs calibration-record-0.16.0 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --calibrate-all 0.16.0 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs calibration-record-HEAD --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --calibrate-all HEAD --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-push-100-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-100 1
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-push-100-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-100 2
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-push-100-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-100 3
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-replace-200-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-replace-200 1
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-replace-200-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-replace-200 2
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-replace-200-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-replace-200 3
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-push-remove-100-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-remove-100 1
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-push-remove-100-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-remove-100 2
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-immediate-array-push-remove-100-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-remove-100 3
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-push-100-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-push-100 1
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-push-100-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-push-100 2
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-push-100-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-push-100 3
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-replace-200-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-replace-200 1
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-replace-200-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-replace-200 2
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-replace-200-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-replace-200 3
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-push-remove-100-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-push-remove-100 1
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-push-remove-100-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-push-remove-100 2
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-nogc-array-push-remove-100-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official-nogc.mjs --pair array-push-remove-100 3
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-push-100-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-100 1 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-push-100-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-100 2 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-push-100-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-100 3 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-replace-200-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-replace-200 1 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-replace-200-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-replace-200 2 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-replace-200-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-replace-200 3 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-push-remove-100-r1 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-remove-100 1 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-push-remove-100-r2 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-remove-100 2 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs pair-record-array-push-remove-100-r3 --expose-gc /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/measure-official.mjs --pair array-push-remove-100 3 --old-wait
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/run-command.mjs analysis-official /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/analyze.mjs
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/analyze-156.mjs
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-156/final-evidence.mjs
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs prepare-build-1 --expose-gc {scratch}/g26-156/measure-official.mjs --prepare array-push-100 1 HEAD
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs prepare-build-2 --expose-gc {scratch}/g26-156/measure-official.mjs --prepare array-push-100 1 HEAD
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs calibration-immediate-0.16.0 --expose-gc {scratch}/g26-156/measure-official.mjs --calibrate-all 0.16.0
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs calibration-immediate-HEAD --expose-gc {scratch}/g26-156/measure-official.mjs --calibrate-all HEAD
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs calibration-record-0.16.0 --expose-gc {scratch}/g26-156/measure-official.mjs --calibrate-all 0.16.0 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs calibration-record-HEAD --expose-gc {scratch}/g26-156/measure-official.mjs --calibrate-all HEAD --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-push-100-r1 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-100 1
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-push-100-r2 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-100 2
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-push-100-r3 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-100 3
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-replace-200-r1 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-replace-200 1
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-replace-200-r2 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-replace-200 2
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-replace-200-r3 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-replace-200 3
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-push-remove-100-r1 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-remove-100 1
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-push-remove-100-r2 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-remove-100 2
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-immediate-array-push-remove-100-r3 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-remove-100 3
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-push-100-r1 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-push-100 1
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-push-100-r2 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-push-100 2
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-push-100-r3 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-push-100 3
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-replace-200-r1 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-replace-200 1
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-replace-200-r2 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-replace-200 2
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-replace-200-r3 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-replace-200 3
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-push-remove-100-r1 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-push-remove-100 1
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-push-remove-100-r2 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-push-remove-100 2
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-nogc-array-push-remove-100-r3 --expose-gc {scratch}/g26-156/measure-official-nogc.mjs --pair array-push-remove-100 3
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-push-100-r1 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-100 1 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-push-100-r2 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-100 2 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-push-100-r3 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-100 3 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-replace-200-r1 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-replace-200 1 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-replace-200-r2 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-replace-200 2 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-replace-200-r3 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-replace-200 3 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-push-remove-100-r1 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-remove-100 1 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-push-remove-100-r2 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-remove-100 2 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs pair-record-array-push-remove-100-r3 --expose-gc {scratch}/g26-156/measure-official.mjs --pair array-push-remove-100 3 --old-wait
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/run-command.mjs analysis-official {scratch}/g26-156/analyze.mjs
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/analyze-156.mjs
+{node-home}/versions/node/v26.11.1/bin/node {scratch}/g26-156/final-evidence.mjs
 ```
 
 | label | 시작 UTC | 종료 UTC | seconds | exit code |

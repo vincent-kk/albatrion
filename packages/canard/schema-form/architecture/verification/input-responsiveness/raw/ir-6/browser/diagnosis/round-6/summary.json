@@ -1,0 +1,79 @@
+{
+  "diagnosticOnly": true,
+  "formalGateEvidence": false,
+  "finishedAt": "2026-10-31T13:43:21.540793+00:00",
+  "head": "ccf4ec8ae092bfd775353b7a9d6be91ad07b1fb4",
+  "warmup": 3,
+  "count": 10,
+  "retainedPages": 80,
+  "rows": [
+    {
+      "id": "mount-array-1000-none",
+      "medians": {
+        "E": {
+          "firstPaintedMs": 146.2999999821186,
+          "eagerPaintedMs": 204.19999998807907
+        },
+        "F-old": {
+          "firstPaintedMs": 142.05000001192093,
+          "eagerPaintedMs": 213.9500000178814
+        },
+        "F-new": {
+          "firstPaintedMs": 138.25,
+          "eagerPaintedMs": 206.65000000596046
+        },
+        "V1": {
+          "firstPaintedMs": 148.30000001192093,
+          "eagerPaintedMs": 205.4500000178814
+        }
+      },
+      "changes": {
+        "firstPaintedMs": {
+          "F-new/E": 0.9449760766705229,
+          "F-new-V1": -10.050000011920929,
+          "F-new-F-old": -3.800000011920929
+        },
+        "eagerPaintedMs": {
+          "F-new/E": 1.0119980412244096,
+          "F-new-V1": 1.199999988079071,
+          "F-new-F-old": -7.300000011920929
+        }
+      },
+      "newEagerAboveOld": false
+    },
+    {
+      "id": "mount-array-1000-validate",
+      "medians": {
+        "E": {
+          "firstPaintedMs": 157.2999999821186,
+          "eagerPaintedMs": 214.05000001192093
+        },
+        "F-old": {
+          "firstPaintedMs": 140.8499999642372,
+          "eagerPaintedMs": 224.4500000178814
+        },
+        "F-new": {
+          "firstPaintedMs": 136.55000001192093,
+          "eagerPaintedMs": 215.65000000596046
+        },
+        "V1": {
+          "firstPaintedMs": 146.30000001192093,
+          "eagerPaintedMs": 216.44999998807907
+        }
+      },
+      "changes": {
+        "firstPaintedMs": {
+          "F-new/E": 0.868086459170016,
+          "F-new-V1": -9.75,
+          "F-new-F-old": -4.299999952316284
+        },
+        "eagerPaintedMs": {
+          "F-new/E": 1.0074748890163534,
+          "F-new-V1": -0.7999999821186066,
+          "F-new-F-old": -8.800000011920929
+        }
+      },
+      "newEagerAboveOld": false
+    }
+  ]
+}

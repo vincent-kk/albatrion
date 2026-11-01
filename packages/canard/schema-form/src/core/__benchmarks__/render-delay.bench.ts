@@ -2,9 +2,12 @@ import { bench, describe } from 'vitest';
 
 import { clone } from '@winglet/common-utils/object';
 
-import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
-import { ValidationMode } from '@/schema-form/core/engine';
 import type { JSONSchema } from '@/schema-form/types';
+
+import {
+  ValidationMode,
+  nodeFromJSONSchema,
+} from '../../../bench/distEngine/nodeFromJSONSchema';
 
 /**
  * Initial render-delay regression guard.
@@ -109,6 +112,7 @@ for (const { name, schema, value } of cases) {
     });
 
     // Mode-flag control: no validator is supplied, so this does not measure validator compilation.
+    // This synchronous row includes slot enqueueing, but excludes the later macrotask and verdict; it is not validation-complete mount latency.
     bench('[mount] nodeFromJSONSchema (validation on)', () => {
       nodeFromJSONSchema({
         jsonSchema: schema,

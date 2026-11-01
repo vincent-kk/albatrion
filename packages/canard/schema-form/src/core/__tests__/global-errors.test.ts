@@ -236,6 +236,15 @@ describe('form-level external and validation errors', () => {
     expect(root.errors).toEqual([]);
   });
 
+  it('SURFACE-053 WRITE-045 79C-01 clears a root external error set between two resets with no validation between them', () => {
+    const root = createRoot();
+    reloadFieldNodeForm(root, { field: 'a' });
+    root.setExternalErrors([{ dataPath: '', message: 'server' }]);
+    reloadFieldNodeForm(root, { field: 'b' });
+    expect(root.globalErrors).toEqual([]);
+    expect(root.errors).toEqual([]);
+  });
+
   it('195C-01 folds a pending child change into the root list before adoption hands it over', () => {
     const root = createRoot();
     const issue = { dataPath: '/field', message: 'server' };

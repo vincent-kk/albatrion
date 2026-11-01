@@ -13,7 +13,7 @@
 - B·C는 새 process마다 H와 A/W를 번갈아 실행합니다. warmup 20, 101쌍 × 3회입니다. schema 준비·강제 GC는 시계 밖이며 끝점은 64 Promise turn 및 같은 check queue의 setImmediate sentinel입니다. 앞뒤 empty sentinel 101개의 중앙값 평균을 양쪽 시간에서 뺍니다. 음수 차이는 보존합니다.
 - N은 동일 HEAD control 세 run의 H−control 중앙값 차이 및 paired 중앙값 절댓값의 최댓값입니다. 세 run의 bound가 모두 N보다 크고 paired 중앙값 95% 구간 하한이 모두 0보다 클 때만 **잡음 초과**입니다. 101개 표본에서는 정렬한 41번째/61번째가 구간입니다. 연속 표본의 독립성은 보장되지 않아 구간보다 세 run 재현과 control을 우선합니다.
 - 제거는 측정 전용 in-memory build plugin에서 함수 body를 상수/무동작/상수 자료 재생으로 교체합니다. 조회·guard·유효한 그래프를 위한 재생 scaffold 비용은 남습니다. cold 분석에 한정한 병합·동결/형 판정 guard를 사용합니다. 결과가 바뀐 제거는 후속 마운트 작업도 달라질 수 있어 순수 함수 비용으로 해석하지 않습니다.
-- 사용자 지정 작업 트리 외 제품·git 쓰기·설치·다른 에이전트는 사용하지 않았습니다. worker는 순차 실행하고 signal 없는 정상/예상 exit를 확인했습니다. esbuild는 stdin EOF를 받아 exit 0으로 끝났습니다. 원시 .cpuprofile만 지정 /private/tmp 위치에 보관하고 per-run 자료는 profile-100c01/ 아래에 둡니다.
+- 사용자 지정 작업 트리 외 제품·git 쓰기·설치·다른 에이전트는 사용하지 않았습니다. worker는 순차 실행하고 signal 없는 정상/예상 exit를 확인했습니다. esbuild는 stdin EOF를 받아 exit 0으로 끝났습니다. 원시 .cpuprofile만 지정 {scratch} 위치에 보관하고 per-run 자료는 profile-100c01/ 아래에 둡니다.
 
 ## A — 분석만의 표본 귀속
 
@@ -568,3 +568,5 @@ node packages/canard/schema-form/architecture/verification/07-switch/tools/summa
 ```
 
 생성 번들·source map은 최종 산출물에서 제거합니다. 재집계 시 --build head control로 동일 해시의 map을 다시 만듭니다. 프로파일·측정·보고서·summary는 모두 파일당 5,000,000 바이트 이하입니다. 설치 없는 npx 실행에는 npm_config_offline=true와 npm_config_yes=false를 적용했습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0fdb6660ba07`, `af1904cf9cc2`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

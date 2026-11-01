@@ -1,0 +1,291 @@
+{
+  "baseline": "0b9337cd9",
+  "productUnmodified": true,
+  "failed": 9,
+  "passed": 3,
+  "failingNames": [
+    "compacts live kept descendants in their original order",
+    "restores scalar items that explicitly keep their own source",
+    "recursively compacts nested clearing arrays",
+    "preserves each kept candidate kind inside a compacted survivor",
+    "preserves kept scalar item candidates at the same compacted index",
+    "restores kept array items with inactive=false and candidateOwner=false",
+    "restores kept array items with inactive=true and candidateOwner=false",
+    "restores kept array items with inactive=false and candidateOwner=true",
+    "restores kept array items with inactive=true and candidateOwner=true"
+  ],
+  "reason": "Kept sources are discarded or re-entry has no items; same-name candidate kinds must keep their own source channels.",
+  "passingControls": [
+    "keeps clearing arrays without keep descendants empty on re-entry",
+    "preserves overlay visits for object exits with clear=true",
+    "preserves overlay visits for array exits with clear=false"
+  ],
+  "fixedContractCases": 18,
+  "renderCases": 4,
+  "additionalRegressions": {
+    "baseline": "869ab553c",
+    "failed": 2,
+    "passed": 1,
+    "failingNames": [
+      "publishes compacted kept sources and restores inactive=true sources when their gate opens",
+      "keeps an inactive survivor through repeated parent exits when its new position never visited that field"
+    ],
+    "reason": "Compacted publication overwrote an old inactive-entry memo; a second exit lost a keep record absent at the new positional source."
+  },
+  "inactivePlanMutation": {
+    "change": "omit plan owner when resolving an already inactive descendant",
+    "failedCase": "compacts already inactive nested arrays without losing their row-local keep policies",
+    "red": true,
+    "restored": true
+  },
+  "notSubstitutedOnBaseline": {
+    "reason": "Recorded only against the intermediate implementation 869ab553c or the final implementation; not substituted onto 0b9337cd9.",
+    "files": [
+      "src/core/surface/__tests__/surface.clearing-array-keep.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-policy.test.ts",
+      "src/__tests__/e2e/clearing-array-keep.test.tsx"
+    ]
+  },
+  "candidate2": {
+    "baseline": "fae1785dc",
+    "failingNames": [
+      "writes a survivor old reference to the same survivor after compaction",
+      "drops a write addressed at a discarded item after compaction",
+      "visits a clearing array without keep declarations once, whatever its item count",
+      "marks the array when an item descendant declares unsetOnInactive false",
+      "marks the array when an item descendant declares an expression",
+      "marks the array when the item itself declares a keep",
+      "marks a host whose controls.fields address a child with a keep",
+      "marks every ancestor on the path to the declaration",
+      "marks a recursive template that reaches a keep"
+    ],
+    "passingCharacterizations": [
+      "rebinds kept item candidates when survivors shift to earlier indices",
+      "keeps an item whose only kept source is an explicitly kept empty array"
+    ],
+    "recursiveFixtureNote": "Verified by disabling the flag computation after correcting the fixture."
+  },
+  "candidate3": {
+    "baseline": "54cae86ca",
+    "productUnmodified": true,
+    "failingNames": [
+      "drops a write through an already inactive descendant of a discarded item",
+      "reads a discarded candidate descendant from its frozen source instead of a compacted survivor"
+    ],
+    "failures": [
+      {
+        "expected": [
+          {
+            "keep": 12
+          },
+          {
+            "keep": 24
+          }
+        ],
+        "received": [
+          {
+            "keep": 5
+          },
+          {
+            "keep": 24
+          }
+        ]
+      },
+      {
+        "expected": [
+          1,
+          2
+        ],
+        "received": []
+      }
+    ],
+    "recursiveItemEdgeMutation": {
+      "file": "src/core/engine/blueprint/utils/features/collectTemplateParents.ts",
+      "change": "omit item and itemCandidates reverse-edge registration",
+      "failingName": "marks a recursive template that reaches a keep",
+      "assertion": "children template hasKeepDescendants is true",
+      "received": "undefined",
+      "red": true,
+      "restored": true,
+      "greenAfterRestore": true
+    }
+  },
+  "candidate4": {
+    "baseline": "057dea82d",
+    "productUnmodified": true,
+    "failingNames": [
+      "drops a write through a descendant of an already inactive object inside a discarded item"
+    ],
+    "failed": 1,
+    "skipped": 7,
+    "failures": [
+      {
+        "expected": [
+          {
+            "group": {
+              "keep": 12
+            }
+          },
+          {
+            "group": {
+              "keep": 24
+            }
+          }
+        ],
+        "received": [
+          {
+            "group": {
+              "keep": 5
+            }
+          },
+          {
+            "group": {
+              "keep": 24
+            }
+          }
+        ]
+      }
+    ],
+    "assertion": "final list value after group exits before clearing list and an old descendant receives setValue(5)"
+  },
+  "candidate5": {
+    "baseline": "941398ea704ffbba5b46d180c5628445688d2703",
+    "productUnmodified": true,
+    "failingNames": [
+      "keeps original row references on their rows when an already inactive list compacts under a clearing ancestor"
+    ],
+    "failed": 1,
+    "skipped": 8,
+    "failures": [
+      {
+        "expected": [
+          {
+            "keep": 13,
+            "tags": [
+              {
+                "keep": 3
+              }
+            ]
+          }
+        ],
+        "received": [
+          {
+            "drop": 5,
+            "keep": 12,
+            "tags": [
+              {
+                "keep": 3
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "assertion": "final list value after an inherited-policy list exits privately before its clearing section; old discarded and survivor references receive 5 and 13",
+    "fixed": {
+      "passed": 1,
+      "skipped": 8
+    },
+    "node": "v24.20.0"
+  },
+  "candidate6": {
+    "baseline": "ba0db9a426916b02e92a20c13bef6c7a30d7bb62",
+    "executionHead": "a20d0c2a003cad48d7cf363a50f6162bb384be11",
+    "productUnmodified": true,
+    "failingNames": [
+      "drops a write through an inactive candidate carried into a re-entered row once that row is discarded"
+    ],
+    "failed": 1,
+    "passed": 1,
+    "skipped": 9,
+    "failures": [
+      {
+        "expected": [
+          {
+            "keep": 2
+          }
+        ],
+        "received": [
+          {
+            "p": 5,
+            "keep": 2
+          }
+        ]
+      }
+    ],
+    "assertion": "final toEqual after re-entry carries the inactive candidate into a new row, the row is discarded, and the old candidate reference receives setValue(5)",
+    "fixed": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 9
+    },
+    "additionalCharacterization": {
+      "name": "drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded",
+      "originalScenario": {
+        "passedBeforeFix": true,
+        "passedAfterFix": true,
+        "recreatesTupleRow": true,
+        "note": "The original tuple had no multi-candidate slot, so applyArraySlots recreated the row without transferring the old candidate. Its old path lay past the only compacted survivor; this pass did not cover restoreTransferredSlotSource.",
+        "transfersCandidate": false
+      },
+      "strengthenedScenario": {
+        "candidateName": "value",
+        "allOfCandidatesPerTupleRow": 2,
+        "productHead": "502a1d4d9",
+        "executionHead": "aa0945e8ae457cf31ba53c6f55b908b38adebd28",
+        "productUnmodified": true,
+        "baselineExecuted": false,
+        "passedBeforeFix": null,
+        "passedOnCurrentProduct": true,
+        "isFailFirstEvidence": false,
+        "recreatesTupleRow": true,
+        "transfersCandidate": true,
+        "expected": [
+          {
+            "keep": 2
+          }
+        ],
+        "received": [
+          {
+            "keep": 2
+          }
+        ],
+        "reachConfirmation": {
+          "function": "restoreTransferredSlotSource",
+          "callsDuringRemove": 6,
+          "method": "Temporary Vitest module spy cleared immediately before remove(0); a called assertion and count confirmed execution.",
+          "temporaryInstrumentationRemoved": true
+        },
+        "note": "The strengthened tuple supplies allOf value candidates in every row and passes on the current product. It was not run on the pre-fix product and is regression coverage, not fail-first evidence."
+      }
+    },
+    "node": "v24.20.0",
+    "reviewFollowup": {
+      "productHead": "502a1d4d9",
+      "productUnmodified": true,
+      "node": "v24.20.0",
+      "gates": [
+        {
+          "command": "yarn workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/surface.clearing-array-keep.test.ts settle.retained-slot settle.pointer-slot-work settle.detached array-detached utils/slots/__tests__",
+          "files": 23,
+          "passed": 81,
+          "failed": 0,
+          "skipped": 0,
+          "exitCode": 0
+        },
+        {
+          "command": "yarn workspace @canard/schema-form typecheck",
+          "exitCode": 0
+        },
+        {
+          "command": "yarn workspace @canard/schema-form lint",
+          "exitCode": 0
+        }
+      ],
+      "fullProjectsRerun": false,
+      "buildRerun": false,
+      "measurementRerun": false,
+      "note": "Only the regression test and documentation changed; the full gates and measurement window for product head 502a1d4d9 remain the existing evidence."
+    }
+  }
+}

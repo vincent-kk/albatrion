@@ -1,0 +1,245 @@
+{
+  "kind": "B7-untimed-load-preflight",
+  "node": "v26.12.1",
+  "resolved": {
+    "@canard/schema-form-ajv8-plugin": {
+      "entry": "index.cjs",
+      "sha256": "d830dc6a2a541238f0ead894e3d22b59fe27e7f1dccc1590c29b9191d5bdde79",
+      "exists": true
+    },
+    "@canard/schema-form_0.16.0": {
+      "entry": "index.cjs",
+      "sha256": "19b9be1d81803928ead079d7ef225c61dc71ba8fdb1cf3f19d8926ebd28c44e2",
+      "exists": true
+    },
+    "@canard/schema-form_0.16.1": {
+      "entry": "index.cjs",
+      "sha256": "52b59ab3d221e68871aa2f2f01d2edc5c7e1b25bd3be200960a11badfeb02219",
+      "exists": true
+    }
+  },
+  "operations": 44,
+  "checks": [
+    {
+      "lane": "A",
+      "row": "single-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "mount-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "mount-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "mount-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "single-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "bulk-flat-2000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "bulk-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-discriminator-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-if-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-nested-oneOf-20",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-0",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-100",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-4000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-250",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-4000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-8000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "wave-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "single-flat-1000-subscribed",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "single-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "mount-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "mount-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "mount-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "single-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "bulk-flat-2000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "bulk-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-discriminator-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-if-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-nested-oneOf-20",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-0",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-100",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-4000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-250",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-4000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-8000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "wave-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "single-flat-1000-subscribed",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "passed": true
+    }
+  ],
+  "timedSamples": 0
+}

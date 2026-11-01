@@ -3,6 +3,8 @@ import { type ChangeEvent, useMemo } from 'react';
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Nullable } from '@aileron/declare';
+
 import type {
   FieldInputPropsWithSchema,
   StringSchema,
@@ -17,6 +19,7 @@ export const FieldInputStringRadio = ({
   jsonSchema,
   readOnly,
   disabled,
+  misfit,
   defaultValue,
   onChange,
   context,
@@ -24,14 +27,14 @@ export const FieldInputStringRadio = ({
   style,
   className,
 }: FieldInputPropsWithSchema<
-  string | null,
+  Nullable<string>,
   StringSchema,
   RadioLabelsContext
 >) => {
   const radioOptions = useMemo(
     () =>
       jsonSchema.enum
-        ? map(jsonSchema.enum, (rawValue: string | null) => {
+        ? map(jsonSchema.enum, (rawValue: Nullable<string>) => {
             const value = '' + rawValue;
             return {
               value,
@@ -50,9 +53,13 @@ export const FieldInputStringRadio = ({
     onChange(rawValue);
   });
   return (
-    <span role="group" aria-labelledby={`label:${path}`}>
+    <span
+      role="group"
+      aria-labelledby={'label:' + path}
+      aria-invalid={misfit || undefined}
+    >
       {map(radioOptions, ({ value, rawValue, label }, index) => {
-        const id = `${path}-${index}`;
+        const id = path + '-' + index;
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input

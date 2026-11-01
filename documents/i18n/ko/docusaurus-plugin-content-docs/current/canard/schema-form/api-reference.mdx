@@ -494,8 +494,8 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   required: boolean;
   node: Node;
   type: Node['type']; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'
-  typeMismatch: Node['typeMismatch']; // stored value mismatches the accepted kinds
+  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
+  misfit: Node['misfit']; // stored value mismatches the accepted kinds
   name: Node['name'];
   path: Node['path'];
   nullable: Node['nullable'];
@@ -539,7 +539,7 @@ interface FieldNode {
     | 'virtual'
     | 'union';
   readonly strategy: 'branch' | 'terminal'; // branch nodes own child nodes
-  readonly schemaType: string | readonly string[]; // authored kind(s), including 'integer'
+  readonly schemaType: string | readonly string[] | undefined; // authored kind(s), including 'integer'; undefined on a virtual node
   readonly jsonSchema: Readonly<Record<string, unknown>> | boolean;
   readonly required: boolean;
   readonly nullable: boolean;
@@ -569,7 +569,7 @@ interface FieldNode {
   readonly disabled: boolean;
   readonly watchValues: readonly unknown[];
   readonly context: Readonly<Record<string, unknown>>;
-  readonly typeMismatch: boolean;
+  readonly misfit: boolean; // stored value mismatches the accepted kinds
 
   // State
   state: {
@@ -593,6 +593,7 @@ interface FieldNode {
   // Navigation
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void; // self, then preorder; false skips that node's descendants
 
   // Events and requests
   subscribe(listener: (event: { type: number }) => void): () => void; // event.type holds FieldNodeEventType bits
@@ -621,6 +622,25 @@ node.setState({ [FieldNodeState.ErrorVisible]: true });
 unsubscribe();
 ```
 
+`visitSubtree`는 노드 자신에게 먼저 visitor를 부르고, 하위는 전위 순서로, 형제는
+`children` 순서로 부릅니다. `false`를 돌려주면 그 노드의 하위만 건너뜁니다. 폼 안의
+노드에서는 현재 형상만 방문하고, 폼에서 빠진 노드에서는 그 노드와 함께 빠진 하위
+트리를 방문합니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는
+방문된다는 보장이 없습니다. 순회 중의 값 쓰기는 순회가 끝날 때 한 번 반영되므로
+순회 중 읽기는 순회 전의 값을 돌려줍니다. 상태와 외부 오류의 변경은 바로 적용되고
+그 이벤트만 끝까지 기다리며, 바깥 `batch` 안에서는 모두 그 batch의 끝까지
+기다리고, 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다. 리스너 밖에서
+visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 폼에서 빠진 노드에 쓰면 폼 안의 필드는 바뀌지
+않습니다. `FormHandle`에는 `visitSubtree`가 없으므로 `formRef.current?.node`에서
+부르십시오.
+
+```ts
+node.visitSubtree((child) => {
+  if (child.path === '/profile/locked') return false; // skip its descendants
+  if (child.type === 'string') child.setValue(''); // applied once at the end
+});
+```
+
 ## `ArrayNode` Methods
 
 ```ts
@@ -630,6 +650,7 @@ interface ArrayNodeMethods<Item> {
   pop(): Item | undefined; // remove the last item; returns its value
   update(index: number, value: Item): Item | undefined; // replace one position
   remove(index: number): Item | undefined; // remove one position; returns its value
+  insert(index: number, value?: Item): number; // insert at a position in [0, length]; returns the new length
   clear(): void; // remove every item
 }
 ```
@@ -793,6 +814,7 @@ node.active / node.visible / node.enabled / node.readOnly / node.disabled
 node.required / node.nullable / node.type / node.strategy / node.schemaType
 node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
 node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
+node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
 node.validate() → Promise<readonly ValidationIssue[]>
 node.request(FieldNodeRequestType.Focus | Select | Refresh | Remount)
 node.subscribe(listener) → unsubscribe   // event.type & FieldNodeEventType.X
@@ -801,7 +823,7 @@ node.revision(mask?) / node.batch(fn)
 // ── ArrayNode additional ────────────────────────────────────────
 arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
 arrayNode.push(value?) → length / arrayNode.pop() / arrayNode.update(index, value)
-arrayNode.remove(index) / arrayNode.clear()
+arrayNode.remove(index) / arrayNode.insert(index, value?) → length / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
 useFormSubmit(ref)                              → { submit, pending }

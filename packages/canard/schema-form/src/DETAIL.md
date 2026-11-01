@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- `controls.inactiveValue`는 리터럴 종류와 resolver 함수의 합집합을 유지하여 인라인 함수의 두 매개변수에 공통 resolver 문맥 형을 제공합니다.
+
+- B12는 공개 이름 `InactiveValue<V>`·`InactiveValueResolver<V>`·`InactiveValueContext`와 노드의 `onInactive`를 추가합니다. 보존값 리터럴·함수와 인스턴스 콜백이 같은 직전 커밋 인터페이스를 공유합니다. 공개 이름은 97개이며 코드 enum에는 전용 경고 둘을 더합니다.
+
 - `index.ts`가 이 패키지의 공개 표면이다. 소비자는 이 진입점이 이름으로 내보낸 심볼만 사용하며, 하위 모듈 파일을 직접 참조하지 않는다.
 - **스키마 `options`는 공개 계약이다.** `JSONSchema` 타입이 선언한 `options` 필드는 소비자가 스키마에 직접 쓰는 값이므로, 필드를 추가·삭제하거나 의미를 바꾸는 것은 공개 계약 변경이다.
 - 값 투영 옵션은 **방출 값을 바꾸되 노드 트리를 바꾸지 않는다.** 투영은 노드가 밖으로 내보내는 값(`outputValue`)에 적용되고, 자식 노드·렌더된 입력·편집 중인 `value`는 유지된다. 이 분리는 사용자가 편집 중인 화면이 투영 때문에 접히지 않게 하는 계약이다(VALUE-027·034, LANDING-067).
@@ -10,16 +14,25 @@
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않는다. 오류·경고 코드는 `FormErrorCode`·`FormWarningCode`(값과 형)로 공개하며 오류 클래스는 가드 넷으로만 가른다(289라운드 D4, 32C-02). 노드 형·가드도 새 엔진의 계약을 이름으로 내보낸다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
 - 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ErrorVisible=4를 유지한다. `NodeState` 별칭은 내보내지 않는다(SURFACE-056·060, LANDING-157).
 - `__tests__/e2e`·`__tests__/scenarios`·`__tests__/migration`은 외부 소비자 자격으로 루트 `index.ts`를 가져오는 공개 API 시험 구획이다(D7). 나머지 제품·시험·fixture는 자기·조상 내부를 직접 가져오고 자기·조상 index를 거치지 않으며, 자손·혈통 밖 fractal은 관문 index로 소비하는 import 모델을 따른다.
-- `hooks`·`types`·`rolled`는 `src`의 자식 fractal이다. 루트 `index.ts`는 공개 훅을 `./hooks` 관문으로, 공개 형을 `./types`·`./rolled` 관문으로 재수출한다. `rolled`의 공개 이름 열여덟 개가 `types`의 기반 형과 같은 이름이라 한 관문에 함께 실을 수 없으므로 `rolled`는 `types`의 자식이 아니라 형제이다. `src`의 organ(`constants`·`helpers` 칸)은 자식 fractal을 가져오지 않는다(모델 B1). `constants`에는 index가 없어 소비자가 `constants/bitmask`·`constants/control`·`constants/style` 파일을 직접 가져온다.
+- `hooks`·`types`는 `src`의 자식 fractal이다. 루트 `index.ts`는 공개 훅을 `./hooks` 관문으로, 공개 형을 `./types` 관문으로, 공개 Form 조각 형을 `./components/Form` 관문으로 재수출한다. `types`는 내부 형을 본명으로 관심사별 칸(`types/schema/`·`types/field/`·`types/error/`)에 두고, 공개 `Roll` 형을 `types/rolled/` 칸에 `Rolled` 접두사로 둔다. 루트 `index.ts`는 `Rolled*` 형을 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 재수출한다. `src`의 organ(`constants`·`helpers` 칸)은 자식 fractal을 가져오지 않는다(모델 B1). `constants`에는 index가 없어 소비자가 `constants/bitmask`·`constants/control`·`constants/style` 파일을 직접 가져온다.
 
 ## API Contracts
 
+- 소유자 결정으로 루트 주소는 빈 문자열과 `#`이며 `/`와 `#/`는 빈 이름 자식입니다. fieldInputMap과 검증기 dataPath도 같은 뜻을 사용하고 빈 이름이 없으면 루트 오류로 대신 배정하지 않습니다.
+
 ### 경계 검증과 시험 도우미
 
-- `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 92개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증한다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽는다.
+- H 검증의 runtime bridge 직접 import는 소유 surface DETAIL의 단일 예외를 따른다(코디네이터 msg_29959ddbd70f). importModel은 그 importer/target만 별도 계수하고 다른 D 위반0을 유지한다.
+
+- `__tests__/pointerIsolation.test.ts`는 제품 소스의 경로 분할·조립(`+` 결합과 템플릿 리터럴 포함)·이스케이프·원문 연산자 비교·`/` 접두 검사와 비교·경로 구조 정규식을 검사하며 jsonPointer 소유 경계만 허용한다.
+
+- `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 97개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증한다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽는다.
 - `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미이다. 제품 트리나 패키지 공개 표면에 속하지 않는다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 상위 방향으로 열린 경로로 가져온다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져온다.
 - `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증한다.
 - `__tests__/Form.label.test.tsx`는 Form 관문이 조립한 `Form.Label`·`Form.Input` 정적 멤버로 label 규약을 검증한다. 관문의 조립 모양을 쓰는 시험이므로 Form 안이 아니라 부모 시험 구획에 둔다. 공개 진입점의 이주 형 검증은 D7 migration 구획에서 루트 index를 소비한다.
+- 다음 시험은 외부 소비자 구획(`__tests__/e2e`)에서 `vi.mock('@/schema-form/core')`로 core index의 바인딩 전용 이름 둘을 감싼다: `scheduleValidationSlot`을 손으로 푸는 대기열로 바꾸고 `startFieldNodeLoadValidation`의 호출 수를 센다. 로드 슬롯의 시점·토큰 폐기·엔진 진입 횟수는 공개 표면으로 관찰할 수 없고 감싸기는 제품 import 간선을 만들지 않는다. 패턴이 아니라 파일 목록이며 여기에 없는 e2e 시험은 같은 방식으로 core를 감쌀 수 없다.
+  - `__tests__/e2e/validation.load-slot.render.test.tsx`
+  - `__tests__/e2e/validation.load-slot-failures.render.test.tsx`
 
 ### 렌더 시험 하니스
 
@@ -35,13 +48,13 @@
 
 ### 작성 표면
 
-`types/types/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않는다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둔다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언한다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않는다.
+`types/schema/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않는다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둔다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언한다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않는다.
 
 공개 `JSONSchema`(코어 인터페이스 `AuthoredSchema`의 별칭)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언한다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류이다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않는다. 두 경우 모두 런타임이 청사진 오류를 던진다. `options`의 형은 아직 열려 있다.
 
 ### 스키마 옵션
 
-`types/types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
+`types/schema/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
 
 | 옵션                     | 적용 스키마                                        | 계약                                                                                                                                                                                                                                         |
 | ------------------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -95,7 +108,7 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 ### union-input-types — 읽기 전용 종류 튜플은 값 합집합을 보존한다
 
 - 실제 공개 `InferValueType`과 `FieldInputProps`를 사용한 시험에서 선언한 종류의 값은 허용하고 목록 밖 값은 타입 오류로 거부한다.
-- `InferJSONSchema`는 서로 다른 비-null 종류의 값 합집합을 하나의 type 튜플로 추론하며, 이에 대응하는 입력 노드는 `UnionNode`이다(LANDING-190). 같은 종류의 리터럴 합집합과 nullable 단일 종류는 기존 종류 노드를 유지한다.
+- `FieldInputProps`가 쓰는 내부 `InferFieldInputSchema`는 서로 다른 비-null 종류의 값 합집합을 하나의 type 튜플로 추론하며, 이에 대응하는 입력 노드는 `UnionNode`이다(LANDING-190). 같은 종류의 리터럴 합집합과 nullable 단일 종류는 기존 종류 노드를 유지한다.
 - 정규화는 튜플 원소와 원래 type 프로퍼티의 필수·선택 여부를 보존한다.
 
 ### public-value-inference — 형 없는 스키마의 공개 값 형
@@ -118,4 +131,4 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ## Last Updated
 
-계약 기준: LANDING-067·170·205·207·208, WRITE-083, VALUE-027·034; 정돈-2(2026-10-14).
+2026-10-28

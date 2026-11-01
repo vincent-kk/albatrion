@@ -1,0 +1,86 @@
+[
+  {
+    "id": "mount",
+    "productBase": "c2cc703be",
+    "testCommit": "c2cc703be",
+    "mutation": "remove dispatchMount validationStamp advance",
+    "passed": 0,
+    "failed": 1,
+    "filtered": 10,
+    "sha256": {
+      "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.binding-input.test.ts": "80297a01530bbd5f2037f7ac4797e4c40ef303fd91665aa251ba96368040e903"
+    },
+    "raw": "mount.json.gz"
+  },
+  {
+    "id": "reset-unit",
+    "productBase": "c2cc703be",
+    "testCommit": "c2cc703be",
+    "mutation": "remove dispatchResetForm validationStamp advance",
+    "passed": 0,
+    "failed": 1,
+    "filtered": 4,
+    "sha256": {
+      "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.onChange.test.ts": "59534875d9185199315175f53a359a254a2891a746384f4aef906223f59cab85"
+    },
+    "raw": "reset-unit.json.gz"
+  },
+  {
+    "id": "reset-render",
+    "productBase": "c2cc703be",
+    "testCommit": "c2cc703be",
+    "mutation": "remove dispatchResetForm validationStamp advance",
+    "passed": 1,
+    "failed": 1,
+    "filtered": 13,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "345567a30cf613501c72340839e46a9426f7ac7f6b33113542019bc1d091a73e"
+    },
+    "raw": "reset-render.json.gz"
+  },
+  {
+    "id": "reset-react18",
+    "productBase": "c2cc703be",
+    "testCommit": "c2cc703be",
+    "mutation": "remove dispatchResetForm validationStamp advance",
+    "passed": 1,
+    "failed": 1,
+    "filtered": 13,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "345567a30cf613501c72340839e46a9426f7ac7f6b33113542019bc1d091a73e"
+    },
+    "raw": "reset-react18.json.gz"
+  },
+  {
+    "id": "strength-render",
+    "productBase": "c5d963b2d",
+    "testCommit": "c2cc703be",
+    "mutation": "strengthened checks against original IR-8 stage product",
+    "passed": 1,
+    "failed": 5,
+    "filtered": 32,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "345567a30cf613501c72340839e46a9426f7ac7f6b33113542019bc1d091a73e",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "fe8c5ee98c370913c23955ed166d1e4a71ab4403c309d51b5823b157d107f85d",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-owed.render.test.tsx": "bccf6e7cbd21a61269c5120ad76daa56503efd97bf2f6249aff44ab86855900f",
+      "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "36c0f8b3db307fbd7ee1d794fa49f7092cc354917a98050538279d801fcf14fc"
+    },
+    "raw": "strength-render.json.gz"
+  },
+  {
+    "id": "strength-react18",
+    "productBase": "c5d963b2d",
+    "testCommit": "c2cc703be",
+    "mutation": "strengthened checks against original IR-8 stage product",
+    "passed": 1,
+    "failed": 5,
+    "filtered": 32,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "345567a30cf613501c72340839e46a9426f7ac7f6b33113542019bc1d091a73e",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "fe8c5ee98c370913c23955ed166d1e4a71ab4403c309d51b5823b157d107f85d",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-owed.render.test.tsx": "bccf6e7cbd21a61269c5120ad76daa56503efd97bf2f6249aff44ab86855900f",
+      "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "36c0f8b3db307fbd7ee1d794fa49f7092cc354917a98050538279d801fcf14fc"
+    },
+    "raw": "strength-react18.json.gz"
+  }
+]

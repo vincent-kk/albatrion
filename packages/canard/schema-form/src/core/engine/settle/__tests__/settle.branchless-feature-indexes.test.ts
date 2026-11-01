@@ -7,7 +7,7 @@ import {
 } from '@/schema-form/core/engine/blueprint';
 
 import { getDeriveRuleTable } from '../../derive';
-import { getDependencyIndex } from '../utils/write/getDependencyIndex';
+import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 
 // filid:contract settle-branchless-feature-indexes
 describe('branchless feature indexes and empty rule tables', () => {

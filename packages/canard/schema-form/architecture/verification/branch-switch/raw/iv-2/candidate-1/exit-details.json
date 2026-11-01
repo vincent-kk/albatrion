@@ -1,0 +1,444 @@
+{
+  "row": "switch-oneOf-80",
+  "lanes": {
+    "A": {
+      "finalizeExits": {
+        "selfUs": {
+          "median": 5.228500000384884,
+          "min": 5.001000000675049,
+          "max": 5.292000000054031,
+          "processMedians": [
+            5.001000000675049,
+            5.292000000054031,
+            5.228500000384884
+          ]
+        },
+        "calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "processMedians": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "finalizePendingExitLoop": {
+        "selfUs": {
+          "median": 4.374999999527063,
+          "min": 4.333499999347623,
+          "max": 4.436500000792876,
+          "processMedians": [
+            4.436500000792876,
+            4.374999999527063,
+            4.333499999347623
+          ]
+        },
+        "calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "processMedians": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "captureDetachedFieldNodeReads": {
+        "selfUs": {
+          "median": 5.08399999989706,
+          "min": 5.041499999833832,
+          "max": 5.229500000041298,
+          "processMedians": [
+            5.229500000041298,
+            5.08399999989706,
+            5.041499999833832
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "visitFieldNodes": {
+        "selfUs": {
+          "median": 4.3735000001561275,
+          "min": 4.2709999997896375,
+          "max": 4.37499999998181,
+          "processMedians": [
+            4.37499999998181,
+            4.2709999997896375,
+            4.3735000001561275
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "retainExitedSlot": {
+        "selfUs": {
+          "median": 7.167000000890766,
+          "min": 6.938000000445754,
+          "max": 7.417500000201471,
+          "processMedians": [
+            7.417500000201471,
+            7.167000000890766,
+            6.938000000445754
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "createExitSlotOverlay": {
+        "selfUs": {
+          "median": 5.375000000640284,
+          "min": 5.248999999594162,
+          "max": 5.377000001089982,
+          "processMedians": [
+            5.375000000640284,
+            5.377000001089982,
+            5.248999999594162
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "readSlotExitPolicy": {
+        "selfUs": {
+          "median": 3.771499999857042,
+          "min": 3.7505000002511224,
+          "max": 3.830999999991036,
+          "processMedians": [
+            3.7505000002511224,
+            3.771499999857042,
+            3.830999999991036
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "finalizeRetainLoop": {
+        "selfUs": {
+          "median": 2.00000000018008,
+          "min": 1.999999999497959,
+          "max": 2.0009999998364947,
+          "processMedians": [
+            2.00000000018008,
+            2.0009999998364947,
+            1.999999999497959
+          ]
+        },
+        "calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "processMedians": [
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    "B": {
+      "finalizeExits": {
+        "selfUs": {
+          "median": 5.459999999857246,
+          "min": 5.334499999435138,
+          "max": 5.479000000150336,
+          "processMedians": [
+            5.334499999435138,
+            5.459999999857246,
+            5.479000000150336
+          ]
+        },
+        "calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "processMedians": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "finalizePendingExitLoop": {
+        "selfUs": {
+          "median": 4.292500000019572,
+          "min": 4.250999999840133,
+          "max": 4.312000000027183,
+          "processMedians": [
+            4.292500000019572,
+            4.312000000027183,
+            4.250999999840133
+          ]
+        },
+        "calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "processMedians": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "captureDetachedFieldNodeReads": {
+        "selfUs": {
+          "median": 5.3129999998873245,
+          "min": 5.083500000182539,
+          "max": 5.374999999958163,
+          "processMedians": [
+            5.374999999958163,
+            5.3129999998873245,
+            5.083500000182539
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "visitFieldNodes": {
+        "selfUs": {
+          "median": 4.417499999590291,
+          "min": 4.206999999723848,
+          "max": 4.499999999325155,
+          "processMedians": [
+            4.417499999590291,
+            4.499999999325155,
+            4.206999999723848
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "retainExitedSlot": {
+        "selfUs": {
+          "median": 6.981499999028529,
+          "min": 6.895000000213258,
+          "max": 7.186999999703403,
+          "processMedians": [
+            6.981499999028529,
+            7.186999999703403,
+            6.895000000213258
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "createExitSlotOverlay": {
+        "selfUs": {
+          "median": 4.958500000157073,
+          "min": 4.812499999616193,
+          "max": 5.146999999169566,
+          "processMedians": [
+            4.958500000157073,
+            5.146999999169566,
+            4.812499999616193
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "readSlotExitPolicy": {
+        "selfUs": {
+          "median": 3.8334999992457597,
+          "min": 3.791999999748441,
+          "max": 4.000499999847307,
+          "processMedians": [
+            3.791999999748441,
+            4.000499999847307,
+            3.8334999992457597
+          ]
+        },
+        "calls": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "processMedians": [
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "finalizeRetainLoop": {
+        "selfUs": {
+          "median": 2.084000000195374,
+          "min": 2.0010000005186157,
+          "max": 2.2499999997762643,
+          "processMedians": [
+            2.084000000195374,
+            2.2499999997762643,
+            2.0010000005186157
+          ]
+        },
+        "calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "processMedians": [
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    }
+  },
+  "reductions": [
+    {
+      "name": "finalizeExits",
+      "A": 5.228500000384884,
+      "B": 5.459999999857246,
+      "widthUs": 0.29099999937898247,
+      "criterion": "decrease",
+      "passed": false,
+      "callsA": 1,
+      "callsB": 1
+    },
+    {
+      "name": "finalizePendingExitLoop",
+      "A": 4.374999999527063,
+      "B": 4.292500000019572,
+      "widthUs": 0.10300000144525256,
+      "criterion": "decrease",
+      "passed": true,
+      "callsA": 1,
+      "callsB": 1
+    },
+    {
+      "name": "captureDetachedFieldNodeReads",
+      "A": 5.08399999989706,
+      "B": 5.3129999998873245,
+      "widthUs": 0.18800000020746666,
+      "criterion": "decrease",
+      "passed": false,
+      "callsA": 3,
+      "callsB": 3
+    },
+    {
+      "name": "visitFieldNodes",
+      "A": 4.3735000001561275,
+      "B": 4.417499999590291,
+      "widthUs": 0.10400000019217259,
+      "criterion": "decrease",
+      "passed": false,
+      "callsA": 3,
+      "callsB": 3
+    },
+    {
+      "name": "retainExitedSlot",
+      "A": 7.167000000890766,
+      "B": 6.981499999028529,
+      "widthUs": 0.479499999755717,
+      "criterion": "decrease",
+      "passed": true,
+      "callsA": 3,
+      "callsB": 3
+    },
+    {
+      "name": "createExitSlotOverlay",
+      "A": 5.375000000640284,
+      "B": 4.958500000157073,
+      "widthUs": 0.12800000149582047,
+      "criterion": "decrease",
+      "passed": true,
+      "callsA": 3,
+      "callsB": 3
+    },
+    {
+      "name": "readSlotExitPolicy",
+      "A": 3.771499999857042,
+      "B": 3.8334999992457597,
+      "widthUs": 0.08049999973991362,
+      "criterion": "decrease",
+      "passed": false,
+      "callsA": 3,
+      "callsB": 3
+    },
+    {
+      "name": "finalizeRetainLoop",
+      "A": 2.00000000018008,
+      "B": 2.084000000195374,
+      "widthUs": 0.0010000003385357559,
+      "criterion": "decrease",
+      "passed": false,
+      "callsA": 1,
+      "callsB": 1
+    }
+  ],
+  "passed": false
+}

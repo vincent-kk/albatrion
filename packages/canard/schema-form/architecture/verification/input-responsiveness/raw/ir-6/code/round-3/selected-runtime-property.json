@@ -1,0 +1,14 @@
+{
+  "publicRoots": 97,
+  "rootsSelectingRuntime": 73,
+  "rootsWithoutRuntime": 24,
+  "selectedMembers": [
+    "diagnostics"
+  ],
+  "selectedDeclaration": "diagnostics: FieldNodeDiagnostics;",
+  "wholeRuntimeExposures": 0,
+  "changedInternalMemberExposures": 0,
+  "cadenceExposed": false,
+  "perRootPathsArtifact": "evaluated-public-declarations.json.gz",
+  "positiveControlArtifact": "declaration-controls.json"
+}

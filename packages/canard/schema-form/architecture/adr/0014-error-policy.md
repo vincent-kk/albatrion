@@ -172,7 +172,7 @@
 | `revision` | 원장 | 통지 원장. 커밋 때 일괄 갱신한다(F16) |
 | 커밋 번호 | 원장 | 검증 결과의 스탬프. 오래된 결과를 버린다(F28) |
 | `diagnostics` | 작업 | 마지막 로드 이후의 작업 기록(ERROR-130. 지속은 14라운드 답 O-2 가). `status`는 `'stable'` 또는 `'degraded'`이고 `cause`를 든다. `degraded` 동안 폼의 제출 경로가 거부한다(17라운드 소유자 답 R17-1 나). 루트에서 관측한다 |
-| 경고등(`typeMismatch`) | 계산 | 원본과 노드의 현재 spec(게이트가 켜진 동안의 유효 목록)만의 함수, 공개 형의 판별자 |
+| 경고등(`misfit`) | 계산 | 원본과 노드의 현재 spec(게이트가 켜진 동안의 유효 목록)만의 함수, 공개 형의 판별자 |
 
 **상태는 `raw`와 `extras` 둘뿐이다**(원리 P3(형상은 상태의 순수 함수다), VALUE-002). 나머지는 상태에서 계산되거나 작업의 기록이다(VALUE-002). "노드 트리가 곧 상태"는 이 둘을 노드가 소유한다는 뜻이다(VALUE-002). 폼은 `oneOf`·`anyOf`로 분기를 고르지 않으므로(원리 P1′(폼이 스키마에서 읽는 것은 노드 트리의 모양을 정하는 문법뿐)) 수동 분기 선택을 담을 칸이 없다(VALUE-002).
 
@@ -676,7 +676,7 @@ Form 속성 `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 �
 
 변환에러는 onError 로 전달하죠(ERROR-184).
 
-편집자 결정: `onError` 기록의 level은 `warning`이다(ERROR-186). 값을 보존하므로 폼의 약속은 지켜진다(ERROR-186). error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다(ERROR-186). `SCHEMA_FORM_WARNING.TYPE_MISMATCH`를 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)(ERROR-186, SURFACE-061). level은 `warning`이다(개발 모드 콘솔, 프로덕션은 핸들러가 있을 때만)(ERROR-186). 【추론】 `SCHEMA_FORM_WARNING.TYPE_MISMATCH` 기록은 `{ level: 'warning', code, path, expected: { schemaType, nullable, effective }, received, reason, candidates?, source }`이다(ERROR-186, EVENT-060, SURFACE-061). 【추론】 `expected.schemaType`은 `node.schemaType`이고, `expected.effective`는 그 커밋의 유효 목록이다(ERROR-186). 【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다(ERROR-186, EVENT-060). 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(ERROR-186, SURFACE-061).
+편집자 결정: `onError` 기록의 level은 `warning`이다(ERROR-186). 값을 보존하므로 폼의 약속은 지켜진다(ERROR-186). error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다(ERROR-186). `SCHEMA_FORM_WARNING.MISFIT`을 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)(ERROR-186, SURFACE-061). level은 `warning`이다(개발 모드 콘솔, 프로덕션은 핸들러가 있을 때만)(ERROR-186). 【추론】 `SCHEMA_FORM_WARNING.MISFIT` 기록은 `{ level: 'warning', code, path, expected: { schemaType, nullable, effective }, received, reason, candidates?, source }`이다(ERROR-186, EVENT-060, SURFACE-061). 【추론】 `expected.schemaType`은 `node.schemaType`이고, `expected.effective`는 그 커밋의 유효 목록이다(ERROR-186). 【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다(ERROR-186, EVENT-060). 게터 `misfit: boolean`, 경로 목록 `misfits: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.MISFIT`이다(ERROR-186, SURFACE-061).
 
 검증기가 있든 없든 보낸다(core의 parse가 찾는 것이라 검증 결과가 아니다)(ERROR-187). 제출은 검증기가 있으면 검증이 막고 없으면 막지 않는다(통보 3)(ERROR-187).
 
@@ -749,7 +749,7 @@ Form 속성 `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 �
 
 입력 컴포넌트가 래퍼를 거치지 않고 `FormTypeInputProps`의 `node`로 한 쓰기도 표식이 없으므로 이 옛 노드 참조에 들며, 재생성 reset 뒤 타이머나 언마운트 정리에서 하면 던진다(문서화, LANDING-121)(ERROR-164). 입력 컴포넌트의 늦은 쓰기는 `node`가 아니라 `onChange`로 한다는 것(재생성 reset 뒤 `node`로 한 늦은 쓰기는 `SchemaFormError`)(ERROR-164).
 
-【추론】 '(미정)' 행은 없앤다(ERROR-198). 【추론】 설계 항목이 정한 코드는 그 항목의 원장 번호와 함께 ERROR-164의 목록에 정식 행으로 더한다(ERROR-198). 【추론】 이름은 가칭이고 PR-4에서 확정한다(ERROR-164 머리 문단)(ERROR-198). 【추론】 코드를 두지 않기로 한 항목은 행 없이 그 항목에 '코드 없음'을 적는다(ERROR-198). 【추론】 (미정) 행의 넷 가운데 같은 `$id` 사본 루트의 중복 등록(PR-4)은 코드 없음이다(ERROR-198, ERROR-201). 【추론】 같은 가상 이름의 다른 `fields`(슬라이스 1)는 청사진 오류 (가칭) `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`다(ERROR-198, ERROR-192). 【추론】 비객체 V의 `Merge`와 되먹임 거부 표면(슬라이스 2)은 코드 없음이며, 되먹임은 기존 `FEEDBACK_LIMIT_EXCEEDED`가 드러내고, `Overwrite`로 온 `undefined`도 코드가 생기지 않는다(ERROR-198, ERROR-194). 【추론】 `controls.children` 대상이 형상에 없을 때(슬라이스 6)는 코드 없음이고, 청사진에 없는 이름만 청사진 오류 (가칭) `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`다(ERROR-198, ERROR-193). 【추론】 쓰기 쪽이 ERROR-164의 목록에 더하는 행은 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(무리 이동, ERROR-195), `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE`(ERROR-196), `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)다(ERROR-198, ERROR-164). 【추론】 청사진 쪽이 ERROR-164의 목록에 더하는 행은 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`·`SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`(ERROR-189, ERROR-190), `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`(ERROR-191), `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`(ERROR-192), `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`(ERROR-193), `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED`(ERROR-200)다(ERROR-198, ERROR-164). 【추론】 렌더 계층의 빈 `ChildNodeComponents` 경고는 `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`(ERROR-202)이다(ERROR-198, ERROR-164, ERROR-185, ERROR-202). 【추론】 S1 변환 실패의 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(ERROR-186)는 이미 있다(ERROR-198, SURFACE-061). 【추론】 안건 `reviews/round-18-agenda.md:108`의 `if` 공허한 참 경고(Q10)는 두지 않으며 경고 코드도 없다(ERROR-198). 【추론】 `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 목록에서 빠진다(ERROR-198, CONTROLS-079). 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(ERROR-198, ERROR-164, SURFACE-061).
+【추론】 '(미정)' 행은 없앤다(ERROR-198). 【추론】 설계 항목이 정한 코드는 그 항목의 원장 번호와 함께 ERROR-164의 목록에 정식 행으로 더한다(ERROR-198). 【추론】 이름은 가칭이고 PR-4에서 확정한다(ERROR-164 머리 문단)(ERROR-198). 【추론】 코드를 두지 않기로 한 항목은 행 없이 그 항목에 '코드 없음'을 적는다(ERROR-198). 【추론】 (미정) 행의 넷 가운데 같은 `$id` 사본 루트의 중복 등록(PR-4)은 코드 없음이다(ERROR-198, ERROR-201). 【추론】 같은 가상 이름의 다른 `fields`(슬라이스 1)는 청사진 오류 (가칭) `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`다(ERROR-198, ERROR-192). 【추론】 비객체 V의 `Merge`와 되먹임 거부 표면(슬라이스 2)은 코드 없음이며, 되먹임은 기존 `FEEDBACK_LIMIT_EXCEEDED`가 드러내고, `Overwrite`로 온 `undefined`도 코드가 생기지 않는다(ERROR-198, ERROR-194). 【추론】 `controls.children` 대상이 형상에 없을 때(슬라이스 6)는 코드 없음이고, 청사진에 없는 이름만 청사진 오류 (가칭) `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`다(ERROR-198, ERROR-193). 【추론】 쓰기 쪽이 ERROR-164의 목록에 더하는 행은 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(무리 이동, ERROR-195), `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE`(ERROR-196), `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY`(ERROR-197)다(ERROR-198, ERROR-164). 【추론】 청사진 쪽이 ERROR-164의 목록에 더하는 행은 `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`·`SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`(ERROR-189, ERROR-190), `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`(ERROR-191), `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`(ERROR-192), `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`(ERROR-193), `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED`(ERROR-200)다(ERROR-198, ERROR-164). 【추론】 렌더 계층의 빈 `ChildNodeComponents` 경고는 `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`(ERROR-202)이다(ERROR-198, ERROR-164, ERROR-185, ERROR-202). 【추론】 S1 변환 실패의 `SCHEMA_FORM_WARNING.MISFIT`(ERROR-186)는 이미 있다(ERROR-198, SURFACE-061). 【추론】 안건 `reviews/round-18-agenda.md:108`의 `if` 공허한 참 경고(Q10)는 두지 않으며 경고 코드도 없다(ERROR-198). 【추론】 `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 목록에서 빠진다(ERROR-198, CONTROLS-079). 게터 `misfit: boolean`, 경로 목록 `misfits: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.MISFIT`(ERROR-198, ERROR-164, SURFACE-061).
 
 ### 05-validation-and-errors.md §2.25 이주와 구현 순서
 
@@ -1038,3 +1038,63 @@ StrictMode의 이중 호출은 가드 캐시가 작성 루트 객체를 키로 �
 - `design/07-landing-and-tests.md` §1.16 (LANDING-061)
 - `design/07-landing-and-tests.md` §1.19 (LANDING-064)
 - `design/07-landing-and-tests.md` §1.22 (LANDING-067)
+
+
+## IR-6 검증 시점 보충 — 2026-10-31
+
+현행 D1은 쓰기의 다음 프레임 선행·연속 이월·quiet 후행과 마지막 실제 실행 기준100ms cap을 사용하고 동기 정착·사건·onChange를 유지합니다(VALIDATE-052).
+화면 슬롯은 프레임 API 부재·숨김 문서에서 매크로태스크로 fallback하며100ms stall 타이머와 단일 실행을 경주하고 common-utils scheduler의0.16.1 선례를 유지합니다(VALIDATE-052).
+오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다(VALIDATE-052).
+OnChange만 이력을 기록하며 새 표시와 중간에 숨겨진 표시는 판정 정착·조용한 drop·수락한 explicit root 판정·폐기의 release를 기다리고 조용한 변경은 약2프레임 뒤 표시합니다(VALIDATE-052).
+기록은 write sequence당 node 한 번이며 모든 append가 generation을 전진시키고 예약 cutoff 이하만 해제하여 뒤 기록이 앞 기록의 수명을 늘리지 않습니다(VALIDATE-052).
+정책은 root별 layout effect에서만 commit하고 렌더 중에는 엔진을 바꾸지 않으며 표시 hook은 candidate만 memoized release-version 구독과 같은 client/server getter를 사용합니다(VALIDATE-052).
+renderer/input은 enabled를 검사하고 child-errors는 hidden 자식도 집계하며 inactive 값 제거와 off-branch 오류 제외를 유지합니다(VALIDATE-052).
+현재 stamp의 commit-only 폐기는 targets를 보존해 최신 commit을 cadence로 재요청하고 explicit 반환·submit 값은 호출 시점 snapshot 계약을 유지합니다(VALIDATE-052).
+Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
+숨긴 reset 재생성은 원래 load별 경고 범위로 옛 기록 뒤 새 reset 기록을 chain 끝에 전달하고 handler 실패는 각각 격리하며 다른 hidden 사슬·같은-schema reset은 reconnect까지 buffer합니다(VALIDATE-052).
+한계는 hook disabled의 즉시 reveal·drop 뒤 state/enabled render의 hold 생략·commit-only stream hold·release와 paint 사이 쓰기의1~2프레임 이전 판정·한 batch 안 미표시 조합의 이력 포함이며 G는 구현하지 않습니다(VALIDATE-052).
+
+마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
+
+if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
+
+
+## IR-7 숨김 전달 보충 — 2026-11-01
+
+위 IR-6의 숨김 buffer·reconnect·owed·unmount 배달 제한은 이 보충이 대체하며 원문은 기록으로 유지합니다 (VALIDATE-052). 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다 (VALIDATE-052). 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다 (VALIDATE-052). reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다 (VALIDATE-052). Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다 (VALIDATE-052). 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다 (VALIDATE-052). (ERROR-019, REACT-007, VALIDATE-052) (VALIDATE-052).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다 (VALIDATE-052). 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다 (VALIDATE-052). mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다 (VALIDATE-052). unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다 (VALIDATE-052).
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다 (VALIDATE-052). onError는 insertion effect로 최신입니다 (VALIDATE-052). 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다 (VALIDATE-052).
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다 (VALIDATE-052). prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다 (VALIDATE-052).
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다 (VALIDATE-052). mount-time 기록이 build-time 기록보다 먼저 도착합니다 (VALIDATE-052).
+
+근거는 [IR-7 계획](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01)의 소유자 원문39–41입니다 (VALIDATE-052). reset 기록별 handler 실패는 reportErrorToHost로 격리하고 이후 기록과 binding 교체를 계속합니다 (VALIDATE-052). 구독은 첫 commit 또는 reset에서 한 번만 설치하고 effect cleanup은 검증 루트 참조만 해제합니다 (VALIDATE-052).
+
+
+## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
+
+【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다 (VALIDATE-052). VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다 (ERROR-164). ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다 (VALIDATE-046). WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다 (TEST-021).
+
+
+## IR-9 — onError origin (2026-11-01)
+
+ERROR-019: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+ERROR-017·019·021: 필수 origin은 발생을 만든 연산이며 load·write·validate·submit·render로 닫힙니다.
+
+ERROR-019: load는 트리 구성·mount·reset·rebuild·검증기 변경과 그 사슬입니다. ERROR-019: write는 공개 쓰기·배열·상태·batch·맥락·finishInput·외부 오류와 통지 리스너입니다. ERROR-019: validate는 자동·명시적 전체 컴파일·실행·판정 전달과 그 리스너입니다. ERROR-019: submit은 SubmitWhileDegraded와 네이티브 capture에서 처음 드러난 실패이며 dispatchValidate가 보고한 실패는 validate를 유지합니다. ERROR-164·202: render는 RenderFailed 경계와 ChildNodeComponentsOnTerminal 같은 렌더 기록이며 warnDevelopmentIssue 개발 콘솔 경고는 기록이 아닙니다.
+
+ERROR-019·041: 최외곽 사슬의 origin을 중첩·adoption에서 보존하므로 write 리스너·onChange의 reset은 write이고 reset 안의 쓰기는 load입니다. ERROR-019: 첫 commit의 외부 errors 적용은 load, prop 변경은 write이며 검증 결과 리스너 실패는 validate, 로드 뒤 독립 state 리스너 실패는 write입니다.
+
+ERROR-005·023: 오류 묶음은 throw 값으로만 남기고 개별 기록에는 싣지 않으며 각 수집 호출의 첫 병합 오류·details를 보존합니다. ERROR-019·021·023: 전달·중복·호스트·호출자·console·재진입 규칙은 유지합니다.
+
+ERROR-017: `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+ERROR-139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 함께 따릅니다.
+
+
+## IR-9 round b — origin corrections
+
+ERROR-041: 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write); 코덱스 교차 검토가 확인한 개발·운영 분기를 없애며 앞선 mount의 load 고정 설명을 대체합니다.
+
+ERROR-017: 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.

@@ -1,12 +1,17 @@
+export { scheduleValidationSlot } from './validationScheduling';
+export { engineModes } from './utils/cache/engineModes';
 export {
   adoptFieldNodeChain,
   createFormErrorRecord,
+  forEachFailureLeaf,
   dispatchBatch,
   dispatchClear,
   dispatchClearExternalErrors,
   dispatchClearSubtreeState,
   dispatchContextChange,
   dispatchFinishInput,
+  dispatchInsert,
+  dispatchLoadValidation,
   dispatchMount,
   dispatchPop,
   dispatchPush,
@@ -20,10 +25,12 @@ export {
   dispatchSetValue,
   dispatchUpdate,
   dispatchValidate,
+  dispatchVisitSubtree,
   dispatchWriteInput,
   readFieldNodeInteractionReset,
   readFieldNodeRevision,
   subscribeFieldNode,
+  onInactiveFieldNode,
 } from './write';
 export {
   blueprint,
@@ -37,6 +44,7 @@ export {
   readValidationEntry,
   retainValidationRoot,
   releaseValidationRoot,
+  readFieldNodeRevealBaseline,
 } from './validation';
 export {
   EMPTY_REVISION_LEDGER,
@@ -46,8 +54,8 @@ export {
 export {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeTypeMismatch,
-  readFieldNodeTypeMismatches,
+  readFieldNodeMisfit,
+  readFieldNodeMisfits,
   readFieldNodeWatchValues,
   loadFieldNodeAtMount,
   resetFieldNodeForm,
@@ -78,4 +86,13 @@ export type { Behavior, FieldNodeRecord, FieldNodeRuntime } from './record';
 export type { NodeStateFlags } from './types/state';
 export type { NodeStrategy } from './types/strategy';
 export type { AuthoredSchema } from './types/jsonSchema';
-export type { SchemaControls } from './types/controls';
+export type {
+  SchemaControls,
+  InactiveValue,
+  InactiveValueResolver,
+  InactiveValueContext,
+} from './types/controls';
+export { readFieldNodeRevealPolicy } from './validation';
+export { readFieldNodeRevealVersion } from './validation';
+export { subscribeFieldNodeRevealReleased } from './validation';
+export { commitFieldNodeRevealPolicy } from './validation';

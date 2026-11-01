@@ -16,7 +16,8 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import type { ValidationIssue, Validator } from '../type';
+import type { ValidationIssue } from '../types/issue';
+import type { Validator } from '../types/validator';
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 import { requestFieldNodeValidation } from '../utils/run/requestFieldNodeValidation';
 
@@ -49,8 +50,8 @@ const recordErrorBits = (node: DispatchTestNode): number[] => {
   return received;
 };
 
-/** Let the coalesced validation microtask and its wave run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+/** Let the frame-backed validation slot and its wave run (a macrotask in Node). */
+const settle = () => new Promise((resolve) => setImmediate(resolve));
 
 /** Object form with one string field, the target of every issue below. */
 const nameSchema = {

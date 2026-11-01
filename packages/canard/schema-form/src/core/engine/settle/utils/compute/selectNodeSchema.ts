@@ -1,15 +1,27 @@
 import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
+
+import {
+  appendSegment,
+  isDescendantPath,
+} from '@/schema-form/helpers/jsonPointer';
+
+import {
   FormErrorCode,
   FormWarningCode,
   SchemaFormError,
 } from '../../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { captureFieldNodeChange } from '../../../record';
+import { captureFieldNodeChange, indexFieldNodeWarning } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import { indexFieldNodeWarning } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { evaluateGate } from '../gates/evaluateGate';
+import { getGateRegistry } from '../gates/getGateRegistry';
+import { selectRootGateDeclarations } from './childSelection/gateSelection/selectRootGateDeclarations';
+import { readOneOfBranch } from './utils/readOneOfBranch';
 
 /**
  * Recompute one node's active overlays and effective schema in a host round.
@@ -21,24 +33,39 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
-  const active = node.blueprintNode.declarations.filter((declaration) =>
-    declaration.gates.every((gate) => evaluateGate(gate, context, node)),
-  );
+  const rootSelection = selectRootGateDeclarations(node, context);
+  const active =
+    rootSelection ??
+    filterArray(node.blueprintNode.declarations, (declaration) => {
+      for (const gate of declaration.gates)
+        if (!evaluateGate(gate, context, node)) return false;
+      return true;
+    });
+
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
     for (const declaration of active) {
-      const match = /^(.*\/oneOf)\/(\d+)(?:\/|$)/.exec(declaration.schemaPath);
-      if (
-        !match ||
-        !declaration.gates.some((gate) =>
-          gate.schemaPath.startsWith(`${match[1]}/${match[2]}/`),
-        )
-      )
-        continue;
-      const branch = Number(match[2]);
-      const selected = branches.get(match[1]) ?? [];
-      if (!selected.includes(branch)) selected.push(branch);
-      branches.set(match[1], selected);
+      const crossed = readOneOfBranch(
+        declaration.schemaPath,
+        getGateRegistry(node.runtime).pathSegments(declaration.schemaPath),
+      );
+      if (!crossed) continue;
+      let crossesBranch = false;
+      for (const gate of declaration.gates)
+        if (
+          isDescendantPath(
+            gate.schemaPath,
+            appendSegment(crossed.oneOfPath, crossed.position),
+          )
+        ) {
+          crossesBranch = true;
+          break;
+        }
+      if (!crossesBranch) continue;
+      const branch = Number(crossed.position);
+      const selected = branches.get(crossed.oneOfPath) ?? [];
+      if (selected.indexOf(branch) === -1) selected.push(branch);
+      branches.set(crossed.oneOfPath, selected);
     }
     for (const [schemaPath, selected] of branches) {
       if (selected.length < 2) continue;
@@ -51,7 +78,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
         code,
         path: node.path,
         schemaPath,
-        message: `Multiple gated oneOf branches are active at ${schemaPath}`,
+        message: 'Multiple gated oneOf branches are active at ' + schemaPath,
         details: { branches: selected },
       } as const;
       indexFieldNodeWarning(node.runtime, key, node.path, record);
@@ -60,11 +87,11 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   }
   context.selectedDeclarationIds.set(
     node,
-    active.map((declaration) => declaration.id),
+    mapArray(active, (declaration) => declaration.id),
   );
   const effective = mergeEffectiveSchema(
     node.blueprintNode,
-    active.map((declaration) => declaration.id),
+    mapArray(active, (declaration) => declaration.id),
     { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
   );
   if (effective.typeConflict) {
@@ -78,12 +105,19 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
       'sharedConflict',
     );
   }
-  if (node.parent === null)
-    node.active = captureFieldNodeChange(
-      node,
-      'active',
-      active.some((declaration) => declaration.role === 'declaration'),
-    );
+
+  if (node.parent === null) {
+    let hasActiveDeclaration = false;
+    for (let index = 0, count = active.length; index < count; index++) {
+      const declaration = active[index];
+
+      if (declaration.role === 'declaration') {
+        hasActiveDeclaration = true;
+        break;
+      }
+    }
+    node.active = captureFieldNodeChange(node, 'active', hasActiveDeclaration);
+  }
   if (node.schema === effective) return false;
   node.schema = captureFieldNodeChange(node, 'schema', effective);
   context.changedNodes.add(node);

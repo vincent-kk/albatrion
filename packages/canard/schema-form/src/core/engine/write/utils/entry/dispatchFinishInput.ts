@@ -4,6 +4,7 @@ import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { readBatchValue } from '../chain/readBatchValue';
 
 /**
@@ -26,12 +27,13 @@ export const dispatchFinishInput = <Self extends FieldNodeRecord<Self>>(
         runtime.disableAutomaticWrites)
     )
       return;
-    const input: Self = runtime.batchDepth
+    const marking = isBatchMarking(node);
+    const input: Self = marking
       ? Object.create(node, { raw: { value: readBatchValue(node) } })
       : node;
     const value = node.behavior.finishInput(input);
     if (value === undefined || value === input.raw) return;
-    if (runtime.batchDepth)
+    if (marking)
       (runtime.batchWrites ??= []).push({
         node,
         value,

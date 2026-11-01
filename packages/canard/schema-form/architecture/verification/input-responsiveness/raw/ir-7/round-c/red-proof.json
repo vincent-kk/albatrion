@@ -1,0 +1,26 @@
+{
+  "testCommit": "3f4f6beff",
+  "testFile": "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+  "testSha256": "320c5e1f0b88a543a9d91d881b67236d64a73f73a1967ba88c708165f977abf2",
+  "redBase": "000f5685e",
+  "stageBase": "7428d5db8",
+  "stageSurface": {
+    "onError": "ValidatorCompileFailed",
+    "surface": "thrown",
+    "calls": 1,
+    "host": [
+      "%o\n\n%s\n\n%s\n",
+      "ErrorBoundary caught an error:"
+    ],
+    "extraHostErrors": 0
+  },
+  "red": {
+    "passed": 5,
+    "failed": 1,
+    "failure": "RenderFailed/sink instead of ValidatorCompileFailed/thrown"
+  },
+  "stage": {
+    "passed": 1,
+    "filtered": 5
+  }
+}

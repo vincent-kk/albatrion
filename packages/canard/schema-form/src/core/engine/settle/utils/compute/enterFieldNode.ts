@@ -1,12 +1,12 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { restoreLatentState } from '../latent/restoreLatentState';
-import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
-import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
-import { markWrite } from '../write/markWrite';
+import type { SettlementContext } from '../../types/settlement';
+import { getChildDistribution } from '../input/getChildDistribution';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { markWrite } from '../input/markWrite';
+import { replayMovedSource } from '../slots/replayMovedSource';
 
 /**
- * Give this settlement's distributed key priority over an entering node's latent.
+ * Prefer caller input while structural replay preserves an entering candidate's source.
  * @param host - Live parent that may have received a current write
  * @param child - Occurrence newly entering the shape
  * @param name - Child name in the parent's declaration
@@ -20,15 +20,7 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
   name: string,
   context: SettlementContext<Self>,
 ): void => {
-  const distribution = isWithinReplacePaths(context, child.path)
-    ? context.distributedInputs.get(host)
-    : undefined;
-  const latent = context.root.runtime.latentRaw;
-  const key =
-    latent.size > 0
-      ? JSON.stringify([child.path, child.blueprintNode.kind])
-      : undefined;
-  const own = key === undefined ? undefined : latent.get(key);
+  const distribution = getChildDistribution(host, name, context, child.path);
   const write =
     distribution &&
     hasDistributedChildInput(
@@ -36,9 +28,13 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
       name,
       host.behavior.type === 'array',
     );
-  if (write || distribution?.whole) {
-    if (write && !distribution.whole && key !== undefined && latent.has(key))
-      restoreLatentState(child, own, context);
+  if (distribution?.preserveLatent)
+    replayMovedSource(
+      child,
+      write ? Reflect.get(distribution.input, name) : undefined,
+      context,
+    );
+  else if (write || distribution?.whole) {
     const value = write ? Reflect.get(distribution.input, name) : undefined;
     if (distribution.automatic) {
       context.automatic = true;
@@ -47,5 +43,10 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
     }
     markWrite(child, value, context);
     if (distribution.automatic) context.automatic = false;
-  } else restoreLatentState(child, own, context);
+  } else if (child.behavior.strategy === 'terminal')
+    markWrite(child, undefined, context);
+  else {
+    context.dirtyPaths.add(child.path);
+    context.shapeDirtyPaths.add(child.path);
+  }
 };

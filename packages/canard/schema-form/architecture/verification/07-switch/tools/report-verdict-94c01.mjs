@@ -10,7 +10,7 @@ const directory = path.dirname(fileURLToPath(import.meta.url));
 const output = path.resolve(directory, '..');
 const repo = path.resolve(output, '../../../../../..');
 const relativeOutput = path.relative(repo, output);
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const git = args => execFileSync('git', args, { cwd: repo, encoding: 'utf8', maxBuffer: 10_000_000 });
 const head = git(['rev-parse', 'HEAD']).trim();
 assert.equal(head, '9383abcdaf22c7dd19dd6d6ddb7e66b4a9616dd4');
@@ -292,9 +292,9 @@ function blockedMarkdown() {
     '지시된 STOP 분기를 따랐으므로 무계측 종단 도구·빈 호출 보정·새 엔진의 종단≥동기 median 검증·구 엔진의 비동기 몫 포함 검증은 실행하지 않았습니다. Promise 큐 배출은 위 콜백을 누락하고 setImmediate sentinel은 엔진의 macrotask를 포함할 수 있어 타이머 대기 제외라는 조건을 증명하지 못합니다. 스케줄링 검사 도구 자체는 합성 microtask→Promise→timer→microtask 체인을 감지해 SCHEDULER_PROBE_OK를 출력했습니다.', '',
     '새 공식 코어 그룹 수는 **미판정(null)**입니다. React production Profiler 기존 표본은 재사용하며 94C-02 적용 후 branchless 22/24, 식 전용 2/2입니다. Task 1의 잠정 코어는 branchless 8/24·식 전용 0/2입니다. 분기 행은 기존 91라운드 판단을 유지하고, 새로운 종단 비로 통과를 선언하지 않습니다. G26은 미통과입니다.', '',
     '## 재현과 산출물', '', '```sh',
-    '/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs --self-check',
+    '{node-home}/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs --self-check',
     '# 아래 명령은 한 픽스처를 자연 종료한 뒤 native apply_patch에 적용할 JSON patches를 출력합니다.',
-    '/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs sample-0',
+    '{node-home}/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs sample-0',
     'node packages/canard/schema-form/architecture/verification/07-switch/tools/report-verdict-94c01.mjs --check', '```', '',
     `18개 최종 검사 프로세스·36개 JSON, 72작업×101표본입니다. 측정 파일은 시간 숫자만 포함하고 최대 ${report.verification.maxTimingBytes}바이트입니다. primitive 호출 수·코드 스택·분류별 CPU·환경·해시는 summary JSON에만 있습니다. 전달 형식을 고치기 위해 최종 검사 전에 sample-0을 두 번 더 실행했고 첫 출력은 저장하지 않았으며 두 번째 파일은 최종 검사로 대체했습니다. 최종 측정에는 변경된 같은 도구 해시를 가진 18종만 사용했습니다. 제품 src·git 상태를 쓰지 않았으며 자식 esbuild는 stdin EOF 뒤 code 0으로 종료했습니다.`, '');
   return lines.join('\n');

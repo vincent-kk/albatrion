@@ -1,4 +1,6 @@
-import type { BlueprintSchema } from '../../type';
+import type { Dictionary } from '@aileron/declare';
+
+import type { BlueprintSchema } from '../../types/schema';
 
 /**
  * Read shape syntax from an object schema without interpreting boolean constraints.
@@ -7,6 +9,6 @@ import type { BlueprintSchema } from '../../type';
  */
 export const readSchemaObject = (
   schema: BlueprintSchema,
-): Readonly<Record<string, any>> & {
-  properties?: Readonly<Record<string, BlueprintSchema>>;
+): Readonly<Dictionary> & {
+  properties?: Readonly<Dictionary<BlueprintSchema>>;
 } => (typeof schema === 'boolean' ? {} : schema);

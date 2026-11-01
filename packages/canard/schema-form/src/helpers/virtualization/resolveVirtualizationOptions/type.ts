@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
@@ -97,5 +97,5 @@ export interface ResolvedVirtualizationOptions {
   rootMargin: VirtualizationRootMargin;
   backfill: VirtualizationBackfill;
   estimateHeight: number | Fn<[node: FieldNode], number>;
-  Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
+  Placeholder: Nullable<ComponentType<VirtualizationPlaceholderProps>>;
 }

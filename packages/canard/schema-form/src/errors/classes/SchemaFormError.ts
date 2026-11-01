@@ -1,9 +1,11 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../constants/FormErrorGroup';
+import { getCodeSpecific } from '../utils/getCodeSpecific';
 import type { SchemaFormErrorCode } from '../type';
 
 /** Group every SchemaFormError code carries; the code value repeats it before the bare name. */
-const GROUP = 'SCHEMA_FORM_ERROR';
+const GROUP = FormErrorGroup.SchemaForm;
 
 /**
  * Error class for schema form construction errors.
@@ -25,8 +27,8 @@ export class SchemaFormError extends BaseError {
     message: string,
     details: ErrorDetails = {},
   ) {
-    super(GROUP, code.slice(GROUP.length + 1), message, details);
-    this.name = 'SchemaFormError';
+    super(GROUP, getCodeSpecific(code), message, details);
+    this.name = GROUP;
   }
 }
 

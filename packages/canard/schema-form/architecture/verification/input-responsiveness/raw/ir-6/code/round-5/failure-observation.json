@@ -1,0 +1,300 @@
+{
+  "reviewBaseline": "07c4d5d9333dba196e791266badcae127fcd8a25",
+  "note": "Main Y8 defect red runs restored all 52 reviewed executable source hashes. Final fixture changes and controls are distinguished in ir-6-results.md; unavailable cleanup red is a candidate-only check, not a reviewed-baseline claim.",
+  "observations": [
+    {
+      "artifact": "ir6-r5-unavailable-red-unit.json.gz",
+      "success": false,
+      "passed": 0,
+      "failed": 1,
+      "cases": [
+        {
+          "name": "IR-6 Y2 records original state once and drops standalone baselines after a frame and task",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 ignores identical touched patches and never clears touched on a repeat blur",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 mode 0 records no reveal baseline",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 mode 2 records no reveal baseline",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 a later record after the frame callback postpones the whole drop",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 clearing subtree state captures the prior flags before its direct empty write",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 capture records enabled before a controls change without scheduling in record",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 settle drops baselines before notifying its holding listeners",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 disposal drops standalone baselines and invalidates an already queued drop",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 a pending drop clears its scheduling flag and a later standalone record schedules again",
+          "status": "skipped"
+        },
+        {
+          "name": "IR-6 Y2 validation becoming unavailable drops standalone baselines without a pending transition",
+          "status": "failed"
+        }
+      ],
+      "scope": "candidate-only missing cleanup"
+    },
+    {
+      "artifact": "ir6-r5-y8-baseline-final-red-unit.json.gz",
+      "success": false,
+      "passed": 4,
+      "failed": 6,
+      "cases": [
+        {
+          "name": "IR-6 Y2 records original state once and drops standalone baselines after a frame and task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 ignores identical touched patches and never clears touched on a repeat blur",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 mode 0 records no reveal baseline",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 mode 2 records no reveal baseline",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 a later record after the frame callback postpones the whole drop",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 clearing subtree state captures the prior flags before its direct empty write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 capture records enabled before a controls change without scheduling in record",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 settle drops baselines before notifying its holding listeners",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 disposal drops standalone baselines and invalidates an already queued drop",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 a pending drop clears its scheduling flag and a later standalone record schedules again",
+          "status": "failed"
+        }
+      ],
+      "scope": "amendment8 exact reviewed product replay"
+    },
+    {
+      "artifact": "ir6-r5-y8-red-react18.json.gz",
+      "success": false,
+      "passed": 4,
+      "failed": 8,
+      "cases": [
+        {
+          "name": "IR-6 R-a a context commit in an async gap keeps display held until the newest verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a an async mount discarded by context still obtains an OnChange verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a standalone ErrorVisible reveal followed by a same-task value write holds the old verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 handle showError followed by a same-task value write holds through its policy baseline",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a state reveal in another task before the same paint still holds a subsequent write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a policy reveal in another task before the same paint still holds a subsequent write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a painted state reveal keeps its eligible error through the next value verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y1 a painted policy reveal keeps its eligible error through the next value verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y1 limit iv pins a reveal recorded inside rAF before the following drop task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y3 the parent own entry cannot reveal a child aggregate until its current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y1 a second React display uses an already eligible baseline during pending",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 R-f/R-g a hidden replacement delivers original then reset warnings with per-load dedup",
+          "status": "failed"
+        }
+      ],
+      "scope": "amendment8 exact reviewed product replay"
+    },
+    {
+      "artifact": "ir6-r5-y8-red-render.json.gz",
+      "success": false,
+      "passed": 4,
+      "failed": 6,
+      "cases": [
+        {
+          "name": "IR-6 Y1 a standalone ErrorVisible reveal followed by a same-task value write holds the old verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 handle showError followed by a same-task value write holds through its policy baseline",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a state reveal in another task before the same paint still holds a subsequent write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a policy reveal in another task before the same paint still holds a subsequent write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y1 a painted state reveal keeps its eligible error through the next value verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y1 a painted policy reveal keeps its eligible error through the next value verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y1 limit iv pins a reveal recorded inside rAF before the following drop task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y3 the parent own entry cannot reveal a child aggregate until its current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y1 a second React display uses an already eligible baseline during pending",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 R-f/R-g a hidden replacement delivers original then reset warnings with per-load dedup",
+          "status": "failed"
+        }
+      ],
+      "scope": "amendment8 exact reviewed product replay"
+    },
+    {
+      "artifact": "ir6-r5-y8-red-unit.json.gz",
+      "success": false,
+      "passed": 6,
+      "failed": 9,
+      "cases": [
+        {
+          "name": "IR-6 W3 pending precedes the first synchronous value subscriber",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 W3 a delivery that cancels the automatic request releases its early hold",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 W3 a reverting chain does not release an earlier queued request",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a automatic commit-only discard keeps pending and delivers the newest context verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a an asynchronous initial explicit mount verdict requeues OnChange even without an earlier hold",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a equal-content setValue preserves emit while a changed commit still owes a current verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 records original state once and drops standalone baselines after a frame and task",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 ignores identical touched patches and never clears touched on a repeat blur",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 mode 0 records no reveal baseline",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 mode 2 records no reveal baseline",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 a later record after the frame callback postpones the whole drop",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 clearing subtree state captures the prior flags before its direct empty write",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 capture records enabled before a controls change without scheduling in record",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 Y2 settle drops baselines before notifying its holding listeners",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 Y2 disposal drops standalone baselines and invalidates an already queued drop",
+          "status": "failed"
+        }
+      ],
+      "scope": "amendment8 exact reviewed product replay"
+    },
+    {
+      "artifact": "ir6-r5-y8-retry-red-render.json.gz",
+      "success": false,
+      "passed": 0,
+      "failed": 2,
+      "cases": [
+        {
+          "name": "IR-6 R-a a context commit in an async gap keeps display held until the newest verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 R-a an async mount discarded by context still obtains an OnChange verdict",
+          "status": "failed"
+        }
+      ],
+      "scope": "amendment8 exact reviewed product replay"
+    }
+  ]
+}

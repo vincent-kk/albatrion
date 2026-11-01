@@ -1,0 +1,18 @@
+{
+  "base": "960bcd79a09c2d54a1f0e0585f3ba3544a287e34",
+  "criteriaHash": "b59eb2151d813f1130ade335b27a04bb14b9c2cd0f3fd962fef7810bd069e63b",
+  "productionHashes": {
+    "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "7edc217e1c1ce6cf845f6113702967a84999aca703e6877d1d3bfe5751bf733c",
+    "packages/canard/schema-form/src/providers/FormErrorContext/utils/createFormErrorService.ts": "3803fe287cd15bd9041cdce8404d4b07a787ae0e6c0a67e0d49b9affec1e58db",
+    "packages/canard/schema-form/src/providers/FormErrorContext/index.ts": "eb2e4df29cf9ceb55d3d07c9f6beb1e85a493fc36364b3a9d7dd60e6d80597d4",
+    "packages/canard/schema-form/src/core/engine/write/index.ts": "2b73172c6ca993894dcaf51e814ff7898369050ec6603dd36e8a9a37f767c754",
+    "packages/canard/schema-form/src/core/engine/index.ts": "4eeccc3d6f25caf33d93b81676d91b2e59cf246f03a702d5dba8274b3cd1888f",
+    "packages/canard/schema-form/src/core/index.ts": "168585f9fb011f50a6c47ceaedcb5e55b2ced3087e02f927c7197bbe8a240d1a",
+    "packages/canard/schema-form/src/core/engine/write/utils/report/deliverChainRecords.ts": "f047614ace230b56ec6ef501e8276698f8aa615a68331d395cb0e7aaa798f6ff",
+    "packages/canard/schema-form/src/core/engine/write/utils/report/reportValidationFailure.ts": "9eef74ef877d68dc5c0622be4e6782d9f1ac7491dea238d87547ef9c52f9b885",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/flushRootLoad.ts": "bdcd678d13d0c94172ac1358bde695c5315239454e7a09fa4c1e486ae92d1a1b",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts": "878ba9922af7f0fc9695d4c99d76ce133ec2a0dd9ec02d3eaaa8ceafd0e25151",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/reportLoadValidationFailure.ts": "816ce6331184da49cff9ca1b99e3ca4ae2fe724e3a890ecbb638e656a7965156",
+    "packages/canard/schema-form/src/components/Form/components/FormCore/components/FormRoot.tsx": "74c32c1de0aa2bfd254e6b5ed01bd118d963614e31aa6f8ad9bac53514564f27"
+  }
+}

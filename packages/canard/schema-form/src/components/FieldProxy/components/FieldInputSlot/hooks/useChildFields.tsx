@@ -3,24 +3,34 @@ import {
   type MemoExoticComponent,
   type RefObject,
   memo,
+  useCallback,
   useLayoutEffect,
   useMemo,
+  useRef,
+  useSyncExternalStore,
 } from 'react';
 
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import {
   useConstant,
   useLazyConstant,
-  useOnUnmount,
   useReference,
 } from '@winglet/react-utils/hook';
 
 import { DeferredFieldProxy } from '@/schema-form/components/FieldProxy/components/DeferredFieldProxy';
 import type { FieldProxyProps } from '@/schema-form/components/FieldProxy/type';
 import { type FieldNode, isTerminalNode } from '@/schema-form/core';
+import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildFieldProps } from '@/schema-form/types';
 
 import type { AdditionalChildNodeProperties, ChildField } from '../type';
+
+/** The form manager is fixed for this hook's lifetime; no notifications are needed. */
+const subscribeNever = () => NOOP_FUNCTION;
+
+/** Server and hydration renders share a null manager before enabling client gating. */
+const getNoManager = () => null;
 
 /**
  * Create child fields for the given FieldNode
@@ -28,29 +38,49 @@ import type { AdditionalChildNodeProperties, ChildField } from '../type';
  * @param NodeProxy - FieldProxy
  * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
- * @returns ChildField[]
+ * @returns Child fields and an optional ref that the input's existing layout
+ *          effect marks true before passive snapshot consistency checks,
+ *          plus the form manager used to record the slot's real input commit
  *
  * @remarks `node.children` is read during render and kept consistent by the
  *          input's combined `useSyncExternalStore` tracker, so
  *          `UpdateChildren` deliveries landing between render and commit
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
+ *          Hydration reads a null manager through the server snapshot;
+ *          the input's commit keeps the detector's client snapshot null before
+ *          passive consistency checks, avoiding a hydration-only re-render.
+ *          Real input slots record their own commits as revealed so later remounts
+ *          cannot replace them with placeholders.
  */
 export const useChildFields = (
   node: FieldNode,
   NodeProxy: ComponentType<FieldProxyProps>,
   mountedChildren: RefObject<number>,
   terminalChildren: ChildField[],
-): ChildField[] => {
+): readonly [
+  ChildField[],
+  RefObject<boolean> | undefined,
+  VirtualizationManager | null,
+] => {
   const children = node.children;
 
-  const { manager } = useVirtualizationContext();
-
+  const { manager: formManager } = useVirtualizationContext();
+  const hydratedRef = useRef(false);
+  const getSnapshot = useCallback(
+    () => (hydratedRef.current || isTerminalNode(node) ? null : formManager),
+    [node, formManager],
+  );
+  const snapshot = useSyncExternalStore(
+    subscribeNever,
+    getSnapshot,
+    getNoManager,
+  );
   const cache = useLazyConstant(() => new Map<FieldNode, ChildField>());
-  useOnUnmount(() => cache.clear());
 
-  return useMemo(() => {
+  const ChildFields = useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
+    const manager = snapshot ?? (hydratedRef.current ? formManager : null);
     const gateManager = manager?.forBranch(children.length) ?? null;
     const ChildFields: ChildField[] = [];
     for (const node of children) {
@@ -117,9 +147,15 @@ export const useChildFields = (
     node,
     children,
     NodeProxy,
-    manager,
+    snapshot,
+    formManager,
     cache,
     terminalChildren,
     mountedChildren,
   ]);
+  return [
+    ChildFields,
+    snapshot === null && formManager !== null ? hydratedRef : undefined,
+    formManager,
+  ];
 };

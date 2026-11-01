@@ -1,0 +1,8 @@
+{
+  "file": "dist/core/engine/record/types/runtime.d.ts",
+  "selectedMember": "diagnostics",
+  "fullTextEqual": true,
+  "includesDocumentationComment": true,
+  "fullText": "\n    /** Settlement health retained until a form-level load. */\n    diagnostics: FieldNodeDiagnostics;",
+  "sha256": "39e993b9c4c04b6cf8ed77547869f7e8fae867f3e5bdbcfef03df5551cffc6f3"
+}

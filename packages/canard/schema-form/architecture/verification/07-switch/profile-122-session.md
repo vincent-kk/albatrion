@@ -1,8 +1,8 @@
 이번 세션에서는 1c와 변경 2를 모두 REJECT로 판정했습니다. 변경 2가 기각되었으므로 F3는 조건에 따라 실행하지 않았습니다. F-A의 기준은 HEAD였으며, F-A도 REJECT로 판정했습니다. 채택되어 다음 기준에 누적된 코어 변경은 없습니다.
 
-측정 대상은 `packages/canard/schema-form`입니다. 이번 측정용 번들·캐시·원시 파일의 루트 S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+측정 대상은 `packages/canard/schema-form`입니다. 이번 측정용 번들·캐시·원시 파일의 루트 S는 `{scratch}`입니다.
 
-HEAD는 `439fda3219ec6b42efbef4d7fa0f02a40111453f`이고, 모든 실행은 `/opt/homebrew/bin/node`의 Node v26.10.0를 사용했습니다. 실제 바이너리는 `/opt/homebrew/Cellar/node/26.10.0_2/bin/node`이며 V8은 14.6.202.34-node.35, CPU는 Apple M1 Max, 메모리는 64 GiB였습니다. 실제 측정 기록은 2026-10-08 02:36:12 KST부터 2026-10-08 08:05:11 KST까지입니다.
+HEAD는 `439fda3219ec6b42efbef4d7fa0f02a40111453f`이고, 모든 실행은 `{node-home}/bin/node`의 Node v26.10.0를 사용했습니다. 실제 바이너리는 `{node-home}/Cellar/node/26.10.0_2/bin/node`이며 V8은 14.6.202.34-node.35, CPU는 Apple M1 Max, 메모리는 64 GiB였습니다. 실제 측정 기록은 2026-10-08 02:36:12 KST부터 2026-10-08 08:05:11 KST까지입니다.
 
 측정 worker 1,209개를 순차 실행했습니다. 모든 유효 측정 worker가 종료 코드 0과 signal null로 자체 종료했습니다. 측정 명령의 최장 기록은 228.185초로 8분 이내였습니다. 측정 중에는 별도 빌드·분석·패키지 관리자 명령을 실행하지 않았습니다. 저장소 Git 쓰기, 설치와 제품 소스 변경은 하지 않았으며, 번들과 캐시 및 원시 파일은 지정된 S에만 두었습니다.
 
@@ -92,3 +92,5 @@ measure-react-render-counts의 메모리 내 React 함수·클래스 및 fiber �
 준비 단계에서는 scratch wrapper의 소문자 전용 이름 검사 때문에 oneOf-5가 worker 시작 전에 한 차례 차단되었습니다. 대문자 O를 허용하도록 wrapper만 정정했으며 기존 16개 측정과 시계 코드는 유지했습니다. 이 비측정 종료 기록도 원시 SHA-256 목록에 포함했습니다. 이번 보고서는 해당 준비 오류를 유효 측정 실패로 집계하지 않았습니다.
 
 판정 근거로 95C-01·105C-01·94C-02와 origin/1.0.0-beta의 118–121 회차 및 120 회차 부록을 읽었습니다. 이 원문들의 SHA-256은 초기 preflight와 세션 근거에 기록했습니다. 이번 보고서는 이번 측정 결과를 기록하며, 이전 수치는 요청된 119 세션의 같은 번들 A/A 비교에만 사용했습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `439fda3219ec`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

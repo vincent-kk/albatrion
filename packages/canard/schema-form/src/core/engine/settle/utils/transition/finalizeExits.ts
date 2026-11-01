@@ -1,18 +1,25 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
 
-import { captureFieldNodeChange } from '../../../record';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
+import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { updateOutput } from '../compute/updateOutput';
+import { captureFieldNodeChange } from '../../../record';
+import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { getLatentOrder } from '../latent/getLatentOrder';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
-import { applyExitClearing } from './applyExitClearing';
-import { captureExitedRaw } from './captureExitedRaw';
+import { applyInactiveValues } from '../inactive/applyInactiveValues';
+import { resolveInactiveValue } from '../inactive/resolveInactiveValue';
+import { updateOutput } from '../output/updateOutput';
+import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
+import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { finalizePerished } from './finalizePerished';
+import { isRekeyedDestination } from './utils/isRekeyedDestination';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
-import { writeLatentRaw } from './writeLatentRaw';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -22,104 +29,92 @@ import { writeLatentRaw } from './writeLatentRaw';
 export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  finalizePerished(context);
-  let mismatchIndex: Map<string, Set<string>> | undefined;
-  for (const node of context.pendingExits.values()) {
-    if (node.detached) continue;
-    const parent = node.parent;
-    if (parent?.structure?.[node.name] === node) continue;
-    context.exited.add(node);
-    walkOwnedFieldNodes(node, (departing) => {
-      if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedFieldNodeReads(departing, {
-          emit: context.previousEmit,
-          context: context.previousContext,
-          schema:
-            context.originalSchemas.get(departing.path)?.schema ??
-            departing.schema.schema,
-        });
-      departing.detached = true;
-      departing.active = captureFieldNodeChange(departing, 'active', false);
-    });
-    getGateRegistry(node.runtime).remove(node);
-    if (!mismatchIndex) {
-      mismatchIndex = new Map();
-      for (const path of context.root.runtime.typeMismatchPaths) {
-        let ancestor = path;
-        while (true) {
-          let paths = mismatchIndex.get(ancestor);
-          if (!paths) {
-            paths = new Set();
-            mismatchIndex.set(ancestor, paths);
-          }
-          paths.add(path);
-          if (!ancestor) break;
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
-        }
-      }
-    }
-    for (const path of [...(mismatchIndex.get(node.path) ?? [])]) {
-      context.root.runtime.typeMismatchPaths.delete(path);
-      let ancestor = path;
-      while (true) {
-        mismatchIndex.get(ancestor)?.delete(path);
-        if (!ancestor) break;
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
-      }
-    }
-  }
-  withdrawDetachedFills(context);
   const scope = context.kind === 'load' ? context.loadScope : undefined;
   const inLoadScope = (node: Self): boolean =>
     scope !== undefined &&
     (!scope.path ||
       node.path === scope.path ||
-      node.path.startsWith(`${scope.path}/`));
+      isDescendantPath(node.path, scope.path));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
-  if (applyPolicy)
-    applyExitClearing(
-      context,
-      (node) =>
-        inLoadScope(node) || context.throwingGateExits?.has(node) === true,
+  finalizePerished(context);
+  let misfitIndex: Optional<Map<string, Set<string>>>;
+  for (const node of context.pendingExits.values()) {
+    if (node.detached) continue;
+    const parent = node.parent;
+    if (parent?.structure?.[node.name] === node) continue;
+    context.exited.add(node);
+    const rekeyed =
+      context.rekeyedArrayMoves &&
+      isRekeyedDestination(node, context.rekeyedArrayMoves);
+    visitFieldNodes(
+      node,
+      (departing) => {
+        if (
+          (departing.blueprintNode.hasInactiveValue ||
+            departing.runtime.inactiveListeners?.has(departing)) &&
+          applyPolicy &&
+          !rekeyed &&
+          !inLoadScope(node) &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node)
+        )
+          resolveInactiveValue(departing, node, context);
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedFieldNodeReads(departing, {
+            emit: context.previousEmit,
+            context: context.previousContext,
+            schema:
+              context.originalSchemas.get(departing.path)?.schema ??
+              departing.schema.schema,
+          });
+        if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
+        departing.detached = true;
+        departing.active = captureFieldNodeChange(departing, 'active', false);
+      },
+      { owned: true },
     );
-  for (const node of context.exited)
-    if (
-      !inLoadScope(node) &&
-      node.detached &&
-      (context.entered.has(node) ||
-        !applyPolicy ||
-        context.throwingGateExits?.has(node))
-    )
-      captureExitedRaw(
-        node,
-        false,
-        context,
-        false,
-        getLatentOrder(node.parent, node.name, node.blueprintNode),
-      );
-  if (context.root.runtime.latentRaw.size > 0)
-    for (const node of [...context.entered, ...context.revived]) {
-      if (node.detached) continue;
-      let live = true;
-      for (
-        let current: Self | null = node;
-        current?.parent;
-        current = current.parent
-      )
-        if (current.parent.structure?.[current.name] !== current) {
-          live = false;
-          break;
+    getGateRegistry(node.runtime).remove(node);
+    if (rekeyed) continue;
+    if (!misfitIndex) {
+      misfitIndex = new Map();
+      for (const path of context.root.runtime.misfitPaths) {
+        let ancestor = path;
+        while (true) {
+          let paths = misfitIndex.get(ancestor);
+          if (!paths) {
+            paths = new Set();
+            misfitIndex.set(ancestor, paths);
+          }
+          paths.add(path);
+          if (!ancestor) break;
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
-      if (live)
-        writeLatentRaw(
-          context,
-          JSON.stringify([node.path, node.blueprintNode.kind]),
-          false,
-          undefined,
-        );
+      }
     }
+    for (const path of [...(misfitIndex.get(node.path) ?? [])]) {
+      context.root.runtime.misfitPaths.delete(path);
+      let ancestor = path;
+      while (true) {
+        misfitIndex.get(ancestor)?.delete(path);
+        if (!ancestor) break;
+        ancestor = resolvePointer(ancestor, $.Parent);
+      }
+    }
+  }
+  withdrawDetachedFills(context);
+  for (const node of context.exited)
+    if (!inLoadScope(node) && node.detached)
+      retainExitedSlot(
+        node,
+        context,
+        applyPolicy &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node),
+      );
+  if (context.inactiveValueOverrides) applyInactiveValues(context);
   const affectedAncestors = new Set<Self>();
+  finalizeRestoredSlotRaw(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) affectedAncestors.add(ancestor);

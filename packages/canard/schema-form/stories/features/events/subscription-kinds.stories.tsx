@@ -1,4 +1,5 @@
 // Loaded by Storybook CSF through the features glob in .storybook/main.ts; each named export is one story.
+import { scheduleMacrotask } from '@winglet/common-utils/scheduler';
 import { eventsFeatureScenarios, playScenario, subscriptionStages } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
@@ -41,7 +42,7 @@ export const EventKinds: Story = {
       else if (stage.act === 'focus') handle.focus(stage.path);
       else if (stage.act === 'refresh') handle.refresh(stage.path);
       else if (isArrayNode(node)) node.push(stage.value);
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => scheduleMacrotask(resolve))));
       stop();
       const names = readEventNames(received);
       const label = `stage ${index} ${stage.act} ${stage.path}`;

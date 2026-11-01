@@ -1,0 +1,16 @@
+{
+  "appendOnlyBaseline": "0f11c2fe2",
+  "authorized464DecisionCorrections": [
+    "464C-08",
+    "464C-09"
+  ],
+  "preservedRecordsVerified": 1,
+  "appendOnlyTrackedFiles": 82,
+  "modifiedFiles": 284,
+  "portableAdditions": true,
+  "productDiffEmpty": true,
+  "archivePatchesApplied": 173,
+  "archiveBytes": 2014119,
+  "archiveCapBytes": 5000000,
+  "relativeLinksMissing": []
+}

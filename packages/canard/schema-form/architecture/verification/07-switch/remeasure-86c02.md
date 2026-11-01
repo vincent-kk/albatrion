@@ -636,7 +636,7 @@ node packages/canard/schema-form/bench/round-87-check.mjs
 
 ```sh
 # worktree 루트에서 실행; 소스는 지정 scratchpad에 이미 추출한 상태입니다.
-ROUND88_SCRATCH=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/round88-quiet
+ROUND88_SCRATCH={scratch}/round88-quiet
 node "$ROUND88_SCRATCH/build.mjs" baseline
 node "$ROUND88_SCRATCH/build.mjs" head
 node --expose-gc "$ROUND88_SCRATCH/measure.mjs" baseline array-1000 1
@@ -1705,7 +1705,7 @@ computed mount의 회차별 W/P는 −1.05%, −4.89%, +1.32%입니다. P 수준
 | oneOf-20 | 63 → 63 | **10 → 8** |
 | sample-0 | 3 → 3 | **3 → 0** |
 
-추가 테스트 13건은 유효 스키마·정적 형 참조·동결·원본 불변성·동일 활성 집합 참조, 단일 역전 범위·빈 enum, 형 교집합·nullable·형 배열·단일/복수 pattern·원자 값·수집기·늦은 경고·선언 전순서·격리 메모를 검증합니다. core 차등 시험은 기존 런타임 병합을 호출자 메모로 강제한 대조군과 마운트 및 후속 쓰기의 노드 순서·값·유효 스키마·상태·경고·리비전·이벤트 순서를 비교합니다. 실제 타입 불일치 경고와 이벤트가 비어 있지 않음도 확인합니다.
+추가 테스트 13건은 유효 스키마·정적 형 참조·동결·원본 불변성·동일 활성 집합 참조, 단일 역전 범위·빈 enum, 형 교집합·nullable·형 배열·단일/복수 pattern·원자 값·수집기·늦은 경고·선언 전순서·격리 메모를 검증합니다. core 차등 시험은 기존 런타임 병합을 호출자 메모로 강제한 대조군과 마운트 및 후속 쓰기의 노드 순서·값·유효 스키마·상태·경고·리비전·이벤트 순서를 비교합니다. 실제 misfit 경고와 이벤트가 비어 있지 않음도 확인합니다.
 
 제품 변경 전에는 의미 검증 12건이 통과하고 계수 시험만 `expected 4 to be 0`으로 실패했습니다. 제품 변경 후에는 같은 작은 마운트의 정적 병합 4→4, 런타임 병합 4→0으로 13건이 통과했습니다. fallback 계수 시험은 실제 기존 병합 실행을 확인하며 반환값만 비교하는 시험으로 대체하지 않았습니다.
 
@@ -1813,7 +1813,7 @@ populateNodeChildren.ts와 blueprint/DETAIL.md 두 파일을 git show HEAD의 �
 | `npx eslint "src/**/*.{ts,tsx}"` | 종료0 |
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; LEGACY_ISOLATED: 1625 files checked |
 
-[A·B 보고서](profile-100c01.md), [A·B summary JSON](profile-100c01-summary.json), [C 판정·차등·계수·검증 JSON](profile-100c01/verdict.summary.json)에 근거를 보관했습니다. 모든 per-run 자료는 profile-100c01/에 있고 파일마다 5MB 이하입니다. .cpuprofile은 지정 /private/tmp 위치에만 보관하며 생성 번들과 map은 정리합니다. 설치·git 쓰기·다른 에이전트·강제 종료 없이 측정 worker를 순차 실행했습니다.
+[A·B 보고서](profile-100c01.md), [A·B summary JSON](profile-100c01-summary.json), [C 판정·차등·계수·검증 JSON](profile-100c01/verdict.summary.json)에 근거를 보관했습니다. 모든 per-run 자료는 profile-100c01/에 있고 파일마다 5MB 이하입니다. .cpuprofile은 지정 {scratch} 위치에만 보관하며 생성 번들과 map은 정리합니다. 설치·git 쓰기·다른 에이전트·강제 종료 없이 측정 worker를 순차 실행했습니다.
 
 ## 101라운드 할당 묶음 1 정규화 memo
 
@@ -1873,7 +1873,7 @@ flat-500 강제 GC의 run별 H−W는 0.268167, 0.209584, 0.350625ms이며 세 �
 
 재현 도구는 [normalization-memo.mjs](profile-101-alloc/normalization-memo.mjs)입니다. 루트에서 `node packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/normalization-memo.mjs --build head control working`, `--objects head 1`, `--objects working 1`, `--objects-noinline head 2`, `--objects-noinline working 2`를 각각 순차 실행합니다. `--pairs <control|working> <fixture> <mount|later> <forced|steady>`는 세 fresh worker를 순차 실행합니다. 위 표의 각 연산과 두 조건을 모두 실행한 후 `--summarize`로 판정합니다. HEAD/control 번들 hash는 동일하며 모든 esbuild 서비스는 stdin EOF로 자연 종료했습니다.
 
-시간·계수·process·요약 JSON은 모두 profile-101-alloc/ 아래에 있으며 파일별 최대 145,232바이트로 5MB 이하입니다. 번들·source map은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. 측정은 순차 실행했고 모든 실제 command는 8분 이내에 스스로 종료했습니다. 설치·git 쓰기·다른 에이전트·타 worktree 작업은 없었습니다.
+시간·계수·process·요약 JSON은 모두 profile-101-alloc/ 아래에 있으며 파일별 최대 145,232바이트로 5MB 이하입니다. 번들·source map은 지정 `{scratch}/bundles`에만 생성했습니다. 측정은 순차 실행했고 모든 실제 command는 8분 이내에 스스로 종료했습니다. 설치·git 쓰기·다른 에이전트·타 worktree 작업은 없었습니다.
 
 ## 101라운드 할당 묶음 2 템플릿 키
 
@@ -1945,7 +1945,7 @@ Apple M1 Max, 10 logical CPU, 64GiB, darwin arm64 25.6.0, Node v24.20.0, V8 13.6
 
 종단은 `node D/profile-101-alloc/template-keys.mjs --build <head|control|working>`를 각각 실행한 뒤 `NODE_PATH="$PWD/node_modules" NODE_ENV=production node D/profile-101-alloc/template-keys.mjs --pairs <control|working> <fixture> <mount|later> <forced|steady>`로 표의 각 열을 측정합니다. 후보가 있는 상태에서만 `--summarize`를 실행해야 `sources`가 측정 후보의 해시를 기록합니다. 최종 제품은 원복했으므로 현재 working 소스의 재측정은 HEAD 재측정이며, 후보 재현에는 보존한 candidate patch가 필요합니다.
 
-계수·시간·process·검증·후보 JSON은 `profile-101-alloc/` 아래에만 두고 각각 5,000,000바이트 상한을 검사했습니다. 번들과 source map은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. 보호된 `analysis-records-design.md`는 변경하지 않았고, 다른 worktree·설치·git 쓰기·백그라운드 측정·강제 종료는 없습니다. 최종 제품 및 DETAIL이 지정 HEAD와 같은 것은 별도 diff로 확인했습니다.
+계수·시간·process·검증·후보 JSON은 `profile-101-alloc/` 아래에만 두고 각각 5,000,000바이트 상한을 검사했습니다. 번들과 source map은 지정 `{scratch}/bundles`에만 생성했습니다. 보호된 `analysis-records-design.md`는 변경하지 않았고, 다른 worktree·설치·git 쓰기·백그라운드 측정·강제 종료는 없습니다. 최종 제품 및 DETAIL이 지정 HEAD와 같은 것은 별도 diff로 확인했습니다.
 
 ## 101라운드 할당 묶음 게이트 작업 공간
 
@@ -2014,7 +2014,7 @@ oneOf-20의 직접 owner는 evaluateGate 2,400→400, readProjectedValue 3,200�
 
 ### 재현·범위·자연 종료
 
-PKG에서 `PROFILE_101_HEAD=da734b40da7a35186646bef42c9f65cee3178892 PROFILE_101_PRODUCT=head PROFILE_101_TAG=gate-workspaces-before- node architecture/verification/07-switch/profile-101-alloc/measure.mjs --build head control gate-workspaces`로 기준 빌드를 만들었습니다. 같은 환경에 `NODE_PATH=/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules`를 넣고 `--allocations gate-workspaces oneOf-20`을 실행합니다. 첫 전환은 `PROFILE_101_MODE=first`, tag `gate-workspaces-before-transition-`, fixture `oneOf-40`입니다. 후보의 할당 실행은 product를 `working`, tag를 각각 `gate-workspaces-after-` 및 `gate-workspaces-after-transition-`으로 바꿉니다.
+PKG에서 `PROFILE_101_HEAD=da734b40da7a35186646bef42c9f65cee3178892 PROFILE_101_PRODUCT=head PROFILE_101_TAG=gate-workspaces-before- node architecture/verification/07-switch/profile-101-alloc/measure.mjs --build head control gate-workspaces`로 기준 빌드를 만들었습니다. 같은 환경에 `NODE_PATH=node_modules`를 넣고 `--allocations gate-workspaces oneOf-20`을 실행합니다. 첫 전환은 `PROFILE_101_MODE=first`, tag `gate-workspaces-before-transition-`, fixture `oneOf-40`입니다. 후보의 할당 실행은 product를 `working`, tag를 각각 `gate-workspaces-after-` 및 `gate-workspaces-after-transition-`으로 바꿉니다.
 
 당시 후보에서 `node architecture/verification/07-switch/profile-101-alloc/gate-workspaces.mjs --build gate-workspaces` 후 `--pairs <gate-workspaces|control> <fixture> <mount|first|later> <forced|steady>`를 각 연산·열별로 실행했습니다. `--summarize`는 보존된 표본만 판정합니다. 최종 제품은 원복했으므로 지금 working source를 새로 빌드하면 HEAD 제품을 측정하게 됩니다. 측정 당시 후보 번들·map은 지정 tmp 경로에 남아 있습니다.
 
@@ -2240,7 +2240,7 @@ oneOf-20 steady의 H-first 이득은 +0.118583/+0.026375/+0.093458이며 W-first
 | `npx eslint "src/**/*.{ts,tsx}"` | 종료 0, 5.359초 |
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0, 0.414초; `LEGACY_ISOLATED: 1630 files checked` |
 
-[검증 진입점](profile-102-work/verify-single-contribution.mjs)과 `profile-102-work/merge102-verify-{vitest,tsc,eslint,legacy}.{json,log}`에 명령·cwd·종료 상태·시간·출력을 보존했습니다. 타이머 worker 96개는 겹치지 않았으며 최대 4.453초였습니다. 모든 명령 중 최대는 전체 검증의 63.502초로 8분 미만입니다. esbuild 서비스는 stdin EOF로 자연 종료했고 번들·소스맵은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 썼습니다. 새 측정 자료는 모두 `profile-102-work/` 아래 파일당 5MB 이하입니다. git 쓰기·설치 없이 작업했고 다른 에이전트의 `analysis-records-design.md`는 수정하지 않았습니다.
+[검증 진입점](profile-102-work/verify-single-contribution.mjs)과 `profile-102-work/merge102-verify-{vitest,tsc,eslint,legacy}.{json,log}`에 명령·cwd·종료 상태·시간·출력을 보존했습니다. 타이머 worker 96개는 겹치지 않았으며 최대 4.453초였습니다. 모든 명령 중 최대는 전체 검증의 63.502초로 8분 미만입니다. esbuild 서비스는 stdin EOF로 자연 종료했고 번들·소스맵은 지정 `{scratch}/bundles`에만 썼습니다. 새 측정 자료는 모두 `profile-102-work/` 아래 파일당 5MB 이하입니다. git 쓰기·설치 없이 작업했고 다른 에이전트의 `analysis-records-design.md`는 수정하지 않았습니다.
 
 재현은 PKG에서 `node architecture/verification/07-switch/profile-102-work/single-contribution.mjs --build <head|working|control|head-count|working-count>`를 판별로 순차 실행합니다. `--verify`는 59-schema 직접 차등, `--counts`는 별도 계수입니다. 판정 열은 `--pairs <working|control> <fixture> <mount|first|later> forced 1`, steady는 `--pairs working <fixture> <mount|first|later> steady <1|4>`입니다. first/later는 sample-0·nested-d5-f4만 실행하고 각 시작 번호는 연속 3회차를 실행합니다. 지정 검증 진입점에 `<vitest|tsc|eslint|legacy>`를 각각 전달한 뒤 [요약기](profile-102-work/summarize-single-contribution.mjs)를 실행하면 강제 GC 판정과 순서 균형 pooled 값을 재구성합니다. 타이머는 비계수 번들만 사용하며 계수기와 경고 집계의 후속 정리는 측정 clock·제품 코드·시간 번들을 바꾸지 않았습니다.
 
@@ -2304,7 +2304,7 @@ PKG에서 지정 명령을 다시 실행한 최종 결과는 다음과 같습니
 
 최종 후보의 강제 GC 비교 78개와 균형 steady 비교 78개, 총 156개 worker를 수정 후 순차 실행했습니다. 바이트 동일 HEAD/HEAD steady 부가 검사 78개는 앞서 얻은 유효 자료를 재사용했으며 최종 후보의 pooled 값이나 소음 판정에는 섞지 않았습니다. 요약기의 전체 감사 대상 worker 234개는 서로 겹치지 않고 최대 3.942초이며, 기록된 측정 프로세스 292개는 모두 자연 종료했습니다. 측정 명령 최대는 14.522초, 복원 뒤 지정 전체 검증은 64.744초로 8분 미만입니다. esbuild는 stdin EOF로 자연 종료했습니다. **초기 전체 테스트 수집기 한 번이 60초 timeout으로 종료되어 자연 종료 조건을 지키지 못한 예외가 있었고, 그 결과는 제외했습니다.** 측정과 겹치지 않았으며 이후 지정 전체 테스트는 native 감시로 끝까지 자연 종료시켰습니다.
 
-새 측정 자료는 모두 `profile-102-work/` 아래에 있으며 최대 파일은 2,099,856바이트로 파일당 5MB 이하입니다. 번들·소스맵은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 썼습니다. HEAD/control 비계수 SHA-256은 모두 `65098d72628706498ede33be3c15dccba32482597e7998bae92f9716b77f4300`, 판정 후보는 `e48d59fe2c61c589f1cd1fac1d580bfd42f2869ff08388a605a191c742a3d4e9`입니다. git 쓰기 명령·설치를 실행하지 않았으며 다른 에이전트의 `analysis-records-design.md`와 `analysis-records-design-verifier.md`는 수정하지 않았습니다.
+새 측정 자료는 모두 `profile-102-work/` 아래에 있으며 최대 파일은 2,099,856바이트로 파일당 5MB 이하입니다. 번들·소스맵은 지정 `{scratch}/bundles`에만 썼습니다. HEAD/control 비계수 SHA-256은 모두 `65098d72628706498ede33be3c15dccba32482597e7998bae92f9716b77f4300`, 판정 후보는 `e48d59fe2c61c589f1cd1fac1d580bfd42f2869ff08388a605a191c742a3d4e9`입니다. git 쓰기 명령·설치를 실행하지 않았으며 다른 에이전트의 `analysis-records-design.md`와 `analysis-records-design-verifier.md`는 수정하지 않았습니다.
 
 측정 재현은 [driver](profile-102-work/gate-results.mjs)에서 `--build <head|control|working|head-count|working-count>`, `--counts`, `--pairs <control|working> <fixture> <mount|first|later> forced`, `--pairs working <fixture> <mount|first|later> steady`를 **명령마다 순차** 실행하고 [요약기](profile-102-work/summarize-gate-results.mjs)를 실행하는 방식입니다. forced는 3회, steady는 6회를 한 명령이 자연 종료하도록 실행합니다. 현재 제품은 복원되었으므로 `--build working`만 실행하면 HEAD를 다시 측정하게 됩니다. 최종 후보를 재현하려면 보존한 패치를 HEAD 소스의 별도 scratch 복사본에 적용하여 같은 candidate SHA를 먼저 확인해야 합니다. 번들 출력 위치를 저장소 안으로 바꾸지 않습니다. 지정 검증 진입점은 `node architecture/verification/07-switch/profile-102-work/verify-gate-results.mjs <vitest|tsc|eslint|legacy>`이며 `GATES103_VERIFY_HEAD=1`로 복원 뒤 기록을 구분합니다.
 
@@ -2374,7 +2374,7 @@ nested mount r2는 8.797749 → 9.427875ms, Δ −0.630126ms로 그 실행의 �
 
 [개발 차등](profile-102-work/freeze103-dev-equivalence.json)과 `freeze103-head-verify-*.json/.log`에 결과를 보존했습니다. 정식 로그의 최대 타이머 프로세스는 4.401초, 최종 지정 검증의 최대 기록 명령은 63.532초였으며 모두 signal=null로 자연 종료했습니다. 초기 후보 전체 검증도 79.71초로 8분 미만이었습니다. git 쓰기·설치·병렬 측정은 실행하지 않았습니다.
 
-새 측정 파일은 `profile-102-work/` 아래에 있고 최대 파일은 **2,100,384바이트**로 모두 5MB 이하입니다. 번들·소스맵·Vite 캐시는 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. production HEAD/control SHA-256은 `4dc91cb793a96b44d1ab9916c2dcb6c2307b803846030f1609366eacca0da827`, 측정 후보는 `349e176e1d0779a15cfb9cbf8665c8a6569b9bec6657b7e4620bb6a2d9fce599`입니다.
+새 측정 파일은 `profile-102-work/` 아래에 있고 최대 파일은 **2,100,384바이트**로 모두 5MB 이하입니다. 번들·소스맵·Vite 캐시는 지정 `{scratch}/bundles`에만 생성했습니다. production HEAD/control SHA-256은 `4dc91cb793a96b44d1ab9916c2dcb6c2307b803846030f1609366eacca0da827`, 측정 후보는 `349e176e1d0779a15cfb9cbf8665c8a6569b9bec6657b7e4620bb6a2d9fce599`입니다.
 
 재현 도구는 [driver](profile-102-work/production-freeze.mjs), [요약기](profile-102-work/summarize-production-freeze.mjs), [검증기](profile-102-work/verify-production-freeze.mjs)입니다. `--pairs <control|working> <fixture> <mount|first|later> forced`는 3회, steady는 같은 명령의 `steady 1` 및 `steady 4`를 순차 실행하여 6회를 만듭니다. `--development`는 개발 번들·차등·계수를 별도 이름으로 기록하고, `--freeze-counts`는 타이밍 밖에서 동결을 셉니다. 현재 제품 소스는 HEAD로 복원되어 있습니다. 측정 당시 후보는 보존 패치와 외부 번들 SHA로 식별하며, 현재 소스로 `--build working`을 실행하면 HEAD 정책이 생성됩니다.
 
@@ -2456,7 +2456,7 @@ nested 첫 업데이트 r2는 Δ −0.039417ms였지만 자기 N 0.130542ms 안�
 
 마지막 제품 helper 분리 후 번들을 다시 만들고 계수를 재확인했으며, 그 제품 소스 그대로 위 전체 검증을 다시 마쳤습니다. 이후 시험 파일별 계약 표식을 서로 다른 acceptance group에 연결하고 계수 시험의 Set을 반복 중복 조회에 사용하도록 정리했습니다. 이 시험 파일 15개 사례와 운영 14개 사례·타입·린트·격리를 다시 확인한 것이 표의 최종 결과입니다. 측정 뒤 제품 파일의 SHA-256이 바뀌지 않았음을 요약기가 검증합니다. 측정 프로세스 150개·15,150쌍은 서로 겹치지 않았으며 최대 타이머 프로세스는 3.884초였습니다. 기록한 빌드/측정/계수/driver 203개 프로세스는 모두 status=0·signal=null, 최대 12.946초입니다. 최장 검증 명령도 8분 이내이며 모든 명령은 자연 종료했습니다.
 
-HEAD/control production 번들 SHA-256은 `be285ab7c717c62148f3e659bff3195e48bf4428e24c16552457c2796d106460`, 후보는 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`입니다. 두 HEAD comparator는 바이트가 같고 별도 module instance로 로드했습니다. 측정 자료는 `profile-104-owned/`에만 저장하며 각 파일은 5MB 이하입니다. 번들·소스맵·새 Vite 캐시는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했고 설정 파일에 cacheDir을 넣지 않았습니다. 패키지 안의 기존 `.vite` 자료는 이번 작업 전의 수정 시각을 유지합니다.
+HEAD/control production 번들 SHA-256은 `be285ab7c717c62148f3e659bff3195e48bf4428e24c16552457c2796d106460`, 후보는 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`입니다. 두 HEAD comparator는 바이트가 같고 별도 module instance로 로드했습니다. 측정 자료는 `profile-104-owned/`에만 저장하며 각 파일은 5MB 이하입니다. 번들·소스맵·새 Vite 캐시는 `{scratch}/bundles`에만 생성했고 설정 파일에 cacheDir을 넣지 않았습니다. 패키지 안의 기존 `.vite` 자료는 이번 작업 전의 수정 시각을 유지합니다.
 
 재현 도구는 [fixture 생성기](profile-104-owned/export-head-fixture.mjs), [측정 driver](profile-104-owned/measure.mjs), [지정 검사 driver](profile-104-owned/check.mjs), [요약기](profile-104-owned/summarize.mjs)입니다. fixture 생성기는 제품을 수정한 현재 상태에서는 실행을 거부합니다. `measure.mjs build head`, `build control`, `build working` 뒤 각 행에 `batch noise-before`, `batch forced`, `batch steady`, `batch noise-after`를 차례로 실행합니다. 한 batch는 해당 행의 3회 또는 steady 6회를 순차 실행하며 중간마다 진행 결과를 출력합니다. count는 별도 비타이밍 프로세스로 실행합니다. [파일 분리 목록](profile-104-owned/files.md)과 raw JSON에서 시험 실행 환경·제품 변경·측정 증거를 각각 검토할 수 있습니다.
 
@@ -2525,7 +2525,7 @@ nested 마운트의 r1/r2/r3 Δ/N은 0.429334/0.398125, −0.135209/0.385875, 0.
 
 소스 해시 검증은 현재 모든 제품 파일이 측정 HEAD 번들과 일치함을 확인했습니다. HEAD/control SHA-256은 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`, 측정 후보는 `9797788b37af1710f9dfb481580aa6985e479ed66066acb915cebb1a6906bd1f`입니다. 두 HEAD 번들은 바이트가 같고 별도 module instance입니다. 측정 프로세스 150개·15,150쌍의 시간 구간은 겹치지 않았으며 최대 timer는 3.814초, 기록한 build/timer 프로세스 153개는 모두 status=0·signal=null입니다. 가장 긴 전체 검증 명령도 8분 이내입니다. 행별 driver도 최대 46.144초에 자연 종료했고 강제 종료·설치·git 쓰기 명령·병렬 실행은 없었습니다.
 
-이번 측정 자료는 `profile-105-rebound/`에만 두었고 각 파일은 5MB 이하입니다. 같은 이름이었던 기존 build-head/control 기록은 HEAD 원본으로 복원하고 새 기록은 `path105-build-*.json`으로 분리했습니다. 런타임 bundle/map은 지정한 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 저장했고 저장소 안 bundle/map/cache 및 config cacheDir을 추가하지 않았습니다.
+이번 측정 자료는 `profile-105-rebound/`에만 두었고 각 파일은 5MB 이하입니다. 같은 이름이었던 기존 build-head/control 기록은 HEAD 원본으로 복원하고 새 기록은 `path105-build-*.json`으로 분리했습니다. 런타임 bundle/map은 지정한 `{scratch}/bundles`에만 저장했고 저장소 안 bundle/map/cache 및 config cacheDir을 추가하지 않았습니다.
 
 재현 도구는 [측정 driver](profile-105-rebound/path-once-measure.mjs), [검증 driver](profile-105-rebound/path-once-check.mjs), [요약기](profile-105-rebound/path-once-summarize.mjs)입니다. 측정 driver는 committed 104 harness를 메모리에서 HEAD와 출력 위치만 재배치하며 esbuild 서비스는 stdin EOF로 자연 종료합니다. 후보 패치는 기록용으로 보존했습니다. 현재 작업트리에서 `build working`을 다시 실행하면 복구된 HEAD를 빌드하므로 기록된 후보 결과를 덮어쓰지 않아야 합니다.
 
@@ -2593,7 +2593,7 @@ nested 마운트의 r1/r2/r3 Δ/N은 0.429334/0.398125, −0.135209/0.385875, 0.
 | `npx eslint "src/**/*.{ts,tsx}"` | exit 0 |
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | LEGACY_ISOLATED: 1,646 files checked |
 
-운영 번들·소스맵은 지정한 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles` 아래 `child105-head.cjs`·`child105-working.cjs`와 각각의 `.map`입니다. canonical 104 production builder의 공개 export·외부 workspace 의존성·빌드 옵션을 그대로 사용하고 HEAD 소스는 git show, 작업트리 소스는 현재 파일에서 읽었습니다. HEAD SHA-256은 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`, 작업트리는 `31a22a1c85463f0544f4837e220831a8cb5534d239fecba9cbb34e64bad1e0e9`입니다.
+운영 번들·소스맵은 지정한 `{scratch}/bundles` 아래 `child105-head.cjs`·`child105-working.cjs`와 각각의 `.map`입니다. canonical 104 production builder의 공개 export·외부 workspace 의존성·빌드 옵션을 그대로 사용하고 HEAD 소스는 git show, 작업트리 소스는 현재 파일에서 읽었습니다. HEAD SHA-256은 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`, 작업트리는 `31a22a1c85463f0544f4837e220831a8cb5534d239fecba9cbb34e64bad1e0e9`입니다.
 
 [빌드 전용 adapter](profile-105-rebound/child-enumeration-build.mjs)는 `build head`·`build working`만 허용하며 시간 프로토콜을 실행하지 않습니다. [HEAD 소스 해시](profile-105-rebound/child105-build-head.json)와 [작업트리 소스 해시](profile-105-rebound/child105-build-working.json), 각 빌드의 process 기록을 보존했습니다. 두 esbuild 서비스는 stdin EOF로 status=0·signal=null 자연 종료했습니다. [검증 adapter](profile-105-rebound/child-enumeration-check.mjs)의 전체·운영·격리·최종 횟수·타입·lint 로그와 JSON은 같은 외부 bundles 디렉터리의 `child105-check-*`에 있습니다. 지정 검증과 두 빌드는 순차 실행했으며 모두 8분 안에 자연 종료했습니다. 저장소 안 bundle/map/cache나 config cacheDir, 설치·git 쓰기는 추가하지 않았습니다. 패키지의 기존 Vite 캐시는 검증 중 외부 경로로 분리한 뒤 원래 바이트를 복원했습니다.
 
@@ -2676,7 +2676,7 @@ sample-0 마운트는 바이트가 같은 두 HEAD 사이에서도 음수 구간
 
 [측정 adapter](profile-106-power/measure.mjs)는 기존 104 clock을 메모리에서 HEAD·번들·산출물 위치만 재배치합니다. [A/A 실행 시 adapter 사본](profile-106-power/measure-AA.mjs)의 SHA는 대조 process 기록과 일치합니다. 이후 adapter에는 P/C 시간 파일의 후보 접두사를 추가해 A/A 원표본을 보존했습니다. [집계·감사 도구](profile-106-power/summarize.mjs)와 [기계 요약](profile-106-power/summary.json)에 회차별 짝 중앙값·정확한 pooled 통계·A/A 통계·환경·빌드 및 소스 해시·감사를 기록했습니다. 원표본·GC·clock·process·build 자료는 모두 `profile-106-power/` 아래이며 각 파일은 5MB 이하입니다.
 
-런타임 bundle·source map·scratch 소스는 지정한 외부 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles` 아래에만 두었습니다. 저장소 안 bundle·source map·cache, 설치, git 쓰기, 병렬 측정, 강제 종료를 추가하지 않았습니다.
+런타임 bundle·source map·scratch 소스는 지정한 외부 `{scratch}/bundles` 아래에만 두었습니다. 저장소 안 bundle·source map·cache, 설치, git 쓰기, 병렬 측정, 강제 종료를 추가하지 않았습니다.
 
 ## 106라운드 선언 수집
 
@@ -2887,7 +2887,7 @@ Vitest 명령에는 설치 방지 `--no-install`·offline env, `--configLoader r
 
 환경: v26.10.0, V8 14.6.202.34-node.35, darwin/arm64, Apple M1 Max. 판정 worker 450개·45,450쌍, 행 명령 50개를 순차 실행했으며 빌드·시험과의 겹침도 없습니다. worker 최대 3657 ms, 행 최대 32482 ms, 기록된 명령 최대 300433 ms로 480,000 ms 미만입니다. clock 내부 GC 0회입니다. 개별 산출물 최대 91249 bytes이며 모든 파일은 5 MB 이하입니다.
 
-번들·소스맵·optimizer cache는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles` 아래에만 있습니다. git 쓰기·설치·버전 변경은 실행하지 않았고 HEAD는 동일합니다. 각 후보의 실행 번들 입력은 해당 위치 한 파일만 기준과 달랐습니다. 기준 2·3은 후보 1, 기준 4는 후보 3과 소스·번들 해시가 같습니다. 최종 runtime 소스는 후보 3의 측정 바이트와 같습니다.
+번들·소스맵·optimizer cache는 `{scratch}/bundles` 아래에만 있습니다. git 쓰기·설치·버전 변경은 실행하지 않았고 HEAD는 동일합니다. 각 후보의 실행 번들 입력은 해당 위치 한 파일만 기준과 달랐습니다. 기준 2·3은 후보 1, 기준 4는 후보 3과 소스·번들 해시가 같습니다. 최종 runtime 소스는 후보 3의 측정 바이트와 같습니다.
 
 근거는 `profile-106-batch/summary-{AA,1-gate-reads,2-selection,3-empty-fragments,4-first-delivery}.json`, `audit.json`, `check-*.json`·`.txt`, `build-*.json`, `base-*-files.json`, 개별 `*-forced-*.json` 및 `driver-*.json`입니다. 채택 패치 1·3은 각각 DETAIL·구현·새 계수 시험 세 파일만 포함하고 측정 산출물과 이 종합 보고서는 포함하지 않습니다. 패치 적용 시 새 계수 시험의 수정 전 실패·수정 후 통과와 관련 differential 결과는 이 보고서를 함께 확인하십시오.
 
@@ -3832,7 +3832,7 @@ beginPostOrder와 의존 경로/owner·shape 등록을 유지한 채, 원래 dir
 - unit/render/react18: 447파일·3,263사례 통과, 2파일·4사례 실패, todo 1. 실패는 EVENT-070의 useLayoutEffect/useEffect 두 사례가 render와 react18에서 각각 발생한 허용 범위입니다. 자연 종료 300.916000초.
 - NODE_ENV=production: 9파일·20사례 모두 통과. tsc·ESLint·legacy isolation은 exit 0이며 격리 검사는 1,658파일을 확인했습니다.
 - 지정 npx 명령에는 설치 방지 --no-install, 캐시 방지 --cache false, 저장소 임시 config 번들 방지 --configLoader runner, 순차 실행 --maxWorkers=1 --no-file-parallelism만 추가했습니다. NODE_ENV=production은 package script와 같이 자식 실행에 설정했습니다. cacheDir는 설정하지 않았습니다.
-- 기존 루트/패키지 .vite 링크와 모든 production 번들은 지정된 /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles를 사용했습니다. 저장소에 번들·source map·cache를 쓰지 않았습니다. 설치·git 쓰기·병렬 측정·강제 종료 없이 기록된 모든 명령은 8분 미만에 자연 종료했습니다.
+- 기존 루트/패키지 .vite 링크와 모든 production 번들은 지정된 {scratch}/bundles를 사용했습니다. 저장소에 번들·source map·cache를 쓰지 않았습니다. 설치·git 쓰기·병렬 측정·강제 종료 없이 기록된 모든 명령은 8분 미만에 자연 종료했습니다.
 - 정식 측정 프로세스 756개, 전체 짝 76,356개. 모든 기록된 build/test/measurement 순서와 채택 patch의 기반·재생·최종 측정 소스 바이트를 감사했습니다. 가장 긴 기록 명령은 300.916000초입니다. 파일은 각각 5 MB 이하이며 [감사 기록](profile-109-batch/final-audit.json)에 담았습니다.
 - markCommitDeliveries·markSchemaNodeEvent·updateOutput·assembleObject는 HEAD와 바이트 동일합니다. EVENT-007/VALUE-012와 D1/E1/O1/A1 원장 질문은 변경하지 않았습니다. blueprint도 변경하지 않았으므로 추가 59-schema fixture differential의 조건이 발생하지 않았습니다.
 - Filid가 전체 DETAIL 복원 시 기존 acceptance heading을 이유로 거절하여 범위 한정 역편집으로 측정 기반을 정확히 복원했습니다. 새 helper의 기존 compute/utils 위치에 대한 organ 경고는 기존 디렉터리 구조에서 발생한 경고이며 구조를 바꾸지 않았습니다. 이 작업에서 남은 차단은 없습니다.
@@ -3969,3 +3969,5 @@ HEAD `1130bd2f9ff104401cb41bd28c03ab37ffd93d1c`. 111C-01에 따라 각 실제 �
 `array-500/off/update`의 정본 reporter 보정·bootstrap·validation 종단 검증은 `CANONICAL_ROW_END_TO_END_OK`입니다. 원 도구에서 짝 빈 호출 부재로 회귀 검사가 실패했고 수정 뒤 1-pass/2-pass·중첩 FIFO 검사가 통과했습니다. scratch 복사본의 실제 엔진 쓰기 경로에 예약한 5ms setImmediate는 BF/첫 갱신의 차이 **5004.708µs > 잡음 7.372µs**, 세 회차 모두 수치·경계 실패로 `INJECTED_CHECK_A_FAILED`를 만들었습니다. 주입 자료는 공식 결과에 포함하지 않았습니다.
 
 각 배열의 회차별 값과 (가)가 바뀐 다른 92행 전부는 [짝 sentinel 보고](profile-113-paired.md)에 있으며, [summary JSON](profile-113-paired/summary.json), [공식 manifest](profile-113-paired/manifest.json), [주입 summary](profile-113-paired/injected-summary.json)에 원자료·계산·종료 기록을 연결했습니다. 파일은 각각 5MB 이내이며 번들은 메모리, cache·주입 복사본은 지정된 저장소 밖 scratch에만 있습니다. 제품 소스·설치·git 쓰기는 하지 않았습니다. 미저장·미사용 전송 worker 한 개의 폐기와 재실행도 manifest에 기록했습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0189c443b068`, `0fdb6660ba07`, `1130bd2f9ff1`, `23767892757b`, `349b62057d3d`, `3b2cbee8a376`, `42113e6c941b`, `4d4792307dd4`, `552a975abd8a`, `5e8f34625b64`, `5f50768e561f`, `8955aa1735d3`, `926671834a48`, `9caec9a1178a`, `a21a8003f8af`, `af1904cf9cc2`, `afd8ade3df3e`, `b2578f614960`, `b44dc7ebfb07`, `c468f7e6f8cc`, `c4b7bbaeee4b`, `da734b40da7a`, `e27f4b3b7e4c`, `e60490572564`, `f57132aa501e`, `fb99a2d09012`, `fba01cbeac90`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

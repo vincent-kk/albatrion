@@ -1,0 +1,18 @@
+{
+  "result": "RAW_TEMP_PATHS_ABSENT",
+  "checks": [
+    {
+      "tool": "grep",
+      "patternDescription": "temporary absolute path prefix",
+      "exitCode": 1,
+      "matches": []
+    },
+    {
+      "tool": "zgrep",
+      "patternDescription": "temporary absolute path prefix",
+      "exitCode": 1,
+      "matches": []
+    }
+  ],
+  "recursiveDecompressedAudit": "audit.json covers nested gzip files too"
+}

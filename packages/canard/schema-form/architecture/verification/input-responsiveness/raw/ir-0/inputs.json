@@ -1,0 +1,73 @@
+{
+  "preparedAt": "2026-10-30T12:23:55.825Z",
+  "productCommit": "5d1348ed16054efa1ec431945eb00472f4eef7f1",
+  "toolCommit": "445e0f517ceafbc86d4233dcf60ef386e7a4a52c",
+  "lanes": [
+    "L",
+    "S",
+    "E"
+  ],
+  "bundles": {
+    "L": {
+      "product": {
+        "sha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46",
+        "bytes": 260013
+      },
+      "browser": {
+        "sha256": "50dd643d5c70f78466fc70c883fbcc9285d756fb5531311af3a972b8d221d929",
+        "bytes": 1243528
+      }
+    },
+    "S": {
+      "product": {
+        "sha256": "0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6",
+        "bytes": 750818
+      },
+      "browser": {
+        "sha256": "1fda92644ef51e8d61017c0fa1262bca8b58615472cdaf9e3f9807445da8d745",
+        "bytes": 1711888
+      }
+    },
+    "E": {
+      "product": {
+        "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d",
+        "bytes": 857033
+      },
+      "browser": {
+        "sha256": "f461b6057918166429e0e36e35b768a2c9ed918f063f1c81a2597cbbf1538940",
+        "bytes": 1819132
+      }
+    }
+  },
+  "stageProof": {
+    "commit": "0eb03ff3bb54bf06af95271d157aefece1b9bf32",
+    "sha256": "0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6",
+    "sourceProof": {
+      "stageStartFiles": 2602,
+      "stageStartAllBlobsMatch": true,
+      "productDiff": false
+    },
+    "preparation": "branch-switch/tools/iv-5/prepare.mjs"
+  },
+  "stageOmission": null,
+  "versions": {
+    "node": "v24.20.0",
+    "react": "19.2.6",
+    "playwright": "1.58.0",
+    "esbuild": "0.25.9",
+    "ajv": "6.12.6"
+  },
+  "environment": {
+    "cpu": "Apple M1 Max",
+    "logicalCpus": 10,
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "27.0.0",
+    "memoryGiB": 64
+  },
+  "viewport": {
+    "width": 900,
+    "height": 700
+  },
+  "productionReact": true
+}

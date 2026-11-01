@@ -1,4 +1,5 @@
 import {
+  type CSSProperties,
   type ReactElement,
   memo,
   useCallback,
@@ -6,12 +7,29 @@ import {
   useRef,
 } from 'react';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { fillArraySlot } from '../utils/fillArraySlot';
 import { readSlotKind } from '../utils/readSlotKind';
 import { Button } from './Button';
 import { EmptySlot } from './EmptySlot';
+
+/** One array row laid out horizontally. */
+const FLEX_ROW_STYLE: CSSProperties = { display: 'flex' };
+
+/** Right-aligned clickable row holding the add-item button. */
+const ADD_BUTTON_ROW_STYLE: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  cursor: 'pointer',
+  marginBottom: 5,
+};
+
+/** Space between the add-item text and its button. */
+const ADD_LABEL_STYLE: CSSProperties = { marginRight: 10 };
 
 /** Rebuild rows only when their identity, structure or presentation changes. */
 export const ArrayItems = memo(function ArrayItems({
@@ -47,7 +65,7 @@ export const ArrayItems = memo(function ArrayItems({
     [node],
   );
   const container = useRef<HTMLDivElement>(null);
-  const focusRow = useRef<number | null>(null);
+  const focusRow = useRef<Nullable<number>>(null);
   /** Write a slot position as input, then let the commit that mounts its row take focus. */
   const handleSlotWrite = useCallback(
     (index: number, value: unknown) => {
@@ -67,7 +85,7 @@ export const ArrayItems = memo(function ArrayItems({
     const ChildField = ChildFields[index];
     const key = ChildField.key;
     rows.push(
-      <div key={key} style={{ display: 'flex' }}>
+      <div key={key} style={FLEX_ROW_STYLE}>
         <ChildField key={key} />
         {!readOnly && (
           <Button
@@ -88,9 +106,13 @@ export const ArrayItems = memo(function ArrayItems({
   for (let index = childCount; index < slotEnd; index++)
     rows.push(
       <EmptySlot
-        key={`slot:${index}`}
+        key={'slot:' + index}
         index={index}
-        kind={readSlotKind(jsonSchema, index)}
+        kind={readSlotKind(
+          jsonSchema,
+          index,
+          node.find('./' + index)?.jsonSchema,
+        )}
         readOnly={readOnly}
         disabled={disabled}
         onWrite={handleSlotWrite}
@@ -103,16 +125,8 @@ export const ArrayItems = memo(function ArrayItems({
     >
       {rows}
       {!readOnly && (jsonSchema.maxItems ?? Infinity) > childCount && (
-        <label
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            cursor: 'pointer',
-            marginBottom: 5,
-          }}
-        >
-          <div style={{ marginRight: 10 }}>Add New Item</div>
+        <label style={ADD_BUTTON_ROW_STYLE}>
+          <div style={ADD_LABEL_STYLE}>Add New Item</div>
           <Button
             title="add item"
             label="+"

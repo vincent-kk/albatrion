@@ -1,0 +1,52 @@
+{
+  "stage": "closing",
+  "phase": 1,
+  "formalWindows": 0,
+  "exploration": [
+    {
+      "name": "closing-phase1-smoke-1.noindex",
+      "state": "smoke-complete",
+      "pages": 97,
+      "checker": "rejected-rules-sha-mismatch-after-formatting",
+      "frozenRulesSha256": "2dbe9a1fbf30ebaacdc3c4df40438aa951fc754bebd6b4777cb40a310123f424",
+      "activeRulesSha256": "bb019877f5a4f20b8871bfe8db4c38f1e1250b27886c8f71bb2944f67942cf6d"
+    },
+    {
+      "name": "closing-phase1-smoke-2.noindex",
+      "state": "smoke-complete",
+      "reason": "Final committed stream lookup and call-boundary changes are covered by closing-phase1-prepared.noindex.",
+      "pages": 97
+    }
+  ],
+  "events": [
+    {
+      "run": "closing-phase1-smoke-2.noindex",
+      "event": "checker-rejected-slot-overlap",
+      "earlyStarts": 3,
+      "maximumEarlyMs": 0.30000001192092896
+    },
+    {
+      "run": "closing-phase1-prepared.noindex",
+      "event": "superseded-by-slot-deadline-fix",
+      "formal": false
+    },
+    {
+      "run": "closing-phase1-final.noindex",
+      "event": "started-from-52253d1d1-with-deadline-fix",
+      "formal": false
+    },
+    {
+      "run": "closing-phase1-prepared.noindex",
+      "event": "checker-rejected-slot-overlap",
+      "formal": false
+    },
+    {
+      "run": "closing-phase1-final.noindex",
+      "event": "smoke-complete-and-checker-pass",
+      "pages": 97,
+      "operations": 150,
+      "slotOverlaps": 0,
+      "formal": false
+    }
+  ]
+}

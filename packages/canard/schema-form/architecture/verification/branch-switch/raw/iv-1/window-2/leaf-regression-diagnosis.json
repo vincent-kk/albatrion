@@ -1,0 +1,436 @@
+{
+  "timed": false,
+  "newWindowOrPilot": false,
+  "baseline": "99f6ce04f8c5f11f9cc502a7ee503e5207d944f0",
+  "candidate": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+  "baselineDiagnosticSourceHashesMatched": 721,
+  "rows": [
+    {
+      "row": "leaf-gate-250",
+      "lanes": {
+        "A": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ],
+        "B": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 1
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ]
+      }
+    },
+    {
+      "row": "leaf-gate-1000",
+      "lanes": {
+        "A": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ],
+        "B": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 1
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ]
+      }
+    },
+    {
+      "row": "leaf-gate-4000",
+      "lanes": {
+        "A": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ],
+        "B": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 1
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ]
+      }
+    },
+    {
+      "row": "leaf-gate-8000",
+      "lanes": {
+        "A": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ],
+        "B": [
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 1
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          },
+          {
+            "contexts": 1,
+            "computes": {
+              "": 1,
+              "/pad_7": 1
+            },
+            "dependencyOwners": 0,
+            "rounds": 0,
+            "entered": 0,
+            "exited": 0,
+            "scopeBuilderMapAllocations": 0
+          }
+        ]
+      }
+    }
+  ],
+  "conclusion": {
+    "ownerScan": "Excluded: root table result returns before the loop; owners are also empty in all observed writes.",
+    "repeatedCompilation": "Excluded: builder allocation counts per row are [1,0,0,0], proving one first-write construction in these histories; cache getter returns the same Map afterward.",
+    "newPerWriteWork": "One resolver call, cached getter/Map lookup, root comparison, and computeSettlement root dispatch. Host references are read only after the non-root guard. All are constant per write.",
+    "linearTimingCause": "Unresolved by call counts and code reading. Existing root assembly/object copy scales with field count and has unchanged source; larger retained scope Maps may affect cache or GC, but this is not measured attribution.",
+    "shortcut": "The proposed O(1) root-before-owner shortcut already exists. Bypassing the extra root computeSettlement call is a small call-site/import edit, not removal of a gate-count loop; no such product edit was made."
+  }
+}

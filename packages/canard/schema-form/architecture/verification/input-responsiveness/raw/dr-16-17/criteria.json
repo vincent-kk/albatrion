@@ -1,0 +1,606 @@
+{
+  "base": "960bcd79a09c2d54a1f0e0585f3ba3544a287e34",
+  "requiredIds": [
+    "D16-R-submit",
+    "D16-G-unknown",
+    "D16-G-empty",
+    "D16-G-sparse",
+    "D16-G-own",
+    "D16-G-cycle",
+    "D16-G-inner-cycle",
+    "D16-G-plain",
+    "D16-G-shared",
+    "D16-G-primitive-null",
+    "D16-G-primitive-undefined",
+    "D16-G-primitive-primitive",
+    "D16-G-primitive-1",
+    "D16-G-bare",
+    "D16-R-deep",
+    "D16-R-subclass",
+    "D16-R-boundary",
+    "D17-L1",
+    "D17-L2",
+    "D17-L3",
+    "D17-L4-empty",
+    "D17-L4-sparse",
+    "D17-L4-plain",
+    "D17-L4-inherited",
+    "D17-L5-error",
+    "D17-L5-primitive",
+    "D17-L5-undefined",
+    "D17-L6",
+    "D17-L7",
+    "D17-L8",
+    "D17-native",
+    "D17-explicit",
+    "D17-load",
+    "D17-wave",
+    "D17-wave-handler",
+    "D17-onchange",
+    "D17-compile",
+    "D17-degraded",
+    "D17-degraded-caller",
+    "D17-slot-false",
+    "D17-slot-true",
+    "D17-reset",
+    "D17-buffer-guard"
+  ],
+  "cases": [
+    {
+      "id": "D16-R-submit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-16 red skips nested known failures for the submit origin",
+      "base": "failed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-unknown",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [all bundles known] captures an unseen inner leaf once",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-empty",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [dense nonempty] captures an inner empty bundle",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-sparse",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [dense nonempty] captures an inner sparse bundle",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-own",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [own indices] captures an inherited inner index",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-cycle",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [revisit known; no visited set] captures an outer cycle and terminates",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-inner-cycle",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [revisit known; no visited set] captures an inner cycle and terminates",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-plain",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [duck-type nested bundles] captures a plain nested lookalike",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-shared",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [revisit known] captures a shared nested instance",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-primitive-null",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive null",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-primitive-undefined",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive undefined",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-primitive-primitive",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive primitive",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-primitive-1",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive 1",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-G-bare",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [recursive details.errors] captures a prototype-only instance without throwing",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-R-deep",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 red deep known nesting neither throws nor reports",
+      "base": "failed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-R-subclass",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 red recognizes a known nested SchemaFormError subclass on load",
+      "base": "failed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D16-R-boundary",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.render.test.tsx",
+      "title": "DR-16 red a layout write reports A and B once and preserves the boundary bundle",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L1",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L1 visits [[A,B],H] in depth-first identity order",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L2",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L2 visits [A,[B,C],D] in depth-first identity order",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L3",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L3 visits exactly [A,self] for a top-level cycle",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L4-empty",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves empty bundles at both depths",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L4-sparse",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves sparse bundles at both depths",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L4-plain",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves plain bundles at both depths",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L4-inherited",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves inherited bundles at both depths",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L5-error",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L5 preserves a non-bundle leaf error",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L5-primitive",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L5 preserves a non-bundle leaf primitive",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L5-undefined",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L5 preserves a non-bundle leaf undefined",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L6",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L6 visits a prototype-only instance without throwing",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L7",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L7 visits a 50000-deep bundle without overflowing",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-L8",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L8 visits a repeated nested bundle as itself",
+      "base": "missing-new-symbol",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-native",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red native submit sends validator failure then handler by identity",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-explicit",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 guard explicit submit rejects one bundle without host delivery",
+      "base": "passed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-load",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red load sends two derived failures in record identity order",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-wave",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red validation wave keeps handler-first leaf order (handler=false)",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-wave-handler",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red validation wave keeps handler-first leaf order (handler=true)",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-onchange",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 guard automatic OnChange failure keeps handler before validator",
+      "base": "passed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-compile",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "DR-17 native submit sends the compile failure, then the handler error, to the host",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-degraded",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-17 native degraded submit sends its cause then the handler error to the host",
+      "base": "failed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-degraded-caller",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery",
+      "base": "passed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-slot-false",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-2 forwards the slot failure then bundled handler errors (handler throws=false)",
+      "base": "passed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-slot-true",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-2 forwards the slot failure then bundled handler errors (handler throws=true)",
+      "base": "passed",
+      "projects": [
+        "render",
+        "react18"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-reset",
+      "file": "src/providers/RootNodeContext/__tests__/bufferedRecords.test.ts",
+      "title": "DR-17 red reset forwards a never-prepared load bundle by leaf identity",
+      "base": "failed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    },
+    {
+      "id": "D17-buffer-guard",
+      "file": "src/providers/RootNodeContext/__tests__/bufferedRecords.test.ts",
+      "title": "IR-7 T3 a never-prepared replacement transfers its record origin and flushes once",
+      "base": "passed",
+      "projects": [
+        "unit"
+      ],
+      "failurePattern": "(?:AssertionError|expected|to (?:be|have|equal))"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "m16-drop-nested",
+      "failedIds": [
+        "D16-R-submit",
+        "D16-R-boundary"
+      ],
+      "failedTitles": [
+        "DR-16 red skips nested known failures for the submit origin",
+        "DR-16 red a layout write reports A and B once and preserves the boundary bundle"
+      ]
+    },
+    {
+      "id": "m16-all-bundles-known",
+      "failedIds": [
+        "D16-G-unknown",
+        "D16-G-empty",
+        "D16-G-sparse"
+      ],
+      "failedTitles": [
+        "DR-16 guard [all bundles known] captures an unseen inner leaf once",
+        "DR-16 guard [dense nonempty] captures an inner empty bundle",
+        "DR-16 guard [dense nonempty] captures an inner sparse bundle"
+      ]
+    },
+    {
+      "id": "m16-revisit-known",
+      "failedIds": [
+        "D16-G-cycle",
+        "D16-G-inner-cycle",
+        "D16-G-shared"
+      ],
+      "failedTitles": [
+        "DR-16 guard [revisit known; no visited set] captures an outer cycle and terminates",
+        "DR-16 guard [revisit known; no visited set] captures an inner cycle and terminates",
+        "DR-16 guard [revisit known] captures a shared nested instance"
+      ]
+    },
+    {
+      "id": "m16-no-visited",
+      "failedIds": [
+        "D16-G-cycle",
+        "D16-G-inner-cycle"
+      ],
+      "failedTitles": [
+        "DR-16 guard [revisit known; no visited set] captures an outer cycle and terminates",
+        "DR-16 guard [revisit known; no visited set] captures an inner cycle and terminates"
+      ]
+    },
+    {
+      "id": "m16-duck-type",
+      "failedIds": [
+        "D16-G-plain"
+      ],
+      "failedTitles": [
+        "DR-16 guard [duck-type nested bundles] captures a plain nested lookalike"
+      ]
+    },
+    {
+      "id": "m16-recursive-unsafe",
+      "failedIds": [
+        "D16-R-deep",
+        "D16-G-bare"
+      ],
+      "failedTitles": [
+        "DR-16 red deep known nesting neither throws nor reports",
+        "DR-16 guard [recursive details.errors] captures a prototype-only instance without throwing"
+      ]
+    },
+    {
+      "id": "m17-form-root-raw",
+      "failedIds": [
+        "D17-native",
+        "D17-compile",
+        "D17-degraded"
+      ],
+      "failedTitles": [
+        "DR-17 red native submit sends validator failure then handler by identity",
+        "DR-17 native submit sends the compile failure, then the handler error, to the host",
+        "DR-17 native degraded submit sends its cause then the handler error to the host"
+      ]
+    },
+    {
+      "id": "m17-engine-original-raw",
+      "failedIds": [
+        "D17-wave",
+        "D17-wave-handler"
+      ],
+      "failedTitles": [
+        "DR-17 red validation wave keeps handler-first leaf order (handler=false)",
+        "DR-17 red validation wave keeps handler-first leaf order (handler=true)"
+      ]
+    },
+    {
+      "id": "m17-no-root-seed",
+      "failedIds": [
+        "D17-L3"
+      ],
+      "failedTitles": [
+        "DR-17 L3 visits exactly [A,self] for a top-level cycle"
+      ]
+    },
+    {
+      "id": "m17-naive-list",
+      "failedIds": [
+        "D17-L1",
+        "D17-L2"
+      ],
+      "failedTitles": [
+        "DR-17 L1 visits [[A,B],H] in depth-first identity order",
+        "DR-17 L2 visits [A,[B,C],D] in depth-first identity order"
+      ]
+    }
+  ]
+}

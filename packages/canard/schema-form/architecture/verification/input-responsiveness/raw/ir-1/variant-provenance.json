@@ -1,0 +1,38 @@
+[
+  {
+    "lane": "B10",
+    "baseLane": "AB",
+    "sourceCommit": "4c035445b",
+    "baseSha256": "0cb306ea120b68908d06e1224860d8427ce313cfbcf54f89cd7269825bd4a168",
+    "productSha256": "262f2b462e6fff898566db4dbead7fe703dff66d3d261e796d73277790907e80",
+    "replacements": [
+      {
+        "from": "const MAX_REVEALS_PER_SLICE = 25;",
+        "to": "const MAX_REVEALS_PER_SLICE = 10;"
+      },
+      {
+        "from": "const MIN_IDLE_BUDGET_MS = 4;",
+        "to": "const MIN_IDLE_BUDGET_MS = 2;"
+      }
+    ],
+    "otherBytesIdentical": true
+  },
+  {
+    "lane": "B50",
+    "baseLane": "AB",
+    "sourceCommit": "4c035445b",
+    "baseSha256": "0cb306ea120b68908d06e1224860d8427ce313cfbcf54f89cd7269825bd4a168",
+    "productSha256": "4724a67a1711387c460f32ee709f9e82bb028f7951ba420ccc082c1902f4640b",
+    "replacements": [
+      {
+        "from": "const MAX_REVEALS_PER_SLICE = 25;",
+        "to": "const MAX_REVEALS_PER_SLICE = 50;"
+      },
+      {
+        "from": "const MIN_IDLE_BUDGET_MS = 4;",
+        "to": "const MIN_IDLE_BUDGET_MS = 8;"
+      }
+    ],
+    "otherBytesIdentical": true
+  }
+]

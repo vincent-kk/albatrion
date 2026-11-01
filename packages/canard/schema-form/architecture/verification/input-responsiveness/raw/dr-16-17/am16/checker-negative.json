@@ -1,0 +1,12 @@
+[
+  {
+    "name": "raw FCA new diagnostic",
+    "exit": 1,
+    "markerAbsent": true
+  },
+  {
+    "name": "raw supplement count mismatch",
+    "exit": 1,
+    "markerAbsent": true
+  }
+]

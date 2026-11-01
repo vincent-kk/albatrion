@@ -1,6 +1,6 @@
 import type { BasicSchema } from '@winglet/json-schema';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Optional } from '@aileron/declare';
 
 import type { SchemaControls } from './controls';
 
@@ -47,9 +47,9 @@ export interface AuthoredSchema<
   maxProperties?: number;
   required?: readonly string[];
   dependentRequired?: Dictionary<readonly string[]>;
-  properties?: Dictionary<AuthoredSchema<Options, Presentation> | undefined>;
+  properties?: Dictionary<Optional<AuthoredSchema<Options, Presentation>>>;
   patternProperties?: Dictionary<
-    AuthoredSchema<Options, Presentation> | undefined
+    Optional<AuthoredSchema<Options, Presentation>>
   >;
   additionalProperties?: boolean | AuthoredSchema<Options, Presentation>;
   items?:

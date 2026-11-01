@@ -1,0 +1,279 @@
+{
+  "baseline": "96fabedd6",
+  "files": [
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "identifiers": 525,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "identifiers": 570,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "identifiers": 303,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "identifiers": 398,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "identifiers": 266,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "identifiers": 213,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "identifiers": 217,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "identifiers": 219,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "identifiers": 224,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "identifiers": 92,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "identifiers": 216,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "identifiers": 209,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/recognizeEqualityExpression.ts",
+      "identifiers": 92,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "identifiers": 81,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "identifiers": 114,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "identifiers": 120,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "identifiers": 90,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/blueprint/validateShape/utils/visitShape.ts",
+      "identifiers": 63,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts",
+      "identifiers": 71,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+      "identifiers": 104,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "identifiers": 335,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/getRequiredChildren.ts",
+      "identifiers": 119,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/publishPreparedSelection.ts",
+      "identifiers": 84,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/dirtyChildren.ts",
+      "identifiers": 120,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "identifiers": 211,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts",
+      "identifiers": 148,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "identifiers": 127,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "identifiers": 181,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "identifiers": 57,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "identifiers": 111,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "identifiers": 1392,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "identifiers": 342,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+      "identifiers": 109,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "identifiers": 493,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/createGatePredicate.ts",
+      "identifiers": 199,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "identifiers": 116,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "identifiers": 163,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyGateWheelConfirmation.ts",
+      "identifiers": 57,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "identifiers": 168,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTablePrePublication.ts",
+      "identifiers": 84,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "identifiers": 101,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts",
+      "identifiers": 66,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "identifiers": 142,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+      "identifiers": 63,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+      "identifiers": 91,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/settle/utils/write/releaseWrongKindHosts.ts",
+      "identifiers": 84,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "identifiers": 205,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/assertValidationRootReady.ts",
+      "identifiers": 92,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "identifiers": 387,
+      "passed": true
+    },
+    {
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "identifiers": 153,
+      "passed": true
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "identifiers": 94,
+      "passed": true
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringEnum/FieldInputStringEnum.tsx",
+      "identifiers": 141,
+      "passed": true
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "identifiers": 137,
+      "passed": true
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "identifiers": 153,
+      "passed": true
+    }
+  ],
+  "removedRedundantAssignments": 20,
+  "identifierBindingsCompared": 10712,
+  "passed": true,
+  "errors": []
+}

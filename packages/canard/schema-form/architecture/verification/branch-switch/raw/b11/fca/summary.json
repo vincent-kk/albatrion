@@ -1,0 +1,10 @@
+{
+  "result": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "snapshotHash": "f1e6376f785205953be7b3c7949ea5c3048931355a7d4fb8a6d3875103f4f786",
+  "uniqueFindings": 202,
+  "scopeSource": "default",
+  "coveredFacts": 1626,
+  "canonicalError": "circular-dependency: FieldProxy -> FieldInputSlot -> FieldProxy",
+  "existingCycleSubtreeUnchanged": true
+}

@@ -6,9 +6,13 @@
 
 ## Conventions
 
+- 쓰기 pending·커밋 정책 이력·release version과 알림은 이 도메인이 소유하며 타이밍과 공개 사건으로 새지 않는다. 표시 조회·구독은 바인딩 래퍼로만 소비한다.
+
 - 의존 순서는 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < FieldNode`이다. `settle`은 이 fractal의 동기 가드 읽기를 소비하고, 결과 배달은 넘겨받은 콜백을 통해 요청자에게 돌려준다(NODE-016·045, LANDING-084).
-- `index.ts`는 검증 계약 형과 `readValidationEntry`, `compileEntryGuards`, `runFieldNodeValidation`, `routeValidationIssues`, `retainEqualValidationIssues`, `EMPTY_GLOBAL_ERRORS`를 이름으로 내보낸다. 동기 가드와 오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수도 이름으로 내보낸다. 수명 함수 두 개만 `core/index.ts`가 바인딩용으로 다시 내보내고, `src/index.ts`는 내보내지 않는다(NODE-010, VALIDATE-044·046, LANDING-159).
+- `index.ts`는 검증 계약 형과 `readValidationEntry`, `compileEntryGuards`, `runFieldNodeValidation`, `routeValidationIssues`, `retainEqualValidationIssues`, `EMPTY_GLOBAL_ERRORS`를 이름으로 내보낸다. 동기 가드와 오류 읽기, 로드 슬롯의 전체 컴파일 점검과 수명 함수도 이름으로 내보낸다. 수명 함수는 core가 바인딩용으로 명명 재수출하며 패키지 진입점에는 노출하지 않는다(NODE-010, VALIDATE-044·046, LANDING-159).
 - 캐시는 검증기 인스턴스와 작성 루트 정체성의 쌍이 소유한다. 런타임에는 선택한 검증기와 모드, 최신 커밋과 요청 스탬프, 노드 오류 맵, 결과 배달 콜백을 둔다. 노드의 고정 필드는 늘리지 않는다(VALIDATE-018·048·049, NODE-004·045).
+
+- 프레임 예약과 연속 입력 주기는 형제 `validationScheduling`이 소유한다. 로드 슬롯의 write 진입점이 컴파일과 로드 이후 요청 여부를 확인하며, 요청 조회는 validation 내부 계약으로 유지한다.
 
 ## Boundaries
 

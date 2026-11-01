@@ -1,0 +1,36 @@
+{
+  "baseline": "round-6/fca-final-validate.json.gz",
+  "absoluteStatus": "indeterminate",
+  "summary": {
+    "projectRoot": "package:",
+    "snapshotHash": "79f90dd1e6d3e11b0216a7a0d0ce0c3169544c2ff0411a5b865f3c669025e3f8",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "findings": {
+    "added": [],
+    "removed": []
+  },
+  "diagnostics": {
+    "added": [],
+    "removed": []
+  },
+  "facts": {
+    "exact": 1754,
+    "missing": 0,
+    "needsResolution": 0,
+    "rejectedRecords": 0,
+    "rejectedClaims": 0
+  }
+}

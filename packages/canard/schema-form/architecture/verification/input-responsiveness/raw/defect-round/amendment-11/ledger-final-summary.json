@@ -1,0 +1,132 @@
+[
+  {
+    "check": "verbatim",
+    "exitCode": 0,
+    "result": "items 1416, fragments 327, items with non-verbatim decision lines 0"
+  },
+  {
+    "check": "sup",
+    "exitCode": 0,
+    "result": "supplement and conflict quotes 3640, not verbatim at cited lines 0, unparsed 0"
+  },
+  {
+    "check": "ref",
+    "exitCode": 0,
+    "result": "items 1416, problems 0"
+  },
+  {
+    "check": "owner-cited",
+    "exitCode": 0,
+    "result": "owner answers 720, cited 720, uncited 0"
+  },
+  {
+    "check": "bundle",
+    "exitCode": 0,
+    "result": "{\"GOAL\":401,\"PROCESS\":686,\"REACT\":34,\"SCHEMA\":220,\"SETTLE\":405,\"BLUEPRINT\":171,\"VALUE\":198,\"VALIDATE\":155,\"FRAGMENT\":430,\"WRITE\":311,\"CONTROLS\":287,\"SURFACE\":250,\"LANDING\":343,\"TEST\":320,\"EVENT\":255,\"NODE\":165,\"ERROR\":391}"
+  },
+  {
+    "check": "sentence-GOAL",
+    "exitCode": 0,
+    "result": "sentences 441, quoted 303, classified 138, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-SCHEMA",
+    "exitCode": 0,
+    "result": "sentences 225, quoted 94, classified 131, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-CONTROLS",
+    "exitCode": 0,
+    "result": "sentences 406, quoted 194, classified 212, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-BLUEPRINT",
+    "exitCode": 0,
+    "result": "sentences 262, quoted 154, classified 108, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-FRAGMENT",
+    "exitCode": 0,
+    "result": "sentences 555, quoted 257, classified 298, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-VALUE",
+    "exitCode": 0,
+    "result": "sentences 219, quoted 116, classified 103, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-WRITE",
+    "exitCode": 0,
+    "result": "sentences 555, quoted 303, classified 252, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-SETTLE",
+    "exitCode": 0,
+    "result": "sentences 545, quoted 205, classified 340, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-EVENT",
+    "exitCode": 0,
+    "result": "sentences 278, quoted 166, classified 112, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-VALIDATE",
+    "exitCode": 0,
+    "result": "sentences 224, quoted 129, classified 95, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-ERROR",
+    "exitCode": 0,
+    "result": "sentences 587, quoted 470, classified 117, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-NODE",
+    "exitCode": 0,
+    "result": "sentences 272, quoted 177, classified 95, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-REACT",
+    "exitCode": 0,
+    "result": "sentences 123, quoted 29, classified 94, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-SURFACE",
+    "exitCode": 0,
+    "result": "sentences 220, quoted 109, classified 111, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-LANDING",
+    "exitCode": 0,
+    "result": "sentences 363, quoted 210, classified 153, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-TEST",
+    "exitCode": 0,
+    "result": "sentences 388, quoted 383, classified 5, missing 0, bad classifications 0"
+  },
+  {
+    "check": "sentence-PROCESS",
+    "exitCode": 0,
+    "result": "sentences 726, quoted 233, classified 493, missing 0, bad classifications 0"
+  },
+  {
+    "check": "token-inventory",
+    "exitCode": 0,
+    "result": "{\"distinctTokens\":2390,\"byKind\":{\"code\":1963,\"id\":216,\"number\":181,\"errorCode\":30}}"
+  },
+  {
+    "check": "tokens",
+    "exitCode": 0,
+    "result": "{\"total\":2390,\"missing\":397}"
+  },
+  {
+    "check": "plan-links",
+    "exitCode": 0,
+    "result": "plan docs 83, cited ids 577, PR-defining LANDING items 36, problems 1"
+  },
+  {
+    "check": "doc-coverage",
+    "exitCode": 0,
+    "result": "docs 25, items in scope 1144, uncited 66, bad ids 0, missing tokens 0, untagged sentences 0, stale exemptions 0, problems 66"
+  }
+]

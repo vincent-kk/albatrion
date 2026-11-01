@@ -1,0 +1,25 @@
+{
+  "targeted": {
+    "files": 6,
+    "suites": 7,
+    "cases": 19,
+    "passed": 19,
+    "failed": 0,
+    "success": true
+  },
+  "typecheck": {
+    "exitCode": 0
+  },
+  "lint": {
+    "exitCode": 0
+  },
+  "productSourceMatches": "7e7475544",
+  "productSourceDifferences": [],
+  "runtimeSha256": {
+    "index.mjs": "2b328d53737ebcaf1a3557f88e7dd71ef59fdaca9eeb107a46878f24fc287e53",
+    "index.node.mjs": "5d31bad94fe055647bc3f4ae1aa1a1da1a1258a0d0521da61acc003b5441d718",
+    "index.cjs": "f5b339d4e7841449b3f7e35e5c54ebb01a9cfd2203fbc87f642b8e1305815ffa"
+  },
+  "fullGateRuntimeHashesMatch": true,
+  "publicMutationSourceRestored": true
+}

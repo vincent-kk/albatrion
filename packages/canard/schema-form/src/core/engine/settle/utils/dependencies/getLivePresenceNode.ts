@@ -1,0 +1,33 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import type { Optional } from '@aileron/declare';
+
+import type { FieldNodeRecord } from '../../../record';
+import { getDependencyIndex } from './getDependencyIndex';
+
+/**
+ * Resolve a bound presence owner through literal, escaped child names.
+ * @param root - Live root of the current settlement shape
+ * @param path - Absolute bound pointer; navigation operators are field names here
+ * @returns The live exact record, or undefined when its current path is absent
+ */
+export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+  path: string,
+): Optional<Self> => {
+  let live: Optional<Self> = root;
+  const segments = getDependencyIndex(root.runtime.blueprint).pathSegments(
+    path,
+    root.runtime,
+  );
+  for (const segment of segments) {
+    const name = segment;
+    if (typeof name !== 'string') return undefined;
+    live =
+      live?.structure && hasOwnProperty(live.structure, name)
+        ? live.structure[name]
+        : undefined;
+    if (!live) break;
+  }
+  return live && !live.detached ? live : undefined;
+};

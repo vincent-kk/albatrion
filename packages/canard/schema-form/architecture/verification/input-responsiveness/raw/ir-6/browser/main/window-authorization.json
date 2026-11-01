@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-31T10:58:22.694750+00:00",
+  "coordinatorReply": "msg_ad3789bbda7a",
+  "noG7Correction": "msg_84f0444c1629",
+  "preconditions": [
+    "amendment9d five items complete and pushed",
+    "full 18-row frozen-bundle CLI smoke passed",
+    "benchmark test44 lint0 typecheck0 prior reproductions6 passed"
+  ],
+  "preregisteredCommit": "cfd4a9e2a",
+  "measuredHead": "f113566a353d567e1f807daac96f212d8e77c079",
+  "spotlight": "Indexing enabled (mdutil -s /)",
+  "window": "all18rows 3warmup/10retained L/E/F; no other timed window",
+  "tests": {
+    "files": 6,
+    "passed": 44,
+    "failed": 0
+  }
+}

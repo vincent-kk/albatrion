@@ -1,9 +1,11 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../constants/FormErrorGroup';
+import { getCodeSpecific } from '../utils/getCodeSpecific';
 import type { UnhandledErrorCode } from '../type';
 
 /** Group every UnhandledError code carries; the code value repeats it before the bare name. */
-const GROUP = 'UNHANDLED_ERROR';
+const GROUP = FormErrorGroup.Unhandled;
 
 /**
  * Error class for unexpected or undefined errors.
@@ -25,8 +27,8 @@ export class UnhandledError extends BaseError {
     message: string,
     details: ErrorDetails = {},
   ) {
-    super(GROUP, code.slice(GROUP.length + 1), message, details);
-    this.name = 'UnhandledError';
+    super(GROUP, getCodeSpecific(code), message, details);
+    this.name = GROUP;
   }
 }
 

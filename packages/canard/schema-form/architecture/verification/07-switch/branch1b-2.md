@@ -51,7 +51,7 @@
 
 ## 독립 패치와 production 번들
 
-S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+S는 `{scratch}`입니다.
 
 - `S/branch1b.patch`: 1b 구현·계수 시험·해당 DETAIL 비용/acceptance group입니다.
 - `S/branch2.patch`: 경로 구현·계수 시험·해당 DETAIL 비용/acceptance group입니다.
@@ -96,3 +96,5 @@ unit/render/react18은 각각 기존 todo 1개, 실패 0입니다. production은
 - 2는 분기당 기울기를 BF 48.95→39.26, 첫 갱신 32.97→26.38, 이후 갱신 15.86→12.77로 줄였습니다. 그러나 if-then OFF 이후 갱신에서 -0.46 µs 회귀했습니다.
 
 제품 코드는 HEAD로 되돌렸고, HEAD에서도 통과하는 차등 시험의 확장만 남겼습니다. 계수 시험 둘은 HEAD에서 실패하므로 뺐습니다. 두 변경은 세션 scratchpad에 패치로 보관했습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `3a637c4cd967`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

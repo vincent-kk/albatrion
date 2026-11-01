@@ -4,8 +4,8 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { flushSync } from 'react-dom';
 
+import type { LegacyVersion } from '../../../../../canard/schema-form/bench/distEngine/loadDistEngine';
 import { equivalentFixtures } from '../../../fixtures/equivalent';
 import type {
   BenchHandle,
@@ -14,14 +14,16 @@ import type {
 import { applyInteraction } from '../../../fixtures/equivalent/utils/applyInteraction';
 import { mountEquivalentForm } from '../../../fixtures/equivalent/utils/mountEquivalentForm';
 import { loadCoreBenchmark } from '../../utils/loadCoreBenchmark';
-import { drainTicks, forceGc, setupJsdom } from '../../utils/setup-env';
+import { measureRenderUpdates } from '../../utils/measureRenderUpdates';
+import { settleUpdates } from '../../utils/settleUpdates';
+import { forceGc, setupJsdom } from '../../utils/setup-env';
 import { welchTTest } from '../../utils/stats';
 
 type Sample = Record<string, number>;
 
 /** Summarizes milliseconds with nearest-rank p99 and the midpoint median. */
 function summarize(samples: number[]) {
-  const sorted = samples.toSorted((left, right) => left - right);
+  const sorted = [...samples].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
   return {
     samples,
@@ -51,7 +53,7 @@ async function sampleCore(
     },
   });
   const constructedAt = performance.now();
-  await drainTicks(2);
+  await settleUpdates();
   const mount = Math.max(constructedAt, completedAt) - start;
   const handle: BenchHandle = {
     findNode: (pointer) => root.find(pointer),
@@ -64,13 +66,13 @@ async function sampleCore(
     applyInteraction(handle, interaction);
     // Timestamp at root completion, before polling resumes; exclude the polling timer floor.
     for (let tick = 0; changes === before && tick < 12; tick++)
-      await drainTicks();
+      await settleUpdates();
     if (changes === before)
       throw new Error(`${fixture.name}/${version}: no completed root update`);
     update += completedAt - started;
-    await drainTicks();
+    await settleUpdates();
   }
-  await drainTicks();
+  await settleUpdates();
   return { 'core-mount': mount, 'core-update': update };
 }
 
@@ -87,16 +89,15 @@ async function sampleRender(
   const mountCommits = mounted.commits.length;
   mounted.commits.length = 0;
   try {
-    const start = performance.now();
-    for (const interaction of fixture.interactions) {
-      flushSync(() => applyInteraction(mounted.handle, interaction));
-      await drainTicks(2);
-    }
+    const updates = await measureRenderUpdates(
+      mounted.handle,
+      fixture.interactions,
+    );
     if (mountCommits === 0)
       throw new Error('Profiler disabled; use development React 19');
     return {
       'render-mount-wall': mounted.mountMs,
-      'render-update-wall': performance.now() - start,
+      ...updates,
       'profiler-mount': mountDuration,
       'profiler-update': mounted.commits.reduce(
         (sum, duration) => sum + duration,
@@ -110,7 +111,19 @@ async function sampleRender(
   }
 }
 
-/** Runs the U13 paired fixture measurements through the benchmark-form CLI. */
+/**
+ * Read the `--legacy=<version>` option naming the published release paired with the workspace.
+ * @param option - Option value, or undefined when absent
+ * @returns The installed legacy alias; 0.16.1 when absent
+ * @throws When the value names no installed legacy alias
+ */
+function parseLegacyVersion(option: string | undefined): LegacyVersion {
+  if (option === undefined || option === '0.16.1') return '0.16.1';
+  if (option === '0.16.0') return '0.16.0';
+  throw new Error(`--legacy must be 0.16.0 or 0.16.1, got ${option}`);
+}
+
+/** Runs the U13 paired fixture measurements through the benchmark-form CLI; `--legacy=<version>` picks the paired release. */
 export async function runEquivalentBenchmarks() {
   if (!reactVersion.startsWith('19.'))
     throw new Error(`React 19 required, got ${reactVersion}`);
@@ -125,11 +138,14 @@ export async function runEquivalentBenchmarks() {
     ),
   );
   const warmup = 10;
+  const legacy = parseLegacyVersion(
+    args.find((arg) => arg.startsWith('--legacy='))?.slice('--legacy='.length),
+  );
   const cores = {
-    '0.16.0': await loadCoreBenchmark('0.16.0'),
+    [legacy]: await loadCoreBenchmark(legacy),
     latest: await loadCoreBenchmark('latest'),
   };
-  const rows: object[] = [];
+  const rows = [];
   const raw: object[] = [];
   const commit = execFileSync('git', ['rev-parse', '--short=9', 'HEAD'], {
     encoding: 'utf8',
@@ -147,12 +163,12 @@ export async function runEquivalentBenchmarks() {
     for (const fixture of equivalentFixtures.filter(
       (fixture) => !selected || fixture.name === selected,
     )) {
-      const samples: Record<string, Sample[]> = { '0.16.0': [], latest: [] };
+      const samples: Record<string, Sample[]> = { [legacy]: [], latest: [] };
       for (let index = -warmup; index < count; index++) {
         // Alternate AB/BA to distribute JIT and temperature drift across versions.
         for (const version of index % 2 === 0
-          ? (['0.16.0', 'latest'] as const)
-          : (['latest', '0.16.0'] as const)) {
+          ? ([legacy, 'latest'] as const)
+          : (['latest', legacy] as const)) {
           forceGc();
           const sample =
             lane === 'core'
@@ -164,15 +180,15 @@ export async function runEquivalentBenchmarks() {
           performance.clearMarks();
         }
       }
-      raw.push({ fixture: fixture.name, lane, samples: Object.fromEntries(
-        Object.entries(samples).map(([version, values]) => [version, values.map(
-          sample => Object.fromEntries(Object.entries(sample).filter(([key]) => !key.startsWith('commits'))),
-        )]),
-      ) });
+      raw.push({
+        fixture: fixture.name,
+        lane,
+        samples: Object.fromEntries(
+          Object.entries(samples).map(([version, values]) => [version, values]),
+        ),
+      });
       for (const metric of Object.keys(samples.latest[0])) {
-        const old = summarize(
-          samples['0.16.0'].map((sample) => sample[metric]),
-        );
+        const old = summarize(samples[legacy].map((sample) => sample[metric]));
         const current = summarize(
           samples.latest.map((sample) => sample[metric]),
         );
@@ -202,32 +218,49 @@ export async function runEquivalentBenchmarks() {
       }
       fs.mkdirSync(path.dirname(output), { recursive: true });
       const summary = JSON.stringify(
-          {
-            timestamp,
-            commit,
-            node: process.version,
-            react: reactVersion,
-            cpu: os.cpus()[0].model,
-            os: `${os.type()} ${os.release()} ${os.arch()}`,
-            warmup,
-            count,
-            mode,
-            coreBundleDigests: {
-              legacy: cores['0.16.0'].digest,
-              workspace: cores.latest.digest,
-            },
-            rows,
+        {
+          timestamp,
+          commit,
+          node: process.version,
+          react: reactVersion,
+          cpu: os.cpus()[0].model,
+          os: `${os.type()} ${os.release()} ${os.arch()}`,
+          warmup,
+          count,
+          mode,
+          legacyVersion: legacy,
+          coreBundleDigests: {
+            legacy: cores[legacy].digest,
+            workspace: cores.latest.digest,
           },
-          null,
-          2,
-        );
+          updateSettlement:
+            'microtasks -> immediate/message -> timer(0) -> immediate/message',
+          updateFloor:
+            'separate empty barrier after each settled interaction; net is signed subtraction',
+          rows,
+        },
+        null,
+        2,
+      );
       const timings = JSON.stringify({ timestamp, commit, warmup, count, raw });
-      if (Buffer.byteLength(summary) > 5_000_000 || Buffer.byteLength(timings) > 5_000_000)
+      if (
+        Buffer.byteLength(summary) > 5_000_000 ||
+        Buffer.byteLength(timings) > 5_000_000
+      )
         throw new Error('Measurement exceeds 5 MB');
       fs.writeFileSync(output.replace(/\.json$/, '-summary.json'), summary);
       fs.writeFileSync(output, timings);
       console.log(`${lane} ${fixture.name}: ${count} paired samples saved`);
     }
   }
+  console.table(
+    rows.map(({ fixture, metric, old, new: current, ratio }) => ({
+      fixture,
+      metric,
+      L: old.median,
+      E: current.median,
+      'E/L': ratio,
+    })),
+  );
   console.log(`Saved ${output}`);
 }

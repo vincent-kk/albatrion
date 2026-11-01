@@ -1,0 +1,67 @@
+{
+  "sequence": "strictly sequential; restarted at lint after the import helper correction",
+  "source_commit": "4dcf6646f",
+  "console_output": "excerpts; full Vitest JSON reports stored separately",
+  "gates": [
+    {
+      "gate": "lint",
+      "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "gate": "typecheck",
+      "command": "yarn workspace @canard/schema-form typecheck",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "gate": "build",
+      "command": "yarn workspace @canard/schema-form build",
+      "exitCode": 0,
+      "output": "DEVELOPMENT_FLAG_OK reads=48 flags=49 pure=544; GATE_SELECTION_DIST_OK all 3 formats; declaration aliases fixed; agent hashes generated."
+    },
+    {
+      "gate": "unit",
+      "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=<scratch>/ir9b-final-gate-unit.json",
+      "exitCode": 0,
+      "output": "JSON report written."
+    },
+    {
+      "gate": "render",
+      "command": "yarn workspace @canard/schema-form test --run --project render --reporter=json --outputFile=<scratch>/ir9b-final-gate-render.json",
+      "exitCode": 0,
+      "output": "JSON report written."
+    },
+    {
+      "gate": "react18",
+      "command": "yarn workspace @canard/schema-form test --run --project react18 --reporter=json --outputFile=<scratch>/ir9b-final-gate-react18.json",
+      "exitCode": 0,
+      "output": "JSON report written."
+    },
+    {
+      "gate": "verify",
+      "command": "yarn workspace @canard/schema-form test:verify --run --reporter=json --outputFile=<scratch>/ir9b-final-gate-verify.json",
+      "exitCode": 0,
+      "output": "JSON report written."
+    },
+    {
+      "gate": "storybook",
+      "command": "yarn workspace @canard/schema-form test --run --project storybook --reporter=json --outputFile=<scratch>/ir9b-final-gate-storybook.json",
+      "exitCode": 0,
+      "output": "JSON report written."
+    },
+    {
+      "gate": "production",
+      "command": "yarn workspace @canard/schema-form test:production --reporter=json --outputFile=<scratch>/ir9b-final-gate-production.json",
+      "exitCode": 0,
+      "output": "21 tests passed; JSON report written."
+    },
+    {
+      "gate": "import-model",
+      "command": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<scratch>/ir9b-final-gate-import-model.json",
+      "exitCode": 0,
+      "output": "JSON report written."
+    }
+  ]
+}

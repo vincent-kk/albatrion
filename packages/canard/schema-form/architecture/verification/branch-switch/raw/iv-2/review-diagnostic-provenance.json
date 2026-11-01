@@ -1,0 +1,18 @@
+[
+  {
+    "item": "p2-1",
+    "sourceCommit": "2a19dffb2893c126af37199ef3d04bfeac3a2249",
+    "sourceInputsExact": 731,
+    "manifestSha256": "6e4cc6d5d7182193e04496b6e8eb81c70144a49fb829bcdc0d8eac05420583b2",
+    "diagnosticRawSha256": "c98970aa1e4d713ffa02de7f035366b3ad475c7eb6a94187623d6f670e9781a1",
+    "note": "Counts and allocation sites are identical across the empty-reset guard change; source manifests differ and match the committed sources."
+  },
+  {
+    "item": "p3-1",
+    "sourceCommit": "5073e443b265261964c2c1eb439a6f9087fa884a",
+    "sourceInputsExact": 731,
+    "manifestSha256": "8ee2c9fa29d6ff2019c2bdf865259a3321f69e4568b14786f8f9139640476f67",
+    "diagnosticRawSha256": "c98970aa1e4d713ffa02de7f035366b3ad475c7eb6a94187623d6f670e9781a1",
+    "note": "Counts and allocation sites are identical across the empty-reset guard change; source manifests differ and match the committed sources."
+  }
+]

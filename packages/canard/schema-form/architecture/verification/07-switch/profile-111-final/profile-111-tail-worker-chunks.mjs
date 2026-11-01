@@ -21,7 +21,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const directory = "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools";
+const directory = "packages/canard/schema-form/architecture/verification/07-switch/tools";
 const { endpointDifference95c01 } = await import(pathToFileURL(path.join(directory, 'endpointDifference95c01.mjs')));
 const output = path.resolve(directory, '..');
 const pkg = path.resolve(output, '../../..');
@@ -29,7 +29,7 @@ const repo = path.resolve(pkg, '../../..');
 const expectedHead = '4d2e54533dc8feaccb4742be9dd322e46d20be58';
 const measurementHead = process.argv.find(value => value.startsWith('--head='))?.slice(7) ?? expectedHead;
 assert.match(measurementHead, /^[a-f0-9]{40}$/);
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
 const warmup = 12, sampleCount = 101;

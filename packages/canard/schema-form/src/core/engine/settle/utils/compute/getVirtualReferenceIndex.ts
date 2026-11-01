@@ -1,9 +1,11 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
-import type { VirtualReferenceIndex } from '../../type';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import type { VirtualReferenceIndex } from '../../types/settlement';
 
 /** Reverse field references live for the lifetime of one analyzed blueprint. */
-const REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
 
 /**
  * Resolve the reverse index once per settlement and cache it per blueprint.
@@ -12,17 +14,23 @@ const REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
  */
 export const getVirtualReferenceIndex = (
   blueprint: Blueprint,
-): VirtualReferenceIndex | null => {
-  let index = REFERENCES.get(blueprint);
+): Nullable<VirtualReferenceIndex> => {
+  let index = getBlueprintDerived<
+    'virtualReferenceIndex',
+    Nullable<VirtualReferenceIndex>
+  >(blueprint).virtualReferenceIndex;
   if (index !== undefined) return index;
   // Static first-load eligibility already proves the blueprint has no virtual node.
   if (StaticFirstLoadCapability.has(blueprint)) {
-    REFERENCES.set(blueprint, null);
+    getBlueprintDerived<
+      'virtualReferenceIndex',
+      Nullable<VirtualReferenceIndex>
+    >(blueprint).virtualReferenceIndex = null;
     return null;
   }
-  let hosts: Map<BlueprintNode, Map<string, string[]>> | undefined;
+  let hosts: Optional<Map<BlueprintNode, Map<string, string[]>>>;
   for (const host of blueprint.nodes) {
-    let fields: Map<string, string[]> | undefined;
+    let fields: Optional<Map<string, string[]>>;
     for (const entry of host.childEntries) {
       if (entry.node.kind !== 'virtual') continue;
       fields ??= new Map();
@@ -38,6 +46,8 @@ export const getVirtualReferenceIndex = (
     }
   }
   index = hosts ?? null;
-  REFERENCES.set(blueprint, index);
+  getBlueprintDerived<'virtualReferenceIndex', Nullable<VirtualReferenceIndex>>(
+    blueprint,
+  ).virtualReferenceIndex = index;
   return index;
 };

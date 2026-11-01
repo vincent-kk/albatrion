@@ -19,6 +19,7 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 const schema = { type: 'object', properties: { child: { type: 'string' } } };
 
+// filid:contract settle-disposal settle-form-reset-errors
 describe('binding load lifetime', () => {
   it('REACT-010 WRITE-046 adoption inside an input updater drops the rest of the marked entry', () => {
     const previous = createDispatchTree({ type: 'string' }, 'old');

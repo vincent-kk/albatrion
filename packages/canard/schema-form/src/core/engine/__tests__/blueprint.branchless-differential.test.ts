@@ -42,7 +42,7 @@ const { applyInteraction } = await import(interactionPath);
 
 const generic = vi.hoisted(() => ({ enabled: false }));
 vi.mock(
-  '../blueprint/utils/analyze/collectSchemaCapabilities',
+  '../blueprint/buildNodes/utils/declarations/collectSchemaCapabilities',
   async (original) => {
     const actual = await original<{
       collectSchemaCapabilities: CollectSchemaCapabilities;

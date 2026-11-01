@@ -1,0 +1,6880 @@
+{
+  "meta": {
+    "startedAt": "2026-10-30T17:58:06.691Z",
+    "args": {
+      "mode": "plain",
+      "pages": "5",
+      "warmup": "1",
+      "kinds": "nonburst",
+      "variants": "on,off",
+      "warm": "worker",
+      "probe": "1",
+      "quiet": "1",
+      "out": "warm-worker"
+    },
+    "quiet": {
+      "busyCorePercent": 51,
+      "perCore": [
+        15,
+        14,
+        12,
+        6,
+        2,
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    "chromium": "145.0.7632.6",
+    "endedAt": "2026-10-30T17:59:10.427Z"
+  },
+  "results": [
+    {
+      "kind": "nonburst",
+      "variant": "on",
+      "i": 0,
+      "typingMs": 1950.0442919999987,
+      "cores": [
+        {
+          "busy": 230,
+          "idle": 1720
+        },
+        {
+          "busy": 140,
+          "idle": 1810
+        },
+        {
+          "busy": 1100,
+          "idle": 860
+        },
+        {
+          "busy": 430,
+          "idle": 1520
+        },
+        {
+          "busy": 440,
+          "idle": 1510
+        },
+        {
+          "busy": 440,
+          "idle": 1510
+        },
+        {
+          "busy": 40,
+          "idle": 1910
+        },
+        {
+          "busy": 10,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1940
+        },
+        {
+          "busy": 10,
+          "idle": 1930
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 714.2000000476837,
+          "duration": 24,
+          "interactionId": 1997,
+          "processingStart": 714.4000000357628,
+          "processingEnd": 716.5,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 714.2000000476837,
+          "duration": 24,
+          "interactionId": 1997,
+          "processingStart": 716.5,
+          "processingEnd": 722.9000000357628,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 716.6000000238419,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 716.6000000238419,
+          "processingEnd": 716.6000000238419,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 717.9000000357628,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 717.9000000357628,
+          "processingEnd": 722.9000000357628,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 816.9000000357628,
+          "duration": 16,
+          "interactionId": 2004,
+          "processingStart": 817,
+          "processingEnd": 819,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 816.9000000357628,
+          "duration": 16,
+          "interactionId": 2004,
+          "processingStart": 819,
+          "processingEnd": 822.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 819,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 819,
+          "processingEnd": 819,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 820.5,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 820.6000000238419,
+          "processingEnd": 822.8000000119209,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 918.7000000476837,
+          "duration": 16,
+          "interactionId": 2011,
+          "processingStart": 918.7000000476837,
+          "processingEnd": 920.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 918.7000000476837,
+          "duration": 16,
+          "interactionId": 2011,
+          "processingStart": 920.8000000119209,
+          "processingEnd": 924.1000000238419,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 2247.300000011921,
+          "duration": 16,
+          "interactionId": 2102,
+          "processingStart": 2247.300000011921,
+          "processingEnd": 2249.300000011921,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 2247.300000011921,
+          "duration": 16,
+          "interactionId": 2102,
+          "processingStart": 2249.300000011921,
+          "processingEnd": 2253.600000023842,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 718,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 722.9000000357628,
+          "wallMs": 4.900000035762787
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 820.6000000238419,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 822.8000000119209,
+          "wallMs": 2.199999988079071
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 922.1000000238419,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 924,
+          "wallMs": 1.899999976158142
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 1024,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 1026.2000000476837,
+          "wallMs": 2.200000047683716
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1125.800000011921,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1127.5,
+          "wallMs": 1.699999988079071
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1228.6000000238419,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1230.6000000238419,
+          "wallMs": 2
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1331.5,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1333.1000000238419,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1433.800000011921,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1435.6000000238419,
+          "wallMs": 1.800000011920929
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1536.7000000476837,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1538.5,
+          "wallMs": 1.7999999523162842
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1639,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1641.800000011921,
+          "wallMs": 2.800000011920929
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1741.7000000476837,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1743.2000000476837,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1843.300000011921,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1845.9000000357628,
+          "wallMs": 2.600000023841858
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1945.2000000476837,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1946.6000000238419,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 2045.2000000476837,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 2048,
+          "wallMs": 2.799999952316284
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2148.5,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2150.2000000476837,
+          "wallMs": 1.7000000476837158
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2250.7000000476837,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2253.5,
+          "wallMs": 2.799999952316284
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2351.900000035763,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2353.400000035763,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2453.5,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2456.100000023842,
+          "wallMs": 2.600000023841858
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2553.400000035763,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2554.800000011921,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2655.800000011921,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2658.600000023842,
+          "wallMs": 2.800000011920929
+        }
+      ],
+      "validations": [
+        {
+          "sequence": 1,
+          "at": 722.2000000476837,
+          "arrivalMs": 4.200000047683716,
+          "value": "value_0a",
+          "errors": 0
+        },
+        {
+          "sequence": 2,
+          "at": 822.2000000476837,
+          "arrivalMs": 1.600000023841858,
+          "value": "value_0ab",
+          "errors": 1
+        },
+        {
+          "sequence": 3,
+          "at": 923.5,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abc",
+          "errors": 0
+        },
+        {
+          "sequence": 4,
+          "at": 1025.6000000238419,
+          "arrivalMs": 1.600000023841858,
+          "value": "value_0abcd",
+          "errors": 1
+        },
+        {
+          "sequence": 5,
+          "at": 1127,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcde",
+          "errors": 0
+        },
+        {
+          "sequence": 6,
+          "at": 1230.1000000238419,
+          "arrivalMs": 1.5,
+          "value": "value_0abcdef",
+          "errors": 1
+        },
+        {
+          "sequence": 7,
+          "at": 1332.7000000476837,
+          "arrivalMs": 1.2000000476837158,
+          "value": "value_0abcdefg",
+          "errors": 0
+        },
+        {
+          "sequence": 8,
+          "at": 1435.2000000476837,
+          "arrivalMs": 1.4000000357627869,
+          "value": "value_0abcdefgh",
+          "errors": 1
+        },
+        {
+          "sequence": 9,
+          "at": 1538.1000000238419,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abcdefghi",
+          "errors": 0
+        },
+        {
+          "sequence": 10,
+          "at": 1641.4000000357628,
+          "arrivalMs": 2.400000035762787,
+          "value": "value_0abcdefghij",
+          "errors": 1
+        },
+        {
+          "sequence": 11,
+          "at": 1742.9000000357628,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijk",
+          "errors": 0
+        },
+        {
+          "sequence": 12,
+          "at": 1845.6000000238419,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijkl",
+          "errors": 1
+        },
+        {
+          "sequence": 13,
+          "at": 1946.300000011921,
+          "arrivalMs": 1.0999999642372131,
+          "value": "value_0abcdefghijklm",
+          "errors": 0
+        },
+        {
+          "sequence": 14,
+          "at": 2047.6000000238419,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghijklmn",
+          "errors": 1
+        },
+        {
+          "sequence": 15,
+          "at": 2149.800000011921,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefghijklmno",
+          "errors": 0
+        },
+        {
+          "sequence": 16,
+          "at": 2253.2000000476837,
+          "arrivalMs": 2.5,
+          "value": "value_0abcdefghijklmnop",
+          "errors": 1
+        },
+        {
+          "sequence": 17,
+          "at": 2353.100000023842,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijklmnopq",
+          "errors": 0
+        },
+        {
+          "sequence": 18,
+          "at": 2455.800000011921,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijklmnopqr",
+          "errors": 1
+        },
+        {
+          "sequence": 19,
+          "at": 2554.400000035763,
+          "arrivalMs": 1,
+          "value": "value_0abcdefghijklmnopqrs",
+          "errors": 0
+        },
+        {
+          "sequence": 20,
+          "at": 2658.2000000476837,
+          "arrivalMs": 2.400000035762787,
+          "value": "value_0abcdefghijklmnopqrst",
+          "errors": 1
+        }
+      ],
+      "start": 713.6000000238419,
+      "end": 2664.600000023842,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 714.4000000357628,
+          "kd1": 716.5,
+          "kp0": 716.5,
+          "in0": 717.9000000357628,
+          "in1": 722.9000000357628,
+          "ku0": 728.2000000476837,
+          "ku1": 728.7000000476837
+        },
+        {
+          "kd0": 817,
+          "kd1": 819,
+          "kp0": 819,
+          "in0": 820.6000000238419,
+          "in1": 822.8000000119209,
+          "ku0": 823.1000000238419,
+          "ku1": 823.6000000238419
+        },
+        {
+          "kd0": 918.7000000476837,
+          "kd1": 920.8000000119209,
+          "kp0": 920.8000000119209,
+          "in0": 922,
+          "in1": 924,
+          "ku0": 929.2000000476837,
+          "ku1": 929.7000000476837
+        },
+        {
+          "kd0": 1020.8000000119209,
+          "kd1": 1022.8000000119209,
+          "kp0": 1022.8000000119209,
+          "in0": 1024,
+          "in1": 1026.2000000476837,
+          "ku0": 1031.300000011921,
+          "ku1": 1031.6000000238419
+        },
+        {
+          "kd0": 1122.5,
+          "kd1": 1124.5,
+          "kp0": 1124.5,
+          "in0": 1125.7000000476837,
+          "in1": 1127.5,
+          "ku0": 1132.2000000476837,
+          "ku1": 1132.7000000476837
+        },
+        {
+          "kd0": 1225.2000000476837,
+          "kd1": 1227.2000000476837,
+          "kp0": 1227.2000000476837,
+          "in0": 1228.6000000238419,
+          "in1": 1230.6000000238419,
+          "ku0": 1235.5,
+          "ku1": 1236.1000000238419
+        },
+        {
+          "kd0": 1328.300000011921,
+          "kd1": 1330.300000011921,
+          "kp0": 1330.300000011921,
+          "in0": 1331.5,
+          "in1": 1333.1000000238419,
+          "ku0": 1337.800000011921,
+          "ku1": 1338.2000000476837
+        },
+        {
+          "kd0": 1430.6000000238419,
+          "kd1": 1432.5,
+          "kp0": 1432.5,
+          "in0": 1433.800000011921,
+          "in1": 1435.7000000476837,
+          "ku0": 1440.5,
+          "ku1": 1441
+        },
+        {
+          "kd0": 1533.300000011921,
+          "kd1": 1535.2000000476837,
+          "kp0": 1535.2000000476837,
+          "in0": 1536.7000000476837,
+          "in1": 1538.5,
+          "ku0": 1543.6000000238419,
+          "ku1": 1544.1000000238419
+        },
+        {
+          "kd0": 1635.800000011921,
+          "kd1": 1637.7000000476837,
+          "kp0": 1637.7000000476837,
+          "in0": 1638.9000000357628,
+          "in1": 1641.800000011921,
+          "ku0": 1646.5,
+          "ku1": 1646.800000011921
+        },
+        {
+          "kd0": 1738.6000000238419,
+          "kd1": 1740.5,
+          "kp0": 1740.5,
+          "in0": 1741.7000000476837,
+          "in1": 1743.2000000476837,
+          "ku0": 1748,
+          "ku1": 1748.300000011921
+        },
+        {
+          "kd0": 1840.1000000238419,
+          "kd1": 1842,
+          "kp0": 1842,
+          "in0": 1843.300000011921,
+          "in1": 1845.9000000357628,
+          "ku0": 1850.6000000238419,
+          "ku1": 1850.9000000357628
+        },
+        {
+          "kd0": 1942.1000000238419,
+          "kd1": 1944.1000000238419,
+          "kp0": 1944.1000000238419,
+          "in0": 1945.2000000476837,
+          "in1": 1946.6000000238419,
+          "ku0": 1951.2000000476837,
+          "ku1": 1951.7000000476837
+        },
+        {
+          "kd0": 2042,
+          "kd1": 2043.9000000357628,
+          "kp0": 2043.9000000357628,
+          "in0": 2045.2000000476837,
+          "in1": 2048,
+          "ku0": 2052.800000011921,
+          "ku1": 2053.2000000476837
+        },
+        {
+          "kd0": 2145,
+          "kd1": 2147.100000023842,
+          "kp0": 2147.100000023842,
+          "in0": 2148.5,
+          "in1": 2150.2000000476837,
+          "ku0": 2155.2000000476837,
+          "ku1": 2155.600000023842
+        },
+        {
+          "kd0": 2247.300000011921,
+          "kd1": 2249.300000011921,
+          "kp0": 2249.300000011921,
+          "in0": 2250.7000000476837,
+          "in1": 2253.5,
+          "ku0": 2259.2000000476837,
+          "ku1": 2259.2000000476837
+        },
+        {
+          "kd0": 2348.800000011921,
+          "kd1": 2350.800000011921,
+          "kp0": 2350.800000011921,
+          "in0": 2351.900000035763,
+          "in1": 2353.400000035763,
+          "ku0": 2358.5,
+          "ku1": 2358.5
+        },
+        {
+          "kd0": 2450.300000011921,
+          "kd1": 2452.2000000476837,
+          "kp0": 2452.2000000476837,
+          "in0": 2453.5,
+          "in1": 2456.100000023842,
+          "ku0": 2461.400000035763,
+          "ku1": 2461.400000035763
+        },
+        {
+          "kd0": 2550.2000000476837,
+          "kd1": 2552.100000023842,
+          "kp0": 2552.100000023842,
+          "in0": 2553.400000035763,
+          "in1": 2554.800000011921,
+          "ku0": 2559.800000011921,
+          "ku1": 2560
+        },
+        {
+          "kd0": 2652.7000000476837,
+          "kd1": 2654.7000000476837,
+          "kp0": 2654.7000000476837,
+          "in0": 2655.800000011921,
+          "in1": 2658.600000023842,
+          "ku0": 2663.800000011921,
+          "ku1": 2663.800000011921
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2.099999964237213
+        },
+        {
+          "idx": 1,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 2,
+          "ms": 2
+        },
+        {
+          "idx": 3,
+          "ms": 2
+        },
+        {
+          "idx": 4,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 5,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 6,
+          "ms": 2
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 9,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 10,
+          "ms": 1.800000011920929
+        },
+        {
+          "idx": 11,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 12,
+          "ms": 2
+        },
+        {
+          "idx": 13,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 14,
+          "ms": 2.100000023841858
+        },
+        {
+          "idx": 15,
+          "ms": 2
+        },
+        {
+          "idx": 16,
+          "ms": 2
+        },
+        {
+          "idx": 17,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 18,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "off",
+      "i": 0,
+      "typingMs": 1943.7908339999994,
+      "cores": [
+        {
+          "busy": 270,
+          "idle": 1670
+        },
+        {
+          "busy": 290,
+          "idle": 1640
+        },
+        {
+          "busy": 1040,
+          "idle": 910
+        },
+        {
+          "busy": 590,
+          "idle": 1350
+        },
+        {
+          "busy": 590,
+          "idle": 1360
+        },
+        {
+          "busy": 670,
+          "idle": 1270
+        },
+        {
+          "busy": 110,
+          "idle": 1840
+        },
+        {
+          "busy": 40,
+          "idle": 1910
+        },
+        {
+          "busy": 20,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1940
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 594,
+          "duration": 16,
+          "interactionId": 2243,
+          "processingStart": 594.1999999880791,
+          "processingEnd": 594.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keyup",
+          "entryType": "event",
+          "startTime": 594.5999999642372,
+          "duration": 16,
+          "interactionId": 2243,
+          "processingStart": 594.6999999880791,
+          "processingEnd": 594.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 596.2999999523163,
+          "duration": 16,
+          "interactionId": 2250,
+          "processingStart": 596.3999999761581,
+          "processingEnd": 598.5,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 596.2999999523163,
+          "duration": 16,
+          "interactionId": 2250,
+          "processingStart": 598.5,
+          "processingEnd": 604.2999999523163,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 697.2999999523163,
+          "duration": 16,
+          "interactionId": 2257,
+          "processingStart": 697.3999999761581,
+          "processingEnd": 699.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 697.2999999523163,
+          "duration": 16,
+          "interactionId": 2257,
+          "processingStart": 699.3999999761581,
+          "processingEnd": 702.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 699.3999999761581,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 699.3999999761581,
+          "processingEnd": 699.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 700.8999999761581,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 700.8999999761581,
+          "processingEnd": 702.3999999761581,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 799.6999999880791,
+          "duration": 16,
+          "interactionId": 2264,
+          "processingStart": 799.7999999523163,
+          "processingEnd": 801.7999999523163,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 799.6999999880791,
+          "duration": 16,
+          "interactionId": 2264,
+          "processingStart": 801.7999999523163,
+          "processingEnd": 804.5,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 600,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 604.2999999523163,
+          "wallMs": 4.299999952316284
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 700.8999999761581,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 702.3999999761581,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 803.0999999642372,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 804.5,
+          "wallMs": 1.4000000357627869
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 906,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 907.1999999880791,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1007.5999999642372,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1008.8999999761581,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1108.0999999642372,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1109.2999999523163,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1211.0999999642372,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1212.2999999523163,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1313.2999999523163,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1314.5,
+          "wallMs": 1.2000000476837158
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1415.8999999761581,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1417.0999999642372,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1518.199999988079,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1519.3999999761581,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1618.699999988079,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1619.699999988079,
+          "wallMs": 1
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1720.7999999523163,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1721.8999999761581,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1823.0999999642372,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1824.199999988079,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 1925.7999999523163,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 1926.7999999523163,
+          "wallMs": 1
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2027.699999988079,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2028.7999999523163,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2126.599999964237,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2127.699999988079,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2228.099999964237,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2229.099999964237,
+          "wallMs": 1
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2330.199999988079,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2331.199999988079,
+          "wallMs": 1
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2431.099999964237,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2432.2999999523163,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2532.7999999523163,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2533.7999999523163,
+          "wallMs": 1
+        }
+      ],
+      "validations": [],
+      "start": 595.5999999642372,
+      "end": 2540.399999976158,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 596.5,
+          "kd1": 598.3999999761581,
+          "kp0": 598.5,
+          "in0": 600,
+          "in1": 604.2999999523163,
+          "ku0": 609.2999999523163,
+          "ku1": 609.7999999523163
+        },
+        {
+          "kd0": 697.3999999761581,
+          "kd1": 699.3999999761581,
+          "kp0": 699.3999999761581,
+          "in0": 700.8999999761581,
+          "in1": 702.3999999761581,
+          "ku0": 709.0999999642372,
+          "ku1": 709.5999999642372
+        },
+        {
+          "kd0": 799.7999999523163,
+          "kd1": 801.7999999523163,
+          "kp0": 801.7999999523163,
+          "in0": 803.0999999642372,
+          "in1": 804.5,
+          "ku0": 809.5999999642372,
+          "ku1": 810
+        },
+        {
+          "kd0": 902.7999999523163,
+          "kd1": 904.7999999523163,
+          "kp0": 904.7999999523163,
+          "in0": 906,
+          "in1": 907.1999999880791,
+          "ku0": 911.8999999761581,
+          "ku1": 912.3999999761581
+        },
+        {
+          "kd0": 1004.5,
+          "kd1": 1006.5,
+          "kp0": 1006.5,
+          "in0": 1007.5999999642372,
+          "in1": 1008.8999999761581,
+          "ku0": 1013.5,
+          "ku1": 1013.8999999761581
+        },
+        {
+          "kd0": 1104.8999999761581,
+          "kd1": 1106.7999999523163,
+          "kp0": 1106.7999999523163,
+          "in0": 1108.0999999642372,
+          "in1": 1109.2999999523163,
+          "ku0": 1114.0999999642372,
+          "ku1": 1114.5999999642372
+        },
+        {
+          "kd0": 1207.8999999761581,
+          "kd1": 1209.8999999761581,
+          "kp0": 1209.8999999761581,
+          "in0": 1211.0999999642372,
+          "in1": 1212.2999999523163,
+          "ku0": 1217.0999999642372,
+          "ku1": 1217.5
+        },
+        {
+          "kd0": 1309.8999999761581,
+          "kd1": 1311.7999999523163,
+          "kp0": 1311.7999999523163,
+          "in0": 1313.2999999523163,
+          "in1": 1314.5,
+          "ku0": 1319.5,
+          "ku1": 1320
+        },
+        {
+          "kd0": 1412.7999999523163,
+          "kd1": 1414.699999988079,
+          "kp0": 1414.699999988079,
+          "in0": 1415.8999999761581,
+          "in1": 1417.0999999642372,
+          "ku0": 1422.0999999642372,
+          "ku1": 1422.3999999761581
+        },
+        {
+          "kd0": 1515.0999999642372,
+          "kd1": 1517.0999999642372,
+          "kp0": 1517.0999999642372,
+          "in0": 1518.199999988079,
+          "in1": 1519.3999999761581,
+          "ku0": 1524,
+          "ku1": 1524.2999999523163
+        },
+        {
+          "kd0": 1615.5,
+          "kd1": 1617.3999999761581,
+          "kp0": 1617.3999999761581,
+          "in0": 1618.5999999642372,
+          "in1": 1619.699999988079,
+          "ku0": 1624.3999999761581,
+          "ku1": 1624.8999999761581
+        },
+        {
+          "kd0": 1717.5999999642372,
+          "kd1": 1719.699999988079,
+          "kp0": 1719.699999988079,
+          "in0": 1720.7999999523163,
+          "in1": 1721.8999999761581,
+          "ku0": 1726.8999999761581,
+          "ku1": 1727.2999999523163
+        },
+        {
+          "kd0": 1819.5999999642372,
+          "kd1": 1821.5999999642372,
+          "kp0": 1821.5999999642372,
+          "in0": 1823.0999999642372,
+          "in1": 1824.199999988079,
+          "ku0": 1829.3999999761581,
+          "ku1": 1829.8999999761581
+        },
+        {
+          "kd0": 1922.2999999523163,
+          "kd1": 1924.2999999523163,
+          "kp0": 1924.2999999523163,
+          "in0": 1925.7999999523163,
+          "in1": 1926.7999999523163,
+          "ku0": 1932,
+          "ku1": 1932.5
+        },
+        {
+          "kd0": 2024.199999988079,
+          "kd1": 2026.199999988079,
+          "kp0": 2026.199999988079,
+          "in0": 2027.699999988079,
+          "in1": 2028.7999999523163,
+          "ku0": 2033.8999999761581,
+          "ku1": 2034.3999999761581
+        },
+        {
+          "kd0": 2123.2999999523163,
+          "kd1": 2125.2999999523163,
+          "kp0": 2125.2999999523163,
+          "in0": 2126.599999964237,
+          "in1": 2127.699999988079,
+          "ku0": 2133.099999964237,
+          "ku1": 2133.099999964237
+        },
+        {
+          "kd0": 2224.899999976158,
+          "kd1": 2226.7999999523163,
+          "kp0": 2226.7999999523163,
+          "in0": 2228.099999964237,
+          "in1": 2229.099999964237,
+          "ku0": 2234.2999999523163,
+          "ku1": 2234.2999999523163
+        },
+        {
+          "kd0": 2326.5,
+          "kd1": 2328.5,
+          "kp0": 2328.5,
+          "in0": 2330.199999988079,
+          "in1": 2331.199999988079,
+          "ku0": 2337.2999999523163,
+          "ku1": 2337.399999976158
+        },
+        {
+          "kd0": 2427.5,
+          "kd1": 2429.5,
+          "kp0": 2429.5,
+          "in0": 2431.099999964237,
+          "in1": 2432.2999999523163,
+          "ku0": 2438.099999964237,
+          "ku1": 2438.199999988079
+        },
+        {
+          "kd0": 2529.2999999523163,
+          "kd1": 2531.2999999523163,
+          "kp0": 2531.2999999523163,
+          "in0": 2532.7999999523163,
+          "in1": 2533.7999999523163,
+          "ku0": 2539.599999964237,
+          "ku1": 2539.599999964237
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 1,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 2,
+          "ms": 2
+        },
+        {
+          "idx": 3,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 4,
+          "ms": 2
+        },
+        {
+          "idx": 5,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 6,
+          "ms": 2
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 9,
+          "ms": 2
+        },
+        {
+          "idx": 10,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 11,
+          "ms": 2
+        },
+        {
+          "idx": 12,
+          "ms": 2
+        },
+        {
+          "idx": 13,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 14,
+          "ms": 2
+        },
+        {
+          "idx": 15,
+          "ms": 2
+        },
+        {
+          "idx": 16,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 17,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 18,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 19,
+          "ms": 1.9000000357627869
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "off",
+      "i": 1,
+      "typingMs": 1939.644042,
+      "cores": [
+        {
+          "busy": 190,
+          "idle": 1740
+        },
+        {
+          "busy": 120,
+          "idle": 1810
+        },
+        {
+          "busy": 1230,
+          "idle": 700
+        },
+        {
+          "busy": 560,
+          "idle": 1370
+        },
+        {
+          "busy": 440,
+          "idle": 1490
+        },
+        {
+          "busy": 130,
+          "idle": 1810
+        },
+        {
+          "busy": 90,
+          "idle": 1860
+        },
+        {
+          "busy": 20,
+          "idle": 1920
+        },
+        {
+          "busy": 30,
+          "idle": 1920
+        },
+        {
+          "busy": 0,
+          "idle": 1940
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 527.8999999761581,
+          "duration": 16,
+          "interactionId": 1316,
+          "processingStart": 528.1999999880791,
+          "processingEnd": 530.7999999523163,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 527.8999999761581,
+          "duration": 16,
+          "interactionId": 1316,
+          "processingStart": 530.7999999523163,
+          "processingEnd": 536.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 530.8999999761581,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 530.8999999761581,
+          "processingEnd": 530.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 532.0999999642372,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 532.1999999880791,
+          "processingEnd": 536.5999999642372,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 630.7999999523163,
+          "duration": 24,
+          "interactionId": 1323,
+          "processingStart": 630.8999999761581,
+          "processingEnd": 632.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 630.7999999523163,
+          "duration": 24,
+          "interactionId": 1323,
+          "processingStart": 632.8999999761581,
+          "processingEnd": 635.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 632.8999999761581,
+          "duration": 24,
+          "interactionId": 0,
+          "processingStart": 632.8999999761581,
+          "processingEnd": 632.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 634.2999999523163,
+          "duration": 24,
+          "interactionId": 0,
+          "processingStart": 634.3999999761581,
+          "processingEnd": 635.6999999880791,
+          "cancelable": false
+        },
+        {
+          "name": "keyup",
+          "entryType": "event",
+          "startTime": 636,
+          "duration": 16,
+          "interactionId": 1323,
+          "processingStart": 636.0999999642372,
+          "processingEnd": 636.5999999642372,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 730.1999999880791,
+          "duration": 48,
+          "interactionId": 1330,
+          "processingStart": 730.2999999523163,
+          "processingEnd": 769.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 730.1999999880791,
+          "duration": 48,
+          "interactionId": 1330,
+          "processingStart": 769.6999999880791,
+          "processingEnd": 772.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 830.6999999880791,
+          "duration": 48,
+          "interactionId": 1337,
+          "processingStart": 830.7999999523163,
+          "processingEnd": 871.0999999642372,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 830.6999999880791,
+          "duration": 48,
+          "interactionId": 1337,
+          "processingStart": 871.0999999642372,
+          "processingEnd": 874,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 532.2999999523163,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 536.5999999642372,
+          "wallMs": 4.300000011920929
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 634.3999999761581,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 635.6999999880791,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 771.1999999880791,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 772.5999999642372,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 872.6999999880791,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 874,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 933.6999999880791,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 935,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1035.7999999523163,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1037,
+          "wallMs": 1.2000000476837158
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1137.2999999523163,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1138.5,
+          "wallMs": 1.2000000476837158
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1239.5999999642372,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1240.699999988079,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1341.7999999523163,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1342.8999999761581,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1444,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1445.0999999642372,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1545.3999999761581,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1546.5,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1647.7999999523163,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1649.0999999642372,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1749.7999999523163,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1750.7999999523163,
+          "wallMs": 1
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 1851.8999999761581,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 1853,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 1952.5,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 1953.3999999761581,
+          "wallMs": 0.8999999761581421
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2055.199999988079,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2056.199999988079,
+          "wallMs": 1
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2156.899999976158,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2157.899999976158,
+          "wallMs": 1
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2259,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2259.7999999523163,
+          "wallMs": 0.7999999523162842
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2360.5,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2361.399999976158,
+          "wallMs": 0.8999999761581421
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2461,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2462.099999964237,
+          "wallMs": 1.0999999642372131
+        }
+      ],
+      "validations": [],
+      "start": 527.3999999761581,
+      "end": 2468.099999964237,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 528.1999999880791,
+          "kd1": 530.7999999523163,
+          "kp0": 530.7999999523163,
+          "in0": 532.1999999880791,
+          "in1": 536.5999999642372,
+          "ku0": 541.7999999523163,
+          "ku1": 542.1999999880791
+        },
+        {
+          "kd0": 631,
+          "kd1": 632.8999999761581,
+          "kp0": 632.8999999761581,
+          "in0": 634.3999999761581,
+          "in1": 635.6999999880791,
+          "ku0": 636.0999999642372,
+          "ku1": 636.5999999642372
+        },
+        {
+          "kd0": 730.2999999523163,
+          "kd1": 769.6999999880791,
+          "kp0": 769.6999999880791,
+          "in0": 771.1999999880791,
+          "in1": 772.5999999642372,
+          "ku0": 777.8999999761581,
+          "ku1": 778.5
+        },
+        {
+          "kd0": 830.7999999523163,
+          "kd1": 871.0999999642372,
+          "kp0": 871.0999999642372,
+          "in0": 872.6999999880791,
+          "in1": 874,
+          "ku0": 878.8999999761581,
+          "ku1": 879.5
+        },
+        {
+          "kd0": 930.5999999642372,
+          "kd1": 932.5,
+          "kp0": 932.5,
+          "in0": 933.6999999880791,
+          "in1": 935,
+          "ku0": 939.7999999523163,
+          "ku1": 940.1999999880791
+        },
+        {
+          "kd0": 1032.5,
+          "kd1": 1034.5,
+          "kp0": 1034.5,
+          "in0": 1035.7999999523163,
+          "in1": 1037,
+          "ku0": 1041.7999999523163,
+          "ku1": 1042.199999988079
+        },
+        {
+          "kd0": 1134.199999988079,
+          "kd1": 1136.0999999642372,
+          "kp0": 1136.0999999642372,
+          "in0": 1137.2999999523163,
+          "in1": 1138.5,
+          "ku0": 1143.199999988079,
+          "ku1": 1143.5999999642372
+        },
+        {
+          "kd0": 1236.3999999761581,
+          "kd1": 1238.2999999523163,
+          "kp0": 1238.2999999523163,
+          "in0": 1239.5999999642372,
+          "in1": 1240.699999988079,
+          "ku0": 1245.3999999761581,
+          "ku1": 1245.7999999523163
+        },
+        {
+          "kd0": 1338.5999999642372,
+          "kd1": 1340.5,
+          "kp0": 1340.5999999642372,
+          "in0": 1341.7999999523163,
+          "in1": 1342.8999999761581,
+          "ku0": 1347.8999999761581,
+          "ku1": 1348.2999999523163
+        },
+        {
+          "kd0": 1440.7999999523163,
+          "kd1": 1442.7999999523163,
+          "kp0": 1442.7999999523163,
+          "in0": 1443.8999999761581,
+          "in1": 1445.0999999642372,
+          "ku0": 1449.699999988079,
+          "ku1": 1450.0999999642372
+        },
+        {
+          "kd0": 1541.7999999523163,
+          "kd1": 1543.7999999523163,
+          "kp0": 1543.7999999523163,
+          "in0": 1545.3999999761581,
+          "in1": 1546.5,
+          "ku0": 1551.7999999523163,
+          "ku1": 1552.2999999523163
+        },
+        {
+          "kd0": 1644.3999999761581,
+          "kd1": 1646.3999999761581,
+          "kp0": 1646.3999999761581,
+          "in0": 1647.7999999523163,
+          "in1": 1649.0999999642372,
+          "ku0": 1654.2999999523163,
+          "ku1": 1654.699999988079
+        },
+        {
+          "kd0": 1746.699999988079,
+          "kd1": 1748.5999999642372,
+          "kp0": 1748.5999999642372,
+          "in0": 1749.7999999523163,
+          "in1": 1750.7999999523163,
+          "ku0": 1755.2999999523163,
+          "ku1": 1755.699999988079
+        },
+        {
+          "kd0": 1848.7999999523163,
+          "kd1": 1850.699999988079,
+          "kp0": 1850.699999988079,
+          "in0": 1851.8999999761581,
+          "in1": 1853,
+          "ku0": 1857.699999988079,
+          "ku1": 1858.0999999642372
+        },
+        {
+          "kd0": 1949.3999999761581,
+          "kd1": 1951.2999999523163,
+          "kp0": 1951.2999999523163,
+          "in0": 1952.5,
+          "in1": 1953.3999999761581,
+          "ku0": 1957.7999999523163,
+          "ku1": 1958.2999999523163
+        },
+        {
+          "kd0": 2052,
+          "kd1": 2054,
+          "kp0": 2054,
+          "in0": 2055.199999988079,
+          "in1": 2056.199999988079,
+          "ku0": 2062,
+          "ku1": 2062
+        },
+        {
+          "kd0": 2153.7999999523163,
+          "kd1": 2155.699999988079,
+          "kp0": 2155.699999988079,
+          "in0": 2156.899999976158,
+          "in1": 2157.899999976158,
+          "ku0": 2163.099999964237,
+          "ku1": 2163.099999964237
+        },
+        {
+          "kd0": 2255.7999999523163,
+          "kd1": 2257.7999999523163,
+          "kp0": 2257.7999999523163,
+          "in0": 2259,
+          "in1": 2259.7999999523163,
+          "ku0": 2265,
+          "ku1": 2265
+        },
+        {
+          "kd0": 2357.099999964237,
+          "kd1": 2359.199999988079,
+          "kp0": 2359.199999988079,
+          "in0": 2360.5,
+          "in1": 2361.399999976158,
+          "ku0": 2366.199999988079,
+          "ku1": 2366.199999988079
+        },
+        {
+          "kd0": 2457.899999976158,
+          "kd1": 2459.899999976158,
+          "kp0": 2459.899999976158,
+          "in0": 2461,
+          "in1": 2462.099999964237,
+          "ku0": 2467.199999988079,
+          "ku1": 2467.2999999523163
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2.5
+        },
+        {
+          "idx": 1,
+          "ms": 1.7999999523162842
+        },
+        {
+          "idx": 2,
+          "ms": 39.30000001192093
+        },
+        {
+          "idx": 3,
+          "ms": 40.200000047683716
+        },
+        {
+          "idx": 4,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 5,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 6,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 9,
+          "ms": 2
+        },
+        {
+          "idx": 10,
+          "ms": 2
+        },
+        {
+          "idx": 11,
+          "ms": 2
+        },
+        {
+          "idx": 12,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 13,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 14,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 15,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 16,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 17,
+          "ms": 2
+        },
+        {
+          "idx": 18,
+          "ms": 2.100000023841858
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "on",
+      "i": 1,
+      "typingMs": 1945.713125000002,
+      "cores": [
+        {
+          "busy": 320,
+          "idle": 1620
+        },
+        {
+          "busy": 350,
+          "idle": 1590
+        },
+        {
+          "busy": 900,
+          "idle": 1040
+        },
+        {
+          "busy": 470,
+          "idle": 1460
+        },
+        {
+          "busy": 1210,
+          "idle": 740
+        },
+        {
+          "busy": 400,
+          "idle": 1540
+        },
+        {
+          "busy": 110,
+          "idle": 1830
+        },
+        {
+          "busy": 50,
+          "idle": 1900
+        },
+        {
+          "busy": 10,
+          "idle": 1930
+        },
+        {
+          "busy": 0,
+          "idle": 1940
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 697.5,
+          "duration": 16,
+          "interactionId": 529,
+          "processingStart": 697.6999999880791,
+          "processingEnd": 697.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keyup",
+          "entryType": "event",
+          "startTime": 698.0999999642372,
+          "duration": 16,
+          "interactionId": 529,
+          "processingStart": 698.0999999642372,
+          "processingEnd": 698.0999999642372,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 699.5,
+          "duration": 16,
+          "interactionId": 536,
+          "processingStart": 699.6999999880791,
+          "processingEnd": 701.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 699.5,
+          "duration": 16,
+          "interactionId": 536,
+          "processingStart": 701.8999999761581,
+          "processingEnd": 708.0999999642372,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 802.1999999880791,
+          "duration": 24,
+          "interactionId": 543,
+          "processingStart": 802.3999999761581,
+          "processingEnd": 804.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 802.1999999880791,
+          "duration": 24,
+          "interactionId": 543,
+          "processingStart": 804.3999999761581,
+          "processingEnd": 808.1999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 804.3999999761581,
+          "duration": 24,
+          "interactionId": 0,
+          "processingStart": 804.3999999761581,
+          "processingEnd": 804.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 805.8999999761581,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 805.8999999761581,
+          "processingEnd": 808.0999999642372,
+          "cancelable": false
+        },
+        {
+          "name": "keyup",
+          "entryType": "event",
+          "startTime": 808.3999999761581,
+          "duration": 16,
+          "interactionId": 543,
+          "processingStart": 808.5,
+          "processingEnd": 809,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 904.7999999523163,
+          "duration": 16,
+          "interactionId": 550,
+          "processingStart": 904.7999999523163,
+          "processingEnd": 906.7999999523163,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 904.7999999523163,
+          "duration": 16,
+          "interactionId": 550,
+          "processingStart": 906.7999999523163,
+          "processingEnd": 910.5999999642372,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 1006.6999999880791,
+          "duration": 16,
+          "interactionId": 557,
+          "processingStart": 1008.1999999880791,
+          "processingEnd": 1010.2999999523163,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 1006.6999999880791,
+          "duration": 16,
+          "interactionId": 557,
+          "processingStart": 1010.2999999523163,
+          "processingEnd": 1013.6999999880791,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 703.2999999523163,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 708.0999999642372,
+          "wallMs": 4.800000011920929
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 805.8999999761581,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 808.0999999642372,
+          "wallMs": 2.199999988079071
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 908.5,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 910.5,
+          "wallMs": 2
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 1011.5999999642372,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 1013.6999999880791,
+          "wallMs": 2.100000023841858
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1111.0999999642372,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1112.7999999523163,
+          "wallMs": 1.699999988079071
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1213.7999999523163,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1215.699999988079,
+          "wallMs": 1.9000000357627869
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1315.0999999642372,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1316.7999999523163,
+          "wallMs": 1.699999988079071
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1416.8999999761581,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1418.7999999523163,
+          "wallMs": 1.899999976158142
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1518,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1519.8999999761581,
+          "wallMs": 1.899999976158142
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1619.699999988079,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1622.5999999642372,
+          "wallMs": 2.899999976158142
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1720.0999999642372,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1721.5999999642372,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1823,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1825.8999999761581,
+          "wallMs": 2.899999976158142
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1925.2999999523163,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1926.7999999523163,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 2026.5,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 2029.199999988079,
+          "wallMs": 2.699999988079071
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2128.199999988079,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2129.699999988079,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2231,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2233.7999999523163,
+          "wallMs": 2.799999952316284
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2332.599999964237,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2334,
+          "wallMs": 1.4000000357627869
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2434.2999999523163,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2437,
+          "wallMs": 2.700000047683716
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2536,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2537.399999976158,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2636.899999976158,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2639.599999964237,
+          "wallMs": 2.699999988079071
+        }
+      ],
+      "validations": [
+        {
+          "sequence": 1,
+          "at": 707.5,
+          "arrivalMs": 4.200000047683716,
+          "value": "value_0a",
+          "errors": 0
+        },
+        {
+          "sequence": 2,
+          "at": 807.5999999642372,
+          "arrivalMs": 1.699999988079071,
+          "value": "value_0ab",
+          "errors": 1
+        },
+        {
+          "sequence": 3,
+          "at": 910,
+          "arrivalMs": 1.5,
+          "value": "value_0abc",
+          "errors": 0
+        },
+        {
+          "sequence": 4,
+          "at": 1013.1999999880791,
+          "arrivalMs": 1.600000023841858,
+          "value": "value_0abcd",
+          "errors": 1
+        },
+        {
+          "sequence": 5,
+          "at": 1112.3999999761581,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcde",
+          "errors": 0
+        },
+        {
+          "sequence": 6,
+          "at": 1215.2999999523163,
+          "arrivalMs": 1.5,
+          "value": "value_0abcdef",
+          "errors": 1
+        },
+        {
+          "sequence": 7,
+          "at": 1316.3999999761581,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefg",
+          "errors": 0
+        },
+        {
+          "sequence": 8,
+          "at": 1418.3999999761581,
+          "arrivalMs": 1.5,
+          "value": "value_0abcdefgh",
+          "errors": 1
+        },
+        {
+          "sequence": 9,
+          "at": 1519.5,
+          "arrivalMs": 1.5,
+          "value": "value_0abcdefghi",
+          "errors": 0
+        },
+        {
+          "sequence": 10,
+          "at": 1622.2999999523163,
+          "arrivalMs": 2.599999964237213,
+          "value": "value_0abcdefghij",
+          "errors": 1
+        },
+        {
+          "sequence": 11,
+          "at": 1721.199999988079,
+          "arrivalMs": 1.100000023841858,
+          "value": "value_0abcdefghijk",
+          "errors": 0
+        },
+        {
+          "sequence": 12,
+          "at": 1825.5999999642372,
+          "arrivalMs": 2.599999964237213,
+          "value": "value_0abcdefghijkl",
+          "errors": 1
+        },
+        {
+          "sequence": 13,
+          "at": 1926.3999999761581,
+          "arrivalMs": 1.100000023841858,
+          "value": "value_0abcdefghijklm",
+          "errors": 0
+        },
+        {
+          "sequence": 14,
+          "at": 2028.7999999523163,
+          "arrivalMs": 2.299999952316284,
+          "value": "value_0abcdefghijklmn",
+          "errors": 1
+        },
+        {
+          "sequence": 15,
+          "at": 2129.399999976158,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijklmno",
+          "errors": 0
+        },
+        {
+          "sequence": 16,
+          "at": 2233.399999976158,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghijklmnop",
+          "errors": 1
+        },
+        {
+          "sequence": 17,
+          "at": 2333.599999964237,
+          "arrivalMs": 1,
+          "value": "value_0abcdefghijklmnopq",
+          "errors": 0
+        },
+        {
+          "sequence": 18,
+          "at": 2436.599999964237,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijklmnopqr",
+          "errors": 1
+        },
+        {
+          "sequence": 19,
+          "at": 2537.099999964237,
+          "arrivalMs": 1.0999999642372131,
+          "value": "value_0abcdefghijklmnopqrs",
+          "errors": 0
+        },
+        {
+          "sequence": 20,
+          "at": 2639.2999999523163,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghijklmnopqrst",
+          "errors": 1
+        }
+      ],
+      "start": 699,
+      "end": 2645.5,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 699.6999999880791,
+          "kd1": 701.8999999761581,
+          "kp0": 701.8999999761581,
+          "in0": 703.2999999523163,
+          "in1": 708.0999999642372,
+          "ku0": 713,
+          "ku1": 713.5
+        },
+        {
+          "kd0": 802.3999999761581,
+          "kd1": 804.3999999761581,
+          "kp0": 804.3999999761581,
+          "in0": 805.8999999761581,
+          "in1": 808.0999999642372,
+          "ku0": 808.5,
+          "ku1": 809
+        },
+        {
+          "kd0": 904.8999999761581,
+          "kd1": 906.7999999523163,
+          "kp0": 906.7999999523163,
+          "in0": 908.5,
+          "in1": 910.5,
+          "ku0": 916,
+          "ku1": 916.5
+        },
+        {
+          "kd0": 1008.2999999523163,
+          "kd1": 1010.2999999523163,
+          "kp0": 1010.2999999523163,
+          "in0": 1011.5999999642372,
+          "in1": 1013.6999999880791,
+          "ku0": 1019,
+          "ku1": 1019.2999999523163
+        },
+        {
+          "kd0": 1108,
+          "kd1": 1109.8999999761581,
+          "kp0": 1109.8999999761581,
+          "in0": 1111.0999999642372,
+          "in1": 1112.7999999523163,
+          "ku0": 1117.699999988079,
+          "ku1": 1118
+        },
+        {
+          "kd0": 1210.199999988079,
+          "kd1": 1212.199999988079,
+          "kp0": 1212.199999988079,
+          "in0": 1213.699999988079,
+          "in1": 1215.699999988079,
+          "ku0": 1221,
+          "ku1": 1221.5
+        },
+        {
+          "kd0": 1311.5,
+          "kd1": 1313.5999999642372,
+          "kp0": 1313.5999999642372,
+          "in0": 1315.0999999642372,
+          "in1": 1316.7999999523163,
+          "ku0": 1322,
+          "ku1": 1322.3999999761581
+        },
+        {
+          "kd0": 1413.3999999761581,
+          "kd1": 1415.2999999523163,
+          "kp0": 1415.3999999761581,
+          "in0": 1416.8999999761581,
+          "in1": 1418.7999999523163,
+          "ku0": 1424.0999999642372,
+          "ku1": 1424.5
+        },
+        {
+          "kd0": 1514.5999999642372,
+          "kd1": 1516.5,
+          "kp0": 1516.5,
+          "in0": 1518,
+          "in1": 1519.8999999761581,
+          "ku0": 1524.8999999761581,
+          "ku1": 1525.3999999761581
+        },
+        {
+          "kd0": 1616.2999999523163,
+          "kd1": 1618.199999988079,
+          "kp0": 1618.199999988079,
+          "in0": 1619.699999988079,
+          "in1": 1622.5999999642372,
+          "ku0": 1627.5999999642372,
+          "ku1": 1628
+        },
+        {
+          "kd0": 1717.0999999642372,
+          "kd1": 1719,
+          "kp0": 1719,
+          "in0": 1720.0999999642372,
+          "in1": 1721.5999999642372,
+          "ku0": 1726.3999999761581,
+          "ku1": 1726.7999999523163
+        },
+        {
+          "kd0": 1819.7999999523163,
+          "kd1": 1821.699999988079,
+          "kp0": 1821.699999988079,
+          "in0": 1823,
+          "in1": 1825.8999999761581,
+          "ku0": 1831,
+          "ku1": 1831.3999999761581
+        },
+        {
+          "kd0": 1922.0999999642372,
+          "kd1": 1924.0999999642372,
+          "kp0": 1924.0999999642372,
+          "in0": 1925.199999988079,
+          "in1": 1926.7999999523163,
+          "ku0": 1931.5,
+          "ku1": 1931.8999999761581
+        },
+        {
+          "kd0": 2023.199999988079,
+          "kd1": 2025.199999988079,
+          "kp0": 2025.199999988079,
+          "in0": 2026.5,
+          "in1": 2029.199999988079,
+          "ku0": 2033.8999999761581,
+          "ku1": 2034.2999999523163
+        },
+        {
+          "kd0": 2125,
+          "kd1": 2126.899999976158,
+          "kp0": 2126.899999976158,
+          "in0": 2128.199999988079,
+          "in1": 2129.699999988079,
+          "ku0": 2134.399999976158,
+          "ku1": 2134.899999976158
+        },
+        {
+          "kd0": 2227.699999988079,
+          "kd1": 2229.699999988079,
+          "kp0": 2229.699999988079,
+          "in0": 2231,
+          "in1": 2233.7999999523163,
+          "ku0": 2239,
+          "ku1": 2239.099999964237
+        },
+        {
+          "kd0": 2329.5,
+          "kd1": 2331.2999999523163,
+          "kp0": 2331.2999999523163,
+          "in0": 2332.599999964237,
+          "in1": 2334,
+          "ku0": 2339,
+          "ku1": 2339
+        },
+        {
+          "kd0": 2431.2999999523163,
+          "kd1": 2433.199999988079,
+          "kp0": 2433.199999988079,
+          "in0": 2434.2999999523163,
+          "in1": 2437,
+          "ku0": 2442,
+          "ku1": 2442
+        },
+        {
+          "kd0": 2532.7999999523163,
+          "kd1": 2534.699999988079,
+          "kp0": 2534.699999988079,
+          "in0": 2536,
+          "in1": 2537.399999976158,
+          "ku0": 2542.599999964237,
+          "ku1": 2542.599999964237
+        },
+        {
+          "kd0": 2633.699999988079,
+          "kd1": 2635.599999964237,
+          "kp0": 2635.599999964237,
+          "in0": 2636.899999976158,
+          "in1": 2639.599999964237,
+          "ku0": 2644.699999988079,
+          "ku1": 2644.7999999523163
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2
+        },
+        {
+          "idx": 1,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 2,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 3,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 4,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 5,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 6,
+          "ms": 2
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 9,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 10,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 11,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 12,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 13,
+          "ms": 2
+        },
+        {
+          "idx": 14,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 15,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 16,
+          "ms": 1.7999999523162842
+        },
+        {
+          "idx": 17,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 18,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "on",
+      "i": 2,
+      "typingMs": 1944.4984579999946,
+      "cores": [
+        {
+          "busy": 260,
+          "idle": 1680
+        },
+        {
+          "busy": 210,
+          "idle": 1730
+        },
+        {
+          "busy": 1140,
+          "idle": 790
+        },
+        {
+          "busy": 280,
+          "idle": 1660
+        },
+        {
+          "busy": 510,
+          "idle": 1430
+        },
+        {
+          "busy": 490,
+          "idle": 1460
+        },
+        {
+          "busy": 40,
+          "idle": 1910
+        },
+        {
+          "busy": 10,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1920
+        },
+        {
+          "busy": 20,
+          "idle": 1940
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 641.0999999642372,
+          "duration": 16,
+          "interactionId": 5788,
+          "processingStart": 644.0999999642372,
+          "processingEnd": 646.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 641.0999999642372,
+          "duration": 16,
+          "interactionId": 5788,
+          "processingStart": 646.6999999880791,
+          "processingEnd": 652.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 744.3999999761581,
+          "duration": 16,
+          "interactionId": 5795,
+          "processingStart": 744.5999999642372,
+          "processingEnd": 746.5999999642372,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 744.3999999761581,
+          "duration": 16,
+          "interactionId": 5795,
+          "processingStart": 746.5999999642372,
+          "processingEnd": 750.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 845.0999999642372,
+          "duration": 48,
+          "interactionId": 5802,
+          "processingStart": 845.3000000119209,
+          "processingEnd": 883.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 845.0999999642372,
+          "duration": 48,
+          "interactionId": 5802,
+          "processingStart": 883.8000000119209,
+          "processingEnd": 887.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 948.1999999880791,
+          "duration": 48,
+          "interactionId": 5809,
+          "processingStart": 948.3000000119209,
+          "processingEnd": 987.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 948.1999999880791,
+          "duration": 48,
+          "interactionId": 5809,
+          "processingStart": 988,
+          "processingEnd": 991.6999999880791,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 648.0999999642372,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 652.8999999761581,
+          "wallMs": 4.800000011920929
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 748.1999999880791,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 750.3999999761581,
+          "wallMs": 2.199999988079071
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 885.3000000119209,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 887.3999999761581,
+          "wallMs": 2.099999964237213
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 989.5,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 991.6999999880791,
+          "wallMs": 2.199999988079071
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1052.5,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1054.300000011921,
+          "wallMs": 1.800000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1154.5,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1156.3999999761581,
+          "wallMs": 1.899999976158142
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1256.0999999642372,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1257.800000011921,
+          "wallMs": 1.7000000476837158
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1357.300000011921,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1359.0999999642372,
+          "wallMs": 1.7999999523162842
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1459.699999988079,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1461.5,
+          "wallMs": 1.800000011920929
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1560.800000011921,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1563.5999999642372,
+          "wallMs": 2.799999952316284
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1662.3999999761581,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1664,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1764.5999999642372,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1767.300000011921,
+          "wallMs": 2.700000047683716
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1866.0999999642372,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1867.5,
+          "wallMs": 1.4000000357627869
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 1968.800000011921,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 1971.699999988079,
+          "wallMs": 2.899999976158142
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2069.199999988079,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2070.699999988079,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2170.599999964237,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2173.300000011921,
+          "wallMs": 2.700000047683716
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2270.399999976158,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2271.899999976158,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2372.800000011921,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2375.399999976158,
+          "wallMs": 2.599999964237213
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2474.800000011921,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2476.300000011921,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2576.899999976158,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2579.899999976158,
+          "wallMs": 3
+        }
+      ],
+      "validations": [
+        {
+          "sequence": 1,
+          "at": 652.3000000119209,
+          "arrivalMs": 4.200000047683716,
+          "value": "value_0a",
+          "errors": 0
+        },
+        {
+          "sequence": 2,
+          "at": 749.8000000119209,
+          "arrivalMs": 1.600000023841858,
+          "value": "value_0ab",
+          "errors": 1
+        },
+        {
+          "sequence": 3,
+          "at": 886.8999999761581,
+          "arrivalMs": 1.5999999642372131,
+          "value": "value_0abc",
+          "errors": 0
+        },
+        {
+          "sequence": 4,
+          "at": 991.0999999642372,
+          "arrivalMs": 1.5999999642372131,
+          "value": "value_0abcd",
+          "errors": 1
+        },
+        {
+          "sequence": 5,
+          "at": 1053.8999999761581,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abcde",
+          "errors": 0
+        },
+        {
+          "sequence": 6,
+          "at": 1155.8999999761581,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abcdef",
+          "errors": 1
+        },
+        {
+          "sequence": 7,
+          "at": 1257.300000011921,
+          "arrivalMs": 1.2000000476837158,
+          "value": "value_0abcdefg",
+          "errors": 0
+        },
+        {
+          "sequence": 8,
+          "at": 1358.800000011921,
+          "arrivalMs": 1.5,
+          "value": "value_0abcdefgh",
+          "errors": 1
+        },
+        {
+          "sequence": 9,
+          "at": 1461.0999999642372,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abcdefghi",
+          "errors": 0
+        },
+        {
+          "sequence": 10,
+          "at": 1563.199999988079,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghij",
+          "errors": 1
+        },
+        {
+          "sequence": 11,
+          "at": 1663.5999999642372,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijk",
+          "errors": 0
+        },
+        {
+          "sequence": 12,
+          "at": 1766.8999999761581,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijkl",
+          "errors": 1
+        },
+        {
+          "sequence": 13,
+          "at": 1867.0999999642372,
+          "arrivalMs": 1,
+          "value": "value_0abcdefghijklm",
+          "errors": 0
+        },
+        {
+          "sequence": 14,
+          "at": 1971.300000011921,
+          "arrivalMs": 2.5,
+          "value": "value_0abcdefghijklmn",
+          "errors": 1
+        },
+        {
+          "sequence": 15,
+          "at": 2070.300000011921,
+          "arrivalMs": 1.100000023841858,
+          "value": "value_0abcdefghijklmno",
+          "errors": 0
+        },
+        {
+          "sequence": 16,
+          "at": 2172.899999976158,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijklmnop",
+          "errors": 1
+        },
+        {
+          "sequence": 17,
+          "at": 2271.5,
+          "arrivalMs": 1.100000023841858,
+          "value": "value_0abcdefghijklmnopq",
+          "errors": 0
+        },
+        {
+          "sequence": 18,
+          "at": 2375,
+          "arrivalMs": 2.199999988079071,
+          "value": "value_0abcdefghijklmnopqr",
+          "errors": 1
+        },
+        {
+          "sequence": 19,
+          "at": 2475.899999976158,
+          "arrivalMs": 1.0999999642372131,
+          "value": "value_0abcdefghijklmnopqrs",
+          "errors": 0
+        },
+        {
+          "sequence": 20,
+          "at": 2579.5,
+          "arrivalMs": 2.600000023841858,
+          "value": "value_0abcdefghijklmnopqrst",
+          "errors": 1
+        }
+      ],
+      "start": 640.5999999642372,
+      "end": 2586,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 644.1999999880791,
+          "kd1": 646.6999999880791,
+          "kp0": 646.6999999880791,
+          "in0": 648.0999999642372,
+          "in1": 652.8999999761581,
+          "ku0": 657.5999999642372,
+          "ku1": 658
+        },
+        {
+          "kd0": 744.5999999642372,
+          "kd1": 746.5999999642372,
+          "kp0": 746.5999999642372,
+          "in0": 748.1999999880791,
+          "in1": 750.3999999761581,
+          "ku0": 755.8000000119209,
+          "ku1": 756.3000000119209
+        },
+        {
+          "kd0": 845.3000000119209,
+          "kd1": 883.8000000119209,
+          "kp0": 883.8000000119209,
+          "in0": 885.3000000119209,
+          "in1": 887.3999999761581,
+          "ku0": 892.8000000119209,
+          "ku1": 893.3000000119209
+        },
+        {
+          "kd0": 948.3000000119209,
+          "kd1": 987.8999999761581,
+          "kp0": 988,
+          "in0": 989.5,
+          "in1": 991.6999999880791,
+          "ku0": 997,
+          "ku1": 997.5999999642372
+        },
+        {
+          "kd0": 1049.3999999761581,
+          "kd1": 1051.300000011921,
+          "kp0": 1051.300000011921,
+          "in0": 1052.5,
+          "in1": 1054.300000011921,
+          "ku0": 1059.199999988079,
+          "ku1": 1059.5999999642372
+        },
+        {
+          "kd0": 1151.300000011921,
+          "kd1": 1153.300000011921,
+          "kp0": 1153.300000011921,
+          "in0": 1154.5,
+          "in1": 1156.3999999761581,
+          "ku0": 1161.199999988079,
+          "ku1": 1161.5
+        },
+        {
+          "kd0": 1252.8999999761581,
+          "kd1": 1254.800000011921,
+          "kp0": 1254.800000011921,
+          "in0": 1256.0999999642372,
+          "in1": 1257.800000011921,
+          "ku0": 1262.5,
+          "ku1": 1262.8999999761581
+        },
+        {
+          "kd0": 1354.199999988079,
+          "kd1": 1356.0999999642372,
+          "kp0": 1356.0999999642372,
+          "in0": 1357.300000011921,
+          "in1": 1359.0999999642372,
+          "ku0": 1364,
+          "ku1": 1364.3999999761581
+        },
+        {
+          "kd0": 1456.3999999761581,
+          "kd1": 1458.3999999761581,
+          "kp0": 1458.3999999761581,
+          "in0": 1459.699999988079,
+          "in1": 1461.5,
+          "ku0": 1466.300000011921,
+          "ku1": 1466.699999988079
+        },
+        {
+          "kd0": 1557.5999999642372,
+          "kd1": 1559.5,
+          "kp0": 1559.5,
+          "in0": 1560.800000011921,
+          "in1": 1563.5999999642372,
+          "ku0": 1568.199999988079,
+          "ku1": 1568.5999999642372
+        },
+        {
+          "kd0": 1659.300000011921,
+          "kd1": 1661.199999988079,
+          "kp0": 1661.199999988079,
+          "in0": 1662.3999999761581,
+          "in1": 1664,
+          "ku0": 1668.699999988079,
+          "ku1": 1669.199999988079
+        },
+        {
+          "kd0": 1761.3999999761581,
+          "kd1": 1763.300000011921,
+          "kp0": 1763.300000011921,
+          "in0": 1764.5999999642372,
+          "in1": 1767.300000011921,
+          "ku0": 1772,
+          "ku1": 1772.300000011921
+        },
+        {
+          "kd0": 1863,
+          "kd1": 1864.8999999761581,
+          "kp0": 1864.8999999761581,
+          "in0": 1866.0999999642372,
+          "in1": 1867.5,
+          "ku0": 1872.199999988079,
+          "ku1": 1872.5999999642372
+        },
+        {
+          "kd0": 1965.5,
+          "kd1": 1967.3999999761581,
+          "kp0": 1967.3999999761581,
+          "in0": 1968.800000011921,
+          "in1": 1971.699999988079,
+          "ku0": 1976.5,
+          "ku1": 1977
+        },
+        {
+          "kd0": 2066.099999964237,
+          "kd1": 2068,
+          "kp0": 2068,
+          "in0": 2069.199999988079,
+          "in1": 2070.699999988079,
+          "ku0": 2075.300000011921,
+          "ku1": 2075.800000011921
+        },
+        {
+          "kd0": 2167.5,
+          "kd1": 2169.5,
+          "kp0": 2169.5,
+          "in0": 2170.599999964237,
+          "in1": 2173.300000011921,
+          "ku0": 2178.399999976158,
+          "ku1": 2178.599999964237
+        },
+        {
+          "kd0": 2267.300000011921,
+          "kd1": 2269.300000011921,
+          "kp0": 2269.300000011921,
+          "in0": 2270.399999976158,
+          "in1": 2271.899999976158,
+          "ku0": 2276.899999976158,
+          "ku1": 2277
+        },
+        {
+          "kd0": 2369.699999988079,
+          "kd1": 2371.599999964237,
+          "kp0": 2371.599999964237,
+          "in0": 2372.699999988079,
+          "in1": 2375.399999976158,
+          "ku0": 2380.5,
+          "ku1": 2380.5
+        },
+        {
+          "kd0": 2471.199999988079,
+          "kd1": 2473.199999988079,
+          "kp0": 2473.199999988079,
+          "in0": 2474.800000011921,
+          "in1": 2476.300000011921,
+          "ku0": 2481.899999976158,
+          "ku1": 2482
+        },
+        {
+          "kd0": 2573.699999988079,
+          "kd1": 2575.599999964237,
+          "kp0": 2575.599999964237,
+          "in0": 2576.899999976158,
+          "in1": 2579.899999976158,
+          "ku0": 2585.199999988079,
+          "ku1": 2585.199999988079
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2.5
+        },
+        {
+          "idx": 1,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 2,
+          "ms": 38.39999997615814
+        },
+        {
+          "idx": 3,
+          "ms": 39.59999996423721
+        },
+        {
+          "idx": 4,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 5,
+          "ms": 2
+        },
+        {
+          "idx": 6,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 2
+        },
+        {
+          "idx": 9,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 10,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 11,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 12,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 13,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 14,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 15,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 16,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 17,
+          "ms": 1.800000011920929
+        },
+        {
+          "idx": 18,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "off",
+      "i": 2,
+      "typingMs": 1941.0559159999975,
+      "cores": [
+        {
+          "busy": 300,
+          "idle": 1640
+        },
+        {
+          "busy": 240,
+          "idle": 1680
+        },
+        {
+          "busy": 780,
+          "idle": 1160
+        },
+        {
+          "busy": 530,
+          "idle": 1410
+        },
+        {
+          "busy": 920,
+          "idle": 1020
+        },
+        {
+          "busy": 410,
+          "idle": 1530
+        },
+        {
+          "busy": 80,
+          "idle": 1860
+        },
+        {
+          "busy": 50,
+          "idle": 1890
+        },
+        {
+          "busy": 20,
+          "idle": 1920
+        },
+        {
+          "busy": 10,
+          "idle": 1920
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 589.5,
+          "duration": 16,
+          "interactionId": 6511,
+          "processingStart": 589.5999999642372,
+          "processingEnd": 589.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 594.5999999642372,
+          "duration": 16,
+          "interactionId": 6518,
+          "processingStart": 594.5999999642372,
+          "processingEnd": 596.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 594.5999999642372,
+          "duration": 16,
+          "interactionId": 6518,
+          "processingStart": 596.6999999880791,
+          "processingEnd": 602.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 596.6999999880791,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 596.6999999880791,
+          "processingEnd": 596.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 694.5999999642372,
+          "duration": 16,
+          "interactionId": 6525,
+          "processingStart": 694.6999999880791,
+          "processingEnd": 696.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 694.5999999642372,
+          "duration": 16,
+          "interactionId": 6525,
+          "processingStart": 696.8000000119209,
+          "processingEnd": 699.8000000119209,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 598.0999999642372,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 602.6999999880791,
+          "wallMs": 4.600000023841858
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 698.3000000119209,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 699.8000000119209,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 799.8999999761581,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 801.1999999880791,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 902,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 903.1999999880791,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1002.8999999761581,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1004.1999999880791,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1103,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1104.199999988079,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1204.5,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1205.800000011921,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1306.5,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1307.699999988079,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1407.8999999761581,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1409.0999999642372,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1510.3999999761581,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1511.5,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1611.0999999642372,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1612.199999988079,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1712,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1713.0999999642372,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1815.0999999642372,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1816,
+          "wallMs": 0.9000000357627869
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 1917.8999999761581,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 1919,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2020.5999999642372,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2021.699999988079,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2122.399999976158,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2123.399999976158,
+          "wallMs": 1
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2224.5,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2225.599999964237,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2326.300000011921,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2327.300000011921,
+          "wallMs": 1
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2429,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2430.099999964237,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2529,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2530,
+          "wallMs": 1
+        }
+      ],
+      "validations": [],
+      "start": 593.8999999761581,
+      "end": 2536,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 594.5999999642372,
+          "kd1": 596.6999999880791,
+          "kp0": 596.6999999880791,
+          "in0": 598.0999999642372,
+          "in1": 602.6999999880791,
+          "ku0": 607.8000000119209,
+          "ku1": 608.3000000119209
+        },
+        {
+          "kd0": 694.8000000119209,
+          "kd1": 696.8000000119209,
+          "kp0": 696.8000000119209,
+          "in0": 698.3000000119209,
+          "in1": 699.8000000119209,
+          "ku0": 700.0999999642372,
+          "ku1": 700.5999999642372
+        },
+        {
+          "kd0": 796.5,
+          "kd1": 798.5,
+          "kp0": 798.5,
+          "in0": 799.8999999761581,
+          "in1": 801.1999999880791,
+          "ku0": 806.0999999642372,
+          "ku1": 806.5999999642372
+        },
+        {
+          "kd0": 898.6999999880791,
+          "kd1": 900.6999999880791,
+          "kp0": 900.6999999880791,
+          "in0": 901.8999999761581,
+          "in1": 903.1999999880791,
+          "ku0": 907.8999999761581,
+          "ku1": 908.3999999761581
+        },
+        {
+          "kd0": 999.6999999880791,
+          "kd1": 1001.5999999642372,
+          "kp0": 1001.5999999642372,
+          "in0": 1002.8000000119209,
+          "in1": 1004.1999999880791,
+          "ku0": 1008.8000000119209,
+          "ku1": 1009.1999999880791
+        },
+        {
+          "kd0": 1099.8999999761581,
+          "kd1": 1101.800000011921,
+          "kp0": 1101.800000011921,
+          "in0": 1103,
+          "in1": 1104.199999988079,
+          "ku0": 1109.0999999642372,
+          "ku1": 1109.3999999761581
+        },
+        {
+          "kd0": 1201,
+          "kd1": 1203,
+          "kp0": 1203,
+          "in0": 1204.5,
+          "in1": 1205.800000011921,
+          "ku0": 1211,
+          "ku1": 1211.5
+        },
+        {
+          "kd0": 1303.5,
+          "kd1": 1305.3999999761581,
+          "kp0": 1305.3999999761581,
+          "in0": 1306.5,
+          "in1": 1307.699999988079,
+          "ku0": 1312.3999999761581,
+          "ku1": 1312.800000011921
+        },
+        {
+          "kd0": 1404.800000011921,
+          "kd1": 1406.5999999642372,
+          "kp0": 1406.699999988079,
+          "in0": 1407.8999999761581,
+          "in1": 1409.0999999642372,
+          "ku0": 1414.0999999642372,
+          "ku1": 1414.5999999642372
+        },
+        {
+          "kd0": 1506.8999999761581,
+          "kd1": 1508.8999999761581,
+          "kp0": 1508.8999999761581,
+          "in0": 1510.3999999761581,
+          "in1": 1511.5,
+          "ku0": 1516.699999988079,
+          "ku1": 1517.0999999642372
+        },
+        {
+          "kd0": 1608.0999999642372,
+          "kd1": 1610,
+          "kp0": 1610,
+          "in0": 1611.0999999642372,
+          "in1": 1612.199999988079,
+          "ku0": 1617,
+          "ku1": 1617.5
+        },
+        {
+          "kd0": 1708.8999999761581,
+          "kd1": 1711,
+          "kp0": 1711,
+          "in0": 1712,
+          "in1": 1713.0999999642372,
+          "ku0": 1717.800000011921,
+          "ku1": 1718.300000011921
+        },
+        {
+          "kd0": 1811.8999999761581,
+          "kd1": 1813.800000011921,
+          "kp0": 1813.800000011921,
+          "in0": 1815.0999999642372,
+          "in1": 1816,
+          "ku0": 1820.699999988079,
+          "ku1": 1821
+        },
+        {
+          "kd0": 1914.800000011921,
+          "kd1": 1916.699999988079,
+          "kp0": 1916.699999988079,
+          "in0": 1917.8999999761581,
+          "in1": 1919,
+          "ku0": 1923.699999988079,
+          "ku1": 1924.0999999642372
+        },
+        {
+          "kd0": 2017.0999999642372,
+          "kd1": 2019.0999999642372,
+          "kp0": 2019.0999999642372,
+          "in0": 2020.5999999642372,
+          "in1": 2021.699999988079,
+          "ku0": 2026.8999999761581,
+          "ku1": 2027.3999999761581
+        },
+        {
+          "kd0": 2119.300000011921,
+          "kd1": 2121.300000011921,
+          "kp0": 2121.300000011921,
+          "in0": 2122.399999976158,
+          "in1": 2123.5,
+          "ku0": 2128.800000011921,
+          "ku1": 2128.800000011921
+        },
+        {
+          "kd0": 2220.800000011921,
+          "kd1": 2222.800000011921,
+          "kp0": 2222.800000011921,
+          "in0": 2224.5,
+          "in1": 2225.599999964237,
+          "ku0": 2231.599999964237,
+          "ku1": 2231.599999964237
+        },
+        {
+          "kd0": 2322.599999964237,
+          "kd1": 2324.699999988079,
+          "kp0": 2324.699999988079,
+          "in0": 2326.300000011921,
+          "in1": 2327.300000011921,
+          "ku0": 2333.199999988079,
+          "ku1": 2333.199999988079
+        },
+        {
+          "kd0": 2425.5,
+          "kd1": 2427.5,
+          "kp0": 2427.5,
+          "in0": 2429,
+          "in1": 2430.099999964237,
+          "ku0": 2435.699999988079,
+          "ku1": 2435.699999988079
+        },
+        {
+          "kd0": 2525.800000011921,
+          "kd1": 2527.699999988079,
+          "kp0": 2527.699999988079,
+          "in0": 2529,
+          "in1": 2530,
+          "ku0": 2535.099999964237,
+          "ku1": 2535.199999988079
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2
+        },
+        {
+          "idx": 1,
+          "ms": 2
+        },
+        {
+          "idx": 2,
+          "ms": 2
+        },
+        {
+          "idx": 3,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 4,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 5,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 6,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 1.7999999523162842
+        },
+        {
+          "idx": 9,
+          "ms": 2
+        },
+        {
+          "idx": 10,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 11,
+          "ms": 2
+        },
+        {
+          "idx": 12,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 13,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 14,
+          "ms": 2
+        },
+        {
+          "idx": 15,
+          "ms": 2
+        },
+        {
+          "idx": 16,
+          "ms": 2
+        },
+        {
+          "idx": 17,
+          "ms": 2
+        },
+        {
+          "idx": 18,
+          "ms": 2
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "off",
+      "i": 3,
+      "typingMs": 1947.005833000003,
+      "cores": [
+        {
+          "busy": 350,
+          "idle": 1580
+        },
+        {
+          "busy": 360,
+          "idle": 1590
+        },
+        {
+          "busy": 950,
+          "idle": 990
+        },
+        {
+          "busy": 650,
+          "idle": 1310
+        },
+        {
+          "busy": 520,
+          "idle": 1420
+        },
+        {
+          "busy": 370,
+          "idle": 1580
+        },
+        {
+          "busy": 40,
+          "idle": 1900
+        },
+        {
+          "busy": 30,
+          "idle": 1920
+        },
+        {
+          "busy": 10,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1940
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 515.8999999761581,
+          "duration": 24,
+          "interactionId": 5997,
+          "processingStart": 516.1000000238419,
+          "processingEnd": 518.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 515.8999999761581,
+          "duration": 24,
+          "interactionId": 5997,
+          "processingStart": 518.6999999880791,
+          "processingEnd": 524.6000000238419,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 518.8000000119209,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 518.8000000119209,
+          "processingEnd": 518.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 520.1000000238419,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 520.1000000238419,
+          "processingEnd": 524.6000000238419,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 618.1999999880791,
+          "duration": 16,
+          "interactionId": 6004,
+          "processingStart": 618.3000000119209,
+          "processingEnd": 620.3000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 618.1999999880791,
+          "duration": 16,
+          "interactionId": 6004,
+          "processingStart": 620.3000000119209,
+          "processingEnd": 623.5,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 620.3999999761581,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 620.3999999761581,
+          "processingEnd": 620.3999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 622,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 622,
+          "processingEnd": 623.3999999761581,
+          "cancelable": false
+        },
+        {
+          "name": "keyup",
+          "entryType": "event",
+          "startTime": 623.6999999880791,
+          "duration": 16,
+          "interactionId": 6004,
+          "processingStart": 623.6999999880791,
+          "processingEnd": 624.1999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 720.1999999880791,
+          "duration": 48,
+          "interactionId": 6011,
+          "processingStart": 720.3000000119209,
+          "processingEnd": 759.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 720.1999999880791,
+          "duration": 48,
+          "interactionId": 6011,
+          "processingStart": 759.8000000119209,
+          "processingEnd": 762.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 822,
+          "duration": 48,
+          "interactionId": 6018,
+          "processingStart": 822.1000000238419,
+          "processingEnd": 862.6000000238419,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 822,
+          "duration": 48,
+          "interactionId": 6018,
+          "processingStart": 862.6000000238419,
+          "processingEnd": 865.3000000119209,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 520.1999999880791,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 524.6000000238419,
+          "wallMs": 4.400000035762787
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 622,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 623.3999999761581,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 761.3000000119209,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 762.6999999880791,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 864,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 865.3000000119209,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 925.1999999880791,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 926.5,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1027.199999988079,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1028.3999999761581,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1128.3999999761581,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1129.5,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1230.3999999761581,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1231.699999988079,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1331.699999988079,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1333.1000000238419,
+          "wallMs": 1.4000000357627869
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1434.300000011921,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1435.6000000238419,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1535.199999988079,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1536.300000011921,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1637.5,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1638.6000000238419,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1739.6000000238419,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1740.6000000238419,
+          "wallMs": 1
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 1840.3999999761581,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 1841.300000011921,
+          "wallMs": 0.9000000357627869
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 1943.800000011921,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 1944.800000011921,
+          "wallMs": 1
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2045.800000011921,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2046.800000011921,
+          "wallMs": 1
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2147.5,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2148.5,
+          "wallMs": 1
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2249.5,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2250.5,
+          "wallMs": 1
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2351.5,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2352.399999976158,
+          "wallMs": 0.8999999761581421
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2455.600000023842,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2456.699999988079,
+          "wallMs": 1.0999999642372131
+        }
+      ],
+      "validations": [],
+      "start": 515.3999999761581,
+      "end": 2463.300000011921,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 516.1000000238419,
+          "kd1": 518.6999999880791,
+          "kp0": 518.8000000119209,
+          "in0": 520.1000000238419,
+          "in1": 524.6000000238419,
+          "ku0": 529.6999999880791,
+          "ku1": 530.1000000238419
+        },
+        {
+          "kd0": 618.3000000119209,
+          "kd1": 620.3000000119209,
+          "kp0": 620.3000000119209,
+          "in0": 622,
+          "in1": 623.3999999761581,
+          "ku0": 623.6999999880791,
+          "ku1": 624.1999999880791
+        },
+        {
+          "kd0": 720.3999999761581,
+          "kd1": 759.6999999880791,
+          "kp0": 759.8000000119209,
+          "in0": 761.3000000119209,
+          "in1": 762.6999999880791,
+          "ku0": 768,
+          "ku1": 768.6000000238419
+        },
+        {
+          "kd0": 822.1000000238419,
+          "kd1": 862.6000000238419,
+          "kp0": 862.6000000238419,
+          "in0": 864,
+          "in1": 865.3000000119209,
+          "ku0": 870.3999999761581,
+          "ku1": 870.8999999761581
+        },
+        {
+          "kd0": 922.1000000238419,
+          "kd1": 924,
+          "kp0": 924,
+          "in0": 925.1999999880791,
+          "in1": 926.5,
+          "ku0": 931.1999999880791,
+          "ku1": 931.6000000238419
+        },
+        {
+          "kd0": 1024,
+          "kd1": 1026,
+          "kp0": 1026,
+          "in0": 1027.199999988079,
+          "in1": 1028.3999999761581,
+          "ku0": 1033.199999988079,
+          "ku1": 1033.6000000238419
+        },
+        {
+          "kd0": 1125.300000011921,
+          "kd1": 1127.199999988079,
+          "kp0": 1127.199999988079,
+          "in0": 1128.3999999761581,
+          "in1": 1129.5,
+          "ku0": 1134.300000011921,
+          "ku1": 1134.699999988079
+        },
+        {
+          "kd0": 1227.199999988079,
+          "kd1": 1229.199999988079,
+          "kp0": 1229.199999988079,
+          "in0": 1230.3999999761581,
+          "in1": 1231.699999988079,
+          "ku0": 1236.300000011921,
+          "ku1": 1236.699999988079
+        },
+        {
+          "kd0": 1328.300000011921,
+          "kd1": 1330.300000011921,
+          "kp0": 1330.300000011921,
+          "in0": 1331.699999988079,
+          "in1": 1333.1000000238419,
+          "ku0": 1338.300000011921,
+          "ku1": 1338.800000011921
+        },
+        {
+          "kd0": 1430.800000011921,
+          "kd1": 1432.800000011921,
+          "kp0": 1432.800000011921,
+          "in0": 1434.300000011921,
+          "in1": 1435.6000000238419,
+          "ku0": 1440.6000000238419,
+          "ku1": 1441.1000000238419
+        },
+        {
+          "kd0": 1532.1000000238419,
+          "kd1": 1534,
+          "kp0": 1534,
+          "in0": 1535.199999988079,
+          "in1": 1536.300000011921,
+          "ku0": 1541.1000000238419,
+          "ku1": 1541.6000000238419
+        },
+        {
+          "kd0": 1634.3999999761581,
+          "kd1": 1636.3999999761581,
+          "kp0": 1636.3999999761581,
+          "in0": 1637.5,
+          "in1": 1638.6000000238419,
+          "ku0": 1643.3999999761581,
+          "ku1": 1643.800000011921
+        },
+        {
+          "kd0": 1736.3999999761581,
+          "kd1": 1738.300000011921,
+          "kp0": 1738.3999999761581,
+          "in0": 1739.6000000238419,
+          "in1": 1740.6000000238419,
+          "ku0": 1745.199999988079,
+          "ku1": 1745.699999988079
+        },
+        {
+          "kd0": 1837.300000011921,
+          "kd1": 1839.199999988079,
+          "kp0": 1839.199999988079,
+          "in0": 1840.3999999761581,
+          "in1": 1841.300000011921,
+          "ku0": 1845.8999999761581,
+          "ku1": 1846.3999999761581
+        },
+        {
+          "kd0": 1940.699999988079,
+          "kd1": 1942.6000000238419,
+          "kp0": 1942.6000000238419,
+          "in0": 1943.800000011921,
+          "in1": 1944.800000011921,
+          "ku0": 1949.5,
+          "ku1": 1949.800000011921
+        },
+        {
+          "kd0": 2042.6000000238419,
+          "kd1": 2044.6000000238419,
+          "kp0": 2044.6000000238419,
+          "in0": 2045.800000011921,
+          "in1": 2046.800000011921,
+          "ku0": 2052,
+          "ku1": 2052.100000023842
+        },
+        {
+          "kd0": 2144.300000011921,
+          "kd1": 2146.199999988079,
+          "kp0": 2146.199999988079,
+          "in0": 2147.5,
+          "in1": 2148.5,
+          "ku0": 2153.399999976158,
+          "ku1": 2153.5
+        },
+        {
+          "kd0": 2246.5,
+          "kd1": 2248.399999976158,
+          "kp0": 2248.399999976158,
+          "in0": 2249.5,
+          "in1": 2250.5,
+          "ku0": 2255.600000023842,
+          "ku1": 2255.600000023842
+        },
+        {
+          "kd0": 2348.300000011921,
+          "kd1": 2350.199999988079,
+          "kp0": 2350.199999988079,
+          "in0": 2351.399999976158,
+          "in1": 2352.399999976158,
+          "ku0": 2357.399999976158,
+          "ku1": 2357.399999976158
+        },
+        {
+          "kd0": 2452,
+          "kd1": 2454,
+          "kp0": 2454.100000023842,
+          "in0": 2455.600000023842,
+          "in1": 2456.699999988079,
+          "ku0": 2462.399999976158,
+          "ku1": 2462.399999976158
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2.599999964237213
+        },
+        {
+          "idx": 1,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 2,
+          "ms": 39.30000001192093
+        },
+        {
+          "idx": 3,
+          "ms": 40.299999952316284
+        },
+        {
+          "idx": 4,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 5,
+          "ms": 2
+        },
+        {
+          "idx": 6,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 7,
+          "ms": 2
+        },
+        {
+          "idx": 8,
+          "ms": 2
+        },
+        {
+          "idx": 9,
+          "ms": 2
+        },
+        {
+          "idx": 10,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 11,
+          "ms": 2
+        },
+        {
+          "idx": 12,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 13,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 14,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 15,
+          "ms": 2
+        },
+        {
+          "idx": 16,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 17,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 18,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 19,
+          "ms": 2
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "on",
+      "i": 3,
+      "typingMs": 1947.021292000005,
+      "cores": [
+        {
+          "busy": 210,
+          "idle": 1730
+        },
+        {
+          "busy": 200,
+          "idle": 1740
+        },
+        {
+          "busy": 990,
+          "idle": 970
+        },
+        {
+          "busy": 680,
+          "idle": 1270
+        },
+        {
+          "busy": 470,
+          "idle": 1480
+        },
+        {
+          "busy": 660,
+          "idle": 1270
+        },
+        {
+          "busy": 80,
+          "idle": 1870
+        },
+        {
+          "busy": 40,
+          "idle": 1910
+        },
+        {
+          "busy": 20,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1930
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 697.3000000119209,
+          "duration": 16,
+          "interactionId": 8170,
+          "processingStart": 697.6000000238419,
+          "processingEnd": 699.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 697.3000000119209,
+          "duration": 16,
+          "interactionId": 8170,
+          "processingStart": 699.6999999880791,
+          "processingEnd": 706.9000000357628,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 699.8000000119209,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 699.8000000119209,
+          "processingEnd": 699.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 701.1999999880791,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 701.3000000119209,
+          "processingEnd": 706.8000000119209,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 800.1999999880791,
+          "duration": 16,
+          "interactionId": 8177,
+          "processingStart": 800.4000000357628,
+          "processingEnd": 802.4000000357628,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 800.1999999880791,
+          "duration": 16,
+          "interactionId": 8177,
+          "processingStart": 802.4000000357628,
+          "processingEnd": 806.4000000357628,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 802.4000000357628,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 802.4000000357628,
+          "processingEnd": 802.4000000357628,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 804,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 804,
+          "processingEnd": 806.4000000357628,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 903.3000000119209,
+          "duration": 16,
+          "interactionId": 8184,
+          "processingStart": 903.4000000357628,
+          "processingEnd": 905.4000000357628,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 903.3000000119209,
+          "duration": 16,
+          "interactionId": 8184,
+          "processingStart": 905.4000000357628,
+          "processingEnd": 908.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 2226.900000035763,
+          "duration": 16,
+          "interactionId": 8275,
+          "processingStart": 2227,
+          "processingEnd": 2229,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 2226.900000035763,
+          "duration": 16,
+          "interactionId": 8275,
+          "processingStart": 2229,
+          "processingEnd": 2233.199999988079,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 701.4000000357628,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 706.8000000119209,
+          "wallMs": 5.399999976158142
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 804.1000000238419,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 806.4000000357628,
+          "wallMs": 2.300000011920929
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 906.6999999880791,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 908.8000000119209,
+          "wallMs": 2.100000023841858
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 1009.5,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 1011.6000000238419,
+          "wallMs": 2.100000023841858
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1111.800000011921,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1113.6000000238419,
+          "wallMs": 1.800000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1212.800000011921,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1214.800000011921,
+          "wallMs": 2
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1315,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1316.6000000238419,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1417.6000000238419,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1419.300000011921,
+          "wallMs": 1.699999988079071
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1519,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1520.699999988079,
+          "wallMs": 1.699999988079071
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1619.300000011921,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1622,
+          "wallMs": 2.699999988079071
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1721.300000011921,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1722.9000000357628,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1821.300000011921,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1824.1000000238419,
+          "wallMs": 2.800000011920929
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1924,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1925.6000000238419,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 2025.5,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 2028.5,
+          "wallMs": 3
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2127.300000011921,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2128.900000035763,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2230.300000011921,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2233.199999988079,
+          "wallMs": 2.899999976158142
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2332.300000011921,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2333.900000035763,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2433,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2435.699999988079,
+          "wallMs": 2.699999988079071
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2533.400000035763,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2534.900000035763,
+          "wallMs": 1.5
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2636.199999988079,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2638.900000035763,
+          "wallMs": 2.700000047683716
+        }
+      ],
+      "validations": [
+        {
+          "sequence": 1,
+          "at": 706.1000000238419,
+          "arrivalMs": 4.699999988079071,
+          "value": "value_0a",
+          "errors": 0
+        },
+        {
+          "sequence": 2,
+          "at": 805.8000000119209,
+          "arrivalMs": 1.699999988079071,
+          "value": "value_0ab",
+          "errors": 1
+        },
+        {
+          "sequence": 3,
+          "at": 908.1999999880791,
+          "arrivalMs": 1.5,
+          "value": "value_0abc",
+          "errors": 0
+        },
+        {
+          "sequence": 4,
+          "at": 1010.9000000357628,
+          "arrivalMs": 1.4000000357627869,
+          "value": "value_0abcd",
+          "errors": 1
+        },
+        {
+          "sequence": 5,
+          "at": 1113.1000000238419,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcde",
+          "errors": 0
+        },
+        {
+          "sequence": 6,
+          "at": 1214.199999988079,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abcdef",
+          "errors": 1
+        },
+        {
+          "sequence": 7,
+          "at": 1316.199999988079,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefg",
+          "errors": 0
+        },
+        {
+          "sequence": 8,
+          "at": 1418.9000000357628,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefgh",
+          "errors": 1
+        },
+        {
+          "sequence": 9,
+          "at": 1520.300000011921,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefghi",
+          "errors": 0
+        },
+        {
+          "sequence": 10,
+          "at": 1621.6000000238419,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghij",
+          "errors": 1
+        },
+        {
+          "sequence": 11,
+          "at": 1722.5,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijk",
+          "errors": 0
+        },
+        {
+          "sequence": 12,
+          "at": 1823.699999988079,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghijkl",
+          "errors": 1
+        },
+        {
+          "sequence": 13,
+          "at": 1925.300000011921,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefghijklm",
+          "errors": 0
+        },
+        {
+          "sequence": 14,
+          "at": 2028,
+          "arrivalMs": 2.5,
+          "value": "value_0abcdefghijklmn",
+          "errors": 1
+        },
+        {
+          "sequence": 15,
+          "at": 2128.600000023842,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefghijklmno",
+          "errors": 0
+        },
+        {
+          "sequence": 16,
+          "at": 2232.800000011921,
+          "arrivalMs": 2.5,
+          "value": "value_0abcdefghijklmnop",
+          "errors": 1
+        },
+        {
+          "sequence": 17,
+          "at": 2333.600000023842,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefghijklmnopq",
+          "errors": 0
+        },
+        {
+          "sequence": 18,
+          "at": 2435.400000035763,
+          "arrivalMs": 2.400000035762787,
+          "value": "value_0abcdefghijklmnopqr",
+          "errors": 1
+        },
+        {
+          "sequence": 19,
+          "at": 2534.5,
+          "arrivalMs": 1.0999999642372131,
+          "value": "value_0abcdefghijklmnopqrs",
+          "errors": 0
+        },
+        {
+          "sequence": 20,
+          "at": 2638.600000023842,
+          "arrivalMs": 2.400000035762787,
+          "value": "value_0abcdefghijklmnopqrst",
+          "errors": 1
+        }
+      ],
+      "start": 696.9000000357628,
+      "end": 2644.699999988079,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 697.6999999880791,
+          "kd1": 699.6999999880791,
+          "kp0": 699.8000000119209,
+          "in0": 701.4000000357628,
+          "in1": 706.8000000119209,
+          "ku0": 712.4000000357628,
+          "ku1": 713
+        },
+        {
+          "kd0": 800.4000000357628,
+          "kd1": 802.4000000357628,
+          "kp0": 802.4000000357628,
+          "in0": 804.1000000238419,
+          "in1": 806.4000000357628,
+          "ku0": 806.6999999880791,
+          "ku1": 807.1000000238419
+        },
+        {
+          "kd0": 903.4000000357628,
+          "kd1": 905.4000000357628,
+          "kp0": 905.4000000357628,
+          "in0": 906.6999999880791,
+          "in1": 908.8000000119209,
+          "ku0": 913.8000000119209,
+          "ku1": 914.1999999880791
+        },
+        {
+          "kd0": 1006.3000000119209,
+          "kd1": 1008.1999999880791,
+          "kp0": 1008.1999999880791,
+          "in0": 1009.5,
+          "in1": 1011.6000000238419,
+          "ku0": 1016.6000000238419,
+          "ku1": 1017.1000000238419
+        },
+        {
+          "kd0": 1108.5,
+          "kd1": 1110.6000000238419,
+          "kp0": 1110.6000000238419,
+          "in0": 1111.800000011921,
+          "in1": 1113.6000000238419,
+          "ku0": 1118.300000011921,
+          "ku1": 1118.800000011921
+        },
+        {
+          "kd0": 1209.6000000238419,
+          "kd1": 1211.6000000238419,
+          "kp0": 1211.6000000238419,
+          "in0": 1212.800000011921,
+          "in1": 1214.800000011921,
+          "ku0": 1219.6000000238419,
+          "ku1": 1220
+        },
+        {
+          "kd0": 1311.800000011921,
+          "kd1": 1313.800000011921,
+          "kp0": 1313.800000011921,
+          "in0": 1315,
+          "in1": 1316.6000000238419,
+          "ku0": 1321.300000011921,
+          "ku1": 1321.699999988079
+        },
+        {
+          "kd0": 1414.5,
+          "kd1": 1416.4000000357628,
+          "kp0": 1416.4000000357628,
+          "in0": 1417.6000000238419,
+          "in1": 1419.300000011921,
+          "ku0": 1424.1000000238419,
+          "ku1": 1424.5
+        },
+        {
+          "kd0": 1515.800000011921,
+          "kd1": 1517.800000011921,
+          "kp0": 1517.800000011921,
+          "in0": 1519,
+          "in1": 1520.699999988079,
+          "ku0": 1525.4000000357628,
+          "ku1": 1525.9000000357628
+        },
+        {
+          "kd0": 1616.1000000238419,
+          "kd1": 1618.1000000238419,
+          "kp0": 1618.1000000238419,
+          "in0": 1619.199999988079,
+          "in1": 1622,
+          "ku0": 1626.6000000238419,
+          "ku1": 1627.1000000238419
+        },
+        {
+          "kd0": 1717.9000000357628,
+          "kd1": 1719.800000011921,
+          "kp0": 1719.800000011921,
+          "in0": 1721.300000011921,
+          "in1": 1722.9000000357628,
+          "ku0": 1728.1000000238419,
+          "ku1": 1728.6000000238419
+        },
+        {
+          "kd0": 1817.800000011921,
+          "kd1": 1819.800000011921,
+          "kp0": 1819.800000011921,
+          "in0": 1821.300000011921,
+          "in1": 1824.1000000238419,
+          "ku0": 1828.9000000357628,
+          "ku1": 1829.4000000357628
+        },
+        {
+          "kd0": 1920.6000000238419,
+          "kd1": 1922.5,
+          "kp0": 1922.5,
+          "in0": 1924,
+          "in1": 1925.6000000238419,
+          "ku0": 1930.5,
+          "ku1": 1931
+        },
+        {
+          "kd0": 2022.199999988079,
+          "kd1": 2024.199999988079,
+          "kp0": 2024.199999988079,
+          "in0": 2025.5,
+          "in1": 2028.5,
+          "ku0": 2033.4000000357628,
+          "ku1": 2033.800000011921
+        },
+        {
+          "kd0": 2124.100000023842,
+          "kd1": 2126,
+          "kp0": 2126,
+          "in0": 2127.300000011921,
+          "in1": 2128.900000035763,
+          "ku0": 2133.699999988079,
+          "ku1": 2134.199999988079
+        },
+        {
+          "kd0": 2227,
+          "kd1": 2229,
+          "kp0": 2229,
+          "in0": 2230.300000011921,
+          "in1": 2233.199999988079,
+          "ku0": 2238.900000035763,
+          "ku1": 2238.900000035763
+        },
+        {
+          "kd0": 2328.800000011921,
+          "kd1": 2330.800000011921,
+          "kp0": 2330.800000011921,
+          "in0": 2332.300000011921,
+          "in1": 2333.900000035763,
+          "ku0": 2339.5,
+          "ku1": 2339.5
+        },
+        {
+          "kd0": 2429.699999988079,
+          "kd1": 2431.699999988079,
+          "kp0": 2431.699999988079,
+          "in0": 2433,
+          "in1": 2435.699999988079,
+          "ku0": 2440.800000011921,
+          "ku1": 2440.900000035763
+        },
+        {
+          "kd0": 2530.199999988079,
+          "kd1": 2532.100000023842,
+          "kp0": 2532.100000023842,
+          "in0": 2533.400000035763,
+          "in1": 2534.900000035763,
+          "ku0": 2539.900000035763,
+          "ku1": 2540
+        },
+        {
+          "kd0": 2633.100000023842,
+          "kd1": 2635,
+          "kp0": 2635,
+          "in0": 2636.199999988079,
+          "in1": 2638.900000035763,
+          "ku0": 2643.900000035763,
+          "ku1": 2643.900000035763
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 1,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 2,
+          "ms": 2
+        },
+        {
+          "idx": 3,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 4,
+          "ms": 2
+        },
+        {
+          "idx": 5,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 6,
+          "ms": 2
+        },
+        {
+          "idx": 7,
+          "ms": 1.800000011920929
+        },
+        {
+          "idx": 8,
+          "ms": 2
+        },
+        {
+          "idx": 9,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 10,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 11,
+          "ms": 2
+        },
+        {
+          "idx": 12,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 13,
+          "ms": 2
+        },
+        {
+          "idx": 14,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 15,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 16,
+          "ms": 2
+        },
+        {
+          "idx": 17,
+          "ms": 1.800000011920929
+        },
+        {
+          "idx": 18,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "on",
+      "i": 4,
+      "typingMs": 1950.3819579999981,
+      "cores": [
+        {
+          "busy": 180,
+          "idle": 1760
+        },
+        {
+          "busy": 200,
+          "idle": 1740
+        },
+        {
+          "busy": 930,
+          "idle": 1010
+        },
+        {
+          "busy": 390,
+          "idle": 1560
+        },
+        {
+          "busy": 720,
+          "idle": 1240
+        },
+        {
+          "busy": 330,
+          "idle": 1620
+        },
+        {
+          "busy": 30,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1930
+        },
+        {
+          "busy": 20,
+          "idle": 1930
+        },
+        {
+          "busy": 0,
+          "idle": 1950
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 699.5,
+          "duration": 16,
+          "interactionId": 7219,
+          "processingStart": 701.6999999880791,
+          "processingEnd": 703.7999999523163,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 699.5,
+          "duration": 16,
+          "interactionId": 7219,
+          "processingStart": 703.7999999523163,
+          "processingEnd": 710,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 703.7999999523163,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 703.7999999523163,
+          "processingEnd": 703.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 801.6999999880791,
+          "duration": 16,
+          "interactionId": 7226,
+          "processingStart": 801.7999999523163,
+          "processingEnd": 803.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 801.6999999880791,
+          "duration": 16,
+          "interactionId": 7226,
+          "processingStart": 803.8999999761581,
+          "processingEnd": 807.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 803.8999999761581,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 803.8999999761581,
+          "processingEnd": 803.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 903.5,
+          "duration": 16,
+          "interactionId": 7233,
+          "processingStart": 903.5999999642372,
+          "processingEnd": 905.6999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 903.5,
+          "duration": 16,
+          "interactionId": 7233,
+          "processingStart": 905.6999999880791,
+          "processingEnd": 909.2999999523163,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 705.0999999642372,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 710,
+          "wallMs": 4.900000035762787
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 805.3999999761581,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 807.6999999880791,
+          "wallMs": 2.300000011920929
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 907.0999999642372,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 909.1999999880791,
+          "wallMs": 2.100000023841858
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 1009.5999999642372,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 1011.7999999523163,
+          "wallMs": 2.199999988079071
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 1112.2999999523163,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 1114.199999988079,
+          "wallMs": 1.9000000357627869
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1214.7999999523163,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1216.699999988079,
+          "wallMs": 1.9000000357627869
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1317.5999999642372,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1319.199999988079,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1418.699999988079,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1420.5999999642372,
+          "wallMs": 1.899999976158142
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1520.5999999642372,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1522.199999988079,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1622.3999999761581,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1625.199999988079,
+          "wallMs": 2.800000011920929
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1725.0999999642372,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1726.699999988079,
+          "wallMs": 1.600000023841858
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1826.5999999642372,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1829.2999999523163,
+          "wallMs": 2.699999988079071
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1929,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1930.5999999642372,
+          "wallMs": 1.5999999642372131
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 2030.7999999523163,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 2033.5,
+          "wallMs": 2.700000047683716
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 2132.599999964237,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 2134,
+          "wallMs": 1.4000000357627869
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2235.399999976158,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2238.099999964237,
+          "wallMs": 2.699999988079071
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2336.199999988079,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2337.599999964237,
+          "wallMs": 1.399999976158142
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2438.599999964237,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2441.199999988079,
+          "wallMs": 2.600000023841858
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2540.699999988079,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2542.2999999523163,
+          "wallMs": 1.5999999642372131
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2641.5,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2644.2999999523163,
+          "wallMs": 2.799999952316284
+        }
+      ],
+      "validations": [
+        {
+          "sequence": 1,
+          "at": 709.2999999523163,
+          "arrivalMs": 4.199999988079071,
+          "value": "value_0a",
+          "errors": 0
+        },
+        {
+          "sequence": 2,
+          "at": 807.0999999642372,
+          "arrivalMs": 1.699999988079071,
+          "value": "value_0ab",
+          "errors": 1
+        },
+        {
+          "sequence": 3,
+          "at": 908.5999999642372,
+          "arrivalMs": 1.5,
+          "value": "value_0abc",
+          "errors": 0
+        },
+        {
+          "sequence": 4,
+          "at": 1011.0999999642372,
+          "arrivalMs": 1.5,
+          "value": "value_0abcd",
+          "errors": 1
+        },
+        {
+          "sequence": 5,
+          "at": 1113.5999999642372,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcde",
+          "errors": 0
+        },
+        {
+          "sequence": 6,
+          "at": 1216.199999988079,
+          "arrivalMs": 1.4000000357627869,
+          "value": "value_0abcdef",
+          "errors": 1
+        },
+        {
+          "sequence": 7,
+          "at": 1318.699999988079,
+          "arrivalMs": 1.100000023841858,
+          "value": "value_0abcdefg",
+          "errors": 0
+        },
+        {
+          "sequence": 8,
+          "at": 1420.0999999642372,
+          "arrivalMs": 1.399999976158142,
+          "value": "value_0abcdefgh",
+          "errors": 1
+        },
+        {
+          "sequence": 9,
+          "at": 1521.8999999761581,
+          "arrivalMs": 1.300000011920929,
+          "value": "value_0abcdefghi",
+          "errors": 0
+        },
+        {
+          "sequence": 10,
+          "at": 1624.699999988079,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghij",
+          "errors": 1
+        },
+        {
+          "sequence": 11,
+          "at": 1726.2999999523163,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijk",
+          "errors": 0
+        },
+        {
+          "sequence": 12,
+          "at": 1828.8999999761581,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijkl",
+          "errors": 1
+        },
+        {
+          "sequence": 13,
+          "at": 1930.199999988079,
+          "arrivalMs": 1.199999988079071,
+          "value": "value_0abcdefghijklm",
+          "errors": 0
+        },
+        {
+          "sequence": 14,
+          "at": 2033.0999999642372,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijklmn",
+          "errors": 1
+        },
+        {
+          "sequence": 15,
+          "at": 2133.599999964237,
+          "arrivalMs": 1,
+          "value": "value_0abcdefghijklmno",
+          "errors": 0
+        },
+        {
+          "sequence": 16,
+          "at": 2237.7999999523163,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghijklmnop",
+          "errors": 1
+        },
+        {
+          "sequence": 17,
+          "at": 2337.2999999523163,
+          "arrivalMs": 1.0999999642372131,
+          "value": "value_0abcdefghijklmnopq",
+          "errors": 0
+        },
+        {
+          "sequence": 18,
+          "at": 2440.899999976158,
+          "arrivalMs": 2.300000011920929,
+          "value": "value_0abcdefghijklmnopqr",
+          "errors": 1
+        },
+        {
+          "sequence": 19,
+          "at": 2541.7999999523163,
+          "arrivalMs": 1.0999999642372131,
+          "value": "value_0abcdefghijklmnopqrs",
+          "errors": 0
+        },
+        {
+          "sequence": 20,
+          "at": 2643.899999976158,
+          "arrivalMs": 2.399999976158142,
+          "value": "value_0abcdefghijklmnopqrst",
+          "errors": 1
+        }
+      ],
+      "start": 698.6999999880791,
+      "end": 2650.099999964237,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 701.6999999880791,
+          "kd1": 703.7999999523163,
+          "kp0": 703.7999999523163,
+          "in0": 705.0999999642372,
+          "in1": 710,
+          "ku0": 714.6999999880791,
+          "ku1": 715.1999999880791
+        },
+        {
+          "kd0": 801.7999999523163,
+          "kd1": 803.8999999761581,
+          "kp0": 803.8999999761581,
+          "in0": 805.3999999761581,
+          "in1": 807.6999999880791,
+          "ku0": 813.0999999642372,
+          "ku1": 813.5999999642372
+        },
+        {
+          "kd0": 903.5999999642372,
+          "kd1": 905.6999999880791,
+          "kp0": 905.6999999880791,
+          "in0": 907.0999999642372,
+          "in1": 909.1999999880791,
+          "ku0": 914.5,
+          "ku1": 915
+        },
+        {
+          "kd0": 1006.3999999761581,
+          "kd1": 1008.3999999761581,
+          "kp0": 1008.3999999761581,
+          "in0": 1009.5999999642372,
+          "in1": 1011.7999999523163,
+          "ku0": 1016.7999999523163,
+          "ku1": 1017.2999999523163
+        },
+        {
+          "kd0": 1109.199999988079,
+          "kd1": 1111.0999999642372,
+          "kp0": 1111.0999999642372,
+          "in0": 1112.2999999523163,
+          "in1": 1114.199999988079,
+          "ku0": 1119,
+          "ku1": 1119.5
+        },
+        {
+          "kd0": 1211.5999999642372,
+          "kd1": 1213.5,
+          "kp0": 1213.5,
+          "in0": 1214.7999999523163,
+          "in1": 1216.699999988079,
+          "ku0": 1221.5999999642372,
+          "ku1": 1222.0999999642372
+        },
+        {
+          "kd0": 1314.5,
+          "kd1": 1316.3999999761581,
+          "kp0": 1316.3999999761581,
+          "in0": 1317.5999999642372,
+          "in1": 1319.199999988079,
+          "ku0": 1323.8999999761581,
+          "ku1": 1324.199999988079
+        },
+        {
+          "kd0": 1415.5999999642372,
+          "kd1": 1417.5,
+          "kp0": 1417.5,
+          "in0": 1418.699999988079,
+          "in1": 1420.5999999642372,
+          "ku0": 1425.3999999761581,
+          "ku1": 1425.8999999761581
+        },
+        {
+          "kd0": 1517.3999999761581,
+          "kd1": 1519.3999999761581,
+          "kp0": 1519.3999999761581,
+          "in0": 1520.5999999642372,
+          "in1": 1522.199999988079,
+          "ku0": 1527.0999999642372,
+          "ku1": 1527.5
+        },
+        {
+          "kd0": 1619.199999988079,
+          "kd1": 1621.0999999642372,
+          "kp0": 1621.0999999642372,
+          "in0": 1622.3999999761581,
+          "in1": 1625.199999988079,
+          "ku0": 1629.7999999523163,
+          "ku1": 1630.0999999642372
+        },
+        {
+          "kd0": 1722,
+          "kd1": 1724.0999999642372,
+          "kp0": 1724.0999999642372,
+          "in0": 1725.0999999642372,
+          "in1": 1726.699999988079,
+          "ku0": 1731.2999999523163,
+          "ku1": 1731.699999988079
+        },
+        {
+          "kd0": 1823.5,
+          "kd1": 1825.3999999761581,
+          "kp0": 1825.3999999761581,
+          "in0": 1826.5999999642372,
+          "in1": 1829.2999999523163,
+          "ku0": 1833.8999999761581,
+          "ku1": 1834.3999999761581
+        },
+        {
+          "kd0": 1925.699999988079,
+          "kd1": 1927.699999988079,
+          "kp0": 1927.699999988079,
+          "in0": 1929,
+          "in1": 1930.5999999642372,
+          "ku0": 1935.5,
+          "ku1": 1936
+        },
+        {
+          "kd0": 2027.5999999642372,
+          "kd1": 2029.5999999642372,
+          "kp0": 2029.5999999642372,
+          "in0": 2030.7999999523163,
+          "in1": 2033.5,
+          "ku0": 2038.0999999642372,
+          "ku1": 2038.5999999642372
+        },
+        {
+          "kd0": 2129.399999976158,
+          "kd1": 2131.2999999523163,
+          "kp0": 2131.2999999523163,
+          "in0": 2132.599999964237,
+          "in1": 2134,
+          "ku0": 2138.699999988079,
+          "ku1": 2139.099999964237
+        },
+        {
+          "kd0": 2232.199999988079,
+          "kd1": 2234.199999988079,
+          "kp0": 2234.199999988079,
+          "in0": 2235.399999976158,
+          "in1": 2238.099999964237,
+          "ku0": 2243.399999976158,
+          "ku1": 2243.399999976158
+        },
+        {
+          "kd0": 2333.099999964237,
+          "kd1": 2335,
+          "kp0": 2335,
+          "in0": 2336.199999988079,
+          "in1": 2337.599999964237,
+          "ku0": 2342.599999964237,
+          "ku1": 2342.699999988079
+        },
+        {
+          "kd0": 2435.2999999523163,
+          "kd1": 2437.399999976158,
+          "kp0": 2437.399999976158,
+          "in0": 2438.599999964237,
+          "in1": 2441.199999988079,
+          "ku0": 2446.2999999523163,
+          "ku1": 2446.2999999523163
+        },
+        {
+          "kd0": 2537.599999964237,
+          "kd1": 2539.5,
+          "kp0": 2539.5,
+          "in0": 2540.699999988079,
+          "in1": 2542.2999999523163,
+          "ku0": 2547.2999999523163,
+          "ku1": 2547.2999999523163
+        },
+        {
+          "kd0": 2638.399999976158,
+          "kd1": 2640.2999999523163,
+          "kp0": 2640.2999999523163,
+          "in0": 2641.5,
+          "in1": 2644.2999999523163,
+          "ku0": 2649.2999999523163,
+          "ku1": 2649.399999976158
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2
+        },
+        {
+          "idx": 1,
+          "ms": 2
+        },
+        {
+          "idx": 2,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 3,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 4,
+          "ms": 1.800000011920929
+        },
+        {
+          "idx": 5,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 6,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 7,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 8,
+          "ms": 2
+        },
+        {
+          "idx": 9,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 10,
+          "ms": 2
+        },
+        {
+          "idx": 11,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 12,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 13,
+          "ms": 2
+        },
+        {
+          "idx": 14,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 15,
+          "ms": 2
+        },
+        {
+          "idx": 16,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 17,
+          "ms": 2
+        },
+        {
+          "idx": 18,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    },
+    {
+      "kind": "nonburst",
+      "variant": "off",
+      "i": 4,
+      "typingMs": 1945.9804169999989,
+      "cores": [
+        {
+          "busy": 330,
+          "idle": 1620
+        },
+        {
+          "busy": 240,
+          "idle": 1700
+        },
+        {
+          "busy": 960,
+          "idle": 980
+        },
+        {
+          "busy": 670,
+          "idle": 1280
+        },
+        {
+          "busy": 910,
+          "idle": 1030
+        },
+        {
+          "busy": 190,
+          "idle": 1770
+        },
+        {
+          "busy": 70,
+          "idle": 1870
+        },
+        {
+          "busy": 40,
+          "idle": 1910
+        },
+        {
+          "busy": 20,
+          "idle": 1930
+        },
+        {
+          "busy": 10,
+          "idle": 1940
+        }
+      ],
+      "events": [
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 520.3999999761581,
+          "duration": 24,
+          "interactionId": 3544,
+          "processingStart": 520.5999999642372,
+          "processingEnd": 523.3000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 520.3999999761581,
+          "duration": 24,
+          "interactionId": 3544,
+          "processingStart": 523.3000000119209,
+          "processingEnd": 529.3000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 523.3000000119209,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 523.3000000119209,
+          "processingEnd": 523.3000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 524.5,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 524.6999999880791,
+          "processingEnd": 529.1999999880791,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 623.0999999642372,
+          "duration": 16,
+          "interactionId": 3551,
+          "processingStart": 623.0999999642372,
+          "processingEnd": 625.1999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 623.0999999642372,
+          "duration": 16,
+          "interactionId": 3551,
+          "processingStart": 625.1999999880791,
+          "processingEnd": 628.3000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "beforeinput",
+          "entryType": "event",
+          "startTime": 625.1999999880791,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 625.1999999880791,
+          "processingEnd": 625.1999999880791,
+          "cancelable": true
+        },
+        {
+          "name": "input",
+          "entryType": "event",
+          "startTime": 626.8000000119209,
+          "duration": 16,
+          "interactionId": 0,
+          "processingStart": 626.8000000119209,
+          "processingEnd": 628.0999999642372,
+          "cancelable": false
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 725.5,
+          "duration": 48,
+          "interactionId": 3558,
+          "processingStart": 725.5,
+          "processingEnd": 764.8999999761581,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 725.5,
+          "duration": 48,
+          "interactionId": 3558,
+          "processingStart": 764.8999999761581,
+          "processingEnd": 767.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keydown",
+          "entryType": "event",
+          "startTime": 827.3999999761581,
+          "duration": 48,
+          "interactionId": 3565,
+          "processingStart": 827.5,
+          "processingEnd": 867.8000000119209,
+          "cancelable": true
+        },
+        {
+          "name": "keypress",
+          "entryType": "event",
+          "startTime": 827.3999999761581,
+          "duration": 48,
+          "interactionId": 3565,
+          "processingStart": 867.8000000119209,
+          "processingEnd": 870.6999999880791,
+          "cancelable": true
+        }
+      ],
+      "handlers": [
+        {
+          "sequence": 1,
+          "type": "input",
+          "start": 524.6999999880791,
+          "value": "value_0a",
+          "trusted": true,
+          "end": 529.1999999880791,
+          "wallMs": 4.5
+        },
+        {
+          "sequence": 2,
+          "type": "input",
+          "start": 626.8000000119209,
+          "value": "value_0ab",
+          "trusted": true,
+          "end": 628.0999999642372,
+          "wallMs": 1.2999999523162842
+        },
+        {
+          "sequence": 3,
+          "type": "input",
+          "start": 766.3999999761581,
+          "value": "value_0abc",
+          "trusted": true,
+          "end": 767.6999999880791,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 4,
+          "type": "input",
+          "start": 869.3999999761581,
+          "value": "value_0abcd",
+          "trusted": true,
+          "end": 870.6999999880791,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 5,
+          "type": "input",
+          "start": 933.6999999880791,
+          "value": "value_0abcde",
+          "trusted": true,
+          "end": 935,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 6,
+          "type": "input",
+          "start": 1035.0999999642372,
+          "value": "value_0abcdef",
+          "trusted": true,
+          "end": 1036.3999999761581,
+          "wallMs": 1.300000011920929
+        },
+        {
+          "sequence": 7,
+          "type": "input",
+          "start": 1136.3999999761581,
+          "value": "value_0abcdefg",
+          "trusted": true,
+          "end": 1137.5999999642372,
+          "wallMs": 1.199999988079071
+        },
+        {
+          "sequence": 8,
+          "type": "input",
+          "start": 1238.0999999642372,
+          "value": "value_0abcdefgh",
+          "trusted": true,
+          "end": 1239.300000011921,
+          "wallMs": 1.2000000476837158
+        },
+        {
+          "sequence": 9,
+          "type": "input",
+          "start": 1340.699999988079,
+          "value": "value_0abcdefghi",
+          "trusted": true,
+          "end": 1341.800000011921,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 10,
+          "type": "input",
+          "start": 1442.199999988079,
+          "value": "value_0abcdefghij",
+          "trusted": true,
+          "end": 1443.300000011921,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 11,
+          "type": "input",
+          "start": 1543.800000011921,
+          "value": "value_0abcdefghijk",
+          "trusted": true,
+          "end": 1544.8999999761581,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 12,
+          "type": "input",
+          "start": 1645,
+          "value": "value_0abcdefghijkl",
+          "trusted": true,
+          "end": 1646.0999999642372,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 13,
+          "type": "input",
+          "start": 1747,
+          "value": "value_0abcdefghijklm",
+          "trusted": true,
+          "end": 1748.0999999642372,
+          "wallMs": 1.0999999642372131
+        },
+        {
+          "sequence": 14,
+          "type": "input",
+          "start": 1849.800000011921,
+          "value": "value_0abcdefghijklmn",
+          "trusted": true,
+          "end": 1850.699999988079,
+          "wallMs": 0.8999999761581421
+        },
+        {
+          "sequence": 15,
+          "type": "input",
+          "start": 1951.5,
+          "value": "value_0abcdefghijklmno",
+          "trusted": true,
+          "end": 1952.5,
+          "wallMs": 1
+        },
+        {
+          "sequence": 16,
+          "type": "input",
+          "start": 2052.699999988079,
+          "value": "value_0abcdefghijklmnop",
+          "trusted": true,
+          "end": 2053.800000011921,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 17,
+          "type": "input",
+          "start": 2154.300000011921,
+          "value": "value_0abcdefghijklmnopq",
+          "trusted": true,
+          "end": 2155.300000011921,
+          "wallMs": 1
+        },
+        {
+          "sequence": 18,
+          "type": "input",
+          "start": 2257.099999964237,
+          "value": "value_0abcdefghijklmnopqr",
+          "trusted": true,
+          "end": 2258.199999988079,
+          "wallMs": 1.100000023841858
+        },
+        {
+          "sequence": 19,
+          "type": "input",
+          "start": 2358.099999964237,
+          "value": "value_0abcdefghijklmnopqrs",
+          "trusted": true,
+          "end": 2359,
+          "wallMs": 0.9000000357627869
+        },
+        {
+          "sequence": 20,
+          "type": "input",
+          "start": 2459.5,
+          "value": "value_0abcdefghijklmnopqrst",
+          "trusted": true,
+          "end": 2460.5,
+          "wallMs": 1
+        }
+      ],
+      "validations": [],
+      "start": 519.8999999761581,
+      "end": 2466.699999988079,
+      "final": {
+        "inputs": 2000,
+        "counter": 0,
+        "targetValue": "value_0abcdefghijklmnopqrst",
+        "branch": null
+      },
+      "keys": [
+        {
+          "kd0": 520.5999999642372,
+          "kd1": 523.1999999880791,
+          "kp0": 523.3000000119209,
+          "in0": 524.6999999880791,
+          "in1": 529.1999999880791,
+          "ku0": 534.3999999761581,
+          "ku1": 534.8999999761581
+        },
+        {
+          "kd0": 623.1999999880791,
+          "kd1": 625.1999999880791,
+          "kp0": 625.1999999880791,
+          "in0": 626.8000000119209,
+          "in1": 628.0999999642372,
+          "ku0": 634,
+          "ku1": 634.3999999761581
+        },
+        {
+          "kd0": 725.5999999642372,
+          "kd1": 764.8999999761581,
+          "kp0": 764.8999999761581,
+          "in0": 766.3999999761581,
+          "in1": 767.6999999880791,
+          "ku0": 773,
+          "ku1": 773.5
+        },
+        {
+          "kd0": 827.5,
+          "kd1": 867.8000000119209,
+          "kp0": 867.8000000119209,
+          "in0": 869.3999999761581,
+          "in1": 870.6999999880791,
+          "ku0": 875.5999999642372,
+          "ku1": 876.0999999642372
+        },
+        {
+          "kd0": 930.0999999642372,
+          "kd1": 932.0999999642372,
+          "kp0": 932.0999999642372,
+          "in0": 933.6999999880791,
+          "in1": 935,
+          "ku0": 940.0999999642372,
+          "ku1": 940.6999999880791
+        },
+        {
+          "kd0": 1031.699999988079,
+          "kd1": 1033.699999988079,
+          "kp0": 1033.699999988079,
+          "in0": 1035.0999999642372,
+          "in1": 1036.3999999761581,
+          "ku0": 1041.199999988079,
+          "ku1": 1041.699999988079
+        },
+        {
+          "kd0": 1133.300000011921,
+          "kd1": 1135.199999988079,
+          "kp0": 1135.199999988079,
+          "in0": 1136.3999999761581,
+          "in1": 1137.5999999642372,
+          "ku0": 1142.300000011921,
+          "ku1": 1142.699999988079
+        },
+        {
+          "kd0": 1235,
+          "kd1": 1236.8999999761581,
+          "kp0": 1236.8999999761581,
+          "in0": 1238.0999999642372,
+          "in1": 1239.300000011921,
+          "ku0": 1244,
+          "ku1": 1244.5
+        },
+        {
+          "kd0": 1337.3999999761581,
+          "kd1": 1339.300000011921,
+          "kp0": 1339.300000011921,
+          "in0": 1340.699999988079,
+          "in1": 1341.800000011921,
+          "ku0": 1346.800000011921,
+          "ku1": 1347.199999988079
+        },
+        {
+          "kd0": 1439,
+          "kd1": 1441,
+          "kp0": 1441,
+          "in0": 1442.0999999642372,
+          "in1": 1443.300000011921,
+          "ku0": 1447.8999999761581,
+          "ku1": 1448.3999999761581
+        },
+        {
+          "kd0": 1540.5999999642372,
+          "kd1": 1542.5,
+          "kp0": 1542.5,
+          "in0": 1543.800000011921,
+          "in1": 1544.8999999761581,
+          "ku0": 1549.800000011921,
+          "ku1": 1550.199999988079
+        },
+        {
+          "kd0": 1642,
+          "kd1": 1643.8999999761581,
+          "kp0": 1643.8999999761581,
+          "in0": 1645,
+          "in1": 1646.0999999642372,
+          "ku0": 1650.699999988079,
+          "ku1": 1651.0999999642372
+        },
+        {
+          "kd0": 1743.8999999761581,
+          "kd1": 1745.800000011921,
+          "kp0": 1745.800000011921,
+          "in0": 1747,
+          "in1": 1748.0999999642372,
+          "ku0": 1752.699999988079,
+          "ku1": 1753.0999999642372
+        },
+        {
+          "kd0": 1846.5999999642372,
+          "kd1": 1848.5999999642372,
+          "kp0": 1848.5999999642372,
+          "in0": 1849.800000011921,
+          "in1": 1850.699999988079,
+          "ku0": 1855.300000011921,
+          "ku1": 1855.699999988079
+        },
+        {
+          "kd0": 1948.300000011921,
+          "kd1": 1950.300000011921,
+          "kp0": 1950.300000011921,
+          "in0": 1951.5,
+          "in1": 1952.5,
+          "ku0": 1957.0999999642372,
+          "ku1": 1957.5
+        },
+        {
+          "kd0": 2049.199999988079,
+          "kd1": 2051.199999988079,
+          "kp0": 2051.199999988079,
+          "in0": 2052.699999988079,
+          "in1": 2053.800000011921,
+          "ku0": 2059.800000011921,
+          "ku1": 2059.800000011921
+        },
+        {
+          "kd0": 2150.800000011921,
+          "kd1": 2152.699999988079,
+          "kp0": 2152.699999988079,
+          "in0": 2154.300000011921,
+          "in1": 2155.300000011921,
+          "ku0": 2160.599999964237,
+          "ku1": 2160.699999988079
+        },
+        {
+          "kd0": 2253.699999988079,
+          "kd1": 2255.599999964237,
+          "kp0": 2255.599999964237,
+          "in0": 2257.099999964237,
+          "in1": 2258.199999988079,
+          "ku0": 2263.800000011921,
+          "ku1": 2263.800000011921
+        },
+        {
+          "kd0": 2354.899999976158,
+          "kd1": 2356.800000011921,
+          "kp0": 2356.800000011921,
+          "in0": 2358.099999964237,
+          "in1": 2359,
+          "ku0": 2364.199999988079,
+          "ku1": 2364.199999988079
+        },
+        {
+          "kd0": 2456.300000011921,
+          "kd1": 2458.300000011921,
+          "kp0": 2458.300000011921,
+          "in0": 2459.5,
+          "in1": 2460.5,
+          "ku0": 2465.899999976158,
+          "ku1": 2465.899999976158
+        }
+      ],
+      "renders": [],
+      "commits": [],
+      "probe": [
+        {
+          "idx": 0,
+          "ms": 2.600000023841858
+        },
+        {
+          "idx": 1,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 2,
+          "ms": 39.30000001192093
+        },
+        {
+          "idx": 3,
+          "ms": 40.30000001192093
+        },
+        {
+          "idx": 4,
+          "ms": 2
+        },
+        {
+          "idx": 5,
+          "ms": 2
+        },
+        {
+          "idx": 6,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 7,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 8,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 9,
+          "ms": 2
+        },
+        {
+          "idx": 10,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 11,
+          "ms": 1.800000011920929
+        },
+        {
+          "idx": 12,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 13,
+          "ms": 2
+        },
+        {
+          "idx": 14,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 15,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 16,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 17,
+          "ms": 1.899999976158142
+        },
+        {
+          "idx": 18,
+          "ms": 1.9000000357627869
+        },
+        {
+          "idx": 19,
+          "ms": 1.899999976158142
+        }
+      ]
+    }
+  ]
+}

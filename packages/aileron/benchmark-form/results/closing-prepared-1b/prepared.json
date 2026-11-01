@@ -1,0 +1,128 @@
+{
+  "phase": "1b",
+  "scope": "provisional-F-replace-smoke-only",
+  "ruleVersion": "closing-v2-amendment-3",
+  "operations": [
+    {
+      "index": 1,
+      "paintBoundary": 388,
+      "nextPainted": 52.89999997615814,
+      "compile": 11.699999988079071,
+      "validate": 1.899999976158142,
+      "frames": 0,
+      "postPaintBusy": 13.599999964237213
+    },
+    {
+      "index": 2,
+      "paintBoundary": 1400.800000011921,
+      "nextPainted": 53.40000003576279,
+      "compile": 19.30000001192093,
+      "validate": 1.899999976158142,
+      "frames": 0,
+      "postPaintBusy": 21.19999998807907
+    },
+    {
+      "index": 3,
+      "paintBoundary": 2424.900000035763,
+      "nextPainted": 48.89999997615814,
+      "compile": 12.100000023841858,
+      "validate": 2,
+      "frames": 0,
+      "postPaintBusy": 14.100000023841858
+    },
+    {
+      "index": 4,
+      "paintBoundary": 3439,
+      "nextPainted": 46.09999996423721,
+      "compile": 15,
+      "validate": 1.9000000357627869,
+      "frames": 0,
+      "postPaintBusy": 16.900000035762787
+    },
+    {
+      "index": 5,
+      "paintBoundary": 4463.900000035763,
+      "nextPainted": 46.89999997615814,
+      "compile": 13.399999976158142,
+      "validate": 1.800000011920929,
+      "frames": 0,
+      "postPaintBusy": 15.199999988079071
+    },
+    {
+      "index": 6,
+      "paintBoundary": 5487.400000035763,
+      "nextPainted": 45,
+      "compile": 12.900000035762787,
+      "validate": 1.899999976158142,
+      "frames": 0,
+      "postPaintBusy": 14.800000011920929
+    },
+    {
+      "index": 7,
+      "paintBoundary": 6502.700000047684,
+      "nextPainted": 46.60000002384186,
+      "compile": 16.100000023841858,
+      "validate": 1.899999976158142,
+      "frames": 0,
+      "postPaintBusy": 18
+    },
+    {
+      "index": 8,
+      "paintBoundary": 7520.600000023842,
+      "nextPainted": 42.299999952316284,
+      "compile": 12.400000035762787,
+      "validate": 2,
+      "frames": 0,
+      "postPaintBusy": 14.400000035762787
+    },
+    {
+      "index": 9,
+      "paintBoundary": 8544.600000023842,
+      "nextPainted": 45,
+      "compile": 14.300000011920929,
+      "validate": 1.699999988079071,
+      "frames": 0,
+      "postPaintBusy": 16
+    },
+    {
+      "index": 10,
+      "paintBoundary": 9570.400000035763,
+      "nextPainted": 43.39999997615814,
+      "compile": 12,
+      "validate": 1.699999988079071,
+      "frames": 0,
+      "postPaintBusy": 13.699999988079071
+    }
+  ],
+  "medianCompilePlusValidate": 15,
+  "medianPostPaintBusy": 15,
+  "maximumAccountingError": 0,
+  "state": "prepared-1b",
+  "baseHead": "ce1066b335bd6d66b95c308962dda7156ba7ea48",
+  "amendments": [
+    3,
+    4
+  ],
+  "rulesSha256": "23299a3a4a2516f211ac6257d033dbd5f230b2eb1fb03e68777e324d7cd0905c",
+  "committed": false,
+  "formalWindows": 0,
+  "checks": {
+    "tests": 98,
+    "testFiles": 15,
+    "typecheck": "PASS",
+    "lintWarnings": 0,
+    "c7StoredRound6": "PASS",
+    "integrityTests": 7
+  },
+  "phase2Required": [
+    "rebase onto final stage head",
+    "commit amended source and pre-registration on top of that head",
+    "fresh clean B/S builds via Orca checkouts",
+    "commit scrubbed B/S build record beside inputs.json",
+    "rebuild F and wait for coordinator rule/hash check before formal window"
+  ],
+  "unexpectedDefaultYarn": {
+    "trackedManifestChanges": 0,
+    "trackedLockChanges": 0
+  }
+}

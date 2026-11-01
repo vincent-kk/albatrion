@@ -1,0 +1,10 @@
+--- src/core/engine/write/utils/chain/flushQueuedEvents.ts
++++ src/core/engine/write/utils/chain/flushQueuedEvents.ts
+@@ -130,7 +130,6 @@
+     for (const owner of owners) {
+       owner.flushingQueuedEvents = false;
+       if (!standalone) continue;
+-      owner.chainOrigin = previousOrigin;
+       owner.chainErrors = previousErrors;
+       owner.chainOccurrences = previousOccurrences;
+       if (owner !== entryRuntime) owner.chainRoot = undefined;

@@ -202,3 +202,5 @@ Plan: ../../../packages/canard/schema-form/architecture/plan/07-switch/execution
       CHECK: `grep -qE '^\| 07 \| 전환 \| 리뷰 \| \[#[0-9]+\]' packages/canard/schema-form/architecture/PLAN.md && echo BOARD_IN_REVIEW`
       EXPECT: `BOARD_IN_REVIEW`
       EVIDENCE: BOARD_IN_REVIEW (2026-10-11; PR #354, base 1.0.0-beta per the standalone gh pr view recorded in log.md; CHECK run verbatim, recorded by hand)
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `f9ae05d5ea5e`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

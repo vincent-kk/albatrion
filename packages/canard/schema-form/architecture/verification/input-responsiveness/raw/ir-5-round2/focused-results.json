@@ -1,0 +1,18 @@
+{
+  "files": 6,
+  "passed": 26,
+  "failed": 0,
+  "react18Suspense": "normal pass; 40 server inputs retained",
+  "react19Suspense": "normal pass; 40 server inputs retained",
+  "slotAndInputCounts": {
+    "normal": {
+      "commit": 1,
+      "final": 1
+    },
+    "StrictMode": {
+      "commit": 2,
+      "final": 2
+    }
+  },
+  "arrayLayoutEffectExpectation": "unchanged: 2 * 200 = 400"
+}

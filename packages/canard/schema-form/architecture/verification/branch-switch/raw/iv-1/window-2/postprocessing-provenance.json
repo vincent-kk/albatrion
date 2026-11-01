@@ -1,0 +1,17 @@
+{
+  "productCommit": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+  "policyCommit": "bacb708e7ddfe0fcbfb3799e22fd8da5a721e277",
+  "unchangedFrozenSummaryInputs": true,
+  "newPostprocessor": "tools/iv-1/firstWriteExchange.mjs",
+  "postprocessorSha256": "c04c49c8aeafb822ed384bfb6c1576190ed623438dc6e5d7bd9469448c2437a1",
+  "inputSha256": {
+    "judgment.json": "8bf3af0c08e5f9c7e1b12634e4e0649b2b3199e73bb25c5740f677520662f326",
+    "scope-build-cost.json": "5145cc6393086ad038757af8ffb409e3ac11ff34e46398596086622db0ecde79"
+  },
+  "outputSha256": "8ca33ae5614b980b1a9b74b4c52fbba34c7d64976f3d8417a924bffd0aa151a7",
+  "deviceTests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "productRuntimeAndPublicDeclarationHashesUnchangedAfterWindow": true
+}

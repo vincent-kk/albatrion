@@ -1,0 +1,277 @@
+{
+  "experiments": [
+    {
+      "id": "pre-change",
+      "expectedFailed": 3,
+      "failed": 3,
+      "passed": 11,
+      "exitCode": 1,
+      "reason": "Exact delta comparison and missing checker scope: expected assertion failures observed."
+    },
+    {
+      "id": "scope-entries",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/checkStageClosingIntegrity.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingExpandedScope.test.ts",
+      "pattern": "rejects committed drift",
+      "expectedFailed": 3,
+      "failed": 3,
+      "exitCode": 1,
+      "failures": [
+        "× rejects committed drift in expanded scope browser-bench/interaction/helpers/deriveValidationAfterPaintResults.ts with matching hashes 180ms",
+        "× rejects committed drift in expanded scope fixtures/input-responsiveness/ir-6-cases.json with matching hashes 175ms",
+        "× rejects committed drift in expanded scope browser-bench/interaction/helpers/checkStageClosingResults.ts with matching hashes 184ms"
+      ],
+      "summary": [
+        "AssertionError: expected [Function] to throw an error",
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 3 skipped (6)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "    helpers + 'deriveValidationAfterPaintResults.ts',\n",
+          ""
+        ],
+        [
+          "    'fixtures/input-responsiveness',\n",
+          ""
+        ],
+        [
+          "    helpers + 'checkStageClosingResults.ts',\n",
+          ""
+        ]
+      ]
+    },
+    {
+      "id": "decision-entries",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/isStageClosingDecisionFile.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingExpandedScope.test.ts",
+      "pattern": "rejects uncommitted drift",
+      "expectedFailed": 3,
+      "failed": 3,
+      "exitCode": 1,
+      "failures": [
+        "× rejects uncommitted drift in expanded scope browser-bench/interaction/helpers/deriveValidationAfterPaintResults.ts against formal-start hash 118ms",
+        "× rejects uncommitted drift in expanded scope fixtures/input-responsiveness/ir-6-cases.json against formal-start hash 113ms",
+        "× rejects uncommitted drift in expanded scope browser-bench/interaction/helpers/checkStageClosingResults.ts against formal-start hash 114ms"
+      ],
+      "summary": [
+        "AssertionError: expected [Function] to throw an error",
+        "Test Files  1 failed (1)",
+        "Tests  3 failed | 3 skipped (6)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "    file === helpers + 'deriveValidationAfterPaintResults.ts' ||\n",
+          ""
+        ],
+        [
+          "    file.startsWith('fixtures/input-responsiveness/')",
+          "    false"
+        ],
+        [
+          "    file === helpers + 'checkStageClosingResults.ts' ||\n",
+          ""
+        ]
+      ]
+    },
+    {
+      "id": "frame-limit-too-low",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/decideStageClosingGates.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/decideStageClosingOperationFrame.test.ts",
+      "pattern": "operation frame limit",
+      "expectedFailed": 2,
+      "failed": 2,
+      "exitCode": 1,
+      "failures": [
+        "× C5 applies the operation frame limit at 12 ms as PASS 5ms",
+        "× C5 applies the operation frame limit at 16.7 ms as PASS 1ms"
+      ],
+      "summary": [
+        "AssertionError: expected 'FAIL' to be 'PASS' // Object.is equality",
+        "Test Files  1 failed (1)",
+        "Tests  2 failed | 1 passed (3)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "rules.operationFrameDifferenceMs",
+          "rules.vsyncDifferenceMs"
+        ]
+      ]
+    },
+    {
+      "id": "frame-limit-too-high",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/decideStageClosingGates.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/decideStageClosingOperationFrame.test.ts",
+      "pattern": "16.71 ms",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× C5 applies the operation frame limit at 16.71 ms as FAIL 5ms"
+      ],
+      "summary": [
+        "AssertionError: expected 'PASS' to be 'FAIL' // Object.is equality",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 2 skipped (3)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "rules.operationFrameDifferenceMs",
+          "17"
+        ]
+      ]
+    },
+    {
+      "id": "operation-frame-floor",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/readStageClosingMetrics.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/readStageClosingMetrics.test.ts",
+      "pattern": "paired 54ms",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× passes the paired 54ms example only after flooring the operation frames 43ms"
+      ],
+      "summary": [
+        "AssertionError: expected { upperBound: '+Infinity', …(2) } to match object { upperBound: 1.04, …(1) }",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 4 skipped (5)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "Math.max(op.longestFrame, rules.operationFrameFloorMs)",
+          "op.longestFrame"
+        ]
+      ]
+    },
+    {
+      "id": "compile-mean",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/deriveStageClosingValidatorWork.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/validatorWork.test.ts",
+      "pattern": "exactly a compileMean fix",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× requires exactly a compileMean fix for one extra F compile inside a slot 7ms"
+      ],
+      "summary": [
+        "AssertionError: expected { id: 'reset-flat-500-same', …(2) } to match object { status: 'FIX_REQUIRED', …(1) }",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 7 skipped (8)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "      'compileMean',\n",
+          ""
+        ]
+      ]
+    },
+    {
+      "id": "exception-design-cause",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/deriveStageClosingValidatorWork.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/validatorWork.test.ts",
+      "pattern": "empty designCause",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× rejects an exception with an empty designCause 5ms"
+      ],
+      "summary": [
+        "AssertionError: expected 'PASS' to be 'FIX_REQUIRED' // Object.is equality",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 7 skipped (8)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "entry.designCause.trim()",
+          "true"
+        ]
+      ]
+    },
+    {
+      "id": "build-exit-code",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/checkStageClosingBuildRecord.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingBuildRecord.test.ts",
+      "pattern": "invalid exitCode",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× rejects a build record with invalid exitCode 5ms"
+      ],
+      "summary": [
+        "AssertionError: expected [Function] to throw an error",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 skipped (6)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "    assert.equal(build.exitCode, 0, 'Successful build for ' + lane);\n",
+          ""
+        ]
+      ]
+    },
+    {
+      "id": "build-commit",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/checkStageClosingBuildRecord.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingBuildRecord.test.ts",
+      "pattern": "invalid commit",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× rejects a build record with invalid commit 5ms"
+      ],
+      "summary": [
+        "AssertionError: expected [Function] to throw an error",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 skipped (6)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "    assert.equal(\n      build.commit,\n      bundles[lane].commit,\n      'Build commit for ' + lane,\n    );\n",
+          ""
+        ]
+      ]
+    },
+    {
+      "id": "build-clean-product-scope",
+      "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/checkStageClosingBuildRecord.ts",
+      "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/stageClosing/__tests__/checkStageClosingBuildRecord.test.ts",
+      "pattern": "invalid cleanProductScope",
+      "expectedFailed": 1,
+      "failed": 1,
+      "exitCode": 1,
+      "failures": [
+        "× rejects a build record with invalid cleanProductScope 4ms"
+      ],
+      "summary": [
+        "AssertionError: expected [Function] to throw an error",
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 5 skipped (6)"
+      ],
+      "candidateRestored": true,
+      "replacements": [
+        [
+          "    assert.equal(\n      build.cleanProductScope,\n      true,\n      'Clean product scope for ' + lane,\n    );\n",
+          ""
+        ]
+      ]
+    }
+  ],
+  "mutationRuns": 10,
+  "mutationDetectedCases": 15,
+  "preChangeDeltaTest": "FAIL before tolerant delta match; PASS after change",
+  "allCandidatesRestored": true
+} 

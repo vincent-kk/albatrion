@@ -1,0 +1,50 @@
+{
+  "scope": "unpushed descendants of daf4ff55f only",
+  "commits": [
+    {
+      "old": "b8879875e2beeee6a1fa42844bd7a91919b37702",
+      "new": "28ca3ff35ba865ee532103c5616284dca20f2cea",
+      "changed_files": 6,
+      "gzip_snapshots_decompressed": 16,
+      "new_text_machine_path_hits": 0
+    },
+    {
+      "old": "3cd5561590d0d8428002463345ca02507157fc79",
+      "new": "ab4889e3fc93569ba1a37fd08b986d5cd6c51ff8",
+      "changed_files": 18,
+      "gzip_snapshots_decompressed": 16,
+      "new_text_machine_path_hits": 0
+    },
+    {
+      "old": "ba6be57e44bd5dd200c2a9a8dd2731e6326de9e6",
+      "new": "7448a4b8487dc6aca7a0b5170a777aa8303ce1e1",
+      "changed_files": 5,
+      "gzip_snapshots_decompressed": 16,
+      "new_text_machine_path_hits": 0
+    },
+    {
+      "old": "494e0bd6b7f863307e8b3bba27053ec4ee36e061",
+      "new": "bcc903411ae4829c7e748e2f12cadde4d2e98af2",
+      "changed_files": 2,
+      "gzip_snapshots_decompressed": 17,
+      "new_text_machine_path_hits": 0
+    },
+    {
+      "old": "21aa3937b3cac0b27c1ac4fba0044ca0a2de266d",
+      "new": "e1079152a8a14f5eab8a1b4e21b3ddb2ce37b0b4",
+      "changed_files": 1,
+      "gzip_snapshots_decompressed": 17,
+      "new_text_machine_path_hits": 0
+    },
+    {
+      "old": "9506a6279d03c2666d1bec380db8e3a652a1a706",
+      "new": "8be831c4e8473bdeb4c44e7439511971d4fd99ea",
+      "changed_files": 30,
+      "gzip_snapshots_decompressed": 31,
+      "new_text_machine_path_hits": 0
+    }
+  ],
+  "source_and_test_blobs_preserved": true,
+  "historical_ledger_examples": "unchanged baseline text excluded from added-line audit",
+  "audit": "every rewritten commit added text plus complete decompressed gzip snapshots"
+}

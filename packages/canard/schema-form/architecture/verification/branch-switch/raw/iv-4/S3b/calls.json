@@ -1,0 +1,25 @@
+{
+  "roundTrips": 100,
+  "calls": [
+    {
+      "declarations": 1,
+      "gated": false,
+      "atomic": false,
+      "count": 2
+    },
+    {
+      "declarations": 81,
+      "gated": true,
+      "atomic": false,
+      "count": 201
+    },
+    {
+      "declarations": 1,
+      "gated": true,
+      "atomic": false,
+      "count": 1203
+    }
+  ],
+  "diagnosticSourceSha256": "1847032f654dcdce56551deeba11b633f5e88775fcc0e2b2845e597a2db578e0",
+  "qualification": "단일 무게이트2/1406 호출만 자격이며 첫 진입 준비에 국한됩니다."
+}

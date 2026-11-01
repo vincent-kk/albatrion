@@ -27,7 +27,7 @@
 | 0003 예약 층 | `presentation.*`는 렌더 계층의 어휘(플러그인 이주는 08) | CONTROLS·SURFACE 영역 |
 | 0009 성능 예산 | 벤치 비교(옛 판 대 새 판), 모바일 임계 | TEST-026·027·074 |
 | 0011 branch 노드 | 렌더 계층이 청사진에 넘기는 터미널 판정 | NODE·REACT-002·003 |
-| (새) 0015 union 잎 | 기본 union 입력, Hint·props의 `type`·`schemaType`·`nullable`·`typeMismatch`, 공개 형 수출 | REACT-032·033, NODE-058, SURFACE-061 |
+| (새) 0015 union 잎 | 기본 union 입력, Hint·props의 `type`·`schemaType`·`nullable`·`misfit`, 공개 형 수출 | REACT-032·033, NODE-058, SURFACE-061 |
 
 ## 설계 가치
 

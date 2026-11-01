@@ -1,0 +1,70 @@
+{
+  "approved": true,
+  "waitedMs": 30122.474792,
+  "delays": [],
+  "policy": {
+    "averageMs": 30000,
+    "retryDelayMs": 5000,
+    "maxWaitMs": 120000,
+    "spotlightMaxWaitMs": 30000,
+    "maximumExternalCpuPercent": 30
+  },
+  "attempts": [
+    {
+      "requestedDurationMs": 30000,
+      "durationSeconds": 30.117540208,
+      "rows": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 8.334013942253087
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.27541288879025
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 5.37892533324706
+        },
+        {
+          "pid": 9295,
+          "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+          "cpuPercent": 4.1504053497302795
+        },
+        {
+          "pid": 21047,
+          "name": "codex",
+          "cpuPercent": 3.9179826501454067
+        },
+        {
+          "pid": 9215,
+          "name": "Cursor Helper (Renderer)",
+          "cpuPercent": 3.685559950560534
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.2871210369856567
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.6562594238310027
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 2.623056181029416
+        },
+        {
+          "pid": 553,
+          "name": "com.apple.DriverKit-AppleBCMWLAN",
+          "cpuPercent": 1.826178353880417
+        }
+      ]
+    }
+  ]
+}

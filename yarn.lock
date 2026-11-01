@@ -22,6 +22,7 @@ __metadata:
     "@canard/schema-form_0.12.0": "npm:@canard/schema-form@0.12.0"
     "@canard/schema-form_0.12.5": "npm:@canard/schema-form@0.12.5"
     "@canard/schema-form_0.16.0": "https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.0.tgz"
+    "@canard/schema-form_0.16.1": "https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.1.tgz"
     "@canard/schema-form_0.9.0": "npm:@canard/schema-form@0.9.0"
     "@rjsf/core": "npm:6.6.1"
     "@rjsf/utils": "npm:6.6.1"
@@ -2284,6 +2285,21 @@ __metadata:
     react: ">=18 <20"
     react-dom: ">=18 <20"
   checksum: 10c0/1ba84db9c767d86a2918b4e372cf3dc144a47ece9dd226a6880553ad4fa37ea9ebe4088f98a1b00d2745569a78248da88cd54953f80fc761a9a5628bbfb6668d
+  languageName: node
+  linkType: hard
+
+"@canard/schema-form_0.16.1@https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.1.tgz":
+  version: 0.16.1
+  resolution: "@canard/schema-form_0.16.1@https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.1.tgz"
+  dependencies:
+    "@winglet/common-utils": "npm:^0.15.0"
+    "@winglet/json": "npm:^0.16.0"
+    "@winglet/json-schema": "npm:^0.16.0"
+    "@winglet/react-utils": "npm:^0.14.1"
+  peerDependencies:
+    react: ">=18 <20"
+    react-dom: ">=18 <20"
+  checksum: 10c0/ce6e778222c1ed1121a5d21a5bc151ed8dc9fe2e2f5d6734a6b633847317bd9b8a78d9f72a8714a282b7f4f7341fd06c50079c74256def8aff7c539a5d4d8cdc
   languageName: node
   linkType: hard
 

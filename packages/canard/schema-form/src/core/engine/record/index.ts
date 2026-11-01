@@ -1,5 +1,10 @@
 export type { FieldNodeRecord, FieldNodeDelivery } from './types/record';
 export type {
+  InactiveSlotBaseline,
+  InactiveSlotOverlay,
+  InactiveSlotValueMemo,
+} from './types/slots';
+export type {
   Behavior,
   ArrayOperation,
   ArrayArrangePlan,
@@ -12,10 +17,12 @@ export type {
   SettlementEntryApi,
   SettlementFailureCause,
   SettlementScratch,
-  TypeMismatchRecord,
+  MisfitRecord,
 } from './types/runtime';
 export { EMPTY_REVISION_LEDGER } from './constants/emptyRevisionLedger';
 export { FieldNodeRevisionLedger } from './utils/FieldNodeRevisionLedger';
+export { advanceFieldNodeRevision } from './utils/advanceFieldNodeRevision';
+export { canOmitFieldNodePayload } from './utils/canOmitFieldNodePayload';
 export { FieldNodeEventType } from './constants/FieldNodeEventType';
 export { FieldNodeRequestType } from './constants/FieldNodeRequestType';
 export { markFieldNodeEvent } from './utils/markFieldNodeEvent';
@@ -28,3 +35,7 @@ export { publishGlobalStateDeltas } from './utils/publishGlobalStateDeltas';
 
 export { captureFieldNodeChange } from './utils/captureFieldNodeChange';
 export { clearFieldNodeChanges } from './utils/clearFieldNodeChanges';
+
+export { recordFieldNodeRevealBaseline } from './utils/recordFieldNodeRevealBaseline';
+
+export { advanceFieldNodeRevealSequence } from './utils/advanceFieldNodeRevealSequence';

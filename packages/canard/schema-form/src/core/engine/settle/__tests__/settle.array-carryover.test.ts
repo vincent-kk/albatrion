@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-// filid:contract settle-array
+// filid:contract settle-array-carryover
 describe('array projection carryovers', () => {
   it('26C-03 VALUE-034 keeps omitTrailing source slots after a load', () => {
     const { root } = makeFieldNodeTree(

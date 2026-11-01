@@ -29,7 +29,7 @@ const tool = fileURLToPath(import.meta.url);
 const output = path.resolve(path.dirname(tool), '..');
 const pkg = path.resolve(output, '../../..');
 const repo = path.resolve(pkg, '../../..');
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;

@@ -1,0 +1,49 @@
+{
+  "render": {
+    "base": "c5d963b2d",
+    "testCommit": "32d1977ccdef7637c52b30f9c9e94a1185b43b95",
+    "passed": 35,
+    "failed": 25,
+    "skipped": 0,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/migration/form-lifecycle.test.tsx": "b38834b54c81734676d034a7c8fe409407da3bb5fff70213613073cd0dfdc86b",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "7e557d5c7a29ea8b24a8d5b481c0b6e33c5be029beffe55846c98fdd44651e2a",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "6b2dc656986365f6d4ef30156123c8e05bcd31ec0a1b8b0a7d3fd0c9d556ee7c",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-always.render.test.tsx": "28ce460cb8d1e0112c7f1196ef154fc18aa5b0d10292188f632f68126b343490",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "2d80ec7aba9db463df1ce414edfa19b639a6f15b4c8ebd16b93081c9de531808",
+      "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "e65208fca1383169d98561a39ffb6f40d74b5f0b306ec390a9f1add81cbe612b"
+    },
+    "raw": "red-final-render.json.gz"
+  },
+  "react18": {
+    "base": "c5d963b2d",
+    "testCommit": "32d1977ccdef7637c52b30f9c9e94a1185b43b95",
+    "passed": 33,
+    "failed": 24,
+    "skipped": 3,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "7e557d5c7a29ea8b24a8d5b481c0b6e33c5be029beffe55846c98fdd44651e2a",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "6b2dc656986365f6d4ef30156123c8e05bcd31ec0a1b8b0a7d3fd0c9d556ee7c",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-always.render.test.tsx": "28ce460cb8d1e0112c7f1196ef154fc18aa5b0d10292188f632f68126b343490",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "2d80ec7aba9db463df1ce414edfa19b639a6f15b4c8ebd16b93081c9de531808",
+      "packages/canard/schema-form/src/__tests__/migration/form-lifecycle.test.tsx": "b38834b54c81734676d034a7c8fe409407da3bb5fff70213613073cd0dfdc86b",
+      "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "e65208fca1383169d98561a39ffb6f40d74b5f0b306ec390a9f1add81cbe612b"
+    },
+    "raw": "red-final-react18.json.gz"
+  },
+  "unit": {
+    "base": "c5d963b2d",
+    "testCommit": "32d1977ccdef7637c52b30f9c9e94a1185b43b95",
+    "passed": 19,
+    "failed": 5,
+    "skipped": 0,
+    "sha256": {
+      "packages/canard/schema-form/src/core/__tests__/loadValidation.test.ts": "75cacf82de5f347dba01e7fee524fdbcb9b83b8ee1a2957c21f72d78b0f5646d",
+      "packages/canard/schema-form/src/core/__tests__/surfaceIndex.test.ts": "fef581d95aade838f0d0e7b655630e1a9a5d5d71908c95a45276b0f2e5e70e2b",
+      "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.same-id.test.ts": "a0b78a2727dc2550e4d933b98f4daadf43ffbf4ae094fbbcabe22b9f5984163a",
+      "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.binding-input.test.ts": "c62362f0eb05037bf29eed9c2a8f63749a4e6e9e4f438b02cbb8732d49f02a3e",
+      "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.onChange.test.ts": "82a2447eda283634559671f2f56f2422d9f66b0ddb859503ae14071c82f6b7c7"
+    },
+    "raw": "red-final-unit.json.gz"
+  }
+}

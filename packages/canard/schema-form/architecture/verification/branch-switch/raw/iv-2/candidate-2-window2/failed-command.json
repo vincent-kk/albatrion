@@ -1,0 +1,14 @@
+{
+  "executable": "<toolchain>/Cellar/node/26.12.1_1/bin/node",
+  "args": [
+    "<home>/Workspace/albatrion/branch-switch-iv-2/packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-2/worker.mjs",
+    "<scratch>/claude-501/perf-runs/20261029T1129-527c432-iv-2-c2-stage-b.noindex",
+    "switch-siblings-1000",
+    "supplemental",
+    "0"
+  ],
+  "cwd": "<home>/Workspace/albatrion/branch-switch-iv-2",
+  "startedAt": "2026-10-29T12:12:04.549Z",
+  "endedAt": "2026-10-29T12:14:29.281Z",
+  "code": 1
+}

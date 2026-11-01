@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-30T05:47:56.423Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "mds_stores",
+      "cpuPercent": 6.069497341757967
+    },
+    {
+      "name": "WidgetsExtension",
+      "cpuPercent": 5.750050113235215
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 5.430602884712463
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 5.430602884712463
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 4.472261199260421
+    },
+    {
+      "name": "chronod",
+      "cpuPercent": 3.1944722851694127
+    },
+    {
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+      "cpuPercent": 3.1944722851694127
+    },
+    {
+      "name": "Cursor Helper (Renderer)",
+      "cpuPercent": 1.9166833710947475
+    },
+    {
+      "name": "com.apple.DriverKit-AppleBCMWLAN",
+      "cpuPercent": 1.9166833710929316
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.5972361425847064
+    }
+  ]
+}

@@ -17,21 +17,21 @@ F-C는 FormContents의 네이티브 제출 함수를 useCallback으로 고정합
 Plan: 이 기록의 구현 계획을 사용합니다.
 
 - [x] G1: 네 변경의 계수 시험이 HEAD에서 고유 이유로 실패하고 개별·결합 후보에서 통과합니다.
-      CHECK: `node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fbx-diag/check-evidence.mjs counts`
+      CHECK: `node {scratch}/fbx-diag/check-evidence.mjs counts`
       EXPECT: `COUNTS_VERIFIED`
       EVIDENCE: COUNTS_VERIFIED (exit 0)
 - [x] G2: 지정된 할당·보유량·생존량과 304행 touch-count의 원자료가 유효합니다.
-      CHECK: `node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fbx-diag/check-evidence.mjs probes`
+      CHECK: `node {scratch}/fbx-diag/check-evidence.mjs probes`
       EXPECT: `PROBES_VERIFIED`
       EVIDENCE: PROBES_VERIFIED (exit 0)
 - [x] G3: 다섯 지정 명령이 모두 성공하고 제한 밖의 저장소 파일은 변경되지 않습니다.
-      CHECK: `node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fbx-diag/check-evidence.mjs final`
+      CHECK: `node {scratch}/fbx-diag/check-evidence.mjs final`
       EXPECT: `FINAL_VERIFIED`
       EVIDENCE: FINAL_VERIFIED (exit 0)
 
 ## 구현·검증 결과를 이어서 기록합니다.
 
-PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다. 제품 변경은 src의 17개 파일에만 작성하였으며 D에서는 이 기록만 추가하였습니다. 설치, add, commit, stash, 시간 판정은 수행하지 않았습니다. 모든 명령의 종료를 기다렸고 프로세스는 자연 종료하였습니다. 각 실행은 8분 이내에 끝났으며 모든 할당·보유량·scavenge 실행의 부모와 탐침은 `$HOME/.nvm/versions/node/v26.11.1/bin/node`를 순차 사용하였습니다.
+PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `{scratch}`입니다. 제품 변경은 src의 17개 파일에만 작성하였으며 D에서는 이 기록만 추가하였습니다. 설치, add, commit, stash, 시간 판정은 수행하지 않았습니다. 모든 명령의 종료를 기다렸고 프로세스는 자연 종료하였습니다. 각 실행은 8분 이내에 끝났으며 모든 할당·보유량·scavenge 실행의 부모와 탐침은 `$HOME/.nvm/versions/node/v26.11.1/bin/node`를 순차 사용하였습니다.
 
 ## 각 변경의 파일과 동작을 기록합니다.
 
@@ -159,3 +159,5 @@ PKG/CLAUDE.md의 Error Isolation 설명은 정확합니다. 입력 해석 지점
 개별 패치의 DETAIL hunk에서 마지막 공백 문맥을 저장할 때 hunk 길이가 맞지 않는 오류가 발견되어 ff.patch와 fe.patch의 hunk 길이를 실제 문맥에 맞게 수정하였습니다. 최종 HEAD에서 fb.patch·fb-src.patch·fc.patch·ff.patch·fe.patch·fbx.patch의 git apply --check가 모두 통과하였습니다. 계수 보조 도구의 선행 조건은 위에 기록한 그대로입니다.
 
 최종 HEAD는 9a3a3b099이며 git status --short에는 이 기록 한 개의 추가만 남았습니다. check-evidence의 final 모드는 지정 명령의 종료 코드·최종 Vitest 요약·패치 적용 가능성과 이 변경 목록을 단언한 뒤 FINAL_VERIFIED를 출력하였습니다. G1·G2·G3을 모두 충족하였으며 기록과 S의 패치·번들·탐침·304행 계수 산출물을 보존하였습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

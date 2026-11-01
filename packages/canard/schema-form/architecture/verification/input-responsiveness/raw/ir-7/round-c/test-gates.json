@@ -1,0 +1,58 @@
+{
+  "unit": {
+    "files": 620,
+    "passed": 4091,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 1,
+    "raw": "gate-unit.json.gz"
+  },
+  "render": {
+    "files": 159,
+    "passed": 902,
+    "failed": 0,
+    "skipped": 2,
+    "todo": 0,
+    "raw": "gate-render.json.gz"
+  },
+  "react18": {
+    "files": 159,
+    "passed": 895,
+    "failed": 0,
+    "skipped": 9,
+    "todo": 0,
+    "raw": "gate-react18.json.gz"
+  },
+  "verify": {
+    "files": 784,
+    "passed": 5037,
+    "failed": 0,
+    "skipped": 2,
+    "todo": 1,
+    "raw": "gate-verify.json.gz"
+  },
+  "storybook": {
+    "files": 101,
+    "passed": 254,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "raw": "gate-storybook.json.gz"
+  },
+  "production": {
+    "files": 10,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "raw": "gate-production.json.gz"
+  },
+  "import-model": {
+    "files": 1,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "raw": "gate-import-model.json.gz"
+  }
+}

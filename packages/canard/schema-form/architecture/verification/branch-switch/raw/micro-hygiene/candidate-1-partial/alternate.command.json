@@ -1,0 +1,19 @@
+{
+  "executable": "{node-home}/Cellar/node/26.12.1_1/bin/node",
+  "args": [
+    "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form/architecture/verification/design-optimization/tools/alternate.mjs",
+    "--baseline-bundle=<scratch>/claude-501/perf-runs/20261029T1358-8d7d1a8-micro-hygiene.noindex/bundles/A/index.node.mjs",
+    "--candidate-bundle=<scratch>/claude-501/perf-runs/20261029T1358-8d7d1a8-micro-hygiene.noindex/bundles/B/index.node.mjs",
+    "--quality=legacy",
+    "--runs=10",
+    "--warmups=20",
+    "--samples=100",
+    "--quiet-since=2026-10-29T14:09:50.507Z",
+    "--only=single-flat-1000,mount-oneOf-80,mount-flat-1000,mount-nested-d6-f4,single-nested-d6-f4,switch-oneOf-80,bulk-flat-2000,bulk-nested-d6-f4,switch-discriminator-80,switch-if-80,switch-nested-oneOf-20,switch-siblings-0,switch-siblings-100,switch-siblings-1000,switch-siblings-4000,leaf-gate-250,leaf-gate-1000,leaf-gate-4000,leaf-gate-8000,wave-1000,single-flat-1000-subscribed,switch-payload-12",
+    "--run-dir=<scratch>/claude-501/perf-runs/20261029T1358-8d7d1a8-micro-hygiene.noindex/pair"
+  ],
+  "cwd": "<home>/Workspace/albatrion/branch-switch-micro-hygiene",
+  "startedAt": "2026-10-29T14:09:50.511Z",
+  "endedAt": "2026-10-29T14:41:38.584Z",
+  "code": 1
+}

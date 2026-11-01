@@ -1,0 +1,71 @@
+{
+  "seed": 20261031,
+  "resamples": 10000,
+  "jointPageIndices": true,
+  "rows": {
+    "type-flat-500-validate-nonburst": {
+      "upperBound": 0.8730158713639429,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-flat-500-validate-burst": {
+      "upperBound": 2.5555555187625654,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-array-1000-validate-nonburst": {
+      "upperBound": 0.3543307089940119,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-array-1000-validate-burst": {
+      "upperBound": 0.5056179788825699,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-nested-d5-f4-validate-nonburst": {
+      "upperBound": 0.41732283597604763,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-nested-d5-f4-validate-burst": {
+      "upperBound": 0.3828124977808329,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-flat-2000-validate-nonburst": {
+      "upperBound": 0.6718750012369128,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    },
+    "type-flat-2000-validate-burst": {
+      "upperBound": 0.7000000029802322,
+      "undefinedRatios": 0,
+      "fallbackResamples": {
+        "E": 0,
+        "F": 0
+      }
+    }
+  }
+}

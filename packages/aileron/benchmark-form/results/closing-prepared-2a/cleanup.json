@@ -1,0 +1,16 @@
+{
+  "removedWorktrees": [
+    "closing-2a-baseline",
+    "closing-2a-stage"
+  ],
+  "removedBranches": [
+    "scratch/closing-2a-baseline",
+    "scratch/closing-2a-stage"
+  ],
+  "remainingCreatedWorktrees": [],
+  "remainingCreatedBranches": [],
+  "preExistingPrunableMetadata": [
+    "stage-c5d963b2d"
+  ],
+  "preExistingMetadataModified": false
+}

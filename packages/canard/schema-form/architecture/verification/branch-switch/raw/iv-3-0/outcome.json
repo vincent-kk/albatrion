@@ -1,0 +1,26 @@
+{
+  "completed": true,
+  "failure": null,
+  "results": [
+    {
+      "row": "switch-oneOf-80",
+      "interval": 50,
+      "ratio": 0.974893849389879,
+      "reconciled": true
+    },
+    {
+      "row": "switch-siblings-0",
+      "interval": 50,
+      "ratio": 0.9753140076981524,
+      "reconciled": true
+    },
+    {
+      "row": "single-flat-1000",
+      "interval": 50,
+      "ratio": 0.9751953164840993,
+      "reconciled": true
+    }
+  ],
+  "rootNormalizationChanged": true,
+  "endedAt": "2026-10-29T19:04:31.734Z"
+}

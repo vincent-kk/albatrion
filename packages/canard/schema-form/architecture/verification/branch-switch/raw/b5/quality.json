@@ -1,0 +1,242 @@
+{
+  "rule": "A-role legacy10, median over rows of last5/first5 process-sample medians; fixed before window",
+  "ratio": 1.0076749438277453,
+  "bounds": [
+    0.95,
+    1.05
+  ],
+  "passed": true,
+  "rows": [
+    {
+      "row": "single-flat-1000",
+      "first5Ms": 0.677771000000007,
+      "last5Ms": 0.8419790000000091,
+      "ratio": 1.2422765211258677,
+      "minimumRatio": 1.0174607171446823
+    },
+    {
+      "row": "mount-oneOf-80",
+      "first5Ms": 0.42768749999999045,
+      "last5Ms": 0.44185450000003357,
+      "ratio": 1.033124652930103,
+      "minimumRatio": 1.0236087098731896
+    },
+    {
+      "row": "mount-flat-1000",
+      "first5Ms": 2.2100209999999834,
+      "last5Ms": 2.234896000000049,
+      "ratio": 1.011255549155445,
+      "minimumRatio": 0.9942443438914224
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "first5Ms": 9.305020499999955,
+      "last5Ms": 9.272958000000017,
+      "ratio": 0.9965542794881603,
+      "minimumRatio": 1.0100046199875181
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "first5Ms": 0.06381200000004128,
+      "last5Ms": 0.06410450000001333,
+      "ratio": 1.0045837773455129,
+      "minimumRatio": 0.9891696750913314
+    },
+    {
+      "row": "switch-oneOf-80",
+      "first5Ms": 0.11606249999999818,
+      "last5Ms": 0.1149170000000197,
+      "ratio": 0.9901303177169327,
+      "minimumRatio": 0.9199007751936823
+    },
+    {
+      "row": "bulk-flat-2000",
+      "first5Ms": 1.677791500000012,
+      "last5Ms": 2.0871250000000146,
+      "ratio": 1.2439716138745485,
+      "minimumRatio": 1.0522238192084679
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "first5Ms": 4.007021000000066,
+      "last5Ms": 3.9559375000000614,
+      "ratio": 0.9872515018014622,
+      "minimumRatio": 0.9873493609416075
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "first5Ms": 0.08227099999999155,
+      "last5Ms": 0.09977050000000531,
+      "ratio": 1.212705570614379,
+      "minimumRatio": 1.2137429798473534
+    },
+    {
+      "row": "switch-siblings-0",
+      "first5Ms": 0.06047900000001505,
+      "last5Ms": 0.05135450000000219,
+      "ratio": 0.8491294498915228,
+      "minimumRatio": 0.8794713308791097
+    },
+    {
+      "row": "switch-siblings-100",
+      "first5Ms": 0.26408349999999814,
+      "last5Ms": 0.2574999999999932,
+      "ratio": 0.9750703849350489,
+      "minimumRatio": 0.9125806856362283
+    },
+    {
+      "row": "switch-siblings-1000",
+      "first5Ms": 2.802853999999968,
+      "last5Ms": 2.8999164999999607,
+      "ratio": 1.0346298808286103,
+      "minimumRatio": 1.0131620245137112
+    },
+    {
+      "row": "switch-siblings-4000",
+      "first5Ms": 8.88977100000011,
+      "last5Ms": 8.910625499999924,
+      "ratio": 1.0023458984488818,
+      "minimumRatio": 1.0138006720879755
+    },
+    {
+      "row": "leaf-gate-250",
+      "first5Ms": 0.18470800000000054,
+      "last5Ms": 0.18985399999996844,
+      "ratio": 1.0278601901377735,
+      "minimumRatio": 1.002020963874181
+    },
+    {
+      "row": "leaf-gate-1000",
+      "first5Ms": 1.0112914999999703,
+      "last5Ms": 1.057186999999999,
+      "ratio": 1.0453830572095484,
+      "minimumRatio": 1.003711143878301
+    },
+    {
+      "row": "leaf-gate-4000",
+      "first5Ms": 3.5837920000000167,
+      "last5Ms": 3.6223755000000324,
+      "ratio": 1.0107661103099777,
+      "minimumRatio": 1.0881597153587235
+    },
+    {
+      "row": "leaf-gate-8000",
+      "first5Ms": 5.294521000000032,
+      "last5Ms": 5.310125000000028,
+      "ratio": 1.002947197678505,
+      "minimumRatio": 1.0011478907239855
+    },
+    {
+      "row": "switch-payload-12",
+      "first5Ms": 0.3184789999999964,
+      "last5Ms": 0.2963749999999834,
+      "ratio": 0.9305951098816146,
+      "minimumRatio": 0.93877025527182
+    }
+  ],
+  "excluded": [
+    "switch-discriminator-80",
+    "switch-if-80",
+    "wave-1000",
+    "single-flat-1000-subscribed"
+  ],
+  "additionalLegacy10": "B-role kept as supplementary data, excluded from primary quality and L table",
+  "originalDeviceQuality": {
+    "kind": "legacy",
+    "ratio": 0.9966624156144475,
+    "passed": true,
+    "assessedRows": 18,
+    "rows": [
+      {
+        "id": "single-flat-1000",
+        "ratio": 1.0285581772638677
+      },
+      {
+        "id": "mount-oneOf-80",
+        "ratio": 1.0082244743056175
+      },
+      {
+        "id": "mount-flat-1000",
+        "ratio": 0.9969332974878002
+      },
+      {
+        "id": "mount-nested-d6-f4",
+        "ratio": 0.9920187855533237
+      },
+      {
+        "id": "single-nested-d6-f4",
+        "ratio": 1.0704815880401126
+      },
+      {
+        "id": "switch-oneOf-80",
+        "ratio": 0.9040570454427709
+      },
+      {
+        "id": "bulk-flat-2000",
+        "ratio": 0.9918766557435181
+      },
+      {
+        "id": "bulk-nested-d6-f4",
+        "ratio": 0.9963915337410947
+      },
+      {
+        "id": "switch-nested-oneOf-20",
+        "ratio": 1.1559203030776846
+      },
+      {
+        "id": "switch-siblings-0",
+        "ratio": 1.0406393384758854
+      },
+      {
+        "id": "switch-siblings-100",
+        "ratio": 0.9955506609552406
+      },
+      {
+        "id": "switch-siblings-1000",
+        "ratio": 0.9962197385372392
+      },
+      {
+        "id": "switch-siblings-4000",
+        "ratio": 0.8947597878399514
+      },
+      {
+        "id": "leaf-gate-250",
+        "ratio": 0.9206316206793912
+      },
+      {
+        "id": "leaf-gate-1000",
+        "ratio": 1.0179128052027375
+      },
+      {
+        "id": "leaf-gate-4000",
+        "ratio": 0.9935041082177102
+      },
+      {
+        "id": "leaf-gate-8000",
+        "ratio": 0.9969489479684649
+      },
+      {
+        "id": "switch-payload-12",
+        "ratio": 1.0906320314731957
+      }
+    ],
+    "omittedRows": [
+      {
+        "id": "switch-discriminator-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "switch-if-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "wave-1000",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "single-flat-1000-subscribed",
+        "reason": "No compatible legacy lane"
+      }
+    ]
+  }
+}

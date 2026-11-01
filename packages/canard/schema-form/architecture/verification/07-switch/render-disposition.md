@@ -21,8 +21,8 @@
 파일·건수와 커밋을 집계할 때 실제 실행한 셸 명령은 다음과 같습니다. Python 안의 `rg` 호출이 파일을 고르고, 정규식이 호출 지점을 셉니다.
 
 ```sh
-cd /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07
-git -C /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07 rev-parse --short HEAD
+cd {repo}
+git -C {repo} rev-parse --short HEAD
 python3 - <<'PY'
 from pathlib import Path
 import re
@@ -168,3 +168,5 @@ PY
 | `src/__legacy__/core/__tests__/NullableFormScenarios.test.tsx` — `should handle deeply nested nullable objects and arrays` | 1 | 표면만 고친다 | 조합·옛 키가 없습니다. type 배열·null 및 값 단언을 새 e2e에 유지합니다(TEST-005). | `src/__tests__/e2e/value.test.tsx` — `nullable-deep-structure` |
 | `src/__legacy__/core/__tests__/NullableFormScenarios.test.tsx` — `should handle complete job application with nullable fields` | 1 | 표면만 고친다 | 조합·옛 키가 없습니다. type 배열·null 및 값 단언을 새 e2e에 유지합니다(TEST-005). | `src/__tests__/e2e/value.test.tsx` — `nullable-job-application` |
 | `src/__legacy__/core/__tests__/NullableFormScenarios.test.tsx` — `should handle pure null type field` | 1 | 표면만 고친다 | 조합·옛 키가 없습니다. type 배열·null 및 값 단언을 새 e2e에 유지합니다(TEST-005). | `src/__tests__/e2e/value.test.tsx` — `pure-null-field` |
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `29d061941323`, `fc651e734d1c`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

@@ -77,7 +77,7 @@ it.each(['renderer', 'formatError'] as const)(
     expect(records[0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.RENDER_FAILED',
       level: 'error',
-      surface: 'sink',
+      origin: 'render',
       path: '/bad',
       error,
       componentStack: expect.any(String),
@@ -125,7 +125,7 @@ it.each(['renderer', 'formatError'] as const)(
     expect(records).toHaveLength(1);
     expect(records[0]).toMatchObject({
       path: '/bad',
-      surface: 'sink',
+      origin: 'render',
       code: 'SCHEMA_FORM_ERROR.RENDER_FAILED',
     });
     expect(

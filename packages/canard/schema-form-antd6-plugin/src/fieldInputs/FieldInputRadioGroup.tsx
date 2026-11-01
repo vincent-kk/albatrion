@@ -41,6 +41,7 @@ const FieldInputRadioGroup = ({
   context,
   size,
   alias,
+  misfit,
 }: FieldInputRadioGroupProps) => {
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
@@ -75,6 +76,7 @@ const FieldInputRadioGroup = ({
       options={options}
       onChange={handleChange}
       size={size || context?.size}
+      aria-invalid={misfit || undefined}
     />
   );
 };

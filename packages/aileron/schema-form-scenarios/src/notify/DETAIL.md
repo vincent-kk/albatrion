@@ -31,7 +31,7 @@
 | --- | --- | --- | --- |
 | `order.scenario.ts` | `notify.delivery-order` | 루트 통째 쓰기 한 번이 문서 순서로 배달하고 `onChange`와 검증 요청을 한 번씩 내며, 같은 값을 다시 쓰면 배달·콜백·검증 요청이 없다. | — |
 | `batch.scenario.ts` | `notify.batch-change` | 묶음 안의 두 쓰기가 최종 출력 하나와 문서 순서 배달, `onChange`와 검증 요청 한 번씩으로 끝난다. | — |
-| `warning.scenario.ts` | `notify.warning-record` | number 스키마에 문자열을 쓰면 소비자 `onError`가 구조화된 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`를 받는다. | — |
+| `warning.scenario.ts` | `notify.warning-record` | number 스키마에 문자열을 쓰면 소비자 `onError`가 구조화된 경고 코드 `SCHEMA_FORM_WARNING.MISFIT`를 받는다. | — |
 
 ## Last Updated
 

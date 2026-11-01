@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
 /**
  * Arguments the derive round passes to an authored `injectTo` handler (getInjectToContext).
@@ -14,7 +14,7 @@ export type InjectToContext<Schema> = {
   /** Emitted value of the parent, or null at the root. */
   parentValue: unknown;
   /** Effective schema of the parent, or null at the root. */
-  parentJSONSchema: Schema | null;
+  parentJSONSchema: Nullable<Schema>;
   /** Emitted value of the root in this round. */
   rootValue: unknown;
   /** Effective schema of the root. */
@@ -22,6 +22,26 @@ export type InjectToContext<Schema> = {
   /** Form-level context object, or an empty object. */
   context: Dictionary;
 };
+
+/** Exit resolver inputs; every value and schema is read from the preceding commit. */
+export type InactiveValueContext = InjectToContext<
+  Readonly<Dictionary<unknown>> | boolean
+>;
+
+/**
+ * Compute a retained value without performing public writes.
+ * @typeParam V - Previous committed value and returned retained value
+ * @param value - This occurrence's value from the preceding commit
+ * @param context - Preceding paths, schemas, parent/root values and form context
+ * @returns Replacement retained value; undefined preserves the existing source
+ */
+export type InactiveValueResolver<V = unknown> = (
+  value: V,
+  context: InactiveValueContext,
+) => Optional<V>;
+
+/** Literal retained value or its synchronous exit resolver. */
+export type InactiveValue<V = unknown> = V | InactiveValueResolver<V>;
 
 /** Control keys of a `controls.fields` entry and of a fragment (allOf, then, else, oneOf or anyOf branch). */
 export type ChildSchemaControls = {
@@ -43,6 +63,10 @@ export type ChildSchemaControls = {
   resetInteraction?: boolean | string;
   /** Exit policy: clears the value when the node leaves the shape; a boolean or an expression (default: keep). */
   unsetOnInactive?: boolean | string;
+  /** Literal (string, number, boolean, null, object or array) or the shared `InactiveValueResolver`; an inline function is typed by the resolver signature. */
+  inactiveValue?: Nullable<
+    InactiveValueResolver<unknown> | string | number | boolean | object
+  >;
 };
 
 /** Specificity layer of a control declaration: the node itself, a parent `controls.fields` entry, or a fragment. */

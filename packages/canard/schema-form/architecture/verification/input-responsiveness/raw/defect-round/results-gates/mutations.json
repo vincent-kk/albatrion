@@ -1,0 +1,84 @@
+{
+  "sourceCommit": "71971176ee46e49050d2bc6924367f5eca967f2d",
+  "mutations": {
+    "handoff": {
+      "failed": 7,
+      "passed": 6,
+      "filterExcluded": 15,
+      "failedCases": [
+        "DR-13 A1 retains the superseded async root targets (slot)",
+        "DR-13 A1 retains the superseded async root targets (cadence)",
+        "DR-13 gate hands slot targets to a successor that resolves first",
+        "DR-13 gate keeps the superseded cadence rejection silent and assigns both targets",
+        "DR-13 gate reports the superseded slot rejection and hands its sibling target on",
+        "DR-13 gate preserves the cadence record while an explicit subtree verdict settles",
+        "DR-13 gate hands an explicit root run to a subtree successor"
+      ],
+      "report": "amend910-handoff-mutation.json.gz"
+    },
+    "install": {
+      "failed": 1,
+      "passed": 0,
+      "filterExcluded": 4,
+      "failedCases": [
+        "DR-1 gate retains an installing guard-read root while all older recent roots are pinned"
+      ],
+      "report": "amend910-install-mutation.json.gz"
+    },
+    "retired": {
+      "failed": 1,
+      "passed": 2,
+      "filterExcluded": 0,
+      "failedCases": [
+        "DR-2 gate owns a late rejecting slot after rebuild"
+      ],
+      "report": "amend910-retired-mutation.json.gz"
+    },
+    "bundle": {
+      "failed": 4,
+      "passed": 0,
+      "filterExcluded": 2,
+      "failedCases": [
+        "DR-14 gate captures empty or sparse bundles with a render stack (empty)",
+        "DR-14 gate captures empty or sparse bundles with a render stack (sparse)",
+        "DR-14 gate records a renderer empty or sparse bundle (empty)",
+        "DR-14 gate records a renderer empty or sparse bundle (sparse)"
+      ],
+      "report": "amend910-bundle-mutation.json.gz"
+    },
+    "pin-cleanup": {
+      "failed": 3,
+      "passed": 2,
+      "filterExcluded": 0,
+      "failedCases": [
+        "DR-1 leaves committed counts unchanged and releases its pin after a verdict",
+        "DR-1 gate removes the in-flight key after a rejected run",
+        "DR-1 keeps all pinned overflow candidates until a later eviction point"
+      ],
+      "report": "amend910-pin-cleanup-mutation.json.gz"
+    },
+    "path": {
+      "failed": 1,
+      "passed": 0,
+      "filterExcluded": 1,
+      "failedCases": [
+        "DR-9 gate follows a reused path with no tracker or forced render"
+      ],
+      "report": "amend910-path-mutation.json.gz"
+    },
+    "warning-scope": {
+      "failed": 5,
+      "passed": 6,
+      "filterExcluded": 17,
+      "failedCases": [
+        "DR-15 keeps delayed warning ownership (react, reset, read-before)",
+        "DR-15 keeps delayed warning ownership (native, reset, read-before)",
+        "DR-15 keeps delayed warning ownership (react, reset, read-before)",
+        "DR-15 keeps delayed warning ownership (native, reset, read-before)",
+        "DR-15 gate legacy root preserves each original warning scope under StrictMode"
+      ],
+      "report": "amend910-warning-scope-mutation.json.gz"
+    }
+  },
+  "restored": true
+}

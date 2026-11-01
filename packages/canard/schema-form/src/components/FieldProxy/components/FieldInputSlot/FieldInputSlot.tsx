@@ -3,12 +3,15 @@ import { memo, useCallback, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import {
   FieldNodeEventType,
   SetValueOption,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
+  readFieldNodeRevealVersion,
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
@@ -16,6 +19,10 @@ import {
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import {
+  ErrorRevealSubscriber,
+  isErrorRevealed,
+} from '@/schema-form/providers/FieldRendererContext';
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
@@ -24,6 +31,12 @@ import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputSlotProps } from './type';
+
+/** State patch that marks the field dirty after a controlled change. */
+const DIRTY_STATE_PATCH = { 1: true };
+
+/** State patch that marks the field touched after blur. */
+const TOUCHED_STATE_PATCH = { 2: true };
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const FieldInputSlot = memo(
@@ -40,19 +53,30 @@ export const FieldInputSlot = memo(
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const ChildFields = useChildFields(
-      node,
-      NodeProxy,
-      mountedChildren,
-      terminalChildren,
-    );
-    const { checkShowError } = useFieldRendererContext();
+    const [ChildFields, hydrationCommitRef, virtualizationManager] =
+      useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
+    const { checkShowError, showError } = useFieldRendererContext();
+    const live = node.enabled && checkShowError(node.state);
+    const errorVisible = live && isErrorRevealed(node, showError, true);
+    const revealVersion =
+      live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
     const isLive = useLiveNode(node);
-    const [ref, generation, handleCompositionStart, handleCompositionEnd] =
-      useFieldInputControl(node, mountedChildren, commitTerminalChildren);
+    const [
+      ref,
+      generation,
+      handleCompositionStart,
+      handleCompositionEnd,
+      rerender,
+    ] = useFieldInputControl(
+      node,
+      mountedChildren,
+      commitTerminalChildren,
+      hydrationCommitRef,
+      FieldInput ? virtualizationManager : null,
+    );
     const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(
       () =>
@@ -76,13 +100,13 @@ export const FieldInputSlot = memo(
           node.batch(() => {
             onChangeRef.current!(input, option);
             node.clearExternalErrors();
-            node.setState({ 1: true });
+            node.setState(DIRTY_STATE_PATCH);
           });
       },
       [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
     );
     const handleFileAttach = useCallback(
-      (files: File | File[] | undefined) => {
+      (files: Optional<File | File[]>) => {
         if (!accepts()) return;
         if (onFileAttachRef.current) return onFileAttachRef.current(files);
         if (files === undefined) attachedFilesMap.delete(node.path);
@@ -108,7 +132,7 @@ export const FieldInputSlot = memo(
           reset === readFieldNodeInteractionReset(node) &&
           !node.state[2]
         )
-          node.setState({ 2: true });
+          node.setState(TOUCHED_STATE_PATCH);
       });
     }, [accepts, isLive, node]);
     useOnUnmount(() => {
@@ -145,16 +169,23 @@ export const FieldInputSlot = memo(
           node={node}
           type={node.type}
           schemaType={node.schemaType}
-          typeMismatch={node.typeMismatch}
+          misfit={node.misfit}
           name={node.name}
           path={node.path}
           nullable={node.nullable}
           errors={node.errors}
-          errorVisible={checkShowError(node.state)}
+          errorVisible={errorVisible}
           watchValues={node.watchValues}
           ChildFields={ChildFields}
           context={context}
         />
+        {revealVersion !== undefined && (
+          <ErrorRevealSubscriber
+            node={node}
+            version={revealVersion}
+            onRelease={rerender}
+          />
+        )}
       </div>
     );
   },

@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repo = path.resolve(directory, '../../../../../..');
 const artifacts = path.join(directory, 'profile-101-gc');
-const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/prof';
+const raw = '{scratch}/prof';
 const names = ['nested-d5-f4', 'flat-500', 'oneOf-20'];
 const phases = ['blueprint', 'rest', 'garbageCollector', 'program', 'idle', 'driver'];
 const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -107,7 +107,7 @@ function aggregateCpu(records, version) {
 }
 
 export function derive() {
-  assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+  assert.equal(fs.realpathSync(repo), '{repo}');
   const currentHead = execFileSync('git', ['--no-optional-locks', 'rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
   assert.equal(currentHead, 'aee63933e43e3f8da442cf3ba7e7574f2aa16679');
   assert.equal(execFileSync('git', ['--no-optional-locks', 'diff', '--numstat', 'HEAD', '--', 'packages/canard/schema-form/src'],

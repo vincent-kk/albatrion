@@ -1,0 +1,12 @@
+{
+  "candidate": "652ddf6eede10a1852f9b568444b935712fc0dc0",
+  "classification": "completed-adopted",
+  "rawComparisonWorkers": 440,
+  "rawStageWorkers": 18,
+  "rawSupplementalWorkers": 18,
+  "heapWorkers": 4,
+  "retentionWorkers": 3,
+  "heapSnapshotStorage": "External original snapshots remain in the prepared device; repository retention.json keeps the dominator observations, not process snapshots.",
+  "pathSanitization": true,
+  "formalRetry": false
+}

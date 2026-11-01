@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1에서 값 identity 메모는 공통 이름 붙인 저장소에 모으고 노드 identity 메모는 root runtime에 둔다. 정적 선택·값 키 개수·trim 결과·정적 spec·소유 값 membership의 키와 결과는 보존한다. 공통 구조 형은 engine types가 소유하여 자식 간 역의존을 만들지 않는다. 안정 형상과 배열 선언 개수 메모는 트리별로 지연 생성하며 폼 전체 reset·폐기에서 해제한다(SURFACE-063·065).
+
 - options가 없는 유효 스키마의 선택은 생성 때 동결한 기본 choices 객체 하나에 연결합니다. 유효 스키마별 WeakMap 조회·등록과 options/propertyOrder의 해석·독립 동결 배열은 유지하며 schema 결과는 공유하지 않습니다. 속도 면에서는 기본 분기가 WeakMap에 등록하고 상수를 반환하므로 유효 스키마마다 네 필드 객체를 만들고 freeze하는 일이 없어집니다. 메모리 면에서는 기존 WeakMap 항목 수를 유지하고, 적격한 유효 스키마마다 두는 choices 객체를 모듈 상수 하나로 대체합니다(batch2 4-default-choices).
 
 - `record < 종류 fractal < behaviors 뿌리 < settle < FieldNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 살아 있는 노드의 행을 `node.behavior`로 호출하고 형상 밖 노드의 정적 해석과 빈 값 판정에는 이 fractal의 진입점을 소비합니다(NODE-016, WRITE-082·098).
@@ -10,10 +12,10 @@
 
 ## API Contracts
 
-- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 진입점은 표와 정적 `omitEmpty` 빈 값 판정 함수 `isOmittedEmpty`를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, VALUE-034, 26C-01).
+- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 진입점은 표와 정적 `omitEmpty` 빈 값 판정 함수 `isOmittedEmpty`, 유효 스키마별 정적 선택 `getStaticChoices`(settle의 덧붙임 자격이 `omitTrailing`을 읽는다)를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, VALUE-034, 26C-01).
 - 표에는 배열의 `branch`·`terminal`을 포함한 열 행이 있으며, 두 배열 행의 전략 선택도 청사진이 정합니다(NODE-002·047, BLUEPRINT-043, LANDING-065, 35C-12).
 - 행의 칸은 `interpret`, `assemble`, `project`, `finishInput`, `declareChildren`, `arrange`, `type`, `strategy` 순서입니다. 모든 행은 이 칸을 같은 순서로 가지며, 공유 기본 칸 위에 종류의 칸을 덮어 키 순서를 고정합니다. 같은 뜻의 칸은 같은 함수 참조를 씁니다. 여덟 줄을 넘는 칸과 종류 전용 보조는 그 종류의 utils organ에, 두 종류 이상이 쓰는 보조는 이 fractal의 utils organ에 둡니다(NODE-006·009·014, 26C-01, 36C-01, 실행 ADR D1).
-- 배열이 아닌 행의 `arrange`는 `utils/slots/`의 거부 칸 하나를 같은 함수 참조로 씁니다. 그 칸은 모든 환경에서 `path`·`details.method`를 담은 `SchemaFormError`를 `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` 코드로 즉시 던져 겉면과 dispatch가 종류를 묻지 않게 합니다. dispatch 진입 사슬이 오류를 포착하여 사슬 끝에서 `surface: 'thrown'`으로 `onError`에 보고한 뒤 던집니다(NODE-014, ERROR-197, 35C-01).
+- 배열이 아닌 행의 `arrange`는 `utils/slots/`의 거부 칸 하나를 같은 함수 참조로 씁니다. 그 칸은 모든 환경에서 `path`·`details.method`를 담은 `SchemaFormError`를 `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` 코드로 즉시 던져 겉면과 dispatch가 종류를 묻지 않게 합니다. dispatch 진입 사슬이 오류를 포착하여 사슬 끝에서 `origin: 'write'`으로 `onError`에 보고한 뒤 던집니다(NODE-014, ERROR-197, 35C-01).
 - 정적 `omitEmpty`가 적용된 값 `''`, 키 없는 평범한 `{}`, 빈 `[]`만 형상 밖 잎의 방출 없음으로 판정합니다. 유효 스키마는 정적 선언으로 합칩니다(VALUE-034, WRITE-013, 26C-14).
 - 객체 branch는 비객체 원본 아래에도 자식을 유지하고 각 자식의 `local`을 계산하지만 그 호스트는 비객체 `raw`를 받은 그대로 방출하고 자식 방출만 투영에서 제외합니다. 배열 branch도 비배열 `raw`를 그대로 방출합니다. `null`·비객체 원본 아래의 자식은 로드든 쓰기든 채움을 받지 않습니다(VALUE-033·036, WRITE-013·096, 38C-01, 39C-01).
 - `options`의 빈 값 생략·`trim`·키 순서 등 정적 선택은 칸 호출마다 다시 구하지 않습니다. 유효 스키마 메모가 바뀔 때 한 번 계산하고 그 메모와 함께 둡니다(NODE-006, SETTLE-042).

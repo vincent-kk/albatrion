@@ -1,0 +1,137 @@
+{
+  "baselineCommit": "0b9337cd9b7372211883a727fead7f76c8220b4f",
+  "candidate": 2,
+  "productCommit": "be49b6c6777d46ce1cd39a10950d4af09725f8b5",
+  "typecheck": {
+    "passed": true
+  },
+  "lint": {
+    "passed": true
+  },
+  "build": {
+    "passed": true
+  },
+  "publicEntry": {
+    "diff": 0
+  },
+  "publicDeclaration": {
+    "byteIdentical": true
+  },
+  "focused": {
+    "files": 15,
+    "passed": 182
+  },
+  "publicRenderReact18": {
+    "files": 2,
+    "passed": 6
+  },
+  "canonicalFirstActualWrite": {
+    "wrapperCalls": 0,
+    "fullDecoderCalls": 0,
+    "writesPerScene": 6
+  },
+  "projects": {
+    "node": {
+      "files": 841,
+      "passed": 5408,
+      "todo": 1,
+      "projects": [
+        "unit",
+        "render",
+        "react18",
+        "production"
+      ],
+      "maxWorkers": 2
+    },
+    "storybook": {
+      "files": 100,
+      "passed": 251,
+      "runtime": "Node 26.11.1",
+      "browserFileParallelism": false,
+      "fileParallelism": false,
+      "maxWorkers": 1,
+      "isolation": "unchanged default",
+      "shards": [
+        {
+          "index": "1/2",
+          "files": 50,
+          "passed": 124
+        },
+        {
+          "index": "2/2",
+          "files": 50,
+          "passed": 127
+        }
+      ],
+      "coverage": {
+        "sourceFiles": 100,
+        "union": 100,
+        "overlap": 0,
+        "missing": []
+      }
+    },
+    "total": {
+      "files": 941,
+      "passed": 5659,
+      "todo": 1
+    }
+  },
+  "verify": {
+    "files": 707,
+    "passed": 4668,
+    "todo": 1,
+    "maxWorkers": 2
+  },
+  "priorRuns": {
+    "fourProjects": {
+      "passedFiles": 838,
+      "failedFiles": 3,
+      "passedTests": 5400,
+      "failedTests": 7,
+      "todo": 1,
+      "causes": [
+        "import model did not implement the provided verification-internals exemption",
+        "legacy slash-root cousin expression",
+        "legacy slash-root watch fixtures"
+      ],
+      "usedAsSuccessEvidence": false
+    },
+    "browserConnectionClosed": {
+      "runs": 4,
+      "filesCompleted": [
+        92,
+        94,
+        89,
+        91
+      ],
+      "passedTests": [
+        238,
+        240,
+        235,
+        237
+      ],
+      "usedAsSuccessEvidence": false,
+      "observed": "Orchestrator WebSocket closed; diagnostic Chromium parent exited normally; root cause unresolved."
+    }
+  },
+  "formalWindow": {
+    "started": false,
+    "owner": "next measurement worker assigned by coordinator"
+  },
+  "delivery": {
+    "scenes": 72,
+    "phases": 430,
+    "differences": 0
+  },
+  "mount": {
+    "scenes": 6,
+    "phases": 12,
+    "differences": 0
+  },
+  "untimedLoad": {
+    "A": 44,
+    "B": 44,
+    "legacy": 36,
+    "resolvedPluginVerified": true
+  }
+}

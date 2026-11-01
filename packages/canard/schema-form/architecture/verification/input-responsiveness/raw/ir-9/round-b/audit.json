@@ -1,0 +1,101 @@
+{
+  "audit_base": "daf4ff55f",
+  "commits": [
+    {
+      "commit": "28ca3ff35ba865ee532103c5616284dca20f2cea",
+      "changed_files": 6,
+      "gzip_snapshots_decompressed": 16,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "ab4889e3fc93569ba1a37fd08b986d5cd6c51ff8",
+      "changed_files": 18,
+      "gzip_snapshots_decompressed": 16,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "7448a4b8487dc6aca7a0b5170a777aa8303ce1e1",
+      "changed_files": 5,
+      "gzip_snapshots_decompressed": 16,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "bcc903411ae4829c7e748e2f12cadde4d2e98af2",
+      "changed_files": 2,
+      "gzip_snapshots_decompressed": 17,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "e1079152a8a14f5eab8a1b4e21b3ddb2ce37b0b4",
+      "changed_files": 1,
+      "gzip_snapshots_decompressed": 17,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "8be831c4e8473bdeb4c44e7439511971d4fd99ea",
+      "changed_files": 30,
+      "gzip_snapshots_decompressed": 31,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "df6c8c2f8523fb329fce967cc9bc98a84baab690",
+      "changed_files": 2,
+      "gzip_snapshots_decompressed": 31,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "4dcf6646f995212e562916afcc0ad0de8f17e0a1",
+      "changed_files": 1,
+      "gzip_snapshots_decompressed": 31,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "874a3d296affb92cc6dce490e76b1ba1db4783d9",
+      "changed_files": 1,
+      "gzip_snapshots_decompressed": 31,
+      "new_machine_path_hits": 0
+    },
+    {
+      "commit": "1d11c3bc0d25172ae9205f0e4ce78409dcc1bc2c",
+      "changed_files": 1,
+      "gzip_snapshots_decompressed": 31,
+      "new_machine_path_hits": 0
+    }
+  ],
+  "committed_series_machine_path_hits": 0,
+  "working_tree_machine_path_hits": 0,
+  "gzip_files_checked_in_working_tree": 46,
+  "working_tree_files_checked": 193,
+  "path_scope": "Each descendant commit added text/new files, every decompressed gzip snapshot; working tree additions since IR-8. Immutable pre-existing ledger examples are retained.",
+  "inherited_path_examples": [
+    "packages/canard/schema-form/architecture/ledger/error.md",
+    "packages/canard/schema-form/architecture/ledger/test.md"
+  ],
+  "authorized_skip_additions": [
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx",
+      "+  if (inject('reactMajor') !== '18') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx",
+      "+  if (inject('reactMajor') !== '18') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx",
+      "+  if (inject('reactMajor') !== '18') context.skip();"
+    ]
+  ],
+  "other_skip_todo_fails_changes": 0,
+  "new_unsafe_assertions": [],
+  "preserved_record_documents": [
+    "architecture/adr/0014-error-policy.md",
+    "architecture/ledger/error.md"
+  ],
+  "public_closure_changes": 3,
+  "public_tree_hashes_differ": true,
+  "src_index_and_package_manifest_diff_zero": true,
+  "final_test_hashes_match": true,
+  "scratch_worktrees_created": 0,
+  "scratch_branches_created": 0,
+  "scratch_leftovers": 0
+}

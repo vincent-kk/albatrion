@@ -1,0 +1,66 @@
+{
+  "type-flat-500-validate-nonburst": {
+    "upperBound": 0.8055555435978337,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-flat-500-validate-burst": {
+    "upperBound": 0.714285696039395,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-array-1000-validate-nonburst": {
+    "upperBound": 0.2524271864886108,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-array-1000-validate-burst": {
+    "upperBound": 0.2291666614926523,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-nested-d5-f4-validate-nonburst": {
+    "upperBound": 0.629032265042167,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-nested-d5-f4-validate-burst": {
+    "upperBound": 0.5999999940395355,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-flat-2000-validate-nonburst": {
+    "upperBound": 0.479452057926309,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  },
+  "type-flat-2000-validate-burst": {
+    "upperBound": 0.48275863699056887,
+    "undefinedRatios": 0,
+    "fallbackResamples": {
+      "E": 0,
+      "F": 0
+    }
+  }
+}

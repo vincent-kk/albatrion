@@ -64,7 +64,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -76,7 +76,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -88,7 +88,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/phone',
           type: 'string',
           nullable: false,
@@ -101,7 +101,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/v1/users',
           type: 'string',
           nullable: false,
@@ -113,7 +113,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/v2/users',
           type: 'string',
           nullable: false,
@@ -125,7 +125,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/v3/users',
           type: 'string',
           nullable: false,
@@ -138,7 +138,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/123',
           type: 'number',
           nullable: false,
@@ -150,7 +150,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/0',
           type: 'number',
           nullable: false,
@@ -162,7 +162,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/abc',
           type: 'number',
           nullable: false,
@@ -175,7 +175,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin',
           type: 'string',
           nullable: false,
@@ -187,7 +187,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/users',
           type: 'string',
           nullable: false,
@@ -199,7 +199,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/settings/theme',
           type: 'string',
           nullable: false,
@@ -211,7 +211,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/admin',
           type: 'string',
           nullable: false,
@@ -235,7 +235,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/orders/2024-01-15',
           type: 'string',
           nullable: false,
@@ -247,7 +247,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/orders/2024-1-5',
           type: 'string',
           nullable: false,
@@ -260,7 +260,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/files/avatar.jpg',
           type: 'string',
           nullable: false,
@@ -272,7 +272,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/files/logo.png',
           type: 'string',
           nullable: false,
@@ -284,7 +284,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/files/document.pdf',
           type: 'string',
           nullable: false,
@@ -297,7 +297,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/users/123/comments',
           type: 'string',
           nullable: false,
@@ -309,7 +309,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/posts/456/comments',
           type: 'string',
           nullable: false,
@@ -321,7 +321,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/orders/789/comments',
           type: 'string',
           nullable: false,
@@ -343,7 +343,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/profile',
           type: 'string',
           nullable: false,
@@ -355,7 +355,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/profile',
           type: 'string',
           nullable: false,
@@ -367,7 +367,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/settings',
           type: 'string',
           nullable: false,
@@ -414,7 +414,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -426,7 +426,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -438,7 +438,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -450,7 +450,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/theme',
           type: 'string',
           nullable: false,
@@ -470,7 +470,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/age',
           type: 'string',
           nullable: false,
@@ -482,7 +482,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/name',
           type: 'string',
           nullable: false,
@@ -508,7 +508,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/name',
           type: 'string',
           nullable: false,
@@ -520,7 +520,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/123/name',
           type: 'string',
           nullable: false,
@@ -533,7 +533,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/invalid/name',
           type: 'string',
           nullable: false,
@@ -545,7 +545,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/email',
           type: 'string',
           nullable: false,
@@ -558,7 +558,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/items/5/description',
           type: 'string',
           nullable: false,
@@ -570,7 +570,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/items/0/title',
           type: 'string',
           nullable: false,
@@ -583,7 +583,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/data/0/nested/1/value',
           type: 'number',
           nullable: false,
@@ -595,7 +595,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/data/10/nested/20/value',
           type: 'number',
           nullable: false,
@@ -608,7 +608,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/data/abc/nested/1/value',
           type: 'number',
           nullable: false,
@@ -629,7 +629,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0',
           type: 'string',
           nullable: false,
@@ -641,7 +641,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/name/extra',
           type: 'string',
           nullable: false,
@@ -653,7 +653,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users',
           type: 'string',
           nullable: false,
@@ -673,7 +673,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/users/0/profile',
           type: 'string',
           nullable: false,
@@ -685,7 +685,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/admin/0/profile',
           type: 'string',
           nullable: false,
@@ -697,7 +697,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/v2/users/0/profile',
           type: 'string',
           nullable: false,
@@ -725,7 +725,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/name',
           type: 'string',
           nullable: false,
@@ -738,7 +738,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/admin/name',
           type: 'string',
           nullable: false,
@@ -751,7 +751,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/123/email',
           type: 'string',
           nullable: false,
@@ -763,7 +763,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/email',
           type: 'string',
           nullable: false,
@@ -775,7 +775,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/admin/email',
           type: 'string',
           nullable: false,
@@ -788,7 +788,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
@@ -800,7 +800,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/settings',
           type: 'string',
           nullable: false,
@@ -813,7 +813,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/v1/users',
           type: 'string',
           nullable: false,
@@ -825,7 +825,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/v2/posts/123',
           type: 'string',
           nullable: false,
@@ -837,7 +837,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/beta/users',
           type: 'string',
           nullable: false,
@@ -850,7 +850,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[4].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/files/gallery/images/thumb',
           type: 'string',
           nullable: false,
@@ -873,7 +873,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/123/profile',
           type: 'string',
           nullable: false,
@@ -885,7 +885,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/users',
           type: 'string',
           nullable: false,
@@ -897,7 +897,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/posts',
           type: 'string',
           nullable: false,
@@ -909,7 +909,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/comments',
           type: 'string',
           nullable: false,
@@ -936,7 +936,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/name',
           type: 'string',
           nullable: false,
@@ -949,7 +949,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/profile',
           type: 'string',
           nullable: false,
@@ -961,7 +961,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/admin/settings',
           type: 'number',
           nullable: false,
@@ -974,7 +974,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/items/0/tags/1',
           type: 'string',
           nullable: false,
@@ -986,7 +986,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/items/5/tags/10',
           type: 'string',
           nullable: false,
@@ -1011,7 +1011,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -1023,7 +1023,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/items/0/title',
           type: 'string',
           nullable: false,
@@ -1051,7 +1051,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/name',
           type: 'string',
           nullable: false,
@@ -1063,7 +1063,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/user/email',
           type: 'string',
           nullable: false,
@@ -1076,7 +1076,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/orders/0/items/0/name',
           type: 'string',
           nullable: false,
@@ -1088,7 +1088,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/orders/5/items/2/name',
           type: 'string',
           nullable: false,
@@ -1101,7 +1101,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/orders/0/total',
           type: 'number',
           nullable: false,
@@ -1114,7 +1114,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[4].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/0',
           type: 'string',
           nullable: false,
@@ -1126,7 +1126,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[4].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/100',
           type: 'string',
           nullable: false,
@@ -1149,7 +1149,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/users/123',
           type: 'string',
           nullable: false,
@@ -1161,7 +1161,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/posts/1/comments/2',
           type: 'string',
           nullable: false,
@@ -1173,7 +1173,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/posts/1/comments/2',
           type: 'string',
           nullable: false,
@@ -1185,7 +1185,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/api/users/123',
           type: 'string',
           nullable: false,
@@ -1197,7 +1197,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/static/assets',
           type: 'string',
           nullable: false,
@@ -1223,7 +1223,7 @@ describe('normalizeFieldInputMap', () => {
   });
 
   describe('엣지 케이스', () => {
-    test('루트 경로', () => {
+    test('루트와 빈 이름 경로', () => {
       const inputMap: FieldInputMap = {
         '/': TestStringComponent,
         '#': TestNumberComponent,
@@ -1237,8 +1237,8 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
-          path: '',
+          misfit: false,
+          path: '/',
           type: 'string',
           nullable: false,
           required: true,
@@ -1249,7 +1249,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '',
           type: 'string',
           nullable: false,
@@ -1261,8 +1261,8 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[2].test({
           schemaType: 'string',
-          typeMismatch: false,
-          path: '',
+          misfit: false,
+          path: '/',
           type: 'string',
           nullable: false,
           required: false,
@@ -1273,7 +1273,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[3].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '',
           type: 'string',
           nullable: false,
@@ -1293,7 +1293,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/level1/0/level3/1/level5/2/level7/3/value',
           type: 'string',
           nullable: false,
@@ -1306,7 +1306,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/level1/0/level3/1/level5/2/level7/invalid/value',
           type: 'string',
           nullable: false,
@@ -1327,7 +1327,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/0/profile',
           type: 'string',
           nullable: false,
@@ -1339,7 +1339,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/123/profile',
           type: 'string',
           nullable: false,
@@ -1352,7 +1352,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/abc/profile',
           type: 'string',
           nullable: false,
@@ -1364,7 +1364,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/-1/profile',
           type: 'string',
           nullable: false,
@@ -1376,7 +1376,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/01/profile',
           type: 'string',
           nullable: false,
@@ -1399,7 +1399,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/config/theme/value',
           type: 'string',
           nullable: false,
@@ -1411,7 +1411,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/config/language/value',
           type: 'string',
           nullable: false,
@@ -1423,7 +1423,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/config/user-settings/value',
           type: 'string',
           nullable: false,
@@ -1436,7 +1436,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/config/0/value',
           type: 'string',
           nullable: false,
@@ -1457,7 +1457,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/metadata/customKey1',
           type: 'string',
           nullable: false,
@@ -1469,7 +1469,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/metadata/another-custom-key',
           type: 'string',
           nullable: false,
@@ -1481,7 +1481,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/metadata/key_with_underscore',
           type: 'string',
           nullable: false,
@@ -1502,7 +1502,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/entities/user/attributes/name/value',
           type: 'string',
           nullable: false,
@@ -1515,7 +1515,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/entities/0/attributes/email/value',
           type: 'string',
           nullable: false,
@@ -1528,7 +1528,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/entities/product/attributes/0/value',
           type: 'string',
           nullable: false,
@@ -1541,7 +1541,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/entities/0/attributes/1/value',
           type: 'string',
           nullable: false,
@@ -1562,7 +1562,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/fields/field-name/label',
           type: 'string',
           nullable: false,
@@ -1574,7 +1574,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/fields/field_name/label',
           type: 'string',
           nullable: false,
@@ -1587,7 +1587,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/fields/fieldName/label',
           type: 'string',
           nullable: false,
@@ -1599,7 +1599,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/fields/FieldName/label',
           type: 'string',
           nullable: false,
@@ -1620,7 +1620,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/name',
           type: 'string',
           nullable: false,
@@ -1632,7 +1632,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users//name', // 빈 세그먼트
           type: 'string',
           nullable: false,
@@ -1654,7 +1654,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
@@ -1667,7 +1667,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/admin/settings',
           type: 'string',
           nullable: false,
@@ -1680,7 +1680,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/guest/settings',
           type: 'string',
           nullable: false,
@@ -1692,7 +1692,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[1].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/users/guest/settings',
           type: 'string',
           nullable: false,
@@ -1712,7 +1712,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/a/x/y/b',
           type: 'string',
           nullable: false,
@@ -1724,7 +1724,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/a/1/2/b',
           type: 'string',
           nullable: false,
@@ -1736,7 +1736,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/a/key1/key2/b',
           type: 'string',
           nullable: false,
@@ -1749,7 +1749,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/a/x/b',
           type: 'string',
           nullable: false,
@@ -1769,7 +1769,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/theme',
           type: 'string',
           nullable: false,
@@ -1781,7 +1781,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/0',
           type: 'string',
           nullable: false,
@@ -1793,7 +1793,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/settings/very-long-key-name',
           type: 'string',
           nullable: false,
@@ -1813,7 +1813,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/app/config/value',
           type: 'string',
           nullable: false,
@@ -1825,7 +1825,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/0/config/value',
           type: 'string',
           nullable: false,
@@ -1837,7 +1837,7 @@ describe('normalizeFieldInputMap', () => {
       expect(
         result[0].test({
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           path: '/production/config/value',
           type: 'string',
           nullable: false,

@@ -3,11 +3,11 @@
 ## 방법과 환경
 
 - 검증 일시는 2026-10-12, Asia/Seoul입니다. 사전 작업 문맥 없이 지정된 브리프로 시작했으며 `seiri:verify`를 적용했습니다.
-- W는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`, P는 W의 `packages/canard/schema-form`입니다. 브랜치는 `feat/schema-form-switch`, 시작과 작성 직전 HEAD는 `ee3b730c0f871c3a1b839791c368f821cae2c29a`입니다. 시작 시 `git status --porcelain=v1`은 비어 있었습니다.
-- S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g27p4`입니다. 검사 설정·캐시·시험 JSON은 S에 두었습니다. W에 작성한 파일은 이 보고서뿐이며 소스·시험·계획·원장·기록을 수정하지 않았습니다. commit·stash·checkout·switch·새 worktree 생성은 하지 않았습니다.
+- W는 `{repo}`, P는 W의 `packages/canard/schema-form`입니다. 브랜치는 `feat/schema-form-switch`, 시작과 작성 직전 HEAD는 `ee3b730c0f871c3a1b839791c368f821cae2c29a`입니다. 시작 시 `git status --porcelain=v1`은 비어 있었습니다.
+- S는 `{scratch}/g27p4`입니다. 검사 설정·캐시·시험 JSON은 S에 두었습니다. W에 작성한 파일은 이 보고서뿐이며 소스·시험·계획·원장·기록을 수정하지 않았습니다. commit·stash·checkout·switch·새 worktree 생성은 하지 않았습니다.
 - 먼저 `g27-phase1.md`, `g27-phase2.md`, `g27-phase3.md`, `g27-fixes.md`, `g27-runtime7.md`, `g27-runtime-guards-153.md`를 순서대로 읽었습니다. 이어 실행 계획·ADR·log의 최초 기준선, W의 실제 게이트 원장, 지정된 CLAUDE.md와 seiri/filid 규칙, 142라운드 이후 소유자 답과 관리자 닫기를 읽었습니다. 두 winglet 패키지의 CLAUDE.md도 확인했습니다.
-- W에는 142라운드 이후 파일이 없었습니다. 다음 파일은 모두 메인 체크아웃 `/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/`에서 읽었습니다: `round-142-owner-answers.md`, `round-143-owner-answers.md`, `round-144-owner-answers.md`, `round-145-closing.md`, `round-146-owner-answers.md`, `round-147-owner-answers.md`, `round-148-closing.md`, `round-149-owner-answers.md`, `round-150-owner-answers.md`, `round-151-closing.md`, `round-152-owner-answers.md`, `round-153-closing.md`, `round-154-closing.md`, `round-155-closing.md`, `round-156-closing.md`입니다.
-- 실제 검사에는 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin`을 PATH 앞에 두었습니다. Node `v26.11.1`, V8 `14.6.202.34-node.37`, darwin arm64, Vitest `3.2.6`, Vite `7.3.5`, TypeScript `5.9.2`, React `19.2.6`·`18.3.1`입니다. context-mode 분석 런타임과 이 검사 런타임을 구분했습니다.
+- W에는 142라운드 이후 파일이 없었습니다. 다음 파일은 모두 메인 체크아웃 `packages/canard/schema-form/architecture/reviews/`에서 읽었습니다: `round-142-owner-answers.md`, `round-143-owner-answers.md`, `round-144-owner-answers.md`, `round-145-closing.md`, `round-146-owner-answers.md`, `round-147-owner-answers.md`, `round-148-closing.md`, `round-149-owner-answers.md`, `round-150-owner-answers.md`, `round-151-closing.md`, `round-152-owner-answers.md`, `round-153-closing.md`, `round-154-closing.md`, `round-155-closing.md`, `round-156-closing.md`입니다.
+- 실제 검사에는 `{node-home}/versions/node/v26.11.1/bin`을 PATH 앞에 두었습니다. Node `v26.11.1`, V8 `14.6.202.34-node.37`, darwin arm64, Vitest `3.2.6`, Vite `7.3.5`, TypeScript `5.9.2`, React `19.2.6`·`18.3.1`입니다. context-mode 분석 런타임과 이 검사 런타임을 구분했습니다.
 - yarn·npm·gh 명령, 설치 및 외부 검색은 실행하지 않았습니다. G28 CHECK는 원문 그대로 실행하되 `npm_config_offline=true`, `npm_config_yes=false`, `npm_config_ignore_scripts=true`, `npm_config_cache=S/npx-cache`를 적용했습니다. 별도의 Vitest 호출에는 `npx --offline --no-install`을 사용했습니다. 모든 검사 명령은 8분 미만이며 전체 패키지 시험의 제한은 450초, 실제 시간은 85.079초였습니다.
 - `head.config.mjs`와 `scn.config.mjs`는 원래 Vite 설정을 가져와 캐시 위치만 S로 바꾸고 시험 캐시를 껐습니다. `--configLoader runner`를 사용했습니다. 계수 시험을 제외하지 않았습니다. S의 `counts-scratch.cjs` preload는 진단 runner를 읽을 때 고정 scratch 문자열 하나만 `S/counts-<pid>`로 바꾸며 제품 소스와 시험 단언은 그대로 사용합니다. 이 환경 조정은 N2의 저장소 수정을 뜻하지 않습니다.
 - 수정 전·오동작 비교에는 S의 `variant.config.mjs`가 Vite의 메모리상 변환만 바꾸었습니다. 수정 전 제품 파일은 `git show`로 읽었으며 W의 어떤 파일도 되돌리거나 편집하지 않았습니다. 오동작 변형은 검사 장치의 민감도를 확인하기 위한 것으로 현재 HEAD의 결함으로 세지 않았습니다.
@@ -34,7 +34,7 @@ G23의 소유자 브라우저 실행과 G26의 배열 행 수용 대기는 추�
 - `.seiri/tasks/schema-form-switch/gates.md:191`은 G31을 닫혀 있다고 표시하지만 `:192`의 증거는 `f8a39d65e`와 당시 snapshot `282ab981…`입니다. 해당 커밋의 P/src tree는 `fc6685b6baf5452eb838ef4bfa40e26cbaea2158`, 현재 tree는 `8b2586417a850450c32c23b0dd2b278725007811`입니다. 두 tree는 같지 않습니다.
 - 새 의존 경로의 실제 예는 `src/core/settle/utils/structure/applyArraySlots.ts:21`, `src/core/settle/utils/compute/selectChildren.ts:27`, `src/core/blueprint/utils/analyze/resolveReference.ts:6`입니다. 새 함수와 시험 fixture도 들어왔으므로 과거 파일 집합·snapshot의 통과를 그대로 재사용할 조건이 충족되지 않습니다.
 - 현재 `fractal_inspect validate`, path P/src, scopes `boundaries`·`dag`는 **status `indeterminate`, passed 264, failed 2, skipped 0**을 반환했습니다. 두 결과는 실제 순환이나 실제 organ 외부 소비를 특정한 결함이 아니라, 경계와 DAG 분석이 미확정이라는 경고입니다. snapshot은 `ba4883230164fc94c582cbf55cf2c630ba1a09b6cb9169df990fddca56046805`입니다.
-- 도구 artifact의 진단에는 `entry-point-facts-unavailable` 69개와 `verification-facts-unavailable` 400개가 있습니다. artifact는 `/Users/Vincent/.codex/plugins/filid/artifacts/fractal_inspect/469c1874821f40fd917ab374243e91d7224da12e619d91dffd60d951ad3d1da1.json`입니다. 이 실행을 지적 0의 PASS로 바꾸지 않았습니다.
+- 도구 artifact의 진단에는 `entry-point-facts-unavailable` 69개와 `verification-facts-unavailable` 400개가 있습니다. artifact는 `{agent-home}/plugins/filid/artifacts/fractal_inspect/469c1874821f40fd917ab374243e91d7224da12e619d91dffd60d951ad3d1da1.json`입니다. 이 실행을 지적 0의 PASS로 바꾸지 않았습니다.
 - 필요한 것은 현재 소스와 일치하는 exact facts에 근거한 boundaries·dag 검증 결과입니다. facts bootstrap이나 저장소 메타데이터 작성은 읽기 전용 범위에 없으므로 수행하지 않았습니다. 이 지적은 실제 구조 결함의 발견과 구분한 **현재 게이트 증거의 차단**입니다.
 
 ## 비차단 지적
@@ -249,7 +249,7 @@ G4·G13b·G17b·G19b·G20·G30·G33도 원장 CHECK 원문을 실행했습니다
 ### 방법과 범위
 
 - 검증 엔진은 Codex(GPT-6)입니다. 이전 검증에 참여하지 않은 새 세션에서 이 보고서를 먼저 읽고, `seiri:verify`를 적용하여 B2·B3·N1만 재확인했습니다. 새로운 전체 리뷰나 제품 시험은 수행하지 않았습니다.
-- 작업 자리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`, 브랜치는 `feat/schema-form-switch`입니다. 시작 및 추가 작성 직전 HEAD는 `940b7e792ae6d50c56c64cf28f6f085594cc71a6`이며 `git status --porcelain=v1` 출력은 비어 있었습니다.
+- 작업 자리는 `{repo}`, 브랜치는 `feat/schema-form-switch`입니다. 시작 및 추가 작성 직전 HEAD는 `940b7e792ae6d50c56c64cf28f6f085594cc71a6`이며 `git status --porcelain=v1` 출력은 비어 있었습니다.
 - `git diff ee3b730c0 940b7e792 -- packages/canard/schema-form/src` 출력은 비어 있습니다. 두 커밋의 src tree는 모두 `8b2586417a850450c32c23b0dd2b278725007811`이며, 후속 커밋의 변경 파일 다섯은 모두 architecture 문서입니다. 따라서 `ee3b730c0`의 소스에 대한 새 증거를 현재 HEAD에 재사용할 수 있습니다.
 - gitignored 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`를 직접 읽었습니다. 이 절만 추가하며 소스·시험·다른 문서를 수정하지 않았고, commit·stash·checkout·switch 및 yarn·npm·gh를 실행하지 않았습니다.
 
@@ -276,7 +276,7 @@ G4·G13b·G17b·G19b·G20·G30·G33도 원장 CHECK 원문을 실행했습니다
 
 원장 `gates.md:191`–`:192`와 `log.md:519`의 「2026-10-12 G27 4단계와 G31·G32 재확인」 절(`:526`–`:528`)은 현재 src tree에서 facts를 새로 추출·제출한 결과 **1,108 files accepted, 0 rejected**, 이어 `fractal_inspect validate`의 scopes `boundaries`·`dag` 결과 **status `ok`, 0 findings, 266 passed, 0 failed, snapshot `26c2268d…`**를 일치하게 기록합니다. 문서 계약 진단 10건은 이 게이트의 범위 밖으로 구분되어 있습니다. 위에서 확인한 src tree 동일성으로 이 증거의 소스 범위는 현재 HEAD와 일치합니다.
 
-이번 세션에서도 filid 도구를 직접 호출했습니다. 인자는 action `validate`, path `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src`, scopes `["boundaries", "dag"]`입니다. 제 실행 결과는 **status `indeterminate`, 2 findings, 264 passed, 2 failed, 0 skipped, snapshot `ba4883230164fc94c582cbf55cf2c630ba1a09b6cb9169df990fddca56046805`**입니다. 이 실행은 기록의 `ok` 결과를 재현하지 못했으며, PASS로 바꾸어 적지 않습니다.
+이번 세션에서도 filid 도구를 직접 호출했습니다. 인자는 action `validate`, path `packages/canard/schema-form/src`, scopes `["boundaries", "dag"]`입니다. 제 실행 결과는 **status `indeterminate`, 2 findings, 264 passed, 2 failed, 0 skipped, snapshot `ba4883230164fc94c582cbf55cf2c630ba1a09b6cb9169df990fddca56046805`**입니다. 이 실행은 기록의 `ok` 결과를 재현하지 못했으며, PASS로 바꾸어 적지 않습니다.
 
 기록 당시 저장 facts의 유효한 로딩을 현재 도구 환경에서 확인할 수 없었습니다. 도구가 상세 진단을 외부 artifact로 돌렸고, 해당 artifact 읽기도 context-mode의 workspace 경계 제한으로 거부되어 이번 실행의 상세 사유를 직접 확인하지 못했습니다. facts 추출·제출이나 설정 변경은 수행하지 않았습니다. 따라서 B3 해소 판단은 **이번 직접 실행의 통과가 아니라, 동일한 현재 소스에 대한 원장·log의 새 facts 및 통과 기록**에 근거합니다. 현재의 `indeterminate`를 실제 경계 위반이나 순환 발견으로 해석하지 않았습니다.
 
@@ -295,3 +295,5 @@ G27 최종 판정: PASS
 범위 재확인 뒤 주 세션이 같은 HEAD `940b7e792`에서 같은 인자(path `packages/canard/schema-form/src`, scopes `boundaries`·`dag`)로 `fractal_inspect validate`를 다시 실행했습니다. 결과는 status `ok`, 지적 0건, 통과 266, 실패 0, snapshot `26c2268dab3d9c593e4c5a86f66b81c890fa85610c99dea298d8ce084f10de63`이며 기록과 같습니다.
 
 Codex 세션의 결과(`indeterminate`, 통과 264·실패 2, snapshot `ba4883230164…`)는 4단계 본 검증의 실행과 snapshot이 같습니다. 그 실행의 진단은 `entry-point-facts-unavailable` 69개와 `verification-facts-unavailable` 400개였습니다(위 B3). Codex 쪽 filid는 별도의 facts 저장소(`~/.codex/plugins/filid/`)를 읽으며, 그곳에는 이번 추출이 제출되지 않았습니다. 두 결과의 차이는 facts 저장소의 차이이며, 같은 src tree에 대해 exact facts로 판정한 결과는 `ok`입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `f9ae05d5ea5e`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

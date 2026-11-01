@@ -1,0 +1,25 @@
+{
+  "removedDirectories": [
+    "ir6-r6b-red",
+    "ir6-r6b-red-catchup",
+    "ir6-r6b-red-mount",
+    "ir6-r6b-red-fragment",
+    "ir6-r6b-red-mount-final"
+  ],
+  "allAbsent": true,
+  "unusedScratch": "ir6-r6b-red resolved HEAD against backing repo; removed unused, all mutation scratch used explicit correct commits",
+  "remainingBranches": [
+    "vincent-kk/ir6-r6b-red-catchup",
+    "vincent-kk/ir6-r6b-red-fragment",
+    "vincent-kk/ir6-r6b-red-mount",
+    "vincent-kk/ir6-r6b-red-mount-final"
+  ],
+  "remainingBaseConfig": [
+    "branch.vincent-kk/ir6-r6b-red-catchup.base edd51da77",
+    "branch.vincent-kk/ir6-r6b-red-mount.base edd51da77",
+    "branch.vincent-kk/ir6-r6b-red-fragment.base edd51da77",
+    "branch.vincent-kk/ir6-r6b-red-mount-final.base 4a86b8da5"
+  ],
+  "workaroundsAttempted": false,
+  "laneERetained": true
+}

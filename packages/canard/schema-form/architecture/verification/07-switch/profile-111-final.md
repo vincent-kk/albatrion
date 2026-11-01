@@ -225,14 +225,14 @@ canonical `tools/report-verdict-95c01.mjs`의 통계 계산·bootstrap·(나) �
 
 ## 실행 감사와 재현
 
-HEAD와 제품 src·canonical tools의 tracked diff를 확인했습니다. 제품 변경·설치·명시적 git 쓰기는 수행하지 않았습니다. 지정한 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`를 TMPDIR로 쓰고 NODE_DISABLE_COMPILE_CACHE=1을 지정했습니다. esbuild는 write:false로 메모리 번들만 만들었으며 저장소에 bundle·map·cache를 쓰지 않았습니다. 입력 근거 160개 파일 중 최대 manifest가 4067846 bytes로 모두 5MB 이하입니다. 공식 최대 worker 9314ms, 진단 최대 28033ms, 분할 reporter 명령 103623ms로 단일 명령 8분 이내입니다.
+HEAD와 제품 src·canonical tools의 tracked diff를 확인했습니다. 제품 변경·설치·명시적 git 쓰기는 수행하지 않았습니다. 지정한 `{scratch}/bundles`를 TMPDIR로 쓰고 NODE_DISABLE_COMPILE_CACHE=1을 지정했습니다. esbuild는 write:false로 메모리 번들만 만들었으며 저장소에 bundle·map·cache를 쓰지 않았습니다. 입력 근거 160개 파일 중 최대 manifest가 4067846 bytes로 모두 5MB 이하입니다. 공식 최대 worker 9314ms, 진단 최대 28033ms, 분할 reporter 명령 103623ms로 단일 명령 8분 이내입니다.
 
 **실행 예외:** 자료 목록 조회 한 번은 maxBuffer 초과로 SIGTERM 종료되어 “모든 프로세스 자연 종료” 요구를 조회 단계에서 한 번 위반했습니다. 측정 worker에는 해당되지 않습니다. 존재하지 않는 경로/문서 조회는 exit 2/128로 자연 종료했습니다. 첫 reporter 출력은 전송 한도로 잘려 도구 측 JSON parse가 실패했으나 reporter 자체는 exit 0으로 자연 종료했습니다. 원시 표본은 폐기하거나 재실행하지 않았고 reporter만 분할 출력했습니다. scratch 작성의 도구 구문/patch 오류도 측정 전에 수정했습니다.
 
 재현은 manifest의 jobs 순서로 아래 명령을 **한 worker씩** 실행하십시오. 도구 stdout을 native 파일 도구로 저장하며 모든 timing JSON은 `profile-111-final/` 아래에 둡니다.
 
 ```sh
-TMPDIR='/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn exec /opt/homebrew/Cellar/node/26.10.0_2/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs sample-0 off 1 old --head=23dcaec783ed85b2fd9032d6acfe313e18e5ec6d --warmup=20
+TMPDIR='{scratch}/bundles' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn exec {node-home}/Cellar/node/26.10.0_2/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs sample-0 off 1 old --head=23dcaec783ed85b2fd9032d6acfe313e18e5ec6d --warmup=20
 ```
 
 계수/분해·reporter의 실행 소스 복사본은 `profile-111-final/profile-111-*.mjs`이며 실제 실행은 같은 이름의 지정 bundles scratch 파일에서 수행했습니다. 재현 시 복사본을 bundles에 놓고 tail-worker에 `<fixture> off <run> new --head=23dcaec783ed85b2fd9032d6acfe313e18e5ec6d --warmup=20 --count` 또는 `--split`을 전달하십시오. 계수는 배열 세 크기와 flat-100 각 1회차, 분해는 네 fixture 각 세 회차입니다. source map이나 runtime bundle은 저장하지 않습니다.

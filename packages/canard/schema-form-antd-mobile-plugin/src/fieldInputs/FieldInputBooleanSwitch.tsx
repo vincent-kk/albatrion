@@ -31,6 +31,7 @@ const FieldInputBooleanSwitch = ({
   onChange,
   context,
   alias,
+  misfit,
 }: FieldInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};
@@ -41,9 +42,10 @@ const FieldInputBooleanSwitch = ({
 
   return (
     <Switch
+      aria-invalid={misfit || undefined}
       key={path}
       disabled={disabled}
-      checked={value ?? undefined}
+      checked={value === true}
       checkedText={checkedLabel}
       uncheckedText={uncheckedLabel}
       onChange={handleChange}

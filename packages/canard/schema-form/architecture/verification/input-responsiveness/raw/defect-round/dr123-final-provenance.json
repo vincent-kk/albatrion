@@ -1,0 +1,9 @@
+{
+  "baseCommit": "779713587405b73abdd778df874fe21b726bac56",
+  "testCommit": "776187ac3a89f38bca94365b8f531835082d4058",
+  "testSha256": {
+    "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx": "a9b6d42190a039fbbc01679c7ae3b41e4b5eaa673f2d1ef213eda6597ec3dcab"
+  },
+  "report": "dr123-final-driver-base.json.gz",
+  "note": "Final DR-1 driver uses public Form mount/unmount for the nine other roots; baseline is unchanged. Test text follows the import-boundary correction."
+}

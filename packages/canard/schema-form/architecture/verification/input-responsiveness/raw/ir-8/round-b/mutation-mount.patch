@@ -1,0 +1,12 @@
+diff --git a/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchMount.ts b/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchMount.ts
+index e3b8ca863..10810c833 100644
+--- a/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchMount.ts
++++ b/packages/canard/schema-form/src/core/engine/write/utils/entry/dispatchMount.ts
+@@ -31,7 +31,6 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
+   clearWarningKeys(root.runtime);
+   root.runtime.validationUnavailable = false;
+   root.runtime.validationCompileReported = false;
+-  root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
+   root.runtime.deferLoadValidation = settings.deferValidation === true;
+   if (!settings.deferValidation)
+     (root.runtime.validationTargets ??= new Set()).add(root);

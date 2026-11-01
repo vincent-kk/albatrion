@@ -7,14 +7,16 @@ schema-form 도메인 에러 클래스와 패키지 전체의 오류·경고 코
 ## Conventions
 
 - 각 에러 클래스는 `(code: <클래스>Code, message: string, details: ErrorDetails)` 생성자 패턴을 따르며, `code`는 `FormErrorCode` 중 그 클래스 그룹의 그룹 한정 값만 받는다(`SchemaFormErrorCode` 등)
-- 오류·경고 코드의 정본은 `codes/`의 object enum `FormErrorCode`·`FormWarningCode` 둘이며 키는 맨 이름의 PascalCase, 값은 실제로 발생하는 그룹 한정 문자열
+- 오류·경고 코드의 정본은 `constants/`의 object enum `FormErrorCode`·`FormWarningCode` 둘이며 키는 맨 이름의 PascalCase, 값은 실제로 발생하는 그룹 한정 문자열
 - 각 에러 클래스와 함께 `is*Error(error): error is XxxError` 타입 가드 함수를 제공한다
-- `this.name` 을 클래스명으로 명시적으로 설정한다 (`this.name = 'JSONSchemaError'` 등)
+- `this.name`은 클래스가 속한 그룹 상수 값(`JSON_SCHEMA_ERROR` 등)으로 설정한다.
 - `details` 에 디버깅에 필요한 컨텍스트 정보(jsonSchema, path, plugin 등)를 담는다
 
 ## Boundaries
 
 ### Always do
+
+- Delivered occurrence records require an operation origin; pending origin and delivery policy remain owned by write.
 
 - 새 에러 클래스를 추가할 때는 `BaseError`를 상속하고 `is*Error` 타입 가드를 함께 제공한다
 - `index.ts` 에 새 에러를 이름으로 나열해 넣는다

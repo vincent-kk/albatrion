@@ -1,0 +1,73 @@
+{
+  "base": "0df36857c",
+  "baseEntries": 16,
+  "currentEntries": 16,
+  "added": [],
+  "removed": [],
+  "entries": [
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/remount-equivalence.corpus.test.tsx",
+      "it.fails('replays a deterministic feature-pair cover through the screen adapter', async ({"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/remount-equivalence.targeted.test.tsx",
+      "['overlay', createOverlayScenes(), it.fails],"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.continuity-restore.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.continuity-restore.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.hidden-callback-props.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.initially-hidden.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.initially-hidden.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reveal-lifetime.render.test.tsx",
+      "if (inject('reactMajor') !== '18') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/__tests__/e2e/validation.root-release.render.test.tsx",
+      "if (inject('reactMajor') !== '18') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/components/FieldProxy/__tests__/errorReveal.lifecycle.test.tsx",
+      "if (inject('reactMajor') !== '19') context.skip();"
+    ],
+    [
+      "packages/canard/schema-form/src/core/__tests__/remount-equivalence/corpus.test.ts",
+      "const test = family === 14 ? it.fails : it;"
+    ],
+    [
+      "packages/canard/schema-form/src/core/__tests__/remount-equivalence/targeted.test.ts",
+      "it.fails('projection overlays reach readers outside the overlay host', async ({"
+    ],
+    [
+      "packages/canard/schema-form/src/core/engine/behaviors/unionBehavior/__tests__/union.write-paths.test.ts",
+      "it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');"
+    ]
+  ]
+}

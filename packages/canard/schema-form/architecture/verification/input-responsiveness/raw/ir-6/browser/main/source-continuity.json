@@ -1,0 +1,15 @@
+{
+  "measurementHead": "f113566a353d567e1f807daac96f212d8e77c079",
+  "postprocessingOnlyChanges": [
+    "browser-bench/interaction/helpers/checkValidationAfterPaintResults.ts",
+    "browser-bench/interaction/helpers/renderValidationAfterPaintTables.ts"
+  ],
+  "allOtherMeasuredToolHashesMatch": true,
+  "productSourceDiffSinceMeasurement": "",
+  "candidateBundleSha256": "4c3d76b857d85df64b1ceb5f900c13aad6a5acaefa09a5092211c85240ee379f",
+  "comparison": "postprocessing adds archive SHA checks and table coverage/eager detail; formulas and thresholds unchanged",
+  "postprocessingHashes": {
+    "browser-bench/interaction/helpers/checkValidationAfterPaintResults.ts": "459b75a2c879350dc63fa7dd2a6ebb60f6ce811869be2fef36f319c4942c0cd7",
+    "browser-bench/interaction/helpers/renderValidationAfterPaintTables.ts": "08aec42c395f9131eadd868650188da6aa9cc75f9ddbba32e4691a8f18f3b807"
+  }
+}

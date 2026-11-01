@@ -1,31 +1,31 @@
 import type { ErrorDetails } from '@winglet/common-utils/error';
 
-import type { SchemaFormError } from './classes/SchemaFormError';
-import type { FormErrorCode } from './codes/FormErrorCode';
-import type { FormWarningCode } from './codes/FormWarningCode';
+import type { FormErrorCode } from './constants/FormErrorCode';
+import type { FormErrorGroup } from './constants/FormErrorGroup';
+import type { FormWarningCode } from './constants/FormWarningCode';
 
 /** Error codes a JSONSchemaError carries. */
 export type JSONSchemaErrorCode = Extract<
   FormErrorCode,
-  `JSON_SCHEMA_ERROR.${string}`
+  `${typeof FormErrorGroup.JsonSchema}.${string}`
 >;
 
 /** Error codes a SchemaFormError carries. */
 export type SchemaFormErrorCode = Extract<
   FormErrorCode,
-  `SCHEMA_FORM_ERROR.${string}`
+  `${typeof FormErrorGroup.SchemaForm}.${string}`
 >;
 
 /** Error codes an UnhandledError carries. */
 export type UnhandledErrorCode = Extract<
   FormErrorCode,
-  `UNHANDLED_ERROR.${string}`
+  `${typeof FormErrorGroup.Unhandled}.${string}`
 >;
 
 /** Error codes a ValidationError carries. */
 export type ValidationErrorCode = Extract<
   FormErrorCode,
-  `VALIDATION_ERROR.${string}`
+  `${typeof FormErrorGroup.Validation}.${string}`
 >;
 
 /** Every code a report record carries: an error or a warning code. */
@@ -36,7 +36,7 @@ export type FormErrorReason<Code extends FormRecordCode> = Code extends
   | typeof FormErrorCode.ValidatorCompileFailed
   | typeof FormErrorCode.GuardFailed
   ? 'duplicateSchemaId'
-  : Code extends typeof FormWarningCode.TypeMismatch
+  : Code extends typeof FormWarningCode.Misfit
     ? 'unconvertible' | 'ambiguous'
     : Code extends typeof FormErrorCode.DiscriminatorMismatch
       ? 'missing' | 'kind' | 'overlap' | 'key'
@@ -73,10 +73,8 @@ export interface FormErrorRecord {
   details?: ErrorDetails;
   /** Value that will be exposed by this failure. */
   error?: unknown;
-  /** Actual SchemaFormError thrown for an aggregate of several failures. */
-  aggregate?: SchemaFormError;
-  /** External exposure path for an error occurrence. */
-  surface?: FormErrorSurface;
+  /** Operation producing this occurrence: load, write, validate, submit or render. */
+  origin: FormErrorOrigin;
   /** React boundary stack, populated by the render layer. */
   componentStack?: string;
 }
@@ -85,7 +83,7 @@ export interface FormErrorRecord {
 export interface FormErrorReporter {
   /**
    * Deliver an already formatted form occurrence.
-   * @param record - One occurrence with its stable code, level, and surface.
+   * @param record - One occurrence with its stable code, level, and operation origin.
    * @returns Nothing; the observer receives the occurrence.
    */
   report(record: FormErrorRecord): void;
@@ -99,5 +97,16 @@ export interface FormErrorReporter {
 /** Severity of a delivered record. */
 export type FormErrorLevel = 'error' | 'warning';
 
-/** How a delivered error reached the caller: thrown, rejected from a promise, or only reported. */
-export type FormErrorSurface = 'thrown' | 'rejected' | 'sink';
+/** Operation that produced a delivered occurrence, independent of its exposure channel. */
+export type FormErrorOrigin =
+  | 'load'
+  | 'write'
+  | 'validate'
+  | 'submit'
+  | 'render';
+
+/** Internal occurrence awaiting its enclosing operation at delivery. */
+export type PendingFormErrorRecord = Omit<FormErrorRecord, 'origin'> & {
+  /** Explicit creation origin, or the enclosing chain's origin when omitted. */
+  origin?: FormErrorOrigin;
+};

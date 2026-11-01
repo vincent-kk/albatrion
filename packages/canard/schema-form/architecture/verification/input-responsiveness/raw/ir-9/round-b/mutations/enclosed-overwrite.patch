@@ -1,0 +1,11 @@
+--- src/core/engine/write/utils/chain/startFieldNodeChain.ts
++++ src/core/engine/write/utils/chain/startFieldNodeChain.ts
+@@ -19,7 +19,7 @@
+           outer: runtime.enclosingChain,
+         }
+       : undefined;
+-  if (!runtime.enclosingChain) runtime.chainOrigin = origin;
++  runtime.chainOrigin = origin;
+   runtime.chainRoot = root;
+   runtime.chainInitialEmit = root.emit;
+   runtime.chainErrors = [];

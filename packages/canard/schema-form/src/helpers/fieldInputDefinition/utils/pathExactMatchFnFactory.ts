@@ -1,5 +1,9 @@
 import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
-import { stripFragment } from '@/schema-form/helpers/jsonPointer';
+import {
+  isAbsolutePointer,
+  parsePointerSegments,
+  stripFragment,
+} from '@/schema-form/helpers/jsonPointer';
 import type { FieldInputTestFn } from '@/schema-form/types';
 
 import { formatFieldInputMapError } from './formatFieldInputMapError';
@@ -10,7 +14,12 @@ export const pathExactMatchFnFactory = (
 ): FieldInputTestFn => {
   try {
     const path = stripFragment(inputPath);
-    const regex = path ? new RegExp(path) : null;
+    const segments = parsePointerSegments(inputPath);
+    const exactEmptyName =
+      isAbsolutePointer(inputPath) &&
+      segments.length === 1 &&
+      segments[0] === '';
+    const regex = path && !exactEmptyName ? new RegExp(path) : null;
     return (hint) => {
       if (hint.path === path) return true;
       if (regex?.test(hint.path)) return true;

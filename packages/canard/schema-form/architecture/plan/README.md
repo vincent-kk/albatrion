@@ -1,6 +1,6 @@
 # 개발계획 — PR별 디렉토리
 
-> 진행 상황과 다음 할 일은 [../PLAN.md](../PLAN.md)가 든다. 이 문서는 구조와 절차의 설명이다.
+> 단계별 경과와 마감 상태는 [../reviews/README.md](../reviews/README.md)가 든다. 이 문서는 구조와 절차의 설명이다.
 
 > 2026-09-27. 정본은 원장 `../ledger/`다. 이 디렉토리는 원장의 PR 정의(LANDING-058·060–068·071·072·081–097·159)와 소유자의 개발계획 결정(LANDING-204·205·206, PROCESS-067)을 개발 단위로 다시 읽은 표면이며, 어긋나면 원장이 이긴다. 인용한 ID가 모두 현행인지는 `node ledger/checks/plan-links.mjs plan/*.md plan/*/*.md -- ledger/*.md`가 검사한다.
 
@@ -33,7 +33,9 @@ flowchart LR
   S --> P["08 플러그인 (UI 넷)"]
   S --> O["최적화 — 성능 최적화 (동작 불변, 묶음마다 PR)"]
   P --> R["09 정리·릴리스 (PR-8, 레거시 삭제)"]
-  O --> R
+  O --> X["설계 최적화 — 정착 계산 단계와 캐시 계층 (446라운드, 가설마다 PR)"]
+  X --> Y["분기 전환 — 게이트 전환 비용을 변화량에 비례시키는 설계 (453라운드, 가설마다 PR)"]
+  Y --> R
   M -.-> T["릴리스 전환 PR (LANDING-097), master로 직접"]
 ```
 
@@ -49,6 +51,8 @@ flowchart LR
 | 07b·07c | (디렉토리는 소유자가 열 때 만든다; 07c는 186라운드 답으로 연 스토리 재구성 — fairy07, `feat/schema-form-07c-stories`, `../reviews/story-regroup-proposal-184.md`) | 소유자의 이해와 인터페이스 확정, 내부 코드 스타일링 — 159라운드 답으로 07 병합 전에 feat/schema-form-switch 위에 쌓은 브랜치의 PR로 시작, fixy07이 진행하고 소유자가 리뷰(개선-34 → 배정·감사 → 개선-32) | 07 PR #354 위에 쌓음 | — |
 | 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07b | 최적화와 병렬 |
 | 최적화 | [perf-optimization/](perf-optimization/) | 원장 PR 없음 — 27라운드 소유자 답(TEST-027 보충)의 "구현 완료 뒤 별도 작업". 대장 `../verification/performance-issues.md`의 열림 행 | 07 | 08과 병렬, 09 전 |
+| 설계 최적화 | [design-optimization/](design-optimization/) | LANDING-211(446라운드 소유자 허용) — 설계 방향 NODE-060, 청사진 캐시 BLUEPRINT-052, 게이트 입력 메모 BLUEPRINT-053, 캐시 계층과 `FormHandle.rebuild` SURFACE-063, 단계 구성과 관문 TEST-080, 에이전트 PROCESS-069. 가지 `feat/schema-form-design-optimization`은 8단계 가지 위에 쌓고 #445 병합 뒤 base를 `1.0.0-beta`로 | 08, 최적화 | 09 전 |
+| 분기 전환 | [branch-switch/](branch-switch/) | LANDING-212(453라운드 소유자 개시) — 설계 명제 SETTLE-053, 게이트 판정 통일(검증기 `if` 포함) BLUEPRINT-055, 단계 구성 B0~B5와 관문 TEST-092, 에이전트 PROCESS-075. 가지 `feat/schema-form-branch-switch`는 설계 최적화 가지 위에 쌓고 #472·#445 병합 뒤 base를 옮김 | 설계 최적화 | 09 전 |
 | 09 | [09-release-and-cleanup/](09-release-and-cleanup/) | PR-8(LANDING-068·096) + `src/__legacy__/` 삭제(LANDING-205) | 08, 릴리스 전환 PR | — |
 | 별도 | [release-transition/](release-transition/) | LANDING-097 | 없음 | 언제든, 09 전 |
 

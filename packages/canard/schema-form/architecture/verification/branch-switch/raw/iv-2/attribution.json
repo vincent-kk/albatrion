@@ -1,0 +1,1820 @@
+{
+  "timed": false,
+  "sourceHead": "fdfa0f3a70da6a3a3ada1bc6d66933b2902ba270",
+  "method": "Counts are per-write medians. Timer selfNetUs are aggregate per write, never multiplied by call count. Site costs are unattributed; owner totals overlap different timer lanes and must not be added.",
+  "rows": [
+    {
+      "label": "switch-oneOf-80",
+      "writes": 8,
+      "maps": 29,
+      "sets": 68,
+      "allocations": [
+        {
+          "site": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "assembleObject",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 9.126732044052703
+        },
+        {
+          "site": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "assembleObject",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 9.126732044052703
+        },
+        {
+          "site": "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16",
+          "kind": "Map",
+          "count": 3,
+          "classification": "must stay",
+          "owner": "advanceFieldNodeRevision",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "commitGlobalState",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "commitGlobalState",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Map@75:29",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 16.17811602217524
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Set@390:27",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 16.17811602217524
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Set@48:28",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 16.17811602217524
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Set@74:24",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 16.17811602217524
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectLiteralTableChildren.ts:Set@27:18",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "selectLiteralTableChildren",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts:Map@192:16",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "selectChildren",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 37.24011602197687
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@255:32",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "selectEntryStep",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@78:38",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "prepareStaticHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Map@197:21",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 17.452580110970686
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Map@210:40",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 17.452580110970686
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Map@50:40",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 17.452580110970686
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Set@173:50",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 17.452580110970686
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16",
+          "kind": "Set",
+          "count": 3,
+          "classification": "reusable scratch",
+          "owner": "dirtyChildren",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "primeHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 1.4281160223535008
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "primeHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 1.4281160223535008
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@506:14",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@324:21",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@325:26",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@492:20",
+          "kind": "Set",
+          "count": 6,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@493:23",
+          "kind": "Set",
+          "count": 6,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@494:28",
+          "kind": "Set",
+          "count": 6,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@495:29",
+          "kind": "Set",
+          "count": 6,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@503:28",
+          "kind": "Set",
+          "count": 6,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@524:20",
+          "kind": "Set",
+          "count": 6,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@49:23",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerPresenceChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.323616022139399
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@43:52",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerPresenceChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.323616022139399
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:50",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerPresenceChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.323616022139399
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@48:18",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerPresenceChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.323616022139399
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@50:21",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerPresenceChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.323616022139399
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@65:39",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerRecalculation",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 15.823616021990242
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@74:37",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerRecalculation",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 15.823616021990242
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Set@101:30",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerRecalculation",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 15.823616021990242
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Set@91:20",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerRecalculation",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 15.823616021990242
+        },
+        {
+          "site": "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18",
+          "kind": "Map",
+          "count": 3,
+          "classification": "must stay",
+          "owner": "getGateRegistry",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19",
+          "kind": "Map",
+          "count": 3,
+          "classification": "must stay",
+          "owner": "getGateRegistry",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "prepareGateTableRound",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.981765193426789
+        },
+        {
+          "site": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "prepareGateTableRound",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.981765193426789
+        },
+        {
+          "site": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "DirtyPathSet",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "updatePendingExitIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "commitSlotChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 7.508616022178907
+        },
+        {
+          "site": "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "commitSlotChanges",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 7.508616022178907
+        },
+        {
+          "site": "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19",
+          "kind": "Set",
+          "count": 3,
+          "classification": "reusable scratch",
+          "owner": "getSlotEntries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": -0.4287044198413015
+        },
+        {
+          "site": "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markRestoredSlotRaw",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.4882955802309197
+        },
+        {
+          "site": "src/core/engine/settle/utils/transition/finalizeExits.ts:Map@75:21",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "finalizeExits",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 4.889604972495665
+        },
+        {
+          "site": "src/core/engine/settle/utils/transition/finalizeExits.ts:Set@111:29",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "finalizeExits",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 4.889604972495665
+        },
+        {
+          "site": "src/core/engine/settle/utils/transition/finalizePerished.ts:Map@71:24",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "finalizePerished",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.16010497255622935
+        },
+        {
+          "site": "src/core/engine/settle/utils/transition/finalizePerished.ts:Set@28:41",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "finalizePerished",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.16010497255622935
+        },
+        {
+          "site": "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "transitionSettlement",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 4.9402651931527615
+        },
+        {
+          "site": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "exitFieldNodeChain",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 4.010616022142934
+        },
+        {
+          "site": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "exitFieldNodeChain",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 4.010616022142934
+        },
+        {
+          "site": "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "flushQueuedEvents",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.2616160223996158
+        },
+        {
+          "site": "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "collectChainRecords",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        }
+      ],
+      "timers": [
+        {
+          "owner": "startFieldNodeChain",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.0898950279494497,
+          "classification": "must stay"
+        },
+        {
+          "owner": "enterFieldNodeChain",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.3026160223861407,
+          "classification": "must stay"
+        },
+        {
+          "owner": "getSettlementScratch",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.29789502787904754,
+          "classification": "must stay"
+        },
+        {
+          "owner": "createSettlementContext",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.6356160221138307,
+          "classification": "must stay"
+        },
+        {
+          "owner": "prepareSourcePruner",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.3398950280003814,
+          "classification": "must stay"
+        },
+        {
+          "owner": "sameValue",
+          "callsPerWrite": 15,
+          "netUsPerWrite": -5.042022099334986,
+          "classification": "must stay"
+        },
+        {
+          "owner": "markWrite",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 2.5032651930528194,
+          "classification": "must stay"
+        },
+        {
+          "owner": "registerRecalculation",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 15.823616021990242,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "captureFieldNodeChange",
+          "callsPerWrite": 23,
+          "netUsPerWrite": -10.246400551408723,
+          "classification": "must stay"
+        },
+        {
+          "owner": "primeHost",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.4281160223535008,
+          "classification": "must stay"
+        },
+        {
+          "owner": "updateOutput",
+          "callsPerWrite": 6,
+          "netUsPerWrite": 8.376629835258417,
+          "classification": "must stay"
+        },
+        {
+          "owner": "computeNode",
+          "callsPerWrite": 5,
+          "netUsPerWrite": 17.452580110970686,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "prepareGateTableRound",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.981765193426789,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "selectEffectiveDeclarations",
+          "callsPerWrite": 4,
+          "netUsPerWrite": 2.773964088249646,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "mergeEffectiveSchema",
+          "callsPerWrite": 4,
+          "netUsPerWrite": 2.0159198895374413,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "selectNodeSchema",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 5.9901160222042416,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "getSlotBinding",
+          "callsPerWrite": 6,
+          "netUsPerWrite": -2.6924088392560863,
+          "classification": "must stay"
+        },
+        {
+          "owner": "getSlotSource",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 0.16034806655866496,
+          "classification": "must stay"
+        },
+        {
+          "owner": "createFieldNode",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 1.231314917477898,
+          "classification": "must stay"
+        },
+        {
+          "owner": "markRestoredSlotRaw",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 0.4882955802309197,
+          "classification": "must stay"
+        },
+        {
+          "owner": "cloneSlotSubtree",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 5.096348065919894,
+          "classification": "must stay"
+        },
+        {
+          "owner": "markSlotChange",
+          "callsPerWrite": 6,
+          "netUsPerWrite": -0.877908838891881,
+          "classification": "must stay"
+        },
+        {
+          "owner": "cloneFromSlot",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 2.5218149175734603,
+          "classification": "must stay"
+        },
+        {
+          "owner": "enterSlotClone",
+          "callsPerWrite": 3,
+          "netUsPerWrite": -1.1787044195393492,
+          "classification": "must stay"
+        },
+        {
+          "owner": "assembleObject",
+          "callsPerWrite": 2,
+          "netUsPerWrite": 9.126732044052703,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "selectChildren",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 37.24011602197687,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "registerPresenceChanges",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 14.323616022139399,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "finishGateTableRound",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.0898950279494497,
+          "classification": "must stay"
+        },
+        {
+          "owner": "canSkipGateWheel",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.6482651932788106,
+          "classification": "must stay"
+        },
+        {
+          "owner": "preserveReferences",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.5361049725164153,
+          "classification": "must stay"
+        },
+        {
+          "owner": "withdrawDetachedFills",
+          "callsPerWrite": 2,
+          "netUsPerWrite": -0.7034696131204177,
+          "classification": "must stay"
+        },
+        {
+          "owner": "transitionSettlement",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 4.9402651931527615,
+          "classification": "must stay"
+        },
+        {
+          "owner": "publishStateKeys",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.21489502774754188,
+          "classification": "must stay"
+        },
+        {
+          "owner": "finalizePerished",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.16010497255622935,
+          "classification": "must stay"
+        },
+        {
+          "owner": "captureDetachedFieldNodeReads",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 3.2428480662225887,
+          "classification": "must stay"
+        },
+        {
+          "owner": "visitFieldNodes",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 2.2828480661452453,
+          "classification": "must stay"
+        },
+        {
+          "owner": "registryRemoval",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 0.1957955801167599,
+          "classification": "must stay"
+        },
+        {
+          "owner": "finalizePendingExitLoop",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 3.8767651930525138,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "getSlotChildIndex",
+          "callsPerWrite": 3,
+          "netUsPerWrite": -0.7212044201828349,
+          "classification": "must stay"
+        },
+        {
+          "owner": "getRetainedChildEntry",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 0.7177955801630787,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "getControlLayers",
+          "callsPerWrite": 6,
+          "netUsPerWrite": -1.3789088402417748,
+          "classification": "must stay"
+        },
+        {
+          "owner": "captureAbsentSlotInputs",
+          "callsPerWrite": 3,
+          "netUsPerWrite": -1.0547044198524191,
+          "classification": "must stay"
+        },
+        {
+          "owner": "readExitLayerPolicy",
+          "callsPerWrite": 6,
+          "netUsPerWrite": -2.148408840174807,
+          "classification": "must stay"
+        },
+        {
+          "owner": "readSlotExitPolicy",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 1.659348066753093,
+          "classification": "must stay"
+        },
+        {
+          "owner": "createExitSlotOverlay",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 3.3683480661899488,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "retainExitedSlot",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 5.152795579311283,
+          "classification": "must stay"
+        },
+        {
+          "owner": "finalizeRetainLoop",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.399265193339041,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "finalizeRestoredSlotRaw",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.13661602237414994,
+          "classification": "must stay"
+        },
+        {
+          "owner": "finalizeAncestorCollection",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.04789502782811583,
+          "classification": "must stay"
+        },
+        {
+          "owner": "finalizeAncestorOutput",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.3572651936961013,
+          "classification": "must stay"
+        },
+        {
+          "owner": "finalizeExits",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 4.889604972495665,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "markCommitDeliveries",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 16.17811602217524,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "preserveSlotValueMemos",
+          "callsPerWrite": 6,
+          "netUsPerWrite": -1.3599088394939374,
+          "classification": "must stay"
+        },
+        {
+          "owner": "updateSlotChildIndex",
+          "callsPerWrite": 6,
+          "netUsPerWrite": -2.608908840319555,
+          "classification": "must stay"
+        },
+        {
+          "owner": "getSlotEntries",
+          "callsPerWrite": 3,
+          "netUsPerWrite": -0.4287044198413015,
+          "classification": "must stay"
+        },
+        {
+          "owner": "expireOccupiedSlotMemos",
+          "callsPerWrite": 3,
+          "netUsPerWrite": -1.430204420552832,
+          "classification": "must stay"
+        },
+        {
+          "owner": "commitSlotChanges",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 7.508616022178907,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "commitSettlement",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 7.573616022128484,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "finishSettlement",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 3.364616021954938,
+          "classification": "must stay"
+        },
+        {
+          "owner": "releaseSettlementScratch",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.8446160221545906,
+          "classification": "must stay"
+        },
+        {
+          "owner": "writeFieldNode",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 7.157616021814541,
+          "classification": "must stay"
+        },
+        {
+          "owner": "runDeliveryWaves",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.25689502764150207,
+          "classification": "must stay"
+        },
+        {
+          "owner": "flushQueuedEvents",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.2616160223996158,
+          "classification": "must stay"
+        },
+        {
+          "owner": "exitFieldNodeChain",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 4.010616022142934,
+          "classification": "must stay"
+        },
+        {
+          "owner": "everythingElse",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 3.5625000002710294,
+          "classification": "must stay"
+        }
+      ],
+      "floor": [
+        {
+          "row": "switch-oneOf-80",
+          "variant": "noop",
+          "totalUs": 32.58300000015879,
+          "baselineUs": 25.687500000003638,
+          "perCallUs": 0.6895500000155153,
+          "stages": {
+            "markWrite": {
+              "selfUs": 1.8329999998059066,
+              "calls": 1,
+              "selfNetUs": 1.1434499997903913
+            },
+            "registerRecalculation": {
+              "selfUs": 3.7089999996169354,
+              "calls": 1,
+              "selfNetUs": 3.01944999960142
+            },
+            "updateOutput": {
+              "selfUs": 2.3540000001958106,
+              "calls": 2,
+              "selfNetUs": 0.9539000002405373
+            },
+            "computeNode": {
+              "selfUs": 4.375000000209184,
+              "calls": 2,
+              "selfNetUs": 2.9749000002539105
+            },
+            "assembleObject": {
+              "selfUs": 0.9169999998448475,
+              "calls": 1,
+              "selfNetUs": 0.21694999986721086
+            },
+            "transitionSettlement": {
+              "selfUs": 1.1670000003505265,
+              "calls": 1,
+              "selfNetUs": 0.47744999988026393
+            },
+            "markCommitDeliveries": {
+              "selfUs": 4.042000000026746,
+              "calls": 1,
+              "selfNetUs": 3.352450000011231
+            },
+            "commitSettlement": {
+              "selfUs": 1.791999999568361,
+              "calls": 1,
+              "selfNetUs": 1.0919499995907245
+            },
+            "everythingElse": {
+              "selfUs": 11.20800000012423,
+              "calls": 1,
+              "selfNetUs": 11.20800000012423
+            }
+          }
+        },
+        {
+          "row": "switch-oneOf-80",
+          "variant": "leaf",
+          "totalUs": 46.41700000001947,
+          "baselineUs": 40.25000000001455,
+          "perCallUs": 0.6250500000078318,
+          "stages": {
+            "markWrite": {
+              "selfUs": 2.167000000099506,
+              "calls": 1,
+              "selfNetUs": 1.5582999999651292
+            },
+            "registerRecalculation": {
+              "selfUs": 10.311999999885302,
+              "calls": 1,
+              "selfNetUs": 9.745299999872259
+            },
+            "updateOutput": {
+              "selfUs": 3.1254999998964195,
+              "calls": 2,
+              "selfNetUs": 1.8753999998807558
+            },
+            "computeNode": {
+              "selfUs": 4.874499999914406,
+              "calls": 2,
+              "selfNetUs": 3.666299999531475
+            },
+            "assembleObject": {
+              "selfUs": 1.291999999921245,
+              "calls": 1,
+              "selfNetUs": 0.6833000002416156
+            },
+            "transitionSettlement": {
+              "selfUs": 1.334000000042579,
+              "calls": 1,
+              "selfNetUs": 0.7291499998245854
+            },
+            "markCommitDeliveries": {
+              "selfUs": 7.166999999981272,
+              "calls": 1,
+              "selfNetUs": 6.600299999968229
+            },
+            "commitSettlement": {
+              "selfUs": 2.146000000038839,
+              "calls": 1,
+              "selfNetUs": 1.558300000192503
+            },
+            "everythingElse": {
+              "selfUs": 12.833500000169806,
+              "calls": 1,
+              "selfNetUs": 12.833500000169806
+            }
+          }
+        },
+        {
+          "row": "switch-oneOf-80",
+          "variant": "switch",
+          "totalUs": 218.45849999976963,
+          "baselineUs": 192.43749999986903,
+          "perCallUs": 0.7653235294088411,
+          "stages": {
+            "markWrite": {
+              "selfUs": 2.8334999999515276,
+              "calls": 1,
+              "selfNetUs": 2.062044117598602
+            },
+            "registerRecalculation": {
+              "selfUs": 16.04200000019773,
+              "calls": 1,
+              "selfNetUs": 15.270544117844807
+            },
+            "primeHost": {
+              "selfUs": 1.833000000260654,
+              "calls": 1,
+              "selfNetUs": 1.0676764708518127
+            },
+            "updateOutput": {
+              "selfUs": 10.228999999071675,
+              "calls": 6,
+              "selfNetUs": 5.637058822618629
+            },
+            "computeNode": {
+              "selfUs": 42.856000000256245,
+              "calls": 5,
+              "selfNetUs": 39.02938235321204
+            },
+            "wheelPreparation": {
+              "selfUs": 3.9784999996754777,
+              "calls": 1,
+              "selfNetUs": 3.2070441173225523
+            },
+            "cloneFromSlot": {
+              "selfUs": 9.957999999869571,
+              "calls": 3,
+              "selfNetUs": 7.643632352810795
+            },
+            "enterSlotClone": {
+              "selfUs": 0.9580000000823929,
+              "calls": 3,
+              "selfNetUs": -1.3563676469763832
+            },
+            "assembleObject": {
+              "selfUs": 10.333500000115237,
+              "calls": 2,
+              "selfNetUs": 8.790588235409386
+            },
+            "selectChildren": {
+              "selfUs": 38.29099999916252,
+              "calls": 1,
+              "selfNetUs": 37.525676469753684
+            },
+            "transitionSettlement": {
+              "selfUs": 5.104000000073938,
+              "calls": 1,
+              "selfNetUs": 4.332544117721013
+            },
+            "getControlLayers": {
+              "selfUs": 2.000500000121974,
+              "calls": 6,
+              "selfNetUs": -2.5709411766670467
+            },
+            "finalizeExits": {
+              "selfUs": 21.729499999992186,
+              "calls": 1,
+              "selfNetUs": 20.964176470583343
+            },
+            "markCommitDeliveries": {
+              "selfUs": 17.124500000136322,
+              "calls": 1,
+              "selfNetUs": 16.353044117783398
+            },
+            "commitSettlement": {
+              "selfUs": 11.374999999816282,
+              "calls": 1,
+              "selfNetUs": 10.609676470407441
+            },
+            "everythingElse": {
+              "selfUs": 19.584499999382388,
+              "calls": 1,
+              "selfNetUs": 19.584499999382388
+            }
+          }
+        }
+      ]
+    },
+    {
+      "label": "switch-siblings-0",
+      "writes": 4,
+      "maps": 15,
+      "sets": 19,
+      "allocations": [
+        {
+          "site": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "assembleObject",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 2.7235405407712254
+        },
+        {
+          "site": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "assembleObject",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 2.7235405407712254
+        },
+        {
+          "site": "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16",
+          "kind": "Map",
+          "count": 3,
+          "classification": "must stay",
+          "owner": "advanceFieldNodeRevision",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "commitGlobalState",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "commitGlobalState",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Map@75:29",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 9.91104054087127
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Set@390:27",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 9.91104054087127
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Set@48:28",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 9.91104054087127
+        },
+        {
+          "site": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts:Set@74:24",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "markCommitDeliveries",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 9.91104054087127
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts:Map@192:16",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "selectChildren",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 19.51604054015415
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Map@100:19",
+          "kind": "Map",
+          "count": 0,
+          "classification": "reusable scratch",
+          "owner": "prepareStaticHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@146:36",
+          "kind": "Set",
+          "count": 0,
+          "classification": "reusable scratch",
+          "owner": "prepareStaticHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@78:38",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "prepareStaticHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Map@197:21",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.040662162814614
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Map@210:40",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.040662162814614
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Map@50:40",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.040662162814614
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/computeNode.ts:Set@173:50",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "computeNode",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 14.040662162814614
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16",
+          "kind": "Set",
+          "count": 3,
+          "classification": "reusable scratch",
+          "owner": "dirtyChildren",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "primeHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 1.1055743246755367
+        },
+        {
+          "site": "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "primeHost",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 1.1055743246755367
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@19:50",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "captureProjectionBaseline",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@21:46",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "captureProjectionBaseline",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set@24:30",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "captureProjectionBaseline",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@427:20",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "getDependencyIndex",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Set@101:30",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerRecalculation",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 7.259452702773947
+        },
+        {
+          "site": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Set@91:20",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "registerRecalculation",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 7.259452702773947
+        },
+        {
+          "site": "src/core/engine/settle/utils/gates/flushPendingGateReads.ts:Set@51:23",
+          "kind": "Set",
+          "count": 0,
+          "classification": "reusable scratch",
+          "owner": "flushPendingGateReads",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20",
+          "kind": "Map",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "DirtyPathSet",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        },
+        {
+          "site": "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "transitionSettlement",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 1.390540540612435
+        },
+        {
+          "site": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "exitFieldNodeChain",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 2.890540540235904
+        },
+        {
+          "site": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "exitFieldNodeChain",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 2.890540540235904
+        },
+        {
+          "site": "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "flushQueuedEvents",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": 0.1405405403577763
+        },
+        {
+          "site": "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19",
+          "kind": "Set",
+          "count": 1,
+          "classification": "reusable scratch",
+          "owner": "collectChainRecords",
+          "siteNetUs": "unattributed",
+          "ownerNetUs": "unattributed"
+        }
+      ],
+      "timers": [
+        {
+          "owner": "startFieldNodeChain",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.09454729753100322,
+          "classification": "must stay"
+        },
+        {
+          "owner": "enterFieldNodeChain",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.0565405403188355,
+          "classification": "must stay"
+        },
+        {
+          "owner": "getSettlementScratch",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.2764594598399551,
+          "classification": "must stay"
+        },
+        {
+          "owner": "createSettlementContext",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.1470743241728554,
+          "classification": "must stay"
+        },
+        {
+          "owner": "prepareSourcePruner",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.3114256757259215,
+          "classification": "must stay"
+        },
+        {
+          "owner": "sameValue",
+          "callsPerWrite": 10,
+          "netUsPerWrite": -2.7357567569074366,
+          "classification": "must stay"
+        },
+        {
+          "owner": "markWrite",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 2.1265743242578097,
+          "classification": "must stay"
+        },
+        {
+          "owner": "registerRecalculation",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 7.259452702773947,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "captureFieldNodeChange",
+          "callsPerWrite": 17,
+          "netUsPerWrite": -6.912736487062855,
+          "classification": "must stay"
+        },
+        {
+          "owner": "primeHost",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.1055743246755367,
+          "classification": "must stay"
+        },
+        {
+          "owner": "updateOutput",
+          "callsPerWrite": 4,
+          "netUsPerWrite": 4.660810810455095,
+          "classification": "must stay"
+        },
+        {
+          "owner": "computeNode",
+          "callsPerWrite": 4,
+          "netUsPerWrite": 14.040662162814614,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "prepareGateTableRound",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.11345270285334197,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "evaluateGate",
+          "callsPerWrite": 6,
+          "netUsPerWrite": 4.200716215736238,
+          "classification": "must stay"
+        },
+        {
+          "owner": "selectEffectiveDeclarations",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 0.4827229727689464,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "mergeEffectiveSchema",
+          "callsPerWrite": 3,
+          "netUsPerWrite": 1.316121621486574,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "selectNodeSchema",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 2.771074324847497,
+          "classification": "pure in (discriminant value, blueprint) — cacheable per host per bucket"
+        },
+        {
+          "owner": "assembleObject",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 2.7235405407712254,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "selectChildren",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 19.51604054015415,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "registerPresenceChanges",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.5155405406379008,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "finishGateTableRound",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.38095945951927457,
+          "classification": "must stay"
+        },
+        {
+          "owner": "canSkipGateWheel",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.6885743244778053,
+          "classification": "must stay"
+        },
+        {
+          "owner": "preserveReferences",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.18857432414856823,
+          "classification": "must stay"
+        },
+        {
+          "owner": "withdrawDetachedFills",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.3114256757259215,
+          "classification": "must stay"
+        },
+        {
+          "owner": "transitionSettlement",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.390540540612435,
+          "classification": "must stay"
+        },
+        {
+          "owner": "publishStateKeys",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.18642567570045565,
+          "classification": "must stay"
+        },
+        {
+          "owner": "markCommitDeliveries",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 9.91104054087127,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "commitSettlement",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 3.327540540610514,
+          "classification": "reusable scratch"
+        },
+        {
+          "owner": "finishSettlement",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.9310405405552022,
+          "classification": "must stay"
+        },
+        {
+          "owner": "releaseSettlementScratch",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 1.405452702774587,
+          "classification": "must stay"
+        },
+        {
+          "owner": "writeFieldNode",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 5.266040540434275,
+          "classification": "must stay"
+        },
+        {
+          "owner": "runDeliveryWaves",
+          "callsPerWrite": 1,
+          "netUsPerWrite": -0.269425676059335,
+          "classification": "must stay"
+        },
+        {
+          "owner": "flushQueuedEvents",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 0.1405405403577763,
+          "classification": "must stay"
+        },
+        {
+          "owner": "exitFieldNodeChain",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 2.890540540235904,
+          "classification": "must stay"
+        },
+        {
+          "owner": "everythingElse",
+          "callsPerWrite": 1,
+          "netUsPerWrite": 2.6660000000902073,
+          "classification": "must stay"
+        }
+      ],
+      "floor": [
+        {
+          "row": "switch-siblings-0",
+          "variant": "noop",
+          "totalUs": 30.250000000023647,
+          "baselineUs": 24.416499999915686,
+          "perCallUs": 0.6312500000376531,
+          "stages": {
+            "markWrite": {
+              "selfUs": 1.9580000002861198,
+              "calls": 1,
+              "selfNetUs": 1.3746500002753237
+            },
+            "registerRecalculation": {
+              "selfUs": 2.334000000018932,
+              "calls": 1,
+              "selfNetUs": 1.7496500001243476
+            },
+            "updateOutput": {
+              "selfUs": 2.333499999849664,
+              "calls": 2,
+              "selfNetUs": 1.166799999828072
+            },
+            "computeNode": {
+              "selfUs": 4.271499999504158,
+              "calls": 2,
+              "selfNetUs": 3.104799999482566
+            },
+            "assembleObject": {
+              "selfUs": 0.8749999997235136,
+              "calls": 1,
+              "selfNetUs": 0.25064999992991943
+            },
+            "transitionSettlement": {
+              "selfUs": 1.1669999998957792,
+              "calls": 1,
+              "selfNetUs": 0.5416500002183966
+            },
+            "markCommitDeliveries": {
+              "selfUs": 3.9170000000012806,
+              "calls": 1,
+              "selfNetUs": 3.312150000215297
+            },
+            "commitSettlement": {
+              "selfUs": 1.7910000003666937,
+              "calls": 1,
+              "selfNetUs": 1.2076500003558976
+            },
+            "everythingElse": {
+              "selfUs": 10.916500000121232,
+              "calls": 1,
+              "selfNetUs": 10.916500000121232
+            }
+          }
+        },
+        {
+          "row": "switch-siblings-0",
+          "variant": "leaf",
+          "totalUs": 40.39549999993142,
+          "baselineUs": 33.99999999987813,
+          "perCallUs": 0.6395500000053289,
+          "stages": {
+            "markWrite": {
+              "selfUs": 2.416999999923064,
+              "calls": 1,
+              "selfNetUs": 1.7774499999177351
+            },
+            "registerRecalculation": {
+              "selfUs": 4.667000000154076,
+              "calls": 1,
+              "selfNetUs": 4.027450000148747
+            },
+            "updateOutput": {
+              "selfUs": 3.124999999499778,
+              "calls": 2,
+              "selfNetUs": 1.84589999948912
+            },
+            "computeNode": {
+              "selfUs": 4.582999999911408,
+              "calls": 2,
+              "selfNetUs": 3.30389999990075
+            },
+            "assembleObject": {
+              "selfUs": 1.291999999921245,
+              "calls": 1,
+              "selfNetUs": 0.6524499999159161
+            },
+            "transitionSettlement": {
+              "selfUs": 1.334000000042579,
+              "calls": 1,
+              "selfNetUs": 0.6944499998098763
+            },
+            "markCommitDeliveries": {
+              "selfUs": 7.083000000193351,
+              "calls": 1,
+              "selfNetUs": 6.422449999899982
+            },
+            "commitSettlement": {
+              "selfUs": 2.1669999996447586,
+              "calls": 1,
+              "selfNetUs": 1.5274499996394297
+            },
+            "everythingElse": {
+              "selfUs": 12.499999999363354,
+              "calls": 1,
+              "selfNetUs": 12.499999999363354
+            }
+          }
+        },
+        {
+          "row": "switch-siblings-0",
+          "variant": "switch",
+          "totalUs": 101.14599999997154,
+          "baselineUs": 87.14599999984785,
+          "perCallUs": 0.5923695651923164,
+          "stages": {
+            "markWrite": {
+              "selfUs": 2.5625000000673026,
+              "calls": 1,
+              "selfNetUs": 1.9836956522221558
+            },
+            "registerRecalculation": {
+              "selfUs": 7.667000000310509,
+              "calls": 1,
+              "selfNetUs": 7.025695652225256
+            },
+            "primeHost": {
+              "selfUs": 1.4580000001842564,
+              "calls": 1,
+              "selfNetUs": 0.8791956523391096
+            },
+            "updateOutput": {
+              "selfUs": 5.167000000028565,
+              "calls": 4,
+              "selfNetUs": 2.7887826091480985
+            },
+            "computeNode": {
+              "selfUs": 18.12600000062048,
+              "calls": 4,
+              "selfNetUs": 15.810782609239892
+            },
+            "wheelPreparation": {
+              "selfUs": 3.2910000002175366,
+              "calls": 1,
+              "selfNetUs": 2.71219565237239
+            },
+            "evaluateGate": {
+              "selfUs": 7.646999999906257,
+              "calls": 6,
+              "selfNetUs": 4.069673912473935
+            },
+            "assembleObject": {
+              "selfUs": 3.2919999998739513,
+              "calls": 1,
+              "selfNetUs": 2.6161304348356085
+            },
+            "selectChildren": {
+              "selfUs": 19.332500000246,
+              "calls": 1,
+              "selfNetUs": 18.753695652400854
+            },
+            "transitionSettlement": {
+              "selfUs": 1.5829999997549749,
+              "calls": 1,
+              "selfNetUs": 0.9211956520056961
+            },
+            "markCommitDeliveries": {
+              "selfUs": 10.374999999839929,
+              "calls": 1,
+              "selfNetUs": 9.77519565216149
+            },
+            "commitSettlement": {
+              "selfUs": 3.6250000002837623,
+              "calls": 1,
+              "selfNetUs": 2.923000000276696
+            },
+            "everythingElse": {
+              "selfUs": 14.95799999997871,
+              "calls": 1,
+              "selfNetUs": 14.95799999997871
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

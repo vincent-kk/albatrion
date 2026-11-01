@@ -1,21 +1,26 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type {
-  FormErrorRecord,
   FormErrorReporter,
   FormWarningCode,
+  PendingFormErrorRecord,
 } from '../../../../errors';
 import type {
   Blueprint,
-  BlueprintNode,
+  BlueprintChildEntry,
+  BlueprintGate,
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
-import type { DeclarationLayer } from '../../types/controls';
+import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
+import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+import type { ValidationCadence } from '../../validationScheduling';
 import type { FieldNodeFactory } from './behavior';
-import type { FieldNodeDelivery } from './record';
+import type { FieldNodeDelivery, FieldNodeRecord } from './record';
 
 /** Tree-local reverse watch paths used by commit delivery marking. */
 interface FieldNodeWatchDeliveryIndex {
@@ -45,49 +50,20 @@ interface FieldNodeDiagnostics {
   commit?: number;
 }
 
-/** Classification, document position, and retained exit decisions of a latent occurrence. */
-interface LatentRawMetadata {
-  readonly path: string;
-  readonly blueprintNode: BlueprintNode;
-  readonly order: readonly number[];
-  /** Last-live explicit exit decisions retained after rule baselines are pruned. */
-  readonly exitLayers?: readonly {
-    readonly layer: DeclarationLayer;
-    readonly clear: boolean;
-  }[];
-}
-
-/** Last published item and sort position for one enumerable latent occurrence. */
-interface InactiveValueEntryMemo {
-  readonly value: unknown;
-  readonly order: readonly number[];
-  readonly entry: Readonly<{ path: string; value: unknown }>;
-}
-
 /** Root-owned settlement data reached through a record's runtime. */
 interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
-  /** Per-kind latent leaf raw or a host's own frozen raw and undeclared values. */
-  latentRaw: PathKeyedMap<unknown>;
-  /** Whether latent sources changed since the last inactive-value publication. */
-  latentRawDirty?: boolean;
-  /** Latent occurrence shape and document position, keyed like latentRaw. */
-  latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */
-  typeMismatchPaths: PathKeyedSet;
-  /** Commit-scoped inactive value lists keyed by node path. */
-  inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
-  /** Published latent item objects retained across unrelated commits. */
-  inactiveValueEntries?: PathKeyedMap<InactiveValueEntryMemo>;
+  misfitPaths: PathKeyedSet;
 }
 
 /** Last committed reads retained for one node reference after it exits. */
 interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
-  readonly typeMismatch: boolean;
-  readonly typeMismatches: readonly string[];
-  readonly inactiveValues: readonly { path: string; value: unknown }[];
+  readonly misfit: boolean;
+  readonly misfits: readonly string[];
+  readonly inactiveValues?: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
   readonly visible: boolean;
   readonly readOnly: boolean;
@@ -95,9 +71,9 @@ interface DetachedFieldNodeReads {
 }
 
 /** Structured warning emitted when a committed raw value misses its effective type. */
-export interface TypeMismatchRecord {
+export interface MisfitRecord {
   readonly level: 'warning';
-  readonly code: typeof FormWarningCode.TypeMismatch;
+  readonly code: typeof FormWarningCode.Misfit;
   readonly path: string;
   readonly expected: {
     readonly schemaType: BlueprintSchemaType;
@@ -116,7 +92,7 @@ export interface TypeMismatchRecord {
     | 'other';
   readonly reason: 'unconvertible' | 'ambiguous';
   readonly candidates?: readonly string[];
-  readonly source: TypeMismatchSource;
+  readonly source: MisfitSource;
 }
 
 /** One host write's input and replacement mode for child distribution. */
@@ -127,6 +103,10 @@ export interface Distribution {
   readonly whole: boolean;
   /** Whether this distribution was an automatic transition write. */
   readonly automatic: boolean;
+  /** Restored array positions whose sources remain under candidate-specific latent keys. */
+  readonly retainedItemNames?: readonly string[];
+  /** Surviving-slot reconstruction whose stored candidates remain authoritative. */
+  readonly preserveLatent?: boolean;
 }
 
 /** Reusable settlement work containers bound to one tree's node type. */
@@ -141,6 +121,8 @@ export interface SettlementScratch<Self> {
   exited: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
+  /** Lazily allocated host-to-child pending counts, cleared alongside pendingExits. */
+  pendingExitPaths?: Map<string, Map<string, number>>;
   /** Array items removed by length rather than declaration gating. */
   perished: Set<Self>;
   /** Active declaration choices waiting for commit. */
@@ -172,8 +154,6 @@ export interface SettlementScratch<Self> {
   pathChanges: { node: Self; previous: string; current: string }[];
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
-  /** Previous values of latent entries touched in a transition. */
-  latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
   /** Dirty descendant paths and their direct child names by ancestor. */
@@ -195,15 +175,28 @@ export interface SettlementScratch<Self> {
 }
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
-export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
+export interface FieldNodeRuntime<Self>
+  extends FieldNodeRootRuntimeState,
+    TreeMemoStores<BlueprintChildEntry, BlueprintGate> {
+  /** Hosts whose unpublished slot changes must become visible at a commit. */
+  slotDirtyHosts?: Set<Self>;
+  /** Last issued static whole-write generation; never reused within this tree. */
+  writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */
   globalStateCounts: Map<string, number>;
   /** Stable aggregate of keys whose count is positive. */
-  globalState: Readonly<Record<string, true>>;
+  globalState: Readonly<Dictionary<true>>;
   /** Pending events consumed by the later dispatcher. */
   deliveries?: Set<Self>;
   /** Nodes with revision bits marked before the commit visitor reaches them. */
   revisionNodes?: Set<Self>;
+  /** Once publicly read, this tree permanently retains delivery payloads. */
+  revisionObserved?: boolean;
+  /** Unobserved bit-only transitions retained only by the current commit. */
+  revisionTransitions?: WeakMap<
+    object,
+    Map<number, Readonly<Record<number, number>>>
+  >;
   /** Live reverse watch dependencies, allocated on the first watched node. */
   deliveryWatchIndex?: FieldNodeWatchDeliveryIndex;
   /** Paths captured at value/state mutations and consumed by commit watch lookup. */
@@ -211,7 +204,7 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Last diagnostics reference observed by delivery marking. */
   deliveredDiagnostics?: FieldNodeDiagnostics;
   /** Context reference last observed by delivery marking. */
-  deliveredContext?: Readonly<Record<string, unknown>>;
+  deliveredContext?: Readonly<Dictionary<unknown>>;
   /** Public entry depth consumed by the later dispatcher. */
   entryDepth?: number;
   /** Feedback waves already produced by the current outer entry. */
@@ -226,10 +219,12 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   chainInitialEmit?: unknown;
   /** Failures retained in occurrence order until the chain finishes. */
   chainErrors?: unknown[];
+  /** Outermost chain or standalone verdict-wave operation, cleared after delivery. */
+  chainOrigin?: 'load' | 'write' | 'validate';
   /** Error and warning occurrences in their actual chain order. */
   chainOccurrences?: (
     | { kind: 'error'; error: unknown }
-    | { kind: 'record'; record: FormErrorRecord }
+    | { kind: 'record'; record: PendingFormErrorRecord }
   )[];
   /**
    * Stack of enclosing chains' failure collections, innermost first; `outer` links the next.
@@ -248,6 +243,10 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
   listeners?: Map<unknown, Set<(event: FieldNodeDelivery) => void>>;
+  /** Instance-bound exit resolvers; allocated only for registered nodes. */
+  inactiveListeners?: Map<unknown, Set<InactiveValueResolver<unknown>>>;
+  /** True only while a synchronous exit resolver is executing. */
+  resolvingInactiveValue?: boolean;
   /** Subscriber currently producing a delivery callback. */
   currentListener?: (event: FieldNodeDelivery) => void;
   /** Feedback producers already stopped at this chain's wave budget. */
@@ -256,6 +255,10 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Number of active nested `visitSubtree` walks on this tree. */
+  visitDepth?: number;
+  /** Entry whose write opened the batch held open until the outermost walk ends. */
+  visitBatchEntry?: Self;
   /** Caller writes postponed until the outer batch callback finishes. */
   batchWrites?: {
     node: Self;
@@ -263,8 +266,8 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
     option: WriteOption;
     source?: 'input' | 'automatic';
   }[];
-  /** Mount defers validation until the binding's ready effect. */
-  deferMountValidation?: boolean;
+  /** Load defers validation until the binding's slot. */
+  deferLoadValidation?: boolean;
   /** External errors awaiting the replacement tree's first committed shape. */
   adoptedExternalErrors?: Map<string, readonly { dataPath: string }[]>;
   /** Reset scopes requiring validation even with an unchanged root emit. */
@@ -278,11 +281,11 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Warning identities already reported for this tree. */
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */
-  pendingWarningRecords?: Map<string, FormErrorRecord>;
+  pendingWarningRecords?: Map<string, PendingFormErrorRecord>;
   /** Data-path ancestor to warning keys, for change-proportional moves/pruning. */
   warningKeysByPath?: Map<string, Set<string>>;
   /** Guard failures awaiting the current public entry's final delivery. */
-  guardFailureRecords?: Map<string, FormErrorRecord>;
+  guardFailureRecords?: Map<string, PendingFormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */
   reportedGuardFailures?: Set<string>;
   /** Development mount currently defers guard failures until its commit. */
@@ -299,6 +302,8 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   onStateChange?: () => void;
   /** Most recent validation request/result version. */
   validationStamp?: number;
+  /** Request stamp at the current load start; also identifies the load generation. */
+  validationLoadStamp?: number;
   /** Stamp of the latest queued write-triggered request. */
   validationRequestStamp?: number;
   /** Root external issues followed by the ordered whole-schema validator issues. */
@@ -315,10 +320,37 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   validationCompileReported?: boolean;
   /** Dispatcher-owned path for asynchronous execution and delivery failures. */
   reportValidationFailure?: (failure: unknown) => void;
-  /** True while one microtask is queued to run the latest request. */
-  validationQueued?: boolean;
-  /** Subtree scopes merged into the next one-per-commit validation run. */
+  /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
+  validationCadence?: ValidationCadence;
+  /** Latest domain callback selected by the cadence without inspecting its contents. */
+  validationRun?: () => boolean;
+  /** A write-triggered verdict is still pending. */
+  validationPending?: boolean;
+  /** Only occurrences that currently hold a reveal baseline. */
+  revealBaselineNodes?: Set<FieldNodeRecord<Self>>;
+  /** Committed Form policy and its unreleased prior committed values with their generations. */
+  revealPolicy?: {
+    value: unknown;
+    entries: { readonly value: unknown; readonly generation: number }[];
+  };
+  /** Public outer write/walk identity used to coalesce node snapshots. */
+  revealWriteSequence?: number;
+  /** Monotone notification snapshot for every eligibility-history release. */
+  revealReleaseVersion?: number;
+  /** Monotone generation shared by every node and policy history append. */
+  revealBaselineGeneration?: number;
+  /** A nonpending record owes a one-shot post-paint drop. */
+  revealDropOwed?: boolean;
+  /** Identity invalidates an obsolete drop without changing the timing slot contract. */
+  revealDropTask?: object;
+  /** Stamp owned by the active chain's pre-delivery pending record. */
+  validationPendingEntryStamp?: number;
+  /** Internal display listeners notified, from a copy, after every release. */
+  revealReleaseListeners?: Set<() => void>;
+  /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
+  /** Newest started cadence or root run still owing target routing; handed to its successor before supersession. */
+  validationRunning?: { stamp: number; targets: ReadonlySet<Self> };
   /** True after a routing replaced the routed list, until the validation wave publishes it. */
   validationListChanged?: boolean;
   /** Most recent result and its commit number. */
@@ -342,7 +374,7 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Issue references each non-root node last contributed to the root list; adoption fills it from the handed-over lists. */
   externalContributions?: Map<unknown, readonly { dataPath: string }[]>;
   /** Form context shared by every occurrence and expression in this tree; the factory supplies an empty object when none is given. */
-  context: Readonly<Record<string, unknown>>;
+  context: Readonly<Dictionary<unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
   committedRuleValues?: PathKeyedMap<unknown>;
   /** Committed rule keys indexed by their source path for bounded pruning. */
@@ -386,13 +418,22 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   commitNumber?: number;
   /** Changed non-load paths in the last settlement, excluding the written input. */
   refreshTargets?: Set<string>;
-  /** Newly lit mismatch records in the last committed batch. */
-  typeMismatchRecords?: readonly TypeMismatchRecord[];
-  /** Commit-scoped subtree mismatch path lists. */
-  typeMismatchesMemo?: PathKeyedMap<{
+  /** Newly lit misfit records in the last committed batch. */
+  misfitRecords?: readonly MisfitRecord[];
+  /** Subtree misfit path lists, each row stamped with the commit that built it. */
+  misfitsMemo?: PathKeyedMap<{
     commit: number;
     paths: readonly string[];
   }>;
+  /** Memo, its size and the misfit set's mutation count right after the last memo build. */
+  misfitsMemoBuild?: {
+    /** Memo instance the build filled. */
+    readonly memo: NonNullable<FieldNodeRuntime<Self>['misfitsMemo']>;
+    /** Row count the build left. */
+    readonly size: number;
+    /** `misfitPaths.mutations` the build read. */
+    readonly mutations: number;
+  };
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
   /** Stable watch path results for each node within one completed commit. */
@@ -426,5 +467,5 @@ export type SettlementBudget =
 /** Entry that started a settlement: a write kind, or a binding entry without one. */
 export type SettlementEntryApi = FieldNodeWriteKind | 'setContext';
 
-/** Write that produced a type mismatch: a write kind, an automatic fill, or a gate change that re-read the raw. */
-export type TypeMismatchSource = FieldNodeWriteKind | 'fill' | 'gate';
+/** Write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the raw. */
+export type MisfitSource = FieldNodeWriteKind | 'fill' | 'gate';

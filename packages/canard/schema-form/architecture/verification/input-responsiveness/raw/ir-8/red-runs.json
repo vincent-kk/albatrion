@@ -1,0 +1,47 @@
+{
+  "render": {
+    "base": "c5d963b2d",
+    "testCommit": "5dd3d455ab9f031b3304d72d73f9b76d396042e8",
+    "passed": 36,
+    "failed": 24,
+    "skipped": 0,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/migration/form-lifecycle.test.tsx": "b38834b54c81734676d034a7c8fe409407da3bb5fff70213613073cd0dfdc86b",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "9a7d0118be67814d0b1d2c29ec47a52fab1914f08a1e5ef5c285c5cb5988d75c",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "960691e1696fe9f17e705ab33e6123c8fd803325019f751a69d44ed0ff0e1764",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-always.render.test.tsx": "8f8f2f03f36d6229317dd746fbebaa5a108eba11a756a884f8130aecfa7e9111",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "0eec9033d15207a4a2b9f04b16b0afa68e0797c2919a902c0902e0cdc7be6e96",
+      "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "e65208fca1383169d98561a39ffb6f40d74b5f0b306ec390a9f1add81cbe612b"
+    },
+    "raw": "red-render.json.gz"
+  },
+  "react18": {
+    "base": "c5d963b2d",
+    "testCommit": "5dd3d455ab9f031b3304d72d73f9b76d396042e8",
+    "passed": 33,
+    "failed": 24,
+    "skipped": 3,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/migration/form-lifecycle.test.tsx": "b38834b54c81734676d034a7c8fe409407da3bb5fff70213613073cd0dfdc86b",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "9a7d0118be67814d0b1d2c29ec47a52fab1914f08a1e5ef5c285c5cb5988d75c",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "960691e1696fe9f17e705ab33e6123c8fd803325019f751a69d44ed0ff0e1764",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-always.render.test.tsx": "8f8f2f03f36d6229317dd746fbebaa5a108eba11a756a884f8130aecfa7e9111",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "0eec9033d15207a4a2b9f04b16b0afa68e0797c2919a902c0902e0cdc7be6e96",
+      "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "e65208fca1383169d98561a39ffb6f40d74b5f0b306ec390a9f1add81cbe612b"
+    },
+    "raw": "red-react18.json.gz"
+  },
+  "unit": {
+    "base": "c5d963b2d",
+    "testCommit": "5dd3d455ab9f031b3304d72d73f9b76d396042e8",
+    "passed": 5,
+    "failed": 3,
+    "skipped": 0,
+    "sha256": {
+      "packages/canard/schema-form/src/core/__tests__/loadValidation.test.ts": "75cacf82de5f347dba01e7fee524fdbcb9b83b8ee1a2957c21f72d78b0f5646d",
+      "packages/canard/schema-form/src/core/__tests__/surfaceIndex.test.ts": "fef581d95aade838f0d0e7b655630e1a9a5d5d71908c95a45276b0f2e5e70e2b",
+      "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.same-id.test.ts": "a0b78a2727dc2550e4d933b98f4daadf43ffbf4ae094fbbcabe22b9f5984163a"
+    },
+    "raw": "red-unit.json.gz"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mutation": "Only remove target re-add in current-stamp commit-discard branch; leave cadence request intact.",
+  "positiveExitCode": 1,
+  "selectedFailed": 1,
+  "originalSha256": "5e3df95e1635e2aed8876e951b8767a942a6345cd6b33d328219a9f9abf2c4e7",
+  "mutatedSha256": "d68518664dd0f350a570957c1f10306858d610919936321ae3fb161cef230e65",
+  "restored": true
+}

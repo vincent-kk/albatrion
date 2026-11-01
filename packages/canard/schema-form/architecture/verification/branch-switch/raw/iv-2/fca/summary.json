@@ -1,0 +1,18 @@
+{
+  "snapshotHash": "8050e36c5bf86f19e30eac2fa090062ce0b6e9727ed0b255fc82a251c3d1c602",
+  "facts": {
+    "exact": 1682,
+    "covered": 1682
+  },
+  "findings": 202,
+  "severities": {
+    "warning": 200,
+    "info": 1,
+    "error": 1
+  },
+  "baselineFindings": 202,
+  "gatePassed": true,
+  "verdict": "FAIL",
+  "analysisStatus": "indeterminate",
+  "reason": "Existing confirmed DAG cycle and document/structure findings; analysis diagnostics remain indeterminate."
+}

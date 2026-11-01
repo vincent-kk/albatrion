@@ -13,14 +13,14 @@ const pkg = path.resolve(directory, '../../..');
 const repo = path.resolve(pkg, '../../..');
 const results = path.join(directory, 'profile-100c01');
 const work = path.join(results, '.work');
-const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/prof';
+const raw = '{scratch}/prof';
 const head = '0fdb6660ba07b94bafe3ff20e95b0025154ca490';
 const require = createRequire(path.join(repo, 'package.json'));
 const { TraceMap, originalPositionFor } = require('@jridgewell/trace-mapping');
 const ts = require('typescript');
 const fixtures = ['nested-d5-f4', 'flat-500', 'oneOf-20', 'sample-0'];
 const operations = [...fixtures.map(name => [name, 'mount']), ['sample-0', 'later'], ['nested-d5-f4', 'later']];
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), head);
 
 /** Serialize bounded artifacts; timing arrays remain independent of report metadata. */

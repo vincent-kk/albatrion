@@ -1,4 +1,5 @@
 export {
+  batchFieldNodeLoad,
   fieldNodeFactory,
   setContext,
   SetValueOption,
@@ -21,6 +22,8 @@ export {
   writeFieldNodeInput,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
+  startFieldNodeLoadValidation,
+  readFieldNodeRevealBaseline,
   observeFieldNodeReports,
   interpretFieldNodeDraft,
 } from './surface';
@@ -29,7 +32,9 @@ export {
   ValidationMode,
   retainValidationRoot,
   releaseValidationRoot,
+  scheduleValidationSlot,
   blueprint,
+  forEachFailureLeaf,
 } from './engine';
 export type {
   FieldNode,
@@ -50,5 +55,12 @@ export type {
   Validator,
   ValidationIssue,
   SchemaControls,
+  InactiveValue,
+  InactiveValueResolver,
+  InactiveValueContext,
   ValidateFunction,
 } from './engine';
+export { readFieldNodeRevealPolicy } from './surface';
+export { readFieldNodeRevealVersion } from './surface';
+export { subscribeFieldNodeRevealReleased } from './surface';
+export { commitFieldNodeRevealPolicy } from './surface';

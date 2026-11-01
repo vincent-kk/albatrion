@@ -1,24 +1,28 @@
+import type { Nullable } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidateFunction } from '../../type';
+import type { ValidateFunction } from '../../types/validator';
+import { DUPLICATE_SCHEMA_ID_MESSAGE } from '../cache/constants';
 import { readValidationEntry } from '../cache/readValidationEntry';
+import { retryValidationEntry } from '../cache/retryValidationEntry';
 import { isValidator } from '../guard/isValidator';
-import { recentReleaseList } from '../lifetime/recentReleaseList';
 
 /**
- * Compile a replacement root before a binding transfers its old live chain.
- * @param node - New root or one of its occurrences.
+ * Compile or read the cached whole-schema validator for a root.
+ * @param node - Root or one of its occurrences.
  * @returns Shared compiled validator, or null if none was selected.
- * @throws FormErrorCode.ValidatorCompileFailed while the previous tree is still untouched.
+ * @throws FormErrorCode.ValidatorCompileFailed when whole-schema compilation fails.
  */
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): ValidateFunction | null => {
+): Nullable<ValidateFunction> => {
   const root = node.rootNode;
   const validator = root.runtime.validator;
   if (!isValidator(validator)) return null;
   const authoredRoot = root.runtime.blueprint.schema;
   const entry = readValidationEntry(validator, authoredRoot);
+  retryValidationEntry(validator, authoredRoot, entry);
   if (entry.validate && !entry.failure) return entry.validate;
   const id =
     typeof authoredRoot === 'object' &&
@@ -27,23 +31,17 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
       ? authoredRoot.$id
       : undefined;
   const duplicate =
-    !!id &&
+    typeof id === 'string' &&
     entry.failure instanceof Error &&
-    /already exists|duplicate/i.test(entry.failure.message) &&
-    [...recentReleaseList(validator).counts].some(
-      ([other, count]) =>
-        other !== authoredRoot &&
-        count > 0 &&
-        typeof other === 'object' &&
-        other !== null &&
-        other.$id === id,
-    );
-  throw new SchemaFormError(
+    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
+    entry.duplicate === true;
+
+  throw (entry.rejection ??= new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',
     {
       error: entry.failure,
       ...(duplicate ? { reason: 'duplicateSchemaId', $id: id } : {}),
     },
-  );
+  ));
 };

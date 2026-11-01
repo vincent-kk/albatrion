@@ -1,7 +1,7 @@
 import { SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { readFormErrorCode } from './readFormErrorCode';
-import { reportOwnerlessError } from './reportOwnerlessError';
+import { reportOwnerlessFailure } from './reportOwnerlessFailure';
 
 /**
  * Expose an asynchronous validator or result-listener failure once to each surface.
@@ -25,13 +25,13 @@ export const reportValidationFailure = (
           ? { details: failure.details }
           : {}),
         error: failure,
-        surface: 'sink',
+        origin: 'validate',
       });
     } catch (reporterFailure) {
-      reportOwnerlessError(reporterFailure);
+      reportOwnerlessFailure(reporterFailure);
     } finally {
       runtime.reportingErrors = wasReporting;
     }
   }
-  reportOwnerlessError(failure);
+  reportOwnerlessFailure(failure);
 };

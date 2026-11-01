@@ -1,0 +1,41 @@
+{
+  "sourceCommit": "0778bd955",
+  "baseline": "fc341d51b6afb14fba88557d11f7e251fe4d365f",
+  "sourceEntryPointDiff": 0,
+  "publicDeclarationSha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+  "baselineDeclarationIdentical": true,
+  "artifacts": [
+    {
+      "name": "index.mjs",
+      "mode": "table",
+      "slots": "on",
+      "bytes": 856252,
+      "sha256": "67266596dd3bd01748a5c18938b85139a9d9f20b6a582a5a6b45a8dce52b9337",
+      "verifyHelpers": 5,
+      "verifyHelperDeclarationBytes": 3971
+    },
+    {
+      "name": "index.node.mjs",
+      "mode": "table",
+      "slots": "on",
+      "bytes": 855510,
+      "sha256": "78ed0758674a587f7dead70230927ae3a4332c977dc3bc674807a24698b2917d",
+      "verifyHelpers": 5,
+      "verifyHelperDeclarationBytes": 3971
+    },
+    {
+      "name": "index.cjs",
+      "mode": "table",
+      "slots": "on",
+      "bytes": 876332,
+      "sha256": "1f92b4678c71f7bb921a3027f7ee01270e70b8cc6f5b1884f8d7cc11ac56da49",
+      "verifyHelpers": 5,
+      "verifyHelperDeclarationBytes": 4087
+    }
+  ],
+  "coreAppBoundary": {
+    "files": 659,
+    "imports": 3152,
+    "violations": []
+  }
+}

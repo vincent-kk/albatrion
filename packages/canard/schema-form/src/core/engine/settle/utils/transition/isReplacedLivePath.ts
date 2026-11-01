@@ -1,6 +1,10 @@
+import type { Optional } from '@aileron/declare';
+
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Whether a whole replacement already gave this path's only raw to a live node.
@@ -15,15 +19,47 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const scope = context.replaceScope;
   const withinScope =
     scope !== undefined &&
-    (!scope.path || path === scope.path || path.startsWith(`${scope.path}/`));
-  const withinVirtual =
-    context.virtualReplacePaths?.some(
-      (replaced) => path === replaced || path.startsWith(`${replaced}/`),
-    ) ?? false;
-  const withinBatch =
-    context.replacePaths?.some(
-      (replaced) => path === replaced || path.startsWith(`${replaced}/`),
-    ) ?? false;
+    (!scope.path || path === scope.path || isDescendantPath(path, scope.path));
+  let matchesVirtualReplacement: Optional<boolean> = undefined;
+
+  const virtualReplacementPaths = context.virtualReplacePaths;
+  if (virtualReplacementPaths != null) {
+    matchesVirtualReplacement = false;
+    for (
+      let index = 0, count = virtualReplacementPaths.length;
+      index < count;
+      index++
+    ) {
+      const replaced = virtualReplacementPaths[index];
+
+      if (path === replaced || isDescendantPath(path, replaced)) {
+        matchesVirtualReplacement = true;
+        break;
+      }
+    }
+  }
+
+  const withinVirtual = matchesVirtualReplacement ?? false;
+  let matchesBatchReplacement: Optional<boolean> = undefined;
+
+  const replacementPaths = context.replacePaths;
+  if (replacementPaths != null) {
+    matchesBatchReplacement = false;
+    for (
+      let index = 0, count = replacementPaths.length;
+      index < count;
+      index++
+    ) {
+      const replaced = replacementPaths[index];
+
+      if (path === replaced || isDescendantPath(path, replaced)) {
+        matchesBatchReplacement = true;
+        break;
+      }
+    }
+  }
+
+  const withinBatch = matchesBatchReplacement ?? false;
   if (!withinScope && !withinVirtual && !withinBatch) return false;
   const live = find(context.root, path);
   return live !== null && !live.detached;

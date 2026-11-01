@@ -4,8 +4,8 @@
  import path from 'node:path';
  import {createHash} from 'node:crypto';
  import {spawnSync,execFileSync} from 'node:child_process';
--const W="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07", D="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch", T="/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136j", H="069a1d272de2365865ca5ca0c8210d0d2edd8a14", N="/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node";
-+const W="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07", D="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch", T="/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-137r", H="875e0e770a402292bfb06c0fe78810e700364524", N="/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node";
+-const W="{repo}", D="packages/canard/schema-form/architecture/verification/07-switch", T="{scratch}/session-136j", H="069a1d272de2365865ca5ca0c8210d0d2edd8a14", N="{node-home}/versions/node/v26.11.1/bin/node";
++const W="{repo}", D="packages/canard/schema-form/architecture/verification/07-switch", T="{scratch}/session-137r", H="875e0e770a402292bfb06c0fe78810e700364524", N="{node-home}/versions/node/v26.11.1/bin/node";
  const started=new Date().toISOString(), start=performance.now(), log=[];
  const raw=T+'/raw', bundles=T+'/bundles';
  for(const dir of [raw,raw+'/core',raw+'/logs',bundles])fs.mkdirSync(dir,{recursive:true});

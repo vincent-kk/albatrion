@@ -1,12 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import * as arrayUtils from '@winglet/common-utils/array';
+
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
 
-// filid:contract settle-state-keys
+// filid:contract settle-state-keys-context
 describe('context state keys', () => {
   it('GOAL-011 state-key load does not search the expression array per sibling', () => {
     const properties: Record<string, BlueprintSchema> = {};
@@ -19,20 +23,27 @@ describe('context state keys', () => {
       };
     const { root, blueprint } = createTestTree({ type: 'object', properties });
     const find = vi.spyOn(Array.prototype, 'find');
-    const builds = vi.spyOn(Array.prototype, 'map');
+    const nativeBuilds = vi.spyOn(Array.prototype, 'map');
+    const builds = vi.spyOn(arrayUtils, 'map');
     try {
       loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
       expect(
         find.mock.contexts.filter((target) => target === blueprint.expressions),
       ).toHaveLength(0);
       expect(
-        builds.mock.contexts.filter(
-          (target) => target === blueprint.expressions,
+        builds.mock.calls.filter(
+          ([target]) => target === blueprint.expressions,
         ),
       ).toHaveLength(1);
+      expect(
+        nativeBuilds.mock.contexts.filter(
+          (target) => target === blueprint.expressions,
+        ),
+      ).toHaveLength(0);
     } finally {
       find.mockRestore();
       builds.mockRestore();
+      nativeBuilds.mockRestore();
     }
   });
 
@@ -74,5 +85,45 @@ describe('context state keys', () => {
       cause: 'expression',
     });
     expect(root.structure?.child?.visible).toBe(true);
+  });
+});
+
+describe('state-key failures during settlement', () => {
+  it('ERROR-122 throwing visible leaves an unrelated unsetOnInactive exit clear', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        secret: {
+          type: 'string',
+          controls: {
+            active: '../flag',
+            unsetOnInactive: true,
+          },
+        },
+        noisy: {
+          type: 'string',
+          controls: {
+            visible:
+              '!../flag ? (() => { throw new Error("visibility") })() : true',
+          },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: true, secret: 'held' },
+      WriteOption.Overwrite,
+    );
+    expect(() =>
+      writeFieldNode(
+        root.structure!.flag,
+        false,
+        'input',
+        WriteOption.Overwrite,
+      ),
+    ).toThrow('State key expression failed');
+    expect(root.structure?.secret).toBeUndefined();
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 });

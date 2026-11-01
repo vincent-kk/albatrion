@@ -7,10 +7,10 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { changeFieldNodeContext } from '../utils/context/changeFieldNodeContext';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-delivery
+// filid:contract settle-delivery-watch-index
 describe('44C-01 EVENT-064 watch delivery candidates', () => {
   it('skips all 1,000 unrelated watch reads, then delivers every anchor watcher', () => {
     const properties: Record<string, BlueprintSchema> = {

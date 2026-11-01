@@ -1,0 +1,47 @@
+{
+  "baseline": "f4018e82b",
+  "walker_input_commit": "7207b5e2f8d62d6c42781741b656c583136351cf",
+  "algorithm": "TypeScript checker; every package export, package-declared properties, signatures, predicates and type arguments; depth 7; full tsc declaration emission before alias post-processing",
+  "depth": 7,
+  "export_count": 97,
+  "base_tree_sha256": "3056c06cb23d58e6dc9f6879688ded32dcfab2fef88933406f5ad54f4a02baae",
+  "head_tree_sha256": "ef7a56281d0961953330cd6bb36d805ae3d9e3f744b2ddf3df73cf263e86eeeb",
+  "base_declaration_count": 1351,
+  "head_declaration_count": 1352,
+  "changed_public_declaration_carriers": [
+    "errors/index.d.ts",
+    "errors/type.d.ts"
+  ],
+  "changed_internal_declaration_files": [
+    "core/engine/record/types/runtime.d.ts",
+    "core/engine/record/utils/indexFieldNodeWarning.d.ts",
+    "core/engine/write/utils/chain/enterFieldNodeChain.d.ts",
+    "core/engine/write/utils/chain/flushQueuedEvents.d.ts",
+    "core/engine/write/utils/chain/startFieldNodeChain.d.ts",
+    "core/engine/write/utils/entry/dispatchBatch.d.ts",
+    "core/engine/write/utils/report/collectChainRecords.d.ts",
+    "core/engine/write/utils/report/createFormErrorRecord.d.ts",
+    "core/engine/write/utils/report/dedupeWarningRecord.d.ts",
+    "core/engine/write/utils/report/deliverChainRecords.d.ts",
+    "core/engine/write/utils/report/finishQueuedErrors.d.ts",
+    "core/engine/write/utils/report/refuseDetachedWrite.d.ts",
+    "core/engine/write/utils/report/refuseInactiveResolverWrite.d.ts",
+    "core/index.d.ts",
+    "core/surface/index.d.ts",
+    "core/surface/utils/binding/batchFieldNodeLoad.d.ts",
+    "providers/FormErrorContext/type.d.ts",
+    "providers/RootNodeContext/type.d.ts",
+    "providers/RootNodeContext/utils/applyFormErrors.d.ts"
+  ],
+  "public_changes": [
+    "- FormErrorRecord.aggregate?: SchemaFormError",
+    "- FormErrorRecord.surface?: FormErrorSurface",
+    "+ FormErrorRecord.origin: FormErrorOrigin"
+  ],
+  "internal_names_not_reached": [
+    "FieldNodeRuntime",
+    "batchFieldNodeLoad",
+    "PendingFormErrorRecord",
+    "FormErrorService"
+  ]
+}

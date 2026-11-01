@@ -9,10 +9,10 @@
 작업 중인 저장소의 `src`를 읽거나 빌드하지 않았습니다. 지정된 저장소에서 다음 명령으로 확정된 두 패키지 트리만 내보냈으며, 분석용 코드와 번들은 모두 임시 경로에 두었습니다. 저장소에 쓰는 파일은 이 보고서 하나입니다. Git 쓰기와 설치는 하지 않았습니다.
 
 ```sh
-git archive 546b8f537 packages/canard/schema-form packages/aileron | tar -x -C /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundle-115
+git archive 546b8f537 packages/canard/schema-form packages/aileron | tar -x -C {scratch}/bundle-115
 ```
 
-임시 루트는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundle-115`입니다. 설치된 도구만 저장소의 `node_modules` 연결로 재사용했습니다. 공통 build factory는 내보낸 `packages/aileron/script/build/rolldown.bundle.mjs`를 사용했고, 저장소 dist를 지우는 패키지 설정 함수는 호출하지 않았습니다. 부모 TypeScript 설정의 방출 관련 옵션은 같은 커밋의 `tsconfig.base.json`을 읽어 임시 설정에 복원했습니다. 공개 의존성은 외부로 남겼습니다. 분석과 관련 없는 5 MB 초과 내보내기 자료는 읽지 않고 임시 사본에서 제거했고, 분석 스크립트·출력·보고서는 각각 5 MB 이하입니다.
+임시 루트는 `{scratch}/bundle-115`입니다. 설치된 도구만 저장소의 `node_modules` 연결로 재사용했습니다. 공통 build factory는 내보낸 `packages/aileron/script/build/rolldown.bundle.mjs`를 사용했고, 저장소 dist를 지우는 패키지 설정 함수는 호출하지 않았습니다. 부모 TypeScript 설정의 방출 관련 옵션은 같은 커밋의 `tsconfig.base.json`을 읽어 임시 설정에 복원했습니다. 공개 의존성은 외부로 남겼습니다. 분석과 관련 없는 5 MB 초과 내보내기 자료는 읽지 않고 임시 사본에서 제거했고, 분석 스크립트·출력·보고서는 각각 5 MB 이하입니다.
 
 | 측정 | HEAD 재측정 B | BF 별칭 0.16.0 재측정 B | 장부의 0.16.0 기준 B |
 | --- | ---: | ---: | ---: |
@@ -23,7 +23,7 @@ git archive 546b8f537 packages/canard/schema-form packages/aileron | tar -x -C /
 
 현재 ESM의 SHA-256은 `2877b1221fced37620ef441d50efed6b0094835e37e4f43b5e5a66f4613c72d1`입니다. 이는 [G26 원시 자료](profile-114-g26/bundle.json)의 해시와 같고, raw 577,590 B와 minify raw 264,898 B도 같습니다. 출력 그래프의 모듈 528개에서 `src/__legacy__`는 0개입니다. 따라서 현재 결과는 G26의 80,390 B·117,063 B를 그대로 재현하며, 레거시 동봉이 증가 원인은 아닙니다.
 
-BF 별칭의 ESM은 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@canard/schema-form_0.16.0/dist/index.mjs`를 읽었습니다. 이 파일의 SHA-256은 `78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2`이고, 같은 축소 방법으로 35,066 B입니다. 장부의 37,023 B와 1,957 B 차이가 나므로 장부 기준을 재현했다고 주장하지 않습니다. `bundle:false`로도 35,215 B이고, `target:es2020`·neutral 플랫폼·NODE_ENV 바인딩 유지로는 35,066 B여서 이 차이가 해소되지 않았습니다. 과거 배포 파일이나 당시 도구 조건이 달랐는지는 이번 자료만으로 확정하지 못했습니다. 예산 판정에는 37,023 B를 유지하고, 실제 별칭과의 같은 방법 비교에는 35,066 B를 사용합니다.
+BF 별칭의 ESM은 `node_modules/@canard/schema-form_0.16.0/dist/index.mjs`를 읽었습니다. 이 파일의 SHA-256은 `78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2`이고, 같은 축소 방법으로 35,066 B입니다. 장부의 37,023 B와 1,957 B 차이가 나므로 장부 기준을 재현했다고 주장하지 않습니다. `bundle:false`로도 35,215 B이고, `target:es2020`·neutral 플랫폼·NODE_ENV 바인딩 유지로는 35,066 B여서 이 차이가 해소되지 않았습니다. 과거 배포 파일이나 당시 도구 조건이 달랐는지는 이번 자료만으로 확정하지 못했습니다. 예산 판정에는 37,023 B를 유지하고, 실제 별칭과의 같은 방법 비교에는 35,066 B를 사용합니다.
 
 따라서 예산상 증가는 43,367 B이고, 설치된 BF 별칭 대비 같은 방법의 증가는 45,324 B입니다. 그 차이 1,957 B는 기준 자료 불일치이며 새 엔진의 기능이나 구현으로 임의 배분하지 않았습니다.
 
@@ -414,7 +414,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/commit` | `src/core/settle/utils/commit/commitDeriveRules.ts` | 742 |
 | `core/settle/commit` | `src/core/settle/utils/commit/collectNonJsonPaths.ts` | 675 |
 | `core/settle/commit` | `src/core/settle/utils/commit/finalizeDeriveTrace.ts` | 404 |
-| `core/settle/commit` | `src/core/settle/utils/commit/isTypeMismatch.ts` | 403 |
+| `core/settle/commit` | `src/core/settle/utils/commit/isMisfit.ts` | 403 |
 | `core/settle/commit` | `src/core/settle/utils/commit/snapshotExitedPolicies.ts` | 397 |
 | `core/settle/commit` | `src/core/settle/utils/commit/pruneCommittedRuleKeys.ts` | 293 |
 | `core/settle/commit` | `src/core/settle/utils/commit/effectiveType.ts` | 260 |
@@ -856,6 +856,6 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 
 ### 재현 자료
 
-분석 스크립트는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundle-115/analyze.mjs`이고 SHA-256은 `8a2ceedb7720ce4dcf8be2b4725c3413e02176e08e1f31b7f134d046f066b5a1`입니다. `base`, `areas`, `direct`, `features`, `reductions`, `refine`, `details` 모드는 각각 현재 기준·연쇄 제거·직접 제거·분리선 A·축소 후보·초과 중복 제거·개별 후보를 재측정합니다. 분리선 B의 선택 목록과 원시 결과는 `out/features-broad.json`에 고정했습니다. B를 다시 측정할 때에는 이 JSON의 각 단계 모듈 목록을 같은 M4 순서로 사용하면 됩니다. 각 분석 호출에 설정한 제한은 최대 400초이고 실제 분석 명령은 수초 내에 종료했습니다. 지속 서버나 watcher를 띄우지 않았고 rolldown build는 close했으며, esbuild와 gzip은 일회성 CLI로 자연 종료했습니다.
+분석 스크립트는 `{scratch}/bundle-115/analyze.mjs`이고 SHA-256은 `8a2ceedb7720ce4dcf8be2b4725c3413e02176e08e1f31b7f134d046f066b5a1`입니다. `base`, `areas`, `direct`, `features`, `reductions`, `refine`, `details` 모드는 각각 현재 기준·연쇄 제거·직접 제거·분리선 A·축소 후보·초과 중복 제거·개별 후보를 재측정합니다. 분리선 B의 선택 목록과 원시 결과는 `out/features-broad.json`에 고정했습니다. B를 다시 측정할 때에는 이 JSON의 각 단계 모듈 목록을 같은 M4 순서로 사용하면 됩니다. 각 분석 호출에 설정한 제한은 최대 400초이고 실제 분석 명령은 수초 내에 종료했습니다. 지속 서버나 watcher를 띄우지 않았고 rolldown build는 close했으며, esbuild와 gzip은 일회성 CLI로 자연 종료했습니다.
 
-원시 근거는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundle-115/out/base.json`, `areas.json`, `direct.json`, `features.json`, `features-broad.json`, `reductions.json`, `inventory.json`에 있습니다. 소스맵은 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundle-115/out/mapped.min.mjs.map`에 있고 축소 코드는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundle-115/out/base.min.mjs`에 있습니다. 이 임시 자료는 저장소에 추가하지 않았습니다. 보고서에는 임시 자료가 사라져도 확인할 수 있도록 숫자, 분리선, 제거 방법과 전체 모듈 목록을 함께 남겼습니다.
+원시 근거는 `{scratch}/bundle-115/out/base.json`, `areas.json`, `direct.json`, `features.json`, `features-broad.json`, `reductions.json`, `inventory.json`에 있습니다. 소스맵은 `{scratch}/bundle-115/out/mapped.min.mjs.map`에 있고 축소 코드는 `{scratch}/bundle-115/out/base.min.mjs`에 있습니다. 이 임시 자료는 저장소에 추가하지 않았습니다. 보고서에는 임시 자료가 사라져도 확인할 수 있도록 숫자, 분리선, 제거 방법과 전체 모듈 목록을 함께 남겼습니다.

@@ -1,0 +1,122 @@
+{
+  "baselineCommit": "687c1d92402f1fd689c17afc6e0842861345d8c6",
+  "candidateCommit": "dd1462e501056da76c329a1c722b856cfb7a551c",
+  "node": "v24.20.0",
+  "nodeOptions": "default",
+  "deliveryNode": "v26.11.1",
+  "projects": {
+    "unit": {
+      "command": "yarn workspace @canard/schema-form test --run --project unit",
+      "files": 579,
+      "passed": 3853,
+      "todo": 1,
+      "failed": 0,
+      "reportSha256": "56b6b24b27d4efdbae611261a0b009936b34722968b26d82f68fc6fc4e28f85d"
+    },
+    "render": {
+      "command": "yarn workspace @canard/schema-form test --run --project render",
+      "files": 131,
+      "passed": 766,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "f41fdbf026385c7616c0ba658de8b9f9862c8e3e4a41a2b75ac537a29fdb5152"
+    },
+    "react18": {
+      "command": "yarn workspace @canard/schema-form test --run --project react18",
+      "files": 131,
+      "passed": 766,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "7b1a50cb18c9879f0b1971b498a351ca0a78a84e507ff0cb431926292d98f909"
+    },
+    "production": {
+      "command": "yarn workspace @canard/schema-form test --run --project production",
+      "files": 9,
+      "passed": 20,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "c8e07dc220251df65c860718e38e2fb076dbc98187f37cb1c73cbf523f90ec8d"
+    },
+    "storybook": {
+      "command": "yarn workspace @canard/schema-form test --run --project storybook",
+      "files": 100,
+      "passed": 251,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "11b51ea77a77c20877e715128e976d3aa47237e16ffd283e9d942e1978b6620d"
+    },
+    "verify": {
+      "command": "yarn workspace @canard/schema-form test:verify --run",
+      "files": 715,
+      "passed": 4663,
+      "todo": 1,
+      "failed": 0,
+      "reportSha256": "961e5d9246b984e1a5669d8d4670d1a4c8d99e5b2beec5104cd147f25b47329f"
+    }
+  },
+  "staticGates": {
+    "typecheck": {
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form typecheck"
+    },
+    "lint": {
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form lint"
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build"
+    }
+  },
+  "targeted": {
+    "files": 78,
+    "passed": 516,
+    "reportSha256": "39fefa324c5b98e876360642836f11c17559db2f248e2435389c1bd787d95aff"
+  },
+  "storybookSharded": false,
+  "heapRetries": 0,
+  "formalWindowRun": false,
+  "notes": [
+    "Candidate 5 supersedes the completed checks on 941398ea7; those earlier counts are not used here.",
+    "Production is the requested test --run --project production invocation with NODE_ENV=test; test:production was not invoked.",
+    "Unit started after bundle/declaration generation but before confirmation of the build process final typecheck exit; build then exited 0. Test projects themselves ran sequentially."
+  ],
+  "b6Guards": {
+    "pointerIsolation.test.ts": [
+      "keeps pointer parsing and construction inside helpers/jsonPointer",
+      "rejects literal and constructed tilde decoders outside the pointer owner",
+      "rejects separator construction after a centralized builder result",
+      "rejects template, prefix, lone-separator and structure-expression path handling",
+      "keeps ordinary template text and unrelated slashes out of the findings"
+    ],
+    "surface.clearing-array-keep.test.ts": [
+      "publishes compacted kept sources and restores inactive=false sources when their gate opens",
+      "publishes compacted kept sources and restores inactive=true sources when their gate opens",
+      "keeps an inactive survivor through repeated parent exits when its new position never visited that field",
+      "compacts already inactive nested arrays without losing their row-local keep policies",
+      "writes a survivor old reference to the same survivor after compaction",
+      "drops a write addressed at a discarded item after compaction",
+      "drops a write through an already inactive descendant of a discarded item",
+      "drops a write through a descendant of an already inactive object inside a discarded item",
+      "keeps original row references on their rows when an already inactive list compacts under a clearing ancestor"
+    ],
+    "settle.pointer-path-work.test.ts": [
+      "performs no full parsing from the first actual siblings-0 write",
+      "performs no full parsing from the first actual oneOf-80 write"
+    ]
+  },
+  "runtimeBundles": {
+    "index.mjs": {
+      "bytes": 814696,
+      "sha256": "a46d70982ac6321961c625a7c08a5cebfa47d33f2c1d44cf2f2004667d60bd94"
+    },
+    "index.node.mjs": {
+      "bytes": 813954,
+      "sha256": "12874dfae6d8cc33cadf6ecba7737b74386d14da2a81b691323af1c5a28af006"
+    },
+    "index.cjs": {
+      "bytes": 831760,
+      "sha256": "2638c329f049287ba8bc1d46a6c269fbcacc8472630cedd1317f43fc3b7a1c21"
+    }
+  }
+}

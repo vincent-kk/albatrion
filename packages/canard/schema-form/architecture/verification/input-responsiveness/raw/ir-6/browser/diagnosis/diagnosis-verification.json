@@ -1,0 +1,35 @@
+{
+  "diagnosticOnly": true,
+  "commands": [
+    {
+      "command": "node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/diagnosis/tools/checkDiagnosis.mjs",
+      "exitCode": 0,
+      "result": "IR6_DIAGNOSIS_CHECK_OK runs=10 boundFiles=718 formalVerdictsUnchanged=true"
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-6 --audit-base=facd72a71",
+      "exitCode": 0,
+      "result": "newMachinePaths=0; original540 reproduced; G2/G8 FAIL"
+    }
+  ],
+  "nodeSyntaxFiles": 11,
+  "syntaxExitCode": 0,
+  "prototypeFocusedTests": {
+    "V2": {
+      "passed": 15,
+      "failed": 0,
+      "existingPending": 1
+    },
+    "V3": {
+      "passed": 15,
+      "failed": 0,
+      "existingPending": 1
+    }
+  },
+  "formalTableBlockSha256": "e5efe7cc46cd149de960fa95b08ce97e14e0fbbc243fb574294f23b91bfa5502",
+  "formalTableBlockChanged": false,
+  "mainProductChanged": false,
+  "formalRawChanged": false,
+  "scratchVariantsCommitted": false,
+  "mainBundleSha256": "4c3d76b857d85df64b1ceb5f900c13aad6a5acaefa09a5092211c85240ee379f"
+}

@@ -1,0 +1,14 @@
+{
+  "quote": 71,
+  "scope": "C5 rebuild-flat-500 callDuration FAIL accepted for the stage merge (#508)",
+  "ownerQuotes": [
+    "음? 그건 명백하게 느려진게 아니니까 통과해도 되는거 아닌가? 명백하게 막 40프로씩 차이나는게 아니니까",
+    "응 수용"
+  ],
+  "registeredVerdict": "FAIL",
+  "upperBound": 1.1182795750197543,
+  "limit": 1.1,
+  "rulesChanged": false,
+  "remeasurement": false,
+  "source": "coordinator directive msg_e4c9a77e47b5; owner quote 71"
+}

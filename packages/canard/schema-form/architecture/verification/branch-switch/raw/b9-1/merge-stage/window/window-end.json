@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-29T02:06:36.423Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "mds_stores",
+      "cpuPercent": 8.001844585213869
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 6.081401884778843
+    },
+    {
+      "name": "WidgetsExtension",
+      "cpuPercent": 5.44125431794776
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 4.801106751174899
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 4.160959184343816
+    },
+    {
+      "name": "chronod",
+      "cpuPercent": 2.8806640506816508
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.920442700449582
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 1.600368917048596
+    },
+    {
+      "name": "node",
+      "cpuPercent": 1.280295133634874
+    },
+    {
+      "name": "mdworker_shared",
+      "cpuPercent": 1.2802951336342194
+    }
+  ]
+}

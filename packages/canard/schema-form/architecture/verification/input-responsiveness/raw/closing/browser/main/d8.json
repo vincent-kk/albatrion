@@ -1,0 +1,4 @@
+{
+  "status": "CLOSED_BY_TRACE",
+  "reason": "Payload omission also requires no runtime listeners; every mounted field subscribes, so revisionObserved cannot affect React form payload omission."
+}

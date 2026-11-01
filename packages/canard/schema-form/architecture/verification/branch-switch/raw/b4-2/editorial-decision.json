@@ -1,0 +1,36 @@
+{
+  "decision": "adopted-by-editor",
+  "round": 459,
+  "decisionMessageId": "msg_48bf43276cbc",
+  "measuredCommit": "813b32d175736841c3e71e1598c978892ebfbefc",
+  "productSource": "c632ab5f5",
+  "fixedDeviceVerdict": "채택 조건 미충족",
+  "fixedDeviceAdopt": false,
+  "editorialVerdict": "채택 — 편집자 결정(459라운드): 공개 동작 불변·과제 둘 통과·주판정 0·Node 힙 통과, 개별 단계 6건 1 µs 미만 악화와 payload-12 +1.3 %는 창 흐름 안이라 기록한 채 채택, 소유자 재검증 목록",
+  "stageRegressionsAcceptedForReview": 6,
+  "editorialAggregate": "Sum of individual stage self-time medians, including everythingElse; distinct from median of each sample summed ledger, which remains the fixed device gate.",
+  "sumOfStageMediansUs": [
+    {
+      "row": "switch-oneOf-80",
+      "A": 166.85449999997104,
+      "B": 165.21000000000186,
+      "percent": -0.9855892409071809
+    },
+    {
+      "row": "switch-payload-12",
+      "A": 276.2890000001619,
+      "B": 279.8784999997679,
+      "percent": 1.2991831016087918
+    },
+    {
+      "row": "switch-siblings-0",
+      "A": 82.14649999987955,
+      "B": 79.04300000002706,
+      "percent": -3.7780063665001418
+    }
+  ],
+  "revalidationOwner": "Vincent",
+  "rollback": "PR revert only after owner decision",
+  "formalRetries": 0,
+  "postVerdictProductChanges": false
+}

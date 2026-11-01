@@ -100,3 +100,76 @@ it('CONTROLS-051 rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
   );
   expect(screen.getByRole('alert').textContent).toBe('Unable to load form.');
 });
+
+it('REACT-027 publishes undefined when a date input is cleared whether or not it is nullable', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'string',
+        format: 'date',
+        options: { omitEmpty: false },
+      }}
+      defaultValue="2024-02-29"
+    />,
+  );
+  fireEvent.change(view.container.querySelector('input')!, {
+    target: { value: '' },
+  });
+  expect(ref.current!.getValue()).toBeUndefined();
+  view.unmount();
+  const nullable = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: ['string', 'null'],
+        format: 'date',
+        options: { omitEmpty: false },
+      }}
+      defaultValue="2024-02-29"
+    />,
+  );
+  fireEvent.change(nullable.container.querySelector('input')!, {
+    target: { value: '' },
+  });
+  expect(ref.current!.getValue()).toBeUndefined();
+});
+
+it('REACT-027 does not publish a badInput date draft', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string', format: 'date' }}
+      defaultValue="2024-02-29"
+    />,
+  );
+  const input = view.container.querySelector('input')!;
+  Object.defineProperty(input, 'validity', {
+    configurable: true,
+    value: { badInput: true },
+  });
+  fireEvent.change(input, { target: { value: '' } });
+  expect(ref.current!.getValue()).toBe('2024-02-29');
+});
+
+it('REACT-027 restores the node date display on blur after a badInput draft', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string', format: 'date' }}
+      defaultValue="2024-02-29"
+    />,
+  );
+  const input = view.container.querySelector('input')!;
+  Object.defineProperty(input, 'validity', {
+    configurable: true,
+    value: { badInput: true },
+  });
+  fireEvent.change(input, { target: { value: '' } });
+  expect(input.value).toBe('');
+  fireEvent.blur(input);
+  expect(input.value).toBe('2024-02-29');
+});

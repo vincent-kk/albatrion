@@ -19,7 +19,7 @@ describe('70C-01 core host entry', () => {
         validator: { compile: () => validate, compileGuard: () => () => true },
         deferMountValidation,
       });
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(validate).toHaveBeenCalledTimes(calls);
     },
   );

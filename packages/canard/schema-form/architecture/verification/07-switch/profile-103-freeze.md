@@ -275,7 +275,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 - [통계와 보고서 생성](profile-103-freeze/summarize.mjs)
 - 원시 타이머: `profile-103-freeze/time-{variant}-{fixture}-{mode}-r{1,2,3}.json`
 - 상세 IC/map: `profile-103-freeze/ic-{variant}-{fixture}.json`
-- 원시 V8/deopt/CPU: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile103`
+- 원시 V8/deopt/CPU: `{scratch}/bundles/profile103`
 
 ## 주요 함수의 각 접근 사이트
 

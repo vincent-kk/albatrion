@@ -1,7 +1,9 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
-import type { GuardFunction } from '../../type';
+import type { GuardFunction } from '../../types/validator';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from './isValidator';
 
@@ -15,14 +17,12 @@ import { isValidator } from './isValidator';
 export const readFieldNodeGuard = (
   runtime: { blueprint: Blueprint; validator?: unknown },
   gate: BlueprintGate,
-): GuardFunction | undefined => {
+): Optional<GuardFunction> => {
   const validator = runtime.validator;
   if (!isValidator(validator)) return undefined;
   const root = runtime.blueprint.schema;
   const entry = readValidationEntry(validator, root);
-  const pointer = gate.schemaPath.startsWith($.Fragment)
-    ? gate.schemaPath.slice(1)
-    : gate.schemaPath;
+  const pointer = stripFragment(gate.schemaPath);
   const cached = entry.guards.get(pointer);
   if (cached) {
     if ('failure' in cached) throw cached.failure;

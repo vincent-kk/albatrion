@@ -1,0 +1,249 @@
+{
+  "adopt": false,
+  "verdict": "채택 조건 미충족",
+  "gates": {
+    "quality": true,
+    "oneOfLedger": true,
+    "siblingsLedger": false,
+    "test073": true,
+    "nodeHeap": true
+  },
+  "targets": [
+    {
+      "row": "switch-oneOf-80",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": 1.002411764713185
+    },
+    {
+      "row": "switch-payload-12",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": 1.029951135388331
+    },
+    {
+      "row": "switch-siblings-0",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": false,
+      "unwrappedWithinWidth": false,
+      "deliveryWithinWidth": true,
+      "enteringRatio": null
+    }
+  ],
+  "stageRegressions": [
+    {
+      "row": "switch-oneOf-80",
+      "stage": "markWrite",
+      "A": {
+        "median": 1.6249999999899956,
+        "min": 1.5414999999734391,
+        "max": 1.6249999999899956,
+        "width": 0.08350000001655644,
+        "processMedians": [
+          1.6249999999899956,
+          1.5414999999734391,
+          1.6249999999899956
+        ]
+      },
+      "B": {
+        "median": 1.8750000000125056,
+        "min": 1.791999999966265,
+        "max": 1.896000000016329,
+        "width": 0.10400000005006405,
+        "processMedians": [
+          1.791999999966265,
+          1.896000000016329,
+          1.8750000000125056
+        ]
+      }
+    },
+    {
+      "row": "switch-payload-12",
+      "stage": "markWrite",
+      "A": {
+        "median": 1.5415000000302825,
+        "min": 1.520999999996775,
+        "max": 1.6249999999899956,
+        "width": 0.10399999999322063,
+        "processMedians": [
+          1.520999999996775,
+          1.5415000000302825,
+          1.6249999999899956
+        ]
+      },
+      "B": {
+        "median": 1.9169999999917309,
+        "min": 1.771000000019285,
+        "max": 1.9170000000201526,
+        "width": 0.14600000000086766,
+        "processMedians": [
+          1.9170000000201526,
+          1.771000000019285,
+          1.9169999999917309
+        ]
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "markWrite",
+      "A": {
+        "median": 1.5420000000005984,
+        "min": 1.4999999999929514,
+        "max": 1.5420000000005984,
+        "width": 0.04200000000764703,
+        "processMedians": [
+          1.5420000000005984,
+          1.4999999999929514,
+          1.5420000000005984
+        ]
+      },
+      "B": {
+        "median": 2.124999999992383,
+        "min": 2.042000000002986,
+        "max": 2.125000000006594,
+        "width": 0.08300000000360797,
+        "processMedians": [
+          2.125000000006594,
+          2.042000000002986,
+          2.124999999992383
+        ]
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "registerRecalculation",
+      "A": {
+        "median": 6.874999999979536,
+        "min": 6.624999999999659,
+        "max": 6.895499999998833,
+        "width": 0.2704999999991742,
+        "processMedians": [
+          6.624999999999659,
+          6.895499999998833,
+          6.874999999979536
+        ]
+      },
+      "B": {
+        "median": 7.64550000000952,
+        "min": 7.645499999995309,
+        "max": 7.916000000008694,
+        "width": 0.27050000001338503,
+        "processMedians": [
+          7.645499999995309,
+          7.916000000008694,
+          7.64550000000952
+        ]
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "computeNode",
+      "A": {
+        "median": 52.81200000000297,
+        "min": 52.43800000003773,
+        "max": 54.291500000005044,
+        "width": 1.8534999999673119,
+        "processMedians": [
+          52.43800000003773,
+          54.291500000005044,
+          52.81200000000297
+        ]
+      },
+      "B": {
+        "median": 56.14449999998783,
+        "min": 55.958499999974265,
+        "max": 57.541999999997984,
+        "width": 1.5835000000237187,
+        "processMedians": [
+          56.14449999998783,
+          57.541999999997984,
+          55.958499999974265
+        ]
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "selectChildren",
+      "A": {
+        "median": 25.166499999997427,
+        "min": 24.81199999999717,
+        "max": 26.52100000000246,
+        "width": 1.7090000000052896,
+        "processMedians": [
+          24.81199999999717,
+          26.52100000000246,
+          25.166499999997427
+        ]
+      },
+      "B": {
+        "median": 27.08300000000463,
+        "min": 26.9375000000025,
+        "max": 28.958500000001663,
+        "width": 2.0209999999991624,
+        "processMedians": [
+          27.08300000000463,
+          28.958500000001663,
+          26.9375000000025
+        ]
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "everythingElse",
+      "A": {
+        "median": 11.333999999990851,
+        "min": 11.333000000021798,
+        "max": 11.499499999970908,
+        "width": 0.16649999994911013,
+        "processMedians": [
+          11.499499999970908,
+          11.333000000021798,
+          11.333999999990851
+        ]
+      },
+      "B": {
+        "median": 11.729000000002543,
+        "min": 11.624499999982163,
+        "max": 11.978499999997894,
+        "width": 0.3540000000157306,
+        "processMedians": [
+          11.729000000002543,
+          11.978499999997894,
+          11.624499999982163
+        ]
+      }
+    }
+  ],
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "processes": 440,
+    "legacyRows": 18,
+    "stageProcesses": 18,
+    "stageWrites": 1800,
+    "supplementalProcesses": 9,
+    "supplementalWrites": 900
+  },
+  "stageRule": "Common and outermost-entry stage inclusive medians; own noise is A process-median min/max width; all new creation/clone/overlay work is included once in the outermost entering group",
+  "instrumentation": "Comparative timers cover B0 common stages plus conditional outermost entering boundaries, including cloneFromSlot once. Nested creation timers are skipped. Full helper timings and overhead are reported in the supplemental pass only, excluded from adoption. No timer overhead is subtracted; wrapped and unwrapped process medians are both reported.",
+  "timerSites": {
+    "A": {
+      "ledger": 25,
+      "supplemental": 76
+    },
+    "B": {
+      "ledger": 21,
+      "supplemental": 71
+    }
+  }
+}

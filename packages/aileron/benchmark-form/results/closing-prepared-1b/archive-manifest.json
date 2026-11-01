@@ -1,0 +1,16 @@
+{
+  "files": {
+    "F-replace-page.json.gz": {
+      "bytes": 12411,
+      "sha256": "508615772d579dd75c9eb5226288714c51990214b5e8ab7d6ef6fe96839fbebb"
+    },
+    "README.md": {
+      "bytes": 3134,
+      "sha256": "1d88954c8d24c6c355f825ec3da3c6c187831a1e90dbb6a925cea6bbd762afc1"
+    },
+    "prepared.json": {
+      "bytes": 3377,
+      "sha256": "adbcc7bdff368e978bbae332e33f29a5445b6f04e7a16cbe7cd0f311cdd936b5"
+    }
+  }
+}

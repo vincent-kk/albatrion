@@ -1,0 +1,78 @@
+{
+  "state": "prepared-2a",
+  "ruleVersion": "closing-v3-amendment-6",
+  "rulesSha256": "cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430",
+  "preregisteredCommit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "toolCommit": "61e4442f1aac15edd9e8d68a66b0dac522934389",
+  "finalStageCommit": "5df0bf2adb53e9764432a6e34de9c84b84e12da5",
+  "smoke": {
+    "startedAt": "2026-11-01T12:28:49.980Z",
+    "endedAt": "2026-11-01T12:38:22.785Z",
+    "rows": 24,
+    "pages": 95,
+    "pagesPerLane": {
+      "L": 23,
+      "B": 24,
+      "S": 24,
+      "F": 24
+    },
+    "keptPerRowLane": 1,
+    "discardedPerRowLane": 1,
+    "operations": 150,
+    "validatorWorkChecks": 9,
+    "validatorWorkStatus": "PASS",
+    "exceptions": [],
+    "nodeIdentityAndMetricReproduction": "PASS"
+  },
+  "formalWindows": 0,
+  "sourceCommit": "6fcfb2c3867ebaec01b8e338550b442234798c63",
+  "registrationCommit": "ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+  "buildRecordCommit": "61e4442f1aac15edd9e8d68a66b0dac522934389",
+  "auditHelperFixCommit": "6fcfb2c3867ebaec01b8e338550b442234798c63",
+  "checks": {
+    "tests": {
+      "command": "yarn workspace @aileron/benchmark-form test",
+      "exitCode": 0,
+      "summary": "20 files, 132 tests passed"
+    },
+    "typecheck": {
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "exitCode": 0,
+      "summary": "PASS"
+    },
+    "lint": {
+      "command": "yarn workspace @aileron/benchmark-form lint --max-warnings=0",
+      "exitCode": 0,
+      "summary": "PASS"
+    },
+    "archive-check": {
+      "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=closing --root=results/closing-prepared-2a --smoke --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe",
+      "exitCode": 0,
+      "summary": "BROWSER_CHANGES_AUDIT_OK base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe newMachinePaths=0\nCLOSING_SMOKE_REPRODUCED samples=95 validatorWork=PASS"
+    }
+  },
+  "auditFix": {
+    "scope": "checkAddedMachinePaths only; no registered decision code or frozen bundle changed",
+    "before": "1MiB default git stdout buffer produced ENOBUFS for committed source-tree proof",
+    "red": "new 1.1MB tracked-addition test failed with ENOBUFS",
+    "after": "32MiB bounded stdout; clean large diff accepted and machine path at end rejected; full archive audit passes",
+    "browserCollectionRerun": false
+  },
+  "cleanup": {
+    "removedWorktrees": [
+      "closing-2a-baseline",
+      "closing-2a-stage"
+    ],
+    "removedBranches": [
+      "scratch/closing-2a-baseline",
+      "scratch/closing-2a-stage"
+    ],
+    "remainingCreatedWorktrees": [],
+    "remainingCreatedBranches": [],
+    "preExistingPrunableMetadata": [
+      "stage-c5d963b2d"
+    ],
+    "preExistingMetadataModified": false
+  },
+  "next": "Wait for coordinator go before formal window; retain existing frozen inputs and smoke."
+}

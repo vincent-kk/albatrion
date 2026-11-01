@@ -1,0 +1,18 @@
+{
+  "originalRedEvidence": "dr5-provenance.json",
+  "additionalTestCommit": "b0e594a19",
+  "listenerTestCommit": "a61151d20",
+  "testSha256": {
+    "src/providers/RootNodeContext/__tests__/replacementErrors.test.tsx": "bd6e53895c37cce6a7bb663259ad7701a6f961d5f9eb0fc843ae6b8e306f1246",
+    "src/components/FieldProxy/__tests__/pathStructure.test.tsx": "d5ef87055b4ce90be6d62fd8d50add5065168eb96521d652cc188bb22a4682da",
+    "src/hooks/__tests__/useFieldNode.paths.test.tsx": "dff8a82443f43a5a5ccf76c858a53c05ec26f97a757345d8479f1d4ea2503aac"
+  },
+  "listenerReport": "dr9-listeners-base.json.gz",
+  "additionalReport": "dr89-base-additional.json.gz",
+  "note": "Additional report root-proxy count candidate included provider subscription; corrected listener report subtracts the one provider listener and asserts four proxy listeners.",
+  "greenReport": "dr89-focused-green.json.gz",
+  "mutations": {
+    "reportedRemovedFailed": 1,
+    "pathSubscriptionRemovedFailed": 3
+  }
+}

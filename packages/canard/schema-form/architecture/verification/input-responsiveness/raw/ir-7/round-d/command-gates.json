@@ -1,0 +1,24 @@
+[
+  {
+    "gate": "lint",
+    "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exitCode": 0
+  },
+  {
+    "gate": "typecheck",
+    "command": "yarn workspace @canard/schema-form typecheck",
+    "exitCode": 0
+  },
+  {
+    "gate": "render",
+    "command": "yarn workspace @canard/schema-form test --run --project render src/__tests__/e2e/validation.reset-failures.render.test.tsx --reporter=json --outputFile=<temporary>/ir7d-render.json",
+    "exitCode": 0,
+    "raw": "render.json.gz"
+  },
+  {
+    "gate": "react18",
+    "command": "yarn workspace @canard/schema-form test --run --project react18 src/__tests__/e2e/validation.reset-failures.render.test.tsx --reporter=json --outputFile=<temporary>/ir7d-react18.json",
+    "exitCode": 0,
+    "raw": "react18.json.gz"
+  }
+]

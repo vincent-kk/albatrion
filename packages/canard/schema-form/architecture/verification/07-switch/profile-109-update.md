@@ -306,8 +306,8 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 
 ### C1 — 커밋 진단·메모 정리
 
-소유자: `src/core/settle`; 변경 위치: `utils/commit/commitSettlement.ts`. 수정안 하나: 불일치 경로가 계속 비어 있는 경우의 typeMismatchesMemo 갱신을 기존 빈 경로 row의 commit 갱신으로 특화합니다. 비어 있지 않은 상태에서 비는 전이는 기존 초기화를 유지하고 현재 commit 검사와 경고·진단 방문은 보존합니다.
-제거 실험: commitNumber 증가와 markCommitDeliveries만 남깁니다. 진단 방문·타입 불일치 메모·refresh/비활성 값 메모 등을 함께 제거한 포괄 상한입니다.
+소유자: `src/core/settle`; 변경 위치: `utils/commit/commitSettlement.ts`. 수정안 하나: 불일치 경로가 계속 비어 있는 경우의 misfitsMemo 갱신을 기존 빈 경로 row의 commit 갱신으로 특화합니다. 비어 있지 않은 상태에서 비는 전이는 기존 초기화를 유지하고 현재 commit 검사와 경고·진단 방문은 보존합니다.
+제거 실험: commitNumber 증가와 markCommitDeliveries만 남깁니다. 진단 방문·misfit 메모·refresh/비활성 값 메모 등을 함께 제거한 포괄 상한입니다.
 계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. EVENT-007의 증가 루프와 VALUE-012의 조립은 기존 함수를 그대로 소비합니다. 진단/메모 의미를 건너뛰는 수정안은 아닙니다.
 
 ### F1 — 쓰기당 고정 진입·빈 단계 검사
@@ -665,7 +665,7 @@ self+children은 inclusive total입니다. self와 total을 더하지 않습니�
 재현 CLI(한 worker씩, 순차 실행):
 
 ```sh
-TMPDIR='/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn exec /opt/homebrew/Cellar/node/26.10.0_2/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-109-update/measure.mjs --official flat-100 off 1 old
+TMPDIR='{scratch}/bundles' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn exec {node-home}/Cellar/node/26.10.0_2/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-109-update/measure.mjs --official flat-100 off 1 old
 ```
 
 동일 prefix로 --cpu <fixture> <first|later> <1|2|3>, --bound <fixture> <variant> <run>, --diagnose <fixture> <run> <original|shadow-unprofiled>를 실행합니다. official은 원 세 회차 순서를 유지하고 bound는 raw 파일의 3/9 회차 수를 유지합니다. stats.mjs --official/--historical/--bounds와 report.mjs --summary/--markdown은 stdout artifact renderer입니다. stdout은 native 파일 도구로 보존합니다. 원문·해시·시계 창·303/909쌍·진단·회차별 잡음은 [원시 자료](profile-109-update/)와 [구조화 요약](profile-109-update-summary.json)에 있습니다.

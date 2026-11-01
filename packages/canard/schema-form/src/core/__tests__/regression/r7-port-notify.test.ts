@@ -213,6 +213,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('CONTROLS-079 treats injectTo callback public writes as nested feedback', () => {
+    // This callback mutates its captured tree; shipping execution invokes it once.
     let root: FieldNode | undefined;
     const created = makeFieldNodeTree({
       type: 'object',

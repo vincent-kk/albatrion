@@ -1,0 +1,31 @@
+{
+  "measuredLane": "A",
+  "measuredSourceHead": "5d723f38d",
+  "finalSourceHead": "d983f07036ea180dfaffb656a223876ded5a7147",
+  "sourceDifference": "Only fieldNodeFactory development-only if-gate predicate; markdown and tests excluded",
+  "productionCanonicalization": {
+    "tool": "esbuild",
+    "define": {
+      "process.env.NODE_ENV": "\"production\""
+    },
+    "format": "esm",
+    "minifySyntax": true,
+    "minifyWhitespace": true,
+    "treeShaking": true,
+    "legalComments": "none",
+    "frozenProductSha256": "1942ed6d386fa8d6da660e83d9bd5f95f0ee81abf4aefa35b7e828715958e8dc",
+    "builtProductSha256": "3617ff8fe7f2f739803853dce86a1b4913a220b588712b2adf46b6a0a986aac4",
+    "canonicalSha256": "3806b8e96577914b3bcc3712ea96b2d3f5bda5f4fd9cc3106ec9c810cb5b5798",
+    "canonicalBytes": 641705,
+    "byteDifference": 0
+  },
+  "publicDeclarations": {
+    "baselineSourceHead": "91c422e0e",
+    "rootIndexByteDifference": 0,
+    "reachableFiles": 308,
+    "declarationDifference": 0,
+    "commentOnlyDifferences": [
+      "core/engine/validation/utils/lifetime/retainValidationRoot.d.ts"
+    ]
+  }
+}

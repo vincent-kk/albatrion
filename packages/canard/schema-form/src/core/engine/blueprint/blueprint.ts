@@ -1,13 +1,24 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type { Blueprint, BlueprintOptions, BlueprintSchema } from './type';
-import { buildNodes } from './utils/analyze/buildNodes';
-import { compileBlueprintExpressions } from './utils/analyze/compileBlueprintExpressions';
-import type { AnalysisContext } from './utils/analyze/type';
-import { validateShape } from './utils/analyze/validateShape';
-import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
-import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
-import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
+import { buildNodes } from './buildNodes';
+import { collectBlueprintWarnings } from './collectBlueprintWarnings';
+import { compileBlueprintExpressions } from './compileBlueprintExpressions';
+import type { AnalysisContext } from './types/analysis';
+import type {
+  Blueprint,
+  BlueprintCacheEntry,
+  BlueprintOptions,
+} from './types/blueprint';
+import type { BlueprintSchema } from './types/schema';
+import { replayBlueprintDiagnostics } from './utils/diagnostics/replayBlueprintDiagnostics';
+import { markCandidateDescendants } from './utils/features/markCandidateDescendants';
+import { markInactiveValueNodes } from './utils/features/markInactiveValueNodes';
+import { markKeepDescendants } from './utils/features/markKeepDescendants';
+import { validateChildTargets } from './validateChildTargets';
+import { validateShape } from './validateShape';
+
+/** Shared options for a build without injected predicates, collector, or cache. */
+const DEFAULT_BLUEPRINT_OPTIONS: BlueprintOptions = {};
 
 /**
  * Analyze authored schema data into an immutable, finite declaration graph.
@@ -17,7 +28,7 @@ import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapab
  */
 export const blueprint = (
   schema: BlueprintSchema,
-  options: BlueprintOptions = {},
+  options: BlueprintOptions = DEFAULT_BLUEPRINT_OPTIONS,
 ): Blueprint => {
   const entries =
     typeof schema === 'object' ? options.cache?.get(schema) : undefined;
@@ -27,14 +38,17 @@ export const blueprint = (
       entry.isAtomic === options.isAtomic,
   );
   if (cached) {
-    if (options.collect && !cached.warningsCollected) {
-      collectBlueprintWarnings(cached.blueprint, options.collect);
-      cached.warningsCollected = true;
-    }
+    replayBlueprintDiagnostics(
+      cached,
+      options.collect,
+      collectBlueprintWarnings,
+    );
     return cached.blueprint;
   }
   const context: AnalysisContext = {
+    hasChildTargets: false,
     staticFirstLoad: true,
+    hasTemplateRecursion: false,
     capabilities: {
       branchless: true,
       hasExpressions: false,
@@ -65,13 +79,16 @@ export const blueprint = (
         gates: [],
         order: [],
         inherited: false,
-        hostPath: '',
+        hostPath: $.Root,
       },
     ],
-    '',
+    $.Root,
   );
-  validateShape(context);
-  validateChildTargets(context);
+  if (context.hasTemplateRecursion) validateShape(context);
+  if (context.hasChildTargets) validateChildTargets(context);
+  markCandidateDescendants(context.nodes);
+  markKeepDescendants(context.nodes);
+  if (context.hasInactiveValues) markInactiveValueNodes(context.nodes);
   const expressions =
     context.capabilities.hasExpressions || context.capabilities.hasWatch
       ? compileBlueprintExpressions(context)
@@ -110,6 +127,16 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
+  Object.defineProperty(result, 'staticFirstLoadEligible', {
+    value:
+      context.staticFirstLoad &&
+      context.capabilities.branchless &&
+      !context.capabilities.hasExpressions &&
+      !context.capabilities.hasDerive &&
+      !context.capabilities.hasWatch &&
+      !context.capabilities.hasState &&
+      !context.capabilities.hasDependencies,
+  });
   if (process.env.NODE_ENV !== 'production') {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);
@@ -119,27 +146,19 @@ export const blueprint = (
       Object.freeze(expressions);
     Object.freeze(result);
   }
-  const capabilities = result.capabilities;
-  StaticFirstLoadCapability.set(
-    result,
-    context.staticFirstLoad &&
-      capabilities.branchless &&
-      !capabilities.hasExpressions &&
-      !capabilities.hasDerive &&
-      !capabilities.hasWatch &&
-      !capabilities.hasState &&
-      !capabilities.hasDependencies,
-  );
-  collectBlueprintWarnings(result, options.collect);
   if (typeof schema === 'object' && options.cache) {
-    const entry = {
+    const entry: BlueprintCacheEntry = {
       blueprint: result,
       isTerminal: options.isTerminal,
       isAtomic: options.isAtomic,
-      warningsCollected: options.collect !== undefined,
+      collectors: new WeakSet(),
     };
-    if (entries) entries.push(entry);
-    else options.cache.set(schema, [entry]);
-  }
+    replayBlueprintDiagnostics(
+      entry,
+      options.collect,
+      collectBlueprintWarnings,
+    );
+    options.cache.set(schema, entries ? [...entries, entry] : [entry]);
+  } else collectBlueprintWarnings(result, options.collect);
   return result;
 };

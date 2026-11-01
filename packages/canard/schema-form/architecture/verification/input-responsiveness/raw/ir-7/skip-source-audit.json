@@ -1,0 +1,8 @@
+{
+  "method": "Diff existing verification sources against stage; only new React19-only files add context.skip. Existing skip/todo/fails declarations remain unchanged.",
+  "changedSkipLikeLines": [
+    "+  if (inject('reactMajor') !== '19') context.skip();",
+    "+  if (inject('reactMajor') !== '19') context.skip();",
+    "+  if (inject('reactMajor') !== '19') context.skip();"
+  ]
+}

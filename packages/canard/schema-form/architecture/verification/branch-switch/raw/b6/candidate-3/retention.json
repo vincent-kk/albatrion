@@ -1,0 +1,234 @@
+[
+  {
+    "row": "switch-oneOf-80",
+    "node": "v26.11.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 121163,
+        "strongEdges": 503756,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 1129
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 3,
+          "retainedNodes": 3,
+          "heapId": 167857,
+          "retainedNodeHeapIds": [
+            98825,
+            99185,
+            99181
+          ],
+          "bytes": 5456,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 121499,
+        "strongEdges": 506268,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 1129
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 3,
+          "retainedNodes": 3,
+          "heapId": 167857,
+          "retainedNodeHeapIds": [
+            98825,
+            99185,
+            99181
+          ],
+          "bytes": 5776,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [
+        167857,
+        98825,
+        99185,
+        99181
+      ],
+      "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 122080,
+          "strongEdges": 507583,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 1092
+        },
+        "matchingNumericHeapIds": [
+          167857
+        ],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  },
+  {
+    "row": "switch-payload-12",
+    "node": "v26.11.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 160845,
+        "strongEdges": 660680,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 11171
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 12,
+          "retainedNodes": 12,
+          "heapId": 191921,
+          "retainedNodeHeapIds": [
+            187383,
+            187361,
+            187419,
+            193133,
+            189941,
+            191927,
+            191945,
+            191963,
+            191983,
+            187029,
+            187065,
+            187093
+          ],
+          "bytes": 19304,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 161101,
+        "strongEdges": 663118,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 11171
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 12,
+          "retainedNodes": 12,
+          "heapId": 191921,
+          "retainedNodeHeapIds": [
+            187383,
+            187361,
+            187419,
+            193133,
+            189941,
+            191927,
+            191945,
+            191963,
+            191983,
+            187029,
+            187065,
+            187093
+          ],
+          "bytes": 19880,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [
+        191921,
+        187383,
+        187361,
+        187419,
+        193133,
+        189941,
+        191927,
+        191945,
+        191963,
+        191983,
+        187029,
+        187065,
+        187093
+      ],
+      "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 161291,
+          "strongEdges": 662761,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 11130
+        },
+        "matchingNumericHeapIds": [
+          191921
+        ],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  },
+  {
+    "row": "switch-siblings-0",
+    "node": "v26.11.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 100565,
+        "strongEdges": 422285,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 126
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": []
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 100805,
+        "strongEdges": 424026,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 126
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": []
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [],
+      "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 101505,
+          "strongEdges": 425074,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 49
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  }
+]

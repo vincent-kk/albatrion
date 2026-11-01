@@ -1,0 +1,56 @@
+{
+  "red-render": {
+    "product": "06df2956f",
+    "testCommit": "916b08dcf63f9b10de03feeff3704c0dd85a07c0",
+    "passed": 18,
+    "failed": 4,
+    "skipped": 0,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.hidden-delivery.render.test.tsx": "9ed133d9990455569659fdc9ebb3543d69e4aa330a5822b4b6eef8b241982331",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-owed.render.test.tsx": "67fdf060ff87698c094c8c80f66b807391ab01e49bc0f94d4c5ce1805319e31e",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "67fb4629acdc123aab4b8af553838fd730ebe2cabc517a84a87dee80756b0b24"
+    }
+  },
+  "red-react18": {
+    "product": "06df2956f",
+    "testCommit": "916b08dcf63f9b10de03feeff3704c0dd85a07c0",
+    "passed": 18,
+    "failed": 2,
+    "skipped": 2,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.hidden-delivery.render.test.tsx": "9ed133d9990455569659fdc9ebb3543d69e4aa330a5822b4b6eef8b241982331",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.mount-owed.render.test.tsx": "67fdf060ff87698c094c8c80f66b807391ab01e49bc0f94d4c5ce1805319e31e",
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "67fb4629acdc123aab4b8af553838fd730ebe2cabc517a84a87dee80756b0b24"
+    }
+  },
+  "red-unit": {
+    "product": "06df2956f",
+    "testCommit": "916b08dcf63f9b10de03feeff3704c0dd85a07c0",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "sha256": {
+      "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/constructionErrors.test.ts": "b29c9280eb7eab0433f00467211b1c26e0d58b7dbfc4d2c0d69adc46c458dedf"
+    }
+  },
+  "stage-render": {
+    "product": "7428d5db8",
+    "testCommit": "916b08dcf63f9b10de03feeff3704c0dd85a07c0",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 3,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "67fb4629acdc123aab4b8af553838fd730ebe2cabc517a84a87dee80756b0b24"
+    }
+  },
+  "stage-react18": {
+    "product": "7428d5db8",
+    "testCommit": "916b08dcf63f9b10de03feeff3704c0dd85a07c0",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 3,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "67fb4629acdc123aab4b8af553838fd730ebe2cabc517a84a87dee80756b0b24"
+    }
+  }
+}

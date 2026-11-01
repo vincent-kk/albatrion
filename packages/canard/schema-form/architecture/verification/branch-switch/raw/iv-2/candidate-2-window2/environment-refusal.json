@@ -1,0 +1,34 @@
+{
+  "completed": false,
+  "failedLabel": "supplemental-switch-siblings-1000-B-0",
+  "exitCode": 1,
+  "prechecks": 1,
+  "approved": false,
+  "waitedMs": 144584.928958,
+  "ordinaryWaitedMs": 120000,
+  "policy": {
+    "averageMs": 3000,
+    "retryDelayMs": 5000,
+    "maxWaitMs": 120000,
+    "spotlightMaxWaitMs": 600000,
+    "maximumExternalCpuPercent": 30
+  },
+  "heavy": [
+    {
+      "pid": 65922,
+      "name": "mediaanalysisd",
+      "cpuPercent": 60.57287903913652
+    },
+    {
+      "pid": 394,
+      "name": "mds",
+      "cpuPercent": 48.89998047427811
+    },
+    {
+      "pid": 436,
+      "name": "WindowServer",
+      "cpuPercent": 30.601923264484554
+    }
+  ],
+  "raw": "failed-prechecks.json.gz"
+}

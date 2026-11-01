@@ -1,9 +1,14 @@
-import type { FieldNodeRecord } from '../../../record';
+import type { ArrayOperation, FieldNodeRecord } from '../../../record';
 import { arrangeFieldNodeItems } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
+import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
+
+/** Array operation that removes the last item of the array. */
+const POP_OPERATION: ArrayOperation = { kind: 'pop' };
 
 /**
  * Pop an array within the public entry chain; refused feedback does no work.
@@ -14,11 +19,12 @@ import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 export const dispatchPop = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
+  if (refuseDetachedWrite(node)) return;
   if (!enterFieldNodeChain(node)) return;
   try {
-    return node.rootNode.runtime.batchDepth
-      ? markBatchArrayOperation(node, { kind: 'pop' })
-      : arrangeFieldNodeItems(node, { kind: 'pop' });
+    return isBatchMarking(node)
+      ? markBatchArrayOperation(node, POP_OPERATION)
+      : arrangeFieldNodeItems(node, POP_OPERATION);
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);

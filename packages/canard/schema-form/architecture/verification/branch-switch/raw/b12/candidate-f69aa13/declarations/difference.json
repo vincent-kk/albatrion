@@ -1,0 +1,24 @@
+{
+  "before": 94,
+  "after": 97,
+  "added": [
+    "InactiveValue",
+    "InactiveValueContext",
+    "InactiveValueResolver"
+  ],
+  "removed": [],
+  "changed": [
+    "FormWarningCode"
+  ],
+  "nodeMembers": [
+    "onInactive"
+  ],
+  "controlKeys": [
+    "inactiveValue"
+  ],
+  "warningMembers": [
+    "InactiveValueWithUnsetOnInactive",
+    "WriteInInactiveResolver"
+  ],
+  "zeroDifferenceWaived": true
+}

@@ -4,8 +4,8 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Load through the generic path used as the static-first-load oracle. */
@@ -40,7 +40,7 @@ const itemSchema: BlueprintSchema = {
   },
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-fill-descendants
 describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
   it.each([1, 1000])(
     '배열 D의 %i개 아이템은 명시 원본을 보존하고 없는 자손을 채운다',

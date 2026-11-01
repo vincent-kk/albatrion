@@ -3,7 +3,9 @@ import { arrangeFieldNodeItems } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
+import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
 
 /**
  * Remove an array within the public entry chain; refused feedback does no work.
@@ -16,9 +18,10 @@ export const dispatchRemove = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   index: number,
 ): unknown => {
+  if (refuseDetachedWrite(node)) return;
   if (!enterFieldNodeChain(node)) return;
   try {
-    return node.rootNode.runtime.batchDepth
+    return isBatchMarking(node)
       ? markBatchArrayOperation(node, { kind: 'remove', index })
       : arrangeFieldNodeItems(node, { kind: 'remove', index });
   } catch (error) {

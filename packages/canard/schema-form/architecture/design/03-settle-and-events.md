@@ -82,14 +82,14 @@ PR: PR-2 벤치(TEST-027·TEST-032)에 "켜진 조각 N개 호스트의 무관�
 | ---- | ------- | ---- |
 | 표시 | 쓰기를 받은 노드의 `raw`·`extras`를 갱신하고 조상 경로의 재계산 목록에 등록한다 | — |
 | 계산 | 루트에서 한 번 내려간다. 재계산 목록의 자식을 먼저 완료한 뒤 자기 `local`·`emit`·유효 스키마를 만든다. 호스트는 조각과 노드를 SETTLE-018–SETTLE-025의 절차로 정한다. 게이트는 둘이다 — `if`(검증기 플러그인이 컴파일)와 `controls.active`(표현식). 노드 게이트는 조각 게이트와 같은 장치다(SETTLE-003). 계산의 끝, 최종 트리에서 `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`를 한 번 결정한다. 코어에 글로벌은 없고 상태 키는 그 노드에만 걸린다(GOAL-048, 13라운드 답 1). **원본을 읽기만 한다**(E1) | 호스트 바퀴 = 게이트 가진 조각 수 + 노드 게이트 수 + 1 |
-| 파생 | 완성된 트리에서 `controls.derived`(자기 값 덮기), `controls.injectTo`(대상에 대한 전체 교체), `controls.unsetValue`(자기 값을 없음으로)를 평가한다. 라운드마다 후보를 모아 **대상마다 하나만** 적용한다. 순위는 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움이고, 같은 순위끼리는 원천(선언) 노드의 문서 순서에서 나중이 이기고, 같은 노드에 걸린 선언끼리는 층(조각의 `controls` < `controls.children` 항목 < 노드 자신)에서 세부가 이기며, 같은 층이면 조각의 전순서에서 나중이 이긴다(소유자 답 7·16·17 "뒤가 앞을 덮는다"). 진 쓰기는 버리며 그 에지도 소비한다(소비하지 않으면 다음 라운드에 진 규칙이 이겨 순위가 무의미해진다, SETTLE-004). 한 규칙의 에지는 원천 값의 한 번의 변화에 대해 한 정착 안에서 한 번만 소비한다(재발화 금지, SETTLE-004). 기준점은 그 규칙이 이 정착에서 마지막으로 소비한 원천 값이다. 원천이 다른 값으로 다시 바뀌면 새 에지이고, 진짜 순환은 그래서 예산에 잡힌다(SETTLE-004, 소유자 답 4). 같은 대상에 규칙이 둘 와도 경고하지 않는다(13라운드 답 4). 한 정착에서 대상에 더 높은 순위의 쓰기가 이미 적용되었으면 뒤 라운드의 낮은 순위 후보는 버리고 그 에지를 소비한다(소유자 답 9의 뜻: 순위는 라운드가 아니라 정착 단위다). 쓰기가 나오면 표시로 | 라운드 25 |
+| 파생 | 완성된 트리에서 `controls.derived`(자기 값 덮기), `controls.injectTo`(대상에 대한 전체 교체), `controls.unsetValue`(자기 값을 없음으로)를 평가한다. 라운드마다 후보를 모아 **대상마다 하나만** 적용한다. 순위는 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움이고, 같은 순위끼리는 원천(선언) 노드의 문서 순서에서 나중이 이기고, 같은 노드에 걸린 선언끼리는 층(조각의 `controls` < `controls.fields` 항목 < 노드 자신)에서 세부가 이기며, 같은 층이면 조각의 전순서에서 나중이 이긴다(소유자 답 7·16·17 "뒤가 앞을 덮는다"). 진 쓰기는 버리며 그 에지도 소비한다(소비하지 않으면 다음 라운드에 진 규칙이 이겨 순위가 무의미해진다, SETTLE-004). 한 규칙의 에지는 원천 값의 한 번의 변화에 대해 한 정착 안에서 한 번만 소비한다(재발화 금지, SETTLE-004). 기준점은 그 규칙이 이 정착에서 마지막으로 소비한 원천 값이다. 원천이 다른 값으로 다시 바뀌면 새 에지이고, 진짜 순환은 그래서 예산에 잡힌다(SETTLE-004, 소유자 답 4). 같은 대상에 규칙이 둘 와도 경고하지 않는다(13라운드 답 4). 한 정착에서 대상에 더 높은 순위의 쓰기가 이미 적용되었으면 뒤 라운드의 낮은 순위 후보는 버리고 그 에지를 소비한다(소유자 답 9의 뜻: 순위는 라운드가 아니라 정착 단위다). 쓰기가 나오면 표시로 | 라운드 25 |
 | 전이 | **생긴 노드** — 직전 커밋의 형상에 없고 이번 최종 형상에 있는 노드 — 의 **없음**인 값에 채움(`controls.default` > `default`)을 쓴다. 노드 단위이며, 이미 있던 노드는 새 조각이 켜져도 채우지 않는다. 중간 라운드의 채움은 그 노드가 최종 형상에 없으면 버린다. 생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다(순위는 단계를 가로지른다, SETTLE-004). 나감 정책이 참으로 정해진 노드가 **나가면**(직전 커밋의 형상에 있었고 이번 최종 형상에 없으면, 하위 트리 포함, 선언이 하나라도 켜져 있는 공유 노드는 제외) 한 번 없음으로 만든다. 나가는 객체·분기에 켠 정책은 함께 나가는 하위 트리(선언의 나감과 잠복 자손 포함)로 내려가고 자손이 스스로 적은 선언이 가까운 순서로 이긴다(17라운드 소유자 답 R17-2 ㄴ, WRITE-033). 로드에는 나감이 없다(WRITE-037). → 표시로 | 라운드 = 게이트 가진 조각 수 + 노드 게이트 수 + 1 (파생과 **별도**, F2. 채움이나 나감의 비움이 다음 라운드를 부르는 것은 그 쓰기가 게이트를 뒤집어 새 노드를 내거나 노드를 내보낼 때뿐이다, SETTLE-005) |
 | 커밋 | 계산 결과를 트리에 반영하고 정착을 확정한다. `controls.resetInteraction`(옛 `&pristine`, `dirty`·`touched` 초기화)을 최종 트리의 식 값으로 판정한다. 원본에는 쓰지 않는다. 배달 집합 전체의 `revision`을 한 번에 올리고(F16) 단조 **커밋 번호**를 매긴다(F28) | — |
 | 통지 | 루트 디스패처가 문서 순서 위 → 아래로 1회 배달한다. 유효 스키마가 바뀐 노드도 배달 집합에 든다(EVENT-006) | 최외곽 진입의 되먹임 사슬당 파동 25 (EVENT-008), `onChange` 중첩 25 (EVENT-034) |
 | 검증 | `validator(작성된 스키마, 방출 값)`. **커밋 번호**를 스탬프하고 비동기로 요청하며, 늦게 온 결과는 버린다. 실행은 마이크로태스크에 모아 최신 커밋 번호 하나만 돌린다(14라운드 답 O-6) | — |
 
 종류 순위는 소유자 13라운드 답 4로 확정("명령어끼리는 지금 위계가 옳다")(SETTLE-004).
-같은 순위끼리는 원천(선언) 노드의 문서 순서에서 나중이 이기고, 같은 노드에 걸린 선언끼리는 층(조각의 `controls` < `controls.children` 항목 < 노드 자신)에서 세부가 이기며, 같은 층이면 조각의 전순서에서 나중이 이긴다(소유자 답 7·16·17 "뒤가 앞을 덮는다")(소유자: "서로 다른 노드에서 하나의 노드로 injectTo를 할 경우 뒤가 이긴다") — 통지 순서와 같은 위→아래이며 "뒤가 앞을 덮는다"와 한 방향이다(G5: 전순서 없이는 결정적이지 않다)(SETTLE-004).
+같은 순위끼리는 원천(선언) 노드의 문서 순서에서 나중이 이기고, 같은 노드에 걸린 선언끼리는 층(조각의 `controls` < `controls.fields` 항목 < 노드 자신)에서 세부가 이기며, 같은 층이면 조각의 전순서에서 나중이 이긴다(소유자 답 7·16·17 "뒤가 앞을 덮는다")(소유자: "서로 다른 노드에서 하나의 노드로 injectTo를 할 경우 뒤가 이긴다") — 통지 순서와 같은 위→아래이며 "뒤가 앞을 덮는다"와 한 방향이다(G5: 전순서 없이는 결정적이지 않다)(SETTLE-004).
 원천이 다른 값으로 다시 바뀌면 새 에지이고, 진짜 순환은 그래서 예산에 잡힌다(소유자 답 4. "규칙당 정착당 한 번"으로 읽으면 순환이 신호 없이 멈춘다)(SETTLE-004). 차례로 적용하면 순환이 없는 스키마에서도 로드만으로 예산을 다 쓴다(실측)(SETTLE-004).
 같은 정착의 다음 라운드에서 같은 변화로 다시 쓰지 않는다(SETTLE-004).
 진 쓰기는 버리고 그 에지도 소비한다(실험의 `LOSER_FATE`·`EDGE_CONSUMED_ON_LOSS`)(SETTLE-004). 소유자 답 9(`&derived`가 이김)에서 도출된다: 진 규칙의 에지를 소비하지 않으면 다음 라운드에 진 규칙이 이겨 순위가 무의미해진다(SETTLE-004).
@@ -187,13 +187,13 @@ PR: PR-2 시험(SETTLE-042).
 【추론】 합성 노드를 읽는 식은 그 하위 트리 전체에 기댄다(SETTLE-017).
 【추론】 따라서 역의존 조회(SETTLE-017)는 값이 바뀐 노드의 경로와 그 조상·자손 경로를 읽는 식을 모두 찾는다(SETTLE-017).
 
-【추론】 (5) 예산 셈: 호스트 바퀴와 전이 라운드 식의 '노드 게이트 수'는 `controls.active`를 가진 `children` 항목을 대상 수와 무관하게 항목마다 하나로 센다(SETTLE-041).
+【추론】 (5) 예산 셈: 호스트 바퀴와 전이 라운드 식의 '노드 게이트 수'는 `controls.active`를 가진 `fields` 항목을 대상 수와 무관하게 항목마다 하나로 센다(SETTLE-041).
 【추론】 식 하나가 호스트 기준으로 한 번 평가되어 모든 대상에 같은 값으로 걸리기 때문이다(SETTLE-041).
 【추론】 조각의 `controls.active`는 그 조각의 게이트라 '게이트 가진 조각 수'에 이미 들어 있으므로 따로 세지 않는다(SETTLE-041).
 【추론】 조각 범위 제어의 다른 키는 게이트가 아니다(SETTLE-041).
 【추론】 판별 변환과 분기 식의 AND(FRAGMENT-048)는 게이트 하나다(SETTLE-041).
 
-【추론】 `controls.active` 게이트(노드 게이트, 조각 게이트, CONTROLS-073의 `controls.children` 항목 게이트)가 선언한 호스트의 하위 트리 밖을 읽으면, 청사진이 그 게이트의 평가 자리를 L로 옮긴다(SETTLE-045).
+【추론】 `controls.active` 게이트(노드 게이트, 조각 게이트, CONTROLS-073의 `controls.fields` 항목 게이트)가 선언한 호스트의 하위 트리 밖을 읽으면, 청사진이 그 게이트의 평가 자리를 L로 옮긴다(SETTLE-045).
 【추론】 L은 선언한 호스트와, 식이 읽는 모든 경로의 자리를 함께 덮는 가장 낮은 공통 조상 호스트다(SETTLE-045).
 【추론】 `#` 단독과 `(/)`(루트 값 전체)는 루트로 셈하고, `/p`·`#/p`는 `p`의 자리로 셈한다(SETTLE-045).
 【추론】 `@`는 노드가 아니라 공통 조상 계산에 들지 않는다(SETTLE-045).
@@ -328,7 +328,7 @@ SETTLE-005를 구현하려면 자동 쓰기를 되돌릴 수 있는 로그가 �
 
 【추론】 유효 스키마 변경은 이벤트 타입 하나로 싣는다(EVENT-064). 【추론】 가칭은 `UpdateJsonSchema`다(`UpdateValue`↔`value`처럼 공개 읽기 `node.jsonSchema`를 따른 이름)(EVENT-064). 【추론】 커밋에서 노드의 메모된 유효 스키마 참조가 그 노드에 마지막으로 통지한 것과 다를 때 켜진다(EVENT-064). 【추론】 같은 덧씌움 집합이면 같은 참조이므로 참조 비교로 충분하다(EVENT-064). 【추론】 EVENT-006 배달 집합의 "유효 스키마가 바뀐 노드" 항이 이 비트다(EVENT-064). 【추론】 트리 생성(마운트·재생성)에서는 통지하지 않는다(EVENT-064). 【추론】 같은 스키마의 `FormHandle.reset()`·`resetSubtree()` 로드와 `setValue` 전체 교체 쓰기에서 바뀌면 통지한다(EVENT-064, WRITE-090). 【추론】 payload는 `{ previous, current }`이며 둘 다 유효 스키마 참조이고 복사하지 않는다(EVENT-064). 【추론】 `previous`는 마지막으로 통지한 것이다(EVENT-064, EVENT-024). 【추론】 개발 모드 `Object.freeze`는 payload 객체에만 한다(EVENT-064). 【추론】 유효 스키마는 작성자 객체를 참조로 옮겨 쓸 수 있기 때문이다(EVENT-064). 【추론】 출처 칸은 없다(EVENT-064). 【추론】 12-5의 출처는 `UpdateValue`의 쓰기 출처이고, 유효 스키마 변경은 쓰기가 아니다(EVENT-064). 【추론】 렌더 계층은 `SchemaNodeProxy`의 재렌더 마스크에 이 비트를 더한다(EVENT-064). 【추론】 계산 상태(`active`·`visible`·`readOnly`·`disabled`·`watchValues`)의 비트와는 따로 둔다(EVENT-064). 【추론】 오늘의 내부 `UpdateComputedProperties`(`src/core/types/event.ts:63`)가 계산 상태 쪽 비트다(EVENT-064).
 
-【추론】 비트는 `UpdatePath`, payload는 오늘처럼 `{ previous, current }`다(EVENT-068). 【추론】 재인덱싱된 아이템의 자손도 포함한다(오늘 `__updatePath__`의 재귀와 같다)(EVENT-068). 【추론】 오늘처럼 공개 이벤트 형(오늘 `NodeEventType`, 곧 `PublicNodeEventType` 여섯)에는 넣지 않는다(EVENT-068). 【추론】 렌더 계층은 입력을 다시 그리는 사건 집합에 이 비트를 더한다(EVENT-068). 【추론】 입력의 `path`·`name` prop과, 경로를 키로 쓰는 맵(첨부 파일 맵, `useChildNodeErrors`의 상태 맵)이 새 경로를 따라가게 하기 위해서다(EVENT-068).
+【추론】 비트는 `UpdatePath`, payload는 오늘처럼 `{ previous, current }`다(EVENT-068). 【추론】 재인덱싱된 아이템의 자손도 포함한다(오늘 `__updatePath__`의 재귀와 같다)(EVENT-068). 【추론】 오늘처럼 공개 이벤트 형(오늘 `NodeEventType`, 곧 `PublicNodeEventType` 여섯)에는 넣지 않는다(EVENT-068). 【추론】 렌더 계층은 입력을 다시 그리는 사건 집합에 이 비트를 더한다(EVENT-068). 【추론】 입력의 `path`·`name` prop과, 경로를 키로 쓰는 맵(첨부 파일 맵, `useChildFieldErrors`의 상태 맵)이 새 경로를 따라가게 하기 위해서다(EVENT-068).
 
 ### 2.4 예산 초과와 진단
 
@@ -493,3 +493,39 @@ core가 스스로 `Refresh`를 보내는 규칙은 바뀌지 않는다 — 쓰�
 - 무엇: 입력 중에 리스너가 `setValue(getValue())`를 부르는 장면과, 잎 하나만 바꾼 `setValue(V)`에서 `RequestRefresh`를 받는 노드를 센다(EVENT-071).
 - 통과: 앞 장면은 0회, 뒤 장면은 바뀐 잎만 1회이며, 캐럿과 IME 상태가 남는다(EVENT-071).
 - 실패: 원본이 바뀌지 않은 노드가 Refresh를 받으면 정착의 Refresh 대상을 고친다(EVENT-071).
+
+
+## IR-6 검증 시점 보충 — 2026-10-31
+
+현행 D1은 쓰기의 다음 프레임 선행·연속 이월·quiet 후행과 마지막 실제 실행 기준100ms cap을 사용하고 동기 정착·사건·onChange를 유지합니다(VALIDATE-052).
+화면 슬롯은 프레임 API 부재·숨김 문서에서 매크로태스크로 fallback하며100ms stall 타이머와 단일 실행을 경주하고 common-utils scheduler의0.16.1 선례를 유지합니다(VALIDATE-052).
+오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다(VALIDATE-052).
+OnChange만 이력을 기록하며 새 표시와 중간에 숨겨진 표시는 판정 정착·조용한 drop·수락한 explicit root 판정·폐기의 release를 기다리고 조용한 변경은 약2프레임 뒤 표시합니다(VALIDATE-052).
+기록은 write sequence당 node 한 번이며 모든 append가 generation을 전진시키고 예약 cutoff 이하만 해제하여 뒤 기록이 앞 기록의 수명을 늘리지 않습니다(VALIDATE-052).
+정책은 root별 layout effect에서만 commit하고 렌더 중에는 엔진을 바꾸지 않으며 표시 hook은 candidate만 memoized release-version 구독과 같은 client/server getter를 사용합니다(VALIDATE-052).
+renderer/input은 enabled를 검사하고 child-errors는 hidden 자식도 집계하며 inactive 값 제거와 off-branch 오류 제외를 유지합니다(VALIDATE-052).
+현재 stamp의 commit-only 폐기는 targets를 보존해 최신 commit을 cadence로 재요청하고 explicit 반환·submit 값은 호출 시점 snapshot 계약을 유지합니다(VALIDATE-052).
+Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
+숨긴 reset 재생성은 원래 load별 경고 범위로 옛 기록 뒤 새 reset 기록을 chain 끝에 전달하고 handler 실패는 각각 격리하며 다른 hidden 사슬·같은-schema reset은 reconnect까지 buffer합니다(VALIDATE-052).
+한계는 hook disabled의 즉시 reveal·drop 뒤 state/enabled render의 hold 생략·commit-only stream hold·release와 paint 사이 쓰기의1~2프레임 이전 판정·한 batch 안 미표시 조합의 이력 포함이며 G는 구현하지 않습니다(VALIDATE-052).
+
+마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
+
+if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
+
+
+## IR-7 숨김 전달 보충 — 2026-11-01
+
+위 IR-6의 숨김 buffer·reconnect·owed·unmount 배달 제한은 이 보충이 대체하며 원문은 기록으로 유지합니다 (VALIDATE-052). 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다 (VALIDATE-052). 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다 (VALIDATE-052). reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다 (VALIDATE-052). Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다 (VALIDATE-052). 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다 (VALIDATE-052). (ERROR-019, REACT-007, VALIDATE-052) (VALIDATE-052).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다 (VALIDATE-052). 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다 (VALIDATE-052). mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다 (VALIDATE-052). unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다 (VALIDATE-052).
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다 (VALIDATE-052). onError는 insertion effect로 최신입니다 (VALIDATE-052). 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다 (VALIDATE-052).
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다 (VALIDATE-052). prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다 (VALIDATE-052).
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다 (VALIDATE-052). mount-time 기록이 build-time 기록보다 먼저 도착합니다 (VALIDATE-052).
+
+근거는 [IR-7 계획](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01)의 소유자 원문39–41입니다 (VALIDATE-052). reset 기록별 handler 실패는 reportErrorToHost로 격리하고 이후 기록과 binding 교체를 계속합니다 (VALIDATE-052). 구독은 첫 commit 또는 reset에서 한 번만 설치하고 effect cleanup은 검증 루트 참조만 해제합니다 (VALIDATE-052).
+
+
+## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
+
+【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다 (VALIDATE-052). VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다 (ERROR-164). ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다 (VALIDATE-046). WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다 (TEST-021).

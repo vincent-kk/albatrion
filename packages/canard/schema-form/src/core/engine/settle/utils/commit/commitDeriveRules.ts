@@ -1,14 +1,20 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { evaluateResetInteraction } from '../../../derive';
+import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange, shallowPatch } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeState } from '../../../types/state';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getDeriveState } from '../derivation/getDeriveState';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
+
+/** State patch that clears the dirty and touched flags of a reset occurrence. */
+const CLEAN_STATE_PATCH = {
+  [FieldNodeState.Dirty]: false,
+  [FieldNodeState.Touched]: false,
+};
 
 /**
  * Publish final rule baselines and clear interaction flags before revision bumps.
@@ -44,10 +50,7 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
     node.interactionState = captureFieldNodeChange(
       node,
       'interactionState',
-      shallowPatch(node.interactionState, {
-        [FieldNodeState.Dirty]: false,
-        [FieldNodeState.Touched]: false,
-      }),
+      shallowPatch(node.interactionState, CLEAN_STATE_PATCH),
     );
     if (node.interactionState !== previous) context.changedNodes.add(node);
   }
@@ -55,8 +58,12 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
   for (const path of state.visitedSourcePaths)
     pruneCommittedRuleKeys(runtime, path, 'source');
   for (const exited of context.exited)
-    walkOwnedFieldNodes(exited, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, 'occurrence'),
+    visitFieldNodes(
+      exited,
+      (node) => {
+        pruneCommittedRuleKeys(runtime, node.path, 'occurrence');
+      },
+      { owned: true },
     );
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))

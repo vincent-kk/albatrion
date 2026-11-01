@@ -1,12 +1,12 @@
 import type { FormScenario } from '../types';
 
-/** REACT-027 distinguishes nullable clearing from a caller's explicit empty string. */
+/** REACT-027, 444C-09: clearing a nullable string publishes undefined, distinct from a caller's explicit empty string. */
 export const emptyDraftScenario = {
-  name: 'REACT-027 clearing a nullable string sends null instead of an empty string',
+  name: 'REACT-027 clearing a nullable string sends undefined instead of an empty string',
   schema: { type: 'object', properties: { text: { type: ['string', 'null'] } } },
   initialValue: { text: 'initial' },
   steps: [
-    { action: 'setValue', path: '/text', value: '', expect: { values: { '/text': null }, outputValue: { text: null } } },
+    { action: 'setValue', path: '/text', value: '', expect: { values: { '/text': undefined }, outputValue: {} } },
     { action: 'batch', steps: [{ action: 'setValue', path: '/text', value: '' }], expect: { values: { '/text': '' }, outputValue: {} } },
   ],
 } satisfies FormScenario;

@@ -1,0 +1,101 @@
+{
+  "ownerQuotes": {
+    "9": {
+      "verbatim": true,
+      "sha256": "ff192508024b25ac56168072bac8203890713a2d9a94da1b0324a039eba81a38"
+    },
+    "10": {
+      "verbatim": true,
+      "sha256": "471bd195ff5f6128c7aaa173374c72210731896dc1f6e7a71d194050388552d6"
+    },
+    "11": {
+      "verbatim": true,
+      "sha256": "11591f518681691c10a42aea6d84f387a5d9c744660c5e01ad30b3b89ace7e02"
+    },
+    "12": {
+      "verbatim": true,
+      "sha256": "68f0237b374cc920d7ea408ece124d272a3753e1e2e8a1419daf38eab5b0ca68"
+    },
+    "13": {
+      "verbatim": true,
+      "sha256": "fa2f48c9ddfbffe69cc3b639157245217e3c9ab0cba7cd392fc61602fe42c4f1"
+    },
+    "14": {
+      "verbatim": true,
+      "sha256": "f5dc4e84ca0ad6653f0e44b156c81df2c42f350c49209b91951a48788676d78b"
+    },
+    "15": {
+      "verbatim": true,
+      "sha256": "d1193f666d388475b7ee5cb3a55c758ce0bd6e28253199009d3c0ce8e7d51391"
+    },
+    "16": {
+      "verbatim": true,
+      "sha256": "f1a1a549f7ea73e34f68a040a696f9b4c8727e741adbaa8d8a37408df3e4bcb2"
+    },
+    "17": {
+      "verbatim": true,
+      "sha256": "69f062ade4b2685eb868d23d799c2a3573e93c3c021070f93252c034f5cd7495"
+    },
+    "18": {
+      "verbatim": true,
+      "sha256": "051f58510d4de0db9411aa88fa70c5cc04c25b2e6604e609bc9d223cb5c2582d"
+    },
+    "19": {
+      "verbatim": true,
+      "sha256": "269eeee309bf4dababa40aeaee12cff1237d36c52f6e53b43d4494d241bf2015"
+    },
+    "18b": {
+      "verbatim": true,
+      "sha256": "a5866b2ed8ab29dd60cd101b23fe5c80233cd9f8c4b767b34835ac44c109db6e"
+    },
+    "20": {
+      "verbatim": true,
+      "sha256": "58bc9857e8db29cdacf71b077c39f80ca6b743b6701da11c34b24701f400b9a3"
+    },
+    "21": {
+      "verbatim": true,
+      "sha256": "40d1ada422697c84c40d0ca0837010d7b23ee4c6e5fb4099a9fa00dfacc013e0"
+    },
+    "22": {
+      "verbatim": true,
+      "sha256": "b1e6c1a3b7e10d3e24cf18dd1435f296a06d130c6e25dba3b3e4eb8beb5e03ed"
+    },
+    "23": {
+      "verbatim": true,
+      "sha256": "c7728cb63dcbb935a2509aba45e131b187267793886e18771bbff9c0629df1d6"
+    },
+    "24": {
+      "verbatim": true,
+      "sha256": "e811f93c14dee899eeac27f57432154875e3ee8697228544ddb6a2f9196ee5db"
+    },
+    "25": {
+      "verbatim": true,
+      "sha256": "4bf03670a507512d7322407076ae7e574baebf99bfea89dd3affaa3e39de40d6"
+    },
+    "26": {
+      "verbatim": true,
+      "sha256": "e0833aba422f931e7f7fad70a2e0d92ca1edeae51c662bddc211e16d0140bd7c"
+    },
+    "27": {
+      "verbatim": true,
+      "sha256": "61971f0aa2bdbe41e386f4a4d249b27d4b021773b78f158336d10a6a03bcfdbb"
+    },
+    "28": {
+      "verbatim": true,
+      "sha256": "a1b9e2ef42da4c5d50e79912dfd540843a9b94145cc2af559916f3119b9635b7"
+    },
+    "29": {
+      "verbatim": true,
+      "sha256": "a243598f7a30e1d5b69b82008520da1df98939e3354f14883de06d1274c63a53"
+    },
+    "30": {
+      "verbatim": true,
+      "sha256": "4868b4924d54b9b662a208de544ac7d9e0ff75858326ce6de6014b8cc6e60cdc"
+    }
+  },
+  "mergedDesignAndAdrPrefixesUnchanged": true,
+  "mergedLedgerPrefixUnchangedExceptAuthorizedIndexRow": true,
+  "packageVersionChanged": false,
+  "publicSourceIndexChanged": false,
+  "verbatimOwnerTrailingSpaces": "quotes27\u201330 retained byte for byte"
+}

@@ -7,10 +7,10 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 
-// filid:contract scenario-runner
+// filid:contract scenario-runner-union-entry
 describe('union.entry-two-step', () => {
   it('WRITE-098 interprets original 0 under the final flag list after either prior kind', async () => {
     const schema: BlueprintSchema = {
@@ -69,7 +69,7 @@ describe('union.entry-two-step', () => {
             type: ['boolean'],
           });
           expect(root.structure?.a?.raw).toBe(false);
-          expect(root.runtime.typeMismatchPaths.has('/a')).toBe(false);
+          expect(root.runtime.misfitPaths.has('/a')).toBe(false);
         }
         expect(root.emit).toEqual(expected.outputValue);
       },
@@ -126,7 +126,7 @@ describe('union.entry-two-step', () => {
           type: ['string'],
         });
         expect(root.structure?.a?.raw).toBe('0');
-        expect(root.runtime.typeMismatchPaths.has('/a')).toBe(false);
+        expect(root.runtime.misfitPaths.has('/a')).toBe(false);
       },
     });
     expect(result.executedSteps).toBe(1);
@@ -177,7 +177,7 @@ describe('union.entry-two-step', () => {
       assert: (expected) => {
         expect(root.emit).toEqual(expected.outputValue);
         expect(root.structure?.a?.raw).toBe(0);
-        expect(root.runtime.typeMismatchPaths.has('/a')).toBe(true);
+        expect(root.runtime.misfitPaths.has('/a')).toBe(true);
         expect(root.runtime.diagnostics).toMatchObject({
           status: 'degraded',
           cause: 'budget',

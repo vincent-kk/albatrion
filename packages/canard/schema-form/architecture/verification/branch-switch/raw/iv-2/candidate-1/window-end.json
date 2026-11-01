@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-29T10:56:33.054Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "mds_stores",
+      "cpuPercent": 6.403439671677202
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 5.4429237209081505
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 5.122751737318467
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 3.84206380298885
+    },
+    {
+      "name": "node",
+      "cpuPercent": 2.241203885080469
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.9210319015089845
+    },
+    {
+      "name": "bluetoothd",
+      "cpuPercent": 0.9605159507544923
+    },
+    {
+      "name": "codex",
+      "cpuPercent": 0.9605159507490324
+    },
+    {
+      "name": "mdworker_shared",
+      "cpuPercent": 0.6403439671653904
+    },
+    {
+      "name": "configd",
+      "cpuPercent": 0.6403439671648083
+    }
+  ]
+}

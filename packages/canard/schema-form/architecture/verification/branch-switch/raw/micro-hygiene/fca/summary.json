@@ -1,0 +1,71 @@
+{
+  "scan": {
+    "status": "indeterminate",
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "c517ae013f9e50b5e4a0229c06566bc90865f3bd285cadc859b78a9b68f7862a",
+      "adapterIds": [
+        "ecmascript"
+      ],
+      "totalNodes": 375,
+      "depth": 9,
+      "nodesByType": {
+        "organ": 295,
+        "fractal": 80
+      },
+      "violationCount": 201,
+      "certainty": "indeterminate",
+      "filesOutsideFactsScope": 0
+    }
+  },
+  "validate": {
+    "status": "indeterminate",
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "c517ae013f9e50b5e4a0229c06566bc90865f3bd285cadc859b78a9b68f7862a",
+      "mode": "project",
+      "scopes": [
+        "documents",
+        "nodes",
+        "entry-points",
+        "boundaries",
+        "dag",
+        "verification"
+      ],
+      "findingCount": 202,
+      "passed": 2994,
+      "failed": 12,
+      "skipped": 1
+    }
+  },
+  "verification": {
+    "status": "indeterminate",
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "c517ae013f9e50b5e4a0229c06566bc90865f3bd285cadc859b78a9b68f7862a",
+      "fileCount": 735,
+      "specDocument": {
+        "fileCount": 14,
+        "knownCaseCount": 3,
+        "caseCap": 15
+      },
+      "testRecord": {
+        "fileCount": 721,
+        "knownCaseCount": 4427,
+        "caseCap": 32
+      },
+      "fragmentationCount": 0,
+      "violationCount": 21,
+      "certainty": "indeterminate"
+    }
+  },
+  "facts": {
+    "exact": 1663,
+    "covered": 1663,
+    "scope": "default adapter source scope",
+    "unresolved": 0
+  },
+  "findingThreshold": 202,
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate"
+}

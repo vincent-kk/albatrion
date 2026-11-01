@@ -1,0 +1,15 @@
+{
+  "unscopedExitCode": 2,
+  "onlyAuthorizedVerbatimQuoteTrailingSpaces": true,
+  "locations": [
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:155: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:162: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:163: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:167: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:171: trailing whitespace."
+  ],
+  "quoteBlocksVerifiedByteForByte": "history-and-quotes.json",
+  "sourceWhitespaceErrors": 0,
+  "reusedFrom": "round-5b/whitespace-controls.json",
+  "reuseBasis": "The selected public document inputs, two-target source and mutant control, four dynamic table locations, and authorized quote trailing spaces are unchanged from round5b. Final source hash controls verify these inputs."
+}

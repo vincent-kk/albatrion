@@ -1,0 +1,62 @@
+{
+  "gates": {
+    "quality": true,
+    "test073": true,
+    "siblings": true,
+    "stages": true,
+    "protectedTotals": true,
+    "nodeHeap": true,
+    "passed": true
+  },
+  "siblingStages": [
+    {
+      "name": "primeHost",
+      "A": 664.8745000002236,
+      "B": 1.8334999999751744
+    },
+    {
+      "name": "selectChildren",
+      "A": 711.5210000001753,
+      "B": 25.042000000212283
+    },
+    {
+      "name": "registerPresenceChanges",
+      "A": 271.02099999979146,
+      "B": 2.333500000077038
+    },
+    {
+      "name": "commitSettlement",
+      "A": 81.37549999946714,
+      "B": 5.1459999999678985
+    }
+  ],
+  "protectedTotals": [
+    {
+      "row": "switch-oneOf-80",
+      "Amax": 228.1669999999849,
+      "Bmedian": 211.8329999998423
+    },
+    {
+      "row": "switch-siblings-0",
+      "Amax": 105.68749999993088,
+      "Bmedian": 96.1459999998624
+    }
+  ],
+  "regressions": [],
+  "test093": {
+    "ratio": 5.400751802961784,
+    "upperBound": 3,
+    "passed": false
+  },
+  "validated": {
+    "rows": 22,
+    "pairProcesses": 440,
+    "ledgerProcesses": 24,
+    "supplementalProcesses": 24,
+    "warmups": 20,
+    "samples": 100
+  },
+  "method": "Within-window relative gates; stage values are raw self microseconds per write, including instrumentation overhead. Protected ledger totals use the maximum of A process medians.",
+  "deviceCompleted": false,
+  "adoptable": false
+}

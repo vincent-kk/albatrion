@@ -6,6 +6,7 @@ import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { bundleChainErrors } from '../utils/report/bundleChainErrors';
+import { collectChainRecords } from '../utils/report/collectChainRecords';
 import { deliverChainRecords } from '../utils/report/deliverChainRecords';
 
 // filid:contract dispatch-report
@@ -79,7 +80,7 @@ describe('chain failure bundles', () => {
         'warning',
         {
           level: 'warning',
-          code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+          code: 'SCHEMA_FORM_WARNING.MISFIT',
           message: 'warning',
         },
       ],
@@ -110,17 +111,18 @@ describe('chain failure bundles', () => {
         [
           {
             level: 'warning',
-            code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+            code: 'SCHEMA_FORM_WARNING.MISFIT',
             message: 'first',
           },
           {
             level: 'warning',
-            code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+            code: 'SCHEMA_FORM_WARNING.MISFIT',
             message: 'second',
           },
         ],
         original,
         false,
+        'write',
       );
       expect(failures).toEqual([]);
       expect(seen).toEqual(['first', 'second']);
@@ -130,14 +132,14 @@ describe('chain failure bundles', () => {
     }
   });
 
-  it('ERROR-017 ERROR-023 puts the actual aggregate on each component record', () => {
+  it('ERROR-017 ERROR-023 keeps the first error and omits bundles from component records', () => {
     const first = new SchemaFormError(FormErrorCode.GuardFailed, 'first', {
       path: '/a',
     });
     const second = new Error('second');
     const records: {
       error?: unknown;
-      aggregate?: SchemaFormError;
+      origin?: string;
       details?: unknown;
     }[] = [];
     const { root } = createDispatchTree(
@@ -161,6 +163,48 @@ describe('chain failure bundles', () => {
     expect(thrown).toBeInstanceOf(SchemaFormError);
     expect(records.map((record) => record.error)).toEqual([first, second]);
     expect(records[0].details).toBe(first.details);
-    expect(records.map((record) => record.aggregate)).toEqual([thrown, thrown]);
+    expect(records.map((record) => record.origin)).toEqual(['write', 'write']);
+    for (const record of records)
+      expect(record).not.toHaveProperty('aggregate');
+  });
+  it('A5 keeps the first matching error in each collection and refreshes it in a later collection', () => {
+    const first = new SchemaFormError(FormErrorCode.GuardFailed, 'first', {
+      schemaPath: '#/if',
+    });
+    const second = new SchemaFormError(FormErrorCode.GuardFailed, 'second', {
+      schemaPath: '#/if',
+    });
+    const third = new SchemaFormError(FormErrorCode.GuardFailed, 'third', {
+      schemaPath: '#/if',
+    });
+    const stored = {
+      level: 'error' as const,
+      code: FormErrorCode.GuardFailed,
+      message: 'guard',
+      schemaPath: '#/if',
+      error: undefined as unknown,
+      details: {},
+    };
+    const pending = [stored];
+    collectChainRecords(
+      pending,
+      [
+        { kind: 'error', error: first },
+        { kind: 'error', error: second },
+      ],
+      'load',
+      undefined,
+    );
+    expect(stored.error).toBe(first);
+    expect(stored.details).toBe(first.details);
+    expect(stored).not.toHaveProperty('aggregate');
+    collectChainRecords(
+      pending,
+      [{ kind: 'error', error: third }],
+      'load',
+      undefined,
+    );
+    expect(stored.error).toBe(third);
+    expect(stored.details).toBe(third.details);
   });
 });

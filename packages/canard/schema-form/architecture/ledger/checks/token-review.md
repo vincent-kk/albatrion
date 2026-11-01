@@ -6,7 +6,7 @@
 
 Verdict: pass with conditions (고침 6건을 적용하면 통과)
 
-기준: `ledger/README.md` §1·§3·§4. 입력: `/tmp/claude-501/ledger-full/token-missing-review.tsv`(279행). 행마다 원문 줄을 열어 확인했고, (A) 후보는 가리킨 항목을 열어 대조했다.
+기준: `ledger/README.md` §1·§3·§4. 입력: `{scratch}/ledger-full/token-missing-review.tsv`(279행). 행마다 원문 줄을 열어 확인했고, (A) 후보는 가리킨 항목을 열어 대조했다.
 
 ## 1. 분류별 수
 
@@ -469,3 +469,7 @@ node ledger/checks/tokens.mjs check <목록> ledger/*.md
 ## 04 머지 기록(2026-10-01) 뒤의 잔여
 
 잔여 484 그대로다. HANDOFF §1·§2·§5의 04 머지 문단이 새로 든 코드 토큰(`verification/performance-issues.md`, `verification/04-derive-and-controls/performance.md`)은 TEST-027의 보충(속도 문제 대장 인용)이 원장에 함께 들었다. 머지 커밋 해시는 코드 서식 없이 적고, 설계 문서의 줄 번호는 적지 않았다(자리는 29C-04 검증 보고). 새 항목은 없고 보충 줄 하나만 더했다.
+
+## 445라운드 기록 정리 뒤의 잔여 (2026-10-26)
+
+검사 결과 `{"total":2354,"missing":402}`. 소유자 지시(`reviews/round-445-owner-answers.md`)로 `HANDOFF.md` 를 지워 목록 입력에서 뺐고 `README.md` 를 다시 썼다. 잔여 402 = 441 − 39. 빠진 39(코드 35·번호 1·수치 3)는 모두 지운 `HANDOFF.md` 와 옛 `README.md` 의 자기 서술 토큰(C)이며, 새로 든 잔여 토큰은 없다(정리 전후 잔여 목록의 차집합으로 확인). 원장 쪽은 바뀌지 않았다.

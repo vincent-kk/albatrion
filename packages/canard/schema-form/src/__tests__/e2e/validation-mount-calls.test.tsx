@@ -1,8 +1,16 @@
+import { createRef } from 'react';
+
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Form, type JSONSchema, ValidationMode } from '@/schema-form';
+import {
+  Form,
+  type FormHandle,
+  type JSONSchema,
+  ValidationMode,
+} from '@/schema-form';
 
+import { settleValidation } from '../helpers/settleValidation';
 import {
   type FormHarness,
   renderForm,
@@ -21,6 +29,19 @@ afterEach(() => {
 });
 
 describe('mount onValidate calls', () => {
+  it('does not compile a development None-mode form without an if gate', async () => {
+    expect(process.env.NODE_ENV).not.toBe('production');
+    const compile = vi.fn(() => () => null);
+    const compileGuard = vi.fn(() => () => true);
+    form = await renderForm(schema, {
+      validatorFactory: { compile, compileGuard },
+      validationMode: ValidationMode.None,
+    });
+    await form.flush();
+    expect(compile).not.toHaveBeenCalled();
+    expect(compileGuard).not.toHaveBeenCalled();
+  });
+
   it('publishes only the first validation result in the default mode without errors', async () => {
     const onValidate = vi.fn();
     form = await renderForm(schema, {
@@ -67,8 +88,10 @@ describe('mount onValidate calls', () => {
     async ({ errors }) => {
       setupValidatorPlugin();
       const onValidate = vi.fn();
+      const ref = createRef<FormHandle>();
       const view = render(
         <Form
+          ref={ref}
           jsonSchema={schema}
           defaultValue="valid"
           errors={errors}
@@ -76,11 +99,12 @@ describe('mount onValidate calls', () => {
         />,
       );
       await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await settleValidation(() => ref.current?.node);
       });
       expect(onValidate).toHaveBeenCalledTimes(1);
       view.rerender(
         <Form
+          ref={ref}
           jsonSchema={schema}
           defaultValue="valid"
           errors={[]}
@@ -88,7 +112,7 @@ describe('mount onValidate calls', () => {
         />,
       );
       await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await settleValidation(() => ref.current?.node);
       });
       expect(onValidate).toHaveBeenCalledTimes(1);
     },

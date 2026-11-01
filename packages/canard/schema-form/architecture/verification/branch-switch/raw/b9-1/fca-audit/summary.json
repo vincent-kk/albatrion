@@ -1,0 +1,127 @@
+{
+  "target": "packages/canard/schema-form",
+  "snapshotHash": "c8da06cadb35d8d7ba237418b3be9acd7b0d0ece650fe50cbebd9c8e745db595",
+  "facts": {
+    "covered": 1639,
+    "exact": 1639,
+    "missing": 0,
+    "unresolved": 0
+  },
+  "result": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "findings": 202,
+  "severity": {
+    "warning": 200,
+    "info": 1,
+    "error": 1
+  },
+  "diagnosticCounts": {
+    "detail-document-contract": 176,
+    "intent-document-contract": 1
+  },
+  "confirmedErrors": [
+    {
+      "ruleId": "circular-dependency",
+      "severity": "error",
+      "message": "Dependency cycle: src/components/FieldProxy -> src/components/FieldProxy/components/FieldInputSlot -> src/components/FieldProxy",
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/components/FieldProxy",
+      "certainty": "exact",
+      "suggestion": "Break the cycle: move what both sides share into a unit they both import, or invert one edge behind an interface."
+    }
+  ],
+  "changedRuntimeCycleFiles": [],
+  "changedTestCounts": [
+    {
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/derive/__tests__/derive.static-prepared-ids.test.ts",
+      "adapterId": "ecmascript",
+      "role": "test-record",
+      "count": {
+        "certainty": "exact",
+        "exactCount": 1,
+        "knownLowerBound": 1,
+        "reasons": []
+      },
+      "ownerFractalPath": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/derive",
+      "contractGroupIds": [
+        "derive-static-prepared-ids"
+      ]
+    },
+    {
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.oneof-publication-work.test.ts",
+      "adapterId": "ecmascript",
+      "role": "test-record",
+      "count": {
+        "certainty": "exact",
+        "exactCount": 2,
+        "knownLowerBound": 2,
+        "reasons": []
+      },
+      "ownerFractalPath": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle",
+      "contractGroupIds": [
+        "settle-b9-oneof-publication-work"
+      ]
+    },
+    {
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.prepared-publication.test.ts",
+      "adapterId": "ecmascript",
+      "role": "test-record",
+      "count": {
+        "certainty": "exact",
+        "exactCount": 3,
+        "knownLowerBound": 3,
+        "reasons": []
+      },
+      "ownerFractalPath": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle",
+      "contractGroupIds": [
+        "settle-b9-prepared-publication"
+      ]
+    },
+    {
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.presence-delta.test.ts",
+      "adapterId": "ecmascript",
+      "role": "test-record",
+      "count": {
+        "certainty": "exact",
+        "exactCount": 7,
+        "knownLowerBound": 7,
+        "reasons": []
+      },
+      "ownerFractalPath": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle",
+      "contractGroupIds": [
+        "settle-b9-presence-delta"
+      ]
+    },
+    {
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.sibling-preparation.test.ts",
+      "adapterId": "ecmascript",
+      "role": "test-record",
+      "count": {
+        "certainty": "exact",
+        "exactCount": 3,
+        "knownLowerBound": 3,
+        "reasons": []
+      },
+      "ownerFractalPath": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle",
+      "contractGroupIds": [
+        "settle-b9-sibling-preparation"
+      ]
+    },
+    {
+      "path": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.static-commit.test.ts",
+      "adapterId": "ecmascript",
+      "role": "test-record",
+      "count": {
+        "certainty": "exact",
+        "exactCount": 6,
+        "knownLowerBound": 6,
+        "reasons": []
+      },
+      "ownerFractalPath": "<home>/Workspace/albatrion/branch-switch-b9-1/packages/canard/schema-form/src/core/engine/settle",
+      "contractGroupIds": [
+        "settle-b9-static-commit"
+      ]
+    }
+  ],
+  "scope": "Read-only seam audit; no out-of-scope config or structural cleanup applied. One pre-existing FieldProxy cycle remains; three audit snapshots match.",
+  "terminalMarker": "Scan complete: 202 findings"
+}

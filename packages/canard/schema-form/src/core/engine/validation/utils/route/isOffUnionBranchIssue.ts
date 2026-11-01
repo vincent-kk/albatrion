@@ -1,7 +1,22 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
+
+import {
+  JSONPointer as $,
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, SchemaFragment } from '../../../blueprint';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
+
+/** A schema path ending in a `oneOf` or `anyOf` branch index. */
+const UNION_BRANCH_FRAGMENT_PATH = /^.*\/(?:oneOf|anyOf)\/\d+$/;
+
+/** A property key made only of digits, as a branch index. */
+const NUMERIC_KEY = /^\d+$/;
 
 /**
  * Determine whether an issue belongs exclusively to an inactive union fragment.
@@ -16,21 +31,24 @@ export const isOffUnionBranchIssue = (
   activeIds?: ReadonlySet<number>,
 ): boolean => {
   if (!issue.schemaPath || !activeIds) return false;
-  const matches = blueprint.fragments.filter(
+  const matches = filterArray(
+    blueprint.fragments,
     (fragment) =>
       issue.schemaPath === fragment.schemaPath ||
-      issue.schemaPath?.startsWith(`${fragment.schemaPath}/`),
+      (issue.schemaPath !== undefined &&
+        isDescendantPath(issue.schemaPath, fragment.schemaPath)),
   );
   if (!matches.length) return false;
   const longest = Math.max(
-    ...matches.map((fragment) => fragment.schemaPath.length),
+    ...mapArray(matches, (fragment) => fragment.schemaPath.length),
   );
-  const owners = matches.filter(
+  const owners = filterArray(
+    matches,
     (fragment) => fragment.schemaPath.length === longest,
   );
   const branches: SchemaFragment[] = [];
   for (const fragment of blueprint.fragments) {
-    if (!/^.*\/(?:oneOf|anyOf)\/\d+$/.test(fragment.schemaPath)) continue;
+    if (!UNION_BRANCH_FRAGMENT_PATH.test(fragment.schemaPath)) continue;
     const pending = [fragment.id];
     const visited = new Set<number>();
     while (pending.length) {
@@ -39,30 +57,69 @@ export const isOffUnionBranchIssue = (
       visited.add(id);
       pending.push(...blueprint.fragments[id].children);
     }
-    if (owners.some((owner) => visited.has(owner.id))) branches.push(fragment);
+    let containsIssueOwner = false;
+    for (let index = 0, count = owners.length; index < count; index++) {
+      const owner = owners[index];
+
+      if (visited.has(owner.id)) {
+        containsIssueOwner = true;
+        break;
+      }
+    }
+    if (containsIssueOwner) {
+      branches.push(fragment);
+    }
   }
   if (!branches.length) return false;
   const nearest = Math.max(
-    ...branches.map((fragment) => fragment.schemaPath.length),
+    ...mapArray(branches, (fragment) => fragment.schemaPath.length),
   );
-  const candidates = branches.filter(
+  const candidates = filterArray(
+    branches,
     (fragment) => fragment.schemaPath.length === nearest,
   );
   if (candidates.length !== 1) return false;
   const owner = candidates[0];
   if (!owner.gates.length) return false;
-  const unionPath = owner.schemaPath.slice(
-    0,
-    owner.schemaPath.lastIndexOf($.Separator),
-  );
-  const siblings = blueprint.fragments.filter(
+  const unionPath = resolvePointer(owner.schemaPath, $.Parent);
+  const siblings = filterArray(
+    blueprint.fragments,
     (fragment) =>
       fragment.id !== owner.id &&
-      /^\d+$/.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
-      fragment.schemaPath.startsWith(`${unionPath}/`),
+      NUMERIC_KEY.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
+      isDescendantPath(fragment.schemaPath, unionPath),
   );
-  const isActive = (fragment: SchemaFragment): boolean =>
-    fragment.declares.some((id) => activeIds.has(id)) ||
-    fragment.overlays.some((id) => activeIds.has(id));
-  return !isActive(owner) && siblings.some(isActive);
+
+  const isActive = (fragment: SchemaFragment): boolean => {
+    let hasActiveDeclaration = false;
+    for (const id of fragment.declares) {
+      if (activeIds.has(id)) {
+        hasActiveDeclaration = true;
+        break;
+      }
+    }
+    let isActiveFragment = hasActiveDeclaration;
+    if (!isActiveFragment) {
+      for (const id of fragment.overlays) {
+        if (activeIds.has(id)) {
+          isActiveFragment = true;
+          break;
+        }
+      }
+    }
+    return isActiveFragment;
+  };
+  let matches2 = !isActive(owner);
+  if (matches2) {
+    matches2 = false;
+    for (let index = 0, count = siblings.length; index < count; index++) {
+      const item = siblings[index];
+
+      if (isActive(item)) {
+        matches2 = true;
+        break;
+      }
+    }
+  }
+  return matches2;
 };

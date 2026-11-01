@@ -1,0 +1,48 @@
+{
+  "provenance": "Direct designated unit test output observed before Round 3 product edits; recorded from the session tool result, not a later replay.",
+  "productBaseline": "20c1c9af8",
+  "project": "unit",
+  "file": "src/core/engine/validationScheduling/__tests__/validationCadence.test.ts",
+  "tests": 15,
+  "passed": 11,
+  "failed": 4,
+  "failures": [
+    {
+      "behavior": "100 ms uninterrupted cap",
+      "actualStarts": [
+        16,
+        528,
+        1040
+      ],
+      "expectedStarts": [
+        16,
+        128,
+        240,
+        352,
+        464,
+        576,
+        688,
+        800,
+        912,
+        1024,
+        1136,
+        1248
+      ]
+    },
+    {
+      "behavior": "cap covers final request without redundant quiet run",
+      "actualCalls": 1,
+      "expectedCalls": 2
+    },
+    {
+      "behavior": "first delayed watch frame checks cap",
+      "actualCalls": 1,
+      "expectedCalls": 2
+    },
+    {
+      "behavior": "skipped callback retains actual-start cap clock",
+      "actualCalls": 2,
+      "expectedCalls": 3
+    }
+  ]
+}

@@ -1,9 +1,12 @@
 import { flushSync } from 'react-dom';
 
+import { scheduleMacrotask } from '@winglet/common-utils/scheduler';
+
 import type { ScenarioAdapter } from '@aileron/schema-form-scenarios';
 import { expect, userEvent } from 'storybook/test';
 
 import { FieldNodeEventType } from '../../../src';
+import { readFieldNodeRuntime } from '../../helpers/readFieldNodeRuntime';
 
 import { assertStoryObservation } from './assertStoryObservation';
 import { executeStoryStep } from './executeStoryStep';
@@ -47,7 +50,13 @@ export function createStoryScenarioAdapter(context: StoryScenarioContext): Scena
         expect(error).toMatchObject({ code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED' });
       } finally { stops.forEach((stop) => stop()); }
     },
-    async settle() { await new Promise<void>((resolve) => requestAnimationFrame(() => resolve())); },
+    async settle() {
+      for (let round = 0; round < 64; round++) {
+        await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => scheduleMacrotask(resolve))));
+        if (!handle.node || !readFieldNodeRuntime(handle.node).validationPending) return;
+      }
+      throw new Error('Story validation did not settle within 64 frame rounds');
+    },
     assert: (observation) => assertStoryObservation(context, observation, evidence),
   };
 }

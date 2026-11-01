@@ -1,25 +1,29 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
+import { isDependencyOwner } from '../dependencies/isDependencyOwner';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
 /** Compiled exit expressions indexed once per immutable analysis. */
-const EXIT_EXPRESSIONS = new WeakMap<
-  Blueprint,
-  ReadonlyMap<string, BlueprintExpression>
->();
 
 /**
  * Index authored exit expressions by their declaration and schema address.
@@ -29,17 +33,23 @@ const EXIT_EXPRESSIONS = new WeakMap<
 const getExitExpressions = (
   blueprint: Blueprint,
 ): ReadonlyMap<string, BlueprintExpression> => {
-  let indexed = EXIT_EXPRESSIONS.get(blueprint);
+  let indexed = getBlueprintDerived<
+    'exitPolicyExpressions',
+    ReadonlyMap<string, BlueprintExpression>
+  >(blueprint).exitPolicyExpressions;
   if (indexed) return indexed;
-  indexed = new Map(
-    blueprint.expressions
-      .filter((expression) => expression.key === 'unsetOnInactive')
-      .map((expression) => [
+  const entries = new Map<string, BlueprintExpression>();
+  for (const expression of blueprint.expressions)
+    if (expression.key === 'unsetOnInactive')
+      entries.set(
         JSON.stringify([expression.declarationId, expression.schemaPath]),
         expression,
-      ]),
-  );
-  EXIT_EXPRESSIONS.set(blueprint, indexed);
+      );
+  indexed = entries;
+  getBlueprintDerived<
+    'exitPolicyExpressions',
+    ReadonlyMap<string, BlueprintExpression>
+  >(blueprint).exitPolicyExpressions = indexed;
   return indexed;
 };
 
@@ -55,50 +65,75 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   if (expressions.size === 0) return;
   const runtime = context.root.runtime;
   for (const exited of context.exited)
-    walkOwnedFieldNodes(exited, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'),
+    visitFieldNodes(
+      exited,
+      (node) => {
+        pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy');
+      },
+      { owned: true },
     );
   if (context.kind === 'load' && context.loadScope)
-    walkOwnedFieldNodes(context.loadScope, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'),
+    visitFieldNodes(
+      context.loadScope,
+      (node) => {
+        pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy');
+      },
+      { owned: true },
     );
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {
     if (source.detached || !source.structure) continue;
     if (
       context.kind !== 'load' &&
-      !context.dependencyOwnerPaths.has(source.path) &&
+      !isDependencyOwner(context, source.path) &&
       !context.shapeDirtyPaths.has(source.path)
     )
       continue;
-    const sourceKey = JSON.stringify([source.path, source.blueprintNode.kind]);
+    const sourceKey = JSON.stringify([
+      source.path,
+      getBlueprintNodeIdentity(source.blueprintNode),
+    ]);
     const selected =
       context.selectedDeclarationIds.get(source) ??
       source.runtime.committedDeclarationIds?.get(sourceKey);
     for (const declaration of source.blueprintNode.declarations) {
-      if (selected && !selected.includes(declaration.id)) continue;
+      if (selected && selected.indexOf(declaration.id) === -1) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
       const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
+
       if (
         declaration.scope === 'fragment' &&
         typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
-      )
+      ) {
         for (const child of source.children ?? []) {
-          if (
-            !getControlLayers(child, context.selectedDeclarationIds).some(
-              (group) =>
-                group.layer === 'fragment' &&
-                group.host === source &&
-                group.declarationId === declaration.id,
-            )
-          )
+          const childSelected =
+            context.selectedDeclarationIds.get(child) ??
+            child.runtime.committedDeclarationIds?.get(
+              getCommittedDeclarationKey(child, child.runtime),
+            );
+          let belongsToExitingFragment = false;
+          for (const childDeclaration of child.blueprintNode.declarations) {
+            if (
+              (!childSelected ||
+                childSelected.indexOf(childDeclaration.id) !== -1) &&
+              getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
+                declaration.schemaPath,
+              ) !== -1
+            ) {
+              belongsToExitingFragment = true;
+              break;
+            }
+          }
+          if (!belongsToExitingFragment) {
             continue;
+          }
           candidates.add(child);
           break;
         }
+      }
       const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (!isArray(fields)) continue;
       for (const item of fields) {
@@ -138,7 +173,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'string'
       )
         continue;
-      const schemaPath = `${group.schemaPath}/unsetOnInactive`;
+      const schemaPath = appendSegment(group.schemaPath, 'unsetOnInactive');
       const key = getExitPolicyKey(group);
       if (evaluated.has(key)) continue;
       evaluated.add(key);
@@ -153,8 +188,14 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'set',
           Boolean(
             expression.evaluate(
-              expression.dependencies.map((dependency) =>
-                readStateDependency(context.root, group.host.path, dependency),
+              mapArray(expression.dependencies, (dependency) =>
+                readStateDependency(
+                  context.root,
+                  group.host.path,
+                  dependency,
+                  undefined,
+                  group.host,
+                ),
               ),
             ),
           ),

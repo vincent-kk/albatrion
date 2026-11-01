@@ -1,0 +1,19 @@
+[
+  "type-flat-500",
+  "type-nested-d5-f4",
+  "type-flat-500-novalidate",
+  "type-onchange-state-plain",
+  "type-onchange-state-transition",
+  "replace-200-while-typing",
+  "switch-oneOf-20",
+  "validation-flat-500-nonburst",
+  "validation-flat-500-burst",
+  "validation-nested-d5-f4-nonburst",
+  "validation-nested-d5-f4-burst",
+  "mount-flat-500-off",
+  "mount-flat-500-on",
+  "mount-nested-d5-f4-off",
+  "mount-nested-d5-f4-on",
+  "mount-array-1000-off",
+  "mount-array-1000-on"
+]

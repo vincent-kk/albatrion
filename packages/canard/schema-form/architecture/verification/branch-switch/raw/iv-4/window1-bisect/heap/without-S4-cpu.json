@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-30T04:43:58.815Z",
+  "kind": "ps-reported-cpu",
+  "gating": false,
+  "rows": [
+    {
+      "pid": 1056,
+      "cpuPercent": 6.8,
+      "name": "Stats"
+    },
+    {
+      "pid": 436,
+      "cpuPercent": 6.7,
+      "name": "WindowServer"
+    },
+    {
+      "pid": 9295,
+      "cpuPercent": 3.1,
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]"
+    },
+    {
+      "pid": 493,
+      "cpuPercent": 2.4,
+      "name": "airportd"
+    },
+    {
+      "pid": 9215,
+      "cpuPercent": 2.1,
+      "name": "Cursor Helper (Renderer)"
+    },
+    {
+      "pid": 430,
+      "cpuPercent": 1.9,
+      "name": "notifyd"
+    },
+    {
+      "pid": 553,
+      "cpuPercent": 1.9,
+      "name": "com.apple.DriverKit-AppleBCMWLAN"
+    },
+    {
+      "pid": 364,
+      "cpuPercent": 1.2,
+      "name": "logd"
+    },
+    {
+      "pid": 9324,
+      "cpuPercent": 1.1,
+      "name": "Cursor Helper: fileWatcher [1:b8f6554948604aa83bbf23b79e3bbb20]"
+    },
+    {
+      "pid": 369,
+      "cpuPercent": 0.9,
+      "name": "fseventsd"
+    }
+  ]
+}

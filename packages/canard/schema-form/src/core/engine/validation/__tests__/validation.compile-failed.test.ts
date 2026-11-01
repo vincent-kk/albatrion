@@ -10,7 +10,7 @@ import {
 } from '@/schema-form/core/engine/write';
 import { FormErrorCode } from '@/schema-form/errors';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 
 // filid:contract validation-lifetime
@@ -31,7 +31,7 @@ describe('validator failures', () => {
       );
       runtime.validationMode = ValidationMode.OnChange;
       dispatchMount(root, { child: 'a' });
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(sink).toHaveBeenCalledTimes(1);
       expect(report.mock.calls[0][0].code).toBe(
@@ -40,7 +40,7 @@ describe('validator failures', () => {
       expect(readFieldNodeErrors(root)).toEqual([]);
       expect(readFieldNodeErrors(root.structure?.child ?? root)).toEqual([]);
       dispatchResetSubtree(root.structure?.child ?? root);
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(compile).toHaveBeenCalledTimes(1);
     } finally {
@@ -78,7 +78,7 @@ describe('validator failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorThrew,
-      surface: 'rejected',
+      origin: 'validate',
     });
     expect(readFieldNodeErrors(root)).toEqual([]);
   });
@@ -122,7 +122,7 @@ describe('validator failures', () => {
     });
     expect(report.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
-      surface: 'rejected',
+      origin: 'validate',
     });
     await expect(dispatchValidate(root)).rejects.toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
@@ -149,7 +149,7 @@ describe('validator failures', () => {
       dispatchMount(root, 'before');
       runtime.validationMode = ValidationMode.OnChange;
       dispatchResetSubtree(root);
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(sink).toHaveBeenCalledTimes(1);
     } finally {
@@ -187,7 +187,7 @@ describe('validator failures', () => {
       dispatchMount(root, 'before');
       runtime.validationMode = ValidationMode.OnChange;
       dispatchResetSubtree(root);
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(refused[0]).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
       });

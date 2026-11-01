@@ -1,0 +1,5 @@
+{
+  "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-6 --audit-base=facd72a71",
+  "exitCode": 0,
+  "output": "BROWSER_CHANGES_AUDIT_OK base=facd72a71 newMachinePaths=0\nIR6_RAW_REPRODUCED suite=main samples=540 gates=G1:PASS,G2:FAIL,G3:PASS,G4:PASS,G5:PASS,G6:PASS,G8:FAIL\n"
+}

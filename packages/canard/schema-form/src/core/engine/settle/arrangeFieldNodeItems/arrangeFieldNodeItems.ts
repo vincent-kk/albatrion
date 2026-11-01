@@ -1,0 +1,159 @@
+import { isArray } from '@winglet/common-utils/filter';
+
+import type {
+  ArrayArrangePlan,
+  ArrayOperation,
+  FieldNodeRecord,
+} from '../../record';
+import { WriteOption } from '../../types/value';
+import { computeNode } from '../utils/compute/computeNode';
+import { registerRecalculation } from '../utils/dependencies/registerRecalculation';
+import { getGateRegistry } from '../utils/gates/getGateRegistry';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
+import { createSettlementContext } from '../utils/settlement/createSettlementContext';
+import { finishSettlement } from '../utils/settlement/finishSettlement';
+import { readSourceTree } from '../utils/slots/readSourceTree';
+import { readArrayLength } from '../utils/structure/readArrayLength';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { applyArraySlots } from './utils/arraySlots/applyArraySlots';
+import { applyArraySplice } from './utils/arraySlots/applyArraySplice';
+import { applyArrayTail } from './utils/arraySlots/applyArrayTail';
+import { prepareArrayAppend } from './utils/arraySlots/prepareArrayAppend';
+import { prepareArrayPop } from './utils/arraySlots/prepareArrayPop';
+import { prepareArraySplice } from './utils/arraySlots/prepareArraySplice';
+
+/** Synchronous result of a plan whose slot source has already been captured. */
+const resultOf = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  plan: Exclude<ArrayArrangePlan, { kind: 'noop' }>,
+  removed: unknown,
+): unknown => {
+  if (plan.kind === 'update') return undefined;
+  if (plan.result.source === 'removed') return removed;
+  if (plan.result.source === 'length')
+    return plan.kind === 'slots'
+      ? node.itemCount
+      : isArray(node.raw)
+        ? node.raw.length
+        : 0;
+  if (plan.result.source === 'updated')
+    return isArray(node.local) ? node.local[plan.result.index] : undefined;
+  return undefined;
+};
+
+/**
+ * Apply an array behavior's pure proposal and commit one synchronous write.
+ * An admitted static push, or an insert at the current length, skips the row's slot plan and the prefix proofs; see prepareArrayAppend.
+ * An admitted static pop, or a remove of the last position, does the same for the truncation; see prepareArrayPop.
+ * An admitted static middle remove or insert rebuilds only the tail from the edited position; see prepareArraySplice.
+ * @param node - Array host, or any node whose behavior rejects this verb
+ * @param operation - The requested public structural operation
+ * @returns Length, removed or updated value, or void as declared by the plan
+ */
+export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  operation: ArrayOperation,
+): unknown => {
+  if (node.detached)
+    return operation.kind === 'push' || operation.kind === 'insert'
+      ? readArrayLength(node)
+      : undefined;
+  const append = prepareArrayAppend(node, operation);
+  const pop = append ? undefined : prepareArrayPop(node, operation);
+  const splice =
+    append || pop ? undefined : prepareArraySplice(node, operation);
+  const plan = append
+    ? append.plan
+    : pop
+      ? pop.plan
+      : splice
+        ? splice.plan
+        : node.behavior.arrange(node, operation);
+  if (plan.kind === 'noop')
+    return operation.kind === 'push' || operation.kind === 'insert'
+      ? readArrayLength(node)
+      : undefined;
+  if (plan.kind === 'raw') {
+    const previous =
+      isArray(node.raw) && plan.result.source === 'removed'
+        ? node.raw[plan.result.index]
+        : undefined;
+    writeFieldNode(node, plan.raw, 'callerReplace', WriteOption.Overwrite);
+    return resultOf(node, plan, previous);
+  }
+  if (plan.kind === 'update' && !node.structure?.[String(plan.index)]) {
+    const scratch = getSettlementScratch(node.rootNode.runtime);
+    const context = createSettlementContext(
+      node,
+      'callerReplace',
+      WriteOption.Overwrite,
+      scratch,
+    );
+    let oldRaw: unknown;
+    try {
+      oldRaw = readSourceTree(node, context);
+    } finally {
+      releaseSettlementScratch(scratch);
+    }
+    const copy = isArray(oldRaw) ? oldRaw.slice() : [];
+    copy[plan.index] = plan.value;
+    writeFieldNode(node, copy, 'callerReplace', WriteOption.Overwrite);
+    const item = node.structure?.[String(plan.index)];
+    if (item) return item.local;
+    const readScratch = getSettlementScratch(node.rootNode.runtime);
+    try {
+      const readContext = createSettlementContext(
+        node,
+        'callerReplace',
+        WriteOption.Overwrite,
+        readScratch,
+      );
+      const current = readSourceTree(node, readContext);
+      return isArray(current) ? current[plan.index] : undefined;
+    } finally {
+      releaseSettlementScratch(readScratch);
+    }
+  }
+  if (plan.kind === 'update') {
+    const item = node.structure?.[String(plan.index)];
+    if (!item) return undefined;
+    writeFieldNode(item, plan.value, 'callerReplace', WriteOption.Overwrite);
+    return item.local;
+  }
+
+  const scratch = getSettlementScratch(node.rootNode.runtime);
+  const context = createSettlementContext(
+    node,
+    'callerReplace',
+    WriteOption.Overwrite,
+    scratch,
+  );
+  try {
+    if (context.hasGates)
+      getGateRegistry(context.root.runtime).register(context.root);
+    let removed: unknown;
+    if (append) {
+      context.arrayAppend = append;
+      removed = applyArrayTail(node, append.plan, context, append.count);
+      append.children = node.children;
+      append.snapshot = node.runtime.loadSnapshot;
+    } else if (pop) {
+      context.arrayPop = pop;
+      removed = applyArrayTail(node, pop.plan, context, pop.count - 1);
+      pop.children = node.children;
+      pop.snapshot = node.runtime.loadSnapshot;
+    } else if (splice) {
+      context.arraySplice = splice;
+      removed = applyArraySplice(node, splice, context);
+      splice.children = node.children;
+      splice.pathChanges = context.pathChanges.length;
+    } else removed = applyArraySlots(node, plan, context);
+    registerRecalculation(context);
+    computeNode(context.root, context);
+    finishSettlement(context, scratch);
+    return resultOf(node, plan, removed);
+  } finally {
+    releaseSettlementScratch(scratch);
+  }
+};

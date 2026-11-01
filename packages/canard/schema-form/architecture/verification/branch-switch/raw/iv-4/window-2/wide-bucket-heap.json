@@ -1,0 +1,486 @@
+{
+  "rows": [
+    {
+      "runtime": "node",
+      "historyBuckets": 2,
+      "lanes": {
+        "A": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "node",
+          "version": "v26.12.1",
+          "lane": "A",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 2,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 8938304,
+              "afterBytes": 19538680,
+              "retainedBytes": 10600376
+            },
+            {
+              "beforeBytes": 16868536,
+              "afterBytes": 19727264,
+              "retainedBytes": 2858728
+            },
+            {
+              "beforeBytes": 17183248,
+              "afterBytes": 19867328,
+              "retainedBytes": 2684080
+            },
+            {
+              "beforeBytes": 17374552,
+              "afterBytes": 19835184,
+              "retainedBytes": 2460632
+            },
+            {
+              "beforeBytes": 17372264,
+              "afterBytes": 20001672,
+              "retainedBytes": 2629408
+            },
+            {
+              "beforeBytes": 17532752,
+              "afterBytes": 20031440,
+              "retainedBytes": 2498688
+            },
+            {
+              "beforeBytes": 17575224,
+              "afterBytes": 20080440,
+              "retainedBytes": 2505216
+            }
+          ],
+          "medianBytes": 2629408,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 10600376
+        },
+        "B": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "node",
+          "version": "v26.12.1",
+          "lane": "B",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 2,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 8938568,
+              "afterBytes": 19469184,
+              "retainedBytes": 10530616
+            },
+            {
+              "beforeBytes": 16857904,
+              "afterBytes": 19620472,
+              "retainedBytes": 2762568
+            },
+            {
+              "beforeBytes": 17172264,
+              "afterBytes": 19828808,
+              "retainedBytes": 2656544
+            },
+            {
+              "beforeBytes": 17364664,
+              "afterBytes": 19763920,
+              "retainedBytes": 2399256
+            },
+            {
+              "beforeBytes": 17360584,
+              "afterBytes": 19935856,
+              "retainedBytes": 2575272
+            },
+            {
+              "beforeBytes": 17521240,
+              "afterBytes": 19964904,
+              "retainedBytes": 2443664
+            },
+            {
+              "beforeBytes": 17563640,
+              "afterBytes": 20013768,
+              "retainedBytes": 2450128
+            }
+          ],
+          "medianBytes": 2575272,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 10530616
+        }
+      },
+      "passed": true
+    },
+    {
+      "runtime": "node",
+      "historyBuckets": 80,
+      "lanes": {
+        "A": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "node",
+          "version": "v26.12.1",
+          "lane": "A",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 80,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 8938456,
+              "afterBytes": 20716216,
+              "retainedBytes": 11777760
+            },
+            {
+              "beforeBytes": 17410232,
+              "afterBytes": 20657232,
+              "retainedBytes": 3247000
+            },
+            {
+              "beforeBytes": 17675944,
+              "afterBytes": 20843408,
+              "retainedBytes": 3167464
+            },
+            {
+              "beforeBytes": 17858552,
+              "afterBytes": 20892064,
+              "retainedBytes": 3033512
+            },
+            {
+              "beforeBytes": 17886680,
+              "afterBytes": 21029912,
+              "retainedBytes": 3143232
+            },
+            {
+              "beforeBytes": 18046192,
+              "afterBytes": 21015376,
+              "retainedBytes": 2969184
+            },
+            {
+              "beforeBytes": 18075528,
+              "afterBytes": 21100176,
+              "retainedBytes": 3024648
+            }
+          ],
+          "medianBytes": 3143232,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 11777760
+        },
+        "B": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "node",
+          "version": "v26.12.1",
+          "lane": "B",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 80,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 8938624,
+              "afterBytes": 20469952,
+              "retainedBytes": 11531328
+            },
+            {
+              "beforeBytes": 17376272,
+              "afterBytes": 20451856,
+              "retainedBytes": 3075584
+            },
+            {
+              "beforeBytes": 17682632,
+              "afterBytes": 20626688,
+              "retainedBytes": 2944056
+            },
+            {
+              "beforeBytes": 17853608,
+              "afterBytes": 20675280,
+              "retainedBytes": 2821672
+            },
+            {
+              "beforeBytes": 17880712,
+              "afterBytes": 20809416,
+              "retainedBytes": 2928704
+            },
+            {
+              "beforeBytes": 18039408,
+              "afterBytes": 20796232,
+              "retainedBytes": 2756824
+            },
+            {
+              "beforeBytes": 18068816,
+              "afterBytes": 20882504,
+              "retainedBytes": 2813688
+            }
+          ],
+          "medianBytes": 2928704,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 11531328
+        }
+      },
+      "passed": true
+    },
+    {
+      "runtime": "bun",
+      "historyBuckets": 2,
+      "lanes": {
+        "A": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "bun",
+          "version": "1.4.4",
+          "lane": "A",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 2,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 1467338,
+              "afterBytes": 15336980,
+              "retainedBytes": 13869642
+            },
+            {
+              "beforeBytes": 15319904,
+              "afterBytes": 16174637,
+              "retainedBytes": 854733
+            },
+            {
+              "beforeBytes": 7849051,
+              "afterBytes": 16375612,
+              "retainedBytes": 8526561
+            },
+            {
+              "beforeBytes": 8082470,
+              "afterBytes": 16417515,
+              "retainedBytes": 8335045
+            },
+            {
+              "beforeBytes": 8127768,
+              "afterBytes": 16660698,
+              "retainedBytes": 8532930
+            },
+            {
+              "beforeBytes": 16627288,
+              "afterBytes": 16869814,
+              "retainedBytes": 242526
+            },
+            {
+              "beforeBytes": 8515892,
+              "afterBytes": 16835529,
+              "retainedBytes": 8319637
+            }
+          ],
+          "medianBytes": 8335045,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 13869642
+        },
+        "B": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "bun",
+          "version": "1.4.4",
+          "lane": "B",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 2,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 1467338,
+              "afterBytes": 15117589,
+              "retainedBytes": 13650251
+            },
+            {
+              "beforeBytes": 15108451,
+              "afterBytes": 15974208,
+              "retainedBytes": 865757
+            },
+            {
+              "beforeBytes": 7839368,
+              "afterBytes": 16196518,
+              "retainedBytes": 8357150
+            },
+            {
+              "beforeBytes": 8061234,
+              "afterBytes": 16241481,
+              "retainedBytes": 8180247
+            },
+            {
+              "beforeBytes": 8108172,
+              "afterBytes": 16431440,
+              "retainedBytes": 8323268
+            },
+            {
+              "beforeBytes": 8300109,
+              "afterBytes": 16582773,
+              "retainedBytes": 8282664
+            },
+            {
+              "beforeBytes": 8450961,
+              "afterBytes": 16618550,
+              "retainedBytes": 8167589
+            }
+          ],
+          "medianBytes": 8282664,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 13650251
+        }
+      },
+      "passed": true
+    },
+    {
+      "runtime": "bun",
+      "historyBuckets": 80,
+      "lanes": {
+        "A": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "bun",
+          "version": "1.4.4",
+          "lane": "A",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 80,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 1467386,
+              "afterBytes": 16924164,
+              "retainedBytes": 15456778
+            },
+            {
+              "beforeBytes": 16925038,
+              "afterBytes": 17732413,
+              "retainedBytes": 807375
+            },
+            {
+              "beforeBytes": 7938892,
+              "afterBytes": 17870729,
+              "retainedBytes": 9931837
+            },
+            {
+              "beforeBytes": 17854503,
+              "afterBytes": 17939009,
+              "retainedBytes": 84506
+            },
+            {
+              "beforeBytes": 8149621,
+              "afterBytes": 18264659,
+              "retainedBytes": 10115038
+            },
+            {
+              "beforeBytes": 8541919,
+              "afterBytes": 18314405,
+              "retainedBytes": 9772486
+            },
+            {
+              "beforeBytes": 8590671,
+              "afterBytes": 18301278,
+              "retainedBytes": 9710607
+            }
+          ],
+          "medianBytes": 9772486,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 15456778
+        },
+        "B": {
+          "timed": false,
+          "measurement": "resident-heap",
+          "coordinator": "msg_62de4b2d1f33",
+          "smoke": false,
+          "runtime": "bun",
+          "version": "1.4.4",
+          "lane": "B",
+          "staticFields": 1000,
+          "literalBranches": 80,
+          "historyBuckets": 80,
+          "writesPerForm": 80,
+          "sampleCount": 7,
+          "formsCreated": 7,
+          "samples": [
+            {
+              "beforeBytes": 1467386,
+              "afterBytes": 16622876,
+              "retainedBytes": 15155490
+            },
+            {
+              "beforeBytes": 16623662,
+              "afterBytes": 17398948,
+              "retainedBytes": 775286
+            },
+            {
+              "beforeBytes": 17388391,
+              "afterBytes": 17610594,
+              "retainedBytes": 222203
+            },
+            {
+              "beforeBytes": 8072869,
+              "afterBytes": 17584972,
+              "retainedBytes": 9512103
+            },
+            {
+              "beforeBytes": 8122128,
+              "afterBytes": 17930195,
+              "retainedBytes": 9808067
+            },
+            {
+              "beforeBytes": 8463681,
+              "afterBytes": 17973409,
+              "retainedBytes": 9509728
+            },
+            {
+              "beforeBytes": 8505965,
+              "afterBytes": 17959854,
+              "retainedBytes": 9453889
+            }
+          ],
+          "medianBytes": 9509728,
+          "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+          "maxBytes": 15155490
+        }
+      },
+      "passed": true
+    }
+  ],
+  "differences": [
+    {
+      "runtime": "node",
+      "A80Minus2Bytes": 513824,
+      "B80Minus2Bytes": 353432
+    },
+    {
+      "runtime": "bun",
+      "A80Minus2Bytes": 1437441,
+      "B80Minus2Bytes": 1227064
+    }
+  ],
+  "passed": true,
+  "exchangeContribution": 0
+}

@@ -4,12 +4,12 @@
 
 ## 실행 환경과 입력
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`
-- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`
-- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`
+- 작업 트리: `{repo}`
+- D: `packages/canard/schema-form/architecture/verification/07-switch`
+- S: `{scratch}`
 - Node: `v26.11.1`
 - V8: `14.6.202.34-node.37`
-- Node 실제 경로: `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`
+- Node 실제 경로: `{node-home}/versions/node/v26.11.1/bin/node`
 - 엔진: Codex
 - 번들 매니페스트 기준 리비전: `e805074de8a9cb0c072a81284a166ab985a113be`
 
@@ -34,18 +34,18 @@
 
 ```sh
 "$HOME/.nvm/versions/node/v26.11.1/bin/node" \
-  /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
+  packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
   --kind=verdict --lane=react \
-  --rows=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/rows-fb-5.json \
+  --rows={scratch}/rows-fb-5.json \
   --watch-in-selection \
-  --base=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r133-base \
-  --candidate=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-no-fe \
+  --base={scratch}/bundles/r133-base \
+  --candidate={scratch}/bundles/r136-no-fe \
   --blocks=24 \
-  --touch-counts=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-135-counts/react-counts.json \
-  --aa=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-132d/final.json \
+  --touch-counts={scratch}/session-135-counts/react-counts.json \
+  --aa={scratch}/session-132d/final.json \
   --node-version=v26.11.1 \
-  --out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136h \
-  > /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136h.log 2>&1 &
+  --out={scratch}/session-136h \
+  > {scratch}/session-136h.log 2>&1 &
 ```
 
 별도의 짧은 명령으로 폴링하였으며 최초 sleep은 2초, 이후 각 sleep은 50초입니다. 각 폴링 명령은 최종 JSON 존재 여부와 로그의 마지막 행을 포함한 진행 행을 한 줄 출력하였고 이후에는 생성된 JSON 파일 수도 함께 출력하였습니다. `final.json` 존재와 로그의 `SESSION_131_OK`를 함께 확인한 뒤 폴링을 종료하였으며 실행 셸의 종료 코드도 0입니다. 시작 셸은 `nice(5) failed: operation not permitted`를 출력하였지만 러너가 시작되어 사전 검사와 모든 단계를 통과하였습니다. 옵션·입력 거부나 사전 예산 거부는 없었습니다. 별도 confirm 실행은 시작하지 않았습니다.
@@ -124,7 +124,7 @@ round-128에서 수정된 124C-01의 적용 결과, **면제된 회귀는 없습
 
 ```text
 SESSION_131_ESTIMATE: first pass 1573.945s + reserve 1200.000s = 2773.945s; remaining 7099.960s
-SESSION_131_OK: /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136h/final.json; all steps passed; wall 1502.891s
+SESSION_131_OK: {scratch}/session-136h/final.json; all steps passed; wall 1502.891s
 ```
 
 | 세션 구간 | 시간(초) |
@@ -161,3 +161,5 @@ SESSION_131_OK: /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf
 ## 커밋에 적용한 소스
 
 채택 커밋 `daca1d14a`는 `fbx.patch`에서 `fe.patch`를 역적용한 트리이며, 실행 파일 셋은 이 판정에 쓴 fb·fc·ff 적용 트리와 바이트가 같습니다. 개별 `fb.patch`에 있던 `tools/measure-react-render-counts.mjs`의 변경(`countsOnly`일 때도 다섯 쓰기를 포함)은 커밋에 넣지 않았으며, 시간 측정 재현에는 필요하지 않습니다. 시간 판정은 `run-session-131.mjs` 경로로 재며 이 도구를 쓰지 않습니다. 이 도구의 계수 전용 모드에서 그 변경이 하던 일은 커밋된 시험 도우미 `runtimeCounts.mjs`가 같은 치환을 메모리에서 적용하여 재현합니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `daca1d14a840`, `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

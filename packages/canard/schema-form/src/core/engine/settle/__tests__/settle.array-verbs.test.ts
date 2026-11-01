@@ -4,7 +4,8 @@ import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFi
 import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
@@ -239,7 +240,7 @@ describe('array structural verbs', () => {
   });
 
   it('WRITE-085 updates a gated-out slot through the host raw tree', () => {
-    const { root, runtime } = makeRecordTree({
+    const { root } = makeRecordTree({
       type: 'array',
       items: { type: 'string', controls: { active: 'false' } },
     });
@@ -249,8 +250,7 @@ describe('array structural verbs', () => {
     expect(
       arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'b' }),
     ).toBe('b');
-    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
-    expect(latent.get(JSON.stringify(['/0', 'string']))).toBe('b');
+    expect(readRetainedSlotRaw(root, '/0', 'string')).toBe('b');
   });
 
   it('GOAL-073 keeps creation keys increasing through pop, push, and clear', () => {
@@ -308,7 +308,7 @@ describe('array structural verbs', () => {
     });
     const record: TestFieldNode = root;
     root.setValue(17);
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
     const commit = Reflect.get(runtime, 'commitNumber');
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
@@ -316,7 +316,7 @@ describe('array structural verbs', () => {
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.raw).toEqual(['x']);
-    expect(root.typeMismatch).toBe(false);
+    expect(root.misfit).toBe(false);
   });
 
   it('47C-01 keeps nested array slots and live identity on a tuple tail update', () => {
@@ -342,7 +342,7 @@ describe('array structural verbs', () => {
   });
 
   it('47C-01 updates a gated slot through the raw tree without dropping nested slots', () => {
-    const { root, runtime } = makeRecordTree({
+    const { root } = makeRecordTree({
       type: 'array',
       prefixItems: [
         {
@@ -362,7 +362,6 @@ describe('array structural verbs', () => {
     ).toBe('c');
     expect(root.value).toEqual([[{}, {}], null]);
     expect(root.find('/0/1')).toBe(nested);
-    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
-    expect(latent.get(JSON.stringify(['/1', 'string']))).toBe('c');
+    expect(readRetainedSlotRaw(root, '/1', 'string')).toBe('c');
   });
 });

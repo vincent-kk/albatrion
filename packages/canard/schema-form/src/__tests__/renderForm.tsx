@@ -2,12 +2,15 @@ import {
   type FC,
   type ReactElement,
   StrictMode,
+  cloneElement,
   createRef,
   useState,
 } from 'react';
 
 import { act, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+import { isTruthy } from '@winglet/common-utils/filter';
 
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
@@ -28,6 +31,7 @@ import { type JSONSchema } from '@/schema-form/types';
 import { createRenderScenarioAdapter } from './helpers/createRenderScenarioAdapter';
 import { createRenderValidator } from './helpers/createRenderValidator';
 import { observeErrorSink } from './helpers/observeErrorSink';
+import { settleValidation } from './helpers/settleValidation';
 
 /** The shared harness observes settled node state and committed React DOM. */
 export const setupValidatorPlugin = (): void => {
@@ -197,6 +201,10 @@ export interface FormHarness {
   setValue: (value: any, option?: number) => Promise<void>;
   /** Load current Form props synchronously, then wait for commit reconciliation. */
   reset: () => Promise<void>;
+  /** Re-render the same Form with a new context prop and drain its effects. */
+  rerenderContext: (
+    context: Readonly<Record<string, unknown>>,
+  ) => Promise<void>;
   validate: () => Promise<readonly ValidationIssue[]>;
 
   // ---- async draining ----
@@ -284,10 +292,11 @@ export const renderForm = async (
     await act(async () => {
       utils = render(element);
     });
-    // Engine settlement is synchronous; this wait drains React and host work.
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, initialFlushMs));
-    });
+    await settleValidation(() => ref.current?.node);
+    if (initialFlushMs > 0)
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, initialFlushMs));
+      });
   } else {
     // Skip the extra host wait while retaining the settled engine snapshot.
     act(() => {
@@ -298,9 +307,11 @@ export const renderForm = async (
   const container = utils.container;
 
   const flush = async (ms = 0) => {
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, ms));
-    });
+    await settleValidation(() => ref.current?.node);
+    if (ms > 0)
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, ms));
+      });
   };
 
   let unregister = () => {};
@@ -308,6 +319,13 @@ export const renderForm = async (
     handle: ref.current as FormHandle,
     container,
     user,
+    rerenderContext: async (context) => {
+      const next = cloneElement(form, { context });
+      await act(async () => {
+        utils.rerender(strictMode ? <StrictMode>{next}</StrictMode> : next);
+      });
+      await flush();
+    },
     lastValue: () => changes[changes.length - 1],
     changeLog: () => changes.slice(),
     caughtErrors: () =>
@@ -356,7 +374,7 @@ export const renderForm = async (
     errorTexts: () =>
       Array.from(container.querySelectorAll('em'))
         .map((el) => el.textContent?.trim() ?? '')
-        .filter(Boolean),
+        .filter(isTruthy),
 
     node: (path) => ref.current?.findNode(path) ?? null,
     getValue: () => ref.current?.getValue(),
@@ -408,13 +426,13 @@ export const renderForm = async (
     setValue: async (value, option) => {
       await act(async () => {
         ref.current!.setValue(value, option as any);
-        await new Promise((r) => setTimeout(r, 0));
+        await settleValidation(() => ref.current?.node);
       });
     },
     reset: async () => {
       await act(async () => {
         ref.current?.reset();
-        await new Promise((r) => setTimeout(r, 0));
+        await settleValidation(() => ref.current?.node);
       });
     },
     validate: async () => {

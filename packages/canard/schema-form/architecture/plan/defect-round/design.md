@@ -1,0 +1,52 @@
+# 결함 수정 설계
+
+Planning method: coordinator defect-round design through Amendment 2.
+
+## DR-1 — 실행 중 자원 수명
+
+ValidationLifetime에 inflight Map을 둡니다. runFieldNodeValidation이 validator와 authoredRoot를 한 번 잡고 유효한 검증기만 컴파일 점검 전 pin·finally unpin합니다. counts는 커밋 소비자만 셉니다. LRU 두 곳은 상한 8까지 오래된 비고정 후보를 반복 축출하며 후보가 없으면 멈춥니다. unpin은 빈 키 제거·이미 recent인 루트의 순서 갱신만 합니다. 같은 $id 교체는 핀을 무시하는 기존 계약입니다. 비용은 검증당 Map 증가·감소이며 핀 없는 경로에는 새 순회를 더하지 않습니다.
+
+## DR-2 — 슬롯 판정 호스트 전달
+
+reportLoadValidationFailure는 compile 거부를 제외한 원본 오류를 host에 전달합니다. MultipleErrors는 첫 원인부터 소비자 오류까지 순서대로 전달합니다. engine의 onError 기록은 그대로이며 새 capture는 없습니다. 비용은 host 전달 한 번과 bundle 길이만큼 순회입니다.
+
+## DR-3 — 충돌 해제 뒤 한 번 재시도
+
+assertValidationRootReady의 조건은 failure && duplicate === true && retried !== true && 다른 같은 id의 retained root 없음입니다. 기존 same-id 축출을 evictSameIdRoots로 추출하여 생성과 재시도에서 같이 씁니다. 문자열 id·recent 복사 순회·자기 자신 제외·생성 시 counts 삽입 전 호출을 보존합니다. 같은 entry.copy를 컴파일하며 기존 guards와 반환된 guard 참조를 유지합니다. 성공 시 컴파일 실패·중복 원인·거부 객체와 중복 메시지 guard 실패를 지우고 실패 시 기존 정체성을 유지합니다. guard 경로는 재시도하지 않습니다. 재시도는 entry당 한 번이며 정상 실행에는 조건 점검만 추가합니다.
+
+플러그인은 실패한 compile과 compileGuard 뒤 같은 copy 재컴파일을 지원해야 합니다. shipped ajv6·7·8은 충돌 루트를 sibling instance로 분리하므로 duplicate throw double을 별도로 검증합니다. double의 compileGuard는 copy를 등록하지 않고 동기 gate를 반환합니다. ajv8은 guard compile에서 copy를 등록할 수 있습니다. guard-only compile인 item G는 호출 순서·생산 컴파일 시점 변경 때문에 유보합니다.
+
+## 한계
+
+- DR-1: 소비자 없는 같은 id 교체는 고정 사본도 실행 중 해제할 수 있습니다. recent overflow는 unpin 뒤 다음 축출점까지 남을 수 있습니다.
+- DR-3: 같은 handler의 rebuild(); validate() 또는 commit 전 timer·transition 슬롯 실패는 로드 검증을 unavailable로 유지합니다.
+- D9: ERROR-023 항목 2가 우선합니다. 생략된 componentStack·path는 onError에 없고 boundary console.error만 보유합니다. seen 삭제 뒤 native submit은 같은 compile 거부를 다시 보고할 수 있습니다.
+
+## 근거와 검증
+
+계약은 [결정 기록](../../reviews/defect-round.md), 재현과 관문은 [검증 계획](verification.md)에 연결합니다. 공개 src/index.ts·선언·버전은 바꾸지 않으며 산출물은 소스와 다른 커밋으로 보존합니다.
+
+
+## Amendment 3·4 — DR-8·DR-9
+
+DR-8은 replacement load의 prepared 직후 reported를 확정하고 error는 caller를 위해 유지합니다. 최초 구성 실패 회복은 자체 batch 오류 전달을 guard로 확인하며 primitive props-reset의 load·render 두 기록은 기존 제한입니다. DR-9는 useSyncExternalStore와 root부터 최장 해석 prefix까지의 UpdateChildren 구독을 씁니다. node·undefined·root는 고정이며 기본 root 4리스너와 자식 node 주소를 보존합니다. 경로 프록시의 container당 한 리스너·사건 필터 비용, wildcard 첫 매치, identity remount의 focus 유실을 제한으로 기록합니다. [결정](../../reviews/defect-round.md)의 Amendment 4가 이전 설계를 대체합니다.
+
+
+## Amendment 5
+
+DR-10은 inline errors 배열과 validator 교체 및 같은 batch reset·schema 변경의 stale root 쓰기를 재현한 뒤 errors effect를 store.load.root로 바꿉니다. DR-12는 reset의 applyFormErrors에 load origin을 명시하며 no-root recovery listener 기록으로 확인합니다. F1의 origin 문구·F2의 공개 주석 세 곳·존재하지 않는 onReady를 정정합니다. F2는 공개 선언의 주석만 승인된 차이이며 형은 유지합니다. DR-11은 두 React에서 non-native degraded submit의 caller rejection·onError0·host0과 native onError1(origin submit)·host1을 확인했으며 ERROR-019 항목 3·4 및 IR-9 정의를 코디네이터에게 보고하고 결정을 기다립니다.
+
+
+## Amendment 6
+
+DR-11은 ERROR-019 항목 3·4의 결함으로 수정합니다. 명시적 degraded submit은 onError 1(origin submit)·host 0·caller rejection이며 native는 onError 1·host 1입니다. degraded validate의 실행 실패는 이미 onError 1(origin validate)·caller rejection이므로 그대로 둡니다. 최종 결과는 push 없이 로컬 HEAD로 코디네이터에게 인계합니다.
+
+
+## Amendment 7·8 보충
+
+DR-13은 남은 로드 판정을 root 요청으로 충족하고 대체된 비동기 targets를 보존합니다. DR-14는 보고된 원인과 handler 예외만 담은 capture를 생략하며 degraded caller 거부는 bundle로 보존합니다. DR-15는 읽기 당시 scope와 입력 root의 수명을 지킵니다. 공개 batch/walk 이력 예외의 현행 문서를 정정합니다. IR-8의 쓰기 요청 root 가정은 [결정 보충](../../reviews/defect-round.md)으로 정정하며 기준 재현·React 두 버전·mutation·최종 관문으로 검증합니다.
+
+
+## Amendment 9·10 — 결과 관문 정정
+
+DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.

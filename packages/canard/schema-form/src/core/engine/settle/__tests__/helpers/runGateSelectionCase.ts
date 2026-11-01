@@ -3,22 +3,33 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
+import { resetFieldNodeForm } from '../../utils/reset/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
+import { collectRetainedSlotSources } from '../fixtures/collectRetainedSlotSources';
 import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
 
 /**
  * Run one authored history and capture values, shape, delivery order and failures.
  * @param fixture - Fixed verifier boundary and its input history
  * @param configure - Internal mode hook before the first baseline evaluation
+ * @param observe - Optional extra observation of the root, recorded as `extra` after every settlement
+ * @param snapshot - Optional checkpoint copier before later settlements can mutate retained payloads
  * @returns Deterministic observations immediately after every settlement
  */
 export const runGateSelectionCase = (
   fixture: (typeof gateSelectionCases)[number],
   configure: (analysis: Blueprint) => void = () => {},
+  observe?: (root: PlainNode) => unknown,
+  snapshot?: (observation: unknown) => unknown,
 ) => {
-  const { root, blueprint, visits } = createTestTree(fixture.schema);
-  configure(blueprint);
+  const { root, visits } = createTestTree(
+    fixture.schema,
+    undefined,
+    {},
+    configure,
+  );
   root.runtime.context = { gate: () => true };
   const observations: unknown[] = [];
   const capture = (failure: unknown): void => {
@@ -46,16 +57,18 @@ export const runGateSelectionCase = (
       for (let index = children.length - 1; index >= 0; index--)
         if (children[index].parent === node) pending.push(children[index]);
     }
-    observations.push({
+    const observation = {
       nodes,
       failure: failure instanceof Error ? failure.message : failure,
       diagnostics: { ...root.runtime.diagnostics },
       commit: root.runtime.commitNumber,
       globalState: { ...root.runtime.globalState },
-      latent: [...root.runtime.latentRaw],
+      latent: collectRetainedSlotSources(root),
       deliveries: [...(root.runtime.deliveries ?? [])].map((node) => node.path),
       visits: [...visits],
-    });
+      ...(observe ? { extra: observe(root) } : {}),
+    };
+    observations.push(snapshot ? snapshot(observation) : observation);
   };
   let failure: unknown;
   try {
@@ -72,12 +85,17 @@ export const runGateSelectionCase = (
         target.structure![segment.replace(/~1/g, '/').replace(/~0/g, '~')];
     failure = undefined;
     try {
-      writeFieldNode(
-        target,
-        write.value,
-        write.merge ? 'callerPartial' : 'callerReplace',
-        write.merge ? WriteOption.Merge : WriteOption.Overwrite,
-      );
+      if (write.reset === 'form')
+        resetFieldNodeForm(root, write.value, WriteOption.Overwrite);
+      else if (write.reset === 'subtree')
+        resetFieldNodeSubtree(target, WriteOption.Overwrite);
+      else
+        writeFieldNode(
+          target,
+          write.value,
+          write.merge ? 'callerPartial' : 'callerReplace',
+          write.merge ? WriteOption.Merge : WriteOption.Overwrite,
+        );
     } catch (cause) {
       failure = cause;
     }

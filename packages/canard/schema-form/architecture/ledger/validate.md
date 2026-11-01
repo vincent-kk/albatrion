@@ -57,6 +57,7 @@
 | VALIDATE-049 | 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80) |
 | VALIDATE-050 | 값을 바꾸는 검증기 옵션 — `Validator` 문서 주석의 계약 문장, ajv 플러그인 셋의 `bind`는 `coerceTypes`·`useDefaults`·`removeAdditional`을 켠 인스턴스를 거부(가칭 `VALIDATOR_BIND_REFUSED`), 사용자 정의 변경 키워드는 소비자 책임, 스키마 사본은 깊은 복사 한 번 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:34` union O4) |
 | VALIDATE-051 | union과 검증기 — ajv8 기본 설정에 `allowUnionTypes: true`(판정 불변, 로그만 없앰), core는 검증에 넘기는 값을 복사하지 않음, 어긋난 union 값과 통째 값 안쪽의 에러는 union 노드가 받음, 규칙 A·경고등은 검증기를 쓰지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91) |
+| VALIDATE-052 | 쓰기100ms 주기·release 이력 표시·Always 마운트 | 현행 | 소유자 결정과 코디네이터 amendment9 v3. |
 
 항목 형식은 `ledger/README.md` §3을 따른다.
 
@@ -346,6 +347,9 @@
 - 보충:
   > "그래서 같은 스키마 객체로 다시 마운트하거나(StrictMode의 흉내 언마운트 포함) 목록 안에서 돌아오면 다시 컴파일하지 않고(재생성 방지), 메모리 상한은 가비지 수거 시점과 무관하게 '살아 있는 작성 루트의 수 + 목록 크기'로 정해진다(메모리 안정, 모바일 경제성)." (`09-landing-and-test-strategy.md:88`)
   > "재생성 경로의 reset에서는 새 루트를 등록할 때 옛 트리가 아직 살아 있으므로(일곱째의 원자성, 참조 수는 효과 정리에서 내린다) 이 규칙이 아니라 다음 문장의 충돌에 든다." (`09-landing-and-test-strategy.md:88`)
+  > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
+  > 편집자 결정(DR-1): "【추론】 DR-1: 커밋 소비자 counts와 별도로 inflight 핀을 두고 전체 검증의 컴파일 점검 전부터 promise 정착까지 유지한다. LRU 두 축출점은 recent.length > 8인 동안 가장 오래된 비고정 루트를 축출하며 모두 고정되면 멈춘다. unpin은 0인 키를 지우고 이미 recent에 있는 루트만 맨 뒤로 옮기며 플러그인 호출이나 축출을 하지 않는다. 실행 종료부터 다음 축출점까지 recent가 8개를 넘을 수 있다. 같은 $id 교체와 충돌 검사는 핀을 무시하므로 커밋 소비자가 없는 고정 사본도 실행 중 해제되어 ValidatorThrew로 실패할 수 있다. IR-7 L1의 unmount 뒤 쓰기·검증 전달은 유지하며 LRU 초과 때문에 실행 중 해제되는 부분만 닫는다." (`reviews/defect-round.md:6`)
+  > 편집자 결정(DR-1-R2): "【추론】 DR-1-R2: 모든 기존 recent가 고정된 동안 구성의 readFieldNodeGuard가 아직 고정되지 않은 새 루트의 readValidationEntry를 부를 수 있다. 설치 중인 루트는 entry가 생기기 전 축출 후보에서 제외하여 counts와 recent에 유지하고 overflow를 허용한다. 핀 해제 뒤 후속 축출은 해당 copy를 정확히 한 번 해제한다. inflight 수는 실행 중 보이며 성공·거부 뒤 키가 제거되고 committed counts는 바뀌지 않는다. 같은 id 교체가 핀을 무시하는 제한과 unpin 뒤 다음 축출점까지 overflow가 남는 제한은 유지한다." (`reviews/defect-round.md:53`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:345#9-17`(정본), `09-landing-and-test-strategy.md:88`
 - 닫은 사람: 스웜 수렴(편집자 결정, `09-landing-and-test-strategy.md:88`), 원리(`08-design-a-to-z.md:36` 고속성)
@@ -734,7 +738,10 @@
   > 통과: 넷 모두 판정이 같고 오류 기록이 없다.
   > 실패(특히 `bind` 인스턴스를 같은 설정으로 복제할 수 없을 때): 소유자에게 올린다.
   > 실패의 선택지: (가) 소비자 인스턴스의 같은 `$id` 동시 사용을 지원 밖으로 문서화하고 위의 오류로 드러냄, (나) `bind`가 인스턴스 대신 인스턴스를 만드는 함수를 받게 함.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
+  > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
+  > 편집자 결정(DR-3): "【추론】 DR-3: 캐시된 duplicate 실패는 다른 같은 $id 루트의 counts가 양수인 동안 유지한다. 충돌 해제 뒤 다음 전체 스키마 읽기의 assertValidationRootReady에서 entry마다 한 번 재시도한다. readValidationEntry와 guard 읽기는 재시도하지 않는다. 재시도 전 문자열 $id가 같은 recent 루트들을 복사 목록에서 순회하고 자기 자신을 제외하여 기존 축출을 적용한다. copy와 guards 및 이미 반환한 guard를 유지하고 성공 시 validate를 설정하며 failure·duplicate·rejection과 중복 id 메시지의 guard 실패를 지운다. 실패 시 원래 failure·duplicate·rejection 정체성을 유지하고 retried를 기록한다. IR-8의 컴파일 시점 중복 원인을 상대 해제 뒤에도 캐시에 보존한다는 문장은 충돌 지속 또는 실패한 재시도에만 적용한다. compileGuard 호출 및 실패한 compile 뒤 같은 copy의 compile 재시도가 깨끗이 등록되어야 하는 책임은 플러그인에 있다. reset과 commit 사이 validate 또는 commit보다 먼저 실행된 슬롯에서 실패하면 해당 로드의 검증은 계속 unavailable이다." (`reviews/defect-round.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1581-1586,1598-1606`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
@@ -851,3 +858,38 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`
+
+
+## IR-6 상태 보충 — 2026-10-31
+
+VALIDATE-049의 입력 경로·마이크로태스크 실행 규칙은 대체됨(→ VALIDATE-052)입니다. 위 색인과 원문은 과거 기록으로 보존합니다. 제출의 fresh verdict·검증기 입력 불변·플러그인 최적화 소유권은 유지합니다.
+
+### VALIDATE-052 쓰기100ms 주기·release 이력 표시와 Always 마운트
+
+- 결정:
+  > 쓰기 검증은 다음 프레임 선행·연속 프레임 이월·quiet 후행과 실제 마지막 실행 시작 기준100ms cap을 따릅니다. 오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다. OnChange만 기록하며 새 표시·중간 숨김은 판정 정착·조용한 post-paint drop·수락한 explicit root 판정·폐기의 release를 기다립니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 enabled를 포함하고 child-errors는 제외합니다. raw 목록·명시적 호출 시점 snapshot·공개 표면은 유지합니다. Always의 최초 OnChange 판정은 layout에서 즉시 실행하고 다른 모드는 화면 뒤 슬롯을 씁니다.
+- 보충:
+  > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
+  > 편집자 결정(DR-2): "【추론】 DR-2: 호출자가 없는 슬롯 첫 판정의 ValidatorThrew는 engine의 origin validate 기록을 다시 만들지 않고 원래 실패를 host에 한 번 전달한다. MultipleErrors는 bundle 자체 대신 errors[0]부터 소비자 오류 꼬리까지 순서대로 전달한다. ValidatorCompileFailed는 이미 로드 진입점에서 처리하므로 이 helper에서 무시한다. ERROR-019의 IR-8 보충 중 항목 3의 오래된 ValidatorThrew 보고 유지 문장과 VALIDATE-052의 IR-7·IR-8 보충은 슬롯 판정에 한해 이 규칙으로 대체하며 ir-8-results의 L3를 닫는다." (`reviews/defect-round.md:8`)
+  > 편집자 결정(DR-13): "【추론】 DR-13: 로드가 빚진 전체 판정은 루트 전체에 배정하는 요청만 충족한다. 로드 판정이 남아 있으면 자동 하위 요청을 루트로 넓혀 슬롯을 대체하고 검증기는 한 번 실행한다. None·OnRequest-only는 자동 요청하지 않으며 명시적 하위 validate는 stamp를 올리지 않는다. 비동기 슬롯 또는 cadence 루트 판정이 새 stamp에 대체되면 기존 targets를 pending에 되돌려 다음 cadence 판정에 함께 배정한다. 변경 setValue의 root 요청은 기준에서도 정상인 보호 시험이다. IR-8의 쓰기 요청이 항상 root라는 가정을 이 범위에서 정정한다." (`reviews/defect-round.md:39`)
+  > 편집자 결정(DR-13-R2): "【추론】 DR-13-R2: Amendment 7·8의 완료 시 기존 targets를 pending에 되돌린다는 규칙은 철회한다. 최신 cadence 또는 명시적 root 실행은 stamp와 ReadonlySet 대상을 validationRunning 객체에 보유한다. 새 자동 요청이 stamp를 올리기 전에 같은 stamp의 대상을 pending에 인계하여 후속 한 실행이 배정하며 선후 완료 순서와 이전 실행의 거부에 좌우되지 않는다. 각 실행은 정착·null·stale·commit 변경·거부에서 자신이 설정한 객체일 때만 지운다. 명시적 하위 검증은 설정하거나 지우지 않는다. commit-only 불일치는 stamp가 같아 기존 대상 재요청을 유지한다. 대체된 cadence 거부는 기준처럼 보고하지 않고 후속 실행이 판정을 소유한다. 슬롯이 사용하는 explicit root 거부는 superseded여도 onError와 host에 한 번씩 보고한다. 명시적 하위 validate가 쓰기에 대체되면 caller에게 판정을 반환하되 배정하지 않는 기존 제한은 기준과 현행에 모두 남는다." (`reviews/defect-round.md:51`)
+  > 편집자 결정(DR-2-R2): "【추론】 DR-2-R2: 슬롯 판정의 늦은 실패는 예약 시 붙잡은 load.retired가 참이면 host에 전달하지 않는다. schema 변경 reset·rebuild·validator 교체의 옛 load는 은퇴하며 소비자 기록도 버린다. slot token·stamp·root.disposed를 은퇴 신호로 쓰지 않는다. 같은 스키마 reset과 unmount는 load를 은퇴시키지 않으므로 늦은 ValidatorThrew를 onError 한 번과 host 한 번에 전달한다. 현행 load의 원본 및 bundle 원소 순서 전달은 유지한다." (`reviews/defect-round.md:55`)
+- 상태: 현행
+- 출처: `plan/input-responsiveness/design.md:159`(정본), `plan/input-responsiveness/request.md` 소유자 원문9–30 및18b.
+- 닫은 사람: 소유자 결정과 코디네이터 amendment9 v3.
+- 라운드: 입력 응답성 IR-6(2026-10-31).
+- 까닭: 소유자18b·19·21·23·25에 따라 engine history가 모든 적격 조합을 보존합니다. node는 write sequence당 한 번 append하고 정책은 root layout에서만 commit합니다. generation cutoff 해제는 새 기록이 앞 기록을 무기한 연장하지 못하게 하며 re-arm 뒤 version 증가·복사 listener 통지로 새 예약을 보존합니다. 표시 구독은 candidate에만 memoize하며 renderer의 React 수명과 무관하고 배열 mount layout2회·ordinary write0회를 유지합니다. commit-only 폐기는 최신 판정을 재요청하고 hidden reset 재생성은 load별 중복 범위·handler 격리로 chain 끝에 옛 기록 뒤 새 reset 기록을 전달합니다. 같은-schema hidden reset의 chain-end 전달은 미결로 남깁니다. 다섯 표시 한계는 D1에 기록하며 G는 미구현입니다.
+
+
+## IR-7 보충 — VALIDATE-052 (2026-11-01)
+
+첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
+
+IR-6의 owed·hidden buffer·reconnect 제한은 대체합니다. 같은-schema hidden reset의 미결 질문은 chain 끝의 즉시 전달로 닫습니다. reset은 mount-time 기록 뒤 build-time 기록을 전달하고 handler마다 실패를 호스트로 격리하여 이후 기록과 새 binding 교체를 계속합니다. never-prepared 기록의 원래 root·warning scope와 첫 flush의 reported 가드는 유지합니다. REACT-007의 최초 mount settle·추측 렌더 무배달 규칙은 유지하며 show의 필드 layout 쓰기·경고만 show에 도착합니다(L3).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+
+근거: [IR-7 계획의 소유자 원문39–41](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01). 기존 원문·IR-6 보충은 역사 기록으로 보존하고 현재 계약은 이 보충이 대체합니다.

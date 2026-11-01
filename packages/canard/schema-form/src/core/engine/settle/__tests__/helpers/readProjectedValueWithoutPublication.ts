@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
 
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Independently read a projected path without publication or registry effects.

@@ -1,13 +1,14 @@
 import {
   type ForwardedRef,
+  type RefObject,
   type SyntheticEvent,
   useCallback,
   useImperativeHandle,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
@@ -21,29 +22,31 @@ import {
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import {
-  reportErrorToHost,
+  reportFailureToHost,
   useFormErrorContext,
 } from '@/schema-form/providers/FormErrorContext';
 import type { RootBinding } from '@/schema-form/providers/RootNodeContext';
 import type { AttachedFilesMap } from '@/schema-form/types';
 
-import type { FormHandle, FormProps } from '../type';
+import type { FormHandle } from '../types/handle';
+import type { FormProps } from '../types/props';
 import { createChildren } from '../utils/createChildren';
+import { reportSubmitFailure } from '../utils/reportSubmitFailure';
 import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
 export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
-  const binding = useRef<RootBinding>({ reset: () => {} });
+  const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
+    current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
+  }));
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
   const [showError, setShowError] = useState(props.showError);
   const onReset = useHandle(() => setShowError(props.showError));
   const submit = useHandle((native = false) =>
-    submitForm(
-      binding.current.root,
-      props.onSubmit,
-      native ? (error) => reporter?.capture(error) : undefined,
+    submitForm(binding.current.root, props.onSubmit, (error) =>
+      reportSubmitFailure(reporter, error, native),
     ),
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
@@ -53,7 +56,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       try {
         await handleSubmit(true);
       } catch (error) {
-        reportErrorToHost(error);
+        reportFailureToHost(error);
       }
     },
     [handleSubmit],
@@ -73,6 +76,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       remount: (path) =>
         binding.current.root?.find(path)?.request(FieldNodeRequestType.Remount),
       reset: (option) => binding.current.reset(option),
+      rebuild: (option) => binding.current.rebuild(option),
       findNode: (path) => binding.current.root?.find(path) ?? null,
       findNodes: (path) => binding.current.root?.findNodes(path) ?? [],
       getState: () => binding.current.root?.globalState ?? {},
@@ -88,7 +92,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
         setShowError(visible ? true : props.showError),
       submit: handleSubmit,
     }),
-    [attachedFilesMap, handleSubmit, props.showError],
+    [attachedFilesMap, binding, handleSubmit, props.showError],
   );
   const children = useMemo(
     () => createChildren(props.children, props.jsonSchema),
