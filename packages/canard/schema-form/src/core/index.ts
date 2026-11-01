@@ -21,7 +21,7 @@ export {
   writeFieldNodeInput,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
-  hasFieldNodeValidationRequest,
+  startFieldNodeLoadValidation,
   readFieldNodeRevealBaseline,
   observeFieldNodeReports,
   interpretFieldNodeDraft,

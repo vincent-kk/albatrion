@@ -5,6 +5,7 @@ import { createValidationCadence } from '../../../validationScheduling';
 import type { ValidationIssue } from '../../types/issue';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
+import { failValidationCompile } from './failValidationCompile';
 import { runFieldNodeValidation } from './runFieldNodeValidation';
 import { settleFieldNodeValidation } from './settleFieldNodeValidation';
 
@@ -64,13 +65,9 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           typeof failure === 'object' &&
           'code' in failure &&
           failure.code === FormErrorCode.ValidatorCompileFailed
-        ) {
-          runtime.validationUnavailable = true;
-          settleFieldNodeValidation(node);
-          if (runtime.validationCompileReported) return;
-          runtime.validationCompileReported = true;
-        }
-        runtime.reportValidationFailure?.(failure);
+        )
+          failValidationCompile(node, failure);
+        else runtime.reportValidationFailure?.(failure);
       });
     return true;
   };

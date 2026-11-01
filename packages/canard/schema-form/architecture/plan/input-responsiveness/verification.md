@@ -190,3 +190,41 @@ T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도�
 이전 load가 never-prepared이면 batch try/catch 뒤·retired 설정 전에 records를 이관합니다. batch 도중의 adoption compile 실패 기록도 포함하여 이전 기록 전체를 새 build 기록 앞에 붙이며 원래 root·warning scope를 유지합니다. reporter와 새 root의 setup은 batch 전에 그대로 둡니다. 명령형 reset이 던진 경우에도 이전 load는 은퇴하여 늦은 옛 root 쓰기가 onChange·추가 onError를 내보내지 않습니다.
 
 React19의 처음 숨긴 OnRequest Form에서 validator A를 실패하는 B로 바꾼 뒤 show하는 회귀를 stage의 compile 실패 surface·호스트 출력과 대조합니다. 최종 커밋 시험을 000f와 stage에서 실행하고, 은퇴를 try 안으로 옮기는 변형이 양쪽 major의 늦은 쓰기 단언을 깨는지 확인합니다. resetRootLoad의 효과와 RootLoad error/reported 주석도 reset 경로를 명시합니다. 순차 관문·raw·SHA256은 round c 결과에 보존합니다.
+
+
+## IR-8 — load validation after the next frame (2026-11-01)
+
+### Rule
+
+Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+
+### Limits
+
+- L1: 스키마 해석과 트리 구성, 그리고 `if` 게이트가 있는 스키마의 가드 컴파일(이때 전체 스키마도 컴파일됨, F6)은 로드 프레임에 남습니다. 가드만 따로 컴파일하는 플러그인 계약(항목 G)은 다음 단계입니다.
+- L2: `Always` 폼의 첫 오류 표시는 첫 화면보다 한 슬롯(1~2프레임) 늦습니다. IR-6 quote 19의 첫 화면 전 판정은 quote 49로 거둡니다.
+- L3: 슬롯 안의 첫 판정이 검증기 실행 중 예외(`ValidatorThrew`)로 끝나면 표면은 기존대로 `'rejected'`(호스트 없음)입니다. IR-8은 컴파일 실패의 표면만 통일합니다. 후보로 기록합니다.
+- L4: 같은 스키마 객체와 같은 검증기를 이미 컴파일한 폼의 reset·rebuild는 캐시를 쓰므로 슬롯의 컴파일은 조회 한 번입니다. 이득은 새 스키마 객체, 검증기 교체, 아직 컴파일하지 않은 폼(None·OnRequest only)에서 생깁니다.
+- L5: 컴파일 실패 뒤 `validationUnavailable`은 그 로드 동안 유지됩니다. 다음 로드(reset·rebuild·검증기 교체)가 `dispatchMount`·`dispatchResetForm`에서 지웁니다(F3). 같은 스키마 객체를 그대로 reset하면 캐시된 실패를 다시 만나 다시 한 번 보고합니다(로드마다 한 번).
+- L6: unmount 뒤 reset으로 만든 루트는 retain되지 않으므로(IR-7 L1) 슬롯의 컴파일 결과가 축출될 수 있습니다. 변경 없음.
+- L3 (ValidatorThrew surface in the slot verdict).
+- Ledger supplements:
+
+OnRequest-only의 새 background compile 비용은 quote 54로 수용한다. Always·새 객체 reset·검증기 교체는 로드 프레임 비용을 슬롯으로 옮긴다. 공개 엔진 표면은 유지하며 바인딩 adoption만 더 이상 컴파일하지 않는다. 숨김·unmount OnRequest도 슬롯을 실행하며 retain 전 캐시 축출 가능성이 있다.
+
+### Acceptance criteria
+
+T1 OnRequest only: validator `compile` count is 0 after the first paint and 1 after the slot; with a schema whose compile throws, `onError` receives exactly one record (`code: VALIDATOR_COMPILE_FAILED`, `surface: 'sink'`) after the slot, the host sink receives it once, `validate()` rejects and submit rejects afterwards, and no second `onError` record follows. Red today: compile count stays 0 and no record arrives.
+T2 Always: no validator `compile` and no `onValidate` before the first paint (synchronous assertion after render); the first verdict and the error display arrive after the slot. Replaces the IR-6 pre-paint Always test. Red today: compile happens in the layout effect.
+T3 Root-replacing reset, `rebuild()`, and validator change to a failing schema or validator: the call does not throw, `handle.node` is the new root, the new fields render, writes succeed, `onError` receives one `'sink'` record after the slot and the host sink one, `validate()` rejects. Visible and hidden (IR-7 T1 harness), both majors. Red today: throws with `'thrown'`, host 0 (IR-7 round b/c tests adapted accordingly: `validation.reset-failures.render.test.tsx`).
+T4 Same-schema reset in OnChange: no verdict inside the reset act; exactly one verdict after the slot; `onValidate` receives the new list. Compare validator call counts. Red today: the chain end requests through the cadence (count 1 inside the frame-backed cadence instead of the slot; assert the slot origin by making the validator record `performance.now()` relative to the reset act, or by stubbing `scheduleValidationSlot` ordering; the worker states the chosen observation).
+T5 Write before the slot: a user write after mount and before the slot makes the cadence request; the slot adds no second verdict (validator run count 1). Guard for first mount (passes today through `validationStamp > 0`); red for the same-schema reset case (stamp already positive today, so today's `hasFieldNodeValidationRequest` would skip the first verdict, which T4 covers; and after C3 the write's request supersedes the slot verdict).
+T6 None: validator `compile` count 0 across mount, same-schema reset, root-replacing reset, rebuild and validator change (red today for root-replacing reset and rebuild, which compile in adoption).
+T7 Core only (no provider): `mountFieldNode` without settings and `reloadFieldNodeForm` without settings still request the OnChange verdict at chain end (guard, unchanged).
+T8 Superseded slot: two resets in one frame produce one verdict and, with a failing schema, one report (the first slot is dropped by the token).
+T9 Explicit `validate()` before the slot on a failing schema: `'rejected'` once, then the slot adds no second report (`validationCompileReported`).
+
+Amendments 1–3: 모든 로드 시작에 stamp 증가, finally 종료 직전 loadStamp 기록; deferred reset pending 정착; 오래된 explicit compile 실패만 보고 억제; 중복 $id 원인 캐시; 같은 $id 새 내용 replacement는 commit cleanup 뒤 compile. T10·T11은 write→reset 단일 최신 판정과 검증기 없는 pending 해제 guard이다. T4는 reset 직후 pending false가 red 기전이며 T8 토큰은 수동 슬롯 해제로 별도 확인한다.
+
+### Gates
+
+계약 별도 커밋 → 최종 시험 텍스트 stage red·SHA256·gzip 저장 → 제품 구현 → lint(경고 0), typecheck, build, unit, render, react18, verify, storybook, production, import-model, 공개 선언·src/index 무변경, FCA 새 finding 없음, 원장 검사, machine-path·skip/todo audit를 순차 수행한다. 제품과 생성 번들은 별도 커밋한다. 브라우저·benchmark는 수행하지 않는다.

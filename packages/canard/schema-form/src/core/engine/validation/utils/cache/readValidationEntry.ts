@@ -1,5 +1,6 @@
 import type { Optional } from '@aileron/declare';
 
+import type { SchemaFormError } from '../../../../../errors';
 import type { BlueprintSchema } from '../../../blueprint';
 import type {
   GuardFunction,
@@ -8,7 +9,9 @@ import type {
 } from '../../types/validator';
 import { createValidatorCopy } from '../copy/createValidatorCopy';
 import { evictValidationRoot } from '../lifetime/evictValidationRoot';
+import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
+import { DUPLICATE_SCHEMA_ID_MESSAGE } from './constants';
 import { validationEntries } from './validationEntries';
 
 /** Successful or failed compilation retained under one authored position. */
@@ -26,6 +29,10 @@ export interface ValidationEntry {
   readonly validate?: ValidateFunction;
   /** Whole-schema compilation failure when it throws. */
   readonly failure?: unknown;
+  /** Duplicate-id registration observed while this compilation failed. */
+  readonly duplicate?: boolean;
+  /** Shared compile rejection identity for automatic reports and later explicit/native requests. */
+  rejection?: SchemaFormError;
   /** Whether development guard precompilation has already run. */
   eagerCompiled: boolean;
 }
@@ -67,16 +74,22 @@ export const readValidationEntry = (
   const copy = createValidatorCopy(authoredRoot);
   let validate: Optional<ValidateFunction>;
   let failure: unknown;
+  let duplicate = false;
   try {
     validate = validator.compile(copy);
   } catch (error) {
     failure = error;
+    duplicate =
+      error instanceof Error &&
+      DUPLICATE_SCHEMA_ID_MESSAGE.test(error.message) &&
+      hasRetainedValidationRootId(validator, authoredRoot);
   }
   const entry: ValidationEntry = {
     copy,
     guards: new Map(),
     validate,
     failure,
+    duplicate,
     eagerCompiled: false,
   };
   roots.set(authoredRoot, entry);

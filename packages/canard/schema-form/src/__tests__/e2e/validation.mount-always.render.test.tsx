@@ -13,6 +13,7 @@ import {
 } from '@/schema-form';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
+import { observeErrorSink } from '../helpers/observeErrorSink';
 
 afterEach(() => {
   cleanup();
@@ -31,7 +32,7 @@ const Renderer = ({
 );
 
 it.each([false, true])(
-  'IR-6 Always renders the mount verdict before the first frame (layout write=%s)',
+  'IR-6 Always renders the load verdict only after the slot (layout write=%s)',
   async (write) => {
     const clock = createValidationFrameClock();
     const validate = vi.fn(() => [{ dataPath: '', message: 'required' }]);
@@ -57,6 +58,12 @@ it.each([false, true])(
       />,
     );
     await act(async () => {
+      await clock.task();
+    });
+    expect(validate).not.toHaveBeenCalled();
+    expect(view.getByTestId('error').textContent).toBe('');
+    await act(async () => {
+      clock.frame();
       await clock.task();
     });
     expect(validate).toHaveBeenCalledTimes(1);
@@ -94,9 +101,11 @@ it('IR-6 the default visibility keeps mount validation after its first frame', a
   expect(validate).toHaveBeenCalledTimes(1);
 });
 
-it('IR-6 an Always layout-write compile failure releases pending and reports rejected once', async () => {
+it('IR-6 an Always layout-write compile failure releases pending and reports sink once', async () => {
   const clock = createValidationFrameClock();
   const onError = vi.fn();
+  vi.stubGlobal('reportError', vi.fn());
+  const sink = observeErrorSink();
   const Input = ({ onChange }: FieldInputProps) => {
     useLayoutEffect(() => {
       onChange('child');
@@ -120,10 +129,16 @@ it('IR-6 an Always layout-write compile failure releases pending and reports rej
   await act(async () => {
     await clock.task();
   });
+  expect(onError).not.toHaveBeenCalled();
+  await act(async () => {
+    clock.frame();
+    await clock.task();
+  });
   expect(onError).toHaveBeenCalledTimes(1);
+  expect(sink.errors()).toHaveLength(1);
   expect(onError.mock.calls[0][0]).toMatchObject({
     code: FormErrorCode.ValidatorCompileFailed,
-    surface: 'rejected',
+    surface: 'sink',
   });
   await act(async () => {
     clock.frame();

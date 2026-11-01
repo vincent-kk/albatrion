@@ -107,7 +107,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   scheduleFieldNodeRevealDrop(root);
   runtime.validationPendingEntryStamp = undefined;
   runtime.validationTargets = undefined;
-  runtime.deferMountValidation = undefined;
+  runtime.deferLoadValidation = undefined;
   runtime.entryDepth = 0;
   const errors = runtime.chainErrors ?? [];
   if (runtime.stateChanged) {

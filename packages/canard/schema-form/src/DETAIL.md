@@ -30,6 +30,9 @@
 - `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미이다. 제품 트리나 패키지 공개 표면에 속하지 않는다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 상위 방향으로 열린 경로로 가져온다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져온다.
 - `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증한다.
 - `__tests__/Form.label.test.tsx`는 Form 관문이 조립한 `Form.Label`·`Form.Input` 정적 멤버로 label 규약을 검증한다. 관문의 조립 모양을 쓰는 시험이므로 Form 안이 아니라 부모 시험 구획에 둔다. 공개 진입점의 이주 형 검증은 D7 migration 구획에서 루트 index를 소비한다.
+- 다음 시험은 외부 소비자 구획(`__tests__/e2e`)에서 `vi.mock('@/schema-form/core')`로 core index의 바인딩 전용 이름 둘을 감싼다: `scheduleValidationSlot`을 손으로 푸는 대기열로 바꾸고 `startFieldNodeLoadValidation`의 호출 수를 센다. 로드 슬롯의 시점·토큰 폐기·엔진 진입 횟수는 공개 표면으로 관찰할 수 없고 감싸기는 제품 import 간선을 만들지 않는다. 패턴이 아니라 파일 목록이며 여기에 없는 e2e 시험은 같은 방식으로 core를 감쌀 수 없다.
+  - `__tests__/e2e/validation.load-slot.render.test.tsx`
+  - `__tests__/e2e/validation.load-slot-failures.render.test.tsx`
 
 ### 렌더 시험 하니스
 

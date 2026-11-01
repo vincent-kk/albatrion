@@ -13,6 +13,7 @@ import {
   type ValidatorFactory,
 } from '@/schema-form';
 
+import { observeErrorSink } from '../helpers/observeErrorSink';
 import { type FormHarness, renderForm } from '../renderForm';
 
 let form: FormHarness;
@@ -49,11 +50,14 @@ it('LANDING-025 settlement failure commits and notifies the caller value before 
 });
 
 it('LANDING-025 compile failure rejects validation and submission', async () => {
+  const sink = observeErrorSink();
+  const onError = vi.fn();
   const submit = vi.fn();
   form = await renderForm(
     { type: 'string' },
     {
       onSubmit: submit,
+      onError,
       validationMode: ValidationMode.OnRequest,
       validatorFactory: {
         compile: () => {
@@ -70,6 +74,10 @@ it('LANDING-025 compile failure rejects validation and submission', async () => 
     code: 'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED',
   });
   expect(submit).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({ surface: 'sink' }),
+  );
+  expect(sink.errors()).toHaveLength(1);
 });
 
 it('LANDING-036 validatorFactory compiles validation and synchronous guards', async () => {

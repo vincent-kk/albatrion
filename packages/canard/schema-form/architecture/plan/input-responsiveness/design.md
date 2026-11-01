@@ -315,3 +315,242 @@ T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도�
 이전 load가 never-prepared이면 batch try/catch 뒤·retired 설정 전에 records를 이관합니다. batch 도중의 adoption compile 실패 기록도 포함하여 이전 기록 전체를 새 build 기록 앞에 붙이며 원래 root·warning scope를 유지합니다. reporter와 새 root의 setup은 batch 전에 그대로 둡니다. 명령형 reset이 던진 경우에도 이전 load는 은퇴하여 늦은 옛 root 쓰기가 onChange·추가 onError를 내보내지 않습니다.
 
 React19의 처음 숨긴 OnRequest Form에서 validator A를 실패하는 B로 바꾼 뒤 show하는 회귀를 stage의 compile 실패 surface·호스트 출력과 대조합니다. 최종 커밋 시험을 000f와 stage에서 실행하고, 은퇴를 try 안으로 옮기는 변형이 양쪽 major의 늦은 쓰기 단언을 깨는지 확인합니다. resetRootLoad의 효과와 RootLoad error/reported 주석도 reset 경로를 명시합니다. 순차 관문·raw·SHA256은 round c 결과에 보존합니다.
+
+
+## IR-8 — load validation after the next frame (2026-11-01)
+
+### Rule
+
+Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+
+### Limits
+
+- L1: 스키마 해석과 트리 구성, 그리고 `if` 게이트가 있는 스키마의 가드 컴파일(이때 전체 스키마도 컴파일됨, F6)은 로드 프레임에 남습니다. 가드만 따로 컴파일하는 플러그인 계약(항목 G)은 다음 단계입니다.
+- L2: `Always` 폼의 첫 오류 표시는 첫 화면보다 한 슬롯(1~2프레임) 늦습니다. IR-6 quote 19의 첫 화면 전 판정은 quote 49로 거둡니다.
+- L3: 슬롯 안의 첫 판정이 검증기 실행 중 예외(`ValidatorThrew`)로 끝나면 표면은 기존대로 `'rejected'`(호스트 없음)입니다. IR-8은 컴파일 실패의 표면만 통일합니다. 후보로 기록합니다.
+- L4: 같은 스키마 객체와 같은 검증기를 이미 컴파일한 폼의 reset·rebuild는 캐시를 쓰므로 슬롯의 컴파일은 조회 한 번입니다. 이득은 새 스키마 객체, 검증기 교체, 아직 컴파일하지 않은 폼(None·OnRequest only)에서 생깁니다.
+- L5: 컴파일 실패 뒤 `validationUnavailable`은 그 로드 동안 유지됩니다. 다음 로드(reset·rebuild·검증기 교체)가 `dispatchMount`·`dispatchResetForm`에서 지웁니다(F3). 같은 스키마 객체를 그대로 reset하면 캐시된 실패를 다시 만나 다시 한 번 보고합니다(로드마다 한 번).
+- L6: unmount 뒤 reset으로 만든 루트는 retain되지 않으므로(IR-7 L1) 슬롯의 컴파일 결과가 축출될 수 있습니다. 변경 없음.
+- L3 (ValidatorThrew surface in the slot verdict).
+- Ledger supplements:
+
+OnRequest-only의 새 background compile 비용은 quote 54로 수용한다. Always·새 객체 reset·검증기 교체는 로드 프레임 비용을 슬롯으로 옮긴다. 공개 엔진 표면은 유지하며 바인딩 adoption만 더 이상 컴파일하지 않는다. 숨김·unmount OnRequest도 슬롯을 실행하며 retain 전 캐시 축출 가능성이 있다.
+
+### Acceptance criteria
+
+T1 OnRequest only: validator `compile` count is 0 after the first paint and 1 after the slot; with a schema whose compile throws, `onError` receives exactly one record (`code: VALIDATOR_COMPILE_FAILED`, `surface: 'sink'`) after the slot, the host sink receives it once, `validate()` rejects and submit rejects afterwards, and no second `onError` record follows. Red today: compile count stays 0 and no record arrives.
+T2 Always: no validator `compile` and no `onValidate` before the first paint (synchronous assertion after render); the first verdict and the error display arrive after the slot. Replaces the IR-6 pre-paint Always test. Red today: compile happens in the layout effect.
+T3 Root-replacing reset, `rebuild()`, and validator change to a failing schema or validator: the call does not throw, `handle.node` is the new root, the new fields render, writes succeed, `onError` receives one `'sink'` record after the slot and the host sink one, `validate()` rejects. Visible and hidden (IR-7 T1 harness), both majors. Red today: throws with `'thrown'`, host 0 (IR-7 round b/c tests adapted accordingly: `validation.reset-failures.render.test.tsx`).
+T4 Same-schema reset in OnChange: no verdict inside the reset act; exactly one verdict after the slot; `onValidate` receives the new list. Compare validator call counts. Red today: the chain end requests through the cadence (count 1 inside the frame-backed cadence instead of the slot; assert the slot origin by making the validator record `performance.now()` relative to the reset act, or by stubbing `scheduleValidationSlot` ordering; the worker states the chosen observation).
+T5 Write before the slot: a user write after mount and before the slot makes the cadence request; the slot adds no second verdict (validator run count 1). Guard for first mount (passes today through `validationStamp > 0`); red for the same-schema reset case (stamp already positive today, so today's `hasFieldNodeValidationRequest` would skip the first verdict, which T4 covers; and after C3 the write's request supersedes the slot verdict).
+T6 None: validator `compile` count 0 across mount, same-schema reset, root-replacing reset, rebuild and validator change (red today for root-replacing reset and rebuild, which compile in adoption).
+T7 Core only (no provider): `mountFieldNode` without settings and `reloadFieldNodeForm` without settings still request the OnChange verdict at chain end (guard, unchanged).
+T8 Superseded slot: two resets in one frame produce one verdict and, with a failing schema, one report (the first slot is dropped by the token).
+T9 Explicit `validate()` before the slot on a failing schema: `'rejected'` once, then the slot adds no second report (`validationCompileReported`).
+
+Amendments 1–3: 모든 로드 시작에 stamp 증가, finally 종료 직전 loadStamp 기록; deferred reset pending 정착; 오래된 explicit compile 실패만 보고 억제; 중복 $id 원인 캐시; 같은 $id 새 내용 replacement는 commit cleanup 뒤 compile. T10·T11은 write→reset 단일 최신 판정과 검증기 없는 pending 해제 guard이다. T4는 reset 직후 pending false가 red 기전이며 T8 토큰은 수동 슬롯 해제로 별도 확인한다.
+
+### Gates
+
+계약 별도 커밋 → 최종 시험 텍스트 stage red·SHA256·gzip 저장 → 제품 구현 → lint(경고 0), typecheck, build, unit, render, react18, verify, storybook, production, import-model, 공개 선언·src/index 무변경, FCA 새 finding 없음, 원장 검사, machine-path·skip/todo audit를 순차 수행한다. 제품과 생성 번들은 별도 커밋한다. 브라우저·benchmark는 수행하지 않는다.
+
+### Approved implementation and amendments
+
+## Changes
+
+C1 (engine, `core/engine/write/utils/entry/dispatchLoadValidation.ts`, new). `dispatchLoadValidation(root): boolean`. Sequence: if `validationMode === None` or `validationUnavailable` return false; `try { assertValidationRootReady(root) } catch (failure) { failValidationCompile(runtime, failure); return false }`; if the validator is absent (null result) return false; return `(validationMode & OnChange) !== 0 && !hasFieldNodeValidationRequest(root)` where the read is the generalized one of C3. No chain entry is opened (nothing is written). Document the file as the single load-validation entry (seiri agent-legible rule 1).
+
+C2 (engine, `core/engine/validation/utils/run/failValidationCompile.ts`, new). Extract the shared compile-failure handling from `requestFieldNodeValidation.ts:62-73`: `validationUnavailable = true; settleFieldNodeValidation(node); if (validationCompileReported) return; validationCompileReported = true; runtime.reportValidationFailure?.(failure)`. `requestFieldNodeValidation` calls it; C1 calls it. `runtime.reportValidationFailure` is set lazily by `requestFieldNodeValidationWave.ts:15`; C1 runs before any chain, so C1 sets it the same way (`runtime.reportValidationFailure ??= (failure) => reportValidationFailure(runtime, failure)`) or the assignment moves into one shared place. The worker chooses the place and names it in the results.
+
+C3 (engine, `validation/utils/read/hasFieldNodeValidationRequest.ts`). Generalize from `validationStamp > 0` to "a request since the current load started": `(validationStamp ?? 0) > (validationLoadStamp ?? 0)`. New runtime field `validationLoadStamp?: number` (`record/types/runtime.ts`, beside `validationStamp`), written by `dispatchMount` and `dispatchResetForm` as `runtime.validationStamp ?? 0` next to the existing flag resets (F3). The surface binding `core/surface/utils/binding/hasFieldNodeValidationRequest.ts` and its `core/surface/index.ts` and `core/index.ts` exports lose their only consumer (C5) and are removed (Module Contract Principle 6). `surfaceIndex.test.ts` is adapted.
+
+C4 (engine). `adoptFieldNodeChain.ts:29` no longer calls `assertValidationRootReady`; the JSDoc `@throws` and the DETAIL sentence (validation DETAIL.md:39-40 "재생성 인계 전에 … 동기로 드러내어") are corrected. `validation/index.ts:8` keeps exporting `assertValidationRootReady` because C1 (in `write`) consumes it. `dispatchResetForm` gains `settings: { deferValidation?: boolean } = NO_MOUNT_SETTINGS`-style handling identical to `dispatchMount.ts:34-36` (sets `deferMountValidation`, adds the target only when not deferred); `reloadFieldNodeForm` passes it through. `mountFieldNode` already accepts it.
+
+C5 (provider, `providers/RootNodeContext/utils/scheduleLoadValidation.ts`, renamed from `scheduleMountValidation.ts`). 
+```ts
+export const scheduleLoadValidation = (load: RootLoad, store: RootLoadStore): void => {
+  const token = (load.loadValidation = {});
+  scheduleValidationSlot(() => {
+    if (store.load !== load || load.loadValidation !== token) return;
+    const root = load.root;
+    if (!root) return;
+    if (startFieldNodeLoadValidation(root)) validateLoadRoot(root);
+  });
+};
+```
+`RootLoad.loadValidation?: object` (type.ts) drops a slot superseded by a later load start on the same load object (same-schema reset). `startFieldNodeLoadValidation` is the new surface binding of C1 (`core/surface/utils/binding/startFieldNodeLoadValidation.ts`, exported from `core/surface/index.ts` and `core/index.ts`; its consumer is this provider file). `validateMountRoot.ts` → `validateLoadRoot.ts` and `reportMountValidationFailure.ts` → `reportLoadValidationFailure.ts` (content unchanged, JSDoc updated).
+
+C6 (provider, `RootNodeContextProvider.tsx`). Line 191-194 becomes `scheduleLoadValidation(load, store)` with no mode check and no `alwaysRef`; `always`, `alwaysRef` and the effect at :98-100 are removed if `checkShowError` has no other use in this file (`showError` at :102 stays). In the `reset` handle, after `store.unsubscribe = subscribeRootLoad(...)` (:120) and before the `throw` paths, add `if (store.load.root) scheduleLoadValidation(store.load, store)`. `resetRootLoad.ts:60` passes `{ deferValidation: true }` to `reloadFieldNodeForm` and `:78` to `mountFieldNode`. The validator-change and rebuild paths go through `reset` and need nothing else.
+
+C7 (documents, corrected in place): `core/engine/validation/INTENT.md` and `DETAIL.md` (:14, :39, :40, :46, :47, :49, :67, :68, :84: compile timing, the slot entry, failure surfaces; :67 stale duplicate of :68 is removed as the pre-existing carried-forward item), `core/engine/write/DETAIL.md:66` and the adoption sentence, `core/surface/DETAIL.md` (binding list), `core/DETAIL.md`, `core/engine/DETAIL.md`, `providers/RootNodeContext/INTENT.md` and `DETAIL.md` (:10, :21, :25, :27, :52), `docs/ko/SPECIFICATION.md:880` and `:1034`, `docs/en/SPECIFICATION.md:882` and `:1036`, `README.md:2730`, `QUICK_REFERENCE.md:576`, `docs/agents/.../validation-and-state.md:11`, `arrays-and-scale.md:154`, ADR 0004 and 0014 supplements. Ledger supplements (append only): `validate.md` VALIDATE-052 IR-8 supplement (Always after the slot; the load entry), VALIDATE-046 and `error.md` ERROR-201 IR-8 supplement (the atomic-reset rule is withdrawn: a reset whose new schema does not compile keeps the new tree and reports in the slot), the VALIDATOR_COMPILE_FAILED row (ERROR-146 to 157 range: "로드 뒤 첫 검증 요청" → "로드 뒤 다음 프레임 슬롯", surface: automatic paths `'sink'` with host, `validate()`·submit `'rejected'`), `write.md` WRITE-046 and WRITE-086 supplement (adoption no longer compiles), `event.md` EVENT-030 supplement, `react.md` supplement (provider slot for every load), `test.md` supplement naming the adapted tests. Plan records (append only): `architecture/plan/input-responsiveness/request.md` (quotes 44, 47, 48, 49 verbatim), `design.md` and `verification.md` IR-8 sections in the IR-7 section structure.
+
+## Tests
+
+Red first against the stage head from the committed test text (both React majors where the test renders), stored under `architecture/verification/input-responsiveness/raw/ir-8/` with sha256, except where marked guard.
+
+T1 OnRequest only: validator `compile` count is 0 after the first paint and 1 after the slot; with a schema whose compile throws, `onError` receives exactly one record (`code: VALIDATOR_COMPILE_FAILED`, `surface: 'sink'`) after the slot, the host sink receives it once, `validate()` rejects and submit rejects afterwards, and no second `onError` record follows. Red today: compile count stays 0 and no record arrives.
+T2 Always: no validator `compile` and no `onValidate` before the first paint (synchronous assertion after render); the first verdict and the error display arrive after the slot. Replaces the IR-6 pre-paint Always test. Red today: compile happens in the layout effect.
+T3 Root-replacing reset, `rebuild()`, and validator change to a failing schema or validator: the call does not throw, `handle.node` is the new root, the new fields render, writes succeed, `onError` receives one `'sink'` record after the slot and the host sink one, `validate()` rejects. Visible and hidden (IR-7 T1 harness), both majors. Red today: throws with `'thrown'`, host 0 (IR-7 round b/c tests adapted accordingly: `validation.reset-failures.render.test.tsx`).
+T4 Same-schema reset in OnChange: no verdict inside the reset act; exactly one verdict after the slot; `onValidate` receives the new list. Compare validator call counts. Red today: the chain end requests through the cadence (count 1 inside the frame-backed cadence instead of the slot; assert the slot origin by making the validator record `performance.now()` relative to the reset act, or by stubbing `scheduleValidationSlot` ordering; the worker states the chosen observation).
+T5 Write before the slot: a user write after mount and before the slot makes the cadence request; the slot adds no second verdict (validator run count 1). Guard for first mount (passes today through `validationStamp > 0`); red for the same-schema reset case (stamp already positive today, so today's `hasFieldNodeValidationRequest` would skip the first verdict, which T4 covers; and after C3 the write's request supersedes the slot verdict).
+T6 None: validator `compile` count 0 across mount, same-schema reset, root-replacing reset, rebuild and validator change (red today for root-replacing reset and rebuild, which compile in adoption).
+T7 Core only (no provider): `mountFieldNode` without settings and `reloadFieldNodeForm` without settings still request the OnChange verdict at chain end (guard, unchanged).
+T8 Superseded slot: two resets in one frame produce one verdict and, with a failing schema, one report (the first slot is dropped by the token).
+T9 Explicit `validate()` before the slot on a failing schema: `'rejected'` once, then the slot adds no second report (`validationCompileReported`).
+Adapted: `validation.after-paint.render.test.tsx` ("IR-6 (c)" stays; "reports a mount compile failure once as rejected" becomes `'sink'` plus host), `__tests__/e2e/validation-mount-calls.test.tsx` (None still 0), `migration/form-lifecycle.test.tsx` LANDING-025 (OnRequest compile failure: `validate()` and submit still reject; now also one `'sink'` record after the slot), `Form.policies.test.tsx` VALIDATE-044, `validation.lifetime.test.ts`, `surfaceIndex.test.ts`, IR-7 T6 reset isolation (a throwing onError on a build-time record; unchanged behaviour, re-run).
+
+## Gates
+
+lint (0 warnings), typecheck, build; unit, render, react18, verify, storybook, production projects; the import-model test; public declaration and `src/index.ts` diff zero; FCA validate with no new finding; ledger checks; machine-path audit; existing skips and todos unchanged. No browser measurement window: the compile is the same work moved out of the load frame, and the IR-6 rows mount in OnChange mode where it already ran after paint; the results state this and the IR-1 numbers (F8) as the expected saving for OnRequest-only, Always and reset loads. Contracts first in their own commit; red runs stored; product and test commits separate from generated bundles.
+
+## Candidates recorded, not done
+
+- L3 (ValidatorThrew surface in the slot verdict).
+- Item G (guard-only compile for `if` gates).
+- Stale `next.error` after a failed construction reset (pre-existing, IR-7 note).
+
+## Amendment 1 — codex review (2026-11-01; triage in ir-8-review-codex.md)
+
+A1 (load start supersedes earlier requests; replaces C3's stamp definition). Every load start, `dispatchMount` and `dispatchResetForm`, deferred or not, advances `validationStamp` by one and then records `validationLoadStamp = validationStamp`. A deferred `dispatchResetForm` also clears `validationPendingTargets` and settles the pending hold with `settleFieldNodeValidation(root)` (no stamp), which are the steps `clearFieldNodeFormErrors.ts:29-33` applies to non-OnChange resets today; that existing bump is subsumed by the load-start advance (capture after it, so it is not counted as a request). Effects: a cadence run queued before the reset drops at `requestFieldNodeValidation.ts:32`, an in-flight run drops at `:46` and `:60`, a stale explicit `validate()` success returns without routing at `dispatchValidate.ts:90`. `hasFieldNodeValidationRequest(node)` becomes `(validationStamp ?? 0) > (validationLoadStamp ?? 0)` and its documented meaning is "a write validation request or an explicit root validate since the current load started"; a subtree `validate()` does not count (unchanged contract, `validation.after-paint.render.test.tsx:265`). Core-only non-deferred loads keep their chain-end request; the advance only invalidates runs that their own request would have superseded anyway. New regression: write, then a same-schema reset in the same act, no further write: exactly one validator run after the slot.
+
+A2 (stale explicit validate). `dispatchValidate` captures `validationLoadStamp` before its first await; in the catch, when the captured value differs from the current one, it rethrows without touching `validationUnavailable`, `validationCompileReported` or settlement and without reporting, the same treatment `dispatchValidate.ts:49` gives a disposed root. The caller's promise still rejects. T9 gains the case: `validate()` on a failing schema, then a same-schema reset before the slot: the caller rejects, `onError` receives exactly one record (from the slot, `'sink'`), the host sink one.
+
+A3 (scope of "unchanged"). `adoptFieldNodeTree` is binding-only (not exported from `src/index.ts`), so the public core API is unchanged and the binding contract changes: adoption no longer compiles or throws `ValidatorCompileFailed`. `validation.same-id.test.ts` "VALIDATE-046 (iii) keeps the old chain intact when rebuilt-root compilation fails" is rewritten to the new contract (adoption proceeds; the slot entry reports the failure with `reason: 'duplicateSchemaId'` while the old root is still retained) and named in the results.
+
+A4 (tests). T1 and T3 use a validator whose compile fails for an uncompiled (validator, authored root) pair; a rebuild with an already compiled pair cannot be red. T4 holds the load slot in a separate queue (stub `scheduleValidationSlot` in the provider test, release it by hand), advances only the cadence, and expects zero validator runs before the slot is released and one after. T8 releases the stale slot callback first and expects zero engine load entries, then the latest and expects one. T5, T7 and the first-mount and same-schema-reset cases of T6 are guards; T9's original case is a guard, A2's case is red. Count real validator executions separately from `onValidate([])` deliveries caused by reset clearing.
+
+A5 (facts and limits). F2, T1, T2 and T6 hold only for schemas without an `if` gate: in development `fieldNodeFactory.ts:202` compiles the whole schema for any `if` gate regardless of mode (L1). F8 is not an OnRequest saving: a guard-free OnRequest-only initial load pays no compile today, and IR-8 adds one in the background (owner quote 44). The results separate the cost moved off the load frame (Always, uncompiled replacement resets, validator change) from that new background cost.
+
+A6 (provider). The first-mount scheduling stays inside the existing `!load.prepared` branch, so a StrictMode replay schedules once.
+
+A7 (documents added to C7). `src/providers/DETAIL.md:12-13`; `providers/RootNodeContext/DETAIL.md:17-19` and `:58` (alwaysRef, duplicate Always runs, the inline verdict and the pre-frame exception); `core/engine/validation/DETAIL.md:30` (the stamp contract and the removed surface wrapper); ledger supplements for `validate.md` VALIDATE-021 (`:349`, registration order now follows the layout-effect release of the old root when the slot runs after the commit), `error.md` ERROR-019 (`:503`, `:506`, the slot report for automatic load compile failures) and ERROR-164 (`:2507`, the canonical VALIDATOR_COMPILE_FAILED row); supplements to `architecture/design/05-validation-and-errors.md` (`:189`, `:531`, `:701`, `:827`) and `architecture/design/07-landing-and-tests.md` (`:512`, `:1107`); tests `validation.same-id.test.ts:91` (A3) and `validation.mount-always.render.test.tsx:97` (the pre-frame `'rejected'` Always case becomes the slot `'sink'` case). The QUICK_REFERENCE path is `docs/QUICK_REFERENCE.md:576`.
+
+## Amendment 2 — Opus design check (verifier ir8-design-check, PASS with conditions, no P1, six P2, nine P3; 2026-11-01)
+
+Where this amendment and Amendment 1 differ, this amendment wins.
+
+B1 (load start; replaces A1's placement, verifier P2-1 and codex P1-1).
+- In `dispatchMount` and in `dispatchResetForm`, deferred or not, immediately after the flag resets (`validationUnavailable = false; validationCompileReported = false`), advance `validationStamp` by one.
+- In `dispatchResetForm` with `deferValidation`, at the same point, also clear `validationPendingTargets` and settle the pending hold with `settleFieldNodeValidation(root)` (no stamp).
+- Both entries record `validationLoadStamp = validationStamp ?? 0` in their `finally` block immediately before `exitFieldNodeChain`, so the non-OnChange bump in `clearFieldNodeFormErrors.ts:29-32` never counts as a request. A non-deferred OnChange reset's own chain-end request does count, which is correct and unobserved (no slot in core-only use).
+- Reason for settling (deviation from the verifier's "do not settle"): an OnChange form without a validator whose write request was queued before the reset would otherwise keep `validationPending` forever. The queued run drops at `requestFieldNodeValidation.ts:32` and the slot runs no verdict, because C1 returns at the null validator. `settleFieldNodeValidation.ts:12-17` releases only when a hold existed, so the common reset adds no release, and every deferred load start leaves pending false, as the first mount does today.
+- Reason for advancing at every load start (beyond the verifier's deferred-reset-only bump): A2 uses `validationLoadStamp` as the load generation. With the advance, every load start yields a larger value by construction. This includes a core-only reset after a subtree `validate()`, which does not move the stamp.
+- T10 (guard; green today, red against v1, green after): OnChange form, settle; in one `act`, `setValue('typed')` then `reset()`; settle. The validator runs exactly once, with the default value.
+- T11 (guard): OnChange form without a validator; in one `act`, a write then `reset()`; after the slot, `isValidationPending(handle.node)` is false.
+
+B2 (duplicate reason; verifier P2-2 (a)).
+- `ValidationEntry` gains `readonly duplicate?: boolean`. `readValidationEntry`'s catch (`:72-74`) sets it with the existing predicate: a string `$id`, the message gate `/already exists|duplicate/i`, and another counted root with the same `$id` and count > 0 at compile time.
+- `assertValidationRootReady` keeps the message gate and uses `entry.duplicate === true ||` the existing scan.
+- Test (`validation.same-id.test.ts`, red today, green after): retain `first`, compile `second` (fails), release `first`, then `dispatchValidate(second)` rejects with `reason: 'duplicateSchemaId'`.
+- A3's rewrite of "VALIDATE-046 (iii) keeps the old chain intact": adoption proceeds without compiling, and the failure surfaces at the next compile with the reason when a same-`$id` root was counted at compile time.
+
+B3 (same-`$id` replacement; verifier P2-2 (b); a recorded behaviour change, no owner decision needed because it removes a failure).
+- In a visible form, the `useSyncExternalStore` re-render after `reset` commits before the slot. Its layout-effect cleanup releases the old root, and `readValidationEntry.ts:53-61` then evicts it before compiling the new one. So a root-replacing reset to a new schema object with the same `$id` compiles with a non-isolating validator, where adoption fails today.
+- Two mounted forms sharing an `$id` keep the duplicate failure.
+- `if`-gated schemas compile during the reset while the old root is retained, so they keep today's failure, with the reason (B2).
+- Record this in the ERROR-201, VALIDATE-046 and VALIDATE-021 supplements.
+- Render test: a rebuild to a same-`$id` object under a register/release-tracking validator produces no `onError` record.
+
+B4 (test labels; verifier P2-3, overrides A4 where they differ).
+- T4 red mechanism: `isValidationPending(handle.node)` immediately after `act(() => handle.reset())` is true today and false after. The count assertions stay as guards. `after-paint.render.test.tsx:60-90` is the existing near-equivalent.
+- T5 same-schema case: guard.
+- T8: the root-replacing variant is red (each reset throws today). The same-schema variant is a guard. Do not cite the token as a red mechanism. The token's own check is A4's manual slot release (stale callback: zero engine load entries).
+- T9's original cases: guard (first mount is covered by `after-paint.render.test.tsx:146-178` and `:243-263`). A2's case is red: today the stale `validate()` reports `'rejected'` and suppresses the reset's run report, so the host gets 0.
+
+B5 (adapted tests; verifier P2-4).
+- `validation.mount-always.render.test.tsx:33-72` is the pre-paint Always test that T2 replaces.
+- `validation.mount-always.render.test.tsx:97-135` becomes `'sink'` plus one host report after `clock.frame(); clock.task()`.
+- `validation.same-id.test.ts:91-115` follows A3 and B2.
+- In `Form.policies.test.tsx`, only `:48-74` changes (await `settleValidation` before asserting `second.compile`); `:76-101` stays green.
+- `src/__tests__/helpers/settleValidation.ts:7` JSDoc: reset verdicts now also come from the slot. Reset tests with async validators await `onValidate` explicitly.
+- Also run and report `validation.reveal-history` (`:306`), `Form.resetCommit`, the cache-reset tests and `validation.visibility` (`:402`), which the verifier did not trace.
+
+B6 (documents; verifier P2-5, added to C7 and A7).
+- Package documents:
+  - `src/providers/DETAIL.md:12`, `:13`, `:27`;
+  - `providers/RootNodeContext/DETAIL.md:17`, `:18`, `:19`, `:28`, `:43`, `:58`;
+  - `core/engine/write/DETAIL.md:58` (the `dispatchResetForm` signature) and `:61`;
+  - `core/engine/validation/DETAIL.md:28`, `:30`;
+  - `core/surface/DETAIL.md:26`, `:116`.
+- The VALIDATE-052 projection sentence ("최초 mount inline 판정") gets an IR-8 supplement in all ten documents IR-6 and IR-7 wrote: ADR 0001 (`:152`), 0004, 0007 (`:567`), 0008 (`:411`), 0009 (`:272`), 0010 (`:242`), 0014, and design 03 (`:508`), 05 (`:827`), 07 (`:1107`).
+- Ledger supplements:
+  - LANDING-041 (`landing.md:766`, with its 69C-05 supplement at `:774`, "reset은 진입 끝에서");
+  - ERROR-019 item 2 (`error.md:497`).
+- The `react.md` and ERROR-201 supplements explicitly withdraw the IR-7 round b sentence at `react.md:654` and `error.md:3180` ("adoption 전 컴파일 실패 … caller에 다시 던지며 호스트 sink는 0회").
+- Run the ledger projection tools (sup-insert, doc-coverage) if they own those ADR and design copies, and say so in the results.
+
+B7 (exports; verifier P2-6).
+- Add `dispatchLoadValidation` to `core/engine/write/index.ts` and to the write block of `core/engine/index.ts`.
+- Remove `hasFieldNodeValidationRequest` from `core/engine/index.ts:45`, from `core/surface/index.ts` and from `core/index.ts`, together with the surface binding file. C1 imports it from `validation/index.ts:14`, which stays.
+- Add `failValidationCompile` to `validation/index.ts`; C1 is its consumer.
+- Update `core/engine/DETAIL.md:106`, `:118`, `:130`.
+
+B8 (advisories adopted).
+- (P3-1) Signature `failValidationCompile(node, failure)`. A new write-side helper `ensureValidationFailureReporter(runtime)` in `core/engine/write/utils/report/` installs `runtime.reportValidationFailure`. Both `requestFieldNodeValidationWave.ts:15` and C1 use it.
+- (P3-2) C1 sends only `ValidatorCompileFailed` to `failValidationCompile`. Any other failure, such as the `TypeError` at `readValidationEntry.ts:48-49`, goes to `runtime.reportValidationFailure` without marking validation unavailable, mirroring `requestFieldNodeValidation.ts:62-73`.
+- (P3-3) F4 corrections:
+  - The comparison is at `hasFieldNodeValidationRequest.ts:12`.
+  - Other stamp writers are `clearFieldNodeFormErrors.ts:30` and `disposeFieldNodeTree.ts:50`.
+- (P3-4) Rename the runtime field `deferMountValidation` to `deferLoadValidation` (`runtime.ts:268`, `prepareFieldNodeValidation.ts:13`, `exitFieldNodeChain.ts:110`, `dispatchMount.ts:34`, `core/DETAIL.md:71`). The settings key `deferValidation` stays. `__legacy__` is untouched.
+- (P3-5) Rewrite the stale JSDoc at `assertValidationRootReady.ts:13-18`: it compiles or reads the cached whole-schema validator for a root, and throws `ValidatorCompileFailed` on failure.
+- (P3-6) A reset whose new tree cannot be built returns the previous load (`resetRootLoad.ts:69-71`). The slot then repeats that load's cached compile lookup and, when no request happened since that load started, one more verdict on the unchanged value. `onValidate` stays silent through `retainEqualValidationIssues`. This is accepted as benign and stated in the results.
+- (P3-7, P3-8) L6 adds:
+  - Hidden forms (Activity or Suspense) have effects disconnected, so the slot compiles before retain. This is the same exposure as today's adoption-time compile.
+  - An unmounted OnRequest form also compiles in the slot, and a failure gives one `'sink'` record plus a host report, per the Rule.
+- (P3-9) Rule wording: "React 없이 엔진만 쓰는 경우의 동작은 바뀌지 않습니다" becomes "패키지 공개 엔진 표면의 동작은 바뀌지 않습니다. 바인딩 전용 `adoptFieldNodeChain`은 더 이상 컴파일하거나 던지지 않습니다."
+
+## Owner decision added — quote 54 (2026-11-01)
+
+- Quote 54 (answer to A5: OnRequest-only initial loads now pay a background compile after the first paint): "그 비용은 수용한다. 컴파일 비용 이월은 사용성을 불균일하게 만든다"
+- The results cite this quote where they report the new background cost, and the request.md record carries it verbatim with quotes 44, 47, 48 and 49.
+
+## Amendment 3 — delta check of Amendments 1 and 2 (verifier ir8-design-check, PASS with conditions, one P2, seven P3; 2026-11-01)
+
+This amendment is applied as the verifier wrote it. It wins over Amendments 1 and 2 where they differ. The design is approved for dispatch with it.
+
+C3-1 (P2-A, two core tests count stamp increments across a load start; added to B5).
+- `core/engine/write/__tests__/dispatch.binding-input.test.ts:210-238` ("69C-05 deferred mount omits validation while default mount requests it once"): `:233` expects `immediate.runtime.validationStamp` to be 1, and after B1 it is 2.
+- `core/engine/write/__tests__/dispatch.onChange.test.ts:35-46` ("EVENT-032 reset with unchanged emit does not call onChange"): `:44` expects `before + 1`, and after B1 it is `before + 2`.
+- Fix for both: assert the request count as `runtime.validationStamp! - runtime.validationLoadStamp!` equal to 1. `validationLoadStamp` is recorded in the `finally` block before the chain-end request, so this counts only the request.
+- Name both in the results as adapted for the load-start advance.
+
+C3-2 (P3-1, line references).
+- The non-OnChange bump in `clearFieldNodeFormErrors.ts` is at `:34-37`: the bump at `:35` and the settle at `:36`. This corrects A1, B1, B8 P3-3 and the codex triage.
+- `validationPendingTargets = undefined` at `:38` already runs for every reset, in every mode. B1's "also clear `validationPendingTargets`" is therefore redundant but harmless. B1's own step is the advance plus the settle.
+
+C3-3 (P3-2, rename scope). Remove `core/DETAIL.md:71` from the `deferMountValidation` → `deferLoadValidation` rename list. That line documents the test fixture prop `nodeFromJSONSchema({ deferMountValidation })`, which configures only mount and keeps its name. The prop is in `fixtures/nodeFromJSONSchema.ts:20` and `:25`, `hostEntry.test.ts:9-20`, `global-errors.test.ts:27` and `visibility.mount-release.test.tsx:142`.
+
+C3-4 (P3-3, narrowing A2). In `dispatchValidate`'s stale branch, skip the flag writes and the report only for `ValidatorCompileFailed`. Every other failure, such as a stale `ValidatorThrew`, keeps today's path: its `'rejected'` record (ERROR-019 item 3) goes to the same load object's reporter, and its settle with a stamp is already a no-op after the advance.
+
+C3-5 (P3-4, T9 A2 case ordering). Call `reset()` synchronously right after `validate()`, in one `act`, before awaiting the promise. The compile failure surfaces in the microtask after `validate()`'s first await. If the test awaits the rejection first, both today and after IR-8 produce `'rejected'` and then `'sink'`, and the red claim fails.
+
+C3-6 (P3-5, one regex). Define `DUPLICATE_SCHEMA_ID_MESSAGE` once, beside `readValidationEntry`, for example in `core/engine/validation/utils/cache/constants.ts`. `assertValidationRootReady` imports it, which keeps the existing run → cache import direction. Update the `app/cache/DETAIL.md:219` inventory row, which points at `assertValidationRootReady.ts:9` today.
+
+C3-7 (P3-6, DETAIL wording). `core/engine/validation/DETAIL.md` W3 (`:17`) says a chain without a request "이전 대기 요청이나 더 새로운 판정을 풀지 않는다". Add one sentence there, and one to H (`:10`, `:12`), naming the deferred load-start settle as a pending true-to-false release that drops the earlier request. This is added to B6.
+
+C3-8 (P3-7, B3 render test setup).
+- `rebuild()` on the same schema object reuses the cached entry, and a deep-equal new object takes the same-schema path (`isSameSchema`), so neither exercises B3.
+- Set up the test this way: rerender with a new schema object that has the same `$id` and different content, then call `reset()` or `rebuild()`.
+- Use a validator that throws `Error('schema with key already exists')` while that `$id` is registered and unregisters it on `release`.
+- Expect no `onError` record, and the form validating against the new schema after the slot.
+
+C3-9 (test placement, coordinator; removes ambiguity in the brief).
+- T1–T6, T8, T9 and the B3 render test go in `src/__tests__/e2e/validation.load-slot.render.test.tsx`.
+- T7 goes in `src/core/__tests__/loadValidation.test.ts`.
+- T10 and T11 go in `src/__tests__/e2e/validation.after-paint.render.test.tsx`.
+- The B2 test goes in `core/engine/validation/__tests__/validation.same-id.test.ts`.
+
+
+## IR-8 round b — results-gate 수정 (2026-11-01)
+
+codex F1과 results-gate 조건을 채택한다. B2의 `entry.duplicate === true || 기존 scan`은 `entry.duplicate`만 읽는 계약으로 대체한다. readValidationEntry가 컴파일 전에 해제된 같은 $id 루트를 축출하므로 컴파일 시점 counted-root 판정이 충분하며 나중에 retain된 루트는 원인을 바꾸지 않는다 (VALIDATE-046).
+
+컴파일 실패 거부 객체는 캐시 항목마다 하나로 메모한다. 같은 폼이 이미 보고한 객체의 native submit 거부는 onError를 반복하지 않고 host에만 보고한다. 명시적 handle.submit은 계속 거부한다 (ERROR-019, ERROR-139, ERROR-164).
+
+C3-9의 single-file 배치를 대체한다: T3·T9·B3는 validation.load-slot-failures.render.test.tsx로 본문을 유지해 옮기고 native submit 두 모드를 추가한다. 원래 파일은 T1·T2·T4·T5·T6·T8을 유지하며 양쪽 모두 15-case cap을 지킨다 (TEST-021).
+
+T10·T11 즉시 pending, T10의 frame 전 실행 0, T5 reset의 새 슬롯 1, W4 sink·compile/handler host 각 1, Form.policies의 frame 전 compile 0, mount/reset load-start stamp 증가를 강화한다. F1·native-submit 및 강화 시험을 0df36857c에서 실행하고, mount/reset advance를 각각 제거한 scratch copy의 red도 보존한 뒤 scratch를 제거한다 (TEST-021).
+
+L6에 run-time retain 후보를 기록하고 수명 계약은 바꾸지 않는다. 캐시된 compile 거부를 render에서 다시 던지면 seen이 RENDER_FAILED 한 번을 생략하고 seen에서 제거하는 한계를 기록한다. raw 경로 감사는 일반 파일과 gzip 모두의 /tmp 경로까지 포함하며 과거 감사의 누락을 바로잡는다 (VALIDATE-021, ERROR-019, TEST-021).
+
+lint·typecheck·build·unit·render·react18·verify·storybook·production·import-model을 순차 실행한다. 두 load-slot 파일의 act warning 0, FCA 새 finding 0, 원장 기준 대비 새 문제 0, machine-path 0와 skip/todo 불변을 확인하고 round-b 원시에 보존한다 (TEST-021).

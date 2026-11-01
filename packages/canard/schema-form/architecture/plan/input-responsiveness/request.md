@@ -182,3 +182,14 @@ g2는 데이터 측정을 해보도록 해"
 36. (2026-10-31, right after quote 35, seeing finished scratch worktrees accumulate in the repository root) "그리고 작업 진행하면서 작업이 끝난 작업공간은 계속 정리하면서 하도록 해. 
 계속 쌓이는구나. 우리 규칙에도 있지않나"
    Answered: yes, round 451 recorded "받아들입니다. 작업이 완료된 worktree 나 브랜치는 정리하면서 진행하세요" (451C-01), but AGENT-POLICY.md never carried it, and this stage's briefs did not tell workers to remove their scratch worktrees. Actions: the round-5d scratch worktree was removed at once (its red-run results were already committed); the remaining scratch worktrees are removed as soon as their purpose ends (diagnosis display scratch after the round-6 pre-window diagnostic, lane E after the IR-6 measurement is accepted); every later brief tells the worker to remove its scratch worktrees once their results are committed; the stage closing adds the rule to AGENT-POLICY.md. Deleting the eight remote branches of the merged PRs #500 to #507 was blocked by the auto-mode permission classifier and went to the owner.
+
+
+## IR-8 — load validation after the next frame (2026-11-01)
+
+### Owner decisions (verbatim)
+
+- Quote 44: "마운트랑 스키마 컴파일을 나누는건 좋다. 그래야 마운트 비용으로 초기비용이 많은 초기 렌더링을 막지 않을테니. (다음 프레임에 컴파일 빌드, None 빼고 모두) 개발모드 여부와 무관하게 이렇게 처리할 수는 없나? None모드는 컴파일은 안하니 상관없다."
+- Quote 47: "지금 근데 보면 마운트 시점과 reset rebuild 에서 스키마를 빌드하고 오류를 내보내는 코드가 다른건가? 이게 동일 루트를 타야하지 않나? 그래야 리셋이나 리빌드 해도 다음 프레임에 컴파일이나 검증을 해서 좀 속도가 안정될거같은데? 코드도 동작마다 다르게 되지 않고?"
+- Quote 48 (goals 1 and 2): "1. 스키마 빌드는 무거운 작업이니 리셋 리빌드 마운트 같은 무거운 작업과는 다른 프레임에(다음 루프에) 실행되어서 블록 최소화 2. reset rebuild 최초 마운트 모드에서 스키마 빌드 및 검증 로직을 동일한 함수로 구성. 약간씩 다른 동작은 옵션 등으로 처리하도록."
+- Quote 49: "1. always도 동일하게 다음 프레임으로 2. 네 이해한게 맞습니다. 동일 동작을 여러 곳에서 중복으로 선언하면 지금처럼 스팩변경시 누락이 됩니다"
+- Quote 54 (answer to A5: OnRequest-only initial loads now pay a background compile after the first paint): "그 비용은 수용한다. 컴파일 비용 이월은 사용성을 불균일하게 만든다"

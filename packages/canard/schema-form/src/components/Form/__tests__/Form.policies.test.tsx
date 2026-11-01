@@ -70,6 +70,8 @@ it('VALIDATE-044 retains authored schema identity and replaces the root on valid
     </FormCore>,
   );
   expect(ref.current!.node).not.toBe(before);
+  expect(second.compile).not.toHaveBeenCalled();
+  await settleValidation(() => ref.current?.node);
   expect(second.compile).toHaveBeenCalledWith(schema);
 });
 

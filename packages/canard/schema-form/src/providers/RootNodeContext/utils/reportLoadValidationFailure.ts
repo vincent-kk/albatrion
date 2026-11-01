@@ -4,10 +4,10 @@ import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { reportErrorToHost } from '../../FormErrorContext';
 
-/** Isolate only the consumer-error tail of an already engine-reported mount failure.
- * @param failure - Rejection from explicit mount root validation.
+/** Isolate only the consumer-error tail of an already engine-reported load failure.
+ * @param failure - Rejection from explicit load root validation.
  * @returns Nothing; the engine owns reporting every validation failure. */
-export const reportMountValidationFailure = (failure: unknown): void => {
+export const reportLoadValidationFailure = (failure: unknown): void => {
   if (
     !(failure instanceof SchemaFormError) ||
     failure.code !== FormErrorCode.MultipleErrors

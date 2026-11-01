@@ -5,6 +5,7 @@ export { readFieldNodeGuard } from './utils/guard/readFieldNodeGuard';
 export { compileEntryGuards } from './utils/guard/compileEntryGuards';
 export { requestFieldNodeValidation } from './utils/run/requestFieldNodeValidation';
 export { runFieldNodeValidation } from './utils/run/runFieldNodeValidation';
+export { failValidationCompile } from './utils/run/failValidationCompile';
 export { assertValidationRootReady } from './utils/run/assertValidationRootReady';
 export { routeValidationIssues } from './utils/route/routeValidationIssues';
 export { retainEqualValidationIssues } from './utils/route/retainEqualValidationIssues';

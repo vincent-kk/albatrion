@@ -4,6 +4,7 @@ import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import {
   adoptFieldNodeChain,
+  dispatchLoadValidation,
   dispatchMount,
   dispatchValidate,
 } from '@/schema-form/core/engine/write';
@@ -88,7 +89,7 @@ describe('same schema id trees', () => {
     }
   });
 
-  it('VALIDATE-046 (iii) keeps the old chain intact when rebuilt-root compilation fails', () => {
+  it('VALIDATE-046 (iii) adopts without compiling and reports duplicate failure at the load entry', () => {
     const first = { $id: 'urn:atomic', type: 'string' };
     const second = { $id: 'urn:atomic', type: 'number' };
     const validator: Validator = {
@@ -105,13 +106,16 @@ describe('same schema id trees', () => {
     readValidationEntry(validator, first);
     const next = createDispatchTree(second, undefined, validator);
     previous.runtime.entryDepth = 1;
-    expect(() => adoptFieldNodeChain(previous.root, next.root)).toThrow(
-      'Whole-schema validation could not be compiled',
+    expect(() => adoptFieldNodeChain(previous.root, next.root)).not.toThrow();
+    expect(previous.runtime.adoptedRoot).toBe(next.root);
+    const report = vi.fn();
+    next.runtime.reportValidationFailure = report;
+    expect(dispatchLoadValidation(next.root)).toBe(false);
+    expect(report).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        details: expect.objectContaining({ reason: 'duplicateSchemaId' }),
+      }),
     );
-    expect(previous.runtime.entryDepth).toBe(1);
-    expect(previous.runtime.adoptedRoot).toBeUndefined();
-    expect(previous.root.emit).toBe('retained');
-    expect(next.runtime.chainRoot).toBeUndefined();
   });
 
   it('VALIDATE-046 (iii) adopts a separately compiled same-id replacement', async () => {
@@ -135,5 +139,46 @@ describe('same schema id trees', () => {
     expect(previous.runtime.adoptedRoot).toBe(next.root);
     expect(await dispatchValidate(previous.root)).toEqual([]);
     expect(await dispatchValidate(next.root)).toEqual([]);
+  });
+  it('B2 preserves duplicateSchemaId from compile time after the competing root is released', async () => {
+    const first = { $id: 'urn:compile-time', type: 'string' };
+    const second = { $id: 'urn:compile-time', type: 'number' };
+    const validator: Validator = {
+      compile: (schema) => {
+        if (
+          typeof schema === 'object' &&
+          schema !== null &&
+          schema.type === 'number'
+        )
+          throw new Error('schema with key already exists');
+        return () => [];
+      },
+      compileGuard: () => () => true,
+    };
+    retainValidationRoot(validator, first);
+    readValidationEntry(validator, first);
+    readValidationEntry(validator, second);
+    releaseValidationRoot(validator, first);
+    const tree = createDispatchTree(second, undefined, validator);
+    await expect(dispatchValidate(tree.root)).rejects.toMatchObject({
+      details: { reason: 'duplicateSchemaId' },
+    });
+  });
+  it('round b a later retained root does not relabel a cached non-id duplicate failure', async () => {
+    const first = { $id: 'urn:later-retain', type: 'string' };
+    const later = { $id: 'urn:later-retain', type: 'number' };
+    const validator: Validator = {
+      compile: () => {
+        throw new Error('duplicate keyword declaration');
+      },
+      compileGuard: () => () => true,
+    };
+    readValidationEntry(validator, first);
+    retainValidationRoot(validator, later);
+    const tree = createDispatchTree(first, undefined, validator);
+    await expect(dispatchValidate(tree.root)).rejects.not.toHaveProperty(
+      'details.reason',
+    );
+    releaseValidationRoot(validator, later);
   });
 });

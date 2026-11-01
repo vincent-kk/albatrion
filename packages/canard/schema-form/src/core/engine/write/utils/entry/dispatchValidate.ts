@@ -42,6 +42,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   } else runtime.validationStamp ??= 0;
   const stamp = runtime.validationStamp;
   const commit = runtime.commitNumber ?? 0;
+  const loadStamp = runtime.validationLoadStamp;
   let result: Nullable<readonly ValidationIssue[]>;
   try {
     result = await runFieldNodeValidation(node);
@@ -50,6 +51,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     const compileFailure =
       failure instanceof SchemaFormError &&
       failure.code === FormErrorCode.ValidatorCompileFailed;
+    if (compileFailure && loadStamp !== runtime.validationLoadStamp) throw failure;
     if (compileFailure) {
       runtime.validationUnavailable = true;
       settleFieldNodeValidation(node);

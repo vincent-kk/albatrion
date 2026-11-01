@@ -13,7 +13,6 @@ describe('FieldNode PR-2 surface', () => {
       'commitFieldNodeRevealPolicy',
       'fieldNodeFactory',
       'finishFieldNodeInput',
-      'hasFieldNodeValidationRequest',
       'interpretFieldNodeDraft',
       'isArrayNode',
       'isBooleanNode',
@@ -33,6 +32,7 @@ describe('FieldNode PR-2 surface', () => {
       'readFieldNodeRevealVersion',
       'reloadFieldNodeForm',
       'setContext',
+      'startFieldNodeLoadValidation',
       'subscribeFieldNodeRevealReleased',
       'writeFieldNodeInput',
     ]);

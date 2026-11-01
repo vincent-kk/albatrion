@@ -229,8 +229,13 @@ describe('binding input entries', () => {
       validator,
     );
     immediate.runtime.validationMode = ValidationMode.OnChange;
+    const stampBefore = immediate.runtime.validationStamp ?? 0;
     dispatchMount(immediate.root, 'second');
-    expect(immediate.runtime.validationStamp).toBe(1);
+    expect(immediate.runtime.validationLoadStamp).toBe(stampBefore + 1);
+    expect(
+      immediate.runtime.validationStamp! -
+        immediate.runtime.validationLoadStamp!,
+    ).toBe(1);
     expect(
       immediate.runtime.validationPendingTargets?.has(immediate.root),
     ).toBe(true);

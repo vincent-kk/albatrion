@@ -40,6 +40,8 @@ export interface RootLoad {
   error?: unknown;
   /** First commit ran; deliver every form callback while effects are disconnected, until reset retires this load. */
   prepared: boolean;
+  /** Latest scheduled load slot, including same-root reset generations. */
+  loadValidation?: object;
   /** A reset replaced this load; it delivers nothing more to the consumer. */
   retired?: boolean;
   /** Records or construction errors have crossed the commit, replacement reset, or root-fallback boundary. */

@@ -9,6 +9,7 @@ import {
   Form,
   FormErrorCode,
   type FormHandle,
+  type FormProps,
   ValidationMode,
 } from '@/schema-form';
 
@@ -40,7 +41,10 @@ const hideable = (form: ReactNode, hidden: boolean) =>
     </Suspense>
   );
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 it('IR-7 T2 mount validation runs while hidden and is not repeated on show', async () => {
   const validate = vi.fn(() => []);
@@ -243,12 +247,13 @@ it('IR-7 T3 W4 async mount rejection reports once while hidden', async () => {
 
 it('IR-6 W4 a compile onError failure reaches the host once without recapture', async () => {
   const handler = new Error('handler');
+  vi.stubGlobal('reportError', vi.fn());
   const sink = observeErrorSink();
   let first!: () => void;
   const called = new Promise<void>((resolve) => {
     first = resolve;
   });
-  const onError = vi.fn(() => {
+  const onError = vi.fn<NonNullable<FormProps['onError']>>(() => {
     first();
     throw handler;
   });
@@ -268,7 +273,13 @@ it('IR-6 W4 a compile onError failure reaches the host once without recapture', 
     await called;
     await new Promise<void>((resolve) => setImmediate(resolve));
   });
-  expect(onError).toHaveBeenCalledTimes(1);
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({ surface: 'sink' }),
+  );
+  const compileFailure: unknown = onError.mock.calls[0][0].error;
+  expect(
+    sink.errors().filter((error) => error === compileFailure),
+  ).toHaveLength(1);
   expect(sink.errors().filter((error) => error === handler)).toHaveLength(1);
 });
 

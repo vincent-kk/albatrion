@@ -23,7 +23,7 @@
 
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
-- `hasFieldNodeValidationRequest(node)`는 requireRuntimeFieldNode로 공개 노드를 내부 레코드로 좁힌 뒤 engine의 같은 이름 조회를 호출하는 바인딩 전용 통로다. core가 이 래퍼를 명명 재수출하며 src/index와 노드 공개 멤버는 유지한다(IR-6 R2, 코디네이터 승인 msg_7e0a5ed0ffd3).
+- `startFieldNodeLoadValidation(node)`는 surface가 공개 노드를 좁혀 engine의 `dispatchLoadValidation`을 호출하고 core가 재수출하는 로드 슬롯 바인딩이다. 요청 조회는 validation 내부에 남는다.
 
 - BLUEPRINT-052: buildFieldNodeTree accepts an optional caller-owned blueprint cache and forwards it to blueprint without importing app state. Per-tree warning collection and runtime ownership remain unchanged.
 
@@ -113,7 +113,7 @@
 | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | `buildFieldNodeTree(props)`                                   | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않는다                                                                                                         | 70C-01, VALIDATE-010      |
 | `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받는다                                                                                                                 | 69C-01·05, LANDING-041    |
-| `reloadFieldNodeForm(root, value, option?)`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다 | WRITE-015·043·045, 69C-03 |
+| `reloadFieldNodeForm(root, value, option?, { deferValidation? })`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다. deferValidation은 Provider의 공통 로드 슬롯에 판정을 위임하고 기본 core-only 호출은 사슬 끝 요청을 유지한다 | WRITE-015·043·045, 69C-03 |
 | `adoptFieldNodeTree(previousRoot, nextRoot)`                  | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기한다                                                                                                  | 69C-02·03, WRITE-046      |
 | `writeFieldNodeInput(node, value, option)`                    | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별한다                                                                                                      | REACT-009·010, 69C-01     |
 | `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                | WRITE-083, 69C-01         |

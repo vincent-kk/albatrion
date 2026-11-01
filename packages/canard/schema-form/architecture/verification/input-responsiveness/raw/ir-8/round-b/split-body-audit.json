@@ -1,0 +1,8 @@
+{
+  "fromCommit": "0df36857c",
+  "source": "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx",
+  "destination": "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot-failures.render.test.tsx",
+  "T3ByteIdentical": true,
+  "T9ByteIdentical": true,
+  "B3OnlyFinalAwaitWrapped": true
+}

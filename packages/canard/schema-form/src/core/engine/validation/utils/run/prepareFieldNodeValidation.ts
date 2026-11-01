@@ -10,7 +10,7 @@ export const prepareFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.rootNode.runtime;
   if (
     !runtime.entryDepth ||
-    runtime.deferMountValidation ||
+    runtime.deferLoadValidation ||
     !((runtime.validationMode ?? 0) & ValidationMode.OnChange) ||
     runtime.validationUnavailable ||
     (runtime.chainInitialEmit === node.rootNode.emit &&

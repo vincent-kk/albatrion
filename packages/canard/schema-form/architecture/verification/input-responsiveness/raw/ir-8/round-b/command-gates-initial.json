@@ -1,0 +1,14 @@
+[
+  {
+    "gate": "lint",
+    "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "gate": "typecheck",
+    "command": "yarn workspace @canard/schema-form typecheck",
+    "exitCode": 2,
+    "output": "src/__tests__/e2e/validation.mount-owed.render.test.tsx(278,35): error TS2532: Object is possibly 'undefined'.\nsrc/__tests__/e2e/validation.mount-owed.render.test.tsx(278,57): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.\n"
+  }
+]

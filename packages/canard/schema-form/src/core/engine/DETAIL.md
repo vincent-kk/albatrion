@@ -103,7 +103,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 - validationScheduling은 도메인 없는 주기의 독립 자식 경계다. record는 cadence 형, validation은 생성 API, engine은 마운트용 일회성 슬롯을 소비하며 스탬프나 노드를 이 경계로 넘기지 않는다(IR-6 amendment3).
 
-- `hasFieldNodeValidationRequest(node)`는 validation의 요청 스탬프가 양수인지 읽는 조회를 명명 재수출한다. surface의 같은 이름 바인딩 래퍼만 제품 소비하며 core의 공개 노드 경계는 그 래퍼를 사용한다(IR-6 R2).
+- `startFieldNodeLoadValidation(node)`는 surface가 공개 노드를 좁혀 engine의 `dispatchLoadValidation`을 호출하고 core가 재수출하는 로드 슬롯 바인딩이다. 요청 조회는 validation 내부에 남는다.
 
 - 정적 작성 경로의 세그먼트는 유한한 청사진 색인 준비가 소유합니다. 구체 runtime 주소의 순수 문법은 기존 HostDerived의 pointerSegments 슬롯에서 root.runtime을 키로 최대 256개를 FIFO 보유하며 hit에는 배열·wrapper를 만들지 않습니다. 정적 색인은 질의 miss로 확장하지 않습니다. 새로운 주소와 퇴출 주소는 첫 fill을 허용하고 실제 모드 변경은 기존 derived-record 세대와 함께 캐시를 초기화합니다. 같은 occurrence의 load/reset과 새 runtime/rebuild는 기존 소유 수명대로 구별합니다.
 
@@ -115,7 +115,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 승인 계획 9.2절이 겉면과 core 호스트 사이에 고정한 표면이다. 아래 이름만 명명해 재수출하며, 구현 파일에 새 수출이 생겨도 이 계약이 저절로 넓어지지는 않는다.
 
-- **write**: adoptFieldNodeChain, createFormErrorRecord, dispatchBatch, dispatchClear, dispatchClearExternalErrors, dispatchClearSubtreeState, dispatchContextChange, dispatchFinishInput, dispatchInsert, dispatchMount, dispatchPop, dispatchPush, dispatchRemove, dispatchRequest, dispatchResetForm, dispatchResetSubtree, dispatchSetExternalErrors, dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchUpdate, dispatchValidate, dispatchVisitSubtree, dispatchWriteInput, readFieldNodeInteractionReset, readFieldNodeRevision, subscribeFieldNode; 형 FieldNodeListener.
+- **write**: adoptFieldNodeChain, createFormErrorRecord, dispatchBatch, dispatchClear, dispatchClearExternalErrors, dispatchClearSubtreeState, dispatchContextChange, dispatchFinishInput, dispatchInsert, dispatchLoadValidation, dispatchMount, dispatchPop, dispatchPush, dispatchRemove, dispatchRequest, dispatchResetForm, dispatchResetSubtree, dispatchSetExternalErrors, dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchUpdate, dispatchValidate, dispatchVisitSubtree, dispatchWriteInput, readFieldNodeInteractionReset, readFieldNodeRevision, subscribeFieldNode; 형 FieldNodeListener.
 - **blueprint**: blueprint, collectBlueprintWarnings, mergeEffectiveSchema; 형 Blueprint, BlueprintChildEntry, BlueprintNode, BlueprintOptions, BlueprintSchema, BlueprintSchemaType, EffectiveSchema, SchemaTypeName.
 - **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot, scheduleValidationSlot; 형 ValidationIssue, Validator, ValidateFunction.
 - **record**: EMPTY_REVISION_LEDGER, FieldNodeEventType, FieldNodeRequestType; 형 Behavior, FieldNodeRecord, FieldNodeRuntime.
@@ -127,7 +127,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ### 수출의 이유와 도달 범위
 
-- `scheduleValidationSlot`은 RootNodeContext의 마운트 검증이 쓰기 검증과 같은 화면 뒤 실행 시점을 재사용하는 바인딩 전용 통로다. core가 명명 재수출하며 패키지 공개 표면은 넓히지 않는다. 예약 구현은 validationScheduling이 소유한다(IR-6 amendment3).
+- `scheduleValidationSlot`은 RootNodeContext의 모든 로드 검증이 쓰기 검증과 같은 화면 뒤 실행 시점을 재사용하는 바인딩 전용 통로다. core가 명명 재수출하며 패키지 공개 표면은 넓히지 않는다. 예약 구현은 validationScheduling이 소유한다(IR-6 amendment3).
 - `loadFieldNodeAtMount`와 `resetFieldNodeForm`을 수출하는 이유는 다음과 같다. core 시나리오 실행기(`createCoreScenarioAdapter`, `createObservedCoreScenarioAdapter`, `executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`, 그리고 `bench/legacy-compare/`의 독립 비교 스크립트(`array`, `derive-and-controls`, `node-and-settle`)가 engine index를 통해 이 적재 통로를 쓴다. 제품 소비자는 없다.
 - `blueprint`는 bench와 `src/hooks/__tests__/createHookNode.ts`가 쓰는 생성 통로이므로 core index가 다시 내보내고, 패키지 src/index 표면에는 추가하지 않는다. `readFieldNodeGuard`는 validation 내부 계약이라서 engine과 core의 집계 진입점이 재수출하지 않는다.
 - 이름 목록은 승인된 내부 계약이며, 자식 모듈의 모든 수출을 대신하지는 않는다. 시험은 검사 대상이 속한 구획에서 구체적인 내부 단위를 검증한다.

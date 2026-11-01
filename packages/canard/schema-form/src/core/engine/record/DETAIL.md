@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 로드 시작은 validationStamp를 증가시키며 finally의 사슬 종료 직전에 validationLoadStamp를 기록한다. 이 선택적 수는 로드 세대와 로드 이후 요청 비교를 소유한다. deferLoadValidation은 mount·form reset의 바인딩 슬롯 위임을 표시하며 노드 고정 칸은 늘리지 않는다.
+
 - X3/W3의 선택적 validationPendingEntryStamp는 pending을 false에서 true로 만든 사슬만 얻는 stamp이며 이미 pending인 사슬은 얻지 않는다. 이 marker는 실제 요청·무요청 종료·폐기에서 지운다. 노드 고정 칸이나 timing 상태가 아니다.
 
 
