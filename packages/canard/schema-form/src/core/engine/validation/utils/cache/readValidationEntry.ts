@@ -1,5 +1,6 @@
 import type { Optional } from '@aileron/declare';
 
+import type { SchemaFormError } from '../../../../../errors';
 import type { BlueprintSchema } from '../../../blueprint';
 import type {
   GuardFunction,
@@ -30,6 +31,8 @@ export interface ValidationEntry {
   readonly failure?: unknown;
   /** Duplicate-id registration observed while this compilation failed. */
   readonly duplicate?: boolean;
+  /** Shared compile rejection identity for automatic reports and later explicit/native requests. */
+  rejection?: SchemaFormError;
   /** Whether development guard precompilation has already run. */
   eagerCompiled: boolean;
 }

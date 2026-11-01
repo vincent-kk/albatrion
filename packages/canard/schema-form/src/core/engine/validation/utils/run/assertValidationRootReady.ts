@@ -6,7 +6,6 @@ import type { ValidateFunction } from '../../types/validator';
 import { DUPLICATE_SCHEMA_ID_MESSAGE } from '../cache/constants';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from '../guard/isValidator';
-import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
 
 /**
  * Compile or read the cached whole-schema validator for a root.
@@ -33,15 +32,14 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     typeof id === 'string' &&
     entry.failure instanceof Error &&
     DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
-    (entry.duplicate === true ||
-      hasRetainedValidationRootId(validator, authoredRoot));
+    entry.duplicate === true;
 
-  throw new SchemaFormError(
+  throw (entry.rejection ??= new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',
     {
       error: entry.failure,
       ...(duplicate ? { reason: 'duplicateSchemaId', $id: id } : {}),
     },
-  );
+  ));
 };
