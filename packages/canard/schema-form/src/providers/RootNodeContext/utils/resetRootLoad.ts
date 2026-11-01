@@ -74,6 +74,7 @@ export const resetRootLoad = (
     return previous;
   }
   next.prepared = true;
+  next.reported = true;
   const replacement = next.root;
   if (next.reporter) next.reporter.root = replacement;
   const load = () => {

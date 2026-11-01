@@ -36,7 +36,7 @@ export interface RootLoad {
   >;
   /** Warning scope captured for direct records placed in this load. */
   warningScope?: object;
-  /** Construction, mount, or reset failure kept for the reset caller or root boundary to throw and report. */
+  /** Speculative failure for the first boundary, or replacement reset failure kept only for its caller. */
   error?: unknown;
   /** First commit ran; deliver every form callback while effects are disconnected, until reset retires this load. */
   prepared: boolean;
