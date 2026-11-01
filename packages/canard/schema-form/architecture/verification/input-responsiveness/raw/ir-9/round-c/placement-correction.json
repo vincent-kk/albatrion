@@ -193,5 +193,26 @@
   "IR_supplement_lines_outside_supplement_field": 0,
   "quotes": 3616,
   "not_verbatim": 0,
-  "unparsed": 0
+  "unparsed": 0,
+  "insertion_runs": [
+    {
+      "tool": "ledger/checks/sup-insert.mjs",
+      "review": "reviews/ir-9-onerror-origin.md",
+      "plan": "sup-insert-plan-0.json",
+      "plan_sha256": "21594ee79b4d5adc0131318f0d31dd19583489c48dfd89d5b10401d8e5f17267",
+      "plan_bytes_equal_to_invoked": true,
+      "inserted": 12,
+      "exitCode": 0
+    },
+    {
+      "tool": "ledger/checks/sup-insert.mjs",
+      "review": "reviews/ir-8-round-b.md",
+      "plan": "sup-insert-plan-1.json",
+      "plan_sha256": "35b3c4c77980153ea2ce1a4a1775458b01882d10d0275e67270d04636a2dc6e3",
+      "plan_bytes_equal_to_invoked": true,
+      "inserted": 2,
+      "exitCode": 0
+    }
+  ],
+  "quote_prefix_restoration": "The unchanged insertion tool reads the entire review line. The two IR-8 quotations were narrowed back to their original cited prefix after insertion, preserving all14 original quote lines."
 }

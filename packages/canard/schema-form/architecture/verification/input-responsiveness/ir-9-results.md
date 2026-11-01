@@ -8,7 +8,7 @@ onError is an event channel: it delivers the one record of each occurrence and d
 
 ## 변경과 기준
 
-기준은 `f4018e82b`(#511 IR-8)이며 최초 IR-9 제품은 `d6ded31b3`입니다. round b 제품과 최종 관문은 아래에 별도로 기록합니다. 계약 `81d0249a3`을 제품·시험보다 먼저 커밋했고 기존 원장·ADR·설계·계획의 기준 줄은 모두 원래 순서대로 보존했습니다. quote 50·56–59의 원문과 각 맥락, 설계가 전한 상시 결정 67을 request 기록에 보관했습니다. 현행 스펙은 제자리에서 고쳤고 새 IR-9 설계 보충의 문장에는 현행 원장 ID를 연결했습니다.
+기준은 `f4018e82b`(#511 IR-8)이며 최초 IR-9 제품은 `d6ded31b3`입니다. round b 제품과 최종 관문은 아래에 별도로 기록합니다. 계약 `81d0249a3`을 제품·시험보다 먼저 커밋했고 최초 IR-9에서는 기존 원장·ADR·설계·계획의 기준 줄을 원래 순서대로 보존했습니다. round c에서 승인한 보충 14줄의 배치 교정은 아래에 별도로 기록합니다. quote 50·56–59의 원문과 각 맥락, 설계가 전한 상시 결정 67을 request 기록에 보관했습니다. 현행 스펙은 제자리에서 고쳤고 새 IR-9 설계 보충의 문장에는 현행 원장 ID를 연결했습니다.
 
 시험은 `eda18be3f`에서 먼저 커밋했습니다. 최종 보정 본문 `8cb040a21`에서 제품만 일시적으로 기준 코드로 복원한 뒤 [최종 red](raw/ir-9/red-final-runs.json)를 실행했습니다. 제품 diff 0을 확인했고 291개 중 실패 120·통과 168·기존 skip 3입니다. [원시 JSON gzip](raw/ir-9/red-final-tests.json.gz)과 파일별 SHA256을 보존하며 현재 시험 26개 파일의 해시가 모두 일치합니다. 초기 [red](raw/ir-9/red-runs.json)는 287개 중 실패 117·통과 167·기존 skip 3이며 최종 red와 혼합하지 않습니다.
 
@@ -211,3 +211,8 @@ render·verify의 skip 5는 기존 2건과 승인된 React 19 legacy-root 3건�
 React 18 legacy root helper는 `renderLegacyRootOrigin`과 같은 이름의 파일로 바꿨습니다. frozen `__legacy__` 엔진을 뜻하는 이름으로 읽히지 않도록 한 rename이며 모든 소스 참조를 함께 바꿨습니다. [rename-only 증거](raw/ir-9/round-c/rename-proof.json)는 새 이름을 되돌리면 helper·호출자 바이트가 기준 `0920ad9c5`와 같음을 확인합니다. 제품 로직과 시험 단언은 그대로이며 이전 round의 raw 해시는 당시 커밋의 역사적 증거로 보존합니다.
 
 선언 메타데이터에서 errors/index.d.ts·errors/type.d.ts는 공개 record의 운반 파일로 분리했고 내부 변경 목록은 19개입니다. 전체 변경은 여전히 21개이며 공개 폐포 diff 세 줄·선언 트리 해시는 같습니다. 입력 SHA 필드는 `walker_input_commit`으로 이름을 바꿔 walker가 읽은 커밋임을 명시했고 writer도 같은 필드를 출력합니다.
+
+
+round c 지정 관문은 lint → typecheck → import-model → unit → 두 origin 파일(render·react18) → 원장 전체 검사 → FCA validate → 새 커밋·해제 gzip 경로 감사 순서로 실행했습니다. lint 경고 0, typecheck exit 0, import-model 2건·unit 4,101건·origin 45건 통과, 시험 실패 0입니다. 기존 unit todo 1건과 승인된 React 19 legacy-root skip 3건을 유지했습니다. [명령과 실행 순서](raw/ir-9/round-c/command-gates.json), [시험 전체 JSON·집계](raw/ir-9/round-c/test-gates.json), [원장 전체 로그](raw/ir-9/round-c/ledger-logs.json.gz)를 보존합니다.
+
+[round c FCA 비교](raw/ir-9/round-c/fca-diff.json)는 facts 1,775 exact이며 finding 201개와 기존 진단 176개가 위치를 포함한 정확한 키로 같습니다. canonical failed 12·skipped 1 및 indeterminate를 유지하며 신규/해소 finding은 0입니다. [새 커밋 감사](raw/ir-9/round-c/audit.json)는 각 새 커밋의 추가 텍스트와 모든 gzip snapshot을 해제 검사하며 신규 기계 경로는 0입니다. 승인된 이동 14줄의 원문, 그 외 원장 본문, 제품 로직·시험 단언·skip/todo/fails는 유지했습니다. 최종 결과 커밋도 커밋 뒤 같은 검사로 다시 확인합니다.

@@ -1,5 +1,6 @@
 {
   "baseline": "f4018e82b",
+  "walker_input_commit": "7207b5e2f8d62d6c42781741b656c583136351cf",
   "algorithm": "TypeScript checker; every package export, package-declared properties, signatures, predicates and type arguments; depth 7; full tsc declaration emission before alias post-processing",
   "depth": 7,
   "export_count": 97,
@@ -7,6 +8,10 @@
   "head_tree_sha256": "ef7a56281d0961953330cd6bb36d805ae3d9e3f744b2ddf3df73cf263e86eeeb",
   "base_declaration_count": 1351,
   "head_declaration_count": 1352,
+  "changed_public_declaration_carriers": [
+    "errors/index.d.ts",
+    "errors/type.d.ts"
+  ],
   "changed_internal_declaration_files": [
     "core/engine/record/types/runtime.d.ts",
     "core/engine/record/utils/indexFieldNodeWarning.d.ts",
@@ -38,10 +43,5 @@
     "batchFieldNodeLoad",
     "PendingFormErrorRecord",
     "FormErrorService"
-  ],
-  "walker_input_commit": "4dcf6646f995212e562916afcc0ad0de8f17e0a1",
-  "changed_public_declaration_carriers": [
-    "errors/index.d.ts",
-    "errors/type.d.ts"
   ]
 }

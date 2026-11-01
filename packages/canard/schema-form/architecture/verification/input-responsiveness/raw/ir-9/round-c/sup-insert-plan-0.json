@@ -1,35 +1,32 @@
-{
-  "review": "reviews/ir-9-onerror-origin.md",
-  "plan": [
-    {
-      "code": "IR-9",
-      "line": 3,
-      "targets": [
-        "ledger/error.md:ERROR-005",
-        "ledger/error.md:ERROR-017",
-        "ledger/error.md:ERROR-019",
-        "ledger/error.md:ERROR-021",
-        "ledger/error.md:ERROR-023",
-        "ledger/error.md:ERROR-041",
-        "ledger/error.md:ERROR-139",
-        "ledger/error.md:ERROR-164",
-        "ledger/error.md:ERROR-197"
-      ]
-    },
-    {
-      "code": "IR-9",
-      "line": 4,
-      "targets": [
-        "ledger/error.md:ERROR-164",
-        "ledger/react.md:REACT-007"
-      ]
-    },
-    {
-      "code": "IR-9",
-      "line": 5,
-      "targets": [
-        "ledger/test.md:TEST-017"
-      ]
-    }
-  ]
-}
+[
+  {
+    "code": "IR-9",
+    "line": 3,
+    "targets": [
+      "ledger/error.md:ERROR-005",
+      "ledger/error.md:ERROR-017",
+      "ledger/error.md:ERROR-019",
+      "ledger/error.md:ERROR-021",
+      "ledger/error.md:ERROR-023",
+      "ledger/error.md:ERROR-041",
+      "ledger/error.md:ERROR-139",
+      "ledger/error.md:ERROR-164",
+      "ledger/error.md:ERROR-197"
+    ]
+  },
+  {
+    "code": "IR-9",
+    "line": 4,
+    "targets": [
+      "ledger/error.md:ERROR-164",
+      "ledger/react.md:REACT-007"
+    ]
+  },
+  {
+    "code": "IR-9",
+    "line": 5,
+    "targets": [
+      "ledger/test.md:TEST-017"
+    ]
+  }
+]
