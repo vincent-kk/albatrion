@@ -103,9 +103,11 @@ it.each([
       await Promise.resolve();
     });
     expect(warnings()).toHaveLength(operation === 'reset' ? 2 : 1);
-    expect(reports.mock.calls.map(([, scope]) => scope)).toEqual(
-      operation === 'reset' ? readScopes : [readScopes[1]],
-    );
+    const expectedScopes = operation === 'reset' ? readScopes : [readScopes[1]];
+    expect(reports).toHaveBeenCalledTimes(expectedScopes.length);
+    expectedScopes.forEach((scope, index) => {
+      expect(reports.mock.calls[index][1]).toBe(scope);
+    });
   },
 );
 
@@ -157,9 +159,11 @@ it.skipIf(inject('reactMajor') !== '18')(
         await Promise.resolve();
       });
       expect(onError).toHaveBeenCalledTimes(operation === 'reset' ? 2 : 1);
-      expect(reports.mock.calls.map(([, scope]) => scope)).toEqual(
-        operation === 'reset' ? scopes : [scopes[1]],
-      );
+      const expectedScopes = operation === 'reset' ? scopes : [scopes[1]];
+      expect(reports).toHaveBeenCalledTimes(expectedScopes.length);
+      expectedScopes.forEach((scope, index) => {
+        expect(reports.mock.calls[index][1]).toBe(scope);
+      });
       view.unmount();
     }
   },
