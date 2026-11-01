@@ -34,13 +34,13 @@
 
 ## API Contracts
 
-- `dispatchLoadValidation(root): boolean`은 사슬을 열지 않는 로드 검증 진입점이다. None·unavailable·검증기 없음은 false이며 나머지는 전체 스키마를 준비한다. 컴파일 실패만 failValidationCompile로 unavailable·정착·로드별 origin validate 보고하고, 다른 실패는 reporter에 보낸다. OnChange이며 현재 로드 이후 요청이 없을 때만 true를 반환한다.
+- `dispatchLoadValidation(root): boolean`은 사슬을 열지 않는 로드 검증 진입점이다. None·unavailable·검증기 없음은 false이며 나머지는 전체 스키마를 준비한다. 컴파일 실패만 failValidationCompile로 unavailable·정착·로드별 origin validate 보고하고, 다른 실패는 reporter에 보낸다. OnChange이며 현재 로드 이후 전체 배정을 충족할 요청이 없을 때만 true를 반환한다. 로드 판정이 남아 있는 동안 자동 하위 요청은 루트로 넓힌다. None·OnRequest-only는 자동 요청하지 않는다.
 - 모든 mount·form reset은 validationStamp를 증가시키고 finally의 사슬 종료 직전에 validationLoadStamp를 기록한다. deferred reset은 이전 pending을 정착한다. dispatchValidate의 오래된 로드 컴파일 실패는 caller에만 거부하고 현재 로드의 flag·보고를 바꾸지 않는다.
 
 - 수락한 명시적 root 판정은 route 뒤 pending이면 settle, 아니면 전체 release를 수행하여 한 번만 해제하고 배달한다. release listener가 여는 새 쓰기의 이력은 보존한다.
 
 - H: 최외곽 chain 진입·standalone 상태 진입·outer visit는 record의 sequence를 한 번 전진시킨다. exit의 request 뒤와 standalone closeNonSettleEntry의 finally에서 !entryDepth일 때 drop을 예약한다. listener가 던져도 기록 수명은 예약된다. clearSubtreeState의 직접 {} 쓰기 전에도 기록한다.
-- H/D: 하위 트리 validate는 전체 release하지 않는다. commit-only 재요청과 호출 시점 반환 계약은 유지한다. requestFieldNodeValidationWave는 deliverValidationWave 옆의 chain 파일이며 두 소비자가 구체 파일로 사용한다.
+- H/D: 하위 트리 validate는 전체 release하거나 stamp를 올리지 않는다. 로드 판정이 남은 자동 하위 요청은 루트로 넓히며, 대체될 실행의 대상은 새 요청이 stamp를 올리기 전에 후속 pending으로 인계한다. 완료 시 다시 요청하지 않으며 명시적 하위 검증은 실행 소유 기록을 건드리지 않는다. commit-only 재요청과 호출 시점 반환 계약은 유지한다. requestFieldNodeValidationWave는 deliverValidationWave 옆의 chain 파일이며 두 소비자가 구체 파일로 사용한다.
 
 - W3: 공개 리스너 배달 전에 validation의 prepareFieldNodeValidation을 호출해 동기 flushSync·legacy render도 pending을 보게 한다. 종료는 같은 적격 조건으로 실제 요청을 만들고, 요청이 사라지면 기록한 entry stamp만 정착하여 더 최신 pending은 보존한다. state-only 사슬은 기존 다른 요청을 풀지 않는다.
 
@@ -74,7 +74,7 @@
 ### 사슬, 파동, 기록
 
 - 진입은 같은 루트의 다른 공개 쓰기가 스택에 없을 때의 공개 쓰기 한 호출이다. 정착은 동기로 커밋하고, 깊이 1 → 0에서 정착 파동, 해당하는 검증 요청, `onChange`, 발생 순서의 `onError` 기록 전달, throw 순서로 끝난다. `onChange`는 최외곽 동기 진입당 마지막 파동 뒤에 최종 emit으로 한 번만 부른다. 루트 emit 참조가 그대로인 쓰기는 검증 요청과 `onChange`를 모두 만들지 않는다. 리스너 안의 쓰기는 같은 사슬의 다음 파동이고 `onChange` 안의 쓰기는 새 진입이다(EVENT-008·026·027·031·033, ERROR-004·019, 31C-01).
-- `reset`은 emit 참조가 그대로여도 `ValidationMode`의 `OnChange` 비트가 켜져 있으면 검증을 한 번 요청한다. 이 예외만으로 `onChange`를 부르지는 않으며, `resetSubtree()`의 요청은 그 하위 트리에만 적용한다(EVENT-032·072).
+- `reset`은 emit 참조가 그대로여도 `ValidationMode`의 `OnChange` 비트가 켜져 있으면 검증을 한 번 요청한다. 이 예외만으로 `onChange`를 부르지는 않으며, `resetSubtree()`의 요청은 그 하위 트리에 적용하되 로드 전체 판정이 아직 남아 있으면 루트로 넓혀 형제 오류도 배정한다(EVENT-032·072, VALIDATE-052).
 - `dispatchVisitSubtree(node, visitor)`는 공개 `visitSubtree`의 진입이다. 순회 자체는 사슬에 들어가지 않고 런타임의 `visitDepth`만 올리므로, 읽기만 하는 순회는 비용이 없고 리스너 안에서도 된다. 순회 중 쓰기가 `enterFieldNodeChain`에 닿을 때 열린 묶음이 없으면(`batchDepth`가 0) 그 진입이 묶음 하나를 함께 열고(`batchDepth = 1`, 여는 진입을 `visitBatchEntry`에 둠) 이후 쓰기는 `batch`처럼 표시만 된다. 가장 바깥 순회가 끝나 `visitDepth`가 0이 되면 열린 묶음을 `flushBatchWrites`로 루트에서 한 번 정착하고 사슬을 나간다. 쓰기가 없으면 아무것도 열지 않고, 바깥 묶음이 열려 있으면 합류만 하며 정착은 바깥 끝에서 한다. 순회 안의 정착 밖 진입도 열린 진입이 없으면 같은 묶음을 열어 전달을 순회 끝으로 미루므로, 순회 안의 전달 시점은 `batch` 안과 같다. 순회 안에서 쓰기 전에 연 `batch()`는 순회의 묶음에 합류해 자기 끝이 아니라 순회 끝에 정착한다. 오류 관찰자 안의 쓰기 거부와 리스너 되먹임 예산은 묶음을 열기 전에 평소대로 적용된다. visitor가 던지면 자기가 연 묶음이 있을 때만 그 오류를 사슬에 담아 표시된 쓰기를 커밋한 뒤 사슬 끝에서 던지고, 아니면 그대로 다시 던진다. 재생성 reset의 사슬 넘김은 `visitDepth`와 `visitBatchEntry`도 새 루트로 옮긴다(SURFACE-062, 191C-01).
 - `batch(fn)` 안의 `reset`은 그 로드를 즉시 정착시키고 커밋은 함수 끝의 파동에 합류시킨다. 검증 요청과 해당하는 `onChange`는 최외곽 진입의 끝에서 낸다. `resetSubtree()`의 즉시 정착 범위는 그 하위 트리뿐이다(EVENT-015·072).
 - 묶음 안에서도 떼어진 참조의 setValue와 배열 동사는 표시·정착·배달 없이 무동작이다. 생사 판정은 호출 시 직전 커밋의 detached 플래그를 따른다. finishInput도 기존 NODE-044 무동작 규칙을 유지한다. resetSubtree도 무동작이다.

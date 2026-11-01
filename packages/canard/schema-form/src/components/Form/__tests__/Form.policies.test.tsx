@@ -57,7 +57,7 @@ it('VALIDATE-044 retains authored schema identity and replaces the root on valid
   const schema = { type: 'string' } as const;
   const ref = createRef<FormHandle>();
   const view = render(
-    <FormCore ref={ref} jsonSchema={schema} validatorFactory={first}>
+    <FormCore ref={ref} jsonSchema={schema} validatorFactory={first} errors={[]}>
       <span />
     </FormCore>,
   );
@@ -65,7 +65,7 @@ it('VALIDATE-044 retains authored schema identity and replaces the root on valid
   await settleValidation(() => ref.current?.node);
   expect(first.compile).toHaveBeenCalledWith(schema);
   view.rerender(
-    <FormCore ref={ref} jsonSchema={schema} validatorFactory={second}>
+    <FormCore ref={ref} jsonSchema={schema} validatorFactory={second} errors={[]}>
       <span />
     </FormCore>,
   );

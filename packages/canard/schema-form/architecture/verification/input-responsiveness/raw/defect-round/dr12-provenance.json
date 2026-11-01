@@ -1,0 +1,8 @@
+{
+  "testCommit": "4d1db8b7a7cede482e3a249576c6cb8f6ba65260",
+  "testSha256": {
+    "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/replacementErrors.test.tsx": "d78a757f10c3baa902a6a0e869d12d0f721ef15d4b083079481f931156a3a2df"
+  },
+  "report": "dr12-base.json.gz",
+  "failedTests": 2
+}

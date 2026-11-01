@@ -74,6 +74,7 @@ export const resetRootLoad = (
     return previous;
   }
   next.prepared = true;
+  next.reported = true;
   const replacement = next.root;
   if (next.reporter) next.reporter.root = replacement;
   const load = () => {
@@ -81,7 +82,7 @@ export const resetRootLoad = (
     mountFieldNode(replacement, clone(props.defaultValue), loadOption, {
       deferValidation: true,
     });
-    applyFormErrors(replacement, props.errors);
+    applyFormErrors(replacement, props.errors, undefined, 'load');
   };
   try {
     if (root) batchFieldNodeLoad(root, load);

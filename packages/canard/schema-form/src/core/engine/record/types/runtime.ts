@@ -349,6 +349,8 @@ export interface FieldNodeRuntime<Self>
   revealReleaseListeners?: Set<() => void>;
   /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
+  /** Newest started cadence or root run still owing target routing; handed to its successor before supersession. */
+  validationRunning?: { stamp: number; targets: ReadonlySet<Self> };
   /** True after a routing replaced the routed list, until the validation wave publishes it. */
   validationListChanged?: boolean;
   /** Most recent result and its commit number. */

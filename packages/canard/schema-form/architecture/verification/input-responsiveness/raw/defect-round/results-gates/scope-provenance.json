@@ -1,0 +1,17 @@
+{
+  "testCommit": "feb1f6bc58681a219e82db01e3daa07a72b822ad",
+  "testSha256": {
+    "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/__tests__/terminalChildren.test.tsx": "69d2d219735642219938f49273bfbfb499b7ace0edfa24a5f3c8e93b025e8f8d"
+  },
+  "note": "Scope assertions compare object identity and per-scope call count; final render/react18 and verify runs include this text. Earlier exact-base reds retain cd6f8c1a8 text.",
+  "rg-scope-identity-mutation": {
+    "passed": 6,
+    "failed": 5,
+    "skippedOrFiltered": 17
+  },
+  "rg-scope-identity-green": {
+    "passed": 11,
+    "failed": 0,
+    "skippedOrFiltered": 17
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "productBase": "779713587405b73abdd778df874fe21b726bac56",
+  "testCommit": "0b2906938",
+  "testSha256": {
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.plugin-retry.test.ts": "b5ff424974c0142f9f6d97dc099e25ec33d922b8478511e5b7906ef71f01175f",
+    "packages/canard/schema-form/src/components/Form/__tests__/degradedSubmit.test.tsx": "f2320fa7ef964fce0e08656b4c0b795fe27f53c67aac69159b065a64635dc699"
+  },
+  "report": "base-exact-additional-red.json.gz",
+  "baseline": {
+    "total": 7,
+    "failed": 5,
+    "passed": 2
+  },
+  "guard": "Degraded explicit validate already reports once on the baseline; only imperative submit needed product change."
+}

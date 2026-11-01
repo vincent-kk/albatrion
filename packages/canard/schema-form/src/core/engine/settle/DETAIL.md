@@ -237,7 +237,7 @@
 
 - H 폐기는 release listeners를 settle 호출 전에 비우고 모든 이력을 해제하며 예약 token을 무효화한다. 폐기 중 release 통지는 없고 기존 stamp 무효화·cadence 취소·구독 해제 순서는 유지한다.
 
-- 루트 트리 폐기는 런타임의 지연 validationCadence를 cancel하여 프레임·타이머·매크로태스크를 중단하고 참조를 비운다. 기존 스탬프 증가와 대기 대상 제거는 유지한다(IR-6 amendment3).
+- 루트 트리 폐기는 런타임의 지연 validationCadence를 cancel하여 프레임·타이머·매크로태스크를 중단하고 참조를 비운다. 기존 스탬프 증가와 대기 대상 제거를 유지하고 진행 중 검증의 대상 소유 기록도 비운다(IR-6 amendment3, VALIDATE-052).
 
 - 의존 색인의 정적 owner/watch/node·split host 문법은 구성 때 보유하고 동적 질의는 root.runtime 소유의 bounded 문법 캐시를 사용합니다. presence 질의도 runtime 소유자를 전달합니다. 문법 배열은 현재 owner·노드·슬롯 원본 조회 결과를 보유하지 않습니다.
 - watch 멤버십은 살아 있는 경로와 준비된 세그먼트를 함께 보유하여 제거 때 재해석하지 않습니다. 유효 watch 목록은 현재 또는 요청된 snapshot 스키마에서 매번 선택하며 목록 자체를 메모하지 않습니다. state 의존 문법은 실제 호스트 identity·현재 hostPath·authored dependency 키로만 재사용하고 재키 때 다시 묶습니다. 현재 emit/context와 이전 snapshot 값은 매번 읽고 어느 계획에도 보유하지 않습니다.

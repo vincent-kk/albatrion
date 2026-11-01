@@ -234,6 +234,7 @@
   > "| 경로 조회 | `find(path)`, `findNodes(path)` | 터미널 노드 아래의 경로는 둘 다 노드 없음으로 답한다. 공개 API가 객체를 조용히 파괴하면 안 되기 때문이다(07 4.29) | ADR 0006 §4 |" (`02-target-overview.md:316`)
   > "| 46 | 노드 메서드 `findAll` | `findNodes`(`FormHandle`은 이미 `findNodes`다) |" (`08-design-a-to-z.md:478`)
   > 소유자(341라운드, 하위 노드 방문을 공개 표면으로; 설계는 원장 기준, 판정은 소유자): "그리고 공개표면으로도 추가했으면 하네. \n\n자신을 기준으로 하위 모든 노드를 방문하는 공개 기능으로서. \n\n네이밍과 위치, 동작, 배치여부 등은 원장을 참고해서 추정하고 설계를 구성하라.\n판정과 판단이 필요하면 나에게 묻도록" (`reviews/round-341-owner-answers.md:7`)
+  > 편집자 결정(DR-9): "【추론】 DR-9: 경로 주소 바인딩은 경로 컨테이너들의 UpdateChildren을 따라 다시 해석한다. find는 현재 구조에 대한 조회다. useSyncExternalStore는 root부터 각 경로 prefix의 find 결과를 구독하고 unresolved prefix에서 멈춘다. 리스너는 사건 비트로 필터하며 변경 때 모두 해제·재탐색·재구독한 뒤 snapshot 변경을 통지한다. node 입력과 undefined 및 root로 해석되는 입력은 고정 snapshot과 no-op 구독이다. 기본 root proxy와 node-addressed children의 추가 구독·쓰기 비용은 0이며 root의 기존 네 리스너를 유지한다. 경로 프록시는 container마다 리스너 한 개와 사건마다 필터 호출 비용이 들고 wildcard는 첫 매치만 추적한다. identity 변경으로 Input이 remount되면 focus를 잃는 REACT-023 제한은 유지한다. 구독 직후 snapshot 재확인은 tearing을 막으며 재구독 리스너의 같은 wave 재호출은 허용한다." (`reviews/defect-round.md:19`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:415`(정본), `02-target-overview.md:316`, `08-design-a-to-z.md:478`, `06-conclusions.md:394`, `07-conclusions.md:205-210,351`, `05-before-after.md:95` (같은 규칙: NODE-020; 형상에 없는 노드를 돌려주는지는 열림 NODE-019)
 - 닫은 사람: 원리(`06-conclusions.md:175` P2·G4; `find`), 편집자 결정(10라운드 추정 채택 규칙, `07-conclusions.md:209`; `findNodes`), 편집자 결정(17라운드, `08-design-a-to-z.md:478` 이주 행 46; `findAll`)
@@ -849,6 +850,7 @@
   > 편집자 결정(195C-01): "【추론】 (1)은 소비자가 가장 흔히 쓰는 모양(값 바뀌면 서버 오류 지우기)에서 루트 목록이 틀리는 회귀라 차단이 맞다. (2)는 소유자가 직접 지시한 변화라 허용 목록에 빠진 것은 내 기록 누락이다. (4)·(5)는 "경로"를 문자열로 읽은 데서 온 것이고 노드 경로로 통일하면 둘 다 사라진다. (3)은 속도와 늦은 평가의 교환이라 소유자 몫이지만, 늦은 평가를 요구한 이유가 사라졌으므로 2안을 추천한다." (`reviews/round-195-closing.md:9`)
   > 편집자 결정(208C-01): "【추론】 (1)은 오류 경로의 원자성이라 새 동작이 옳고 소비자에게 더 안전하다. 꼬리는 전부 외부 오류 채널과 설정·문서라 쓰기 경로 측정과 독립이다." (`reviews/round-208-closing.md:9`)
   > 편집자 결정(215C-01): "【추론】 PR의 코드 범위가 시험·스토리·시나리오뿐이고 수치가 직접 재실행과 맞으며 결함은 모두 상류에서 고쳐졌으므로 머지에 남는 위험은 없다. 최상위 virtual 형은 런타임이 무시하는 자리를 형이 허용하는 함정이라 지워야 하지만 공개 형이므로 계획을 거친다." (`reviews/round-215-closing.md:15`)
+  > 편집자 결정(DR-10): "【추론】 DR-10·DR-12: validator 교체 또는 pending reset 재대조 뒤 errors effect는 렌더가 보유한 옛 root가 아니라 store.load.root의 현행 root에 적용한다. 같은 errors 배열 재적용은 기존 조기 반환을 따른다. replacement reset의 applyFormErrors는 이전 root 유무와 무관하게 load origin으로 호출하며 자체 batch 사슬의 listener 실패도 load로 보고한다. 오류 배열 내용·경로별 배정과 caller throw·호스트 전달 규칙은 바꾸지 않는다." (`reviews/defect-round.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1155-1159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)

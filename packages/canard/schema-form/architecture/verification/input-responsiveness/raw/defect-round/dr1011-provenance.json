@@ -1,0 +1,16 @@
+{
+  "preFixProduct": "a0ac3ec6d",
+  "testCommit": "aaa1aa3203beefd5be866c3cba34951159ec6ad1",
+  "testSha256": {
+    "packages/canard/schema-form/src/components/Form/__tests__/Form.policies.test.tsx": "0084eb3ff190215b99f2fa2626a220a66a1c719061dce4b2ebdd10fc8303925b",
+    "packages/canard/schema-form/src/components/Form/__tests__/degradedSubmit.test.tsx": "6b18ba2d9c712d36b911534bf712e9ea4182c1a0f2c505a1ec4a42ba0c9c82ca",
+    "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/errors.current-root.test.tsx": "7b1db7a62a63ee0fd9eda6d8841be50f64899fca156f5512272ea53ef14cd76e"
+  },
+  "report": "dr1011-base.json.gz",
+  "results": {
+    "total": 14,
+    "passed": 8,
+    "failed": 6
+  },
+  "DR11": "Decision pending; non-native onError 0, native onError 1 and host 1."
+}

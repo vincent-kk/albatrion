@@ -5,6 +5,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { ValidateFunction } from '../../types/validator';
 import { DUPLICATE_SCHEMA_ID_MESSAGE } from '../cache/constants';
 import { readValidationEntry } from '../cache/readValidationEntry';
+import { retryValidationEntry } from '../cache/retryValidationEntry';
 import { isValidator } from '../guard/isValidator';
 
 /**
@@ -21,6 +22,7 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   if (!isValidator(validator)) return null;
   const authoredRoot = root.runtime.blueprint.schema;
   const entry = readValidationEntry(validator, authoredRoot);
+  retryValidationEntry(validator, authoredRoot, entry);
   if (entry.validate && !entry.failure) return entry.validate;
   const id =
     typeof authoredRoot === 'object' &&

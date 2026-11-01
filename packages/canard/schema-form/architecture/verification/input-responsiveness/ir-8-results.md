@@ -159,3 +159,8 @@ T3·T9·B3는 본문을 유지해 별도 failures 파일로 옮겼고 B3의 최�
 [원장 검사](raw/ir-8/round-b/ledger-checks.json)는 보충 인용 3,597 → 3,600, 불일치·해석 실패 0, ref 문제 0, owner 720/720 인용, 17영역 missing·bad classifications 0입니다. plan-links 기존 1건·doc-coverage 기존 미인용 66개·tokens 기존 잔여 398개는 유지하며 신규 문제는 0입니다.
 
 [확장 감사](raw/ir-8/round-b/audit.json)는 새 텍스트와 모든 IR-8 raw 일반 파일·gzip의 temporary 절대 경로까지 확인합니다. 기존 skip/todo는 그대로이고 scratch worktree·branch 잔여는 없습니다. [정리 증거](raw/ir-8/round-b/scratch-cleanup.json)에 생성 기준·증거 커밋·Orca 제거·branch 삭제를 기록했습니다.
+
+
+## Defect round 보충 — L3와 L6의 범위
+
+기존 결과는 보존합니다. DR-2의 ERROR-019·VALIDATE-052 보충은 L3를 닫습니다. 슬롯 첫 ValidatorThrew는 engine의 origin validate 기록을 유지하고 원래 거부를 host에 한 번 전달합니다. MultipleErrors는 첫 원인과 handler 오류들을 순서대로 전달합니다. DR-1은 L6의 최근 해제 목록 초과로 인한 실행 중 해제를 pin으로 막지만 같은 id 교체의 소비자 없는 사본 해제는 한계로 남습니다. 구현·관문 증거는 defect-round-results.md에서 별도로 보고합니다.

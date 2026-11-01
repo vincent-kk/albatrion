@@ -19,6 +19,6 @@ export const scheduleLoadValidation = (
     if (store.load !== load || load.loadValidation !== token) return;
     const root = load.root;
     if (!root) return;
-    if (startFieldNodeLoadValidation(root)) validateLoadRoot(root);
+    if (startFieldNodeLoadValidation(root)) validateLoadRoot(root, load);
   });
 };

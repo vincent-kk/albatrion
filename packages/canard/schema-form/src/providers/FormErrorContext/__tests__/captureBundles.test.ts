@@ -1,0 +1,101 @@
+import { expect, it, vi } from 'vitest';
+
+import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
+
+import { createFormErrorService } from '../utils/createFormErrorService';
+
+it('DR-14 drops a known failure bundle and a bare handler exception during capture', () => {
+  const service = createFormErrorService();
+  const failure = new Error('compile');
+  const handler = new Error('handler');
+  const onError = vi.fn().mockImplementationOnce(() => {
+    throw handler;
+  });
+  service.onError = onError;
+  expect(() =>
+    service.report({
+      level: 'error',
+      code: FormErrorCode.ValidatorCompileFailed,
+      message: 'compile',
+      origin: 'validate',
+      error: failure,
+    }),
+  ).toThrow(handler);
+  service.capture(
+    new SchemaFormError(FormErrorCode.MultipleErrors, 'bundle', {
+      errors: [failure, handler],
+    }),
+    'submit',
+  );
+  service.capture(handler, 'render', 'component stack');
+  expect(onError).toHaveBeenCalledOnce();
+});
+
+it('DR-14 captures a bundle containing an unseen object', () => {
+  const service = createFormErrorService();
+  const onError = vi.fn();
+  service.onError = onError;
+  const first = new Error('known');
+  service.report({
+    level: 'error',
+    code: FormErrorCode.ValidatorCompileFailed,
+    message: 'compile',
+    origin: 'validate',
+    error: first,
+  });
+  const bundle = new SchemaFormError(
+    FormErrorCode.MultipleErrors,
+    'unseen bundle',
+    { errors: [first, new Error('unseen')] },
+  );
+  service.capture(bundle, 'submit');
+  expect(onError).toHaveBeenCalledTimes(2);
+  expect(onError.mock.calls[1][0].error).toBe(bundle);
+});
+
+it.each([
+  ['empty', []],
+  ['sparse', Array(2)],
+] as const)(
+  'DR-14 gate captures empty or sparse bundles with a render stack (%s)',
+  (_label, errors) => {
+    const service = createFormErrorService();
+    service.onError = vi.fn();
+    const error = { code: FormErrorCode.MultipleErrors, details: { errors } };
+    service.capture(error, 'render', 'renderer component stack');
+    expect(service.onError).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        code: FormErrorCode.RenderFailed,
+        componentStack: 'renderer component stack',
+        error,
+      }),
+    );
+  },
+);
+
+it('DR-14 amendment 11 captures a missing own index inherited from a prototype', () => {
+  const service = createFormErrorService();
+  const onError = vi.fn();
+  service.onError = onError;
+  const known = new Error('already reported');
+  service.report({
+    level: 'error',
+    code: FormErrorCode.ValidatorThrew,
+    message: known.message,
+    origin: 'validate',
+    error: known,
+  });
+  onError.mockClear();
+  const errors = new Array(1);
+  Object.setPrototypeOf(errors, { 0: known });
+  const error = { code: FormErrorCode.MultipleErrors, details: { errors } };
+  service.capture(error, 'render', 'inherited-index renderer stack');
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({
+      code: FormErrorCode.RenderFailed,
+      origin: 'render',
+      componentStack: 'inherited-index renderer stack',
+      error,
+    }),
+  );
+});

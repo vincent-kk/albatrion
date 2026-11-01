@@ -1,0 +1,29 @@
+{
+  "method": "Compare only declarations reached from root exports, including their comments. Normalize the one approved F2 sentence and comment layout; private members outside indexed-access selections are reported as file byte differences, never treated as public declarations.",
+  "publicReachableFiles": 55,
+  "changedFiles": [
+    {
+      "file": "components/Form/components/FormCore/types/handle.d.ts",
+      "approvedComment": true,
+      "privateRuntimeAddition": false
+    },
+    {
+      "file": "components/Form/components/FormCore/types/props.d.ts",
+      "approvedComment": true,
+      "privateRuntimeAddition": false
+    },
+    {
+      "file": "core/engine/record/types/runtime.d.ts",
+      "approvedComment": false,
+      "privateRuntimeAddition": true
+    },
+    {
+      "file": "core/engine/types/state.d.ts",
+      "approvedComment": true,
+      "privateRuntimeAddition": false
+    }
+  ],
+  "unexpectedAdded": [],
+  "unexpectedRemoved": [],
+  "onlyApprovedPublicComments": true
+}

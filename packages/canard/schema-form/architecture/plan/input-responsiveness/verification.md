@@ -235,3 +235,13 @@ Amendments 1–3: 모든 로드 시작에 stamp 증가, finally 종료 직전 lo
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
 T1의 다섯 origin·T2 중첩 load·T3 옛 필드 부재, A1 reset/rebuild/validator 변경, A5 첫 오류, P3-4 write listener reset·validate wave listener·stale load 뒤 state 및 최초/prop 외부 errors를 검증합니다. 기존 whole-record 단언도 갱신합니다. f4018e82b 제품에서 시험을 red로 실행하고 committed test SHA256과 JSON gzip을 보존합니다. lint 0경고→typecheck→build→unit→render→react18→verify→storybook→production→import-model→선언·index·FCA·원장·경로·skip/todo 감사를 순차로 기록합니다.
+
+
+## Defect round 관문 보충
+
+[결함 검증 계획](../defect-round/verification.md)의 기준 red·수정 green·세 변이와 순차 관문을 적용합니다. D4·D5의 Amendment 3 적용 전 전체 관문은 실행하지 않습니다. D9는 ERROR-023 항목 2 우선 제한으로 기록합니다.
+
+
+## Amendment 9·10 — 결과 관문 정정
+
+DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.

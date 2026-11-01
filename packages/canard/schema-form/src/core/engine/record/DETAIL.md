@@ -45,7 +45,7 @@
 
 - H: recordFieldNodeRevealBaseline은 OnChange 상태·active·visible 변이 전에 state 참조·active&&visible·generation·sequence를 entries에 append한다. 같은 node/write sequence에서는 한 번만 기록한다. sequence는 entryDepth·visitDepth가 모두0인 공개 chain/state 진입과 outer visit 시작에서만 증가하며 열린 entry/walk 안에서는 증가하지 않는다.
 - 모든 append는 runtime generation을 증가시키고 pending=false이면 drop owed를 기록한다. 기록 노드 set·커밋 정책·정책 이력·release version/listener set은 선택적 runtime 자료다. record는 scheduling·validation·통지를 실행하거나 import하지 않는다. 생성자 고정 필드 순서와 공개 표면은 유지한다.
-- validationPending은 검증 실행 제어 자료이며 표시 구독의 snapshot이 아니다. validationRun은 실제 시작 여부만 timing에 반환한다.
+- validationPending은 검증 실행 제어 자료이며 표시 구독의 snapshot이 아니다. 선택적 validationRunning은 최신 cadence 또는 명시적 root 실행이 아직 배정해야 할 stamp·ReadonlySet 대상을 보유하며, 후속 요청이 이를 인계하고 해당 실행의 객체 소유자가 정착 시 지운다. 하위 validate는 이 기록을 설정하거나 지우지 않는다. validationRun은 실제 시작 여부만 timing에 반환한다.
 
 - 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
 

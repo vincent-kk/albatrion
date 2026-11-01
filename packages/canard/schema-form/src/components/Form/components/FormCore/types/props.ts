@@ -80,6 +80,7 @@ export interface FormProps<
   /**
    * Error display condition (default: ShowError.DirtyTouched).
    * Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate.
+   * Only the OnChange validation mode holds errors; other modes follow the live condition.
    *   - `true`: Always show
    *   - `false`: Never show
    *   - `ShowError.Dirty`: Show when value has changed

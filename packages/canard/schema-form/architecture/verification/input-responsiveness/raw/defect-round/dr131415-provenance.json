@@ -1,0 +1,20 @@
+{
+  "baseCommit": "779713587405b73abdd778df874fe21b726bac56",
+  "testCommit": "79095c7d5d2a1e2b4f15339ff2285e62ded2ceac",
+  "testSha256": {
+    "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx": "f96c1939c5ffe1974884bc2035c4e572beb29ef41311457eea37f7c1d13d4b62",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "074045b4b003083c958d2e4d463c9ad3f8aa23d20f4db4c9485607e356f0e335",
+    "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/__tests__/terminalChildren.test.tsx": "588c4ae469438bc0ba46912d38156d7c270645b24e520572a98a7e2f05d44f97",
+    "packages/canard/schema-form/src/components/Form/__tests__/degradedSubmit.test.tsx": "29644f8898dda8b96d1ea847fb66d7c54df328f5563ffaa04fd266bdad5b688f",
+    "packages/canard/schema-form/src/core/__tests__/loadValidation.test.ts": "3c1401b0dc2830b497b669f8094a0a55daa913da4a03fc44c89842a0a2f11a50",
+    "packages/canard/schema-form/src/providers/FormErrorContext/__tests__/captureBundles.test.ts": "ff954f9482541cb49c09ba0ff5cebe695e5df4c4c1eee6724b9b4e586770f7d3"
+  },
+  "baseline": {
+    "selectedTests": 37,
+    "passed": 9,
+    "failed": 28,
+    "filterExcluded": 69
+  },
+  "guards": "setValue, OnRequest-only and unseen bundle are intentionally green; DR-11 earlier test also selected",
+  "report": "dr131415-base.json.gz"
+}

@@ -1,0 +1,11 @@
+{
+  "productBase": "779713587",
+  "testCommit": "8a9f28937550d17485c561e15624acb421486a47",
+  "testSha256": {
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.plugin-retry.test.ts": "938859cc2d09cbd79a860b5ae46996433e267ac665063ffec2eb94ce8f2b4656"
+  },
+  "baseReport": "dr3-plugin-base.json.gz",
+  "baseFailedTests": 3,
+  "greenReport": "dr3-plugin-green.json.gz",
+  "normalization": "Checkout prefix removed from report names and stacks; assertions unchanged."
+}
