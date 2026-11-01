@@ -19,7 +19,10 @@ import { settleValidation } from '../helpers/settleValidation';
 /** Guard-free schema keeps compilation observable at the validation boundary. */
 const schema = { type: 'string' } as const;
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 describe('frame-backed Form validation', () => {
   it('IR-6 (h mount) replacing a root before its slot validates only the replacement', async () => {
@@ -116,6 +119,7 @@ describe('frame-backed Form validation', () => {
   it('IR-6 (c) reports a load compile failure once as sink and validate still rejects', async () => {
     const ref = createRef<FormHandle>();
     const onError = vi.fn();
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     render(
       <Form
@@ -183,6 +187,7 @@ describe('frame-backed Form validation', () => {
   it('IR-6 (c-ii) keeps the first child layout-write failure on the sink surface', async () => {
     const ref = createRef<FormHandle>();
     const onError = vi.fn();
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     const Input = ({ onChange }: FieldInputProps) => {
       useLayoutEffect(() => {

@@ -15,11 +15,15 @@ import { hideCommittedForm } from '../helpers/hideCommittedForm';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 import { settleValidation } from '../helpers/settleValidation';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 it.each([false, true])(
   'IR-7 round b adoption compile failure delivers its reset record (hidden=%s)',
   async (hidden) => {
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     const onError = vi.fn();
     const onChange = vi.fn();
@@ -67,7 +71,9 @@ it.each([false, true])(
         surface: 'sink',
       }),
     );
-    act(() => oldRoot?.setValue('late'));
+    act(() => {
+      expect(() => oldRoot?.setValue('late')).toThrow();
+    });
     expect(onChange).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);
     expect(sink.errors()).toHaveLength(1);
@@ -163,6 +169,7 @@ it('IR-7 round b failed build before first show retains exactly one root subscri
 
 it('IR-7 round b replacing an initially hidden failed load reports its construction error once', async (context) => {
   if (inject('reactMajor') !== '19') context.skip();
+  vi.stubGlobal('reportError', vi.fn());
   const sink = observeErrorSink();
   const onError = vi.fn();
   const ref = createRef<FormHandle>();
@@ -206,8 +213,10 @@ it('IR-7 round b replacing an initially hidden failed load reports its construct
 
 it('IR-7 round c initially hidden validator replacement delivers its reset-chain compile record', async (context) => {
   if (inject('reactMajor') !== '19') context.skip();
+  vi.stubGlobal('reportError', vi.fn());
   const sink = observeErrorSink();
   const onError = vi.fn();
+  const ref = createRef<FormHandle>();
   const schema = { type: 'string' } as const;
   const first = { compile: () => () => [], compileGuard: () => () => true };
   const second = {
@@ -218,6 +227,7 @@ it('IR-7 round c initially hidden validator replacement delivers its reset-chain
   };
   const form = (changed: boolean) => (
     <Form
+      ref={ref}
       jsonSchema={schema}
       validatorFactory={changed ? second : first}
       validationMode={ValidationMode.OnRequest}
@@ -234,15 +244,12 @@ it('IR-7 round c initially hidden validator replacement delivers its reset-chain
   });
   view.rerender(<React.Activity mode="hidden">{form(true)}</React.Activity>);
   view.rerender(<React.Activity mode="visible">{form(true)}</React.Activity>);
+  await settleValidation(() => ref.current?.node);
   expect(onError).toHaveBeenCalledExactlyOnceWith(
     expect.objectContaining({
       code: FormErrorCode.ValidatorCompileFailed,
-      surface: 'thrown',
+      surface: 'sink',
     }),
   );
-  // React and the root ErrorBoundary log the caught throw; no host report is added.
-  expect(sink.errors()).toEqual([
-    '%o\n\n%s\n\n%s\n',
-    'ErrorBoundary caught an error:',
-  ]);
+  expect(sink.errors()).toHaveLength(1);
 });

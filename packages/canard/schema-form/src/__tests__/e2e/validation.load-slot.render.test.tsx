@@ -4,6 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import {
+  type FieldRendererProps,
   Form,
   FormErrorCode,
   type FormHandle,
@@ -58,6 +59,7 @@ it.each([false, true])(
   'T1 OnRequest compiles only in the load slot (failure=%s)',
   async (failure) => {
     const clock = createValidationFrameClock();
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     const onError = vi.fn();
     const validate = vi.fn(() => []);
@@ -116,6 +118,16 @@ it.each([true, ShowError.Always])(
         <Form
           jsonSchema={{ type: 'string' }}
           showError={showError}
+          FieldRenderer={({
+            Input,
+            errorVisible,
+            errorMessage,
+          }: FieldRendererProps) => (
+            <>
+              <Input />
+              <span>{errorVisible ? errorMessage : null}</span>
+            </>
+          )}
           validatorFactory={{ compile, compileGuard: () => () => true }}
           onValidate={onValidate}
           formatError={(issue) => issue.message ?? null}
@@ -149,6 +161,7 @@ it.each([
   'T3 %s retains a usable replacement on slot compile failure (hidden=%s)',
   async (operation, hidden) => {
     createValidationFrameClock();
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     const onError = vi.fn();
     const ref = createRef<FormHandle>();
@@ -342,6 +355,7 @@ it.each(['same', 'replacement', 'failing'] as const)(
   'T8 superseded %s slot does not enter the engine',
   async (kind) => {
     createValidationFrameClock();
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     const onError = vi.fn();
     const ref = createRef<FormHandle>();
@@ -385,6 +399,7 @@ it.each([false, true])(
   'T9 explicit compile rejection before slot is isolated by load generation (reset=%s)',
   async (reset) => {
     createValidationFrameClock();
+    vi.stubGlobal('reportError', vi.fn());
     const sink = observeErrorSink();
     const onError = vi.fn();
     const ref = createRef<FormHandle>();

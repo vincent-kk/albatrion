@@ -104,6 +104,7 @@ it('IR-6 the default visibility keeps mount validation after its first frame', a
 it('IR-6 an Always layout-write compile failure releases pending and reports sink once', async () => {
   const clock = createValidationFrameClock();
   const onError = vi.fn();
+  vi.stubGlobal('reportError', vi.fn());
   const sink = observeErrorSink();
   const Input = ({ onChange }: FieldInputProps) => {
     useLayoutEffect(() => {
