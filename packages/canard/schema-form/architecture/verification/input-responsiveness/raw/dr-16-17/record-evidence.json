@@ -1,0 +1,44 @@
+{
+  "supplementTargets": [
+    "ERROR-008",
+    "ERROR-019",
+    "ERROR-028",
+    "EVENT-046"
+  ],
+  "supInsertExit": 0,
+  "ownerQuote75Verbatim": true,
+  "currentSpecFiles": [
+    "packages/canard/schema-form/README-ko_kr.md",
+    "packages/canard/schema-form/README.md",
+    "packages/canard/schema-form/docs/QUICK_REFERENCE.md",
+    "packages/canard/schema-form/docs/agents/skills/schema-form-skill/knowledge/troubleshooting.md",
+    "packages/canard/schema-form/docs/agents/skills/schema-form-skill/knowledge/validation-and-state.md",
+    "packages/canard/schema-form/docs/en/SPECIFICATION.md",
+    "packages/canard/schema-form/docs/ko/SPECIFICATION.md",
+    "packages/canard/schema-form/src/components/Form/DETAIL.md",
+    "packages/canard/schema-form/src/components/Form/components/FormCore/DETAIL.md",
+    "packages/canard/schema-form/src/core/DETAIL.md",
+    "packages/canard/schema-form/src/core/engine/DETAIL.md",
+    "packages/canard/schema-form/src/core/engine/write/DETAIL.md",
+    "packages/canard/schema-form/src/core/engine/write/INTENT.md",
+    "packages/canard/schema-form/src/errors/DETAIL.md",
+    "packages/canard/schema-form/src/providers/FormErrorContext/DETAIL.md",
+    "packages/canard/schema-form/src/providers/FormErrorContext/INTENT.md",
+    "packages/canard/schema-form/src/providers/RootNodeContext/DETAIL.md"
+  ],
+  "writeRetentionReasonPresent": true,
+  "rebase": {
+    "from": "960bcd79a09c2d54a1f0e0585f3ba3544a287e34",
+    "onto": "61457653ae19dfb1f11b97e29355fa3cd6af8f24",
+    "conflicts": []
+  },
+  "publicDeclarationBaseline": {
+    "sourceBuildCommit": "5df0bf2ad",
+    "unchangedThrough": "61457653ae19dfb1f11b97e29355fa3cd6af8f24",
+    "proof": "git diff 5df0bf2ad 61457653a -- packages/canard/schema-form/src packages/canard/schema-form/package.json packages/canard/schema-form/rolldown.config.mjs packages/canard/schema-form/tsconfig.json returned no differences"
+  },
+  "reviewFindings": {
+    "F1": "closed by independent re-review;8 red assertions,2 sink guards,12 total required mutations detected",
+    "F2": "closed;caller rejection wording is conditional and validation-wave listeners remain ownerless"
+  }
+}

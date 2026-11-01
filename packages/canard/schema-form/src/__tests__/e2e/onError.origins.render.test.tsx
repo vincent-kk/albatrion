@@ -17,7 +17,7 @@ import { observeErrorSink } from '../helpers/observeErrorSink';
 import { renderLegacyRootOrigin } from '../helpers/renderLegacyRootOrigin';
 
 // Public Form callbacks are the observation boundary for every origin.
-it('DR-14 native submit reports only the compile failure when onError throws', async () => {
+it('DR-17 native submit sends the compile failure, then the handler error, to the host', async () => {
   createValidationFrameClock();
   const handler = new Error('onError handler');
   const onError = vi.fn<NonNullable<FormProps['onError']>>(() => {
@@ -48,16 +48,9 @@ it('DR-14 native submit reports only the compile failure when onError throws', a
     code: FormErrorCode.ValidatorCompileFailed,
     origin: 'validate',
   });
-  expect(host).toHaveBeenCalledOnce();
-  expect(host.mock.calls[0][0]).toMatchObject({
-    code: FormErrorCode.MultipleErrors,
-    details: {
-      errors: [
-        expect.objectContaining({ code: FormErrorCode.ValidatorCompileFailed }),
-        handler,
-      ],
-    },
-  });
+  expect(host).toHaveBeenCalledTimes(2);
+  expect(host.mock.calls[0][0]).toBe(onError.mock.calls[0][0].error);
+  expect(host.mock.calls[1][0]).toBe(handler);
 });
 afterEach(() => {
   cleanup();

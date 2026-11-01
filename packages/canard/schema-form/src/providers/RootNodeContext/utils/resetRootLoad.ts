@@ -9,7 +9,7 @@ import {
 } from '@/schema-form/core';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
-import { reportErrorToHost } from '../../FormErrorContext';
+import { reportFailureToHost } from '../../FormErrorContext';
 import type { RootLoad, RootLoadProps } from '../type';
 import { applyFormErrors } from './applyFormErrors';
 import { createRootLoad } from './createRootLoad';
@@ -106,14 +106,14 @@ export const resetRootLoad = (
     try {
       reportBufferedRootRecord(next, record);
     } catch (error) {
-      reportErrorToHost(error);
+      reportFailureToHost(error);
     }
   }
   if (!previous.prepared && !previous.reported) {
     previous.reported = true;
     if (previous.error) {
       previous.reporter?.capture(previous.error, 'load');
-      reportErrorToHost(previous.error);
+      reportFailureToHost(previous.error);
     }
   }
   return next;

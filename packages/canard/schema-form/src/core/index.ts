@@ -34,6 +34,7 @@ export {
   releaseValidationRoot,
   scheduleValidationSlot,
   blueprint,
+  forEachFailureLeaf,
 } from './engine';
 export type {
   FieldNode,

@@ -1,0 +1,100 @@
+{
+  "cases": [
+    {
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested details bundle without throwing",
+      "id": "review-0",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested errors bundle without throwing",
+      "id": "review-1",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested index bundle without throwing",
+      "id": "review-2",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested length bundle without throwing",
+      "id": "review-3",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable details bundle as one opaque leaf at both depths",
+      "id": "review-4",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable errors bundle as one opaque leaf at both depths",
+      "id": "review-5",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable index bundle as one opaque leaf at both depths",
+      "id": "review-6",
+      "projects": [
+        "unit"
+      ]
+    },
+    {
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable length bundle as one opaque leaf at both depths",
+      "id": "review-7",
+      "projects": [
+        "unit"
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "id": "m16-remove-input-guard",
+      "failedIds": [
+        "review-0",
+        "review-1",
+        "review-2",
+        "review-3"
+      ],
+      "failedTitles": [
+        "DR-16 review captures an unreadable nested details bundle without throwing",
+        "DR-16 review captures an unreadable nested errors bundle without throwing",
+        "DR-16 review captures an unreadable nested index bundle without throwing",
+        "DR-16 review captures an unreadable nested length bundle without throwing"
+      ]
+    },
+    {
+      "id": "m17-remove-input-guard",
+      "failedIds": [
+        "review-4",
+        "review-5",
+        "review-6",
+        "review-7"
+      ],
+      "failedTitles": [
+        "DR-17 review visits an unreadable details bundle as one opaque leaf at both depths",
+        "DR-17 review visits an unreadable errors bundle as one opaque leaf at both depths",
+        "DR-17 review visits an unreadable index bundle as one opaque leaf at both depths",
+        "DR-17 review visits an unreadable length bundle as one opaque leaf at both depths"
+      ]
+    }
+  ]
+}

@@ -3,6 +3,21 @@ import { expect, it, vi } from 'vitest';
 import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { createFormErrorService } from '../utils/createFormErrorService';
+import { createKnownCaptureService } from './helpers/createKnownCaptureService';
+
+it('DR-16 red skips nested known failures for the submit origin', () => {
+  const { service, onError, A, B, H } = createKnownCaptureService();
+  const inner = new SchemaFormError(FormErrorCode.MultipleErrors, 'listeners', {
+    errors: [A, B],
+  });
+  service.capture(
+    new SchemaFormError(FormErrorCode.MultipleErrors, 'handler', {
+      errors: [inner, H],
+    }),
+    'submit',
+  );
+  expect(onError).not.toHaveBeenCalled();
+});
 
 it('DR-14 drops a known failure bundle and a bare handler exception during capture', () => {
   const service = createFormErrorService();

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 호스트 바인딩은 engine이 소유한 실패 묶음의 잎 순회를 core 경계에서 소비한다. raw host 채널은 바인딩과 engine이 각각 유지하며 패키지 공개 표면은 넓히지 않는다.
+
 - B12는 engine이 소유한 `InactiveValue`·`InactiveValueResolver`·`InactiveValueContext`를 이름으로 재수출하고 surface의 `onInactive`를 노드 공개 계약으로 조합합니다. 구현은 각 소유 경계에 남깁니다.
 
 - D3b-1에서 관찰 fixture는 옮겨진 실제 runtime target-ID 메모를 읽고 모드는 engineModes.setMode를 거쳐 변경한다. 관찰 실행은 이전 설정을 finally에서 복원하며 별도 ID 생산자나 전역 대체 registry를 만들지 않는다.
@@ -197,5 +199,7 @@ RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이�
 - **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 네 개(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지운다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제된다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽는다.
 
 ## Last Updated
+
+2026-11-02
 
 계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

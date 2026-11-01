@@ -10,9 +10,9 @@
 - 자동 로드 컴파일 실패는 공통 슬롯에서 origin validate로 한 번 보고하고 호스트에 한 번 보내며 명시적 검증의 프로미스 거부는 유지한다.
 - P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 은퇴 뒤의 engine 기록에 호스트 보고를 추가하지 않고 기존 reportOwnerlessError를 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자에 도달하지 않고, 슬롯은 예약할 때 붙잡은 load.retired로 host 보고도 생략합니다. 같은 스키마 reset과 unmount는 load가 은퇴하지 않아 늦은 슬롯 실패를 onError와 host에 한 번씩 전달합니다.
 
-- R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportErrorToHost로 보낸 뒤 나머지 기록·binding 교체를 계속합니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
+- R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportFailureToHost로 잎마다 보낸 뒤 나머지 기록·binding 교체를 계속합니다. load flush도 handler 실패를 먼저 host에 보내고 원래 load 오류를 뒤에 보냅니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
 
-- W4: 로드 검증 helper는 engine이 이미 보고한 실패를 다시 capture하지 않는다. compile 실패를 제외한 원래 슬롯 판정 거부를 host에 한 번 전달하며 MultipleErrors의 원소는 첫 원인부터 handler 오류까지 순서대로 보낸다.
+- W4: 로드 검증 helper는 engine이 이미 보고한 실패를 다시 capture하지 않는다. non-bundle compile 실패만 생략하고 나머지는 공통 failure-leaf 순회로 host에 보낸다. 유효한 중첩 MultipleErrors는 첫 원인부터 handler 오류까지 깊이 우선·원소 순서로 보내며 빈 배열·hole·배열 없는 묶음은 버리지 않고 그 값 그대로 한 번 보낸다. caller의 묶음 거부와 렌더 경계의 원래 thrown-value 로그는 유지한다.
 - W5: buffered record의 원래 root를 reporter.root에 보존하고 현재 load.root에도 observeFieldNodeReports guard를 적용해 onError가 현행 폼에 쓸 수 없게 한다.
 - 표시 정책은 로드 검증 예약을 바꾸지 않으며 Always 전용 ref·effect는 없다.
 - 로드 슬롯 전에 쓰기 요청이나 명시적 루트 검증이 있으면 컴파일 후 슬롯 판정은 생략한다. 하위 명시적 검증은 로드 판정을 대체하지 않는다.
@@ -65,4 +65,4 @@ reset·rebuild·검증기 교체는 batchFieldNodeLoad로 load 사슬을 엽니�
 
 ## Last Updated
 
-2026-10-13
+2026-11-02
