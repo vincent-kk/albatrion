@@ -3,6 +3,7 @@ import { clone } from '@winglet/common-utils/object';
 import {
   SetValueOption,
   adoptFieldNodeTree,
+  batchFieldNodeLoad,
   mountFieldNode,
   reloadFieldNodeForm,
 } from '@/schema-form/core';
@@ -56,7 +57,7 @@ export const resetRootLoad = (
     previous.props = { ...props, jsonSchema: previous.props.jsonSchema };
     previous.error = undefined;
     try {
-      root.batch(() => {
+      batchFieldNodeLoad(root, () => {
         reloadFieldNodeForm(root, clone(props.defaultValue), loadOption, {
           deferValidation: true,
         });
@@ -69,7 +70,7 @@ export const resetRootLoad = (
   }
   const next = createRootLoad(props, previous.reporter, false);
   if (!next.root) {
-    previous.reporter?.capture(next.error);
+    previous.reporter?.capture(next.error, 'load');
     return previous;
   }
   next.prepared = true;
@@ -83,18 +84,18 @@ export const resetRootLoad = (
     applyFormErrors(replacement, props.errors);
   };
   try {
-    if (root) root.batch(load);
+    if (root) batchFieldNodeLoad(root, load);
     else load();
   } catch (error) {
     next.error = error;
   }
   if (!previous.prepared && previous.records.length) {
-    next.recordOrigins ??= new WeakMap();
+    next.recordScopes ??= new WeakMap();
     for (const record of previous.records) {
-      const origin = previous.recordOrigins?.get(record);
-      next.recordOrigins.set(record, {
-        root: origin?.root ?? previous.root,
-        warningScope: origin?.warningScope ?? previous.warningScope,
+      const scope = previous.recordScopes?.get(record);
+      next.recordScopes.set(record, {
+        root: scope?.root ?? previous.root,
+        warningScope: scope?.warningScope ?? previous.warningScope,
       });
     }
     next.records = previous.records.splice(0).concat(next.records);
@@ -110,7 +111,7 @@ export const resetRootLoad = (
   if (!previous.prepared && !previous.reported) {
     previous.reported = true;
     if (previous.error) {
-      previous.reporter?.capture(previous.error);
+      previous.reporter?.capture(previous.error, 'load');
       reportErrorToHost(previous.error);
     }
   }

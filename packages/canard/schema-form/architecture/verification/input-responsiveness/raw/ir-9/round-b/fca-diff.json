@@ -1,0 +1,45 @@
+{
+  "baseline": "daf4ff55f",
+  "snapshotHash": "71fc1a242e989310122367009cf4c94ac195a51eeff56787be51689302c3c346",
+  "snapshot_hashes_match": true,
+  "facts": {
+    "covered": 1775,
+    "exact": 1775,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0,
+    "scopeSource": "default"
+  },
+  "finding_baseline": 201,
+  "finding_candidate": 201,
+  "new_findings": [],
+  "removed_findings": [],
+  "exact_key_added": 1,
+  "exact_key_removed": 1,
+  "relocated_findings": [
+    {
+      "before": [
+        "test-record-case-cap",
+        "package:/src/core/__tests__/adoption-delivery.test.ts",
+        "test-record-case-cap is indeterminate: parameterized case at line 205 uses a dynamic table."
+      ],
+      "after": [
+        "test-record-case-cap",
+        "package:/src/core/__tests__/adoption-delivery.test.ts",
+        "test-record-case-cap is indeterminate: parameterized case at line 206 uses a dynamic table."
+      ],
+      "reason": "Adding chainOrigin to expectResting moved the existing dynamic-table case from line205 to206; rule/path/meaning unchanged."
+    }
+  ],
+  "canonical_failed": 12,
+  "canonical_skipped": 1,
+  "diagnostics_unchanged": true,
+  "diagnostic_counts": {
+    "detail-document-contract": 175,
+    "intent-document-contract": 1
+  },
+  "certainty": "indeterminate",
+  "consolidated_result": "FAIL (existing canonical violations); analysis remains indeterminate",
+  "diagnostic_next_actions": "Preserved in complete portable artifacts; existing unrelated contract repairs remain with the coordinator."
+}

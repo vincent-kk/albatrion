@@ -1,0 +1,164 @@
+[
+  {
+    "mutation": "reset-opener-write",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 5,
+    "failed_tests": [
+      "round b core-only reload reports a throwing onChange as load"
+    ],
+    "patch": "mutations/reset-opener-write.patch",
+    "raw": "mutations/reset-opener-write.json.gz"
+  },
+  {
+    "mutation": "outer-clear-removed",
+    "passed": 0,
+    "failed": 4,
+    "skipped": 2,
+    "failed_tests": [
+      "round b outermost exit clears the current runtime (throw=false)",
+      "round b outermost exit clears the current runtime (throw=true)",
+      "round b load adoption clears current and stale runtimes (throw=false)",
+      "round b load adoption clears current and stale runtimes (throw=true)"
+    ],
+    "patch": "mutations/outer-clear-removed.patch",
+    "raw": "mutations/outer-clear-removed.json.gz"
+  },
+  {
+    "mutation": "stale-clear-removed",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 4,
+    "failed_tests": [
+      "round b load adoption clears current and stale runtimes (throw=false)",
+      "round b load adoption clears current and stale runtimes (throw=true)"
+    ],
+    "patch": "mutations/stale-clear-removed.patch",
+    "raw": "mutations/stale-clear-removed.json.gz"
+  },
+  {
+    "mutation": "flush-set-removed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 5,
+    "failed_tests": [
+      "round b standalone state delivery sets write during the listener and restores no origin"
+    ],
+    "patch": "mutations/flush-set-removed.patch",
+    "raw": "mutations/flush-set-removed.json.gz"
+  },
+  {
+    "mutation": "flush-restore-removed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 5,
+    "failed_tests": [
+      "round b standalone state delivery sets write during the listener and restores no origin"
+    ],
+    "patch": "mutations/flush-restore-removed.patch",
+    "raw": "mutations/flush-restore-removed.json.gz"
+  },
+  {
+    "mutation": "enclosed-set-and-restore",
+    "passed": 2,
+    "failed": 2,
+    "skipped": 18,
+    "failed_tests": [
+      "round b T2 stamps a failing inner guard with the enclosing reset load",
+      "round b T2 stamps a failing inner guard with the enclosing reset load"
+    ],
+    "patch": "mutations/enclosed-set-and-restore.patch",
+    "raw": "mutations/enclosed-set-and-restore.json.gz"
+  },
+  {
+    "mutation": "enclosed-overwrite",
+    "passed": 0,
+    "failed": 4,
+    "skipped": 18,
+    "failed_tests": [
+      "T2 reset onChange nested writes retain the outer load origin",
+      "round b T2 stamps a failing inner guard with the enclosing reset load",
+      "T2 reset onChange nested writes retain the outer load origin",
+      "round b T2 stamps a failing inner guard with the enclosing reset load"
+    ],
+    "patch": "mutations/enclosed-overwrite.patch",
+    "raw": "mutations/enclosed-overwrite.json.gz"
+  },
+  {
+    "mutation": "batch-load-opener-write",
+    "passed": 0,
+    "failed": 6,
+    "skipped": 16,
+    "failed_tests": [
+      "A1 reset through the handle reports reset-chain failures as load",
+      "A1 rebuild through the handle reports reset-chain failures as load",
+      "A1 validator through the handle reports reset-chain failures as load",
+      "A1 reset through the handle reports reset-chain failures as load",
+      "A1 rebuild through the handle reports reset-chain failures as load",
+      "A1 validator through the handle reports reset-chain failures as load"
+    ],
+    "patch": "mutations/batch-load-opener-write.patch",
+    "raw": "mutations/batch-load-opener-write.json.gz"
+  },
+  {
+    "mutation": "validation-wave-write",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 20,
+    "failed_tests": [
+      "P3-4 a validation-result listener failure carries validate",
+      "P3-4 a validation-result listener failure carries validate"
+    ],
+    "patch": "mutations/validation-wave-write.patch",
+    "raw": "mutations/validation-wave-write.json.gz"
+  },
+  {
+    "mutation": "merge-first-removed",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 5,
+    "failed_tests": [
+      "chain failure bundles A5 keeps the first matching error in each collection and refreshes it in a later collection"
+    ],
+    "patch": "mutations/merge-first-removed.patch",
+    "raw": "mutations/merge-first-removed.json.gz"
+  },
+  {
+    "mutation": "first-errors-write",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 20,
+    "failed_tests": [
+      "P3-4 external errors at first commit use load and prop changes use write",
+      "P3-4 external errors at first commit use load and prop changes use write"
+    ],
+    "patch": "mutations/first-errors-write.patch",
+    "raw": "mutations/first-errors-write.json.gz"
+  },
+  {
+    "mutation": "adoption-transfer-removed",
+    "passed": 0,
+    "failed": 4,
+    "skipped": 18,
+    "failed_tests": [
+      "A1 rebuild through the handle reports reset-chain failures as load",
+      "A1 validator through the handle reports reset-chain failures as load",
+      "A1 rebuild through the handle reports reset-chain failures as load",
+      "A1 validator through the handle reports reset-chain failures as load"
+    ],
+    "patch": "mutations/adoption-transfer-removed.patch",
+    "raw": "mutations/adoption-transfer-removed.json.gz"
+  },
+  {
+    "mutation": "mount-opener-write",
+    "passed": 0,
+    "failed": 2,
+    "skipped": 24,
+    "failed_tests": [
+      "T1 T3 construction warnings carry load and no exposure fields",
+      "T1 T3 construction warnings carry load and no exposure fields"
+    ],
+    "patch": "mutations/mount-opener-write.patch",
+    "raw": "mutations/mount-opener-write.json.gz"
+  }
+]

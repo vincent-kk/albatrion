@@ -9,6 +9,7 @@ describe('FieldNode PR-2 surface', () => {
       'FieldNodeRequestType',
       'SetValueOption',
       'adoptFieldNodeTree',
+      'batchFieldNodeLoad',
       'buildFieldNodeTree',
       'commitFieldNodeRevealPolicy',
       'fieldNodeFactory',

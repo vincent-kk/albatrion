@@ -104,7 +104,7 @@ describe('ERROR-004 ERROR-005 58C-01 all dispatch settlement failures', () => {
       );
       for (const [index, [record]] of report.mock.calls.entries()) {
         expect(record.error).toBe(errors[index]);
-        expect(record.aggregate).toBe(caught);
+        expect(record).not.toHaveProperty('aggregate');
       }
       if (codes.includes('BUDGET_EXCEEDED')) {
         expect(root.runtime.diagnostics).toMatchObject({

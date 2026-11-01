@@ -879,7 +879,7 @@ ValidationMode.OnChange | ValidationMode.OnRequest;
 
 An error shows only when eligible now and continuously eligible across every engine state, enabled value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
 
-All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `surface: 'sink'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject with `rejected`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
+All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `origin: 'validate'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject; their record carries `origin: 'validate'`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
 
 Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
 
@@ -931,9 +931,27 @@ Errors from `@canard/schema-form` reach you in three places:
 
 | Where | What arrives |
 | --- | --- |
-| `onError` prop of `<Form>` | Every error **and** warning record of that form instance: `level` (`'error'` or `'warning'`), `code`, `message`, and, when known, `path`, `schemaPath`, `details` and the `error` itself |
+| `onError` prop of `<Form>` | Every error **and** warning record of that form instance: `level` (`'error'` or `'warning'`), `code`, `message`, required `origin`, and, when known, `path`, `schemaPath`, `details` and the `error` itself |
 | `submit()` (`FormHandle.submit`, `useFormSubmit`) | Rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails, and with a `SchemaFormError` (`FormErrorCode.SubmitWhileDegraded`) when the form's diagnostics are degraded |
 | `registerPlugin` | Throws an `UnhandledError` (`FormErrorCode.RegisterPlugin`) |
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
 
 Four error classes, each with its own guard: `isJSONSchemaError` (the schema cannot become a form), `isSchemaFormError` (runtime failures of a form instance), `isValidationError` (submission rejected by validation), `isUnhandledError` (failures outside a form instance). The classes are siblings checked with `instanceof`, so at most one guard matches; an error thrown by your own code or a plugin matches none. Every error carries `code` (`'<GROUP>.<CODE>'`, for example `'SCHEMA_FORM_ERROR.RENDER_FAILED'`), `group`, `specific` and `details`.
 

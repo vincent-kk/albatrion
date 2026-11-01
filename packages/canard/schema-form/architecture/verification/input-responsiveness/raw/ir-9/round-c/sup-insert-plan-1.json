@@ -1,0 +1,10 @@
+[
+  {
+    "code": "IR-8 round b",
+    "line": 4,
+    "targets": [
+      "ledger/error.md:ERROR-201",
+      "ledger/validate.md:VALIDATE-046"
+    ]
+  }
+]

@@ -66,3 +66,24 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 - Register the validator plugin once in the test setup file, before any render — not per test.
 - `formRef.current` is `null` on first render — `await waitFor(() => expect(formRef.current).not.toBeNull())` before driving it.
 - Values and controls state settle synchronously inside `setValue()`; write-triggered validation results arrive after the frame that renders the edit and the error DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).
+
+
+## onError record origin
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. Error bundles remain the thrown value and are absent from individual records. Delivery timing, deduplication, caller rejection, host sinks and reentrancy are unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

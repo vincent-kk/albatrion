@@ -78,7 +78,7 @@ describe('validator failures', () => {
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorThrew,
-      surface: 'rejected',
+      origin: 'validate',
     });
     expect(readFieldNodeErrors(root)).toEqual([]);
   });
@@ -122,7 +122,7 @@ describe('validator failures', () => {
     });
     expect(report.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
-      surface: 'rejected',
+      origin: 'validate',
     });
     await expect(dispatchValidate(root)).rejects.toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,

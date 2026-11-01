@@ -6,7 +6,7 @@ ERROR-026과 ERROR-110–117은 루트 경계 바깥에 인스턴스 단위 보�
 
 ## API Contracts
 
-- R-g: 현재 form-level load마다 별도 private warning scope를 소유한다. 이전 load에서 옮겨 온 기록은 원래 scope에서 dedup하며 현재 load와 합치지 않는다. scope는 buffered records가 보유하는 동안만 유지하고 공개 FormErrorRecord 모양·sink·오류 identity dedup은 바꾸지 않는다(ERROR-204).
+- R-g: 현재 form-level load마다 별도 private warning scope를 소유한다. 이전 load에서 옮겨 온 기록은 원래 scope에서 dedup하며 현재 load와 합치지 않는다. scope는 buffered records가 보유하는 동안만 유지하고 경고 scope는 공개 origin과 독립적이며 호스트 싱크·오류 identity dedup은 유지한다(ERROR-204).
 
 onError는 insertion effect로 갱신되어 숨김 commit에서도 최신이며 루트의 prepared/retired 판단은 RootNodeContext가 소유합니다.
 
@@ -15,6 +15,12 @@ onError는 insertion effect로 갱신되어 숨김 commit에서도 최신이며 
 필드 보고 훅은 path를 인자로 받고 렌더 때 현재 보고기를 읽는다. undefined는 루트 경계이며 pendingLoad 처리도 유지한다. 경로 문맥은 DeferredFieldProxy의 Placeholder만 사용하고 전용 훅이 이를 명시적 path 보고 훅에 연결한다(ERROR-044·114, 121C-01). 필드마다 문맥 구독과 Provider를 보유하지 않으며 콜백은 보고기와 path가 같으면 같은 참조이다.
 
 - Context 객체(`FormErrorContext`·`FormErrorPathContext`)와 Provider는 `components/`, 훅(`useFormErrorContext`·`useBoundaryReporter`·`usePlaceholderBoundaryReporter`)은 `hooks/`, 호스트 보고 보조 `reportErrorToHost`는 `utils/`에 있다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
+
+### onError origin
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`capture(error, origin, componentStack?, path?)`는 origin을 필수로 받습니다. 렌더 경계는 render, 네이티브 제출은 submit, 생성·flush·reset 실패는 load를 넘깁니다. 경고 scope는 origin과 독립적이며 recordScopes는 버퍼 기록의 원래 root·scope만 보존합니다.
 
 ## Acceptance Criteria
 

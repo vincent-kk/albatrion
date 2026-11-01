@@ -1,0 +1,10 @@
+--- src/core/engine/write/utils/chain/flushQueuedEvents.ts
++++ src/core/engine/write/utils/chain/flushQueuedEvents.ts
+@@ -47,7 +47,6 @@
+   let waves = 0;
+   let budgetReported = false;
+   if (standalone) {
+-    entryRuntime.chainOrigin = origin;
+     entryRuntime.chainErrors = [];
+     entryRuntime.chainOccurrences = [];
+   }

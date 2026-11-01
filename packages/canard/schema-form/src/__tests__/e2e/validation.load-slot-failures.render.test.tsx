@@ -137,7 +137,7 @@ it.each([
     expect(onError).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         code: FormErrorCode.ValidatorCompileFailed,
-        surface: 'sink',
+        origin: 'validate',
       }),
     );
     expect(sink.errors()).toHaveLength(1);
@@ -190,7 +190,7 @@ it.each([false, true])(
     });
     await releaseSlots();
     expect(onError).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ surface: reset ? 'sink' : 'rejected' }),
+      expect.objectContaining({ origin: 'validate' }),
     );
     expect(sink.errors()).toHaveLength(reset ? 1 : 0);
   },
@@ -261,7 +261,7 @@ it.each([ValidationMode.OnRequest, ValidationMode.OnChange])(
     expect(onError).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         code: FormErrorCode.ValidatorCompileFailed,
-        surface: 'sink',
+        origin: 'validate',
       }),
     );
     const rejection: unknown = onError.mock.calls[0][0].error;

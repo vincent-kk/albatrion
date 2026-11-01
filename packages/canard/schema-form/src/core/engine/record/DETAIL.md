@@ -108,6 +108,10 @@
 - 아직 전달하지 않은 배달 항목·비트별 페이로드/options 표와 커밋 비트 항목은 같은 대기열 안에서 갱신한다. dispatch가 파동을 전달하기 전에 표를 분리하므로 이미 리스너에게 건넨 사건·페이로드/options는 다음 표시가 수정하지 않는다. 마지막 정의된 값, 최초 삽입 순서와 개발 모드 페이로드 동결은 유지하며 반복 표시의 객체·표 복사를 없앤다(EVENT-004·006·007·023·024, 65C-01, I11 step 1).
 - 계산·상태 변경의 현장 기록은 감시 역색인이 있을 때만 `deliveryAffectedPaths`에 영향 경로를 더한다. 이 경로 작업 집합은 정착 커밋에서 소비/삭제하고 변경 노드의 관측 필드를 다시 읽어 경로 집합을 재구축하지 않는다. 경로 이동 목록과 형상 출입 사실은 그대로 감시 색인 조회에 합류한다. 정적 watch 선언 색인과 affected 조회는 유지한다(65C-02·03, 372C-02).
 
+### onError origin
+
+트리 런타임의 선택 chainOrigin은 load·write·validate의 열린 사슬/파동 출처입니다. chainOccurrences·pendingWarningRecords·guardFailureRecords는 origin이 선택적인 내부 대기 기록을 보유하며 최종 FormErrorReporter는 origin 필수 기록만 받습니다. 노드 고정 필드는 늘리지 않습니다.
+
 ## Acceptance Criteria
 
 ### record-retained-slots — 호스트 소유와 수명 상한

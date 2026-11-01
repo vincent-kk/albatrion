@@ -16,6 +16,8 @@ schema-form 도메인 에러 클래스와 패키지 전체의 오류·경고 코
 
 ### Always do
 
+- Delivered occurrence records require an operation origin; pending origin and delivery policy remain owned by write.
+
 - 새 에러 클래스를 추가할 때는 `BaseError`를 상속하고 `is*Error` 타입 가드를 함께 제공한다
 - `index.ts` 에 새 에러를 이름으로 나열해 넣는다
 - `details` 객체에 에러를 재현하는 데 필요한 컨텍스트를 충분히 담는다

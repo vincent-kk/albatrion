@@ -75,7 +75,7 @@ it('LANDING-025 compile failure rejects validation and submission', async () => 
   });
   expect(submit).not.toHaveBeenCalled();
   expect(onError).toHaveBeenCalledExactlyOnceWith(
-    expect.objectContaining({ surface: 'sink' }),
+    expect.objectContaining({ origin: 'validate' }),
   );
   expect(sink.errors()).toHaveLength(1);
 });

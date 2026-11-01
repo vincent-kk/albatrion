@@ -1074,3 +1074,27 @@ if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한�
 ## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
 
 【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다 (VALIDATE-052). VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다 (ERROR-164). ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다 (VALIDATE-046). WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다 (TEST-021).
+
+
+## IR-9 — onError origin (2026-11-01)
+
+ERROR-019: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+ERROR-017·019·021: 필수 origin은 발생을 만든 연산이며 load·write·validate·submit·render로 닫힙니다.
+
+ERROR-019: load는 트리 구성·mount·reset·rebuild·검증기 변경과 그 사슬입니다. ERROR-019: write는 공개 쓰기·배열·상태·batch·맥락·finishInput·외부 오류와 통지 리스너입니다. ERROR-019: validate는 자동·명시적 전체 컴파일·실행·판정 전달과 그 리스너입니다. ERROR-019: submit은 SubmitWhileDegraded와 네이티브 capture에서 처음 드러난 실패이며 dispatchValidate가 보고한 실패는 validate를 유지합니다. ERROR-164·202: render는 RenderFailed 경계와 ChildNodeComponentsOnTerminal 같은 렌더 기록이며 warnDevelopmentIssue 개발 콘솔 경고는 기록이 아닙니다.
+
+ERROR-019·041: 최외곽 사슬의 origin을 중첩·adoption에서 보존하므로 write 리스너·onChange의 reset은 write이고 reset 안의 쓰기는 load입니다. ERROR-019: 첫 commit의 외부 errors 적용은 load, prop 변경은 write이며 검증 결과 리스너 실패는 validate, 로드 뒤 독립 state 리스너 실패는 write입니다.
+
+ERROR-005·023: 오류 묶음은 throw 값으로만 남기고 개별 기록에는 싣지 않으며 각 수집 호출의 첫 병합 오류·details를 보존합니다. ERROR-019·021·023: 전달·중복·호스트·호출자·console·재진입 규칙은 유지합니다.
+
+ERROR-017: `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+ERROR-139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 함께 따릅니다.
+
+
+## IR-9 round b — origin corrections
+
+ERROR-041: 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write); 코덱스 교차 검토가 확인한 개발·운영 분기를 없애며 앞선 mount의 load 고정 설명을 대체합니다.
+
+ERROR-017: 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.

@@ -141,7 +141,7 @@ describe('frame-backed Form validation', () => {
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
-      surface: 'sink',
+      origin: 'validate',
     });
     await expect(ref.current!.validate()).rejects.toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
@@ -181,7 +181,7 @@ describe('frame-backed Form validation', () => {
     await settleValidation(() => ref.current?.node);
     expect(compileAfterChild).toEqual([true]);
     expect(onError).toHaveBeenCalledTimes(1);
-    expect(onError.mock.calls[0][0].surface).toBe('rejected');
+    expect(onError.mock.calls[0][0].origin).toBe('validate');
   });
 
   it('IR-6 (c-ii) keeps the first child layout-write failure on the sink surface', async () => {
@@ -215,7 +215,7 @@ describe('frame-backed Form validation', () => {
       expect(onError).toHaveBeenCalledTimes(1);
       expect(onError.mock.calls[0][0]).toMatchObject({
         code: FormErrorCode.ValidatorCompileFailed,
-        surface: 'sink',
+        origin: 'validate',
       });
       expect(sink.errors()).toContain(onError.mock.calls[0][0].error);
     } finally {

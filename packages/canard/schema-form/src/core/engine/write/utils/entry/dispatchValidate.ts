@@ -51,7 +51,8 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     const compileFailure =
       failure instanceof SchemaFormError &&
       failure.code === FormErrorCode.ValidatorCompileFailed;
-    if (compileFailure && loadStamp !== runtime.validationLoadStamp) throw failure;
+    if (compileFailure && loadStamp !== runtime.validationLoadStamp)
+      throw failure;
     if (compileFailure) {
       runtime.validationUnavailable = true;
       settleFieldNodeValidation(node);
@@ -71,7 +72,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
         {
           error: failure,
           ...(details ? { details } : {}),
-          surface: 'rejected',
+          origin: 'validate',
         },
       );
       const handlerErrors = deliverChainRecords(
@@ -79,6 +80,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
         record ? [record] : [],
         failure,
         true,
+        'validate',
       );
       if (handlerErrors.length)
         throw bundleChainErrors([failure, ...handlerErrors]);

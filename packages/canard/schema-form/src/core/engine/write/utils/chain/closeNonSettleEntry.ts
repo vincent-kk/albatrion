@@ -15,7 +15,8 @@ export const closeNonSettleEntry = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = node.rootNode.runtime;
   if (runtime.entryDepth) return;
-  if (!runtime.visitDepth) return flushQueuedEvents(node.rootNode);
-  startFieldNodeChain(node.rootNode);
+  if (!runtime.visitDepth)
+    return flushQueuedEvents(node.rootNode, true, 'write');
+  startFieldNodeChain(node.rootNode, 'write');
   openVisitBatch(node);
 };

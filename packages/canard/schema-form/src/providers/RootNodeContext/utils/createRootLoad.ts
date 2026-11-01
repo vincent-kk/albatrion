@@ -46,7 +46,7 @@ export const createRootLoad = (
             reporter?.report(record);
           } else {
             load.records.push(record);
-            (load.recordOrigins ??= new WeakMap()).set(record, {
+            (load.recordScopes ??= new WeakMap()).set(record, {
               root: load.root,
               warningScope: reporter?.warningScope,
             });

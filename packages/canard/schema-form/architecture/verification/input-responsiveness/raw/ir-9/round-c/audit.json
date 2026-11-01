@@ -1,0 +1,33 @@
+{
+  "baseline": "0920ad9c5",
+  "commits": [
+    {
+      "commit": "7207b5e2f8d62d6c42781741b656c583136351cf",
+      "changed_files_checked": 14,
+      "gzip_snapshots_decompressed": 46,
+      "new_machine_path_hits": 0
+    }
+  ],
+  "new_machine_path_hits": 0,
+  "working_tree_changed_files": 24,
+  "working_tree_changed_gzip_decompressed": 5,
+  "path_scope": "Every new commit changed text/new files and every complete decompressed gzip snapshot; final working changes likewise. Existing immutable examples retained.",
+  "authorized_ledger_moves": 14,
+  "quote_lines_unchanged": true,
+  "other_ledger_nonblank_lines_unchanged": true,
+  "empty_supplement_field_conversions": [
+    "ERROR-023",
+    "VALIDATE-046"
+  ],
+  "whole_ledger_outside_parsed_fields": 0,
+  "IR_supplement_misplacements": 0,
+  "source_change": "helper/file/reference rename only, reverse spelling restores exact bytes",
+  "product_logic_changed": false,
+  "test_assertions_changed": false,
+  "skip_todo_fails_changes": 0,
+  "new_unsafe_assertions": 0,
+  "declaration_hashes_and_closure_unchanged": true,
+  "public_carriers": 2,
+  "internal_declarations": 19,
+  "scratch_worktrees_or_branches_created": 0
+}

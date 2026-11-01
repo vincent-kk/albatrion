@@ -1,0 +1,26 @@
+{
+  "product_commit": "d6ded31b3",
+  "artifacts": {
+    "dist/index.node.mjs": {
+      "bytes": 882545,
+      "sha256": "3dbd50eb9bbf77de518595dc94eeb94ef55951cdc357435aeeab517fae17488d"
+    },
+    "dist/index.cjs": {
+      "bytes": 904444,
+      "sha256": "9529d135a0dbcade4851ed2e9a06630408c7f5d34b831c5885ec589db9019ee5"
+    },
+    "dist/index.mjs": {
+      "bytes": 883341,
+      "sha256": "0b62ad33dc8eff99fb405568ff441bf643e48a5f1670d33db6cc22e096a0ebcd"
+    },
+    "dist/agents-hashes.json": {
+      "bytes": 1999,
+      "sha256": "61d1dcce0e1bf617da743e4b64a2246e2be51638abc426f6ac4c5b309f8c1e0f"
+    },
+    "dist/index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    }
+  },
+  "tracked_dist": []
+}

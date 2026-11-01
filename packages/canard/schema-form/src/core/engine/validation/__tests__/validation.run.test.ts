@@ -163,7 +163,7 @@ describe('validation execution', () => {
       expect(report.mock.calls[0][0]).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
         error: failure,
-        surface: 'sink',
+        origin: 'validate',
       });
       expect(sink).toHaveBeenCalledTimes(1);
     } finally {

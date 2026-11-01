@@ -12,7 +12,7 @@ import {
   rebasePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
-import type { FormErrorRecord } from '../../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../../errors';
 import type { FieldNodeRuntime } from '../../../../record';
 import { indexFieldNodeWarning } from '../../../../record';
 import { getRuntimePathStores } from '../../../utils/pathStores/getRuntimePathStores';
@@ -69,7 +69,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   const warningMoves: {
     key: string;
     path: string;
-    record: Optional<FormErrorRecord>;
+    record: Optional<PendingFormErrorRecord>;
     remembered: boolean;
   }[] = [];
   for (const key of warningKeys) {

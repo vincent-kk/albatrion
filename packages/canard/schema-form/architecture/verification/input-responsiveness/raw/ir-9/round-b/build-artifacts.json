@@ -1,0 +1,32 @@
+{
+  "product_commit": "e1079152a",
+  "command": "yarn workspace @canard/schema-form build",
+  "exitCode": 0,
+  "artifact_checks": [
+    "DEVELOPMENT_FLAG_OK",
+    "GATE_SELECTION_DIST_OK (all 3 runtime formats)"
+  ],
+  "dist_tracked": false,
+  "files": {
+    "index.mjs": {
+      "bytes": 883304,
+      "sha256": "53c361d7bbdcbc92db5a3d8f74a27f2cd2eac6a65190f262c186df0d38f52e2f"
+    },
+    "index.node.mjs": {
+      "bytes": 882508,
+      "sha256": "f0e3dc656a11c048346cadb8c0adf7a6e46e7f907c46b8c6523d4ea991673054"
+    },
+    "index.cjs": {
+      "bytes": 904407,
+      "sha256": "93c3db3bbcd0a0413668787c94428fe41bf14fd654c7c7fee249eee416a4a10e"
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    },
+    "agents-hashes.json": {
+      "bytes": 1999,
+      "sha256": "7db087b6ff82f7b4c8ffbd22d851561d4812e6378e47744fc897aaab4dacaf29"
+    }
+  }
+}

@@ -25,7 +25,7 @@ export const reportValidationFailure = (
           ? { details: failure.details }
           : {}),
         error: failure,
-        surface: 'sink',
+        origin: 'validate',
       });
     } catch (reporterFailure) {
       reportOwnerlessError(reporterFailure);

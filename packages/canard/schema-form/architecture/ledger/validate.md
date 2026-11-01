@@ -736,8 +736,9 @@
   > 통과: 넷 모두 판정이 같고 오류 기록이 없다.
   > 실패(특히 `bind` 인스턴스를 같은 설정으로 복제할 수 없을 때): 소유자에게 올린다.
   > 실패의 선택지: (가) 소비자 인스턴스의 같은 `$id` 동시 사용을 지원 밖으로 문서화하고 위의 오류로 드러냄, (나) `bind`가 인스턴스 대신 인스턴스를 만드는 함수를 받게 함.
-- 보충: 없음
+- 보충:
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
+  > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1581-1586,1598-1606`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)

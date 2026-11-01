@@ -113,7 +113,7 @@ it('IR-7 T3 R1 reports a layout-write compile failure while hidden', async () =>
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
-      surface: 'sink',
+      origin: 'validate',
     });
     view.rerender(hideable(form, true));
     view.rerender(hideable(form, false));
@@ -196,7 +196,7 @@ it('IR-7 T3 rebuild follows a failure already delivered while hidden', async () 
   expect(onError).toHaveBeenCalledTimes(1);
   expect(onError.mock.calls[0][0]).toMatchObject({
     code: FormErrorCode.ValidatorThrew,
-    surface: 'sink',
+    origin: 'validate',
   });
   view.rerender(hideable(form, true));
   view.rerender(hideable(form, false));
@@ -241,7 +241,7 @@ it('IR-7 T3 W4 async mount rejection reports once while hidden', async () => {
   expect(onError).toHaveBeenCalledTimes(1);
   expect(onError.mock.calls[0][0]).toMatchObject({
     code: FormErrorCode.ValidatorThrew,
-    surface: 'rejected',
+    origin: 'validate',
   });
 });
 
@@ -274,7 +274,7 @@ it('IR-6 W4 a compile onError failure reaches the host once without recapture', 
     await new Promise<void>((resolve) => setImmediate(resolve));
   });
   expect(onError).toHaveBeenCalledExactlyOnceWith(
-    expect.objectContaining({ surface: 'sink' }),
+    expect.objectContaining({ origin: 'validate' }),
   );
   const compileFailure: unknown = onError.mock.calls[0][0].error;
   expect(

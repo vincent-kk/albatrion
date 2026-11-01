@@ -44,6 +44,7 @@ const expectResting = (...trees: Tree[]): void => {
       'enclosingChain',
       'batchWrites',
       'chainRoot',
+      'chainOrigin',
       'currentListener',
     ])
       expect(Reflect.get(runtime, key), key).toBeUndefined();

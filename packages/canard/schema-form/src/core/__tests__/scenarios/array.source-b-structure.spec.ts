@@ -38,7 +38,7 @@ describe('array Source-B structure rollback', () => {
     expect(records.filter((record) => record.level === 'error')).toEqual([
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED',
-        surface: 'thrown',
+        origin: 'write',
       }),
     ]);
   });

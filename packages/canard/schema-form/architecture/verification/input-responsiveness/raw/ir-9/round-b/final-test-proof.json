@@ -1,0 +1,30 @@
+{
+  "product_commit": "e1079152a",
+  "test_commit": "7448a4b84",
+  "helper_import_fix_commit": "4dcf6646f",
+  "final_test_sha256": {
+    "packages/canard/schema-form/src/__tests__/e2e/onError.chain-origin.render.test.tsx": "5f2cbc98afe3a9b44290ab36dbae6bfbc08e658897f5a4f1ec5d705e05954c5b",
+    "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx": "b067233eb0eb556e0076af56493684a96b5cfef0411cdda516143fb06952a804",
+    "packages/canard/schema-form/src/__tests__/helpers/renderLegacyOrigin.tsx": "9d81548fd5ae51ecfda129a2e92bb8de60c71bd53c631303da58e8d4a7eb5994",
+    "packages/canard/schema-form/src/core/__tests__/adoption-delivery.test.ts": "5163a2b7ef9f18d57ba36d572f668b8ba90cc30e34b8cc043c4f6007cc26cdd3",
+    "packages/canard/schema-form/src/core/__tests__/onError.chain-origin.test.ts": "bd08454c91f51801f7d8761ce07c86d6d61d578ba214fc8d2718fd5589d3607b"
+  },
+  "baseline_product": "daf4ff55f",
+  "baseline_gate_bytes_equal": true,
+  "baseline": {
+    "passed": 69,
+    "failed": 2,
+    "skipped": 3
+  },
+  "green": {
+    "passed": 71,
+    "failed": 0,
+    "skipped": 3
+  },
+  "mutation_evidence_reused": {
+    "count": 13,
+    "source": "test-proof.json and mutation-runs.json",
+    "reason": "All assertion-bearing test files and product bytes are unchanged. Only the legacy helper import changed from the root re-export to the same Form and ValidationMode declarations through their owner entry points. Final baseline and targeted green were repeated."
+  },
+  "initial_gate_failure": "Import model U=1 from the new legacy helper importing the ancestor root; fixed without widening exceptions or changing assertions."
+}

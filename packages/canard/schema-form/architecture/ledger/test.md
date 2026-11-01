@@ -382,6 +382,7 @@
   > 편집자 결정(18C-25): "【추론】 되먹임 파동과 `onChange` 중첩 예산, 진입 사슬의 사슬 끝 throw(중첩 진입, 통지·`onChange`와의 순서, `details.errors` 묶음)는 PR-4로 미룬다." (`reviews/round-18-closing.md:770`)
   > 편집자 결정(31C-04): "【추론】 TEST-001의 "독립 검증기는 폼이 쓰는 플러그인과 다른 구현이어야 하고"에서 다른 구현은 다른 라이브러리다: 폼이 쓰는 플러그인과 같은 메이저의 Ajv를 새로 만들어 작성 스키마를 바로 컴파일하는 것은 같은 구현이 다른 경로를 지나는 것이라, 1라운드가 막은 동어반복(같은 구현에 같은 값)을 피하지 못한다." (`reviews/round-31-closing.md:36`)
   > 소유자(40라운드, 차등 시험의 독립 검증기): "내 결정이 맞다. ajv 플러그인에 다른 스키마 검증기를 추가하는건, 플러그인 단계에선 검토할만한데, 지금은 의도하지 않는다." (`reviews/round-40-owner-answers.md:7`) — PR-4의 차등 시험은 ajv 밖의 라이브러리를 더하지 않고 같은 ajv로 폼의 판정(사본 → 컴파일·가드 → 라우팅)과 작성 스키마를 직접 컴파일한 판정을 JSON으로 직렬화한 방출 값으로 비교한다. "다른 구현"의 오라클은 ajv가 아닌 검증기 플러그인을 만드는 PR로 넘기며 그 패키지에 둔다. 31C-04의 오라클 선택은 PR-4에 대해 이 답으로 대체된다(원장 관리자, 2026-10-01).
+  > 편집자 결정(IR-9): "【추론】 IR-9: 각 발생 기록에는 묶음을 싣지 않으며 실제 throw의 bundleChainErrors는 유지한다. 같은 수집 호출의 첫 병합 오류·details를 보존한다. 자동·명시적 검증, 전달·중복·caller·console·재진입 규칙은 유지한다. ERROR-017·019·021·023·005·041·139·164·197·201, VALIDATE-046, REACT-007, TEST-017을 함께 적용한다." (`reviews/ir-9-onerror-origin.md:5`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:166-167,171`(정본), `reviews/round-16-owner-review.md:27`, `reviews/round-18-closing.md:770`
 - 닫은 사람: 편집자 결정(16·17라운드, `09-landing-and-test-strategy.md:171`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-25)

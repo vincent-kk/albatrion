@@ -30,7 +30,7 @@ export interface RootLoad {
   /** Reports raised before preparation, delivered once by the first commit, reset, or root fallback. */
   records: FormErrorRecord[];
   /** Original root and private warning load of a buffered or transferred record. */
-  recordOrigins?: WeakMap<
+  recordScopes?: WeakMap<
     FormErrorRecord,
     { root?: FieldNode; warningScope?: object }
   >;

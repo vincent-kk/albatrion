@@ -1,0 +1,11 @@
+--- src/core/engine/write/utils/entry/dispatchMount.ts
++++ src/core/engine/write/utils/entry/dispatchMount.ts
+@@ -27,7 +27,7 @@
+   option: WriteOption = WriteOption.Overwrite,
+   settings: { deferValidation?: boolean } = NO_MOUNT_SETTINGS,
+ ): void => {
+-  if (!enterFieldNodeChain(root, 'load')) return;
++  if (!enterFieldNodeChain(root, 'write')) return;
+   clearWarningKeys(root.runtime);
+   root.runtime.validationUnavailable = false;
+   root.runtime.validationCompileReported = false;

@@ -61,6 +61,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
         if (key === undefined) {
           reporter.report({
             level: 'warning',
+            origin: 'render',
             code: FormWarningCode.ChildNodeComponentsOnTerminal,
             message: 'Terminal inputs have no child components',
             path: node.path,
@@ -83,6 +84,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
         if (accessed.current & ACCESSED)
           reporter.report({
             level: 'warning',
+            origin: 'render',
             code: FormWarningCode.ChildNodeComponentsOnTerminal,
             message: 'Terminal inputs have no child components',
             path: node.path,

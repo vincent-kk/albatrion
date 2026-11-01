@@ -89,6 +89,10 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 
 공개 `InferFieldNode`는 NODE-059에 따라 형 없는 `oneOf`·`anyOf`의 모든 분기가 인라인 객체 또는 인라인 배열 스키마일 때만 각각 `ObjectNode`·`ArrayNode`로 좁힌다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 `FieldNode`를 유지한다. 형 없는 분기 없는 `const`·`enum` 칸은 리터럴의 JSON 종류에 맞는 원시 노드로 좁힌다.
 
+### onError origin
+
+RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이름으로 재수출합니다. 내부 로드 사슬에만 쓰며 패키지 공개 진입점은 유지합니다.
+
 ## Acceptance Criteria
 
 ### observation-identity-portability — 검증 전용 occurrence 결속

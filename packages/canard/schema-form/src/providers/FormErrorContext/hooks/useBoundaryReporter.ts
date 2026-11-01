@@ -8,7 +8,7 @@ export const useBoundaryReporter = (path?: string) => {
   return useCallback(
     (error: unknown, info: { componentStack?: string }) => {
       if (path === undefined) reporter?.pendingLoad?.();
-      reporter?.capture(error, info.componentStack ?? '', 'sink', path);
+      reporter?.capture(error, 'render', info.componentStack ?? '', path);
     },
     [reporter, path],
   );

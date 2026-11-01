@@ -1,6 +1,5 @@
 import type { ErrorDetails } from '@winglet/common-utils/error';
 
-import type { SchemaFormError } from './classes/SchemaFormError';
 import type { FormErrorCode } from './constants/FormErrorCode';
 import type { FormErrorGroup } from './constants/FormErrorGroup';
 import type { FormWarningCode } from './constants/FormWarningCode';
@@ -74,10 +73,8 @@ export interface FormErrorRecord {
   details?: ErrorDetails;
   /** Value that will be exposed by this failure. */
   error?: unknown;
-  /** Actual SchemaFormError thrown for an aggregate of several failures. */
-  aggregate?: SchemaFormError;
-  /** External exposure path for an error occurrence. */
-  surface?: FormErrorSurface;
+  /** Operation producing this occurrence: load, write, validate, submit or render. */
+  origin: FormErrorOrigin;
   /** React boundary stack, populated by the render layer. */
   componentStack?: string;
 }
@@ -86,7 +83,7 @@ export interface FormErrorRecord {
 export interface FormErrorReporter {
   /**
    * Deliver an already formatted form occurrence.
-   * @param record - One occurrence with its stable code, level, and surface.
+   * @param record - One occurrence with its stable code, level, and operation origin.
    * @returns Nothing; the observer receives the occurrence.
    */
   report(record: FormErrorRecord): void;
@@ -100,5 +97,16 @@ export interface FormErrorReporter {
 /** Severity of a delivered record. */
 export type FormErrorLevel = 'error' | 'warning';
 
-/** How a delivered error reached the caller: thrown, rejected from a promise, or only reported. */
-export type FormErrorSurface = 'thrown' | 'rejected' | 'sink';
+/** Operation that produced a delivered occurrence, independent of its exposure channel. */
+export type FormErrorOrigin =
+  | 'load'
+  | 'write'
+  | 'validate'
+  | 'submit'
+  | 'render';
+
+/** Internal occurrence awaiting its enclosing operation at delivery. */
+export type PendingFormErrorRecord = Omit<FormErrorRecord, 'origin'> & {
+  /** Explicit creation origin, or the enclosing chain's origin when omitted. */
+  origin?: FormErrorOrigin;
+};

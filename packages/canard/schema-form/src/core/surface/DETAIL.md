@@ -123,6 +123,10 @@
 
 - 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸이다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 쓴다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남는다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
+### onError origin
+
+batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전용 통로이며 dispatchBatch에 load origin을 넘깁니다. FieldNode.batch는 write를 유지하고 중첩 호출은 바깥 origin을 따릅니다. core가 이름으로 재수출하며 src/index.ts에는 노출하지 않습니다.
+
 ## Acceptance Criteria
 
 ### surface-slot-new-instance — 슬롯 복제의 새 수명

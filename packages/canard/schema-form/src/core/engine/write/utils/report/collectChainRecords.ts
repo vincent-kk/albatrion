@@ -1,13 +1,13 @@
 import type { Optional } from '@aileron/declare';
 
-import type { FormErrorSurface } from '@/schema-form/errors';
+import type { FormErrorOrigin } from '@/schema-form/errors';
 
 import {
   FormErrorCode,
   JSONSchemaError,
   SchemaFormError,
 } from '../../../../../errors';
-import type { FormErrorRecord } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { createFormErrorRecord } from './createFormErrorRecord';
 import { readFormErrorCode } from './readFormErrorCode';
@@ -16,19 +16,18 @@ import { readFormErrorCode } from './readFormErrorCode';
  * Collect occurrences in order, merging matching failures into stored records.
  * @param pending - Records to extend or update before delivery
  * @param occurrences - Recorded and thrown occurrences collected by the chain
- * @param aggregate - Bundled failure attached when the chain has several errors
- * @param surface - Final delivery surface owned by the enclosing collector
+ * @param origin - Operation owning unlabelled failures in this collection
  * @param reported - Guard schema paths already recorded by this form instance
  * @returns Nothing; updates pending records in place
  */
 export const collectChainRecords = (
-  pending: FormErrorRecord[],
+  pending: PendingFormErrorRecord[],
   occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
-  aggregate: Optional<SchemaFormError>,
-  surface: Exclude<FormErrorSurface, 'rejected'>,
+  origin: FormErrorOrigin,
   reported: Optional<ReadonlySet<string>>,
 ): void => {
-  const created = new Set<FormErrorRecord>();
+  const created = new Set<PendingFormErrorRecord>();
+  const merged = new Set<PendingFormErrorRecord>();
   for (const occurrence of occurrences) {
     if (occurrence.kind === 'record') {
       pending.push(occurrence.record);
@@ -44,12 +43,12 @@ export const collectChainRecords = (
         record.schemaPath === error.details.schemaPath,
     );
     if (existing && error instanceof SchemaFormError) {
-      if (!aggregate || existing.aggregate !== aggregate) {
+      if (!merged.has(existing)) {
         existing.error = error;
         existing.details = error.details;
+        merged.add(existing);
       }
-      existing.surface = surface;
-      if (aggregate) existing.aggregate = aggregate;
+      existing.origin ??= origin;
       continue;
     }
     if (
@@ -77,8 +76,7 @@ export const collectChainRecords = (
         typeof error.details.schemaPath === 'string'
           ? { schemaPath: error.details.schemaPath }
           : {}),
-        ...(aggregate ? { aggregate } : {}),
-        surface,
+        origin,
       },
     );
     if (record) {
