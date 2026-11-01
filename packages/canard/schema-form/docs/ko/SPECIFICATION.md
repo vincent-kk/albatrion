@@ -1049,7 +1049,7 @@ function ProfileForm() {
 | `FormErrorCode.DisposedNodeWrite` | `'SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE'` | 폐기된 노드 참조로 씀 |  |
 | `FormErrorCode.WriteInObserver` | `'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER'` | onError가 자기 폼에 쓰려 함 |  |
 | `FormErrorCode.SubmitWhileDegraded` | `'SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED'` | 진단이 degraded인데 제출을 시도 |  |
-| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | 로드 뒤 다음 프레임 슬롯 또는 명시적 검증에서 전체 스키마 컴파일이 실패; 자동 경로는 sink와 호스트 보고, 명시적 경로는 rejected |  |
+| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | 로드 슬롯은 origin 'validate'의 onError 기록 한 번과 호스트 오류 한 번을 보고하며, 명시적 validate()·submit()은 origin 'validate'로 보고한 뒤 거부 |  |
 | `FormErrorCode.ValidatorThrew` | `'SCHEMA_FORM_ERROR.VALIDATOR_THREW'` | 컴파일된 검증기가 검증 중 예외를 던짐 |  |
 | `FormErrorCode.RenderFailed` | `'SCHEMA_FORM_ERROR.RENDER_FAILED'` | 주입한 렌더러나 루트 렌더가 예외를 던짐 |  |
 | `FormErrorCode.InvalidVirtualNodeValues` | `'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'` | virtual 노드가 모양이 다른 값을 받음 |  |

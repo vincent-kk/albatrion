@@ -1051,7 +1051,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormErrorCode.DisposedNodeWrite` | `'SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE'` | a caller writes through a disposed node reference |  |
 | `FormErrorCode.WriteInObserver` | `'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER'` | onError tries to write to its own form |  |
 | `FormErrorCode.SubmitWhileDegraded` | `'SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED'` | submission is attempted while diagnostics are degraded |  |
-| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | whole-schema compilation fails in the load slot (sink plus host) or explicit validation (rejected) |  |
+| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | the load slot reports one onError record with origin 'validate' and one host error; explicit validate() or submit() reports origin 'validate' and then rejects |  |
 | `FormErrorCode.ValidatorThrew` | `'SCHEMA_FORM_ERROR.VALIDATOR_THREW'` | a compiled validator throws during validation |  |
 | `FormErrorCode.RenderFailed` | `'SCHEMA_FORM_ERROR.RENDER_FAILED'` | an injected renderer or root render throws |  |
 | `FormErrorCode.InvalidVirtualNodeValues` | `'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'` | a virtual node receives values with the wrong shape |  |

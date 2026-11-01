@@ -12,3 +12,8 @@ lint 경고 0 → typecheck → build → unit → render → react18 → verify
 ## Amendment 3·4 추가 관문
 
 DR-8: Error·primitive의 rebuild와 schema-change reset, 최초 구성 실패 뒤 constructible schema 재렌더·reset, primitive props-reset의 load·render 두 기록, 기존 never-prepared 회귀를 확인합니다. DR-9: 부모 재렌더 없는 remove·insert·reorder, 같은 이름의 oneOf 교체, unresolved /2의 push 후 진입, StrictMode·React18 legacy root의 구독 해제·동기 wave, node 입력 무구독과 root 4리스너를 확인합니다. reported 제거와 구독 제거 두 변이를 검출한 뒤 전체 관문을 실행합니다.
+
+
+## Amendment 5
+
+DR-10은 inline errors 배열과 validator 교체 및 같은 batch reset·schema 변경의 stale root 쓰기를 재현한 뒤 errors effect를 store.load.root로 바꿉니다. DR-12는 reset의 applyFormErrors에 load origin을 명시하며 no-root recovery listener 기록으로 확인합니다. F1의 origin 문구·F2의 공개 주석 세 곳·존재하지 않는 onReady를 정정합니다. F2는 공개 선언의 주석만 승인된 차이이며 형은 유지합니다. DR-11은 두 React에서 non-native degraded submit의 caller rejection·onError0·host0과 native onError1(origin submit)·host1을 확인했으며 ERROR-019 항목 3·4 및 IR-9 정의를 코디네이터에게 보고하고 결정을 기다립니다.

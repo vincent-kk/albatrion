@@ -17,3 +17,11 @@
   - 【추론】 DR-8: 교체 load는 그 reset이 보고하며 pendingLoad가 다시 전달하지 않는다. prepared 직후 reported를 설정하고 next.error는 caller throw를 위해 유지한다. 기존 prepared 명령형 reset의 load 기록 한 번·caller throw·host 0과 never-prepared flush는 보존한다. 최초 구성 실패 뒤 constructible schema로 재렌더한 reset의 applyFormErrors listener 실패는 자체 batch 사슬로 보고된다. props-driven reset의 primitive throw는 seen으로 중복 제거할 수 없어 load와 render 기록이 각각 한 번 생기는 기존 제한이며 ERROR-023 항목 2를 따른다.
 - **DR-9 (REACT-012 / SURFACE-009)**
   - 【추론】 DR-9: 경로 주소 바인딩은 경로 컨테이너들의 UpdateChildren을 따라 다시 해석한다. find는 현재 구조에 대한 조회다. useSyncExternalStore는 root부터 각 경로 prefix의 find 결과를 구독하고 unresolved prefix에서 멈춘다. 리스너는 사건 비트로 필터하며 변경 때 모두 해제·재탐색·재구독한 뒤 snapshot 변경을 통지한다. node 입력과 undefined 및 root로 해석되는 입력은 고정 snapshot과 no-op 구독이다. 기본 root proxy와 node-addressed children의 추가 구독·쓰기 비용은 0이며 root의 기존 네 리스너를 유지한다. 경로 프록시는 container마다 리스너 한 개와 사건마다 필터 호출 비용이 들고 wildcard는 첫 매치만 추적한다. identity 변경으로 Input이 remount되면 focus를 잃는 REACT-023 제한은 유지한다. 구독 직후 snapshot 재확인은 tearing을 막으며 재구독 리스너의 같은 wave 재호출은 허용한다.
+
+
+## Amendment 5 — 현행 root의 errors와 문서
+
+- **DR-10·DR-12 (ERROR-019 / SURFACE-053 / WRITE-045)**
+  - 【추론】 DR-10·DR-12: validator 교체 또는 pending reset 재대조 뒤 errors effect는 렌더가 보유한 옛 root가 아니라 store.load.root의 현행 root에 적용한다. 같은 errors 배열 재적용은 기존 조기 반환을 따른다. replacement reset의 applyFormErrors는 이전 root 유무와 무관하게 load origin으로 호출하며 자체 batch 사슬의 listener 실패도 load로 보고한다. 오류 배열 내용·경로별 배정과 caller throw·호스트 전달 규칙은 바꾸지 않는다.
+
+F1은 공개 SPECIFICATION의 ValidatorCompileFailed 셀을 IR-9의 origin validate 및 자동 host·명시적 rejection으로 정정합니다. F2는 OnChange만 오류 표시를 hold하고 다른 mode는 live 조건을 따른다는 공개 주석 세 곳의 정정이며 형·행동 변경이 아닙니다. 존재하지 않는 onReady는 현행 Provider 문서에서 제거합니다. DR-11은 재현과 ERROR-019 항목 3·4의 대조 결과를 코디네이터에게 보고하고 결정을 기다립니다.
