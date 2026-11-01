@@ -10,3 +10,10 @@
   - 【추론】 DR-3: 캐시된 duplicate 실패는 다른 같은 $id 루트의 counts가 양수인 동안 유지한다. 충돌 해제 뒤 다음 전체 스키마 읽기의 assertValidationRootReady에서 entry마다 한 번 재시도한다. readValidationEntry와 guard 읽기는 재시도하지 않는다. 재시도 전 문자열 $id가 같은 recent 루트들을 복사 목록에서 순회하고 자기 자신을 제외하여 기존 축출을 적용한다. copy와 guards 및 이미 반환한 guard를 유지하고 성공 시 validate를 설정하며 failure·duplicate·rejection과 중복 id 메시지의 guard 실패를 지운다. 실패 시 원래 failure·duplicate·rejection 정체성을 유지하고 retried를 기록한다. IR-8의 컴파일 시점 중복 원인을 상대 해제 뒤에도 캐시에 보존한다는 문장은 충돌 지속 또는 실패한 재시도에만 적용한다. compileGuard 호출 및 실패한 compile 뒤 같은 copy의 compile 재시도가 깨끗이 등록되어야 하는 책임은 플러그인에 있다. reset과 commit 사이 validate 또는 commit보다 먼저 실행된 슬롯에서 실패하면 해당 로드의 검증은 계속 unavailable이다.
 - **D9 (ERROR-023 우선 제한)**
   - 【추론】 D9: 소유자 quote 59와 ERROR-023 항목 2의 render capture skip-and-delete를 유지하며 DR-4는 철회한다. host가 이미 보고된 engine 거부 객체를 render에서 다시 던지면 생략된 render 기록의 componentStack과 path는 onError에 도달하지 않고 boundary console.error에만 남는다. seen 삭제 뒤 native submit이 같은 거부를 onError에 다시 보고할 수 있으며 이는 ERROR-019의 IR-8 round b 중복 보고 방지 보충보다 ERROR-023 항목 2가 우선하는 허용 제한이다.
+
+## Amendment 3·4 — 재현된 D4·D5의 수정
+
+- **DR-8 (ERROR-019)**
+  - 【추론】 DR-8: 교체 load는 그 reset이 보고하며 pendingLoad가 다시 전달하지 않는다. prepared 직후 reported를 설정하고 next.error는 caller throw를 위해 유지한다. 기존 prepared 명령형 reset의 load 기록 한 번·caller throw·host 0과 never-prepared flush는 보존한다. 최초 구성 실패 뒤 constructible schema로 재렌더한 reset의 applyFormErrors listener 실패는 자체 batch 사슬로 보고된다. props-driven reset의 primitive throw는 seen으로 중복 제거할 수 없어 load와 render 기록이 각각 한 번 생기는 기존 제한이며 ERROR-023 항목 2를 따른다.
+- **DR-9 (REACT-012 / SURFACE-009)**
+  - 【추론】 DR-9: 경로 주소 바인딩은 경로 컨테이너들의 UpdateChildren을 따라 다시 해석한다. find는 현재 구조에 대한 조회다. useSyncExternalStore는 root부터 각 경로 prefix의 find 결과를 구독하고 unresolved prefix에서 멈춘다. 리스너는 사건 비트로 필터하며 변경 때 모두 해제·재탐색·재구독한 뒤 snapshot 변경을 통지한다. node 입력과 undefined 및 root로 해석되는 입력은 고정 snapshot과 no-op 구독이다. 기본 root proxy와 node-addressed children의 추가 구독·쓰기 비용은 0이며 root의 기존 네 리스너를 유지한다. 경로 프록시는 container마다 리스너 한 개와 사건마다 필터 호출 비용이 들고 wildcard는 첫 매치만 추적한다. identity 변경으로 Input이 remount되면 focus를 잃는 REACT-023 제한은 유지한다. 구독 직후 snapshot 재확인은 tearing을 막으며 재구독 리스너의 같은 wave 재호출은 허용한다.

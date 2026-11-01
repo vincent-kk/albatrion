@@ -14,8 +14,8 @@
 - 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputSlot`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputSlot`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.
 - 재귀 렌더 props 계약 `FieldProxyProps`는 본체가 소유하며 `type.ts`에 선언합니다. 진입점은 이 형을 내보내지 않습니다. 부품 `FieldInputSlot`·`DeferredFieldProxy`는 `type.ts`를 타입 전용 import로만 읽고, 입력 구현은 본체 구현을 값으로 역참조하지 않습니다. 본체는 자신을 `NodeProxy` prop으로 넘겨서 재귀합니다.
 - 비활성 노드는 렌더하지 않습니다. 하위 노드는 전달받은 NodeProxy를 통해 같은 렌더 계약을 재사용합니다. 노드가 없을 때도 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.
-- 마운트된 노드는 data-path로 경로를 노출하고, 노드 구독은 React 생명주기에 맞춰 해제합니다.
-- `UpdateJsonSchema`를 구독하다가 유효 스키마가 바뀌면 렌더 props와 입력 선택을 갱신합니다. 프록시 하나가 구독, 메모, 스냅샷 ref를 소유하며, 별도의 필드 컴포넌트나 필드별 경로 Provider는 만들지 않습니다(REACT-012, 119라운드, 121C-01 F-A).
+- 마운트된 노드는 data-path로 경로를 노출합니다. 경로 주소는 prefix container들의 UpdateChildren을 따라 다시 해석하고 구독은 React 생명주기에 맞춰 해제합니다. node·undefined·root 주소는 고정 snapshot으로 추가 구독하지 않습니다.
+- `UpdateJsonSchema`를 구독하다가 유효 스키마가 바뀌면 렌더 props와 입력 선택을 갱신합니다. 프록시 하나가 노드 추적 구독과 스냅샷 ref를 소유하고 경로 해석은 useFieldNode의 외부 저장소 구독이 소유하며, 별도의 필드 컴포넌트나 필드별 경로 Provider는 만들지 않습니다(REACT-012, 119라운드, 121C-01 F-A).
 - 렌더러 경계는 ErrorBoundary를 직접 씁니다. children이 렌더할 때마다 새 엘리먼트라 memo 비교가 항상 실패하므로 memo로 감싸지 않습니다. 소유 지점에서 한 번 선택한 렌더러가 그 내부에서 errorMessage를 계산합니다. formatError와 렌더러 예외는 원래 오류의 identity, 현재 path, componentStack, origin render를 같은 폼 보고기로 전달하고, 같은 fallback과 console.error를 유지합니다(ERROR-044·090·114).
 - Refresh는 렌더러 경계와 입력 경계의 수명을 유지하고 해당 노드의 원본 입력만 다시 마운트합니다. RequestRemount는 래퍼 key를 바꿔서 경계까지 교체합니다(REACT-019·024, EVENT-039·040, 112C-01).
 - 비용: 필드 전체를 감싸던 Provider, 감싸개, 경계, 분리 컴포넌트를 없애고 오류 메시지 계산을 렌더러 경계 안의 컴포넌트에 둡니다. 필드당 fiber를 순감소 기준으로 4개 줄이는 것이 목표이며, 별도의 필드 경계 상태와 경로 Provider는 두지 않습니다. 쓰기당 렌더 수와 DOM 반영 지연은 런타임 계수로 비교합니다.

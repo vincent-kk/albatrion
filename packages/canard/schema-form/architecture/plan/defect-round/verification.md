@@ -7,3 +7,8 @@ D4·D5는 render/react18에서 red, D6·D7은 실제 onInactive 호출을 확인
 ## 순차 관문
 
 lint 경고 0 → typecheck → build → unit → render → react18 → verify → storybook → production → import-model 순서입니다. 그 뒤 공개 표면 불변, FCA 신규 finding 없음, 원장 신규 finding 없음, 추가 텍스트와 신규 gzip 해제본의 머신 경로 없음, 기존 skip·todo 불변을 확인합니다. 전체 관문은 Amendment 3 적용 뒤 실행합니다. 결과는 한국어 defect-round-results.md에 각 결함·재현·수정·red/green·변이·한계·관문을 기록합니다.
+
+
+## Amendment 3·4 추가 관문
+
+DR-8: Error·primitive의 rebuild와 schema-change reset, 최초 구성 실패 뒤 constructible schema 재렌더·reset, primitive props-reset의 load·render 두 기록, 기존 never-prepared 회귀를 확인합니다. DR-9: 부모 재렌더 없는 remove·insert·reorder, 같은 이름의 oneOf 교체, unresolved /2의 push 후 진입, StrictMode·React18 legacy root의 구독 해제·동기 wave, node 입력 무구독과 root 4리스너를 확인합니다. reported 제거와 구독 제거 두 변이를 검출한 뒤 전체 관문을 실행합니다.

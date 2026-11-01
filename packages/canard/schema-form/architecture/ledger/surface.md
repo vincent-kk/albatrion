@@ -234,6 +234,7 @@
   > "| 경로 조회 | `find(path)`, `findNodes(path)` | 터미널 노드 아래의 경로는 둘 다 노드 없음으로 답한다. 공개 API가 객체를 조용히 파괴하면 안 되기 때문이다(07 4.29) | ADR 0006 §4 |" (`02-target-overview.md:316`)
   > "| 46 | 노드 메서드 `findAll` | `findNodes`(`FormHandle`은 이미 `findNodes`다) |" (`08-design-a-to-z.md:478`)
   > 소유자(341라운드, 하위 노드 방문을 공개 표면으로; 설계는 원장 기준, 판정은 소유자): "그리고 공개표면으로도 추가했으면 하네. \n\n자신을 기준으로 하위 모든 노드를 방문하는 공개 기능으로서. \n\n네이밍과 위치, 동작, 배치여부 등은 원장을 참고해서 추정하고 설계를 구성하라.\n판정과 판단이 필요하면 나에게 묻도록" (`reviews/round-341-owner-answers.md:7`)
+  > 편집자 결정(DR-9): "【추론】 DR-9: 경로 주소 바인딩은 경로 컨테이너들의 UpdateChildren을 따라 다시 해석한다. find는 현재 구조에 대한 조회다. useSyncExternalStore는 root부터 각 경로 prefix의 find 결과를 구독하고 unresolved prefix에서 멈춘다. 리스너는 사건 비트로 필터하며 변경 때 모두 해제·재탐색·재구독한 뒤 snapshot 변경을 통지한다. node 입력과 undefined 및 root로 해석되는 입력은 고정 snapshot과 no-op 구독이다. 기본 root proxy와 node-addressed children의 추가 구독·쓰기 비용은 0이며 root의 기존 네 리스너를 유지한다. 경로 프록시는 container마다 리스너 한 개와 사건마다 필터 호출 비용이 들고 wildcard는 첫 매치만 추적한다. identity 변경으로 Input이 remount되면 focus를 잃는 REACT-023 제한은 유지한다. 구독 직후 snapshot 재확인은 tearing을 막으며 재구독 리스너의 같은 wave 재호출은 허용한다." (`reviews/defect-round.md:19`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:415`(정본), `02-target-overview.md:316`, `08-design-a-to-z.md:478`, `06-conclusions.md:394`, `07-conclusions.md:205-210,351`, `05-before-after.md:95` (같은 규칙: NODE-020; 형상에 없는 노드를 돌려주는지는 열림 NODE-019)
 - 닫은 사람: 원리(`06-conclusions.md:175` P2·G4; `find`), 편집자 결정(10라운드 추정 채택 규칙, `07-conclusions.md:209`; `findNodes`), 편집자 결정(17라운드, `08-design-a-to-z.md:478` 이주 행 46; `findAll`)

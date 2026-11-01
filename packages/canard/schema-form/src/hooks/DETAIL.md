@@ -3,7 +3,7 @@
 ## Requirements
 
 - 공개 훅 다섯과 형 하나를 루트 `src/index.ts`가 이 fractal의 index로 재수출합니다: `useFieldNodeTracker`·`useFieldNodeSubscribe`·`FieldNodeSubscribeOptions`·`useChildFieldMap`·`useChildFieldErrors`·`useFormSubmit`.
-- `useFieldNode`는 패키지 공개 이름이 아니며, 경로로 노드를 찾는 `components/FieldProxy`의 소비자를 위해 index가 내보냅니다.
+- `useFieldNode`는 패키지 공개 이름이 아니며 FieldProxy가 경로의 현재 노드를 구독하도록 내부 index가 내보냅니다. node·undefined·root 입력은 고정이고 다른 경로는 root부터 최장 해석 prefix까지 UpdateChildren 구독을 한 번씩 둡니다. 사건마다 필터·해제·재탐색·재구독 후 snapshot 변경을 통지하고 unmount에서 모두 해제합니다. 경로별 비용은 container마다 리스너 한 개이며 일반 node-addressed 자식과 기본 root 프록시에는 추가 비용이 없습니다.
 
 ## API Contracts
 

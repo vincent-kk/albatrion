@@ -25,3 +25,8 @@ assertValidationRootReady의 조건은 failure && duplicate === true && retried 
 ## 근거와 검증
 
 계약은 [결정 기록](../../reviews/defect-round.md), 재현과 관문은 [검증 계획](verification.md)에 연결합니다. 공개 src/index.ts·선언·버전은 바꾸지 않으며 산출물은 소스와 다른 커밋으로 보존합니다.
+
+
+## Amendment 3·4 — DR-8·DR-9
+
+DR-8은 replacement load의 prepared 직후 reported를 확정하고 error는 caller를 위해 유지합니다. 최초 구성 실패 회복은 자체 batch 오류 전달을 guard로 확인하며 primitive props-reset의 load·render 두 기록은 기존 제한입니다. DR-9는 useSyncExternalStore와 root부터 최장 해석 prefix까지의 UpdateChildren 구독을 씁니다. node·undefined·root는 고정이며 기본 root 4리스너와 자식 node 주소를 보존합니다. 경로 프록시의 container당 한 리스너·사건 필터 비용, wildcard 첫 매치, identity remount의 focus 유실을 제한으로 기록합니다. [결정](../../reviews/defect-round.md)의 Amendment 4가 이전 설계를 대체합니다.
