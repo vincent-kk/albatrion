@@ -43,3 +43,7 @@ lint 경고 0, typecheck, 정식 build와 DEVELOPMENT_FLAG_OK·GATE_SELECTION_DI
 - 처음 전체 unit의 S1 실패는 새 RootNodeContext fixture가 형제 내부 helper를 import했기 때문입니다. 기존 FormErrorService 진입점 타입의 mock으로 고쳐 5개 대상 검사와 두 routing mutation을 재확인했습니다. 실패 원시 결과를 보존하고 전체 게이트를 다시 실행했습니다.
 
 버전 0.16.0과 패키지 공개 표면은 그대로이며 tracked runtime bundle·adapter 출력은 source commit에 포함하지 않았습니다. 새 Git commit은 설정된 identity를 사용하고 author/email override·trailer·push는 하지 않습니다. artifact의 machine path prefix만 placeholder로 정규화했고 gzip mtime은 0입니다. manifest의 unpackPath와 hash는 보존한 원시 증거를 식별합니다.
+
+## 정정: handoff checker의 작성자 주소 단언(2026-11-02)
+
+`raw/dr-16-17/checker.py`의 작성자 단언이 개인 메일 주소 전체를 담고 있어, 코디네이터가 작성자 이름만 확인하는 단언(`author.startswith('Vincent Kelvin <')`)으로 바꿨습니다. 단언의 뜻은 브랜치의 모든 커밋에 대해 유지됩니다. 이 파일의 SHA-256은 `b3f339adaefb8c34cc0032df8f3a264716e2bfa4b7178502a99e3773f7d92c16`에서 `413fb1d8d70b407ec510e0e3f41f680eb6413285039c2e4547b8046ad8faf7d0`로 바뀌었으며, `raw/dr-16-17/manifest.json`의 기록값은 고치지 않고 이 정정으로 대신합니다.
