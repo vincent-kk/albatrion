@@ -1,0 +1,44 @@
+{
+  "baseline": "0df36857c",
+  "baseStatus": "indeterminate",
+  "candidateStatus": "indeterminate",
+  "baseSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "d4c81dc377fa834e0f23e42864f01a6be4320007fac15e309b6fb865d9ee6e91",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 201,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "candidateSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "ec09803797df95edf02399d65eb57330756ad976ab25c728fc2d0555ac7e48c1",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 201,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "findings": {
+    "added": [],
+    "removed": []
+  },
+  "lineReferenceFormatting": "The displayed constants.ts:2 reference is preserved; its line suffix is outside the path code span so FCA resolves the actual file."
+}

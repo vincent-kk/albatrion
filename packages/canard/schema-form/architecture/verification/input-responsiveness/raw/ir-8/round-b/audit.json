@@ -1,0 +1,20 @@
+{
+  "baseline": "0df36857c",
+  "filesAudited": 62,
+  "machinePathsInAddedTextAndNewGzip": 0,
+  "rawTemporaryPathHits": [],
+  "rawPlainFilesAudited": 34,
+  "rawGzipFilesAudited": 37,
+  "originalRecordLinesPreserved": [
+    "packages/canard/schema-form/architecture/ledger/error.md",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/design.md"
+  ],
+  "sourceIndexDiff": "",
+  "versionDiff": "",
+  "publicDeclarationUnchanged": true,
+  "existingSkipsTodosFailsChanged": 0,
+  "scratchWorktreeRemoved": true,
+  "scratchBranchRemoved": true,
+  "scratchLeftovers": [],
+  "initialAuditCorrection": "The prior audit did not check temporary absolute paths. One initial-command path was normalized and the earlier audit was annotated; this audit reads every raw plain and gzip file."
+}

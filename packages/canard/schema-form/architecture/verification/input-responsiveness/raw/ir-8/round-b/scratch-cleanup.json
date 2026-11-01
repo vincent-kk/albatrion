@@ -1,0 +1,11 @@
+{
+  "name": "ir8-round-b-red-probe",
+  "base": "c2cc703be",
+  "setup": "skip",
+  "agentStarted": false,
+  "evidenceCommit": "171238ebe",
+  "removedUsing": "orca worktree rm --force",
+  "pathAbsent": true,
+  "branchDeleted": true,
+  "leftovers": []
+}

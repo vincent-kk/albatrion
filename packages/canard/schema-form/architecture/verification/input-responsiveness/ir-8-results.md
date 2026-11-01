@@ -1,6 +1,6 @@
 # IR-8 — 다음 프레임 뒤 공통 로드 검증
 
-기준은 `c5d963b2d`(IR-6 #509·IR-7 #510 포함)이며, 제품 구현은 `7f04fe29d`입니다. 승인 설계와 Amendments 1–3을 적용했습니다. 최초 마운트·동일 스키마 reset·교체 reset·rebuild·검증기 교체가 같은 Provider 예약 함수와 같은 엔진 진입점을 사용합니다. 아래 실행 관문은 모두 통과했고, FCA·원장 검사는 기준 대비 새 finding 또는 문제가 없습니다. FCA의 기존 `indeterminate`는 유지합니다.
+기준은 `c5d963b2d`(IR-6 #509·IR-7 #510 포함)이며, 제품 구현은 `7f04fe29d`입니다. 승인 설계와 Amendments 1–3을 적용했습니다. 최초 마운트·동일 스키마 reset·교체 reset·rebuild·검증기 교체가 같은 Provider 예약 함수와 같은 엔진 진입점을 사용합니다. 아래 실행 관문은 모두 통과했고, FCA·원장 검사는 기준 대비 새 finding 또는 문제가 없습니다. FCA의 기존 `indeterminate`는 유지합니다. 최신 round b 제품 수정과 재검증은 마지막 절에 따로 기록합니다.
 
 ## 동작과 비용
 
@@ -130,3 +130,32 @@ T3·T9·B3는 본문을 유지해 별도 failures 파일로 옮겼고 B3의 최�
 - L6의 run-time retain 후보는 stage의 OnChange mount slot과 IR-7 L1 unmount 뒤 쓰기에도 있던 노출입니다. 새 OnRequest 슬롯은 동기 compile만 하므로 해당 비동기 실행 창을 추가하지 않습니다.
 
 경로 감사는 일반 파일과 gzip 전체를 읽고 temporary 절대 경로까지 포함합니다. 기존 command-gates-initial.json 명령 필드의 임시 경로 1개를 portable 표기로 고쳤으며 이전 audit가 이 패턴을 누락했다는 사실도 audit.json에 명시했습니다.
+
+
+### Round b 최종 관문과 감사
+
+[순차 명령](raw/ir-8/round-b/command-gates.json)은 lint → typecheck → build → unit → render → react18 → verify → storybook → production → import-model 순이며 모두 exit 0입니다. [green 원시](raw/ir-8/round-b/test-gates.json)에 프로젝트별 reporter 출력을 보존합니다.
+
+| 관문 | round b 최종 결과 |
+| --- | --- |
+| lint | 경고 0 |
+| typecheck·build | exit 0, artifact checks 포함 |
+| unit | 4,094 pass, 0 fail, 기존 todo 1 |
+| render | 926 pass, 0 fail, 기존 skip 2 |
+| react18 | 919 pass, 0 fail, 기존 skip 9 |
+| verify | 5,064 pass, 0 fail, 기존 skip 2·todo 1 |
+| storybook·production | 254 pass·21 pass, fail 0 |
+| import-model | 2 pass |
+| load-slot case cap·act | 각 파일 11 case ≤ 15, 양쪽 major 44 pass·act warning 0 |
+| 공개 선언·버전 | 0df 대비 src/index.ts·index.d.ts·package.json 변경 0 |
+| skip/todo/fails | 정적 원본 대조에서 추가·삭제 0 |
+
+최초 typecheck가 W4 mock의 무인자 추론을 검출했습니다. 최종 `0fdc44e05`는 공개 FormProps.onError에서 spy 타입을 유도합니다. [타입 보정 증거](raw/ir-8/round-b/w4-type-only-proof.json)는 red 시험 커밋 `c2cc703be`와 최종 파일의 SHA256을 모두 기록하고 TypeScript가 만든 실행 코드가 byte-identical임을 확인합니다. 따라서 W4 red의 실행 본문은 바뀌지 않았습니다. 수정 후 위 순차 관문 전체를 재실행했습니다.
+
+[분할 본문 감사](raw/ir-8/round-b/split-body-audit.json)는 T3·T9 본문이 0df와 byte-identical이고 B3의 유일한 변경이 최종 validate await의 act 감싸기임을 확인합니다. [제품 SHA256](raw/ir-8/round-b/product-sha256.json)과 [빌드 manifest](raw/ir-8/round-b/build-artifacts.json)를 보존하며, 빌드 증거는 `07ca046eb`로 제품과 분리 커밋했습니다. dist는 기존 ignore 정책을 유지합니다.
+
+[최종 FCA 비교](raw/ir-8/round-b/fca-diff.json)는 0df 대비 finding 201 → 201, 추가·제거 모두 0입니다. facts 1,770 exact, missing·uncertain·tool-error 0이며 scan·validate·verification snapshot이 일치합니다. 기존 indeterminate·canonical failed 12·unsupported는 통과로 바꾸지 않습니다. 요청된 constants.ts:2 표기는 실제 2행을 확인한 뒤 줄번호만 코드 범위 밖에 표시했습니다. 파일명에 줄번호를 포함시키던 검사기의 초기 경고와 최종 해소 결과도 원시에 남깁니다.
+
+[원장 검사](raw/ir-8/round-b/ledger-checks.json)는 보충 인용 3,597 → 3,600, 불일치·해석 실패 0, ref 문제 0, owner 720/720 인용, 17영역 missing·bad classifications 0입니다. plan-links 기존 1건·doc-coverage 기존 미인용 66개·tokens 기존 잔여 398개는 유지하며 신규 문제는 0입니다.
+
+[확장 감사](raw/ir-8/round-b/audit.json)는 새 텍스트와 모든 IR-8 raw 일반 파일·gzip의 temporary 절대 경로까지 확인합니다. 기존 skip/todo는 그대로이고 scratch worktree·branch 잔여는 없습니다. [정리 증거](raw/ir-8/round-b/scratch-cleanup.json)에 생성 기준·증거 커밋·Orca 제거·branch 삭제를 기록했습니다.

@@ -1,0 +1,12 @@
+{
+  "cap": 15,
+  "files": {
+    "validation.load-slot-failures.render.test.tsx": 11,
+    "validation.load-slot.render.test.tsx": 11
+  },
+  "executionProjects": [
+    "render",
+    "react18"
+  ],
+  "actWarnings": 0
+}
