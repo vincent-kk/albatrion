@@ -40,7 +40,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     }
     const targets = runtime.validationPendingTargets ?? new Set([node]);
     runtime.validationPendingTargets = undefined;
-    const stamp = runtime.validationStamp;
+    const stamp = runtime.validationStamp ?? 0;
     const running = { stamp, targets };
     runtime.validationRunning = running;
     const commit = runtime.commitNumber ?? 0;
