@@ -11,8 +11,8 @@ const fragmentScopeScenario = {
   initialValue: { inside: 'I', outside: 'O' },
   steps: [{ action: 'setValue', path: '/outside', value: 'edited',
     expect: { states: {
-      '/inside': { visible: false, enabled: false, readOnly: true },
-      '/outside': { visible: true, enabled: true, readOnly: false },
+      '/inside': { isVisible: false, isPresent: false, isReadOnly: true },
+      '/outside': { isVisible: true, isPresent: true, isReadOnly: false },
     }, outputValue: { inside: 'I', outside: 'edited' } } }],
 } satisfies FormScenario;
 
@@ -26,8 +26,8 @@ const rootLocalScenario = {
   initialValue: { child: 'C' },
   steps: [{ action: 'setValue', path: '/child', value: 'edited',
     expect: { states: {
-      '': { readOnly: true, disabled: true, visible: false, enabled: false },
-      '/child': { readOnly: false, disabled: false, visible: true, enabled: true },
+      '': { isReadOnly: true, isDisabled: true, isVisible: false, isPresent: false },
+      '/child': { isReadOnly: false, isDisabled: false, isVisible: true, isPresent: true },
     }, outputValue: { child: 'edited' } } }],
 } satisfies FormScenario;
 

@@ -15,11 +15,11 @@ export enum ShowError {
   /** Never show error */
   Never = BIT_FLAG_01,
   /** Show error when the input's value is updated */
-  Dirty = BIT_FLAG_02,
+  Edited = BIT_FLAG_02,
   /** Show error when the input is touched */
   Touched = BIT_FLAG_03,
   /** Show error when the input's value is updated and touched */
-  DirtyTouched = BIT_FLAG_04,
+  EditedTouched = BIT_FLAG_04,
 }
 
 /** Form validator prop: the core object contract requires synchronous guard compilation. */

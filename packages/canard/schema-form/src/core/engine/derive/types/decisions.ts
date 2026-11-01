@@ -72,7 +72,7 @@ export interface DeriveRoundDecision<Self> {
 
 /** Final interaction reset decision made before the commit publishes revisions. */
 export interface DeriveResetInteractionDecision<Self> {
-  /** Live records whose dirty and touched flags clear. */
+  /** Live records whose edited and touched flags clear. */
   readonly nodes: readonly Self[];
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];

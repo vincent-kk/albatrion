@@ -115,7 +115,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ### error-display-via-policy
 
-- Control error visibility through the `showError` prop / `ShowError` enum and the node's `dirty` / `touched` state. Do not sprinkle `errors.length > 0` checks across individual inputs.
+- Control error visibility through the `showError` prop / `ShowError` enum and the node's `edited` / `touched` state. Do not sprinkle `errors.length > 0` checks across individual inputs.
 - Why: the policy is centralized; reinventing it causes inconsistent UX and duplicated logic.
 
 ### form-handle-typed

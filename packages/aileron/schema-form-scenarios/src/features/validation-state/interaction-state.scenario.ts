@@ -10,7 +10,7 @@ const draftSchema = {
 /** A loaded draft whose interaction state starts empty. */
 export const interactionStateScenario: FormScenario = {
   name: 'validation-state.interaction-state',
-  description: 'VALUE-022 dirty and touched; EVENT-062, LANDING-152 and LANDING-153 globalState keys are true and drop when no node holds them, and the globalState object is replaced only when a key crosses zero; GOAL-061 touched waits for blur; EVENT-067 onStateChange fires once per entry that changes any node state, even when the global keys do not cross zero, so focus leaving /done notifies although globalState is unchanged. Stages come from interactionStateStages.',
+  description: 'VALUE-022 edited and touched; EVENT-062, LANDING-152 and LANDING-153 globalState keys are true and drop when no node holds them, and the globalState object is replaced only when a key crosses zero; GOAL-061 touched waits for blur; EVENT-067 onStateChange fires once per entry that changes any node state, even when the global keys do not cross zero, so focus leaving /done notifies although globalState is unchanged. Stages come from interactionStateStages.',
   schema: draftSchema,
   initialValue: { title: 'draft', done: false },
   steps: [{ action: 'batch', steps: [], expect: { values: { '/title': 'draft', '/done': false } } }],
@@ -31,9 +31,9 @@ export interface InteractionStateStage {
 /** Interactions applied in order to interactionStateScenario. */
 export const interactionStateStages: readonly InteractionStateStage[] = [
   { act: 'load', state: {}, notifications: 0 },
-  { act: 'type', text: ' v2', state: { dirty: true }, notifications: 1 },
-  { act: 'blur', state: { dirty: true, touched: true }, notifications: 1 },
-  { act: 'returnAndType', text: '!', state: { dirty: true, touched: true }, notifications: 1 },
+  { act: 'type', text: ' v2', state: { edited: true }, notifications: 1 },
+  { act: 'blur', state: { edited: true, touched: true }, notifications: 1 },
+  { act: 'returnAndType', text: '!', state: { edited: true, touched: true }, notifications: 1 },
   { act: 'clearState', state: {}, notifications: 1 },
   { act: 'setState', state: { touched: true }, notifications: 1 },
 ];

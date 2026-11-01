@@ -11,7 +11,7 @@ import { cx08SwitchWithArrayVerbs } from './cx08-switch-with-array-verbs.scenari
 import { cx09ResetDuringValidation } from './cx09-reset-during-validation.scenario';
 import { cx10InjectChainInBatch } from './cx10-inject-chain-in-batch.scenario';
 import { cx11ImeDuringSwitch } from './cx11-ime-during-switch.scenario';
-import { cx12DeferredDirtyTouched } from './cx12-deferred-dirty-touched.scenario';
+import { cx12DeferredEditedTouched } from './cx12-deferred-edited-touched.scenario';
 import { cx13NestedOneofAnyof } from './cx13-nested-oneof-anyof.scenario';
 import { cx14RecursiveConditions } from './cx14-recursive-conditions.scenario';
 import { cx15ExternalAndValidationErrors } from './cx15-external-and-validation-errors.scenario';
@@ -35,7 +35,7 @@ export type { CompositeCase, CompositeNodeState, CompositePropStage, CompositeTa
 
 /** Composite cases CX-01 to CX-24 in order; each pairs shared steps with an optional consumer tail. */
 export const compositeCases: readonly CompositeCase[] = [
-  cx01OrderForm, cx02OrgChart, cx03Profile, cx04AmountInput, cx05Permissions, cx06PluginForm, cx07SetupWizard, cx08SwitchWithArrayVerbs, cx09ResetDuringValidation, cx10InjectChainInBatch, cx11ImeDuringSwitch, cx12DeferredDirtyTouched, cx13NestedOneofAnyof, cx14RecursiveConditions, cx15ExternalAndValidationErrors, cx16RapidMixedToggles, cx17BranchArrayItemErrors, cx18SwitchRecomputesDerived, cx19BranchDefaultsAndReset, cx20ArrayOfOneofItems, cx21GuardInsideArrayItems, cx22VisibleVersusActiveInBranch, cx23NullableBranchObject, cx24EnterSubmitAndBranch,
+  cx01OrderForm, cx02OrgChart, cx03Profile, cx04AmountInput, cx05Permissions, cx06PluginForm, cx07SetupWizard, cx08SwitchWithArrayVerbs, cx09ResetDuringValidation, cx10InjectChainInBatch, cx11ImeDuringSwitch, cx12DeferredEditedTouched, cx13NestedOneofAnyof, cx14RecursiveConditions, cx15ExternalAndValidationErrors, cx16RapidMixedToggles, cx17BranchArrayItemErrors, cx18SwitchRecomputesDerived, cx19BranchDefaultsAndReset, cx20ArrayOfOneofItems, cx21GuardInsideArrayItems, cx22VisibleVersusActiveInBranch, cx23NullableBranchObject, cx24EnterSubmitAndBranch,
 ];
 
 /** Composite regression scenarios split out of CX-08 and CX-14 after their defects were fixed (round 214). */

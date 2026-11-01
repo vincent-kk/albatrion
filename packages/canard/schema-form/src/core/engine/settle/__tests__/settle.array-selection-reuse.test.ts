@@ -356,7 +356,7 @@ describe('static array selection matches the full route', () => {
     for (const child of prefix) {
       expect(
         capture.mock.calls.filter(
-          ([node, field]) => node === child && field === 'active',
+          ([node, field]) => node === child && field === 'isActive',
         ),
       ).toHaveLength(0);
       expect(visits.filter((path) => path === child.path)).toHaveLength(0);
@@ -373,7 +373,7 @@ describe('static array selection matches the full route', () => {
     expect(
       capture.mock.calls.filter(
         ([node, field]) =>
-          prefix.some((child) => child === node) && field === 'active',
+          prefix.some((child) => child === node) && field === 'isActive',
       ),
     ).toHaveLength(0);
     expect(

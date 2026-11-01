@@ -182,7 +182,7 @@ describe('clear empties the host by host prefix with positional detached reads',
     for (let index = 0; index < former.length; index++) {
       const node = former[index];
       expect(node.detached).toBe(true);
-      expect(node.active).toBe(false);
+      expect(node.isActive).toBe(false);
       expect(node.pendingDelivery).toBeUndefined();
       expect(node.pendingRevision).toBe(0);
       expect({ ...node.revisionLedger }).toEqual(ledgers[index]);

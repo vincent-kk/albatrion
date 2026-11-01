@@ -25,10 +25,10 @@ import ForAI from '@site/src/components/ForAI';
 | `onChange`               | `(value: Value) => void`                               | —                        | 폼 값이 바뀔 때 호출됩니다                                                                                   |
 | `onSubmit`               | `(value: Value) => Promise<void> \| void`              | —                        | `submit()`이 검증을 통과한 뒤 호출됩니다                                                                     |
 | `onValidate`             | `(errors: FieldNode['globalErrors']) => void`          | —                        | 검증 결과나 외부 오류 목록이 폼 오류 목록을 바꿀 때 그 목록과 함께 호출됩니다. 이전과 같은 결과는 건너뜁니다 |
-| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | 폼의 상호작용 플래그(dirty, touched)가 바뀔 때 호출됩니다                                                    |
+| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | 폼의 상호작용 플래그(edited, touched)가 바뀔 때 호출됩니다                                                    |
 | `onError`                | `(record: FormErrorRecord) => void`                    | —                        | 생성 실패와 렌더 실패를 포함해, 이 폼 인스턴스의 오류 기록마다 호출됩니다                                    |
 | `onDiagnosticsChange`    | `(diagnostics: FieldNode['diagnostics']) => void`      | —                        | 준비가 끝난 뒤 루트 진단이 바뀔 때 호출됩니다                                                                |
-| `showError`              | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | 검증 오류를 표시할 시점                                                                                      |
+| `showError`              | `boolean \| ShowError`                                 | `ShowError.EditedTouched` | 검증 오류를 표시할 시점                                                                                      |
 | `validationMode`         | `ValidationMode`                                       | `OnChange \| OnRequest`  | 검증이 실행되는 시점                                                                                         |
 | `validatorFactory`       | `ValidatorFactory`                                     | 플러그인 validator       | validator 객체(`compile`과 `compileGuard`). Form prop, `FormProvider`, 플러그인 순으로 적용됩니다            |
 | `readOnly`               | `boolean`                                              | `false`                  | 모든 입력에 `readOnly`를 적용합니다                                                                          |
@@ -57,9 +57,9 @@ import { ShowError } from '@canard/schema-form';
 
 ShowError.Always; // always show (same as true)
 ShowError.Never; // never show (same as false)
-ShowError.Dirty; // show when node.state[FieldNodeState.Dirty] is true
+ShowError.Edited; // show when node.state[FieldNodeState.Edited] is true
 ShowError.Touched; // show when node.state[FieldNodeState.Touched] is true
-ShowError.DirtyTouched; // show when dirty AND touched (default)
+ShowError.EditedTouched; // show when edited AND touched (default)
 // A node's own node.state[FieldNodeState.ErrorVisible] overrides this policy.
 ```
 
@@ -573,7 +573,7 @@ interface FieldNode {
 
   // State
   state: {
-    [FieldNodeState.Dirty]?: boolean; // set on every user input write
+    [FieldNodeState.Edited]?: boolean; // set on every user input write
     [FieldNodeState.Touched]?: boolean; // set on blur
     [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
     [key: string]: any; // your own flags
@@ -765,7 +765,7 @@ onValidate?:            (errors: FieldNode['globalErrors']) => void
 onStateChange?:         (state: FieldNode['globalState']) => void
 onError?:               (record: FormErrorRecord) => void
 onDiagnosticsChange?:   (diagnostics: FieldNode['diagnostics']) => void
-showError?:             boolean | ShowError              // default: DirtyTouched
+showError?:             boolean | ShowError              // default: EditedTouched
 validationMode?:        ValidationMode                   // default: OnChange|OnRequest
 validatorFactory?:      ValidatorFactory
 readOnly?:              boolean
@@ -809,9 +809,9 @@ getAttachedFilesMap(): AttachedFilesMap
 node.value / node.outputValue / node.defaultValue
 node.setValue(value, option?)
 node.errors / node.globalErrors / node.setExternalErrors(list) / node.clearExternalErrors()
-node.state[FieldNodeState.Dirty | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
-node.active / node.visible / node.enabled / node.readOnly / node.disabled
-node.required / node.nullable / node.type / node.strategy / node.schemaType
+node.state[FieldNodeState.Edited | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
+node.isActive / node.isVisible / node.isPresent / node.isReadOnly / node.isDisabled
+node.isRequired / node.nullable / node.type / node.strategy / node.schemaType
 node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
 node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
 node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
@@ -834,3 +834,23 @@ useChildFieldErrors(node, disabled?)            → { errorMessage, showError, f
 ```
 
 </ForAI>
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. React 소비자는 `UpdateValue`, `UpdatePath`, `UpdateState`에서 다시 읽어야 합니다. 같은 값 reset은 `UpdateValue` 없이도 결과를 바꿀 수 있습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

@@ -11,7 +11,7 @@ describe('TEST-077 union write paths', () => {
     expect(isUnionNode(root)).toBe(true);
     expect(root.value).toBe(42);
     expect(root.outputValue).toBe(42);
-    expect(root.misfit).toBe(false);
+    expect(root.isMisfit).toBe(false);
   });
 
   it('interprets a nested node write without replacing its sibling', () => {
@@ -119,7 +119,7 @@ describe('TEST-077 union write paths', () => {
     });
     root.setValue({ source: '42' });
     expect(root.find('/target')?.raw).toBe(42);
-    expect(root.find('/target')?.misfit).toBe(false);
+    expect(root.find('/target')?.isMisfit).toBe(false);
   });
 
   it('TEST-077 injectTo writes through the effective union list', () => {
@@ -137,7 +137,7 @@ describe('TEST-077 union write paths', () => {
     });
     root.setValue({ source: '42' });
     expect(root.find('/target')?.raw).toBe(42);
-    expect(root.find('/target')?.misfit).toBe(false);
+    expect(root.find('/target')?.isMisfit).toBe(false);
   });
   it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
   it('25C-11 completes all eight node.type values with the array node', () => {

@@ -111,7 +111,7 @@ describe('standalone wave failures', () => {
     });
 
     expect(() =>
-      dispatchSetState(root, { [FieldNodeState.Dirty]: true }),
+      dispatchSetState(root, { [FieldNodeState.Edited]: true }),
     ).toThrow(failure);
     expect(child.emit).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
@@ -220,7 +220,7 @@ describe('standalone wave failures', () => {
     runtime.onChange = () => {
       if (!changed) {
         changed = true;
-        dispatchSetState(root, { [FieldNodeState.Dirty]: true });
+        dispatchSetState(root, { [FieldNodeState.Edited]: true });
       }
     };
     subscribeFieldNode(root, (event) => {

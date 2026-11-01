@@ -41,12 +41,12 @@ import type { FormRenderProps } from './types/props';
  * ```tsx
  * <Form.Render path="/password">
  *   {({ value, onChange, node, errors }) => {
- *     const { touched, dirty } = node.state;
+ *     const { isTouched, isEdited } = node;
  *     return (
  *       <div
  *         className={cx('field', {
- *           'field--touched': touched,
- *           'field--dirty': dirty,
+ *           'field--touched': isTouched,
+ *           'field--edited': isEdited,
  *           'field--error': errors?.length > 0,
  *         })}
  *       >

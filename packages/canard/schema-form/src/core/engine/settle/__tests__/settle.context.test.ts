@@ -45,16 +45,16 @@ describe('context change settlement', () => {
     if (!reset) return;
     const runtime: FieldNodeRuntime<unknown> = Reflect.get(root, 'runtime');
     Reflect.set(reset, 'state', {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
 
     setContext(root, { show: true, label: 'new', clear: true, reset: true });
 
-    expect(root.find('/shown')?.active).toBe(true);
+    expect(root.find('/shown')?.isActive).toBe(true);
     expect(root.find('/derived')?.value).toBe('new');
     expect(root.find('/cleared')?.value).toBeUndefined();
-    expect(Reflect.get(reset, 'state')[FieldNodeState.Dirty]).toBe(false);
+    expect(Reflect.get(reset, 'state')[FieldNodeState.Edited]).toBe(false);
     expect(Reflect.get(reset, 'state')[FieldNodeState.Touched]).toBe(false);
     expect(runtime.settlementTrace?.entry.api).toBe('setContext');
   });

@@ -95,7 +95,7 @@ describe('binding input entries', () => {
     expect(runtime.refreshTargets?.has('')).toBe(true);
   });
 
-  it('REACT-010 marked input groups value, external-error clearing and dirty in one commit', () => {
+  it('REACT-010 marked input groups value, external-error clearing and edited in one commit', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     dispatchMount(root, 'old');
     dispatchSetExternalErrors(root, [{ dataPath: '', message: 'external' }]);
@@ -103,7 +103,7 @@ describe('binding input entries', () => {
     dispatchWriteInput(root, 'new');
     expect(root.local).toBe('new');
     expect(runtime.nodeErrors?.has(root)).toBe(false);
-    expect(root.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(root.interactionState[FieldNodeState.Edited]).toBe(true);
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
   });
 
@@ -149,7 +149,7 @@ describe('binding input entries', () => {
     expect(runtime.refreshTargets?.size).toBe(0);
   });
 
-  it('WRITE-083 finish trims automatically without clearing errors or dirty and refreshes input', () => {
+  it('WRITE-083 finish trims automatically without clearing errors or edited and refreshes input', () => {
     const { root, runtime } = createDispatchTree({
       type: 'string',
       options: { trim: true },
@@ -157,7 +157,7 @@ describe('binding input entries', () => {
     dispatchMount(root, '  value  ');
     const errors = [{ dataPath: '', message: 'external' }];
     dispatchSetExternalErrors(root, errors);
-    dispatchSetState(root, { [FieldNodeState.Dirty]: true });
+    dispatchSetState(root, { [FieldNodeState.Edited]: true });
     const state = root.interactionState;
     const listener = vi.fn();
     subscribeFieldNode(root, listener);

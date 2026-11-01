@@ -16,12 +16,12 @@ describe('array position reconciliation', () => {
     const adapter = createCoreScenarioAdapter(scenario);
     const item = adapter.root.find('/1');
     expect(item).not.toBeNull();
-    if (item) item.state = { ...item.state, dirty: true, touched: true };
+    if (item) item.state = { ...item.state, edited: true, touched: true };
 
     await runScenario(scenario, adapter);
 
     expect(adapter.root.find('/0')?.state).toMatchObject({
-      dirty: true,
+      edited: true,
       touched: true,
     });
   });

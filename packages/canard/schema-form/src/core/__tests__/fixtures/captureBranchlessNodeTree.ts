@@ -19,9 +19,9 @@ export const captureBranchlessNodeTree = (root: FieldNode): unknown => {
       errors: node.errors,
       state: node.state,
       schema: node.jsonSchema,
-      visible: node.visible,
-      readOnly: node.readOnly,
-      disabled: node.disabled,
+      isVisible: node.isVisible,
+      isReadOnly: node.isReadOnly,
+      isDisabled: node.isDisabled,
       watchValues: node.watchValues,
     });
     const children = node.children;

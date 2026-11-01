@@ -113,8 +113,8 @@ describe('features — handle-layout consumer-only', () => {
       await act(async () => { await handle!.validate(); });
       await settle(() => handle?.node);
       expect({
-        titleReadOnly: handle!.findNode('/title')!.readOnly,
-        secretVisible: handle!.findNode('/secret')!.visible,
+        titleReadOnly: handle!.findNode('/title')!.isReadOnly,
+        secretVisible: handle!.findNode('/secret')!.isVisible,
         codeMessageShown: Boolean(container.querySelector('[data-path="/code"] em')?.textContent?.trim()),
       }).toEqual(providerLayers.expected);
     } finally {

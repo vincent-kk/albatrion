@@ -28,7 +28,7 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     node.behavior.type !== 'array' ||
     node.behavior.strategy !== 'branch' ||
     node.detached ||
-    !node.active ||
+    !node.isActive ||
     !node.deliveryInitialized ||
     runtime.batchDepth ||
     runtime.visitDepth ||

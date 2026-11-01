@@ -11,7 +11,7 @@ import type { FormErrorProps } from './types/props';
  *
  * Displays field-specific validation errors with customizable styling.
  * Error visibility is controlled by the form's `showError` prop and field state
- * (touched, dirty, etc.). Automatically handles error formatting and display logic.
+ * (touched, edited, etc.). Automatically handles error formatting and display logic.
  *
  * @example
  * Basic error display:

@@ -5,7 +5,7 @@ export type KeywordsByPath = Readonly<Record<string, readonly string[]>>;
 export type ValidationModeName = 'OnChange' | 'OnRequest' | 'None';
 
 /** Error display policy named without the engine enum, mapped by each consumer. */
-export type ShowErrorName = 'Always' | 'Never' | 'Dirty' | 'Touched' | 'DirtyTouched';
+export type ShowErrorName = 'Always' | 'Never' | 'Edited' | 'Touched' | 'EditedTouched';
 
 /** Interaction state flags named without the engine enum; a key is present only while some node holds it. */
-export type InteractionStateNames = Readonly<Partial<Record<'dirty' | 'touched' | 'showError', true>>>;
+export type InteractionStateNames = Readonly<Partial<Record<'edited' | 'touched' | 'showError', true>>>;

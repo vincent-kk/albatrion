@@ -69,14 +69,14 @@ describe('detached FieldNode references', () => {
     );
     const target = root.find('/target');
     if (!target) throw new Error('Expected the loaded target');
-    expect(target.misfit).toBe(true);
+    expect(target.isMisfit).toBe(true);
     resetFieldNodeForm(
       runtimeRoot,
       { flag: false, target: 'other' },
       SetValueOption.Overwrite,
     );
     expect(Reflect.get(target, 'detached')).toBe(true);
-    expect(target.misfit).toBe(true);
+    expect(target.isMisfit).toBe(true);
     expect(target.misfits).toEqual(['/target']);
     expect(target.defaultValue).toBe('bad');
   });
@@ -103,8 +103,8 @@ describe('detached FieldNode references', () => {
     const leaf = root.find('/group/leaf');
     if (!group || !leaf) throw new Error('Expected the active group subtree');
     root.find('/flag')?.setValue(false);
-    expect(group.active).toBe(false);
-    expect(leaf.active).toBe(false);
+    expect(group.isActive).toBe(false);
+    expect(leaf.isActive).toBe(false);
     expect(Reflect.get(leaf, 'detached')).toBe(true);
     const commit = Reflect.get(runtime, 'commitNumber');
     leaf.setValue('x');
@@ -245,15 +245,15 @@ describe('detached FieldNode references', () => {
     const target = root.find('/group/target');
     if (!target) throw new Error('Expected the active target');
     const before = {
-      misfit: target.misfit,
+      isMisfit: target.isMisfit,
       misfits: target.misfits,
       inactiveValues: target.inactiveValues,
       defaultValue: target.defaultValue,
     };
-    expect(before.misfit).toBe(true);
+    expect(before.isMisfit).toBe(true);
     expect(before.misfits).toContain('/group/target');
     root.find('/flag')?.setValue(false);
-    expect(target.misfit).toBe(before.misfit);
+    expect(target.isMisfit).toBe(before.isMisfit);
     expect(target.misfits).toBe(before.misfits);
     Reflect.set(runtime, 'loadSnapshot', {
       group: { target: { seed: 'changed' } },
@@ -261,9 +261,9 @@ describe('detached FieldNode references', () => {
     root.setValue({ flag: true, group: { target: { updated: true } } });
     const current = root.find('/group/target');
     expect(current).not.toBe(target);
-    expect(current?.misfit).toBe(false);
+    expect(current?.isMisfit).toBe(false);
     expect(current?.defaultValue).toEqual({ seed: 'changed' });
-    expect(target.misfit).toBe(before.misfit);
+    expect(target.isMisfit).toBe(before.isMisfit);
     expect(target.misfits).toBe(before.misfits);
     expect(target.inactiveValues).toBe(before.inactiveValues);
     expect(target.defaultValue).toBe(before.defaultValue);

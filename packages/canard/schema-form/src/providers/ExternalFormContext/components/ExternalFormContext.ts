@@ -24,7 +24,7 @@ export interface ExternalFormContext {
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
-  /** Error display condition (default: ShowError.DirtyTouched) */
+  /** Error display condition (default: ShowError.EditedTouched) */
   showError?: boolean | ShowError;
   /** Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest) */
   validationMode?: ValidationMode;

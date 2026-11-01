@@ -11,7 +11,7 @@ import { useExternalFormContext } from '../../ExternalFormContext';
 import { createShowErrorChecker } from '../utils/createShowErrorChecker';
 import { FieldRendererContext } from './FieldRendererContext';
 
-const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
+const DEFAULT_SHOW_ERROR = ShowError.EditedTouched;
 
 interface FieldRendererContextProviderProps {
   /** Custom field renderer component */
@@ -22,12 +22,12 @@ interface FieldRendererContextProviderProps {
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show errors
    *   - `false`: Never show errors
-   *   - `ShowError.Dirty`: Show errors when value has changed
+   *   - `ShowError.Edited`: Show errors when value has changed
    *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show errors when both Dirty and Touched states are met
+   *   - `ShowError.EditedTouched`: Show errors when both Edited and Touched states are met
    */
   showError?: FormProps['showError'];
 }

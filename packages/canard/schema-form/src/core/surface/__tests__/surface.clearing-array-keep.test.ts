@@ -55,8 +55,8 @@ it.each([false, true])(
     root.find('/open')!.setValue(true);
     expect(root.find('/list')!.children).toHaveLength(2);
     expect(root.find('/list')).not.toBe(oldList);
-    expect(oldList.active).toBe(false);
-    expect(oldKeep.active).toBe(false);
+    expect(oldList.isActive).toBe(false);
+    expect(oldKeep.isActive).toBe(false);
     expect(oldKeep.value).toBe(12);
     expect(root.inactiveValues).toEqual(
       inactive

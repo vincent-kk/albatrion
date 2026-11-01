@@ -30,9 +30,9 @@ export const useFieldInput = (node: FieldNode, disabled: boolean) => {
     const hint: FieldInputHint = {
       type: node.type,
       schemaType: node.schemaType,
-      misfit: node.misfit,
+      misfit: node.isMisfit,
       path,
-      required: node.required,
+      required: node.isRequired,
       nullable: node.nullable,
       jsonSchema: schema,
       format: typeof schema.format === 'string' ? schema.format : undefined,

@@ -190,12 +190,12 @@ interface FormProps<
   /** 커스텀 오류 포맷 함수 */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * 오류 표시 조건 (기본값: ShowError.DirtyTouched)
+   * 오류 표시 조건 (기본값: ShowError.EditedTouched)
    *   - `true`: 항상 표시
    *   - `false`: 표시 안함
-   *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
+   *   - `ShowError.Edited`: 값이 변경되었을 때 표시
    *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
-   *   - `ShowError.DirtyTouched`: Dirty와 Touched 조건 모두 충족 시 표시
+   *   - `ShowError.EditedTouched`: Dirty와 Touched 조건 모두 충족 시 표시
    */
   showError?: boolean | ShowError;
   /**
@@ -398,6 +398,26 @@ function ProfileForm() {
 
 `jsonSchema`나 `defaultValue` 속성만 바뀌면 폼은 지금 트리를 그대로 두고, 두 값은 `reset`이 다시 읽습니다. 폼은 검증기가 바뀔 때와 `reset`이 다른 `jsonSchema`로 실행될 때 트리를 새로 만들고, 같은 스키마의 `reset`은 기존 트리에 값을 다시 불러옵니다. 재생성 전에 보관한 노드는 버려진 트리에 속하므로, 참조를 들고 있지 말고 노드가 필요한 순간에 `formRef.current.node`를 읽거나 `findNode`를 부르십시오.
 
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. React 소비자는 `UpdateValue`, `UpdatePath`, `UpdateState`에서 다시 읽어야 합니다. 같은 값 reset은 `UpdateValue` 없이도 결과를 바꿀 수 있습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.
+
 ### 노드 상태 플래그
 
 노드의 상호작용 플래그는 `node.state`에 있으며 키는 `FieldNodeState` enum입니다. 직접 정한 키를 더 둘 수도 있습니다.
@@ -405,7 +425,7 @@ function ProfileForm() {
 ```typescript
 import { FieldNodeState } from '@canard/schema-form';
 
-node.state[FieldNodeState.Dirty]; // 사용자가 이 필드의 값을 바꾼 뒤 true
+node.state[FieldNodeState.Edited]; // 사용자가 이 필드의 값을 바꾼 뒤 true
 node.state[FieldNodeState.Touched]; // 사용자가 이 필드를 떠난(blur) 뒤 true
 node.state[FieldNodeState.ErrorVisible]; // 오류 표시를 직접 지정한 값(지정했을 때만)
 
@@ -415,21 +435,21 @@ node.rootNode.globalState; // 하나 이상의 노드에서 참인 플래그
 
 | 플래그         | 켜는 곳                       | 효과                                                   |
 | -------------- | ----------------------------- | ------------------------------------------------------ |
-| `Dirty`        | 사용자 입력이 값을 쓸 때마다  | `ShowError.Dirty`, `ShowError.DirtyTouched`가 사용     |
-| `Touched`      | blur, 한 애니메이션 프레임 뒤 | `ShowError.Touched`, `ShowError.DirtyTouched`가 사용   |
+| `Edited`        | 사용자 입력이 값을 쓸 때마다  | `ShowError.Edited`, `ShowError.EditedTouched`가 사용     |
+| `Touched`      | blur, 한 애니메이션 프레임 뒤 | `ShowError.Touched`, `ShowError.EditedTouched`가 사용   |
 | `ErrorVisible` | 사용자가 `setState`로         | `true`나 `false`가 그 노드의 `showError` 정책보다 우선 |
 
-`controls.resetInteraction` 규칙은 조건이 false에서 true로 바뀔 때, 또는 조건이 true인 채로 필드가 로드되거나 형상에 들어올 때 `Dirty`와 `Touched`를 지웁니다. `FormHandle.setState`는 모든 노드를 패치하고, `FormHandle.reset()`과 `clearState()`는 직접 정한 키를 포함해 모든 플래그를 지웁니다.
+`controls.resetInteraction` 규칙은 조건이 false에서 true로 바뀔 때, 또는 조건이 true인 채로 필드가 로드되거나 형상에 들어올 때 `Edited`와 `Touched`를 지웁니다. `FormHandle.setState`는 모든 노드를 패치하고, `FormHandle.reset()`과 `clearState()`는 직접 정한 키를 포함해 모든 플래그를 지웁니다.
 
 다른 노드 속성은 필드의 현재 상태를 알려 줍니다.
 
 ```typescript
 node.errors; // 이 필드에 표시되는 오류 (검증 오류와 외부 오류)
-node.active; // 조건(`controls.active`, if/then/else, oneOf)이 필드를 제외하는 동안 false
-node.visible; // 모든 active 선언을 합친 뒤의 표시 여부
-node.enabled; // active이면서 visible
-node.readOnly; // 읽기 전용 (스키마 `readOnly` 포함)
-node.disabled; // 비활성화 (`enabled`와 별개)
+node.isActive; // 조건(`controls.active`, if/then/else, oneOf)이 필드를 제외하는 동안 false
+node.isVisible; // 모든 active 선언을 합친 뒤의 표시 여부
+node.isPresent; // active이면서 visible
+node.isReadOnly; // 읽기 전용 (스키마 `readOnly` 포함)
+node.isDisabled; // 비활성화 (`isPresent`와 별개)
 ```
 
 ### 하위 트리 방문
@@ -621,7 +641,7 @@ const formInputMap = {
     default: any;                        // 새로 나타난 노드의 채움 값
     derived: string;                     // 파생 값
     unsetValue: boolean | string;        // false에서 true로 바뀌면 값을 비움
-    resetInteraction: boolean | string;  // false에서 true로 바뀌면 dirty/touched를 비움
+    resetInteraction: boolean | string;  // false에서 true로 바뀌면 edited/touched를 비움
     unsetOnInactive: boolean | string;   // 노드가 형상을 떠날 때 유지된 값을 버림
     fields: { targets: string[]; controls: { /* 앞의 아홉 키와 inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기

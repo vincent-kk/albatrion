@@ -101,7 +101,7 @@ controls: { active: "./type === 'A'" }
 | `default`          | 리터럴 값                 | 새로 나타난 노드의 채움 값                   | -       |
 | `derived`          | `string`                  | 파생 값 계산                                 | -       |
 | `unsetValue`       | `boolean \| string`       | false에서 true로 바뀌면 값을 비움            | -       |
-| `resetInteraction` | `boolean \| string`       | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
+| `resetInteraction` | `boolean \| string`       | false에서 true로 바뀌면 edited/touched 초기화 | -       |
 | `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
 | `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
 | `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
@@ -442,7 +442,7 @@ node.visitSubtree((child) => {
 | `Initialized`                | 노드 초기화 완료                      |
 | `UpdatePath`                 | 경로 변경 (배열 재정렬)               |
 | `UpdateValue`                | 값 변경                               |
-| `UpdateState`                | 상호작용 플래그 변경 (dirty, touched) |
+| `UpdateState`                | 상호작용 플래그 변경 (edited, touched) |
 | `UpdateGlobalState`          | 트리 전체 상호작용 플래그 변경        |
 | `UpdateError`                | 검증 오류 변경                        |
 | `UpdateGlobalError`          | 트리 전체 검증 오류 변경              |
@@ -599,3 +599,23 @@ onError is an event channel: it delivers the one record of each occurrence and d
 사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. submit()·validate()의 caller에게 거부되는 묶음은 거부 값 하나로 유지하며 개별 onError 기록에는 묶음을 싣지 않습니다. 명시적 validate 중 검증 결과 리스너 실패는 caller가 없는 별도 통로여서 host에 전달하고 validate 자체는 resolve할 수 있습니다. 부른 쪽이 없는 실패는 기존 호스트 채널에 깊이 우선·원소 순서로 잎마다 보냅니다. 비어 있지 않고 모든 index가 own인 배열을 가진 SchemaFormError MultipleErrors만 펼치며 형식이 어긋나거나 읽을 수 없거나 다시 만난 묶음과 그 밖의 값은 그대로 보냅니다. engine 검증 결과 파동·자동 OnChange 검증·load flush의 handler-first 순서와 native submit·load slot의 original-first 순서는 유지합니다. React와 렌더 ErrorBoundary는 던진 값을 그대로 기록합니다. 이미 보고한 오류·핸들러 예외만 담은 유효한 중첩 묶음은 capture를 생략하며 미지·malformed·순환·재방문 중첩 묶음은 기록합니다. 배열 길이는 1..2^32 − 1 정수이며 처음과 마지막 읽기가 같아야 하고 각 순회는 호출 전체에서 원소 점검 예산 1,000,000개를 공유합니다. 읽을 수 없거나 길이가 변하거나 예산을 넘은 묶음은 같은 identity의 잎이므로 host도 묶음을 받을 수 있습니다. capture는 최상위 메타데이터·문자열 변환도 보호하며 읽기 실패 때 원래 값을 고정 fallback 메시지의 기록 하나로 전달합니다. 전달 시점·호출자 거부·재진입·sink 예외 전파는 유지합니다.
 
 `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. React 소비자는 `UpdateValue`, `UpdatePath`, `UpdateState`에서 다시 읽어야 합니다. 같은 값 reset은 `UpdateValue` 없이도 결과를 바꿀 수 있습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

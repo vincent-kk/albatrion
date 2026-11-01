@@ -83,7 +83,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
       child.path !== appendSegment(node.path, entry.name) ||
       child.blueprintNode !== entry.node ||
       child.schema !== selected.schema ||
-      !child.active ||
+      !child.isActive ||
       child.detached ||
       node.structure?.[entry.name] !== child ||
       (next[entry.name] !== undefined && next[entry.name] !== child)

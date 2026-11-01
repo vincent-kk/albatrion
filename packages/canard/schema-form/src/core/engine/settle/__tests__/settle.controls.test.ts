@@ -31,7 +31,7 @@ describe('settled controls', () => {
       properties: { field: { type: 'string', controls: { readOnly: false } } },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.readOnly).toBe(true);
+    expect(root.structure?.field?.isReadOnly).toBe(true);
   });
 
   it('CONTROLS-082 disabled OR keeps a true own key over parent false', () => {
@@ -43,7 +43,7 @@ describe('settled controls', () => {
       properties: { field: { type: 'string', controls: { disabled: true } } },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.disabled).toBe(true);
+    expect(root.structure?.field?.isDisabled).toBe(true);
   });
 
   it('CONTROLS-082 visible AND combines false across declaration positions', () => {
@@ -55,7 +55,7 @@ describe('settled controls', () => {
       properties: { field: { type: 'string', controls: { visible: true } } },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.visible).toBe(false);
+    expect(root.structure?.field?.isVisible).toBe(false);
   });
 
   it('CONTROLS-082 standard readOnly is OR merged with controls', () => {
@@ -70,7 +70,7 @@ describe('settled controls', () => {
       },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.readOnly).toBe(true);
+    expect(root.structure?.field?.isReadOnly).toBe(true);
   });
 
   it('CONTROLS-073 fields entry expression uses its host for every target', () => {
@@ -90,8 +90,8 @@ describe('settled controls', () => {
       { lock: true, a: 'a', b: 'b' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.a?.disabled).toBe(true);
-    expect(root.structure?.b?.disabled).toBe(true);
+    expect(root.structure?.a?.isDisabled).toBe(true);
+    expect(root.structure?.b?.isDisabled).toBe(true);
   });
 
   it('state key expressions follow a later dependency change', () => {
@@ -111,8 +111,8 @@ describe('settled controls', () => {
       WriteOption.Overwrite,
     );
     expect([
-      root.structure?.target?.visible,
-      root.structure?.target?.disabled,
+      root.structure?.target?.isVisible,
+      root.structure?.target?.isDisabled,
     ]).toEqual([false, false]);
     writeFieldNode(
       root.structure!.flag,
@@ -121,8 +121,8 @@ describe('settled controls', () => {
       WriteOption.Overwrite,
     );
     expect([
-      root.structure?.target?.visible,
-      root.structure?.target?.disabled,
+      root.structure?.target?.isVisible,
+      root.structure?.target?.isDisabled,
     ]).toEqual([true, true]);
   });
 
@@ -147,21 +147,21 @@ describe('settled controls', () => {
       { x: false, unrelated: 'a', child: 'c' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.child?.visible).toBe(false);
+    expect(root.structure?.child?.isVisible).toBe(false);
     writeFieldNode(
       root.structure!.x,
       true,
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.child?.visible).toBe(true);
+    expect(root.structure?.child?.isVisible).toBe(true);
     writeFieldNode(
       root.structure!.unrelated,
       'b',
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.child?.visible).toBe(true);
+    expect(root.structure?.child?.isVisible).toBe(true);
   });
 
   it('state keys visit no fragment children for an unrelated leaf write', () => {
@@ -190,7 +190,7 @@ describe('settled controls', () => {
     for (let index = 0; index < allOf.length; index += 1) {
       const child = root.structure?.[`fragment${index}`];
       expect(child).toBeDefined();
-      let visible = child!.visible;
+      let visible = child!.isVisible;
       Object.defineProperty(child, 'visible', {
         configurable: true,
         get: () => visible,
@@ -229,8 +229,8 @@ describe('settled controls', () => {
       { inside: 'i', outside: 'o' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.inside?.visible).toBe(false);
-    expect(root.structure?.outside?.visible).toBe(true);
+    expect(root.structure?.inside?.isVisible).toBe(false);
+    expect(root.structure?.outside?.isVisible).toBe(true);
   });
 
   it('CONTROLS-045 no root inheritance keeps root state local', () => {
@@ -243,15 +243,15 @@ describe('settled controls', () => {
       },
     });
     loadFieldNodeAtMount(root, { child: 'c' }, WriteOption.Overwrite);
-    expect([root.readOnly, root.disabled, root.visible]).toEqual([
+    expect([root.isReadOnly, root.isDisabled, root.isVisible]).toEqual([
       true,
       true,
       false,
     ]);
     expect([
-      root.structure?.child?.readOnly,
-      root.structure?.child?.disabled,
-      root.structure?.child?.visible,
+      root.structure?.child?.isReadOnly,
+      root.structure?.child?.isDisabled,
+      root.structure?.child?.isVisible,
     ]).toEqual([false, false, true]);
   });
 
@@ -272,8 +272,8 @@ describe('settled controls', () => {
     });
     loadFieldNodeAtMount(root, { source: 'a' }, WriteOption.Overwrite);
     expect([
-      root.structure?.target?.readOnly,
-      root.structure?.target?.disabled,
+      root.structure?.target?.isReadOnly,
+      root.structure?.target?.isDisabled,
     ]).toEqual([true, true]);
     expect(root.structure?.target?.raw).toBe('a');
     writeFieldNode(
@@ -361,15 +361,15 @@ describe('settled controls', () => {
       WriteOption.Overwrite,
     );
     expect(child.detached).toBe(true);
-    expect([child.visible, child.readOnly, child.disabled]).toEqual([
+    expect([child.isVisible, child.isReadOnly, child.isDisabled]).toEqual([
       false,
       true,
       true,
     ]);
     expect(root.runtime.detachedReads?.get(child)).toMatchObject({
-      visible: false,
-      readOnly: true,
-      disabled: true,
+      isVisible: false,
+      isReadOnly: true,
+      isDisabled: true,
     });
   });
 
@@ -391,7 +391,7 @@ describe('settled controls', () => {
     root.setValue({ shown: true, source: 'old', target: 't' });
     const target = root.find('/target');
     root.setValue({ shown: false, source: 'new', target: 't' });
-    expect(target?.active).toBe(false);
+    expect(target?.isActive).toBe(false);
     expect(target?.watchValues).toEqual(['old']);
     expect(target?.watchValues).toBe(target?.watchValues);
   });

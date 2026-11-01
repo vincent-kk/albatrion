@@ -93,7 +93,7 @@ function LoginForm() {
         jsonSchema={schema}
         onChange={setValue}
         onSubmit={handleSubmit}
-        showError={ShowError.DirtyTouched}
+        showError={ShowError.EditedTouched}
       />
       <button onClick={() => formRef.current?.submit()}>
         Login
@@ -151,7 +151,7 @@ registerPlugin(uiPlugin);
   onChange={setValue}
   onSubmit={async (value) => { /* validated value */ }}
   onValidate={(errors) => { /* called after each validation */ }}
-  showError={ShowError.DirtyTouched}  // default
+  showError={ShowError.EditedTouched}  // default
   validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
   ref={formRef}
 />

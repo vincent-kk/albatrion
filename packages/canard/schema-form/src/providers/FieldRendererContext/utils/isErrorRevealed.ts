@@ -22,7 +22,7 @@ export const isErrorRevealed = (
   resolveErrorVisibility(
     true,
     node.state,
-    node.enabled,
+    node.isPresent,
     policy,
     readFieldNodeRevealBaseline(node)?.entries ?? EMPTY_ENTRIES,
     readFieldNodeRevealPolicy(node),

@@ -391,7 +391,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       'sharedConflict',
     );
   }
-  child.active = captureFieldNodeChange(child, 'active', true);
+  child.isActive = captureFieldNodeChange(child, 'isActive', true);
   child.detached = false;
   if (next[entry.name] !== child) {
     frame.changed = true;

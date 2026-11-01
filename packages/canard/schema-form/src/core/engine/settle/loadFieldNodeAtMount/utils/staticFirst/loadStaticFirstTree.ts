@@ -143,7 +143,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       const child = createChildNode(node, entry);
       node.structure![entry.name] = child;
       frame.children!.push(child);
-      child.required = frame.required.includes(entry.name);
+      child.isRequired = frame.required.includes(entry.name);
       const input =
         frame.input !== null &&
         typeof frame.input === 'object' &&
@@ -174,5 +174,6 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   }
   runtime.commitNumber = commit;
   if (deltas) publishGlobalStateDeltas(root, deltas);
+  runtime.loadBaseline = { value: root.emit };
   finishStaticFirstLoad(root, option, warnings);
 };

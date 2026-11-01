@@ -28,7 +28,7 @@ FieldProxy/
 
 ### Always do
 
-- 외부에서는 `FieldProxy`를 통해서만 노드를 렌더링하고, 노드가 없거나 `node.enabled === false`이면 `null` 반환
+- 외부에서는 `FieldProxy`를 통해서만 노드를 렌더링하고, 노드가 없거나 `node.isPresent === false`이면 `null` 반환
 - 오류 표시 조건이 거짓이면 포맷된 오류를 숨기고, 포맷 실패와 렌더러 실패는 같은 필드 보고기와 경로로 격리
 - Refresh 동안 렌더러 경계를 유지하고, 하위 트리는 RequestRemount일 때만 교체
 - `FieldProxy`를 `NodeProxy` prop으로 재귀 전달해서 하위 노드 렌더링

@@ -49,7 +49,7 @@ export interface FieldInputProps<
   /** Authored accepted schema kind(s), including integer. */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
-  misfit: Node['misfit'];
+  misfit: Node['isMisfit'];
   /** Name of field node assigned to FieldInput Component */
   name: Node['name'];
   /** Path of field node assigned to FieldInput Component */
@@ -195,7 +195,7 @@ export type FieldInputHint = {
   misfit: boolean;
   /** FieldNode['path'] */
   path: string;
-  /** FieldNode['required'] */
+  /** FieldNode['isRequired']; the React hint key stays required. */
   required: boolean;
   /** FieldNode['nullable'] */
   nullable: boolean;

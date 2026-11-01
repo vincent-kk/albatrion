@@ -159,10 +159,10 @@ const runStep = async (step: CompositeTailStep, context: TailContext, label: str
     for (const [path, expected] of Object.entries(step.states)) {
       const target = node(path)!;
       const actual = {
-        ...('dirty' in expected && { dirty: Boolean(target.state?.[FieldNodeState.Dirty]) }),
+        ...('edited' in expected && { edited: Boolean(target.state?.[FieldNodeState.Edited]) }),
         ...('touched' in expected && { touched: Boolean(target.state?.[FieldNodeState.Touched]) }),
-        ...('readOnly' in expected && { readOnly: target.readOnly }),
-        ...('visible' in expected && { visible: target.visible }),
+        ...('isReadOnly' in expected && { isReadOnly: target.isReadOnly }),
+        ...('isVisible' in expected && { isVisible: target.isVisible }),
       };
       expect(actual, `${label} ${path}`).toEqual(expected);
     }

@@ -61,7 +61,7 @@ export const canReuseSplicedChildren = <Self extends FieldNodeRecord<Self>>(
       child.parent !== node ||
       child.path !== appendSegment(node.path, entry.name) ||
       child.schema !== schema ||
-      !child.active ||
+      !child.isActive ||
       child.detached ||
       schema.typeConflict ||
       entry.node.kind === 'virtual' ||

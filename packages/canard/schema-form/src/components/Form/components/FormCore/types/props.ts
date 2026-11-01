@@ -78,14 +78,14 @@ export interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched).
+   * Error display condition (default: ShowError.EditedTouched).
    * Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate.
    * Only the OnChange validation mode holds errors; other modes follow the live condition.
    *   - `true`: Always show
    *   - `false`: Never show
-   *   - `ShowError.Dirty`: Show when value has changed
+   *   - `ShowError.Edited`: Show when value has changed
    *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched states are met
+   *   - `ShowError.EditedTouched`: Show when both Edited and Touched states are met
    */
   showError?: boolean | ShowError;
   /**

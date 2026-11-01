@@ -46,7 +46,7 @@ const gatedList = (
 const stateKeys = (root: TestRoot, ...path: number[]) => {
   let node: TestRoot | undefined = root.structure!.list;
   for (const index of path) node = node?.structure?.[index];
-  return [node?.readOnly, node?.disabled, node?.visible];
+  return [node?.isReadOnly, node?.isDisabled, node?.isVisible];
 };
 
 /**

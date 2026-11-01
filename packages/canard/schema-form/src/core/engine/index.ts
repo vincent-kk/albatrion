@@ -53,8 +53,9 @@ export {
 } from './record';
 export {
   readFieldNodeDefaultValue,
+  readFieldNodeIsDivergent,
   readFieldNodeInactiveValues,
-  readFieldNodeMisfit,
+  readFieldNodeIsMisfit,
   readFieldNodeMisfits,
   readFieldNodeWatchValues,
   loadFieldNodeAtMount,

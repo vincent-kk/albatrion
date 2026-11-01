@@ -93,7 +93,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     dispatchRemove(at('/rows'), 0);
     expect(root.emit).toEqual({ rows: [{ on: false }] });
     expect(moved.detached).toBe(true);
-    expect(moved.active).toBe(false);
+    expect(moved.isActive).toBe(false);
     expect(moved.path).toBe('/rows/0/note');
     expect(at('/rows/0').children).not.toContain(moved);
     expect(registered(root, '/rows/0/note')).toBe(false);
@@ -130,7 +130,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(root.emit).toEqual({ rows: [{ on: false }, { on: true }] });
     expect(perished.detached).toBe(true);
     expect(moved.detached).toBe(true);
-    expect(moved.active).toBe(false);
+    expect(moved.isActive).toBe(false);
     expect(moved.path).toBe('/rows/1/note');
     expect(registered(root, '/rows/1/note')).toBe(false);
     expect(deliveries).toEqual([]);
@@ -158,7 +158,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     dispatchRemove(at('/rows'), 0);
     expect(root.emit).toEqual({ rows: [{ on: true, note: 'n1' }] });
     expect(moved.detached).toBe(false);
-    expect(moved.active).toBe(true);
+    expect(moved.isActive).toBe(true);
     expect(find(root, '/rows/0/note')).toBe(moved);
     expect(registered(root, '/rows/0/note')).toBe(true);
     expect(deliveries).toEqual([
@@ -207,9 +207,9 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     );
     expect(root.emit).toEqual({ trim: true, rows: [{ on: true, note: 'n0' }] });
     expect(item.detached).toBe(true);
-    expect(item.active).toBe(false);
+    expect(item.isActive).toBe(false);
     expect(note.detached).toBe(true);
-    expect(note.active).toBe(false);
+    expect(note.isActive).toBe(false);
     expect(registered(root, '/rows/1/note')).toBe(false);
     expect(events).toEqual([]);
     expect(Reflect.get(root, 'inactiveValues')).toEqual([]);
@@ -237,7 +237,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     });
     expect([first.path, second.path]).toEqual(['/rows/1/note', '/rows/2/note']);
     expect([first.detached, second.detached]).toEqual([true, true]);
-    expect([first.active, second.active]).toEqual([false, false]);
+    expect([first.isActive, second.isActive]).toEqual([false, false]);
     expect(registered(root, '/rows/1/note')).toBe(false);
     expect(registered(root, '/rows/2/note')).toBe(false);
     expect(deliveries).toEqual([[], []]);
@@ -280,7 +280,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
       '/rows/3/note',
     ]);
     expect(notes.map((note) => note.detached)).toEqual([true, true, true]);
-    expect(notes.map((note) => note.active)).toEqual([false, false, false]);
+    expect(notes.map((note) => note.isActive)).toEqual([false, false, false]);
     expect(registered(root, '/rows/3/note')).toBe(false);
     expect(deliveries).toEqual([[], [], []]);
     expect(Reflect.get(root, 'inactiveValues')).toEqual([
@@ -333,7 +333,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     dispatchRemove(at('/rows'), 0);
     expect(root.emit).toEqual({ rows: [{ on: false, cells: [{}] }] });
     expect(note.detached).toBe(true);
-    expect(note.active).toBe(false);
+    expect(note.isActive).toBe(false);
     expect(registered(root, '/rows/0/cells/0/note')).toBe(false);
     expect(noteDeliveries).toEqual([]);
     expect(Reflect.get(root, 'inactiveValues')).toEqual([
@@ -377,7 +377,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     dispatchRemove(at('/rows/0/cells'), 0);
     expect(root.emit).toEqual({ rows: [{ cells: [{ on: false }] }] });
     expect(moved.detached).toBe(true);
-    expect(moved.active).toBe(false);
+    expect(moved.isActive).toBe(false);
     expect(registered(root, '/rows/0/cells/0/note')).toBe(false);
     expect(deliveries).toEqual([]);
     expect(Reflect.get(root, 'inactiveValues')).toEqual([

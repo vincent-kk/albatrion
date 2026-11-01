@@ -39,7 +39,7 @@ it('does not revisit 1000 retained required flags and bounds declaration-key wor
   let requiredReads = 0;
   for (let index = 0; index < 1000; index++) {
     const child = root.structure![`pad_${index}`];
-    let required = child.required;
+    let required = child.isRequired;
     Object.defineProperty(child, 'required', {
       configurable: true,
       enumerable: true,
@@ -91,12 +91,12 @@ it('updates existing required flags when branch required identities differ', () 
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const shared = root.structure!.shared;
-  expect(shared.required).toBe(false);
+  expect(shared.isRequired).toBe(false);
   writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
   expect(root.structure!.shared).toBe(shared);
-  expect(shared.required).toBe(true);
+  expect(shared.isRequired).toBe(true);
   writeFieldNode(root.structure!.kind, false, 'input', WriteOption.Overwrite);
-  expect(shared.required).toBe(false);
+  expect(shared.isRequired).toBe(false);
 });
 
 it('sets required on newly entering children when the required array is retained', () => {
@@ -110,9 +110,9 @@ it('sets required on newly entering children when the required array is retained
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  expect(root.structure!.a.required).toBe(true);
+  expect(root.structure!.a.isRequired).toBe(true);
   writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
-  expect(root.structure!.b.required).toBe(true);
+  expect(root.structure!.b.isRequired).toBe(true);
 });
 
 it('passes only each host own entering children to the required subset', () => {

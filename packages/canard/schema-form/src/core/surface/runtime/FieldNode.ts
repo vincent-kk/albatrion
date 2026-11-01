@@ -41,13 +41,15 @@ import type {
 import {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeMisfit,
+  readFieldNodeIsDivergent,
+  readFieldNodeIsMisfit,
   readFieldNodeMisfits,
   readFieldNodeWatchValues,
 } from '../../engine';
 import type { NodeStateFlags } from '../../engine';
 import { EMPTY_GLOBAL_ERRORS, readFieldNodeErrors } from '../../engine';
 import type { ValidationIssue } from '../../engine';
+import { FieldNodeState } from '../../engine';
 import { SetValueOption } from '../type';
 
 /** Runtime record implementation; the public FieldNode name denotes a union type. */
@@ -77,6 +79,12 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   private storedDisabled: boolean;
   local: unknown;
   emit: unknown;
+  /** Current output at this path retained by the divergence read memo. */
+  divergenceCurrent: unknown;
+  /** Last root load output at this path retained by the divergence read memo. */
+  divergenceBase: unknown;
+  /** Pure comparison result for the retained path values. */
+  divergenceResult: boolean;
   schema: EffectiveSchema;
   interactionState: FieldNodeRecord<FieldNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
@@ -137,6 +145,9 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.storedDisabled = false;
     this.local = undefined;
     this.emit = undefined;
+    this.divergenceCurrent = undefined;
+    this.divergenceBase = undefined;
+    this.divergenceResult = false;
     this.schema = schema;
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
@@ -170,10 +181,12 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get jsonSchema() {
     return this.schema.schema;
   }
-  get required() {
+  /** Whether the effective declaration requires this occurrence. */
+  get isRequired() {
     return this.storedRequired;
   }
-  set required(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isRequired(value: boolean) {
     this.storedRequired = value;
   }
   get nullable() {
@@ -239,32 +252,41 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get inactiveValues() {
     return readFieldNodeInactiveValues<FieldNode>(this);
   }
-  get active() {
+  /** Whether this occurrence remains in the current shape. */
+  get isActive() {
     return this.storedActive;
   }
-  set active(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isActive(value: boolean) {
     this.storedActive = value;
   }
-  get visible() {
+  /** Local visibility after active declarations are combined. */
+  get isVisible() {
     return this.storedVisible;
   }
-  set visible(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isVisible(value: boolean) {
     this.storedVisible = value;
   }
   /** A node is enabled when it remains active and visible. */
-  get enabled() {
-    return this.active && this.visible;
+  /** Whether this occurrence is active and visible, independent of disabled state. */
+  get isPresent() {
+    return this.isActive && this.isVisible;
   }
-  get readOnly() {
+  /** Local read-only state including the standard schema readOnly flag. */
+  get isReadOnly() {
     return this.storedReadOnly;
   }
-  set readOnly(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isReadOnly(value: boolean) {
     this.storedReadOnly = value;
   }
-  get disabled() {
+  /** Local input lock independent of presence. */
+  get isDisabled() {
     return this.storedDisabled;
   }
-  set disabled(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isDisabled(value: boolean) {
     this.storedDisabled = value;
   }
   /** Effective watched values read from the emitted tree. */
@@ -275,8 +297,9 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get context() {
     return this.runtime.context;
   }
-  get misfit() {
-    return readFieldNodeMisfit<FieldNode>(this);
+  /** Whether the retained raw value misses the effective accepted types. */
+  get isMisfit() {
+    return readFieldNodeIsMisfit<FieldNode>(this);
   }
   get misfits() {
     return readFieldNodeMisfits<FieldNode>(this);
@@ -286,6 +309,18 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   get defaultValue() {
     return readFieldNodeDefaultValue<FieldNode>(this);
+  }
+  /** Output difference from the last root load; re-read on UpdateValue, UpdatePath or UpdateState. */
+  get isDivergent(): boolean {
+    return readFieldNodeIsDivergent<FieldNode>(this);
+  }
+  /** User-input state truthiness; re-read on UpdateState, including for detached references. */
+  get isEdited(): boolean {
+    return !!this.state[FieldNodeState.Edited];
+  }
+  /** Blur state truthiness; re-read on UpdateState, including for detached references. */
+  get isTouched(): boolean {
+    return !!this.state[FieldNodeState.Touched];
   }
   find(pointer?: Nullable<string | readonly string[]>) {
     return find<FieldNode>(this, pointer);

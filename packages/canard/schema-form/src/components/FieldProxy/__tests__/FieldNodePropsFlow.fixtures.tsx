@@ -64,11 +64,11 @@ export const createMockFieldNode = (
     defaultValue: undefined,
 
     // State flags
-    required: false,
-    readOnly: false,
-    disabled: false,
+    isRequired: false,
+    isReadOnly: false,
+    isDisabled: false,
     nullable: false,
-    enabled: true,
+    isPresent: true,
 
     // Tree properties
     isRoot: false,
@@ -277,7 +277,7 @@ export const testScenarios = {
       path: 'user.id',
       name: 'id',
       value: 'user-123',
-      readOnly: true,
+      isReadOnly: true,
     }),
 
   /**
@@ -288,7 +288,7 @@ export const testScenarios = {
       path: 'user.status',
       name: 'status',
       value: 'inactive',
-      disabled: true,
+      isDisabled: true,
     }),
 
   /**
@@ -299,7 +299,7 @@ export const testScenarios = {
       path: 'user.email',
       name: 'email',
       value: '',
-      required: true,
+      isRequired: true,
     }),
 
   /**
@@ -320,7 +320,7 @@ export const testScenarios = {
     }),
 
   /**
-   * Dirty and touched field
+   * Edited and touched field
    */
   dirtyTouchedField: () =>
     createStringNode({
@@ -340,7 +340,7 @@ export const testScenarios = {
     createStringNode({
       path: 'hidden.field',
       name: 'field',
-      enabled: false,
+      isPresent: false,
     }),
 
   /**

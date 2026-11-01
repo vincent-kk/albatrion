@@ -121,7 +121,7 @@ describe('array integration runtime stores', () => {
     }
   });
 
-  it('43C-01 pop/remove subtract touched/dirty items and descendants from global counts', () => {
+  it('43C-01 pop/remove subtract touched/edited items and descendants from global counts', () => {
     for (const kind of ['pop', 'remove'] as const) {
       const { root } = createTestTree({
         type: 'array',
@@ -139,7 +139,7 @@ describe('array integration runtime stores', () => {
       const item = root.children![kind === 'pop' ? 1 : 0];
       const leaf = item.structure!.n;
       item.interactionState = { touched: true };
-      leaf.interactionState = { dirty: true };
+      leaf.interactionState = { edited: true };
       const deltas = new Map<string, number>();
       for (const node of [item, leaf]) {
         accumulateGlobalStateDeltas(deltas, {}, node.interactionState);
@@ -147,14 +147,14 @@ describe('array integration runtime stores', () => {
         node.deliveryChanges |= FieldNodeEventType.UpdateState;
       }
       publishGlobalStateDeltas(root, deltas);
-      expect(root.runtime.globalState).toEqual({ touched: true, dirty: true });
+      expect(root.runtime.globalState).toEqual({ touched: true, edited: true });
       arrangeFieldNodeItems(
         root,
         kind === 'pop' ? { kind } : { kind, index: 0 },
       );
       expect(root.runtime.globalState).toEqual({});
       expect(root.runtime.globalStateCounts.get('touched') ?? 0).toBe(0);
-      expect(root.runtime.globalStateCounts.get('dirty') ?? 0).toBe(0);
+      expect(root.runtime.globalStateCounts.get('edited') ?? 0).toBe(0);
     }
   });
 

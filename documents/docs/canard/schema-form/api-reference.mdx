@@ -26,10 +26,10 @@ API.
 | `onChange`               | `(value: Value) => void`                               | —                        | Called when the form value changes                                                                                                            |
 | `onSubmit`               | `(value: Value) => Promise<void> \| void`              | —                        | Called by `submit()` after validation passes                                                                                                  |
 | `onValidate`             | `(errors: FieldNode['globalErrors']) => void`          | —                        | Called with the form error list when a validation result or the external error list changes it; a result equal to the previous one is skipped |
-| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | Called when the form's interaction flags (dirty, touched) change                                                                              |
+| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | Called when the form's interaction flags (edited, touched) change                                                                              |
 | `onError`                | `(record: FormErrorRecord) => void`                    | —                        | Called with each error record of this form instance, including construction and render failures                                               |
 | `onDiagnosticsChange`    | `(diagnostics: FieldNode['diagnostics']) => void`      | —                        | Called when the root diagnostics change after preparation                                                                                     |
-| `showError`              | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                                                                                             |
+| `showError`              | `boolean \| ShowError`                                 | `ShowError.EditedTouched` | When to display validation errors                                                                                                             |
 | `validationMode`         | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                                                                                                          |
 | `validatorFactory`       | `ValidatorFactory`                                     | plugin validator         | Validator object (`compile` and `compileGuard`); Form prop, then `FormProvider`, then plugin                                                  |
 | `readOnly`               | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                                                                                                |
@@ -58,9 +58,9 @@ import { ShowError } from '@canard/schema-form';
 
 ShowError.Always; // always show (same as true)
 ShowError.Never; // never show (same as false)
-ShowError.Dirty; // show when node.state[FieldNodeState.Dirty] is true
+ShowError.Edited; // show when node.state[FieldNodeState.Edited] is true
 ShowError.Touched; // show when node.state[FieldNodeState.Touched] is true
-ShowError.DirtyTouched; // show when dirty AND touched (default)
+ShowError.EditedTouched; // show when edited AND touched (default)
 // A node's own node.state[FieldNodeState.ErrorVisible] overrides this policy.
 ```
 
@@ -579,7 +579,7 @@ interface FieldNode {
 
   // State
   state: {
-    [FieldNodeState.Dirty]?: boolean; // set on every user input write
+    [FieldNodeState.Edited]?: boolean; // set on every user input write
     [FieldNodeState.Touched]?: boolean; // set on blur
     [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
     [key: string]: any; // your own flags
@@ -772,7 +772,7 @@ onValidate?:            (errors: FieldNode['globalErrors']) => void
 onStateChange?:         (state: FieldNode['globalState']) => void
 onError?:               (record: FormErrorRecord) => void
 onDiagnosticsChange?:   (diagnostics: FieldNode['diagnostics']) => void
-showError?:             boolean | ShowError              // default: DirtyTouched
+showError?:             boolean | ShowError              // default: EditedTouched
 validationMode?:        ValidationMode                   // default: OnChange|OnRequest
 validatorFactory?:      ValidatorFactory
 readOnly?:              boolean
@@ -816,9 +816,9 @@ getAttachedFilesMap(): AttachedFilesMap
 node.value / node.outputValue / node.defaultValue
 node.setValue(value, option?)
 node.errors / node.globalErrors / node.setExternalErrors(list) / node.clearExternalErrors()
-node.state[FieldNodeState.Dirty | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
-node.active / node.visible / node.enabled / node.readOnly / node.disabled
-node.required / node.nullable / node.type / node.strategy / node.schemaType
+node.state[FieldNodeState.Edited | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
+node.isActive / node.isVisible / node.isPresent / node.isReadOnly / node.isDisabled
+node.isRequired / node.nullable / node.type / node.strategy / node.schemaType
 node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
 node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
 node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
@@ -841,3 +841,23 @@ useChildFieldErrors(node, disabled?)            → { errorMessage, showError, f
 ```
 
 </ForAI>
+
+### Node boolean properties and load divergence
+
+Node boolean properties use `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled` and `isMisfit`. `isPresent` is `isActive && isVisible`, independent of `isDisabled`. React props, schema keys and `controls` keys keep their names.
+
+```ts
+node.isEdited;    // truthiness of state[FieldNodeState.Edited]
+node.isTouched;   // truthiness of state[FieldNodeState.Touched]
+node.isDivergent; // current form output differs from the last root load at node.path
+```
+
+`isEdited` and `isTouched` are read-only booleans; re-read them on `FieldNodeEventType.UpdateState`. Only input writes set Edited. `setValue`, array verbs and automatic fills do not. Reset, `clearState` and `controls.resetInteraction` clear the interaction flags. Detached references keep their last-commit interaction state.
+
+`isDivergent` compares the current root output and the last committed root-load output at the same node path. The first mount, form reset with a value or explicit undefined, rebuild, validator change and `root.resetSubtree()` take a new baseline after the output is final. Before the first load commits it reads false. Changing the Form `defaultValue` prop alone, ordinary writes and a child `resetSubtree()` do not move that baseline. A load that throws before commit keeps the preceding baseline; a failure reported after commit establishes the degraded output as the new baseline.
+
+Reverting to the baseline reads false. Hidden fields remain in the output; array holes use their actual output contribution. Items compare by position: a moved or added item can read true, while an added item matching the value originally at that position reads false. Child reset follows its load source by item identity, so after array movement, or with dependencies outside its subtree, the restored subtree can remain divergent. Detached nodes read false because they no longer contribute to the output.
+
+The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. React consumers re-read `isDivergent` on `UpdateValue`, `UpdatePath` or `UpdateState`; reset can change it without `UpdateValue`.
+
+Writes perform no divergence reads or comparisons. A root load allocates one baseline box retaining its output reference. Each getter read walks two cached paths, O(depth), and compares only when either path value changes by `Object.is`; repeated unchanged reads call `sameValue` zero times, including NaN. A first comparison skips unchanged references. The baseline retains replaced parts until the next root load, and each node memo retains only its own two path values and result.

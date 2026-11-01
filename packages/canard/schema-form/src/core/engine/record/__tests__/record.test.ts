@@ -56,7 +56,7 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     escapedName: '',
     path: '',
     depth: 0,
-    required: false,
+    isRequired: false,
     nullable: false,
     schemaType: blueprintNode.schemaType,
     structure: {},
@@ -66,12 +66,15 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     nextItemKey: 0,
     raw: undefined,
     undeclaredValues: undefined,
-    active: true,
-    visible: true,
-    readOnly: false,
-    disabled: false,
+    isActive: true,
+    isVisible: true,
+    isReadOnly: false,
+    isDisabled: false,
     local: undefined,
     emit: undefined,
+    divergenceCurrent: undefined,
+    divergenceBase: undefined,
+    divergenceResult: false,
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
@@ -113,14 +116,14 @@ describe('record layout operations', () => {
       state = node.interactionState;
     node.path = captureFieldNodeChange(node, 'path', '/next');
     node.children = captureFieldNodeChange(node, 'children', []);
-    node.visible = captureFieldNodeChange(node, 'visible', false);
-    node.disabled = captureFieldNodeChange(node, 'disabled', true);
+    node.isVisible = captureFieldNodeChange(node, 'isVisible', false);
+    node.isDisabled = captureFieldNodeChange(node, 'isDisabled', true);
     node.schema = captureFieldNodeChange(node, 'schema', {
       schema: { title: 'next' },
       typeConflict: false,
     });
     node.interactionState = captureFieldNodeChange(node, 'interactionState', {
-      dirty: true,
+      edited: true,
     });
     expect(node.deliveryPreviousPath).toBe('');
     expect(node.deliveryPreviousChildren).toBe(children);
@@ -136,8 +139,8 @@ describe('record layout operations', () => {
       node.deliveryPreviousState,
     ]).toEqual([undefined, undefined, undefined, undefined, undefined]);
     expect(node.path).toBe('/next');
-    expect(node.visible).toBe(false);
-    expect(node.interactionState).toEqual({ dirty: true });
+    expect(node.isVisible).toBe(false);
+    expect(node.interactionState).toEqual({ edited: true });
   });
 
   it('allocates no change records for initialization or equal assignments', () => {
@@ -157,11 +160,11 @@ describe('record layout operations', () => {
   });
 
   it('copies changed state and removes keys patched with undefined', () => {
-    const state = { touched: true, dirty: true };
-    const next = shallowPatch(state, { touched: undefined, dirty: false });
-    expect(next).toEqual({ dirty: false });
+    const state = { touched: true, edited: true };
+    const next = shallowPatch(state, { touched: undefined, edited: false });
+    expect(next).toEqual({ edited: false });
     expect(next).not.toBe(state);
-    expect(state).toEqual({ touched: true, dirty: true });
+    expect(state).toEqual({ touched: true, edited: true });
   });
 
   it('escapes pointer names and derives the child path and depth', () => {

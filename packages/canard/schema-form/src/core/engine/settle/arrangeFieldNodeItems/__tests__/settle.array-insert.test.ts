@@ -395,7 +395,7 @@ describe('array insert', () => {
         [0, 1, 2].flatMap((position) =>
           ['absolute', 'relative'].map((field) => {
             const node = root.find(`/arr/${position}/${field}`);
-            return isTestFieldNode(node) ? node.visible : undefined;
+            return isTestFieldNode(node) ? node.isVisible : undefined;
           }),
         );
       const inserted = makeFieldNodeTree(schema).root;

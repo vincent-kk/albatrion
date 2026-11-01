@@ -22,22 +22,22 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     if (!first || !second) throw new Error('Expected both children');
     const empty = root.globalState;
     expect(empty).toEqual({});
-    first.state = { [FieldNodeState.Dirty]: true };
+    first.state = { [FieldNodeState.Edited]: true };
     const one = root.globalState;
-    expect(one).toEqual({ [FieldNodeState.Dirty]: true });
+    expect(one).toEqual({ [FieldNodeState.Edited]: true });
     second.setState({
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
     expect(root.globalState).toEqual({
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
-    first.setState({ [FieldNodeState.Dirty]: false });
+    first.setState({ [FieldNodeState.Edited]: false });
     const two = root.globalState;
     expect(two).toBe(root.globalState);
     second.setState({ [FieldNodeState.Touched]: false });
-    expect(root.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    expect(root.globalState).toEqual({ [FieldNodeState.Edited]: true });
     second.clearSubtreeState();
     expect(root.globalState).toEqual({});
     expect(root.globalState).not.toBe(empty);
@@ -55,15 +55,15 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const first = root.find('/first');
     const second = root.find('/second');
     if (!first || !second) throw new Error('Expected both children');
-    first.setState({ [FieldNodeState.Dirty]: true });
+    first.setState({ [FieldNodeState.Edited]: true });
     const before = root.globalState;
     const events: number[] = [];
     root.subscribe((event) => {
       if (event.type & FieldNodeEventType.UpdateGlobalState)
         events.push(event.type);
     });
-    second.setState({ [FieldNodeState.Dirty]: true });
-    first.setState({ [FieldNodeState.Dirty]: false });
+    second.setState({ [FieldNodeState.Edited]: true });
+    first.setState({ [FieldNodeState.Edited]: false });
     expect(root.globalState).toBe(before);
     expect(events).toEqual([]);
   });
@@ -86,9 +86,9 @@ describe('EVENT-062 43C-01 globalState surface', () => {
         events.push(event.type);
     });
     root.batch(() => {
-      first.setState({ [FieldNodeState.Dirty]: true });
-      second.setState({ [FieldNodeState.Dirty]: true });
-      first.setState({ [FieldNodeState.Dirty]: false });
+      first.setState({ [FieldNodeState.Edited]: true });
+      second.setState({ [FieldNodeState.Edited]: true });
+      first.setState({ [FieldNodeState.Edited]: false });
       expect(events).toEqual([]);
     });
     expect(events).toHaveLength(1);
@@ -102,9 +102,9 @@ describe('EVENT-062 43C-01 globalState surface', () => {
       if (event.type & FieldNodeEventType.UpdateGlobalState)
         events.push(event.type);
     });
-    root.setState({ [FieldNodeState.Dirty]: true });
+    root.setState({ [FieldNodeState.Edited]: true });
     expect(events).toHaveLength(1);
-    expect(root.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    expect(root.globalState).toEqual({ [FieldNodeState.Edited]: true });
   });
 
   it('normalizes truthy nonboolean state values to true', () => {
@@ -128,7 +128,7 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     root.setValue({ target: 'edited' });
     const target = root.find('/target');
     if (!target) throw new Error('Expected the active target');
-    target.setState({ [FieldNodeState.Dirty]: true });
+    target.setState({ [FieldNodeState.Edited]: true });
     target.resetSubtree();
     expect(root.globalState).toEqual({});
   });
@@ -144,16 +144,16 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     root.setValue({ flag: true, target: 'value' });
     const old = root.find('/target');
     if (!old) throw new Error('Expected the active target');
-    old.setState({ [FieldNodeState.Dirty]: true });
-    expect(root.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    old.setState({ [FieldNodeState.Edited]: true });
+    expect(root.globalState).toEqual({ [FieldNodeState.Edited]: true });
     root.find('/flag')?.setValue(false);
     expect(root.globalState).toEqual({});
     expect(old.globalState).toBe(root.globalState);
     root.find('/flag')?.setValue(true);
     const current = root.find('/target');
     if (!current || current === old) throw new Error('Expected a new target');
-    current.setState({ [FieldNodeState.Dirty]: true });
-    expect(root.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    current.setState({ [FieldNodeState.Edited]: true });
+    expect(root.globalState).toEqual({ [FieldNodeState.Edited]: true });
     expect(old.globalState).toBe(root.globalState);
   });
 
@@ -169,16 +169,16 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const first = root.find('/first');
     const second = root.find('/second');
     if (!first || !second) throw new Error('Expected both children');
-    const dirty = FieldNodeState.Dirty;
-    expect(dirty in root.globalState).toBe(false);
-    first.setState({ [dirty]: true });
-    second.setState({ [dirty]: true });
-    expect(root.globalState[dirty]).toBe(true);
-    first.setState({ [dirty]: false });
-    expect(root.globalState[dirty]).toBe(true);
-    second.setState({ [dirty]: false });
-    expect(dirty in root.globalState).toBe(false);
-    expect(root.globalState[dirty]).toBeUndefined();
+    const edited = FieldNodeState.Edited;
+    expect(edited in root.globalState).toBe(false);
+    first.setState({ [edited]: true });
+    second.setState({ [edited]: true });
+    expect(root.globalState[edited]).toBe(true);
+    first.setState({ [edited]: false });
+    expect(root.globalState[edited]).toBe(true);
+    second.setState({ [edited]: false });
+    expect(edited in root.globalState).toBe(false);
+    expect(root.globalState[edited]).toBeUndefined();
     expect(Object.values(root.globalState)).not.toContain(false);
   });
 
@@ -186,13 +186,13 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const copies: Record<string, boolean | undefined>[] = [];
     const onStateChange = (state: FieldNode['globalState']) => {
       const copy: Record<string, boolean | undefined> = { ...state };
-      copy[FieldNodeState.Dirty] = false;
+      copy[FieldNodeState.Edited] = false;
       copy[FieldNodeState.Touched] = undefined;
       const spread: Record<string, boolean | undefined> = {
         ...state,
-        [FieldNodeState.Dirty]: false,
+        [FieldNodeState.Edited]: false,
       };
-      expect(spread[FieldNodeState.Dirty]).toBe(false);
+      expect(spread[FieldNodeState.Edited]).toBe(false);
       copies.push(copy);
       const shared: FieldNode['globalState'] = copy;
       expect(shared).toBe(copy);
@@ -200,7 +200,7 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const { root } = makeFieldNodeTree({ type: 'string' });
     onStateChange(root.globalState);
     expect(copies).toEqual([
-      { [FieldNodeState.Dirty]: false, [FieldNodeState.Touched]: undefined },
+      { [FieldNodeState.Edited]: false, [FieldNodeState.Touched]: undefined },
     ]);
   });
 });

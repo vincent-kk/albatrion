@@ -8,6 +8,8 @@
 
 ## Conventions
 
+- Boolean node properties use the is prefix; isEdited and isTouched read interaction state, and isDivergent compares output against the last committed root load.
+
 - 클래스에는 필드, 게터, 한 문장짜리 위임만 두고, 종류별 계산은 행에 맡긴다(NODE-010).
 - 공개 타입은 레코드 필드를 숨긴 `type` 판별 합집합이다(NODE-015·046).
 

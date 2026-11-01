@@ -101,12 +101,12 @@ interface FormProps<
   /** 사용자 정의 오류 형식 함수 */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * 오류 표시 조건 (기본: ShowError.DirtyTouched)
+   * 오류 표시 조건 (기본: ShowError.EditedTouched)
    *   - `true`: 항상 표시
    *   - `false`: 절대 표시하지 않음
-   *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
+   *   - `ShowError.Edited`: 값이 변경되었을 때 표시
    *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
-   *   - `ShowError.DirtyTouched`: Dirty 및 Touched 조건이 모두 충족되었을 때 표시
+   *   - `ShowError.EditedTouched`: Edited 및 Touched 조건이 모두 충족되었을 때 표시
    */
   showError?: boolean | ShowError;
   /**
@@ -1760,7 +1760,7 @@ export const FormWithCustomInput = () => {
 - `derived`: JSONPointer 표현식을 사용하여 다른 필드 값을 참조해 자동으로 값을 계산합니다. `controls.derived` 속성을 사용합니다
 - `active`: 해당 Node가 활성화될지 여부를 결정합니다. 활성화 되지 않은 Node의 Input은 표시되지 않으며 그 값은 제거됩니다.
 - `visible`: 해당 Node가 표시될지 여부를 결정합니다. Input의 표시 여부를 결정합니다.
-- `resetInteraction`: 해당 Node의 상호작용 상태를 초기화합니다. 표현식이 `false`에서 `true`로 바뀌면 Node의 `dirty`와 `touched` 상태를 비웁니다.
+- `resetInteraction`: 해당 Node의 상호작용 상태를 초기화합니다. 표현식이 `false`에서 `true`로 바뀌면 Node의 `edited`와 `touched` 상태를 비웁니다.
 - `readOnly`: 해당 Node가 읽기 전용일지 여부를 결정합니다. readOnly 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `disabled`: 해당 Node가 비활성화될 때 표시될지 여부를 결정합니다. disabled 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `oneOf`/`anyOf` 분기의 `active`, 또는 호스트의 `discriminator`: 표시할 분기를 선택합니다. 각 분기에 `controls.active` 표현식을 주거나, `controls.discriminator`에 속성 이름을 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다. ObjectNode 에서만 사용할 수 있습니다. 두 게이트가 모두 없으면 모든 분기가 켜집니다. 모든 분기의 필드가 존재하며 어느 분기가 맞는지는 검증기만 정합니다.
@@ -2501,7 +2501,7 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 | `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                      |
 | `computed.derived` / `&derived`                                        | `controls.derived`                                                       |
 | `computed.watch` / `&watch` (문자열 또는 배열)                         | `controls.watch` (배열만)                                                |
-| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (조건이 참으로 바뀔 때 dirty·touched 초기화) |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (조건이 참으로 바뀔 때 edited·touched 초기화) |
 | `oneOf` / `anyOf` 분기의 `computed.if` / `&if`                         | 그 분기의 `controls.active`                                              |
 | `injectTo`                                                             | `controls.injectTo` (핸들러 모양은 같음)                                 |
 | `terminal`                                                             | `options.terminal` (객체·배열 스키마)                                    |
@@ -2557,12 +2557,22 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 | `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
 | `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
 | `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
+| `ShowError.Dirty` | `ShowError.Edited` |
+| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
+| `node.required` | `node.isRequired` |
+| `node.active` | `node.isActive` |
+| `node.visible` | `node.isVisible` |
+| `node.enabled` | `node.isPresent` |
+| `node.readOnly` | `node.isReadOnly` |
+| `node.disabled` | `node.isDisabled` |
+| `node.misfit` | `node.isMisfit` |
 | `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (같은 비트)                                                                                                                      |
 | `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (`UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`는 그대로이고 이벤트가 더 공개됨)          |
 | `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
 | 형 `JSONSchemaError` (`errors` prop과 `onValidate` 인자)                                                                                                                  | `ValidationIssue` (필드는 같고 선택 필드 `rejectedKey` 추가, `isJSONSchemaError`는 유지)                                                                       |
 
-- 이름이 바뀐 것은 노드 상태 비트뿐입니다. `ShowError` 정책 enum(`Dirty`, `Touched`, `DirtyTouched` 등), Form의 `showError` prop, `FormHandle.showError()`는 이름이 그대로입니다.
+- 노드 상태와 ShowError 정책 멤버는 Edited·EditedTouched를 씁니다. Form `showError` prop과 `FormHandle.showError()`는 그대로이며 기본 정책은 같은 비트·동작의 `ShowError.EditedTouched`입니다.
 
 ### 동작 변경
 
@@ -2660,3 +2670,23 @@ export const AntdForm = () => {
   return <Form jsonSchema={jsonSchema} />;
 };
 ```
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. React 소비자는 `UpdateValue`, `UpdatePath`, `UpdateState`에서 다시 읽어야 합니다. 같은 값 reset은 `UpdateValue` 없이도 결과를 바꿀 수 있습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

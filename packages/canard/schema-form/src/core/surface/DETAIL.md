@@ -2,6 +2,9 @@
 
 ## Requirements
 
+- 노드 boolean 이름은 `is`로 시작하고 record와 공개 getter는 같은 이름을 쓴다. React props, schema 및 controls 키는 유지한다.
+- `isDivergent`는 unset baseline 및 detach에서 false다. root load commit의 최종 출력 참조를 박스에 보관하며 자식 reset·일반 쓰기는 baseline을 옮기지 않는다. 두 경로 값 전체를 Object.is로 메모하고 읽기당 두 경로를 순회한다. 비교는 참조 보존 부분을 건너뛰며 key 순서에 민감하다. React 소비자는 UpdateValue·UpdatePath·UpdateState에서 다시 읽는다. 커밋 전 실패는 기준을 유지하고 커밋 뒤 보고한 실패는 degraded 출력을 기준으로 쓴다.
+
 - `onInactive`의 해제 함수는 반복 호출해도 뒤에 등록한 리스너를 해제하지 않습니다.
 
 - B12 공개 `onInactive(listener): () => void`는 subscribe 옆의 인스턴스 수명 등록 통로입니다. 공통 resolver 인자로 직전 커밋을 읽고 반환값으로 보존값을 정하며 새 재진입 인스턴스에는 재등록합니다.
@@ -41,7 +44,7 @@
 | `strategy` | getter | `behavior.strategy` | NODE-002·047 |
 | `schemaType` | getter | 레코드의 청사진 고정 칸 | NODE-057·058 |
 | `jsonSchema` | getter | 유효 `schema.schema` | BLUEPRINT-041, NODE-058 |
-| `required` | getter | 레코드 선언 칸 | NODE-004 |
+| `isRequired` | getter | 레코드 선언 칸 | NODE-004 |
 | `nullable` | getter | 레코드의 청사진 고정 칸 | NODE-057 |
 | `depth` | getter | 레코드 깊이 | NODE-004 |
 | `isRoot` | getter | 레코드의 부모 유무 | NODE-004 |
@@ -56,14 +59,14 @@
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
 | `inactiveValues` | getter | 호스트의 보유 슬롯·overlay에서 지연 계산한 동결 목록. 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
-| `active` | getter | 최종 형상에 있는가. 정착 중 임시 이탈 뒤 재진입한 노드는 같은 인스턴스로 참이고, 최종 이탈해 떼어진 옛 참조는 다시 들어도 거짓이다. NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
-| `visible` | getter | 레코드 `visible`의 로컬 AND 결과. 떼어지면 마지막 커밋 값으로 고정 | (CONTROLS-022·082, NODE-044, 28C-02) |
-| `enabled` | getter | `active && visible`. 살아 있으면 `visible`과 같고 `disabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |
-| `readOnly` | getter | 레코드 `readOnly`의 표준·로컬 OR 결과. Form 속성 전체 잠금은 포함하지 않고 떼어지면 고정 | (CONTROLS-023·082, 28C-02) |
-| `disabled` | getter | 레코드 `disabled`의 로컬 OR 결과. Form 속성 전체 잠금은 포함하지 않고 떼어지면 고정 | (CONTROLS-023·082, 28C-02) |
+| `isActive` | getter | 최종 형상에 있는가. 정착 중 임시 이탈 뒤 재진입한 노드는 같은 인스턴스로 참이고, 최종 이탈해 떼어진 옛 참조는 다시 들어도 거짓이다. NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
+| `isVisible` | getter | 레코드 `isVisible`의 로컬 AND 결과. 떼어지면 마지막 커밋 값으로 고정 | (CONTROLS-022·082, NODE-044, 28C-02) |
+| `isPresent` | getter | `active && visible`. 살아 있으면 `isVisible`과 같고 `isDisabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |
+| `isReadOnly` | getter | 레코드 `isReadOnly`의 표준·로컬 OR 결과. Form 속성 전체 잠금은 포함하지 않고 떼어지면 고정 | (CONTROLS-023·082, 28C-02) |
+| `isDisabled` | getter | 레코드 `isDisabled`의 로컬 OR 결과. Form 속성 전체 잠금은 포함하지 않고 떼어지면 고정 | (CONTROLS-023·082, 28C-02) |
 | `watchValues` | getter | settle의 `readFieldNodeWatchValues`가 유효 스키마 `controls.watch` 경로를 방출 트리에서 읽은 배열. 같은 커밋에서는 같은 참조 | (CONTROLS-032·080, LANDING-137, 28C-07) |
 | `context` | getter | 트리 런타임 `context` 칸의 같은 참조 | (SURFACE-055, CONTROLS-080, 28C-08) |
-| `misfit` | getter | 살아 있으면 현재 경고등, 떼어졌으면 마지막 커밋의 경고등 | VALUE-030·037, SURFACE-061, NODE-044 |
+| `isMisfit` | getter | 살아 있으면 현재 경고등, 떼어졌으면 마지막 커밋의 경고등 | VALUE-030·037, SURFACE-061, NODE-044 |
 | `misfits` | getter | 살아 있으면 하위 경로 목록 메모, 떼어졌으면 마지막 커밋의 목록 | VALUE-030·037, SURFACE-061, NODE-044 |
 | `diagnostics` | getter | 떼어진 참조에서도 살아 있는 트리 런타임의 진단을 읽는 NODE-044 예외 | ERROR-131·204, SURFACE-007 |
 | `defaultValue` | getter | 살아 있으면 루트 로드 스냅숏, 떼어졌으면 마지막 커밋의 자기 경로 값 | WRITE-085, NODE-044 |
@@ -87,6 +90,9 @@
 | `setExternalErrors(errors)` | method | `dispatch.dispatchSetExternalErrors` | EVENT-045, SURFACE-053 |
 | `clearExternalErrors()` | method | `dispatch.dispatchClearExternalErrors` | EVENT-045, SURFACE-053 |
 | `state` | getter/setter | 레코드의 `interactionState` 읽기; 쓰기는 `dispatch.dispatchSetState` | EVENT-012·067, NODE-010 |
+| `isEdited` | getter | `state[FieldNodeState.Edited]`의 truthiness이며 `UpdateState`에서 다시 읽는다. |
+| `isTouched` | getter | `state[FieldNodeState.Touched]`의 truthiness이며 `UpdateState`에서 다시 읽는다. |
+| `isDivergent` | getter | 마지막 루트 로드 커밋 출력과 현재 폼 출력의 같은 경로 값을 비교한다. |
 | `setState(state)` | method | `dispatch.dispatchSetState` | EVENT-012·067, SURFACE-053 |
 | `globalState` | getter | 트리 런타임의 키별 참 노드 수에서 유도된 현재 `globalState` 읽기; 떼어진 참조도 같은 런타임을 읽음 | EVENT-062, SURFACE-053, NODE-044, 43C-01 |
 | `globalErrors` | getter | 루트의 전체 검증 오류 목록 | VALIDATE-043, SURFACE-053 |
@@ -98,8 +104,8 @@
 - 클래스 파일에는 레코드 순서의 저장 필드, 상수 읽기 게터, 한 문장 위임만 둔다. 정착이 쓰는 공개 레코드 칸은 같은 이름의 게터와 한 문장 저장 세터를 짝지어 프로토타입 이름을 유지한다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않는다. `type`·`strategy` 분기는 가드 외에는 행에서만 한다. 구현한 레코드 인터페이스에 문서가 있는 멤버는 클래스에 주석을 두지 않아 그 문서를 물려받고, 레코드에 없지만 공개 인터페이스(NodeSurface·ArrayNode)에 문서가 있는 공개 멤버는 그 첫 문장을 클래스에 한 줄 요약으로 둔다. 어느 쪽에도 문서가 없는 멤버는 주석을 두지 않는다. 인라인 `{@inheritDoc}`는 쓰지 않는다(NODE-010·049).
 - 공개 `FieldNode`는 `type`으로 판별하는 `StringNode | NumberNode | BooleanNode | NullNode | ObjectNode | ArrayNode | VirtualNode | UnionNode`이다. `schemaType`은 차례로 `'string'`, `'number' | 'integer'`, `'boolean'`, `'null'`, `'object'`, `'array'`, `undefined`, `UnionSchemaType`으로 좁힌다. `schemaType`은 JSON 형만 담으며, JSON 형이 없는 virtual 노드는 `undefined`이고 `type`으로 판별한다. virtual 노드의 내부 `jsonSchema.type`은 `'virtual'`이다. `UnionMemberType = 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'`이고 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`이다(NODE-057·058).
 - 여섯 배열 메서드의 공개 형은 이 합집합의 `ArrayNode` 구성원에만 두고 branch·terminal 두 전략이 같은 서명을 가진다. `type`으로 좁히지 않은 다른 노드 형에는 메서드가 없으며, 런타임에서 비배열 호출을 시도하면 행의 거부 칸이 처리한다(NODE-010·014, SURFACE-005, TEST-070, 26C-01, 35C-01).
-- `UnionNode`는 `type: 'union'`, `strategy: 'terminal'`, `children: null`이고 `misfit: false`일 때 `value`는 허용 종류의 값·`undefined`·nullable일 때 `null`, `misfit: true`일 때 `value: unknown`인 두 구성원으로 나뉜다. `misfit`는 `node.type`이 아니라 현재 `schemaType`·유효 목록과 `nullable` 기준이며 `false`는 검증 통과가 아니다(NODE-058, VALUE-037, SURFACE-061).
-- union 입력의 `FieldInputProps`는 `value`에 같은 판별 결과를 보여 주고 `onChange`는 목록 종류의 값과 `undefined`, nullable일 때만 `null`을 받는다. `misfit: true`의 `value: unknown`을 그대로 `onChange`의 허용 범위로 넓히지 않는다. `ObjectValue`·`ArrayValue`를 포함한 객체·배열 원본 참조는 변환하지 않는다(NODE-058, VALUE-037).
+- `UnionNode`는 `type: 'union'`, `strategy: 'terminal'`, `children: null`이고 `isMisfit: false`일 때 `value`는 허용 종류의 값·`undefined`·nullable일 때 `null`, `isMisfit: true`일 때 `value: unknown`인 두 구성원으로 나뉜다. `isMisfit`는 `node.type`이 아니라 현재 `schemaType`·유효 목록과 `nullable` 기준이며 `false`는 검증 통과가 아니다(NODE-058, VALUE-037, SURFACE-061).
+- union 입력의 `FieldInputProps`는 `value`에 같은 판별 결과를 보여 주고 `onChange`는 목록 종류의 값과 `undefined`, nullable일 때만 `null`을 받는다. `isMisfit: true`의 `value: unknown`을 그대로 `onChange`의 허용 범위로 넓히지 않는다. `ObjectValue`·`ArrayValue`를 포함한 객체·배열 원본 참조는 변환하지 않는다(NODE-058, VALUE-037).
 - 공개 가드 열은 `isFieldNode`, `isStringNode`, `isNumberNode`, `isBooleanNode`, `isObjectNode`, `isArrayNode`, `isVirtualNode`, `isUnionNode`, `isBranchNode`, `isTerminalNode`이다. 첫째는 단일 클래스 `instanceof`, 종류 가드 일곱은 `type`, 마지막 둘은 `strategy`를 본다. `isNullNode`는 소비자가 없어 내보내지 않는다. `isTerminalNode`는 union과 터미널 객체도 좁힌다(NODE-015·041, raw-round17 §4).
 - `InferFieldNode<Schema>`는 타입 배열의 null을 nullable로 떼고 integer를 종류 판정에서 number로 접어 한 종류면 그 노드, 둘 이상이면 `UnionNode`, null만이면 `NullNode`로 사상한다. 형 없는 원시 분기는 종류 합집합으로, 전부 인라인 객체·배열인 분기는 각각 `ObjectNode`·`ArrayNode`로, 분기 없는 단일 종류 `const`·`enum`은 그 리터럴 종류로 사상한다. 정적으로 판정할 수 없는 참조·게이트·복합 연언은 넓은 `FieldNode`이고 청사진 오류인 모양은 `never`이다. 오버로드가 생성 결과를 좁히며 단언·`any`를 쓰지 않는다(NODE-046·058·059, TEST-070).
 - 공개 노드 형·가드는 이 fractal이 소유하고 패키지 진입점이 이름으로 내보내며, 소비자 형도 새 엔진 계약을 따른다(NODE-010·050, LANDING-067·159). `setContext`는 `surface/index.ts`가 이름 붙여 내보내고 `core/index.ts`가 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않는다(NODE-010, SURFACE-055, 28C-03·08). 이 바인딩 전용 함수는 클래스 멤버가 아니며 맥락 변경 사슬을 `write.dispatchContextChange`에 한 문장으로 위임하고 옵션 비트를 받지 않는다(NODE-010·016, LANDING-064·084, WRITE-015, 28C-08).
@@ -155,7 +161,7 @@ batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전�
 
 ### surface-members — 정확한 겉면
 
-- 멤버 목록 시험은 배열 메서드 여섯을 포함한 이 표의 55개 게터·세터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인한다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과한다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
+- 멤버 목록 시험은 배열 메서드 여섯을 포함한 이 표의 59개 게터·세터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인한다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과한다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
 
 ### surface-types — 판별과 참조
 
@@ -163,7 +169,9 @@ batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전�
 
 ### surface-detached — 떼어진 참조의 고정 읽기
 
-- 이탈한 자손 전체의 옛 참조는 `active: false`·`enabled: false`이고 쓰기로 커밋 번호가 바뀌지 않는다. 마지막 커밋의 `misfit`·`misfits`·`inactiveValues`·`defaultValue`·`visible`·`readOnly`·`disabled`는 이후 트리 변경·새 인스턴스 재진입에도 같다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽는다. 같은 `(path, kind)`가 새 인스턴스로 살아 있는 동안 옛 참조의 `setValue`·`Merge`·`resetSubtree`는 오류 없이 아무 효과도 내지 않으며 살아 있는 값과 잠복 원본을 보존한다. 경로가 다시 이탈하면 두 옛 참조는 같은 잠복 원본을 쓰고 다음 재진입이 그 값을 읽는다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지한다(NODE-043·044, WRITE-079·087, SETTLE-010, ERROR-131, SURFACE-007, 26C-08·12, 28C-02).
+- `isDivergent` reads false after detach because it describes the output, as `isPresent` and `isActive` do; `isEdited` and `isTouched` keep their last-commit state.
+
+- 이탈한 자손 전체의 옛 참조는 `isActive: false`·`isPresent: false`이고 쓰기로 커밋 번호가 바뀌지 않는다. 마지막 커밋의 `isMisfit`·`misfits`·`inactiveValues`·`defaultValue`·`isVisible`·`isReadOnly`·`isDisabled`는 이후 트리 변경·새 인스턴스 재진입에도 같다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽는다. 같은 `(path, kind)`가 새 인스턴스로 살아 있는 동안 옛 참조의 `setValue`·`Merge`·`resetSubtree`는 오류 없이 아무 효과도 내지 않으며 살아 있는 값과 잠복 원본을 보존한다. 경로가 다시 이탈하면 두 옛 참조는 같은 잠복 원본을 쓰고 다음 재진입이 그 값을 읽는다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지한다(NODE-043·044, WRITE-079·087, SETTLE-010, ERROR-131, SURFACE-007, 26C-08·12, 28C-02).
 
 ### surface-visit — 하위 트리 방문
 

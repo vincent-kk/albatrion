@@ -22,7 +22,7 @@ it('LANDING-005 branches expose active nodes without branch selection APIs', asy
   });
   expect(form.exists('/a')).toBe(true);
   expect(form.exists('/b')).toBe(true);
-  expect(form.node('/a')?.active).toBe(true);
+  expect(form.node('/a')?.isActive).toBe(true);
   expect(form.handle.node).not.toHaveProperty('oneOfIndex');
   expect(form.handle.node).not.toHaveProperty('anyOfIndices');
 });
@@ -88,7 +88,7 @@ it('LANDING-017 active visible and disabled are read from controls', async () =>
   });
   expect(form.node('/off')).toBeNull();
   expect(form.exists('/off')).toBe(false);
-  expect(form.node('/hidden')?.visible).toBe(false);
+  expect(form.node('/hidden')?.isVisible).toBe(false);
   expect(form.field('/hidden')).toBeNull();
   expect(form.field('/locked')).toHaveProperty('disabled', true);
 });
@@ -145,9 +145,9 @@ it('LANDING-132 conditional required updates the input required flag', async () 
       fieldInputDefinitions: [{ test: { type: 'string' }, Component: Input }],
     },
   );
-  expect(form.node('/name')?.required).toBe(false);
+  expect(form.node('/name')?.isRequired).toBe(false);
   await form.toggle('/flag');
-  expect(form.node('/name')?.required).toBe(true);
+  expect(form.node('/name')?.isRequired).toBe(true);
   expect(form.field('/name')).toHaveProperty('required', true);
   await form.toggle('/flag');
   expect(form.field('/name')).toHaveProperty('required', false);

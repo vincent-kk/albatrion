@@ -21,7 +21,7 @@ export default {
   title: 'Form/13. FormError',
 };
 
-export const DirtyTouched = () => {
+export const EditedTouched = () => {
   const jsonSchema = {
     type: 'object',
     properties: {
@@ -49,7 +49,7 @@ export const DirtyTouched = () => {
     errorMessage,
   }: FieldRendererProps) => {
     const {
-      [FieldNodeState.Dirty]: dirty,
+      [FieldNodeState.Edited]: dirty,
       [FieldNodeState.Touched]: touched,
       [FieldNodeState.ErrorVisible]: showError,
     } = node.state || {};
@@ -87,7 +87,7 @@ export const DirtyTouched = () => {
   };
 
   const [showError, setShowError] = useState<ShowError | boolean>(
-    ShowError.DirtyTouched,
+    ShowError.EditedTouched,
   );
 
   const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -101,35 +101,35 @@ export const DirtyTouched = () => {
             checked={
               !!(
                 typeof showError === 'number' &&
-                showError & ShowError.DirtyTouched
+                showError & ShowError.EditedTouched
               )
             }
-            value={ShowError.DirtyTouched}
+            value={ShowError.EditedTouched}
             onChange={(e) => {
               setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.DirtyTouched;
+                if (typeof prev === 'boolean') return ShowError.EditedTouched;
                 return e.target.checked
-                  ? prev | ShowError.DirtyTouched
-                  : prev & ~ShowError.DirtyTouched;
+                  ? prev | ShowError.EditedTouched
+                  : prev & ~ShowError.EditedTouched;
               });
             }}
           />
-          DirtyTouched
+          EditedTouched
         </label>
         <label>
           <input
             type="checkbox"
             name="showError"
             checked={
-              !!(typeof showError === 'number' && showError & ShowError.Dirty)
+              !!(typeof showError === 'number' && showError & ShowError.Edited)
             }
-            value={ShowError.Dirty}
+            value={ShowError.Edited}
             onChange={(e) => {
               setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.Dirty;
+                if (typeof prev === 'boolean') return ShowError.Edited;
                 return e.target.checked
-                  ? prev | ShowError.Dirty
-                  : prev & ~ShowError.Dirty;
+                  ? prev | ShowError.Edited
+                  : prev & ~ShowError.Edited;
               });
             }}
           />

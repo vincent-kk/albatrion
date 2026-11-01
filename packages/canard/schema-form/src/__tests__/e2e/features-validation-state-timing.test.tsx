@@ -45,10 +45,10 @@ const keywords = (form: FormHarness, expected: KeywordsByPath): KeywordsByPath =
 /**
  * Translate a global state record into flag names.
  * @param state - getState() result or onStateChange argument keyed by FieldNodeState flags.
- * @returns The same state keyed by dirty, touched, and showError.
+ * @returns The same state keyed by edited, touched, and showError.
  */
 const stateNames = (state: Readonly<Record<string, boolean | undefined>>): InteractionStateNames => ({
-  ...(state[FieldNodeState.Dirty] && { dirty: true }),
+  ...(state[FieldNodeState.Edited] && { edited: true }),
   ...(state[FieldNodeState.Touched] && { touched: true }),
   ...(state[FieldNodeState.ErrorVisible] && { showError: true }),
 });

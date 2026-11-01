@@ -10,9 +10,9 @@ import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
-/** State patch that clears the dirty and touched flags of a reset occurrence. */
+/** State patch that clears the edited and touched flags of a reset occurrence. */
 const CLEAN_STATE_PATCH = {
-  [FieldNodeState.Dirty]: false,
+  [FieldNodeState.Edited]: false,
   [FieldNodeState.Touched]: false,
 };
 

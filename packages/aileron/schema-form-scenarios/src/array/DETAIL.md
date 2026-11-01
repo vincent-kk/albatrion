@@ -40,7 +40,7 @@ prefixItems와 터미널 값은 minItems의 자동 채움을 전제하지 않으
 | `landing-202.scenario.ts` | `array.landing-202` | 통째 쓰기에서 뒤쪽에 새로 생긴 객체 아이템만 채우고 기존의 빈 아이템은 유지한다. | LANDING-202, LANDING-203 |
 | `omit-trailing.scenario.ts` | `array.omit-trailing` | raw 아이템 자리를 유지하면서 방출 꼬리의 null 자리를 자른다. | TEST-018, VALUE-034, 37C-01 |
 | `pop-slot.scenario.ts` | `array.pop-slot` | 마지막 아이템과 그 스냅숏 자리만 제거한다. | TEST-018, NODE-051, WRITE-095 |
-| `position-reconcile.scenario.ts` | `array.position-reconcile` | 밀린 아이템의 키·노드 참조·dirty 상태·touched 상태를 새 위치에서 유지한다. | TEST-018, NODE-051, 41C-01 |
+| `position-reconcile.scenario.ts` | `array.position-reconcile` | 밀린 아이템의 키·노드 참조·edited 상태·touched 상태를 새 위치에서 유지한다. | TEST-018, NODE-051, 41C-01 |
 | `push-slot.scenario.ts` | `array.push-slot` | 기존 identity를 유지하고 push로 넣은 값을 스냅숏에 담으며 하위 트리 reset에서 그 값을 복원한다. | TEST-011, TEST-018, TEST-023, NODE-051, WRITE-099, 26C-02, 35C-03 |
 | `remove-slot.scenario.ts` | `array.remove-slot` | 남은 참조를 밀고 제거한 스냅숏 자리를 잘라 낸다. | TEST-018, NODE-051, WRITE-095, 41C-01 |
 | `source-b-structure.scenario.ts` | `array.source-b-structure` | 예산 초과 뒤 호출자의 Source B를 복원하고 생성된 아이템을 제거하며 이미 사용한 키를 보존한다. | TEST-018, NODE-051, WRITE-099 |

@@ -6,6 +6,7 @@ import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 import type { Optional } from '@aileron/declare';
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
+import { FieldNodeState } from '@/schema-form/core';
 import {
   FieldNodeEventType,
   SetValueOption,
@@ -32,11 +33,11 @@ import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputSlotProps } from './type';
 
-/** State patch that marks the field dirty after a controlled change. */
-const DIRTY_STATE_PATCH = { 1: true };
+/** State patch that marks the field edited after a controlled change. */
+const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
 
 /** State patch that marks the field touched after blur. */
-const TOUCHED_STATE_PATCH = { 2: true };
+const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const FieldInputSlot = memo(
@@ -56,7 +57,7 @@ export const FieldInputSlot = memo(
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     const { checkShowError, showError } = useFieldRendererContext();
-    const live = node.enabled && checkShowError(node.state);
+    const live = node.isPresent && checkShowError(node.state);
     const errorVisible = live && isErrorRevealed(node, showError, true);
     const revealVersion =
       live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
@@ -91,8 +92,8 @@ export const FieldInputSlot = memo(
           !accepts() ||
           rootReadOnly ||
           rootDisabled ||
-          node.readOnly ||
-          node.disabled
+          node.isReadOnly ||
+          node.isDisabled
         )
           return;
         if (!onChangeRef.current) writeFieldNodeInput(node, input, option);
@@ -100,7 +101,7 @@ export const FieldInputSlot = memo(
           node.batch(() => {
             onChangeRef.current!(input, option);
             node.clearExternalErrors();
-            node.setState(DIRTY_STATE_PATCH);
+            node.setState(EDITED_STATE_PATCH);
           });
       },
       [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
@@ -152,7 +153,7 @@ export const FieldInputSlot = memo(
         onCompositionEnd={handleCompositionEnd}
       >
         <FieldInput
-          required={node.required}
+          required={node.isRequired}
           placeholder={undefined}
           style={undefined}
           className={undefined}
@@ -162,14 +163,14 @@ export const FieldInputSlot = memo(
           onChange={handleChange}
           onFileAttach={handleFileAttach}
           {...overrideProps}
-          readOnly={rootReadOnly || node.readOnly || !!overrideProps.readOnly}
-          disabled={rootDisabled || node.disabled || !!overrideProps.disabled}
+          readOnly={rootReadOnly || node.isReadOnly || !!overrideProps.readOnly}
+          disabled={rootDisabled || node.isDisabled || !!overrideProps.disabled}
           inputGeneration={generation}
           jsonSchema={node.jsonSchema as JSONSchema}
           node={node}
           type={node.type}
           schemaType={node.schemaType}
-          misfit={node.misfit}
+          misfit={node.isMisfit}
           name={node.name}
           path={node.path}
           nullable={node.nullable}

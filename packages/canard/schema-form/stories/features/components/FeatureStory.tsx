@@ -86,7 +86,7 @@ export function FeatureStory({ scenario, formProps, propStages, providerProps, l
       defaultValue: { initialValue: scenario.initialValue, defaultValue: current && 'defaultValue' in current ? current.defaultValue : scenario.initialValue },
       settings: {
         validationMode: describeValidationMode(formProps && 'validationMode' in formProps ? formProps.validationMode ?? providerProps?.validationMode ?? (ValidationMode.OnChange | ValidationMode.OnRequest) : ValidationMode.OnChange | ValidationMode.OnRequest),
-        showError: current?.showError ?? formProps?.showError ?? providerProps?.showError ?? 'DirtyTouched',
+        showError: current?.showError ?? formProps?.showError ?? providerProps?.showError ?? 'EditedTouched',
         validator: formProps?.validatorFactory || providerProps?.validatorFactory ? 'validatorFactory' : 'ajv8 plugin (counted)',
         virtualization: formProps?.virtualization ?? false,
         FormProvider: Boolean(providerProps), context: current?.context ?? formProps?.context ?? providerProps?.context,

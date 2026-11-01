@@ -26,12 +26,12 @@ export const captureDetachedFieldNodeReads = <
   }
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
-    misfit: runtime.misfitPaths.has(node.path),
+    isMisfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
-    visible: node.visible,
-    readOnly: node.readOnly,
-    disabled: node.disabled,
+    isVisible: node.isVisible,
+    isReadOnly: node.isReadOnly,
+    isDisabled: node.isDisabled,
   });
   const detachedReads =
     runtime.detachedReads ?? new WeakMap<object, typeof reads>();

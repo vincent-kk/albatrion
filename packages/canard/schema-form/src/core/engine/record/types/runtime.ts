@@ -54,6 +54,8 @@ interface FieldNodeDiagnostics {
 interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
+  /** Final root output of the last root load commit; an absent box means no load committed. */
+  loadBaseline?: { readonly value: unknown };
   /** Current paths whose raw values miss their effective types. */
   misfitPaths: PathKeyedSet;
 }
@@ -61,13 +63,17 @@ interface FieldNodeRootRuntimeState {
 /** Last committed reads retained for one node reference after it exits. */
 interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
-  readonly misfit: boolean;
+  /** Mismatch decision at the final live commit. */
+  readonly isMisfit: boolean;
   readonly misfits: readonly string[];
   readonly inactiveValues?: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
-  readonly visible: boolean;
-  readonly readOnly: boolean;
-  readonly disabled: boolean;
+  /** Visibility at the final live commit. */
+  readonly isVisible: boolean;
+  /** Read-only decision at the final live commit. */
+  readonly isReadOnly: boolean;
+  /** Input-lock decision at the final live commit. */
+  readonly isDisabled: boolean;
 }
 
 /** Structured warning emitted when a committed raw value misses its effective type. */

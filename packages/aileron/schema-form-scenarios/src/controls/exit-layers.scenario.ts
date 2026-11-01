@@ -61,7 +61,7 @@ const visiblePreservesValueScenario = {
   } },
   initialValue: { secret: 'held' },
   steps: [{ action: 'setValue', path: '/secret', value: 'edited',
-    expect: { states: { '/secret': { visible: false, enabled: false } },
+    expect: { states: { '/secret': { isVisible: false, isPresent: false } },
       outputValue: { secret: 'edited' } } }],
 } satisfies FormScenario;
 

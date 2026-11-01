@@ -33,7 +33,7 @@ describe('FieldNode PR-2 surface', () => {
         /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
       ),
     ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(56);
+    expect(rows).toHaveLength(59);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)
@@ -70,13 +70,13 @@ describe('FieldNode PR-2 surface', () => {
     });
     root.setValue({ shown: true, target: 'value', hidden: 'hidden' });
     const target = root.find('/target');
-    expect(target?.enabled).toBe(true);
-    expect(target?.disabled).toBe(true);
-    expect(root.find('/hidden')?.enabled).toBe(false);
+    expect(target?.isPresent).toBe(true);
+    expect(target?.isDisabled).toBe(true);
+    expect(root.find('/hidden')?.isPresent).toBe(false);
     root.find('/shown')?.setValue(false);
-    expect(target?.active).toBe(false);
-    expect(target?.visible).toBe(true);
-    expect(target?.enabled).toBe(false);
+    expect(target?.isActive).toBe(false);
+    expect(target?.isVisible).toBe(true);
+    expect(target?.isPresent).toBe(false);
   });
 
   it('TEST-069 active getter reads the settled node gate', () => {
@@ -89,17 +89,17 @@ describe('FieldNode PR-2 surface', () => {
     });
     root.setValue({ flag: true, target: 'shown' });
     const target = root.find('/target');
-    expect(target?.active).toBe(true);
-    expect(root.find('/flag')?.active).toBe(true);
+    expect(target?.isActive).toBe(true);
+    expect(root.find('/flag')?.isActive).toBe(true);
     expect(isFieldNode(target)).toBe(true);
     root.find('/flag')?.setValue(false);
     expect(root.find('/target')).toBeNull();
-    expect(target?.active).toBe(false);
+    expect(target?.isActive).toBe(false);
     expect(target?.value).toBe('shown');
     root.find('/flag')?.setValue(true);
     expect(root.find('/target')).not.toBe(target);
-    expect(root.find('/target')?.active).toBe(true);
-    expect(target?.active).toBe(false);
+    expect(root.find('/target')?.isActive).toBe(true);
+    expect(target?.isActive).toBe(false);
   });
 
   it('children returns the exact stored array reference', () => {

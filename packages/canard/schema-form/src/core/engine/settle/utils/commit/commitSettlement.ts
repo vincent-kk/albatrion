@@ -253,4 +253,6 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         (runtime.slotDirtyHosts ??= new Set()).add(parent);
     }
   if (runtime.slotDirtyHosts?.size) commitSlotChanges(context.root);
+  if (loadScope === context.root)
+    runtime.loadBaseline = { value: context.root.emit };
 };

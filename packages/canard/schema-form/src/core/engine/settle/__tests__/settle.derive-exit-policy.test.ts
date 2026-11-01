@@ -32,11 +32,11 @@ describe('derive baseline alongside exit policy', () => {
     );
     const target = root.structure!.target;
     target.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(target, 'b', 'input', WriteOption.Overwrite);
     expect(target.raw).toBe('b');
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
   });
 });

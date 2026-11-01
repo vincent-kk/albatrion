@@ -18,7 +18,7 @@ const profileSchema = {
 export const cx03Profile: CompositeCase = {
   scenario: {
     name: 'composite.cx03-profile',
-    description: 'C3 profile (G3, G5). VALUE-015 a null address keeps its children in the shape while the output stays null; a write of an object promotes it without filling sibling defaults; the country guard switches postcode and zip and keeps the postcode raw value (LANDING-018). The tail layers an external error before validator issues (VALIDATE-043), hides untouched messages under the Dirty policy, and clears the subtree errors when the address returns to null.',
+    description: 'C3 profile (G3, G5). VALUE-015 a null address keeps its children in the shape while the output stays null; a write of an object promotes it without filling sibling defaults; the country guard switches postcode and zip and keeps the postcode raw value (LANDING-018). The tail layers an external error before validator issues (VALIDATE-043), hides untouched messages under the Edited policy, and clears the subtree errors when the address returns to null.',
     schema: profileSchema,
     initialValue: { address: null },
     steps: [
@@ -42,7 +42,7 @@ export const cx03Profile: CompositeCase = {
     { act: 'props', stage: { errors: [{ dataPath: '/address/postcode', keyword: 'server', message: 'postcode is taken' }] } },
     { act: 'write', path: '/address/postcode', value: '1' },
     { act: 'errors', errors: { '/address/postcode': ['server', 'minLength'] } },
-    { act: 'props', stage: { showError: 'Dirty' } },
+    { act: 'props', stage: { showError: 'Edited' } },
     { act: 'shown', shown: { '/address/postcode': false } },
     { act: 'write', path: '/address', value: null },
     { act: 'errors', errors: { '/address/postcode': [] } },

@@ -79,7 +79,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           child.name !== entry.name ||
           child.blueprintNode !== entry.node ||
           child.schema !== schema ||
-          !child.active ||
+          !child.isActive ||
           child.detached ||
           node.structure?.[entry.name] !== child
         ) {

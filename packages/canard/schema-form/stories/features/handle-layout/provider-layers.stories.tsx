@@ -26,8 +26,8 @@ export const ContextAndSettings: Story = {
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     await expectEventually(() => ({
-      titleReadOnly: handle.findNode('/title')!.readOnly,
-      secretVisible: handle.findNode('/secret')!.visible,
+      titleReadOnly: handle.findNode('/title')!.isReadOnly,
+      secretVisible: handle.findNode('/secret')!.isVisible,
       codeMessageShown: Boolean(canvasElement.querySelector('[data-path="/code"] em')?.textContent?.trim()),
     }), providerLayers.expected, 'merged provider and Form layers');
   },

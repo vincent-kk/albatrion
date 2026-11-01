@@ -23,10 +23,10 @@ export const expressionCostScenario: FormScenario = {
   schema: expressionSchema,
   initialValue: { rate: 1, show: true },
   steps: [
-    { action: 'batch', steps: [], expect: { values: { '/r0': 1, '/r199': 200 }, states: { '/r1': { visible: true } } } },
+    { action: 'batch', steps: [], expect: { values: { '/r0': 1, '/r199': 200 }, states: { '/r1': { isVisible: true } } } },
     { action: 'batch', steps: [{ action: 'setValue', path: '/rate', value: 5 }], expect: { values: { '/r0': 5, '/r1': 6, '/r199': 204 } } },
     { action: 'batch', steps: [{ action: 'setValue', path: '/show', value: false }], expect: {
-      values: { '/r1': 6, '/r199': 204 }, states: { '/r1': { visible: false }, '/r0': { visible: true } },
+      values: { '/r1': 6, '/r199': 204 }, states: { '/r1': { isVisible: false }, '/r0': { isVisible: true } },
     } },
   ],
 };

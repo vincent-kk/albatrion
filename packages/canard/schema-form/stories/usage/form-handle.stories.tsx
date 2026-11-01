@@ -85,16 +85,16 @@ export const ReadAndWriteValue: Story = {
   },
 };
 
-/** Record public Dirty, Touched and ErrorVisible (show-error) state flags. */
+/** Record public Edited, Touched and ErrorVisible (show-error) state flags. */
 export const InteractionState: Story = {
   render: () => <HandleWorkbench scenario={packageEntryRenderScenario} example="InteractionState" />,
-  parameters: { docs: { description: { story: 'Click Set interaction flags and Read state to see Dirty, Touched and the ShowError flag (public name ErrorVisible). Click Clear state and Read state to see an empty state bag.' } } },
+  parameters: { docs: { description: { story: 'Click Set interaction flags and Read state to see Edited, Touched and the ShowError flag (public name ErrorVisible). Click Clear state and Read state to see an empty state bag.' } } },
   async play({ canvasElement }) {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Set interaction flags' }));
     await readHandleCall(canvasElement, 'setState');
     await userEvent.click(canvas.getByRole('button', { name: 'Read state' }));
-    await expect((await readHandleCall(canvasElement, 'getState')).result).toEqual({ [FieldNodeState.Dirty]: true, [FieldNodeState.Touched]: true, [FieldNodeState.ErrorVisible]: true });
+    await expect((await readHandleCall(canvasElement, 'getState')).result).toEqual({ [FieldNodeState.Edited]: true, [FieldNodeState.Touched]: true, [FieldNodeState.ErrorVisible]: true });
     await userEvent.click(canvas.getByRole('button', { name: 'Clear state' }));
     await expect((await readHandleCall(canvasElement, 'clearState')).result).toEqual({});
     await userEvent.click(canvas.getByRole('button', { name: 'Read state' }));

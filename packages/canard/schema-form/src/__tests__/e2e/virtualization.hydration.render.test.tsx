@@ -445,7 +445,7 @@ describe('virtualization across server rendering and client hydration', () => {
       }
       const array = ref.current!.findNode('/items')!;
       if (array.type !== 'array') throw new Error('Expected array');
-      expect(ref.current!.findNode('/items/0')!.visible).toBe(false);
+      expect(ref.current!.findNode('/items/0')!.isVisible).toBe(false);
       expect(container.querySelectorAll('input')).toHaveLength(0);
       await act(async () => {
         array.push('second');
@@ -454,7 +454,7 @@ describe('virtualization across server rendering and client hydration', () => {
       await act(async () => {
         ref.current!.findNode('/show')!.setValue(true);
       });
-      expect(ref.current!.findNode('/items/0')!.visible).toBe(true);
+      expect(ref.current!.findNode('/items/0')!.isVisible).toBe(true);
       expect(
         container.querySelector('[data-path="/items/0"][data-deferred]'),
       ).not.toBeNull();

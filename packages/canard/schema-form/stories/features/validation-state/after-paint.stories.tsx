@@ -70,7 +70,7 @@ const Harness = ({
         ref={ref}
         jsonSchema={{ type: 'string', minLength: 3 }}
         defaultValue={same ? '' : 'ab'}
-        showError={touched ? ShowError.Touched : ShowError.DirtyTouched}
+        showError={touched ? ShowError.Touched : ShowError.EditedTouched}
         FieldRenderer={Renderer}
         fieldInputMap={{ '': Input }}
         formatError={(error) => error.message ?? null}
@@ -194,7 +194,7 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
   }
 };
 
-export const DirtyTouched: Story = {
+export const EditedTouched: Story = {
   play: async ({ canvasElement }) => check(canvasElement, false, false),
 };
 export const TouchedKeyThenTab: Story = {

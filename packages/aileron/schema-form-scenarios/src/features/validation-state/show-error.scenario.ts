@@ -10,7 +10,7 @@ const codeSchema = {
 /** A field invalid from the first screen; display policies decide when its message is drawn. */
 export const showErrorScenario: FormScenario = {
   name: 'validation-state.show-error',
-  description: 'ShowError policies gate only the display of issues the node already holds: Always, Never, Dirty after input, Touched after blur (GOAL-061 defers touched to blur), and DirtyTouched after both; /tag is focused and left without input, which separates Touched from DirtyTouched; the handle showError overrides the policy. Cases come from showErrorCases.',
+  description: 'ShowError policies gate only the display of issues the node already holds: Always, Never, Edited after input, Touched after blur (GOAL-061 defers touched to blur), and EditedTouched after both; /tag is focused and left without input, which separates Touched from EditedTouched; the handle showError overrides the policy. Cases come from showErrorCases.',
   schema: codeSchema,
   initialValue: { code: 'abc', tag: 'abc' },
   steps: [{ action: 'batch', steps: [], expect: { values: { '/code': 'abc' }, errors: { '/code': [{ keyword: 'maxLength' }], '/tag': [{ keyword: 'maxLength' }] } } }],
@@ -26,7 +26,7 @@ export interface ShowErrorCase {
   readonly afterInput: boolean;
   /** Message drawn after focus leaves /code. */
   readonly afterBlur: boolean;
-  /** Message under /tag after focus leaves it without input, which separates Touched from DirtyTouched. */
+  /** Message under /tag after focus leaves it without input, which separates Touched from EditedTouched. */
   readonly afterTouchOnly: boolean;
 }
 
@@ -34,9 +34,9 @@ export interface ShowErrorCase {
 export const showErrorCases: readonly ShowErrorCase[] = [
   { policy: 'Always', atLoad: true, afterInput: true, afterBlur: true, afterTouchOnly: true },
   { policy: 'Never', atLoad: false, afterInput: false, afterBlur: false, afterTouchOnly: false },
-  { policy: 'Dirty', atLoad: false, afterInput: true, afterBlur: true, afterTouchOnly: false },
+  { policy: 'Edited', atLoad: false, afterInput: true, afterBlur: true, afterTouchOnly: false },
   { policy: 'Touched', atLoad: false, afterInput: false, afterBlur: true, afterTouchOnly: true },
-  { policy: 'DirtyTouched', atLoad: false, afterInput: false, afterBlur: true, afterTouchOnly: false },
+  { policy: 'EditedTouched', atLoad: false, afterInput: false, afterBlur: true, afterTouchOnly: false },
 ];
 
 /** The handle's showError overrides a Never policy, and showError(false) hides the message again. */

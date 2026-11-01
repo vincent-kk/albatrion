@@ -45,7 +45,7 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')
     node.itemKey = host.nextItemKey++;
   if (!entering) {
-    node.active = false;
+    node.isActive = false;
     node.detached = true;
     node.retainedSourceOverlay = source.retainedSourceOverlay;
     if (hasOwnProperty(source, 'retainedExitPolicy'))

@@ -112,7 +112,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
       child.path !== appendSegment(node.path, entry.name) ||
       child.blueprintNode !== entry.node ||
       child.schema !== schema ||
-      !child.active ||
+      !child.isActive ||
       child.detached ||
       (prepared && prepared.baseline[entry.name] !== child)
     ) {

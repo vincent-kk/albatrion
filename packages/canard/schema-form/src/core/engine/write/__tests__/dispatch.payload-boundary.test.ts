@@ -247,7 +247,7 @@ describe('payload boundary differential characterization', () => {
     subscribeFieldNode(root, (event) => {
       if (event.type & E.UpdateValue) {
         seen.push('value');
-        dispatchSetState(root, { dirty: true });
+        dispatchSetState(root, { edited: true });
         throw failure;
       }
       if (event.type & E.UpdateState) seen.push('state');
@@ -264,7 +264,7 @@ describe('payload boundary differential characterization', () => {
       'global',
       'state-complete',
     ]);
-    expect(runtime.globalState).toEqual({ dirty: true });
+    expect(runtime.globalState).toEqual({ edited: true });
   });
 
   it('09 detects the read/subscribe gap without replay or baseline overwrite', () => {

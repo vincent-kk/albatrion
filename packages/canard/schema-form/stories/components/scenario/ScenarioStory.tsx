@@ -35,7 +35,7 @@ export function ScenarioStory({ scenario }: { scenario: FormScenario }) {
   useEffect(() => {
     report({ value: handle ? handle.getValue() : scenario.initialValue, errors: handle?.getErrors() ?? [],
       defaultValue: { initialValue: scenario.initialValue, defaultValue: scenario.initialValue },
-      settings: { validator: 'ajv validatorFactory (counted)', validationMode: 'OnChange | OnRequest', showError: 'DirtyTouched',
+      settings: { validator: 'ajv validatorFactory (counted)', validationMode: 'OnChange | OnRequest', showError: 'EditedTouched',
         virtualization: scenario.name === 'controls.virtualization', FormProvider: false, context: undefined, fieldInputMap: [], fieldInputDefinitions: [] },
       stage: { current: 1, total: 1, schema: scenario.schema },
     });

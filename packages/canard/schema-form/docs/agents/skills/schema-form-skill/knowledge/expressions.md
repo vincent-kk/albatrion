@@ -49,7 +49,7 @@ total: { type: 'number', controls: { watch: ['../items'] } },
 
 ## resetInteraction
 
-`resetInteraction` does not change values — it resets interaction state (`dirty`, `touched`). It fires when the expression turns from `false` to `true`, so drive it with a toggle-style condition rather than a constant.
+`resetInteraction` does not change values — it resets interaction state (`edited`, `touched`). It fires when the expression turns from `false` to `true`, so drive it with a toggle-style condition rather than a constant.
 
 ## Evaluation Timing
 

@@ -10,10 +10,10 @@ export interface ScenarioExpectation {
   readonly values?: Readonly<Record<string, unknown>>;
   /** Local state keys observed on nodes at JSON Pointer paths. */
   readonly states?: Readonly<Record<string, Readonly<{
-    visible?: boolean;
-    readOnly?: boolean;
-    disabled?: boolean;
-    enabled?: boolean;
+    isVisible?: boolean;
+    isReadOnly?: boolean;
+    isDisabled?: boolean;
+    isPresent?: boolean;
   }>>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;

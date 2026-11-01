@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 정적 첫 로드도 최종 root.emit을 `loadBaseline` 박스로 보관한다. 할당은 commit number와 전역 상태가 확정된 뒤, 커밋 뒤 경고 보고 전에 한 번 실행한다. 정착 경로와 같이 undefined 출력과 미설정 기준을 구별한다.
+
 - 경로 조상의 계산은 jsonPointer의 resolvePointer에 위임하고 정적 적재의 순회·배달 할당 수는 유지합니다.
 
 - 적재는 일반 슬롯과 overlay를 초기화하며 잠복 원본 저장소나 원본 그림자를 만들지 않는다. 슬롯 없는 호스트의 실행 경로는 준비 때 고정하고 정적 첫 적재와 일반 적재의 기존 커밋·배달 순서를 유지한다.
@@ -15,7 +17,7 @@
 - 진입점은 `loadFieldNodeAtMount<Self>(root: FieldNodeRecord<Self>, value: unknown, option: WriteOption): void`를 이름으로 내보낸다. 부모 settle의 진입점이 이를 다시 내보내고 write의 마운트 진입이 소비한다.
 
 - 첫 루트 load의 정적 경로는 기존 branchless capability와 선언 수집·형상 분석에서 얻은 내부 자격 증명을 사용한다. 게이트·식·잠복·기존 커밋이 없는 유한 객체·배열·스칼라와 literal `default`만 처리하며 `DisableAutomaticWrites`를 같은 값 선택에 적용한다. `controls.default`·virtual·재귀 배열·whole-value 전략·`controls.unsetValue`·`injectTo` 및 아직 증명하지 않은 호출자 입력은 노드 변경과 커밋 번호 예약 전에 범용 경로로 보낸다. 자격 확정 뒤에만 범용 경로와 같은 번호 하나를 예약한다(89C-01·02).
-- 정적 첫 로드는 진입에서 기존 배달 Set의 자리를 예약하고, 부모 default의 명시 분배와 자손 default를 부모 우선으로 해석한 뒤 자식 완료 시 출력·required·페이로드·revision을 확정한다. 루트 완료 전 리스너·보고기를 호출하지 않으며 최외곽 디스패처가 예약 순서로 배달한다. 같은 값의 반복 읽기는 같은 참조이다. 노드별 계산·assembly는 각 1회이며 노드 재계산과 필수 배달 순회를 따로 기록한다. 기존 배달 Set의 O(N) 순서 셀과 O(D) DFS 스택을 유지하고, 발생별 선택 선언·dirty 등록·빈 automatic/exit/disposal 집합·형상 재선택·`initialOutputs` 목록을 만들지 않는다. 새 순서 셀은 없으며 기존 셀당 바이트와 범용 scratch 감소를 별도로 측정한다. 시간·메모리 비용은 93라운드 (i)의 HEAD/작업트리 쌍 측정으로 기록한다(89C-04·05, GOAL-071, SETTLE-001·003·017, EVENT-005·007).
+- 정적 첫 로드는 진입에서 기존 배달 Set의 자리를 예약하고, 부모 default의 명시 분배와 자손 default를 부모 우선으로 해석한 뒤 자식 완료 시 출력·isRequired·페이로드·revision을 확정한다. 루트 완료 전 리스너·보고기를 호출하지 않으며 최외곽 디스패처가 예약 순서로 배달한다. 같은 값의 반복 읽기는 같은 참조이다. 노드별 계산·assembly는 각 1회이며 노드 재계산과 필수 배달 순회를 따로 기록한다. 기존 배달 Set의 O(N) 순서 셀과 O(D) DFS 스택을 유지하고, 발생별 선택 선언·dirty 등록·빈 automatic/exit/disposal 집합·형상 재선택·`initialOutputs` 목록을 만들지 않는다. 새 순서 셀은 없으며 기존 셀당 바이트와 범용 scratch 감소를 별도로 측정한다. 시간·메모리 비용은 93라운드 (i)의 HEAD/작업트리 쌍 측정으로 기록한다(89C-04·05, GOAL-071, SETTLE-001·003·017, EVENT-005·007).
 
 ## Acceptance Criteria
 

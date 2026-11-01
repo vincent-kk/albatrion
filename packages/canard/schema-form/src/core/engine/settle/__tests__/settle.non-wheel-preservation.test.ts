@@ -102,7 +102,7 @@ describe('H2 non-wheel reference preservation', () => {
       outputValue: Reflect.get(node, 'outputValue'),
       children: node.children,
       schema: node.schema,
-      active: node.active,
+      isActive: node.isActive,
       revision: node.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0,
     }));
     const previousOther = root.structure!.other.local;
@@ -116,7 +116,7 @@ describe('H2 non-wheel reference preservation', () => {
       expect(Reflect.get(node, 'outputValue')).toBe(previous.outputValue);
       expect(node.children).toBe(previous.children);
       expect(node.schema).toBe(previous.schema);
-      expect(node.active).toBe(previous.active);
+      expect(node.isActive).toBe(previous.isActive);
       expect(node.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0).toBe(
         previous.revision,
       );

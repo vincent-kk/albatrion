@@ -78,7 +78,7 @@ it('catches a display release between its held render and passive subscription',
       ref={ref}
       jsonSchema={schema}
       defaultValue=""
-      showError={ShowError.Dirty}
+      showError={ShowError.Edited}
       validationMode={ValidationMode.OnChange}
       validatorFactory={pendingValidator}
       FieldRenderer={Renderer}
@@ -86,7 +86,7 @@ it('catches a display release between its held render and passive subscription',
     />,
   );
   releaseInLayout = true;
-  // Dirty's first input write holds the display; unresolved validation prevents a competing release.
+  // Edited's first input write holds the display; unresolved validation prevents a competing release.
   fireEvent.change(view.container.querySelector('input')!, {
     target: { value: 'x' },
   });
@@ -121,7 +121,7 @@ it('keeps input identity, focus and both mounts through hold start and release',
       ref={ref}
       jsonSchema={schema}
       defaultValue=""
-      showError={ShowError.Dirty}
+      showError={ShowError.Edited}
       FieldRenderer={Renderer}
       validatorFactory={{
         compileGuard: () => () => true,
@@ -170,7 +170,7 @@ it('catches an event-free release while a held display is hidden by Activity', a
       ref={ref}
       jsonSchema={schema}
       defaultValue=""
-      showError={ShowError.Dirty}
+      showError={ShowError.Edited}
       validatorFactory={pendingValidator}
       FieldRenderer={Renderer}
       fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}

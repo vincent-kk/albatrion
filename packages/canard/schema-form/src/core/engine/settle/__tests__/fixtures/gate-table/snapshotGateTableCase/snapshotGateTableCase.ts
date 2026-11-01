@@ -22,6 +22,11 @@ export const snapshotGateTableCase = async (
   serialized: string,
 ): Promise<void> => {
   serialized = normalizeH1PrivateHistory(fixture, serialized);
+  const captureDirectory = process.env.STATE_VOCABULARY_GATE_CAPTURE;
+  if (captureDirectory) {
+    mkdirSync(captureDirectory, { recursive: true });
+    writeFileSync(join(captureDirectory, fixture + '.json'), serialized);
+  }
   const directory = fileURLToPath(new URL('../', import.meta.url));
   const canonical = canonicalGateTableJSON(JSON.parse(serialized));
   const manifestPath = join(directory, 'large.manifest.json');
@@ -50,7 +55,7 @@ export const snapshotGateTableCase = async (
     'registrations',
   ];
   const full: Record<string, unknown> = {};
-  const hashes: Record<string, unknown> = {};
+  const hashes: Record<string, unknown> = { ...manifest[fixture] };
   const updating =
     Reflect.get(expect.getState().snapshotState, '_updateSnapshot') === 'all';
   for (const [section, value] of Object.entries(sections)) {

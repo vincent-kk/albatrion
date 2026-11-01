@@ -23,7 +23,7 @@ const probe = createHandleProbe();
 const onStateChange = fn();
 
 /** Shared scenario `validation-state.interaction-state`, driven through interactionStateStages. */
-export const DirtyTouchedAndNotifications: Story = {
+export const EditedTouchedAndNotifications: Story = {
   args: { scenario, formProps: { onStateChange }, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
   async play({ args, canvasElement, step }) {

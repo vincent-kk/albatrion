@@ -15,7 +15,7 @@
 
 ### Always do
 
-- `onChange` 핸들러에서 `node.clearExternalErrors()`를 호출한 뒤 `NodeState.Dirty` 플래그 설정
+- `onChange` 핸들러에서 `node.clearExternalErrors()`를 호출한 뒤 `NodeState.Edited` 플래그 설정
 - 언마운트할 때 `attachedFilesMap`에서 해당 경로의 항목 삭제
 - `readOnly` 또는 `disabled` 상태에서는 `onChange` 차단
 

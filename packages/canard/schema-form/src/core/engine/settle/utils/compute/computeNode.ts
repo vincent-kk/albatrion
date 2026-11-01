@@ -114,7 +114,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   const previousEmit = node.emit;
   const previousChildren = node.children;
   const previousSchema = node.schema;
-  const previousActive = node.active;
+  const previousActive = node.isActive;
   if (!context.shapeDirtyPaths.has(node.path)) {
     const recalculated = dirtyChildren(node, context);
     let registrations = context.presenceRegistrations ?? 0;

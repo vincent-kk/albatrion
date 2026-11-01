@@ -22,12 +22,12 @@ describe('TEST-077 union mismatch lamp', () => {
     });
     root.setValue({ narrow: false, a: 'abc' });
     const a = root.find('/a');
-    expect(a?.misfit).toBe(false);
+    expect(a?.isMisfit).toBe(false);
     expect(a?.schemaType).toEqual(['string', 'number']);
     expect(Object.isFrozen(a?.schemaType)).toBe(true);
     const fixedType = a?.schemaType;
     root.find('/narrow')?.setValue(true);
-    expect(a?.misfit).toBe(true);
+    expect(a?.isMisfit).toBe(true);
     expect(a?.value).toBe('abc');
     expect(a?.schemaType).toBe(fixedType);
     expect(a?.jsonSchema).toMatchObject({ type: ['number'] });
@@ -50,9 +50,9 @@ describe('TEST-077 union mismatch lamp', () => {
     });
     root.setValue({ narrow: true, a: 'abc' });
     const a = root.find('/a');
-    expect(a?.misfit).toBe(true);
+    expect(a?.isMisfit).toBe(true);
     root.find('/narrow')?.setValue(false);
-    expect(a?.misfit).toBe(false);
+    expect(a?.isMisfit).toBe(false);
     expect(root.misfits).toEqual([]);
     expect(a?.raw).toBe('abc');
   });
@@ -60,9 +60,9 @@ describe('TEST-077 union mismatch lamp', () => {
   it('turns the lamp off when a later value matches the effective list', () => {
     const { root } = makeFieldNodeTree({ type: ['number', 'boolean'] });
     root.setValue('invalid');
-    expect(root.misfit).toBe(true);
+    expect(root.isMisfit).toBe(true);
     root.setValue(1);
-    expect(root.misfit).toBe(false);
+    expect(root.isMisfit).toBe(false);
     expect(root.misfits).toEqual([]);
   });
 
@@ -94,7 +94,7 @@ describe('TEST-077 union mismatch lamp', () => {
       type: ['number', 'boolean'],
     });
     root.setValue('unconvertible');
-    expect(root.misfit).toBe(true);
+    expect(root.isMisfit).toBe(true);
     expect(records(runtime)).toEqual([
       expect.objectContaining({
         level: 'warning',
@@ -110,10 +110,10 @@ describe('TEST-077 union mismatch lamp', () => {
       }),
     ]);
     root.setValue('still invalid');
-    expect(root.misfit).toBe(true);
+    expect(root.isMisfit).toBe(true);
     expect(records(runtime)).toEqual([]);
     root.setValue(1);
-    expect(root.misfit).toBe(false);
+    expect(root.isMisfit).toBe(false);
     expect(records(runtime)).toEqual([]);
     root.setValue('unconvertible');
     expect(records(runtime)).toHaveLength(1);
@@ -125,7 +125,7 @@ describe('TEST-077 union mismatch lamp', () => {
     });
     root.setValue(0);
     expect(root.raw).toBe(0);
-    expect(root.misfit).toBe(true);
+    expect(root.isMisfit).toBe(true);
     expect(records(runtime)).toEqual([
       expect.objectContaining({
         code: expect.stringMatching(/MISFIT$/),

@@ -21,7 +21,7 @@ describe('array settlement lifecycle', () => {
     const perished = root.children![1];
     root.setValue(['x']);
     expect(root.children).toHaveLength(1);
-    expect(perished.active).toBe(false);
+    expect(perished.isActive).toBe(false);
     expect(perished.value).toBe('b');
     expect(perished.defaultValue).toBe('b');
     expect(root.inactiveValues).toEqual([]);
@@ -419,7 +419,7 @@ describe('array settlement lifecycle', () => {
     root.find('/flag')?.setValue(false);
     expect(root.find('/items')?.children).toEqual([]);
     expect(root.find('/items')?.value).toEqual([null]);
-    expect(former.active).toBe(false);
+    expect(former.isActive).toBe(false);
     expect(readRetainedSlotRaw(root, '/items/0', 'string')).toBe('a');
     root.find('/items')?.setValue([]);
     expect(hasRetainedSlotOwnSource(root, '/items/0', 'string')).toBe(false);

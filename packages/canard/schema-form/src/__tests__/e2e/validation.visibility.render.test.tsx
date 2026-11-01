@@ -65,7 +65,7 @@ it('IR-6 a touched field never commits its previous error when the first charact
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue=""
-      showError={ShowError.DirtyTouched}
+      showError={ShowError.EditedTouched}
       FieldRenderer={Renderer}
       fieldInputDefinitions={[{ test: () => true, Component: Input }]}
       formatError={(error) => error.message ?? null}
@@ -224,7 +224,7 @@ it('IR-6 submit reveals a still-invalid touched field and settles its hold', asy
   act(() => ref.current!.node!.setState({ 2: true }));
   act(() => {
     ref.current!.setValue('still-invalid');
-    // Imperative writes retain dirty; reveal the first-change condition during this pending request.
+    // Imperative writes retain edited; reveal the first-change condition during this pending request.
     ref.current!.node!.setState({ 1: true });
   });
   expect(view.getByTestId('error').textContent).toBe('');

@@ -45,7 +45,7 @@ it('IR-6 H records each standalone write and drops its entries by captured gener
   const before = a.interactionState;
   dispatchSetState(a, { 2: true });
   expect(a.revealBaseline).toMatchObject({
-    entries: [{ state: before, enabled: true }],
+    entries: [{ state: before, isPresent: true }],
   });
   expect(runtime.revealBaselineNodes?.has(a)).toBe(true);
   dispatchSetState(a, { 4: true });
@@ -106,8 +106,8 @@ it('IR-6 Y2 clearing subtree state captures the prior flags before its direct em
 });
 it('IR-6 Y2 capture records enabled before a controls change without scheduling in record', () => {
   const { a, runtime } = fixture();
-  a.visible = captureFieldNodeChange(a, 'visible', false);
-  expect(a.revealBaseline?.entries[0].enabled).toBe(true);
+  a.isVisible = captureFieldNodeChange(a, 'isVisible', false);
+  expect(a.revealBaseline?.entries[0].isPresent).toBe(true);
   expect(runtime.revealDropOwed).toBe(true);
   expect(runtime.revealDropTask).toBeUndefined();
 });

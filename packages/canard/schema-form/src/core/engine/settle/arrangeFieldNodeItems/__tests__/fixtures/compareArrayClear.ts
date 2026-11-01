@@ -137,7 +137,7 @@ export const compareArrayClear = (
           stores: observePathStores(root.runtime, current.path),
           gates,
           departed: observeDetachedReads(root, former),
-          formerPaths: former.map((node) => [node.path, node.active]),
+          formerPaths: former.map((node) => [node.path, node.isActive]),
         });
       }
     } finally {

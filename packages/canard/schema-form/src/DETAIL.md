@@ -12,7 +12,7 @@
 - `<Form>`은 `core/`의 새 엔진을 사용하며 노드 종류는 동작 행 계약을 따른다. `src/__legacy__/`는 참고용으로 보존하고, 비레거시 코드는 이 경로를 가져오지 않는다(LANDING-067·205).
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않는다. 오류·경고 코드는 `FormErrorCode`·`FormWarningCode`(값과 형)로 공개하며 오류 클래스는 가드 넷으로만 가른다(289라운드 D4, 32C-02). 노드 형·가드도 새 엔진의 계약을 이름으로 내보낸다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
-- 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ErrorVisible=4를 유지한다. `NodeState` 별칭은 내보내지 않는다(SURFACE-056·060, LANDING-157).
+- 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Edited=1·Touched=2·ErrorVisible=4를 유지한다. `NodeState` 별칭은 내보내지 않는다(SURFACE-056·060, LANDING-157).
 - `__tests__/e2e`·`__tests__/scenarios`·`__tests__/migration`은 외부 소비자 자격으로 루트 `index.ts`를 가져오는 공개 API 시험 구획이다(D7). 나머지 제품·시험·fixture는 자기·조상 내부를 직접 가져오고 자기·조상 index를 거치지 않으며, 자손·혈통 밖 fractal은 관문 index로 소비하는 import 모델을 따른다.
 - `hooks`·`types`는 `src`의 자식 fractal이다. 루트 `index.ts`는 공개 훅을 `./hooks` 관문으로, 공개 형을 `./types` 관문으로, 공개 Form 조각 형을 `./components/Form` 관문으로 재수출한다. `types`는 내부 형을 본명으로 관심사별 칸(`types/schema/`·`types/field/`·`types/error/`)에 두고, 공개 `Roll` 형을 `types/rolled/` 칸에 `Rolled` 접두사로 둔다. 루트 `index.ts`는 `Rolled*` 형을 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 재수출한다. `src`의 organ(`constants`·`helpers` 칸)은 자식 fractal을 가져오지 않는다(모델 B1). `constants`에는 index가 없어 소비자가 `constants/bitmask`·`constants/control`·`constants/style` 파일을 직접 가져온다.
 

@@ -122,7 +122,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       probe('M27 mismatch iteration', visited);
       expect(visited).toBeLessThan(count * 12);
       expect(child.misfits).toEqual(before);
-      expect(child.misfit).toBe(true);
+      expect(child.isMisfit).toBe(true);
       expect(misfitPaths.size).toBe(0);
     } finally {
       spy.mockRestore();

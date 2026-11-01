@@ -155,7 +155,7 @@ describe('binding load lifetime', () => {
       }),
     );
     expect(() =>
-      dispatchSetState(child, { [FieldNodeState.Dirty]: true }),
+      dispatchSetState(child, { [FieldNodeState.Edited]: true }),
     ).toThrowError(
       expect.objectContaining({
         code: expect.stringContaining('DISPOSED_NODE_WRITE'),

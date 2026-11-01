@@ -17,7 +17,7 @@ export const propsFlowScenario: FormScenario = {
   schema: propsSchema,
   initialValue: { name: 'Kim', locked: 'L', off: 'O' },
   steps: [{ action: 'batch', steps: [], expect: {
-    states: { '/locked': { readOnly: true }, '/off': { disabled: true } }, values: { '/name': 'Kim', '/locked': 'L', '/off': 'O' },
+    states: { '/locked': { isReadOnly: true }, '/off': { isDisabled: true } }, values: { '/name': 'Kim', '/locked': 'L', '/off': 'O' },
   } }],
 };
 

@@ -50,12 +50,12 @@ const policyStory = (policy: ShowErrorName): Story => {
 export const Always: Story = policyStory('Always');
 /** Shared scenario `validation-state.show-error` with ShowError.Never. */
 export const Never: Story = policyStory('Never');
-/** Shared scenario `validation-state.show-error` with ShowError.Dirty. */
-export const Dirty: Story = policyStory('Dirty');
+/** Shared scenario `validation-state.show-error` with ShowError.Edited. */
+export const Edited: Story = policyStory('Edited');
 /** Shared scenario `validation-state.show-error` with ShowError.Touched. */
 export const Touched: Story = policyStory('Touched');
-/** Shared scenario `validation-state.show-error` with ShowError.DirtyTouched, the default policy. */
-export const DirtyTouched: Story = policyStory('DirtyTouched');
+/** Shared scenario `validation-state.show-error` with ShowError.EditedTouched, the default policy. */
+export const EditedTouched: Story = policyStory('EditedTouched');
 
 const forcedProbe = createHandleProbe();
 

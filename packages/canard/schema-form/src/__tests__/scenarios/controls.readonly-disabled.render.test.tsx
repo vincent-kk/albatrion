@@ -80,7 +80,7 @@ describe('GAP-10 controls.readOnly driven by a sibling value', () => {
     expect(form.field('/name')).toHaveAttribute('readonly');
     expect(isReadOnly(form.field('/name'))).toBe(true);
     // tree agrees
-    expect(form.node('/name')?.readOnly).toBe(true);
+    expect(form.node('/name')?.isReadOnly).toBe(true);
     expect(form.caughtErrors()).toEqual([]);
   });
 
@@ -92,26 +92,26 @@ describe('GAP-10 controls.readOnly driven by a sibling value', () => {
     // DOM attribute gone, tree computed flag false.
     expect(form.field('/name')).not.toHaveAttribute('readonly');
     expect(isReadOnly(form.field('/name'))).toBe(false);
-    expect(form.node('/name')?.readOnly).toBe(false);
+    expect(form.node('/name')?.isReadOnly).toBe(false);
     expect(form.getValue()?.prepared).toBe(true);
 
     await form.setValue({ prepared: false });
     expect(form.field('/name')).toHaveAttribute('readonly');
-    expect(form.node('/name')?.readOnly).toBe(true);
+    expect(form.node('/name')?.isReadOnly).toBe(true);
   });
 
   it('flips readOnly on a real checkbox toggle of the controlling sibling', async () => {
     const form = await renderForm(computedSchema);
-    expect(form.node('/name')?.readOnly).toBe(true);
+    expect(form.node('/name')?.isReadOnly).toBe(true);
 
     await form.toggle('/prepared'); // -> true
     expect(form.getValue()?.prepared).toBe(true);
     expect(form.field('/name')).not.toHaveAttribute('readonly');
-    expect(form.node('/name')?.readOnly).toBe(false);
+    expect(form.node('/name')?.isReadOnly).toBe(false);
 
     await form.toggle('/prepared'); // -> false
     expect(form.field('/name')).toHaveAttribute('readonly');
-    expect(form.node('/name')?.readOnly).toBe(true);
+    expect(form.node('/name')?.isReadOnly).toBe(true);
   });
 });
 
@@ -121,9 +121,9 @@ describe('GAP-10 controls.disabled driven by a sibling value', () => {
 
     // name undefined -> age disabled; age undefined -> nationality disabled.
     expect(form.field('/age')).toBeDisabled();
-    expect(form.node('/age')?.disabled).toBe(true);
+    expect(form.node('/age')?.isDisabled).toBe(true);
     expect(form.field('/nationality')).toBeDisabled();
-    expect(form.node('/nationality')?.disabled).toBe(true);
+    expect(form.node('/nationality')?.isDisabled).toBe(true);
     expect(form.caughtErrors()).toEqual([]);
   });
 
@@ -135,7 +135,7 @@ describe('GAP-10 controls.disabled driven by a sibling value', () => {
 
     expect(form.getValue()?.name).toBe('Vincent');
     expect(form.field('/age')).not.toBeDisabled();
-    expect(form.node('/age')?.disabled).toBe(false);
+    expect(form.node('/age')?.isDisabled).toBe(false);
   });
 
   it('keeps age disabled when name is too short', async () => {
@@ -145,7 +145,7 @@ describe('GAP-10 controls.disabled driven by a sibling value', () => {
 
     expect(form.getValue()?.name).toBe('abc');
     expect(form.field('/age')).toBeDisabled();
-    expect(form.node('/age')?.disabled).toBe(true);
+    expect(form.node('/age')?.isDisabled).toBe(true);
   });
 
   it('cascades enable down name -> age -> nationality', async () => {
@@ -155,9 +155,9 @@ describe('GAP-10 controls.disabled driven by a sibling value', () => {
 
     // age enabled by name length, nationality enabled by age >= 10.
     expect(form.field('/age')).not.toBeDisabled();
-    expect(form.node('/age')?.disabled).toBe(false);
+    expect(form.node('/age')?.isDisabled).toBe(false);
     expect(form.field('/nationality')).not.toBeDisabled();
-    expect(form.node('/nationality')?.disabled).toBe(false);
+    expect(form.node('/nationality')?.isDisabled).toBe(false);
     expect(form.getValue()).toMatchObject({ name: 'Vincent', age: 20 });
   });
 });
@@ -172,8 +172,8 @@ describe('GAP-10 form-level readOnly prop overrides computed state', () => {
     expect(form.field('/name')).toHaveAttribute('readonly');
     expect(form.field('/age')).toHaveAttribute('readonly');
     // Tree: the node's OWN computed flag is false -> divergence is intentional.
-    expect(form.node('/name')?.readOnly).toBe(false);
-    expect(form.node('/age')?.readOnly).toBe(false);
+    expect(form.node('/name')?.isReadOnly).toBe(false);
+    expect(form.node('/age')?.isReadOnly).toBe(false);
   });
 
   it('maps form-level readOnly onto the enum select disabled attribute while node flags stay false', async () => {
@@ -184,8 +184,8 @@ describe('GAP-10 form-level readOnly prop overrides computed state', () => {
     // select has no readonly attr; readOnly maps to disabled (disabled||readOnly).
     expect(form.field('/nationality')).toBeDisabled();
     // Neither computed flag is set on the node — purely the form-level prop.
-    expect(form.node('/nationality')?.disabled).toBe(false);
-    expect(form.node('/nationality')?.readOnly).toBe(false);
+    expect(form.node('/nationality')?.isDisabled).toBe(false);
+    expect(form.node('/nationality')?.isReadOnly).toBe(false);
   });
 });
 
@@ -195,10 +195,10 @@ describe('GAP-10 form-level disabled prop overrides computed state', () => {
 
     // prepared has no controls.disabled, yet the DOM input is disabled.
     expect(form.field('/prepared')).toBeDisabled();
-    expect(form.node('/prepared')?.disabled).toBe(false);
+    expect(form.node('/prepared')?.isDisabled).toBe(false);
     // name likewise: computed flag false, DOM disabled via rootDisabled.
     expect(form.field('/name')).toBeDisabled();
-    expect(form.node('/name')?.disabled).toBe(false);
+    expect(form.node('/name')?.isDisabled).toBe(false);
     expect(form.caughtErrors()).toEqual([]);
   });
 });
@@ -209,16 +209,16 @@ describe('GAP-10 enum select maps controls.readOnly to the disabled attribute', 
 
     // unlock undefined -> nationality.readOnly true -> select disabled.
     expect(form.field('/nationality')).toBeDisabled();
-    expect(form.node('/nationality')?.readOnly).toBe(true);
+    expect(form.node('/nationality')?.isReadOnly).toBe(true);
 
     await form.setValue({ unlock: true });
     expect(form.field('/nationality')).not.toBeDisabled();
-    expect(form.node('/nationality')?.readOnly).toBe(false);
+    expect(form.node('/nationality')?.isReadOnly).toBe(false);
     expect(form.getValue()?.unlock).toBe(true);
 
     await form.setValue({ unlock: false });
     expect(form.field('/nationality')).toBeDisabled();
-    expect(form.node('/nationality')?.readOnly).toBe(true);
+    expect(form.node('/nationality')?.isReadOnly).toBe(true);
   });
 });
 
@@ -236,11 +236,11 @@ describe('GAP-10 initial-mount priming of computed readOnly/disabled (two-phase)
     // seeded sibling values in BOTH layers (no priming drift).
     await form.flush();
     expect(form.field('/name')).not.toHaveAttribute('readonly');
-    expect(form.node('/name')?.readOnly).toBe(false);
+    expect(form.node('/name')?.isReadOnly).toBe(false);
     expect(form.field('/age')).not.toBeDisabled();
-    expect(form.node('/age')?.disabled).toBe(false);
+    expect(form.node('/age')?.isDisabled).toBe(false);
     expect(form.field('/nationality')).not.toBeDisabled();
-    expect(form.node('/nationality')?.disabled).toBe(false);
+    expect(form.node('/nationality')?.isDisabled).toBe(false);
     expect(form.caughtErrors()).toEqual([]);
   });
 });
@@ -254,11 +254,11 @@ describe('GAP-10 convergence under repeated sibling flips', () => {
     // Even number of toggles -> prepared back to false -> name readOnly again.
     expect(form.getValue()?.prepared).toBe(false);
     expect(form.field('/name')).toHaveAttribute('readonly');
-    expect(form.node('/name')?.readOnly).toBe(true);
+    expect(form.node('/name')?.isReadOnly).toBe(true);
 
     await form.toggle('/prepared'); // -> true
     expect(form.field('/name')).not.toHaveAttribute('readonly');
-    expect(form.node('/name')?.readOnly).toBe(false);
+    expect(form.node('/name')?.isReadOnly).toBe(false);
 
     expect(form.caughtErrors()).toEqual([]);
     expect(
