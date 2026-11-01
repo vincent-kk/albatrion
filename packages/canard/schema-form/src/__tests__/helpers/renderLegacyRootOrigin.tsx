@@ -11,7 +11,7 @@ import {
 import { ValidationMode } from '@/schema-form/core';
 
 /** Render the public Form through React 18's legacy root with a single load warning. */
-export const renderLegacyOrigin = () => {
+export const renderLegacyRootOrigin = () => {
   vi.spyOn(console, 'error').mockImplementation(() => {});
   const ref = createRef<FormHandle>();
   const onError = vi.fn<NonNullable<FormProps['onError']>>();

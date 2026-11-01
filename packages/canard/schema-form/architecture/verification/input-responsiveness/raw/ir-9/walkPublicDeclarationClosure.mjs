@@ -157,11 +157,12 @@ const expected = '- FormErrorRecord.aggregate?: SchemaFormError\n- FormErrorReco
 if (diff !== expected) throw new Error('Unexpected public closure diff:\n' + diff);
 writeFileSync(resolve(output, 'public-declaration.diff'), diff);
 const changed = [...new Set([...base.tree.keys(), ...head.tree.keys()])].filter((name) => base.tree.get(name) !== head.tree.get(name)).sort();
+const publicCarriers = ['errors/index.d.ts', 'errors/type.d.ts'];
 const compact = ({ tree, ...rest }) => JSON.parse(JSON.stringify(rest).split(packageRoot).join('package:').split(repository).join('repository:'));
 for (const [name, report] of [['base', base], ['head', head]]) writeFileSync(resolve(output, `public-closure-${name}.json.gz`), gzipSync(JSON.stringify(compact(report))));
 writeFileSync(resolve(output, 'public-declaration.json'), JSON.stringify({
   baseline,
-  candidate,
+  walker_input_commit: candidate,
   algorithm: 'TypeScript checker; every package export, package-declared properties, signatures, predicates and type arguments; depth 7; full tsc declaration emission before alias post-processing',
   depth: 7,
   export_count: head.exports.length,
@@ -169,7 +170,8 @@ writeFileSync(resolve(output, 'public-declaration.json'), JSON.stringify({
   head_tree_sha256: hashTree(head.tree),
   base_declaration_count: base.tree.size,
   head_declaration_count: head.tree.size,
-  changed_internal_declaration_files: changed,
+  changed_public_declaration_carriers: changed.filter((name) => publicCarriers.includes(name)),
+  changed_internal_declaration_files: changed.filter((name) => !publicCarriers.includes(name)),
   public_changes: [...removed, ...added],
   internal_names_not_reached: ['FieldNodeRuntime', 'batchFieldNodeLoad', 'PendingFormErrorRecord', 'FormErrorService'].filter((name) => !head.reached.includes(name)),
 }, null, 2) + '\n');

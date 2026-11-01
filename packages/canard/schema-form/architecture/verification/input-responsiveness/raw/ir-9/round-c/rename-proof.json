@@ -1,0 +1,20 @@
+{
+  "baseline": "0920ad9c5",
+  "behaviour_changed": false,
+  "files": [
+    {
+      "before": "packages/canard/schema-form/src/__tests__/helpers/renderLegacyOrigin.tsx",
+      "after": "packages/canard/schema-form/src/__tests__/helpers/renderLegacyRootOrigin.tsx",
+      "baseline_sha256": "9d81548fd5ae51ecfda129a2e92bb8de60c71bd53c631303da58e8d4a7eb5994",
+      "candidate_sha256": "7897b2ca7dc38ee815e181b46a34f27d375b09f1270496317cf957f22c837873",
+      "reverse_rename_equals_baseline": true
+    },
+    {
+      "before": "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx",
+      "after": "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx",
+      "baseline_sha256": "b067233eb0eb556e0076af56493684a96b5cfef0411cdda516143fb06952a804",
+      "candidate_sha256": "7d06004148b8adabc4fa906ff23744d83b8da200e11ce41679581aae2c007683",
+      "reverse_rename_equals_baseline": true
+    }
+  ]
+}

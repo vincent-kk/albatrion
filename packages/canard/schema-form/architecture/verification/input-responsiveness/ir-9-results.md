@@ -134,7 +134,7 @@ scratch worktree·branch를 만들지 않아 제거 대상과 잔여 모두 0입
 
 ### 공개 선언과 커밋 이력
 
-[커밋한 walker](raw/ir-9/walkPublicDeclarationClosure.mjs)는 공개 export 97개에서 패키지 선언 속성·시그니처·타입 인자를 깊이 7까지 추적했습니다. 공개 이름·시그니처는 같고 폐포 diff는 aggregate·surface 제거와 필수 origin 추가 세 줄뿐입니다. 전체 emitter 선언은 기준 1,351개, 후보 1,352개이며 SHA256은 각각 `3056c06cb23d58e6dc9f6879688ded32dcfab2fef88933406f5ad54f4a02baae`, `ef7a56281d0961953330cd6bb36d805ae3d9e3f744b2ddf3df73cf263e86eeeb`입니다. 바뀐 내부 선언 21개와 공개 이름으로 도달하지 않는 내부 이름 넷은 [메타데이터](raw/ir-9/public-declaration.json)에 보존했습니다. index.d.ts만 비교한 이전의 빈 diff는 이 증거를 대신하지 못합니다.
+[커밋한 walker](raw/ir-9/walkPublicDeclarationClosure.mjs)는 공개 export 97개에서 패키지 선언 속성·시그니처·타입 인자를 깊이 7까지 추적했습니다. 공개 이름·시그니처는 같고 폐포 diff는 aggregate·surface 제거와 필수 origin 추가 세 줄뿐입니다. 전체 emitter 선언은 기준 1,351개, 후보 1,352개이며 SHA256은 각각 `3056c06cb23d58e6dc9f6879688ded32dcfab2fef88933406f5ad54f4a02baae`, `ef7a56281d0961953330cd6bb36d805ae3d9e3f744b2ddf3df73cf263e86eeeb`입니다. 바뀐 선언 21개(공개 record 운반 파일 2개·내부 선언 19개)와 공개 이름으로 도달하지 않는 내부 이름 넷은 [메타데이터](raw/ir-9/public-declaration.json)에 보존했습니다. index.d.ts만 비교한 이전의 빈 diff는 이 증거를 대신하지 못합니다.
 
 처음 저장한 폐포 gzip 두 개에 checker가 만든 절대 import 경로가 남아 있었습니다. 승인받은 범위인 `daf4ff55f` 이후의 미공개 6개 커밋을 다시 구성해 생성 단계에서 package/repository 상대 표기로 바꿨습니다. [이력 감사·SHA 매핑](raw/ir-9/round-b/history-audit.json)은 각 커밋의 새 텍스트와 전체 gzip snapshot을 해제 검사해 신규 경로 0을 확인합니다. 기존 gzip 중 내용이 같은 것은 원래 blob을 보존했습니다. 제품·시험 blob도 보존했으며 새 제품 SHA는 `e1079152a`, 원래 시험 SHA는 `7448a4b84`입니다.
 
@@ -171,7 +171,7 @@ A1/A6 시험은 리스너가 새 스키마로 reset할 때 blueprint 진단은 l
 write·settle DETAIL의 mount guard 규칙은 현행 계약으로 교정했고 ERROR-041 및 ADR-0014에는 [채택한 review 결정](../../reviews/ir-9-round-b.md)의 보충을 추가했습니다. A6의 생성 중 load/사슬 실행 중 opener 구분은 README 두 언어·SPEC 두 언어·QUICK_REFERENCE·validation-and-state·errors DETAIL에 추가하고 ERROR-017과 ADR에도 보충했습니다. 기준 원장·ADR·설계·계획 줄은 삭제하거나 재배열하지 않았습니다.
 
 
-round b 최종 원장 검사는 보충 인용 3,603→3,605, 원문 불일치·해석 실패 0입니다. 새 보충 두 줄은 parser가 실제 읽는 보충 필드 안에 두었습니다. 결정 원문 불일치 0, ref 문제 0, owner 720/720, 17영역 sentence missing·bad classifications 0이며 기존 plan-links 1·doc-coverage 미인용 66·tokens 잔여 398은 유지합니다. [최종 검사](raw/ir-9/round-b/ledger-checks.json)와 [전체 portable 로그](raw/ir-9/round-b/ledger-logs.json.gz)를 보존합니다.
+round c 배치 교정 뒤 최종 원장 검사는 보충·충돌 인용 3,616, 원문 불일치·해석 실패 0입니다. 새 보충 두 줄은 parser가 실제 읽는 보충 필드 안에 두었습니다. 결정 원문 불일치 0, ref 문제 0, owner 720/720, 17영역 sentence missing·bad classifications 0이며 기존 plan-links 1·doc-coverage 미인용 66·tokens 잔여 398은 유지합니다. [round c 최종 검사](raw/ir-9/round-c/ledger-checks.json)와 [전체 portable 로그](raw/ir-9/round-c/ledger-logs.json.gz)를 보존합니다.
 
 
 ### round b 최종 감사와 한계
@@ -200,3 +200,14 @@ helper import 보정 뒤 lint → typecheck → build → unit → render → re
 | import-model | 2 | 0 | 0 | 0 |
 
 render·verify의 skip 5는 기존 2건과 승인된 React 19 legacy-root 3건입니다. react18 skip 9건과 unit·verify todo 1건은 기존 상태입니다. 최종 관문의 실패를 숨기거나 단언·coverage를 줄인 변경은 없습니다.
+
+
+## IR-9 round c — 원장 배치와 이름 교정
+
+원장 README §3의 보충 필드 규칙에 따라 기존 IR 보충 14줄을 보충 칸으로 옮겼습니다. 까닭 아래의 11줄과 충돌 아래의 3줄을 앞의 빈 줄과 함께 제거한 뒤 지정 `sup-insert.mjs`로 다시 넣었습니다. ERROR-023·VALIDATE-046의 보충 없음은 보충 필드로 바꿨고 ERROR-017·041 뒤에 남은 이중 빈 줄도 정리했습니다. IR-8의 인용 줄에는 기존 인용보다 긴 뒷문장이 있어 도구 삽입 뒤 두 곳을 원래 인용문으로 되돌렸습니다. 인용 내용은 14줄 모두 바이트가 같으며 결정 자체를 바꾼 것은 없습니다.
+
+[배치 교정 증거](raw/ir-9/round-c/placement-correction.json)는 각 항목·기존/현재 위치·인용 해시와 도구 계획을 보존합니다. 원장 전체에서 parsed list 필드 밖의 `>` 줄은 0개이고 IR 보충이 보충 필드 밖에 있는 경우도 0개입니다. sup-check는 보충·충돌 인용 3,616건, 원문 불일치 0·해석 실패 0입니다. 원래 충돌로 집계되던 세 줄은 보충으로 옮겨 집계 총합에 영향을 주지 않고, 이전에 읽히지 않던 11줄이 새로 집계됩니다.
+
+React 18 legacy root helper는 `renderLegacyRootOrigin`과 같은 이름의 파일로 바꿨습니다. frozen `__legacy__` 엔진을 뜻하는 이름으로 읽히지 않도록 한 rename이며 모든 소스 참조를 함께 바꿨습니다. [rename-only 증거](raw/ir-9/round-c/rename-proof.json)는 새 이름을 되돌리면 helper·호출자 바이트가 기준 `0920ad9c5`와 같음을 확인합니다. 제품 로직과 시험 단언은 그대로이며 이전 round의 raw 해시는 당시 커밋의 역사적 증거로 보존합니다.
+
+선언 메타데이터에서 errors/index.d.ts·errors/type.d.ts는 공개 record의 운반 파일로 분리했고 내부 변경 목록은 19개입니다. 전체 변경은 여전히 21개이며 공개 폐포 diff 세 줄·선언 트리 해시는 같습니다. 입력 SHA 필드는 `walker_input_commit`으로 이름을 바꿔 walker가 읽은 커밋임을 명시했고 writer도 같은 필드를 출력합니다.

@@ -286,13 +286,12 @@
   > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
   > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
   > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:51`(정본), `08-design-a-to-z.md:355`, `03-mental-model.md:180`(맥락: "둘 이상의 오류는 `SchemaFormError`의 `details.errors`로 묶는다(`AggregateError`·`cause`는 쓰지 않는다)")
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:51`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-006 환경 규칙 — 정착·통지 오류는 모든 환경에서 같게 드러남
 
@@ -480,14 +479,12 @@
 - 보충:
   > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
   > 편집자 결정(IR-9 round b): "【추론】 IR-9 round b: 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다. 새 runtime에서 트리를 만들고 DialectMismatch를 직접 보고하므로 생성은 별도 load 연산이다." (`reviews/ir-9-round-b.md:4`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:106-118`(정본), `08-design-a-to-z.md:359`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:74`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
-
 
 ### ERROR-018 층과 level의 대응
 
@@ -519,13 +516,12 @@
   > 편집자 결정(90C-02): "【추론】 ERROR-019는 "한 사건에 기록 하나이며, 발생 순서대로 부른다"와 2번 "정착 도중에는 부르지 않는다"를 정했고 89C-01은 정착 도중의 동기 보고가 있으면 보존할 경계가 아니라 결함이므로 발견한 07이 고치라고 했다. 사슬 없는 내부 정착에서 게이트 평가가 검증기 부재(ERROR-147의 경고 기록)를 보고자에게 직접, 그것도 두 번 부른 것은 두 문장을 모두 어기고, 커밋이 통째 값의 JSON 부정합 경고(VALUE-037의 가칭 `NON_JSON_WHOLE_VALUE`)를 콘솔에 즉시 낸 것은 둘째를 어긴다. 둘을 기록으로 보관해 사슬 끝에 보내는 수정은 원장대로이고, 회귀 시험 둘의 붉음에서 초록이 증거다. 귀속은 고친 파일로 적는다(게이트 평가와 검증기 부재의 보고는 05의 통지·검증, 커밋의 경고는 03의 정착에 05가 얹은 보고 경로) — `plan/07-switch/log.md` §8에 한 줄씩." (`reviews/round-90-closing.md:16`)
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
   > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 전체 컴파일 실패는 캐시 항목마다 거부 객체 하나를 쓰므로, 폼이 이미 onError로 보고한 그 객체의 네이티브 submit 거부는 onError에 다시 보내지 않고 호스트 싱크에만 보고한다." (`reviews/ir-8-round-b.md:3`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:122-132`(정본), `08-design-a-to-z.md:361`, `09-landing-and-test-strategy.md:48,174`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `09-landing-and-test-strategy.md:48`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-020 렌더 중 보증의 범위
 
@@ -545,13 +541,12 @@
 - 보충:
   > 편집자 결정(31C-02): "【추론】 ERROR-021이 "예외는 하나다"라고 적은 가드 컴파일 실패의 시점 차이에, 18라운드 뒤 블록 WRITE-099가 둘째 예외를 더했다: `NON_JSON_WHOLE_VALUE`의 깊이 점검은 핸들러가 있어도 프로덕션에서는 돌지 않는다. 뒤 결정이 이기므로 운영 모드에서 핸들러가 받지 못하는 경고는 이 코드 하나다." (`reviews/round-31-closing.md:20`)
   > 편집자 결정(31C-02): "【추론】 `RESET_REBUILT_BY_REFERENCE`(ERROR-196)와 `MULTIPLE_GATED_BRANCHES_ACTIVE`의 "개발 모드이거나 핸들러가 있을 때만 판정"은 판정 비용(순회 한 번 더)을 소비자가 없을 때 아끼는 것이라 ERROR-021과 어긋나지 않는다: 핸들러가 있으면 프로덕션에서도 판정하고 전달한다. 구현은 이 둘을 `hasConsumer()`로, `NON_JSON_WHOLE_VALUE`를 개발 모드 조건으로 거르며, 나머지 경고는 ERROR-021대로 판정하고 소비자가 있으면 전달한다." (`reviews/round-31-closing.md:21`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:135`(정본), `08-design-a-to-z.md:362`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:135`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-022 기본 출력과의 관계 — 오류·경고의 기본 드러남
 
@@ -579,14 +574,13 @@
   > - 원시값(문자열, 숫자)은 `WeakSet`에 넣을 수 없으므로 표지 없이 사건마다 보낸다. 이펙트에서 연 사슬의 원시값 throw가 필드 바운더리에 다시 잡히면 두 번 갈 수 있다.
   > - 검증 불가는 한 로드에 오류 객체 하나이며, 그 로드에서 처음 드러날 때 한 번 보낸다.
   > - 묶음은 구성 오류마다 기록하고, 묶음 자체는 `aggregate` 칸으로만 싣는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:144-150`(정본), `09-landing-and-test-strategy.md:48,174`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:146-150`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-024 중복 막기 — 경고
 
@@ -850,14 +844,12 @@
   > 편집자 결정(55C-02): "【추론】 소비자가 `bind(instance)`로 넘긴 인스턴스의 설정은 VALIDATE-003대로 소비자의 책임이고 VALIDATE-033은 가드용 인스턴스가 `allErrors: false` 말고는 같은 설정을 따르게 했으므로, 플러그인이 가드 인스턴스에서 `strictTypes`·`strictRequired`를 몰래 끄는 것은 두 항목에 어긋난다; 그런 인스턴스에서 일부 가드가 컴파일에 실패하면 ERROR-041대로 그 게이트의 가드 실패(정착 오류, `onError` 기록)로 드러나고 전체 검증은 그대로이므로, "엄격 옵션을 켠 인스턴스를 바인딩하면 일부 `if` 가드가 컴파일에 실패해 그 게이트가 거짓이 될 수 있다(strict 모드는 기본이 아니다, VALIDATE-005)"를 플러그인 문서에 적는 문서화된 한계다. 두 가드 경로 모두 같다." (`reviews/round-55-closing.md:17`)
   > 소유자(126라운드, 조건부 분기의 최적화 기준): "이 케이스는 구판 폼엔 없는 기능이니까, 완전히 16.67ms 윈도우를 기반으로 최적화를 해야할거 같네. 지금 하자는건 아닌데 말이야" (`reviews/round-126-owner-answers.md:7`) — 검증기 가드로 켜지는 if/then/else 분기는 옛 판 대비 배율이 아니라 16.67 ms 프레임 예산의 절대 기준만으로 개선 단계에서 최적화한다(원장 관리자, 2026-10-08).
   > 편집자 결정(IR-9 round b): "【추론】 IR-9 round b: 코덱스 교차 검토가 확인한 enclosed mount의 GUARD_FAILED 오류를 수정한다. 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write). Amendment 1의 mountingGuardPass이면 load로 고정한다는 문장은 이 결정이 대체하며 개발·운영의 origin 차이를 끝낸다." (`reviews/ir-9-round-b.md:3`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:218`(정본), `08-design-a-to-z.md:180`, `adr/0004-validator-plugin-compile-guard.md:9,46,78`, `08-design-a-to-z.md:345`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `08-design-a-to-z.md:180`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
-
 
 ### ERROR-042 검증기 관련 이주 안내
 
@@ -2147,13 +2139,12 @@
 - 보충:
   > 편집자 결정(201C-01): "【추론】 ERROR-139는 "어디로 드러나는가"를 적었고 ERROR-016·019는 "무엇이 기록되는가"를 적어 둘을 합치면 검증 거부는 싱크만이다. 제품이 이미 그렇고 스토리가 고정하니 문서 한 문장만 맞추면 된다." (`reviews/round-201-closing.md:9`)
   > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 전체 컴파일 실패는 캐시 항목마다 거부 객체 하나를 쓰므로, 폼이 이미 onError로 보고한 그 객체의 네이티브 submit 거부는 onError에 다시 보내지 않고 호스트 싱크에만 보고한다." (`reviews/ir-8-round-b.md:3`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:203#5`(정본, ERROR-034에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:203`)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:203`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-140 제출 거부는 렌더 계층의 일이다
 
@@ -2584,6 +2575,8 @@
   > 편집자 결정(463C-02): "【추론】 462C-04의 계약을 codex 워커에 위임해 구현했고, 구현 중 물음에 다음을 정해 계약(`plan/branch-switch/exit-value.md`)에 적었다: 콜백 가운데 `undefined`가 아닌 반환이 있으면 그 값, 없으면 `inactiveValue`, 그것도 `undefined`면 기존 보존값; 한 노드의 여러 콜백은 등록 순서대로 모두 호출하고 마지막 `undefined`가 아닌 결과 채택, 던지면 그 노드의 override 전체 취소와 정착 실패 기록; 자동 쓰기가 억제된 정착(`disableAutomaticWrites`, 실패·예산)과 load·reset·던진 나감·들어오기만 한 엔트리는 `unsetOnInactive`와 같은 범위로 제외; 나감을 일으킨 쓰기가 그 경로 값을 JSON으로 명시하면 명시값이 이기고 resolver 미실행, 덮임은 쓰기의 JSON이 그 경로를 덮는지로 보되(조상 whole은 자손까지, merge는 있는 키만, 서브트리 생략이면 실행) 한 배치 안에서는 합집합(뒤따르는 빈 merge가 whole 덮임을 거두지 않음). 독립 검토는 후보 1 FAIL(P1 1: 배열 재키와 나감이 겹치면 새 경로로 직전 스냅샷을 읽어 다른 아이템의 값을 받음 — 옛 주소로 읽도록 고침; P2 2: 키 형이 `unknown`으로 접힘, 자손 결과가 지워진 조상 아래 되살아남)에서 Delta 1~5 CONDITIONAL PASS(P1·P2 0)까지 다섯 번이었고, Delta 2는 폼 입력의 merge 쓰기가 whole로 읽히는 P2를, Delta 3·4는 장치 결함(`verifyInputs`·`readConfig`가 `.noindex` 루트를 거부)을 찾았다. 창은 넷: 창 1 후보 무효(재키 결함 발견), 창 2 환경 실패(`mds` 58 %, B8의 `mds_stores`에 이어 같은 원인 두 번째라 장치 수정 뒤 재시도), 창 3 장치 실패(루트 검사), 창 4 채택(TEST-073 0, 장부 총합 A 폭 안, Node 힙 B 중앙 1439.97 ≤ A 최대 1895.47). 장치 수정 셋: 준비 루트와 원시 폴더를 `.noindex`로, Spotlight 계열(`mds`·`mds_stores`·`mdworker`)만 시작 지연 허용 600초, 창 전 실제 CLI 예행(1행·1프로세스·예열 1/표본 1, 정식 마커 없음). 최종 관문 다섯 프로젝트·verify 실패 0, 배달 429점 차이 0 + 새 7장면 21관측점, 선언 94 → 97(멤버 하나·형 셋·키 하나·경고 둘). 단계 병합의 도구 충돌 다섯은 런타임 해시 불변으로 창 없이 병합했다(`c71495815`). 원장 코드 시험(ERROR-164)은 경고 멤버 둘을 기대값에 명시했고 정본에는 보충으로 적는다." (`reviews/round-463-closing.md:10`)
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
   > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 전체 컴파일 실패는 캐시 항목마다 거부 객체 하나를 쓰므로, 폼이 이미 onError로 보고한 그 객체의 네이티브 submit 거부는 onError에 다시 보내지 않고 호스트 싱크에만 보고한다." (`reviews/ir-8-round-b.md:3`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: 사슬을 연 최외곽 연산이 origin을 정하며 중첩·adoption에 보존한다. reset·rebuild·validator 교체와 최초 외부 errors 적용은 load, 공개 쓰기와 prop errors 변경은 write, 검증 컴파일·실행·판정 파동과 그 리스너는 validate, SubmitWhileDegraded와 native capture 최초 실패는 submit, 렌더 경계·ChildNodeComponentsOnTerminal은 render이다. write 리스너나 onChange의 reset은 write이며 reset의 중첩 쓰기는 load이다. 개발 warnDevelopmentIssue는 기록이 아니다." (`reviews/ir-9-onerror-origin.md:4`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:248-300`(정본, ERROR-044에서 분할), `reviews/round-18-closing.md:386-387,661,670,731-733`, `reviews/round-18-closing.md:2458-2461,2550,2581`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14·18C-21·18C-24), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED` 행), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -2598,10 +2591,6 @@
   > `reviews/round-18-closing.md:2458`의 "형 없는 칸의 빈 U와 객체·배열 분기(`:30`·`:33`)"는 19라운드 결정과 다르다: "형 없는 칸의 빈 U와 객체·배열이 다른 종류와 섞인 분기"로 읽고, "분기도 `const`·`enum`도 없는 형 없는 칸"과 "리터럴의 종류가 섞이거나 객체·배열인 `const`·`enum`"을 더한다(BLUEPRINT-048, BLUEPRINT-050). 19라운드 결정이 이긴다(`reviews/round-19-closing.md:22,43`).
   > `adr/0014-error-policy.md:257`의 "오늘에만 명시. 새 설계 분류표에 자리가 없어 이 표에 더함"은 18라운드 결정과 다르다: 새 설계에도 있으며 코드는 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)이고, 공개 API에서 오면 호출자 오류, 자동 쓰기에서 오면 정착 오류(`cause` (가칭) `'writeShape'`)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:661,670`).
   > `adr/0014-error-policy.md:264`의 "새 설계에서 셋으로 나뉨"은 18라운드 결정과 다르다: 정적 대상 없음(`INJECT_TARGET_NOT_FOUND`)은 낼 자리가 없어 빠지므로 둘(동적 대상 없음 `INJECT_TARGET_MISSING`, 식 예외 `EXPRESSION_THREW`)로 나뉜다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386-387`).
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: 사슬을 연 최외곽 연산이 origin을 정하며 중첩·adoption에 보존한다. reset·rebuild·validator 교체와 최초 외부 errors 적용은 load, 공개 쓰기와 prop errors 변경은 write, 검증 컴파일·실행·판정 파동과 그 리스너는 validate, SubmitWhileDegraded와 native capture 최초 실패는 submit, 렌더 경계·ChildNodeComponentsOnTerminal은 render이다. write 리스너나 onChange의 reset은 write이며 reset의 중첩 쓰기는 load이다. 개발 warnDevelopmentIssue는 기록이 아니다." (`reviews/ir-9-onerror-origin.md:4`)
 
 ### ERROR-165 §7.2 코드 목록 — (미정) 행
 
@@ -3037,13 +3026,12 @@
 - 보충:
   > 편집자 결정(35C-01): "【추론】 ERROR-197의 던짐(`type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다, 기록에 `path`와 `details.method`)은 PR-5가 만드는 배열 행의 공유 칸에 사는 것이라 PR-5의 몫이고, NODE-014대로 메서드는 단일 클래스에 두되 형은 공개 `ArrayNode` 인터페이스에만 준다." (`reviews/round-35-closing.md:9`)
   > 편집자 결정(35C-01): "【추론】 "throw 직전에 `onError`로 보낸다(surface `'thrown'`)"는 PR-4의 보고기를 쓰므로 33C-01의 디스패치 배선과 함께 뒤에 머지하는 단계가 더한다; 06이 먼저 머지되면 공유 칸은 던지기만 하고 보고를 시도하지 않으며, 그 자리의 DETAIL에 배선 PR이 보고를 더한다는 한 줄을 남긴다. 코드 이름은 가칭 그대로 쓰고 05의 확정 목록(31C-05)에 든다." (`reviews/round-35-closing.md:10`)
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:709-713`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:715-717`
-
-  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-198 §7.2의 (미정) 행을 닫는 규칙 — 넷의 처분, 18라운드가 더하는 행, `if` 공허한 참 경고 없음, `INJECT_TARGET_NOT_FOUND` 빠짐
 
@@ -3110,13 +3098,12 @@
   > 편집자 결정(31C-03): "【추론】 `reason`은 새 코드가 아니라 기록의 `details` 칸이며, 그 값은 코드마다 원장이 이름 붙인 것으로 닫힌 리터럴 합집합이다: `VALUE_TYPE_MISMATCH`는 `'unconvertible'`·`'ambiguous'`(VALUE-037), `DISCRIMINATOR_MISMATCH`는 `'missing'`·`'kind'`·`'overlap'`·`'key'`(25C-12), `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`는 `'duplicateSchemaId'`(ERROR-201, 가칭) 하나다." (`reviews/round-31-closing.md:28`)
   > 편집자 결정(31C-03): "【추론】 원장이 이름 붙이지 않은 원인(예: 검증기 `compile`이 던짐)에는 `reason`을 싣지 않고 그 코드의 ERROR-164 행이 정한 `details`(원래 예외 등)만 싣는다; 값을 하나 더하는 것은 원장 항목이지 코드만의 변경이 아니다." (`reviews/round-31-closing.md:29`)
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
+  > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1587-1591`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1593-1596`
-
-  > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
 
 ### ERROR-202 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` — 터미널 노드 입력이 빈 `ChildNodeComponents`를 읽을 때의 렌더 계층 경고
 

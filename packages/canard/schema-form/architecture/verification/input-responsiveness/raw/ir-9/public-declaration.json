@@ -1,6 +1,5 @@
 {
   "baseline": "f4018e82b",
-  "candidate": "4dcf6646f995212e562916afcc0ad0de8f17e0a1",
   "algorithm": "TypeScript checker; every package export, package-declared properties, signatures, predicates and type arguments; depth 7; full tsc declaration emission before alias post-processing",
   "depth": 7,
   "export_count": 97,
@@ -25,8 +24,6 @@
     "core/index.d.ts",
     "core/surface/index.d.ts",
     "core/surface/utils/binding/batchFieldNodeLoad.d.ts",
-    "errors/index.d.ts",
-    "errors/type.d.ts",
     "providers/FormErrorContext/type.d.ts",
     "providers/RootNodeContext/type.d.ts",
     "providers/RootNodeContext/utils/applyFormErrors.d.ts"
@@ -41,5 +38,10 @@
     "batchFieldNodeLoad",
     "PendingFormErrorRecord",
     "FormErrorService"
+  ],
+  "walker_input_commit": "4dcf6646f995212e562916afcc0ad0de8f17e0a1",
+  "changed_public_declaration_carriers": [
+    "errors/index.d.ts",
+    "errors/type.d.ts"
   ]
 }

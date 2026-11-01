@@ -14,7 +14,7 @@ import {
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
 import { observeErrorSink } from '../helpers/observeErrorSink';
-import { renderLegacyOrigin } from '../helpers/renderLegacyOrigin';
+import { renderLegacyRootOrigin } from '../helpers/renderLegacyRootOrigin';
 
 // Public Form callbacks are the observation boundary for every origin.
 afterEach(() => {
@@ -218,13 +218,13 @@ it.each(['mount', 'reset', 'rebuild'] as const)(
 
 it('round b React 18 legacy-root mount has exact operation records', (context) => {
   if (inject('reactMajor') !== '18') context.skip();
-  const { onError } = renderLegacyOrigin();
+  const { onError } = renderLegacyRootOrigin();
   assertRecords(onError, 'load', FormWarningCode.Misfit);
 });
 
 it('round b React 18 legacy-root reset has exact operation records', (context) => {
   if (inject('reactMajor') !== '18') context.skip();
-  const { ref, onError } = renderLegacyOrigin();
+  const { ref, onError } = renderLegacyRootOrigin();
   onError.mockClear();
   act(() => ref.current!.reset());
   assertRecords(onError, 'load', FormWarningCode.Misfit);
@@ -232,7 +232,7 @@ it('round b React 18 legacy-root reset has exact operation records', (context) =
 
 it('round b React 18 legacy-root write has exact operation records', (context) => {
   if (inject('reactMajor') !== '18') context.skip();
-  const { ref, onError } = renderLegacyOrigin();
+  const { ref, onError } = renderLegacyRootOrigin();
   const failure = new Error('legacy write');
   ref.current!.node!.subscribe(() => {
     throw failure;
