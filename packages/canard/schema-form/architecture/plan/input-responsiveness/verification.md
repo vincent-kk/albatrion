@@ -353,3 +353,14 @@ Phase 2 커밋에서 clean-build 기록에도 check:browser-results --audit-base
 - Phase 1b의 두 파일 무결성 문장: gate/derive 두 현재 해시만 기록하는 설명은 모든 non-test decision code의 current SHA=toolHashes[key]=toolCommit blob SHA 검사로 대체합니다. committed diff 범위에는 stageClosing, checker, 두 derive, validationAfterPaint, summarize 계열 및 input-responsiveness fixtures를 포함합니다.
 
 Phase 2a는 사전등록 커밋, fresh B/S 및 최종 stage 제품의 F 빌드, 전체 smoke와 checker, unit·typecheck·lint까지만 승인되었습니다. 아홉 validator work 행의 F/B 불일치가 있으면 예외를 추가하지 않고 코디네이터에게 보고한 뒤 중지합니다. clean-build 기록에 check:browser-results --audit-base=<preregisteredCommit> 경로 감사를 적용합니다. 정식 측정 창은 다음 go 이후에만 시작합니다.
+
+
+### 단계 마감 측정 — Phase 2a 준비 실행 기록
+
+최종 stage 5df0bf2ad 위의 ba49b312ca8aed6c69550bf068b3e72c6f40c0fe에 Amendments 3–7 소스·사전등록을 고정했습니다. B/S를 새 clean Orca 체크아웃에서 빌드했고 F 제품의 source tree는 최종 stage와 일치합니다. 전체 build 성공 기록과 동결 inputs를 61e4442f1aac15edd9e8d68a66b0dac522934389에 보존한 뒤 두 임시 체크아웃 및 브랜치를 제거했습니다. 초기 타입 검사 실패는 로컬 AJV/플러그인 선언 연결 문제였으며 제품 소스를 바꾸지 않고 연결을 바로잡은 전체 build 재실행은 모두 exitCode:0입니다.
+
+24행·95개 kept smoke page와 150회 연산을 저장하고 checker로 지표·순서·node identity를 재현했습니다. 다섯 mount 및 네 operation 행의 compile/validate 평균이 모두 F=B이고 F unattributed=0이며 예외 목록은 비어 있습니다. smoke의 toolCommit은 61e4442f1aac15edd9e8d68a66b0dac522934389입니다. 이 표본은 행·lane당 warmup 1개 폐기 및 kept 1개인 준비 검증이며 정식 창의 성능 판정이 아닙니다.
+
+경로 감사가 커밋된 inputs의 1MiB 초과 source-tree proof diff에서 ENOBUFS로 중단되는 문제를 발견했습니다. 신규 큰 tracked addition을 끝까지 검사하는 회귀 테스트로 먼저 재현한 뒤 git diff stdout 버퍼 상한을 32MiB로 늘렸습니다. 이는 경로 검사를 생략하지 않으며 상한 초과는 계속 실패합니다. 검사 조건·등록 규칙 값·제품·브라우저 번들과 수집한 smoke는 바꾸지 않습니다. 이 도구 보완 뒤 같은 저장 자료에 --smoke --write 및 경로 감사를 적용하며 브라우저 수집은 다시 실행하지 않습니다. 정식 창은 다음 go를 기다립니다.
+
+Phase 2a 최종 검증: 전체 benchmark-form 20개 파일·132개 테스트 통과, 브라우저 typecheck 통과, lint 경고 0개입니다. 압축 smoke 보존본도 checker로 재현했으며 --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe 경로 감사에서 신규 machine path는 0개입니다. 원래 1MiB 감사 버퍼에서 새 회귀 테스트가 ENOBUFS로 실패하고 보완 후 큰 입력 통과·끝의 machine path 거절을 모두 확인했습니다. 정식 창은 실행하지 않았습니다.

@@ -13,11 +13,10 @@ import { gunzipSync } from 'node:zlib';
  */
 export function checkAddedMachinePaths(repository: string, base: string): void {
   assert.match(base, /^[a-f0-9]{7,40}$/i, 'Audit requires a commit SHA');
-  const changed = execFileSync(
-    'git',
-    ['diff', '--name-only', '-z', base],
-    { cwd: repository, encoding: 'utf8' },
-  )
+  const changed = execFileSync('git', ['diff', '--name-only', '-z', base], {
+    cwd: repository,
+    encoding: 'utf8',
+  })
     .split('\0')
     .filter(Boolean);
   const untracked = execFileSync(
@@ -39,8 +38,21 @@ export function checkAddedMachinePaths(repository: string, base: string): void {
     } else {
       const diff = execFileSync(
         'git',
-        ['diff', '--no-ext-diff', '--no-textconv', '--unified=0', base, '--', file],
-        { cwd: repository, encoding: 'utf8' },
+        [
+          'diff',
+          '--no-ext-diff',
+          '--no-textconv',
+          '--unified=0',
+          base,
+          '--',
+          file,
+        ],
+        {
+          cwd: repository,
+          encoding: 'utf8',
+          // Committed source-tree proofs exceed the default 1MiB stdout buffer.
+          maxBuffer: 32 * 1024 * 1024,
+        },
       );
       const lines: string[] = [];
       let inHunk = false;
@@ -51,7 +63,10 @@ export function checkAddedMachinePaths(repository: string, base: string): void {
       }
       additions = lines.join('\n');
     }
-    assert.ok(!machinePath.test(additions), file + ' contains a new machine path');
+    assert.ok(
+      !machinePath.test(additions),
+      file + ' contains a new machine path',
+    );
   }
   console.log(`BROWSER_CHANGES_AUDIT_OK base=${base} newMachinePaths=0`);
 }
