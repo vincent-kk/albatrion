@@ -1,0 +1,38 @@
+{
+  "baseline": "f4018e82b",
+  "test_commit": "eda18be3f",
+  "product_diff_zero": true,
+  "test_sha256": {
+    "packages/canard/schema-form/src/__tests__/e2e/onError.chain-origin.render.test.tsx": "b7150e57dc49902d57c4fb7915f1f835b8b74e981383e651495c1ae123f3daa7",
+    "packages/canard/schema-form/src/__tests__/e2e/onError.origins.render.test.tsx": "28fb08e2f7b435c14132d2c64dda016e59572b3fdc943056e42759de86eb6d7d",
+    "packages/canard/schema-form/src/__tests__/e2e/validation-reset-report.test.tsx": "2a858e38ad22bd6218b61bfc8c07cf8e593e51e946f049fce66aa2c9b30a471d",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.after-paint.render.test.tsx": "17f32e595e797a27433015788fedaea2659217928c4bf314a18a66886dfbd883",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot-failures.render.test.tsx": "d9250387a915a3a7a1cc213511507cdaef3ad3820ea9ec3b3f5812a3b221ef07",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.load-slot.render.test.tsx": "f715242665dd3e7f39b157fd6711a820f7d652a2ae67c2cd39670962560548b1",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.mount-always.render.test.tsx": "127cf88c73a196457c33dfe993978a86015cf97fd5541d1305373a5d4f662ecd",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.mount-owed.render.test.tsx": "098302936d45da0172a07da0fb63190bcaf88976a1da2b1115fff766ba763b49",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": "727042c9177607f82d9f43133f8adf2df1b41cebd59e8dca96a92b370c2e5586",
+    "packages/canard/schema-form/src/__tests__/migration/form-lifecycle.test.tsx": "bbecd730368a4db929b8c315eff64edbf0fff76b728be3d4c85649b020524f7d",
+    "packages/canard/schema-form/src/components/FieldProxy/__tests__/rendererBoundary.test.tsx": "4d790293195bd44b336d292647969964ddd2bcb73c7e71863cf55bc0f0cd3ec3",
+    "packages/canard/schema-form/src/core/__tests__/scenarios/array.source-b-structure.spec.ts": "b6597cf5d04527f71e45c04ce68d90cf6a84b517f27893b109184508c0ad4ad7",
+    "packages/canard/schema-form/src/core/engine/__tests__/validation-guard-integration.test.ts": "fe2478ca6a1aebec7d074a038abc56e3645b1bfc59ecb014d4312beb0dda51d2",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.compile-failed.test.ts": "a4e24acc162c2341ca72a17d584fe26b23484667c7b9c610fd0f857e3f23acd7",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.run.test.ts": "53549fa380ffa9dbf81d2939e8f4535f9ffb7ef7763a913be6ad7bf7d422e17d",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.same-id.test.ts": "8e20ebedbfc2bd430e70af0167bcb1f112541d97df84b5af094837a07e88522e",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.all-failures.test.ts": "af7d04fc0ba33f55fc2bbec1ce6cd0b64f58899993e28f3b1ac6133a7c5cc3ce",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.array-entry.test.ts": "ff54ddbfc790f3a9aab18dadf0bf45ccfe92cb41ddbbc92f27020a6a2736ee12",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.bundle.test.ts": "cd9432798ef3374f6f4981377ca296d98adcd866379a3642f0e8a4831f9429a9",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.gate-failures.test.ts": "979dda416bb6131f2fca3b909d663314ffd3526cab7fb95c376ac0cbfdff0b21",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.report.test.ts": "6c73d96bb45393d1eccdf7b8a4c1f0b2b67e511803dd6362c410ae0929b5bc1e",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.source-path.test.ts": "9355f39adf1f97a44b2c0020440018abcc54e89de523486d76d02c428bcdcf8f",
+    "packages/canard/schema-form/src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts": "6361008d7dd69179fabd5ab82f191ec4c1abc72d8caef9999619361e51fb4820"
+  },
+  "total": 287,
+  "passed": 167,
+  "failed": 117,
+  "report": "red-tests.json.gz",
+  "excluded_setup_runs": [
+    "missing dependency dist",
+    "symlinked dependency React resolved outside worktree"
+  ]
+}
