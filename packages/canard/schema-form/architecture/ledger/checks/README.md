@@ -1115,7 +1115,7 @@ architecture의 텍스트 2762개와 gzip 2925개를 감사해 지정된 세 경
 
 ### 추가 정정: DR-6 관문 조건(2026-11-02)
 
-기준 HEAD `2b0e70946ebabd91cc2c113c66266e9d2492939b`에서 앞의 힙 스냅숏 삭제 정정과 기존 노트 전체를 보존한 채 이 절만 덧붙입니다. 기록의 경로 문자열을 추가 교정했으며 제품 로직·제품 시험·manifest·lockfile은 바꾸지 않았습니다. 원장 항목·결정·보충을 추가하지 않아 `sup-insert.mjs` 삽입 대상도 없습니다.
+기준 HEAD `3f59c791f65c3c598fea04909eedc778d79b9f38`에서 앞의 힙 스냅숏 삭제 정정과 기존 노트 전체를 보존한 채 이 절만 덧붙입니다. 기록의 경로 문자열을 추가 교정했으며 제품 로직·제품 시험·manifest·lockfile은 바꾸지 않았습니다. 원장 항목·결정·보충을 추가하지 않아 `sup-insert.mjs` 삽입 대상도 없습니다.
 
 #### 파일명·이스케이프 접두사 교정과 횟수
 
@@ -1869,3 +1869,46 @@ packages의 추적 파일 11166개와 gzip 2931개(architecture 2925개)를 검�
 기존 `gates.py`의 26개 명령을 추가 교정 후 및 노트 추가 후 실행하고 앞선 final 결과와 요약을 대조했습니다. sup-check 3640/0/0, verbatim-check 1416/327/0, ref-check 1416/0, owner-cited 720/720/0, 문장 17영역 누락·오분류 0, tokens 2390/397, 기존 plan 문제 1·doc 미인용 66을 유지합니다. 제품 시험·빌드·FCA 재실행을 이 기록 변경의 증거로 주장하지 않습니다.
 
 이번 노트 추가 전 README SHA-256은 `0379b98101a22a471501dbbcc5a904b8c2e825def3d38f0f9a6fae85ae50a195`입니다. 최종 README SHA는 자기 참조를 피하기 위해 새 HEAD 고정 PR 본문에 따로 기록합니다. 감사 스크립트·단계별 manifest·상세 출력은 실행 scratch의 `dr-6/gate-conditions/`에 두며 커밋하지 않습니다.
+
+### 마지막 주석: 검토 산문과 보관 도구의 재실행 제한(2026-11-02)
+
+이 절은 이전 노트의 원문을 유지하면서 마지막 P3 세 항목을 보완합니다. 허용된 예외로 앞 절 1118행의 기준 SHA 인용 한 곳만 다시 작성된 이력의 `3f59c791f65c3c598fea04909eedc778d79b9f38`로 고쳤으며, 그 밖의 기존 바이트는 모두 보존했습니다. 현재 작업 가지 이름은 `feat/schema-form-dr-6-records`입니다.
+
+#### 검색 루트·검사 문구의 자리표시자
+
+다음은 개별 기계 경로가 아니라 검색 루트나 검사 규칙을 가리키던 줄도 자리표시자로 읽히게 된 16곳입니다. 되돌리면 금지 경로 문자열이 재유입되므로 원문 복원 없이 이 의미 차이를 보존합니다.
+
+| 위치 | 의미 보완 |
+| --- | --- |
+| `verification/branch-switch/reviews/pr-b7-candidate-5-claude.md:27`, `pr-b7-candidate-6-claude.md:34`, `pr-b9-0-candidate-1-claude.md:105`, `pr-b9-0-candidate-2-claude.md:112`, `pr-b9-1-candidate-1-claude.md:183`·`:249` | 앞 절에 나열한 검색 루트 여섯 곳이며 현재 자리표시자 자체를 검색해 원래 검토를 재현했다는 뜻이 아닙니다. |
+| `reviews/round-444-closing.md:18`, `:26`, `:57` | 금지 규칙 검사 결과가 지금은 `{home}/` 0줄·0건으로 읽힙니다. 이 자리표시자를 검사 규칙으로 삼은 실행은 없었으므로, 치환 뒤 문구를 실제로 실행한 검사의 이름으로 읽으면 안 됩니다. |
+| `verification/branch-switch/reviews/pr-b12-candidate-1-claude.md:581`, `:664`, `:802` | 위생 검토에서 금지 검색 루트를 열거한 세 곳도 자리표시자로 바뀌었습니다. 현재 문구의 자리표시자 부재를 별도 검사한 결과가 아닙니다. |
+| `verification/branch-switch/raw/b12/independent-review.md.gz:581`, `:664`, `:802` (해제 뒤 줄) | 같은 검토의 원자료 세 곳도 검색 루트의 의미가 약해졌습니다. 이 사본에는 더 앞선 비식별화 표기 `<users>/`·`<tmp>/`도 남으므로 검토 Markdown과 바이트가 같다는 주장은 아닙니다. |
+| `verification/branch-switch/reviews/pr-b9-0-candidate-1-claude.md:75` | 서로 다른 private·일반 macOS 임시 폴더 루트가 모두 `{tmp}/…`가 돼 검토가 비교하던 두 루트의 구분을 잃었습니다. 두 검토 대상을 하나의 실제 루트로 판정한 뜻은 아닙니다. |
+
+#### 정규화·누출 검사 도구의 조용한 무력화
+
+앞 절의 새 이스케이프 교정 13회 가운데 정규화·누출 검사에 들어 있던 일반 루트는 11회입니다. manifest와 diff를 대조해 코디네이터 확인을 받았으며, 나머지 2회는 context와 runWindow의 실행 디렉터리 guard입니다.
+
+| 보관 도구·스냅숏 | 일반 루트 교정 횟수 |
+| --- | --- |
+| `verification/branch-switch/tools/b9-0/summarize.mjs` | 2 |
+| `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` | 3 (tmp 루트 1회 포함) |
+| `verification/branch-switch/tools/iv-3-0/checkResults.mjs` | 2 |
+| `verification/branch-switch/tools/iv-3-0/publish.mjs` | 2 |
+| `_archive/branches/09c7b3544cfd.patch.gz` (해제한 패치) | 2 |
+
+이 도구들은 재실행하면 반드시 실패하는 것이 아닙니다. 정상 종료하면서 실제 기계 경로의 마스킹이나 누출 탐지를 조용히 놓칠 수 있습니다. 따라서 어떤 재실행이나 패치 복원 실행보다 먼저 해당 리터럴을 원래 검사·마스킹 의미로 복구해야 합니다. 앞의 실행 불가 목록은 이런 의미의 무력화도 포함하며, guard에서 즉시 throw하는 경우와 구별해야 합니다. 확인된 import 소비자는 보관된 branch-switch 도구 안에만 있고 제품 코드에서 쓰지 않습니다. 이번 기록 작업은 리터럴을 실행 가능한 값으로 복구하거나 이 도구들을 재실행하지 않습니다.
+
+#### 계산된 자식 경로를 실행하는 소비자 추가
+
+명시적인 `.mjs` 문자열의 import 역그래프가 놓친 다음 네 소비자를 실행 불가 목록에 추가합니다. 앞의 93개와 겹치지 않아 현재 목록은 총 97개입니다. 경로 구성 줄과 실제 spawn 호출을 함께 근거로 삼았습니다.
+
+| 추가 소비자 | 자식 도구 | 실행 근거 |
+| --- | --- | --- |
+| `verification/07-switch/tools/run-verdict-93c01.mjs` | `measure-verdict-93c01.mjs` | 같은 파일 12행에서 worker 경로 구성, 53행에서 `spawn`에 전달 |
+| `verification/07-switch/tools/run-verdict-95c01.mjs` | `measure-verdict-95c01.mjs` | 같은 파일 7행에서 worker 경로 구성, 20행에서 `spawnSync`에 전달 |
+| `verification/branch-switch/tools/b4-2/checkTools.mjs` | `b4-2/window.mjs` | 같은 파일 376행에서 `spawnSync`에 계산된 경로를 전달 |
+| `verification/branch-switch/tools/b6/checkTools.mjs` | `b6/window.mjs` | 같은 파일의 `spawnSync` 호출에 260행에서 계산된 경로를 전달 |
+
+이번 변경은 README 한 파일의 SHA 인용 1곳 교정과 이 블록 추가뿐입니다. 기존 26개 원장 검사 요약을 앞선 최종 실행과 대조하고, SHA 인용 한 곳을 제외한 이전 바이트가 모두 동일하며 뒤에 이 블록만 붙었는지 검사했습니다. sup-check 3640/0/0, verbatim-check 1416/327/0, ref-check 1416/0과 기존 문제를 유지합니다. 원자료·gzip·제품·시험·도구 코드는 바꾸지 않았습니다. 최종 README 해시는 자기 참조 없이 새 HEAD 고정 PR 본문에 기록합니다.
