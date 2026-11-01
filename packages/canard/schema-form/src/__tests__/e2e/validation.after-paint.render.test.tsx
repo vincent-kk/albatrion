@@ -12,6 +12,7 @@ import {
 } from '@/schema-form';
 
 import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
+import { isValidationPending } from '../helpers/isValidationPending';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 import { settleValidation } from '../helpers/settleValidation';
 
@@ -386,4 +387,43 @@ it('IR-6 settle waits through writes started by delivered validation callbacks',
   expect(remaining).toBe(0);
   expect(ref.current!.getValue()).toBe('value1');
   expect(validate).toHaveBeenCalledTimes(4);
+});
+
+it('T10 write then same-schema reset drops the earlier request and validates the default once', async () => {
+  const ref = createRef<FormHandle>();
+  const validate = vi.fn(() => []);
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      defaultValue="default"
+      validatorFactory={{
+        compile: () => validate,
+        compileGuard: () => () => true,
+      }}
+    />,
+  );
+  await settleValidation(() => ref.current?.node);
+  validate.mockClear();
+  act(() => {
+    ref.current!.setValue('typed');
+    ref.current!.reset();
+  });
+  await settleValidation(() => ref.current?.node);
+  expect(validate).toHaveBeenCalledExactlyOnceWith('default');
+});
+
+it('T11 a deferred reset without a validator releases the earlier pending hold', async () => {
+  const ref = createRef<FormHandle>();
+  observeErrorSink();
+  render(
+    <Form ref={ref} jsonSchema={{ type: 'string' }} defaultValue="default" />,
+  );
+  await settleValidation(() => ref.current?.node);
+  act(() => {
+    ref.current!.setValue('typed');
+    ref.current!.reset();
+  });
+  await settleValidation(() => ref.current?.node);
+  expect(isValidationPending(ref.current!.node!)).toBe(false);
 });
