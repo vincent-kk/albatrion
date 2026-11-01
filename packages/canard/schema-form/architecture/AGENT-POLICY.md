@@ -1,6 +1,6 @@
 # 에이전트 정책 — 역할·분담·사용량
 
-이 문서는 `@canard/schema-form` 1.0.0 작업에 쓰는 에이전트의 역할, 장기 작업과 워커의 구분, 사용량 풀과 소비 순서를 한곳에 모은 정본이다. 소유자 Vincent의 지시가 바뀌면 이 문서를 고치고, 바뀐 원문은 라운드 문서(`reviews/round-NN-owner-answers.md`)에 그대로 남긴다. 인계 문서 `AGENT-HANDOFF.md` 는 445라운드 기록 정리에서 지웠고, 운영 원칙의 요지는 `reviews/README.md` 에 있다. 마지막 갱신은 445라운드(2026-10-26, 444라운드 지시 반영)다.
+이 문서는 `@canard/schema-form` 1.0.0 작업에 쓰는 에이전트의 역할, 장기 작업과 워커의 구분, 사용량 풀과 소비 순서를 한곳에 모은 정본이다. 소유자 Vincent의 지시가 바뀌면 이 문서를 고치고, 바뀐 원문은 라운드 문서(`reviews/round-NN-owner-answers.md`)에 그대로 남긴다. 인계 문서 `AGENT-HANDOFF.md` 는 445라운드 기록 정리에서 지웠고, 운영 원칙의 요지는 `reviews/README.md` 에 있다. 마지막 갱신은 466라운드(2026-11-02, 작업공간 정리 규칙 반영)다.
 
 ## 1. 우선순위
 
@@ -64,19 +64,22 @@
 - 코디네이터의 대기는 필터 대기 하나뿐이다: `orca orchestration check --ack <delivery> --wait --types "worker_done,escalation,question" --timeout-ms 1500000 --json`을 백그라운드로 걸어 두고, 그것이 돌아올 때만 읽고 판정한다. 워커의 `heartbeat`·`status`는 자동 발신이라 코디네이터가 읽지 않으며, 하네스의 "orchestration message(s)" 알림은 읽지 않은 생존 신호까지 세므로 그 알림에는 반응하지 않는다. 생존 신호는 필터 대기가 돌아온 뒤 한꺼번에 확인 처리한다(451라운드 소유자 지적).
 - 워커 brief에는 `status`를 창 시작·창 종료·막힘 세 때에만 보내고, 그 밖의 진행 보고는 보내지 않는다고 적는다. 질문은 `question`, 결정 요청은 `escalation`으로만 보낸다.
 
-## 7. 변경 이력
+## 7. 작업공간 정리
+
+완료한 worktree와 가지는 작업을 진행하면서 정리하며, 끝난 scratch 작업공간을 쌓아 두지 않는다. 필요한 결과는 커밋하거나 다른 방식으로 보존한 뒤 scratch를 제거하고, 목적이 끝나면 바로 정리한다. 후속 워커 brief마다 이 의무를 넣는다.
+
+진행 중인 측정·검토 또는 명시적인 보존 지시가 있을 때만 작업공간을 유지한다. 원격 가지 삭제는 기록된 허가와 시점을 따르며, 72번은 남은 단계 가지를 #508 병합 뒤 삭제하도록 정했다. 68번에서 유보한 Git worktree 메타데이터와 가지 설정 키 정리는 Vincent의 몫으로 남긴다.
+
+근거는 Vincent의 36번 원문(`reviews/round-466-owner-answers.md:35`)과 이를 재확인한 451C-01(`reviews/round-451-owner-answers.md:7-8`)이며, 편집자 결정은 466C-13(`reviews/round-466-closing.md`)이다.
+
+## 8. 변경 이력
 
 | 라운드 | 날짜 | 바뀐 것 |
 | --- | --- | --- |
+| 466 | 2026-11-02 | 작업공간 정리(466C-13): 완료한 worktree·가지를 진행 중 정리하고, 필요한 결과를 보존한 scratch는 목적이 끝나면 제거한다. 후속 워커 brief에도 정리 의무를 넣으며 원격 가지는 기록된 허가·시점에 따르고, 68번에서 유보한 Git 메타데이터 정리는 Vincent에게 남긴다 |
 | 457 | 2026-10-28 | 소유자 지적 반영(457C-05): PR 본문·결과 문서·커밋 메시지에 기계 로컬 경로를 쓰지 않는다. 판정이 기대는 측정 요약은 `verification/<단계>/raw/<가설>/`에, 독립 검토 판정은 `verification/<단계>/reviews/`에 커밋해 저장소 경로로 인용한다. 소유자가 짧은 판정을 지시하면(457C-01) 측정 보고의 2부 검토는 생략하고 코드 검토 한 번과 측정 판정만 한다 |
 | 453 | 2026-10-27 | 분기 전환 단계에 적용(PROCESS-075): 정책 본문은 그대로이고, 소유자가 멀티에이전트 진행을 허가했다. 읽기·추적 보조(쓰기 한 번의 작업량 추적)는 Claude 하위 에이전트, 구현·측정은 codex 워커, 독립 검토는 antigravity |
 | 451 | 2026-10-27 | 소유자 지적 반영: 코디네이터는 필터 대기 하나로만 기다리고 생존 신호·상태 알림에 반응하지 않는다. 워커 status 는 창 시작·종료·막힘 세 때만 |
 | 446 | 2026-10-26 | 설계 최적화 단계에 적용(PROCESS-069): 정책 본문은 그대로이고, Fable 오케스트레이터는 소유자 대화·설계·판단·원장·커밋만 맡으며 코드를 고치지 않는다. 동시 워커는 둘까지, 전체 시험과 측정은 한 번에 하나 |
 | 445 | 2026-10-26 | 444라운드 지시 반영: 단계 루트 PR 밖의 병합은 코디네이터 재량, Fable 대신 Opus를 더 쓰고 codex·agy·cursor 사용을 늘리며 수정 PR은 다른 모델 가족이나 Opus로 검증 |
 | 429 | 2026-10-20 | 문서 신설. Claude 한도 초기화로 평시 운행, 장기 작업 셋(codex sol·Claude Opus·agy argon), 워커 구분, 풀별 한도와 초기화, 소비 순서 cursor > codex = agy > claude |
-
-## 8. Workspace cleanup
-
-Remove finished worktrees and branches as work proceeds; do not let completed scratch workspaces accumulate. Commit or otherwise preserve required results before removing a scratch workspace, remove it as soon as its purpose ends, and include this obligation in every later worker brief. Keep a workspace only while an active measurement, review or explicit retention still needs it. Follow the recorded permission and timing for remote branch deletion; quote 72 schedules the remaining stage branches after #508 merges.
-
-Authority: Vincent's quote 36 (`reviews/round-466-owner-answers.md:35`), reaffirming 451C-01 (`reviews/round-451-owner-answers.md:7-8`); the editor decision is 466C-13 (`reviews/round-466-closing.md`). Git worktree metadata and branch configuration cleanup reserved by quote 68 remain Vincent's responsibility.
