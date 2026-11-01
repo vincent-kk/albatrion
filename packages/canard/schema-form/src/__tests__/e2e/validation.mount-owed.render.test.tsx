@@ -40,7 +40,10 @@ const hideable = (form: ReactNode, hidden: boolean) =>
     </Suspense>
   );
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 it('IR-7 T2 mount validation runs while hidden and is not repeated on show', async () => {
   const validate = vi.fn(() => []);
@@ -243,6 +246,7 @@ it('IR-7 T3 W4 async mount rejection reports once while hidden', async () => {
 
 it('IR-6 W4 a compile onError failure reaches the host once without recapture', async () => {
   const handler = new Error('handler');
+  vi.stubGlobal('reportError', vi.fn());
   const sink = observeErrorSink();
   let first!: () => void;
   const called = new Promise<void>((resolve) => {
