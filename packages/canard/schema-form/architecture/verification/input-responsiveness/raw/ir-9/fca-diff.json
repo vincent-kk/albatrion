@@ -1,0 +1,50 @@
+{
+  "baseline": "f4018e82b (IR-8 round b final scan)",
+  "baseStatus": "indeterminate",
+  "candidateStatus": "indeterminate",
+  "baseSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "ec09803797df95edf02399d65eb57330756ad976ab25c728fc2d0555ac7e48c1",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 201,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "candidateSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "f67d5cd1a18c4a2d6d4b513f4813ed0da1ea3b65c3c63760cdc5aecea19483c0",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 201,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "added": [],
+  "removed": [],
+  "matching_snapshots": true,
+  "facts": {
+    "covered": 1773,
+    "exact": 1773,
+    "missing": 0,
+    "uncertain": 0,
+    "tool_error": 0,
+    "scope": "default adapter source extensions"
+  }
+}

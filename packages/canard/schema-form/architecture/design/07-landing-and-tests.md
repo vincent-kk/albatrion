@@ -1136,7 +1136,7 @@ ERROR-019: onError is an event channel: it delivers the one record of each occur
 
 ERROR-017·019·021: 필수 origin은 발생을 만든 연산이며 load·write·validate·submit·render로 닫힙니다.
 
-ERROR-019: load는 트리 구성·mount·reset·rebuild·검증기 변경과 그 사슬입니다. ERROR-019: write는 공개 쓰기·배열·상태·batch·맥락·finishInput·외부 오류와 통지 리스너입니다. ERROR-019: validate는 자동·명시적 전체 컴파일·실행·판정 전달과 그 리스너입니다. ERROR-019: submit은 SubmitWhileDegraded와 네이티브 capture에서 처음 드러난 실패이며 dispatchValidate가 보고한 실패는 validate를 유지합니다. ERROR-044·202: render는 RenderFailed 경계와 ChildNodeComponentsOnTerminal 같은 렌더 기록이며 warnDevelopmentIssue 개발 콘솔 경고는 기록이 아닙니다.
+ERROR-019: load는 트리 구성·mount·reset·rebuild·검증기 변경과 그 사슬입니다. ERROR-019: write는 공개 쓰기·배열·상태·batch·맥락·finishInput·외부 오류와 통지 리스너입니다. ERROR-019: validate는 자동·명시적 전체 컴파일·실행·판정 전달과 그 리스너입니다. ERROR-019: submit은 SubmitWhileDegraded와 네이티브 capture에서 처음 드러난 실패이며 dispatchValidate가 보고한 실패는 validate를 유지합니다. ERROR-164·202: render는 RenderFailed 경계와 ChildNodeComponentsOnTerminal 같은 렌더 기록이며 warnDevelopmentIssue 개발 콘솔 경고는 기록이 아닙니다.
 
 ERROR-019·041: 최외곽 사슬의 origin을 중첩·adoption에서 보존하므로 write 리스너·onChange의 reset은 write이고 reset 안의 쓰기는 load입니다. ERROR-019: 첫 commit의 외부 errors 적용은 load, prop 변경은 write이며 검증 결과 리스너 실패는 validate, 로드 뒤 독립 state 리스너 실패는 write입니다.
 

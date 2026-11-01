@@ -1,0 +1,36 @@
+{
+  "machine_path_hits": [],
+  "inherited_path_examples": [
+    {
+      "file": "packages/canard/schema-form/architecture/ledger/error.md",
+      "note": "Only unchanged pre-branch lines contain historical path examples; append-only record preservation prevents rewriting them."
+    },
+    {
+      "file": "packages/canard/schema-form/architecture/ledger/test.md",
+      "note": "Only unchanged pre-branch lines contain historical path examples; append-only record preservation prevents rewriting them."
+    }
+  ],
+  "path_scope": "All new files and decompressed gzip bytes; added lines of modified pre-existing files; inherited record lines preserved.",
+  "gzip_checked": 14,
+  "changed_files_checked": 129,
+  "skip_todo_fails_changes": [],
+  "new_unsafe_assertions": [],
+  "prebranch_record_lines_preserved": [
+    "architecture/adr/0014-error-policy.md",
+    "architecture/design/05-validation-and-errors.md",
+    "architecture/design/07-landing-and-tests.md",
+    "architecture/ledger/error.md",
+    "architecture/ledger/react.md",
+    "architecture/ledger/test.md",
+    "architecture/ledger/validate.md",
+    "architecture/plan/input-responsiveness/design.md",
+    "architecture/plan/input-responsiveness/request.md",
+    "architecture/plan/input-responsiveness/verification.md"
+  ],
+  "src_index_diff_zero": true,
+  "package_manifest_diff_zero": true,
+  "scratch_worktrees_created": 0,
+  "scratch_branches_created": 0,
+  "scratch_removed": 0,
+  "scratch_leftovers": 0
+}
