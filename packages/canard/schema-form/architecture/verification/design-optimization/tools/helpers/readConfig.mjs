@@ -53,7 +53,7 @@ export function readConfig(argv, toolsURL) {
     values['run-dir'] ?? `{scratch}/perf-runs/${runId}`,
   );
   if (
-    !/^\/private\{scratch}\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\/(?:pair|stages))?$/.test(
+    !/^{scratch}\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\/(?:pair|stages))?$/.test(
       runDir.replace(/\.noindex(?=\/(?:pair|stages)$|$)/, ''),
     )
   )

@@ -1112,3 +1112,760 @@ architecture의 텍스트 2762개와 gzip 2925개를 감사해 지정된 세 경
 - 삭제 뒤 트리에 남은 비식별화 파일은 297개가 아니라 294개이고, 치환은 35467건이 아니라 24064건입니다. 범주별로 repo 10819건이 769건, home 1138건이 22건, node-home 22782건이 22557건, scratch 689건이 677건이 되며, agent-home 10건과 tmp 29건은 같습니다.
 - `packages/aileron/benchmark-form/.gitignore`에 `*.heapsnapshot` 규칙을 넣어 힙 스냅숏을 다시 커밋하지 않게 했습니다.
 - 세 파일의 원본은 2026-05-29 커밋 `06f5d32f5`부터 master 이력에 남습니다.
+
+### 추가 정정: DR-6 관문 조건(2026-11-02)
+
+기준 HEAD `2b0e70946ebabd91cc2c113c66266e9d2492939b`에서 앞의 힙 스냅숏 삭제 정정과 기존 노트 전체를 보존한 채 이 절만 덧붙입니다. 기록의 경로 문자열을 추가 교정했으며 제품 로직·제품 시험·manifest·lockfile은 바꾸지 않았습니다. 원장 항목·결정·보충을 추가하지 않아 `sup-insert.mjs` 삽입 대상도 없습니다.
+
+#### 파일명·이스케이프 접두사 교정과 횟수
+
+`reviews/round-233-closing.md:12`의 감사 문서는 worktree 이름으로 시작하는 파일명인데 앞선 16행이 worktree 자체로 잘못 판정했습니다. 지금은 `{scratch}/authoring-syntax-audit.md`이며 `reviews/round-251-closing.md:5`의 실제 worktree 표기는 그대로입니다. 16행은 2→1, 해당 `$SESSION_TMP/` 31행은 이 교정으로 151→152입니다.
+
+55행의 이전 11회 중 3회는 삭제한 세 힙 스냅숏의 jsdom author URL을 임시 경로로 오인한 것입니다. 세 파일에는 정상 임시 루트도 각각 1회 있어 삭제로 55행에서 총 6회가 사라졌습니다. 남은 5회는 readConfig 1회·검토 원문 2회·그 gzip 사본 2회의 반쪽 치환이었으며 이번에 세션 scratch 접두사 전체로 다시 분류했습니다. 따라서 현재 트리에서 55행에 귀속될 횟수는 0입니다. 31행은 이 5회를 더하면 157이 되고, 아래 새 이스케이프 경로의 세션 scratch 2회를 합치면 159입니다. 일반 임시 루트의 `$SESSION_TMP/` 41행은 삭제된 스냅숏 6회로 72→66입니다. URL 오인은 트리 파일 삭제로 해소했으며 기존 표의 11을 덮어쓰지 않았습니다.
+
+`readConfig.mjs`와 검토 원문·gzip 사본의 반쪽 치환 5회는 `{scratch}` 다음에 원래 이스케이프된 슬래시와 안정적인 꼬리가 이어지도록 교정했습니다. 새 이스케이프 경로 13회는 home 5회·scratch 7회·tmp 1회입니다. scratch 중 2회는 profile context와 runWindow의 세션 scratch 접두사이고 나머지 5회는 임시 루트 검사 리터럴입니다. 이스케이프 단계 수를 유지하며 접두사 뒤의 바이트를 보존했습니다.
+
+| 새 이스케이프 교정 파일 | 횟수 |
+| --- | --- |
+| `_archive/branches/09c7b3544cfd.patch.gz` | 2 |
+| `verification/branch-switch/tools/b9-0/summarize.mjs` | 2 |
+| `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` | 3 |
+| `verification/branch-switch/tools/iv-3-0/checkResults.mjs` | 2 |
+| `verification/branch-switch/tools/iv-3-0/publish.mjs` | 2 |
+| `verification/design-optimization/tools/profile/branch-switch/runWindow.mjs` | 1 |
+| `verification/design-optimization/tools/profile/context.mjs` | 1 |
+
+힙 삭제 직후의 24,064회에서 새 이스케이프 13회를 더한 현재 귀속 합계는 24,077회입니다. 파일명 1회는 repo에서 scratch로 재분류되므로 합계를 늘리지 않으며 반쪽 치환 5회도 중복 계상하지 않습니다. 기존 경로 치환 파일 294개에 새 파일 7개가 더해 현재 남은 경로 치환 파일은 301개입니다. 범주별 파일 수는 서로 겹칠 수 있습니다.
+
+| 범주 | 현재 파일 수 | 현재 치환 귀속 횟수 |
+| --- | --- | --- |
+| {repo} | 126 | 768 |
+| {scratch} | 185 | 685 |
+| {agent-home} | 9 | 10 |
+| {node-home} | 102 | 22557 |
+| {tmp} | 9 | 30 |
+| {home} | 16 | 27 |
+
+#### 추가 SHA-256 교정표
+
+아래 이전 값은 이번 기준 HEAD의 바이트 해시이며 새 값은 추가 교정 뒤의 해시입니다. gzip은 압축·해제 값을 각각 명시하고 level 9·mtime 0으로 다시 압축했습니다. 원래 기록의 해시와 앞선 표는 그대로 두며 이 표와 이어지는 참조 표가 최신 교정입니다.
+
+| 파일 | 바이트 | 이전 SHA-256 | 새 SHA-256 |
+| --- | --- | --- | --- |
+| `_archive/branches/09c7b3544cfd.patch.gz` | 압축 | `fedae1b04558b970e5efb80961ca5afeed839804cf5b8f0d47c7b2d32dc7f11e` | `7f9414e8abfa1880e296b2bc4b8c4a43e7ff742444072718d844ebc5743e3f50` |
+| `_archive/branches/09c7b3544cfd.patch.gz` | 해제 | `af81e2f9cdd45bc1e66b0ea8e725e35d8d803a576f16b6955692cda115e6861e` | `69dd32c430f1ac6602057fb0ee85cfa4212d67b75bd9eb829f7dc3f418f0cb24` |
+| `reviews/round-233-closing.md` | 원문 | `8f6cde349f849aaca8e4e764543ce1851153df85a656f8abb5cc14ade47488e7` | `604eb9062b9ce38d0051348cbd6955f736dd5abbc2d05130c746eed924fe33f6` |
+| `verification/branch-switch/raw/b12/independent-review.md.gz` | 압축 | `56238a166bfd973411c436c8b01a5f7591bc51962bffe9161105b341b18d8892` | `82af383afe2b7da0ebe64d45efb2ca260c5bd102bc624025bbd330380f13bf48` |
+| `verification/branch-switch/raw/b12/independent-review.md.gz` | 해제 | `f68e0bbf27d2a6db71144f3e1114b7fec726702697bdb61b6d40a1efc9fefd0c` | `cf0a5a4c3f3f098b8be7bfd7f28ee9fa9ec60164886e98370b89b69812934420` |
+| `verification/branch-switch/reviews/pr-b12-candidate-1-claude.md` | 원문 | `bc66ea73c82bf50bbd9f86f7dab5776100ad4fcd7b0b45108427414b98c62cbe` | `e4233be0f3e1e2a15b9480a1bb1c75b5beca7e05f327480003e46fa00eec59da` |
+| `verification/branch-switch/tools/b9-0/summarize.mjs` | 원문 | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` | 원문 | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/tools/iv-3-0/checkResults.mjs` | 원문 | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/tools/iv-3-0/publish.mjs` | 원문 | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/design-optimization/tools/helpers/readConfig.mjs` | 원문 | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/design-optimization/tools/profile/branch-switch/runWindow.mjs` | 원문 | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/design-optimization/tools/profile/context.mjs` | 원문 | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+
+앞선 표의 세 heap snapshot 행은 더 이상 트리 파일을 설명하지 않습니다. 파일은 삭제돼 새 파일 해시가 없으며 앞선 새 해시는 과거 커밋에 남은 중간 비식별화 바이트만 가리킵니다. 세 행은 `heap-array-100-2026-05-29T02-24-15-340Z.heapsnapshot`, `heap-array-100-2026-05-29T04-30-05-172Z.heapsnapshot`, `heap-array-100-2026-05-29T05-56-17-988Z.heapsnapshot`입니다.
+
+#### 이전 전체 해시의 모든 참조
+
+추가 교정 파일의 직전 해시와 초기 비식별화 전 해시를 모두 목록에 넣어 저장소 전체에서 `git grep -nF -f <이전 해시 목록> -- .`를 실행하고 gzip 해제 바이트도 검사했습니다. 따라서 branch-switch raw의 summary·inputs와 기존 노트 안에 남은 중간 해시까지 포함합니다. 노트 추가 직전 결과를 아래에 고정하며 같은 위치·해시는 중복하지 않습니다.
+
+| 참조 위치 | 기록된 이전 SHA-256 | 현재 SHA-256 |
+| --- | --- | --- |
+| `_archive/branches/reachability.json.gz:1` | `af81e2f9cdd45bc1e66b0ea8e725e35d8d803a576f16b6955692cda115e6861e` | `69dd32c430f1ac6602057fb0ee85cfa4212d67b75bd9eb829f7dc3f418f0cb24` |
+| `ledger/checks/README.md:256` | `8f6cde349f849aaca8e4e764543ce1851153df85a656f8abb5cc14ade47488e7` | `604eb9062b9ce38d0051348cbd6955f736dd5abbc2d05130c746eed924fe33f6` |
+| `ledger/checks/README.md:256` | `dc9c4718c1825f951a57ecc32adb6b874491de1a008828a9b7fb26b35636196d` | `604eb9062b9ce38d0051348cbd6955f736dd5abbc2d05130c746eed924fe33f6` |
+| `ledger/checks/README.md:402` | `56238a166bfd973411c436c8b01a5f7591bc51962bffe9161105b341b18d8892` | `82af383afe2b7da0ebe64d45efb2ca260c5bd102bc624025bbd330380f13bf48` |
+| `ledger/checks/README.md:402` | `69b229deb953a261d5ea41e38fbf303618b2aa2d263ff121e2b8df217bb7c867` | `82af383afe2b7da0ebe64d45efb2ca260c5bd102bc624025bbd330380f13bf48` |
+| `ledger/checks/README.md:403` | `f68e0bbf27d2a6db71144f3e1114b7fec726702697bdb61b6d40a1efc9fefd0c` | `cf0a5a4c3f3f098b8be7bfd7f28ee9fa9ec60164886e98370b89b69812934420` |
+| `ledger/checks/README.md:403` | `fbcba65452fa473c6ba358dcc0b082185471018c23a1e13de249c9c04f73a155` | `cf0a5a4c3f3f098b8be7bfd7f28ee9fa9ec60164886e98370b89b69812934420` |
+| `ledger/checks/README.md:429` | `ba1005ca57e1eaf866c834c610a7da7ce57249140e4a721b85ef60c651ab4c42` | `e4233be0f3e1e2a15b9480a1bb1c75b5beca7e05f327480003e46fa00eec59da` |
+| `ledger/checks/README.md:429` | `bc66ea73c82bf50bbd9f86f7dab5776100ad4fcd7b0b45108427414b98c62cbe` | `e4233be0f3e1e2a15b9480a1bb1c75b5beca7e05f327480003e46fa00eec59da` |
+| `ledger/checks/README.md:457` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:457` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:525` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:525` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:530` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:530` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:538` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:538` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:547` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:547` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:555` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:555` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:563` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:563` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:571` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:571` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:579` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:579` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:587` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:587` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:595` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:595` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:603` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:603` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:611` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:611` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:619` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:619` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:627` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:627` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:635` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:635` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:643` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:643` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:651` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:651` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:659` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:659` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:667` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:667` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:675` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:675` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:683` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:683` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:691` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:691` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:699` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:699` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:707` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:707` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:715` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:715` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:723` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:723` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:731` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:731` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:739` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:739` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:747` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:747` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:755` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:755` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:763` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:763` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:771` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:771` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:779` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:779` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:787` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:787` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:795` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:795` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:803` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:803` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:811` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:811` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:819` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:819` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:827` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:827` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:835` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:835` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:843` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:843` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:851` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:851` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:859` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:859` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:867` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:867` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:875` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:875` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:883` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:883` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:891` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:891` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:899` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:899` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:907` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:907` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:915` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:915` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:923` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:923` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:931` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:931` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:939` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:939` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:947` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:947` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:955` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:955` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:963` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:963` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:971` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:971` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:979` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:979` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:987` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:987` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:995` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:995` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1003` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1003` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1011` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1011` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1019` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1019` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1024` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1024` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1029` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `ledger/checks/README.md:1029` | `dc2f3a2d6ccb1f4b3afc0a6e565a8d12b7a5a4904df09a9f46484d9e5ff7ee95` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/b9-0/tool-hashes.json:35` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-0/evidence.json.gz:1` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-0/evidence.json.gz:1` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-0/evidence.json.gz:1` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-0/evidence.json.gz:1` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-0/evidence.json.gz:1` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-0/post-review-diagnostics/inputs.json:149` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-0/post-review-diagnostics/inputs.json:321` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-0/post-review-diagnostics/inputs.json:357` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-0/post-review-diagnostics/inputs.json:669` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-0/post-review-diagnostics/inputs.json:817` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-0/summary.json:214` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-0/summary.json:302` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-0/summary.json:578` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-0/summary.json:750` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-0/summary.json:838` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-3-0/inputs.json:161` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-3-0/inputs.json:177` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-3-0/inputs.json:279` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-3-0/inputs.json:328` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-3-0/inputs.json:346` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-3-0/inputs.json:352` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-3-0/reanalysis.json:36` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-3-0/reanalysis.json:54` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-3-0/snapshots/measurement-tools.json:97` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:347` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:365` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S10-reprobe/inputs-B.json.gz:371` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S10/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:345` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:363` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-A.json.gz:369` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S1a/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S1b/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:347` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:365` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe-refused-1/inputs-B.json.gz:371` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:347` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:365` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2a-reprobe/inputs-B.json.gz:371` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2a/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S2b/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:345` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:363` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-A.json.gz:369` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:345` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:363` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S4-allocation/inputs-B.json.gz:369` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S4-reprobe/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:345` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:363` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-A.json.gz:369` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:345` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:363` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S4/inputs-B.json.gz:369` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:341` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:359` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-A.json.gz:365` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:345` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:363` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S5-refined/inputs-B.json.gz:369` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:341` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:359` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-A.json.gz:365` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:341` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:359` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S5/inputs-B.json.gz:365` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-A.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:354` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:372` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow-role-corrected/inputs-B.json.gz:378` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-A.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:354` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:372` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S6b-narrow/inputs-B.json.gz:378` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S6b/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-A.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:346` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:364` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S8-diagnostic/inputs-B.json.gz:370` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:341` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:359` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S9-gc/inputs-A.json.gz:365` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:341` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:359` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S9-refused-1/inputs-A.json.gz:365` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:341` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:359` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/S9/inputs-A.json.gz:365` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a-clean/inputs-B.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1a/inputs-B.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S1b/inputs-B.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S4/inputs-B.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean-refused-1/inputs-B.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-clean/inputs-B.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-1/inputs-B.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-1/inputs-B.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5-refused-auto-2/inputs-B.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S5/inputs-B.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:352` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:370` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-A.json.gz:376` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:159` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:175` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:264` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:282` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:353` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:371` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-4/window1-without-S6b/inputs-B.json.gz:377` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-5/evidence.json.gz:1` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-5/summary.json:158` | `95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624` | `cd563014de5a846f7c8d177b7469560e01f10784b512bf2ad5baf703e52d391e` |
+| `verification/branch-switch/raw/iv-5/summary.json:474` | `b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1` | `e1c66eca1f926c078e790667c7b4122c66f3a625f6feaf49b37089d01b22c92e` |
+| `verification/branch-switch/raw/iv-5/summary.json:486` | `d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f` | `5783824446428fcd5dc756a1fd9af573a2fe67ab9082abe0945d0a8d67e67abf` |
+| `verification/branch-switch/raw/iv-5/summary.json:718` | `71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104` | `3934420cfc054584f41f24cfa349adcba37203978e62a25d7b86c3ba4da7ef10` |
+| `verification/branch-switch/raw/iv-5/summary.json:754` | `adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37` | `a8c5a30ed1e6ba85f11e93cf96436522bcdbb4cd5661b528c73a5cf1daa0aab9` |
+| `verification/branch-switch/raw/iv-5/summary.json:954` | `fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063` | `3485092bfedd57f87a0df2dd9855a49ddc05cd1b1916a9a876278aa5a3c73b60` |
+| `verification/branch-switch/raw/iv-5/summary.json:1226` | `267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b` | `57c25d1a5c62561520a523ec8c8bb31d49a689508a384c88cbe0086a6c195cfa` |
+
+일반 텍스트 git grep은 97줄이며 gzip 내부까지 포함한 고유 참조는 593곳입니다.
+
+#### 축약 해시 참조의 교정
+
+앞선 full-hex 검색은 짧게 적은 값을 찾지 못했습니다. 다음 전체 해시는 앞선 파일별 표에서 유도되며, 기존 축약 표기와 참조는 수정하지 않고 현재 값으로 정정합니다.
+
+| 대상 파일 | 기록된 축약 | 이전 전체 SHA-256 | 현재 전체 SHA-256 | 현재 같은 길이 축약 |
+| --- | --- | --- | --- | --- |
+| `verification/07-switch/tools/report-verdict-121.mjs` | `6c614a9849d808e0` | `6c614a9849d808e0a6e74712c19508d69ffeec1b350c011e0c2b5a00a22a5b1b` | `2b0cf188c8eaf32eca1b73b547662d9a5979faeac6da9c6bc7ba3463f234e243` | `2b0cf188c8eaf32e` |
+| `verification/07-switch/tools/prepare-branch1-bundles.mjs` | `667d1046ce543860` | `667d1046ce54386056453616d449bbde14f380907a3ab48554f7f891094e1279` | `b86a3cefdc11b459bc15ebae0e6258e89db2a9f9a89c2a06b1eb82368a0f68f6` | `b86a3cefdc11b459` |
+| `verification/perf-optimization/mount-breakdown-results.md` | `3efc5b94` | `3efc5b947324b1c7441003b49e56ceb75c0fcee9ecd08c0632f9dc8ca580ba28` | `cca2cd48e7580c8606b8f29383bb7fee3babb22c8ac4ee7f0d1e0743a3dbfd82` | `cca2cd48` |
+
+| 참조 위치 | 이전 축약 | 현재 같은 길이 축약 |
+| --- | --- | --- |
+| `_archive/branches/reachability.json.gz:1` | `3efc5b94` | `cca2cd48` |
+| `_archive/branches/reachability.json.gz:1` | `667d1046ce543860` | `b86a3cefdc11b459` |
+| `_archive/branches/reachability.json.gz:1` | `6c614a9849d808e0` | `2b0cf188c8eaf32e` |
+| `ledger/process.md:884` | `3efc5b94` | `cca2cd48` |
+| `ledger/test.md:683` | `3efc5b94` | `cca2cd48` |
+| `reviews/round-411-closing.md:8` | `3efc5b94` | `cca2cd48` |
+| `verification/07-switch/harness-129.md:105` | `6c614a9849d808e0` | `2b0cf188c8eaf32e` |
+| `verification/07-switch/harness-129.md:107` | `667d1046ce543860` | `b86a3cefdc11b459` |
+
+#### 실행 불가 목록의 추가
+
+기존 39개 목록에 다음 54개 보관 도구·검증 파일을 더합니다. readConfig의 경로 guard가 실제 디렉터리를 받을 수 없고, context·runWindow 및 경로 정규화·검사 도구의 리터럴도 치환돼 기록된 상태 그대로 실행할 수 없습니다. 정적·동적 import 및 URL 실행 참조에 쓰인 상대 `.mjs` 문자열을 검색한 역방향 의존 그래프로 전이적 소비자를 추적했습니다. 표는 명시적인 참조의 근거이고 계산된 파일명까지 완전한 정적 분석을 했다는 주장은 아닙니다. 파일을 수정한 목록과 실행 불가 영향 목록은 구분됩니다.
+
+| 추가 파일 | 직접 의존 근거 |
+| --- | --- |
+| `verification/07-switch/tools/ga-validation-129.mjs` | `verification/07-switch/tools/report-verdict-121.mjs` (`verification/07-switch/tools/ga-validation-129.mjs:1`) |
+| `verification/07-switch/tools/recompute-session-131.mjs` | `verification/07-switch/tools/measurement-node-131.mjs` (`verification/07-switch/tools/recompute-session-131.mjs:12`) |
+| `verification/07-switch/tools/report-session-131.mjs` | `verification/07-switch/tools/report-cluster-129.mjs` (`verification/07-switch/tools/report-session-131.mjs:2`) |
+| `verification/07-switch/tools/run-session-131.mjs` | `verification/07-switch/tools/measure-core-pair-129.mjs` (`verification/07-switch/tools/run-session-131.mjs:17`) |
+| `verification/07-switch/tools/self-test-129.mjs` | `verification/07-switch/tools/report-cluster-129.mjs` (`verification/07-switch/tools/self-test-129.mjs:16`) |
+| `verification/07-switch/tools/self-test-131.mjs` | `verification/07-switch/tools/measurement-node-131.mjs` (`verification/07-switch/tools/self-test-131.mjs:28`) |
+| `verification/07-switch/tools/verify-session-131.mjs` | `verification/07-switch/tools/report-cluster-129.mjs` (`verification/07-switch/tools/verify-session-131.mjs:6`) |
+| `verification/branch-switch/tools/b11/window.mjs` | `verification/branch-switch/tools/b4-2/stages.mjs` (`verification/branch-switch/tools/b11/window.mjs:168`) |
+| `verification/branch-switch/tools/b12/window.mjs` | `verification/branch-switch/tools/b11/window.mjs` (`verification/branch-switch/tools/b12/window.mjs:8`) |
+| `verification/branch-switch/tools/b4-1/stages.mjs` | `verification/design-optimization/tools/helpers/readConfig.mjs` (`verification/branch-switch/tools/b4-1/stages.mjs:14`) |
+| `verification/branch-switch/tools/b4-2/stages.mjs` | `verification/design-optimization/tools/helpers/readConfig.mjs` (`verification/branch-switch/tools/b4-2/stages.mjs:14`) |
+| `verification/branch-switch/tools/b6/window.mjs` | `verification/branch-switch/tools/b4-2/stages.mjs` (`verification/branch-switch/tools/b6/window.mjs:138`) |
+| `verification/branch-switch/tools/b8/window.mjs` | `verification/branch-switch/tools/b4-2/stages.mjs` (`verification/branch-switch/tools/b8/window.mjs:167`) |
+| `verification/branch-switch/tools/b9-0/summarize.mjs` | 직접 경로 리터럴 교정 |
+| `verification/branch-switch/tools/b9-1/checkTools.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/b9-1/checkTools.mjs:8`) |
+| `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` | 직접 경로 리터럴 교정 |
+| `verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs:7`) |
+| `verification/branch-switch/tools/b9-1/summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs` (`verification/branch-switch/tools/b9-1/summarize.mjs:15`) |
+| `verification/branch-switch/tools/iv-0/preserveFailure.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-0/preserveFailure.mjs:9`) |
+| `verification/branch-switch/tools/iv-0/publishAudit.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-0/publishAudit.mjs:8`) |
+| `verification/branch-switch/tools/iv-0/publishDiagnostics.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-0/publishDiagnostics.mjs:9`) |
+| `verification/branch-switch/tools/iv-0/report/saveRawEvidence.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-0/report/saveRawEvidence.mjs:7`) |
+| `verification/branch-switch/tools/iv-0/summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-0/summarize.mjs:9`) |
+| `verification/branch-switch/tools/iv-1/summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs` (`verification/branch-switch/tools/iv-1/summarize.mjs:13`) |
+| `verification/branch-switch/tools/iv-2/summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs` (`verification/branch-switch/tools/iv-2/summarize.mjs:13`) |
+| `verification/branch-switch/tools/iv-3-0/checkResults.mjs` | 직접 경로 리터럴 교정 |
+| `verification/branch-switch/tools/iv-3-0/publish.mjs` | 직접 경로 리터럴 교정 |
+| `verification/branch-switch/tools/iv-4/summarizeWindow.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-4/summarizeWindow.mjs:11`) |
+| `verification/branch-switch/tools/iv-5/saveRawEvidence.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-5/saveRawEvidence.mjs:7`) |
+| `verification/branch-switch/tools/iv-5/summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs` (`verification/branch-switch/tools/iv-5/summarize.mjs:8`) |
+| `verification/branch-switch/tools/micro-hygiene/__tests__/shortWindowConfig.test.mjs` | `verification/design-optimization/tools/helpers/readAlternatingConfig.mjs` (`verification/branch-switch/tools/micro-hygiene/__tests__/shortWindowConfig.test.mjs:4`) |
+| `verification/branch-switch/tools/micro-hygiene/short-summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs` (`verification/branch-switch/tools/micro-hygiene/short-summarize.mjs:11`) |
+| `verification/branch-switch/tools/micro-hygiene/summarize.mjs` | `verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs` (`verification/branch-switch/tools/micro-hygiene/summarize.mjs:13`) |
+| `verification/branch-switch/tools/window/preflight.mjs` | `verification/design-optimization/tools/helpers/readConfig.mjs` (`verification/branch-switch/tools/window/preflight.mjs:10`) |
+| `verification/design-optimization/tools/alternate.mjs` | `verification/design-optimization/tools/helpers/readAlternatingConfig.mjs` (`verification/design-optimization/tools/alternate.mjs:11`) |
+| `verification/design-optimization/tools/branch-switch.mjs` | `verification/design-optimization/tools/pair-core.mjs` (`verification/design-optimization/tools/branch-switch.mjs:4`) |
+| `verification/design-optimization/tools/helpers/readAlternatingConfig.mjs` | `verification/design-optimization/tools/helpers/readConfig.mjs` (`verification/design-optimization/tools/helpers/readAlternatingConfig.mjs:4`) |
+| `verification/design-optimization/tools/helpers/runAlternatingParent.mjs` | `verification/design-optimization/tools/alternate.mjs` (`verification/design-optimization/tools/helpers/runAlternatingParent.mjs:57`) |
+| `verification/design-optimization/tools/pair-core.mjs` | `verification/design-optimization/tools/helpers/readConfig.mjs` (`verification/design-optimization/tools/pair-core.mjs:11`) |
+| `verification/design-optimization/tools/probes.mjs` | `verification/design-optimization/tools/pair-core.mjs` (`verification/design-optimization/tools/probes.mjs:3`) |
+| `verification/design-optimization/tools/profile/analyze.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/analyze.mjs:5`) |
+| `verification/design-optimization/tools/profile/branch-switch-ledger.mjs` | `verification/design-optimization/tools/helpers/readConfig.mjs` (`verification/design-optimization/tools/profile/branch-switch-ledger.mjs:8`) |
+| `verification/design-optimization/tools/profile/branch-switch/runWindow.mjs` | 직접 경로 리터럴 교정 |
+| `verification/design-optimization/tools/profile/callers.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/callers.mjs:5`) |
+| `verification/design-optimization/tools/profile/compare.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/compare.mjs:5`) |
+| `verification/design-optimization/tools/profile/context.mjs` | 직접 경로 리터럴 교정 |
+| `verification/design-optimization/tools/profile/count.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/count.mjs:5`) |
+| `verification/design-optimization/tools/profile/heap.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/heap.mjs:6`) |
+| `verification/design-optimization/tools/profile/leaf.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/leaf.mjs:4`) |
+| `verification/design-optimization/tools/profile/phases.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/phases.mjs:4`) |
+| `verification/design-optimization/tools/profile/prepare.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/prepare.mjs:3`) |
+| `verification/design-optimization/tools/profile/run.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/run.mjs:8`) |
+| `verification/design-optimization/tools/profile/scale.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/scale.mjs:4`) |
+| `verification/design-optimization/tools/profile/tables.mjs` | `verification/design-optimization/tools/profile/context.mjs` (`verification/design-optimization/tools/profile/tables.mjs:4`) |
+
+#### 검토 산문·잔여 표기의 범위
+
+검토 산문의 `verification/branch-switch/reviews/pr-b7-candidate-5-claude.md:27`, `pr-b7-candidate-6-claude.md:34`, `pr-b9-0-candidate-1-claude.md:105`, `pr-b9-0-candidate-2-claude.md:112`, `pr-b9-1-candidate-1-claude.md:183`·`:249`는 실제 경로 대신 검색 루트를 나열하던 줄도 자리표시자가 됐지만 원문으로 되돌리면 금지 경로 문자열이 재유입되므로 그대로 둡니다.
+
+이전 라운드 raw JSON·검토·gzip의 비절대 표기 `<scratch>/claude-501/perf-runs/…`와 `<home>/.nvm/…`, `packages/aileron/benchmark-form/PLAN.md`의 `~/.nvm/versions/node/v20.19.5/bin`은 수용 패턴 밖의 알려진 잔여로 보존합니다.
+
+추가 전수 검색에서 `packages/winglet/data-loader/CLAUDE.md:55`, `:61`, `:67`, `:92`의 기존 절대 경로 4곳을 확인했습니다. 이 파일은 master에 이미 있는 다른 패키지 문서이므로 코디네이터의 답에 따라 변경하지 않습니다. 이스케이프 경로 수용 범위는 architecture 전체 및 origin/master와 HEAD 사이에서 달라진 모든 파일로 한정하며 이 4곳은 DR-6 범위 밖의 기존 발견입니다.
+
+#### 추가 검증
+
+packages의 추적 파일 11166개와 gzip 2931개(architecture 2925개)를 검색했습니다. 이스케이프 0개·1개·중첩 JSON 단계의 슬래시를 함께 인식하는 패턴으로 검사했으며, 승인된 범위 안의 경로 hit와 역슬래시가 붙은 scratch 자리표시자는 모두 0입니다. 파일명을 오인한 감사 표기와 plain 경로 루트의 git grep도 출력이 없습니다. 범위 밖의 data-loader 4곳은 위에 분리해 적었습니다.
+
+추가 변경 11개 파일을 단계별 치환 위치에 따라 역순으로 복원해 기준 HEAD 바이트와 줄바꿈 수가 완전히 같음을 확인했습니다. gzip 2개는 해제 바이트 복원·압축 전후 SHA 및 결정적 재압축 바이트를 대조했습니다. 이 노트는 코디네이터 정정까지 포함한 README 원래 바이트 뒤에 이 절만 한 번 덧붙였는지 별도로 확인합니다.
+
+기존 `gates.py`의 26개 명령을 추가 교정 후 및 노트 추가 후 실행하고 앞선 final 결과와 요약을 대조했습니다. sup-check 3640/0/0, verbatim-check 1416/327/0, ref-check 1416/0, owner-cited 720/720/0, 문장 17영역 누락·오분류 0, tokens 2390/397, 기존 plan 문제 1·doc 미인용 66을 유지합니다. 제품 시험·빌드·FCA 재실행을 이 기록 변경의 증거로 주장하지 않습니다.
+
+이번 노트 추가 전 README SHA-256은 `0379b98101a22a471501dbbcc5a904b8c2e825def3d38f0f9a6fae85ae50a195`입니다. 최종 README SHA는 자기 참조를 피하기 위해 새 HEAD 고정 PR 본문에 따로 기록합니다. 감사 스크립트·단계별 manifest·상세 출력은 실행 scratch의 `dr-6/gate-conditions/`에 두며 커밋하지 않습니다.

@@ -65,7 +65,7 @@ for (const name of fs.readdirSync(path.join(root, 'raw.noindex')).sort()) {
     const profile = fs.readFileSync(path.join(source, 'cpu.cpuprofile'));
     assert.doesNotMatch(
       profile.toString(),
-      /\/Users\/|\/private\/tmp\/|file:\/\/\//,
+      /{home}\/|{scratch}\/|file:\/\/\//,
     );
     fs.writeFileSync(path.join(target, 'cpu.cpuprofile.gz'), gzipSync(profile));
   }
