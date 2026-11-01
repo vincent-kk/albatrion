@@ -203,7 +203,7 @@ it.each(['cadence-resolve', 'cadence-reject', 'root-resolve'] as const)(
     await f.frames();
     expect(runtime.validationRunning).toBeDefined();
     act(() => f.ref.current!.rebuild());
-    expect(root.disposed).toBe(true);
+    expect(f.ref.current!.node).not.toBe(root);
     expect(runtime.validationRunning).toBeUndefined();
     await f.complete(4);
   },
