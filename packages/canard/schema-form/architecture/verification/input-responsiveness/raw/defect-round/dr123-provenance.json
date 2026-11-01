@@ -1,0 +1,19 @@
+{
+  "productBase": "779713587",
+  "testCommit": "e9bf5d055d15958d9578ea7b561e08f551f0ff82",
+  "testSha256": {
+    "packages/canard/schema-form/src/__tests__/fixtures/createDuplicateIdValidator.ts": "3ea70aa2745428f732bbc5fb7ab73da3781c0a0ee062d360195841f4977a141f",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.inflight.test.ts": "77d660e18f0e32266589a41dc81edbc1cca723d804384997b5c3aae961674e9d",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.retry.test.ts": "854b3d5616243ffff4814e98c6a0910c2419ce89eaa348d9e71f0459f13bef96",
+    "packages/canard/schema-form/src/core/engine/validation/__tests__/validation.same-id.test.ts": "da9ef2411d8dd20c53612f0aae69f011c48bd742a5f6d1c759a3ddc20cf8f6ba",
+    "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx": "aa24309a616e656f1a2bce460bccbe89b1f962843a90bc811748d6bab0603560"
+  },
+  "report": "dr123-base.json.gz",
+  "results": {
+    "total": 22,
+    "passed": 10,
+    "failed": 12
+  },
+  "normalization": "Checkout prefix removed from names and stacks; assertions unchanged.",
+  "doubleCompileGuard": "Never registers the copy; returns a synchronous flag predicate."
+}
