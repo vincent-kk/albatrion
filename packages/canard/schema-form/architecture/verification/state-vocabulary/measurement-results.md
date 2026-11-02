@@ -43,7 +43,7 @@
 | C5 | PASS |
 | C6 | PASS |
 
-사전 등록 판정은 **SV-1 FAIL, SV-2 PASS**입니다. SV-1은 C1–C6이 모두 통과해야 하며, 이 창에서는 C2 하나가 FAIL입니다. C2는 typing 8행마다 F의 pooled event duration p95가 B + 8ms 이하이고, 긴 프레임 수가 B + 1 이하일 것을 요구합니다. type-array-1000-validate-nonburst에서 F 48ms가 B 32ms + 8ms를 넘었습니다. 나머지 일곱 typing 행과 C1·C3·C4·C5·C6은 통과했습니다. 규칙과 판정은 바꾸지 않았고, 창을 다시 돌려 판정을 대체하지 않았습니다. 원인 검토는 맨 아래 결론 절에 있으며, 수용 여부는 Vincent가 병합할 때 결정합니다.
+사전 등록 판정은 **SV-1 FAIL, SV-2 PASS**입니다. SV-1은 C1–C6이 모두 통과해야 하며, 이 창에서는 C2 하나가 FAIL입니다. C2는 typing 8행마다 F의 event duration p95가 B + 8ms 이하이고, 긴 프레임 수가 B + 1 이하일 것을 요구합니다. 이 행 값은 모든 이벤트를 합친 p95가 아닙니다. 페이지마다 p95를 구한 뒤 10페이지에서 nearest-rank p95를 취하므로, 10페이지에서는 페이지 p95의 최댓값이 됩니다. type-array-1000-validate-nonburst에서 F 48ms가 B 32ms + 8ms를 넘었습니다. 나머지 일곱 typing 행과 C1·C3·C4·C5·C6은 통과했습니다. 규칙과 판정은 바꾸지 않았고, 창을 다시 돌려 판정을 대체하지 않았습니다. 원인 검토는 맨 아래 결론 절에 있으며, 수용 여부는 Vincent가 병합할 때 결정합니다.
 
 ## F/B 통계와 상한
 
@@ -721,13 +721,13 @@ flat 2,000-field 폼에서 leaf 하나를 바꾼 뒤 루트 `isDivergent`를 읽
 
 세 행은 비율 상한이 1.05–1.10 진단 구간에 있지만, 절대 차이 상한은 작습니다.
 
-- type-array-1000-validate-nonburst의 processing은 0.025ms입니다.
+- type-array-1000-validate-nonburst의 processing은 0.025ms이고, tail은 0.1ms입니다.
 - type-flat-2000-validate-burst의 processing은 0.025ms이고, tail은 0.1ms입니다.
 - reset-flat-500-replace의 callDuration은 0.225ms입니다. 중앙값은 B 3.375ms, F 3.4ms입니다.
 
 profile은 실행하지 않았고 조치도 하지 않습니다. 이 단계는 쓰기 경로에 작업을 더하지 않으며, 엔진 비용 시험이 쓰기 중 divergence reader 호출 0회를 고정합니다.
 
-type-array-1000-validate-nonburst의 postPaintBusy 중앙값은 B 39.6ms, F 65.0ms로 차이가 납니다. 이 지표는 typing 행에서 마운트 직후의 값을 씁니다. 페이지 값이 약 14ms와 약 65ms 두 갈래로 나뉘고, 두 갈래가 양쪽 레인에 고루 나타납니다. B는 14ms 안팎이 다섯, 64ms 이상이 다섯이고, F는 14ms 안팎이 넷, 65ms 안팎이 여섯입니다. 같은 폼의 마운트 전용 행 mount-array-1000-validate는 B와 F 모두 11.3–12.6ms입니다.
+type-array-1000-validate-nonburst의 postPaintBusy 중앙값은 B 39.6ms, F 65.0ms로 차이가 납니다. 이 지표는 typing 행에서 마운트 직후의 값을 씁니다. 페이지 값이 약 14ms와 약 65ms 두 갈래로 나뉘고, 두 갈래가 양쪽 레인에 고루 나타납니다. B는 14ms 안팎이 다섯, 64.4–114.8ms가 다섯이고, F는 14ms 안팎이 넷, 65ms 안팎이 여섯입니다. 같은 폼의 마운트 전용 행 mount-array-1000-validate는 B와 F 모두 11.3–12.6ms입니다.
 
 ## 재현
 
@@ -755,9 +755,10 @@ type-array-1000-validate-nonburst의 postPaintBusy 중앙값은 B 39.6ms, F 65.0
 
 다른 행과 페이지는 B와 같은 범위입니다.
 
-- 나머지 F 페이지 아홉 개의 상위 이벤트는 16–24ms로, B 페이지와 같은 범위입니다.
+- 나머지 F 페이지 아홉 개의 페이지 최댓값은 16–24ms로, B 페이지 열 개의 16–32ms 안에 있습니다.
+- 모든 페이지의 interaction을 합친 p95는 B와 F 모두 24ms입니다. F-1 하나를 빼면 F의 행 값은 24ms가 되어 기준 40ms 안에 듭니다.
 - 페이지별 p95의 중앙값은 B와 F 모두 24ms이고, 그 비율의 bootstrap 상한은 1.0입니다.
 - 같은 폼의 burst 행은 B와 F 모두 32ms입니다.
 - 처리 p95는 F 5.6ms, B 7.1ms입니다.
 
-이 단계의 변경은 이름 변경과 읽기 전용 getter뿐이고, typing 쓰기 경로에는 작업을 더하지 않습니다. 그래서 코디네이터는 이 C2 FAIL을, 외부에서 생긴 표시 지연 한 번이 pooled p95에 그대로 반영된 결과로 판단합니다. 판정은 등록된 대로 FAIL로 남깁니다. 판정을 바꾸지 않는 별도 진단 창은 요청이 있을 때만 실행합니다.
+이 단계의 변경은 이름 변경과 읽기 전용 getter뿐이고, typing 쓰기 경로에는 작업을 더하지 않습니다. 그래서 코디네이터는 이 C2 FAIL을, 외부에서 생긴 표시 지연 한 번이 페이지 p95의 최댓값을 쓰는 행 집계에 그대로 반영된 결과로 판단합니다. 판정은 등록된 대로 FAIL로 남깁니다. 판정을 바꾸지 않는 별도 진단 창은 요청이 있을 때만 실행합니다.
