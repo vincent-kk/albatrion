@@ -11,7 +11,7 @@
 
 ## 근거와 남은 것
 
-- W4 oracle 상한은 merged1000의482.9ms 중123.5ms(25.6%), W1 snapshot 상한은 C1000 wave의24.99ms 중23.80ms입니다. 구현 절감 수치가 아니며 두 후보별로 수용 측정합니다.
+- W4 oracle 상한은 merged1000의482.9ms 중123.5ms(25.6%), W1 snapshot 상한은 C1000 wave의24.99ms 중23.80ms입니다. 구현 절감 수치가 아니며 뒤의 전체 수락 측정과 구분합니다.
 - W5는6.5%로10% 미달, W2는 절감 없음, W3는 가정한 제품 render 경로 부재, C2는1ms 미달로 기록합니다. A의 C1도 별도 측정으로 기록 종결되었습니다.
 - 구현·mutation·전체 관문은 verification/lazy-memo에 보존하고 push·게시·병합·버전 변경은 하지 않습니다.
 
@@ -19,4 +19,13 @@
 
 - 제품 소스 a9dccbea9에서 기준 characterization18개·focused21개와 M1–M4의 지정 실패·복원을 확인했습니다. lint 경고0·typecheck·정식 build·전체7프로젝트·importModel이 통과했습니다. 정확한 개수와 최초 실패·수정·환경 복구는 `verification/lazy-memo/results.md` 및 raw 증거에 있습니다.
 - #519의 a962c942d로 리베이스 후 원장 새 불일치0·미인용0 유지, FCA 새 finding/diagnostic0입니다. 기존 경고와 절대 FAIL/indeterminate는 보존합니다. 기계 경로0·23개 버전 불변입니다.
-- 5셀15프로세스 파일럿과 동일 control 번들 확인을 완료했습니다. 전체 수락 행렬은 실행하지 않았으며 W4·W1 각각의 수용/종결은 측정 작업자가 판정합니다.
+- 5셀15프로세스 파일럿 뒤 전체12 warmup·60 runs의5셀15프로세스가 exit0·97.282099초에 완료되었습니다. 모든 control이 첫 시도에서 유효했고 재시도·VOID·overlap 관측은0입니다. 사전 규칙에 따라 W4 ACCEPT·W1 ACCEPT이며 정확한5셀 수치·quiet check·run receipt는 `verification/lazy-memo/results.md`와 그 raw 증거에 보존합니다.
+
+## 전체 수락과 독립 검토
+
+- **469C-03 (제곱 비용 개선의 검증과 수락)**
+  - 【추론】 소유자 원문87(`reviews/round-469-owner-answers.md:9`)의 오류 검증과 O(n^2) 우려에 따라 특성화·mutation·독립 gate·사전 등록 전체 측정을 수행했다. 기준55055f65b·후보c9634e1c3의5셀은12 warmup·60 runs,15프로세스 exit0,97.282099초이며 control은 전부 첫 시도에서 유효하고 재시도·VOID·overlap 관측은0이다. control 허용폭 max(0.3ms,3%), 주 셀1ms·10% 이상 및 control차이2배 초과 절감, 보조 셀 max(0.05ms,5%) 회귀 한계를 적용해 W4 ACCEPT·W1 ACCEPT로 수락한다. 정확한 수치·규칙·quiet check·run receipt는 verification/lazy-memo/results.md와 raw/accept-full-*에 보존한다. 제품 코드·버전은 더 바꾸지 않는다.
+- 독립 gate는 agy Flash의 PASS WITH CONDITIONS이며 P1은 없었습니다. P2의 수락 결과 미기록은 이번 기록 갱신으로 해결합니다.
+- P3의 subscribed flag 참조 계수 제안은 채택하지 않습니다. React는 같은 훅 인스턴스의 기존 구독을 정리한 뒤 다시 구독하며, 비구독 fallback은 기존 전체 revision 읽기이므로 현재 계약을 유지합니다.
+- P3의 scope root short-circuit 제안도 채택하지 않습니다. merged 주 셀에서 이미99.6% 절감했으므로 추가 코드 변경을 하지 않습니다. 정확한 savingFraction은0.99648740449054입니다. 원문87 기록 제안은 위와 owner registry에 반영했습니다.
+- 기록 마무리의 원장26검사는 a962c942d 대비 새 불일치0·owner778개 전부 인용·미인용0입니다. 기계 경로0·23개 버전 불변이며 c9634e1c3 대비 src diff가 비어 있습니다. 세부 영수증은 verification/lazy-memo/raw/records-final-*에 보존합니다.
