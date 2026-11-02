@@ -4,12 +4,12 @@ import type { Optional } from '@aileron/declare';
 
 import {
   JSONPointer as $,
-  isDescendantPath,
   parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
+import { createValidationScope } from './createValidationScope';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
@@ -23,16 +23,19 @@ const isOwnedNode = <Self extends FieldNodeRecord<Self>>(
   Reflect.get(candidate, 'runtime') === runtime;
 
 /**
- * Replace displayed validator issues inside a requested live subtree.
- * @param target - Scope being validated; siblings keep their displayed issues.
+ * Replace displayed validator issues across the requested subtrees in one pass.
+ * @param targets - Same-root scopes being validated; unselected siblings keep their issues.
  * @param issues - Ordered whole-schema verdict retained at form level.
- * @returns Nodes whose displayed validator issues changed.
+ * @returns Union of changed nodes; a singleton scope retains the single-target result.
  */
 export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
-  target: Self,
+  targets: Iterable<Self>,
   issues: readonly ValidationIssue[],
 ): Set<Self> => {
-  const root = target.rootNode;
+  const scopes = [...targets];
+  const first = scopes[0];
+  if (!first) return new Set();
+  const root = first.rootNode;
   const runtime = root.runtime;
   const before =
     runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
@@ -44,8 +47,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
       for (let index = 0; index < ids.length; index++)
         activeIds.add(ids[index]);
   }
-  const inScope = (node: Self): boolean =>
-    node === target || isDescendantPath(node.path, target.path);
+  const inScope = createValidationScope(scopes);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {

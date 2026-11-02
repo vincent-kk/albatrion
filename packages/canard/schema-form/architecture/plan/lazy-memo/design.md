@@ -22,7 +22,7 @@ W1은 오류 표시 정책을 저장소에 옮기지 않고 기존 event mask의
 
 ## 검증 기록
 
-사용자가 scratch를 저장소 밖으로 제한했으므로 자동 .seiri ledger 대신 /private/tmp/claude-501/perf-runs/lazy-b/impl/gates.md의 명시적 CHECK 기록을 사용합니다. 별도 성능 실행은 하지 않으며 파일럿 수치로 수용하지 않습니다. 현행 설계는 lazy-b-design Amendment 1이며 그 독립 설계 검토를 재사용하고 실제 경로·호출·표현을 추가로 grounding합니다.
+사용자가 scratch를 저장소 밖으로 제한했으므로 자동 .seiri ledger 대신 외부 스크래치의 gates.md의 명시적 CHECK 기록을 사용합니다. 별도 성능 실행은 하지 않으며 파일럿 수치로 수용하지 않습니다. 현행 설계는 lazy-b-design Amendment 1이며 그 독립 설계 검토를 재사용하고 실제 경로·호출·표현을 추가로 grounding합니다.
 
 ## 계획 검토
 

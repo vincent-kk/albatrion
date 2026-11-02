@@ -22,7 +22,7 @@ describe('validation issue attribution', () => {
       { dataPath: '/terminal/deep', message: 'inner' },
       { dataPath: '/absent', message: 'ownerless' },
     ];
-    routeValidationIssues(root, issues);
+    routeValidationIssues([root], issues);
     expect(runtime.globalErrors).toBe(issues);
     expect(
       readFieldNodeErrors(root.structure?.host ?? root).map(
@@ -40,7 +40,7 @@ describe('validation issue attribution', () => {
   it('VALIDATE-051 keeps a union host keyword on its data node', () => {
     const { root } = createDispatchTree({ type: ['string', 'number'] });
     dispatchMount(root, 'x');
-    routeValidationIssues(root, [
+    routeValidationIssues([root], [
       {
         dataPath: '',
         keyword: 'oneOf',
@@ -62,7 +62,7 @@ describe('validation issue attribution', () => {
       then: { properties: { value: { pattern: '^A' } } },
     });
     dispatchMount(root, { flag: true, value: 'b' });
-    routeValidationIssues(root, [
+    routeValidationIssues([root], [
       {
         dataPath: '/value',
         schemaPath: '#/allOf/0/properties/value/minLength',
