@@ -205,3 +205,7 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 
 원문65·79와 C1의 미채택 판정은 round-468-owner-answers.md·round-468-closing.md에 보존합니다. v1·Amendment 2 후보는 사전등록 기준에서 bulk2/6만 통과해 CLOSE_C1_AS_RECORD로 닫았습니다. 계획은 ../plan/lazy-capture, 전체 열 셀과 원본은 ../verification/lazy-capture에 두며 제품 함수·DETAIL은 기준으로 복원하고 기존 동작의 특성화만 유지합니다. NODE-044·WRITE-085의 현행 계약은 바꾸지 않습니다.
 - [469라운드](round-469-closing.md), [원문](round-469-owner-answers.md): B W4·W1의 조건부 수용.
+
+## 470라운드 — 이월 측정과 union trim 시험
+
+[결정](round-470-closing.md)·[원문](round-470-owner-answers.md): U 완료, F·R 기록 종결, G 별도 설계·PR 진행 가능입니다. 전체 측정과 검증은 ../verification/carried-items/results.md에 있으며 제품 구현·버전은 그대로입니다. 다음 라운드는471입니다.

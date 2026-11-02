@@ -96,3 +96,7 @@ flowchart LR
 ## B 지연 메모 조사 후 구현
 
 - [요청](lazy-memo/request.md)·[설계](lazy-memo/design.md)·[검증](lazy-memo/verification.md): VALIDATE-043·052, REACT-019, 469C-01·02.
+
+## C 이월 항목 측정과 시험
+
+470라운드의 [요청](carried-items/request.md)·[측정 설계](carried-items/design.md)·[검증](carried-items/verification.md)은 U 완료, F·R 기록 종결, G 별도 설계 자격을 다룹니다(TEST-077, VALIDATE-044). 결과와 원본은 [carried-items](../verification/carried-items/results.md)에 있습니다.

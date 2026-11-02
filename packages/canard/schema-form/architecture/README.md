@@ -91,3 +91,7 @@ IR-6 연속 입력 결정(2026-10-31): D1 쓰기는 선행·프레임 이월·�
 ## 467라운드 상태 어휘 구현 보충(2026-11-02)
 
 #508은 08 검토·성능 가지에 병합됐으며 상태 어휘 구현은 병합 기준 212967e0f 위에서 진행합니다. 최종 is 접두사 boolean·isPresent·isDivergent 및 Edited/EditedTouched와 드문 투명 lazy memo는 VALUE-044·NODE-067과 [최종 설계](plan/state-vocabulary/design.md)를 따릅니다. [467라운드 원문](reviews/round-467-owner-answers.md)·[닫기](reviews/round-467-closing.md)·[구현 검증](verification/state-vocabulary/results.md)에 근거를 연결합니다. 성능 창·최종 독립 검토·병합은 구현 관문과 구분하며 버전·릴리스 결정은 Vincent에게 남습니다.
+
+## 470라운드 이월 항목 마감 보충
+
+이월 항목은 [요청과 측정 설계](plan/carried-items/request.md)·[전체 결과](verification/carried-items/results.md)·[결정](reviews/round-470-closing.md)에 기록했습니다. union 문자열 trim 시험은 완료했고 대형 배열 첫 프레임과 rebuild 비용은 기록으로 닫았습니다. if guard 전체 compile은 별도 설계·PR 진행 자격을 얻었으며 공개 검증기 계약과 제품 구현은 이번에 바꾸지 않습니다. 버전·릴리스·상위 PR은 Vincent가 맡습니다.
