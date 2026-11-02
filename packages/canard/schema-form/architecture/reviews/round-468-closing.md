@@ -1,26 +1,23 @@
-# 468라운드 닫기 — 측정 조건부 C1 이탈 기본값 읽기
+# 468라운드 닫기 — C1을 수치 기록으로 마감
 
-2026-11-02. 상태 어휘 병합 머리55055f65b의 다음 작업입니다. 구현 관문과 별도 수용 측정을 구분하며 기존 원문·보충·실패 기록을 삭제하지 않습니다.
+2026-11-02. 기준55055f65b, 측정 후보0c95807f4입니다. 사전등록 판정은 CLOSE_C1_AS_RECORD이며 제품 변경을 채택하지 않습니다.
 
 ## 편집자 결정
 
-- **468C-01 (한 번 쓰는 이탈 기본값의 경로 캐시 우회)**
-  - 【추론】 소유자 원문65·79(`reviews/round-468-owner-answers.md:7-8`)에 따라 상태 어휘 병합 뒤의 A를 측정 조건부로 진행한다. C1의 이탈 기본값 포착은 공급된 load가 있으면 undefined를 포함한 load.value를 우선하고 이미 떼어진 노드는 기존 detachedReads의 defaultValue를 읽으며 나머지는 현재 loadSnapshot과 node.path로 getLoadValue를 호출해 경로를 직접 파싱한다. 이 한 번의 읽기는 runtime 포인터 세그먼트 캐시를 조회·삽입·퇴출하지 않고 살아 있는 defaultValue 게터는 준비된 문법과 기존 캐시를 유지한다. NODE-044의 포착 시점·얕은 참조·오류 배열 identity와 WRITE-085의 로드 스냅숏 출처는 같고 NODE-004·NODE-045의 노드·runtime 필드는 늘지 않는다. watch·오류·경고등·플래그·동결·WeakMap과 다섯 호출 지점 및 C2는 바꾸지 않는다. 구현은 특성화·삽입0 red/green·변이·전체 관문 뒤 별도 작업자가 N1000 아홉 셀을 12예열·60회로 재어 bulk 여섯 중 넷 이상에서 중앙값10%와1ms 이상 절감하고 모든 셀에서0.5ms 초과 퇴보가 없을 때만 수용한다. 미달이면 C1도 수치와 함께 기록으로 닫고 버전·릴리스·상위 PR은 소유자에게 남긴다.
+- **468C-01 (이탈 포착 동작 유지와 C1 기록 마감)**
+  - 【추론】 소유자 원문65·79(`reviews/round-468-owner-answers.md:7-8`)의 실측 이익 조건을 적용해 C1을 기록으로 닫는다. 이탈 포착의 defaultValue 읽기는 기준55055f65b의 동작을 유지한다. runtime 포인터 캐시를 우회한 v1과 준비된 정적 문법을 보존한 Amendment 2를 구현·검증하고 후보0c95807f4를 사전등록 규칙으로 측정했으나 bulk 여섯 셀 중 errors의 setValue([])와 clear() 두 셀만 통과해 필요한 넷에 못 미쳤다. 각각1.3826039999999011ms·0.15632138163007778과1.4820840000000999ms·0.17807221440314658을 절감했으며 모든 셀의0.5ms 초과 퇴보는0이었다. 제품 함수·세 DETAIL 행·삽입0 시험은 기준으로 복원하고 NODE-044의 현행 계약은 바꾸지 않으며 기존 동작을 그대로 통과한 특성화14개만 남긴다. 전체 열 셀과 시도·환경 원본 및 판정은 verification/lazy-capture/results.md에 보존한다.
+- **468C-02 (runtime 캐시 계약 유지)**
+  - 【추론】 소유자 원문65·79(`reviews/round-468-owner-answers.md:7-8`)에 따른 C1의 미채택 마감으로 runtime 포인터 세그먼트 캐시와 로드 기본값 출처의 현행 계약은 기준55055f65b 그대로 유지한다. 캐시를 우회한 v1 및 Amendment 2는 사전등록한 bulk 넷 이상 조건에서 둘만 통과했으며0.5ms 초과 퇴보는 없었다. 이 보충은 WRITE-085의 동작을 바꾸지 않는 실험 마감 기록이고 제품 계약·버전·API를 추가하지 않는다. 근거와 전체 측정 표는 verification/lazy-capture/results.md에 있다.
 
-## 근거와 남은 것
+## 시도·근거·후속
 
-- 소유자 원문은 round-468-owner-answers.md, 현재 설계는 plan/lazy-capture/design.md, 실행 관문은 plan/lazy-capture/verification.md를 따릅니다.
-- 최종 성능 수용·독립 검토·PR 게시·병합은 이 계약 기록과 구분합니다. 다음 라운드 번호는469입니다.
+- v1의 직접 파싱과 Amendment 2의 정적 문법 보존, agy Flash의 PASS WITH CONDITIONS(P1 계약 선행·P2 detached fallback 유지), 구현 후보의 전체 관문과 변이 결과를 plan/lazy-capture 및 verification/lazy-capture에 남깁니다. 설계 검토의 조건부 통과와 제품 성능 수용은 구분합니다.
+- 측정은 독립 VM·동일 코드 control·12예열·60회였고 control 무효 두 그룹은 사전 규칙대로 전체 세 프로세스를 한 번 재시도했습니다.36프로세스가 모두 종료0이며 경쟁 검사 목록은 비어 있습니다. 최종 열 셀은 모두 유효합니다.
+- plain/watch bulk 절감은0.7550209999999424–0.9437079999999014ms로1ms에 못 미쳤습니다. oneOf-80 보호 셀의 변화는+0.0030625000000270575ms로0.5ms 한도 안입니다. 기준은 측정 뒤 고치지 않았습니다.
+- 제품 함수와 DETAIL은 기준 바이트로 복원하고 삽입0 시험은 제거합니다. 원문65·79와 인용을 보존하기 위해 코디네이터 지시에 따라 NODE-044에는468C-01, WRITE-085에는468C-02의 기존 동작 유지 보충만 남깁니다. source 동작·공개 API·버전은 바뀌지 않습니다.
+- 이 가지는 기록 PR이며 push·게시·병합은 코디네이터의 후속입니다. 다음 라운드는469입니다.
 
-## Amendment 2 — 정적 문법의 보존
+## 기록 가지 마감 관문
 
-- **468C-02 (runtime 캐시 우회와 정적 문법 재사용의 분리)**
-  - 【추론】 468C-01의 세 번째 우선순위는 Amendment 2로 좁힌다. 분기 있는 청사진의 이탈 기본값 포착은 getDependencyIndex(runtime.blueprint).pathSegments(node.path)에 runtime을 넘기지 않아 준비된 정적 문법을 재사용하고 미준비 경로만 보유 없이 파싱한다. 분기 없는 청사진은 getLoadValue(runtime.loadSnapshot, node.path)에 세그먼트를 넘기지 않는다. 두 경로 모두 runtime 포인터 세그먼트 캐시를 조회·삽입·퇴출하지 않으며 기존 oneOf 전환의 full-pointer decoder0 계약과 테스트는 그대로 유지한다. 공급된 undefined와 이미 떼어진 읽기의 우선순위 및 나머지 관측·필드·호출 지점은468C-01과 같다.
-
-- 첫 전체 unit은4241통과·2실패·todo1이었다. 실패 두 건은 oneOf-80의 이전 payload 세 경로를 직접 파싱한 v1과 decoder0 계약의 충돌이며, 승인된 Amendment 2로 구현을 좁힌다. 기존 시험을 완화하지 않고 최초 실패 결과를 보존한다.
-
-## 구현 관문 결과
-
-- Amendment 2 제품은 `b0a8b3304`에 구현했습니다. 특성화14개·수정 설계 focused20개와 삽입0 red/green·M1–M3를 확인했고 기존 decoder0 시험은 그대로입니다.
-- lint 경고0·타입·정식 빌드와 일곱 테스트 프로젝트·importModel은 실패0입니다. 실제 skip·todo 수와 원장/FCA 기준 비교 및 압축 원본은 verification/lazy-capture/results.md와 그 raw 자료에 보존합니다.
-- 실제 제품의 성능 수용과 독립 검토는 다음 담당자에게 남깁니다. 구현 작업자는 측정·push·PR 게시·병합·버전 변경을 하지 않았습니다.
+- 제품 함수·DETAIL의 기준 바이트 복원과 특성화14개 무수정 통과를 확인했습니다. src 차이는 특성화·fixture 두 파일뿐입니다.
+- lint 경고0·typecheck·unit4242통과·verify-unit4286통과(두 프로젝트 각각todo1, 실패·skip0), 원장26검사·owner775/775·문서 미인용66 유지, 전체23manifest 버전 불변과 변경64파일 경로0을 확인했습니다. 기존 raw36개는 바이트를 보존했습니다. 원본은 verification/lazy-capture/raw/close- 접두 자료입니다.

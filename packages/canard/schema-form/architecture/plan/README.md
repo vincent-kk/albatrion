@@ -90,6 +90,6 @@ flowchart LR
 | 계획서 형식 | 디렉토리마다 문서 셋, seiri·filid 절차 | PROCESS-067 |
 | 07 뒤의 순서(2026-10-09) | 07 → 소유자의 이해와 인터페이스 확정·내부 코드 스타일링(07b, 소유자가 직접) → 성능 개선과 플러그인 개편(병렬) → 문서 정리와 레거시 제거(09) → 실제 배포 | `../reviews/round-130-owner-answers.md` |
 
-## C1 이탈 기본값 경로
+## C1 이탈 기본값 실험 — 기록으로 마감
 
-468라운드의 요청·설계·검증은 [lazy-capture](./lazy-capture/request.md)를 따릅니다.
+468라운드의 [lazy-capture](./lazy-capture/request.md)는 사전등록 관문에서 bulk2/6으로 CLOSE_C1_AS_RECORD 판정을 받았습니다. v1·Amendment 2와 측정 증거를 보존하며 제품 변경은 없고 기존 동작의 특성화만 남깁니다.
