@@ -89,9 +89,7 @@ jobs:
         # --topological-dev, not -t: -R pulls devDependencies into the closure but
         # -t orders by dependencies only, so a devDep can land AFTER its dependent
         # and its dist is still missing when that dependent type-checks.
-        run: >-
-          yarn workspaces foreach -R --topological-dev
-          --from '@canard/schema-form' run build
+        run: node --import tsx packages/aileron/benchmark-form/browser-bench/core/prepareCheckout.mjs .
 
       - name: schema-form React 18 and 19 render tests
         run: yarn workspace @canard/schema-form test --run --project render --project react18 --reporter=dot
