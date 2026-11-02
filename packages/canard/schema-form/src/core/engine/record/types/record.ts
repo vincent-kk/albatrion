@@ -1,5 +1,7 @@
 import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
+import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   BlueprintChildEntry,
   BlueprintNode,
@@ -99,6 +101,10 @@ export interface FieldNodeRecord<Self> {
   emit: unknown;
   /** Current output at this occurrence's path when divergence was last read. */
   divergenceCurrent: unknown;
+  /** Concrete path whose parsed segments this occurrence retains. */
+  divergencePath: string | undefined;
+  /** Parsed path syntax retained until this occurrence changes address. */
+  divergenceSegments: readonly PointerSegment[] | undefined;
   /** Baseline output at this occurrence's path when divergence was last read. */
   divergenceBase: unknown;
   /** Pure comparison result for the two retained path values. */

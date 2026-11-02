@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- divergence의 주소 메모는 노드 수명에 귀속되며 주소가 바뀐 첫 읽기에서만 segment 배열을 교체한다. 생성자와 구조적 시험 fixture는 path·segments를 미설정으로 초기화하고 쓰기에서는 갱신하지 않는다.
+
 - `loadBaseline?: { value: unknown }`는 마지막 루트 load commit의 출력 참조이며 unset box와 undefined 출력을 구별한다. 노드 고정 칸 divergenceCurrent·divergenceBase·divergenceResult는 읽기 결과 메모이고 생성자에서 undefined·undefined·false로 초기화한다. 쓰기나 detach에서는 이 메모를 조회하지 않는다. record는 비교를 실행하지 않는다.
 
 - 로드 시작은 validationStamp를 증가시키며 finally의 사슬 종료 직전에 validationLoadStamp를 기록한다. 이 선택적 수는 로드 세대와 로드 이후 요청 비교를 소유한다. deferLoadValidation은 mount·form reset의 바인딩 슬롯 위임을 표시하며 노드 고정 칸은 늘리지 않는다.

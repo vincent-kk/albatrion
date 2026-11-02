@@ -73,6 +73,8 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     local: undefined,
     emit: undefined,
     divergenceCurrent: undefined,
+    divergencePath: undefined,
+    divergenceSegments: undefined,
     divergenceBase: undefined,
     divergenceResult: false,
     schema: { schema: {}, typeConflict: false },

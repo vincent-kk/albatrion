@@ -14,12 +14,17 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const baseline = node.runtime.loadBaseline;
   if (!baseline || node.detached) return false;
-  const segments = node.runtime.blueprint.capabilities.branchless
-    ? getCachedPointerSegments(node.runtime, node.path)
-    : getDependencyIndex(node.runtime.blueprint).pathSegments(
-        node.path,
-        node.runtime,
-      );
+  let segments = node.divergenceSegments;
+  if (!segments || !Object.is(node.path, node.divergencePath)) {
+    segments = node.runtime.blueprint.capabilities.branchless
+      ? getCachedPointerSegments(node.runtime, node.path)
+      : getDependencyIndex(node.runtime.blueprint).pathSegments(
+          node.path,
+          node.runtime,
+        );
+    node.divergencePath = node.path;
+    node.divergenceSegments = segments;
+  }
   const current = getLoadValue(node.rootNode.emit, node.path, segments);
   const base = getLoadValue(baseline.value, node.path, segments);
   if (

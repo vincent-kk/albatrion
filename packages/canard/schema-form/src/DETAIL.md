@@ -22,7 +22,6 @@
 
 ### 경계 검증과 시험 도우미
 
-- 상태 어휘의 비용·빠른 로드·커밋 전 실패 시험은 실제 함수 모듈을 spy해야 하므로 surface 시험에서 divergence reader·sameValue·loadStaticFirstTree·finishSettlement를 직접 읽는다. 재수출 index의 spy는 실제 호출을 세지 못하므로 importModel은 아래 네 importer/target을 정확히 열거하고 별도 계수한다. 제품 import 경계는 유지한다.
 
 - H 검증의 runtime bridge 직접 import는 소유 surface DETAIL의 단일 예외를 따른다(코디네이터 msg_29959ddbd70f). importModel은 그 importer/target만 별도 계수하고 다른 D 위반0을 유지한다.
 

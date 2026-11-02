@@ -108,7 +108,7 @@ export interface NodeSurface<
   /**
    * Whether current form output differs from the last root load at this path.
    * False before the first load and after detach. Array positions and key order matter.
-   * React consumers re-read on UpdateValue, UpdatePath or UpdateState.
+   * Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
    */
   readonly isDivergent: boolean;
   find(

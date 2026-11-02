@@ -1,0 +1,76 @@
+{
+  "f2-red": {
+    "numPassedTests": 37,
+    "numFailedTests": 1,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "failures": [
+      {
+        "name": "a second sweep of 320 branchless nodes parses no pointer segments",
+        "reason": "AssertionError: expected \"parsePointerSegments\" to be called +0 times, but got 320 times"
+      }
+    ]
+  },
+  "engine-green": {
+    "numPassedTests": 38,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "failures": []
+  },
+  "render-green": {
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "failures": []
+  },
+  "mutation-f2": {
+    "numPassedTests": 0,
+    "numFailedTests": 1,
+    "numPendingTests": 5,
+    "numTodoTests": 0,
+    "failures": [
+      {
+        "name": "a second sweep of 320 branchless nodes parses no pointer segments",
+        "reason": "AssertionError: expected \"parsePointerSegments\" to be called +0 times, but got 320 times"
+      }
+    ]
+  },
+  "mutation-f6": {
+    "numPassedTests": 0,
+    "numFailedTests": 3,
+    "numPendingTests": 16,
+    "numTodoTests": 0,
+    "failures": [
+      {
+        "name": "state-vocabulary output divergence settled load with expressions captures the final output",
+        "reason": "AssertionError: expected undefined to deeply equal { value: { a: 'loaded', b: 'loaded' } }"
+      },
+      {
+        "name": "state-vocabulary output divergence a default-filled field compares against the filled output, not the raw load source",
+        "reason": "AssertionError: expected undefined to deeply equal { value: { a: 'filled' } }"
+      },
+      {
+        "name": "an unchanged repeated read and a NaN field call sameValue zero times",
+        "reason": "AssertionError: expected undefined to deeply equal { value: { s: 'loaded', n: NaN } }"
+      }
+    ]
+  },
+  "mutation-static": {
+    "numPassedTests": 0,
+    "numFailedTests": 2,
+    "numPendingTests": 12,
+    "numTodoTests": 0,
+    "failures": [
+      {
+        "name": "state-vocabulary output divergence static-first load captures the final filled output baseline",
+        "reason": "AssertionError: expected undefined to deeply equal { value: { a: 'd' } }"
+      },
+      {
+        "name": "static-first load captures the final filled output as the baseline",
+        "reason": "AssertionError: expected undefined to deeply equal { value: { a: 'd' } }"
+      }
+    ]
+  }
+}

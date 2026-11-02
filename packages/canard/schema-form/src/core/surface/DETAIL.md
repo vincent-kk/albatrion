@@ -3,7 +3,7 @@
 ## Requirements
 
 - 노드 boolean 이름은 `is`로 시작하고 record와 공개 getter는 같은 이름을 쓴다. React props, schema 및 controls 키는 유지한다.
-- `isDivergent`는 unset baseline 및 detach에서 false다. root load commit의 최종 출력 참조를 박스에 보관하며 자식 reset·일반 쓰기는 baseline을 옮기지 않는다. 두 경로 값 전체를 Object.is로 메모하고 읽기당 두 경로를 순회한다. 비교는 참조 보존 부분을 건너뛰며 key 순서에 민감하다. React 소비자는 UpdateValue·UpdatePath·UpdateState에서 다시 읽는다. 커밋 전 실패는 기준을 유지하고 커밋 뒤 보고한 실패는 degraded 출력을 기준으로 쓴다.
+- `isDivergent`는 unset baseline 및 detach에서 false다. root load commit의 최종 출력 참조를 박스에 보관하며 자식 reset·일반 쓰기는 baseline을 옮기지 않는다. 두 경로 값 전체를 Object.is로 메모하고 읽기당 두 경로를 순회한다. 비교는 참조 보존 부분을 건너뛰며 key 순서에 민감하다. React 소비자는 루트의 UpdateValue·UpdateState·RequestRefresh와 읽는 노드의 UpdatePath에서 다시 읽고, 루트나 노드 교체 때 구독을 다시 연결한다. root load의 C와 S 경로 모두 RequestRefresh를 배달하므로 같은 출력 reset도 포착한다. 커밋 전 실패는 기준을 유지하고 커밋 뒤 보고한 실패는 degraded 출력을 기준으로 쓴다.
 
 - `onInactive`의 해제 함수는 반복 호출해도 뒤에 등록한 리스너를 해제하지 않습니다.
 

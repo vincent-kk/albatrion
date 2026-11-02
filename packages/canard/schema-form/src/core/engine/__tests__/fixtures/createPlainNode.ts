@@ -88,6 +88,8 @@ export const createPlainNode = (
     local: undefined,
     emit: undefined,
     divergenceCurrent: undefined,
+    divergencePath: undefined,
+    divergenceSegments: undefined,
     divergenceBase: undefined,
     divergenceResult: false,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),

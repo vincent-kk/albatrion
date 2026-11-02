@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- divergence 읽기는 각 노드가 마지막 path 문자열과 해석한 segment 배열을 보유한다. path가 Object.is로 같으면 branchless LRU와 dependency index를 다시 조회하지 않는다. 300개 이상 노드의 두 번째 전체 읽기에서 parse 호출은0이다. 비용·커밋 실패 spy는 이 엔진의 시험이 소유하며 surface에 import 예외를 만들지 않는다.
+
 - 고정 HEAD 차등 시험은 원래 revision과 값·사건·순서를 보존한다. 상태 이름 변경 뒤에도 현재 observer가 pinned 노드의 원래 필드를 읽도록, 해당 observer 소스의 node.is 접두사 다섯 접근만 pinned 빌드에서 옛 필드 철자로 대응시킨다. 관측 키는 현재 이름이며 제품 별칭이나 기준 재생성을 하지 않는다.
 
 - 루트 static-first load와 loadScope가 root인 settlement commit의 끝에서 `loadBaseline` 박스에 최종 root.emit 참조를 한 번 저장한다. 하위 reset과 쓰기는 baseline을 옮기지 않는다. `readFieldNodeIsDivergent`는 현재 루트 출력과 기준 출력에서 같은 cached path를 두 번 읽고 Object.is 입력 키로 sameValue 결과를 메모한다. unset·detached는 false이며 커밋 전 실패는 기준을 유지한다. 커밋 뒤 보고한 오류는 degraded 출력으로 baseline을 갱신한다.

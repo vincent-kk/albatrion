@@ -24,6 +24,13 @@ ShowError의 기본 EditedTouched 정책과 비트 값은 유지하며 Submitted
 쓰기에는 기준 읽기나 비교를 더하지 않고 반복 읽기의 비교 호출은 0이다 (VALUE-044).
 메모는 자기 경로 값만 보유하며 기준은 로드 뒤 교체된 부분을 보유한다 (VALUE-044).
 정착 중 읽기는 `value`·`outputValue`처럼 일시 값을 줄 수 있으나 모든 입력을 키로 삼으므로 커밋 뒤까지 남지 않는다 (VALUE-044).
-React는 `UpdateValue`·`UpdatePath`·`UpdateState`에서 다시 읽는다 (VALUE-044).
+React 소비자는 루트의 `UpdateValue`·`UpdateState`·`RequestRefresh`와 해당 노드의 `UpdatePath`에서 다시 읽고 교체 때 재구독한다 (VALUE-044).
 커밋 전 던진 로드는 기준을 유지하고 커밋 뒤 보고되는 예산·식·게이트 실패는 degraded 출력을 새 기준으로 삼는다 (VALUE-044).
 근거는 원문 32·60–63이며 최종 getter 철자는 78번을 따른다 (VALUE-044).
+
+## 최종 관문 — VALUE-044·NODE-067
+
+React 소비자는 루트의 `UpdateValue`·`UpdateState`·`RequestRefresh`와 해당 노드의 `UpdatePath`에서 다시 읽는다 (VALUE-044, NODE-067).
+루트 로드의 C와 S 경로는 모두 `RequestRefresh`를 전달하므로 같은 출력 reset도 포착하며 루트나 노드 교체 때 구독을 다시 연결한다 (VALUE-044, NODE-067).
+각 노드는 생성자에서 초기화한 `divergencePath`와 `divergenceSegments`에 마지막 주소와 segment 배열을 보유하고 `Object.is`로 주소가 같으면 전역 LRU와 dependency index를 재조회하지 않는다 (VALUE-044, NODE-067).
+320개 노드의 두 번째 sweep에서 parse 호출은0이며 추가 보유 비용은 노드별 경로 깊이에 비례한다 (VALUE-044, NODE-067).

@@ -16,3 +16,8 @@
 - 소유자 원문은 round-467-owner-answers.md, 최종 계약은 plan/state-vocabulary/design.md, 실행 결과는 verification/state-vocabulary/results.md에 둡니다.
 - 기존 기록·보충은 삭제하지 않습니다. 구현 관문과 성능 창·독립 검토·소유자 병합·버전 결정을 구분합니다.
 - 다음 라운드 번호는 468이다.
+
+## 최종 관문 후속 보충
+
+- **467C-04 (루트 이벤트와 노드별 경로 memo)**
+  - 【추론】 React 소비자는 루트의 `UpdateValue`·`UpdateState`·`RequestRefresh`와 해당 노드의 `UpdatePath`에서 다시 읽는다. 루트 로드의 C와 S 경로는 모두 `RequestRefresh`를 전달하므로 같은 출력 reset도 포착하며 루트나 노드 교체 때 구독을 다시 연결한다. 각 노드는 생성자에서 초기화한 `divergencePath`와 `divergenceSegments`에 마지막 주소와 segment 배열을 보유하고 `Object.is`로 주소가 같으면 전역 LRU와 dependency index를 재조회하지 않는다. 320개 노드의 두 번째 sweep에서 parse 호출은0이며 추가 보유 비용은 노드별 경로 깊이에 비례한다. 엔진 내부 spy는 엔진 fractal의 시험에 배치하고 import-model 예외를 두지 않는다. API reference의 노드 선언·indexed access·mock override와 실패 진단 이름도 최종 어휘를 따른다.

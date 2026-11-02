@@ -22,11 +22,11 @@ type MockFieldNodeOverrides = {
   jsonSchema?: FieldNode['jsonSchema'];
   value?: any;
   defaultValue?: any;
-  required?: boolean;
-  readOnly?: boolean;
-  disabled?: boolean;
+  isRequired?: boolean;
+  isReadOnly?: boolean;
+  isDisabled?: boolean;
   nullable?: boolean;
-  enabled?: boolean;
+  isPresent?: boolean;
   isRoot?: boolean;
   depth?: number;
   parentNode?: FieldNode | null;

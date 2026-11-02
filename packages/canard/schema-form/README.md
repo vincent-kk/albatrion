@@ -587,7 +587,7 @@ interface FieldInputProps<
   /** Authored accepted kind(s), including 'integer'; undefined on a virtual node */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds */
-  misfit: Node['misfit'];
+  misfit: Node['isMisfit'];
   /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
   /** Path of the field node assigned to the FieldInput Component */
@@ -2570,7 +2570,7 @@ node.isDivergent; // current form output differs from the last root load at node
 
 Reverting to the baseline reads false. Hidden fields remain in the output; array holes use their actual output contribution. Items compare by position: a moved or added item can read true, while an added item matching the value originally at that position reads false. Child reset follows its load source by item identity, so after array movement, or with dependencies outside its subtree, the restored subtree can remain divergent. Detached nodes read false because they no longer contribute to the output.
 
-The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. React consumers re-read `isDivergent` on `UpdateValue`, `UpdatePath` or `UpdateState`; reset can change it without `UpdateValue`.
+The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
 
 Writes perform no divergence reads or comparisons. A root load allocates one baseline box retaining its output reference. Each getter read walks two cached paths, O(depth), and compares only when either path value changes by `Object.is`; repeated unchanged reads call `sameValue` zero times, including NaN. A first comparison skips unchanged references. The baseline retains replaced parts until the next root load, and each node memo retains only its own two path values and result.
 

@@ -1,0 +1,116 @@
+[
+  {
+    "name": "formal-build",
+    "command": "yarn workspace @canard/schema-form build",
+    "exit": 0,
+    "evidence": "gate-summary.json runtimeBuild"
+  },
+  {
+    "name": "unit",
+    "command": "yarn workspace @canard/schema-form test run --project unit --reporter=json --outputFile=<scratch>/gate-unit.json",
+    "exit": 0,
+    "evidence": "gate-unit.json.gz"
+  },
+  {
+    "name": "render",
+    "command": "yarn workspace @canard/schema-form test run --project render --reporter=json --outputFile=<scratch>/gate-render.json",
+    "exit": 0,
+    "evidence": "gate-render.json.gz"
+  },
+  {
+    "name": "react18",
+    "command": "yarn workspace @canard/schema-form test run --project react18 --reporter=json --outputFile=<scratch>/gate-react18.json",
+    "exit": 0,
+    "evidence": "gate-react18.json.gz"
+  },
+  {
+    "name": "storybook",
+    "command": "yarn workspace @canard/schema-form test run --project storybook --reporter=json --outputFile=<scratch>/gate-storybook.json",
+    "exit": 0,
+    "evidence": "gate-storybook.json.gz"
+  },
+  {
+    "name": "production",
+    "command": "yarn workspace @canard/schema-form test:production --reporter=json --outputFile=<scratch>/gate-production.json",
+    "exit": 0,
+    "evidence": "gate-production.json.gz"
+  },
+  {
+    "name": "verify-unit",
+    "command": "yarn workspace @canard/schema-form test run --project verify-unit --reporter=json --outputFile=<scratch>/gate-verify-unit.json",
+    "exit": 0,
+    "evidence": "gate-verify-unit.json.gz"
+  },
+  {
+    "name": "verify-render",
+    "command": "yarn workspace @canard/schema-form test run --project verify-render --reporter=json --outputFile=<scratch>/gate-verify-render.json",
+    "exit": 0,
+    "evidence": "gate-verify-render.json.gz"
+  },
+  {
+    "name": "scenarios-typecheck",
+    "command": "yarn workspace @aileron/schema-form-scenarios typecheck",
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "name": "scenarios-test",
+    "command": "yarn workspace @aileron/schema-form-scenarios test --reporter=json --outputFile=<scratch>/gate-scenarios.json",
+    "exit": 0,
+    "output": "JSON report written to <scratch>/gate-scenarios.json\n"
+  },
+  {
+    "name": "ajv6-typecheck",
+    "command": "yarn workspace @canard/schema-form-ajv6-plugin typecheck",
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "name": "ajv6-test",
+    "command": "yarn workspace @canard/schema-form-ajv6-plugin test run --reporter=json --outputFile=<scratch>/gate-ajv6.json",
+    "exit": 0,
+    "output": "JSON report written to <scratch>/gate-ajv6.json\n"
+  },
+  {
+    "name": "ajv7-typecheck",
+    "command": "yarn workspace @canard/schema-form-ajv7-plugin typecheck",
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "name": "ajv7-test",
+    "command": "yarn workspace @canard/schema-form-ajv7-plugin test run --reporter=json --outputFile=<scratch>/gate-ajv7.json",
+    "exit": 0,
+    "output": "JSON report written to <scratch>/gate-ajv7.json\n"
+  },
+  {
+    "name": "ajv8-typecheck",
+    "command": "yarn workspace @canard/schema-form-ajv8-plugin typecheck",
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "name": "ajv8-test",
+    "command": "yarn workspace @canard/schema-form-ajv8-plugin test run --reporter=json --outputFile=<scratch>/gate-ajv8.json",
+    "exit": 0,
+    "output": "JSON report written to <scratch>/gate-ajv8.json\n"
+  },
+  {
+    "name": "import-model",
+    "command": "yarn workspace @canard/schema-form test run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<scratch>/gate-import-model.json",
+    "exit": 0,
+    "output": "│ ┌────────────────────────────────────────────────────────────────────────────┐\n│ │  Info: Found a setup file with \"setProjectAnnotations\".                    │\n│ │  Skipping automatic provisioning of preview annotations to avoid           │\n│ │  conflicts. Since Storybook 10.3, \"@storybook/addon-vitest\" applies these  │\n│ │   automatically.                                                           │\n│ │  You can safely remove the \"setProjectAnnotations\" call from your setup    │\n│ │  file, or remove the file entirely if you don't have custom code there.    │\n│ └────────────────────────────────────────────────────────────────────────────┘\nJSON report written to <scratch>/gate-import-model.json\n"
+  },
+  {
+    "name": "lint-final",
+    "command": "yarn workspace @canard/schema-form lint --max-warnings=0",
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "name": "typecheck-final",
+    "command": "yarn workspace @canard/schema-form typecheck",
+    "exit": 0,
+    "output": ""
+  }
+]

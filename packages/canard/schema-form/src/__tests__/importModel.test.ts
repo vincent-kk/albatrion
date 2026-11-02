@@ -182,14 +182,6 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
   let totalU = 0;
   let exemptU = 0;
   const revealRuntimeBridges: string[] = [];
-  /** Exact module spies required to observe the implementation rather than an index copy. */
-  const vocabularySpyBridges = [
-    'core/surface/__tests__/state-vocabulary.cost.test.ts -> core/engine/settle/utils/loadValues/readFieldNodeIsDivergent.ts',
-    'core/surface/__tests__/state-vocabulary.cost.test.ts -> core/engine/utils/compute/sameValue.ts',
-    'core/surface/__tests__/state-vocabulary.divergence.test.ts -> core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts',
-    'core/surface/__tests__/state-vocabulary.loads.test.ts -> core/engine/settle/utils/settlement/finishSettlement.ts',
-  ];
-  const observedVocabularySpies: string[] = [];
   for (const importer of files.filter((file) => /\.tsx?$/.test(file))) {
     for (const { specifier, line } of readImports(importer)) {
       const target = resolveImport(specifier, importer);
@@ -214,11 +206,6 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
             targetPath === 'core/engine/validation/index.ts'))
       ) {
         revealRuntimeBridges.push(importerPath + ' -> ' + targetPath);
-        continue;
-      }
-      const vocabularySpy = importerPath + ' -> ' + targetPath;
-      if (verdict === 'S1' && vocabularySpyBridges.includes(vocabularySpy)) {
-        observedVocabularySpies.push(vocabularySpy);
         continue;
       }
       if (verdict === 'U') {
@@ -260,10 +247,6 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
   console.info(
     'IMPORT_MODEL_REVEAL_BRIDGE count=' + revealRuntimeBridges.length,
   );
-  expect(
-    observedVocabularySpies.sort(),
-    'exact state-vocabulary module spies',
-  ).toEqual(vocabularySpyBridges);
   expect(counts, message).toEqual({ U: 0, D: 0, S1: 0 });
 }, 60000);
 

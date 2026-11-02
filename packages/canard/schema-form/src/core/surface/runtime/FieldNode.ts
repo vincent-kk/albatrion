@@ -1,5 +1,7 @@
 import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
+import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   BlueprintNode,
   BlueprintSchemaType,
@@ -81,6 +83,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   emit: unknown;
   /** Current output at this path retained by the divergence read memo. */
   divergenceCurrent: unknown;
+  /** Concrete path whose parsed segments this occurrence retains. */
+  divergencePath: string | undefined;
+  /** Parsed path syntax retained until this occurrence changes address. */
+  divergenceSegments: readonly PointerSegment[] | undefined;
   /** Last root load output at this path retained by the divergence read memo. */
   divergenceBase: unknown;
   /** Pure comparison result for the retained path values. */
@@ -146,6 +152,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.local = undefined;
     this.emit = undefined;
     this.divergenceCurrent = undefined;
+    this.divergencePath = undefined;
+    this.divergenceSegments = undefined;
     this.divergenceBase = undefined;
     this.divergenceResult = false;
     this.schema = schema;
@@ -309,7 +317,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get defaultValue() {
     return readFieldNodeDefaultValue<FieldNode>(this);
   }
-  /** Output difference from the last root load; re-read on UpdateValue, UpdatePath or UpdateState. */
+  /** Output difference from the last root load. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events. */
   get isDivergent(): boolean {
     return readFieldNodeIsDivergent<FieldNode>(this);
   }

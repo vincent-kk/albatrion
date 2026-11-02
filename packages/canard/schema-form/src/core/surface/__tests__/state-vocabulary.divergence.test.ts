@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../engine';
-import * as staticLoad from '../../engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree';
 import { requireRuntimeFieldNode } from '../runtime/requireRuntimeFieldNode';
 import { reloadFieldNodeForm } from '../utils/binding/reloadFieldNodeForm';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
@@ -19,12 +18,10 @@ describe('state-vocabulary output divergence', () => {
     expect(root.isDivergent).toBe(false);
   });
   it('static-first load captures the final filled output baseline', () => {
-    const load = vi.spyOn(staticLoad, 'loadStaticFirstTree');
     const root = makeVocabularyTree(
       { type: 'object', properties: { a: { type: 'string', default: 'd' } } },
       undefined,
     );
-    expect(load).toHaveBeenCalledTimes(1);
     expect(requireRuntimeFieldNode(root).runtime.loadBaseline).toEqual({
       value: { a: 'd' },
     });
@@ -57,6 +54,9 @@ describe('state-vocabulary output divergence', () => {
       },
       { a: 'loaded' },
     );
+    expect(requireRuntimeFieldNode(root).runtime.loadBaseline).toEqual({
+      value: { a: 'loaded', b: 'loaded' },
+    });
     expect(root.find('/b')?.value).toBe('loaded');
     expect(root.isDivergent).toBe(false);
     expect(root.find('/b')?.isDivergent).toBe(false);
@@ -69,6 +69,9 @@ describe('state-vocabulary output divergence', () => {
       },
       {},
     );
+    expect(requireRuntimeFieldNode(root).runtime.loadBaseline).toEqual({
+      value: { a: 'filled' },
+    });
     expect(root.find('/a')?.value).toBe('filled');
     expect(root.find('/a')?.isDivergent).toBe(false);
   });

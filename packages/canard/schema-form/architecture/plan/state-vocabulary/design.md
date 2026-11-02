@@ -12,7 +12,7 @@
 
 ## 기준 출력과 지연 읽기
 
-`isDivergent`는 현재 폼 출력과 마지막 루트 로드 커밋 출력의 같은 경로 값을 비교한다. 기준은 `loadBaseline` 박스의 최종 루트 출력 참조이고, 첫 로드 전과 detach 뒤에는 false다. 루트 reset·루트 resetSubtree·rebuild·validator 교체는 새 기준을 만들며 자식 reset과 일반 쓰기는 옮기지 않는다. 배열은 위치로 비교하고 hole·숨김 값도 폼 출력 그대로 포함한다. 자식 reset의 원본은 아이템 identity를 따라가므로 배열 재배치나 외부 파생값에 따라 reset 뒤에도 true일 수 있다. `sameValue`는 각 단계의 같은 참조를 건너뛰며 미선언 객체 키 순서에 민감하다. 읽기는 두 경로를 O(depth)로 걷고 현재 값과 기준 값을 `Object.is`로 키 삼아 결과를 메모한다. 쓰기에는 기준 읽기나 비교를 더하지 않고 반복 읽기의 비교 호출은 0이다. 메모는 자기 경로 값만 보유하며 기준은 로드 뒤 교체된 부분을 보유한다. 정착 중 읽기는 `value`·`outputValue`처럼 일시 값을 줄 수 있으나 모든 입력을 키로 삼으므로 커밋 뒤까지 남지 않는다. React는 `UpdateValue`·`UpdatePath`·`UpdateState`에서 다시 읽는다. 커밋 전 던진 로드는 기준을 유지하고 커밋 뒤 보고되는 예산·식·게이트 실패는 degraded 출력을 새 기준으로 삼는다.
+`isDivergent`는 현재 폼 출력과 마지막 루트 로드 커밋 출력의 같은 경로 값을 비교한다. 기준은 `loadBaseline` 박스의 최종 루트 출력 참조이고, 첫 로드 전과 detach 뒤에는 false다. 루트 reset·루트 resetSubtree·rebuild·validator 교체는 새 기준을 만들며 자식 reset과 일반 쓰기는 옮기지 않는다. 배열은 위치로 비교하고 hole·숨김 값도 폼 출력 그대로 포함한다. 자식 reset의 원본은 아이템 identity를 따라가므로 배열 재배치나 외부 파생값에 따라 reset 뒤에도 true일 수 있다. `sameValue`는 각 단계의 같은 참조를 건너뛰며 미선언 객체 키 순서에 민감하다. 읽기는 두 경로를 O(depth)로 걷고 현재 값과 기준 값을 `Object.is`로 키 삼아 결과를 메모한다. 쓰기에는 기준 읽기나 비교를 더하지 않고 반복 읽기의 비교 호출은 0이다. 메모는 자기 경로 값만 보유하며 기준은 로드 뒤 교체된 부분을 보유한다. 정착 중 읽기는 `value`·`outputValue`처럼 일시 값을 줄 수 있으나 모든 입력을 키로 삼으므로 커밋 뒤까지 남지 않는다. React 소비자는 루트의 `UpdateValue`·`UpdateState`·`RequestRefresh`와 해당 노드의 `UpdatePath`에서 다시 읽는다. 루트 로드의 C와 S 경로는 모두 `RequestRefresh`를 전달하므로 같은 출력 reset도 포착하며 루트나 노드 교체 때 구독을 다시 연결한다. 커밋 전 던진 로드는 기준을 유지하고 커밋 뒤 보고되는 예산·식·게이트 실패는 degraded 출력을 새 기준으로 삼는다.
 
 정적 첫 로드의 loadStaticFirstTree 끝과 정착 commitSettlement의 loadScope===root에서만 최종 emit을 박스에 넣습니다. undefined 출력과 미설정 기준을 구별합니다. 배열 아이템의 자체 emit이 아니라 양쪽 모두 getLoadValue와 같은 cached path segments를 사용합니다. cache 필드는 생성자에서 current/base undefined, result false로 초기화합니다. NaN 반복 읽기도 Object.is 키로 적중하며 -0 차이는 재계산만 유발합니다. isDivergent는 readonly getter입니다.
 
@@ -29,3 +29,7 @@
 ## 성능 창 사전 계약
 
 코디네이터의 별도 측정은 B/F 두 lane과 BF/FB Williams 순서, 예열 3·보존 10페이지 및 keys===200 무결성을 사용합니다. 하네스 unit·smoke와 독립 사전등록 확인 뒤 창을 시작합니다. stage state-vocabulary·version state-vocabulary-v1의 새 규칙 파일과 inputs.json의 독립 SHA를 쓰며 기존 closing 규칙·helper를 바꾸지 않습니다. SV-1은 B 기준 closing-v3-amendment-6을 적용하고 C7은 제외합니다. ratio-only 판정은 F/B 95% bootstrap 상한>1.10과 F−B 중앙차 상한>사전등록 floor를 모두 넘을 때 막습니다. callDuration과 C1 processing floor는 1ms입니다. SV-2 validator work는 F=B입니다. divergence 행은 F 절대 시간만 보고하며 횟수는 unit test가 고정합니다. heap은 100회 편집 뒤 CDP collectGarbage와 Runtime.getHeapUsage로 B/F를 비교하고 heap snapshot은 커밋하지 않습니다. 성능 창과 독립 최종 검토·릴리스 결정은 구현 관문 뒤 코디네이터가 마감합니다.
+
+## 최종 관문 보강
+
+각 노드는 생성자에서 초기화한 `divergencePath`와 `divergenceSegments`에 마지막 주소와 segment 배열을 보유하고 `Object.is`로 주소가 같으면 전역 LRU와 dependency index를 재조회하지 않는다. 320개 노드의 두 번째 sweep에서 parse 호출은0이며 추가 보유 비용은 노드별 경로 깊이에 비례한다. 엔진 내부 spy는 엔진 fractal의 시험에 위치하고 import-model 예외를 두지 않습니다. 두 API reference의 bare 노드 선언과 indexed access도 현재 이름으로 통일합니다.

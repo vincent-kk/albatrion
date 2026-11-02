@@ -1,28 +1,12 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { FieldNodeEventType, FieldNodeState } from '../../engine';
-import * as settlement from '../../engine/settle/utils/settlement/finishSettlement';
 import { requireRuntimeFieldNode } from '../runtime/requireRuntimeFieldNode';
 import { setContext } from '../runtime/setContext';
 import { reloadFieldNodeForm } from '../utils/binding/reloadFieldNodeForm';
 import { makeVocabularyTree } from './fixtures/makeVocabularyTree';
 
 afterEach(() => vi.restoreAllMocks());
-
-it('a load that throws before commit keeps the preceding baseline', () => {
-  const root = makeVocabularyTree({ type: 'string' }, 'loaded');
-  root.setValue('edited');
-  const runtime = requireRuntimeFieldNode(root).runtime;
-  const baseline: unknown = Reflect.get(runtime, 'loadBaseline');
-  expect(baseline).toBeDefined();
-  vi.spyOn(settlement, 'finishSettlement').mockImplementationOnce(() => {
-    throw new Error('before commit');
-  });
-  expect(() => reloadFieldNodeForm(root, 'failed load')).toThrow(
-    'before commit',
-  );
-  expect(Reflect.get(runtime, 'loadBaseline')).toBe(baseline);
-});
 
 it('a reset to the same output moves the baseline without UpdateValue', () => {
   const root = makeVocabularyTree({ type: 'string' }, 'loaded');
