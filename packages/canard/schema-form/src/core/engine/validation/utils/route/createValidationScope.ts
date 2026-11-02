@@ -1,4 +1,8 @@
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 
@@ -17,10 +21,10 @@ export const createValidationScope = <Self extends FieldNodeRecord<Self>>(
   const targetPaths = new Set(targets.map((target) => target.path));
   return (node) => {
     if (identities.has(node)) return true;
-    let boundary = node.path.lastIndexOf('/');
-    while (boundary >= 0) {
-      if (targetPaths.has(node.path.slice(0, boundary))) return true;
-      boundary = boundary === 0 ? -1 : node.path.lastIndexOf('/', boundary - 1);
+    let path = node.path;
+    while (path) {
+      path = resolvePointer(path, $.Parent);
+      if (targetPaths.has(path)) return true;
     }
     return false;
   };

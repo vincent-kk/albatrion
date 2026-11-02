@@ -35,7 +35,7 @@ export const createChildErrorStore = (
       state.subscribed
         ? state.version === 0
           ? state.base
-          : state.base + '#' + state.version
+          : `${state.base}#${state.version}`
         : readChildErrorSnapshot(node),
   };
 };
