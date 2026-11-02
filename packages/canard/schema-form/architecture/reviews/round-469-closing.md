@@ -14,3 +14,9 @@
 - W4 oracle 상한은 merged1000의482.9ms 중123.5ms(25.6%), W1 snapshot 상한은 C1000 wave의24.99ms 중23.80ms입니다. 구현 절감 수치가 아니며 두 후보별로 수용 측정합니다.
 - W5는6.5%로10% 미달, W2는 절감 없음, W3는 가정한 제품 render 경로 부재, C2는1ms 미달로 기록합니다. A의 C1도 별도 측정으로 기록 종결되었습니다.
 - 구현·mutation·전체 관문은 verification/lazy-memo에 보존하고 push·게시·병합·버전 변경은 하지 않습니다.
+
+## 구현 검증 결과
+
+- 제품 소스 a9dccbea9에서 기준 characterization18개·focused21개와 M1–M4의 지정 실패·복원을 확인했습니다. lint 경고0·typecheck·정식 build·전체7프로젝트·importModel이 통과했습니다. 정확한 개수와 최초 실패·수정·환경 복구는 `verification/lazy-memo/results.md` 및 raw 증거에 있습니다.
+- #519의 a962c942d로 리베이스 후 원장 새 불일치0·미인용0 유지, FCA 새 finding/diagnostic0입니다. 기존 경고와 절대 FAIL/indeterminate는 보존합니다. 기계 경로0·23개 버전 불변입니다.
+- 5셀15프로세스 파일럿과 동일 control 번들 확인을 완료했습니다. 전체 수락 행렬은 실행하지 않았으며 W4·W1 각각의 수용/종결은 측정 작업자가 판정합니다.
