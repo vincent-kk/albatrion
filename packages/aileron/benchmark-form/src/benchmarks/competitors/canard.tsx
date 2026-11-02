@@ -47,10 +47,10 @@ const createCanardAdapter = (
 
     return {
       async fireChange(index, value) {
-        fireReactChange(
-          container.querySelectorAll('input')[index] as HTMLInputElement,
-          value,
-        );
+        const input = container.querySelectorAll('input')[index];
+        if (!(input instanceof HTMLInputElement))
+          throw new Error(`Expected benchmark input at index ${index}`);
+        fireReactChange(input, value);
         await drainTicks(1);
       },
       async setValueProgrammatic(index, value) {
