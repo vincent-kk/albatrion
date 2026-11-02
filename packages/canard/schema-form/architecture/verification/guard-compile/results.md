@@ -185,3 +185,196 @@ M1–M6은 각각1·1·7·1·1·1개를 실패시켰고 제품 소스 바이트�
 최종측정준비는 기존4mount셀과flat/if-flat의typing·first-key4셀을한번의quietfullrun으로측정합니다. pilot은셀별한번,retained72·warmup24·총96페이지,경쟁0이며 조건부typing의control한그룹이invalid로남아재시도하지않았습니다. 첫키는native keydown event.timeStamp부터대응input의다음rAF까지,per-write longest-frame은input부터100ms에겹친raw rAF간격의최댓값입니다. typing handler와frame회귀는max(0.05ms,기준5%),first-key는max(0.5ms,기준5%),control은각gated지표의max(0.3ms,기준3%)이며정식무효group은한번재시도후재무효VOID입니다. mount9관문은기존규칙을유지합니다.
 
 전체20회 재수용·입력회귀 matrix는 실행하지 않았고 최종HEAD의문서·시험전용차이를검증해측정제품에고정합니다. 한개의정식명령과정의·pilot원본·해시는외부prep보고서로인계하며 push·게시·병합·버전변경은하지않습니다.
+
+
+## 최종 제품의 전체 재수용·입력 회귀 측정 — ACCEPT
+
+기준 `1202dd53b677ccefdf84fbe360f377426bf6ea98`, 측정 후보 `08980e4c5266b11d86ada29c969fa4125e254022`, 제품 소스 `d6f3e2d6604bd5362d4cdf4585eb8ff732aae733`입니다. mount 재수용과 typing 회귀 검사를 모두 사전등록 규칙에 따라 ACCEPT로 결정했습니다. 여덟 그룹 모두 첫 시도에 유효했고 재시도·VOID·경쟁 실행은 없었습니다. build당 셀별 warmup3·보존20이며 입력 셀의 handler·frame 분포는 보존20페이지의400개 쓰기를 pooling합니다. 아래 숫자는 summary.json의 값을 반올림 없이 옮겼습니다.
+
+### 전체 분포
+
+| 셀 | 지표 (ms) | build | n | median | p95 |
+|---|---|---|---:|---:|---:|
+| mount-if-flat-500-none | firstPaintedMs | baseline | 20 | 104.39999997615814 | 107.5 |
+| mount-if-flat-500-none | longestMountTask | baseline | 20 | 103.0 | 106 |
+| mount-if-flat-500-none | firstPaintedMs | candidate | 20 | 69.44999998807907 | 71 |
+| mount-if-flat-500-none | longestMountTask | candidate | 20 | 68.0 | 70 |
+| mount-if-flat-500-none | firstPaintedMs | control | 20 | 104.40000009536743 | 106.30000007152557 |
+| mount-if-flat-500-none | longestMountTask | control | 20 | 103.0 | 105 |
+| mount-if-flat-500-validate | firstPaintedMs | baseline | 20 | 103.70000004768372 | 105.5 |
+| mount-if-flat-500-validate | longestMountTask | baseline | 20 | 102.5 | 104 |
+| mount-if-flat-500-validate | firstVerdictMs | baseline | 20 | 120.04999995231628 | 121.69999992847443 |
+| mount-if-flat-500-validate | firstPaintedMs | candidate | 20 | 68.94999998807907 | 72 |
+| mount-if-flat-500-validate | longestMountTask | candidate | 20 | 68.0 | 71 |
+| mount-if-flat-500-validate | firstVerdictMs | candidate | 20 | 109.6499999165535 | 111.80000007152557 |
+| mount-if-flat-500-validate | firstPaintedMs | control | 20 | 104.55000001192093 | 107.39999997615814 |
+| mount-if-flat-500-validate | longestMountTask | control | 20 | 103.0 | 106 |
+| mount-if-flat-500-validate | firstVerdictMs | control | 20 | 120.29999995231628 | 123.80000007152557 |
+| mount-flat-500-none | firstPaintedMs | baseline | 20 | 37.300000071525574 | 39.700000047683716 |
+| mount-flat-500-none | longestMountTask | baseline | 20 | 0.0 | 0 |
+| mount-flat-500-none | firstPaintedMs | candidate | 20 | 37.35000002384186 | 38.300000071525574 |
+| mount-flat-500-none | longestMountTask | candidate | 20 | 0.0 | 0 |
+| mount-flat-500-none | firstPaintedMs | control | 20 | 37.500000059604645 | 39.89999997615814 |
+| mount-flat-500-none | longestMountTask | control | 20 | 0.0 | 0 |
+| mount-flat-500-validate | firstPaintedMs | baseline | 20 | 37.30000001192093 | 39.60000002384186 |
+| mount-flat-500-validate | longestMountTask | baseline | 20 | 0.0 | 0 |
+| mount-flat-500-validate | firstVerdictMs | baseline | 20 | 87.00000005960464 | 90.20000004768372 |
+| mount-flat-500-validate | firstPaintedMs | candidate | 20 | 37.44999998807907 | 38.299999952316284 |
+| mount-flat-500-validate | longestMountTask | candidate | 20 | 0.0 | 0 |
+| mount-flat-500-validate | firstVerdictMs | candidate | 20 | 87.55000001192093 | 89.5 |
+| mount-flat-500-validate | firstPaintedMs | control | 20 | 37.55000001192093 | 39.5 |
+| mount-flat-500-validate | longestMountTask | control | 20 | 0.0 | 0 |
+| mount-flat-500-validate | firstVerdictMs | control | 20 | 87.69999998807907 | 91.39999997615814 |
+| type-flat-500-validate-nonburst | handlerMs | baseline | 400 | 0.8999999761581421 | 2.100000023841858 |
+| type-flat-500-validate-nonburst | longestFrameMs | baseline | 400 | 9.200000000000045 | 10.299999999999955 |
+| type-flat-500-validate-nonburst | handlerMs | candidate | 400 | 0.8999999761581421 | 1.6999999284744263 |
+| type-flat-500-validate-nonburst | longestFrameMs | candidate | 400 | 9.299999999999955 | 10.299999999999955 |
+| type-flat-500-validate-nonburst | handlerMs | control | 400 | 0.8000000715255737 | 1.7000000476837158 |
+| type-flat-500-validate-nonburst | longestFrameMs | control | 400 | 9.200000000000045 | 10.299999999999955 |
+| first-key-flat-500-validate | firstKeyToPaintMs | baseline | 20 | 4.399999976158142 | 5 |
+| first-key-flat-500-validate | firstKeyToPaintMs | candidate | 20 | 4.550000011920929 | 7.100000023841858 |
+| first-key-flat-500-validate | firstKeyToPaintMs | control | 20 | 4.5 | 7.699999928474426 |
+| type-if-flat-500-validate-nonburst | handlerMs | baseline | 400 | 0.8500000238418579 | 1.8000000715255737 |
+| type-if-flat-500-validate-nonburst | longestFrameMs | baseline | 400 | 9.199999999999932 | 10.299999999999955 |
+| type-if-flat-500-validate-nonburst | handlerMs | candidate | 400 | 0.7999999523162842 | 1.899999976158142 |
+| type-if-flat-500-validate-nonburst | longestFrameMs | candidate | 400 | 9.300000000000068 | 10.299999999999955 |
+| type-if-flat-500-validate-nonburst | handlerMs | control | 400 | 0.8000000715255737 | 1.899999976158142 |
+| type-if-flat-500-validate-nonburst | longestFrameMs | control | 400 | 9.200000000000045 | 10.299999999999955 |
+| first-key-if-flat-500-validate | firstKeyToPaintMs | baseline | 20 | 3.5 | 7.900000095367432 |
+| first-key-if-flat-500-validate | firstKeyToPaintMs | candidate | 20 | 3.549999952316284 | 6.100000023841858 |
+| first-key-if-flat-500-validate | firstKeyToPaintMs | control | 20 | 3.3000000715255737 | 5 |
+
+### 셀별 control·차이·관문
+
+차이는 candidate−baseline입니다. savingMs·savingFraction만 baseline−candidate 방향이며, 아래 경로는 각 셀의 첫 attempt 객체 안을 가리킵니다. 모든 숫자는 summary.json 원본 정밀도입니다.
+
+| 셀 | 경로 | 값 |
+|---|---|---|
+| mount-if-flat-500-none | attempt | 1 |
+| mount-if-flat-500-none | controlGap | 1.1920928955078125e-07 |
+| mount-if-flat-500-none | controlBand | 3.1319999992847443 |
+| mount-if-flat-500-none | valid | true |
+| mount-if-flat-500-none | savingMs | 34.94999998807907 |
+| mount-if-flat-500-none | savingFraction | 0.33477011490479514 |
+| mount-if-flat-500-none | medianRegressionMs | -34.94999998807907 |
+| mount-if-flat-500-none | firstVerdictRegressionMs | null |
+| mount-if-flat-500-none | guardFreeRegressionBand | 3.1319999992847443 |
+| mount-if-flat-500-none | void | false |
+| mount-if-flat-500-validate | attempt | 1 |
+| mount-if-flat-500-validate | controlGap | 0.8499999642372131 |
+| mount-if-flat-500-validate | controlBand | 3.1110000014305115 |
+| mount-if-flat-500-validate | valid | true |
+| mount-if-flat-500-validate | savingMs | 34.750000059604645 |
+| mount-if-flat-500-validate | savingFraction | 0.33510125403689267 |
+| mount-if-flat-500-validate | medianRegressionMs | -34.750000059604645 |
+| mount-if-flat-500-validate | firstVerdictRegressionMs | -10.400000035762787 |
+| mount-if-flat-500-validate | guardFreeRegressionBand | 3.1110000014305115 |
+| mount-if-flat-500-validate | void | false |
+| mount-flat-500-none | attempt | 1 |
+| mount-flat-500-none | controlGap | 0.19999998807907104 |
+| mount-flat-500-none | controlBand | 1.1190000021457671 |
+| mount-flat-500-none | valid | true |
+| mount-flat-500-none | savingMs | -0.04999995231628418 |
+| mount-flat-500-none | savingFraction | -0.0013404812927722651 |
+| mount-flat-500-none | medianRegressionMs | 0.04999995231628418 |
+| mount-flat-500-none | firstVerdictRegressionMs | null |
+| mount-flat-500-none | guardFreeRegressionBand | 1.1190000021457671 |
+| mount-flat-500-none | void | false |
+| mount-flat-500-validate | attempt | 1 |
+| mount-flat-500-validate | controlGap | 0.25 |
+| mount-flat-500-validate | controlBand | 1.119000000357628 |
+| mount-flat-500-validate | valid | true |
+| mount-flat-500-validate | savingMs | -0.1499999761581421 |
+| mount-flat-500-validate | savingFraction | -0.0040214470807024855 |
+| mount-flat-500-validate | medianRegressionMs | 0.1499999761581421 |
+| mount-flat-500-validate | firstVerdictRegressionMs | 0.5499999523162842 |
+| mount-flat-500-validate | guardFreeRegressionBand | 1.119000000357628 |
+| mount-flat-500-validate | void | false |
+| type-flat-500-validate-nonburst | attempt | 1 |
+| type-flat-500-validate-nonburst | controls.handlerMs.gap | 0.09999990463256836 |
+| type-flat-500-validate-nonburst | controls.handlerMs.band | 0.3 |
+| type-flat-500-validate-nonburst | controls.handlerMs.valid | true |
+| type-flat-500-validate-nonburst | controls.longestFrameMs.gap | 0.0 |
+| type-flat-500-validate-nonburst | controls.longestFrameMs.band | 0.3 |
+| type-flat-500-validate-nonburst | controls.longestFrameMs.valid | true |
+| type-flat-500-validate-nonburst | valid | true |
+| type-flat-500-validate-nonburst | gates.handlerMs | true |
+| type-flat-500-validate-nonburst | gates.longestFrameMs | true |
+| type-flat-500-validate-nonburst | regressionMs.handlerMs | 0.0 |
+| type-flat-500-validate-nonburst | regressionMs.longestFrameMs | 0.09999999999990905 |
+| type-flat-500-validate-nonburst | regressionBands.handlerMs | 0.05 |
+| type-flat-500-validate-nonburst | regressionBands.longestFrameMs | 0.4600000000000023 |
+| type-flat-500-validate-nonburst | void | false |
+| first-key-flat-500-validate | attempt | 1 |
+| first-key-flat-500-validate | controls.firstKeyToPaintMs.gap | 0.10000002384185791 |
+| first-key-flat-500-validate | controls.firstKeyToPaintMs.band | 0.3 |
+| first-key-flat-500-validate | controls.firstKeyToPaintMs.valid | true |
+| first-key-flat-500-validate | valid | true |
+| first-key-flat-500-validate | gates.firstKeyToPaintMs | true |
+| first-key-flat-500-validate | regressionMs.firstKeyToPaintMs | 0.15000003576278687 |
+| first-key-flat-500-validate | regressionBands.firstKeyToPaintMs | 0.5 |
+| first-key-flat-500-validate | void | false |
+| type-if-flat-500-validate-nonburst | attempt | 1 |
+| type-if-flat-500-validate-nonburst | controls.handlerMs.gap | 0.04999995231628418 |
+| type-if-flat-500-validate-nonburst | controls.handlerMs.band | 0.3 |
+| type-if-flat-500-validate-nonburst | controls.handlerMs.valid | true |
+| type-if-flat-500-validate-nonburst | controls.longestFrameMs.gap | 1.1368683772161603e-13 |
+| type-if-flat-500-validate-nonburst | controls.longestFrameMs.band | 0.3 |
+| type-if-flat-500-validate-nonburst | controls.longestFrameMs.valid | true |
+| type-if-flat-500-validate-nonburst | valid | true |
+| type-if-flat-500-validate-nonburst | gates.handlerMs | true |
+| type-if-flat-500-validate-nonburst | gates.longestFrameMs | true |
+| type-if-flat-500-validate-nonburst | regressionMs.handlerMs | -0.05000007152557373 |
+| type-if-flat-500-validate-nonburst | regressionMs.longestFrameMs | 0.10000000000013642 |
+| type-if-flat-500-validate-nonburst | regressionBands.handlerMs | 0.05 |
+| type-if-flat-500-validate-nonburst | regressionBands.longestFrameMs | 0.45999999999999663 |
+| type-if-flat-500-validate-nonburst | void | false |
+| first-key-if-flat-500-validate | attempt | 1 |
+| first-key-if-flat-500-validate | controls.firstKeyToPaintMs.gap | 0.19999992847442627 |
+| first-key-if-flat-500-validate | controls.firstKeyToPaintMs.band | 0.3 |
+| first-key-if-flat-500-validate | controls.firstKeyToPaintMs.valid | true |
+| first-key-if-flat-500-validate | valid | true |
+| first-key-if-flat-500-validate | gates.firstKeyToPaintMs | true |
+| first-key-if-flat-500-validate | regressionMs.firstKeyToPaintMs | 0.04999995231628418 |
+| first-key-if-flat-500-validate | regressionBands.firstKeyToPaintMs | 0.5 |
+| first-key-if-flat-500-validate | void | false |
+
+### 전체 판정
+
+| 관문 | 결과 |
+|---|---|
+| allControlGroupsValid | true |
+| ifNoneAtLeast10Percent | true |
+| ifNoneAtLeast16_7Ms | true |
+| ifNoneMoreThanTwiceControlGap | true |
+| ifOnChangeAtLeast10Percent | true |
+| ifOnChangeAtLeast16_7Ms | true |
+| ifOnChangeFirstVerdictWithin16_7Ms | true |
+| mount-flat-500-noneWithinAmendedRegressionBand | true |
+| mount-flat-500-validateWithinAmendedRegressionBand | true |
+| type-flat-500-validate-nonburst.handlerMs | true |
+| type-flat-500-validate-nonburst.longestFrameMs | true |
+| first-key-flat-500-validate.firstKeyToPaintMs | true |
+| type-if-flat-500-validate-nonburst.handlerMs | true |
+| type-if-flat-500-validate-nonburst.longestFrameMs | true |
+| first-key-if-flat-500-validate.firstKeyToPaintMs | true |
+| mode | "full" |
+| mountDecision | "accept" |
+| typingDecision | "ACCEPT" |
+| decision | "ACCEPT" |
+| seconds | 730.8632652759552 |
+| success | true |
+
+### 첫 paint 뒤로 이동한 비용
+
+다음 수치는 summary의 중앙값끼리 뺀 값이 아니라 raw의 각 보존 페이지에서 계산한 별도 파생치입니다. paint→첫 Form.onValidate 경과창과 동기 validator 작업 wall time을 구분합니다.
+
+| build | n | paint→verdict median (ms) | paint→verdict p95 (ms) | 전체 compile median (ms) | 첫 paint 뒤 validator 작업 합계 median (ms) |
+|---|---:|---:|---:|---:|---:|
+| baseline | 20 | 16.0 | 16.5 | 32.44999998807907 | 1.899999976158142 |
+| candidate | 20 | 40.55000001192093 | 41.700000047683716 | 24.69999998807907 | 26.55000001192093 |
+| control | 20 | 16.0 | 17.399999976158142 | 32.799999952316284 | 1.899999976158142 |
+
+OnChange의 paint→verdict 경과창은16.0→40.55000001192093ms로 늘었고 그 구간의 validator 작업 합계는1.899999976158142→26.55000001192093ms입니다. 첫 paint와 mount 시작 기준 첫 verdict는 모두 빨라졌으며 전체 컴파일이 paint 뒤 슬롯으로 이동한 교환관계입니다. None은 명시 validate·submit에서도 전체 검증과 전체 컴파일을 생략합니다. OnRequest·OnChange는 로드 슬롯 또는 더 이른 명시 수요에서 한 번 컴파일합니다. 가드 컴파일은 분기 선택·표시를 위해 mount 정착에 동기로 남습니다.
+
+정식20회 결과가 이전 pilot의 invalid control 그룹을 대신하는 최종 판정이며 pilot 원본은 보존합니다. 원시 full-01 JSON20개와 파생치의 기계 경로를 정규화한 압축본 및 해시를 artifacts.json에 추가했습니다. 제품·시험·버전은 바꾸지 않고 최종 기록만 추가하며 push·게시·병합은 하지 않습니다.

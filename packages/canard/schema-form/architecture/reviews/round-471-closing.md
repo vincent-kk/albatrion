@@ -46,3 +46,8 @@
 - 원래15·10시드재실행과네환경각2000쌍을완료했습니다.21개관측차이는모두471C-06의등록경쟁차이로분류했고미분류0이며,이전transient주입원본과실제결함의원인·최소재현·수정결과는구분해보존했습니다.
 - M1–M6 지정실패와바이트복원,일곱Vitest프로젝트·importModel·세AJV플러그인·소비자시험및정적·빌드관문이통과했습니다. 원장26검사새불일치0·FCA새finding/diagnostic0·버전23불변이며기존FCA FAIL/indeterminate는유지합니다. 정밀개수와증거는verification/guard-compile/results.md를따릅니다.
 - 최종8셀측정은pilot96페이지만완료했고조건부typing control한그룹은invalid로보존했습니다. 최종HEAD의20회재수용·입력회귀전체측정은후속작업자가수행하며기존471C-04 ACCEPT를최종제품의새판정으로대체하지않습니다. push·게시·병합·릴리스는하지않습니다.
+
+## 최종 제품의 전체 측정 수용
+
+- **471C-07 (최종 mount 재수용·typing 회귀 ACCEPT)**
+  - 【추론】 기준1202dd53b·후보08980e4c5·제품d6f3e2d66의 사전등록 최종 전체 측정에서 mount 재수용과 typing 회귀 검사를 모두 ACCEPT로 수용한다. 여덟 그룹 모두 첫 시도 유효이며 mount9관문과 typing6관문이 모두 true이고 재시도·VOID·경쟁 실행은 없다. if None first paint 절감은34.94999998807907ms·savingFraction0.33477011490479514, if OnChange는34.750000059604645ms·savingFraction0.33510125403689267이며 첫 verdict 변화는-10.400000035762787ms다. 전체 분포·control·입력 회귀와 첫 paint 뒤 비용 이동은 verification/guard-compile/results.md에 보존하며 제품·시험·버전은 바꾸지 않는다.
