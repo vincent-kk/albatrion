@@ -5,14 +5,13 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { prepareReactBundles } from '../../../../../architecture/verification/07-switch/tools/prepare-react-bundles.mjs';
+import { prepareReactBundles } from './prepare-react-bundles.mjs';
 
 const packageRoot = fileURLToPath(
   new URL('../../../../../', import.meta.url),
 );
-const tool = resolve(
-  packageRoot,
-  'architecture/verification/07-switch/tools/measure-react-render-counts.mjs',
+const tool = fileURLToPath(
+  new URL('./measure-react-render-counts.mjs', import.meta.url),
 );
 const outputDirectory = mkdtempSync(
   join(tmpdir(), `schema-form-react-counts-${process.pid}-`),

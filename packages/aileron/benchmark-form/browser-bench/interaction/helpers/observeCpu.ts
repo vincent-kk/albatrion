@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
 /**
  * Observe process CPU using the standing cumulative-counter sampler, retaining path-free rows only.
@@ -8,10 +7,9 @@ import { pathToFileURL } from 'node:url';
  * @returns Timestamped top-ten and heavy PID evidence; observation never authorizes a mid-run stop
  */
 export async function observeCpu(durationMs: number, excluded: number[]) {
-  const file = path.resolve(
-    '../../canard/schema-form/architecture/verification/branch-switch/tools/window/helpers/sampleProcessCpu.mjs',
+  const { sampleProcessCpu } = await import(
+    new URL('./cpu/sampleProcessCpu.mjs', import.meta.url).href
   );
-  const { sampleProcessCpu } = await import(pathToFileURL(file).href);
   const result = await sampleProcessCpu(durationMs);
   const rows = result.rows.map(
     (row: { pid: number; name: string; cpuPercent: number }) => ({

@@ -1,6 +1,4 @@
 import { execFileSync } from 'node:child_process';
-import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 import type { Browser } from 'playwright';
 
 import { readMeasurementPids } from './readMeasurementPids';
@@ -15,11 +13,7 @@ export async function samplePageWithCpu(
   sampler: typeof samplePage = samplePage,
 ) {
   const { parseCpuSample } = await import(
-    pathToFileURL(
-      path.resolve(
-        '../../canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/parseCpuSample.mjs',
-      ),
-    ).href
+    new URL('./cpu/parseCpuSample.mjs', import.meta.url).href
   );
   const startedAt = new Date().toISOString();
   const started = performance.now();
