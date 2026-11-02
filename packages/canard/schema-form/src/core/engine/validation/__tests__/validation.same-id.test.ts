@@ -11,6 +11,7 @@ import {
 import { FormErrorCode } from '@/schema-form/errors';
 
 import type { Validator } from '../types/validator';
+import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
 import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
@@ -28,12 +29,20 @@ describe('same schema id trees', () => {
       release,
     };
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     releaseValidationRoot(validator, first);
     expect(release).not.toHaveBeenCalled();
 
     retainValidationRoot(validator, second);
-    readValidationEntry(validator, second);
+    compileValidationEntry(
+      validator,
+      second,
+      readValidationEntry(validator, second),
+    );
     expect(release).toHaveBeenCalledExactlyOnceWith(compile.mock.calls[0][0]);
     expect(release.mock.calls[0][0]).not.toBe(first);
     expect(compile).toHaveBeenCalledTimes(2);
@@ -56,7 +65,11 @@ describe('same schema id trees', () => {
     const oldTree = createDispatchTree(first, undefined, validator);
     dispatchMount(oldTree.root, 'kept');
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     const newTree = createDispatchTree(second, undefined, validator);
     dispatchMount(newTree.root, 42);
     await expect(dispatchValidate(newTree.root)).rejects.toMatchObject({
@@ -78,7 +91,11 @@ describe('same schema id trees', () => {
       compileGuard: () => () => true,
     };
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     const { root } = createDispatchTree(second, undefined, validator);
     await expect(dispatchValidate(root)).rejects.toMatchObject({
       details: { error: expect.any(Error) },
@@ -104,7 +121,11 @@ describe('same schema id trees', () => {
     const previous = createDispatchTree(first, undefined, validator);
     dispatchMount(previous.root, 'retained');
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     const next = createDispatchTree(second, undefined, validator);
     previous.runtime.entryDepth = 1;
     expect(() => adoptFieldNodeChain(previous.root, next.root)).not.toThrow();
@@ -132,7 +153,11 @@ describe('same schema id trees', () => {
     const previous = createDispatchTree(first, undefined, validator);
     dispatchMount(previous.root, 'old');
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     const next = createDispatchTree(second, undefined, validator);
     dispatchMount(next.root, 5);
     previous.runtime.entryDepth = 1;
@@ -157,8 +182,16 @@ describe('same schema id trees', () => {
       compileGuard: () => () => true,
     };
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
-    readValidationEntry(validator, second);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
+    compileValidationEntry(
+      validator,
+      second,
+      readValidationEntry(validator, second),
+    );
     releaseValidationRoot(validator, first);
     const tree = createDispatchTree(second, undefined, validator);
     await expect(dispatchValidate(tree.root)).rejects.toMatchObject({
@@ -174,7 +207,11 @@ describe('same schema id trees', () => {
       },
       compileGuard: () => () => true,
     };
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     retainValidationRoot(validator, later);
     const tree = createDispatchTree(first, undefined, validator);
     const failure = await dispatchValidate(tree.root).catch(

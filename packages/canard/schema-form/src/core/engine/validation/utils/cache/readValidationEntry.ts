@@ -1,5 +1,3 @@
-import type { Optional } from '@aileron/declare';
-
 import type { SchemaFormError } from '../../../../../errors';
 import type { BlueprintSchema } from '../../../blueprint';
 import type {
@@ -10,9 +8,7 @@ import type {
 import { createValidatorCopy } from '../copy/createValidatorCopy';
 import { evictRecentValidationRoots } from '../lifetime/evictRecentValidationRoots';
 import { evictSameIdRoots } from '../lifetime/evictSameIdRoots';
-import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
-import { DUPLICATE_SCHEMA_ID_MESSAGE } from './constants';
 import { validationEntries } from './validationEntries';
 
 /** Successful or failed compilation retained under one authored position. */
@@ -26,6 +22,8 @@ export interface ValidationEntry {
   readonly copy: BlueprintSchema;
   /** Authored-position guard compilation outcomes, including failures. */
   readonly guards: Map<string, GuardResult>;
+  /** Whether the first whole-schema compile has been attempted, including a thrown undefined. */
+  compiled: boolean;
   /** Whole-schema compilation result when successful. */
   validate?: ValidateFunction;
   /** Whole-schema compilation failure when it throws. */
@@ -41,10 +39,10 @@ export interface ValidationEntry {
 }
 
 /**
- * Read or create the single copied and compiled entry for this validator/root pair.
+ * Read or create the shared copy and guards without compiling the whole schema.
  * @param validator - Selected instance; its identity owns an independent cache.
  * @param authoredRoot - Authored schema object retained by the form tree.
- * @returns The shared entry, including a cached compilation failure.
+ * @returns The shared entry; whole-schema compilation waits for explicit demand.
  */
 export const readValidationEntry = (
   validator: Validator,
@@ -66,25 +64,10 @@ export const readValidationEntry = (
     list.recent.push(authoredRoot);
     evictRecentValidationRoots(validator, authoredRoot);
   }
-  const copy = createValidatorCopy(authoredRoot);
-  let validate: Optional<ValidateFunction>;
-  let failure: unknown;
-  let duplicate = false;
-  try {
-    validate = validator.compile(copy);
-  } catch (error) {
-    failure = error;
-    duplicate =
-      error instanceof Error &&
-      DUPLICATE_SCHEMA_ID_MESSAGE.test(error.message) &&
-      hasRetainedValidationRootId(validator, authoredRoot);
-  }
   const entry: ValidationEntry = {
-    copy,
+    copy: createValidatorCopy(authoredRoot),
     guards: new Map(),
-    validate,
-    failure,
-    duplicate,
+    compiled: false,
     eagerCompiled: false,
   };
   roots.set(authoredRoot, entry);

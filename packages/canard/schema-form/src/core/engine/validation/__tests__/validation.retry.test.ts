@@ -3,6 +3,7 @@ import { expect, it, vi } from 'vitest';
 import { createDuplicateIdValidator } from '@/schema-form/__tests__/fixtures/createDuplicateIdValidator';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 
+import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
 import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
@@ -14,7 +15,11 @@ it('DR-3 B2 retries after the collision ends but waits for a third retained root
   const second = { $id: 'urn:retry', type: 'number' };
   const third = { $id: 'urn:retry', type: 'boolean' };
   retainValidationRoot(validator, first);
-  readValidationEntry(validator, first);
+  compileValidationEntry(
+    validator,
+    first,
+    readValidationEntry(validator, first),
+  );
   const entry = readValidationEntry(validator, second);
   const guard = compileGuard(entry.copy, '/if');
   entry.guards.set('/if', { guard });
@@ -46,7 +51,11 @@ it('DR-3 preserves a failed retry rejection and never retries it twice', () => {
   const first = { $id: 'urn:retry-failed', type: 'string' };
   const second = { $id: 'urn:retry-failed', type: 'number' };
   retainValidationRoot(double.validator, first);
-  readValidationEntry(double.validator, first);
+  compileValidationEntry(
+    double.validator,
+    first,
+    readValidationEntry(double.validator, first),
+  );
   const entry = readValidationEntry(double.validator, second);
   const tree = createDispatchTree(second, undefined, double.validator);
   expect(() => assertValidationRootReady(tree.root)).toThrow();
@@ -69,8 +78,13 @@ it('DR-3 removes only duplicate-id guard failures after a successful retry', () 
   const first = { $id: 'urn:retry-guards', type: 'string' };
   const second = { $id: 'urn:retry-guards', type: 'object' };
   retainValidationRoot(validator, first);
-  readValidationEntry(validator, first);
+  compileValidationEntry(
+    validator,
+    first,
+    readValidationEntry(validator, first),
+  );
   const entry = readValidationEntry(validator, second);
+  compileValidationEntry(validator, second, entry);
   const unrelated = new Error('unsupported keyword');
   entry.guards.set('/if', {
     failure: new Error('schema with key already exists'),
