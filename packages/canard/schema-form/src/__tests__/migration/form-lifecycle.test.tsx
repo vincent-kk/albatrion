@@ -115,7 +115,7 @@ it('LANDING-039 same-schema reset retains nodes clears state and refreshes only 
   const child = form.node('/name');
   const wrapper = form.wrapper('');
   await form.type('/name', 'edited');
-  await act(async () => form.handle.setState({ [FieldNodeState.Dirty]: true }));
+  await act(async () => form.handle.setState({ [FieldNodeState.Edited]: true }));
   const input = form.field('/name');
   await form.reset();
   expect(form.handle.node).toBe(root);
@@ -189,7 +189,7 @@ it('LANDING-044 onError observes mismatch warnings without replacing the value',
       }),
     ]),
   );
-  expect(form.handle.node?.misfit).toBe(true);
+  expect(form.handle.node?.isMisfit).toBe(true);
 });
 
 it('LANDING-045 degraded diagnostics survive writes and subtree reset and reject submit', async () => {

@@ -34,9 +34,9 @@ describe.each(['record', 'skip', 'shadow'] as const)(
             dispatchSetValue(getDispatchNode(root, 'source', 'flag'), flag);
             const observer = getDispatchNode(root, 'observer');
             const state = getDispatchNode(observer, 'state');
-            expect(state.visible).toBe(!flag);
-            expect(state.readOnly).toBe(!flag);
-            expect(state.disabled).toBe(!flag);
+            expect(state.isVisible).toBe(!flag);
+            expect(state.isReadOnly).toBe(!flag);
+            expect(state.isDisabled).toBe(!flag);
             const gate = getDispatchNode(observer, 'gate');
             expect(gate.structure?.leaf !== undefined).toBe(!flag);
             const fresh = mountPresenceTree(schema, root.emit);

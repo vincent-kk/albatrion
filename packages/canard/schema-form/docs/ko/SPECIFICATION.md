@@ -190,12 +190,12 @@ interface FormProps<
   /** 커스텀 오류 포맷 함수 */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * 오류 표시 조건 (기본값: ShowError.DirtyTouched)
+   * 오류 표시 조건 (기본값: ShowError.EditedTouched)
    *   - `true`: 항상 표시
    *   - `false`: 표시 안함
-   *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
+   *   - `ShowError.Edited`: 사용자 입력으로 필드를 편집한 뒤 표시
    *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
-   *   - `ShowError.DirtyTouched`: Dirty와 Touched 조건 모두 충족 시 표시
+   *   - `ShowError.EditedTouched`: 사용자 입력으로 필드를 편집하고 touched 상태가 되었을 때 표시
    */
   showError?: boolean | ShowError;
   /**
@@ -398,6 +398,26 @@ function ProfileForm() {
 
 `jsonSchema`나 `defaultValue` 속성만 바뀌면 폼은 지금 트리를 그대로 두고, 두 값은 `reset`이 다시 읽습니다. 폼은 검증기가 바뀔 때와 `reset`이 다른 `jsonSchema`로 실행될 때 트리를 새로 만들고, 같은 스키마의 `reset`은 기존 트리에 값을 다시 불러옵니다. 재생성 전에 보관한 노드는 버려진 트리에 속하므로, 참조를 들고 있지 말고 노드가 필요한 순간에 `formRef.current.node`를 읽거나 `findNode`를 부르십시오.
 
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.
+
 ### 노드 상태 플래그
 
 노드의 상호작용 플래그는 `node.state`에 있으며 키는 `FieldNodeState` enum입니다. 직접 정한 키를 더 둘 수도 있습니다.
@@ -405,7 +425,7 @@ function ProfileForm() {
 ```typescript
 import { FieldNodeState } from '@canard/schema-form';
 
-node.state[FieldNodeState.Dirty]; // 사용자가 이 필드의 값을 바꾼 뒤 true
+node.state[FieldNodeState.Edited]; // 사용자가 이 필드의 값을 바꾼 뒤 true
 node.state[FieldNodeState.Touched]; // 사용자가 이 필드를 떠난(blur) 뒤 true
 node.state[FieldNodeState.ErrorVisible]; // 오류 표시를 직접 지정한 값(지정했을 때만)
 
@@ -415,21 +435,21 @@ node.rootNode.globalState; // 하나 이상의 노드에서 참인 플래그
 
 | 플래그         | 켜는 곳                       | 효과                                                   |
 | -------------- | ----------------------------- | ------------------------------------------------------ |
-| `Dirty`        | 사용자 입력이 값을 쓸 때마다  | `ShowError.Dirty`, `ShowError.DirtyTouched`가 사용     |
-| `Touched`      | blur, 한 애니메이션 프레임 뒤 | `ShowError.Touched`, `ShowError.DirtyTouched`가 사용   |
+| `Edited`        | 사용자 입력이 값을 쓸 때마다  | `ShowError.Edited`, `ShowError.EditedTouched`가 사용     |
+| `Touched`      | blur, 한 애니메이션 프레임 뒤 | `ShowError.Touched`, `ShowError.EditedTouched`가 사용   |
 | `ErrorVisible` | 사용자가 `setState`로         | `true`나 `false`가 그 노드의 `showError` 정책보다 우선 |
 
-`controls.resetInteraction` 규칙은 조건이 false에서 true로 바뀔 때, 또는 조건이 true인 채로 필드가 로드되거나 형상에 들어올 때 `Dirty`와 `Touched`를 지웁니다. `FormHandle.setState`는 모든 노드를 패치하고, `FormHandle.reset()`과 `clearState()`는 직접 정한 키를 포함해 모든 플래그를 지웁니다.
+`controls.resetInteraction` 규칙은 조건이 false에서 true로 바뀔 때, 또는 조건이 true인 채로 필드가 로드되거나 형상에 들어올 때 `Edited`와 `Touched`를 지웁니다. `FormHandle.setState`는 모든 노드를 패치하고, `FormHandle.reset()`과 `clearState()`는 직접 정한 키를 포함해 모든 플래그를 지웁니다.
 
 다른 노드 속성은 필드의 현재 상태를 알려 줍니다.
 
 ```typescript
 node.errors; // 이 필드에 표시되는 오류 (검증 오류와 외부 오류)
-node.active; // 조건(`controls.active`, if/then/else, oneOf)이 필드를 제외하는 동안 false
-node.visible; // 모든 active 선언을 합친 뒤의 표시 여부
-node.enabled; // active이면서 visible
-node.readOnly; // 읽기 전용 (스키마 `readOnly` 포함)
-node.disabled; // 비활성화 (`enabled`와 별개)
+node.isActive; // 조건(`controls.active`, if/then/else, oneOf)이 필드를 제외하는 동안 false
+node.isVisible; // 모든 active 선언을 합친 뒤의 표시 여부
+node.isPresent; // active이면서 visible
+node.isReadOnly; // 읽기 전용 (스키마 `readOnly` 포함)
+node.isDisabled; // 비활성화 (`isPresent`와 별개)
 ```
 
 ### 하위 트리 방문
@@ -537,7 +557,7 @@ interface FieldInputProps<
   node: Node; // 필드 노드
   type: Node['type']; // 노드 종류
   schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함), virtual 노드는 undefined
-  misfit: Node['misfit']; // 저장된 값이 허용 종류와 어긋나는지
+  misfit: Node['isMisfit']; // 저장된 값이 허용 종류와 어긋나는지
   name: Node['name']; // 노드 이름
   path: Node['path']; // 노드 경로
   nullable: Node['nullable']; // null 허용 여부
@@ -621,7 +641,7 @@ const formInputMap = {
     default: any;                        // 새로 나타난 노드의 채움 값
     derived: string;                     // 파생 값
     unsetValue: boolean | string;        // false에서 true로 바뀌면 값을 비움
-    resetInteraction: boolean | string;  // false에서 true로 바뀌면 dirty/touched를 비움
+    resetInteraction: boolean | string;  // false에서 true로 바뀌면 edited/touched를 비움
     unsetOnInactive: boolean | string;   // 노드가 형상을 떠날 때 유지된 값을 버림
     fields: { targets: string[]; controls: { /* 앞의 아홉 키와 inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
@@ -875,13 +895,13 @@ ValidationMode.OnChange | ValidationMode.OnRequest;
 
 `OnChange` 쓰기는 다음 프레임 뒤 선행 실행하며 연속 입력은 프레임마다 이월하고 quiet 프레임 뒤 후행 실행합니다. 마지막 실제 자동 실행 시작 기준100ms 상한 뒤에는 watch로 돌아갑니다. 디바운스는 `FieldInput`이 소유합니다. 프레임 API가 없거나 숨긴 문서이면 매크로태스크 fallback을 쓰고100ms stalled-frame 타이머가 프레임 뒤 task와 단일 실행을 경주합니다. 명시적 `validate()`와 제출은 즉시 시작하고 제출은 판정을 기다립니다.
 
-오류는 지금 적격이며 마지막 release 이후 엔진 state·enabled·커밋된 Form 정책의 모든 조합에서 계속 적격일 때 표시합니다. 숨김은 즉시이며 새로 적격해지거나 중간에 부적격했던 오류는 다음 release를 기다립니다. release는 pending true→false 정착, 조용한 post-paint 이력 drop, 수락한 explicit root 판정, 폐기입니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 `active && visible`도 검사하고 자식 오류 훅은 enabled를 제외합니다. `OnChange`만 이력을 기록하며 다른 모드는 live 조건을 씁니다. 공개 `batch()` 또는 walk 하나에서는 그 쓰기 시퀀스의 첫 상태만 이력에 기록하고 중간 상태는 별도 이력으로 남기지 않습니다. 한 React batch 안의 서로 다른 공개 호출은 중간 상태도 기록합니다. React-only 복원·remount·mirror·virtualization도 같은 이력을 소비합니다. 현재 stamp의 commit-only 폐기는 targets를 보존하고 cadence에서 최신 commit을 재요청합니다. 새 함수·`Date`·`Map`·class identity를 포함한 context 변경 stream이 이어지면 멎을 때까지 hold합니다.
+오류는 지금 적격이며 마지막 release 이후 엔진 state·isPresent·커밋된 Form 정책의 모든 조합에서 계속 적격일 때 표시합니다. 숨김은 즉시이며 새로 적격해지거나 중간에 부적격했던 오류는 다음 release를 기다립니다. release는 pending true→false 정착, 조용한 post-paint 이력 drop, 수락한 explicit root 판정, 폐기입니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 `active && visible`도 검사하고 자식 오류 훅은 enabled를 제외합니다. `OnChange`만 이력을 기록하며 다른 모드는 live 조건을 씁니다. 공개 `batch()` 또는 walk 하나에서는 그 쓰기 시퀀스의 첫 상태만 이력에 기록하고 중간 상태는 별도 이력으로 남기지 않습니다. 한 React batch 안의 서로 다른 공개 호출은 중간 상태도 기록합니다. React-only 복원·remount·mirror·virtualization도 같은 이력을 소비합니다. 현재 stamp의 commit-only 폐기는 targets를 보존하고 cadence에서 최신 commit을 재요청합니다. 새 함수·`Date`·`Map`·class identity를 포함한 context 변경 stream이 이어지면 멎을 때까지 hold합니다.
 
 Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 거부하며 기록의 origin은 `validate`입니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 
 raw `errors`, Form children errors, `FormRender`, `node.errors`, `getErrors()`는 표시와 무관합니다. custom UI는 `errorVisible`과 `useChildFieldErrors().showErrors`를 씁니다. hidden 자식은 값·aggregate 오류를 유지하고 inactive는 값 제거·off-branch issue 제외를 따릅니다. 첫 layout commit을 마친 현행 load는 숨김 중에도 같은-schema reset을 포함한 모든 폼 콜백을 engine chain 끝에 전달하며 show에서 재생하지 않습니다. 준비 전 변경·상태·진단은 버리고 생성 기록만 보관하며, reset으로 은퇴한 load의 기록은 버립니다. 루트 교체 reset은 handler 실패를 각각 격리하고 mount 기록 뒤 build 기록을 binding 교체 전에 전달합니다. React가 숨김과 unmount를 구분하지 않으므로 보유한 핸들·노드는 unmount 뒤에도 전달하지만 검증 캐시 참조는 cleanup에서 해제합니다. 숨김 중 onError만 최신 prop을 사용하고 다른 콜백은 마지막 연결 commit을 사용하며 Form ref는 null입니다. 필드 layout 쓰기·렌더 경고는 show에 도착합니다. `None`·`OnRequest`와 검증 계산 비용은 유지합니다.
 
-한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/enabled render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
+한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/isPresent render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/isPresent/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
 
 ### 오류 메시지 포맷팅
 

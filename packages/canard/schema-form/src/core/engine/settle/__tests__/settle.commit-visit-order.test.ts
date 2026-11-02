@@ -157,7 +157,7 @@ describe('commit source visit characterization', () => {
     try {
       markCommitDeliveries(context, (node) => order.push(node.path));
       expect(order).toEqual(['', '/b', '/a']);
-      expect(a.required).toBe(true);
+      expect(a.isRequired).toBe(true);
       expect(a.revisionLedger[E.UpdateControlledProperties]).toBe(revision + 1);
     } finally {
       releaseSettlementScratch(scratch);

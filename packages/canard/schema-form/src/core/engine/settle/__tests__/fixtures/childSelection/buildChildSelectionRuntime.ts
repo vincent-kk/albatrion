@@ -269,6 +269,13 @@ export const buildChildSelectionRuntime = async (
                       path,
                     )
                   : readFileSync(args.path, 'utf8');
+              // The shared observer keeps current keys while reading the pinned revision's original fields.
+              if (revision && path.endsWith('/runChildSelectionHistory.ts'))
+                contents = contents.replace(
+                  /\bnode\.is(Active|Visible|ReadOnly|Disabled|Required)\b/g,
+                  (_access, field: string) =>
+                    'node.' + field[0].toLowerCase() + field.slice(1),
+                );
               if (
                 path.endsWith('/selectChildren.ts') ||
                 path.endsWith('/updateOutput.ts') ||

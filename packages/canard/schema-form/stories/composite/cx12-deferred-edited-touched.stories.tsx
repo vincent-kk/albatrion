@@ -4,8 +4,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FeatureStory } from '../features/components/FeatureStory';
 import { createCompositeStory } from './utils/createCompositeStory';
 
-export default { title: 'Composite/CX12DeferredDirtyTouched', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
+export default { title: 'Composite/CX12DeferredEditedTouched', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;
 
-/** Shared composite case `composite.cx12-deferred-dirty-touched` with its consumer tail. */
-export const Case: Story = createCompositeStory('composite.cx12-deferred-dirty-touched');
+/** Shared composite case `composite.cx12-deferred-edited-touched` with its consumer tail. */
+export const Case: Story = createCompositeStory('composite.cx12-deferred-edited-touched');

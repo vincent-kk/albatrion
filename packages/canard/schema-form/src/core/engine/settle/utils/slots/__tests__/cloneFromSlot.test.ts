@@ -47,7 +47,7 @@ it('copies source channels and rebinds every active and inactive parent', () => 
   const source = getDispatchNode(root, 'group');
   const hidden = getDispatchNode(source, 'hidden');
   const oldItem = getDispatchNode(source, 'list', '0');
-  dispatchSetState(getDispatchNode(source, 'leaf'), { dirty: true });
+  dispatchSetState(getDispatchNode(source, 'leaf'), { edited: true });
   dispatchSetValue(getDispatchNode(source, 'childOpen'), false);
   const hiddenEntry = getRetainedChildEntry(
     source,

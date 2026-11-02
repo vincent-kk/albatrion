@@ -5,7 +5,7 @@ import { createShowErrorChecker } from './createShowErrorChecker';
 /** One pre-change node eligibility interval, ordered with policy commits. */
 type NodeEntry = {
   state: FieldNode['state'];
-  enabled: boolean;
+  isPresent: boolean;
   generation: number;
 };
 /** Committed policy plus every unreleased preceding value. */
@@ -16,7 +16,7 @@ type PolicyHistory = {
 /** Check every eligibility combination that existed since the last release.
  * @param live - Current condition, including the same context checkShowError(state) and React-only disabled input.
  * @param state - Current node interaction flags.
- * @param enabled - Current active/visible conjunction.
+ * @param isPresent - Current active/visible conjunction.
  * @param policy - Policy rendered by the current context.
  * @param entries - Node intervals, ascending by generation.
  * @param history - Committed policy and preceding committed intervals.
@@ -25,13 +25,13 @@ type PolicyHistory = {
 export const resolveErrorVisibility = (
   live: boolean,
   state: FieldNode['state'],
-  enabled: boolean,
+  isPresent: boolean,
   policy: unknown,
   entries: readonly NodeEntry[],
   history: PolicyHistory | undefined,
   includeEnabled: boolean,
 ): boolean => {
-  if (!live || (includeEnabled && !enabled)) return false;
+  if (!live || (includeEnabled && !isPresent)) return false;
   if (
     entries.length === 0 &&
     !history?.entries.length &&
@@ -50,7 +50,7 @@ export const resolveErrorVisibility = (
         : policy;
     if (
       !createShowErrorChecker(beforePolicy)(nodeEntry?.state ?? state) ||
-      (includeEnabled && !(nodeEntry?.enabled ?? enabled))
+      (includeEnabled && !(nodeEntry?.isPresent ?? isPresent))
     )
       return false;
     if (!nodeEntry && !policyEntry) return true;

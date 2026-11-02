@@ -1,5 +1,7 @@
 import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
+import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   BlueprintChildEntry,
   BlueprintNode,
@@ -48,7 +50,7 @@ export interface FieldNodeRecord<Self> {
   /** Number of structural edges from the root. */
   depth: number;
   /** Whether the current declaration requires this node. */
-  required: boolean;
+  isRequired: boolean;
   /** Whether the fixed type permits null. */
   readonly nullable: boolean;
   /** Stable JSON type restriction retained from blueprint analysis; undefined on virtual nodes. */
@@ -86,17 +88,27 @@ export interface FieldNodeRecord<Self> {
   /** Undeclared object keys retained in their incoming own-key order. */
   undeclaredValues: unknown;
   /** Result of the current node gate. */
-  active: boolean;
+  isActive: boolean;
   /** Local visibility after all active state declarations are combined. */
-  visible: boolean;
+  isVisible: boolean;
   /** Local read-only result, including standard schema readOnly. */
-  readOnly: boolean;
+  isReadOnly: boolean;
   /** Local disabled result after all active state declarations are combined. */
-  disabled: boolean;
+  isDisabled: boolean;
   /** Calculated local value before output projection. */
   local: unknown;
   /** Calculated output value. */
   emit: unknown;
+  /** Current output at this occurrence's path when divergence was last read. */
+  divergenceCurrent: unknown;
+  /** Concrete path whose parsed segments this occurrence retains. */
+  divergencePath: string | undefined;
+  /** Parsed path syntax retained until this occurrence changes address. */
+  divergenceSegments: readonly PointerSegment[] | undefined;
+  /** Baseline output at this occurrence's path when divergence was last read. */
+  divergenceBase: unknown;
+  /** Pure comparison result for the two retained path values. */
+  divergenceResult: boolean;
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
@@ -105,7 +117,8 @@ export interface FieldNodeRecord<Self> {
   revealBaseline?: {
     entries: {
       readonly state: NodeStateFlags;
-      readonly enabled: boolean;
+      /** Presence before this write's first eligibility change. */
+      readonly isPresent: boolean;
       readonly generation: number;
       readonly sequence: number;
     }[];

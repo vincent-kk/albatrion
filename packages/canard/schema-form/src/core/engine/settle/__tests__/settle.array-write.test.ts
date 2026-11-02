@@ -23,7 +23,7 @@ describe('array settlement writes', () => {
     writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
     const first = root.children![0];
     const second = root.children![1];
-    patchFieldNodeInteractionState(second, { touched: true, dirty: true });
+    patchFieldNodeInteractionState(second, { touched: true, edited: true });
     writeFieldNode(
       root,
       ['x', 'y', 'z'],
@@ -34,7 +34,7 @@ describe('array settlement writes', () => {
     expect(root.children![1]).toBe(second);
     expect(root.children![1].interactionState).toMatchObject({
       touched: true,
-      dirty: true,
+      edited: true,
     });
     expect(root.children!.map((item) => item.itemKey)).toEqual([0, 1, 2]);
     expect(root.local).toEqual(['x', 'y', 'z']);
@@ -151,7 +151,7 @@ describe('array settlement writes', () => {
     expect(root.outputValue).toBeNull();
     expect(Reflect.get(root, 'itemCount')).toBe(0);
     expect(root.children).toEqual([]);
-    expect(root.misfit).toBe(true);
+    expect(root.isMisfit).toBe(true);
   });
 
   it('39C-01 emits a wrong-kind object item raw instead of an object hole', () => {

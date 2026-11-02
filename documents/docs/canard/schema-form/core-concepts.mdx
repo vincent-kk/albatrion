@@ -36,26 +36,31 @@ const schema = {
 ## Node Tree
 
 Each node is a reactive object that owns its own value, validation errors,
-and interaction flags in `node.state` (keyed by `FieldNodeState`: `Dirty`,
+and interaction flags in `node.state` (keyed by `FieldNodeState`: `Edited`,
 `Touched`, `ErrorVisible`).
 Changes propagate upward: when a leaf node's value changes, all ancestor nodes
 receive an `UpdateValue` event and update their aggregated value.
 
 ### Node State Flags
 
-| Property       | Type                         | Description                                                                    |
-| -------------- | ---------------------------- | ------------------------------------------------------------------------------ |
-| `value`        | `any`                        | Current value                                                                  |
-| `outputValue`  | `unknown`                    | Emitted value after output filters                                             |
-| `defaultValue` | `unknown`                    | Value at initialization                                                        |
-| `errors`       | `readonly ValidationIssue[]` | Validation issues for this node                                                |
-| `state`        | `NodeStateFlags`             | Interaction flags keyed by `FieldNodeState` (`Dirty`, `Touched`, `ErrorVisible`) |
-| `visible`      | `boolean`                    | From `controls.visible`                                                        |
-| `active`       | `boolean`                    | From `controls.active`                                                         |
-| `readOnly`     | `boolean`                    | From `controls.readOnly`, the standard `readOnly`, or inherited                |
-| `disabled`     | `boolean`                    | From `controls.disabled` or inherited                                          |
-| `required`     | `boolean`                    | Field is required in parent schema                                             |
-| `nullable`     | `boolean`                    | Schema type includes `"null"`                                                  |
+| Property       | Type                         | Description                                                                                                  |
+| -------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `value`        | `any`                        | Current value                                                                                                |
+| `outputValue`  | `unknown`                    | Emitted value after output filters                                                                           |
+| `defaultValue` | `unknown`                    | Value at initialization                                                                                      |
+| `errors`       | `readonly ValidationIssue[]` | Validation issues for this node                                                                              |
+| `state`        | `NodeStateFlags`             | Interaction flags keyed by `FieldNodeState` (`Edited`, `Touched`, `ErrorVisible`)                            |
+| `isVisible`    | `boolean`                    | From `controls.visible`                                                                                      |
+| `isActive`     | `boolean`                    | From `controls.active`                                                                                       |
+| `isReadOnly`   | `boolean`                    | From `controls.readOnly`, the standard `readOnly`, or inherited                                              |
+| `isDisabled`   | `boolean`                    | From `controls.disabled` or inherited                                                                        |
+| `isRequired`   | `boolean`                    | Field is required in parent schema                                                                           |
+| `nullable`     | `boolean`                    | Schema type includes `"null"`                                                                                |
+| `isPresent`    | `boolean`                    | `isActive && isVisible`, independent of `isDisabled`                                                         |
+| `isMisfit`     | `boolean`                    | Raw value does not match the accepted types                                                                  |
+| `isEdited`     | `boolean`                    | User-input flag; re-read on `UpdateState`                                                                    |
+| `isTouched`    | `boolean`                    | Blur flag; re-read on `UpdateState`                                                                          |
+| `isDivergent`  | `boolean`                    | Output at this path differs from the last root load; re-read on `UpdateValue`, `UpdatePath` or `UpdateState` |
 
 ### Node Navigation
 
@@ -283,12 +288,12 @@ enum ValidationMode {
 enum ShowError {
   Always       = 1,   // always show
   Never        = 2,   // never show
-  Dirty        = 4,   // show when the Dirty flag is set
+  Edited        = 4,   // show when the Edited flag is set
   Touched      = 8,   // show when the Touched flag is set
-  DirtyTouched = 16,  // show when both Dirty AND Touched are set (default)
+  EditedTouched = 16,  // show when both Edited AND Touched are set (default)
 }
 
-<Form showError={ShowError.DirtyTouched} />  // default
+<Form showError={ShowError.EditedTouched} />  // default
 <Form showError={true} />                    // same as ShowError.Always
 <Form showError={false} />                   // same as ShowError.Never
 ```

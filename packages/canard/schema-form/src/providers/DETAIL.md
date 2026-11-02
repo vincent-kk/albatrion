@@ -14,7 +14,7 @@
 - 준비 전 변경·상태·진단은 버리고 준비된 현행 load는 숨김·unmount 뒤에도 모든 폼 콜백을 chain 끝에 전달합니다. 준비 뒤 `onStateChange`는 `root.globalState`를 읽고, `onValidate`는 루트 `UpdateGlobalError`를 따르되 같은 목록 참조는 연속으로 두 번 보고하지 않으며(246C-01), 직전 보고가 빈 목록이면 이어지는 빈 집계를 다시 보고하지 않고(245C-01), `onDiagnosticsChange`는 루트 `UpdateDiagnostics`를 따라 전달합니다(EVENT-062, REACT-007, LANDING-075).
 - `errors` 속성은 전체 목록을 루트에 적용하고 경로 키로 각 비루트 노드에도 외부 오류를 적용합니다. 폼 reset이 비운 명령형 외부 오류·검증 결과 뒤에 같은 호출 안에서 두 적용을 현재 트리에 다시 수행합니다. 재생성 뒤에도 옛 노드 객체를 키로 사용하지 않습니다. `FormHandle.getErrors()`는 루트에 적용한 전체 외부 오류 + 검증 목록을 읽습니다(WRITE-045, SURFACE-053, VALIDATE-043, 69C-03, 79C-01).
 - reset은 호출 시점의 커밋된 속성으로 동기 로드합니다. `helpers/`의 스키마 비교는 같은 객체 또는 JSON 부분의 키 순서까지 깊은 같음과 JSON 밖 값의 참조 같음으로 판정합니다. 같은 스키마는 호출 안에서 `reloadFieldNodeForm`으로 트리·노드 identity를 유지하고, 다른 스키마는 호출 안에서 `buildFieldNodeTree` → `adoptFieldNodeTree` → `mountFieldNode`를 마쳐 옛 트리를 폐기하고 핸들을 새 루트로 바꿉니다(WRITE-042·043·046, 69C-02, 실행 ADR D7).
-- 두 reset 경로 모두 dirty·touched·첨부 파일 맵을 비우고 `showError`를 속성 값으로 돌리며 진단을 새 로드로 확정합니다. 같은 처리기의 속성 갱신은 예약된 렌더의 커밋에서 재대조하여 실제로 달라졌으면 독립된 reset 진입으로 다시 로드하고, 언마운트된 폼의 재대조는 버립니다(WRITE-044·045).
+- 두 reset 경로 모두 edited·touched·첨부 파일 맵을 비우고 `showError`를 속성 값으로 돌리며 진단을 새 로드로 확정합니다. 같은 처리기의 속성 갱신은 예약된 렌더의 커밋에서 재대조하여 실제로 달라졌으면 독립된 reset 진입으로 다시 로드하고, 언마운트된 폼의 재대조는 버립니다(WRITE-044·045).
 
 - 각 Context 모듈은 Context 객체와 Provider를 역할 칸 components, 소비 훅을 hooks, 그 밖의 보조를 utils에 두고 진입점 index가 이름으로 내보냅니다(원장 결정 D3). 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 

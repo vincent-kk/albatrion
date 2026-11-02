@@ -59,7 +59,7 @@ const controlsTree = () => {
 describe('round9 P4 controls under the current AND/OR policy', () => {
   it('r9.mjs:104 CONTROLS-082 combines local locks with OR and visibility with AND', () => {
     const x = controlsTree().find('/x');
-    expect([x?.active, x?.visible, x?.readOnly, x?.disabled]).toEqual([
+    expect([x?.isActive, x?.isVisible, x?.isReadOnly, x?.isDisabled]).toEqual([
       true,
       false,
       true,
@@ -72,7 +72,7 @@ describe('round9 P4 controls under the current AND/OR policy', () => {
   });
 
   it('r9.mjs:107 CONTROLS-082 fragment visibility reaches its declaration', () => {
-    expect(controlsTree().find('/z')?.visible).toBe(false);
+    expect(controlsTree().find('/z')?.isVisible).toBe(false);
   });
 
   it('r9.mjs:108 invisible fragment value remains in emitted output', () => {

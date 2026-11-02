@@ -99,12 +99,12 @@ interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show
    *   - `false`: Never show
-   *   - `ShowError.Dirty`: Show when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched conditions are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: boolean | ShowError;
   /**
@@ -587,7 +587,7 @@ interface FieldInputProps<
   /** Authored accepted kind(s), including 'integer'; undefined on a virtual node */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds */
-  misfit: Node['misfit'];
+  misfit: Node['isMisfit'];
   /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
   /** Path of the field node assigned to the FieldInput Component */
@@ -1775,7 +1775,7 @@ Each property below is a key of the `controls` object.
 - `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use the `controls.derived` property
 - `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
 - `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
-- `resetInteraction`: Resets a node's interaction state. When the expression turns from `false` to `true`, the node's `dirty` and `touched` states are cleared.
+- `resetInteraction`: Resets a node's interaction state. When the expression turns from `false` to `true`, the node's `edited` and `touched` states are cleared.
 - `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified
 - `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
 - `active` on a `oneOf`/`anyOf` branch, or `discriminator` on the host: Select the branch to display. Give each branch a `controls.active` expression, or set `controls.discriminator` to a property name and tag each branch with `const`/`enum` on that property (ObjectNode only). Without either gate, every branch is on: all branches' fields are present, and only the validator decides which branch matches.
@@ -2554,6 +2554,26 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 
 ---
 
+### Node boolean properties and load divergence
+
+Node boolean properties use `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled` and `isMisfit`. `isPresent` is `isActive && isVisible`, independent of `isDisabled`. React props, schema keys and `controls` keys keep their names.
+
+```ts
+node.isEdited;    // truthiness of state[FieldNodeState.Edited]
+node.isTouched;   // truthiness of state[FieldNodeState.Touched]
+node.isDivergent; // current form output differs from the last root load at node.path
+```
+
+`isEdited` and `isTouched` are read-only booleans; re-read them on `FieldNodeEventType.UpdateState`. Only input writes set Edited. `setValue`, array verbs and automatic fills do not. Reset, `clearState` and `controls.resetInteraction` clear the interaction flags. Detached references keep their last-commit interaction state.
+
+`isDivergent` compares the current root output and the last committed root-load output at the same node path. The first mount, form reset with a value or explicit undefined, rebuild, validator change and `root.resetSubtree()` take a new baseline after the output is final. Before the first load commits it reads false. Changing the Form `defaultValue` prop alone, ordinary writes and a child `resetSubtree()` do not move that baseline. A load that throws before commit keeps the preceding baseline; a failure reported after commit establishes the degraded output as the new baseline.
+
+Reverting to the baseline reads false. Hidden fields remain in the output; array holes use their actual output contribution. Items compare by position: a moved or added item can read true, while an added item matching the value originally at that position reads false. Child reset follows its load source by item identity, so after array movement, or with dependencies outside its subtree, the restored subtree can remain divergent. Detached nodes read false because they no longer contribute to the output.
+
+The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
+
+Writes perform no divergence reads or comparisons. A root load allocates one baseline box retaining its output reference. Each getter read walks two cached paths, O(depth), and compares only when either path value changes by `Object.is`; repeated unchanged reads call `sameValue` zero times, including NaN. A first comparison skips unchanged references. The baseline retains replaced parts until the next root load, and each node memo retains only its own two path values and result.
+
 ## Migration (1.0.0)
 
 1.0.0 moves every schema setting into three groups (`presentation`, `controls`, `options`), renames the public API around "field", and replaces the node engine. No old name is kept as an alias. Update in this order: schemas, then component and type imports, then any code that reads node state or validation errors.
@@ -2575,7 +2595,7 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 | `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                                  |
 | `computed.derived` / `&derived`                                        | `controls.derived`                                                                   |
 | `computed.watch` / `&watch` (string or array)                          | `controls.watch` (array only)                                                        |
-| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (resets dirty and touched when the condition turns true) |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (resets edited and touched when the condition turns true) |
 | `computed.if` / `&if` on a `oneOf` / `anyOf` branch                    | `controls.active` on that branch                                                     |
 | `injectTo`                                                             | `controls.injectTo` (same handler shape)                                             |
 | `terminal`                                                             | `options.terminal` (object and array schemas)                                        |
@@ -2631,12 +2651,22 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 | `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
 | `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
 | `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
+| `ShowError.Dirty` | `ShowError.Edited` |
+| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
+| `node.required` | `node.isRequired` |
+| `node.active` | `node.isActive` |
+| `node.visible` | `node.isVisible` |
+| `node.enabled` | `node.isPresent` |
+| `node.readOnly` | `node.isReadOnly` |
+| `node.disabled` | `node.isDisabled` |
+| `node.misfit` | `node.isMisfit` |
 | `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (same bit)                                                                                                                       |
 | `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (keeps `UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`, and exposes more events)           |
 | `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
 | type `JSONSchemaError` (the `errors` prop and `onValidate` payload)                                                                                                       | `ValidationIssue` (same fields, plus optional `rejectedKey`; `isJSONSchemaError` stays)                                                                        |
 
-- Only the node-state bit was renamed. The `ShowError` policy enum (`Dirty`, `Touched`, `DirtyTouched`, …), the Form `showError` prop and `FormHandle.showError()` keep their names.
+- The node state and ShowError policy members use Edited and EditedTouched. The Form `showError` prop and `FormHandle.showError()` keep their names; the default policy is `ShowError.EditedTouched` with the same bit and behaviour.
 
 ### Behavior changes
 
@@ -2743,10 +2773,10 @@ export const AntdForm = () => {
 
 `OnChange` writes run after the next frame; continuous input carries across active frames, with a trailing run after a quiet frame and a 100 ms cap measured from the last automatic run that actually started. A cap returns to watch. Debouncing belongs to `FieldInput`. Missing frame APIs or a hidden document use a macrotask fallback; a 100 ms stalled-frame timer races the frame-backed task so it runs once. Explicit `validate()` and submit start immediately, and submit awaits the verdict.
 
-An error shows only when eligible now and continuously eligible across every engine state, enabled value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. Within one public `batch()` or walk, only the first state of that write sequence enters history; intermediate states do not. Separate public calls inside one React batch still record their intermediate states. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
+An error shows only when eligible now and continuously eligible across every engine state, isPresent value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. Within one public `batch()` or walk, only the first state of that write sequence enters history; intermediate states do not. Separate public calls inside one React batch still record their intermediate states. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
 
 All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `origin: 'validate'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject; their record carries `origin: 'validate'`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
 
 Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
 
-Known limits: the hook's React-only `disabled` argument reveals at once; state/enabled renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/enabled/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.
+Known limits: the hook's React-only `disabled` argument reveals at once; state/isPresent renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/isPresent/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.

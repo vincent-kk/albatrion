@@ -121,8 +121,8 @@ describe('round9 PR-3 derive regression', () => {
   });
   it('r9.mjs:51 unsetValue keeps the input active and visible', () => {
     const x = clearTree().find('/x');
-    expect(x?.active).toBe(true);
-    expect(Reflect.get(x ?? {}, 'visible')).toBe(true);
+    expect(x?.isActive).toBe(true);
+    expect(Reflect.get(x ?? {}, 'isVisible')).toBe(true);
   });
   it('r9.mjs:54 an unrelated write does not refill after unsetValue', () => {
     const root = clearTree();

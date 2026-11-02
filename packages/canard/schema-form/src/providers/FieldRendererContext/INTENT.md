@@ -19,8 +19,8 @@ FieldRendererContext/
 - Resolve the rendered policy and compute renderer, input and child-error visibility from engine history; subscribe candidates to release versions without React visibility storage.
 
 - TypeScript와 React로 작성한다.
-- `checkShowError(condition?)` 함수는 `FieldNodeState.ErrorVisible`을 먼저 보고, 그다음 `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크를 평가한다.
-- 기본 showError는 `ShowError.DirtyTouched`다(dirty와 touched를 모두 만족할 때 표시한다).
+- `checkShowError(condition?)` 함수는 `FieldNodeState.ErrorVisible`을 먼저 보고, 그다음 `ShowError.Always/Never/Edited/Touched/EditedTouched` 비트마스크를 평가한다.
+- 기본 showError는 `ShowError.EditedTouched`다(dirty와 touched를 모두 만족할 때 표시한다).
 - Form 수준의 `CustomFieldRenderer`와 `formatError`가 `ExternalFormContext` 값보다 우선한다.
 - `useFieldRendererContext`는 `PluginManager.FieldRenderer`와 `PluginManager.formatError`를 마지막 fallback으로 쓴다.
 

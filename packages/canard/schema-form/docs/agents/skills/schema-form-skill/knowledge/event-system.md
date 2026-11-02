@@ -25,7 +25,7 @@ Consequence: after `setValue()` returns, values and controls state are current a
 
 Events are delivered from the committed result of a settlement, not while it is still computing. The settlement marks which bits changed per node, and each outermost write then delivers them once in document order, so a listener reading the tree sees the final committed state. Nodes without listeners still count their bits, so `revision(mask)` stays correct for late subscribers.
 
-Aggregate flags are published at the root. `UpdateGlobalState` is raised once per outermost entry, and only when a state key (such as `dirty` or `touched`) crosses between "no node has it" and "some node has it"; further nodes joining or leaving a key that is already set raise nothing.
+Aggregate flags are published at the root. `UpdateGlobalState` is raised once per outermost entry, and only when a state key (such as `edited` or `touched`) crosses between "no node has it" and "some node has it"; further nodes joining or leaving a key that is already set raise nothing.
 
 ## Subscribing
 

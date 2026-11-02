@@ -5,14 +5,14 @@ import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 
 import { createFragmentArrayTree } from './fixtures/createFragmentArrayTree';
 
-/** Dirty and touched flags used to observe resetInteraction's public result. */
+/** Edited and touched flags used to observe resetInteraction's public result. */
 const INTERACTION = {
-  [FieldNodeState.Dirty]: true,
+  [FieldNodeState.Edited]: true,
   [FieldNodeState.Touched]: true,
 };
 /** Cleared flags expected only on declared targets. */
 const CLEARED = {
-  [FieldNodeState.Dirty]: false,
+  [FieldNodeState.Edited]: false,
   [FieldNodeState.Touched]: false,
 };
 

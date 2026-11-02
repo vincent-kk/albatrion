@@ -64,7 +64,8 @@ export interface NodeSurface<
   readonly strategy: Strategy;
   readonly schemaType: SchemaType;
   readonly jsonSchema: BlueprintSchema;
-  readonly required: boolean;
+  /** Whether the effective declaration requires this occurrence. */
+  readonly isRequired: boolean;
   readonly nullable: Nullable;
   readonly depth: number;
   readonly isRoot: boolean;
@@ -81,23 +82,35 @@ export interface NodeSurface<
   readonly value: Value;
   readonly outputValue: unknown;
   readonly inactiveValues: readonly InactiveValue[];
-  readonly active: boolean;
-  /** Local visibility after all active declarations are combined. */
-  readonly visible: boolean;
-  /** A node is enabled when it remains active and visible. */
-  readonly enabled: boolean;
-  /** Local read-only state, including standard schema readOnly. */
-  readonly readOnly: boolean;
-  /** Local disabled state, independent of enabled. */
-  readonly disabled: boolean;
+  /** Whether this occurrence remains in the current shape. */
+  readonly isActive: boolean;
+  /** Local visibility after active declarations are combined. */
+  readonly isVisible: boolean;
+  /** Whether this occurrence is active and visible, independent of disabled state. */
+  readonly isPresent: boolean;
+  /** Local read-only state including the standard schema readOnly flag. */
+  readonly isReadOnly: boolean;
+  /** Local input lock independent of presence. */
+  readonly isDisabled: boolean;
   /** Effective watched values read from the emitted tree. */
   readonly watchValues: readonly unknown[];
   /** Shared context reference supplied by the current Form binding. */
   readonly context: Readonly<Dictionary<unknown>>;
-  readonly misfit: boolean;
+  /** Whether the retained raw value misses the effective accepted types. */
+  readonly isMisfit: boolean;
   readonly misfits: readonly string[];
   readonly diagnostics: NodeDiagnostics;
   readonly defaultValue: unknown;
+  /** User-input state truthiness; React consumers re-read on UpdateState. */
+  readonly isEdited: boolean;
+  /** Blur state truthiness; React consumers re-read on UpdateState. */
+  readonly isTouched: boolean;
+  /**
+   * Whether current form output differs from the last root load at this path.
+   * False before the first load and after detach. Array positions and key order matter.
+   * Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
+   */
+  readonly isDivergent: boolean;
   find(
     pointer?: NullableValue<string | readonly string[]>,
   ): NullableValue<FieldNode>;
@@ -260,9 +273,13 @@ export type UnionNode<
       >,
       null,
       Nullable
-    > & { readonly misfit: false })
+    > & {
+      /** The raw value matches an accepted union member. */
+      readonly isMisfit: false;
+    })
   | (NodeSurface<'union', 'terminal', Types, unknown, null, Nullable> & {
-      readonly misfit: true;
+      /** The retained raw value lies outside the accepted union members. */
+      readonly isMisfit: true;
     });
 
 /** Union input sees the misfit lamp without accepting a misfitting write. */

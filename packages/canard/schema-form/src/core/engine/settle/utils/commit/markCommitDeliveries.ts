@@ -107,8 +107,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         if (child.parent !== host || child.blueprintNode.kind === 'virtual')
           continue;
         const next = isArray(required) && required.indexOf(child.name) !== -1;
-        if (child.required === next) continue;
-        child.required = next;
+        if (child.isRequired === next) continue;
+        child.isRequired = next;
         candidates.add(child);
         if (child.deliveryInitialized)
           markFieldNodeEvent(
@@ -309,10 +309,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         if (
           (changes & FieldNodeEventType.UpdateControlledProperties &&
             node.deliveryPreviousComputed !==
-              (+node.active |
-                (+node.visible << 1) |
-                (+node.readOnly << 2) |
-                (+node.disabled << 3))) ||
+              (+node.isActive |
+                (+node.isVisible << 1) |
+                (+node.isReadOnly << 2) |
+                (+node.isDisabled << 3))) ||
           watchChanged
         )
           mark(node, FieldNodeEventType.UpdateControlledProperties);

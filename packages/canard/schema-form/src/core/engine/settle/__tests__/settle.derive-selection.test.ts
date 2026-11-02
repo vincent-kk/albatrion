@@ -77,7 +77,7 @@ describe('active derive declarations', () => {
     );
     const target = root.structure!.H.structure!.x;
     target.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
@@ -86,7 +86,7 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
   });
 
@@ -307,12 +307,12 @@ describe('active derive declarations', () => {
     );
     const target = root.structure!.H.structure!.P;
     target.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(target.structure!.q, 'user', 'input', WriteOption.Overwrite);
     expect(target.structure?.q?.raw).toBe('user');
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
   });
 
@@ -815,7 +815,7 @@ describe('newly selected declaration baselines', () => {
     );
     const target = root.structure!.x;
     target.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
@@ -824,9 +824,9 @@ describe('newly selected declaration baselines', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
     writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
   });
 

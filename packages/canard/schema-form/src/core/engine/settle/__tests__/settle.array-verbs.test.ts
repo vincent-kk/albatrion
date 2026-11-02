@@ -73,7 +73,7 @@ describe('array structural verbs', () => {
     const first = root.children![0];
     const second = root.children![1];
     const grandchild = second.children![0];
-    second.state = { ...second.state, dirty: true, touched: true };
+    second.state = { ...second.state, edited: true, touched: true };
     expect(arrangeFieldNodeItems(record, { kind: 'remove', index: 0 })).toEqual(
       {
         name: 'a',
@@ -83,7 +83,7 @@ describe('array structural verbs', () => {
     expect(root.children![0]).toBe(second);
     expect(second).toMatchObject({ name: '0', path: '/0', itemKey: 1 });
     expect(grandchild.path).toBe('/0/name');
-    expect(second.state).toMatchObject({ dirty: true, touched: true });
+    expect(second.state).toMatchObject({ edited: true, touched: true });
     expect(root.value).toEqual([{ name: 'b' }, { name: 'c' }]);
     expect(Reflect.get(runtime, 'loadSnapshot')).toEqual([
       { name: 's1' },
@@ -308,7 +308,7 @@ describe('array structural verbs', () => {
     });
     const record: TestFieldNode = root;
     root.setValue(17);
-    expect(root.misfit).toBe(true);
+    expect(root.isMisfit).toBe(true);
     const commit = Reflect.get(runtime, 'commitNumber');
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
@@ -316,7 +316,7 @@ describe('array structural verbs', () => {
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.raw).toEqual(['x']);
-    expect(root.misfit).toBe(false);
+    expect(root.isMisfit).toBe(false);
   });
 
   it('47C-01 keeps nested array slots and live identity on a tuple tail update', () => {

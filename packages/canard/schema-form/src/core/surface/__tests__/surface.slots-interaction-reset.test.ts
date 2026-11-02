@@ -5,8 +5,8 @@ import { createRetainedSlotTree } from './fixtures/createRetainedSlotTree';
 // filid:contract surface-slot-interaction-reset
 it('clones sources without carrying interaction or external errors into re-entry', () => {
   const tree = createRetainedSlotTree();
-  tree.group.setState({ dirty: true, touched: true });
-  tree.leaf.setState({ dirty: true, touched: true });
+  tree.group.setState({ edited: true, touched: true });
+  tree.leaf.setState({ edited: true, touched: true });
   tree.leaf.setExternalErrors([
     { dataPath: '/group/leaf', message: 'external' },
   ]);
@@ -19,7 +19,7 @@ it('clones sources without carrying interaction or external errors into re-entry
   expect(leaf.state).toEqual({});
   expect(leaf.errors).toEqual([]);
   expect(leaf.value).toBe('kept');
-  expect(tree.leaf.state).toEqual({ dirty: true, touched: true });
+  expect(tree.leaf.state).toEqual({ edited: true, touched: true });
   expect(tree.leaf.errors).toEqual([
     { dataPath: '/group/leaf', message: 'external' },
   ]);

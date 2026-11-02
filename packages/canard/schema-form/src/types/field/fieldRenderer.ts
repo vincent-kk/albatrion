@@ -28,7 +28,7 @@ export interface FieldRendererProps extends ChildFieldProps {
   /** Errors of the field node assigned to FieldRenderer Component */
   errors: FieldNode['errors'];
   /** Whether the field node assigned to FieldRenderer Component is required */
-  required: FieldNode['required'];
+  required: FieldNode['isRequired'];
   /** `FieldInput` component of the field node assigned to FieldRenderer Component */
   Input: ComponentType<ChildFieldProps>;
   /** Whether to show errors for the field node assigned to FieldRenderer Component.

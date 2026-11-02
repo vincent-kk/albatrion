@@ -17,7 +17,7 @@ it('calls an instance listener once while still attached and restores its result
   root.setValue({ open: true, value: 'before' });
   const old = root.find('/value')!;
   const listener = vi.fn((value, context) => {
-    expect(old.active).toBe(true);
+    expect(old.isActive).toBe(true);
     expect(value).toBe('before');
     expect(context.rootValue).toEqual({ open: true, value: 'before' });
     expect(context.dataPath).toBe('/value');

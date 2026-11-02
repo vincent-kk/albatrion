@@ -111,8 +111,8 @@ describe('dispatcher budgets', () => {
         dispatchSetValue(root, `p${feedbackCalls++}`);
         return;
       }
-      dispatchSetState(root, { [FieldNodeState.Dirty]: true });
-      dispatchSetSubtreeState(root, { [FieldNodeState.Dirty]: true });
+      dispatchSetState(root, { [FieldNodeState.Edited]: true });
+      dispatchSetSubtreeState(root, { [FieldNodeState.Edited]: true });
       dispatchClearSubtreeState(root);
       dispatchSetExternalErrors(root, [{ dataPath: '', message: 'blocked' }]);
       dispatchClearExternalErrors(root);
@@ -121,7 +121,7 @@ describe('dispatcher budgets', () => {
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
     expect(root.interactionState[FieldNodeState.Touched]).toBe(true);
-    expect(root.interactionState[FieldNodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[FieldNodeState.Edited]).toBeUndefined();
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(observed).toHaveLength(26);
     expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(1);

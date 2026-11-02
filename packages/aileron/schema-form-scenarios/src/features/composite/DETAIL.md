@@ -37,7 +37,7 @@
 | `cx09-reset-during-validation.scenario.ts` | `composite.cx09-reset-during-validation` | 보류한 검증 결과가 reset 뒤에 도착하면 버려지고, reset은 다시 적재하고 상호작용 상태를 지운다. | EVENT-046, WRITE-044 |
 | `cx10-inject-chain-in-batch.scenario.ts` | `composite.cx10-inject-chain-in-batch` | injectTo 사슬이 한 정착 안에서 끝나고, 중간 편집은 뒤쪽만 다시 주입하며, 되먹임이 예산을 넘으면 degraded로 보고하고 폼은 계속 동작한다. | EVENT-013, EVENT-020, EVENT-026, ERROR-080 |
 | `cx11-ime-during-switch.scenario.ts` | `composite.cx11-ime-during-switch` | 조합 중인 입력이 분기 전환으로 사라지면 조합 끝이 닫힌 분기에 아무것도 쓰지 않고, 돌아오면 조합 전 raw가 돌아온다. | LANDING-018, REACT-027 |
-| `cx12-deferred-dirty-touched.scenario.ts` | `composite.cx12-deferred-dirty-touched` | 필드 백 개의 가상화에서 미룬 필드가 핸들 쓰기를 받고, focus로 마운트된 뒤 입력이 dirty를, blur가 touched를 만들며 reset이 둘을 지운다. | TEST-020, GOAL-061, CONTROLS-029 |
+| `cx12-deferred-edited-touched.scenario.ts` | `composite.cx12-deferred-edited-touched` | 필드 백 개의 가상화에서 미룬 필드가 핸들 쓰기를 받고, focus로 마운트된 뒤 입력이 dirty를, blur가 touched를 만들며 reset이 둘을 지운다. | TEST-020, GOAL-061, CONTROLS-029 |
 | `cx13-nested-oneof-anyof.scenario.ts` | `composite.cx13-nested-oneof-anyof` | 세 겹으로 중첩된 분기에서 안쪽 전환과 부가 가드는 제 값을 지키고 바깥 전환은 하위 트리 전체를 내렸다가 되살린다. | FRAGMENT-021, LANDING-018 |
 | `cx14-recursive-conditions.scenario.ts` | `composite.cx14-recursive-conditions` | 이스케이프한 포인터 키 아래 재귀 if/then/else 트리에서 최상위 토글이 하위 트리를 내렸다가 raw로 되살리고, 깊은 오류는 그 노드에 붙는다. | LANDING-018, SCHEMA-040 |
 | `cx15-external-and-validation-errors.scenario.ts` | `composite.cx15-external-and-validation-errors` | 외부 오류가 검증 이슈보다 앞에 오고, 값 수정은 검증 이슈만, 빈 errors 속성은 외부 오류만 지우며, 배열이 아닌 errors는 빈 목록이다. | VALIDATE-043 |

@@ -34,18 +34,18 @@ describe('array item declarations', () => {
       { kind: 'hide', locked: true, x: 'b' },
     ]);
     expect(root.find('/0/x')).toMatchObject({
-      visible: true,
-      readOnly: false,
-      disabled: false,
+      isVisible: true,
+      isReadOnly: false,
+      isDisabled: false,
     });
     expect(root.find('/1/x')).toMatchObject({
-      visible: false,
-      readOnly: true,
-      disabled: true,
+      isVisible: false,
+      isReadOnly: true,
+      isDisabled: true,
     });
     root.find('/0/kind')?.setValue('hide');
-    expect(root.find('/0/x')?.visible).toBe(false);
-    expect(root.find('/1/x')?.visible).toBe(false);
+    expect(root.find('/0/x')?.isVisible).toBe(false);
+    expect(root.find('/1/x')?.isVisible).toBe(false);
   });
 
   it('35C-08 SETTLE-045 applies an if/then gate only to the matching item', () => {
@@ -192,11 +192,11 @@ describe('array item declarations', () => {
         { x: 'off', absolute: 'b', relative: 'b' },
       ],
     });
-    expect(root.find('/arr/1/absolute')?.visible).toBe(false);
-    expect(root.find('/arr/1/relative')?.visible).toBe(false);
+    expect(root.find('/arr/1/absolute')?.isVisible).toBe(false);
+    expect(root.find('/arr/1/relative')?.isVisible).toBe(false);
     root.find('/arr/0/x')?.setValue('on');
-    expect(root.find('/arr/1/absolute')?.visible).toBe(true);
-    expect(root.find('/arr/1/relative')?.visible).toBe(true);
+    expect(root.find('/arr/1/absolute')?.isVisible).toBe(true);
+    expect(root.find('/arr/1/relative')?.isVisible).toBe(true);
   });
 
   it('35C-08 CONTROLS-080 reads the emitted array length from an item', () => {
@@ -217,10 +217,10 @@ describe('array item declarations', () => {
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const array = root as ArrayNode;
     root.setValue([{ marker: 'a' }, { marker: 'b' }]);
-    expect(root.find('/0/marker')?.visible).toBe(true);
+    expect(root.find('/0/marker')?.isVisible).toBe(true);
     array.push({ marker: 'c' });
-    expect(root.find('/0/marker')?.visible).toBe(false);
-    expect(root.find('/2/marker')?.visible).toBe(false);
+    expect(root.find('/0/marker')?.isVisible).toBe(false);
+    expect(root.find('/2/marker')?.isVisible).toBe(false);
   });
 
   it('35C-08 CONTROLS-080 rebinds item declarations after remove and push', () => {
@@ -244,12 +244,12 @@ describe('array item declarations', () => {
     const surviving = root.children?.[1];
     array.remove(0);
     expect(root.children?.[0]).toBe(surviving);
-    expect(root.find('/0/x')?.visible).toBe(true);
-    expect(root.find('/1/x')?.visible).toBe(false);
+    expect(root.find('/0/x')?.isVisible).toBe(true);
+    expect(root.find('/1/x')?.isVisible).toBe(false);
     root.find('/0/kind')?.setValue('hide');
-    expect(root.find('/0/x')?.visible).toBe(false);
+    expect(root.find('/0/x')?.isVisible).toBe(false);
     array.push({ kind: 'show', x: 'D' });
-    expect(root.find('/2/x')?.visible).toBe(true);
+    expect(root.find('/2/x')?.isVisible).toBe(true);
   });
 
   it('35C-08 binds each nested array template segment to its own index', () => {
@@ -274,9 +274,9 @@ describe('array item declarations', () => {
       [{ kind: 'show', x: 'c' }],
     ]);
     root.find('/0/1/kind')?.setValue('hide');
-    expect(root.find('/0/0/x')?.visible).toBe(true);
-    expect(root.find('/0/1/x')?.visible).toBe(false);
-    expect(root.find('/1/0/x')?.visible).toBe(true);
+    expect(root.find('/0/0/x')?.isVisible).toBe(true);
+    expect(root.find('/0/1/x')?.isVisible).toBe(false);
+    expect(root.find('/1/0/x')?.isVisible).toBe(true);
   });
 
   it('35C-08 SETTLE-045 keeps gate registrations bound after remove and push', () => {
@@ -316,10 +316,10 @@ describe('array item declarations', () => {
     });
     root.setValue([{ x: 'a' }, { x: 'b' }]);
     setContext(root, { show: false });
-    expect(root.find('/0/x')?.visible).toBe(false);
-    expect(root.find('/1/x')?.visible).toBe(false);
+    expect(root.find('/0/x')?.isVisible).toBe(false);
+    expect(root.find('/1/x')?.isVisible).toBe(false);
     setContext(root, { show: true });
-    expect(root.find('/0/x')?.visible).toBe(true);
-    expect(root.find('/1/x')?.visible).toBe(true);
+    expect(root.find('/0/x')?.isVisible).toBe(true);
+    expect(root.find('/1/x')?.isVisible).toBe(true);
   });
 });

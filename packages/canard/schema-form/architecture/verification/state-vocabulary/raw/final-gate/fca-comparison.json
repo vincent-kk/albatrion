@@ -1,0 +1,44 @@
+{
+  "merged-base": {
+    "diagnostics": {
+      "base": 306,
+      "head": 306,
+      "new": [],
+      "removed": []
+    },
+    "findings": {
+      "base": 566,
+      "head": 566,
+      "new": [],
+      "removed": []
+    },
+    "violations": {
+      "base": 30,
+      "head": 30,
+      "new": [],
+      "removed": []
+    }
+  },
+  "previous-head": {
+    "diagnostics": {
+      "base": 306,
+      "head": 306,
+      "new": [],
+      "removed": []
+    },
+    "findings": {
+      "base": 566,
+      "head": 566,
+      "new": [],
+      "removed": []
+    },
+    "violations": {
+      "base": 30,
+      "head": 30,
+      "new": [],
+      "removed": []
+    }
+  },
+  "snapshot": "a6c1f258488f5578def12abfe41373c9d54742ec7ad39d1d22f9672928a752e7",
+  "verdict": "FAIL / indeterminate remains; no new finding or diagnostic"
+}

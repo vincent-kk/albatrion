@@ -34,7 +34,7 @@ export interface ChildComponentStage {
   readonly text?: string;
   /** Child field names the card renders, in order. */
   readonly fields: readonly string[];
-  /** useChildFieldErrors showErrors per child under ShowError.DirtyTouched: the child's state, not whether it has issues. */
+  /** useChildFieldErrors showErrors per child under ShowError.EditedTouched: the child's state, not whether it has issues. */
   readonly showErrors: readonly boolean[];
   /** Issue count per child from errorMatrix. */
   readonly errorCounts: readonly number[];

@@ -18,7 +18,7 @@ export enum ValidationMode {
 /** UI state flags a node can carry. */
 export enum FieldNodeState {
   /** Set when the user changes this node's value through its input; programmatic writes (setValue, array verbs) and automatic writes (fill, derived, injectTo, unsetValue, exit clearing, trim) never set it. Cleared by reset, controls.resetInteraction and clearState. */
-  Dirty = BIT_FLAG_00,
+  Edited = BIT_FLAG_00,
   /** Set once the user leaves this node's input (blur) for the first time. Cleared by reset, controls.resetInteraction and clearState. */
   Touched = BIT_FLAG_01,
   /** Request validation messages for this node. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. Only the OnChange validation mode holds errors; other modes follow the live condition. */
@@ -27,7 +27,7 @@ export enum FieldNodeState {
 
 /** Typed bag of boolean-like UI state flags carried by a node. */
 export type NodeStateFlags = {
-  [FieldNodeState.Dirty]?: boolean;
+  [FieldNodeState.Edited]?: boolean;
   [FieldNodeState.Touched]?: boolean;
   [FieldNodeState.ErrorVisible]?: boolean;
   [key: string]: any;

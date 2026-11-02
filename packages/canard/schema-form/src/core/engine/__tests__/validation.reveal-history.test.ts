@@ -50,8 +50,8 @@ it('IR-6 H separate standalone writes retain every pre-change state in generatio
   dispatchSetState(a, { 4: true });
   expect(a.revealBaseline).toMatchObject({
     entries: [
-      { state: first, enabled: true },
-      { state: second, enabled: true },
+      { state: first, isPresent: true },
+      { state: second, isPresent: true },
     ],
   });
 });
@@ -66,7 +66,7 @@ it('IR-6 H an intermediate hide within one batch coalesces to its painted entry'
       dispatchSetState(a, { 4: true });
     });
     expect(a.revealBaseline).toMatchObject({
-      entries: [{ state: before, enabled: true }],
+      entries: [{ state: before, isPresent: true }],
     });
   });
 });
@@ -83,7 +83,7 @@ it('IR-6 H a subtree walk shares one sequence across its standalone state writes
     }
   });
   expect(a.revealBaseline).toMatchObject({
-    entries: [{ state: before, enabled: true }],
+    entries: [{ state: before, isPresent: true }],
   });
 });
 it('IR-6 H later nodes do not extend the first node past its captured release generation', async () => {

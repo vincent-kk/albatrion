@@ -125,11 +125,11 @@ describe('settled value rule layers', () => {
       WriteOption.Overwrite,
     );
     root.structure!.a.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     root.structure!.b.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
@@ -139,13 +139,13 @@ describe('settled value rule layers', () => {
       WriteOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.structure?.a?.interactionState[FieldNodeState.Dirty]).toBe(
+    expect(root.structure?.a?.interactionState[FieldNodeState.Edited]).toBe(
       false,
     );
     expect(root.structure?.a?.interactionState[FieldNodeState.Touched]).toBe(
       false,
     );
-    expect(root.structure?.b?.interactionState[FieldNodeState.Dirty]).toBe(
+    expect(root.structure?.b?.interactionState[FieldNodeState.Edited]).toBe(
       false,
     );
     expect(root.structure?.b?.interactionState[FieldNodeState.Touched]).toBe(

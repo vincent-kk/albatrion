@@ -27,17 +27,17 @@ const scenarioNamed = (name: string) => {
 };
 
 /**
- * Read dirty and touched from one node state record.
+ * Read edited and touched from one node state record.
  * @param state - Node state keyed by FieldNodeState flags.
  * @returns Only the flags that are true, by name.
  */
 const interaction = (state: Readonly<Record<string, boolean | undefined>> = {}) => ({
-  ...(state[FieldNodeState.Dirty] && { dirty: true }),
+  ...(state[FieldNodeState.Edited] && { edited: true }),
   ...(state[FieldNodeState.Touched] && { touched: true }),
 });
 
 describe('features — derivation consumer-only', () => {
-  it('CONTROLS-029 only a rising /clear edge resets dirty and touched of /name and no value changes', async () => {
+  it('CONTROLS-029 only a rising /clear edge resets edited and touched of /name and no value changes', async () => {
     const scenario = scenarioNamed('derivation.reset-interaction');
     const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue });
     try {
@@ -72,7 +72,7 @@ describe('features — derivation consumer-only', () => {
         await act(async () => { await settleValidation(() => handle?.node); });
         const current = handle!;
         expect({
-          states: { titleReadOnly: current.findNode('/title')!.readOnly, secretVisible: current.findNode('/secret')!.visible },
+          states: { titleReadOnly: current.findNode('/title')!.isReadOnly, secretVisible: current.findNode('/secret')!.isVisible },
           values: Object.fromEntries(Object.keys(stage.values).map((path) => [path, current.findNode(path)?.value])),
           changes: onChange.mock.calls.length - before,
         }, `context stage ${stage.label}`).toEqual({ states: stage.states, values: stage.values, changes: stage.changes });

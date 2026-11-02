@@ -145,12 +145,12 @@ describe('settle derivation', () => {
     );
     const target = root.structure!.target;
     setTestInteractionState(target, {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
     const revision = target.revisionLedger[FieldNodeEventType.UpdateState] ?? 0;
     writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
     expect(
       target.revisionLedger[FieldNodeEventType.UpdateState],
@@ -179,7 +179,7 @@ describe('settle derivation', () => {
     );
     const target = root.structure!.target;
     setTestInteractionState(target, {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
     writeFieldNode(
@@ -189,7 +189,7 @@ describe('settle derivation', () => {
       WriteOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.raw).toBe('manual');
-    expect(root.structure?.target?.interactionState[FieldNodeState.Dirty]).toBe(
+    expect(root.structure?.target?.interactionState[FieldNodeState.Edited]).toBe(
       false,
     );
     expect(

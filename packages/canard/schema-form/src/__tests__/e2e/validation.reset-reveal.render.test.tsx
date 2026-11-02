@@ -20,7 +20,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 it.each([false, true])(
-  'IR-6 H Dirty resetInteraction never displays too short beneath abc (pending ErrorVisible toggle=%s)',
+  'IR-6 H Edited resetInteraction never displays too short beneath abc (pending ErrorVisible toggle=%s)',
   async (toggle) => {
     const ref = createRef<FormHandle>();
     let slow = false;
@@ -69,7 +69,7 @@ it.each([false, true])(
           },
         }}
         defaultValue={{ kind: false, a: 'a' }}
-        showError={ShowError.Dirty}
+        showError={ShowError.Edited}
         FieldRenderer={Renderer}
         fieldInputDefinitions={[
           { test: { type: 'object' }, Component: Branch },

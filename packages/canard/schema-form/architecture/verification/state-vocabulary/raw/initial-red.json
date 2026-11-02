@@ -1,0 +1,141 @@
+{
+  "base": "61457653ae19dfb1f11b97e29355fa3cd6af8f24",
+  "total": 51,
+  "passed": 18,
+  "failed": 33,
+  "failures": [
+    {
+      "name": "writes read no baseline and never call the divergence reader",
+      "reason": "Error: readFieldNodeIsDivergent does not exist"
+    },
+    {
+      "name": "a flat 2,000-field first read compares once with at most 2,000 baseline property reads",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "a nested 200-by-10 edit and restore retains unchanged baseline branches",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "an unchanged repeated read calls sameValue zero times",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "a NaN-valued field hits the repeated-read memo",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence before the first load the baseline is unset",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence static-first load, setValue and revert use the last root load output",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence settled load with expressions captures the final output",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence a default-filled field compares against the filled output, not the raw load source",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence resets with and without a value move the root baseline",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence child reset restores its subtree without moving a sibling baseline",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence array holes compare the contribution in the root output",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence a moved array item invalidates its memo even when its own emit is unchanged",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence added items compare by position, including an equal baseline value",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence switching a branch back restores false and detached nodes read false",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence hidden fields remain part of the output comparison",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary output divergence undeclared key order follows sameValue semantics",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters reads false before the first load",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters user input sets isEdited and blur state sets isTouched",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters setState follows truthiness and clearSubtreeState clears both getters",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters form reset clears both getters",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters controls.resetInteraction clears both getters",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters strict-false new getter contract: programmatic setValue",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters strict-false new getter contract: array verbs",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "state-vocabulary interaction getters strict-false new getter contract: default fill",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    },
+    {
+      "name": "a load that throws before commit keeps the preceding baseline",
+      "reason": "AssertionError: expected undefined to be defined"
+    },
+    {
+      "name": "a reset to the same output moves the baseline without UpdateValue",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "detached interaction getters keep their last committed state",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "mid-settlement context reads after remove and reset do not poison later reads",
+      "reason": "AssertionError: expected undefined to be true // Object.is equality"
+    },
+    {
+      "name": "runtime property names and enum keys expose the new vocabulary without aliases",
+      "reason": "AssertionError: expected [ 'constructor', 'type', …(55) ] to include 'isRequired'"
+    },
+    {
+      "name": "FieldNode PR-2 surface 26C-01 PR-4 member list matches the DETAIL table exactly",
+      "reason": "AssertionError: expected [ …(56) ] to have a length of 59 but got 56"
+    },
+    {
+      "name": "Edited keeps the input-state bit and EditedTouched keeps the default display policy",
+      "reason": "AssertionError: expected { '1': 'Always', '2': 'Never', …(8) } to have property \"Edited\" with value 4"
+    },
+    {
+      "name": "new node vocabulary follows input, reset, rebuild and validator changes",
+      "reason": "AssertionError: expected undefined to be false // Object.is equality"
+    }
+  ],
+  "guardSplit": "Coordinator msg_cd30dba4cb07: base guards pin the pre-existing input state bit; new strict-false getter assertions are separate red cases. After implementation both groups use Edited and the getter."
+}

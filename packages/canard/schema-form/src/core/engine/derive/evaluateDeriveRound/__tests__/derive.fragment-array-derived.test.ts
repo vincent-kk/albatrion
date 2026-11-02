@@ -119,7 +119,7 @@ describe('CONTROLS-077 fragment derived array targets', () => {
     expect(list.value).toEqual(['A', 'A', 'A']);
     for (const child of list.children ?? [])
       child.setState({
-        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Edited]: true,
         [FieldNodeState.Touched]: true,
       });
     /** Shared identities must survive selection without taking a new edge. */
@@ -136,7 +136,7 @@ describe('CONTROLS-077 fragment derived array targets', () => {
     ).toEqual([]);
     for (const child of list.children ?? [])
       expect(child.state).toMatchObject({
-        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Edited]: true,
         [FieldNodeState.Touched]: true,
       });
     root.find('/source')?.setValue('C');

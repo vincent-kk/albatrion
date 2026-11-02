@@ -46,13 +46,13 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
     try {
       root.setValue(value(1));
       expect(visits, `state-key whole-write visits: ${visits}`).toBe(1);
-      expect((root.find('/controlled') as NumberNode).disabled).toBe(true);
+      expect((root.find('/controlled') as NumberNode).isDisabled).toBe(true);
       visits = 0;
       (root.find('/f1') as NumberNode).setValue(2);
       expect(visits, `state-key unrelated-write visits: ${visits}`).toBe(0);
       (root.find('/f0') as NumberNode).setValue(0);
       expect(visits).toBe(1);
-      expect((root.find('/controlled') as NumberNode).disabled).toBe(false);
+      expect((root.find('/controlled') as NumberNode).isDisabled).toBe(false);
     } finally {
       spy.mockRestore();
     }

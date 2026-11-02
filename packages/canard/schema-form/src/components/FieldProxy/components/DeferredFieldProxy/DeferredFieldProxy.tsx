@@ -80,9 +80,9 @@ export const DeferredFieldProxy = ({
     // React 18 replays effects without replaying DOM refs in StrictMode.
     manager.register(element, () => setRevealed(true));
     return () => manager.unregister(element);
-  }, [manager, revealed, node.enabled]);
+  }, [manager, revealed, node.isPresent]);
 
-  if (!node.enabled) return null;
+  if (!node.isPresent) return null;
   if (revealed) return <NodeProxy {...proxyProps} />;
 
   const Placeholder = manager.Placeholder;

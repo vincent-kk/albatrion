@@ -67,7 +67,7 @@ it('retains a wrong-kind result and reports its misfit on re-entry', () => {
   ]);
   root.find('/open')!.setValue(true);
   expect(root.find('/value')!.value).toEqual({ invalid: true });
-  expect(root.find('/value')!.misfit).toBe(true);
+  expect(root.find('/value')!.isMisfit).toBe(true);
 });
 
 it('preserves a declared array result and restores its length and values', () => {

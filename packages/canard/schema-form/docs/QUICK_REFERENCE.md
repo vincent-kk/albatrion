@@ -101,7 +101,7 @@ controls: { active: "./type === 'A'" }
 | `default`          | 리터럴 값                 | 새로 나타난 노드의 채움 값                   | -       |
 | `derived`          | `string`                  | 파생 값 계산                                 | -       |
 | `unsetValue`       | `boolean \| string`       | false에서 true로 바뀌면 값을 비움            | -       |
-| `resetInteraction` | `boolean \| string`       | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
+| `resetInteraction` | `boolean \| string`       | false에서 true로 바뀌면 edited/touched 초기화 | -       |
 | `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
 | `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
 | `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
@@ -442,7 +442,7 @@ node.visitSubtree((child) => {
 | `Initialized`                | 노드 초기화 완료                      |
 | `UpdatePath`                 | 경로 변경 (배열 재정렬)               |
 | `UpdateValue`                | 값 변경                               |
-| `UpdateState`                | 상호작용 플래그 변경 (dirty, touched) |
+| `UpdateState`                | 상호작용 플래그 변경 (edited, touched) |
 | `UpdateGlobalState`          | 트리 전체 상호작용 플래그 변경        |
 | `UpdateError`                | 검증 오류 변경                        |
 | `UpdateGlobalError`          | 트리 전체 검증 오류 변경              |
@@ -571,13 +571,13 @@ arrayNode.children; // 자식 노드 배열
 
 `OnChange` 쓰기는 다음 프레임 뒤 선행 실행하며 연속 입력은 프레임마다 이월하고 quiet 프레임 뒤 후행 실행합니다. 마지막 실제 자동 실행 시작 기준100ms 상한 뒤에는 watch로 돌아갑니다. 디바운스는 `FieldInput`이 소유합니다. 프레임 API가 없거나 숨긴 문서이면 매크로태스크 fallback을 쓰고100ms stalled-frame 타이머가 프레임 뒤 task와 단일 실행을 경주합니다. 명시적 `validate()`와 제출은 즉시 시작하고 제출은 판정을 기다립니다.
 
-오류는 지금 적격이며 마지막 release 이후 엔진 state·enabled·커밋된 Form 정책의 모든 조합에서 계속 적격일 때 표시합니다. 숨김은 즉시이며 새로 적격해지거나 중간에 부적격했던 오류는 다음 release를 기다립니다. release는 pending true→false 정착, 조용한 post-paint 이력 drop, 수락한 explicit root 판정, 폐기입니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 `active && visible`도 검사하고 자식 오류 훅은 enabled를 제외합니다. `OnChange`만 이력을 기록하며 다른 모드는 live 조건을 씁니다. 공개 `batch()` 또는 walk 하나에서는 그 쓰기 시퀀스의 첫 상태만 이력에 기록하고 중간 상태는 별도 이력으로 남기지 않습니다. 한 React batch 안의 서로 다른 공개 호출은 중간 상태도 기록합니다. React-only 복원·remount·mirror·virtualization도 같은 이력을 소비합니다. 현재 stamp의 commit-only 폐기는 targets를 보존하고 cadence에서 최신 commit을 재요청합니다. 새 함수·`Date`·`Map`·class identity를 포함한 context 변경 stream이 이어지면 멎을 때까지 hold합니다.
+오류는 지금 적격이며 마지막 release 이후 엔진 state·isPresent·커밋된 Form 정책의 모든 조합에서 계속 적격일 때 표시합니다. 숨김은 즉시이며 새로 적격해지거나 중간에 부적격했던 오류는 다음 release를 기다립니다. release는 pending true→false 정착, 조용한 post-paint 이력 drop, 수락한 explicit root 판정, 폐기입니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 `active && visible`도 검사하고 자식 오류 훅은 enabled를 제외합니다. `OnChange`만 이력을 기록하며 다른 모드는 live 조건을 씁니다. 공개 `batch()` 또는 walk 하나에서는 그 쓰기 시퀀스의 첫 상태만 이력에 기록하고 중간 상태는 별도 이력으로 남기지 않습니다. 한 React batch 안의 서로 다른 공개 호출은 중간 상태도 기록합니다. React-only 복원·remount·mirror·virtualization도 같은 이력을 소비합니다. 현재 stamp의 commit-only 폐기는 targets를 보존하고 cadence에서 최신 commit을 재요청합니다. 새 함수·`Date`·`Map`·class identity를 포함한 context 변경 stream이 이어지면 멎을 때까지 hold합니다.
 
 Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 거부하며 기록의 origin은 `validate`입니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 
 raw `errors`, Form children errors, `FormRender`, `node.errors`, `getErrors()`는 표시와 무관합니다. custom UI는 `errorVisible`과 `useChildFieldErrors().showErrors`를 씁니다. hidden 자식은 값·aggregate 오류를 유지하고 inactive는 값 제거·off-branch issue 제외를 따릅니다. 첫 layout commit을 마친 현행 load는 숨김 중에도 같은-schema reset을 포함한 모든 폼 콜백을 engine chain 끝에 전달하며 show에서 재생하지 않습니다. 준비 전 변경·상태·진단은 버리고 생성 기록만 보관하며, reset으로 은퇴한 load의 기록은 버립니다. 루트 교체 reset은 handler 실패를 각각 격리하고 mount 기록 뒤 build 기록을 binding 교체 전에 전달합니다. React가 숨김과 unmount를 구분하지 않으므로 보유한 핸들·노드는 unmount 뒤에도 전달하지만 검증 캐시 참조는 cleanup에서 해제합니다. 숨김 중 onError만 최신 prop을 사용하고 다른 콜백은 마지막 연결 commit을 사용하며 Form ref는 null입니다. 필드 layout 쓰기·렌더 경고는 show에 도착합니다. `None`·`OnRequest`와 검증 계산 비용은 유지합니다.
 
-한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/enabled render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
+한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/isPresent render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/isPresent/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
 
 
 ## onError record origin
@@ -599,3 +599,23 @@ onError is an event channel: it delivers the one record of each occurrence and d
 사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. submit()·validate()의 caller에게 거부되는 묶음은 거부 값 하나로 유지하며 개별 onError 기록에는 묶음을 싣지 않습니다. 명시적 validate 중 검증 결과 리스너 실패는 caller가 없는 별도 통로여서 host에 전달하고 validate 자체는 resolve할 수 있습니다. 부른 쪽이 없는 실패는 기존 호스트 채널에 깊이 우선·원소 순서로 잎마다 보냅니다. 비어 있지 않고 모든 index가 own인 배열을 가진 SchemaFormError MultipleErrors만 펼치며 형식이 어긋나거나 읽을 수 없거나 다시 만난 묶음과 그 밖의 값은 그대로 보냅니다. engine 검증 결과 파동·자동 OnChange 검증·load flush의 handler-first 순서와 native submit·load slot의 original-first 순서는 유지합니다. React와 렌더 ErrorBoundary는 던진 값을 그대로 기록합니다. 이미 보고한 오류·핸들러 예외만 담은 유효한 중첩 묶음은 capture를 생략하며 미지·malformed·순환·재방문 중첩 묶음은 기록합니다. 배열 길이는 1..2^32 − 1 정수이며 처음과 마지막 읽기가 같아야 하고 각 순회는 호출 전체에서 원소 점검 예산 1,000,000개를 공유합니다. 읽을 수 없거나 길이가 변하거나 예산을 넘은 묶음은 같은 identity의 잎이므로 host도 묶음을 받을 수 있습니다. capture는 최상위 메타데이터·문자열 변환도 보호하며 읽기 실패 때 원래 값을 고정 fallback 메시지의 기록 하나로 전달합니다. 전달 시점·호출자 거부·재진입·sink 예외 전파는 유지합니다.
 
 `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

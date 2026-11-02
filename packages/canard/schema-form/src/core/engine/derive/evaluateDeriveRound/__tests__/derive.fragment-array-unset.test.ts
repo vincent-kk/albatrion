@@ -119,7 +119,7 @@ describe('CONTROLS-077 fragment unsetValue array targets', () => {
     expect(runtime.committedRuleValues?.size).toBe(0);
     for (const child of list.children ?? [])
       child.setState({
-        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Edited]: true,
         [FieldNodeState.Touched]: true,
       });
     /** Selection changes must retain shared node identities and their state. */
@@ -136,7 +136,7 @@ describe('CONTROLS-077 fragment unsetValue array targets', () => {
     ).toEqual([]);
     for (const child of list.children ?? [])
       expect(child.state).toMatchObject({
-        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Edited]: true,
         [FieldNodeState.Touched]: true,
       });
     root.find('/trigger')?.setValue(false);

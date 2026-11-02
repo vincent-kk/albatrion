@@ -59,7 +59,7 @@ it('compares frozen detached reads after external state and error inputs', () =>
   const { root } = createDispatchTree(SCHEMA);
   dispatchMount(root, { open: true, count: 0, value: 'held' });
   const old = getDispatchNode(root, 'value');
-  dispatchSetState(old, { dirty: true, touched: true });
+  dispatchSetState(old, { edited: true, touched: true });
   dispatchSetExternalErrors(old, [{ dataPath: '/value', message: 'external' }]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), true);

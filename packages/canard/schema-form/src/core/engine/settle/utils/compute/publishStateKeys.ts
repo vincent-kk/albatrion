@@ -28,14 +28,14 @@ export const publishStateKeys = <Self extends FieldNodeRecord<Self>>(
   );
   for (const { node, visible, readOnly, disabled } of result.entries) {
     if (
-      node.visible !== visible ||
-      node.readOnly !== readOnly ||
-      node.disabled !== disabled
+      node.isVisible !== visible ||
+      node.isReadOnly !== readOnly ||
+      node.isDisabled !== disabled
     )
       context.changedNodes.add(node);
-    node.visible = captureFieldNodeChange(node, 'visible', visible);
-    node.readOnly = captureFieldNodeChange(node, 'readOnly', readOnly);
-    node.disabled = captureFieldNodeChange(node, 'disabled', disabled);
+    node.isVisible = captureFieldNodeChange(node, 'isVisible', visible);
+    node.isReadOnly = captureFieldNodeChange(node, 'isReadOnly', readOnly);
+    node.isDisabled = captureFieldNodeChange(node, 'isDisabled', disabled);
   }
   for (const failure of result.failures) {
     const { path, schemaPath, cause } = failure;

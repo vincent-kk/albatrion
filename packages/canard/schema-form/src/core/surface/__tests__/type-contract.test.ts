@@ -27,7 +27,7 @@ type PublicKeys =
   | 'strategy'
   | 'schemaType'
   | 'jsonSchema'
-  | 'required'
+  | 'isRequired'
   | 'nullable'
   | 'depth'
   | 'isRoot'
@@ -42,14 +42,14 @@ type PublicKeys =
   | 'value'
   | 'outputValue'
   | 'inactiveValues'
-  | 'active'
-  | 'visible'
-  | 'enabled'
-  | 'readOnly'
-  | 'disabled'
+  | 'isActive'
+  | 'isVisible'
+  | 'isPresent'
+  | 'isReadOnly'
+  | 'isDisabled'
   | 'watchValues'
   | 'context'
-  | 'misfit'
+  | 'isMisfit'
   | 'misfits'
   | 'diagnostics'
   | 'defaultValue'
@@ -57,6 +57,9 @@ type PublicKeys =
   | 'findNodes'
   | 'setValue'
   | 'resetSubtree'
+  | 'isEdited'
+  | 'isTouched'
+  | 'isDivergent'
   | 'state'
   | 'setState'
   | 'globalState'
@@ -176,8 +179,8 @@ describe('new FieldNode public types', () => {
 
   it('splits union values by mismatch without widening onChange', () => {
     type Types = readonly ['string', 'number'];
-    type Matching = Extract<UnionNode<Types, false>, { misfit: false }>;
-    type MisfitNode = Extract<UnionNode<Types, false>, { misfit: true }>;
+    type Matching = Extract<UnionNode<Types, false>, { isMisfit: false }>;
+    type MisfitNode = Extract<UnionNode<Types, false>, { isMisfit: true }>;
     expectTypeOf<Matching['value']>().toEqualTypeOf<
       string | number | undefined
     >();

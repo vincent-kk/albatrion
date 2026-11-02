@@ -68,7 +68,7 @@ describe('settle gate calculation', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.active).toBe(true);
+    expect(root.structure?.target?.isActive).toBe(true);
     expect(root.emit).toEqual({ flag: true, target: 'shown' });
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.target).toBeUndefined();
@@ -337,7 +337,7 @@ describe('settle gate calculation', () => {
     );
     expect(root.structure?.p?.structure?.child).toBeUndefined();
     writeFieldNode(root.structure!.flag, '0', 'input', WriteOption.Overwrite);
-    expect(root.structure?.p?.structure?.child?.active).toBe(true);
+    expect(root.structure?.p?.structure?.child?.isActive).toBe(true);
     expect(root.emit).toEqual({ p: { child: 'yes' }, flag: 0 });
   });
 

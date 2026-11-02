@@ -23,7 +23,7 @@ describe('validation-state feature scenarios', () => {
 
   it('name every validation mode and display policy exactly once', () => {
     expect(validationModeCases.map((item) => item.mode).sort()).toEqual(['None', 'OnChange', 'OnRequest']);
-    expect(showErrorCases.map((item) => item.policy).sort()).toEqual(['Always', 'Dirty', 'DirtyTouched', 'Never', 'Touched']);
+    expect(showErrorCases.map((item) => item.policy).sort()).toEqual(['Always', 'Edited', 'EditedTouched', 'Never', 'Touched']);
   });
 
   it('keep stage and case labels unique and start interaction stages from the load', () => {

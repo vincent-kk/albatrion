@@ -17,6 +17,6 @@ it('retains the detached source while re-entry issues a new subtree', () => {
   expect(tree.root.find('/group')!.undeclaredValues).toEqual(extras);
   expect(Reflect.get(tree.group, 'detached')).toBe(true);
   expect(Reflect.get(tree.leaf, 'detached')).toBe(true);
-  expect(tree.group.active).toBe(false);
-  expect(tree.leaf.active).toBe(false);
+  expect(tree.group.isActive).toBe(false);
+  expect(tree.leaf.isActive).toBe(false);
 });

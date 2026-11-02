@@ -106,7 +106,7 @@ export const FieldProxy = ({
   const [, rerender] = useReducer(increment, 0);
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
-  if (!node?.enabled) return null;
+  if (!node?.isPresent) return null;
   const live = checkShowError(node.state);
   const errorVisible = live && isErrorRevealed(node, showError, true);
   const revealVersion =
@@ -131,7 +131,7 @@ export const FieldProxy = ({
             name={node.name}
             value={node.value}
             errors={node.errors}
-            required={node.required}
+            required={node.isRequired}
             Input={Input}
             errorVisible={errorVisible}
             formatError={formatError}

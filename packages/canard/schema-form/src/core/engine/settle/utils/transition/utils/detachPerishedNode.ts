@@ -28,5 +28,5 @@ export const detachPerishedNode = <Self extends FieldNodeRecord<Self>>(
       rekeyed.current + departing.path.slice(rekeyed.previous.length),
     );
   departing.detached = true;
-  departing.active = captureFieldNodeChange(departing, 'active', false);
+  departing.isActive = captureFieldNodeChange(departing, 'isActive', false);
 };

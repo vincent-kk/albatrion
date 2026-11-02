@@ -1,0 +1,142 @@
+{
+  "unit": {
+    "numTotalTests": 4229,
+    "numPassedTests": 4228,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 1
+  },
+  "render": {
+    "numTotalTests": 1025,
+    "numPassedTests": 1018,
+    "numFailedTests": 0,
+    "numPendingTests": 7,
+    "numTodoTests": 0
+  },
+  "react18": {
+    "numTotalTests": 1025,
+    "numPassedTests": 1016,
+    "numFailedTests": 0,
+    "numPendingTests": 9,
+    "numTodoTests": 0
+  },
+  "storybook": {
+    "numTotalTests": 254,
+    "numPassedTests": 254,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "production": {
+    "numTotalTests": 21,
+    "numPassedTests": 21,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "verify-unit": {
+    "numTotalTests": 4273,
+    "numPassedTests": 4272,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 1
+  },
+  "verify-render": {
+    "numTotalTests": 1025,
+    "numPassedTests": 1018,
+    "numFailedTests": 0,
+    "numPendingTests": 7,
+    "numTodoTests": 0
+  },
+  "scenarios": {
+    "numTotalTests": 45,
+    "numPassedTests": 45,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "ajv6": {
+    "numTotalTests": 130,
+    "numPassedTests": 130,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "ajv7": {
+    "numTotalTests": 135,
+    "numPassedTests": 135,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "ajv8": {
+    "numTotalTests": 334,
+    "numPassedTests": 334,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "import-model": {
+    "numTotalTests": 2,
+    "numPassedTests": 2,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "checks": {
+    "lintWarnings": 0,
+    "typecheck": 0,
+    "formalBuild": 0,
+    "snapshotRequired": 41,
+    "mutationF2Failed": 1,
+    "mutationF6Failed": 3,
+    "mutationStaticFailed": 2,
+    "removedSpyExemptionMatches": 0,
+    "oldNodeIndexedAccessMatches": 0,
+    "newFcaFindings": 0,
+    "newFcaDiagnostics": 0
+  },
+  "previousHead": "1b947739d65d8df2df221f4b5ada83b4f7a6277e",
+  "mergedBase": "212967e0f1d2a044d40b9c090420b6b54a33d078",
+  "recordedAt": "2026-11-02T03:13:36.168097+00:00",
+  "sourceManifest": {
+    "documents/docs/canard/schema-form/api-reference.mdx": "7bf09034dbebe855861d14dcbacbc9360dfe8b656559a1bcbdb216d9b3046709",
+    "documents/i18n/ko/docusaurus-plugin-content-docs/current/canard/schema-form/api-reference.mdx": "416f29d7885e9918e77c72f930c6a7e1990c61077562c307fcb4338317cf6ea6",
+    "packages/canard/schema-form/README-ko_kr.md": "ed7ebfa369eb96259a19fe59b27f9bcc4ec6c31fae37b577c298272e74334d1c",
+    "packages/canard/schema-form/README.md": "23ae7a00fe3bc8d2a6c569b9fdd093c451a880abeb5d47ffe934d181373cb1be",
+    "packages/canard/schema-form/docs/QUICK_REFERENCE.md": "83b39cce236b5180ecca015fd0f4a2fde2e889331bf1dc002fe11226707421ba",
+    "packages/canard/schema-form/docs/agents/skills/schema-form-skill/knowledge/validation-and-state.md": "7e254f9b44474a2b5f0c5e7e501c7a453099cc958a9f384566f7b7ff768aea05",
+    "packages/canard/schema-form/docs/en/SPECIFICATION.md": "732983690f1e2ed0ee952059d46091d310ee5103a41f555376097418339aff2e",
+    "packages/canard/schema-form/docs/ko/SPECIFICATION.md": "14653438fb424c6ef9a91d84200c79976cb1a15b104f3cfaf3818d38d69afcbe",
+    "packages/canard/schema-form/src/DETAIL.md": "b0999a2078bc14af0d8977fd36c3e5f625a4983a3d9b04646652308b82fe3fd4",
+    "packages/canard/schema-form/src/__tests__/importModel.test.ts": "ede8b0b6148971b0cf89b5064ec13bdab3c7a0c39d9a94a082309ba815821033",
+    "packages/canard/schema-form/src/__tests__/migration/state-vocabulary.subscription.test.tsx": "bdae88b989c5b9c0ab4931c395fa8a5ccf9de7d86a342c327e4d2172296caed2",
+    "packages/canard/schema-form/src/__tests__/migration/state-vocabulary.test.tsx": "877ef76013b1680465a29cdd61f6e69bfceeb4cd11d6839d63fe77e3daf2ded9",
+    "packages/canard/schema-form/src/components/FieldProxy/__tests__/FieldNodePropsFlow.fixtures.tsx": "6ca9113954c2807e4ccd89d10c02a24f3bea72c66fc3b7df6104fa4d24105cbf",
+    "packages/canard/schema-form/src/core/__tests__/scenarios/utils/assertCoreScenarioExpectation.ts": "82f4bd4b3d7de3bc1bbd6f58b7ef29aefa3ee073562358d9c7a09db31a890f3c",
+    "packages/canard/schema-form/src/core/engine/__tests__/fixtures/createPlainNode.ts": "e13abd2227cf82005c43c5838ea42ba4605ecdbc440400ff4601a3b967dc081e",
+    "packages/canard/schema-form/src/core/engine/behaviors/__tests__/rows.test.ts": "11d86625d5b990511c576167f3b3b9890d9dac8bdf798e16ed55e0fc254f6bc6",
+    "packages/canard/schema-form/src/core/engine/behaviors/arrayBehavior/__tests__/arrayBehavior.test.ts": "b23e933f7d323da301606b7972c2636b576e7d854a5b64d8f8decb6d2f9efac8",
+    "packages/canard/schema-form/src/core/engine/navigation/__tests__/fixtures/createNode.ts": "0c9ae06de6464b2392573dda7e6c3635c49ca2868090228908a676804865b875",
+    "packages/canard/schema-form/src/core/engine/record/DETAIL.md": "d6cce8ad21e21a4183742d32a673fc22a2d468fbf9d9dc65f458efd1cab1b944",
+    "packages/canard/schema-form/src/core/engine/record/__tests__/record.test.ts": "1169631152602cc2924f7f84c0bc02749b59a248ccc9543ea4be780888e92f60",
+    "packages/canard/schema-form/src/core/engine/record/types/record.ts": "17d3ab7af4981503a7b4bf77fb15cff28898ef8a099043915d098fa8968c5dec",
+    "packages/canard/schema-form/src/core/engine/settle/DETAIL.md": "99f98c795e3f2efff74ed72a91d66ea5bc6f38ad7dd69d5b1d6ccc417db938d1",
+    "packages/canard/schema-form/src/core/engine/settle/__tests__/settle.divergence-read-cost.test.ts": "b216940758dcf933911fa1093ab1d336f9b7c3ce55c93cd0bd4cc59f4a8bf1f3",
+    "packages/canard/schema-form/src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first-load-baseline.test.ts": "d6ddabca6da252a431c59b07b61662cdcc6783e3165da0798488e0868d652dac",
+    "packages/canard/schema-form/src/core/engine/settle/utils/loadValues/readFieldNodeIsDivergent.ts": "19cc4f5edcd84a28e6dafc7c39c50c2161866fef535808a99575f16e4f3dadd5",
+    "packages/canard/schema-form/src/core/surface/DETAIL.md": "c8a9a22bf9a3989d6b216851022d1e4c478a3cc51018abec0da6a4852fd23f49",
+    "packages/canard/schema-form/src/core/surface/__tests__/state-vocabulary.cost.test.ts": "b9d72c4db819df42594af8dd8d0906013112bfdf0195255f1c71d1731de92e3c",
+    "packages/canard/schema-form/src/core/surface/__tests__/state-vocabulary.divergence.test.ts": "fac460e5a029ecd7538bfa7efd97dee76431e0f993c765191e6ee1854356d737",
+    "packages/canard/schema-form/src/core/surface/__tests__/state-vocabulary.loads.test.ts": "575625ad00f4147a3a3a20f0f444084f8e6315bcca1f8c96861bfcb9e0448fa7",
+    "packages/canard/schema-form/src/core/surface/runtime/FieldNode.ts": "6bf3bcd95ff145934539d0337f5aecb58f6274d1f140b5ea40ca85a5d5f906f6",
+    "packages/canard/schema-form/src/core/surface/type.ts": "b99fa25882240f1ac78d630f3717a2470a34bba0acd2e4b53d6a735220a4205d"
+  },
+  "sourceDigest": "fd45ddcf6fce8b9e23a934492d7316e64f70319c6e441e5ba9b5f4d66357d071",
+  "runtimeBuild": {
+    "index.node.mjs": "f51fd503768fbb97f6cb1f8a52d6a20d807e7e2d33d7d7d42fe58c378a8412fa",
+    "index.cjs": "7582c2eeea76a058a7b2f811de5be5ca6948a901ca9c649dbaa058a90834dfa6",
+    "index.mjs": "4dd7d5cd87584e15cfe9167896b601f857657ad91bd14fb3b634135362ad1082",
+    "index.d.ts": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+  }
+}

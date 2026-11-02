@@ -1,0 +1,56 @@
+[
+  {
+    "evidence": "mutation-every-commit.json",
+    "total": 13,
+    "passed": 0,
+    "failed": 1,
+    "target": "state-vocabulary output divergence settled value load, setValue and revert use the last root load output",
+    "failure": "AssertionError: expected false to be true // Object.is equality",
+    "restored": true
+  },
+  {
+    "evidence": "mutation-no-memo.json",
+    "total": 5,
+    "passed": 0,
+    "failed": 1,
+    "target": "an unchanged repeated read calls sameValue zero times",
+    "failure": "AssertionError: expected \"sameValue\" to be called +0 times, but got 1 times",
+    "restored": true
+  },
+  {
+    "evidence": "mutation-child-reset.json",
+    "total": 13,
+    "passed": 0,
+    "failed": 1,
+    "target": "state-vocabulary output divergence child reset restores its subtree without moving a sibling baseline",
+    "failure": "AssertionError: expected false to be true // Object.is equality",
+    "restored": true
+  },
+  {
+    "evidence": "mutation-load-source.json",
+    "total": 13,
+    "passed": 0,
+    "failed": 1,
+    "target": "state-vocabulary output divergence a default-filled field compares against the filled output, not the raw load source",
+    "failure": "AssertionError: expected true to be false // Object.is equality",
+    "restored": true
+  },
+  {
+    "evidence": "mutation-cloned-baseline.json",
+    "total": 5,
+    "passed": 0,
+    "failed": 1,
+    "target": "a nested 200-by-10 edit and restore retains unchanged baseline branches",
+    "failure": "AssertionError: expected 2200 to be less than or equal to 210",
+    "restored": true
+  },
+  {
+    "evidence": "mutation-static-first-rebased.json",
+    "total": 13,
+    "passed": 0,
+    "failed": 1,
+    "target": "state-vocabulary output divergence static-first load captures the final filled output baseline",
+    "failure": "AssertionError: expected undefined to deeply equal { value: { a: 'd' } }",
+    "restored": true
+  }
+]

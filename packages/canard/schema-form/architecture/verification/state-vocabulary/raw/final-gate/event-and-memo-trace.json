@@ -1,0 +1,26 @@
+{
+  "baseline": "1b947739d65d8df2df221f4b5ada83b4f7a6277e",
+  "C": [
+    "markCommitDeliveries: root load scope always marks RequestRefresh",
+    "UpdateState if cleared interaction state reference changes",
+    "UpdateValue compares root local and emit identities"
+  ],
+  "S": [
+    "commitStaticFirstNode: UpdateValue | RequestRefresh reserved per node",
+    "loadStaticFirstTree assigns baseline before dispatcher delivery"
+  ],
+  "readEvents": {
+    "root": [
+      "UpdateValue",
+      "UpdateState",
+      "RequestRefresh"
+    ],
+    "node": [
+      "UpdatePath"
+    ]
+  },
+  "lifetime": "reattach to replacement root or node; detached references receive no new event guarantee",
+  "renderFixture": "omitTrailing:true and omitEmpty:false preserve the empty projected array before pushing x; /0 changes from absent to null with no local value/path/state event",
+  "sameOutputReset": "update committed defaultValue to edited without changing schema identity, then handle.reset(); output has no UpdateValue and RequestRefresh is present",
+  "memo": "two constructor-initialized fields retain current path and parsed segments; all warm sweeps bypass both LRU and dependency index"
+}

@@ -401,7 +401,7 @@ describe('settled exit policy layers', () => {
       },
     });
     loadFieldNodeAtMount(root, { hidden: 'held' }, WriteOption.Overwrite);
-    expect(root.structure?.hidden?.visible).toBe(false);
+    expect(root.structure?.hidden?.isVisible).toBe(false);
     expect(root.structure?.hidden?.raw).toBe('held');
   });
 

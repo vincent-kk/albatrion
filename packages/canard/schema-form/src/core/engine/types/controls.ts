@@ -59,7 +59,7 @@ export type ChildSchemaControls = {
   derived?: string;
   /** Clears the node's value when the boolean or expression turns from false to true. */
   unsetValue?: boolean | string;
-  /** Resets `dirty` and `touched` when the boolean or expression turns from false to true. */
+  /** Resets `edited` and `touched` when the boolean or expression turns from false to true. */
   resetInteraction?: boolean | string;
   /** Exit policy: clears the value when the node leaves the shape; a boolean or an expression (default: keep). */
   unsetOnInactive?: boolean | string;

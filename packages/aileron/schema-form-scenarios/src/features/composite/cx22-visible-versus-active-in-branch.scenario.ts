@@ -21,12 +21,12 @@ export const cx22VisibleVersusActiveInBranch: CompositeCase = {
     initialValue: { kind: 'a', show: false, use: false, hidden: 'h', removed: 'r' },
     steps: [
       { action: 'batch', steps: [], expect: {
-        states: { '/hidden': { visible: false } }, values: { '/hidden': 'h' }, errors: { '/hidden': [{ keyword: 'minLength' }] }, shape: { '/removed': 'absent' },
+        states: { '/hidden': { isVisible: false } }, values: { '/hidden': 'h' }, errors: { '/hidden': [{ keyword: 'minLength' }] }, shape: { '/removed': 'absent' },
       } },
       { action: 'batch', steps: [{ action: 'setValue', path: '/kind', value: 'b' }], expect: { shape: { '/hidden': 'absent', '/other': 'present' } } },
-      { action: 'batch', steps: [{ action: 'setValue', path: '/kind', value: 'a' }], expect: { values: { '/hidden': 'h' }, states: { '/hidden': { visible: false } } } },
+      { action: 'batch', steps: [{ action: 'setValue', path: '/kind', value: 'a' }], expect: { values: { '/hidden': 'h' }, states: { '/hidden': { isVisible: false } } } },
       { action: 'batch', steps: [{ action: 'setValue', path: '/show', value: true }, { action: 'setValue', path: '/use', value: true }], expect: {
-        states: { '/hidden': { visible: true } }, shape: { '/removed': 'present' },
+        states: { '/hidden': { isVisible: true } }, shape: { '/removed': 'present' },
       } },
     ],
   },

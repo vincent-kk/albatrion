@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-02T05:38:24.624Z",
+  "samples": 0,
+  "approved": true,
+  "quiet": {
+    "startedAt": "2026-11-02T05:37:54.480Z",
+    "endedAt": "2026-11-02T05:38:24.624Z",
+    "durationSeconds": 30.138177250000002,
+    "top": [
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 9.82143006010467
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 7.166989503309183
+      },
+      {
+        "pid": 68829,
+        "name": "cursor-agent",
+        "cpuPercent": 6.669281898924388
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 3.318050695982286
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 3.0526066403039445
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.953065119422303
+      },
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 2.1899134593478258
+      },
+      {
+        "pid": 408,
+        "name": "launchservicesd",
+        "cpuPercent": 1.8249278827938784
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 1.824927882787843
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 1.29403977143116
+      }
+    ],
+    "heavy": [],
+    "totalPercent": 56.67230588733991
+  },
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      33732,
+      33731,
+      33730,
+      33717,
+      68829,
+      68668,
+      68667,
+      80848
+    ]
+  }
+}

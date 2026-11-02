@@ -70,7 +70,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           });
         if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
         departing.detached = true;
-        departing.active = captureFieldNodeChange(departing, 'active', false);
+        departing.isActive = captureFieldNodeChange(departing, 'isActive', false);
       },
       { owned: true },
     );

@@ -53,7 +53,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
     }
   });
 
-  it('WRITE-083 controlled blur trim replaces raw and DOM and preserves dirty state', async () => {
+  it('WRITE-083 controlled blur trim replaces raw and DOM and preserves edited state', async () => {
     const form = await renderForm({
       type: 'object',
       properties: {
@@ -66,14 +66,14 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
     });
     try {
       await form.type('/text', '  word  ');
-      const dirty = form.node('/text')!.state[FieldNodeState.Dirty];
+      const edited = form.node('/text')!.state[FieldNodeState.Edited];
       await form.user.tab();
       expect([form.value('/text'), form.node('/text')?.value]).toEqual([
         'word',
         'word',
       ]);
-      expect(dirty).toBe(true);
-      expect(form.node('/text')!.state[FieldNodeState.Dirty]).toBe(dirty);
+      expect(edited).toBe(true);
+      expect(form.node('/text')!.state[FieldNodeState.Edited]).toBe(edited);
       await act(async () => {
         await new Promise<void>((resolve) =>
           requestAnimationFrame(() => resolve()),

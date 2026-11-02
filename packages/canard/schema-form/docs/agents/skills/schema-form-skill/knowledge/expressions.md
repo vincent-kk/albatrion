@@ -49,11 +49,11 @@ total: { type: 'number', controls: { watch: ['../items'] } },
 
 ## resetInteraction
 
-`resetInteraction` does not change values — it resets interaction state (`dirty`, `touched`). It fires when the expression turns from `false` to `true`, so drive it with a toggle-style condition rather than a constant.
+`resetInteraction` does not change values — it resets interaction state (`edited`, `touched`). It fires when the expression turns from `false` to `true`, so drive it with a toggle-style condition rather than a constant.
 
 ## Evaluation Timing
 
-Expressions are evaluated synchronously while a write settles, so controls state (`active`, `visible`, `readOnly`, `disabled`, derived values, `watchValues`) is current as soon as `setValue()` returns, on a parent or a leaf alike. Listeners receive `UpdateControlledProperties` when the outermost write finishes; write-triggered validation runs after the frame that renders the edit (see `event-system.md`).
+Expressions are evaluated synchronously while a write settles, so node state (`isActive`, `isVisible`, `isReadOnly`, `isDisabled`, derived values, `watchValues`) is current as soon as `setValue()` returns, on a parent or a leaf alike. Listeners receive `UpdateControlledProperties` when the outermost write finishes; write-triggered validation runs after the frame that renders the edit (see `event-system.md`).
 
 ## Context (`@`)
 

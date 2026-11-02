@@ -82,7 +82,7 @@ describe('Form engine binding', () => {
     const node = ref.current!.node;
     act(() => {
       ref.current!.setValue('edited');
-      ref.current!.setState({ dirty: true, touched: true });
+      ref.current!.setState({ edited: true, touched: true });
     });
     act(() => {
       ref.current!.reset();

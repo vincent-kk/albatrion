@@ -17,7 +17,7 @@ export const recordFieldNodeRevealBaseline = <Self>(
     (runtime.revealBaselineGeneration ?? 0) + 1);
   entries.push({
     state: node.interactionState,
-    enabled: node.active && node.visible,
+    isPresent: node.isActive && node.isVisible,
     generation,
     sequence,
   });

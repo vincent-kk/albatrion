@@ -54,7 +54,7 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
         child.parent === node &&
         child.path === path &&
         child.schema === proof.schema &&
-        child.active &&
+        child.isActive &&
         !child.detached)
   );
 };

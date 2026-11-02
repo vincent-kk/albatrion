@@ -392,7 +392,7 @@ describe('settlement delivery ledger', () => {
     );
     const target = root.structure!.target;
     target.interactionState = {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     for (const node of root.runtime.deliveries ?? [])

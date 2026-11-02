@@ -162,7 +162,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       context.dirtyPaths.add(child.path);
       context.changedNodes.add(child);
     }
-    child.active = captureFieldNodeChange(child, 'active', true);
+    child.isActive = captureFieldNodeChange(child, 'isActive', true);
     child.detached = false;
     baseline[entry.name] = child;
   }

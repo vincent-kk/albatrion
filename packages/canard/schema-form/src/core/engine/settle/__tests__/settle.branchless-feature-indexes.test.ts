@@ -50,7 +50,7 @@ describe('branchless feature indexes and empty rule tables', () => {
     expect(target.value).toBe(6);
     root.find('/source')!.setValue(-1);
     expect(target.value).toBe(-2);
-    expect(target.visible).toBe(false);
+    expect(target.isVisible).toBe(false);
   });
 
   it('shares empty rule tables only when derive absence is proven as a capability', () => {

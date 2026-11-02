@@ -59,7 +59,7 @@ describe('context state keys', () => {
     root.runtime.context = { locked };
     loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, WriteOption.Overwrite);
     expect(locked).toHaveBeenCalledTimes(1);
-    expect([root.structure?.a?.readOnly, root.structure?.b?.readOnly]).toEqual([
+    expect([root.structure?.a?.isReadOnly, root.structure?.b?.isReadOnly]).toEqual([
       true,
       true,
     ]);
@@ -84,7 +84,7 @@ describe('context state keys', () => {
       status: 'degraded',
       cause: 'expression',
     });
-    expect(root.structure?.child?.visible).toBe(true);
+    expect(root.structure?.child?.isVisible).toBe(true);
   });
 });
 
