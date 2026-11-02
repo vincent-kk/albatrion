@@ -7,3 +7,11 @@ export interface ChildErrorStoreState {
   /** Whether a listener currently owns the revision base. */
   subscribed: boolean;
 }
+
+/** React external-store surface owned by one child-error hook instance. */
+export interface ChildErrorStore {
+  /** Register one listener and return its complete cleanup. */
+  subscribe(listener: () => void): () => void;
+  /** Read a current cold vector or the subscribed base/version token. */
+  getSnapshot(): string;
+}

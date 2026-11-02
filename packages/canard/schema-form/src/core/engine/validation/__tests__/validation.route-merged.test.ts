@@ -4,7 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Optional } from '@aileron/declare';
 
-import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { dispatchRemove } from '@/schema-form/core/engine/write';
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -16,6 +16,7 @@ import type { ValidationIssue } from '../types/issue';
 import { isOffUnionBranchIssue } from '../utils/route/isOffUnionBranchIssue';
 import { routeValidationIssues } from '../utils/route/routeValidationIssues';
 import { updateFieldNodeGlobalErrors } from '../utils/route/updateFieldNodeGlobalErrors';
+import { createRoutingTree } from './fixtures/createRoutingTree';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
 const isOwnedNode = <Self extends FieldNodeRecord<Self>>(
@@ -137,7 +138,7 @@ const isSameItems = (
 const compareRoutes = (
   selection: 'siblings' | 'overlap' | 'root' | 'stale',
 ) => {
-  const root = nodeFromJSONSchema({
+  const root = createRoutingTree({
     jsonSchema: {
       type: 'object',
       properties: {
@@ -149,7 +150,6 @@ const compareRoutes = (
       },
     },
     defaultValue: { group: { a: 'a', b: 'b' }, outside: 'outside' },
-    deferMountValidation: true,
     validationMode: 2,
   });
   const group = root.structure?.group;
@@ -158,18 +158,17 @@ const compareRoutes = (
   const outside = root.structure?.outside;
   if (!group || !a || !b || !outside)
     throw new Error('Missing route fixture nodes');
-  const staleRoot = nodeFromJSONSchema({
+  const staleRoot = createRoutingTree({
     jsonSchema: {
       type: 'array',
       items: { type: 'object', properties: { a: { type: 'string' } } },
     },
     defaultValue: [{ a: 'old' }],
-    deferMountValidation: true,
     validationMode: 2,
   });
   const stale = (staleRoot.children ?? [])[0];
   if (!stale) throw new Error('Missing stale fixture');
-  staleRoot.remove(0);
+  dispatchRemove(staleRoot, 0);
   // This stale key belongs to the same runtime and records exactly the live target path.
   const staleKey = { runtime: root.runtime, path: group.path };
   const staleDescendant = { runtime: root.runtime, path: a.path + '/retired' };
@@ -191,8 +190,8 @@ const compareRoutes = (
     [staleDescendant, [same]],
     [foreign, [same]],
   ]);
-  const combined = new Map<unknown, readonly unknown[]>(
-    [...initial].map(([node]) => [node, [{ marker: 'combined' }]]),
+  const combined = new Map<unknown, { readonly errors: readonly unknown[] }>(
+    [...initial].map(([node]) => [node, { errors: [{ marker: 'combined' }] }]),
   );
   const runtime = root.runtime;
   const reset = () => {
@@ -209,7 +208,7 @@ const compareRoutes = (
       : selection === 'overlap'
         ? [a, group, b]
         : selection === 'stale'
-          ? [group]
+          ? [group, b]
           : [a, b];
   reset();
   const expectedReturn = new Set<typeof root>();
@@ -228,7 +227,8 @@ const compareRoutes = (
   const actualReturn = new Set<typeof root>();
   for (const node of routeValidationIssues(targets, issues))
     actualReturn.add(node);
-  if (selection === 'stale') expect(runtime.validationErrors?.has(staleKey)).toBe(true);
+  if (selection === 'stale')
+    expect(runtime.validationErrors?.has(staleKey)).toBe(true);
   expect(runtime.validationErrors).toEqual(expected.errors);
   expect(runtime.validationChangedNodes).toEqual(expected.changed);
   expect(actualReturn).toEqual(expectedReturn);
@@ -253,18 +253,17 @@ it('does not clear a stale key whose address equals the target address', () =>
   compareRoutes('stale'));
 
 it('uses a detached target path for strict descendants without selecting its live replacement', () => {
-  const root = nodeFromJSONSchema({
+  const root = createRoutingTree({
     jsonSchema: {
       type: 'array',
       items: { type: 'object', properties: { a: { type: 'string' } } },
     },
     defaultValue: [{ a: 'old' }, { a: 'live' }],
-    deferMountValidation: true,
     validationMode: 2,
   });
   const retired = (root.children ?? [])[0];
   if (!retired) throw new Error('Missing retiring target');
-  root.remove(0);
+  dispatchRemove(root, 0);
   const live = (root.children ?? [])[0];
   const child = live?.structure?.a;
   if (!live || !child) throw new Error('Missing replacement nodes');
@@ -288,7 +287,7 @@ it('uses a detached target path for strict descendants without selecting its liv
 });
 
 it('filters an inactive union issue and preserves rejected-key host attribution in a merged root scope', () => {
-  const root = nodeFromJSONSchema({
+  const root = createRoutingTree({
     jsonSchema: {
       type: 'object',
       controls: { discriminator: 'kind' },
@@ -299,7 +298,6 @@ it('filters an inactive union issue and preserves rejected-key host attribution 
       ],
     },
     defaultValue: { kind: 'x', value: 'a' },
-    deferMountValidation: true,
     validationMode: 2,
   });
   const value = root.structure?.value;

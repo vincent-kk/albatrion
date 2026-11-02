@@ -4,7 +4,10 @@ import type { FieldNode } from '@/schema-form/core';
 
 import { readChildErrorSnapshot } from './childErrorStore/readChildErrorSnapshot';
 import { subscribeChildErrorStore } from './childErrorStore/subscribeChildErrorStore';
-import type { ChildErrorStoreState } from './childErrorStore/types';
+import type {
+  ChildErrorStore,
+  ChildErrorStoreState,
+} from './childErrorStore/types';
 
 /**
  * Own one hook's parent/child error subscription and constant-time live snapshot.
@@ -17,7 +20,7 @@ export const createChildErrorStore = (
   node: FieldNode,
   children: readonly FieldNode[] | null | undefined,
   disabled?: boolean,
-) => {
+): ChildErrorStore => {
   const state: ChildErrorStoreState = {
     base: '',
     version: 0,
