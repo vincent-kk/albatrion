@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
-import { SetValueOption, isUnionNode } from '@/schema-form/core/surface';
+import {
+  SetValueOption,
+  finishFieldNodeInput,
+  isUnionNode,
+  writeFieldNodeInput,
+} from '@/schema-form/core/surface';
 
 // filid:contract union-rule-a
 describe('TEST-077 union write paths', () => {
@@ -139,7 +144,27 @@ describe('TEST-077 union write paths', () => {
     expect(root.find('/target')?.raw).toBe(42);
     expect(root.find('/target')?.isMisfit).toBe(false);
   });
-  it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
+  it('TEST-077 stage 07 (PR-7): finished string input applies trim', () => {
+    const { root } = makeFieldNodeTree({
+      type: ['string', 'number'],
+      options: { trim: true },
+    });
+    writeFieldNodeInput(root, ' 42 ');
+    expect(isUnionNode(root)).toBe(true);
+    expect(root.raw).toBe(' 42 ');
+    expect(root.outputValue).toBe(' 42 ');
+    finishFieldNodeInput(root);
+    expect(root.raw).toBe('42');
+    expect(root.value).toBe('42');
+    expect(root.outputValue).toBe('42');
+    expect(root.isMisfit).toBe(false);
+
+    writeFieldNodeInput(root, 42);
+    finishFieldNodeInput(root);
+    expect(root.raw).toBe(42);
+    expect(root.outputValue).toBe(42);
+    expect(root.isMisfit).toBe(false);
+  });
   it('25C-11 completes all eight node.type values with the array node', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
