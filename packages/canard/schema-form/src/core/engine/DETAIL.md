@@ -107,7 +107,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 - `startFieldNodeLoadValidation(node)`는 surface가 공개 노드를 좁혀 engine의 `dispatchLoadValidation`을 호출하고 core가 재수출하는 로드 슬롯 바인딩이다. 요청 조회는 validation 내부에 남는다.
 
-- 정적 작성 경로의 세그먼트는 유한한 청사진 색인 준비가 소유합니다. 구체 runtime 주소의 순수 문법은 기존 HostDerived의 pointerSegments 슬롯에서 root.runtime을 키로 최대 256개를 FIFO 보유하며 hit에는 배열·wrapper를 만들지 않습니다. 정적 색인은 질의 miss로 확장하지 않습니다. 새로운 주소는 첫 fill을 허용하며 이탈 defaultValue 포착은 캐시를 채우지 않습니다. 실제 모드 변경은 기존 derived-record 세대와 함께 캐시를 초기화합니다. 같은 occurrence의 load/reset과 새 runtime/rebuild는 기존 소유 수명대로 구별합니다.
+- 정적 작성 경로의 세그먼트는 유한한 청사진 색인 준비가 소유합니다. 구체 runtime 주소의 순수 문법은 기존 HostDerived의 pointerSegments 슬롯에서 root.runtime을 키로 최대 256개를 FIFO 보유하며 hit에는 배열·wrapper를 만들지 않습니다. 정적 색인은 질의 miss로 확장하지 않습니다. 새로운 주소는 첫 fill을 허용하며 이탈 defaultValue 포착은 준비된 정적 문법을 유지하고 runtime 캐시를 사용하지 않습니다. 실제 모드 변경은 기존 derived-record 세대와 함께 캐시를 초기화합니다. 같은 occurrence의 load/reset과 새 runtime/rebuild는 기존 소유 수명대로 구별합니다.
 
 - 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 

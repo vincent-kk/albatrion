@@ -11,3 +11,10 @@
 
 - 소유자 원문은 round-468-owner-answers.md, 현재 설계는 plan/lazy-capture/design.md, 실행 관문은 plan/lazy-capture/verification.md를 따릅니다.
 - 최종 성능 수용·독립 검토·PR 게시·병합은 이 계약 기록과 구분합니다. 다음 라운드 번호는469입니다.
+
+## Amendment 2 — 정적 문법의 보존
+
+- **468C-02 (runtime 캐시 우회와 정적 문법 재사용의 분리)**
+  - 【추론】 468C-01의 세 번째 우선순위는 Amendment 2로 좁힌다. 분기 있는 청사진의 이탈 기본값 포착은 getDependencyIndex(runtime.blueprint).pathSegments(node.path)에 runtime을 넘기지 않아 준비된 정적 문법을 재사용하고 미준비 경로만 보유 없이 파싱한다. 분기 없는 청사진은 getLoadValue(runtime.loadSnapshot, node.path)에 세그먼트를 넘기지 않는다. 두 경로 모두 runtime 포인터 세그먼트 캐시를 조회·삽입·퇴출하지 않으며 기존 oneOf 전환의 full-pointer decoder0 계약과 테스트는 그대로 유지한다. 공급된 undefined와 이미 떼어진 읽기의 우선순위 및 나머지 관측·필드·호출 지점은468C-01과 같다.
+
+- 첫 전체 unit은4241통과·2실패·todo1이었다. 실패 두 건은 oneOf-80의 이전 payload 세 경로를 직접 파싱한 v1과 decoder0 계약의 충돌이며, 승인된 Amendment 2로 구현을 좁힌다. 기존 시험을 완화하지 않고 최초 실패 결과를 보존한다.

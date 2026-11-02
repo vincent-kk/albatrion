@@ -13,3 +13,7 @@ NODE-044는 이탈 읽기의 고정을, WRITE-085는 기본값의 로드 출처�
 FCA 기준은 동일 snapshot의 scan·전체6범위 validate·verification으로 확보했습니다. 구조 finding566·실패26, verification 위반30과 기존 indeterminate 축을 유지하며 이를 절대 PASS로 바꾸지 않습니다. 구현 뒤에는 새 finding과 diagnostic을 다중집합으로 비교합니다.
 
 특성화·기준 red·변이·전체 관문 및 수용 측정은 아직 이 계약 기록의 통과 주장에 포함하지 않습니다.
+
+## v1 구현과 Amendment 2
+
+특성화14개는 기준에서 모두 통과했고 삽입0 시험은 실제1500회 삽입으로 실패했습니다. v1의 focused22개는 통과했으나 첫 전체 unit은4241통과·2실패·todo1입니다. 기존 oneOf-80 diagnostics 두 경우가 이탈한 이전 payload 세 주소의 직접 파싱을 검출했습니다. 테스트를 바꾸지 않고468C-02로 준비된 정적 문법을 보존하도록 좁힙니다. 최초 실패 결과는 최종 raw 증거에 함께 보존하며 v1의 관문·변이 결과를 수정 설계의 통과로 재사용하지 않습니다.
