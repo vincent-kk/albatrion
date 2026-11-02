@@ -1,0 +1,107 @@
+name: browser-benchmark
+
+on:
+  pull_request:
+    paths:
+      - "packages/canard/schema-form/src/**"
+      - "packages/canard/schema-form-ajv*-plugin/src/**"
+      - "packages/aileron/benchmark-form/**"
+      - ".github/workflows/browser-benchmark.yml"
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: "Comma-separated core case IDs; empty selects all ten"
+        required: false
+        default: ""
+      runs:
+        description: "Measured fresh pages per case and variant"
+        required: false
+        default: "20"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-benchmark-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Checkout baseline
+        uses: actions/checkout@v4
+        with:
+          path: .benchmark-baseline
+          ref: ${{ github.event.pull_request.base.sha || github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.5"
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install candidate
+        run: yarn install --immutable
+
+      - name: Install baseline independently
+        working-directory: .benchmark-baseline
+        run: yarn install --immutable
+
+      - name: Build candidate closure
+        run: node --import tsx packages/aileron/benchmark-form/browser-bench/core/prepareCheckout.mjs .
+
+      - name: Build baseline closure
+        run: node --import tsx packages/aileron/benchmark-form/browser-bench/core/prepareCheckout.mjs .benchmark-baseline
+
+      - name: Read Playwright version
+        id: playwright
+        run: node -e 'require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT, "version=" + require("playwright/package.json").version + "\n")'
+
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-chromium-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium and system dependencies
+        run: yarn exec playwright install --with-deps chromium
+
+      - name: Measure browser cases
+        env:
+          BENCH_CASES: ${{ inputs.cases }}
+          BENCH_RUNS: ${{ github.event_name == 'pull_request' && '10' || inputs.runs || '20' }}
+        run: |
+          args=(--baseline-dir "$GITHUB_WORKSPACE/.benchmark-baseline" --runs "$BENCH_RUNS" --out "$RUNNER_TEMP/browser-benchmark")
+          if [[ -n "$BENCH_CASES" ]]; then args+=(--cases "$BENCH_CASES"); fi
+          yarn workspace @aileron/benchmark-form bench:form "${args[@]}"
+
+      - name: Publish step summary
+        if: always()
+        run: |
+          if [[ -f "$RUNNER_TEMP/browser-benchmark/summary.md" ]]; then
+            cat "$RUNNER_TEMP/browser-benchmark/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload browser artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-benchmark-${{ github.run_id }}
+          path: ${{ runner.temp }}/browser-benchmark/
+          if-no-files-found: ignore
+          retention-days: 30
