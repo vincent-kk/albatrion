@@ -104,3 +104,7 @@ flowchart LR
 ## G 가드 읽기와 전체 컴파일 분리
 
 471라운드 [요청](guard-compile/request.md)·[설계](guard-compile/design.md)·[검증](guard-compile/verification.md)은 470의 G 자격 판정을 이어갑니다. Amendment 1의 같은 id 중간 해제·공개 예제·최초 판정 시간과 네 수용 셀을 포함합니다.
+
+## 코어 브라우저 벤치와 자료 정리
+
+472라운드 [요청](tidy-bench/request.md)과 [마감](../reviews/round-472-closing.md)은 열 코어 사례의 CLI·권고용 GitHub Action, 실행 코드의 패키지 정본과 원자료 보관 정리를 다룹니다. TEST-026의 기존 측정 계약과 과거 판정은 유지합니다.
