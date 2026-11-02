@@ -35,7 +35,7 @@ const createCanardAdapter = (
       <Form
         ref={ref}
         jsonSchema={buildFlatSchema(fieldCount)}
-        CustomFieldRenderer={Renderer}
+        FieldRenderer={Renderer}
         onChange={() => {}}
         virtualization={virtualization}
       />,

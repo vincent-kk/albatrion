@@ -6,9 +6,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": [
-    "./**/*.ts",
-    "./**/*.tsx",
-    "../fixtures/input-responsiveness/**/*.ts"
-  ]
+  "include": ["./**/*.ts", "./**/*.tsx", "../fixtures/core/**/*.ts"]
 }
