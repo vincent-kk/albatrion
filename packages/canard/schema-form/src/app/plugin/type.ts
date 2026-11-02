@@ -250,15 +250,15 @@ export interface ValidatorPlugin {
   compile: (jsonSchema: JSONSchema) => ValidateFunction;
   /**
    * Compile a synchronous guard for an authored schema pointer in the copy.
-   * @param root - The copy root previously passed to `compile`.
+   * @param root - Engine-owned copy root, whether or not `compile` has run for it.
    * @param pointer - Authored schema location preserved in the copy.
-   * @returns A boolean predicate that does not modify its input.
+   * @returns A boolean predicate; registers the root independently without modifying it.
    */
   compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
   /**
    * Release a root's validator resources when its cache entry is evicted.
-   * @param root - The copy root previously passed to `compile`.
-   * @returns Nothing; owned resources are discarded.
+   * @param root - Engine-owned copy root, whether or not `compile` has run for it.
+   * @returns Nothing; discards root resources or does nothing if it was never registered.
    */
   release?(root: JSONSchema): void;
   /** Declared JSON Schema dialect, when the plugin can identify one. */

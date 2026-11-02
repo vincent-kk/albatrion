@@ -24,6 +24,7 @@ yarn storybook         # Storybook development server
 ## Key Details
 
 - Default options: `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
+- **Registration and call order**: `compileGuard(copy, pointer)` and `release(copy)` accept the engine-owned copy whether or not `compile(copy)` has run. Guards register the root independently, including guards with `$ref` into root definitions, and full validation can be compiled later. Pass the same copy object to `compile`, every `compileGuard`, and `release`. Releasing an unregistered root is a no-op.
 - `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
 - Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 - `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.

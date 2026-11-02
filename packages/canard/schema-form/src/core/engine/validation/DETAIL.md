@@ -39,14 +39,14 @@
 - `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 `types/issue.ts`가 선언하는 정규화된 검증 결과이다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).
 - core는 `compile` 결과와 가드에 방출 트리를 참조 그대로 건네고, 검증기는 받은 값과 스키마를 바꾸지 않는다. 값을 바꾸는 사용자 정의 키워드를 쓰지 않을 책임은 소비자에게 있다. core는 `bind`를 호출하지 않고, 선택된 검증기를 트리 생성 인자로 받는다(VALIDATE-001·044·050, CONTROLS-075).
 - `readFieldNodeGuard(runtime, gate)`는 `settle`이 쓰는 동기 가드 읽기이다. `requestFieldNodeValidation(root, deliver: (issues, commit) => void)`는 실행을 예약하고, `readFieldNodeErrors(node): readonly ValidationIssue[]`는 라우팅된 오류를 읽는다. `assertValidationRootReady(node)`는 전체 스키마 검증 함수를 컴파일하거나 캐시에서 읽고 실패 시 ValidatorCompileFailed를 던진다. 같은 캐시 항목의 실패한 재시도는 원래 거부 정체성을 유지한다. 컴파일 시점 duplicate 실패는 다른 retained 충돌이 사라진 다음 전체 읽기에서 entry당 한 번 같은 copy로 재시도하며 성공 시 실패·거부와 중복 guard 실패를 지우고 기존 guard 참조를 유지한다. guard 읽기는 재시도하지 않는다. `retainValidationRoot(validator, authoredRoot)`와 `releaseValidationRoot(validator, authoredRoot)`는 바인딩의 커밋 이펙트와 정리용으로 이름을 붙인 진입점이다. `EMPTY_GLOBAL_ERRORS`는 두 오류 층이 비었거나 아직 계산 전인 폼 목록이 공유하는 빈 배열이며, `FieldNode`의 `globalErrors` 읽기와 `write`의 발행 비교가 같은 참조를 쓰도록 진입점으로 내보낸다(VALIDATE-015·021·043·046·049, NODE-010).
-- `readValidationEntry`는 로드 슬롯·명시적 검증·가드 읽기에 검증기별 사본과 전체 컴파일 결과를 준비한다. `compileEntryGuards`는 개발 빌드의 트리 구성 단계에서 if 게이트가 있는 청사진의 가드를 준비하며, 이때 사본을 읽으므로 전체 스키마도 컴파일한다. if 게이트가 없는 개발 폼은 이 준비를 건너뛰며 None 모드에서는 컴파일하지 않는다. 단순 보유는 컴파일을 시작하지 않는다. `runFieldNodeValidation`과 `routeValidationIssues`는 `write`가 명시적 `validate()`의 판정과 오류 표시를 순서대로 연결하는 통로이다. 이들은 패키지 공개 진입점으로 다시 내보내지 않는다. 검증 사본 함수는 이 fractal 내부 구현이며, 시험은 그 파일을 직접 읽는다(NODE-010, VALIDATE-017·018·043·048, LANDING-159).
+- `readValidationEntry`는 로드 슬롯·명시적 검증·가드 읽기에 검증기별 사본과 가드 표만 준비하며 전체 컴파일은 하지 않는다. `compileValidationEntry`는 최초 전체 수요에서 같은 id의 zero-consumer 루트를 퇴출한 직후 같은 사본을 한 번 컴파일하고 실패·duplicate를 저장한다. `assertValidationRootReady`가 이를 호출한 다음 기존 한 번 재시도를 적용한다. `compileEntryGuards`는 개발 빌드의 if 가드만 준비하며 전체 스키마를 컴파일하지 않는다. None은 if 유무와 무관하게 전체 컴파일하지 않는다. 단순 보유는 컴파일을 시작하지 않는다. `runFieldNodeValidation`과 `routeValidationIssues`는 `write`가 명시적 `validate()`의 판정과 오류 표시를 순서대로 연결하는 통로이다. 이들은 패키지 공개 진입점으로 다시 내보내지 않는다. 검증 사본 함수는 이 fractal 내부 구현이며, 시험은 그 파일을 직접 읽는다(NODE-010, VALIDATE-017·018·043·048, LANDING-159).
 - `Validator`와 새 엔진의 `ValidateFunction`은 이 fractal 안에서만 내보낸다. 바깥에 공개된 `ValidateFunction`과 `ValidatorFactory`는 07까지 레거시 형이고, 공개 `ValidatorPlugin`은 같은 메서드 서명의 선택 항목 `compileGuard?`, `release?`, `dialect?`를 더해 구조적으로 맞춘다. 수명 함수는 `core/index.ts`에만 다시 노출하고 패키지 공개 `src/index.ts`에는 두지 않는다(LANDING-036·084·159, VALIDATE-044, 32C-01, 34C-01).
 
 ### 사본, 가드, 수명
 
-- 검증기 인스턴스마다 `WeakMap<작성 루트 객체, 항목>`을 둔다. 항목은 한 번 깊이 복사한 스키마에서 키워드 자리의 `controls`, `options`, `presentation`만 빼며(`options.virtual` 포함), `required`는 고쳐 쓰지 않는다. `compile`, 모든 `compileGuard`, `release`는 항목의 동일한 사본 객체를 받고, 가드 포인터는 작성 루트 안의 위치를 그대로 가리킨다. 가드 표는 이 위치를 키로 삼아 전체 검증 함수나 그 실패를 같은 항목에 보관한다(VALIDATE-017–019·034·048).
-- 프로덕션에서는 처음 평가할 때 가드를 컴파일한다. 개발 모드에서는 if 게이트가 있을 때 트리 구성 중 캐시 항목마다 한 번 모든 가드와 전체 스키마를 미리 컴파일한다. 보유에서 전체 컴파일을 없애는 절감은 production 빌드에 적용되며, 개발 빌드의 guard-free 폼도 로드 슬롯이나 명시적 검증 전에는 컴파일하지 않는다. 실패는 캐시하지만, 그 가드를 소비하는 폼마다 가드 하나당 자기 `GUARD_FAILED`를 한 번 기록한다. 같은 폼에서 같은 가드가 뒤이어 실패하면 던지기만 하고 다시 기록하지 않는다. 프로덕션에서 평가되지 않은 가드는 기록하지 않는다. 실패하거나 던지거나 boolean이 아닌 결과를 내면 해당 게이트를 거짓으로 정착시킨다(VALIDATE-015·047·048, ERROR-041·164).
-- 보유는 컴파일하지 않고 참조 수와 최근 해제 목록만 갱신한다. 로드 슬롯 또는 명시적 검증·가드 읽기의 첫 `readValidationEntry`가 사본과 전체 검증 함수를 준비하며, 이미 보유한 루트의 참조 수를 덮어쓰거나 최근 목록에 넣지 않는다. 동기 가드 읽기도 이 컴파일 경로를 사용한다.
+- 검증기 인스턴스마다 `WeakMap<작성 루트 객체, 항목>`을 둔다. 항목은 한 번 깊이 복사한 스키마에서 키워드 자리의 `controls`, `options`, `presentation`만 빼며(`options.virtual` 포함), `required`는 고쳐 쓰지 않는다. `compile`, 모든 `compileGuard`, `release`는 항목의 동일한 사본 객체를 받고, `compileGuard`·`release`는 전체 `compile`의 선행을 요구하지 않으며 미등록 해제는 무해하게 끝나고, 가드 포인터는 작성 루트 안의 위치를 그대로 가리킨다. 가드 표는 이 위치를 키로 삼아 전체 검증 함수나 그 실패를 같은 항목에 보관한다(VALIDATE-017–019·034·048).
+- 프로덕션에서는 처음 평가할 때 가드를 컴파일한다. 개발 모드에서는 if 게이트가 있을 때 트리 구성 중 캐시 항목마다 한 번 모든 가드만 미리 컴파일한다. 전체 컴파일은 모든 빌드에서 첫 전체 수요까지 지연하며 OnRequest·OnChange는 다음 프레임 뒤 로드 슬롯 또는 먼저 온 명시적 validate·submit에서 실행한다. 가드 컴파일 실패와 전체 컴파일 실패의 보고 경계를 분리한다. 실패는 캐시하지만, 그 가드를 소비하는 폼마다 가드 하나당 자기 `GUARD_FAILED`를 한 번 기록한다. 같은 폼에서 같은 가드가 뒤이어 실패하면 던지기만 하고 다시 기록하지 않는다. 프로덕션에서 평가되지 않은 가드는 기록하지 않는다. 실패하거나 던지거나 boolean이 아닌 결과를 내면 해당 게이트를 거짓으로 정착시킨다(VALIDATE-015·047·048, ERROR-041·164).
+- 보유는 컴파일하지 않고 참조 수와 최근 해제 목록만 갱신한다. 첫 `readValidationEntry`는 사본과 가드 표, compiled=false를 준비하며 이미 보유한 루트의 참조 수를 덮어쓰거나 최근 목록에 넣지 않는다. 동기 가드 읽기는 전체 컴파일을 시작하지 않는다. 생성 뒤 경쟁 루트가 해제될 수 있으므로 최초 전체 컴파일 직전에도 같은 id의 해제된 루트를 퇴출한다.
 - 참조 수는 커밋 이펙트에서 올리고 정리에서 내린다. 참조 수가 0이 된 작성 루트는 최근 해제 목록에 들어간다. 커밋 소비자와 별도로 실행 중 핀을 관리하며 검증 컴파일 점검부터 promise 정착까지 LRU 축출을 막는다. 두 LRU 축출점은 오래된 비고정 후보를 상한 8까지 반복 축출하고 후보가 없으면 멈춘다. unpin은 plugin 호출 없이 빈 핀 키를 지우고 이미 recent에 있는 루트만 맨 뒤로 옮긴다. 실행 종료부터 다음 축출점까지 목록이 8을 넘을 수 있다. 같은 id 교체는 핀을 무시하므로 커밋 소비자가 없는 실행 중 사본은 해제될 수 있다. 목록에서 밀려나거나 같은 `$id`를 다시 등록하기 직전에, 캐시 항목이 있을 때만 그 사본으로 `release(root)`를 한 번 호출하고 core 캐시를 지운다. 목록 안에서 돌아온 같은 객체는 다시 컴파일하지 않는다. 커밋되지 않은 트리도 참조 수 0으로 이 목록에 들어간다(VALIDATE-021·045·048).
 - 서로 다른 작성 루트 객체가 같은 `$id`를 가진 채 동시에 살아 있어도 각 트리는 자기 루트로 판정한다. 등록 충돌 없이 루트별로 격리할 책임은 플러그인에 있고, core는 `$id`를 고치지 않는다. 재생성 reset은 컴파일 없이 새 트리로 전환하며 실패는 로드 슬롯에서 보고한다(VALIDATE-046, ERROR-201).
 
@@ -102,6 +102,10 @@
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
 - **Reason**: 형 칸의 형은 이름으로 진입점을 거쳐 write·engine·core의 집계 진입점과 플러그인 검증 계약에 제공되며, 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
+## History
+
+- 471C-01·02·03: 가드 캐시 생성과 전체 컴파일의 첫 수요를 분리하고 같은 id의 지연 사이 해제를 보호한다.
 
 ## Last Updated
 

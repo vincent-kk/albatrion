@@ -36,16 +36,16 @@ export interface Validator {
    */
   compile(copy: BlueprintSchema): ValidateFunction;
   /**
-   * Compile a synchronous guard for a pointer in the registered copy root.
-   * @param root - The copy root previously passed to `compile`.
+   * Compile a synchronous guard independently of whole-schema compilation.
+   * @param root - Engine-owned copy root, whether or not `compile` has run for it.
    * @param pointer - Authored schema location preserved in the copy.
-   * @returns A synchronous boolean predicate.
+   * @returns A synchronous boolean predicate; registers the root independently when needed.
    */
   compileGuard(root: BlueprintSchema, pointer: string): GuardFunction;
   /**
    * Release engine-owned resources when a root leaves the cache.
-   * @param root - The copy root previously passed to `compile`.
-   * @returns Nothing; resources associated with the root are discarded.
+   * @param root - Engine-owned copy root, whether or not `compile` has run for it.
+   * @returns Nothing; discards root resources or does nothing if it was never registered.
    */
   release?(root: BlueprintSchema): void;
   /** JSON Schema dialect understood by this validator, when declared. */
