@@ -2,7 +2,7 @@ import type { BlueprintSchema } from '../../../blueprint';
 import type { Validator } from '../../types/validator';
 import { evictSameIdRoots } from '../lifetime/evictSameIdRoots';
 import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
-import { DUPLICATE_SCHEMA_ID_MESSAGE } from './constants';
+import { clearDuplicateGuardFailures } from './clearDuplicateGuardFailures';
 import type { ValidationEntry } from './readValidationEntry';
 
 /** Retry one cached collision only after competing committed consumers disappear.
@@ -32,10 +32,5 @@ export const retryValidationEntry = (
   delete entry.failure;
   delete entry.duplicate;
   delete entry.rejection;
-  for (const [pointer, result] of entry.guards)
-    if (
-      result.failure instanceof Error &&
-      DUPLICATE_SCHEMA_ID_MESSAGE.test(result.failure.message)
-    )
-      entry.guards.delete(pointer);
+  clearDuplicateGuardFailures(entry);
 };

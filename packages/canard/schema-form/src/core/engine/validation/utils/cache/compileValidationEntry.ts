@@ -2,6 +2,7 @@ import type { BlueprintSchema } from '../../../blueprint';
 import type { Validator } from '../../types/validator';
 import { evictSameIdRoots } from '../lifetime/evictSameIdRoots';
 import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
+import { clearDuplicateGuardFailures } from './clearDuplicateGuardFailures';
 import { DUPLICATE_SCHEMA_ID_MESSAGE } from './constants';
 import type { ValidationEntry } from './readValidationEntry';
 
@@ -20,6 +21,7 @@ export const compileValidationEntry = (
   evictSameIdRoots(validator, authoredRoot);
   try {
     entry.validate = validator.compile(entry.copy);
+    clearDuplicateGuardFailures(entry);
   } catch (error) {
     entry.failure = error;
     entry.duplicate =
