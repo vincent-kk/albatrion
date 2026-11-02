@@ -5,6 +5,8 @@
 - 방향은 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < FieldNode`이다. `validation`은 위 세 fractal과 `app/plugin`을 타입으로도 가져오지 않으며, `write`가 제공한 결과 콜백만 호출한다(NODE-016·045, CONTROLS-075, LANDING-084).
 - `FieldNodeRuntime`의 검증기, 검증 모드, 최신 커밋과 요청 스탬프, 보류 중인 실행, 노드 오류 맵을 소비한다. 사본, 가드, 전체 판정 함수의 캐시와 참조 수, 최근 해제 목록은 검증기 인스턴스별로 이 fractal이 소유하며 노드별 필드는 더하지 않는다(NODE-004·045, VALIDATE-018·021·048·049).
 
+- 병합 pending targets는 한 실행에서 한 번 라우팅하며 active 선언 Set·issue 경로 해석은 각각 최대 한 번입니다. 범위는 target 동일성 또는 엄격한 조상 target 경로이고 같은 주소의 다른 stale 키는 제외합니다. 더는 살지 않는 target의 기록 경로, 기존 배열·global 참조·combined 무효화 및 단일 changed/복수 합집합을 유지합니다(VALIDATE-043·052, 469C-01).
+
 ## API Contracts
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다. 미룬 로드 시작은 이전 요청을 버리고 pending true→false 정착으로 reveal hold를 해제한다.
@@ -103,4 +105,4 @@
 
 ## Last Updated
 
-2026-10-30
+2026-11-02

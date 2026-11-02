@@ -93,3 +93,6 @@ flowchart LR
 ## C1 이탈 기본값 실험 — 기록으로 마감
 
 468라운드의 [lazy-capture](./lazy-capture/request.md)는 사전등록 관문에서 bulk2/6으로 CLOSE_C1_AS_RECORD 판정을 받았습니다. v1·Amendment 2와 측정 증거를 보존하며 제품 변경은 없고 기존 동작의 특성화만 남깁니다.
+## B 지연 메모 조사 후 구현
+
+- [요청](lazy-memo/request.md)·[설계](lazy-memo/design.md)·[검증](lazy-memo/verification.md): VALIDATE-043·052, REACT-019, 469C-01·02.

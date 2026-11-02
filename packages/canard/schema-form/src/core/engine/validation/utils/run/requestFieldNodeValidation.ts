@@ -60,7 +60,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           return;
         }
         const issues = retainEqualValidationIssues(node, result);
-        for (const target of targets) routeValidationIssues(target, issues);
+        routeValidationIssues(targets, issues);
         runtime.validationResult = { commit, issues };
         settleFieldNodeValidation(node, stamp);
         deliver(issues, commit);

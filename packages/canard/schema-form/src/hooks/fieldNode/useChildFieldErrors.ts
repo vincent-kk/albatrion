@@ -1,32 +1,23 @@
-import {
-  type ReactNode,
-  useCallback,
-  useMemo,
-  useSyncExternalStore,
-} from 'react';
+import { type ReactNode, useMemo, useSyncExternalStore } from 'react';
 
 import { map as mapArray } from '@winglet/common-utils/array';
-import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import {
-  type FieldNode,
-  FieldNodeEventType,
-  type ValidationIssue,
-} from '@/schema-form/core';
+import { type FieldNode, type ValidationIssue } from '@/schema-form/core';
 import {
   useFieldRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
 import { useErrorVisibility } from '@/schema-form/providers/FieldRendererContext';
 
-/** Event mask that invalidates a node's and its direct children's error view. */
-const CHILD_FIELD_ERROR_EVENTS =
-  FieldNodeEventType.UpdateChildren |
-  FieldNodeEventType.UpdateState |
-  FieldNodeEventType.UpdatePath |
-  FieldNodeEventType.UpdateError;
+import { createChildErrorStore } from './utils/createChildErrorStore';
 
-/** Read direct-child issues and visibility, resubscribing when children or paths change. */
+/**
+ * Read child issues and visibility using parent/child revision subscriptions.
+ * @param node - Container whose current direct children supply the error matrix
+ * @param disabled - Suppress error reads and event subscriptions when true
+ * @returns Current raw errors, formatted messages and existing visibility decisions
+ * Subscribed snapshots reuse one revision base and notification version; cold reads join current revisions.
+ */
 export const useChildFieldErrors = (
   node: FieldNode,
   disabled?: boolean,
@@ -41,28 +32,15 @@ export const useChildFieldErrors = (
   const { formatError, checkShowError } = useFieldRendererContext();
   const { context } = useWorkspaceContext();
   const children = node.children;
-  const subscribe = useCallback(
-    (update: () => void) => {
-      if (disabled) return NOOP_FUNCTION;
-      const unsubscribes = mapArray([node, ...(children ?? [])], (child) =>
-        child.subscribe(({ type }) => {
-          if (type & CHILD_FIELD_ERROR_EVENTS) update();
-        }),
-      );
-      return () => {
-        for (const unsubscribe of unsubscribes) unsubscribe();
-      };
-    },
+  const store = useMemo(
+    () => createChildErrorStore(node, children, disabled),
     [node, children, disabled],
   );
-  const snapshot = useCallback(
-    () =>
-      mapArray([node, ...(node.children ?? [])], (child) =>
-        child.revision(CHILD_FIELD_ERROR_EVENTS),
-      ).join(':'),
-    [node],
+  const revision = useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    store.getSnapshot,
   );
-  const revision = useSyncExternalStore(subscribe, snapshot, snapshot);
 
   const visibilityNodes = [node, ...(children ?? [])];
   const visible = useErrorVisibility(
