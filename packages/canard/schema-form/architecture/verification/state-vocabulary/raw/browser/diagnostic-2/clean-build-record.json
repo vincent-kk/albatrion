@@ -1,0 +1,48 @@
+{
+  "lanes": {
+    "B": {
+      "commit": "212967e0f1d2a044d40b9c090420b6b54a33d078",
+      "cleanProductScope": true,
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build",
+      "exitEvidence": "The executor observed exit code 0 immediately before this record command",
+      "dependencyBuilds": [
+        "@winglet/common-utils",
+        "@winglet/json",
+        "@winglet/json-schema",
+        "@winglet/react-utils"
+      ],
+      "validatorPluginBuilds": [
+        "@canard/schema-form-ajv6-plugin",
+        "@canard/schema-form-ajv7-plugin",
+        "@canard/schema-form-ajv8-plugin"
+      ],
+      "product": {
+        "sha256": "8bc0b0121de53f5576f0e842389b724523c2cbb32bccd7aadc17d04cb63f679f",
+        "bytes": 892529
+      }
+    },
+    "F": {
+      "commit": "736ee7ed1aa97422aa6f7128d85fbbd4c6b64682",
+      "cleanProductScope": true,
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build",
+      "exitEvidence": "The executor observed exit code 0 immediately before this record command",
+      "dependencyBuilds": [
+        "@winglet/common-utils",
+        "@winglet/json",
+        "@winglet/json-schema",
+        "@winglet/react-utils"
+      ],
+      "validatorPluginBuilds": [
+        "@canard/schema-form-ajv6-plugin",
+        "@canard/schema-form-ajv7-plugin",
+        "@canard/schema-form-ajv8-plugin"
+      ],
+      "product": {
+        "sha256": "4dd7d5cd87584e15cfe9167896b601f857657ad91bd14fb3b634135362ad1082",
+        "bytes": 894438
+      }
+    }
+  }
+}
