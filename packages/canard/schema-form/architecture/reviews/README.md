@@ -200,3 +200,7 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 ## 467라운드 상태 어휘 구현
 
 466 뒤 다음 빈 번호 467에서 #508 병합 기준 위의 상태 어휘 변경을 기록합니다. 소유자 최종 이름과 지연 읽기는 round-467-owner-answers.md·round-467-closing.md, 계약은 ../plan/state-vocabulary/design.md, 실행 증거는 ../verification/state-vocabulary/results.md를 따릅니다. 성능 창과 독립 최종 검토는 코디네이터의 후속이며 다음 라운드는468입니다.
+
+## 468라운드 — C1 기록 마감
+
+원문65·79와 C1의 미채택 판정은 round-468-owner-answers.md·round-468-closing.md에 보존합니다. v1·Amendment 2 후보는 사전등록 기준에서 bulk2/6만 통과해 CLOSE_C1_AS_RECORD로 닫았습니다. 계획은 ../plan/lazy-capture, 전체 열 셀과 원본은 ../verification/lazy-capture에 두며 제품 함수·DETAIL은 기준으로 복원하고 기존 동작의 특성화만 유지합니다. NODE-044·WRITE-085의 현행 계약은 바꾸지 않습니다.

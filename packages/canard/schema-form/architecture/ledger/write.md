@@ -1336,6 +1336,7 @@
   > 편집자 결정(26C-06): "【추론】 원장이 "루트가 든다"고 적은 트리 전체 자료(로드 스냅숏, 잠복 원본, 경고등 경로 집합, 잠복 원본 열거의 메모)의 저장 자리는 트리마다 하나인 `SchemaNodeRuntime`의 칸이며, 루트는 자기 `runtime` 필드를 통해 그것을 든다." (`reviews/round-26-closing.md:66`)
   > 편집자 결정(35C-06): "【추론】 `update(i, v)`는 i번째 아이템에 `v`를 통째로 쓰는 로드 아닌 쓰기이고(그 안의 위치 재조정은 NODE-051), WRITE-007대로 그 아이템만 바뀌며 WRITE-085대로 구조 연산이 아니라 키와 스냅숏 자리를 지킨다." (`reviews/round-35-closing.md:48`)
   > 편집자 결정(35C-06): "【추론】 범위 밖([0, 길이) 밖)·음수 인덱스의 `update`·`remove`, 빈 배열의 `pop()`, 값이 `null`인 터미널 배열의 `update`·`remove`·`pop`은 원장이 정한 바가 없으므로 레거시(`src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts:413-447`, `TerminalStrategy/TerminalStrategy.ts:195-224`)를 따라 오류도 경고도 없는 무효 호출이다; 새 코드는 없고 06의 시험이 무효 호출을 단언해 고정한다." (`reviews/round-35-closing.md:49`)
+  > 편집자 결정(468C-02): "【추론】 소유자 원문65·79(`reviews/round-468-owner-answers.md:7-8`)에 따른 C1의 미채택 마감으로 runtime 포인터 세그먼트 캐시와 로드 기본값 출처의 현행 계약은 기준55055f65b 그대로 유지한다. 캐시를 우회한 v1 및 Amendment 2는 사전등록한 bulk 넷 이상 조건에서 둘만 통과했으며0.5ms 초과 퇴보는 없었다. 이 보충은 WRITE-085의 동작을 바꾸지 않는 실험 마감 기록이고 제품 계약·버전·API를 추가하지 않는다. 근거와 전체 측정 표는 verification/lazy-capture/results.md에 있다." (`reviews/round-468-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1220-1236`(정본), `reviews/round-18-closing.md:2779-2780,2883-2884`, `reviews/round-18-closing.md:2954`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-97), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-103), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
