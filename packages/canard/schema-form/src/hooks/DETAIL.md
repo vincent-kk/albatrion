@@ -16,6 +16,8 @@
 - 훅 구현은 주제별 두 칸에 있습니다. 노드를 읽고 구독하는 다섯(`useFieldNode`·`useFieldNodeTracker`·`useFieldNodeSubscribe`·`useChildFieldMap`·`useChildFieldErrors`)은 `fieldNode/`, 폼 제출 훅 `useFormSubmit`은 `form/`입니다. 형제의 형·값은 `@/schema-form/core`·`@/schema-form/providers`·`@/schema-form/components/FieldProxy`·`@/schema-form/components/Form`·`@/schema-form/types` 관문으로 가져옵니다.
 - `components/FieldProxy`·`components/Form`이 이 fractal을 쓰고 이 fractal도 두 컴포넌트 fractal의 형을 씁니다. 거꾸로 가는 변은 모두 `import type`이라 런타임 순환이 없습니다.
 
+- useChildFieldErrors는 node와 현재 children을 함께 같은 mask로 구독합니다. 비구독 snapshot은 전체 revision join이며 구독 시 base를 한 번 계산하고 version0이면 base, 이후 base+#version을 반환합니다. 해제하면 모든 구독과 구독 상태를 정리합니다. node·children·disabled로 저장소를 갱신하고 render/subscribe 사이 변경과 StrictMode 재구독을 놓치지 않습니다. 구독 중 snapshot은 O(1), 비구독 읽기·구독 준비·보유량은 O(C)입니다(469C-02).
+
 ## Acceptance Criteria
 
 ### hooks-gateway — 관문으로만 소비

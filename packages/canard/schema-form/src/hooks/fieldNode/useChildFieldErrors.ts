@@ -26,7 +26,13 @@ const CHILD_FIELD_ERROR_EVENTS =
   FieldNodeEventType.UpdatePath |
   FieldNodeEventType.UpdateError;
 
-/** Read direct-child issues and visibility, resubscribing when children or paths change. */
+/**
+ * Read child issues and visibility using parent/child revision subscriptions.
+ * @param node - Container whose current direct children supply the error matrix
+ * @param disabled - Suppress error reads and event subscriptions when true
+ * @returns Current raw errors, formatted messages and existing visibility decisions
+ * Subscribed snapshots reuse one revision base and notification version; cold reads join current revisions.
+ */
 export const useChildFieldErrors = (
   node: FieldNode,
   disabled?: boolean,
