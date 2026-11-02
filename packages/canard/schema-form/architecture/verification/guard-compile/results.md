@@ -134,3 +134,54 @@ FCA는 같은 snapshot으로 scan·전체6범위 validate·verification을 각�
 | mount-flat-500-validate-attempt1 | 0 | 80.00886082649231 | [] | [] |
 
 전체 runner seconds는319.0329804420471, success는true, decision은accept입니다. 각 build의 보존 회수는20, warmup은3이며 최초 판정은 mount 시작부터 Form 첫 onValidate 진입까지입니다. 기준 제품과 control은 동일 바이트이고1c44a823b 제품을 재사용합니다. 수용 규칙은 파일럿·전체 실행 뒤 바꾸지 않았습니다.
+
+
+## Amendment 2·2a — 중복 id 가드 실패 복구와 최종 재검증
+
+2026-11-03. 계약7ed29468c→수정d6f3e2d66→실제 슬롯 시험0b0784869 순서로 추가했습니다. 수정 전 제품은19798fed1과 같으며 기존 전체 측정 ACCEPT는 그 이전 후보의 기록입니다. 최종 제품의 재수용·입력 회귀 전체 측정은 후속 실행으로 남깁니다.
+
+같은 id의A가 살아 있을 때B 가드가 등록 실패한 뒤A를 해제하면, 기준은 전체 컴파일 재시도 성공에서 중복 가드 실패를 지웠지만 지연 후보는 첫 전체 컴파일 성공에서 지우지 않아 다음 쓰기가 GUARD_FAILED를 던졌습니다. clearDuplicateGuardFailures를 최초 컴파일의try 안 성공 직후와 기존 재시도 성공에서 함께 호출합니다. 정규식에 맞는Error 가드 실패만 제거하고 일반 실패와 성공한 가드는 유지하며 전체 컴파일 실패는 아무것도 지우지 않습니다. app/cache의 writer 목록과validation DETAIL,471C-05 및 VALIDATE-046·ERROR-041·201 보충을 선행 기록했습니다.
+
+배포 AJV6·7·8은 같은 id 충돌에서 같은 설정의 별도 인스턴스를 사용하므로 이 충돌을 피합니다. 회귀는 실제AJV addSchema/removeSchema 등록을 모델링하며 충돌 때 던지는 검증기를 사용합니다. render 회귀는 수정 전 OnChange1실패·None/OnRequest2통과, 기준3통과, 수정 후3통과입니다. OnRequest 한계는 교체 뒤 첫 명시 validate 및 지연 로드 슬롯 전에 확인한 것이며, 로드 슬롯도 전체 컴파일 수요입니다. None 및 그 수요 전의 중복 가드 실패는 기존 한계로 유지합니다. 단위2개와 기존 재시도3개가 통과했고, 실제 스케줄러를 쓰는 최종 회귀에서도 M5가 다시 GUARD_FAILED를 검출했습니다.
+
+M1–M6은 각각1·1·7·1·1·1개를 실패시켰고 제품 소스 바이트를 모두 복원했습니다. 원본red·green·기준 실행과 변이 증거는 raw/fix-*에 보존했습니다.
+
+### 등록 경쟁 차이와 무작위 비교
+
+소유 중인A를 먼저마운트하고 같은id C를None으로 별도마운트하여 등록실패 상태로retain한 뒤 A를B로교체하면, 기준은 live C의참조수가 retry를막아거부하고 후보는해제된A를퇴출한 첫compile에서B가등록하여판정합니다. 실제등록을 얻는루트만 달라지며 C를컴파일하면다시충돌하므로 IR-8의 동시mounted충돌규칙은유지됩니다. 코디네이터가 설명가능한차이로수용한471C-06을 VALIDATE-046·ERROR-201에 새보충으로추가했고 기존보충은수정하지않았습니다.
+
+등록에충실한 주입만사용하여 원래15개·실패10개 시드를 양쪽에서새로실행했고 각각 이 설명가능한2개만남았습니다. 이전transient 주입의75개 차이는 실제충돌없는실패를만든하니스증상으로원본을보존했습니다. 이후발견된 stale guard결함과 혼동하지않습니다.
+
+| 환경 | 시드 범위 | 쌍 | 역할별 스냅숏 | 설명 가능한 차이 | 미분류 |
+|---|---|---:|---:|---:|---:|
+| render-plain | 1192230912–1192232911 | 2000 | 64990 | 3 | 0 |
+| render-strict | 1192296448–1192298447 | 2000 | 64765 | 7 | 0 |
+| react18-plain | 1192361984–1192363983 | 2000 | 64692 | 5 | 0 |
+| react18-strict | 1192427520–1192429519 | 2000 | 64121 | 6 | 0 |
+
+총8000쌍·16000역할 실행·역할별258568스냅숏의 입력동작 전체가 같았습니다.21개관측차이는 모두471C-06이며 첫원인과이후모든단계의차이를scratch에보존했습니다. React18단일프로세스가약3.5GiB로증가한 미완료실행을보존하고, 같은250시드경계8묶음을양쪽에적용하여각2000쌍을완료했습니다. 생성기·주입소스는같고 동시에Vitest를둘실행하지않았습니다. 무작위자료와측정준비도구는커밋하지않았습니다.
+
+### 정식 관문과 최종 측정 준비
+
+정식 build·산출물검증·typecheck·lint오류경고0과 세플러그인의lint경고0·typecheck가통과했습니다.
+
+| 관문 | 통과 | 기존 skip |
+|---|---:|---:|
+| unit | 4255 | 0 |
+| render | 1038 | 7 |
+| react18 | 1036 | 9 |
+| verify-unit | 4299 | 0 |
+| verify-render | 1038 | 7 |
+| production | 21 | 0 |
+| storybook | 254 | 0 |
+| import-model | 2 | 0 |
+| ajv6-tests | 133 | 0 |
+| ajv7-tests | 138 | 0 |
+| ajv8-tests | 343 | 0 |
+| scenarios | 45 | 0 |
+
+원장26검사 새불일치0·인용오류0·기존문서미인용66유지·소유자786/786,버전23개불변입니다. FCA사실저장소가새epoch로무효화된최초진단을보존하고3181개를재추출하여모두exact로등록했습니다. 기준대비새finding0·diagnostic0이며 기존구조566·실패26 및verification30과indeterminate는남아절대PASS로표시하지않습니다.
+
+최종측정준비는 기존4mount셀과flat/if-flat의typing·first-key4셀을한번의quietfullrun으로측정합니다. pilot은셀별한번,retained72·warmup24·총96페이지,경쟁0이며 조건부typing의control한그룹이invalid로남아재시도하지않았습니다. 첫키는native keydown event.timeStamp부터대응input의다음rAF까지,per-write longest-frame은input부터100ms에겹친raw rAF간격의최댓값입니다. typing handler와frame회귀는max(0.05ms,기준5%),first-key는max(0.5ms,기준5%),control은각gated지표의max(0.3ms,기준3%)이며정식무효group은한번재시도후재무효VOID입니다. mount9관문은기존규칙을유지합니다.
+
+전체20회 재수용·입력회귀 matrix는 실행하지 않았고 최종HEAD의문서·시험전용차이를검증해측정제품에고정합니다. 한개의정식명령과정의·pilot원본·해시는외부prep보고서로인계하며 push·게시·병합·버전변경은하지않습니다.
