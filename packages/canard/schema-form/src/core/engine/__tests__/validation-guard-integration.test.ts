@@ -93,7 +93,7 @@ describe('guard records at public entry boundaries', () => {
       undefined,
       validator,
     );
-    expect(compile).toHaveBeenCalledTimes(1);
+    expect(compile).not.toHaveBeenCalled();
     expect(compileGuard).toHaveBeenCalledTimes(2);
   });
 
