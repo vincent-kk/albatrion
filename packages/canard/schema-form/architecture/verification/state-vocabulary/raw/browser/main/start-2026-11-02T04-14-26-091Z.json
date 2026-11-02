@@ -1,0 +1,84 @@
+{
+  "at": "2026-11-02T04:14:26.091Z",
+  "samples": 0,
+  "approved": false,
+  "quiet": {
+    "startedAt": "2026-11-02T04:13:55.983Z",
+    "endedAt": "2026-11-02T04:14:26.090Z",
+    "durationSeconds": 30.102448625,
+    "top": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 85.97307256429548
+      },
+      {
+        "pid": 66847,
+        "name": "cursor-agent",
+        "cpuPercent": 33.319548602003564
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 11.726620794120983
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.477878342378088
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 4.119266227963812
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 2.724030892685259
+      },
+      {
+        "pid": 62730,
+        "name": "spotlightknowledged",
+        "cpuPercent": 2.690811003751012
+      },
+      {
+        "pid": 80344,
+        "name": "Orca",
+        "cpuPercent": 2.325392225464758
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.2921723365243025
+      },
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 2.2257325586584993
+      }
+    ],
+    "heavy": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 85.97307256429548
+      }
+    ],
+    "totalPercent": 175.89931191187955
+  },
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      29867,
+      29866,
+      29865,
+      29852,
+      66847,
+      66712,
+      66709,
+      80848
+    ]
+  }
+}

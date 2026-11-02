@@ -1,0 +1,84 @@
+{
+  "at": "2026-11-02T04:01:34.407Z",
+  "samples": 0,
+  "approved": false,
+  "quiet": {
+    "startedAt": "2026-11-02T04:01:04.316Z",
+    "endedAt": "2026-11-02T04:01:34.407Z",
+    "durationSeconds": 30.086267458000002,
+    "top": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 101.87372043669623
+      },
+      {
+        "pid": 66847,
+        "name": "cursor-agent",
+        "cpuPercent": 48.726549481304545
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 8.143250083861451
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 5.384516381980968
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 3.02463574542838
+      },
+      {
+        "pid": 62730,
+        "name": "spotlightknowledged",
+        "cpuPercent": 2.592544924653304
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.5925449246494425
+      },
+      {
+        "pid": 76438,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.559307169209037
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 1.9610275712126042
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 1.8280765494326092
+      }
+    ],
+    "heavy": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 101.87372043669623
+      }
+    ],
+    "totalPercent": 195.40476425689351
+  },
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      15486,
+      15485,
+      15484,
+      15471,
+      66847,
+      66712,
+      66709,
+      80848
+    ]
+  }
+}
