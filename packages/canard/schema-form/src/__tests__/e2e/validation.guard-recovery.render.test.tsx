@@ -16,16 +16,8 @@ import {
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
 
-/** Holds the load slot until the test explicitly drains frames and validation work. */
-const slots = vi.hoisted(() => ({ callbacks: new Array<() => void>() }));
-vi.mock('@/schema-form/core', async (importOriginal) => {
-  const core = await importOriginal<typeof import('@/schema-form/core')>();
-  return { ...core, scheduleValidationSlot: (callback: () => void) => slots.callbacks.push(callback) };
-});
-
 afterEach(() => {
   cleanup();
-  slots.callbacks.length = 0;
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -71,7 +63,6 @@ it.each([ValidationMode.OnChange, ValidationMode.None, ValidationMode.OnRequest]
     const flush = async () => {
       for (let frame = 0; frame < 6; frame++) await act(async () => {
         clock.frame(200);
-        for (const callback of slots.callbacks.splice(0)) callback();
         await vi.runOnlyPendingTimersAsync();
         await clock.task();
       });
