@@ -1,0 +1,39 @@
+[
+  {
+    "id": "is-divergent-flat-2000",
+    "lane": "F",
+    "index": 0,
+    "edits": 1,
+    "read": {
+      "status": "ran",
+      "firstMs": 0.3999999761581421,
+      "repeatedMs": 0,
+      "first": true,
+      "repeated": true
+    }
+  },
+  {
+    "id": "heap-flat-2000-100-edits",
+    "lane": "B",
+    "index": 0,
+    "edits": 100,
+    "heap": {
+      "usedSize": 31938448,
+      "totalSize": 33292288,
+      "embedderHeapUsedSize": 12660072,
+      "backingStorageSize": 1926015
+    }
+  },
+  {
+    "id": "heap-flat-2000-100-edits",
+    "lane": "F",
+    "index": 0,
+    "edits": 100,
+    "heap": {
+      "usedSize": 31981176,
+      "totalSize": 33816576,
+      "embedderHeapUsedSize": 12662120,
+      "backingStorageSize": 1927939
+    }
+  }
+]
