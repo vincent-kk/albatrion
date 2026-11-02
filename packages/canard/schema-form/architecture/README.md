@@ -98,4 +98,4 @@ IR-6 연속 입력 결정(2026-10-31): D1 쓰기는 선행·프레임 이월·�
 
 ## 471라운드 G 구현
 
-[계약 결정](reviews/round-471-closing.md)·[소유자 원문](reviews/round-471-owner-answers.md)·[계획](plan/guard-compile/request.md)·[검증](verification/guard-compile/results.md): 가드 읽기의 전체 컴파일을 첫 전체 수요까지 미룹니다. 전체 수용 측정은 별도이며 버전은 불변입니다.
+[계약 결정](reviews/round-471-closing.md)·[소유자 원문](reviews/round-471-owner-answers.md)·[계획](plan/guard-compile/request.md)·[검증](verification/guard-compile/results.md): 가드 읽기의 전체 컴파일을 첫 전체 수요까지 미룹니다. 전체 수용 측정은 ACCEPT이며 버전은 불변입니다.

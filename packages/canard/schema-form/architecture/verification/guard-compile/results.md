@@ -1,6 +1,6 @@
 # G 구현 검증 — 가드 읽기와 전체 컴파일 분리
 
-기준은1202dd53b이며 제품 런타임이 같은1c44a823b의 사전 측정 build를 재사용할 수 있습니다. 계약 선행8a8bbb03a 뒤 구현f750262ea를 만들었습니다. 전체 수용 측정은 별도 작업이며 현재 수용 판정은 없습니다.
+기준은1202dd53b이며 제품 런타임이 같은1c44a823b의 사전 측정 build를 재사용할 수 있습니다. 계약 선행8a8bbb03a 뒤 구현f750262ea를 만들었습니다. 전체 수용 측정의 사전등록9관문이 모두 통과하여 ACCEPT로 수용했습니다.
 
 ## 기준 red와 특성화
 
@@ -60,12 +60,77 @@ importModel2개, AJV6 133개·AJV7 138개·AJV8 343개 및 소비자 schema-form
 
 FCA는 같은 snapshot으로 scan·전체6범위 validate·verification을 각각 실행했습니다. 기준/최종 구조 finding566·failed26·skipped308, verification finding30을 보존하고 새 finding0·새 diagnostic0입니다. snapshot은 기준15660a391a940a6cc6769dbbf6e44b72e0538291cf753b7568ff0e61c54f4c90, 최종321725c7afa224b6901f567744fdc62ba54e2a715bb838f15e52b63b0c6eaef5입니다. facts는 기준3171/3171·최종3178/3178 exact이며 unsupported514는 양쪽 동일합니다. 절대 판정은 기존 위반과 indeterminate 축을 가진 FAIL이고 변경 비교에서 새 항목이 없는 것입니다.
 
-버전은 추적 manifest23개 모두 기준과 같습니다. 기계 경로 감사는 architecture 전체와 변경 파일의 plain·escaped 문자열 및 gzip 해제 내용을 포함하며0 hit를 요구합니다. 원본 전체를 scratch에 유지하고 저장소 raw114개는 경로만 정규화한 gzip과 해시 manifest로 보존합니다. 감사 범위6483개·gzip3549개에서0 hit였습니다.
+버전은 추적 manifest23개 모두 기준과 같습니다. 기계 경로 감사는 architecture 전체와 변경 파일의 plain·escaped 문자열 및 gzip 해제 내용을 포함하며0 hit를 요구합니다. 원본 전체를 scratch에 유지하고 저장소 raw126개는 경로만 정규화한 gzip과 해시 manifest로 보존합니다. 감사 범위6483개·gzip3549개에서0 hit였습니다.
 
-## 수용 측정 준비 — 전체 판정 대기
+## 수용 측정 준비와 파일럿 이력
 
 네 셀에 각 build warmup1회·보존3회의 파일럿만 실행했습니다(48페이지·보존36·warmup12). 원본 재집계,22809개 frozen hash, overlap 없음 검사가 통과했습니다. if/None paint104.5→70.2ms, if/OnChange paint107.5→70.0ms·첫 verdict123.5→110.9ms는 파일럿 관찰일 뿐 수용 결과가 아닙니다. guard-free OnChange pilot은 control gap2.300ms가 band1.122ms를 넘어 invalid로 보존했고 재실행하지 않았습니다.
 
 정식 셀은 mount-if-flat-500-none·mount-if-flat-500-validate·mount-flat-500-none·mount-flat-500-validate, 각 build20회입니다. time to first verdict는 root.render 직전 mount.startedAt부터 Form 첫 onValidate callback 진입까지이며 fallback은 없습니다. None10%·16.7ms·control gap2배 초과 절감, OnChange10%·16.7ms 절감, 첫 verdict 기준+16.7ms 이내, guard-free 회귀 max(0.5ms,3%) 이내를 모두 만족해야 수용합니다. control 유효 폭은 max(0.3ms,3%)이며 전체 그룹 한 번 재시도 뒤 재무효 VOID입니다.
 
-기준은1202dd53b이며 runtime/build/fixture 범위에서1c44a823b와 다른 것은 union 시험뿐이라 기존1c44a823b 기준 제품을 명시된 허가에 따라 재사용합니다. 후보 제품은 구현f750262ea에서 만들고 최종 문서·시험 커밋과 runtime/build 입력 동일성을 확인해 최종 head로 repin합니다. 실행 가능한 harness와 full 명령은 scratch prep 보고서와 PR 본문에 두며 전체 수용 측정은 실행하지 않았습니다.
+기준은1202dd53b이며 runtime/build/fixture 범위에서1c44a823b와 다른 것은 union 시험뿐이라 기존1c44a823b 기준 제품을 명시된 허가에 따라 재사용합니다. 후보 제품은 구현f750262ea에서 만들고 최종 문서·시험 커밋과 runtime/build 입력 동일성을 확인해 측정 후보19798fed1로 repin을 완료했습니다. 실행 가능한 harness와 full 명령은 scratch prep 보고서와 PR 본문에 두며 전체 수용 측정은 아래 결과대로 완료되어 ACCEPT입니다.
+
+## 전체 수용 측정 — ACCEPT
+
+측정 후보19798fed1c01161a49741250e6eedd816f55ff4d, 제품 소스f750262ea73c4d82d048a06d89d14aa7d5022936, 기준1202dd53b677ccefdf84fbe360f377426bf6ea98입니다. summary.json의 원본 수치와 사전등록 규칙에 따라 코디네이터가 ACCEPT를 결정했습니다. 네 그룹 모두 첫 시도에 유효했고 아래9관문이 모두 true이며 재시도·VOID·overlap은 없습니다. 파일럿의 invalid control 기록은 보존하되 최종 판정은 이번 전체 실행을 따릅니다.
+
+| 셀 | 시도 | build | metric | n | median | p95 |
+| --- | ---: | --- | --- | ---: | ---: | ---: |
+| mount-if-flat-500-none | 1 | baseline | firstPaintedMs | 20 | 105.55000001192093 | 110 |
+| mount-if-flat-500-none | 1 | baseline | longestMountTask | 20 | 104.0 | 109 |
+| mount-if-flat-500-none | 1 | candidate | firstPaintedMs | 20 | 69.80000001192093 | 73.60000002384186 |
+| mount-if-flat-500-none | 1 | candidate | longestMountTask | 20 | 68.5 | 72 |
+| mount-if-flat-500-none | 1 | control | firstPaintedMs | 20 | 104.65000003576279 | 106.40000009536743 |
+| mount-if-flat-500-none | 1 | control | longestMountTask | 20 | 104.0 | 105 |
+| mount-if-flat-500-validate | 1 | baseline | firstPaintedMs | 20 | 105.3999999165535 | 115.19999992847443 |
+| mount-if-flat-500-validate | 1 | baseline | longestMountTask | 20 | 104.0 | 114 |
+| mount-if-flat-500-validate | 1 | baseline | firstVerdictMs | 20 | 121.54999995231628 | 131.5 |
+| mount-if-flat-500-validate | 1 | candidate | firstPaintedMs | 20 | 70.25 | 73.10000002384186 |
+| mount-if-flat-500-validate | 1 | candidate | longestMountTask | 20 | 69.0 | 72 |
+| mount-if-flat-500-validate | 1 | candidate | firstVerdictMs | 20 | 110.64999997615814 | 115.5 |
+| mount-if-flat-500-validate | 1 | control | firstPaintedMs | 20 | 106.5 | 109.89999997615814 |
+| mount-if-flat-500-validate | 1 | control | longestMountTask | 20 | 105.0 | 109 |
+| mount-if-flat-500-validate | 1 | control | firstVerdictMs | 20 | 122.69999998807907 | 127 |
+| mount-flat-500-none | 1 | baseline | firstPaintedMs | 20 | 38.55000001192093 | 40.10000002384186 |
+| mount-flat-500-none | 1 | baseline | longestMountTask | 20 | 0.0 | 0 |
+| mount-flat-500-none | 1 | candidate | firstPaintedMs | 20 | 37.89999997615814 | 40.799999952316284 |
+| mount-flat-500-none | 1 | candidate | longestMountTask | 20 | 0.0 | 0 |
+| mount-flat-500-none | 1 | control | firstPaintedMs | 20 | 38.59999990463257 | 41.300000071525574 |
+| mount-flat-500-none | 1 | control | longestMountTask | 20 | 0.0 | 0 |
+| mount-flat-500-validate | 1 | baseline | firstPaintedMs | 20 | 38.249999940395355 | 40.700000047683716 |
+| mount-flat-500-validate | 1 | baseline | longestMountTask | 20 | 0.0 | 0 |
+| mount-flat-500-validate | 1 | baseline | firstVerdictMs | 20 | 88.69999998807907 | 92.5 |
+| mount-flat-500-validate | 1 | candidate | firstPaintedMs | 20 | 37.94999998807907 | 41.800000071525574 |
+| mount-flat-500-validate | 1 | candidate | longestMountTask | 20 | 0.0 | 0 |
+| mount-flat-500-validate | 1 | candidate | firstVerdictMs | 20 | 88.89999997615814 | 91.89999997615814 |
+| mount-flat-500-validate | 1 | control | firstPaintedMs | 20 | 38.0 | 41.39999997615814 |
+| mount-flat-500-validate | 1 | control | longestMountTask | 20 | 0.0 | 0 |
+| mount-flat-500-validate | 1 | control | firstVerdictMs | 20 | 89.19999992847443 | 93.29999995231628 |
+
+| 셀 | 시도 | controlGap | controlBand | valid | savingMs | savingFraction | medianRegressionMs | firstVerdictRegressionMs | guardFreeRegressionBand | void |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| mount-if-flat-500-none | 1 | 0.8999999761581421 | 3.166500000357628 | true | 35.75 | 0.33870203691105977 | -35.75 | null | 3.166500000357628 | false |
+| mount-if-flat-500-validate | 1 | 1.1000000834465027 | 3.1619999974966047 | true | 35.1499999165535 | 0.3334914605728861 | -35.1499999165535 | -10.899999976158142 | 3.1619999974966047 | false |
+| mount-flat-500-none | 1 | 0.049999892711639404 | 1.1565000003576278 | true | 0.6500000357627869 | 0.016861220118334252 | -0.6500000357627869 | null | 1.1565000003576278 | false |
+| mount-flat-500-validate | 1 | 0.24999994039535522 | 1.1474999982118606 | true | 0.2999999523162842 | 0.007843136020490759 | -0.2999999523162842 | 0.19999998807907104 | 1.1474999982118606 | false |
+
+| 사전등록 관문 | 결과 |
+| --- | --- |
+| allControlGroupsValid | true |
+| ifNoneAtLeast10Percent | true |
+| ifNoneAtLeast16_7Ms | true |
+| ifNoneMoreThanTwiceControlGap | true |
+| ifOnChangeAtLeast10Percent | true |
+| ifOnChangeAtLeast16_7Ms | true |
+| ifOnChangeFirstVerdictWithin16_7Ms | true |
+| mount-flat-500-noneWithinAmendedRegressionBand | true |
+| mount-flat-500-validateWithinAmendedRegressionBand | true |
+
+| 실행 그룹 | exitCode | seconds | competitorsBefore | competitorsDuring |
+| --- | ---: | ---: | --- | --- |
+| mount-if-flat-500-none-attempt1 | 0 | 79.61197471618652 | [] | [] |
+| mount-if-flat-500-validate-attempt1 | 0 | 79.57786393165588 | [] | [] |
+| mount-flat-500-none-attempt1 | 0 | 79.8342809677124 | [] | [] |
+| mount-flat-500-validate-attempt1 | 0 | 80.00886082649231 | [] | [] |
+
+전체 runner seconds는319.0329804420471, success는true, decision은accept입니다. 각 build의 보존 회수는20, warmup은3이며 최초 판정은 mount 시작부터 Form 첫 onValidate 진입까지입니다. 기준 제품과 control은 동일 바이트이고1c44a823b 제품을 재사용합니다. 수용 규칙은 파일럿·전체 실행 뒤 바꾸지 않았습니다.
