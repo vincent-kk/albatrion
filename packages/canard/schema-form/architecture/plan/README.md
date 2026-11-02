@@ -100,3 +100,7 @@ flowchart LR
 ## C 이월 항목 측정과 시험
 
 470라운드의 [요청](carried-items/request.md)·[측정 설계](carried-items/design.md)·[검증](carried-items/verification.md)은 U 완료, F·R 기록 종결, G 별도 설계 자격을 다룹니다(TEST-077, VALIDATE-044). 결과와 원본은 [carried-items](../verification/carried-items/results.md)에 있습니다.
+
+## G 가드 읽기와 전체 컴파일 분리
+
+471라운드 [요청](guard-compile/request.md)·[설계](guard-compile/design.md)·[검증](guard-compile/verification.md)은 470의 G 자격 판정을 이어갑니다. Amendment 1의 같은 id 중간 해제·공개 예제·최초 판정 시간과 네 수용 셀을 포함합니다.

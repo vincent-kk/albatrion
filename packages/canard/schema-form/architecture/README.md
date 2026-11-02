@@ -95,3 +95,7 @@ IR-6 연속 입력 결정(2026-10-31): D1 쓰기는 선행·프레임 이월·�
 ## 470라운드 이월 항목 마감 보충
 
 이월 항목은 [요청과 측정 설계](plan/carried-items/request.md)·[전체 결과](verification/carried-items/results.md)·[결정](reviews/round-470-closing.md)에 기록했습니다. union 문자열 trim 시험은 완료했고 대형 배열 첫 프레임과 rebuild 비용은 기록으로 닫았습니다. if guard 전체 compile은 별도 설계·PR 진행 자격을 얻었으며 공개 검증기 계약과 제품 구현은 이번에 바꾸지 않습니다. 버전·릴리스·상위 PR은 Vincent가 맡습니다.
+
+## 471라운드 G 구현
+
+[계약 결정](reviews/round-471-closing.md)·[소유자 원문](reviews/round-471-owner-answers.md)·[계획](plan/guard-compile/request.md)·[검증](verification/guard-compile/results.md): 가드 읽기의 전체 컴파일을 첫 전체 수요까지 미룹니다. 전체 수용 측정은 별도이며 버전은 불변입니다.

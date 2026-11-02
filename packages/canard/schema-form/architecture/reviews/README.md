@@ -209,3 +209,7 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 ## 470라운드 — 이월 측정과 union trim 시험
 
 [결정](round-470-closing.md)·[원문](round-470-owner-answers.md): U 완료, F·R 기록 종결, G 별도 설계·PR 진행 가능입니다. 전체 측정과 검증은 ../verification/carried-items/results.md에 있으며 제품 구현·버전은 그대로입니다. 다음 라운드는471입니다.
+
+## 471라운드 — 가드의 전체 컴파일 분리
+
+[결정](round-471-closing.md)·[원문](round-471-owner-answers.md)은 compileGuard 선행 계약과 지연 전체 컴파일의 같은 id 보호를 기록합니다. 계획은 ../plan/guard-compile, 증거는 ../verification/guard-compile이며 전체 수용 측정은 후속입니다. 다음 라운드는472입니다.

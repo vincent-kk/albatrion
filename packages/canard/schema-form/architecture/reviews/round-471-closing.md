@@ -1,6 +1,6 @@
 # 471라운드 닫기 — 가드 읽기와 전체 컴파일 분리
 
-2026-11-02. 기준1c44a823b, G의 설계 및 Amendment 1 계약을 선행 기록합니다. 구현 검증과 수용 측정은 구분하며 전체 수용 판정은 아직 없습니다.
+2026-11-02. 기준1202dd53b, G의 설계 및 Amendment 1 계약을 선행 기록합니다. 구현 검증과 수용 측정은 구분하며 전체 수용 판정은 아직 없습니다.
 
 ## 편집자 결정
 
@@ -17,3 +17,10 @@
 - 사전 oracle은 None 첫 paint109.0→72.3ms, OnChange108.9→73.5ms이며 구현 수용 수치가 아닙니다.
 - 수용 측정은 네 셀20회, 동일 control, time to first verdict와 guard-free 회귀 한계를 사전 고정하고 별도 작업자가 실행합니다.
 - push·게시·병합·버전 변경은 하지 않습니다.
+
+
+## 구현 마감 관문
+
+- 계약8a8bbb03a→구현f750262ea→시험 보강5b8e74804 순서입니다. 기준 red4/4, 특성화28/28, M1–M4 지정 실패와 바이트 복원, 일곱 Vitest 프로젝트·세 plugin·소비자45개·importModel2개 및 정적 관문이 통과했습니다. 개수·최초 실패와 환경 복구는 verification/guard-compile/results.md와 raw 증거를 따릅니다.
+- 원장26검사 새 불일치0·인용 오류0·소유자786/786·기존 문서 미인용66 유지, FCA 새 finding/diagnostic0입니다. 기존 절대 FAIL·indeterminate와 경고는 그대로 보존합니다. 버전은 불변이고 기계 경로0을 확인합니다.
+- 네 셀 pilot만 완료했고 guard-free OnChange control은 invalid로 남겼습니다. 전체20회 수용 측정은 후속 작업자가 실행하므로 G 수용 여부는 아직 결정하지 않습니다. 첫 verdict는 mount 시작부터 Form 첫 onValidate callback까지입니다.
