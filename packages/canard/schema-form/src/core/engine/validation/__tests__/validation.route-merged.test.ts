@@ -228,6 +228,7 @@ const compareRoutes = (
   const actualReturn = new Set<typeof root>();
   for (const node of routeValidationIssues(targets, issues))
     actualReturn.add(node);
+  if (selection === 'stale') expect(runtime.validationErrors?.has(staleKey)).toBe(true);
   expect(runtime.validationErrors).toEqual(expected.errors);
   expect(runtime.validationChangedNodes).toEqual(expected.changed);
   expect(actualReturn).toEqual(expectedReturn);
