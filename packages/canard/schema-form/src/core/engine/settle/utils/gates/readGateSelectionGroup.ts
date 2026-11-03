@@ -75,7 +75,7 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
 
         selectedResult = matchesDiscriminatorTag;
       } else {
-        selectedResult = Boolean(expression!.evaluate([value]));
+        selectedResult = !!expression!.evaluate([value]);
       }
       verifyGateSelection(
         (admitted.indexOf(index) !== -1) === selectedResult,

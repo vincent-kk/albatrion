@@ -36,7 +36,7 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
               : undefined;
           if (!node) break;
         }
-        exists = Boolean(node && !node.detached);
+        exists = !!(node && !node.detached);
         live.set(entry.targetPath, exists);
       }
       if (!exists) round[index] = { ...entry, result: 'withdrawn' };

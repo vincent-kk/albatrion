@@ -12,8 +12,8 @@ export const accumulateGlobalStateDeltas = (
   if (changedKeys) {
     for (const key in changedKeys) {
       if (!hasOwnProperty(changedKeys, key)) continue;
-      const before = Boolean(previous[key]);
-      const after = Boolean(next[key]);
+      const before = !!previous[key];
+      const after = !!next[key];
       if (before !== after)
         deltas.set(key, (deltas.get(key) ?? 0) + (after ? 1 : -1));
     }
