@@ -10,6 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 /**
  * Build the React fixture against pinned HEAD or working sources, without timing it.
+ * Working-only builds read no git history; pinned builds index the requested revision once.
  * @param packageRoot - schema-form in the authorized stage-07 worktree
  * @param outputRoot - Scratch directory that receives `<name>.cjs`
  * @param variant - `head` (pinned revision), `change` (working tree) or `both`
@@ -28,9 +29,10 @@ export async function prepareReactBundles(packageRoot, outputRoot, variant = 'bo
   const benchmarkRequire = createRequire(resolve(worktree, 'packages/aileron/benchmark-form/package.json'));
   const releaseModule = harness ? pathToFileURL(benchmarkRequire.resolve('@canard/schema-form_0.16.0').replace(/\.cjs$/, '.mjs')).href : null;
   const profilingModule = harness ? benchmarkRequire.resolve('react-dom/profiling') : null;
-  const tracked = childProcess.execFileSync('git', ['ls-tree', '-r', '--name-only', head, 'packages/canard/schema-form/src'],
-    { cwd: worktree, encoding: 'utf8', timeout: 10000 }).trim().split('\n');
-  const headPaths = new Set(tracked);
+  const headPaths = variant === 'change' ? null : new Set(
+    childProcess.execFileSync('git', ['ls-tree', '-r', '--name-only', head, 'packages/canard/schema-form/src'],
+      { cwd: worktree, encoding: 'utf8', timeout: 10000 }).trim().split('\n'),
+  );
   const results = [];
   mkdirSync(outputRoot, { recursive: true });
   for (const name of variant === 'both' ? ['head', 'change'] : [variant]) {
@@ -74,7 +76,7 @@ export async function prepareReactBundles(packageRoot, outputRoot, variant = 'bo
           });
           // Explicit historical resolution also covers SchemaNodeField after its removal. The equivalent harness
           // resolves the working tree the same way, so tree shaking treats both variants alike.
-          const known = name === 'head' ? path => headPaths.has(relative(worktree, path))
+          const known = name === 'head' ? path => headPaths?.has(relative(worktree, path)) === true
             : path => statSync(path, { throwIfNoEntry: false })?.isFile() === true;
           builder.onResolve({ filter: /^(\.|@\/schema-form)/ }, args => {
             if ((name !== 'head' && !harness) || !args.importer.startsWith(resolve(packageRoot, 'src'))) return;
