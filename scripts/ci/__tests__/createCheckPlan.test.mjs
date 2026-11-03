@@ -204,7 +204,7 @@ test("build closure precedes lint and includes every linted workspace dependency
   }
 });
 
-test("every planned Vitest command receives a generous supported test timeout at execution", () => {
+test("every planned Vitest command receives a generous supported test timeout and passWithNoTests at execution", () => {
   const plan = createCheckPlan(workspaces, ["package.json"]);
   const outcome = runPlanSteps(plan.shards, {
     root,
@@ -216,6 +216,11 @@ test("every planned Vitest command receives a generous supported test timeout at
     const expected = step.kind === "test" ? 1 : 0;
     assert.equal(
       step.args.filter((arg) => arg === "--testTimeout=120000").length,
+      expected,
+      step.label,
+    );
+    assert.equal(
+      step.args.filter((arg) => arg === "--passWithNoTests").length,
       expected,
       step.label,
     );
