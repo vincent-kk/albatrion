@@ -49,3 +49,47 @@ it('G recovery leaves every guard outcome intact when the whole compile fails', 
   expect(entry.guards.get('/ordinary/if')).toBe(ordinary);
   expect(entry.guards.get('/successful/if')).toBe(successful);
 });
+
+it.each([
+  ['key collision', 'schema with key or id "urn:recovery-key" already exists'],
+  [
+    'reference collision',
+    'reference "urn:recovery-reference" resolves to more than one schema',
+  ],
+])(
+  'VALIDATE-046 recovery clears the AJV %s guard failure after a successful whole compile',
+  (_name, message) => {
+    const root = { type: 'object' };
+    const validator: Validator = {
+      compile: () => () => null,
+      compileGuard: () => () => true,
+    };
+    const entry = readValidationEntry(validator, root);
+    entry.guards.set('/collision/if', { failure: new Error(message) });
+
+    compileValidationEntry(validator, root, entry);
+
+    expect(entry.guards.has('/collision/if')).toBe(false);
+  },
+);
+
+it.each([
+  'schema is invalid: data/required must NOT have duplicate items (items ## 1 and 0 are identical)',
+  'duplicate keyword declaration',
+])(
+  'VALIDATE-046 recovery keeps the guard failure "%s" after a successful whole compile',
+  (message) => {
+    const root = { type: 'object' };
+    const validator: Validator = {
+      compile: () => () => null,
+      compileGuard: () => () => true,
+    };
+    const entry = readValidationEntry(validator, root);
+    const failure = { failure: new Error(message) };
+    entry.guards.set('/meta/if', failure);
+
+    compileValidationEntry(validator, root, entry);
+
+    expect(entry.guards.get('/meta/if')).toBe(failure);
+  },
+);
