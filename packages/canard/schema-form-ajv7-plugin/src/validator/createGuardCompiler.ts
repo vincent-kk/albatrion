@@ -1,5 +1,7 @@
 import type Ajv from 'ajv';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { cloneInstance } from './utils/cloneInstance';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
@@ -53,7 +55,7 @@ export const createGuardCompiler = (
   );
   if (direct && '$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
-  const dynamicAnchors: Record<string, typeof validate> = {};
+  const dynamicAnchors: Dictionary<typeof validate> = {};
   if (!direct) {
     const rootValidate = guard.getSchema(registration.rootId);
     const guardCopy = registration.guardCopy;
@@ -74,7 +76,7 @@ export const createGuardCompiler = (
       dataPath: '',
       parentData: {},
       parentDataProperty: '',
-      rootData: value as Record<string, unknown>,
+      rootData: value as Dictionary<unknown>,
       dynamicAnchors: { ...dynamicAnchors },
     });
     if (typeof result !== 'boolean')

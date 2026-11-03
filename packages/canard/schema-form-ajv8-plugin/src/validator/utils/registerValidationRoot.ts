@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /**
@@ -7,7 +9,7 @@ import type { SchemaRootRegistration } from './registerSchemaRoot';
  * @param snapshot - `Object.entries(target)` taken before the failed call
  * @returns Nothing; deletes every own key of `target` and re-inserts the snapshot's entries in order
  */
-const restoreInPlace = <T>(target: Record<string, T>, snapshot: [string, T][]): void => {
+const restoreInPlace = <T>(target: Dictionary<T>, snapshot: [string, T][]): void => {
   for (const key of Object.keys(target)) delete target[key];
   for (const [key, value] of snapshot) target[key] = value;
 };
