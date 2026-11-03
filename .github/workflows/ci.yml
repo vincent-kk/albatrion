@@ -51,7 +51,7 @@ jobs:
       matrix:
         shard: ${{ fromJSON(needs.affected.outputs.shards) }}
     env:
-      CI: 'true'
+      CI: "true"
     steps:
       - name: Checkout event head
         uses: actions/checkout@v4

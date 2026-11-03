@@ -5,8 +5,19 @@
  * @returns {string} Escaped Markdown table and selection description.
  */
 export function formatPlanSummary(plan, results) {
-  return ['## Affected workspace checks', '', `Changed: ${plan.changed.join(', ') || '(none)'}`, '',
-    `Dependents: ${plan.dependents.join(', ') || '(none)'}`, '',
-    '| Shard | Command | Result | Seconds |', '| --- | --- | --- | --- |',
-    ...results.map((result) => `| ${result.shard} | \`yarn ${result.args.join(' ').replaceAll('|', '\\|').replaceAll('`', '\\`')}\` | ${result.status} | ${result.seconds.toFixed(2)} |`), ''].join('\n');
+  return [
+    "## Affected workspace checks",
+    "",
+    `Changed: ${plan.changed.join(", ") || "(none)"}`,
+    "",
+    `Dependents: ${plan.dependents.join(", ") || "(none)"}`,
+    "",
+    "| Shard | Command | Result | Seconds |",
+    "| --- | --- | --- | --- |",
+    ...results.map(
+      (result) =>
+        `| ${result.shard} | \`yarn ${result.args.join(" ").replaceAll("|", "\\|").replaceAll("`", "\\`")}\` | ${result.status} | ${result.seconds.toFixed(2)} |`,
+    ),
+    "",
+  ].join("\n");
 }

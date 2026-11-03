@@ -5,6 +5,7 @@
  * @returns {object|undefined} Deepest containing workspace, when one exists.
  */
 export function findWorkspaceOwner(file, workspaces) {
-  return workspaces.filter(({ directory }) => file.startsWith(`${directory}/`))
+  return workspaces
+    .filter(({ directory }) => file.startsWith(`${directory}/`))
     .sort((left, right) => right.directory.length - left.directory.length)[0];
 }
