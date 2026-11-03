@@ -238,3 +238,4 @@ onError is an event channel: it delivers the one record of each occurrence and d
 - Quote 81 (2026-11-03; 맥락: 역할 배정 — codex는 검증, 구현은 Claude Opus — 과 추가 설명 요청): "음 codex를 그대로 쓰도록 해. 검증까지만. 구현은 클로드로 하지. 클로드 opus로 하면 될거같아 fable쓰지말고. 다만 아직 어떤 교체와 트레이드오프인지 이해가 잘 안되네 추가 설명을 좀 해줘"
 - Quote 82 (2026-11-03; 맥락: 시험판 2 방향과 역할 배정으로 진행을 승인): "그래 진행해보자."
 - Quote 83 (2026-11-04; 맥락: 병합 전 리뷰 뒤 세 플러그인의 불리언 변환 방식 지시): "Boolean 대신 !! 를 써라. Boolean 이 너무 느리다."
+- Quote 84 (2026-11-04; 맥락: 세 플러그인의 Boolean() 을 !! 로 바꾼 뒤 변환 방식 보완 지시): "Boolean 함수를 쓴 부분을 !! 로 바꿀때, 1. ! 한개로 가능하게 로직을 수정할 수 있으면 수정하라. 2. (v)=>!!v 구조는 isTruthy 를 써라."

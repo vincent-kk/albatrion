@@ -1,4 +1,5 @@
 import type { JSONSchema } from '@canard/schema-form';
+import { isTruthy } from '@winglet/common-utils/filter';
 import type Ajv from 'ajv';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
@@ -49,7 +50,7 @@ export const createGuardCompiler = (
     const validate = registration.guardAjv.compile(schema);
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
-    return (value) => !!validate(value);
+    return (value) => isTruthy(validate(value));
   }
   const guard = registerSchemaGuard(ajv, root, registration);
   if (
@@ -71,5 +72,5 @@ export const createGuardCompiler = (
     return (value) => !validateProbe(value);
   }
   const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
-  return (value) => !!validate(value);
+  return (value) => isTruthy(validate(value));
 };
