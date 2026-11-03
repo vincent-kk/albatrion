@@ -149,6 +149,8 @@ describe('createValidator for one AJV instance', () => {
       $id: 'https://example.test/create-validator-release',
       if: { const: 'first' },
     } as unknown as JSONSchema;
+    validator.compile(root);
+    ajvValidatorPlugin.compile(root);
     expect(validator.compileGuard(root, '/if')('first')).toBe(true);
     expect(ajvValidatorPlugin.compileGuard(root, '/if')('first')).toBe(true);
     validator.release!(root);
