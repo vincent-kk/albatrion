@@ -40,7 +40,7 @@ describe('VALIDATE-045 release', () => {
     const instance = new Ajv({ allErrors: true });
     const add = vi.spyOn(instance, 'addSchema');
     const remove = vi.spyOn(instance, 'removeSchema');
-    ajvValidatorPlugin.bind(instance);
+    ajvValidatorPlugin.bind?.(instance);
     const root = { $id: 'https://example.test/ajv6/guard-only', type: 'string' } as const;
     expect(ajvValidatorPlugin.compileGuard(root, '')('ok')).toBe(true);
     ajvValidatorPlugin.release(root);

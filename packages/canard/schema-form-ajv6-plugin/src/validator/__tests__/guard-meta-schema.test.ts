@@ -52,7 +52,7 @@ afterEach(() => {
 
 describe('IR-10 guard meta-schema', () => {
   it('compiles a self-contained guard beside an unrelated meta-schema violation', () => {
-    ajvValidatorPlugin.bind(new Ajv());
+    ajvValidatorPlugin.bind?.(new Ajv());
     for (const variant of ['no-id', 'root-id', 'nested-id']) {
       const root = unrelatedViolation(variant, 't1');
       const guard = attempt(() => ajvValidatorPlugin.compileGuard(root, '/if'));
@@ -65,7 +65,7 @@ describe('IR-10 guard meta-schema', () => {
   });
 
   it('compiles root-pointer guards beside an unrelated meta-schema violation', () => {
-    ajvValidatorPlugin.bind(new Ajv());
+    ajvValidatorPlugin.bind?.(new Ajv());
     ajvValidatorPlugin.configure({ directGuardCompile: false });
     const pointerRoot = unrelatedViolation('no-id', 't2');
     const pointerGuard = attempt(() => ajvValidatorPlugin.compileGuard(pointerRoot, '/if'));
@@ -87,7 +87,7 @@ describe('IR-10 guard meta-schema', () => {
 
   it('registers a root only for root-pointer guards and for the compile of a $id root', () => {
     const instance = new Ajv();
-    ajvValidatorPlugin.bind(instance);
+    ajvValidatorPlugin.bind?.(instance);
     const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
     const plain: JSONSchema = { type: 'object', if: condition };
     ajvValidatorPlugin.compileGuard(plain, '/if');
@@ -112,7 +112,7 @@ describe('IR-10 guard meta-schema', () => {
 
   it('keeps one guard instance and one registration from a direct to two root-pointer guards', () => {
     const instance = new Ajv();
-    ajvValidatorPlugin.bind(instance);
+    ajvValidatorPlugin.bind?.(instance);
     const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
     const removeSchema = vi.spyOn(Ajv.prototype, 'removeSchema');
     const cloneInstance = vi.spyOn(sibling, 'cloneInstance');
@@ -141,7 +141,7 @@ describe('IR-10 guard meta-schema', () => {
   });
 
   it('evaluates meta-only violations inside the condition with the generated code', () => {
-    ajvValidatorPlugin.bind(new Ajv());
+    ajvValidatorPlugin.bind?.(new Ajv());
     const root: JSONSchema = {
       type: 'object',
       if: { properties: { kind: { type: 'string', minLength: 1.5 } }, required: ['kind', 'kind'] },
@@ -156,7 +156,7 @@ describe('IR-10 guard meta-schema', () => {
 
   it('rolls back a failed validation registration', async () => {
     const instance = new Ajv();
-    ajvValidatorPlugin.bind(instance);
+    ajvValidatorPlugin.bind?.(instance);
     const kept: JSONSchema = { $id: 'https://example.test/ir10-b', type: 'string' };
     ajvValidatorPlugin.compile(kept);
     const invalid: JSONSchema = {
@@ -187,7 +187,7 @@ describe('IR-10 guard meta-schema', () => {
 
   it('keeps consumer registrations and order after a failed registration', () => {
     const instance = new Ajv();
-    ajvValidatorPlugin.bind(instance);
+    ajvValidatorPlugin.bind?.(instance);
     instance.addSchema({ $id: 'https://example.test/ir10-x', type: 'string' });
     const clash: JSONSchema = { $id: 'https://example.test/ir10-x', type: 'number' };
     expect.soft(() => ajvValidatorPlugin.compile(clash), 'T9 same $id as a consumer schema').toThrow(/already exists/);
