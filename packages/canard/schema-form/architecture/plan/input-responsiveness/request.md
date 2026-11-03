@@ -249,3 +249,10 @@ onError is an event channel: it delivers the one record of each occurrence and d
 - Quote 85 (2026-11-04; 맥락: !! 치환 뒤 콜백과 단일 부정 정리 지시): "그 일단, visible.some(Boolean); 이걸 const showError = visible.some((flag) => !!flag); 로 바꾼건 isTruthy 를 쓰도록해. 같은 함수야. 유사하게, Boolean 함수를 쓴 부분을 !! 로 바꿀때, 1. ! 한개로 가능하게 로직을 수정할 수 있으면 수정하라. 2. (v)=>!!v 구조는 isTruthy 를 써라."
 
 Quote 83(같은 날, 'Boolean 대신 !! 를 써라. Boolean 이 너무 느리다.')은 IR-10 절(#529)에 있다.
+
+## IR-11 — guard fidelity (2026-11-04)
+
+### Owner decisions (verbatim)
+
+- Quote 87 (2026-11-04; 맥락: guard-fidelity 작업의 목표 지시): "최대한. 사용자가 이걸로 오류나 예기지치못한 동작을 맞이하지 않도록. 합리적이고 예측가능하며 jsonSchema 의 스팩을 충실히 반영하도록 진행해"
+- Quote 88 (2026-11-04; 맥락: guard-fidelity 계획에 덧붙인 지시): "ajv 버전 세개가 "동일하게"동작하는걸 원하는건 아는데, 최소한 우리 form에서 동일한 기대를 충족했으면 하는데."

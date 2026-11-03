@@ -670,3 +670,23 @@ The codex design check returned FAIL; every finding was applied before implement
 - P1 (C3a, C4, C5): `registerSchemaRoot` registered a root with `$id` on the validation instance at guard time and ran the meta-schema check there. Validation registration is deferred to the whole-schema compile; the anchor probe path is closed by the same change.
 - P2: the change is recorded as a contract change that adds a `validateSchema` exception to VALIDATE-033, not as a defect repair; the other value-copy sites are out of scope; per-run comparison targets and absolute values are separated (F9); `required: "kind"` differs by AJV major; the guarantee is limited to AJV's root meta-schema check; `checkGuardRootCollection.ts`, `guard-root-lifetime`, the README `compileGuard` paragraphs, `CLAUDE.md`, VALIDATE-003·017, ADR 0001·0004, design/05 and `release.test.ts` are updated; T3, T6 and T7 cover the transitions on one root, L2, and the ajv7 `guardCopy` read.
 - Delta checks 2–4 (same session) added the atomic rollback of a failed validation registration (C3a, T8), the snapshot restore of `refs` and `schemas` that keeps consumer registrations and string aliases (T9), and the restore of key order that sibling construction depends on (T9).
+
+## IR-11 — guard fidelity (2026-11-04)
+
+검증기 플러그인 계약이 소비자에게 예측 가능하고 JSON Schema 명세에 충실하도록 네 갈래(PR-A ajv7·ajv8 가드의 동적 범위, PR-B 중복 `$id` 문구 분류, PR-C 비객체 호스트 `if` 경고와 계약 문서, PR-D 세 플러그인 적합성 시험)로 고칩니다. 소유자 원문은 `request.md`의 IR-11 절(quote 87–88)에 있습니다. 각 PR이 자기 하위 절을 더합니다.
+
+### PR-B — duplicate-id message classification
+
+- 사실. 엔진의 `DUPLICATE_SCHEMA_ID_MESSAGE`가 `/already exists|duplicate/i`여서, 같은 `$id`의 유효한 루트가 retain된 동안 `required: ['a','a']`나 `enum: [1,1]` 루트를 컴파일하면 AJV의 메타 스키마 문구 `must NOT have duplicate items`가 중복 `$id`로 분류되었습니다. 결과는 `reason: 'duplicateSchemaId'`, 다른 루트 해제 뒤의 쓸모없는 재시도 한 번, 그리고 남는 잘못된 이유였습니다. 살아 있는 루트를 잘못 퇴출하지는 않았습니다.
+- 사실. AJV의 실제 중복 식별자 문구는 ajv 6.12.6의 `schema with key or id "…" already exists`·`id "…" resolves to more than one schema`, ajv 7.2.4·8.17.1의 `schema with key or id "…" already exists`·`reference "…" resolves to more than one schema`입니다. 배포 플러그인의 같은 `$id` 격리는 플러그인이 관리하는 서로 다른 루트 사이의 충돌만 피하며, 메타 오류·한 루트 안의 내부 `$id` 중복·소비자가 미리 등록한 스키마와의 충돌은 엔진에 도달합니다.
+- 규칙(R2). 중복 `$id` 분류 문구는 `already exists`와 `resolves to more than one schema`뿐입니다. 메타 스키마의 `must NOT have duplicate items`와 `duplicate`라는 단어만 든 메시지는 분류하지 않습니다. 이 규칙은 전체 컴파일 실패의 분류(`compileValidationEntry`, `assertValidationRootReady`)와 전체 컴파일 성공 뒤 가드 실패 정리(`clearDuplicateGuardFailures`)에 똑같이 적용됩니다. 사용자 정의 검증기가 복구 분류를 받으려면 두 문구 중 하나를 메시지에 담아야 합니다.
+- 확장. `resolves to more than one schema`는 지금까지 분류되지 않던 한 루트 안의 내부 `$id` 중복을 새로 중복으로 분류합니다. 이 분류는 같은 루트 `$id`의 다른 루트가 retain된 동안에만 `duplicateSchemaId`가 되고, 싣는 `$id`는 안쪽 `$id`가 아니라 루트 `$id`입니다. 상대 루트 해제로 풀리지 않는 내부 중복은 재시도 한 번 뒤에도 실패하고 그 이유를 유지하며, 이는 DR-3의 현행 규칙과 같습니다. 한 자원 안에서 앵커 이름이 겹칠 때도 AJV는 같은 문구를 내므로 그 경우도 같은 한 번 재시도를 받습니다.
+- 한계(L3). `duplicate`라는 단어만으로 중복을 알리던 사용자 정의 검증기는 이유와 재시도를 잃습니다. 저장소 안에서는 `validation.plugin-retry.test.ts` 한 곳이 그랬고 AJV 문구로 바꿨습니다.
+- 한계(L4). 두 대안 `already exists`와 `resolves to more than one schema`는 부분 문자열 일치로 남습니다. 그래서 속성 이름에 그 문구가 든 스키마의 메타 오류나, AJV 7·8이 앵커 문자열을 그대로 담아 던지는 `invalid anchor "…"`처럼 다른 오류 메시지에 그 문구가 들어 있으면 잘못 분류될 수 있습니다. 비용은 같은 루트 `$id`의 다른 루트가 retain된 동안 잘못된 `duplicateSchemaId` 이유 하나와 불필요한 재시도 한 번입니다.
+- 변경. `src/core/engine/validation/utils/cache/constants.ts`의 정규식과 그 문서 주석, `validation.plugin-retry.test.ts`의 시험 문구, `Validator.compile` 문서 주석, `src/app/cache/DETAIL.md`의 사용처, validation `DETAIL.md`, 원장 ERROR-201·VALIDATE-046 보충, 본체 README en·ko의 사용자 정의 검증기 문단입니다.
+- 시험. `validation.same-id.test.ts`에 ajv8 기본 검증기로 `required`·`enum` 메타 위반 두 건(T3), `validation.guard-recovery.test.ts`에 두 AJV 충돌 문구의 정리 두 건과 메타·키워드 `duplicate` 실패의 보존 두 건(T10)을 더했습니다.
+
+#### Ledger supplements (PR-B)
+
+- 【추론】 IR-11 PR-B: 중복 `$id` 분류와 중복 가드 실패 정리는 AJV 6·7·8의 중복 id 문구 `already exists`와 `resolves to more than one schema`에만 반응하며, 메타 스키마의 `must NOT have duplicate items`와 `duplicate`라는 단어만 든 메시지는 분류하지 않는다. 사용자 정의 검증기가 `reason: 'duplicateSchemaId'`와 한 번 재시도를 받으려면 두 문구 중 하나를 오류 메시지에 담아야 한다. 관리되는 루트 간 충돌은 격리하지만, 메타 오류·내부 $id 중복·소비자 등록 충돌도 엔진에 도달한다; `resolves to more than one schema`는 내부 $id 중복을 새로 분류한다. 이 분류는 같은 루트 `$id`의 다른 루트가 retain된 동안에만 `duplicateSchemaId`가 되며, 싣는 `$id`는 안쪽 `$id`가 아니라 루트 `$id`이다. 다른 루트가 해제된 뒤의 한 번 재시도에서도 내부 중복은 다시 실패하고 그 이유를 유지한다.
+- 【추론】 IR-11 PR-B: 한 자원 안에서 앵커 이름이 겹칠 때도 AJV는 같은 `resolves to more than one schema` 문구를 내므로, 그 경우도 같은 조건에서 `duplicateSchemaId`와 같은 한 번 재시도를 받는다. 두 대안 `already exists`와 `resolves to more than one schema`는 부분 문자열 일치라서, AJV 7·8이 앵커 문자열을 그대로 담아 던지는 `invalid anchor "…"`처럼 다른 오류 메시지에 그 문구가 들어 있으면 같은 루트 `$id`의 다른 루트가 retain된 동안 잘못된 `duplicateSchemaId` 이유 하나와 불필요한 재시도 한 번이 생긴다.
