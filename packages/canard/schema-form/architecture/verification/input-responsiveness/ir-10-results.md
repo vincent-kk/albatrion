@@ -60,14 +60,15 @@ ajv7·ajv6의 최종 해시 차이는 `bind(`를 `bind?.(`로 바꾼 것뿐입�
 | G11 | met | `UNIT_RENDER_OK`(시험 파일 844 통과·1 skip, 시험 5,349 통과·8 skip; 새 worktree에서 다시 실행) |
 | G12 | met | `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과; 새 worktree에서 메시지 정리 뒤 다시 실행) |
 | G13 | met | 네 패키지 `yarn --cwd … build` 성공. schema-form 마지막 줄 `✓ agents-hashes.json written: 14 file(s)`, ajv8 `Fixed 24 imports in 18 .d.ts files.`, ajv7 `Fixed 12 imports in 8 .d.ts files.`, ajv6 `Fixed 13 imports in 8 .d.ts files.` |
-| G14·G15 | 조정자 | — |
+| G14 | 조정자 | — |
+| G15 | met | 실행 41673496071, 아래 "최종 CI 측정(G15)" 절 |
 
 ## 브라우저 측정(F9, 계획에서 옮김)
 
 - 실행 41650676406(시험판 2 = `13a31635d` 대 단계 브랜치): type-flat-500 1.342 → 1.245 ms(−7.2%), mount-if-flat-500-none 158.45 → 141.35 ms(−17.1 ms), 나머지 일곱 사례는 유의한 회귀로 기록되지 않음.
 - 실행 41651117812(시험판 2 대 0.16.1): type-flat-500 1.488 대 1.165 ms(+27.7%; 단계 브랜치의 최종 실행 41605464351은 +31.8%), mount-if-flat-500-none 187.2 대 157.25 ms(+19.0%; 단계 +26.2%), first-key-flat-500-validate 182.1 대 134.8 ms(+35.1%; 단계 +36.8%), mount-if-flat-500-validate 비율 0.98(단계 1.00), mount-flat-500-none 0.878(단계 0.877).
 - 시험판 1의 "느려짐" 한 건은 재측정 41654678521에서 −2.1 ms로 오차였습니다.
-- 최종 브랜치 CI 실행: 조정자가 채웁니다.
+- 최종 브랜치 CI 실행: 41673496071(아래 "최종 CI 측정(G15)" 절).
 
 ## 계획과 다르게 한 것
 
@@ -93,3 +94,21 @@ codex 병합 전 리뷰(조건부 PASS)의 보완을 제품 동작 변경 없이
 - `4fb908604` 시험: 세 `guard-meta-schema.test.ts`의 fixture 생성기와 등록 추출기를 각 플러그인의 `src/validator/__tests__/utils/unrelatedViolation.ts`·`pluginRegistrations.ts`로 옮겼습니다. 시험 파일에 남은 비공개 보조 함수는 `attempt`·`verdict` 둘이고 본문은 8줄 이하입니다. 등록 키 접두어는 제품의 `PLUGIN_KEY_PREFIX`를 씁니다. T1에 새로 만든 바인딩 인스턴스에서 같은 루트의 `compile`이 메타 스키마 위반 메시지로 실패하는 단언을 더했습니다(앞선 가드·컴파일의 잔여 등록과 무관한 확인). `restoreInPlace`, 시험 보조 함수, `keyedObject`, 새 상수, ajv6 `_refs` 선언에 문서 주석을 채웠습니다.
 - 관문 재실행(`4fb908604`): G9 `TYPECHECK_ALL_OK`, G10 `LINT_ALL_OK`, G11 `UNIT_RENDER_OK`(시험 파일 844 통과·1 skip, 시험 5,349 통과·8 skip), G12 `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과). G7·G8은 이 기록의 커밋 뒤 다시 실행했습니다.
 - 보완 뒤 시험 파일 sha256: ajv8 `2356c320afece21971a854bbe200bdf28d6f24179b27759992c0eaa728c382a3`, ajv7 `3d56cbe21a890a7c6b3675a46fa1b0fa27b1bcae3e34d654b22151ae08f90f55`, ajv6 `0ba8672661d2073a6170a311deb4abfc125b47644b50f6fa1ea2b9e10cad5b6c`, `copyObjectValue.test.ts` `f011db7a47040ce6699859a81a7ed86052a91d9773916b0d6ba21ea4af11c9e5`.
+
+## 최종 CI 측정(G15)
+
+CI 브라우저 측정 실행 41673496071, 후보 `3b4badad5` 대 기준 `feat/schema-form-08-review-and-perf`, 9개 사례, 20회, 워밍업 3회입니다. 단위는 ms이며 type 사례는 쓰기 한 번당 ms입니다.
+
+| 사례 | 후보 중앙값 | 기준 중앙값 | 차이 | 판정 |
+| --- | --- | --- | --- | --- |
+| mount-flat-500-none | 116.850 | 116.700 | +0.150 | 오차 안 |
+| mount-flat-500-validate | 167.750 | 167.700 | +0.050 | 오차 안 |
+| mount-if-flat-500-none | 148.150 | 160.350 | −12.200 | 빠름(2차 시도) |
+| mount-if-flat-500-validate | 197.600 | 201.400 | −3.800 | 오차 안 |
+| mount-nested-d5-f4-validate | 331.700 | 334.550 | −2.850 | 오차 안 |
+| mount-array-1000-validate | 483.200 | 485.200 | −2.000 | 오차 안 |
+| type-flat-500-validate-nonburst | 1.250 | 1.315 | −0.065(−4.9%) | 오차 안 |
+| type-array-1000-validate-nonburst | 1.368 | 1.352 | +0.015 | 오차 안 |
+| first-key-flat-500-validate | 139.000 | 142.250 | −3.250 | 오차 안 |
+
+느려진 사례는 없고 방향은 F9와 같습니다. 크기는 이 실행기에서 시험판 실행 41650676406(검증 없는 `if` 마운트 −17.1 ms, 키 입력 −7.2%)보다 작습니다. G15는 met입니다.
