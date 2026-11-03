@@ -20,4 +20,17 @@ describe('VALIDATE-045 release', () => {
     expect((await other(4)) === null).toBe(true);
     expect(ajvValidatorPlugin.compileGuard(second, '')(4)).toBe(true);
   });
+
+  it('leaves the bound instance untouched when only a guard was compiled', () => {
+    const instance = new Ajv({ allErrors: true, strict: false });
+    const add = vi.spyOn(instance, 'addSchema');
+    const remove = vi.spyOn(instance, 'removeSchema');
+    ajvValidatorPlugin.bind(instance);
+    const root = { $id: 'https://example.test/ajv7/guard-only', type: 'string' } as const;
+    expect(ajvValidatorPlugin.compileGuard(root, '')('ok')).toBe(true);
+    ajvValidatorPlugin.release(root);
+    expect(add).not.toHaveBeenCalledWith(expect.anything(), expect.stringContaining('urn:canard:schema-form:ajv7:'));
+    expect(remove).not.toHaveBeenCalledWith(expect.stringContaining('urn:canard:schema-form:ajv7:'));
+    expect(instance.getSchema(root.$id)).toBeUndefined();
+  });
 });
