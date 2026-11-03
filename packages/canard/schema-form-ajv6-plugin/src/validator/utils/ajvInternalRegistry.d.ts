@@ -14,6 +14,7 @@ declare module 'ajv' {
       readonly keywords: Readonly<Record<string, boolean>>;
     };
     readonly _schemas: Record<string, { readonly schema: object } | undefined>;
+    /** Resolved references by URI: compiled schema objects or string aliases; restored in place after a failed validation registration. */
     readonly _refs: Record<string, unknown>;
   }
 }

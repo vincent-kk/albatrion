@@ -8,12 +8,19 @@ import { ajvValidatorPlugin as plugin2019 } from '../../2019/validatorPlugin';
 import { ajvValidatorPlugin as plugin2020 } from '../../2020/validatorPlugin';
 import { ajvValidatorPlugin } from '../../default/validatorPlugin';
 import * as sibling from '../utils/makeSibling';
+import { pluginRegistrations } from './utils/pluginRegistrations';
+import { unrelatedViolation } from './utils/unrelatedViolation';
 
-const PLUGIN_KEY = 'https://canard.invalid/ajv8/';
-const condition = { properties: { kind: { const: 'a' } }, required: ['kind'] };
+/** Valid `if` condition shared by the roots below: `kind` must equal `'a'`. */
+const condition: JSONSchema = { properties: { kind: { const: 'a' } }, required: ['kind'] };
+/** AJV's root meta-schema rejection, reported by message or by the offending keyword. */
 const META_VIOLATION = /multipleOf|schema is invalid/;
 
-/** Run a call and keep its result or its exception, so every later assertion still runs. */
+/**
+ * Run a call and keep its result or its exception, so every later assertion still runs.
+ * @param run - The call under test
+ * @returns `value` when the call returned, `error` when it threw
+ */
 const attempt = <T>(run: () => T): { value?: T; error?: unknown } => {
   try {
     return { value: run() };
@@ -22,32 +29,16 @@ const attempt = <T>(run: () => T): { value?: T; error?: unknown } => {
   }
 };
 
-/** The guard's verdict, or the compile exception when no guard was returned. */
+/**
+ * Evaluate a compiled guard, or surface the compile exception when no guard was returned.
+ * @param compiled - Result of `attempt` around `compileGuard`
+ * @param value - Data the guard evaluates
+ * @returns The guard's boolean verdict, or the exception that prevented compilation
+ */
 const verdict = (
   compiled: { value?: (value: unknown) => boolean; error?: unknown },
   value: unknown,
 ): unknown => (compiled.value ? compiled.value(value) : compiled.error);
-
-/** A root whose unrelated `count` field fails the meta-schema while its condition is valid. */
-const unrelatedViolation = (variant: string, serial: string): JSONSchema => ({
-  ...(variant === 'root-id' ? { $id: `https://example.test/ir10-root-${serial}` } : {}),
-  type: 'object',
-  properties: {
-    kind: { type: 'string' },
-    count: { type: 'number', multipleOf: 0 },
-  },
-  ...(variant === 'nested-id'
-    ? { definitions: { other: { $id: `https://example.test/ir10-nested-${serial}`, type: 'string' } } }
-    : {}),
-  if: condition,
-  then: { required: ['count'] },
-});
-
-/** Registrations made with this plugin's keys, with the instance that received each. */
-const pluginRegistrations = (spy: { mock: { calls: unknown[][]; contexts: unknown[] } }) =>
-  spy.mock.calls.flatMap(([, key], index) =>
-    typeof key === 'string' && key.startsWith(PLUGIN_KEY) ? [spy.mock.contexts[index]] : [],
-  );
 
 afterEach(() => {
   ajvValidatorPlugin.configure({ directGuardCompile: true });
@@ -62,12 +53,17 @@ describe.each([
   it('compiles a self-contained guard beside an unrelated meta-schema violation', () => {
     plugin.bind(new Constructor({ strict: false }));
     for (const variant of ['no-id', 'root-id', 'nested-id']) {
-      const root = unrelatedViolation(variant, `${dialect}-t1`);
+      const root = unrelatedViolation(variant, `${dialect}-t1`, condition);
       const guard = attempt(() => plugin.compileGuard(root, '/if'));
       expect.soft(guard.error, `T1 ${variant}: guard compiles`).toBeUndefined();
       expect.soft(verdict(guard, { kind: 'a' }), `T1 ${variant}: matching value`).toBe(true);
       expect.soft(verdict(guard, { kind: 'b' }), `T1 ${variant}: other value`).toBe(false);
       expect.soft(() => plugin.compile(root), `T1 ${variant}: compile throws`).toThrow();
+      plugin.release(root);
+      plugin.bind(new Constructor({ strict: false }));
+      expect
+        .soft(() => plugin.compile(root), `T1 ${variant}: compile on a fresh instance`)
+        .toThrow(META_VIOLATION);
       plugin.release(root);
     }
   });
@@ -77,11 +73,11 @@ describe('IR-10 guard meta-schema default', () => {
   it('compiles root-pointer guards beside an unrelated meta-schema violation', () => {
     ajvValidatorPlugin.bind(new Ajv({ strict: false }));
     ajvValidatorPlugin.configure({ directGuardCompile: false });
-    const pointerRoot = unrelatedViolation('no-id', 't2');
+    const pointerRoot = unrelatedViolation('no-id', 't2', condition);
     const pointerGuard = attempt(() => ajvValidatorPlugin.compileGuard(pointerRoot, '/if'));
     ajvValidatorPlugin.configure({ directGuardCompile: true });
     const referenceRoot: JSONSchema = {
-      ...unrelatedViolation('no-id', 't2'),
+      ...unrelatedViolation('no-id', 't2', condition),
       definitions: { isA: condition },
       if: { $ref: '#/definitions/isA' },
     };
@@ -145,7 +141,7 @@ describe('IR-10 guard meta-schema default', () => {
     ajvValidatorPlugin.release(root);
     const removedKeys = removeSchema.mock.calls.filter(
       ([key], index) =>
-        typeof key === 'string' && key.startsWith(PLUGIN_KEY) && removeSchema.mock.contexts[index] !== instance,
+        typeof key === 'string' && key.startsWith(sibling.PLUGIN_KEY_PREFIX) && removeSchema.mock.contexts[index] !== instance,
     );
     expect.soft(removedKeys.length, 'T6 release removes the guard registration').toBeGreaterThan(0);
   });

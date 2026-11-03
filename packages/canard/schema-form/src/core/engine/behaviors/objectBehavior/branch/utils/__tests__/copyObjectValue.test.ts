@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { copyObjectValue } from '../copyObjectValue';
 
+/**
+ * Build a plain object with numbered keys, for copies around the fast-property limit.
+ * @param count - Number of own keys, each `key<index>` holding its index
+ * @returns A new object with `count` keys in ascending index order
+ */
 const keyedObject = (count: number) => {
   const source: Record<string, number> = {};
   for (let index = 0; index < count; index++) source['key' + index] = index;

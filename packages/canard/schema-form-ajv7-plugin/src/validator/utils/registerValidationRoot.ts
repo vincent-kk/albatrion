@@ -1,6 +1,12 @@
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
-/** Put the snapshot's entries back in their order, keeping the object's identity. */
+/**
+ * Put the snapshot's entries back in their order, keeping the object's identity, so code that
+ * holds the object and code that enumerates its keys both see the state before the failed call.
+ * @param target - The AJV registry object to restore in place (`refs`, `schemas` or their AJV 6 names)
+ * @param snapshot - `Object.entries(target)` taken before the failed call
+ * @returns Nothing; deletes every own key of `target` and re-inserts the snapshot's entries in order
+ */
 const restoreInPlace = <T>(target: Record<string, T>, snapshot: [string, T][]): void => {
   for (const key of Object.keys(target)) delete target[key];
   for (const [key, value] of snapshot) target[key] = value;
