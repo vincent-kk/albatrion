@@ -84,3 +84,12 @@ ajv7·ajv6의 최종 해시 차이는 `bind(`를 `bind?.(`로 바꾼 것뿐입�
 ## 작업 공간 경위
 
 결과 기록을 쓰기 전에 원래 작업 공간 worktree가 이 작업 밖에서 제거되었습니다. 그것을 모른 채 실행한 결과 커밋 하나가 본체 checkout의 단계 브랜치에 들어갔고, 푸시 전에 `git reset --soft`로 되돌려 단계 브랜치는 `a41d6ab36` 그대로입니다. IR-10 브랜치는 영향을 받지 않았습니다. 조정자가 같은 브랜치로 새 worktree를 만들었고, 메시지 정리·이 기록·G7·G8은 새 worktree에서 실행했습니다. G1–G6, G9–G11, G13, G16과 G12는 제거 전 worktree에서 같은 tree로 실행한 결과입니다. 새 worktree의 설치가 끝난 뒤 G11·G12를 `a6caaf220`에서 다시 실행해 같은 결과를 얻었습니다. 설치 도중의 첫 재실행은 의존 패키지 빌드 산출물이 아직 없어 모듈을 불러오지 못한 설정 실패였고 판정에 넣지 않았습니다.
+
+## 병합 전 리뷰 보완
+
+codex 병합 전 리뷰(조건부 PASS)의 보완을 제품 동작 변경 없이 두 커밋으로 적용했습니다.
+
+- `e3e2c4858` 문서: 세 영문 README의 메타 스키마 문단과 세 한글 README의 대응 문구를 "AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돈다"로 한정했습니다. `VALIDATOR_COMPILE_FAILED`는 기본 검사 설정에 한정하고(`validateSchema: false`·`'log'`로 바인딩한 인스턴스는 그 옵션대로), 사용자 정의 키워드의 메타 검사·엄격 옵션·코드 생성 검사가 가드 컴파일에도 남는다는 문장을 더했습니다. "`compile` registers it on the bound instance"는 README 세 개와 ajv8·ajv7 `CLAUDE.md`에서 "`$id`가 있는 루트의 사본을 선택된 검증용 인스턴스(충돌 시 별도 형제)에 등록하고, `$id`가 없는 루트는 등록 없이 일회 사본을 컴파일한다"로 고쳤습니다.
+- `4fb908604` 시험: 세 `guard-meta-schema.test.ts`의 fixture 생성기와 등록 추출기를 각 플러그인의 `src/validator/__tests__/utils/unrelatedViolation.ts`·`pluginRegistrations.ts`로 옮겼습니다. 시험 파일에 남은 비공개 보조 함수는 `attempt`·`verdict` 둘이고 본문은 8줄 이하입니다. 등록 키 접두어는 제품의 `PLUGIN_KEY_PREFIX`를 씁니다. T1에 새로 만든 바인딩 인스턴스에서 같은 루트의 `compile`이 메타 스키마 위반 메시지로 실패하는 단언을 더했습니다(앞선 가드·컴파일의 잔여 등록과 무관한 확인). `restoreInPlace`, 시험 보조 함수, `keyedObject`, 새 상수, ajv6 `_refs` 선언에 문서 주석을 채웠습니다.
+- 관문 재실행(`4fb908604`): G9 `TYPECHECK_ALL_OK`, G10 `LINT_ALL_OK`, G11 `UNIT_RENDER_OK`(시험 파일 844 통과·1 skip, 시험 5,349 통과·8 skip), G12 `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과). G7·G8은 이 기록의 커밋 뒤 다시 실행했습니다.
+- 보완 뒤 시험 파일 sha256: ajv8 `2356c320afece21971a854bbe200bdf28d6f24179b27759992c0eaa728c382a3`, ajv7 `3d56cbe21a890a7c6b3675a46fa1b0fa27b1bcae3e34d654b22151ae08f90f55`, ajv6 `0ba8672661d2073a6170a311deb4abfc125b47644b50f6fa1ea2b9e10cad5b6c`, `copyObjectValue.test.ts` `f011db7a47040ce6699859a81a7ed86052a91d9773916b0d6ba21ea4af11c9e5`.
