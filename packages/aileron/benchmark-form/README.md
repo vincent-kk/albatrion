@@ -1,5 +1,34 @@
 # 전체 폼 벤치마크
 
+## 코어 브라우저 측정
+
+먼저 저장소 루트에서 `yarn install --immutable`과
+`node --import tsx packages/aileron/benchmark-form/browser-bench/core/prepareCheckout.mjs .`로
+워크스페이스 빌드를 준비하고 `yarn exec playwright install --with-deps chromium`을 실행합니다.
+
+```sh
+yarn workspace @aileron/benchmark-form bench:form --runs 20 --warmup 3 --out results/core
+yarn workspace @aileron/benchmark-form bench:form --baseline master --cases mount-flat-500-none,rebuild-flat-500 --runs 20 --out results/compare
+```
+
+`--cases`를 생략하면 열 가지 코어 사례를 측정합니다. 기준 ref는 독립적으로 설치·빌드한
+임시 Git worktree에서 준비하며, 이미 준비한 체크아웃은 `--baseline-dir <path>`로 지정합니다.
+후보는 현재 워크스페이스의 빌드 결과를 사용합니다. 매 표본은 새 페이지에서 실행하고 기준·후보·
+기준 번들의 동일 바이트 대조군을 교차 측정합니다. `summary.json`, `summary.md`, `samples.json`,
+`quiet.json`을 출력하며 typing 수치는 입력 한 번당 ms, 나머지는 작업 한 번당 ms입니다.
+
+`faster`와 `slower`는 사례별 절대·상대 차이 기준을 넘긴 결과이고 `within noise`는 그 이내입니다.
+기준과 대조군 차이가 허용 폭을 넘으면 한 번 재시도하고 계속 유효하지 않으면 `void`로 남깁니다.
+기준 없는 측정은 `measured`로 표기합니다. 로컬에서는 외부 CPU 사용이 높으면 시작을 거부하며,
+CI에서는 CPU 상태를 기록하고 계속합니다. 속도 판정은 권고이며 하네스 실패만 CI를 실패시킵니다.
+
+GitHub의 `browser-benchmark`와 `performance-benchmarks` 워크플로는 수동 실행(`workflow_dispatch`)으로만 동작합니다.
+`browser-benchmark`는 실행한 브랜치를 후보로, `baseline` 입력의 ref(비우면 기본 브랜치)를 기준으로 비교하며
+`cases`와 `runs`(기본 20)를 고를 수 있습니다. GitHub 공유 실행기에서는 같은 코드도 수 % 흔들리므로
+한 번의 `slower`는 다시 확인할 신호로 읽습니다.
+
+`results/baseline.json`은 Node `guard:check`의 입력이므로 유지하고 생성 결과는 Git에서 제외합니다.
+
 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1`
 은 공개 L과 작업 공간 dist E를 AB/BA로 교대하며 각 판 10예열·최소 100표본을 기록합니다.
 `--out=<path>.json`에 원시 표본, `<path>-summary.json`에 중앙값·p99·비율을 저장하고 표를 출력합니다.

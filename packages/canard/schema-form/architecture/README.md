@@ -99,3 +99,11 @@ IR-6 연속 입력 결정(2026-10-31): D1 쓰기는 선행·프레임 이월·�
 ## 471라운드 G 구현
 
 [계약 결정](reviews/round-471-closing.md)·[소유자 원문](reviews/round-471-owner-answers.md)·[계획](plan/guard-compile/request.md)·[검증](verification/guard-compile/results.md): 가드 읽기의 전체 컴파일을 첫 전체 수요까지 미룹니다. 전체 수용 측정은 ACCEPT이며 버전은 불변입니다.
+
+## 원자료 정리 (472라운드)
+
+측정 원자료, 로그, 측정 도구 스크립트는 472라운드에서 저장소 트리에서 지웠습니다. 결과 요약, 리뷰, 원장, 계획, ADR, 설계 문서는 그대로 남깁니다. 원장이 구체적으로 인용한 판정 기록 파일은 남겼습니다. 지운 파일은 커밋 c0d63d08d2c5af1ad8dd334e85417ffe3913a4db의 git 이력에서 볼 수 있습니다.
+
+## 472라운드 — 코어 벤치와 자료 정리 마감
+
+[요청](plan/tidy-bench/request.md)·[결정과 검증](reviews/round-472-closing.md)·[소유자 원문](reviews/round-472-owner-answers.md)은 코어 브라우저 벤치와 권고용 워크플로, 패키지 내부 정본, 원자료 삭제와 역사 보관을 기록합니다. 문서·인용 자료는 남기고 새 원자료는 만들지 않았으며 문서 증류와 최종 병합은 소유자 후속입니다.

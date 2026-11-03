@@ -11,7 +11,7 @@ import {
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
 
 // @ts-expect-error The existing generator corpus is JavaScript without declarations.
-import { corpus } from '../../../../architecture/spikes/guard-cost/redteam3/corpus.mjs';
+import { corpus } from './fixtures/generatorSchemaCorpus.mjs';
 
 /** Capability fields exposed by the blueprint contract, writable as the collector writes them. */
 type Capabilities = {
