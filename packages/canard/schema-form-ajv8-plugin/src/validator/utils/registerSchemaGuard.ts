@@ -18,7 +18,7 @@ export const registerSchemaGuard = (
   registration: SchemaRootRegistration,
 ): Ajv => {
   if (registration.guardAjv && registration.guardCopy) return registration.guardAjv;
-  const guardCopy = structuredClone(root);
+  const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
   const guardAjv = registration.guardAjv ?? makeSibling(baseAjv, false, false);
   const refsBefore = Object.keys(guardAjv.refs);
   guardAjv.addSchema(guardCopy, registration.key);

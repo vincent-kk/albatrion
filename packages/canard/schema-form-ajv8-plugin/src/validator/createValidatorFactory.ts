@@ -19,7 +19,7 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
     registerValidationRoot(registration);
     const transient = registration.validationCopy
       ? { $async: true, $ref: registration.key }
-      : { ...structuredClone(jsonSchema), $async: true };
+      : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
     const validate = registration.validationAjv.compile(transient);
     registration.validationAjv.removeSchema(transient);
     return async (data) => {

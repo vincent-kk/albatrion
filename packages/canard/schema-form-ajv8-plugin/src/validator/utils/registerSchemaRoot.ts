@@ -80,7 +80,8 @@ export const registerSchemaRoot = (
     : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
   if (!ids.length) registry.compilerCount++;
   const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
-  const validationCopy = ids.length ? structuredClone(root) : undefined;
+  const validationCopy: JSONSchema | undefined = ids.length
+    ? JSON.parse(JSON.stringify(root)) : undefined;
   const registration: SchemaRootRegistration = {
     baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids, probes: [],
     directGuards: [], guardChecks: new WeakMap(),

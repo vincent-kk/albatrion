@@ -230,4 +230,25 @@ describe('IR-10 guard meta-schema default', () => {
     expect.soft(attempt(() => sibling.makeSibling(instance, false)).error, 'T9 sibling construction').toBeUndefined();
     for (const root of [clash, aliased, metaClash]) ajvValidatorPlugin.release(root);
   });
+
+  it('copies keep an own __proto__ key', () => {
+    ajvValidatorPlugin.bind(new Ajv({ strict: false }));
+    for (const id of ['https://example.test/own-proto', undefined]) {
+      const properties = {};
+      Object.defineProperty(properties, '__proto__', { value: { type: 'string' }, enumerable: true, writable: true, configurable: true });
+      const root: JSONSchema = {
+        ...(id ? { $id: id } : {}),
+        type: 'object',
+        properties,
+        definitions: { isA: condition },
+        if: { $ref: '#/definitions/isA' },
+      };
+      const label = id ? '$id root' : 'root without $id';
+      const guard = attempt(() => ajvValidatorPlugin.compileGuard(root, '/if'));
+      expect.soft(guard.error, `${label}: root-pointer guard compiles`).toBeUndefined();
+      expect.soft(verdict(guard, {}), `${label}: guard verdict for {}`).toBe(false);
+      expect.soft(attempt(() => ajvValidatorPlugin.compile(root)).error, `${label}: compile`).toBeUndefined();
+      ajvValidatorPlugin.release(root);
+    }
+  });
 });
