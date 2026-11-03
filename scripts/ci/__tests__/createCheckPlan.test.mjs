@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import { createCheckPlan } from "../helpers/plan/createCheckPlan.mjs";
 import { createBuildSteps } from "../helpers/plan/createBuildSteps.mjs";
+import { createShard } from "../helpers/plan/createShard.mjs";
 import { runPlanSteps } from "../helpers/runner/runPlanSteps.mjs";
 import { scanImportDependencies } from "../helpers/selection/scanImportDependencies.mjs";
 import { readTrackedFiles } from "../helpers/workspaces/readTrackedFiles.mjs";
@@ -37,7 +38,12 @@ test("build closure includes manifest prerequisites and Yarn topological-dev ord
   const build = plan.steps.find(
     ({ label }) => label === "Build workspace closure",
   );
-  assert.ok(build.args.includes("@slats/agents-assets-sync"));
+  assert.ok(
+    plan.steps.some(
+      ({ kind, args }) =>
+        kind === "build" && args.includes("@slats/agents-assets-sync"),
+    ),
+  );
   assert.ok(build.args.includes("--topological-dev"));
   assert.ok(
     !createBuildSteps(["@winglet/style-utils"], workspaces).some(({ label }) =>
@@ -67,10 +73,17 @@ test("schema-form closure bootstraps runtime and declarations before AJV and ful
     const build = shard.steps.find(
       ({ label }) => label === "Build workspace closure",
     );
-    for (const version of [6, 7, 8])
-      assert.ok(
-        build.args.includes(`@canard/schema-form-ajv${version}-plugin`),
-      );
+    assert.ok(build.args.includes("@canard/schema-form"));
+    if (shard.name === "main")
+      assert.ok(build.args.includes("@canard/schema-form-antd5-plugin"));
+    for (const step of shard.steps.filter(({ label }) =>
+      ["Build schema-form prerequisites", "Build AJV declarations"].includes(
+        label,
+      ),
+    ))
+      for (const [index, arg] of step.args.entries())
+        if (arg === "--include")
+          assert.ok(!build.args.includes(step.args[index + 1]));
   }
 });
 
@@ -103,10 +116,45 @@ test("production-testbed uses its manifest name and only builds when affected", 
   );
 });
 
-test("shards isolate schema-form suites and browser installation", () => {
+test("default pr tier runs only schema-form unit tests without a browser", () => {
   const plan = createCheckPlan(workspaces, [
     "packages/canard/schema-form/src/index.ts",
   ]);
+  assert.equal(plan.tier, "pr");
+  assert.equal(plan.browser, false);
+  assert.deepEqual(
+    plan.shards.map(({ name }) => name),
+    ["main", "schema-form"],
+  );
+  const schema = plan.shards.find(({ name }) => name === "schema-form");
+  assert.equal(schema.browser, false);
+  assert.equal(plan.shards[0].browser, false);
+  assert.deepEqual(
+    schema.steps.filter(({ kind }) => kind === "test"),
+    [
+      {
+        kind: "test",
+        label: "Test schema-form unit",
+        args: [
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "unit",
+        ],
+      },
+    ],
+  );
+});
+
+test("pre-release tier isolates complete schema-form suites and browser installation", () => {
+  const plan = createCheckPlan(workspaces, ["README.md"], null, "pre-release");
+  assert.equal(plan.tier, "pre-release");
+  assert.equal(plan.reason, "pre-release tier checks every workspace");
+  assert.deepEqual(plan.changed, workspaces.map(({ name }) => name).sort());
+  assert.deepEqual(plan.affected, plan.changed);
+  assert.equal(plan.browser, true);
   assert.deepEqual(
     plan.shards.map(({ name }) => name),
     ["main", "schema-form"],
@@ -117,22 +165,33 @@ test("shards isolate schema-form suites and browser installation", () => {
   assert.deepEqual(
     schema.steps
       .filter(({ kind }) => kind === "test")
-      .map(({ args }) => args.slice(2)),
+      .map(({ label, args }) => ({ label, args })),
     [
-      [
-        "test",
-        "--run",
-        "--project",
-        "unit",
-        "--project",
-        "render",
-        "--project",
-        "react18",
-        "--project",
-        "storybook",
-      ],
-      ["test:verify", "--run"],
-      ["test:production"],
+      {
+        label: "Test schema-form unit/render/React18/Storybook",
+        args: [
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "unit",
+          "--project",
+          "render",
+          "--project",
+          "react18",
+          "--project",
+          "storybook",
+        ],
+      },
+      {
+        label: "Verify schema-form",
+        args: ["workspace", "@canard/schema-form", "test:verify", "--run"],
+      },
+      {
+        label: "Test schema-form production bundles",
+        args: ["workspace", "@canard/schema-form", "test:production"],
+      },
     ],
   );
   assert.ok(
@@ -140,6 +199,56 @@ test("shards isolate schema-form suites and browser installation", () => {
       ({ kind, args }) => kind === "test" && args[1] === "@canard/schema-form",
     ),
   );
+});
+
+test("pre-release preserves an explicit reason and other workspace checks", () => {
+  const pr = createCheckPlan(workspaces, ["package.json"]);
+  const preRelease = createCheckPlan(
+    workspaces,
+    [],
+    "explicit pre-release",
+    "pre-release",
+  );
+  assert.equal(preRelease.reason, "explicit pre-release");
+  assert.deepEqual(
+    createCheckPlan(workspaces, ["README.md"], "", "pre-release").changed,
+    preRelease.changed,
+  );
+  assert.deepEqual(preRelease.shards[0], pr.shards[0]);
+  assert.deepEqual(
+    preRelease.shards[1].steps.filter(({ kind }) => kind !== "test"),
+    pr.shards[1].steps.filter(({ kind }) => kind !== "test"),
+  );
+});
+
+test("plan and shard reject unsupported tiers", () => {
+  for (const tier of ["invalid", "release"]) {
+    assert.throws(() => createCheckPlan(workspaces, [], null, tier), /tier/i);
+    assert.throws(() => createShard("main", [], [], workspaces, tier), /tier/i);
+  }
+});
+
+test("build steps keep leaf builds and omit an empty closure", () => {
+  const graph = [
+    { name: "leaf", dependencies: [], scripts: { build: "build" } },
+  ];
+  assert.deepEqual(createBuildSteps(["leaf"], graph), [
+    {
+      kind: "build",
+      label: "Build workspace closure",
+      args: [
+        "workspaces",
+        "foreach",
+        "--all",
+        "--topological-dev",
+        "--include",
+        "leaf",
+        "run",
+        "build",
+      ],
+    },
+  ]);
+  assert.deepEqual(createBuildSteps([], graph), []);
 });
 
 test("a leaf has one main shard and markdown-only changes have no steps", () => {

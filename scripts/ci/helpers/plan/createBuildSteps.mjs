@@ -29,6 +29,7 @@ export function createBuildSteps(affected, workspaces) {
     )
     .sort();
   const steps = [];
+  let remainingBuildNames = buildNames;
   if (buildNames.includes(schemaForm)) {
     const prerequisites = collectClosure(
       [schemaForm, ...ajvPlugins],
@@ -63,8 +64,13 @@ export function createBuildSteps(affected, workspaces) {
         "Build AJV declarations",
       ),
     );
+    remainingBuildNames = buildNames.filter(
+      (name) => !prerequisites.includes(name) && !ajvPlugins.includes(name),
+    );
   }
-  if (buildNames.length)
-    steps.push(createTopologicalBuild(buildNames, "Build workspace closure"));
+  if (remainingBuildNames.length)
+    steps.push(
+      createTopologicalBuild(remainingBuildNames, "Build workspace closure"),
+    );
   return steps;
 }

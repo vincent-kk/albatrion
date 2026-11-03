@@ -6,9 +6,12 @@ import { createBuildSteps } from "./createBuildSteps.mjs";
  * @param {string[]} affected Workspaces checked in this shard.
  * @param {string[]} changed Workspaces whose sources changed.
  * @param {object[]} workspaces Manifest scripts and build edges.
+ * @param {string} tier Check policy, either pr or pre-release; other values throw.
  * @returns {object} Named shard with browser requirement and serial steps.
  */
-export function createShard(name, affected, changed, workspaces) {
+export function createShard(name, affected, changed, workspaces, tier = "pr") {
+  if (tier !== "pr" && tier !== "pre-release")
+    throw new Error(`Invalid check tier: ${tier}`);
   const selected = workspaces.filter((workspace) =>
     affected.includes(workspace.name),
   );
@@ -36,7 +39,20 @@ export function createShard(name, affected, changed, workspaces) {
   for (const workspace of selected.filter(
     (workspace) => workspace.scripts.test,
   )) {
-    if (workspace.name === "@canard/schema-form") {
+    if (workspace.name === "@canard/schema-form" && tier === "pr")
+      steps.push({
+        kind: "test",
+        label: "Test schema-form unit",
+        args: [
+          "workspace",
+          workspace.name,
+          "test",
+          "--run",
+          "--project",
+          "unit",
+        ],
+      });
+    else if (workspace.name === "@canard/schema-form") {
       steps.push({
         kind: "test",
         label: "Test schema-form unit/render/React18/Storybook",
@@ -75,7 +91,7 @@ export function createShard(name, affected, changed, workspaces) {
   return {
     name,
     affected,
-    browser: affected.includes("@canard/schema-form"),
+    browser: tier === "pre-release" && affected.includes("@canard/schema-form"),
     steps,
   };
 }

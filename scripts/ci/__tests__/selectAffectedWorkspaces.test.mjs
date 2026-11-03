@@ -169,3 +169,60 @@ test("missing, zero, and unreachable bases conservatively select all", () => {
     reason: null,
   });
 });
+
+test("pre-release CLI selects every workspace without a base and ignores supplied ranges", () => {
+  for (const range of [
+    [],
+    ["--base", "HEAD", "--head", "HEAD"],
+    ["--base", "unavailable", "--head", "unavailable"],
+  ]) {
+    const result = spawnSync(
+      process.execPath,
+      [
+        "scripts/ci/selectAffectedWorkspaces.mjs",
+        "--tier",
+        "pre-release",
+        ...range,
+      ],
+      {
+        cwd: root,
+        encoding: "utf8",
+      },
+    );
+    assert.equal(result.status, 0, result.stderr);
+    const plan = JSON.parse(result.stdout);
+    assert.equal(plan.tier, "pre-release");
+    assert.equal(plan.reason, "pre-release tier checks every workspace");
+    assert.deepEqual(plan.changed, workspaces.map(({ name }) => name).sort());
+    assert.equal(plan.browser, true);
+  }
+});
+
+test("CLI defaults to pr and rejects unsupported tiers", () => {
+  const pr = spawnSync(
+    process.execPath,
+    [
+      "scripts/ci/selectAffectedWorkspaces.mjs",
+      "--base",
+      "HEAD",
+      "--head",
+      "HEAD",
+    ],
+    {
+      cwd: root,
+      encoding: "utf8",
+    },
+  );
+  assert.equal(pr.status, 0, pr.stderr);
+  assert.equal(JSON.parse(pr.stdout).tier, "pr");
+  const invalid = spawnSync(
+    process.execPath,
+    ["scripts/ci/selectAffectedWorkspaces.mjs", "--tier", "invalid"],
+    {
+      cwd: root,
+      encoding: "utf8",
+    },
+  );
+  assert.notEqual(invalid.status, 0);
+  assert.match(invalid.stderr, /tier/i);
+});

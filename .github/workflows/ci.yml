@@ -4,12 +4,18 @@ on:
   pull_request:
   push:
     branches: [master]
+  workflow_call:
+    inputs:
+      tier:
+        type: string
+        required: false
+        default: pr
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ inputs.tier || 'pr' }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -36,9 +42,15 @@ jobs:
       - name: Select affected workspaces
         id: select
         env:
+          CHECK_TIER: ${{ inputs.tier || 'pr' }}
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: node scripts/ci/selectAffectedWorkspaces.mjs --base "$BASE_SHA" --head "$HEAD_SHA"
+        run: |
+          if [ "$CHECK_TIER" = "pre-release" ]; then
+            node scripts/ci/selectAffectedWorkspaces.mjs --tier "$CHECK_TIER"
+          else
+            node scripts/ci/selectAffectedWorkspaces.mjs --tier "$CHECK_TIER" --base "$BASE_SHA" --head "$HEAD_SHA"
+          fi
 
   check:
     name: check (${{ matrix.shard.name }})
