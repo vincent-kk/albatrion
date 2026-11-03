@@ -598,7 +598,8 @@
 
 - 결정:
   > **중복 막기 — 경고.** 키는 서식 전의 구조 키다. code, 위치(`path`, 없으면 `schemaPath`, 둘 다 없으면 폼 수준), 코드마다 정한 판별 칸(예: `ALL_OF_KEYWORD_IGNORED_FOR_FORM`의 `keyword`, `PRESENTATION_KEY_SUSPECT`의 키 이름)으로 이룬다. 메시지는 이 키를 통과한 첫 번에만 서식한다. 키는 폼 인스턴스의 로드(마운트, 스키마 교체, 루트 전체 교체, reset)마다 비우며, `diagnostics`와 같은 단위다. 집합은 핸들러가 있을 때만, 처음 경고가 날 때 만든다. 청사진 경고는 청사진의 목록이 이미 발생마다 하나씩이라 따로 거르지 않는다. 검증기 없이 쓰는 폼은 트리마다 `VALIDATOR_MISSING` 하나를 받으며, 검증 모드를 `None`으로 적으면 사라진다(§6).
-- 보충: 없음
+- 보충:
+  > 소유자(473라운드 원문 106): "다른 충동조건도 무조건 error나 warning으로 기존을 무분별하게 따르지 말고, 이게 에러를 내서 알려줄 문젠지, 조용히 넘어가되 경고하면 되는 문제인지를 구분해서 적절한 에러를 설계하도록 해줘" (`reviews/round-473-owner-answers.md:8`, 2026-11-03). 현행 적용: 경고의 로드별 구조 키는 `(code, path, schemaPath)`다. 데이터 path가 없어도 서로 다른 작성 schemaPath의 같은 코드 경고를 각각 한 번 전달하고, 완전히 같은 키의 반복은 억제한다. schemaPath가 없는 런타임 경고의 path 기준과 origin 독립성 및 ERROR-204의 폼 수준 로드 초기화·이전 버퍼 scope는 유지한다.
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:152`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
