@@ -12,6 +12,8 @@ This is a **yarn-based monorepo** with the following structure:
 
 ## 📋 Important Commands
 
+The `ci` workflow checks pull requests to every branch and pushes to `master`. Its install-free selector compares the merge base, follows workspace manifest dependencies and tracked source imports to select affected consumers, lints changed workspaces, builds their dependency closures, and runs available typechecks and per-package tests. Shared inputs select all workspaces; ordinary Markdown and unrelated tooling select none. Schema-form's complete unit, render, React 18, Storybook, verification, and production suites run in a separate browser-enabled shard. To inspect a range locally, run `node scripts/ci/selectAffectedWorkspaces.mjs --base <sha> --head <sha> --output <plan.json>`, followed by `node scripts/ci/runCheckPlan.mjs --plan <plan.json> --dry-run`.
+
 Use **yarn** commands (not npm) for this project:
 
 - `yarn lint` - Check code style across all packages
