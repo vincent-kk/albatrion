@@ -116,3 +116,4 @@ CI 브라우저 측정 실행 41673496071, 후보 `3b4badad5` 대 기준 `feat/s
 ## 소유자 추가 지시(quote 83)
 
 - `bbcf67570`(소유자 quote 83): 세 플러그인 제품 코드의 `Boolean(…)` 7곳(ajv8 가드 판정 2곳과 `allErrors` 2곳, ajv7 `allErrors` 2곳, ajv6 1곳)을 `!!`로 바꿨습니다. 엔진은 범위 밖입니다. 재실행(`bbcf67570`): G9 `TYPECHECK_ALL_OK`, G10 `LINT_ALL_OK`, G12 `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과).
+- `88e520bf1`(소유자 quote 84): ajv8 가드 판정 2곳을 `!!validate(value)`에서 `isTruthy(validate(value))`(`@winglet/common-utils/filter`, 이미 선언된 의존성)로 바꿨습니다. `allErrors` 5곳은 `boolean` 인자로 넘어가 `!` 한 개로 바꿀 수 없으므로 `!!`를 유지했습니다. 재실행(`88e520bf1`): G9 `TYPECHECK_ALL_OK`, G10 `LINT_ALL_OK`, G12 `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과).
