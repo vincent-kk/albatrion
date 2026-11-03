@@ -195,6 +195,11 @@ import { setDataProperty } from './setDataProperty';
  * - vs JSON.parse(JSON.stringify): ~3x slower but handles more types
  * - vs Lodash cloneDeep: ~20% faster with better type support
  *
+ * **When to use:**
+ * - **Pure JSON values** (schema copies, serialisable data): use `JSON.parse(JSON.stringify(value))`, which is the fastest and keeps an own `__proto__` key
+ * - **Date, Map, Set, typed arrays or circular references, no functions**: use the platform `structuredClone`
+ * - **Runtime objects with functions, class instances (prototype chain) or symbol keys**: use `clone`
+ *
  * **Common Pitfalls:**
  * - **Functions**: Cloned by reference (not implementation)
  * - **DOM Elements**: Not cloneable, returned as-is
