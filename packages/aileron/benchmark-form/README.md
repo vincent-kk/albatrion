@@ -22,6 +22,11 @@ yarn workspace @aileron/benchmark-form bench:form --baseline master --cases moun
 기준 없는 측정은 `measured`로 표기합니다. 로컬에서는 외부 CPU 사용이 높으면 시작을 거부하며,
 CI에서는 CPU 상태를 기록하고 계속합니다. 속도 판정은 권고이며 하네스 실패만 CI를 실패시킵니다.
 
+GitHub의 `browser-benchmark`와 `performance-benchmarks` 워크플로는 수동 실행(`workflow_dispatch`)으로만 동작합니다.
+`browser-benchmark`는 실행한 브랜치를 후보로, `baseline` 입력의 ref(비우면 기본 브랜치)를 기준으로 비교하며
+`cases`와 `runs`(기본 20)를 고를 수 있습니다. GitHub 공유 실행기에서는 같은 코드도 수 % 흔들리므로
+한 번의 `slower`는 다시 확인할 신호로 읽습니다.
+
 `results/baseline.json`은 Node `guard:check`의 입력이므로 유지하고 생성 결과는 Git에서 제외합니다.
 
 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1`
