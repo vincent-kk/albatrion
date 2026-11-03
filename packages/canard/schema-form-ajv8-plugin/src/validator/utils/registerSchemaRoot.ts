@@ -20,7 +20,10 @@ export interface SchemaRootRegistration {
   guardAjv?: Ajv;
   readonly validationCopy?: JSONSchema;
   guardCopy?: JSONSchema;
-  readonly validationRefs: readonly string[];
+  /** `refs` entries the validation registration added; empty until `registerValidationRoot` succeeds. */
+  validationRefs: readonly string[];
+  /** Whether `validationCopy` is registered on `validationAjv`; set only by a successful `registerValidationRoot`. */
+  validationRegistered: boolean;
   guardRefs?: readonly string[];
   readonly key: string;
   readonly ids: readonly string[];
@@ -40,7 +43,7 @@ export interface SchemaRootRegistry {
 /** Monotonic keys stay unique across every registry that shares one instance. */
 let nextSchemaRootKey = 0;
 
-/** Registers a copy once for each bound instance and authored root identity. */
+/** Records a copy once for each bound instance and authored root identity; `registerValidationRoot` registers it with AJV. */
 export const registerSchemaRoot = (
   registry: SchemaRootRegistry,
   baseAjv: Ajv,
@@ -78,12 +81,8 @@ export const registerSchemaRoot = (
   if (!ids.length) registry.compilerCount++;
   const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
   const validationCopy = ids.length ? structuredClone(root) : undefined;
-  const validationRefsBefore = validationCopy ? Object.keys(validationAjv.refs) : [];
-  if (validationCopy) validationAjv.addSchema(validationCopy, key);
-  const validationRefs = validationCopy
-    ? Object.keys(validationAjv.refs).filter((ref) => !validationRefsBefore.includes(ref)) : [];
   const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRefs, key, ids, probes: [],
+    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids, probes: [],
     directGuards: [], guardChecks: new WeakMap(),
   };
   registrations.push(registration);

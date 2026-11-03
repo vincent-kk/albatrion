@@ -3,10 +3,20 @@ import type Ajv from 'ajv';
 /** Registration keys belong to this plugin and must not enter a sibling. */
 export const PLUGIN_KEY_PREFIX = 'urn:canard:schema-form:ajv6:';
 
-/** Clone a bound Ajv 6 profile, including consumer schemas and keywords. */
-export const cloneInstance = (instance: Ajv.Ajv, allErrors: boolean): Ajv.Ajv => {
+/**
+ * Clone a bound Ajv 6 profile, including consumer schemas and keywords.
+ * @param instance - Bound instance whose options, formats, keywords and consumer schemas are copied
+ * @param allErrors - Error collection of the clone
+ * @param validateSchema - Schema validation of the clone; defaults to the bound instance's setting
+ * @returns A new instance of the bound instance's class
+ */
+export const cloneInstance = (
+  instance: Ajv.Ajv,
+  allErrors: boolean,
+  validateSchema: Ajv.Options['validateSchema'] = instance._opts.validateSchema,
+): Ajv.Ajv => {
   const Constructor = instance.constructor;
-  const clone = new Constructor({ ...instance._opts, allErrors });
+  const clone = new Constructor({ ...instance._opts, allErrors, validateSchema });
   for (const [name, format] of Object.entries(instance._formats))
     clone.addFormat(name, format);
   for (const name of Object.keys(instance.RULES.custom)) {

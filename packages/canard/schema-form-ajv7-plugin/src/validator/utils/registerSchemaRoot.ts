@@ -22,6 +22,8 @@ export interface SchemaRootRegistration {
   readonly rootId: string;
   readonly ids: readonly string[];
   readonly validationCopy?: object;
+  /** Whether `validationCopy` is registered on `validation`; set only by a successful `registerValidationRoot`. */
+  validationRegistered: boolean;
   guardCopy?: object;
 }
 
@@ -35,7 +37,7 @@ export interface SchemaCompilerPool {
 /** Monotonic keys avoid collisions with registrations retained across binds. */
 let nextSchemaRootKey = 0;
 
-/** Register one copy, leaving its guard instance and ID-free validation cache empty. */
+/** Record one copy, leaving its guard instance, its validation registration and the ID-free validation cache empty. */
 export const registerSchemaRoot = (
   root: object,
   instance: Ajv,
@@ -70,10 +72,9 @@ export const registerSchemaRoot = (
   const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
   const validationCopy: object | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
-  if (validationCopy) validation.addSchema(validationCopy, key);
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
-    base: instance, validation, key, rootId, ids, validationCopy,
+    base: instance, validation, key, rootId, ids, validationCopy, validationRegistered: false,
     directGuards: [], guardChecks: new WeakMap(),
   };
   roots.set(root, registration);

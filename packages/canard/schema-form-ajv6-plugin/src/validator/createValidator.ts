@@ -5,11 +5,11 @@ import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
 import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
-import { registerSchemaGuard } from './utils/registerSchemaGuard';
 import {
   type SchemaRootRegistration,
   registerSchemaRoot,
 } from './utils/registerSchemaRoot';
+import { registerValidationRoot } from './utils/registerValidationRoot';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
@@ -48,6 +48,7 @@ export const createValidator = (
         active,
         finalizer,
       );
+      registerValidationRoot(registered);
       const validate = createValidatorFactory(
         registered.validation,
         registered.validationCopy ? registered.key : undefined,
@@ -62,8 +63,8 @@ export const createValidator = (
         active,
         finalizer,
       );
-      registerSchemaGuard(root, ajv, registered);
       return createGuardCompiler(
+        ajv,
         registered,
         pointer,
         root,

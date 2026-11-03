@@ -5,7 +5,7 @@ import { createValidatorFactory } from './createValidatorFactory';
 import { createGuardCompiler } from './createGuardCompiler';
 import { assertBindableInstance } from './utils/assertBindableInstance';
 import { registerSchemaRoot, type SchemaCompilerPool, type SchemaRootRegistration } from './utils/registerSchemaRoot';
-import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import { registerValidationRoot } from './utils/registerValidationRoot';
 import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
@@ -93,6 +93,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   compile: (jsonSchema) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
     const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
+    registerValidationRoot(registered);
     const validate = createValidatorFactory(
       registered.validation, registered.validationCopy ? registered.key : undefined,
     )(jsonSchema);
@@ -101,8 +102,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   compileGuard: (root, pointer) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
     const registered = registerSchemaRoot(root, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
-    registerSchemaGuard(root, ajvInstance, registered);
-    return createGuardCompiler(registered, pointer, root, directGuardCompile, finalizer);
+    return createGuardCompiler(ajvInstance, registered, pointer, root, directGuardCompile, finalizer);
   },
   release: (root) => releaseSchemaRoot(root, roots, active, finalizer),
   dialect: 'http://json-schema.org/draft-07/schema#',
