@@ -9,6 +9,7 @@ import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBu
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
+import { setDataProperty } from './setDataProperty';
 
 /**
  * Creates a deep clone of any value with comprehensive type support and circular reference handling.
@@ -371,8 +372,13 @@ const replicateProperties = (
   if (length > 0)
     for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
       const descriptor = getOwnPropertyDescriptor(target, k);
-      if (descriptor == null || descriptor.writable)
-        target[k] = replicate(source[k], limit, depth, cache);
+      if (descriptor == null || descriptor.writable) {
+        const cloned = replicate(source[k], limit, depth, cache);
+        // Plain assignment of an own '__proto__' key would swap the clone's
+        // prototype instead of copying the key, so only that key is defined.
+        if (k === '__proto__') setDataProperty(target, k, cloned);
+        else target[k] = cloned;
+      }
     }
   const symbols = getSymbols(source);
   const symbolsLength = symbols.length;
