@@ -5,6 +5,7 @@ import { findWorkspaceOwner } from "./findWorkspaceOwner.mjs";
 
 /**
  * Adds tracked source imports to manifest edges, including test-only cycles.
+ * Comments and strings may add harmless extra selection edges.
  * @param {string} root Checkout directory for source reads.
  * @param {string[]} files Tracked repository-relative paths.
  * @param {object[]} workspaces Named manifests with dependency lists.

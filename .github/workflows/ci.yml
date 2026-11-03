@@ -58,13 +58,10 @@ jobs:
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.19.5
       - name: Enable Corepack
+        # Yarn must be available before setup-node resolves its package-manager cache.
         run: corepack enable
-      - name: Restore Yarn cache
+      - name: Setup Node and restore Yarn cache
         uses: actions/setup-node@v4
         with:
           node-version: 20.19.5

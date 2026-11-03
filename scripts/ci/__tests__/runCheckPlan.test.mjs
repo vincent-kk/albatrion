@@ -31,10 +31,7 @@ test("dry runs print ordered command groups without executing", () => {
 });
 
 test("runner stops on first failure and returns its code with skipped results", () => {
-  const scratchRoot =
-    process.env.GITHUB_ACTIONS === "true"
-      ? join(tmpdir(), "ci-affected")
-      : "/private/tmp/claude-501/perf-runs/ci-affected";
+  const scratchRoot = join(tmpdir(), "ci-affected");
   mkdirSync(scratchRoot, { recursive: true });
   const scratch = mkdtempSync(join(scratchRoot, "runner-"));
   try {
