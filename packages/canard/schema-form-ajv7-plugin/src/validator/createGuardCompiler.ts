@@ -4,6 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { cloneInstance } from './utils/cloneInstance';
+import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
 import { registerSchemaGuard } from './utils/registerSchemaGuard';
 import type { SchemaRootRegistration } from './utils/registerSchemaRoot';
@@ -21,6 +22,8 @@ import { resolveGuardSchema } from './utils/resolveGuardSchema';
  * @param finalizer - Cleanup owner for roots whose resources cannot retain the root.
  * @returns An input-preserving predicate; asynchronous results are refused.
  * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
+ * @throws Error when the guard or a declaration selected as its dynamic anchor is asynchronous, or when the guard
+ * references a dynamic anchor inline that no chain resource and no ancestor of the reference inside the guard declares
  */
 export const createGuardCompiler = (
   instance: Ajv,
@@ -50,27 +53,16 @@ export const createGuardCompiler = (
   const guard = direct
     ? (registration.guard ??= cloneInstance(instance, false, false))
     : registerSchemaGuard(root, instance, registration);
+  // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
+  // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
+  const dynamicAnchors = direct || !guard.opts.dynamicRef || !registration.hasDynamicKeywords
+    ? {}
+    : collectGuardDynamicAnchors(root, registration.rootId, fragment, guard);
   const validate = guard.compile(
     direct ? schema : { $ref: `${registration.rootId}${fragment}` },
   );
   if (direct && '$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
-  const dynamicAnchors: Dictionary<typeof validate> = {};
-  if (!direct) {
-    const rootValidate = guard.getSchema(registration.rootId);
-    const guardCopy = registration.guardCopy;
-    if (!rootValidate || !guardCopy)
-      throw new Error(
-        `Registered Ajv guard root was not found: ${registration.rootId}`,
-      );
-    if (
-      '$dynamicAnchor' in guardCopy &&
-      typeof guardCopy.$dynamicAnchor === 'string'
-    )
-      dynamicAnchors[guardCopy.$dynamicAnchor] = rootValidate;
-    if ('$recursiveAnchor' in guardCopy && guardCopy.$recursiveAnchor === true)
-      dynamicAnchors[''] = rootValidate;
-  }
   return (value) => {
     const result = validate(value, {
       dataPath: '',

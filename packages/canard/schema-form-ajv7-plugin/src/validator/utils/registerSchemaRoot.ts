@@ -8,6 +8,9 @@ import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
+/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+
 /** Ajv instances and registration key retained for one root identity. */
 export interface SchemaRootRegistration {
   /** Direct schemas are owned and released with this root's guard instance. */
@@ -21,6 +24,8 @@ export interface SchemaRootRegistration {
   readonly key: string;
   readonly rootId: string;
   readonly ids: readonly string[];
+  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly hasDynamicKeywords: boolean;
   readonly validationCopy?: object;
   /** Whether `validationCopy` is registered on `validation`; set only by a successful `registerValidationRoot`. */
   validationRegistered: boolean;
@@ -49,8 +54,10 @@ export const registerSchemaRoot = (
   const previous = roots.get(root);
   if (previous) return previous;
   const ids: string[] = [];
+  let hasDynamicKeywords = false;
   JSON.stringify(root, (name, value: unknown) => {
     if (name === '$id' && typeof value === 'string') ids.push(value);
+    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
     return value;
   });
   if (ids.length)
@@ -75,7 +82,7 @@ export const registerSchemaRoot = (
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
     base: instance, validation, key, rootId, ids, validationCopy, validationRegistered: false,
-    directGuards: [], guardChecks: new WeakMap(),
+    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
   };
   roots.set(root, registration);
   finalizer.register(root, registration, registration);
