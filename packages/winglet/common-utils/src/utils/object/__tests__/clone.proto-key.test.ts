@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
+
 import { clone } from '../clone';
 
 /** A JSON Schema fragment whose `properties` map may carry an own `__proto__` key. */
@@ -52,6 +54,22 @@ describe('clone — own __proto__ key', () => {
     ).toBe(true);
     expect(Object.getPrototypeOf(inner.properties)).toBe(Object.prototype);
     expect(copy).toEqual(source);
+  });
+
+  it('matches the source own keys when __proto__ sits beside a sibling key', () => {
+    const source = parseSchema(
+      '{"type":"object","properties":{"__proto__":{"type":"string"},"a":{"type":"number"}}}',
+    );
+
+    const copy = clone(source);
+
+    expect(hasOwnProperty(source.properties, '__proto__')).toBe(true);
+    expect(hasOwnProperty(copy.properties, '__proto__')).toBe(true);
+    expect(Object.keys(copy.properties)).toEqual(
+      Object.keys(source.properties),
+    );
+    expect(Object.keys(copy.properties)).toEqual(['__proto__', 'a']);
+    expect(Object.getPrototypeOf(copy.properties)).toBe(Object.prototype);
   });
 
   it('shares no reference with the source for the __proto__ value', () => {
