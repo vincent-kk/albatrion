@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JSONSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -14,7 +14,7 @@ import { renderForm } from '../renderForm';
  * shows only in validation.
  */
 describe('nullable.object-validation.render — validity of a preserved null is the schema’s decision', () => {
-  const branches = [
+  const branches: readonly JSONSchema[] = [
     {
       controls: { active: "./kind === 'a'" },
       properties: { aValue: { type: 'string' } },
@@ -24,17 +24,16 @@ describe('nullable.object-validation.render — validity of a preserved null is 
       properties: { bValue: { type: 'string' } },
     },
   ];
-  const target = (composition: 'oneOf' | 'anyOf') =>
-    ({
-      type: 'object',
-      properties: {
-        target: {
-          type: ['object', 'null'],
-          properties: { kind: { type: 'string', enum: ['a', 'b'] } },
-          [composition]: branches,
-        },
+  const target = (composition: 'oneOf' | 'anyOf'): JSONSchema => ({
+    type: 'object',
+    properties: {
+      target: {
+        type: ['object', 'null'],
+        properties: { kind: { type: 'string', enum: ['a', 'b'] } },
+        [composition]: branches,
       },
-    }) as JSONSchema;
+    },
+  });
 
   it('reports the oneOf error a validator gives for null: properties-only branches all match it', async () => {
     const form = await renderForm(target('oneOf'), {

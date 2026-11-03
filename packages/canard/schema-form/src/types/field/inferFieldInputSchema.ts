@@ -1,5 +1,7 @@
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
+import type { NonObjectSchemaControls } from '@/schema-form/core';
+
 import type {
   JSONSchema,
   JSONSchemaWithVirtual,
@@ -74,8 +76,10 @@ type InferredKinds<Value> = readonly [
 /** A multi-kind value belongs to one terminal schema, including its nullable flag. */
 type UnionSchema<Value, Options extends Dictionary> = Omit<
   JSONSchema<Options>,
-  'type'
+  'type' | 'controls'
 > & {
+  /** Multi-kind terminal inputs cannot select object property branches. */
+  controls?: NonObjectSchemaControls<JSONSchema<Options>>;
   type: readonly [
     ...InferredKinds<Value>,
     ...(null extends Value ? ['null'] : []),

@@ -18,7 +18,10 @@ import type {
 
 import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
-import type { SchemaControls } from '@/schema-form/core';
+import type {
+  NonObjectSchemaControls,
+  SchemaControls,
+} from '@/schema-form/core';
 
 import type { FieldInputProps } from '../field/fieldInput';
 import type { VirtualNodeValue } from './value';
@@ -168,7 +171,7 @@ export type ObjectSchema<Options extends Dictionary = object> =
   | NullableObjectSchema<Options>;
 /** Non-nullable object schema */
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
-  BasicSchema &
+  SchemaBase<SchemaControls<JSONSchema>> &
     WingletNonNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
@@ -181,7 +184,7 @@ export type NonNullableObjectSchema<Options extends Dictionary = object> =
     };
 /** Nullable object schema (type: ['object', 'null']) */
 export type NullableObjectSchema<Options extends Dictionary = object> =
-  BasicSchema &
+  SchemaBase<SchemaControls<JSONSchema>> &
     WingletNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
@@ -212,12 +215,15 @@ export type VirtualNodeSchema<Options extends Dictionary = object> = {
 export type NullSchema<Options extends Dictionary = object> = BasicSchema &
   WingletNullSchema<Options, JSONSchemaChildren<Options>>;
 
-/** Base schema properties for all types */
-export type BasicSchema = {
+/** Base schema properties for hosts without object branch selection. */
+export type BasicSchema = SchemaBase<NonObjectSchemaControls<JSONSchema>>;
+
+/** Binding properties parameterized by the host's supported controls. */
+type SchemaBase<Controls> = {
   /** Renderer data belongs to the binding and stays typed in per-kind schemas. */
   presentation?: SchemaPresentation;
   /** Rules and policies that change value and shape over time; any other key is a blueprint error */
-  controls?: SchemaControls<JSONSchema>;
+  controls?: Controls;
   /** Field options and configurations */
   options?: {
     /** Omit empty values from form data (default: true) */

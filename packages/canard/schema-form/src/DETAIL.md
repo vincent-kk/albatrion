@@ -51,7 +51,9 @@
 
 `types/schema/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않는다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둔다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언한다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않는다.
 
-공개 `JSONSchema`(코어 인터페이스 `AuthoredSchema`의 별칭)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언한다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류이다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않는다. 두 경우 모두 런타임이 청사진 오류를 던진다. `options`의 형은 아직 열려 있다.
+Public `JSONSchema` aliases the core `AuthoredSchema` union. Only `type: 'object'`, `['object', 'null']`, or `['null', 'object']` admits `controls.discriminator`; all other hosts and non-object per-kind aliases use `NonObjectSchemaControls`. Broad type arrays without a discriminator remain valid. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류이다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않는다. 두 경우 모두 런타임이 청사진 오류를 던진다. `options`의 형은 아직 열려 있다.
+
+Standard `@winglet/json-schema` annotations may include recursively partial schemas and therefore need to be checked against the form-specific `JSONSchema` at their declaration site when passed into form APIs. No cast is required for authored form literals.
 
 ### 스키마 옵션
 

@@ -76,3 +76,5 @@ Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/
 | Quick reference (Korean, table-first) | `docs/QUICK_REFERENCE.md`                       |
 | API shapes (authoritative)            | `dist/index.d.ts`                               |
 | Storybook examples                    | `stories/*.stories.tsx` (repository)            |
+
+`controls.discriminator` requires an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`; other host types are TypeScript errors.

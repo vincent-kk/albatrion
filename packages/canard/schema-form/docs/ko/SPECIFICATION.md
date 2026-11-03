@@ -646,11 +646,13 @@ const formInputMap = {
     fields: { targets: string[]; controls: { /* 앞의 아홉 키와 inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
     inactiveValue: literal | ((value, ctx) => next); // 형상을 떠날 때 보존할 값
-    discriminator: string;               // oneOf/anyOf 호스트: 분기 태그 속성
     watch: string[];                     // 값 구독 (경로 배열)
   }
 }
 ```
+
+`controls.discriminator`는 `oneOf` 또는 `anyOf`를 가진 객체 호스트(`type: 'object'`, `['object', 'null']`, `['null', 'object']`)에서만 선언합니다. 다른 호스트 타입은 TypeScript에서 거부합니다.
+
 
 키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)와 `inactiveValue`를 허용하며, 나머지 네 키는 던집니다.
 

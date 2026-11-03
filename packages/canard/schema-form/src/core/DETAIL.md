@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Authored schemas distinguish object hosts from other hosts at the declaration site. The binding consumes `NonObjectSchemaControls` through this boundary; helper union members stay internal. This introduces no runtime allocation.
+
 - 호스트 바인딩은 engine이 소유한 실패 묶음의 잎 순회를 core 경계에서 소비한다. raw host 채널은 바인딩과 engine이 각각 유지하며 패키지 공개 표면은 넓히지 않는다.
 
 - B12는 engine이 소유한 `InactiveValue`·`InactiveValueResolver`·`InactiveValueContext`를 이름으로 재수출하고 surface의 `onInactive`를 노드 공개 계약으로 조합합니다. 구현은 각 소유 경계에 남깁니다.

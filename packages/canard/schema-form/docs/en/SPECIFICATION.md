@@ -648,11 +648,13 @@ const formInputMap = {
     fields: { targets: string[]; controls: { /* first nine keys plus inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
     inactiveValue: literal | ((value, ctx) => next); // Retained value when leaving the shape
-    discriminator: string;               // oneOf/anyOf host: branch tag property
     watch: string[];                     // Value subscription (array of paths)
   }
 }
 ```
+
+`controls.discriminator` is available only on an object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`. Other host types are rejected by TypeScript.
+
 
 The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), the first nine keys (`active` through `unsetOnInactive`) and `inactiveValue` are allowed; any of the other four throws.
 

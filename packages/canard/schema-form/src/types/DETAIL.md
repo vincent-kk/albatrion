@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Object per-kind schemas admit `controls.discriminator`; every other kind, virtual group and inferred multi-kind input schema forbids it. Untyped fragments retain child controls, and broad type arrays without a discriminator remain assignable.
+
 - B12 작성 제어 키 검증은 node·fields·fragment의 `inactiveValue`를 공통 resolver 리터럴 합집합으로 허용하며 식 제어 키 목록에는 넣지 않습니다.
 
 - 형 파일은 네 칸에 있습니다. `schema/`는 `jsonSchema`·`value`·`injectTo`, `field/`는 `fieldInput`·`fieldRenderer`·`inferFieldInputSchema`, `error/`는 `error`, `rolled/`는 공개 `Roll` 형 `fieldRenderer`·`jsonSchema`를 둡니다.

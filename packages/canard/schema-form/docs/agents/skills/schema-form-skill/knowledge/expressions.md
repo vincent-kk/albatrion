@@ -119,3 +119,5 @@ Standard JSON Schema `if`/`then`/`else` gates fragments: the `then` properties b
 ## Circular References
 
 Do not create derivation cycles (`a` derived from `b`, `b` derived from `a`). Neither `injectTo` nor `derived` cycles are detected: a cycle that keeps producing new values exceeds the 25-round budget and the write throws (`inject-to.md`).
+
+`controls.discriminator` requires an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`; other host types are TypeScript errors.
