@@ -28,7 +28,7 @@ describe('validator lifetime and guard read', () => {
     expect(
       readFieldNodeGuard({ blueprint: analysis, validator }, gate)?.('ready'),
     ).toBe(true);
-    expect(compile).toHaveBeenCalledTimes(1);
+    expect(compile).not.toHaveBeenCalled();
     expect(compileGuard).toHaveBeenCalledTimes(1);
     releaseValidationRoot(validator, authored);
     expect(release).not.toHaveBeenCalled();

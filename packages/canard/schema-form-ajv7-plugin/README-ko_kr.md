@@ -68,6 +68,12 @@ registerPlugin(ajvValidatorPlugin);
 - **반환값**: 스키마에 대해 데이터를 검증할 수 있는 validator factory 함수
 - **기능**: 자동 오류 변환, 상세한 검증 메시지, 성능 최적화
 
+#### **`compileGuard(root, pointer)`와 `release(root)`**
+
+- `compileGuard`는 엔진이 소유한 복사본 루트의 JSON Pointer에서 동기 불리언 가드를 컴파일합니다. `compile` 호출 여부와 관계없이 복사본을 받아 루트를 독립적으로 등록하므로, 자체 완결적인 가드와 루트 정의를 `$ref`로 참조하는 가드 모두 전체 스키마 컴파일 전에 사용할 수 있습니다.
+- `compile`, 모든 `compileGuard`, `release`에는 동일한 복사본 객체를 전달합니다. 전체 스키마 검증은 가드 컴파일 이후에 컴파일해도 됩니다.
+- `release`도 `compile` 호출 여부와 관계없이 같은 복사본을 받아 루트의 AJV 등록과 컴파일 결과를 제거합니다. 등록되지 않은 루트를 해제하면 아무 작업도 하지 않습니다.
+
 ### **기본 설정**
 
 커스텀 AJV 인스턴스가 제공되지 않은 경우, 플러그인은 다음 기본 설정을 사용합니다:

@@ -91,7 +91,9 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 
 #### **`compileGuard(root, pointer)`**
 
-- **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the authored root, retaining its `$ref` context
+- **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the engine-owned copy root, retaining its `$ref` context
+- **Call order**: Accepts that copy whether or not `compile` has run. It registers the root independently, so both self-contained guards and guards with `$ref` into root definitions work before whole-schema compilation.
+- **Identity**: Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 - **Limits**: Asynchronous formats and keywords are unsupported
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 
@@ -100,6 +102,7 @@ Strict options on a bound instance, such as `strictTypes` and `strictRequired`, 
 #### **`release(root)`**
 
 - **Purpose**: Removes that root's Ajv registrations and compiled results when the form cache evicts it
+- **Call order**: Accepts the same engine-owned copy whether or not `compile` has run. Releasing an unregistered root is a no-op.
 
 ### **Default Configuration**
 

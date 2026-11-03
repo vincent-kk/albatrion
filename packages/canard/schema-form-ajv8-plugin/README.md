@@ -127,7 +127,11 @@ The guard instance retains the bound dialect, formats and keywords with
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
-Guards are synchronous and use a JSON Pointer into the authored root. Release removes that root's AJV registrations. VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported by `compileGuard`: there is one guard per location, and it answers for the first-compiled dynamic scope.
+Guards are synchronous and use a JSON Pointer into the engine-owned copy root. `compileGuard` accepts that copy whether or not `compile` has run and registers the root independently, so both self-contained guards and guards with `$ref` into root definitions work before whole-schema compilation. Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
+
+`release` accepts that copy whether or not `compile` has run and removes that root's AJV registrations and compiled functions. Releasing an unregistered root is a no-op.
+
+VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported by `compileGuard`: there is one guard per location, and it answers for the first-compiled dynamic scope.
 
 `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 

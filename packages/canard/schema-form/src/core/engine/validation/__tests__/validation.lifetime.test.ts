@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 
 import type { Validator } from '../types/validator';
+import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { evictValidationRoot } from '../utils/lifetime/evictValidationRoot';
 import { recentReleaseList } from '../utils/lifetime/recentReleaseList';
@@ -31,7 +32,7 @@ describe('validator registration lifetime', () => {
     retainValidationRoot(validator, root);
     retainValidationRoot(validator, root);
     readValidationEntry(validator, root);
-    expect(compile).toHaveBeenCalledTimes(1);
+    expect(compile).not.toHaveBeenCalled();
     expect(recentReleaseList(validator).counts.get(root)).toBe(2);
     expect(recentReleaseList(validator).recent).not.toContain(root);
     releaseValidationRoot(validator, root);
@@ -69,7 +70,8 @@ describe('validator registration lifetime', () => {
     }));
     for (const root of roots) {
       retainValidationRoot(validator, root);
-      readValidationEntry(validator, root);
+      const entry = readValidationEntry(validator, root);
+      compileValidationEntry(validator, root, entry);
       releaseValidationRoot(validator, root);
       expect(registered.size).toBeLessThanOrEqual(8);
     }
@@ -79,7 +81,11 @@ describe('validator registration lifetime', () => {
     const recent = roots[roots.length - 1];
     const before = compile.mock.calls.length;
     retainValidationRoot(validator, recent);
-    readValidationEntry(validator, recent);
+    compileValidationEntry(
+      validator,
+      recent,
+      readValidationEntry(validator, recent),
+    );
     expect(compile).toHaveBeenCalledTimes(before);
     releaseValidationRoot(validator, recent);
     expect(release).toHaveBeenCalledTimes(roots.length - 8);

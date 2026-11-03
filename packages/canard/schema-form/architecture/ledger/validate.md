@@ -261,6 +261,7 @@
   > compileGuard(root, pointer): (value) => boolean                           // 동기, 첫 실패에서 중단
   > ```
 - 보충:
+  > 편집자 결정(471C-02): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 Validator와 ValidatorPlugin의 compileGuard·release는 compile 실행 여부와 무관하게 엔진 소유 사본 루트를 받는다. compile·모든 compileGuard·release에는 동일 객체를 주며 플러그인은 필요한 루트 등록을 독립 수행하고 미등록 release는 무해하게 끝낸다. 배포 AJV6·7·8은 이 순서를 이미 지원하므로 구현을 바꾸지 않고 계약 시험과 문서를 보강한다." (`reviews/round-471-closing.md:10`)
   > 편집자 결정(219C-02): "【추론】 플러그인 계약 `compileGuard(root, pointer)`의 pointer는 스키마 위치를 뜻하므로, 스키마가 아닌 곳을 가리키는 호출은 계약 위반이고 세 플러그인이 같은 방식으로 거부해야 호출자 버그가 보인다." (`reviews/round-219-closing.md:28`)
   > 편집자 결정(223C-01): "【추론】 세 플러그인이 같은 코드로 같은 자리에서 거부하므로 호출자 버그가 세 플러그인에서 같은 모양으로 보인다." (`reviews/round-223-closing.md:9`)
   > 소유자(232라운드, 대기열 26 퍼센트 인코딩): "어 그럼 고치시죠" (`reviews/round-232-owner-answers.md:8`)
@@ -287,6 +288,7 @@
 - 결정:
   > - 가드 안의 `$ref`가 루트 정의를 가리킬 수 있으므로 루트 문맥에서 컴파일한다. 떼어 낸 `if`는 `$ref` 때문에 단독 컴파일이 실패하므로 가드는 사본(작성 스키마에서 키워드 위치의 그룹 객체 셋을 지운 복사본, 08 §3.4)의 루트와 위치를 받는다(아래 '가드를 컴파일하는 방식', 16라운드 실행 확인).
 - 보충:
+  > 편집자 결정(471C-02): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 Validator와 ValidatorPlugin의 compileGuard·release는 compile 실행 여부와 무관하게 엔진 소유 사본 루트를 받는다. compile·모든 compileGuard·release에는 동일 객체를 주며 플러그인은 필요한 루트 등록을 독립 수행하고 미등록 release는 무해하게 끝낸다. 배포 AJV6·7·8은 이 순서를 이미 지원하므로 구현을 바꾸지 않고 계약 시험과 문서를 보강한다." (`reviews/round-471-closing.md:10`)
   > "`compile`은 사본을, `compileGuard`는 사본의 루트와 위치를 받는다." (`08-design-a-to-z.md:345`)
   > "동작이 확인된 방식은 루트를 한 번 등록하고 가드를 **루트 안의 위치로** 가리키는 것이다 — `addSchema(root)` 뒤에 `compile({ $ref: 'root#/allOf/0/if' })`. 공허한 참의 의미도 보존된다(실행)." (`adr/0004-validator-plugin-compile-guard.md:73`)
   > "가드를 떼어낸 새 객체로 컴파일하면 검증기의 객체 identity 캐시가 빗나가므로, 작성된 스키마 안의 위치로 식별한다(위 '결정' 절) — `$id` 기저 URI와 `$dynamicRef`의 문맥 문제도 함께 걸려 있다(`reviews/round-1.md` §7-6)." (`adr/0004-validator-plugin-compile-guard.md:46`)
@@ -307,6 +309,7 @@
 - 결정:
   > 캐시는 코어가 검증기 인스턴스마다 WeakMap<작성 루트, { 사본, 가드 표 }>로 든다(16라운드 편집자 결정, 답 10으로 확정).
 - 보충:
+  > 편집자 결정(471C-01): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 if 가드 읽기와 개발 가드 준비는 사본·가드 항목만 만들고 전체 검증을 컴파일하지 않는다. None은 전체 컴파일을 하지 않으며 OnRequest·OnChange는 다음 프레임 뒤 로드 슬롯 또는 먼저 온 명시적 validate·submit에서 같은 사본을 최초 한 번 컴파일한다. 가드는 정착 중 위치당 한 번 동기로 컴파일하고 전체 컴파일 실패는 기존 슬롯 sink·onError, validate 거부, submit onFailure로 보고한다." (`reviews/round-471-closing.md:8`)
   > "캐시의 키가 작성 루트이므로 같은 검증기 인스턴스를 쓰고 같은 스키마 객체로 만든 폼 인스턴스들이 컴파일을 공유한다(`validatorFactory`로 폼마다 다른 인스턴스를 주면 공유하지 않는다)." (`adr/0004-validator-plugin-compile-guard.md:34`)
   > 반영 칸(union O4, 스키마 사본): "검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다." (`reviews/round-18-owner-answers.md:34`)
 - 상태: 현행
@@ -319,7 +322,8 @@
 
 - 결정:
   > 플러그인의 `compileGuard`는 가드 캐시를 들지 않고, 사본 루트의 등록(루트마다 한 번의 `addSchema`와 고유 키 배정)은 플러그인의 검증기 인스턴스가 든다(ajv는 같은 키의 재등록에 실패한다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(471C-02): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 Validator와 ValidatorPlugin의 compileGuard·release는 compile 실행 여부와 무관하게 엔진 소유 사본 루트를 받는다. compile·모든 compileGuard·release에는 동일 객체를 주며 플러그인은 필요한 루트 등록을 독립 수행하고 미등록 release는 무해하게 끝낸다. 배포 AJV6·7·8은 이 순서를 이미 지원하므로 구현을 바꾸지 않고 계약 시험과 문서를 보강한다." (`reviews/round-471-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:34#3`(정본), `adr/0004-validator-plugin-compile-guard.md:10`, `08-design-a-to-z.md:345`, `09-landing-and-test-strategy.md:19,279`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1), 소유자 답(`reviews/round-16-owner-answers.md:16` 10)
@@ -345,6 +349,7 @@
 - 결정:
   > 살아 있는 트리는 자기 작성 루트 객체를 강하게 든다. 사본 루트의 등록과 가드는 그 작성 루트를 쓰는 살아 있는 트리가 있는 동안 남고, 마지막 트리가 폐기되면 크기 상한이 있는 최근 해제 목록에 두었다가 밀려날 때 푼다(참조 세기 + 최근 해제 목록). 참조 수는 커밋(효과)에서 올리고 그 정리에서 내린다. 렌더에서 만들어졌으나 커밋되지 않은 트리의 작성 루트는 참조 수 0으로 최근 해제 목록에 든다. 목록에서 밀려날 때 플러그인 등록과 함께 코어 캐시의 그 작성 루트 항목도 지운다(다음 마운트는 사본·가드·등록을 함께 다시 만든다). 같은 스키마 객체로 다시 마운트하면 다시 컴파일하지 않고(재생성 방지), 메모리 상한은 수거 시점과 무관하게 '살아 있는 작성 루트의 수 + 목록 크기'다(메모리 안정). 16라운드 답 10에서 편집자 도출이며 해제 방식은 16라운드 스웜 수렴(편집자 결정)으로 정했다(`FinalizationRegistry`는 정리 콜백의 호출이 보장되지 않아 기본 경로로 쓰지 않는다). 코어의 캐시는 WeakMap이지만 플러그인의 등록과 컴파일 결과는 강한 참조이기 때문이다. 같은 `$id`의 새 루트가 등록될 때 참조 수가 0인 옛 루트의 등록은 먼저 푼다.
 - 보충:
+  > 편집자 결정(471C-03): "【추론】 소유자 원문67·79·89(`reviews/round-471-owner-answers.md:8-10`)의 기술 책임과 오류 검증 조건을 적용해 항목 생성과 최초 전체 컴파일 직전에 같은 $id의 참조 수0 루트를 퇴출한다. 사이에 경쟁 루트가 해제되어도 지연 컴파일이 성공하며 retained 충돌만 duplicateSchemaId로 분류한다. 기존 한 번 재시도·거부 정체성·중복 가드 실패 정리와 게이트별 GUARD_FAILED를 유지한다. 원문89의 병합 허가는 #520에만 속하며 이 변경은 별도 사전등록 수용 측정에서 ACCEPT를 얻었고 병합은 소유자 판단에 따른다." (`reviews/round-471-closing.md:12`)
   > "그래서 같은 스키마 객체로 다시 마운트하거나(StrictMode의 흉내 언마운트 포함) 목록 안에서 돌아오면 다시 컴파일하지 않고(재생성 방지), 메모리 상한은 가비지 수거 시점과 무관하게 '살아 있는 작성 루트의 수 + 목록 크기'로 정해진다(메모리 안정, 모바일 경제성)." (`09-landing-and-test-strategy.md:88`)
   > "재생성 경로의 reset에서는 새 루트를 등록할 때 옛 트리가 아직 살아 있으므로(일곱째의 원자성, 참조 수는 효과 정리에서 내린다) 이 규칙이 아니라 다음 문장의 충돌에 든다." (`09-landing-and-test-strategy.md:88`)
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
@@ -684,12 +689,15 @@
   > 【추론】 (4) 가드 함수는 같은 값에 같은 boolean을 동기로 돌려준다.
   > 【추론】 던지거나 boolean이 아닌 값(비동기 스키마의 Promise 등)을 내면 그 평가는 가드 실패(`GUARD_FAILED`, 정착 오류)다.
 - 보충:
+  > 편집자 결정(471C-07): "【추론】 기준1202dd53b·후보08980e4c5·제품d6f3e2d66의 사전등록 최종 전체 측정에서 mount 재수용과 typing 회귀 검사를 모두 ACCEPT로 수용한다. 여덟 그룹 모두 첫 시도 유효이며 mount9관문과 typing6관문이 모두 true이고 재시도·VOID·경쟁 실행은 없다. if None first paint 절감은34.94999998807907ms·savingFraction0.33477011490479514, if OnChange는34.750000059604645ms·savingFraction0.33510125403689267이며 첫 verdict 변화는-10.400000035762787ms다. 전체 분포·control·입력 회귀와 첫 paint 뒤 비용 이동은 verification/guard-compile/results.md에 보존하며 제품·시험·버전은 바꾸지 않는다." (`reviews/round-471-closing.md:53`)
+  > 편집자 결정(471C-02): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 Validator와 ValidatorPlugin의 compileGuard·release는 compile 실행 여부와 무관하게 엔진 소유 사본 루트를 받는다. compile·모든 compileGuard·release에는 동일 객체를 주며 플러그인은 필요한 루트 등록을 독립 수행하고 미등록 release는 무해하게 끝낸다. 배포 AJV6·7·8은 이 순서를 이미 지원하므로 구현을 바꾸지 않고 계약 시험과 문서를 보강한다." (`reviews/round-471-closing.md:10`)
   > 반영 칸(union O4, 계약 문장): "나. `Validator` 문서 주석에 계약 문장을 넣는다: "core는 `compile` 결과와 가드에 방출 트리를 참조로 넘긴다. 검증기와 가드는 받은 값과 받은 스키마를 바꾸지 않는다. 값을 바꾸는 사용자 정의 키워드(ajv `modifying: true` 등)를 쓰지 않는 것은 소비자의 책임이다."" (`reviews/round-18-owner-answers.md:34`)
   > 편집자 결정(34C-01): "【추론】 LANDING-084는 PR-4의 새 fractal 칸에 "`app/plugin/type.ts` 개정"을 적었고 VALIDATE-044는 플러그인이 `Validator`에 소비자 훅 `bind?`만 더 가진다고 했으므로, 플러그인이 구현하고 가져오는 계약 형은 오늘도 공개 index가 내보내는 `ValidatorPlugin`이며 그 개정은 PR-4의 몫이다; 32C-01의 "새 계약 형은 공개 index가 아닌 새 엔진 쪽 모듈에서 내보낸다"는 코어가 받는 계약 형 `Validator`(가칭)와 Form 속성 `validatorFactory`의 공개 형에 한한 말이고, 플러그인용 `ValidatorPlugin`에는 미치지 않는다." (`reviews/round-34-closing.md:9`)
   > 편집자 결정(34C-01): "【추론】 PR-4의 `ValidatorPlugin` 개정은 더하기만 한다: `compileGuard?(root, pointer)`·`release?(root)`를 선택 멤버로 더하고, `compile` 결과 함수의 에러 정규화에 `rejectedKey`를 더한다; 선택으로 두는 까닭은 옛 엔진이 PR-7까지 공개 진입점을 섬기는 동안(LANDING-159 규칙 3) 소비자의 사용자 정의 플러그인이 형 검사에서 깨지지 않게 하는 것이며, 필수로 좁히는 것은 Form 속성이 `{ compile, compileGuard }` 객체가 되는 PR-7(LANDING-036 이주 33)에서 이주 항목과 함께 한다." (`reviews/round-34-closing.md:10`)
   > 편집자 결정(34C-01): "【추론】 코어의 `Validator` 형은 `src/core/validation/`에 두고 공개 index에서 내보내지 않으며, `compileGuard`가 있는 `ValidatorPlugin` 값이 구조적으로 `Validator`를 만족하게 두 형을 맞춘다; ajv 플러그인 셋은 세 멤버를 모두 구현하고(LANDING-093 개발계획 P1), 코어 쪽 적합성은 코어의 시험이 플러그인 셋을 `Validator`로 받아 단언한다. 부속 경로(`exports`에 둘째 진입점)를 더하는 것은 공개 겉면 추가라 이 라운드가 열지 않는다." (`reviews/round-34-closing.md:11`)
   > 편집자 결정(35C-07): "【추론】 34C-01의 추가 멤버에 `dialect?`를 더한다: VALIDATE-044가 계약 멤버로 "선택 방언 선언(VALIDATE-026)"을 들었고 VALIDATE-026이 선언을 선택으로, 어긋남 경고를 개발 모드 전용(핸들러가 있으면 기록)으로 받았으므로, `ValidatorPlugin`의 네 번째 선택 멤버로 PR-4에서 더하고 ajv8 진입점 셋이 방언을 선언한다; 경고의 발화 자리는 트리 생성의 폼 수준 보고기라 LANDING-064의 core 쪽에 따라 PR-4다." (`reviews/round-35-closing.md:57`)
   > 편집자 결정(470C-04): "【추론】 소유자 원문65·79(`reviews/round-470-owner-answers.md:7,9`)에 따라 G는 사전 등록 규칙을 통과해 별도 설계와 PR로 진행 가능하다. 각 build20회에서 None 첫 paint109.0→72.3ms로36.7ms·33.7% 절감했고 control차이는0.35ms다. OnChange108.9→73.5ms로35.4ms·32.5% 절감했으며 guard·유효 스키마·렌더 필드의12페이지 동등성도 통과했다. None의10% 및16.7ms 이상·control차이2배 초과 절감과 모든 측정 셀의 중앙값0.5ms 초과 퇴보 없음, control폭 max(0.3ms,3%)를 충족했고 재시도·VOID는0이다. 기준의 paint 전 전체 compile34.15ms·guard compile6.3ms와 oracle guard약16.6ms를 기록한다. oracle의 compile/compileGuard 순서는 공개 검증기 플러그인 계약에 영향을 주므로 이 라운드는 측정과 판정만 기록하고 VALIDATE-044의 제품 계약은 유지한다." (`reviews/round-470-closing.md:14`)
+  > 편집자 결정(471C-04): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)의 실측 이익 조건에 따라 기준1202dd53b·후보19798fed1의 사전등록 전체 측정을 ACCEPT로 수용한다. 네 그룹 모두 첫 시도 유효·9관문 true·재시도와 VOID 및 overlap0이며 if None의 first paint 절감은35.75ms·savingFraction0.33870203691105977, if OnChange는35.1499999165535ms·savingFraction0.3334914605728861이다. 첫 verdict 변화는-10.899999976158142ms, guard-free None과 OnChange의 변화는-0.6500000357627869ms와-0.2999999523162842ms로 각각 사전등록 한계 안이다. 원본 정밀도의 전체 표와 실행 결과는 verification/guard-compile/results.md에 보존하며 제품 코드와 버전은 더 바꾸지 않는다." (`reviews/round-471-closing.md:31`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1509-1523`(정본), `reviews/round-18-owner-answers.md:34`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-54), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 계약 문장)
@@ -716,7 +724,8 @@
   > 【추론】 목록이 작아야 서버 메모리가 묶인다.
   > PR: PR-4 시험.
   > 무엇: 서로 다른 스키마로 1,000번 마운트·언마운트한 뒤 등록 수가 '살아 있는 루트 + 8' 이하인지, 같은 객체를 다시 마운트하면 컴파일이 0번인지 본다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(471C-03): "【추론】 소유자 원문67·79·89(`reviews/round-471-owner-answers.md:8-10`)의 기술 책임과 오류 검증 조건을 적용해 항목 생성과 최초 전체 컴파일 직전에 같은 $id의 참조 수0 루트를 퇴출한다. 사이에 경쟁 루트가 해제되어도 지연 컴파일이 성공하며 retained 충돌만 duplicateSchemaId로 분류한다. 기존 한 번 재시도·거부 정체성·중복 가드 실패 정리와 게이트별 GUARD_FAILED를 유지한다. 원문89의 병합 허가는 #520에만 속하며 이 변경은 별도 사전등록 수용 측정에서 ACCEPT를 얻었고 병합은 소유자 판단에 따른다." (`reviews/round-471-closing.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1554-1568,1574-1575`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-56)
@@ -742,6 +751,9 @@
   > 실패(특히 `bind` 인스턴스를 같은 설정으로 복제할 수 없을 때): 소유자에게 올린다.
   > 실패의 선택지: (가) 소비자 인스턴스의 같은 `$id` 동시 사용을 지원 밖으로 문서화하고 위의 오류로 드러냄, (나) `bind`가 인스턴스 대신 인스턴스를 만드는 함수를 받게 함.
 - 보충:
+  > 편집자 결정(471C-06): "【추론】 등록 충돌을 던지는 검증기에서 실제 등록에 실패한 live 루트 C도 hasRetainedValidationRootId의 참조 수에 포함되므로 기준은 B의 재시도를 막는다. 후보의 최초 전체 컴파일은 해제된 A를 퇴출하고 빈 등록 자리에 B를 등록할 수 있다. 동시에 살아 있는 같은 id 루트 중 실제 등록을 얻는 쪽만 달라지고 양쪽 모두 등록 보유 루트는 최대 하나이므로 IR-8의 동시 mounted 충돌 유지 규칙에 어긋나지 않는 설명 가능한 차이로 수용한다. 배포 AJV6·7·8은 별도 인스턴스로 격리하며 이 차이는 충돌을 던지는 사용자 정의 검증기에 한정한다." (`reviews/round-471-closing.md:41`)
+  > 편집자 결정(471C-05): "【추론】 전체 스키마의 최초 컴파일과 한 번 재시도는 성공 직후 동일한 정리 함수를 호출하여 DUPLICATE_SCHEMA_ID_MESSAGE에 맞는 캐시된 가드 실패만 지운다. 다른 가드 실패와 성공한 가드 참조는 유지하며 전체 컴파일 실패는 아무 가드도 지우지 않는다. 같은 id 등록에서 던지는 사용자 정의 검증기의 교체 복구를 보장하고, 배포 AJV6·7·8은 충돌 시 같은 설정의 별도 인스턴스를 써 이 충돌을 피한다. None 및 OnRequest에서 첫 전체 검증 수요 전 중복 가드 실패가 남는 기존 한계는 이 단계에서 바꾸지 않는다." (`reviews/round-471-closing.md:36`)
+  > 편집자 결정(471C-03): "【추론】 소유자 원문67·79·89(`reviews/round-471-owner-answers.md:8-10`)의 기술 책임과 오류 검증 조건을 적용해 항목 생성과 최초 전체 컴파일 직전에 같은 $id의 참조 수0 루트를 퇴출한다. 사이에 경쟁 루트가 해제되어도 지연 컴파일이 성공하며 retained 충돌만 duplicateSchemaId로 분류한다. 기존 한 번 재시도·거부 정체성·중복 가드 실패 정리와 게이트별 GUARD_FAILED를 유지한다. 원문89의 병합 허가는 #520에만 속하며 이 변경은 별도 사전등록 수용 측정에서 ACCEPT를 얻었고 병합은 소유자 판단에 따른다." (`reviews/round-471-closing.md:12`)
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
   > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
   > 편집자 결정(DR-3): "【추론】 DR-3: 캐시된 duplicate 실패는 다른 같은 $id 루트의 counts가 양수인 동안 유지한다. 충돌 해제 뒤 다음 전체 스키마 읽기의 assertValidationRootReady에서 entry마다 한 번 재시도한다. readValidationEntry와 guard 읽기는 재시도하지 않는다. 재시도 전 문자열 $id가 같은 recent 루트들을 복사 목록에서 순회하고 자기 자신을 제외하여 기존 축출을 적용한다. copy와 guards 및 이미 반환한 guard를 유지하고 성공 시 validate를 설정하며 failure·duplicate·rejection과 중복 id 메시지의 guard 실패를 지운다. 실패 시 원래 failure·duplicate·rejection 정체성을 유지하고 retried를 기록한다. IR-8의 컴파일 시점 중복 원인을 상대 해제 뒤에도 캐시에 보존한다는 문장은 충돌 지속 또는 실패한 재시도에만 적용한다. compileGuard 호출 및 실패한 compile 뒤 같은 copy의 compile 재시도가 깨끗이 등록되어야 하는 책임은 플러그인에 있다. reset과 commit 사이 validate 또는 commit보다 먼저 실행된 슬롯에서 실패하면 해당 로드의 검증은 계속 unavailable이다." (`reviews/defect-round.md:10`)
@@ -792,10 +804,13 @@
   > 【추론】 `validatorFactory`가 폼마다 새 인스턴스를 주면 공유하지 않는다는 점은 문서에 적는다(VALIDATE-018 보충과 같다).
   > 【추론】 같은 `$id` 충돌, 최근 해제 목록의 크기, `$id`·`$dynamicRef` 문맥은 이 항목이 아니다(18C-56, 18C-57, 18C-58).
 - 보충:
+  > 편집자 결정(471C-07): "【추론】 기준1202dd53b·후보08980e4c5·제품d6f3e2d66의 사전등록 최종 전체 측정에서 mount 재수용과 typing 회귀 검사를 모두 ACCEPT로 수용한다. 여덟 그룹 모두 첫 시도 유효이며 mount9관문과 typing6관문이 모두 true이고 재시도·VOID·경쟁 실행은 없다. if None first paint 절감은34.94999998807907ms·savingFraction0.33477011490479514, if OnChange는34.750000059604645ms·savingFraction0.33510125403689267이며 첫 verdict 변화는-10.400000035762787ms다. 전체 분포·control·입력 회귀와 첫 paint 뒤 비용 이동은 verification/guard-compile/results.md에 보존하며 제품·시험·버전은 바꾸지 않는다." (`reviews/round-471-closing.md:53`)
+  > 편집자 결정(471C-01): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 if 가드 읽기와 개발 가드 준비는 사본·가드 항목만 만들고 전체 검증을 컴파일하지 않는다. None은 전체 컴파일을 하지 않으며 OnRequest·OnChange는 다음 프레임 뒤 로드 슬롯 또는 먼저 온 명시적 validate·submit에서 같은 사본을 최초 한 번 컴파일한다. 가드는 정착 중 위치당 한 번 동기로 컴파일하고 전체 컴파일 실패는 기존 슬롯 sink·onError, validate 거부, submit onFailure로 보고한다." (`reviews/round-471-closing.md:8`)
   > 편집자 결정(18C-101): "【추론】 "한 로드에 한 번"(VALIDATE-048)은 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2850`)
   > 편집자 결정(18C-105): "【추론】 `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록이다." (`reviews/round-18-closing.md:2946`)
   > 편집자 결정(18C-105): "【추론】 그 기록은 폼 수준 로드(마운트, `FormHandle.reset()`)마다 한 번 낸다." (`reviews/round-18-closing.md:2947`)
   > 편집자 결정(18C-105): "【추론】 `resetSubtree()`는 그 기록을 다시 내지도 초기화하지도 않으며, 그 기록이 막은 `OnChange` 검증 예약은 다음 폼 수준 로드까지 막힌 채다." (`reviews/round-18-closing.md:2948`)
+  > 편집자 결정(471C-04): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)의 실측 이익 조건에 따라 기준1202dd53b·후보19798fed1의 사전등록 전체 측정을 ACCEPT로 수용한다. 네 그룹 모두 첫 시도 유효·9관문 true·재시도와 VOID 및 overlap0이며 if None의 first paint 절감은35.75ms·savingFraction0.33870203691105977, if OnChange는35.1499999165535ms·savingFraction0.3334914605728861이다. 첫 verdict 변화는-10.899999976158142ms, guard-free None과 OnChange의 변화는-0.6500000357627869ms와-0.2999999523162842ms로 각각 사전등록 한계 안이다. 원본 정밀도의 전체 표와 실행 결과는 verification/guard-compile/results.md에 보존하며 제품 코드와 버전은 더 바꾸지 않는다." (`reviews/round-471-closing.md:31`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2136-2145`(정본), `reviews/round-18-closing.md:2850`, `reviews/round-18-closing.md:2946-2948`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-79), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-101), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-105)
@@ -814,7 +829,10 @@
   > 【추론】 워커나 인터프리터 쪽 최적화는 검증기 플러그인의 몫이며, `compile`은 비동기 검증 함수를 돌려줄 수 있다.
   > 【추론】 검증 빈도를 줄이려는 호스트는 `ValidationMode`의 `OnRequest`를 쓴다.
   > 【추론】 제출은 캐시된 판정이 아니라 보내는 스냅숏을 새로 검증한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(471C-07): "【추론】 기준1202dd53b·후보08980e4c5·제품d6f3e2d66의 사전등록 최종 전체 측정에서 mount 재수용과 typing 회귀 검사를 모두 ACCEPT로 수용한다. 여덟 그룹 모두 첫 시도 유효이며 mount9관문과 typing6관문이 모두 true이고 재시도·VOID·경쟁 실행은 없다. if None first paint 절감은34.94999998807907ms·savingFraction0.33477011490479514, if OnChange는34.750000059604645ms·savingFraction0.33510125403689267이며 첫 verdict 변화는-10.400000035762787ms다. 전체 분포·control·입력 회귀와 첫 paint 뒤 비용 이동은 verification/guard-compile/results.md에 보존하며 제품·시험·버전은 바꾸지 않는다." (`reviews/round-471-closing.md:53`)
+  > 편집자 결정(471C-01): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 if 가드 읽기와 개발 가드 준비는 사본·가드 항목만 만들고 전체 검증을 컴파일하지 않는다. None은 전체 컴파일을 하지 않으며 OnRequest·OnChange는 다음 프레임 뒤 로드 슬롯 또는 먼저 온 명시적 validate·submit에서 같은 사본을 최초 한 번 컴파일한다. 가드는 정착 중 위치당 한 번 동기로 컴파일하고 전체 컴파일 실패는 기존 슬롯 sink·onError, validate 거부, submit onFailure로 보고한다." (`reviews/round-471-closing.md:8`)
+  > 편집자 결정(471C-04): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)의 실측 이익 조건에 따라 기준1202dd53b·후보19798fed1의 사전등록 전체 측정을 ACCEPT로 수용한다. 네 그룹 모두 첫 시도 유효·9관문 true·재시도와 VOID 및 overlap0이며 if None의 first paint 절감은35.75ms·savingFraction0.33870203691105977, if OnChange는35.1499999165535ms·savingFraction0.3334914605728861이다. 첫 verdict 변화는-10.899999976158142ms, guard-free None과 OnChange의 변화는-0.6500000357627869ms와-0.2999999523162842ms로 각각 사전등록 한계 안이다. 원본 정밀도의 전체 표와 실행 결과는 verification/guard-compile/results.md에 보존하며 제품 코드와 버전은 더 바꾸지 않는다." (`reviews/round-471-closing.md:31`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2154-2160`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80)
@@ -872,6 +890,8 @@ VALIDATE-049의 입력 경로·마이크로태스크 실행 규칙은 대체됨(
 - 결정:
   > 쓰기 검증은 다음 프레임 선행·연속 프레임 이월·quiet 후행과 실제 마지막 실행 시작 기준100ms cap을 따릅니다. 오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다. OnChange만 기록하며 새 표시·중간 숨김은 판정 정착·조용한 post-paint drop·수락한 explicit root 판정·폐기의 release를 기다립니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 enabled를 포함하고 child-errors는 제외합니다. raw 목록·명시적 호출 시점 snapshot·공개 표면은 유지합니다. Always의 최초 OnChange 판정은 layout에서 즉시 실행하고 다른 모드는 화면 뒤 슬롯을 씁니다.
 - 보충:
+  > 편집자 결정(471C-07): "【추론】 기준1202dd53b·후보08980e4c5·제품d6f3e2d66의 사전등록 최종 전체 측정에서 mount 재수용과 typing 회귀 검사를 모두 ACCEPT로 수용한다. 여덟 그룹 모두 첫 시도 유효이며 mount9관문과 typing6관문이 모두 true이고 재시도·VOID·경쟁 실행은 없다. if None first paint 절감은34.94999998807907ms·savingFraction0.33477011490479514, if OnChange는34.750000059604645ms·savingFraction0.33510125403689267이며 첫 verdict 변화는-10.400000035762787ms다. 전체 분포·control·입력 회귀와 첫 paint 뒤 비용 이동은 verification/guard-compile/results.md에 보존하며 제품·시험·버전은 바꾸지 않는다." (`reviews/round-471-closing.md:53`)
+  > 편집자 결정(471C-01): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)에 따라 if 가드 읽기와 개발 가드 준비는 사본·가드 항목만 만들고 전체 검증을 컴파일하지 않는다. None은 전체 컴파일을 하지 않으며 OnRequest·OnChange는 다음 프레임 뒤 로드 슬롯 또는 먼저 온 명시적 validate·submit에서 같은 사본을 최초 한 번 컴파일한다. 가드는 정착 중 위치당 한 번 동기로 컴파일하고 전체 컴파일 실패는 기존 슬롯 sink·onError, validate 거부, submit onFailure로 보고한다." (`reviews/round-471-closing.md:8`)
   > 편집자 결정(IR-8): "【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다. VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다. ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다. WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다." (`reviews/ir-8-load-validation.md:3`)
   > 편집자 결정(DR-2): "【추론】 DR-2: 호출자가 없는 슬롯 첫 판정의 ValidatorThrew는 engine의 origin validate 기록을 다시 만들지 않고 원래 실패를 host에 한 번 전달한다. MultipleErrors는 bundle 자체 대신 errors[0]부터 소비자 오류 꼬리까지 순서대로 전달한다. ValidatorCompileFailed는 이미 로드 진입점에서 처리하므로 이 helper에서 무시한다. ERROR-019의 IR-8 보충 중 항목 3의 오래된 ValidatorThrew 보고 유지 문장과 VALIDATE-052의 IR-7·IR-8 보충은 슬롯 판정에 한해 이 규칙으로 대체하며 ir-8-results의 L3를 닫는다." (`reviews/defect-round.md:8`)
   > 편집자 결정(DR-13): "【추론】 DR-13: 로드가 빚진 전체 판정은 루트 전체에 배정하는 요청만 충족한다. 로드 판정이 남아 있으면 자동 하위 요청을 루트로 넓혀 슬롯을 대체하고 검증기는 한 번 실행한다. None·OnRequest-only는 자동 요청하지 않으며 명시적 하위 validate는 stamp를 올리지 않는다. 비동기 슬롯 또는 cadence 루트 판정이 새 stamp에 대체되면 기존 targets를 pending에 되돌려 다음 cadence 판정에 함께 배정한다. 변경 setValue의 root 요청은 기준에서도 정상인 보호 시험이다. IR-8의 쓰기 요청이 항상 root라는 가정을 이 범위에서 정정한다." (`reviews/defect-round.md:39`)
@@ -879,6 +899,7 @@ VALIDATE-049의 입력 경로·마이크로태스크 실행 규칙은 대체됨(
   > 편집자 결정(DR-2-R2): "【추론】 DR-2-R2: 슬롯 판정의 늦은 실패는 예약 시 붙잡은 load.retired가 참이면 host에 전달하지 않는다. schema 변경 reset·rebuild·validator 교체의 옛 load는 은퇴하며 소비자 기록도 버린다. slot token·stamp·root.disposed를 은퇴 신호로 쓰지 않는다. 같은 스키마 reset과 unmount는 load를 은퇴시키지 않으므로 늦은 ValidatorThrew를 onError 한 번과 host 한 번에 전달한다. 현행 load의 원본 및 bundle 원소 순서 전달은 유지한다." (`reviews/defect-round.md:55`)
   > 편집자 결정(469C-01): "【추론】 소유자 원문65·79(`reviews/round-469-owner-answers.md:7-8`)에 따라 W4는 병합 target들을 한 번 라우팅한다. active 선언 Set과 각 issue 경로 해석은 실행마다 최대 한 번이며 기존 표시 맵·issue 순서·재사용 배열 참조·changed 합집합·combined 무효화·전역 오류와 stamp 정책을 유지한다. 범위는 target 객체 동일성 또는 / 경계의 엄격히 짧은 조상 target 경로이며 같은 경로의 다른 stale 키는 제외하고 더는 살지 않는 target도 기록한 경로를 따른다. 단일 대상 반환은 기존 changed이고 복수 대상은 순차 호출의 합집합이다. DR-13·DR-13-R2의 병합 요청 수명은 유지하며 결과 배정만 한 pass로 합친다. merged1000의 중앙값10%·1ms·control차이2배 초과 절감과 single-target 회귀 max(0.05ms,5%) 이하를 별도 측정해야 수용한다." (`reviews/round-469-closing.md:8`)
   > 편집자 결정(469C-03): "【추론】 소유자 원문87(`reviews/round-469-owner-answers.md:9`)의 오류 검증과 O(n^2) 우려에 따라 특성화·mutation·독립 gate·사전 등록 전체 측정을 수행했다. 기준55055f65b·후보c9634e1c3의5셀은12 warmup·60 runs,15프로세스 exit0,97.282099초이며 control은 전부 첫 시도에서 유효하고 재시도·VOID·overlap 관측은0이다. control 허용폭 max(0.3ms,3%), 주 셀1ms·10% 이상 및 control차이2배 초과 절감, 보조 셀 max(0.05ms,5%) 회귀 한계를 적용해 W4 ACCEPT·W1 ACCEPT로 수락한다. 정확한 수치·규칙·quiet check·run receipt는 verification/lazy-memo/results.md와 raw/accept-full-*에 보존한다. 제품 코드·버전은 더 바꾸지 않는다." (`reviews/round-469-closing.md:27`)
+  > 편집자 결정(471C-04): "【추론】 소유자 원문65·67·79(`reviews/round-471-owner-answers.md:7-9`)의 실측 이익 조건에 따라 기준1202dd53b·후보19798fed1의 사전등록 전체 측정을 ACCEPT로 수용한다. 네 그룹 모두 첫 시도 유효·9관문 true·재시도와 VOID 및 overlap0이며 if None의 first paint 절감은35.75ms·savingFraction0.33870203691105977, if OnChange는35.1499999165535ms·savingFraction0.3334914605728861이다. 첫 verdict 변화는-10.899999976158142ms, guard-free None과 OnChange의 변화는-0.6500000357627869ms와-0.2999999523162842ms로 각각 사전등록 한계 안이다. 원본 정밀도의 전체 표와 실행 결과는 verification/guard-compile/results.md에 보존하며 제품 코드와 버전은 더 바꾸지 않는다." (`reviews/round-471-closing.md:31`)
 - 상태: 현행
 - 출처: `plan/input-responsiveness/design.md:159`(정본), `plan/input-responsiveness/request.md` 소유자 원문9–30 및18b.
 - 닫은 사람: 소유자 결정과 코디네이터 amendment9 v3.

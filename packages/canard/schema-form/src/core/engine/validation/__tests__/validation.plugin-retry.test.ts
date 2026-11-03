@@ -7,6 +7,7 @@ import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures
 import type { JSONSchema } from '@/schema-form/types';
 
 import type { Validator } from '../types/validator';
+import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
 import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
@@ -42,8 +43,14 @@ it.each([
       if: { properties: { flag: { const: true } } },
     };
     retainValidationRoot(validator, first);
-    readValidationEntry(validator, first);
+    compileValidationEntry(
+      validator,
+      first,
+      readValidationEntry(validator, first),
+    );
     const entry = readValidationEntry(validator, second);
+    expect(entry.failure).toBeUndefined();
+    compileValidationEntry(validator, second, entry);
     expect(entry.failure).toBeInstanceOf(Error);
     const guard = validator.compileGuard(entry.copy, '/if');
     entry.guards.set('/if', { guard });
