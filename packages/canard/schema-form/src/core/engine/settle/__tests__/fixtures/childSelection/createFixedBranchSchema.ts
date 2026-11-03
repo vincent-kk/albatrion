@@ -1,11 +1,11 @@
-import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
 
 /**
  * Keep live width and payload size fixed while varying the authored branch count.
  * @param count - At least five branches so kind_0 and kind_4 both exist
  * @returns The fixed-axis schema used by the original 16B/8B characterization
  */
-export const createFixedBranchSchema = (count: number): BlueprintSchema => ({
+export const createFixedBranchSchema = (count: number): AuthoredSchema => ({
   type: 'object',
   properties: {
     common: { type: 'string', default: 'shared' },
