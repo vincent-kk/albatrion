@@ -6,9 +6,9 @@ import type { Dictionary, Optional } from '@aileron/declare';
 import type { Behavior } from '../../../../record';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
-import { copyObjectValue } from '../../../../utils/copyObjectValue';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
+import { copyObjectValue } from './copyObjectValue';
 
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (
