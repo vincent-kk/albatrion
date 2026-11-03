@@ -94,10 +94,10 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
             : state.committedRuleValues.get(key);
           const load =
             !consumed &&
-            Boolean(
+            !!(
               state.loadScope &&
-                (node.path === state.loadScope.path ||
-                  isDescendantPath(node.path, state.loadScope.path)),
+              (node.path === state.loadScope.path ||
+                isDescendantPath(node.path, state.loadScope.path))
             );
           const appeared =
             !consumed &&
@@ -179,7 +179,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
                 evaluatedExpressions,
               );
               if (evaluated.threw) throw evaluated.cause;
-              current = Boolean(evaluated.value);
+              current = !!evaluated.value;
               if (!(current && (appeared || (priorExists && !prior))))
                 value = undefined;
             }
@@ -198,9 +198,8 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
             state.activeUnsetTargets.add(target);
           const fired =
             rule.kind === 'derived'
-              ? Boolean(appeared || (priorExists && !sameValue(prior, current)))
-              : current === true &&
-                Boolean(appeared || (priorExists && !prior));
+              ? !!(appeared || (priorExists && !sameValue(prior, current)))
+              : current === true && !!(appeared || (priorExists && !prior));
           if (!fired) continue;
           if (rule.kind === 'derived' && value === undefined) {
             if (state.trace)

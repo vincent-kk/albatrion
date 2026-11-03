@@ -145,7 +145,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
       getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
         node.blueprintNode,
       ).gateSelectionTable?.alwaysSteps ?? [],
-      (index) => Boolean(plan && !entries.has(plan.steps[index].entry.name)),
+      (index) => !!(plan && !entries.has(plan.steps[index].entry.name)),
     ),
   };
   record.preparedStaticHost = prepared;

@@ -224,3 +224,11 @@ g2는 데이터 측정을 해보도록 해"
 > the coordinator decides technical scope and method.
 
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+## Boolean 생성자 대신 !! (2026-11-04)
+
+### Owner decisions (verbatim)
+
+- Quote 84 (2026-11-04; 맥락: 엔진 제품 코드의 불리언 변환 방식 지시): "Boolean 생성자 함수는 되도록 안쓰려고 하니까."
+
+Quote 83(같은 날, 'Boolean 대신 !! 를 써라. Boolean 이 너무 느리다.')은 IR-10 절(#529)에 있다.

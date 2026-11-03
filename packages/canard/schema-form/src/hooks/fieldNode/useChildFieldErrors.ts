@@ -60,7 +60,7 @@ export const useChildFieldErrors = (
     const showErrors = visible.slice(1);
     const formattedError =
       formattedErrors.find((message) => message != null) ?? null;
-    const showError = visible.some(Boolean);
+    const showError = visible.some((flag) => !!flag);
 
     return {
       errorMessage: showError ? formattedError : null,
