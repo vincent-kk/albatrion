@@ -1,6 +1,7 @@
 import { type ReactNode, useMemo, useSyncExternalStore } from 'react';
 
 import { map as mapArray } from '@winglet/common-utils/array';
+import { isTruthy } from '@winglet/common-utils/filter';
 
 import { type FieldNode, type ValidationIssue } from '@/schema-form/core';
 import {
@@ -60,7 +61,7 @@ export const useChildFieldErrors = (
     const showErrors = visible.slice(1);
     const formattedError =
       formattedErrors.find((message) => message != null) ?? null;
-    const showError = visible.some(Boolean);
+    const showError = visible.some(isTruthy);
 
     return {
       errorMessage: showError ? formattedError : null,

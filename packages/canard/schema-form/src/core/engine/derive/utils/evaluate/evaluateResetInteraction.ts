@@ -68,7 +68,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
               evaluatedExpressions,
             );
             if (evaluated.threw) throw evaluated.cause;
-            current = Boolean(evaluated.value);
+            current = !!evaluated.value;
           } catch (cause) {
             (failures ??= []).push({
               sourcePath: node.path,

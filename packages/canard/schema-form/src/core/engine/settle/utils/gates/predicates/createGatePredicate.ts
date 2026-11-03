@@ -115,7 +115,7 @@ export const createGatePredicate = (
         return false;
       }
       return expression
-        ? Boolean(expression.evaluate(input.values))
+        ? !!expression.evaluate(input.values)
         : gate.condition === true;
     },
   };

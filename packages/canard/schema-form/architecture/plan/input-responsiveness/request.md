@@ -238,5 +238,14 @@ onError is an event channel: it delivers the one record of each occurrence and d
 - Quote 81 (2026-11-03; 맥락: 역할 배정 — codex는 검증, 구현은 Claude Opus — 과 추가 설명 요청): "음 codex를 그대로 쓰도록 해. 검증까지만. 구현은 클로드로 하지. 클로드 opus로 하면 될거같아 fable쓰지말고. 다만 아직 어떤 교체와 트레이드오프인지 이해가 잘 안되네 추가 설명을 좀 해줘"
 - Quote 82 (2026-11-03; 맥락: 시험판 2 방향과 역할 배정으로 진행을 승인): "그래 진행해보자."
 - Quote 83 (2026-11-04; 맥락: 병합 전 리뷰 뒤 세 플러그인의 불리언 변환 방식 지시): "Boolean 대신 !! 를 써라. Boolean 이 너무 느리다."
-- Quote 84 (2026-11-04; 맥락: 세 플러그인의 Boolean() 을 !! 로 바꾼 뒤 변환 방식 보완 지시): "Boolean 함수를 쓴 부분을 !! 로 바꿀때, 1. ! 한개로 가능하게 로직을 수정할 수 있으면 수정하라. 2. (v)=>!!v 구조는 isTruthy 를 써라."
-- Quote 85 (2026-11-04; 맥락: 세 플러그인의 복사·사전 형·불리언 변환 방식 보완 지시): "JSON.parse(JSON.stringify( << 이건 clone 을 쓰도록 하고 (더 빠름) Record<string,  는 Dictionary 를 쓰도록해. schema-form 본체처럼 공통 유틸리티타입 import 를 지원해. clone 은 common-utils 에서 import 할 수 있어. isTruthy 는 !!이랑 동치니까, return (value) => isTruthy(validate(value)); 이렇게 쓸꺼면 return (value) => !!(validate(value)); 이렇게 써줘. 함수호출비용이 불필요하게 추가된다. filter(isTruthy) 이런식으로 쓰는 경우가 아니라면 !!를 써 차라리. 함수호출량 줄이게. 코드에 비효율을 남기지 말도록"
+- isTruthy 규칙 원문은 Quote 85(Boolean 생성자 절)에 있다.
+- Quote 86 (2026-11-04; 맥락: 세 플러그인의 복사·사전 형·불리언 변환 방식 보완 지시): "JSON.parse(JSON.stringify( << 이건 clone 을 쓰도록 하고 (더 빠름) Record<string,  는 Dictionary 를 쓰도록해. schema-form 본체처럼 공통 유틸리티타입 import 를 지원해. clone 은 common-utils 에서 import 할 수 있어. isTruthy 는 !!이랑 동치니까, return (value) => isTruthy(validate(value)); 이렇게 쓸꺼면 return (value) => !!(validate(value)); 이렇게 써줘. 함수호출비용이 불필요하게 추가된다. filter(isTruthy) 이런식으로 쓰는 경우가 아니라면 !!를 써 차라리. 함수호출량 줄이게. 코드에 비효율을 남기지 말도록"
+
+## Boolean 생성자 대신 !! (2026-11-04)
+
+### Owner decisions (verbatim)
+
+- Quote 84 (2026-11-04; 맥락: 엔진 제품 코드의 불리언 변환 방식 지시): "Boolean 생성자 함수는 되도록 안쓰려고 하니까."
+- Quote 85 (2026-11-04; 맥락: !! 치환 뒤 콜백과 단일 부정 정리 지시): "그 일단, visible.some(Boolean); 이걸 const showError = visible.some((flag) => !!flag); 로 바꾼건 isTruthy 를 쓰도록해. 같은 함수야. 유사하게, Boolean 함수를 쓴 부분을 !! 로 바꿀때, 1. ! 한개로 가능하게 로직을 수정할 수 있으면 수정하라. 2. (v)=>!!v 구조는 isTruthy 를 써라."
+
+Quote 83(같은 날, 'Boolean 대신 !! 를 써라. Boolean 이 너무 느리다.')은 IR-10 절(#529)에 있다.

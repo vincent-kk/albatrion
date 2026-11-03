@@ -186,16 +186,14 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           runtime,
           key,
           'set',
-          Boolean(
-            expression.evaluate(
-              mapArray(expression.dependencies, (dependency) =>
-                readStateDependency(
-                  context.root,
-                  group.host.path,
-                  dependency,
-                  undefined,
-                  group.host,
-                ),
+          !!expression.evaluate(
+            mapArray(expression.dependencies, (dependency) =>
+              readStateDependency(
+                context.root,
+                group.host.path,
+                dependency,
+                undefined,
+                group.host,
               ),
             ),
           ),
