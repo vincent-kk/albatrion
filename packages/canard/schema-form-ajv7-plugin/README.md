@@ -75,12 +75,14 @@ unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It a
 every guard compiled at a root pointer, which is a limitation of that path; a self-contained
 guard compiled directly still evaluates, because a guard compile failure belongs to its own
 gate only.
-Guards compile without AJV's root meta-schema validation (`validateSchema: false`); only the
-whole-schema compile checks a schema against its meta-schema. A meta-schema violation outside
-the condition, such as `multipleOf: 0` in an unrelated field, fails no guard on either path and
-makes full validation report `VALIDATOR_COMPILE_FAILED`. A meta-only violation inside the
-condition schema itself, such as `minLength: 1.5`, does not fail the guard; the guard evaluates
-as the code AJV generates for it.
+Guards compile without AJV's root meta-schema validation (`validateSchema: false`); AJV's root
+meta-schema check runs only in the whole-schema compile. Custom keyword meta-schema checks, strict
+options and code-generation checks still apply when a guard compiles. A root meta-schema violation
+outside the condition, such as `multipleOf: 0` in an unrelated field, fails no guard on either
+path; with the default schema validation, full validation reports `VALIDATOR_COMPILE_FAILED`,
+while an instance bound with `validateSchema: false` or `'log'` compiles as that option says.
+A meta-only violation inside the condition schema itself, such as `minLength: 1.5`, does not fail
+the guard; the guard evaluates as the code AJV generates for it.
 The guard instance retains the bound dialect, formats and keywords with
 `allErrors: false` and `validateSchema: false`. `release(root)` also removes its directly compiled guards.
 
@@ -92,7 +94,7 @@ The guard instance retains the bound dialect, formats and keywords with
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
-- `compileGuard` returns a synchronous boolean guard for a pointer in the engine-owned copy root. It accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance, and `compile` registers it on the bound instance. Both kinds of guard work before whole-schema compilation.
+- `compileGuard` returns a synchronous boolean guard for a pointer in the engine-owned copy root. It accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy without registering it. Both kinds of guard work before whole-schema compilation.
 - `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 - Pass the same engine-owned copy object to `compile`, every `compileGuard`, and `release`; they share one registration, and whole-schema validation can be compiled later.
 - `release` accepts that copy whether or not `compile` has run and removes its registration and compiled functions. Releasing an unregistered root is a no-op. A second live root with the same `$id` remains independent.
