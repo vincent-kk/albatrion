@@ -89,6 +89,7 @@ export type { NodeStrategy } from './types/strategy';
 export type { AuthoredSchema } from './types/jsonSchema';
 export type {
   SchemaControls,
+  NonObjectSchemaControls,
   InactiveValue,
   InactiveValueResolver,
   InactiveValueContext,

@@ -27,7 +27,7 @@
 
 - 분석 문맥은 선언마다 그 선언이 수집된 구성 입력의 인덱스(`declarationInputs`)를 기록한다. 재귀에 적중해 템플릿을 다시 쓰는 연결이 가리키는 입력의 게이트를 선언별로 찾기 위해서다(211C-01). 내부 template tuple은 작성 위치, 문맥, 최초로 나타난 gate 순서로 한 번 구성하고, 같은 조각의 외부 문자열 표현을 host-bound 키에 조합한다. 두 Map의 실제 키 바이트, 조회 순서, 공개 schema·data 경로는 유지한다. 속도 비용은 입력, gate, 소유 경로, 문자열 길이에 비례하며, 전체 tuple 문자열을 다시 JSON으로 인코딩하던 일과 중간 tuple·host 배열이 없어진다. 메모리 비용은 호출 중에 쓰는 키 두 개, 인코딩 조각, 중복 판정 목록이며 새로 보유하는 캐시나 노드 필드는 없다. 종단 시간은 105C-01과 그 최소 크기 규칙으로 확인한다(106라운드 감도 판정).
 
-- 선언 수집은 선언을 만들 때 그 스키마의 controls.discriminator 또는 controls.fields가 정의되어 있으면 분석 문맥의 hasChildTargets를 true로 바꾸며, false로 되돌리지 않는다.
+- 선언 수집은 controls.fields가 정의되어 있으면 분석 문맥의 hasChildTargets를 true로 바꾸며, false로 되돌리지 않는다. discriminator만으로는 이 증거를 세우지 않는다. 선언별 판별 키는 독립적이므로 자식 대상 검증에서 키를 비교하지 않는다(C12).
 
 - 노드 구성은 `constructing.has(key)`가 참인 연결에서 분석 문맥의 `hasTemplateRecursion`을 true로 바꾸며, false로 되돌리지 않는다. 어느 조회가 템플릿을 돌려주었는지로 판단하지 않는다.
 
@@ -37,9 +37,15 @@
 
 - 명시된 discriminator만 정적 const·enum을 읽는다. 정적 allOf와 참조를 따라 태그를 교차하고, 끌어올린 선언과 자기 active의 결합을 보존하며, 작성 스키마는 바꾸지 않는다.
 
+- 판별자 모양을 먼저 검사한다(C1). 비문자열·빈 문자열은 `INVALID_CONTROL_SHAPE`이며 details는 `{ group: 'controls', key: 'discriminator', expected: 'string' }` 오류다. 정적 연언에서 알려진 비객체 호스트는 태그를 읽지 않고 키를 무시한다(C3). 호스트 형이 미정이면 union 태그를 계속 읽으며, 판별 게이트 분기로 호스트 형을 추론하지 않는다. 객체 선언에 oneOf·anyOf 배열이 없으면 그 선언의 키만 무시한다(C2). 무시한 키만으로 branchless capability를 끄지 않는다.
+- 객체 union의 어느 분기에도 태그가 없으면 `DISCRIMINATOR_MISMATCH`의 `missing` 오류다(C4). 일부만 태그가 없으면 해당 분기는 판별 게이트 없이 자기 active만 따른다(C5). 같은 oneOf의 태그 중복은 `overlap` 오류이고(C6), anyOf 중복은 해당 분기를 모두 켠다(C7). 호스트가 태그 형을 정하지 않은 경우에만 분기 태그 종류 불일치를 `kind` 오류로 보고한다(C8). 호스트가 여러 태그 종류를 포괄하면 허용한다(C9). 서로 다른 선언의 키는 각자의 union만 선택한다(C12).
+- 태그 값을 형 추론보다 먼저 교차한다. 공집합은 값 목록이 빈 판별 게이트로 기록하여 절대 켜지지 않게 하고, 태그 누락으로 세지 않는다(C11). 호스트 태그 형 밖의 분기도 도달 불가능으로 기록한다(C10). C10·C11의 태그 선언은 무게이트로 끌어올리지 않으며, 호스트에 해당 자식이 있으면 그 자식의 선언에도 넣지 않아 종류 충돌과 안정성 빠른 경로의 불필요한 탈락을 피한다. 도달 가능한 분기 안에만 있는 태그는 항상 마운트되는 자식으로 끌어올린다(C13).
+
 - controls, options, fields 항목에 허용하는 키는 닫힌 목록이다. controls의 두 목록은 `core/engine/types/controls.ts`의 `SchemaControls`·`ChildSchemaControls`와 형으로 묶여 있어서, 어느 쪽이 어긋나도 형 검사가 실패한다. 닫힌 목록 밖의 키는 UNKNOWN_GROUP_KEY, 목록 안 키의 값 모양이 틀리면 INVALID_CONTROL_SHAPE다. injectTo는 함수만 허용하며 정적 대상 분석은 하지 않는다. presentation은 불투명한 병합 데이터로만 취급한다.
 
 ## API Contracts
+
+- Discriminator classification adds a static-host/tag scan and a temporary list of tag declarations per branch. Time is proportional to the visited conjunctions and tag values, with the existing pairwise exclusive-tag overlap check retained. Temporary storage is linear in a branch's static tag declarations; unreachable descriptors retain at most two optional boolean flags and introduce no cache or runtime node.
 
 - 객체 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`이면 청사진 구축이 `RESERVED_PROPERTY_NAME`으로 거부한다. 이 이름의 경로는 왕복하면 예약 연산자 이름(`*`, `.`, `..`, `@`)으로 읽혀 값 적재·비활성 값·검증 배정이 다른 속성을 가리키기 때문이다. 오류는 속성 이름과 규칙을 메시지에 싣고 `properties` 아래 해당 이름의 작성 위치를 `schemaPath`로 가진다. 진단 코드는 공개 `FormErrorCode.ReservedPropertyName`을 사용한다.
 
@@ -69,4 +75,4 @@
 
 ## Last Updated
 
-2026-10-28
+2026-11-03

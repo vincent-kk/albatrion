@@ -1,5 +1,3 @@
-import type { Optional } from '@aileron/declare';
-
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../errors';
@@ -14,27 +12,8 @@ import { throwBlueprintError } from '../utils/diagnostics/throwBlueprintError';
  */
 export const validateChildTargets = (context: AnalysisContext): void => {
   for (const node of context.nodes) {
-    let discriminator: Optional<string>;
     for (const declaration of node.declarations) {
       const controls = readSchemaObject(declaration.schema).controls;
-      if (controls?.discriminator !== undefined) {
-        if (
-          discriminator !== undefined &&
-          discriminator !== controls.discriminator
-        )
-          throwBlueprintError(
-            FormErrorCode.DiscriminatorMismatch,
-            declaration.schemaPath,
-            {
-              propertyName: discriminator,
-              other: controls.discriminator,
-              reason: 'key',
-            },
-            context.options,
-          );
-        discriminator = controls.discriminator;
-      }
-
       const controlFields = controls?.fields;
       if (controlFields != null) {
         for (

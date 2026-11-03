@@ -646,11 +646,26 @@ const formInputMap = {
     fields: { targets: string[]; controls: { /* 앞의 아홉 키와 inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
     inactiveValue: literal | ((value, ctx) => next); // 형상을 떠날 때 보존할 값
-    discriminator: string;               // oneOf/anyOf 호스트: 분기 태그 속성
     watch: string[];                     // 값 구독 (경로 배열)
   }
 }
 ```
+
+`controls.discriminator`는 `oneOf` 또는 `anyOf`를 가진 객체 호스트(`type: 'object'`, `['object', 'null']`, `['null', 'object']`)에서만 선언합니다. 다른 호스트 타입은 TypeScript에서 거부합니다.
+
+TypeScript는 객체 호스트 형을 제한하며 union 존재 여부는 런타임에서 확인합니다. union 없는 객체 선언도 허용하고 판별자를 경고와 함께 무시합니다.
+
+```typescript
+{
+  type: 'object',
+  controls: { discriminator: 'kind' },
+  oneOf: [
+    { properties: { kind: { const: 'cat' }, name: { type: 'string' } } },
+    { properties: { kind: { const: 'dog' }, age: { type: 'number' } } }
+  ]
+}
+```
+
 
 키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)와 `inactiveValue`를 허용하며, 나머지 네 키는 던집니다.
 
@@ -769,9 +784,33 @@ const jsonSchema = {
 
 - 부모와 다른 `type`을 선언한 분기도 스키마를 불러올 때 거부되지 않습니다. 폼은 부모의 종류를 유지하고 검증기는 그 분기를 작성된 `type` 그대로 평가하므로, 그 분기는 자기 `type`의 값에만 맞습니다.
 - 부모가 선언한 프로퍼티를 게이트 없는 분기(`controls.active`가 없고 `controls.discriminator`가 고르지 않는 분기)가 다시 선언하면 부모 프로퍼티의 `type` 안에 있어야 합니다. 더 좁은 `type`은 허용되고 부모의 것이 이기며, 그 밖의 `type`은 `SHARED_NODE_KIND_CONFLICT`를 던집니다. 게이트 없는 분기들만 선언한 프로퍼티는 종류가 서로 같아야 하며, 다르면 같은 오류를 던집니다. 게이트가 걸린 분기의 프로퍼티는 비교하지 않습니다. 부모가 선언한 프로퍼티면 부모의 `type`이 이기고, 아니면 그 분기의 필드가 자기 종류를 가집니다.
-- 판별 태그에는 `kind: { type: 'string', const: 'cat' }`처럼 `type`을 붙여도 됩니다. 분기마다 태그의 종류가 다르거나 태그 값이 겹치면 `DISCRIMINATOR_MISMATCH`, 태그의 `const` / `enum` 값에 공통 값이 없으면 `EMPTY_ENUM_INTERSECTION`을 던지고, 태그 자신의 `type` 밖에 있는 태그 값은 경고 `DISCRIMINATOR_BRANCH_UNREACHABLE`을 냅니다.
+- 판별 태그에는 `type`을 붙여도 됩니다. 아래 규칙으로 효과를 분류합니다.
 
-이 오류들은 스키마 오류입니다(`isJSONSchemaError`로 판별). 객체 전체를 하나의 입력으로 다루는 경우 — `options.terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 자식 노드를 만들지 않으므로 위의 프로퍼티 검사는 그 분기들에 대해 실행되지 않습니다. `DISCRIMINATOR_MISMATCH`, `EMPTY_ENUM_INTERSECTION`과 아래의 `NULL_BRANCH_IGNORED_FOR_FORM` 경고는 그대로 적용되고, `DISCRIMINATOR_BRANCH_UNREACHABLE`은 객체가 만들지 않는 자식 필드를 기준으로 판정하므로 보고되지 않으며, 검증기는 작성된 스키마를 그대로 봅니다.
+이 오류들은 스키마 오류입니다(`isJSONSchemaError`로 판별). 객체 전체를 하나의 입력으로 다루는 경우 — `options.terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 자식 노드를 만들지 않으므로 위의 프로퍼티 검사는 그 분기들에 대해 실행되지 않습니다. `DISCRIMINATOR_MISMATCH`와 아래의 `NULL_BRANCH_IGNORED_FOR_FORM` 경고는 그대로 적용되고, 일반 정적 연언의 `EMPTY_ENUM_INTERSECTION`은 오류로 유지됩니다. 판별 태그의 빈 교차는 절대 켜지지 않는 분기로 남습니다. `DISCRIMINATOR_BRANCH_UNREACHABLE`은 자식을 만들지 않는 이 객체에서 보고하지 않으며, 검증기는 작성된 스키마를 그대로 봅니다.
+
+#### 판별자 규칙
+
+판별자는 선언마다 속성 이름 하나입니다. 같은 노드의 서로 다른 선언은 다른 키를 가질 수 있고, 각 키는 그 선언에 함께 적은 `oneOf` / `anyOf`만 선택합니다. 분기 자신의 `controls.active`는 판별 게이트와 계속 AND로 결합합니다.
+
+| 사례 | 조건 | 결과 |
+| --- | --- | --- |
+| C1 | 키가 비어 있지 않은 문자열이 아님 | `INVALID_CONTROL_SHAPE`, details `{ group: 'controls', key: 'discriminator', expected: 'string' }`; 무시할 호스트보다 먼저 검사 |
+| C2 | 객체 선언에 `oneOf`·`anyOf` 배열이 없음 | 키 무시; `DISCRIMINATOR_IGNORED_FOR_FORM`, `reason: 'union'` |
+| C3 | 호스트의 정적 연언에서 알려진 형이 비객체임(여러 종류의 union 호스트 포함) | 태그를 읽지 않고 키 무시; `DISCRIMINATOR_IGNORED_FOR_FORM`, `reason: 'host'` |
+| C4 | 객체 union은 있지만 어느 분기에도 키의 `const` / `enum` 태그가 없음 | `DISCRIMINATOR_MISMATCH`, `reason: 'missing'` |
+| C5 | 일부 분기에만 태그가 있음 | 허용; 무태그 분기는 판별 게이트 없이 자기 `active`를 따름 |
+| C6 | 같은 `oneOf`의 두 분기가 태그 값을 공유함 | `DISCRIMINATOR_MISMATCH`, `reason: 'overlap'` |
+| C7 | 같은 `anyOf`의 두 분기가 태그 값을 공유함 | 허용; 일치하는 모든 분기가 참여 |
+| C8 | 호스트가 태그 필드의 형을 선언하지 않고 분기 태그가 서로 다른 노드 종류를 요구함 | `DISCRIMINATOR_MISMATCH`, `reason: 'kind'` |
+| C9 | 호스트 태그 필드의 선언 형이 여러 분기 태그 종류를 포괄함 | 허용; union 태그 필드로 종류를 넘나들며 선택 |
+| C10 | 분기 태그가 호스트 태그 필드의 선언 형 밖임(분기 태그의 `type` 명시 여부 무관) | `DISCRIMINATOR_BRANCH_UNREACHABLE`, `reason: 'kind'`; 도달 불가능한 태그 선언은 끌어올리지 않음 |
+| C11 | 태그 `const` / `enum` 교차가 공집합임(`enum: []` 포함) | `DISCRIMINATOR_BRANCH_UNREACHABLE`, `reason: 'empty'`; 절대 켜지지 않는 게이트를 남기고 태그는 끌어올리지 않음 |
+| C12 | 같은 노드의 선언들이 서로 다른 키를 지정함 | 허용; 각 union이 독립적으로 선택 |
+| C13 | 도달 가능한 태그 필드가 분기에만 있음 | 허용; 항상 마운트되는 자식으로 끌어올림 |
+
+`DISCRIMINATOR_MISMATCH`와 두 판별 경고의 details는 태그 값 목록 없는 `{ propertyName, reason }`입니다. 불일치 이유는 `'missing' | 'kind' | 'overlap'`이며 `'key'`는 없습니다. 키 무시 경고는 `'union' | 'host'`를 쓰고 선언의 `controls/discriminator` 위치에 선언마다 한 번 보고합니다. 도달 불가능 경고는 `'kind' | 'empty'`를 쓰고 분기의 schemaPath를 가리킵니다.
+
+태그 값은 형 추론보다 먼저 교차합니다. 빈 교차도 태그가 있는 분기로 세며 절대 켜지지 않게 하므로 C4가 아닙니다. C10·C11 태그는 끌어올리지 않고, 호스트가 이미 그 자식을 소유하면 그 자식의 선언에서도 제외하여 형과 선택 빠른 경로의 안정성을 보존합니다. 형 미정 union 호스트는 태그를 계속 읽되 판별 게이트 분기로 자기 형을 추론하지 않습니다. 무시한 판별자는 게이트를 만들거나 그 자체로 branchless 경로를 끄지 않습니다. 호스트 태그의 `enum` 밖 값 검사는 새로 추가하지 않습니다.
 
 #### null 분기 패턴
 
@@ -1043,7 +1082,7 @@ function ProfileForm() {
 | `FormErrorCode.CreateDynamicFunction` | `'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION'` | controls 식을 컴파일할 수 없음 |  |
 | `FormErrorCode.ObservedValues` | `'JSON_SCHEMA_ERROR.OBSERVED_VALUES'` | 관찰 값 식 분석이 실패 |  |
 | `FormErrorCode.UnknownGroupKey` | `'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY'` | controls·options·자식 controls 키가 닫힌 목록 밖 |  |
-| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | 판별자 키나 분기 값이 어긋남 |  |
+| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | union 태그 없음(`missing`), 호스트 태그 형 없이 분기 종류 불일치(`kind`), oneOf 중복(`overlap`) |  |
 | `FormErrorCode.SharedNodeKindConflict` | `'JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT'` | 정적 선언과 게이트 없는 분기의 노드 종류가 충돌 |  |
 | `FormErrorCode.TerminalStrategyMismatch` | `'JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH'` | 선언들이 노드의 terminal 전략에서 어긋남 |  |
 | `FormErrorCode.RecursiveShapeUnbounded` | `'JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED'` | 스키마 분석이 끝없는 재귀 형상을 찾음 |  |
@@ -1105,7 +1144,8 @@ function ProfileForm() {
 | `FormWarningCode.DependentSchemasIgnoredForForm` | `'SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM'` | 폼 형상에서 dependentSchemas를 지원하지 않음 |  |
 | `FormWarningCode.ChildNodeComponentsOnTerminal` | `'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL'` | terminal 입력이 빈 자식 노드 컴포넌트를 읽음 |  |
 | `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | terminal 하위 트리가 폼이 무시하는 예약 키를 선언 |  |
-| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | 판별자 태그 값이 허용 목록 밖 |  |
+| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | 호스트 태그 형 밖(`kind`) 또는 태그 교차 공집합(`empty`); details `{ propertyName, reason }` |  |
+| `FormWarningCode.DiscriminatorIgnoredForForm` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM'` | 판별자 무시: union 없음(`union`) 또는 알려진 비객체 호스트(`host`); details `{ propertyName, reason }` |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | 개발 모드에서 통째 값이 JSON과 호환되지 않음 |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | 입력 정의의 test 객체에 모르는 키가 있음 |  |
 | `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |

@@ -2,8 +2,7 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JSONSchema } from '@winglet/json-schema';
-
+import type { JSONSchema } from '@/schema-form';
 import { VirtualizationBackfill } from '@/schema-form';
 
 import { settleValidation } from '../helpers/settleValidation';

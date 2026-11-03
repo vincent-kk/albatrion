@@ -40,7 +40,6 @@ export const collectSchemaCapabilities = (
   if (record.readOnly !== undefined) capabilities.hasState = true;
   const controls = record.controls;
   if (!controls) return;
-  if (controls.discriminator !== undefined) capabilities.branchless = false;
   const fields = controls.fields;
   for (let index = -1; index < (isArray(fields) ? fields.length : 0); index++) {
     const group = index < 0 ? controls : fields[index].controls;

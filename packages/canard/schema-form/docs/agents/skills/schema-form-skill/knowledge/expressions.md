@@ -119,3 +119,13 @@ Standard JSON Schema `if`/`then`/`else` gates fragments: the `then` properties b
 ## Circular References
 
 Do not create derivation cycles (`a` derived from `b`, `b` derived from `a`). Neither `injectTo` nor `derived` cycles are detected: a cycle that keeps producing new values exceeds the 25-round budget and the write throws (`inject-to.md`).
+
+`controls.discriminator` requires an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`; other host types are TypeScript errors.
+
+TypeScript checks the object-host type; union presence is a runtime condition. A valid key without a union is ignored with `DISCRIMINATOR_IGNORED_FOR_FORM` (`reason: 'union'`); a known non-object runtime host ignores it without reading tags (`reason: 'host'`). Invalid or empty keys still throw `INVALID_CONTROL_SHAPE` first. An untyped union host still reads tags and cannot infer its type from discriminator-gated branches.
+
+`DISCRIMINATOR_MISMATCH` has only `'missing' | 'kind' | 'overlap'`: no branch tags an existing union, different tag kinds without a host-declared tag type, or overlapping tags in the same `oneOf`. Untagged siblings remain ungated by the discriminator. Overlapping `anyOf` tags activate every matching branch; a host tag type covering several kinds is allowed; each declaration's single key selects its own union independently. Reachable branch-only tags are lifted into an always-mounted child.
+
+Unreachable tags outside the host tag type, with or without an explicit tag `type`, warn with `DISCRIMINATOR_BRANCH_UNREACHABLE` (`reason: 'kind'`). An empty tag `const`/`enum` intersection (including `enum: []`) warns with `reason: 'empty'` and keeps a never-active gate, so it is not missing. Neither tag is lifted; when the host owns that child, neither is added to its declarations. Both warnings and `DISCRIMINATOR_MISMATCH` use details `{ propertyName, reason }`, without values. Ignored-key warnings point to `controls/discriminator` once per declaration; unreachable warnings point to the branch schemaPath. Ignoring the key creates no gates and does not itself disable branchless construction. Host tag `enum` exclusions are not newly checked.
+
+Terminal objects (`options.terminal` or `presentation.FieldInput`) retain mismatch errors and omit unreachable warnings; ordinary static enum intersections retain `EMPTY_ENUM_INTERSECTION`. See the C1–C13 table in `docs/en/SPECIFICATION.md`.

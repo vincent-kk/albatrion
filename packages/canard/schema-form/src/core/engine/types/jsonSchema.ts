@@ -2,33 +2,64 @@ import type { BasicSchema } from '@winglet/json-schema';
 
 import type { Dictionary, Optional } from '@aileron/declare';
 
-import type { SchemaControls } from './controls';
+import type { NonObjectSchemaControls, SchemaControls } from './controls';
 
-/** Authored schema; the host supplies presentation data without coupling core to React. */
-export interface AuthoredSchema<
+/** Scalar JSON Schema type names retained in unrestricted type arrays. */
+type JsonSchemaType =
+  | 'string'
+  | 'number'
+  | 'integer'
+  | 'boolean'
+  | 'null'
+  | 'object'
+  | 'array';
+
+/** Explicit object hosts that can select property branches. */
+type ObjectHostSchemaType =
+  | 'object'
+  | readonly ['object', 'null']
+  | readonly ['null', 'object'];
+
+/** Scalar hosts that cannot select object property branches. */
+type NonObjectSchemaType = Exclude<JsonSchemaType, 'object'>;
+
+/** Authored schema; the host supplies opaque presentation data without coupling core to React. */
+export type AuthoredSchema<
   Options extends Dictionary = object,
   Presentation extends object = { [key: string]: unknown },
-> extends BasicSchema<unknown, Options, AuthoredSchema<Options, Presentation>> {
-  type?:
-    | 'string'
-    | 'number'
-    | 'integer'
-    | 'boolean'
-    | 'null'
-    | 'object'
-    | 'array'
-    | readonly (
-        | 'string'
-        | 'number'
-        | 'integer'
-        | 'boolean'
-        | 'null'
-        | 'object'
-        | 'array'
-      )[];
-  presentation?: Presentation;
-  /** Rules and policies that change value and shape over time; any other key is a blueprint error. */
+> =
+  | ObjectAuthoredSchema<Options, Presentation>
+  | NonObjectAuthoredSchema<Options, Presentation>;
+
+/** Object hosts alone admit an explicit discriminator. */
+interface ObjectAuthoredSchema<
+  Options extends Dictionary,
+  Presentation extends object,
+> extends AuthoredSchemaBase<Options, Presentation> {
+  /** Object or nullable-object shape required for property selection. */
+  type: ObjectHostSchemaType;
+  /** Node controls, including object branch selection. */
   controls?: SchemaControls<AuthoredSchema<Options, Presentation>>;
+}
+
+/** Other hosts retain unrestricted type arrays when no discriminator is present. */
+interface NonObjectAuthoredSchema<
+  Options extends Dictionary,
+  Presentation extends object,
+> extends AuthoredSchemaBase<Options, Presentation> {
+  /** Scalar non-object kind or any authored type array. */
+  type?: NonObjectSchemaType | readonly JsonSchemaType[];
+  /** Node controls without object branch selection. */
+  controls?: NonObjectSchemaControls<AuthoredSchema<Options, Presentation>>;
+}
+
+/** Recursive schema keywords shared by every host. */
+interface AuthoredSchemaBase<
+  Options extends Dictionary,
+  Presentation extends object,
+> extends BasicSchema<unknown, Options, AuthoredSchema<Options, Presentation>> {
+  /** Opaque host binding data. */
+  presentation?: Presentation;
   /** Numeric constraints retain their standard scalar types. */
   minimum?: number;
   maximum?: number;

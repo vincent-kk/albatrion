@@ -105,7 +105,7 @@ controls: { active: "./type === 'A'" }
 | `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
 | `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
 | `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
-| `discriminator`    | `string`                  | oneOf/anyOf 호스트의 분기 태그 속성          | -       |
+| `discriminator`    | `string`                  | 객체·nullable 객체의 oneOf/anyOf 분기 태그 속성 | -       |
 | `watch`            | `string[]`                | 값 구독 (경로 배열만)                        | -       |
 
 `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
@@ -619,3 +619,13 @@ node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같�
 비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
 
 쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.
+
+`controls.discriminator`는 객체·nullable 객체 호스트(`type: 'object'`, `['object', 'null']`, `['null', 'object']`)의 `oneOf`·`anyOf` 선택에 사용합니다. 다른 호스트 형은 TypeScript 오류입니다.
+
+TypeScript는 객체 호스트 형을 제한하며 union 존재 여부는 런타임 조건입니다. 유효한 키라도 객체 선언에 union이 없으면 `DISCRIMINATOR_IGNORED_FOR_FORM`(`reason: 'union'`), 알려진 비객체 호스트면 태그를 읽지 않고 같은 경고(`reason: 'host'`)와 함께 무시합니다. 비문자열·빈 키는 먼저 `INVALID_CONTROL_SHAPE` 오류입니다. 형 미정 union 호스트는 태그를 계속 읽되 판별 게이트 분기로 자기 형을 추론하지 않습니다.
+
+`DISCRIMINATOR_MISMATCH`는 union에 태그가 전혀 없음(`missing`), 호스트 태그 형 없이 분기 종류 불일치(`kind`), 같은 oneOf의 중복(`overlap`)만 나타냅니다. 일부 무태그 분기는 판별 게이트가 없고 자기 active를 따릅니다. anyOf 중복은 모두 선택하며, 호스트 태그 형이 여러 종류를 포괄하면 허용하고, 선언마다 키 하나로 자기 union을 독립 선택합니다. 도달 가능한 분기 전용 태그는 항상 마운트되는 자식으로 끌어올립니다.
+
+호스트 태그 형 밖의 분기는 type 명시 여부와 무관하게 `DISCRIMINATOR_BRANCH_UNREACHABLE`(`reason: 'kind'`), 태그 const·enum 공집합(`enum: []` 포함)은 같은 경고(`reason: 'empty'`)입니다. 둘 다 태그를 끌어올리지 않고, 호스트에 자식이 있으면 그 자식 선언에도 넣지 않습니다. 빈 교차는 절대 켜지지 않는 게이트로 남겨 태그 누락으로 세지 않습니다. 두 경고와 불일치 오류의 details는 값 목록 없는 `{ propertyName, reason }`입니다. 무시 경고는 선언마다 `controls/discriminator` 위치에 한 번, 도달 불가능 경고는 분기의 schemaPath에 보고합니다. 무시한 키는 게이트를 만들거나 자체로 branchless 경로를 끄지 않으며 호스트 태그 enum 밖 검사도 추가하지 않습니다.
+
+터미널 객체(`options.terminal` 또는 `presentation.FieldInput`)의 판별 불일치 오류는 유지하고 도달 불가능 경고는 보고하지 않습니다. 일반 정적 연언의 `EMPTY_ENUM_INTERSECTION`은 유지합니다. 전체 규칙은 `docs/ko/SPECIFICATION.md`의 C1–C13 표를 참고하세요.

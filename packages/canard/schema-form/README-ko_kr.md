@@ -1765,6 +1765,8 @@ export const FormWithCustomInput = () => {
 - `disabled`: 해당 Node가 비활성화될 때 표시될지 여부를 결정합니다. disabled 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `oneOf`/`anyOf` 분기의 `active`, 또는 호스트의 `discriminator`: 표시할 분기를 선택합니다. 각 분기에 `controls.active` 표현식을 주거나, `controls.discriminator`에 속성 이름을 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다. ObjectNode 에서만 사용할 수 있습니다. 두 게이트가 모두 없으면 모든 분기가 켜집니다. 모든 분기의 필드가 존재하며 어느 분기가 맞는지는 검증기만 정합니다.
 
+  키는 객체·nullable 객체 호스트(`type: 'object'`, `['object', 'null']`, `['null', 'object']`)에 선언합니다. union 없는 선언이나 알려진 비객체 런타임 호스트는 경고와 함께 키를 무시합니다. anyOf 태그 중복, 여러 종류를 포괄하는 호스트 태그 형, 선언마다의 독립 키는 허용합니다. union 전체 태그 누락·oneOf 중복·호스트 태그 형 없이 모호한 분기 종류는 오류이고, 도달 불가능한 종류·빈 교차는 태그를 끌어올리지 않고 경고합니다. C1–C13과 터미널 객체 예외는 [판별자 규칙](docs/ko/SPECIFICATION.md#판별자-규칙)을 참고하세요.
+
 #### 계층 규칙
 
 `controls`는 Node 자신, 그 Node를 가리키는 부모의 `controls.fields` 항목, 그 Node를 선언한 조각(예: `allOf` 항목)에 선언할 수 있습니다. 계층은 서로를 덮어쓰지 않고 합쳐집니다. 표준 `readOnly`와 `readOnly` / `disabled` 제어는 OR로, `visible`은 AND로 결합합니다.

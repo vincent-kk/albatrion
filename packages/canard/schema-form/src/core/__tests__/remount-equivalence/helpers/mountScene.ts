@@ -1,7 +1,11 @@
 import { createSceneValidator } from '@/schema-form/__tests__/fixtures/remountEquivalence/createSceneValidator';
 import type { RemountScene } from '@/schema-form/__tests__/fixtures/remountEquivalence/types';
 import { type AuthoredSchema, ValidationMode } from '@/schema-form/core/engine';
-import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
+import {
+  type FieldNode,
+  buildFieldNodeTree,
+  mountFieldNode,
+} from '@/schema-form/core/surface';
 
 /**
  * Compile and mount a wholly independent tree; no blueprint is reused.
@@ -14,7 +18,12 @@ export function mountScene(
   scene: RemountScene,
   value: unknown,
   context = scene.context ?? {},
-) {
+): {
+  /** Independently mounted public root. */
+  root: FieldNode;
+  /** Diagnostics observed during this tree's lifetime. */
+  records: { code: string; path?: string; level: string }[];
+} {
   const records: { code: string; path?: string; level: string }[] = [];
   const root = buildFieldNodeTree({
     jsonSchema: scene.schema as AuthoredSchema,

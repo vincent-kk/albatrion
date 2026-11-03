@@ -79,7 +79,7 @@ export type ChildControlKey = keyof ChildSchemaControls;
  * Controls of a node schema: the child keys plus declarations and cross-node injection.
  * @typeParam Schema - Schema type that `injectTo` receives in its context
  */
-export type SchemaControls<Schema> = ChildSchemaControls & {
+type SchemaControlsBase<Schema> = ChildSchemaControls & {
   /** Controls addressed by name to direct child fields, one hop only. */
   fields?: readonly {
     /** Names of the direct children this entry addresses. */
@@ -95,10 +95,20 @@ export type SchemaControls<Schema> = ChildSchemaControls & {
    * @returns A path-to-value map or entry list to write, or nothing
    */
   injectTo?(value: unknown, context: InjectToContext<Schema>): unknown;
-  /** Property name whose `const` or `enum` tags select the oneOf or anyOf branch. */
-  discriminator?: string;
   /** Dependency paths whose values reach the input as `watchValues`, in order. */
   watch?: readonly string[];
+};
+
+/** Controls of an object host, including its explicit branch tag property. */
+export type SchemaControls<Schema> = SchemaControlsBase<Schema> & {
+  /** Property whose `const` or `enum` tags select `oneOf` or `anyOf` branches on an object or nullable-object host. */
+  discriminator?: string;
+};
+
+/** Controls of other hosts; a discriminator requires an object host. */
+export type NonObjectSchemaControls<Schema> = SchemaControlsBase<Schema> & {
+  /** Object branch selection is unavailable on this host. */
+  discriminator?: never;
 };
 
 /** Key of a node `controls` object. */

@@ -187,19 +187,22 @@ export const populateNodeChildren = (
           ({ gate }) => gate!,
         );
         input.gates = [...input.gates, ...entryGates];
-        if (existing) existing.inputs.push(input);
-        else
-          properties.set(name, {
-            path,
-            inputs: [input],
-          });
         const discriminatorIndex = input.gates.findIndex(
           (gate) =>
             gate.kind === 'discriminator' &&
             gate.condition.propertyName === name,
         );
+        const discriminator = input.gates[discriminatorIndex];
+        if (
+          discriminator?.kind === 'discriminator' &&
+          discriminator.condition.lift === false
+        )
+          continue;
+        const entry = existing ?? { path, inputs: [] };
+        if (!existing) properties.set(name, entry);
+        entry.inputs.push(input);
         if (discriminatorIndex >= 0)
-          properties.get(name)!.inputs.push({
+          entry.inputs.push({
             ...input,
             gates: input.gates.slice(0, discriminatorIndex),
             context: 'declaration',

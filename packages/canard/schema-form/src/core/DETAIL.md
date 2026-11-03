@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Authored schemas distinguish object hosts from other hosts at the declaration site. The binding consumes `NonObjectSchemaControls` through this boundary; helper union members stay internal. This introduces no runtime allocation.
+
 - 호스트 바인딩은 engine이 소유한 실패 묶음의 잎 순회를 core 경계에서 소비한다. raw host 채널은 바인딩과 engine이 각각 유지하며 패키지 공개 표면은 넓히지 않는다.
 
 - B12는 engine이 소유한 `InactiveValue`·`InactiveValueResolver`·`InactiveValueContext`를 이름으로 재수출하고 surface의 `onInactive`를 노드 공개 계약으로 조합합니다. 구현은 각 소유 경계에 남깁니다.
@@ -29,6 +31,8 @@
 - 자식 형상 그래프는 순환하지 않는다. 부모·루트 참조는 노드의 탐색과 폐기 후 읽기 계약을 유지한다(WRITE-086).
 
 ## API Contracts
+
+- 판별자의 오류·무시·도달 불가능 분류는 blueprint가 소유합니다. C7의 anyOf 중복과 C9의 호스트 태그 union, C12의 선언별 독립 키는 정착에서도 같은 선택을 보존합니다. `ObjectAuthoredSchema`·`NonObjectAuthoredSchema`는 내부 보조 형으로 남고, 외부 바인딩이 필요한 `NonObjectSchemaControls`만 core 경계를 건넙니다.
 
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
@@ -200,6 +204,6 @@ RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이�
 
 ## Last Updated
 
-2026-11-02
+2026-11-03
 
 계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

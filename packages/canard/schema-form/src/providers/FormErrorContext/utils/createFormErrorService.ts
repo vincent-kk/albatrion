@@ -39,7 +39,11 @@ export const createFormErrorService = (): FormErrorService => {
         seen.add(record.error);
       }
       if (record.level === 'warning') {
-        const key = JSON.stringify([record.code, record.path]);
+        const key = JSON.stringify([
+          record.code,
+          record.path,
+          record.schemaPath,
+        ]);
         const scope = reportScope ?? service.warningScope;
         let keys = warnings.get(scope);
         if (!keys) warnings.set(scope, (keys = new Set()));

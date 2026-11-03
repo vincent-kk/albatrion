@@ -51,7 +51,9 @@
 
 `types/schema/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않는다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둔다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언한다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않는다.
 
-공개 `JSONSchema`(코어 인터페이스 `AuthoredSchema`의 별칭)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언한다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류이다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않는다. 두 경우 모두 런타임이 청사진 오류를 던진다. `options`의 형은 아직 열려 있다.
+Public `JSONSchema` aliases the core `AuthoredSchema` union. Only `type: 'object'`, `['object', 'null']`, or `['null', 'object']` admits `controls.discriminator`; all other hosts and non-object per-kind aliases use `NonObjectSchemaControls`. Broad type arrays without a discriminator remain valid. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류이다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않는다. 두 경우 모두 런타임이 청사진 오류를 던진다. `options`의 형은 아직 열려 있다.
+
+Standard `@winglet/json-schema` annotations may include recursively partial schemas and therefore need to be checked against the form-specific `JSONSchema` at their declaration site when passed into form APIs. No cast is required for authored form literals.
 
 ### 스키마 옵션
 
@@ -88,6 +90,8 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 - 색인 서명을 뺀 `BasicSchema`의 선언 키에는 `computed`, `&` 축약, `injectTo`, `terminal`이 없고, 객체 스키마의 선언 키에는 `virtual`, `propertyKeys`도 없고, 객체 스키마의 `options`는 `propertyOrder`와 `virtual`을 선언한다.
 
 ### controls-surface — controls는 런타임이 받는 키와 값만 형으로 받는다
+
+- 객체·nullable 객체의 판별자는 union을 가진 선언에서 분기를 선택합니다. union 없는 선언과 알려진 비객체 호스트는 키를 무시하고 `DiscriminatorIgnoredForForm`으로 경고합니다. 비문자열·빈 키, 태그가 전혀 없는 union, oneOf 중복, 호스트 태그 형 없이 서로 다른 분기 종류는 오류입니다. anyOf 중복과 선언별 독립 판별 키는 허용합니다. 세부 C1–C13 계약은 blueprint가 소유하며, 공개 진단 details는 `{ propertyName, reason }`이고 태그 값 목록은 싣지 않습니다.
 
 - 공개 `JSONSchema`와 종류별 별칭의 `controls` 키는 런타임의 열세 키와 같고, fields 항목의 `controls` 키는 아홉 키와 같다.
 - 모르는 키, 문자열 `watch`, 함수가 아닌 `injectTo`는 주석·`satisfies` 리터럴에서 형 오류이고, 사용자 정의 `Options`를 넘긴 `JSONSchema`는 그대로 컴파일된다.
@@ -132,4 +136,4 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ## Last Updated
 
-2026-10-28
+2026-11-03

@@ -39,8 +39,12 @@ export type FormErrorReason<Code extends FormRecordCode> = Code extends
   : Code extends typeof FormWarningCode.Misfit
     ? 'unconvertible' | 'ambiguous'
     : Code extends typeof FormErrorCode.DiscriminatorMismatch
-      ? 'missing' | 'kind' | 'overlap' | 'key'
-      : never;
+      ? 'missing' | 'kind' | 'overlap'
+      : Code extends typeof FormWarningCode.DiscriminatorIgnoredForForm
+        ? 'union' | 'host'
+        : Code extends typeof FormWarningCode.DiscriminatorBranchUnreachable
+          ? 'kind' | 'empty'
+          : never;
 
 /**
  * Code-specific details with closed reasons and automatic-write source paths.

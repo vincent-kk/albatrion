@@ -32,7 +32,7 @@ export const FormErrorCode = {
   ObservedValues: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ObservedValues}`,
   /** Class: JSONSchemaError; when: a controls, options, or child controls key is outside its closed list. */
   UnknownGroupKey: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.UnknownGroupKey}`,
-  /** Class: JSONSchemaError; when: a discriminator key or branch value is inconsistent. */
+  /** Class: JSONSchemaError; when: no union branch tags the key, untyped tag kinds differ, or oneOf tags overlap. */
   DiscriminatorMismatch: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.DiscriminatorMismatch}`,
   /** Class: JSONSchemaError; when: static and ungated branch node kinds conflict. */
   SharedNodeKindConflict: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.SharedNodeKindConflict}`,
