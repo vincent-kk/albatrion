@@ -23,7 +23,8 @@
 - AJV 플러그인의 bind 거부 오류는 자체 `Error`이며 `group`·`code`를 `UNHANDLED_ERROR`·`FormErrorCode.ValidatorBindRefused`로 맞춥니다. `isUnhandledError`는 이를 알아보지 못하며 호출자는 `code`로 가릅니다(32C-02). `SCHEMA_FORM_WARNING.MISFIT`이 경고등 코드이고 `VALUE_TYPE_MISMATCH`는 아니며, `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 코드 표에서 뺍니다(ERROR-031·164·188·198, SURFACE-061, CONTROLS-079).
 - `FormErrorRecord`는 level·code·message와 필수 origin, 선택 path·schemaPath·details·error·componentStack을 담습니다. origin은 load·write·validate·submit·render의 닫힌 합집합이며 details는 error.details와 같은 참조입니다. 내부 대기 기록의 origin만 선택적이며 전달 전에 확정합니다(ERROR-017·019).
 - `interface FormErrorReporter { report(record: FormErrorRecord): void; hasConsumer(): boolean }`은 core가 트리 생성 인자로 받는 형입니다. `hasConsumer()`가 거짓이면 일반 경고의 판정·서식·키 할당을 하지 않고, true이면 같은 사건의 code·level·details·origin를 환경에 따라 바꾸지 않습니다. `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고만은 `hasConsumer()`와 무관하게 개발 모드에서만 합니다(ERROR-013·021·030, WRITE-099, 31C-02).
-- 코드별 `reason`은 닫힌 값만 둡니다. `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에는 `'duplicateSchemaId'`, `MISFIT`에는 `'unconvertible' | 'ambiguous'`, `DISCRIMINATOR_MISMATCH`에는 `'missing' | 'kind' | 'overlap' | 'key'`를 씁니다. 원장이 이름 붙이지 않은 원인에는 `reason`을 만들지 않습니다(ERROR-201, VALUE-037, 31C-03).
+- 코드별 `reason`은 닫힌 값만 둡니다. `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에는 `'duplicateSchemaId'`, `MISFIT`에는 `'unconvertible' | 'ambiguous'`, `DISCRIMINATOR_MISMATCH`에는 `'missing' | 'kind' | 'overlap'`를 씁니다. 판별자의 `missing`은 union에 태그가 전혀 없음(C4), `kind`는 호스트 태그 형이 없는데 분기 종류가 다름(C8), `overlap`은 같은 oneOf의 중복(C6)입니다. 선언별 독립 키(C12)는 오류가 아니며 `key` 이유는 없습니다(ERROR-201·203).
+- `FormWarningCode.DiscriminatorIgnoredForForm`의 값은 `SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM`이며 이유는 `'union' | 'host'`입니다(C2·C3). `DiscriminatorBranchUnreachable`은 `'kind' | 'empty'`를 사용합니다(C10·C11). 두 경고와 `DiscriminatorMismatch`의 details는 `{ propertyName, reason }`만 담고 태그 값 목록을 담지 않습니다. 판별자 값 모양 오류(C1)는 `INVALID_CONTROL_SHAPE`이며 details는 `{ group: 'controls', key: 'discriminator', expected: 'string' }`이며 일반 정적 연언의 `EMPTY_ENUM_INTERSECTION`은 유지합니다. 원장이 이름 붙이지 않은 원인에는 `reason`을 만들지 않습니다.
 - `FormErrorDetails<Code>`의 `sourcePath?: string`은 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`·`SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`에만 허용합니다. 자동 쓰기 실패의 `details.sourcePath`는 쓰기를 낸 `controls.injectTo` 선언 노드의 데이터 경로이며, `details.path`와 기록의 `path`는 대상 경로로 유지합니다. 쓰기 모양 오류의 `expectedLength`·`received`는 보존하고 호출자 경로의 쓰기 모양 오류에는 `sourcePath`를 넣지 않습니다. 오류 기록의 `details`는 이 필드를 포함한 `error.details`와 같은 참조입니다(ERROR-017·195, 59C-01).
 - 코드 enum은 패키지 전체의 공개 데이터입니다. 기록 생성·사슬 끝 전달·묶음·경고 중복 키와 전달 중 쓰기 거부는 `engine/write`가 소유하며 이 fractal의 클래스·상수·형에는 넣지 않습니다(ERROR-004·005·024·029·164, NODE-016).
 
@@ -70,6 +71,6 @@ onError is an event channel: it delivers the one record of each occurrence and d
 
 ## Last Updated
 
-2026-11-02
+2026-11-03
 
 계약 기준: LANDING-067·095, REACT-033, ERROR-110–119·164·202, 68C-08, 69C-02; 그룹·맨 이름 조합 및 클래스 이름 계약(2026-10-16).

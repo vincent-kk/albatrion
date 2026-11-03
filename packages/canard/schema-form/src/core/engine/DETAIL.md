@@ -102,6 +102,8 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## API Contracts
 
+- `AuthoredSchema`의 두 보조 멤버 `ObjectAuthoredSchema`·`NonObjectAuthoredSchema`는 내부에 남습니다. `NonObjectSchemaControls`만 바인딩 소비를 위해 engine·core 경계에서 명명 재수출하며 패키지 공개 이름을 늘리지 않습니다. 판별자의 C1–C13 정적 분석은 blueprint가 소유하고, 정착은 anyOf 중복의 동시 선택(C7), 여러 태그 종류(C9), 선언마다의 독립 키(C12)를 보존합니다.
+
 - write의 `forEachFailureLeaf`는 호스트 바인딩이 engine과 같은 실패 묶음의 잎 순서·identity를 쓰도록 core에 명명 재수출한다. 구현과 의미는 write에 남기며 패키지 공개 진입점에는 노출하지 않는다.
 
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
@@ -126,7 +128,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 - **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot, scheduleValidationSlot; 형 ValidationIssue, Validator, ValidateFunction.
 - **record**: EMPTY_REVISION_LEDGER, FieldNodeEventType, FieldNodeRequestType; 형 Behavior, FieldNodeRecord, FieldNodeRuntime.
 - **settle**: readFieldNodeDefaultValue, readFieldNodeInactiveValues, readFieldNodeIsMisfit, readFieldNodeMisfits, readFieldNodeWatchValues, loadFieldNodeAtMount, resetFieldNodeForm.
-- **types**: ValidationMode, WriteOption, FieldNodeState; 형 AuthoredSchema, NodeStateFlags, NodeStrategy, SchemaControls.
+- **types**: ValidationMode, WriteOption, FieldNodeState; 형 AuthoredSchema, NodeStateFlags, NodeStrategy, SchemaControls, NonObjectSchemaControls.
 - **behaviors**: BEHAVIORS, interpret, isMember.
 - **navigation**: find, findNodes.
 - **utils**: PathKeyedMap, PathKeyedSet.
@@ -187,6 +189,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## Last Updated
 
-2026-11-02
+2026-11-03
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).

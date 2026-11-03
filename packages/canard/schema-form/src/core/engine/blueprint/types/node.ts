@@ -27,6 +27,10 @@ type DiscriminatorCondition = {
   readonly propertyName: string;
   /** Authored tag values retained without coercion. */
   readonly values: readonly unknown[];
+  /** An impossible tag contributes no child declaration or lifted input. */
+  readonly lift?: false;
+  /** Host-declared tag kinds make every value of this branch unreachable. */
+  readonly kindUnreachable?: true;
 };
 
 /** Declarative gate; analysis stores kind-specific conditions but never evaluates them. */

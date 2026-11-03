@@ -22,4 +22,6 @@ export const SchemaFormWarningSpecific = {
   InactiveValueWithUnsetOnInactive: 'INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE',
   /** A synchronous exit resolver attempts to write to its resolving tree. */
   WriteInInactiveResolver: 'WRITE_IN_INACTIVE_RESOLVER',
+  /** A valid discriminator cannot select branches on this declaration. */
+  DiscriminatorIgnoredForForm: 'DISCRIMINATOR_IGNORED_FOR_FORM',
 } as const;

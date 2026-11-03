@@ -1780,6 +1780,8 @@ Each property below is a key of the `controls` object.
 - `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
 - `active` on a `oneOf`/`anyOf` branch, or `discriminator` on the host: Select the branch to display. Give each branch a `controls.active` expression, or set `controls.discriminator` to a property name and tag each branch with `const`/`enum` on that property (ObjectNode only). Without either gate, every branch is on: all branches' fields are present, and only the validator decides which branch matches.
 
+  Declare the key on an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`). A union-less declaration or known non-object runtime host warns and ignores it. AnyOf tag overlap, host tag types covering several kinds, and independent keys on separate declarations are allowed. Missing tags for the whole union, oneOf overlap, and ambiguous tag kinds without a host type remain errors; unreachable kind/empty tags warn without lifting. See [Discriminator Rules](docs/en/SPECIFICATION.md#discriminator-rules) for C1–C13 and terminal-object exceptions.
+
 #### Layering Rules
 
 `controls` can be declared on the node itself, on a parent's `controls.fields` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.

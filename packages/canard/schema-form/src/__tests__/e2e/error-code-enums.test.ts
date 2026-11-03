@@ -28,6 +28,6 @@ describe('root error and warning code enums', () => {
     expect(FormWarningCode.WriteInInactiveResolver).toBe(
       'SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER',
     );
-    expect(Object.keys(FormWarningCode)).toHaveLength(20);
+    expect(Object.keys(FormWarningCode)).toHaveLength(21);
   });
 });

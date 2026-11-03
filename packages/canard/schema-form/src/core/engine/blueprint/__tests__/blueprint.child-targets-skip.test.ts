@@ -43,32 +43,12 @@ it.each([
       options: { virtual: { group: { fields: ['a'] } } },
     },
   },
-])('skips child-target validation for $name', ({ schema }) => {
-  const validate = vi.spyOn(childTargets, 'validateChildTargets');
-  blueprint(schema);
-  expect(validate).not.toHaveBeenCalled();
-});
-
-it.each([
-  { name: 'root fields', schema: { type: 'object', controls: { fields: [] } } },
   {
     name: 'root discriminator',
     schema: {
       type: 'object',
       controls: { discriminator: 'tag' },
       oneOf: [{ properties: { tag: { type: 'string', const: 'a' } } }],
-    },
-  },
-  {
-    name: 'oneOf child fields',
-    schema: {
-      type: 'object',
-      oneOf: [
-        {
-          controls: { active: true },
-          properties: { a: { type: 'object', controls: { fields: [] } } },
-        },
-      ],
     },
   },
   {
@@ -90,13 +70,6 @@ it.each([
     },
   },
   {
-    name: 'referenced fields',
-    schema: {
-      $defs: { target: { type: 'object', controls: { fields: [] } } },
-      $ref: '#/$defs/target',
-    },
-  },
-  {
     name: 'referenced discriminator',
     schema: {
       $defs: {
@@ -110,21 +83,6 @@ it.each([
     },
   },
   {
-    name: 'virtual fields controls',
-    schema: {
-      type: 'object',
-      properties: { a: { type: 'number' } },
-      options: {
-        virtual: {
-          group: {
-            fields: ['a'],
-            controls: { fields: [{ targets: ['a'], controls: {} }] },
-          },
-        },
-      },
-    },
-  },
-  {
     name: 'virtual discriminator',
     schema: {
       type: 'object',
@@ -135,6 +93,48 @@ it.each([
             fields: ['tag'],
             controls: { discriminator: 'tag' },
             oneOf: [{ properties: { tag: { type: 'string', const: 'a' } } }],
+          },
+        },
+      },
+    },
+  },
+])('skips child-target validation for $name', ({ schema }) => {
+  const validate = vi.spyOn(childTargets, 'validateChildTargets');
+  blueprint(schema);
+  expect(validate).not.toHaveBeenCalled();
+});
+
+it.each([
+  { name: 'root fields', schema: { type: 'object', controls: { fields: [] } } },
+  {
+    name: 'oneOf child fields',
+    schema: {
+      type: 'object',
+      oneOf: [
+        {
+          controls: { active: true },
+          properties: { a: { type: 'object', controls: { fields: [] } } },
+        },
+      ],
+    },
+  },
+  {
+    name: 'referenced fields',
+    schema: {
+      $defs: { target: { type: 'object', controls: { fields: [] } } },
+      $ref: '#/$defs/target',
+    },
+  },
+  {
+    name: 'virtual fields controls',
+    schema: {
+      type: 'object',
+      properties: { a: { type: 'number' } },
+      options: {
+        virtual: {
+          group: {
+            fields: ['a'],
+            controls: { fields: [{ targets: ['a'], controls: {} }] },
           },
         },
       },

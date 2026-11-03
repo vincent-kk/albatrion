@@ -45,7 +45,9 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 **`SHARED_NODE_KIND_CONFLICT`** — an ungated branch (no `controls.active`, not selected by `controls.discriminator`) redeclares a parent property with a `type` outside the parent's, or ungated branches disagree on a property's kind. Narrow the branch `type` to the parent's, drop it, or gate the branch.
 
-**`DISCRIMINATOR_MISMATCH` / `EMPTY_ENUM_INTERSECTION`** — discriminator tags differ in kind across branches or overlap (`DISCRIMINATOR_MISMATCH`), or a tag's `const`/`enum` values have nothing in common (`EMPTY_ENUM_INTERSECTION`). Typed tags (`{ type: 'string', const: 'cat' }`) are fine.
+**`DISCRIMINATOR_MISMATCH`** — an existing object union has no tagged branch (`missing`), branch tags require different kinds without a host-declared tag type (`kind`), or tags overlap within one `oneOf` (`overlap`). `anyOf` overlap and different keys on separate declarations are allowed. A host-declared tag union can cover multiple kinds.
+
+**`DISCRIMINATOR_IGNORED_FOR_FORM` / `DISCRIMINATOR_BRANCH_UNREACHABLE`** — ignored keys have reason `union` (no union on that object declaration) or `host` (known non-object host). Unreachable tags have reason `kind` (outside host tag type) or `empty` (empty const/enum intersection) and are not lifted. These warnings and mismatch errors have details `{ propertyName, reason }`, without values. Terminal objects omit unreachable warnings. Ordinary static enum intersection errors still use `EMPTY_ENUM_INTERSECTION`; see `expressions.md` for C1–C13.
 
 **A nullable object fails validation while `null`** (no warning is printed) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
 

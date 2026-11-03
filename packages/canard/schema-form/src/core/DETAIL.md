@@ -32,6 +32,8 @@
 
 ## API Contracts
 
+- 판별자의 오류·무시·도달 불가능 분류는 blueprint가 소유합니다. C7의 anyOf 중복과 C9의 호스트 태그 union, C12의 선언별 독립 키는 정착에서도 같은 선택을 보존합니다. `ObjectAuthoredSchema`·`NonObjectAuthoredSchema`는 내부 보조 형으로 남고, 외부 바인딩이 필요한 `NonObjectSchemaControls`만 core 경계를 건넙니다.
+
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출한다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공한다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않는다. 패키지의 src/index 공개 이름은 유지한다(07c 계획 9.2).
@@ -202,6 +204,6 @@ RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이�
 
 ## Last Updated
 
-2026-11-02
+2026-11-03
 
 계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

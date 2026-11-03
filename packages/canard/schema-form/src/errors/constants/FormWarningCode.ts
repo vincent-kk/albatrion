@@ -31,7 +31,7 @@ export const FormWarningCode = {
   ChildNodeComponentsOnTerminal: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.ChildNodeComponentsOnTerminal}`,
   /** Class: warning record; when: a terminal subtree declares a reserved key ignored by the form. */
   TerminalSubtreeKeyIgnoredForForm: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.TerminalSubtreeKeyIgnoredForForm}`,
-  /** Class: warning record; when: a branch discriminator literal is outside the allowed list. */
+  /** Class: warning record; when: a branch tag is empty or outside the admitted kinds. */
   DiscriminatorBranchUnreachable: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DiscriminatorBranchUnreachable}`,
   /** Class: warning record; when: a development-mode whole value is not JSON-compatible. */
   NonJsonWholeValue: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.NonJsonWholeValue}`,
@@ -47,6 +47,8 @@ export const FormWarningCode = {
   InactiveValueWithUnsetOnInactive: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.InactiveValueWithUnsetOnInactive}`,
   /** Class: warning record; when: a public value, array, batch or reset write is attempted inside an inactive resolver. */
   WriteInInactiveResolver: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.WriteInInactiveResolver}`,
+  /** Class: warning record; when: a discriminator has no union or object host and is ignored. */
+  DiscriminatorIgnoredForForm: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DiscriminatorIgnoredForForm}`,
 } as const;
 
 /** Closed union of the warning code values. */

@@ -91,6 +91,8 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ### controls-surface — controls는 런타임이 받는 키와 값만 형으로 받는다
 
+- 객체·nullable 객체의 판별자는 union을 가진 선언에서 분기를 선택합니다. union 없는 선언과 알려진 비객체 호스트는 키를 무시하고 `DiscriminatorIgnoredForForm`으로 경고합니다. 비문자열·빈 키, 태그가 전혀 없는 union, oneOf 중복, 호스트 태그 형 없이 서로 다른 분기 종류는 오류입니다. anyOf 중복과 선언별 독립 판별 키는 허용합니다. 세부 C1–C13 계약은 blueprint가 소유하며, 공개 진단 details는 `{ propertyName, reason }`이고 태그 값 목록은 싣지 않습니다.
+
 - 공개 `JSONSchema`와 종류별 별칭의 `controls` 키는 런타임의 열세 키와 같고, fields 항목의 `controls` 키는 아홉 키와 같다.
 - 모르는 키, 문자열 `watch`, 함수가 아닌 `injectTo`는 주석·`satisfies` 리터럴에서 형 오류이고, 사용자 정의 `Options`를 넘긴 `JSONSchema`는 그대로 컴파일된다.
 
@@ -134,4 +136,4 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ## Last Updated
 
-2026-10-28
+2026-11-03

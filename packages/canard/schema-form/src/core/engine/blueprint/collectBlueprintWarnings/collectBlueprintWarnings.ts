@@ -2,6 +2,8 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../../errors';
 import type {
   Blueprint,
@@ -59,6 +61,25 @@ export const collectBlueprintWarnings = (
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
+      const propertyName = schema.controls?.discriminator;
+      if (typeof propertyName === 'string' && propertyName.length) {
+        const reason =
+          node.kind !== 'object' && node.kind !== 'virtual'
+            ? 'host'
+            : !isArray(schema.oneOf) && !isArray(schema.anyOf)
+              ? 'union'
+              : undefined;
+        if (reason)
+          emit({
+            code: FormWarningCode.DiscriminatorIgnoredForForm,
+            level: 'warning',
+            schemaPath: appendSegment(
+              appendSegment(declaration.schemaPath, 'controls'),
+              'discriminator',
+            ),
+            details: { propertyName, reason },
+          });
+      }
       collectInactiveValueWarnings(
         schema.controls,
         declaration.schemaPath,
@@ -106,9 +127,22 @@ export const collectBlueprintWarnings = (
         )
           warning(FormWarningCode.NullBranchIgnoredForForm);
       }
+      if (node.strategy === 'terminal') continue;
       for (const gate of declaration.gates) {
         if (gate.kind !== 'discriminator') continue;
         const descriptor = gate.condition;
+        if (descriptor.kindUnreachable || descriptor.values.length === 0) {
+          emit({
+            code: FormWarningCode.DiscriminatorBranchUnreachable,
+            level: 'warning',
+            schemaPath: gate.schemaPath,
+            details: {
+              propertyName: descriptor.propertyName,
+              reason: descriptor.kindUnreachable ? 'kind' : 'empty',
+            },
+          });
+          continue;
+        }
         const tag = node.childEntries.find(
           (entry) => entry.name === descriptor.propertyName,
         )?.node;
@@ -149,7 +183,7 @@ export const collectBlueprintWarnings = (
             code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',
             schemaPath: gate.schemaPath,
-            details: { propertyName: descriptor.propertyName },
+            details: { propertyName: descriptor.propertyName, reason: 'kind' },
           });
         }
       }

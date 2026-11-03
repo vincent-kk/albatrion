@@ -655,6 +655,19 @@ const formInputMap = {
 
 `controls.discriminator` is available only on an object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`. Other host types are rejected by TypeScript.
 
+TypeScript enforces the object-host type; union presence is checked at run time. An object declaration without a union is accepted and its discriminator is ignored with a warning.
+
+```typescript
+{
+  type: 'object',
+  controls: { discriminator: 'kind' },
+  oneOf: [
+    { properties: { kind: { const: 'cat' }, name: { type: 'string' } } },
+    { properties: { kind: { const: 'dog' }, age: { type: 'number' } } }
+  ]
+}
+```
+
 
 The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), the first nine keys (`active` through `unsetOnInactive`) and `inactiveValue` are allowed; any of the other four throws.
 
@@ -773,9 +786,33 @@ A branch usually omits `type` and takes its parent's. The parent's own `type` de
 
 - A branch whose `type` differs from the parent's is not rejected when the schema loads. The form keeps the parent's kind, and the validator still evaluates the branch with its own `type`, so the branch matches only values of that type.
 - A property declared by the parent and again by an ungated branch (one without `controls.active` that `controls.discriminator` does not select) must stay within the parent property's `type`. A narrower `type` is accepted and the parent's wins; a `type` outside it throws `SHARED_NODE_KIND_CONFLICT`. When only ungated branches declare a property, they must agree on its kind, or the same error is thrown. A property in a gated branch is not compared: when the parent declares it, the parent's `type` wins; otherwise the gated branch's field keeps its own kind.
-- Discriminator tags may carry a `type`, as in `kind: { type: 'string', const: 'cat' }`. Tags of different kinds across branches, or overlapping tag values, throw `DISCRIMINATOR_MISMATCH`; tag `const` / `enum` values with nothing in common throw `EMPTY_ENUM_INTERSECTION`; a tag value outside the tag's own `type` gives the warning `DISCRIMINATOR_BRANCH_UNREACHABLE`.
+- Discriminator tags may carry a `type`; the rules below classify their effect.
 
-These errors are schema errors (recognized by `isJSONSchemaError`). An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no child nodes, so the property check above does not run for its branches. `DISCRIMINATOR_MISMATCH`, `EMPTY_ENUM_INTERSECTION` and the `NULL_BRANCH_IGNORED_FOR_FORM` warning below still apply; `DISCRIMINATOR_BRANCH_UNREACHABLE` is not reported, because it is checked against a child field the object does not build, and the validator still sees the schema as written.
+These errors are schema errors (recognized by `isJSONSchemaError`). An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no child nodes, so the property check above does not run for its branches. `DISCRIMINATOR_MISMATCH` and the `NULL_BRANCH_IGNORED_FOR_FORM` warning below still apply; `EMPTY_ENUM_INTERSECTION` remains an error for ordinary static conjunctions; `DISCRIMINATOR_BRANCH_UNREACHABLE` is not reported, because it is checked against a child field the object does not build, and the validator still sees the schema as written.
+
+#### Discriminator Rules
+
+A discriminator is one property name per declaration. Separate declarations on the same node may name different keys; each key gates only the `oneOf` / `anyOf` written beside it. A branch's own `controls.active` remains AND-ed with its discriminator gate.
+
+| Case | Condition | Result |
+| --- | --- | --- |
+| C1 | Key is not a non-empty string | `INVALID_CONTROL_SHAPE`, details `{ group: 'controls', key: 'discriminator', expected: 'string' }`; checked before ignored-host cases |
+| C2 | Object declaration has no `oneOf` or `anyOf` array | Ignore the key; `DISCRIMINATOR_IGNORED_FOR_FORM`, `reason: 'union'` |
+| C3 | The host's static conjunction has a known non-object type, including a multi-kind union host | Ignore the key without reading tags; `DISCRIMINATOR_IGNORED_FOR_FORM`, `reason: 'host'` |
+| C4 | Object union exists but no branch tags the key with `const` / `enum` | `DISCRIMINATOR_MISMATCH`, `reason: 'missing'` |
+| C5 | Only some branches carry tags | Allowed; an untagged branch has no discriminator gate and still follows its own `active` |
+| C6 | Two branches of the same `oneOf` share a tag value | `DISCRIMINATOR_MISMATCH`, `reason: 'overlap'` |
+| C7 | Two branches of the same `anyOf` share a tag value | Allowed; all matching branches participate |
+| C8 | Host does not declare the tag field's type and branch tags require different node kinds | `DISCRIMINATOR_MISMATCH`, `reason: 'kind'` |
+| C9 | Host tag field's declared type covers several branch tag kinds | Allowed; the tag field can be a union and select across kinds |
+| C10 | A branch tag lies outside the host tag field's declared type, with or without an explicit branch tag `type` | `DISCRIMINATOR_BRANCH_UNREACHABLE`, `reason: 'kind'`; do not lift the unreachable tag declaration |
+| C11 | Tag `const` / `enum` intersection is empty, including `enum: []` | `DISCRIMINATOR_BRANCH_UNREACHABLE`, `reason: 'empty'`; keep a never-active gate and do not lift the tag |
+| C12 | Declarations on the same node name different keys | Allowed; their unions select independently |
+| C13 | A reachable tag field exists only in branches | Allowed; lift it into an always-mounted child |
+
+`DISCRIMINATOR_MISMATCH` and both discriminator warnings have details `{ propertyName, reason }`, without tag values. Mismatch reasons are `'missing' | 'kind' | 'overlap'`; there is no `'key'` reason. Ignored-key warnings use `'union' | 'host'` and point to the declaration's `controls/discriminator`, once per declaration. Unreachable warnings use `'kind' | 'empty'` and point to the branch's schemaPath.
+
+Read tag values before inferring their types: a tagged branch with an empty intersection is never active and still counts as tagged, so it does not cause C4. Unreachable C10/C11 tags are not lifted; when the host already owns that child, they are also omitted from its declarations, preserving its type and selection fast-path stability. An untyped host with a union still reads tags and cannot infer its own type from discriminator-gated branches. Ignoring a discriminator creates no gates and does not by itself disable the branchless path. Values outside the host tag's `enum` are not newly checked.
 
 #### The null-branch pattern
 
@@ -1047,7 +1084,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormErrorCode.CreateDynamicFunction` | `'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION'` | a controls expression cannot be compiled |  |
 | `FormErrorCode.ObservedValues` | `'JSON_SCHEMA_ERROR.OBSERVED_VALUES'` | observed-value expression analysis fails |  |
 | `FormErrorCode.UnknownGroupKey` | `'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY'` | a controls, options, or child controls key is outside its closed list |  |
-| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | a discriminator key or branch value is inconsistent |  |
+| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | no union branch tags the key (`missing`), untyped-host tag kinds differ (`kind`), or oneOf tags overlap (`overlap`) |  |
 | `FormErrorCode.SharedNodeKindConflict` | `'JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT'` | static and ungated branch node kinds conflict |  |
 | `FormErrorCode.TerminalStrategyMismatch` | `'JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH'` | declarations disagree on a node's terminal strategy |  |
 | `FormErrorCode.RecursiveShapeUnbounded` | `'JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED'` | schema analysis finds an unbounded recursive shape |  |
@@ -1109,7 +1146,8 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormWarningCode.DependentSchemasIgnoredForForm` | `'SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM'` | dependentSchemas is unsupported for form shape |  |
 | `FormWarningCode.ChildNodeComponentsOnTerminal` | `'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL'` | a terminal input reads empty child-node components |  |
 | `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | a terminal subtree declares a reserved key ignored by the form |  |
-| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | a branch discriminator literal is outside the allowed list |  |
+| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | tag kind is outside the host tag type (`kind`) or tag intersection is empty (`empty`); details `{ propertyName, reason }` |  |
+| `FormWarningCode.DiscriminatorIgnoredForForm` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM'` | discriminator ignored: no union (`union`) or known non-object host (`host`); details `{ propertyName, reason }` |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | a development-mode whole value is not JSON-compatible |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | an input definition test object has an unknown key |  |
 | `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | a value cannot be converted to the active type unambiguously |  |

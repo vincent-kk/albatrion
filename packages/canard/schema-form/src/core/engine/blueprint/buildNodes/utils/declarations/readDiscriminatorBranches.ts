@@ -14,6 +14,7 @@ import {
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
+import type { BlueprintGate } from '../../../types/node';
 import type { BlueprintSchema } from '../../../types/schema';
 import { intersectAllowedTypes } from '../../../utils/allowedTypes/intersectAllowedTypes';
 import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
@@ -23,7 +24,7 @@ import { inferAllowedTypes } from '../nodeTypes/inferAllowedTypes';
 import { collectStaticSchemas } from '../references/collectStaticSchemas';
 
 /** Union keywords whose branches are checked for a shared discriminator. */
-const UNION_KEYWORDS = ['oneOf', 'anyOf'] as const;
+const UNION_KEYWORDS: readonly ('oneOf' | 'anyOf')[] = ['oneOf', 'anyOf'];
 
 /**
  * Read explicit discriminator tags from each branch's static conjunction.
@@ -36,12 +37,15 @@ export const readDiscriminatorBranches = (
   context: AnalysisContext,
   schema: BlueprintSchema,
   schemaPath: string,
-): Map<string, { propertyName: string; values: readonly unknown[] }> => {
+): Map<
+  string,
+  Extract<BlueprintGate, { kind: 'discriminator' }>['condition']
+> => {
   const host = readSchemaObject(schema);
   const propertyName = host.controls?.discriminator;
   const result = new Map<
     string,
-    { propertyName: string; values: readonly unknown[] }
+    Extract<BlueprintGate, { kind: 'discriminator' }>['condition']
   >();
   if (propertyName === undefined) return result;
   if (typeof propertyName !== 'string' || !propertyName.length)
@@ -55,6 +59,29 @@ export const readDiscriminatorBranches = (
       },
       context.options,
     );
+  const hostParts = collectStaticSchemas(context, schema, schemaPath);
+  let hostTypes: ReturnType<typeof readAllowedTypes>;
+  let hostTagTypes: ReturnType<typeof readAllowedTypes>;
+  for (const part of hostParts) {
+    hostTypes = intersectAllowedTypes(
+      hostTypes,
+      readAllowedTypes(part.schema, part.schemaPath, context.options),
+    );
+    const property = readSchemaObject(part.schema).properties?.[propertyName];
+    if (property === undefined) continue;
+    const propertyPath = appendSegment(
+      appendSegment(part.schemaPath, 'properties'),
+      propertyName,
+    );
+    for (const tag of collectStaticSchemas(context, property, propertyPath))
+      hostTagTypes = intersectAllowedTypes(
+        hostTagTypes,
+        readAllowedTypes(tag.schema, tag.schemaPath, context.options),
+      );
+  }
+  if (hostTypes !== undefined && foldAllowedTypes(hostTypes) !== 8)
+    return result;
+  if (!isArray(host.oneOf) && !isArray(host.anyOf)) return result;
   for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
     let previousMask: Optional<number>;
@@ -95,7 +122,9 @@ export const readDiscriminatorBranches = (
         continue;
       }
       let values: Optional<readonly unknown[]>;
-      let mask: Optional<number>;
+      let tagTypes: ReturnType<typeof readAllowedTypes>;
+      const tagProperties: { schema: BlueprintSchema; schemaPath: string }[] =
+        [];
       for (const part of parts) {
         const property = readSchemaObject(part.schema).properties?.[
           propertyName
@@ -105,8 +134,7 @@ export const readDiscriminatorBranches = (
           appendSegment(part.schemaPath, 'properties'),
           propertyName,
         );
-        const types = inferAllowedTypes(context, property, propertyPath, true);
-        if (types) mask = foldAllowedTypes(types);
+        tagProperties.push({ schema: property, schemaPath: propertyPath });
         for (const tag of collectStaticSchemas(
           context,
           property,
@@ -120,22 +148,38 @@ export const readDiscriminatorBranches = (
           for (const restriction of restrictions) {
             if (!isArray(restriction)) continue;
             const intersection = intersectEnum(values, restriction, true);
-            if (
-              intersection === EMPTY_INTERSECTION ||
-              intersection?.length === 0
-            )
-              return throwBlueprintError(
-                FormErrorCode.EmptyEnumIntersection,
-                tag.schemaPath,
-                { propertyName },
-                context.options,
-              );
-            values = intersection;
+            values = intersection === EMPTY_INTERSECTION ? [] : intersection;
           }
         }
       }
       if (values === undefined) continue;
+      for (const property of tagProperties) {
+        if (values.length) {
+          tagTypes = intersectAllowedTypes(
+            tagTypes,
+            inferAllowedTypes(
+              context,
+              property.schema,
+              property.schemaPath,
+              true,
+            ),
+          );
+        } else {
+          for (const tag of collectStaticSchemas(
+            context,
+            property.schema,
+            property.schemaPath,
+          ))
+            tagTypes = intersectAllowedTypes(
+              tagTypes,
+              readAllowedTypes(tag.schema, tag.schemaPath, context.options),
+            );
+        }
+      }
+      const mask =
+        tagTypes === undefined ? undefined : foldAllowedTypes(tagTypes);
       if (
+        hostTagTypes === undefined &&
         mask !== undefined &&
         previousMask !== undefined &&
         mask !== previousMask
@@ -175,7 +219,7 @@ export const readDiscriminatorBranches = (
           break;
         }
       }
-      if (hasOverlappingTag) {
+      if (keyword === 'oneOf' && hasOverlappingTag) {
         return throwBlueprintError(
           FormErrorCode.DiscriminatorMismatch,
           branchPath,
@@ -187,7 +231,31 @@ export const readDiscriminatorBranches = (
       previousValues.push(...values);
       result.set(
         branchPath,
-        Object.freeze({ propertyName, values: Object.freeze([...values]) }),
+        Object.freeze({
+          propertyName,
+          values: Object.freeze([...values]),
+          ...(!values.length
+            ? { lift: false }
+            : hostTagTypes !== undefined &&
+                ((mask !== undefined &&
+                  (mask & foldAllowedTypes(hostTagTypes)) === 0) ||
+                  !values.some((value) =>
+                    value === null
+                      ? hostTagTypes.includes('null')
+                      : hostTagTypes.some((type) =>
+                          type === 'integer'
+                            ? typeof value === 'number' &&
+                              Number.isInteger(value)
+                            : type === 'array'
+                              ? isArray(value)
+                              : type === 'object'
+                                ? typeof value === 'object' && !isArray(value)
+                                : typeof value === type,
+                        ),
+                  ))
+              ? { lift: false, kindUnreachable: true }
+              : {}),
+        }),
       );
     }
   }

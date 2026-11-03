@@ -56,7 +56,7 @@
 
 - 정적 첫 로드 자격은 기존 branchless 증명을 재사용하고, 선언 수집과 재귀 형상 분석에 추가 증거를 결합해 정한다. public Blueprint 형을 넓히지 않는 약한 sidecar에 boolean 하나를 보유한다. `controls.default`, 전이, 식, 가상, 재귀, 컨테이너 whole-value는 자격 밖이다. 게이트 판정을 다시 만들지 않고, 첫 로드 때 전체 스키마를 다시 훑지도 않는다. 수집마다 고정 검사를, 청사진마다 O(1)의 보유 메모리를 더하며 정적 검증과 경고는 유지한다(89C-02·04).
 
-- 89C-03에 따라 분기가 없다는 것은, 선언 수집이 실제로 도달한 모든 작성 위치에 `oneOf`, `anyOf`, `if`, discriminator, `controls.active`가 없다는 증명이다. 참조 대상, 무게이트 allOf, items, prefixItems, 옛 additionalItems, 인라인 자식, 가상 선언을 같은 수집 과정에서 판정한다. 터미널 아래에서 무시되는 데이터는 기존 경고 범위대로 유지한다. BLUEPRINT-002의 선언·Fragment 그래프와, BLUEPRINT-001·012·044·030의 정적 충돌, S0–S6, 터미널 경고, 재귀 판정, 작성 순서, 판정 함수 메모는 분기 유무와 관계없이 유지한다.
+- 89C-03에 따라 분기가 없다는 것은, 선언 수집이 실제로 도달한 모든 작성 위치에 `oneOf`, `anyOf`, `if`, `controls.active`가 없다는 증명이다. 무시되는 discriminator만으로는 이 증명을 깨지 않는다(C2·C3). 참조 대상, 무게이트 allOf, items, prefixItems, 옛 additionalItems, 인라인 자식, 가상 선언을 같은 수집 과정에서 판정한다. 터미널 아래에서 무시되는 데이터는 기존 경고 범위대로 유지한다. BLUEPRINT-002의 선언·Fragment 그래프와, BLUEPRINT-001·012·044·030의 정적 충돌, S0–S6, 터미널 경고, 재귀 판정, 작성 순서, 판정 함수 메모는 분기 유무와 관계없이 유지한다.
 
 - 분기 없음과, 식·watch·state·파생 규칙 없음은 각각 독립된 capability다. 기능이 없으면 expressions와 dependencies는 청사진마다 소유하고 정적 색인 EMPTY_INDEX는 불변으로 공유한다. 기능이 있으면 식 컴파일, 기능 색인, SETTLE-017 역의존 표를 유지한다. 생략하는 것은 조건 평가용 자료, 동적 선언 조합 자료, gate-host 색인, 게이트 역의존 trie, 빈 registry뿐이다. 생성 시 분석이 끝난다는 점, 청사진 캐시 키, if 게이트를 작성 위치당 한 번만 컴파일한다는 점은 유지한다. 수집 중에 capability를 결합하는 일은 O(S) 순회에 고정 검사만 더하며, 청사진당 O(1) 기록을 보유한다. 기능이 없는 경우에는 뒤이은 O(S) 분석과 O(S) 색인 할당이 없어지고, 기능이 있는 경우에는 기존 시간·메모리 차수가 유지된다. 실제 시간과 구조 수는 93라운드 짝 측정으로 기록한다.
 
@@ -160,8 +160,10 @@
 
 ### discriminator — 명시 판별
 
-- 참조, allOf, 자기 active 결합, 끌어올림, null 분기, 태그 누락, 중복, 도달 불가능 진단을 검증한다. 자동 판별은 일어나지 않는다.
-- `DISCRIMINATOR_MISMATCH`는 네 가지다. 키가 어느 분기에도 없음(`missing`), 분기끼리 종류가 다름(`kind`), 분기 사이에 값이 겹침(`overlap`), 같은 노드의 선언 사이에서 판별 키가 다름(`key`)이다. details는 `{ propertyName, other?, reason }`이며, `key`에서 `propertyName`은 먼저 선언된 키이고 `other`는 다른 키다(25C-12).
+- C1은 비문자열·빈 키의 `INVALID_CONTROL_SHAPE`(details `{ group: 'controls', key: 'discriminator', expected: 'string' }`) 오류이며 C2·C3보다 먼저 검사한다. C2는 union 없는 객체 선언, C3는 정적 연언에서 알려진 비객체 호스트의 키를 무시하며 `DISCRIMINATOR_IGNORED_FOR_FORM`의 `union`·`host` 경고다. 형 미정 union 호스트는 태그를 계속 읽되 판별 게이트 분기로 형을 추론하지 않는다. C2는 선언별이고, 무시한 키는 게이트나 branchless 비활성 증거를 만들지 않는다.
+- `DISCRIMINATOR_MISMATCH`의 details는 `{ propertyName, reason }`이며 값 목록을 담지 않는다. 이유는 union 어느 분기에도 태그가 없음(C4, `missing`), 호스트가 태그 형을 정하지 않았는데 분기 종류가 다름(C8, `kind`), 같은 oneOf에서 태그가 겹침(C6, `overlap`)뿐이다. 일부 무태그 분기는 판별 게이트가 없고(C5), anyOf 중복은 모두 선택하며(C7), 호스트 태그 형이 여러 종류를 포괄하면 허용한다(C9). 선언마다 다른 키는 자기 union을 독립 선택한다(C12).
+- 호스트 태그 형 밖의 분기(C10)는 태그 type 명시 여부와 무관하게 `DISCRIMINATOR_BRANCH_UNREACHABLE`의 `kind` 경고다. 태그 const·enum 공집합(C11)은 형 추론 전에 빈 값 게이트로 남겨 절대 켜지지 않게 하며 `empty` 경고다. 둘 다 태그를 끌어올리지 않고, 호스트 자식이 있으면 그 자식 선언에서도 제외하여 충돌과 불필요한 빠른 경로 탈락을 막는다. 경고 details는 `{ propertyName, reason }`만 담는다. 도달 가능한 태그가 분기에만 있으면 항상 마운트되는 자식으로 끌어올린다(C13).
+- 터미널 객체(`options.terminal` 또는 `presentation.FieldInput`)에도 판별 불일치 오류는 적용된다. 자식이 없어 `DISCRIMINATOR_BRANCH_UNREACHABLE`은 보고하지 않으며, 일반 정적 연언의 `EMPTY_ENUM_INTERSECTION`은 오류로 유지한다. 호스트 태그 enum 밖의 값 검사는 추가하지 않는다.
 
 ### gate-evaluation-location — L의 정적 계산
 
@@ -224,6 +226,6 @@
 
 ## Last Updated
 
-2026-10-28
+2026-11-03
 
 2026-10-13. 계약 기준: 211C-01, REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거, 106라운드 선언 수집, 참조·controls·hint 봉투 가드와 형 목록 predicate; 정돈-2(2026-10-14). 정돈-3 blueprint 재구성(2026-10-15). 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077).

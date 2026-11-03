@@ -12,6 +12,8 @@
 
 ## API Contracts
 
+- `JSONSchema`는 core의 재귀 `AuthoredSchema` 합집합을 유지합니다. 객체·nullable 객체만 판별자를 허용하되, 판별자 없는 넓은 type 배열은 계속 받습니다. `NonObjectSchemaControls`는 core 관문에서 가져오고 두 authored 보조 멤버를 공개하지 않습니다. 내부 `UnionSchema`는 기반의 type·controls를 함께 제외한 뒤 비객체 controls를 선언하여 추론된 여러 종류의 입력에 판별자가 섞이지 않게 합니다. union 존재 여부는 TypeScript 제한이 아니며, 객체 선언에 union이 없을 때의 무시 경고는 blueprint 계약입니다.
+
 - 내부 형은 본명을 쓰고, 공개 `Roll` 형만 `Rolled` 접두사를 가집니다. 공개 이름은 루트 index의 재수출에서만 생깁니다.
 - `Roll`은 공개 형을 평평한 객체로 펴서 사용자 편집기의 형 표시를 좋게 하는 것뿐이며 런타임 동작이 없습니다. 스키마 형은 `JSONSchemaChildren`을 거쳐 자기 자신을 다시 가리키는 재귀 형이라, 정의 자리에서 `Roll`로 감싸면 TypeScript가 순환 별칭으로 거부합니다. 그래서 재귀 고리 밖의 `Rolled*` 이름이 내부 형을 감쌉니다.
 - `rolled/` 파일은 다른 칸의 형 파일을 직접 가져오며 import와 export는 형 전용입니다. 런타임 값이나 초기화 동작이 없습니다.
