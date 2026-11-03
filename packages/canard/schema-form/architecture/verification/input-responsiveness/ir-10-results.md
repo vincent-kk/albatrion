@@ -57,8 +57,8 @@ ajv7·ajv6의 최종 해시 차이는 `bind(`를 `bind?.(`로 바꾼 것뿐입�
 | G8 | met | `RECORDS_OK` |
 | G9 | met | `TYPECHECK_ALL_OK` |
 | G10 | met | `LINT_ALL_OK` |
-| G11 | met | `UNIT_RENDER_OK`(시험 파일 844 통과·1 skip, 시험 5,349 통과·8 skip) |
-| G12 | met | `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과; create-validator 재작성 뒤, 메시지 정리 전 실행. 메시지 정리는 tree 동일, 메시지만 변경) |
+| G11 | met | `UNIT_RENDER_OK`(시험 파일 844 통과·1 skip, 시험 5,349 통과·8 skip; 새 worktree에서 다시 실행) |
+| G12 | met | `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과; 새 worktree에서 메시지 정리 뒤 다시 실행) |
 | G13 | met | 네 패키지 `yarn --cwd … build` 성공. schema-form 마지막 줄 `✓ agents-hashes.json written: 14 file(s)`, ajv8 `Fixed 24 imports in 18 .d.ts files.`, ajv7 `Fixed 12 imports in 8 .d.ts files.`, ajv6 `Fixed 13 imports in 8 .d.ts files.` |
 | G14·G15 | 조정자 | — |
 
@@ -83,4 +83,4 @@ ajv7·ajv6의 최종 해시 차이는 `bind(`를 `bind?.(`로 바꾼 것뿐입�
 
 ## 작업 공간 경위
 
-결과 기록을 쓰기 전에 원래 작업 공간 worktree가 이 작업 밖에서 제거되었습니다. 그것을 모른 채 실행한 결과 커밋 하나가 본체 checkout의 단계 브랜치에 들어갔고, 푸시 전에 `git reset --soft`로 되돌려 단계 브랜치는 `a41d6ab36` 그대로입니다. IR-10 브랜치는 영향을 받지 않았습니다. 조정자가 같은 브랜치로 새 worktree를 만들었고, 메시지 정리·이 기록·G7·G8은 새 worktree에서 실행했습니다. G1–G6, G9–G11, G13, G16과 G12는 제거 전 worktree에서 같은 tree로 실행한 결과입니다. 새 worktree에서 G11·G12를 다시 돌렸으나 작업 공간 의존 패키지(`@winglet/common-utils` 등)의 빌드 산출물이 없어 모듈을 불러오지 못한 설정 실패였으므로 판정에 넣지 않았습니다.
+결과 기록을 쓰기 전에 원래 작업 공간 worktree가 이 작업 밖에서 제거되었습니다. 그것을 모른 채 실행한 결과 커밋 하나가 본체 checkout의 단계 브랜치에 들어갔고, 푸시 전에 `git reset --soft`로 되돌려 단계 브랜치는 `a41d6ab36` 그대로입니다. IR-10 브랜치는 영향을 받지 않았습니다. 조정자가 같은 브랜치로 새 worktree를 만들었고, 메시지 정리·이 기록·G7·G8은 새 worktree에서 실행했습니다. G1–G6, G9–G11, G13, G16과 G12는 제거 전 worktree에서 같은 tree로 실행한 결과입니다. 새 worktree의 설치가 끝난 뒤 G11·G12를 `a6caaf220`에서 다시 실행해 같은 결과를 얻었습니다. 설치 도중의 첫 재실행은 의존 패키지 빌드 산출물이 아직 없어 모듈을 불러오지 못한 설정 실패였고 판정에 넣지 않았습니다.
