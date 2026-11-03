@@ -112,3 +112,7 @@ CI 브라우저 측정 실행 41673496071, 후보 `3b4badad5` 대 기준 `feat/s
 | first-key-flat-500-validate | 139.000 | 142.250 | −3.250 | 오차 안 |
 
 느려진 사례는 없고 방향은 F9와 같습니다. 크기는 이 실행기에서 시험판 실행 41650676406(검증 없는 `if` 마운트 −17.1 ms, 키 입력 −7.2%)보다 작습니다. G15는 met입니다.
+
+## 소유자 추가 지시(quote 83)
+
+- `bbcf67570`(소유자 quote 83): 세 플러그인 제품 코드의 `Boolean(…)` 7곳(ajv8 가드 판정 2곳과 `allErrors` 2곳, ajv7 `allErrors` 2곳, ajv6 1곳)을 `!!`로 바꿨습니다. 엔진은 범위 밖입니다. 재실행(`bbcf67570`): G9 `TYPECHECK_ALL_OK`, G10 `LINT_ALL_OK`, G12 `PLUGIN_SUITES_OK`(ajv8 353, ajv7 146, ajv6 141 통과).
