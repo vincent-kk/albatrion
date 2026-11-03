@@ -20,7 +20,7 @@ export function runPlanSteps(shards, { root, env, dryRun, log }) {
         throw new Error("Invalid check-plan command");
       const args =
         step.kind === "test"
-          ? [...step.args, "--testTimeout=120000", "--hookTimeout=120000"]
+          ? [...step.args, "--testTimeout=120000"]
           : step.args;
       let status = exitCode ? "skipped" : "planned";
       const start = performance.now();

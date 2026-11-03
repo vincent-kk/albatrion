@@ -204,7 +204,7 @@ test("build closure precedes lint and includes every linted workspace dependency
   }
 });
 
-test("every planned Vitest command receives generous test and hook timeouts at execution", () => {
+test("every planned Vitest command receives a generous supported test timeout at execution", () => {
   const plan = createCheckPlan(workspaces, ["package.json"]);
   const outcome = runPlanSteps(plan.shards, {
     root,
@@ -221,7 +221,7 @@ test("every planned Vitest command receives generous test and hook timeouts at e
     );
     assert.equal(
       step.args.filter((arg) => arg === "--hookTimeout=120000").length,
-      expected,
+      0,
       step.label,
     );
   }
