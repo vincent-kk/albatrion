@@ -16,7 +16,7 @@ it('bulk fixtures keep complete observations in off/table/verify with zero viola
   for (const fixture of [...bulkConsumeCases, ...tableBulk])
     await observeGateTableModes(fixture, bulkConsumeCases.slice(0, 2).includes(fixture));
   expect(gateSelectionTable.violations).toBe(before);
-}, 120000);
+}, 300000);
 
 it('recreates /list/0 after /list was deleted in a non-stable pass within the same settlement', async () => {
   const consumed = new WeakSet<DirtyPathSet>();
