@@ -56,6 +56,8 @@ jobs:
       - name: Checkout event head
         uses: actions/checkout@v4
         with:
+          # Tests read pinned historical commits with git.
+          fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Enable Corepack
