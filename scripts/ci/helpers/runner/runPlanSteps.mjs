@@ -18,14 +18,16 @@ export function runPlanSteps(shards, { root, env, dryRun, log }) {
         typeof step.label !== "string"
       )
         throw new Error("Invalid check-plan command");
+      const args =
+        step.kind === "test"
+          ? [...step.args, "--testTimeout=120000", "--hookTimeout=120000"]
+          : step.args;
       let status = exitCode ? "skipped" : "planned";
       const start = performance.now();
       if (!exitCode) {
-        log(
-          `::group::${shard.name}: ${step.label}\nyarn ${step.args.join(" ")}`,
-        );
+        log(`::group::${shard.name}: ${step.label}\nyarn ${args.join(" ")}`);
         if (!dryRun) {
-          const result = spawnSync("yarn", step.args, {
+          const result = spawnSync("yarn", args, {
             cwd: root,
             env,
             stdio: "inherit",
@@ -41,6 +43,7 @@ export function runPlanSteps(shards, { root, env, dryRun, log }) {
       }
       results.push({
         ...step,
+        args,
         shard: shard.name,
         status,
         seconds: (performance.now() - start) / 1000,

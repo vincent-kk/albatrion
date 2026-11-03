@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import { createCheckPlan } from "../helpers/plan/createCheckPlan.mjs";
 import { createBuildSteps } from "../helpers/plan/createBuildSteps.mjs";
+import { runPlanSteps } from "../helpers/runner/runPlanSteps.mjs";
 import { scanImportDependencies } from "../helpers/selection/scanImportDependencies.mjs";
 import { readTrackedFiles } from "../helpers/workspaces/readTrackedFiles.mjs";
 import { readWorkspaces } from "../helpers/workspaces/readWorkspaces.mjs";
@@ -200,5 +201,28 @@ test("build closure precedes lint and includes every linted workspace dependency
         );
       }
     }
+  }
+});
+
+test("every planned Vitest command receives generous test and hook timeouts at execution", () => {
+  const plan = createCheckPlan(workspaces, ["package.json"]);
+  const outcome = runPlanSteps(plan.shards, {
+    root,
+    env: {},
+    dryRun: true,
+    log: () => {},
+  });
+  for (const step of outcome.results) {
+    const expected = step.kind === "test" ? 1 : 0;
+    assert.equal(
+      step.args.filter((arg) => arg === "--testTimeout=120000").length,
+      expected,
+      step.label,
+    );
+    assert.equal(
+      step.args.filter((arg) => arg === "--hookTimeout=120000").length,
+      expected,
+      step.label,
+    );
   }
 });
