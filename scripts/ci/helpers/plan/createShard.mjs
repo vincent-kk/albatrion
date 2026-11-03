@@ -1,7 +1,7 @@
 import { createBuildSteps } from './createBuildSteps.mjs';
 
 /**
- * Assembles one independently installable shard in lint/build/typecheck/test order.
+ * Assembles one independently installable shard in build/lint/typecheck/test order.
  * @param {string} name Matrix shard identifier.
  * @param {string[]} affected Workspaces checked in this shard.
  * @param {string[]} changed Workspaces whose sources changed.
@@ -10,10 +10,11 @@ import { createBuildSteps } from './createBuildSteps.mjs';
  */
 export function createShard(name, affected, changed, workspaces) {
   const selected = workspaces.filter((workspace) => affected.includes(workspace.name));
-  const steps = selected.filter((workspace) => changed.includes(workspace.name) && workspace.scripts.lint)
+  const lint = selected.filter((workspace) => changed.includes(workspace.name) && workspace.scripts.lint)
     .map((workspace) => ({ kind: 'lint', label: `Lint ${workspace.name}`, args: ['workspace', workspace.name, 'lint'] }));
   const builds = createBuildSteps(affected, workspaces);
-  steps.push(...builds);
+  // ESLint import/no-unresolved resolves workspace dist exports, which clean checkouts must build first.
+  const steps = [...builds, ...lint];
   for (const workspace of selected) {
     const built = builds.some((step) => step.args.includes(workspace.name));
     if (workspace.scripts.typecheck && !built) steps.push({ kind: 'typecheck', label: `Typecheck ${workspace.name}`, args: ['workspace', workspace.name, 'typecheck'] });

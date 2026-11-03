@@ -82,3 +82,19 @@ test('future standalone typecheck scripts are read dynamically', () => {
   const workspace = { name: 'future', directory: 'packages/future', dependencies: [], selectionDependencies: [], scripts: { typecheck: 'tsc' } };
   assert.equal(createCheckPlan([workspace], ['packages/future/x.ts']).steps[0].kind, 'typecheck');
 });
+
+test('build closure precedes lint and includes every linted workspace dependency', () => {
+  const plan = createCheckPlan(workspaces, ['package.json']);
+  for (const shard of plan.shards) {
+    const firstLint = shard.steps.findIndex(({ kind }) => kind === 'lint');
+    const lastBuild = shard.steps.findLastIndex(({ kind }) => kind === 'build');
+    if (firstLint >= 0) assert.ok(lastBuild < firstLint, shard.name);
+    for (const lint of shard.steps.filter(({ kind }) => kind === 'lint')) {
+      const workspace = workspaces.find(({ name }) => name === lint.args[1]);
+      for (const dependency of workspace.dependencies) {
+        if (!workspaces.find(({ name }) => name === dependency).scripts.build) continue;
+        assert.ok(shard.steps.slice(0, firstLint).some(({ kind, args }) => kind === 'build' && args.includes(dependency)), `${workspace.name} needs ${dependency}`);
+      }
+    }
+  }
+});
