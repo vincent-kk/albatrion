@@ -49,7 +49,7 @@ export const createGuardCompiler = (
     const validate = registration.guardAjv.compile(schema);
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
-    return (value) => Boolean(validate(value));
+    return (value) => !!validate(value);
   }
   const guard = registerSchemaGuard(ajv, root, registration);
   if (
@@ -71,5 +71,5 @@ export const createGuardCompiler = (
     return (value) => !validateProbe(value);
   }
   const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
-  return (value) => Boolean(validate(value));
+  return (value) => !!validate(value);
 };

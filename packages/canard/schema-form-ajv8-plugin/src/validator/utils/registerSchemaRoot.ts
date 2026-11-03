@@ -73,10 +73,10 @@ export const registerSchemaRoot = (
     registry.compilerCount = 0;
   }
   if (!ids.length && registry.compilerCount === MAX_TRANSIENT_ROOTS) {
-    registry.compilerCurrent = makeSibling(baseAjv, Boolean(baseAjv.opts.allErrors));
+    registry.compilerCurrent = makeSibling(baseAjv, !!baseAjv.opts.allErrors);
     registry.compilerCount = 0;
   }
-  const validationAjv = conflict ? makeSibling(baseAjv, Boolean(baseAjv.opts.allErrors))
+  const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
     : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
   if (!ids.length) registry.compilerCount++;
   const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;

@@ -63,10 +63,10 @@ export const registerSchemaRoot = (
     active.some((ref) => ref.deref()?.ids.includes(id)) ||
     shared.some((ref) => ref.deref()?.ids.includes(id)));
   if (!ids.length && pool.count === MAX_TRANSIENT_ROOTS) {
-    pool.current = cloneInstance(pool.base, Boolean(pool.base.opts.allErrors));
+    pool.current = cloneInstance(pool.base, !!pool.base.opts.allErrors);
     pool.count = 0;
   }
-  const validation = conflict ? cloneInstance(instance, Boolean(instance.opts.allErrors))
+  const validation = conflict ? cloneInstance(instance, !!instance.opts.allErrors)
     : ids.length ? instance : pool.current;
   if (!ids.length) pool.count++;
   const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;

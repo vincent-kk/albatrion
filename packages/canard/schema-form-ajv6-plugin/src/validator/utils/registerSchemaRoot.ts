@@ -51,7 +51,7 @@ export const registerSchemaRoot = (
   const conflict = ids.some((id) =>
     active.some((ref) => ref.deref()?.ids.includes(id)) ||
     shared.some((ref) => ref.deref()?.ids.includes(id)));
-  const validation = conflict ? cloneInstance(instance, Boolean(instance._opts.allErrors)) : instance;
+  const validation = conflict ? cloneInstance(instance, !!instance._opts.allErrors) : instance;
   const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
   const validationCopy: object | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
