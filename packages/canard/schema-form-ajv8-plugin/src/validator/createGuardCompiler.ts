@@ -4,6 +4,7 @@ import type Ajv from 'ajv';
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
+import { makeSibling } from './utils/makeSibling';
 import { registerSchemaGuard } from './utils/registerSchemaGuard';
 import {
   type SchemaRootRegistry,
@@ -29,7 +30,6 @@ export const createGuardCompiler = (
   directGuardCompile: boolean,
 ): ((value: unknown) => boolean) => {
   const registration = registerSchemaRoot(registry, ajv, root);
-  const guard = registerSchemaGuard(ajv, root, registration);
   const rootId = typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
   if (located === undefined)
@@ -45,11 +45,13 @@ export const createGuardCompiler = (
     if (schema === root) registry.finalizer.unregister(registration);
     if (!registration.directGuards.includes(schema))
       registration.directGuards.push(schema);
-    const validate = guard.compile(schema);
+    registration.guardAjv ??= makeSibling(ajv, false, false);
+    const validate = registration.guardAjv.compile(schema);
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
-    return (value) => Boolean(validate(value));
+    return (value) => !!validate(value);
   }
+  const guard = registerSchemaGuard(ajv, root, registration);
   if (
     pointer === '/if' &&
     ('$dynamicAnchor' in root || '$recursiveAnchor' in root)
@@ -69,5 +71,5 @@ export const createGuardCompiler = (
     return (value) => !validateProbe(value);
   }
   const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
-  return (value) => Boolean(validate(value));
+  return (value) => !!validate(value);
 };

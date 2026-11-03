@@ -225,6 +225,22 @@ g2는 데이터 측정을 해보도록 해"
 
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
+
+## IR-10 — 성능 여유와 가드 단독 컴파일 (2026-11-03·04)
+
+### Owner decisions (verbatim)
+
+- Quote 76 (2026-11-03; 맥락: 단계 브랜치의 0.16.1 대비 속도 차이에서 불필요한 연산이 있는지 조사를 요청): "으음... 속도를 개선할 여지가 있나? 크지 않아서 수용할 수도 있는데, 가능하면 불필요한 연산이나 비효율이 있나 한번 보고싶네. 기능추가라 속도가 느려지는건 필연적일 수도 있지만....."
+- Quote 77 (2026-11-03; 맥락: 조사 진행 중 상황 정리를 요청): "잠깐 무슨 상황이지? 정리해서 알려줘"
+- Quote 78 (2026-11-03; 맥락: 방향 제안을 요청하고 시험판 선행을 허용): "합리적이고 설계 관점에서 유리하면서 ux 예측가능성 원칙에 부합하는 방향이 뭔지 제안을 덧붙여봐. 선행시도 하고 이후 선택해도되잖아"
+- Quote 79 (2026-11-03; 맥락: 시험판 측정 뒤 지지하는 방향을 질문): "좋아 지금까지는 어떤 방향을 지지하고 있는거야?"
+- Quote 80 (2026-11-03; 맥락: 최종 수정 방향과 바꾸는 요소, 사양 손실을 포함한 트레이드오프를 요청): "지금까지 정보로 최종 수정 방향을 제안해줘. 이때 바꾸는 요소와, 트레이드오프를 알려줘. 스팩소실등을 포함해서 말이야"
+- Quote 81 (2026-11-03; 맥락: 역할 배정 — codex는 검증, 구현은 Claude Opus — 과 추가 설명 요청): "음 codex를 그대로 쓰도록 해. 검증까지만. 구현은 클로드로 하지. 클로드 opus로 하면 될거같아 fable쓰지말고. 다만 아직 어떤 교체와 트레이드오프인지 이해가 잘 안되네 추가 설명을 좀 해줘"
+- Quote 82 (2026-11-03; 맥락: 시험판 2 방향과 역할 배정으로 진행을 승인): "그래 진행해보자."
+- Quote 83 (2026-11-04; 맥락: 병합 전 리뷰 뒤 세 플러그인의 불리언 변환 방식 지시): "Boolean 대신 !! 를 써라. Boolean 이 너무 느리다."
+- isTruthy 규칙 원문은 Quote 85(Boolean 생성자 절)에 있다.
+- Quote 86 (2026-11-04; 맥락: 세 플러그인의 복사·사전 형·불리언 변환 방식 보완 지시): "JSON.parse(JSON.stringify( << 이건 clone 을 쓰도록 하고 (더 빠름) Record<string,  는 Dictionary 를 쓰도록해. schema-form 본체처럼 공통 유틸리티타입 import 를 지원해. clone 은 common-utils 에서 import 할 수 있어. isTruthy 는 !!이랑 동치니까, return (value) => isTruthy(validate(value)); 이렇게 쓸꺼면 return (value) => !!(validate(value)); 이렇게 써줘. 함수호출비용이 불필요하게 추가된다. filter(isTruthy) 이런식으로 쓰는 경우가 아니라면 !!를 써 차라리. 함수호출량 줄이게. 코드에 비효율을 남기지 말도록"
+
 ## Boolean 생성자 대신 !! (2026-11-04)
 
 ### Owner decisions (verbatim)

@@ -116,8 +116,16 @@ unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It a
 every guard compiled at a root pointer, which is a limitation of that path; a self-contained
 guard compiled directly still evaluates, because a guard compile failure belongs to its own
 gate only.
+Guards compile without AJV's root meta-schema validation (`validateSchema: false`); AJV's root
+meta-schema check runs only in the whole-schema compile. Custom keyword meta-schema checks, strict
+options and code-generation checks still apply when a guard compiles. A root meta-schema violation
+outside the condition, such as `multipleOf: 0` in an unrelated field, fails no guard on either
+path; with the default schema validation, full validation reports `VALIDATOR_COMPILE_FAILED`,
+while an instance bound with `validateSchema: false` or `'log'` compiles as that option says.
+A meta-only violation inside the condition schema itself, such as `minLength: 1.5`, does not fail
+the guard; the guard evaluates as the code AJV generates for it.
 The guard instance retains the bound dialect, formats and keywords with
-`allErrors: false`. `release(root)` also removes its directly compiled guards.
+`allErrors: false` and `validateSchema: false`. `release(root)` also removes its directly compiled guards.
 
 #### **`compile(jsonSchema)`**
 
@@ -127,7 +135,7 @@ The guard instance retains the bound dialect, formats and keywords with
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
-Guards are synchronous and use a JSON Pointer into the engine-owned copy root. `compileGuard` accepts that copy whether or not `compile` has run and registers the root independently, so both self-contained guards and guards with `$ref` into root definitions work before whole-schema compilation. Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
+Guards are synchronous and use a JSON Pointer into the engine-owned copy root. `compileGuard` accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy without registering it. Both kinds of guard work before whole-schema compilation. Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 
 `release` accepts that copy whether or not `compile` has run and removes that root's AJV registrations and compiled functions. Releasing an unregistered root is a no-op.
 

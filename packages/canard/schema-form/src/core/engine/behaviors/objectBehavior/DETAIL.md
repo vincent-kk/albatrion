@@ -21,6 +21,7 @@
 - terminal에는 자식 선언이 없고, `interpret`·`assemble`·`project`가 통째로 받은 객체 참조를 유지한다. 내부 키는 정규화하지 않는다. `Merge`가 객체 호스트에 대한 부분 쓰기인지 통째 값 쓰기인지는 정착의 쓰기 종류가 판정한다(NODE-005·006, VALUE-037, WRITE-079).
 - `utils/` organ은 두 전략이 함께 쓰는 `omitEmptyObject`와 객체 값 동등성 보조를 소유한다. `omitEmptyObject`는 입력을 바꾸지 않는 투영 계산이며 다른 종류에 재수출하지 않는다(NODE-009, LANDING-082).
 - 객체 합성의 안전한 키 쓰기는 정착의 선언 밖 값 복사와 공유하므로 최저 공통 소유자인 engine의 utils 구획에서 가져온다. `__proto__`의 own property 보호와 그 밖의 키의 일반 대입은 같은 보조가 맡는다.
+- 객체 값의 얕은 사본은 `branch/utils/copyObjectValue`가 만든다. 키 수가 1,020 이하이고 자기 `__proto__` 키가 없으면 `Object.assign({}, source)`, 그 밖에는 전개 복사이며 결과의 키·순서·값은 두 경로가 같다. 1,020은 V8의 빠른 속성 한계라 엔진별 상수가 코드에 들어가고, 문서 주석이 그 까닭을 적는다(IR-10).
 
 ## Acceptance Criteria
 

@@ -8,6 +8,7 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
+import { copyObjectValue } from './copyObjectValue';
 
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (
@@ -50,7 +51,7 @@ export const assembleObject: Behavior['assemble'] = (
         oldHasKey &&
         !Object.is(child.emit, Reflect.get(previous, child.name))
       ) {
-        if (!patch) patch = { ...previous };
+        if (!patch) patch = copyObjectValue(previous, stable.names.length);
         writeObjectKey(patch, child.name, child.emit);
       }
     }
@@ -100,7 +101,7 @@ export const assembleObject: Behavior['assemble'] = (
           oldHasKey &&
           !Object.is(child.emit, Reflect.get(previous, child.name))
         ) {
-          if (!patch) patch = { ...previous };
+          if (!patch) patch = copyObjectValue(previous, oldNames.length);
           writeObjectKey(patch, child.name, child.emit);
         }
       }
@@ -263,7 +264,7 @@ export const assembleObject: Behavior['assemble'] = (
             ? Reflect.get(extras, name)
             : undefined;
         if (!Object.is(value, Reflect.get(previous, name))) {
-          if (!patch) patch = { ...previous };
+          if (!patch) patch = copyObjectValue(previous, names.length);
           writeObjectKey(patch, name, value);
         }
       }

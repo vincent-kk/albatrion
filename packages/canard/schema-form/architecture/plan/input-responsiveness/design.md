@@ -588,3 +588,85 @@ DR-13은 남은 로드 판정을 root 요청으로 충족하고 대체된 비동
 ## Amendment 9·10 — 결과 관문 정정
 
 DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.
+
+
+## IR-10 — object value copy and guard-only compile (2026-11-04)
+
+IR-8 L1이 다음 단계로 남긴 가드 단독 컴파일(항목 G)을 이 절이 닫습니다. IR-8 "Candidates recorded, not done"의 항목 G는 이 절로 닫혔습니다. 객체 노드의 값 복사를 V8의 빠른 복제 경로로 옮기는 변경을 함께 둡니다. 소유자 원문은 `request.md`의 IR-10 절(quote 76–82)에 있습니다.
+
+### Rule
+
+- R1. 객체 노드의 값 복사는 `copyObjectValue(source, keyCount)`가 합니다. 키 수가 1,020 이하이고 자기 `__proto__` 키가 없으면 `Object.assign({}, source)`, 그 밖에는 `{ ...source }`입니다. 결과의 키·순서·값은 두 경로가 같습니다.
+- R2. `if` 가드는 자기 조건 스키마만 컴파일합니다. 자족한 가드(직접 경로)는 어떤 인스턴스에도 루트를 등록하지 않습니다. `$ref`·앵커·`$schema`·`directGuardCompile: false` 때문에 루트 위치가 필요한 가드만 루트 사본을 가드용 인스턴스에 등록하되, 가드용 인스턴스는 `validateSchema: false`입니다. 검증용 인스턴스에 대한 루트 사본 등록(`$id`가 있는 루트)은 전체 컴파일(`compile`)이 처음 필요로 할 때 합니다. AJV의 루트 메타 스키마 검사는 그래서 검증용 컴파일에서만 돕니다. 사용자 정의 키워드의 메타 검사, 엄격 옵션, 코드 생성 검사는 가드 컴파일에도 그대로 남습니다.
+- R3. 가드 컴파일 실패의 단위는 그대로 게이트 하나입니다(ERROR-041). 조건과 무관한 곳의 메타 스키마 위반은 더 이상 가드 실패가 아닙니다. 조건 스키마 자체의 코드 생성 실패(`minLength: "a"`, 지원하지 않는 정규식)는 그대로 가드 실패입니다. `required: "kind"`는 ajv7·ajv8에서는 코드 생성이 거부하지만 ajv6은 생성된 코드가 문자열을 순회하므로 판별이 판마다 다릅니다(L2). 루트 위치 경로의 가드는 루트를 컴파일하므로 루트 다른 곳의 코드 생성 오류에는 여전히 함께 실패합니다(L3).
+- R4. 세 플러그인(ajv8의 세 방언 포함, ajv7, ajv6)이 같은 규칙을 따릅니다.
+
+### Limits
+
+- L1: 검증 모드 None에서는 어떤 폼도 AJV의 루트 메타 스키마 검사를 받지 않습니다. 오늘 `if`가 있는 None 폼이 부수 효과로 받던 검사는 사라집니다.
+- L2: 조건 스키마 안의 메타 전용 위반(`minLength: 1.5`, `required`의 중복 항목, ajv6의 `required: "kind"`)은 가드 실패가 아니라 AJV가 생성한 코드대로 판정됩니다. 기본 검사 프로필의 검증용 컴파일은 그 위반을 `VALIDATOR_COMPILE_FAILED`로 보고합니다. 소비자가 `validateSchema: false`나 `'log'`로 바인딩한 인스턴스에서는 전체 컴파일도 그 옵션대로 동작합니다.
+- L3: 루트 위치 경로의 가드는 참조를 풀 때 루트를 컴파일하므로, 루트 다른 곳의 코드 생성 오류(풀리지 않는 `$ref`)와 사용자 정의 키워드의 메타 검사 위반에는 여전히 함께 실패합니다(README가 적은 한계, 유지).
+- L4: 검증을 쓰는 `if` 폼에서는 총 작업량이 줄지 않습니다. 가드 단계가 하던 루트 등록과 메타 검사 약 10 ms가 다음 프레임 뒤의 검증 컴파일로 옮겨 갑니다.
+- L5: 1,020이라는 값은 V8의 빠른 속성 한계입니다. 엔진별 상수가 코드에 들어가며 문서 주석이 그 까닭을 적습니다.
+- L6: 0.16.1 대비 남는 격차(키 입력 +27.7%, 검증 없는 `if` 마운트 +19.0%, 첫 키 입력 +35.1%)는 이 작업의 범위 밖입니다.
+- L7: 배포 AJV의 루트 간 `$id` 격리는 그대로입니다(충돌 판정이 별도 검증 인스턴스를 고르고, 가드도 루트별 형제를 씁니다; 같은 `$id` 자체는 오류가 아닙니다, ERROR-201). 바뀌는 것은 실제 검증용 등록 실패(격리하지 못한 충돌, 메타 스키마 위반)의 발생 시점이 가드 시점에서 전체 `compile`로 옮겨 간다는 것뿐입니다. 471C-05가 적은 사용자 정의 검증기의 한계는 유지됩니다. 기존 같은-`$id` 시험의 기대값은 바꾸지 않습니다.
+
+### Acceptance criteria
+
+- A1. In all three plugins, a self-contained `if` guard of a root with a meta-schema violation in a field unrelated to the condition compiles and evaluates correctly, and `compile` of the same root throws (T1).
+- A2. Compiling one self-contained guard calls `addSchema` with a plugin key on no instance (also for a root with `$id`); a guard with `$ref` registers the root copy once on the guard instance; for a `$id` root with `validationCopy`, `compile` registers once on the validation instance; a root without `$id` compiles a transient and registers no plugin key (T3). Direct guard, then a root-pointer guard, then another root-pointer guard on one root use one guard instance and one registration, and the first predicate keeps its verdict (T6).
+- A3. `copyObjectValue` preserves keys, order and values, keeps an own `__proto__` key as a data key, and returns a new object (T4).
+- A4. All existing tests are green. Public declarations (`src/index.ts`, each plugin's `src/index.ts`) and `package.json` are unchanged.
+- A5. Records: ledger supplements (ERROR-041, ERROR-201, VALIDATE-003 below 55C-02, VALIDATE-017, VALIDATE-019, VALIDATE-033), supplements below the VALIDATE-033 and VALIDATE-019 lines of ADR 0001, ADR 0004 and design/05, this section, the owner quotes in `request.md`, `verification/input-responsiveness/ir-10-results.md`, the three plugin READMEs and their Korean counterparts, the plugin `CLAUDE.md` files, and the engine DETAIL documents. All are additions; no earlier record is deleted.
+
+### Gates
+
+lint (0 warnings), typecheck and build in schema-form and the three plugins; schema-form `unit` and `render` projects; the full suites of the three plugins; public declaration and `package.json` diff zero; no machine path; no new FCA finding (coordinator, filid). The browser measurement already exists (F9: runs 41650676406 and 41651117812); after implementation the coordinator runs the CI measurement once more on the final branch (nine cases, 20 runs, baseline `feat/schema-form-08-review-and-perf`) to confirm the same direction. Documents first, then the test text with its red run stored, then the product commits, then the results.
+
+### Changes
+
+C1 (engine, new `core/engine/behaviors/objectBehavior/branch/utils/copyObjectValue.ts`). `FAST_PROPERTY_LIMIT = 1020`; an own `__proto__` key or more keys keep the spread; otherwise `Object.assign` into a new object. Its one consumer is `assembleObject`, so it sits in that organ (`filid_code-placement` §1); the three `{ ...previous }` sites of `assembleObject.ts` pass the key count they already hold. The other value-copy sites (`interpretFieldNodeInput.ts`, `replaceAtPath.ts`, `selectChildren.ts`, `alignArraySnapshotSlots.ts`) are outside the key-input path and out of scope.
+
+C2 (engine test). `settle.sibling-preparation.test.ts` counts only `Object.assign` calls whose target has a null prototype (structure copies); value copies now use `Object.assign` legitimately.
+
+C3 (ajv8). `makeSibling(baseAjv, allErrors, validateSchema = baseAjv.opts.validateSchema)`. `registerSchemaGuard` returns early only when both `guardAjv` and `guardCopy` exist and reuses an existing `guardAjv`; the guard sibling is `makeSibling(baseAjv, false, false)`. `createGuardCompiler` no longer registers before the direct decision: the direct path compiles the subschema on `registration.guardAjv ??= makeSibling(ajv, false, false)`, and the probe and `$ref` paths call `registerSchemaGuard` first.
+
+C3a (ajv8, deferred validation registration). `registerSchemaRoot` no longer calls `validationAjv.addSchema`; the registration carries `validationRegistered` (initially false) and a writable `validationRefs` (initially empty). New `utils/registerValidationRoot.ts` registers `validationCopy` once, immediately before the whole-schema compile, and is atomic: before `addSchema` it snapshots `refs` and `schemas`; on a throw it calls `removeSchema(validationCopy)` for the cache entry and then restores both objects in place (clears their own keys and re-inserts the snapshot keys in snapshot order, so consumer registrations with the same `$id`, string aliases and the enumeration order that sibling construction copies all survive), and rethrows. The flag becomes true only on success, so a retry with the same copy validates again. `disposeSchemaRoot` removes the validation registration only when `validationRegistered`.
+
+C4 (ajv7). `cloneInstance(instance, allErrors, validateSchema = instance.opts.validateSchema)`. `registerSchemaGuard` returns early only when both `guard` and `guardCopy` exist and reuses an existing `guard`; the guard clone is `cloneInstance(instance, false, false)`. `createGuardCompiler(instance, registration, pointer, root, directGuardCompile, finalizer)` drops the "guard root was not registered" throw; the direct path compiles on `registration.guard ??= cloneInstance(instance, false, false)`, the other paths call `registerSchemaGuard` and read `guardCopy` after it. The entry points (`createValidator.ts`, `validatorPlugin.ts`) no longer register before `createGuardCompiler`. Deferred validation registration as in C3a (`utils/registerValidationRoot.ts`, called by both entry points before the whole-schema compile; `disposeSchemaRoot` keyed on the registered flag). The test helper `checkGuardRootCollection.ts` and `guard-root-lifetime.test.ts` use the new call shape.
+
+C5 (ajv6). As C4 with `instance._opts`, `Ajv.Ajv`, `_refs` and `_schemas`; the direct decision reads `instance._opts.schemaId === 'id' || instance._opts.schemaId === 'auto'`.
+
+C6 (plugin READMEs and `CLAUDE.md`). Guards compile without AJV's root meta-schema validation (`validateSchema: false`); only the whole-schema compile checks the schema form; a meta-schema violation outside the condition fails no guard on either path; a meta-only violation inside the condition schema is evaluated by the generated code (L2). Only guards that need the root location register the root on the guard instance; `compile` registers it on the bound instance.
+
+C7 (ledger and design records, append only). Supplements below. C8: this section, `request.md`, `ir-10-results.md`. C9: engine DETAIL lines for R1·L5 (`objectBehavior/DETAIL.md`) and R2 (`validation/DETAIL.md`).
+
+### Tests
+
+Red runs use the stage head `a41d6ab36` with only the test commit applied; `ir-10-results.md` separates red assertions from guard assertions.
+
+- T1 (ajv8 three dialects, ajv7, ajv6; `src/validator/__tests__/guard-meta-schema.test.ts`). Root with `count: { type: 'number', multipleOf: 0 }` and `if: { properties: { kind: { const: 'a' } }, required: ['kind'] }`: `compileGuard(root, '/if')` returns a predicate true for `{ kind: 'a' }` and false for `{ kind: 'b' }` (red), and `compile(root)` throws (guard). Also with a root `$id` and with a `$id` only in an unrelated subschema.
+- T2. The same violation with a root-pointer guard (`directGuardCompile: false` or `if: { $ref: '#/definitions/isA' }`) compiles and evaluates (red).
+- T3. `addSchema` spy: zero plugin-key registrations for one self-contained guard, also with a root `$id` (red); one for a `$ref` guard (guard); one more on the validation instance at `compile` of a `$id` root (red).
+- T6. Direct guard, root-pointer guard, second root-pointer guard on one root: cumulative plugin-key registrations 0 (red), 1, 1; one guard-instance construction (guard); the first predicate keeps its verdict; `release` removes the registration.
+- T7. Meta-only violations inside the condition schema: `compileGuard` returns a boolean predicate (red) and `compile` throws (L2).
+- T8. `$id` root with an unrelated `multipleOf: 0`: `compile` throws, a second `compile` of the same object throws the same meta-schema violation, and after `release` a valid root with the same `$id` compiles (red in ajv7 and ajv8, guard in ajv6); an earlier `$id` root keeps `getSchema` and `$ref` compilation (guard).
+- T9. A consumer's earlier schema with the same `$id` survives a failed plugin registration (guard); a consumer string alias in `refs` survives a failed registration whose nested `$id` overwrote it (red in ajv7 and ajv8); a consumer meta-schema stays ahead of the schema that uses it in `schemas`, and a sibling can still be constructed (guard).
+- T4 (engine, `behaviors/objectBehavior/branch/utils/__tests__/copyObjectValue.test.ts`). Keys, order and values (numeric keys included), a new object, an own `__proto__` data key with `Object.prototype` as the copy's prototype, and the same result at 1,021 keys.
+- T5 (existing). `settle.sibling-preparation.test.ts` green after C2; `release.test.ts` rewritten where it assumed that a guard alone registers on the bound instance; the guard, default-settings, direct-guard and lifetime suites green.
+
+### Ledger supplements
+
+- 【추론】 IR-10: 53C-01이 적은 직접 경로의 격리를 등록 시점의 AJV 루트 메타 스키마 검사에도 넓힌다. 가드 컴파일은 조건 스키마만 대상으로 하고(자족한 가드는 루트를 등록하지 않고, 루트 위치 가드는 가드용 인스턴스에 `validateSchema: false`로 등록한다), AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돈다. 조건과 무관한 곳의 메타 스키마 위반은 어느 경로의 가드도 실패시키지 않고 전체 검증만 `VALIDATOR_COMPILE_FAILED`가 되며, 조건 스키마 자체의 코드 생성 실패는 그대로 그 게이트의 가드 실패다. 검증 모드 None에서는 어떤 폼도 AJV의 루트 메타 스키마 검사를 받지 않는다(L1). 조건 스키마 안의 메타 전용 위반은 가드 실패가 아니라 생성된 코드대로 판정되고 기본 검사 프로필의 전체 컴파일이 보고한다(L2). 배포 AJV의 루트 간 `$id` 격리는 그대로이고 실제 검증용 등록 실패의 시점만 전체 `compile`로 옮겨 간다(L7).
+- 【추론】 IR-10: 배포 AJV6·7·8의 같은 `$id` 격리(충돌 판정이 고르는 별도 검증 인스턴스, 루트별 가드 형제)는 그대로다. 격리하지 못한 충돌이나 메타 스키마 위반으로 인한 실제 검증용 등록 실패는 가드 시점이 아니라 전체 `compile`(또는 루트 위치 가드의 등록)에서 일어나며, 실패한 검증용 등록은 원자적으로 되돌린다: 호출 전 `refs`·`schemas`의 스냅샷으로 값과 키 순서를 복원하고 캐시 항목만 지우므로, 같은 사본의 재컴파일은 같은 이유로 다시 실패하고 소비자가 미리 등록한 같은 `$id` 스키마와 문자열 별칭은 남는다. 471C-05의 사용자 정의 검증기 한계와 기존 같은-`$id` 시험의 기대값은 바꾸지 않는다.
+- 【추론】 IR-10: 가드용 인스턴스가 검증용 인스턴스와 다른 설정은 `allErrors: false`와 `validateSchema: false` 둘이다. 뒤의 것은 IR-10이 더한 예외로, AJV의 루트 메타 스키마 검사를 전체 검증 컴파일 한 곳에 둔다. 형식, 사용자 정의 키워드(그 키워드의 메타 검사 포함), 방언, 엄격 옵션은 그대로 같다.
+- 【추론】 IR-10: 자족한 가드는 루트를 어느 인스턴스에도 등록하지 않고 가드용 인스턴스에서 그 부분 스키마 객체를 직접 컴파일한다. `$ref`·앵커·`$schema`나 `directGuardCompile: false` 때문에 루트 위치가 필요한 가드만 루트 사본을 가드용 인스턴스에 한 번 등록하고 루트 안의 위치로 가리킨다.
+- 【추론】 IR-10: 사본 루트의 등록은 루트 위치가 필요한 가드가 처음 컴파일될 때 가드용 인스턴스에 한 번, `$id`가 있는 루트의 전체 컴파일이 처음 필요로 할 때 검증용 인스턴스에 한 번 일어난다. 자족한 가드는 등록하지 않고, `$id`가 없는 루트의 전체 컴파일은 등록 없이 일회 사본을 컴파일한다. `release(root)`는 일어난 등록만 지운다.
+
+## Amendment 1 — codex design check (2026-11-04)
+
+The codex design check returned FAIL; every finding was applied before implementation.
+
+- P1 (C3a, C4, C5): `registerSchemaRoot` registered a root with `$id` on the validation instance at guard time and ran the meta-schema check there. Validation registration is deferred to the whole-schema compile; the anchor probe path is closed by the same change.
+- P2: the change is recorded as a contract change that adds a `validateSchema` exception to VALIDATE-033, not as a defect repair; the other value-copy sites are out of scope; per-run comparison targets and absolute values are separated (F9); `required: "kind"` differs by AJV major; the guarantee is limited to AJV's root meta-schema check; `checkGuardRootCollection.ts`, `guard-root-lifetime`, the README `compileGuard` paragraphs, `CLAUDE.md`, VALIDATE-003·017, ADR 0001·0004, design/05 and `release.test.ts` are updated; T3, T6 and T7 cover the transitions on one root, L2, and the ajv7 `guardCopy` read.
+- Delta checks 2–4 (same session) added the atomic rollback of a failed validation registration (C3a, T8), the snapshot restore of `refs` and `schemas` that keeps consumer registrations and string aliases (T9), and the restore of key order that sibling construction depends on (T9).

@@ -74,7 +74,9 @@ it.each(['table', 'verify'] as const)(
     const work = {
       callbacks,
       comparisons: comparisons.mock.calls.length,
-      copies: copies.mock.calls.length,
+      copies: copies.mock.calls.filter(
+        ([target]) => Object.getPrototypeOf(target) === null,
+      ).length,
       fullEnumerations,
     };
     vi.restoreAllMocks();
