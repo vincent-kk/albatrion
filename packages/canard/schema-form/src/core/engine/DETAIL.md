@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 생성기 스키마 코퍼스의 정본은 engine의 공유 시험 픽스처가 소유합니다. blueprint와 derive가 같은 입력을 검증하므로 최저 공통 fractal에 두며, 시험은 architecture의 역사 자료를 실행 입력으로 읽지 않습니다.
+
 - `inactiveValue` 키는 unknown과 함수의 합집합으로 접지 않고 리터럴 종류를 열거하여 인라인 resolver의 문맥 형을 유지합니다.
 
 - B12 보존값은 공통 `InactiveValueContext`·`InactiveValueResolver<V>`·`InactiveValue<V>`로 선언하며 engine/core/package 경계를 통해 공개합니다. 정착이 직전 커밋 문맥을 구성하고 write가 등록·쓰기 거부를 소유합니다.

@@ -1,6 +1,7 @@
-import type { JSONSchema } from '@canard/schema-form';
-
-import type { EquivalentFixture } from './types';
+import type {
+  EquivalentFixture,
+  EquivalentJSONSchema as JSONSchema,
+} from './types';
 
 export const branchFixtures: EquivalentFixture[] = [5, 10, 20].map((count) => ({
   name: `oneOf-${count}`,
@@ -18,7 +19,7 @@ export const branchFixtures: EquivalentFixture[] = [5, 10, 20].map((count) => ({
         [`payload_${index}_c`]: { type: 'boolean', default: index % 2 === 0 },
       },
     })),
-  } as JSONSchema,
+  } satisfies JSONSchema,
   workspace: {
     type: 'object',
     properties: {
@@ -33,7 +34,7 @@ export const branchFixtures: EquivalentFixture[] = [5, 10, 20].map((count) => ({
         [`payload_${index}_c`]: { type: 'boolean', default: index % 2 === 0 },
       },
     })),
-  } as JSONSchema,
+  } satisfies JSONSchema,
   interactions: [
     { kind: 'set', path: '/kind', value: `kind_${count - 1}` },
     { kind: 'set', path: '/kind', value: 'kind_0' },

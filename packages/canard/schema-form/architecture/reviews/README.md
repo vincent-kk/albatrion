@@ -213,3 +213,7 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 ## 471라운드 — 가드의 전체 컴파일 분리
 
 [결정](round-471-closing.md)·[원문](round-471-owner-answers.md)은 compileGuard 선행 계약과 지연 전체 컴파일의 같은 id 보호를 기록합니다. 계획은 ../plan/guard-compile, 증거는 ../verification/guard-compile이며 전체 수용 측정은 사전등록9관문을 모두 통과해 ACCEPT입니다. 다음 라운드는472입니다.
+
+## 472라운드 — 코어 벤치와 자료 정리
+
+[결정과 검증 요약](round-472-closing.md)·[원문](round-472-owner-answers.md)·[요청](../plan/tidy-bench/request.md)에 실행 장치 정리와 인용 자료를 보존한 삭제를 기록합니다. 과거 측정 판정과 버전은 그대로이며 새 원자료를 만들지 않았습니다. 다음 라운드는473입니다.

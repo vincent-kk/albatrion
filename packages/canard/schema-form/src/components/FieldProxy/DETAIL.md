@@ -24,7 +24,7 @@
 - `request(kind)`의 focus, select, refresh, remount 사건을 실행합니다. `RequestRemount`는 래퍼 key를 바꾸며, 사용자 override는 노드 식별 정보처럼 덮어쓸 수 없는 필드를 대체하지 못합니다(EVENT-063·073).
 - 입력의 자식 프록시가 마운트되었는지 판정할 때는 본체와 가상화의 `DeferredFieldProxy` 자리를 모두 포함합니다. 입력은 실제로 자식 프록시가 마운트되어 있는지를 보고 Refresh에서 다시 마운트할지 가립니다(REACT-028).
 - 가상화의 노출(reveal) 기록은 매니저가 가진 노드 identity 기록을 가져다 씁니다. 한 번 노출된 필드는 배열 인덱스가 다시 매겨져도 placeholder가 되지 않으며, 미노출 형제의 placeholder도 현재 경로를 표시합니다(LANDING-087).
-- 런타임 계수 도우미 `__tests__/helpers/runtimeCounts.mjs`는 이 fractal의 시험과 부품 `FieldInputSlot`, 형제 `Form`의 계수 시험이 함께 씁니다(검증 코드이므로 소비자가 아닙니다).
+- 런타임 계수 도우미 `__tests__/helpers/runtimeCounts.mjs`는 이 fractal의 시험과 부품 `FieldInputSlot`, 형제 `Form`의 계수 시험이 함께 씁니다(검증 코드이므로 소비자가 아닙니다). 번들 준비와 계수 CLI는 같은 시험 도우미 구획의 정본을 실행하며, 역사 자료 디렉토리의 도구를 읽지 않습니다.
 
 ## Acceptance Criteria
 

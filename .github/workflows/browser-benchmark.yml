@@ -1,0 +1,106 @@
+name: browser-benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: "Git ref to compare against; empty selects the default branch"
+        required: false
+        default: ""
+      cases:
+        description: "Comma-separated core case IDs; empty selects all ten"
+        required: false
+        default: ""
+      runs:
+        description: "Measured fresh pages per case and variant"
+        required: false
+        default: "20"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    # Pinned: the repository's Playwright (1.58) cannot install Chromium on ubuntu-latest (26.04).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Checkout baseline
+        uses: actions/checkout@v4
+        with:
+          path: .benchmark-baseline
+          ref: ${{ inputs.baseline || github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.5"
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install candidate
+        run: yarn install --immutable
+
+      - name: Install baseline independently
+        working-directory: .benchmark-baseline
+        run: yarn install --immutable
+
+      - name: Build candidate closure
+        run: node --import tsx packages/aileron/benchmark-form/browser-bench/core/prepareCheckout.mjs .
+
+      - name: Build baseline closure
+        run: node --import tsx packages/aileron/benchmark-form/browser-bench/core/prepareCheckout.mjs .benchmark-baseline
+
+      - name: Read Playwright version
+        id: playwright
+        run: node -e 'require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT, "version=" + require("playwright/package.json").version + "\n")'
+
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-chromium-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium and system dependencies
+        run: yarn exec playwright install --with-deps chromium
+
+      - name: Measure browser cases
+        env:
+          BENCH_CASES: ${{ inputs.cases }}
+          BENCH_RUNS: ${{ inputs.runs || '20' }}
+        run: |
+          args=(--baseline-dir "$GITHUB_WORKSPACE/.benchmark-baseline" --runs "$BENCH_RUNS" --out "$RUNNER_TEMP/browser-benchmark")
+          if [[ -n "$BENCH_CASES" ]]; then args+=(--cases "$BENCH_CASES"); fi
+          yarn workspace @aileron/benchmark-form bench:form "${args[@]}"
+
+      - name: Publish step summary
+        if: always()
+        run: |
+          if [[ -f "$RUNNER_TEMP/browser-benchmark/summary.md" ]]; then
+            cat "$RUNNER_TEMP/browser-benchmark/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload browser artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-benchmark-${{ github.run_id }}
+          path: ${{ runner.temp }}/browser-benchmark/
+          if-no-files-found: ignore
+          retention-days: 30
