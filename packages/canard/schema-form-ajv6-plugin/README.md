@@ -78,8 +78,14 @@ unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It a
 every guard compiled at a root pointer, which is a limitation of that path; a self-contained
 guard compiled directly still evaluates, because a guard compile failure belongs to its own
 gate only.
+Guards compile without AJV's root meta-schema validation (`validateSchema: false`); only the
+whole-schema compile checks a schema against its meta-schema. A meta-schema violation outside
+the condition, such as `multipleOf: 0` in an unrelated field, fails no guard on either path and
+makes full validation report `VALIDATOR_COMPILE_FAILED`. A meta-only violation inside the
+condition schema itself, such as `minLength: 1.5`, does not fail the guard; the guard evaluates
+as the code AJV generates for it.
 The guard instance retains the bound dialect, formats and keywords with
-`allErrors: false`. `release(root)` also removes its directly compiled guards.
+`allErrors: false` and `validateSchema: false`. `release(root)` also removes its directly compiled guards.
 
 AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` as contextual.
 
@@ -92,7 +98,7 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 #### **`compileGuard(root, pointer)`**
 
 - **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the engine-owned copy root, retaining its `$ref` context
-- **Call order**: Accepts that copy whether or not `compile` has run. It registers the root independently, so both self-contained guards and guards with `$ref` into root definitions work before whole-schema compilation.
+- **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance, and `compile` registers it on the bound instance. Both kinds of guard work before whole-schema compilation.
 - **Identity**: Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 - **Limits**: Asynchronous formats and keywords are unsupported
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.

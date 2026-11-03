@@ -81,6 +81,8 @@ VALIDATE-002의 "같은 설정"은 값을 바꾸는 옵션을 쓰지 않는 것�
 
 - 가드용 인스턴스는 첫 실패에서 멈춰야 하는데(`allErrors: false`) Ajv에서 그것은 인스턴스 옵션이다(VALIDATE-033). 검증용과 가드용 인스턴스의 나머지 설정(format, 커스텀 키워드, 방언)을 같게 유지하는 규칙을 플러그인이 가져야 한다(VALIDATE-033). `bind`는 모듈 전역이어서 설정의 단위가 폼이 아니라 프로세스다(VALIDATE-033).
 
+【추론】 IR-10: 가드용 인스턴스가 검증용 인스턴스와 다른 설정은 `allErrors: false`와 `validateSchema: false` 둘이다. 뒤의 것은 IR-10이 더한 예외로, AJV의 루트 메타 스키마 검사를 전체 검증 컴파일 한 곳에 둔다. 형식, 사용자 정의 키워드(그 키워드의 메타 검사 포함), 방언, 엄격 옵션은 그대로 같다(VALIDATE-033). 근거는 [IR-10 계획](../plan/input-responsiveness/design.md#ir-10--object-value-copy-and-guard-only-compile-2026-11-04)입니다.
+
 ### 05-validation-and-errors.md §1.7 판정 요청과 오류 배정
 
 【추론】 폼은 검증을 입력 경로에서 떼어 내는 장치를 따로 두지 않는다(VALIDATE-049).
