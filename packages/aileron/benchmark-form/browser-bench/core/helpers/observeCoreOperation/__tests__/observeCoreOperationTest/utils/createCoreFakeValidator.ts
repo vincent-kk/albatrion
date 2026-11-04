@@ -3,10 +3,17 @@ import type { plugin } from '@canard/schema-form-ajv8-plugin';
 import { observeCoreValidator } from '../../../../../harness/utils/observeCoreValidator/observeCoreValidator';
 import type { createCoreFakeWorld } from '../../createCoreFakeWorld';
 
-/** Validator double: compile spends 3 ms, each run spends 2 ms and settles 10 ms later unless the value is in `rejecting`. */
+/**
+ * Wrap a deterministic validator whose compile spends 3 ms and run spends 2 ms synchronously.
+ * @param world - Virtual page whose timers drive Promise settlement.
+ * @param rejecting - Values that reject instead of returning a verdict.
+ * @param settleDelayMs - Per-value async delay in ms, defaulting to 10.
+ * @returns Wrapped plugin and lifetime records for operation-lifecycle tests.
+ */
 export function createCoreFakeValidator(
   world: ReturnType<typeof createCoreFakeWorld>,
   rejecting: string[] = [],
+  settleDelayMs: (value: string) => number = () => 10,
 ) {
   const source: typeof plugin = {
     validator: {
@@ -24,7 +31,7 @@ export function createCoreFakeValidator(
               ? String(data.probe)
               : '';
           return new Promise<null>((resolve, reject) => {
-            world.schedule(world.env.now() + 10, () =>
+            world.schedule(world.env.now() + settleDelayMs(value), () =>
               rejecting.includes(value)
                 ? reject(new Error('validator rejected ' + value))
                 : resolve(null),

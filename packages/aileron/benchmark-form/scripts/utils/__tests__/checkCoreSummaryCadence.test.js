@@ -15,13 +15,15 @@ it('requires explicit nominal cadence in the summary and matches it to the accep
   };
   expect(
     checkCoreSummaryCadence(
-      { cases: [{ id: 'example', attempt: 1 }] },
+      { mode: 'measure', runs: 1, cases: [{ id: 'example', attempt: 1 }] },
       samples,
     ),
   ).toContainEqual(expect.stringContaining('frameIntervalNominalMs'));
   expect(
     checkCoreSummaryCadence(
       {
+        mode: 'measure',
+        runs: 1,
         cases: [
           {
             id: 'example',

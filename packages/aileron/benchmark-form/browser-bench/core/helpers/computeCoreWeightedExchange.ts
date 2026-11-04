@@ -36,15 +36,21 @@ export function computeCoreWeightedExchange(
     const baselineMicros = microsOf(comparison?.baseline);
     const candidateMicros = microsOf(comparison?.candidate);
     const verdict = comparison?.verdict;
+    const unobservableLoad =
+      metric === 'blockingMs' &&
+      (id.startsWith('mount-') || id.startsWith('rebuild-'));
     const reason = weight.excluded
       ? weight.excluded
       : !comparison
         ? 'not measured'
-        : verdict === 'slower' || verdict === 'faster'
-          ? undefined
-          : (verdict ?? 'not measured');
+        : unobservableLoad
+          ? '< 50 ms 관측 불가'
+          : verdict === 'slower' || verdict === 'faster'
+            ? undefined
+            : (verdict ?? 'not measured');
     const sums = Boolean(
       !weight.excluded &&
+        !unobservableLoad &&
         comparison &&
         baselineMicros !== null &&
         candidateMicros !== null &&

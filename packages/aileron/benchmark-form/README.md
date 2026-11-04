@@ -53,6 +53,7 @@ capture→bubble 핸들러 평균)를 그대로 두고 `metrics`와 쓰기별 `w
   60/120 Hz를 판별해 `frameIntervalNominalMs = 1000 / Hz`를 모든 표본에 기록하며, 요약의 `frames`에도 변형별
   명목 간격을 명시합니다. 두 명목 간격 어느 쪽의 ±3 ms에도 들지 않으면 관측 불가로 표본이 실패합니다.
   로컬 G3·G4는 두 주기를 허용하고 최종 CI G6는 60 Hz 및 13.7–19.7 ms를 요구합니다.
+  로컬 120 Hz의 프레임 간격 수치는 CI 60 Hz 수치와 직접 비교할 수 없으며, 최종 보고서는 CI 측정만 사용합니다.
   UX 프레임 예산과 `overBudgetFrames`는 호스트 주기에 관계없이 16.7 ms 기준을 유지합니다.
   `frameBudget60`과 `frameBudget120`에는 각각 16.7 ms와 8.3 ms 기준의 `frameOverflowMs`·`overBudgetFrames`를
   담습니다. 기존 최상위 두 지표는 16.7 ms 의미를 유지하며, 요약의 `frames`에도 두 예산의 페이지별 통계를 보존합니다.

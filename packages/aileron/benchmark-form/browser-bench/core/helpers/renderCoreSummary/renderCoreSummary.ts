@@ -5,6 +5,7 @@ import { formatCoreFrameBudget } from './utils/formatCoreFrameBudget';
 import { formatCoreMedian } from './utils/formatCoreMedian';
 import { formatCoreMetricPair } from './utils/formatCoreMetricPair';
 import { formatCoreNumber } from './utils/formatCoreNumber';
+import { formatCoreRatio } from './utils/formatCoreRatio';
 import { formatCoreTypingSpread } from './utils/formatCoreTypingSpread';
 import { renderCoreWeightedExchange } from './utils/renderCoreWeightedExchange';
 
@@ -24,7 +25,7 @@ export function renderCoreSummary(summary: CoreSummary): string {
     '',
     '- 단위는 ms. type 사례의 경과는 쓰기 20회의 핸들러 평균, 블로킹·검증기·피드백 값은 쓰기 2–20의 반복 비용(쓰기 1회당; 첫 쓰기는 표 4의 첫 쓰기 ms와 first-key 행). 다른 사례는 작업 1회당. 프레임 관측 수치는 20회 입력 창 전체(키 사이 대기 포함) 단위.',
     '- 명목 간격 frameIntervalNominalMs는 빈 rAF 중앙값을 60/120 Hz로 판별한 1000/Hz ms이며 표 4는 기준/후보를 표시한다. 허용 오차 ±3 ms, CI 최종 실행은 60 Hz(13.7–19.7 ms)만 허용한다. 초과 프레임 수는 페이지별 중앙값. 프레임 예산 16.7 ms(60 Hz, 주 예산)와 8.3 ms(120 Hz, 보조). 프레임 열은 블로킹 중앙값 / 해당 예산, 넘침은 max(0, 중앙값 − 해당 예산); 각 예산의 기준판 초과 여부를 함께 적는다. UX 판정과 가중 교환비는 16.7 ms 기준을 유지하며 8.3 ms 열은 참고용이다. mount·rebuild는 50 ms 미만을 재는 수단이 없어 N/A이며 대신 가장 긴 Long Task ms를 적는다.',
-    '- 비율 = 후보 / 기준; Δ % = (후보 − 기준) / 기준 × 100; 기준 0이면 N/A. 교환비 단위는 µs/event × 가중치.',
+    '- 비율 = 후보 / 기준; Δ % = (후보 − 기준) / 기준 × 100; 기준 0 또는 비교 불가인 JSON null 비율·백분율은 N/A, 비교 자체가 없는 undefined는 —. 교환비 단위는 µs/event × 가중치.',
     '- Long Task API 문턱은 50 ms: "< 50"은 관측 없음이지 0이 아니다. 가장 긴 Long Task는 창과 겹친 작업의 원래 길이이고 창 안 합은 겹친 부분만 더한다.',
     '- 프레임 간격·가장 긴 간격·초과 합은 관측된 rAF 간격이며 CPU 블로킹과 구별한다. 검증기 구간은 동기/지연이 아니라 첫 프레임 전/후로 나눈다(0.16.1의 입력 검증은 매크로태스크라 첫 rAF 전에 돌 수 있다).',
     '- 화면 반영(type)은 다음 키 전에 마커 전이가 관측된 exact 쓰기의 조건부 평균이다. 부류 수(exact/censored/noChange/superseded)가 두 판에서 다르면 전체 피드백 개선으로 일반화하지 않는다. 블로킹 교환비에서 제외된 mount 비용은 0이 아니라 미측정 비용이다.',
@@ -38,7 +39,7 @@ export function renderCoreSummary(summary: CoreSummary): string {
     '| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: |',
     ...rows.map(
       (row) =>
-        `| ${row.id} | ${formatCoreNumber(row.baseline?.medianMs)} | ${formatCoreNumber(row.candidate.medianMs)} | ${formatCoreNumber(row.candidate.p95Ms)} | ${formatCoreNumber(row.metrics.durationMs.ratio)} | ${formatCoreNumber(row.deltaMs)} | ${formatCoreNumber(row.metrics.durationMs.deltaPercent, 1)} | ${row.verdict} | ${row.attempt ?? '—'} |`,
+        `| ${row.id} | ${formatCoreNumber(row.baseline?.medianMs)} | ${formatCoreNumber(row.candidate.medianMs)} | ${formatCoreNumber(row.candidate.p95Ms)} | ${formatCoreRatio(row.metrics.durationMs.ratio)} | ${formatCoreNumber(row.deltaMs)} | ${formatCoreRatio(row.metrics.durationMs.deltaPercent, 1)} | ${row.verdict} | ${row.attempt ?? '—'} |`,
     ),
     '',
     '## 2. 블로킹',
@@ -47,7 +48,7 @@ export function renderCoreSummary(summary: CoreSummary): string {
     '| --- | ---: | ---: | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
     ...rows.map(
       (row) =>
-        `| ${row.id} | ${formatCoreMedian(row.metrics.blockingMs.baseline)} | ${formatCoreMedian(row.metrics.blockingMs.candidate)} | ${formatCoreNumber(row.metrics.blockingMs.deltaPercent, 1)} | ${row.metrics.blockingMs.verdict} | ${formatCoreFrameBudget(row.budget.baseline, 'frames')} / ${formatCoreFrameBudget(row.budget.candidate, 'frames')} | ${formatCoreFrameBudget(row.budget.baseline, 'overflowMs')} / ${formatCoreFrameBudget(row.budget.candidate, 'overflowMs')} | ${formatCoreBaselineOverflow(row.budget.baseline)} | ${formatCoreFrameBudget(row.budget120.baseline, 'frames')} / ${formatCoreFrameBudget(row.budget120.candidate, 'frames')} | ${formatCoreFrameBudget(row.budget120.baseline, 'overflowMs')} / ${formatCoreFrameBudget(row.budget120.candidate, 'overflowMs')} | ${formatCoreBaselineOverflow(row.budget120.baseline)} | ${formatCoreMetricPair(row, 'maxLongTaskMs')} (관측 ${row.frames.baseline?.longTaskObservedSamples ?? '—'}/${row.baseline?.samples ?? '—'} / ${row.frames.candidate.longTaskObservedSamples}/${row.candidate.samples}) | ${formatCoreMetricPair(row, 'longTaskOverlapMs')} | ${formatCoreMetricPair(row, 'preFrameValidatorMs')} | ${formatCoreMetricPair(row, 'postFrameValidatorMs')} |`,
+        `| ${row.id} | ${formatCoreMedian(row.metrics.blockingMs.baseline)} | ${formatCoreMedian(row.metrics.blockingMs.candidate)} | ${formatCoreRatio(row.metrics.blockingMs.deltaPercent, 1)} | ${row.metrics.blockingMs.verdict} | ${formatCoreFrameBudget(row.budget.baseline, 'frames')} / ${formatCoreFrameBudget(row.budget.candidate, 'frames')} | ${formatCoreFrameBudget(row.budget.baseline, 'overflowMs')} / ${formatCoreFrameBudget(row.budget.candidate, 'overflowMs')} | ${formatCoreBaselineOverflow(row.budget.baseline)} | ${formatCoreFrameBudget(row.budget120.baseline, 'frames')} / ${formatCoreFrameBudget(row.budget120.candidate, 'frames')} | ${formatCoreFrameBudget(row.budget120.baseline, 'overflowMs')} / ${formatCoreFrameBudget(row.budget120.candidate, 'overflowMs')} | ${formatCoreBaselineOverflow(row.budget120.baseline)} | ${formatCoreMetricPair(row, 'maxLongTaskMs')} (관측 ${row.frames.baseline?.longTaskObservedSamples ?? '—'}/${row.baseline?.samples ?? '—'} / ${row.frames.candidate.longTaskObservedSamples}/${row.candidate.samples}) | ${formatCoreMetricPair(row, 'longTaskOverlapMs')} | ${formatCoreMetricPair(row, 'preFrameValidatorMs')} | ${formatCoreMetricPair(row, 'postFrameValidatorMs')} |`,
     ),
     '',
     '## 3. 피드백',
@@ -56,7 +57,7 @@ export function renderCoreSummary(summary: CoreSummary): string {
     '| --- | --- | --- | ---: | ---: | --- | --- | --- | --- | --- |',
     ...rows.map(
       (row) =>
-        `| ${row.id} | ${formatCoreMetricPair(row, 'validatorSettledMs')} | ${formatCoreMetricPair(row, 'feedbackCommittedMs')} | ${formatCoreNumber(row.metrics.feedbackCommittedMs.ratio)} | ${formatCoreNumber(row.metrics.feedbackCommittedMs.deltaPercent, 1)} | ${row.metrics.feedbackCommittedMs.verdict} | ${formatCoreMetricPair(row, 'validationReportedMs')} | ${formatCoreFeedbackClasses(row.typing, 'baseline')} | ${formatCoreFeedbackClasses(row.typing, 'candidate')} | ${row.typing ? `${row.typing.baseline?.coalescedWrites ?? '—'} / ${row.typing.candidate.coalescedWrites}` : '—'} |`,
+        `| ${row.id} | ${formatCoreMetricPair(row, 'validatorSettledMs')} | ${formatCoreMetricPair(row, 'feedbackCommittedMs')} | ${formatCoreRatio(row.metrics.feedbackCommittedMs.ratio)} | ${formatCoreRatio(row.metrics.feedbackCommittedMs.deltaPercent, 1)} | ${row.metrics.feedbackCommittedMs.verdict} | ${formatCoreMetricPair(row, 'validationReportedMs')} | ${formatCoreFeedbackClasses(row.typing, 'baseline')} | ${formatCoreFeedbackClasses(row.typing, 'candidate')} | ${row.typing ? `${row.typing.baseline?.coalescedWrites ?? '—'} / ${row.typing.candidate.coalescedWrites}` : '—'} |`,
     ),
     '',
     '## 4. 프레임 관측·UX',

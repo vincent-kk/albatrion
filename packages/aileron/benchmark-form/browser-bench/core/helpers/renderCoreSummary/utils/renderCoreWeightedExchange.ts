@@ -1,5 +1,6 @@
 import type { CoreWeightedExchange } from '../../../reportTypes';
 import { formatCoreNumber } from './formatCoreNumber';
+import { formatCoreRatio } from './formatCoreRatio';
 
 /**
  * Render the weighted per-event exchange and its raw weighted ratio.
@@ -20,7 +21,7 @@ export const renderCoreWeightedExchange = (
       `| ${row.id} | ${row.weight} | ${row.k} | ${formatCoreNumber(row.baselineMicros, 0)} | ${formatCoreNumber(row.candidateMicros, 0)} | ${formatCoreNumber(row.deltaMicros, 0)} | ${row.counted ? 'counted' : (row.reason ?? '—')} | ${row.contributionMicros.toFixed(0)} | ${row.basis} |`,
   ),
   '',
-  `가중 교환비 Σ(가중치 × Δ) = ${value.exchangeMicros.toFixed(0)} µs (폭 안 행은 0, 음수가 개선); 가중 기준 합 = ${value.weightedBaselineMicros.toFixed(0)} µs; 가중 후보 합 = ${value.weightedCandidateMicros.toFixed(0)} µs; 가중 비율 = ${formatCoreNumber(value.weightedRatio)}.`,
+  `가중 교환비 Σ(가중치 × Δ) = ${value.exchangeMicros.toFixed(0)} µs (폭 안 행은 0, 음수가 개선); 가중 기준 합 = ${value.weightedBaselineMicros.toFixed(0)} µs; 가중 후보 합 = ${value.weightedCandidateMicros.toFixed(0)} µs; 가중 비율 = ${formatCoreRatio(value.weightedRatio)}.`,
   `제외 행: ${value.excluded.length ? value.excluded.join('; ') : '없음'}`,
   '',
 ];

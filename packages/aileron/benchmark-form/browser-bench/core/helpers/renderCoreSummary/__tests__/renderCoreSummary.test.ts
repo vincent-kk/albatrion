@@ -50,7 +50,7 @@ it('renders the five tables with N/A budgets and the weighted exchange', () => {
   );
   expect(text).toContain('1000000');
   expect(text).toContain('1.200');
-  expect(text).toContain('mount-flat-500-none: not observable');
+  expect(text).toContain('mount-flat-500-none: < 50 ms 관측 불가');
   expect(text).toContain('54/3/3/0');
 });
 
@@ -89,4 +89,47 @@ it('preserves void and the retry attempt in the summary', () => {
   summary.cases[0].attempt = 2;
   const text = renderCoreSummary(summary);
   expect(text).toContain('| void | 2 |');
+});
+
+it('renders N/A in the actual ratio and percent cells of a zero-baseline row', () => {
+  const row = createCoreTestCase('type-flat-500-validate-nonburst', {
+    durationMs: [3, 0],
+    blockingMs: [1, 0],
+    feedbackCommittedMs: [3, 0],
+  });
+  const text = renderCoreSummary({
+    mode: 'compare',
+    runs: 3,
+    warmup: 0,
+    cases: [row],
+  });
+  const cells = (section: string) =>
+    text
+      .split(section)[1]
+      .split('\n')
+      .find((line) => line.startsWith('| type-flat-500'))!
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => cell.trim());
+  expect(cells('## 1. 경과·동기')[4]).toBe('N/A');
+  expect(cells('## 1. 경과·동기')[6]).toBe('N/A');
+  expect(cells('## 2. 블로킹')[3]).toBe('N/A');
+  expect(cells('## 3. 피드백').slice(3, 5)).toEqual(['N/A', 'N/A']);
+  delete row.metrics.feedbackCommittedMs.ratio;
+  delete row.metrics.feedbackCommittedMs.deltaPercent;
+  const missing = renderCoreSummary({
+    mode: 'measure',
+    runs: 3,
+    warmup: 0,
+    cases: [row],
+  });
+  expect(
+    missing
+      .split('## 3. 피드백')[1]
+      .split('\n')
+      .find((line) => line.startsWith('| type-flat-500'))!
+      .split('|')
+      .slice(4, 6)
+      .map((cell) => cell.trim()),
+  ).toEqual(['—', '—']);
 });

@@ -83,6 +83,7 @@ export async function observeCoreOperation(
   spec: CoreOperationSpec,
   env: CoreObservationEnv,
 ): Promise<CoreOperationResult> {
+  const deadlineMs = env.now() + CAP_MS;
   let finished = false;
   const cap = new Promise<never>((_, reject) =>
     env.setTimeout(() => {
@@ -132,7 +133,10 @@ export async function observeCoreOperation(
       frames,
       cap,
     );
-    const summary = await longTasks.finish(outcome.startMs, endMs);
+    const summary = await Promise.race([
+      longTasks.finish(outcome.startMs, endMs),
+      cap,
+    ]);
     const computed = computeCoreMetrics({
       operation: spec.operation,
       validation: spec.validation,
@@ -150,9 +154,12 @@ export async function observeCoreOperation(
       reports: spec.reports,
       longTasks: summary,
     });
+    if (env.now() >= deadlineMs)
+      throw new Error(`Core observation exceeded ${CAP_MS} ms cap`);
     return { startMs: outcome.startMs, endMs, ...computed };
   } finally {
     finished = true;
     frames.stop();
+    longTasks.stop();
   }
 }

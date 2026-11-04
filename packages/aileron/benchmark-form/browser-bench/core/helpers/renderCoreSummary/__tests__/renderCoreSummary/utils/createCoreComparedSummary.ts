@@ -1,7 +1,10 @@
 import type { CoreSummary } from '../../../../../reportTypes';
 import { createCoreTestCase } from '../../../../__tests__/createCoreTestCase';
 
-/** Compare-mode summary with one slower mount and one typing case. */
+/**
+ * Build stable comparison evidence for renderer table tests.
+ * @returns One slower mount, one typing case and both weighted exchange views.
+ */
 export const createCoreComparedSummary = (): CoreSummary => {
   const mount = createCoreTestCase(
     'mount-flat-500-none',
@@ -96,7 +99,7 @@ export const createCoreComparedSummary = (): CoreSummary => {
             candidateMicros: null,
             deltaMicros: null,
             counted: false,
-            reason: 'not observable',
+            reason: '< 50 ms 관측 불가',
             contributionMicros: 0,
           },
         ],
@@ -104,7 +107,7 @@ export const createCoreComparedSummary = (): CoreSummary => {
         weightedBaselineMicros: 5_000_000,
         weightedCandidateMicros: 6_000_000,
         weightedRatio: 1.2,
-        excluded: ['mount-flat-500-none: not observable'],
+        excluded: ['mount-flat-500-none: < 50 ms 관측 불가'],
       },
       feedback: {
         metric: 'feedbackCommittedMs',

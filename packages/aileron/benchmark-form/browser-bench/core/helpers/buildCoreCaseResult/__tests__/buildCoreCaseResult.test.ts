@@ -44,7 +44,7 @@ describe('buildCoreCaseResult', () => {
     const result = buildCoreCaseResult(
       'type-flat-500-validate-nonburst',
       1,
-      groups({ feedbackCommittedMs: 41.5 }, { feedbackCommittedMs: 40 }),
+      groups({ feedbackCommittedMs: 11.5 }, { feedbackCommittedMs: 10 }),
       true,
     );
     expect(result.verdict).toBe('slower');
@@ -54,8 +54,8 @@ describe('buildCoreCaseResult', () => {
     expect(result.metrics.feedbackCommittedMs.verdict).toBe('within noise');
     expect(result.metrics.feedbackCommittedMs.thresholdMs).toBe(2);
     expect(result.metrics.feedbackCommittedMs.deltaMs).toBe(1.5);
-    expect(result.metrics.feedbackCommittedMs.ratio).toBeCloseTo(1.0375);
-    expect(result.metrics.feedbackCommittedMs.deltaPercent).toBeCloseTo(3.75);
+    expect(result.metrics.feedbackCommittedMs.ratio).toBeCloseTo(1.15);
+    expect(result.metrics.feedbackCommittedMs.deltaPercent).toBeCloseTo(15);
   });
 
   it('judges CPU metrics with the 0.5 ms / 5 % class and voids a metric whose control leaves its band', () => {
@@ -63,14 +63,14 @@ describe('buildCoreCaseResult', () => {
       'type-flat-500-validate-nonburst',
       1,
       {
-        candidate: [createCoreTestMeasurement({ blockingMs: 2.6 })],
-        baseline: [createCoreTestMeasurement({ blockingMs: 2 })],
-        control: [createCoreTestMeasurement({ blockingMs: 2.6 })],
+        candidate: [createCoreTestMeasurement({ blockingMs: 21 })],
+        baseline: [createCoreTestMeasurement({ blockingMs: 20 })],
+        control: [createCoreTestMeasurement({ blockingMs: 20.7 })],
       },
       true,
     );
     expect(result.metrics.blockingMs.verdict).toBe('void');
-    expect(result.metrics.blockingMs.controlBandMs).toBe(0.5);
+    expect(result.metrics.blockingMs.controlBandMs).toBe(0.6);
     expect(result.metrics.preFrameValidatorMs.verdict).toBe('within noise');
     expect(result.metrics.preFrameValidatorMs.thresholdMs).toBe(0.5);
     expect(result.verdict).not.toBe('void');
@@ -239,5 +239,31 @@ describe('buildCoreCaseResult', () => {
     expect(result.metrics.feedbackCommittedMs.baseline).toBeUndefined();
     expect(result.ux.candidate.feedback).toBe('perceptible');
     expect(result.ux.baseline).toBeUndefined();
+  });
+
+  it('grades a mixed Long Task median below 50 ms as ok', () => {
+    const measurements = [null, null, 70].map((maxLongTaskMs) =>
+      createCoreTestMeasurement({
+        blockingMs: null,
+        firstWriteMs: null,
+        validationReportedMs: 5,
+        maxLongTaskMs,
+      }),
+    );
+    const result = buildCoreCaseResult(
+      'mount-flat-500-validate',
+      1,
+      {
+        candidate: measurements,
+        baseline: measurements,
+        control: measurements,
+      },
+      true,
+    );
+    expect(result.metrics.maxLongTaskMs.candidate).toMatchObject({
+      kind: 'mixed',
+      median: '<50',
+    });
+    expect(result.ux.candidate.blocking).toBe('ok');
   });
 });

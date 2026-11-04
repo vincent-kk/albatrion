@@ -54,9 +54,7 @@ for (const [id, groups] of Object.entries(samples)) {
       measurements.forEach((measurement, index) => {
         checked++;
         problems.push(
-          ...checkCoreMeasurement(id, variant, index, measurement, {
-            requireObserved: true,
-          }),
+          ...checkCoreMeasurement(id, variant, index, measurement, {}),
         );
         const where = `${id} ${variant}[${index}]`;
         if (operation === 'mount' && validation) {

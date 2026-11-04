@@ -7,6 +7,7 @@ import { checkCoreSummaryCadence } from './utils/checkCoreSummaryCadence.mjs';
 import { parseCoreCaseId } from './utils/parseCoreCaseId.mjs';
 import { parseScriptArgs } from './utils/parseScriptArgs.mjs';
 import { readCoreArtifacts } from './utils/readCoreArtifacts.mjs';
+import { rebuildCoreSummary } from './utils/rebuildCoreSummary.mjs';
 
 /** Validated CLI options; unknown or duplicate flags are rejected before artifact inspection. */
 const options = parseScriptArgs(process.argv.slice(2), [
@@ -34,6 +35,7 @@ if (
 const { samples, summary } = readCoreArtifacts(samplesPath, summaryPath);
 /** Accumulated gate failures; any entry makes the process exit nonzero. */
 const problems = checkCoreSummaryCadence(summary, samples);
+if (summary.mode !== 'compare') problems.push('final run mode must be compare');
 if (options['--run-json']) {
   const run = JSON.parse(readFileSync(options['--run-json'], 'utf8'));
   if (run.conclusion !== 'success')
@@ -72,7 +74,12 @@ for (const row of summary.cases) {
     problems.push(`${row.id}: no sample group for attempt ${row.attempt}`);
     continue;
   }
-  for (const [variant, measurements] of Object.entries(group.samples)) {
+  for (const variant of ['candidate', 'baseline', 'control']) {
+    const measurements = group.samples?.[variant];
+    if (!Array.isArray(measurements)) {
+      problems.push(`${row.id} ${variant}: required sample array is missing`);
+      continue;
+    }
     if (measurements.length !== runs)
       problems.push(
         `${row.id} ${variant}: ${measurements.length} samples ≠ ${runs}`,
@@ -80,11 +87,18 @@ for (const row of summary.cases) {
     measurements.forEach((measurement, index) =>
       problems.push(
         ...checkCoreMeasurement(row.id, variant, index, measurement, {
-          requireObserved: true,
           require60Hz: true,
         }),
       ),
     );
+  }
+}
+if (!problems.length) {
+  try {
+    const { mismatches } = await rebuildCoreSummary(summary, samples);
+    problems.push(...mismatches);
+  } catch (error) {
+    problems.push(`raw-sample rebuild failed: ${error.message}`);
   }
 }
 for (const problem of problems) console.log(problem);

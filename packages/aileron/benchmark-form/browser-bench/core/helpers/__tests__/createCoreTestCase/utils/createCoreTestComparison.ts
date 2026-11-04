@@ -1,6 +1,12 @@
 import type { CoreMetricComparison } from '../../../../reportTypes';
 
-/** Numeric comparison with the given medians. */
+/**
+ * Build numeric comparison evidence with explicit medians and verdict.
+ * @param candidate - Workspace median in milliseconds.
+ * @param baseline - Baseline/control median in milliseconds; zero gives null ratios.
+ * @param verdict - Advisory status to exercise report and exchange handling.
+ * @returns Complete per-variant statistics and comparison fields for three samples.
+ */
 export const createCoreTestComparison = (
   candidate: number,
   baseline: number,

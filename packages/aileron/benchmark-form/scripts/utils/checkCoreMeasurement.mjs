@@ -1,7 +1,7 @@
 import { coreObservability } from '../coreObservability.mjs';
 import { parseCoreCaseId } from './parseCoreCaseId.mjs';
 
-/** Nominal rAF periods and tolerance, mirroring isCoreFrameIntervalNominal.ts. */
+/** Nominal rAF periods and tolerance, mirroring detectCoreFrameIntervalNominal.ts. */
 const FRAME_PERIODS_MS = [1000 / 60, 1000 / 120];
 /** Maximum absolute deviation in milliseconds from a supported nominal rAF period. */
 const FRAME_TOLERANCE_MS = 3;
@@ -12,10 +12,16 @@ const FRAME_TOLERANCE_MS = 3;
  * @param {string} variant - candidate, baseline or control.
  * @param {number} index - Sample index for messages.
  * @param {object} measurement - One CoreMeasurement.
- * @param {{ requireObserved: boolean, require60Hz?: boolean }} options - Whether "required" metrics must be non-null (checkers) or may be null (page-level leniency).
+ * @param {{ require60Hz?: boolean }} options - Require the final CI 60 Hz cadence in addition to mandatory observability.
  * @returns {string[]} Problems; empty when the measurement conforms.
  */
-export function checkCoreMeasurement(id, variant, index, measurement, options) {
+export function checkCoreMeasurement(
+  id,
+  variant,
+  index,
+  measurement,
+  options = {},
+) {
   const row = coreObservability[parseCoreCaseId(id).key];
   const where = `${id} ${variant}[${index}]`;
   const problems = [];
@@ -32,12 +38,7 @@ export function checkCoreMeasurement(id, variant, index, measurement, options) {
       problems.push(`${where}: ${name} must be finite, got ${value}`);
     else if (expectation === 'nullable' && value !== null && !finite(value))
       problems.push(`${where}: ${name} must be null or finite, got ${value}`);
-    else if (
-      expectation === 'required' &&
-      (options.requireObserved
-        ? !finite(value)
-        : value !== null && !finite(value))
-    )
+    else if (expectation === 'required' && !finite(value))
       problems.push(`${where}: ${name} is required, got ${value}`);
   }
   const nominal = FRAME_PERIODS_MS.find(

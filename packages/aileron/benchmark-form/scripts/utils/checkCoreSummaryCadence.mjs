@@ -14,8 +14,20 @@ export function checkCoreSummaryCadence(summary, samples) {
       problems.push(`${row.id}: no accepted sample group for summary cadence`);
       continue;
     }
-    for (const [variant, measurements] of Object.entries(group.samples)) {
-      if (!measurements.length) continue;
+    for (const variant of summary.mode === 'measure'
+      ? ['candidate']
+      : ['candidate', 'baseline', 'control']) {
+      const measurements = group.samples?.[variant];
+      if (
+        !Array.isArray(measurements) ||
+        measurements.length !== summary.runs ||
+        !measurements.length
+      ) {
+        problems.push(
+          `${row.id} ${variant}: expected an array of ${summary.runs} samples for summary cadence`,
+        );
+        continue;
+      }
       const periods = measurements.map(
         ({ metrics }) => metrics.frameIntervalNominalMs,
       );

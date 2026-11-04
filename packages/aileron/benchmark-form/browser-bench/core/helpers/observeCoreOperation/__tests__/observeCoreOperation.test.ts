@@ -30,7 +30,7 @@ describe('observeCoreOperation', () => {
           longTasks: world.longTasks(
             () => [
               { startTime: start - 200, duration: 90 },
-              { startTime: start - 30, duration: 80 },
+              { startTime: start - 70, duration: 100 },
               { startTime: start + 10, duration: 80 },
             ],
             () => [{ startTime: start + 20, duration: 60 }],
@@ -38,6 +38,10 @@ describe('observeCoreOperation', () => {
           async execute() {
             start = world.env.now();
             const validate = validator.plugin.validator.compile({});
+            world.schedule(start + 5, () => world.marker.set('0'));
+            world.schedule(start + 30, () =>
+              reports.push({ atMs: world.env.now(), probeError: false }),
+            );
             world.schedule(start + 40, () => {
               void settled(validate({ probe: 'x' })).then(() => {
                 world.schedule(world.env.now() + 5, () =>
@@ -78,9 +82,9 @@ describe('observeCoreOperation', () => {
     expect(result.endMs - start).toBeGreaterThanOrEqual(57 + 32);
     expect(result.endMs - start).toBeLessThanOrEqual(57 + 50 + 32 + 16);
     const relativeEnd = result.endMs - start;
-    expect(result.metrics.maxLongTaskMs).toBe(80);
+    expect(result.metrics.maxLongTaskMs).toBe(100);
     expect(result.metrics.longTaskOverlapMs).toBe(
-      50 + Math.min(80, relativeEnd - 10) + Math.min(60, relativeEnd - 20),
+      30 + Math.min(80, relativeEnd - 10) + Math.min(60, relativeEnd - 20),
     );
     expect(result.writes).toEqual([]);
   });
@@ -111,7 +115,7 @@ describe('observeCoreOperation', () => {
               world.schedule(at, () =>
                 records.push({
                   start: at,
-                  durationMs: 1,
+                  durationMs: index === 0 ? 5 : 1,
                   trusted: true,
                   value,
                 }),
@@ -166,7 +170,7 @@ describe('observeCoreOperation', () => {
       false,
     ]);
     expect(result.metrics.blockingMs).toBe(1);
-    expect(result.metrics.firstWriteMs).toBe(1);
+    expect(result.metrics.firstWriteMs).toBe(5);
     expect(result.metrics.validatorSettledMs).toBe((117 + 132) / 2);
     expect(result.metrics.feedbackCommittedMs).toBe(134);
     expect(result.metrics.feedbackClasses).toEqual({
@@ -210,6 +214,8 @@ describe('observeCoreOperation', () => {
     expect(result.metrics.validationReportedMs).toBeNull();
     expect(result.metrics.maxLongTaskMs).toBeNull();
     expect(result.metrics.longTaskOverlapMs).toBe(0);
+    expect(result.endMs - start).toBeGreaterThanOrEqual(20 + 16);
+    expect(result.metrics.frames).toBeGreaterThanOrEqual(3);
     expect(result.endMs - start).toBeLessThanOrEqual(20 + 50 + 32 + 16);
   });
 
@@ -332,5 +338,192 @@ describe('observeCoreOperation', () => {
         ),
       ),
     ).rejects.toThrow('frame interval');
+  });
+
+  it('waits for a marker committed 300 ms after validation settles', async () => {
+    const world = createCoreFakeWorld();
+    const validator = createCoreFakeValidator(world);
+    let start = 0;
+    let shown = 0;
+    const result = await world.runUntil(
+      observeCoreOperation(
+        {
+          operation: 'mount',
+          validation: true,
+          loadValue: 'x',
+          validator: validator.observation,
+          marker: world.marker,
+          reports: [],
+          longTasks: world.longTasks(() => []),
+          async execute() {
+            start = world.env.now();
+            const validate = validator.plugin.validator.compile({});
+            void settled(validate({ probe: 'x' })).then(() => {
+              shown = world.env.now() + 300;
+              world.schedule(shown, () => world.marker.set('1'));
+            });
+            return { startMs: start, durationMs: 0, writes: [] };
+          },
+        },
+        world.env,
+      ),
+    );
+    expect(result.metrics.feedbackCommittedMs).toBe(shown - start);
+    expect(result.metrics.feedbackCommittedMs).toBe(315);
+    expect(result.endMs).toBeGreaterThanOrEqual(shown);
+  });
+
+  it('waits for a trailing run that starts 5 ms after the first settle and stays pending for 400 ms', async () => {
+    const world = createCoreFakeWorld();
+    const validator = createCoreFakeValidator(world, [], (value) =>
+      value === 'later' ? 400 : 10,
+    );
+    let trailingSettle = 0;
+    const result = await world.runUntil(
+      observeCoreOperation(
+        {
+          operation: 'mount',
+          validation: true,
+          loadValue: 'x',
+          validator: validator.observation,
+          marker: world.marker,
+          reports: [],
+          longTasks: world.longTasks(() => []),
+          async execute() {
+            const startMs = world.env.now();
+            const validate = validator.plugin.validator.compile({});
+            void settled(validate({ probe: 'x' })).then(() => {
+              world.marker.set('1');
+              world.schedule(world.env.now() + 5, () => {
+                trailingSettle = world.env.now() + 2 + 400;
+                void settled(validate({ probe: 'later' }));
+              });
+            });
+            return { startMs, durationMs: 0, writes: [] };
+          },
+        },
+        world.env,
+      ),
+    );
+    expect(trailingSettle).toBeGreaterThan(0);
+    expect(result.endMs).toBeGreaterThanOrEqual(trailingSettle);
+    expect(validator.observation.pending.size).toBe(0);
+  });
+
+  it('ignores a matching run before capture and waits for the final value validated inside the window', async () => {
+    const world = createCoreFakeWorld();
+    const validator = createCoreFakeValidator(world);
+    const validate = validator.plugin.validator.compile({});
+    void settled(validate({ probe: 'ab' }));
+    let start = 0;
+    const result = await world.runUntil(
+      observeCoreOperation(
+        {
+          operation: 'type',
+          validation: true,
+          loadValue: null,
+          validator: validator.observation,
+          marker: world.marker,
+          reports: [],
+          longTasks: world.longTasks(() => []),
+          async execute() {
+            start = world.env.now();
+            world.schedule(start + 300, () => {
+              void settled(validate({ probe: 'ab' }));
+            });
+            await new Promise<void>((resolve) =>
+              world.env.setTimeout(resolve, 11),
+            );
+            return {
+              startMs: start,
+              durationMs: 1,
+              writes: [
+                { start, durationMs: 1, trusted: true, value: 'a' },
+                {
+                  start: start + 10,
+                  durationMs: 1,
+                  trusted: true,
+                  value: 'ab',
+                },
+              ],
+            };
+          },
+        },
+        world.env,
+      ),
+    );
+    expect(result.endMs - start).toBeGreaterThanOrEqual(312);
+    expect(result.metrics.validatorSettledMs).toBe(302);
+  });
+
+  it('rejects and disconnects when only the final Long Task drain exceeds the cap', async () => {
+    const world = createCoreFakeWorld();
+    let disconnected = false;
+    const env = {
+      ...world.env,
+      setTimeout: (callback: () => void, delay: number) =>
+        world.env.setTimeout(callback, delay === 0 ? 6000 : delay),
+    };
+    const source = world.longTasks(() => []);
+    await expect(
+      world.runUntil(
+        observeCoreOperation(
+          {
+            operation: 'mount',
+            validation: false,
+            loadValue: null,
+            validator: { records: [], pending: new Set() },
+            marker: world.marker,
+            reports: [],
+            longTasks: (deliver) => {
+              const observer = source(deliver);
+              return {
+                ...observer,
+                disconnect() {
+                  disconnected = true;
+                  observer.disconnect();
+                },
+              };
+            },
+            async execute() {
+              return { startMs: env.now(), durationMs: 0, writes: [] };
+            },
+          },
+          env,
+        ),
+      ),
+    ).rejects.toThrow('5000');
+    expect(env.now()).toBe(5000);
+    expect(disconnected).toBe(true);
+  });
+
+  it('enforces the absolute deadline even when the cap timer callback is delayed', async () => {
+    const world = createCoreFakeWorld();
+    const env = {
+      ...world.env,
+      setTimeout: (callback: () => void, delay: number) =>
+        world.env.setTimeout(callback, delay === 5000 ? 7000 : delay),
+    };
+    await expect(
+      world.runUntil(
+        observeCoreOperation(
+          {
+            operation: 'mount',
+            validation: false,
+            loadValue: null,
+            validator: { records: [], pending: new Set() },
+            marker: world.marker,
+            reports: [],
+            longTasks: world.longTasks(() => []),
+            async execute() {
+              const startMs = env.now();
+              world.spend(4900);
+              return { startMs, durationMs: 4900, writes: [] };
+            },
+          },
+          env,
+        ),
+      ),
+    ).rejects.toThrow('5000');
   });
 });

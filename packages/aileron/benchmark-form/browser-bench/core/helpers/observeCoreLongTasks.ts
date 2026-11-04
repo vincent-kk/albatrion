@@ -16,6 +16,8 @@ export interface CoreLongTaskSummary {
 export interface CoreLongTaskObservation {
   /** Wait one macrotask, collect queued entries, disconnect, and summarize the window. */
   finish(startMs: number, endMs: number): Promise<CoreLongTaskSummary>;
+  /** Disconnect without draining on failure or deadline expiry; safe after finish. */
+  stop(): void;
 }
 
 /** Part of one task inside [startMs, endMs]; 0 when disjoint. */
@@ -37,14 +39,18 @@ export function observeCoreLongTasks(
   env: CoreObservationEnv,
 ): CoreLongTaskObservation {
   const entries: CoreLongTaskEntry[] = [];
+  let stopped = false;
   const observer = source((delivered) => {
     entries.push(...delivered);
   });
   return {
     async finish(startMs, endMs) {
       await new Promise<void>((resolve) => env.setTimeout(resolve, 0));
+      if (stopped)
+        throw new Error('Long Task observation stopped before drain');
       entries.push(...observer.takeRecords());
       observer.disconnect();
+      stopped = true;
       const overlapping = entries.filter(
         (entry) => overlapOf(entry, startMs, endMs) > 0,
       );
@@ -57,6 +63,10 @@ export function observeCoreLongTasks(
           0,
         ),
       };
+    },
+    stop() {
+      if (!stopped) observer.disconnect();
+      stopped = true;
     },
   };
 }
