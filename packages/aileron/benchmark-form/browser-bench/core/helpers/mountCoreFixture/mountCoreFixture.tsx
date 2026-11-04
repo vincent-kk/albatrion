@@ -38,6 +38,7 @@ export async function mountCoreFixture(
 ): Promise<MountedCoreFixture> {
   registerPlugin(validatorPlugin);
   const Renderer = createCoreMarkerRenderer(fixture.measuredPath);
+  const legacyRendererProp = { CustomFormTypeRenderer: Renderer };
   const formRef = createRef<FormHandle>();
   const root = createRoot(container);
   const firstPaint = new Promise<void>((resolve) => {
@@ -68,6 +69,7 @@ export async function mountCoreFixture(
       ref={formRef}
       jsonSchema={fixture.schema}
       FieldRenderer={Renderer}
+      {...legacyRendererProp}
       showError={true}
       onValidate={hooks.onValidate}
       {...(fixture.defaultValidation
