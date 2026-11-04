@@ -275,21 +275,21 @@ describe('settled controls', () => {
       root.structure?.target?.isReadOnly,
       root.structure?.target?.isDisabled,
     ]).toEqual([true, true]);
-    expect(root.structure?.target?.raw).toBe('a');
+    expect(root.structure?.target?.source).toBe('a');
     writeFieldNode(
       root.structure!.target,
       'manual',
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.raw).toBe('manual');
+    expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(
-      root.structure!.source,
+      root.structure!['source'],
       'b',
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.raw).toBe('b');
+    expect(root.structure?.target?.source).toBe('b');
   });
 
   it('28C-07 watchValues reads effective watch paths and memoizes a commit; CONTROLS-019 a single-string watch is not a watch', () => {

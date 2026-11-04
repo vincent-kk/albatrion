@@ -1,7 +1,7 @@
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { readSlotRawTree } from './readSlotRawTree';
+import { readSlotSourceTree } from './readSlotSourceTree';
 import { resolveSlotSource } from './resolveSlotSource';
 /**
  * Recompose a gated-out item from its retained own-kind latent sources.
@@ -16,7 +16,7 @@ export const readInactiveSlotSource = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
 ): unknown => {
   const resolved = resolveSlotSource(context.root, path, template);
-  return resolved.source || resolved.overlay
-    ? readSlotRawTree(template, resolved.source, resolved.overlay)
+  return resolved.instance || resolved.overlay
+    ? readSlotSourceTree(template, resolved.instance, resolved.overlay)
     : undefined;
 };

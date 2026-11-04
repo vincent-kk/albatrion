@@ -4,7 +4,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 
 const records = (runtime: object) => Reflect.get(runtime, 'misfitRecords');
 
-// filid:contract union-raw
+// filid:contract union-source
 describe('TEST-077 union mismatch lamp', () => {
   it('turns the lamp on when a gate narrows the effective list', () => {
     const { root } = makeFieldNodeTree({
@@ -54,7 +54,7 @@ describe('TEST-077 union mismatch lamp', () => {
     root.find('/narrow')?.setValue(false);
     expect(a?.isMisfit).toBe(false);
     expect(root.misfits).toEqual([]);
-    expect(a?.raw).toBe('abc');
+    expect(a?.source).toBe('abc');
   });
 
   it('turns the lamp off when a later value matches the effective list', () => {
@@ -124,7 +124,7 @@ describe('TEST-077 union mismatch lamp', () => {
       type: ['string', 'boolean'],
     });
     root.setValue(0);
-    expect(root.raw).toBe(0);
+    expect(root.source).toBe(0);
     expect(root.isMisfit).toBe(true);
     expect(records(runtime)).toEqual([
       expect.objectContaining({

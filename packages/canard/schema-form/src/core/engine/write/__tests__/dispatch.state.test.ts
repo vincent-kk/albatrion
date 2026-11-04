@@ -83,7 +83,7 @@ describe('dispatcher state events', () => {
     dispatchSetState(root, { [FieldNodeState.Edited]: true });
 
     expect(root.interactionState[FieldNodeState.Edited]).toBe(true);
-    expect(root.raw).toBeUndefined();
+    expect(root.source).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(seen).toEqual([

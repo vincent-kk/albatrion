@@ -21,7 +21,7 @@ export function compareObservations(
     if (
       ![
         'value',
-        'raw',
+        'source',
         'outputValue',
         'output',
         'errors',

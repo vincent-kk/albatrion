@@ -7,7 +7,7 @@ import type { SettlementContext } from '../../../types/settlement';
  * Every condition is a fixed number of reads; the host's own key-set condition belongs to the caller.
  * @param node - Branch host being distributed by `markWrite`
  * @param context - Current settlement whose write kind, scope, gate presence and written target are read
- * @returns Whether the write is a caller write of a static form outside batch, visit and load marking, with no pending latent change, no latent raw or misfit path at or under the written target, on an attached host
+ * @returns Whether the write is a caller write of a static form outside batch, visit and load marking, with no pending latent change, no latent source or misfit path at or under the written target, on an attached host
  */
 export const admitsSameValueWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,

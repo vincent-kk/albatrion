@@ -337,7 +337,7 @@ class DependencyIndex {
 
   /**
    * Emit only ordinary and living table owners in the original trie/rank order.
-   * @param changedPath - Concrete changed raw path
+   * @param changedPath - Concrete changed source path
    * @param root - Current live structure used to resolve each table host
    * @param sink - Settlement effects and deferred rank-positioned anchors
    * @returns Nothing; presence and derive queries keep using the full owners array

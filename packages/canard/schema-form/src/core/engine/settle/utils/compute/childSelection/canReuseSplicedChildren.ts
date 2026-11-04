@@ -32,7 +32,7 @@ export const canReuseSplicedChildren = <Self extends FieldNodeRecord<Self>>(
   const children = node.children;
   if (
     context.hasGates ||
-    node.raw !== undefined ||
+    node.source !== undefined ||
     node.itemCount !== (proof.entry ? proof.count + 1 : proof.count - 1) ||
     node.structure !== prior ||
     !children ||

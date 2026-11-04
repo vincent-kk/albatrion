@@ -6,7 +6,7 @@ import { selectRenderScenes } from '@/schema-form/__tests__/fixtures/remountEqui
 
 import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene';
 
-// 남은 차이는 C443-01(omitEmpty 투영의 raw·value)뿐이며 444C-01 로 정당한 차이로 닫혔다(architecture/reviews/round-444-closing.md).
+// 남은 차이는 C443-01(omitEmpty 투영의 source·value)뿐이며 444C-01 로 정당한 차이로 닫혔다(architecture/reviews/round-444-closing.md).
 it.fails('replays a deterministic feature-pair cover through the screen adapter', async ({
   task,
 }) => {

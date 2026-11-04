@@ -6,23 +6,23 @@ import { getSlotSource } from './getSlotSource';
 
 /**
  * End inactive entry lifetimes hidden by the final active shape.
- * @param source - Retained source whose scalar memo may no longer be observable
+ * @param instance - Retained source whose scalar memo may no longer be observable
  * @param overlay - Owner patch carrying an input-only memo
  * @param live - Current shape at the same public address, regardless of kind
  * @returns Nothing; frozen previously returned arrays retain their own entries
  */
 export const expireOccupiedSlotMemos = <Self extends FieldNodeRecord<Self>>(
-  source: Optional<Self>,
+  instance: Optional<Self>,
   overlay: Optional<InactiveSlotOverlay>,
   live: Optional<Self>,
 ): void => {
   if (!live) return;
-  if (source) source.inactiveValueMemo = undefined;
+  if (instance) instance.inactiveValueMemo = undefined;
   if (overlay) overlay.valueMemo = undefined;
-  for (const entry of getSlotEntries(source, overlay)) {
-    const child = getSlotSource(source, entry, overlay);
+  for (const entry of getSlotEntries(instance, overlay)) {
+    const child = getSlotSource(instance, entry, overlay);
     expireOccupiedSlotMemos(
-      child.source,
+      child.instance,
       child.overlay,
       live.structure?.[entry.name],
     );

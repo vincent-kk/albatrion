@@ -9,7 +9,7 @@ import {
   subscribeFieldNode,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 const observed = vi.hoisted(() => ({ fast: [] as boolean[] }));
 vi.mock('../utils/settlement/finishSettlement', async (load) => {
@@ -55,7 +55,7 @@ it('H4 keeps the scalar fast path after an ignored exited-item write', () => {
   expect(retired.detached).toBe(true);
   dispatchSetValue(retired, 11);
   expect(root.runtime.blueprint.capabilities.branchless).toBe(true);
-  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBeUndefined();
+  expect(readRetainedSlotSource(root, '/other/0', 'number')).toBeUndefined();
   seen.length = 0;
   beginObservation();
 
@@ -63,6 +63,6 @@ it('H4 keeps the scalar fast path after an ignored exited-item write', () => {
 
   expect(observed.fast).toEqual([true]);
   expect(root.emit).toEqual({ group: { stable: 1 } });
-  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBeUndefined();
+  expect(readRetainedSlotSource(root, '/other/0', 'number')).toBeUndefined();
   expect(seen).toEqual(['', '/group', '/group/stable']);
 });

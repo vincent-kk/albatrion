@@ -9,8 +9,8 @@ import type { SettlementContext } from '../../types/settlement';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 
 /**
- * Select hosts touched by raw changes, new children, or declaration selection.
- * @param context - Changed raw paths, entered nodes, and selected declarations
+ * Select hosts touched by source changes, new children, or declaration selection.
+ * @param context - Changed source paths, entered nodes, and selected declarations
  * @returns Live source addresses for this non-load derive round
  */
 export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
@@ -19,7 +19,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   const paths = new Set<string>();
   for (const owner of context.contextOwners ?? []) paths.add(owner);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
-  for (const changed of context.changedRaw) {
+  for (const changed of context.changedSource) {
     for (const owner of dependencies.affected(changed, context.root))
       paths.add(owner);
     let path = changed;

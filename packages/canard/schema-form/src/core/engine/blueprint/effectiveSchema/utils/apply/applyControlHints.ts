@@ -3,7 +3,7 @@ import type { EffectiveSchemaFields } from '../../types/state';
 import { isObjectRecord } from '../finalize/isObjectRecord';
 
 /**
- * Keep single-value hints while behavioral rules remain in raw declarations.
+ * Keep single-value hints while behavioral rules remain in source declarations.
  * @param target - Fresh effective schema whose controls hint may be replaced.
  * @param source - Authored controls object; other values contribute no hint.
  * @returns Nothing; updates and registers only a newly allocated controls envelope.

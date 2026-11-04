@@ -11,18 +11,18 @@
 
 | 후보 | oneOf-80 단계 (µs/쓰기, self) | A | B | 판정 상한 | B/A | 상한 | 비악화 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | setLatentRaw + captureExitedRaw | 17.376 | 12.062 | 8.000 | 0.694 | 미달 | 통과 |
+| 1 | setLatentSource + captureExitedSource | 17.376 | 12.062 | 8.000 | 0.694 | 미달 | 통과 |
 | 1 | assembleObject | 9.667 | 6.208 | 3.000 | 0.642 | 미달 | 통과 |
 | 1 | registerRecalculation | 12.729 | 15.688 | 5.000 | 1.232 | 미달 | 악화 |
 | 1 | markCommitDeliveries | 11.542 | 11.750 | 6.000 | 1.018 | 미달 | 악화 |
-| 2 | setLatentRaw + captureExitedRaw | 16.917 | 12.312 | 12.062 | 0.728 | 미달 | 통과 |
+| 2 | setLatentSource + captureExitedSource | 16.917 | 12.312 | 12.062 | 0.728 | 미달 | 통과 |
 | 2 | assembleObject | 9.146 | 6.042 | 6.208 | 0.661 | 충족 | 통과 |
 | 2 | registerRecalculation | 12.625 | 12.959 | 12.625 | 1.026 | 미달 | 악화 |
 | 2 | markCommitDeliveries | 11.230 | 11.646 | 11.230 | 1.037 | 미달 | 악화 |
 
 | payload-12 단계 (µs/쓰기, self) | 후보1 A | 후보1 B | 후보2 A | 후보2 B |
 | --- | --- | --- | --- | --- |
-| setLatentRaw + captureExitedRaw | 48.500 | 30.834 | 46.210 | 29.648 |
+| setLatentSource + captureExitedSource | 48.500 | 30.834 | 46.210 | 29.648 |
 | assembleObject | 35.812 | 10.500 | 33.772 | 10.062 |
 | registerRecalculation | 19.917 | 23.751 | 19.584 | 19.500 |
 | markCommitDeliveries | 15.562 | 13.833 | 15.417 | 14.980 |
@@ -65,7 +65,7 @@
 | 후보2 TEST-073 | 전체 인접10쌍·각1,000 처리량 표본 Welch 주판정 회귀 0 /22행; 앞5·뒤5 보조 회귀 2건 |
 | 후보1 검사 | build·typecheck·lint 통과; unit3677+기존todo1, render/react18 각760, production20, verify4481+기존todo1, Storybook251 사례 |
 | 후보2 검사 | 표적30·build·typecheck·lint 통과; unit3675+기존todo1, render/react18 각760, production20, verify4479+기존todo1, Storybook251 사례 |
-| 동치/표면 | 각 후보 배달72장면·323지점 및 공개관측6장면·12지점 차이0. 값·raw/local/emit 키 순서·사건·payload·revision·잠복 원본·inactiveValues·떼어진 참조·재진입 비교. 각 후보 index.d.ts 바이트 동일 |
+| 동치/표면 | 각 후보 배달72장면·323지점 및 공개관측6장면·12지점 차이0. 값·source/local/emit 키 순서·사건·payload·revision·잠복 원본·inactiveValues·떼어진 참조·재진입 비교. 각 후보 index.d.ts 바이트 동일 |
 | 후보1 악화 분석 | 추론: 재계산의 매 등록 liveByPath Map 구성·경로 조회가 얕은 사슬의 slice 절감보다 컸습니다. 배달은 이미 Δ 순회여서 추가 단축 효과가 없었습니다. 두 항목은 설계Ⅱ 뒤 재검토 |
 | 후보2 비악화 실패 해석 | 재계산·배달 구현은 A와 바이트 동일합니다. 차이는 잡음 수준(약 ±0.4µs)이지만 규칙에 허용 오차가 없어 미채택입니다. 조립 약 −3µs·잠복 키 약 −4.6µs는 설계Ⅱ 뒤 다시 볼 단서입니다 |
 | 후보1 절감 기여 | oneOf-80 잠복 처리−30.6%, 조립−35.8%; 재계산+23.2%, 배달+1.8% |

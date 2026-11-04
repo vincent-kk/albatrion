@@ -51,7 +51,7 @@ export interface RemountScene {
   masks?: readonly { prefix: number; entries: readonly ObservationMask[] }[];
 }
 
-/** Raw values are encoded only when a diagnostic is printed. */
+/** Observed values are encoded only when a diagnostic is printed. */
 export interface ObservationDifference {
   path: string;
   updated: unknown;

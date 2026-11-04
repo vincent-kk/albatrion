@@ -215,7 +215,7 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     const left = root.structure!.left;
-    const source = left.structure!.source;
+    const instance = left.structure!['source'];
     const leftTarget = root.structure!.leftTarget;
     const rightTarget = root.structure!.rightTarget;
     writeFieldNode(leftTarget, 'manual-left', 'input', WriteOption.Overwrite);
@@ -226,11 +226,11 @@ describe('settlement delivery ledger', () => {
     const targetRevision =
       leftTarget.revisionLedger[FieldNodeEventType.RequestRefresh] ?? 0;
     const sourceRevision =
-      source.revisionLedger[FieldNodeEventType.RequestRefresh] ?? 0;
+      instance.revisionLedger[FieldNodeEventType.RequestRefresh] ?? 0;
 
     resetFieldNodeSubtree(left, WriteOption.Overwrite);
 
-    expect(leftTarget.raw).toBe('left:A');
+    expect(leftTarget.source).toBe('left:A');
     expect(
       (leftTarget.pendingDelivery?.type ?? 0) &
         FieldNodeEventType.RequestRefresh,
@@ -238,18 +238,18 @@ describe('settlement delivery ledger', () => {
     expect(leftTarget.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(
       targetRevision + 1,
     );
-    expect(source.raw).toBe('A');
-    expect(source.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(
+    expect(instance.source).toBe('A');
+    expect(instance.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(
       sourceRevision + 1,
     );
-    expect(rightTarget.raw).toBe('manual-right');
+    expect(rightTarget.source).toBe('manual-right');
     expect(
       (rightTarget.pendingDelivery?.type ?? 0) &
         FieldNodeEventType.RequestRefresh,
     ).toBe(0);
   });
 
-  it('EVENT-071 and SETTLE-049 omit Refresh when an outside injection leaves raw unchanged', () => {
+  it('EVENT-071 and SETTLE-049 omit Refresh when an outside injection leaves source unchanged', () => {
     const injectTo = vi.fn(() => ({ '../../target': 'injected' }));
     const { root } = createTestTree({
       type: 'object',
@@ -277,7 +277,7 @@ describe('settlement delivery ledger', () => {
     resetFieldNodeSubtree(root.structure!.group, WriteOption.Overwrite);
 
     expect(injectTo).toHaveBeenCalledTimes(2);
-    expect(target.raw).toBe('injected');
+    expect(target.source).toBe('injected');
     expect(
       (target.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(0);
@@ -423,7 +423,7 @@ describe('settlement delivery ledger', () => {
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.structure!.source,
+      root.structure!['source'],
       'new',
       'input',
       WriteOption.Overwrite,

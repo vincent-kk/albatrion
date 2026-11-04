@@ -13,7 +13,7 @@ import { deliverChainRecords } from '../utils/report/deliverChainRecords';
 describe('chain failure bundles', () => {
   it('ERROR-005 ERROR-017 preserves occurrence order and the original values', () => {
     const first = new Error('first');
-    const second = { raw: true };
+    const second = { source: true };
     const result = bundleChainErrors([first, second]);
     expect(result).toBeInstanceOf(SchemaFormError);
     if (!(result instanceof SchemaFormError))

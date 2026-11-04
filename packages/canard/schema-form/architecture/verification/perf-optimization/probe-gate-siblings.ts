@@ -50,7 +50,7 @@ const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
     const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
+      latentSource: new PathKeyedMap('pair'),
       misfitPaths: new PathKeyedSet(),
       inactiveValuesMemo: new PathKeyedMap<
         readonly { path: string; value: unknown }[]

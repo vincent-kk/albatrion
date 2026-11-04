@@ -7,8 +7,8 @@ import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createUnionFoldTree } from './fixtures/createUnionFoldTree';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 describe('union fold committed rule identities', () => {
   it('commits derive source and target fold keys while switching derived nodes', () => {
@@ -24,7 +24,7 @@ describe('union fold committed rule identities', () => {
       { left: true, right: false, source: 'first' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.shared?.raw).toBe('first');
+    expect(root.structure?.shared?.source).toBe('first');
     expect(
       [...root.runtime.committedRuleValues!.keys()]
         .map((key) => JSON.parse(key))
@@ -41,7 +41,7 @@ describe('union fold committed rule identities', () => {
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(root.structure?.shared?.raw).toBe('second');
+    expect(root.structure?.shared?.source).toBe('second');
     const keys = [...root.runtime.committedRuleValues!.keys()]
       .map((key) => JSON.parse(key))
       .filter((key) => key[0] === '/shared');
@@ -101,9 +101,9 @@ describe('union fold committed rule identities', () => {
     ).toBe(true);
     writeFieldNode(root, { right: false }, 'callerPartial', WriteOption.Merge);
     expect(hasRetainedSlotOwnSource(root, '/shared', 'union:5')).toBe(false);
-    expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(17);
+    expect(readRetainedSlotSource(root, '/shared', 'union:3')).toBe(17);
     writeFieldNode(root, { left: true }, 'callerPartial', WriteOption.Merge);
-    expect(root.structure?.shared?.raw).toBe(17);
+    expect(root.structure?.shared?.source).toBe(17);
   });
 
   it('fills each union fold once when a sibling default changes the selected fold', () => {
@@ -125,7 +125,7 @@ describe('union fold committed rule identities', () => {
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.shared?.schemaType).toEqual(['string', 'boolean']);
-    expect(root.structure?.shared?.raw).toBe(true);
+    expect(root.structure?.shared?.source).toBe(true);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 });

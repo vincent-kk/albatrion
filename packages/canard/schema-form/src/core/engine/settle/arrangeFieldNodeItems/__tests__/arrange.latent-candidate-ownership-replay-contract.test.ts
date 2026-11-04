@@ -14,7 +14,7 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 import { createMoveReplayScene } from './fixtures/createMoveReplayScene';
 import type { MoveReplayCase } from './fixtures/createMoveReplayScene';
 
@@ -77,7 +77,7 @@ it.each([
     scene.mode === 'terminal-null' ||
     scene.mode === 'array-terminal'
   )
-    expect(moved.raw).toEqual(fixture.expectedMoved);
+    expect(moved.source).toEqual(fixture.expectedMoved);
   expect(root.local).toEqual(fixture.expected);
   expect(root.emit).toEqual(fixture.expected);
   expect(
@@ -89,13 +89,13 @@ it.each([
   expect(validationInputs.at(-1)).toEqual(fixture.expected);
   if (scene.mode === 'inactive-number') {
     const path = `/${fixture.destinationIndex}/v`;
-    expect(readRetainedSlotRaw(root, path, 'number')).toBe(123);
+    expect(readRetainedSlotSource(root, path, 'number')).toBe(123);
 
     dispatchSetValue(getDispatchNode(moved, 'enabled'), true);
     const expectedMoved = { enabled: true, v: 123, extra: 9 };
     const expected =
       scene.operation === 'insert' ? [{}, expectedMoved] : [expectedMoved];
-    expect(getDispatchNode(moved, 'v').raw).toBe(123);
+    expect(getDispatchNode(moved, 'v').source).toBe(123);
     expect(root.local).toEqual(expected);
     expect(root.emit).toEqual(expected);
     expect(

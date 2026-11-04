@@ -30,8 +30,8 @@ export const releaseSettlementScratch = <Self>(
   scratch.dirtyPaths.clear();
   if (scratch.dependencyOwnerPaths.size) scratch.dependencyOwnerPaths.clear();
   if (scratch.shapeDirtyPaths.size) scratch.shapeDirtyPaths.clear();
-  if (scratch.changedRaw.size) scratch.changedRaw.clear();
-  if (scratch.explicitRaw.size) scratch.explicitRaw.clear();
+  if (scratch.changedSource.size) scratch.changedSource.clear();
+  if (scratch.explicitSource.size) scratch.explicitSource.clear();
   if (scratch.changedNodes.size) scratch.changedNodes.clear();
   if (scratch.stateDirtyNodes.size) scratch.stateDirtyNodes.clear();
   if (scratch.originalSchemas.size) scratch.originalSchemas.clear();

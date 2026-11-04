@@ -37,6 +37,6 @@ export const Case: Story = createCompositeStory('composite.cx11-ime-during-switc
     }
     await expectEventually(() => ({ value: handle.getValue() }), { value: { kind: 'b' } }, 'nothing landed in the closed branch');
     handle.findNode('/kind')!.setValue('a');
-    await expectEventually(() => handle.findNode('/text')?.value, heldAtSwitch, 'switching back restores the raw value held at the switch');
+    await expectEventually(() => handle.findNode('/text')?.value, heldAtSwitch, 'switching back restores the source value held at the switch');
   },
 });

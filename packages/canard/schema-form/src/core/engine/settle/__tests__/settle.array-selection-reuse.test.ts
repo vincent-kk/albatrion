@@ -157,7 +157,7 @@ describe('static array selection matches the full route', () => {
         {
           apply: (node) =>
             dispatchSetValue(
-              node.structure!['0'].structure!.source,
+              node.structure!['0'].structure!['source'],
               4,
               WriteOption.Overwrite,
             ),

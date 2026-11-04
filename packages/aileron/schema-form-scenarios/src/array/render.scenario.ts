@@ -27,7 +27,7 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'array.branch-projection-injection',
-    description: 'array.omit-trailing.composite and conditional: LANDING-023 reads output; LANDING-018 retains inactive raw.',
+    description: 'array.omit-trailing.composite and conditional: LANDING-023 reads output; LANDING-018 retains inactive source.',
     schema: { type: 'object', properties: { shown: { type: 'boolean' }, copy: rows }, allOf: [{
       controls: { active: './shown' }, properties: { rows: { ...rows, controls: {
         injectTo: (value: unknown) => ({ '../copy': value }),
@@ -42,7 +42,7 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'array.min-items-explicit-slots',
-    description: 'array.omit-trailing: LANDING-116 input owns constraints, VALUE-034 projection preserves raw slots.',
+    description: 'array.omit-trailing: LANDING-116 input owns constraints, VALUE-034 projection preserves source slots.',
     schema: { ...rows, minItems: 3 }, initialValue: [],
     steps: [
       { action: 'batch', steps: [], expect: { shape: { '/0': 'absent' }, outputValue: [] } },
@@ -73,7 +73,7 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'array.terminal-array-external-reset',
-    description: 'array.prefixItems-terminal and terminal-mode: LANDING-116 no automatic minItems fill; terminal raw is whole.',
+    description: 'array.prefixItems-terminal and terminal-mode: LANDING-116 no automatic minItems fill; terminal source is whole.',
     schema: { type: 'array', options: { terminal: true }, minItems: 3, prefixItems: [{ type: 'string', default: 'schema' }] },
     initialValue: ['external'],
     steps: [

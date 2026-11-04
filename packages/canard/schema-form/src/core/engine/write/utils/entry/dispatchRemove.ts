@@ -11,7 +11,7 @@ import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
  * Remove an array within the public entry chain; refused feedback does no work.
  * @param node - Array host or a record whose arrange slot throws on non-array use
  * @param index - Integer position in the current or batch-marked array
- * @returns Removed marked raw in a batch, otherwise the settled removed value; undefined when entry is refused
+ * @returns Removed marked source in a batch, otherwise the settled removed value; undefined when entry is refused
  * @throws Non-array or settlement failures at the outer chain end
  */
 export const dispatchRemove = <Self extends FieldNodeRecord<Self>>(

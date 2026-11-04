@@ -59,7 +59,7 @@ it.each(['form', 'subtree'] as const)(
     if (kind === 'form') resetFieldNodeForm(root, {}, WriteOption.Overwrite);
     else resetFieldNodeSubtree(root, WriteOption.Overwrite);
     expect(getHostDerived(root).preparedStaticHost).toBeUndefined();
-    expect(root.structure!.kind.raw).toBe(0);
+    expect(root.structure!.kind.source).toBe(0);
   },
 );
 

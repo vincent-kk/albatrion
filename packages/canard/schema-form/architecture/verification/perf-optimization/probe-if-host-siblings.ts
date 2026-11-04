@@ -145,7 +145,7 @@ function exerciseSize(n: number, core: CoreEngine, countCalls: boolean) {
     {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
+      latentSource: new PathKeyedMap('pair'),
       misfitPaths: new PathKeyedSet(),
       inactiveValuesMemo: new PathKeyedMap<
         readonly { path: string; value: unknown }[]

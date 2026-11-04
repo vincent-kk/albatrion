@@ -12,7 +12,7 @@
 | TEST-093 형제 1000/0       | FAIL | 21.238배; 창 전 코디네이터가 3배로 고정                                            |
 | 다른 canonical 행 TEST-073 | PASS | 전체10/10 주판정 회귀 0건: 없음                                                    |
 | Node 노드당 힙             | FAIL | S 중앙 1439.098 → E 중앙 1440.346 B/node; Bun은 아래 보고                          |
-| 제거 경로 장부             | PASS | E의 setLatentRaw·captureExitedRaw·updateInactiveValuesMemo 최대 호출 모두0         |
+| 제거 경로 장부             | PASS | E의 setLatentSource·captureExitedSource·updateInactiveValuesMemo 최대 호출 모두0         |
 
 판정은 무계측 총합 행을 기준으로 합니다. 단계 장부는 보조 자료이며 매핑 불일치 항목을 단계간 비교에서 제외합니다. 비율 관문은 창 품질 실패 시 판정 불가이며 재측정하지 않습니다.
 
@@ -136,8 +136,8 @@
 | switch-oneOf-80      | selectChildren           |  31.458 |  28.519 |          1/1 | 매핑 불일치·비교 제외 |
 | switch-oneOf-80      | transitionSettlement     |   5.042 |   3.917 |          1/1 | 폭 안                 |
 | switch-oneOf-80      | getControlLayers         |  13.521 |   1.437 |         12/6 | 매핑 불일치·비교 제외 |
-| switch-oneOf-80      | setLatentRaw             |  11.187 |   0.000 |          6/0 | 폭 안                 |
-| switch-oneOf-80      | captureExitedRaw         |   5.834 |   0.000 |          3/0 | 폭 안                 |
+| switch-oneOf-80      | setLatentSource             |  11.187 |   0.000 |          6/0 | 폭 안                 |
+| switch-oneOf-80      | captureExitedSource         |   5.834 |   0.000 |          3/0 | 폭 안                 |
 | switch-oneOf-80      | finalizeExits            |  22.794 |  20.354 |          1/1 | 폭 안                 |
 | switch-oneOf-80      | markCommitDeliveries     |  11.021 |  11.584 |          1/1 | 폭 안                 |
 | switch-oneOf-80      | updateInactiveValuesMemo |  18.292 |   0.000 |          1/0 | 폭 안                 |
@@ -157,8 +157,8 @@
 | switch-payload-12    | selectChildren           |  58.708 |  48.748 |          1/1 | 폭 안                 |
 | switch-payload-12    | transitionSettlement     |   8.020 |   7.834 |          1/1 | 폭 안                 |
 | switch-payload-12    | getControlLayers         |  46.917 |   3.416 |        48/24 | 폭 안                 |
-| switch-payload-12    | setLatentRaw             |  37.230 |   0.000 |         24/0 | 매핑 불일치·비교 제외 |
-| switch-payload-12    | captureExitedRaw         |  13.396 |   0.000 |         12/0 | 폭 안                 |
+| switch-payload-12    | setLatentSource             |  37.230 |   0.000 |         24/0 | 매핑 불일치·비교 제외 |
+| switch-payload-12    | captureExitedSource         |  13.396 |   0.000 |         12/0 | 폭 안                 |
 | switch-payload-12    | finalizeExits            | 103.938 |  35.856 |          1/1 | 폭 안                 |
 | switch-payload-12    | markCommitDeliveries     |  15.125 |  15.146 |          1/1 | 폭 안                 |
 | switch-payload-12    | updateInactiveValuesMemo |  44.041 |   0.000 |          1/0 | 매핑 불일치·비교 제외 |
@@ -212,8 +212,8 @@
 | switch-oneOf-80   | transitionSettlement     |   4.958 |       5.042 |     0.333 | 폭 안                 |
 | switch-oneOf-80   | finalizeExits            |  23.873 |      22.794 |     1.687 | 폭 안                 |
 | switch-oneOf-80   | getControlLayers         |  15.520 |      13.521 |     0.145 | 매핑 불일치·비교 제외 |
-| switch-oneOf-80   | captureExitedRaw         |   5.709 |       5.834 |     0.499 | 폭 안                 |
-| switch-oneOf-80   | setLatentRaw             |  11.208 |      11.187 |     1.207 | 폭 안                 |
+| switch-oneOf-80   | captureExitedSource         |   5.709 |       5.834 |     0.499 | 폭 안                 |
+| switch-oneOf-80   | setLatentSource             |  11.208 |      11.187 |     1.207 | 폭 안                 |
 | switch-oneOf-80   | updateOutput             |   6.958 |       6.896 |     0.354 | 폭 안                 |
 | switch-oneOf-80   | assembleObject           |   9.979 |       9.187 |     1.062 | 폭 안                 |
 | switch-oneOf-80   | commitSettlement         |   8.500 |       8.418 |     0.374 | 폭 안                 |
@@ -230,8 +230,8 @@
 | switch-payload-12 | transitionSettlement     |   7.688 |       8.020 |     0.563 | 폭 안                 |
 | switch-payload-12 | finalizeExits            | 102.416 |     103.938 |    18.631 | 폭 안                 |
 | switch-payload-12 | getControlLayers         |  45.476 |      46.917 |     1.794 | 폭 안                 |
-| switch-payload-12 | captureExitedRaw         |  12.124 |      13.396 |     1.751 | 폭 안                 |
-| switch-payload-12 | setLatentRaw             |  31.273 |      37.230 |     1.583 | 매핑 불일치·비교 제외 |
+| switch-payload-12 | captureExitedSource         |  12.124 |      13.396 |     1.751 | 폭 안                 |
+| switch-payload-12 | setLatentSource             |  31.273 |      37.230 |     1.583 | 매핑 불일치·비교 제외 |
 | switch-payload-12 | updateOutput             |   6.561 |       6.832 |     0.456 | 폭 안                 |
 | switch-payload-12 | assembleObject           |  37.105 |      34.583 |     4.000 | 폭 안                 |
 | switch-payload-12 | commitSettlement         |  15.771 |      17.646 |     0.938 | 매핑 불일치·비교 제외 |
@@ -248,8 +248,8 @@
 | switch-siblings-0 | transitionSettlement     |   1.229 |       1.250 |     0.000 | 매핑 불일치·비교 제외 |
 | switch-siblings-0 | finalizeExits            |   0.000 |       0.000 |     0.000 | 폭 안                 |
 | switch-siblings-0 | getControlLayers         |   0.000 |       0.000 |     0.000 | 폭 안                 |
-| switch-siblings-0 | captureExitedRaw         |   0.000 |       0.000 |     0.000 | 폭 안                 |
-| switch-siblings-0 | setLatentRaw             |   0.000 |       0.000 |     0.000 | 폭 안                 |
+| switch-siblings-0 | captureExitedSource         |   0.000 |       0.000 |     0.000 | 폭 안                 |
+| switch-siblings-0 | setLatentSource             |   0.000 |       0.000 |     0.000 | 폭 안                 |
 | switch-siblings-0 | updateOutput             |   3.666 |       3.750 |     0.084 | 매핑 불일치·비교 제외 |
 | switch-siblings-0 | assembleObject           |   2.541 |       2.541 |     0.042 | 폭 안                 |
 | switch-siblings-0 | commitSettlement         |   3.417 |       3.354 |     0.146 | 폭 안                 |

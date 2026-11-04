@@ -9,10 +9,10 @@ it('applies a host JSON overlay at clone while ignoring the old leaf write', () 
   expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
   tree.leaf.setValue('ignored');
   tree.root.setValue({ group: { leaf: 'overlay' } }, SetValueOption.Merge);
-  expect(tree.leaf.raw).toBe('kept');
+  expect(tree.leaf.source).toBe('kept');
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBe('overlay');
-  expect(tree.root.find('/group')!.undeclaredValues).toEqual({
+  expect(tree.root.find('/group/leaf')!.source).toBe('overlay');
+  expect(tree.root.find('/group')!.extras).toEqual({
     extra: { retained: true },
   });
 });
@@ -24,10 +24,10 @@ it('clears absent slot descendants on whole replacement through a live host', ()
   tree.group.setValue({ leaf: 'ignored' });
   tree.root.setValue({ open: false, group: { leaf: 'replacement' } });
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBe('replacement');
-  expect(tree.root.find('/group')!.undeclaredValues).toBeUndefined();
+  expect(tree.root.find('/group/leaf')!.source).toBe('replacement');
+  expect(tree.root.find('/group')!.extras).toBeUndefined();
   expect(tree.root.find('/group')!.inactiveValues).toEqual([]);
-  expect(tree.leaf.raw).toBe('kept');
+  expect(tree.leaf.source).toBe('kept');
 });
 
 it('merges a host overlay while retaining unwritten descendants and extras', () => {
@@ -37,9 +37,9 @@ it('merges a host overlay while retaining unwritten descendants and extras', () 
   tree.group.setValue({ leaf: 'ignored' }, SetValueOption.Merge);
   tree.root.setValue({ group: { leaf: 'merged' } }, SetValueOption.Merge);
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBe('merged');
+  expect(tree.root.find('/group/leaf')!.source).toBe('merged');
   expect(tree.root.find('/group/list/0')!.value).toEqual({ text: 'first' });
-  expect(tree.root.find('/group')!.undeclaredValues).toEqual({
+  expect(tree.root.find('/group')!.extras).toEqual({
     extra: { retained: true },
   });
   expect(tree.root.find('/group')!.inactiveValues).toEqual([
@@ -54,9 +54,9 @@ it('drops slot sources absent from a live root whole replacement', () => {
   tree.root.setValue({ open: false });
   expect(tree.root.inactiveValues).toEqual([]);
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBeUndefined();
-  expect(tree.root.find('/group')!.undeclaredValues).toBeUndefined();
-  expect(tree.leaf.raw).toBe('kept');
+  expect(tree.root.find('/group/leaf')!.source).toBeUndefined();
+  expect(tree.root.find('/group')!.extras).toBeUndefined();
+  expect(tree.leaf.source).toBe('kept');
 });
 
 it('replaces a supplied inactive subtree through a root write without mutating its slot', () => {
@@ -69,9 +69,9 @@ it('replaces a supplied inactive subtree through a root write without mutating i
     { path: '/group/leaf', value: 'root overlay' },
   ]);
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBe('root overlay');
+  expect(tree.root.find('/group/leaf')!.source).toBe('root overlay');
   expect(tree.root.find('/group')!.inactiveValues).toEqual([]);
-  expect(tree.root.find('/group')!.undeclaredValues).toBeUndefined();
+  expect(tree.root.find('/group')!.extras).toBeUndefined();
 });
 
 it('ignores an old reference write while the same kind has a live lifetime', () => {
@@ -80,9 +80,9 @@ it('ignores an old reference write while the same kind has a live lifetime', () 
   expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
   tree.open();
   tree.leaf.setValue('ignored');
-  expect(tree.root.find('/group/leaf')!.raw).toBe('kept');
+  expect(tree.root.find('/group/leaf')!.source).toBe('kept');
   tree.close();
   tree.leaf.setValue('latest absent source');
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBe('kept');
+  expect(tree.root.find('/group/leaf')!.source).toBe('kept');
 });

@@ -9,8 +9,8 @@ import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 // filid:contract settle-budget
 describe('settle exits and budgets', () => {
@@ -100,12 +100,12 @@ describe('settle exits and budgets', () => {
       },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.toggle?.raw).toBe(true);
+    expect(root.structure?.toggle?.source).toBe(true);
     expect(root.structure?.transient).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/transient', 'string')).toBe(false);
   });
 
-  it('TEST-069 exit node clears its own raw while detached reads stay frozen', () => {
+  it('TEST-069 exit node clears its own source while detached reads stay frozen', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -128,12 +128,12 @@ describe('settle exits and budgets', () => {
     const former = root.structure!.secret;
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.secret).toBeUndefined();
-    expect(former.raw).toBe('held');
+    expect(former.source).toBe('held');
     expect(former.detached).toBe(true);
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.secret).not.toBe(former);
-    expect(root.structure?.secret?.raw).toBe('fresh');
+    expect(root.structure?.secret?.source).toBe('fresh');
   });
 
   it('WRITE-032 exit policy reads only the previous committed declarations', () => {
@@ -193,10 +193,10 @@ describe('settle exits and budgets', () => {
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
-    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
+    expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.branch?.structure?.drop?.raw).toBeUndefined();
-    expect(root.structure?.branch?.structure?.keep?.raw).toBe('K');
+    expect(root.structure?.branch?.structure?.drop?.source).toBeUndefined();
+    expect(root.structure?.branch?.structure?.keep?.source).toBe('K');
   });
 
   it('WRITE-034 clears latent descendants of an exiting declaration with false override', () => {
@@ -236,12 +236,12 @@ describe('settle exits and budgets', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(readRetainedSlotRaw(root, '/branch/drop', 'string')).toBe('D');
+    expect(readRetainedSlotSource(root, '/branch/drop', 'string')).toBe('D');
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
-    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
+    expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-034 applies a departing declaration policy while its host stays live', () => {
@@ -275,7 +275,7 @@ describe('settle exits and budgets', () => {
       },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.addr?.structure?.zip?.raw).toBe('Z');
+    expect(root.structure?.addr?.structure?.zip?.source).toBe('Z');
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.addr).toBeDefined();
     expect(root.structure?.addr?.structure?.zip).toBeUndefined();
@@ -300,10 +300,10 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     const former = root.structure!.branch;
-    const extras = former.undeclaredValues;
+    const extras = former.extras;
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(former.undeclaredValues).toBe(extras);
-    expect(former.undeclaredValues).toEqual({ extra: 'E' });
+    expect(former.extras).toBe(extras);
+    expect(former.extras).toEqual({ extra: 'E' });
   });
 
   it('SETTLE-011 and ERROR-204 retain degraded diagnostics until form load', () => {
@@ -326,7 +326,7 @@ describe('settle exits and budgets', () => {
     expect(() =>
       writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
     ).toThrow();
-    expect(root.structure?.a?.raw).toBe(0);
+    expect(root.structure?.a?.source).toBe(0);
     expect(root.runtime.misfitPaths.has('/a')).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
@@ -378,7 +378,7 @@ describe('settle exits and budgets', () => {
     });
   });
 
-  it('SETTLE-011 host wheel budget commits explicit raw before throwing', () => {
+  it('SETTLE-011 host wheel budget commits explicit source before throwing', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -394,9 +394,9 @@ describe('settle exits and budgets', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow();
-    expect(root.raw).toBeUndefined();
-    expect(root.structure?.a?.raw).toBe(true);
-    expect(root.structure?.b?.raw).toBe(true);
+    expect(root.source).toBeUndefined();
+    expect(root.structure?.a?.source).toBe(true);
+    expect(root.structure?.b?.source).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

@@ -6,9 +6,9 @@ import { createRetainedSlotTree } from './fixtures/createRetainedSlotTree';
 it('reads a retained detached host without observing later overlays or reset', () => {
   const tree = createRetainedSlotTree();
   const value = tree.group.value;
-  const raw = tree.leaf.raw;
+  const source = tree.leaf.source;
   const children = tree.group.children;
-  const extras = tree.group.undeclaredValues;
+  const extras = tree.group.extras;
   const inactive = tree.group.inactiveValues;
   tree.close();
   expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
@@ -18,9 +18,9 @@ it('reads a retained detached host without observing later overlays or reset', (
   tree.root.find('/group/leaf')!.setValue('new lifetime');
   tree.root.resetSubtree();
   expect(tree.group.value).toBe(value);
-  expect(tree.leaf.raw).toBe(raw);
+  expect(tree.leaf.source).toBe(source);
   expect(tree.group.children).toBe(children);
-  expect(tree.group.undeclaredValues).toBe(extras);
+  expect(tree.group.extras).toBe(extras);
   expect(tree.group.inactiveValues).toBe(inactive);
   expect(Object.isFrozen(inactive)).toBe(true);
   expect(inactive).toEqual([{ path: '/group/held', value: 'hidden' }]);

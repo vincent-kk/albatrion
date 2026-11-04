@@ -36,8 +36,8 @@ const observe = (root: PlainNode) => {
     expect(node.children).toBe(node.children);
     nodes.push({
       path: node.path,
-      raw: node.raw,
-      undeclaredValues: node.undeclaredValues,
+      source: node.source,
+      extras: node.extras,
       local: node.local,
       emit: node.emit,
       isRequired: node.isRequired,
@@ -307,7 +307,7 @@ it('matches a literal null container default without filling its children', () =
   });
   expect(eligible).toBe(!genericFirstLoad);
   expect(actual.emit).toEqual({ account: null });
-  expect(actual.structure?.account?.structure?.kind?.raw).toBeUndefined();
+  expect(actual.structure?.account?.structure?.kind?.source).toBeUndefined();
 });
 
 it('matches literal null and wrong-kind defaults with ordered warning records', () => {

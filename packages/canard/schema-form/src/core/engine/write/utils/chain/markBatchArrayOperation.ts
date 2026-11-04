@@ -20,31 +20,31 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
   operation: ArrayOperation,
 ): unknown => {
   const value = readBatchValue(node);
-  const source = isArray(value) ? value : [];
+  const previousItems = isArray(value) ? value : [];
   const view: FieldNodeRecord<Self> = Object.create(node, {
-    raw: { value },
-    itemCount: { value: source.length },
+    source: { value },
+    itemCount: { value: previousItems.length },
   });
   const plan = node.behavior.arrange(view, operation);
   if (plan.kind === 'noop')
     return operation.kind === 'push' || operation.kind === 'insert'
       ? readArrayLength(view)
       : undefined;
-  let raw: readonly unknown[];
+  let source: readonly unknown[];
   if (plan.kind === 'update') {
-    const copy = source.slice();
+    const copy = previousItems.slice();
     copy[plan.index] = plan.value;
-    raw = copy;
+    source = copy;
   } else
-    raw =
-      plan.kind === 'raw'
-        ? plan.raw
+    source =
+      plan.kind === 'source'
+        ? plan.source
         : mapArray(plan.slots, (slot) =>
-            'from' in slot ? source[slot.from] : slot.value,
+            'from' in slot ? previousItems[slot.from] : slot.value,
           );
   (node.rootNode.runtime.batchWrites ??= []).push({
     node,
-    value: raw,
+    value: source,
     option: WriteOption.Replace,
   });
   if (plan.kind === 'update' || plan.result.source === 'updated') {
@@ -60,8 +60,8 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
       live?.blueprintNode ??
       (candidates.length === 1 ? candidates[0].node : undefined);
     return template
-      ? interpretFieldNodeInput(template, raw[index], live)
-      : raw[index];
+      ? interpretFieldNodeInput(template, source[index], live)
+      : source[index];
   }
   if (plan.result.source === 'removed') {
     const index = plan.result.index;
@@ -71,8 +71,8 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
       live?.blueprintNode ??
       (candidates.length === 1 ? candidates[0].node : undefined);
     return template
-      ? interpretFieldNodeInput(template, source[index], live)
-      : source[index];
+      ? interpretFieldNodeInput(template, previousItems[index], live)
+      : previousItems[index];
   }
-  return plan.result.source === 'length' ? raw.length : undefined;
+  return plan.result.source === 'length' ? source.length : undefined;
 };

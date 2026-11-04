@@ -22,8 +22,8 @@ describe('settled default sources', () => {
       ],
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.inside?.raw).toBe('fragment');
-    expect(root.structure?.outside?.raw).toBeUndefined();
+    expect(root.structure?.inside?.source).toBe('fragment');
+    expect(root.structure?.outside?.source).toBeUndefined();
   });
 
   it('CONTROLS-073 value layer orders own, fields, fragment, and standard defaults', () => {
@@ -52,10 +52,10 @@ describe('settled default sources', () => {
       properties: { standard: { type: 'string', default: 'standard' } },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.own?.raw).toBe('own');
-    expect(root.structure?.item?.raw).toBe('item-last');
-    expect(root.structure?.fragment?.raw).toBe('fragment');
-    expect(root.structure?.standard?.raw).toBe('standard');
+    expect(root.structure?.own?.source).toBe('own');
+    expect(root.structure?.item?.source).toBe('item-last');
+    expect(root.structure?.fragment?.source).toBe('fragment');
+    expect(root.structure?.standard?.source).toBe('standard');
   });
 
   it('CONTROLS-077 later fragment default wins within its layer', () => {
@@ -77,6 +77,6 @@ describe('settled default sources', () => {
       ],
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.field?.raw).toBe('later');
+    expect(root.structure?.field?.source).toBe('later');
   });
 });

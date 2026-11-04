@@ -42,7 +42,7 @@ const hostWith = (controls: Record<string, unknown>): BlueprintSchema => ({
   },
 });
 
-/** Two sibling hosts, `a` holding an array of arrays, so latent raw and misfits can sit inside or outside the written host. */
+/** Two sibling hosts, `a` holding an array of arrays, so latent source and misfits can sit inside or outside the written host. */
 const SCOPED: BlueprintSchema = {
   type: 'object',
   properties: {

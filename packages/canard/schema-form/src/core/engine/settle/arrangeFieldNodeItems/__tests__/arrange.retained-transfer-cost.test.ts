@@ -9,7 +9,7 @@ import {
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 import * as cloning from '../../utils/slots/cloneSlotSubtree';
-import * as raw from '../../utils/slots/readSlotRawTree';
+import * as source from '../../utils/slots/readSlotSourceTree';
 import * as bindings from '../../utils/slots/rekeyArraySlotBindings';
 
 afterEach(() => vi.restoreAllMocks());
@@ -39,7 +39,7 @@ it.each(['insert', 'remove', 'shift'] as const)(
       for (const item of root.children ?? [])
         dispatchSetValue(getDispatchNode(item, 'open'), false);
       const clone = vi.spyOn(cloning, 'cloneSlotSubtree');
-      const compose = vi.spyOn(raw, 'readSlotRawTree');
+      const compose = vi.spyOn(source, 'readSlotSourceTree');
       const rekey = vi.spyOn(bindings, 'rekeyArraySlotBindings');
       if (operation === 'insert') dispatchInsert(root, 0, { open: false });
       else if (operation === 'remove') dispatchRemove(root, 0);

@@ -54,7 +54,7 @@
 
 ### Ⅲ. 변화량 적용 — Δ 밖의 장부를 없앰
 
-- 잠복 키: 노드 레코드가 자기 `[path, identity]` 키를 한 번 만들어 들고, 잠복 저장·색인·메모가 그 키를 재사용한다(stringify·parse 왕복 제거). 살아 있는 노드의 집합(`pendingExits`·`entered`·`exited`·`changedNodes`)은 노드 identity로 잡고, 아직 없는 노드를 가리켜야 하는 것(게이트 읽기·의존 표식·`changedRaw`)만 경로 키로 남긴다.
+- 잠복 키: 노드 레코드가 자기 `[path, identity]` 키를 한 번 만들어 들고, 잠복 저장·색인·메모가 그 키를 재사용한다(stringify·parse 왕복 제거). 살아 있는 노드의 집합(`pendingExits`·`entered`·`exited`·`changedNodes`)은 노드 identity로 잡고, 아직 없는 노드를 가리켜야 하는 것(게이트 읽기·의존 표식·`changedSource`)만 경로 키로 남긴다.
 - 비활성 값 메모: 전체 재구성 대신 증분 유지. 나감은 자기 호스트의 목록에 청사진 엔트리 순서(호스트의 엔트리 색인)로 끼우고, 들어옴은 뺀다. 정렬과 전수 `find`가 사라지고 Δ가 닿은 호스트만 바뀐다. `inactiveValues`의 공개 결과(순서·내용)는 같아야 한다.
 - 잠복 경로 색인: 정착마다의 재구성(`getLatentPathIndex`)을 없애고 영속 `PathStoreIndex`의 O(depth) 질의만 쓴다.
 - 출력 재조립: 호스트의 활성 자식 목록 A개를 청사진 순서로 걸어 조립한다(E개 전수와 `Map`·`Set` 제거). 방출 객체는 지금처럼 새 객체다.
@@ -66,7 +66,7 @@
 
 ### Ⅴ. 설계 Ⅱ — 내부 레코드 유지와 수명별 핸들 (조건부)
 
-Ⅰ~Ⅳ로 관문에 못 미치면 NODE-060의 설계 Ⅱ로 간다: 내부 레코드는 비활성일 때도 raw를 들고 남으며, 공개 `FieldNode`는 수명마다 새로 발급해 NODE-044를 지킨다. 잠복 직렬화·노드 재생성·메모가 사라지고 나감은 레코드의 비활성 표시가 된다. 비용은 호스트당 K·M의 보유 메모리이며 여섯 의미 시험(`plan/design-optimization/verification.md`)이 그대로 관문이다. 착수 여부는 B3의 수치로 Vincent가 정한다.
+Ⅰ~Ⅳ로 관문에 못 미치면 NODE-060의 설계 Ⅱ로 간다: 내부 레코드는 비활성일 때도 source를 들고 남으며, 공개 `FieldNode`는 수명마다 새로 발급해 NODE-044를 지킨다. 잠복 직렬화·노드 재생성·메모가 사라지고 나감은 레코드의 비활성 표시가 된다. 비용은 호스트당 K·M의 보유 메모리이며 여섯 의미 시험(`plan/design-optimization/verification.md`)이 그대로 관문이다. 착수 여부는 B3의 수치로 Vincent가 정한다.
 
 ## 단계
 
@@ -93,10 +93,10 @@ B0(`../../verification/branch-switch/b0-ledger.md`, 창 2026-10-27 09:28 UTC, �
 | switch-if-80 | 쌍 없음 | 595.9 | active의 2.28배, 평가 640회·바퀴 2회, 평가당 약 0.46 µs(discriminator 0.28) |
 | switch-payload-12 | 108.4 | 480.6 | Δ 항: 나감·들어옴 잎 하나당 약 12 µs(0.16.1은 3.6) |
 
-단계 장부(oneOf-80, 쓰기당 µs): computeNode 103(selectChildren self 36, computeNode self 35, wheelPreparation 8.7, assembleObject 9.1), finalizeExits 55(getControlLayers 15.5/12회, setLatentRaw 11.2/6회, captureExitedRaw 5.7, self 23.9), commitSettlement 46(updateInactiveValuesMemo 18.7, markCommitDeliveries 11.9, self 8.5), registerRecalculation 13.0, everythingElse 17.1, transition 5.0. 할당 약 130 KB/쓰기. 두 번째 바퀴의 원인은 선택 도중 활성 payload가 공표되어 게이트가 읽는 루트 투영 객체의 identity가 라운드 안에서 바뀌는 것(즉시 반영 계약의 귀결)이며, 전체 호스트를 읽는 게이트에서는 Δ>0이면 언제나 일어난다.
+단계 장부(oneOf-80, 쓰기당 µs): computeNode 103(selectChildren self 36, computeNode self 35, wheelPreparation 8.7, assembleObject 9.1), finalizeExits 55(getControlLayers 15.5/12회, setLatentSource 11.2/6회, captureExitedSource 5.7, self 23.9), commitSettlement 46(updateInactiveValuesMemo 18.7, markCommitDeliveries 11.9, self 8.5), registerRecalculation 13.0, everythingElse 17.1, transition 5.0. 할당 약 130 KB/쓰기. 두 번째 바퀴의 원인은 선택 도중 활성 payload가 공표되어 게이트가 읽는 루트 투영 객체의 identity가 라운드 안에서 바뀌는 것(즉시 반영 계약의 귀결)이며, 전체 호스트를 읽는 게이트에서는 Δ>0이면 언제나 일어난다.
 
 - **B1(게이트 통일)의 선:** 같은 창에서 B의 `switch-if-80` ≤ B의 `switch-oneOf-80` × 1.1 + 40 µs(게이트당 guard 0.5 µs), B의 `switch-discriminator-80` ≤ B의 `switch-oneOf-80` × 1.05, 두 행 모두 A 대비 폭 (다) 밖 개선, 쓰기당 평가 수 `if` ≤ 80·`discriminator` ≤ 80(표면 O(1)), 바퀴 1회(속성 단위 읽기로 좁혀진 경우), `switch-oneOf-80`은 폭 밖 악화 없음.
-- **B2(가설마다 PR)의 선:** 겨냥한 단계가 다음 상한 아래로 내려가고 그 행의 총합이 폭 밖으로 준다 — wheelPreparation ≤ 1 µs, getControlLayers 합 ≤ 2 µs, updateInactiveValuesMemo ≤ 3 µs(Δ에만 비례), assembleObject ≤ 3 µs, setLatentRaw+captureExitedRaw ≤ 8 µs, registerRecalculation ≤ 5 µs, markCommitDeliveries ≤ 6 µs, selectChildren self + computeNode self ≤ 25 µs(먼저 세부 장부로 나눈다), everythingElse ≤ 10 µs. 바닥(형제 0) ≤ 40 µs. 상한의 합은 약 63 µs로 관문과 같은 크기다.
+- **B2(가설마다 PR)의 선:** 겨냥한 단계가 다음 상한 아래로 내려가고 그 행의 총합이 폭 밖으로 준다 — wheelPreparation ≤ 1 µs, getControlLayers 합 ≤ 2 µs, updateInactiveValuesMemo ≤ 3 µs(Δ에만 비례), assembleObject ≤ 3 µs, setLatentSource+captureExitedSource ≤ 8 µs, registerRecalculation ≤ 5 µs, markCommitDeliveries ≤ 6 µs, selectChildren self + computeNode self ≤ 25 µs(먼저 세부 장부로 나눈다), everythingElse ≤ 10 µs. 바닥(형제 0) ≤ 40 µs. 상한의 합은 약 63 µs로 관문과 같은 크기다.
 - **B3의 선:** 446C-06 그대로(같은 창의 0.16.1 × 1.5, 1 ms 미만), 세 종류 행에 적용.
 - 회귀 적합의 잔차가 커서(−53~+52 µs) floor·slope는 구조 상수가 아니라 방향 지표로만 쓴다. 목표선은 단계 장부의 값에 둔다.
 

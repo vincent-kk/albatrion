@@ -31,13 +31,13 @@ describe('derive rule locality', () => {
       { t: 'T1', flag: true, x: '' },
       WriteOption.Overwrite,
     );
-    const observed = [root.structure?.x?.raw];
+    const observed = [root.structure?.x?.source];
     writeFieldNode(root.structure!.x, 'manual', 'input', WriteOption.Overwrite);
-    observed.push(root.structure?.x?.raw);
+    observed.push(root.structure?.x?.source);
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    observed.push(root.structure?.x?.raw);
+    observed.push(root.structure?.x?.source);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    observed.push(root.structure?.x?.raw);
+    observed.push(root.structure?.x?.source);
     expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
 
@@ -85,7 +85,7 @@ describe('derive rule locality', () => {
         'input',
         WriteOption.Overwrite,
       );
-      expect(root.structure?.H?.structure?.x?.raw).toBe('manual');
+      expect(root.structure?.H?.structure?.x?.source).toBe('manual');
     },
   );
 
@@ -161,11 +161,11 @@ describe('derive rule locality', () => {
       },
     });
     writeFieldNode(
-      root.structure!.left.structure!.source,
+      root.structure!.left.structure!['source'],
       'B',
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.left?.structure?.target?.raw).toBe('B');
+    expect(root.structure?.left?.structure?.target?.source).toBe('B');
   });
 });

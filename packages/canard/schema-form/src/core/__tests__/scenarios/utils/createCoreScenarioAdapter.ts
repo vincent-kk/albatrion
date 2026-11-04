@@ -86,11 +86,11 @@ export function createCoreScenarioAdapter(
           value,
         );
       for (const [path, value] of Object.entries(
-        expectation.undeclaredValues ?? {},
+        expectation.extras ?? {},
       ))
         expect(
-          root.find(path)?.undeclaredValues,
-          `undeclaredValues ${path}`,
+          root.find(path)?.extras,
+          `extras ${path}`,
         ).toEqual(value);
     },
   };

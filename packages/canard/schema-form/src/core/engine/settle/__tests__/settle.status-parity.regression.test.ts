@@ -51,8 +51,8 @@ describe('settle status parity regressions', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { a: 0 }, WriteOption.Overwrite),
     ).toThrow();
-    expect(root.raw).toBeUndefined();
-    expect(root.structure?.a?.raw).toBe(0);
+    expect(root.source).toBeUndefined();
+    expect(root.structure?.a?.source).toBe(0);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

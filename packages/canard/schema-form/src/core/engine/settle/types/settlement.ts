@@ -201,7 +201,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     calls: number;
     /** Presence reader candidates inserted during lookup and deferred expansion. */
     ownerInsertions: number;
-    /** Incremental location-watch probes, excluding raw invalidation queries. */
+    /** Incremental location-watch probes, excluding source invalidation queries. */
     indexLookups: number;
   };
   /** Proof that this call is one admitted static push, consulted by selection, assembly and alignment. */
@@ -218,7 +218,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   suppressAutomaticWrites: boolean;
   /** Load boundary whose current shape begins a new appearance lifetime. */
   loadScope?: Self;
-  /** Whole-replacement boundary whose subtree keeps only the written raw per path. */
+  /** Whole-replacement boundary whose subtree keeps only the written source per path. */
   replaceScope?: Self;
   /** Multi-write batch scopes: each marked path, or each received key's child path of a shallow Merge; bounds replacement instead of replaceScope (191C-01). */
   replacePaths?: readonly string[];
@@ -248,9 +248,9 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   gateSelectionRounds?: Map<Self, GateSelectionRound>;
   /** Restore the verify-only dirty observer even when a settlement throws. */
   restoreGateSelectionDirty?: () => void;
-  /** Monotone clock shared by every raw registration call site. */
+  /** Monotone clock shared by every source registration call site. */
   registrationEpoch?: number;
-  /** Latest raw registration hit of each immutable split bucket. */
+  /** Latest source registration hit of each immutable split bucket. */
   splitHitEpochs?: Map<SplitBucket, number>;
   /** Latest registration generation applied to a living split owner. */
   splitMarks?: Map<string, number>;
@@ -263,7 +263,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     supplementInsertions: number;
     restore: () => void;
   };
-  /** Only the independent verification pass takes the old raw registration path. */
+  /** Only the independent verification pass takes the old source registration path. */
   shadowRegistration?: boolean;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
@@ -276,7 +276,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Previous state for each automatic write, restored in reverse order. */
   automaticLog: {
     node: Self;
-    previousRaw: unknown;
+    previousSource: unknown;
     previousExtras: unknown;
     previousDistributed?: Distribution;
   }[];
@@ -311,8 +311,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     Self,
     Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
   >;
-  /** Caller raw-change membership before restoring each fresh retained clone. */
-  slotRestoredRaw?: Map<Self, boolean>;
+  /** Caller source-change membership before restoring each fresh retained clone. */
+  slotRestoredSource?: Map<Self, boolean>;
   /** Exit-only plans; private retained clones consume them before this call ends. */
   compactedSlotSources?: Map<Self, CompactedSlotSources<Self>>;
   /** Whether marking is currently applying a transition write. */
@@ -327,8 +327,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   dependencyOwnerPaths: Set<string>;
   /** Hosts whose declarations or children require a new gate/shape selection. */
   shapeDirtyPaths: Set<string>;
-  /** Raw paths actually changed during marking. */
-  changedRaw: Set<string>;
+  /** Source paths actually changed during marking. */
+  changedSource: Set<string>;
   /** Nodes whose calculated value or shape changed. */
   changedNodes: Set<Self>;
   /** Selecting hosts whose completed entries have not yet been assembled. */

@@ -3,7 +3,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { isMisfit } from './isMisfit';
 
 /**
- * Find scalar conversions that could admit a currently mismatched raw value.
+ * Find scalar conversions that could admit a currently mismatched source value.
  * @param node - Node whose row supplies the same conversion rule as marking
  * @param effective - Current gated type list
  * @returns Converted kind names in effective-list order
@@ -16,13 +16,13 @@ export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
   const candidates: Exclude<SchemaTypeName, 'null'>[] = [];
   for (const kind of kinds) {
     if (kind === 'null') continue;
-    const converted = node.behavior.interpret(node.raw, {
+    const converted = node.behavior.interpret(node.source, {
       kinds: kind,
       mask: 0,
       nullable: node.nullable,
     });
     if (
-      !Object.is(converted, node.raw) &&
+      !Object.is(converted, node.source) &&
       !isMisfit(converted, kind, node.nullable)
     )
       candidates.push(kind);

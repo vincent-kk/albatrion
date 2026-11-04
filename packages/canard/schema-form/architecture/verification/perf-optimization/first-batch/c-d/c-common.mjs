@@ -37,7 +37,7 @@ export function fixture(spec) {
   return {schema,input};
 }
 export function make(M, schema, input, onChange) {
-  const root=M.fieldNodeFactory(M.blueprint(schema),{diagnostics:{status:'stable'},loadSnapshot:undefined,latentRaw:new M.PathKeyedMap('pair'),misfitPaths:new M.PathKeyedSet(),inactiveValuesMemo:new M.PathKeyedMap('path'),unsetOnInactive:true,onChange});
+  const root=M.fieldNodeFactory(M.blueprint(schema),{diagnostics:{status:'stable'},loadSnapshot:undefined,latentSource:new M.PathKeyedMap('pair'),misfitPaths:new M.PathKeyedSet(),inactiveValuesMemo:new M.PathKeyedMap('path'),unsetOnInactive:true,onChange});
   M.mountFieldNode(root,structuredClone(input),M.SetValueOption.Overwrite);
   return root;
 }
@@ -52,7 +52,7 @@ export async function prepare(engine,spec,observe=false) {
   M.writeFieldNodeInput(warm.find('/x'),1,M.SetValueOption.Overwrite); await drain();
   if(spec.kind==='latent') {
     for(let i=0;i<spec.C;i++) { const gate=root.find('/h/k'+i+'/gate'); if(gate)M.writeFieldNodeInput(gate,false,M.SetValueOption.Overwrite); }
-    if(root.runtime.latentRaw.size!==spec.C-1)throw new Error('Latent setup did not retain every descendant: '+spec.id);
+    if(root.runtime.latentSource.size!==spec.C-1)throw new Error('Latent setup did not retain every descendant: '+spec.id);
     await drain();
   }
   const held=allNodes(root), known=new WeakSet();
@@ -75,7 +75,7 @@ export function encode(value,seen=new Map()) {
 export function snapshot(f) {
   const {root,held}=f;
   const live=allNodes(root);for(const node of live)if(!held.includes(node))held.push(node);
-  return {values:encode(root.value),raw:encode(root.raw),inactiveValues:encode(root.inactiveValues),latent:encode([...root.runtime.latentRaw]),metadata:encode(root.runtime.latentRawMetadata),committedRules:encode(root.runtime.committedRuleValues),declarations:encode(root.runtime.committedDeclarationIds),deliveries:structuredClone(f.deliveries),nodes:held.map(node=>({path:node.path,kind:node.blueprintNode.kind,detached:node.detached,active:node.active,raw:encode(node.raw),local:encode(node.value),emit:encode(node.outputValue),state:encode(node.state),inactive:encode(node.inactiveValues),revision:node.revision(),revisionBits:Array.from({length:17},(_,i)=>node.revision(2**i)),exitPolicy:enginePolicy(node,f.M)}))};
+  return {values:encode(root.value),source:encode(root.source),inactiveValues:encode(root.inactiveValues),latent:encode([...root.runtime.latentSource]),metadata:encode(root.runtime.latentSourceMetadata),committedRules:encode(root.runtime.committedRuleValues),declarations:encode(root.runtime.committedDeclarationIds),deliveries:structuredClone(f.deliveries),nodes:held.map(node=>({path:node.path,kind:node.blueprintNode.kind,detached:node.detached,active:node.active,source:encode(node.source),local:encode(node.value),emit:encode(node.outputValue),state:encode(node.state),inactive:encode(node.inactiveValues),revision:node.revision(),revisionBits:Array.from({length:17},(_,i)=>node.revision(2**i)),exitPolicy:enginePolicy(node,f.M)}))};
 }
 function enginePolicy(node,M) {const groups=M.getControlLayers(node,new Map());return {clear:M.readExitLayerPolicy(groups,node.runtime.committedRuleValues,node.runtime.unsetOnInactive===true),groups:encode(groups),pendingDelivery:encode(node.pendingDelivery),pendingRevision:node.pendingRevision,revisionLedger:encode(node.revisionLedger)};}
 export function invoke(engine,spec,f) { const node=f.root.find(spec.op==='exit'?'/flag':spec.kind==='items'||spec.kind==='prefixItems'?'/h/0':'/h/probe');if(!node)throw new Error('No write target '+spec.id);return engine.M.writeFieldNodeInput(node,spec.op==='exit'?false:-1,engine.M.SetValueOption.Overwrite); }
@@ -83,7 +83,7 @@ export function validate(spec,f) {
   if(f.root.value.flag!==(spec.op==='exit'?false:true))throw new Error('Flag mismatch '+spec.id);
   if(spec.op==='control'&&f.held.some(n=>n.detached))throw new Error('Control exited a node '+spec.id);
   if(spec.op==='exit'&&spec.kind!=='prefixItems'&&f.root.find('/h/'+(spec.kind==='items'?'0':'k0')))throw new Error('Expected child to leave '+spec.id);
-  if(spec.op==='exit'&&spec.kind==='overlap'){const expectedKeep=spec.nodePolicy!==undefined?!spec.nodePolicy:spec.fieldsPolicy!==undefined?!spec.fieldsPolicy:true;if(f.root.runtime.latentRaw.has(JSON.stringify(['/h/k0','number']))!==expectedKeep)throw new Error('Overlap policy priority mismatch '+spec.id);}
+  if(spec.op==='exit'&&spec.kind==='overlap'){const expectedKeep=spec.nodePolicy!==undefined?!spec.nodePolicy:spec.fieldsPolicy!==undefined?!spec.fieldsPolicy:true;if(f.root.runtime.latentSource.has(JSON.stringify(['/h/k0','number']))!==expectedKeep)throw new Error('Overlap policy priority mismatch '+spec.id);}
   if((f.root.runtime.deliveries?.size??0)!==0)throw new Error('Delivery queue did not drain');
 }
 export async function measure(engine,spec,config) {

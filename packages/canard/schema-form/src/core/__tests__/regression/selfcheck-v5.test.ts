@@ -38,9 +38,9 @@ describe('selfcheck-v5 PR-2 regression', () => {
     second.find('/a')?.setValue('x');
     const replaced = sharedDefault();
     replaced.setValue({ a: 'x', b: 'y' });
-    expect(first.outputValue).toHaveProperty('x', first.find('/x')?.raw);
-    expect(second.outputValue).toHaveProperty('x', second.find('/x')?.raw);
-    expect(replaced.find('/x')?.raw).toBe(2);
+    expect(first.outputValue).toHaveProperty('x', first.find('/x')?.source);
+    expect(second.outputValue).toHaveProperty('x', second.find('/x')?.source);
+    expect(replaced.find('/x')?.source).toBe(2);
     expect(replaced.outputValue).toHaveProperty('x', 2);
   });
 
@@ -68,7 +68,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     expect(JSON.stringify(root.outputValue)).toBe('{"a":"x"}');
     root.find('/z')?.setValue('q');
     expect(JSON.stringify(root.outputValue)).toBe('{"a":"x","z":"q"}');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
   it('selfcheck-v5.mjs:108 SETTLE-048 keeps a missing value on a non-load replacement', () => {
@@ -78,7 +78,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     root.find('/z')?.setValue('q');
     root.setValue({ a: 'x', z: 'q' });
     expect(JSON.stringify(root.outputValue)).toBe('{"a":"x","z":"q"}');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
   const nullHost = () =>
@@ -109,7 +109,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     expect(root.outputValue).toBeNull();
     note?.setValue('Z');
     expect(root.outputValue).toEqual({ note: 'Z' });
-    expect(root.find('/keep')?.raw).toBeUndefined();
+    expect(root.find('/keep')?.source).toBeUndefined();
   });
 
   it('selfcheck-v5.mjs:328 leaves children unfilled under null while a later partial write restores the host', () => {
@@ -131,7 +131,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
       { snapshot: null },
     );
     root.resetSubtree();
-    expect(root.find('/d')?.raw).toBeUndefined();
+    expect(root.find('/d')?.source).toBeUndefined();
     root.find('/a')?.setValue('A');
     expect(root.outputValue).toEqual({ a: 'A' });
   });
@@ -153,10 +153,10 @@ describe('selfcheck-v5 PR-2 regression', () => {
     });
     root.setValue({ kind: 'a', e: 'EXTRA' });
     expect(JSON.stringify(root.outputValue)).toBe('{"kind":"a"}');
-    expect(root.undeclaredValues).toBeUndefined();
+    expect(root.extras).toBeUndefined();
     root.find('/kind')?.setValue('b');
     expect(root.outputValue).toEqual({ kind: 'b', e: 'EXTRA' });
-    expect(root.find('/e')?.raw).toBe('EXTRA');
+    expect(root.find('/e')?.source).toBe('EXTRA');
   });
 
   for (const [name, value] of [
@@ -196,8 +196,8 @@ describe('selfcheck-v5 PR-2 regression', () => {
     root.setValue({ a: 1, b: 2 });
     expect(first).toBe('{"a":1,"b":2}');
     expect(JSON.stringify(root.outputValue)).toBe(first);
-    expect(root.find('/a')?.raw).toBe(1);
-    expect(root.find('/b')?.raw).toBe(2);
+    expect(root.find('/a')?.source).toBe(1);
+    expect(root.find('/b')?.source).toBe(2);
   });
 
   it('selfcheck-v5.mjs:515 keeps extras and treats present falsy values as present', () => {
@@ -221,7 +221,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
       });
       root.setValue({ ...input, extra: 42 });
       expect(root.outputValue).toHaveProperty('extra', 42);
-      expect(root.find('/n')?.raw).toEqual('n' in input ? input.n : 'D');
+      expect(root.find('/n')?.source).toEqual('n' in input ? input.n : 'D');
     }
   });
 
@@ -242,7 +242,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     });
     root.setValue({ on: false });
     root.find('/on')?.setValue(true);
-    expect(root.find('/child')?.raw).toBe('D');
+    expect(root.find('/child')?.source).toBe('D');
     expect(root.outputValue).toEqual({ on: true, child: 'D' });
   });
 
@@ -290,8 +290,8 @@ describe('selfcheck-v5 PR-2 regression', () => {
     root.setValue({ target: { note: 'typed', reason: 'edited' } });
     root.setValue({ target: null });
     expect(root.outputValue).toEqual({ target: null });
-    expect(root.find('/target')?.raw).toBeNull();
-    expect(root.find('/target')?.children?.map((child) => child.raw)).toEqual([
+    expect(root.find('/target')?.source).toBeNull();
+    expect(root.find('/target')?.children?.map((child) => child.source)).toEqual([
       undefined,
       undefined,
     ]);

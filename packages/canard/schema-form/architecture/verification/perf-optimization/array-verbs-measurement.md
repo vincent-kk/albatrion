@@ -375,7 +375,7 @@ insert(0)과 insert(N/2)는 remove(0)·remove(N/2)의 거울이고, insert(N)은
   - 일반 선택: `selectChildren` 3,054(13%)
   - 꼬리 재계산: `computeNode`에서 선택과 출력을 뺀 2,222(10%)
   - 재계산 등록: `registerRecalculation` 1,069(5%)
-  - 원본 트리 읽기: `readRawTree` 367(1.6%)
+  - 원본 트리 읽기: `readSourceTree` 367(1.6%)
   - 배달 파동: `runDeliveryWaves` 244
 - **remove(N/2):**
   - 칸 적용 본체 3,982(25%)
@@ -383,7 +383,7 @@ insert(0)과 insert(N/2)는 remove(0)·remove(N/2)의 거울이고, insert(N)은
   - 일반 선택 3,037(19%)
   - 꼬리 재계산 1,061(7%)
   - 재계산 등록 499
-  - `readRawTree` 299
+  - `readSourceTree` 299
   - `canApplyArrayTail` 179
 - **clear:**
   - 꼬리 적용의 소멸 처리(지워지는 N개의 읽기 포착·제거): `applyArrayTail`에서 (나)를 뺀 5,561(49%)
@@ -400,7 +400,7 @@ insert(0)과 insert(N/2)는 remove(0)·remove(N/2)의 거울이고, insert(N)은
 
 | 후보                                                                                       | remove(1)          | remove(N/2) | 비율(remove(1)) | 크기                       |
 | ------------------------------------------------------------------------------------------ | ------------------ | ----------- | --------------- | -------------------------- |
-| (ㄱ) `readRawTree(host)` — 배열 전체 원본 트리 N×S(`applyArraySlots.ts:39`)                | 367                | 299         | 1.6%            | N 비례                     |
+| (ㄱ) `readSourceTree(host)` — 배열 전체 원본 트리 N×S(`applyArraySlots.ts:39`)                | 367                | 299         | 1.6%            | N 비례                     |
 | (ㄴ) 경로 변경 때문에 재사용 증명이 거절되어 타는 일반 선택(`canReuseArrayChildren.ts:36`) | 3,054              | 3,037       | 13%             | N 비례(꼬리가 아니라 전체) |
 | (ㄷ) 이름만 바뀐 꼬리 하위의 dirty·형상 dirty 재계산(`applyArraySlots.ts:128-131`)         | 2,222 + 등록 1,069 | 1,061 + 499 | 14%             | T 비례                     |
 

@@ -158,7 +158,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
         },
       },
     });
-    expect(root.structure!.gated.raw).toBe('gate');
+    expect(root.structure!.gated.source).toBe('gate');
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -184,7 +184,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
       },
     });
     expect(root.emit).toEqual([{ value: 3, derived: 4 }]);
-    expect(root.children![0].structure!.hidden.raw).toBeUndefined();
+    expect(root.children![0].structure!.hidden.source).toBeUndefined();
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 

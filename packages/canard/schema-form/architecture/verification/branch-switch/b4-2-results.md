@@ -138,8 +138,8 @@ payload12의 개별 중앙값 합은276.2890→279.8785µs(+1.299%)이고, 공�
 | switch-oneOf-80   | transitionSettlement     | 3.958  | 3.875  | 3.958   | 3.875   | 0.249 | 1/1          | 없음 |
 | switch-oneOf-80   | finalizeExits            | 19.104 | 19.709 | 23.625  | 24.271  | 0.750 | 1/1          | 없음 |
 | switch-oneOf-80   | getControlLayers         | 1.416  | 1.458  | 1.416   | 1.458   | 0.085 | 6/6          | 없음 |
-| switch-oneOf-80   | captureExitedRaw         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
-| switch-oneOf-80   | setLatentRaw             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
+| switch-oneOf-80   | captureExitedSource         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
+| switch-oneOf-80   | setLatentSource             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
 | switch-oneOf-80   | updateOutput             | 7.230  | 7.167  | 16.750  | 16.457  | 0.750 | 6/6          | 없음 |
 | switch-oneOf-80   | assembleObject           | 9.166  | 9.042  | 9.166   | 9.042   | 0.333 | 2/2          | 없음 |
 | switch-oneOf-80   | commitSettlement         | 9.688  | 9.375  | 22.708  | 22.605  | 3.625 | 1/1          | 없음 |
@@ -164,8 +164,8 @@ payload12의 개별 중앙값 합은276.2890→279.8785µs(+1.299%)이고, 공�
 | switch-payload-12 | transitionSettlement     | 7.709  | 8.041  | 7.709   | 8.041   | 0.209 | 1/1          | 있음 |
 | switch-payload-12 | finalizeExits            | 35.956 | 37.253 | 42.209  | 43.605  | 4.063 | 1/1          | 없음 |
 | switch-payload-12 | getControlLayers         | 3.457  | 3.501  | 3.457   | 3.501   | 0.145 | 24/24        | 없음 |
-| switch-payload-12 | captureExitedRaw         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
-| switch-payload-12 | setLatentRaw             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
+| switch-payload-12 | captureExitedSource         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
+| switch-payload-12 | setLatentSource             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
 | switch-payload-12 | updateOutput             | 7.149  | 7.126  | 41.708  | 43.813  | 3.042 | 15/15        | 없음 |
 | switch-payload-12 | assembleObject           | 34.167 | 36.188 | 34.167  | 36.188  | 2.416 | 2/2          | 없음 |
 | switch-payload-12 | commitSettlement         | 14.458 | 13.917 | 29.813  | 30.499  | 2.833 | 1/1          | 없음 |
@@ -190,8 +190,8 @@ payload12의 개별 중앙값 합은276.2890→279.8785µs(+1.299%)이고, 공�
 | switch-siblings-0 | transitionSettlement     | 1.250  | 1.250  | 1.250   | 1.250   | 0.041 | 1/1          | 없음 |
 | switch-siblings-0 | finalizeExits            | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
 | switch-siblings-0 | getControlLayers         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
-| switch-siblings-0 | captureExitedRaw         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
-| switch-siblings-0 | setLatentRaw             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
+| switch-siblings-0 | captureExitedSource         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
+| switch-siblings-0 | setLatentSource             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000 | 0/0          | 없음 |
 | switch-siblings-0 | updateOutput             | 3.749  | 3.667  | 6.313   | 6.332   | 0.146 | 4/4          | 없음 |
 | switch-siblings-0 | assembleObject           | 2.542  | 2.541  | 2.542   | 2.541   | 0.042 | 1/1          | 없음 |
 | switch-siblings-0 | commitSettlement         | 3.375  | 3.292  | 12.333  | 12.021  | 0.188 | 1/1          | 없음 |
@@ -302,7 +302,7 @@ FCA는 scan376노드·depth9·위반200, validate201지적, verification691파�
 | src/core/engine/write/**tests**/dispatch.closing-branch.test.ts  | src/core/engine/settle/**tests**/dispatch.closing-branch.test.ts        |
 | src/core/engine/**tests**/fixtures/collectRetainedSlotSources.ts | src/core/engine/settle/**tests**/fixtures/collectRetainedSlotSources.ts |
 | src/core/engine/**tests**/fixtures/readInactiveValuesAt.ts       | src/core/engine/settle/**tests**/fixtures/readInactiveValuesAt.ts       |
-| src/core/engine/**tests**/fixtures/readRetainedSlotRaw.ts        | src/core/engine/settle/**tests**/fixtures/readRetainedSlotRaw.ts        |
+| src/core/engine/**tests**/fixtures/readRetainedSlotSource.ts        | src/core/engine/settle/**tests**/fixtures/readRetainedSlotSource.ts        |
 
 두 시험은 기준선 대비 이동이며 fixture3개는 이번 구현 도중 새로 만든 관찰 장치의 최종 배치 조정입니다. [배치 근거](raw/b4-2/import-placement.json).
 
@@ -313,8 +313,8 @@ FCA는 scan376노드·depth9·위반200, validate201지적, verification691파�
 | src/core/engine/settle/utils/commit/commitSettlement.ts              | 261                        |
 | src/core/engine/settle/utils/commit/commitSettlement.ts              | 275                        |
 | src/core/engine/settle/utils/latent/readLatentSlotSource.ts          | 51                         |
-| src/core/engine/settle/utils/latent/readRawTree.ts                   | 29                         |
-| src/core/engine/settle/utils/latent/readRawTree.ts                   | 33                         |
+| src/core/engine/settle/utils/latent/readSourceTree.ts                   | 29                         |
+| src/core/engine/settle/utils/latent/readSourceTree.ts                   | 33                         |
 | src/core/engine/settle/utils/latentStore/hasLatentUnder.ts           | 23                         |
 | src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts  | 21                         |
 | src/core/engine/settle/utils/transition/applyExitClearing.ts         | 23                         |
@@ -416,7 +416,7 @@ FCA는 scan376노드·depth9·위반200, validate201지적, verification691파�
 | src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-splice-fallback.test.ts                           | 1         | 0         | 0         | 0         |
 | src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-splice.test.ts                                    | 1         | 0         | 0         | 0         |
 | src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.detached-write-address.test.ts                          | 1         | 0         | 0         | 0         |
-| src/core/engine/settle/utils/latentStore/**tests**/setLatentRaw.test.ts                                               | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/utils/latentStore/**tests**/setLatentSource.test.ts                                               | 1         | 0         | 0         | 0         |
 | src/core/engine/settle/utils/slots/**tests**/createSlotValueOverlay.test.ts                                           | 1         | 0         | 0         | 0         |
 | src/core/engine/settle/utils/slots/**tests**/materializeInactiveSlotValues.test.ts                                    | 2         | 0         | 0         | 0         |
 | src/core/engine/write/**tests**/dispatch.batch.test.ts                                                                | 14        | 0         | 0         | 0         |

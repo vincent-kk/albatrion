@@ -121,7 +121,7 @@ ms 열은 반복 2의 값이다. 별도 프로세스의 앞선 마운트 측정�
 추가 장면의 상위 자기 %:
 
 - switch-wide: selectChildren 20.8, hasOwnProperty 16.6, computeNodeBody 14.5, writeObjectKey 9.7, selectEntryStep 8.8, assembleObject 8.3, primeHost 6.2, updateOutput 3.2, 게이트 레지스트리 register 1.8.
-- switch-distinct: markCommitDeliveries 4.8, GC 3.4, markFieldNodeEvent 3.3, updateInactiveValuesMemo 3.0(포함 9.4), selectEntryStep 3.0, setLatentRaw 2.9(포함 7.8), 게이트 레지스트리 register 2.8, affectedByPresence 2.7 — 평평한 프로파일, 두드러진 지점 없음.
+- switch-distinct: markCommitDeliveries 4.8, GC 3.4, markFieldNodeEvent 3.3, updateInactiveValuesMemo 3.0(포함 9.4), selectEntryStep 3.0, setLatentSource 2.9(포함 7.8), 게이트 레지스트리 register 2.8, affectedByPresence 2.7 — 평평한 프로파일, 두드러진 지점 없음.
 - mount-bp: buildNodes 16.1(blueprint 포함 43.0), GC 15.4, collectDeclarations 5.7, appendChildEntries 5.5, populateNodeChildren 3.6, freezeEffectiveSchema 2.9.
 - leaf-wide-oneof: sameValue 46.0, assembleObject 43.0, computeNodeBody 6.8.
 - leaf-wide: assembleObject 94.3.
@@ -147,7 +147,7 @@ ms 열은 반복 2의 값이다. 별도 프로세스의 앞선 마운트 측정�
 | 경로 색인 add/delete/set(DirtyPathSet·PathKeyedMap·PathStoreIndex) | 5.6 | 2.5 | 0.8 | 1.6 | 5.4 | 0.2 |
 | GC | 10.2 | 15.4 | 12.2(재실행 3.0) | 1.7 | 1.2 | 0.9 |
 
-switch-distinct에서는 잠복·비활성 값 장부가 보인다: setLatentRaw 7.8, updateInactiveValuesMemo 9.4, PathKeyedMap.set 7.3.
+switch-distinct에서는 잠복·비활성 값 장부가 보인다: setLatentSource 7.8, updateInactiveValuesMemo 9.4, PathKeyedMap.set 7.3.
 
 ## 5. 호출 수와 할당
 

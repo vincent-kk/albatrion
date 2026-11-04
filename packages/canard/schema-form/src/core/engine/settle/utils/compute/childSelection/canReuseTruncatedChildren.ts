@@ -25,7 +25,7 @@ export const canReuseTruncatedChildren = <Self extends FieldNodeRecord<Self>>(
   const dirty = context.dirtyChildrenByParent.get(node.path);
   return (
     !context.hasGates &&
-    node.raw === undefined &&
+    node.source === undefined &&
     node.itemCount === proof.count - 1 &&
     node.structure === prior &&
     node.children === proof.children &&

@@ -5,7 +5,7 @@ import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testField
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
@@ -110,7 +110,7 @@ describe('array structural verbs', () => {
     expect(root.children![0].itemKey).toBeGreaterThan(oldSecond.itemKey!);
     expect(root.children![1].value).toBe('c');
     expect(root.children![1].itemKey).toBeGreaterThan(oldSecond.itemKey!);
-    expect(root.undeclaredValues).toEqual(['d']);
+    expect(root.extras).toEqual(['d']);
   });
 
   it('NODE-052 gives a shifted value a new node when the slot template differs (41C-01)', () => {
@@ -187,14 +187,14 @@ describe('array structural verbs', () => {
       arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'x' }),
     ).toBe('x');
     expect(original).toEqual(['a', 'b']);
-    expect(root.raw).not.toBe(original);
+    expect(root.source).not.toBe(original);
     expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBe('b');
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'z' })).toBe(2);
-    const beforeRemove = root.raw;
+    const beforeRemove = root.source;
     expect(arrangeFieldNodeItems(record, { kind: 'remove', index: 0 })).toBe(
       'x',
     );
-    expect(root.raw).not.toBe(beforeRemove);
+    expect(root.source).not.toBe(beforeRemove);
     expect(root.value).toEqual(['z']);
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(root.value).toEqual([]);
@@ -236,10 +236,10 @@ describe('array structural verbs', () => {
     ).toBe('c');
     expect(root.value).toEqual(['a', 'c']);
     expect(root.children![0]).toBe(item);
-    expect(root.undeclaredValues).toEqual(['c']);
+    expect(root.extras).toEqual(['c']);
   });
 
-  it('WRITE-085 updates a gated-out slot through the host raw tree', () => {
+  it('WRITE-085 updates a gated-out slot through the host source tree', () => {
     const { root } = makeRecordTree({
       type: 'array',
       items: { type: 'string', controls: { active: 'false' } },
@@ -250,7 +250,7 @@ describe('array structural verbs', () => {
     expect(
       arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'b' }),
     ).toBe('b');
-    expect(readRetainedSlotRaw(root, '/0', 'string')).toBe('b');
+    expect(readRetainedSlotSource(root, '/0', 'string')).toBe('b');
   });
 
   it('GOAL-073 keeps creation keys increasing through pop, push, and clear', () => {
@@ -292,13 +292,13 @@ describe('array structural verbs', () => {
       arrangeFieldNodeItems(record, { kind: 'remove', index: 0 }),
     ).toBeUndefined();
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
-    expect(root.raw).toBeNull();
+    expect(root.source).toBeNull();
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
-    expect(root.raw).toEqual(['x']);
+    expect(root.source).toEqual(['x']);
     root.setValue(undefined);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'y' })).toBe(1);
-    expect(root.raw).toEqual(['y']);
+    expect(root.source).toEqual(['y']);
   });
 
   it('48C-02 pushes over a terminal wrong-kind value and clears its warning', () => {
@@ -312,10 +312,10 @@ describe('array structural verbs', () => {
     const commit = Reflect.get(runtime, 'commitNumber');
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
-    expect(root.raw).toBe(17);
+    expect(root.source).toBe(17);
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
-    expect(root.raw).toEqual(['x']);
+    expect(root.source).toEqual(['x']);
     expect(root.isMisfit).toBe(false);
   });
 
@@ -341,7 +341,7 @@ describe('array structural verbs', () => {
     expect(root.find('/0/1')).toBe(nested);
   });
 
-  it('47C-01 updates a gated slot through the raw tree without dropping nested slots', () => {
+  it('47C-01 updates a gated slot through the source tree without dropping nested slots', () => {
     const { root } = makeRecordTree({
       type: 'array',
       prefixItems: [
@@ -362,6 +362,6 @@ describe('array structural verbs', () => {
     ).toBe('c');
     expect(root.value).toEqual([[{}, {}], null]);
     expect(root.find('/0/1')).toBe(nested);
-    expect(readRetainedSlotRaw(root, '/1', 'string')).toBe('c');
+    expect(readRetainedSlotSource(root, '/1', 'string')).toBe('c');
   });
 });

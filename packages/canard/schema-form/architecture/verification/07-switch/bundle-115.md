@@ -253,7 +253,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/behaviors` | `src/core/behaviors/utils/slots/declareNoChildren.ts` | 31 |
 | `core/behaviors` | `src/core/behaviors/arrayBehavior/utils/projection/omitEmptyArray.ts` | 28 |
 | `core/behaviors` | `src/core/behaviors/objectBehavior/utils/objectKeyCounts.ts` | 15 |
-| `core/behaviors` | `src/core/behaviors/utils/slots/assembleRaw.ts` | 12 |
+| `core/behaviors` | `src/core/behaviors/utils/slots/assembleSource.ts` | 12 |
 | `core/behaviors` | `src/core/behaviors/utils/slots/projectIdentity.ts` | 12 |
 | `core/behaviors` | `src/core/behaviors/utils/slots/finishNoInput.ts` | 10 |
 | `core/behaviors` | `src/core/behaviors/virtualBehavior/utils/value/projectNoEmit.ts` | 10 |
@@ -506,8 +506,8 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/other` | `src/core/settle/utils/settlement/createSettlementContext.ts` | 1,171 |
 | `core/settle/other` | `src/core/settle/utils/latent/distributeLatentValue.ts` | 1,109 |
 | `core/settle/other` | `src/core/settle/utils/latent/readLatentSlotSource.ts` | 702 |
-| `core/settle/other` | `src/core/settle/utils/latent/readRawTree.ts` | 651 |
-| `core/settle/other` | `src/core/settle/utils/latent/setLatentRaw.ts` | 612 |
+| `core/settle/other` | `src/core/settle/utils/latent/readSourceTree.ts` | 651 |
+| `core/settle/other` | `src/core/settle/utils/latent/setLatentSource.ts` | 612 |
 | `core/settle/other` | `src/core/settle/utils/context/changeSchemaNodeContext.ts` | 537 |
 | `core/settle/other` | `src/core/settle/utils/paths/expandTemplatePaths.ts` | 520 |
 | `core/settle/other` | `src/core/settle/utils/controls/readSchemaNodeWatchValues.ts` | 494 |
@@ -551,7 +551,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/transition` | `src/core/settle/utils/transition/finalizePerished.ts` | 683 |
 | `core/settle/transition` | `src/core/settle/utils/transition/restoreSourceB.ts` | 667 |
 | `core/settle/transition` | `src/core/settle/utils/transition/restoreArrayStructure.ts` | 660 |
-| `core/settle/transition` | `src/core/settle/utils/transition/captureExitedRaw.ts` | 644 |
+| `core/settle/transition` | `src/core/settle/utils/transition/captureExitedSource.ts` | 644 |
 | `core/settle/transition` | `src/core/settle/utils/transition/collectFillDescendants.ts` | 631 |
 | `core/settle/transition` | `src/core/settle/utils/transition/withdrawDetachedFills.ts` | 589 |
 | `core/settle/transition` | `src/core/settle/utils/transition/prunePerishedPaths.ts` | 480 |
@@ -561,8 +561,8 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/transition` | `src/core/settle/utils/transition/hasWrongKindBranchAncestor.ts` | 275 |
 | `core/settle/transition` | `src/core/settle/utils/transition/isReplacedLivePath.ts` | 231 |
 | `core/settle/transition` | `src/core/settle/utils/transition/applyExitClearing.ts` | 170 |
-| `core/settle/transition` | `src/core/settle/utils/transition/isMissingRaw.ts` | 132 |
-| `core/settle/transition` | `src/core/settle/utils/transition/writeLatentRaw.ts` | 92 |
+| `core/settle/transition` | `src/core/settle/utils/transition/isMissingSource.ts` | 132 |
+| `core/settle/transition` | `src/core/settle/utils/transition/writeLatentSource.ts` | 92 |
 | `core/settle/transition` | `src/core/settle/utils/transition/hasRecursiveFill.ts` | 78 |
 | `core/settle/transition` | `src/core/settle/utils/transition/readUnsetPolicy.ts` | 60 |
 | `core/settle/transition` | `src/core/settle/utils/transition/getTransitionCap.ts` | 12 |
@@ -574,7 +574,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/write` | `src/core/settle/utils/write/registerRecalculation.ts` | 747 |
 | `core/settle/write` | `src/core/settle/utils/write/interpretSchemaNodeInput.ts` | 673 |
 | `core/settle/write` | `src/core/settle/utils/write/getSettlementScratch.ts` | 666 |
-| `core/settle/write` | `src/core/settle/utils/write/pruneLatentRaw.ts` | 403 |
+| `core/settle/write` | `src/core/settle/utils/write/pruneLatentSource.ts` | 403 |
 | `core/settle/write` | `src/core/settle/utils/write/staticSpec.ts` | 373 |
 | `core/settle/write` | `src/core/settle/utils/write/nextExtras.ts` | 369 |
 | `core/settle/write` | `src/core/settle/utils/write/releaseWrongKindHosts.ts` | 331 |
@@ -769,7 +769,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 
 - `src/core/settle/utils/latent/indexLatentDescendant.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/getLatentPathIndex.ts`를 측정용 스텁으로 바꿨습니다.
-- `src/core/settle/utils/latent/setLatentRaw.ts`를 측정용 스텁으로 바꿨습니다.
+- `src/core/settle/utils/latent/setLatentSource.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/indexEnteredLatentKey.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/HostLatent.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/restoreLatentState.ts`를 측정용 스텁으로 바꿨습니다.
@@ -783,7 +783,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 - `src/core/settle/utils/latent/captureOwnLatent.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/getEnteredLatentKeys.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/readLatentSlotSource.ts`를 측정용 스텁으로 바꿨습니다.
-- `src/core/settle/utils/latent/readRawTree.ts`를 측정용 스텁으로 바꿨습니다.
+- `src/core/settle/utils/latent/readSourceTree.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/captureArrayLatent.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/detached/readSchemaNodeInactiveValues.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/detached/readSchemaNodeTypeMismatch.ts`를 측정용 스텁으로 바꿨습니다.
@@ -834,9 +834,9 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 
 - `src/core/settle/utils/transition/getTransitionCap.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/readUnsetPolicy.ts`를 추가로 측정용 스텁으로 바꿨습니다.
-- `src/core/settle/utils/transition/writeLatentRaw.ts`를 추가로 측정용 스텁으로 바꿨습니다.
+- `src/core/settle/utils/transition/writeLatentSource.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/isReplacedLivePath.ts`를 추가로 측정용 스텁으로 바꿨습니다.
-- `src/core/settle/utils/transition/captureExitedRaw.ts`를 추가로 측정용 스텁으로 바꿨습니다.
+- `src/core/settle/utils/transition/captureExitedSource.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/captureLatentDescendants.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/readDepartingAncestorPolicy.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/applyExitClearing.ts`를 추가로 측정용 스텁으로 바꿨습니다.
@@ -847,7 +847,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 - `src/core/settle/utils/transition/finalizePerished.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/finalizeExits.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/restoreSourceB.ts`를 추가로 측정용 스텁으로 바꿨습니다.
-- `src/core/settle/utils/transition/isMissingRaw.ts`를 추가로 측정용 스텁으로 바꿨습니다.
+- `src/core/settle/utils/transition/isMissingSource.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/readDefault.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/hasWrongKindBranchAncestor.ts`를 추가로 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/transition/collectFillDescendants.ts`를 추가로 측정용 스텁으로 바꿨습니다.

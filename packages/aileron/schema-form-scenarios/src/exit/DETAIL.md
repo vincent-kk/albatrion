@@ -2,7 +2,7 @@
 
 ## Requirements
 
-자식의 게이트가 잠복 raw를 유지하며 방출상 있음을 바꾸면 그 경로를 읽는 형제 게이트도 같은 화면 단계에서 다시 평가한다(SETTLE-020·045, CONTROLS-080). exit.presence-readers 장면은 양방향 전환 뒤 읽는 필드의 DOM 있음과 최종 방출을 검증한다.
+자식의 게이트가 잠복 source를 유지하며 방출상 있음을 바꾸면 그 경로를 읽는 형제 게이트도 같은 화면 단계에서 다시 평가한다(SETTLE-020·045, CONTROLS-080). exit.presence-readers 장면은 양방향 전환 뒤 읽는 필드의 DOM 있음과 최종 방출을 검증한다.
 
 이 부류는 재사용 가능한 나감 동작 데이터와 이름으로 내보내는 장면 목록을 소유한다(60C-01).
 장면을 가져올 때 실행을 수행하거나 엔진 의존성을 도입하지 않는다(TEST-010).
@@ -29,8 +29,8 @@
 
 | Scene file | Scene name | Behavior verified | Ledger evidence |
 | --- | --- | --- | --- |
-| `retain-inactive.scenario.ts` | `exit.retain-inactive` | 비활성 필드를 방출에서 빼고 다시 나타날 때 보존한 raw 값을 복원한다. | — |
-| `unset-inactive.scenario.ts` | `exit.unset-inactive` | unsetOnInactive로 나가는 필드의 raw 값을 버리고 다시 나타날 때 비어 있게 한다. | — |
+| `retain-inactive.scenario.ts` | `exit.retain-inactive` | 비활성 필드를 방출에서 빼고 다시 나타날 때 보존한 source 값을 복원한다. | — |
+| `unset-inactive.scenario.ts` | `exit.unset-inactive` | unsetOnInactive로 나가는 필드의 source 값을 버리고 다시 나타날 때 비어 있게 한다. | — |
 
 ## Last Updated
 

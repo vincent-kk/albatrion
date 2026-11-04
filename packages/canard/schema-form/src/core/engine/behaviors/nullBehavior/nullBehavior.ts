@@ -1,5 +1,5 @@
 import type { Behavior } from '../../record';
-import { assembleRaw } from '../utils/slots/assembleRaw';
+import { assembleSource } from '../utils/slots/assembleSource';
 import { declareNoChildren } from '../utils/slots/declareNoChildren';
 import { finishNoInput } from '../utils/slots/finishNoInput';
 import { interpretIdentity } from '../utils/slots/interpretIdentity';
@@ -9,7 +9,7 @@ import { rejectArrayOperation } from '../utils/slots/rejectArrayOperation';
 /** Calculation row for the non-coercing null kind. */
 export const nullBehavior: Behavior = Object.freeze({
   interpret: interpretIdentity,
-  assemble: assembleRaw,
+  assemble: assembleSource,
   project: projectIdentity,
   finishInput: finishNoInput,
   declareChildren: declareNoChildren,

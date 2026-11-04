@@ -132,7 +132,7 @@ export const gateWheelCases: (typeof gateSelectionCases)[number][] = [
     writes: [{ path: '/cfg/mode', value: 'x' }],
   },
   {
-    name: 'S5 overlay changes projection without changing raw',
+    name: 'S5 overlay changes projection without changing source',
     schema: {
       type: 'object',
       properties: {

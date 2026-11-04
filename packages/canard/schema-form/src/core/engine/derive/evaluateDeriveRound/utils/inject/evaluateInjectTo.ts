@@ -17,7 +17,7 @@ import { getInjectToContext } from './getInjectToContext';
 const NO_INJECT_WRITES = Object.freeze({ writes: Object.freeze([]) });
 
 /**
- * Evaluate one fired handler without writing raw or latent state.
+ * Evaluate one fired handler without writing any node source or latent state.
  * @param source - Live rule source
  * @param root - Calculated root for this round
  * @param rule - Authored function and declaration order

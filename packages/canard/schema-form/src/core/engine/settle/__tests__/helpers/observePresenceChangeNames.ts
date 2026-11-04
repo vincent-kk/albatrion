@@ -46,7 +46,7 @@ export const observePresenceChangeNames = () => {
         prepared.selectedStructure !== structure
       )
         counts.mismatch++;
-      else if (host.raw === null) counts.null++;
+      else if (host.source === null) counts.null++;
       else if (context.entered.has(host)) counts.entered++;
       else if (context.exited.has(host)) counts.exited++;
       else if (context.perished.has(host)) counts.perished++;

@@ -4,7 +4,7 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 it.each([
   { slots: 1, filters: 15 },
@@ -56,7 +56,7 @@ it.each([
     const inactive = [];
     for (let index = 0; index < slots; index++) {
       const path = '/list/' + index;
-      expect(readRetainedSlotRaw(root, path, 'string')).toBe('kept');
+      expect(readRetainedSlotSource(root, path, 'string')).toBe('kept');
       inactive.push({ path, value: 'kept' });
     }
     expect(readInactiveValuesAt(root, '')).toEqual(inactive);
@@ -94,7 +94,7 @@ it.each([{ slots: 1 }, { slots: 32 }])(
     });
     expect(root.local).toEqual(root.emit);
     for (let index = 0; index < slots; index++)
-      expect(readRetainedSlotRaw(root, '/list/' + index, 'string')).toBe(
+      expect(readRetainedSlotSource(root, '/list/' + index, 'string')).toBe(
         'kept',
       );
     dispatchSetValue(open, true);

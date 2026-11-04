@@ -20,7 +20,7 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
     if (!host.detached) {
       for (const [entry, previous] of host.inactiveSlotBaselines ?? []) {
         preserveSlotValueMemos(
-          previous.source,
+          previous.instance,
           previous.overlay,
           host.inactiveSlots?.get(entry),
           host.inactiveSlotOverlays?.get(entry),

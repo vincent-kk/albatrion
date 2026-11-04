@@ -26,7 +26,7 @@ const makeNode = (
   ({
     runtime: {},
     local: undefined,
-    undeclaredValues: extras,
+    extras,
     schema: {
       schema: { type: 'object', options: { propertyOrder } },
       typeConflict: false,

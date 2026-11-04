@@ -116,7 +116,7 @@ describe('Form engine binding', () => {
     expect(() => previous.setValue('late')).toThrow();
   });
 
-  it('LANDING-067 submits outputValue and retains raw array positions', async () => {
+  it('LANDING-067 submits outputValue and retains source array positions', async () => {
     const ref = createRef<FormHandle>();
     const submit = vi.fn();
     render(

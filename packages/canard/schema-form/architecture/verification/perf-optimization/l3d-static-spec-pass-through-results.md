@@ -57,7 +57,7 @@ markWrite의 미해석 호출자는 enterFieldNode, restoreLatentState, replayMo
 
 Node·Bun 각각 기준/수정 모듈을 독립 로드하여 같은 5장면·37관측을 deepStrictEqual로 대조했고 차이는 모두 0건입니다. BN1000, 중첩 정적 객체, nullable 숫자 배열, 게이트·잠복·재진입, union/nullable과 복수 출처 배치를 포함합니다.
 
-값·raw·extras·local·emit·schema·전체 이벤트와 onChange·17bit revision, 노드 및 children/container 참조의 이전 대비 동일성, inactive/latent/misfit·선언·warning·runtime snapshot/commit/diagnostics·전역 수를 정규화해 비교했습니다. 동일 입력·Merge·coercion과 배열 push/insert/remove/pop/clear/update·배치 반환값도 포함합니다. 원자료는 `.seiri/tasks/l3d-static-spec-pass-through/run/{node,bun}-compare.json` 및 `compare.mjs`입니다.
+값·source·extras·local·emit·schema·전체 이벤트와 onChange·17bit revision, 노드 및 children/container 참조의 이전 대비 동일성, inactive/latent/misfit·선언·warning·runtime snapshot/commit/diagnostics·전역 수를 정규화해 비교했습니다. 동일 입력·Merge·coercion과 배열 push/insert/remove/pop/clear/update·배치 반환값도 포함합니다. 원자료는 `.seiri/tasks/l3d-static-spec-pass-through/run/{node,bun}-compare.json` 및 `compare.mjs`입니다.
 
 ## 네 게이트
 

@@ -103,7 +103,7 @@ try {
     'nextKey',
     'parent',
     'root',
-    'raw',
+    'source',
     'extras',
     'local',
     'emit',

@@ -87,7 +87,7 @@ it('allocates no reused scratch containers and clears only populated work lists'
       scratch.filledNodes,
       scratch.dependencyOwnerPaths,
       scratch.shapeDirtyPaths,
-      scratch.explicitRaw,
+      scratch.explicitSource,
       scratch.changedNodes,
       scratch.stateDirtyNodes,
       scratch.originalSchemas,
@@ -95,19 +95,19 @@ it('allocates no reused scratch containers and clears only populated work lists'
     const spies = unused.map((container) => vi.spyOn(container, 'clear'));
     const dirty = vi.spyOn(scratch.dirtyPaths, 'clear');
     const parents = vi.spyOn(scratch.dirtyChildrenByParent, 'clear');
-    const raw = vi.spyOn(scratch.changedRaw, 'clear');
+    const source = vi.spyOn(scratch.changedSource, 'clear');
     scratch.dirtyPaths.add('/value');
-    scratch.changedRaw.add('/value');
+    scratch.changedSource.add('/value');
     releaseSettlementScratch(scratch);
     expect(spies.map((spy) => spy.mock.calls.length)).toEqual(
       unused.map(() => 0),
     );
     expect(dirty).toHaveBeenCalledTimes(1);
     expect(parents).toHaveBeenCalledTimes(1);
-    expect(raw).toHaveBeenCalledTimes(1);
+    expect(source).toHaveBeenCalledTimes(1);
     expect(scratch.dirtyPaths.size).toBe(0);
     expect(scratch.dirtyChildrenByParent.size).toBe(0);
-    expect(scratch.changedRaw.size).toBe(0);
+    expect(scratch.changedSource.size).toBe(0);
     expect(scratch.inUse).toBe(false);
   }
 });
@@ -182,13 +182,13 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   const cap = vi.spyOn(caps, 'getTransitionCap');
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
-  const source = root.structure!.source;
-  writeFieldNode(source, 2, 'input', WriteOption.Overwrite);
+  const instance = root.structure!['source'];
+  writeFieldNode(instance, 2, 'input', WriteOption.Overwrite);
   expect(root.emit).toEqual({ source: 2, derived: 3, gated: 'filled' });
   expect(cap).toHaveBeenCalled();
   expect(reference).toHaveBeenCalled();
   expect(() =>
-    writeFieldNode(source, -1, 'input', WriteOption.Overwrite),
+    writeFieldNode(instance, -1, 'input', WriteOption.Overwrite),
   ).toThrow();
   const scratch = root.runtime.settlementScratch!;
   expect(scratch.inUse).toBe(false);
@@ -196,7 +196,7 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
     if (container instanceof Map || container instanceof Set)
       expect(container.size).toBe(0);
   expect(() =>
-    writeFieldNode(source, 3, 'input', WriteOption.Overwrite),
+    writeFieldNode(instance, 3, 'input', WriteOption.Overwrite),
   ).not.toThrow();
   expect(root.runtime.settlementScratch).toBe(scratch);
   expect(root.emit).toEqual({ source: 3, derived: 4, gated: 'filled' });
@@ -218,11 +218,11 @@ it('keeps nested scratch independent and resets an empty postorder mode', () => 
     WriteOption.EnableAutomaticWrites,
     inner,
   );
-  first.changedRaw.add('/outer');
-  nested.changedRaw.add('/inner');
+  first.changedSource.add('/outer');
+  nested.changedSource.add('/inner');
   (inner.dirtyPaths as DirtyPathSet).beginPostOrder();
   releaseSettlementScratch(inner);
-  expect(first.changedRaw.has('/outer')).toBe(true);
+  expect(first.changedSource.has('/outer')).toBe(true);
   expect(outer.inUse).toBe(true);
   expect(first.suppressAutomaticWrites).toBe(true);
   expect(nested.suppressAutomaticWrites).toBe(false);
@@ -242,7 +242,7 @@ it('keeps nested scratch independent and resets an empty postorder mode', () => 
   );
   expect(reused).toBe(outer);
   expect(later).not.toBe(first);
-  expect(later.changedRaw.size).toBe(0);
+  expect(later.changedSource.size).toBe(0);
   expect(later.suppressAutomaticWrites).toBe(false);
   releaseSettlementScratch(reused);
 });

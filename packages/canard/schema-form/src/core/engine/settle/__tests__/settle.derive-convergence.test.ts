@@ -186,7 +186,7 @@ it('consumes losing edges and preserves rank across subsequent caller writes', (
   expect(
     JSON.parse(result.snapshots[1]).nodes.find(
       (node: { path: string }) => node.path === '/target',
-    ).raw,
+    ).source,
   ).toBe(7);
 });
 
@@ -235,7 +235,7 @@ it('falls back for context expressions anywhere in the blueprint', () => {
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.structure!.target.raw).toBe(2);
+  expect(result.root.structure!.target.source).toBe(2);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -252,7 +252,7 @@ it('falls back for whole host expressions anywhere in the blueprint', () => {
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.structure!.target.raw).toBe(2);
+  expect(result.root.structure!.target.source).toBe(2);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -369,6 +369,6 @@ it('actually runs shadow and rejects a false proof with nonzero confirmation can
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
-    writeFieldNode(root.structure!.source, 3, 'input', WriteOption.Overwrite),
+    writeFieldNode(root.structure!['source'], 3, 'input', WriteOption.Overwrite),
   ).toThrow('Derive convergence proof failed: confirmation was not empty');
 });

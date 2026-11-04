@@ -46,7 +46,7 @@ describe('array fragment derive candidates', () => {
         { a: false, b: true, list: [0] },
         WriteOption.Overwrite,
       );
-      expect(root.structure!.list.structure!['0'].raw).toBe(42);
+      expect(root.structure!.list.structure!['0'].source).toBe(42);
     },
   );
 });

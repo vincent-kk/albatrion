@@ -16,7 +16,7 @@ import { collectFillDescendants } from './collectFillDescendants';
 import { getTransitionCap } from './getTransitionCap';
 import { hasRecursiveFill } from './hasRecursiveFill';
 import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
-import { isMissingRaw } from './isMissingRaw';
+import { isMissingSource } from './isMissingSource';
 import { readDefault } from './readDefault';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 
@@ -95,7 +95,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           filled.add(key);
         }
         if (context.deriveState?.activeUnsetTargets.has(node)) continue;
-        if (node.raw !== undefined) continue;
+        if (node.source !== undefined) continue;
         if (hasWrongKindBranchAncestor(node)) continue;
         if (
           node.behavior.type === 'array' &&
@@ -103,7 +103,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
         )
           continue;
         const value = readDefault(node, context.selectedDeclarationIds);
-        if (value === undefined || !isMissingRaw(node, context)) continue;
+        if (value === undefined || !isMissingSource(node, context)) continue;
         if (node.behavior.strategy === 'branch') {
           if (fillHosts && hasRecursiveFill(node, fillHosts, context)) {
             recordSettlementFailure(

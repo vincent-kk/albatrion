@@ -163,7 +163,7 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
     ]);
   });
 
-  it('writes -0 and a nullable null over equal raw values, then a NaN that leaves a misfit path', async () => {
+  it('writes -0 and a nullable null over equal source values, then a NaN that leaves a misfit path', async () => {
     await compareSameValueWrite(FLAT, { zero: 0, nan: 1, d: null }, [
       {
         apply: (root) => dispatchSetValue(root, { zero: -0, nan: 1, d: null }),

@@ -16,7 +16,7 @@
 - 트리 생성은 일반 비활성 원본을 슬롯·overlay로만 구성하며 슬롯 모드 선택이나 원본 그림자 런타임을 만들지 않는다. 공개 멤버·선언은 유지하며 슬롯 자료는 실제 사용하는 호스트에만 지연 할당한다.
 
 - 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
-- 슬롯의 raw·extras·선언 밖 값과 보유 자손은 엔진의 복제 재진입 입력이다. 런타임 클래스에는 정착·슬롯 선택 알고리즘을 두지 않는다. 배열 itemKey는 새로 발급하며 중첩 호스트는 엔진이 고정 출발점에서 형상을 다시 고른다. 호스트별 지연 보유 자료 이외에 모든 노드의 생성자 할당이나 공개 읽기의 전체 트리 순회를 추가하지 않는다(SETTLE-044·GOAL-029, NODE-053·055).
+- 슬롯의 source·extras·선언 밖 값과 보유 자손은 엔진의 복제 재진입 입력이다. 런타임 클래스에는 정착·슬롯 선택 알고리즘을 두지 않는다. 배열 itemKey는 새로 발급하며 중첩 호스트는 엔진이 고정 출발점에서 형상을 다시 고른다. 호스트별 지연 보유 자료 이외에 모든 노드의 생성자 할당이나 공개 읽기의 전체 트리 순회를 추가하지 않는다(SETTLE-044·GOAL-029, NODE-053·055).
 
 - 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < derive < settle < write < surface`이다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 안다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임한다(NODE-010·016, LANDING-084).
 - 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않는다(NODE-016). core 시나리오 러너와 engine 시험은 core 소유 시험 fixture의 `FieldNodeRecord` 기반 형을 사용하며 구현 클래스를 직접 가져오지 않는다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않는다(filid 경계 규칙 §5).
@@ -54,8 +54,8 @@
 | `escapedName` | getter | 레코드 이스케이프 이름 | NODE-008 |
 | `path` | getter | 레코드 절대 경로 | NODE-008·054 |
 | `children` | getter | 현재 형상의 저장 배열 그대로 | NODE-043, TEST-070 |
-| `raw` | getter | 잎·터미널의 해석된 원본 또는 branch 호스트의 잘못된 종류 원본. 객체·배열 입력은 각 자식에 분배되어 branch 호스트에는 저장되지 않음 | VALUE-002·004, NODE-021, 26C-01 |
-| `undeclaredValues` | getter | 객체 branch의 선언 밖 키 또는 배열 branch의 청사진 없는 꼬리 자리 값을 받은 순서로 보관하는 상태 칸 | VALUE-002·004, NODE-052, 26C-01 |
+| `source` | getter | 잎·터미널의 해석된 원본 또는 branch 호스트의 잘못된 종류 원본. 객체·배열 입력은 각 자식에 분배되어 branch 호스트에는 저장되지 않음 | VALUE-002·004, NODE-021, 26C-01 |
+| `extras` | getter | 객체 branch의 선언 밖 키 또는 배열 branch의 청사진 없는 꼬리 자리 값을 받은 순서로 보관하는 상태 칸 | VALUE-002·004, NODE-052, 26C-01 |
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
 | `inactiveValues` | getter | 호스트의 보유 슬롯·overlay에서 지연 계산한 동결 목록. 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
@@ -137,7 +137,7 @@ batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전�
 
 ### surface-slot-new-instance — 슬롯 복제의 새 수명
 
-- 재진입한 노드와 자손은 새 인스턴스이고 옛 참조는 떼어진 채 유지된다. raw·extras·선언 밖 값과 보존된 자손 원본은 같은 공개 값으로 복원된다.
+- 재진입한 노드와 자손은 새 인스턴스이고 옛 참조는 떼어진 채 유지된다. source·extras·선언 밖 값과 보존된 자손 원본은 같은 공개 값으로 복원된다.
 
 ### surface-slot-old-subscriptions — 옛 구독의 무통지
 
@@ -153,7 +153,7 @@ batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전�
 
 ### surface-slot-frozen-reads — 떼어진 슬롯의 고정 읽기
 
-- 옛 참조의 value·raw·선언 밖 값·children·inactiveValues 읽기는 이후 overlay·재진입·reset에서 바뀌지 않는다. 같은 인스턴스에서 변화 없는 inactiveValues 반복 읽기는 같은 동결 배열을 반환한다.
+- 옛 참조의 value·source·선언 밖 값·children·inactiveValues 읽기는 이후 overlay·재진입·reset에서 바뀌지 않는다. 같은 인스턴스에서 변화 없는 inactiveValues 반복 읽기는 같은 동결 배열을 반환한다.
 
 ### surface-slot-memory-bound — 방문한 슬롯의 보유 상한
 

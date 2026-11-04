@@ -7,7 +7,7 @@
 | 항목 | 결과와 근거 |
 | --- | --- |
 | 1. 타입·키 | `InactiveValue<V>`·`InactiveValueResolver<V>`·`InactiveValueContext`를 공개했습니다. node·fields·fragment에 열 번째 키 `inactiveValue`를 허용하고 문자열은 리터럴로 유지합니다. 동일 층의 literal true `unsetOnInactive`와 동거하면 전용 경고를 냅니다. 청사진 시험 9개는 구현 전 `UNKNOWN_GROUP_KEY`로 실패하고 구현 뒤 통과했습니다. |
-| 2. 보존값 | 직전 커밋의 값·부모/루트 값·스키마·폼 context로 해석하고 retain 뒤, restored raw 전 슬롯 JSON whole replace로 적용합니다. node→fields→fragment, 조상→자손 순서를 지킵니다. 리터럴·함수·undefined·층·재진입·합성·명시값 시험 13개가 통과했습니다. |
+| 2. 보존값 | 직전 커밋의 값·부모/루트 값·스키마·폼 context로 해석하고 retain 뒤, restored source 전 슬롯 JSON whole replace로 적용합니다. node→fields→fragment, 조상→자손 순서를 지킵니다. 리터럴·함수·undefined·층·재진입·합성·명시값 시험 13개가 통과했습니다. |
 | 3. 등록 | `node.onInactive`는 인스턴스별 Map/Set과 idempotent 해제를 사용합니다. 등록 순서대로 모두 실행하고 마지막 정의된 결과를 채택하며 모두 undefined이면 선언을 적용합니다. throw는 노드 override 전체를 취소합니다. 수명·context 시험 10개, 해석 경로 미진입 비용 시험 2개가 통과했습니다. |
 | 4. 거부·실패 | resolver 중 setValue·배열 여섯 동사·batch·resetSubtree를 진입 전에 거부합니다. 개발 경고와 운영 침묵을 구별하며 예외는 정착 실패로 기록하고 나감은 커밋합니다. 거부 시험은 가드 전 2개가 batch 실행으로 실패했고, 가드 뒤 예외 격리·보고 재귀까지 6개가 통과했습니다. production은 ESM·Node ESM·CJS의 침묵을 직접 확인했습니다. |
 | 5. 배달 | 기존 79장면·429관측점의 A/B 차이 0, 마운트 6장면·12관측점 차이 0입니다. 새 기능 7장면·21관측점은 후보 계약으로 별도 단언했습니다. |

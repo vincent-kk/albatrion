@@ -27,7 +27,7 @@ describe('settle descendant rebirth regression', () => {
       { present: true, source: 'A', group: { target: 'manual' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.group?.structure?.target?.raw).toBe('A');
+    expect(root.structure?.group?.structure?.target?.source).toBe('A');
 
     writeFieldNode(
       root.structure!.present,

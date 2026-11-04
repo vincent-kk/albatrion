@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** Trailing null slots are filtered from output while raw item positions remain. */
+/** Trailing null slots are filtered from output while source item positions remain. */
 export const omitTrailingScenario = {
   name: 'array.omit-trailing',
   description: 'TEST-018 VALUE-034: omitTrailing trims only the output tail.',

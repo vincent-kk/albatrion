@@ -23,7 +23,7 @@ const NO_FAILURES: readonly [] = Object.freeze([]);
 
 /**
  * Decide final interaction resets from loaded values or false-to-true edges.
- * @param root - Final calculated tree whose raw values remain untouched
+ * @param root - Final calculated tree whose source values remain untouched
  * @param state - Last commit and current settlement rule values
  * @returns Nodes to clear, optional trace, and all authored expression failures
  */

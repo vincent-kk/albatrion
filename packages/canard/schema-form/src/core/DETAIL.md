@@ -4,7 +4,7 @@
 
 - Authored schemas distinguish object hosts from other hosts at the declaration site. The binding consumes `NonObjectSchemaControls` through this boundary; helper union members stay internal. This introduces no runtime allocation.
 
-- 호스트 바인딩은 engine이 소유한 실패 묶음의 잎 순회를 core 경계에서 소비한다. raw host 채널은 바인딩과 engine이 각각 유지하며 패키지 공개 표면은 넓히지 않는다.
+- 호스트 바인딩은 engine이 소유한 실패 묶음의 잎 순회를 core 경계에서 소비한다. unrefined host 채널은 바인딩과 engine이 각각 유지하며 패키지 공개 표면은 넓히지 않는다.
 
 - B12는 engine이 소유한 `InactiveValue`·`InactiveValueResolver`·`InactiveValueContext`를 이름으로 재수출하고 surface의 `onInactive`를 노드 공개 계약으로 조합합니다. 구현은 각 소유 경계에 남깁니다.
 
@@ -21,7 +21,7 @@
 - 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 engine에 둔다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않는다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가한다(NODE-045, SETTLE-017·047, GOAL-011).
 
 - `core/index.ts`가 이 fractal의 경계이다. `surface/`의 노드·바인딩 계약과 `engine/`의 공개 실행 계약을 와일드카드 없이 이름으로 다시 내보내며, 렌더 계층은 이 경계를 사용한다(LANDING-067·087, 69C-01).
-- 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값이다. 원본 상태는 `raw`·`undeclaredValues`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않는다(VALUE-002·027·034, LANDING-067).
+- 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값이다. 원본 상태는 `source`·`extras`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않는다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽는다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유한다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않는다. 새 시나리오 하네스는 새 엔진을 검증한다(LANDING-205).
 - `nodeFromJSONSchema`는 `src/__tests__/fixtures/`의 시험·측정 도우미이며 core index의 공개 생성·마운트 통로만 사용한다. core·패키지 진입점은 이 도우미를 내보내지 않으며 시험·bench·aileron 벤치마크가 파일 경로로 읽는다. `<Form>`은 `buildFieldNodeTree`·`mountFieldNode` 바인딩 통로를 쓴다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않는다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않는다. 사건 계약은 새 엔진의 record가 소유한다(LANDING-087, 70C-01).
@@ -103,8 +103,8 @@ RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이�
 
 ### observation-identity-portability — 검증 전용 occurrence 결속
 
-- 원래 selection collector의 실제 rules·ruleSources·ruleTargets 소실에 의한 거짓 동치와 raw occurrence offset에 의한 거짓 차이를 재현하고, 완전 capture는 그 오류를 구별한다.
-- 실제 source/raw A/raw B의 producer와 reader가 같은 module에 결속되고 fixture graph에는 engine/producer가 없다. 명시 입력 SHA, 원문 prefix/footer, compiler/parser/dependency와 source graph 계보를 검증하며 cached output·잘못된 입력·literal을 바꾸는 서식 변환은 거절한다.
+- 원래 selection collector의 실제 rules·ruleSources·ruleTargets 소실에 의한 거짓 동치와 original occurrence offset에 의한 거짓 차이를 재현하고, 완전 capture는 그 오류를 구별한다.
+- 실제 source/unprocessed A/unprocessed B의 producer와 reader가 같은 module에 결속되고 fixture graph에는 engine/producer가 없다. 명시 입력 SHA, 원문 prefix/footer, compiler/parser/dependency와 source graph 계보를 검증하며 cached output·잘못된 입력·literal을 바꾸는 서식 변환은 거절한다.
 - 원형58 호환과 helper 회귀, source-owner와 injection 목적지 구별·readonly 무할당·rebirth/held history·잘못된 owner 거절을 Node/Bun에서 별도 단위로 검증한다. 과거 live66 및 성능·후속 제품 가설의 결과를 이번 실행으로 합산하지 않는다.
 
 ### two-channel — 두 채널이 분리되어 있다

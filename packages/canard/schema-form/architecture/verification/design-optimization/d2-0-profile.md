@@ -106,7 +106,7 @@ CPU·호출 수·할당은 서로 다른 계측 실행입니다. CPU의 연산�
 | markCommitDeliveries | 296.3 / 3.0 | 1063.6 / 10.6 | 30.3 / 0.3 | 0.0 / 0.0 |
 | markFieldNodeEvent | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 |
 | loadStaticFirstTree | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 | 2039.8 / 20.3 |
-| setLatentRaw | 842.7 / 8.4 | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 |
+| setLatentSource | 842.7 / 8.4 | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 |
 | updateInactiveValuesMemo | 905.1 / 9.0 | 0.6 / 0.0 | 3.4 / 0.0 | 0.0 / 0.0 |
 
 ### 계측 예외와 위치 표기
@@ -132,7 +132,7 @@ CPU 반복 66,142회, 비 idle 수집 10020.8ms입니다. 아래 자기 시간�
 | 3 | assembleObject | engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:21 | 316.5 | 3.2 | 3.3 |
 | 4 | getPrefix | engine/utils/pathIndex/utils/PathStoreIndex.ts:38 | 281.9 | 2.8 | 2.9 |
 | 5 | updateInactiveValuesMemo | engine/settle/utils/commit/updateInactiveValuesMemo.ts:29 | 269.4 | 2.7 | 9 |
-| 6 | setLatentRaw | engine/settle/utils/latentStore/setLatentRaw.ts:22 | 255.2 | 2.5 | 8.4 |
+| 6 | setLatentSource | engine/settle/utils/latentStore/setLatentSource.ts:22 | 255.2 | 2.5 | 8.4 |
 | 7 | selectEntryStep | engine/settle/utils/compute/childSelection/selectEntryStep.ts:75 | 246.2 | 2.5 | 10 |
 | 8 | register | engine/settle/utils/gates/getGateRegistry.ts:118 | 240.9 | 2.4 | 3.6 |
 | 9 | (program) | (native) | 221.6 | 2.2 | 2.2 |
@@ -179,7 +179,7 @@ CPU 반복 66,142회, 비 idle 수집 10020.8ms입니다. 아래 자기 시간�
 | 5 | get name | surface/runtime/FieldNode.ts | 86.0 |
 | 6 | isChildMarkerAt | engine/utils/controls/getFragmentOwnerPaths.ts | 72.0 |
 | 7 | getCommittedDeclarationKey | engine/utils/controls/getCommittedDeclarationKey.ts | 54.0 |
-| 8 | get raw | surface/runtime/FieldNode.ts | 54.0 |
+| 8 | get source | surface/runtime/FieldNode.ts | 54.0 |
 | 9 | captureFieldNodeChange | engine/record/utils/captureFieldNodeChange.ts | 52.0 |
 | 10 | get rootNode | surface/runtime/FieldNode.ts | 46.0 |
 | 11 | set | engine/utils/pathIndex/PathKeyedMap.ts | 44.0 |
@@ -221,7 +221,7 @@ CPU 반복 66,142회, 비 idle 수집 10020.8ms입니다. 아래 자기 시간�
 | 12 | captureLatentDescendants | engine/settle/utils/transition/captureLatentDescendants.ts | 4.08 | 2.0 |
 | 13 | collect | engine/settle/utils/dependencies/getDependencyIndex.ts | 3.94 | 1.9 |
 | 14 | add | (native) | 3.76 | 1.8 |
-| 15 | setLatentRaw | engine/settle/utils/latentStore/setLatentRaw.ts | 3.62 | 1.8 |
+| 15 | setLatentSource | engine/settle/utils/latentStore/setLatentSource.ts | 3.62 | 1.8 |
 
 ### bulk-nested-d6-f4
 
@@ -265,7 +265,7 @@ CPU 반복 1,372회, 비 idle 수집 10045.9ms입니다. 아래 자기 시간은
 | --- | --- | --- | ---: |
 | 1 | get path | surface/runtime/FieldNode.ts | 43,689.0 |
 | 2 | get name | surface/runtime/FieldNode.ts | 24,570.0 |
-| 3 | get raw | surface/runtime/FieldNode.ts | 17,748.0 |
+| 3 | get source | surface/runtime/FieldNode.ts | 17,748.0 |
 | 4 | get schemaType | surface/runtime/FieldNode.ts | 16,383.0 |
 | 5 | sameValue | engine/utils/compute/sameValue.ts | 12,740.0 |
 | 6 | isTreeNode | engine/settle/utils/commit/markCommitDeliveries.ts | 10,923.0 |
@@ -447,7 +447,7 @@ CPU 반복 480회, 비 idle 수집 10059.5ms입니다. 아래 자기 시간은 *
 | --- | --- | --- | ---: |
 | 1 | readSchemaObject | engine/blueprint/utils/analyze/readSchemaObject.ts | 30,035.0 |
 | 2 | get name | surface/runtime/FieldNode.ts | 21,840.0 |
-| 3 | get raw | surface/runtime/FieldNode.ts | 16,383.0 |
+| 3 | get source | surface/runtime/FieldNode.ts | 16,383.0 |
 | 4 | get children | surface/runtime/FieldNode.ts | 10,923.0 |
 | 5 | unionAllowedTypes | engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts | 10,922.0 |
 | 6 | readAllowedTypes | engine/blueprint/utils/allowedTypes/readAllowedTypes.ts | 10,922.0 |

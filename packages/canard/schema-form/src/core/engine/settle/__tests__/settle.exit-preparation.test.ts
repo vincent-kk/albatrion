@@ -12,8 +12,8 @@ import { getControlLayers } from '../utils/controls/getControlLayers';
 import { getSlotOrder } from '../utils/slots/getSlotOrder';
 import { readUnsetPolicy } from '../utils/transition/readUnsetPolicy';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -221,14 +221,14 @@ describe('exit preparation preserves committed policies and document order', () 
         !clear,
       );
       if (!clear)
-        expect(readRetainedSlotRaw(root, '/branch/value', 'string')).toBe('V');
+        expect(readRetainedSlotSource(root, '/branch/value', 'string')).toBe('V');
       writeFieldNode(
         root.structure!.flag,
         true,
         'input',
         WriteOption.Overwrite,
       );
-      if (!clear) expect(root.structure!.branch.structure!.value.raw).toBe('V');
+      if (!clear) expect(root.structure!.branch.structure!.value.source).toBe('V');
       expect(root.structure!.branch).not.toBe(old);
     },
   );

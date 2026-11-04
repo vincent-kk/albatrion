@@ -6,7 +6,7 @@ import { isPlain } from '../isPlain';
 
 /**
  * Tell whether a host write keeps the key set (object) or the item count (array) of the host's previous local.
- * Reads each input key once; the caller has already proven the raw, extras and item count unchanged.
+ * Reads each input key once; the caller has already proven the source, extras and item count unchanged.
  * @param node - Branch host whose `local` still holds the previous commit's assembly
  * @param value - Interpreted host input
  * @param isMerge - Whether omitted keys are retained, so only supplied keys must already exist

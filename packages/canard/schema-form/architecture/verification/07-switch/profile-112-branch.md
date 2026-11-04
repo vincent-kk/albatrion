@@ -166,7 +166,7 @@ B=5/10/20/40에서 건드리는 분기는 0과 4, 무관 분기는 3/8/18/38개�
 | `src/core/settle/utils/gates/getGateRegistry.ts:222:getGateRegistry` | 16/8/8 | 16/8/8 | 24/8 | V04 |
 | `src/core/settle/utils/gates/getGateRegistry.ts:50:register` | 16/8/8 | 16/8/8 | 24/8 | V04 |
 | `src/core/SchemaNode/SchemaNode.ts:154:path` | 72/45/36 | 90/45/45 | 135/45 | V19 |
-| `src/core/SchemaNode/SchemaNode.ts:160:raw` | 32/19/16 | 38/19/19 | 57/19 | V19 |
+| `src/core/SchemaNode/SchemaNode.ts:160:source` | 32/19/16 | 38/19/19 | 57/19 | V19 |
 | `src/core/settle/utils/write/DirtyPathSet.ts:45:add` | 12/6/6 | 12/6/6 | 18/6 | V13 |
 | `src/core/settle/utils/paths/bindTemplatePath.ts:7:bindTemplatePath` | 6/6/3 | 12/6/6 | 18/6 | V05 |
 | `src/core/settle/utils/write/getDependencyIndex.ts:84:loop` | 6/3/3 | 6/3/3 | 9/3 | V13 |
@@ -330,7 +330,7 @@ B=5/10/20/40에서 건드리는 분기는 0과 4, 무관 분기는 3/8/18/38개�
 
 - **C05** [src/core/settle/DETAIL.md](../../../src/core/settle/DETAIL.md) `:30`: “게이트는 첫 거절에서 멈추며 선언/깊이/배달 순서와 같은 값의 참조는 유지합니다.”
 
-- **C06** [src/core/settle/DETAIL.md](../../../src/core/settle/DETAIL.md) `:128`: “무공표 독립 reader는 노드가 이미 소비되었거나 공표 대기이면 던지고, 읽지 않는 undefined raw 호스트는 제외함을 단언합니다.”
+- **C06** [src/core/settle/DETAIL.md](../../../src/core/settle/DETAIL.md) `:128`: “무공표 독립 reader는 노드가 이미 소비되었거나 공표 대기이면 던지고, 읽지 않는 undefined source 호스트는 제외함을 단언합니다.”
 
 - **C07** [src/core/settle/DETAIL.md](../../../src/core/settle/DETAIL.md) `:130`: “마운트와 갱신의 모든 active gate 평가 직후 독립 reader의 값이 평가 결과와 같고, changedNodes·pendingOutputs·gateThrowVersion이 변하지 않으며 위반이 0임을 단언합니다.”
 

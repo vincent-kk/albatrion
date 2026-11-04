@@ -5,7 +5,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
 // filid:contract settle-gates-conflicts
 describe('shared declaration conflicts', () => {
@@ -105,7 +105,7 @@ describe('shared declaration conflicts', () => {
       blueprint.root.childEntries.find((entry) => entry.name === 'shared')
         ?.node,
     );
-    expect(root.structure?.enabled?.raw).toBe(true);
+    expect(root.structure?.enabled?.source).toBe(true);
     if (conflict) {
       expect(caught).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
@@ -171,9 +171,9 @@ describe('shared declaration conflicts', () => {
       WriteOption.Overwrite,
     );
     expect(root.runtime.diagnostics.status).toBe('stable');
-    expect(root.structure?.target?.raw).toBe('A');
+    expect(root.structure?.target?.source).toBe('A');
     expect(root.structure?.filled).toBeUndefined();
-    expect(root.structure?.departed?.raw).toBe('held');
+    expect(root.structure?.departed?.source).toBe('held');
 
     let caught: unknown;
     try {
@@ -190,8 +190,8 @@ describe('shared declaration conflicts', () => {
       code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
     });
     expect(root.structure?.shared?.blueprintNode.kind).toBe('number');
-    expect(root.structure?.target?.raw).toBe('B');
-    expect(root.structure?.filled?.raw).toBe('F');
+    expect(root.structure?.target?.source).toBe('B');
+    expect(root.structure?.filled?.source).toBe('F');
     expect(root.structure?.departed).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/departed', 'string')).toBe(false);
     expect(root.runtime.diagnostics).toMatchObject({
@@ -201,7 +201,7 @@ describe('shared declaration conflicts', () => {
     });
   });
 
-  it('26C-05 typeConflict commits the raw source then throws', () => {
+  it('26C-05 typeConflict commits the source then throws', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -218,9 +218,9 @@ describe('shared declaration conflicts', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
-    expect(root.raw).toBeUndefined();
-    expect(root.undeclaredValues).toEqual({ enabled: true });
-    expect(root.structure?.value?.raw).toBe(3);
+    expect(root.source).toBeUndefined();
+    expect(root.extras).toEqual({ enabled: true });
+    expect(root.structure?.value?.source).toBe(3);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'sharedConflict',

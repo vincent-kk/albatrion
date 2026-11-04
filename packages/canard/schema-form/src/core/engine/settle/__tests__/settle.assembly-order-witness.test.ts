@@ -20,7 +20,7 @@ it('connects the real slot order writer to object assembly without dormant visit
     },
   });
   const node = {
-    runtime: {}, local: {}, undeclaredValues: undefined,
+    runtime: {}, local: {}, extras: undefined,
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof objectBehavior.branch.assemble>[0];

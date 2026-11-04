@@ -27,12 +27,12 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * An object host is written whole only inside the context's replacement scope; under a
  * multi-write batch that scope is the union of the written paths (191C-01).
  * In an admitted static write a host keeping its key set or item count stays out of
- * shape-dirty and its leaf children whose interpreted value equals their raw are not marked (W1).
+ * shape-dirty and its leaf children whose interpreted value equals their source are not marked (W1).
  * @param node - Caller target or descendant reached by a whole host write
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
- * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its raw by the distribution's skip test; omitted, the input is interpreted and compared here
+ * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its source by the distribution's skip test; omitted, the input is interpreted and compared here
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
@@ -61,16 +61,16 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   else
     context.automaticLog.push({
       node,
-      previousRaw: node.raw,
-      previousExtras: node.undeclaredValues,
+      previousSource: node.source,
+      previousExtras: node.extras,
       previousDistributed: context.distributedInputs.get(node),
     });
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
-    if (known || !sameValue(node.raw, value)) {
-      node.raw = value;
-      context.changedRaw.add(node.path);
+    if (known || !sameValue(node.source, value)) {
+      node.source = value;
+      context.changedSource.add(node.path);
       context.changedNodes.add(node);
       if (context.automatic) context.automaticChanged = true;
     }
@@ -93,7 +93,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     }
     return;
   }
-  let nextRaw: unknown;
+  let nextSource: unknown;
   let extras: unknown;
   let whole: boolean;
   let countChanged = false;
@@ -105,20 +105,20 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         host: node,
         previousItems: [...(node.children ?? [])],
         previousItemCount,
-        previousExtras: node.undeclaredValues,
+        previousExtras: node.extras,
       });
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
     node.itemCount = isArray(value) ? value.length : 0;
     countChanged = node.itemCount !== previousItemCount;
-    nextRaw = isArray(value) ? undefined : value;
+    nextSource = isArray(value) ? undefined : value;
     extras = isArray(value) ? arrayExtras(node, value) : undefined;
     whole = true;
     if (isMerge && node !== context.replaceScope)
       pruneInactiveSources(node.runtime, node.path, undefined, context);
   } else {
     if (!isPlain(value)) {
-      nextRaw = value;
+      nextSource = value;
       extras = undefined;
       whole = true;
       if (isMerge && node !== context.replaceScope)
@@ -136,27 +136,27 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
               break;
             }
       }
-      nextRaw = isMerge ? node.raw : undefined;
-      if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
-      extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
+      nextSource = isMerge ? node.source : undefined;
+      if (isMerge && nextSource !== undefined) context.wrongKindHosts.add(node);
+      extras = nextExtras(node.extras, value, declared, isMerge);
     }
   }
-  const rawChanged = !sameValue(node.raw, nextRaw);
-  const extrasChanged = node.undeclaredValues !== extras;
+  const sourceChanged = !sameValue(node.source, nextSource);
+  const extrasChanged = node.extras !== extras;
   const sameShape =
-    node.raw === undefined &&
-    nextRaw === undefined &&
-    node.undeclaredValues === undefined &&
+    node.source === undefined &&
+    nextSource === undefined &&
+    node.extras === undefined &&
     extras === undefined &&
     !countChanged &&
     admitsSameValueWrite(node, context) &&
     keepsHostKeys(node, value, isMerge);
   if (!sameShape && context.writeEpoch !== undefined)
     restoreWriteEpochPaths(context);
-  if (rawChanged || extrasChanged || countChanged) {
-    node.raw = nextRaw;
-    node.undeclaredValues = extras;
-    context.changedRaw.add(node.path);
+  if (sourceChanged || extrasChanged || countChanged) {
+    node.source = nextSource;
+    node.extras = extras;
+    context.changedSource.add(node.path);
     context.changedNodes.add(node);
     if (context.automatic) context.automaticChanged = true;
   }
@@ -192,7 +192,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       childSpec = staticSpec(child.schemaType, child.nullable);
       interpreted = child.behavior.interpret(childInput, childSpec);
     }
-    if (interpreted !== UNINTERPRETED && sameValue(child.raw, interpreted))
+    if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;
     if (context.automatic) {
       context.writtenInputs.set(child, childInput);

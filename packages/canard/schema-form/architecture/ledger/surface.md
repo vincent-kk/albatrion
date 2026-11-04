@@ -510,7 +510,7 @@
 - 결정:
   > | 칸 | 공개 이름 | 비고 |
   > | -- | --------- | ---- |
-  > | 원본 (`raw`) | 공개 이름 없음 | 소비자가 원본을 직접 읽을 이유가 없다. 꺼진 조각의 원본은 N6의 `getInactiveValues`가 열거한다 |
+  > | 원본 (`source`) | 공개 이름 없음 | 소비자가 원본을 직접 읽을 이유가 없다. 꺼진 조각의 원본은 N6의 `getInactiveValues`가 열거한다 |
   > | 합성 값 (`local`) | `value` (유지) | 호스트 노드에서만 뜻이 "원본"에서 "합성 값"으로 바뀐다. README 1483행 "`node.value` stays raw"는 이주 안내 대상 |
   > | 방출 값 (`emit`) | `outputValue` | 오늘의 `normalizedValue`의 이름 변경. README가 이 투영을 "Array Output Filters"(배열 한정)라 부른다. `normalizedValue`는 무엇을 정규화했는지 말하지 않고 내부 비트 `Normalize`와 뜻이 다르다 |
 - 보충: 없음

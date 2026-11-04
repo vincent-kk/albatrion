@@ -3,7 +3,7 @@ import { optionsSchema } from './literal-and-format.scenario';
 
 /**
  * Built-in inputs preserve the display of strings outside their enum or date domain. The enum select adds a
- * disabled option for the raw value, and a malformed date uses an editable text input. Validation still reports
+ * disabled option for the source value, and a malformed date uses an editable text input. Validation still reports
  * the enum violation on the node.
  */
 export const restrictedInputFindingScenario: FormScenario = {

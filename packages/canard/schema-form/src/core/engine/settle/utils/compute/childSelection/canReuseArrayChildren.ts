@@ -56,7 +56,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     capabilities.hasDerive ||
     oldCount === undefined ||
     oldCount === node.itemCount ||
-    node.raw !== undefined ||
+    node.source !== undefined ||
     context.distributedInputs.has(node) ||
     context.pathChanges.length > 0 ||
     context.pendingExits.size > 0 ||

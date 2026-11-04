@@ -7,7 +7,7 @@ import { markWrite } from '../input/markWrite';
 /**
  * Apply current caller input without restoring an already cloned source again.
  * @param host - Live distribution owner of the entering clone
- * @param child - Fresh subtree whose retained raw and extras have been copied
+ * @param child - Fresh subtree whose retained source and extras have been copied
  * @param name - Canonical binding name used by the host input
  * @param context - Distribution, automatic-write, and fill work for this entry
  * @returns Nothing; exact retained sources take precedence over structural replay

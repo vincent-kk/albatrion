@@ -100,6 +100,6 @@ describe('round9 P4 controls under the current AND/OR policy', () => {
     const root = controlsTree();
     root.find('/on')?.setValue(false);
     root.find('/on')?.setValue(true);
-    expect(root.find('/x')?.raw).toBe('X');
+    expect(root.find('/x')?.source).toBe('X');
   });
 });

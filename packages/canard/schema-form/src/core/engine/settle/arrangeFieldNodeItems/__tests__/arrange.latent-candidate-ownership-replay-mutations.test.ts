@@ -15,8 +15,8 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 it.each([
   [
@@ -108,7 +108,7 @@ it.each([
     destinationOn: true,
     list: operation === 'insert' ? [{}, value] : [value],
   };
-  expect(getDispatchNode(list, name).raw).toEqual(value);
+  expect(getDispatchNode(list, name).source).toEqual(value);
   expect(root.local).toEqual(expected);
   expect(root.emit).toEqual(expected);
   expect(
@@ -187,13 +187,13 @@ it.each([
     const from = operation === 'insert' ? '0' : '1';
     const to = operation === 'insert' ? '1' : '0';
     const list = getDispatchNode(root, 'list');
-    const held = readRetainedSlotRaw(root, '/list/' + from, 'object');
+    const held = readRetainedSlotSource(root, '/list/' + from, 'object');
     expect(held).toEqual({ extra: 9 });
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
-    expect(readRetainedSlotRaw(root, '/list/' + to, 'object')).toEqual(held);
+    expect(readRetainedSlotSource(root, '/list/' + to, 'object')).toEqual(held);
     expect(hasRetainedSlotOwnSource(root, '/list/' + from, 'object')).toBe(
       false,
     );
@@ -206,7 +206,7 @@ it.each([
     };
     expect(root.local).toEqual(expected);
     expect(root.emit).toEqual(expected);
-    expect(getDispatchNode(list, to).undeclaredValues).toEqual({ extra: 9 });
+    expect(getDispatchNode(list, to).extras).toEqual({ extra: 9 });
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({ current: { local: expected, emit: expected } });

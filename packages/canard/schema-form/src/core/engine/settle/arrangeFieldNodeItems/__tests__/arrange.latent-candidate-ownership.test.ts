@@ -12,8 +12,8 @@ import {
   dispatchSetValue,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 import * as slotApplication from '../utils/arraySlots/applyArraySlots';
 
@@ -30,19 +30,19 @@ describe('tuple source-slot candidate ownership', () => {
       });
       const list = getDispatchNode(root, 'list');
       const names = depth === 1 ? ['v'] : ['box', 'v'];
-      const source = getDispatchNode(list, '0');
+      const instance = getDispatchNode(list, '0');
       dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-      expect(getDispatchNode(source, ...names).raw).toBe(37);
+      expect(getDispatchNode(instance, ...names).source).toBe(37);
       dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
       expect(
-        readRetainedSlotRaw(root, '/list/0/' + names.join('/'), 'number'),
+        readRetainedSlotSource(root, '/list/0/' + names.join('/'), 'number'),
       ).toBe(37);
       root.runtime.disableAutomaticWrites = true;
       dispatchInsert(list, 0, {});
       const moved = getDispatchNode(list, '1');
-      expect(source.detached).toBe(true);
-      expect(moved).not.toBe(source);
-      expect(getDispatchNode(moved, ...names).raw).toBe(37);
+      expect(instance.detached).toBe(true);
+      expect(moved).not.toBe(instance);
+      expect(getDispatchNode(moved, ...names).source).toBe(37);
       expect(moved.local).toEqual(depth === 1 ? { v: 37 } : { box: { v: 37 } });
       expect(moved.emit).toEqual(moved.local);
     },
@@ -94,7 +94,7 @@ describe('tuple source-slot candidate ownership', () => {
         )?.value,
       ).toBe(expected);
       dispatchSetValue(getDispatchNode(root, destination, 'show'), true);
-      expect(getDispatchNode(root, destination, 'v').raw).toBe(expected);
+      expect(getDispatchNode(root, destination, 'v').source).toBe(expected);
     },
   );
 
@@ -120,7 +120,7 @@ describe('tuple source-slot candidate ownership', () => {
         getDispatchNode(root, 'kind'),
         kind === 'string' ? 'number' : 'string',
       );
-      expect(readRetainedSlotRaw(root, `/list/${sourceIndex}/v`, kind)).toBe(
+      expect(readRetainedSlotSource(root, `/list/${sourceIndex}/v`, kind)).toBe(
         value,
       );
 
@@ -128,7 +128,7 @@ describe('tuple source-slot candidate ownership', () => {
       else dispatchRemove(list, 0);
       expect(original.detached).toBe(true);
       expect(getDispatchNode(list, String(destination))).not.toBe(original);
-      expect(readRetainedSlotRaw(root, `/list/${destination}/v`, kind)).toBe(
+      expect(readRetainedSlotSource(root, `/list/${destination}/v`, kind)).toBe(
         value,
       );
 
@@ -137,7 +137,7 @@ describe('tuple source-slot candidate ownership', () => {
           hasRetainedSlotOwnSource(root, `/list/${sourceIndex}/v`, kind),
         ).toBe(false);
       dispatchSetValue(getDispatchNode(root, 'kind'), kind);
-      expect(getDispatchNode(list, String(destination), 'v').raw).toBe(value);
+      expect(getDispatchNode(list, String(destination), 'v').source).toBe(value);
       expect(list.local).toEqual(
         operation === 'insert'
           ? [{}, { v: value }, { v: value }]
@@ -166,25 +166,25 @@ describe('tuple source-slot candidate ownership', () => {
       dispatchSetValue(getDispatchNode(root, 'kind'), 'none');
       const source = operation === 'insert' ? 0 : 1;
       const destination = operation === 'insert' ? 1 : 0;
-      expect(readRetainedSlotRaw(root, `/list/${source}/v`, 'string')).toBe(
+      expect(readRetainedSlotSource(root, `/list/${source}/v`, 'string')).toBe(
         source === 0 ? 'first' : 'second',
       );
-      expect(readRetainedSlotRaw(root, `/list/${source}/v`, 'number')).toBe(37);
+      expect(readRetainedSlotSource(root, `/list/${source}/v`, 'number')).toBe(37);
       if (operation === 'insert') dispatchInsert(list, 0, {});
       else dispatchRemove(list, 0);
       expect(
-        readRetainedSlotRaw(root, `/list/${destination}/v`, 'string'),
+        readRetainedSlotSource(root, `/list/${destination}/v`, 'string'),
       ).toBe(source === 0 ? 'first' : 'second');
       expect(
-        readRetainedSlotRaw(root, `/list/${destination}/v`, 'number'),
+        readRetainedSlotSource(root, `/list/${destination}/v`, 'number'),
       ).toBe(37);
 
       dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-      expect(getDispatchNode(list, String(destination), 'v').raw).toBe(
+      expect(getDispatchNode(list, String(destination), 'v').source).toBe(
         source === 0 ? 'first' : 'second',
       );
       dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-      expect(getDispatchNode(list, String(destination), 'v').raw).toBe(37);
+      expect(getDispatchNode(list, String(destination), 'v').source).toBe(37);
     },
   );
 
@@ -196,8 +196,8 @@ describe('tuple source-slot candidate ownership', () => {
       const list = getDispatchNode(root, 'list');
       dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
       dispatchSetValue(getDispatchNode(root, 'kind'), 'none');
-      expect(readRetainedSlotRaw(root, '/list/0/v', 'string')).toBe('held');
-      expect(readRetainedSlotRaw(root, '/list/0/v', 'number')).toBe(37);
+      expect(readRetainedSlotSource(root, '/list/0/v', 'string')).toBe('held');
+      expect(readRetainedSlotSource(root, '/list/0/v', 'number')).toBe(37);
       if (operation === 'remove') dispatchRemove(list, 0);
       else if (operation === 'pop') dispatchPop(list);
       else dispatchClear(list);

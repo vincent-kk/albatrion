@@ -61,7 +61,7 @@ describe('state-vocabulary output divergence', () => {
     expect(root.isDivergent).toBe(false);
     expect(root.find('/b')?.isDivergent).toBe(false);
   });
-  it('a default-filled field compares against the filled output, not the raw load source', () => {
+  it('a default-filled field compares against the filled output, not the loaded source', () => {
     const root = makeVocabularyTree(
       {
         type: 'object',

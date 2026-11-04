@@ -12,7 +12,7 @@ import * as layers from '../utils/controls/getControlLayers';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -174,7 +174,7 @@ describe('direct exit-policy child ownership', () => {
     const old = root.structure!.secret;
     dispatchWriteInput(root.structure!.flag, false);
     expect(old.detached).toBe(true);
-    expect(old.raw).toBe('S');
+    expect(old.source).toBe('S');
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(
       scene.keep,
     );
@@ -182,6 +182,6 @@ describe('direct exit-policy child ownership', () => {
       { flag: false, probe: -1 },
     ]);
     dispatchWriteInput(root.structure!.flag, true);
-    expect(root.structure!.secret.raw).toBe(scene.keep ? 'S' : undefined);
+    expect(root.structure!.secret.source).toBe(scene.keep ? 'S' : undefined);
   });
 });

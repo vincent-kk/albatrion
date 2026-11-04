@@ -11,7 +11,7 @@ const config=settings(false),baseline=await load('baseline'),direct=await load('
 const priorityCases=[{reversePolicy:true,label:'reverse-same-layer'},{fieldsPolicy:true,label:'fields-clear'},{fieldsPolicy:true,nodePolicy:false,label:'node-keep'},{fieldsPolicy:false,nodePolicy:true,label:'node-clear'}].map(extra=>({kind:'overlap',F:4,C:16,op:'exit',...extra,id:'overlap-F4-C16-exit-'+extra.label}));
 for(const spec of reverse([...scenes(config.smoke),...priorityCases])) {
   const a=await prepare(baseline,spec,true),b=await prepare(direct,spec,true),phases=[];
-  const compare=phase=>{const left=snapshot(a),right=snapshot(b),same=isDeepStrictEqual(left,right);phases.push({phase,same,digest:sha(json(left)),deliveryCount:left.deliveries.length,latentCount:a.root.runtime.latentRaw.size});if(!same)differences.push({scene:spec.id,phase,left,right});};
+  const compare=phase=>{const left=snapshot(a),right=snapshot(b),same=isDeepStrictEqual(left,right);phases.push({phase,same,digest:sha(json(left)),deliveryCount:left.deliveries.length,latentCount:a.root.runtime.latentSource.size});if(!same)differences.push({scene:spec.id,phase,left,right});};
   compare('before');invoke(baseline,spec,a);invoke(direct,spec,b);validate(spec,a);validate(spec,b);compare('write-return');await drain();compare('after-drain');
   if(spec.op==='exit') {
     // An old reference writes latent data without changing its frozen reads (NODE-044).
@@ -23,5 +23,5 @@ for(const spec of reverse([...scenes(config.smoke),...priorityCases])) {
   rows.push({...spec,status:phases.every(p=>p.same)?'pass':'fail',phases});
 }
 save('out/differential-details.json',JSON.stringify(differences,null,2)+'\n');
-console.log(json({kind:'C-differential',runtime:runtime(),config,bundles:[identity(baseline.bundle),identity(direct.bundle)],compared:['values','raw/local/emit','latent keys, values and metadata','inactiveValues','events/order/payloads/onChange','all revision bits','committed rule values and declaration choices','detached reads and writes','reentry and second exit'],differences:differences.length,status:differences.length?'fail':'pass',rows}));
+console.log(json({kind:'C-differential',runtime:runtime(),config,bundles:[identity(baseline.bundle),identity(direct.bundle)],compared:['values','source/local/emit','latent keys, values and metadata','inactiveValues','events/order/payloads/onChange','all revision bits','committed rule values and declaration choices','detached reads and writes','reentry and second exit'],differences:differences.length,status:differences.length?'fail':'pass',rows}));
 if(differences.length)process.exitCode=1;

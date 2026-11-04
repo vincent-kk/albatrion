@@ -70,7 +70,7 @@ it('82C-01 expands each dirty ancestor only once', () => {
   registerRecalculation({
     root,
     dirtyPaths,
-    changedRaw: new Set(),
+    changedSource: new Set(),
     hasGates: false,
   } as unknown as SettlementContext<typeof root>);
   expect(dirtyPaths.has('')).toBe(true);

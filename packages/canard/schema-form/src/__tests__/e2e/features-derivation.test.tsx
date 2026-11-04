@@ -47,7 +47,7 @@ const run = async (name: string) => {
 };
 
 describe('features — derivation shared screen runner (TEST-025)', () => {
-  it('CONTROLS-021 and CONTROLS-022 visible hides and keeps output while active removes and restores the raw value', async () => {
+  it('CONTROLS-021 and CONTROLS-022 visible hides and keeps output while active removes and restores the source value', async () => {
     await run('derivation.visible-versus-active');
   });
 

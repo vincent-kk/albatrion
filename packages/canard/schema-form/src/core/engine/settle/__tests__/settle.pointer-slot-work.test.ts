@@ -74,10 +74,10 @@ describe('slot syntax caches without source caching', () => {
     const text = getDispatchNode(root, 'value');
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     const number = getDispatchNode(root, 'value');
-    expect(resolveSlotSource(root, '/value', text.blueprintNode).source).toBe(
+    expect(resolveSlotSource(root, '/value', text.blueprintNode).instance).toBe(
       text,
     );
-    expect(resolveSlotSource(root, '/value', number.blueprintNode).source).toBe(
+    expect(resolveSlotSource(root, '/value', number.blueprintNode).instance).toBe(
       number,
     );
     const before = resolveSlotSource(root, '/value', text.blueprintNode);
@@ -86,19 +86,19 @@ describe('slot syntax caches without source caching', () => {
       writeSlotPath(root, '/value', text.blueprintNode, 'patched', true),
     ).toBe(true);
     const after = resolveSlotSource(root, '/value', text.blueprintNode);
-    expect(after.source).toBe(text);
+    expect(after.instance).toBe(text);
     expect(after.overlay).toBeDefined();
     expect(after.overlay).not.toBe(before.overlay);
-    expect(resolveSlotSource(root, '/value', number.blueprintNode).source).toBe(
+    expect(resolveSlotSource(root, '/value', number.blueprintNode).instance).toBe(
       number,
     );
     expect(decoder).not.toHaveBeenCalled();
     dispatchSetValue(getDispatchNode(root, 'kind'), 'text');
     const reentered = getDispatchNode(root, 'value');
     expect(reentered).not.toBe(text);
-    expect(reentered.raw).toBe('patched');
-    expect(text.raw).toBe('held');
-    expect(resolveSlotSource(root, '/value', text.blueprintNode).source).toBe(
+    expect(reentered.source).toBe('patched');
+    expect(text.source).toBe('held');
+    expect(resolveSlotSource(root, '/value', text.blueprintNode).instance).toBe(
       reentered,
     );
   });
@@ -121,7 +121,7 @@ describe('slot syntax caches without source caching', () => {
     dispatchRemove(rows, 0);
     expect(old.path).toBe('/rows/1/value');
     const currentPath = '/rows/0/value';
-    expect(resolveSlotSource(root, currentPath, old.blueprintNode).source).toBe(
+    expect(resolveSlotSource(root, currentPath, old.blueprintNode).instance).toBe(
       old,
     );
     decoder.mockClear();
@@ -133,7 +133,7 @@ describe('slot syntax caches without source caching', () => {
     ).toBeDefined();
     expect(decoder).not.toHaveBeenCalled();
     dispatchSetValue(getDispatchNode(rows, '0', 'kind'), 'text');
-    expect(getDispatchNode(rows, '0', 'value').raw).toBe('moved');
-    expect(old.raw).toBe('second');
+    expect(getDispatchNode(rows, '0', 'value').source).toBe('moved');
+    expect(old.source).toBe('second');
   });
 });

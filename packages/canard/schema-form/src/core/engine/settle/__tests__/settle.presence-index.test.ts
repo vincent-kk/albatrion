@@ -128,7 +128,7 @@ it('compacts relocated watch records during 500 distinct item registrations', ()
     items: [{ active: true, name: 'N' }],
   });
   const registry = getGateRegistry(root.runtime);
-  const source = getDispatchNode(root, 'items', '0', 'name');
+  const instance = getDispatchNode(root, 'items', '0', 'name');
   const changed = new Set(['/unrelated']);
   const prefixes = new Set(['']);
   const cursor = { changed: 0, prefixes: 0, index: 0 };
@@ -141,7 +141,7 @@ it('compacts relocated watch records during 500 distinct item registrations', ()
     cursor,
   );
   for (let index = 1; index <= 500; index++) {
-    const item = { ...source, path: `/items/${index}/name` };
+    const item = { ...instance, path: `/items/${index}/name` };
     registry.register(item);
     const indexes = Reflect.get(registry, 'watchIndex') as Map<
       string,

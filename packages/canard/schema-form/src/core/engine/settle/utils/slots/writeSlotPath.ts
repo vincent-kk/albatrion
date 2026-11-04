@@ -20,7 +20,7 @@ import { markSlotChange } from './markSlotChange';
  * @param input - Caller input interpreted only at the target
  * @param whole - Whether the target's missing descendants are replaced
  * @param context - Optional automatic-write rollback scope
- * @param automatic - Whether projected child writes preserve wrong-kind ancestor raw
+ * @param automatic - Whether projected child writes preserve wrong-kind ancestor source
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
  * @returns Whether a terminal descendant has a projected value
  */
@@ -63,12 +63,12 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       host = live;
       continue;
     }
-    const source = host.inactiveSlots?.get(entry);
+    const instance = host.inactiveSlots?.get(entry);
     const previous = host.inactiveSlotOverlays?.get(entry);
     let wrote = false;
     const patch = (
       template: BlueprintNode,
-      source: Optional<Self>,
+      instance: Optional<Self>,
       previous: Optional<InactiveSlotOverlay>,
       index: number,
     ): InactiveSlotOverlay => {
@@ -76,7 +76,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         const result = createSlotValueOverlay(
           template,
           input,
-          source,
+          instance,
           previous,
           whole,
           automatic,
@@ -92,18 +92,18 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       const selected = index === names.length - 1 ? target : undefined;
       const requested = getSlotPathEntry(
         template,
-        source,
+        instance,
         previous,
         name,
         selected,
       );
-      const binding = requested && getSlotBinding(source, requested, previous);
+      const binding = requested && getSlotBinding(instance, requested, previous);
       if (!binding) return previous ?? {};
-      const prior = getSlotSource(source, binding, previous);
+      const prior = getSlotSource(instance, binding, previous);
       const children = new Map(previous?.children);
       children.set(
         binding,
-        patch(binding.node, prior.source, prior.overlay, index + 1),
+        patch(binding.node, prior.instance, prior.overlay, index + 1),
       );
       for (const other of entries) {
         if (
@@ -111,11 +111,11 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
           other.name !== name ||
           getBlueprintNodeIdentity(other.node) ===
             getBlueprintNodeIdentity(binding.node) ||
-          source?.structure?.[name]?.blueprintNode === other.node
+          instance?.structure?.[name]?.blueprintNode === other.node
         )
           continue;
-        const prior = getSlotSource(source, other, previous);
-        if (prior.source || prior.overlay)
+        const prior = getSlotSource(instance, other, previous);
+        if (prior.instance || prior.overlay)
           children.set(other, { replace: true });
       }
       return { ...previous, children };
@@ -123,7 +123,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     markSlotChange(host, entry, undefined, context);
     (host.inactiveSlotOverlays ??= new Map()).set(
       entry,
-      patch(entry.node, source, previous, depth + 1),
+      patch(entry.node, instance, previous, depth + 1),
     );
     for (const other of entries) {
       if (

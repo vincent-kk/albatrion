@@ -32,8 +32,8 @@ it('keeps fresh clone memos empty and ignores writes through old lifetimes', () 
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(first, 'patched');
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'value').raw).toBe('held');
-  expect(first.raw).toBe('held');
+  expect(getDispatchNode(root, 'value').source).toBe('held');
+  expect(first.source).toBe('held');
 });
 
 it('does not copy empty aggregate caches onto an active leaf clone', () => {

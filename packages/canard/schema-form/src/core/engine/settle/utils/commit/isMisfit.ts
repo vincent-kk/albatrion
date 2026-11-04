@@ -5,7 +5,7 @@ import type { Optional } from '@aileron/declare';
 import type { BlueprintSchemaType } from '../../../blueprint';
 
 /**
- * Test raw membership in the current effective list without conversion.
+ * Test source membership in the current effective list without conversion.
  * @param value - Committed original input
  * @param effective - Current scalar or ordered list of accepted types; undefined for a virtual node, which never misfits
  * @param nullable - Static null permission for this node

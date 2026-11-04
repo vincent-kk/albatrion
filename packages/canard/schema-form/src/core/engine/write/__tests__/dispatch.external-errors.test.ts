@@ -32,7 +32,7 @@ describe('dispatcher external errors', () => {
       FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateGlobalError,
     ]);
     expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateError)).toBe(1);
-    expect(root.raw).toBeUndefined();
+    expect(root.source).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(onChange).not.toHaveBeenCalled();

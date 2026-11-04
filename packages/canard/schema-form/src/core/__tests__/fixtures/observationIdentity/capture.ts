@@ -95,8 +95,8 @@ function stateOf(
     nextKey: node.nextItemKey,
     parent: node.parent,
     root: node.rootNode,
-    raw: node.raw,
-    extras: node.undeclaredValues,
+    source: node.source,
+    extras: node.extras,
     local: node.local,
     emit: node.emit,
     value: node.value,
@@ -176,9 +176,9 @@ export function captureObservationState(
     codec.nodes,
   );
   const current = liveNodes(root);
-  const key = (raw: string) => {
-    const normalized = normalize(raw);
-    const parts = JSON.parse(raw);
+  const key = (encodedKey: string) => {
+    const normalized = normalize(encodedKey);
+    const parts = JSON.parse(encodedKey);
     if (parts.length === 8) {
       const owner = known.find((node) => readExistingId(node) === parts[7]);
       if (
@@ -188,7 +188,7 @@ export function captureObservationState(
         owner.runtime !== runtime ||
         owner.rootNode !== root
       )
-        throw new Error('Invalid current rule owner attachment: ' + raw);
+        throw new Error('Invalid current rule owner attachment: ' + encodedKey);
     }
     return normalized;
   };
@@ -301,7 +301,7 @@ export function captureObservation(
     known
       .flatMap((node) => [
         node.children,
-        node.undeclaredValues,
+        node.extras,
         node.local,
         node.emit,
       ])
@@ -331,7 +331,7 @@ export function captureObservation(
         node: codec.nodes.get(node),
         parent: node.parent ? codec.nodes.get(node.parent) : null,
         children: codec.id(node.children),
-        extras: codec.id(node.undeclaredValues),
+        extras: codec.id(node.extras),
         local: codec.id(node.local),
         emit: codec.id(node.emit),
         snapshot: codec.id(root.runtime.loadSnapshot),

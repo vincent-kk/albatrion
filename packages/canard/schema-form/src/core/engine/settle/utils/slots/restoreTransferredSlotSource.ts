@@ -7,13 +7,13 @@ import { markWrite } from '../input/markWrite';
 import { cloneSlotSubtree } from './cloneSlotSubtree';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
-import { markRestoredSlotRaw } from './markRestoredSlotRaw';
-import { readSlotRawTree } from './readSlotRawTree';
+import { markRestoredSlotSource } from './markRestoredSlotSource';
+import { readSlotSourceTree } from './readSlotSourceTree';
 
 /**
  * Rebind a moved candidate to a different blueprint while preserving every child kind.
  * @param node - Fresh destination occurrence with no previously published lifetime
- * @param source - Immutable source occurrence, absent for an input-only candidate
+ * @param instance - Immutable source occurrence, absent for an input-only candidate
  * @param overlay - Owner patch over the source's original declaration
  * @param context - Structural replay and fixed-baseline entry work
  * @returns Nothing; child sources have fresh parent chains and ordinary input is distributed
@@ -22,18 +22,18 @@ export const restoreTransferredSlotSource = <
   Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
-  source: Optional<Self>,
+  instance: Optional<Self>,
   overlay: Optional<InactiveSlotOverlay>,
   context: SettlementContext<Self>,
 ): void => {
-  const template = source?.blueprintNode ?? node.blueprintNode;
-  const input = readSlotRawTree(template, source, overlay);
-  for (const entry of getSlotEntries(source, overlay, template)) {
-    const prior = getSlotSource(source, entry, overlay);
-    if (prior.source)
+  const template = instance?.blueprintNode ?? node.blueprintNode;
+  const input = readSlotSourceTree(template, instance, overlay);
+  for (const entry of getSlotEntries(instance, overlay, template)) {
+    const prior = getSlotSource(instance, entry, overlay);
+    if (prior.instance)
       (node.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
         entry,
-        cloneSlotSubtree(node, entry, prior.source, context, false),
+        cloneSlotSubtree(node, entry, prior.instance, context, false),
       );
     if (prior.overlay)
       (node.inactiveSlotOverlays ??= new Map()).set(entry, prior.overlay);
@@ -45,5 +45,5 @@ export const restoreTransferredSlotSource = <
       ...distribution,
       preserveLatent: true,
     });
-  markRestoredSlotRaw(node, context);
+  markRestoredSlotSource(node, context);
 };

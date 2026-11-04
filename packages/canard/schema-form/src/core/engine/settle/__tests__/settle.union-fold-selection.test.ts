@@ -69,7 +69,7 @@ describe('same-name union fold selection', () => {
     expect(pending).toContain(true);
     expect(pending[pending.length - 1]).toBe(false);
     expect(revived).toContain(true);
-    expect(original.raw).toBe(17);
+    expect(original.source).toBe(17);
     expect(original.detached).toBe(false);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
@@ -87,7 +87,7 @@ describe('same-name union fold selection', () => {
       (entry) => entry.name === 'shared',
     );
     expect(root.structure?.shared?.blueprintNode).toBe(variants[1].node);
-    expect(root.structure?.shared?.raw).toBe(true);
+    expect(root.structure?.shared?.source).toBe(true);
     expect(
       root.children?.filter((child) => child.name === 'shared'),
     ).toHaveLength(1);

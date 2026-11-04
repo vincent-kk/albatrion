@@ -83,7 +83,7 @@
 | computeNode           | 103.479 | primeHost=2.917, updateOutput=5.103, computeNode=35.147, wheelPreparation=8.687, markWrite=2.875, assembleObject=9.084, selectChildren=35.978 |
 | runDeriveRounds       |   0.000 |                                                                                                                                               |
 | transitionSettlement  |   4.958 | transitionSettlement=4.958                                                                                                                    |
-| finalizeExits         |  55.458 | getControlLayers=11.564, setLatentRaw=11.208, captureExitedRaw=5.709, assembleObject=0.792, updateOutput=1.792, finalizeExits=23.873          |
+| finalizeExits         |  55.458 | getControlLayers=11.564, setLatentSource=11.208, captureExitedSource=5.709, assembleObject=0.792, updateOutput=1.792, finalizeExits=23.873          |
 | commitSettlement      |  46.145 | getControlLayers=3.958, markCommitDeliveries=11.876, updateInactiveValuesMemo=18.666, commitSettlement=8.500                                  |
 | everythingElse        |  17.124 | unwrappedEntry=17.124                                                                                                                         |
 
@@ -104,8 +104,8 @@
 | transitionSettlement     |   4.958 |        4.958 |     1.000 |    3056.800 | 549 / 557 / 559     |
 | finalizeExits            |  23.873 |       55.458 |     1.000 |   14409.600 | 2599 / 2656 / 2644  |
 | getControlLayers         |  15.520 |       15.520 |    12.000 |   16024.800 | 2857 / 2920 / 2914  |
-| captureExitedRaw         |   5.709 |       18.876 |     3.000 |    3250.960 | 611 / 573 / 607     |
-| setLatentRaw             |  11.208 |       11.208 |     6.000 |   11990.560 | 2068 / 2088 / 2020  |
+| captureExitedSource         |   5.709 |       18.876 |     3.000 |    3250.960 | 611 / 573 / 607     |
+| setLatentSource             |  11.208 |       11.208 |     6.000 |   11990.560 | 2068 / 2088 / 2020  |
 | updateOutput             |   6.958 |       17.083 |     6.000 |     748.080 | 163 / 137 / 131     |
 | assembleObject           |   9.979 |        9.979 |     2.000 |   12469.280 | 2345 / 2278 / 2312  |
 | commitSettlement         |   8.500 |       46.145 |     1.000 |    4696.560 | 827 / 868 / 871     |
@@ -145,8 +145,8 @@
 | transitionSettlement     |   1.229 |        1.229 |     1.000 |     797.200 | 146 / 126 / 152     |
 | finalizeExits            |   0.000 |        0.000 |     0.000 |       0.000 | 0 / 0 / 0           |
 | getControlLayers         |   0.000 |        0.000 |     0.000 |       0.000 | 0 / 0 / 0           |
-| captureExitedRaw         |   0.000 |        0.000 |     0.000 |       0.000 | 0 / 0 / 0           |
-| setLatentRaw             |   0.000 |        0.000 |     0.000 |       0.000 | 0 / 0 / 0           |
+| captureExitedSource         |   0.000 |        0.000 |     0.000 |       0.000 | 0 / 0 / 0           |
+| setLatentSource             |   0.000 |        0.000 |     0.000 |       0.000 | 0 / 0 / 0           |
 | updateOutput             |   3.666 |        6.209 |     4.000 |     458.560 | 83 / 95 / 85        |
 | assembleObject           |   2.541 |        2.541 |     1.000 |    1609.040 | 278 / 300 / 291     |
 | commitSettlement         |   3.417 |       12.208 |     1.000 |    1354.800 | 280 / 245 / 247     |
@@ -165,7 +165,7 @@
 | computeNode           | 566.167 | primeHost=11.167, updateOutput=7.144, computeNode=53.645, assembleObject=32.564, wheelPreparation=7.646, evaluateGate=221.668, markWrite=2.958, selectChildren=214.251 |
 | runDeriveRounds       |   0.000 |                                                                                                                                                                        |
 | transitionSettlement  |   5.187 | transitionSettlement=5.187                                                                                                                                             |
-| finalizeExits         |  50.062 | getControlLayers=6.520, setLatentRaw=11.250, captureExitedRaw=5.583, assembleObject=0.542, updateOutput=0.750, finalizeExits=23.022                                    |
+| finalizeExits         |  50.062 | getControlLayers=6.520, setLatentSource=11.250, captureExitedSource=5.583, assembleObject=0.542, updateOutput=0.750, finalizeExits=23.022                                    |
 | commitSettlement      |  42.500 | getControlLayers=1.750, markCommitDeliveries=11.958, updateInactiveValuesMemo=19.166, commitSettlement=7.480                                                           |
 | everythingElse        |  17.729 | unwrappedEntry=17.729                                                                                                                                                  |
 
@@ -186,8 +186,8 @@
 | transitionSettlement     |   5.187 |        5.187 |     1.000 |    2964.800 | 492 / 561 / 542       |
 | finalizeExits            |  23.022 |       50.062 |     1.000 |   13929.920 | 2570 / 2530 / 2549    |
 | getControlLayers         |   8.271 |        8.271 |    12.000 |    3088.960 | 563 / 553 / 553       |
-| captureExitedRaw         |   5.583 |       16.334 |     3.000 |    2609.760 | 488 / 467 / 506       |
-| setLatentRaw             |  11.250 |       11.250 |     6.000 |   11777.920 | 2029 / 2117 / 2029    |
+| captureExitedSource         |   5.583 |       16.334 |     3.000 |    2609.760 | 488 / 467 / 506       |
+| setLatentSource             |  11.250 |       11.250 |     6.000 |   11777.920 | 2029 / 2117 / 2029    |
 | updateOutput             |   7.959 |       41.271 |    13.000 |    2405.440 | 438 / 464 / 446       |
 | assembleObject           |  33.147 |       33.147 |     8.000 |   57611.840 | 10734 / 10812 / 10687 |
 | commitSettlement         |   7.480 |       42.500 |     1.000 |    4666.160 | 864 / 863 / 852       |
@@ -206,7 +206,7 @@
 | computeNode           | 617.541 | primeHost=9.417, updateOutput=8.668, computeNode=76.837, assembleObject=28.439, wheelPreparation=8.709, evaluateGate=292.862, markWrite=3.605, selectChildren=183.323 |
 | runDeriveRounds       |   0.000 |                                                                                                                                                                       |
 | transitionSettlement  |   5.313 | transitionSettlement=5.313                                                                                                                                            |
-| finalizeExits         |  96.750 | getControlLayers=45.292, setLatentRaw=12.334, captureExitedRaw=7.042, assembleObject=0.542, updateOutput=1.625, finalizeExits=27.063                                  |
+| finalizeExits         |  96.750 | getControlLayers=45.292, setLatentSource=12.334, captureExitedSource=7.042, assembleObject=0.542, updateOutput=1.625, finalizeExits=27.063                                  |
 | commitSettlement      |  62.167 | getControlLayers=14.375, markCommitDeliveries=12.646, updateInactiveValuesMemo=20.500, commitSettlement=11.959                                                        |
 | everythingElse        |  25.542 | unwrappedEntry=25.542                                                                                                                                                 |
 
@@ -227,8 +227,8 @@
 | transitionSettlement     |   5.313 |        5.313 |     1.000 |    3038.640 | 554 / 536 / 572       |
 | finalizeExits            |  27.063 |       96.750 |     1.000 |   14692.320 | 2556 / 2593 / 2575    |
 | getControlLayers         |  59.874 |       59.874 |    12.000 |    2315.680 | 440 / 401 / 413       |
-| captureExitedRaw         |   7.042 |       33.104 |     3.000 |    2561.680 | 479 / 497 / 479       |
-| setLatentRaw             |  12.334 |       12.334 |     6.000 |   11813.120 | 2115 / 2036 / 2011    |
+| captureExitedSource         |   7.042 |       33.104 |     3.000 |    2561.680 | 479 / 497 / 479       |
+| setLatentSource             |  12.334 |       12.334 |     6.000 |   11813.120 | 2115 / 2036 / 2011    |
 | updateOutput             |  10.790 |       41.833 |    11.000 |    2060.320 | 357 / 381 / 397       |
 | assembleObject           |  29.042 |       29.042 |     7.000 |   46108.080 | 8602 / 8604 / 8571    |
 | commitSettlement         |  11.959 |       62.167 |     1.000 |    4601.200 | 792 / 834 / 792       |
@@ -247,7 +247,7 @@
 | computeNode           | 189.021 | primeHost=5.833, updateOutput=7.353, computeNode=59.918, wheelPreparation=10.457, markWrite=3.646, assembleObject=8.229, selectChildren=68.938, evaluateGate=20.127 |
 | runDeriveRounds       |   0.000 |                                                                                                                                                                     |
 | transitionSettlement  |   5.459 | transitionSettlement=5.459                                                                                                                                          |
-| finalizeExits         |  60.042 | getControlLayers=11.396, setLatentRaw=13.479, captureExitedRaw=6.063, assembleObject=3.000, updateOutput=1.708, finalizeExits=24.188                                |
+| finalizeExits         |  60.042 | getControlLayers=11.396, setLatentSource=13.479, captureExitedSource=6.063, assembleObject=3.000, updateOutput=1.708, finalizeExits=24.188                                |
 | commitSettlement      |  52.084 | getControlLayers=3.876, markCommitDeliveries=14.500, updateInactiveValuesMemo=24.500, commitSettlement=8.646                                                        |
 | everythingElse        |  19.000 | unwrappedEntry=19.000                                                                                                                                               |
 
@@ -268,8 +268,8 @@
 | transitionSettlement     |   5.459 |        5.459 |     1.000 |    3163.120 | 576 / 578 / 643     |
 | finalizeExits            |  24.188 |       60.042 |     1.000 |   16517.760 | 2950 / 2978 / 3028  |
 | getControlLayers         |  15.314 |       15.314 |    18.000 |   23265.360 | 4138 / 4267 / 4294  |
-| captureExitedRaw         |   6.063 |       20.855 |     3.000 |    3176.640 | 598 / 594 / 585     |
-| setLatentRaw             |  13.479 |       13.479 |     6.000 |   14435.520 | 2448 / 2456 / 2414  |
+| captureExitedSource         |   6.063 |       20.855 |     3.000 |    3176.640 | 598 / 594 / 585     |
+| setLatentSource             |  13.479 |       13.479 |     6.000 |   14435.520 | 2448 / 2456 / 2414  |
 | updateOutput             |   9.083 |       20.668 |    14.000 |    2526.800 | 435 / 468 / 502     |
 | assembleObject           |  11.209 |       11.209 |    10.000 |   15270.240 | 2772 / 2815 / 2750  |
 | commitSettlement         |   8.646 |       52.084 |     1.000 |    4660.800 | 844 / 900 / 848     |
@@ -288,7 +288,7 @@
 | computeNode           | 160.021 | primeHost=2.645, updateOutput=4.689, computeNode=45.123, wheelPreparation=9.062, markWrite=5.021, assembleObject=35.730, selectChildren=57.252 |
 | runDeriveRounds       |   0.000 |                                                                                                                                                |
 | transitionSettlement  |   7.688 | transitionSettlement=7.688                                                                                                                     |
-| finalizeExits         | 179.521 | getControlLayers=33.291, setLatentRaw=31.273, captureExitedRaw=12.124, assembleObject=1.458, updateOutput=1.417, finalizeExits=102.416         |
+| finalizeExits         | 179.521 | getControlLayers=33.291, setLatentSource=31.273, captureExitedSource=12.124, assembleObject=1.458, updateOutput=1.417, finalizeExits=102.416         |
 | commitSettlement      |  78.812 | getControlLayers=12.206, markCommitDeliveries=14.709, updateInactiveValuesMemo=35.854, commitSettlement=15.771                                 |
 | everythingElse        |  21.730 | unwrappedEntry=21.730                                                                                                                          |
 
@@ -309,8 +309,8 @@
 | transitionSettlement     |   7.688 |        7.688 |     1.000 |    9682.960 | 1775 / 1764 / 1771    |
 | finalizeExits            | 102.416 |      179.521 |     1.000 |   52964.400 | 9709 / 9575 / 9488    |
 | getControlLayers         |  45.476 |       45.476 |    48.000 |   63385.600 | 11357 / 11485 / 11476 |
-| captureExitedRaw         |  12.124 |       49.770 |    12.000 |   13591.680 | 2273 / 2333 / 2422    |
-| setLatentRaw             |  31.273 |       31.273 |    24.000 |   47000.480 | 7396 / 7432 / 7354    |
+| captureExitedSource         |  12.124 |       49.770 |    12.000 |   13591.680 | 2273 / 2333 / 2422    |
+| setLatentSource             |  31.273 |       31.273 |    24.000 |   47000.480 | 7396 / 7432 / 7354    |
 | updateOutput             |   6.561 |       43.604 |    15.000 |    1861.760 | 341 / 347 / 327       |
 | assembleObject           |  37.105 |       37.105 |     2.000 |   43201.200 | 7988 / 7991 / 8143    |
 | commitSettlement         |  15.771 |       78.812 |     1.000 |   14549.440 | 2670 / 2657 / 2607    |
@@ -348,9 +348,9 @@
 {"previous":{"common":"shared","kind":"kind_79"},"next":{"common":"shared","kind":"kind_79","payload_79_a":"a_79","payload_79_b":79},"previousIdentity":2,"nextIdentity":4,"sameIdentity":false}
 ```
 
-선택 과정에서 활성 payload를 계산·발행하면서 **게이트들이 읽는 루트 투영 객체의 내용과 identity가 라운드 안에서 바뀝니다**. `recordGateFrameInput.ts`는 첫 raw 객체를 유지한 채 후속 raw를 `Object.is`로 비교하므로 `consistent=false`가 됩니다. `canSkipGateWheel.ts`는 이 프레임의 확인 바퀴 생략을 허용하지 않습니다. 실제 쓰기당 selectChildren는 active-80에서 1회, if/discriminator에서 2회이고 evaluateGate는 각각 640/800회입니다.
+선택 과정에서 활성 payload를 계산·발행하면서 **게이트들이 읽는 루트 투영 객체의 내용과 identity가 라운드 안에서 바뀝니다**. `recordGateFrameInput.ts`는 첫 source 객체를 유지한 채 후속 source를 `Object.is`로 비교하므로 `consistent=false`가 됩니다. `canSkipGateWheel.ts`는 이 프레임의 확인 바퀴 생략을 허용하지 않습니다. 실제 쓰기당 selectChildren는 active-80에서 1회, if/discriminator에서 2회이고 evaluateGate는 각각 640/800회입니다.
 
-프레임에 기록되는 값은 `evaluateGate.ts`의 `readProjectedValue`가 반환한 raw입니다. 이어서 생성하는 `{ ...host }` 판정 입력 복사본은 이 witness에 기록되지 않습니다. 따라서 확인된 원인은 선택 도중 투영 raw의 변화이며, 게이트별 입력 복사를 없애는 것만으로 이 witness가 일관돼지는지는 B1에서 별도로 확인해야 합니다. 진단의 structuredClone·JSON 기록은 시간·호출 수·할당 통과 밖입니다. 전체 두 값과 identity는 각 `*.gate-inputs.json`에 있습니다.
+프레임에 기록되는 값은 `evaluateGate.ts`의 `readProjectedValue`가 반환한 source입니다. 이어서 생성하는 `{ ...host }` 판정 입력 복사본은 이 witness에 기록되지 않습니다. 따라서 확인된 원인은 선택 도중 투영 source의 변화이며, 게이트별 입력 복사를 없애는 것만으로 이 witness가 일관돼지는지는 B1에서 별도로 확인해야 합니다. 진단의 structuredClone·JSON 기록은 시간·호출 수·할당 통과 밖입니다. 전체 두 값과 identity는 각 `*.gate-inputs.json`에 있습니다.
 
 ## 확실하지 않음
 

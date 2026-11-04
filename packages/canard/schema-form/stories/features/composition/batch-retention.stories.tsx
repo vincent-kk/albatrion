@@ -9,8 +9,8 @@ import { findScenario } from '../components/findScenario';
 export default { title: 'Features/Composition/BatchRetention', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;
 
-/** Shared scenario `composition.batch-keeps-inactive-raw`. */
-export const BatchKeepsInactiveRaw: Story = createFeatureStory(findScenario(compositionFeatureScenarios, 'composition.batch-keeps-inactive-raw'));
+/** Shared scenario `composition.batch-keeps-inactive-source`. */
+export const BatchKeepsInactiveSource: Story = createFeatureStory(findScenario(compositionFeatureScenarios, 'composition.batch-keeps-inactive-source'));
 
 /** Shared scenario `composition.batched-toggle-keeps-edit`. */
 export const BatchedToggleKeepsEdit: Story = createFeatureStory(findScenario(compositionFeatureScenarios, 'composition.batched-toggle-keeps-edit'));

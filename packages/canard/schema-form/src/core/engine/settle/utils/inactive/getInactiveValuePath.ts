@@ -34,7 +34,7 @@ export const getInactiveValuePath = <Self extends FieldNodeRecord<Self>>(
     let name = child.name;
     if (compaction) {
       const binding = [...compaction.sources].find(
-        ([, source]) => source === child,
+        ([, instance]) => instance === child,
       )?.[0];
       if (!binding) return undefined;
       name = binding.name;

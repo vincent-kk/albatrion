@@ -177,12 +177,12 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    const source = root.structure!.source;
+    const instance = root.structure!['source'];
     const watcher = root.structure!.watcher;
-    source.interactionState = { [FieldNodeState.Touched]: true };
+    instance.interactionState = { [FieldNodeState.Touched]: true };
     const before = root.runtime.commitNumber;
 
-    writeFieldNode(source, 'same', 'input', WriteOption.Overwrite);
+    writeFieldNode(instance, 'same', 'input', WriteOption.Overwrite);
     expect(root.runtime.commitNumber).toBe((before ?? 0) + 1);
     expect(
       (watcher.pendingDelivery?.type ?? 0) &

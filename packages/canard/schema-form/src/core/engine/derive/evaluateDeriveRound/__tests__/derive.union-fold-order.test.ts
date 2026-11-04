@@ -21,11 +21,11 @@ describe('same-name union source order', () => {
     const edges = root.blueprintNode.childEntries.filter(
       (entry) => entry.name === 'shared',
     );
-    const source = root.runtime.nodeFactory(edges[1], root, root.runtime);
-    expect(getDeriveSourceOrder(source)).toEqual([
+    const instance = root.runtime.nodeFactory(edges[1], root, root.runtime);
+    expect(getDeriveSourceOrder(instance)).toEqual([
       root.blueprintNode.childEntries.indexOf(edges[1]),
     ]);
-    expect(getDeriveSourceOrder(source)).not.toEqual([
+    expect(getDeriveSourceOrder(instance)).not.toEqual([
       root.blueprintNode.childEntries.indexOf(edges[0]),
     ]);
   });

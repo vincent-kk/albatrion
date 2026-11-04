@@ -154,9 +154,9 @@ it('preserves each kept candidate kind inside a compacted survivor', () => {
   dispatchSetValue(getDispatchNode(root, 'number'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list', '0', 'keep').raw).toBe('held');
+  expect(getDispatchNode(root, 'list', '0', 'keep').source).toBe('held');
   dispatchSetValue(getDispatchNode(root, 'number'), true);
-  expect(getDispatchNode(root, 'list', '0', 'keep').raw).toBe(12);
+  expect(getDispatchNode(root, 'list', '0', 'keep').source).toBe(12);
 });
 
 it('preserves kept scalar item candidates at the same compacted index', () => {
@@ -189,9 +189,9 @@ it('preserves kept scalar item candidates at the same compacted index', () => {
   dispatchSetValue(getDispatchNode(root, 'number'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list', '0').raw).toBe('held');
+  expect(getDispatchNode(root, 'list', '0').source).toBe('held');
   dispatchSetValue(getDispatchNode(root, 'number'), true);
-  expect(getDispatchNode(root, 'list', '0').raw).toBe(12);
+  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
 });
 
 it.each([
@@ -285,11 +285,11 @@ it('rebinds kept item candidates when survivors shift to earlier indices', () =>
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'list').itemCount).toBe(1);
-  expect(getDispatchNode(root, 'list', '0').raw).toBe(12);
+  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
   dispatchSetValue(getDispatchNode(root, 'number'), false);
-  expect(getDispatchNode(root, 'list', '0').raw).toBe('held');
+  expect(getDispatchNode(root, 'list', '0').source).toBe('held');
   dispatchSetValue(getDispatchNode(root, 'number'), true);
-  expect(getDispatchNode(root, 'list', '0').raw).toBe(12);
+  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
 });
 
 it('keeps an item whose only kept source is an explicitly kept empty array', () => {

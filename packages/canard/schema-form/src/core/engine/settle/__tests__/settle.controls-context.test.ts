@@ -8,7 +8,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
 // filid:contract settle-state-keys-context
 describe('context state keys', () => {

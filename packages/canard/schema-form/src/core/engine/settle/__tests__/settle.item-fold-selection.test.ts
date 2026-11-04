@@ -237,7 +237,7 @@ describe('array item fold selection', () => {
         validator,
       );
       dispatchMount(root, { open: true, a: true, b: false, list: ['A'] });
-      expect(root.structure!.list.structure!['0'].raw).toBe('A');
+      expect(root.structure!.list.structure!['0'].source).toBe('A');
       if (absentBeforeClose) dispatchSetValue(root.structure!.a, false);
       dispatchSetValue(root.structure!.open, false);
       if (!absentBeforeClose) dispatchSetValue(root.structure!.a, false);
@@ -247,7 +247,7 @@ describe('array item fold selection', () => {
       dispatchSetValue(root.structure!.open, true);
       const list = root.structure!.list;
       expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].raw).toBeUndefined();
+      expect(list.structure!['0'].source).toBeUndefined();
       const later = { open: true, a: false, b: true, list: [null] };
       expect(root.local).toEqual(later);
       expect(root.emit).toEqual(later);
@@ -268,7 +268,7 @@ describe('array item fold selection', () => {
       expect(root.structure!.list.structure!['0'].blueprintNode.kind).toBe(
         'string',
       );
-      expect(root.structure!.list.structure!['0'].raw).toBe('A');
+      expect(root.structure!.list.structure!['0'].source).toBe('A');
       const earlier = { open: true, a: true, b: false, list: ['A'] };
       expect(root.local).toEqual(earlier);
       expect(root.emit).toEqual(earlier);
@@ -296,7 +296,7 @@ describe('array item fold selection', () => {
       );
       const list = root.structure!.list;
       expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].raw).toBe(7);
+      expect(list.structure!['0'].source).toBe(7);
       writeFieldNode(
         root,
         { a: true, b: false, list: ['first'] },
@@ -304,7 +304,7 @@ describe('array item fold selection', () => {
         WriteOption.Overwrite,
       );
       expect(list.structure!['0'].blueprintNode.kind).toBe('string');
-      expect(list.structure!['0'].raw).toBe('first');
+      expect(list.structure!['0'].source).toBe('first');
       writeFieldNode(
         root,
         { a: false, b: true, list: [8] },
@@ -312,7 +312,7 @@ describe('array item fold selection', () => {
         WriteOption.Overwrite,
       );
       expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].raw).toBe(8);
+      expect(list.structure!['0'].source).toBe(8);
       expect(list.children).toHaveLength(1);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
@@ -322,7 +322,7 @@ describe('array item fold selection', () => {
     | 'items'
     | 'prefixItems'
   )[])(
-    '%s reads later-fold latent raw while the slot has no live node',
+    '%s reads later-fold latent source while the slot has no live node',
     (keyword) => {
       const { root } = createItemFoldTree(keyword);
       loadFieldNodeAtMount(
@@ -404,7 +404,7 @@ describe('array item fold selection', () => {
     | 'items'
     | 'prefixItems'
   )[])(
-    '%s restores A latent raw after B without handing A input to B',
+    '%s restores A latent source after B without handing A input to B',
     (keyword) => {
       const { root } = createItemFoldTree(keyword);
       loadFieldNodeAtMount(
@@ -426,7 +426,7 @@ describe('array item fold selection', () => {
       );
       const list = root.structure!.list;
       expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].raw).toBeUndefined();
+      expect(list.structure!['0'].source).toBeUndefined();
       writeFieldNode(
         root.structure!.b,
         false,
@@ -439,7 +439,7 @@ describe('array item fold selection', () => {
         'callerReplace',
         WriteOption.Overwrite,
       );
-      expect(list.structure!['0'].raw).toBe('retained');
+      expect(list.structure!['0'].source).toBe('retained');
     },
   );
 });

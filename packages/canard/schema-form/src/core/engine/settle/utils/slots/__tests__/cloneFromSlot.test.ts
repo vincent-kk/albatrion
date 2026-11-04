@@ -44,21 +44,21 @@ it('copies source channels and rebinds every active and inactive parent', () => 
       extra: 7,
     },
   });
-  const source = getDispatchNode(root, 'group');
-  const hidden = getDispatchNode(source, 'hidden');
-  const oldItem = getDispatchNode(source, 'list', '0');
-  dispatchSetState(getDispatchNode(source, 'leaf'), { edited: true });
-  dispatchSetValue(getDispatchNode(source, 'childOpen'), false);
+  const instance = getDispatchNode(root, 'group');
+  const hidden = getDispatchNode(instance, 'hidden');
+  const oldItem = getDispatchNode(instance, 'list', '0');
+  dispatchSetState(getDispatchNode(instance, 'leaf'), { edited: true });
+  dispatchSetValue(getDispatchNode(instance, 'childOpen'), false);
   const hiddenEntry = getRetainedChildEntry(
-    source,
+    instance,
     hidden.name,
     hidden.blueprintNode,
   );
-  const entry = getRetainedChildEntry(root, source.name, source.blueprintNode);
+  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
   if (!hiddenEntry || !entry) throw new Error('Expected declared bindings');
-  source.inactiveSlots = new Map([[hiddenEntry, hidden]]);
+  instance.inactiveSlots = new Map([[hiddenEntry, hidden]]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  root.inactiveSlots = new Map([[entry, source]]);
+  root.inactiveSlots = new Map([[entry, instance]]);
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,
@@ -68,11 +68,11 @@ it('copies source channels and rebinds every active and inactive parent', () => 
   );
   const merge = vi.spyOn(blueprints, 'mergeEffectiveSchema');
   try {
-    const clone = cloneFromSlot(root, entry, source, context);
-    expect(clone).not.toBe(source);
+    const clone = cloneFromSlot(root, entry, instance, context);
+    expect(clone).not.toBe(instance);
     expect(clone.parent).toBe(root);
-    expect(clone.undeclaredValues).toEqual({ extra: 7 });
-    expect(getDispatchNode(clone, 'leaf').raw).toBe('kept');
+    expect(clone.extras).toEqual({ extra: 7 });
+    expect(getDispatchNode(clone, 'leaf').source).toBe('kept');
     expect(getDispatchNode(clone, 'leaf').interactionState).toEqual({});
     expect(context.entered.has(getDispatchNode(clone, 'list', '0'))).toBe(true);
     expect(getDispatchNode(clone, 'list', '0').itemKey).toBeGreaterThan(
@@ -81,11 +81,11 @@ it('copies source channels and rebinds every active and inactive parent', () => 
     const candidate = clone.inactiveSlots?.get(hiddenEntry);
     expect(candidate).not.toBe(hidden);
     expect(candidate?.parent).toBe(clone);
-    expect(candidate?.raw).toBe('hidden');
+    expect(candidate?.source).toBe('hidden');
     expect(candidate?.detached).toBe(true);
-    expect(source.inactiveSlots.get(hiddenEntry)).toBe(hidden);
-    expect(source.detached).toBe(true);
-    expect(hidden.parent).toBe(source);
+    expect(instance.inactiveSlots.get(hiddenEntry)).toBe(hidden);
+    expect(instance.detached).toBe(true);
+    expect(hidden.parent).toBe(instance);
     expect(merge).not.toHaveBeenCalled();
   } finally {
     releaseSettlementScratch(scratch);

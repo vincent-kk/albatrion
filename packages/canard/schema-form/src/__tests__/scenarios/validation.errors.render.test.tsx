@@ -26,7 +26,7 @@ import { renderForm } from '../renderForm';
  *     `errorVisible` is true — every test passes `showError: true`
  *     (→ `ShowError.Always`) so the DOM mirror is observable.
  *   - The default `formatValidationError` resolves `jsonSchema.errorMessages`
- *     by keyword, falling back to the raw AJV message; schemas below pin
+ *     by keyword, falling back to the source AJV message; schemas below pin
  *     deterministic messages so DOM text is exact.
  *   - `Form.onSubmit` runs `rootNode.validate()` and THROWS a `ValidationError`
  *     when errors exist (so `onSubmit` is never invoked on invalid data); with

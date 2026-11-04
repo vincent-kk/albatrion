@@ -24,11 +24,11 @@ const nestedSchema = {
   ...reentryGuard,
 };
 
-/** CX-13: each layer toggles forward and backward and keeps its raw values, then the 197C-01 steps. */
+/** CX-13: each layer toggles forward and backward and keeps its source values, then the 197C-01 steps. */
 export const cx13NestedOneofAnyof: CompositeCase = {
   scenario: {
     name: 'composite.cx13-nested-oneof-anyof',
-    description: 'Three nested layers: the inner mode switch keeps discount, the add-on guard keeps ssoDomain, and the outer tier switch drops the whole plan subtree and restores it with every inner raw value (FRAGMENT-021, LANDING-018). Toggles run inner to outer and back outer to inner. Then 197C-01: R2 a virtual batch write, and in the tail R1, other-kind re-entry inside a batch after a Merge write.',
+    description: 'Three nested layers: the inner mode switch keeps discount, the add-on guard keeps ssoDomain, and the outer tier switch drops the whole plan subtree and restores it with every inner source value (FRAGMENT-021, LANDING-018). Toggles run inner to outer and back outer to inner. Then 197C-01: R2 a virtual batch write, and in the tail R1, other-kind re-entry inside a batch after a Merge write.',
     schema: nestedSchema,
     initialValue: { tier: 'pro', plan: { mode: 'yearly', discount: 10, sso: true, ssoDomain: 'a.com' }, ...reentryValue },
     steps: [

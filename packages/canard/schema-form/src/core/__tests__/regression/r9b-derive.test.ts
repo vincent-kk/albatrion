@@ -35,12 +35,12 @@ describe('round9b final derive shape', () => {
   it('r9b.mjs:115 retracts a fragment after a filled dependency derives its gate', () => {
     const root = finalShapeTree(true);
     root.setValue({ on: 1 });
-    expect(root.find('/seed')?.raw).toBe(1);
+    expect(root.find('/seed')?.source).toBe(1);
     expect(root.find('/x')).toBeNull();
     expect(root.outputValue).toEqual({ seed: 1, on: 0 });
   });
 
-  it('r9b.mjs:127 keeps caller raw even when final shape excludes it', () => {
+  it('r9b.mjs:127 keeps caller source even when final shape excludes it', () => {
     const root = finalShapeTree(false);
     root.setValue({ seed: 1, on: 1, x: 'caller' });
     expect(root.inactiveValues).toContainEqual({ path: '/x', value: 'caller' });

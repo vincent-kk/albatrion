@@ -7,10 +7,10 @@ import { getDeclaredChildNames } from '../../../utils/declarations/getDeclaredCh
 import { isPlain } from '../../../utils/input/isPlain';
 
 /**
- * Test pre-fill raw absence only when a container's own default is a candidate.
+ * Test pre-fill source absence only when a container's own default is a candidate.
  * @param template - Finite branch/scalar template owning this distributed source
  * @param value - Literal source before any descendant default is applied
- * @returns The same raw/extras absence used by generic isMissingRaw
+ * @returns The same source/extras absence used by generic isMissingSource
  */
 export const isMissingStaticInput = (
   template: BlueprintNode,

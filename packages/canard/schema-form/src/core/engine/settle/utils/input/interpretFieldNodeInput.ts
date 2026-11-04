@@ -15,10 +15,10 @@ import { staticSpec } from './staticSpec';
 /**
  * Interpret an input subtree without applying any settlement semantics.
  * @param template - Static occurrence restriction, including array item bindings
- * @param input - Marked raw input; undeclared keys and tail slots remain intact
+ * @param input - Marked source input; undeclared keys and tail slots remain intact
  * @param live - Current occurrence, whose selected descendants take priority over first candidates
  * @param seen - Ancestors already visited, preventing cyclic input recursion
- * @returns Interpreted raw tree; unselected multi-candidate slots retain their input until selection, and unchanged containers retain their reference
+ * @returns Interpreted source tree; unselected multi-candidate slots retain their input until selection, and unchanged containers retain their reference
  * @remarks O(visited input subtree); only changed containers are copied.
  */
 export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(

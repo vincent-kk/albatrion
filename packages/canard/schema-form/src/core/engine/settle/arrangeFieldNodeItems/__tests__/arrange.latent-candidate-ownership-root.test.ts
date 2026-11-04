@@ -14,8 +14,8 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
 describe('moving tuple slot-root candidate sources', () => {
@@ -129,10 +129,10 @@ describe('moving tuple slot-root candidate sources', () => {
     }
     const list = getDispatchNode(root, 'list');
     const original = getDispatchNode(list, String(sourceIndex));
-    expect(original.raw).toBe(liveValue);
+    expect(original.source).toBe(liveValue);
 
     if (mode === 'retained') {
-      expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe(
+      expect(readRetainedSlotSource(root, `/list/${sourceIndex}`, other)).toBe(
         stored,
       );
     } else
@@ -163,7 +163,7 @@ describe('moving tuple slot-root candidate sources', () => {
     expect(original.detached).toBe(true);
     expect(moved).not.toBe(original);
     expect(moved.blueprintNode.kind).toBe(other);
-    expect(moved.raw).toBe(expectedValue);
+    expect(moved.source).toBe(expectedValue);
     expect(root.local).toEqual(expected);
     expect(root.emit).toEqual(expected);
     expect(
@@ -183,26 +183,26 @@ describe('moving tuple slot-root candidate sources', () => {
 
     expect(hasRetainedSlotOwnSource(root, movedPath, other)).toBe(false);
 
-    expect(readRetainedSlotRaw(root, movedPath, live)).toBe(liveValue);
+    expect(readRetainedSlotSource(root, movedPath, live)).toBe(liveValue);
 
     if (operation === 'insert') dispatchRemove(list, 0);
     else dispatchInsert(list, 0, stored);
     const restored = getDispatchNode(list, String(sourceIndex));
-    expect(restored.raw).toBe(liveValue);
-    expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe(
+    expect(restored.source).toBe(liveValue);
+    expect(readRetainedSlotSource(root, `/list/${sourceIndex}`, other)).toBe(
       stored,
     );
 
     dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
-    expect(getDispatchNode(list, String(sourceIndex)).raw).toBe(stored);
-    expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, live)).toBe(
+    expect(getDispatchNode(list, String(sourceIndex)).source).toBe(stored);
+    expect(readRetainedSlotSource(root, `/list/${sourceIndex}`, live)).toBe(
       liveValue,
     );
 
     dispatchSetValue(getDispatchNode(root, 'b'), false);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
-    expect(getDispatchNode(list, String(sourceIndex)).raw).toBe(liveValue);
+    expect(getDispatchNode(list, String(sourceIndex)).source).toBe(liveValue);
     const returned = {
       a: true,
       b: false,
@@ -217,7 +217,7 @@ describe('moving tuple slot-root candidate sources', () => {
     });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(returned);
-    expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe(
+    expect(readRetainedSlotSource(root, `/list/${sourceIndex}`, other)).toBe(
       stored,
     );
   });

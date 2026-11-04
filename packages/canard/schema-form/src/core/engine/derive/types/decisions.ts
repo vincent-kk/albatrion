@@ -27,7 +27,7 @@ export interface DeriveTraceEntry {
 
 /** Candidate for one automatic write after an edge has been consumed. */
 export interface DeriveWrite<Self> {
-  /** Live target record, absent when an injection addresses latent raw. */
+  /** Live target record, absent when an injection addresses latent source. */
   readonly target?: Self;
   /** Absolute data path of the addressed target. */
   readonly targetPath: string;
@@ -37,7 +37,7 @@ export interface DeriveWrite<Self> {
   readonly siblings?: readonly BlueprintChildEntry[];
   /** Document position of a latent target. */
   readonly targetOrder?: readonly number[];
-  /** Raw replacement value, including undefined for unset. */
+  /** Source replacement value, including undefined for unset. */
   readonly value: unknown;
   /** Kind of rule that produced this candidate. */
   readonly kind: 'derived' | 'unsetValue' | 'injectTo';

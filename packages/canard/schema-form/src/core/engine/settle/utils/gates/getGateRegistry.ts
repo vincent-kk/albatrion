@@ -279,14 +279,14 @@ class GateRegistry {
     return list;
   }
 
-  /** Whether changed raw intersects any read that can affect this host's wheel. */
+  /** Whether changed source intersects any read that can affect this host's wheel. */
   mayChangeAt(
     path: string,
-    changedRaw: ReadonlySet<string>,
+    changedSource: ReadonlySet<string>,
     changedAncestors: ReadonlySet<string>,
   ): boolean {
     for (const occurrence of this.byLocation.get(path) ?? [])
-      if (this.readsChanged(occurrence, changedRaw, changedAncestors))
+      if (this.readsChanged(occurrence, changedSource, changedAncestors))
         return true;
     return false;
   }
@@ -358,11 +358,11 @@ class GateRegistry {
   /** Whether a changed read can reselect this live node's own declarations. */
   mayChangeOwnDeclarationAt(
     path: string,
-    changedRaw: ReadonlySet<string>,
+    changedSource: ReadonlySet<string>,
     changedAncestors: ReadonlySet<string>,
   ): boolean {
     for (const occurrence of this.byPath.get(path)?.ownOccurrences ?? [])
-      if (this.readsChanged(occurrence, changedRaw, changedAncestors))
+      if (this.readsChanged(occurrence, changedSource, changedAncestors))
         return true;
     return false;
   }
@@ -431,7 +431,7 @@ class GateRegistry {
   /**
    * Apply one occurrence's watches and bound stale insertion records.
    * @param index - Existing location index, possibly being initialized
-   * @param occurrence - Gate with the canonical watchPaths used by raw queries
+   * @param occurrence - Gate with the canonical watchPaths used by source queries
    * @param by - One added or removed occurrence reference
    * @returns Nothing; count maps and root count remain synchronized
    */
@@ -488,24 +488,24 @@ class GateRegistry {
       : [location.hostPath];
   }
 
-  /** Check whether a bound gate reads a changed raw path. */
+  /** Check whether a bound gate reads a changed source path. */
   private readsChanged(
     occurrence: RegisteredGateOccurrence,
-    changedRaw: ReadonlySet<string>,
+    changedSource: ReadonlySet<string>,
     changedAncestors: ReadonlySet<string>,
   ): boolean {
-    if (changedRaw.size === 0) return false;
+    if (changedSource.size === 0) return false;
     for (const watched of occurrence.watchPaths) {
       if (
         watched === $.Root ||
-        changedRaw.has(watched) ||
+        changedSource.has(watched) ||
         changedAncestors.has(watched)
       )
         return true;
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
           prefix = resolvePointer(prefix, $.Parent);
-          if (changedRaw.has(prefix)) return true;
+          if (changedSource.has(prefix)) return true;
         }
     }
     return false;

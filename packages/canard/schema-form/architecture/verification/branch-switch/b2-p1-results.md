@@ -4,7 +4,7 @@
 
 ## 후보 1 — 가설과 사전 고정 기준
 
-- 가설은 잠복 원본 L개 전수의 find·정렬·호스트 재그룹을 나감/진입 Δ로 대체하는 것이다. 대상은 `updateInactiveValuesMemo`, `setLatentRaw`, `getLatentOrder`, `captureExitedRaw`와 commit 연결이다. 예측은 oneOf-80 메모 18.7 → ≤3 µs/쓰기 및 약 23 KB/쓰기 할당의 감소였다. 접촉 원장은 SETTLE-053·VALUE-031이고 NODE-044·SETTLE-044·ERROR-125를 유지했다.
+- 가설은 잠복 원본 L개 전수의 find·정렬·호스트 재그룹을 나감/진입 Δ로 대체하는 것이다. 대상은 `updateInactiveValuesMemo`, `setLatentSource`, `getLatentOrder`, `captureExitedSource`와 commit 연결이다. 예측은 oneOf-80 메모 18.7 → ≤3 µs/쓰기 및 약 23 KB/쓰기 할당의 감소였다. 접촉 원장은 SETTLE-053·VALUE-031이고 NODE-044·SETTLE-044·ERROR-125를 유지했다.
 - 코디네이터가 측정 전에 허용한 비용 해석은 Δ 조회 O(|Δ|·깊이)에 영향 호스트별 불변 목록 복사를 더하는 것이다. 목록은 호스트마다 정착당 한 번만 복사하며 루트가 L개면 O(L)이 남는다. 순서 위치는 이진 탐색이다. 공개 getter 지연 계산은 이번 범위에서 구현하지 않았다.
 - 채택은 메모 inclusive ≤3 µs/쓰기, oneOf-80·payload-12 모두 폭 밖 개선, canonical/구독 TEST-073, Node B2 중앙값≤A 최댓값을 함께 요구했다. 폭은 max(|A−A′|, rangeA, rangeA′)이며 B가 A와 A′ 양쪽에서 폭을 넘어야 개선으로 판정했다. TEST-073은 평균 처리량 감소 >15%와 양측 Welch p<0.05의 동시 성립이다.
 
@@ -71,7 +71,7 @@ oneOf-80의 메모 할당은 23,011 → 23,559 B/쓰기로 감소하지 않았�
 
 ## 증분 경로에 도달하지 않은 원인
 
-B의 계측 manifest에는 목록 갱신 함수가 포함되지만, 모든 oneOf-80·payload-12 단계 표본에서 그 타이머 호출은 0이다. 공개 판별자 `setValue`는 `callerReplace`이고, 게이트가 있는 폼은 `writeFieldNode`의 `branchless` 스칼라 자격을 얻지 못한다. 따라서 실제 잠복 키가 없는 판별자 경로에도 `pruneLatentRaw`가 호출된다. 후보가 함수 진입 시 무조건 `inactiveValuesRebuild = true`를 세웠기 때문에, 뒤의 commit은 전체 재구성으로 후퇴했다.
+B의 계측 manifest에는 목록 갱신 함수가 포함되지만, 모든 oneOf-80·payload-12 단계 표본에서 그 타이머 호출은 0이다. 공개 판별자 `setValue`는 `callerReplace`이고, 게이트가 있는 폼은 `writeFieldNode`의 `branchless` 스칼라 자격을 얻지 못한다. 따라서 실제 잠복 키가 없는 판별자 경로에도 `pruneLatentSource`가 호출된다. 후보가 함수 진입 시 무조건 `inactiveValuesRebuild = true`를 세웠기 때문에, 뒤의 commit은 전체 재구성으로 후퇴했다.
 
 계수 red/green은 `writeFieldNode(..., input, ...)` 경로를 고정했다. 공개 `setValue`의 이 후퇴를 측정 전에 고정하지 못한 시험 범위 결함이다. 이번 수치는 후보의 전체 후퇴 경로 비용이며, 정상적으로 도달한 증분 알고리즘이나 루트 배열 복사의 독립 비용을 재는 수치가 아니다. 따라서 루트 복사가 3 µs 초과의 원인이라고 단정하거나 이를 근거로 getter 지연 계산 B2-P1b를 채택하지 않는다. 후속 실험은 실제 공개 `setValue` 전환의 증분 도달과 빈 가지치기의 무효과를 먼저 계수로 고정해야 한다. 후보 1은 재측정하지 않았다. 코디네이터는 이 결과를 정상 증분 가설의 측정으로 볼 수 없는 구현 결함으로 판단하여, 결함을 보정한 후보 2의 별도 창을 지시했다.
 
@@ -165,23 +165,23 @@ oneOf-80 A/A′ 차이는 144.541 µs이며 폭 233.749 µs에 반영했다. 창
 | --- | --- | --- | ---: | ---: | ---: | ---: |
 | switch-oneOf-80 | A | updateInactiveValuesMemo | 17.750 | 17.750 | 1 | 22694.88 |
 | switch-oneOf-80 | A | updateInactiveHostLists | 0.000 | 0.000 | 0 | 미수집 |
-| switch-oneOf-80 | A | setLatentRaw | 11.041 | 11.041 | 6 | 11731.52 |
-| switch-oneOf-80 | A | captureExitedRaw | 5.584 | 18.312 | 3 | 3098.80 |
+| switch-oneOf-80 | A | setLatentSource | 11.041 | 11.041 | 6 | 11731.52 |
+| switch-oneOf-80 | A | captureExitedSource | 5.584 | 18.312 | 3 | 3098.80 |
 | switch-oneOf-80 | A | commitSettlement | 8.126 | 42.042 | 1 | 4791.36 |
 | switch-payload-12 | A | updateInactiveValuesMemo | 37.875 | 37.875 | 1 | 87789.68 |
 | switch-payload-12 | A | updateInactiveHostLists | 0.000 | 0.000 | 0 | 미수집 |
-| switch-payload-12 | A | setLatentRaw | 32.854 | 32.854 | 24 | 47336.48 |
-| switch-payload-12 | A | captureExitedRaw | 12.915 | 51.458 | 12 | 12481.68 |
+| switch-payload-12 | A | setLatentSource | 32.854 | 32.854 | 24 | 47336.48 |
+| switch-payload-12 | A | captureExitedSource | 12.915 | 51.458 | 12 | 12481.68 |
 | switch-payload-12 | A | commitSettlement | 16.292 | 84.500 | 1 | 14837.20 |
 | switch-oneOf-80 | B | updateInactiveValuesMemo | 13.709 | 24.042 | 1 | 24691.12 |
 | switch-oneOf-80 | B | updateInactiveHostLists | 10.353 | 10.353 | 1 | 미수집 |
-| switch-oneOf-80 | B | setLatentRaw | 11.583 | 11.583 | 6 | 12085.68 |
-| switch-oneOf-80 | B | captureExitedRaw | 5.666 | 19.230 | 3 | 3088.88 |
+| switch-oneOf-80 | B | setLatentSource | 11.583 | 11.583 | 6 | 12085.68 |
+| switch-oneOf-80 | B | captureExitedSource | 5.666 | 19.230 | 3 | 3088.88 |
 | switch-oneOf-80 | B | commitSettlement | 8.208 | 50.770 | 1 | 4504.80 |
 | switch-payload-12 | B | updateInactiveValuesMemo | 31.645 | 52.875 | 1 | 96789.60 |
 | switch-payload-12 | B | updateInactiveHostLists | 21.355 | 21.355 | 1 | 미수집 |
-| switch-payload-12 | B | setLatentRaw | 32.250 | 32.250 | 24 | 49006.32 |
-| switch-payload-12 | B | captureExitedRaw | 12.332 | 49.210 | 12 | 12704.24 |
+| switch-payload-12 | B | setLatentSource | 32.250 | 32.250 | 24 | 49006.32 |
+| switch-payload-12 | B | captureExitedSource | 12.332 | 49.210 | 12 | 12704.24 |
 | switch-payload-12 | B | commitSettlement | 16.458 | 98.896 | 1 | 14480.72 |
 
 oneOf-80 메모 inclusive 24.042 µs는 목표 3 µs를 넘었다. 메모 self도 13.709 µs이며 목록 갱신 하위 단계는 10.353 µs다. 하위 단계에는 루트 목록 O(L) 복사, 이진 탐색, 삽입·제거와 공표가 함께 들어 있다. 따라서 10.353 µs를 루트 복사 단독 비용으로 해석하지 않는다. 메모 할당은 22,694.88 → 24,691.12 B/쓰기, payload-12는 87,789.68 → 96,789.60 B/쓰기로 증가했다.

@@ -65,7 +65,7 @@ export function createLifecycleScenes(): RemountScene[] {
   ];
   return rows.map((row) => {
     const entries: ObservationMask[] = [
-      ...['raw', 'value', 'outputValue'].map(
+      ...['source', 'value', 'outputValue'].map(
         (channel): ObservationMask => ({
           path: `/nodes/~1${row.target}/${channel}`,
           updated: row.value,

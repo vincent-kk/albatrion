@@ -14,7 +14,7 @@ import {
   dispatchWriteInput,
   subscribeFieldNode,
 } from '../../write';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 import { referenceNextExtras } from './fixtures/referenceNextExtras';
 
 describe('single extras comparison observations', () => {
@@ -39,13 +39,13 @@ describe('single extras comparison observations', () => {
       subscribeFieldNode(root, ({ type }) => delivered.push(type));
       const local = root.local,
         emit = root.emit,
-        extras = root.undeclaredValues;
+        extras = root.extras;
       const revisions = root.revisionLedger;
       for (const option of [WriteOption.Overwrite, WriteOption.Merge]) {
         dispatchWriteInput(root, structuredClone(input), option);
         expect(root.local).toBe(local);
         expect(root.emit).toBe(emit);
-        expect(root.undeclaredValues).toBe(extras);
+        expect(root.extras).toBe(extras);
         expect(root.revisionLedger).toEqual(revisions);
         expect(
           delivered.some((type) => type & FieldNodeEventType.UpdateValue),
@@ -72,7 +72,7 @@ describe('single extras comparison observations', () => {
       { added: 5 },
       {},
     ]) {
-      const previous = root.undeclaredValues;
+      const previous = root.extras;
       const output = root.emit;
       const revision = root.revisionLedger;
       const expected = referenceNextExtras(
@@ -87,11 +87,11 @@ describe('single extras comparison observations', () => {
       changed.mockClear();
       dispatchWriteInput(root, input, WriteOption.Merge);
       expect(input).toStrictEqual(before);
-      expect(root.undeclaredValues).toStrictEqual(expected);
-      expect(Object.keys(Object(root.undeclaredValues))).toEqual(
+      expect(root.extras).toStrictEqual(expected);
+      expect(Object.keys(Object(root.extras))).toEqual(
         Object.keys(Object(expected)),
       );
-      expect(root.undeclaredValues === previous).toBe(equal);
+      expect(root.extras === previous).toBe(equal);
       expect(root.emit === output).toBe(equal);
       expect(
         delivered.some((type) => type & FieldNodeEventType.UpdateValue),
@@ -114,7 +114,7 @@ describe('single extras comparison observations', () => {
       dispatchWriteInput(root, [...input]);
       const local = root.local,
         emit = root.emit,
-        extras = root.undeclaredValues;
+        extras = root.extras;
       const revisions = root.revisionLedger;
       const changed = vi.fn();
       root.runtime.onChange = changed;
@@ -124,7 +124,7 @@ describe('single extras comparison observations', () => {
         dispatchWriteInput(root, [...input], option);
         expect(root.local).toBe(local);
         expect(root.emit).toBe(emit);
-        expect(root.undeclaredValues).toBe(extras);
+        expect(root.extras).toBe(extras);
         expect(root.revisionLedger).toEqual(revisions);
         expect(
           delivered.some((type) => type & FieldNodeEventType.UpdateValue),
@@ -144,7 +144,7 @@ describe('single extras comparison observations', () => {
       dispatchMount(root, [1, 2]);
       const children = root.children,
         local = root.local,
-        extras = root.undeclaredValues;
+        extras = root.extras;
       const revision =
         root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
       const delivered: number[] = [];
@@ -152,7 +152,7 @@ describe('single extras comparison observations', () => {
       dispatchPush(root, 3);
       expect(root.local).not.toBe(local);
       expect(root.children).not.toBe(children);
-      expect(root.undeclaredValues).not.toBe(extras);
+      expect(root.extras).not.toBe(extras);
       expect(root.emit).toEqual([1, 2, 3]);
       expect(
         root.revisionLedger[FieldNodeEventType.UpdateChildren],
@@ -187,12 +187,12 @@ describe('single extras comparison observations', () => {
       ],
     });
     dispatchMount(root, { flag: false, h: { known: 1, extra: { value: 2 } } });
-    const previous = readRetainedSlotRaw(root, '/h', 'object') as {
+    const previous = readRetainedSlotSource(root, '/h', 'object') as {
       extra: unknown;
     };
     dispatchWriteInput(root, { h: { extra: { value: 2 } } }, WriteOption.Merge);
     expect(
-      (readRetainedSlotRaw(root, '/h', 'object') as { extra: unknown }).extra,
+      (readRetainedSlotSource(root, '/h', 'object') as { extra: unknown }).extra,
     ).toBe(previous.extra);
     dispatchWriteInput(root, { flag: true }, WriteOption.Merge);
     expect(root.emit).toEqual({

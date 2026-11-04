@@ -7,7 +7,7 @@ import {
 
 /**
  * Resolve a domain exception to a known report code.
- * @param error - Original thrown value, including raw non-Error values
+ * @param error - Original thrown value, including source non-Error values
  * @returns Its known error code or the listener-failure fallback
  */
 export const readFormErrorCode = (error: unknown): FormErrorCode =>

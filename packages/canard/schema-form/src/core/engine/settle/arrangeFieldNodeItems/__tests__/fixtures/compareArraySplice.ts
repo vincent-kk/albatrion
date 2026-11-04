@@ -30,7 +30,7 @@ export interface SpliceStep {
 /**
  * Run identical public writes with the splice admission enabled and declined.
  * An admitted step must also reuse its host's selection in the candidate unless the step says otherwise, while the oracle never reuses it.
- * After each step it compares results, deliveries with payloads in order, settlement observations (raw, keys, names, paths, revisions and latent raw included),
+ * After each step it compares results, deliveries with payloads in order, settlement observations (source, keys, names, paths, revisions and latent source included),
  * default sources, where every former item now sits, departed nodes' detached reads and the contents of every container retained before the step.
  * @param schema - Authored declarations for two independently owned trees
  * @param input - Source mounted through the public chain before the history

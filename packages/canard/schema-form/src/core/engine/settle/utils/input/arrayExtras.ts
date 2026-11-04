@@ -20,6 +20,6 @@ export const arrayExtras = <Self extends FieldNodeRecord<Self>>(
     ? node.blueprintNode.prefixItems.length
     : 0;
   const next = value.length > start ? value.slice(start) : undefined;
-  const previous = node.undeclaredValues;
+  const previous = node.extras;
   return isArray(previous) && sameValue(previous, next) ? previous : next;
 };

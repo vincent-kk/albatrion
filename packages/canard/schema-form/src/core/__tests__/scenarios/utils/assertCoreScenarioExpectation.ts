@@ -7,7 +7,7 @@ import type { FieldNode } from '@/schema-form/core/surface';
 /**
  * Compare requested observations with the settled public node surface.
  * @param root - Root node after a completed scenario action
- * @param expectation - Shape, raw values, output, and diagnostic assertions
+ * @param expectation - Shape, source values, output, and diagnostic assertions
  * @returns Nothing; assertion failures identify the mismatched observation
  */
 export function assertCoreScenarioExpectation(

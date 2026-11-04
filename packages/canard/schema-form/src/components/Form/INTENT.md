@@ -7,7 +7,7 @@
 ## Conventions
 
 - `Form`의 보조 렌더링 컴포넌트는 네임스페이스로 묶되 폼의 상태 소유권은 중복하지 않는다.
-- `FormHandle`의 `getValue`·제출·최초 변경 방출은 `rootNode.outputValue`를 읽고, `setValue`는 raw 값을 노드에 전달한다. 편집 상태와 외부 값을 구별한다.
+- `FormHandle`의 `getValue`·제출·최초 변경 방출은 `rootNode.outputValue`를 읽고, `setValue`는 source 값을 노드에 전달한다. 편집 상태와 외부 값을 구별한다.
 - Provider의 중첩 순서를 고정해 바깥 설정과 안쪽 노드·렌더링 소비자의 관계를 유지한다.
 - `children`은 ReactNode 또는 `(props: FormChildrenProps) => ReactNode` 렌더 함수 모두 지원한다. 함수형은 `FormChildrenRenderer`가 트래커(`useFieldNodeTracker`)로 다시 실행하도록 구동한다.
 - Emit changes only from prepared current loads, including while hidden; suppress identical references. Submit validation failures use `ValidationError`.

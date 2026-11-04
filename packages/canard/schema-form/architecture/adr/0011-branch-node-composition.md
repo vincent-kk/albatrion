@@ -32,16 +32,16 @@
 
 ### 02-node-and-value.md §1.1 노드의 종류
 
-3.1판이 상태를 `raw`·`selection`·`extras` 셋으로 줄인 뒤(VALUE-002), 종류를 가르는 기준은 "자식 집합이 어디서 오는가"와 "값을 드는가" 둘이다(NODE-021).
+3.1판이 상태를 `source`·`selection`·`extras` 셋으로 줄인 뒤(VALUE-002), 종류를 가르는 기준은 "자식 집합이 어디서 오는가"와 "값을 드는가" 둘이다(NODE-021).
 
 | 종류 | 자식 집합의 출처 | 값 | identity | 방출·가드·검증에서의 자리 |
 | ---- | ---------------- | -- | -------- | ------------------------- |
-| 리프 | 없다 | `raw` | 이름 또는 인덱스 | 자기 값으로 나타난다 |
-| 터미널 object·array | 없다 — 자식을 만들지 않는다 | `raw` 하나로 값을 통째로 든다 | 이름 | 값 통째로 나타난다. 안의 `if`/`oneOf`는 형상을 만들지 않고 검증기가 그대로 판정한다 |
-| branch object | **스키마** — 청사진이 정적으로 열거한 선언(BLUEPRINT-004) | 없다. 비객체 값(`null`, `17`)이 왔을 때만 `raw`를 든다(VALUE-002) | property 이름 (+ 타입이 다른 배타 조각의 경우 조각) | `local`을 합성하고 투영해 `emit`을 만든다 |
+| 리프 | 없다 | `source` | 이름 또는 인덱스 | 자기 값으로 나타난다 |
+| 터미널 object·array | 없다 — 자식을 만들지 않는다 | `source` 하나로 값을 통째로 든다 | 이름 | 값 통째로 나타난다. 안의 `if`/`oneOf`는 형상을 만들지 않고 검증기가 그대로 판정한다 |
+| branch object | **스키마** — 청사진이 정적으로 열거한 선언(BLUEPRINT-004) | 없다. 비객체 값(`null`, `17`)이 왔을 때만 `source`를 든다(VALUE-002) | property 이름 (+ 타입이 다른 배타 조각의 경우 조각) | `local`을 합성하고 투영해 `emit`을 만든다 |
 | branch array | **값** — 아이템 수 × 아이템 청사진 | 위와 같다 | 인덱스와 독립적인 단조 키(현재의 `#n`, 제약 T-22(배열 아이템의 React key는 생성 순서의 nonce)) | 위와 같다 |
 
-노드 종류 표는 VALUE-002를 따라 읽어야 한다: 상태 칸은 `raw`·`extras` 둘뿐이고 `selection`은 없다(NODE-021, VALUE-002).
+노드 종류 표는 VALUE-002를 따라 읽어야 한다: 상태 칸은 `source`·`extras` 둘뿐이고 `selection`은 없다(NODE-021, VALUE-002).
 
 노드 트리가 곧 상태(VALUE-001)와 작업 루프(SETTLE-001)가 들어오면 값의 합성, 상향·하향 전파, 역류 방지 잠금은 branch 노드의 일이 아니게 된다(NODE-025). 남는 것은 다음이다(NODE-025).
 
@@ -118,7 +118,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 | 항목 | 규칙 |
 | ---- | ---- |
 | 자식의 출처 | 형제 참조. 스키마도 값도 아니다 |
-| 값 | `raw`·`emit`이 없고, 행의 `assemble` 칸이 참조 노드 값의 튜플을 `local`에 둔다(`value` 게터는 `local`, 오늘의 `VirtualNode.ts:112-139`). 전략은 `branch`다(`src/helpers/jsonSchema/filter.ts:20-21`, 17라운드 노드 구조 수렴). 가상은 늘 `branch`이고 `options.terminal: true`는 청사진 오류다 |
+| 값 | `source`·`emit`이 없고, 행의 `assemble` 칸이 참조 노드 값의 튜플을 `local`에 둔다(`value` 게터는 `local`, 오늘의 `VirtualNode.ts:112-139`). 전략은 `branch`다(`src/helpers/jsonSchema/filter.ts:20-21`, 17라운드 노드 구조 수렴). 가상은 늘 `branch`이고 `options.terminal: true`는 청사진 오류다 |
 | 쓰기 | 참조 노드로 부채질한다(`VirtualNode.ts:39-96`). 유지 |
 | 방출·가드·검증 | 나타나지 않는다. 표준 `required`는 실제 필드만 적는다 |
 | 명령 | `RequestRefresh`는 유지(EVENT-039) |
@@ -185,7 +185,7 @@ Vincent의 요건: 상속 구조를 그대로 두는 것, 공유 로직을 타�
 
 생김은 노드 단위다(WRITE-007). 직전 커밋의 형상에 없고 이번 정착의 최종 형상에 있는 노드만 생긴 것이고, 본체·게이트 없는 `allOf` 항목·이미 켜져 있던 다른 조각이 두고 있던 노드는 새 조각이 켜져도 생기지 않는다(WRITE-007).
 
-"없음"과 `''`·`null`·`{}`은 다르다(WRITE-010). 객체 호스트의 없음은 호스트와 모든 자손의 `raw`·`extras`가 없음인 것이라, 로드한 V가 그 자리에 `{}`를 주어도 호스트는 `controls.default` > `default`를 받는다(WRITE-010, WRITE-082). 리프에 `undefined`를 쓰면 없음이 된다(WRITE-010). 입력 컴포넌트가 `onChange(undefined)`를 보내도 값이 없음이 된다(소유자 답(`reviews/round-10-owner-answers.md:15` C-11), WRITE-010). `Merge`로 키에 `undefined`를 쓰면 그 키는 없음이 된다(WRITE-010). `extras`의 키도 같고, 따로 `removeKey`를 두지 않는다(소유자 답(`reviews/round-10-owner-answers.md:18` C-2), WRITE-010).
+"없음"과 `''`·`null`·`{}`은 다르다(WRITE-010). 객체 호스트의 없음은 호스트와 모든 자손의 `source`·`extras`가 없음인 것이라, 로드한 V가 그 자리에 `{}`를 주어도 호스트는 `controls.default` > `default`를 받는다(WRITE-010, WRITE-082). 리프에 `undefined`를 쓰면 없음이 된다(WRITE-010). 입력 컴포넌트가 `onChange(undefined)`를 보내도 값이 없음이 된다(소유자 답(`reviews/round-10-owner-answers.md:15` C-11), WRITE-010). `Merge`로 키에 `undefined`를 쓰면 그 키는 없음이 된다(WRITE-010). `extras`의 키도 같고, 따로 `removeKey`를 두지 않는다(소유자 답(`reviews/round-10-owner-answers.md:18` C-2), WRITE-010).
 
 공개 옵션은 비트마스크다 — `SetValueOption.Overwrite | Merge | DisableAutomaticWrites | EnableAutomaticWrites`, Form 속성은 `disableAutomaticWrites`(SURFACE-004, SURFACE-039, WRITE-015).
 

@@ -22,7 +22,7 @@ unit·render·react18 프로젝트는 setupDeriveShadowEvaluation.ts가 내부 �
 - P6은 같은 경로의 반복 읽기가 모두 일관되고, 모든 기록 값을 끝에서 재읽은 값과 `Object.is`로 비교해 같아야 합니다.
 - P7은 load가 아닌 갱신이며 호스트 분배 입력과 기존 예산 초과가 없어야 합니다.
 
-프레임은 `computeNode.ts:159`에서 바퀴마다 만들고 `:235`의 재귀 경계에서 저장·복원합니다. 식 의존값과 `@`의 runtime.context 참조는 `evaluateGate.ts:146`, if·판별 게이트의 투영 raw와 projectedExtra 참조는 `:56`에서 기록합니다. appliesWhen은 원래 순서대로 재귀 평가하며 각 호출이 스스로 기록합니다. 원본 키나 구조 노드 정체성으로 투영 값을 대체하지 않습니다.
+프레임은 `computeNode.ts:159`에서 바퀴마다 만들고 `:235`의 재귀 경계에서 저장·복원합니다. 식 의존값과 `@`의 runtime.context 참조는 `evaluateGate.ts:146`, if·판별 게이트의 투영 source와 projectedExtra 참조는 `:56`에서 기록합니다. appliesWhen은 원래 순서대로 재귀 평가하며 각 호출이 스스로 기록합니다. 원본 키나 구조 노드 정체성으로 투영 값을 대체하지 않습니다.
 
 primeHost의 고정 출발점, 실행된 바퀴의 전 게이트 평가, 단계 순서와 예산 계산은 유지합니다(SETTLE-001·017·018·020·044). P1 때문에 상한을 소진한 바퀴에서는 생략하지 않으며 BudgetExceeded 보고를 보존합니다. 내부 `gateWheelEvaluation`의 skip·record·shadow 모드만 시험과 bench에서 전환하며 공개 옵션이나 index.ts export를 추가하지 않았습니다.
 
@@ -51,8 +51,8 @@ typecheck·lint·다섯 프로젝트(unit·render·react18·production·storyboo
 | S5 중첩 키 | 1 | 바퀴 0 뒤 발화합니다. |
 | S5 omitEmpty overlay | 1, 1 | 켜는 쓰기의 바퀴 0에서는 P6 불일치로 진행하고 바퀴 1 뒤 발화합니다. 되돌리는 쓰기는 바퀴 0 뒤 발화합니다. 방출 값은 같고 루트의 커밋된 선언 목록이 `[0, 2]`와 `[0, 1, 2]`로 다른 반례입니다. |
 | S6 무관한 common 쓰기 | 0 | 호스트 바퀴 자체가 0회입니다. |
-| S6 if의 잠복 p='P' 복원 | 0 | raw 참조가 바뀌어 확인 바퀴를 유지합니다. |
-| 추가 if 대조군: 값 없는 p 선언 | 1 | 투영 raw·extras 참조가 그대로이므로 바퀴 0 뒤 발화하며 shadow의 실제 확인도 무동작입니다. |
+| S6 if의 잠복 p='P' 복원 | 0 | source 참조가 바뀌어 확인 바퀴를 유지합니다. |
+| 추가 if 대조군: 값 없는 p 선언 | 1 | 투영 source·extras 참조가 그대로이므로 바퀴 0 뒤 발화하며 shadow의 실제 확인도 무동작입니다. |
 | 추가 이동 게이트 두 장면 | 0 | 기존 p에서는 P3, 새 p와 이동 게이트가 생기면 P2·P3가 바퀴 0 뒤의 생략을 차단합니다. |
 
 if를 일괄 제외하는 특례는 넣지 않았습니다. 설계의 if 게이트가 생략되지 않을 것이라는 예상은 값 없는 자식 사례로 정정됩니다. S5 overlay 반례는 기본 omitEmpty=false인 cfg 잎의 원본을 그대로 둔 채 투영 값이 바뀌도록 구성했습니다. overlay 장면의 관측 1에서 방출 값 `{ flag: true }`는 같고, 차이는 루트의 커밋된 선언 목록 `[0, 2]`와 `[0, 1, 2]`입니다. 중첩 경로 자체는 별도 S5 장면에서 검증했습니다.
@@ -64,7 +64,7 @@ if를 일괄 제외하는 특례는 넣지 않았습니다. 설계의 if 게이�
 | 변이 | 결과 |
 |---|---|
 | V1 P6 제거 | S3 임계 바퀴의 생략 금지 단언에서 검출했습니다. |
-| V2 changedRaw 경로로만 P6 제한 | 원본이 그대로인 S5 overlay에서 검출했습니다. |
+| V2 changedSource 경로로만 P6 제한 | 원본이 그대로인 S5 overlay에서 검출했습니다. |
 | V3 undefined 읽기 무시 | S3 임계 바퀴에서 검출했습니다. |
 | V4 투영 값 대신 구조 노드 정체성 비교 | S5 overlay에서 검출했습니다. |
 | V5 P1 제거 | cap=1에서 BudgetExceeded가 사라져 검출했습니다. |

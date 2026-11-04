@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { isArrayNode } from '@/schema-form/core/surface';
 
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 // Detached writes preserve the retained source across array index movement.
 it('ignores a detached field write after its surviving array item moves', () => {
@@ -43,8 +43,8 @@ it('ignores a detached field write after its surviving array item moves', () => 
   expect(survivor.path).toBe('/items/1');
   ref.setValue('x');
   const retainedAfterWrite = {
-    moved: readRetainedSlotRaw(root, '/items/1/gated', 'string'),
-    former: readRetainedSlotRaw(root, '/items/2/gated', 'string'),
+    moved: readRetainedSlotSource(root, '/items/1/gated', 'string'),
+    former: readRetainedSlotSource(root, '/items/2/gated', 'string'),
   };
   expect(ref.path).toBe('/items/2/gated');
   expect(ref.value).toBe('third');

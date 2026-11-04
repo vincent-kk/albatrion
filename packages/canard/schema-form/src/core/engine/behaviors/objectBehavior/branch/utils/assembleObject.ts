@@ -24,7 +24,7 @@ export const assembleObject: Behavior['assemble'] = (
     hint &&
     stable?.children === children &&
     stable.schema === node.schema &&
-    stable.undeclaredValues === node.undeclaredValues &&
+    stable.extras === node.extras &&
     previous !== null &&
     typeof previous === 'object' &&
     objectKeyCounts.get(previous) === stable.names.length
@@ -64,8 +64,8 @@ export const assembleObject: Behavior['assemble'] = (
   if (
     stable?.children === children &&
     stable.schema === node.schema &&
-    stable.undeclaredValues === undefined &&
-    node.undeclaredValues === undefined &&
+    stable.extras === undefined &&
+    node.extras === undefined &&
     previous !== null &&
     typeof previous === 'object' &&
     !isArray(previous)
@@ -115,7 +115,7 @@ export const assembleObject: Behavior['assemble'] = (
   const entries = node.blueprintNode.childEntries;
   if (
     previous === undefined &&
-    node.undeclaredValues === undefined &&
+    node.extras === undefined &&
     preferred.length === 0 &&
     entries.length === children.length
   ) {
@@ -144,14 +144,14 @@ export const assembleObject: Behavior['assemble'] = (
       (node.runtime.objectShapes ??= new WeakMap()).set(node, {
         children,
         schema: node.schema,
-        undeclaredValues: node.undeclaredValues,
+        extras: node.extras,
         names,
       });
       objectKeyCounts.set(result, names.length);
       return result;
     }
   }
-  const extra = node.undeclaredValues;
+  const extra = node.extras;
   const extras =
     extra !== null && typeof extra === 'object' && !isArray(extra)
       ? extra
@@ -170,7 +170,7 @@ export const assembleObject: Behavior['assemble'] = (
     (node.runtime.objectShapes ??= new WeakMap()).set(node, {
       children,
       schema: node.schema,
-      undeclaredValues: node.undeclaredValues,
+      extras: node.extras,
       names,
     });
     objectKeyCounts.set(result, names.length);
@@ -271,7 +271,7 @@ export const assembleObject: Behavior['assemble'] = (
       (node.runtime.objectShapes ??= new WeakMap()).set(node, {
         children,
         schema: node.schema,
-        undeclaredValues: node.undeclaredValues,
+        extras: node.extras,
         names,
       });
       objectKeyCounts.set(patch ?? previous, names.length);
@@ -292,7 +292,7 @@ export const assembleObject: Behavior['assemble'] = (
   (node.runtime.objectShapes ??= new WeakMap()).set(node, {
     children,
     schema: node.schema,
-    undeclaredValues: node.undeclaredValues,
+    extras: node.extras,
     names,
   });
   objectKeyCounts.set(result, names.length);

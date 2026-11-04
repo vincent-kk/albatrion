@@ -133,7 +133,7 @@
 
 | 항목 | 현재 | 새 설계 | 변화 | 근거 |
 | ---- | ---- | ------- | ---- | ---- |
-| `node.value`/`normalizedValue` | 원본과 정제된 값으로 나뉜다 | 구분 유지가 "자연스럽다"고만 적혀 있다. 상태 칸 셋(`raw`/`local`/`emit`)에 공개 이름을 어떻게 배치할지는 **D-23 대기** | 미결(D-23) | `open-questions.md` Q3 / 6라운드 D-23 |
+| `node.value`/`normalizedValue` | 원본과 정제된 값으로 나뉜다 | 구분 유지가 "자연스럽다"고만 적혀 있다. 상태 칸 셋(`source`/`local`/`emit`)에 공개 이름을 어떻게 배치할지는 **D-23 대기** | 미결(D-23) | `open-questions.md` Q3 / 6라운드 D-23 |
 | `node.enhancedValue` | 가상 필드를 포함한 값 | 새 모델에 자리가 없다(발견 33). 거취는 D-23과 함께 | **미확인 → 미결(D-23)** | 패키지 `CLAUDE.md` / 6라운드 D-23 |
 | `oneOfIndex`/`anyOfIndices` | 활성 분기의 인덱스를 읽는 공개 표면 | 대응물이 언급되지 않는다. 형상 쪽에는 `selection` 칸과 활성 조각 집합이 있다 | **미확인**(이주 충격 목록의 하나) | `AbstractNode.ts:490` / 6라운드 발견 57 |
 | 배열 `push`/`remove`/`clear` | 마이크로태스크 하나 뒤에 풀리는 Promise를 돌려준다 | **동기**. Promise를 돌려주지 않는다 | 파괴적 변경 | `01-current-structure.md:81` / `adr/0007:127`, T-7 |

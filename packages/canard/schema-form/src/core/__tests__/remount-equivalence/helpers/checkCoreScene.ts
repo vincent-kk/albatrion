@@ -16,7 +16,7 @@ import { mountScene } from './mountScene';
 /**
  * Compare every write prefix with a new mount of the public output.
  * @param scene - Deterministic schema, values and public write sequence.
- * @param report - Emit raw diagnostics when no task metadata sink is used.
+ * @param report - Emit source diagnostics when no task metadata sink is used.
  * @returns Every mismatch, including thrown operations and automatic validation.
  */
 export async function checkCoreScene(

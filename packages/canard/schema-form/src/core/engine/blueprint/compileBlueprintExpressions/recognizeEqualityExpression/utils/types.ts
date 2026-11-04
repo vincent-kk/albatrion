@@ -1,6 +1,6 @@
 import type { EqualityLiteral } from '../../../types/blueprint';
 
-/** Closed token set; raw identifiers and member access never reach the parser. */
+/** Closed token set; source identifiers and member access never reach the parser. */
 export type EqualityToken =
   | { readonly kind: 'reference' }
   | { readonly kind: 'literal'; readonly value: EqualityLiteral }

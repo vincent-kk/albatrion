@@ -203,8 +203,8 @@ describe('detached FieldNode references', () => {
     leaf.setValue('older latent');
     group.setValue('replaced', SetValueOption.Merge);
     root.find('/flag')?.setValue(true);
-    expect(root.find('/group')?.raw).toBeUndefined();
-    expect(root.find('/group/leaf')?.raw).toBe('before');
+    expect(root.find('/group')?.source).toBeUndefined();
+    expect(root.find('/group/leaf')?.source).toBe('before');
   });
 
   it('reads live diagnostics through a detached reference', () => {
@@ -318,7 +318,7 @@ describe('detached FieldNode references', () => {
     const commit = Reflect.get(runtime, 'commitNumber');
     old.setValue('x');
     old.resetSubtree();
-    expect(current.raw).toBe('initial');
+    expect(current.source).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(root.inactiveValues).toEqual([]);
     expect(root.inactiveValues.some((entry) => entry.path === '/target')).toBe(
@@ -329,7 +329,7 @@ describe('detached FieldNode references', () => {
     current.setValue('from second reference');
     old.setValue('y');
     root.find('/flag')?.setValue(true);
-    expect(root.find('/target')?.raw).toBe('initial');
+    expect(root.find('/target')?.source).toBe('initial');
   });
 
   it('26C-12 NODE-044 ignores a detached write inside a batch across every lifetime', () => {
@@ -350,13 +350,13 @@ describe('detached FieldNode references', () => {
     root.batch(() => {
       old.setValue('x');
     });
-    expect(current.raw).toBe('initial');
+    expect(current.source).toBe('initial');
     root.find('/flag')?.setValue(false);
     root.batch(() => {
       old.setValue('y');
     });
     root.find('/flag')?.setValue(true);
-    expect(root.find('/target')?.raw).toBe('initial');
+    expect(root.find('/target')?.source).toBe('initial');
   });
 
   for (const [verb, call, result, latent] of DETACHED_VERBS)
@@ -403,7 +403,7 @@ describe('detached FieldNode references', () => {
     root.batch(() => {
       finishFieldNodeInput(old);
     });
-    expect(current.raw).toBe(' x ');
+    expect(current.source).toBe(' x ');
   });
 
   it('26C-12 EVENT-013 judges a detached write against the shape committed before the batch', () => {
@@ -424,7 +424,7 @@ describe('detached FieldNode references', () => {
       old.setValue('y');
     });
     root.find('/flag')?.setValue(true);
-    expect(root.find('/target')?.raw).toBe('initial');
+    expect(root.find('/target')?.source).toBe('initial');
   });
 
   it('26C-12 ignores Merge through an old detached object while its path is live', () => {
@@ -439,8 +439,8 @@ describe('detached FieldNode references', () => {
     if (!current || current === old) throw new Error('Expected a new group');
     const commit = Reflect.get(runtime, 'commitNumber');
     old.setValue({ leaf: 'x' }, SetValueOption.Merge);
-    expect(current.raw).toBeUndefined();
-    expect(root.find('/group/leaf')?.raw).toBe('initial');
+    expect(current.source).toBeUndefined();
+    expect(root.find('/group/leaf')?.source).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(root.inactiveValues).toEqual([]);
     expect(root.inactiveValues.some((entry) => entry.path === '/group')).toBe(

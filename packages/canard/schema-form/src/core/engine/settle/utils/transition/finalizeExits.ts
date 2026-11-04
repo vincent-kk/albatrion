@@ -15,7 +15,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { applyInactiveValues } from '../inactive/applyInactiveValues';
 import { resolveInactiveValue } from '../inactive/resolveInactiveValue';
 import { updateOutput } from '../output/updateOutput';
-import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
+import { finalizeRestoredSlotSource } from '../slots/finalizeRestoredSlotSource';
 import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { finalizePerished } from './finalizePerished';
 import { isRekeyedDestination } from './utils/isRekeyedDestination';
@@ -114,7 +114,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       );
   if (context.inactiveValueOverrides) applyInactiveValues(context);
   const affectedAncestors = new Set<Self>();
-  finalizeRestoredSlotRaw(context);
+  finalizeRestoredSlotSource(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) affectedAncestors.add(ancestor);

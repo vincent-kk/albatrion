@@ -7,8 +7,8 @@ import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 // filid:contract settle-array-lifecycle
 describe('array settlement lifecycle', () => {
@@ -49,13 +49,13 @@ describe('array settlement lifecycle', () => {
     const former = root.find('/items')!;
     const formerFirst = former.children![0];
     root.find('/flag')?.setValue(false);
-    expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual(
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(
       root.inactiveValues[0]?.value,
     );
     expect(root.inactiveValues).toEqual([
       { path: '/items', value: ['a', 'b'] },
     ]);
-    expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual(['a', 'b']);
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(['a', 'b']);
     expect(Object.isFrozen(root.inactiveValues[0]?.value)).toBe(true);
     root.find('/flag')?.setValue(true);
     expect(root.find('/items')?.value).toEqual(['a', 'b']);
@@ -63,7 +63,7 @@ describe('array settlement lifecycle', () => {
     expect(root.find('/items')?.children?.[0]).not.toBe(formerFirst);
   });
 
-  it('38C-02 captures raw item trees and folds latent children into one host', () => {
+  it('38C-02 captures source item trees and folds latent children into one host', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -113,7 +113,7 @@ describe('array settlement lifecycle', () => {
     root.find('/items/0/show')?.setValue(false);
     expect(root.find('/items/0/hidden')).toBeNull();
     root.find('/showHost')?.setValue(false);
-    const rawTree = [
+    const sourceTree = [
       {
         show: false,
         visible: 'v',
@@ -124,11 +124,11 @@ describe('array settlement lifecycle', () => {
       },
       { nestedArray: [] },
     ];
-    expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual(
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(
       root.inactiveValues[0]?.value,
     );
-    expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual(rawTree);
-    expect(root.inactiveValues).toEqual([{ path: '/items', value: rawTree }]);
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(sourceTree);
+    expect(root.inactiveValues).toEqual([{ path: '/items', value: sourceTree }]);
     root.find('/showHost')?.setValue(true);
     expect(root.find('/items')?.value).toEqual([
       {
@@ -379,7 +379,7 @@ describe('array settlement lifecycle', () => {
     const first = host.children![0];
     const tuple = root.structure!.tuple;
     const tupleFirst = tuple.children![0];
-    const previousExtras = tuple.undeclaredValues;
+    const previousExtras = tuple.extras;
     expect(() =>
       writeFieldNode(
         root,
@@ -395,12 +395,12 @@ describe('array settlement lifecycle', () => {
     expect(host.children).toEqual([first]);
     expect(host.children![0]).toBe(first);
     expect(host.itemCount).toBe(1);
-    expect(host.undeclaredValues).toBeUndefined();
+    expect(host.extras).toBeUndefined();
     expect(host.nextItemKey).toBeGreaterThan(first.itemKey! + 1);
     expect(tuple.children![0]).toBe(tupleFirst);
     expect(tuple.itemCount).toBe(2);
-    expect(tuple.undeclaredValues).toBe(previousExtras);
-    expect(tuple.undeclaredValues).toEqual(['extra']);
+    expect(tuple.extras).toBe(previousExtras);
+    expect(tuple.extras).toEqual(['extra']);
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {
@@ -420,7 +420,7 @@ describe('array settlement lifecycle', () => {
     expect(root.find('/items')?.children).toEqual([]);
     expect(root.find('/items')?.value).toEqual([null]);
     expect(former.isActive).toBe(false);
-    expect(readRetainedSlotRaw(root, '/items/0', 'string')).toBe('a');
+    expect(readRetainedSlotSource(root, '/items/0', 'string')).toBe('a');
     root.find('/items')?.setValue([]);
     expect(hasRetainedSlotOwnSource(root, '/items/0', 'string')).toBe(false);
   });

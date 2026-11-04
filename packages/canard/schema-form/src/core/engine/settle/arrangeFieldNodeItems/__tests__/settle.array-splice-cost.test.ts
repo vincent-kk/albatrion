@@ -17,7 +17,7 @@ import * as reuse from '../../utils/compute/childSelection/reuseArrayChildren';
 import * as ids from '../../utils/compute/childSelection/staticIds';
 import * as registration from '../../utils/dependencies/registerRecalculation';
 import * as output from '../../utils/output/updateOutput';
-import * as rawTree from '../../utils/slots/readSourceTree';
+import * as sourceTree from '../../utils/slots/readSourceTree';
 import * as general from '../utils/arraySlots/applyArraySlots';
 import * as splicing from '../utils/arraySlots/applyArraySplice';
 import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
@@ -108,7 +108,7 @@ const measure = (
     },
   );
   const spies = {
-    readSourceTree: vi.spyOn(rawTree, 'readSourceTree'),
+    readSourceTree: vi.spyOn(sourceTree, 'readSourceTree'),
     canApplyArrayTail: vi.spyOn(tailProof, 'canApplyArrayTail'),
     applyArraySlots: vi.spyOn(general, 'applyArraySlots'),
     updateOutput: vi.spyOn(output, 'updateOutput'),
@@ -162,11 +162,11 @@ describe('an admitted middle remove or insert does tail-sized work', () => {
   );
 });
 
-describe('the general slot path reads the raw tree only when a slot needs it', () => {
+describe('the general slot path reads the source tree only when a slot needs it', () => {
   it('reads nothing for an item-template array and still reads a tuple array', () => {
     const declined = (schema: BlueprintSchema) => {
       vi.spyOn(admission, 'prepareArraySplice').mockReturnValue(undefined);
-      const read = vi.spyOn(rawTree, 'readSourceTree');
+      const read = vi.spyOn(sourceTree, 'readSourceTree');
       const slots = vi.spyOn(general, 'applyArraySlots');
       const { root } = createDispatchTree(schema);
       dispatchMount(root, [0, 1, 2, 3, 4], WriteOption.Overwrite, {

@@ -13,4 +13,4 @@ type Story = StoryObj<typeof FeatureStory>;
 export const ObjectChildren: Story = createFeatureStory(findScenario(valueScenarios, 'value.omit-empty-object'));
 
 /** Shared scenario `union.omit-empty`. */
-export const UnionRawKept: Story = createFeatureStory(findScenario(unionScenarios, 'union.omit-empty'));
+export const UnionSourceKept: Story = createFeatureStory(findScenario(unionScenarios, 'union.omit-empty'));

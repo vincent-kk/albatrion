@@ -7,7 +7,7 @@ import { markWrite } from '../../input/markWrite';
 import { writeInactiveSource } from '../../slots/writeInactiveSource';
 
 /**
- * Apply one selected automatic replacement to live or latent raw.
+ * Apply one selected automatic replacement to live or latent source.
  * @param write - Winner from derive's pure decision
  * @param context - Reversible settlement work list
  * @returns Nothing; marking and latent distribution are recorded for rollback

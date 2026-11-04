@@ -6,7 +6,7 @@ import { getItemEntry } from '../../../../blueprint';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
 
 /**
- * Prove that every retained position keeps its existing raw owner and path.
+ * Prove that every retained position keeps its existing source owner and path.
  * @param host - Live branch array before its proposed structural update
  * @param plan - Slot proposal with a retained prefix and optional value tail
  * @returns Whether only the tail needs construction or retirement
@@ -41,7 +41,7 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   if (hasMultipleItemCandidates) {
     return false;
   }
-  if (host.raw !== undefined || host.itemCount === plan.slots.length)
+  if (host.source !== undefined || host.itemCount === plan.slots.length)
     return false;
   const prefixCount = minLite(host.itemCount, plan.slots.length);
   for (let index = 0; index < prefixCount; index++) {

@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** LANDING-010 merges allOf conditions; LANDING-018 keeps inactive raw values. */
+/** LANDING-010 merges allOf conditions; LANDING-018 keeps inactive source values. */
 export const conditionalScreenScenarios = [
   {
     name: 'LANDING-010 if-then-adult-roundtrip',

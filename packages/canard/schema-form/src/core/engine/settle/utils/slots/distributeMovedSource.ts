@@ -21,7 +21,7 @@ export const distributeMovedSource = <Self extends FieldNodeRecord<Self>>(
   _order: readonly number[],
 ): void => {
   const retained = resolveSlotSource(context.root, path, template);
-  if (retained.source || retained.overlay) return;
+  if (retained.instance || retained.overlay) return;
   writeSlotPath(
     context.root,
     path,

@@ -10,36 +10,36 @@ import { getSlotSource } from './getSlotSource';
 /**
  * Detach a kept candidate's channels from its old array position without reinterpreting them.
  * @param template - Exact candidate whose child bindings must remain distinct
- * @param source - Retained occurrence supplying channels omitted from the patch
+ * @param instance - Retained occurrence supplying channels omitted from the patch
  * @param overlay - Exit policy patch, including already materialized nested arrays
  * @returns A source-independent replacement preserving every kept candidate kind
  */
 export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Optional<Self>,
+  instance: Optional<Self>,
   overlay: Optional<InactiveSlotOverlay>,
 ): InactiveSlotOverlay => {
-  const inherited = overlay?.replace ? undefined : source;
-  const raw =
-    overlay && hasOwnProperty(overlay, 'raw') ? overlay.raw : inherited?.raw;
-  const undeclaredValues =
-    overlay && hasOwnProperty(overlay, 'undeclaredValues')
-      ? overlay.undeclaredValues
-      : inherited?.undeclaredValues;
+  const inherited = overlay?.replace ? undefined : instance;
+  const source =
+    overlay && hasOwnProperty(overlay, 'source') ? overlay.source : inherited?.source;
+  const extras =
+    overlay && hasOwnProperty(overlay, 'extras')
+      ? overlay.extras
+      : inherited?.extras;
   const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
   if (template.strategy === 'branch')
-    for (const entry of getSlotEntries(source, overlay, template)) {
-      const child = getSlotSource(source, entry, overlay);
+    for (const entry of getSlotEntries(instance, overlay, template)) {
+      const child = getSlotSource(instance, entry, overlay);
       children.set(
         entry,
-        materializeKeptSlotOverlay(entry.node, child.source, child.overlay),
+        materializeKeptSlotOverlay(entry.node, child.instance, child.overlay),
       );
     }
   return {
     ...overlay,
     replace: true,
-    raw,
-    undeclaredValues,
+    source,
+    extras,
     ...(template.kind === 'array'
       ? { itemCount: overlay?.itemCount ?? inherited?.itemCount ?? 0 }
       : undefined),

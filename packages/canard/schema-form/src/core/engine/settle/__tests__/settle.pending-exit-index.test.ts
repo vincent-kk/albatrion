@@ -26,7 +26,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
     const { root, context } = gateTableScene();
     engineModes.setMode('gateSelection', 'off');
     const prior = { ...root.structure };
-    root.structure!.kind.raw =
+    root.structure!.kind.source =
       root.structure!.kind.local =
       root.structure!.kind.emit =
         'b';

@@ -16,7 +16,7 @@
 
 ## 2. 실행 중 범위 확인과 국소 바퀴
 
-표의 루트 후보는 조회 뒤 바로 기존 루트 경로로 갑니다. 비루트 후보는 소유자·적중 bucket·changedRaw·나감 후보가 범위 안인지 확인합니다. load/reset, batch, distributedInputs, 이동, 실패·예산 및 occurrence 불일치는 루트로 후퇴합니다. 후속 파생·전이 계산도 범위를 재확인합니다.
+표의 루트 후보는 조회 뒤 바로 기존 루트 경로로 갑니다. 비루트 후보는 소유자·적중 bucket·changedSource·나감 후보가 범위 안인지 확인합니다. load/reset, batch, distributedInputs, 이동, 실패·예산 및 occurrence 불일치는 루트로 후퇴합니다. 후속 파생·전이 계산도 범위를 재확인합니다.
 
 진단한 204개 일반 쓰기 중 48개가 국소 바퀴입니다. 정적 중첩 40개는 `/n0/n0/n0/n0/n*`, 중첩 oneOf 8개는 `/outer/inner`이며 나머지 156개는 루트입니다. [행별 실행 결과](raw/iv-1/resolution.json)를 보존했습니다. 국소 호스트부터 계산하고 조상은 updateOutput으로 결과를 조립합니다. 같은 변화 구동 커밋 집합과 기존 배달 파동을 유지합니다. 1000개 presence 필드 시험의 compute 1003→1002는 `/h` 밖 루트 진입 하나가 출력 조립으로 바뀐 결과입니다. 실제 wheelHost `/h`를 단언하고, 같은 fixture를 강제로 루트에 보내면 기존 1003회와 같은 presence·visibility·배달 관측을 확인합니다. 조상 lattice와 고정 HEAD 선택 대조에도 강제 루트 짝을 유지합니다.
 

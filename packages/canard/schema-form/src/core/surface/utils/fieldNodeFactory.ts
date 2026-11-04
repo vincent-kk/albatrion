@@ -92,7 +92,7 @@ const createFieldNode = (
   entry: BlueprintChildEntry | BlueprintNode,
   parent: Nullable<RuntimeFieldNode>,
   runtime: FieldNodeRuntime<RuntimeFieldNode>,
-  source?: RuntimeFieldNode,
+  instance?: RuntimeFieldNode,
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
@@ -101,7 +101,7 @@ const createFieldNode = (
     ? appendFormattedSegment(parent.path, escapedName)
     : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
-  const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
+  const row = instance?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,
@@ -118,7 +118,7 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    source?.schema ??
+    instance?.schema ??
       mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
         mode: 'runtime',
         isAtomic: runtime.blueprint?.isAtomic,

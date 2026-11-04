@@ -48,9 +48,9 @@ for (const name of ['index.mjs', 'index.node.mjs', 'index.cjs']) {
   );
   assert.equal(slots, undefined, name + ': no retired source-mode switch');
   const retired = [
-    'captureExitedRaw',
-    'setLatentRaw',
-    'writeLatentRaw',
+    'captureExitedSource',
+    'setLatentSource',
+    'writeLatentSource',
     'restoreLatentState',
     'updateInactiveValuesMemo',
     'createSlotShadowSession',

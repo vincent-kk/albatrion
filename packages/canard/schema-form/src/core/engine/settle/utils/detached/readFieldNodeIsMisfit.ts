@@ -3,7 +3,7 @@ import type { FieldNodeRecord } from '../../../record';
 /**
  * Read the current or final committed mismatch lamp for one reference.
  * @param node - Live occurrence or departed reference with frozen reads
- * @returns Whether its retained raw value misses the effective accepted types
+ * @returns Whether its retained source value misses the effective accepted types
  */
 export const readFieldNodeIsMisfit = <Self extends FieldNodeRecord<Self>>(
   node: Self,

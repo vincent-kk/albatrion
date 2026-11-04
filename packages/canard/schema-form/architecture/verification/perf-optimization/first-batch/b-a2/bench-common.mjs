@@ -115,7 +115,7 @@ export async function loadEngine(name = 'current', variant = 'baseline', instrum
       if (!M.isObjectNode(captured)) throw new Error('Legacy Form did not return an object node');
       return captured;
     }
-    const root = M.fieldNodeFactory(M.blueprint(schema), { diagnostics: { status: 'stable' }, loadSnapshot: undefined, latentRaw: new M.PathKeyedMap('pair'), misfitPaths: new M.PathKeyedSet(), inactiveValuesMemo: new M.PathKeyedMap('path'), onChange });
+    const root = M.fieldNodeFactory(M.blueprint(schema), { diagnostics: { status: 'stable' }, loadSnapshot: undefined, latentSource: new M.PathKeyedMap('pair'), misfitPaths: new M.PathKeyedSet(), inactiveValuesMemo: new M.PathKeyedMap('path'), onChange });
     M.mountFieldNode(root, input, M.SetValueOption.Overwrite);
     return root;
   };
@@ -224,7 +224,7 @@ const owns = (value, name) => value !== null && typeof value === 'object' && Obj
 function declaredNameSnapshot(root, rec, expected) {
   const host = root.find('/h'), child = root.find('/h/k0'), emitted = (rec.value ?? root.value)?.h;
   return {
-    extrasHasK0: owns(host.undeclaredValues, 'k0'), extrasK0: host.undeclaredValues?.k0 ?? null,
+    extrasHasK0: owns(host.extras, 'k0'), extrasK0: host.extras?.k0 ?? null,
     emittedHasK0: owns(emitted, 'k0'), emittedK0: emitted?.k0 ?? null, declaredChildK0: child?.value ?? null,
     emittedK0MatchesDeclaredChild: emitted?.k0 === child?.value,
     emittedUnexpectedK0: !owns(expected.h, 'k0') && owns(emitted, 'k0'),
@@ -238,7 +238,7 @@ async function observeCallerMutation(engine, spec) {
     await drain(); await warmEngine(engine); rec.reset();
     const first = await writeOnce(engine, spec, root, rec, expected, () => root.find('/h').setValue(callerInput, engine.M.SetValueOption.Overwrite));
     const host = root.find('/h'), key = 'k500', marker = -123456, beforeCalls = rec.calls;
-    const snapshot = () => ({ hostValue: host.value?.[key], rootValue: root.value?.h?.[key], extrasValue: host.undeclaredValues?.[key], hostFollows: host.value?.[key] === marker, rootFollows: root.value?.h?.[key] === marker, extrasFollow: host.undeclaredValues?.[key] === marker, extrasAliasCallerInput: host.undeclaredValues === callerInput });
+    const snapshot = () => ({ hostValue: host.value?.[key], rootValue: root.value?.h?.[key], extrasValue: host.extras?.[key], hostFollows: host.value?.[key] === marker, rootFollows: root.value?.h?.[key] === marker, extrasFollow: host.extras?.[key] === marker, extrasAliasCallerInput: host.extras === callerInput });
     const before = snapshot();
     callerInput[key] = marker;
     const immediate = snapshot(); await drain(); const afterDrain = snapshot();
@@ -269,7 +269,7 @@ export async function correctness(engine, spec) {
       await drainMountTicks(); await drain();
       const mount = fullCheck(engine, root, spec, mountExpected), mountOrder = sameKeys(root.find('/h').value, mountExpected.h);
       const declaredNames = spec.host === 'B1' ? { afterMount: declaredNameSnapshot(root, rec, mountExpected) } : undefined;
-      const previousExtras = root.find('/h').undeclaredValues, previousCopy = structuredClone(previousExtras);
+      const previousExtras = root.find('/h').extras, previousCopy = structuredClone(previousExtras);
       let first;
       if (spec.op === 'mount') first = { ok: mount && (rec.calls === 0 || matchesRoot(rec.value, firstExpected)), onChange: rec.calls === 0 || matchesRoot(rec.value, firstExpected) };
       else {
@@ -281,12 +281,12 @@ export async function correctness(engine, spec) {
       const merge = spec.op === 'merge-one-key' ? {
         previousKeyCount: Object.keys(previousCopy ?? {}).length,
         hostKeyCount: Object.keys(root.find('/h').value ?? {}).length,
-        extrasKeyCount: Object.keys(root.find('/h').undeclaredValues ?? {}).length,
-        newExtrasObject: root.find('/h').undeclaredValues !== previousExtras,
+        extrasKeyCount: Object.keys(root.find('/h').extras ?? {}).length,
+        newExtrasObject: root.find('/h').extras !== previousExtras,
         previousExtrasUnchanged: isDeepStrictEqual(previousExtras, previousCopy),
-        retainedPreviousKeys: Object.keys(previousCopy ?? {}).every((name) => owns(root.find('/h').undeclaredValues, name) && root.find('/h').undeclaredValues[name] === previousCopy[name]),
+        retainedPreviousKeys: Object.keys(previousCopy ?? {}).every((name) => owns(root.find('/h').extras, name) && root.find('/h').extras[name] === previousCopy[name]),
         hostOrderMatchesExpected: sameKeys(root.find('/h').value, firstExpected.h),
-        extrasOrderMatchesExpected: sameKeys(root.find('/h').undeclaredValues, firstExpected.h),
+        extrasOrderMatchesExpected: sameKeys(root.find('/h').extras, firstExpected.h),
         expectedLastKey: 'k' + spec.n,
         observedLastKey: Object.keys(root.find('/h').value ?? {}).at(-1),
       } : undefined;

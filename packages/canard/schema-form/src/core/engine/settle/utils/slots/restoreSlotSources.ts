@@ -27,8 +27,8 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
       )
         continue;
       markSlotChange(host, entry);
-      if (previous.source)
-        (host.inactiveSlots ??= new Map()).set(entry, previous.source);
+      if (previous.instance)
+        (host.inactiveSlots ??= new Map()).set(entry, previous.instance);
       else host.inactiveSlots?.delete(entry);
       if (previous.overlay)
         (host.inactiveSlotOverlays ??= new Map()).set(entry, previous.overlay);

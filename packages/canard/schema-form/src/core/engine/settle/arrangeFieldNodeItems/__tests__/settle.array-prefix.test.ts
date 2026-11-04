@@ -4,7 +4,7 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import * as rawTree from '../../utils/slots/readSourceTree';
+import * as sourceTree from '../../utils/slots/readSourceTree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 import { compareArrayTail } from './fixtures/compareArrayTail';
@@ -164,7 +164,7 @@ describe('array prefix parity', () => {
         undefined,
         true,
       );
-      expect(actual.undeclaredValues).toEqual([undefined]);
+      expect(actual.extras).toEqual([undefined]);
       expect(result).toBe('tail');
       expect(Object.keys(actual.runtime.loadSnapshot!)).toEqual(['0', '1']);
     });
@@ -280,10 +280,10 @@ describe('array prefix parity', () => {
   });
 });
 
-describe('array prefix retained raw work', () => {
+describe('array prefix retained source work', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it('does not rebuild retained raw item trees for append or remove-last', () => {
+  it('does not rebuild retained source item trees for append or remove-last', () => {
     const { root } = createTestTree({
       type: 'array',
       items: { type: 'object', properties: { value: { type: 'string' } } },
@@ -294,7 +294,7 @@ describe('array prefix retained raw work', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    const read = vi.spyOn(rawTree, 'readSourceTree');
+    const read = vi.spyOn(sourceTree, 'readSourceTree');
     expect(
       arrangeFieldNodeItems(root, { kind: 'push', value: { value: 'c' } }),
     ).toBe(3);

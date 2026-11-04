@@ -313,7 +313,7 @@ describe('watch dependency syntax ownership', () => {
     const stale = new Set<unknown>();
     root.runtime.deliveryWatchIndex!.affected('/1/source', stale);
     expect(stale.has(retained)).toBe(false);
-    dispatchSetValue(root.structure!['0'].structure!.source, 'changed');
+    dispatchSetValue(root.structure!['0'].structure!['source'], 'changed');
     expect(readFieldNodeWatchValues(retained)).toEqual(['changed']);
     expect(retained.deliveryWatchValues).toEqual(['changed']);
   });

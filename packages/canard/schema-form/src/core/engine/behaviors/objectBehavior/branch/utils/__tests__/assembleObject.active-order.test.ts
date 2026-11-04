@@ -27,7 +27,7 @@ const fixture = () => {
   const node = {
     runtime: {},
     local: {},
-    undeclaredValues: undefined,
+    extras: undefined,
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof assembleObject>[0];
@@ -87,7 +87,7 @@ describe('prepared active-name order', () => {
       schema: { type: 'object', options: { propertyOrder: ['extra', 'beta'] } },
       typeConflict: false,
     } as typeof node.schema;
-    node.undeclaredValues = { extra: NaN, absent: undefined };
+    node.extras = { extra: NaN, absent: undefined };
     children[0].emit = NaN;
     const expected = assembleObjectBaseline(node, children);
     const result = assembleObject(node, children);

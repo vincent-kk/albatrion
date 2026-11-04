@@ -28,8 +28,8 @@ it('leaves gate binding to selected entry for both source constructors', () => {
     },
   });
   dispatchMount(root, { open: true, group: { value: 'held' } });
-  const source = getDispatchNode(root, 'group');
-  const entry = getRetainedChildEntry(root, source.name, source.blueprintNode);
+  const instance = getDispatchNode(root, 'group');
+  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
   if (!entry) throw new Error('Expected a retained group binding');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   const scratch = getSettlementScratch(runtime);
@@ -43,11 +43,11 @@ it('leaves gate binding to selected entry for both source constructors', () => {
   try {
     const fresh = createChildNode(root, entry);
     expect(register).not.toHaveBeenCalled();
-    const clone = cloneFromSlot(root, entry, source, context);
+    const clone = cloneFromSlot(root, entry, instance, context);
     expect(register).not.toHaveBeenCalled();
-    expect(clone).not.toBe(source);
+    expect(clone).not.toBe(instance);
     expect(clone).not.toBe(fresh);
-    expect(getDispatchNode(clone, 'value').raw).toBe('held');
+    expect(getDispatchNode(clone, 'value').source).toBe('held');
     expect(context.entered.has(getDispatchNode(clone, 'value'))).toBe(true);
   } finally {
     releaseSettlementScratch(scratch);

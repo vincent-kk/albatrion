@@ -22,9 +22,9 @@
    - 재귀 시험이 재귀 간선을 실제로 고정하지 못하는 점은 새 결함 3에 적었습니다.
 3. **[P2] 사적 복제 범위와 DETAIL — 해결.** `settle/DETAIL.md:27`은 네 가지를 적고, 모두 코드와 맞습니다. 나간 최상위 서브트리 전체를 복제합니다. 압축 배열 아래에는 생존 아이템만 결합합니다. 복제 비용과 보유 메모리는 노드 수에 비례합니다. `retainedItemNames`를 조회하는 복원 비용은 n의 제곱에 비례합니다.
 4. **[P2] 비어 있는 keep 배열 — 올바르게 반박.**
-   - `createExitSlotOverlay.ts:89-93`의 원본 판정은 "지우지 않음, 그리고 raw 정의·extras 정의·배열 중 하나"입니다. 명시 `unsetOnInactive: false`인 배열은 `readSlotExitPolicy`가 keep을 돌려주므로 `clear`가 거짓입니다. 그래서 raw가 undefined이고 아이템이 0개여도 원본입니다.
+   - `createExitSlotOverlay.ts:89-93`의 원본 판정은 "지우지 않음, 그리고 source 정의·extras 정의·배열 중 하나"입니다. 명시 `unsetOnInactive: false`인 배열은 `readSlotExitPolicy`가 keep을 돌려주므로 `clear`가 거짓입니다. 그래서 source가 undefined이고 아이템이 0개여도 원본입니다.
    - 명시 keep이 없는 배열은 지움 배열 아래에서 지움을 상속하므로 51행이나 65행의 배열 분기로 갑니다. 그 분기에서는 생존 아이템이 있을 때만 원본이 됩니다(`hasSource = itemCount !== 0`). 따라서 keep 없는 배열이 아이템을 살리는 결함은 없습니다.
-   - 시험(`settle.retained-slot-array-compaction.test.ts:295`)은 재진입 길이 2와 값 `[{}, {}]`를 단언합니다. 이는 "남는 것이 맞다"는 조정자 결정과 일치합니다. 결정 문서의 전제, 곧 빈 배열은 정의된 raw라는 말은 코드상 틀렸고, 작업자의 정정이 맞습니다.
+   - 시험(`settle.retained-slot-array-compaction.test.ts:295`)은 재진입 길이 2와 값 `[{}, {}]`를 단언합니다. 이는 "남는 것이 맞다"는 조정자 결정과 일치합니다. 결정 문서의 전제, 곧 빈 배열은 정의된 source라는 말은 코드상 틀렸고, 작업자의 정정이 맞습니다.
 5. **[P2] 도우미 배치 — 해결.** 두 도우미는 `settle/utils/slots/`의 평평한 파일이 되었습니다. 함수 이름을 딴 디렉터리는 저장소에도 디스크에도 남아 있지 않습니다. 옛 경로는 측정 원자료 `architecture/verification/branch-switch/raw/b7/stage-inputs.json:2258-2259`에만 남아 있습니다. 이는 후보 1의 측정 입력 기록이므로 그대로 두는 것이 맞습니다.
 6. **[P2] 후보 종류와 색인 이동 시험 — 해결.** `settle.retained-slot-array-compaction.test.ts:251`은 후보 소유 배열에서 색인 2의 아이템이 색인 0으로 옮겨지는 경우를 다룹니다. 단언 대상은 닫힌 동안의 `inactiveValues` 경로, 재진입 값, 종류 전환 뒤 값입니다. 다만 한 색인에 두 종류가 모두 보존된 채 색인이 옮겨지는 경우는 고정하지 않습니다(확인하지 못한 것 참조).
 7. **[P3] 비활성 후보에 활성 나감 입력을 넘김 — 해결.** `createClearedArrayOverlay.ts:58`은 활성 구조의 아이템에만 `context`를 넘깁니다. 이는 객체 경로(`createExitSlotOverlay.ts:97-138`)와 같습니다.
@@ -46,7 +46,7 @@
   1. `surface.clearing-array-keep.test.ts` 첫 시험과 같은 스키마와 값을 씁니다. keep은 `active: '#/show'`이고 `unsetOnInactive: false`입니다.
   2. `/list/0/keep`의 옛 참조를 잡습니다.
   3. `show`를 false로 바꾸고, 이어서 `open`을 false로 바꿉니다.
-  4. 잡아 둔 참조에 5를 씁니다. 0번 아이템은 keep raw가 없어 버려졌고, 원래 1번 아이템이 색인 0으로 압축되어 있습니다. 쓰기는 그 생존 아이템의 비활성 keep 원본에 overlay 5로 떨어집니다.
+  4. 잡아 둔 참조에 5를 씁니다. 0번 아이템은 keep source가 없어 버려졌고, 원래 1번 아이템이 색인 0으로 압축되어 있습니다. 쓰기는 그 생존 아이템의 비활성 keep 원본에 overlay 5로 떨어집니다.
   5. 다시 열고 `show`를 true로 바꾸면 기대값 `[{ keep: 12 }, { keep: 24 }]` 대신 `[{ keep: 5 }, { keep: 24 }]`가 나옵니다.
 
   이 결과는 조정자 결정과 어긋납니다. 결정은 "버려진 아이템에 대한 쓰기는 그 색인을 차지한 아이템에 적용하지 않는다"입니다. `settle/DETAIL.md:17`의 "or at a descendant of them"과도 어긋납니다. 새 시험 두 건은 자기 칸이 없는 자손(`/list/0/drop`)과 아이템 자신(`/list/2`)만 다루므로 이 경로를 잡지 못합니다.
@@ -181,7 +181,7 @@
 
 ### 수정 5 — 소멸 주소의 읽기(새 결함 5)
 
-1. `settle/utils/slots/readSourceTree.ts`의 분리 분기(27-42행)를 고칩니다. 첫 줄에서 `const address = DetachedWriteAddress.read(node);`를 계산합니다. `address?.discarded`이면 `return readSlotRawTree(node.blueprintNode, node, undefined);`로 그 노드의 고정 값만 읽습니다. 아니면 `resolveSlotSource`에 `address?.path ?? node.path`를 넘깁니다.
+1. `settle/utils/slots/readSourceTree.ts`의 분리 분기(27-42행)를 고칩니다. 첫 줄에서 `const address = DetachedWriteAddress.read(node);`를 계산합니다. `address?.discarded`이면 `return readSlotSourceTree(node.blueprintNode, node, undefined);`로 그 노드의 고정 값만 읽습니다. 아니면 `resolveSlotSource`에 `address?.path ?? node.path`를 넘깁니다.
 2. 검증은 typecheck와 B7 시험 다섯 파일, 그리고 `settle/arrangeFieldNodeItems/__tests__/` 실행입니다.
 
 ## 확인하지 못한 것

@@ -99,6 +99,6 @@ it('represents inherited clearing as an overlay while leaving the source unchang
   expect(materializeInactiveSlotValues(root)).toEqual([
     { path: '/group/keep', value: 'keep' },
   ]);
-  expect(group.undeclaredValues).toEqual({ extra: 7 });
-  expect(getDispatchNode(group, 'drop').raw).toBe('drop');
+  expect(group.extras).toEqual({ extra: 7 });
+  expect(getDispatchNode(group, 'drop').source).toBe('drop');
 });

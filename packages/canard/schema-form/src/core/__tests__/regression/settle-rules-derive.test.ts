@@ -20,7 +20,7 @@ describe('round18 derive settlement rules', () => {
       },
     });
     root.setValue({ a: 1, b: 1 });
-    expect(root.find('/target')?.raw).toBe('later');
+    expect(root.find('/target')?.source).toBe('later');
   });
 
   it('settleRules.test.mjs:25 SETTLE-004 higher kind survives a later round', () => {
@@ -43,7 +43,7 @@ describe('round18 derive settlement rules', () => {
       },
     });
     root.setValue({ a: 1, b: 1 });
-    expect(root.find('/target')?.raw).toBe('D1');
+    expect(root.find('/target')?.source).toBe('D1');
   });
 
   it('settleRules.test.mjs:36 SETTLE-004 layer and fragment order break source ties', () => {
@@ -63,7 +63,7 @@ describe('round18 derive settlement rules', () => {
       },
     }).root;
     nodeLayer.setValue({ source: 'A' });
-    expect(nodeLayer.find('/target')?.raw).toBe('A node');
+    expect(nodeLayer.find('/target')?.source).toBe('A node');
     const fragmentLayer = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -81,7 +81,7 @@ describe('round18 derive settlement rules', () => {
       ],
     }).root;
     fragmentLayer.setValue({ source: 'A' });
-    expect(fragmentLayer.find('/target')?.raw).toBe('A second');
+    expect(fragmentLayer.find('/target')?.source).toBe('A second');
   });
 
   it('settleRules.test.mjs:59 LANDING-064 exit edge does not inject after root replacement', () => {
@@ -100,8 +100,8 @@ describe('round18 derive settlement rules', () => {
       },
     });
     root.setValue({ flag: true, source: 'before' });
-    expect(root.find('/target')?.raw).toBe('before');
+    expect(root.find('/target')?.source).toBe('before');
     root.setValue({ flag: false, source: 'after', target: 'before' });
-    expect(root.find('/target')?.raw).toBe('before');
+    expect(root.find('/target')?.source).toBe('before');
   });
 });
