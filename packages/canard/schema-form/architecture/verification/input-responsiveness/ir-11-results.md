@@ -164,3 +164,64 @@ L8′ 사례는 수정 뒤 결과가 결정적이므로, 이제 시험이 관찰
 | VALIDATE-047 | 사례 (i)–(iii)과 수명·직접 컴파일·메타 스키마·release 시험이 변경 없이 통과합니다. 사례 (iv)는 F25대로 ajv8은 관찰, ajv7은 컴파일 거부로 바뀌었고 지원 밖이라는 성격은 같습니다. |
 | 55C-02 | 위치당 가드 하나는 그대로입니다. "첫 번째로 컴파일된 범위의 답"이라는 문구는 IR-11 PR-A 보충의 "어휘적 사슬로 계산한 판정"으로 대체되었고, 원래 인용문은 원장에 그대로 둡니다. |
 | DR-3 | 엔진 코드는 바뀌지 않았고 엔진 validation 단위 시험이 그대로 통과합니다. |
+
+## PR-C — IfOnNonObjectHost warning and validator contract docs
+
+시험·엔진 커밋의 기준은 단계 브랜치 `c124a50de`이고, 그 위에 PR-A를 담은 단계 머리 `a4aa6da57`을 병합한 뒤 문서 커밋을 얹었습니다. 설계는 [IR-11 PR-C 절](../../plan/input-responsiveness/design.md#pr-c--ifonnonobjecthost-warning-and-validator-contract-docs)에 있습니다.
+
+### 커밋
+
+| 순서 | 커밋 | 내용 |
+| --- | --- | --- |
+| 1 | `dcfacf416` | 시험: `blueprint.if-host-warning.test.ts` 여덟 건, `codeEnums.ledger.test.ts`·`publicSurface.test.ts.snap`·`e2e/error-code-enums.test.ts`의 새 항목 |
+| 2 | `37bcc0edb` | 엔진: `SchemaFormWarningSpecific`·`FormWarningCode`의 마지막 항목 `IfOnNonObjectHost`(C9), `collectBlueprintWarnings.ts`의 방출(C10) |
+| 병합 | `df8ffb3ef` | 단계 머리 `a4aa6da57`(PR-A) 병합, 충돌 없음 |
+| 3 | 이 파일을 담은 커밋 | 문서: `ValidatorPlugin` 문서 주석, validation·errors·수집 모듈 문서, SPECIFICATION en·ko, `QUICK_REFERENCE.md`, troubleshooting, 본체 README en·ko, 세 플러그인 README en·ko, 원장 SETTLE-021·ERROR-164 보충, design.md IR-11 PR-C 절, 이 절 |
+
+### 빨간 실행
+
+제품 코드가 기준 그대로인 시험 커밋 상태에서 시험 파일을 실행했습니다. 계획이 빨강이라고 적은 사례는 모두 실패했고 보호라고 적은 사례는 모두 통과했습니다. 실패 이유는 모두 새 경고 코드의 부재였습니다.
+
+| 사례 | 예상 | 관측 |
+| --- | --- | --- |
+| 문자열 호스트 `#/properties/name/if` | 빨강 | 실패: 경고가 없음(`expected [] to deeply equal [ { code: undefined, …(3) } ]`, 상수도 아직 없음) |
+| 배열 자신의 `if` | 빨강 | 실패: 경고가 없음 |
+| null 전용 호스트 | 빨강 | 실패: 경고가 없음 |
+| `type: ['object','string']` union, nullable object, 배열 `items` 안의 객체 조건, 객체 호스트, 가상 호스트 | 보호 | 다섯 건 모두 통과 |
+| `codeEnums.ledger.test.ts` ERROR-164 경고 코드 목록 | 빨강 | 실패: 21개 대 기대 22개 |
+| `publicSurface.test.ts` 97개 이름 | 빨강(스냅샷) | 실패: 이름 수 97 단언은 통과하고 스냅샷의 `FormWarningCode` 행이 다름 |
+| `e2e/error-code-enums.test.ts` 경고 코드 수 | 빨강 | 실패: 21개 대 기대 22개 |
+
+`e2e/error-code-enums.test.ts`는 계획의 파일 목록에 없었고 첫 G-C2 실행에서 드러났습니다. 계획의 L6(21에서 22)에 해당하므로 시험 커밋에 넣고 같은 방식으로 빨간 실행을 기록했습니다.
+
+### 관문
+
+| 관문 | 결과 |
+| --- | --- |
+| G-C1 빨간 실행 | 위 표 |
+| G-C2 unit·render | 병합 뒤 코드에서 exit 0, 시험 파일 845 통과·1 건너뜀, 시험 5,364 통과·8 건너뜀 |
+| G-C3 typecheck·lint·build | 세 명령 모두 exit 0 |
+| G-C4′ 공개 표면 | export 97 그대로, 스냅샷은 `FormWarningCode` 형 전체를 담은 기존 논리 행 하나 안에 멤버 `IfOnNonObjectHost`가 더해짐(새 행 없음, diff로는 그 행의 추가 1·삭제 1) |
+| G-C5 문서 일관성 | validation `DETAIL.md`에 `compileGuard?` 없음, `type.ts` 예제 셋 모두 `compileGuard`, ajv8 README en·ko에 `errorDataPath` 없음, ajv6 README에 `strictTypes`·`strictRequired` 없음, 본체 README en·ko에 계약 절과 `if, then, else` 절, SPECIFICATION en·ko와 `QUICK_REFERENCE.md`에 새 경고 |
+| G-C6 기록 | SETTLE-021·ERROR-164 보충, design.md IR-11 PR-C 절, 이 절; 기계 고유 경로 없음 |
+| G-X3 저장소 점검 계획 | exit 0, 23단계 모두 통과(아래) |
+
+G-X3: 병합 뒤 `selectAffectedWorkspaces.mjs --tier pr --base a4aa6da57 --head HEAD`(머리 `352a4c71e`, 이 절의 머리 해시만 고치기 전의 문서 커밋)는 바뀐 작업 공간으로 schema-form 하나, 의존 작업 공간 열한 개를 골랐고 대체 사유는 없었습니다. `runCheckPlan.mjs`로 실행한 결과 빌드·lint·typecheck·시험 23단계가 모두 통과했습니다. 병합 뒤 리뷰 수정 전 머리 `ee2d748a3`의 한 실행에서는 제 변경과 무관한 벽시계 시간 시험 `global-errors.timing.test.ts` 한 건이 40ms 기준을 넘어(65.5ms) 실패했고, 그 파일만 세 번 다시 돌리면 모두 통과했습니다. 병합 전 기준 `c124a50de`로 돌린 첫 실행도 23단계 모두 통과했습니다.
+
+| 작업 공간 | 시험 파일 | 시험 |
+| --- | --- | --- |
+| `@canard/schema-form` unit | 657 | 4,299 |
+| `@canard/schema-form-ajv8-plugin` | 28 | 460 |
+| `@canard/schema-form-ajv7-plugin` | 23 | 201 |
+| `@canard/schema-form-ajv6-plugin` | 18 | 141 |
+| UI 플러그인 넷(antd-mobile, antd5, antd6, mui) | 10, 18, 18, 10 | 43, 90, 87, 68 |
+| `@aileron/benchmark`, `@aileron/benchmark-form` | 2, 9 | 11, 73 |
+
+### 보존한 계약
+
+- VALIDATE-017·019: 가드는 루트 사본의 작성 위치로 식별되고 루트는 독립 등록·release됩니다. 엔진 코드는 바뀌지 않았고 validation 시험이 그대로 통과합니다.
+- VALIDATE-033: 가드용 인스턴스의 프로필 보존은 그대로이며, README 계약 절의 기본값 목록이 이를 적습니다.
+- VALIDATE-044: `compile`·`compileGuard` 필수, `bind`는 엔진이 부르지 않음, 입력 불변이 README 계약 절과 `ValidatorPlugin` 문서 주석에 같은 말로 적혀 있습니다.
+- ERROR-041: 가드 실패의 단위는 게이트 하나입니다. README의 실패 격리 항목과 조건 절이 거짓 판정과 가드 실패를 구분해 적습니다.
+- design.md IR-10 `:600-601`(R2·R3)과 `:660-664`(보충): 가드는 조건 스키마만 컴파일하고, 루트 메타 스키마 검사는 전체 컴파일에서만 돌며, 가드 컴파일 실패는 자기 게이트에 한정됩니다. 이 PR은 이를 문서로만 옮겼습니다.
+- `src/app/plugin/INTENT.md`·`DETAIL.md`는 이미 `compileGuard`를 필수로 적고 있어 바꾸지 않았습니다.

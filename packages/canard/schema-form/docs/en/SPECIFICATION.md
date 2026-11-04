@@ -861,6 +861,8 @@ Read tag values before inferring their types: a tagged branch with an empty inte
 
 The `then` properties belong to the shape only while the `if` guard passes, and the `else` properties only while it fails. The guard is evaluated synchronously through the validator's guard entry point; with no validator selected (no `validatorFactory` on the Form or a FormProvider, and no validator plugin), both `then` and `else` stay off.
 
+A false verdict and a guard failure are different outcomes. A false verdict turns `else` on, while a guard that fails to compile or to evaluate turns both `then` and `else` off and records `GUARD_FAILED` for that gate only. The guard reads the host value, and a host whose value is absent or not an object is evaluated against `{}`; an `if` on a host whose allowed types do not include object raises the `IF_ON_NON_OBJECT_HOST` warning. The full rules are in the README section [Conditional schemas: if, then, else](../../README.md#conditional-schemas-if-then-else).
+
 ### allOf (Composition)
 
 ```typescript
@@ -1148,6 +1150,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | a terminal subtree declares a reserved key ignored by the form |  |
 | `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | tag kind is outside the host tag type (`kind`) or tag intersection is empty (`empty`); details `{ propertyName, reason }` |  |
 | `FormWarningCode.DiscriminatorIgnoredForForm` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM'` | discriminator ignored: no union (`union`) or known non-object host (`host`); details `{ propertyName, reason }` |  |
+| `FormWarningCode.IfOnNonObjectHost` | `'SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST'` | an `if` sits on a host whose allowed types do not include object; the guard is evaluated against `{}`, so `then` and `else` cannot read the host value; details `{ kind }` |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | a development-mode whole value is not JSON-compatible |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | an input definition test object has an unknown key |  |
 | `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | a value cannot be converted to the active type unambiguously |  |

@@ -859,6 +859,8 @@ const jsonSchema = {
 
 `then`의 프로퍼티는 `if` 가드가 통과하는 동안에만, `else`의 프로퍼티는 가드가 실패하는 동안에만 형상에 속합니다. 가드는 검증기의 가드 진입점을 통해 동기로 평가하며, 선택된 검증기가 없으면(Form이나 FormProvider의 `validatorFactory`도, 검증기 플러그인도 없으면) `then`과 `else` 모두 꺼진 채로 남습니다.
 
+거짓 판정과 가드 실패는 다른 결과입니다. 거짓 판정은 `else`를 켜고, 컴파일이나 평가에 실패한 가드는 `then`과 `else`를 모두 끄며 그 게이트에 대해서만 `GUARD_FAILED`를 기록합니다. 가드는 호스트 값을 읽고, 값이 없거나 객체가 아닌 호스트는 `{}`에 대해 평가합니다. 허용 형에 object가 없는 호스트의 `if`는 `IF_ON_NON_OBJECT_HOST` 경고를 냅니다. 전체 규칙은 README의 [조건 스키마: if, then, else](../../README-ko_kr.md#조건-스키마-if-then-else) 절에 있습니다.
+
 ### allOf (합성)
 
 ```typescript
@@ -1146,6 +1148,7 @@ function ProfileForm() {
 | `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | terminal 하위 트리가 폼이 무시하는 예약 키를 선언 |  |
 | `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | 호스트 태그 형 밖(`kind`) 또는 태그 교차 공집합(`empty`); details `{ propertyName, reason }` |  |
 | `FormWarningCode.DiscriminatorIgnoredForForm` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM'` | 판별자 무시: union 없음(`union`) 또는 알려진 비객체 호스트(`host`); details `{ propertyName, reason }` |  |
+| `FormWarningCode.IfOnNonObjectHost` | `'SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST'` | 허용 형에 object가 없는 호스트에 `if`가 있음; 가드는 `{}`에 대해 평가되므로 `then`과 `else`는 호스트 값을 읽지 못함; details `{ kind }` |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | 개발 모드에서 통째 값이 JSON과 호환되지 않음 |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | 입력 정의의 test 객체에 모르는 키가 있음 |  |
 | `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |

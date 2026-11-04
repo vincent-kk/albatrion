@@ -100,6 +100,7 @@ registerPlugin(plugin);
 - **목적**: 선호하는 설정으로 구성된 커스텀 AJV 인스턴스를 제공할 수 있습니다
 - **사용법**: 선택적 - 호출하지 않으면 기본 AJV 인스턴스가 자동으로 생성됩니다
 - **장점**: AJV 설정, 커스텀 키워드, 포맷, 검증 규칙에 대한 완전한 제어 가능
+- **바인딩 순서**: `bind`는 첫 컴파일 전에 한 번 부릅니다. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않으며, 이 플러그인에서는 이미 등록된 루트는 등록한 인스턴스에 그대로 남습니다.
 
 #### **`compile(jsonSchema)`**
 
@@ -264,7 +265,6 @@ import Ajv from 'ajv';
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
-  errorDataPath: 'property', // AJV 8.x는 기본적으로 'instancePath' 사용
 });
 
 // 커스텀 키워드나 포맷 추가
