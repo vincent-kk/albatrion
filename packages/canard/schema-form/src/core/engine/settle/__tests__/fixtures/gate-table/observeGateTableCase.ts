@@ -90,7 +90,7 @@ export const observeGateTableCase = (
         event: 'registration',
         pendingExits: [...context.pendingExits.keys()],
         dirty: readScheduledPaths(context),
-        changedRaw: [...context.changedRaw],
+        changedSource: [...context.changedSource],
       });
       registrations.push({
         dirty: readScheduledPaths(context),

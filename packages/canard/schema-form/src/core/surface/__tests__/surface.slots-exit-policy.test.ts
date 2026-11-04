@@ -28,11 +28,11 @@ it('clears a host source while preserving an explicitly retained descendant', ()
     { path: '/outer/keep', value: 'retained' },
   ]);
   root.find('/show')!.setValue(true);
-  expect(root.find('/outer/drop')!.raw).toBeUndefined();
-  expect(root.find('/outer/keep')!.raw).toBe('retained');
-  expect(root.find('/outer')!.undeclaredValues).toBeUndefined();
+  expect(root.find('/outer/drop')!.source).toBeUndefined();
+  expect(root.find('/outer/keep')!.source).toBe('retained');
+  expect(root.find('/outer')!.extras).toBeUndefined();
   expect(outer.value).toBe(value);
-  expect(outer.undeclaredValues).toEqual({ extra: 'clear' });
+  expect(outer.extras).toEqual({ extra: 'clear' });
 });
 
 it('preserves source slots when a throwing gate causes the exit', () => {

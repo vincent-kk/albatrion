@@ -16,11 +16,11 @@
 
 ## 2. 확인 바퀴가 읽는 것과 같음이 보장되는 조건
 
-- 게이트 입력은 세 경로뿐이다. 식 게이트는 occurrence.watchPaths마다 readProjectedValue 값을 읽고 `@`는 runtime.context를 읽는다(`evaluateGate.ts:164-173`). if·판별 게이트는 호스트 투영 값과 호스트 extras를 읽는다(`:44-47`, `:66-90`). appliesWhen의 부모 게이트는 재귀로 같은 함수를 지난다(`:36-40`). readProjectedValue는 노드의 emit, 조상 emit의 하위 값, undeclaredValues 가운데 하나를 돌려주고, 아직 계산되지 않은 변경은 undefined로 돌려준다(`readProjectedValue.ts:15-22`, `:30-91`).
+- 게이트 입력은 세 경로뿐이다. 식 게이트는 occurrence.watchPaths마다 readProjectedValue 값을 읽고 `@`는 runtime.context를 읽는다(`evaluateGate.ts:164-173`). if·판별 게이트는 호스트 투영 값과 호스트 extras를 읽는다(`:44-47`, `:66-90`). appliesWhen의 부모 게이트는 재귀로 같은 함수를 지난다(`:36-40`). readProjectedValue는 노드의 emit, 조상 emit의 하위 값, extras 가운데 하나를 돌려주고, 아직 계산되지 않은 변경은 undefined로 돌려준다(`readProjectedValue.ts:15-22`, `:30-91`).
 - 바퀴 k+1의 입력이 달라지는 길은 모두 바퀴 k 안의 가우스-자이델 효과다. 바퀴 사이에 새 쓰기는 없다. 길은 다섯이다: (가) 앞 게이트가 평가된 뒤 뒤 엔트리가 켜져 키가 투영에 나타남(분배 입력과 잠복 복원 `selectChildren.ts:286-300` 포함), (나) 자식의 유효 스키마나 overlay가 바뀌어 원본은 그대로인데 emit이 바뀜(`:363-373`), (다) 꺼진 엔트리가 제거되어 키가 사라짐(`:236-246`), (라) 루트 스키마 변경이 루트 투영을 바꿈(selectNodeSchema), (마) 이동 게이트 추가나 scheduleRelocatedGates가 자손을 더럽힘(`computeNode.ts:168-177`). 상속 overlay는 호스트 루프 동안 바뀌지 않는다.
 - 게이트의 정적 의존 목록은 이미 있다. 식 컴파일러가 의존 경로를 BlueprintExpression.dependencies로 둔다(`blueprint/types/blueprint.ts:78-81`, `compileBlueprintExpressions.ts:89-106`, `createDynamicFunction.ts:35`). 레지스트리가 발생마다 절대 경로 watchPaths로 묶고(`getGateRegistry.ts:238-258`), 표시 단계가 이것으로 형상 dirty를 정한다(`registerRecalculation.ts:41-64`, `getGateRegistry.ts:180-201`, `:261-281`). if 게이트의 watchPaths는 호스트 경로 하나, 판별 게이트는 propertyName 경로 하나다(`:240-250`). controls.watch는 derived·감시 쪽 의존이며 게이트 판정에는 쓰이지 않는다(SETTLE-043).
 - BLUEPRINT-007 (a)는 제품 코드에 구현되어 있지 않다. 가장 가까운 것은 유니온 호스트의 직접 선택 계획이며 dependencies.length === 1을 요구하지만 "condition still runs on every visit"다(`getDirectChildSelectionPlan.ts:12`, `:96-106`). 96C-01 (가) 판별 선택 표는 99라운드에 구현했다가 되돌렸다(`reviews/round-99-closing.md:3`). (나) 결과 재사용은 제품 코드에 없다.
-- 정확한 조건: 바퀴 k에서 각 게이트가 받은 입력이 바퀴 k가 끝난 상태에서 같은 자리를 다시 읽은 값과 모두 같고, 바퀴 k가 자손 일거리를 남기지 않아야 한다. 이 둘이 성립하면 바퀴 k+1은 귀납적으로 같은 순서로 같은 값을 내고 아무것도 바꾸지 않는다. 쓰면 안 되는 조건: "바퀴 중 바뀐 원본 키(changedRaw)와 선언된 의존의 교집합". (나)와 (라)는 원본 경로를 건드리지 않고 읽는 값을 바꾸기 때문이다(97C-01 (2)).
+- 정확한 조건: 바퀴 k에서 각 게이트가 받은 입력이 바퀴 k가 끝난 상태에서 같은 자리를 다시 읽은 값과 모두 같고, 바퀴 k가 자손 일거리를 남기지 않아야 한다. 이 둘이 성립하면 바퀴 k+1은 귀납적으로 같은 순서로 같은 값을 내고 아무것도 바꾸지 않는다. 쓰면 안 되는 조건: "바퀴 중 바뀐 원본 키(changedSource)와 선언된 의존의 교집합". (나)와 (라)는 원본 경로를 건드리지 않고 읽는 값을 바꾸기 때문이다(97C-01 (2)).
 
 ## 3. 실험 설계: 조건부 생략
 
@@ -31,7 +31,7 @@
 - P3: 바퀴 k 끝에 dirtyChildren(node, context)가 비어 있다(`dirtyChildren.ts:19-31`).
 - P4: 바퀴 k 동안 gateThrowVersion이 그대로다(`evaluateGate.ts:178`; 보수 조항).
 - P5: context.pendingOutputs가 비어 있다. 끝의 재읽기가 flushPendingOutput을 부르지 않아야 공표 자리와 배달 순서(EVENT-005)가 그대로다(`flushPendingOutput.ts:17`, `readProjectedValue.ts:35`, `:45`, `:66`, `:88`).
-- P6(핵심): 바퀴 k 동안 이 호스트 프레임의 evaluateGate가 읽은 모든 (경로 → 값)이, 끝에서 같은 경로를 다시 읽은 값과 Object.is로 같다. 식 게이트는 의존 값을, `@`는 runtime.context 참조를, if·판별 게이트는 raw 참조와 projectedExtra 참조를 기록하고, appliesWhen은 재귀 호출이 스스로 기록한다. 같은 경로가 한 바퀴 안에서 다른 값으로 읽혔다면 P6은 거짓이다. 기록 비용은 평가마다 맵 연산 한 번이고, 끝 검사는 서로 다른 경로 수만큼의 재읽기다(oneOf와 S1에서는 1).
+- P6(핵심): 바퀴 k 동안 이 호스트 프레임의 evaluateGate가 읽은 모든 (경로 → 값)이, 끝에서 같은 경로를 다시 읽은 값과 Object.is로 같다. 식 게이트는 의존 값을, `@`는 runtime.context 참조를, if·판별 게이트는 source 참조와 projectedExtra 참조를 기록하고, appliesWhen은 재귀 호출이 스스로 기록한다. 같은 경로가 한 바퀴 안에서 다른 값으로 읽혔다면 P6은 거짓이다. 기록 비용은 평가마다 맵 연산 한 번이고, 끝 검사는 서로 다른 경로 수만큼의 재읽기다(oneOf와 S1에서는 1).
 - P7(범위 제한): context.kind !== 'load', !context.distributedInputs.has(node), !context.exceededBudget. 꺼진 엔트리 분배(`selectChildren.ts:405-448`)의 멱등성을 증명하지 않은 범위를 뺀다.
 - 프레임 격리: computeNode는 재귀이므로 증인 맵을 호스트 프레임마다 두고 중첩 호출 전후로 저장·복원한다. 자식 호스트 바퀴의 읽기는 부모 증인에 넣지 않는다.
 
@@ -51,7 +51,7 @@
 - S4(같은 호스트의 두 게이트가 다른 키를 읽음): './k1 === "on"'이 p를, './k2 === "on"'이 q를 켠다. k1을 쓰면 생략이 적용되어야 한다.
 - S5(중첩 키): './cfg/mode === "x"' 게이트에 cfg/mode를 쓰면 생략. 변형으로 켜진 분기가 cfg에 overlay(omitEmpty 등)를 얹어 원본은 그대로인데 읽는 값이 바뀌면 P6이 거짓이어야 한다(`fixtures/gateSelectionCases.ts:227` 꼴).
 - S6(게이트 입력을 바꾸지 않는 쓰기와 if 게이트 대조군): oneOf 폼의 common을 쓰면 형상 dirty가 아니므로 바퀴 0(`computeNode.ts:90-97`). 검증기 if 게이트 호스트에 쓰면 생략되지 않아야 한다.
-- 변이 목록(각 변이는 지정한 단언을 뒤집어야 한다): V1 P6을 끄고 무조건 생략 → S3에서 p가 빠짐. V2 P6을 changedRaw 비교로 → S5 overlay 변형이 뒤집힘. V3 바퀴 시작에 없던 노드의 읽기(undefined)를 무시 → S3 뒤집힘. V4 emit 대신 구조 노드 정체성만 비교 → S5 변형과 `gateSelectionCases.ts:227` 뒤집힘. V5 P1 끔 → cap 1 스파이 아래 BudgetExceeded 관측 소실(`settle/DETAIL.md:476` 선례). V6 P2·P3 끔 → `gateSelectionCases.ts:357`, `settle.gates.test.ts:319` 뒤집힘. V7 바퀴 0을 직전 선택으로 대체 → S3 대조 장면에서 A·B가 남고 `settle.gates.test.ts:425` 뒤집힘. V8 증인 프레임 공유 → S2 비루트 변형. P4나 P7을 끈 변이가 아무 단언도 뒤집지 못하면 보수 조항으로 따로 보고한다.
+- 변이 목록(각 변이는 지정한 단언을 뒤집어야 한다): V1 P6을 끄고 무조건 생략 → S3에서 p가 빠짐. V2 P6을 changedSource 비교로 → S5 overlay 변형이 뒤집힘. V3 바퀴 시작에 없던 노드의 읽기(undefined)를 무시 → S3 뒤집힘. V4 emit 대신 구조 노드 정체성만 비교 → S5 변형과 `gateSelectionCases.ts:227` 뒤집힘. V5 P1 끔 → cap 1 스파이 아래 BudgetExceeded 관측 소실(`settle/DETAIL.md:476` 선례). V6 P2·P3 끔 → `gateSelectionCases.ts:357`, `settle.gates.test.ts:319` 뒤집힘. V7 바퀴 0을 직전 선택으로 대체 → S3 대조 장면에서 A·B가 남고 `settle.gates.test.ts:425` 뒤집힘. V8 증인 프레임 공유 → S2 비루트 변형. P4나 P7을 끈 변이가 아무 단언도 뒤집지 못하면 보수 조항으로 따로 보고한다.
 - 차등과 그림자 시험: runGateSelectionCase의 configure 훅으로 생략을 켠 판과 끈 판의 전체 관측(nodes, revisions, deliveries, failures, latent, commit)을 견준다. 그림자 모드에서는 P가 참일 때도 k+1을 실제로 돌려 세 값이 false이고 자리별 게이트 값이 같음을 단언하며, settle 전체 스위트와 시나리오에 걸쳐 돌린다. P가 거짓인데 k+1이 안정이었던 "놓친 생략" 횟수도 센다.
 - 본뜰 기존 시험: `settle.gates.test.ts:400-460`(SETTLE-050), `:223-344`(SETTLE-045), `:492`(SETTLE-017 중첩), `fixtures/gateSelectionCases.ts`의 이력 14개, `settle.gate-selection.test.ts`, `settle.gate-selection-counts.test.ts`.
 

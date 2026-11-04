@@ -7,7 +7,7 @@ import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as priming from '../utils/compute/primeHost';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 /** Source files whose pending-exit key building is counted. */
 const KEY_SITES =
@@ -117,7 +117,7 @@ describe('pending-exit keys are built only while an exit is pending', () => {
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.g).toBeUndefined();
     expect(root.local).toEqual({ t: true, a: 1 });
-    expect(readRetainedSlotRaw(root, '/g', 'string')).toBe('G');
+    expect(readRetainedSlotSource(root, '/g', 'string')).toBe('G');
   });
 
   // Lookup contract check: the only natural hit is a deferred SharedNodeConflict,

@@ -73,7 +73,7 @@ pet:     {oneOf: [{$ref: Persian}, {$ref: Dog}], discriminator: {propertyName: p
 | Cat에 `nullable: true` | 3.0 (springdoc/NSwag, 추론) | valid (분기 0; ajv는 `nullable` 키워드를 `strict:true`에서도 컴파일) | **false** |
 | `anyOf: [{discriminator, oneOf: [...]}, {type: 'null'}]` | pydantic `Optional[discriminated]` | valid | 바깥 true, **안쪽 false** |
 
-(`run.mjs:67-78`, `results.log` §2.) `nullable=false`이면 `null`은 §C3의 "잘못된 종류의 값"으로 취급되어 `raw := null`, 자식 전부 비활성, `emit = null`이고 검증기는 valid를 준다 — 폼은 "깨진" 상태를 그리면서 에러를 내지 못한다. §A6의 null 계약이 걸리지 않는다. 반대로 pydantic의 중첩 모양은 2단계가 "그 분기 자체가 호스트"라고만 하고 남은 분기가 다시 union일 때 B를 재귀하라는 말도, 바깥의 `nullable`을 안쪽에 넘기라는 말도 없다 — **미정의**. 이 구현은 재귀하되 플래그를 넘기지 않아 안쪽이 `false`가 된다.
+(`run.mjs:67-78`, `results.log` §2.) `nullable=false`이면 `null`은 §C3의 "잘못된 종류의 값"으로 취급되어 `source := null`, 자식 전부 비활성, `emit = null`이고 검증기는 valid를 준다 — 폼은 "깨진" 상태를 그리면서 에러를 내지 못한다. §A6의 null 계약이 걸리지 않는다. 반대로 pydantic의 중첩 모양은 2단계가 "그 분기 자체가 호스트"라고만 하고 남은 분기가 다시 union일 때 B를 재귀하라는 말도, 바깥의 `nullable`을 안쪽에 넘기라는 말도 없다 — **미정의**. 이 구현은 재귀하되 플래그를 넘기지 않아 안쪽이 `false`가 된다.
 
 ### 3 — 반례 (§B.3 후보 선택)
 
@@ -147,7 +147,7 @@ ajv `discriminator: true`(`run.mjs:118-125`):
 
 pydantic 출력에 호스트 `properties: {note: {default: 'auto'}}`를 더한 호스트. `run.mjs:164-176`:
 
-| 로드 | raw(정착 후) | 방출 | 로드 = 방출? | ajv 에러 목록 |
+| 로드 | source(정착 후) | 방출 | 로드 = 방출? | ajv 에러 목록 |
 | --- | --- | --- | --- | --- |
 | `{kind: bird}` | `+note` | `{note, kind}` | 아니오 (default 주입) | **동일** (oneOf + 분기별 `const`·`required`) |
 | `{kind: bird, meow: m}` | `+note` | `{note, kind}` — `meow` 빠짐 | 아니오 | **다름**: 방출에는 `required meow`가 추가 |

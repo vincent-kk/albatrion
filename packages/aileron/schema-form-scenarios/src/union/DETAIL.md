@@ -38,7 +38,7 @@ U9 렌더 장면은 명시 활성 분기의 왕복·중첩·공유 값과 nullab
 | `gated-effective-list.scenario.ts` | `union.gated-effective-list` | 같은 커밋에서 게이트가 정한 유효 형 목록으로 쓰인 값을 해석한다. | WRITE-093, TEST-077 |
 | `integer.scenario.ts` | `union.integer` | integer 멤버십이 받아들이지 못하는 소수를 문자열로 변환한다. | WRITE-093, TEST-077 |
 | `object-array.scenario.ts` | `union.object-array` | 객체·배열 값 전체를 자식 노드 없이 터미널 값으로 유지한다. | WRITE-093, TEST-077 |
-| `omit-empty.scenario.ts` | `union.omit-empty` | 빈 문자열·객체·배열 값을 raw 상태에 유지하면서 방출에서는 뺀다. | WRITE-093, TEST-077 |
+| `omit-empty.scenario.ts` | `union.omit-empty` | 빈 문자열·객체·배열 값을 source 상태에 유지하면서 방출에서는 뺀다. | WRITE-093, TEST-077 |
 | `rule-a.scenario.ts` | `union.rule-a` | Rule A에 따라 숫자 문자열의 숫자 멤버를 고른다. | WRITE-093, TEST-077 |
 
 ## Last Updated

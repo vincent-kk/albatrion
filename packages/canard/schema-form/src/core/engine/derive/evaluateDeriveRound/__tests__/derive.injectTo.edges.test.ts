@@ -21,14 +21,14 @@ describe('injectTo edge boundaries', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
-    expect(root.structure?.target?.raw).toBeUndefined();
-    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBeUndefined();
+    expect(root.structure?.target?.source).toBeUndefined();
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBeUndefined();
     expect(injectTo).toHaveBeenCalledTimes(2);
-    writeFieldNode(root.structure!.source, 'C', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('C');
+    writeFieldNode(root.structure!['source'], 'C', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('C');
     expect(injectTo).toHaveBeenCalledTimes(3);
   });
 
@@ -98,7 +98,7 @@ describe('injectTo edge boundaries', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow();
-    expect(root.structure?.target?.raw).toBe('written');
+    expect(root.structure?.target?.source).toBe('written');
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
 
@@ -121,7 +121,7 @@ describe('injectTo edge boundaries', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
-    expect(root.structure?.target?.raw).toBeUndefined();
+    expect(root.structure?.target?.source).toBeUndefined();
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
 
@@ -138,13 +138,13 @@ describe('injectTo edge boundaries', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
-    expect(root.structure?.source?.raw).toBe('A');
+    expect(root.structure?.['source']?.source).toBe('A');
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',
       commit: 1,
     });
-    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -161,7 +161,7 @@ describe('injectTo edge boundaries', () => {
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledTimes(2);
-    expect(root.structure?.target?.raw).toBe('root');
+    expect(root.structure?.target?.source).toBe('root');
   });
 
   it('WRITE-015 suppress injectTo consumes the load edge', () => {
@@ -178,9 +178,9 @@ describe('injectTo edge boundaries', () => {
       { source: 'A', target: 'manual' },
       WriteOption.DisableAutomaticWrites,
     );
-    expect(root.structure?.target?.raw).toBe('manual');
-    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('manual');
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -200,7 +200,7 @@ describe('injectTo edge boundaries', () => {
     );
     resetFieldNodeSubtree(root.structure!.group, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
-    expect(root.structure?.group?.structure?.target?.raw).toBeUndefined();
+    expect(root.structure?.group?.structure?.target?.source).toBeUndefined();
   });
 
   it('SETTLE-049 excludes an ancestor source outside the reset scope', () => {
@@ -241,7 +241,7 @@ describe('injectTo edge boundaries', () => {
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledTimes(before);
-    expect(root.structure?.target?.raw).toBe('manual');
+    expect(root.structure?.target?.source).toBe('manual');
   });
 
   it('ERROR-195 accepts a correctly sized virtual tuple', () => {
@@ -259,7 +259,7 @@ describe('injectTo edge boundaries', () => {
       options: { virtual: { v: { fields: ['real'] } } },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.structure?.real?.raw).toBe('written');
+    expect(root.structure?.real?.source).toBe('written');
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 
@@ -303,7 +303,7 @@ describe('injectTo edge boundaries', () => {
       undefined,
       'C',
     ]);
-    expect(root.structure?.t?.raw).toBe('from-C');
+    expect(root.structure?.t?.source).toBe('from-C');
   });
 
   it('CONTROLS-073 reborn target kind starts its fields derived edge anew', () => {
@@ -347,7 +347,7 @@ describe('injectTo edge boundaries', () => {
     const newTarget = root.structure!.target;
     expect(newTarget).not.toBe(oldTarget);
     expect(newTarget.blueprintNode.kind).toBe('union');
-    expect(newTarget.raw).toBe(10);
+    expect(newTarget.source).toBe(10);
     expect([...(root.runtime.committedRuleValues?.keys() ?? [])]).not.toContain(
       oldKey,
     );
@@ -397,8 +397,8 @@ describe('injectTo edge boundaries', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(target.raw).toBe(99);
+    expect(target.source).toBe(99);
     writeFieldNode(root.structure!.b, 'C', 'input', WriteOption.Overwrite);
-    expect(target.raw).toBe(10);
+    expect(target.source).toBe(10);
   });
 });

@@ -25,11 +25,11 @@ export const preserveSlotValueMemos = <Self extends FieldNodeRecord<Self>>(
   for (const entry of getSlotEntries(previous, previousOverlay)) {
     const old = getSlotSource(previous, entry, previousOverlay);
     const next = getSlotSource(current, entry, overlay);
-    if (next.source || next.overlay)
+    if (next.instance || next.overlay)
       preserveSlotValueMemos(
-        old.source,
+        old.instance,
         old.overlay,
-        next.source,
+        next.instance,
         next.overlay,
       );
   }

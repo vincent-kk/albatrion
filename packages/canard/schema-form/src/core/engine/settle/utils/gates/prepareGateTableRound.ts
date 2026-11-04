@@ -40,7 +40,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     ancestor;
     ancestor = ancestor.parent
   )
-    if (ancestor.raw !== undefined) return;
+    if (ancestor.source !== undefined) return;
   const table = getGateSelectionTable(
     node.blueprintNode,
     node.runtime.blueprint,

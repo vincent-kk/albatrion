@@ -34,8 +34,8 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
   if (plan.result.source === 'length')
     return plan.kind === 'slots'
       ? node.itemCount
-      : isArray(node.raw)
-        ? node.raw.length
+      : isArray(node.source)
+        ? node.source.length
         : 0;
   if (plan.result.source === 'updated')
     return isArray(node.local) ? node.local[plan.result.index] : undefined;
@@ -74,12 +74,12 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     return operation.kind === 'push' || operation.kind === 'insert'
       ? readArrayLength(node)
       : undefined;
-  if (plan.kind === 'raw') {
+  if (plan.kind === 'source') {
     const previous =
-      isArray(node.raw) && plan.result.source === 'removed'
-        ? node.raw[plan.result.index]
+      isArray(node.source) && plan.result.source === 'removed'
+        ? node.source[plan.result.index]
         : undefined;
-    writeFieldNode(node, plan.raw, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(node, plan.source, 'callerReplace', WriteOption.Overwrite);
     return resultOf(node, plan, previous);
   }
   if (plan.kind === 'update' && !node.structure?.[String(plan.index)]) {
@@ -90,13 +90,13 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       WriteOption.Overwrite,
       scratch,
     );
-    let oldRaw: unknown;
+    let oldSource: unknown;
     try {
-      oldRaw = readSourceTree(node, context);
+      oldSource = readSourceTree(node, context);
     } finally {
       releaseSettlementScratch(scratch);
     }
-    const copy = isArray(oldRaw) ? oldRaw.slice() : [];
+    const copy = isArray(oldSource) ? oldSource.slice() : [];
     copy[plan.index] = plan.value;
     writeFieldNode(node, copy, 'callerReplace', WriteOption.Overwrite);
     const item = node.structure?.[String(plan.index)];

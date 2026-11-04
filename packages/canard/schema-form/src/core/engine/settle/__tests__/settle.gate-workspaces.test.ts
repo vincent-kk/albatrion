@@ -53,7 +53,7 @@ describe('compiled active gate workspace characterization', () => {
         )!;
         const context = {
           root,
-          changedRaw: new Set(),
+          changedSource: new Set(),
           changedNodes: new Set(),
           pendingOutputs: new Set(),
         } as unknown as SettlementContext<PlainNode>;

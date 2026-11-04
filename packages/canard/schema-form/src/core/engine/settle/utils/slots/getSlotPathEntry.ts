@@ -11,7 +11,7 @@ import { getSlotEntries } from './getSlotEntries';
 /**
  * Find a declared or moved foreign binding without losing an old reference's kind.
  * @param template - Blueprint currently owning this address
- * @param source - Live or immutable retained parent at this depth
+ * @param instance - Live or immutable retained parent at this depth
  * @param overlay - Replacement sources over that parent
  * @param name - Unescaped occurrence name to resolve
  * @param selected - Old reference's kind, absent for the ordinary first-candidate rule
@@ -19,7 +19,7 @@ import { getSlotEntries } from './getSlotEntries';
  */
 export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Optional<Self>,
+  instance: Optional<Self>,
   overlay: Optional<InactiveSlotOverlay>,
   name: string,
   selected?: BlueprintNode,
@@ -31,7 +31,7 @@ export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
   if (!selected)
     return (
       declared[0] ??
-      getSlotEntries(source, overlay, template).find(
+      getSlotEntries(instance, overlay, template).find(
         (entry) => entry.name === name,
       )
     );
@@ -40,7 +40,7 @@ export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
   );
   if (exact) return exact;
   const retained = filterArray(
-    getSlotEntries(source, overlay, template),
+    getSlotEntries(instance, overlay, template),
     (entry) => entry.name === name,
   );
   return (

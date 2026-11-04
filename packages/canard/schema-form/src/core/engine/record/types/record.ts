@@ -84,9 +84,9 @@ export interface FieldNodeRecord<Self> {
   /** Next creation-order nonce owned by an array host. */
   nextItemKey: number;
   /** Interpreted terminal source or a branch's non-plain source. */
-  raw: unknown;
+  source: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
-  undeclaredValues: unknown;
+  extras: unknown;
   /** Result of the current node gate. */
   isActive: boolean;
   /** Local visibility after all active state declarations are combined. */

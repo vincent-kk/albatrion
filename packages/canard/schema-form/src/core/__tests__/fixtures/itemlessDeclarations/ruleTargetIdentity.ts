@@ -32,7 +32,7 @@ export function createRuleTargetIdentity<Node extends RuleOwner>(
   };
 }
 
-/** Check independent raw stores before normalization can hide a missing or conflicting edge. */
+/** Check independent source stores before normalization can hide a missing or conflicting edge. */
 export function assertRuleIndexes(
   rules: ReadonlyMap<string, unknown> | undefined,
   sources: ReadonlyMap<string, ReadonlySet<string>> | undefined,

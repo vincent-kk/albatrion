@@ -13,7 +13,7 @@ const planSchema = {
 export const cx19BranchDefaultsAndReset: CompositeCase = {
   scenario: {
     name: 'composite.cx19-branch-defaults-and-reset',
-    description: 'Defaults fill once when a branch node is created (LANDING-011); an edit in branch b is retained while b is closed (LANDING-018) but reset is a new load (WRITE-044) that drops retained raw values, so after reset branch a shows its default and switching to b fills b\'s default again.',
+    description: 'Defaults fill once when a branch node is created (LANDING-011); an edit in branch b is retained while b is closed (LANDING-018) but reset is a new load (WRITE-044) that drops retained source values, so after reset branch a shows its default and switching to b fills b\'s default again.',
     schema: planSchema,
     initialValue: { plan: 'a' },
     steps: [

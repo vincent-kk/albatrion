@@ -8,7 +8,7 @@ overlay가 유지 자식의 유효 스키마를 바꾸어 방출만 달라질 �
 
 유지 자식의 스키마가 정착 중 처음 바뀌기 직전에 호스트·자식 정체별 schema/emit 참조를 포착합니다. 변경 위치는 primeHost와 selectEntryStep 두 곳입니다. 기존 있음 등록 지점에서 같은 자식의 스키마와 방출이 모두 기준값과 다를 때만 escape한 이름을 정체 변화 이름에 중복 없이 더하고, 비교 뒤 기준값을 현재 값으로 갱신합니다. affectedByPresence, 조상 재확인, 공표 경로를 그대로 재사용합니다(SETTLE-020·021·045, CONTROLS-080 (5)).
 
-primeHost가 복귀 스키마를 먼저 적용하고 initialDirty가 방출까지 복구하므로, selectEntryStep 안에서만 계산 전후를 비교하면 복귀를 놓칩니다. 두 변경 위치에서 기준값을 포착하는 규칙으로 켜짐과 복귀를 함께 처리합니다. updateOutput의 sameValue 참조 보존을 이용하며 changedRaw 제외 조건은 추가하지 않습니다.
+primeHost가 복귀 스키마를 먼저 적용하고 initialDirty가 방출까지 복구하므로, selectEntryStep 안에서만 계산 전후를 비교하면 복귀를 놓칩니다. 두 변경 위치에서 기준값을 포착하는 규칙으로 켜짐과 복귀를 함께 처리합니다. updateOutput의 sameValue 참조 보존을 이용하며 changedSource 제외 조건은 추가하지 않습니다.
 
 ## 변경 파일과 비용
 

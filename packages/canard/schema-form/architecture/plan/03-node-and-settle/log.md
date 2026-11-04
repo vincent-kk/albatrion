@@ -20,7 +20,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | `plan/03-node-and-settle/verification.md` | `85e7d01af` | `d97ace6fbac1e3e9` |
 | `ledger/*.md` | `85e7d01af` | 커밋으로 고정 |
 
-- 목표: 상속 없는 단일 클래스 `SchemaNode`와 동작 행, `raw`·`extras` 둘뿐인 상태, 정착 루프(표시·계산·전이·커밋)와 예산·원본 B, `diagnostics`(LANDING-062).
+- 목표: 상속 없는 단일 클래스 `SchemaNode`와 동작 행, `source`·`extras` 둘뿐인 상태, 정착 루프(표시·계산·전이·커밋)와 예산·원본 B, `diagnostics`(LANDING-062).
 - 비목표: `if`의 실제 `compileGuard` 연결(05), 파생(04), 상태 키·제어(04), 통지·검증(05), 배열 행(06), 렌더·공개 전환(07), 명령 메서드(05, EVENT-073). 판별 게이트와 노드·조각 `controls.active`의 실제 평가는 03의 몫이다(26C-04).
 - 산출물·완료 기준·게이트: `request.md` "산출물과 완료 기준", `verification.md` 전체. 원장 ID 목록은 두 문서의 "원장 항목 색인".
 
@@ -38,7 +38,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 - Q1(틀림, 26C-01): 멤버는 그 기제를 들여오는 PR에서 겉면에 들고, 그 PR이 DETAIL 목록·멤버 목록 시험·공개 형을 함께 고친다.
   - 이기는 원장: EVENT-063, LANDING-064·066, TEST-069 (나).
-  - PR-2 겉면: `raw-round17-node-structure.md:74`의 PR-2 목록(식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, settle로 직접 위임하는 `setValue`)에 `raw`·`extras`·`diagnostics`·`SetValueOption`·`defaultValue`·`resetSubtree`와 경고등 게터 `misfit`·`misfits`(WRITE-093, 원장 `64160dcaa`)를 더한 것.
+  - PR-2 겉면: `raw-round17-node-structure.md:74`의 PR-2 목록(식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, settle로 직접 위임하는 `setValue`)에 `source`·`extras`·`diagnostics`·`SetValueOption`·`defaultValue`·`resetSubtree`와 경고등 게터 `misfit`·`misfits`(WRITE-093, 원장 `64160dcaa`)를 더한 것.
   - 뒤 PR의 멤버: 명령 메서드·`subscribe`·`validate`·오류 읽기·외부 오류 설정은 PR-4, 배열 메서드는 PR-5, 계산 게터는 PR-6.
   - TEST-070의 "배열 멤버" 형 검사는 PR-5.
   - `verification.md:26`을 26C-01로 고친다.
@@ -83,8 +83,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | 2026-09-30 | U10 | R1·R2·W1·P1·P2 수정 커밋 `c12496437`(문서)·`d829920ee`(코드). G22 4차 `FAIL`: R1·R2·P1·P2·W2 해소, 게이트 27 통과. 남은 차단: B7(`d829920ee`의 W1 고침에서 생긴 퇴행 — 같은 잠복 상태가 거쳐 온 길에 따라 `inactiveValues`가 다름), B8(`62a53ca39`부터 있던 결함 — 같은 이름을 배타 게이트 아래 다른 종류로 선언하면 마운트부터 `hostWheel` 초과). 비차단 P3(커밋마다 열거 배열 할당), P4(대량 이탈 때 `getLatentOrder` 비용 691→1,069ms, 최적화는 소유자 답대로 뒤로). 조율 판정: B7은 열거를 잠복 상태의 순수 함수로 — 브랜치 호스트 값을 청사진 자식 선언으로 펼치고 자기 키를 가진 자손은 그 키가 이김 | 이 기록 |
 | 2026-09-30 | U10 | 원장 판정 26C-13(원장 `74ac267f8`, `reviews/round-26-closing.md:137-139`): 같은 이름이 다른 종류로 형상에 살아 있으면 비활성 선언은 부모 값에서 잠복 원본을 만들지 않음, 로드는 형상에 없는 경로의 값을 전순서에서 앞선 종류 하나의 잠복 원본으로 실음, 열거는 경로 단위. 후속 확인(원장 변경 없음): 한 경로의 여러 종류 잠복 원본은 전순서 앞선 종류 하나로 열거, 전체 교체 쓰기·로드는 범위 안의 모든 종류 잠복 원본을 V로 바꾸거나 지움(WRITE-094·085, 18C-64), 들어오는 다른 종류 노드는 자기 잠복 원본 또는 없음에서 채움(VALUE-002·004·025, SETTLE-005) | 원장 `74ac267f8` |
 | 2026-09-30 | U10 | B7·B8·P3·26C-13(codex `75910280`), 교차 대조 antigravity `FAIL` F1(전체 쓰기가 다른 종류 잠복 원본을 되살림)·F2(같은 이름 다른 종류 중복 열거) 재현 확인 → codex 용량 초과로 sonnet 서브에이전트가 수정, 들어오는 자식이 호스트의 옛 키를 읽던 결함(debugger 진단, `readHostInput`)을 worker가 수정. 수정 전 새 시험 실패 확인. 조율 세션 재실행 unit·render 334파일·4,365시험 통과, lint·typecheck·SCN 15 통과. P4는 `performance.md` 후속 후보에 기록 | 이 커밋 |
-| 2026-09-30 | U10 | 진단 중 발견: 객체 호스트의 `raw`가 로드·전체 쓰기로 받은 V 전체를 들고 입력 쓰기로 갱신되지 않음(VALUE-002·004 위반, PR-2 겉면 `raw`로 보임). 원장 관리자 확인(원장 변경 없음): PR-2 범위(LANDING-062·082, 26C-01), `extras`는 VALUE-002·WRITE-090·091·018, `Merge`의 기반은 자식마다의 현재 원본(WRITE-079), 로드 스냅숏은 런타임 칸이라 영향 없음(WRITE-085, 26C-06). 조율 판정: PR-2 안에서 값 모델을 원장대로 맞춤 — 설계 명세 작성 중 | 이 기록 |
-| 2026-09-30 | U10 | 값 모델 설계: 명세 v1(Plan) → verifier `REWORK`(12 지적) → 원장 판정 O1–O6·Q1–Q4·OPEN-1/2/4(26C-14, 원장 `d1c6a25a0`) → 명세 v2 → verifier `APPROVE-WITH-FIXES`(F-N1–N9 수용). 결정: 호스트 `raw`는 잘못된 종류 값만, 선언 밖 키는 `extras`, 잠복 원본은 노드마다(호스트는 자기 `extras`·잘못된 종류 값), 경로를 담은 형상 밖 쓰기는 전순서 첫 종류에 쓰고 다른 종류를 지움(떼어진 참조는 자기 종류), `Merge`는 키마다 부분 쓰기, 들어오는 자식은 분배 입력 → 자기 잠복 → 없음, 채움은 원본 B에 남지 않음, 열거는 노드 단위(`extras` 없음). 구현 codex(`c3337821`): 시험 먼저 27건 실패 확인 뒤 통과. 조율 세션 게이트 실행 25 통과(G18은 이 기록의 분할된 옛 항목 인용을 WRITE-090·091로 고침, G19는 커밋 전). 교차 대조 antigravity `PASS` | 이 커밋 |
+| 2026-09-30 | U10 | 진단 중 발견: 객체 호스트의 `source`가 로드·전체 쓰기로 받은 V 전체를 들고 입력 쓰기로 갱신되지 않음(VALUE-002·004 위반, PR-2 겉면 `source`로 보임). 원장 관리자 확인(원장 변경 없음): PR-2 범위(LANDING-062·082, 26C-01), `extras`는 VALUE-002·WRITE-090·091·018, `Merge`의 기반은 자식마다의 현재 원본(WRITE-079), 로드 스냅숏은 런타임 칸이라 영향 없음(WRITE-085, 26C-06). 조율 판정: PR-2 안에서 값 모델을 원장대로 맞춤 — 설계 명세 작성 중 | 이 기록 |
+| 2026-09-30 | U10 | 값 모델 설계: 명세 v1(Plan) → verifier `REWORK`(12 지적) → 원장 판정 O1–O6·Q1–Q4·OPEN-1/2/4(26C-14, 원장 `d1c6a25a0`) → 명세 v2 → verifier `APPROVE-WITH-FIXES`(F-N1–N9 수용). 결정: 호스트 `source`는 잘못된 종류 값만, 선언 밖 키는 `extras`, 잠복 원본은 노드마다(호스트는 자기 `extras`·잘못된 종류 값), 경로를 담은 형상 밖 쓰기는 전순서 첫 종류에 쓰고 다른 종류를 지움(떼어진 참조는 자기 종류), `Merge`는 키마다 부분 쓰기, 들어오는 자식은 분배 입력 → 자기 잠복 → 없음, 채움은 원본 B에 남지 않음, 열거는 노드 단위(`extras` 없음). 구현 codex(`c3337821`): 시험 먼저 27건 실패 확인 뒤 통과. 조율 세션 게이트 실행 25 통과(G18은 이 기록의 분할된 옛 항목 인용을 WRITE-090·091로 고침, G19는 커밋 전). 교차 대조 antigravity `PASS` | 이 커밋 |
 | 2026-09-30 | U10 | G22 5차 `FAIL`: B7·B8 해소, 값 모델 확인 시험 약 60건 통과, 이전 고침 퇴행 없음, P3 해소. 남은 차단: G18(이 기록의 분할된 옛 항목 인용), R3(`c77e89da5`의 새 퇴행 — 로드 정착이 나감 갈무리를 통째로 건너뛰어 `resetSubtree`가 범위 밖 노드를 내보내면 원본 손실, EVENT-072·NODE-044·VALUE-006). 조율 세션 수정: 인용을 고치고 settle DETAIL 먼저, 로드 범위 밖 나감은 일반 나감 규칙으로 갈무리(`finalizeExits`·`applyExitClearing`), 시험 추가(수정 전 실패 확인). 재실행 unit·render 335파일·4,390시험, lint·typecheck·SCN 15, G18 통과 | 이 커밋 |
 | 2026-09-30 | U10 | G22 6차 `PASS`(`e770721e4`): 실행 게이트 27 통과, R3 해소, 로드 범위 경계 탐침(억제·실패·중첩 범위·범위 밖을 읽는 게이트·폼 reset 대 부분 reset) 전부 통과, 이전 고침 퇴행 없음. 누적 차단 지적 B1–B8·R1–R3·W1·W2·G2·G18 모두 해소. 남은 게이트 G20(storybook, 소유자 실행)·G21(filid 스캔, PR 경계) | 이 커밋 |
 

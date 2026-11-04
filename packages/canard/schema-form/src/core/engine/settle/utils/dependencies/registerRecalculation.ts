@@ -16,7 +16,7 @@ import { getDependencyIndex } from './getDependencyIndex';
 
 /**
  * Schedule changed nodes, ancestors, and blueprint reverse dependency owners.
- * @param context - Marked write with its changed raw paths
+ * @param context - Marked write with its changed source paths
  * @returns Nothing; extends its bounded dirty path set
  */
 export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
@@ -64,7 +64,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     const dirty = context.dirtyPaths;
     if (dirty instanceof DirtyPathSet)
       dirty.configureSplitOwners(dependencies.splitOwners);
-    for (const changed of context.changedRaw)
+    for (const changed of context.changedSource)
       dependencies.affectedForRegistration(changed, context.root, {
         hit: (bucket, liveRanks) => {
           (context.splitHitEpochs ??= new Map()).set(bucket, epoch);
@@ -83,7 +83,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
         },
       });
   } else {
-    for (const changed of context.changedRaw)
+    for (const changed of context.changedSource)
       for (const declarationPath of dependencies.affected(
         changed,
         context.root,
@@ -104,7 +104,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   }
   if (context.hasGates) {
     const changedAncestors = new Set<string>();
-    for (const changed of context.changedRaw)
+    for (const changed of context.changedSource)
       for (let prefix = changed; prefix; ) {
         prefix = resolvePointer(prefix, $.Parent);
         if (changedAncestors.has(prefix)) break;
@@ -112,13 +112,13 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       }
     const registry = getGateRegistry(context.root.runtime);
     for (const path of context.dirtyPaths) {
-      if (registry.mayChangeAt(path, context.changedRaw, changedAncestors))
+      if (registry.mayChangeAt(path, context.changedSource, changedAncestors))
         context.shapeDirtyPaths.add(path);
       if (
         path &&
         registry.mayChangeOwnDeclarationAt(
           path,
-          context.changedRaw,
+          context.changedSource,
           changedAncestors,
         )
       )

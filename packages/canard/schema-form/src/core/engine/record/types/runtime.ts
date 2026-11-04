@@ -56,7 +56,7 @@ interface FieldNodeRootRuntimeState {
   loadSnapshot: unknown;
   /** Final root output of the last root load commit; an absent box means no load committed. */
   loadBaseline?: { readonly value: unknown };
-  /** Current paths whose raw values miss their effective types. */
+  /** Current paths whose source values miss their effective types. */
   misfitPaths: PathKeyedSet;
 }
 
@@ -76,7 +76,7 @@ interface DetachedFieldNodeReads {
   readonly isDisabled: boolean;
 }
 
-/** Structured warning emitted when a committed raw value misses its effective type. */
+/** Structured warning emitted when a committed source value misses its effective type. */
 export interface MisfitRecord {
   readonly level: 'warning';
   readonly code: typeof FormWarningCode.Misfit;
@@ -142,7 +142,7 @@ export interface SettlementScratch<Self> {
   /** Previous state of each reversible automatic node write. */
   automaticLog: {
     node: Self;
-    previousRaw: unknown;
+    previousSource: unknown;
     previousExtras: unknown;
     previousDistributed?: Distribution;
   }[];
@@ -169,9 +169,9 @@ export interface SettlementScratch<Self> {
   /** Hosts scheduled for a new shape selection. */
   shapeDirtyPaths: Set<string>;
   /** Paths whose own source channels changed. */
-  changedRaw: Set<string>;
+  changedSource: Set<string>;
   /** Explicit caller changes retained for Source B. */
-  explicitRaw: Set<string>;
+  explicitSource: Set<string>;
   /** Nodes whose source or calculated result changed. */
   changedNodes: Set<Self>;
   /** Nodes visited by calculation whose final state keys need publication. */
@@ -414,7 +414,7 @@ export interface FieldNodeRuntime<Self>
   };
   /** Form default for automatic writes, overridden by a call's explicit bits. */
   disableAutomaticWrites?: boolean;
-  /** Form default for clearing raw when a node leaves the shape. */
+  /** Form default for clearing source when a node leaves the shape. */
   unsetOnInactive?: boolean;
   /** Last committed active declarations keyed by the occurrence path and kind. */
   committedDeclarationIds?: PathKeyedMap<readonly number[]>;
@@ -473,5 +473,5 @@ export type SettlementBudget =
 /** Entry that started a settlement: a write kind, or a binding entry without one. */
 export type SettlementEntryApi = FieldNodeWriteKind | 'setContext';
 
-/** Write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the raw. */
+/** Write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the source. */
 export type MisfitSource = FieldNodeWriteKind | 'fill' | 'gate';

@@ -8,28 +8,28 @@ import { getRetainedChildEntry } from './getRetainedChildEntry';
 
 /**
  * Tell whether an inactive interval adds rows beyond a reference's frozen host view.
- * @param source - Source whose active own channels were absent from its frozen list
+ * @param instance - Source whose active own channels were absent from its frozen list
  * @param overlay - Final exit exclusions without modifying those source channels
  * @returns Whether a new active lifetime must rebuild its aggregate list identity
  */
 export const hasAdditionalInactiveSources = <
   Self extends FieldNodeRecord<Self>,
 >(
-  source: Self,
-  overlay: Optional<InactiveSlotOverlay> = source.retainedSourceOverlay,
+  instance: Self,
+  overlay: Optional<InactiveSlotOverlay> = instance.retainedSourceOverlay,
 ): boolean => {
-  const own = overlay && hasOwnProperty(overlay, 'raw');
-  const raw = own ? overlay.raw : overlay?.replace ? undefined : source.raw;
-  if (source.behavior.strategy === 'terminal') return raw !== undefined;
-  if (source.behavior.type === 'array' && !own && !overlay?.replace)
+  const own = overlay && hasOwnProperty(overlay, 'source');
+  const source = own ? overlay.source : overlay?.replace ? undefined : instance.source;
+  if (instance.behavior.strategy === 'terminal') return source !== undefined;
+  if (instance.behavior.type === 'array' && !own && !overlay?.replace)
     return true;
-  if (raw !== undefined && isMisfit(raw, source.schemaType, source.nullable))
+  if (source !== undefined && isMisfit(source, instance.schemaType, instance.nullable))
     return true;
   if (overlay?.replace) return false;
-  for (const child of source.children ?? []) {
-    if (child.parent !== source) continue;
+  for (const child of instance.children ?? []) {
+    if (child.parent !== instance) continue;
     const binding = getRetainedChildEntry(
-      source,
+      instance,
       child.name,
       child.blueprintNode,
     );

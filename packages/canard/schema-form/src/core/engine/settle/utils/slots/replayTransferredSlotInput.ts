@@ -20,10 +20,10 @@ export const replayTransferredSlotInput = <Self extends FieldNodeRecord<Self>>(
   const entry = getRetainedChildEntry(host, node.name, node.blueprintNode);
   if (!entry) return false;
   const binding = getSlotBinding(host, entry);
-  const source = host.inactiveSlots?.get(binding);
+  const instance = host.inactiveSlots?.get(binding);
   const overlay = host.inactiveSlotOverlays?.get(binding);
-  if (!source && !overlay) return false;
-  restoreTransferredSlotSource(node, source, overlay, context);
+  if (!instance && !overlay) return false;
+  restoreTransferredSlotSource(node, instance, overlay, context);
   markSlotChange(host, binding, undefined, context);
   host.inactiveSlots?.delete(binding);
   host.inactiveSlotOverlays?.delete(binding);

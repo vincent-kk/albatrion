@@ -21,10 +21,10 @@ const tierSchema = {
   ],
 };
 
-/** Inner switches leave outer branches alone; outer round trips restore every inner raw value. */
+/** Inner switches leave outer branches alone; outer round trips restore every inner source value. */
 export const nestedThreeLevelsScenario: FormScenario = {
   name: 'composition.nested-oneof-three-levels',
-  description: 'FRAGMENT-021 nesting is recursive; LANDING-018 deactivation removes output only; LANDING-032 raw values survive outer and inner round trips; LANDING-011 defaults are not refilled.',
+  description: 'FRAGMENT-021 nesting is recursive; LANDING-018 deactivation removes output only; LANDING-032 source values survive outer and inner round trips; LANDING-011 defaults are not refilled.',
   schema: tierSchema,
   initialValue: { tier: 'pro', plan: { mode: 'team', team: { size: 'small' } } },
   steps: [

@@ -17,7 +17,7 @@ import { dispatchSetValue } from '../../write';
 import { dispatchUpdate } from '../../write';
 import { subscribeFieldNode } from '../../write';
 import { getDispatchNode as getDispatchChild } from './fixtures/getDispatchNode';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
 /** A guarded then branch plus an unrelated field, mirrored from the 07c finding scenario. */
 const noteSchema = {
@@ -66,7 +66,7 @@ const kindSchema = (other: boolean) =>
     else: { properties: { value: { type: 'number' } } },
   }) as const;
 
-/** Mount a guarded tree, close the branch, and return the root with its latent raw retained. */
+/** Mount a guarded tree, close the branch, and return the root with its latent source retained. */
 const hideVat = (schema: typeof noteSchema | typeof companySchema) => {
   const tree = createDispatchTree(schema, undefined, createTestValidator());
   dispatchMount(tree.root, { company: true, vat: 'VAT-9' });
@@ -232,10 +232,10 @@ describe('dispatcher batch', () => {
       WriteOption.DisableAutomaticWrites |
       WriteOption.EnableAutomaticWrites;
     dispatchBatch(root, () => dispatchSetValue(root, {}, both));
-    expect(root.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.name?.source).toBeUndefined();
   });
 
-  it('191C-01 LANDING-018 LANDING-032 keeps latent raw outside a two-write batch', () => {
+  it('191C-01 LANDING-018 LANDING-032 keeps latent source outside a two-write batch', () => {
     const { root } = hideVat(noteSchema);
     const note = getDispatchChild(root, 'note');
     dispatchBatch(root, () => {
@@ -293,7 +293,7 @@ describe('dispatcher batch', () => {
       },
     ],
   ])(
-    '191C-01 keeps latent raw outside array and object batches: %s',
+    '191C-01 keeps latent source outside array and object batches: %s',
     (_, writes) => {
       const { root } = createDispatchTree(
         hostSchema,
@@ -315,7 +315,7 @@ describe('dispatcher batch', () => {
     },
   );
 
-  it('26C-10 clears latent raw under a root write inside a batch', () => {
+  it('26C-10 clears latent source under a root write inside a batch', () => {
     const { root } = hideVat(noteSchema);
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'note'), 'x');
@@ -326,7 +326,7 @@ describe('dispatcher batch', () => {
     expect(root.emit).toEqual({ company: true });
   });
 
-  it('191C-01 keeps latent raw under a shallow Merge batch', () => {
+  it('191C-01 keeps latent source under a shallow Merge batch', () => {
     const { root } = hideVat(noteSchema);
     dispatchBatch(root, () => {
       dispatchSetValue(root, { note: 'z' }, WriteOption.Merge);
@@ -417,7 +417,7 @@ describe('dispatcher batch', () => {
     expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(false);
   });
 
-  it('191C-01 pins the automatic-origin skip: a batched trim keeps the other-kind latent raw', () => {
+  it('191C-01 pins the automatic-origin skip: a batched trim keeps the other-kind latent source', () => {
     const { root } = createDispatchTree(
       kindSchema(true),
       undefined,
@@ -435,7 +435,7 @@ describe('dispatcher batch', () => {
     expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true);
   });
 
-  it('191C-01 pins replacement without a root scope: a batched same-node double write keeps latent raw', () => {
+  it('191C-01 pins replacement without a root scope: a batched same-node double write keeps latent source', () => {
     const { root } = createDispatchTree(
       kindSchema(false),
       undefined,
@@ -501,7 +501,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(true);
   });
 
-  it('prunes only the latent raw of the sibling a batched virtual overwrite replaces while the branch switches', () => {
+  it('prunes only the latent source of the sibling a batched virtual overwrite replaces while the branch switches', () => {
     const schema = {
       type: 'object',
       properties: {

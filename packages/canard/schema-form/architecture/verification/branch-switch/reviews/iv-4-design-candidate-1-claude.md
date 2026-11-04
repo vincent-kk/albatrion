@@ -72,7 +72,7 @@ P3-7. S8에는 경계값 퇴보와 위생 규칙 충돌을 적어야 합니다 (
 
 P3-8. NODE-044와 NODE-064는 Phase 2 공통 규칙으로 적어야 합니다. 지금은 S4 문단과 Phase 3의 "후보가 추가하거나 바꾼 계약의 NODE-044/064 … 보호도 유지한다"에만 있습니다. 그래서 후보가 그 계약을 바꿀 수 있다고 읽힐 여지가 있습니다. 수정 명세: Phase 2의 1번에 "NODE-044와 NODE-064는 어떤 후보도 바꾸지 않는다"를 넣습니다. Phase 3의 문장은 "새 공개 객체 발급과 떼어진 객체 불변"으로 다시 씁니다.
 
-P3-9. 작은 문구 오류와 누락이 있습니다. S6a의 "호스트별 첫 읽기"는 "커밋 변경 뒤 첫 읽기"가 정확합니다(`materializeInactiveSlotValues.ts:18-19`, `commitSlotChanges.ts:52`). S7의 기각 이유에는 단계 두 항목(`commitSettlement`, `markCommitDeliveries`)의 실패가 빠졌습니다(`iv-1-results.md:111`). 상위 40개 중 표에 없는 큰 묶음도 있습니다. 포인터 문자열 함수군은 `resolvePointer` 1.476, `pathSegments` 0.967, `parsePointerSegment` 0.826, `escapeSegment` 0.817, `readFormattedPointerSegment` 0.764로 합이 약 4.85 µs/왕복입니다. 이 밖에 `getCommittedDeclarationKey` 1.726, `markRestoredSlotRaw` 1.428이 있습니다. 브리프상 이 행들의 추가는 선택입니다.
+P3-9. 작은 문구 오류와 누락이 있습니다. S6a의 "호스트별 첫 읽기"는 "커밋 변경 뒤 첫 읽기"가 정확합니다(`materializeInactiveSlotValues.ts:18-19`, `commitSlotChanges.ts:52`). S7의 기각 이유에는 단계 두 항목(`commitSettlement`, `markCommitDeliveries`)의 실패가 빠졌습니다(`iv-1-results.md:111`). 상위 40개 중 표에 없는 큰 묶음도 있습니다. 포인터 문자열 함수군은 `resolvePointer` 1.476, `pathSegments` 0.967, `parsePointerSegment` 0.826, `escapeSegment` 0.817, `readFormattedPointerSegment` 0.764로 합이 약 4.85 µs/왕복입니다. 이 밖에 `getCommittedDeclarationKey` 1.726, `markRestoredSlotSource` 1.428이 있습니다. 브리프상 이 행들의 추가는 선택입니다.
 
 ## 확인한 코드 주장
 

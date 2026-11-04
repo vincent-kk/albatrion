@@ -19,7 +19,7 @@
 ### 값 채널
 
 - `getValue()`·`submit`·`onChange`는 `rootNode.outputValue`를 읽는다. `setValue(value, options)`는 받은 값을 `rootNode.setValue`에 넘긴다.
-- `node`와 경로 조회는 노드 자체를 제공하므로 호출자가 raw 상태를 관찰할 수 있다. 이 조회를 폼 방출 값의 정제와 혼동하지 않는다.
+- `node`와 경로 조회는 노드 자체를 제공하므로 호출자가 source 상태를 관찰할 수 있다. 이 조회를 폼 방출 값의 정제와 혼동하지 않는다.
 - 정제의 내용은 스키마 옵션과 노드가 결정한다. 현재 `ArrayNode`의 `options.omitTrailing`이 적용 사례이며, `Form`은 읽을 채널을 고를 뿐 정제 규칙을 다시 구현하지 않는다.
 
 ### Form 속성

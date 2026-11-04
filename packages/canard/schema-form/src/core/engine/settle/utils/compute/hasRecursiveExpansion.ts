@@ -65,7 +65,7 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
     return true;
   if (
     !context.filledNodes.has(node) &&
-    (node.raw !== undefined || node.undeclaredValues !== undefined)
+    (node.source !== undefined || node.extras !== undefined)
   )
     return true;
   const children = node.children;

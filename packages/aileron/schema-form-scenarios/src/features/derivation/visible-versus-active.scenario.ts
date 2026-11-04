@@ -10,10 +10,10 @@ const noteSchema = {
   },
 };
 
-/** visible only hides a field, while active removes the node and its output and restores the raw value on return. */
+/** visible only hides a field, while active removes the node and its output and restores the source value on return. */
 export const visibleVersusActiveScenario: FormScenario = {
   name: 'derivation.visible-versus-active',
-  description: 'CONTROLS-022 visible false only hides and the output keeps the value; CONTROLS-021 active false removes the node and its output, keeps the raw value, and recreates the node with it when active returns (LANDING-011).',
+  description: 'CONTROLS-022 visible false only hides and the output keeps the value; CONTROLS-021 active false removes the node and its output, keeps the source value, and recreates the node with it when active returns (LANDING-011).',
   schema: noteSchema,
   initialValue: { open: true, hiddenNote: 'kept', inactiveNote: 'parked' },
   steps: [

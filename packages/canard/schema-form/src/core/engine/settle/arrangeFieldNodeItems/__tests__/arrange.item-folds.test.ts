@@ -42,7 +42,7 @@ describe('array verbs with item folds', () => {
         1,
       );
       expect(list.structure!['0'].blueprintNode.kind).toBe(kind);
-      expect(list.structure!['0'].raw).toBe(first);
+      expect(list.structure!['0'].source).toBe(first);
       expect(
         arrangeFieldNodeItems(list, {
           kind: 'insert',
@@ -51,12 +51,12 @@ describe('array verbs with item folds', () => {
         }),
       ).toBe(2);
       expect(list.structure!['0'].blueprintNode.kind).toBe(kind);
-      expect(list.structure!['0'].raw).toBe(inserted);
+      expect(list.structure!['0'].source).toBe(inserted);
       expect(arrangeFieldNodeItems(list, { kind: 'remove', index: 0 })).toBe(
         inserted,
       );
       expect(list.structure!['0'].blueprintNode.kind).toBe(kind);
-      expect(list.structure!['0'].raw).toBe(first);
+      expect(list.structure!['0'].source).toBe(first);
       expect(
         arrangeFieldNodeItems(list, {
           kind: 'update',
@@ -64,7 +64,7 @@ describe('array verbs with item folds', () => {
           value: updated,
         }),
       ).toBe(updated);
-      expect(list.structure!['0'].raw).toBe(updated);
+      expect(list.structure!['0'].source).toBe(updated);
       expect(list.local).toEqual([updated]);
       expect(list.runtime.loadSnapshot).toMatchObject({ list: [first] });
     },

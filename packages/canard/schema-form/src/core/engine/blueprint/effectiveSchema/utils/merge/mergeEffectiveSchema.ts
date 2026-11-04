@@ -18,7 +18,7 @@ const DEFAULT_MERGE_OPTIONS: EffectiveSchemaOptions = {};
 
 /**
  * Derive immutable rendering hints from selected declarations without evaluating gates.
- * @param node - Analyzed node retaining every raw declaration for later settlement.
+ * @param node - Analyzed node retaining every source declaration for later settlement.
  * @param activeDeclarationIds - IDs of active gated contributions; ungated ones always apply.
  * @param options - Static error policy and renderer atomic-value predicate.
  * @param memo - Optional caller-owned memo; omission uses the module's weak node cache.

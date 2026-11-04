@@ -21,7 +21,7 @@
 | S6b | kept | 없음 | 289538f96 | 보호23건·typecheck·lint·build 통과. oneOf 절감0.915가 잡음0.710을 넘고 보호 행도 통과합니다. siblings는 잡음 경계입니다. |
 | S3a | excluded | 없음 | — | S5 뒤 후보 builder는 따뜻한 호출당 파생 레코드를 한 번만 조회합니다. prepareStaticHost의 추가 조회는 다른 키나 cold 준비이며0.35µs 상한의 같은 레코드 중복을 특정하지 못했습니다. |
 | S11a | excluded | 없음 | — | getCommittedDeclarationKey는 실제 path와 fold-inclusive kind를 이미 메모합니다. 재색인·다른 종류를 건너 생략 가능한 중복을 특정하지 못했습니다. |
-| S11b | excluded | 없음 | — | markRestoredSlotRaw의 overlay 전·후는 소유 원본과 제외 채널을 각각 기록하므로 같은 입력의 중복이 아닙니다. NODE-044/064를 보존한 좁은 삭제 근거가 없습니다. |
+| S11b | excluded | 없음 | — | markRestoredSlotSource의 overlay 전·후는 소유 원본과 제외 채널을 각각 기록하므로 같은 입력의 중복이 아닙니다. NODE-044/064를 보존한 좁은 삭제 근거가 없습니다. |
 | S10 | dropped | 5반복으로 해소 | 11bd156ad | 허가된5반복1회에서 표적·보호 전체 관문을 통과하지 못해 제외 확정입니다. |
 | S8a | excluded | 없음 | — | 전체 항목5 역적용이 payload 인과를 확인하지 못했고 보호 행도 퇴보했습니다. 선언ID helper 한 곳을 원인으로 특정할 근거가 없습니다. |
 | S8b | excluded | 없음 | — | 전체 역적용 인과가 확인되지 않았으며 현재 publishPreparedSelection은 이미 helper 없는 조기 종료 classic loop입니다. |

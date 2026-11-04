@@ -70,7 +70,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         let ancestor = path;
         while (ancestor) {
           ancestor = resolvePointer(ancestor, $.Parent);
-          if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
+          if (!context.changedSource.has(ancestor)) affectedPaths.delete(ancestor);
         }
       }
     }

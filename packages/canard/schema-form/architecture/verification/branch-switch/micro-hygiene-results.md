@@ -198,7 +198,7 @@
 | `src/core/engine/settle/utils/slots/createSlotValueOverlay.ts` | 2 | 0 | 0 |
 | `src/core/engine/settle/utils/slots/getSlotChildIndex.ts` | 2 | 0 | 0 |
 | `src/core/engine/settle/utils/slots/getSlotEntries.ts` | 0 | 0 | 1 |
-| `src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/slots/markRestoredSlotSource.ts` | 0 | 0 | 1 |
 | `src/core/engine/settle/utils/slots/markSlotChange.ts` | 3 | 0 | 2 |
 | `src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts` | 0 | 0 | 1 |
 | `src/core/engine/settle/utils/slots/materializeKeptSlotOverlay.ts` | 1 | 0 | 0 |
@@ -397,9 +397,9 @@
 | 193 | `src/core/engine/settle/utils/dependencies/registerRecalculation.ts:71` · `<inline>` | 반복 멤버십 조회 | 상한 불명; 등록 검증 shadow의 원래 gate/dependency 값 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 194 | `src/core/engine/settle/utils/dependencies/registerRecalculation.ts:80` · `<inline>` | 반복 멤버십 조회 | 상한 불명; 등록 검증 shadow의 owner/schema 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 195 | `src/core/engine/settle/utils/dependencies/registerRecalculation.ts:97` · `expanded` | 중첩 비교 | 상한 불명; 고유 엔트리 수는 `ancestor && !expanded.has(ancestor)` · `context.dirtyPaths`에 비례 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
-| 196 | `src/core/engine/settle/utils/dependencies/registerRecalculation.ts:107` · `changedAncestors` | 중첩 비교 | 상한 불명; 고유 엔트리 수는 `prefix` · `context.changedRaw` · `context.dirtyPaths`에 비례 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
+| 196 | `src/core/engine/settle/utils/dependencies/registerRecalculation.ts:107` · `changedAncestors` | 중첩 비교 | 상한 불명; 고유 엔트리 수는 `prefix` · `context.changedSource` · `context.dirtyPaths`에 비례 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 197 | `src/core/engine/settle/utils/dependencies/supplementSplitOwner.ts:30` · `<inline>` | 반복 멤버십 조회 | 상한 불명; split owner 보강에서 참조하는 baseline 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
-| 198 | `src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts:20` · `paths` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `context.contextOwners ?? []` · `dependencies.affected(changed, context.root)` · `context.changedRaw`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
+| 198 | `src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts:20` · `paths` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `context.contextOwners ?? []` · `dependencies.affected(changed, context.root)` · `context.changedSource`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
 | 199 | `src/core/engine/settle/utils/derivation/getDeriveState.ts:22` · `<inline>` | 반복 멤버십 조회 | 상한 불명; DeriveState의 이전/현재 rule 평가 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 200 | `src/core/engine/settle/utils/derivation/getDeriveState.ts:23` · `consumedRuleValues` | 반복 멤버십 조회 | 상한 불명; DeriveState.consumedRuleValues의 rule-target 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 201 | `src/core/engine/settle/utils/derivation/getDeriveState.ts:24` · `activeRuleKeys` | 반복 멤버십 조회 | 상한 불명; DeriveState.activeRuleKeys의 활성 rule 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
@@ -447,7 +447,7 @@
 | 296 | `src/core/engine/settle/utils/slots/commitSlotChanges.ts:31` · `bindings` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `hosts`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
 | 299 | `src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts:79` · `<inline>` | 반복 멤버십 조회 | 상한 불명; clear overlay에서 보유한 고유 slot/entry 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 308 | `src/core/engine/settle/utils/slots/getSlotEntries.ts:21` · `entries` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `host?.children ?? []` · `host?.inactiveSlots?.keys() ?? []` · `host?.inactiveSlotOverlays?.keys() ?? []`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
-| 309 | `src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:14` · `<inline>` | 반복 멤버십 조회 | 상한 불명; slotRestoredRaw가 기억하는 restored live node 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
+| 309 | `src/core/engine/settle/utils/slots/markRestoredSlotSource.ts:14` · `<inline>` | 반복 멤버십 조회 | 상한 불명; slotRestoredSource가 기억하는 restored live node 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 310 | `src/core/engine/settle/utils/slots/markSlotChange.ts:19` · `<inline>` | 반복 멤버십 조회 | 상한 불명; slotAutomaticLog의 host와 slot binding 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 311 | `src/core/engine/settle/utils/slots/markSlotChange.ts:21` · `bindings` | 반복 멤버십 조회 | 상한 불명; `bindings.has(entry)`에서 다루는 고유 키 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 315 | `src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts:36` · `chosen` | 반복 멤버십 조회 | 상한 불명; 고유 엔트리 수는 `values`에 비례 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |

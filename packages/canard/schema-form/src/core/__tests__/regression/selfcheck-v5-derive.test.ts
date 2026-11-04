@@ -4,7 +4,7 @@ import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 derive regression', () => {
-  it('selfcheck-v5.mjs:274 ERROR-070 A4a commits caller raw after 25 feedback rounds', () => {
+  it('selfcheck-v5.mjs:274 ERROR-070 A4a commits caller source after 25 feedback rounds', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -79,7 +79,7 @@ describe('selfcheck-v5 derive regression', () => {
       { snapshot: { src: 'go', host: { a: 'A', b: 'B' } } },
     );
     root.resetSubtree();
-    expect(root.find('/host/b')?.raw).toBeUndefined();
+    expect(root.find('/host/b')?.source).toBeUndefined();
     root.find('/host/a')?.setValue('A2');
     expect(root.outputValue).toEqual({ src: 'go', host: { a: 'A2' } });
   });
@@ -130,7 +130,7 @@ describe('selfcheck-v5 derive regression', () => {
     root.setValue({ src: 'a', host: { note: 'typed' } });
     root.find('/host')?.setValue(null);
     root.find('/src')?.setValue('b');
-    expect(root.find('/host')?.raw).toBeNull();
+    expect(root.find('/host')?.source).toBeNull();
     expect(root.outputValue).toEqual({ src: 'b', host: null });
   });
 

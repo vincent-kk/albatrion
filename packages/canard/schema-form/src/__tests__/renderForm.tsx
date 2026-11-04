@@ -368,8 +368,8 @@ export const renderForm = async (
     },
     mountOrdinal: (path) => {
       const el = byId(container, path);
-      const raw = el?.getAttribute('data-mount');
-      return raw == null ? NaN : Number(raw);
+      const mountText = el?.getAttribute('data-mount');
+      return mountText == null ? NaN : Number(mountText);
     },
     errorTexts: () =>
       Array.from(container.querySelectorAll('em'))

@@ -13,7 +13,7 @@ const POP_OPERATION: ArrayOperation = { kind: 'pop' };
 /**
  * Pop an array within the public entry chain; refused feedback does no work.
  * @param node - Array host or a record whose arrange slot throws on non-array use
- * @returns Removed marked raw in a batch, otherwise the settled removed value; undefined when entry is refused
+ * @returns Removed marked source in a batch, otherwise the settled removed value; undefined when entry is refused
  * @throws Non-array or settlement failures at the outer chain end
  */
 export const dispatchPop = <Self extends FieldNodeRecord<Self>>(

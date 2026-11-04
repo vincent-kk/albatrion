@@ -12,7 +12,7 @@ import {
   subscribeFieldNode,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 describe('candidate-owned latent descendant cleanup', () => {
   it.each([
@@ -60,12 +60,12 @@ describe('candidate-owned latent descendant cleanup', () => {
         dispatchSetValue(getDispatchNode(root, 'open'), false);
       if (route !== 'absent-at-close')
         dispatchSetValue(getDispatchNode(root, 'a'), false);
-      expect(readRetainedSlotRaw(root, path, 'number')).toBe(5);
+      expect(readRetainedSlotSource(root, path, 'number')).toBe(5);
       dispatchSetValue(getDispatchNode(root, 'b'), true);
       if (route !== 'direct')
         dispatchSetValue(getDispatchNode(root, 'open'), true);
       dispatchSetValue(getDispatchNode(root, 'b'), false);
-      expect(readRetainedSlotRaw(root, path, 'number')).toBe(5);
+      expect(readRetainedSlotSource(root, path, 'number')).toBe(5);
       const absent = {
         open: true,
         a: false,
@@ -87,7 +87,7 @@ describe('candidate-owned latent descendant cleanup', () => {
         slot === 'property'
           ? getDispatchNode(root, 'box', 'v')
           : getDispatchNode(root, 'list', '0');
-      expect(getDispatchNode(candidate, 'x').raw).toBe(5);
+      expect(getDispatchNode(candidate, 'x').source).toBe(5);
       expect(root.local).toEqual(initial);
       expect(root.emit).toEqual(initial);
       expect(

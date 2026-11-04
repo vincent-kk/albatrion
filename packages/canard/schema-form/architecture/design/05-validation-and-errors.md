@@ -461,7 +461,7 @@ R17-1 나에 따라 예산 초과, 식·가드 실패, 동적 `controls.injectTo
 
 ### 2.7 진단 기록과 원인
 
-`diagnostics`는 상태(`raw`·`extras`)도 계산 결과((스키마, 원본)의 함수)도 아니라 **작업의 기록**이다(VALUE-002의 분류. 재계산 목록·`revision`·커밋 번호와 같은 칸)(ERROR-128, VALUE-002).
+`diagnostics`는 상태(`source`·`extras`)도 계산 결과((스키마, 원본)의 함수)도 아니라 **작업의 기록**이다(VALUE-002의 분류. 재계산 목록·`revision`·커밋 번호와 같은 칸)(ERROR-128, VALUE-002).
 
 `setValue(V)`는 로드가 아니라 전체 교체 쓰기이고, `diagnostics`는 폼 수준 로드인 마운트·`FormHandle.reset()`에서만 초기화하며 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다(ERROR-129, ERROR-204, WRITE-090).
 

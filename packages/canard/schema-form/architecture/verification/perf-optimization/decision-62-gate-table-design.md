@@ -23,8 +23,8 @@
 | --- | --- | --- | --- |
 | 1 | `packages/canard/schema-form/src/core/surface/runtime/FieldNode.ts:296-297` → `write/utils/entry/dispatchSetValue.ts:52-58` | 공개 `setValue`가 `writeFieldNode(node, input, 'callerReplace', …)`를 부릅니다. | 없음 |
 | 2 | `settle/utils/write/writeFieldNode.ts:112-124` | 정착 문맥을 만들고 루트를 게이트 레지스트리에 등록합니다. | 없음 |
-| 3 | `settle/utils/write/writeFieldNode.ts:143` → `settle/utils/input/markWrite.ts:65-73` | 단말 `/kind`의 raw를 바꾸고 `changedRaw`·`changedNodes`·`dirtyPaths`에 넣습니다. | 없음 |
-| 4 | `settle/utils/write/writeFieldNode.ts:146` → `settle/utils/dependencies/registerRecalculation.ts:21-31` | `changedRaw`마다 `getDependencyIndex(...).affected(changed, root)`의 소유자를 `dirtyPaths`·`dependencyOwnerPaths`에 넣고 부모를 `shapeDirtyPaths`에 넣습니다. | 소유자 3N+1개(루트 `''` 하나와 분기 페이로드 선언 3N개). 색인은 게이트를 가진 모든 선언 경로를 그 게이트 의존의 소유자로 넣기 때문입니다(`settle/utils/dependencies/getDependencyIndex.ts:82-92`). |
+| 3 | `settle/utils/write/writeFieldNode.ts:143` → `settle/utils/input/markWrite.ts:65-73` | 단말 `/kind`의 source를 바꾸고 `changedSource`·`changedNodes`·`dirtyPaths`에 넣습니다. | 없음 |
+| 4 | `settle/utils/write/writeFieldNode.ts:146` → `settle/utils/dependencies/registerRecalculation.ts:21-31` | `changedSource`마다 `getDependencyIndex(...).affected(changed, root)`의 소유자를 `dirtyPaths`·`dependencyOwnerPaths`에 넣고 부모를 `shapeDirtyPaths`에 넣습니다. | 소유자 3N+1개(루트 `''` 하나와 분기 페이로드 선언 3N개). 색인은 게이트를 가진 모든 선언 경로를 그 게이트 의존의 소유자로 넣기 때문입니다(`settle/utils/dependencies/getDependencyIndex.ts:82-92`). |
 | 5 | `settle/utils/dependencies/registerRecalculation.ts:32-40`, `:41-65` | dirty 경로의 조상을 넣고, dirty 경로마다 `mayChangeAt`·`mayChangeOwnDeclarationAt`로 형상 dirty를 더합니다. | dirty 경로 3N+2개를 두 번 훑습니다. 살아 있지 않은 3N−3개가 그대로 남습니다. |
 | 6 | `settle/utils/write/writeFieldNode.ts:147` → `settle/utils/compute/computeNode.ts:42`, `:115` | 루트는 dirty이고 형상 dirty이므로 바퀴 경로로 갑니다. | 없음 |
 | 7 | `settle/utils/compute/computeNode.ts:153-198` | `declareChildren`의 엔트리·선언·게이트와 루트 선언의 게이트, 옮긴 게이트로 게이트 목록을 모읍니다. | 3N+2 엔트리 순회((가2)가 캐시로 바꾸는 중) |
@@ -41,7 +41,7 @@
 | 18 | `settle/utils/compute/computeNode.ts:240-248` | 있음 등록(#431), dirty 자식 계산. `dirtyChildren`은 부모 색인의 모든 dirty 자손 항목을 훑습니다(`settle/utils/compute/dirtyChildren.ts:19-31`, 색인은 `settle/utils/scratch/DirtyPathSet.ts:71-86`이 엄격 접두마다 넣음). | 항목 약 3N개를 훑고 살아 있는 0~1개를 돌려줌 |
 | 19 | `settle/utils/compute/computeNode.ts:252-282` | 옮긴 게이트 갱신(`getGateRegistry.ts:201-205`가 위치 집합 전체를 펼침), 바퀴 상한(`getGateBudgetCap.ts:80-84`가 게이트 목록을 원소별로 비교), 확인 바퀴 생략 술어(`canSkipGateWheel.ts:26-51`). | 위치 집합 크기 N+α, 게이트 목록 N |
 | 20 | `settle/utils/write/writeFieldNode.ts:150` → `settle/utils/settlement/finishSettlement.ts:59` → `settle/utils/transition/transitionSettlement.ts:61-189` | 새로 들어온 페이로드의 기본값을 자동 쓰기로 채웁니다. | 없음 |
-| 21 | `settle/utils/transition/transitionSettlement.ts:206` | 누적 `changedRaw`(`/kind`와 새 페이로드 셋)로 둘째 등록을 합니다(97C-01 (4)의 누적 질의). | 4번과 같은 3N+1 |
+| 21 | `settle/utils/transition/transitionSettlement.ts:206` | 누적 `changedSource`(`/kind`와 새 페이로드 셋)로 둘째 등록을 합니다(97C-01 (4)의 누적 질의). | 4번과 같은 3N+1 |
 | 22 | `settle/utils/transition/transitionSettlement.ts:208` | 루트를 다시 계산합니다. 7~19번이 다시 돕니다(바퀴 W3). | 평가 4N, 단계 3N+2, 등 |
 
 확인 바퀴 둘(W2·W4)은 결정 58의 술어로 생략됩니다(`settle/utils/compute/computeNode.ts:267-279`). 그래서 실행되는 루트 바퀴는 둘이고 바퀴마다 평가가 4N(선언 N + 단계 3N)이어서 합계 8N입니다(진단 1절 표와 같음).
@@ -81,7 +81,7 @@
 탐침에서 새로 안 사실이 셋 있습니다.
 
 - **둘째 전환은 바퀴가 하나입니다.** 돌아오는 분기의 페이로드는 잠복 값으로 되살아나 기본값 채움이 없으므로 전이 패스가 바퀴를 돌리지 않습니다(`settle/utils/transition/transitionSettlement.ts:184-189`). 측정기의 장면(새 마운트 뒤 첫 전환)은 바퀴가 둘입니다.
-- **같은 값 쓰기는 이미 상수입니다.** `markWrite`가 값이 같으면 `changedRaw`에 넣지 않으므로(`settle/utils/input/markWrite.ts:66-71`) 등록이 소유자를 하나도 내지 않고 루트는 형상 dirty가 아니어서 바퀴가 돌지 않습니다.
+- **같은 값 쓰기는 이미 상수입니다.** `markWrite`가 값이 같으면 `changedSource`에 넣지 않으므로(`settle/utils/input/markWrite.ts:66-71`) 등록이 소유자를 하나도 내지 않고 루트는 형상 dirty가 아니어서 바퀴가 돌지 않습니다.
 - **마운트는 바퀴가 다섯이고 평가가 20N입니다.** 적재(`load`)에서는 직접 계획을 쓰지 않으므로(`selectChildren.ts:139-144`의 `context.kind !== 'load'` 조건) 일반 선택기가 돕니다. 표 모형의 마운트 값(37)은 8절 PR-6에서 적재에도 표를 쓸 때의 값입니다.
 
 ### 1.3 #435 병합 뒤 줄 번호 대응
@@ -250,7 +250,7 @@ interface GateSelectionTable {
 **되살림의 dirty 공백도 생기지 않습니다(실행 확인).** 되살아나는 p는 지금 코드와 새 경로 모두에서 보충 이전에 이미 dirty입니다. 근거는 다음과 같습니다(줄 번호는 HEAD `394c284a7`).
 
 1. **p가 퇴장하려면 감시 키 값이 p가 선택된 뒤 바뀌어야 합니다.** 감시 노드는 기준 단말이라 바퀴 첫 라운드 전에 `initialDirty`에서 계산되고(`computeNode.ts:172-174`), 바퀴 안에서는 다시 바뀌지 않습니다. 그래서 값은 계산 패스와 계산 패스 사이의 원시값 쓰기(쓰기, 자동 쓰기, 파생)로만 바뀝니다.
-2. **모든 루트 계산 앞에 등록이 돕니다.** 호출 자리 여섯(`writeFieldNode.ts:146-147`, `runDeriveRounds.ts:126-128`, `transitionSettlement.ts:206-208`, `restoreSourceB.ts:49-50`, `releaseWrongKindHosts.ts:34-35`, `arrangeFieldNodeItems.ts:170-171`)이 모두 그렇습니다. 문맥 변경(`changeFieldNodeContext.ts:54`)은 원시값을 바꾸지 않습니다. 등록은 누적된 `changedRaw` 전체를 질의하므로(`registerRecalculation.ts:21`) 감시 키 쓰기 뒤의 모든 등록이 p의 묶음을 적중합니다. 조상의 원시값 쓰기도 `affected`가 그 아래 트라이를 모두 걸으므로 적중합니다(`getDependencyIndex.ts:134-140`).
+2. **모든 루트 계산 앞에 등록이 돕니다.** 호출 자리 여섯(`writeFieldNode.ts:146-147`, `runDeriveRounds.ts:126-128`, `transitionSettlement.ts:206-208`, `restoreSourceB.ts:49-50`, `releaseWrongKindHosts.ts:34-35`, `arrangeFieldNodeItems.ts:170-171`)이 모두 그렇습니다. 문맥 변경(`changeFieldNodeContext.ts:54`)은 원시값을 바꾸지 않습니다. 등록은 누적된 `changedSource` 전체를 질의하므로(`registerRecalculation.ts:21`) 감시 키 쓰기 뒤의 모든 등록이 p의 묶음을 적중합니다. 조상의 원시값 쓰기도 `affected`가 그 아래 트라이를 모두 걸으므로 적중합니다(`getDependencyIndex.ts:134-140`).
 3. **그러므로 p를 퇴장시키는 계산 패스 직전의 등록은 p가 살아 있을 때 p를 적중합니다.** 구조는 직전 계산 패스의 결과이기 때문입니다. 지금 코드도 새 경로(3.2절 표의 "살아 있는 분할 소유자")도 이때 p를 dirty에 넣습니다.
 4. **그 등록과 퇴장 사이에 p는 계산되지 않습니다.** 호스트가 형상 dirty이므로(`registerRecalculation.ts:28-30`) 바퀴 경로로 가고, `primeHost`가 구조를 게이트 없는 엔트리로 되돌린 뒤(`primeHost.ts:111`) `initialDirty`를 구하므로 p는 그 목록에 없습니다. 꺼진 엔트리 처리(`selectChildren.ts:218-251`)와 퇴장 등록(`:461-480`)도 p를 계산하지 않습니다.
 5. **dirty 열쇠는 그 자리의 살아 있는 노드를 계산할 때만 빠집니다**(`computeNode.ts:84,97,113,149,251,260,266`, `computeStableNode.ts:28`). 게이트 정착에는 정착 도중 비움이 없고(`transitionSettlement.ts:180`은 게이트 없는 정착에서만 닿음), `restoreSourceB`도 dirty 집합을 비우지 않습니다(`restoreSourceB.ts:45-49`).
@@ -270,7 +270,7 @@ interface GateSelectionTable {
 - R 때 p가 살아 있었으면 3.2절이 p를 넣고 `splitMarks`를 R의 세대로 적습니다. 그 노드가 계산되면 두 경로 모두에서 p가 빠지고, 뒤의 되살림에서 `lastHit`가 표시와 같으므로 다시 넣지 않습니다. 계산되지 않았으면 p는 두 경로 모두에 남아 있습니다.
 - R 때 p가 살아 있지 않았으면 지금 코드는 p를 넣었고 그 뒤 지울 노드가 없었습니다. 새 경로는 처음 들어오거나 되살아날 때 `lastHit > 표시`이므로 넣습니다.
 - 같은 정착에서 들어와 계산된 뒤 나가고 다시 되살아나는 경우, 첫 진입에서 표시가 `lastHit`가 되므로 둘째에는 넣지 않습니다. 지금 코드도 첫 계산에서 지운 뒤 다시 넣지 않습니다.
-- `restoreSourceB`는 `changedRaw`를 줄입니다(`settle/utils/transition/restoreSourceB.ts:45-46`). 줄어든 등록이 p를 적중하지 않으면 `lastHit`가 올라가지 않으므로, 앞에서 계산된 p를 다시 넣지 않습니다. 지금 코드도 다시 넣지 않습니다.
+- `restoreSourceB`는 `changedSource`를 줄입니다(`settle/utils/transition/restoreSourceB.ts:45-46`). 줄어든 등록이 p를 적중하지 않으면 `lastHit`가 올라가지 않으므로, 앞에서 계산된 p를 다시 넣지 않습니다. 지금 코드도 다시 넣지 않습니다.
 - 게이트 정착에서 정착 도중 `dirtyPaths.clear()`가 불리는 자리는 없습니다. `transitionSettlement.ts:180`은 `context.initialOutputs`가 있을 때만 닿고, 그것은 `!context.hasGates`일 때만 만들어집니다(`computeNode.ts:61-73`). 정착 끝의 비움(`releaseSettlementScratch.ts:27-29`)은 새 문맥 필드도 함께 비웁니다. 검증 모드는 게이트 정착의 정착 도중 비움이 없음을 단언합니다.
 
 **소유자 술어입니다.** `dependencyOwnerPaths`는 `has`로만 읽힙니다(`settle/utils/compute/publishStateKeys.ts:25`, `settle/utils/commit/commitExitPolicyValues.ts:81`). 두 자리를 `isDependencyOwner(context, path)`로 바꿉니다. 이 함수는 `dependencyOwnerPaths.has(path)`이거나 path가 분할 소유자이고 그 묶음이 `splitHitEpochs`에 있으면 참입니다. 지금 코드에서 분할 소유자 p가 이 집합에 드는 조건은 "어떤 등록이 p의 감시 경로와 교차했다"이고, 이 집합은 정착 도중 줄지 않으므로(`restoreSourceB`도 비우지 않음) 두 판정은 같습니다. 있음 등록(`registerPresenceChanges.ts:101-102,130`, `flushPresenceTemplates.ts:46-47,74`, `publishPresenceOwner.ts:15`)은 지금처럼 실제 집합에 넣습니다.
@@ -293,7 +293,7 @@ PR-1에서 `selectChildren.ts:159-407`의 단계 본문을 함수 하나(`select
 | --- | --- | --- |
 | G1 | `context.kind !== 'load'`이고 직접 계획을 쓰는 경우(`selectChildren.ts:139-152`와 같은 조건)이며 표가 있습니다. | 적재는 PR-6 전까지 지금 경로 |
 | G2 | 내부 스위치 `gateSelectionTable.mode !== 'off'` | 차등 시험의 기준 실행 |
-| G3 | 루트부터 호스트까지 모든 노드의 `raw === undefined` | `readProjectedValue.ts:42-56`의 wrong-kind 조상 공표·`undefined` 반환을 피함 |
+| G3 | 루트부터 호스트까지 모든 노드의 `source === undefined` | `readProjectedValue.ts:42-56`의 wrong-kind 조상 공표·`undefined` 반환을 피함 |
 | G4 | 감시 단말 경로가 라운드 시작 때 dirty가 아님 | 9번 단계(`computeNode.ts:200-202`)에서 이미 계산됨 |
 
 **읽기 자리입니다.** 루트는 `selectNodeSchema`의 첫 표 게이트 자리(선언 고리의 시작), 비루트 호스트는 `firstStepIndex` 단계 직전에 묶음마다 한 번 읽습니다. 읽기는 `evaluateGate.ts:44-46,140-153`이 하던 일을 그대로 한 번 합니다. 즉 `getGateRegistry(...).locate(host, group.firstGate)`로 결합한 `watchPaths[0]`을 얻고, `readProjectedValue(context, path)`로 값을 읽고, `recordGateInput(context, path, v, 'value')`로 증인 프레임에 적습니다. 값은 정착 문맥의 호스트별 칸(`Map<host, { round, values }>`)에 두어 같은 라운드의 `selectChildren`이 다시 씁니다.
@@ -360,7 +360,7 @@ E5를 만족하면 `selectNodeSchema.ts:27-29`의 거르기를 다음으로 바�
 | 같은 값 쓰기 | 등록·바퀴가 없음(지금과 같음) | `markWrite.ts:66-71` |
 | 루트 일괄 setValue(판별 키와 페이로드 함께) | R의 4번이 입력에 이름이 있는 꺼진 분기를 방문해 잠복으로 분배. 켜진 분기는 진입 때 분배 입력을 받음. 등록은 하위 순회로 모든 묶음을 적중하되 살아 있는 분할 소유자만 넣음 | 4.2절 표의 `:410-453` 줄, 3.3절 |
 | 표 밖 게이트가 던짐 | 그 단계에서 지금처럼 `gateThrowVersion`이 오르고 `threw` 처리 | `evaluateGate.ts:157-200` |
-| 호스트나 조상이 wrong-kind(`raw !== undefined`) | G3로 그 라운드는 지금 경로 | — |
+| 호스트나 조상이 wrong-kind(`source !== undefined`) | G3로 그 라운드는 지금 경로 | — |
 | 중첩 union 호스트 | 호스트 자신의 선택은 표 경로. 부모가 이 호스트의 조각 선언을 고르는 자리(부모의 일반 선택기)는 지금처럼 N개를 평가 | 선례 설계 §2의 두 평가 자리. 9절 잔여, 10절 질문 2 |
 | 적재(마운트) | PR-6 전까지 지금 경로 | G1 |
 
@@ -406,7 +406,7 @@ E5를 만족하면 `selectNodeSchema.ts:27-29`의 거르기를 다음으로 바�
 | 조항 | 지금 문구(요지) | 바꾸는 문구(제안) |
 | --- | --- | --- |
 | 96C-01 (가) (`architecture/ledger/blueprint.md:174`, `reviews/round-96-closing.md:9`) | "바퀴는 지금 그 게이트들을 평가하던 자리에서 표를 한 번 찾아 그 값들을 같은 순서로 반영한다" | "바퀴는 첫 표 게이트의 평가 자리에서 감시 키를 한 번 읽어 표를 찾고, 그 값에서 켜지는 엔트리와 직전 자식·현재 구조·대기 퇴장·입력 키에 해당하는 엔트리만 기존 순서로 방문한다. 방문하지 않는 엔트리는 기존 실행에서도 상태를 바꾸지 않음이 증명된 꺼진 엔트리다(결정 62 (라))." |
-| 97C-01 (2) (`ledger/blueprint.md:175`) | 원래 평가 위치마다 상수 시간 동일성 검사 | "식 게이트의 감시 키가 호스트의 무게이트 단일 선언 단말 엔트리이고 라운드 진입 때 경로 위 모든 노드의 raw가 없고 그 키가 dirty가 아니면, 그 라운드 안의 읽기는 같은 값이고 공표가 없음이 증명되므로 한 번만 읽는다. 이 자격이 없으면 자리마다 지금처럼 평가한다. 판별 게이트(`controls.discriminator`)는 이 문구의 대상이 아니다." |
+| 97C-01 (2) (`ledger/blueprint.md:175`) | 원래 평가 위치마다 상수 시간 동일성 검사 | "식 게이트의 감시 키가 호스트의 무게이트 단일 선언 단말 엔트리이고 라운드 진입 때 경로 위 모든 노드의 source가 없고 그 키가 dirty가 아니면, 그 라운드 안의 읽기는 같은 값이고 공표가 없음이 증명되므로 한 번만 읽는다. 이 자격이 없으면 자리마다 지금처럼 평가한다. 판별 게이트(`controls.discriminator`)는 이 문구의 대상이 아니다." |
 | 97C-01 (4) | 형상 dirty 판정은 매 호출의 누적 집합에 대한 질의 | 문장은 유지하고 다음을 더합니다. "dirty 집합에는 살아 있지 않은 표 소유자를 넣지 않는다. 분할 소유자는 퇴장 직전 등록에서 이미 dirty 가 되어 계산 없이 나가므로, 진입·되살림 때 dirty 공백은 생기지 않는다. 등록 시점 보충 규칙은 결과를 바꾸지 않는 방어로만 두며, 검증 모드가 '보충 이전에 이미 dirty 이고 보충 삽입 횟수는 0'을 단언한다. 변이 V5·V5′·V6 은 동치 변이이므로 변이 관문에서 제외한다. `dependencyOwnerPaths`의 질의는 적중 기록으로 답한다. 루트가 아닌 호스트에서는 그 소유자들이 부모 색인에서 차지하던 자리를 닻 키로 지켜, 매 `dirtyChildren` 호출의 구성원과 순서를 넣었을 때와 같게 둔다. 매 등록 직후의 형상 dirty 집합도 넣었을 때와 같다." |
 | 97C-01 (5) 뒷부분 | "잠복 owner의 축약은 상태 키의 공표·나감 정책·배달 후보에 차이가 없음을 보이기 전에는 넣지 않는다" | PR-3a·3b의 차등·그림자 증거를 원장에 붙여 조건 충족으로 기록합니다(문구 자체는 유지, 충족 기록 추가). |
 | SETTLE-020 (`ledger/settle.md:384-399`; 결정 칸 `:389`) | "한 바퀴에 **모든** 게이트(조각 게이트와 노드 게이트, 켜진 것과 꺼진 것 모두)를 평가한다" | 결정 칸의 문장은 그대로 두고, 보충에서 그 칸의 "평가"를 **"전수 평가와 같은 판정을 얻는 일"**로 명시적으로 다시 정의합니다(검증 발견 5). 제안 문구는 "이 결정의 '평가'는 각 게이트의 판정을 전수 평가와 같은 값으로 얻는 일이다. 표 게이트는 감시 키를 한 번 읽어 표를 찾는 것으로 판정을 얻고, 꺼진 표 게이트의 판정은 칸에 들지 않은 것으로 얻는다. 즉시 반영의 순서는 방문 엔트리의 기존 순서로 지킨다(결정 62 (라))."입니다. |
@@ -537,7 +537,7 @@ PR-1의 특성화 묶음은 다음 고정물을 담습니다.
 
 1. 대표 판정 순서는 명시 맵을 먼저 보고, 없으면 "런 구성원이고, 생존 제외 순번에 없고, 제외 기록에 없음"으로 첫 닻의 대표를 판정합니다. 명시 맵의 구성원이 삭제되면 그 닻을 하나 줄이고 명시 맵에서 뺍니다.
 2. 풀린 집합(3.3절 "대표입니다")은 대표인지와 관계없이 **삭제된 모든 런 구성원**을 기록합니다. 첫 적중 때 살아 있어 진짜 열쇠로 들어갔다가 계산되고 그 뒤 나간 구성원도 다음 적중에서 새로 대표되어야 하기 때문입니다. 감소는 대표 판정이 참인 삭제에서만 일어납니다(V8).
-3. 새로 대표되는 구성원은 등록 호출 한 번에 한 번만 셉니다. 한 등록의 `changedRaw`에 같은 묶음을 적중하는 경로가 여럿이어도, 지금 코드는 열쇠를 첫 삽입 때 한 번만 넣기 때문입니다.
+3. 새로 대표되는 구성원은 등록 호출 한 번에 한 번만 셉니다. 한 등록의 `changedSource`에 같은 묶음을 적중하는 경로가 여럿이어도, 지금 코드는 열쇠를 첫 삽입 때 한 번만 넣기 때문입니다.
 4. 닻의 자리는 첫 새 대표의 rank이며, 암묵 표현에서는 런의 첫 비생존 순번입니다. 이 순번은 생존 제외 순번을 앞에서부터 건너뛰어 O(생존 + 1)에 얻습니다.
 5. 생존 제외 순번, 제외 기록, 명시 맵, 대표 개수는 정착 단위 상태입니다. 정착 끝의 비움(`releaseSettlementScratch.ts:27-29`)에서 함께 지우고, 정적 경로 → 런 색인만 청사진 단위로 공유합니다.
 

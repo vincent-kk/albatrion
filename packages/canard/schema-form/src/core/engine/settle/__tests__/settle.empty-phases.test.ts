@@ -94,7 +94,7 @@ it('does not skip gates, rule evaluation or rule commits with actual work', () =
   const commit = vi.spyOn(rules, 'commitDeriveRules');
   const policy = vi.spyOn(exitRules, 'commitExitPolicyValues');
   const exit = vi.spyOn(exits, 'finalizeExits');
-  writeFieldNode(root.structure!.source, 0, 'input', WriteOption.Overwrite);
+  writeFieldNode(root.structure!['source'], 0, 'input', WriteOption.Overwrite);
   expect(root.emit).toEqual({ source: 0, target: 1 });
   expect(run).toHaveBeenCalledTimes(1);
   expect(run.mock.calls[0][0].deriveRounds).toBe(1);

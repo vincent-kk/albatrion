@@ -9,7 +9,7 @@ oneOf-80의 mount는 A 2.720583 ms, A′ 2.830125 ms, B 2.160250 ms로 **입증(
 117C-01은 모든 호스트의 계획을 mount의 primeHost에서 만들던 구현이 if-then mount·BF와 flat-500 첫 갱신에서 회귀했기 때문에, 둘 이상의 union 분기를 실제로 도는 첫 비적재 전환에서 지연 생성하기로 결정한 기록입니다. 적재의 선택 결과가 달라진다는 이유로 금지한 것이 아닙니다. 근거는 [round-117-closing](../../reviews/round-117-closing.md), [branch1b-2](../07-switch/branch1b-2.md), [branch1c-F3](../07-switch/branch1c-F3.md), [branch1d-design](../07-switch/branch1d-design.md)입니다. PR-2a의 마운트 사전 준비 뒤에도 남아 있던 사용 제외와, 일반 load의 지연 준비를 구별했습니다.
 
 - selectChildren과 primeHost는 캐시에 이미 있는 계획을 load에도 사용합니다. 미준비 load는 계획 함수를 부르지 않고 기존 선택으로 돌아갑니다. createSettlementContext의 일반 load 준비 제외는 유지합니다.
-- prepareGateTableRound는 `context.kind === 'load' && !DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)`를 조상 순회 전에 거절합니다. 준비된 계획이 있어도 게이트가 있는 객체·허용 모드·모든 조상의 raw 부재·감시 경로가 dirty 아님 조건을 유지합니다.
+- prepareGateTableRound는 `context.kind === 'load' && !DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)`를 조상 순회 전에 거절합니다. 준비된 계획이 있어도 게이트가 있는 객체·허용 모드·모든 조상의 source 부재·감시 경로가 dirty 아님 조건을 유지합니다.
 - load의 읽기 전 공표는 `immediate && (!direct || context.kind === 'load')`로 유지합니다. 표 밖 단계는 원래 자리에서 공표하고 평가합니다. verify+skip은 원래 표 단계의 묶음 읽기 전 공표가 pendingOutputs와 changedNodes의 순서 집합을 바꾸지 않는지 S2로 확인합니다. 이 추가 검사는 shadow에 적용하지 않습니다.
 - 초기 출력 수집, 비활성 입력의 잠복 분배, 최초 상태 키 계산, 적재 확인 바퀴, 검증과 배달 순서는 유지합니다. load에 증인 프레임이나 확인 바퀴 생략을 추가하지 않았습니다. 라운드 캐시와 pending-exit 색인의 초기화·형식·갱신·수명도 유지했습니다.
 

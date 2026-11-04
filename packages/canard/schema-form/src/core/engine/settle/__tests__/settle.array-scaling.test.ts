@@ -118,7 +118,7 @@ describe('44C-01 array settlement scaling', () => {
     }
   });
 
-  it('49C-01 SETTLE-017 bounds changed-raw visits when gated rows are rewritten', () => {
+  it('49C-01 SETTLE-017 bounds changed-source visits when gated rows are rewritten', () => {
     const count = 2000;
     const { root } = makeFieldNodeTree({
       type: 'object',
@@ -148,10 +148,10 @@ describe('44C-01 array settlement scaling', () => {
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const scratch = getSettlementScratch(root.runtime);
     releaseSettlementScratch(scratch);
-    const changedRaw = scratch.changedRaw;
+    const changedSource = scratch.changedSource;
     const iterate = Set.prototype[Symbol.iterator];
     let visits = 0;
-    Object.defineProperty(changedRaw, Symbol.iterator, {
+    Object.defineProperty(changedSource, Symbol.iterator, {
       configurable: true,
       value: function* (this: Set<string>) {
         for (const path of iterate.call(this)) {
@@ -168,11 +168,11 @@ describe('44C-01 array settlement scaling', () => {
       }));
       root.find('/rows')!.setValue(value);
       if (process.env.SETTLE_SCALING_PROBE)
-        console.info(`49C-01 changed-raw visits: ${visits}`);
+        console.info(`49C-01 changed-source visits: ${visits}`);
       expect(root.value).toEqual({ flag: true, rows: value });
       expect(visits).toBeLessThan(count * 20);
     } finally {
-      Reflect.deleteProperty(changedRaw, Symbol.iterator);
+      Reflect.deleteProperty(changedSource, Symbol.iterator);
     }
   });
 

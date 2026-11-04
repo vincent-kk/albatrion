@@ -9,7 +9,7 @@ import {
 } from '../../../write';
 import { createCandidateSourceRecord } from '../../__tests__/fixtures/createCandidateSourceRecord';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 it('retains live and latent candidate sources while a slot is parked in an undeclared tail', () => {
   const { root, runtime } = createDispatchTree({
@@ -32,16 +32,16 @@ it('retains live and latent candidate sources while a slot is parked in an undec
   dispatchInsert(list, 0, {});
   expect(old.detached).toBe(true);
   expect(list.emit).toEqual([{}, { v: 'live' }]);
-  expect(readRetainedSlotRaw(root, '/list/1/v', 'string')).toBe('live');
-  expect(readRetainedSlotRaw(root, '/list/1/v', 'number')).toBe(37);
+  expect(readRetainedSlotSource(root, '/list/1/v', 'string')).toBe('live');
+  expect(readRetainedSlotSource(root, '/list/1/v', 'number')).toBe(37);
 
   dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
   dispatchRemove(list, 0);
   expect(list.emit).toEqual([{ v: 37 }]);
-  expect(readRetainedSlotRaw(root, '/list/0/v', 'string')).toBe('live');
+  expect(readRetainedSlotSource(root, '/list/0/v', 'string')).toBe('live');
   dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
   expect(root.emit).toEqual({ kind: 'string', list: [{ v: 'live' }] });
-  expect(readRetainedSlotRaw(root, '/list/0/v', 'number')).toBe(37);
+  expect(readRetainedSlotSource(root, '/list/0/v', 'number')).toBe(37);
   expect(runtime.loadSnapshot).toEqual({
     kind: 'string',
     list: [{ v: 'live' }],

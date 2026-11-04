@@ -28,7 +28,7 @@ const CONSTRAINT_KEYS = [
 ];
 
 /**
- * Apply one contribution to fresh accumulation state, preserving raw declarations.
+ * Apply one contribution to fresh accumulation state, preserving source declarations.
  * @param state - Private result state to mutate.
  * @param declaration - Active authored schema and its diagnostic location.
  * @param options - Error and renderer atomicity policies.

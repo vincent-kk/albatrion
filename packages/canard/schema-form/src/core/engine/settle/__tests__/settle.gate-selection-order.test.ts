@@ -32,16 +32,16 @@ const SCHEMA: BlueprintSchema = {
 
 // filid:contract settle-gate-selection-order
 describe('gate selection original-site shadow precondition', () => {
-  it('excludes an unread undefined-raw host and rejects consumed or published pending nodes', () => {
+  it('excludes an unread undefined-source host and rejects consumed or published pending nodes', () => {
     const { root } = createTestTree(SCHEMA);
     loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
     const context = {
       root,
-      changedRaw: new Set(),
+      changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set([root]),
     } as unknown as SettlementContext<PlainNode>;
-    expect(root.raw).toBeUndefined();
+    expect(root.source).toBeUndefined();
     expect(readProjectedValueWithoutPublication(context, '/kind')).toBe(
       'kind_0',
     );
@@ -53,7 +53,7 @@ describe('gate selection original-site shadow precondition', () => {
       readProjectedValueWithoutPublication(context, '/kind'),
     ).toThrow('/kind');
     context.pendingOutputs!.delete(root.structure!.kind);
-    root.raw = null;
+    root.source = null;
     expect(() =>
       readProjectedValueWithoutPublication(context, '/kind'),
     ).toThrow('<root>');
@@ -99,7 +99,7 @@ describe('gate selection original-site shadow precondition', () => {
       edge?: string;
       phase: string;
       message: string;
-      rootRaw: unknown;
+      rootSource: unknown;
       pending: string[];
     }[] = [];
     let shadowReads = 0;
@@ -137,7 +137,7 @@ describe('gate selection original-site shadow precondition', () => {
             edge,
             phase,
             message: cause instanceof Error ? cause.message : String(cause),
-            rootRaw: context.root.raw,
+            rootSource: context.root.source,
             pending: pendingBefore.map((node) => node.path || '<root>'),
           });
         }

@@ -76,9 +76,9 @@ export interface NodeSurface<
   readonly path: string;
   readonly children: Children;
   /** Interpreted terminal source or a branch's non-plain source. */
-  readonly raw: unknown;
+  readonly source: unknown;
   /** Undeclared object keys retained in incoming own-key order. */
-  readonly undeclaredValues: unknown;
+  readonly extras: unknown;
   readonly value: Value;
   readonly outputValue: unknown;
   readonly inactiveValues: readonly InactiveValue[];
@@ -96,7 +96,7 @@ export interface NodeSurface<
   readonly watchValues: readonly unknown[];
   /** Shared context reference supplied by the current Form binding. */
   readonly context: Readonly<Dictionary<unknown>>;
-  /** Whether the retained raw value misses the effective accepted types. */
+  /** Whether the retained source value misses the effective accepted types. */
   readonly isMisfit: boolean;
   readonly misfits: readonly string[];
   readonly diagnostics: NodeDiagnostics;
@@ -274,11 +274,11 @@ export type UnionNode<
       null,
       Nullable
     > & {
-      /** The raw value matches an accepted union member. */
+      /** The source value matches an accepted union member. */
       readonly isMisfit: false;
     })
   | (NodeSurface<'union', 'terminal', Types, unknown, null, Nullable> & {
-      /** The retained raw value lies outside the accepted union members. */
+      /** The retained source value lies outside the accepted union members. */
       readonly isMisfit: true;
     });
 

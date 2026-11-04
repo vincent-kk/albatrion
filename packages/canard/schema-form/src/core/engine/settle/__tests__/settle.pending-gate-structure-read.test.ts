@@ -99,7 +99,7 @@ describe('pending gate structure reads', () => {
     );
     try {
       const template = root.structure!.child.blueprintNode;
-      delete root.structure!.source;
+      delete root.structure!['source'];
       context.pendingOutputs = new Set([root]);
       flushPendingGateReads(template, '/child', context);
       expect(context.pendingOutputs.has(root)).toBe(false);
@@ -125,9 +125,9 @@ describe('pending gate structure reads', () => {
     try {
       const template = root.structure!.child.blueprintNode;
       const ordinary = { ...root.structure };
-      const source = ordinary.source;
-      delete ordinary.source;
-      Object.setPrototypeOf(ordinary, { source });
+      const instance = ordinary['source'];
+      delete ordinary['source'];
+      Object.setPrototypeOf(ordinary, { source: instance });
       root.structure = ordinary;
       context.pendingOutputs = new Set([root]);
       flushPendingGateReads(template, '/child', context);

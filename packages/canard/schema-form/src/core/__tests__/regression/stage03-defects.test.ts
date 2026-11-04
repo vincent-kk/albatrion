@@ -21,9 +21,9 @@ describe('stage 03 ledger adjudication regressions', () => {
   const expectSelfNegatingBudget = () => {
     const root = selfNegatingGate();
     expect(() => root.setValue({})).toThrow();
-    expect(root.raw).toBeUndefined();
+    expect(root.source).toBeUndefined();
     expect(root.outputValue).toEqual({});
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
     expect(root.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',
@@ -68,7 +68,7 @@ describe('stage 03 ledger adjudication regressions', () => {
     root.find('/host')?.setValue(17);
     root.find('/host/a')?.setValue('A2');
     expect(root.outputValue).toEqual({ host: { a: 'A2' } });
-    expect(root.find('/host/b')?.raw).toBeUndefined();
+    expect(root.find('/host/b')?.source).toBeUndefined();
   });
 
   it('selfcheck-v5.mjs:571 promotes a null host on a child input without refilling', () => {
@@ -143,8 +143,8 @@ describe('stage 03 ledger adjudication regressions', () => {
       ],
     });
     root.setValue(null);
-    expect(root.raw).toBeNull();
-    expect(root.find('/kind')?.raw).toBeUndefined();
+    expect(root.source).toBeNull();
+    expect(root.find('/kind')?.source).toBeUndefined();
     expect(root.outputValue).toBeNull();
   });
 
@@ -177,9 +177,9 @@ describe('stage 03 ledger adjudication regressions', () => {
       ],
     });
     expect(() => root.setValue({ x: 1, y: 1 })).toThrow();
-    expect(root.raw).toBeUndefined();
-    expect(root.find('/x')?.raw).toBe(1);
-    expect(root.find('/y')?.raw).toBe(1);
+    expect(root.source).toBeUndefined();
+    expect(root.find('/x')?.source).toBe(1);
+    expect(root.find('/y')?.source).toBe(1);
     expect(root.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

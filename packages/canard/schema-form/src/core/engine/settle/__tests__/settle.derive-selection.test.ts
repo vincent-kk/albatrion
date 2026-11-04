@@ -39,14 +39,14 @@ describe('active derive declarations', () => {
       { H: { enabled: false, s: 'S1', x: 'own' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.raw).toBe('own');
+    expect(root.structure?.H?.structure?.x?.source).toBe('own');
     writeFieldNode(
       root.structure!.H.structure!.enabled,
       true,
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.raw).toBe('own');
+    expect(root.structure?.H?.structure?.x?.source).toBe('own');
   });
 
   it('FRAGMENT-050 shared node baseline only for resetInteraction', () => {
@@ -130,7 +130,7 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.G?.structure?.H?.structure?.x?.raw).toBe('own');
+    expect(root.structure?.G?.structure?.H?.structure?.x?.source).toBe('own');
   });
 
   it('SETTLE-003 non-root effective schema and selection match a fresh load on both flips', () => {
@@ -201,11 +201,11 @@ describe('active derive declarations', () => {
       },
     });
     loadFieldNodeAtMount(root, { t: 'T1' }, WriteOption.Overwrite);
-    expect(root.structure?.H?.structure?.x?.raw).toBe('T1');
+    expect(root.structure?.H?.structure?.x?.source).toBe('T1');
     writeFieldNode(root.structure!.t, 'T2', 'input', WriteOption.Overwrite);
-    expect(root.structure?.H?.structure?.x?.raw).toBe('T2');
+    expect(root.structure?.H?.structure?.x?.source).toBe('T2');
     writeFieldNode(root.structure!.t, 'T3', 'input', WriteOption.Overwrite);
-    expect(root.structure?.H?.structure?.x?.raw).toBe('T3');
+    expect(root.structure?.H?.structure?.x?.source).toBe('T3');
   });
 
   it('CONTROLS-077 fragment unsetValue consumes a false-to-true dependency edge', () => {
@@ -229,9 +229,9 @@ describe('active derive declarations', () => {
       { c: false, H: { x: 'v' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.raw).toBe('v');
+    expect(root.structure?.H?.structure?.x?.source).toBe('v');
     writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.H?.structure?.x?.raw).toBeUndefined();
+    expect(root.structure?.H?.structure?.x?.source).toBeUndefined();
   });
 
   it('SETTLE-049 inactive ancestor fragment does not derive on a nested write', () => {
@@ -274,8 +274,8 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.P?.structure?.q?.raw).toBe('user');
-    expect(root.structure?.H?.structure?.P?.structure?.r?.raw).toBe('r0');
+    expect(root.structure?.H?.structure?.P?.structure?.q?.source).toBe('user');
+    expect(root.structure?.H?.structure?.P?.structure?.r?.source).toBe('r0');
     expect(derive).not.toHaveBeenCalled();
   });
 
@@ -311,7 +311,7 @@ describe('active derive declarations', () => {
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(target.structure!.q, 'user', 'input', WriteOption.Overwrite);
-    expect(target.structure?.q?.raw).toBe('user');
+    expect(target.structure?.q?.source).toBe('user');
     expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
   });
@@ -338,13 +338,13 @@ describe('active derive declarations', () => {
       { flag: false, source: 'A', target: 'manual' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('manual');
+    expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.source, 'C', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'C', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
   });
 
   it('FRAGMENT-050 shared node baseline only for allOf derived, then source change fires', () => {
@@ -370,9 +370,9 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('manual');
-    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('B');
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('B');
   });
 
   it('FRAGMENT-050 newly entered node fires for allOf derived', () => {
@@ -397,7 +397,7 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('A');
+    expect(root.structure?.target?.source).toBe('A');
   });
 
   it('FRAGMENT-050 shared node baseline only for then derived, then source change fires', () => {
@@ -427,9 +427,9 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.raw).toBe('own');
+    expect(root.structure?.x?.source).toBe('own');
     writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('S2');
+    expect(root.structure?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 newly entered node fires for then derived', () => {
@@ -458,7 +458,7 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.raw).toBe('S1');
+    expect(root.structure?.x?.source).toBe('S1');
   });
 
   it('FRAGMENT-050 shared node baseline only for unsetValue, then false-to-true fires', () => {
@@ -484,16 +484,16 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('held');
+    expect(root.structure?.target?.source).toBe('held');
     writeFieldNode(
       root.structure!.clear,
       false,
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.raw).toBe('held');
+    expect(root.structure?.target?.source).toBe('held');
     writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBeUndefined();
+    expect(root.structure?.target?.source).toBeUndefined();
   });
 
   it('FRAGMENT-050 shared injectTo baseline only and newly entered source fires', () => {
@@ -527,16 +527,16 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(shared.structure?.output?.raw).toBe('manual');
+    expect(shared.structure?.output?.source).toBe('manual');
     expect(injectTo).not.toHaveBeenCalled();
     writeFieldNode(
-      shared.structure!.source,
+      shared.structure!['source'],
       'B',
       'input',
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
-    expect(shared.structure?.output?.raw).toBe('from-B');
+    expect(shared.structure?.output?.source).toBe('from-B');
 
     injectTo.mockClear();
     const entered = createTestTree({
@@ -565,9 +565,9 @@ describe('active derive declarations', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(entered.structure?.source?.raw).toBe('A');
+    expect(entered.structure?.['source']?.source).toBe('A');
     expect(injectTo).toHaveBeenCalledWith('A', expect.any(Object));
-    expect(entered.structure?.output?.raw).toBe('from-A');
+    expect(entered.structure?.output?.source).toBe('from-A');
   });
 });
 
@@ -610,9 +610,9 @@ describe('newly selected declaration baselines', () => {
     const after = root.runtime.committedDeclarationIds?.get(key);
     expect(after?.length).toBe(before?.length);
     expect(after).not.toEqual(before);
-    expect(root.structure?.x?.raw).toBe('m');
+    expect(root.structure?.x?.source).toBe('m');
     writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('S2');
+    expect(root.structure?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 root if/then shared derived fires on its next source edge', () => {
@@ -641,11 +641,11 @@ describe('newly selected declaration baselines', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.raw).toBe('own');
+    expect(root.structure?.x?.source).toBe('own');
     writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('S2');
+    expect(root.structure?.x?.source).toBe('S2');
     writeFieldNode(root.structure!.s, 'S3', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('S3');
+    expect(root.structure?.x?.source).toBe('S3');
   });
 
   it('FRAGMENT-050 depth-one if/then shared derived fires on its next source edge', () => {
@@ -682,14 +682,14 @@ describe('newly selected declaration baselines', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.raw).toBe('own');
+    expect(root.structure?.H?.structure?.x?.source).toBe('own');
     writeFieldNode(
       root.structure!.H.structure!.s,
       'S2',
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.raw).toBe('S2');
+    expect(root.structure?.H?.structure?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 allOf if/then shared derived fires on its next source edge', () => {
@@ -725,9 +725,9 @@ describe('newly selected declaration baselines', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.raw).toBe('own');
+    expect(root.structure?.x?.source).toBe('own');
     writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('S2');
+    expect(root.structure?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 discriminator shared derived fires after switching branch', () => {
@@ -757,9 +757,9 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.kind, 'a', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('own');
+    expect(root.structure?.x?.source).toBe('own');
     writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBe('S2');
+    expect(root.structure?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 if/then shared unsetValue fires on its next false-to-true edge', () => {
@@ -788,9 +788,9 @@ describe('newly selected declaration baselines', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.raw).toBe('keep');
+    expect(root.structure?.x?.source).toBe('keep');
     writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.x?.raw).toBeUndefined();
+    expect(root.structure?.x?.source).toBeUndefined();
   });
 
   it('FRAGMENT-050 if/then shared resetInteraction fires on its next edge', () => {
@@ -857,10 +857,10 @@ describe('newly selected declaration baselines', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.out?.raw).toBe('manual');
+    expect(root.structure?.out?.source).toBe('manual');
     expect(injectTo).not.toHaveBeenCalled();
     writeFieldNode(root.structure!.src, 'B', 'input', WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
-    expect(root.structure?.out?.raw).toBe('from-B');
+    expect(root.structure?.out?.source).toBe('from-B');
   });
 });

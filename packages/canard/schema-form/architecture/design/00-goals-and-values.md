@@ -204,7 +204,7 @@ P1이 가장 위에 있다(GOAL-032). P2–P4는 "폼이 값을 어떻게 다루
 | # | 원리 | 한 문장 | 근원 |
 | - | ---- | ------- | ---- |
 | P1 | **판정은 검증기의 것이다** | 폼은 스키마의 뜻을 해석하지 않는다. 폼의 판정 = `validator(작성된 스키마, 방출 값)`. 폼이 스키마에서 읽는 것은 **형상**(어떤 노드가 있는가)을 만드는 데 필요한 최소한이다 | G1, G3, ADR 0001·0004 |
-| P2 | **원본은 호출자와 작성자만 쓴다** | 노드의 원본(raw)에 쓰는 주체는 사용자 입력, 호출자의 `setValue`·`reset`, 그리고 작성자가 선언한 규칙(노드가 생길 때의 채움과 그 원천 `controls.default`·`default`, 예약 층의 `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 나감 정책이 참으로 정해진 노드의 나감 비움)이다. 나감 정책 키의 Form 속성 층은 호출자가 켠다. core가 스스로 원본을 "고치는" 일은 없다 | ADR 0013, 소유자의 축 6항(`controls`의 키는 값을 제어하는 층이다) |
+| P2 | **원본은 호출자와 작성자만 쓴다** | 노드의 원본(source)에 쓰는 주체는 사용자 입력, 호출자의 `setValue`·`reset`, 그리고 작성자가 선언한 규칙(노드가 생길 때의 채움과 그 원천 `controls.default`·`default`, 예약 층의 `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 나감 정책이 참으로 정해진 노드의 나감 비움)이다. 나감 정책 키의 Form 속성 층은 호출자가 켠다. core가 스스로 원본을 "고치는" 일은 없다 | ADR 0013, 소유자의 축 6항(`controls`의 키는 값을 제어하는 층이다) |
 | P3 | **형상은 상태의 순수 함수다** | 어떤 조각이 켜져 있고 어떤 자식이 존재하는지는 (스키마, 원본 전체)에서 매번 같은 절차로 계산된다. 이력을 읽지 않는다. 계산은 원본을 읽기만 한다 | ADR 0007 |
 | P4 | **방출은 정책이다** | 방출 값은 원본과 형상의 투영이다. 비활성 노드의 제외, `omitEmpty`·`omitTrailing`은 원본을 건드리지 않는 투영 규칙이며, 작성자가 고른다 | ADR 0006·0013 |
 | P5 | **core는 렌더러를 모른다** | core는 노드 트리·작업 루프·통지만 안다. React도, 컴포넌트도, 화면의 명령도 모른다. 렌더 계층이 core를 구독한다 | ADR 0008·0011 |
@@ -270,7 +270,7 @@ P1이 가장 위에 있다(GOAL-032). P2–P4는 "폼이 값을 어떻게 다루
 | T-8 | **사용자 주입 컴포넌트는 격리된다** | `withErrorBoundary`로 1회 래핑(`SchemaNodeProxy`/`SchemaNodeInputWrapper`, `VirtualizationManager` 생성자) — 패키지 `CLAUDE.md` Error Isolation | 입력 하나의 throw가 폼 전체를 떨어뜨린다 | 렌더 계층 규칙. 그대로. core 쪽 대응은 EVENT-010(리스너 격리 — `subscribe` 소비자의 throw가 뒤의 노드 통지를 막지 않는다) | 기존 에러 경계 테스트 + 새로 "리스너가 throw해도 다음 노드가 통지된다" |
 | T-9 | **루트 `onChange`와 OnChange 검증은 매크로태스크로 디바운스된다** | `afterMicrotask`(이름과 달리 취소 뒤 재예약하는 **매크로태스크**, `AbstractNode/utils/afterMicrotask/afterMicrotask.ts:18-28`)가 `__handleChange__`를 감싼다(`AbstractNode.ts:1219-1223`) — `validate()`와 루트 `onChange`가 함께 묶인다 | 키 입력마다 소비자 콜백과 검증기가 돈다 | 소유자 결정 D-10(EVENT-026, F31이 F22를 대체): 루트 `onChange`는 **최외곽 동기 진입당 1회**, 디바운스 없음(진입 깊이 카운터, `spikes/work-loop/REPORT-v4c.txt`). React 이펙트의 쓰기는 새 진입이라 키 입력당 2회이며 문서화 대상(C-10). 검증은 커밋 번호 스탬프로 비동기(F28) | `validation.*.render.test.tsx`, 루트 `onChange` 호출 횟수 단언 |
 
-동치 비교를 버리고 **출처**로 판단한다: 쓰기에 출처 노드를 싣고, 그 노드 자신의 입력에서 온 부분 쓰기는 Refresh를 내지 않으며 그 밖의 쓰기(전체 교체·`injectTo`·전이·다른 노드의 입력)가 raw를 바꾸면 낸다(GOAL-053).
+동치 비교를 버리고 **출처**로 판단한다: 쓰기에 출처 노드를 싣고, 그 노드 자신의 입력에서 온 부분 쓰기는 Refresh를 내지 않으며 그 밖의 쓰기(전체 교체·`injectTo`·전이·다른 노드의 입력)가 source를 바꾸면 낸다(GOAL-053).
 
 하니스는 재사용하고 기존 시나리오의 기대값은 버리되 상황 목록은 자산으로 옮긴다(GOAL-056).
 
@@ -282,7 +282,7 @@ P1이 가장 위에 있다(GOAL-032). P2–P4는 "폼이 값을 어떻게 다루
 | - | ---- | ----------- | --------- | -------------- |
 | T-10 | blur의 Touched는 `requestAnimationFrame`으로 늦추고 focus가 취소한다 | `SchemaNodeInput.tsx:80-86` | 포커스 이동 중 에러가 깜빡인다 | 렌더 계층. 그대로 |
 | T-11 | 렌더 중의 값 읽기는 계산하지 않는다 | `get value()`가 만료·잠금이 아니면 캐시를 돌려준다(`ObjectNode/…/BranchStrategy.ts:304`), commit-on-read 제거(`DETAIL.md:101`) | 렌더 중 읽기가 null 조상을 조기 승격시키거나 전파 가드를 어긋나게 한다 | P3·VALUE-013: 읽기는 메모를 돌려줄 뿐 계산하지 않는다(정착된 읽기 4–11 ns). 구조로 흡수 |
-| T-12 | 자동 쓰기는 null 조상을 객체로 만들지 않는다 | `option & Automatic \|\| !__hasNullAncestor__`이면 전달하지 않는다(`AbstractNode.ts:1117`, `value.ts:46`) | reset·derived가 빈 폼을 객체로 만든다 | WRITE-013: 호스트의 `raw`를 비우는 것은 **사용자·호출자의 부분 쓰기**뿐이다. default 주입과 `injectTo`는 비객체 호스트의 `raw`를 건드리지 않는다 — `injectTo`가 대상의 전체 교체라도 조상의 `raw`는 그대로. 4라운드 F10으로 명세에 넣었다 |
+| T-12 | 자동 쓰기는 null 조상을 객체로 만들지 않는다 | `option & Automatic \|\| !__hasNullAncestor__`이면 전달하지 않는다(`AbstractNode.ts:1117`, `value.ts:46`) | reset·derived가 빈 폼을 객체로 만든다 | WRITE-013: 호스트의 `source`를 비우는 것은 **사용자·호출자의 부분 쓰기**뿐이다. default 주입과 `injectTo`는 비객체 호스트의 `source`를 건드리지 않는다 — `injectTo`가 대상의 전체 교체라도 조상의 `source`는 그대로. 4라운드 F10으로 명세에 넣었다 |
 | T-13 | 검증 결과는 세대 토큰으로 걸러진다 | `__generation__` 단조 증가, 구세대 결과 폐기(`ValidationManager.ts:56-62, 121-124`) | 비동기 검증의 경합으로 stale 에러가 남는다 | SETTLE-008: 커밋 번호 스탬프 |
 | T-14 | 같은 틱의 재진입 `injectTo`는 건너뛰고 매크로태스크로 해제한다 | `InjectionGuardManager.ts:4-8`, `AbstractNode.ts:977-1019` | 순환 주입의 스택 오버플로 | EVENT-020 파생 라운드 상한 25. 틱 기반 가드는 사라진다 |
 | T-15 | 한 번 드러난 가상화 노드는 placeholder로 돌아가지 않는다(defer-once) | `helpers/virtualization/INTENT.md:12`, `DETAIL.md:16` | 값 변경·스크롤 아웃에서 포커스·선택이 사라진다 | 렌더 계층. 그대로 |

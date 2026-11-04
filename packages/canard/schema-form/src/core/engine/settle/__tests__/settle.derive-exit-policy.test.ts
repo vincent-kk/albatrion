@@ -36,7 +36,7 @@ describe('derive baseline alongside exit policy', () => {
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(target, 'b', 'input', WriteOption.Overwrite);
-    expect(target.raw).toBe('b');
+    expect(target.source).toBe('b');
     expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
   });
 });

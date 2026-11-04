@@ -12,7 +12,7 @@
 
 장면 S=(schema, initialValue, writes, context)에 대해 U를 독립 컴파일·마운트하고 초기 상태와 모든 쓰기 접두사를 검사합니다. 정착 뒤 U.root.outputValue를 F의 입력으로 사용하여 같은 설정으로 독립 컴파일·마운트합니다. React에서는 FormHandle.getValue()가 같은 출력 채널입니다. 청사진·검증기를 공유하지 않습니다. 근거는 [VALUE-031 ㄹ](../ledger/value.md#value-031)입니다.
 
-공개 API로 raw·value·outputValue·undeclaredValues, 붙은 경로와 자식 순서, 타입, 유효 jsonSchema, active·visible·enabled·readOnly·disabled·required·nullable·watchValues·misfit(s), 현재 오류와 globalErrors, 배열 길이를 비교합니다. undefined·부재 키·희소 배열을 구별하되 객체 신원과 별명 공유는 비교하지 않습니다(VALUE-012·028). 각 분기에 독립적인 고유 boolean 키워드를 부여하여 공개 유효 스키마에서 oneOf 선택과 anyOf 동시 선택을 관찰합니다.
+공개 API로 source·value·outputValue·extras, 붙은 경로와 자식 순서, 타입, 유효 jsonSchema, active·visible·enabled·readOnly·disabled·required·nullable·watchValues·misfit(s), 현재 오류와 globalErrors, 배열 길이를 비교합니다. undefined·부재 키·희소 배열을 구별하되 객체 신원과 별명 공유는 비교하지 않습니다(VALUE-012·028). 각 분기에 독립적인 고유 boolean 키워드를 부여하여 공개 유효 스키마에서 oneOf 선택과 anyOf 동시 선택을 관찰합니다.
 
 명시 validate 전의 OnChange 자동 오류도 별도 비교합니다(EVENT-002, VALIDATE-006). F가 degraded이거나 U가 처음 degraded로 바뀌는 접두사는 실패입니다. 이후 U에 남은 과거 degraded 이력만 별도로 기록합니다(VALUE-003, ERROR-204). F의 경고 (code,path)는 U의 누적 경고에 포함되어야 하며 원시 reporter 기록을 남깁니다.
 
@@ -30,7 +30,7 @@ React는 현재 DOM의 value·checked·selected·disabled·readOnly 프로퍼티
 | inactiveValues | VALUE-029·VALUE-031(a): 출력에 없는 잠복 원본 |
 | 과거 경고 중복과 diagnostics의 과거 commit/iterations | ERROR-204: 폼 로드 동안 누적 기록 |
 
-raw와 undeclaredValues는 제외하지 않습니다. 형 정규화(VALUE-031(c), WRITE-052)와 키/자식 순서는 엄격 비교합니다. 현재 계산 상태·형상·misfit·유효 스키마·watch를 이력이라는 이유로 지우지 않습니다.
+source와 extras는 제외하지 않습니다. 형 정규화(VALUE-031(c), WRITE-052)와 키/자식 순서는 엄격 비교합니다. 현재 계산 상태·형상·misfit·유효 스키마·watch를 이력이라는 이유로 지우지 않습니다.
 
 VALUE-031(b)의 omitEmpty·omitTrailing과 (d)의 로드 자동 쓰기는 차이를 보기 전에 작성한 고정 경로/채널/예측값/조항으로만 마스크합니다. U 유효 옵션을 F 생성 전에 확인하고 식 판독 경로와의 겹침을 거절합니다. 계산 상태·형상·유효 스키마·watch·misfit는 마스크할 수 없습니다. 일반 생성 말뭉치의 마스크 수는 0입니다. derived·injectTo·unsetValue 대상 직접 편집은 생성하지 않고 일괄 쓰기에서 현재 출력으로 보존합니다. 이 수명 차이는 코어의 손으로 작성한 세 장면에서 고정 기대값으로 확인합니다(CONTROLS-026~028, SETTLE-046·048). 마스크 밖 차이는 새 제외로 자동 승격하지 않습니다.
 

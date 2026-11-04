@@ -9,10 +9,10 @@ import {
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 it.each(['items', 'prefixItems'] as const)(
-  '%s single-kind off-write retains whole raw, inactiveValues and entry interpretation',
+  '%s single-kind off-write retains whole source, inactiveValues and entry interpretation',
   (keyword) => {
     const { root } = createDispatchTree({
       type: 'object',
@@ -29,7 +29,7 @@ it.each(['items', 'prefixItems'] as const)(
     dispatchMount(root, { open: false, list: [] });
     dispatchSetValue(root, { open: false, list: ['7'] });
     expect(root.blueprintNode.hasCandidateDescendants).toBeUndefined();
-    const latent = readRetainedSlotRaw(root, '/list', 'array');
+    const latent = readRetainedSlotSource(root, '/list', 'array');
     expect(latent).toEqual(['7']);
     expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/list', value: ['7'] },

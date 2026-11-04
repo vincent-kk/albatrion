@@ -17,11 +17,11 @@ const mixedSchema = {
   ],
 };
 
-/** CX-16: two kinds of gates flip in screen writes and in batches, and both sides keep raw values throughout. */
+/** CX-16: two kinds of gates flip in screen writes and in batches, and both sides keep source values throughout. */
 export const cx16RapidMixedToggles: CompositeCase = {
   scenario: {
     name: 'composite.cx16-rapid-mixed-toggles',
-    description: 'controls.active removes a node and its value from the output (CONTROLS-021) while if/then/else keeps the inactive raw value (LANDING-018): three single toggles with writes between them, four toggles inside one batch, and both gates flipped in the same batch each end with both sides restorable. Then 197C-01: R2 a virtual batch write, and in the tail R1, other-kind re-entry inside a batch after a Merge write.',
+    description: 'controls.active removes a node and its value from the output (CONTROLS-021) while if/then/else keeps the inactive source value (LANDING-018): three single toggles with writes between them, four toggles inside one batch, and both gates flipped in the same batch each end with both sides restorable. Then 197C-01: R2 a virtual batch write, and in the tail R1, other-kind re-entry inside a batch after a Merge write.',
     schema: mixedSchema,
     initialValue: { gate: true, extra: 'e', company: true, vat: 'V', ...reentryValue },
     steps: [

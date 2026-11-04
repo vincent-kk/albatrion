@@ -458,7 +458,7 @@ Node F=64 평상시 쓰기는 3.384→1.048 ms로 2.336 ms(69.0%) 줄고, Bun은
 
 Node 계측 plain F=64 control의 전체 getControlLayers는 기준 572회→직접 소유 18회입니다. 같은 F/C의 exit는 전체 78회→78회, 그중 commitExitPolicyValues 호출자 몫은 3회→3회입니다. 직접 소유 검사는 조각이 꺼진 exit에서는 타지 않습니다. 포괄 µs는 타이머를 포함하므로 비계측 ms와 더하지 않습니다.
 
-Node 정답 차등은 두 바퀴 각각 72장면·323단계, 차이 0입니다. 값·raw/local/emit·잠복 키/값/메타데이터·inactiveValues·이벤트 차례/payload/onChange·모든 revision 비트·커밋 정책/선언·옛 떼어진 참조·재진입·두 번째 나감을 비교하며, overlap과 반대 순서·fields/node 우선순위도 포함합니다. Bun은 시간 비교를 했고 이 차등 행은 Node에서 실행했습니다. L2-1을 L3 다섯째 가설로 둡니다.
+Node 정답 차등은 두 바퀴 각각 72장면·323단계, 차이 0입니다. 값·source/local/emit·잠복 키/값/메타데이터·inactiveValues·이벤트 차례/payload/onChange·모든 revision 비트·커밋 정책/선언·옛 떼어진 참조·재진입·두 번째 나감을 비교하며, overlap과 반대 순서·fields/node 우선순위도 포함합니다. Bun은 시간 비교를 했고 이 차등 행은 Node에서 실행했습니다. L2-1을 L3 다섯째 가설로 둡니다.
 
 ## D — B2 보존 메모리 분류
 
@@ -474,11 +474,11 @@ Node는 B2와 같은 평평한 숫자 필드 1000·8000개(루트 포함 1001·8
 | event/revision records | 240.18 | 937.65 | 240.02 | 936.25 | 240.00 | 936.05 |  |
 | closures | 0.00 | 200.42 | 0.00 | 200.05 | 0.00 | 200.00 |  |
 | effective schema per occurrence | 0.00 |  | 0.00 |  | 0.00 |  | 0.16.1에 직접 대응하는 범주 없음: effective schema per occurrence field/category. |
-| value: raw | 0.00 |  | 0.00 |  | 0.00 |  | 0.16.1에 직접 대응하는 범주 없음: value: raw field/category. |
+| value: source | 0.00 |  | 0.00 |  | 0.00 |  | 0.16.1에 직접 대응하는 범주 없음: value: source field/category. |
 | value: local | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |  |
 | value: emit | 0.00 |  | 0.00 |  | 0.00 |  | 0.16.1에 직접 대응하는 범주 없음: value: emit field/category. |
 | value: load snapshot | 8.03 | 0.00 | 49.16 | 0.00 | 55.04 | 0.00 |  |
-| value: undeclaredValues | 0.00 |  | 0.00 |  | 0.00 |  | 0.16.1에 직접 대응하는 범주 없음: value: undeclaredValues field/category. |
+| value: extras | 0.00 |  | 0.00 |  | 0.00 |  | 0.16.1에 직접 대응하는 범주 없음: value: extras field/category. |
 | value: emit + local | 8.03 |  | 49.16 |  | 55.04 |  | 0.16.1에 직접 대응하는 범주 없음: value: emit + local field/category. |
 | structure containers | 57.30 | 18.39 | 57.17 | 18.03 | 57.15 | 17.98 |  |
 | other tree-owned | 18.49 | 211.72 | 11.24 | 208.47 | 10.21 | 208.00 |  |

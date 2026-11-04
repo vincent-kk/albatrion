@@ -32,7 +32,7 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
   );
   const pending: {
     entry: BlueprintChildEntry;
-    source?: Self;
+    instance?: Self;
     overlay?: InactiveSlotOverlay;
   }[] = [];
   for (const entry of entries) {
@@ -48,16 +48,16 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
         : (getItemEntries(host.blueprintNode, Number(name)).find(
             (candidate) => candidate.node === entry.node,
           ) ?? { ...entry, name });
-    const source = host.inactiveSlots?.get(entry);
+    const instance = host.inactiveSlots?.get(entry);
     const overlay = host.inactiveSlotOverlays?.get(entry);
     markSlotChange(host, entry, undefined, context);
     host.inactiveSlots?.delete(entry);
     host.inactiveSlotOverlays?.delete(entry);
-    if (target) pending.push({ entry: target, source, overlay });
+    if (target) pending.push({ entry: target, instance, overlay });
   }
-  for (const { entry, source, overlay } of pending) {
+  for (const { entry, instance, overlay } of pending) {
     markSlotChange(host, entry, undefined, context);
-    if (source) (host.inactiveSlots ??= new Map()).set(entry, source);
+    if (instance) (host.inactiveSlots ??= new Map()).set(entry, instance);
     if (overlay) (host.inactiveSlotOverlays ??= new Map()).set(entry, overlay);
   }
   if (

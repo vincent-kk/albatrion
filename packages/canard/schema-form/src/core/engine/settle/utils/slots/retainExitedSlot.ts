@@ -43,7 +43,7 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
     host.inactiveSlotOverlays?.delete(entry);
     return;
   }
-  const source = result.compacted
+  const instance = result.compacted
     ? cloneSlotSubtree(
         host,
         entry,
@@ -53,7 +53,7 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
         context.compactedSlotSources,
       )
     : node;
-  (host.inactiveSlots ??= new Map()).set(entry, source);
+  (host.inactiveSlots ??= new Map()).set(entry, instance);
   if (result.overlay)
     (host.inactiveSlotOverlays ??= new Map()).set(entry, result.overlay);
   else host.inactiveSlotOverlays?.delete(entry);

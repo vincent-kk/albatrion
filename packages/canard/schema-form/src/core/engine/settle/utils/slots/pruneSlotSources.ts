@@ -43,16 +43,16 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
         clear(child);
   };
   const patch = (
-    source: Optional<Self>,
+    instance: Optional<Self>,
     overlay: Optional<InactiveSlotOverlay>,
     position: number,
   ): InactiveSlotOverlay => {
     if (position === parts.length) return { replace: true };
     const children = new Map(overlay?.children);
-    for (const entry of getSlotEntries(source, overlay)) {
+    for (const entry of getSlotEntries(instance, overlay)) {
       if (entry.name !== parts[position]) continue;
-      const prior = getSlotSource(source, entry, overlay);
-      children.set(entry, patch(prior.source, prior.overlay, position + 1));
+      const prior = getSlotSource(instance, entry, overlay);
+      children.set(entry, patch(prior.instance, prior.overlay, position + 1));
     }
     return { ...overlay, children };
   };

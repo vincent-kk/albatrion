@@ -27,7 +27,7 @@
 ### 2. 정확성 및 일반 경로와의 동치성 (Correctness & Equivalence)
 - **분기 조건**: `previous === undefined && children.length === 0 && preferred.length === 0 && entries.length === 0 && extras` (비null, 비배열 객체)로 정확히 제한되었습니다.
 - **키 순서 및 결과 쓰기**: `names`는 `Object.keys(extras)`로 직접 수집되며, 키 순서대로 `writeObjectKey(result, name, Reflect.get(extras, name))`를 호출하여 결과를 작성합니다.
-- **형상 기록 및 키 수 등록**: `STABLE_SHAPES.set(node, { children, schema: node.schema, undeclaredValues: node.undeclaredValues, names })` 및 `objectKeyCounts.set(result, names.length)` 호출은 일반 경로(기존 247–252행)와 정확히 일치합니다.
+- **형상 기록 및 키 수 등록**: `STABLE_SHAPES.set(node, { children, schema: node.schema, extras: node.extras, names })` 및 `objectKeyCounts.set(result, names.length)` 호출은 일반 경로(기존 247–252행)와 정확히 일치합니다.
 - **생략된 연산**:
   - 빈 `childValues` Map 및 `seen` Set 인스턴스 할당 생략.
   - 빈 Map에 대한 키별 `childValues.has(name)` 검사 2회 생략.

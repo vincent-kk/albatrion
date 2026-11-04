@@ -7,19 +7,19 @@ import type { SettlementContext } from '../../types/settlement';
  * @param context - Settled clone lifetimes and caller marks retained before restoration
  * @returns Nothing; caller writes and nonempty final sources keep their Refresh marks
  */
-export const finalizeRestoredSlotRaw = <Self extends FieldNodeRecord<Self>>(
+export const finalizeRestoredSlotSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  for (const [node, preceding] of context.slotRestoredRaw ?? []) {
+  for (const [node, preceding] of context.slotRestoredSource ?? []) {
     if (!node.detached || preceding) continue;
     const live = find(context.root, node.path);
     if (
       live &&
       live !== node &&
-      live.raw === undefined &&
-      live.undeclaredValues === undefined &&
+      live.source === undefined &&
+      live.extras === undefined &&
       !(live.behavior.type === 'array' && live.itemCount > 0)
     )
-      context.changedRaw.delete(node.path);
+      context.changedSource.delete(node.path);
   }
 };

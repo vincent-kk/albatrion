@@ -7,7 +7,7 @@
 | 번호 | 한 줄 요약 | 상태 | 닫은 사람 |
 | --- | --- | --- | --- |
 | VALUE-001 | 별도의 데이터 모델을 두지 않는다 — 노드 트리가 곧 상태 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
-| VALUE-002 | 노드가 드는 칸과 그 종류 — 상태는 raw와 extras 둘뿐 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40·18C-59), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40; 경고등은 계산 칸) |
+| VALUE-002 | 노드가 드는 칸과 그 종류 — 상태는 source와 extras 둘뿐 | 현행 | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3, 상태가 둘뿐인 것은 그 귀결 `adr/0006-single-value-ownership.md:3`), 원리(`03-mental-model.md:55-72` §2, 칸 목록 `adr/0006-single-value-ownership.md:3`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40·18C-59), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40; 경고등은 계산 칸) |
 | VALUE-003 | diagnostics 칸 — 작업의 기록, 다음 로드까지 지속, 루트에서 관측 | 현행 | 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) |
 | VALUE-004 | 저장되는 값은 자식 노드가 없는 노드에만 있다 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
 | VALUE-005 | 노출 표면은 전략과 무관하게 같다 — 경로 조회도 같다 | 현행 | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가) |
@@ -31,7 +31,7 @@
 | VALUE-023 | 버린 대안 — 루트의 JSON 값 트리, 셀 테이블, 노드별 사본 동기화 | 현행(부정 결정) | 소유자 답(`reviews/round-1.md:176` §5의 전환을 받는가), 편집자 결정(1차안 대체, 적대적 검토 R12, `adr/0006-single-value-ownership.md:12`) |
 | VALUE-024 | 대체됨: node.value는 원본, normalizedValue는 방출 값이라는 구분의 유지 | 대체됨(→ VALUE-027) | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`), 편집자 결정(18라운드, 소유자 물음으로 올림, `reviews/round-18-agenda.md:166`), 소유자 답(`reviews/round-18-owner-answers.md:18` 12-8; VALUE-027의 이름으로 대체) |
 | VALUE-025 | 결과 — 기본 정책에서 원본은 남고, 나감 정책이 참이면 다시 켜질 때 채움을 받는다 | 현행 | 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값) |
-| VALUE-026 | 대체됨: 상태 칸은 raw·selection·extras 셋이라는 06 용어표의 정의 | 대체됨(→ VALUE-002) | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3), 편집자 결정(10라운드, `07-conclusions.md:29`) |
+| VALUE-026 | 대체됨: 상태 칸은 source·selection·extras 셋이라는 06 용어표의 정의 | 대체됨(→ VALUE-002) | 소유자 답(`reviews/round-10-owner-answers.md:9` A-3), 편집자 결정(10라운드, `07-conclusions.md:29`) |
 | VALUE-027 | 값 읽기는 셋이다 — value, outputValue, getInactiveValues의 이름 | 현행 | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`), 소유자 답(`reviews/round-18-owner-answers.md:18` 12-8) |
 | VALUE-028 | 구조 공유는 `emit` 사이에서만 말한다 | 현행 | 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`) |
 | VALUE-029 | 잠복 원본 열거 — 루트 노드의 함수, 노드마다 getter `inactiveValues` | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:22` 12-8 셋째), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-81; 반환 모양) |
@@ -65,12 +65,12 @@
 - 라운드: 1
 - 까닭: `adr/0006-single-value-ownership.md:12`, `adr/0006-single-value-ownership.md:21`
 
-### VALUE-002 노드가 드는 칸과 그 종류 — 상태는 raw와 extras 둘뿐
+### VALUE-002 노드가 드는 칸과 그 종류 — 상태는 source와 extras 둘뿐
 - 결정:
   > **2. 노드가 드는 칸은 열이고, 그 가운데 상태는 둘뿐이다.**
   > | 칸 | 종류 | 내용 |
   > | -- | ---- | ---- |
-  > | `raw` | 상태 | 원본. 리프와 터미널 노드가 값을 든다. 자식이 있는 노드는 잘못된 종류의 값(`null`, `17`)이 왔을 때만 든다 |
+  > | `source` | 상태 | 원본. 리프와 터미널 노드가 값을 든다. 자식이 있는 노드는 잘못된 종류의 값(`null`, `17`)이 왔을 때만 든다 |
   > | `extras` | 상태 | 호스트가 받은, 어떤 조각에도 선언되지 않은 키와 값, 그리고 그 순서(E16). 순서는 받은 순서이며 ECMAScript own-key 순서를 따른다 |
   > | `active` | 계산 | 이번 커밋의 활성 조각·노드 집합 |
   > | `local` | 계산 | 활성 자식 `emit`의 합성 — 투영 전 |
@@ -79,7 +79,7 @@
   > | 재계산 목록 | 작업 | 이번 정착에서 다시 계산할 자식의 목록. 상호작용 상태 `dirty`와 다른 것이다 |
   > | `revision` | 원장 | 통지 원장. 커밋 때 일괄 갱신한다(F16) |
   > | 커밋 번호 | 원장 | 검증 결과의 스탬프. 오래된 결과를 버린다(F28) |
-  > **상태는 `raw`와 `extras` 둘뿐이다**(P3). 나머지는 상태에서 계산되거나 작업의 기록이다. "노드 트리가 곧 상태"는 이 둘을 노드가 소유한다는 뜻이다. 폼은 `oneOf`·`anyOf`로 분기를 고르지 않으므로(P1′) 수동 분기 선택을 담을 칸이 없다.
+  > **상태는 `source`와 `extras` 둘뿐이다**(P3). 나머지는 상태에서 계산되거나 작업의 기록이다. "노드 트리가 곧 상태"는 이 둘을 노드가 소유한다는 뜻이다. 폼은 `oneOf`·`anyOf`로 분기를 고르지 않으므로(P1′) 수동 분기 선택을 담을 칸이 없다.
 - 보충:
   > "extras     호스트가 받은, 청사진 어디에도 선언되지 않은 키와 그 순서. `if` 안에만 적힌 키는 선언이 아니므로 `extras`다." (`03-mental-model.md:59`)
   > "조각이 선언한 키는 그 조각이 모두 꺼지면 잠복 원본이며 게이트도 검증기도 보지 않는다(P1·P4, 14라운드)" (`03-mental-model.md:59`)
@@ -89,10 +89,10 @@
   > 편집자 결정(18C-40): "【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다." (`reviews/round-18-closing.md:1084`)
   > 편집자 결정(18C-59): "【추론】 배열 호스트의 `extras`는 아이템 청사진이 없는 자리의 값이다." (`reviews/round-18-closing.md:1668`)
   > 편집자 결정(18C-59): "【추론】 자리 순서로 들고, 선언된 아이템 뒤에 방출한다(VALUE-002 보충)." (`reviews/round-18-closing.md:1669`)
-  > 편집자 결정(65C-03): "【추론】 장부를 노드 키 `Map`(`deliverySnapshots`·`deliveries`·`queuedEvents`)에서 레코드 필드(기준값, 대기 마스크, 비트별 `revision` 칸, payload 칸)로 옮기는 것은 NODE-004 "노드 인스턴스가 곧 레코드"와 맞고, VALUE-002 "상태는 `raw`와 `extras` 둘뿐이다(P3). 나머지는 상태에서 계산되거나 작업의 기록이다"의 "작업의 기록"에 든다 — 장부는 형상·값·방출에 들지 않고 읽기 API에 노출되지 않으며 커밋이 비운다. 그러므로 P3를 어기지 않는다. 조건은 넷이다: (1) 레코드 필드는 `record/type.ts`에 선언하고 NODE-004를 따르는 `record`의 DETAIL을 먼저 고친다; (2) 차등 시험은 개정 대장(비트별 `revision`), payload(`previous`·`current`), 배달 순서, `UpdateGlobalState` 횟수의 불변을 S1·S2 전후로 확인한다(06의 54만 단계 차등과 같은 모양); (3) S1과 S2는 별도 커밋이되 한 설계이므로 같은 PR 안에서 잇고, S3 뒤에 한다; (4) 05가 정한 이름(`revisionLedger`, `UpdateGlobalState`, 사건 종류)은 바뀌지 않는다." (`reviews/round-65-closing.md:26`)
+  > 편집자 결정(65C-03): "【추론】 장부를 노드 키 `Map`(`deliverySnapshots`·`deliveries`·`queuedEvents`)에서 레코드 필드(기준값, 대기 마스크, 비트별 `revision` 칸, payload 칸)로 옮기는 것은 NODE-004 "노드 인스턴스가 곧 레코드"와 맞고, VALUE-002 "상태는 `source`와 `extras` 둘뿐이다(P3). 나머지는 상태에서 계산되거나 작업의 기록이다"의 "작업의 기록"에 든다 — 장부는 형상·값·방출에 들지 않고 읽기 API에 노출되지 않으며 커밋이 비운다. 그러므로 P3를 어기지 않는다. 조건은 넷이다: (1) 레코드 필드는 `record/type.ts`에 선언하고 NODE-004를 따르는 `record`의 DETAIL을 먼저 고친다; (2) 차등 시험은 개정 대장(비트별 `revision`), payload(`previous`·`current`), 배달 순서, `UpdateGlobalState` 횟수의 불변을 S1·S2 전후로 확인한다(06의 54만 단계 차등과 같은 모양); (3) S1과 S2는 별도 커밋이되 한 설계이므로 같은 PR 안에서 잇고, S3 뒤에 한다; (4) 05가 정한 이름(`revisionLedger`, `UpdateGlobalState`, 사건 종류)은 바뀌지 않는다." (`reviews/round-65-closing.md:26`)
   > 편집자 결정(400C-01): "【추론】 터미널 모드(options.terminal)는 느리지 않다: 객체 1000키 마운트 Node −90%·Bun −64%, 배열 8천 마운트 거의 0으로 0.16.1보다 빠르다. 느린 것은 표시 없이 하위 선언이 없는 호스트(자식 0개 브랜치)이며 원인은 모든 키가 선언 밖 값이 되어 키마다 복사(계측 비율 37%)와 재조립(47%)되는 것이다. 0.16.1은 items 없는 배열 스키마를 거부하므로 그 모양의 옛 판 수치는 없다. 결함 수정 셋(F2·F3·394C-02)은 배열 동사 비용을 바꾸지 않았다(수정 전 대비 모든 행 −7%~+6%). 다음 구현 묶음 L3의 수용 가설은 다섯이고 각각 지우는 비효율 하나를 이름 지었다(370라운드): (a) 선언 밖 키마다 defineProperty를 일반 대입으로(writeObjectKey, __proto__ 보호는 코드에만 있으므로 그 불변을 시험으로 고정하고 원장 보충으로 적음); (b) items 없는 배열의 push·insert(N) 지름길 — 선언 밖 값뿐인 배열의 덧붙임이 모든 칸을 걷는 O(N) 접두 증명·재사용 검사를 없앰(자격 배제 목록 그대로, prefixItems 튜플 뒤 꼬리 제외, 새 빈 children 참조·UpdateChildren·revision 유지, 전체 배달 비교); (c) nextExtras 끝의 sameValue가 markWrite의 비교와 중복인 두 번 비교 제거(Merge 길 동일성 확인이 선행 조건); (d) 이미 해석된 자식에 staticSpec을 다시 조회하지 않고 넘김(all-keys 격차의 2.75%); (e) 게이트 조각이 있는 폼의 평상시 쓰기가 나감 정책 의존 판정마다 조각별 전체 통제 층을 만든 뒤 소유 하나를 찾는 것을 직접 소유 판정으로(조각 수에 초선형, F=64에서 Node 3.38→1.05 ms·Bun 16.6→1.36 ms, 72장면·323단계 차등 0, 정책 평가·층 순서 불변, 캐시 없음; 결정 58의 입구 수치 3.38 ms 중 2.34 ms). 가설마다 커밋 하나, PR 하나(대기열 56), 검증은 agy high(397라운드). 증명 먼저 후보(비효율로 이름 짓기 전 증명 필요, 지금 쪼개지 않음): all-keys 격차 중 DETAIL 설계 기록만 근거인 알고리즘 몫(커밋 후보 루프, 커밋마다 RevisionLedger 생성, dirty 색인 반복), (c) 다섯(없는 misfit 경로 삭제, 빈 commitGlobalState 방문, hasDistributedChildInput 재검사, effectiveType 재검사, keepsHostKeys 훑기), 빈 상호작용 상태 공유(노드당 56 B, 정체성 비교·제자리 변경 부재 증명 선행). 수용 후보(M3 때 현재 수치로 소유자 수용 목록): all-keys 격차 중 원장 계약 몫(SETTLE-001·002·003, 노드별 revision·EVENT 배달), 선언 밖 값의 불변 사본·순서 보관이 요구하는 키 수 비례 복사·재조립(VALUE-002, SETTLE-042·043), 터미널 객체 한 키 변경의 첫 다른 키 위치 비례 비교(두 판 같은 방향), 노드 레코드 376 B(NODE-018 추정 210~260 B 초과, NODE-055 판정은 하지 않음), 청사진 스키마 노드당 약 1,820~1,830 B와 폼 하나 기준 트리+청사진 메모리 0.16.1 대비 약 5분의 1 증가(398라운드 소유자 판단으로 청사진 공유는 지금 하지 않음). 폐기: 선언 밖 값 입력 재사용(Merge에서 이전 값 상실, 호출자 객체 변조가 폼 값에 전파, 396라운드 예측 가능성 원칙 위반). 기록만: items 없는 배열 remove(0)의 extras 인식 splice(범위 밖), 빈 배열→빈 배열의 새 children 참조와 UpdateChildren(원장 요구인지 부산물인지 미확인, 지름길은 보존), 빈 구조 그릇 정리(지울 것 없음, L3-3 닫음)." (`reviews/round-400-closing.md:8`)
   > 편집자 결정(400C-03): "【추론】 비용 분해에서 "계약상 필요"는 원장 항목(SETTLE·EVENT·VALUE 등)이 그 결과를 요구하는 경우에만 쓰고, DETAIL의 알고리즘 기술만 근거인 반복은 "현재 알고리즘"으로 따로 센다(fairy08 b2 대조). 그래야 "계약상 필수"로 읽혀 개선 여지가 가려지지 않는다. __proto__ 보호(writeObjectKey)는 원장에 근거가 없는 코드만의 불변이므로 L3-(a) 때 시험으로 고정하고 VALUE-002 보충으로 적는다." (`reviews/round-400-closing.md:12`)
-  > 편집자 결정(404C-01): "【추론】 PR #417을 8e35b01fc로 squash 병합했다(커밋 a8a71b65f DETAIL 셋, 67964cc21 코드·시험). 비효율 하나: items 템플릿이 없는 배열은 값이 모두 선언 밖 값이라 끝 덧붙임 한 번마다 정적 꼬리 자격(admitsStaticArrayTail)이 extras 존재·템플릿 없음·children 길이 불일치로 거절되어 일반 길로 갔고, 일반 길과 출력 합성이 모든 칸을 걸어 접두를 다시 증명했다(getItemEntries 8천에서 24,003회 ≈ 3N). 바뀐 자격 한 문장: items와 prefixItems가 모두 없고 children이 비어 있으며 선언 밖 값의 길이가 아이템 수와 같은 정적 branch 배열의 단독 push 또는 insert(N) 한 번은 지름길 자격을 얻어 덧붙인 칸 하나만 다루고, 출력 합성은 이전 배열에 값 하나를 이은 새 배열을 만든다; 템플릿이 있는 배열의 기존 경로, prefixItems 튜플 꼬리, 게이트·통째 raw·배치·로드·자동 쓰기, 가운데 insert·remove·pop의 배제는 그대로다. 유지한 관측(측정 문서 A3 절 목록 전부): 호스트·루트 값의 새 참조와 local 얕은 사본, 새 로드 스냅숏 배열·끝 값·defaultValue, 선언 밖 값의 새 배열과 이전 배열 불변(VALUE-002), 빈→빈 children의 새 배열 참조와 UpdateChildren·revision 증가(400C-01의 미결 기록 범위 유지), 호스트·조상 UpdateValue 차례·비트·payload와 루트 onChange 한 번·검증 요청 한 번, itemCount·길이 상태·omitTrailing 제외, 호출자 입력 불변(WRITE-013). compareArrayAppend 픽스처가 지름길 트리와 일반 길을 강제한 트리의 전체 배달 기록을 대조해 차이 0이다. 효과(Node v26.12.0·Bun 1.4.3, 두 바퀴 중앙값): 8천 push Node 0.653→0.063 ms(−90.4%)·Bun 1.816→0.080 ms(−95.6%), insert(N) Node 0.663→0.072 ms(−89.2%)·Bun 1.774→0.081 ms(−95.5%); getItemEntries는 1천 3,003→2회, 8천 24,003→2회로 수용 사본을 제외한 작업이 상수다(시험은 상한 4회로 단언). 남은 시간(8천 기준 Node 약 0.06~0.07 ms, 1천의 약 2~3배)은 SETTLE-042·VALUE-002·WRITE-085가 요구하는 세 배열(local, 로드 스냅숏, 선언 밖 값)의 O(N) 얕은 사본이며 수용 후보 목록에 둔다. 캐시·전역 상태는 없고 ArrayAppendProof 형의 선택 속성 추가는 공개 표면으로 재수출되지 않는다. 기존 시험 기대값 변경 0건. 388라운드 허용 범위의 실험이며 소유자가 되돌릴 수 있다. remove(0)의 extras 인식 splice는 여전히 범위 밖이다." (`reviews/round-404-closing.md:8`)
+  > 편집자 결정(404C-01): "【추론】 PR #417을 8e35b01fc로 squash 병합했다(커밋 a8a71b65f DETAIL 셋, 67964cc21 코드·시험). 비효율 하나: items 템플릿이 없는 배열은 값이 모두 선언 밖 값이라 끝 덧붙임 한 번마다 정적 꼬리 자격(admitsStaticArrayTail)이 extras 존재·템플릿 없음·children 길이 불일치로 거절되어 일반 길로 갔고, 일반 길과 출력 합성이 모든 칸을 걸어 접두를 다시 증명했다(getItemEntries 8천에서 24,003회 ≈ 3N). 바뀐 자격 한 문장: items와 prefixItems가 모두 없고 children이 비어 있으며 선언 밖 값의 길이가 아이템 수와 같은 정적 branch 배열의 단독 push 또는 insert(N) 한 번은 지름길 자격을 얻어 덧붙인 칸 하나만 다루고, 출력 합성은 이전 배열에 값 하나를 이은 새 배열을 만든다; 템플릿이 있는 배열의 기존 경로, prefixItems 튜플 꼬리, 게이트·통째 source·배치·로드·자동 쓰기, 가운데 insert·remove·pop의 배제는 그대로다. 유지한 관측(측정 문서 A3 절 목록 전부): 호스트·루트 값의 새 참조와 local 얕은 사본, 새 로드 스냅숏 배열·끝 값·defaultValue, 선언 밖 값의 새 배열과 이전 배열 불변(VALUE-002), 빈→빈 children의 새 배열 참조와 UpdateChildren·revision 증가(400C-01의 미결 기록 범위 유지), 호스트·조상 UpdateValue 차례·비트·payload와 루트 onChange 한 번·검증 요청 한 번, itemCount·길이 상태·omitTrailing 제외, 호출자 입력 불변(WRITE-013). compareArrayAppend 픽스처가 지름길 트리와 일반 길을 강제한 트리의 전체 배달 기록을 대조해 차이 0이다. 효과(Node v26.12.0·Bun 1.4.3, 두 바퀴 중앙값): 8천 push Node 0.653→0.063 ms(−90.4%)·Bun 1.816→0.080 ms(−95.6%), insert(N) Node 0.663→0.072 ms(−89.2%)·Bun 1.774→0.081 ms(−95.5%); getItemEntries는 1천 3,003→2회, 8천 24,003→2회로 수용 사본을 제외한 작업이 상수다(시험은 상한 4회로 단언). 남은 시간(8천 기준 Node 약 0.06~0.07 ms, 1천의 약 2~3배)은 SETTLE-042·VALUE-002·WRITE-085가 요구하는 세 배열(local, 로드 스냅숏, 선언 밖 값)의 O(N) 얕은 사본이며 수용 후보 목록에 둔다. 캐시·전역 상태는 없고 ArrayAppendProof 형의 선택 속성 추가는 공개 표면으로 재수출되지 않는다. 기존 시험 기대값 변경 0건. 388라운드 허용 범위의 실험이며 소유자가 되돌릴 수 있다. remove(0)의 extras 인식 splice는 여전히 범위 밖이다." (`reviews/round-404-closing.md:8`)
   > 편집자 결정(405C-01): "【추론】 PR #418을 89ea2c98b로 squash 병합했다(커밋 a4375e180 DETAIL 셋, cad821b8d 코드·시험). 비효율 하나: nextExtras의 두 복사 루프가 선언 밖 값의 키마다 Object.defineProperty로 썼다. 바뀐 규칙 한 문장: 선언 밖 값은 새 사본에 복사하되 `__proto__`만 own property로 정의하고 나머지 키는 일반 대입하며, 선언 키 거름·Merge의 기존 키 보존과 새 키 순서·호출자 입력 불변·빈 값 처리·같은 값의 기존 참조 되살림은 그대로다(VALUE-002, WRITE-013, SETTLE-042, SETTLE-043). 안전한 키 쓰기 writeObjectKey는 객체 합성과 정착이 함께 쓰므로 두 소비자의 최저 공통 fractal인 engine의 utils 구획에 두고 자식 fractal의 형을 가져오거나 공개 진입점에 수출하지 않는다. `__proto__` 보호는 원장 항목이 요구한 적 없는 코드만의 불변이므로 이 결정이 VALUE-002의 보충이 되고, 시험 packages/canard/schema-form/src/core/engine/settle/utils/input/__tests__/nextExtras.plain-assignment.test.ts의 "keeps __proto__ as an own data property without changing prototypes (merge=%s)", "copies a previous __proto__ key during Merge", "filters a declared input key"가 prototype 오염 없음과 own property 유지를 고정한다. 효과(Node v26.12.0·Bun 1.4.3, 두 바퀴 중앙값): Node B0 마운트 1.412→0.966 ms(−31.6%), 한 키 −11.8%, 모든 키 −18.2%; Node B1 마운트 1.809→1.004 ms(−44.5%), 한 키 −8.8%, 모든 키 −14.8%; Bun B0 마운트 −18.6%, 모든 키 −2.2~−8.9%, 한 키 ±1% 안; Bun B1 마운트는 첫 창 +31.7%였으나 재측정 두 바퀴 범위가 0을 걸쳐 차이 없음으로 읽는다(400C-02). 캐시·전역 상태는 없고 공개 API는 불변이며 기존 시험 기대값 변경은 0건이다. 388라운드 허용 범위의 실험이며 소유자가 되돌릴 수 있다. v1 입력 참조 재사용은 396·400라운드대로 폐기 상태다." (`reviews/round-405-closing.md:8`)
   > 편집자 결정(406C-01): "【추론】 PR #419를 bb4ff19d9로 squash 병합했다(커밋 3ee575f03 DETAIL, d382874e8 코드·시험). 비효율 하나: Overwrite 쓰기마다 nextExtras가 선언 밖 값 전체를 구조 비교해 같은 값이면 이전 참조를 돌려준 뒤, markWrite가 같은 두 값을 다시 구조 비교했다(Node B0 한 키에서 nextExtras 포괄 시간의 31.2%가 이 비교). nextExtras의 되살림은 잠복 Merge가 참조로 변경 여부를 판단하는 데 의존하므로 유지하고, 대신 배열 꼬리를 만드는 arrayExtras도 이전 꼬리와 같은 값이면 이전 참조를 되살리게 하여 markWrite의 extras 변경 판정을 참조 동일성으로 바꿨다. 규칙 한 문장: 선언 밖 값의 구조 비교는 쓰기 한 번에 한 번이며, 그 비교는 사본을 만드는 자리(객체 nextExtras, 배열 arrayExtras)가 맡고 markWrite에 extras를 넘기는 모든 호출자는 같은 값이면 이전 참조를 넘긴다(SETTLE-043의 같은 값 규칙과 커밋·emit 참조 되살림은 그대로; VALUE-002의 키 순서와 WRITE-013의 호출자 입력 불변 유지). 효과(Node v26.12.0·Bun 1.4.3, 두 바퀴 중앙값, N=1000): B0 한 키 Node 0.987→0.924 ms(−6.2% [−3.4~−9.1]), Bun 0.476→0.411 ms(−13.7%); Bun B1 한 키 −4.4%, 모든 키 −6.0%; Node 모든 키와 Node B1 한 키(+5.5% [−19.0~+8.0])는 바퀴 범위가 0을 걸쳐 차이 없음(400C-02). 계측: 객체 쓰기의 선언 밖 값 구조 비교 2회→1회(시험은 1회 이하 상한). 캐시·전역 상태 없음, 공개 API 불변, 기존 시험 기대값 변경 0건. 370라운드 원칙의 적용 기준을 기록한다: "추가 코드가 제거 비효율보다 크다"는 줄 수가 아니라 비례로 읽으며, 반복 비용 O(키 수)를 없애는 순증 몇 줄은 허용하고 분기 없는 모양을 우선한다. 388라운드 허용 범위의 실험이며 소유자가 되돌릴 수 있다." (`reviews/round-406-closing.md:8`)
   > 편집자 결정(467C-01): "【추론】 `FieldNodeState.Dirty`→`FieldNodeState.Edited`(bit 1), `ShowError.Dirty`→`ShowError.Edited`(bit 4), `ShowError.DirtyTouched`→`ShowError.EditedTouched`(bit 16), `required`→`isRequired`, `active`→`isActive`, `visible`→`isVisible`, `enabled`→`isPresent`, `readOnly`→`isReadOnly`, `disabled`→`isDisabled`, `misfit`→`isMisfit`로 바꾼다. 노드 boolean은 is 접두사를 쓰고 isRoot는 유지하며 record와 getter는 같은 이름이다. React props·FieldInputHint·schema·controls 키와 재계산 dirty 어휘는 유지하고 옛 이름 별칭은 두지 않는다. `isEdited`는 `!!state[FieldNodeState.Edited]`, `isTouched`는 `!!state[FieldNodeState.Touched]`이다. 사용자 입력만 Edited를 세우고 프로그램 setValue·배열 동사·fill·파생 쓰기·injectTo·unsetValue·trim은 세우지 않는다. 원래 값 복귀로 Edited가 지워지지 않으며 reset·clearSubtreeState·resetInteraction이 초기화한다. detach 뒤 isEdited·isTouched는 마지막 커밋 상태를 유지하고 isDivergent는 isPresent·isActive처럼 현재 출력 기여를 설명하므로 false다. ShowError의 기본 EditedTouched 정책과 비트 값은 유지하며 Submitted나 Divergent 조건을 더하지 않는다. 근거는 원문 29–31·60·76–78이다." (`reviews/round-467-closing.md:8`)
@@ -186,7 +186,7 @@
 
 ### VALUE-009 불변식은 emit에만 있다
 - 결정:
-  > **7. 불변식은 `emit`에만 있다**(E9): 부모의 `emit` = 활성 자식 `emit`의 투영. `raw`에는 그런 불변식이 없다 — 형상에 없는 노드와 비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다.
+  > **7. 불변식은 `emit`에만 있다**(E9): 부모의 `emit` = 활성 자식 `emit`의 투영. `source`에는 그런 불변식이 없다 — 형상에 없는 노드와 비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다.
 - 보충: 없음
 - 상태: 현행
 - 출처: `adr/0006-single-value-ownership.md:56#1`(정본)
@@ -214,8 +214,8 @@
   > | -- | --------- | -- |
   > | `local` | `node.value` | 합성 값. 투영 전 |
   > | `emit` | `node.outputValue` | 방출 값. 오늘의 `normalizedValue`의 이름 변경. `FormHandle.getValue()`는 루트의 `outputValue`와 같다 |
-  > | 형상에 없는 노드의 `raw` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |
-  > 원본 칸 `raw`에는 공개 이름이 없다. `enhancedValue`는 새 모델에 자리가 없어 사라진다. 노드에 `getValue()` 메서드는 따로 두지 않는다(`node.value`와 뜻이 다르면 이름만 보고 속는다). "노드의 메모는 루트 스냅숏의 해당 부분과 같은 참조"는 `omitEmpty`·`omitTrailing`이 투영을 바꾸는 노드에서 거짓이므로, 구조 공유는 `emit` 사이에서만 말한다.
+  > | 형상에 없는 노드의 `source` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |
+  > 원본 칸 `source`에는 공개 이름이 없다. `enhancedValue`는 새 모델에 자리가 없어 사라진다. 노드에 `getValue()` 메서드는 따로 두지 않는다(`node.value`와 뜻이 다르면 이름만 보고 속는다). "노드의 메모는 루트 스냅숏의 해당 부분과 같은 참조"는 `omitEmpty`·`omitTrailing`이 투영을 바꾸는 노드에서 거짓이므로, 구조 공유는 `emit` 사이에서만 말한다.
 - 보충: 없음
 - 상태: 분할됨(→ VALUE-027, VALUE-028)
 - 출처: `adr/0006-single-value-ownership.md:58-66`(정본), `adr/0006-single-value-ownership.md:3,9`, `06-conclusions.md:186-190`, `07-conclusions.md:97,347`, `08-design-a-to-z.md:412`
@@ -223,13 +223,13 @@
 - 라운드: 9
 - 까닭: `06-conclusions.md:189`
 - 충돌:
-  > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `raw` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`, VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`).
+  > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `source` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`, VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`).
 
 ### VALUE-012 emit의 참조 규칙
 - 결정:
-  > **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `raw` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9). "같은 값을 두 번 읽으면 같은 참조"가 이것으로 성립한다.
+  > **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `source` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9). "같은 값을 두 번 읽으면 같은 참조"가 이것으로 성립한다.
 - 보충:
-  > 편집자 결정(18C-50): "【추론】 (나) 커밋 단계에서, 이번 정착에 쓰인 잎의 `raw`·`extras`가 직전 커밋의 것과 (가)로 같으면 직전 참조를 둔다." (`reviews/round-18-closing.md:1383`)
+  > 편집자 결정(18C-50): "【추론】 (나) 커밋 단계에서, 이번 정착에 쓰인 잎의 `source`·`extras`가 직전 커밋의 것과 (가)로 같으면 직전 참조를 둔다." (`reviews/round-18-closing.md:1383`)
   > 편집자 결정(18C-50): "【추론】 쓰기 경계에서 지금 값과 같으면 쓰지 않는 것은 오늘과 같다." (`reviews/round-18-closing.md:1384`)
   > 편집자 결정(18C-50): "【추론】 호스트의 `emit`은 VALUE-012대로 만든다." (`reviews/round-18-closing.md:1385`)
   > 편집자 결정(18C-50): "【추론】 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만)." (`reviews/round-18-closing.md:1386`)
@@ -275,7 +275,7 @@
 
 ### VALUE-015 null 계약 D-1 — setValue(null)은 키가 없는 전체 교체
 - 결정:
-  > `setValue(null)`은 키가 없는 전체 교체이므로 자식 원본이 없음이 된다. 원본 칸 하나로 족하며 셋째 칸도 특수 장치도 없다 — 2라운드 S7(#338 S4와 "null 아래도 원본 유지"의 충돌)은 이렇게 닫힌다. 3라운드 E9의 "비객체 V는 자식 raw를 건드리지 않는다"와 E18("비객체 호스트의 자식은 비활성")은 **삭제**한다: 비객체 호스트의 자식은 **존재하고 렌더되며** 빈 상태를 보인다. 로드는 새 수명이므로 그 자식들은 생긴 노드로서 채움을 받고, `setValue(null)` 뒤 다시 객체가 로드되어도 채움을 받는다(원장 §3). 실수로 누른 null의 되돌리기는 입력 컴포넌트의 몫이다.
+  > `setValue(null)`은 키가 없는 전체 교체이므로 자식 원본이 없음이 된다. 원본 칸 하나로 족하며 셋째 칸도 특수 장치도 없다 — 2라운드 S7(#338 S4와 "null 아래도 원본 유지"의 충돌)은 이렇게 닫힌다. 3라운드 E9의 "비객체 V는 자식 source를 건드리지 않는다"와 E18("비객체 호스트의 자식은 비활성")은 **삭제**한다: 비객체 호스트의 자식은 **존재하고 렌더되며** 빈 상태를 보인다. 로드는 새 수명이므로 그 자식들은 생긴 노드로서 채움을 받고, `setValue(null)` 뒤 다시 객체가 로드되어도 채움을 받는다(원장 §3). 실수로 누른 null의 되돌리기는 입력 컴포넌트의 몫이다.
 - 보충: 없음
 - 상태: 분할됨(→ VALUE-036, WRITE-090)
 - 출처: `adr/0006-single-value-ownership.md:76`(정본), `adr/0006-single-value-ownership.md:74`, `reviews/round-5-derivations.md:40`, `adr/0007-settle-cycle.md:115`, `adr/0013-core-does-not-rewrite-values.md:53`(WRITE-014의 정본), `03-mental-model.md:90`
@@ -393,12 +393,12 @@
 - 라운드: 13
 - 까닭: `reviews/round-13-owner-answers.md:8`
 
-### VALUE-026 대체됨: 상태 칸은 raw·selection·extras 셋이라는 06 용어표의 정의
+### VALUE-026 대체됨: 상태 칸은 source·selection·extras 셋이라는 06 용어표의 정의
 - 결정:
   > | 용어 | 뜻 |
   > | ---- | -- |
   > | `selection` | 판별식이 없는 union 호스트에서 사용자가 수동으로 고른 분기. 상태 칸의 하나다 |
-  > | 상태 칸 | 노드가 실제로 소유하는 상태. 원본(`raw`), `selection`, `extras` 셋뿐이다. 나머지는 계산 결과다 |
+  > | 상태 칸 | 노드가 실제로 소유하는 상태. 원본(`source`), `selection`, `extras` 셋뿐이다. 나머지는 계산 결과다 |
 - 보충: 없음
 - 상태: 대체됨(→ VALUE-002)
 - 출처: `06-conclusions.md:51-52`(정본), `06-conclusions.md:19-20`, `07-conclusions.md:29,37`, `adr/0002-guard-fragment-model.md:53`
@@ -414,8 +414,8 @@
   > | -- | --------- | -- |
   > | `local` | `node.value` | 합성 값. 투영 전 |
   > | `emit` | `node.outputValue` | 방출 값. 오늘의 `normalizedValue`의 이름 변경. `FormHandle.getValue()`는 루트의 `outputValue`와 같다 |
-  > | 형상에 없는 노드의 `raw` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |
-  > 원본 칸 `raw`에는 공개 이름이 없다. `enhancedValue`는 새 모델에 자리가 없어 사라진다. 노드에 `getValue()` 메서드는 따로 두지 않는다(`node.value`와 뜻이 다르면 이름만 보고 속는다).
+  > | 형상에 없는 노드의 `source` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |
+  > 원본 칸 `source`에는 공개 이름이 없다. `enhancedValue`는 새 모델에 자리가 없어 사라진다. 노드에 `getValue()` 메서드는 따로 두지 않는다(`node.value`와 뜻이 다르면 이름만 보고 속는다).
 - 보충:
   > 열린 부분(값 읽기의 공개 이름과 이름 표면. 표는 행을 나누지 않고 함께 연다): "값 읽기 이름(`value`는 원본, 방출 값의 이름 등, 07 §6.2 N3)에 소유자 동의 원문이 없다." (`reviews/round-18-agenda.md:166`)
   > 소유자(12-8 답): "이대로 가도 되는데요, value 랑 outputValue 가 다르면, 투영할때만 바뀌는 경우(빠지는 값?)은 어떤게 있죠? 이거 물어보는 이유가, 어떤 object node 에 조건부 브랜치가 있을때, 이게 브랜치가 하나 꺼진 경우, 그 값은 제거되기로 했잖아요? 근데 node 본인은 꺼진 브랜치의 값을 볼 수 있는건가요? 아니, value 로 전달되는거면 FormTypeInput 에서는 value가 활성브랜치 여부와 무관하게 보이는건가?" (`reviews/round-18-owner-answers.md:18`)
@@ -426,7 +426,7 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:18`, `06-conclusions.md:189`
 - 충돌:
-  > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `raw` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`, VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`). 이 항목의 나머지 행(`value`·`outputValue`·`FormHandle.getValue()`)은 현행이다(SURFACE-050).
+  > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `source` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`, VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`). 이 항목의 나머지 행(`value`·`outputValue`·`FormHandle.getValue()`)은 현행이다(SURFACE-050).
   > `reviews/round-18-owner-answers.md:18`의 "그 원본은 잠복 원본으로만 남아 `getInactiveValues(path)`로 열거한다"는 잠복 원본 열거를 `getInactiveValues`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`, VALUE-029: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`).
 
 ### VALUE-028 구조 공유는 `emit` 사이에서만 말한다
@@ -450,8 +450,8 @@
   > 편집자 결정(18C-81): "【추론】 `node.inactiveValues`(와 그것이 부르는 루트 노드의 함수)는 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`을 돌려준다." (`reviews/round-18-closing.md:2171`)
   > 편집자 결정(26C-13): "【추론】 잠복 원본이 생기는 길은 둘뿐이다: 노드가 형상을 떠날 때 그 노드의 원본(NODE-044), 그리고 비활성 경로 쓰기(18C-64, 옛 참조 쓰기 포함). 형상에 든 적 없는 다른 종류의 선언은 노드가 아니므로 부모 원본의 키 값에서 잠복 원본을 만들지 않으며, 그 값은 살아 있는 노드의 원본 하나다." (`reviews/round-26-closing.md:137`)
   > 편집자 결정(26C-13): "【추론】 `inactiveValues`의 열거는 경로 단위다: 반환 `{ path, value }`에는 종류가 없으므로, 같은 경로가 어느 종류로든 형상에 있는 동안 그 경로의 잠복 원본은 열거에 나오지 않고, 경로가 형상을 떠나면 나온다." (`reviews/round-26-closing.md:140`)
-  > 편집자 결정(35C-10): "【추론】 26C-13·26C-14(SETTLE-029, VALUE-002)가 형상 밖 객체 값만 선언의 전순서로 노드별 잠복 원본에 분배하고 호스트의 잠복 원본은 자신의 비객체 `raw`와 선언 밖 `extras`만 보관하므로, 배열은 평범한 객체가 아니라 게이트로 꺼진 배열 호스트의 잠복 원본은 배열 전체를 호스트 자신의 얼린 `raw`로 들고 아이템별로 나누지 않으며, `inactiveValues`에는 호스트 경로의 `{ path, value }` 항목 하나다." (`reviews/round-35-closing.md:82`)
-  > 편집자 결정(395C-01): "【추론】 R1(a·b·c): 구조 이동이나 보존하는 호스트 이탈이 남기는 모든 자리는 파괴적 주소·저장 변경 전에 모든 깊이의 살아 있는·이미 잠복인 후보 원천을 포착하고, 같은 정착의 이후 모든 단계에서 (경로, 토큰) 정체와 메타데이터를 보존하며, 합성 입력보다 정확한 원천을 먼저 재생한다(NODE-051, 41C-01). 보호 여부는 직계 후보 수가 아니라 후보를 포함한 하위 트리로 정하고, 템플릿 없는 도착 예외는 후보가 있는 이동의 원본 포착에만 적용해 후보 없는·단일 종류 자리는 base의 조기 종료와 목적지 등록을 그대로 둔다. R2(d): 후보 이탈은 자동 쓰기 억제와 무관하게 상속 소유 범위 안의 공유되지 않은 도달 불가 낡은 열쇠를 지우되 억제된 정책 쓰기는 켜지 않는다(WRITE-015·034). 이 정리는 후보 소유 범위 안의 이탈에만 하고 같은 포착이 돌려준 소유 판정을 같은 이탈 결정 안에서 인자로만 넘겨 재사용한다 — 모듈·런타임·노드 어디에도 저장하지 않으므로 370라운드의 캐시 금지에 해당하지 않는다. 자연 경로는 찾지 못해 합성 재현이다. R3(e): 종류가 둘 이상인 배열 경로의 형상 밖 쓰기는 쓰는 순간 선언된 원천을 재귀적으로 청사진 전순서의 첫 종류에 묶고 그 주소의 다른 종류 원천을 지우며 길이와 미선언 꼬리는 보존하고 재진입 때 주인을 다시 바꾸지 않는다 — 객체의 형상 밖 쓰기 규칙(26C-13·14, WRITE-087)과 같아진다. 35C-10("비활성 배열 호스트의 잠복 원본은 배열 전체를 호스트 자신의 얼린 raw 하나로 보관")은 뒤집지 않고 좁힌다: 후보가 있는 배열 경로의 새 형상 밖 쓰기만 제외하고, 이탈 포착과 후보 없는·단일 종류 배열은 그대로다. 결정 62는 이 수정으로 (가) "현행 규칙 유지, 배열을 객체와 같게"로 잠정 닫으며 소유자 확정을 기다린다." (`reviews/round-395-closing.md:8`)
+  > 편집자 결정(35C-10): "【추론】 26C-13·26C-14(SETTLE-029, VALUE-002)가 형상 밖 객체 값만 선언의 전순서로 노드별 잠복 원본에 분배하고 호스트의 잠복 원본은 자신의 비객체 `source`와 선언 밖 `extras`만 보관하므로, 배열은 평범한 객체가 아니라 게이트로 꺼진 배열 호스트의 잠복 원본은 배열 전체를 호스트 자신의 얼린 `source`로 들고 아이템별로 나누지 않으며, `inactiveValues`에는 호스트 경로의 `{ path, value }` 항목 하나다." (`reviews/round-35-closing.md:82`)
+  > 편집자 결정(395C-01): "【추론】 R1(a·b·c): 구조 이동이나 보존하는 호스트 이탈이 남기는 모든 자리는 파괴적 주소·저장 변경 전에 모든 깊이의 살아 있는·이미 잠복인 후보 원천을 포착하고, 같은 정착의 이후 모든 단계에서 (경로, 토큰) 정체와 메타데이터를 보존하며, 합성 입력보다 정확한 원천을 먼저 재생한다(NODE-051, 41C-01). 보호 여부는 직계 후보 수가 아니라 후보를 포함한 하위 트리로 정하고, 템플릿 없는 도착 예외는 후보가 있는 이동의 원본 포착에만 적용해 후보 없는·단일 종류 자리는 base의 조기 종료와 목적지 등록을 그대로 둔다. R2(d): 후보 이탈은 자동 쓰기 억제와 무관하게 상속 소유 범위 안의 공유되지 않은 도달 불가 낡은 열쇠를 지우되 억제된 정책 쓰기는 켜지 않는다(WRITE-015·034). 이 정리는 후보 소유 범위 안의 이탈에만 하고 같은 포착이 돌려준 소유 판정을 같은 이탈 결정 안에서 인자로만 넘겨 재사용한다 — 모듈·런타임·노드 어디에도 저장하지 않으므로 370라운드의 캐시 금지에 해당하지 않는다. 자연 경로는 찾지 못해 합성 재현이다. R3(e): 종류가 둘 이상인 배열 경로의 형상 밖 쓰기는 쓰는 순간 선언된 원천을 재귀적으로 청사진 전순서의 첫 종류에 묶고 그 주소의 다른 종류 원천을 지우며 길이와 미선언 꼬리는 보존하고 재진입 때 주인을 다시 바꾸지 않는다 — 객체의 형상 밖 쓰기 규칙(26C-13·14, WRITE-087)과 같아진다. 35C-10("비활성 배열 호스트의 잠복 원본은 배열 전체를 호스트 자신의 얼린 source 하나로 보관")은 뒤집지 않고 좁힌다: 후보가 있는 배열 경로의 새 형상 밖 쓰기만 제외하고, 이탈 포착과 후보 없는·단일 종류 배열은 그대로다. 결정 62는 이 수정으로 (가) "현행 규칙 유지, 배열을 객체와 같게"로 잠정 닫으며 소유자 확정을 기다린다." (`reviews/round-395-closing.md:8`)
   > 편집자 결정(395C-03): "【추론】 같은 배열 호스트의 inactiveValues 호스트 항목이 들어온 길(이탈 포착, 꺼진 쓰기, 로드)마다 다른 모양인 겹침은 base부터 있던 것으로 이 PR의 규칙과 무관하다(fairy08 P3-2). 394C-02의 수용 잔여(둘러싼 후보 자리가 깊이마다 겹치는 재귀 장면의 이탈 비용)는 이 PR에서 바꾸지 않았고, 읽기 조사 결과("한 이탈 판정 안에서 같은 도달 질문을 한 번만 푼다", 제품 100~160줄)는 작은 PR의 기준을 넘어 측정 묶음 후보로 둔다." (`reviews/round-395-closing.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:22`(정본, 12-8 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다), `06-conclusions.md:388`, `02-target-overview.md:309`, `adr/0006-single-value-ownership.md:64`, `adr/0013-core-does-not-rewrite-values.md:108` (이름의 관례: SURFACE-050; 반환 모양은 열림 WRITE-020), `reviews/round-18-closing.md:2171`
@@ -461,7 +461,7 @@
 - 충돌:
   > `06-conclusions.md:388`의 "`getInactiveValues(path)`가 꺼진 조각의 원본을 열거한다."는 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
   > `02-target-overview.md:309`의 "| | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 읽기 전용으로 열거한다 | ADR 0006 |"는 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
-  > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `raw` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
+  > `adr/0006-single-value-ownership.md:64`의 "| 형상에 없는 노드의 `source` | `getInactiveValues(path)` | 형상에 없는 노드의 원본을 열거한다 |"는 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
   > `adr/0013-core-does-not-rewrite-values.md:108`의 "잠복 값 열거 API `getInactiveValues(path)`(F26, ADR 0006)의 반환 모양."은 잠복 원본 열거를 `getInactiveValues(path)`라는 읽기로 적는다. 소유자 답과 다르다. 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:22`).
   > `reviews/round-18-owner-answers.md:22`의 "반환 모양(WRITE-020, 안건 11-14)은 그대로 열림이다."는 18라운드 결정과 다르다: 반환 모양은 읽기 전용 배열 `ReadonlyArray<{ readonly path: string; readonly value: unknown }>`이다(WRITE-087). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:2171`).
 
@@ -469,7 +469,7 @@
 
 - 결정:
   > 【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다.
-  > 【추론】 원본과 노드의 형(`type`, nullable)만의 함수이므로 '상태는 `raw`와 `extras` 둘뿐'(P3)을 지킨다.
+  > 【추론】 원본과 노드의 형(`type`, nullable)만의 함수이므로 '상태는 `source`와 `extras` 둘뿐'(P3)을 지킨다.
   > 【추론】 소유자가 말한 '상태'는 사용자에게 보이는 뜻이다.
   > 【추론】 쓰기마다 `interpret`가 한 번 정한다.
   > 【추론】 켜지는 값은 자기 형이 아니고, 없음도 아니고, nullable 노드의 `null`도 아닌 값이다.
@@ -484,7 +484,7 @@
   > 【추론】 새 이벤트는 없다(바뀌면 `UpdateValue`가 알린다).
   > 【추론】 `FormHandle`에는 더하지 않는다.
 - 보충:
-  > 편집자 결정(18C-91): "【추론】 `valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다." (`reviews/round-18-closing.md:2520`)
+  > 편집자 결정(18C-91): "【추론】 `valueTypeMismatch = source !== undefined && !(source === null && nullable) && !isMemberOfEffectiveList(source)`이며, 원본과 노드의 현재 spec만의 함수다." (`reviews/round-18-closing.md:2520`)
   > 편집자 결정(18C-91): "【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다." (`reviews/round-18-closing.md:2521`)
   > 편집자 결정(18C-101): "【추론】 "로드마다 다시 만든다"(VALUE-030)는 `resetSubtree()`에는 그 하위 트리에만 적용한다." (`reviews/round-18-closing.md:2851`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
@@ -574,7 +574,7 @@
   > 【추론】 해법은 스키마에 nullable을 적는 것이다.
   > 【추론】 값 규칙은 이미 닫혀 있고 문서화만 남았다.
 - 보충:
-  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `raw`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
+  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their source, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `source`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1123-1127`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40)
@@ -600,10 +600,10 @@
 - 보충:
   > 편집자 결정(35C-08): "【추론】 아이템 선언의 노드 게이트와 아이템 스키마의 게이트 조각은 허용된다(BLUEPRINT-030은 게이트를 형상 확장의 경계로 센다); 게이트로 형상을 떠난 아이템은 WRITE-036의 소멸 목록(`remove`·짧아진 통째 쓰기·로드)에 없으므로 나감이며 나감 정책·비움·잠복 포착이 런타임 경로를 키로 적용되고, 자리는 색인이라 남아 VALUE-034대로 방출 없는 자리로 채운다(객체 `{}`, 배열 `[]`, 잎 `null`; `omitTrailing`은 그런 꼬리를 자른다)." (`reviews/round-35-closing.md:67`)
   > 편집자 결정(37C-01): "【추론】 `omitTrailing`은 가지 배열의 방출 배열 꼬리에서 빈 자리의 최대 연속 구간을 자르는 투영이며, 빈 자리는 셋이다: (1) 방출이 없는 아이템의 자리를 VALUE-034대로 채운 값(객체 `{}`, 배열 `[]`, 잎 `null`), (2) 잎 아이템이 실제로 `null`을 방출한 자리(방출 배열에서 (1)의 잎과 구별되지 않고, PR-5로 넘어온 프로토타입 기대 `['a', null, null]` → `['a']`가 이것을 자른다), (3) 청사진이 없는 자리(`extras`)의 값이 `undefined` 또는 `null`인 자리." (`reviews/round-37-closing.md:9`)
-  > 편집자 결정(37C-01): "【추론】 `omitEmpty`를 끈 객체·배열 아이템이 실제로 방출한 `{}`·`[]`는 빈 자리가 아니라 자르지 않으며(VALUE-034 "`omitEmpty`를 끈 호스트는 `{}`·`[]`를 방출한다"; 프로토타입 `[{}, { a: 1 }, {}]`가 그대로 남는다), 앞과 가운데의 빈 자리는 색인을 지키기 위해 남긴다(레거시 `omitTrailingArray`의 주석과 같은 까닭, `[undefined, 'x', undefined]` → `[null, 'x']`); 원본 `raw`·상태·스냅숏은 바뀌지 않는다(GOAL P4, VALUE-034 "이 투영은 원본과 상태를 바꾸지 않는다")." (`reviews/round-37-closing.md:10`)
-  > 편집자 결정(38C-02): "【추론】 잠복 원본이 생기는 길은 "노드가 형상을 떠날 때 그 노드의 원본"(26C-13, NODE-044)이고 형상은 상태(`raw`·`extras`)의 순수 함수(P3)이므로, 35C-10의 "배열 전체를 호스트 자신의 얼린 `raw`로"는 아이템의 방출이나 `local`이 아니라 원본 트리를 뜻한다: 자리마다 아이템 잎·터미널의 `raw`, 가지 아이템은 그 자식들의 원본 트리와 `extras`를 재귀로 모은 객체(배열 아이템이면 배열), 원본이 하나도 없는 자리는 `undefined`, 청사진 없는 자리는 `extras`의 값이다; VALUE-034의 방출용 채움(`{}`·`[]`·`null`)은 데이터가 아니라 얼리지 않는다." (`reviews/round-38-closing.md:18`)
+  > 편집자 결정(37C-01): "【추론】 `omitEmpty`를 끈 객체·배열 아이템이 실제로 방출한 `{}`·`[]`는 빈 자리가 아니라 자르지 않으며(VALUE-034 "`omitEmpty`를 끈 호스트는 `{}`·`[]`를 방출한다"; 프로토타입 `[{}, { a: 1 }, {}]`가 그대로 남는다), 앞과 가운데의 빈 자리는 색인을 지키기 위해 남긴다(레거시 `omitTrailingArray`의 주석과 같은 까닭, `[undefined, 'x', undefined]` → `[null, 'x']`); 원본 `source`·상태·스냅숏은 바뀌지 않는다(GOAL P4, VALUE-034 "이 투영은 원본과 상태를 바꾸지 않는다")." (`reviews/round-37-closing.md:10`)
+  > 편집자 결정(38C-02): "【추론】 잠복 원본이 생기는 길은 "노드가 형상을 떠날 때 그 노드의 원본"(26C-13, NODE-044)이고 형상은 상태(`source`·`extras`)의 순수 함수(P3)이므로, 35C-10의 "배열 전체를 호스트 자신의 얼린 `source`로"는 아이템의 방출이나 `local`이 아니라 원본 트리를 뜻한다: 자리마다 아이템 잎·터미널의 `source`, 가지 아이템은 그 자식들의 원본 트리와 `extras`를 재귀로 모은 객체(배열 아이템이면 배열), 원본이 하나도 없는 자리는 `undefined`, 청사진 없는 자리는 `extras`의 값이다; VALUE-034의 방출용 채움(`{}`·`[]`·`null`)은 데이터가 아니라 얼리지 않는다." (`reviews/round-38-closing.md:18`)
   > 편집자 결정(38C-02): "【추론】 재진입은 그 원본 트리를 생김의 입력으로 삼아 새 키의 아이템을 만들고, 원본이 `undefined`인 자리와 자손에만 채움이 간다(35C-10, WRITE-007); 방출의 구멍은 그때 VALUE-034로 다시 채워진다." (`reviews/round-38-closing.md:20`)
-  > 편집자 결정(47C-01): "【추론】 객체 호스트(아이템 포함)는 자식의 원본 트리 가운데 `undefined`가 아닌 것이 하나라도 있으면 그 키들만 모은 객체이고 하나도 없으면 `undefined`다 — 객체 아이템의 존재는 배열 자리가 보장하므로 `{}`로 얼릴 필요가 없고, `{}`는 VALUE-034의 방출용 채움이라 데이터가 아니다(38C-02); 잎은 `raw`가 있으면 그 값, 없으면 `undefined`다. `[undefined, undefined]`를 받은 배열 자리에 객체 아이템 청사진이 있으면 아이템은 `raw` 없이 생기고 자식 잎에 원본이 없어 WRITE-090의 채움은 그 생긴 노드에만 간다." (`reviews/round-47-closing.md:10`)
+  > 편집자 결정(47C-01): "【추론】 객체 호스트(아이템 포함)는 자식의 원본 트리 가운데 `undefined`가 아닌 것이 하나라도 있으면 그 키들만 모은 객체이고 하나도 없으면 `undefined`다 — 객체 아이템의 존재는 배열 자리가 보장하므로 `{}`로 얼릴 필요가 없고, `{}`는 VALUE-034의 방출용 채움이라 데이터가 아니다(38C-02); 잎은 `source`가 있으면 그 값, 없으면 `undefined`다. `[undefined, undefined]`를 받은 배열 자리에 객체 아이템 청사진이 있으면 아이템은 `source` 없이 생기고 자식 잎에 원본이 없어 WRITE-090의 채움은 그 생긴 노드에만 간다." (`reviews/round-47-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2307-2315,2324-2327`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-88)
@@ -626,16 +626,16 @@
 ### VALUE-036 null 계약 D-1 — setValue(null)은 키가 없는 전체 교체, 셋째 칸도 특수 장치도 없음, 비객체 호스트의 자식은 존재하고 렌더됨
 
 - 결정:
-  > `setValue(null)`은 키가 없는 전체 교체이므로 자식 원본이 없음이 된다. 원본 칸 하나로 족하며 셋째 칸도 특수 장치도 없다 — 2라운드 S7(#338 S4와 "null 아래도 원본 유지"의 충돌)은 이렇게 닫힌다. 3라운드 E9의 "비객체 V는 자식 raw를 건드리지 않는다"와 E18("비객체 호스트의 자식은 비활성")은 **삭제**한다: 비객체 호스트의 자식은 **존재하고 렌더되며** 빈 상태를 보인다.
+  > `setValue(null)`은 키가 없는 전체 교체이므로 자식 원본이 없음이 된다. 원본 칸 하나로 족하며 셋째 칸도 특수 장치도 없다 — 2라운드 S7(#338 S4와 "null 아래도 원본 유지"의 충돌)은 이렇게 닫힌다. 3라운드 E9의 "비객체 V는 자식 source를 건드리지 않는다"와 E18("비객체 호스트의 자식은 비활성")은 **삭제**한다: 비객체 호스트의 자식은 **존재하고 렌더되며** 빈 상태를 보인다.
   > 실수로 누른 null의 되돌리기는 입력 컴포넌트의 몫이다.
 - 보충:
   > 편집자 결정(18C-100): "【추론】 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음이다(WRITE-090, WRITE-092)." (`reviews/round-18-closing.md:2831`)
   > 편집자 결정(18C-100): "【추론】 로드로 온 `null` 아래 자식은 로드의 새 수명이라 채움을 받는다." (`reviews/round-18-closing.md:2832`)
   > 편집자 결정(18C-100): "【추론】 그래서 VALUE-036의 "빈 상태"는 로드로 온 `null` 아래에서는 채운 상태이고, 로드가 아닌 쓰기로 온 `null` 아래에서는 없음이다." (`reviews/round-18-closing.md:2833`)
-  > 편집자 결정(38C-01): "【추론】 NODE-021·VALUE-002대로 가지 배열의 자식 집합은 값에서 오고(아이템 수 × 아이템 청사진) 자식이 있는 노드는 잘못된 종류의 값이 왔을 때만 `raw`를 드므로, 배열 호스트에 `null`·수·평범한 객체 같은 배열 아닌 값을 통째로 쓰면 호스트가 그 값을 `raw`로 들고 길이가 없으니 아이템은 0개다; 있던 아이템은 WRITE-036의 "통째 교체로 짧아진 배열"처럼 소멸이지 나감이 아니다. 객체 호스트의 자식이 스키마에서 와 비객체 `raw` 아래에도 존재한다는 VALUE-036의 문장은 자식이 값에서 오는 배열에는 옮겨 적용할 것이 없고, 아이템을 잘못된 종류의 `raw` 아래 남기라는 원장 문장은 없다." (`reviews/round-38-closing.md:9`)
-  > 편집자 결정(38C-01): "【추론】 호스트의 방출은 억제되지 않고 그 잘못된 종류의 `raw`를 자기 값으로 방출한다(WRITE-013의 예 "`setValue({ user: null })` 뒤 … 사용자가 `name`에 입력하면 `user`가 객체가 되어 방출된다"는 그 전까지 `user`가 `null`을 방출함을 전제한다; VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"는 자식 쪽 문장이다), 정합 경고등은 "잘못된 종류를 든 가지 노드도 켜진다"대로 켜진다. 로드로 온 비배열 값도 같되 채울 아이템이 없다." (`reviews/round-38-closing.md:10`)
-  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `raw`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
-  > 편집자 결정(39C-01): "【추론】 머지된 객체 행의 `projectObject`가 비객체 `raw`에 `undefined`를 돌려주는 것과 `objectBehavior/DETAIL.md`의 "그 호스트의 방출은 하지 않습니다"는 03의 기록에 결정으로 남아 있지 않은 근사이며 결함이다(29C-02·29C-03의 선례와 같다); nullable 객체(`type: ['object','null']`)의 `null`이 방출에서 사라져 `{ user: null }`이 `{}`가 되는 것은 동작 결함이고, 배열 아이템인 객체 호스트의 `null`이 VALUE-034의 구멍 채움 `{}`로 바뀌어 보이는 것도 같은 결함이다." (`reviews/round-39-closing.md:10`)
+  > 편집자 결정(38C-01): "【추론】 NODE-021·VALUE-002대로 가지 배열의 자식 집합은 값에서 오고(아이템 수 × 아이템 청사진) 자식이 있는 노드는 잘못된 종류의 값이 왔을 때만 `source`를 드므로, 배열 호스트에 `null`·수·평범한 객체 같은 배열 아닌 값을 통째로 쓰면 호스트가 그 값을 `source`로 들고 길이가 없으니 아이템은 0개다; 있던 아이템은 WRITE-036의 "통째 교체로 짧아진 배열"처럼 소멸이지 나감이 아니다. 객체 호스트의 자식이 스키마에서 와 비객체 `source` 아래에도 존재한다는 VALUE-036의 문장은 자식이 값에서 오는 배열에는 옮겨 적용할 것이 없고, 아이템을 잘못된 종류의 `source` 아래 남기라는 원장 문장은 없다." (`reviews/round-38-closing.md:9`)
+  > 편집자 결정(38C-01): "【추론】 호스트의 방출은 억제되지 않고 그 잘못된 종류의 `source`를 자기 값으로 방출한다(WRITE-013의 예 "`setValue({ user: null })` 뒤 … 사용자가 `name`에 입력하면 `user`가 객체가 되어 방출된다"는 그 전까지 `user`가 `null`을 방출함을 전제한다; VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"는 자식 쪽 문장이다), 정합 경고등은 "잘못된 종류를 든 가지 노드도 켜진다"대로 켜진다. 로드로 온 비배열 값도 같되 채울 아이템이 없다." (`reviews/round-38-closing.md:10`)
+  > 편집자 결정(39C-01): "【추론】 원장은 잘못된 종류의 값을 보존하고 방출하라고 적었다: VALUE-033 "(4) nullable이 아닌 노드의 `null`은 바꾸지 않고 받은 그대로 방출된다", 쓰기 정책 표의 "nullable이 아닌 객체의 `null`을 `{}`로 바꾸기(S7), 비객체 값 버리기 | **폐기.** 보존·방출하고 type 에러를 낸다", WRITE-013의 예(`setValue({ user: null })` 뒤 `user`는 입력이 올 때까지 `null`인 채 방출된다); PR-2로 넘어온 프로토타입도 같다(`spikes/round9/regress/selfcheck-v5.mjs:485` "A3-3/A3-4-host: null and 17 hosts emit their source, no branch on (G={}), children exist", `:569` "after setValue({target:null}) emit {target:null}"). 그래서 38C-01이 서고, 가지 호스트(객체·배열)는 잘못된 종류의 `source`를 자기 방출로 내며 자식 방출만 투영에서 빠진다(VALUE-002 "비객체 호스트 아래 자식의 원본은 부모의 `emit`에 나타나지 않는다"); 게이트 입력이 `G = {}`인 것(SETTLE 영역)은 게이트가 보는 값의 규칙이지 방출의 규칙이 아니다." (`reviews/round-39-closing.md:9`)
+  > 편집자 결정(39C-01): "【추론】 머지된 객체 행의 `projectObject`가 비객체 `source`에 `undefined`를 돌려주는 것과 `objectBehavior/DETAIL.md`의 "그 호스트의 방출은 하지 않습니다"는 03의 기록에 결정으로 남아 있지 않은 근사이며 결함이다(29C-02·29C-03의 선례와 같다); nullable 객체(`type: ['object','null']`)의 `null`이 방출에서 사라져 `{ user: null }`이 `{}`가 되는 것은 동작 결함이고, 배열 아이템인 객체 호스트의 `null`이 VALUE-034의 구멍 채움 `{}`로 바뀌어 보이는 것도 같은 결함이다." (`reviews/round-39-closing.md:10`)
   > 소유자(266라운드, 41 결정·스토리 요구): "2번에, 첫번째가 맞는거 같다. 일관된 규칙이 중요하고, 사용자는 form 만 보고 값을 믿어야 하니까 이렇게 표시와 실제가 다른건 매우 잘못된 것으로 보인다. \n\n나머지는 스토리를 어떻게 봐야하는지, 어떻게 테스트해야하는지 잘 모르겠어서 테스트를 충분히 못하겠다.\n그리고 ref 핸들을 통한 테스트도 아예 없어보이는군. \n\n스토리들에 적절한 구조화 데코레이터를 통해서 가독성과 사용성을 좀 올려달라. 사람도 보고 알 수 있어야지.\n그리고 ref 핸들러를 통한 스토리도 좀 추가해달라." (`reviews/round-266-owner-answers.md:13`)
   > 편집자 결정(272C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: unit·render·react18 3950 통과, storybook 241, typecheck 0, lint 0, build·test:production 20, json-schema 392, 플러그인 일곱(130/135/334/2/15/15/5), documents build, G16 CONSUMER_BUNDLE_OK(prod 289,111 B, dev 292,408 B). verifier(opus): 2b132db02의 런타임 변경은 세 파일뿐(transitionSettlement.ts:90-92의 `context.kind !== 'load'` 제거, loadStaticFirstTree.ts의 동등 처리, hasWrongKindBranchAncestor.ts JSDoc), derive·injectTo 경로(가드 호출처 한 곳)·reset 셋('load' 종류) 확인, 공개 export 변화 0, 금지 경로 0 → pass with conditions(조건은 시험 실행이었고 충족). agy(session 9fb65fe5): 명세 en·ko 문단·예시, 시나리오 둘(VALUE-036 loaded null leaves children unfilled until input promotion; union.null-ancestor-input-promotion 로드 직후 kind undefined·승격 뒤 name만 default), nullable-branch-nodes.md가 결정과 일치, 옛 서술 잔존 0 → 차단 사유 없음. 대기열 45의 넓은 해석은 소유자가 좁히지 않아 그대로 병합했으며, 좁히는 답이 오면 후속 PR로 처리한다. 07c 브리프: 계획 1~8절 + 9절(verifier 대조) + 9.6절(helpers·components는 compartment), 이동 뒤 깨질 시험 둘(buildChildSelectionRuntime 경로 매퍼, dependencyDirection 재작성)과 해석기 사후 조건 포함." (`reviews/round-272-closing.md:9`)
 - 상태: 현행
@@ -647,7 +647,7 @@
 ### VALUE-037 `union`의 경고등과 방출·채움 — `valueTypeMismatch`는 원본과 현재 spec의 함수, 켜질 때마다 한 번과 다시 보내는 때, (가칭) `UpdateJsonSchema` 배달, `VALUE_TYPE_MISMATCH` 기록의 칸, 방출은 원본 참조, 통째 값의 JSON 부정합 경고 (가칭) `NON_JSON_WHOLE_VALUE`, 채움은 원본이 `undefined`일 때만
 
 - 결정:
-  > 【추론】 `valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다.
+  > 【추론】 `valueTypeMismatch = source !== undefined && !(source === null && nullable) && !isMemberOfEffectiveList(source)`이며, 원본과 노드의 현재 spec만의 함수다.
   > 【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다.
   > 【추론】 경고등은 그 노드의 경로가 루트의 경로 집합에 들어가는 커밋에 켜진다(ERROR-186).
   > 【추론】 `VALUE_TYPE_MISMATCH`는 경고등이 켜질 때마다 한 번 보내고, 켜진 채 다른 어긋난 값이 와도 다시 보내지 않는다.
@@ -684,7 +684,7 @@
 - 충돌:
   > `reviews/round-18-closing.md:2540`의 "`(code, path)`로 로드마다 한 번 내며"는 18C-98의 결정과 다르다: 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 비우므로 `NON_JSON_WHOLE_VALUE`는 폼 수준 로드 사이에 `(code, path)`마다 한 번이고, `setValue(V)`와 `resetSubtree()` 뒤에는 다시 내지 않는다(ERROR-204). 18C-98의 결정이 이긴다(`reviews/round-18-closing.md:2797-2798`).
   > `reviews/round-18-closing.md:2544`의 "목록 밖 `default`(예: `['string','boolean']`에 `default: 0`)는 마운트 때 경고등을 켜고"는 18C-105의 결정과 다르다: 목록 밖 `default`의 경고등·경고는 마운트만이 아니라 노드가 생길 때마다(WRITE-090의 채움 시점) 켜고 보낸다(WRITE-099). 18C-105의 결정이 이긴다(`reviews/round-18-closing.md:2953`).
-  > `reviews/round-18-closing.md:2520`의 "【추론】 `valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
+  > `reviews/round-18-closing.md:2520`의 "【추론】 `valueTypeMismatch = source !== undefined && !(source === null && nullable) && !isMemberOfEffectiveList(source)`이며, 원본과 노드의 현재 spec만의 함수다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
 
 ### VALUE-038 비활성 값 메모의 유지 방식(455라운드) — 공개 `inactiveValues`가 동결 배열이고 루트 목록이 잠복 전체를 품으므로 쓰기에서 즉시 유지하는 증분 설계(B2-P1, 두 후보)는 O(L)을 피하지 못해 미채택·되돌림(계약 시험 다섯과 기록만 #475), 다음 가설 B2-P1b는 쓰기에서 Δ가 닿은 호스트의 dirty 표식과 journal만 두고 첫 읽기 때 materialize, 나가는 참조의 직전 커밋 캡처도 세대 토큰으로 지연(NODE-044 유지, 같은 세대 배열은 참조 재사용), 첫 읽기 O(K log K)+미소비 Δ, 읽지 않은 journal이 max(2·L, 512)를 넘으면 커밋 때 압축(쓰기당 상각 O(1)), 영속 색인·HAMT는 범위 밖
 

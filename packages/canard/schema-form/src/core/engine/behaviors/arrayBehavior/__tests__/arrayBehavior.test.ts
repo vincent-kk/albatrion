@@ -20,7 +20,7 @@ import { arrayBehavior } from '../arrayBehavior';
 const makeRecord = (
   behavior: Behavior,
   template: BlueprintNode,
-  raw: unknown = undefined,
+  source: unknown = undefined,
   options: Record<string, unknown> = {},
 ): FieldNodeRecord<unknown> => ({
   behavior,
@@ -50,8 +50,8 @@ const makeRecord = (
   itemKey: null,
   itemCount: 0,
   nextItemKey: 0,
-  raw,
-  undeclaredValues: undefined,
+  source,
+  extras: undefined,
   isActive: true,
   isVisible: true,
   isReadOnly: false,
@@ -149,7 +149,7 @@ describe('array branch calculation', () => {
     const node = makeRecord(arrayBehavior.branch, template);
     node.itemCount = 3;
     node.structure = { '0': { emit: 'first' } };
-    node.undeclaredValues = ['second', 'third'];
+    node.extras = ['second', 'third'];
     const local = arrayBehavior.branch.assemble(node, []);
     expect(local).toEqual(['first', 'second', 'third']);
     node.local = local;
@@ -180,8 +180,8 @@ describe('array branch calculation', () => {
       typeConflict: false,
     };
     expect(arrayBehavior.branch.project(node, [])).toEqual([]);
-    node.raw = { wrong: true };
-    expect(arrayBehavior.branch.project(node, ['kept'])).toBe(node.raw);
+    node.source = { wrong: true };
+    expect(arrayBehavior.branch.project(node, ['kept'])).toBe(node.source);
   });
 
   it('VALUE-034 keeps an emitted object before omitted host holes and tail nulls', () => {
@@ -196,7 +196,7 @@ describe('array branch calculation', () => {
     node.itemCount = 4;
     const emitted = {};
     node.structure = { '0': { emit: emitted } };
-    node.undeclaredValues = [null, undefined];
+    node.extras = [null, undefined];
     const local = arrayBehavior.branch.assemble(node, []);
     expect(local).toEqual([{}, [], null, undefined]);
     const projected = arrayBehavior.branch.project(node, local);
@@ -261,7 +261,7 @@ describe('array branch calculation', () => {
           row.arrange(node, { kind: 'update', index, value: 'x' }),
         ).toEqual({ kind: 'noop' });
       }
-      node.raw = null;
+      node.source = null;
       for (const operation of [
         { kind: 'pop' },
         { kind: 'update', index: 0, value: 'x' },
@@ -276,7 +276,7 @@ describe('array branch calculation', () => {
               slots: [{ value: 'x' }],
               result: { source: 'length' },
             }
-          : { kind: 'raw', raw: ['x'], result: { source: 'length' } },
+          : { kind: 'source', source: ['x'], result: { source: 'length' } },
       );
     }
   });
@@ -324,8 +324,8 @@ describe('array branch calculation', () => {
         expect(
           row.arrange(node, { kind: 'insert', index, value: 'x' }),
         ).toEqual({ kind: 'noop' });
-      for (const raw of [null, 5, { a: 1 }]) {
-        node.raw = raw;
+      for (const source of [null, 5, { a: 1 }]) {
+        node.source = source;
         node.itemCount = 0;
         expect(
           row.arrange(node, { kind: 'insert', index: 1, value: 'x' }),
@@ -340,14 +340,14 @@ describe('array branch calculation', () => {
 
 // filid:contract array-terminal
 describe('array terminal calculation', () => {
-  it('35C-12 retains raw identity and copies it for every valid change', () => {
-    const raw = ['a', 'b', 'c'];
+  it('35C-12 retains source identity and copies it for every valid change', () => {
+    const source = ['a', 'b', 'c'];
     const node = makeRecord(
       arrayBehavior.terminal,
       blueprint({ type: 'array' }).root,
-      raw,
+      source,
     );
-    expect(arrayBehavior.terminal.assemble(node, [])).toBe(raw);
+    expect(arrayBehavior.terminal.assemble(node, [])).toBe(source);
     const operations: readonly ArrayOperation[] = [
       { kind: 'push', value: 'd' },
       { kind: 'pop' },
@@ -364,13 +364,13 @@ describe('array terminal calculation', () => {
     ];
     operations.forEach((operation, index) => {
       const plan = arrayBehavior.terminal.arrange(node, operation);
-      expect(plan.kind).toBe('raw');
-      if (plan.kind === 'raw') {
-        expect(plan.raw).toEqual(expected[index]);
-        expect(plan.raw).not.toBe(raw);
+      expect(plan.kind).toBe('source');
+      if (plan.kind === 'source') {
+        expect(plan.source).toEqual(expected[index]);
+        expect(plan.source).not.toBe(source);
       }
     });
-    expect(raw).toEqual(['a', 'b', 'c']);
+    expect(source).toEqual(['a', 'b', 'c']);
     expect(
       arrayBehavior.terminal.arrange(node, {
         kind: 'update',
@@ -378,10 +378,10 @@ describe('array terminal calculation', () => {
         value: 'x',
       }),
     ).toMatchObject({ result: { source: 'updated', index: 1 } });
-    node.raw = undefined;
+    node.source = undefined;
     expect(
       arrayBehavior.terminal.arrange(node, { kind: 'push', value: 'x' }),
-    ).toEqual({ kind: 'raw', raw: ['x'], result: { source: 'length' } });
+    ).toEqual({ kind: 'source', source: ['x'], result: { source: 'length' } });
     expect(arrayBehavior.terminal.arrange(node, { kind: 'pop' })).toEqual({
       kind: 'noop',
     });
@@ -398,11 +398,11 @@ describe('array terminal calculation', () => {
   });
 
   it('NODE-005 splices terminal insert into a copy and appends at the length like push', () => {
-    const raw = ['a', 'b', 'c'];
+    const source = ['a', 'b', 'c'];
     const node = makeRecord(
       arrayBehavior.terminal,
       blueprint({ type: 'array' }).root,
-      raw,
+      source,
     );
     const expected = [
       ['x', 'a', 'b', 'c'],
@@ -416,13 +416,13 @@ describe('array terminal calculation', () => {
         value: 'x',
       });
       expect(plan).toEqual({
-        kind: 'raw',
-        raw: expected[position],
+        kind: 'source',
+        source: expected[position],
         result: { source: 'length' },
       });
-      if (plan.kind === 'raw') expect(plan.raw).not.toBe(raw);
+      if (plan.kind === 'source') expect(plan.source).not.toBe(source);
     });
-    expect(raw).toEqual(['a', 'b', 'c']);
+    expect(source).toEqual(['a', 'b', 'c']);
     expect(
       arrayBehavior.terminal.arrange(node, {
         kind: 'insert',
@@ -434,25 +434,25 @@ describe('array terminal calculation', () => {
     );
   });
 
-  it('LANDING-085 projects trailing nullish values without changing raw', () => {
-    const raw = ['kept', null, undefined];
+  it('LANDING-085 projects trailing nullish values without changing source', () => {
+    const source = ['kept', null, undefined];
     const node = makeRecord(
       arrayBehavior.terminal,
       blueprint({ type: 'array' }).root,
-      raw,
+      source,
       { omitTrailing: true },
     );
-    const projected = arrayBehavior.terminal.project(node, raw);
+    const projected = arrayBehavior.terminal.project(node, source);
     expect(projected).toEqual(['kept']);
-    expect(arrayBehavior.terminal.project(node, raw)).toBe(projected);
-    expect(raw).toEqual(['kept', null, undefined]);
+    expect(arrayBehavior.terminal.project(node, source)).toBe(projected);
+    expect(source).toEqual(['kept', null, undefined]);
     node.schema = {
       schema: { options: { omitTrailing: false } },
       typeConflict: false,
     };
-    expect(arrayBehavior.terminal.project(node, raw)).toBe(raw);
-    node.raw = 3;
-    expect(arrayBehavior.terminal.project(node, raw)).toBe(3);
+    expect(arrayBehavior.terminal.project(node, source)).toBe(source);
+    node.source = 3;
+    expect(arrayBehavior.terminal.project(node, source)).toBe(3);
   });
 });
 

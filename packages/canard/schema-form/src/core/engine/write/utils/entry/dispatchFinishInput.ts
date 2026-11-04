@@ -29,10 +29,10 @@ export const dispatchFinishInput = <Self extends FieldNodeRecord<Self>>(
       return;
     const marking = isBatchMarking(node);
     const input: Self = marking
-      ? Object.create(node, { raw: { value: readBatchValue(node) } })
+      ? Object.create(node, { source: { value: readBatchValue(node) } })
       : node;
     const value = node.behavior.finishInput(input);
-    if (value === undefined || value === input.raw) return;
+    if (value === undefined || value === input.source) return;
     if (marking)
       (runtime.batchWrites ??= []).push({
         node,

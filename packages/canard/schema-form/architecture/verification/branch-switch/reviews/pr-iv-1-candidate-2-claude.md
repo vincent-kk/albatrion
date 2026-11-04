@@ -64,7 +64,7 @@ FAIL 사유는 판정 장치 하나입니다. (a)가 범위 표 생성 비용을
    - 계산 전 재확인 경로(20-24행)는 재진입 때 순수 루트 경로와 같은 재계산을 하므로 동등합니다.
 3. **앞 판정 P2 두 건.**
    - if 시험은 required 가림을 제거했고, if 호스트 아래 후보 시험과 virtual 및 재귀 전제 시험을 더했습니다.
-   - 후퇴 시험은 writeEpoch, changedRaw, wrong-kind 안팎, split 안팎, 재결합 안 된 occurrence, 예산 둘, detached, 끊긴 부모 사슬, terminal, cause 없는 실패, 계산 전과 뒤 재확인을 다룹니다.
+   - 후퇴 시험은 writeEpoch, changedSource, wrong-kind 안팎, split 안팎, 재결합 안 된 occurrence, 예산 둘, detached, 끊긴 부모 사슬, terminal, cause 없는 실패, 계산 전과 뒤 재확인을 다룹니다.
    - 규칙 줄 제거 probe 13건의 기록(raw/iv-1/candidate-2-review/summary.json)에서 표본 4건(if-host-edge, recursive-binding, postcompute-host-candidate, split-outside)을 열어 봤습니다. 모두 설정 오류가 아니라 해당 단언에서 실패했습니다.
    - P3-3부터 P3-7까지도 반영되었습니다. 특히 commits 절은 stateDirtyNodes만 빼고 비교하며, 빠진 항목이 host의 엄격 조상뿐인지 단언합니다. 최종 commit 후보 집합 전체도 강제 루트와 비교합니다.
 4. **장치 (f).**

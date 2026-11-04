@@ -11,7 +11,7 @@ import { createSettlementContext } from '../utils/settlement/createSettlementCon
 import { hasWrongKindBranchAncestor } from '../utils/transition/hasWrongKindBranchAncestor';
 import { transitionSettlement } from '../utils/transition/transitionSettlement';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
 // filid:contract settle-array-writes
 describe('array settlement writes', () => {
@@ -120,7 +120,7 @@ describe('array settlement writes', () => {
     );
     expect(root.itemCount).toBe(4);
     expect(root.children).toHaveLength(2);
-    expect(root.undeclaredValues).toEqual(['c', 'd']);
+    expect(root.extras).toEqual(['c', 'd']);
     expect(root.local).toEqual(['a', 2, 'c', 'd']);
     expect(root.children![0].schemaType).toBe(
       root.blueprintNode.prefixItems![0].schemaType,
@@ -140,21 +140,21 @@ describe('array settlement writes', () => {
     expect(root.value).toEqual(['a', null, 'c']);
   });
 
-  it('38C-01 emits wrong-kind array raw at the root without item nodes', () => {
+  it('38C-01 emits wrong-kind array source at the root without item nodes', () => {
     const { root } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string' },
     });
     root.setValue(['old']);
     root.setValue(null);
-    expect(root.raw).toBeNull();
+    expect(root.source).toBeNull();
     expect(root.outputValue).toBeNull();
     expect(Reflect.get(root, 'itemCount')).toBe(0);
     expect(root.children).toEqual([]);
     expect(root.isMisfit).toBe(true);
   });
 
-  it('39C-01 emits a wrong-kind object item raw instead of an object hole', () => {
+  it('39C-01 emits a wrong-kind object item source instead of an object hole', () => {
     const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
@@ -166,10 +166,10 @@ describe('array settlement writes', () => {
     });
     root.setValue([null]);
     expect(root.value).toEqual([null]);
-    expect(root.children?.[0].raw).toBeNull();
+    expect(root.children?.[0].source).toBeNull();
   });
 
-  it('NODE-051 retains a wrong-kind array raw and perishes its old items', () => {
+  it('NODE-051 retains a wrong-kind array source and perishes its old items', () => {
     const { root } = createTestTree({
       type: 'array',
       items: { type: 'string' },
@@ -182,16 +182,16 @@ describe('array settlement writes', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.raw).toEqual({ 0: 'wrong' });
+    expect(root.source).toEqual({ 0: 'wrong' });
     expect(root.itemCount).toBe(0);
     expect(root.children).toEqual([]);
-    expect(root.undeclaredValues).toBeUndefined();
+    expect(root.extras).toBeUndefined();
     expect(old.detached).toBe(true);
     writeFieldNode(root, ['b'], 'callerReplace', WriteOption.Overwrite);
     expect(root.children![0].itemKey).toBeGreaterThan(old.itemKey!);
   });
 
-  it('WRITE-090 blocks non-load descendant fills below wrong-kind array raw', () => {
+  it('WRITE-090 blocks non-load descendant fills below wrong-kind array source', () => {
     const { root } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string', default: 'fill' },
@@ -220,12 +220,12 @@ describe('array settlement writes', () => {
       WriteOption.Overwrite,
       scratch,
     );
-    transient.root.raw = 7;
+    transient.root.source = 7;
     context.entered.add(pending);
     try {
       expect(hasWrongKindBranchAncestor(pending)).toBe(true);
       transitionSettlement(context);
-      expect(pending.raw).toBeUndefined();
+      expect(pending.source).toBeUndefined();
       expect(context.filledNodes.has(pending)).toBe(false);
     } finally {
       releaseSettlementScratch(scratch);

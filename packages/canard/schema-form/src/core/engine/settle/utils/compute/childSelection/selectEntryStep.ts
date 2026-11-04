@@ -275,7 +275,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     );
   const slotState =
     !priorChild && !currentChild ? getSlotSource(node, entry) : undefined;
-  const slotSource = slotState?.source;
+  const slotSource = slotState?.instance;
   const slotOverlay = slotState?.overlay;
   const input = ownsInput
     ? Reflect.get(distribution.input, entry.name)

@@ -111,7 +111,7 @@ describe('unified gate predicates', () => {
     const context = {
       root,
       kind: 'input',
-      changedRaw: new Set(),
+      changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
     } as unknown as SettlementContext<PlainNode>;
@@ -140,7 +140,7 @@ describe('unified gate predicates', () => {
     const context = {
       root,
       kind: 'input',
-      changedRaw: new Set(),
+      changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
     } as unknown as SettlementContext<PlainNode>;
@@ -261,7 +261,7 @@ describe('unified gate predicates', () => {
       .filter((gate) => gate.kind === 'if');
     const context = {
       root,
-      changedRaw: new Set(),
+      changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
     } as unknown as SettlementContext<PlainNode>;
@@ -356,7 +356,7 @@ describe('unified gate predicates', () => {
     const context = {
       root,
       kind: 'input',
-      changedRaw: new Set(),
+      changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
     } as unknown as SettlementContext<PlainNode>;
@@ -386,7 +386,7 @@ describe('unified gate predicates', () => {
     const context = {
       root,
       kind: 'input',
-      changedRaw: new Set(),
+      changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
     } as unknown as SettlementContext<PlainNode>;

@@ -8,14 +8,14 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import { getSlotEntries } from '../../utils/slots/getSlotEntries';
 import { getSlotSource } from '../../utils/slots/getSlotSource';
-import { readSlotRawTree } from '../../utils/slots/readSlotRawTree';
+import { readSlotSourceTree } from '../../utils/slots/readSlotSourceTree';
 
 /**
  * Inspect the source channels of one retained candidate in a slot contract test.
  * @param root - Current live root owning the retained source graph
  * @param path - Absolute path of the inactive candidate
  * @param token - Blueprint kind identity, including union folds
- * @returns The candidate's interpreted raw tree, or undefined when no source is retained
+ * @returns The candidate's interpreted source tree, or undefined when no source is retained
  */
 const findRetainedSlot = <Self extends FieldNodeRecord<Self>>(
   root: Self,
@@ -25,14 +25,14 @@ const findRetainedSlot = <Self extends FieldNodeRecord<Self>>(
   | {
       entry: BlueprintChildEntry;
       template: BlueprintNode;
-      source: Self | undefined;
+      instance: Self | undefined;
       overlay: InactiveSlotOverlay | undefined;
     }
   | undefined => {
   root = root.rootNode;
   const names = path.split('/').slice(1).map(unescapeSegment);
   const visit = (
-    source: Self | undefined,
+    instance: Self | undefined,
     overlay: InactiveSlotOverlay | undefined,
     template: BlueprintNode,
     depth: number,
@@ -40,24 +40,24 @@ const findRetainedSlot = <Self extends FieldNodeRecord<Self>>(
     | {
         entry: BlueprintChildEntry;
         template: BlueprintNode;
-        source: Self | undefined;
+        instance: Self | undefined;
         overlay: InactiveSlotOverlay | undefined;
       }
     | undefined => {
-    for (const entry of getSlotEntries(source, overlay, template)) {
+    for (const entry of getSlotEntries(instance, overlay, template)) {
       if (entry.name !== names[depth]) continue;
-      const child = getSlotSource(source, entry, overlay);
+      const child = getSlotSource(instance, entry, overlay);
       if (depth === names.length - 1) {
         if (
           token !== undefined &&
           getBlueprintNodeIdentity(entry.node) !== token
         )
           continue;
-        if (child.source && !child.source.detached) continue;
-        if (!child.overlay && !child.source) continue;
+        if (child.instance && !child.instance.detached) continue;
+        if (!child.overlay && !child.instance) continue;
         return { entry, template: entry.node, ...child };
       }
-      const value = visit(child.source, child.overlay, entry.node, depth + 1);
+      const value = visit(child.instance, child.overlay, entry.node, depth + 1);
       if (value !== undefined) return value;
     }
     return undefined;
@@ -65,15 +65,15 @@ const findRetainedSlot = <Self extends FieldNodeRecord<Self>>(
   return visit(root, undefined, root.blueprintNode, 0);
 };
 
-/** Read one inactive candidate's interpreted raw tree for a slot contract assertion. */
-export const readRetainedSlotRaw = (
+/** Read one inactive candidate's interpreted source tree for a slot contract assertion. */
+export const readRetainedSlotSource = (
   root: unknown,
   path: string,
   token?: string,
 ): unknown => {
   const retained = findRetainedSlot(requireRecord(root), path, token);
   return retained
-    ? readSlotRawTree(retained.template, retained.source, retained.overlay)
+    ? readSlotSourceTree(retained.template, retained.instance, retained.overlay)
     : undefined;
 };
 
@@ -87,23 +87,23 @@ export const hasRetainedSlotOwnSource = (
   if (!retained) return false;
   if (retained.template.kind === 'array')
     return (
-      readSlotRawTree(retained.template, retained.source, retained.overlay) !==
+      readSlotSourceTree(retained.template, retained.instance, retained.overlay) !==
       undefined
     );
-  const { source, overlay } = retained;
-  const raw =
-    overlay && hasOwnProperty(overlay, 'raw')
-      ? overlay.raw
+  const { instance, overlay } = retained;
+  const source =
+    overlay && hasOwnProperty(overlay, 'source')
+      ? overlay.source
       : overlay?.replace
         ? undefined
-        : source?.raw;
+        : instance?.source;
   const extras =
-    overlay && hasOwnProperty(overlay, 'undeclaredValues')
-      ? overlay.undeclaredValues
+    overlay && hasOwnProperty(overlay, 'extras')
+      ? overlay.extras
       : overlay?.replace
         ? undefined
-        : source?.undeclaredValues;
-  return raw !== undefined || extras !== undefined;
+        : instance?.extras;
+  return source !== undefined || extras !== undefined;
 };
 
 /** Read the actual retained candidate binding for a slot ownership assertion. */

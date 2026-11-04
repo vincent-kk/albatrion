@@ -34,8 +34,8 @@
 
 ### 4. [P2] 비어 있는 keep 배열 자손만 있어도 아이템이 살아남습니다
 
-- **위치:** `settle/utils/slots/createExitSlotOverlay.ts:75-79`(지우지 않는 배열은 raw와 상관없이 `hasSource`가 참), 이를 소비하는 `createExitSlotOverlay/createClearedArrayOverlay.ts:60`.
-- **무엇이 틀렸나:** 계약은 keep 원본을 "`unsetOnInactive: false`이고 raw가 정의된 노드"로 정의합니다. 그런데 branch 배열은 보통 raw가 undefined이고, 지우지 않는 배열은 아이템이 0개여도 원본이 있다고 판정됩니다. 예를 들어 아이템 스키마에 `tags: { type: 'array', controls: { unsetOnInactive: false } }`가 있으면, 사용자가 tags를 채우지 않았어도 모든 아이템이 `{ tags: [] }`로 살아남습니다. 그러면 재진입 길이가 0이 아니라 원래 아이템 수가 됩니다(추적했고 실행하지는 않았습니다).
+- **위치:** `settle/utils/slots/createExitSlotOverlay.ts:75-79`(지우지 않는 배열은 source와 상관없이 `hasSource`가 참), 이를 소비하는 `createExitSlotOverlay/createClearedArrayOverlay.ts:60`.
+- **무엇이 틀렸나:** 계약은 keep 원본을 "`unsetOnInactive: false`이고 source가 정의된 노드"로 정의합니다. 그런데 branch 배열은 보통 source가 undefined이고, 지우지 않는 배열은 아이템이 0개여도 원본이 있다고 판정됩니다. 예를 들어 아이템 스키마에 `tags: { type: 'array', controls: { unsetOnInactive: false } }`가 있으면, 사용자가 tags를 채우지 않았어도 모든 아이템이 `{ tags: [] }`로 살아남습니다. 그러면 재진입 길이가 0이 아니라 원래 아이템 수가 됩니다(추적했고 실행하지는 않았습니다).
 - **왜 중요한가:** 배열 길이는 이 계약의 핵심 관측값입니다. 객체 호스트에서는 같은 규칙이 슬롯을 유지할지만 바꾸지만, 배열 호스트에서는 길이를 바꿉니다.
 - **고치는 방법:** 결정이 필요합니다. 계약 문장을 따르면, 압축 판정에서 "아이템이 0개인 지우지 않는 배열"은 원본으로 세지 않아야 합니다. 어느 쪽으로 정하든 이 경우를 고정하는 시험을 더합니다.
 
@@ -87,7 +87,7 @@
 
 1. `git mv`로 `settle/utils/slots/createExitSlotOverlay/createClearedArrayOverlay.ts`를 `settle/utils/slots/createClearedArrayOverlay.ts`로 옮깁니다. `settle/utils/slots/createExitSlotOverlay/createClearedArrayOverlay/materializeKeptSlotOverlay.ts`는 `settle/utils/slots/materializeKeptSlotOverlay.ts`로 옮깁니다. 빈 디렉터리 두 개는 남기지 않습니다.
 2. `createExitSlotOverlay.ts:7`의 가져오기를 `./createClearedArrayOverlay`로 바꿉니다.
-3. 옮긴 `createClearedArrayOverlay.ts`의 가져오기를 다음처럼 고칩니다. `../../../../blueprint`는 `../../../blueprint`로, `../../../../record`는 `../../../record`로, `../../../types/settlement`는 `../../types/settlement`로 바꿉니다. `../getSlotEntries`, `../getSlotSource`, `../readSlotRawTree`는 각각 `./getSlotEntries`, `./getSlotSource`, `./readSlotRawTree`로 바꿉니다. `./createClearedArrayOverlay/materializeKeptSlotOverlay`는 `./materializeKeptSlotOverlay`로 바꿉니다.
+3. 옮긴 `createClearedArrayOverlay.ts`의 가져오기를 다음처럼 고칩니다. `../../../../blueprint`는 `../../../blueprint`로, `../../../../record`는 `../../../record`로, `../../../types/settlement`는 `../../types/settlement`로 바꿉니다. `../getSlotEntries`, `../getSlotSource`, `../readSlotSourceTree`는 각각 `./getSlotEntries`, `./getSlotSource`, `./readSlotSourceTree`로 바꿉니다. `./createClearedArrayOverlay/materializeKeptSlotOverlay`는 `./materializeKeptSlotOverlay`로 바꿉니다.
 4. 옮긴 `materializeKeptSlotOverlay.ts`의 가져오기를 다음처럼 고칩니다. `../../../../../blueprint`는 `../../../blueprint`로, `../../../../../record`는 `../../../record`로 바꿉니다. `../../getSlotEntries`와 `../../getSlotSource`는 `./getSlotEntries`와 `./getSlotSource`로 바꿉니다.
 5. 검증: 저장소의 typecheck와 lint 관문, B7 시험 다섯 파일을 실행합니다.
 
@@ -95,11 +95,11 @@
 
 - **지움 없는 나감과 배열 자손이 없는 객체 호스트의 나감:** `activeClear`를 지운 뒤에도 `clear` 값과 overlay 결과는 기준과 같습니다. 새 할당은 반환 객체의 `compacted` 필드뿐입니다. `retainExitedSlot`은 `compacted`가 거짓이면 기존처럼 원래 노드를 슬롯에 둡니다. 호출 수 시험의 3회와 7회는 기준에서도 통과한 대조군입니다(`fail-first.json`).
 - **살아 있던 keep:** 아이템은 상속된 지움으로 해석되고, 명시 keep 자손만 원본으로 남아 압축 색인으로 공표됩니다. `collectSlotSourceValues`는 `packedArrayInput` 배열 값 자체는 공표하지 않고, 실체화된 패치의 잎만 공표합니다.
-- **이미 비활성이던 keep:** 아이템의 `inactiveSlots` 순회가 그 원본의 마지막 정책(`retainedExitPolicy`)을 읽어 보존하고, 실체화 패치가 원본 raw를 복사합니다. 옛 참조의 고정 읽기와 항목 메모 동일성은 겉면 시험이 단언합니다.
+- **이미 비활성이던 keep:** 아이템의 `inactiveSlots` 순회가 그 원본의 마지막 정책(`retainedExitPolicy`)을 읽어 보존하고, 실체화 패치가 원본 source를 복사합니다. 옛 참조의 고정 읽기와 항목 메모 동일성은 겉면 시험이 단언합니다.
 - **스칼라 keep 아이템, 중첩 배열, 반복 나감:** 중첩 배열은 살아 있는 것과 이미 비활성인 것을 모두 확인했습니다. 각 경우를 시험이 공개 관측(`inactiveValues` 경로, 재진입 값, `itemCount`)으로 단언합니다.
 - **후보 소유 배열:** `hasSlotCandidateOwner`와 `retainClearedArrayCarriers`는 지워졌고 남은 참조가 없습니다. 정책 시험 네 행이 후보 소유 범위와 상관없이 같은 결과를 단언합니다.
 - **keep 없는 배열:** overlay의 `itemCount`가 0이면 `retain`이 거짓이어서 슬롯이 남지 않고 재진입 길이는 0입니다. 중첩된 keep 없는 지움 배열의 overlay에 더해진 `packedArrayInput`과 빈 `children`은 공표와 복원에서 기준과 같은 결과를 냅니다.
-- **재진입:** `applySlotOverlay`는 압축 raw를 배열 입력으로 씁니다. `retainedItemNames` 때문에 생존 자리는 raw를 재분배받지 않고 자기 후보 슬롯에서 복원합니다. 따라서 다른 종류의 값이 살아 있는 종류에 입력되지 않습니다.
+- **재진입:** `applySlotOverlay`는 압축 source를 배열 입력으로 씁니다. `retainedItemNames` 때문에 생존 자리는 source를 재분배받지 않고 자기 후보 슬롯에서 복원합니다. 따라서 다른 종류의 값이 살아 있는 종류에 입력되지 않습니다.
 - **튜플:** `prefixItems`의 각 색인은 별도 청사진 노드입니다. 그래서 배열 이동 시험의 "삽입 뒤 나감" 사례가 foreign binding 경로를 실제로 지나갑니다. 이 구성은 배열 이동의 `rekeyArraySlotBindings`와 같습니다(쓰기 주소 이전만 빠졌습니다, 결함 1).
 - **계획 수명:** `compactedSlotSources`는 호출마다 새로 만드는 정착 맥락의 선택 필드입니다. `createExitSlotOverlay`의 유일한 바깥 호출자는 `retainExitedSlot`이므로 고아 계획이 정착 뒤로 남지 않습니다.
 - **규칙:** 새 함수 파일은 각각 내보내기가 하나이고, TSDoc의 매개변수와 반환이 채워져 있습니다. `as any`, `as never`, 네이티브 `Array.isArray`나 `Object.prototype.hasOwnProperty` 호출, 역사를 서술하는 주석은 더해지지 않았습니다. settle DETAIL의 "pre-existing inconsistency … owner decision" 문장은 지워졌고, DETAIL은 코드와 같은 커밋에서 바뀌었습니다. 시험 파일은 검증하는 fractal 안에 있습니다(settle, arrangeFieldNodeItems, surface, 패키지 e2e).

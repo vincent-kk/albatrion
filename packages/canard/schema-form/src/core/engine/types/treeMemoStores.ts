@@ -10,8 +10,8 @@ export interface TreeMemoStores<Entry = unknown, Gate = unknown> {
     {
       children: readonly unknown[];
       schema: unknown;
-      undeclaredValues: unknown;
-      raw: unknown;
+      extras: unknown;
+      source: unknown;
       itemCount: number;
     }
   >;
@@ -20,7 +20,7 @@ export interface TreeMemoStores<Entry = unknown, Gate = unknown> {
     {
       children: readonly unknown[];
       schema: unknown;
-      undeclaredValues: unknown;
+      extras: unknown;
       names: readonly string[];
     }
   >;

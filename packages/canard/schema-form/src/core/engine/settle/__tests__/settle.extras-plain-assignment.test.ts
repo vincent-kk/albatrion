@@ -41,7 +41,7 @@ describe('extras copy settlement equivalence', () => {
           delivered.length = 0;
           changed.length = 0;
           const oldOutput = root.emit;
-          const oldExtras = root.undeclaredValues;
+          const oldExtras = root.extras;
           if (index === 0) dispatchMount(root, inputs[index]);
           else
             dispatchWriteInput(
@@ -53,9 +53,9 @@ describe('extras copy settlement equivalence', () => {
             observation: observeArraySelection(root),
             delivered: [...delivered],
             changed: [...changed],
-            extraKeys: Object.keys(Object(root.undeclaredValues)),
+            extraKeys: Object.keys(Object(root.extras)),
             sameOutput: root.emit === oldOutput,
-            sameExtras: root.undeclaredValues === oldExtras,
+            sameExtras: root.extras === oldExtras,
           });
         }
         histories.push(history);
@@ -124,7 +124,7 @@ describe('extras copy settlement equivalence', () => {
             changed.length = 0;
             const before = structuredClone(inputs[index]);
             const oldOutput = root.emit;
-            const oldExtras = root.structure?.h?.undeclaredValues;
+            const oldExtras = root.structure?.h?.extras;
             if (index === 0) dispatchMount(root, inputs[index]);
             else
               dispatchWriteInput(
@@ -139,9 +139,9 @@ describe('extras copy settlement equivalence', () => {
               delivered: [...delivered],
               changed: [...changed],
               keys: Object.keys(Object(host.emit)),
-              extraKeys: Object.keys(Object(host.undeclaredValues)),
+              extraKeys: Object.keys(Object(host.extras)),
               sameOutput: root.emit === oldOutput,
-              sameExtras: host.undeclaredValues === oldExtras,
+              sameExtras: host.extras === oldExtras,
             });
           }
           histories.push(history);

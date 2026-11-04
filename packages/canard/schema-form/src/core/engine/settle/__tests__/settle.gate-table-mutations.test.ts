@@ -10,7 +10,7 @@ import { prepareGateTableRound } from '../utils/gates/prepareGateTableRound';
 import * as reading from '../utils/gates/readGateSelectionGroup';
 import { updatePendingExitIndex } from '../utils/scratch/updatePendingExitIndex';
 import { gateTableScene } from './fixtures/gateTableScene';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 const previousMode = engineModes.gateSelection;
 const previous = { ...gateSelectionTable };
@@ -110,7 +110,7 @@ describe('named decision-62 mutation witnesses', () => {
     context.pendingExits.set('["/a","string"]', root.structure!.a);
     updatePendingExitIndex(context, '/a', 1);
     delete root.structure!.a;
-    root.structure!.kind.raw =
+    root.structure!.kind.source =
       root.structure!.kind.local =
       root.structure!.kind.emit =
         'b';
@@ -127,7 +127,7 @@ describe('named decision-62 mutation witnesses', () => {
 
       const { root, context } = gateTableScene();
       delete root.structure!.a;
-      root.structure!.kind.raw =
+      root.structure!.kind.source =
         root.structure!.kind.local =
         root.structure!.kind.emit =
           'b';
@@ -138,7 +138,7 @@ describe('named decision-62 mutation witnesses', () => {
       });
       prepareGateTableRound(root, context, 0);
       selectChildren(root, context, {}, () => {}, true);
-      expect(readRetainedSlotRaw(root, '/a', 'string')).toBe('dormant');
+      expect(readRetainedSlotSource(root, '/a', 'string')).toBe('dormant');
     },
   );
 });

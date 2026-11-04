@@ -315,7 +315,7 @@ push gap의 주된 양수는 core settle/propagation +20.486 ms이며 React 전�
 
 | 후보 | 구분 | 근거와 시도할 경계 | 조건부 절감 예산 / 관측 self 상한 |
 | --- | --- | --- | --- |
-| append / remove-last에서 raw·slot·path 전체 재구성 줄이기 | core | readRawTree의 기존 slot 순회, applyArraySlots의 전체 slot/map/set 재구성, rekey의 움직이지 않는 path 처리를 함께 확인. 이 fixture는 끝에서만 추가/삭제하므로 일반 재배열을 거치지 않는 경계가 후보입니다 | push 4.423 / 8.847 ms; push/remove 8.022 / 16.044 ms |
+| append / remove-last에서 source·slot·path 전체 재구성 줄이기 | core | readRawTree의 기존 slot 순회, applyArraySlots의 전체 slot/map/set 재구성, rekey의 움직이지 않는 path 처리를 함께 확인. 이 fixture는 끝에서만 추가/삭제하므로 일반 재배열을 거치지 않는 경계가 후보입니다 | push 4.423 / 8.847 ms; push/remove 8.022 / 16.044 ms |
 | 구조가 그대로인 자식의 select/compute 재방문 줄이기 | core | selectChildren와 computeNode에서 dirty child 및 새/제거 slot만 처리할 수 있는지 확인. snapshot·latent/branch·path 계약은 유지되어야 합니다 | push 2.466 / 4.933 ms; push/remove 3.976 / 7.951 ms; replace 0.513 / 1.025 ms |
 | 입력의 uSES tracker 통합과 등록/스냅샷 중복 줄이기 | React (tracker) | useFormTypeInputControl의 refresh tracker, SchemaNodeInput과 useChildNodeComponents의 tracker를 한 스냅샷으로 합치는 기존 F-E 방향. 포커스/선택 layout 구독과 자식의 commit 순서는 유지. 현재 보류된 F-E의 구현 승인으로 읽지 않습니다 | replace tracker 전체의 50%는 1.669 ms, 관측 전체 3.338 ms. old보다 증가한 tracker 자체는 +0.890 ms입니다 |
 

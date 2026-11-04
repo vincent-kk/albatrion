@@ -111,7 +111,7 @@ describe('array entry integration', () => {
     expect(root.local).toEqual([9]);
   });
 
-  it('62C-01 pop/remove return marked interpreted raw, including descendant marks', () => {
+  it('62C-01 pop/remove return marked interpreted source, including descendant marks', () => {
     const { root } = createDispatchTree({
       type: 'array',
       items: {

@@ -34,12 +34,12 @@ const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
     : undefined;
 
 /**
- * Apply a proven prefix-preserving proposal without composing retained raw trees.
+ * Apply a proven prefix-preserving proposal without composing retained source trees.
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
  * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
  * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its structure if multi-slot callers are added.
- * @param host - Live branch array with no whole raw override
+ * @param host - Live branch array with no whole source override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
  * @param offset - Position of `plan.slots[0]`; an append proof's plan lists only the new slot after its retained prefix, and a pop proof's plan lists no slot after its N-1 retained positions
@@ -57,7 +57,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const items: Dictionary<Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
-  const oldExtras = isArray(host.undeclaredValues) ? host.undeclaredValues : [];
+  const oldExtras = isArray(host.extras) ? host.extras : [];
   const templateCount = host.blueprintNode.prefixItems?.length ?? 0;
   const removedIndex =
     plan.result.source === 'removed' ? plan.result.index : -1;
@@ -146,12 +146,12 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
 
   host.itemCount = length;
-  host.raw = undefined;
-  host.undeclaredValues = extras.length ? extras : undefined;
+  host.source = undefined;
+  host.extras = extras.length ? extras : undefined;
   host.structure = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, oldCount);
-  context.changedRaw.add(host.path);
+  context.changedSource.add(host.path);
   context.changedNodes.add(host);
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);

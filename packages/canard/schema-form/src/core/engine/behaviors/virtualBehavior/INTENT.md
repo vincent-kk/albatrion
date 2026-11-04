@@ -7,7 +7,7 @@
 ## Conventions
 
 - 가상 노드는 항상 `type: 'virtual'`, `strategy: 'branch'`다(NODE-047).
-- 값은 참조 노드에서 읽으며, 자체 `raw`와 `emit`을 소유하지 않는다(NODE-034).
+- 값은 참조 노드에서 읽으며, 자체 `source`와 `emit`을 소유하지 않는다(NODE-034).
 
 ## Boundaries
 

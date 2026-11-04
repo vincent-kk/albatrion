@@ -5,7 +5,7 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markWrite } from '../input/markWrite';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
-import { markRestoredSlotRaw } from './markRestoredSlotRaw';
+import { markRestoredSlotSource } from './markRestoredSlotSource';
 
 /**
  * Apply a host-owned patch only to a newly issued instance subtree.
@@ -19,15 +19,15 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
   overlay: InactiveSlotOverlay,
   context: SettlementContext<Self>,
 ): void => {
-  markRestoredSlotRaw(node, context);
-  const ownsRaw = hasOwnProperty(overlay, 'raw');
+  markRestoredSlotSource(node, context);
+  const ownsSource = hasOwnProperty(overlay, 'source');
   const arrayInput =
-    ownsRaw &&
+    ownsSource &&
     node.behavior.type === 'array' &&
     node.behavior.strategy === 'branch' &&
-    isArray(overlay.raw);
+    isArray(overlay.source);
   if (arrayInput) {
-    markWrite(node, overlay.raw, context);
+    markWrite(node, overlay.source, context);
     if (overlay.children?.size) {
       const names: string[] = [];
       for (const entry of overlay.children.keys())
@@ -39,19 +39,19 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
           retainedItemNames: names,
         });
     }
-  } else if (ownsRaw || overlay.replace) {
-    node.raw = ownsRaw ? overlay.raw : undefined;
+  } else if (ownsSource || overlay.replace) {
+    node.source = ownsSource ? overlay.source : undefined;
   }
   if (
-    hasOwnProperty(overlay, 'undeclaredValues') ||
+    hasOwnProperty(overlay, 'extras') ||
     (overlay.replace && !arrayInput)
   )
-    node.undeclaredValues = overlay.undeclaredValues;
+    node.extras = overlay.extras;
   if (overlay.itemCount !== undefined) node.itemCount = overlay.itemCount;
   else if (
     overlay.replace &&
     node.behavior.type === 'array' &&
-    !isArray(overlay.raw)
+    !isArray(overlay.source)
   )
     node.itemCount = 0;
   if (overlay.replace) {
@@ -73,7 +73,7 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
     if (live?.blueprintNode === entry.node) continue;
     (node.inactiveSlotOverlays ??= new Map()).set(entry, patch);
   }
-  markRestoredSlotRaw(node, context);
+  markRestoredSlotSource(node, context);
   context.changedNodes.add(node);
   context.dirtyPaths.add(node.path);
   if (node.behavior.strategy === 'branch')

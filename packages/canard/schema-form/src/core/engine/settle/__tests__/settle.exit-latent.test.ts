@@ -8,8 +8,8 @@ import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 describe('latent descendant exit policies', () => {
   it('SETTLE-017 small exit parses no unrelated committed policies', () => {
@@ -82,7 +82,7 @@ describe('latent descendant exit policies', () => {
       WriteOption.Merge,
     );
     expect(root.structure?.secret).toBeUndefined();
-    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-038 updates a node expression while that node remains in shape', () => {
@@ -151,9 +151,9 @@ describe('latent descendant exit policies', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(readRetainedSlotRaw(root, '/outer/value', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('held');
     writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/outer/value', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('held');
   });
 
   it('WRITE-034 uses the last live expression after a suppressed exit', () => {
@@ -197,7 +197,7 @@ describe('latent descendant exit policies', () => {
       'input',
       WriteOption.DisableAutomaticWrites,
     );
-    expect(readRetainedSlotRaw(root, '/branch/secret', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/branch/secret', 'string')).toBe('held');
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
         key.startsWith('["/branch/secret",'),

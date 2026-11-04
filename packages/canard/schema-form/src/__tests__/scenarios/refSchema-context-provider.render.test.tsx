@@ -305,8 +305,8 @@ describe('context passed via Form context prop reaches FieldInput', () => {
     });
 
     // DOM: the custom input received props.context verbatim.
-    const raw = form.field('/greeting')?.getAttribute('data-context');
-    expect(JSON.parse(raw ?? 'null')).toEqual({ greeting: 'hello', count: 3 });
+    const contextText = form.field('/greeting')?.getAttribute('data-context');
+    expect(JSON.parse(contextText ?? 'null')).toEqual({ greeting: 'hello', count: 3 });
     expect(form.value('/greeting')).toBe('hi');
     // Tree agrees on the underlying value.
     expect(form.node('/greeting')?.value).toBe('hi');
@@ -449,8 +449,8 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     );
 
     // DOM: the input sees {...provider, ...form} -> userRole overridden, tier kept.
-    const raw = form.field('/greeting')?.getAttribute('data-context');
-    expect(JSON.parse(raw ?? 'null')).toEqual({
+    const contextText = form.field('/greeting')?.getAttribute('data-context');
+    expect(JSON.parse(contextText ?? 'null')).toEqual({
       userRole: 'user',
       tier: 'gold',
     });

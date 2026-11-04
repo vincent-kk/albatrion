@@ -33,7 +33,7 @@ export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
     witness?.structure === previous &&
     prepared?.selectedStructure === structure &&
     context.preparedStaticHosts?.has(host) &&
-    host.raw !== null &&
+    host.source !== null &&
     !context.entered.has(host) &&
     !context.exited.has(host) &&
     !context.perished.has(host) &&

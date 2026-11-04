@@ -3,9 +3,9 @@ import { trimmedArrays } from '../../../../utils/cache/valueMemos';
 import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
 
 /**
- * Trim trailing nullish raw items or unfilled branch slots without mutation.
+ * Trim trailing nullish source items or unfilled branch slots without mutation.
  * @param value - Local or terminal array whose suffix may be omitted
- * @param node - Branch host for detecting item holes; absent for terminal raw
+ * @param node - Branch host for detecting item holes; absent for terminal source
  * @returns Original array when unchanged, otherwise a memoized copied prefix
  */
 export const omitTrailingArray = <Self>(

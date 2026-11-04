@@ -25,7 +25,7 @@ export const unionRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'union.branch-round-trip-shared-values',
-    description: 'composition.oneOf.initial: LANDING-011 existing nodes are not filled again; LANDING-032 shared nodes retain raw.',
+    description: 'composition.oneOf.initial: LANDING-011 existing nodes are not filled again; LANDING-032 shared nodes retain source.',
     schema: branchSchema, initialValue: { kind: 'a' },
     steps: [
       { action: 'setValue', path: '/a', value: 'edited', expect: { values: { '/a': 'edited' } } },
@@ -42,7 +42,7 @@ export const unionRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'union.active-anyof-shared-fields',
-    description: 'composition.anyOf: LANDING-018 raw survives deactivation; LANDING-038 effective schema merges active fragments.',
+    description: 'composition.anyOf: LANDING-018 source survives deactivation; LANDING-038 effective schema merges active fragments.',
     schema: { type: 'object', properties: { left: { type: 'boolean' }, right: { type: 'boolean' } }, anyOf: [
       { controls: { active: './left' }, properties: { shared: { type: 'string' }, a: { type: 'string' } } },
       { controls: { active: './right' }, properties: { shared: { type: 'string' }, b: { type: 'string' } } },
@@ -56,7 +56,7 @@ export const unionRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'union.nested-branch-round-trip',
-    description: 'composition.nested-branch: LANDING-018 deactivation removes output only; LANDING-032 retains the raw value.',
+    description: 'composition.nested-branch: LANDING-018 deactivation removes output only; LANDING-032 retains the source value.',
     schema: { type: 'object', properties: { shown: { type: 'boolean' } }, allOf: [{
       controls: { active: './shown' }, properties: { inner: { type: 'object', properties: {
         kind: { type: 'string' },

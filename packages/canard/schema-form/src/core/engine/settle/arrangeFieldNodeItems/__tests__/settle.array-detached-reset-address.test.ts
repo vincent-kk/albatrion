@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { isArrayNode, reloadFieldNodeForm } from '@/schema-form/core/surface';
 
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 it.each(['subtree', 'form'] as const)(
   'ignores a rekeyed old reference through %s reset',
@@ -40,11 +40,11 @@ it.each(['subtree', 'form'] as const)(
     else reloadFieldNodeForm(root, { sibling: 'b', items: [{ flag: false }] });
     reference.setValue('x');
     expect(reference.path).toBe('/items/1/gated');
-    expect(readRetainedSlotRaw(root, '/items/0/gated', 'string')).toBe(
+    expect(readRetainedSlotSource(root, '/items/0/gated', 'string')).toBe(
       reset === 'subtree' ? 'second' : undefined,
     );
     expect(
-      readRetainedSlotRaw(root, '/items/1/gated', 'string'),
+      readRetainedSlotSource(root, '/items/1/gated', 'string'),
     ).toBeUndefined();
     root.find('/items/0/flag')!.setValue(true);
     expect(root.find('/items/0/gated')!.value).toBe(

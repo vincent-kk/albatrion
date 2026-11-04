@@ -14,7 +14,7 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 it.each([
   { operation: 'insert', depth: 1 },
@@ -49,19 +49,19 @@ it.each([
     const destination = operation === 'insert' ? 1 : 0;
     const names = depth === 1 ? ['v'] : ['box', 'v'];
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(source), ...names).raw).toBe(37);
+    expect(getDispatchNode(list, String(source), ...names).source).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     const original = getDispatchNode(list, String(source), ...names);
-    expect(original.raw).toBe('live');
+    expect(original.source).toBe('live');
     root.runtime.disableAutomaticWrites = true;
     const path = `/list/${destination}/` + names.join('/');
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
-    expect(getDispatchNode(list, String(destination), ...names).raw).toBe(37);
-    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+    expect(getDispatchNode(list, String(destination), ...names).source).toBe(37);
+    expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(destination), ...names).raw).toBe(
+    expect(getDispatchNode(list, String(destination), ...names).source).toBe(
       'live',
     );
     const expected = {
@@ -78,7 +78,7 @@ it.each([
     await dispatchValidate(root);
     expect(inputs.at(-1)).toEqual(expected);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(destination), ...names).raw).toBe(37);
+    expect(getDispatchNode(list, String(destination), ...names).source).toBe(37);
   },
 );
 

@@ -1,4 +1,4 @@
-/** Round 9 spike. Generated from v4e by make-v5.mjs; raw and extras are the state cells. */
+/** Round 9 spike. Generated from v4e by make-v5.mjs; source and extras are the state cells. */
 
 /** Sentinel for "this node emits nothing", so it is omitted by its parent. */
 export const MISSING = Symbol('missing');
@@ -165,7 +165,7 @@ function makeNode(kind, name) {
     clearWas: false,
     clearNext: false,
     unconditional: false,
-    raw: undefined,
+    source: undefined,
     pendingRaw: undefined,
     hasPending: false,
     reported: NOREPORT,
@@ -529,7 +529,7 @@ function stageRaw(node, value) {
   touch(node);
 }
 
-const rawOf = (n) => (n.hasPending ? n.pendingRaw : n.raw);
+const rawOf = (n) => (n.hasPending ? n.pendingRaw : n.source);
 const emitOf = (n, sid) => (n.stamp === sid ? n.nextEmit : n.emit);
 const extrasOf = (n) => (n.hasPendingExtras ? n.pendingExtras : n.extras);
 const fragOnOf = (n, sid) => (n.fragStamp === sid ? n.nextFragOn : n.fragOn);
@@ -544,7 +544,7 @@ function markReplaced(host) {
   host.root.replacedHosts.push(host);
 }
 
-/** Absent = a leaf without raw, or a host that received no value (A2 "없음"). */
+/** Absent = a leaf without source, or a host that received no value (A2 "없음"). */
 const isAbsent = (n) => (n.kind === 'leaf' ? rawOf(n) === undefined : n.absent);
 
 /** A value landed on `node`: it and every ancestor host exist now. */
@@ -552,7 +552,7 @@ function markPresent(node) {
   for (let n = node; n !== null && n.absent; n = n.parent) n.absent = false;
 }
 
-/** Erase a subtree's raw (absent) and extras — "V에 없는 자식". */
+/** Erase a subtree's source (absent) and extras — "V에 없는 자식". */
 function erase(node) {
   if (loadDepth > 0 && node.isSource) markSourceLoaded(node);
   if (node.isSource && inSettle === false) markSourceWritten(node);
@@ -702,8 +702,8 @@ function clearNonObjectAncestors(node) {
 
 /**
  * Leaf input (partial write): the input reports `value` as what it shows,
- * so a committed raw equal to it needs no RequestRefresh (A6). A host above
- * whose raw is a non-object is emptied (A5).
+ * so a committed source equal to it needs no RequestRefresh (A6). A host above
+ * whose source is a non-object is emptied (A5).
  */
 export function write(node, value) {
   const root = enter(node);
@@ -897,9 +897,9 @@ function compute(node, sid) {
 }
 
 function computeArray(node, sid) {
-  const raw = rawOf(node);
-  if (raw !== undefined) {
-    publish(node, sid, MISSING, raw);
+  const source = rawOf(node);
+  if (source !== undefined) {
+    publish(node, sid, MISSING, source);
     return;
   }
   const prev = node.local;
@@ -1059,12 +1059,12 @@ function sweepOnce(node, on, sid, nonObject) {
 /**
  * Host compute (A4): A0 = unconditional + inherited overlays that are on;
  * G = compose(A) (projected: children's emit already carry omitEmpty /
- * omitTrailing / null; a non-object host raw makes G = {}); all guards each
+ * omitTrailing / null; a non-object host source makes G = {}); all guards each
  * sweep, option B, repeat while A changed, cap = fragments + 1.
  */
 function computeObject(node, sid) {
-  const raw = rawOf(node);
-  const nonObject = raw !== undefined;
+  const source = rawOf(node);
+  const nonObject = source !== undefined;
   const frags = node.fragments;
   const nFrag = frags.length;
   const on = node.nextFragOn;
@@ -1074,7 +1074,7 @@ function computeObject(node, sid) {
   node.fragStamp = sid;
   if (nFrag === 0) {
     const L = compose(node, sid, true);
-    publishHost(node, sid, L, nonObject, raw, status, sweeps);
+    publishHost(node, sid, L, nonObject, source, status, sweeps);
     return;
   }
   for (let i = 0; i < nFrag; i++) {
@@ -1096,14 +1096,14 @@ function computeObject(node, sid) {
     }
   }
   if (sweeps > lastSettle.maxSweepsOnOneHost) lastSettle.maxSweepsOnOneHost = sweeps;
-  publishHost(node, sid, node.nextLocal, nonObject, raw, status, sweeps);
+  publishHost(node, sid, node.nextLocal, nonObject, source, status, sweeps);
 }
 
-function publishHost(node, sid, L, nonObject, raw, status, sweeps) {
+function publishHost(node, sid, L, nonObject, source, status, sweeps) {
   const s = node.nextSettle;
   s.status = status;
   s.sweeps = sweeps;
-  const emit = nonObject ? raw : node.nextLocalKeys.length === 0 ? MISSING : L;
+  const emit = nonObject ? source : node.nextLocalKeys.length === 0 ? MISSING : L;
   publish(node, sid, L, emit);
 }
 
@@ -1241,7 +1241,7 @@ function snapshot(node) {
 
 function snapNode(n, recs) {
   const obj = n.kind === 'object';
-  recs.push({ n, raw: rawOf(n), absent: n.absent, extras: obj ? extrasOf(n) : null, kids: n.kind === 'array' ? n.children.slice() : null });
+  recs.push({ n, source: rawOf(n), absent: n.absent, extras: obj ? extrasOf(n) : null, kids: n.kind === 'array' ? n.children.slice() : null });
   const kids = n.children;
   if (kids !== null) for (let i = 0; i < kids.length; i++) snapNode(kids[i], recs);
 }
@@ -1253,7 +1253,7 @@ function restore(snap) {
     const r = recs[i];
     const n = r.n;
     if (r.kids !== null) restoreItems(n, r.kids);
-    if (rawOf(n) !== r.raw) stageRaw(n, r.raw);
+    if (rawOf(n) !== r.source) stageRaw(n, r.source);
     else touch(n);
     n.absent = r.absent;
     if (n.kind !== 'object') continue;
@@ -1465,7 +1465,7 @@ function payloadOf(node, prevLocal, prevEmit) {
 
 const valueOrUndefined = (v) => (v === MISSING ? undefined : v);
 
-/** Apply staged raw / extras / memos; collect changed nodes in tree order. */
+/** Apply staged source / extras / memos; collect changed nodes in tree order. */
 function commit(node, sid, out, signalOnly) {
   let changed = false;
   if (node.controlNext !== null) {
@@ -1474,10 +1474,10 @@ function commit(node, sid, out, signalOnly) {
   }
   if (node.clearExpression !== undefined) node.clearWas = !!evalExpression(node.clearExpression, expressionView(node.root));
   if (node.hasPending) {
-    node.raw = node.pendingRaw;
+    node.source = node.pendingRaw;
     node.hasPending = false;
     node.pendingRaw = undefined;
-    if (node.kind === 'leaf' && node.raw !== node.reported) {
+    if (node.kind === 'leaf' && node.source !== node.reported) {
       node.signals |= REFRESH;
       if (trace) lastSettle.refreshed.push(pathOf(node));
     }
@@ -1716,13 +1716,13 @@ export function activeIds(host) {
   return out;
 }
 
-/** Raw tree as plain data (`undefined` = absent), for reports. */
-export function rawTree(node) {
-  if (node.kind === 'leaf') return node.raw;
-  if (node.raw !== undefined) return node.raw;
-  if (node.kind === 'array') return node.children.map(rawTree);
+/** Source tree as plain data (`undefined` = absent), for reports. */
+export function sourceTree(node) {
+  if (node.kind === 'leaf') return node.source;
+  if (node.source !== undefined) return node.source;
+  if (node.kind === 'array') return node.children.map(sourceTree);
   const out = {};
-  for (const c of node.children) out[c.name] = rawTree(c);
+  for (const c of node.children) out[c.name] = sourceTree(c);
   if (node.extras !== null) for (const k of Object.keys(node.extras)) out[k] = node.extras[k];
   return out;
 }
@@ -1734,7 +1734,7 @@ function visitNodes(node, fn) {
   for (const child of node.children ?? []) visitNodes(child, fn);
 }
 
-/** Staged raw view for reserved expressions; JSON Schema guards use projected G. */
+/** Staged source view for reserved expressions; JSON Schema guards use projected G. */
 function stagedTree(node) {
   if (node.kind === 'leaf' || rawOf(node) !== undefined) return rawOf(node);
   if (node.kind === 'array') return node.children.map(stagedTree);

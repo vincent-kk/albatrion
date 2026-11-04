@@ -69,7 +69,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   stateDirtyNodes: ReadonlySet<Self>,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
-  expandFrom: (source: Self) => boolean,
+  expandFrom: (instance: Self) => boolean,
 ): CalculatedStateKeys<Self> => {
   const blueprint = root.runtime.blueprint;
   const index = getFeatureNodeIndex(blueprint);
@@ -87,15 +87,15 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
       ));
   const candidates = new Set<Self>();
   for (const node of stateDirtyNodes) if (isTarget(node)) candidates.add(node);
-  for (const source of stateDirtyNodes) {
-    const targets = index.stateKeyChildren.get(source.blueprintNode.id);
+  for (const instance of stateDirtyNodes) {
+    const targets = index.stateKeyChildren.get(instance.blueprintNode.id);
     if (!targets) continue;
-    if (source.detached || !source.children?.length) continue;
-    if (!expandFrom(source)) continue;
-    for (const child of source.children)
+    if (instance.detached || !instance.children?.length) continue;
+    if (!expandFrom(instance)) continue;
+    for (const child of instance.children)
       if (
         targets.has(child.name) ||
-        (source.blueprintNode.kind === 'array' && targets.has($.Wildcard))
+        (instance.blueprintNode.kind === 'array' && targets.has($.Wildcard))
       )
         candidates.add(child);
   }

@@ -2,7 +2,7 @@ import type { BlueprintSchema } from '../../../engine';
 
 /** An authored input and finite public history; no product fast-path switch is exposed. */
 export interface ItemlessScene {
-  /** Named matrix entry, preserved in raw comparison records. */
+  /** Named matrix entry, preserved in source comparison records. */
   id: string;
   /** Authored schema compiled independently for every engine run. */
   schema: BlueprintSchema;

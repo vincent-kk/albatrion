@@ -7,7 +7,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
- * Whether a whole replacement already gave this path's only raw to a live node.
+ * Whether a whole replacement already gave this path's only source to a live node.
  * @param context - Call whose replacement scope, virtual replace paths, or batch replace paths bound the covered paths
  * @param path - Absolute path of an exiting occurrence
  * @returns True when the path lies in a replaced scope and a live node holds it

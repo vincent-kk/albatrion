@@ -31,7 +31,7 @@ const OBJECT_TEMPLATE = OBJECT_ANALYSIS.root;
 /** Build a complete record with no engine instance or settlement mutation. */
 const makeRecord = (
   behavior: Behavior,
-  raw: unknown,
+  source: unknown,
   options: Record<string, unknown> = {},
   blueprintNode: BlueprintNode = OBJECT_TEMPLATE,
 ): FieldNodeRecord<unknown> => ({
@@ -62,8 +62,8 @@ const makeRecord = (
   itemKey: null,
   itemCount: 0,
   nextItemKey: 0,
-  raw,
-  undeclaredValues: undefined,
+  source,
+  extras: undefined,
   isActive: true,
   isVisible: true,
   isReadOnly: false,
@@ -152,11 +152,11 @@ describe('behavior rows', () => {
     expect(booleanBehavior.interpret('false', spec('boolean'))).toBe(false);
   });
 
-  it('separates empty string projection and trim from the raw input', () => {
+  it('separates empty string projection and trim from the source input', () => {
     const node = makeRecord(stringBehavior, '  text  ', { trim: true });
     expect(stringBehavior.assemble(node, [])).toBe('  text  ');
     expect(stringBehavior.finishInput(node)).toBe('text');
-    expect(node.raw).toBe('  text  ');
+    expect(node.source).toBe('  text  ');
     expect(stringBehavior.project(node, '')).toBeUndefined();
     const choices = getStaticChoices(node.schema);
     expect(getStaticChoices(node.schema)).toBe(choices);
@@ -204,7 +204,7 @@ describe('behavior rows', () => {
     expect(objectBehavior.terminal.project(node, object)).toBe(object);
     expect(objectBehavior.terminal.declareChildren(node)).toEqual([]);
     expect(objectBehavior.terminal.project(node, {})).toBeUndefined();
-    node.raw = 17;
+    node.source = 17;
     expect(objectBehavior.terminal.project(node, object)).toBe(17);
   });
 
@@ -229,7 +229,7 @@ describe('behavior rows', () => {
     ).toBe(true);
   });
 
-  it('assembles current object children in propertyOrder, declaration, undeclaredValues order', () => {
+  it('assembles current object children in propertyOrder, declaration, extras order', () => {
     const node = makeRecord(objectBehavior.branch, undefined, {
       propertyOrder: ['second'],
     });
@@ -237,7 +237,7 @@ describe('behavior rows', () => {
       { name: 'first', emit: 1 },
       { name: 'second', emit: 2 },
     ];
-    node.undeclaredValues = { other: 3 };
+    node.extras = { other: 3 };
     const local = objectBehavior.branch.assemble(node, children);
     if (local === null || typeof local !== 'object')
       throw new Error('object assembly returned a scalar');
@@ -250,7 +250,7 @@ describe('behavior rows', () => {
     expect(changed).not.toBe(local);
     expect(changed).toEqual({ second: 2, first: 4, other: 3 });
     node.local = changed;
-    node.undeclaredValues = { other: 3, last: 5 };
+    node.extras = { other: 3, last: 5 };
     const expanded = objectBehavior.branch.assemble(node, children);
     if (expanded === null || typeof expanded !== 'object')
       throw new Error('object assembly returned a scalar');

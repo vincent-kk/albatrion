@@ -356,7 +356,7 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 
 소유자: `src/core/settle`; 변경 위치: `utils/write/markWrite.ts`. 수정안 하나: 기존 정상 terminal·명시적 scalar 쓰기를 단형 분기로 특화하여 branch/virtual/load/automatic 검사만 줄입니다. interpret와 SameValueZero, writtenInputs 및 모든 dirty/changed 표시는 유지합니다.
 제거 실험: 이 픽스처의 terminal 입력 몸통만 직접 실행합니다.
-계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. raw 표시의 분기 특화이며 assembly나 커밋 revision 증가를 고치지 않습니다.
+계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. source 표시의 분기 특화이며 assembly나 커밋 revision 증가를 고치지 않습니다.
 
 ### 첫 갱신의 크기 독립 고정 몫
 
@@ -503,7 +503,7 @@ A1/O1/F1/P1/Q1/W1의 일부 later 제거 변형은 회귀 조건을 채웁니다
 
 정확한 문장 (architecture/ledger/value.md:215):
 
-> **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `raw` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9).
+> **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `source` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9).
 
 보충: 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만).
 

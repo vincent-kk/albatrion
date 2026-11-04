@@ -36,7 +36,7 @@ items와 prefixItems가 모두 없는 정적 branch 배열의 단독 push·inser
 
 변경 후 `admitsStaticArrayTail.ts:22`의 extrasOnly 분기는 append가 인수 true를 넘긴 경우만 허용합니다. pop·가운데 insert/remove는 기본 false 자격을 그대로 사용합니다. `canReuseAppendedChild.ts:41`은 아이템 없는 새 자리·빈 children·N+1 extras·dirty 자식 부재만 확인하고, `reuseArrayChildren.ts:25`는 공표할 자식 없이 반환합니다. `assembleArray.ts:78`의 새 분기는 아이템과 prefixItems가 모두 없고 children이 비어 있는 경우에만 끝 값을 읽습니다. applyArrayTail의 기존 빈 children 공표와 스냅숏·extras 복사는 유지합니다.
 
-prefixItems 튜플 뒤의 extras 꼬리, 아직 선언된 튜플 자리, 게이트·식·파생·감시·의존·상태 키·가상·union·터미널 호스트·리터럴 아닌 기본값·제어 기본값·unsetValue·injectTo·재귀 확장, 통째 raw, 잠복/미공표 잠복 변경, misfit, 배치·방문, 떼어진/비활성/배달 미초기화 호스트, omitTrailing, 배열이 아닌 직전 local/emit 등의 기존 제외 조건은 유지합니다. 로드·자동 쓰기는 이 단독 공개 동사 자격으로 넓히지 않습니다. remove(0)의 extras splice는 수정하지 않았습니다.
+prefixItems 튜플 뒤의 extras 꼬리, 아직 선언된 튜플 자리, 게이트·식·파생·감시·의존·상태 키·가상·union·터미널 호스트·리터럴 아닌 기본값·제어 기본값·unsetValue·injectTo·재귀 확장, 통째 source, 잠복/미공표 잠복 변경, misfit, 배치·방문, 떼어진/비활성/배달 미초기화 호스트, omitTrailing, 배열이 아닌 직전 local/emit 등의 기존 제외 조건은 유지합니다. 로드·자동 쓰기는 이 단독 공개 동사 자격으로 넓히지 않습니다. remove(0)의 extras splice는 수정하지 않았습니다.
 
 ## 검증
 

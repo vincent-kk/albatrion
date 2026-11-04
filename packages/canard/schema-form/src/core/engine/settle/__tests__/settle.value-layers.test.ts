@@ -21,17 +21,17 @@ describe('settled value rule layers', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'first' }, WriteOption.Overwrite);
-    expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
+    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
       'first',
       'first',
     ]);
     writeFieldNode(
-      root.structure!.source,
+      root.structure!['source'],
       'second',
       'input',
       WriteOption.Overwrite,
     );
-    expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
+    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
       'second',
       'second',
     ]);
@@ -58,8 +58,8 @@ describe('settled value rule layers', () => {
       { source: 'from-source' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.inside?.raw).toBe('from-source');
-    expect(root.structure?.outside?.raw).toBeUndefined();
+    expect(root.structure?.inside?.source).toBe('from-source');
+    expect(root.structure?.outside?.source).toBeUndefined();
   });
 
   it('CONTROLS-073 fields derived evaluates once for all targets', () => {
@@ -74,7 +74,7 @@ describe('settled value rule layers', () => {
     root.runtime.context = { derive };
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(derive).toHaveBeenCalledTimes(1);
-    expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
+    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
       'shared',
       'shared',
     ]);
@@ -94,7 +94,7 @@ describe('settled value rule layers', () => {
     root.runtime.context = { clear };
     loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, WriteOption.Overwrite);
     expect(clear).toHaveBeenCalledTimes(2);
-    expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
+    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
       undefined,
       undefined,
     ]);

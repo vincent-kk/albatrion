@@ -15,14 +15,14 @@ export const getSlotSource = <Self extends FieldNodeRecord<Self>>(
   host: Optional<Self>,
   entry: BlueprintChildEntry,
   overlay?: InactiveSlotOverlay,
-): { source: Optional<Self>; overlay: Optional<InactiveSlotOverlay> } => {
+): { instance: Optional<Self>; overlay: Optional<InactiveSlotOverlay> } => {
   const binding = getSlotBinding(host, entry, overlay);
   const supplied = overlay?.children?.get(binding);
   if (overlay?.replace && !supplied)
-    return { source: undefined, overlay: undefined };
+    return { instance: undefined, overlay: undefined };
   const live = host?.structure?.[entry.name];
   return {
-    source:
+    instance:
       live?.blueprintNode === entry.node
         ? live
         : host?.inactiveSlots?.get(binding),

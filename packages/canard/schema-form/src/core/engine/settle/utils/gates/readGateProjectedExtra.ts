@@ -12,14 +12,14 @@ import { getGateRegistry } from './getGateRegistry';
  * Resolve the current host's extras under the same ancestor projection rules as its gate.
  * @param context - Current live projected tree
  * @param hostPath - Bound absolute declaration host path
- * @param raw - Publication already read at the gate's evaluation site
+ * @param source - Publication already read at the gate's evaluation site
  * @param owner - Optional current occurrence, avoiding a redundant host traversal
- * @returns Host extras, or undefined beneath a blocking raw ancestor or absent host
+ * @returns Host extras, or undefined beneath a blocking source ancestor or absent host
  */
 export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   hostPath: string,
-  raw: unknown,
+  source: unknown,
   owner?: Self,
 ): unknown => {
   let hostNode: Optional<Self>;
@@ -49,12 +49,12 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
   )
     if (
       ancestor.behavior.strategy === 'branch' &&
-      ancestor.raw !== undefined &&
+      ancestor.source !== undefined &&
       (ancestor.parent !== null ||
-        raw === null ||
-        typeof raw !== 'object' ||
-        isArray(raw))
+        source === null ||
+        typeof source !== 'object' ||
+        isArray(source))
     )
       return undefined;
-  return hostNode?.undeclaredValues;
+  return hostNode?.extras;
 };

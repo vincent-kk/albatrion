@@ -64,7 +64,7 @@ switch-oneOf-80/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대�
 | commitSettlement (13994, src/core/engine/settle/utils/commit/commitSettlement.ts) | B | 1.518 | 1.54 | 386 |
 | captureDetachedFieldNodeReads (14546, src/core/engine/settle/utils/detached/captureDetachedFieldNodeReads.ts) | A | 1.482 | 1.51 | 373 |
 | resolvePointer (1041, src/helpers/jsonPointer/utils/resolvePointer.ts) | OTHER | 1.476 | 1.50 | 371 |
-| markRestoredSlotRaw (10525, src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts) | OTHER | 1.428 | 1.45 | 364 |
+| markRestoredSlotSource (10525, src/core/engine/settle/utils/slots/markRestoredSlotSource.ts) | OTHER | 1.428 | 1.45 | 364 |
 | readFieldNodeWatchValues (13488, src/core/engine/settle/utils/controls/readFieldNodeWatchValues.ts) | OTHER | 1.413 | 1.44 | 361 |
 | add (7238, src/core/engine/settle/utils/scratch/DirtyPathSet.ts) | OTHER | 1.243 | 1.26 | 314 |
 | updateOutput (7768, src/core/engine/settle/utils/output/updateOutput.ts) | B | 1.225 | 1.25 | 312 |
@@ -99,7 +99,7 @@ OTHER 전체:
 | selectEffectiveDeclarations (prepared/engine.mjs:1703) | 1.829 |
 | getCommittedDeclarationKey (prepared/engine.mjs:4808) | 1.726 |
 | resolvePointer (prepared/engine.mjs:1041) | 1.476 |
-| markRestoredSlotRaw (prepared/engine.mjs:10525) | 1.428 |
+| markRestoredSlotSource (prepared/engine.mjs:10525) | 1.428 |
 | readFieldNodeWatchValues (prepared/engine.mjs:13488) | 1.413 |
 | add (prepared/engine.mjs:7238) | 1.243 |
 | hasOwnProperty (packages/winglet/common-utils/dist/libs/hasOwnProperty.mjs:3) | 1.111 |
@@ -172,7 +172,7 @@ OTHER 전체:
 | get gateSelection (prepared/engine.mjs:1200) | 0.095 |
 | preserveReferences (prepared/engine.mjs:11643) | 0.093 |
 | (anonymous) (prepared/engine.mjs:11167) | 0.093 |
-| get raw (prepared/engine.mjs:18993) | 0.089 |
+| get source (prepared/engine.mjs:18993) | 0.089 |
 | readFieldNodeErrors (prepared/engine.mjs:6414) | 0.089 |
 | getChildDistribution (prepared/engine.mjs:8382) | 0.087 |
 | visitFieldNodes (prepared/engine.mjs:12995) | 0.082 |
@@ -243,11 +243,11 @@ OTHER 전체:
 | markWrongKindAncestors (prepared/engine.mjs:15715) | 0.020 |
 | set active (prepared/engine.mjs:19017) | 0.020 |
 | (anonymous) (prepared/engine.mjs:11784) | 0.020 |
-| assembleRaw (prepared/engine.mjs:8893) | 0.020 |
+| assembleSource (prepared/engine.mjs:8893) | 0.020 |
 | isTypeName (prepared/engine.mjs:13447) | 0.019 |
 | planSplitAnchors (prepared/engine.mjs:7126) | 0.019 |
 | getFeatureNodeIndex (prepared/engine.mjs:4368) | 0.019 |
-| set raw (prepared/engine.mjs:18996) | 0.016 |
+| set source (prepared/engine.mjs:18996) | 0.016 |
 | flushPresenceTemplates (prepared/engine.mjs:5870) | 0.016 |
 | get name (prepared/engine.mjs:18969) | 0.016 |
 | get nullable (prepared/engine.mjs:18951) | 0.016 |
@@ -422,7 +422,7 @@ OTHER 전체:
 | assertFieldNodeWritable (prepared/engine.mjs:12327) | 0.020 |
 | markSilent (prepared/engine.mjs:13818) | 0.020 |
 | dispatchSetValue (prepared/engine.mjs:18002) | 0.020 |
-| get raw (prepared/engine.mjs:18993) | 0.020 |
+| get source (prepared/engine.mjs:18993) | 0.020 |
 | prepareHostWheelPlan (prepared/engine.mjs:11966) | 0.020 |
 | get children (prepared/engine.mjs:18987) | 0.020 |
 | projectIdentity (prepared/engine.mjs:9067) | 0.020 |
@@ -439,7 +439,7 @@ OTHER 전체:
 | delete (prepared/engine.mjs:18846) | 0.015 |
 | staticSpec (prepared/engine.mjs:9487) | 0.015 |
 | RegExp: ^(0\|[1-9]\d*)$ (V8:0) | 0.015 |
-| assembleRaw (prepared/engine.mjs:8893) | 0.013 |
+| assembleSource (prepared/engine.mjs:8893) | 0.013 |
 | prepareSourcePruner (prepared/engine.mjs:15657) | 0.012 |
 | write (packages/canard/schema-form/architecture/verification/branch-switch/tools/b9-0/operation.mjs:26) | 0.012 |
 | get rootNode (prepared/engine.mjs:18963) | 0.012 |
@@ -469,7 +469,7 @@ OTHER 전체:
 | prepareGateSelection (prepared/engine.mjs:12444) | 0.007 |
 | get hasSplitOwners (prepared/engine.mjs:5398) | 0.004 |
 | get name (prepared/engine.mjs:18969) | 0.004 |
-| get undeclaredValues (prepared/engine.mjs:18999) | 0.004 |
+| get extras (prepared/engine.mjs:18999) | 0.004 |
 | (anonymous) (prepared/engine.mjs:11850) | 0.004 |
 | compareDeclarations (prepared/engine.mjs:1726) | 0.004 |
 | get schemaType (prepared/engine.mjs:18939) | 0.004 |
@@ -480,7 +480,7 @@ OTHER 전체:
 | (anonymous) (prepared/engine.mjs:11849) | 0.004 |
 | (anonymous) (prepared/engine.mjs:12135) | 0.004 |
 | deliverChainRecords (prepared/engine.mjs:17300) | 0.004 |
-| set raw (prepared/engine.mjs:18996) | 0.004 |
+| set source (prepared/engine.mjs:18996) | 0.004 |
 | isTypeName (prepared/engine.mjs:13447) | 0.003 |
 
 single-flat-1000/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대역 중심 78.900, 103.321, 111.333 µs.
@@ -593,7 +593,7 @@ OTHER 전체:
 | delete (prepared/engine.mjs:18846) | 0.004 |
 | isMember (prepared/engine.mjs:9025) | 0.004 |
 | isTypeName (prepared/engine.mjs:13447) | 0.004 |
-| get raw (prepared/engine.mjs:18993) | 0.004 |
+| get source (prepared/engine.mjs:18993) | 0.004 |
 | get rootNode (prepared/engine.mjs:18963) | 0.004 |
 | setValue (prepared/engine.mjs:19068) | 0.004 |
 | clearFieldNodeChanges (prepared/engine.mjs:7729) | 0.004 |

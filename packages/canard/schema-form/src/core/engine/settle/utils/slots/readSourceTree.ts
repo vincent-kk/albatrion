@@ -11,13 +11,13 @@ import type { SettlementContext } from '../../types/settlement';
 import { isPlain } from '../input/isPlain';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readInactiveSlotSource } from './readInactiveSlotSource';
-import { readSlotRawTree } from './readSlotRawTree';
+import { readSlotSourceTree } from './readSlotSourceTree';
 
 /**
- * Compose one live item's raw tree with sources retained at gated-out paths.
+ * Compose one live item's source tree with sources retained at gated-out paths.
  * @param node - Live or detached occurrence whose source channels are read
  * @param context - Settlement containing retained sources beneath the item
- * @returns Raw tree, retaining every array slot; undefined for an empty-source
+ * @returns Source tree, retaining every array slot; undefined for an empty-source
  * object or leaf; detached occurrences use their frozen source channels
  */
 export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
@@ -25,9 +25,9 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   if (node.detached)
-    return readSlotRawTree(node.blueprintNode, node, undefined);
-  if (node.raw !== undefined || node.behavior.strategy === 'terminal')
-    return node.raw;
+    return readSlotSourceTree(node.blueprintNode, node, undefined);
+  if (node.source !== undefined || node.behavior.strategy === 'terminal')
+    return node.source;
   if (node.behavior.type === 'array') {
     const slots: unknown[] = [];
     let tailStart = 0;
@@ -35,8 +35,8 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
       const candidates = getItemEntries(node.blueprintNode, index);
       let value: unknown;
       if (candidates.length === 0)
-        value = isArray(node.undeclaredValues)
-          ? node.undeclaredValues[index - tailStart]
+        value = isArray(node.extras)
+          ? node.extras[index - tailStart]
           : undefined;
       else {
         tailStart++;
@@ -49,8 +49,8 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
     }
     return slots;
   }
-  const value: Dictionary<unknown> = isPlain(node.undeclaredValues)
-    ? { ...node.undeclaredValues }
+  const value: Dictionary<unknown> = isPlain(node.extras)
+    ? { ...node.extras }
     : {};
   let found = Object.keys(value).length > 0;
   for (const entry of node.blueprintNode.childEntries) {

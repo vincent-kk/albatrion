@@ -87,7 +87,7 @@ S1은 모든 테이블 단계의 버킷 판정을 독립 식 평가와 비교합
 | discriminator intersected values, negative zero and null schema branch | 52 | 52 | 52 | 52 |
 | FRAGMENT048 false front short circuits a throwing rear and preserves exits | 32 | 32 | 32 | 32 |
 | pending throwing exit followed by derived discriminator transition | 42 | 42 | 42 | 42 |
-| overlay omitEmpty and root host schema changes without key raw changes | 18 | 18 | 18 | 18 |
+| overlay omitEmpty and root host schema changes without key source changes | 18 | 18 | 18 | 18 |
 | same-wheel default and derived key changes are visible at original sites | 96 | 92 | 92 | 76 |
 | two shared hosts, array occurrences and replacement reindexing | 320 | 320 | 320 | 320 |
 | wrong-kind ancestors, hidden extras and current host identity replacement | 114 | 114 | 114 | 114 |
@@ -108,7 +108,7 @@ S1은 모든 테이블 단계의 버킷 판정을 독립 식 평가와 비교합
 | S3 fixed-start positive-cycle control | 54 | 54 | 54 | 54 |
 | S4 two distinct dependencies on one host | 24 | 24 | 24 | 24 |
 | S5 nested dependency | 10 | 10 | 10 | 10 |
-| S5 overlay changes projection without changing raw | 42 | 42 | 42 | 42 |
+| S5 overlay changes projection without changing source | 42 | 42 | 42 | 42 |
 | S6 unrelated key has no host wheel | 12 | 12 | 12 | 12 |
 | S6 validator if gate keeps its confirmation | 12 | 12 | 12 | 12 |
 

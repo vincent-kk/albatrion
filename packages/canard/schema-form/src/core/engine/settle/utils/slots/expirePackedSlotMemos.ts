@@ -7,12 +7,12 @@ import { getSlotSource } from './getSlotSource';
 
 /**
  * End independent entry lifetimes folded into a candidate-free packed array.
- * @param source - Departing array with its immutable current child sources
+ * @param instance - Departing array with its immutable current child sources
  * @param overlay - Final policy patch and explicit independent descendant writes
  * @returns Nothing; previously returned frozen views retain their entry references
  */
 export const expirePackedSlotMemos = <Self extends FieldNodeRecord<Self>>(
-  source: Self,
+  instance: Self,
   overlay: Optional<InactiveSlotOverlay>,
 ): void => {
   const clear = (
@@ -23,19 +23,19 @@ export const expirePackedSlotMemos = <Self extends FieldNodeRecord<Self>>(
     if (patch) patch.valueMemo = undefined;
     for (const entry of getSlotEntries(node, patch)) {
       const child = getSlotSource(node, entry, patch);
-      clear(child.source, child.overlay);
+      clear(child.instance, child.overlay);
     }
   };
-  for (const entry of getSlotEntries(source, overlay)) {
+  for (const entry of getSlotEntries(instance, overlay)) {
     if (
       entry.node.hasCandidateDescendants ||
-      getItemEntries(source.blueprintNode, Number(entry.name)).length > 1 ||
+      getItemEntries(instance.blueprintNode, Number(entry.name)).length > 1 ||
       (overlay?.children?.has(entry) &&
         overlay.children.get(entry) !==
-          source.retainedSourceOverlay?.children?.get(entry))
+          instance.retainedSourceOverlay?.children?.get(entry))
     )
       continue;
-    const child = getSlotSource(source, entry, overlay);
-    clear(child.source, child.overlay);
+    const child = getSlotSource(instance, entry, overlay);
+    clear(child.instance, child.overlay);
   }
 };

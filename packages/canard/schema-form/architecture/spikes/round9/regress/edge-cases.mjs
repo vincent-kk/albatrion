@@ -10,7 +10,7 @@ for (const initial of [{}, { x: 'D' }]) {
     x: { default: 'D', '&clearValue': G => G.x === 'D' },
   } }, initial);
   eq(root.settle.status, 'stable', 'clear event does not retract itself when deletion falsifies its expression');
-  eq(root.find('/x').raw, undefined, 'self-dependent clear leaves missing');
+  eq(root.find('/x').source, undefined, 'self-dependent clear leaves missing');
 }
 {
   const root = buildSchema({ type: 'object', properties: { on: {} }, allOf: [{
@@ -18,9 +18,9 @@ for (const initial of [{}, { x: 'D' }]) {
       group: { type: 'object', properties: { x: { default: 'D' } } },
     },
   }] }, { on: false });
-  eq(root.find('/group/x').raw, undefined, 'inactive fragment descendants are not born');
+  eq(root.find('/group/x').source, undefined, 'inactive fragment descendants are not born');
   L.write(root.find('/on'), true);
-  eq(root.find('/group/x').raw, 'D', 'activation creates descendants');
+  eq(root.find('/group/x').source, 'D', 'activation creates descendants');
 }
 {
   const root = buildSchema({ type: 'object', properties: {
@@ -28,7 +28,7 @@ for (const initial of [{}, { x: 'D' }]) {
       properties: { x: { default: 'D' } } },
   } }, { clear: false, group: { x: 'loaded' } });
   L.write(root.find('/clear'), true);
-  eq(root.find('/group/x').raw, undefined, 'cleared object descendants are not refilled');
+  eq(root.find('/group/x').source, undefined, 'cleared object descendants are not refilled');
   eq(L.valueOf(root).group, undefined, 'cleared object emits no value');
 }
 {
@@ -37,7 +37,7 @@ for (const initial of [{}, { x: 'D' }]) {
     group: { type: 'object', properties: { x: { default: 'D' } } },
   } }, { group: { x: 'loaded' } });
   L.write(root.find('/src'), 'edge');
-  eq(root.find('/group/x').raw, undefined, 'automatic overwrite is not a caller load or fragment birth');
+  eq(root.find('/group/x').source, undefined, 'automatic overwrite is not a caller load or fragment birth');
 }
 {
   const root = buildSchema({ type: 'object', properties: { kind: {} }, allOf: [{
@@ -54,7 +54,7 @@ for (const order of [['derived', 'injectTo', 'clearValue'], ['clearValue', 'inje
   const root = buildSchema({ type: 'object', properties: {
     src: {}, x: { default: 'D', '&derived': { from: '/src', map: v => v * 2 }, '&clearValue': true },
   } }, { src: 2, x: 'loaded' });
-  eq(root.find('/x').raw, order[0] === 'derived' ? undefined : 4, 'stage order includes clearValue');
+  eq(root.find('/x').source, order[0] === 'derived' ? undefined : 4, 'stage order includes clearValue');
 }
 for (const combine of ['and-or', 'nearest']) {
   L.setSwitches({ ...L.NEW_SWITCHES, CONTROL_COMBINE: combine });
@@ -62,7 +62,7 @@ for (const combine of ['and-or', 'nearest']) {
     x: { default: 'plain', '&default': () => 'alias', '&readOnly': true,
       control: { default: () => 'control', readOnly: false, disabled: false } },
   } }, {}, { form: { readOnly: true } });
-  eq(root.find('/x').raw, 'control', 'control.default wins over &default and default');
+  eq(root.find('/x').source, 'control', 'control.default wins over &default and default');
   eq(root.find('/x').controls.readOnly, combine === 'and-or', 'Form readOnly participates');
   eq(root.find('/x').controls.disabled, combine === 'and-or', 'root disabled participates');
 }
@@ -87,9 +87,9 @@ L.setSwitches(L.NEW_SWITCHES);
   const schema = { type: 'object', properties: { on: {}, x: { default: 'base' } },
     allOf: [{ '&active': G => G.on === true, properties: { x: { '&default': () => 'fragment' } } }] };
   const root = buildSchema(schema, { on: true });
-  eq(root.find('/x').raw, 'fragment', 'active expression default wins over base default');
+  eq(root.find('/x').source, 'fragment', 'active expression default wins over base default');
   L.write(root.find('/x'), undefined);
   L.write(root.find('/on'), false); L.write(root.find('/on'), true);
-  eq(root.find('/x').raw, undefined, 'an unconditional node does not become new when an overlay turns on');
+  eq(root.find('/x').source, undefined, 'an unconditional node does not become new when an overlay turns on');
 }
 console.log(JSON.stringify({ edgeCases: checks, passed: true }));

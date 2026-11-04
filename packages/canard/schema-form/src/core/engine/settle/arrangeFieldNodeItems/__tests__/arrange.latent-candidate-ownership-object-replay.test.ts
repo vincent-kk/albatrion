@@ -112,11 +112,11 @@ it.each<ReplayCase>([
     expect(moved.local).toEqual(expectedMoved);
     expect(moved.emit).toEqual(expectedMoved);
     if (destination === 'declared') {
-      expect(getDispatchNode(moved, 'v').raw).toBe(123);
-      expect(moved.undeclaredValues).toEqual(extras ? { extra: 9 } : undefined);
+      expect(getDispatchNode(moved, 'v').source).toBe(123);
+      expect(moved.extras).toEqual(extras ? { extra: 9 } : undefined);
     } else {
       expect(moved.structure?.v).toBeUndefined();
-      expect(moved.undeclaredValues).toEqual(expectedMoved);
+      expect(moved.extras).toEqual(expectedMoved);
     }
     expect(root.local).toEqual(expected);
     expect(root.emit).toEqual(expected);

@@ -15,7 +15,7 @@ import {
 } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 import { readFieldNodeDefaultValue } from '../../utils/loadValues/readFieldNodeDefaultValue';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
@@ -225,7 +225,7 @@ describe('array insert', () => {
           dispatchInsert(root, 1, 'x'),
         );
         expect(ignored.result).toBe(0);
-        expect(ignored.root.raw).toEqual(host);
+        expect(ignored.root.source).toEqual(host);
         expect(ignored.deliveredPaths).toEqual([]);
         expect(ignored.changes).toBe(0);
         const inserted = runArrayWrite(STRINGS, host, (root) =>
@@ -236,7 +236,7 @@ describe('array insert', () => {
         );
         expect(inserted.result).toBe(1);
         expect(inserted.root.local).toEqual(['x']);
-        expect(inserted.root.raw).toBeUndefined();
+        expect(inserted.root.source).toBeUndefined();
         expect(inserted.root.runtime.misfitPaths.size).toBe(0);
         expect(inserted.root.emit).toEqual(pushed.root.emit);
         expect(inserted.deliveredPaths).toEqual(pushed.deliveredPaths);
@@ -256,7 +256,7 @@ describe('array insert', () => {
         dispatchInsert(root, 1, 'x'),
       );
       expect(run.result).toBe(3);
-      expect(run.root.raw).toEqual(['a', 'x', 'b']);
+      expect(run.root.source).toEqual(['a', 'x', 'b']);
       expect(input).toEqual(['a', 'b']);
       const whole = runArrayWrite(terminal, input, (root) =>
         dispatchSetValue(root, ['a', 'x', 'b'], WriteOption.Overwrite),
@@ -275,14 +275,14 @@ describe('array insert', () => {
       const pushed = runArrayWrite(terminal, input, (root) =>
         dispatchPush(root, 'x'),
       );
-      expect(tail.root.raw).toEqual(pushed.root.raw);
+      expect(tail.root.source).toEqual(pushed.root.source);
       expect(tail.result).toBe(pushed.result);
       const wrongKind = runArrayWrite(terminal, 7, (root) => [
         dispatchInsert(root, 1, 'x'),
         dispatchInsert(root, 0, 'x'),
       ]);
       expect(wrongKind.result).toEqual([0, 1]);
-      expect(wrongKind.root.raw).toEqual(['x']);
+      expect(wrongKind.root.source).toEqual(['x']);
     });
     it('NODE-044 ignores a detached host insert', () => {
       const { root } = createTestTree({
@@ -316,7 +316,7 @@ describe('array insert', () => {
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 9, value: 'y' }),
       ).toBe(2);
-      expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a', 'b']);
+      expect(readRetainedSlotSource(root, '/list', 'array')).toEqual(['a', 'b']);
       writeFieldNode(
         root.structure!.show,
         true,

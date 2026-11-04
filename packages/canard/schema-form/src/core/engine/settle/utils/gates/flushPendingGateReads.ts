@@ -111,13 +111,13 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     const local = read === path || isDescendantPath(read, path);
     for (const host of context.pendingOutputs ?? []) {
       // A read inside the entry walks the entry node that the host holds before its subtree gates run.
-      if (local && host.raw === undefined) continue;
+      if (local && host.source === undefined) continue;
       if (read === host.path) flushPendingOutput(host, context);
       else if (isDescendantPath(read, host.path)) {
         const name = readPointerSegment(read.slice(host.path.length + 1), 0);
         if (typeof name !== 'string') continue;
         if (
-          host.raw !== undefined ||
+          host.source !== undefined ||
           !host.structure ||
           (host.behavior.type !== 'array' &&
           Object.getPrototypeOf(host.structure) === null

@@ -7,8 +7,8 @@ import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 describe('settled exit policy layers', () => {
   it('WRITE-031 node layer overrides the Form clear policy', () => {
@@ -32,7 +32,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-031 fields layer clears a child when Form keeps it', () => {
@@ -127,7 +127,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-032 fragment turning off applies to a departing declaration', () => {
@@ -162,9 +162,9 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(root.structure?.addr?.structure?.city?.raw).toBe('C');
+    expect(root.structure?.addr?.structure?.city?.source).toBe('C');
     expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
-    expect(root.structure?.addr?.undeclaredValues).toEqual({ extra: 'E' });
+    expect(root.structure?.addr?.extras).toEqual({ extra: 'E' });
   });
 
   it('WRITE-033 fields subtree policy reaches exiting descendants', () => {
@@ -199,7 +199,7 @@ describe('settled exit policy layers', () => {
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
-    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
+    expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-034 fragment latent policy reaches previously absent descendants', () => {
@@ -249,7 +249,7 @@ describe('settled exit policy layers', () => {
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
-    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
+    expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-034 latent fields entry keep overrides a departing parent clear', () => {
@@ -287,7 +287,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
+    expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-038 previous commit expression ignores the exiting write', () => {
@@ -351,7 +351,7 @@ describe('settled exit policy layers', () => {
     const calls = explode.mock.calls.length;
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(explode).toHaveBeenCalledTimes(calls);
-    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-038 removes an exited occurrence expression baseline after using it', () => {
@@ -402,7 +402,7 @@ describe('settled exit policy layers', () => {
     });
     loadFieldNodeAtMount(root, { hidden: 'held' }, WriteOption.Overwrite);
     expect(root.structure?.hidden?.isVisible).toBe(false);
-    expect(root.structure?.hidden?.raw).toBe('held');
+    expect(root.structure?.hidden?.source).toBe('held');
   });
 
   it('FRAGMENT-050 exit not edge evaluates no departing fragment value rule', () => {

@@ -5,7 +5,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
@@ -172,12 +172,12 @@ describe('array legacy contract ports', () => {
       items: { type: 'string' },
     });
     expect((root as ArrayNode).push()).toBe(1);
-    expect(root.children?.map((item) => item.raw)).toEqual([undefined]);
+    expect(root.children?.map((item) => item.source)).toEqual([undefined]);
     expect(root.value).toEqual([null]);
     expect(root.outputValue).toEqual([null]);
   });
 
-  it('GOAL-074 restores omitTrailing slots from raw after branch reactivation', () => {
+  it('GOAL-074 restores omitTrailing slots from source after branch reactivation', () => {
     const { root } = makeRecordTree({
       type: 'object',
       properties: {
@@ -193,13 +193,13 @@ describe('array legacy contract ports', () => {
     root.setValue({ active: true, tail: ['a', null, null] });
     expect(root.outputValue).toEqual({ active: true, tail: ['a'] });
     root.find('/active')?.setValue(false);
-    expect(readRetainedSlotRaw(root, '/tail', 'array')).toEqual([
+    expect(readRetainedSlotSource(root, '/tail', 'array')).toEqual([
       'a',
       null,
       null,
     ]);
     root.find('/active')?.setValue(true);
-    expect(root.find('/tail')?.children?.map((item) => item.raw)).toEqual([
+    expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
       null,
       null,

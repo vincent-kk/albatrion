@@ -9,18 +9,18 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
  * Tell whether a live array host admits a bounded tail verb (push or pop) without visiting its items.
  * Every condition is a fixed number of reads; the verb-specific position checks belong to the caller.
  * @param node - Write target of a public array verb, outside batch marking
- * @param allowUndeclared - Only append may admit a host with no item or prefix templates and an extras slot per item
+ * @param allowExtras - Only append may admit a host with no item or prefix templates and an extras slot per item
  * @returns Whether the settled static branch host retains every local and emitted position with matching children or append-only undeclared slots
  */
 export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  allowUndeclared = false,
+  allowExtras = false,
 ): boolean => {
   const runtime = node.runtime;
   const count = node.itemCount;
   const local = node.local;
   const extrasOnly =
-    allowUndeclared &&
+    allowExtras &&
     !node.blueprintNode.item &&
     !node.blueprintNode.prefixItems?.length;
   return !(
@@ -37,12 +37,12 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     node.inactiveSlotOverlays?.size ||
     node.inactiveSlotChildren?.size ||
     runtime.misfitPaths.size > 0 ||
-    node.raw !== undefined ||
+    node.source !== undefined ||
     (extrasOnly
       ? (node.children?.length ?? 0) !== 0 ||
-        (isArray(node.undeclaredValues) ? node.undeclaredValues.length : 0) !==
+        (isArray(node.extras) ? node.extras.length : 0) !==
           count
-      : node.undeclaredValues !== undefined ||
+      : node.extras !== undefined ||
         !node.blueprintNode.item ||
         (node.children?.length ?? 0) !== count) ||
     !isArray(local) ||

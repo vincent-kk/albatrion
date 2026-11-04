@@ -1,13 +1,13 @@
 import type { BlueprintSchema } from '../../../blueprint';
 
-/** A string whose gate can keep latent caller raw outside the emitted tree. */
+/** A string whose gate can keep latent caller source outside the emitted tree. */
 const gated = (active: string, defaultValue?: string): BlueprintSchema => ({
   type: 'string',
   ...(defaultValue === undefined ? {} : { default: defaultValue }),
   controls: { active },
 });
 
-/** Two dependent gates make c enter or leave without writing its raw value. */
+/** Two dependent gates make c enter or leave without writing its source value. */
 export const presenceHost = (withDefault = false): BlueprintSchema => ({
   type: 'object',
   properties: {
@@ -78,7 +78,7 @@ export const presenceStateSchema: BlueprintSchema = {
   },
 };
 
-/** Same-host relocation reads a late emitted sibling rather than caller raw. */
+/** Same-host relocation reads a late emitted sibling rather than caller source. */
 export const presenceRelocatedSchema: BlueprintSchema = {
   type: 'object',
   properties: {

@@ -35,7 +35,7 @@ import { canApplyArrayTail } from './canApplyArrayTail';
 
 /**
  * Apply a branch plan before calculation while paths are free to change.
- * The host's raw tree is composed only when a slot reads it: extras, a whole raw, or a removed or retained slot without a live node.
+ * The host's source tree is composed only when a slot reads it: extras, a whole source, or a removed or retained slot without a live node.
  * @param host - Live array occurrence whose positions the plan replaces
  * @param plan - Pure source-position proposal from the array behavior
  * @param context - One settlement's entered, perished, and changed-path facts
@@ -49,14 +49,14 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
-  // With an item template and no tuple positions, extras or whole raw, only a slot without a live node reads raw.
-  let rawSlots =
-    host.raw === undefined &&
+  // With an item template and no tuple positions, extras or whole source, only a slot without a live node reads source.
+  let sourceSlots =
+    host.source === undefined &&
     host.blueprintNode.item &&
     !host.blueprintNode.prefixItems?.length &&
-    host.undeclaredValues === undefined
+    host.extras === undefined
       ? undefined
-      : readRawSlots(host, context);
+      : readSourceSlots(host, context);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const removedIndex =
@@ -67,12 +67,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       ? undefined
       : removedItem
         ? removedItem.local
-        : (rawSlots ??= readRawSlots(host, context))[removedIndex];
+        : (sourceSlots ??= readSourceSlots(host, context))[removedIndex];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
     for (const item of host.children ?? []) registry.remove(item);
   const nextItems: Dictionary<Self> = Object.create(null);
-  const nextRaw: unknown[] = [];
+  const nextSource: unknown[] = [];
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();
   const created: { node: Self; value: unknown; moved: boolean }[] = [];
@@ -82,8 +82,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < plan.slots.length; index++) {
     const slot = plan.slots[index];
     const from = 'from' in slot ? slot.from : undefined;
-    const value = 'value' in slot ? slot.value : rawSlots?.[slot.from];
-    nextRaw.push(value);
+    const value = 'value' in slot ? slot.value : sourceSlots?.[slot.from];
+    nextSource.push(value);
     nextSnapshot.push('value' in slot ? slot.value : oldSnapshot[slot.from]);
     const candidates = getItemEntries(host.blueprintNode, index);
     const sourceCandidates =
@@ -128,9 +128,9 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       }
     }
     const source =
-      from === undefined || rawSlots
+      from === undefined || sourceSlots
         ? value
-        : (rawSlots = readRawSlots(host, context))[from];
+        : (sourceSlots = readSourceSlots(host, context))[from];
     if (from !== undefined && !old && !moved) destinations.set(from, index);
     if (old && moved) {
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
@@ -141,7 +141,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     }
     if (!entry) continue;
     if (candidates.length > 1) {
-      nextRaw[index] = source;
+      nextSource[index] = source;
       deferred = true;
       continue;
     }
@@ -212,8 +212,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     );
   }
   host.itemCount = plan.slots.length;
-  host.raw = undefined;
-  host.undeclaredValues = arrayExtras(host, nextRaw);
+  host.source = undefined;
+  host.extras = arrayExtras(host, nextSource);
   host.structure = nextItems;
   host.children = captureFieldNodeChange(
     host,
@@ -221,13 +221,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     Object.values(nextItems),
   );
   context.arrayCounts.set(host, oldCount);
-  context.changedRaw.add(host.path);
+  context.changedSource.add(host.path);
   context.changedNodes.add(host);
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
   if (deferred) {
     const distribution: Distribution = {
-      input: nextRaw,
+      input: nextSource,
       whole: false,
       automatic: false,
     };
@@ -260,15 +260,15 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
 };
 
 /**
- * Read the host's composed raw tree as slots.
+ * Read the host's composed source tree as slots.
  * @param host - Live array occurrence before its plan is applied
  * @param context - Settlement holding retained sources beneath the host
- * @returns Raw slots, or none when the tree is not an array
+ * @returns Source slots, or none when the tree is not an array
  */
-const readRawSlots = <Self extends FieldNodeRecord<Self>>(
+const readSourceSlots = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   context: SettlementContext<Self>,
 ): readonly unknown[] => {
-  const raw = readSourceTree(host, context);
-  return isArray(raw) ? raw : [];
+  const source = readSourceTree(host, context);
+  return isArray(source) ? source : [];
 };

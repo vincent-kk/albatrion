@@ -7,7 +7,7 @@ VALUE-006	getInactiveValues(path)	이긴 충돌 VALUE-029(소유자 답 12-8 셋
 VALUE-027	getInactiveValues(path)	이긴 충돌 VALUE-029(소유자 답 12-8 셋째: 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter inactiveValues)
 VALUE-027	N3	가리킴 바꿈 07-conclusions.md §6.2 N3 → SURFACE-050(값 읽기 이름 확정)
 VALUE-030	valueTypeMismatches: readonly string[]	이긴 충돌 SURFACE-061(확정 이름 typeMismatches: readonly string[])
-VALUE-037	valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
+VALUE-037	valueTypeMismatch = source !== undefined && !(source === null && nullable) && !isMemberOfEffectiveList(source)	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
 VALUE-037	valueTypeMismatch === false	이긴 충돌 SURFACE-061(확정 이름 typeMismatch로 읽음)
 WRITE-015	N1	가리킴 바꿈 07-conclusions 6.1·6.2의 N1 → SURFACE-004, SURFACE-039
 WRITE-019	getInactiveValues(path)	이긴 충돌 VALUE-029: 잠복 원본 열거의 이름을 충돌 줄의 규칙(노드마다 getter inactiveValues)으로 바꿈

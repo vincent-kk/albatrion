@@ -29,7 +29,7 @@ describe('TEST-077 union write paths', () => {
     });
     root.setValue({ a: 1, keep: 'retained' });
     root.find('/a')?.setValue('false');
-    expect(root.find('/a')?.raw).toBe(false);
+    expect(root.find('/a')?.source).toBe(false);
     expect(root.outputValue).toEqual({ a: false, keep: 'retained' });
   });
 
@@ -45,7 +45,7 @@ describe('TEST-077 union write paths', () => {
     );
     root.setValue({ a: false });
     root.find('/a')?.resetSubtree();
-    expect(root.find('/a')?.raw).toBe(42);
+    expect(root.find('/a')?.source).toBe(42);
     expect(root.outputValue).toEqual({ a: 42 });
   });
 
@@ -55,7 +55,7 @@ describe('TEST-077 union write paths', () => {
     const { root } = makeFieldNodeTree({ type: ['object', 'string'] });
     root.setValue(first);
     root.setValue(second, SetValueOption.Merge);
-    expect(root.raw).toBe(second);
+    expect(root.source).toBe(second);
     expect(root.value).toBe(second);
     expect(root.outputValue).toBe(second);
     expect(root.children).toBeNull();
@@ -65,7 +65,7 @@ describe('TEST-077 union write paths', () => {
     const value = [1, { a: 2 }];
     const { root } = makeFieldNodeTree({ type: ['array', 'string'] });
     root.setValue(value);
-    expect(root.raw).toBe(value);
+    expect(root.source).toBe(value);
     expect(root.outputValue).toBe(value);
     expect(root.children).toBeNull();
   });
@@ -76,7 +76,7 @@ describe('TEST-077 union write paths', () => {
       options: { trim: true },
     });
     root.setValue('  text  ');
-    expect(root.raw).toBe('  text  ');
+    expect(root.source).toBe('  text  ');
     expect(root.outputValue).toBe('  text  ');
     root.setValue(false);
     expect(root.outputValue).toBe(false);
@@ -123,7 +123,7 @@ describe('TEST-077 union write paths', () => {
       },
     });
     root.setValue({ source: '42' });
-    expect(root.find('/target')?.raw).toBe(42);
+    expect(root.find('/target')?.source).toBe(42);
     expect(root.find('/target')?.isMisfit).toBe(false);
   });
 
@@ -141,7 +141,7 @@ describe('TEST-077 union write paths', () => {
       },
     });
     root.setValue({ source: '42' });
-    expect(root.find('/target')?.raw).toBe(42);
+    expect(root.find('/target')?.source).toBe(42);
     expect(root.find('/target')?.isMisfit).toBe(false);
   });
   it('TEST-077 stage 07 (PR-7): finished string input applies trim', () => {
@@ -151,17 +151,17 @@ describe('TEST-077 union write paths', () => {
     });
     writeFieldNodeInput(root, ' 42 ');
     expect(isUnionNode(root)).toBe(true);
-    expect(root.raw).toBe(' 42 ');
+    expect(root.source).toBe(' 42 ');
     expect(root.outputValue).toBe(' 42 ');
     finishFieldNodeInput(root);
-    expect(root.raw).toBe('42');
+    expect(root.source).toBe('42');
     expect(root.value).toBe('42');
     expect(root.outputValue).toBe('42');
     expect(root.isMisfit).toBe(false);
 
     writeFieldNodeInput(root, 42);
     finishFieldNodeInput(root);
-    expect(root.raw).toBe(42);
+    expect(root.source).toBe(42);
     expect(root.outputValue).toBe(42);
     expect(root.isMisfit).toBe(false);
   });

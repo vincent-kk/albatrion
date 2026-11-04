@@ -4,9 +4,9 @@ import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createUnionFoldTree } from './fixtures/createUnionFoldTree';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
-describe('union fold pending exits and retained raw', () => {
+describe('union fold pending exits and retained source', () => {
   it.each([
     {
       from: 'left',
@@ -25,7 +25,7 @@ describe('union fold pending exits and retained raw', () => {
       other: 'union:3',
     },
   ])(
-    'isolates pending exits and restores $from and $to raw independently',
+    'isolates pending exits and restores $from and $to source independently',
     ({ from, to, first, second, own, other }) => {
       const { root } = createUnionFoldTree();
       loadFieldNodeAtMount(
@@ -39,8 +39,8 @@ describe('union fold pending exits and retained raw', () => {
         'callerPartial',
         WriteOption.Merge,
       );
-      expect(root.structure?.shared?.raw).toBeUndefined();
-      expect(readRetainedSlotRaw(root, '/shared', own)).toBe(first);
+      expect(root.structure?.shared?.source).toBeUndefined();
+      expect(readRetainedSlotSource(root, '/shared', own)).toBe(first);
       writeFieldNode(
         root.structure!.shared,
         second,
@@ -53,15 +53,15 @@ describe('union fold pending exits and retained raw', () => {
         'callerPartial',
         WriteOption.Merge,
       );
-      expect(root.structure?.shared?.raw).toBe(first);
-      expect(readRetainedSlotRaw(root, '/shared', other)).toBe(second);
+      expect(root.structure?.shared?.source).toBe(first);
+      expect(readRetainedSlotSource(root, '/shared', other)).toBe(second);
       writeFieldNode(
         root,
         { [from]: false, [to]: true },
         'callerPartial',
         WriteOption.Merge,
       );
-      expect(root.structure?.shared?.raw).toBe(second);
+      expect(root.structure?.shared?.source).toBe(second);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
   );
@@ -70,7 +70,7 @@ describe('union fold pending exits and retained raw', () => {
     { from: 'left', to: 'right', first: 17, second: true },
     { from: 'right', to: 'left', first: true, second: 29 },
   ])(
-    'keeps discriminator $from and $to raw in their own folds',
+    'keeps discriminator $from and $to source in their own folds',
     ({ from, to, first, second }) => {
       const { root } = createUnionFoldTree({ discriminator: true });
       loadFieldNodeAtMount(
@@ -81,7 +81,7 @@ describe('union fold pending exits and retained raw', () => {
       const original = root.structure!.shared.blueprintNode;
       writeFieldNode(root.structure!.tag, to, 'input', WriteOption.Overwrite);
       expect(root.structure?.shared?.blueprintNode).not.toBe(original);
-      expect(root.structure?.shared?.raw).toBeUndefined();
+      expect(root.structure?.shared?.source).toBeUndefined();
       writeFieldNode(
         root.structure!.shared,
         second,
@@ -89,9 +89,9 @@ describe('union fold pending exits and retained raw', () => {
         WriteOption.Overwrite,
       );
       writeFieldNode(root.structure!.tag, from, 'input', WriteOption.Overwrite);
-      expect(root.structure?.shared?.raw).toBe(first);
+      expect(root.structure?.shared?.source).toBe(first);
       writeFieldNode(root.structure!.tag, to, 'input', WriteOption.Overwrite);
-      expect(root.structure?.shared?.raw).toBe(second);
+      expect(root.structure?.shared?.source).toBe(second);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
   );
@@ -112,14 +112,14 @@ describe('union fold pending exits and retained raw', () => {
     );
     expect(detached.detached).toBe(true);
     writeFieldNode(detached, 31, 'callerReplace', WriteOption.Overwrite);
-    expect(root.structure?.shared?.raw).toBeUndefined();
-    expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(17);
+    expect(root.structure?.shared?.source).toBeUndefined();
+    expect(readRetainedSlotSource(root, '/shared', 'union:3')).toBe(17);
     writeFieldNode(
       root,
       { left: true, right: false },
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(root.structure?.shared?.raw).toBe(17);
+    expect(root.structure?.shared?.source).toBe(17);
   });
 });

@@ -37,7 +37,7 @@ export type ArrayArrangePlan =
       result: ArrayArrangeResult;
     }
   | { kind: 'update'; index: number; value: unknown }
-  | { kind: 'raw'; raw: readonly unknown[]; result: ArrayArrangeResult };
+  | { kind: 'source'; source: readonly unknown[]; result: ArrayArrangeResult };
 
 /** Pure calculation slots shared across nodes of one kind and strategy. */
 export interface Behavior<Self = unknown> {
@@ -84,5 +84,5 @@ export type FieldNodeFactory<Self> = (
   entry: BlueprintChildEntry | BlueprintNode,
   parent: Nullable<Self>,
   runtime: FieldNodeRuntime<Self>,
-  source?: Self,
+  instance?: Self,
 ) => Self;

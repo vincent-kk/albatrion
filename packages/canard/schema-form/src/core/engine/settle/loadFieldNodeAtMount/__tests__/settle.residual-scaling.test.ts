@@ -7,7 +7,7 @@ import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import type { SettlementContext } from '../../types/settlement';
 import { registerRecalculation } from '../../utils/dependencies/registerRecalculation';
 import { DirtyPathSet } from '../../utils/scratch/DirtyPathSet';
-import * as sourcePresence from '../../utils/transition/isMissingRaw';
+import * as sourcePresence from '../../utils/transition/isMissingSource';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as staticFirstLoad from '../utils/staticFirst/canLoadStaticFirstTree';
 
@@ -30,7 +30,7 @@ it.each([3, 5])(
             ),
           };
     const { root } = createTestTree(schema(depth));
-    const missing = vi.spyOn(sourcePresence, 'isMissingRaw');
+    const missing = vi.spyOn(sourcePresence, 'isMissingSource');
     vi.spyOn(staticFirstLoad, 'canLoadStaticFirstTree').mockReturnValue(false);
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
     expect(
@@ -56,7 +56,7 @@ it.each([4, 16, 64])(
     registerRecalculation({
       root,
       dirtyPaths,
-      changedRaw: new Set(),
+      changedSource: new Set(),
       hasGates: false,
     } as unknown as SettlementContext<typeof root>);
     expect(dirtyPaths.size).toBe(depth + 1);
@@ -85,7 +85,7 @@ it('repairs ancestors of an unresolved dirty path on the next registration', () 
   const context = {
     root,
     dirtyPaths,
-    changedRaw: new Set(),
+    changedSource: new Set(),
     hasGates: false,
   } as unknown as SettlementContext<typeof root>;
   registerRecalculation(context);

@@ -117,7 +117,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       key === undefined ? undefined : context.pendingExits.get(key);
     const retained =
       !priorChild && !pending ? getSlotSource(node, entry) : undefined;
-    const slotSource = retained?.source;
+    const slotSource = retained?.instance;
     const slotOverlay = retained?.overlay;
     const child =
       priorChild ??

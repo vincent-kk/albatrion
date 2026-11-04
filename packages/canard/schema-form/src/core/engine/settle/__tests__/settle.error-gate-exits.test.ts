@@ -8,8 +8,8 @@ import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 // filid:contract settle-gates-error-exits
 describe('throwing gate exit isolation', () => {
@@ -62,7 +62,7 @@ describe('throwing gate exit isolation', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.k, false, 'input', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/h/d', 'string')).toBe('D');
+    expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
     root.runtime.context = {
       gate: () => {
         throw new Error('gate');
@@ -72,7 +72,7 @@ describe('throwing gate exit isolation', () => {
       writeFieldNode(root, { z: 'go' }, 'callerPartial', WriteOption.Merge),
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.h).toBeUndefined();
-    expect(readRetainedSlotRaw(root, '/h/d', 'string')).toBe('D');
+    expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
   });
 
   it('ERROR-125 throwing gate preserves its exit while another clears and derive runs', () => {
@@ -122,8 +122,8 @@ describe('throwing gate exit isolation', () => {
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.bad).toBeUndefined();
     expect(root.structure?.other).toBeUndefined();
-    expect(readRetainedSlotRaw(root, '/bad/child', 'string')).toBe('B');
+    expect(readRetainedSlotSource(root, '/bad/child', 'string')).toBe('B');
     expect(hasRetainedSlotOwnSource(root, '/other', 'string')).toBe(false);
-    expect(root.structure?.target?.raw).toBe('C');
+    expect(root.structure?.target?.source).toBe('C');
   });
 });

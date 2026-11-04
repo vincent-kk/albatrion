@@ -27,14 +27,14 @@
 ### P2-2 (확인됨) 쓰기 시점 후퇴 조건 다수와 계산 뒤 후퇴 경로에 시험이 없습니다
 
 - 근거: settle/DETAIL.md:356은 split host 후퇴와 "재결합하지 않은 공유 occurrence의 표는 사용하지 않습니다"를 검증 기준으로 적습니다. 그러나 src/core/engine/settle/__tests__/settle.local-wheel-resolution.test.ts:40-99는 외부 소유자, load, batch, distributedInputs, pathChanges, cause, pending exit 안팎만 다룹니다. 다음 절에는 시험이 없습니다.
-  - src/core/engine/settle/utils/settlement/resolveSettlementScope.ts의 21행 loadScope, 22행 writeEpoch, 28-29행 예산 초과, 30행 occurrence 경로 불일치, 35행 detached 또는 terminal 호스트, 39-40행 범위 밖 changedRaw, 41-47행 split bucket, 51-52행 wrong-kind 조상입니다.
+  - src/core/engine/settle/utils/settlement/resolveSettlementScope.ts의 21행 loadScope, 22행 writeEpoch, 28-29행 예산 초과, 30행 occurrence 경로 불일치, 35행 detached 또는 terminal 호스트, 39-40행 범위 밖 changedSource, 41-47행 split bucket, 51-52행 wrong-kind 조상입니다.
   - src/core/engine/settle/utils/compute/computeSettlement.ts:20-24(파생과 전이 재진입 때의 사전 재확인)와 26-30(국소 바퀴 뒤 재확인)의 루트 후퇴입니다. 이 경로는 국소 바퀴가 이미 소비한 dirty 집합 위에서 루트 바퀴를 다시 도는 유일한 곳입니다.
 - 실패 시나리오: 이 절 가운데 하나를 지우거나 조건을 뒤집어도 새 시험은 모두 통과합니다. seiri_test-validity 4절과 DETAIL의 검증 주장에 어긋납니다.
 - 추가 위험(가능성): 계산 뒤 후퇴는 한 번도 시험되지 않았습니다. 코드를 따라가면 branchless이면서 게이트가 없는 청사진에서는 이 후퇴가 verify 모드에서 S6 단언으로 던질 수 있습니다. computeStableNode가 국소 호스트를 consume하면 부모의 children 간선은 남습니다(scratch/DirtyPathSet.ts:285-296). 이어지는 루트 바퀴의 dirtyChildren(부모)이 소비된 호스트를 돌려주고, compute/dirtyChildren.ts:33-41의 S6 검사가 던집니다. 출하 모드에서는 소비된 자식이 바로 돌아오므로 해가 없습니다.
 - 수정 명세:
   1. settle.local-wheel-resolution.test.ts에 다음 경우를 더합니다. 모두 기존 setup()을 씁니다.
      - `context.writeEpoch = 1;`이면 root입니다.
-     - `context.changedRaw.add('/sibling');`이면 root입니다.
+     - `context.changedSource.add('/sibling');`이면 root입니다.
      - `context.wrongKindHosts.add(root);`이면 root이고, `context.wrongKindHosts.add(h);`이면 h입니다(현재 동작 고정).
      - `context.splitHitEpochs = new Map([[{ hostPath: '', firstRank: 0, ranksByName: new Map(), runs: [], runByName: new Map() }, 1]]);`이면 root이고, 같은 객체의 hostPath가 '/h/x'이면 h입니다.
   2. settle.local-wheel-compute.test.ts 첫 시험의 fixture(h/n/x와 sibling/stable)로 계산 뒤 후퇴 시험을 더합니다.
@@ -56,7 +56,7 @@
 
 ### P3-2 (가능성) 국소 바퀴 뒤 재확인이 범위 밖 shape 표시를 보지 않고, 증인도 그것을 다시 일으키지 않습니다
 
-- 근거: computeSettlement.ts:26의 재확인은 소유자, changedRaw, split, pending exit, wrong-kind, 실패만 봅니다. registerPresenceChanges.ts:134-170은 소유자를 늘리지 않고 H 위 조상을 shapeDirtyPaths에 넣을 수 있습니다. 루트 경로라면 그 조상이 full wheel로 승격되지만(computeNode.ts:121-151) 국소 경로는 무시합니다. verifyLocalSettlement는 이미 정착한 트리 위에서 원래 입력만 다시 넣으므로, 바퀴 도중의 presence 등록이 다시 일어나지 않아 이 차이에 둔감합니다. 정적 닫힘이 이 경우를 막는다고 보지만 그 연결을 증명하는 시험은 없습니다.
+- 근거: computeSettlement.ts:26의 재확인은 소유자, changedSource, split, pending exit, wrong-kind, 실패만 봅니다. registerPresenceChanges.ts:134-170은 소유자를 늘리지 않고 H 위 조상을 shapeDirtyPaths에 넣을 수 있습니다. 루트 경로라면 그 조상이 full wheel로 승격되지만(computeNode.ts:121-151) 국소 경로는 무시합니다. verifyLocalSettlement는 이미 정착한 트리 위에서 원래 입력만 다시 넣으므로, 바퀴 도중의 presence 등록이 다시 일어나지 않아 이 차이에 둔감합니다. 정적 닫힘이 이 경우를 막는다고 보지만 그 연결을 증명하는 시험은 없습니다.
 - 수정 명세(방어, 선택): computeSettlement.ts:25 앞에서 H의 엄격한 조상 가운데 이미 shape dirty인 경로를 기록하고, 26행 뒤에 새로 표시된 엄격한 조상이 있으면 루트로 후퇴합니다. 비용은 국소 쓰기마다 깊이에 비례합니다. 제품 바이트 변경이므로 P3-1과 같이 판단합니다.
 
 ### P3-3 gate-table 국소 짝 비교가 commits 절 전체를 뺍니다

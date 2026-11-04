@@ -8,17 +8,17 @@ import { flushPendingOutput } from '../output/flushPendingOutput';
 import { getGateRegistry } from './getGateRegistry';
 
 /**
- * Read a publication only after its changed raw has been calculated.
+ * Read a publication only after its changed source has been calculated.
  * @param node - Record whose emission is requested
- * @param context - Raw changes and calculated records for this settlement
- * @returns Published emission, or undefined while its changed raw is pending
+ * @param context - Source changes and calculated records for this settlement
+ * @returns Published emission, or undefined while its changed source is pending
  */
 const projectedEmission = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown =>
   node.emit === undefined ||
-  (context.changedRaw.has(node.path) && !context.changedNodes.has(node))
+  (context.changedSource.has(node.path) && !context.changedNodes.has(node))
     ? undefined
     : node.emit;
 
@@ -45,13 +45,13 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
     if (typeof name !== 'string') return undefined;
     if (
       node.behavior.strategy === 'branch' &&
-      node.raw !== undefined &&
+      node.source !== undefined &&
       flushPendingOutput(node, context)
     )
       value = projectedEmission(node, context);
     if (
       node.behavior.strategy === 'branch' &&
-      node.raw !== undefined &&
+      node.source !== undefined &&
       (node.parent !== null ||
         value === null ||
         typeof value !== 'object' ||
@@ -85,11 +85,11 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
         const declared = getDeclaredChildNames(node.blueprintNode);
         if (
           !declared.has(name) &&
-          node.undeclaredValues !== null &&
-          typeof node.undeclaredValues === 'object' &&
-          hasOwnProperty(node.undeclaredValues, name)
+          node.extras !== null &&
+          typeof node.extras === 'object' &&
+          hasOwnProperty(node.extras, name)
         )
-          value = Reflect.get(node.undeclaredValues, name);
+          value = Reflect.get(node.extras, name);
         else return undefined;
       }
     }

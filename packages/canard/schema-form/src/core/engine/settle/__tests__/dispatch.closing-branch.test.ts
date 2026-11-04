@@ -12,7 +12,7 @@ import { dispatchPush } from '../../write';
 import { dispatchSetValue } from '../../write';
 import { readFieldNodeInactiveValues } from '../utils/detached/readFieldNodeInactiveValues';
 import { getDispatchNode as getDispatchChild } from './fixtures/getDispatchNode';
-import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
 /** A kind discriminator with a tag list in one branch (07c composite.finding-batch-push-into-closing-branch). */
 const listSchema = {
@@ -40,7 +40,7 @@ const mountList = () => {
 const closeAndReopen = (
   write: (root: DispatchTestNode) => void,
 ): {
-  closedRaw: unknown;
+  closedSource: unknown;
   closedSize: number;
   reopened: unknown;
   reopenedSize: number;
@@ -51,11 +51,11 @@ const closeAndReopen = (
   write(root);
   const commits = (runtime.commitNumber ?? 0) - before;
   const closed = readFieldNodeInactiveValues(root);
-  const closedRaw = closed.find((entry) => entry.path === '/tags')?.value;
+  const closedSource = closed.find((entry) => entry.path === '/tags')?.value;
   const closedSize = closed.length;
   dispatchSetValue(getDispatchChild(root, 'kind'), 'list');
   return {
-    closedRaw,
+    closedSource,
     closedSize,
     reopened: getDispatchChild(root, 'tags').emit,
     reopenedSize: readFieldNodeInactiveValues(root).length,
@@ -70,8 +70,8 @@ describe('array growth in the write that closes its branch (211C-01 A)', () => {
     );
     expect(result.commits).toBe(1);
     expect(result.closedSize).toBe(1);
-    expect(result.closedRaw).toEqual(['a', 'b', 'c', 'd']);
-    expect(Object.isFrozen(result.closedRaw)).toBe(true);
+    expect(result.closedSource).toEqual(['a', 'b', 'c', 'd']);
+    expect(Object.isFrozen(result.closedSource)).toBe(true);
     expect(result.reopened).toEqual(['a', 'b', 'c', 'd']);
     expect(result.reopenedSize).toBe(0);
   });
@@ -84,7 +84,7 @@ describe('array growth in the write that closes its branch (211C-01 A)', () => {
       }),
     );
     expect(result.commits).toBe(1);
-    expect(result.closedRaw).toEqual(['a', 'b', 'c', 'd']);
+    expect(result.closedSource).toEqual(['a', 'b', 'c', 'd']);
     expect(result.reopened).toEqual(['a', 'b', 'c', 'd']);
   });
 
@@ -125,7 +125,7 @@ describe('array growth in the write that closes its branch (211C-01 A)', () => {
         dispatchSetValue(getDispatchChild(root, 'kind'), 'single');
       }),
     );
-    expect(result.closedRaw).toEqual(['z', 'b', 'c']);
+    expect(result.closedSource).toEqual(['z', 'b', 'c']);
     expect(result.reopened).toEqual(['z', 'b', 'c']);
   });
 });

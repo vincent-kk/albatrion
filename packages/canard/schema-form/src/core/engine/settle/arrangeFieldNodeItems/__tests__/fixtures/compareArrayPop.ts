@@ -26,7 +26,7 @@ export interface PopStep {
 
 /**
  * Run identical public writes with the pop admission enabled and declined.
- * After each step it compares results, deliveries, settlement observations (latent raw included), default sources,
+ * After each step it compares results, deliveries, settlement observations (latent source included), default sources,
  * old-position ownership, departed nodes' detached reads and the contents of every container retained before the step.
  * @param schema - Authored declarations for two independently owned trees
  * @param input - Source mounted through the public chain before the history

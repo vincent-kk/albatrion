@@ -18,7 +18,7 @@ import { transitionSettlement } from '../transition/transitionSettlement';
 /**
  * Complete derivation, transition, rollback, and one commit after calculation.
  * @param context - Calculated call with any host budget failure
- * @param scratch - This call's explicit raw baseline container
+ * @param scratch - This call's explicit source baseline container
  * @param scalarWrite - Caller-proven live scalar with unchanged type and no derive capability
  * @returns Nothing; committed records and runtime hold the result
  * @throws Deferred failures after commit when no dispatch chain owns them
@@ -28,7 +28,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   scratch: SettlementScratch<Self>,
   scalarWrite = false,
 ): void => {
-  for (const path of context.changedRaw) scratch.explicitRaw.add(path);
+  for (const path of context.changedSource) scratch.explicitSource.add(path);
   if (context.hostWheelExceeded && !context.exceededBudget) {
     recordSettlementFailure(
       context,
@@ -61,7 +61,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   )
     transitionSettlement(context);
   if (context.exceededBudget) {
-    restoreSourceB(context, scratch.explicitRaw);
+    restoreSourceB(context, scratch.explicitSource);
     captureDeriveBaseline(context);
   }
   publishStateKeys(context);

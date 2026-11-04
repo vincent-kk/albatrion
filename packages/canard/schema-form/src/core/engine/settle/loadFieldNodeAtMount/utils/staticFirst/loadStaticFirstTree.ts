@@ -25,7 +25,7 @@ interface Frame<Self> {
   node: Self;
   input: unknown;
   automatic: boolean;
-  /** An object or array branch ancestor holds a wrong-kind raw, so no default fills here. */
+  /** An object or array branch ancestor holds a wrong-kind source, so no default fills here. */
   blocked: boolean;
   entered: boolean;
   index: number;
@@ -111,13 +111,13 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
         if (node.behavior.type === 'array') {
           const array = isArray(value);
           node.itemCount = array ? value.length : 0;
-          node.raw = array ? undefined : value;
-          node.undeclaredValues = array ? arrayExtras(node, value) : undefined;
+          node.source = array ? undefined : value;
+          node.extras = array ? arrayExtras(node, value) : undefined;
           frame.entries = node.behavior.declareChildren(node);
         } else {
           const object = isPlain(value);
-          node.raw = object ? undefined : value;
-          node.undeclaredValues = object
+          node.source = object ? undefined : value;
+          node.extras = object
             ? nextExtras(
                 undefined,
                 value,
@@ -130,7 +130,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
             ? authored.required
             : EMPTY;
         }
-      } else node.raw = value;
+      } else node.source = value;
       const state = node.interactionState;
       for (const key in state)
         if (hasOwnProperty(state, key) && state[key]) {
@@ -156,7 +156,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
         automatic: frame.automatic,
         blocked:
           frame.blocked ||
-          (node.behavior.strategy === 'branch' && node.raw !== undefined),
+          (node.behavior.strategy === 'branch' && node.source !== undefined),
         entered: false,
         index: 0,
         entries: EMPTY,

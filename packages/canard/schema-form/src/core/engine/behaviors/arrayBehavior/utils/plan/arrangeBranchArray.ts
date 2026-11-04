@@ -24,7 +24,7 @@ const CLEAR_SLOTS_PLAN: ArrayArrangePlan = {
  */
 export const arrangeBranchArray: Behavior['arrange'] = (node, operation) => {
   if (
-    node.raw === null &&
+    node.source === null &&
     operation.kind !== 'push' &&
     operation.kind !== 'insert'
   )

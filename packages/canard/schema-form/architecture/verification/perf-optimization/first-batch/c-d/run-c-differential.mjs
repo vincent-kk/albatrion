@@ -23,5 +23,5 @@ for(const spec of reverse([...scenes(config.smoke),...priorityCases])) {
   rows.push({...spec,status:phases.every(p=>p.same)?'pass':'fail',phases});
 }
 save('out/differential-details.json',JSON.stringify(differences,null,2)+'\n');
-console.log(json({kind:'C-differential',runtime:runtime(),config,bundles:[identity(baseline.bundle),identity(direct.bundle)],compared:['values','raw/local/emit','latent keys, values and metadata','inactiveValues','events/order/payloads/onChange','all revision bits','committed rule values and declaration choices','detached reads and writes','reentry and second exit'],differences:differences.length,status:differences.length?'fail':'pass',rows}));
+console.log(json({kind:'C-differential',runtime:runtime(),config,bundles:[identity(baseline.bundle),identity(direct.bundle)],compared:['values','source/local/emit','latent keys, values and metadata','inactiveValues','events/order/payloads/onChange','all revision bits','committed rule values and declaration choices','detached reads and writes','reentry and second exit'],differences:differences.length,status:differences.length?'fail':'pass',rows}));
 if(differences.length)process.exitCode=1;

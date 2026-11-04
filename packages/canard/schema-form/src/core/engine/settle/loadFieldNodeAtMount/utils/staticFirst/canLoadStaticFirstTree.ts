@@ -20,8 +20,8 @@ export const canLoadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   !root.children?.length &&
   !root.pendingDelivery &&
   !root.pendingRevision &&
-  root.raw === undefined &&
-  root.undeclaredValues === undefined &&
+  root.source === undefined &&
+  root.extras === undefined &&
   !root.runtime.deliveries?.size &&
   root.runtime.globalStateCounts.size === 0 &&
   StaticFirstLoadCapability.has(root.runtime.blueprint);

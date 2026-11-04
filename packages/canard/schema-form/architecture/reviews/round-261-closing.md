@@ -9,7 +9,7 @@
 | 1 | `SchemaNodeEventType.UpdateComputedProperties` → `UpdateControlledProperties` | 변경(옛 낱말 `computed`) |
 | 2 | `ChildNodeComponentProps`·`ChildNodeComponents`·`useChildNodeComponentMap`·`useChildNodeErrors` → `ChildField*` | 변경(FieldNode와 어휘 통일) |
 | 3 | `SchemaNodeState.ShowError` → `FieldNodeState.ErrorVisible` | 변경(ShowError 네 겹 해소; prop·메서드는 유지) |
-| 4 | 노드 멤버 `extras` → `undeclaredValues` | 변경(담는 것을 말함; 대안 `passthrough`) |
+| 4 | 노드 멤버 `extras` → `extras` | 변경(담는 것을 말함; 대안 `passthrough`) |
 | 5 | `Hint` → `FieldInputHint`, `FieldInputTestObject`는 그 부분형 | 변경 |
 | 6 | `dispatch` 디렉터리 → 역할 이름(예: `write`) | C 재배치에서 |
 | 7 | `SetValueOption` 셋 → 공개 하나, 내부는 다른 이름 | 정리(런타임 불변) |

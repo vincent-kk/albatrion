@@ -30,7 +30,7 @@
  * - gate-form-one-key: the input handler body writes `h.sw` 2 on host `h` whose K
  *   children are each gated on `'../sw >= 0'`.
  * - latent-object-one-key and misfit-object-one-key: `개념 없음` rows. 0.16.x keeps a
- *   closed then-branch's values in the host value itself (no latent raw store) and
+ *   closed then-branch's values in the host value itself (no latent source store) and
  *   turns a string in a number field into null (no misfit), so neither scene exists.
  *
  * Settlement and timed region, as in probe-legacy-array-verbs.ts: the clock starts
@@ -575,7 +575,7 @@ const operationSpecs: OperationSpec[] = [
   },
   unsupportedSpec(
     'latent-object-one-key',
-    '0.16.x has no latent raw store: values of a closed then-branch stay in the host value itself',
+    '0.16.x has no latent source store: values of a closed then-branch stay in the host value itself',
   ),
   unsupportedSpec(
     'misfit-object-one-key',

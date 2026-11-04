@@ -90,7 +90,7 @@ describe('extras-only static array appends', () => {
     const { root } = createDispatchTree({ type: 'array' });
     dispatchMount(root, [1, 2]);
     const children = root.children;
-    const extras = root.undeclaredValues;
+    const extras = root.extras;
     const local = root.local;
     const snapshot = root.runtime.loadSnapshot;
     const revision = root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
@@ -99,7 +99,7 @@ describe('extras-only static array appends', () => {
     dispatchPush(root, 3);
     expect(root.children).not.toBe(children);
     expect(root.children).toEqual([]);
-    expect(root.undeclaredValues).not.toBe(extras);
+    expect(root.extras).not.toBe(extras);
     expect(root.local).not.toBe(local);
     expect(root.runtime.loadSnapshot).not.toBe(snapshot);
     expect(children).toEqual([]);
@@ -135,7 +135,7 @@ describe('extras-only static array appends', () => {
     expect(Object.keys(snapshot)).toEqual(['1']);
   });
 
-  it.each(['tuple tail', 'omitTrailing', 'whole raw', 'batch', 'load'])(
+  it.each(['tuple tail', 'omitTrailing', 'whole source', 'batch', 'load'])(
     'retains the %s exclusion',
     (scene) => {
       const schema: BlueprintSchema = {
@@ -145,7 +145,7 @@ describe('extras-only static array appends', () => {
           : {}),
         ...(scene === 'omitTrailing' ? { options: { omitTrailing: true } } : {}),
       };
-      compareArrayAppend(schema, scene === 'whole raw' ? 'raw' : [1], [
+      compareArrayAppend(schema, scene === 'whole source' ? 'source' : [1], [
         {
           apply: (root) => {
             if (scene === 'batch')

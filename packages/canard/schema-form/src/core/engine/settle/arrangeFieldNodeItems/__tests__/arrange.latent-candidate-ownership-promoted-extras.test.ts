@@ -90,9 +90,9 @@ it.each<MoveCase>([
       show: !inactive,
       list: operation === 'insert' ? [{}, value] : [value],
     };
-    expect(getDispatchNode(moved, 'b').raw).toBe(99);
-    expect(getDispatchNode(moved, 'v').raw).toBe('live');
-    expect(moved.undeclaredValues).toEqual({ keep: 'extra' });
+    expect(getDispatchNode(moved, 'b').source).toBe(99);
+    expect(getDispatchNode(moved, 'v').source).toBe('live');
+    expect(moved.extras).toEqual({ keep: 'extra' });
     expect(root.local).toEqual(expected);
     expect(root.emit).toEqual(expected);
     expect(

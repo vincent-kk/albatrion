@@ -17,8 +17,8 @@ export const markWrongKindAncestors = <Self extends FieldNodeRecord<Self>>(
     if (
       parent.behavior.type === 'object' &&
       parent.behavior.strategy === 'branch' &&
-      parent.raw !== undefined &&
-      !isPlain(parent.raw)
+      parent.source !== undefined &&
+      !isPlain(parent.source)
     )
       context.wrongKindHosts.add(parent);
     parent = parent.parent;

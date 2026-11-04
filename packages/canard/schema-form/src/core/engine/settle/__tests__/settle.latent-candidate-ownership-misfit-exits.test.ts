@@ -69,7 +69,7 @@ it.each([
     const path = `/list/${destination}/v`;
     const oldItem = getDispatchNode(list, String(source));
     const oldChild = getDispatchNode(oldItem, 'v');
-    expect(oldChild.raw).toBe('bad');
+    expect(oldChild.source).toBe('bad');
     expect([...runtime.misfitPaths]).toEqual([sourcePath]);
     expect(runtime.misfitRecords).toEqual([
       expect.objectContaining({ path: sourcePath, reason: 'unconvertible' }),

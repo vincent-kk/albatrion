@@ -8,10 +8,10 @@ import { getDispatchNode } from './fixtures/getDispatchNode';
 import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
-it('keeps declared off-write payload out of the host raw and inactive host value', () => {
+it('keeps declared off-write payload out of the host source and inactive host value', () => {
   const { root } = createDispatchTree({
     type: 'object',
     properties: {
@@ -29,11 +29,11 @@ it('keeps declared off-write payload out of the host raw and inactive host value
   dispatchMount(root, { open: false });
   dispatchSetValue(root, { open: false, list: [7, 'tail'] });
   expect(root.emit).toEqual({ open: false });
-  expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual([
+  expect(readRetainedSlotSource(root, '/list', 'array')).toEqual([
     undefined,
     'tail',
   ]);
-  expect(readRetainedSlotRaw(root, '/list/0', 'number')).toBe(7);
+  expect(readRetainedSlotSource(root, '/list/0', 'number')).toBe(7);
   expect(readInactiveValuesAt(root, '')).toEqual([
     { path: '/list', value: [undefined, 'tail'] },
     { path: '/list/0', value: 7 },
@@ -69,11 +69,11 @@ it('replaces nested off-write array scope on a partial parent write', () => {
     b: false,
     host: { list: [7, 71], extra: 'kept' },
   });
-  expect(readRetainedSlotRaw(root, '/host/list/1', 'number')).toBe(71);
+  expect(readRetainedSlotSource(root, '/host/list/1', 'number')).toBe(71);
   dispatchSetValue(root, { host: { list: [8] } }, WriteOption.Merge);
   expect(hasRetainedSlotOwnSource(root, '/host/list/1', 'number')).toBe(false);
-  expect(readRetainedSlotRaw(root, '/host/list/0', 'number')).toBe(8);
-  expect(readRetainedSlotRaw(root, '/host/list', 'array')).toEqual([undefined]);
+  expect(readRetainedSlotSource(root, '/host/list/0', 'number')).toBe(8);
+  expect(readRetainedSlotSource(root, '/host/list', 'array')).toEqual([undefined]);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(root.emit).toEqual({
@@ -159,7 +159,7 @@ it.each([
           : '/list/0/0';
     const kind = reversed ? 'string' : 'number';
     const value = reversed ? '7' : 7;
-    expect(readRetainedSlotRaw(root, path, kind)).toBe(value);
+    expect(readRetainedSlotSource(root, path, kind)).toBe(value);
     expect(
       hasRetainedSlotOwnSource(root, path, reversed ? 'number' : 'string'),
     ).toBe(false);
@@ -177,7 +177,7 @@ it.each([
             : [[shown ?? null]];
       expect(getDispatchNode(root, 'list').emit).toEqual(expected);
       if (shown === undefined)
-        expect(readRetainedSlotRaw(root, path, kind)).toBe(value);
+        expect(readRetainedSlotSource(root, path, kind)).toBe(value);
     }
   },
 );
@@ -212,7 +212,7 @@ it.each([false, true])(
       list: [7, ...tail],
     });
     const kind = reversed ? 'string' : 'number';
-    expect(readRetainedSlotRaw(root, '/list/0', kind)).toBe(reversed ? '7' : 7);
+    expect(readRetainedSlotSource(root, '/list/0', kind)).toBe(reversed ? '7' : 7);
     dispatchSetValue(getDispatchNode(root, reversed ? 'a' : 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
     expect(getDispatchNode(root, 'list').emit).toEqual([null, ...tail]);

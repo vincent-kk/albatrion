@@ -13,19 +13,19 @@ if (!scenario) throw new Error('array.terminal-verbs scenario is missing');
 
 // filid:contract scenario-array-terminal
 describe('terminal array verbs', () => {
-  it('applies each verb to a fresh raw array copy', async () => {
+  it('applies each verb to a fresh source array copy', async () => {
     const adapter = createCoreScenarioAdapter(scenario);
     const checkedAdapter = {
       ...adapter,
       async execute(step: FormScenarioStep) {
-        const previousRaw = adapter.root.raw;
-        expect(Array.isArray(previousRaw)).toBe(true);
-        const previousValue = Array.isArray(previousRaw)
-          ? [...previousRaw]
-          : previousRaw;
+        const previousSource = adapter.root.source;
+        expect(Array.isArray(previousSource)).toBe(true);
+        const previousValue = Array.isArray(previousSource)
+          ? [...previousSource]
+          : previousSource;
         await adapter.execute(step);
-        expect(previousRaw).toEqual(previousValue);
-        expect(adapter.root.raw).not.toBe(previousRaw);
+        expect(previousSource).toEqual(previousValue);
+        expect(adapter.root.source).not.toBe(previousSource);
       },
     };
 

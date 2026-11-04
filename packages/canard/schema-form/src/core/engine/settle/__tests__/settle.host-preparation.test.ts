@@ -65,7 +65,7 @@ describe('host lifetime preparation', () => {
     writeFieldNode(root.structure!.kind, 3, 'input', WriteOption.Overwrite);
     expect(caps).not.toHaveBeenCalled();
     expect(reads.mock.calls.length).toBeLessThanOrEqual(2);
-    expect(root.structure!.payload_3.raw).toBe(3);
+    expect(root.structure!.payload_3.source).toBe(3);
     expect(root.structure!.payload_2).toBeUndefined();
   });
 
@@ -92,7 +92,7 @@ describe('host lifetime preparation', () => {
       }
       expect(publications).toBe(0);
       expect(root.structure!.kind).toBe(fixed);
-      expect(root.structure!.payload_0.raw).toBe(0);
+      expect(root.structure!.payload_0.source).toBe(0);
     },
   );
 

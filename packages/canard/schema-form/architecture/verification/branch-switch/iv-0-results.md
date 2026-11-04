@@ -71,8 +71,8 @@ computeNode 호출 5회는 루트 바퀴 5회가 아닙니다. oneOf-80은 루�
 | transitionSettlement | 5.812 | 4.855 |
 | finalizeExits | 25.750 | 19.791 |
 | getControlLayers | 14.354 | 1.562 |
-| captureExitedRaw | 6.833 | 0.000 |
-| setLatentRaw | 11.939 | 0.000 |
+| captureExitedSource | 6.833 | 0.000 |
+| setLatentSource | 11.939 | 0.000 |
 | updateOutput | 8.271 | 9.020 |
 | assembleObject | 10.000 | 10.146 |
 | commitSettlement | 9.895 | 10.916 |
@@ -104,8 +104,8 @@ wrapped 총시간 중앙값: S 279.000, E 205.083 µs.
 | transitionSettlement | 8.084 | 8.417 |
 | finalizeExits | 99.726 | 30.331 |
 | getControlLayers | 47.976 | 3.728 |
-| captureExitedRaw | 14.520 | 0.000 |
-| setLatentRaw | 34.044 | 0.000 |
+| captureExitedSource | 14.520 | 0.000 |
+| setLatentSource | 34.044 | 0.000 |
 | updateOutput | 7.855 | 8.438 |
 | assembleObject | 35.272 | 36.229 |
 | commitSettlement | 17.833 | 15.313 |
@@ -137,8 +137,8 @@ wrapped 총시간 중앙값: S 507.958, E 302.062 µs.
 | transitionSettlement | 1.459 | 1.500 |
 | finalizeExits | 0.000 | 0.000 |
 | getControlLayers | 0.000 | 0.000 |
-| captureExitedRaw | 0.000 | 0.000 |
-| setLatentRaw | 0.000 | 0.000 |
+| captureExitedSource | 0.000 | 0.000 |
+| setLatentSource | 0.000 | 0.000 |
 | updateOutput | 4.666 | 4.771 |
 | assembleObject | 3.125 | 3.209 |
 | commitSettlement | 4.021 | 3.500 |
@@ -170,8 +170,8 @@ wrapped 총시간 중앙값: S 96.250, E 98.542 µs.
 | transitionSettlement | 2.416 | 2.083 |
 | finalizeExits | 0.000 | 0.000 |
 | getControlLayers | 0.000 | 0.000 |
-| captureExitedRaw | 0.000 | 0.000 |
-| setLatentRaw | 0.000 | 0.000 |
+| captureExitedSource | 0.000 | 0.000 |
+| setLatentSource | 0.000 | 0.000 |
 | updateOutput | 8.458 | 7.791 |
 | assembleObject | 260.709 | 257.853 |
 | commitSettlement | 83.479 | 5.396 |
@@ -402,7 +402,7 @@ details는 이 절의 하위 타이머에만 사용합니다. writeFieldNode의 
 | readSlotExitPolicy | 0.000 | 0.000 | 0.0 |
 | finalizeAncestorCollection | 0.000 | 0.000 | 0.0 |
 | finalizeAncestorOutput | 0.000 | 0.000 | 0.0 |
-| finalizeRestoredSlotRaw | 0.000 | 0.000 | 0.0 |
+| finalizeRestoredSlotSource | 0.000 | 0.000 | 0.0 |
 
 짝당 추정 오버헤드 0.644 µs; details 총시간 135.354, plain 87.146 µs.
 
@@ -433,7 +433,7 @@ details는 이 절의 하위 타이머에만 사용합니다. writeFieldNode의 
 | readSlotExitPolicy | 3.751 | 1.659 | 3.0 |
 | finalizeAncestorCollection | 0.666 | -0.048 | 1.0 |
 | finalizeAncestorOutput | 1.042 | 0.357 | 1.0 |
-| finalizeRestoredSlotRaw | 0.833 | 0.137 | 1.0 |
+| finalizeRestoredSlotSource | 0.833 | 0.137 | 1.0 |
 
 짝당 추정 오버헤드 0.685 µs; details 총시간 315.375, plain 196.751 µs.
 

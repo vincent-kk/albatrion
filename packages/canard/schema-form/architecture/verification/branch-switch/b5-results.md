@@ -42,11 +42,11 @@ B6과 B7을 병합한 설계 Ⅱ의 마감 상태를 공개 0.16.1 및 단계 �
 | 다른 canonical 행 TEST-073 | B3와 같은 제외 목록을 적용한 전체 10/10 주판정 회귀가 0건입니다. | PASS | 전체 10/10 주판정 회귀는 0건입니다. |
 | Node 노드당 힙 | E 중앙값 ≤ S 중앙값입니다. PR별 E 중앙값 ≤ S 최대도 별도 보고합니다. | FAIL | S 중앙 1439.098 B/node, E 중앙 1439.346 B/node입니다. E 중앙은 S 최대 1889.510 B/node 이하입니다. Bun은 아래 보고입니다. |
 
-위 여섯 관문은 B3와 같은 선이며 형제 상한 3배를 이번 창 전에 다시 고정했습니다. 제거 경로 장부의 E `setLatentRaw`·`captureExitedRaw`·`updateInactiveValuesMemo` 최대 호출 0도 B3처럼 별도 확인합니다. TEST-073의 다른 행 주판정에서는 oneOf-80·discriminator-80·if-80·siblings-1000을 제외하되 전체 22행 원판정과 반창을 함께 공개합니다. 총합 행으로 관문을 판정하며 계측 단계의 절대 시간을 배포 번들과 직접 비교하지 않습니다. 품질이 0.95–1.05 안이므로 비율 관문을 판정 불가로 바꾸지 않았습니다.
+위 여섯 관문은 B3와 같은 선이며 형제 상한 3배를 이번 창 전에 다시 고정했습니다. 제거 경로 장부의 E `setLatentSource`·`captureExitedSource`·`updateInactiveValuesMemo` 최대 호출 0도 B3처럼 별도 확인합니다. TEST-073의 다른 행 주판정에서는 oneOf-80·discriminator-80·if-80·siblings-1000을 제외하되 전체 22행 원판정과 반창을 함께 공개합니다. 총합 행으로 관문을 판정하며 계측 단계의 절대 시간을 배포 번들과 직접 비교하지 않습니다. 품질이 0.95–1.05 안이므로 비율 관문을 판정 불가로 바꾸지 않았습니다.
 
 | 보조 확인 | 판정 | 근거 |
 | --- | --- | --- |
-| 제거 경로 최대 호출 0 | PASS | E의 setLatentRaw·captureExitedRaw·updateInactiveValuesMemo 최대 호출은 0입니다. |
+| 제거 경로 최대 호출 0 | PASS | E의 setLatentSource·captureExitedSource·updateInactiveValuesMemo 최대 호출은 0입니다. |
 
 ## 창 환경·품질
 
@@ -203,8 +203,8 @@ S의 wheelPreparation은 B0 staticList부터 첫 cap 구간으로 연결합니�
 | switch-oneOf-80 | selectChildren | 32.667 | 29.772 | 1/1 | 폭 안 |
 | switch-oneOf-80 | transitionSettlement | 5.375 | 4.062 | 1/1 | 매핑 불일치·비교 제외 |
 | switch-oneOf-80 | getControlLayers | 14.417 | 1.415 | 12/6 | 매핑 불일치·비교 제외 |
-| switch-oneOf-80 | setLatentRaw | 11.459 | 0.000 | 6/0 | 폭 안 |
-| switch-oneOf-80 | captureExitedRaw | 5.999 | 0.000 | 3/0 | 폭 안 |
+| switch-oneOf-80 | setLatentSource | 11.459 | 0.000 | 6/0 | 폭 안 |
+| switch-oneOf-80 | captureExitedSource | 5.999 | 0.000 | 3/0 | 폭 안 |
 | switch-oneOf-80 | finalizeExits | 23.436 | 18.376 | 1/1 | 폭 안 |
 | switch-oneOf-80 | markCommitDeliveries | 11.271 | 11.979 | 1/1 | 폭 안 |
 | switch-oneOf-80 | updateInactiveValuesMemo | 18.959 | 0.000 | 1/0 | 폭 안 |
@@ -224,8 +224,8 @@ S의 wheelPreparation은 B0 staticList부터 첫 cap 구간으로 연결합니�
 | switch-payload-12 | selectChildren | 56.749 | 52.586 | 1/1 | 폭 안 |
 | switch-payload-12 | transitionSettlement | 7.625 | 8.105 | 1/1 | 폭 안 |
 | switch-payload-12 | getControlLayers | 46.106 | 3.480 | 48/24 | 매핑 불일치·비교 제외 |
-| switch-payload-12 | setLatentRaw | 33.500 | 0.000 | 24/0 | 매핑 불일치·비교 제외 |
-| switch-payload-12 | captureExitedRaw | 13.604 | 0.000 | 12/0 | 매핑 불일치·비교 제외 |
+| switch-payload-12 | setLatentSource | 33.500 | 0.000 | 24/0 | 매핑 불일치·비교 제외 |
+| switch-payload-12 | captureExitedSource | 13.604 | 0.000 | 12/0 | 매핑 불일치·비교 제외 |
 | switch-payload-12 | finalizeExits | 100.271 | 32.856 | 1/1 | 폭 안 |
 | switch-payload-12 | markCommitDeliveries | 14.938 | 15.396 | 1/1 | 폭 안 |
 | switch-payload-12 | updateInactiveValuesMemo | 40.354 | 0.000 | 1/0 | 매핑 불일치·비교 제외 |
@@ -279,8 +279,8 @@ siblings-1000은 B0 계측 행이 없어 이 표에 없습니다. 폭 밖 항목
 | switch-oneOf-80 | transitionSettlement | 4.958 | 5.375 | 0.313 | 매핑 불일치·비교 제외 |
 | switch-oneOf-80 | finalizeExits | 23.873 | 23.436 | 3.063 | 폭 안 |
 | switch-oneOf-80 | getControlLayers | 15.520 | 14.417 | 0.751 | 매핑 불일치·비교 제외 |
-| switch-oneOf-80 | captureExitedRaw | 5.709 | 5.999 | 0.499 | 폭 안 |
-| switch-oneOf-80 | setLatentRaw | 11.208 | 11.459 | 1.333 | 폭 안 |
+| switch-oneOf-80 | captureExitedSource | 5.709 | 5.999 | 0.499 | 폭 안 |
+| switch-oneOf-80 | setLatentSource | 11.208 | 11.459 | 1.333 | 폭 안 |
 | switch-oneOf-80 | updateOutput | 6.958 | 7.125 | 0.606 | 폭 안 |
 | switch-oneOf-80 | assembleObject | 9.979 | 9.084 | 1.104 | 폭 안 |
 | switch-oneOf-80 | commitSettlement | 8.500 | 8.668 | 0.833 | 폭 안 |
@@ -297,8 +297,8 @@ siblings-1000은 B0 계측 행이 없어 이 표에 없습니다. 폭 밖 항목
 | switch-payload-12 | transitionSettlement | 7.688 | 7.625 | 0.896 | 폭 안 |
 | switch-payload-12 | finalizeExits | 102.416 | 100.271 | 7.353 | 폭 안 |
 | switch-payload-12 | getControlLayers | 45.476 | 46.106 | 0.583 | 매핑 불일치·비교 제외 |
-| switch-payload-12 | captureExitedRaw | 12.124 | 13.604 | 0.412 | 매핑 불일치·비교 제외 |
-| switch-payload-12 | setLatentRaw | 31.273 | 33.500 | 0.519 | 매핑 불일치·비교 제외 |
+| switch-payload-12 | captureExitedSource | 12.124 | 13.604 | 0.412 | 매핑 불일치·비교 제외 |
+| switch-payload-12 | setLatentSource | 31.273 | 33.500 | 0.519 | 매핑 불일치·비교 제외 |
 | switch-payload-12 | updateOutput | 6.561 | 6.624 | 0.273 | 폭 안 |
 | switch-payload-12 | assembleObject | 37.105 | 37.292 | 4.166 | 폭 안 |
 | switch-payload-12 | commitSettlement | 15.771 | 17.354 | 0.646 | 매핑 불일치·비교 제외 |
@@ -315,8 +315,8 @@ siblings-1000은 B0 계측 행이 없어 이 표에 없습니다. 폭 밖 항목
 | switch-siblings-0 | transitionSettlement | 1.229 | 1.271 | 0.062 | 폭 안 |
 | switch-siblings-0 | finalizeExits | 0.000 | 0.000 | 0.000 | 폭 안 |
 | switch-siblings-0 | getControlLayers | 0.000 | 0.000 | 0.000 | 폭 안 |
-| switch-siblings-0 | captureExitedRaw | 0.000 | 0.000 | 0.000 | 폭 안 |
-| switch-siblings-0 | setLatentRaw | 0.000 | 0.000 | 0.000 | 폭 안 |
+| switch-siblings-0 | captureExitedSource | 0.000 | 0.000 | 0.000 | 폭 안 |
+| switch-siblings-0 | setLatentSource | 0.000 | 0.000 | 0.000 | 폭 안 |
 | switch-siblings-0 | updateOutput | 3.666 | 3.750 | 0.145 | 폭 안 |
 | switch-siblings-0 | assembleObject | 2.541 | 2.542 | 0.042 | 폭 안 |
 | switch-siblings-0 | commitSettlement | 3.417 | 3.396 | 0.105 | 폭 안 |

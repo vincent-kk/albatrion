@@ -11,8 +11,8 @@ import {
   dispatchSetValue,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
-import { readRetainedSlotEntry } from './fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotEntry } from './fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 it.each(['insert', 'remove'] as const)(
   'V2 %s preserves all candidate stores when destination slots become inactive',
@@ -91,8 +91,8 @@ it.each(['insert', 'remove'] as const)(
       const path = `/list/${destination}/v`;
       const stringKey = JSON.stringify([path, 'string']);
       expect(list.structure?.[String(destination)]).toBeUndefined();
-      expect(readRetainedSlotRaw(root, path, 'string')).toBe(values[source]);
-      expect(readRetainedSlotRaw(root, path, 'number')).toBe(37);
+      expect(readRetainedSlotSource(root, path, 'string')).toBe(values[source]);
+      expect(readRetainedSlotSource(root, path, 'number')).toBe(37);
       const stringMetadata = metadata[source].string;
       const numberMetadata = metadata[source].number;
       if (!stringMetadata || !numberMetadata)
@@ -120,11 +120,11 @@ it.each(['insert', 'remove'] as const)(
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     const retained = operation === 'insert' ? values : values.slice(1);
     for (let index = 0; index < retained.length; index++)
-      expect(getDispatchNode(list, String(index), 'v').raw).toBe(
+      expect(getDispatchNode(list, String(index), 'v').source).toBe(
         retained[index],
       );
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     for (let index = 0; index < retained.length; index++)
-      expect(getDispatchNode(list, String(index), 'v').raw).toBe(37);
+      expect(getDispatchNode(list, String(index), 'v').source).toBe(37);
   },
 );

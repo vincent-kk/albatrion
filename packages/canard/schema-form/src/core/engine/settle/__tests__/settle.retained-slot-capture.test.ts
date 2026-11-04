@@ -4,7 +4,7 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
-it('keeps a detached instance in the host without capturing latent raw', () => {
+it('keeps a detached instance in the host without capturing latent source', () => {
   const { root } = createDispatchTree({
     type: 'object',
     properties: {
@@ -20,7 +20,7 @@ it('keeps a detached instance in the host without capturing latent raw', () => {
   expect(old.detached).toBe(true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'value')).not.toBe(old);
-  expect(getDispatchNode(root, 'value').raw).toBe('held');
+  expect(getDispatchNode(root, 'value').source).toBe('held');
 });
 
 it('does not retain an entry whose effective exit policy clears its source', () => {
@@ -39,7 +39,7 @@ it('does not retain an entry whose effective exit policy clears its source', () 
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect([...(root.inactiveSlots?.values() ?? [])]).not.toContain(old);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'value').raw).toBeUndefined();
+  expect(getDispatchNode(root, 'value').source).toBeUndefined();
 });
 
 it('retains same-name candidates under separate blueprint child entries', () => {
@@ -67,9 +67,9 @@ it('retains same-name candidates under separate blueprint child entries', () => 
   expect(values).toContain(number);
   expect(values).toHaveLength(2);
   dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-  expect(getDispatchNode(root, 'value').raw).toBe('first');
+  expect(getDispatchNode(root, 'value').source).toBe('first');
   dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-  expect(getDispatchNode(root, 'value').raw).toBe(7);
+  expect(getDispatchNode(root, 'value').source).toBe(7);
 });
 
 afterEach(() => vi.restoreAllMocks());

@@ -36,7 +36,7 @@
 
 ### 별표 호환 장치의 제거
 
-`settle/utils/literalStar/`·`literalStarStore/` 전부, 공유 파일의 분기 168곳, 청사진의 `containsLiteralStar`와 `markCandidateDescendants`의 별표 분기를 지운다. 이름이 `*`인 키의 폼은 일반 슬롯 경로를 탄다. 공개 기대값이 바뀌는 곳은 `*`를 `*x`로 바꾼 사본으로 관측한 네 파일 11건이다: `surface.slots-wildcard-publication`(3, 숨김 해제), `surface.slots-wildcard-lifetimes`(5, 숨김 해제와 항목 참조 정체성의 일반 규칙), `surface.slots-wildcard-packed-array`(2, 재진입 복원 값이 원본 `held`에서 마지막 패치 값 `patched`로), `surface.slots-wildcard-policies`(1, 비활성 그룹 아래 `keep=true` 자손이 지워지지 않고 남음). 뒤의 둘은 숨김과 다른 장치 고유 의미의 차이이며, 일반 슬롯 경로의 결과(마지막 쓰기 복원, keep 지시 준수)를 올바른 쪽으로 본다(460C-03). 장치 자체를 고정한 시험(`literalStarStore/__tests__/setLatentRaw.test.ts`, `settle.retained-slot-wildcard.test.ts`의 장치 진입 케이스, `markCandidateDescendants.literalStar.test.ts`)은 지우고, 장치 내부를 참조하던 시험(`settle.array-clear`·`settle.scalar-latent-scope`·`settle.retained-slot-capture`·`settle.latent-candidate-ownership-policy`)은 공개 관측 단언으로 옮기거나 장치 목적 단언이면 지운다(459C-03 규칙).
+`settle/utils/literalStar/`·`literalStarStore/` 전부, 공유 파일의 분기 168곳, 청사진의 `containsLiteralStar`와 `markCandidateDescendants`의 별표 분기를 지운다. 이름이 `*`인 키의 폼은 일반 슬롯 경로를 탄다. 공개 기대값이 바뀌는 곳은 `*`를 `*x`로 바꾼 사본으로 관측한 네 파일 11건이다: `surface.slots-wildcard-publication`(3, 숨김 해제), `surface.slots-wildcard-lifetimes`(5, 숨김 해제와 항목 참조 정체성의 일반 규칙), `surface.slots-wildcard-packed-array`(2, 재진입 복원 값이 원본 `held`에서 마지막 패치 값 `patched`로), `surface.slots-wildcard-policies`(1, 비활성 그룹 아래 `keep=true` 자손이 지워지지 않고 남음). 뒤의 둘은 숨김과 다른 장치 고유 의미의 차이이며, 일반 슬롯 경로의 결과(마지막 쓰기 복원, keep 지시 준수)를 올바른 쪽으로 본다(460C-03). 장치 자체를 고정한 시험(`literalStarStore/__tests__/setLatentSource.test.ts`, `settle.retained-slot-wildcard.test.ts`의 장치 진입 케이스, `markCandidateDescendants.literalStar.test.ts`)은 지우고, 장치 내부를 참조하던 시험(`settle.array-clear`·`settle.scalar-latent-scope`·`settle.retained-slot-capture`·`settle.latent-candidate-ownership-policy`)은 공개 관측 단언으로 옮기거나 장치 목적 단언이면 지운다(459C-03 규칙).
 
 ### 비용 문장
 
@@ -48,14 +48,14 @@
 
 배열 호스트가 지움(자기 `unsetOnInactive: true` 또는 상속된 지움)과 함께 나갈 때:
 
-- 서브트리에 명시 keep 원본(`unsetOnInactive: false`이고 raw가 정의된 노드; 그 노드 자신이 아이템이어도 됨)을 하나라도 가진 아이템만 살아남는다. 살아남은 아이템은 원래 순서로 앞에서부터 채워지고(압축), 배열 길이는 살아남은 아이템 수다.
+- 서브트리에 명시 keep 원본(`unsetOnInactive: false`이고 source가 정의된 노드; 그 노드 자신이 아이템이어도 됨)을 하나라도 가진 아이템만 살아남는다. 살아남은 아이템은 원래 순서로 앞에서부터 채워지고(압축), 배열 길이는 살아남은 아이템 수다.
 - 살아남은 아이템은 객체 호스트가 자식에게 적용하는 것과 같은 규칙으로 kept 원본만 품는다. 나감 시점에 그 keep 노드가 살아 있었든 이미 비활성이었든 같다.
 - 닫힌 동안 `inactiveValues`는 압축된 색인으로 kept 원본을 공표한다(`/list/0/keep`). 재진입은 압축된 배열을 복원한다. 비활성이던 keep 원본은 재진입 뒤에도 자기 조건이 참이 될 때까지 비활성 슬롯에 남아 `inactiveValues`에 보인다(B4-2의 비활성 쓰기 규칙).
 - 후보 소유 범위의 유무로 동작이 갈리지 않는다(`hasSlotCandidateOwner`와 숨은 운반자 `retainClearedArrayCarriers`는 소비처가 없어지면 지운다). 중첩 배열은 같은 규칙을 재귀한다. 객체 호스트의 동작은 바뀌지 않는다. keep 자손이 하나도 없는 배열은 지금처럼 길이 0이다.
 
 ### 구현 방향(구속하지 않음)
 
-overlay의 자식 패치는 청사진 엔트리로 키를 매기므로 같은 템플릿의 아이템을 개별로 가리킬 수 없다. 따라서 나감 시점에 살아남은 아이템의 보존 값을 실체화해 overlay의 `raw`(압축 배열)와 `itemCount`로 두고, 재진입은 그 값으로 배열을 다시 세우는 쪽이 자연스럽다. `createExitSlotOverlay`의 "지움 + 배열 + 후보 소유자 없음" 조기 반환과 아이템에 넘기는 강제 지움을 이 규칙으로 바꾼다.
+overlay의 자식 패치는 청사진 엔트리로 키를 매기므로 같은 템플릿의 아이템을 개별로 가리킬 수 없다. 따라서 나감 시점에 살아남은 아이템의 보존 값을 실체화해 overlay의 `source`(압축 배열)와 `itemCount`로 두고, 재진입은 그 값으로 배열을 다시 세우는 쪽이 자연스럽다. `createExitSlotOverlay`의 "지움 + 배열 + 후보 소유자 없음" 조기 반환과 아이템에 넘기는 강제 지움을 이 규칙으로 바꾼다.
 
 ### 바뀌는 문서와 시험
 

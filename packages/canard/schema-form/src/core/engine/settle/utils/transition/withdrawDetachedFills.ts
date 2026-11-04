@@ -22,12 +22,12 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
       let ancestor: Nullable<Self> = entry.node;
       while (ancestor && ancestor !== node) ancestor = ancestor.parent;
       if (!ancestor) continue;
-      entry.node.raw = entry.previousRaw;
-      entry.node.undeclaredValues = entry.previousExtras;
+      entry.node.source = entry.previousSource;
+      entry.node.extras = entry.previousExtras;
       if (entry.previousDistributed)
         context.distributedInputs.set(entry.node, entry.previousDistributed);
       else context.distributedInputs.delete(entry.node);
-      context.changedRaw.delete(entry.node.path);
+      context.changedSource.delete(entry.node.path);
     }
     context.writtenInputs.delete(node);
   }

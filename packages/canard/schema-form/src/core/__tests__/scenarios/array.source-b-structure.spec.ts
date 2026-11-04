@@ -30,8 +30,8 @@ describe('array Source-B structure rollback', () => {
     if (!isTestFieldNode(host)) throw new Error('Expected a runtime FieldNode');
     expect(host?.itemCount).toBe(0);
     expect(host?.children).toEqual([]);
-    expect(host?.raw).toBeUndefined();
-    expect(host?.undeclaredValues).toBeUndefined();
+    expect(host?.source).toBeUndefined();
+    expect(host?.extras).toBeUndefined();
     expect(host?.value).toEqual([]);
     expect(host?.outputValue).toBeUndefined();
     expect(host?.nextItemKey).toBeGreaterThan(0);

@@ -4,8 +4,8 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { SchemaFormError } from '@/schema-form/errors';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
-import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 import { getGateRegistry } from '../../utils/gates/getGateRegistry';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
@@ -43,7 +43,7 @@ describe('array path movement', () => {
     expect(root.children![0]).toBe(shifted);
     expect(shifted.path).toBe('/0');
     expect(hasRetainedSlotOwnSource(root, '/1/hidden', 'string')).toBe(false);
-    expect(readRetainedSlotRaw(root, '/0/hidden', 'string')).toBe('secret');
+    expect(readRetainedSlotSource(root, '/0/hidden', 'string')).toBe('secret');
     expect(root.runtime.misfitPaths.has('/1/count')).toBe(false);
     expect(root.runtime.misfitPaths.has('/0/count')).toBe(true);
     expect(
@@ -70,7 +70,7 @@ describe('array path movement', () => {
     const popped = root.children![1];
     expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
     writeFieldNode(popped, 'latent', 'callerReplace', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/1', 'string')).toBeUndefined();
+    expect(readRetainedSlotSource(root, '/1', 'string')).toBeUndefined();
     const removed = root.children![0];
     arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
@@ -108,7 +108,7 @@ describe('array path movement', () => {
     );
     expect(former.detached).toBe(true);
     expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(1);
-    expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a']);
+    expect(readRetainedSlotSource(root, '/list', 'array')).toEqual(['a']);
     writeFieldNode(
       root.structure!.show,
       true,

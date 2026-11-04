@@ -16,8 +16,8 @@ nextExtras와 잠복 Merge 경로는 그대로입니다. arrayExtras는 원래�
 
 | helper와 호출자 path:line | 경로와 후속 소비 | 참조 되살림 의존 및 처리 |
 |---|---|---|
-| nextExtras → settle/utils/input/markWrite.ts:128 | Overwrite·Merge·load·automatic의 object branch; :54에서 Merge를 판정하고 :126에서 raw를 유지하며 :140–142에서 변경 채널을 저장 | 기존 :131의 중복 sameValue를 !==로 바꿨습니다; helper의 같으면 previous라는 보장을 소비합니다 |
-| nextExtras → settle/utils/latent/distributeLatentValue.ts:121 | whole이면 previous=undefined, Merge면 이전 HostLatent.undeclaredValues; :155–159에서 Object.is로 같은 HostLatent를 재사용 | 의존합니다; :157의 참조 비교와 setLatentRaw.ts:58의 dirty 판정 때문에 nextExtras.ts:27의 되살림을 유지합니다 |
+| nextExtras → settle/utils/input/markWrite.ts:128 | Overwrite·Merge·load·automatic의 object branch; :54에서 Merge를 판정하고 :126에서 source를 유지하며 :140–142에서 변경 채널을 저장 | 기존 :131의 중복 sameValue를 !==로 바꿨습니다; helper의 같으면 previous라는 보장을 소비합니다 |
+| nextExtras → settle/utils/latent/distributeLatentValue.ts:121 | whole이면 previous=undefined, Merge면 이전 HostLatent.extras; :155–159에서 Object.is로 같은 HostLatent를 재사용 | 의존합니다; :157의 참조 비교와 setLatentSource.ts:58의 dirty 판정 때문에 nextExtras.ts:27의 되살림을 유지합니다 |
 | nextExtras → settle/utils/latent/distributeMovedLatentInput.ts:78 | :76에서 기존 잠복 값은 건너뛰고 previous=undefined로 새 HostLatent만 만듭니다 | 이전 extras 참조가 없으므로 되살림에 의존하지 않으며 변경하지 않았습니다 |
 | nextExtras → settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts:119 | 새 노드 최초 적재에서 previous=undefined로 :118에 저장 | 이전 참조가 없고 변경하지 않았습니다 |
 | arrayExtras → settle/utils/input/markWrite.ts:108 | 배열 원본 분배; 기존 :131에서 구조 비교 | 구조 비교를 helper로 옮기고 markWrite는 참조로만 판단합니다 |
@@ -47,7 +47,7 @@ nextExtras와 잠복 Merge 경로는 그대로입니다. arrayExtras는 원래�
 
 기준과 수정의 비계측 dist 사본을 각각 독립 실행했습니다. Node와 Bun 모두 6장면·88단계(마운트 6회와 쓰기 82회)의 차이가 0건입니다. 객체 두 장면(선언 자식 유무), 배열 네 장면(extras-only·prefixItems·옛 tuple items·일반 items)에서 같은 값·다른 값 Overwrite와 Merge, 새 키·빈 Merge, 게이트 나감·잠복 Merge·재진입, push·insert·remove·pop·update·clear, 같은 값으로 되돌아오는 두 배치, sparse·undefined·NaN 입력을 실행했습니다.
 
-전체 listener event의 종류·payload·순서, root onChange, 모든 살아 있는 노드의 local·emit·raw·extras·스키마·상태·17개 bit별 revision, children·item key·경로, loadSnapshot·commit·진단·global counts, 잠복·inactive·misfit·선택·경고 저장소, 단계 전후 local·emit·extras·children·snapshot 참조 유지 여부를 비교했습니다. 따라서 같은 값의 추가 UpdateValue·값 revision·onChange가 없고, 처음 쓰기의 기존 상태 revision을 포함한 전체 기록도 두 판이 일치합니다.
+전체 listener event의 종류·payload·순서, root onChange, 모든 살아 있는 노드의 local·emit·source·extras·스키마·상태·17개 bit별 revision, children·item key·경로, loadSnapshot·commit·진단·global counts, 잠복·inactive·misfit·선택·경고 저장소, 단계 전후 local·emit·extras·children·snapshot 참조 유지 여부를 비교했습니다. 따라서 같은 값의 추가 UpdateValue·값 revision·onChange가 없고, 처음 쓰기의 기존 상태 revision을 포함한 전체 기록도 두 판이 일치합니다.
 
 원자료와 재현 도구는 .seiri/tasks/l3c-extras-single-compare/에 있습니다. run/compare.mjs가 두 사본을 실제로 실행하고 deepStrictEqual로 비교하며, run/node-compare.json과 run/bun-compare.json에 각각 status=pass, scenes=6, steps=88, differences=0을 남겼습니다. before-test.log·after-test.log·full-test.log에 시험 결과를 보존했습니다.
 

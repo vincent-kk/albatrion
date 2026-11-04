@@ -25,7 +25,7 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
  * Apply an admitted middle remove or insert by cutting at the edited position and splicing only the tail.
- * Positions before `proof.index` keep their nodes, keys, raw, load-snapshot slots and structure entries, and are never read.
+ * Positions before `proof.index` keep their nodes, keys, source, load-snapshot slots and structure entries, and are never read.
  * Mutates `host.structure` in place; the tail items shift by one position and are renamed in the general path's order.
  * Admission proved the blueprint ungated, so no gate is removed or registered here.
  * Renamed tail descendants are re-published and marked changed but not scheduled for recalculation: no value or selection of a static blueprint reads a position.
@@ -129,12 +129,12 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     );
   }
   host.itemCount = length;
-  host.raw = undefined;
-  host.undeclaredValues = undefined;
+  host.source = undefined;
+  host.extras = undefined;
   host.structure = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, count);
-  context.changedRaw.add(host.path);
+  context.changedSource.add(host.path);
   context.changedNodes.add(host);
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);

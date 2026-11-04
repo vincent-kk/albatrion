@@ -289,7 +289,7 @@ describe('splice admission declines and the general path settles', () => {
     );
   });
 
-  it('a retained misfit and a wrong-kind host raw', () => {
+  it('a retained misfit and a wrong-kind host source', () => {
     compareArraySplice(
       { type: 'array', items: { type: 'number' } },
       [1, 2, 3],

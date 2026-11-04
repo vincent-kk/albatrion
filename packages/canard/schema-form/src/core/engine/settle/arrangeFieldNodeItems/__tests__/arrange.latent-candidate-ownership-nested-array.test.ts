@@ -9,7 +9,7 @@ import {
   dispatchSetValue,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 it.each(['insert', 'remove'] as const)(
   'W1 %s preserves candidates beneath an array with one immediate item template',
@@ -41,32 +41,32 @@ it.each(['insert', 'remove'] as const)(
     const list = getDispatchNode(root, 'list');
     const old = getDispatchNode(list, String(source));
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(old, '0', 'v').raw).toBe(37);
+    expect(getDispatchNode(old, '0', 'v').source).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
 
-    expect(readRetainedSlotRaw(root, sourcePath, 'number')).toBe(37);
+    expect(readRetainedSlotSource(root, sourcePath, 'number')).toBe(37);
 
     runtime.disableAutomaticWrites = true;
     if (operation === 'insert') dispatchInsert(list, 0, []);
     else dispatchRemove(list, 0);
     expect(old.detached).toBe(true);
-    expect(getDispatchNode(list, String(destination), '0', 'v').raw).toBe(37);
+    expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(37);
 
     expect(list.local).toEqual(
       operation === 'insert' ? [[], [{ v: 37 }]] : [[{ v: 37 }]],
     );
     expect(root.emit).toEqual(root.local);
-    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+    expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(destination), '0', 'v').raw).toBe(
+    expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(
       'live',
     );
-    expect(readRetainedSlotRaw(root, path, 'number')).toBe(37);
+    expect(readRetainedSlotSource(root, path, 'number')).toBe(37);
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(destination), '0', 'v').raw).toBe(37);
-    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+    expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(37);
+    expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
     expect(runtime.loadSnapshot).toEqual(
       operation === 'insert'
         ? { kind: 'string', list: [[], [{ v: 'live' }]] }

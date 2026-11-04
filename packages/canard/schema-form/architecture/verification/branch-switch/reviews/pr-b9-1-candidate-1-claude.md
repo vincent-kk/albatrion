@@ -40,7 +40,7 @@ None. One P1 candidate was traced and cleared: the no-membership clause does not
 ### P2-3 (confirmed gap) — H8 fallbacks and the bounded-equals-full claim are untested
 
 - `settle/__tests__/settle.presence-delta.test.ts` has one case. It asserts only `scans === 0` and the final `local`.
-- No test drives a prepared host through raw null, host entered, exited, perished or revived, a witness mismatch (`previous !== witness.structure`), or a deleted preparation. No test compares the bounded names with the full scan.
+- No test drives a prepared host through source null, host entered, exited, perished or revived, a witness mismatch (`previous !== witness.structure`), or a deleted preparation. No test compares the bounded names with the full scan.
 - The brief asked that each fallback be reachable and tested. Each branch is reachable by code reading (`collectPresenceChangeNames.ts:29-37`), but none is asserted, and P2-1 shows the equivalence is not exact.
 - **Fix spec:**
   1. In `settle.presence-delta.test.ts`, import the module namespace and wrap `collectPresenceChangeNames` with `vi.spyOn`.
@@ -78,7 +78,7 @@ None. One P1 candidate was traced and cleared: the no-membership clause does not
    - The Proxy invariants hold: the target is extensible, baseline descriptors are configurable, and `__proto__` is copied as an own key.
    - The test asserts callbacks 0, list comparisons 0, `Object.assign` 0, `Object.values(root.structure)` 0, the same structure and children references, and key order, in both table and verify modes.
 2. **H8.**
-   - Fallbacks occur when there is no witness, when `witness.structure !== previous`, when the preparation is absent or replaced, when the host was not prepared in this settlement, on raw null, and on entered, exited, perished or revived hosts (`collectPresenceChangeNames.ts:29-37`). The else branch is byte-equivalent to the removed scans.
+   - Fallbacks occur when there is no witness, when `witness.structure !== previous`, when the preparation is absent or replaced, when the host was not prepared in this settlement, on source null, and on entered, exited, perished or revived hosts (`collectPresenceChangeNames.ts:29-37`). The else branch is byte-equivalent to the removed scans.
    - Undeclared keys and extras are not structure keys. The projection-baseline loop is unchanged and costs O(captured baselines).
    - No existing test file changed in the range, and all touched suites pass in `raw/b9-1/static-unit.json.gz` and `static-verify.json.gz`.
 3. **H4.**
@@ -152,7 +152,7 @@ Reviewed: `550d1dae2` (docs: settle DETAIL H1/H8/H4 corrections and the engine D
 3. **P2-3 fixed, with one residual gap (P3-A).**
    - Five real-write scenarios in `settle.presence-delta.test.ts` cover the 1,000-sibling switch, multi-round p/q, the nullable null round trip, host exit and re-entry, and a deleted preparation. Each goes through a spy that compares every real collector call with the two original for-in loops. Those loops are byte-equal to `registerPresenceChanges.ts:40-44` at `3104b0d9b`.
    - Which assertion fails without the P2-1 fix: the `dynamicNames` assertion in `:50` (recorded). The other four differential scenarios pass on the pre-fix source (recorded). They are guards, not failing-first tests.
-   - `:174` reaches raw null, entered, exited, perished, revived, witness mismatch and missing preparation. The product's else branch runs for each, because the spy's classifier mirrors `collectPresenceChangeNames.ts:30-38`. Its assertions cannot fail when a guard is deleted (P3-A).
+   - `:174` reaches source null, entered, exited, perished, revived, witness mismatch and missing preparation. The product's else branch runs for each, because the spy's classifier mirrors `collectPresenceChangeNames.ts:30-38`. Its assertions cannot fail when a guard is deleted (P3-A).
 4. **Prior P3 items are all applied (confirmed).**
    - P3-1: `prepareStaticHost.ts:136-137`.
    - P3-2: try/finally at `selectChildren.ts:233-250`.
@@ -186,7 +186,7 @@ Reviewed: `550d1dae2` (docs: settle DETAIL H1/H8/H4 corrections and the engine D
 
 - **P3-A (confirmed, test validity) — the fallback-reach test cannot fail when a guard is deleted.**
   - `settle.presence-delta.test.ts:174-226` calls the collector with `previous === structure`, or with a shallow copy at :217. Both the full scan and the bounded path return `[]`.
-  - Deleting any one guard term at `collectPresenceChangeNames.ts:33-38` (preparedStaticHosts, raw null, entered, exited, perished, revived) keeps every assertion green. The counts come from the test's own classifier. In the real-write scenarios, :117 and :152 also accept `missing`, so those guards are shadowed there too.
+  - Deleting any one guard term at `collectPresenceChangeNames.ts:33-38` (preparedStaticHosts, source null, entered, exited, perished, revived) keeps every assertion green. The counts come from the test's own classifier. In the real-write scenarios, :117 and :152 also accept `missing`, so those guards are shadowed there too.
   - Effect: only regression protection is missing. The guards were verified by trace in the prior round.
   - Fix: in `:174`, before each fallback call, run `const previous = Object.assign(Object.create(null), structure); delete previous.kind;` and `context.presenceSelections.set(root, { structure: previous, names: prepared.dynamicNames })`, then call `collectPresenceChangeNames(root, previous, context)`. The full scan then returns `['kind']`, and a bounded result would return `[]`, so the spy's `toEqual` fails when the guard is removed. For the mismatch case, set the witness structure to `structure` and still pass `previous`. Keep the existing `previous === structure` call for `counts.bounded`.
   - Verify after the window: remove each guard term one at a time, confirm that `:174` fails, then restore it.
@@ -201,7 +201,7 @@ Reviewed: `550d1dae2` (docs: settle DETAIL H1/H8/H4 corrections and the engine D
 - No test, build or window was run, by instruction. Failing-first status comes from the committed logs.
 - It is not verified that candidate bundle `7a93f102…` was built from `1c329eb22`.
 - There is no separate raw record of the six-test rerun after `f4e6cbcc3`. The diff is a pure extraction.
-- It is not known whether any real flow reaches the raw-null or lifecycle guards with a valid witness.
+- It is not known whether any real flow reaches the source-null or lifecycle guards with a valid witness.
 
 ## Delta 2 — oneOf-80 protective-gate fix `88ba096e8..048bdab41`
 

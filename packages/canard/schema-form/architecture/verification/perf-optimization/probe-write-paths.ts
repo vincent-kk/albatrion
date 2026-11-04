@@ -18,7 +18,7 @@
  *   W keys at every level (`o` plus W−1 numbers; --wide-width, default 100;
  *   --wide-depths, default 1,2,4), isolating each ancestor's output comparison.
  * - latent-object-one-key: h.setValue(next, Overwrite) with one key changed while a
- *   closed `then` branch keeps K values as latent raw (supplied at mount).
+ *   closed `then` branch keeps K values as latent source (supplied at mount).
  * - misfit-object-one-key: the same write while a sibling host holds K strings in
  *   number fields (K misfit paths).
  * - gate-toggle-exit: writeFieldNodeInput(flag, false) closes the gate of one field

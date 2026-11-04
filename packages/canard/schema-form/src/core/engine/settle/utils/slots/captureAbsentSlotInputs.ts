@@ -54,7 +54,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
     const result = createSlotValueOverlay(
       entry.node,
       Reflect.get(current.input, name),
-      prior.source,
+      prior.instance,
       prior.overlay,
       current.whole,
     );

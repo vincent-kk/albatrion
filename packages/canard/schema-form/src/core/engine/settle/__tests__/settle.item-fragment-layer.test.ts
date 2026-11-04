@@ -6,7 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 /** Live tree root created by the shared settle fixture. */
 type TestRoot = ReturnType<typeof createTestTree>['root'];
@@ -50,13 +50,13 @@ const stateKeys = (root: TestRoot, ...path: number[]) => {
 };
 
 /**
- * Read the latent raw value kept for one exited string item.
+ * Read the latent source value kept for one exited string item.
  * @param root - Settled tree root
  * @param index - Item index under `/list`
- * @returns The kept raw value, or `undefined` when it was cleared
+ * @returns The kept source value, or `undefined` when it was cleared
  */
 const latentItem = (root: TestRoot, index: number) =>
-  readRetainedSlotRaw(root, '/list/' + index, 'string');
+  readRetainedSlotSource(root, '/list/' + index, 'string');
 
 /**
  * Turn `/flag` off with an input write.
@@ -112,7 +112,7 @@ describe('array item fragment layer', () => {
     );
     expect(
       [on, off].map((root) =>
-        [0, 1].map((index) => root.structure!.list!.structure![index]?.raw),
+        [0, 1].map((index) => root.structure!.list!.structure![index]?.source),
       ),
     ).toEqual([
       ['d', 'd'],
@@ -197,7 +197,7 @@ describe('array item fragment layer', () => {
     );
     expect(
       [0, 1].map((index) => [
-        root.structure!.list!.structure![index]?.raw,
+        root.structure!.list!.structure![index]?.source,
         ...stateKeys(root, index),
       ]),
     ).toEqual([

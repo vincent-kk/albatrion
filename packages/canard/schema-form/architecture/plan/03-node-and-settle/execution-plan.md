@@ -8,7 +8,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 ## 1. 목표와 완료 기준
 
-목표: 상속 없는 단일 클래스 `SchemaNode`와 동작 행을 세운다. 상태는 `raw`·`extras` 둘뿐이다. 그 위에 정착 루프(표시·계산·전이·커밋), 예산과 원본 B, `diagnostics`를 둔다(LANDING-062·082·092). 새 엔진은 07까지 `<Form>`에 닿지 않는다. 옛 시험 전체가 회귀 신호다(LANDING-159).
+목표: 상속 없는 단일 클래스 `SchemaNode`와 동작 행을 세운다. 상태는 `source`·`extras` 둘뿐이다. 그 위에 정착 루프(표시·계산·전이·커밋), 예산과 원본 B, `diagnostics`를 둔다(LANDING-062·082·092). 새 엔진은 07까지 `<Form>`에 닿지 않는다. 옛 시험 전체가 회귀 신호다(LANDING-159).
 
 | 완료 기준(`request.md`) | 단위 | 관찰할 증거 |
 | --- | --- | --- |
@@ -32,7 +32,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 | # | 물음 | 채택한 해석 | 근거 | 상태 |
 | --- | --- | --- | --- | --- |
-| I1 | 뒤 PR 기제의 겉면 멤버를 PR-2에 두는가 | 두지 않는다. PR-2의 겉면 계약은 `reviews/raw-round17-node-structure.md:74`의 식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, `settle`로 직접 위임하는 `setValue`에 `raw`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`, 경고등 게터 `typeMismatch`·`typeMismatches`(WRITE-093)와 공개 옵션 `SetValueOption`을 더한 것이다. 멤버 목록 시험은 클래스 멤버만 단언한다. 각 뒤 PR은 자기 멤버를 들일 때 `SchemaNode/DETAIL.md` 목록·멤버 목록 시험·공개 형을 함께 고친다. 시험용 주입 자리와 스텁 멤버는 없다 | 26C-01, NODE-010, EVENT-063, LANDING-064·066 | 닫힘 |
+| I1 | 뒤 PR 기제의 겉면 멤버를 PR-2에 두는가 | 두지 않는다. PR-2의 겉면 계약은 `reviews/raw-round17-node-structure.md:74`의 식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, `settle`로 직접 위임하는 `setValue`에 `source`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`, 경고등 게터 `typeMismatch`·`typeMismatches`(WRITE-093)와 공개 옵션 `SetValueOption`을 더한 것이다. 멤버 목록 시험은 클래스 멤버만 단언한다. 각 뒤 PR은 자기 멤버를 들일 때 `SchemaNode/DETAIL.md` 목록·멤버 목록 시험·공개 형을 함께 고친다. 시험용 주입 자리와 스텁 멤버는 없다 | 26C-01, NODE-010, EVENT-063, LANDING-064·066 | 닫힘 |
 | I2 | dispatch 없는 PR-2의 동사 진입 | `SchemaNode.setValue`가 `settle` 쓰기로 직접 위임한다. PR-2의 사슬은 `settle` 호출 하나이고 05(PR-4)가 `dispatch` 진입으로 옮긴다 | TEST-069, LANDING-064, 26C-01 | 닫힘 |
 | I3 | PR-2에 배정된 "렌더 시나리오" 게이트 | 시나리오를 SCN의 순수 데이터로 넣고 코어 러너로 새 트리에서 돌린다. 렌더 실행기는 07이다. `FormHandle.reset()`은 루트의 폼 수준 로드다. ERROR-204의 경고 중복 키 초기화는 05(PR-4), 제출 거부는 07(PR-7)로 넘긴다 | 26C-02, TEST-023, ERROR-032·204 | 닫힘 |
 | I4 | PR-2 게이트 문장이 뒤 PR 기제를 쓰는 경우(SETTLE-048·049, EVENT-071, WRITE-096) | PR-2는 로드가 비우는 기준(생김·채움), 표시의 쓰기 종류, 커밋의 Refresh 대상 집합을 단언한다. `derived`·`injectTo` 발화는 04(PR-3), 리스너·`RequestRefresh`·`UpdateValue` 배달은 05(PR-4), 캐럿·IME는 07(PR-7)에 사례별로 넘긴다 | 26C-03, TEST-069 (라) | 닫힘 |
@@ -124,7 +124,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - `DETAIL.md`가 계약으로 드는 것:
   - 진입점이 이름으로 내보내는 기호와 서명.
   - `record/`의 형 전부: `SchemaNodeRecord<Self>`의 필드 목록과 순서, `Behavior`의 칸 목록과 순서, `SchemaNodeRuntime`의 `if` 술어·진단·예산·`nodeFactory`에 필요한 최소 칸. 뒤 PR 칸은 미리 두지 않는다(26C-01, NODE-045).
-  - `SchemaNode/DETAIL.md`의 PR-2 겉면 멤버 목록. `ARCH/reviews/raw-round17-node-structure.md:74`의 PR-2 목록에 `raw`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`·`typeMismatch`·`typeMismatches`(WRITE-093)를 더하고, `SetValueOption`은 공개 옵션 계약으로 적는다. 멤버 이름·종류·위임 대상을 적고 뒤 PR 멤버는 그 PR의 문서 변경으로 들인다(EVENT-063, 26C-01).
+  - `SchemaNode/DETAIL.md`의 PR-2 겉면 멤버 목록. `ARCH/reviews/raw-round17-node-structure.md:74`의 PR-2 목록에 `source`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`·`typeMismatch`·`typeMismatches`(WRITE-093)를 더하고, `SetValueOption`은 공개 옵션 계약으로 적는다. 멤버 이름·종류·위임 대상을 적고 뒤 PR 멤버는 그 PR의 문서 변경으로 들인다(EVENT-063, 26C-01).
   - `settle/DETAIL.md`의 단계 순서, 예산 다섯 가운데 PR-2가 여는 둘, 원본 B 기록 항목, 쓰기 종류 목록(VALUE-032·WRITE-096), 로드의 범위(마운트·폼 수준 reset·`resetSubtree`).
   - DAG와 organ 예외.
   - `behaviors/utils/parse/`의 문서(LANDING-150).
@@ -172,7 +172,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - 계산:
   - 루트에서 한 번 내려가는 하강.
   - 호스트 바퀴: 출발점 고정, 매 바퀴 모든 게이트, 가우스-자이델, 상한 = 게이트 가진 조각 수 + 노드 게이트 수 + 1(SETTLE-041의 셈).
-  - 게이트 입력은 투영과 `extras`이고, 비객체 `raw`이면 `{}`다.
+  - 게이트 입력은 투영과 `extras`이고, 비객체 `source`이면 `{}`다.
   - 판별 게이트의 `./<key>` 값과 `values` 판정, 분기의 `controls.active`와 AND. 노드·조각 `controls.active`는 PR-1의 실제 `BlueprintExpression.evaluate`로 제품 경로의 호스트 바퀴에서 평가한다. `if`만 `record/`의 술어 인터페이스를 호출한다(26C-04).
   - 상속 overlay 재계산. SETTLE-045의 옮긴 게이트.
   - 유효 스키마 메모(`mergeEffectiveSchema`)와 유효 목록.
@@ -204,7 +204,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
   - 라운드 상한은 SETTLE-005.
 - 예산과 원본 B:
   - PR-2가 여는 예산은 호스트 바퀴와 전이 라운드다.
-  - 되돌림 기록은 노드, 이전 `raw`, 이전 `extras`이고, 중간 라운드 채움의 철회보다 먼저 적용한다. 배열 구조 항목은 06이다.
+  - 되돌림 기록은 노드, 이전 `source`, 이전 `extras`이고, 중간 라운드 채움의 철회보다 먼저 적용한다. 배열 구조 항목은 06이다.
   - 원본 B에는 쓰기 경계의 해석만 남는다. 원본 B로 형상을 한 번 더 계산한다.
   - `diagnostics { status, cause, exceededBudget, iterations, commit }`. PR-2는 폼 수준 로드에서 `diagnostics`만 초기화함을 단언한다. 경고 중복 키 초기화는 05(PR-4), 제출 거부는 07(PR-7)이다(26C-02, ERROR-204). 던지는 자리는 `settle` 호출 끝이고 모든 환경이다.
   - (c′) 재귀 펼침 멈춤은 `exceededBudget: 'recursion'`이다.

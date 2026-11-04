@@ -6,7 +6,7 @@ oneOf-N 마운트의 게이트 평가 20N은 루트 호스트 하나의 바퀴 �
 
 ## 원인
 
-평가는 하위 호스트가 아니라 루트 호스트(`host: ""`)에서만 일어납니다. primeHost 안의 평가는 없습니다. 루트의 `selectNodeSchema`가 선언 게이트 N개를 평가하고, load에서 직접 선택 계획이 꺼진 `selectChildren`이 엔트리 3N+2개의 선언 게이트를 평가하므로, 같은 게이트 객체가 바퀴마다 네 번 평가됩니다. 패스 A에서 형상 dirty가 된 루트는 정착이 끝나기 전에 `shapeDirtyPaths`가 지워지지 않아, 같은 정착의 재계산마다 다시 바퀴를 돕니다. 누적된 `changedRaw`의 `/kind`를 `registerRecalculation`이 다시 읽어 루트를 형상 dirty로 표시하는 경로가 이와 독립으로 있습니다. #427의 확인 바퀴 생략은 load에서 입력 증인 프레임을 만들지 않고, load 조항과 `distributedInputs` 조항이 마운트의 모든 루트 바퀴를 거부합니다.
+평가는 하위 호스트가 아니라 루트 호스트(`host: ""`)에서만 일어납니다. primeHost 안의 평가는 없습니다. 루트의 `selectNodeSchema`가 선언 게이트 N개를 평가하고, load에서 직접 선택 계획이 꺼진 `selectChildren`이 엔트리 3N+2개의 선언 게이트를 평가하므로, 같은 게이트 객체가 바퀴마다 네 번 평가됩니다. 패스 A에서 형상 dirty가 된 루트는 정착이 끝나기 전에 `shapeDirtyPaths`가 지워지지 않아, 같은 정착의 재계산마다 다시 바퀴를 돕니다. 누적된 `changedSource`의 `/kind`를 `registerRecalculation`이 다시 읽어 루트를 형상 dirty로 표시하는 경로가 이와 독립으로 있습니다. #427의 확인 바퀴 생략은 load에서 입력 증인 프레임을 만들지 않고, load 조항과 `distributedInputs` 조항이 마운트의 모든 루트 바퀴를 거부합니다.
 
 ## 기전
 
@@ -14,8 +14,8 @@ oneOf-N 마운트의 게이트 평가 20N은 루트 호스트 하나의 바퀴 �
 2. load에서는 직접 선택 계획이 꺼져 있습니다(`settle/utils/compute/childSelection/selectChildren.ts:136-141`). 그래서 `selectChildren`은 `declareChildren`으로 엔트리 3N+2개를 받습니다(`:150-152`). 그리고 선언마다 게이트를 평가합니다(`:178-201`). payload 엔트리 하나는 자기 분기의 게이트 하나를 가지므로, 이것이 바퀴당 3N입니다. 같은 게이트 객체가 바퀴마다 네 번 평가됩니다. 루트 조각 선언에서 한 번, 분기 프로퍼티 셋에서 한 번씩입니다. 소유자는 모두 루트이고 edgeName은 모두 undefined입니다. 프로퍼티 선언의 schemaPath에 `/controls/active`를 붙인 값이 게이트 schemaPath와 다르기 때문입니다(`selectChildren.ts:193`).
 3. `computeNode`는 호스트가 `context.shapeDirtyPaths`에 있을 때만 primeHost와 바퀴로 갑니다(`computeNode.ts:95`, `:150`, `:159`). 없으면 `:95-103`의 비형상 경로로 자식 재계산과 출력 갱신만 합니다.
 4. `shapeDirtyPaths`는 정착 중에 지워지지 않습니다. 엔진 전체에서 유일한 clear 위치는 정착이 끝난 뒤의 `settle/utils/scratch/releaseSettlementScratch.ts:29`입니다. `computeNode`는 `dirtyPaths`만 지웁니다(`computeNode.ts:221`, `:227`). 그래서 패스 A에서 형상 dirty가 된 루트는 같은 정착의 모든 재계산에서 다시 바퀴를 돕니다.
-5. `changedRaw`도 누적됩니다. 집합 전체를 비우는 곳은 `releaseSettlementScratch.ts:30`과 `settle/utils/transition/restoreSourceB.ts:45`입니다. 경로 하나를 지우는 자리는 `withdrawDetachedFills.ts:29`(`context.changedRaw.delete`)에도 있습니다. 전이 2라운드의 `registerRecalculation`(`transitionSettlement.ts:206`)은 1라운드에서 넣은 `/kind`를 여전히 봅니다. 그래서 루트를 다시 형상 dirty로 표시하는 경로가 둘 이상입니다. 하나는 `settle/utils/dependencies/registerRecalculation.ts:21-31`(affected)입니다. 다른 하나는 `:50-52`입니다. `mayChangeAt`이 `settle/utils/gates/getGateRegistry.ts:261-281`의 readsChanged로 `/kind`를 바뀐 읽기로 판정합니다. `registerRecalculation.ts:53-63`의 `mayChangeOwnDeclarationAt`도 같은 누적 `changedRaw`를 읽습니다.
-6. 형상 dirty의 잔류와 `changedRaw`의 누적은 서로 독립입니다. 잔류만 없애면 누적된 `changedRaw`가 다시 표시하고, 누적만 없애면 패스 A의 형상 dirty가 남습니다.
+5. `changedSource`도 누적됩니다. 집합 전체를 비우는 곳은 `releaseSettlementScratch.ts:30`과 `settle/utils/transition/restoreSourceB.ts:45`입니다. 경로 하나를 지우는 자리는 `withdrawDetachedFills.ts:29`(`context.changedSource.delete`)에도 있습니다. 전이 2라운드의 `registerRecalculation`(`transitionSettlement.ts:206`)은 1라운드에서 넣은 `/kind`를 여전히 봅니다. 그래서 루트를 다시 형상 dirty로 표시하는 경로가 둘 이상입니다. 하나는 `settle/utils/dependencies/registerRecalculation.ts:21-31`(affected)입니다. 다른 하나는 `:50-52`입니다. `mayChangeAt`이 `settle/utils/gates/getGateRegistry.ts:261-281`의 readsChanged로 `/kind`를 바뀐 읽기로 판정합니다. `registerRecalculation.ts:53-63`의 `mayChangeOwnDeclarationAt`도 같은 누적 `changedSource`를 읽습니다.
+6. 형상 dirty의 잔류와 `changedSource`의 누적은 서로 독립입니다. 잔류만 없애면 누적된 `changedSource`가 다시 표시하고, 누적만 없애면 패스 A의 형상 dirty가 남습니다.
 7. 같은 기제가 갱신 첫 쓰기의 둘째 바퀴 쌍도 만듭니다. 437의 "첫 쓰기 16N·네 휠"이 그것입니다(`packages/canard/schema-form/architecture/verification/perf-optimization/gate-wheel-skip-design-437.md` 설계 문서 49행(4절)).
 8. W4는 게이트 입력이 W3 이후와 같아도 실제 일을 합니다. 전이 2라운드가 채운 payload 값을 `flushPendingOutput`(`selectChildren.ts:404`)이 루트 출력에 반영합니다. 이 반영은 계측의 outputChanged(`computeNode.ts:187`)에 나타나지 않습니다. 187행은 `context.initialOutputs`가 있으면 노드를 그 배열에 넣기만 하고, `updateOutput`의 결과를 outputChanged에 싣지 않습니다.
 9. #427 술어가 마운트에서 막히는 지점은 세 곳입니다. `computeNode.ts:161`은 `context.kind !== 'load'`일 때만 `GateWheelFrame`을 만듭니다. 마운트에서는 입력 증인을 기록하지 않습니다. `settle/utils/gates/canSkipGateWheel.ts:33`은 `context.kind === 'load'`이면 거부합니다. `canSkipGateWheel.ts:34`는 `context.distributedInputs.has(node)`이면 거부합니다. 마운트에서는 `writeFieldNode.ts:136`의 `markWrite(root, …)`가 `settle/utils/input/markWrite.ts:147`에서 루트를 무조건 `distributedInputs`에 넣습니다. 이 항목은 정착이 끝날 때까지 남습니다(`releaseSettlementScratch.ts:19`). 따라서 이 조항은 마운트의 모든 루트 바퀴를 막습니다.
@@ -141,7 +141,7 @@ primeHost는 세 번을 합쳐 41.8 µs입니다.
 
 ### H1. 패스 C 제거: 패스 단위 형상 dirty
 
-- **기제입니다.** 누적 `shapeDirtyPaths`는 그대로 두고, 이번 계산 패스에서 새로 표시된 형상 dirty를 따로 둡니다. computeNode는 바퀴를 돌린 뒤 그 표시를 소비합니다. 누적 집합에는 이미 있는 경로를 다시 add해도 흔적이 남지 않으므로, add할 때마다 패스 집합에도 넣는 래퍼가 필요합니다. add 자리는 엔진 안에 19곳입니다. 아울러 `registerRecalculation`은 직전 호출 이후 `changedRaw`에 더해진 증분으로만 affected와 `mayChangeAt`을 판정합니다(`registerRecalculation.ts:21-31`, `:50-64`).
+- **기제입니다.** 누적 `shapeDirtyPaths`는 그대로 두고, 이번 계산 패스에서 새로 표시된 형상 dirty를 따로 둡니다. computeNode는 바퀴를 돌린 뒤 그 표시를 소비합니다. 누적 집합에는 이미 있는 경로를 다시 add해도 흔적이 남지 않으므로, add할 때마다 패스 집합에도 넣는 래퍼가 필요합니다. add 자리는 엔진 안에 19곳입니다. 아울러 `registerRecalculation`은 직전 호출 이후 `changedSource`에 더해진 증분으로만 affected와 `mayChangeAt`을 판정합니다(`registerRecalculation.ts:21-31`, `:50-64`).
 - **지우면 안 되는 이유입니다.** `shapeDirtyPaths`는 정착 뒤에도 `settle/utils/commit/commitExitPolicyValues.ts:82`와 `settle/utils/compute/publishStateKeys.ts:26`이 읽습니다. 그래서 누적 집합은 남겨야 합니다.
 - **동치 논거입니다.** 이 픽스처에서는 전이 2라운드의 쓰기가 payload 원본뿐이어서 결과가 같습니다. 일반적으로는 같지 않습니다. 게이트는 emit을 읽고, 하위 호스트의 선택 변화(자식 퇴장, overlay)는 원본 경로를 건드리지 않고 읽는 값을 바꿉니다(437 설계 2절의 (나)와 (다)). 현재 마운트는 루트가 정착 내내 형상 dirty라서 이 경우를 다시 계산하지만, H1은 이 경우를 놓칩니다. 패스 B에서는 c='x'를 보고 분기가 켜지고 m이 들어옵니다. 이어서 전이 2라운드가 m='M'을 채웁니다. 현재 코드는 패스 C에서 루트를 primeHost부터 다시 돌려 h 계산 뒤 c가 나간 것을 보고 분기와 z를 끕니다. H1에서는 증분 {/h/m}이 루트 게이트의 감시 경로 /h/c와 겹치지 않아 루트가 비형상 경로로 가고 분기와 z가 켜진 채 남습니다(정적 추적; 실행 확인은 별도).
 
@@ -151,7 +151,7 @@ primeHost는 세 번을 합쳐 41.8 µs입니다.
 
 - **기대 절감입니다.** 바퀴는 5개에서 3개로, 평가는 20N에서 12N으로 줍니다. 시간은 약 0.35~0.40 ms(마운트의 약 11 %) 줄 것으로 봅니다. 절반 가정에서의 값은 패스 B·C 바퀴 비용의 절반(776.5 ÷ 2 ≈ 388 µs)에 primeHost 한 번(약 14 µs)을 더한 값입니다. 하한은 남는 비형상 경로 비용을 뺀 값입니다. 갱신 첫 쓰기의 둘째 쌍도 같이 줄어듭니다.
 - **위험입니다.**
-  - overlay나 스키마 변화처럼 원본이 그대로인데 emit이 바뀌는 경로는 `changedRaw`로 잡히지 않습니다. 갱신 경로에는 이미 있는 한계이지만, 마운트에서는 H1이 새로 만드는 동작 차이입니다. 그래도 전이 라운드에서 이 경로가 실제로 생기는지는 차등 시험으로 확인해야 합니다.
+  - overlay나 스키마 변화처럼 원본이 그대로인데 emit이 바뀌는 경로는 `changedSource`로 잡히지 않습니다. 갱신 경로에는 이미 있는 한계이지만, 마운트에서는 H1이 새로 만드는 동작 차이입니다. 그래도 전이 라운드에서 이 경로가 실제로 생기는지는 차등 시험으로 확인해야 합니다.
   - 표시 자리가 19곳이라 하나라도 빠지면 바퀴가 생략되어 형상이 틀립니다.
   - 값이 있는 마운트에서는 H2와 같은 분배 멱등성 전제가 필요합니다.
 - 원장 문구입니다. 충돌이 있습니다. SETTLE-020 보충 97C-01 (4)는 형상 dirty 판정을 매 호출의 누적 집합에 대한 질의로 고정하고, 그보다 좁은 판정을 SETTLE-044 위반과 같다고 봅니다. H1은 이 조항을 바꾸는 편집자·소유자 결정 없이는 진행할 수 없습니다.
@@ -212,7 +212,7 @@ H1과 H2를 함께 적용하면 바퀴는 W1, W2 두 개, 평가는 8N이 됩니
 
 1. **패스 B와 패스 C의 시간 분리입니다.** 두 패스는 스택이 같아(`finishSettlement` → `transitionSettlement` → `computeNode`) 프로파일로 나눌 수 없습니다. 이 때문에 H1의 절감은 절반 가정으로 추정했습니다. 측정용 번들에서 `transitionSettlement.ts:208`의 호출을 라운드 번호가 이름에 든 래퍼(예: 라운드 1용, 라운드 2용)로 감싸고 `profile.mjs`와 `stage.mjs`를 돌리면 정해집니다. H1은 이 분리와 별도로 반박되었습니다.
 2. **확인 바퀴와 바뀐 바퀴의 단가 차이입니다.** H2의 절감 범위가 이것에 달려 있습니다. 437 `instrument.mjs`의 wheel 앵커(`for (let round = 0; round < cap; round++) {`)와 end 앵커에 `process.hrtime.bigint()` 기록을 붙여, 바퀴별 경과 시간을 `count.mjs` 결과에 넣으면 정해집니다. 계수 전용 실행이므로 시간에는 탐침 오버헤드가 들어 있다는 점을 함께 적어야 합니다.
-3. **패스 C 원인의 실행 확인입니다.** 기전 3~6은 정적 판독입니다. `transitionSettlement.ts:206` 직전에 `context.shapeDirtyPaths.has('')`와 `[...context.changedRaw]`를 기록하는 탐침을 넣고 `count.mjs`를 돌리면 확인됩니다. 기대값은 전이 2라운드에서 루트가 이미 형상 dirty이고 changedRaw에 `/kind`가 남아 있는 것입니다.
+3. **패스 C 원인의 실행 확인입니다.** 기전 3~6은 정적 판독입니다. `transitionSettlement.ts:206` 직전에 `context.shapeDirtyPaths.has('')`와 `[...context.changedSource]`를 기록하는 탐침을 넣고 `count.mjs`를 돌리면 확인됩니다. 기대값은 전이 2라운드에서 루트가 이미 형상 dirty이고 changedSource에 `/kind`가 남아 있는 것입니다.
 4. **검증 등록 단계의 비용입니다.** 437 계수와 프로파일은 `validationMode: 0`이라 이 단계가 0입니다. 439 운영 재측정이 어떤 검증 설정을 썼는지는 이번에 확인하지 않았습니다. 439 `environment.json`과 `tools/`에서 설정을 확인한 뒤, 같은 설정으로 `count.mjs`와 `profile.mjs`를 다시 돌리면 정해집니다.
 5. **값이 있는 마운트에서 H2의 분배 멱등성입니다.** 꺼진 분기의 payload 키를 포함한 defaultValue 픽스처를 만들고, 생략을 켠 판과 끈 판의 latent, commit, deliveries, revisions를 차등 비교하면 정해집니다. 그림자 모드(생략 판정이 참일 때도 다음 바퀴를 실제로 돌려 무변화를 단언)를 settle 스위트 전체에 걸어 함께 확인합니다.
 6. **H1 반례는 정적 추적이며 아직 실행하지 않았습니다.** 반례 스키마에서 패스 C가 분기와 z를 끄고, H1에서는 분기와 z가 켜진 채 남는다는 서술은 실행 확인이 따로입니다.
@@ -224,7 +224,7 @@ H1과 H2를 함께 적용하면 바퀴는 W1, W2 두 개, 평가는 8N이 됩니
 
 ### 검증
 
-Claude Opus가 이 진단을 검증하였고, 판정은 조건부 통과입니다. 주장 1–5는 확인되었고, N=80 행은 0.1 µs 안에서 다시 유도되었습니다. H1은 반박되었습니다. H2는 선행 조건과 함께 확인되었습니다. H3의 동치는 미확정입니다. H4·H5의 결론은 유지되었고, 원장 인용을 더했습니다. 검증이 요구한 수정을 이 문서에 반영하였습니다. 반영한 내용은 H1 원장 충돌 문구, H1 동치 실패와 반례 스키마, H1 위험의 분배 멱등성 전제, H1 절반 가정 문구, 조합 추정의 0.50~0.59 ms, H3의 load 제외 문구, 단계 표 뒤의 E4·HEAD·E5 한정, H4·H5 원장 끝의 96C-01·97C-01·438C-02, `getDirectChildSelectionPlan.ts:46`, 설계 문서 49행(4절), `mayChangeOwnDeclarationAt`(`registerRecalculation.ts:53-63`), `changedRaw.delete`(`withdrawDetachedFills.ts:29`), W4의 `flushPendingOutput`(`selectChildren.ts:404`)입니다.
+Claude Opus가 이 진단을 검증하였고, 판정은 조건부 통과입니다. 주장 1–5는 확인되었고, N=80 행은 0.1 µs 안에서 다시 유도되었습니다. H1은 반박되었습니다. H2는 선행 조건과 함께 확인되었습니다. H3의 동치는 미확정입니다. H4·H5의 결론은 유지되었고, 원장 인용을 더했습니다. 검증이 요구한 수정을 이 문서에 반영하였습니다. 반영한 내용은 H1 원장 충돌 문구, H1 동치 실패와 반례 스키마, H1 위험의 분배 멱등성 전제, H1 절반 가정 문구, 조합 추정의 0.50~0.59 ms, H3의 load 제외 문구, 단계 표 뒤의 E4·HEAD·E5 한정, H4·H5 원장 끝의 96C-01·97C-01·438C-02, `getDirectChildSelectionPlan.ts:46`, 설계 문서 49행(4절), `mayChangeOwnDeclarationAt`(`registerRecalculation.ts:53-63`), `changedSource.delete`(`withdrawDetachedFills.ts:29`), W4의 `flushPendingOutput`(`selectChildren.ts:404`)입니다.
 
 ## 판정
 

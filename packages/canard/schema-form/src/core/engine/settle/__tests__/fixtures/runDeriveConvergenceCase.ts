@@ -103,9 +103,9 @@ export const runDeriveConvergenceCase = (
           nodes.push({
             path: node.path,
             kind: node.blueprintNode.kind,
-            raw: node.raw,
+            source: node.source,
             emit: node.emit,
-            undeclaredValues: node.undeclaredValues,
+            extras: node.extras,
             isReadOnly: node.isReadOnly,
             isVisible: node.isVisible,
             isDisabled: node.isDisabled,

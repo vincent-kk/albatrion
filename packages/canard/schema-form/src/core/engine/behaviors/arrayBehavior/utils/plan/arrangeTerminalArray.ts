@@ -11,64 +11,64 @@ const NOOP_PLAN: ArrayArrangePlan = { kind: 'noop' };
 const LENGTH_RESULT = { source: 'length' } as const;
 
 /**
- * Propose a copied whole-array raw value for a terminal verb.
- * @param node - Terminal record holding the last whole raw array
+ * Propose a copied whole-array source value for a terminal verb.
+ * @param node - Terminal record holding the last whole source array
  * @param operation - Requested structural array verb
- * @returns Copied raw proposal or no-op when no position can change
+ * @returns Copied source proposal or no-op when no position can change
  */
 export const arrangeTerminalArray: Behavior['arrange'] = (node, operation) => {
-  const raw = node.raw;
+  const source = node.source;
   if (
-    !isArray(raw) &&
-    raw !== undefined &&
+    !isArray(source) &&
+    source !== undefined &&
     operation.kind !== 'push' &&
     operation.kind !== 'insert'
   )
     return NOOP_PLAN;
-  const source = isArray(raw) ? raw : [];
-  const length = source.length;
+  const items = isArray(source) ? source : [];
+  const length = items.length;
   if (operation.kind === 'push')
     return {
-      kind: 'raw',
-      raw: [...source, operation.value],
+      kind: 'source',
+      source: [...items, operation.value],
       result: LENGTH_RESULT,
     };
   if (operation.kind === 'clear')
     return length === 0
       ? NOOP_PLAN
       : {
-          kind: 'raw',
-          raw: [],
+          kind: 'source',
+          source: [],
           result: { source: 'void' },
         };
   if (operation.kind === 'pop')
     return length === 0
       ? NOOP_PLAN
       : {
-          kind: 'raw',
-          raw: source.slice(0, -1),
+          kind: 'source',
+          source: items.slice(0, -1),
           result: { source: 'removed', index: length - 1 },
         };
   if (operation.kind === 'insert') {
     if (!isValidInsertIndex(operation.index, length)) return NOOP_PLAN;
-    const inserted = source.slice();
+    const inserted = items.slice();
     inserted.splice(operation.index, 0, operation.value);
-    return { kind: 'raw', raw: inserted, result: LENGTH_RESULT };
+    return { kind: 'source', source: inserted, result: LENGTH_RESULT };
   }
   if (!isValidArrayIndex(operation.index, length)) return NOOP_PLAN;
-  const copy = source.slice();
+  const copy = items.slice();
   if (operation.kind === 'remove') {
     copy.splice(operation.index, 1);
     return {
-      kind: 'raw',
-      raw: copy,
+      kind: 'source',
+      source: copy,
       result: { source: 'removed', index: operation.index },
     };
   }
   copy[operation.index] = operation.value;
   return {
-    kind: 'raw',
-    raw: copy,
+    kind: 'source',
+    source: copy,
     result: { source: 'updated', index: operation.index },
   };
 };

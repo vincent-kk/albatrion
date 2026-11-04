@@ -77,7 +77,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-  for (const path of context.changedRaw) {
+  for (const path of context.changedSource) {
     if (
       loadScope &&
       (path === loadScope.path || isDescendantPath(path, loadScope.path))
@@ -95,7 +95,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     const effective = effectiveType(node);
     // Only a virtual node lacks a JSON type, and it never misfits.
     if (schemaType === undefined || effective === undefined) return;
-    const misfit = isMisfit(node.raw, effective, node.nullable);
+    const misfit = isMisfit(node.source, effective, node.nullable);
     const wasOn = runtime.misfitPaths.has(node.path);
     if (misfit) runtime.misfitPaths.add(node.path);
     else runtime.misfitPaths.delete(node.path);
@@ -104,9 +104,9 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       !(
         development &&
         node.behavior.strategy === 'terminal' &&
-        node.raw !== null &&
-        typeof node.raw === 'object' &&
-        context.changedRaw.has(node.path)
+        node.source !== null &&
+        typeof node.source === 'object' &&
+        context.changedSource.has(node.path)
       )
     )
       return;
@@ -123,14 +123,14 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
             nullable: node.nullable,
             effective,
           },
-          received: receivedType(node.raw),
+          received: receivedType(node.source),
           reason: ambiguous ? 'ambiguous' : 'unconvertible',
           ...(ambiguous ? { candidates } : {}),
           source: context.filledNodes.has(node)
             ? 'fill'
             : context.kind === 'load' && context.entered.has(node)
               ? 'load'
-              : context.changedRaw.has(node.path)
+              : context.changedSource.has(node.path)
                 ? context.kind
                 : 'gate',
         };
@@ -169,11 +169,11 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       if (
         development &&
         node.behavior.strategy === 'terminal' &&
-        node.raw !== null &&
-        typeof node.raw === 'object' &&
-        context.changedRaw.has(node.path)
+        node.source !== null &&
+        typeof node.source === 'object' &&
+        context.changedSource.has(node.path)
       ) {
-        const innerPaths = collectNonJsonPaths(node.raw, node.path);
+        const innerPaths = collectNonJsonPaths(node.source, node.path);
         if (innerPaths.length) {
           const code = FormWarningCode.NonJsonWholeValue;
           const key = JSON.stringify([code, node.path]);

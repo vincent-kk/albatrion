@@ -86,7 +86,7 @@ F=16→64의 평상시 쓰기 증가율은 Node 기준 약 11.9배→직접 판�
 | exit `getControlLayers` 전체 | 78 | 78 |
 | exit 중 `commitExitPolicyValues` caller | 3 | 3 |
 
-기존 차등 러너를 Node에서 정방향·역방향으로 각각 실행했습니다. 두 실행 모두 status=pass, 72장면·323단계, 차이 0입니다. 값·raw/local/emit·잠복 키/값/메타데이터·inactiveValues·이벤트 순서/payload/onChange·모든 revision 비트·커밋 정책/선언·옛 떼어진 참조·재진입·두 번째 나감을 비교합니다. overlap의 반대 순서·fields/node 우선순위도 포함합니다.
+기존 차등 러너를 Node에서 정방향·역방향으로 각각 실행했습니다. 두 실행 모두 status=pass, 72장면·323단계, 차이 0입니다. 값·source/local/emit·잠복 키/값/메타데이터·inactiveValues·이벤트 순서/payload/onChange·모든 revision 비트·커밋 정책/선언·옛 떼어진 참조·재진입·두 번째 나감을 비교합니다. overlap의 반대 순서·fields/node 우선순위도 포함합니다.
 
 원시 결과와 측정 사본은 작업 폴더의 `.seiri/tasks/l3e-direct-ownership/run/`에 있습니다: `node-1.json`, `bun-1.json`, `node-2.json`, `bun-2.json`, `instrumentation.json`, `differential.json`, `differential-2.json`. 재현 진입은 그 폴더의 `timing.mjs`이며 기존 C의 여섯 plain 장면만 고릅니다. 각 런타임에서 1차는 옵션 없이, 2차는 `--reverse`, 계측은 Node `--instrumented --warmups=2 --samples=3`입니다. 차등은 `run-c-differential.mjs`와 같은 파일의 `--reverse` 실행입니다. 임시 작업 자료는 Seiri 정리 대상이므로 영속 측정표는 이 문서입니다.
 

@@ -218,16 +218,16 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
       context[kind].delete(root);
       expect(counts[kind]).toBeGreaterThan(0);
     }
-    const raw = root.raw;
+    const source = root.source;
     context.presenceSelections.set(root, {
       structure: previous,
       names: prepared.dynamicNames,
     });
-    root.raw = null;
+    root.source = null;
     expect(collectPresenceChangeNames(root, previous, context)).toEqual([
       'kind',
     ]);
-    root.raw = raw;
+    root.source = source;
     context.presenceSelections.set(root, {
       structure,
       names: prepared.dynamicNames,

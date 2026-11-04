@@ -23,7 +23,7 @@ METHOD (follows reviews/round-1.md §2)
   Prototype correctness gate (proto/selfcheck.mjs, ALL PASSING, run before
   measuring, in its own process): untouched siblings keep identical memo
   references; the root memo moves iff something emitted changed; deactivate ->
-  reactivate restores the raw value; `if:{not:{required:['x']}}, then x
+  reactivate restores the source value; `if:{not:{required:['x']}}, then x
   default 1` hits the 25-pass cap, throws synchronously, and leaves the
   committed tree and the staged write untouched; a batch settles once; a guard
   flip toggles exactly the three fields its fragment declares.

@@ -32,7 +32,7 @@
 | test073          | 미충족 |
 | nodeHeap         | 통과   |
 
-일반 슬롯 경로의 captureExitedRaw·setLatentRaw·updateInactiveValuesMemo는 모든 계측 표본에서 호출0입니다. entering은 factory·재진입·복원·clone·overlay를 포함한 가장 바깥 구간의 합계이며 새 함수 이름으로 생성 비용을 숨기지 않습니다. [판정](raw/b4-1/candidate-1/judgement.json).
+일반 슬롯 경로의 captureExitedSource·setLatentSource·updateInactiveValuesMemo는 모든 계측 표본에서 호출0입니다. entering은 factory·재진입·복원·clone·overlay를 포함한 가장 바깥 구간의 합계이며 새 함수 이름으로 생성 비용을 숨기지 않습니다. [판정](raw/b4-1/candidate-1/judgement.json).
 
 | 행                | entering A µs | entering B µs | B/A       | 절반   |
 | ----------------- | ------------- | ------------- | --------- | ------ |
@@ -117,8 +117,8 @@
 | switch-oneOf-80   | transitionSettlement     | 4.875  | 3.979  | 4.875   | 3.979   | 0.124   | 없음 |
 | switch-oneOf-80   | finalizeExits            | 18.584 | 18.415 | 39.980  | 23.375  | 0.542   | 없음 |
 | switch-oneOf-80   | getControlLayers         | 2.125  | 1.418  | 2.125   | 1.418   | 0.042   | 없음 |
-| switch-oneOf-80   | captureExitedRaw         | 5.293  | 0.000  | 13.729  | 0.000   | 0.333   | 없음 |
-| switch-oneOf-80   | setLatentRaw             | 10.563 | 0.000  | 10.563  | 0.000   | 0.291   | 없음 |
+| switch-oneOf-80   | captureExitedSource         | 5.293  | 0.000  | 13.729  | 0.000   | 0.333   | 없음 |
+| switch-oneOf-80   | setLatentSource             | 10.563 | 0.000  | 10.563  | 0.000   | 0.291   | 없음 |
 | switch-oneOf-80   | updateOutput             | 6.875  | 7.332  | 15.709  | 16.418  | 1.103   | 없음 |
 | switch-oneOf-80   | assembleObject           | 9.041  | 9.208  | 9.041   | 9.208   | 0.562   | 없음 |
 | switch-oneOf-80   | commitSettlement         | 7.729  | 9.543  | 38.209  | 22.708  | 2.896   | 없음 |
@@ -135,8 +135,8 @@
 | switch-payload-12 | transitionSettlement     | 7.042  | 8.020  | 7.042   | 8.020   | 0.687   | 있음 |
 | switch-payload-12 | finalizeExits            | 34.769 | 35.749 | 93.229  | 42.709  | 3.730   | 없음 |
 | switch-payload-12 | getControlLayers         | 6.292  | 3.625  | 6.292   | 3.625   | 0.438   | 없음 |
-| switch-payload-12 | captureExitedRaw         | 11.605 | 0.000  | 38.791  | 0.000   | 0.771   | 없음 |
-| switch-payload-12 | setLatentRaw             | 35.377 | 0.000  | 35.377  | 0.000   | 1.498   | 없음 |
+| switch-payload-12 | captureExitedSource         | 11.605 | 0.000  | 38.791  | 0.000   | 0.771   | 없음 |
+| switch-payload-12 | setLatentSource             | 35.377 | 0.000  | 35.377  | 0.000   | 1.498   | 없음 |
 | switch-payload-12 | updateOutput             | 6.520  | 8.292  | 45.854  | 45.416  | 4.564   | 없음 |
 | switch-payload-12 | assembleObject           | 37.709 | 35.896 | 37.709  | 35.896  | 4.375   | 없음 |
 | switch-payload-12 | commitSettlement         | 16.124 | 14.938 | 76.833  | 33.375  | 2.437   | 없음 |
@@ -153,8 +153,8 @@
 | switch-siblings-0 | transitionSettlement     | 1.291  | 1.292  | 1.291   | 1.292   | 0.042   | 없음 |
 | switch-siblings-0 | finalizeExits            | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
 | switch-siblings-0 | getControlLayers         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
-| switch-siblings-0 | captureExitedRaw         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
-| switch-siblings-0 | setLatentRaw             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
+| switch-siblings-0 | captureExitedSource         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
+| switch-siblings-0 | setLatentSource             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
 | switch-siblings-0 | updateOutput             | 3.854  | 3.875  | 6.499   | 6.625   | 0.479   | 없음 |
 | switch-siblings-0 | assembleObject           | 2.583  | 2.666  | 2.583   | 2.666   | 0.124   | 없음 |
 | switch-siblings-0 | commitSettlement         | 3.541  | 3.687  | 13.000  | 12.541  | 0.563   | 없음 |
@@ -184,7 +184,7 @@
 | enterSlotClone                | 0.708/0.708        | 1.044/1.044          | 0.000/0.000          |
 | expireOccupiedSlotMemos       | 0.291/0.291        | 0.542/0.542          | 0.000/0.000          |
 | expirePackedSlotMemos         | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
-| finalizeRestoredSlotRaw       | 0.584/0.584        | 0.375/0.375          | 0.000/0.000          |
+| finalizeRestoredSlotSource       | 0.584/0.584        | 0.375/0.375          | 0.000/0.000          |
 | getRetainedChildEntry         | 0.687/0.687        | 1.544/1.544          | 0.000/0.000          |
 | getSlotEntries                | 1.042/1.042        | 1.125/1.125          | 0.000/0.000          |
 | getSlotEntryPosition          | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
@@ -193,7 +193,7 @@
 | hasSlotCandidateOwner         | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | hasSlotOverlaySource          | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | isSlotEligible                | 1.313/1.313        | 2.207/2.207          | 0.875/0.875          |
-| markRestoredSlotRaw           | 1.625/1.625        | 4.125/4.125          | 0.000/0.000          |
+| markRestoredSlotSource           | 1.625/1.625        | 4.125/4.125          | 0.000/0.000          |
 | markSlotChange                | 2.480/2.480        | 6.709/6.709          | 0.000/0.000          |
 | materializeInactiveSlotValues | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | preserveConvertedSlotMemos    | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
@@ -201,7 +201,7 @@
 | pruneArraySlotTail            | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | pruneSlotSources              | 1.875/1.875        | 2.500/2.500          | 1.500/1.500          |
 | readSlotExitPolicy            | 1.479/2.229        | 3.166/4.791          | 0.000/0.000          |
-| readSlotRawTree               | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
+| readSlotSourceTree               | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | readSlotValueEntry            | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | rekeyArraySlotBindings        | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
 | rekeySlotWriteAddresses       | 0.000/0.000        | 0.000/0.000          | 0.000/0.000          |
@@ -242,7 +242,7 @@
 
 이름이 정확히 `*`인 속성을 품는 청사진 폼 전체는 기존 잠복 경로를 씁니다. 일반 폼과 같은20예열/100개의 새 트리 이탈에서 호출 수를 계수했습니다.
 
-| 폼       | 단계            | captureExitedRaw 최소/최대 | setLatentRaw 최소/최대 | memo 최소/최대 |
+| 폼       | 단계            | captureExitedSource 최소/최대 | setLatentSource 최소/최대 | memo 최소/최대 |
 | -------- | --------------- | -------------------------- | ---------------------- | -------------- |
 | normal   | hide-descendant | 0/0                        | 0/0                    | 0/0            |
 | normal   | close-host      | 0/0                        | 0/0                    | 0/0            |
@@ -387,8 +387,8 @@ Node v26.12.1, Apple M1 Max arm64에서 A0/B0부터 A9/B9까지 교차한 440개
 | switch-oneOf-80   | transitionSettlement     | 4.958  | 3.875  | 4.958   | 3.875   | 0.042   | 없음 |
 | switch-oneOf-80   | finalizeExits            | 18.708 | 18.687 | 39.875  | 23.417  | 1.000   | 없음 |
 | switch-oneOf-80   | getControlLayers         | 2.040  | 1.457  | 2.040   | 1.457   | 0.062   | 없음 |
-| switch-oneOf-80   | captureExitedRaw         | 5.521  | 0.000  | 13.833  | 0.000   | 0.499   | 없음 |
-| switch-oneOf-80   | setLatentRaw             | 10.645 | 0.000  | 10.645  | 0.000   | 0.417   | 없음 |
+| switch-oneOf-80   | captureExitedSource         | 5.521  | 0.000  | 13.833  | 0.000   | 0.499   | 없음 |
+| switch-oneOf-80   | setLatentSource             | 10.645 | 0.000  | 10.645  | 0.000   | 0.417   | 없음 |
 | switch-oneOf-80   | updateOutput             | 6.854  | 7.209  | 15.396  | 16.334  | 1.772   | 없음 |
 | switch-oneOf-80   | assembleObject           | 8.896  | 9.125  | 8.896   | 9.125   | 1.833   | 없음 |
 | switch-oneOf-80   | commitSettlement         | 8.000  | 9.334  | 40.251  | 22.375  | 1.750   | 없음 |
@@ -405,8 +405,8 @@ Node v26.12.1, Apple M1 Max arm64에서 A0/B0부터 A9/B9까지 교차한 440개
 | switch-payload-12 | transitionSettlement     | 7.563  | 7.917  | 7.563   | 7.917   | 1.042   | 없음 |
 | switch-payload-12 | finalizeExits            | 34.562 | 34.628 | 89.750  | 41.208  | 3.896   | 없음 |
 | switch-payload-12 | getControlLayers         | 6.001  | 3.398  | 6.001   | 3.398   | 0.311   | 없음 |
-| switch-payload-12 | captureExitedRaw         | 11.501 | 0.000  | 39.396  | 0.000   | 1.959   | 없음 |
-| switch-payload-12 | setLatentRaw             | 34.645 | 0.000  | 34.645  | 0.000   | 0.606   | 없음 |
+| switch-payload-12 | captureExitedSource         | 11.501 | 0.000  | 39.396  | 0.000   | 1.959   | 없음 |
+| switch-payload-12 | setLatentSource             | 34.645 | 0.000  | 34.645  | 0.000   | 0.606   | 없음 |
 | switch-payload-12 | updateOutput             | 6.646  | 6.875  | 43.564  | 41.835  | 7.270   | 없음 |
 | switch-payload-12 | assembleObject           | 36.500 | 34.500 | 36.500  | 34.500  | 7.084   | 없음 |
 | switch-payload-12 | commitSettlement         | 15.624 | 14.271 | 75.251  | 30.395  | 4.396   | 없음 |
@@ -423,8 +423,8 @@ Node v26.12.1, Apple M1 Max arm64에서 A0/B0부터 A9/B9까지 교차한 440개
 | switch-siblings-0 | transitionSettlement     | 1.250  | 1.250  | 1.250   | 1.250   | 0.042   | 없음 |
 | switch-siblings-0 | finalizeExits            | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
 | switch-siblings-0 | getControlLayers         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
-| switch-siblings-0 | captureExitedRaw         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
-| switch-siblings-0 | setLatentRaw             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
+| switch-siblings-0 | captureExitedSource         | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
+| switch-siblings-0 | setLatentSource             | 0.000  | 0.000  | 0.000   | 0.000   | 0.000   | 없음 |
 | switch-siblings-0 | updateOutput             | 3.791  | 3.709  | 6.480   | 6.416   | 0.104   | 없음 |
 | switch-siblings-0 | assembleObject           | 2.542  | 2.542  | 2.542   | 2.542   | 0.041   | 없음 |
 | switch-siblings-0 | commitSettlement         | 3.417  | 3.375  | 12.333  | 12.500  | 0.708   | 없음 |
@@ -466,7 +466,7 @@ entering은 factory·생성·진입·복원·재귀 clone·overlay를 포괄하�
 | enterSlotClone                | 0.708/0.708     | 1.126/1.126       | 0.000/0.000       |
 | expireOccupiedSlotMemos       | 0.291/0.291     | 0.542/0.542       | 0.000/0.000       |
 | expirePackedSlotMemos         | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
-| finalizeRestoredSlotRaw       | 0.584/0.584     | 0.375/0.375       | 0.000/0.000       |
+| finalizeRestoredSlotSource       | 0.584/0.584     | 0.375/0.375       | 0.000/0.000       |
 | getRetainedChildEntry         | 0.771/0.771     | 1.708/1.708       | 0.000/0.000       |
 | getSlotEntries                | 1.042/1.042     | 1.166/1.166       | 0.000/0.000       |
 | getSlotEntryPosition          | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
@@ -475,7 +475,7 @@ entering은 factory·생성·진입·복원·재귀 clone·overlay를 포괄하�
 | hasSlotCandidateOwner         | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | hasSlotOverlaySource          | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | isSlotEligible                | 1.335/1.335     | 2.293/2.293       | 0.687/0.687       |
-| markRestoredSlotRaw           | 1.667/1.667     | 4.229/4.229       | 0.000/0.000       |
+| markRestoredSlotSource           | 1.667/1.667     | 4.229/4.229       | 0.000/0.000       |
 | markSlotChange                | 2.334/2.334     | 6.042/6.042       | 0.000/0.000       |
 | materializeInactiveSlotValues | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | preserveConvertedSlotMemos    | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
@@ -483,7 +483,7 @@ entering은 factory·생성·진입·복원·재귀 clone·overlay를 포괄하�
 | pruneArraySlotTail            | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | pruneSlotSources              | 1.896/1.896     | 2.458/2.458       | 1.541/1.541       |
 | readSlotExitPolicy            | 1.457/2.188     | 3.229/4.812       | 0.000/0.000       |
-| readSlotRawTree               | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
+| readSlotSourceTree               | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | readSlotValueEntry            | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | rekeyArraySlotBindings        | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
 | rekeySlotWriteAddresses       | 0.000/0.000     | 0.000/0.000       | 0.000/0.000       |
@@ -518,7 +518,7 @@ reset 뒤 슬롯 호스트가 남는지와 바이트를 보고합니다. 서로 
 
 정확히 별표인 자식 이름이 있는 청사진은 폼 전체에서 기존 잠복 경로를 사용합니다. 일반 슬롯 행의 호출0과 구분하여 예외 비용을 별도로 보고하며 채택 관문을 대신하지 않습니다.
 
-| 변형     | 단계            | captureExitedRaw 최소/최대 | setLatentRaw 최소/최대 | updateInactiveValuesMemo 최소/최대 |
+| 변형     | 단계            | captureExitedSource 최소/최대 | setLatentSource 최소/최대 | updateInactiveValuesMemo 최소/최대 |
 | -------- | --------------- | -------------------------- | ---------------------- | ---------------------------------- |
 | normal   | hide-descendant | 0/0                        | 0/0                    | 0/0                                |
 | normal   | close-host      | 0/0                        | 0/0                    | 0/0                                |

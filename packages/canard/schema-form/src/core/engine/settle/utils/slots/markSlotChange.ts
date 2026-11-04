@@ -21,7 +21,7 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
     if (!bindings) journal.set(host, (bindings = new Map()));
     if (!bindings.has(entry))
       bindings.set(entry, {
-        source: host.inactiveSlots?.get(entry),
+        instance: host.inactiveSlots?.get(entry),
         overlay: host.inactiveSlotOverlays?.get(entry),
       });
   }
@@ -35,7 +35,7 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
               (child) => child.parent === host && child.name === entry.name,
             )
           : undefined),
-      source: host.inactiveSlots?.get(entry),
+      instance: host.inactiveSlots?.get(entry),
       overlay: host.inactiveSlotOverlays?.get(entry),
     });
   (host.runtime.slotDirtyHosts ??= new Set()).add(host);

@@ -22,7 +22,7 @@ describe('extras comparison admission', () => {
     ({ merge, input, changed }) => {
       const { root } = createDispatchTree({ type: 'object' });
       dispatchMount(root, { seed: { value: 1 } });
-      const previous = root.undeclaredValues;
+      const previous = root.extras;
       const scratch = getSettlementScratch(root.runtime);
       const context = createSettlementContext(
         root,
@@ -35,8 +35,8 @@ describe('extras comparison admission', () => {
       try {
         markWrite(root, input, context);
         calls = compare.mock.calls.filter(([left]) => left === previous).length;
-        expect(context.changedRaw.has(root.path)).toBe(changed);
-        expect(root.undeclaredValues === previous).toBe(!changed);
+        expect(context.changedSource.has(root.path)).toBe(changed);
+        expect(root.extras === previous).toBe(!changed);
       } finally {
         compare.mockRestore();
         releaseSettlementScratch(scratch);
@@ -51,7 +51,7 @@ describe('extras comparison admission', () => {
   ])('compares array extras at most once for %j', ({ input, changed }) => {
     const { root } = createDispatchTree({ type: 'array' });
     dispatchMount(root, [1, NaN, undefined]);
-    const previous = root.undeclaredValues;
+    const previous = root.extras;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -64,8 +64,8 @@ describe('extras comparison admission', () => {
     try {
       markWrite(root, input, context);
       calls = compare.mock.calls.filter(([left]) => left === previous).length;
-      expect(context.changedRaw.has(root.path)).toBe(changed);
-      expect(root.undeclaredValues === previous).toBe(!changed);
+      expect(context.changedSource.has(root.path)).toBe(changed);
+      expect(root.extras === previous).toBe(!changed);
     } finally {
       compare.mockRestore();
       releaseSettlementScratch(scratch);

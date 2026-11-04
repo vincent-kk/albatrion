@@ -126,7 +126,7 @@ const born = loaded || (!child.unconditional && (child.declaredBy ?? []).some(i 
 | a2: 본체 `x`(기본값 없음) + `then`의 `default` T | 로드 `kind=off`, `kind:=on` | `x` 없음 | 같음 |
 | a3: 게이트 없는 `allOf` 항목 `x`(U) + `then`의 T | 로드, `x` 지움, `kind:=on` | `x='U'`, 없음, **`x='T'` 다시 채움** | 채우지 않음 |
 | a4: 본체 `x`(B) + `then`의 T | 로드, `x` 지움, `kind:=on` | `x` 없음 | 같음 |
-| 노드 게이트 `x`의 `&active: G.show`(D) | 로드 `show=false`, `x` 지움, `show:=true` | 로드 때 raw `x='D'`(방출 제외), 없음, **다시 채우지 않음** | 미정(spec 공백) |
+| 노드 게이트 `x`의 `&active: G.show`(D) | 로드 `show=false`, `x` 지움, `show:=true` | 로드 때 source `x='D'`(방출 제외), 없음, **다시 채우지 않음** | 미정(spec 공백) |
 
 결론입니다. v5는 본체 노드에서만 노드 단위이고, 조건부 조각끼리 공유한 노드(a1)와 게이트 없는 `allOf` 항목의 노드(a3)에서는 조각 단위로 다시 채웁니다. a3은 spec:105 "게이트 없는 조각은 무조건(오늘의 `allOf` 항목)"과도 어긋납니다. 본체와 게이트 없는 `allOf` 항목이 다르게 동작하기 때문입니다. 노드 게이트는 거꾸로입니다. 거짓에서 참이 되어도 생성으로 보지 않고, 로드 때 꺼져 있어도 채웁니다. 로컬의 "`&active`가 거짓에서 참이 되는 것도 생성이다 [확신 중]"은 v5와 다릅니다. 어느 쪽이 맞는지는 spec이 정하지 않았습니다(§4의 2번).
 

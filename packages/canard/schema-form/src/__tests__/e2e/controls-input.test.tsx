@@ -53,7 +53,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
     }
   });
 
-  it('WRITE-083 controlled blur trim replaces raw and DOM and preserves edited state', async () => {
+  it('WRITE-083 controlled blur trim replaces source and DOM and preserves edited state', async () => {
     const form = await renderForm({
       type: 'object',
       properties: {

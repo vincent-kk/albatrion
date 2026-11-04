@@ -11,7 +11,7 @@ import {
  * <Form> calls the same build channel through binding-only functions.
  * @param props - Authored schema, initial value, services and host predicates;
  * invalid schemas fail during construction, before mounting.
- * @param props.isTerminal - Renderer predicate accepting raw object or boolean schemas;
+ * @param props.isTerminal - Renderer predicate accepting uncompiled object or boolean schemas;
  * undefined leaves earlier terminal hints intact.
  * @returns The mounted root; mount validation is requested unless explicitly deferred.
  */

@@ -15,15 +15,15 @@ import { holeValue } from './holeValue';
 const rememberShape = <Self>(
   node: Pick<
     FieldNodeRecord<Self>,
-    'schema' | 'undeclaredValues' | 'raw' | 'itemCount' | 'runtime'
+    'schema' | 'extras' | 'source' | 'itemCount' | 'runtime'
   >,
   children: readonly unknown[],
 ): void => {
   (node.runtime.arrayShapes ??= new WeakMap()).set(node, {
     children,
     schema: node.schema,
-    undeclaredValues: node.undeclaredValues,
-    raw: node.raw,
+    extras: node.extras,
+    source: node.source,
     itemCount: node.itemCount,
   });
 };
@@ -65,7 +65,7 @@ export const assembleArray: Behavior['assemble'] = (
     node.itemCount === append + 1 &&
     (previous.length === append || previous.length === append + 1)
   ) {
-    const extras = node.undeclaredValues;
+    const extras = node.extras;
     if (
       !node.blueprintNode.item &&
       !node.blueprintNode.prefixItems?.length &&
@@ -106,8 +106,8 @@ export const assembleArray: Behavior['assemble'] = (
     previous?.length === node.itemCount &&
     stable?.children === children &&
     stable.schema === node.schema &&
-    stable.undeclaredValues === node.undeclaredValues &&
-    stable.raw === node.raw &&
+    stable.extras === node.extras &&
+    stable.source === node.source &&
     stable.itemCount === node.itemCount
   ) {
     let patch: Optional<unknown[]>;
@@ -153,7 +153,7 @@ export const assembleArray: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const extras = isArray(node.undeclaredValues) ? node.undeclaredValues : [];
+  const extras = isArray(node.extras) ? node.extras : [];
   const result: unknown[] = [];
   let tailStart = 0;
   for (let index = 0; index < node.itemCount; index++) {

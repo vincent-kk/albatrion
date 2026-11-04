@@ -6,8 +6,8 @@ import { dispatchMount, dispatchPush, dispatchSetValue } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -23,7 +23,7 @@ describe('candidate exit policy ownership', () => {
     dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'b'), false);
-    expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(5);
+    expect(readRetainedSlotSource(root, '/v/x', 'number')).toBe(5);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
     expect(getDispatchNode(root, 'v').local).toEqual({ x: 5 });
   });
@@ -55,12 +55,12 @@ describe('candidate exit policy ownership', () => {
     const array = getDispatchNode(root, 'v');
     dispatchPush(array, { show: true, drop: 11, keep: 12 });
     dispatchSetValue(getDispatchNode(array, '0', 'show'), false);
-    expect(readRetainedSlotRaw(root, '/v/0/drop', 'number')).toBe(11);
-    expect(readRetainedSlotRaw(root, '/v/0/keep', 'number')).toBe(12);
+    expect(readRetainedSlotSource(root, '/v/0/drop', 'number')).toBe(11);
+    expect(readRetainedSlotSource(root, '/v/0/keep', 'number')).toBe(12);
     dispatchSetValue(getDispatchNode(root, 'b'), false);
-    expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(5);
+    expect(readRetainedSlotSource(root, '/v/x', 'number')).toBe(5);
     expect(hasRetainedSlotOwnSource(root, '/v/0/drop', 'number')).toBe(false);
-    expect(readRetainedSlotRaw(root, '/v/0/keep', 'number')).toBe(12);
+    expect(readRetainedSlotSource(root, '/v/0/keep', 'number')).toBe(12);
   });
 
   it.each([false, true])(
@@ -80,9 +80,9 @@ describe('candidate exit policy ownership', () => {
       dispatchSetValue(getDispatchNode(root, 'a'), false);
       dispatchSetValue(getDispatchNode(root, 'b'), true);
       dispatchSetValue(getDispatchNode(root, 'b'), false);
-      expect(readRetainedSlotRaw(root, '/v/0', 'number')).toBe(5);
+      expect(readRetainedSlotSource(root, '/v/0', 'number')).toBe(5);
       dispatchSetValue(getDispatchNode(root, 'a'), true);
-      expect(getDispatchNode(root, 'v', '0').raw).toBe(5);
+      expect(getDispatchNode(root, 'v', '0').source).toBe(5);
       expect(getDispatchNode(root, 'v').local).toEqual({ '0': 5 });
     },
   );

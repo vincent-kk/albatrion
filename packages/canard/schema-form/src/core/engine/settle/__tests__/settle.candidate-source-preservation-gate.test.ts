@@ -7,8 +7,8 @@ import { createCandidateSourceRecord } from './fixtures/createCandidateSourceRec
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import {
   hasRetainedSlotOwnSource,
-  readRetainedSlotRaw,
-} from './fixtures/readRetainedSlotRaw';
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
 it.each([
   { value: 37, keyword: 'items', depth: 1, disabled: false },
@@ -51,12 +51,12 @@ it.each([
     dispatchMount(root, { open: true, kind: 'number', list });
     dispatchSetValue(getDispatchNode(root, 'kind'), 'none');
     const path = depth === 1 ? '/list/0/v' : '/list/0/0/v';
-    expect(readRetainedSlotRaw(root, path, 'number')).toBe(value);
+    expect(readRetainedSlotSource(root, path, 'number')).toBe(value);
     runtime.disableAutomaticWrites = disabled;
     dispatchSetValue(getDispatchNode(root, 'open'), false);
-    expect(readRetainedSlotRaw(root, path, 'number')).toBe(value);
+    expect(readRetainedSlotSource(root, path, 'number')).toBe(value);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(readRetainedSlotRaw(root, path, 'number')).toBe(value);
+    expect(readRetainedSlotSource(root, path, 'number')).toBe(value);
     expect(hasRetainedSlotOwnSource(root, path, 'string')).toBe(false);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     expect(root.emit).toEqual({ open: true, kind: 'number', list });

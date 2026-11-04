@@ -33,7 +33,7 @@
 - 맥락: 에지는 규칙마다 기준점과 지금 값을 견준다. 정착이 시작될 때의 기준점은 직전 커밋의 값이다(SETTLE-028·048, 18C-102). `unsetValue`·`resetInteraction`의 기준점은 식 값이고, `unsetOnInactive`의 식 값은 그 노드가 형상에 있던 마지막 커밋의 것을 나감에서 쓴다. 나가는 순간 새로 평가하지 않는다(WRITE-038). 트리 전체 자료의 저장 자리는 `SchemaNodeRuntime`의 칸이며 `record/`가 선언한다(26C-06).
 - 결정: `SchemaNodeRuntime`에 커밋된 규칙 값의 칸(가칭 `committedRuleValues`)을 둔다. 키는 규칙 발생(규칙 템플릿과 발생 경로·종류)이고, 값은 `injectTo` 원천의 방출 값, `derived`의 의존 값 튜플, `unsetValue`·`resetInteraction`·`unsetOnInactive`의 식 값이다. 던진 `unsetOnInactive` 식은 "유지"로 적는다(ERROR-122·WRITE-031의 28C-05 보충). 커밋이 이번 정착에서 평가한 발생만 고쳐 쓴다. 로드는 그 범위의 항목을 지우고(발화), 나간 노드의 항목은 커밋에서 지운다(재탄생은 거짓→참). 정착 안에서 소비한 값은 정착 문맥의 작업 칸에 둔다(재발화 금지).
 - 까닭:
-  - 03의 `committedDeclarationIds`(직전 커밋의 선언 집합으로 나감 정책을 정함)와 같은 종류의 "작업의 기록"이다. 상태 둘(`raw`·`extras`)의 순수 함수라는 성질을 바꾸지 않는다(SETTLE-010, GOAL-083 "이력은 방아쇠로만").
+  - 03의 `committedDeclarationIds`(직전 커밋의 선언 집합으로 나감 정책을 정함)와 같은 종류의 "작업의 기록"이다. 상태 둘(`source`·`extras`)의 순수 함수라는 성질을 바꾸지 않는다(SETTLE-010, GOAL-083 "이력은 방아쇠로만").
   - 식 값을 저장해 두면 나감에서 형상 밖 노드를 평가하지 않는다는 문장을 그대로 지킨다.
   - 비용은 규칙을 가진 발생 수에 비례한다. 규칙 없는 노드에는 아무것도 붙지 않는다.
 - 버린 것:

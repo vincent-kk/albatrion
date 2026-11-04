@@ -4,7 +4,7 @@
 
 ## U — TEST-077 완료
 
-union.write-paths.test.ts의 todo를 실제 writeFieldNodeInput/finishFieldNodeInput 시험으로 바꿨습니다. string-number union의 공백 포함 `' 42 '`는 입력 중 유지되고 마침 뒤 문자열 `'42'`가 되며 수 `42`는 수로 유지됩니다. 정상 대상 파일11통과, finishStringInput.ts:8의 node.raw.trim()을 node.raw로 바꾸면 TEST-077만 실패해10통과/1실패입니다. 원본 바이트와 SHA를 복원했습니다. 두 project의 기존 todo 각1개가0이 되어 총2개 감소했습니다. raw/union-*에 정상·변이·복원·환경 내역을 보존합니다.
+union.write-paths.test.ts의 todo를 실제 writeFieldNodeInput/finishFieldNodeInput 시험으로 바꿨습니다. string-number union의 공백 포함 `' 42 '`는 입력 중 유지되고 마침 뒤 문자열 `'42'`가 되며 수 `42`는 수로 유지됩니다. 정상 대상 파일11통과, finishStringInput.ts:8의 node.source.trim()을 node.source로 바꾸면 TEST-077만 실패해10통과/1실패입니다. 원본 바이트와 SHA를 복원했습니다. 두 project의 기존 todo 각1개가0이 되어 총2개 감소했습니다. raw/union-*에 정상·변이·복원·환경 내역을 보존합니다.
 
 ## 전체 측정의 범위
 

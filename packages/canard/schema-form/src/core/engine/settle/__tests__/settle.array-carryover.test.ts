@@ -20,7 +20,7 @@ describe('array projection carryovers', () => {
     );
     root.resetSubtree();
     expect(root.outputValue).toEqual({ tail: ['a'] });
-    expect(root.find('/tail')?.children?.map((item) => item.raw)).toEqual([
+    expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
       null,
       null,
@@ -76,7 +76,7 @@ describe('array projection carryovers', () => {
     );
     root.resetSubtree();
     expect(root.outputValue).toEqual([null, 'x']);
-    expect(root.children?.map((item) => item.raw)).toEqual([
+    expect(root.children?.map((item) => item.source)).toEqual([
       undefined,
       'x',
       undefined,

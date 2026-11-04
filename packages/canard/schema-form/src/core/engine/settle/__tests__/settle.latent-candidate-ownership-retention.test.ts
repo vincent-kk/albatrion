@@ -4,7 +4,7 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 it.each([
   { shared: true, label: 'W2 shared ancestor' },
@@ -55,13 +55,13 @@ it.each([
       v: [{ x: 5, extra: 'kept', z: 9 }],
     });
     dispatchSetValue(getDispatchNode(root, 'show'), false);
-    const value = readRetainedSlotRaw(root, '/v/0', 'object');
-    expect(readRetainedSlotRaw(root, '/v/0/x', 'number')).toBe(5);
+    const value = readRetainedSlotSource(root, '/v/0', 'object');
+    expect(readRetainedSlotSource(root, '/v/0/x', 'number')).toBe(5);
     dispatchSetValue(getDispatchNode(root, 'b'), false);
-    expect(readRetainedSlotRaw(root, '/v/0/x', 'number')).toBe(5);
-    expect(readRetainedSlotRaw(root, '/v/0/extra', 'string')).toBe('kept');
+    expect(readRetainedSlotSource(root, '/v/0/x', 'number')).toBe(5);
+    expect(readRetainedSlotSource(root, '/v/0/extra', 'string')).toBe('kept');
     if (shared) {
-      expect(readRetainedSlotRaw(root, '/v/0', 'object')).toEqual(value);
+      expect(readRetainedSlotSource(root, '/v/0', 'object')).toEqual(value);
     }
   },
 );

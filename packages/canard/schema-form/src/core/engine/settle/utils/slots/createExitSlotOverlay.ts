@@ -32,7 +32,7 @@ interface ExitSlotOverlay {
  * @param previous - Existing patch over this source, if a parent already owns one
  * @param context - Active exit inputs, omitted for already inactive descendants
  * @param sourceContext - Exit plan owner, also shared with already inactive descendants
- * @returns A patch and retention decision; no raw, extras, or public reads are mutated
+ * @returns A patch and retention decision; no source, extras, or public reads are mutated
  */
 export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -57,8 +57,8 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   ) {
     const overlay = {
       replace: true,
-      raw: undefined,
-      undeclaredValues: undefined,
+      source: undefined,
+      extras: undefined,
       itemCount: 0,
     };
     if (context) node.retainedSourceOverlay = overlay;
@@ -76,22 +76,22 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     const hasSource = overlay.itemCount !== 0;
     return { overlay, hasSource, retain: hasSource, compacted: hasSource };
   }
-  const raw =
-    previous && hasOwnProperty(previous, 'raw')
-      ? previous?.raw
+  const source =
+    previous && hasOwnProperty(previous, 'source')
+      ? previous?.source
       : previous?.replace
         ? undefined
-        : node.raw;
+        : node.source;
   const extras =
-    previous && hasOwnProperty(previous, 'undeclaredValues')
-      ? previous?.undeclaredValues
+    previous && hasOwnProperty(previous, 'extras')
+      ? previous?.extras
       : previous?.replace
         ? undefined
-        : node.undeclaredValues;
+        : node.extras;
   let hasSource =
     !clear &&
     (context?.inactiveValueOverrides?.has(node) ||
-      raw !== undefined ||
+      source !== undefined ||
       extras !== undefined ||
       node.behavior.type === 'array');
   let children: Optional<Map<BlueprintChildEntry, InactiveSlotOverlay>>;
@@ -143,7 +143,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     if (visited.indexOf(entry) !== -1) continue;
     if (!clear && hasSlotOverlaySource(prior)) hasSource = true;
     const overlay = clear
-      ? { replace: true, raw: undefined, undeclaredValues: undefined }
+      ? { replace: true, source: undefined, extras: undefined }
       : prior;
     if (overlay !== previous?.children?.get(entry)) {
       children ??= new Map(previous?.children);
@@ -153,8 +153,8 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   const overlay = clear
     ? {
         ...previous,
-        raw: undefined,
-        undeclaredValues: undefined,
+        source: undefined,
+        extras: undefined,
         ...(node.behavior.type === 'array' ? { itemCount: 0 } : undefined),
         ...(children ? { children } : undefined),
       }
@@ -162,7 +162,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       ? { ...previous, children }
       : previous;
   if (context) node.retainedSourceOverlay = overlay;
-  if (!clear && node.behavior.type === 'array' && node.raw === undefined)
+  if (!clear && node.behavior.type === 'array' && node.source === undefined)
     expirePackedSlotMemos(node, overlay);
   return { overlay, hasSource, retain: !clear || hasSource, compacted };
 };

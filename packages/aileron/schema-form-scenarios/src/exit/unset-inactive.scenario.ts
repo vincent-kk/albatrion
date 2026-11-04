@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** A departing field with unsetOnInactive discards its retained raw value. */
+/** A departing field with unsetOnInactive discards its retained source value. */
 export const unsetInactiveScenario = {
   name: 'exit.unset-inactive',
   schema: { type: 'object', properties: {

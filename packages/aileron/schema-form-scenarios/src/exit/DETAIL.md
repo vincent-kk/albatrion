@@ -29,8 +29,8 @@
 
 | Scene file | Scene name | Behavior verified | Ledger evidence |
 | --- | --- | --- | --- |
-| `retain-inactive.scenario.ts` | `exit.retain-inactive` | 비활성 필드를 방출에서 빼고 다시 나타날 때 보존한 raw 값을 복원한다. | — |
-| `unset-inactive.scenario.ts` | `exit.unset-inactive` | unsetOnInactive로 나가는 필드의 raw 값을 버리고 다시 나타날 때 비어 있게 한다. | — |
+| `retain-inactive.scenario.ts` | `exit.retain-inactive` | 비활성 필드를 방출에서 빼고 다시 나타날 때 보존한 source 값을 복원한다. | — |
+| `unset-inactive.scenario.ts` | `exit.unset-inactive` | unsetOnInactive로 나가는 필드의 source 값을 버리고 다시 나타날 때 비어 있게 한다. | — |
 
 ## Last Updated
 

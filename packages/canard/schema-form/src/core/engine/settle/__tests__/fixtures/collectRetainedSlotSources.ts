@@ -5,35 +5,35 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import { getSlotEntries } from '../../utils/slots/getSlotEntries';
 import { getSlotSource } from '../../utils/slots/getSlotSource';
-import { readSlotRawTree } from '../../utils/slots/readSlotRawTree';
+import { readSlotSourceTree } from '../../utils/slots/readSlotSourceTree';
 
 /**
  * Capture visited retained candidates without exposing a storage-map facade.
  * @param root - Live root whose source graph is finite at the materialized value depth
- * @returns Document-ordered addresses, kinds and interpreted retained raw trees
+ * @returns Document-ordered addresses, kinds and interpreted retained source trees
  */
 export const collectRetainedSlotSources = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-): { path: string; kind: string; raw: unknown }[] => {
-  const result: { path: string; kind: string; raw: unknown }[] = [];
+): { path: string; kind: string; source: unknown }[] => {
+  const result: { path: string; kind: string; source: unknown }[] = [];
   const visit = (
-    source: Self | undefined,
+    instance: Self | undefined,
     overlay: InactiveSlotOverlay | undefined,
     template: BlueprintNode,
     path: string,
     retained: boolean,
   ): void => {
-    for (const entry of getSlotEntries(source, overlay, template)) {
-      const child = getSlotSource(source, entry, overlay);
+    for (const entry of getSlotEntries(instance, overlay, template)) {
+      const child = getSlotSource(instance, entry, overlay);
       const address = path + '/' + escapeSegment(entry.name);
-      const inactive = retained || !!child.source?.detached || !!child.overlay;
+      const inactive = retained || !!child.instance?.detached || !!child.overlay;
       if (inactive)
         result.push({
           path: address,
           kind: getBlueprintNodeIdentity(entry.node),
-          raw: readSlotRawTree(entry.node, child.source, child.overlay),
+          source: readSlotSourceTree(entry.node, child.instance, child.overlay),
         });
-      visit(child.source, child.overlay, entry.node, address, inactive);
+      visit(child.instance, child.overlay, entry.node, address, inactive);
     }
   };
   visit(root, undefined, root.blueprintNode, '', false);

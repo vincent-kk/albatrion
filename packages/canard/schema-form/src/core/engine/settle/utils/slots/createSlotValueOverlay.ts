@@ -17,7 +17,7 @@ import { getSlotSource } from './getSlotSource';
  * Interpret one inactive write into an immutable source-channel patch.
  * @param template - Exact target kind selected by the ordinary absent-path rule
  * @param input - Caller-owned input, never changed by distribution
- * @param source - Retained source used only for partial merge inheritance
+ * @param instance - Retained source used only for partial merge inheritance
  * @param previous - Existing patch over that source
  * @param whole - Whether absent descendants lose their previous sources
  * @param automatic - Whether this write is an automatic fill
@@ -27,7 +27,7 @@ import { getSlotSource } from './getSlotSource';
 export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   input: unknown,
-  source: Optional<Self>,
+  instance: Optional<Self>,
   previous: Optional<InactiveSlotOverlay>,
   whole: boolean,
   automatic = false,
@@ -36,15 +36,15 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   if (template.kind === 'virtual') return { overlay: {}, wrote: false };
   if (template.strategy === 'terminal') {
     const behavior = BEHAVIORS[template.kind]?.[template.strategy];
-    const raw = behavior
+    const source = behavior
       ? behavior.interpret(
           input,
           staticSpec(template.schemaType, template.nullable),
         )
       : input;
     return {
-      overlay: { replace: true, raw },
-      wrote: raw !== undefined && !isOmittedEmpty(template, raw),
+      overlay: { replace: true, source },
+      wrote: source !== undefined && !isOmittedEmpty(template, source),
     };
   }
   if (
@@ -54,7 +54,7 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   ) {
     if (seen.has(input)) return { overlay: { replace: true }, wrote: false };
     seen.add(input);
-    const raw = input.slice();
+    const source = input.slice();
     const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
     let wrote = false;
     for (let index = 0; index < input.length; index++) {
@@ -71,13 +71,13 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
       );
       children.set(entry, child.overlay);
       if (child.wrote) wrote = true;
-      raw[index] = undefined;
+      source[index] = undefined;
     }
     seen.delete(input);
     return {
       overlay: {
         replace: true,
-        raw: Object.freeze(raw),
+        source: Object.freeze(source),
         itemCount: input.length,
         children,
       },
@@ -85,21 +85,21 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
     };
   }
   if (!isPlain(input))
-    return { overlay: { replace: true, raw: input }, wrote: false };
+    return { overlay: { replace: true, source: input }, wrote: false };
   if (seen.has(input)) return { overlay: { replace: true }, wrote: false };
   seen.add(input);
-  const previousRaw =
-    previous && hasOwnProperty(previous, 'raw')
-      ? previous.raw
+  const previousSource =
+    previous && hasOwnProperty(previous, 'source')
+      ? previous.source
       : previous?.replace
         ? undefined
-        : source?.raw;
+        : instance?.source;
   const previousExtras =
-    previous && hasOwnProperty(previous, 'undeclaredValues')
-      ? previous.undeclaredValues
+    previous && hasOwnProperty(previous, 'extras')
+      ? previous.extras
       : previous?.replace
         ? undefined
-        : source?.undeclaredValues;
+        : instance?.extras;
   const extras = nextExtras(
     whole ? undefined : previousExtras,
     input,
@@ -111,11 +111,11 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   for (const name of Object.keys(input)) {
     const entry = template.childEntries.find((entry) => entry.name === name);
     if (!entry) continue;
-    const prior = whole ? undefined : getSlotSource(source, entry, previous);
+    const prior = whole ? undefined : getSlotSource(instance, entry, previous);
     const child = createSlotValueOverlay(
       entry.node,
       Reflect.get(input, name),
-      prior?.source,
+      prior?.instance,
       prior?.overlay,
       whole,
       automatic,
@@ -125,9 +125,9 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
     if (child.wrote) wrote = true;
     for (const sibling of template.childEntries) {
       if (sibling.name !== name || sibling.node === entry.node) continue;
-      const prior = getSlotSource(source, sibling, previous);
-      if (prior.source || prior.overlay)
-        children.set(sibling, { replace: true, raw: undefined });
+      const prior = getSlotSource(instance, sibling, previous);
+      if (prior.instance || prior.overlay)
+        children.set(sibling, { replace: true, source: undefined });
     }
   }
   seen.delete(input);
@@ -135,8 +135,8 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
     overlay: {
       ...(!whole ? previous : undefined),
       replace: whole || previous?.replace,
-      raw: whole || (wrote && !automatic) ? undefined : previousRaw,
-      undeclaredValues: extras,
+      source: whole || (wrote && !automatic) ? undefined : previousSource,
+      extras,
       children,
     },
     wrote,

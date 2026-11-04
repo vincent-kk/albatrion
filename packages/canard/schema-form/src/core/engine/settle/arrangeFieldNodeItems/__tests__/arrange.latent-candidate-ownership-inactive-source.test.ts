@@ -14,8 +14,8 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from '../../__tests__/fixtures/readRetainedSlotSource';
 
 /** Surviving inactive source and destination with one declared number kind. */
 interface MoveCase {
@@ -81,13 +81,13 @@ it.each<MoveCase>([
     const path = `/list/${to}/${names.join('/')}`;
     const list = getDispatchNode(root, 'list');
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(from), ...names).raw).toBe(37);
+    expect(getDispatchNode(list, String(from), ...names).source).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(from), ...names).raw).toBe('live');
+    expect(getDispatchNode(list, String(from), ...names).source).toBe('live');
     dispatchSetValue(getDispatchNode(root, 'show'), false);
     expect(list.structure?.[String(from)]).toBeUndefined();
-    expect(readRetainedSlotRaw(root, sourcePath, 'number')).toBe(37);
-    expect(readRetainedSlotRaw(root, sourcePath, 'string')).toBe('live');
+    expect(readRetainedSlotSource(root, sourcePath, 'number')).toBe(37);
+    expect(readRetainedSlotSource(root, sourcePath, 'string')).toBe('live');
 
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
@@ -101,7 +101,7 @@ it.each<MoveCase>([
     };
     const moved = getDispatchNode(list, String(to), ...names);
     expect(moved.blueprintNode.kind).toBe('number');
-    expect(moved.raw).toBe(37);
+    expect(moved.source).toBe(37);
     expect(root.local).toEqual(expected);
     expect(root.emit).toEqual(expected);
     expect(
@@ -110,7 +110,7 @@ it.each<MoveCase>([
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
     expect([...runtime.misfitPaths]).toEqual([]);
-    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+    expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     expect(hasRetainedSlotOwnSource(root, sourcePath, 'number')).toBe(false);
     expect(hasRetainedSlotOwnSource(root, sourcePath, 'string')).toBe(false);

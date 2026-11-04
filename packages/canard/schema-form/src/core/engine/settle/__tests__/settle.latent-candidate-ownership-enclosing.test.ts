@@ -12,8 +12,8 @@ import {
   subscribeFieldNode,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
-import { readRetainedSlotEntry } from './fixtures/readRetainedSlotRaw';
-import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotEntry } from './fixtures/readRetainedSlotSource';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 
 it('V1 independent nested exit preserves a source shared with an enclosing sibling', async () => {
   const a: BlueprintSchema = {
@@ -67,14 +67,14 @@ it('V1 independent nested exit preserves a source shared with an enclosing sibli
   dispatchSetValue(getDispatchNode(root, 'b'), false);
   const metadata = readRetainedSlotEntry(root, '/v/0/0', 'number');
   expect(metadata).toBeDefined();
-  expect(readRetainedSlotRaw(root, '/v/0/0', 'number')).toBe(5);
+  expect(readRetainedSlotSource(root, '/v/0/0', 'number')).toBe(5);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
   dispatchSetValue(getDispatchNode(root, 'inner'), false);
-  expect(readRetainedSlotRaw(root, '/v/0/0', 'number')).toBe(5);
+  expect(readRetainedSlotSource(root, '/v/0/0', 'number')).toBe(5);
   dispatchSetValue(getDispatchNode(root, 'a'), false);
   dispatchSetValue(getDispatchNode(root, 'b'), true);
   const expected = { ...initial, inner: false };
-  expect(getDispatchNode(root, 'v', '0', '0').raw).toBe(5);
+  expect(getDispatchNode(root, 'v', '0', '0').source).toBe(5);
   expect(root.local).toEqual(expected);
   expect(root.emit).toEqual(expected);
   expect(

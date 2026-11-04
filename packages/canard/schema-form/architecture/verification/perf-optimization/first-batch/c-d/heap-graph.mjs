@@ -42,7 +42,7 @@ export class HeapGraph {
 }
 const isNode=(g,i,engine)=>g.type(i)==='object'&&(engine==='current'?g.name(i)==='FieldNode':/^(Object|Number|String|Boolean|Array|Null|Virtual)Node$/.test(g.name(i)));
 const mapName=/^(Map|Set|WeakMap|WeakSet|PathKeyedMap|PathKeyedSet|PathStoreIndex)$/;
-const valueFields={storedRaw:'raw',raw:'raw',local:'local',emit:'emit',loadSnapshot:'load snapshot',storedUndeclaredValues:'undeclaredValues',undeclaredValues:'undeclaredValues',__value__:'local',__draft__:'legacy draft',__initialValue__:'load snapshot',__restoreValue__:'load snapshot'};
+const valueFields={storedSource:'source',source:'source',local:'local',emit:'emit',loadSnapshot:'load snapshot',storedExtras:'extras',extras:'extras',__value__:'local',__draft__:'legacy draft',__initialValue__:'load snapshot',__restoreValue__:'load snapshot'};
 export function classifyGraph(g,engine,nodes) {
   const graph=g.dominators(),root=g.anchor('__CD_TREE'),owned=g.ownedBy(root),seeds=new Map(),valueLabels=new Map();let recordCount=0;
   function seed(i,category,priority){const old=seeds.get(i);if(owned[i]&&(!old||old.priority<priority))seeds.set(i,{category,priority});}

@@ -34,6 +34,7 @@
 - 일회성 scheduleValidationSlot은 validationScheduling 진입점을 통해 engine·core가 명명 재수출한다. validation은 이를 재수출하는 facade를 두지 않으며 패키지 공개 표면은 늘리지 않는다(IR-6 amendment3).
 - `GuardFunction`은 동기 가드의 내부 형이며 validation index가 내보내지 않는다. core 시험 검증기는 engine index의 `Validator['compileGuard']` 반환형에서 가드 형을 유도한다. `readFieldNodeGuard`는 settle이 소비하는 validation 진입점 이름이며, engine과 core의 집계 index는 재수출하지 않는다.
 - `__tests__/validation.retain-guard.test.ts`는 검증기 수명 유지와 동기 가드 읽기를 함께 검증하므로 validation이 소유한다. 플러그인 형이 검증기 형을 만족하는지는 app/plugin의 시험 구획이 검증한다. write와 공유하는 트리 생성 fixture는 engine의 공용 시험 구획에서 읽는다.
+- DR-3의 출하 검증기 회귀는 컴파일 사본의 매개변수를 엔진의 `AuthoredSchema`로 선언한다. 검증기 입력은 호스트의 표현 데이터나 공개 노드 표면 타입에 결합하지 않는다.
 
 - `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `types/validator.ts`가 선언한다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식과 키워드를 지원하지 않는다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력에 대한 판정을 돌려주고 던지지 않는 계약이다. 던지면 실행 실패이다(VALIDATE-015·016·044, ERROR-032).
 - `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 `types/issue.ts`가 선언하는 정규화된 검증 결과이다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).

@@ -32,7 +32,7 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
   const dirty = context.dirtyChildrenByParent.get(node.path);
   return (
     !context.hasGates &&
-    node.raw === undefined &&
+    node.source === undefined &&
     node.itemCount === proof.count + 1 &&
     node.structure === prior &&
     node.children === proof.children &&
@@ -45,8 +45,8 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
     (proof.entry === undefined
       ? child === undefined &&
         node.children?.length === 0 &&
-        isArray(node.undeclaredValues) &&
-        node.undeclaredValues.length === node.itemCount &&
+        isArray(node.extras) &&
+        node.extras.length === node.itemCount &&
         !dirty?.size
       : child !== undefined &&
         child.blueprintNode === proof.entry.node &&

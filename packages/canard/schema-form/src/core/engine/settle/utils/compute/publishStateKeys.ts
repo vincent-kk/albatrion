@@ -21,10 +21,10 @@ export const publishStateKeys = <Self extends FieldNodeRecord<Self>>(
     context.root,
     context.stateDirtyNodes,
     context.selectedDeclarationIds,
-    (source) =>
+    (instance) =>
       context.kind === 'load' ||
-      isDependencyOwner(context, source.path) ||
-      context.shapeDirtyPaths.has(source.path),
+      isDependencyOwner(context, instance.path) ||
+      context.shapeDirtyPaths.has(instance.path),
   );
   for (const { node, visible, readOnly, disabled } of result.entries) {
     if (

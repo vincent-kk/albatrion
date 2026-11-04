@@ -44,7 +44,7 @@ if의 화이트리스트는 객체 `type`·`properties`·`required`·`dependentR
 - 전체 verify 1차: 4,451통과, 2실패. 새 discriminator 표가 줄인 사적 조립 방문의 분류 문제였으며 아래 add-only 확장 후 최종 전체 4,455시험이 통과했습니다.
 - 최종 `typecheck`·`lint`·지정 `build` 통과. development flag와 gate-selection 배포 산출물 검사도 통과했습니다. lint의 형 단언 4건은 타입 가드와 지연 getter로 제거했습니다.
 - 기본 Node 24·4GB의 전체 시험은 V8 메모리 한도로 중단되어 해당 로그를 보존했습니다. Node 26.12.1, `NODE_OPTIONS=--max-old-space-size=8192`, `--maxWorkers=4`로 다섯 프로젝트 전체와 verify를 각각 한 번 완료했습니다. 제품 시험 실패를 환경 변경으로 숨긴 것이 아니며 초기 OOM 결과도 원자료에 남깁니다.
-- Node·Bun의 정본 첫 묶음 C 차분 장치를 수정 없이 복사해 A/B 번들에 실행했습니다. 값·raw/local/emit·잠복·inactiveValues·이벤트 순서/payload/onChange·revision·선언 선택·분리 참조·재진입·두 번째 나감의 차이는 0입니다. 전체 시험은 `compare*` 장면도 포함합니다.
+- Node·Bun의 정본 첫 묶음 C 차분 장치를 수정 없이 복사해 A/B 번들에 실행했습니다. 값·source/local/emit·잠복·inactiveValues·이벤트 순서/payload/onChange·revision·선언 선택·분리 참조·재진입·두 번째 나감의 차이는 0입니다. 전체 시험은 `compare*` 장면도 포함합니다.
 
 공개 루트 선언 SHA-256은 `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`로 A/B가 동일합니다. 측정 뒤 이전 D3b-2b 최종 산출물에서 A의 전체 번들을 확인했으며, 그 Node 해시가 단계 시작 A와 정확히 같습니다. 해당 `index.d.ts`와 B를 `cmp`하여 바이트 차이 0을 확인했습니다. 공개 진입점·타입 빌드 설정도 그 기준부터 단계 시작까지 변경되지 않았고, `src/__tests__/publicSurface.test.ts` 변경은 0입니다. 원본과 `public-surface.json`을 정식 원자료 루트에 보존했습니다.
 
@@ -308,7 +308,7 @@ oneOf80의 최소 통계 중앙 B/A는 0.576, 중앙 통계 중앙 B/A는 0.895�
 | --- | --- | ---: | ---: | ---: | ---: |
 | 1 | computeNodeBody (computeNode) | 4.354 | 5.182 | +0.828 | 1.190 |
 | 2 | commitSettlement (commitSettlement) | 2.016 | 2.653 | +0.637 | 1.316 |
-| 3 | captureExitedRaw (captureExitedRaw) | 0.480 | 1.088 | +0.607 | 2.264 |
+| 3 | captureExitedSource (captureExitedSource) | 0.480 | 1.088 | +0.607 | 2.264 |
 | 4 | visitFieldNodes.owned (snapshotExitedPolicies) | 0.374 | 0.978 | +0.604 | 2.616 |
 | 5 | add (DirtyPathSet) | 0.360 | 0.941 | +0.581 | 2.614 |
 | 6 | selectEntryStep (selectEntryStep) | 2.140 | 2.702 | +0.562 | 1.263 |

@@ -16,10 +16,10 @@ export interface InactiveSlotValueMemo {
 export interface InactiveSlotOverlay {
   /** Discard unspecified channels and descendants instead of inheriting them. */
   readonly replace?: boolean;
-  /** An own property distinguishes an explicit clear from no raw override. */
-  readonly raw?: unknown;
+  /** An own property distinguishes an explicit clear from no source override. */
+  readonly source?: unknown;
   /** An own property distinguishes cleared extras from inherited extras. */
-  readonly undeclaredValues?: unknown;
+  readonly extras?: unknown;
   /** Candidate-specific descendant patches in their authored bindings. */
   readonly children?: ReadonlyMap<BlueprintChildEntry, InactiveSlotOverlay>;
   /** Array positions retained even when no declared item has a source. */
@@ -35,7 +35,7 @@ export interface InactiveSlotBaseline<Self> {
   /** Previously active child whose own inactive descendants were already published. */
   readonly active?: Self;
   /** Instance visible to the preceding inactive-value publication. */
-  readonly source: Optional<Self>;
+  readonly instance: Optional<Self>;
   /** Patch visible before the first unpublished mutation of this binding. */
   readonly overlay: Optional<InactiveSlotOverlay>;
 }

@@ -335,7 +335,7 @@ CPU OLS의 절편·R²·36개 점과 함수별 self 및 self+children, 배타 �
 | `src/core/settle/utils/gates/getGateRegistry.ts:261:getGateRegistry` | 32 / 16 / 16 | 11.881 | 5.919 | 4.776 | 동일 파일·행·이름의 함수 self |
 | `src/core/settle/utils/gates/getGateRegistry.ts:79:register` | 16 / 8 / 8 | 7.493 | 3.922 | 4.968 | 동일 파일·행·이름의 함수 self |
 | `src/core/SchemaNode/SchemaNode.ts:154:path` | 60 / 30 / 30 | 0.856 | 0.174 | 0.253 | 동일 파일·행·이름의 함수 self |
-| `src/core/SchemaNode/SchemaNode.ts:160:raw` | 32 / 16 / 16 | 0.516 | 0.173 | 0.174 | 동일 파일·행·이름의 함수 self |
+| `src/core/SchemaNode/SchemaNode.ts:160:source` | 32 / 16 / 16 | 0.516 | 0.173 | 0.174 | 동일 파일·행·이름의 함수 self |
 | `src/core/settle/utils/write/DirtyPathSet.ts:45:add` | 12 / 6 / 6 | 12.289 | 8.933 | 7.774 | 동일 파일·행·이름의 함수 self |
 | `src/core/settle/utils/paths/bindTemplatePath.ts:7:bindTemplatePath` | 6 / 3 / 3 | 3.380 | 1.993 | 2.680 | 동일 파일·행·이름의 함수 self |
 | `src/core/settle/utils/write/getDependencyIndex.ts:84:loop` | 6 / 3 / 3 | 귀속 불가 | 귀속 불가 | 귀속 불가 | 귀속 불가: 함수 내 loop별 self 미분리 |

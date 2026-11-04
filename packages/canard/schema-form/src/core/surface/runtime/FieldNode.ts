@@ -73,8 +73,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   itemKey: Nullable<number>;
   itemCount: number;
   nextItemKey: number;
-  private storedRaw: unknown;
-  private storedUndeclaredValues: unknown;
+  private storedSource: unknown;
+  private storedExtras: unknown;
   private storedActive: boolean;
   private storedVisible: boolean;
   private storedReadOnly: boolean;
@@ -143,8 +143,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.itemKey = null;
     this.itemCount = 0;
     this.nextItemKey = 0;
-    this.storedRaw = undefined;
-    this.storedUndeclaredValues = undefined;
+    this.storedSource = undefined;
+    this.storedExtras = undefined;
     this.storedActive = true;
     this.storedVisible = true;
     this.storedReadOnly = false;
@@ -239,17 +239,17 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   set children(value: Nullable<readonly FieldNode[]>) {
     this.storedChildren = value;
   }
-  get raw() {
-    return this.storedRaw;
+  get source() {
+    return this.storedSource;
   }
-  set raw(value: unknown) {
-    this.storedRaw = value;
+  set source(value: unknown) {
+    this.storedSource = value;
   }
-  get undeclaredValues() {
-    return this.storedUndeclaredValues;
+  get extras() {
+    return this.storedExtras;
   }
-  set undeclaredValues(value: unknown) {
-    this.storedUndeclaredValues = value;
+  set extras(value: unknown) {
+    this.storedExtras = value;
   }
   get value() {
     return this.local;
@@ -304,7 +304,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get context() {
     return this.runtime.context;
   }
-  /** Whether the retained raw value misses the effective accepted types. */
+  /** Whether the retained source value misses the effective accepted types. */
   get isMisfit() {
     return readFieldNodeIsMisfit<FieldNode>(this);
   }

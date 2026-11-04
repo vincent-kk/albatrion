@@ -59,9 +59,9 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       inputType === 'boolean' ||
       inputType === 'number') &&
     node.schemaType === inputType &&
-    typeof node.raw === inputType &&
+    typeof node.source === inputType &&
     (inputType !== 'number' ||
-      (Number.isFinite(input) && Number.isFinite(node.raw))) &&
+      (Number.isFinite(input) && Number.isFinite(node.source))) &&
     typeof schema === 'object' &&
     schema !== null &&
     schema.type === node.schemaType;

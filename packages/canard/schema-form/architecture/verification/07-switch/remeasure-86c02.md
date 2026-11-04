@@ -797,7 +797,7 @@ core는 미구독 development 생성/갱신입니다. subscribed는 같은 코�
 
 처음에는 11건 중 9건 통과, 위 배열 2건이 상한 예외로 실패했습니다. 두 경로의 예외와 오류 후 상태도 비교하도록 행렬을 완성한 뒤, 제품 소스가 여전히 HEAD인 상태에서 11건 모두 통과했습니다. oracle은 `writeSchemaNode(..., 'load', ...)`이고 기존 후보 v의 `hasIndependentLeafDefaults`만 false로 고정했습니다. 비교 대상은 아직 HEAD의 `loadSchemaNodeAtMount`입니다.
 
-평면·정수/escaped 이름·required·후속 A→B→A·중첩 parent/child default·부분 입력·배열 0/1/1,000·자동쓰기 억제·정적 ref/allOf·null/undefined/wrong-kind·derived/controls.default·게이트 사례를 포함합니다. 값/raw/extras·pending payload/options·배달 삽입 순서·revision·커밋 번호·진단·전역 상태·경고·스냅숏과 일부 참조 보존을 비교했습니다. 오류 2건은 **현재 동작의 기록이며 바람직한 계약으로 승인한 것이 아닙니다**. 실제 리스너 실행, 전체 fallback 행렬, 검증 ON/async, 정적 자격 및 복잡도 증명은 미완료입니다.
+평면·정수/escaped 이름·required·후속 A→B→A·중첩 parent/child default·부분 입력·배열 0/1/1,000·자동쓰기 억제·정적 ref/allOf·null/undefined/wrong-kind·derived/controls.default·게이트 사례를 포함합니다. 값/source/extras·pending payload/options·배달 삽입 순서·revision·커밋 번호·진단·전역 상태·경고·스냅숏과 일부 참조 보존을 비교했습니다. 오류 2건은 **현재 동작의 기록이며 바람직한 계약으로 승인한 것이 아닙니다**. 실제 리스너 실행, 전체 fallback 행렬, 검증 ON/async, 정적 자격 및 복잡도 증명은 미완료입니다.
 
 ### ERROR-019 발견과 수정
 
@@ -1140,7 +1140,7 @@ Set 셀당 값은 실제 V8 heap의 table self_size에서 빈 Set table 120B를 
 | --- | --- | --- |
 | eligibility 증명 | 기존 capability 수집에 고정 검사 결합; 작성 literal 데이터 L의 descriptor/유한성 검사 O(L) 추가, 첫 load 조회 O(1); getter 실행 없음 | Blueprint 공개 shape 유지, 청사진당 weak-sidecar bool O(1); literal 검사의 active ancestry와 key 목록 임시 저장 |
 | entry 예약·후위 assemble/project | occurrence당 계산/assembly 1회, dirty·형상 재선택·initialOutputs 재조립 목록 제거; 고전 DFS while와 자식 인덱스 사용 | 기존 O(N) 배달 Set, 신규 order cell 0; live frame O(D), frame 총 생성 O(N); shared 정적 객체 entry cache O(S) |
-| 기본값 선택·required·부가 값 보존 | default가 있는 container의 missing 판정은 값 재계산 없는 source-only 검사; 후보 source span 합만큼 추가 읽기, 겹친 후보의 최악은 O(LD); required 길이 R·자식 C의 기존 배열 membership 비용 O(CR) 유지 | automatic/selected/dirty/exit/disposal 장부 없음; required용 새 Set 미생성, 필요한 raw/extras·자식 배열·출력 payload는 유지 |
+| 기본값 선택·required·부가 값 보존 | default가 있는 container의 missing 판정은 값 재계산 없는 source-only 검사; 후보 source span 합만큼 추가 읽기, 겹친 후보의 최악은 O(LD); required 길이 R·자식 C의 기존 배열 membership 비용 O(CR) 유지 | automatic/selected/dirty/exit/disposal 장부 없음; required용 새 Set 미생성, 필요한 source/extras·자식 배열·출력 payload는 유지 |
 | batched payload/revision·진단 | 후위 한 번 확정, 루트 뒤 2N 필수 dispatcher visitor 유지; 실제 경고만 예약 번호로 정렬 O(W log W) | 필요한 revision/payload O(N); 실제 경고 cell O(W), 경고가 없으면 목록 미생성; 전역 상태 delta는 값이 있을 때만 생성 |
 | 첫 후속 generic update | 정착 의미와 계산 수 유지; 최초 scratch 생성의 고정 비용을 첫 update로 이동 | update 없는 root의 scratch 0, update 후에는 기존 generic scratch 보유 |
 
@@ -1148,7 +1148,7 @@ Set 셀당 값은 실제 V8 heap의 table self_size에서 빈 Set table 120B를 
 
 ### 차등 매트릭스·지정 검증·산출물
 
-구현 전 확장 generic 매트릭스 22건을 통과시켰고, own `controls.default: undefined` fallback 사례를 더한 최종 매트릭스는 generic 강제 경로와 static 활성 경로 모두 **23/23**입니다. 같은 assertion으로 값·raw/extras·오류·diagnostics·경고·배달 순서·commit·revision·전역 상태·snapshot·listener payload·ref/allOf·배열 0/1/1000 및 fallback을 비교합니다. intermediate state가 동기 reporter로 관측되지 않는 characterization과 모든 revision이 첫 리스너 전에 확정되는 단언을 포함합니다. 정적 원가 테스트 2건은 eligibility, fallback 번호 비소비, occurrence당 assembly 1회와 generic scratch 부재를 검사합니다. 기존 sourcePresence 스케일링 검사는 generic oracle을 명시하여 기존 assertion을 보존했습니다.
+구현 전 확장 generic 매트릭스 22건을 통과시켰고, own `controls.default: undefined` fallback 사례를 더한 최종 매트릭스는 generic 강제 경로와 static 활성 경로 모두 **23/23**입니다. 같은 assertion으로 값·source/extras·오류·diagnostics·경고·배달 순서·commit·revision·전역 상태·snapshot·listener payload·ref/allOf·배열 0/1/1000 및 fallback을 비교합니다. intermediate state가 동기 reporter로 관측되지 않는 characterization과 모든 revision이 첫 리스너 전에 확정되는 단언을 포함합니다. 정적 원가 테스트 2건은 eligibility, fallback 번호 비소비, occurrence당 assembly 1회와 generic scratch 부재를 검사합니다. 기존 sourcePresence 스케일링 검사는 generic oracle을 명시하여 기존 assertion을 보존했습니다.
 
 | PKG 지정 명령 | 결과 |
 | --- | --- |
@@ -1347,7 +1347,7 @@ HEAD `349b62057`(H, git show 소스)와 작업트리(W)를 `tools/measure-round-
 
 변경은 하나의 파생 의존 처리 최적화입니다. `registerRecalculation.ts:19`는 게이트·로드·배열 변경·생김·나감·소멸·이동·예산 복구가 없는 정착에서만 경로별 역의존 결과를 공유합니다. 이미 계산된 원본은 새 dirty 표시가 없으면 다시 소유자를 등록하지 않습니다. 같은 원본 경로가 새 자동 쓰기로 다시 dirty가 되면 재등록합니다. `collectDeriveSourcePaths.ts:17`은 형상이 바뀌면 공유 결과를 버리고, 같은 형상에서는 같은 조회 배열을 사용하되 원본별 소유자→자기 경로→조상의 삽입 순서를 유지합니다. 비공유 경로는 캐시 조회·등록 분기 없이 직접 조회합니다.
 
-`evaluateDeriveRound.ts:102`는 식 의존 경로 다음 감시 경로를 고전 for 루프로 최종 튜플 하나에 합칩니다. 같은 노드의 식에 이미 든 감시 경로만 기존대로 제외합니다. 읽기·규칙 평가·후보·오류의 순서, 값 동등, 에지 소비, 순위, 마지막 수렴 확인은 유지했습니다. `changedRaw`는 누적 기록 그대로입니다.
+`evaluateDeriveRound.ts:102`는 식 의존 경로 다음 감시 경로를 고전 for 루프로 최종 튜플 하나에 합칩니다. 같은 노드의 식에 이미 든 감시 경로만 기존대로 제외합니다. 읽기·규칙 평가·후보·오류의 순서, 값 동등, 에지 소비, 순위, 마지막 수렴 확인은 유지했습니다. `changedSource`는 누적 기록 그대로입니다.
 
 속도 비용은 공유 가능한 정착의 고정 조건 확인과 경로별 Map 조회이며, 동일 경로의 역색인 조회와 소유자 재등록 및 튜플 map/filter 작업을 줄입니다. 메모리 비용은 호출별 Map 1개와 O(변경 경로+소유자 참조)의 임시 보유, context의 고정 슬롯 1개입니다. 새 영구 색인이나 scratch 컨테이너는 없고 heap byte는 측정하지 않았습니다. **연산 감소는 확인했으나 최종 시간 개선은 입증하지 못했습니다.**
 
@@ -1394,7 +1394,7 @@ HEAD `349b62057`(H, git show 소스)와 작업트리(W)를 `tools/measure-round-
 
 map/filter의 각 반환 배열까지 포함한 튜플의 명시적 배열 생성은 8→2입니다. affected의 배열 계수는 배열 리터럴 site만 세며 split/filter/flatMap 같은 native 메서드 내부의 생성과 V8 backing store는 포함하지 않습니다. 전체 heap 할당 수로 환산하지 않았습니다. 로드·게이트·형상 변경 경로는 공유 Map을 만들지 않습니다. sample-0·flat-500·oneOf-20의 후속 helper·조회·소유자 등록·compute 계수는 H/W가 같습니다.
 
-`settle.derive-dependencies.test.ts`의 동작 보존 사례는 변경 전 통과했고 연산 사례는 의존 조회가 6회여서 실패했습니다. 변경 후 두 사례는 통과했습니다. 값·파생 raw·동일 쓰기의 emit 참조, 오류 부재, payload·배달 경로 순서·개정·commit·진단, 평가2회와 쓰기 후보 [1,0]·기록 라운드2회를 고정했습니다. 최종 전체 스위트의 기존 표현식 실패·예산 복구·게이트·배열·재탄생·순위·watch 사례도 통과했습니다. 최종 24개 시간 판과 8개 계수 판의 mount/first/later 전체 관측 해시는 H/W와 무계측/계수 사이에 일치했습니다.
+`settle.derive-dependencies.test.ts`의 동작 보존 사례는 변경 전 통과했고 연산 사례는 의존 조회가 6회여서 실패했습니다. 변경 후 두 사례는 통과했습니다. 값·파생 source·동일 쓰기의 emit 참조, 오류 부재, payload·배달 경로 순서·개정·commit·진단, 평가2회와 쓰기 후보 [1,0]·기록 라운드2회를 고정했습니다. 최종 전체 스위트의 기존 표현식 실패·예산 복구·게이트·배열·재탄생·순위·watch 사례도 통과했습니다. 최종 24개 시간 판과 8개 계수 판의 mount/first/later 전체 관측 해시는 H/W와 무계측/계수 사이에 일치했습니다.
 
 ### 원장 검토가 필요한 잔여
 
@@ -1421,9 +1421,9 @@ map/filter의 각 반환 배열까지 포함한 튜플의 명시적 배열 생�
 
 ### 중단한 설계 지점과 코드 반례
 
-승인 설계 §4.2·5.1은 기존 공표 위치와 순서를 보존하고 §8·10은 shadow를 위해 읽기 경로 전체에 pending output이 없음을 단언합니다. 그런데 `readProjectedValue.ts:36-46`은 branch 호스트 raw가 `undefined`이고 직접 자식이 있으면 호스트를 flush하지 않고 그 자식의 emit을 읽습니다. `selectChildren.ts:291-292`는 앞선 자식의 즉시 계산 뒤 호스트를 pendingOutputs에 넣습니다. 따라서 /kind 자체는 이미 계산되어 올바른 값이어도 그 경로의 루트는 pending일 수 있습니다. `flushPendingGateReads.ts`도 이 경우 기존 직접 자식 읽기를 위해 루트를 공표하지 않습니다.
+승인 설계 §4.2·5.1은 기존 공표 위치와 순서를 보존하고 §8·10은 shadow를 위해 읽기 경로 전체에 pending output이 없음을 단언합니다. 그런데 `readProjectedValue.ts:36-46`은 branch 호스트 source가 `undefined`이고 직접 자식이 있으면 호스트를 flush하지 않고 그 자식의 emit을 읽습니다. `selectChildren.ts:291-292`는 앞선 자식의 즉시 계산 뒤 호스트를 pendingOutputs에 넣습니다. 따라서 /kind 자체는 이미 계산되어 올바른 값이어도 그 경로의 루트는 pending일 수 있습니다. `flushPendingGateReads.ts`도 이 경우 기존 직접 자식 읽기를 위해 루트를 공표하지 않습니다.
 
-실행 반례의 첫 자리는 `#/oneOf/0/controls/active`, owner `''`, read `/kind`, root raw `undefined`, pending `['<root>']`입니다. 테스트의 spy는 실제 evaluateGate를 먼저 한 번 호출하고 그 자리가 반환한 상태에서 독립 reader를 실행합니다. 독립 reader는 공표·locate·레지스트리 변경을 호출하지 않으며 changedNodes·pendingOutputs·gateThrowVersion 불변도 단언합니다. 최적화나 전수 평가의 상태를 고쳐 shadow를 통과시키지 않았습니다. 실패 단언은 `.fails`나 skip으로 바꾸지 않고 남겼습니다.
+실행 반례의 첫 자리는 `#/oneOf/0/controls/active`, owner `''`, read `/kind`, root source `undefined`, pending `['<root>']`입니다. 테스트의 spy는 실제 evaluateGate를 먼저 한 번 호출하고 그 자리가 반환한 상태에서 독립 reader를 실행합니다. 독립 reader는 공표·locate·레지스트리 변경을 호출하지 않으며 changedNodes·pendingOutputs·gateThrowVersion 불변도 단언합니다. 최적화나 전수 평가의 상태를 고쳐 shadow를 통과시키지 않았습니다. 실패 단언은 `.fails`나 skip으로 바꾸지 않고 남겼습니다.
 
 이 부재 단언을 통과시키려 추가 flush를 하면 승인 설계가 보존하도록 한 공표 및 changedNodes/배달 순서에 손댑니다. 반대로 실제로 읽는 자식만 단언하도록 줄이면 “경로 전체” 조건을 바꿉니다. 둘 다 임의로 선택하지 않았습니다. shadow 선행조건을 현행 reader와 맞게 정정할 설계 판단이 필요합니다. 나머지 차등 행렬·네 모드·표 on 결과·위치별 표 동등성은 미검증이며 통과로 보고하지 않습니다.
 
@@ -1467,7 +1467,7 @@ sample-0·flat-500의 후속 update·mount도 미측정입니다. 절차 2를 �
 
 ### 차등·shadow와 교정
 
-제품 변경 전에 skip off의 13개 차등 사례가 통과했습니다. skip on은 새 생성 시 증명 자료가 없어서 예상대로 실패했습니다. 최종 19개 관련 시험은 off, test shadow on, shadow 없는 development on을 새 독립 트리에서 비교합니다. 값/raw/extras·형상·제어 상태·오류·진단·배달 payload/options/순서·개정·커밋·쓰기 라운드 수·iterations·개발 기록·규칙 기준이 같습니다. 규칙 key의 발생 identity만 독립 트리 간 비교에서 제외합니다.
+제품 변경 전에 skip off의 13개 차등 사례가 통과했습니다. skip on은 새 생성 시 증명 자료가 없어서 예상대로 실패했습니다. 최종 19개 관련 시험은 off, test shadow on, shadow 없는 development on을 새 독립 트리에서 비교합니다. 값/source/extras·형상·제어 상태·오류·진단·배달 payload/options/순서·개정·커밋·쓰기 라운드 수·iterations·개발 기록·규칙 기준이 같습니다. 규칙 key의 발생 identity만 독립 트리 간 비교에서 제외합니다.
 
 테스트 모드의 shadow는 생략할 `evaluateDeriveRound`를 실제로 돌리고 후보와 실패가 모두 0인지 단언합니다. 개발 모드 시험에서는 실제 평가가 갱신당 2→1이며 빈 trace 슬롯은 유지됩니다. 잘못된 증명을 주입하면 shadow가 사슬의 남은 후보를 찾아 거부하는 음성 시험도 통과했습니다. 자손 derived→조상 injectTo, gate가 읽는 대상, 비활성 조각의 규칙/watch, watch-only 에지, A→B→C 사슬, 진 쓰기와 소비된 에지, 전이 채움 뒤 재진입, 재귀·맥락·전체 호스트·불완전 식·가상 쓰기 fallback, 파생 예산 25 복구를 포함합니다.
 
@@ -1525,7 +1525,7 @@ derived의 첫·후속 중앙값은 세 회차 모두 개선됐습니다. 생성
 
 ### 보정한 그림자 단언과 차등 검증
 
-그림자 시점의 단언 대상은 **그 읽기에서 기준 reader가 실제 값을 읽는 노드와 공표했을 노드**입니다. 기준 reader가 읽지도 공표하지도 않는 조상은 제외합니다. raw가 undefined이고 직접 자식이 있는 가지 호스트는 그 자식 읽기에서 제외하지만, 루트 자체 읽기·raw가 있는 가지 조상의 공표·직접 자식이 없는 자리의 공표·최종 직접 노드 읽기는 포함합니다.
+그림자 시점의 단언 대상은 **그 읽기에서 기준 reader가 실제 값을 읽는 노드와 공표했을 노드**입니다. 기준 reader가 읽지도 공표하지도 않는 조상은 제외합니다. source가 undefined이고 직접 자식이 있는 가지 호스트는 그 자식 읽기에서 제외하지만, 루트 자체 읽기·source가 있는 가지 조상의 공표·직접 자식이 없는 자리의 공표·최종 직접 노드 읽기는 포함합니다.
 
 표를 끈 전수 평가에서 복구한 시험 두 건과 verifier 이력 14건을 먼저 통과했습니다. 실행 중 관측한 모든 원래 읽기 자리에서 보정 단언 위반은 **0건**이었으며 보고할 실패 자리는 없습니다. 별도 반례 시험은 제외되는 조상에만 pending output이 있으면 통과하고, 실제 루트/키·wrong-kind 공표 대상이 pending이면 실패함을 확인합니다. **단언을 만족시키는 추가 flush는 넣지 않았습니다.**
 
@@ -3383,8 +3383,8 @@ blueprint·record·settle·behaviors의 TypeScript AST에서 객체 생산 지�
 | 327: object spread | `src/core/settle/utils/latent/readRawTree.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 328: conditional object | `src/core/settle/utils/latent/readRawTree.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 329: fixed literal | `src/core/settle/utils/latent/readRawTree.ts:48` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
-| 330: conditional object | `src/core/settle/utils/latent/setLatentRaw.ts:37` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
-| 331: conditional object | `src/core/settle/utils/latent/setLatentRaw.ts:45` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
+| 330: conditional object | `src/core/settle/utils/latent/setLatentSource.ts:37` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
+| 331: conditional object | `src/core/settle/utils/latent/setLatentSource.ts:45` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 332: object spread | `src/core/settle/utils/load/alignArraySnapshotSlots.ts:36` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 333: fixed literal | `src/core/settle/utils/load/alignArraySnapshotSlots.ts:45` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 334: fixed literal | `src/core/settle/utils/load/clearSubtreeState.ts:17` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |

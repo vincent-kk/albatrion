@@ -152,7 +152,7 @@ describe('chain error reporting', () => {
   });
 
   it('ERROR-022 ERROR-023 ERROR-099 ERROR-101 preserves raw callback exceptions per event', () => {
-    const raw = { reason: 'raw' };
+    const failure = { reason: 'raw' };
     const seen: unknown[] = [];
     const { root, runtime } = createDispatchTree(
       { type: 'string' },
@@ -161,7 +161,7 @@ describe('chain error reporting', () => {
       { hasConsumer: () => true, report: (record) => seen.push(record.error) },
     );
     runtime.onChange = () => {
-      throw raw;
+      throw failure;
     };
     for (const value of ['one', 'two']) {
       let caught: unknown;
@@ -170,9 +170,9 @@ describe('chain error reporting', () => {
       } catch (error) {
         caught = error;
       }
-      expect(caught).toBe(raw);
+      expect(caught).toBe(failure);
     }
-    expect(seen).toEqual([raw, raw]);
+    expect(seen).toEqual([failure, failure]);
   });
 
   it('ERROR-030 skips warning records and formatting without a consumer', () => {
@@ -249,7 +249,7 @@ describe('chain error reporting', () => {
     });
     subscribeFieldNode(root, () => {
       const amount = root.structure?.amount;
-      if (amount && amount.raw !== 'bad') dispatchSetValue(amount, 'bad');
+      if (amount && amount.source !== 'bad') dispatchSetValue(amount, 'bad');
     });
     expect(() => dispatchSetValue(root, { amount: 1 })).toThrow(failure);
     expect(seen).toEqual([
