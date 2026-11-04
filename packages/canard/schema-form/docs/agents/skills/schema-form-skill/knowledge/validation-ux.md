@@ -133,6 +133,6 @@ Pass server issues through Form's `errors` prop with a field `dataPath`. The dis
 
 A successful schema validation does not clear external issues. Replace the prop with an empty list when the server error is no longer relevant; assert both `getErrors()` and the message after adding and clearing it.
 
-Use an empty `dataPath` for a root issue; `/` addresses a child with an empty name. For a node-local message, use its `setExternalErrors`/`clearExternalErrors`; local issues are not added to form-wide `getErrors()`.
+Use an empty `dataPath` for a root issue; `/` addresses a child with an empty name. For a node-local message, use its `setExternalErrors`/`clearExternalErrors`; these issues also appear in form-wide `getErrors()`, and clearing them removes them from that aggregate. Typing into the affected field clears its server error through the input’s `onChange`.
 
 Compilation or execution failure is a rejected validation operation, not an input error. Keep it out of the server-error list, observe `onError` for the occurrence, and handle rejection from imperative validate/submit calls.

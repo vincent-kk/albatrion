@@ -155,6 +155,34 @@ it('routes server errors through the form and clears them independently of schem
   expect(view.queryByRole('alert')).toBeNull();
 });
 
+it('aggregates node-local server errors and clears them explicitly or on input', () => {
+  const formRef = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={formRef}
+      {...formProps}
+      defaultValue={{ name: 'Ada' }}
+      showError
+    />,
+  );
+  const field = formRef.current!.findNode('/name')!;
+  const serverErrors: ValidationIssue[] = [
+    { dataPath: '/name', keyword: 'server', message: 'This name is taken.' },
+  ];
+  act(() => field.setExternalErrors(serverErrors));
+  expect(formRef.current!.getErrors()).toEqual(serverErrors);
+  expect(view.getByRole('alert').textContent).toBe('This name is taken.');
+  act(() => field.clearExternalErrors());
+  expect(formRef.current!.getErrors()).toEqual([]);
+  expect(view.queryByRole('alert')).toBeNull();
+  act(() => field.setExternalErrors(serverErrors));
+  expect(formRef.current!.getErrors()).toEqual(serverErrors);
+  fireEvent.change(view.getByLabelText('Name'), { target: { value: 'Grace' } });
+  expect(formRef.current!.getValue()).toEqual({ name: 'Grace' });
+  expect(formRef.current!.getErrors()).toEqual([]);
+  expect(view.queryByRole('alert')).toBeNull();
+});
+
 /** The conditional requirement and its input are declared together. */
 const receiptSchema = {
   type: 'object',
@@ -290,6 +318,7 @@ it('submit rejects invalid input and sends a fresh valid value after explicit er
   });
   expect(isValidationError(rejection)).toBe(true);
   expect(onSubmit).not.toHaveBeenCalled();
+  expect(view.queryByRole('alert')).toBeNull();
   act(() => formRef.current!.showError());
   await waitFor(() => expect(view.queryByRole('alert')).not.toBeNull());
   fireEvent.change(view.getByLabelText('Name'), { target: { value: 'Ada' } });

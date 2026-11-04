@@ -36,7 +36,7 @@ objectNode.find('./price')?.setValue(999); // bypasses filtering
 
 Errors exist (`getErrors()` shows them) but the UI is silent:
 
-1. Display policy — set `showError` on `<Form>` (`boolean | ShowError` enum; never a string) or call `formRef.current?.showError(true)`. See `validation-and-state.md`.
+1. Display policy — set `showError` on `<Form>` (`boolean | ShowError` enum; never a string) or call `formRef.current?.showError(true)`. See `validation-ux.md`.
 2. Custom inputs must render behind `errorVisible` — an input ignoring it never shows anything.
 
 ## Composition (oneOf / anyOf)

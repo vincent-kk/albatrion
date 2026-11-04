@@ -45,5 +45,5 @@ useEffect(
 
 - Every `subscribe()` must have its cleanup returned from the effect — leaked listeners keep running after remounts.
 - **Events delivered before a subscription are not replayed.** For a state mirror that must catch up, use `useFieldNodeSubscribe`'s `onSubscribe` catch-up rather than assuming you saw everything. `node.revision(mask?)` is a monotonic counter of delivered events for the masked bits, counted whether or not a listener existed, so a late subscriber can detect a gap.
-- For re-render-on-event, `useFieldNodeTracker(node, mask)` — always pass the mask; the default is ALL events (`validation-and-state.md`).
+- For re-render-on-event, `useFieldNodeTracker(node, mask)` — always pass the mask; the default is ALL events.
 - A write made inside a listener joins the same chain; the feedback depth is capped at 25 waves, and exceeding it throws `FEEDBACK_LIMIT_EXCEEDED` at the end of the outermost write.

@@ -26,6 +26,6 @@ Use the skill's verification guidance to check the resulting form.
 - Per-input logic deciding when validation messages may appear:
   use the form's display policy and the input's resolved `errorVisible`.
 - Rebuilding conditional required fields or defaults in React effects:
-  consult the skill’s guidance on conditional fields before adding effects.
+  declare conditional requirements and defaults in the schema instead.
 
 Follow the skill for examples, limitations, and tests for these choices.
