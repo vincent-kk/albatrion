@@ -29,6 +29,66 @@ GitHub의 `browser-benchmark`와 `performance-benchmarks` 워크플로는 수동
 
 `results/baseline.json`은 Node `guard:check`의 입력이므로 유지하고 생성 결과는 Git에서 제외합니다.
 
+### 코어 측정 모델
+
+표본(새 페이지) 하나는 기존 `durationMs`(마운트·재구성·첫 키는 그리기까지의 경과, 타이핑은 쓰기 20회의
+capture→bubble 핸들러 평균)를 그대로 두고 `metrics`와 쓰기별 `writes`를 더합니다. 정의는
+`browser-bench/core/types.ts`의 `CoreMetrics`에, 작업별 관측 가능 여부는 `browser-bench/core/coreObservability.ts`
+(스크립트용 사본 `scripts/coreObservability.mjs`, 시험이 둘의 동일성을 확인)에 있습니다.
+
+- **블로킹**: 직접 잰 값만 `blockingMs`라 부릅니다(타이핑은 쓰기 2–20의 핸들러 평균, 첫 키는 그 핸들러 시간).
+  마운트·재구성에는 50 ms 미만을 재는 수단이 없어 `null`이고, Long Tasks API로 창과 겹친 작업의 원래 길이
+  최댓값(`maxLongTaskMs`, 관측 없음은 "< 50 ms"이지 0이 아님)과 창 안 겹침 합(`longTaskOverlapMs`)을 적습니다.
+- **검증기**: 등록 전에 플러그인의 `compile`과 검증 함수를 감싸 호출마다 동기 반환 시각과 Promise 완료 시각,
+  루트 값에서 읽은 측정 경로의 값(`probeValue`)을 기록합니다. 동기 구간은 "동기/지연"이 아니라 시작 표식 뒤
+  첫 rAF 전/후(`preFrameValidatorMs`/`postFrameValidatorMs`)로 나눕니다. 0.16.1의 입력 검증은 매크로태스크라
+  첫 rAF 전에 돌 수 있고, 현재 엔진은 프레임 뒤 슬롯에서 돕니다.
+- **화면 반영**: 측정 경로 하나(타이핑 잎 또는 로드 프로브 `/probe`)에만 `<i data-core-marker data-core-error>`를
+  그리는 렌더러를 쓰고 `MutationObserver`로 속성 전이 시각을 받습니다. 타이핑은 쓰기마다 `probeValue`가 그 값과
+  같은 첫 검증 실행의 완료(`validatorSettledMs`)와, 다음 키 전에 기대 상태로 전이한 시각(`feedbackCommittedMs`)을
+  귀속하고 exact/censored/noChange/superseded 부류와 합쳐진 쓰기 수(`coalescedWrites`)를 셉니다. 평균은 exact 쓰기
+  2–20의 조건부 평균이며 첫 쓰기는 `firstWriteMs`와 `writes[0]`에 따로 남습니다. 마운트·재구성은 `/probe` 마커의
+  0→1 전이와 `/probe` 오류를 담은 첫 `onValidate`(`validationReportedMs`)를 적습니다.
+- **프레임**: 작업 전에 rAF 루프를 켜고 빈 간격 10개의 중앙값을 `frameIntervalMs`로 보정합니다. 관측 중앙값에서
+  60/120 Hz를 판별해 `frameIntervalNominalMs = 1000 / Hz`를 모든 표본에 기록하며, 요약의 `frames`에도 변형별
+  명목 간격을 명시합니다. 두 명목 간격 어느 쪽의 ±3 ms에도 들지 않으면 관측 불가로 표본이 실패합니다.
+  로컬 G3·G4는 두 주기를 허용하고 최종 CI G6는 60 Hz 및 13.7–19.7 ms를 요구합니다.
+  UX 프레임 예산과 `overBudgetFrames`는 호스트 주기에 관계없이 16.7 ms 기준을 유지합니다.
+  `frameBudget60`과 `frameBudget120`에는 각각 16.7 ms와 8.3 ms 기준의 `frameOverflowMs`·`overBudgetFrames`를
+  담습니다. 기존 최상위 두 지표는 16.7 ms 의미를 유지하며, 요약의 `frames`에도 두 예산의 페이지별 통계를 보존합니다.
+  창 안 rAF 간격 수·가장 긴 간격·16.7 ms 초과 합·초과 프레임 수는 "관측된 rAF 간격"이며 CPU 블로킹과 구별합니다.
+- **종료**: 드라이버의 마지막 쓰기 완료, 마지막 값을 검증한 실행의 완료와 마커 상태 일치, 진행 중 실행 0,
+  그 뒤 rAF 두 번 또는 250 ms 무활동 중 먼저 오는 것. 전체 상한 5,000 ms는 rAF와 독립된 타이머입니다.
+
+요약(`summary.json`·`summary.md`)은 사례마다 `durationMs`의 기존 판정(`decideCoreComparison`, 임계 불변)에 더해
+지표별 통계(numeric / below-threshold / mixed / not-observable)·비율·Δ·판정(지연 지표 max(2 ms, 5 %), CPU 지표
+max(0.5 ms, 5 %); 지표별 대조군이 띠 밖이면 그 지표만 void), 블로킹 중앙값의 프레임 예산(마운트는 N/A), 타이핑 분포,
+RAIL 기준 UX 판정을 내고, 전체에 `fixtures/core-weights.json`의 가중치로 `blockingMs`·`feedbackCommittedMs`의
+가중 교환비(폭 안 행은 0, 음수가 개선)와 가중 비율(원시 가중 합의 비)을 냅니다. 범례와 표 다섯 개의 열 정의는
+`browser-bench/core/helpers/renderCoreSummary/renderCoreSummary.ts`가 출력하는 범례에 있습니다.
+표 4는 명목 간격과 페이지별 초과 프레임 수 중앙값을, 표 2는 Long Task 관측 표본 수를 함께 표시합니다.
+표 2의 블로킹 예산은 16.7 ms(60 Hz, 주 예산)와 8.3 ms(120 Hz, 보조) 각각에 대해 프레임 대비 비율·초과 ms·
+기준판도 초과했는지를 표시합니다. 요약의 `budget`은 16.7 ms, `budget120`은 8.3 ms이며, mount·rebuild는 둘 다
+N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비에는 들어가지 않습니다.
+
+**두 판 호환 보정.** 같은 `harness.tsx`를 0.16.1과 현재 dist로 각각 번들합니다. 필드 렌더러 속성명이 0.16.1은
+`CustomFormTypeRenderer`, 현재는 `FieldRenderer`이므로 같은 마커 렌더러를 두 이름으로 모두 넘깁니다(이전 하네스는
+`FieldRenderer`만 넘겨 0.16.1이 기본 렌더러로 라벨·오류 DOM을 더 그렸고, 그 비교의 마운트 수치는 기준판에
+불리했습니다). 오류가 키 입력만으로 보이도록 두 판 모두 `showError={true}`를 명시하고, validate 사례의 모든 형상에
+루트 프로브 잎 `probe`(`pattern '^(?:..)*$'`, 기본값 `x`)를 더해 `/probe` 오류가 정확히 하나 생기게 합니다
+(`expectedInputs` +1, 두 판 동일). 평탄 타이핑 잎 `field_000`의 기본값은 빈 문자열(짝수 길이)로 두어 첫 키가 마커를
+0→1로 바꿉니다.
+
+**프로브와 검사 스크립트.** `yarn workspace @aileron/benchmark-form bench:probe`는 헤드리스 Chromium에서 80 ms 바쁜
+루프를 rAF 간격과 Long Task로 잡는지, 창 밖·경계 작업을 거르는지, `takeRecords()`로 지연 항목을 거두는지, 빈 rAF 간격
+중앙값이 명목 주기인지 확인합니다. 같은 실행에서 관측기 자기 실행 시간(원시), 빈 rAF 루프 바닥, 순 오버헤드
+(원시 − 바닥)를 ms/s로 모두 출력하며, 순 오버헤드 ≤1 ms/s와 바닥 ≤2.5 ms/s가 모두 충족되어야
+`PROBE_FRAMES_OK`를 냅니다. `scripts/checkRedTests.mjs`(시험이 단언으로 빨간지), `scripts/checkSmokeSamples.mjs
+<samples.json> <summary.json>`(두 판 스모크의 모든 표본이 관측 표를 만족하는지), `scripts/checkFinalRun.mjs`
+(CI 실행 아티팩트 검사), `scripts/renderFinalReport.mjs <summary.json> <samples.json>`(원시 표본에서 요약을 다시
+만들어 대조한 뒤 범례와 표 다섯 개를 출력), `scripts/checkReportTables.mjs <summary.json> <samples.json> <report.md>`
+(보고서의 생성 블록이 재생성 결과와 같은지)는 플레인 Node로 실행합니다.
+
 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1`
 은 공개 L과 작업 공간 dist E를 AB/BA로 교대하며 각 판 10예열·최소 100표본을 기록합니다.
 `--out=<path>.json`에 원시 표본, `<path>-summary.json`에 중앙값·p99·비율을 저장하고 표를 출력합니다.
