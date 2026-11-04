@@ -67,9 +67,9 @@ interface RegisteredNode {
   /** Fold-inclusive kind token at this live path. */
   kind: string;
   /** Gate memo bound to this exact live node lifetime. */
-  memo: Map<BlueprintGate, RegisteredGateOccurrence>;
+  memo: ReadonlyMap<BlueprintGate, RegisteredGateOccurrence>;
   /** Direct edge bindings owned by the same live registration. */
-  edges: Map<string, Map<BlueprintGate, RegisteredGateOccurrence>>;
+  edges?: Map<string, Map<BlueprintGate, RegisteredGateOccurrence>>;
   /** Gate occurrences registered by its template and direct edges. */
   occurrences: readonly RegisteredGateOccurrence[];
   /** Gates on this node's own declarations, before direct child edges. */
@@ -171,17 +171,14 @@ class GateRegistry {
   register<Self extends FieldNodeRecord<Self>>(node: Self): void {
     if (this.byPath.get(node.path)?.node === node) return;
     this.removePath(node.path);
-    const memo = new Map<BlueprintGate, RegisteredGateOccurrence>();
-    const edges = new Map<
-      string,
-      Map<BlueprintGate, RegisteredGateOccurrence>
-    >();
+    let memo: Map<BlueprintGate, RegisteredGateOccurrence> | undefined;
+    let edges: RegisteredNode['edges'];
     for (const declaration of node.blueprintNode.declarations)
       for (const gate of declaration.gates)
         this.add(
           node,
           gate,
-          memo,
+          (memo ??= new Map()),
           gate.schemaPath ===
             appendSegment(
               appendSegment(node.blueprintNode.schemaPath, 'controls'),
@@ -190,13 +187,8 @@ class GateRegistry {
             ? node.path
             : undefined,
         );
-    const ownOccurrences = [...memo.values()];
+    const ownOccurrences = memo ? [...memo.values()] : EMPTY_OCCURRENCES;
     for (const entry of node.blueprintNode.childEntries) {
-      let edgeMemo = edges.get(entry.name);
-      if (!edgeMemo) {
-        edgeMemo = new Map<BlueprintGate, RegisteredGateOccurrence>();
-        edges.set(entry.name, edgeMemo);
-      }
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
           if (
@@ -205,25 +197,36 @@ class GateRegistry {
               appendSegment(declaration.schemaPath, 'controls'),
               'active',
             )
-          )
+          ) {
+            edges ??= new Map();
+            let edgeMemo = edges.get(entry.name);
+            if (!edgeMemo) {
+              edgeMemo = new Map();
+              edges.set(entry.name, edgeMemo);
+            }
             this.add(
               node,
               gate,
               edgeMemo,
               appendSegment(node.path, entry.name),
             );
-          else this.add(node, gate, memo);
+          } else this.add(node, gate, (memo ??= new Map()));
     }
     this.byPath.set(node.path, {
       node,
       kind: getBlueprintNodeIdentity(node.blueprintNode),
-      memo,
+      memo: memo ?? EMPTY_GATE_MEMO,
       edges,
       ownOccurrences,
-      occurrences: [
-        ...memo.values(),
-        ...[...edges.values()].flatMap((edge) => [...edge.values()]),
-      ],
+      occurrences:
+        memo || edges
+          ? [
+              ...(memo?.values() ?? EMPTY_OCCURRENCES),
+              ...[...(edges?.values() ?? [])].flatMap((edge) => [
+                ...edge.values(),
+              ]),
+            ]
+          : EMPTY_OCCURRENCES,
     });
   }
 
@@ -241,12 +244,16 @@ class GateRegistry {
     this.register(node);
     const registration = this.byPath.get(node.path)!;
     const edge = edgeName
-      ? registration.edges.get(edgeName)?.get(gate)
+      ? registration.edges?.get(edgeName)?.get(gate)
       : undefined;
     if (edge) return edge;
     const existing = registration.memo.get(gate);
     if (existing) return existing;
-    const memo = registration.memo;
+    const memo =
+      registration.memo instanceof Map && registration.memo !== EMPTY_GATE_MEMO
+        ? registration.memo
+        : new Map<BlueprintGate, RegisteredGateOccurrence>();
+    registration.memo = memo;
     this.add(node, gate, memo);
     const edges = registration.edges;
     this.byPath.set(node.path, {
@@ -257,7 +264,7 @@ class GateRegistry {
       ownOccurrences: registration.ownOccurrences,
       occurrences: [
         ...memo.values(),
-        ...[...edges.values()].flatMap((edgeMemo) => [
+        ...[...(edges?.values() ?? [])].flatMap((edgeMemo) => [
           ...edgeMemo.values(),
         ]),
       ],
@@ -572,7 +579,10 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   occurrenceCount: () => 0,
 });
 /** Repeated absent relocation reads preserve reference identity. */
-const EMPTY_OCCURRENCES: readonly GateOccurrence[] = Object.freeze([]);
+const EMPTY_OCCURRENCES: readonly RegisteredGateOccurrence[] = Object.freeze([]);
+/** Private read-only absence marker, replaced before any occurrence is inserted. */
+const EMPTY_GATE_MEMO: ReadonlyMap<BlueprintGate, RegisteredGateOccurrence> =
+  Object.freeze(new Map<BlueprintGate, RegisteredGateOccurrence>());
 
 /**
  * Get the settlement-owned occurrence memo for a tree runtime.
