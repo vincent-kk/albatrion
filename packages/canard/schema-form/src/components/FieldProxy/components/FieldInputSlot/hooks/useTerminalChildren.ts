@@ -5,7 +5,6 @@ import { FormWarningCode } from '@/schema-form/errors';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
 import type { ChildField } from '../type';
-import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
 /** A property key made only of digits, as an array index read. */
 const NUMERIC_KEY = /^\d+$/;
@@ -27,8 +26,7 @@ const CLEAR_ACCESSED_MASK = ~ACCESSED;
 type TerminalChildren = readonly [children: ChildField[], commit: () => void];
 
 /** Child list and commit marker of an input whose children need no read detector. */
-const UNDETECTED: TerminalChildren = [EMPTY_CHILDREN, () => {}];
-Object.freeze(UNDETECTED);
+const UNDETECTED: TerminalChildren = Object.freeze([EMPTY_CHILDREN, () => {}]);
 
 /**
  * Detect terminal child-list reads; deferred warnings retain the read's load scope
@@ -104,3 +102,15 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
     return UNDETECTED;
   }, [node, reporter]);
 };
+
+/**
+ * Whether a terminal node's input can mistakenly read ChildFields (round 180).
+ * Only an object or array node can be made terminal by an inline input while a container
+ * input for the same schema would render children; string, number, boolean, null and union
+ * nodes are terminal by nature, so a shared input reading the empty list there is no mistake.
+ * @param node - Live node whose input receives ChildFields
+ * @returns `true` for an object or array node rendered with the terminal strategy
+ */
+const isDetectableTerminal = (node: FieldNode): boolean =>
+  node.strategy === 'terminal' &&
+  (node.type === 'object' || node.type === 'array');
