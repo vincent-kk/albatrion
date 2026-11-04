@@ -19,6 +19,7 @@ function normalizeAliases(alias: unknown): { find: string | RegExp; replacement:
   return Object.entries((alias ?? {}) as Record<string, string>).map(([find, replacement]) => ({ find, replacement }));
 }
 const config: StorybookConfig = {
+  core: { disableTelemetry: true },
   stories: [
     '../stories/scenarios/**/*.stories.tsx',
     '../stories/usage/**/*.stories.tsx',

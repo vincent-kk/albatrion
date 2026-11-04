@@ -1,0 +1,95 @@
+:is(.sf-form, .sf-usage) label:not([hidden]) {
+  display: block;
+  margin-bottom: var(--sf-space-1);
+  font-size: var(--sf-text-sm);
+  font-weight: 500;
+}
+
+:is(.sf-form, .sf-usage) :is(input:not([type]), input[type='text'], input[type='number'], input[type='email'], input[type='date'], input[type='password'], input[type='month'], input[type='week'], input[type='time'], input[type='datetime-local'], select, textarea) {
+  width: 100%;
+  max-width: min(480px, 100%);
+  min-width: 0;
+  min-height: 40px;
+  padding: var(--sf-space-2) var(--sf-space-3);
+  border: 1px solid var(--sf-border-strong);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-bg);
+  color: var(--sf-text);
+  font: inherit;
+  font-size: var(--sf-text-md);
+  transition: color var(--sf-duration), background-color var(--sf-duration), border-color var(--sf-duration);
+}
+
+:is(.sf-form, .sf-usage) :is(input, select, textarea, button):focus-visible {
+  outline: 2px solid var(--sf-accent);
+  outline-offset: 1px;
+}
+
+/* aria-invalid marks a misfit value; it does not mark every validation error. */
+:is(.sf-form, .sf-usage) [aria-invalid='true'] { border-color: var(--sf-danger); }
+:is(.sf-form, .sf-usage) :is(input, select, textarea, button):disabled { opacity: 0.55; cursor: not-allowed; }
+:is(.sf-form, .sf-usage) input:is([type='checkbox'], [type='radio']) {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--sf-accent);
+}
+:is(.sf-form, .sf-usage) label:not([hidden]):has(input:is([type='checkbox'], [type='radio'])) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sf-space-2);
+}
+:is(.sf-form, .sf-usage) fieldset {
+  min-width: 0;
+  margin: 0 0 var(--sf-space-4);
+  padding: var(--sf-space-4);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--sf-radius-md);
+}
+:is(.sf-form, .sf-usage) fieldset fieldset { background: var(--sf-surface); }
+:is(.sf-form, .sf-usage) legend { padding: 0 var(--sf-space-1); font-size: var(--sf-text-sm); font-weight: 600; }
+:is(.sf-form, .sf-usage) :is(form, fieldset) > div { margin-bottom: var(--sf-space-4); }
+/* Fallback field notes retain their inline font size, spacing and depth indent. */
+:is(.sf-form, .sf-usage) em { color: var(--sf-danger); }
+/* Inline-styled array controls retain their authored dimensions. */
+:is(.sf-form, .sf-usage) button:not([style]) {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--sf-border-strong);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-surface-2);
+  color: var(--sf-text);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  cursor: pointer;
+  transition: color var(--sf-duration), background-color var(--sf-duration), border-color var(--sf-duration);
+}
+:is(.sf-form, .sf-usage) button:not([style]):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sf-surface-2), var(--sf-text) 8%);
+}
+:is(.sf-form, .sf-usage) button[type='submit']:not([style]) {
+  border: 0;
+  background: var(--sf-accent);
+  color: var(--sf-on-accent);
+}
+:is(.sf-form, .sf-usage) button[type='submit']:not([style]):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sf-accent), var(--sf-text) 8%);
+}
+:is(.sf-form, .sf-usage) button[aria-label='Apply next form props'] { margin-bottom: var(--sf-space-4); }
+:is(.sf-form, .sf-usage) output[aria-label='Form output']:not([hidden]) {
+  display: block;
+  margin-top: var(--sf-space-4);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-mono);
+  font-size: var(--sf-text-code);
+  overflow-wrap: anywhere;
+}
+
+:is(.sf-form, .sf-usage) output[aria-label='Form output']:not([hidden])::before {
+  content: 'Output';
+  display: block;
+  margin-bottom: var(--sf-space-1);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-sans);
+  font-size: var(--sf-text-xs);
+  font-weight: 500;
+}
