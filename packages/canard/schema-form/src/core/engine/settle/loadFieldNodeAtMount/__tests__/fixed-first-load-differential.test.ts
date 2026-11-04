@@ -92,3 +92,14 @@ it('T4 preserves call-sensitive synchronous guards without a purity assumption',
   expect(actual.work.commits).toBe(oracle.work.commits);
   expectFixedFirstLoadRoute(actual);
 });
+
+it('T10 pins public mount route entry with a required value', () => {
+  const fixture = { ...schema, required: ['value'] };
+  const actual = observeFixedFirstLoad(fixture, { dispatch: true });
+  const oracle = observeFixedFirstLoad(fixture, {
+    dispatch: true,
+    general: true,
+  });
+  expect(actual.snapshot()).toEqual(oracle.snapshot());
+  expectFixedFirstLoadRoute(actual);
+});

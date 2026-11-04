@@ -2,10 +2,15 @@ import { expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 
-import { isFixedFirstLoadAdmissible } from '../settle/loadFieldNodeAtMount/__tests__/fixtures/observeFixedFirstLoad';
-import * as fixedLoader from '../settle/loadFieldNodeAtMount/utils/staticFirst/loadFixedFirstTree';
+import { engineModes } from '../utils/cache/engineModes';
 import { dispatchMount, dispatchValidate, subscribeFieldNode } from '../write';
 import { createTestTree } from './fixtures/createTestTree';
+
+/** Report whether the active engine modes admit the fixed-first mount route. */
+const isFixedFirstLoadAdmissible = (): boolean =>
+  engineModes.gateSelection !== 'verify' &&
+  engineModes.gateWheel !== 'shadow' &&
+  !engineModes.deriveShadow;
 
 // filid:contract fixed-first-load-validation
 it('T9 selects synchronous guards while whole compilation stays deferred on the authored copy', async () => {
@@ -32,13 +37,7 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
     root.runtime.validationMode = 2;
     const deliveries: unknown[] = [];
     subscribeFieldNode(root, (event) => deliveries.push(event));
-    const loader = vi.spyOn(fixedLoader, 'loadFixedFirstTree');
     dispatchMount(root, undefined, undefined, { deferValidation: true });
-    expect(
-      loader.mock.calls.length,
-      'Verifier modes retain the plan but use the general loader',
-    ).toBe(!general && isFixedFirstLoadAdmissible() ? 1 : 0);
-    loader.mockRestore();
     const selectedSlots = visits.filter((visit) =>
       visit.startsWith('select:'),
     ).length;

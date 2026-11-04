@@ -18,6 +18,17 @@ it.each([
 ] as const)(
   'T2 rejects a baseline %s anywhere in the new route',
   (_name, child) => {
+    expect(
+      Reflect.get(
+        blueprint({
+          type: 'object',
+          properties: { value: { type: 'string' } },
+          if: {},
+          then: { properties: { value: { minLength: 2 } } },
+        }),
+        'fixedFirstLoadPlan',
+      ),
+    ).toBeDefined();
     const result = blueprint({
       type: 'object',
       properties: { value: { type: 'string' }, child },
@@ -28,6 +39,17 @@ it.each([
   },
 );
 it('T2 rejects accessors without invoking the overlay getter for its proof', () => {
+  expect(
+    Reflect.get(
+      blueprint({
+        type: 'object',
+        properties: { value: { type: 'string' } },
+        if: {},
+        then: { properties: { value: { minLength: 2 } } },
+      }),
+      'fixedFirstLoadPlan',
+    ),
+  ).toBeDefined();
   const constraint = Object.defineProperty({}, 'minLength', {
     enumerable: true,
     get: () => 2,
@@ -43,6 +65,17 @@ it('T2 rejects accessors without invoking the overlay getter for its proof', () 
 it.each([NaN, Infinity, '2', -1, 1.5])(
   'T2 rejects non-finite or nonnumeric constraint %s',
   (minLength) => {
+    expect(
+      Reflect.get(
+        blueprint({
+          type: 'object',
+          properties: { value: { type: 'string' } },
+          if: {},
+          then: { properties: { value: { minLength: 2 } } },
+        }),
+        'fixedFirstLoadPlan',
+      ),
+    ).toBeDefined();
     const result = blueprint({
       type: 'object',
       properties: { value: { type: 'string' } },
@@ -53,6 +86,17 @@ it.each([NaN, Infinity, '2', -1, 1.5])(
   },
 );
 it('T2 rejects an alternative child identity', () => {
+  expect(
+    Reflect.get(
+      blueprint({
+        type: 'object',
+        properties: { value: { type: 'string' } },
+        if: {},
+        then: { properties: { value: { minLength: 2 } } },
+      }),
+      'fixedFirstLoadPlan',
+    ),
+  ).toBeDefined();
   const result = blueprint({
     type: 'object',
     properties: { value: { type: 'string' } },

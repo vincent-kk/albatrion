@@ -11,6 +11,7 @@ import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as fixedLoader from '../utils/staticFirst/loadFixedFirstTree';
 import {
   expectFixedFirstLoadRoute,
+  isFixedFirstLoadAdmissible,
   observeFixedFirstLoad,
 } from './fixtures/observeFixedFirstLoad';
 
@@ -49,6 +50,7 @@ it('T12 releases preparation after successful and failed assembly', () => {
     });
   const failed = observeFixedFirstLoad(schema);
   failure.mockRestore();
+  expect(failed.prepared).toBe(isFixedFirstLoadAdmissible());
   expect(failed.error).toMatchObject({ message: 'assembly interrupted' });
   expect(failed.work.commits).toBe(0);
   expect(

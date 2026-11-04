@@ -89,6 +89,8 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ### conditional-static-load-render — Public mount and first edits
 
+- Core의 T10 행은 e2e import 모델이 loader spy를 금지하므로 공개 마운트 경로의 진입을 고정합니다.
+
 - With shipped or absent validators, initial defaults/required/input counts, first kind changes, errors and callback ordering match ordinary mount. Unsupported required/control overlays retain fallback behavior.
 
 ### conditional-static-load-lifetime — StrictMode and binding replacement
