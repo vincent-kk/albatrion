@@ -4,7 +4,7 @@ import { plugin as ajv8 } from '@canard/schema-form-ajv8-plugin';
 import { expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
-import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+import type { JSONSchema } from '@/schema-form/types';
 
 import type { Validator } from '../types/validator';
 import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
@@ -20,7 +20,7 @@ it.each([
 ] as const)(
   'DR-3 reuses the shipped copy after compile failure and prior compileGuard (%s)',
   async (name, shipped) => {
-    const compile = vi.fn((copy: AuthoredSchema) => {
+    const compile = vi.fn((copy: JSONSchema) => {
       const validate = shipped.compile(copy);
       if (copy.title === 'replacement' && !failed) {
         failed = true;
