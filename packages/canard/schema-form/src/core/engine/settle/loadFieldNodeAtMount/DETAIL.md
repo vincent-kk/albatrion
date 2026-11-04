@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 - The fixed-first gated route is separate from the ungated static loader. It requires undefined caller input, an attached fresh root with no committed delivery, pending state, children, source, extras or global state, and an immutable compiler plan. Plan, freshness and mode admission completes before occurrence creation/registration, context or selected-ID initialization, source/schema/children mutation and commit reservation. The shared next-snapshot/diagnostics prologue and finally remain unchanged; an absent plan never enters the new loader.
 - One ordinary settlement context owns the fixed baseline and sparse contribution witnesses. Allocation and mandatory commit/delivery remain O(N); repeated selection is O(G+K) for G gates and K affected entries. Output assembly and logical confirmation rounds remain ordinary; the ungated no-scratch/one-assembly promises do not apply here.

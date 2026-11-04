@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 - `onInactive`의 옛 해제 함수를 반복 호출해도 더 새 등록 집합은 제거하지 않습니다. resolver 쓰기 거부의 경고 보고기 안에서 시도한 쓰기는 재보고 없이 무시하여 재귀 배달을 막습니다.
 

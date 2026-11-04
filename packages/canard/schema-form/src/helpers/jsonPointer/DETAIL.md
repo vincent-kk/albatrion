@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 fragment-root 접두사는 constants 구획의 단일 `FragmentPrefix` 상수로 만들고 내부 파서들이 공유합니다. 기존 JSONPointer 객체의 키·값과 공개 진입점은 늘리지 않으며, 동일한 접두 비교를 호출마다 다시 조립하지 않습니다.
 

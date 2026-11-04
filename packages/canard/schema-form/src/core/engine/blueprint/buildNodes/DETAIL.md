@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널과 게이트별로 소유하여 참조로 구별하는 `evaluationReads`를 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널과 게이트별로 소유하여 참조로 구별하는 `evaluationReads`를 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 - B12 `inactiveValue`는 노드·fields·조각 controls 모두에서 허용하는 열 번째 자식 제어 키입니다. 문자열은 리터럴이며 식 목록에 포함하지 않습니다.
 

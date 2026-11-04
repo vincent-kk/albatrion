@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 - D3b-1의 안정 형상과 최근 선언 count/result는 각 root runtime의 별도 지연 WeakMap이다. 같은 청사진을 공유하는 폼도 각 live host를 키로 써서 서로의 count 메모를 교체하지 않는다. item entry 사실과 선택 순서는 기존 청사진 보조에 남는다. trim 결과는 공통 값 키 메모로 옮겨 같은 배열 identity/end의 결과 참조를 보존한다. 폼 전체 reset·폐기는 재계산 가능한 메모를 비우고 부분 reset은 유지한다(SURFACE-065).
 

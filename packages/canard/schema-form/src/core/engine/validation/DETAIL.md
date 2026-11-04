@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 - 방향은 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < FieldNode`이다. `validation`은 위 세 fractal과 `app/plugin`을 타입으로도 가져오지 않으며, `write`가 제공한 결과 콜백만 호출한다(NODE-016·045, CONTROLS-075, LANDING-084).
 - `FieldNodeRuntime`의 검증기, 검증 모드, 최신 커밋과 요청 스탬프, 보류 중인 실행, 노드 오류 맵을 소비한다. 사본, 가드, 전체 판정 함수의 캐시와 참조 수, 최근 해제 목록은 검증기 인스턴스별로 이 fractal이 소유하며 노드별 필드는 더하지 않는다(NODE-004·045, VALIDATE-018·021·048·049).

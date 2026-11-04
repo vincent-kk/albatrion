@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
 
 - D3b-1에서 값 identity 메모는 공통 이름 붙인 저장소에 모으고 노드 identity 메모는 root runtime에 둔다. 정적 선택·값 키 개수·trim 결과·정적 spec·소유 값 membership의 키와 결과는 보존한다. 공통 구조 형은 engine types가 소유하여 자식 간 역의존을 만들지 않는다. 안정 형상과 배열 선언 개수 메모는 트리별로 지연 생성하며 폼 전체 reset·폐기에서 해제한다(SURFACE-063·065).
 

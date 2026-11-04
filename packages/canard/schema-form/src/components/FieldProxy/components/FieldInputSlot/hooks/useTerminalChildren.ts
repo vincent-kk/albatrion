@@ -10,6 +10,7 @@ import type { ChildField } from '../type';
 const NUMERIC_KEY = /^\d+$/;
 
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
+// eslint-disable-next-line no-restricted-syntax -- Exposed as the mutable ChildField[] contract.
 const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 
 /** Read-detector state after the input's owning layout effect commits. */

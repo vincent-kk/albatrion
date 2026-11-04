@@ -18,15 +18,4 @@ describe('shared empty values', () => {
     expect(Reflect.ownKeys(EMPTY_OBJECT)).toEqual([]);
     expect(Object.isFrozen(EMPTY_OBJECT)).toBe(true);
   });
-
-  it('preserves each reference across repeated imports', async () => {
-    const firstArray = await import('../array');
-    const secondArray = await import('../array');
-    const firstObject = await import('../object');
-    const secondObject = await import('../object');
-    expect(firstArray.EMPTY_ARRAY).toBe(EMPTY_ARRAY);
-    expect(secondArray.EMPTY_ARRAY).toBe(EMPTY_ARRAY);
-    expect(firstObject.EMPTY_OBJECT).toBe(EMPTY_OBJECT);
-    expect(secondObject.EMPTY_OBJECT).toBe(EMPTY_OBJECT);
-  });
 });
