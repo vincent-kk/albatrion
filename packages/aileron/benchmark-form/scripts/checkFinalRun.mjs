@@ -1,4 +1,4 @@
-// Gate G6: the CI run succeeded and its artifacts match the requested baseline, head, runs and case set with no void or missing metric.
+// Gate G6: the CI run succeeded and its artifacts match the requested inputs with no unlisted void or missing metric.
 import { readFileSync } from 'node:fs';
 
 import { coreObservability } from './coreObservability.mjs';
@@ -16,6 +16,7 @@ const options = parseScriptArgs(process.argv.slice(2), [
   '--head',
   '--runs',
   '--cases',
+  '--allow-void',
 ]);
 /** Summary and raw-sample artifact locations supplied as positional arguments. */
 const [summaryPath, samplesPath] = options._.split('\n');
@@ -29,8 +30,24 @@ if (
   !options['--cases']
 )
   throw new Error(
-    'Usage: checkFinalRun.mjs <summary.json> <samples.json> --run-json <run.json> --baseline <sha> --head <sha> --runs <n> --cases <a,b,...>',
+    'Usage: checkFinalRun.mjs <summary.json> <samples.json> --run-json <run.json> --baseline <sha> --head <sha> --runs <n> --cases <a,b,...> [--allow-void <metric,...>]',
   );
+/** Comparison metrics; firstWriteMs has a distribution but no comparison verdict. */
+const metricNames = [
+  'durationMs',
+  ...Object.keys(coreObservability['mount-validate'].metrics).filter(
+    (name) => name !== 'firstWriteMs',
+  ),
+];
+/**
+ * Explicit void exceptions, still subject to raw-sample verification and listed in the output.
+ * Long Task durations are whole milliseconds that vary by page beyond the 3 % CPU control band (1.9 ms at
+ * 63.5 ms); a listed void stays visible in the output because its cause is undetermined (plan A7).
+ */
+const allowedVoidMetrics = options['--allow-void']?.split(',') ?? [];
+for (const name of allowedVoidMetrics)
+  if (!metricNames.includes(name))
+    throw new Error(`Unknown metric in --allow-void: ${name}`);
 /** Parsed raw evidence and the corresponding summary for this verification run. */
 const { samples, summary } = readCoreArtifacts(samplesPath, summaryPath);
 /** Accumulated gate failures; any entry makes the process exit nonzero. */
@@ -59,8 +76,11 @@ if (ids.length !== cases.length || cases.some((id) => !ids.includes(id)))
 for (const row of summary.cases) {
   const observability = coreObservability[parseCoreCaseId(row.id).key];
   for (const [name, comparison] of Object.entries(row.metrics)) {
-    if (comparison.verdict === 'void')
-      problems.push(`${row.id}: ${name} is void`);
+    if (comparison.verdict === 'void') {
+      if (allowedVoidMetrics.includes(name))
+        console.log(`allowed void: ${row.id} ${name}`);
+      else problems.push(`${row.id}: ${name} is void`);
+    }
     if (
       observability?.metrics[name] === 'required' &&
       comparison.verdict === 'not observable'

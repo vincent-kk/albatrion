@@ -11,9 +11,13 @@ import { getCoreFixture } from '../../../../fixtures/core/getCoreFixture';
 /**
  * Build synthetic 60 Hz comparison evidence for every final-run case.
  * @param runs - Positive page count per variant; 20 exercises the CI artifact contract.
+ * @param voidMetric - Optional metric with an out-of-band control on the first case.
  * @returns Summary and raw samples rebuilt from the same measurements; this is gate QA, not performance evidence.
  */
-export function createCoreFinalFixture(runs = 20) {
+export function createCoreFinalFixture(
+  runs = 20,
+  voidMetric?: 'maxLongTaskMs' | 'durationMs',
+) {
   const ids = [
     'mount-flat-500-none',
     'mount-flat-500-validate',
@@ -25,7 +29,7 @@ export function createCoreFinalFixture(runs = 20) {
     'type-array-1000-validate-nonburst',
     'first-key-flat-500-validate',
   ];
-  const samples: Record<string, { attempt: 1; samples: CoreVariantGroups }[]> =
+  const samples: Record<string, { attempt: 1 | 2; samples: CoreVariantGroups }[]> =
     {};
   const cases = ids.map((id) => {
     const fixture = getCoreFixture(id);
@@ -85,8 +89,16 @@ export function createCoreFinalFixture(runs = 20) {
       ),
       control: Array.from({ length: runs }, () => structuredClone(measurement)),
     };
-    samples[id] = [{ attempt: 1, samples: groups }];
-    return buildCoreCaseResult(id, 1, groups, true);
+    const attempt = voidMetric && id === ids[0] ? 2 : 1;
+    if (attempt === 2 && voidMetric === 'maxLongTaskMs')
+      for (const measurements of Object.values(groups))
+        for (const sample of measurements) sample.metrics.maxLongTaskMs = 60;
+    if (attempt === 2)
+      for (const control of groups.control)
+        if (voidMetric === 'durationMs') control.durationMs += 100;
+        else control.metrics.maxLongTaskMs = 1000;
+    samples[id] = [{ attempt, samples: groups }];
+    return buildCoreCaseResult(id, attempt, groups, true);
   });
   const weights = readCoreWeights();
   const summary: CoreSummary = {

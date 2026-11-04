@@ -11,6 +11,46 @@ describe('checkFinalRun complete comparison evidence', () => {
     expect(result.stdout).toContain('FINAL_RUN_OK');
   });
 
+  it('allows and explicitly lists a void on a named metric before success', () => {
+    const fixture = createCoreFinalFixture(20, 'maxLongTaskMs');
+    expect(fixture.summary.cases[0].metrics.maxLongTaskMs.verdict).toBe('void');
+    expect(runCoreFinalCheck(fixture).status).not.toBe(0);
+    const result = runCoreFinalCheck(fixture, ['--allow-void', 'maxLongTaskMs']);
+    expect(result.status, result.stdout + result.stderr).toBe(0);
+    expect(result.stdout).toContain(
+      'allowed void: mount-flat-500-none maxLongTaskMs\nFINAL_RUN_OK',
+    );
+  });
+
+  it('still rejects a void on a metric outside the allowed list', () => {
+    const fixture = createCoreFinalFixture(20, 'durationMs');
+    expect(fixture.summary.cases[0].metrics.durationMs.verdict).toBe('void');
+    const result = runCoreFinalCheck(fixture, ['--allow-void', 'maxLongTaskMs']);
+    expect(result.status).not.toBe(0);
+    expect(result.stdout).toContain('mount-flat-500-none: durationMs is void');
+    expect(result.stdout).toContain('FINAL_RUN_FAILED');
+  });
+
+  it('throws for an unknown allowed metric name', () => {
+    const result = runCoreFinalCheck(createCoreFinalFixture(), [
+      '--allow-void',
+      'maxLongTaskMs,unknownMetric',
+    ]);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain('Unknown metric in --allow-void: unknownMetric');
+    expect(result.stdout).not.toContain('FINAL_RUN_OK');
+  });
+
+  it('still rebuilds raw samples under --allow-void', () => {
+    const fixture = createCoreFinalFixture();
+    fixture.summary.cases[0].metrics.maxLongTaskMs.verdict = 'void';
+    const result = runCoreFinalCheck(fixture, ['--allow-void', 'maxLongTaskMs']);
+    expect(result.status).not.toBe(0);
+    expect(result.stdout).toContain(
+      'mount-flat-500-none differs from its raw samples',
+    );
+  });
+
   it.each(['candidate', 'baseline', 'control'] as const)(
     'rejects a missing %s variant',
     (variant) => {
