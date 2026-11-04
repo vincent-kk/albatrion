@@ -42,19 +42,23 @@ export const buildFixedFirstLoadPlan = (
       node.hasPropertyCandidates
     )
       return undefined;
-    const children = new Map<string, BlueprintChildEntry>();
-    const affected: BlueprintChildEntry[] = [];
-    for (const entry of node.childEntries) {
-      if (children.has(entry.name)) return undefined;
-      let baseline = 0;
-      let gated = false;
-      for (const declaration of entry.declarations) {
-        if (declaration.gates.length) gated = true;
-        else if (declaration.role === 'declaration') baseline++;
+    let children: Map<string, BlueprintChildEntry> | undefined;
+    let affected: BlueprintChildEntry[] | undefined;
+    if (node.kind === 'object') {
+      children = new Map();
+      affected = [];
+      for (const entry of node.childEntries) {
+        if (children.has(entry.name)) return undefined;
+        let baseline = 0;
+        let gated = false;
+        for (const declaration of entry.declarations) {
+          if (declaration.gates.length) gated = true;
+          else if (declaration.role === 'declaration') baseline++;
+        }
+        if (baseline !== 1) return undefined;
+        children.set(entry.name, entry);
+        if (gated) affected.push(entry);
       }
-      if (baseline !== 1) return undefined;
-      children.set(entry.name, entry);
-      if (gated) affected.push(entry);
     }
     let localIf = false;
     for (const declaration of node.declarations) {
@@ -82,7 +86,7 @@ export const buildFixedFirstLoadPlan = (
           gates[0].appliesWhen?.length
         )
           return undefined;
-        if (node.kind === 'object') {
+        if (children) {
           if (
             gates[0].hostPath !== node.path ||
             !isFixedFirstFragment(schema, children)
@@ -94,7 +98,7 @@ export const buildFixedFirstLoadPlan = (
       if (hasOwnProperty(schema, 'if')) {
         if (
           gates.length ||
-          node.kind !== 'object' ||
+          !children ||
           !isFixedFirstFragment(schema.then, children) ||
           !isFixedFirstFragment(schema.else, children)
         )
@@ -107,7 +111,7 @@ export const buildFixedFirstLoadPlan = (
       )
         return undefined;
     }
-    if (node.kind === 'object' && (localIf || affected.length > 0))
+    if (affected && (localIf || affected.length > 0))
       hosts[node.id] = Object.freeze({
         entries: node.childEntries,
         affected: Object.freeze(affected),
