@@ -24,7 +24,7 @@ it.each([
       const validate = shipped.compile(copy);
       if (copy.title === 'replacement' && !failed) {
         failed = true;
-        throw new Error('duplicate schema registration probe');
+        throw new Error('schema with key or id "urn:probe" already exists');
       }
       return validate;
     });

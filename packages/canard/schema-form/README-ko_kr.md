@@ -368,6 +368,8 @@ export const App = () => (
 
 AJV 플러그인의 `createValidatorFactory(ajv)`는 compile 함수만 반환하므로 그 자체로는 유효한 `validatorFactory`가 아닙니다.
 
+이미 쓰이는 `$id`의 스키마를 등록하지 못하는 사용자 정의 검증기는 메시지에 AJV 6·7·8의 중복 id 문구인 `already exists`나 `resolves to more than one schema`를 담은 오류를 던져야 하며, 이 두 문구만 `reason: 'duplicateSchemaId'`와 같은 `$id`의 다른 루트가 해제된 뒤의 한 번 재시도를 받습니다.
+
 ### 오류 메시지 형식 지정
 
 📌 `@canard/schema-form`은 유효성 검증 메시지를 커스텀 할 수 있는 기능을 제공합니다.
