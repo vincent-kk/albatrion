@@ -12,7 +12,8 @@ export function formatScenarioDescription(description: string): string {
   return prose.split(';').map((part) => {
     const sentence = part.trim();
     if (!sentence) return '';
-    const capitalized = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+    const firstWord = sentence.split(/\s+/, 1)[0].replace(/[.,:!?]+$/, '');
+    const capitalized = /[().]|.[A-Z]/.test(firstWord) ? sentence : sentence.charAt(0).toUpperCase() + sentence.slice(1);
     return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`;
   }).filter(Boolean).join(' ');
 }

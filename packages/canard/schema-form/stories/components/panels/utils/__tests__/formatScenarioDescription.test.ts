@@ -15,7 +15,7 @@ describe('formatScenarioDescription', () => {
   it('cleans round markers throughout the real cx15 description', () => {
     const description = compositeCases.find(({ scenario }) => scenario.name === 'composite.cx15-external-and-validation-errors')!.scenario.description!;
     expect(formatScenarioDescription(description)).toBe(
-      'A node lists external errors before validator issues. Fixing the value drops only the validator issue. An empty errors prop drops the external one. A non-array errors prop is read as an empty list. GetErrors() is the root external errors followed by the validation list. The shared steps check the validator side. The tail stages the errors prop.',
+      'A node lists external errors before validator issues. Fixing the value drops only the validator issue. An empty errors prop drops the external one. A non-array errors prop is read as an empty list. getErrors() is the root external errors followed by the validation list. The shared steps check the validator side. The tail stages the errors prop.',
     );
   });
   it('removes repeated IDs, empty parentheses and the prefix colon anywhere', () => {
@@ -33,6 +33,14 @@ describe('formatScenarioDescription', () => {
   it('cleans marker lists next to punctuation and preserves meaningful parentheses', () => {
     expect(formatScenarioDescription('NODE-051 : first;(TEST-018,79C-01); last (see NODE-051)'))
       .toBe('First. Last (see).');
+  });
+
+  it('preserves a leading code identifier with parentheses, dots or internal capitals', () => {
+    expect(formatScenarioDescription('getErrors() returns issues; node.value is current; showError controls visibility; getErrors returns issues'))
+      .toBe('getErrors() returns issues. node.value is current. showError controls visibility. getErrors returns issues.');
+    expect(formatScenarioDescription('submit() sends values; regular prose becomes a sentence'))
+      .toBe('submit() sends values. Regular prose becomes a sentence.');
+    expect(formatScenarioDescription('plain.')).toBe('Plain.');
   });
 
 });
