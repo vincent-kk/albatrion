@@ -15,7 +15,10 @@ describe('checkFinalRun complete comparison evidence', () => {
     const fixture = createCoreFinalFixture(20, 'maxLongTaskMs');
     expect(fixture.summary.cases[0].metrics.maxLongTaskMs.verdict).toBe('void');
     expect(runCoreFinalCheck(fixture).status).not.toBe(0);
-    const result = runCoreFinalCheck(fixture, ['--allow-void', 'maxLongTaskMs']);
+    const result = runCoreFinalCheck(fixture, [
+      '--allow-void',
+      'maxLongTaskMs',
+    ]);
     expect(result.status, result.stdout + result.stderr).toBe(0);
     expect(result.stdout).toContain(
       'allowed void: mount-flat-500-none maxLongTaskMs\nFINAL_RUN_OK',
@@ -25,7 +28,10 @@ describe('checkFinalRun complete comparison evidence', () => {
   it('still rejects a void on a metric outside the allowed list', () => {
     const fixture = createCoreFinalFixture(20, 'durationMs');
     expect(fixture.summary.cases[0].metrics.durationMs.verdict).toBe('void');
-    const result = runCoreFinalCheck(fixture, ['--allow-void', 'maxLongTaskMs']);
+    const result = runCoreFinalCheck(fixture, [
+      '--allow-void',
+      'maxLongTaskMs',
+    ]);
     expect(result.status).not.toBe(0);
     expect(result.stdout).toContain('mount-flat-500-none: durationMs is void');
     expect(result.stdout).toContain('FINAL_RUN_FAILED');
@@ -37,14 +43,19 @@ describe('checkFinalRun complete comparison evidence', () => {
       'maxLongTaskMs,unknownMetric',
     ]);
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain('Unknown metric in --allow-void: unknownMetric');
+    expect(result.stderr).toContain(
+      'Unknown metric in --allow-void: unknownMetric',
+    );
     expect(result.stdout).not.toContain('FINAL_RUN_OK');
   });
 
   it('still rebuilds raw samples under --allow-void', () => {
     const fixture = createCoreFinalFixture();
     fixture.summary.cases[0].metrics.maxLongTaskMs.verdict = 'void';
-    const result = runCoreFinalCheck(fixture, ['--allow-void', 'maxLongTaskMs']);
+    const result = runCoreFinalCheck(fixture, [
+      '--allow-void',
+      'maxLongTaskMs',
+    ]);
     expect(result.status).not.toBe(0);
     expect(result.stdout).toContain(
       'mount-flat-500-none differs from its raw samples',
@@ -76,6 +87,19 @@ describe('checkFinalRun complete comparison evidence', () => {
       expect(runCoreFinalCheck(fixture).status).not.toBe(0);
     },
   );
+
+  it('accepts weighted reasons stored in the earlier Korean wording', () => {
+    const fixture = createCoreFinalFixture();
+    const current = JSON.stringify(fixture.summary.weighted);
+    const legacy = current
+      .split('< 50 ms not observable')
+      .join('< 50 ms 관측 불가');
+    expect(legacy).not.toBe(current);
+    fixture.summary.weighted = JSON.parse(legacy);
+    const result = runCoreFinalCheck(fixture);
+    expect(result.status, result.stdout + result.stderr).toBe(0);
+    expect(result.stdout).toContain('FINAL_RUN_OK');
+  });
 
   it('requires compare mode', () => {
     const fixture = createCoreFinalFixture();

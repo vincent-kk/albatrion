@@ -6,6 +6,24 @@ export const CORE_SUMMARY_MARKERS = {
   end: '<!-- core-summary:end -->',
 };
 
+/** Weighted-exchange reason text stored by summaries written before the English report format, keyed to its current wording. */
+const LEGACY_WEIGHTED_REASONS = new Map([
+  ['< 50 ms 관측 불가', '< 50 ms not observable'],
+]);
+
+/**
+ * Rewrite stored weighted-exchange reasons into the current wording so older artifacts still compare.
+ * @param {object | undefined} weighted - summary.json `weighted` content.
+ * @returns {object | undefined} A JSON copy with legacy reasons replaced.
+ */
+const migrateWeightedReasons = (weighted) => {
+  let text = JSON.stringify(weighted);
+  if (text === undefined) return undefined;
+  for (const [legacy, current] of LEGACY_WEIGHTED_REASONS)
+    text = text.split(legacy).join(current);
+  return JSON.parse(text);
+};
+
 /**
  * Recompute every case result and the weighted exchanges from raw samples with the harness's own code and render them.
  * @param {object} summary - summary.json content.
@@ -60,7 +78,10 @@ export async function rebuildCoreSummary(summary, samples) {
           ),
         })
       : undefined;
-  if (JSON.stringify(weighted) !== JSON.stringify(normalize(summary.weighted)))
+  if (
+    JSON.stringify(weighted) !==
+    JSON.stringify(migrateWeightedReasons(summary.weighted))
+  )
     mismatches.push('weighted exchange differs from the recomputed cases');
   const rendered = renderCoreSummary({ ...summary, cases, weighted });
   return {

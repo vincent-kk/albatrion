@@ -99,7 +99,7 @@ export const createCoreComparedSummary = (): CoreSummary => {
             candidateMicros: null,
             deltaMicros: null,
             counted: false,
-            reason: '< 50 ms 관측 불가',
+            reason: '< 50 ms not observable',
             contributionMicros: 0,
           },
         ],
@@ -107,7 +107,7 @@ export const createCoreComparedSummary = (): CoreSummary => {
         weightedBaselineMicros: 5_000_000,
         weightedCandidateMicros: 6_000_000,
         weightedRatio: 1.2,
-        excluded: ['mount-flat-500-none: < 50 ms 관측 불가'],
+        excluded: ['mount-flat-500-none: < 50 ms not observable'],
       },
       feedback: {
         metric: 'feedbackCommittedMs',

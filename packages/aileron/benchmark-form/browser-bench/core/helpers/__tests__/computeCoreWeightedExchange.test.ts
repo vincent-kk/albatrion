@@ -62,7 +62,7 @@ describe('computeCoreWeightedExchange', () => {
     expect(exchange.exchangeMicros).toBe(1_000_000);
     expect(
       exchange.rows.find((row) => row.id === 'mount-flat-500-validate')?.reason,
-    ).toBe('< 50 ms 관측 불가');
+    ).toBe('< 50 ms not observable');
     expect(exchange.weightedBaselineMicros).toBe(5000 * 1000 + 31000);
     expect(exchange.weightedCandidateMicros).toBe(5000 * 1200 + 30000);
     expect(exchange.weightedRatio).toBeCloseTo(
