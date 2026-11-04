@@ -24,6 +24,7 @@
     "test": "yarn run -T vitest run --root . --config vite.config.ts",
     "test:cli": "node --import tsx fixtures/equivalent/__tests__/tsx-smoke.ts",
     "bench:form": "node --import tsx browser-bench/run.mjs",
+    "bench:probe": "node --import tsx browser-bench/core/probe/probeCoreFrames.ts",
     "typecheck": "tsc --noEmit --declaration false --emitDeclarationOnly false --composite false -p tsconfig.json && tsc --noEmit -p browser-bench/tsconfig.json"
   },
   "dependencies": {

@@ -3,12 +3,13 @@ import {
   buildFlatSchema,
   buildNestedSchema,
 } from '../../src/fixtures/scale-schemas';
+import { CORE_PROBE } from './coreProbe';
 import type { CoreFixture } from './types';
 
 /**
  * Resolve core case grammar through operation/shape rules and canonical generators.
  * @param id - A mount, nonburst typing, first-key or rebuild core case identifier.
- * @returns A fresh schema with its native control count and public target path.
+ * @returns A fresh schema with its native control count, public target path and measured path.
  * @throws If the identifier or its operation/shape/validation combination is unsupported.
  */
 export function getCoreFixture(id: string): CoreFixture {
@@ -42,6 +43,7 @@ export function getCoreFixture(id: string): CoreFixture {
   const nested = shape === 'nested-d5-f4';
   const array = shape === 'array-1000';
   const conditional = shape === 'if-flat-500';
+  const validation = mode !== 'none';
   let schema = nested
     ? buildNestedSchema(5, 4)
     : array
@@ -69,21 +71,38 @@ export function getCoreFixture(id: string): CoreFixture {
         : undefined
       : schema.properties?.field_000;
     if (!leaf) throw new Error('Core typing leaf missing: ' + id);
-    leaf.pattern = '^(?:..)*$';
+    leaf.pattern = CORE_PROBE.pattern;
+    if (!array) leaf.default = CORE_PROBE.typedDefault;
   }
+  if (validation)
+    schema.properties = {
+      ...schema.properties,
+      [CORE_PROBE.name]: {
+        type: CORE_PROBE.type,
+        pattern: CORE_PROBE.pattern,
+        default: CORE_PROBE.default,
+      },
+    };
+  const target = nested
+    ? '/n0/n0/n0/n0/n0'
+    : array
+      ? '/items/0/name'
+      : conditional
+        ? '/field_0'
+        : '/field_000';
+  const inputs = nested ? 1024 : array ? 3000 : conditional ? 501 : 500;
   return {
     id,
     schema,
-    target: nested
-      ? '/n0/n0/n0/n0/n0'
-      : array
-        ? '/items/0/name'
-        : conditional
-          ? '/field_0'
-          : '/field_000',
-    expectedInputs: nested ? 1024 : array ? 3000 : conditional ? 501 : 500,
+    target,
+    measuredPath: !validation
+      ? null
+      : operation === 'type' || operation === 'first-key'
+        ? target
+        : CORE_PROBE.path,
+    expectedInputs: validation ? inputs + 1 : inputs,
     operation,
-    validation: mode !== 'none',
+    validation,
     defaultValidation: operation === 'mount' && mode === 'validate',
     intervalMs: operation === 'type' ? 100 : 0,
   };
