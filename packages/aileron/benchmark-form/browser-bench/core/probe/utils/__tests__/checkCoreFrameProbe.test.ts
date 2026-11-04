@@ -25,6 +25,28 @@ describe('checkCoreFrameProbe', () => {
     expect(checkCoreFrameProbe(evidence)).toEqual([]);
   });
 
+  it('rejects raw 3.0 ms/s even when floor 2.9 leaves net 0.1 ms/s', () => {
+    expect(
+      checkCoreFrameProbe({
+        ...evidence,
+        idleOverheadMsPerSecond: 3,
+        idleFloorMsPerSecond: 2.9,
+        idleNetOverheadMsPerSecond: 0.1,
+      }),
+    ).toContainEqual(expect.stringContaining('raw observer overhead'));
+  });
+
+  it('enforces the raw bound independently when floor and net both pass', () => {
+    expect(
+      checkCoreFrameProbe({
+        ...evidence,
+        idleOverheadMsPerSecond: 3,
+        idleFloorMsPerSecond: 2.3,
+        idleNetOverheadMsPerSecond: 0.7,
+      }),
+    ).toContainEqual(expect.stringContaining('raw observer overhead'));
+  });
+
   it('rejects a bare-loop floor over 2.5 ms/s even when the net is small', () => {
     expect(
       checkCoreFrameProbe({ ...evidence, idleFloorMsPerSecond: 2.6 }),

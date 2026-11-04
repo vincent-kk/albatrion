@@ -11,7 +11,9 @@ import { checkCoreFrameProbe } from './utils/checkCoreFrameProbe';
 /** Routed secure origin; COOP/COEP headers enable precise performance.now readings. */
 const ORIGIN = 'https://core-frame-probe.invalid';
 
+/** Source directory resolving the probe's entry and HTML fixture. */
 const here = fileURLToPath(new URL('.', import.meta.url));
+/** Disposable bundle output removed on either success or probe failure. */
 const directory = mkdtempSync(join(tmpdir(), 'core-frame-probe-'));
 try {
   await build({
@@ -59,7 +61,7 @@ try {
     ];
     for (const failure of failures) console.log(failure);
     console.log(
-      `PROBE_OVERHEAD raw=${result.idleOverheadMsPerSecond.toFixed(3)} floor=${result.idleFloorMsPerSecond.toFixed(3)} net=${result.idleNetOverheadMsPerSecond.toFixed(3)} ms/s; net <= 1, floor <= 2.5`,
+      `PROBE_OVERHEAD raw=${result.idleOverheadMsPerSecond.toFixed(3)} floor=${result.idleFloorMsPerSecond.toFixed(3)} net=${result.idleNetOverheadMsPerSecond.toFixed(3)} ms/s; raw <= 2.5, floor <= 2.5, net <= 1`,
     );
     console.log(failures.length ? 'PROBE_FRAMES_FAILED' : 'PROBE_FRAMES_OK');
     process.exitCode = failures.length ? 1 : 0;

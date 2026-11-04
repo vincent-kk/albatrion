@@ -29,7 +29,7 @@ describe('observeCoreOperation', () => {
           reports,
           longTasks: world.longTasks(
             () => [
-              { startTime: start - 200, duration: 90 },
+              { startTime: start - 200, duration: 150 },
               { startTime: start - 70, duration: 100 },
               { startTime: start + 10, duration: 80 },
             ],

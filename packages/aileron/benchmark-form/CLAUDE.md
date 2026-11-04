@@ -63,7 +63,7 @@ baseline. Weights and their rationale live in `fixtures/core-weights.json`.
 ## Evidence and reports
 
 `bench:probe` reports nominal cadence and raw/floor/net observer overhead. Require
-net ≤1 ms/s and the same-run bare-loop floor ≤2.5 ms/s. Never replace these gates
+net ≤1 ms/s, the same-run bare-loop floor ≤2.5 ms/s, and raw self-time ≤2.5 ms/s. Never replace these gates
 with a silent host-specific exemption.
 
 Run `node packages/aileron/benchmark-form/scripts/checkSmokeSamples.mjs

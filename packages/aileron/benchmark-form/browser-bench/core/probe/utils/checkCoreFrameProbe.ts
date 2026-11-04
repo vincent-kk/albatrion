@@ -4,7 +4,7 @@ import type { CoreFrameProbeResult } from '../frameProbeHarness';
 /**
  * Validate measured observer evidence without changing the 16.7 ms UX budget.
  * @param result - Raw browser probe values, including cadence and raw/floor/net overhead in ms/s.
- * @returns Failures; an empty list requires net overhead ≤ 1 ms/s and floor ≤ 2.5 ms/s.
+ * @returns Failures; an empty list requires net ≤ 1 ms/s, floor ≤ 2.5 ms/s and raw ≤ 2.5 ms/s.
  */
 export function checkCoreFrameProbe(result: CoreFrameProbeResult): string[] {
   const failures: string[] = [];
@@ -40,8 +40,9 @@ export function checkCoreFrameProbe(result: CoreFrameProbeResult): string[] {
   );
   expect(
     Number.isFinite(result.idleOverheadMsPerSecond) &&
-      result.idleOverheadMsPerSecond >= 0,
-    'raw observer overhead is invalid',
+      result.idleOverheadMsPerSecond >= 0 &&
+      result.idleOverheadMsPerSecond <= 2.5,
+    `raw observer overhead ${result.idleOverheadMsPerSecond} ms/s exceeds 2.5 or is invalid`,
   );
   expect(
     Number.isFinite(result.idleFloorMsPerSecond) &&

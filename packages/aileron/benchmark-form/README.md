@@ -83,7 +83,7 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 **프로브와 검사 스크립트.** `yarn workspace @aileron/benchmark-form bench:probe`는 헤드리스 Chromium에서 80 ms 바쁜
 루프를 rAF 간격과 Long Task로 잡는지, 창 밖·경계 작업을 거르는지, `takeRecords()`로 지연 항목을 거두는지, 빈 rAF 간격
 중앙값이 명목 주기인지 확인합니다. 같은 실행에서 관측기 자기 실행 시간(원시), 빈 rAF 루프 바닥, 순 오버헤드
-(원시 − 바닥)를 ms/s로 모두 출력하며, 순 오버헤드 ≤1 ms/s와 바닥 ≤2.5 ms/s가 모두 충족되어야
+(원시 − 바닥)를 ms/s로 모두 출력하며, 순 오버헤드 ≤1 ms/s·바닥 ≤2.5 ms/s·원시 ≤2.5 ms/s가 모두 충족되어야
 `PROBE_FRAMES_OK`를 냅니다. `scripts/checkRedTests.mjs`(시험이 단언으로 빨간지), `scripts/checkSmokeSamples.mjs
 <samples.json> <summary.json>`(두 판 스모크의 모든 표본이 관측 표를 만족하는지), `scripts/checkFinalRun.mjs`
 (CI 실행 아티팩트 검사), `scripts/renderFinalReport.mjs <summary.json> <samples.json>`(원시 표본에서 요약을 다시
