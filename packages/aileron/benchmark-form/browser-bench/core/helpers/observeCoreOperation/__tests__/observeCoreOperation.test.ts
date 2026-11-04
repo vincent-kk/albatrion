@@ -2,13 +2,17 @@ import { describe, expect, it } from 'vitest';
 
 import type { plugin } from '@canard/schema-form-ajv8-plugin';
 
-import type {
-  CoreInputRecord,
-  CoreValidationReport,
-} from '../../../types';
+import type { CoreInputRecord, CoreValidationReport } from '../../../types';
 import { observeCoreOperation } from '../observeCoreOperation';
 import { observeCoreValidator } from '../utils/observeCoreValidator';
 import { createCoreFakeWorld } from './createCoreFakeWorld';
+
+/** The fake validator always returns a promise; narrow the engine's union for the tests. */
+const settled = (result: unknown): Promise<unknown> => {
+  if (!(result instanceof Promise))
+    throw new Error('fake validator must return a promise');
+  return result;
+};
 
 /** Validator double: compile spends 3 ms, each run spends 2 ms and settles 10 ms later unless the value is in `rejecting`. */
 function createFakeValidator(
@@ -23,22 +27,22 @@ function createFakeValidator(
       release: () => {},
       dialect: 'http://json-schema.org/draft-07/schema#',
       compile: () => {
-          world.spend(3);
-          return (data: unknown) => {
-            world.spend(2);
-            const value =
-              typeof data === 'object' && data !== null && 'probe' in data
-                ? String(data.probe)
-                : '';
-            return new Promise<null>((resolve, reject) => {
-              world.schedule(world.env.now() + 10, () =>
-                rejecting.includes(value)
-                  ? reject(new Error('validator rejected ' + value))
-                  : resolve(null),
-              );
-            });
-          };
-        },
+        world.spend(3);
+        return (data: unknown) => {
+          world.spend(2);
+          const value =
+            typeof data === 'object' && data !== null && 'probe' in data
+              ? String(data.probe)
+              : '';
+          return new Promise<null>((resolve, reject) => {
+            world.schedule(world.env.now() + 10, () =>
+              rejecting.includes(value)
+                ? reject(new Error('validator rejected ' + value))
+                : resolve(null),
+            );
+          });
+        };
+      },
     },
   };
   return observeCoreValidator(source, '/probe', world.env);
@@ -71,14 +75,18 @@ describe('observeCoreOperation', () => {
             start = world.env.now();
             const validate = validator.plugin.validator.compile({});
             world.schedule(start + 40, () => {
-              void validate({ probe: 'x' }).then(() => {
-                world.schedule(world.env.now() + 5, () => world.marker.set('1'));
+              void settled(validate({ probe: 'x' })).then(() => {
+                world.schedule(world.env.now() + 5, () =>
+                  world.marker.set('1'),
+                );
               });
             });
             world.schedule(start + 60, () =>
               reports.push({ atMs: world.env.now(), probeError: true }),
             );
-            await new Promise<void>((resolve) => world.env.setTimeout(resolve, 20));
+            await new Promise<void>((resolve) =>
+              world.env.setTimeout(resolve, 20),
+            );
             return { startMs: start, durationMs: 20, writes: [] };
           },
         },
@@ -95,6 +103,7 @@ describe('observeCoreOperation', () => {
     expect(result.metrics.preFrameValidatorMs).toBe(3);
     expect(result.metrics.postFrameValidatorMs).toBe(2);
     expect(result.metrics.frameIntervalMs).toBe(16);
+    expect(result.metrics.frameIntervalNominalMs).toBe(1000 / 60);
     expect(result.metrics.frames).toBeGreaterThanOrEqual(2);
     expect(result.metrics.feedbackClasses).toEqual({
       exact: 0,
@@ -132,22 +141,31 @@ describe('observeCoreOperation', () => {
             start = world.env.now();
             const validate = validator.plugin.validator.compile({});
             const run = (value: string, then?: () => void) =>
-              void validate({ probe: value }).then(then);
+              void settled(validate({ probe: value })).then(then);
             for (const [index, value] of values.entries()) {
               const at = start + index * 100;
               world.schedule(at, () =>
-                records.push({ start: at, durationMs: 1, trusted: true, value }),
+                records.push({
+                  start: at,
+                  durationMs: 1,
+                  trusted: true,
+                  value,
+                }),
               );
             }
             world.schedule(start + 5, () =>
               run('a', () =>
-                world.schedule(world.env.now() + 2, () => world.marker.set('1')),
+                world.schedule(world.env.now() + 2, () =>
+                  world.marker.set('1'),
+                ),
               ),
             );
             world.schedule(start + 205, () => run('ab'));
             world.schedule(start + 420, () =>
               run('abcd', () =>
-                world.schedule(world.env.now() + 2, () => world.marker.set('0')),
+                world.schedule(world.env.now() + 2, () =>
+                  world.marker.set('0'),
+                ),
               ),
             );
             await new Promise<void>((resolve) =>
@@ -166,10 +184,16 @@ describe('observeCoreOperation', () => {
       'exact',
     ]);
     expect(result.writes.map((write) => write.validatorSettledMs)).toEqual([
-      17, 117, null, 132,
+      17,
+      117,
+      null,
+      132,
     ]);
     expect(result.writes.map((write) => write.feedbackCommittedMs)).toEqual([
-      19, null, null, 134,
+      19,
+      null,
+      null,
+      134,
     ]);
     expect(result.writes.map((write) => write.coalesced)).toEqual([
       false,
@@ -208,7 +232,9 @@ describe('observeCoreOperation', () => {
           longTasks: world.longTasks(() => []),
           async execute() {
             start = world.env.now();
-            await new Promise<void>((resolve) => world.env.setTimeout(resolve, 20));
+            await new Promise<void>((resolve) =>
+              world.env.setTimeout(resolve, 20),
+            );
             return { startMs: start, durationMs: 20, writes: [] };
           },
         },
@@ -241,10 +267,12 @@ describe('observeCoreOperation', () => {
             start = world.env.now();
             const validate = validator.plugin.validator.compile({});
             world.schedule(start + 10, () => {
-              validate({ probe: 'bad' }).catch(() => {});
+              settled(validate({ probe: 'bad' })).catch(() => {});
             });
             world.schedule(start + 40, () => {
-              void validate({ probe: 'x' }).then(() => world.marker.set('1'));
+              void settled(validate({ probe: 'x' })).then(() =>
+                world.marker.set('1'),
+              );
             });
             return { startMs: start, durationMs: 0, writes: [] };
           },
@@ -278,7 +306,9 @@ describe('observeCoreOperation', () => {
             world.stallFrames();
             const validate = validator.plugin.validator.compile({});
             world.schedule(start + 10, () => {
-              void validate({ probe: 'x' }).then(() => world.marker.set('1'));
+              void settled(validate({ probe: 'x' })).then(() =>
+                world.marker.set('1'),
+              );
             });
             return { startMs: start, durationMs: 0, writes: [] };
           },
@@ -316,7 +346,7 @@ describe('observeCoreOperation', () => {
     ).rejects.toThrow('5000');
   });
 
-  it('fails calibration when the empty rAF interval leaves 13.7–19.7 ms', async () => {
+  it('fails calibration when the empty rAF interval is neither a 60 Hz nor a 120 Hz period', async () => {
     const world = createCoreFakeWorld(25);
     const validator = createFakeValidator(world);
     await expect(

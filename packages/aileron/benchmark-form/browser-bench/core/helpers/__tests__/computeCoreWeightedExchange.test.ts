@@ -4,11 +4,17 @@ import type { CoreWeights } from '../../reportTypes';
 import { computeCoreWeightedExchange } from '../computeCoreWeightedExchange';
 import { createCoreTestCase } from './createCoreTestCase';
 
+/** Weight fixtures include mounts, repeat typing, the one-off key and an excluded rebuild. */
 const weights: CoreWeights = {
   'mount-flat-500-validate': { weight: 1, k: 1, basis: 'one mount' },
   'type-flat-500-validate-nonburst': { weight: 5000, k: 1, basis: 'typing' },
   'first-key-flat-500-validate': { weight: 1, k: 1, basis: 'first key' },
-  'rebuild-flat-500': { weight: 5, k: 1, basis: 'bulk', excluded: 'no rebuild in 0.16.1' },
+  'rebuild-flat-500': {
+    weight: 5,
+    k: 1,
+    basis: 'bulk',
+    excluded: 'no rebuild in 0.16.1',
+  },
 };
 
 describe('computeCoreWeightedExchange', () => {
@@ -16,14 +22,28 @@ describe('computeCoreWeightedExchange', () => {
     const exchange = computeCoreWeightedExchange(
       'blockingMs',
       [
-        createCoreTestCase('type-flat-500-validate-nonburst', { blockingMs: [1.2, 1] }, { blockingMs: 'slower' }),
-        createCoreTestCase('first-key-flat-500-validate', { blockingMs: [30, 31] }),
-        createCoreTestCase('mount-flat-500-validate', { blockingMs: [0, 0] }, { blockingMs: 'not observable' }),
+        createCoreTestCase(
+          'type-flat-500-validate-nonburst',
+          { blockingMs: [1.2, 1] },
+          { blockingMs: 'slower' },
+        ),
+        createCoreTestCase('first-key-flat-500-validate', {
+          blockingMs: [30, 31],
+        }),
+        createCoreTestCase(
+          'mount-flat-500-validate',
+          { blockingMs: [0, 0] },
+          { blockingMs: 'not observable' },
+        ),
       ],
       weights,
     );
-    const typing = exchange.rows.find((row) => row.id === 'type-flat-500-validate-nonburst');
-    const firstKey = exchange.rows.find((row) => row.id === 'first-key-flat-500-validate');
+    const typing = exchange.rows.find(
+      (row) => row.id === 'type-flat-500-validate-nonburst',
+    );
+    const firstKey = exchange.rows.find(
+      (row) => row.id === 'first-key-flat-500-validate',
+    );
     expect(typing).toMatchObject({
       weight: 5000,
       baselineMicros: 1000,
@@ -41,15 +61,23 @@ describe('computeCoreWeightedExchange', () => {
     expect(exchange.exchangeMicros).toBe(1_000_000);
     expect(exchange.weightedBaselineMicros).toBe(5000 * 1000 + 31000);
     expect(exchange.weightedCandidateMicros).toBe(5000 * 1200 + 30000);
-    expect(exchange.weightedRatio).toBeCloseTo((5000 * 1200 + 30000) / (5000 * 1000 + 31000));
+    expect(exchange.weightedRatio).toBeCloseTo(
+      (5000 * 1200 + 30000) / (5000 * 1000 + 31000),
+    );
   });
 
   it('lists excluded rows and keeps the ratio null without a baseline sum', () => {
     const exchange = computeCoreWeightedExchange(
       'feedbackCommittedMs',
       [
-        createCoreTestCase('mount-flat-500-validate', { feedbackCommittedMs: [100, 90] }, { feedbackCommittedMs: 'void' }),
-        createCoreTestCase('rebuild-flat-500', { feedbackCommittedMs: [10, 10] }),
+        createCoreTestCase(
+          'mount-flat-500-validate',
+          { feedbackCommittedMs: [100, 90] },
+          { feedbackCommittedMs: 'void' },
+        ),
+        createCoreTestCase('rebuild-flat-500', {
+          feedbackCommittedMs: [10, 10],
+        }),
       ],
       weights,
     );

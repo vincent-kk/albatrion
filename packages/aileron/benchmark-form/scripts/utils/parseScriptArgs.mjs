@@ -16,7 +16,8 @@ export function parseScriptArgs(args, known) {
     const [flag, inline] = argument.split(/=(.*)/s);
     if (!known.includes(flag)) throw new Error(`Unknown option: ${flag}`);
     const value = inline ?? args[++index];
-    if (value === undefined || flag in values) throw new Error(`Missing or duplicate option: ${flag}`);
+    if (value === undefined || flag in values)
+      throw new Error(`Missing or duplicate option: ${flag}`);
     values[flag] = value;
   }
   values._ = positionals.join('\n');

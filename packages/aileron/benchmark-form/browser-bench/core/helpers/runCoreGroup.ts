@@ -1,5 +1,6 @@
 import type { Browser } from 'playwright';
 
+import type { CoreMeasurement } from '../types';
 import { sampleCorePage } from './sampleCorePage';
 
 /**
@@ -10,7 +11,7 @@ import { sampleCorePage } from './sampleCorePage';
  * @param runs - Positive measured samples per variant.
  * @param warmup - Discarded samples per variant.
  * @param compare - Whether baseline and control variants participate.
- * @returns Raw measured durations grouped by variant.
+ * @returns Complete measurements grouped by variant.
  */
 export async function runCoreGroup(
   browser: Browser,
@@ -20,12 +21,15 @@ export async function runCoreGroup(
   warmup: number,
   compare: boolean,
 ) {
-  const samples: Record<string, number[]> = {
+  const samples: Record<
+    'candidate' | 'baseline' | 'control',
+    CoreMeasurement[]
+  > = {
     candidate: [],
     baseline: [],
     control: [],
   };
-  const orders = compare
+  const orders: (keyof typeof samples)[][] = compare
     ? [
         ['baseline', 'candidate', 'control'],
         ['candidate', 'control', 'baseline'],
@@ -38,7 +42,7 @@ export async function runCoreGroup(
   for (let index = 0; index < warmup + runs; index++) {
     for (const variant of orders[index % orders.length]) {
       const sample = await sampleCorePage(browser, bundles, variant, id);
-      if (index >= warmup) samples[variant].push(sample.durationMs);
+      if (index >= warmup) samples[variant].push(sample);
     }
   }
   return samples;

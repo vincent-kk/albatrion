@@ -14,6 +14,32 @@ const groups = (
 });
 
 describe('buildCoreCaseResult', () => {
+  it('preserves observed display cadence and frame counts while keeping the UX budget at 16.7 ms', () => {
+    const result = buildCoreCaseResult(
+      'type-flat-500-validate-nonburst',
+      1,
+      groups({
+        frameIntervalMs: 8.34,
+        frameIntervalNominalMs: 1000 / 120,
+        blockingMs: 12,
+      }),
+      true,
+    );
+    expect(result.frames.candidate.frameIntervalNominalMs).toEqual([
+      1000 / 120,
+    ]);
+    expect(result.frames.baseline?.frameIntervalNominalMs).toEqual([1000 / 60]);
+    expect(result.frames.candidate.overBudgetFrames.medianMs).toBe(2);
+    expect(result.frames.candidate.longTaskObservedSamples).toBe(0);
+    expect(result.budget.candidate?.overBudget).toBe(false);
+    expect(result.budget120.candidate?.overBudget).toBe(true);
+    expect(result.budget120.candidate?.frames).toBeCloseTo(12 / 8.3);
+    expect(
+      result.frames.candidate.frameBudget120.frameOverflowMs.medianMs,
+    ).toBe(25);
+    expect(result.ux.candidate.blocking).toBe('ok');
+  });
+
   it('keeps the elapsed verdict and judges delay metrics with the 2 ms / 5 % class', () => {
     const result = buildCoreCaseResult(
       'type-flat-500-validate-nonburst',
@@ -55,13 +81,25 @@ describe('buildCoreCaseResult', () => {
       'mount-flat-500-validate',
       2,
       groups(
-        { blockingMs: null, firstWriteMs: null, validationReportedMs: 120, longTaskOverlapMs: 3 },
-        { blockingMs: null, firstWriteMs: null, validationReportedMs: 100, longTaskOverlapMs: 0 },
+        {
+          blockingMs: null,
+          firstWriteMs: null,
+          validationReportedMs: 120,
+          longTaskOverlapMs: 3,
+        },
+        {
+          blockingMs: null,
+          firstWriteMs: null,
+          validationReportedMs: 100,
+          longTaskOverlapMs: 0,
+        },
       ),
       true,
     );
     expect(result.metrics.blockingMs.verdict).toBe('not observable');
-    expect(result.metrics.blockingMs.candidate).toEqual({ kind: 'not-observable' });
+    expect(result.metrics.blockingMs.candidate).toEqual({
+      kind: 'not-observable',
+    });
     expect(result.metrics.longTaskOverlapMs.ratio).toBeNull();
     expect(result.metrics.longTaskOverlapMs.deltaPercent).toBeNull();
     expect(result.metrics.longTaskOverlapMs.deltaMs).toBe(3);
@@ -76,11 +114,17 @@ describe('buildCoreCaseResult', () => {
     const below = buildCoreCaseResult(
       'mount-flat-500-validate',
       1,
-      groups({ blockingMs: null, firstWriteMs: null, validationReportedMs: 5 }, { blockingMs: null, firstWriteMs: null, validationReportedMs: 5 }),
+      groups(
+        { blockingMs: null, firstWriteMs: null, validationReportedMs: 5 },
+        { blockingMs: null, firstWriteMs: null, validationReportedMs: 5 },
+      ),
       true,
     );
     expect(below.metrics.maxLongTaskMs.verdict).toBe('below threshold');
-    expect(below.metrics.maxLongTaskMs.candidate).toEqual({ kind: 'below-threshold', samples: 3 });
+    expect(below.metrics.maxLongTaskMs.candidate).toEqual({
+      kind: 'below-threshold',
+      samples: 3,
+    });
     expect(below.metrics.maxLongTaskMs.deltaMs).toBeNull();
     expect(below.ux.candidate.blocking).toBe('ok');
     const mixed = buildCoreCaseResult(
@@ -88,12 +132,38 @@ describe('buildCoreCaseResult', () => {
       1,
       {
         candidate: [
-          createCoreTestMeasurement({ blockingMs: null, firstWriteMs: null, validationReportedMs: 5, maxLongTaskMs: 70 }),
-          createCoreTestMeasurement({ blockingMs: null, firstWriteMs: null, validationReportedMs: 5, maxLongTaskMs: 120 }),
-          createCoreTestMeasurement({ blockingMs: null, firstWriteMs: null, validationReportedMs: 5 }),
+          createCoreTestMeasurement({
+            blockingMs: null,
+            firstWriteMs: null,
+            validationReportedMs: 5,
+            maxLongTaskMs: 70,
+          }),
+          createCoreTestMeasurement({
+            blockingMs: null,
+            firstWriteMs: null,
+            validationReportedMs: 5,
+            maxLongTaskMs: 120,
+          }),
+          createCoreTestMeasurement({
+            blockingMs: null,
+            firstWriteMs: null,
+            validationReportedMs: 5,
+          }),
         ],
-        baseline: [createCoreTestMeasurement({ blockingMs: null, firstWriteMs: null, validationReportedMs: 5 })],
-        control: [createCoreTestMeasurement({ blockingMs: null, firstWriteMs: null, validationReportedMs: 5 })],
+        baseline: [
+          createCoreTestMeasurement({
+            blockingMs: null,
+            firstWriteMs: null,
+            validationReportedMs: 5,
+          }),
+        ],
+        control: [
+          createCoreTestMeasurement({
+            blockingMs: null,
+            firstWriteMs: null,
+            validationReportedMs: 5,
+          }),
+        ],
       },
       true,
     );
@@ -112,7 +182,10 @@ describe('buildCoreCaseResult', () => {
     const result = buildCoreCaseResult(
       'type-flat-500-validate-nonburst',
       1,
-      groups({ blockingMs: 20, feedbackCommittedMs: 150 }, { blockingMs: 8, feedbackCommittedMs: 90 }),
+      groups(
+        { blockingMs: 20, feedbackCommittedMs: 150 },
+        { blockingMs: 8, feedbackCommittedMs: 90 },
+      ),
       true,
     );
     expect(result.budget.candidate).toEqual({
@@ -120,8 +193,15 @@ describe('buildCoreCaseResult', () => {
       overflowMs: 20 - 16.7,
       overBudget: true,
     });
-    expect(result.budget.baseline).toEqual({ frames: 8 / 16.7, overflowMs: 0, overBudget: false });
-    expect(result.ux.candidate).toEqual({ blocking: 'perceptible', feedback: 'perceptible' });
+    expect(result.budget.baseline).toEqual({
+      frames: 8 / 16.7,
+      overflowMs: 0,
+      overBudget: false,
+    });
+    expect(result.ux.candidate).toEqual({
+      blocking: 'perceptible',
+      feedback: 'perceptible',
+    });
     expect(result.ux.baseline).toEqual({ blocking: 'ok', feedback: 'ok' });
     expect(result.typing?.candidate).toEqual({
       samples: 3,
@@ -141,7 +221,14 @@ describe('buildCoreCaseResult', () => {
       'mount-flat-500-validate',
       1,
       {
-        candidate: [createCoreTestMeasurement({ blockingMs: null, firstWriteMs: null, feedbackCommittedMs: 1500, validationReportedMs: 5 })],
+        candidate: [
+          createCoreTestMeasurement({
+            blockingMs: null,
+            firstWriteMs: null,
+            feedbackCommittedMs: 1500,
+            validationReportedMs: 5,
+          }),
+        ],
         baseline: [],
         control: [],
       },

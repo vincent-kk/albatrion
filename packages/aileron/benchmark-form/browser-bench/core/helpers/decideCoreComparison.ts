@@ -1,4 +1,4 @@
-import type { CoreCaseResult } from '../reportTypes';
+import type { CoreDurationResult } from '../reportTypes';
 import { summarizeCoreSamples } from './summarizeCoreSamples';
 
 /**
@@ -16,7 +16,7 @@ export function decideCoreComparison(
   candidateSamples: readonly number[],
   controlSamples: readonly number[],
   attempt: 1 | 2,
-): CoreCaseResult {
+): CoreDurationResult {
   const baseline = summarizeCoreSamples(baselineSamples);
   const candidate = summarizeCoreSamples(candidateSamples);
   const control = summarizeCoreSamples(controlSamples);

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import type { JSONSchema } from '@canard/schema-form';
+
 import {
   buildArraySchema,
   buildFlatSchema,
@@ -13,7 +15,7 @@ import { getCoreFixture } from '../getCoreFixture';
 const probe = { type: 'string', pattern: '^(?:..)*$', default: 'x' };
 
 /** Canonical schema with the probe leaf added beside the root properties. */
-const probed = (schema: ReturnType<typeof buildFlatSchema>) => ({
+const probed = (schema: JSONSchema) => ({
   ...schema,
   properties: { ...schema.properties, probe },
 });
@@ -133,7 +135,12 @@ describe('core fixture contract', () => {
   });
 
   it('uses unchanged canonical schemas for none mounts and adds only the probe leaf to validated loads', () => {
-    expect(CORE_PROBE).toEqual({ path: '/probe', name: 'probe', ...probe });
+    expect(CORE_PROBE).toEqual({
+      path: '/probe',
+      name: 'probe',
+      typedDefault: '',
+      ...probe,
+    });
     expect(getCoreFixture('mount-flat-500-none').schema).toEqual(
       buildFlatSchema(500),
     );
@@ -154,8 +161,8 @@ describe('core fixture contract', () => {
   it('keeps the typed leaf initial values at even length so the first key flips the marker', () => {
     expect(
       getCoreFixture('type-flat-500-validate-nonburst').schema.properties
-        ?.field_000?.default,
-    ).toBeUndefined();
+        ?.field_000,
+    ).toEqual({ type: 'string', pattern: '^(?:..)*$', default: '' });
     const items = getCoreFixture('type-array-1000-validate-nonburst').schema
       .properties?.items?.default;
     expect(Array.isArray(items) && items[0]).toMatchObject({ name: 'name-0' });
@@ -185,6 +192,7 @@ describe('core fixture contract', () => {
     expect(typing.schema).toEqual(firstKey.schema);
     expect(typing.schema).not.toBe(firstKey.schema);
     expect(typing.schema.properties?.field_000?.pattern).toBe('^(?:..)*$');
+    expect(typing.schema.properties?.field_000?.default).toBe('');
     expect(typing.schema.properties?.field_001).toEqual({
       type: 'string',
       default: 'value_1',

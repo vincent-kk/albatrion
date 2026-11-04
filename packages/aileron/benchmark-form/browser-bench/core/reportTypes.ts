@@ -28,7 +28,7 @@ export type CoreMetricName =
  * Distribution of one metric over a variant's samples.
  * numeric: every sample numeric. below-threshold: every sample null (Long Task "< 50 ms").
  * mixed: some samples null; median is taken over all samples with null ordered below every number,
- * so it is a number, "<50" for Long Task metrics, or null for other metrics whose median sample is unobserved.
+ * so it is a number or "<50" for Long Task metrics. Required metrics cannot have missing samples.
  * not-observable: the metric does not apply to this operation.
  */
 export type CoreMetricStatistics =
@@ -44,7 +44,7 @@ export type CoreMetricStatistics =
       kind: 'mixed';
       samples: number;
       observed: number;
-      median: number | '<50' | null;
+      median: number | '<50';
       maxMs: number;
     }
   | { kind: 'not-observable' };
@@ -153,10 +153,18 @@ export interface CoreDurationResult {
 
 /** One advisory case result with the per-metric, budget, typing and UX views. */
 export interface CoreCaseResult extends CoreDurationResult {
+  /** Per-variant cadence and frame counts; nominal periods expose local 120 Hz runs. */
+  frames: {
+    candidate: CoreFrameDistribution;
+    baseline?: CoreFrameDistribution;
+    control?: CoreFrameDistribution;
+  };
   /** Every metric's statistics and comparison, durationMs included. */
   metrics: Record<CoreMetricName, CoreMetricComparison>;
   /** Frame budget of the blocking median per variant; null = N/A. */
   budget: { candidate: CoreFrameBudget; baseline?: CoreFrameBudget };
+  /** Informational 8.3 ms blocking budget; excluded from UX grading and weighted exchange. */
+  budget120: { candidate: CoreFrameBudget; baseline?: CoreFrameBudget };
   /** Per-write distributions for typing cases. */
   typing?: {
     candidate: CoreTypingDistribution;
@@ -164,6 +172,26 @@ export interface CoreCaseResult extends CoreDurationResult {
   };
   /** UX grades per variant. */
   ux: { candidate: CoreUxVerdict; baseline?: CoreUxVerdict };
+}
+
+/** Frame evidence pooled over a variant's fresh pages. */
+export interface CoreFrameDistribution {
+  /** Primary 16.7 ms gap evidence, with page-level statistics for both fields. */
+  frameBudget60: {
+    frameOverflowMs: CoreStatistics;
+    overBudgetFrames: CoreStatistics;
+  };
+  /** Informational 8.3 ms gap evidence, with page-level statistics for both fields. */
+  frameBudget120: {
+    frameOverflowMs: CoreStatistics;
+    overBudgetFrames: CoreStatistics;
+  };
+  /** Distinct detected periods in ms, sorted; each sample carries its own nominal too. */
+  frameIntervalNominalMs: number[];
+  /** Per-page counts of rAF gaps above the fixed 16.7 ms UX budget. */
+  overBudgetFrames: CoreStatistics;
+  /** Pages with at least one overlapping Long Task, independent of its censored median. */
+  longTaskObservedSamples: number;
 }
 
 /** One case's contribution to a weighted exchange. */

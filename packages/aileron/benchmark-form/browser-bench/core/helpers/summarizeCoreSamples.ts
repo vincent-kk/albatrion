@@ -3,7 +3,7 @@ import type { CoreStatistics } from '../reportTypes';
 /**
  * Summarize one nonempty set of finite, nonnegative durations.
  * @param values - Milliseconds per operation, or per write for typing.
- * @returns Median and nearest-rank p95; throws for absent or invalid evidence.
+ * @returns Median, nearest-rank p95, max and count; throws for absent or invalid evidence.
  */
 export function summarizeCoreSamples(
   values: readonly number[],
@@ -21,5 +21,7 @@ export function summarizeCoreSamples(
         ? sorted[middle]
         : (sorted[middle - 1] + sorted[middle]) / 2,
     p95Ms: sorted[Math.ceil(sorted.length * 0.95) - 1],
+    maxMs: sorted[sorted.length - 1],
+    samples: sorted.length,
   };
 }

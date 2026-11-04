@@ -3,15 +3,16 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
 
-import { decideCoreComparison } from './helpers/decideCoreComparison';
+import { buildCoreCaseResult } from './helpers/buildCoreCaseResult/buildCoreCaseResult';
+import { computeCoreWeightedExchange } from './helpers/computeCoreWeightedExchange';
 import { observeCpu } from './helpers/observeCpu';
 import { parseCoreOptions } from './helpers/parseCoreOptions';
 import { prepareCoreBaseline } from './helpers/prepareCoreBaseline';
 import { prepareCoreBundles } from './helpers/prepareCoreBundles';
 import { readAncestorPids } from './helpers/readAncestorPids';
-import { renderCoreSummary } from './helpers/renderCoreSummary';
+import { readCoreWeights } from './helpers/readCoreWeights';
+import { renderCoreSummary } from './helpers/renderCoreSummary/renderCoreSummary';
 import { runCoreGroup } from './helpers/runCoreGroup';
-import { summarizeCoreSamples } from './helpers/summarizeCoreSamples';
 import type { CoreSummary } from './reportTypes';
 
 /**
@@ -29,6 +30,7 @@ export async function runCoreBenchmark(
   ci: boolean,
 ) {
   const options = parseCoreOptions(args);
+  const weights = readCoreWeights();
   const output = resolve(cwd, options.out);
   mkdirSync(output, { recursive: true });
   const baseline = prepareCoreBaseline(
@@ -74,19 +76,12 @@ export async function runCoreBenchmark(
             Boolean(baseline.root),
           );
           raw[id].push({ attempt, samples });
-          const row = baseline.root
-            ? decideCoreComparison(
-                id,
-                samples.baseline,
-                samples.candidate,
-                samples.control,
-                attempt,
-              )
-            : {
-                id,
-                candidate: summarizeCoreSamples(samples.candidate),
-                verdict: 'measured' as const,
-              };
+          const row = buildCoreCaseResult(
+            id,
+            attempt,
+            samples,
+            Boolean(baseline.root),
+          );
           if (row.verdict === 'retry') continue;
           summary.cases.push(row);
           console.log(
@@ -102,6 +97,19 @@ export async function runCoreBenchmark(
     } finally {
       await browser.close();
     }
+    if (baseline.root)
+      summary.weighted = {
+        blocking: computeCoreWeightedExchange(
+          'blockingMs',
+          summary.cases,
+          weights,
+        ),
+        feedback: computeCoreWeightedExchange(
+          'feedbackCommittedMs',
+          summary.cases,
+          weights,
+        ),
+      };
     const revision = execFileSync('git', ['rev-parse', 'HEAD'], {
       cwd: repository,
       encoding: 'utf8',

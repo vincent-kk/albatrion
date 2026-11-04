@@ -24,6 +24,8 @@ export function createCoreTestMeasurement(
       markers: 1,
     },
     metrics: {
+      frameBudget60: { frameOverflowMs: 5, overBudgetFrames: 2 },
+      frameBudget120: { frameOverflowMs: 25, overBudgetFrames: 12 },
       durationMs,
       blockingMs: 2,
       maxLongTaskMs: null,
@@ -37,6 +39,7 @@ export function createCoreTestMeasurement(
       validationReportedMs: null,
       frames: 120,
       frameIntervalMs: 16.6,
+      frameIntervalNominalMs: 1000 / 60,
       longestFrameMs: 20,
       frameOverflowMs: 5,
       overBudgetFrames: 2,

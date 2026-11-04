@@ -86,6 +86,7 @@ export function createCoreFakeWorld(frameMs = 16): CoreFakeWorld {
           throw error;
         },
       );
+      guarded.catch(() => {});
       await new Promise((resolve) => setTimeout(resolve, 0));
       while (!done)
         if (!(await step()))

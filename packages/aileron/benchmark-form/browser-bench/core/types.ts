@@ -23,7 +23,11 @@ export interface CoreCounts {
 }
 
 /** Attribution class of one write's visible feedback. */
-export type CoreFeedbackClass = 'exact' | 'censored' | 'noChange' | 'superseded';
+export type CoreFeedbackClass =
+  | 'exact'
+  | 'censored'
+  | 'noChange'
+  | 'superseded';
 
 /** One validator call. run: `data` is the root emit; `probeValue` is the measured leaf's value inside it (null for compile). */
 export interface CoreValidatorRecord {
@@ -45,8 +49,20 @@ export interface CoreValidatorRecord {
   error?: string;
 }
 
+/** Frame-gap evidence for one fixed UX budget, independent of the host refresh rate. */
+export interface CoreFrameBudgetObservation {
+  /** Sum in ms of the portions of rAF gaps above this budget. */
+  frameOverflowMs: number;
+  /** Count of gaps strictly longer than this budget. */
+  overBudgetFrames: number;
+}
+
 /** Per-sample observations added beside the unchanged elapsed metric. */
 export interface CoreMetrics {
+  /** Primary 16.7 ms gap evidence; identical to the existing frameOverflowMs and overBudgetFrames. */
+  frameBudget60: CoreFrameBudgetObservation;
+  /** Informational 8.3 ms gap evidence; excluded from UX grading and weighted exchange. */
+  frameBudget120: CoreFrameBudgetObservation;
   /** Existing elapsed metric, unchanged (typing: mean handler ms over 20 writes). */
   durationMs: number;
   /** Directly measured main-thread blocking, only where a direct measure exists: typing = mean capture→bubble handler ms of writes 2–20; first-key = its handler ms; mount/rebuild = null (no sub-50 ms measure; see maxLongTaskMs). */
@@ -76,8 +92,10 @@ export interface CoreMetrics {
   validationReportedMs: number | null;
   /** Observed rAF gaps ending inside the window (typing: includes the 19 inter-key waits). */
   frames: number;
-  /** Median of ten empty rAF gaps observed before the window; the sample fails outside 13.7–19.7 ms. */
+  /** Median of ten empty rAF gaps observed before the window; the sample fails unless it is within 3 ms of 1000/60 or 1000/120. */
   frameIntervalMs: number;
+  /** Detected nominal compositor period: 1000 / 60 or 1000 / 120 ms; unsupported cadence fails the sample. */
+  frameIntervalNominalMs: number;
   /** Longest observed rAF gap ending inside the window. */
   longestFrameMs: number;
   /** Sum over window gaps of the part above the 16.7 ms budget. */

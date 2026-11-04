@@ -8,7 +8,10 @@ export type CoreMetricExpectation = 'required' | 'nullable' | 'null' | 'number';
 /** Per-operation expectations shared by page assertions, checkers and the report. */
 export interface CoreObservabilityRow {
   /** Expectation per compared metric plus firstWriteMs. */
-  metrics: Record<Exclude<CoreMetricName, 'durationMs'> | 'firstWriteMs', CoreMetricExpectation>;
+  metrics: Record<
+    Exclude<CoreMetricName, 'durationMs'> | 'firstWriteMs',
+    CoreMetricExpectation
+  >;
   /** Lifetime compile count expectation. */
   lifetimeCompiles: 'zero' | 'positive';
   /** Operation-window validator run count expectation. */
@@ -27,6 +30,7 @@ export type CoreObservabilityKey =
   | 'type-validate'
   | 'first-key-validate';
 
+/** Shared validated-load expectations; other operation rows narrow these fields. */
 const loadMetrics: CoreObservabilityRow['metrics'] = {
   blockingMs: 'null',
   maxLongTaskMs: 'nullable',
@@ -42,7 +46,10 @@ const loadMetrics: CoreObservabilityRow['metrics'] = {
 };
 
 /** Which metrics each operation can observe; a null metric is reported as not observable. */
-export const coreObservability: Record<CoreObservabilityKey, CoreObservabilityRow> = {
+export const coreObservability: Record<
+  CoreObservabilityKey,
+  CoreObservabilityRow
+> = {
   'mount-validate': {
     metrics: loadMetrics,
     lifetimeCompiles: 'positive',
