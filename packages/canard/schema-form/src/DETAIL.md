@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Conditional fixed-first mount is internal and adds no public API. Public Form values, effective schemas, visible inputs, validation and callback timing retain ordinary behavior.
+
 - `controls.inactiveValue`는 리터럴 종류와 resolver 함수의 합집합을 유지하여 인라인 함수의 두 매개변수에 공통 resolver 문맥 형을 제공합니다.
 
 - B12는 공개 이름 `InactiveValue<V>`·`InactiveValueResolver<V>`·`InactiveValueContext`와 노드의 `onInactive`를 추가합니다. 보존값 리터럴·함수와 인스턴스 콜백이 같은 직전 커밋 인터페이스를 공유합니다. 공개 이름은 97개이며 코드 enum에는 전용 경고 둘을 더합니다.
@@ -84,6 +86,14 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 | `node.outputValue`                                        | 투영                 |
 
 ## Acceptance Criteria
+
+### conditional-static-load-render — Public mount and first edits
+
+- With shipped or absent validators, initial defaults/required/input counts, first kind changes, errors and callback ordering match ordinary mount. Unsupported required/control overlays retain fallback behavior.
+
+### conditional-static-load-lifetime — StrictMode and binding replacement
+
+- React 18/19 StrictMode exposes no duplicate mount/validation/revision callbacks. Replacing an absent validator binding with a valid binding creates a new root with freshly evaluated guards; callback reads see final schemas and revisions.
 
 ### authoring-surface — 지워진 작성 키를 선언하지 않는다
 

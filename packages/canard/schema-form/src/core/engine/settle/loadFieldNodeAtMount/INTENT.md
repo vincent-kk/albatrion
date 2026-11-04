@@ -2,7 +2,7 @@
 
 ## Purpose
 
-첫 마운트의 입력과 로드 스냅숏을 확정하고, 자격을 증명한 정적 트리는 한 번씩 조립하여 부모 settle에 마운트 정착 통로를 제공한다(SETTLE-001·003·017).
+Own first-mount input and snapshots, the ungated single-assembly loader, and the separately proven fixed-structure conditional route through ordinary settlement (SETTLE-001·003·017).
 
 ## Conventions
 

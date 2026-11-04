@@ -2,6 +2,11 @@
 
 ## Requirements
 
+- `fixedFirstLoadPlan` is a separate immutable, nonenumerable creation fact for mount only. Absence requires ordinary settlement before any mutation; it does not widen branchless, staticFirstLoadEligible or StaticFirstLoadCapability.
+- The proof consumes completed declarations and edges in O(declarations + edges), retaining existing references and sparse affected sites. It never evaluates validators or owns live records; cache and engine-mode resets retain the fact. Branchless compilation exits with an O(1) check.
+- Admission requires finite branch objects and scalar terminals with literal scalar defaults, no expressions, derive, watch, state, dependencies, controls, arrays, union, disjunction, virtual, recursion, whole-value strategy, container defaults or alternate child identities. Every child has an unconditional identity.
+- Independent local if hosts are allowed; prerequisites and nested gated hosts are rejected. Each then/else is absent or a plain own-data properties fragment whose already unconditional string children contain only finite numeric own minLength/maxLength. Unknown keys, accessors, required, defaults, types, nullable, references, options and presentation in overlays reject the whole plan.
+
 - B12 `inactiveValue`는 리터럴 또는 함수이며 식 컴파일·의존 추적 대상이 아닙니다. 선언이 없는 퇴장에는 해석 경로를 열지 않도록 청사진에 작성 존재 사실만 준비합니다. 같은 층의 literal true `unsetOnInactive`와 동거하면 경고합니다.
 
 - 수렴 증명은 파싱된 연산자 심볼로 문맥·와일드카드를 구별하고, 리터럴 예약 이름의 경로를 일반 속성으로 취급한다.
@@ -54,7 +59,7 @@
 
 - 파생 수렴 증명은 첫 실제 파생 쓰기 라운드에서, 모든 선언, 식, watch, injectTo 원천, gate 읽기를 포함해 정적 대상마다 한 번 계산한다. 쓰기가 없는 생성·마운트에서는 증명을 수집하거나 등록하지 않는다. 비활성 선언도 제외하지 않으며 조상·자손 양방향 교차를 사용한다. 불완전한 식, 맥락·전체 호스트 읽기, 발생별 재귀·배열 경로는 폼 전체 fallback이며, 이 결과도 청사진에 메모한다. 단순 리터럴·경로·연산자 식만 읽기가 완전함을 증명하고, 컨테이너와 가상 쓰기는 보수적으로 제외한다. 첫 쓰기는 O(선언+읽기+대상×읽기) 작업과 임시 색인을 부담하고, 이후의 쓰기와 같은 청사진의 두 번째 폼은 O(1) 약한 캐시 조회를 사용한다. 약한 sidecar는 청사진당 한 항목과 O(대상 수)의 경로 참조를 보유하며, 기존 O(식 수) 완전성 등록은 유지한다. 파생이 없는 폼은 증명을 수집·등록·할당하지 않고 반환한다. 정적 오류, 경고, 식 컴파일은 생성 시점 그대로이며, 값 평가나 노드·식 descriptor shape 추가는 없다(98C-01, 99라운드).
 
-- 정적 첫 로드 자격은 기존 branchless 증명을 재사용하고, 선언 수집과 재귀 형상 분석에 추가 증거를 결합해 정한다. public Blueprint 형을 넓히지 않는 약한 sidecar에 boolean 하나를 보유한다. `controls.default`, 전이, 식, 가상, 재귀, 컨테이너 whole-value는 자격 밖이다. 게이트 판정을 다시 만들지 않고, 첫 로드 때 전체 스키마를 다시 훑지도 않는다. 수집마다 고정 검사를, 청사진마다 O(1)의 보유 메모리를 더하며 정적 검증과 경고는 유지한다(89C-02·04).
+- 정적 첫 로드 자격은 기존 branchless 증명을 재사용하고, 선언 수집과 재귀 형상 분석에 추가 증거를 결합해 정한다. 내부 Blueprint.staticFirstLoadEligible의 비열거·읽기 전용 boolean 생성 사실로 보유한다. `controls.default`, 전이, 식, 가상, 재귀, 컨테이너 whole-value는 자격 밖이다. 게이트 판정을 다시 만들지 않고, 첫 로드 때 전체 스키마를 다시 훑지도 않는다. 수집마다 고정 검사를, 청사진마다 O(1)의 보유 메모리를 더하며 정적 검증과 경고는 유지한다(89C-02·04).
 
 - 89C-03에 따라 분기가 없다는 것은, 선언 수집이 실제로 도달한 모든 작성 위치에 `oneOf`, `anyOf`, `if`, `controls.active`가 없다는 증명이다. 무시되는 discriminator만으로는 이 증명을 깨지 않는다(C2·C3). 참조 대상, 무게이트 allOf, items, prefixItems, 옛 additionalItems, 인라인 자식, 가상 선언을 같은 수집 과정에서 판정한다. 터미널 아래에서 무시되는 데이터는 기존 경고 범위대로 유지한다. BLUEPRINT-002의 선언·Fragment 그래프와, BLUEPRINT-001·012·044·030의 정적 충돌, S0–S6, 터미널 경고, 재귀 판정, 작성 순서, 판정 함수 메모는 분기 유무와 관계없이 유지한다.
 
@@ -105,6 +110,18 @@
 - 자식 프랙탈은 `buildNodes`(선언과 노드 구성), `compileBlueprintExpressions`(식과 의존 컴파일), `validateShape`(유한 형상 검증), `collectBlueprintWarnings`(예약 키 경고 수집), `validateChildTargets`(자식 대상 검증), `StaticFirstLoadCapability`(첫 로드 자격 보관), `effectiveSchema`(활성 선언 병합)이다. `types/`는 공용 형을, `utils/<topic>/`는 자식이 위쪽으로 가져다 쓰는 보조와 진입점을 거쳐 바깥 소비자를 섬기는 보조(`features`, `itemEntry`)를 소유한다.
 
 ## Acceptance Criteria
+
+### fixed-first-load-proof — Mount-only immutable evidence
+
+- The 500-field plus kind-default fixture has a plan while branchless and the old static capability remain false. Cached analysis and mode resets retain the same evidence without validator verdicts.
+
+### fixed-first-load-fallback — Closed overlay language
+
+- Each unsupported branch feature independently removes admission, including empty/redundant required and accessors. Existing branchless arrays retain their old eligibility.
+
+### fixed-first-load-shape — Baseline exclusions
+
+- Arrays, union/disjunction, container defaults, whole-value nodes, controls and alternate identities have no fixed-first plan; unsupported descriptors and nonnumeric constraints also decline admission.
 
 ### shape-validation-counts — 템플릿 재귀 증거와 형상 검증 호출
 

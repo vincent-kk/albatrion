@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- A fresh mount may carry invocation-owned fixed-first preparation. It constructs the unconditional baseline once, then replays only affected original declaration sites through ordinary selection. It preserves host-wheel confirmation rounds and full guard invocation order/counts, including failed and unavailable predicates.
+- Scalar default transitions remain after the initial computation. Existing transition, schema merge, required/control, output, diagnostics, commit and delivery algorithms stay in charge; no final-value pre-evaluation or guard-error retry occurs. Output assembly is not optimized by this route.
+- Prepared witnesses are released on normal or exceptional return. Later writes/reset use ordinary settlement with the original gate registry; no persistent node flags or cached verdicts are introduced. Unsupported verifier configurations decline admission before mutation.
+
 - divergence 읽기는 각 노드가 마지막 path 문자열과 해석한 segment 배열을 보유한다. path가 Object.is로 같으면 branchless LRU와 dependency index를 다시 조회하지 않는다. 300개 이상 노드의 두 번째 전체 읽기에서 parse 호출은0이다. 비용·커밋 실패 spy는 이 엔진의 시험이 소유하며 surface에 import 예외를 만들지 않는다.
 
 - 고정 HEAD 차등 시험은 원래 revision과 값·사건·순서를 보존한다. 상태 이름 변경 뒤에도 현재 observer가 pinned 노드의 원래 필드를 읽도록, 해당 observer 소스의 node.is 접두사 다섯 접근만 pinned 빌드에서 옛 필드 철자로 대응시킨다. 관측 키는 현재 이름이며 제품 별칭이나 기준 재생성을 하지 않는다.
@@ -360,6 +364,22 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### fixed-first-selection — Sparse ordinary selection
+
+- Fixed membership retains authored/integer ordering, selected IDs, occurrence registration and unchanged sibling references while affected sites execute at their original positions.
+
+### fixed-first-epochs — Guard/default sequencing
+
+- Initial and post-default guard input sequences, validator invocation counts and logical round diagnostics equal ordinary settlement, including suppressed/enabled automatic writes.
+
+### fixed-first-errors — Commit and failure order
+
+- Missing validators, compile/evaluation failures and nonboolean results retain ordinary warning/error deduplication and commit-before-report semantics without a second load.
+
+### fixed-first-modes — Mode boundaries
+
+- Supported modes preserve observations; unsupported verification modes explicitly use ordinary settlement and never bypass their verifier.
 
 ### settle-zero-survivor-discard — 비어 있는 지움 배열의 쓰기 폐기
 

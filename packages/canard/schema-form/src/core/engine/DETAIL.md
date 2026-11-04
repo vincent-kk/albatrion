@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Conditional fixed-first mount changes only structural selection work. Existing guard compilation, validation demand and callback scheduling retain the authored root schema and ordinary commit boundaries.
+
 - `AuthoredSchema` is a recursive union with a shared base. A discriminator requires an explicitly object or nullable-object host; other type arrays remain valid without that key. Non-object controls retain every other control type and its documentation.
 
 - 생성기 스키마 코퍼스의 정본은 engine의 공유 시험 픽스처가 소유합니다. blueprint와 derive가 같은 입력을 검증하므로 최저 공통 fractal에 두며, 시험은 architecture의 역사 자료를 실행 입력으로 읽지 않습니다.
@@ -154,6 +156,10 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
   - `settle/utils/gates/__tests__/getGateBudgetCap.pointer-work.test.ts`: 같은 gate의 예산 분류가 `utils/parsePointerSegments`를 한 번만 부르고 준비된 예산을 재사용함을 센다.
 
 ## Acceptance Criteria
+
+### fixed-first-load-validation — Deferred full validation
+
+- Real guards select constraints synchronously while whole-root compilation remains deferred. First validation demand compiles the original root once; errors and onValidate waves equal ordinary mount.
 
 ### literal-star-controls — 예약 이름 속성의 일반 제어
 
