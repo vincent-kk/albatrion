@@ -74,6 +74,8 @@ export interface GuardScenario extends ValidatorScenarioBase {
   readonly hostValue: unknown;
   /** Required verdict, a required compile rejection, or `null` when only observed. */
   readonly expected: boolean | 'rejects' | null;
+  /** Case-insensitive regular expression source matched against the compileGuard error; required when expected is 'rejects'. */
+  readonly failure?: string;
 }
 
 /** Whole validation of one value: `compile(schema)(value)`. */

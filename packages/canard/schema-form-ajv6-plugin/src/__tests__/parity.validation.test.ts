@@ -1,14 +1,15 @@
-// Shared validator parity, validation bundle: rows come from @aileron/schema-form-scenarios/validator.
-import { validationScenarios } from '@aileron/schema-form-scenarios/validator';
+// Shared validator parity, whole-validation scenarios: rows come from @aileron/schema-form-scenarios/validator.
+import { type ParityRow, indexDeclaredRows, wholeValidationScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, expect, it } from 'vitest';
 
-import type { ParityRow } from './utils/expandParityRows';
-import { indexDeclaredRows } from './utils/indexDeclaredRows';
+import { copyOf } from './utils/copyOf';
 import { loadParityValidator } from './utils/loadParityValidator';
-import { copyOf, readValidation } from './utils/readValidation';
+import { readValidation } from './utils/readValidation';
 
 const support = {
-  entries: [{ entry: 'default', draft: '07' }],
+  entries: [
+    { entry: 'default', draft: '07' },
+  ],
   features: [],
 } as const;
 
@@ -20,9 +21,9 @@ const rows = [
   ['validation.format-off-by-default', 'default', 'default', true],
 ] as const satisfies readonly ParityRow[];
 
-const scenarios = indexDeclaredRows(rows, validationScenarios, support);
+const scenarios = indexDeclaredRows(rows, wholeValidationScenarios, support);
 
-describe('validator parity: validation scenarios (ajv6)', () => {
+describe('validator parity: whole-validation scenarios (ajv6)', () => {
   it.each(rows)('%s [%s %s directGuardCompile=%s]', async (id, entry, profile, directGuardCompile) => {
     const scenario = scenarios.get(id);
     if (!scenario) throw new Error(`Unknown parity scenario ${id}`);

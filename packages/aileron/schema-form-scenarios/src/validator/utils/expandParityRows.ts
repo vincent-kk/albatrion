@@ -4,7 +4,7 @@ import type {
   ValidatorScenarioEntry,
   ValidatorScenarioFeature,
   ValidatorScenarioProfile,
-} from '@aileron/schema-form-scenarios/validator';
+} from '../types';
 
 /** What one plugin offers: its entries with their dialects, and its optional capabilities. */
 export interface ParitySupport {

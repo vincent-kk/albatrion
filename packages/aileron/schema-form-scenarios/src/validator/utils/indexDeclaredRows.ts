@@ -1,4 +1,4 @@
-import type { ValidatorScenario } from '@aileron/schema-form-scenarios/validator';
+import type { ValidatorScenario } from '../types';
 
 import { type ParityRow, type ParitySupport, expandParityRows } from './expandParityRows';
 

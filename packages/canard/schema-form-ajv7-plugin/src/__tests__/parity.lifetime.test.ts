@@ -1,9 +1,7 @@
-// Shared validator parity, lifetime bundle: rows come from @aileron/schema-form-scenarios/validator.
-import { lifetimeScenarios } from '@aileron/schema-form-scenarios/validator';
+// Shared validator parity, lifetime scenarios: rows come from @aileron/schema-form-scenarios/validator.
+import { type ParityRow, indexDeclaredRows, lifetimeScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, it } from 'vitest';
 
-import type { ParityRow } from './utils/expandParityRows';
-import { indexDeclaredRows } from './utils/indexDeclaredRows';
 import { loadParityValidator } from './utils/loadParityValidator';
 import { runLifetimeStep } from './utils/runLifetimeStep';
 

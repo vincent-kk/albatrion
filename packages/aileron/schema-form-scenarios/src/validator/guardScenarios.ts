@@ -14,9 +14,13 @@ const onRootPointer: ValidatorScenarioApplicability = { ...onEveryEntry, directG
 /** The 2019-09 dynamic vocabulary only: the Ajv2019 entry or binding. */
 const on2019Vocabulary: ValidatorScenarioApplicability = { ...onEveryEntry, entries: ['2019'] };
 
+/** The 2020-12 dynamic vocabulary only: the ajv8 2020 entry. */
+const on2020Vocabulary: ValidatorScenarioApplicability = { ...onEveryEntry, entries: ['2020'] };
+
 /** The same on both guard compile paths. */
 const onBothPaths: ValidatorScenarioApplicability = { ...onEveryEntry, directGuardCompile: 'both' };
 
+/** `then` and `else` markers that let whole validation reveal the `if` verdict. */
 const branches = {
   then: { required: ['accepted'] },
   else: { required: ['rejected'] },
@@ -89,6 +93,7 @@ const dynamic = {
   },
 } as const;
 
+/** Dialects with a dynamic-scope vocabulary that the defect-A and chain cases run on. */
 type DynamicDraft = keyof typeof dynamic;
 
 /** Defect A T1: a root `/if` guard is independent of the root's other assertions (`required: ['x']`). */
@@ -189,6 +194,37 @@ const rootSchemaRoot = {
 
 /** `direct-guard-compile.test.ts`: an asynchronous condition cannot back a synchronous guard. */
 const asyncConditionRoot = { type: 'object', if: { $async: true, type: 'string' } } as const;
+
+/** L8′, `guard-scope.lexical-ancestors.test.ts` 2020 variant: an off-chain `$id` wrapper declares `$dynamicAnchor` first; the guard refuses it. */
+const offChainWrapper2020Root = {
+  $id: 'https://example.test/ajv8/2020/l8/root',
+  $ref: 'wrapper',
+  $defs: {
+    wrapper: { $id: 'wrapper', $dynamicAnchor: 'node', $ref: 'leaf' },
+    leaf: {
+      $id: 'leaf',
+      type: 'object',
+      required: ['ok'],
+      if: { properties: { next: { $dynamicRef: '#node' } }, required: ['next'] },
+      ...branches,
+    },
+  },
+} as const;
+
+/** Plan T8 (b), 2020: an ancestor without `$id` declares `$dynamicAnchor`, which binds like a chain declaration. */
+const hostAnchor2020Root = {
+  $id: 'https://example.test/ajv8/2020/host-anchor',
+  type: 'object',
+  properties: {
+    host: {
+      $dynamicAnchor: 'node',
+      type: 'object',
+      required: ['ok'],
+      if: { properties: { next: { $dynamicRef: '#node' } }, required: ['next'] },
+      ...branches,
+    },
+  },
+} as const;
 
 /** VALIDATE-047 case (iv), ajv8 shape: one location used from two dynamic scopes (unsupported). */
 const twoScopesCommon = {
@@ -319,10 +355,12 @@ export const guardScenarios: readonly GuardScenario[] = [
       schema: nestedIfRoot(draft), pointer: '/$defs/branch/if', hostValue: { next: { kind: 'no' } }, expected: false },
     { kind: 'guard', bundle: 'conformance', id: `guard.nested-resource-chain.${draft}`, source: 'IR-11 plan T8 (a)', drafts: [draft], applies: onEveryEntry,
       schema: nestedResourceRoot(draft), pointer: '/$defs/mid/$defs/leaf/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: true },
+    { kind: 'guard', bundle: 'conformance', id: `guard.nested-resource-chain.${draft}.missing-ok`, source: 'IR-11 plan T8 (a)', drafts: [draft], applies: onEveryEntry,
+      schema: nestedResourceRoot(draft), pointer: '/$defs/mid/$defs/leaf/if', hostValue: { ok: true, next: { rejected: true } }, expected: false },
     { kind: 'guard', bundle: 'conformance', id: `guard.async-root-anchor.${draft}.root-if`, source: 'IR-11 plan T9', drafts: [draft], applies: onEveryEntry,
-      schema: asyncRootIf(draft), pointer: '/if', hostValue: {}, expected: 'rejects' },
+      schema: asyncRootIf(draft), pointer: '/if', hostValue: {}, expected: 'rejects', failure: 'async schema' },
     { kind: 'guard', bundle: 'conformance', id: `guard.async-root-anchor.${draft}.nested`, source: 'IR-11 plan T9', drafts: [draft], applies: onEveryEntry,
-      schema: asyncRootNested(draft), pointer: '/$defs/branch/if', hostValue: {}, expected: 'rejects' },
+      schema: asyncRootNested(draft), pointer: '/$defs/branch/if', hostValue: {}, expected: 'rejects', failure: 'async schema' },
   ]),
   { kind: 'guard', bundle: 'conformance', id: 'guard.self-contained.unrelated-meta-violation.match', source: 'IR-10 T1', drafts: ['07'], applies: onEveryEntry,
     schema: unrelatedViolationRoot, pointer: '/if', hostValue: { kind: 'a' }, expected: true },
@@ -339,16 +377,22 @@ export const guardScenarios: readonly GuardScenario[] = [
   { kind: 'guard', bundle: 'conformance', id: 'guard.root-schema-declaration', source: 'IR-10 direct guard compile', drafts: ['07'], applies: onEveryEntry,
     schema: rootSchemaRoot, pointer: '/if', hostValue: { n: 'six' }, expected: false },
   { kind: 'guard', bundle: 'conformance', id: 'guard.async-condition', source: 'VALIDATE-047 asynchronous guard', drafts: ['07'], applies: onBothPaths,
-    schema: asyncConditionRoot, pointer: '/if', hostValue: 'text', expected: 'rejects' },
+    schema: asyncConditionRoot, pointer: '/if', hostValue: 'text', expected: 'rejects', failure: 'async schema' },
   { kind: 'guard', bundle: 'conformance', id: 'guard.off-chain-wrapper.2019', source: 'IR-11 L8′', drafts: ['2019'], applies: on2019Vocabulary,
-    schema: offChainWrapperRoot, pointer: '/$defs/leaf/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: 'rejects' },
+    schema: offChainWrapperRoot, pointer: '/$defs/leaf/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: 'rejects', failure: 'is not bound' },
   { kind: 'guard', bundle: 'conformance', id: 'guard.non-root-recursive-anchor.2019', source: 'IR-11 plan T8 (b), L12', drafts: ['2019'], applies: on2019Vocabulary,
-    schema: nonRootRecursiveAnchorRoot, pointer: '/properties/host/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: 'rejects' },
+    schema: nonRootRecursiveAnchorRoot, pointer: '/properties/host/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: 'rejects', failure: 'is not bound' },
   { kind: 'guard', bundle: 'observation', id: 'observe.two-scopes.2020', source: 'VALIDATE-047 (iv), ajv8 shape', drafts: ['2020'], applies: onEveryEntry,
     schema: { ...twoScopesCommon, $ref: '#/$defs/stringScope' }, pointer: '/$defs/shared/if',
     hostValue: { stringKey: true, numberKey: true, next: { stringKey: true } }, expected: null },
+  { kind: 'guard', bundle: 'conformance', id: 'guard.off-chain-wrapper.2020', source: 'IR-11 L8′', drafts: ['2020'], applies: on2020Vocabulary,
+    schema: offChainWrapper2020Root, pointer: '/$defs/leaf/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: 'rejects', failure: 'is not bound' },
+  { kind: 'guard', bundle: 'conformance', id: 'guard.host-anchor-ancestor.2020.ok', source: 'IR-11 plan T8 (b)', drafts: ['2020'], applies: on2020Vocabulary,
+    schema: hostAnchor2020Root, pointer: '/properties/host/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: true },
+  { kind: 'guard', bundle: 'conformance', id: 'guard.host-anchor-ancestor.2020.missing-ok', source: 'IR-11 plan T8 (b)', drafts: ['2020'], applies: on2020Vocabulary,
+    schema: hostAnchor2020Root, pointer: '/properties/host/if', hostValue: { ok: true, next: { rejected: true } }, expected: false },
   { kind: 'guard', bundle: 'conformance', id: 'guard.two-scopes-off-chain.2019', source: 'VALIDATE-047 (iv), ajv7 shape', drafts: ['2019'], applies: on2019Vocabulary,
-    schema: twoScopesAjv7Root, pointer: '/$defs/common/if', hostValue: { next: { kind: 'left' } }, expected: 'rejects' },
+    schema: twoScopesAjv7Root, pointer: '/$defs/common/if', hostValue: { next: { kind: 'left' } }, expected: 'rejects', failure: 'is not bound' },
   { kind: 'guard', bundle: 'observation', id: 'observe.non-root-anchor-with-inner-ancestor.2019', source: 'IR-11 L16', drafts: ['2019'], applies: on2019Vocabulary,
     schema: nonRootAnchorWithInnerAncestorRoot, pointer: '/properties/host/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: null },
 ];

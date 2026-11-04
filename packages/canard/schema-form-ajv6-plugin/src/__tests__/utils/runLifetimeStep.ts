@@ -3,7 +3,8 @@ import type { LifetimeStep, ValidatorScenarioSchema } from '@aileron/schema-form
 import type Ajv from 'ajv';
 import { expect } from 'vitest';
 
-import { copyOf, readValidation } from './readValidation';
+import { copyOf } from './copyOf';
+import { readValidation } from './readValidation';
 
 /**
  * Read the `$id` of a scenario root.

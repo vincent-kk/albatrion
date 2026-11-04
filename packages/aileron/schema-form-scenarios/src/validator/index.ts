@@ -1,13 +1,12 @@
 export { guardScenarios } from './guardScenarios';
-export { validationScenarios } from './validationScenarios';
+export { wholeValidationScenarios } from './wholeValidationScenarios';
 export { lifetimeScenarios } from './lifetimeScenarios';
+export { indexDeclaredRows } from './utils/indexDeclaredRows';
+export type { ParityRow } from './utils/expandParityRows';
 export type {
   LifetimeStep,
   ValidationExpectation,
-  ValidatorScenario,
-  ValidatorScenarioDraft,
   ValidatorScenarioEntry,
-  ValidatorScenarioFeature,
   ValidatorScenarioProfile,
   ValidatorScenarioSchema,
 } from './types';

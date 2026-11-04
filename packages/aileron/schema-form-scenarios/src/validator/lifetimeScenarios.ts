@@ -11,6 +11,7 @@ const onEveryEntry: ValidatorScenarioApplicability = {
 /** A consumer instance bound once before first use, which the step then inspects. */
 const onConsumerInstance: ValidatorScenarioApplicability = { ...onEveryEntry, profiles: ['custom'] };
 
+/** Every dialect: these sequences use no dialect-specific keyword. */
 const everyDraft = ['07', '2019', '2020'] as const;
 
 /** AJV's root meta-schema rejection, by message or by the offending keyword (IR-10). */

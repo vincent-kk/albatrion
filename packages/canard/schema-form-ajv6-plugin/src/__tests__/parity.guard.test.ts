@@ -1,15 +1,15 @@
-// Shared validator parity, guard bundle: rows come from @aileron/schema-form-scenarios/validator.
+// Shared validator parity, guard scenarios, draft-07 entry: rows come from @aileron/schema-form-scenarios/validator.
 // Observation rows assert nothing; they print a table row only when PARITY_OBSERVE is set (read from process.env).
-import { guardScenarios } from '@aileron/schema-form-scenarios/validator';
+import { type ParityRow, indexDeclaredRows, guardScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, expect, it } from 'vitest';
 
-import type { ParityRow } from './utils/expandParityRows';
-import { indexDeclaredRows } from './utils/indexDeclaredRows';
+import { copyOf } from './utils/copyOf';
 import { loadParityValidator } from './utils/loadParityValidator';
-import { copyOf } from './utils/readValidation';
 
 const support = {
-  entries: [{ entry: 'default', draft: '07' }],
+  entries: [
+    { entry: 'default', draft: '07' },
+  ],
   features: [],
 } as const;
 
@@ -43,14 +43,15 @@ const verdictOf = (run: () => boolean): boolean | string => {
   }
 };
 
-describe('validator parity: guard scenarios (ajv6)', () => {
+describe('validator parity: guard scenarios, draft-07 entry (ajv6)', () => {
   it.each(rows)('%s [%s %s directGuardCompile=%s]', async (id, entry, profile, directGuardCompile) => {
     const scenario = scenarios.get(id);
     if (!scenario) throw new Error(`Unknown parity scenario ${id}`);
     const { validator } = await loadParityValidator(entry, profile, directGuardCompile);
     const root = copyOf(scenario.schema);
     if (scenario.expected === 'rejects') {
-      expect(() => validator.compileGuard(root, scenario.pointer)).toThrow();
+      if (!scenario.failure) throw new Error(`${id} needs failure`);
+      expect(() => validator.compileGuard(root, scenario.pointer)).toThrow(new RegExp(scenario.failure, 'i'));
       validator.release?.(root);
       return;
     }

@@ -734,7 +734,7 @@ The codex design check returned FAIL; every finding was applied before implement
 - 보장. 적합성 묶음은 세 플러그인이 같은 기대값을 내야 하는 범위이며, 기대값은 플러그인과 인스턴스를 공유하지 않는 별도 AJV 전체 검증의 관측값입니다. PR-A의 지원 조건 안에서만 가드 판정을 기대값으로 둡니다. 지원 밖이라도 플러그인이 컴파일 단계에서 반드시 거부하는 형태(L8′ 사슬 밖 `$id` 래퍼, L12 자원 루트가 아닌 `$recursiveAnchor`, 사슬과 참조의 조상이 이름을 선언하지 않는 (iv)의 ajv7 모양)는 거부를 기대값으로 하는 적합성 사례이고, 소비자는 `compileGuard` 호출만 감싸 거부를 단언합니다. 판정이 정해지지 않은 형태((iv)의 ajv8 모양, L16)는 관찰 묶음에 두어 플러그인별 관측값만 기록하고 단언하지 않습니다. 플러그인 간 같은 답은 지원 밖에서 계약이 아닙니다(F19).
 - 지원 계약(D1). `bind`는 첫 사용 전에 한 번 부르는 것이 지원 계약입니다. 이미 등록된 루트가 있는 상태의 재바인딩은 플러그인마다 다르며(ajv8은 등록을 원래 인스턴스에 유지, ajv7·ajv6은 등록소를 비움) 적합성 보장에 넣지 않습니다. 검사 프로필 `custom`은 새 모듈에 소비자 인스턴스를 한 번 bind한 상태입니다.
 - 범위 밖. 비객체 호스트의 `{}` 평가(SETTLE-021)는 엔진 동작이라 목록에 없습니다.
-- 변경. 시나리오 패키지의 새 경계 `src/validator/`와 `"./validator"` 하위 경로, 세 플러그인의 `@aileron/schema-form-scenarios` 개발 의존과 `src/__tests__/parity.{guard,validation,lifetime}.test.ts`, ajv7·ajv8 `CLAUDE.md`입니다. 플러그인 제품 코드는 바뀌지 않습니다.
+- 변경. 시나리오 패키지의 새 경계 `src/validator/`와 `"./validator"` 하위 경로, 세 플러그인의 `@aileron/schema-form-scenarios` 개발 의존과 `src/__tests__/parity.*.test.ts`(ajv7·ajv8은 가드 묶음을 draft-07 파일과 동적 어휘 파일로 나눔), ajv7·ajv8 `CLAUDE.md`입니다. 플러그인 제품 코드는 바뀌지 않습니다.
 
 #### 구현 차이, 계약 아님 (D5)
 
@@ -744,7 +744,7 @@ The codex design check returned FAIL; every finding was applied before implement
 | 등록된 루트가 있을 때의 `bind` | 등록을 원래 인스턴스에 유지 | 등록소를 새로 만듦 | 등록소를 새로 만듦 |
 | 가드 반환값 검사 | `!!validate(value)` | 불리언이 아니면 TypeError | 불리언이 아니면 TypeError |
 | 동적 앵커 호출 인자 | `instancePath` | `dataPath` | 동적 어휘 없음 |
-| 기본 `allowUnionTypes` | 켬 | 옵션 없음(`strict: false`) | 옵션 없음 |
+| 기본 `allowUnionTypes` | 켬 | 플러그인 기본값이 설정하지 않음(`strict: false`) | 옵션 없음 |
 | 사례 (iv) ajv8 모양(2020) | 어휘적 진입의 답(관찰) | 해당 없음 | 해당 없음 |
 | 사례 (iv) ajv7 모양(2019) | 컴파일 거부(적합성) | 컴파일 거부(적합성) | 해당 없음 |
 

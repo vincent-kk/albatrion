@@ -1,17 +1,14 @@
-// Shared validator parity, guard bundle: rows come from @aileron/schema-form-scenarios/validator.
+// Shared validator parity, guard scenarios, draft-07 entry: rows come from @aileron/schema-form-scenarios/validator.
 // Observation rows assert nothing; they print a table row only when PARITY_OBSERVE is set (read from process.env).
-import { guardScenarios } from '@aileron/schema-form-scenarios/validator';
+import { type ParityRow, indexDeclaredRows, guardScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, expect, it } from 'vitest';
 
-import type { ParityRow } from './utils/expandParityRows';
-import { indexDeclaredRows } from './utils/indexDeclaredRows';
+import { copyOf } from './utils/copyOf';
 import { loadParityValidator } from './utils/loadParityValidator';
-import { copyOf } from './utils/readValidation';
 
 const support = {
   entries: [
     { entry: 'default', draft: '07' },
-    { entry: '2019', draft: '2019' },
   ],
   features: [],
 } as const;
@@ -20,14 +17,6 @@ const support = {
 const rows = [
   ['guard.inner-id-ref.eligible', 'default', 'default', true],
   ['guard.inner-id-ref.ineligible', 'default', 'default', true],
-  ['guard.recursive-ref.through-ref', '2019', 'default', true],
-  ['guard.root-assertions.2019.empty', '2019', 'default', true],
-  ['guard.root-assertions.2019.flag', '2019', 'default', true],
-  ['guard.nested-if-root-scope.2019.yes', '2019', 'default', true],
-  ['guard.nested-if-root-scope.2019.no', '2019', 'default', true],
-  ['guard.nested-resource-chain.2019', '2019', 'default', true],
-  ['guard.async-root-anchor.2019.root-if', '2019', 'default', true],
-  ['guard.async-root-anchor.2019.nested', '2019', 'default', true],
   ['guard.self-contained.unrelated-meta-violation.match', 'default', 'default', true],
   ['guard.self-contained.unrelated-meta-violation.other', 'default', 'default', true],
   ['guard.ref.unrelated-meta-violation', 'default', 'default', true],
@@ -37,10 +26,6 @@ const rows = [
   ['guard.root-schema-declaration', 'default', 'default', true],
   ['guard.async-condition', 'default', 'default', true],
   ['guard.async-condition', 'default', 'default', false],
-  ['guard.off-chain-wrapper.2019', '2019', 'default', true],
-  ['guard.non-root-recursive-anchor.2019', '2019', 'default', true],
-  ['guard.two-scopes-off-chain.2019', '2019', 'default', true],
-  ['observe.non-root-anchor-with-inner-ancestor.2019', '2019', 'default', true],
 ] as const satisfies readonly ParityRow[];
 
 const scenarios = indexDeclaredRows(rows, guardScenarios, support);
@@ -58,14 +43,15 @@ const verdictOf = (run: () => boolean): boolean | string => {
   }
 };
 
-describe('validator parity: guard scenarios (ajv7)', () => {
+describe('validator parity: guard scenarios, draft-07 entry (ajv7)', () => {
   it.each(rows)('%s [%s %s directGuardCompile=%s]', async (id, entry, profile, directGuardCompile) => {
     const scenario = scenarios.get(id);
     if (!scenario) throw new Error(`Unknown parity scenario ${id}`);
     const { validator } = await loadParityValidator(entry, profile, directGuardCompile);
     const root = copyOf(scenario.schema);
     if (scenario.expected === 'rejects') {
-      expect(() => validator.compileGuard(root, scenario.pointer)).toThrow();
+      if (!scenario.failure) throw new Error(`${id} needs failure`);
+      expect(() => validator.compileGuard(root, scenario.pointer)).toThrow(new RegExp(scenario.failure, 'i'));
       validator.release?.(root);
       return;
     }

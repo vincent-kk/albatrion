@@ -8,6 +8,7 @@ const onEveryEntry: ValidatorScenarioApplicability = {
   features: [],
 };
 
+/** Every dialect: these cases use no dialect-specific keyword. */
 const everyDraft = ['07', '2019', '2020'] as const;
 
 /**
@@ -15,7 +16,7 @@ const everyDraft = ['07', '2019', '2020'] as const;
  * comparison cases of each plugin's `differential.test.ts`; their data paths are
  * the AJV whole-validation issue paths with `required` pointing at the missing key.
  */
-export const validationScenarios: readonly ValidationScenario[] = [
+export const wholeValidationScenarios: readonly ValidationScenario[] = [
   { kind: 'validation', bundle: 'conformance', id: 'validation.if-only-oneof-invalid', source: 'VALIDATE-036', drafts: everyDraft, applies: onEveryEntry,
     schema: {
       type: 'object',
