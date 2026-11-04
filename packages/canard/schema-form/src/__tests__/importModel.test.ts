@@ -5,7 +5,7 @@
  * S1: non-lineage fractals are reached through their own index, never internals.
  * B1: organs do not import their owner's direct child fractals, subject to B7.
  * Index retention: exported names have product consumers outside their owner's subtree (stated, not asserted here).
- * D7: public-API tests under __tests__/e2e, scenarios and migration may read the root index.
+ * D7: public-API tests under __tests__/e2e, scenarios, migration and agents-examples may read the root index.
  * O and deeper non-lineage index re-exports are outside these assertions.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -204,7 +204,7 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
       }
       if (verdict === 'U') {
         totalU++;
-        if (/^__tests__\/(e2e|scenarios|migration)\//.test(importerPath)) {
+        if (/^__tests__\/(e2e|scenarios|migration|agents-examples)\//.test(importerPath)) {
           exemptU++;
           continue;
         }
