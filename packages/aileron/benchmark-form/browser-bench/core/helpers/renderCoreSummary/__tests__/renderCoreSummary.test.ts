@@ -25,7 +25,7 @@ it('renders the legend units', () => {
   expect(text).toContain('observed rAF intervals');
   expect(text).toContain('< 50');
   expect(text).toContain('N/A');
-  expect(text).toContain('for 1 write');
+  expect(text).toContain('(per write;');
   expect(text).toContain('Ratio = candidate / baseline');
 });
 

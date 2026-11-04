@@ -53,7 +53,9 @@ class ImportExtensionProcessor {
 
     console.log(`📄 Total files: ${allFiles.length}`);
     console.log(`🎯 Target files: ${targetFiles.length}`);
-    console.log(`📝 Supported extensions: ${this.supportedExtensions.join(", ")}`);
+    console.log(
+      `📝 Supported extensions: ${this.supportedExtensions.join(", ")}`,
+    );
     console.log("");
 
     let processedCount = 0;
@@ -431,7 +433,9 @@ class ImportExtensionProcessor {
           return originalImportPath; // 그래도 디렉토리이므로 확장자 없이 반환
         }
       } catch (error) {
-        console.log(`   ❌ Failed to access path: ${fullPath} - ${error.message}`);
+        console.log(
+          `   ❌ Failed to access path: ${fullPath} - ${error.message}`,
+        );
       }
     }
 
@@ -534,7 +538,9 @@ async function main(): Promise<void> {
     );
     console.log("");
     console.log("🎯 Supported files: .ts, .tsx, .js, .jsx, .mjs, .cjs");
-    console.log("📦 Supported paths: relative paths (./, ../), absolute path aliases (@/, ~/)");
+    console.log(
+      "📦 Supported paths: relative paths (./, ../), absolute path aliases (@/, ~/)",
+    );
     console.log("⚠️  The node_modules directory is automatically excluded.");
     process.exit(1);
   }
