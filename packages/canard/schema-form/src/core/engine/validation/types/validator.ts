@@ -33,6 +33,7 @@ export interface Validator {
    * Compile a schema copy into a validator that returns issues rather than throwing.
    * @param copy - Engine-owned validation copy of the authored root.
    * @returns A function that reports ordered validation issues.
+   * @throws When compilation fails. A failure caused by a schema id that is already registered is classified as `reason: 'duplicateSchemaId'` and retried only when its message contains `already exists` or `resolves to more than one schema`, the duplicate-id messages of AJV 6, 7 and 8.
    */
   compile(copy: BlueprintSchema): ValidateFunction;
   /**

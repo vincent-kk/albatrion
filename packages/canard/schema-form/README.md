@@ -373,6 +373,8 @@ export const App = () => (
 
 `createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
 
+A custom validator that cannot register a schema whose `$id` is already in use should throw an error whose message contains `already exists` or `resolves to more than one schema`, the duplicate-id messages of AJV 6, 7 and 8, because only those messages receive `reason: 'duplicateSchemaId'` and the one retry after the other root with that `$id` is released.
+
 ### Available Validator Plugins
 
 - [**@canard/schema-form-ajv8-plugin**](../schema-form-ajv8-plugin/README.md): AJV 8.x based (latest JSON Schema support)
