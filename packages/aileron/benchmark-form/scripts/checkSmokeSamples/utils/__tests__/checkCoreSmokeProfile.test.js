@@ -43,6 +43,29 @@ describe('checkCoreSmokeProfile', () => {
     );
   });
 
+  it('rejects warmup 2 when the remaining workload otherwise matches', () => {
+    const summary = {
+      runs: 1,
+      warmup: 2,
+      cases: remaining.map((id) => ({ id })),
+    };
+    const samples = Object.fromEntries(remaining.map((id) => [id, []]));
+    expect(
+      checkCoreSmokeProfile(summary, samples, 'remaining').problems,
+    ).toContainEqual(expect.stringContaining('warmup 1'));
+  });
+
+  it('rejects an unrelated case replacing a remaining case at the same count', () => {
+    const cases = remaining.map((id, index) =>
+      index === 0 ? 'mount-flat-500-none' : id,
+    );
+    const summary = { runs: 1, warmup: 1, cases: cases.map((id) => ({ id })) };
+    const samples = Object.fromEntries(cases.map((id) => [id, []]));
+    expect(
+      checkCoreSmokeProfile(summary, samples, 'remaining').problems,
+    ).toContainEqual(expect.stringContaining('case set'));
+  });
+
   it('rejects a missing case in either artifact', () => {
     const summary = {
       runs: 1,
