@@ -1,7 +1,6 @@
-import type { GateSelectionLiteral } from '../../../../types/gateSelectionTable';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-/** No bucket matches a non-primitive value, undefined, NaN or an unlisted literal. */
-const EMPTY: readonly number[] = Object.freeze([]);
+import type { GateSelectionLiteral } from '../../../../types/gateSelectionTable';
 
 /**
  * Match Map's primitive keys without coercion or widening the literal contract.
@@ -17,5 +16,5 @@ export const readGateBucket = (
   typeof value === 'string' ||
   typeof value === 'number' ||
   typeof value === 'boolean'
-    ? (buckets.get(value) ?? EMPTY)
-    : EMPTY;
+    ? (buckets.get(value) ?? EMPTY_ARRAY)
+    : EMPTY_ARRAY;

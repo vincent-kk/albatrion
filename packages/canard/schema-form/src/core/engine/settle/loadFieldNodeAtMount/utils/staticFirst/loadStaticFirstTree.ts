@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -34,8 +35,6 @@ interface Frame<Self> {
   order: number;
   children: Optional<Self[]>;
 }
-/** Empty shape/required lists share immutable storage. */
-const EMPTY = Object.freeze([]);
 
 /**
  * Fuse first shape, independent fill, assembly and delivery finalization in one DFS.
@@ -62,8 +61,8 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       blocked: false,
       entered: false,
       index: 0,
-      entries: EMPTY,
-      required: EMPTY,
+      entries: EMPTY_ARRAY,
+      required: EMPTY_ARRAY,
       order: 0,
       children: undefined,
     },
@@ -128,7 +127,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
           frame.entries = getStaticObjectEntries(node.blueprintNode);
           frame.required = isArray(authored?.required)
             ? authored.required
-            : EMPTY;
+            : EMPTY_ARRAY;
         }
       } else node.source = value;
       const state = node.interactionState;
@@ -159,8 +158,8 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
           (node.behavior.strategy === 'branch' && node.source !== undefined),
         entered: false,
         index: 0,
-        entries: EMPTY,
-        required: EMPTY,
+        entries: EMPTY_ARRAY,
+        required: EMPTY_ARRAY,
         order: 0,
         children: undefined,
       });

@@ -41,8 +41,47 @@ const environmentTokenRules = [
   },
 ];
 
+/** Product defaults share one frozen value; identity sentinels keep private references. */
+const sharedEmptyValueRule = {
+  selector:
+    "CallExpression[callee.object.name='Object'][callee.property.name='freeze'][arguments.length=1] > :matches(ArrayExpression[elements.length=0], ObjectExpression[properties.length=0])",
+  message:
+    'Use EMPTY_ARRAY/EMPTY_OBJECT from @winglet/common-utils/constant for shared empty values; keep identity sentinels private.',
+};
+
+/** These values retain their identity or the public mutable ChildFields contract. */
+const sharedEmptyValueExclusions = [
+  '**/__tests__/**',
+  '**/__benchmarks__/**',
+  '**/*.test.*',
+  '**/*.spec.*',
+  'src/core/engine/record/constants/emptyRevisionLedger.ts',
+  'src/components/FieldProxy/components/FieldInputSlot/hooks/useTerminalChildren.ts',
+];
+
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: sharedEmptyValueExclusions,
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        ...environmentTokenRules,
+        sharedEmptyValueRule,
+        {
+          selector: "PropertyDefinition[key.type='PrivateIdentifier']",
+          message:
+            "ES private fields (#) are not allowed. Use 'private __fieldName__' convention instead for ECMA 2022 compatibility.",
+        },
+        {
+          selector: "MethodDefinition[key.type='PrivateIdentifier']",
+          message:
+            "ES private methods (#) are not allowed. Use 'private __methodName__()' convention instead for ECMA 2022 compatibility.",
+        },
+      ],
+    },
+  },
   {
     files: [
       'src/core/engine/record/**/*.ts',
@@ -82,6 +121,7 @@ export default [
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
+        sharedEmptyValueRule,
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
           message: 'ES # private fields are forbidden in FieldNode (NODE-010).',
@@ -151,11 +191,15 @@ export default [
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],
-    ignores: ['src/core/surface/classes/FieldNode.ts', '**/__tests__/**'],
+    ignores: [
+      'src/core/surface/classes/FieldNode.ts',
+      ...sharedEmptyValueExclusions,
+    ],
     rules: {
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
+        sharedEmptyValueRule,
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
           message:
@@ -205,11 +249,12 @@ export default [
       'src/fieldInputs/**/*.{ts,tsx}',
       'src/helpers/**/*.{ts,tsx}',
     ],
-    ignores: ['**/__tests__/**'],
+    ignores: sharedEmptyValueExclusions,
     rules: {
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
+        sharedEmptyValueRule,
         // Keep the base-config entries (per-rule overrides replace, not merge).
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",

@@ -1,10 +1,9 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Nullable, Optional } from '@aileron/declare';
 
 import { getBlueprintDerived } from '../../../../utils/cache/derivedRecords';
 import { collectIfGateReadNames } from './collectIfGateReadNames';
-
-/** Boolean conditions inspect no value or property identity. */
-const EMPTY_NAMES: readonly string[] = Object.freeze([]);
 
 /**
  * Cache a finite property-read proof without executing or decompiling a guard.
@@ -16,7 +15,7 @@ export const getIfGateReadNames = (
   condition: unknown,
   blueprint?: object,
 ): Optional<readonly string[]> => {
-  if (typeof condition === 'boolean') return EMPTY_NAMES;
+  if (typeof condition === 'boolean') return EMPTY_ARRAY;
   if (!condition || typeof condition !== 'object') return undefined;
   const record = blueprint
     ? getBlueprintDerived<

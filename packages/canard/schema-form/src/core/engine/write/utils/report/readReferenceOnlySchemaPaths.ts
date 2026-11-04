@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -5,9 +6,6 @@ import {
   JSONPointer as $,
   appendSegment,
 } from '@/schema-form/helpers/jsonPointer';
-
-/** Shared frozen result when no reference-only change is found. */
-const NO_PATHS: readonly string[] = Object.freeze([]);
 
 /**
  * Find changed opaque references only when all JSON schema data is equal.
@@ -30,7 +28,7 @@ export const readReferenceOnlySchemaPaths = (
     const left = item.previous;
     const right = item.next;
     if (typeof left !== typeof right || left === null || right === null)
-      return NO_PATHS;
+      return EMPTY_ARRAY;
     if (
       typeof left === 'function' ||
       typeof left === 'symbol' ||
@@ -39,13 +37,14 @@ export const readReferenceOnlySchemaPaths = (
       paths.push(item.path);
       continue;
     }
-    if (typeof left !== 'object' || typeof right !== 'object') return NO_PATHS;
+    if (typeof left !== 'object' || typeof right !== 'object')
+      return EMPTY_ARRAY;
     const leftArray = isArray(left);
-    if (leftArray !== isArray(right)) return NO_PATHS;
+    if (leftArray !== isArray(right)) return EMPTY_ARRAY;
     if (!leftArray) {
       const leftPrototype = Object.getPrototypeOf(left);
       const rightPrototype = Object.getPrototypeOf(right);
-      if (leftPrototype !== rightPrototype) return NO_PATHS;
+      if (leftPrototype !== rightPrototype) return EMPTY_ARRAY;
       if (leftPrototype !== Object.prototype && leftPrototype !== null) {
         paths.push(item.path);
         continue;
@@ -69,7 +68,7 @@ export const readReferenceOnlySchemaPaths = (
       }
     }
     if (haveDifferentKeys) {
-      return NO_PATHS;
+      return EMPTY_ARRAY;
     }
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {
       const key = leftKeys[index];

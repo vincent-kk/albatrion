@@ -2,6 +2,7 @@ import {
   filter as filterArray,
   map as mapArray,
 } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -21,7 +22,7 @@ import { getWatchPaths } from './getWatchPaths';
 
 /** Rule-free analyses share a read-only empty table. */
 const EMPTY_TABLE: DeriveRuleTable = Object.freeze({
-  rules: Object.freeze([]),
+  rules: EMPTY_ARRAY,
   byDeclaration: emptyReadonlyMap,
 });
 /** Keys whose string expression is evaluated by the first derive unit. */

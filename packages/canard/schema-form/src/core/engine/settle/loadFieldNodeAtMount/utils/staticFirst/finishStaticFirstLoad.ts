@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import {
@@ -10,10 +12,6 @@ import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
 import { indexFieldNodeWarning } from '../../../../record';
 import type { WriteOption } from '../../../../types/value';
 import { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
-
-/** Empty committed projections are shared without a per-load empty output list. */
-const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
-const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 
 /**
  * Publish root metadata and reserved warning output after the DFS has completed.
@@ -71,11 +69,11 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }
-  runtime.misfitRecords = records ? Object.freeze(records) : EMPTY_WARNINGS;
+  runtime.misfitRecords = records ? Object.freeze(records) : EMPTY_ARRAY;
   const memo = (runtime.misfitsMemo ??= new PathKeyedMap('path'));
   memo.clear();
   if (!runtime.misfitPaths.size)
-    memo.set($.Root, { commit, paths: EMPTY_PATHS });
+    memo.set($.Root, { commit, paths: EMPTY_ARRAY });
   else {
     const paths = [...runtime.misfitPaths].sort();
     memo.set($.Root, { commit, paths: Object.freeze(paths) });

@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import { mergeEffectiveSchema } from '../../../../../blueprint';
 import type {
@@ -10,9 +11,6 @@ import type {
   DiscriminatorEntrySelection,
   PreparedDiscriminatorEntry,
 } from './prepareDiscriminatorEntrySelection';
-
-/** All unknown or non-primitive tags share one stable no-match bucket. */
-const EMPTY_BUCKET: readonly number[] = Object.freeze([]);
 
 /**
  * Read or prepare one tag's ordered IDs and schema without retaining input values.
@@ -28,7 +26,7 @@ export const readDiscriminatorEntrySelection = (
   value: unknown,
   isAtomic: BlueprintOptions['isAtomic'],
 ): PreparedDiscriminatorEntry => {
-  const bucket = selection.buckets.get(value) ?? EMPTY_BUCKET;
+  const bucket = selection.buckets.get(value) ?? EMPTY_ARRAY;
   const cached = selection.prepared.get(bucket);
   if (cached) return cached;
   const ids = mapArray(

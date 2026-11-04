@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import {
@@ -18,9 +19,6 @@ import { resolveReference } from '../references/resolveReference';
 import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { validateControlGroups } from './validateControlGroups';
-
-/** Shared frozen empty expansion path. */
-const NO_VISITING: readonly string[] = Object.freeze([]);
 
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
@@ -45,7 +43,7 @@ export const collectDeclarations = (
   context: AnalysisContext,
   input: SchemaInput,
   path: string,
-  visiting: readonly string[] = NO_VISITING,
+  visiting: readonly string[] = EMPTY_ARRAY,
   ownerId?: number,
   result: PropertyDeclaration[] = [],
 ): PropertyDeclaration[] => {

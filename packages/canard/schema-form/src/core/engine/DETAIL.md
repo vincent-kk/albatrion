@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 참조 동일성 센티널을 제외한 공유 빈 읽기 전용 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+
 - Conditional fixed-first mount changes only structural selection work. Existing guard compilation, validation demand and callback scheduling retain the authored root schema and ordinary commit boundaries.
 
 - `AuthoredSchema` is a recursive union with a shared base. A discriminator requires an explicitly object or nullable-object host; other type arrays remain valid without that key. Non-object controls retain every other control type and its documentation.
@@ -127,7 +129,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 - **write**: adoptFieldNodeChain, createFormErrorRecord, dispatchBatch, dispatchClear, dispatchClearExternalErrors, dispatchClearSubtreeState, dispatchContextChange, dispatchFinishInput, dispatchInsert, dispatchLoadValidation, dispatchMount, dispatchPop, dispatchPush, dispatchRemove, dispatchRequest, dispatchResetForm, dispatchResetSubtree, dispatchSetExternalErrors, dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchUpdate, dispatchValidate, dispatchVisitSubtree, dispatchWriteInput, forEachFailureLeaf, readFieldNodeInteractionReset, readFieldNodeRevision, subscribeFieldNode; 형 FieldNodeListener.
 - **blueprint**: blueprint, collectBlueprintWarnings, mergeEffectiveSchema; 형 Blueprint, BlueprintChildEntry, BlueprintNode, BlueprintOptions, BlueprintSchema, BlueprintSchemaType, EffectiveSchema, SchemaTypeName.
-- **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot, scheduleValidationSlot; 형 ValidationIssue, Validator, ValidateFunction.
+- **validation**: compileEntryGuards, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot, scheduleValidationSlot; 형 ValidationIssue, Validator, ValidateFunction.
 - **record**: EMPTY_REVISION_LEDGER, FieldNodeEventType, FieldNodeRequestType; 형 Behavior, FieldNodeRecord, FieldNodeRuntime.
 - **settle**: readFieldNodeDefaultValue, readFieldNodeInactiveValues, readFieldNodeIsMisfit, readFieldNodeMisfits, readFieldNodeWatchValues, loadFieldNodeAtMount, resetFieldNodeForm.
 - **types**: ValidationMode, WriteOption, FieldNodeState; 형 AuthoredSchema, NodeStateFlags, NodeStrategy, SchemaControls, NonObjectSchemaControls.

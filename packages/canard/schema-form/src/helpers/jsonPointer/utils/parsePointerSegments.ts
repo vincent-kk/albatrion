@@ -1,10 +1,10 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import { JSONPointer as $, FragmentPrefix } from '../constants/JSONPointer';
 import type { PointerSegment } from '../constants/PointerOperator';
 import { parsePointerSegment } from './parsePointerSegment';
-
-const EMPTY_SEGMENTS: readonly PointerSegment[] = Object.freeze([]);
 
 /**
  * Decode an address string or an already split array into segments.
@@ -14,7 +14,7 @@ const EMPTY_SEGMENTS: readonly PointerSegment[] = Object.freeze([]);
 export const parsePointerSegments = (
   pointer: string | readonly string[],
 ): readonly PointerSegment[] => {
-  if (pointer === $.Root || pointer === $.Fragment) return EMPTY_SEGMENTS;
+  if (pointer === $.Root || pointer === $.Fragment) return EMPTY_ARRAY;
   if (typeof pointer !== 'string') {
     const offset = pointer[0] === $.Fragment ? 1 : 0;
     let segments: Optional<PointerSegment[]> = offset

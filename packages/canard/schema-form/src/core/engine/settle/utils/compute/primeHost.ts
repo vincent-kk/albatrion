@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
@@ -26,7 +27,7 @@ import { enterFieldNode } from './enterFieldNode';
 import { prepareFixedFirstHost } from './firstLoad/prepareFixedFirstHost';
 
 /** Empty active-declaration list: only ungated contributions apply. */
-const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
