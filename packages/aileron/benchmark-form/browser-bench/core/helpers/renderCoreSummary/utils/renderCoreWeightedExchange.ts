@@ -14,14 +14,14 @@ export const renderCoreWeightedExchange = (
 ) => [
   `### ${title} (${value.metric})`,
   '',
-  '| 사례 | 가중치 | k | 기준 µs | 후보 µs | Δ µs/event | 계산 | 기여 µs | 근거 |',
+  '| Case | Weight | k | Baseline µs | Candidate µs | Δ µs/event | Counted | Contribution µs | Basis |',
   '| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- |',
   ...value.rows.map(
     (row) =>
       `| ${row.id} | ${row.weight} | ${row.k} | ${formatCoreNumber(row.baselineMicros, 0)} | ${formatCoreNumber(row.candidateMicros, 0)} | ${formatCoreNumber(row.deltaMicros, 0)} | ${row.counted ? 'counted' : (row.reason ?? '—')} | ${row.contributionMicros.toFixed(0)} | ${row.basis} |`,
   ),
   '',
-  `가중 교환비 Σ(가중치 × Δ) = ${value.exchangeMicros.toFixed(0)} µs (폭 안 행은 0, 음수가 개선); 가중 기준 합 = ${value.weightedBaselineMicros.toFixed(0)} µs; 가중 후보 합 = ${value.weightedCandidateMicros.toFixed(0)} µs; 가중 비율 = ${formatCoreRatio(value.weightedRatio)}.`,
-  `제외 행: ${value.excluded.length ? value.excluded.join('; ') : '없음'}`,
+  `Weighted exchange Σ(weight × Δ) = ${value.exchangeMicros.toFixed(0)} µs (rows within noise count as 0, negative means improvement); weighted baseline sum = ${value.weightedBaselineMicros.toFixed(0)} µs; weighted candidate sum = ${value.weightedCandidateMicros.toFixed(0)} µs; weighted ratio = ${formatCoreRatio(value.weightedRatio)}.`,
+  `Excluded rows: ${value.excluded.length ? value.excluded.join('; ') : 'none'}`,
   '',
 ];

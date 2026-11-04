@@ -40,20 +40,20 @@ class ImportExtensionProcessor {
     try {
       await fs.access(targetDir);
     } catch (error) {
-      throw new Error(`디렉토리에 접근할 수 없습니다: ${targetDir}`);
+      throw new Error(`Cannot access directory: ${targetDir}`);
     }
 
-    console.log(`🚀 처리 시작: ${targetDir}`);
-    console.log(`📁 디렉토리 기반으로 모든 파일을 재귀적으로 탐색합니다...`);
+    console.log(`🚀 Starting processing: ${targetDir}`);
+    console.log(`📁 Recursively scanning all files in the directory...`);
 
     const allFiles = await this.getAllFiles(targetDir);
     const targetFiles = allFiles.filter((file) =>
       this.supportedExtensions.some((ext) => file.endsWith(ext)),
     );
 
-    console.log(`📄 전체 파일 수: ${allFiles.length}`);
-    console.log(`🎯 처리 대상 파일 수: ${targetFiles.length}`);
-    console.log(`📝 지원하는 확장자: ${this.supportedExtensions.join(", ")}`);
+    console.log(`📄 Total files: ${allFiles.length}`);
+    console.log(`🎯 Target files: ${targetFiles.length}`);
+    console.log(`📝 Supported extensions: ${this.supportedExtensions.join(", ")}`);
     console.log("");
 
     let processedCount = 0;
@@ -67,15 +67,15 @@ class ImportExtensionProcessor {
       // 진행상황 표시
       if (processedCount % 10 === 0 || processedCount === targetFiles.length) {
         console.log(
-          `⏳ 진행상황: ${processedCount}/${targetFiles.length} (${Math.round((processedCount / targetFiles.length) * 100)}%)`,
+          `⏳ Progress: ${processedCount}/${targetFiles.length} (${Math.round((processedCount / targetFiles.length) * 100)}%)`,
         );
       }
     }
 
     console.log("");
-    console.log(`✅ 처리 완료!`);
-    console.log(`📊 처리된 파일: ${processedCount}개`);
-    console.log(`🔧 수정된 파일: ${modifiedCount}개`);
+    console.log(`✅ Processing complete!`);
+    console.log(`📊 Processed files: ${processedCount}`);
+    console.log(`🔧 Modified files: ${modifiedCount}`);
   }
 
   private async getAllFiles(dir: string): Promise<string[]> {
@@ -112,7 +112,7 @@ class ImportExtensionProcessor {
         }
       }
     } catch (error) {
-      console.warn(`⚠️  디렉토리 읽기 실패: ${dir} - ${error}`);
+      console.warn(`⚠️  Failed to read directory: ${dir} - ${error}`);
     }
 
     return files;
@@ -126,12 +126,12 @@ class ImportExtensionProcessor {
       if (content !== updatedContent) {
         if (this.options.dryRun) {
           console.log(
-            `🔍 [DRY RUN] 변경될 파일: ${path.relative(this.options.targetDir, filePath)}`,
+            `🔍 [DRY RUN] File to be changed: ${path.relative(this.options.targetDir, filePath)}`,
           );
         } else {
           await fs.writeFile(filePath, updatedContent, "utf-8");
           console.log(
-            `✏️  업데이트됨: ${path.relative(this.options.targetDir, filePath)}`,
+            `✏️  Updated: ${path.relative(this.options.targetDir, filePath)}`,
           );
         }
         return true;
@@ -139,7 +139,7 @@ class ImportExtensionProcessor {
       return false;
     } catch (error) {
       console.error(
-        `❌ 파일 처리 중 오류 발생 ${path.relative(this.options.targetDir, filePath)}:`,
+        `❌ Error processing file ${path.relative(this.options.targetDir, filePath)}:`,
         error,
       );
       return false;
@@ -161,17 +161,17 @@ class ImportExtensionProcessor {
       (match, prefix, importPath, suffix, ending) => {
         matchCount++;
         console.log(
-          `🔍 매칭된 구문 ${matchCount} (from): ${match.replace(/\s+/g, " ").trim()}`,
+          `🔍 Matched statement ${matchCount} (from): ${match.replace(/\s+/g, " ").trim()}`,
         );
-        console.log(`   경로: ${importPath}`);
+        console.log(`   Path: ${importPath}`);
 
         const newPath = this.resolveImportPath(importPath, currentDir);
         const result = `${prefix}${newPath}${suffix}${ending}`;
 
         if (newPath !== importPath) {
-          console.log(`   변경됨: ${importPath} → ${newPath}`);
+          console.log(`   Changed: ${importPath} → ${newPath}`);
         } else {
-          console.log(`   변경 없음: ${importPath}`);
+          console.log(`   Unchanged: ${importPath}`);
         }
 
         return result;
@@ -191,17 +191,17 @@ class ImportExtensionProcessor {
 
         matchCount++;
         console.log(
-          `🔍 매칭된 구문 ${matchCount} (side-effect): ${match.trim()}`,
+          `🔍 Matched statement ${matchCount} (side-effect): ${match.trim()}`,
         );
-        console.log(`   경로: ${importPath}`);
+        console.log(`   Path: ${importPath}`);
 
         const newPath = this.resolveImportPath(importPath, currentDir);
         const result = `${prefix}${newPath}${suffix}${ending}`;
 
         if (newPath !== importPath) {
-          console.log(`   변경됨: ${importPath} → ${newPath}`);
+          console.log(`   Changed: ${importPath} → ${newPath}`);
         } else {
-          console.log(`   변경 없음: ${importPath}`);
+          console.log(`   Unchanged: ${importPath}`);
         }
 
         return result;
@@ -222,11 +222,11 @@ class ImportExtensionProcessor {
 
         matchCount++;
         console.log(
-          `🔍 매칭된 구문 ${matchCount} (malformed - from 키워드 누락): ${match.trim()}`,
+          `🔍 Matched statement ${matchCount} (malformed - missing from keyword): ${match.trim()}`,
         );
-        console.log(`   경로: ${importPath}`);
+        console.log(`   Path: ${importPath}`);
         console.log(
-          `   ⚠️  'from' 키워드가 누락된 것 같습니다. 수정을 권장합니다.`,
+          `   ⚠️  The 'from' keyword appears to be missing. A correction is recommended.`,
         );
 
         const newPath = this.resolveImportPath(importPath, currentDir);
@@ -239,7 +239,7 @@ class ImportExtensionProcessor {
         const result = `${correctedPrefix}${newPath}${suffix}${ending}`;
 
         console.log(
-          `   수정됨: ${match.trim()} → ${result.replace(/\s+/g, " ").trim()}`,
+          `   Corrected: ${match.trim()} → ${result.replace(/\s+/g, " ").trim()}`,
         );
 
         return result;
@@ -248,7 +248,7 @@ class ImportExtensionProcessor {
 
     if (matchCount === 0) {
       console.log(
-        `⚠️  매칭된 import/export 구문이 없습니다: ${path.relative(this.options.targetDir, currentFilePath)}`,
+        `⚠️  No matching import/export statements: ${path.relative(this.options.targetDir, currentFilePath)}`,
       );
 
       // 디버깅을 위해 파일 내용의 import/export 라인들을 출력
@@ -258,7 +258,7 @@ class ImportExtensionProcessor {
       );
 
       if (importExportLines.length > 0) {
-        console.log(`   파일에서 발견된 import/export 라인들:`);
+        console.log(`   Import/export lines found in the file:`);
         importExportLines.forEach((line, index) => {
           console.log(`     ${index + 1}: ${line.trim()}`);
         });
@@ -269,43 +269,43 @@ class ImportExtensionProcessor {
   }
 
   private resolveImportPath(importPath: string, currentDir: string): string {
-    console.log(`🔍 경로 처리 시작: ${importPath}`);
+    console.log(`🔍 Starting path processing: ${importPath}`);
 
     // 이미 확장자가 있는 경우 변경하지 않음
     if (this.supportedExtensions.some((ext) => importPath.endsWith(ext))) {
-      console.log(`   ✅ 이미 확장자 존재: ${importPath}`);
+      console.log(`   ✅ Extension already present: ${importPath}`);
       return importPath;
     }
 
     // 절대 경로 별칭 처리 (@/, ~/ 등)
     if (importPath.startsWith("@/") || importPath.startsWith("~/")) {
-      console.log(`   🎯 절대 경로 별칭 처리: ${importPath}`);
+      console.log(`   🎯 Processing absolute path alias: ${importPath}`);
       return this.resolveAliasPath(importPath, currentDir);
     }
 
     // node_modules 패키지나 다른 절대 경로는 변경하지 않음
     if (!importPath.startsWith(".")) {
-      console.log(`   📦 외부 패키지: ${importPath}`);
+      console.log(`   📦 External package: ${importPath}`);
       return importPath;
     }
 
     // 상대 경로 처리
-    console.log(`   📁 상대 경로 처리: ${importPath}`);
+    console.log(`   📁 Processing relative path: ${importPath}`);
     return this.resolveRelativePath(importPath, currentDir);
   }
 
   private resolveAliasPath(importPath: string, currentDir: string): string {
     const projectRoot = this.findProjectRoot(currentDir);
-    console.log(`   프로젝트 루트: ${projectRoot}`);
+    console.log(`   Project root: ${projectRoot}`);
 
     // monorepo에서 패키지 이름을 자동 감지
     const packageName = this.detectPackageName(projectRoot);
-    console.log(`   감지된 패키지 이름: ${packageName}`);
+    console.log(`   Detected package name: ${packageName}`);
 
     // @/{package-name}/ 패턴 처리
     if (importPath.startsWith(`@/${packageName}/`)) {
       const aliasPath = importPath.replace(`@/${packageName}/`, "");
-      console.log(`   패키지 내부 경로: ${aliasPath}`);
+      console.log(`   Package-internal path: ${aliasPath}`);
       return this.resolvePackageInternalPath(
         aliasPath,
         projectRoot,
@@ -315,7 +315,7 @@ class ImportExtensionProcessor {
 
     // 기존 @/ 또는 ~/ 처리 (fallback)
     const aliasPath = importPath.replace(/^[@~]\//, "");
-    console.log(`   일반 별칭 경로: ${aliasPath}`);
+    console.log(`   General alias path: ${aliasPath}`);
 
     // 가능한 경로들을 시도
     const possibleBasePaths = [
@@ -338,17 +338,17 @@ class ImportExtensionProcessor {
       // 예: "@albatrion/common-utils" → "common-utils"
       if (packageJSON.name) {
         const name = packageJSON.name.split("/").pop() || packageJSON.name;
-        console.log(`   package.json에서 감지된 이름: ${name}`);
+        console.log(`   Name detected in package.json: ${name}`);
         return name;
       }
 
       // package.json에 name이 없으면 디렉토리 이름 사용
       const dirName = path.basename(projectRoot);
-      console.log(`   디렉토리 이름 사용: ${dirName}`);
+      console.log(`   Using directory name: ${dirName}`);
       return dirName;
     } catch (error) {
       console.log(
-        `   package.json 읽기 실패, 디렉토리 이름 사용: ${path.basename(projectRoot)}`,
+        `   Failed to read package.json, using directory name: ${path.basename(projectRoot)}`,
       );
       return path.basename(projectRoot);
     }
@@ -359,7 +359,7 @@ class ImportExtensionProcessor {
     projectRoot: string,
     originalImportPath: string,
   ): string {
-    console.log(`   패키지 내부 경로 처리: ${aliasPath}`);
+    console.log(`   Processing package-internal path: ${aliasPath}`);
 
     // monorepo 패키지에서 일반적인 경로들
     const possibleBasePaths = [
@@ -382,9 +382,9 @@ class ImportExtensionProcessor {
     originalImportPath: string,
   ): string {
     for (const basePath of possibleBasePaths) {
-      console.log(`   시도하는 기본 경로: ${basePath}`);
+      console.log(`   Trying base path: ${basePath}`);
       const fullPath = path.join(basePath, aliasPath);
-      console.log(`   전체 경로: ${fullPath}`);
+      console.log(`   Full path: ${fullPath}`);
 
       // 1. 먼저 정확한 파일이 있는지 확인 (확장자 포함)
       for (const ext of this.defaultExtensions) {
@@ -392,7 +392,7 @@ class ImportExtensionProcessor {
         try {
           const stats = require("fs").statSync(exactFilePath);
           if (stats.isFile()) {
-            console.log(`   ✅ 정확한 파일 발견: ${exactFilePath}`);
+            console.log(`   ✅ Exact file found: ${exactFilePath}`);
             return originalImportPath + ext;
           }
         } catch (error) {
@@ -404,7 +404,7 @@ class ImportExtensionProcessor {
       try {
         const stats = require("fs").statSync(fullPath);
         if (stats.isDirectory()) {
-          console.log(`   📁 디렉토리 발견: ${fullPath}`);
+          console.log(`   📁 Directory found: ${fullPath}`);
 
           // index 파일들을 확인
           const indexFiles = ["index.ts", "index.tsx", "index.js", "index.jsx"];
@@ -412,7 +412,7 @@ class ImportExtensionProcessor {
             const indexPath = path.join(fullPath, indexFile);
             try {
               require("fs").statSync(indexPath);
-              console.log(`   ✅ 인덱스 파일 발견: ${indexPath}`);
+              console.log(`   ✅ Index file found: ${indexPath}`);
               return originalImportPath; // 디렉토리 import는 확장자를 붙이지 않음
             } catch (error) {
               // 해당 인덱스 파일이 없음
@@ -420,23 +420,23 @@ class ImportExtensionProcessor {
           }
 
           // 인덱스 파일이 없는 디렉토리
-          console.log(`   ⚠️  인덱스 파일이 없는 디렉토리: ${fullPath}`);
+          console.log(`   ⚠️  Directory without an index file: ${fullPath}`);
           // 디렉토리 내용 확인
           try {
             const dirContents = require("fs").readdirSync(fullPath);
-            console.log(`   디렉토리 내용: ${dirContents.join(", ")}`);
+            console.log(`   Directory contents: ${dirContents.join(", ")}`);
           } catch (error) {
-            console.log(`   디렉토리 읽기 실패: ${error.message}`);
+            console.log(`   Failed to read directory: ${error.message}`);
           }
           return originalImportPath; // 그래도 디렉토리이므로 확장자 없이 반환
         }
       } catch (error) {
-        console.log(`   ❌ 경로 접근 실패: ${fullPath} - ${error.message}`);
+        console.log(`   ❌ Failed to access path: ${fullPath} - ${error.message}`);
       }
     }
 
-    console.warn(`   ⚠️  확장자를 찾을 수 없습니다: ${originalImportPath}`);
-    console.log(`   시도한 모든 경로:`);
+    console.warn(`   ⚠️  Cannot find extension: ${originalImportPath}`);
+    console.log(`   All attempted paths:`);
     for (const basePath of possibleBasePaths) {
       const fullPath = path.join(basePath, aliasPath);
       console.log(`     - ${fullPath}`);
@@ -450,13 +450,13 @@ class ImportExtensionProcessor {
 
   private resolveRelativePath(importPath: string, currentDir: string): string {
     const absolutePath = path.resolve(currentDir, importPath);
-    console.log(`   절대 경로 변환: ${absolutePath}`);
+    console.log(`   Resolved absolute path: ${absolutePath}`);
 
     // 디렉토리인지 확인
     try {
       const stats = require("fs").statSync(absolutePath);
       if (stats.isDirectory()) {
-        console.log(`   ✅ 디렉토리: ${absolutePath}`);
+        console.log(`   ✅ Directory: ${absolutePath}`);
         return importPath; // 디렉토리는 확장자를 붙이지 않음
       }
     } catch (error) {
@@ -468,14 +468,14 @@ class ImportExtensionProcessor {
       const pathWithExt = absolutePath + ext;
       try {
         require("fs").statSync(pathWithExt);
-        console.log(`   ✅ 파일 발견: ${pathWithExt}`);
+        console.log(`   ✅ File found: ${pathWithExt}`);
         return importPath + ext;
       } catch (error) {
         // 해당 확장자로 파일이 없음
       }
     }
 
-    console.warn(`   ⚠️  확장자를 찾을 수 없습니다: ${importPath}`);
+    console.warn(`   ⚠️  Cannot find extension: ${importPath}`);
     return importPath;
   }
 
@@ -513,43 +513,43 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log("🔧 Import 확장자 자동 추가 도구");
+    console.log("🔧 Automatic import extension tool");
     console.log("");
-    console.log("사용법: tsx script.ts <디렉토리_경로> [--dry-run]");
+    console.log("Usage: tsx script.ts <directory_path> [--dry-run]");
     console.log("");
-    console.log("예시:");
+    console.log("Examples:");
     console.log(
-      "  tsx script.ts ./src              # src 디렉토리의 모든 파일 처리",
+      "  tsx script.ts ./src              # Process all files in the src directory",
     );
-    console.log("  tsx script.ts ./src --dry-run    # 변경사항만 미리보기");
+    console.log("  tsx script.ts ./src --dry-run    # Preview changes only");
     console.log(
-      "  tsx script.ts .                  # 현재 디렉토리의 모든 파일 처리",
-    );
-    console.log("");
-    console.log(
-      "📁 지정된 디렉토리의 모든 하위 디렉토리를 재귀적으로 탐색하여",
-    );
-    console.log(
-      "   모든 TypeScript/JavaScript 파일의 import/export 구문을 처리합니다.",
+      "  tsx script.ts .                  # Process all files in the current directory",
     );
     console.log("");
-    console.log("🎯 지원하는 파일: .ts, .tsx, .js, .jsx, .mjs, .cjs");
-    console.log("📦 지원하는 경로: 상대경로 (./, ../), 절대경로 별칭 (@/, ~/)");
-    console.log("⚠️  node_modules 디렉토리는 자동으로 제외됩니다.");
+    console.log(
+      "📁 Recursively scans every subdirectory of the specified directory",
+    );
+    console.log(
+      "   and processes import/export statements in all TypeScript/JavaScript files.",
+    );
+    console.log("");
+    console.log("🎯 Supported files: .ts, .tsx, .js, .jsx, .mjs, .cjs");
+    console.log("📦 Supported paths: relative paths (./, ../), absolute path aliases (@/, ~/)");
+    console.log("⚠️  The node_modules directory is automatically excluded.");
     process.exit(1);
   }
 
   const targetDir = path.resolve(args[0]);
   const dryRun = args.includes("--dry-run");
 
-  console.log("🔧 Import 확장자 자동 추가 도구");
+  console.log("🔧 Automatic import extension tool");
   console.log("=====================================");
-  console.log(`📂 대상 디렉토리: ${targetDir}`);
+  console.log(`📂 Target directory: ${targetDir}`);
 
   if (dryRun) {
-    console.log("🔍 DRY RUN 모드: 실제 파일은 변경되지 않습니다.");
+    console.log("🔍 DRY RUN mode: files will not be changed.");
   } else {
-    console.log("⚠️  실제 파일을 변경합니다. 백업을 권장합니다.");
+    console.log("⚠️  Files will be changed. A backup is recommended.");
   }
   console.log("");
 
@@ -566,7 +566,7 @@ async function main(): Promise<void> {
   try {
     await processor.processDirectory();
   } catch (error) {
-    console.error("❌ 처리 중 오류 발생:", error);
+    console.error("❌ Error during processing:", error);
     process.exit(1);
   }
 }

@@ -44,7 +44,7 @@ export function computeCoreWeightedExchange(
       : !comparison
         ? 'not measured'
         : unobservableLoad
-          ? '< 50 ms 관측 불가'
+          ? '< 50 ms not observable'
           : verdict === 'slower' || verdict === 'faster'
             ? undefined
             : (verdict ?? 'not measured');

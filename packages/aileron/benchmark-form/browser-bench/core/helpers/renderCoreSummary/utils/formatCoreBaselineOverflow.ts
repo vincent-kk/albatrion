@@ -11,6 +11,6 @@ export function formatCoreBaselineOverflow(
   return budget === null || budget === undefined
     ? 'N/A'
     : budget.overBudget
-      ? '예'
-      : '아니요';
+      ? 'yes'
+      : 'no';
 }

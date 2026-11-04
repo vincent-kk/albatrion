@@ -80,9 +80,9 @@ for (const fixture of [
       });
     }
 const lines = [
-  '# 목적별 fingerprint 공개 함수 성능',
+  '# Public fingerprint function performance by purpose',
   '',
-  '환경: ' +
+  'Environment: ' +
     runs[0].metadata.node +
     ', V8 ' +
     runs[0].metadata.v8 +
@@ -90,10 +90,10 @@ const lines = [
     runs[0].metadata.cpu +
     '.',
   '',
-  '5개 독립 process × 30 batch 평균. 표의 p50/p95는 요청별 지연이 아닌 batch 평균 분포입니다. cold 측정은 fresh identity이며 생성 비용은 timing 밖입니다. 순서를 회전·반전하고 출력 길이 및 lookup 결과를 소비합니다. 메타데이터에 실제 측정한 source SHA-256을 보존합니다.',
+  '5 independent processes × 30 batch means. Table p50/p95 values describe the distribution of batch means, not per-request latency. Cold measurements use fresh identities with creation cost outside timing. Execution order is rotated and reversed; output lengths and lookup results are consumed. Metadata preserves the SHA-256 of the source actually measured.',
   '',
-  'fast, sorted, safe+sort, safe-no-sort와 factory 경로를 각각 측정합니다. Map/Set은 safe에서 opaque identity이므로 graph 내용 비교와 동등 계약의 경쟁으로 해석하지 않습니다. 캐시 적중은 immutable 전제입니다.',
-  '캐시 적중은 이 혼합 harness의 짧은 배치만으로 함수 자체의 회귀를 판정하지 않습니다. 충분히 warm-up한 장기 배치 비교는 cacheHit.ts로 별도 실행합니다.',
+  'fast, sorted, safe+sort, safe-no-sort and factory paths are measured separately. Map/Set use opaque identity in safe, so comparisons with graph-content equality do not represent competition under equivalent contracts. Cache hits assume immutability.',
+  'Short batches in this mixed harness alone do not establish a regression in the cache-hit function itself. Long-batch comparisons with sufficient warm-up are run separately using cacheHit.ts.',
   '',
   '| fixture/phase/API | p50 µs | p95 µs | bytes | samples |',
   '| --- | ---: | ---: | ---: | ---: |',
@@ -114,9 +114,9 @@ for (const [name, row] of Object.entries(summary))
   );
 lines.push(
   '',
-  '## 대응 API 비율',
+  '## Corresponding API ratios',
   '',
-  '신규/기존의 process 중앙값 비율 평균과 95% t CI(df=4)입니다. 1보다 작을수록 빠릅니다. 모든 workload의 무회귀를 자동으로 주장하지 않습니다.',
+  'Values show the mean new/existing process-median ratio and a 95% t CI(df=4). Values below 1 mean faster execution. They do not automatically establish no regressions across all workloads.',
   '',
   '| fixture/phase | new / old | ratio [95% CI] |',
   '| --- | --- | --- |',

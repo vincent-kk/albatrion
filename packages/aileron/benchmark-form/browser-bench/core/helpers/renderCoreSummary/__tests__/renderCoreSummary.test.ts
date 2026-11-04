@@ -17,32 +17,36 @@ it('renders the legend units', () => {
   expect(text).toContain('16.7 ms');
   expect(text).toContain('µs');
   expect(text).toContain('RAIL');
-  expect(text).toContain('exact 쓰기의 조건부 평균');
-  expect(text).toContain('관측된 rAF 간격');
+  expect(text).not.toMatch(/[\uAC00-\uD7A3]/);
+  expect(text).toContain(
+    'An invalid baseline/control group is retried once, then marked void.',
+  );
+  expect(text).toContain('conditional mean of exact writes');
+  expect(text).toContain('observed rAF intervals');
   expect(text).toContain('< 50');
   expect(text).toContain('N/A');
-  expect(text).toContain('쓰기 1회당');
-  expect(text).toContain('비율 = 후보 / 기준');
+  expect(text).toContain('for 1 write');
+  expect(text).toContain('Ratio = candidate / baseline');
 });
 
 it('makes the local nominal cadence and observed frame counts visible', () => {
   const text = renderCoreSummary(createCoreComparedSummary());
   expect(text).toContain('frameIntervalNominalMs');
   expect(text).toContain('16.667 / 8.333');
-  expect(text).toContain('초과 프레임 수(기준/후보)');
-  expect(text).toContain('8.3 ms 프레임(기준/후보)');
-  expect(text).toContain('16.7 ms 기준판도 초과');
-  expect(text).toContain('8.3 ms 기준판도 초과');
+  expect(text).toContain('Over-budget frames (baseline/candidate)');
+  expect(text).toContain('8.3 ms frames (baseline/candidate)');
+  expect(text).toContain('16.7 ms baseline also over budget');
+  expect(text).toContain('8.3 ms baseline also over budget');
 });
 
 it('renders the five tables with N/A budgets and the weighted exchange', () => {
   const text = renderCoreSummary(createCoreComparedSummary());
   for (const title of [
-    '## 1. 경과·동기',
-    '## 2. 블로킹',
-    '## 3. 피드백',
-    '## 4. 프레임 관측·UX',
-    '## 5. 가중 교환비',
+    '## 1. Elapsed and synchronous work',
+    '## 2. Blocking',
+    '## 3. Feedback',
+    '## 4. Frame observations and UX',
+    '## 5. Weighted exchange',
   ])
     expect(text).toContain(title);
   expect(text).toContain(
@@ -50,7 +54,7 @@ it('renders the five tables with N/A budgets and the weighted exchange', () => {
   );
   expect(text).toContain('1000000');
   expect(text).toContain('1.200');
-  expect(text).toContain('mount-flat-500-none: < 50 ms 관측 불가');
+  expect(text).toContain('mount-flat-500-none: < 50 ms not observable');
   expect(text).toContain('54/3/3/0');
 });
 
@@ -111,10 +115,10 @@ it('renders N/A in the actual ratio and percent cells of a zero-baseline row', (
       .split('|')
       .slice(1, -1)
       .map((cell) => cell.trim());
-  expect(cells('## 1. 경과·동기')[4]).toBe('N/A');
-  expect(cells('## 1. 경과·동기')[6]).toBe('N/A');
-  expect(cells('## 2. 블로킹')[3]).toBe('N/A');
-  expect(cells('## 3. 피드백').slice(3, 5)).toEqual(['N/A', 'N/A']);
+  expect(cells('## 1. Elapsed and synchronous work')[4]).toBe('N/A');
+  expect(cells('## 1. Elapsed and synchronous work')[6]).toBe('N/A');
+  expect(cells('## 2. Blocking')[3]).toBe('N/A');
+  expect(cells('## 3. Feedback').slice(3, 5)).toEqual(['N/A', 'N/A']);
   delete row.metrics.feedbackCommittedMs.ratio;
   delete row.metrics.feedbackCommittedMs.deltaPercent;
   const missing = renderCoreSummary({
@@ -125,7 +129,7 @@ it('renders N/A in the actual ratio and percent cells of a zero-baseline row', (
   });
   expect(
     missing
-      .split('## 3. 피드백')[1]
+      .split('## 3. Feedback')[1]
       .split('\n')
       .find((line) => line.startsWith('| type-flat-500'))!
       .split('|')
