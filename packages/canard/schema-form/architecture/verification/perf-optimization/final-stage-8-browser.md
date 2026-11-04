@@ -175,3 +175,4 @@ compare; 20 runs and 3 warmup pages per variant.
 제외 행: mount-flat-500-none: not observable; mount-if-flat-500-none: not observable; rebuild-flat-500: 0.16.1 has no rebuild, so the row is excluded from this comparison.
 
 An invalid baseline/control group is retried once, then marked void.
+<!-- core-summary:end -->
