@@ -225,3 +225,97 @@ G-X3: 병합 뒤 `selectAffectedWorkspaces.mjs --tier pr --base a4aa6da57 --head
 - ERROR-041: 가드 실패의 단위는 게이트 하나입니다. README의 실패 격리 항목과 조건 절이 거짓 판정과 가드 실패를 구분해 적습니다.
 - design.md IR-10 `:600-601`(R2·R3)과 `:660-664`(보충): 가드는 조건 스키마만 컴파일하고, 루트 메타 스키마 검사는 전체 컴파일에서만 돌며, 가드 컴파일 실패는 자기 게이트에 한정됩니다. 이 PR은 이를 문서로만 옮겼습니다.
 - `src/app/plugin/INTENT.md`·`DETAIL.md`는 이미 `compileGuard`를 필수로 적고 있어 바꾸지 않았습니다.
+
+## PR-D — shared validator parity scenarios
+
+설계는 [IR-11 절의 PR-D 하위 절](../../plan/input-responsiveness/design.md#pr-d--shared-validator-parity-scenarios)입니다. 기준은 단계 브랜치 `a4aa6da57`(PR-A·PR-B 병합 뒤)입니다.
+
+### 커밋
+
+| 순서 | 커밋 | 내용 |
+| --- | --- | --- |
+| 1 | `9b2d510af` | 시나리오 패키지의 `src/validator/` 경계(형, 가드·검증·수명 시나리오, `index.ts`, INTENT·DETAIL)와 `"./validator"` 하위 경로 |
+| 2 | `b42c5ee18` | 세 플러그인의 parity 시험 세 파일(행을 리터럴로 적고 수집 단계에서 카탈로그와 대조)과 시험 도우미, `@aileron/schema-form-scenarios` 개발 의존, `yarn.lock`의 작업 공간 연결 세 줄, ajv7·ajv8 `CLAUDE.md` |
+| 3 | `fbb7ffdf7` | 시나리오 패키지 루트 INTENT·DETAIL의 범위 문장, design.md PR-D 하위 절, 이 절 |
+| — | `26e9adba2` | 단계 `f47444e76`(PR-C) 병합 |
+| 4 | `942d03b87` | 이 절의 G-X3 수치, `src/validation/DETAIL.md`의 개발 의존 문장 |
+| 5 | `8d05f59e7` | 병합 검토 반영: (iv) ajv7 모양의 거부 적합성 이동, 거부 행은 `compileGuard`만 단언, `releaseTwice`는 같은 사본 재컴파일 |
+| 6 | `2e94fde7a` | 검증자 지적 반영: 거부 이유 패턴, 빠진 동적 범위 사례와 가드 파일 분할, `wholeValidationScenarios` 이름, 공유 행 도우미, `copyOf` 분리, 문서 문장 |
+| 7 | 이 기록을 담은 커밋 | 최종 머리의 G-X3 수치와 이 표 |
+
+### 시나리오 수
+
+선언한 시나리오는 가드 36건(적합성 34, 관찰 2), 전체 검증 5건, 수명 7건입니다. 플러그인은 자기 진입점·방언·기능에 맞는 시나리오만 펼칩니다.
+
+| 파일 | ajv8 | ajv7 | ajv6 |
+| --- | --- | --- | --- |
+| `parity.guard.test.ts`(draft-07 진입점) | 11 | 11 | 11 |
+| `parity.guard.dynamic.test.ts`(2019·2020 진입점) | 26(적합성 24, 관찰 2) | 13(적합성 12, 관찰 1) | 해당 없음 |
+| `parity.validation.test.ts` | 15 | 8 | 4 |
+| `parity.lifetime.test.ts` | 22 | 15 | 8 |
+| 합계 | 74 | 47 | 23 |
+
+모든 파일이 관찰 행을 포함해 펼친 행 32건 이하입니다. 각 파일은 행을 시나리오 `id`·진입점·프로필·`directGuardCompile`의 리터럴 목록으로 적어 실행하지 않고도 셀 수 있고, 스키마와 기대값은 실행할 때 카탈로그에서 `id`로 찾습니다. 목록이 카탈로그를 펼친 결과와 다르면 수집 단계에서 실패합니다(한 행을 지워 실패를 확인한 뒤 되돌렸습니다). ajv6에는 관찰 행이 없습니다. 관찰 사례는 모두 2019 또는 2020 방언이기 때문입니다.
+
+### 빨간 실행
+
+현재 단계 코드에서 세 플러그인의 parity 시험은 모두 통과했습니다(ajv8 74, ajv7 47, ajv6 23). 적합성 사례 가운데 빨간 것은 없으므로 결함 발견은 없습니다.
+
+PR-A 전 ajv8 제품 코드(`40bb80e9a`의 `src`를 작업 기록의 스크래치 사본으로 풀고, 이 PR의 두 가드 시험과 도우미를 얹어 실행)에서는 가드 시험 37건 중 13건이 실패했습니다. 모두 `parity.guard.dynamic.test.ts`의 행이고, draft-07 파일 11건은 모두 통과했습니다. 실패한 행은 계획의 T7′ 표가 빨강이라고 적은 여덟 칸, PR-A가 만든 컴파일 거부 네 건, 그리고 PR-A의 빨간 실행이 이미 빨강으로 기록한 T8 (나) 2020의 참 값 한 건입니다.
+
+| 시나리오 | 2020 | 2019 | 기준의 관측 |
+| --- | --- | --- | --- |
+| 결함 A T1, 호스트 `{}` | 빨강 | 빨강 | 가드 true, 기대 false |
+| 결함 A T1, 호스트 `{ flag: true }` | 보호 | 보호 | — |
+| 결함 A T2, `next.kind === 'yes'` | 빨강 | 빨강 | 가드 false, 기대 true |
+| 결함 A T2, `next.kind === 'no'` | 보호 | 보호 | — |
+| 계획 T8 (가) 중첩 자원 사슬, 참 값 | 빨강 | 빨강 | 가드 false, 기대 true |
+| 계획 T8 (가) 중첩 자원 사슬, `ok`가 빠진 값 | 보호 | 보호 | 가드 false가 기대 false와 우연히 같음 |
+| 계획 T9 비동기 루트 앵커, 중첩 포인터 | 빨강 | 빨강 | 컴파일이 예외 없이 성공 |
+| 계획 T9 비동기 루트 앵커, 루트 `/if` | 보호 | 보호 | 기준의 프로브가 이미 거부 |
+| L8′ 사슬 밖 `$id` 래퍼의 거부 | 빨강 | 빨강 | 컴파일이 예외 없이 성공 |
+| 계획 T8 (나) 2019 자원 루트가 아닌 `$recursiveAnchor`의 거부(L12) | — | 빨강 | 컴파일이 예외 없이 성공 |
+| 계획 T8 (나) 2020 `$id` 없는 조상 앵커, 참 값 | 빨강 | — | 가드 false, 기대 true |
+| 계획 T8 (나) 2020 `$id` 없는 조상 앵커, `ok`가 빠진 값 | 보호 | — | 가드 false가 기대 false와 같음 |
+| VALIDATE-047 (iv) ajv7 모양의 거부 | — | 빨강 | 컴파일이 예외 없이 성공 |
+| 그 밖의 행(draft-07 파일 11건 포함)과 관찰 2건 | 통과 | 통과 | — |
+
+### 관찰 사례 (단언 없음)
+
+관찰 행은 `process.env.PARITY_OBSERVE`가 있을 때만 `console.info`로 표 한 줄을 냅니다. 아래는 그 변수를 켜고 node로 세 플러그인의 parity 시험을 한 번 실행한 현재 단계 코드의 관측값이며, 모든 행은 기본 프로필과 `directGuardCompile: true`입니다.
+
+| 시나리오 | 진입점 | ajv8 | ajv7 | ajv6 | AJV 전체 검증 |
+| --- | --- | --- | --- | --- | --- |
+| VALIDATE-047 (iv), ajv8 모양 | 2020 | true(어휘적 진입, 문자열 범위의 답) | 해당 없음 | 해당 없음 | 문자열 범위 true, 숫자 범위 false(PR-A 기록) |
+| L16 `if` 밖 비루트 `$recursiveAnchor`와 `if` 안 조상 선언 | 2019 | false | false | 해당 없음 | true |
+
+L16 사례에서는 README가 적은 대로 가드와 전체 검증이 다릅니다. L16 사례는 원본 시험이 없어 ajv8 README의 L16 설명으로 만든 스키마입니다.
+
+### CI 선택
+
+`selectAffectedWorkspaces.mjs --tier pr --base a4aa6da57 --head 9b2d510af`는 시나리오 패키지만 바뀐 범위에서 바뀐 작업 공간으로 `@aileron/schema-form-scenarios` 하나, 의존 작업 공간 열두 개를 골랐고 그 안에 세 AJV 플러그인이 있습니다. 대체 사유는 없습니다. 이 범위에서는 플러그인이 아직 시나리오 패키지에 의존하지 않으므로, 플러그인은 `@canard/schema-form`을 거쳐 선택되었습니다. 둘째 커밋 뒤에는 `scripts/ci/helpers/workspaces/readWorkspaces.mjs:33`이 개발 의존을 그래프에 넣고 `scripts/ci/helpers/selection/scanImportDependencies.mjs:15`가 그 목록에서 간선을 만들므로 직접 간선도 생깁니다.
+
+### 계획 이탈
+
+- codex 설계 검토(gates.md G-X2의 PR-D 행)와 조정자 결정을 브리프보다 앞세워 반영했습니다. L8′ 사슬 밖 래퍼와 계획 T8 (나)의 2019 비루트 앵커는 관찰이 아니라 `expected: 'rejects'` 적합성 사례이고, 2019-09 동적 어휘가 있는 진입점에만 적용합니다. merge 검토에서 사례 (iv)의 ajv7 모양도 사슬과 참조의 조상이 `node`를 선언하지 않아 두 플러그인이 컴파일 단계에서 거부하므로 거부 적합성 사례로 옮겼습니다. 관찰 묶음은 사례 (iv)의 ajv8 모양과 L16만 남겼고, 브리프가 적은 북엔딩(L13) 관찰은 원본 시험이 없어 빼었습니다. 관찰은 파일에 쓰지 않고 `PARITY_OBSERVE`가 있을 때만 `console.info`로 냅니다.
+- 거부 행은 `compileGuard` 호출만 감싸 예외를 단언하고 돌려받은 가드를 부르지 않습니다. `releaseTwice` 단계는 한 사본으로 release 두 번, 컴파일과 검증, release 두 번, 같은 사본의 재컴파일과 검증을 차례로 합니다.
+- 가드 시나리오의 기대값 형에 관찰 사례용 `null`을 더했습니다. 브리프의 형은 `boolean | 'rejects'`였습니다.
+- 수명 단계 어휘에 IR-10 T9 (가)·(다)를 위한 `keepConsumerSchemaAfterSameIdFailure`와 `keepConsumerMetaSchemaAfterSameIdFailure`를 더했습니다. T9 (다)의 원본 단언(AJV 내부 `schemas` 순서와 `makeSibling` 직접 호출)은 공개 API로 옮길 수 없어, 같은 `$id`의 두 번째 살아 있는 루트가 소비자 등록을 복사한 형제 인스턴스에서 컴파일되는지로 바꿨습니다.
+- 다중 값 원본 사례는 판정을 가르는 값을 옮겼고, 검증자 지적에 따라 T8 (가)의 `ok`가 빠진 값, L8′ 래퍼의 2020 변형, T8 (나)의 2020 두 값을 더했습니다. 32건 상한은 이제 사례를 줄이지 않고 가드 묶음을 두 파일로 나누는 것으로 지킵니다. IR-10 사례는 draft-07 진입점에만 적용합니다. 원본 시험은 그대로 남아 있으므로 지운 검증은 없습니다.
+- 거부 사례는 `failure` 정규식으로 거부 이유까지 단언합니다(비동기는 `async schema`, 묶이지 않은 참조는 `is not bound`). 한 패턴을 `zzz`로 바꿔 해당 행이 실패하는 것을 확인한 뒤 되돌렸습니다.
+- 행 도우미 `expandParityRows`와 `indexDeclaredRows`는 세 플러그인의 공통 부류인 시나리오 `validator` 부류의 `utils/`로 옮겼습니다. 조정자 지시는 둘 다 내보내는 것이었지만, 바깥 소비자가 있는 `indexDeclaredRows`와 `ParityRow` 형만 내보냈습니다. `expandParityRows`의 소비자는 같은 부류 안의 `indexDeclaredRows`뿐이고, 저장소 원칙은 바깥 소비자가 없는 내보내기를 결함으로 봅니다. `copyOf`, `readValidation`, `runLifetimeStep`은 플러그인 형에 묶이므로 플러그인마다 남았고, `copyOf`는 자기 파일로 나눴습니다.
+- 검증 묶음의 이름을 `validationScenarios`에서 `wholeValidationScenarios`로 바꿨습니다. 패키지 루트의 `validationScenarios`(폼 시나리오)와 이름이 겹치지 않게 하려는 것입니다.
+- 계획의 T7′대로 T8 (가)와 T9를 결함 A 사례(T1·T2)와 함께 넣었습니다.
+- `yarn install`은 저장소 설정 `enableImmutableInstalls: true` 때문에 처음 호출이 잠금 파일을 바꾸지 못하고 끝났고, `--no-immutable`로 한 번 더 호출했습니다. 첫 호출이 보여 준 변경과 최종 `yarn.lock` 변경은 같은 작업 공간 연결 세 줄입니다.
+- 지정된 의존 폐쇄 빌드는 schema-form의 typecheck에서 멈췄습니다. 그 시험이 세 플러그인의 dist 형을 읽는데 플러그인 빌드가 그 뒤에 오기 때문입니다. 세 플러그인을 따로 빌드한 뒤 schema-form typecheck는 종료 코드 0입니다.
+- ajv6에는 `CLAUDE.md`가 없어 parity 문장을 ajv7·ajv8에만 더했습니다.
+
+### 관문
+
+| 관문 | 결과 |
+| --- | --- |
+| G-D1 공유 | `index.ts`가 이름으로 내보내고(세 묶음, `indexDeclaredRows`, 소비자가 쓰는 형), 세 플러그인의 `package.json` 개발 의존에 `@aileron/schema-form-scenarios`가 있으며, 세 플러그인의 parity 시험이 `@aileron/schema-form-scenarios/validator`를 가져옵니다. |
+| G-D2 세 시험 | parity 파일: ajv8 4파일 74건, ajv7 4파일 47건, ajv6 3파일 23건 통과. 플러그인 전체: ajv8 32파일 534건, ajv7 27파일 248건, ajv6 21파일 164건 통과. 시나리오 패키지 자체 시험 15파일 45건 통과. 세 플러그인과 시나리오 패키지의 typecheck·lint 종료 코드 0. |
+| G-D2′ 묶음 분리 | 적합성 행은 단언하고 관찰 행은 기록만 합니다. 관찰 표는 위에 있습니다. |
+| G-D3 CI 선택 | 위 CI 선택 절과 같습니다. |
+| G-X3 저장소 점검 계획 | 최종 머리 `2e94fde7a`(기준 `f47444e76`)에서 52단계가 모두 통과했고 종료 코드는 0입니다(schema-form 단위 4299건, ajv8 534건, ajv7 248건, ajv6 164건, 시나리오 패키지 45건). 앞선 머리 `26e9adba2`(병합 직후)와 `fbb7ffdf7`(병합 전)에서도 같은 52단계가 모두 통과했습니다. |

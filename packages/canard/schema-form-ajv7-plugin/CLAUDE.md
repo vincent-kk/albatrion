@@ -20,6 +20,7 @@ yarn storybook         # Storybook development server (port 6006)
 - `src/validator/createGuardCompiler.ts` — synchronous pointer guards
 - `src/validator/utils/registerSchemaRoot.ts` — registration shared by validation and guards
 - `src/validator/utils/transformErrors.ts` — AJV errors to `ValidationIssue`
+- `src/__tests__/parity.{guard,guard.dynamic,validation,lifetime}.test.ts` run the shared validator parity scenarios of `@aileron/schema-form-scenarios/validator` (a devDependency) on this plugin's entries; conformance rows assert, observation rows only record (IR-11 PR-D).
 - `src/validator/utils/resolveAjvConstructor.ts` — constructor extraction from the AJV default import
 
 ## Key Details

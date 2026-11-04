@@ -75,6 +75,7 @@
     "ajv": "^8.0.0"
   },
   "devDependencies": {
+    "@aileron/schema-form-scenarios": "workspace:*",
     "@canard/schema-form": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

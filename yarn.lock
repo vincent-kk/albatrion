@@ -2020,6 +2020,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-ajv6-plugin@workspace:packages/canard/schema-form-ajv6-plugin"
   dependencies:
+    "@aileron/schema-form-scenarios": "workspace:*"
     "@canard/schema-form": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
@@ -2037,6 +2038,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-ajv7-plugin@workspace:packages/canard/schema-form-ajv7-plugin"
   dependencies:
+    "@aileron/schema-form-scenarios": "workspace:*"
     "@canard/schema-form": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
@@ -2054,6 +2056,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@canard/schema-form-ajv8-plugin@workspace:packages/canard/schema-form-ajv8-plugin"
   dependencies:
+    "@aileron/schema-form-scenarios": "workspace:*"
     "@canard/schema-form": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"

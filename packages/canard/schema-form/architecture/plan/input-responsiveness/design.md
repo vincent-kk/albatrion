@@ -726,3 +726,30 @@ The codex design check returned FAIL; every finding was applied before implement
 
 - 【추론】 정적 비객체 호스트의 `if`는 경고 `IfOnNonObjectHost`, 판정은 그대로 `{}` (2026-11-04). 허용 형에 object가 없는 호스트 선언(`kind`가 object·virtual이 아니고, union이면 `schemaType`에 object가 없음)의 `if`는 판정을 그대로 `{}`로 하되 청사진 경고 `IfOnNonObjectHost`(`SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`)를 낸다. 경고는 `if`의 존재만 보고 내용은 읽지 않으며, 객체 종류 호스트의 값이 실행 시 객체가 아닌 경우는 경고하지 않는다.
 - 【추론】 IR-11 PR-C: 경고 코드 `IfOnNonObjectHost`(`SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`)를 `FormWarningCode`의 마지막 항목으로 더한다. 발생 조건은 허용 형에 object가 없는 호스트 선언(`kind`가 object·virtual이 아니고, union이면 `schemaType`에 object가 없음)에 `if`가 있는 것이고, 위치는 선언의 `#/…/if`, details는 `{ kind }`이며 `reason`은 없다. 중복은 `collect` 호출 한 번 안에서 (code, schemaPath, details.keyword) 키로 억제되고(`collectBlueprintWarnings.ts:49-53`) 새 상태는 더하지 않는다. 이 경고의 details에는 keyword가 없으므로 같은 `#/…/if` 위치의 경고는 `collect` 호출마다 하나이며, 다른 수집기에는 캐시된 진단 재생으로 다시 전달된다. 판정은 SETTLE-021대로 `{}`이다. 경고 코드 수는 21에서 22가 되고 패키지 최상위 export 수 97은 그대로다.
+
+### PR-D — shared validator parity scenarios
+
+- 사실. 소유자 원문(2026-11-04)은 "ajv 버전 세개가 "동일하게"동작하는걸 원하는건 아는데, 최소한 우리 form에서 동일한 기대를 충족했으면 하는데."입니다. 세 AJV 플러그인은 각자 시험을 갖고 있었지만, 폼이 플러그인에 거는 기대를 한 목록으로 적고 세 플러그인이 같은 목록을 돌리는 장치는 없었습니다.
+- 규칙(R6, R6′). 폼의 기대는 `@aileron/schema-form-scenarios/validator`의 시나리오 목록 하나로 적습니다. 묶음은 셋입니다: 가드 판정(`(스키마, 포인터, 호스트 값) → 불리언 또는 컴파일 거부`), 전체 검증(`(스키마, 값) → 적합 여부와 오류 dataPath 집합`), 수명(compile 전 compileGuard, release 멱등, 같은 `$id` 두 루트 격리, 등록 실패 뒤 같은 사본 재컴파일, 소비자 등록의 보존). 각 시나리오는 방언, 진입점(ajv7의 2019는 Ajv2019 바인딩), 검사 프로필, `directGuardCompile`, 필요 기능을 선언하고, 플러그인은 자기 진입점이 갖춘 조건의 시나리오만 돌립니다.
+- 보장. 적합성 묶음은 세 플러그인이 같은 기대값을 내야 하는 범위이며, 기대값은 플러그인과 인스턴스를 공유하지 않는 별도 AJV 전체 검증의 관측값입니다. PR-A의 지원 조건 안에서만 가드 판정을 기대값으로 둡니다. 지원 밖이라도 플러그인이 컴파일 단계에서 반드시 거부하는 형태(L8′ 사슬 밖 `$id` 래퍼, L12 자원 루트가 아닌 `$recursiveAnchor`, 사슬과 참조의 조상이 이름을 선언하지 않는 (iv)의 ajv7 모양)는 거부를 기대값으로 하는 적합성 사례이고, 소비자는 `compileGuard` 호출만 감싸 거부를 단언합니다. 판정이 정해지지 않은 형태((iv)의 ajv8 모양, L16)는 관찰 묶음에 두어 플러그인별 관측값만 기록하고 단언하지 않습니다. 플러그인 간 같은 답은 지원 밖에서 계약이 아닙니다(F19).
+- 지원 계약(D1). `bind`는 첫 사용 전에 한 번 부르는 것이 지원 계약입니다. 이미 등록된 루트가 있는 상태의 재바인딩은 플러그인마다 다르며(ajv8은 등록을 원래 인스턴스에 유지, ajv7·ajv6은 등록소를 비움) 적합성 보장에 넣지 않습니다. 검사 프로필 `custom`은 새 모듈에 소비자 인스턴스를 한 번 bind한 상태입니다.
+- 범위 밖. 비객체 호스트의 `{}` 평가(SETTLE-021)는 엔진 동작이라 목록에 없습니다.
+- 변경. 시나리오 패키지의 새 경계 `src/validator/`와 `"./validator"` 하위 경로, 세 플러그인의 `@aileron/schema-form-scenarios` 개발 의존과 `src/__tests__/parity.*.test.ts`(ajv7·ajv8은 가드 묶음을 draft-07 파일과 동적 어휘 파일로 나눔), ajv7·ajv8 `CLAUDE.md`입니다. 플러그인 제품 코드는 바뀌지 않습니다.
+
+#### 구현 차이, 계약 아님 (D5)
+
+| 항목 | ajv8 | ajv7 | ajv6 |
+| --- | --- | --- | --- |
+| 진입점과 방언 | default(draft-07)·2019·2020 진입점 | 기본 draft-07, 2019는 Ajv2019 바인딩 | draft-07만 |
+| 등록된 루트가 있을 때의 `bind` | 등록을 원래 인스턴스에 유지 | 등록소를 새로 만듦 | 등록소를 새로 만듦 |
+| 가드 반환값 검사 | `!!validate(value)` | 불리언이 아니면 TypeError | 불리언이 아니면 TypeError |
+| 동적 앵커 호출 인자 | `instancePath` | `dataPath` | 동적 어휘 없음 |
+| 기본 `allowUnionTypes` | 켬 | 플러그인 기본값이 설정하지 않음(`strict: false`) | 옵션 없음 |
+| 사례 (iv) ajv8 모양(2020) | 어휘적 진입의 답(관찰) | 해당 없음 | 해당 없음 |
+| 사례 (iv) ajv7 모양(2019) | 컴파일 거부(적합성) | 컴파일 거부(적합성) | 해당 없음 |
+
+AJV 동기 검증 함수는 불리언만 돌려주므로 반환값 검사의 차이는 관찰 가능한 동작 차이를 만들지 않습니다. 나머지 행은 지원 계약 밖이거나 방언 범위의 차이이며, 폼의 기대(적합성 묶음)는 세 플러그인에서 같습니다.
+
+#### Ledger supplements (PR-D)
+
+- 【추론】 IR-11 PR-D: 폼이 검증기 플러그인에 거는 기대는 `@aileron/schema-form-scenarios/validator`의 가드·검증·수명 시나리오 목록 하나로 적고, ajv6·ajv7·ajv8 플러그인이 같은 목록을 자기 진입점(ajv7의 2019는 Ajv2019 바인딩)으로 돌린다. 적합성 묶음의 기대값은 별도 AJV 전체 검증의 관측값이고 세 플러그인이 같은 값을 내야 한다. 컴파일 거부가 보장된 지원 밖 형태(L8′, L12, 이름이 묶이지 않는 (iv)의 ajv7 모양)는 거부를 단언하고, 판정이 정해지지 않은 형태((iv)의 ajv8 모양, L16)는 관찰 묶음으로 기록만 하며 플러그인 간 같은 답을 요구하지 않는다. `bind`의 지원 계약은 첫 사용 전 한 번이고, 등록된 루트가 있는 상태의 재바인딩 차이는 구현 차이이며 계약이 아니다.
