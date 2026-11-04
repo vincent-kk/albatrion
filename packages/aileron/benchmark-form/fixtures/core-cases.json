@@ -8,5 +8,6 @@
   "type-flat-500-validate-nonburst",
   "type-array-1000-validate-nonburst",
   "first-key-flat-500-validate",
+  "first-key-flat-500-validate-after-load",
   "rebuild-flat-500"
 ]

@@ -47,7 +47,7 @@ let marker: CoreMarkerObservation | undefined;
 const reports: CoreValidationReport[] = [];
 /** Current public form handle is resolved after every root replacement. */
 let mounted: MountedCoreFixture | undefined;
-/** First-key latency starts inside the first-paint hook, before the driver is called. */
+/** First-key latency starts before the driver, after any requested load-validation wait. */
 let firstKey: Promise<number> | undefined;
 /** Mount and first-key are observed inside prepare; run only reports them. */
 let prepared: CoreOperationResult | undefined;

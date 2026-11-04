@@ -44,6 +44,11 @@
     "k": 1,
     "basis": "One first key per session: the owner rule's one-off first-write term, kept as its own row."
   },
+  "first-key-flat-500-validate-after-load": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One first key after load validation settles; kept alongside the immediate first key at the same weight to distinguish load overlap from settled-load input cost."
+  },
   "rebuild-flat-500": {
     "weight": 5,
     "k": 1,

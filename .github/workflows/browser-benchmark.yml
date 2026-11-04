@@ -8,9 +8,9 @@ on:
         required: false
         default: ""
       cases:
-        description: "Comma-separated core case IDs; empty selects all ten"
+        description: "Comma-separated core case IDs; empty selects all eleven"
         required: false
-        default: ""
+        default: "mount-flat-500-none,mount-flat-500-validate,mount-if-flat-500-none,mount-if-flat-500-validate,mount-nested-d5-f4-validate,mount-array-1000-validate,type-flat-500-validate-nonburst,type-array-1000-validate-nonburst,first-key-flat-500-validate,first-key-flat-500-validate-after-load,rebuild-flat-500"
       runs:
         description: "Measured fresh pages per case and variant"
         required: false

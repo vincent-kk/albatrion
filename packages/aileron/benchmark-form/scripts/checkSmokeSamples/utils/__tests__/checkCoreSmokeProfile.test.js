@@ -9,17 +9,18 @@ const remaining = [
   'mount-nested-d5-f4-validate',
   'type-array-1000-validate-nonburst',
 ];
-/** The mandatory five-case smoke keeps its two-run contract. */
+/** The mandatory six-case smoke keeps its two-run contract. */
 const required = [
   'mount-flat-500-validate',
   'mount-flat-500-none',
   'mount-array-1000-validate',
   'type-flat-500-validate-nonburst',
   'first-key-flat-500-validate',
+  'first-key-flat-500-validate-after-load',
 ];
 
 describe('checkCoreSmokeProfile', () => {
-  it('keeps the default five-case two-run requirement', () => {
+  it('keeps the default six-case two-run requirement', () => {
     expect(
       checkCoreSmokeProfile(
         { runs: 2, warmup: 1, cases: required.map((id) => ({ id })) },

@@ -12,7 +12,7 @@ export interface CoreFixture {
   measuredPath: string | null;
   /** Complete primitive control count required before a sample can finish. */
   expectedInputs: number;
-  /** Measured public operation; first-key begins at the initial paint hook. */
+  /** Measured public operation; first-key is driven from the initial paint hook, after any case-specific load wait. */
   operation: 'mount' | 'type' | 'first-key' | 'rebuild';
   /** Enable the public OnChange validation mode. */
   validation: boolean;

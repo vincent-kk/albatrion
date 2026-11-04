@@ -2,11 +2,19 @@ import { expect, it } from 'vitest';
 
 import { parseCoreOptions } from '../parseCoreOptions';
 
-it('defaults to ten core cases, twenty runs and three warmups', () => {
+it('defaults to eleven core cases, twenty runs and three warmups', () => {
   const options = parseCoreOptions([]);
-  expect(options.cases).toHaveLength(10);
+  expect(options.cases).toHaveLength(11);
   expect(options.runs).toBe(20);
   expect(options.warmup).toBe(3);
+});
+
+it('accepts both first-key variants through the canonical case list', () => {
+  const cases = [
+    'first-key-flat-500-validate',
+    'first-key-flat-500-validate-after-load',
+  ];
+  expect(parseCoreOptions(['--cases', cases.join(',')]).cases).toEqual(cases);
 });
 
 it('accepts spaced and equals arguments including zero warmups', () => {

@@ -7,7 +7,7 @@ import { parseScriptArgs } from './utils/parseScriptArgs.mjs';
 import { readCoreArtifacts } from './utils/readCoreArtifacts.mjs';
 import { rebuildCoreSummary } from './utils/rebuildCoreSummary.mjs';
 
-/** Named workload selection; omitted profile preserves the mandatory five-case smoke. */
+/** Named workload selection; omitted profile preserves the mandatory six-case smoke. */
 const options = parseScriptArgs(process.argv.slice(2), ['--profile']);
 /** Raw-sample and summary artifact locations supplied by the caller. */
 const [samplesPath, summaryPath] = options._.split('\n');
