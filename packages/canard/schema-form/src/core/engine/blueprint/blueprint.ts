@@ -14,6 +14,7 @@ import { replayBlueprintDiagnostics } from './utils/diagnostics/replayBlueprintD
 import { markCandidateDescendants } from './utils/features/markCandidateDescendants';
 import { markInactiveValueNodes } from './utils/features/markInactiveValueNodes';
 import { markKeepDescendants } from './utils/features/markKeepDescendants';
+import { buildFixedFirstLoadPlan } from './utils/staticFirst/buildFixedFirstLoadPlan';
 import { validateChildTargets } from './validateChildTargets';
 import { validateShape } from './validateShape';
 
@@ -127,6 +128,14 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
+  const fixedFirstLoadPlan = buildFixedFirstLoadPlan(
+    result,
+    context.staticFirstLoad,
+  );
+  if (fixedFirstLoadPlan)
+    Object.defineProperty(result, 'fixedFirstLoadPlan', {
+      value: fixedFirstLoadPlan,
+    });
   Object.defineProperty(result, 'staticFirstLoadEligible', {
     value:
       context.staticFirstLoad &&

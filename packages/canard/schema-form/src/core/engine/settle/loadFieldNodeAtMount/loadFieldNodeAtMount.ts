@@ -5,7 +5,9 @@ import type { WriteOption } from '../../types/value';
 import { prepareGateSelection } from '../utils/compute/childSelection/prepareGateSelection';
 import { setLoadValue } from '../utils/loadValues/setLoadValue';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { canLoadFixedFirstTree } from './utils/staticFirst/canLoadFixedFirstTree';
 import { canLoadStaticFirstTree } from './utils/staticFirst/canLoadStaticFirstTree';
+import { loadFixedFirstTree } from './utils/staticFirst/loadFixedFirstTree';
 import { loadStaticFirstTree } from './utils/staticFirst/loadStaticFirstTree';
 
 /**
@@ -31,6 +33,8 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
     )
       prepareGateSelection(blueprint);
     if (canLoadStaticFirstTree(root, value)) loadStaticFirstTree(root, option);
+    else if (canLoadFixedFirstTree(root, value))
+      loadFixedFirstTree(root, option);
     else writeFieldNode(root, value, 'load', option);
   } finally {
     if (root.runtime.revisionTransitions !== previousTransitions)
