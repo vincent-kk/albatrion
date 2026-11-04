@@ -7,7 +7,10 @@ import {
   useSyncExternalStore,
 } from 'react';
 
+import type { Nullable } from '@aileron/declare';
+
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
+import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
 
@@ -23,6 +26,8 @@ const INPUT_TRACKING_EVENTS_WITHOUT_REFRESH =
 
 /** Refresh waits while the raw input owns an active IME composition. */
 const COMPOSING = 1;
+/** Mask that clears the composing bit from the refresh deferral state. */
+const CLEAR_COMPOSING_MASK = ~COMPOSING;
 /** Refresh waits for the child ownership observed by render, subscribe or delivery. */
 const MOUNTED_CHILDREN = 2;
 
@@ -46,15 +51,21 @@ const MOUNTED_CHILDREN = 2;
  * @param mountedChildren - Count of committed child proxies owned by the input
  * @param commitTerminalChildren - Commit marker from `useTerminalChildren`; the focus/select layout
  *        effect calls it first, so the input keeps a single layout effect of its own
- * @returns Container ref, input key and composition handlers that preserve the composing input
+ * @param hydrationCommitRef - Hydration detector to settle in that same layout
+ *        effect before React checks the server snapshot in its passive phase
+ * @param virtualizationManager - Records this slot's node only when a real
+ *        input is present; hidden proxies and placeholders never own this commit
+ * @returns Container ref, input key, composition handlers and stable re-render dispatch shared with held-display releases
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
   commitTerminalChildren: () => void,
+  hydrationCommitRef?: RefObject<boolean>,
+  virtualizationManager?: VirtualizationManager | null,
 ) => {
   const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
-  const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
+  const [, rerender] = useReducer((value: number) => value + 1, 0);
   const ref = useRef<HTMLDivElement>(null);
   const refreshDeferral = useRef(0);
   refreshDeferral.current =
@@ -91,15 +102,17 @@ export const useFieldInputControl = <Node extends FieldNode>(
     refreshDeferral.current |= COMPOSING;
   }, []);
   const handleCompositionEnd = useCallback(() => {
-    refreshDeferral.current &= ~COMPOSING;
+    refreshDeferral.current &= CLEAR_COMPOSING_MASK;
     if (
       mountedChildren.current === 0 &&
       generation.current !== node.revision(FieldNodeEventType.RequestRefresh)
     )
-      releaseComposition();
+      rerender();
   }, [node, mountedChildren]);
   useLayoutEffect(() => {
     commitTerminalChildren();
+    if (hydrationCommitRef) hydrationCommitRef.current = true;
+    virtualizationManager?.markRevealed(node);
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & FieldNodeEventType.RequestFocus)
@@ -110,12 +123,19 @@ export const useFieldInputControl = <Node extends FieldNode>(
       }
     });
     return unsubscribe;
-  }, [node, ref, commitTerminalChildren]);
+  }, [
+    node,
+    ref,
+    commitTerminalChildren,
+    hydrationCommitRef,
+    virtualizationManager,
+  ]);
   return [
     ref,
     generation.current,
     handleCompositionStart,
     handleCompositionEnd,
+    rerender,
   ] as const;
 };
 
@@ -125,8 +145,8 @@ type SelectableElement = HTMLInputElement | HTMLTextAreaElement;
 type FocusableElement = SelectableElement | HTMLButtonElement;
 
 const queryElement = (
-  container: HTMLElement | null,
-): FocusableElement | null => {
+  container: Nullable<HTMLElement>,
+): Nullable<FocusableElement> => {
   if (!container) return null;
   const element = container.querySelector<FocusableElement>(
     FOCUS_SELECT_SELECTOR,

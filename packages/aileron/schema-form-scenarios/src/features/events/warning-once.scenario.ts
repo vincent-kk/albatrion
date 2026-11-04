@@ -7,11 +7,11 @@ export const warningOnceScenario: FormScenario = {
   schema: { type: 'number' },
   initialValue: 1,
   steps: [
-    { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'not a number' }], expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.TYPE_MISMATCH'] } },
+    { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'not a number' }], expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.MISFIT'] } },
     { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'still not' }], expect: { onErrorCodes: [] } },
     { action: 'batch', steps: [{ action: 'setValue', path: '', value: 3 }], expect: { outputValue: 3, onErrorCodes: [] } },
     { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'again' }], expect: { onErrorCodes: [] } },
     { action: 'reset', expect: { outputValue: 1, onErrorCodes: [] } },
-    { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'after reset' }], expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.TYPE_MISMATCH'] } },
+    { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'after reset' }], expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.MISFIT'] } },
   ],
 };

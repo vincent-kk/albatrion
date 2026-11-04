@@ -2,6 +2,18 @@
 
 ## Requirements
 
+- Authored schemas distinguish object hosts from other hosts at the declaration site. The binding consumes `NonObjectSchemaControls` through this boundary; helper union members stay internal. This introduces no runtime allocation.
+
+- 호스트 바인딩은 engine이 소유한 실패 묶음의 잎 순회를 core 경계에서 소비한다. unrefined host 채널은 바인딩과 engine이 각각 유지하며 패키지 공개 표면은 넓히지 않는다.
+
+- B12는 engine이 소유한 `InactiveValue`·`InactiveValueResolver`·`InactiveValueContext`를 이름으로 재수출하고 surface의 `onInactive`를 노드 공개 계약으로 조합합니다. 구현은 각 소유 경계에 남깁니다.
+
+- D3b-1에서 관찰 fixture는 옮겨진 실제 runtime target-ID 메모를 읽고 모드는 engineModes.setMode를 거쳐 변경한다. 관찰 실행은 이전 설정을 finally에서 복원하며 별도 ID 생산자나 전역 대체 registry를 만들지 않는다.
+
+- 검증 전용 관찰 session은 실제 engine module과 그 module의 기존 producer WeakMap을 읽기만 하는 reader, graph-local codec 및 실제로 생성·보존한 객체를 함께 결속한다. 제품 소스·공개 표면·사건·기존 기대값을 변경하지 않으며 관찰 사본의 readonly footer만 허용한다.
+- 관찰은 19개 상태와 9개 이력 채널, 원형58의 ID·순서·초기화·연산·결과와 listener/retained 참조 관계를 보존한다. runtime key의 앞 일곱 부분과 다섯 부분 exit-policy key는 유지하고 여덟 번째 실제 producer ID만 같은 module의 실제 객체에 대한 codec occurrence로 바꾼다. 모든 optional rule store 부재는 빈 상태이며, 실제 누락·orphan·충돌·미지원 key shape는 거절한다.
+- 현재 규칙은 실제 current attachment/lifetime와 일치해야 한다. 동일 module의 적법한 known retained 역사 occurrence는 원래 ID·참조·기록된 수명이 맞으면 detached라는 이유로 거절하지 않는다. unknown·foreign·ambiguous·conflicting·잘못 부착된·codec-unreachable 및 phase/lifetime 불일치는 실패하며 최신 경로 역추정·producer 재호출·shadow ID·전역 registry는 쓰지 않는다.
+
 - 청사진에서 정규화한 무조건 선언을 재사용해도 마운트와 후속 쓰기의 값·유효 스키마·노드 순서·상태·경고·리비전·통지가 같아야 한다. 런타임 실제 병합 수는 마운트 단위로 검증하며 정적 검사 수는 줄이지 않는다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
 
 - 청사진·정착·파생이 공유하는 기능 부재 결과는 engine이 소유한 불변 빈 Map/Set 조회 객체를 쓴다. 변경 메서드를 제공하지 않으며 기능 부재가 각각 증명된 경우에만 공유한다. 영구 저장은 전체 프로세스에서 O(1)이며 청사진별 빈 Map/Set 할당을 제거한다(89C-03).
@@ -9,7 +21,7 @@
 - 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 engine에 둔다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않는다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가한다(NODE-045, SETTLE-017·047, GOAL-011).
 
 - `core/index.ts`가 이 fractal의 경계이다. `surface/`의 노드·바인딩 계약과 `engine/`의 공개 실행 계약을 와일드카드 없이 이름으로 다시 내보내며, 렌더 계층은 이 경계를 사용한다(LANDING-067·087, 69C-01).
-- 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값이다. 원본 상태는 `raw`·`undeclaredValues`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않는다(VALUE-002·027·034, LANDING-067).
+- 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값이다. 원본 상태는 `source`·`extras`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않는다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽는다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유한다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않는다. 새 시나리오 하네스는 새 엔진을 검증한다(LANDING-205).
 - `nodeFromJSONSchema`는 `src/__tests__/fixtures/`의 시험·측정 도우미이며 core index의 공개 생성·마운트 통로만 사용한다. core·패키지 진입점은 이 도우미를 내보내지 않으며 시험·bench·aileron 벤치마크가 파일 경로로 읽는다. `<Form>`은 `buildFieldNodeTree`·`mountFieldNode` 바인딩 통로를 쓴다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않는다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않는다. 사건 계약은 새 엔진의 record가 소유한다(LANDING-087, 70C-01).
@@ -19,6 +31,10 @@
 - 자식 형상 그래프는 순환하지 않는다. 부모·루트 참조는 노드의 탐색과 폐기 후 읽기 계약을 유지한다(WRITE-086).
 
 ## API Contracts
+
+- 판별자의 오류·무시·도달 불가능 분류는 blueprint가 소유합니다. C7의 anyOf 중복과 C9의 호스트 태그 union, C12의 선언별 독립 키는 정착에서도 같은 선택을 보존합니다. `ObjectAuthoredSchema`·`NonObjectAuthoredSchema`는 내부 보조 형으로 남고, 외부 바인딩이 필요한 `NonObjectSchemaControls`만 core 경계를 건넙니다.
+
+- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출한다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공한다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않는다. 패키지의 src/index 공개 이름은 유지한다(07c 계획 9.2).
 - `fieldNodeFactory`·`blueprint`를 재수출하는 이유는 core 밖의 시험·측정 도구(`bench/legacy-compare/`의 네 파일, `src/hooks/__tests__/createHookNode.ts`)가 core index를 생성 통로로 쓰기 때문이다. 제품 소비자는 없다.
@@ -33,12 +49,14 @@
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `FieldNode` 및 타입별 노드                                                                         | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면                                                                      |
 | `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드                                    | 런타임 타입 판별                                                                                                                                                 |
-| `FieldNodeState`                                                                                   | Dirty=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않는다(SURFACE-056·060, LANDING-157).                               |
+| `FieldNodeState`                                                                                   | Edited=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않는다(SURFACE-056·060, LANDING-157).                               |
 | `SetValueOption` · `ValidationMode`                                                                | 쓰기 옵션 비트·검증 모드 열거값                                                                                                                                  |
 | `FieldNodeEventType` · `FieldNodeRequestType`                                                      | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067)                                                                                                          |
 | 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                       |
 | `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
-| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
+| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 커밋 소비자 수명 증감 통로이며 실행 중 핀은 validation 내부에서 별도로 관리합니다. 바인딩은 이를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
+| `scheduleValidationSlot(run)` | RootNodeContext의 모든 로드 검증이 쓰기 검증과 같은 다음 화면 뒤 슬롯을 쓰도록 validationScheduling·engine 경계를 통해 명명 재수출한다. 패키지 공개 `src/index.ts`와 공개 선언에는 노출하지 않는다(IR-6). |
+| `startFieldNodeLoadValidation(node)` | 다음 프레임 뒤 로드 슬롯에서 engine의 dispatchLoadValidation을 호출하는 바인딩 전용 통로다. 패키지 공개 표면은 유지한다. |
 
 시험·측정 도우미 서명: `src/__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환한다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓이다(70C-01, VALIDATE-010, CONTROLS-075).
 
@@ -77,7 +95,17 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 
 공개 `InferFieldNode`는 NODE-059에 따라 형 없는 `oneOf`·`anyOf`의 모든 분기가 인라인 객체 또는 인라인 배열 스키마일 때만 각각 `ObjectNode`·`ArrayNode`로 좁힌다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 `FieldNode`를 유지한다. 형 없는 분기 없는 `const`·`enum` 칸은 리터럴의 JSON 종류에 맞는 원시 노드로 좁힌다.
 
+### onError origin
+
+RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이름으로 재수출합니다. 내부 로드 사슬에만 쓰며 패키지 공개 진입점은 유지합니다.
+
 ## Acceptance Criteria
+
+### observation-identity-portability — 검증 전용 occurrence 결속
+
+- 원래 selection collector의 실제 rules·ruleSources·ruleTargets 소실에 의한 거짓 동치와 original occurrence offset에 의한 거짓 차이를 재현하고, 완전 capture는 그 오류를 구별한다.
+- 실제 source/unprocessed A/unprocessed B의 producer와 reader가 같은 module에 결속되고 fixture graph에는 engine/producer가 없다. 명시 입력 SHA, 원문 prefix/footer, compiler/parser/dependency와 source graph 계보를 검증하며 cached output·잘못된 입력·literal을 바꾸는 서식 변환은 거절한다.
+- 원형58 호환과 helper 회귀, source-owner와 injection 목적지 구별·readonly 무할당·rebirth/held history·잘못된 owner 거절을 Node/Bun에서 별도 단위로 검증한다. 과거 live66 및 성능·후속 제품 가설의 결과를 이번 실행으로 합산하지 않는다.
 
 ### two-channel — 두 채널이 분리되어 있다
 
@@ -98,11 +126,13 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 - 시나리오 명세 표는 각 부류의 장면 목록에서 생성되므로 사례 수를 정적으로 셀 수 없으며 `spec-document-case-cap`은 `indeterminate`로 유지한다(60C-01).
 - TEST-023에 따라 코어 시험이 공유 시나리오 데이터를 해석한다. 비공개 시나리오 패키지는 코어 실행기를 소유하지 않는다.
 - 주입된 코어 어댑터가 단계를 순서대로 한 번씩 실행하며 정착을 기다린 뒤 기대를 검사하고 실패를 호출자에게 전달한다.
+- 규칙 대상의 강화 관측은 실행 모듈의 기존 ID 조회와 실제 live·retained·retired 노드 참조를 연결한다. 같은 경로·종류의 최신 노드 추정이나 임의 출현 순서로 수명 차이를 숨기지 않으며, 알 수 없거나 모호하거나 서로 충돌하는 연결은 실패로 보고한다.
+- 강화 관측은 규칙 키의 첫 일곱 항목과 양방향 경로 색인, 별칭·사건·호출자 공유 참조를 보존한다. `injectTo`의 규칙 소유 노드와 실제 주입 목적지를 구별하고, 대상 ID가 없는 다섯 항목 정책 키에 없는 대상 색인을 요구하지 않는다. 기존 source 특성화·비용 spy와 격리 모듈의 강화 관측은 별도 증거로 유지한다.
 - 각 부류의 시나리오를 새 `FieldNode` 트리에서 실행하고 단계별 형상·방출·진단·상태 키를 검증한다. `reset`은 루트 폼 수준 로드이며 `resetSubtree()`는 해당 하위 트리만 로드한다(TEST-011·016·019·023, SETTLE-049).
 
 ### scenario-value — 값 부류 시나리오
 
-- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·형 불일치 기록을 낸다(TEST-019·023).
+- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·misfit 기록을 낸다(TEST-019·023).
 
 ### scenario-settle — 정착 부류 시나리오
 
@@ -173,5 +203,7 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 - **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 네 개(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지운다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제된다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽는다.
 
 ## Last Updated
+
+2026-11-03
 
 계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

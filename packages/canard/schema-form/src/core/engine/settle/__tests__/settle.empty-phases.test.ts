@@ -3,13 +3,12 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as rules from '../utils/commit/commitDeriveRules';
 import * as exitRules from '../utils/commit/commitExitPolicyValues';
 import * as trace from '../utils/commit/finalizeDeriveTrace';
-import * as policies from '../utils/commit/snapshotExitedPolicies';
 import * as derive from '../utils/derivation/runDeriveRounds';
-import * as alignment from '../utils/load/alignArraySnapshotSlots';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import * as alignment from '../utils/loadValues/alignArraySnapshotSlots';
 import * as exits from '../utils/transition/finalizeExits';
 import * as transition from '../utils/transition/transitionSettlement';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -29,7 +28,6 @@ it('does not enter any empty phase on first or later singleton writes', () => {
     vi.spyOn(derive, 'runDeriveRounds'),
     vi.spyOn(transition, 'transitionSettlement'),
     vi.spyOn(exits, 'finalizeExits'),
-    vi.spyOn(policies, 'snapshotExitedPolicies'),
     vi.spyOn(rules, 'commitDeriveRules'),
     vi.spyOn(exitRules, 'commitExitPolicyValues'),
     vi.spyOn(trace, 'finalizeDeriveTrace'),
@@ -44,7 +42,7 @@ it('does not enter any empty phase on first or later singleton writes', () => {
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
     expect(spies.map((spy) => spy.mock.calls.length)).toEqual([
-      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0,
     ]);
   }
 });
@@ -96,13 +94,11 @@ it('does not skip gates, rule evaluation or rule commits with actual work', () =
   const commit = vi.spyOn(rules, 'commitDeriveRules');
   const policy = vi.spyOn(exitRules, 'commitExitPolicyValues');
   const exit = vi.spyOn(exits, 'finalizeExits');
-  const snapshot = vi.spyOn(policies, 'snapshotExitedPolicies');
-  writeFieldNode(root.structure!.source, 0, 'input', WriteOption.Overwrite);
+  writeFieldNode(root.structure!['source'], 0, 'input', WriteOption.Overwrite);
   expect(root.emit).toEqual({ source: 0, target: 1 });
   expect(run).toHaveBeenCalledTimes(1);
   expect(run.mock.calls[0][0].deriveRounds).toBe(1);
   expect(commit).toHaveBeenCalledTimes(1);
   expect(policy).toHaveBeenCalledTimes(1);
   expect(exit).toHaveBeenCalledTimes(1);
-  expect(snapshot).toHaveBeenCalledTimes(1);
 });

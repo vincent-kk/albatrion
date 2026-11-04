@@ -3,6 +3,7 @@ import type Ajv from 'ajv';
 
 import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
+import { registerValidationRoot } from './utils/registerValidationRoot';
 import { transformErrors } from './utils/transformErrors';
 
 /**
@@ -15,9 +16,10 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
   const roots = registry ?? createSchemaRootRegistry();
   return (jsonSchema: JSONSchema): ValidateFunction => {
     const registration = registerSchemaRoot(roots, ajv, jsonSchema);
+    registerValidationRoot(registration);
     const transient = registration.validationCopy
       ? { $async: true, $ref: registration.key }
-      : { ...structuredClone(jsonSchema), $async: true };
+      : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
     const validate = registration.validationAjv.compile(transient);
     registration.validationAjv.removeSchema(transient);
     return async (data) => {

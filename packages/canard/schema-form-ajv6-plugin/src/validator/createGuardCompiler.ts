@@ -1,11 +1,18 @@
+import type Ajv from 'ajv';
+
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
+import { cloneInstance } from './utils/cloneInstance';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
+import { registerSchemaGuard } from './utils/registerSchemaGuard';
 import type { SchemaRootRegistration } from './utils/registerSchemaRoot';
 import { resolveGuardSchema } from './utils/resolveGuardSchema';
 
 /**
  * Compile a synchronous guard directly when context-free, otherwise in its root.
- * @param registration - The first-error sibling and owner of compiled guards.
+ * A direct guard registers no root; only a root-pointer guard registers the root copy on the
+ * guard instance, which compiles without meta-schema validation.
+ * @param instance - The bound instance whose profile the guard instance copies.
+ * @param registration - The first-error guard instance and owner of compiled guards.
  * @param pointer - The guard's original JSON Pointer, optionally prefixed with #.
  * @param root - The engine copy containing the original subschema object.
  * @param directGuardCompile - Enable direct compilation of self-contained guards.
@@ -14,6 +21,7 @@ import { resolveGuardSchema } from './utils/resolveGuardSchema';
  * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
  */
 export const createGuardCompiler = (
+  instance: Ajv.Ajv,
   registration: SchemaRootRegistration,
   pointer: string,
   root: object,
@@ -21,8 +29,6 @@ export const createGuardCompiler = (
   finalizer: FinalizationRegistry<SchemaRootRegistration>,
 ): ((value: unknown) => boolean) => {
   const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
-  const guard = registration.guard;
-  if (!guard) throw new Error('Ajv 6 guard root was not registered');
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
   if (located === undefined)
@@ -34,7 +40,7 @@ export const createGuardCompiler = (
     isSelfContainedGuard(
       schema,
       registration.guardChecks,
-      guard._opts.schemaId === 'id' || guard._opts.schemaId === 'auto',
+      instance._opts.schemaId === 'id' || instance._opts.schemaId === 'auto',
     );
   if (direct) {
     // A direct root would retain itself through the finalizer's held value.
@@ -43,6 +49,9 @@ export const createGuardCompiler = (
     if (!registration.directGuards.includes(schema))
       registration.directGuards.push(schema);
   }
+  const guard = direct
+    ? (registration.guard ??= cloneInstance(instance, false, false))
+    : registerSchemaGuard(root, instance, registration);
   const validate = guard.compile(
     direct ? schema : { $ref: `${registration.rootId}${fragment}` },
   );

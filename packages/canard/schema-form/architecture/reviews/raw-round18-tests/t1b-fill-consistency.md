@@ -1,6 +1,6 @@
 # T1-B — 채움 시점 논리 정합성
 
-경로 기준은 ARCH = `/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/`, PKG = `/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/`입니다. `ledger/…:줄`은 ARCH 아래의 경로입니다. 저장소는 고치지 않았습니다. 오늘 코드 탐침은 `/private/tmp/claude-501/t1b/probe/fill.probe.test.ts`에 두고 PKG 코드로 실행했습니다.
+경로 기준은 ARCH = `packages/canard/schema-form/architecture/`, PKG = `packages/canard/schema-form/`입니다. `ledger/…:줄`은 ARCH 아래의 경로입니다. 저장소는 고치지 않았습니다. 오늘 코드 탐침은 `{scratch}/t1b/probe/fill.probe.test.ts`에 두고 PKG 코드로 실행했습니다.
 
 ## 요약: 결정됨 11 / 공백 2 / 모순 5
 
@@ -47,7 +47,7 @@
 - 반대 쪽 근거:
   - REACT-019 `react.md:280`의 "로드된 노드 모두"에 충돌 줄 `:297`이 붙어, `setValue`는 로드에서 빠졌습니다.
   - EVENT-039 `event.md:591`은 "로드는 값이 같아도 원본을 새로 쓰므로"라고 로드에만 예외를 둡니다.
-  - 일반 규칙은 GOAL-053 보충 `goal.md:779`의 "그 밖의 쓰기가 raw를 바꾸면 낸다"입니다.
+  - 일반 규칙은 GOAL-053 보충 `goal.md:779`의 "그 밖의 쓰기가 source를 바꾸면 낸다"입니다.
   - WRITE-090 `:1349`는 `setValue(getValue())`가 멱등이라고 적습니다.
 
 **실패 장면.** 사용자가 입력하는 중에 리스너가 `setValue(getValue())`를 부릅니다. LANDING-042로 읽으면 모든 잎 입력이 다시 마운트되어 캐럿과 IME 상태를 잃습니다. 출처 규칙으로 읽으면 아무 일도 없습니다.

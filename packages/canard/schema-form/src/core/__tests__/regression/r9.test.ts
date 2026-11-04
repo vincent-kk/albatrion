@@ -34,7 +34,7 @@ describe('round9 P1 fill regression', () => {
     ).toBeUndefined();
   });
   it('r9.mjs:28 lets controls.default beat ordinary default', () => {
-    expect(fillTree().find('/base')?.raw).toBe('E');
+    expect(fillTree().find('/base')?.source).toBe('E');
   });
   it('r9.mjs:29 does not fill the inactive then declaration', () => {
     const root = fillTree();
@@ -42,20 +42,20 @@ describe('round9 P1 fill regression', () => {
     expect(root.outputValue).not.toHaveProperty('added');
   });
   it('r9.mjs:30 leaves a source without default missing', () => {
-    expect(fillTree().find('/absent')?.raw).toBeUndefined();
+    expect(fillTree().find('/absent')?.source).toBeUndefined();
   });
   it('r9.mjs:31 preserves every present empty, null, zero, and false input', () => {
     const root = fillTree();
     expect(
-      ['empty', 'nil', 'zero', 'no'].map((key) => root.find(`/${key}`)?.raw),
+      ['empty', 'nil', 'zero', 'no'].map((key) => root.find(`/${key}`)?.source),
     ).toEqual(['', null, 0, false]);
   });
   it('r9.mjs:34 fills the added declaration on activation', () => {
     const root = fillTree();
     root.find('/kind')?.setValue('on');
-    expect(root.find('/added')?.raw).toBe('A');
+    expect(root.find('/added')?.source).toBe('A');
   });
-  it('r9.mjs:35 retains the deactivated fallback raw value', () => {
+  it('r9.mjs:35 retains the deactivated fallback source value', () => {
     const root = fillTree();
     root.find('/kind')?.setValue('on');
     expect(root.inactiveValues).toContainEqual({
@@ -68,7 +68,7 @@ describe('round9 P1 fill regression', () => {
     root.find('/kind')?.setValue('on');
     root.find('/added')?.setValue(undefined);
     root.find('/base')?.setValue('manual');
-    expect(root.find('/added')?.raw).toBeUndefined();
+    expect(root.find('/added')?.source).toBeUndefined();
   });
   it('r9.mjs:40 fills on a later activation lifetime', () => {
     const root = fillTree();
@@ -76,7 +76,7 @@ describe('round9 P1 fill regression', () => {
     root.find('/added')?.setValue(undefined);
     root.find('/kind')?.setValue('off');
     root.find('/kind')?.setValue('on');
-    expect(root.find('/added')?.raw).toBe('A');
+    expect(root.find('/added')?.source).toBe('A');
   });
 });
 

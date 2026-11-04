@@ -21,6 +21,6 @@ export function isTestFieldNode(value: unknown): value is TestFieldNode {
     'runtime' in value &&
     'schema' in value &&
     'rootNode' in value &&
-    'raw' in value
+    'source' in value
   );
 }

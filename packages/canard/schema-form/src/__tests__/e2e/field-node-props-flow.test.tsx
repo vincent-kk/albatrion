@@ -29,7 +29,7 @@ const Probe = (props: FieldInputProps) => {
   );
 };
 
-it('WRITE-083 input value dirty and external-error clearing commit together', async () => {
+it('WRITE-083 input value edited and external-error clearing commit together', async () => {
   const snapshots: unknown[] = [];
   form = await renderForm(
     { type: 'string' },
@@ -47,7 +47,7 @@ it('WRITE-083 input value dirty and external-error clearing commit together', as
   const stop = form.handle.node!.subscribe(() =>
     snapshots.push({
       value: form.getValue(),
-      dirty: form.handle.getState()[FieldNodeState.Dirty],
+      edited: form.handle.getState()[FieldNodeState.Edited],
       errors: form.getErrors(),
     }),
   );
@@ -55,10 +55,10 @@ it('WRITE-083 input value dirty and external-error clearing commit together', as
   stop();
   expect(snapshots.length).toBeGreaterThan(0);
   for (const snapshot of snapshots)
-    expect(snapshot).toEqual({ value: 'after', dirty: true, errors: [] });
+    expect(snapshot).toEqual({ value: 'after', edited: true, errors: [] });
 });
 
-it('LANDING-168 root readOnly rejects input value dirty and error changes', async () => {
+it('LANDING-168 root readOnly rejects input value edited and error changes', async () => {
   // 79C-01: Form errors applies the whole external list to the root.
   form = await renderForm(
     { type: 'string' },
@@ -76,7 +76,7 @@ it('LANDING-168 root readOnly rejects input value dirty and error changes', asyn
   ).toEqual(external);
   await act(async () => input.onChange('blocked'));
   expect(form.getValue()).toBe('before');
-  expect(form.handle.getState()[FieldNodeState.Dirty]).not.toBe(true);
+  expect(form.handle.getState()[FieldNodeState.Edited]).not.toBe(true);
   expect(
     form.handle.node!.errors,
     'blocked input preserves node external errors',
@@ -97,7 +97,7 @@ it('LANDING-168 root disabled rejects input callbacks', async () => {
   );
   await act(async () => input.onChange('blocked'));
   expect(form.getValue()).toBe('before');
-  expect(form.handle.getState()[FieldNodeState.Dirty]).not.toBe(true);
+  expect(form.handle.getState()[FieldNodeState.Edited]).not.toBe(true);
 });
 
 it('LANDING-201 input Overwrite retains its own DOM and caret', async () => {
@@ -115,7 +115,7 @@ it('LANDING-201 input Overwrite retains its own DOM and caret', async () => {
   expect(form.getValue()).toBe('abc');
 });
 
-it('TEST-020 replaced input late onChange cannot mutate value dirty or external errors', async () => {
+it('TEST-020 replaced input late onChange cannot mutate value edited or external errors', async () => {
   // 79C-01: Form errors is reapplied to the root after reset.
   form = await renderForm(
     { type: 'string' },
@@ -134,7 +134,7 @@ it('TEST-020 replaced input late onChange cannot mutate value dirty or external 
   await form.reset();
   await act(async () => late('stale'));
   expect(form.getValue()).toBe('loaded');
-  expect(form.handle.getState()[FieldNodeState.Dirty]).not.toBe(true);
+  expect(form.handle.getState()[FieldNodeState.Edited]).not.toBe(true);
   expect(
     form.handle.node!.errors,
     'late input preserves node external errors',
@@ -152,7 +152,7 @@ it('TEST-020 touched is delivered after blur', async () => {
   );
 });
 
-it('WRITE-083 finishInput trims only after blur and retains external errors and dirty', async () => {
+it('WRITE-083 finishInput trims only after blur and retains external errors and edited', async () => {
   // 79C-01: Form errors uses the root external-error channel.
   form = await renderForm(
     { type: 'string', options: { trim: true } },
@@ -179,7 +179,7 @@ it('WRITE-083 finishInput trims only after blur and retains external errors and 
     'trim preserves node external errors',
   ).toEqual(external);
   expect(form.getErrors()).toEqual(external);
-  expect(form.handle.getState()[FieldNodeState.Dirty]).not.toBe(true);
+  expect(form.handle.getState()[FieldNodeState.Edited]).not.toBe(true);
 });
 
 it('WRITE-083 finishInput on an already trimmed value makes no value write', async () => {

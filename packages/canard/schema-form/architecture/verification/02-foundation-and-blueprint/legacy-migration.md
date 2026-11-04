@@ -70,3 +70,5 @@ yarn workspace @canard/schema-form typecheck
 커밋 대상은 manifest의 이동 전후 주소, live helpers/jsonSchema/index.ts, Form.tsx, schemaNodeFactory.ts, 패키지 eslint.config.js, 이 보고서와 manifest입니다. 생성된 dist·빌드 결과는 포함하지 않습니다.
 
 이동 대상의 기존 큰 시험 파일과 기존 FCA 문서 형식을 일괄 정리하지 않았습니다. 원래 상대 경로와 회귀 기록을 보존했으며 PR 경계 스캔의 기존 발견과 새 발견을 구분해야 합니다. 전체 기존 unit/render/storybook 시험, strict 타입, 실제 경계 스캔은 02의 통합 게이트로 남아 있습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `4d59285ac5af`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

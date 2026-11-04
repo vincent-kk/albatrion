@@ -47,7 +47,7 @@ describe('chain error reporting', () => {
     if (!isArray(errors)) throw new Error('Expected bundled errors');
     expect(errors).toHaveLength(2);
     expect(report).toHaveBeenCalledTimes(1);
-    expect(report.mock.calls[0][0].aggregate).toBe(caught);
+    expect(report.mock.calls[0][0]).not.toHaveProperty('aggregate');
     expect(report.mock.calls[0][0].error).toBe(errors[0]);
   });
 
@@ -78,7 +78,7 @@ describe('chain error reporting', () => {
         code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
         path: '/a',
         schemaPath: '#/properties/a/controls/active',
-        surface: 'thrown',
+        origin: 'write',
       }),
     );
   });
@@ -126,7 +126,7 @@ describe('chain error reporting', () => {
     for (const [record] of report.mock.calls)
       expect(record).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
-        aggregate: caught,
+        origin: 'write',
       });
   });
 
@@ -152,7 +152,7 @@ describe('chain error reporting', () => {
   });
 
   it('ERROR-022 ERROR-023 ERROR-099 ERROR-101 preserves raw callback exceptions per event', () => {
-    const raw = { reason: 'raw' };
+    const failure = { reason: 'raw' };
     const seen: unknown[] = [];
     const { root, runtime } = createDispatchTree(
       { type: 'string' },
@@ -161,7 +161,7 @@ describe('chain error reporting', () => {
       { hasConsumer: () => true, report: (record) => seen.push(record.error) },
     );
     runtime.onChange = () => {
-      throw raw;
+      throw failure;
     };
     for (const value of ['one', 'two']) {
       let caught: unknown;
@@ -170,9 +170,9 @@ describe('chain error reporting', () => {
       } catch (error) {
         caught = error;
       }
-      expect(caught).toBe(raw);
+      expect(caught).toBe(failure);
     }
-    expect(seen).toEqual([raw, raw]);
+    expect(seen).toEqual([failure, failure]);
   });
 
   it('ERROR-030 skips warning records and formatting without a consumer', () => {
@@ -194,7 +194,7 @@ describe('chain error reporting', () => {
     expect(
       createFormErrorRecord(
         false,
-        'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+        'SCHEMA_FORM_WARNING.MISFIT',
         'warning',
         format,
       ),
@@ -203,7 +203,7 @@ describe('chain error reporting', () => {
     expect(
       createFormErrorRecord(
         true,
-        'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+        'SCHEMA_FORM_WARNING.MISFIT',
         'warning',
         format,
       )?.message,
@@ -249,12 +249,12 @@ describe('chain error reporting', () => {
     });
     subscribeFieldNode(root, () => {
       const amount = root.structure?.amount;
-      if (amount && amount.raw !== 'bad') dispatchSetValue(amount, 'bad');
+      if (amount && amount.source !== 'bad') dispatchSetValue(amount, 'bad');
     });
     expect(() => dispatchSetValue(root, { amount: 1 })).toThrow(failure);
     expect(seen).toEqual([
       'SCHEMA_FORM_ERROR.LISTENER_THREW',
-      'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+      'SCHEMA_FORM_WARNING.MISFIT',
     ]);
   });
 

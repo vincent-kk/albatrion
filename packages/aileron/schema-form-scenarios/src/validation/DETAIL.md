@@ -6,7 +6,7 @@
 장면을 가져올 때 실행을 수행하거나 엔진 의존성을 도입하지 않는다(TEST-010).
 
 코어 소비자의 `scenario-validation` 계약(VALIDATE-043, TEST-019·023)이 이 목록 전체를 관찰 어댑터로 실행하고, 코어의 같은 ajv 경로 비교도 이 목록 전체를 사례로 읽는다.
-ajv 플러그인은 이 패키지에 개발 의존을 두지 않는다는 소유자 결정에 따라 비교 사례를 자기 시험 안에 둔다(05 실행 기록 U12b).
+세 AJV 플러그인은 parity 시험을 위해 `@aileron/schema-form-scenarios/validator`를 작업 공간 개발 의존으로 받는다(소유자 요청 2026-11-04, request.md quote 88). 시나리오 데이터는 여전히 엔진, AJV, 테스트 러너를 가져오지 않는다.
 
 ## API Contracts
 

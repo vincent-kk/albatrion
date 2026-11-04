@@ -1,6 +1,6 @@
 import { evaluateDeriveRound } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getDeriveState } from './getDeriveState';
 
 /**

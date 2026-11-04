@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** Empty union input remains in the node's raw channel. */
+/** Empty union input remains in the node's source channel. */
 export const omitEmptyUnionScenario = {
   name: 'union.omit-empty',
   schema: { type: 'object', properties: {

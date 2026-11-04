@@ -1,8 +1,5 @@
-import { blueprint } from '@/schema-form/core/engine';
-import type { BlueprintSchema } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
-import type { Validator } from '@/schema-form/core/engine';
+import type { BlueprintSchema, Validator } from '@/schema-form/core/engine';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
 import { fieldNodeFactory } from '@/schema-form/core/surface';
 import type { FormErrorReporter } from '@/schema-form/errors';
 
@@ -23,11 +20,8 @@ export const makeFieldNodeTree = (
     errorReporter: options.errorReporter,
     diagnostics: { status: 'stable' as const },
     loadSnapshot: options.snapshot,
-    latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
+
+    misfitPaths: new PathKeyedSet(),
   };
   const validator =
     'validator' in options ? options.validator : createTestValidator();

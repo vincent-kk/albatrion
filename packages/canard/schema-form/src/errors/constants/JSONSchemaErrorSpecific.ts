@@ -1,0 +1,24 @@
+/** Internal bare specifics for the JSONSchemaError group, in ledger order. */
+export const JSONSchemaErrorSpecific = {
+  /** Property names reserved by literal operator percent spellings. */
+  ReservedPropertyName: 'RESERVED_PROPERTY_NAME',
+  UnknownJsonSchema: 'UNKNOWN_JSON_SCHEMA',
+  UnexpectedArraySchema: 'UNEXPECTED_ARRAY_SCHEMA',
+  AllOfTypeRedefinition: 'ALL_OF_TYPE_REDEFINITION',
+  ConflictingConstValues: 'CONFLICTING_CONST_VALUES',
+  InvalidRange: 'INVALID_RANGE',
+  EmptyEnumIntersection: 'EMPTY_ENUM_INTERSECTION',
+  VirtualFieldsNotValid: 'VIRTUAL_FIELDS_NOT_VALID',
+  VirtualFieldsNotInProperties: 'VIRTUAL_FIELDS_NOT_IN_PROPERTIES',
+  CreateDynamicFunction: 'CREATE_DYNAMIC_FUNCTION',
+  ObservedValues: 'OBSERVED_VALUES',
+  UnknownGroupKey: 'UNKNOWN_GROUP_KEY',
+  DiscriminatorMismatch: 'DISCRIMINATOR_MISMATCH',
+  SharedNodeKindConflict: 'SHARED_NODE_KIND_CONFLICT',
+  TerminalStrategyMismatch: 'TERMINAL_STRATEGY_MISMATCH',
+  RecursiveShapeUnbounded: 'RECURSIVE_SHAPE_UNBOUNDED',
+  VirtualFieldsMismatch: 'VIRTUAL_FIELDS_MISMATCH',
+  ChildrenTargetNotFound: 'CHILDREN_TARGET_NOT_FOUND',
+  TerminalOptionUnsupported: 'TERMINAL_OPTION_UNSUPPORTED',
+  InvalidControlShape: 'INVALID_CONTROL_SHAPE',
+} as const;

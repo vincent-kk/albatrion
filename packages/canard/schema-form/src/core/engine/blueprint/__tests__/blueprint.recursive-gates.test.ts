@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../blueprint';
-import type { BlueprintGate, BlueprintSchema } from '../type';
+import type { BlueprintGate } from '../types/node';
+import type { BlueprintSchema } from '../types/schema';
 
 /** A recursive node whose `then` and `then/allOf/0/then` both declare `children`. */
 const multi = {

@@ -1,20 +1,34 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
+  dispatchInsert,
+  dispatchMount,
   dispatchPop,
   dispatchPush,
   dispatchRemove,
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
 
+import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as records from '../../record';
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
+import * as ids from '../utils/compute/childSelection/staticIds';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { compareArraySelection } from './fixtures/compareArraySelection';
 
 afterEach(() => vi.restoreAllMocks());
+
+/** Static object items: no gate, expression, derive or watch, so a middle verb is admitted to the splice path. */
+const STATIC_ITEMS: BlueprintSchema = {
+  type: 'array',
+  items: { type: 'object', properties: { value: { type: 'string' } } },
+};
+
+/** Six static items, so N/2 = 3 and N-2 = 4. */
+const SIX = Array.from({ length: 6 }, (_, value) => ({ value: String(value) }));
 
 // filid:contract settle-array-selection-reuse
 describe('static array selection matches the full route', () => {
@@ -143,7 +157,7 @@ describe('static array selection matches the full route', () => {
         {
           apply: (node) =>
             dispatchSetValue(
-              node.structure!['0'].structure!.source,
+              node.structure!['0'].structure!['source'],
               4,
               WriteOption.Overwrite,
             ),
@@ -227,16 +241,60 @@ describe('static array selection matches the full route', () => {
     expect(root.emit).toEqual({ rows: [1, 2], sibling: 'same' });
   });
 
-  it('retains full selection for a removal that moves prefix paths', () => {
-    compareArraySelection(
-      {
-        type: 'array',
-        items: { type: 'object', properties: { value: { type: 'string' } } },
-      },
-      [{ value: 'a' }, { value: 'b' }, { value: 'c' }],
-      [{ apply: (node) => dispatchRemove(node, 0), reuse: false }],
-    );
+  it('retains full selection for a removal that moves paths under a gate or an expression', () => {
+    for (const controls of [{ active: '../flag' }, { visible: '../flag' }])
+      compareArraySelection(
+        {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              flag: { type: 'boolean' },
+              value: { type: 'string', controls },
+            },
+          },
+        },
+        [
+          { flag: true, value: 'a' },
+          { flag: false, value: 'b' },
+          { flag: true, value: 'c' },
+        ],
+        [{ apply: (node) => dispatchRemove(node, 0), reuse: false }],
+      );
   });
+
+  it.each<[string, (node: PlainNode, index: number) => unknown, number]>([
+    ['removal', (node, index) => dispatchRemove(node, index), -1],
+    [
+      'insertion',
+      (node, index) => dispatchInsert(node, index, { value: 'new' }),
+      1,
+    ],
+  ])(
+    'reuses selection for a static middle %s that moves paths and republishes only the tail entries at 0, 1, N/2 and N-2',
+    (_, verb, delta) => {
+      for (const index of [0, 1, 3, 4]) {
+        compareArraySelection(STATIC_ITEMS, SIX, [
+          { apply: (node) => verb(node, index), reuse: true },
+        ]);
+        const { root } = createTestTree(STATIC_ITEMS);
+        dispatchMount(root, SIX, WriteOption.Overwrite, {
+          deferValidation: true,
+        });
+        const published = vi.spyOn(ids, 'staticIds');
+        verb(root, index);
+        const positions = published.mock.calls
+          .map(([entry]) => entry.name)
+          .filter((name) => /^\d+$/.test(name));
+        published.mockRestore();
+        expect(positions).toEqual(
+          Array.from({ length: SIX.length + delta - index }, (_, offset) =>
+            String(index + offset),
+          ),
+        );
+      }
+    },
+  );
 
   it('retains full selection for whole replacement and a wrong-kind host', () => {
     compareArraySelection(
@@ -298,7 +356,7 @@ describe('static array selection matches the full route', () => {
     for (const child of prefix) {
       expect(
         capture.mock.calls.filter(
-          ([node, field]) => node === child && field === 'active',
+          ([node, field]) => node === child && field === 'isActive',
         ),
       ).toHaveLength(0);
       expect(visits.filter((path) => path === child.path)).toHaveLength(0);
@@ -315,7 +373,7 @@ describe('static array selection matches the full route', () => {
     expect(
       capture.mock.calls.filter(
         ([node, field]) =>
-          prefix.some((child) => child === node) && field === 'active',
+          prefix.some((child) => child === node) && field === 'isActive',
       ),
     ).toHaveLength(0);
     expect(

@@ -45,7 +45,7 @@ const reasons = {
   E1: '채움은 노드 생성 때 한 번이며 뒤 라운드에서 새 default로 교체하지 않습니다.',
   E10: '선택 상태를 제거했으므로 순수 분기가 모두 켜집니다.',
   E12: '게이트 없는 조각은 모두 켜지고 두 노드 모두 생성 시 채웁니다.',
-  X2: 'entry 안에서 다른 조각이 켜져도 이미 채운 raw를 교체하지 않습니다.',
+  X2: 'entry 안에서 다른 조각이 켜져도 이미 채운 source를 교체하지 않습니다.',
   'X10/X12': '점수와 동점 스위치가 제거되어 세 역사적 입력 모두 순수 분기를 전부 켭니다.',
   X15: '최종 shape 밖의 채움 후보와 그에 의존한 주입을 철회합니다. 파생 안정 후 후보를 검토하여 5라운드에 수렴합니다.',
   X16: 'edge 모드의 채움/주입/조각 피드백은 예산 초과로 base를 커밋합니다. level 모드는 채움 전에 undefined에서 파생하여 수렴합니다.',
@@ -103,7 +103,7 @@ const sharedNodeRows = read('./r8port-output.txt').split('\n').filter(line => li
   .filter(row => row.probe === 'P3' && row.case === 'N7_extra_Bon_xMissing_then_a');
 assert.equal(sharedNodeRows.length, 6);
 changed.push('', '검증 뒤 수정: 기존 round9 대비 변경된 단언과 관측');
-changed.push('r9 P4 and-or: 비활성 y의 load raw Y → missing; NODE_GATE_UNIT=shape에서는 생성 전 채우지 않습니다. nearest의 Y는 유지합니다.');
+changed.push('r9 P4 and-or: 비활성 y의 load source Y → missing; NODE_GATE_UNIT=shape에서는 생성 전 채우지 않습니다. nearest의 Y는 유지합니다.');
 changed.push('r8 SUMMARY 차이 개수 26 → 28: OLD/first 및 OLD/last에도 기존 노드의 재채움을 금지하므로 round8과의 차이가 추가됩니다.');
 changed.push('최종 shape 후속 수정: SUMMARY 차이는 28 → 17입니다. P1 12행과 P4 X16 5행의 관측이 변경되었습니다.');
 changed.push('A4b 기대값: new {c:C} → undefined, old {t:from-C} → {t:from-undefined}; 최종 shape 밖의 중간 c를 커밋하지 않습니다.');

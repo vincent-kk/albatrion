@@ -55,38 +55,38 @@ describe('round9b fragment retention regression', () => {
     });
     root.setValue({ a: 1 });
     const x = root.find('/x');
-    expect(x?.raw).toBe('P');
+    expect(x?.source).toBe('P');
     x?.setValue(undefined);
     root.find('/b')?.setValue(1);
     expect(root.find('/x')).toBe(x);
-    expect(x?.raw).toBeUndefined();
+    expect(x?.source).toBeUndefined();
   });
 
   it('r9b.mjs:35 a2 does not fill an already present base node', () => {
     const root = heldNode('none');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
     root.find('/x')?.setValue(undefined);
     root.find('/kind')?.setValue('on');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
   it('r9b.mjs:35 a3 keeps the unconditional filled node through then activation', () => {
     const root = heldNode('unconditional');
-    expect(root.find('/x')?.raw).toBe('U');
+    expect(root.find('/x')?.source).toBe('U');
     root.find('/x')?.setValue(undefined);
     root.find('/kind')?.setValue('on');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
   it('r9b.mjs:35 a4 keeps the base filled node through then activation', () => {
     const root = heldNode('default');
-    expect(root.find('/x')?.raw).toBe('B');
+    expect(root.find('/x')?.source).toBe('B');
     root.find('/x')?.setValue(undefined);
     root.find('/kind')?.setValue('on');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
-  it('r9b.mjs:50 gates birth by final shape and retains inactive raw', () => {
+  it('r9b.mjs:50 gates birth by final shape and retains inactive source', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -105,10 +105,10 @@ describe('round9b fragment retention regression', () => {
     root.setValue({ show: false });
     expect(root.find('/x')).toBeNull();
     root.find('/show')?.setValue(true);
-    expect(root.find('/x')?.raw).toBe('E');
+    expect(root.find('/x')?.source).toBe('E');
     root.find('/x')?.setValue(undefined);
     root.find('/note')?.setValue('unrelated');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
     root.find('/x')?.setValue('retained');
     root.find('/show')?.setValue(false);
     expect(root.inactiveValues).toContainEqual({
@@ -116,10 +116,10 @@ describe('round9b fragment retention regression', () => {
       value: 'retained',
     });
     root.find('/show')?.setValue(true);
-    expect(root.find('/x')?.raw).toBe('retained');
+    expect(root.find('/x')?.source).toBe('retained');
   });
 
-  it('r9b.mjs:50 TEST-069 replaces historical raw-unit birth with shape-unit birth', () => {
+  it('r9b.mjs:50 TEST-069 replaces historical source-unit birth with shape-unit birth', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -135,7 +135,7 @@ describe('round9b fragment retention regression', () => {
     expect(root.find('/x')).toBeNull();
     expect(root.outputValue).toEqual({ show: false });
     root.find('/show')?.setValue(true);
-    expect(root.find('/x')?.raw).toBe('E');
+    expect(root.find('/x')?.source).toBe('E');
   });
 
   it('r9b.mjs:73 rebirths a gated object descendant on the next lifetime', () => {
@@ -153,11 +153,11 @@ describe('round9b fragment retention regression', () => {
     root.setValue({ show: false });
     expect(root.find('/group/x')).toBeNull();
     root.find('/show')?.setValue(true);
-    expect(root.find('/group/x')?.raw).toBe('D');
+    expect(root.find('/group/x')?.source).toBe('D');
     root.find('/group/x')?.setValue(undefined);
     root.find('/show')?.setValue(false);
     root.find('/show')?.setValue(true);
-    expect(root.find('/group/x')?.raw).toBe('D');
+    expect(root.find('/group/x')?.source).toBe('D');
   });
 
   for (const [name, keyword] of [
@@ -174,7 +174,7 @@ describe('round9b fragment retention regression', () => {
         [keyword]: branches,
       });
       root.setValue({ kind: 'b', y: 1 });
-      expect(root.find('/kind')?.raw).toBe('b');
+      expect(root.find('/kind')?.source).toBe('b');
       expect(root.find('/kind')?.jsonSchema).not.toHaveProperty('const');
       expect(root.find('/x')).not.toBeNull();
       expect(root.find('/y')).not.toBeNull();

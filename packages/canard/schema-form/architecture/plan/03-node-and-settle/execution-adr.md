@@ -13,7 +13,7 @@
 
 ## D2 멤버는 기제를 들이는 PR에서 겉면에 더한다
 
-- 맥락: PR-2의 겉면은 `reviews/raw-round17-node-structure.md:74`의 목록에 `raw`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`, 경고등 게터 `typeMismatch`·`typeMismatches`(WRITE-093)와 공개 옵션 `SetValueOption`을 더한 것이다(26C-01). 멤버 목록 시험은 클래스 멤버만 센다. SURFACE-058의 약 54개는 PR-7 전환 때의 수다.
+- 맥락: PR-2의 겉면은 `reviews/raw-round17-node-structure.md:74`의 목록에 `source`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`, 경고등 게터 `typeMismatch`·`typeMismatches`(WRITE-093)와 공개 옵션 `SetValueOption`을 더한 것이다(26C-01). 멤버 목록 시험은 클래스 멤버만 센다. SURFACE-058의 약 54개는 PR-7 전환 때의 수다.
 - 결정: PR-2는 자기 멤버만 `SchemaNode/DETAIL.md`·멤버 목록 시험·공개 형에 둔다. PR-4는 명령 메서드와 통지·검증·오류 멤버, PR-5는 배열 메서드, PR-6은 계산 게터를 그 기제와 함께 세 곳에 더한다(EVENT-063, LANDING-064·066). 원장이 PR을 지정하지 않은 멤버도 같은 규칙을 따른다.
 - 까닭: TEST-069 (나)의 대역은 `if` 술어 하나뿐이고 뒤 PR을 위한 시험 전용 주입 자리나 스텁을 금한다.
 - 결과: `SchemaNodeRuntime`은 PR-2의 `if` 술어·진단·예산·`nodeFactory`에 필요한 최소 칸만 선언한다(NODE-045). TEST-070의 배열 멤버 형 시험은 PR-5에서 한다.

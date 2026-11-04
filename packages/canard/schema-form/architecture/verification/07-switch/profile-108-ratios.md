@@ -14,7 +14,7 @@ HEAD `0f690b0fa489c84cd2266f86928be27a8d0abe52`의 새 엔진과 `@canard/schema
 
 ## 공통 보정과 환경
 
-Node `v26.10.0`, V8 `14.6.202.34-node.35`, Apple M1 Max입니다. 107과 같은 Node이며 실제 worker 실행 파일은 `/opt/homebrew/Cellar/node/26.10.0_2/bin/node`입니다. 0.16.0 bundle SHA-256도 107과 같습니다. 같은 fixture의 결과 digest가 107 및 이번 old/new 사이에서 모두 같습니다.
+Node `v26.10.0`, V8 `14.6.202.34-node.35`, Apple M1 Max입니다. 107과 같은 Node이며 실제 worker 실행 파일은 `{node-home}/Cellar/node/26.10.0_2/bin/node`입니다. 0.16.0 bundle SHA-256도 107과 같습니다. 같은 fixture의 결과 digest가 107 및 이번 old/new 사이에서 모두 같습니다.
 
 | 검증 | empty 표본 | C 종단 µs | M microtask µs | C−M µs | wait residual p95 µs |
 | --- | --- | --- | --- | --- | --- |
@@ -154,6 +154,6 @@ flat-100 첫 갱신의 검증 (가) 미통과는 107 대비 새 현상입니다.
 
 전체 작업의 자체 종료 조건에는 예외가 있습니다. **성능 측정 전의 넓은 `rg --files` 준비 조회 1회가 기본 출력 버퍼 초과로 SIGTERM 종료되었습니다.** 성능 표본에 포함하지 않았습니다. 후처리의 첫 전체 tracked-diff 단언도 exit 1·signal=null로 자체 종료했습니다. 원인은 제가 편집하지 않은 `analysis-records-design.md`의 2줄 추가·1줄 변경이며 수정 시각 `2026-10-06T21:12:42.693Z`은 첫 측정 약 3분 28초 전입니다. 해당 변경을 되돌리지 않았습니다. 제품 src와 나머지 tracked 경로가 변경되지 않았음을 확인한 뒤, 후처리 검사를 제품 src 및 알려진 문서 경로로 한정하고 문서 변경을 감사에 남겼습니다.
 
-원시 자료·후처리 근거는 `profile-108-ratios/`에 있습니다. 감사 시 각 파일 최대 120602bytes로 5MB 이하였으며 최종 보고서도 같은 제한을 확인합니다. esbuild의 `write:false`로 bundle/source map은 메모리에서만 사용했습니다. `TMPDIR`는 저장소 밖 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`로 고정하고 Node compile cache를 비활성화했습니다. 저장소 안에는 번들·source map·캐시를 생성하지 않았습니다.
+원시 자료·후처리 근거는 `profile-108-ratios/`에 있습니다. 감사 시 각 파일 최대 120602bytes로 5MB 이하였으며 최종 보고서도 같은 제한을 확인합니다. esbuild의 `write:false`로 bundle/source map은 메모리에서만 사용했습니다. `TMPDIR`는 저장소 밖 `{scratch}/bundles`로 고정하고 Node compile cache를 비활성화했습니다. 저장소 안에는 번들·source map·캐시를 생성하지 않았습니다.
 
 재현은 해당 HEAD에서 한 worker씩 실행합니다: `TMPDIR='<위 외부 경로>' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-108-ratios/measure.mjs <fixture> <off|on> <1|2|3> <old|new>`. 회차별 순서는 1 old→new, 2 new→old, 3 old→new입니다. stdout JSON과 자연 종료 근거를 별도 파일에 보관합니다. `summarize.mjs --calibration`, `--rows <fixture> <validation>`, `--audit`도 순차 실행하며 stdout 결과를 native 파일 도구로 저장합니다. 임의로 source/계측/목표를 바꾸지 않습니다.

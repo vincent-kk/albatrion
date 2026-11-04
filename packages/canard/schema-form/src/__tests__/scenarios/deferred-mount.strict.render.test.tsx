@@ -2,10 +2,10 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JSONSchema } from '@winglet/json-schema';
-
+import type { JSONSchema } from '@/schema-form';
 import { VirtualizationBackfill } from '@/schema-form';
 
+import { settleValidation } from '../helpers/settleValidation';
 import { renderForm } from '../renderForm';
 
 /**
@@ -142,7 +142,7 @@ describe('deferred-mount under StrictMode', () => {
     });
     await act(async () => {
       form.handle.focus('/f15');
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await settleValidation(() => form.handle.node);
     });
     expect(form.exists('/f15')).toBe(true);
     expect(document.activeElement).toBe(form.field('/f15'));

@@ -1,7 +1,13 @@
+import type { SchemaFormError } from '../../../../../errors';
 import type { BlueprintSchema } from '../../../blueprint';
-import type { GuardFunction, ValidateFunction, Validator } from '../../type';
+import type {
+  GuardFunction,
+  ValidateFunction,
+  Validator,
+} from '../../types/validator';
 import { createValidatorCopy } from '../copy/createValidatorCopy';
-import { evictValidationRoot } from '../lifetime/evictValidationRoot';
+import { evictRecentValidationRoots } from '../lifetime/evictRecentValidationRoots';
+import { evictSameIdRoots } from '../lifetime/evictSameIdRoots';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
 import { validationEntries } from './validationEntries';
 
@@ -16,19 +22,27 @@ export interface ValidationEntry {
   readonly copy: BlueprintSchema;
   /** Authored-position guard compilation outcomes, including failures. */
   readonly guards: Map<string, GuardResult>;
+  /** Whether the first whole-schema compile has been attempted, including a thrown undefined. */
+  compiled: boolean;
   /** Whole-schema compilation result when successful. */
-  readonly validate?: ValidateFunction;
+  validate?: ValidateFunction;
   /** Whole-schema compilation failure when it throws. */
-  readonly failure?: unknown;
+  failure?: unknown;
+  /** Duplicate-id registration observed while this compilation failed. */
+  duplicate?: boolean;
+  /** Whether the one whole-schema retry after a retained-id collision has been consumed. */
+  retried?: boolean;
+  /** Shared compile rejection identity for automatic reports and later explicit/native requests. */
+  rejection?: SchemaFormError;
   /** Whether development guard precompilation has already run. */
   eagerCompiled: boolean;
 }
 
 /**
- * Read or create the single copied and compiled entry for this validator/root pair.
+ * Read or create the shared copy and guards without compiling the whole schema.
  * @param validator - Selected instance; its identity owns an independent cache.
  * @param authoredRoot - Authored schema object retained by the form tree.
- * @returns The shared entry, including a cached compilation failure.
+ * @returns The shared entry; whole-schema compilation waits for explicit demand.
  */
 export const readValidationEntry = (
   validator: Validator,
@@ -44,31 +58,16 @@ export const readValidationEntry = (
   const existing = roots.get(authoredRoot);
   if (existing) return existing;
   const list = recentReleaseList(validator);
-  if (typeof authoredRoot.$id === 'string')
-    for (const oldRoot of [...list.recent])
-      if (
-        oldRoot !== authoredRoot &&
-        typeof oldRoot === 'object' &&
-        oldRoot !== null &&
-        oldRoot.$id === authoredRoot.$id
-      )
-        evictValidationRoot(validator, oldRoot);
-  list.counts.set(authoredRoot, 0);
-  list.recent.push(authoredRoot);
-  if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
-  const copy = createValidatorCopy(authoredRoot);
-  let validate: ValidateFunction | undefined;
-  let failure: unknown;
-  try {
-    validate = validator.compile(copy);
-  } catch (error) {
-    failure = error;
+  evictSameIdRoots(validator, authoredRoot);
+  if (!list.counts.has(authoredRoot)) {
+    list.counts.set(authoredRoot, 0);
+    list.recent.push(authoredRoot);
+    evictRecentValidationRoots(validator, authoredRoot);
   }
   const entry: ValidationEntry = {
-    copy,
+    copy: createValidatorCopy(authoredRoot),
     guards: new Map(),
-    validate,
-    failure,
+    compiled: false,
     eagerCompiled: false,
   };
   roots.set(authoredRoot, entry);

@@ -10,6 +10,12 @@ export interface IdleDeadlineLike {
 /** Simulated time budget per tick when requestIdleCallback is unavailable */
 const FALLBACK_BUDGET_MS = 8;
 
+/** Deadline handed to the callback when `requestIdleCallback` is unavailable. */
+const FALLBACK_DEADLINE: IdleDeadlineLike = {
+  didTimeout: true,
+  timeRemaining: () => FALLBACK_BUDGET_MS,
+};
+
 /**
  * Schedule a callback on browser idle time.
  * @remarks Falls back to `scheduleCancelableMacrotaskSafe` when
@@ -27,7 +33,5 @@ export const scheduleIdle = (
     const id = requestIdleCallback(callback);
     return () => cancelIdleCallback(id);
   }
-  return scheduleCancelableMacrotaskSafe(() =>
-    callback({ didTimeout: true, timeRemaining: () => FALLBACK_BUDGET_MS }),
-  );
+  return scheduleCancelableMacrotaskSafe(() => callback(FALLBACK_DEADLINE));
 };

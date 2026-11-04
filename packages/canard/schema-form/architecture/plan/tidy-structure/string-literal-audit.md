@@ -1,5 +1,7 @@
 # 문자열 리터럴 규약 전수 판정 (2026-10-14, 1.0.0-beta 48b1a59fb, 제품 코드 674파일)
 
+> 48b1a59fb 시점의 스냅숏이다. 경로와 줄 번호는 그 커밋의 것이고, 뒤의 구조 이동을 반영하지 않는다.
+
 > 291라운드 소유자 물음("문자열 리터럴은 JSON Schema `type` 정도를 제외하면 쓰고 싶지 않다. 바뀔 때 변경 표면이 너무 크다. 이런 게 더 있나? method·event dispatch는 문제없나?")에 대한 답. 원장 관리자가 `debugger` 서브에이전트(읽기 전용)로 `=== '…'`·`case '…'` 비교 전부를 값과 좌변 형으로 묶어 판정했다. 기준: 값이 리터럴 합집합(또는 열거)으로 형이 잡히면 바꿀 때 컴파일러가 모든 자리를 잡는다(SAFE); 합집합이 있어도 중복 정의되거나 일부 자리가 `string`이면 WEAK; 형이 없으면 UNGUARDED. tsc는 돌리지 않았고 형은 읽어서 확인했다. 시험·스토리·벤치·`__legacy__`는 제외.
 
 ## 1. SAFE — 바꾸면 컴파일러가 전부 잡는다
@@ -27,13 +29,13 @@
 
 ## 3. UNGUARDED — 형이 없어 바꾸면 조용히 놓친다 (순위)
 
-1. **오류 클래스 생성자의 `code: string`** 넷(`errors/SchemaFormError.ts:18`, `JSONSchemaError.ts:25`, `ValidationError.ts:20`, `UnhandledError.ts:18`). 그래서 리터럴 6곳이 통과했고, `'SCHEMA_VALIDATION_FAILED'`(`components/Form/utils/submitForm.ts:23`)는 상수 자체가 없다(이미 드리프트). `DevelopmentIssue.code: string`, `TypeMismatchRecord.code: string`도 같다. `PRESENTATION_KEY_SUSPECT`는 생산자가 없다.
+1. **오류 클래스 생성자의 `code: string`** 넷(`errors/SchemaFormError.ts:18`, `JSONSchemaError.ts:25`, `ValidationError.ts:20`, `UnhandledError.ts:18`). 그래서 리터럴 6곳이 통과했고, `'SCHEMA_VALIDATION_FAILED'`(`components/Form/utils/submitForm.ts:23`)는 상수 자체가 없다(이미 드리프트). `DevelopmentIssue.code: string`, `MisfitRecord.code: string`도 같다. `PRESENTATION_KEY_SUSPECT`는 생산자가 없다.
 2. **controls 키 어휘**(active·visible·readOnly·disabled·derived·unsetValue·resetInteraction·unsetOnInactive·injectTo·fields·watch·discriminator). 정본은 `core/engine/types/controls.ts:27-71`인데 독립 목록이 다섯(`EXPRESSION_KEYS` 2벌, `KEY_NAMES`, `RULE_KEYS`, `OPTION_KEYS: string[]`), `BlueprintExpression.key: string`(`blueprint/type.ts:235`), `Reflect.get(controls, '<key>')` 22곳과 `hasOwnProperty` 4곳이 문자열로 읽는다. 정본에 묶인 곳은 `validateControlGroups.ts:99-117` 하나뿐.
 3. **FieldNode 공개 형과 런타임 클래스가 컴파일 시점에 연결되지 않음.** `core/surface/type.ts:47-132`의 공개 형과 `core/surface/FieldNode.ts:48`(`implements FieldNodeRecord`만)은 `fieldNodeFactory`의 구현 시그니처가 `unknown`을 반환(`utils/fieldNodeFactory.ts:96-100`)하고 가드가 `instanceof`뿐이라 서로 검사되지 않는다. 지금 48개 멤버 이름은 일치하며, 유일한 보호는 런타임 시험 `surface/__tests__/surface.test.ts:30-41`(DETAIL 표와 대조). 형에서 이름을 바꾸거나 시그니처를 바꿔도 컴파일은 통과하고 실행 때 깨진다.
 4. **경로 토큰** '@'·'*'·'#'·'/'·'..'·'.'. 정본 `helpers/jsonPointer/enum.ts:3`을 65곳이 쓰지만 엔진이 리터럴로 우회하는 줄이 약 135줄(`navigation/utils/query/findNodes.ts:16-29`, `settle/utils/write/getDependencyIndex.ts:52-147` 등).
 5. **스키마 그룹 키워드** 'controls'·'options'·'presentation' 문자열 비교 6파일(`applySchemaContribution.ts:55-64`, `mergeSingleStaticContribution.ts:72-74`, `createValidatorCopy.ts:56`, `collectInlineTerminalWarnings.ts:47`, `removeFormGroups.ts:14-16`).
 6. **FieldInput 힌트 키** `testKeys: string[]` + `as (keyof FieldInputTestObject)[]` 캐스트(`fieldInputDefinitions.ts:23-31,78`), `ListMatchedHintKey`와 중복.
-7. **진단 추적 문자열** `TypeMismatchRecord.source: string`, `settlementTrace.entry.api: string` 등(시험만 읽음).
+7. **진단 추적 문자열** `MisfitRecord.source: string`, `settlementTrace.entry.api: string` 등(시험만 읽음).
 
 ## 4. 답 — method·event dispatch는 안전한가
 

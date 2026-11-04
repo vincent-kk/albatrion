@@ -1,3 +1,5 @@
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import type { FieldNodeRecord } from '../types/record';
 
@@ -7,7 +9,7 @@ export const publishGlobalStateDeltas = <Self extends FieldNodeRecord<Self>>(
   deltas: ReadonlyMap<string, number>,
 ): void => {
   const runtime = root.runtime;
-  let nextState: Record<string, true> | undefined;
+  let nextState: Optional<Dictionary<true>>;
   for (const [key, delta] of deltas) {
     if (!delta) continue;
     const previous = runtime.globalStateCounts.get(key) ?? 0;

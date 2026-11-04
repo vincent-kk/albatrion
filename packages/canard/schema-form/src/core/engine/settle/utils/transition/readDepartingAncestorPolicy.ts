@@ -1,8 +1,9 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { filter as filterArray } from '@winglet/common-utils/array';
 
-import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 
@@ -18,18 +19,18 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
     if (ancestor.detached) continue;
-    const previous = getControlLayers(ancestor, new Map());
-    const departed = previous.filter((group) => {
-      if (!hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive))
-        return false;
+    const previous = getControlLayers(ancestor, emptyReadonlyMap, true);
+    const departed = filterArray(previous, (group) => {
       const key = JSON.stringify([
         group.host.path,
-        group.host.blueprintNode.kind,
+        getBlueprintNodeIdentity(group.host.blueprintNode),
       ]);
       const selected =
         context.selectedDeclarationIds.get(group.host) ??
         context.root.runtime.committedDeclarationIds?.get(key);
-      return !selected?.includes(group.declarationId);
+      return (
+        selected === undefined || selected.indexOf(group.declarationId) === -1
+      );
     });
     if (departed.length)
       return readExitLayerPolicy(

@@ -11,7 +11,7 @@
 | P1′ 값을 고치지 않는다 — 입력 구성 요소의 계약 | GOAL-026, WRITE-001, REACT-027 | "core는 받은 값을 고치지 않는다."(WRITE-001) 초안은 입력이 들고, 빈 칸·비우기의 값은 계약대로. 목록 밖의 값을 보내도 core가 받아 경고등으로 알린다(REACT-033) |
 | C6 편집 중 상태의 보존과 격리 | GOAL-019 | 캐럿·초안 보존 등 계승할 제약(T-1·T-2)은 플러그인 입력에서도 지켜진다 |
 | T-8 사용자 주입 구성 요소는 격리된다 | GOAL-059 | 플러그인 입력이 throw해도 그 서브트리만 fallback(`withErrorBoundary`는 소유 지점 1회) |
-| `typeMismatch === false`는 검증 통과가 아니다 | VALUE-037, SURFACE-061 | 무효 표지는 `typeMismatch`로, 검증 오류는 `errors`로 따로 그린다 |
+| `misfit === false`는 검증 통과가 아니다 | VALUE-037, SURFACE-061 | 무효 표지는 `misfit`으로, 검증 오류는 `errors`로 따로 그린다 |
 
 ## ADR
 
@@ -19,7 +19,7 @@
 | --- | --- | --- |
 | 0003 예약 층: `controls`·`options`·`presentation` | `presentation.*` 이주의 근거 | CONTROLS 영역, LANDING-078 |
 | 0014 오류는 삼키지 않는다 | 플러그인 입력의 격리와 무효 표지 | ERROR 영역, REACT-027 |
-| (새) 0015 union 잎 | 플러그인마다 union 항목: `{type:'union'}` 시험 객체, 유효 목록 기준의 입력, `typeMismatch` | REACT-033, NODE-058 |
+| (새) 0015 union 잎 | 플러그인마다 union 항목: `{type:'union'}` 시험 객체, 유효 목록 기준의 입력, `misfit` | REACT-033, NODE-058 |
 
 ## 설계 가치
 

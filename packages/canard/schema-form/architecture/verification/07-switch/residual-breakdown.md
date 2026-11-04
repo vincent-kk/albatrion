@@ -12,7 +12,7 @@ L=t_small×R, E=t_large−L, Q=t_large/(t_small×R)입니다. L은 작은 입력
 
 | phase / 귀속 | 최대 크기 전 L + E = 시간 | 후 L + E = 시간 | 원인·수정·연산 증거 |
 | --- | --- | --- | --- |
-| 03 transition/source presence | 0.685808 + (0.244410) = 0.930218; Q=1.356 | 0.027428 + (-0.001075) = 0.026353; Q=0.961 | transitionSettlement.ts:61–63 → isMissingRaw.ts:17. 각 entered branch마다 전체 빈 하위 트리를 다시 읽는 O(ND). 실제 default 후보만 검사해 방문313/7737→64/1024. 추가 영구 메모리 없음; branch 자체 default가 있는 경우 기존 source 보호 유지. |
+| 03 transition/source presence | 0.685808 + (0.244410) = 0.930218; Q=1.356 | 0.027428 + (-0.001075) = 0.026353; Q=0.961 | transitionSettlement.ts:61–63 → isMissingSource.ts:17. 각 entered branch마다 전체 빈 하위 트리를 다시 읽는 O(ND). 실제 default 후보만 검사해 방문313/7737→64/1024. 추가 영구 메모리 없음; branch 자체 default가 있는 경우 기존 source 보호 유지. |
 | 06 dirty index / mount | 1.899068 + (1.086697) = 2.985765; Q=1.572 | 1.382231 + (-0.042809) = 1.339422; Q=0.969 | DirtyPathSet.ts:66–76의 노드별 모든 prefix 색인. registerRecalculation.ts:15–16에서 ungated 계산 경계만 beginPostOrder(:22)로 전환; 직접 에지(:59)만 유지. 계산된 전 색인456/12744→실측168/2728=2(N−1). 시간·메모리는 고유 prefix closure 수에 선형. |
 | 06 dirty index / leaf update | 0.026802 + (0.008329) = 0.035131; Q=1.311 | 0.029653 + (0.004052) = 0.033705; Q=1.137 | registerRecalculation.ts:29–32가 만든 각 조상을 다시 DirtyPathSet에 prefix 색인하던 O(D²). 깊이4/16/64 색인 peak10/136/2080→4/16/64 검증. 실제 BF 10회 입력의 link 삽입60/150→60/100(일반 최초 색인+직접 closure). 작은 d3는 전환 고정비 때문에0.016081→0.017792ms로 증가한다. |
 
@@ -186,7 +186,7 @@ nested는 위 두 실제 중복을 제거했습니다. 남은 transition exclusi
 | derive-rule-index | src/core/settle/derive/utils/rules/getDeriveRuleTable.ts:41–46 | controls 없는 선언은1회 읽고 continue; flat/nested 선언 수와 선형. |
 | transition | src/core/settle/utils/transition/transitionSettlement.ts:44,47,70 | entered 깊이 bucket, filled membership, written input의 타입 확인. ungated filledNodes는 노드 정체성 Set; default/source/index 하위 비용 제외. |
 | gate-evaluation | src/core/settle/utils/gates/evaluateGate.ts:26 | 영향 gate의 평가; update120/240/480회, 순서·의미 유지. |
-| source-presence | src/core/settle/utils/transition/isMissingRaw.ts:17 | 빈 자식 재귀. 호출자를 default 후보로 제한하여 nested 중복 하위 트리 탐색 제거. |
+| source-presence | src/core/settle/utils/transition/isMissingSource.ts:17 | 빈 자식 재귀. 호출자를 default 후보로 제한하여 nested 중복 하위 트리 탐색 제거. |
 | default-selection | src/core/settle/utils/transition/readDefault.ts:14 | 노드의 선택 선언에서 default 탐색. nested에서는 단일 선언이며 leaf default만 source 검사. |
 | dirty-children | src/core/settle/utils/compute/dirtyChildren.ts:18 | 부모에 색인된 직계 계산 후보 순회; ungated 직접 에지당 처리. |
 | dirty-index | src/core/settle/utils/write/DirtyPathSet.ts:22,59,66 | post-order frontier에서 직접 에지만 보관; 일반/gated index의 첫 descendant 순서 유지. 문자열 slice/hash의 경로 길이 비용은 남음. |
@@ -226,3 +226,5 @@ P-135는 stage06(07a083c18) src/core/settle/utils/transition/withdrawDetachedFil
 패키지 bench:baseline 실제 명령도 최신 소스로 재실행하여 [bench-82c01-residual-baseline.json](bench-82c01-residual-baseline.json)에 보존했습니다(7파일44항목, legacy 비교 없음). 최신 번들은 dist minify+gzip71,994B, gzip104,592B이고 전체 fractal 표는 performance.md의(라)에 갱신했습니다. 기존 React BF 시간 자료는 이번 잔여 수정 이전 자료입니다. 최신 소스의 React 동작은 위 render/react18 전체 suite로 검증했으며 이번 후속에서는 React BF 시간 자료를 재측정한 것으로 주장하지 않습니다.
 
 원장 의미 변경이나 승인 요청은 없습니다. flat/nested/oneOf core mount 및 oneOf update의 배율은 여전히 크기 독립이 아니므로 (나)에 새로 이동한 행은 없습니다. 기존 (나)의 nested update는 최신1.559/1.558×입니다. 구조 결함 해결, 선형 상수 비용 기록, 소유자 수용은 구별합니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `b49f53962f3e`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

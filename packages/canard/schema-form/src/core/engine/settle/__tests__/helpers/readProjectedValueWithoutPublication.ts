@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
 
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Independently read a projected path without publication or registry effects.
@@ -20,7 +20,7 @@ export const readProjectedValueWithoutPublication = <
   let node = context.root;
   const emission = (record: Self): unknown =>
     record.emit === undefined ||
-    (context.changedRaw.has(record.path) && !context.changedNodes.has(record))
+    (context.changedSource.has(record.path) && !context.changedNodes.has(record))
       ? undefined
       : record.emit;
   const assertPublished = (record: Self): void => {
@@ -36,11 +36,11 @@ export const readProjectedValueWithoutPublication = <
   const encoded = path.slice(1).split('/');
   for (let index = 0; index < encoded.length; index++) {
     const name = encoded[index].replace(/~1/g, '/').replace(/~0/g, '~');
-    if (node.behavior.strategy === 'branch' && node.raw !== undefined)
+    if (node.behavior.strategy === 'branch' && node.source !== undefined)
       assertPublished(node);
     if (
       node.behavior.strategy === 'branch' &&
-      node.raw !== undefined &&
+      node.source !== undefined &&
       (node.parent !== null ||
         value === null ||
         typeof value !== 'object' ||
@@ -75,11 +75,11 @@ export const readProjectedValueWithoutPublication = <
         }
       if (
         !declared &&
-        node.undeclaredValues !== null &&
-        typeof node.undeclaredValues === 'object' &&
-        hasOwnProperty(node.undeclaredValues, name)
+        node.extras !== null &&
+        typeof node.extras === 'object' &&
+        hasOwnProperty(node.extras, name)
       )
-        value = Reflect.get(node.undeclaredValues, name);
+        value = Reflect.get(node.extras, name);
       else return undefined;
     }
   }

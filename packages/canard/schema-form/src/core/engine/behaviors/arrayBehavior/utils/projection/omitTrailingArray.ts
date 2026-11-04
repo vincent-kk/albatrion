@@ -1,19 +1,11 @@
-import { getItemEntry } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
-
-/** Reuse the most recent trimmed view while its source prefix is unchanged. */
-const TRIMMED = new WeakMap<
-  readonly unknown[],
-  {
-    end: number;
-    result: readonly unknown[];
-  }
->();
+import { trimmedArrays } from '../../../../utils/cache/valueMemos';
+import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
 
 /**
- * Trim trailing nullish raw items or unfilled branch slots without mutation.
+ * Trim trailing nullish source items or unfilled branch slots without mutation.
  * @param value - Local or terminal array whose suffix may be omitted
- * @param node - Branch host for detecting item holes; absent for terminal raw
+ * @param node - Branch host for detecting item holes; absent for terminal source
  * @returns Original array when unchanged, otherwise a memoized copied prefix
  */
 export const omitTrailingArray = <Self>(
@@ -26,8 +18,8 @@ export const omitTrailingArray = <Self>(
     if (!node) {
       if (value[index] != null) break;
     } else {
-      const entry = getItemEntry(node.blueprintNode, index);
-      if (!entry) {
+      const template = getArrayItemTemplate(node, index);
+      if (!template) {
         if (value[index] != null) break;
       } else {
         const child = node.structure?.[String(index)];
@@ -39,8 +31,8 @@ export const omitTrailingArray = <Self>(
           emission !== undefined &&
           !(
             emission === null &&
-            entry.node.kind !== 'object' &&
-            entry.node.kind !== 'array'
+            template.kind !== 'object' &&
+            template.kind !== 'array'
           )
         )
           break;
@@ -49,13 +41,17 @@ export const omitTrailingArray = <Self>(
     end--;
   }
   if (end === value.length) return value;
-  const cached = TRIMMED.get(value);
-  if (
-    cached?.end === end &&
-    cached.result.every((item, index) => Object.is(item, value[index]))
-  )
-    return cached.result;
+  const cached = trimmedArrays.get(value);
+  if (cached?.end === end) {
+    let unchanged = true;
+    for (let index = 0; index < cached.result.length; index++)
+      if (!Object.is(cached.result[index], value[index])) {
+        unchanged = false;
+        break;
+      }
+    if (unchanged) return cached.result;
+  }
   const result = value.slice(0, end);
-  TRIMMED.set(value, { end, result });
+  trimmedArrays.set(value, { end, result });
   return result;
 };

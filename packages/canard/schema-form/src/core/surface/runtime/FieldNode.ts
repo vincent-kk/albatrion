@@ -1,3 +1,7 @@
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
+import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   BlueprintNode,
   BlueprintSchemaType,
@@ -8,6 +12,7 @@ import {
   dispatchClear,
   dispatchClearExternalErrors,
   dispatchClearSubtreeState,
+  dispatchInsert,
   dispatchPop,
   dispatchPush,
   dispatchRemove,
@@ -19,9 +24,12 @@ import {
   dispatchSetValue,
   dispatchUpdate,
   dispatchValidate,
+  dispatchVisitSubtree,
+  onInactiveFieldNode,
   readFieldNodeRevision,
   subscribeFieldNode,
 } from '../../engine';
+import type { InactiveValueResolver } from '../../engine';
 import type { FieldNodeListener } from '../../engine';
 import { find, findNodes } from '../../engine';
 import { EMPTY_REVISION_LEDGER } from '../../engine';
@@ -35,13 +43,15 @@ import type {
 import {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeTypeMismatch,
-  readFieldNodeTypeMismatches,
+  readFieldNodeIsDivergent,
+  readFieldNodeIsMisfit,
+  readFieldNodeMisfits,
   readFieldNodeWatchValues,
 } from '../../engine';
 import type { NodeStateFlags } from '../../engine';
 import { EMPTY_GLOBAL_ERRORS, readFieldNodeErrors } from '../../engine';
 import type { ValidationIssue } from '../../engine';
+import { FieldNodeState } from '../../engine';
 import { SetValueOption } from '../type';
 
 /** Runtime record implementation; the public FieldNode name denotes a union type. */
@@ -49,7 +59,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   readonly behavior: Behavior<FieldNode>;
   readonly runtime: FieldNodeRuntime<FieldNode>;
   readonly blueprintNode: BlueprintNode;
-  parent: FieldNode | null;
+  parent: Nullable<FieldNode>;
   private readonly root: FieldNode;
   private storedName: string;
   private storedEscapedName: string;
@@ -57,20 +67,30 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   private storedDepth: number;
   private storedRequired: boolean;
   private readonly storedNullable: boolean;
-  private readonly storedSchemaType: BlueprintSchemaType;
-  structure: Record<string, FieldNode> | null;
-  private storedChildren: readonly FieldNode[] | null;
-  itemKey: number | null;
+  private readonly storedSchemaType: Optional<BlueprintSchemaType>;
+  structure: Nullable<Dictionary<FieldNode>>;
+  private storedChildren: Nullable<readonly FieldNode[]>;
+  itemKey: Nullable<number>;
   itemCount: number;
   nextItemKey: number;
-  private storedRaw: unknown;
-  private storedUndeclaredValues: unknown;
+  private storedSource: unknown;
+  private storedExtras: unknown;
   private storedActive: boolean;
   private storedVisible: boolean;
   private storedReadOnly: boolean;
   private storedDisabled: boolean;
   local: unknown;
   emit: unknown;
+  /** Current output at this path retained by the divergence read memo. */
+  divergenceCurrent: unknown;
+  /** Concrete path whose parsed segments this occurrence retains. */
+  divergencePath: string | undefined;
+  /** Parsed path syntax retained until this occurrence changes address. */
+  divergenceSegments: readonly PointerSegment[] | undefined;
+  /** Last root load output at this path retained by the divergence read memo. */
+  divergenceBase: unknown;
+  /** Pure comparison result for the retained path values. */
+  divergenceResult: boolean;
   schema: EffectiveSchema;
   interactionState: FieldNodeRecord<FieldNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
@@ -79,12 +99,12 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   deliveryChanges: number;
   deliveryPreviousLocal: unknown;
   deliveryPreviousEmit: unknown;
-  deliveryPreviousPath: string | undefined;
-  deliveryPreviousChildren: readonly FieldNode[] | null | undefined;
-  deliveryPreviousComputed: number | undefined;
-  deliveryPreviousSchema: EffectiveSchema | undefined;
-  deliveryPreviousState: NodeStateFlags | undefined;
-  deliveryWatchValues: readonly unknown[] | undefined;
+  deliveryPreviousPath: Optional<string>;
+  deliveryPreviousChildren: Optional<Nullable<readonly FieldNode[]>>;
+  deliveryPreviousComputed: Optional<number>;
+  deliveryPreviousSchema: Optional<EffectiveSchema>;
+  deliveryPreviousState: Optional<NodeStateFlags>;
+  deliveryWatchValues: Optional<readonly unknown[]>;
   pendingDelivery: FieldNodeRecord<FieldNode>['pendingDelivery'];
   pendingRevision: number;
   pendingNonSettleDelivery: FieldNodeRecord<FieldNode>['pendingNonSettleDelivery'];
@@ -96,13 +116,13 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     behavior: Behavior<FieldNode>,
     runtime: FieldNodeRuntime<FieldNode>,
     blueprintNode: BlueprintNode,
-    parent: FieldNode | null,
+    parent: Nullable<FieldNode>,
     name: string,
     escapedName: string,
     path: string,
     depth: number,
-    structure: Record<string, FieldNode> | null,
-    children: readonly FieldNode[] | null,
+    structure: Nullable<Dictionary<FieldNode>>,
+    children: Nullable<readonly FieldNode[]>,
     schema: EffectiveSchema,
     state: FieldNodeRecord<FieldNode>['interactionState'],
   ) {
@@ -123,14 +143,19 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.itemKey = null;
     this.itemCount = 0;
     this.nextItemKey = 0;
-    this.storedRaw = undefined;
-    this.storedUndeclaredValues = undefined;
+    this.storedSource = undefined;
+    this.storedExtras = undefined;
     this.storedActive = true;
     this.storedVisible = true;
     this.storedReadOnly = false;
     this.storedDisabled = false;
     this.local = undefined;
     this.emit = undefined;
+    this.divergenceCurrent = undefined;
+    this.divergencePath = undefined;
+    this.divergenceSegments = undefined;
+    this.divergenceBase = undefined;
+    this.divergenceResult = false;
     this.schema = schema;
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
@@ -152,255 +177,258 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.interactionReset = 0;
   }
 
-  /** {@inheritDoc NodeSurface.type} */
   get type() {
     return this.behavior.type;
   }
-  /** {@inheritDoc NodeSurface.strategy} */
   get strategy() {
     return this.behavior.strategy;
   }
-  /** {@inheritDoc NodeSurface.schemaType} */
   get schemaType() {
     return this.storedSchemaType;
   }
-  /** {@inheritDoc NodeSurface.jsonSchema} */
   get jsonSchema() {
     return this.schema.schema;
   }
-  /** {@inheritDoc NodeSurface.required} */
-  get required() {
+  /** Whether the effective declaration requires this occurrence. */
+  get isRequired() {
     return this.storedRequired;
   }
-  set required(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isRequired(value: boolean) {
     this.storedRequired = value;
   }
-  /** {@inheritDoc NodeSurface.nullable} */
   get nullable() {
     return this.storedNullable;
   }
-  /** {@inheritDoc NodeSurface.depth} */
   get depth() {
     return this.storedDepth;
   }
   set depth(value: number) {
     this.storedDepth = value;
   }
-  /** {@inheritDoc NodeSurface.isRoot} */
   get isRoot() {
     return this.parent === null;
   }
-  /** {@inheritDoc NodeSurface.rootNode} */
   get rootNode() {
     return this.root;
   }
-  /** {@inheritDoc NodeSurface.parentNode} */
   get parentNode() {
     return this.parent;
   }
-  /** {@inheritDoc NodeSurface.name} */
   get name() {
     return this.storedName;
   }
   set name(value: string) {
     this.storedName = value;
   }
-  /** {@inheritDoc NodeSurface.escapedName} */
   get escapedName() {
     return this.storedEscapedName;
   }
   set escapedName(value: string) {
     this.storedEscapedName = value;
   }
-  /** {@inheritDoc NodeSurface.path} */
   get path() {
     return this.storedPath;
   }
   set path(value: string) {
     this.storedPath = value;
   }
-  /** {@inheritDoc NodeSurface.children} */
   get children() {
     return this.storedChildren;
   }
-  set children(value: readonly FieldNode[] | null) {
+  set children(value: Nullable<readonly FieldNode[]>) {
     this.storedChildren = value;
   }
-  /** {@inheritDoc NodeSurface.raw} */
-  get raw() {
-    return this.storedRaw;
+  get source() {
+    return this.storedSource;
   }
-  set raw(value: unknown) {
-    this.storedRaw = value;
+  set source(value: unknown) {
+    this.storedSource = value;
   }
-  /** {@inheritDoc NodeSurface.undeclaredValues} */
-  get undeclaredValues() {
-    return this.storedUndeclaredValues;
+  get extras() {
+    return this.storedExtras;
   }
-  set undeclaredValues(value: unknown) {
-    this.storedUndeclaredValues = value;
+  set extras(value: unknown) {
+    this.storedExtras = value;
   }
-  /** {@inheritDoc NodeSurface.value} */
   get value() {
     return this.local;
   }
-  /** {@inheritDoc NodeSurface.outputValue} */
   get outputValue() {
     return this.emit;
   }
-  /** {@inheritDoc NodeSurface.inactiveValues} */
   get inactiveValues() {
     return readFieldNodeInactiveValues<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.active} */
-  get active() {
+  /** Whether this occurrence remains in the current shape. */
+  get isActive() {
     return this.storedActive;
   }
-  set active(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isActive(value: boolean) {
     this.storedActive = value;
   }
-  /** {@inheritDoc NodeSurface.visible} */
-  get visible() {
+  /** Local visibility after active declarations are combined. */
+  get isVisible() {
     return this.storedVisible;
   }
-  set visible(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isVisible(value: boolean) {
     this.storedVisible = value;
   }
-  /** {@inheritDoc NodeSurface.enabled} */
-  get enabled() {
-    return this.active && this.visible;
+  /** Whether this occurrence is active and visible, independent of disabled state. */
+  get isPresent() {
+    return this.isActive && this.isVisible;
   }
-  /** {@inheritDoc NodeSurface.readOnly} */
-  get readOnly() {
+  /** Local read-only state including the standard schema readOnly flag. */
+  get isReadOnly() {
     return this.storedReadOnly;
   }
-  set readOnly(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isReadOnly(value: boolean) {
     this.storedReadOnly = value;
   }
-  /** {@inheritDoc NodeSurface.disabled} */
-  get disabled() {
+  /** Local input lock independent of presence. */
+  get isDisabled() {
     return this.storedDisabled;
   }
-  set disabled(value: boolean) {
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isDisabled(value: boolean) {
     this.storedDisabled = value;
   }
-  /** {@inheritDoc NodeSurface.watchValues} */
+  /** Effective watched values read from the emitted tree. */
   get watchValues() {
     return readFieldNodeWatchValues<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.context} */
+  /** Shared context reference supplied by the current Form binding. */
   get context() {
     return this.runtime.context;
   }
-  /** {@inheritDoc NodeSurface.typeMismatch} */
-  get typeMismatch() {
-    return readFieldNodeTypeMismatch<FieldNode>(this);
+  /** Whether the retained source value misses the effective accepted types. */
+  get isMisfit() {
+    return readFieldNodeIsMisfit<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.typeMismatches} */
-  get typeMismatches() {
-    return readFieldNodeTypeMismatches<FieldNode>(this);
+  get misfits() {
+    return readFieldNodeMisfits<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.diagnostics} */
   get diagnostics(): FieldNodeRuntime<FieldNode>['diagnostics'] {
     return this.runtime.diagnostics;
   }
-  /** {@inheritDoc NodeSurface.defaultValue} */
   get defaultValue() {
     return readFieldNodeDefaultValue<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.find} */
-  find(pointer?: string | readonly string[] | null) {
+  /** Output difference from the last root load. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events. */
+  get isDivergent(): boolean {
+    return readFieldNodeIsDivergent<FieldNode>(this);
+  }
+  /** User-input state truthiness; re-read on UpdateState, including for detached references. */
+  get isEdited(): boolean {
+    return !!this.state[FieldNodeState.Edited];
+  }
+  /** Blur state truthiness; re-read on UpdateState, including for detached references. */
+  get isTouched(): boolean {
+    return !!this.state[FieldNodeState.Touched];
+  }
+  find(pointer?: Nullable<string | readonly string[]>) {
     return find<FieldNode>(this, pointer);
   }
-  /** {@inheritDoc NodeSurface.findNodes} */
-  findNodes(pointer?: string | readonly string[] | null) {
+  findNodes(pointer?: Nullable<string | readonly string[]>) {
     return findNodes<FieldNode>(this, pointer);
   }
-  /** {@inheritDoc NodeSurface.setValue} */
+  /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
+  visitSubtree(visitor: (node: FieldNode) => void | boolean) {
+    return dispatchVisitSubtree<FieldNode>(this, visitor);
+  }
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchSetValue<FieldNode>(this, value, option);
   }
-  /** {@inheritDoc ArrayNode.push} */
+  /** Append one caller value and return the new length synchronously. */
   push(value?: unknown) {
     return dispatchPush<FieldNode>(this, value);
   }
-  /** {@inheritDoc ArrayNode.pop} */
+  /** Remove the final position and return its last committed value. */
   pop() {
     return dispatchPop<FieldNode>(this);
   }
-  /** {@inheritDoc ArrayNode.update} */
+  /** Replace one position without changing its snapshot or identity. */
   update(index: number, value: unknown) {
     return dispatchUpdate<FieldNode>(this, index, value);
   }
-  /** {@inheritDoc ArrayNode.remove} */
+  /** Remove one position and return its last committed value. */
   remove(index: number) {
     return dispatchRemove<FieldNode>(this, index);
   }
-  /** {@inheritDoc ArrayNode.clear} */
+  /** Insert one caller value at a position in [0, length] and return the new length synchronously. */
+  insert(index: number, value?: unknown) {
+    return dispatchInsert<FieldNode>(this, index, value);
+  }
+  /** Remove every position without returning an item. */
   clear() {
     return dispatchClear<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchResetSubtree<FieldNode>(this, option);
   }
-  /** {@inheritDoc NodeSurface.state} */
+  /** Local interaction flags, patched through the dispatcher on assignment. */
   get state() {
     return this.interactionState;
   }
-  /** {@inheritDoc NodeSurface.state} */
   set state(value: NodeStateFlags) {
     dispatchSetState<FieldNode>(this, value);
   }
-  /** {@inheritDoc NodeSurface.setState} */
+  /** Patch this occurrence's interaction flags. */
   setState(state: NodeStateFlags) {
     return dispatchSetState<FieldNode>(this, state);
   }
-  /** {@inheritDoc NodeSurface.globalState} */
+  /** Interaction flags present on at least one node in the current tree shape. */
   get globalState() {
     return this.runtime.globalState;
   }
-  /** {@inheritDoc NodeSurface.setSubtreeState} */
+  /** Patch interaction flags throughout this live subtree. */
   setSubtreeState(state: NodeStateFlags) {
     return dispatchSetSubtreeState<FieldNode>(this, state);
   }
-  /** {@inheritDoc NodeSurface.clearSubtreeState} */
+  /** Clear interaction flags throughout this live subtree. */
   clearSubtreeState() {
     return dispatchClearSubtreeState<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.errors} */
+  /** Displayed validator and external issues for this occurrence. */
   get errors() {
     return readFieldNodeErrors<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.globalErrors} */
+  /** Ordered whole-tree validator issues. */
   get globalErrors() {
     return this.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS;
   }
-  /** {@inheritDoc NodeSurface.setExternalErrors} */
+  /** Replace this occurrence's external issues; a non-root write also replaces the root list's issues at this path. */
   setExternalErrors(errors: readonly ValidationIssue[]) {
     return dispatchSetExternalErrors<FieldNode>(this, errors);
   }
-  /** {@inheritDoc NodeSurface.clearExternalErrors} */
+  /** Clear this occurrence's external issues; a non-root clear also removes the root list's issues at this path. */
   clearExternalErrors() {
     return dispatchClearExternalErrors<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.validate} */
+  /** Request a fresh whole-schema validation verdict. */
   validate() {
     return dispatchValidate<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.subscribe} */
+  /** Subscribe to future event deliveries. */
   subscribe(listener: FieldNodeListener) {
     return subscribeFieldNode<FieldNode>(this, listener);
   }
-  /** {@inheritDoc NodeSurface.revision} */
+  /** Resolve the retained value synchronously at this instance's normal keep-policy gate exit; returns cleanup. */
+  onInactive(listener: InactiveValueResolver<unknown>) {
+    return onInactiveFieldNode<FieldNode>(this, listener);
+  }
+  /** Read the accumulated delivery revision for selected event bits. */
   revision(mask?: FieldNodeEventType) {
     return readFieldNodeRevision<FieldNode>(this, mask);
   }
-  /** {@inheritDoc NodeSurface.request} */
+  /** Request one renderer action. */
   request(kind: FieldNodeRequestType) {
     return dispatchRequest<FieldNode>(this, kind);
   }
-  /** {@inheritDoc NodeSurface.batch} */
+  /** Group synchronous writes in one outer delivery boundary. */
   batch(fn: () => void) {
     return dispatchBatch<FieldNode>(this, fn);
   }

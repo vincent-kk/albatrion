@@ -1,7 +1,7 @@
 import type { Blueprint } from '../../../../blueprint';
+import { getBlueprintDerived } from '../../../../utils/cache/derivedRecords';
 
 /** One maximum authored relative read per immutable blueprint. */
-const RELATIVE_SPANS = new WeakMap<Blueprint, number>();
 
 /**
  * Memoize the whole-blueprint span shared by recursive expansion and fill.
@@ -9,7 +9,9 @@ const RELATIVE_SPANS = new WeakMap<Blueprint, number>();
  * @returns Largest relative ancestor read, or zero when no relative read exists
  */
 export const getRecursiveRelativeSpan = (blueprint: Blueprint): number => {
-  let span = RELATIVE_SPANS.get(blueprint);
+  let span = getBlueprintDerived<'recursiveRelativeSpan', number>(
+    blueprint,
+  ).recursiveRelativeSpan;
   if (span !== undefined) return span;
   span = 0;
   const templates = blueprint.nodes;
@@ -30,6 +32,8 @@ export const getRecursiveRelativeSpan = (blueprint: Blueprint): number => {
       }
     }
   }
-  RELATIVE_SPANS.set(blueprint, span);
+  getBlueprintDerived<'recursiveRelativeSpan', number>(
+    blueprint,
+  ).recursiveRelativeSpan = span;
   return span;
 };

@@ -32,7 +32,7 @@ export const companySchema = {
 export const ifThenElseScenarios: readonly FormScenario[] = [
   {
     name: 'composition.if-then-else-guard',
-    description: 'FRAGMENT-009 if gates use compileGuard; FRAGMENT-003 then and else are gated declarations; GOAL-034 the form does not interpret if; LANDING-018 retains inactive raw values.',
+    description: 'FRAGMENT-009 if gates use compileGuard; FRAGMENT-003 then and else are gated declarations; GOAL-034 the form does not interpret if; LANDING-018 retains inactive source values.',
     schema: ageSchema,
     initialValue: { age: 20 },
     steps: [
@@ -56,7 +56,7 @@ export const ifThenElseScenarios: readonly FormScenario[] = [
   },
   {
     name: 'composition.if-nested-guard',
-    description: 'FRAGMENT-021 allOf entries carry independent if/then pairs; FRAGMENT-009 the guard reads the nested host value; LANDING-018 retains inactive raw values.',
+    description: 'FRAGMENT-021 allOf entries carry independent if/then pairs; FRAGMENT-009 the guard reads the nested host value; LANDING-018 retains inactive source values.',
     schema: countrySchema,
     initialValue: { address: { country: 'KR' } },
     steps: [
@@ -74,7 +74,7 @@ export const ifThenElseScenarios: readonly FormScenario[] = [
   },
   {
     name: 'composition.if-else-screen-rapid-toggle',
-    description: 'FRAGMENT-009 boolean guard with else; LANDING-011 then defaults fill once; LANDING-018 both sides keep raw values across four screen toggles and a single-write batch. The multi-write batch case is composition.batched-toggle-keeps-edit.',
+    description: 'FRAGMENT-009 boolean guard with else; LANDING-011 then defaults fill once; LANDING-018 both sides keep source values across four screen toggles and a single-write batch. The multi-write batch case is composition.batched-toggle-keeps-edit.',
     schema: companySchema,
     initialValue: { company: false, personalId: 'P1' },
     steps: [

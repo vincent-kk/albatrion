@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-// filid:contract settle-array
+// filid:contract settle-array-carryover
 describe('array projection carryovers', () => {
   it('26C-03 VALUE-034 keeps omitTrailing source slots after a load', () => {
     const { root } = makeFieldNodeTree(
@@ -20,7 +20,7 @@ describe('array projection carryovers', () => {
     );
     root.resetSubtree();
     expect(root.outputValue).toEqual({ tail: ['a'] });
-    expect(root.find('/tail')?.children?.map((item) => item.raw)).toEqual([
+    expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
       null,
       null,
@@ -76,7 +76,7 @@ describe('array projection carryovers', () => {
     );
     root.resetSubtree();
     expect(root.outputValue).toEqual([null, 'x']);
-    expect(root.children?.map((item) => item.raw)).toEqual([
+    expect(root.children?.map((item) => item.source)).toEqual([
       undefined,
       'x',
       undefined,

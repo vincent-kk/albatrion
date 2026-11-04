@@ -2,7 +2,7 @@
 
 변경 1b는 회귀 4개로 REJECT이며, 변경 2는 회귀 1개로 REJECT입니다. 1b가 기각되었으므로 변경 2는 b-2와 b-head를 비교했습니다. 아래 수치는 이번 세션의 측정값만 사용했습니다.
 
-측정 대상은 커밋된 HEAD bd1807be20784467dc25933d605738bba0c0acdb이며, 작업 트리의 1b·2 변경은 측정 전후 그대로 보존되었습니다. 원본 src, Git 상태, 설치된 의존성을 수정하지 않았습니다. 번들·소스맵·캐시는 /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/bundles 아래에서만 다루었으며 cacheDir를 설정하지 않았습니다. 패키지 관리자 명령과 설치는 실행하지 않았습니다.
+측정 대상은 커밋된 HEAD bd1807be20784467dc25933d605738bba0c0acdb이며, 작업 트리의 1b·2 변경은 측정 전후 그대로 보존되었습니다. 원본 src, Git 상태, 설치된 의존성을 수정하지 않았습니다. 번들·소스맵·캐시는 {scratch}/bundles/bundles 아래에서만 다루었으며 cacheDir를 설정하지 않았습니다. 패키지 관리자 명령과 설치는 실행하지 않았습니다.
 
 Node v26.10.0, V8 14.6.202.34-node.35, Apple M1 Max, Darwin 25.6.0 arm64, 메모리 64 GiB에서 실행했습니다. React는 19.2.6의 production profiling 빌드를 사용했습니다. 측정은 진단, React, Core A/A, 1b, 2 순서로 수행했으며 모든 워커를 순차 실행하고 자연 종료를 기다렸습니다. 공식 Core 워커 621개와 React 워커 228개의 최장 단조 시계 소요 시간은 115.503초였습니다. 단일 명령의 8분 제한을 넘지 않았고, 준비·분석도 구간별 명령으로 나누었습니다.
 
@@ -654,17 +654,17 @@ b-1b와 b-head를 9회 비교했습니다. 회귀는 99% 구간 전체가 0보�
 
 A/A의 첫 if-then/OFF 실행은 fixture 파일 복사 누락으로 표본을 만들기 전에 ENOENT와 종료 코드 1로 자연 종료했습니다. 기존 117의 if-then.json을 그대로 복사한 뒤 해당 18개 OFF/ON 실행을 수행했습니다. 실패 실행은 실행 로그에 보존했고 측정 표본에는 포함하지 않았습니다. 초기 React 도구 확인용 smoke 원시 파일도 공식 결과와 구분하여 보존했습니다.
 
-모든 원시 JSON 968개는 /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-119-raw에 있으며 [raw-sha256.txt](profile-119-session/raw-sha256.txt)에 각 절대 경로와 SHA-256을 기록했습니다. 공식 per-run 원시는 Core 621개, React 워커 228개이며 나머지는 엔진 쌍 기록·진단·준비·smoke 자료입니다. 저장소 안에는 요약·스크립트·실행 로그만 두었습니다. 최종 감사에서 모든 커밋 대상 파일이 5,000,000 bytes 이하인지 검사했습니다. 번들과 원시 파일은 커밋 대상에 포함하지 않았습니다.
+모든 원시 JSON 968개는 {scratch}/profile-119-raw에 있으며 [raw-sha256.txt](profile-119-session/raw-sha256.txt)에 각 절대 경로와 SHA-256을 기록했습니다. 공식 per-run 원시는 Core 621개, React 워커 228개이며 나머지는 엔진 쌍 기록·진단·준비·smoke 자료입니다. 저장소 안에는 요약·스크립트·실행 로그만 두었습니다. 최종 감사에서 모든 커밋 대상 파일이 5,000,000 bytes 이하인지 검사했습니다. 번들과 원시 파일은 커밋 대상에 포함하지 않았습니다.
 
 재현 시 [core.mjs](profile-119-session/core.mjs), [calibrate.mjs](profile-119-session/calibrate.mjs), [analyze-row.mjs](profile-119-session/analyze-row.mjs), [verdict.mjs](profile-119-session/verdict.mjs), [verify-results.mjs](profile-119-session/verify-results.mjs)를 이 순서로 사용합니다. 아래 예시는 한 회차 또는 한 분석 단계의 명령이며 모두 순차 실행해야 합니다.
 
 ```sh
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/measure-react.mjs --pair sample-0 1
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/measure-react.mjs --pair sample-0 1 --old-wait
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/core.mjs AA sample-0 off 1
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/core.mjs 1b sample-0 off 1
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/core.mjs 2 sample-0 off 1 rejected
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/verify-results.mjs
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/measure-react.mjs --pair sample-0 1
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/measure-react.mjs --pair sample-0 1 --old-wait
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/core.mjs AA sample-0 off 1
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/core.mjs 1b sample-0 off 1
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/core.mjs 2 sample-0 off 1 rejected
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-119-session/verify-results.mjs
 ```
 
 React·Core의 실제 실행 명령과 자연 종료 코드는 execution-react.json 및 execution-core-AA/1b/2.json에 있습니다. 이 보고서는 [render-report.mjs](profile-119-session/render-report.mjs)가 현재 요약 JSON에서 생성한 내용입니다.

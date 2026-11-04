@@ -14,7 +14,7 @@
 ```sh
 yarn workspace @canard/schema-form bench:baseline
 yarn workspace @canard/schema-form build
-yarn workspace @aileron/benchmark-form bench:scale --out=/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/verification/02-foundation-and-blueprint/baseline/scale.json
+yarn workspace @aileron/benchmark-form bench:scale --out=packages/canard/schema-form/architecture/verification/02-foundation-and-blueprint/baseline/scale.json
 ```
 
 CPU를 쓰는 세 명령은 순서대로 실행했다. 첫 명령의 기존 출력 파일은 실행 전에

@@ -32,7 +32,7 @@ export const ContextStages: Story = {
       if (index > 0) await userEvent.click(canvasElement.querySelector<HTMLButtonElement>('button[aria-label="Apply next form props"]')!);
       await expectEventually(
         () => ({
-          states: { titleReadOnly: handle.findNode('/title')!.readOnly, secretVisible: handle.findNode('/secret')!.visible },
+          states: { titleReadOnly: handle.findNode('/title')!.isReadOnly, secretVisible: handle.findNode('/secret')!.isVisible },
           values: Object.fromEntries(Object.keys(stage.values).map((path) => [path, handle.findNode(path)?.value])),
           changes: onChange.mock.calls.length - before,
         }),

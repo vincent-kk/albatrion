@@ -1,8 +1,5 @@
-import type {
-  BlueprintNode,
-  BlueprintSchema,
-  PropertyDeclaration,
-} from '../../type';
+import type { BlueprintNode, PropertyDeclaration } from '../../types/node';
+import type { BlueprintSchema } from '../../types/schema';
 
 /**
  * Construct a renderer-free node fixture for the effective-schema contract.

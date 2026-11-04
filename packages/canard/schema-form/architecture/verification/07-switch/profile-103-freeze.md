@@ -275,7 +275,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 - [통계와 보고서 생성](profile-103-freeze/summarize.mjs)
 - 원시 타이머: `profile-103-freeze/time-{variant}-{fixture}-{mode}-r{1,2,3}.json`
 - 상세 IC/map: `profile-103-freeze/ic-{variant}-{fixture}.json`
-- 원시 V8/deopt/CPU: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile103`
+- 원시 V8/deopt/CPU: `{scratch}/bundles/profile103`
 
 ## 주요 함수의 각 접근 사이트
 
@@ -586,7 +586,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -599,7 +599,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -1023,7 +1023,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -1036,7 +1036,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -1493,7 +1493,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -1506,7 +1506,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -1936,7 +1936,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -1949,7 +1949,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -2408,7 +2408,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -2421,7 +2421,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -2893,7 +2893,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -2906,7 +2906,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -3348,7 +3348,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -3361,7 +3361,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -3792,7 +3792,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -3805,7 +3805,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -4262,7 +4262,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -4275,7 +4275,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -4705,7 +4705,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -4718,7 +4718,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -5177,7 +5177,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -5190,7 +5190,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |
@@ -5662,7 +5662,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:76:13 | StoreIC structure | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:30 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:77:13 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC raw | 미제공 / other |  |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:86:15 | StoreIC source | 미제공 / other |  |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:87:15 | StoreIC extras | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:89:16 | StoreIC entries | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:90:16 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
@@ -5675,7 +5675,7 @@ HEAD는 그대로이고 `packages/canard/schema-form/src`의 tracked diff는 없
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:60 | StoreIC required | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:109:87 | StoreIC children | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:71:14 | StoreIC automatic | 1 / mono | HOLEY_ELEMENTS |
-| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC raw | 1 / mono | HOLEY_ELEMENTS |
+| loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:92:18 | StoreIC source | 1 / mono | HOLEY_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:56:15 | LoadIC length | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:57:18 | KeyedLoadIC <dynamic> | 1 / mono | PACKED_ELEMENTS |
 | loadStaticFirstTree | settle/utils/load/loadStaticFirstTree.ts:58:23 | LoadIC node | 1 / mono | HOLEY_ELEMENTS |

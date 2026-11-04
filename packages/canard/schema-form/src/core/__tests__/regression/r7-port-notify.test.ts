@@ -213,6 +213,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('CONTROLS-079 treats injectTo callback public writes as nested feedback', () => {
+    // This callback mutates its captured tree; shipping execution invokes it once.
     let root: FieldNode | undefined;
     const created = makeFieldNodeTree({
       type: 'object',
@@ -245,7 +246,7 @@ describe('round7 dispatch and notification ports', () => {
     root.setValue({ clear: false, target: 'X' });
     const target = requireNode(root, '/target');
     target.setState({
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
     const delivered: number[] = [];
@@ -254,7 +255,7 @@ describe('round7 dispatch and notification ports', () => {
     });
     requireNode(root, '/clear').setValue(true);
     expect(target.state).toMatchObject({
-      [FieldNodeState.Dirty]: false,
+      [FieldNodeState.Edited]: false,
       [FieldNodeState.Touched]: false,
     });
     expect(
@@ -294,7 +295,7 @@ describe('round7 dispatch and notification ports', () => {
       delivered.push(event.type);
     });
     requireNode(root, '/show').setValue(true);
-    expect(target.visible).toBe(true);
+    expect(target.isVisible).toBe(true);
     expect(
       delivered.some(
         (type) => !!(type & FieldNodeEventType.UpdateControlledProperties),

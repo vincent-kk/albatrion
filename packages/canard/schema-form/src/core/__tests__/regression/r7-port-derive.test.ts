@@ -34,15 +34,15 @@ describe('round7 derive port', () => {
     expect(sequentialEdges().outputValue).toEqual({ src: 'x', tgt: 'f(x)' });
   });
   it('r7-port.mjs:340 X3c commit-reference sequential edges end at f(x)', () => {
-    expect(sequentialEdges().find('/tgt')?.raw).toBe('f(x)');
+    expect(sequentialEdges().find('/tgt')?.source).toBe('f(x)');
   });
   it('r7-port.mjs:351 X3L fires injectTo at mount and reset', () => {
     const root = e3Tree();
     root.setValue({ src: 'x', tgt: 'custom' });
-    expect(root.find('/tgt')?.raw).toBe('f(x)');
+    expect(root.find('/tgt')?.source).toBe('f(x)');
     root.find('/tgt')?.setValue('mine');
     root.find('/src')?.setValue('z');
-    expect(root.find('/tgt')?.raw).toBe('f(z)');
+    expect(root.find('/tgt')?.source).toBe('f(z)');
     root.resetSubtree();
     expect(root.outputValue).toEqual({ src: 'x', tgt: 'f(x)' });
   });
@@ -73,7 +73,7 @@ describe('round7 derive port', () => {
     root.setValue({});
     expect(root.outputValue).toEqual({ kind: 'b' });
     expect(root.find('/x')).toBeNull();
-    expect(root.find('/y')?.raw).toBeUndefined();
+    expect(root.find('/y')?.source).toBeUndefined();
     expect(root.diagnostics.status).toBe('stable');
   });
   it('r7-port.mjs:444 FRAGMENT-050 29C-01 X16 keeps the birth-edge write after retracting c', () => {

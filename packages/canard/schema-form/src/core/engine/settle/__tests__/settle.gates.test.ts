@@ -4,8 +4,8 @@ import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/creat
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gates
@@ -20,7 +20,7 @@ describe('settle gate calculation', () => {
     expect(() =>
       writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite),
     ).toThrow('Gate evaluation failed');
-    expect(root.raw).toBeUndefined();
+    expect(root.source).toBeUndefined();
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',
@@ -68,7 +68,7 @@ describe('settle gate calculation', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.active).toBe(true);
+    expect(root.structure?.target?.isActive).toBe(true);
     expect(root.emit).toEqual({ flag: true, target: 'shown' });
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.target).toBeUndefined();
@@ -99,13 +99,13 @@ describe('settle gate calculation', () => {
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.undeclaredValues).toEqual({ mode: 'on' });
+    expect(root.structure?.user?.source).toBeNull();
+    expect(root.structure?.user?.extras).toEqual({ mode: 'on' });
     expect(root.structure?.probe).toBeUndefined();
     expect(root.emit).toEqual({ user: null });
   });
 
-  it('CONTROLS-080 withholds host extras from an if predicate when raw is null', () => {
+  it('CONTROLS-080 withholds host extras from an if predicate when source is null', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -133,8 +133,8 @@ describe('settle gate calculation', () => {
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.undeclaredValues).toEqual({ enabled: true });
+    expect(root.structure?.user?.source).toBeNull();
+    expect(root.structure?.user?.extras).toEqual({ enabled: true });
     expect(root.structure?.user?.structure?.guarded).toBeUndefined();
   });
 
@@ -166,12 +166,12 @@ describe('settle gate calculation', () => {
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.undeclaredValues).toEqual({ mode: 'off' });
+    expect(root.structure?.user?.source).toBeNull();
+    expect(root.structure?.user?.extras).toEqual({ mode: 'off' });
     expect(root.structure?.user?.structure?.guarded).toBeDefined();
   });
 
-  it('CONTROLS-080 excludes a root child from a wrong-kind raw emission', () => {
+  it('CONTROLS-080 excludes a root child from a wrong-kind source emission', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -190,9 +190,9 @@ describe('settle gate calculation', () => {
       'automatic',
       WriteOption.Overwrite,
     );
-    expect(root.raw).toBeNull();
+    expect(root.source).toBeNull();
     expect(root.emit).toBeNull();
-    expect(root.structure?.child?.raw).toBe('D');
+    expect(root.structure?.child?.source).toBe('D');
     expect(root.structure?.probe).toBeUndefined();
   });
 
@@ -337,7 +337,7 @@ describe('settle gate calculation', () => {
     );
     expect(root.structure?.p?.structure?.child).toBeUndefined();
     writeFieldNode(root.structure!.flag, '0', 'input', WriteOption.Overwrite);
-    expect(root.structure?.p?.structure?.child?.active).toBe(true);
+    expect(root.structure?.p?.structure?.child?.isActive).toBe(true);
     expect(root.emit).toEqual({ p: { child: 'yes' }, flag: 0 });
   });
 
@@ -422,7 +422,7 @@ describe('settle gate calculation', () => {
     expect(root.emit).toEqual(first);
   });
 
-  it('SETTLE-050 starts mutually gated siblings closed despite latent raw', () => {
+  it('SETTLE-050 starts mutually gated siblings closed despite latent source', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {

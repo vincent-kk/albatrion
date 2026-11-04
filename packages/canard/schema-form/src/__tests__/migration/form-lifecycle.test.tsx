@@ -13,6 +13,7 @@ import {
   type ValidatorFactory,
 } from '@/schema-form';
 
+import { observeErrorSink } from '../helpers/observeErrorSink';
 import { type FormHarness, renderForm } from '../renderForm';
 
 let form: FormHarness;
@@ -49,11 +50,14 @@ it('LANDING-025 settlement failure commits and notifies the caller value before 
 });
 
 it('LANDING-025 compile failure rejects validation and submission', async () => {
+  const sink = observeErrorSink();
+  const onError = vi.fn();
   const submit = vi.fn();
   form = await renderForm(
     { type: 'string' },
     {
       onSubmit: submit,
+      onError,
       validationMode: ValidationMode.OnRequest,
       validatorFactory: {
         compile: () => {
@@ -70,6 +74,10 @@ it('LANDING-025 compile failure rejects validation and submission', async () => 
     code: 'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED',
   });
   expect(submit).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({ origin: 'validate' }),
+  );
+  expect(sink.errors()).toHaveLength(1);
 });
 
 it('LANDING-036 validatorFactory compiles validation and synchronous guards', async () => {
@@ -107,7 +115,7 @@ it('LANDING-039 same-schema reset retains nodes clears state and refreshes only 
   const child = form.node('/name');
   const wrapper = form.wrapper('');
   await form.type('/name', 'edited');
-  await act(async () => form.handle.setState({ [FieldNodeState.Dirty]: true }));
+  await act(async () => form.handle.setState({ [FieldNodeState.Edited]: true }));
   const input = form.field('/name');
   await form.reset();
   expect(form.handle.node).toBe(root);
@@ -177,11 +185,11 @@ it('LANDING-044 onError observes mismatch warnings without replacing the value',
     expect.arrayContaining([
       expect.objectContaining({
         level: 'warning',
-        code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+        code: 'SCHEMA_FORM_WARNING.MISFIT',
       }),
     ]),
   );
-  expect(form.handle.node?.typeMismatch).toBe(true);
+  expect(form.handle.node?.isMisfit).toBe(true);
 });
 
 it('LANDING-045 degraded diagnostics survive writes and subtree reset and reject submit', async () => {

@@ -6,7 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-write
+// filid:contract settle-write-traversal
 describe('bounded settlement traversal', () => {
   it('SETTLE-047 visits only the leaf and its ancestor on an input write', () => {
     const properties = Object.fromEntries(

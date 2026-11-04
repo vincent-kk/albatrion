@@ -68,7 +68,7 @@ describe('round8 PR-2 observations promoted to assertions', () => {
       ],
     });
     root.setValue({ a: true, b: true });
-    expect(root.find('/x')?.raw).toBe('B');
+    expect(root.find('/x')?.source).toBe('B');
     expect(root.outputValue).toEqual({ a: true, b: true, x: 'B' });
   });
 
@@ -89,34 +89,34 @@ describe('round8 PR-2 observations promoted to assertions', () => {
     });
     root.setValue({});
     expect(root.outputValue).toEqual({});
-    expect(root.find('/c')?.raw).toBeUndefined();
+    expect(root.find('/c')?.source).toBeUndefined();
     expect(root.diagnostics.status).toBe('stable');
   });
 
   it('r8-port.mjs:364 N1 fills x once despite a gate changed by the fill', () => {
     const root = nTree('N1', true);
-    expect(root.find('/x')?.raw).toBe(1);
+    expect(root.find('/x')?.source).toBe(1);
     expect(root.outputValue).toEqual({ x: 1 });
     expect(root.diagnostics.status).toBe('stable');
   });
 
   it('r8-port.mjs:365 N1 without a default leaves x missing', () => {
     const root = nTree('N1', false);
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
     expect(root.outputValue).toEqual({});
     expect(root.diagnostics.status).toBe('stable');
   });
 
   it('r8-port.mjs:366 N9 commits the stable x value', () => {
     const root = nTree('N9', true);
-    expect(root.find('/x')?.raw).toBe(1);
+    expect(root.find('/x')?.source).toBe(1);
     expect(root.outputValue).toEqual({ x: 1 });
     expect(root.diagnostics.status).toBe('stable');
   });
 
   it('r8-port.mjs:367 N9 without defaults leaves x missing', () => {
     const root = nTree('N9', false);
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
     expect(root.outputValue).toEqual({});
     expect(root.diagnostics.status).toBe('stable');
   });

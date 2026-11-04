@@ -1,0 +1,1264 @@
+{
+  "adopt": false,
+  "gates": {
+    "quality": true,
+    "stages": false,
+    "json": true,
+    "test073": true,
+    "nodeHeap": true
+  },
+  "stageGates": {
+    "latent": {
+      "A": 16.916500000036194,
+      "B": 12.312000000008538,
+      "limit": 12.0624999998995,
+      "met": false,
+      "notWorse": true
+    },
+    "assembleObject": {
+      "A": 9.14600000001542,
+      "B": 6.041999999951031,
+      "limit": 6.207999999986669,
+      "met": true,
+      "notWorse": true
+    },
+    "registerRecalculation": {
+      "A": 12.624999999985675,
+      "B": 12.958500000024742,
+      "limit": 12.624999999985675,
+      "met": false,
+      "notWorse": false
+    },
+    "markCommitDeliveries": {
+      "A": 11.229500000013104,
+      "B": 11.645500000014408,
+      "limit": 11.229500000013104,
+      "met": false,
+      "notWorse": false
+    }
+  },
+  "stages": {
+    "A:switch-oneOf-80": {
+      "latent": 16.916500000036194,
+      "assembleObject": 9.14600000001542,
+      "registerRecalculation": 12.624999999985675,
+      "markCommitDeliveries": 11.229500000013104
+    },
+    "A:switch-payload-12": {
+      "latent": 46.20950000011703,
+      "assembleObject": 33.77150000002871,
+      "registerRecalculation": 19.58350000001019,
+      "markCommitDeliveries": 15.417000000013559
+    },
+    "B:switch-oneOf-80": {
+      "latent": 12.312000000008538,
+      "assembleObject": 6.041999999951031,
+      "registerRecalculation": 12.958500000024742,
+      "markCommitDeliveries": 11.645500000014408
+    },
+    "B:switch-payload-12": {
+      "latent": 29.64750000018057,
+      "assembleObject": 10.062499999975216,
+      "registerRecalculation": 19.500000000022055,
+      "markCommitDeliveries": 14.979500000009693
+    }
+  },
+  "quality": {
+    "kind": "legacy",
+    "ratio": 0.9955713884706113,
+    "passed": true,
+    "assessedRows": 18,
+    "rows": [
+      {
+        "id": "single-flat-1000",
+        "ratio": 1.0272356413983406
+      },
+      {
+        "id": "mount-oneOf-80",
+        "ratio": 0.9793625855997881
+      },
+      {
+        "id": "mount-flat-1000",
+        "ratio": 0.9949236100140312
+      },
+      {
+        "id": "mount-nested-d6-f4",
+        "ratio": 0.9973784715539401
+      },
+      {
+        "id": "single-nested-d6-f4",
+        "ratio": 0.9729307508329323
+      },
+      {
+        "id": "switch-oneOf-80",
+        "ratio": 1.0334520069808604
+      },
+      {
+        "id": "bulk-flat-2000",
+        "ratio": 0.9929764681959237
+      },
+      {
+        "id": "bulk-nested-d6-f4",
+        "ratio": 0.9886225951856672
+      },
+      {
+        "id": "switch-nested-oneOf-20",
+        "ratio": 1.143134396354949
+      },
+      {
+        "id": "switch-siblings-0",
+        "ratio": 0.7065476673432902
+      },
+      {
+        "id": "switch-siblings-100",
+        "ratio": 0.9773811885448661
+      },
+      {
+        "id": "switch-siblings-1000",
+        "ratio": 0.9962191669271915
+      },
+      {
+        "id": "switch-siblings-4000",
+        "ratio": 1.1183616354213102
+      },
+      {
+        "id": "leaf-gate-250",
+        "ratio": 1.0423960474229876
+      },
+      {
+        "id": "leaf-gate-1000",
+        "ratio": 0.9742137784433585
+      },
+      {
+        "id": "leaf-gate-4000",
+        "ratio": 0.9880440141676206
+      },
+      {
+        "id": "leaf-gate-8000",
+        "ratio": 1.0035980022642264
+      },
+      {
+        "id": "switch-payload-12",
+        "ratio": 1.1118680438623676
+      }
+    ],
+    "omittedRows": [
+      {
+        "id": "switch-discriminator-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "switch-if-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "wave-1000",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "single-flat-1000-subscribed",
+        "reason": "No compatible legacy lane"
+      }
+    ]
+  },
+  "heap": [
+    {
+      "runtime": "node",
+      "A": {
+        "bytesPerNode": 1439.3953209358128,
+        "samples": [
+          1890.7834433113378,
+          1452.0279944011197,
+          1431.9632073585283,
+          1439.3953209358128,
+          1440.6974605078983,
+          1438.0707858428314,
+          1434.733853229354
+        ]
+      },
+      "B": {
+        "bytesPerNode": 1438.998600279944,
+        "samples": [
+          1890.129174165167,
+          1452.0567886422716,
+          1432.4287142571486,
+          1438.998600279944,
+          1440.868626274745,
+          1437.9732053589282,
+          1434.8314337132574
+        ]
+      },
+      "maximumA": 1890.7834433113378,
+      "passGate": true
+    },
+    {
+      "runtime": "bun",
+      "A": {
+        "bytesPerNode": 2233.9750049990002,
+        "samples": [
+          2234.46350729854,
+          2233.9750049990002,
+          2234.742451509698,
+          2227.080183963207,
+          2226.746650669866,
+          2233.9566086782643,
+          2234.7364527094583
+        ]
+      },
+      "B": {
+        "bytesPerNode": 2233.0553889222156,
+        "samples": [
+          2233.3013397320537,
+          2233.096580683863,
+          2233.0553889222156,
+          2233.2895420915816,
+          2232.5590881823637,
+          2225.755848830234,
+          2225.28574285143
+        ]
+      },
+      "maximumA": 2234.742451509698,
+      "passGate": true
+    }
+  ],
+  "coverage": [
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 61.0,
+        "getCommittedDeclarationKey": 27.0,
+        "indexLatentDescendant": 9.0,
+        "getLatentPathIndex": 4.0,
+        "PathKeyedMap.set": 22.0,
+        "PathKeyedMap.delete": 12.0
+      }
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 232.0,
+        "getCommittedDeclarationKey": 99.0,
+        "indexLatentDescendant": 36.0,
+        "getLatentPathIndex": 13.0,
+        "PathKeyedMap.set": 76.0,
+        "PathKeyedMap.delete": 48.0
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 25.0,
+        "getCommittedDeclarationKey": 36.0,
+        "getLatentPathIndex": 4.0,
+        "PathKeyedMap.set": 22.0,
+        "PathKeyedMap.delete": 12.0
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 97.0,
+        "getCommittedDeclarationKey": 135.0,
+        "getLatentPathIndex": 13.0,
+        "PathKeyedMap.set": 76.0,
+        "PathKeyedMap.delete": 48.0
+      }
+    }
+  ],
+  "keyCounts": [
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 3,
+          "enterFieldNode": 3,
+          "selectChildren": 3,
+          "transitionSettlement": 10,
+          "captureExitedRaw": 3,
+          "visitFieldNodes.owned": 6,
+          "finalizeExits": 3,
+          "getCommittedDeclarationKey": 3
+        },
+        "parse": {
+          "getLatentPathIndex": 3,
+          "setLatentRaw": 9,
+          "getStoreKeyPaths": 9,
+          "captureLatentDescendants": 3
+        }
+      }
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 12,
+          "enterFieldNode": 12,
+          "selectChildren": 12,
+          "transitionSettlement": 37,
+          "captureExitedRaw": 12,
+          "visitFieldNodes.owned": 24,
+          "finalizeExits": 12,
+          "getCommittedDeclarationKey": 12
+        },
+        "parse": {
+          "getLatentPathIndex": 12,
+          "setLatentRaw": 36,
+          "getStoreKeyPaths": 36,
+          "captureLatentDescendants": 12
+        }
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 3,
+          "selectChildren": 3,
+          "transitionSettlement": 10,
+          "visitFieldNodes.owned": 6
+        },
+        "parse": {
+          "captureLatentDescendants": 3
+        }
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 12,
+          "selectChildren": 12,
+          "transitionSettlement": 37,
+          "visitFieldNodes.owned": 24
+        },
+        "parse": {
+          "captureLatentDescendants": 12
+        }
+      }
+    }
+  ],
+  "test073": [
+    {
+      "row": "single-flat-1000",
+      "comparison": "all",
+      "t": 5.909122344509291,
+      "df": 1975.1285148403279,
+      "pValue": 4.040920186825467e-09,
+      "meanA": 7898.276995711253,
+      "meanB": 7135.476518825067,
+      "percent": -9.657808624594777,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "single-flat-1000",
+      "comparison": "early",
+      "t": 1.0580824054923534,
+      "df": 991.8077101418891,
+      "pValue": 0.29027550443010786,
+      "meanA": 7470.553413886319,
+      "meanB": 7274.89871778382,
+      "percent": -2.619012076653038,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-flat-1000",
+      "comparison": "late",
+      "t": 7.467629432605728,
+      "df": 920.1403907781681,
+      "pValue": 1.8941083394189658e-13,
+      "meanA": 8326.00057753618,
+      "meanB": 6996.0543198663045,
+      "percent": -15.973410586327773,
+      "regression": true,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-oneOf-80",
+      "comparison": "all",
+      "t": -2.327530383786684,
+      "df": 1985.8214325018193,
+      "pValue": 0.02003709145379659,
+      "meanA": 396.70384770910334,
+      "meanB": 400.8201509722102,
+      "percent": 1.0376262511386791,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "mount-oneOf-80",
+      "comparison": "early",
+      "t": -1.1041084928058185,
+      "df": 993.2062347729076,
+      "pValue": 0.26981349555738887,
+      "meanA": 397.05177765818877,
+      "meanB": 399.8569293956733,
+      "percent": 0.7064951966792243,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-oneOf-80",
+      "comparison": "late",
+      "t": -2.2039881940032915,
+      "df": 990.4616068114798,
+      "pValue": 0.02775459514791564,
+      "meanA": 396.35591776001627,
+      "meanB": 401.7833725487472,
+      "percent": 1.3693386538553343,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-flat-1000",
+      "comparison": "all",
+      "t": -1.4481673607818106,
+      "df": 1997.315179830337,
+      "pValue": 0.14772720446414078,
+      "meanA": 397.6613865370807,
+      "meanB": 401.25228807437816,
+      "percent": 0.9030048324701001,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "mount-flat-1000",
+      "comparison": "early",
+      "t": -2.2856863320212812,
+      "df": 997.2558200779652,
+      "pValue": 0.02248170500417228,
+      "meanA": 395.75220243636045,
+      "meanB": 403.7693624424399,
+      "percent": 2.0258030041838238,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-flat-1000",
+      "comparison": "late",
+      "t": 0.23842297003368948,
+      "df": 997.8871204578323,
+      "pValue": 0.8116020040780009,
+      "meanA": 399.57057063780127,
+      "meanB": 398.735213706316,
+      "percent": -0.209063678076149,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "comparison": "all",
+      "t": -0.21474683095662522,
+      "df": 1997.9922618031667,
+      "pValue": 0.8299866238951336,
+      "meanA": 54.14296591497978,
+      "meanB": 54.211402781965774,
+      "percent": 0.12640029194828095,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "comparison": "early",
+      "t": 0.331695526936407,
+      "df": 997.9889880892969,
+      "pValue": 0.7401888212624423,
+      "meanA": 54.26032165161575,
+      "meanB": 54.1097039975574,
+      "percent": -0.27758341541983533,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "comparison": "late",
+      "t": -0.642269577701548,
+      "df": 997.9461762090045,
+      "pValue": 0.520845676106376,
+      "meanA": 54.02561017834364,
+      "meanB": 54.31310156637419,
+      "percent": 0.5321390856697805,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "comparison": "all",
+      "t": 7.046797375215537,
+      "df": 1908.9811778641238,
+      "pValue": 2.5470334322298218e-12,
+      "meanA": 3400.743968837787,
+      "meanB": 2974.9289862156065,
+      "percent": -12.521230252088166,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "comparison": "early",
+      "t": 6.025974318975796,
+      "df": 941.526131692572,
+      "pValue": 2.409517649428751e-09,
+      "meanA": 3453.1465904788183,
+      "meanB": 2933.0252285058014,
+      "percent": -15.062243908414452,
+      "regression": true,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "comparison": "late",
+      "t": 3.9199057798666543,
+      "df": 964.7108647147263,
+      "pValue": 9.484296325182728e-05,
+      "meanA": 3348.3413471967597,
+      "meanB": 3016.8327439254062,
+      "percent": -9.900681229794372,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-oneOf-80",
+      "comparison": "all",
+      "t": 5.360902035113242,
+      "df": 1825.1685586754118,
+      "pValue": 9.333372641902178e-08,
+      "meanA": 1550.5407130211158,
+      "meanB": 1437.8907663039272,
+      "percent": -7.265204052442997,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-oneOf-80",
+      "comparison": "early",
+      "t": 3.2182994058192462,
+      "df": 910.777643269213,
+      "pValue": 0.0013351021241060437,
+      "meanA": 1539.4163625873696,
+      "meanB": 1440.1409390477875,
+      "percent": -6.448900112554689,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-oneOf-80",
+      "comparison": "late",
+      "t": 4.411924053254795,
+      "df": 912.9062841455021,
+      "pValue": 1.1467448239680303e-05,
+      "meanA": 1561.6650634548594,
+      "meanB": 1435.6405935600671,
+      "percent": -8.069878288497357,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-flat-2000",
+      "comparison": "all",
+      "t": -3.5805774605124343,
+      "df": 1996.4166050109839,
+      "pValue": 0.00035102984099286545,
+      "meanA": 477.7114478617148,
+      "meanB": 484.53428494721027,
+      "percent": 1.4282339508578268,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "bulk-flat-2000",
+      "comparison": "early",
+      "t": -0.2608096710541461,
+      "df": 996.5786160454587,
+      "pValue": 0.7942931681345773,
+      "meanA": 481.0776796867466,
+      "meanB": 481.7628702381889,
+      "percent": 0.14242825646961776,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-flat-2000",
+      "comparison": "late",
+      "t": -4.713599609564618,
+      "df": 989.8801495446232,
+      "pValue": 2.7820808809075464e-06,
+      "meanA": 474.34521603668315,
+      "meanB": 487.30569965623255,
+      "percent": 2.7322893077406096,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "comparison": "all",
+      "t": 1.8765644822715963,
+      "df": 1996.9137765918954,
+      "pValue": 0.06072353301856065,
+      "meanA": 193.9869262506909,
+      "meanB": 191.21789148370468,
+      "percent": -1.4274337041702445,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "comparison": "early",
+      "t": 1.179392814977203,
+      "df": 997.0804493465243,
+      "pValue": 0.2385231275097014,
+      "meanA": 192.81459795834976,
+      "meanB": 190.3348914520956,
+      "percent": -1.2860574523459123,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "comparison": "late",
+      "t": 1.4767807605980388,
+      "df": 997.7586805713435,
+      "pValue": 0.14004995507153783,
+      "meanA": 195.15925454303215,
+      "meanB": 192.10089151531398,
+      "percent": -1.5671114520699359,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-discriminator-80",
+      "comparison": "all",
+      "t": -3.350469819915401,
+      "df": 1996.5105114371215,
+      "pValue": 0.0008217708905555028,
+      "meanA": 2338.2066681995325,
+      "meanB": 2401.0380721328447,
+      "percent": 2.6871621224865416,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-discriminator-80",
+      "comparison": "early",
+      "t": 1.4276365651245284,
+      "df": 997.4138693860044,
+      "pValue": 0.15370949912391585,
+      "meanA": 2396.074842094676,
+      "meanB": 2355.7533691786875,
+      "percent": -1.6828135835998848,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-discriminator-80",
+      "comparison": "late",
+      "t": -6.840573128845761,
+      "df": 986.7025574598786,
+      "pValue": 1.3819762427240491e-11,
+      "meanA": 2280.3384943043957,
+      "meanB": 2446.3227750870014,
+      "percent": 7.278931667258393,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-if-80",
+      "comparison": "all",
+      "t": 2.294038097046167,
+      "df": 1997.1055176088933,
+      "pValue": 0.021891677765658795,
+      "meanA": 1456.2044758240463,
+      "meanB": 1433.598461248221,
+      "percent": -1.5523928782757657,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-if-80",
+      "comparison": "early",
+      "t": 5.551299866348433,
+      "df": 927.8215091530697,
+      "pValue": 3.701415702066696e-08,
+      "meanA": 1434.6298939175529,
+      "meanB": 1363.2804317994078,
+      "percent": -4.973370652643427,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-if-80",
+      "comparison": "late",
+      "t": -1.8393104302000378,
+      "df": 967.7406250109461,
+      "pValue": 0.06617573573127405,
+      "meanA": 1477.779057730546,
+      "meanB": 1503.9164906970343,
+      "percent": 1.7686969394889118,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "comparison": "all",
+      "t": -0.1604466404701467,
+      "df": 1977.0869194709371,
+      "pValue": 0.8725456427028311,
+      "meanA": 1225.1774212522635,
+      "meanB": 1227.3653611139316,
+      "percent": 0.1785814710355771,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "comparison": "early",
+      "t": 6.38307594965973,
+      "df": 990.3350886935829,
+      "pValue": 2.662446652307782e-10,
+      "meanA": 1351.7030735400422,
+      "meanB": 1219.1916675901791,
+      "percent": -9.803292494025506,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "comparison": "late",
+      "t": -8.671961141954311,
+      "df": 987.8690060086468,
+      "pValue": 1.7206181289719412e-17,
+      "meanA": 1098.65176896448,
+      "meanB": 1235.5390546376836,
+      "percent": 12.459569951106975,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-0",
+      "comparison": "all",
+      "t": -2.0754415145690714,
+      "df": 1996.959872510142,
+      "pValue": 0.03807336628475215,
+      "meanA": 6760.984450430803,
+      "meanB": 7025.405999874262,
+      "percent": 3.9109918294015777,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-0",
+      "comparison": "early",
+      "t": -0.2846290253277165,
+      "df": 997.8583021386756,
+      "pValue": 0.775987428692478,
+      "meanA": 6776.458124437571,
+      "meanB": 6831.002003839097,
+      "percent": 0.8049024785503622,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-0",
+      "comparison": "late",
+      "t": -2.828521064819846,
+      "df": 996.1970557255349,
+      "pValue": 0.004770155475933927,
+      "meanA": 6745.510776424064,
+      "meanB": 7219.809995909407,
+      "percent": 7.0313314322029585,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-100",
+      "comparison": "all",
+      "t": 3.071838579940733,
+      "df": 1978.8111408001278,
+      "pValue": 0.0021564200581266763,
+      "meanA": 2654.801778854409,
+      "meanB": 2536.7691270569953,
+      "percent": -4.446006204212605,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-100",
+      "comparison": "early",
+      "t": 8.2957784618123,
+      "df": 996.4110205590378,
+      "pValue": 3.4738583951268085e-16,
+      "meanA": 3199.028109491879,
+      "meanB": 2846.4118113236236,
+      "percent": -11.022607057499833,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-100",
+      "comparison": "late",
+      "t": -2.3155753483421453,
+      "df": 984.8423548097247,
+      "pValue": 0.020786160076164566,
+      "meanA": 2110.5754482169305,
+      "meanB": 2227.126442790367,
+      "percent": 5.52223777036267,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-1000",
+      "comparison": "all",
+      "t": 27.54879026769226,
+      "df": 1775.4341922967064,
+      "pValue": 2.1286314671135865e-139,
+      "meanA": 410.8838144149857,
+      "meanB": 365.011711855055,
+      "percent": -11.164251535496273,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-1000",
+      "comparison": "early",
+      "t": 14.756461259124334,
+      "df": 787.6818313237762,
+      "pValue": 1.0851050705120587e-43,
+      "meanA": 407.22556656260053,
+      "meanB": 374.06107727364287,
+      "percent": -8.144009613369763,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-1000",
+      "comparison": "late",
+      "t": 24.60393303580785,
+      "df": 924.7692235816488,
+      "pValue": 3.156593488665081e-103,
+      "meanA": 414.54206226736994,
+      "meanB": 355.9623464364677,
+      "percent": -14.131187438615012,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-4000",
+      "comparison": "all",
+      "t": 43.514202944369174,
+      "df": 1985.8817527434474,
+      "pValue": 4.5053192958504226e-291,
+      "meanA": 140.42384488036072,
+      "meanB": 125.96300238614377,
+      "percent": -10.297996402631904,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-4000",
+      "comparison": "early",
+      "t": 31.571234591190212,
+      "df": 961.8157590048683,
+      "pValue": 1.0732031946970448e-150,
+      "meanA": 141.46209223811007,
+      "meanB": 126.85360499172928,
+      "percent": -10.32678579487689,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-4000",
+      "comparison": "late",
+      "t": 30.47455035709386,
+      "df": 996.6475638573077,
+      "pValue": 1.1381274027149668e-144,
+      "meanA": 139.3855975226118,
+      "meanB": 125.07239978055847,
+      "percent": -10.268778120875343,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-250",
+      "comparison": "all",
+      "t": 3.9041481134962774,
+      "df": 1994.8919166898347,
+      "pValue": 9.770031551235751e-05,
+      "meanA": 13935.906290369705,
+      "meanB": 12585.045143571455,
+      "percent": -9.693385694848933,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-250",
+      "comparison": "early",
+      "t": 2.5235516533248754,
+      "df": 997.8474499300694,
+      "pValue": 0.011771930216444612,
+      "meanA": 13922.130036343984,
+      "meanB": 12690.857301566852,
+      "percent": -8.84399679907365,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-250",
+      "comparison": "late",
+      "t": 2.993707890678268,
+      "df": 993.6178606327403,
+      "pValue": 0.0028243173489296038,
+      "meanA": 13949.682544395453,
+      "meanB": 12479.232985576027,
+      "percent": -10.541096932777204,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-1000",
+      "comparison": "all",
+      "t": -0.9488548633090618,
+      "df": 1993.6369909861762,
+      "pValue": 0.34280943598264957,
+      "meanA": 14377.049971929386,
+      "meanB": 14703.010495900551,
+      "percent": 2.267228149081979,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-1000",
+      "comparison": "early",
+      "t": -0.20932285092125394,
+      "df": 997.3418615997721,
+      "pValue": 0.8342389614495647,
+      "meanA": 13791.353160069488,
+      "meanB": 13895.737105935825,
+      "percent": 0.756879652451814,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-1000",
+      "comparison": "late",
+      "t": -1.1677177583902394,
+      "df": 993.6898666789969,
+      "pValue": 0.2432007375210865,
+      "meanA": 14962.746783789295,
+      "meanB": 15510.283885865292,
+      "percent": 3.6593354815654733,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-4000",
+      "comparison": "all",
+      "t": 3.0779982218564266,
+      "df": 1989.4000296509078,
+      "pValue": 0.0021123993957299692,
+      "meanA": 955.3263518057408,
+      "meanB": 933.0397798661378,
+      "percent": -2.332875241793275,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-4000",
+      "comparison": "early",
+      "t": 2.8681240400666366,
+      "df": 980.654312451719,
+      "pValue": 0.004217646730747828,
+      "meanA": 961.7890677823416,
+      "meanB": 930.6347639618949,
+      "percent": -3.2392033621551852,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-4000",
+      "comparison": "late",
+      "t": 1.4010194832400304,
+      "df": 997.5093648374155,
+      "pValue": 0.16151926415307982,
+      "meanA": 948.8636358291399,
+      "meanB": 935.4447957703779,
+      "percent": -1.4142011087859063,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-8000",
+      "comparison": "all",
+      "t": -1.9800063025327583,
+      "df": 1968.5870425935639,
+      "pValue": 0.04784187320791855,
+      "meanA": 605.818805672262,
+      "meanB": 608.3387303895461,
+      "percent": 0.4159535315989116,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-8000",
+      "comparison": "early",
+      "t": -0.49897698926482753,
+      "df": 989.607036124044,
+      "pValue": 0.6179064918125485,
+      "meanA": 606.6900155985595,
+      "meanB": 607.5650637603545,
+      "percent": 0.1442331568505706,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-8000",
+      "comparison": "late",
+      "t": -2.2571700647884776,
+      "df": 976.1913400422285,
+      "pValue": 0.024217798705597537,
+      "meanA": 604.9475957459673,
+      "meanB": 609.1123970187359,
+      "percent": 0.6884565377324847,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "wave-1000",
+      "comparison": "all",
+      "t": -2.963590016957743,
+      "df": 1997.6108701578112,
+      "pValue": 0.0030766906846560562,
+      "meanA": 500.71735785824484,
+      "meanB": 507.2979959462548,
+      "percent": 1.3142420538720279,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "wave-1000",
+      "comparison": "early",
+      "t": -1.6106822369453122,
+      "df": 996.4303892586944,
+      "pValue": 0.10756570667283172,
+      "meanA": 491.3924819825722,
+      "meanB": 496.5937430878546,
+      "percent": 1.0584738871660004,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "wave-1000",
+      "comparison": "late",
+      "t": -2.729220653556695,
+      "df": 997.1451503026898,
+      "pValue": 0.006460166709088294,
+      "meanA": 510.0422337339171,
+      "meanB": 518.0022488046552,
+      "percent": 1.5606580287409688,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "comparison": "all",
+      "t": -0.08954626536845346,
+      "df": 1996.1727366298467,
+      "pValue": 0.9286567699536787,
+      "meanA": 8014.646312752395,
+      "meanB": 8021.734779384579,
+      "percent": 0.08844391075506497,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "comparison": "early",
+      "t": -0.4154080169499715,
+      "df": 997.2445729713562,
+      "pValue": 0.677932601301573,
+      "meanA": 8187.83767173365,
+      "meanB": 8237.98271873791,
+      "percent": 0.6124333311757546,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "comparison": "late",
+      "t": 0.35594537890234584,
+      "df": 996.2719310700801,
+      "pValue": 0.721956827378973,
+      "meanA": 7841.454953771145,
+      "meanB": 7805.486840031248,
+      "percent": -0.4586918365525827,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-payload-12",
+      "comparison": "all",
+      "t": -3.2569181189259195,
+      "df": 1992.1862435103517,
+      "pValue": 0.001145205690885698,
+      "meanA": 806.4237234823999,
+      "meanB": 836.2114152505894,
+      "percent": 3.6938015215570053,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-payload-12",
+      "comparison": "early",
+      "t": -0.6391822398080482,
+      "df": 994.8948387381841,
+      "pValue": 0.5228515164182475,
+      "meanA": 824.7778563935452,
+      "meanB": 832.6840377091964,
+      "percent": 0.9585831208202,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-payload-12",
+      "comparison": "late",
+      "t": -3.8455035015846577,
+      "df": 974.6533919671688,
+      "pValue": 0.00012811492401708404,
+      "meanA": 788.0695905712545,
+      "meanB": 839.7387927919816,
+      "percent": 6.556426340886112,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    }
+  ],
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "processes": 440,
+    "legacyRows": 18,
+    "stageProcesses": 12,
+    "stageWrites": 1200
+  },
+  "window": {
+    "started": {
+      "startedAt": "2026-10-27T16:42:09.250Z",
+      "quietSince": "2026-10-27T16:42:14.334Z",
+      "durationSeconds": 5.0793269169999995,
+      "heavy": [],
+      "highestCpuPercent": 18.309512563312655
+    },
+    "endedAt": "2026-10-27T16:51:08.038Z",
+    "ended": {
+      "startedAt": "2026-10-27T16:51:08.038Z",
+      "quietSince": "2026-10-27T16:51:13.115Z",
+      "durationSeconds": 5.074773042000015,
+      "heavy": [],
+      "highestCpuPercent": 22.26700565026186
+    },
+    "selectedCompleteWindows": 1,
+    "interruptedCollectionWindows": 0,
+    "artifactCheckerNote": null,
+    "callCountFixtureCorrection": null,
+    "interruptedWindow": null,
+    "preflightAttempts": [
+      {
+        "startedAt": "2026-10-27T16:42:09.250Z",
+        "quietSince": "2026-10-27T16:42:14.334Z",
+        "durationSeconds": 5.0793269169999995,
+        "heavy": [],
+        "highestCpuPercent": 18.309512563312655
+      }
+    ],
+    "setupFailures": []
+  },
+  "criterion": "Candidate 2 latent and assembly self costs must be no greater than candidate 1 B; none of the four stages may exceed its own A; primary TEST-073 has zero regressions; Node heap passes. Registration and delivery implementations equal the baseline.",
+  "source": {
+    "A": "8d9d885bf",
+    "B": "a28f8ce0d",
+    "runtimeNode": "v26.12.1",
+    "NODE_ENV": "production",
+    "currentSha256": {
+      "A": "92a8c340b5f78f311e7b852b4555119903d4829431804b85f3af4fd66bb305cf",
+      "B": "af6c3ae8b269fde07ce6a5af50d910c04fc144b638bdbb54c72f8bc44037f9ce"
+    },
+    "legacySha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46"
+  }
+}

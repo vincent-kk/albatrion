@@ -1,0 +1,119 @@
+{
+  "adopt": true,
+  "verdict": "채택",
+  "gates": {
+    "quality": true,
+    "oneOfLedger": true,
+    "siblingsLedger": true,
+    "test073": true,
+    "nodeHeap": true
+  },
+  "targets": [
+    {
+      "row": "switch-oneOf-80",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": 0.9855547882141479
+    },
+    {
+      "row": "switch-payload-12",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": 0.9637186408383448
+    },
+    {
+      "row": "switch-siblings-0",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": null
+    }
+  ],
+  "stageRegressions": [
+    {
+      "row": "switch-payload-12",
+      "stage": "markWrite",
+      "A": {
+        "median": 1.7919999999946867,
+        "min": 1.6669999999976426,
+        "max": 1.9580000000019027,
+        "width": 0.2910000000042601,
+        "processMedians": [
+          1.6669999999976426,
+          1.9580000000019027,
+          1.7919999999946867
+        ]
+      },
+      "B": {
+        "median": 2.145499999997469,
+        "min": 2.0625000000222826,
+        "max": 2.1455000000116797,
+        "width": 0.08299999998939711,
+        "processMedians": [
+          2.145499999997469,
+          2.0625000000222826,
+          2.1455000000116797
+        ]
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "markWrite",
+      "A": {
+        "median": 1.5624999999914735,
+        "min": 1.5410000000031232,
+        "max": 1.5830000000107702,
+        "width": 0.04200000000764703,
+        "processMedians": [
+          1.5410000000031232,
+          1.5624999999914735,
+          1.5830000000107702
+        ]
+      },
+      "B": {
+        "median": 1.8335000000035961,
+        "min": 1.7919999999946867,
+        "max": 1.9159999999942556,
+        "width": 0.1239999999995689,
+        "processMedians": [
+          1.7919999999946867,
+          1.8335000000035961,
+          1.9159999999942556
+        ]
+      }
+    }
+  ],
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "processes": 440,
+    "legacyRows": 18,
+    "stageProcesses": 18,
+    "stageWrites": 1800,
+    "supplementalProcesses": 9,
+    "supplementalWrites": 900
+  },
+  "stageRule": "Common and outermost-entry stage inclusive medians; own noise is A process-median min/max width; all new creation/clone/overlay work is included once in the outermost entering group",
+  "instrumentation": "Comparative timers cover B0 common stages plus conditional outermost entering boundaries, including cloneFromSlot once. Nested creation timers are skipped. Full helper timings and overhead are reported in the supplemental pass only, excluded from adoption. No timer overhead is subtracted; wrapped and unwrapped process medians are both reported.",
+  "timerSites": {
+    "A": {
+      "ledger": 25,
+      "supplemental": 76
+    },
+    "B": {
+      "ledger": 21,
+      "supplemental": 71
+    }
+  }
+}

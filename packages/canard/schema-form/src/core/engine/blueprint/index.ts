@@ -1,23 +1,29 @@
 export { blueprint } from './blueprint';
-export { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
+export { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
+export { HostStaticPartition } from './utils/features/HostStaticPartition';
 export { DeriveConvergenceTargets } from './utils/features/DeriveConvergenceTargets';
-export { getFeatureNodeIndex } from './utils/features/getFeatureNodeIndex/getFeatureNodeIndex';
-export { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
-export { mergeEffectiveSchema } from './utils/effectiveSchema/mergeEffectiveSchema';
+export { getFeatureNodeIndex } from './utils/features/getFeatureNodeIndex';
+export { collectBlueprintWarnings } from './collectBlueprintWarnings';
+export { mergeEffectiveSchema } from './effectiveSchema';
 export { getItemEntry } from './utils/itemEntry/getItemEntry';
+export { getItemEntries } from './utils/itemEntry/getItemEntries';
 export type {
   Blueprint,
-  BlueprintNode,
-  BlueprintChildEntry,
   BlueprintOptions,
-  BlueprintSchema,
   BlueprintDiagnostic,
   BlueprintExpression,
+} from './types/blueprint';
+export type {
+  BlueprintNode,
+  BlueprintChildEntry,
   BlueprintGate,
-  BlueprintNodeKind,
-  BlueprintSchemaType,
   PropertyDeclaration,
   SchemaFragment,
+} from './types/node';
+export type {
+  BlueprintSchema,
+  BlueprintNodeKind,
+  BlueprintSchemaType,
   SchemaTypeName,
-  EffectiveSchema,
-} from './type';
+} from './types/schema';
+export type { EffectiveSchema } from './types/effectiveSchema';

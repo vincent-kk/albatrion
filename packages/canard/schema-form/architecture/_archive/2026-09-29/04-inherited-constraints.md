@@ -24,7 +24,7 @@
 | - | ---- | ----------- | --------- | -------------- |
 | T-10 | blur의 Touched는 `requestAnimationFrame`으로 늦추고 focus가 취소한다 | `SchemaNodeInput.tsx:80-86` | 포커스 이동 중 에러가 깜빡인다 | 렌더 계층. 그대로 |
 | T-11 | 렌더 중의 값 읽기는 계산하지 않는다 | `get value()`가 만료·잠금이 아니면 캐시를 돌려준다(`ObjectNode/…/BranchStrategy.ts:304`), commit-on-read 제거(`DETAIL.md:101`) | 렌더 중 읽기가 null 조상을 조기 승격시키거나 전파 가드를 어긋나게 한다 | P3·ADR 0006: 읽기는 메모를 돌려줄 뿐 계산하지 않는다(정착된 읽기 4–11 ns). 구조로 흡수 |
-| T-12 | 자동 쓰기는 null 조상을 객체로 만들지 않는다 | `option & Automatic \|\| !__hasNullAncestor__`이면 전달하지 않는다(`AbstractNode.ts:1117`, `value.ts:46`) | reset·derived가 빈 폼을 객체로 만든다 | A2·A5: 호스트의 `raw`를 비우는 것은 **사용자·호출자의 부분 쓰기**뿐이다. default 주입과 `injectTo`는 비객체 호스트의 `raw`를 건드리지 않는다 — `injectTo`가 대상의 전체 교체라도 조상의 `raw`는 그대로. 4라운드 F10으로 명세에 넣었다 |
+| T-12 | 자동 쓰기는 null 조상을 객체로 만들지 않는다 | `option & Automatic \|\| !__hasNullAncestor__`이면 전달하지 않는다(`AbstractNode.ts:1117`, `value.ts:46`) | reset·derived가 빈 폼을 객체로 만든다 | A2·A5: 호스트의 `source`를 비우는 것은 **사용자·호출자의 부분 쓰기**뿐이다. default 주입과 `injectTo`는 비객체 호스트의 `source`를 건드리지 않는다 — `injectTo`가 대상의 전체 교체라도 조상의 `source`는 그대로. 4라운드 F10으로 명세에 넣었다 |
 | T-13 | 검증 결과는 세대 토큰으로 걸러진다 | `__generation__` 단조 증가, 구세대 결과 폐기(`ValidationManager.ts:56-62, 121-124`) | 비동기 검증의 경합으로 stale 에러가 남는다 | ADR 0004·0007: revision 스탬프. 같은 장치 |
 | T-14 | 같은 틱의 재진입 `injectTo`는 건너뛰고 매크로태스크로 해제한다 | `InjectionGuardManager.ts:4-8`, `AbstractNode.ts:977-1019` | 순환 주입의 스택 오버플로 | A3 파생 라운드 상한 25. 틱 기반 가드는 사라진다 |
 | T-15 | 한 번 드러난 가상화 노드는 placeholder로 돌아가지 않는다(defer-once) | `helpers/virtualization/INTENT.md:12`, `DETAIL.md:16` | 값 변경·스크롤 아웃에서 포커스·선택이 사라진다 | 렌더 계층. 그대로 |

@@ -112,7 +112,7 @@ it('does not skip a virtual write whose actual targets are sibling paths', () =>
     { source: 1 },
     [{ path: '/source', value: 3 }],
   );
-  expect(result.root.structure!.a.raw).toBe(3);
-  expect(result.root.structure!.sink.raw).toBe(4);
+  expect(result.root.structure!.a.source).toBe(3);
+  expect(result.root.structure!.sink.source).toBe(4);
   expect(result.proof).toBeUndefined();
 });

@@ -1,0 +1,13 @@
+# IR-6 Amendment 10 v2 review
+
+Review product range `cb8b251dc3701b62adb8c1cf8c016f19f91d1647..61e28eb44ad451663adac7fab185f95053f09815`. Contract commits `ee1b4e824` and `a2d97e6b6` precede the product; `ccf4ec8ae` adds its code evidence. The following commits add diagnostic artifacts only.
+
+Requirements are Amendment 10 v2 D1–D6 and tests 1–6. Follow repository AGENTS/CLAUDE instructions, the package CLAUDE, and the touched owners' INTENT/DETAIL contracts. Engine H records and scheduling stay unchanged. Non-enabled/non-live displays skip reveal reads; held displays alone mount a passive subscriber after the stable first child. FieldProxy adds one module reducer; FieldInputSlot reuses composition dispatch. The aggregate hook retains candidate version+1 and non-candidate0. Public declarations and package version stay unchanged.
+
+The approved typing substitution `msg_408720d9d417` releases `entry.rootNode` from the baseline set, with root/runtime identity checks and no cast. New Form tests cover same-commit layout release, input identity/focus/mounts and Activity reconnection. Mutant JSON verifies missing catch-up, all-live subscription and V3 fragment failures; mutation worktrees were removed.
+
+Reproduce code evidence from repository root with `node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/round-6/checkRound6.mjs`. The adjacent code-gates, static, declaration, FCA and ledger records contain project counts and source hashes. Unit4089/render882/react18 881/verify5015/storybook254/production21 passed; existing skips/todo remain. Final lifecycle fixtures separately pass19=3 and18=2+Activity skip. FCA absolute status remains indeterminate with the same202findings/177diagnostics and no new difference.
+
+Risks and limits: a reducer release follows current event priority, so an event-free release may reveal one paint later than the prior store hook. Transition and passive catch-up use their documented priorities. Each render re-reads history; existing error-change trackers remain sync. Activity is tested on React19, with the harness skip on18. The four-lane mount diagnostic is diagnostic-only: F-new eager improves F-old by7.30/8.80ms but remains above E by2.45/1.60ms. G2 and full-window performance for the new candidate are unmeasured. The previous formal G2/G8 FAIL remains recorded.
+
+Task gates G1–G6 and G9 have evidence; G7 review/go, G8 new formal window and G10 final handoff remain open. There are no abandoned gates. Coordinator owns the independent Opus and codex reviews and the go Phase E decision; no worker_done is sent yet.

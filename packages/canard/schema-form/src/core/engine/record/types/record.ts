@@ -1,4 +1,9 @@
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
+import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
+  BlueprintChildEntry,
   BlueprintNode,
   BlueprintSchemaType,
   EffectiveSchema,
@@ -6,6 +11,11 @@ import type {
 import type { NodeStateFlags } from '../../types/state';
 import type { Behavior } from './behavior';
 import type { FieldNodeRuntime } from './runtime';
+import type {
+  InactiveSlotBaseline,
+  InactiveSlotOverlay,
+  InactiveSlotValueMemo,
+} from './slots';
 
 /** One pending node event with values indexed by their event bits. */
 export interface FieldNodeDelivery {
@@ -26,7 +36,7 @@ export interface FieldNodeRecord<Self> {
   /** Immutable analysis template for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Current structural parent, absent only at the root. */
-  parent: Self | null;
+  parent: Nullable<Self>;
   /** Live root, including when this node has detached. */
   rootNode: Self;
   /** Unescaped name within the parent. */
@@ -35,44 +45,84 @@ export interface FieldNodeRecord<Self> {
   escapedName: string;
   /** Canonical absolute path of this occurrence. */
   path: string;
+  /** Settlement generation marking this occurrence for a static whole write. */
+  writeEpoch?: number;
   /** Number of structural edges from the root. */
   depth: number;
   /** Whether the current declaration requires this node. */
-  required: boolean;
+  isRequired: boolean;
   /** Whether the fixed type permits null. */
   readonly nullable: boolean;
-  /** Stable type restriction retained from blueprint analysis. */
-  readonly schemaType: BlueprintSchemaType;
+  /** Stable JSON type restriction retained from blueprint analysis; undefined on virtual nodes. */
+  readonly schemaType: Optional<BlueprintSchemaType>;
   /** Direct children in the last committed shape, keyed by their names. */
-  structure: Record<string, Self> | null;
+  structure: Nullable<Dictionary<Self>>;
   /** Stored public child array for the last committed shape. */
-  children: readonly Self[] | null;
+  children: Nullable<readonly Self[]>;
+  /** Previously active occurrences retained by their exact blueprint binding. */
+  inactiveSlots?: Map<BlueprintChildEntry, Self>;
+  /** Immutable missing-child inputs and source exclusions at this occurrence's exit. */
+  retainedSourceOverlay?: InactiveSlotOverlay;
+  /** Host-owned source patches that never mutate retained public references. */
+  inactiveSlotOverlays?: Map<BlueprintChildEntry, InactiveSlotOverlay>;
+  /** Pre-change sources retained until a live host publishes its next commit. */
+  inactiveSlotBaselines?: Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>;
+  /** Owned active child hosts with retained descendants, excluding unrelated siblings. */
+  inactiveSlotChildren?: Map<string, Self>;
+  /** Frozen materialization for this reference's committed inactive sources. */
+  inactiveValuesCache?: readonly { path: string; value: unknown }[];
+  /** Whether a committed slot or descendant change invalidated this host read. */
+  inactiveValuesDirty?: boolean;
+  /** Last item published from this inactive lifetime; absent on active clones. */
+  inactiveValueMemo?: InactiveSlotValueMemo;
+  /** Last-live explicit keep/clear decision; an own undefined means inheritance. */
+  retainedExitPolicy?: boolean;
   /** Creation-order nonce for an array item, absent on other nodes. */
-  itemKey: number | null;
+  itemKey: Nullable<number>;
   /** Number of array host positions, including positions without templates. */
   itemCount: number;
   /** Next creation-order nonce owned by an array host. */
   nextItemKey: number;
   /** Interpreted terminal source or a branch's non-plain source. */
-  raw: unknown;
+  source: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
-  undeclaredValues: unknown;
+  extras: unknown;
   /** Result of the current node gate. */
-  active: boolean;
+  isActive: boolean;
   /** Local visibility after all active state declarations are combined. */
-  visible: boolean;
+  isVisible: boolean;
   /** Local read-only result, including standard schema readOnly. */
-  readOnly: boolean;
+  isReadOnly: boolean;
   /** Local disabled result after all active state declarations are combined. */
-  disabled: boolean;
+  isDisabled: boolean;
   /** Calculated local value before output projection. */
   local: unknown;
   /** Calculated output value. */
   emit: unknown;
+  /** Current output at this occurrence's path when divergence was last read. */
+  divergenceCurrent: unknown;
+  /** Concrete path whose parsed segments this occurrence retains. */
+  divergencePath: string | undefined;
+  /** Parsed path syntax retained until this occurrence changes address. */
+  divergenceSegments: readonly PointerSegment[] | undefined;
+  /** Baseline output at this occurrence's path when divergence was last read. */
+  divergenceBase: unknown;
+  /** Pure comparison result for the two retained path values. */
+  divergenceResult: boolean;
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
   interactionState: NodeStateFlags;
+  /** Unreleased pre-change eligibility entries, one per public write sequence, cut by release generation. */
+  revealBaseline?: {
+    entries: {
+      readonly state: NodeStateFlags;
+      /** Presence before this write's first eligibility change. */
+      readonly isPresent: boolean;
+      readonly generation: number;
+      readonly sequence: number;
+    }[];
+  };
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   /** Whether this occurrence has completed its initial delivery comparison. */
@@ -85,7 +135,7 @@ export interface FieldNodeRecord<Self> {
   /** Address before this commit's first rekey. */
   deliveryPreviousPath?: string;
   /** Child identity collection before the first shape change. */
-  deliveryPreviousChildren?: readonly Self[] | null;
+  deliveryPreviousChildren?: Nullable<readonly Self[]>;
   /** Packed active/visible/readOnly/disabled values before their first change. */
   deliveryPreviousComputed?: number;
   /** Effective schema identity before this commit's first schema change. */

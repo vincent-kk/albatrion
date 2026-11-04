@@ -4,6 +4,7 @@ import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
 import { isArraySchema, isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -38,6 +39,7 @@ const FieldInputStringEnum = ({
   alias: aliasProp,
   placeholder,
   size,
+  misfit,
 }: FieldInputStringEnumProps) => {
   const [schema, alias, mode] = useMemo(() => {
     const labels = context.enumLabels || aliasProp;
@@ -66,9 +68,15 @@ const FieldInputStringEnum = ({
   }, [options]);
 
   const initialValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
-    if (Array.isArray(defaultValue)) return defaultValue.map((v) => '' + v);
-    else return '' + defaultValue;
+    if (isArray(defaultValue))
+      return defaultValue.every(
+        (value) => value === null || typeof value === 'string',
+      )
+        ? defaultValue.map((value) => '' + value)
+        : undefined;
+    return defaultValue === null || typeof defaultValue === 'string'
+      ? '' + defaultValue
+      : undefined;
   }, [defaultValue]);
 
   const handleChange = useHandle((value: string | string[]) => {
@@ -96,6 +104,8 @@ const FieldInputStringEnum = ({
       onChange={handleChange}
       style={{ width: '100%' }}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     >
       {Options}
     </Select>

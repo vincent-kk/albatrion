@@ -2,6 +2,8 @@ import type { ValidationIssue } from '@canard/schema-form';
 import { convertJSONPathToPointer } from '@winglet/json/path-common';
 import type { ErrorObject } from 'ajv';
 
+import type { Dictionary } from '@aileron/declare';
+
 /** Normalize Ajv 6 paths and attach the key rejected by a constraint. */
 export const transformDataPath = (errors: ErrorObject[], root?: object): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
@@ -38,7 +40,7 @@ export const transformDataPath = (errors: ErrorObject[], root?: object): Validat
       let target: unknown = root;
       for (const segment of segments) {
         if (typeof target !== 'object' || target === null) break;
-        target = (target as Record<string, unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+        target = (target as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
       }
       if (typeof target === 'object' && target !== null && 'required' in target &&
           Array.isArray(target.required) && target.required.length === 1 &&

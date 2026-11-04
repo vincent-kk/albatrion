@@ -89,7 +89,7 @@ export const validatorBranchScenarios: readonly FormScenario[] = [
   },
   {
     name: 'composition.guard-pattern-reveal',
-    description: 'FRAGMENT-009 the validator guard judges a pattern on every keystroke; GOAL-034 the form does not interpret if; LANDING-018 the revealed field keeps its raw value while hidden.',
+    description: 'FRAGMENT-009 the validator guard judges a pattern on every keystroke; GOAL-034 the form does not interpret if; LANDING-018 the revealed field keeps its source value while hidden.',
     schema: revealSchema,
     initialValue: {},
     steps: [

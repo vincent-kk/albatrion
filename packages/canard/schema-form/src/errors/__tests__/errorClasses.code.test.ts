@@ -4,7 +4,7 @@ import { JSONSchemaError } from '../classes/JSONSchemaError';
 import { SchemaFormError } from '../classes/SchemaFormError';
 import { UnhandledError } from '../classes/UnhandledError';
 import { ValidationError } from '../classes/ValidationError';
-import { FormErrorCode } from '../codes/FormErrorCode';
+import { FormErrorCode } from '../constants/FormErrorCode';
 
 describe('error class codes', () => {
   it.each([

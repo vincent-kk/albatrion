@@ -2,7 +2,7 @@ import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /** Remove Ajv's strong references when a root is released or collected. */
 export const disposeSchemaRoot = (registration: SchemaRootRegistration): void => {
-  if (registration.validationCopy) {
+  if (registration.validationRegistered && registration.validationCopy) {
     registration.validation.removeSchema(registration.key);
     registration.validation.removeSchema(registration.validationCopy);
   }

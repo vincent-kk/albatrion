@@ -1,10 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine';
 import type { BlueprintSchema } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
 
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
@@ -20,11 +18,8 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: snapshot,
-    latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
+
+    misfitPaths: new PathKeyedSet(),
   });
 
 describe('FieldNode PR-2 surface', () => {
@@ -38,7 +33,7 @@ describe('FieldNode PR-2 surface', () => {
         /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
       ),
     ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(53);
+    expect(rows).toHaveLength(59);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)
@@ -75,13 +70,13 @@ describe('FieldNode PR-2 surface', () => {
     });
     root.setValue({ shown: true, target: 'value', hidden: 'hidden' });
     const target = root.find('/target');
-    expect(target?.enabled).toBe(true);
-    expect(target?.disabled).toBe(true);
-    expect(root.find('/hidden')?.enabled).toBe(false);
+    expect(target?.isPresent).toBe(true);
+    expect(target?.isDisabled).toBe(true);
+    expect(root.find('/hidden')?.isPresent).toBe(false);
     root.find('/shown')?.setValue(false);
-    expect(target?.active).toBe(false);
-    expect(target?.visible).toBe(true);
-    expect(target?.enabled).toBe(false);
+    expect(target?.isActive).toBe(false);
+    expect(target?.isVisible).toBe(true);
+    expect(target?.isPresent).toBe(false);
   });
 
   it('TEST-069 active getter reads the settled node gate', () => {
@@ -94,17 +89,17 @@ describe('FieldNode PR-2 surface', () => {
     });
     root.setValue({ flag: true, target: 'shown' });
     const target = root.find('/target');
-    expect(target?.active).toBe(true);
-    expect(root.find('/flag')?.active).toBe(true);
+    expect(target?.isActive).toBe(true);
+    expect(root.find('/flag')?.isActive).toBe(true);
     expect(isFieldNode(target)).toBe(true);
     root.find('/flag')?.setValue(false);
     expect(root.find('/target')).toBeNull();
-    expect(target?.active).toBe(false);
+    expect(target?.isActive).toBe(false);
     expect(target?.value).toBe('shown');
     root.find('/flag')?.setValue(true);
     expect(root.find('/target')).not.toBe(target);
-    expect(root.find('/target')?.active).toBe(true);
-    expect(target?.active).toBe(false);
+    expect(root.find('/target')?.isActive).toBe(true);
+    expect(target?.isActive).toBe(false);
   });
 
   it('children returns the exact stored array reference', () => {
@@ -144,6 +139,25 @@ describe('FieldNode PR-2 surface', () => {
     );
   });
 
+  it('SURFACE-005 delegates insert synchronously and ERROR-197 names insert on strings', () => {
+    const array = makeTree({ type: 'array', items: { type: 'string' } });
+    if (!isArrayNode(array)) throw new Error('Expected an array node');
+    expect(array.push('a')).toBe(1);
+    expect(array.insert(0, 'x')).toBe(2);
+    expect(array.insert(2, 'y')).toBe(3);
+    expect(array.insert(5, 'z')).toBe(3);
+    expect(array.value).toEqual(['x', 'a', 'y']);
+    const string = makeTree({ type: 'string' });
+    expect(() =>
+      Reflect.get(string, 'insert').call(string, 0, 'x'),
+    ).toThrowError(
+      expect.objectContaining({
+        code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+        details: { path: '', method: 'insert' },
+      }),
+    );
+  });
+
   it('TEST-069 isTerminalNode object includes terminal object nodes', () => {
     const root = makeTree({ type: 'object', options: { terminal: true } });
     root.setValue({ retained: true });
@@ -165,7 +179,7 @@ describe('FieldNode PR-2 surface', () => {
       { value: 'loaded' },
     );
     root.setValue({ value: 'edited', extra: 1 });
-    expect(root.undeclaredValues).toEqual({ extra: 1 });
+    expect(root.extras).toEqual({ extra: 1 });
     expect(root.find('/value')?.defaultValue).toBe('loaded');
     root.find('/value')?.resetSubtree();
     expect(root.find('/value')?.value).toBe('loaded');

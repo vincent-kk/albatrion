@@ -7,7 +7,7 @@ import type { FieldNode } from '@/schema-form/core/surface';
 /**
  * Compare requested observations with the settled public node surface.
  * @param root - Root node after a completed scenario action
- * @param expectation - Shape, raw values, output, and diagnostic assertions
+ * @param expectation - Shape, source values, output, and diagnostic assertions
  * @returns Nothing; assertion failures identify the mismatched observation
  */
 export function assertCoreScenarioExpectation(
@@ -26,14 +26,14 @@ export function assertCoreScenarioExpectation(
   for (const [path, states] of Object.entries(expectation.states ?? {})) {
     const node = root.find(path);
     expect(node, `state node ${path}`).not.toBeNull();
-    if (states.visible !== undefined)
-      expect(node?.visible, `state ${path}.visible`).toBe(states.visible);
-    if (states.readOnly !== undefined)
-      expect(node?.readOnly, `state ${path}.readOnly`).toBe(states.readOnly);
-    if (states.disabled !== undefined)
-      expect(node?.disabled, `state ${path}.disabled`).toBe(states.disabled);
-    if (states.enabled !== undefined)
-      expect(node?.enabled, `state ${path}.enabled`).toBe(states.enabled);
+    if (states.isVisible !== undefined)
+      expect(node?.isVisible, `state ${path}.isVisible`).toBe(states.isVisible);
+    if (states.isReadOnly !== undefined)
+      expect(node?.isReadOnly, `state ${path}.isReadOnly`).toBe(states.isReadOnly);
+    if (states.isDisabled !== undefined)
+      expect(node?.isDisabled, `state ${path}.isDisabled`).toBe(states.isDisabled);
+    if (states.isPresent !== undefined)
+      expect(node?.isPresent, `state ${path}.isPresent`).toBe(states.isPresent);
   }
   if ('outputValue' in expectation)
     expect(root.outputValue, 'outputValue').toEqual(expectation.outputValue);

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 describe('settle descendant rebirth regression', () => {
@@ -27,7 +27,7 @@ describe('settle descendant rebirth regression', () => {
       { present: true, source: 'A', group: { target: 'manual' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.group?.structure?.target?.raw).toBe('A');
+    expect(root.structure?.group?.structure?.target?.source).toBe('A');
 
     writeFieldNode(
       root.structure!.present,

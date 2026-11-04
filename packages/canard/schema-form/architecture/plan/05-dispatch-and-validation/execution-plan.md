@@ -16,7 +16,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | --- | --- | --- |
 | `src/core/dispatch/`·`src/core/validation/`과 문서, `app/plugin/type.ts` 개정 | U2, U3, U4, U5a, U5b, U6, U7, U8 | 문서 선행 커밋(G3), 경계 린트 목록(G4), 디스패처·검증 시험 초록(G13–G24), 의존 방향 시험(G12) |
 | 명령 메서드 하나(소유자가 정한 이름·형)와 멤버 목록 시험(`FormHandle` 쪽은 07) | U6, U9 | `request(kind)`·`SchemaNodeRequestType` 시험(G17·G18), 멤버 표·멤버 목록 시험·공개 형(G25) |
-| `onError` core 쪽과 코드 표 상수(ERROR-164), `TYPE_MISMATCH` | U3, U5b | 코드 표 기계 대조 시험(G7), 보고기 시험 태그(G15·G16) |
+| `onError` core 쪽과 코드 표 상수(ERROR-164), `MISFIT` | U3, U5b | 코드 표 기계 대조 시험(G7), 보고기 시험 태그(G15·G16) |
 | 검증기 계약과 ajv6·7·8 구현, `bind` 거부 | U3, U7, U11a, U11b, U11c | 플러그인 계약 게이트 넷·`bind-refusal`·`union-types`(G30–G35) |
 | 차등 테스트와 훅 수준 바인딩 시험 초록, `verification.md`의 게이트 전부 | U12, U13, U14, U15, U16a, U16b | 차등 스위트(G37), 회귀·시나리오(G38·G39), 훅 시험(G40), 벤치 행(G41–G43), 06 통합(G44–G46), 최종 게이트(G47–G54) |
 
@@ -62,9 +62,9 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | I18 | 플러그인 계약 게이트의 자리 | 플러그인 패키지는 공개 `@canard/schema-form`만 가져오고 그 진입점은 07까지 옛 엔진이다. 그래서 VALIDATE-046·047의 (i)–(iv)는 플러그인 계약 수준(`compile`·`compileGuard`·`release`의 판정을 독립 ajv와 비교)으로 각 플러그인 패키지에서 시험하고, VALIDATE-046 (iii) 재생성 reset의 원자성은 core에서 시험용 검증기로 한 번 더 본다. 에러 라우팅 규칙 (5)의 플러그인별 `$ref` 아래 `schemaPath` 모양은 각 플러그인이 내는 모양을 플러그인 시험이 단언하고, 같은 모양 셋을 core 라우팅 시험이 입력으로 쓴다 | VALIDATE-043·046·047, 18C-53·57·58, LANDING-159 | 자율 결정 |
 | I19 | `VALIDATOR_BIND_REFUSED`를 던지는 형 | 세 플러그인 모두 네이티브 `Error`를 확장한 플러그인 안 하위 클래스를 던진다(이름 `ValidatorBindRefusedError`, 가칭 — `name`도 그 이름이며 `'UnhandledError'`가 아님). 필드는 `group: 'UNHANDLED_ERROR'`, `code: 'VALIDATOR_BIND_REFUSED'`, `details`(문제 된 옵션 이름 목록)다. 세 패키지의 클래스는 같은 모양이며(ajv8 포함) `BaseError`도 새 의존도 쓰지 않는다. core의 `isUnhandledError`는 `instanceof` 가드(`src/errors/UnhandledError.ts:30`)라 이 객체를 알아보지 못하며 이는 받아들인다. 플러그인 문서에 "호출자는 `group`과 `code`로 가른다" 한 줄을 적는다 | VALIDATE-050, ERROR-100·164, SURFACE-014, 32C-02, 35라운드 35C-07(원장 관리자 답, 커밋 대기) | 닫힘(35C-07이 32C-02를 고침) |
 | I20 | 오류 코드 상수의 자리 | 코드 표(ERROR-164 행 + 그 뒤 더해진 행, 살아 있는 코드 60)는 렌더 계층 코드까지 포함하는 패키지 전체의 표라 `src/errors/`(기존 fractal)가 소유한다. 상수는 표의 순서를 따르고 문서 주석에 level·부류·언제를 적는다. settle의 `settle/utils/errors/settleErrorCode.ts`는 표의 상수를 이름으로 가져와 쓰도록 바뀐다(04 ADR D6의 "05가 이름을 확정하면 이 파일만 고친다"). 기록 형 `FormErrorRecord`·코드 형 `FormErrorCode`·보고기 형도 `src/errors/`의 형 파일이다 | ERROR-013·017·031·164·198, `request.md:50`, 04 `execution-adr.md` D6 | 자율 결정 |
-| I21 | `reason`의 값 | 코드마다 닫힌 리터럴 합집합이다: `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED` → `'duplicateSchemaId'`(+ `$id`), `TYPE_MISMATCH` → `'unconvertible' \| 'ambiguous'`, `DISCRIMINATOR_MISMATCH` → `'missing' \| 'kind' \| 'overlap' \| 'key'`. 원장이 이름 붙이지 않은 원인(검증기가 던짐 등)에는 `reason`을 두지 않고 던진 값은 그 행의 `details` 칸에 둔다. 새 코드는 없다 | ERROR-201, VALUE-037(`ledger/value.md:615`), 31C-03 | 닫힘(31C-03) |
+| I21 | `reason`의 값 | 코드마다 닫힌 리터럴 합집합이다: `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED` → `'duplicateSchemaId'`(+ `$id`), `MISFIT` → `'unconvertible' \| 'ambiguous'`, `DISCRIMINATOR_MISMATCH` → `'missing' \| 'kind' \| 'overlap' \| 'key'`. 원장이 이름 붙이지 않은 원인(검증기가 던짐 등)에는 `reason`을 두지 않고 던진 값은 그 행의 `details` 칸에 둔다. 새 코드는 없다 | ERROR-201, VALUE-037(`ledger/value.md:615`), 31C-03 | 닫힘(31C-03) |
 | I22 | ajv8 `allowUnionTypes` | ajv8의 세 진입점(`default`·`2019`·`2020`)에만 `allowUnionTypes: true`를 더한다. 판정을 바꾸지 않고 `strictTypes: "log"`의 `console.warn`만 없앤다. ajv7(`strict: false`)·ajv6(엄격 모드 없음)과 VALIDATE-003의 다른 기본값은 그대로다. `bind`는 ajv7·8에서 `instance.opts`, ajv6에서 `instance._opts`를 읽는다 | VALIDATE-003·050·051(`ledger/validate.md:101,813-814`), 31C-04(Q4 답) | 닫힘 |
-| I23 | 가칭 이름의 확정 | 확정은 05의 판단이며 `log.md`와 PR 본문에 적고 원장 관리자가 보충을 단다(31C-05). 이미 정해진 이름(`union`·`unionBehavior`·`isUnionNode`, `SCHEMA_FORM_WARNING.TYPE_MISMATCH`, `INJECT_TARGET_NOT_FOUND` 삭제, 맨앞 `Node` 금지)을 먼저 대조한다. U2가 `ledger/*.md`의 `가칭`을 모두 모아 이름마다 확정 여부를 정한다 | ERROR-164 머리 문단, ERROR-198, SURFACE-056·061, CONTROLS-079, 31C-05 | 닫힘(31C-05) |
+| I23 | 가칭 이름의 확정 | 확정은 05의 판단이며 `log.md`와 PR 본문에 적고 원장 관리자가 보충을 단다(31C-05). 이미 정해진 이름(`union`·`unionBehavior`·`isUnionNode`, `SCHEMA_FORM_WARNING.MISFIT`, `INJECT_TARGET_NOT_FOUND` 삭제, 맨앞 `Node` 금지)을 먼저 대조한다. U2가 `ledger/*.md`의 `가칭`을 모두 모아 이름마다 확정 여부를 정한다 | ERROR-164 머리 문단, ERROR-198, SURFACE-056·061, CONTROLS-079, 31C-05 | 닫힘(31C-05) |
 | I24 | 커밋 번호 스탬프와 실행 합치기 | 검증 요청은 최외곽 진입마다 한 번이고, 실행은 마이크로태스크에 모아 최신 커밋 번호 하나만 돈다. 결과는 스탬프가 최신일 때만 자기 파동으로 배달하며 정착 파동에 섞지 않는다. 늦은 결과는 버린다. 결과 파동의 리스너 예외는 `onError` 한 번과 주인 없는 싱크 한 번이며 처리되지 않은 거부가 되지 않는다. 결과 배달은 dispatch가 validation에 넘기는 콜백이다 | EVENT-046, VALIDATE-006·049, ERROR-019 (5), LANDING-084 | 닫힘 |
 | I25 | 같은 `$id`의 `bind` 인스턴스 | 플러그인은 같은 `$id`의 살아 있는 두 루트를 같은 설정의 다른 인스턴스에 등록해 떼어 둔다. 기본 인스턴스는 플러그인이 같은 옵션으로 만든다. `bind` 인스턴스는 `instance.constructor`와 그 옵션으로 만들되, 사용자 정의 키워드·형식까지 같은지 보장할 수 없으면 VALIDATE-046의 실패 처리(소유자에게 (a) 동시 사용 미지원 문서화 또는 (b) `bind`가 인스턴스 생성 함수를 받음)를 그대로 따른다 | VALIDATE-046(실패 줄), ERROR-201 | 게이트로 판정 |
 
@@ -210,7 +210,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 - 원장: ERROR-004·005·008·013·014·016·017·019·021·022·023·024·025·028·029·030·096·097·099·100·101·196·204, WRITE-099, VALUE-037, TEST-017, 31C-02.
 - 만들 파일: `dispatch/utils/report/`(`createFormErrorRecord.ts`·`deliverChainRecords.ts`·`bundleChainErrors.ts`·`reportOwnerlessError.ts`·`dedupeWarningRecord.ts`·`assertNotInDelivery.ts`), 시험 `dispatch/__tests__/dispatch.report.test.ts`·`dispatch.bundle.test.ts`·`dispatch.observer-write.test.ts`·`dispatch.warning-key.test.ts`.
-- 고칠 파일: `dispatch/utils/chain/exitSchemaNodeChain.ts`(U5a 파일, 같은 세션이 이음), settle의 경고 판정 자리(`TYPE_MISMATCH` 기록은 `settle/utils/commit/commitSettlement.ts`의 `warnDevelopmentIssue` 호출을 런타임 기록으로, `MULTIPLE_GATED_BRANCHES_ACTIVE`는 `oneOf` 호스트의 이미 계산된 게이트 결과를 세는 자리 — 경계 있는 탐색: `grep -rn "oneOf" PKG/src/core/settle/utils/gates PKG/src/core/settle/utils/compute`로 정하고 브리프에 파일을 적음).
+- 고칠 파일: `dispatch/utils/chain/exitSchemaNodeChain.ts`(U5a 파일, 같은 세션이 이음), settle의 경고 판정 자리(`MISFIT` 기록은 `settle/utils/commit/commitSettlement.ts`의 `warnDevelopmentIssue` 호출을 런타임 기록으로, `MULTIPLE_GATED_BRANCHES_ACTIVE`는 `oneOf` 호스트의 이미 계산된 게이트 결과를 세는 자리 — 경계 있는 탐색: `grep -rn "oneOf" PKG/src/core/settle/utils/gates PKG/src/core/settle/utils/compute`로 정하고 브리프에 파일을 적음).
 - 단계(붉은 시험 먼저): 사슬 끝 기록마다 발생 순서로 `report`(경고 포함), 정착 중에는 아무것도 전달하지 않음; 묶음(둘 이상 → `SchemaFormError` `MULTIPLE_ERRORS`, `details.errors` 순서, `aggregate`와 구성 기록, 원래 값은 펴지 않고 첫째); 핸들러가 던질 때(부른 쪽이 있으면 남은 전달을 끝내고 묶어 던짐, 없으면 싱크 한 번·전달 계속·핸들러 예외를 다시 `onError`에 보내지 않음); 전달 중 깃발과 쓰기 거부(`WRITE_IN_OBSERVER` 즉시, `onError`에 안 감, `validate()`는 허용, 다른 폼은 막지 않음); 경고 구조 키(코드·위치·코드별 판별 칸, 첫 통과에만 서식, 같은 노드의 다른 `allOf` 키워드는 따로)와 폼 수준 로드에서만 초기화(마운트·폼 수준 reset, `setValue(V)`·`resetSubtree()`는 아님 — ERROR-204); `hasConsumer()`가 거짓이면 기록·서식·경고 집합·정착 경고 판정을 만들지 않음(할당 계측 시험); 마운트 뒤 붙은 핸들러는 그 뒤 사건만; 원시 예외 전달; 주인 없는 싱크(ERROR-008: `window`면 `reportError`, 아니면 `ErrorEvent` 분기, 없으면 `console.error` 한 번, Node의 uncaught 방출 없음); 청사진 오류·경고(PR-1의 수집기)를 기록으로; `RESET_REBUILT_BY_REFERENCE`·`MULTIPLE_GATED_BRANCHES_ACTIVE`는 `hasConsumer()`일 때만; `NON_JSON_WHOLE_VALUE` 깊이 점검은 개발 모드에서만(I9).
 - 완료: G15·G16.
 
@@ -305,7 +305,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 - 원장: TEST-027·072·076, LANDING-093(18C-30 보충), `reviews/round-27-owner-answers.md:7-11`.
 - 만들 파일: `PKG/bench/dispatch-and-validation.bench.ts`(행 `TEST-076-mount`: 마운트를 폼 몫과 검증기 몫(`compileGuard`)으로 나눔, 같은 실행의 옛 엔진 대비; `TEST-076-guards200`: 가드 200개 조건부 폼 생성; `EVENT-004-wave`: 1,000 노드 변경 한 파동), `ARCH/verification/05-dispatch-and-validation/performance.md`.
-- 단계: `node --import tsx`와 `/opt/homebrew/bin/bun`으로 같은 입력을 돈다. 판정은 TEST-072의 선(같은 실행에서 옛 판 대비 처리량 15% 넘는 하락 ∧ Welch p<0.05). 가드 200개 행은 미리 적은 수용 필요 항목이며 미리 받아들인 것이 아니다 — 수치를 바꿔 적고 선을 넘으면 Vincent의 수용을 받는다. 03·04 벤치(`bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`)를 다시 돌려 05 뒤 값을 기록만 한다. 새로 느린 것은 `ARCH/verification/performance-issues.md` "열림"에 행. P-03(게이트 형제 첫 로드 이차)이 배달 경로와 겹치면 수치만 그 행에 덧붙인다. 공개 `<Form>` 선(`guard:check`)도 돈다(레거시 경로의 import 분리 영향).
+- 단계: `node --import tsx`와 `{node-home}/bin/bun`으로 같은 입력을 돈다. 판정은 TEST-072의 선(같은 실행에서 옛 판 대비 처리량 15% 넘는 하락 ∧ Welch p<0.05). 가드 200개 행은 미리 적은 수용 필요 항목이며 미리 받아들인 것이 아니다 — 수치를 바꿔 적고 선을 넘으면 Vincent의 수용을 받는다. 03·04 벤치(`bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`)를 다시 돌려 05 뒤 값을 기록만 한다. 새로 느린 것은 `ARCH/verification/performance-issues.md` "열림"에 행. P-03(게이트 형제 첫 로드 이차)이 배달 경로와 겹치면 수치만 그 행에 덧붙인다. 공개 `<Form>` 선(`guard:check`)도 돈다(레거시 경로의 import 분리 영향).
 - 완료: G41·G42·G43.
 
 ### U16a 06과의 통합
@@ -474,7 +474,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 | O-34 TEST-017의 core 목록 | TEST-017 | U5b, U7, U8, U11, U12b | G16·G19·G23·G37 |
 | O-35 이주 안내 | ERROR-042 | 제외(08) | — |
 | W-01–W-03 검증기 없음·조건부 경고·검증기 원천은 청사진 오류 아님 | ERROR-144–154 | U7 | `validation.missing.test.ts`(`ERROR-146`, `ERROR-153`) — G19 |
-| W-04 `DIALECT_MISMATCH`·`NON_JSON_WHOLE_VALUE`·`TYPE_MISMATCH` | ERROR-186·188, VALUE-037 | U3, U5b, U8 | G7·G16·G23 |
+| W-04 `DIALECT_MISMATCH`·`NON_JSON_WHOLE_VALUE`·`MISFIT` | ERROR-186·188, VALUE-037 | U3, U5b, U8 | G7·G16·G23 |
 | W-05 공허한 참 경고 없음 | ERROR-198 | U7 | G19 |
 | W-06 같은 `$id`의 `reason` | ERROR-201, 31C-03 | U8 | `validation.same-id.test.ts`(`31C-03 duplicateSchemaId`) — G23 |
 | W-07 가칭 확정, `INJECT_TARGET_NOT_FOUND` 삭제 | ERROR-164·198, 31C-05 | U2, U3 | G6·G7 |
@@ -557,7 +557,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 ## 8. 검증 명령(저장소 루트 = 이 작업 트리)
 
-2026-10-01 확인: `PKG/package.json`의 `lint` = `eslint "src/**/*.{ts,tsx}"`, `test` = `vitest`, `typecheck` = `tsc --noEmit --composite false --rootDir . -p tsconfig.json`; `P6`·`P7`·`P8`은 같은 `lint`·`typecheck`와 `test` = `yarn run -T vitest`(jsdom); vitest 프로젝트 `unit`·`render`·`storybook`(`PKG/vite.config.ts`); `ARCH/ledger/checks/plan-links.mjs`(끝 줄 `problems 0`); `/opt/homebrew/bin/bun`; 루트 `tsx`; `@aileron/benchmark-form`의 `guard:check`(요약 줄 `summary: 0 regression(s)`). 아래 `npx` 형태는 같은 스크립트의 이진을 부르며 성공 표지를 붙이기 위한 것이다(M4).
+2026-10-01 확인: `PKG/package.json`의 `lint` = `eslint "src/**/*.{ts,tsx}"`, `test` = `vitest`, `typecheck` = `tsc --noEmit --composite false --rootDir . -p tsconfig.json`; `P6`·`P7`·`P8`은 같은 `lint`·`typecheck`와 `test` = `yarn run -T vitest`(jsdom); vitest 프로젝트 `unit`·`render`·`storybook`(`PKG/vite.config.ts`); `ARCH/ledger/checks/plan-links.mjs`(끝 줄 `problems 0`); `{node-home}/bin/bun`; 루트 `tsx`; `@aileron/benchmark-form`의 `guard:check`(요약 줄 `summary: 0 regression(s)`). 아래 `npx` 형태는 같은 스크립트의 이진을 부르며 성공 표지를 붙이기 위한 것이다(M4).
 
 - 단위 범위: `(cd packages/canard/schema-form && npx vitest run --project unit <경로>)`
 - 패키지 unit·render: `(cd packages/canard/schema-form && npx vitest run --project unit --project render)`
@@ -565,7 +565,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 - 플러그인(셋 각각): `(cd packages/canard/schema-form-ajv8-plugin && npx vitest run && npx eslint "src/**/*.{ts,tsx}" && npx tsc --noEmit --composite false --rootDir . -p tsconfig.json)`
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md)`
-- 05 벤치: `(cd packages/canard/schema-form && node --import tsx bench/dispatch-and-validation.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/dispatch-and-validation.bench.ts)`
+- 05 벤치: `(cd packages/canard/schema-form && node --import tsx bench/dispatch-and-validation.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/dispatch-and-validation.bench.ts)`
 - 03·04 벤치 기록 재측정: `bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`를 같은 두 엔진으로
 - 공개 `<Form>` 선: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 - 06과 merge한 뒤의 겉면 합집합: `(cd packages/canard/schema-form && npx vitest run --project unit src/core/SchemaNode/__tests__/surface.test.ts src/core/SchemaNode/__tests__/type-contract.test.ts)`(G44)

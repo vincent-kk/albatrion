@@ -77,7 +77,7 @@
 1. [중간] 청사진이 공개 유효 스키마 안에 새로 만든 배열이 아닌 객체(controls 봉투 `applySchemaContribution.ts:99-103`, `mergeSingleStaticContribution.ts:48-51`; pattern clause 객체 `finalizeEffectiveSchema.ts:23`; exclusive 경계 clause 객체 `applyConstraintKeywords.ts:48-55`; hint group 복사본 `mergeHintGroup.ts:23`, `:36`)가 분류되지 않았습니다. 이들은 `node.jsonSchema`의 `.controls`, `.allOf[k]`, `.options`로 닿고 청사진 캐시로 폼 사이에 공유되므로 102C-01의 규칙상 (1)입니다. 청사진 완료 때 얕게 동결하고, merge가 안에 만든 하위 객체는 이유를 적고 동결하지 않습니다. 세 고정 폼의 계수는 변하지 않습니다.
 2. [낮음~중간] F34(`populateVirtualNodes.ts:96`)는 임시값이 아니라 가상 `BlueprintNode.fields`로 보유되고 런타임이 읽습니다. 공개 타입에 없고 소유자가 하나이므로 개발 전용 분류는 맞지만 근거를 "가상 노드가 단독 소유하는 내부 기록"으로 고칩니다.
 3. [낮음~중간] F47–F49(`getItemEntry.ts:30`, `:32`, `:44`)는 청사진 완료 뒤 slot을 처음 요청할 때 만들어져 모듈 수준 WeakMap으로 공유됩니다. 생성 시점에 개발 모드에서만 동결한다고 적고, mount 뒤 새 배열 slot을 만드는 시험을 두 모드 모두 더합니다.
-4. [낮음] default 대조 표에 검증 경로(`runSchemaNodeValidation.ts:17`, `evaluateGate.ts:102`; 안전성은 ajv 플러그인의 `assertBindableInstance`가 데이터를 바꾸는 옵션을 거부하는 데 달림), 새 객체에만 쓰는 경로(`readRawTree.ts:40-48`, `readLatentSlotSource.ts:39-47`), draft·복사본에만 쓰는 경로(`alignArraySnapshotSlots.ts:36,85,90`, `replaceAtPath.ts:27-32`, `markBatchArrayOperation.ts:30`, `arrangeSchemaNodeItems.ts:59-64`, `shallowPatch.ts:14`)를 더하고, 데이터를 바꾸는 소비자 validator는 계약 밖이라고 적습니다.
+4. [낮음] default 대조 표에 검증 경로(`runSchemaNodeValidation.ts:17`, `evaluateGate.ts:102`; 안전성은 ajv 플러그인의 `assertBindableInstance`가 데이터를 바꾸는 옵션을 거부하는 데 달림), 새 객체에만 쓰는 경로(`readSourceTree.ts:40-48`, `readLatentSlotSource.ts:39-47`), draft·복사본에만 쓰는 경로(`alignArraySnapshotSlots.ts:36,85,90`, `replaceAtPath.ts:27-32`, `markBatchArrayOperation.ts:30`, `arrangeSchemaNodeItems.ts:59-64`, `shallowPatch.ts:14`)를 더하고, 데이터를 바꾸는 소비자 validator는 계약 밖이라고 적습니다.
 5. [낮음] 운영 모드 시험이 React 개발 빌드로 돌 수 있습니다. React를 불러오기 전에 NODE_ENV=production을 정한 별도 프로젝트나 프로세스에서 실행하고 운영 빌드가 로드되었음을 단언합니다.
 6. [낮음] 분석 중에 버려지는 정적 schema를 완료 동결 대상에 올린 문장은 도달 가능성 기준과 맞지 않으므로 지우거나 근거를 적습니다.
 
@@ -96,3 +96,5 @@
 5. [낮음] 문서의 낡은 모순(571행의 "(2)로 유지", 시험 번호 563·572·573행)을 고칩니다.
 6. [낮음] 개발 모드 산식(344행)에 appliesWhen 복사본과 validationOnly·가상·lazy 복사본을 더하고, 기존의 개발 모드 동결 단언은 개발 모드 프로젝트에만 둡니다.
 7. [참고] Q106의 두 자리는 103C로 정해진 것이라 결정 대기가 아니라 시험 정정으로 적습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0fdb6660ba07`, `23767892757b`, `5f50768e561f`, `da734b40da7a`, `e60490572564`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

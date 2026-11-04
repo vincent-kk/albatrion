@@ -151,6 +151,7 @@
   > "청사진 분석: controls.discriminator 키가 어느 분기에도 없거나, 분기끼리 종류가 다르거나 값이 겹치거나, 선언 사이 값이 다름" (`adr/0014-error-policy.md:260`)
   > 편집자 결정(18C-91): "【추론】 판별 키가 union이어도 FRAGMENT-007의 분기 규칙은 그대로다(BLUEPRINT-017)." (`reviews/round-18-closing.md:2548`)
   > 편집자 결정(18C-91): "【추론】 분기의 `const`·`enum` 리터럴의 JSON 종류가 판별 키의 목록(`schemaType`, 원소 하나인 경우 포함)과 nullable 어디에도 없으면, 청사진이 개발 모드 경고 `(가칭) SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE`을 낸다." (`reviews/round-18-closing.md:2549`)
+  > 소유자(473라운드 원문 106): "다른 충동조건도 무조건 error나 warning으로 기존을 무분별하게 따르지 말고, 이게 에러를 내서 알려줄 문젠지, 조용히 넘어가되 경고하면 되는 문제인지를 구분해서 적절한 에러를 설계하도록 해줘" (`reviews/round-473-owner-answers.md:8`, 2026-11-03). 현행 적용(C1–C13): 비문자열·빈 키는 INVALID_CONTROL_SHAPE 오류(details `{ group: 'controls', key: 'discriminator', expected: 'string' }`), union 없는 객체 선언과 알려진 비객체 호스트는 키 무시 경고다. 객체 union 전체 태그 누락은 missing, 같은 oneOf 태그 중복은 overlap, 호스트 태그 형 없이 분기 종류가 다르면 kind 오류다. 일부 무태그 분기는 자기 active만 따른다(C5). anyOf 태그 중복은 모두 켜지고(C7), 호스트 태그 형이 여러 종류를 포괄하면 허용한다(C9). 호스트 태그 형 밖은 kind 경고(C10), 태그 공집합은 empty 경고(C11)이며 둘 다 태그를 끌어올리지 않는다. 각 선언의 키는 자기 union만 선택하고(C12), 도달 가능한 분기 전용 태그는 항상 마운트되는 자식으로 끌어올린다(C13). 두 판별 경고와 불일치 오류의 details는 `{ propertyName, reason }`만 가진다.
 - 상태: 현행
 - 출처: `adr/0010-branch-conventions.md:18#4-6`(정본), `02-target-overview.md:231`, `07-conclusions.md:142`, `adr/0010-branch-conventions.md:19`, `reviews/round-18-closing.md:2548-2549`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)
@@ -717,6 +718,7 @@
 - 보충:
   > 편집자 결정(25C-01): "【추론】 한 분기의 정적 연언 안에서 판별 키의 `const`·`enum` 교차가 공집합이면 오류 코드는 ERROR-164의 정적 연언 행(`EMPTY_ENUM_INTERSECTION`)이며 `DISCRIMINATOR_MISMATCH`가 아니다." (`reviews/round-25-closing.md:9`)
   > 편집자 결정(25C-03): "【추론】 리터럴 `enum: []`는 공집합 표시가 아니며, 공집합은 잎 함수가 `EMPTY_INTERSECTION`을 돌려준 경우만이다. 이 셋은 유효 스키마의 키워드 교차에만 걸리고, 판별 키의 `const`·`enum` 모으기는 FRAGMENT-048대로 키워드를 가리지 않고 교차하며, 기여 하나의 값이 이미 비어도(`{ enum: [] }`, `{ const: 'a', enum: ['b'] }`) `EMPTY_ENUM_INTERSECTION`이다(25C-01)." (`reviews/round-25-closing.md:34`)
+  > 소유자(473라운드 원문 106): "다른 충동조건도 무조건 error나 warning으로 기존을 무분별하게 따르지 말고, 이게 에러를 내서 알려줄 문젠지, 조용히 넘어가되 경고하면 되는 문제인지를 구분해서 적절한 에러를 설계하도록 해줘" (`reviews/round-473-owner-answers.md:8`, 2026-11-03). 현행 적용(C11): 분기 태그의 정적 const·enum 교차는 형 추론보다 먼저 구하며 enum: []도 빈 교차다. EMPTY_ENUM_INTERSECTION을 던지는 대신 값 목록이 빈 판별 게이트로 기록하여 분기를 절대 켜지지 않게 하고 DISCRIMINATOR_BRANCH_UNREACHABLE(reason: 'empty')로 경고한다. 태그가 있으므로 모든 분기가 비어도 C4 missing은 아니다. C10·C11 태그는 끌어올리지 않고 호스트에 자식이 있으면 그 자식 선언에도 넣지 않아 종류 충돌과 안정성 빠른 경로 탈락을 막는다. 일반 정적 연언의 EMPTY_ENUM_INTERSECTION은 유지한다.
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:130-140`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-05)
@@ -730,7 +732,9 @@
   > 【추론】 같은 호스트에서 `oneOf[i]`는 모든 `anyOf[j]`보다 앞이다.
   > 【추론】 주석 키의 나중 승, 같은 대상 규칙의 같은 층 동점, 공유 충돌의 '앞선 종류', 터미널 전략의 '나중 것', 호스트 바퀴의 평가 순서가 모두 이 순서를 쓴다.
   > 【추론】 JSON 키 순서는 여전히 쓰지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(389C-01): "【추론】 정적 선언 없는 이름에서 게이트 선언이 동시에 켜질 때의 공유 충돌은 청사진이 fold마다 하나로 묶은 노드의 identity로 판정한다: 같은 이름의 둘째 활성 간선의 청사진 노드가 첫 활성 간선의 것과 다르면 `SHARED_NODE_CONFLICT`이고 같으면 노드 하나다. 살아 있는 자식은 앞선 정착에서 이어받았을 수 있으므로 그 자식의 종류나 identity를 충돌 기준으로 쓰지 않는다. 같은 간선 안에서는 타입 나열 순서·null 포함 여부로 충돌을 추가 판정하지 않고 유효 타입의 빈 교집합(`typeConflict`)만 소비하므로 첫 타입 비교 보조(`hasSharedConflict`)는 지운다 — 한 간선의 선언(정적 소유자 없는 간선의 역할이 선언인 것들)은 같은 마스크라 그 비교가 참이 되는 경우는 모두 오탐이었고, 정적 소유자가 있는 간선의 다른 fold 게이트 선언은 `typeConflict`가 잡는다. 오류 코드·메시지·`cause: sharedConflict`·앞선 종류의 전순서·커밋 뒤 전달은 그대로다." (`reviews/round-389-closing.md:8`)
+  > 편집자 결정(390C-01): "【추론】 "(경로, 종류)" 열쇠와 "어느 종류의 노드를 살릴지"의 종류는 토큰 보조 하나가 정한다: union이 아니면 기존 kind 문자열이고(같은 이름 형제 사이에서 fold가 단일 타입이라 kind가 곧 정체), union이면 `union:<fold mask>`다. 마스크는 청사진 노드가 이미 보관한 정규화 `schemaType` 목록에서 청사진과 같은 fold 보조로 호출마다 계산하며(number/integer 같은 비트, null은 비트 없음), 저장 필드와 캐시를 더하지 않는다. 그래서 `[string,number]`와 `[number,string]`은 같은 토큰이고 `[string,boolean]`은 다르다. 이탈 대기·잠복 원본과 순서·게이트 경로 등록·커밋 선언·나감 정책·파생 규칙 열쇠·채움 집합은 모두 이 토큰으로 구별하고, 선택의 재사용·비활성 삭제·문서 순서 검색은 청사진 노드 객체 동일성으로 판정하므로 뒤 종류가 살아 있어도 첫 활성 종류가 생존하며 다른 fold의 잠복 값은 넘겨받지 않는다. 행 선택·전략·게이트 방식·구멍 값·공개 `type` 가드 같은 범주 판정은 기존 kind를 그대로 쓴다. 두 보조는 blueprint·settle·derive의 가장 낮은 공통 소유자인 engine의 organ에 두고 자식 모듈이 위로 직접 가져온다." (`reviews/round-390-closing.md:8`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:238-241`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-10)
@@ -840,7 +844,8 @@
 - 결정:
   > 【추론】 판별 키가 union이어도 FRAGMENT-007의 분기 규칙은 그대로다(BLUEPRINT-017).
   > 【추론】 분기의 `const`·`enum` 리터럴의 JSON 종류가 판별 키의 목록(`schemaType`, 원소 하나인 경우 포함)과 nullable 어디에도 없으면, 청사진이 개발 모드 경고 `(가칭) SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE`을 낸다.
-- 보충: 없음
+- 보충:
+  > 소유자(473라운드 원문 106): "다른 충동조건도 무조건 error나 warning으로 기존을 무분별하게 따르지 말고, 이게 에러를 내서 알려줄 문젠지, 조용히 넘어가되 경고하면 되는 문제인지를 구분해서 적절한 에러를 설계하도록 해줘" (`reviews/round-473-owner-answers.md:8`, 2026-11-03). 현행 적용: 호스트가 태그 형을 선언해 여러 종류를 포괄하면 서로 다른 분기 태그 종류도 허용한다(C9). 호스트 태그 형 밖은 분기 태그 type 명시 여부와 무관하게 DISCRIMINATOR_BRANCH_UNREACHABLE(reason: 'kind', C10), 태그 const·enum 공집합은 같은 코드의 reason: 'empty'(C11)다. details는 `{ propertyName, reason }`이며 values는 없다. C10·C11 태그는 끌어올리지 않고, 호스트 자식이 있으면 그 자식 선언에서도 제외한다. 터미널 객체에서는 이 경고를 보고하지 않는다. 호스트 태그 enum 밖의 값 검사는 추가하지 않는다.
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2548-2549`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91)

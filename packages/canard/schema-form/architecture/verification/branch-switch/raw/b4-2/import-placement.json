@@ -1,0 +1,31 @@
+{
+  "changes": [
+    {
+      "from": "src/core/engine/write/__tests__/dispatch.batch.test.ts",
+      "to": "src/core/engine/settle/__tests__/dispatch.batch.test.ts",
+      "basis": "The assertions inspect settlement ownership; verification lives with what it exercises."
+    },
+    {
+      "from": "src/core/engine/write/__tests__/dispatch.closing-branch.test.ts",
+      "to": "src/core/engine/settle/__tests__/dispatch.closing-branch.test.ts",
+      "basis": "The assertions inspect settlement ownership; verification lives with what it exercises."
+    },
+    {
+      "from": "src/core/engine/__tests__/fixtures/collectRetainedSlotSources.ts",
+      "to": "src/core/engine/settle/__tests__/fixtures/collectRetainedSlotSources.ts",
+      "basis": "New in-flight source-observation fixture, placed under settle before the product commit; no baseline file was deleted."
+    },
+    {
+      "from": "src/core/engine/__tests__/fixtures/readInactiveValuesAt.ts",
+      "to": "src/core/engine/settle/__tests__/fixtures/readInactiveValuesAt.ts",
+      "basis": "New in-flight source-observation fixture, placed under settle before the product commit; no baseline file was deleted."
+    },
+    {
+      "from": "src/core/engine/__tests__/fixtures/readRetainedSlotRaw.ts",
+      "to": "src/core/engine/settle/__tests__/fixtures/readRetainedSlotRaw.ts",
+      "basis": "New in-flight source-observation fixture, placed under settle before the product commit; no baseline file was deleted."
+    }
+  ],
+  "newExports": 0,
+  "newBoundaryExemptions": 0
+}

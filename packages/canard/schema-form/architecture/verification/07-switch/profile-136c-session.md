@@ -4,12 +4,12 @@
 
 ## 실행 환경과 입력
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`
-- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`
-- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`
+- 작업 트리: `{repo}`
+- D: `packages/canard/schema-form/architecture/verification/07-switch`
+- S: `{scratch}`
 - Node: `v26.11.1`
 - V8: `14.6.202.34-node.37`
-- Node 실제 경로: `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`
+- Node 실제 경로: `{node-home}/versions/node/v26.11.1/bin/node`
 - 엔진: Codex
 - 번들 매니페스트 기준 리비전: `e805074de8a9cb0c072a81284a166ab985a113be`
 
@@ -25,18 +25,18 @@
 
 ```sh
 "$HOME/.nvm/versions/node/v26.11.1/bin/node" \
-  /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
+  packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
   --kind=verdict --lane=react \
-  --rows=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/rows-fb-4.json \
+  --rows={scratch}/rows-fb-4.json \
   --watch-in-selection \
-  --base=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r133-base \
-  --candidate=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r133-fbx \
+  --base={scratch}/bundles/r133-base \
+  --candidate={scratch}/bundles/r133-fbx \
   --blocks=24 \
-  --touch-counts=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-135-counts/react-counts.json \
-  --aa=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-132c/final.json \
+  --touch-counts={scratch}/session-135-counts/react-counts.json \
+  --aa={scratch}/session-132c/final.json \
   --node-version=v26.11.1 \
-  --out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136c \
-  > /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136c.log 2>&1 &
+  --out={scratch}/session-136c \
+  > {scratch}/session-136c.log 2>&1 &
 ```
 
 별도의 짧은 명령으로 폴링하였으며 최초 sleep은 2초, 이후 각 sleep은 50초입니다. 각 명령은 진행 행을 한 줄 출력하였습니다. `final.json` 존재와 로그의 `SESSION_131_FAILED`를 함께 확인한 뒤 폴링을 종료하였으며 실행 셸의 종료 코드도 1입니다. 시작 셸은 `nice(5) failed: operation not permitted`를 출력하였지만 러너가 시작되어 최초 사전 검사와 첫 통과의 worker 48개를 완료하였습니다.
@@ -155,3 +155,5 @@ Before measurement: estimated 5000.012s + confirmation reserve 0.000s exceeds re
 최종 JSON 원본은 2,876,362바이트이며 part 2와 같은 보관 형식으로 66,670바이트의 gzip을 보존하였습니다. 요약 원본은 1,947바이트, 첫 보고는 34,237바이트이고 `raw-sha256.txt`는 러너의 `sha256.txt`를 그대로 복사한 15,518바이트 목록입니다. 각 보존 산출물은 5MB 이하이며 SHA-256 목록의 경로는 원 세션 디렉터리 기준입니다. 실패 최종 JSON에 행별 `report`가 없으므로 회귀 표시·이득·잠정 면제와 `CONFIRMATION_PENDING`을 검토할 수 있도록 첫 보고도 함께 보존하였습니다. 러너 요약의 빈 행별 표나 일반 문구를 최종 채택 판정으로 사용하지 않았습니다.
 
 압축 해제한 JSON과 원본의 바이트 동일성을 확인하였고 요약·첫 보고·SHA-256 목록도 원본과 바이트가 같습니다. 보고서의 산출물 링크가 모두 존재함을 확인하였습니다. 원자료와 실행 로그 `S/session-136c.log`는 S의 원 세션에 남아 있습니다. 최종 JSON 원본의 SHA-256은 `ee10e8e7a6ef971cfb5fc479ee5c3b1ff7998f775db82539ce4362891c4c6817`이고 첫 보고의 SHA-256은 `75d6fa80d0cb7fc3d7872df01d08c6269937db546ad28c1be65f14e77f35939e`입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

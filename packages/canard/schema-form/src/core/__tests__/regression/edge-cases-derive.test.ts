@@ -42,7 +42,7 @@ describe('round9 derive edge cases', () => {
         },
       });
       root.setValue(initial);
-      expect(root.find('/x')?.raw).toBeUndefined();
+      expect(root.find('/x')?.source).toBeUndefined();
     });
   }
 
@@ -64,7 +64,7 @@ describe('round9 derive edge cases', () => {
   };
 
   it('edge-cases.mjs:31 cleared object descendants are not refilled', () => {
-    expect(clearedObject().find('/group/x')?.raw).toBeUndefined();
+    expect(clearedObject().find('/group/x')?.source).toBeUndefined();
   });
   it('edge-cases.mjs:32 cleared object emits no value', () => {
     expect(clearedObject().outputValue).toEqual({ clear: true });
@@ -85,7 +85,7 @@ describe('round9 derive edge cases', () => {
     });
     root.setValue({ group: { x: 'loaded' } });
     root.find('/src')?.setValue('edge');
-    expect(root.find('/group/x')?.raw).toBeUndefined();
+    expect(root.find('/group/x')?.source).toBeUndefined();
   });
 
   for (const [name, schema] of [
@@ -107,7 +107,7 @@ describe('round9 derive edge cases', () => {
         },
       });
       root.setValue({ src: 2, x: 9 });
-      expect(root.find('/x')?.raw).toBeUndefined();
+      expect(root.find('/x')?.source).toBeUndefined();
     });
   }
 

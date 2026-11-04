@@ -1,6 +1,6 @@
 # 18라운드 S1 검증 — 노드별 parse는 값의 수정인가, JS 자동 형변환의 통제된 모사인가 (2026-09-26)
 
-소유자 답 S1(`reviews/round-18-owner-answers.md`)과 소유자의 물음("자동 형변환을 값의 수정으로 보는게 맞을까요? 아니면 js 의 자동형변환 모사동작이라고 주장해도 무방할까요?")에 대해 검증자가 오늘의 파서 다섯을 JavaScript 변환, ajv 8.17.1의 `coerceTypes`(`true`, `array`)와 같은 입력 표로 실행해 비교한 판정이다. 아래는 받은 그대로 옮겼다. 저장소 파일은 쓰지 않았고 임시 파일은 `/tmp/claude-501/s1check/`에 있었다.
+소유자 답 S1(`reviews/round-18-owner-answers.md`)과 소유자의 물음("자동 형변환을 값의 수정으로 보는게 맞을까요? 아니면 js 의 자동형변환 모사동작이라고 주장해도 무방할까요?")에 대해 검증자가 오늘의 파서 다섯을 JavaScript 변환, ajv 8.17.1의 `coerceTypes`(`true`, `array`)와 같은 입력 표로 실행해 비교한 판정이다. 아래는 받은 그대로 옮겼다. 저장소 파일은 쓰지 않았고 임시 파일은 `{scratch}/s1check/`에 있었다.
 
 **Verdict: 조건부 정당함.** 다만 커밋 165ee8948의 코드를 그대로 두면 이 서술은 성립하지 않습니다. 파서가 하는 일 가운데 JavaScript 변환과 ajv `coerceTypes`의 결과가 모두 일치하는 것은 일부입니다. 뒤에 나오는 표에서 (a)로 표시한 행들이며, 이 부분만 "통제된 모사"라고 부를 수 있습니다. 나머지 행 대부분은 두 기준 어디에도 없는 값 수정입니다. 이 수정들이 유효하지 않은 주입값을 유효한 값이나 "없음"으로 바꾸기 때문에 에러가 보이지 않게 됩니다.
 
@@ -154,7 +154,7 @@ JavaScript에는 배열이나 plain object로 가는 암묵 변환이 없습니�
 
 ## 임시 파일
 
-모두 `/tmp/claude-501/s1check/` 아래에 있습니다.
+모두 `{scratch}/s1check/` 아래에 있습니다.
 - `vite.config.mjs`: `@/schema-form` 별칭 설정. 캐시도 이 디렉터리에 둡니다.
 - `parsers.ts`, `parsers.out`: 파서, JavaScript, ajv 비교 표
 - `nodes.ts`, `nodes.out`: 로드, 전파, 잎 `setValue`, 검증 실행

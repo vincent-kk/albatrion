@@ -1,5 +1,6 @@
-import { reportErrorToHost } from '../../FormErrorContext';
+import { reportFailureToHost } from '../../FormErrorContext';
 import type { RootLoad } from '../type';
+import { reportBufferedRootRecord } from './reportBufferedRootRecord';
 
 /** Deliver a committed load once; root fallback drops warnings from abandoned children. */
 export const flushRootLoad = (load: RootLoad, errorsOnly = false): void => {
@@ -9,13 +10,13 @@ export const flushRootLoad = (load: RootLoad, errorsOnly = false): void => {
   for (const record of load.records.splice(0))
     if (!errorsOnly || record.level === 'error') {
       try {
-        load.reporter?.report(record);
+        reportBufferedRootRecord(load, record);
       } catch (error) {
-        reportErrorToHost(error);
+        reportFailureToHost(error);
       }
     }
   if (load.error) {
-    load.reporter?.capture(load.error);
-    reportErrorToHost(load.error);
+    load.reporter?.capture(load.error, 'load');
+    reportFailureToHost(load.error);
   }
 };

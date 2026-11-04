@@ -175,11 +175,11 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 - 원장: SURFACE-005·056, NODE-005·010·014·044·051·052, WRITE-007·022·085·088·095·099, GOAL-058·073, EVENT-068(사실만), TEST-070, 35C-01·02·03·05·06.
 - 붉은 시험 먼저(`settle/__tests__/`, `SchemaNode/__tests__/`).
 - settle 구조 진입 함수 하나(가칭 `arrangeSchemaNodeItems(node, operation)`, settle 진입점이 이름으로 내보냄): `node.behavior.arrange`의 계획을 받아 (1) 새 아이템 목록을 만든다(옛 노드 재사용, 새 자리는 노드 생성·새 키, 빠진 노드는 소멸), (2) 자리가 바뀐 아이템과 그 자손의 이름·경로를 바꾸고 경로 열쇠 저장소를 옮긴다, (3) 스냅숏 자리를 맞춘다(구조 연산의 새 자리는 `v`), (4) 생김(채움 대상)과 소멸을 정착 작업 칸에 적고, (5) 표시 → 계산 → 파생 → 전이 → 커밋을 한 번 돈다. `update`는 그 아이템에 `writeSchemaNode(item, v, 'callerReplace')`와 같은 경로를 탄다.
-- 경로 열쇠 저장소 옮기기(`settle/utils/structure/`): 게이트 색인은 맵 열쇠만 옮기지 않는다. `getGateRegistry`의 `byPath`·`byLocation`(자리 L 열쇠)과 게이트 발생 안의 `watchPaths`가 경로에서 계산되므로, 경로를 바꾸기 전에 옮길 하위 트리를 `remove(node)`로 지우고 경로를 바꾼 뒤 `register(node)`로 다시 등록해 L과 `watchPaths`를 새 경로로 다시 계산한다. 그 밖에 잠복 원본과 메타데이터, `committedDeclarationIds`, 파생·나감 정책 규칙 기준값과 두 색인, `typeMismatchPaths`. 경로 접두로 찾는 메모(`typeMismatchesMemo`·`inactiveValuesMemo`·`inactiveValueEntries`)는 호스트 조상 경로부터 무효화한다. `record/utils/updateSchemaNodeNameAndPath.ts`를 자손까지 부르는 걷기로 감싼다(M7). 옮길 저장소 목록은 시험 하나(저장소마다 "옮긴 뒤 옛 경로에 항목 없음, 새 경로에 같은 항목")로 고정한다.
+- 경로 열쇠 저장소 옮기기(`settle/utils/structure/`): 게이트 색인은 맵 열쇠만 옮기지 않는다. `getGateRegistry`의 `byPath`·`byLocation`(자리 L 열쇠)과 게이트 발생 안의 `watchPaths`가 경로에서 계산되므로, 경로를 바꾸기 전에 옮길 하위 트리를 `remove(node)`로 지우고 경로를 바꾼 뒤 `register(node)`로 다시 등록해 L과 `watchPaths`를 새 경로로 다시 계산한다. 그 밖에 잠복 원본과 메타데이터, `committedDeclarationIds`, 파생·나감 정책 규칙 기준값과 두 색인, `misfitPaths`. 경로 접두로 찾는 메모(`misfitsMemo`·`inactiveValuesMemo`·`inactiveValueEntries`)는 호스트 조상 경로부터 무효화한다. `record/utils/updateSchemaNodeNameAndPath.ts`를 자손까지 부르는 걷기로 감싼다(M7). 옮길 저장소 목록은 시험 하나(저장소마다 "옮긴 뒤 옛 경로에 항목 없음, 새 경로에 같은 항목")로 고정한다.
 - 경로 바뀜 사실(35C-02): 바뀐 노드의 (이전, 지금) 경로를 정착 작업 칸에 모은다(배달은 PR-4). 시험은 바뀐 경로(상태 신호)만 단언한다.
 - 겉면: `SchemaNode.ts`에 다섯 메서드(한 문장 위임), `SchemaNode/type.ts`의 `ArrayNode` 두 구성원에 메서드 형, DETAIL 멤버 표, `surface.test.ts`(39), `type-contract.test.ts`, `tsc --strict` 형 시험(TEST-070). 05와 같은 파일이므로 이어진 덩어리로 둔다(log §0 합의).
 - 터미널 배열: 계획의 새 원본으로 호스트를 통째로 쓴다(`callerReplace`와 같은 비로드 통째 쓰기). 아이템 스냅숏 자리 없음.
-- 확인 시험: 동사마다 identity(노드 참조·키)와 스냅숏 자리(`push('x')` 뒤 새 아이템 `defaultValue`가 `'x'`이고 `resetSubtree()`가 `'x'`로 되돌림, WRITE-099), `remove(0)` 뒤 당겨진 아이템의 `dirty`·`touched`·잠복·`typeMismatch`·게이트 색인이 데이터를 따라감, 닫힌 튜플의 `remove(0)`에서 값이 `extras`에서 노드로 옮김(NODE-052 예), 범위 밖 무동작(35C-06), `null` 터미널 배열의 무동작, 소멸한 아이템 참조의 쓰기(살아 있는 같은 경로면 무동작, `pop` 뒤면 잠복 원본), 키 계수의 단조성(원본 B 되돌림 뒤에도), ERROR-197.
+- 확인 시험: 동사마다 identity(노드 참조·키)와 스냅숏 자리(`push('x')` 뒤 새 아이템 `defaultValue`가 `'x'`이고 `resetSubtree()`가 `'x'`로 되돌림, WRITE-099), `remove(0)` 뒤 당겨진 아이템의 `dirty`·`touched`·잠복·`misfit`·게이트 색인이 데이터를 따라감, 닫힌 튜플의 `remove(0)`에서 값이 `extras`에서 노드로 옮김(NODE-052 예), 범위 밖 무동작(35C-06), `null` 터미널 배열의 무동작, 소멸한 아이템 참조의 쓰기(살아 있는 같은 경로면 무동작, `pop` 뒤면 잠복 원본), 키 계수의 단조성(원본 B 되돌림 뒤에도), ERROR-197.
 - 완료: §5의 U6 행 태그, 겉면 시험·형 시험 초록(G8·G9).
 
 ### U7 아이템 안의 선언 — 템플릿 경로 묶기
@@ -293,7 +293,7 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 - lint·typecheck: `(cd packages/canard/schema-form && npx eslint "src/**/*.{ts,tsx}" && npx tsc --noEmit --composite false --rootDir . -p tsconfig.json)`
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md | tail -1)`
-- 06 벤치: `(cd packages/canard/schema-form && node --import tsx bench/array.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/array.bench.ts)`
+- 06 벤치: `(cd packages/canard/schema-form && node --import tsx bench/array.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/array.bench.ts)`
 - 03·04 벤치 재측정: `bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`를 같은 두 런타임으로
 - 공개 `<Form>` 가드: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 - 빌드(번들 누출 확인이 필요할 때만): `yarn workspace @canard/schema-form build` 뒤 `yarn workspace @canard/schema-form build:types`(04 log의 형 선언 복구)

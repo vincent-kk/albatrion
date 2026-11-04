@@ -1,8 +1,9 @@
 import { captureBlueprintObservables } from '@/schema-form/core/__tests__/fixtures/captureBlueprintObservables';
 
 import { blueprint } from '../../blueprint';
-import type { BlueprintDiagnostic, BlueprintSchema } from '../../type';
-import { mergeEffectiveSchema } from '../../utils/effectiveSchema/mergeEffectiveSchema';
+import { mergeEffectiveSchema } from '../../effectiveSchema';
+import type { BlueprintDiagnostic } from '../../types/blueprint';
+import type { BlueprintSchema } from '../../types/schema';
 
 /**
  * Capture authored output independently of internal membership ownership.

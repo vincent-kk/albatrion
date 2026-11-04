@@ -15,7 +15,7 @@
 
 - **디스패치**: 루트 디스패처, `batch`, 진입당 `onChange` 1회, 진입 사슬과 사슬 끝의 throw, 진입 사슬의 소유는 `dispatch`(쓰기 동사마다 진입 함수), 겉면의 쓰기 위임을 `dispatch` 진입으로(LANDING-064·084). 상태·오류·명령 사건과 검증 결과의 배달 경로(LANDING-064).
 - **명령**: 명령 종류를 매개변수로 받는 노드 메서드 하나(EVENT-073). 메서드 이름·명령 종류 값의 형·`FormHandle` 대칭 모양은 **이 PR 착수 전에** 편집자가 권장안을 올리고 소유자가 정한다(EVENT-073). 명령의 뜻은 EVENT-063 그대로(요청 사건만 냄, 원본을 쓰지 않음, 실행은 렌더 계층).
-- **`onError`의 core 쪽**: 기록 형 `FormErrorRecord`와 코드 형, 보고기(`report`, `hasConsumer`), 사슬 끝 기록마다 전달, 핸들러 예외의 묶음 규칙, 전달 중 쓰기 거부, 경고의 구조 키 중복 억제와 폼 수준 로드에서만의 초기화(ERROR-204), 정착 경고 판정의 소비자 조건(LANDING-064·093). 코드 표는 ERROR-164; 경고 코드 `TYPE_MISMATCH`(SURFACE-061).
+- **`onError`의 core 쪽**: 기록 형 `FormErrorRecord`와 코드 형, 보고기(`report`, `hasConsumer`), 사슬 끝 기록마다 전달, 핸들러 예외의 묶음 규칙, 전달 중 쓰기 거부, 경고의 구조 키 중복 억제와 폼 수준 로드에서만의 초기화(ERROR-204), 정착 경고 판정의 소비자 조건(LANDING-064·093). 코드 표는 ERROR-164; 경고 코드 `MISFIT`(SURFACE-061).
 - **검증기 계약**: `compileGuard(root, pointer)`(동기), 사본·가드 캐시, 가드의 늦은 컴파일(프로덕션)과 개발 모드 일괄 컴파일, `rejectedKey`, `validatorFactory` 통일, 같은 `$id` 루트의 중복 등록·참조 세기·최근 해제 목록, 재생성 reset의 같은 `$id`(LANDING-064·093, VALIDATE-045·046·047). **`bind` 거부**: 값을 바꾸는 검증기 옵션(`coerceTypes`·`useDefaults`·`removeAdditional`)이 켜져 있으면 `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`(가칭)를 즉시 던지고 인스턴스를 붙이지 않으며, 검증기에 넘기는 스키마 사본은 (검증기 인스턴스, 작성 루트)마다 한 번 깊이 복사한다(VALIDATE-050). `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록(WRITE-099).
 - **ajv6·ajv7·ajv8 플러그인**: 동기 `compileGuard`, `rejectedKey`, 같은 `$id` 처리를 셋 다 이 PR에서 구현한다(LANDING-206, LANDING-093). ajv6은 가드 게이트의 (i)만(18C-58). `bind` 거부 규칙을 플러그인 문서에 적는다. ajv8 플러그인의 세 진입점(`default`·`2019`·`2020`) 기본 설정에 `allowUnionTypes: true`를 더한다(VALIDATE-051). 플러그인 셋은 선택 `release(root)`를 구현한다(VALIDATE-045). 플러그인 셋과 core의 폴백 검증기는 루트에 `''`를 내고, core는 `'/'`를 루트의 별칭으로 받아 `''`로 정규화한다(FRAGMENT-053).
 - 검증 실행 실패와 검증 불가의 드러남, `UpdateDiagnostics`, 커밋 번호 스탬프 검증과 실행 합치기, 주인 없는 오류 싱크, `ValidateFunction` 문서 주석 "판정은 돌려주고 던지지 않는다", 에러 라우팅(VALIDATE-043, 18C-53), 오류 클래스 `ValidationIssue`, `SchemaFormError`의 집계 오류(LANDING-064).
@@ -40,7 +40,7 @@
 
 - [ ] `src/core/dispatch/`·`src/core/validation/`과 문서, `app/plugin/type.ts` 개정
 - [ ] 명령 메서드 하나(소유자가 정한 이름·형)와 멤버 목록 시험(`FormHandle` 쪽 구현은 07)
-- [ ] `onError` core 쪽과 코드 표 상수(ERROR-164), `TYPE_MISMATCH`
+- [ ] `onError` core 쪽과 코드 표 상수(ERROR-164), `MISFIT`
 - [ ] 검증기 계약과 ajv6·7·8 구현, `bind` 거부
 - [ ] 차등 테스트와 훅 수준 바인딩 시험 초록, `verification.md`의 게이트 전부 통과
 

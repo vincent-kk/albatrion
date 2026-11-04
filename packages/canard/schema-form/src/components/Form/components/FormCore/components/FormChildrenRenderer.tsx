@@ -11,7 +11,7 @@ import type {
   JSONSchema,
 } from '@/schema-form/types';
 
-import type { FormChildrenProps } from '../type';
+import type { FormChildrenProps } from '../types/props';
 
 /** Root-node events that re-run the function-children render-prop. */
 const RERENDERING_EVENT =

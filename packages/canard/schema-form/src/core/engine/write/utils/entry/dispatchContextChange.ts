@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { changeFieldNodeContext } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
@@ -12,7 +14,7 @@ import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
  */
 export const dispatchContextChange = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  context: Readonly<Record<string, unknown>>,
+  context: Readonly<Dictionary<unknown>>,
 ): void => {
   if (!enterFieldNodeChain(root)) return;
   try {

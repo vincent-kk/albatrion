@@ -99,12 +99,12 @@ interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show
    *   - `false`: Never show
-   *   - `ShowError.Dirty`: Show when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched conditions are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: boolean | ShowError;
   /**
@@ -120,7 +120,7 @@ interface FormProps<
    * Render-level virtualization (deferred mount) for large forms (default: off)
    *  - `true`: Enable with default options
    *  - `VirtualizationOptions`: Enable with custom options
-   *  - Requires IntersectionObserver; silently disabled when unavailable (e.g. SSR)
+   *  - Requires IntersectionObserver for gating; SSR renders every field and hydrates unchanged
    */
   virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
@@ -159,6 +159,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** Find the node at a JSONPointer path */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find every node matching a JSONPointer path */
@@ -190,6 +192,7 @@ interface FormHandle<
 - Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
 - `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
 - `reset()` also empties the attached-files map and drops a `showError(true)` override, so error display follows the `showError` prop again.
+- `rebuild(option?)` invalidates this schema object's cached blueprint and replaces this form's tree using the same options as `reset`. Other forms using the same schema object keep their existing tree during ordinary `reset`; their own `rebuild` or a new mount resolves fresh analysis.
 
 #### AttachedFilesMap
 
@@ -261,9 +264,9 @@ export const App = () => {
 
 `@canard/schema-form` provides a plugin-based validation system. Various validator plugins can be used for JSON Schema validation.
 
-### ValidatorFactory
+### Validator plugin contract
 
-ValidatorFactory is an object with two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if/then/else`, plus optional `release` and `dialect`:
+A validator plugin's `validator`, and the `validatorFactory` object that `Form` and `FormProvider` accept, follow one contract: two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if`, `then` and `else`, plus optional `release` and `dialect`:
 
 ```ts
 // The engine passes its own copy of the schema; it is typed as JSONSchema here.
@@ -282,7 +285,43 @@ type ValidateFunction<Value = unknown> = (
   | null;
 ```
 
-A `ValidateFunction` returns the ordered `ValidationIssue`s, or `null` when the value is valid, and must not throw. The `validatorFactory` prop of `Form` and `FormProvider` takes this object. The selection order is the Form prop, then FormProvider, then the plugin's `validator`. Keep the reference stable, because changing it rebuilds the tree.
+The selection order is the Form prop, then FormProvider, then the plugin's `validator`. Keep the reference stable, because changing it rebuilds the tree.
+
+#### Required duties
+
+- `compile(copy)` returns a `ValidateFunction` for the engine's copy of the root schema. The function returns the ordered `ValidationIssue`s, or `null` when the value is valid, and must not throw.
+- `compileGuard(root, pointer)` returns a synchronous predicate that answers `true` or `false` for the `if` schema at `pointer`. The schema is evaluated in the context of `root`, so the guard sees the root's `$ref` targets, `$id`s and anchors. Whether a verdict that depends on dynamic anchors matches full validation follows each plugin's documented support condition and limits, given in the "Guard dynamic scope" paragraph of the [ajv8](../schema-form-ajv8-plugin/README.md) and [ajv7](../schema-form-ajv7-plugin/README.md) plugin READMEs.
+- `compileGuard` may be called before `compile` has run for the same root, and it registers whatever it needs on its own.
+- Neither method may modify the schema it receives or the value it validates.
+
+#### Optional members
+
+- `bind(instance)` is a hook for consumers who inject their own validator instance. The engine never calls it. Call it once, before the first form compiles; re-binding after a root is registered is not supported.
+- `release(root)` is called when the engine evicts a root from its cache. It must be idempotent, so releasing a root that was never registered does nothing.
+- `dialect` names the JSON Schema dialect the plugin validates, when it can name one. A schema whose `$schema` differs raises the `DIALECT_MISMATCH` warning.
+
+#### Failure isolation
+
+- A guard that fails to compile, throws, or returns a non-boolean turns off both branches of its own gate and records `GUARD_FAILED` once per guard location in each form. A guard failure does not switch off other gates, but a compile error that every guard at a root pointer shares, such as an unresolved `$ref` elsewhere in the root, makes each of those guards fail on its own.
+- A `compile` that throws makes full validation report `VALIDATOR_COMPILE_FAILED` and leaves the guards unchanged.
+- Two live roots with the same `$id` are each judged by their own root. Isolating them is the plugin's job, and the engine never rewrites `$id`.
+- A custom validator that cannot register a schema whose `$id` is already in use should throw an error whose message contains `already exists` or `resolves to more than one schema`, the duplicate-id messages of AJV 6, 7 and 8, because only those messages receive `reason: 'duplicateSchemaId'` and the one retry after the other root with that `$id` is released.
+
+#### Defaults of the published AJV plugins
+
+- The default instance does not validate formats; a bound instance keeps its own format setting.
+- The default entry point of `@canard/schema-form-ajv8-plugin` validates Draft-07; the other dialects have their own entry points.
+- Remote `$ref`s are not loaded, so every referenced schema must be inside the root or registered on a bound instance.
+- Guards compile on a sibling instance with `allErrors: false` and `validateSchema: false`, so AJV's root meta-schema check runs only in the full compile.
+- With `directGuardCompile` on, which is the default, a self-contained guard compiles its own subschema directly; a guard that needs `$ref`, anchors or `$schema` compiles at the root pointer.
+- Roots with the same `$id` are isolated on separate validation instances.
+
+#### Not supported
+
+- A dynamic reference that one schema location reaches through two different dynamic scopes; the guard answers for one scope. Each plugin README lists its exact dynamic-scope limits.
+- A condition that reads data outside its host, such as a `$data` reference to a sibling or parent value.
+- Asynchronous guards, meaning an `$async` schema or an asynchronous keyword inside `if`.
+- A guard that fails to compile under the strict options of a bound instance; that gate turns both branches off and records `GUARD_FAILED`.
 
 ### Validator Plugin Usage
 
@@ -369,6 +408,25 @@ export const App = () => (
 ```
 
 `createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
+
+### Conditional schemas: if, then, else
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: { country: { type: 'string' } },
+  if: { properties: { country: { const: 'KR' } }, required: ['country'] },
+  then: { properties: { phone: { type: 'string', pattern: '^010-' } } },
+  else: { properties: { phone: { type: 'string', pattern: '^\\+' } } },
+} as const;
+```
+
+- The `if` schema is evaluated against the host value, which is the value of the object that declares `if` as the validator would see it.
+- `then` belongs to the shape while the verdict is true, and `else` while it is false.
+- A host whose value is absent or is not an object is evaluated against `{}`. Following JSON Schema, `properties` is vacuously true on `{}`, so add `required` to the condition when a branch should wait until the field has a value.
+- A guard failure is not a false verdict. A guard that fails to compile or to evaluate turns both `then` and `else` off and records `GUARD_FAILED` for that gate only.
+- With no validator selected, meaning no `validatorFactory` on the Form or a FormProvider and no validator plugin, both `then` and `else` stay off.
+- An `if` on a host whose allowed types do not include object, such as a string, number, boolean, array or null-only field, is valid JSON Schema, but the form evaluates it against `{}`, so its branches cannot read the field's own value. The blueprint reports the `IF_ON_NON_OBJECT_HOST` warning with details `{ kind }` at the `if` location, once per location in each diagnostics collection. Move the condition to the enclosing object, or widen the host type to include `object`. A union such as `type: ['object', 'string']` and a nullable object do not warn.
 
 ### Available Validator Plugins
 
@@ -526,7 +584,7 @@ The conditions for a FieldInput can be defined using a function or an object:
 type FieldInputHint = {
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   path: string;
   required: boolean;
   nullable: boolean;
@@ -581,10 +639,10 @@ interface FieldInputProps<
   node: Node;
   /** Node kind (e.g., 'string', 'number', 'object', 'array') */
   type: Node['type'];
-  /** Authored accepted kind(s), including 'integer' */
+  /** Authored accepted kind(s), including 'integer'; undefined on a virtual node */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['isMisfit'];
   /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
   /** Path of the field node assigned to the FieldInput Component */
@@ -943,7 +1001,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -951,6 +1009,24 @@ function ProfileForm() {
   );
 }
 ```
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. A bundle rejected to a submit() or validate() caller remains one rejection value; individual onError records never contain it. Validation-result listener failures remain ownerless even during an explicit validate(), which can resolve while those failures reach the host. Unowned failures reach the existing host channel one leaf at a time, depth-first in element order. Only SchemaFormError MultipleErrors with a nonempty array and every index owned by that array expands; malformed, unreadable or revisited bundles and other values are reported as themselves. Engine validation waves, automatic OnChange validation and load flush retain handler-first order; native submit and the load slot retain original-first order. React and the render ErrorBoundary log the thrown value unchanged. Capture suppresses valid nested bundles containing only already-reported errors or handler exceptions; unknown, malformed, cyclic or revisited nested bundles are still captured. Array lengths must be stable integers from 1 through 2^32 - 1; each traversal has a shared 1,000,000-element inspection budget. An unreadable, unstable or over-budget bundle remains an opaque leaf, so the host can receive a bundle. Capture also guards top-level metadata and string conversion, delivering the original value once with a fixed fallback message when inspection fails. Delivery timing, caller rejection, reentrancy and sink exception propagation remain unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
 
 `onError` receives every error and warning record of the form instance; `submit()` rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails. The full code list is in [SPECIFICATION — Error Handling](./docs/en/SPECIFICATION.md#error-handling).
 
@@ -1373,6 +1449,27 @@ export const AdvancedForm = () => {
 
 **Note**: The extended JSONPointer syntax (`..`, `.`, `*`) is a deliberate extension to the RFC 6901 specification, implemented to provide enhanced form manipulation capabilities. While these extensions deviate from the standard, they are essential for supporting complex form interactions and navigation patterns commonly required in real-world applications.
 
+### Walking a Subtree
+
+`node.visitSubtree(visitor)` calls `visitor` on the node itself and then on every node below it. Use it to read or update a whole section of the form in one pass.
+
+```typescript
+// Clear every string field under /profile, but leave /profile/locked and everything under it as is.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // skip this node's descendants
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **Order.** The node itself comes first, then its descendants in preorder, with siblings in `children` order. Terminal nodes are leaves.
+- **Skipping.** Returning `false` skips that node's descendants only, and the walk goes on with the next sibling. Any other return value, `undefined` included, continues into the children.
+- **Range.** From a node in the form, only the current shape is visited, so fields that a condition excludes are not. A node reachable twice is visited once, and a node created during the walk is not guaranteed to be visited. From a node that is no longer in the form (a reference kept after a condition or an array change took its field out), the walk covers the subtree that left the form with it.
+- **Writes.** Value writes made during the walk are applied together when the walk ends, so value reads during the walk return the values from before it. State and external-error changes (`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`) change the data at once, but their events, like those of `request`, are delivered once when the walk ends. Inside an enclosing `node.batch(fn)`, everything waits for the end of that batch instead. A form `reset` or a `resetSubtree()` inside the walk still takes effect at once.
+- **Writes to a node that left the form.** Such a write never changes a field in the form, also during a walk or a batch. If a field of the same kind is at that path, the write does nothing; otherwise the value is kept for that path and loads when such a field comes back. Whether a field is at that path is judged by the last committed shape, not by changes made earlier in the same batch or walk, so such a write is still dropped when the same batch or walk has just removed that field. A reference to a field that the same batch or walk removes is still in the form when written, so its write is handled like any other write.
+- **Errors.** If the visitor throws, the writes it already made are applied and the error is rethrown. If a walk inside a listener has made a value write, the error does not reach the code that called `visitSubtree`, as with `batch`.
+- **Cost.** The walk opens nothing until something writes, so a read-only walk adds no cost and also works inside a listener. A write inside a listener follows the same rules as any other listener write.
+- **FormHandle.** `FormHandle` has no `visitSubtree`. Call it on `formRef.current?.node` or on a node from `findNode`.
+
 ---
 
 ## Advanced Usage
@@ -1733,10 +1830,12 @@ Each property below is a key of the `controls` object.
 - `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use the `controls.derived` property
 - `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
 - `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
-- `resetInteraction`: Resets a node's interaction state. When the expression turns from `false` to `true`, the node's `dirty` and `touched` states are cleared.
+- `resetInteraction`: Resets a node's interaction state. When the expression turns from `false` to `true`, the node's `edited` and `touched` states are cleared.
 - `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified
 - `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
 - `active` on a `oneOf`/`anyOf` branch, or `discriminator` on the host: Select the branch to display. Give each branch a `controls.active` expression, or set `controls.discriminator` to a property name and tag each branch with `const`/`enum` on that property (ObjectNode only). Without either gate, every branch is on: all branches' fields are present, and only the validator decides which branch matches.
+
+  Declare the key on an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`). A union-less declaration or known non-object runtime host warns and ignores it. AnyOf tag overlap, host tag types covering several kinds, and independent keys on separate declarations are allowed. Missing tags for the whole union, oneOf overlap, and ambiguous tag kinds without a host type remain errors; unreachable kind/empty tags warn without lifting. See [Discriminator Rules](docs/en/SPECIFICATION.md#discriminator-rules) for C1–C13 and terminal-object exceptions.
 
 #### Layering Rules
 
@@ -2429,13 +2528,28 @@ The node tree is always fully built, so values, validation, `getValue()`/`setVal
 
 Placeholders are unstyled by default (an empty box carrying `data-path` and a `data-deferred` state marker). To render skeletons, either style the marker with a CSS attribute selector (`[data-deferred] { … }`) or pass `virtualization.Placeholder` — a React component (Suspense-fallback style) rendered inside each deferred box with `{ node, height }` props. Space reservation always stays with `estimateHeight`, and the component mounts once per deferred field, so keep it light.
 
-Measured with `compare-frameworks` (production React, 500 flat fields): mount drops from ~55ms/500 field-renders to ~19ms/20 field-renders; keystroke/setValue stay at exactly 1 render.
-
 > **Caveats**
 >
-> - Requires `IntersectionObserver`; when unavailable the option is silently ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps — the server renders all fields while the client would gate them, causing a hydration mismatch.
+> - Requires `IntersectionObserver` for gating; browsers without it render everything eagerly and emit a development warning. On server-rendered pages every field renders on the server and hydrates unchanged; gating applies to branches and children added after hydration.
+> - Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
 > - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `controls.visible` render no placeholder.
 > - With `backfill: VirtualizationBackfill.None`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `Idle` backfill restores the full DOM within a few idle frames.
+
+#### Input responsiveness at scale
+
+Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In [IR-1](./architecture/verification/input-responsiveness/ir-1-results.md#기본값-결정-자료), replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
+
+| Form | Off: eager paint / all revealed | On: eager paint / all revealed |
+| --- | ---: | ---: |
+| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
+| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
+| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. See [IR-5](./architecture/verification/input-responsiveness/ir-5-results.md). The default remains off.
+
+- **Validation:** cost grows with schema size. The desktop Chromium flat-2000 [IR-2 diagnosis](./architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31) attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
+- **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
+- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. [IR-0](./architecture/verification/input-responsiveness/ir-0-results.md#type-onchange-state-plain) E lane event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
 
 ---
 
@@ -2497,6 +2611,26 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 
 ---
 
+### Node boolean properties and load divergence
+
+Node boolean properties use `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled` and `isMisfit`. `isPresent` is `isActive && isVisible`, independent of `isDisabled`. React props, schema keys and `controls` keys keep their names.
+
+```ts
+node.isEdited;    // truthiness of state[FieldNodeState.Edited]
+node.isTouched;   // truthiness of state[FieldNodeState.Touched]
+node.isDivergent; // current form output differs from the last root load at node.path
+```
+
+`isEdited` and `isTouched` are read-only booleans; re-read them on `FieldNodeEventType.UpdateState`. Only input writes set Edited. `setValue`, array verbs and automatic fills do not. Reset, `clearState` and `controls.resetInteraction` clear the interaction flags. Detached references keep their last-commit interaction state.
+
+`isDivergent` compares the current root output and the last committed root-load output at the same node path. The first mount, form reset with a value or explicit undefined, rebuild, validator change and `root.resetSubtree()` take a new baseline after the output is final. Before the first load commits it reads false. Changing the Form `defaultValue` prop alone, ordinary writes and a child `resetSubtree()` do not move that baseline. A load that throws before commit keeps the preceding baseline; a failure reported after commit establishes the degraded output as the new baseline.
+
+Reverting to the baseline reads false. Hidden fields remain in the output; array holes use their actual output contribution. Items compare by position: a moved or added item can read true, while an added item matching the value originally at that position reads false. Child reset follows its load source by item identity, so after array movement, or with dependencies outside its subtree, the restored subtree can remain divergent. Detached nodes read false because they no longer contribute to the output.
+
+The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
+
+Writes perform no divergence reads or comparisons. A root load allocates one baseline box retaining its output reference. Each getter read walks two cached paths, O(depth), and compares only when either path value changes by `Object.is`; repeated unchanged reads call `sameValue` zero times, including NaN. A first comparison skips unchanged references. The baseline retains replaced parts until the next root load, and each node memo retains only its own two path values and result.
+
 ## Migration (1.0.0)
 
 1.0.0 moves every schema setting into three groups (`presentation`, `controls`, `options`), renames the public API around "field", and replaces the node engine. No old name is kept as an alias. Update in this order: schemas, then component and type imports, then any code that reads node state or validation errors.
@@ -2518,7 +2652,7 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 | `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                                  |
 | `computed.derived` / `&derived`                                        | `controls.derived`                                                                   |
 | `computed.watch` / `&watch` (string or array)                          | `controls.watch` (array only)                                                        |
-| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (resets dirty and touched when the condition turns true) |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (resets edited and touched when the condition turns true) |
 | `computed.if` / `&if` on a `oneOf` / `anyOf` branch                    | `controls.active` on that branch                                                     |
 | `injectTo`                                                             | `controls.injectTo` (same handler shape)                                             |
 | `terminal`                                                             | `options.terminal` (object and array schemas)                                        |
@@ -2574,12 +2708,22 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 | `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
 | `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
 | `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
+| `ShowError.Dirty` | `ShowError.Edited` |
+| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
+| `node.required` | `node.isRequired` |
+| `node.active` | `node.isActive` |
+| `node.visible` | `node.isVisible` |
+| `node.enabled` | `node.isPresent` |
+| `node.readOnly` | `node.isReadOnly` |
+| `node.disabled` | `node.isDisabled` |
+| `node.misfit` | `node.isMisfit` |
 | `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (same bit)                                                                                                                       |
 | `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (keeps `UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`, and exposes more events)           |
 | `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
 | type `JSONSchemaError` (the `errors` prop and `onValidate` payload)                                                                                                       | `ValidationIssue` (same fields, plus optional `rejectedKey`; `isJSONSchemaError` stays)                                                                        |
 
-- Only the node-state bit was renamed. The `ShowError` policy enum (`Dirty`, `Touched`, `DirtyTouched`, …), the Form `showError` prop and `FormHandle.showError()` keep their names.
+- The node state and ShowError policy members use Edited and EditedTouched. The Form `showError` prop and `FormHandle.showError()` keep their names; the default policy is `ShowError.EditedTouched` with the same bit and behaviour.
 
 ### Behavior changes
 
@@ -2587,6 +2731,7 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 - **Enum select shows `undefined` as no selection.** The built-in string enum select shows a leading, selected, empty and disabled option when the value is `undefined`, also when the enum contains `''`. A value outside the enum keeps its leading disabled option.
 - **Checkbox and radio option ids include the index.** Each option's `id` is now `${path}-${index}`, with a matching `htmlFor` on its label. Selectors that targeted `#<path>` on these inputs must change. The default renderer's label and `Form.Label` always carry both `htmlFor={path}` and `id="label:${path}"` (the branch legend carries the id; the `label:` prefix keeps it from ever matching an input id, which is the empty string at the root and starts with `/` everywhere else), because the place that draws the label does not know which input was chosen. The builtin checkbox and radio options containers have `role="group"` with `aria-labelledby="label:${path}"`, so the group is found by its title (`getByRole('group', { name })`); for these groups `htmlFor` points at no element, which is harmless. Custom `FieldInput` and `FieldRenderer` components follow the same convention: put `id={path}` on a single input to connect it with the title, and reference `label:${path}` with `aria-labelledby` on a group container. In the default renderer a checkbox array is also a fieldset named by the same legend, so query inside that fieldset. Where no title with `id="label:${path}"` is drawn (the root, array items, `Form.Input` without `Form.Label`, a custom or plugin renderer that omits that id) leaves the group container's `aria-labelledby` without a target, so the renderer must name the group itself. `Form.Label` builds both attributes from its `path` prop as given, so pass the absolute path (`/size`, not `size` or `./size`) for them to match the input and the group.
 - **`oneOf` / `anyOf` branches are no longer chosen from `const` tags.** When branches differ only by a `const` tag, declare `controls.discriminator: '<property>'` on the host, or `controls.active` on each branch. Without either, every branch stays active.
+- **A FieldInput test object no longer matches virtual nodes with `schemaType: 'virtual'`.** `schemaType` holds JSON types only, so a virtual node's `schemaType` is `undefined`; its `jsonSchema.type` is still `'virtual'`. Match virtual nodes with `type: 'virtual'`, or with a test object that sets `schemaType: undefined` itself.
 - **Custom validator plugins must implement `compileGuard`.** A `ValidatorPlugin` now needs `compileGuard(root, pointer)` next to `compile`; `release(root)` is optional. The official ajv6, ajv7 and ajv8 plugins already implement it.
 
 `onValidate` behaves as in 0.16: it fires when the reported error list or the `errors` prop changes, and a re-validation with the same result does not fire it.
@@ -2679,3 +2824,16 @@ export const AntdForm = () => {
   return <Form jsonSchema={jsonSchema} />;
 };
 ```
+
+
+## Validation timing
+
+`OnChange` writes run after the next frame; continuous input carries across active frames, with a trailing run after a quiet frame and a 100 ms cap measured from the last automatic run that actually started. A cap returns to watch. Debouncing belongs to `FieldInput`. Missing frame APIs or a hidden document use a macrotask fallback; a 100 ms stalled-frame timer races the frame-backed task so it runs once. Explicit `validate()` and submit start immediately, and submit awaits the verdict.
+
+An error shows only when eligible now and continuously eligible across every engine state, isPresent value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. Within one public `batch()` or walk, only the first state of that write sequence enters history; intermediate states do not. Separate public calls inside one React batch still record their intermediate states. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
+
+All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `origin: 'validate'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject; their record carries `origin: 'validate'`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
+
+Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
+
+Known limits: the hook's React-only `disabled` argument reveals at once; state/isPresent renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/isPresent/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.

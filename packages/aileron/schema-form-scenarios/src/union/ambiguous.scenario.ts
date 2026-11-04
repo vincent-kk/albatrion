@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** Ambiguous scalar conversion retains the caller's raw value. */
+/** Ambiguous scalar conversion retains the caller's source value. */
 export const ambiguousScenario = {
   name: 'union.ambiguous',
   schema: { type: ['string', 'boolean'] },

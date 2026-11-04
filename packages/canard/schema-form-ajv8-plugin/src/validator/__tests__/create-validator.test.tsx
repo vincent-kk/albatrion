@@ -181,6 +181,8 @@ describe.each(entries)(
         $id: 'https://example.test/create-validator-release',
         if: { const: 'first' },
       } as unknown as JSONSchema;
+      validator.compile(root);
+      plugin.compile(root);
       expect(validator.compileGuard(root, '/if')('first')).toBe(true);
       expect(plugin.compileGuard(root, '/if')('first')).toBe(true);
       validator.release!(root);

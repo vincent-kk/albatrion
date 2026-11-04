@@ -3,15 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { BEHAVIORS } from '@/schema-form/core/engine/behaviors/behaviors';
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintNode } from '@/schema-form/core/engine/blueprint';
-import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type {
   ArrayOperation,
   Behavior,
   FieldNodeRecord,
 } from '@/schema-form/core/engine/record';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import { SchemaFormError } from '@/schema-form/errors';
 
@@ -21,7 +20,7 @@ import { arrayBehavior } from '../arrayBehavior';
 const makeRecord = (
   behavior: Behavior,
   template: BlueprintNode,
-  raw: unknown = undefined,
+  source: unknown = undefined,
   options: Record<string, unknown> = {},
 ): FieldNodeRecord<unknown> => ({
   behavior,
@@ -33,11 +32,8 @@ const makeRecord = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
+
+    misfitPaths: new PathKeyedSet(),
   },
   blueprintNode: template,
   parent: null,
@@ -46,7 +42,7 @@ const makeRecord = (
   escapedName: '',
   path: '/list',
   depth: 0,
-  required: false,
+  isRequired: false,
   nullable: false,
   schemaType: template.schemaType,
   structure: null,
@@ -54,14 +50,19 @@ const makeRecord = (
   itemKey: null,
   itemCount: 0,
   nextItemKey: 0,
-  raw,
-  undeclaredValues: undefined,
-  active: true,
-  visible: true,
-  readOnly: false,
-  disabled: false,
+  source,
+  extras: undefined,
+  isActive: true,
+  isVisible: true,
+  isReadOnly: false,
+  isDisabled: false,
   local: undefined,
   emit: undefined,
+  divergenceCurrent: undefined,
+  divergencePath: undefined,
+  divergenceSegments: undefined,
+  divergenceBase: undefined,
+  divergenceResult: false,
   schema: { schema: { options }, typeConflict: false },
   interactionState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
@@ -148,7 +149,7 @@ describe('array branch calculation', () => {
     const node = makeRecord(arrayBehavior.branch, template);
     node.itemCount = 3;
     node.structure = { '0': { emit: 'first' } };
-    node.undeclaredValues = ['second', 'third'];
+    node.extras = ['second', 'third'];
     const local = arrayBehavior.branch.assemble(node, []);
     expect(local).toEqual(['first', 'second', 'third']);
     node.local = local;
@@ -179,8 +180,8 @@ describe('array branch calculation', () => {
       typeConflict: false,
     };
     expect(arrayBehavior.branch.project(node, [])).toEqual([]);
-    node.raw = { wrong: true };
-    expect(arrayBehavior.branch.project(node, ['kept'])).toBe(node.raw);
+    node.source = { wrong: true };
+    expect(arrayBehavior.branch.project(node, ['kept'])).toBe(node.source);
   });
 
   it('VALUE-034 keeps an emitted object before omitted host holes and tail nulls', () => {
@@ -195,7 +196,7 @@ describe('array branch calculation', () => {
     node.itemCount = 4;
     const emitted = {};
     node.structure = { '0': { emit: emitted } };
-    node.undeclaredValues = [null, undefined];
+    node.extras = [null, undefined];
     const local = arrayBehavior.branch.assemble(node, []);
     expect(local).toEqual([{}, [], null, undefined]);
     const projected = arrayBehavior.branch.project(node, local);
@@ -260,7 +261,7 @@ describe('array branch calculation', () => {
           row.arrange(node, { kind: 'update', index, value: 'x' }),
         ).toEqual({ kind: 'noop' });
       }
-      node.raw = null;
+      node.source = null;
       for (const operation of [
         { kind: 'pop' },
         { kind: 'update', index: 0, value: 'x' },
@@ -275,22 +276,78 @@ describe('array branch calculation', () => {
               slots: [{ value: 'x' }],
               result: { source: 'length' },
             }
-          : { kind: 'raw', raw: ['x'], result: { source: 'length' } },
+          : { kind: 'source', source: ['x'], result: { source: 'length' } },
       );
+    }
+  });
+
+  it('NODE-051 plans branch insert at the front, the middle and the tail', () => {
+    const node = makeRecord(
+      arrayBehavior.branch,
+      blueprint({ type: 'array', items: { type: 'string' } }).root,
+    );
+    node.itemCount = 3;
+    const plans = [0, 1, 3].map((index) =>
+      arrayBehavior.branch.arrange(node, { kind: 'insert', index, value: 'x' }),
+    );
+    expect(plans).toEqual([
+      {
+        kind: 'slots',
+        slots: [{ value: 'x' }, { from: 0 }, { from: 1 }, { from: 2 }],
+        result: { source: 'length' },
+      },
+      {
+        kind: 'slots',
+        slots: [{ from: 0 }, { value: 'x' }, { from: 1 }, { from: 2 }],
+        result: { source: 'length' },
+      },
+      {
+        kind: 'slots',
+        slots: [{ from: 0 }, { from: 1 }, { from: 2 }, { value: 'x' }],
+        result: { source: 'length' },
+      },
+    ]);
+    expect(plans[2]).toEqual(
+      arrayBehavior.branch.arrange(node, { kind: 'push', value: 'x' }),
+    );
+  });
+
+  it('35C-06 47C-02 accepts insert only in [0, N] and only at 0 on a non-array host', () => {
+    for (const row of [arrayBehavior.branch, arrayBehavior.terminal]) {
+      const node = makeRecord(
+        row,
+        blueprint({ type: 'array', items: { type: 'string' } }).root,
+        row.strategy === 'terminal' ? ['a', 'b'] : undefined,
+      );
+      node.itemCount = row.strategy === 'branch' ? 2 : 0;
+      for (const index of [-1, 3, 1.5, Number.NaN, Infinity])
+        expect(
+          row.arrange(node, { kind: 'insert', index, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+      for (const source of [null, 5, { a: 1 }]) {
+        node.source = source;
+        node.itemCount = 0;
+        expect(
+          row.arrange(node, { kind: 'insert', index: 1, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+        expect(
+          row.arrange(node, { kind: 'insert', index: 0, value: 'x' }),
+        ).toEqual(row.arrange(node, { kind: 'push', value: 'x' }));
+      }
     }
   });
 });
 
 // filid:contract array-terminal
 describe('array terminal calculation', () => {
-  it('35C-12 retains raw identity and copies it for every valid change', () => {
-    const raw = ['a', 'b', 'c'];
+  it('35C-12 retains source identity and copies it for every valid change', () => {
+    const source = ['a', 'b', 'c'];
     const node = makeRecord(
       arrayBehavior.terminal,
       blueprint({ type: 'array' }).root,
-      raw,
+      source,
     );
-    expect(arrayBehavior.terminal.assemble(node, [])).toBe(raw);
+    expect(arrayBehavior.terminal.assemble(node, [])).toBe(source);
     const operations: readonly ArrayOperation[] = [
       { kind: 'push', value: 'd' },
       { kind: 'pop' },
@@ -307,13 +364,13 @@ describe('array terminal calculation', () => {
     ];
     operations.forEach((operation, index) => {
       const plan = arrayBehavior.terminal.arrange(node, operation);
-      expect(plan.kind).toBe('raw');
-      if (plan.kind === 'raw') {
-        expect(plan.raw).toEqual(expected[index]);
-        expect(plan.raw).not.toBe(raw);
+      expect(plan.kind).toBe('source');
+      if (plan.kind === 'source') {
+        expect(plan.source).toEqual(expected[index]);
+        expect(plan.source).not.toBe(source);
       }
     });
-    expect(raw).toEqual(['a', 'b', 'c']);
+    expect(source).toEqual(['a', 'b', 'c']);
     expect(
       arrayBehavior.terminal.arrange(node, {
         kind: 'update',
@@ -321,10 +378,10 @@ describe('array terminal calculation', () => {
         value: 'x',
       }),
     ).toMatchObject({ result: { source: 'updated', index: 1 } });
-    node.raw = undefined;
+    node.source = undefined;
     expect(
       arrayBehavior.terminal.arrange(node, { kind: 'push', value: 'x' }),
-    ).toEqual({ kind: 'raw', raw: ['x'], result: { source: 'length' } });
+    ).toEqual({ kind: 'source', source: ['x'], result: { source: 'length' } });
     expect(arrayBehavior.terminal.arrange(node, { kind: 'pop' })).toEqual({
       kind: 'noop',
     });
@@ -340,25 +397,62 @@ describe('array terminal calculation', () => {
     ).toEqual({ kind: 'noop' });
   });
 
-  it('LANDING-085 projects trailing nullish values without changing raw', () => {
-    const raw = ['kept', null, undefined];
+  it('NODE-005 splices terminal insert into a copy and appends at the length like push', () => {
+    const source = ['a', 'b', 'c'];
     const node = makeRecord(
       arrayBehavior.terminal,
       blueprint({ type: 'array' }).root,
-      raw,
+      source,
+    );
+    const expected = [
+      ['x', 'a', 'b', 'c'],
+      ['a', 'x', 'b', 'c'],
+      ['a', 'b', 'c', 'x'],
+    ];
+    [0, 1, 3].forEach((index, position) => {
+      const plan = arrayBehavior.terminal.arrange(node, {
+        kind: 'insert',
+        index,
+        value: 'x',
+      });
+      expect(plan).toEqual({
+        kind: 'source',
+        source: expected[position],
+        result: { source: 'length' },
+      });
+      if (plan.kind === 'source') expect(plan.source).not.toBe(source);
+    });
+    expect(source).toEqual(['a', 'b', 'c']);
+    expect(
+      arrayBehavior.terminal.arrange(node, {
+        kind: 'insert',
+        index: 3,
+        value: 'x',
+      }),
+    ).toEqual(
+      arrayBehavior.terminal.arrange(node, { kind: 'push', value: 'x' }),
+    );
+  });
+
+  it('LANDING-085 projects trailing nullish values without changing source', () => {
+    const source = ['kept', null, undefined];
+    const node = makeRecord(
+      arrayBehavior.terminal,
+      blueprint({ type: 'array' }).root,
+      source,
       { omitTrailing: true },
     );
-    const projected = arrayBehavior.terminal.project(node, raw);
+    const projected = arrayBehavior.terminal.project(node, source);
     expect(projected).toEqual(['kept']);
-    expect(arrayBehavior.terminal.project(node, raw)).toBe(projected);
-    expect(raw).toEqual(['kept', null, undefined]);
+    expect(arrayBehavior.terminal.project(node, source)).toBe(projected);
+    expect(source).toEqual(['kept', null, undefined]);
     node.schema = {
       schema: { options: { omitTrailing: false } },
       typeConflict: false,
     };
-    expect(arrayBehavior.terminal.project(node, raw)).toBe(raw);
-    node.raw = 3;
-    expect(arrayBehavior.terminal.project(node, raw)).toBe(3);
+    expect(arrayBehavior.terminal.project(node, source)).toBe(source);
+    node.source = 3;
+    expect(arrayBehavior.terminal.project(node, source)).toBe(3);
   });
 });
 
@@ -384,6 +478,21 @@ describe('non-array arrangement', () => {
           }),
         );
       }
+    }
+  });
+
+  it('NODE-014 ERROR-197 rejects insert on every non-array row with its method', () => {
+    for (const row of Object.values(BEHAVIORS).flatMap(Object.values)) {
+      if (row.type === 'array') continue;
+      const node = makeRecord(row, blueprint({ type: 'array' }).root);
+      expect(() =>
+        row.arrange(node, { kind: 'insert', index: 0, value: 1 }),
+      ).toThrowError(
+        expect.objectContaining({
+          code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+          details: { path: '/list', method: 'insert' },
+        }),
+      );
     }
   });
 });

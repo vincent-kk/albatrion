@@ -33,7 +33,7 @@
 - 맥락: 에지는 규칙마다 기준점과 지금 값을 견준다. 정착이 시작될 때의 기준점은 직전 커밋의 값이다(SETTLE-028·048, 18C-102). `unsetValue`·`resetInteraction`의 기준점은 식 값이고, `unsetOnInactive`의 식 값은 그 노드가 형상에 있던 마지막 커밋의 것을 나감에서 쓴다. 나가는 순간 새로 평가하지 않는다(WRITE-038). 트리 전체 자료의 저장 자리는 `SchemaNodeRuntime`의 칸이며 `record/`가 선언한다(26C-06).
 - 결정: `SchemaNodeRuntime`에 커밋된 규칙 값의 칸(가칭 `committedRuleValues`)을 둔다. 키는 규칙 발생(규칙 템플릿과 발생 경로·종류)이고, 값은 `injectTo` 원천의 방출 값, `derived`의 의존 값 튜플, `unsetValue`·`resetInteraction`·`unsetOnInactive`의 식 값이다. 던진 `unsetOnInactive` 식은 "유지"로 적는다(ERROR-122·WRITE-031의 28C-05 보충). 커밋이 이번 정착에서 평가한 발생만 고쳐 쓴다. 로드는 그 범위의 항목을 지우고(발화), 나간 노드의 항목은 커밋에서 지운다(재탄생은 거짓→참). 정착 안에서 소비한 값은 정착 문맥의 작업 칸에 둔다(재발화 금지).
 - 까닭:
-  - 03의 `committedDeclarationIds`(직전 커밋의 선언 집합으로 나감 정책을 정함)와 같은 종류의 "작업의 기록"이다. 상태 둘(`raw`·`extras`)의 순수 함수라는 성질을 바꾸지 않는다(SETTLE-010, GOAL-083 "이력은 방아쇠로만").
+  - 03의 `committedDeclarationIds`(직전 커밋의 선언 집합으로 나감 정책을 정함)와 같은 종류의 "작업의 기록"이다. 상태 둘(`source`·`extras`)의 순수 함수라는 성질을 바꾸지 않는다(SETTLE-010, GOAL-083 "이력은 방아쇠로만").
   - 식 값을 저장해 두면 나감에서 형상 밖 노드를 평가하지 않는다는 문장을 그대로 지킨다.
   - 비용은 규칙을 가진 발생 수에 비례한다. 규칙 없는 노드에는 아무것도 붙지 않는다.
 - 버린 것:
@@ -47,8 +47,8 @@
 - 결정: 레코드에 `visible`·`readOnly`·`disabled` 세 필드를 `active` 옆 고정 배치로 더한다. 생성자는 대입만 하고, 계산의 끝에서 `settle/utils/controls/`가 재계산 목록의 노드만 다시 쓴다. `SchemaNode`의 게터는 필드를 읽거나 settle의 이름 붙은 읽기 함수에 한 문장으로 위임한다(NODE-010).
   - `visible`·`readOnly`·`disabled`는 CONTROLS-082의 로컬 결합 결과다. Form 속성의 전체 잠금은 렌더 계층이 그 위에 OR하므로 게터에 들지 않는다(CONTROLS-082의 28C-02 보충).
   - `enabled`는 `active && visible`이다. 살아 있는 노드에서는 `visible`과 같고 잠금과 무관하다(LANDING-066의 28C-02 보충).
-  - 떼어진 노드: `visible`·`readOnly`·`disabled`는 `captureDetachedSchemaNodeReads`가 `typeMismatch`와 함께 떼어질 때 한 번 잡은 값이다(NODE-044의 28C-02 보충). `enabled`는 `active`가 거짓이라 거짓이다(26C-08).
-  - `watchValues`는 레코드 필드가 아니다. 유효 스키마의 `controls.watch`(나중 승)의 경로를 방출 트리에서 읽는 함수 하나를 `settle/utils/controls/`에 두고 게터가 위임한다(CONTROLS-080 (5)). 같은 커밋 안에서는 같은 참조를 돌려주도록 커밋 번호로 메모한다(03의 `typeMismatchesMemo` 선례).
+  - 떼어진 노드: `visible`·`readOnly`·`disabled`는 `captureDetachedSchemaNodeReads`가 `misfit`과 함께 떼어질 때 한 번 잡은 값이다(NODE-044의 28C-02 보충). `enabled`는 `active`가 거짓이라 거짓이다(26C-08).
+  - `watchValues`는 레코드 필드가 아니다. 유효 스키마의 `controls.watch`(나중 승)의 경로를 방출 트리에서 읽는 함수 하나를 `settle/utils/controls/`에 두고 게터가 위임한다(CONTROLS-080 (5)). 같은 커밋 안에서는 같은 참조를 돌려주도록 커밋 번호로 메모한다(03의 `misfitsMemo` 선례).
 - 까닭: `active`의 선례와 같은 모양이라 읽는 자가 추측할 것이 없다(seiri naming §1). 레코드 필드는 한 숨은 클래스를 유지하고 읽기가 단형이다(`reviews/raw-round17-node-structure.md:144`). 떼어진 노드의 마지막 커밋 읽기(NODE-044)도 필드면 그대로 남는다.
 - 버린 것:
   - 비트마스크 필드 하나: 노드당 두 칸을 아끼지만 게터에 해석이 들고 `active`의 모양과 달라진다.

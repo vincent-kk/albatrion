@@ -15,9 +15,9 @@ const combinationScenario = {
   initialValue: { locked: 'L', disabled: 'D', hidden: 'H' },
   steps: [{ action: 'batch', steps: [{ action: 'setValue', path: '/locked', value: 'edited' }],
     expect: { states: {
-      '/locked': { readOnly: true, disabled: false, visible: true, enabled: true },
-      '/disabled': { readOnly: false, disabled: true, enabled: true },
-      '/hidden': { visible: false, enabled: false },
+      '/locked': { isReadOnly: true, isDisabled: false, isVisible: true, isPresent: true },
+      '/disabled': { isReadOnly: false, isDisabled: true, isPresent: true },
+      '/hidden': { isVisible: false, isPresent: false },
     }, outputValue: { locked: 'edited', disabled: 'D', hidden: 'H' } } }],
 } satisfies FormScenario;
 
@@ -29,7 +29,7 @@ const standardReadOnlyScenario = {
   } },
   initialValue: { field: 'before' },
   steps: [{ action: 'batch', steps: [{ action: 'setValue', path: '/field', value: 'after' }],
-    expect: { states: { '/field': { readOnly: true, enabled: true } },
+    expect: { states: { '/field': { isReadOnly: true, isPresent: true } },
       outputValue: { field: 'after' } } }],
 } satisfies FormScenario;
 
@@ -44,9 +44,9 @@ const childrenExpressionScenario = {
   initialValue: { lock: false, a: 'A', b: 'B' },
   steps: [
     { action: 'setValue', path: '/lock', value: true,
-      expect: { states: { '/a': { disabled: true }, '/b': { disabled: true } } } },
+      expect: { states: { '/a': { isDisabled: true }, '/b': { isDisabled: true } } } },
     { action: 'setValue', path: '/lock', value: false,
-      expect: { states: { '/a': { disabled: false }, '/b': { disabled: false } } } },
+      expect: { states: { '/a': { isDisabled: false }, '/b': { isDisabled: false } } } },
   ],
 } satisfies FormScenario;
 

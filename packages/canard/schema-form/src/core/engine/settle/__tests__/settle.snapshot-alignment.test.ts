@@ -5,7 +5,7 @@ import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFi
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 
 describe('49C-01 snapshot alignment matches sequential writes', () => {
   it('fills sparse default slots when a later child alignment reuses the array', () => {

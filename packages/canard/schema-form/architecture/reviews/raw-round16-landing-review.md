@@ -27,7 +27,7 @@
 | `compileGuard(schema)` 동기 호출 | 불가(실행 확인): 떼어 낸 `if`의 `$ref` 실패, ajv 셋 `$async`, 같은 `$id` 재컴파일 throw. ADR 0004:70은 이미 (루트, 위치) | `compileGuard(root, pointer)`, 캐시 (검증기 인스턴스, 작성 루트 객체) WeakMap, `Form`의 `clone` 제거 |
 | `extras` 정적 규칙 | 가능. 스캐너 항목 `keyword`·`variant`·`dataPath`; `$ref` 순환은 `referenceSkipped:'cycle'` | 조각 표 만드는 걸음에서 함께 뽑음 |
 | 유효 스키마 메모 | 가능(추정). 활성 부분집합을 비트 정수로 키, 위치별 메모. 후보에 `controls.children` 항목과 조각 `controls`까지 넣어야 "같은 집합 = 같은 참조" | 새 집합마다 한 번 병합 |
-| 되돌림 기록 원본 B | 가능하나 범위 확대: `extras`, 배열 아이템 구조 생성·폐기, 중간 채움 철회 순서 | 기록 항목 = {노드, 이전 raw, 이전 extras, 구조 변경} |
+| 되돌림 기록 원본 B | 가능하나 범위 확대: `extras`, 배열 아이템 구조 생성·폐기, 중간 채움 철회 순서 | 기록 항목 = {노드, 이전 source, 이전 extras, 구조 변경} |
 | `presentation.FormTypeInput` 유무로 터미널 | 모순 아님. `getNodeGroup.ts:27-29` React 판정을 "있고 null 아님"으로. UI 플러그인이 `options.protocols·minimum·maximum·lazy`를 읽음 | 플러그인 자유 칸은 `presentation`으로 |
 | UI 플러그인 넷은 타입·등록 키만(08:530) | 틀림: `FormTypeInputDefinition` 11–19회, `FormTypeInputPropsWithSchema` 8–15회, 27파일이 `jsonSchema.options.*`·맨 키(`formType`·`radioLabels`·`switchLabels`·`lazy`·`ampm`·`minRows`·`maxRows`) 읽음(mui 7/19, antd5 9/22, antd6 9/22, antd-mobile 2/14), 노드 표면 `push`·`remove`·`maxItems`·`length` | PR-7 규모 재산정 |
 | §14 누락 행 | `validatorFactory` 모양, `ValidatorPlugin.compileGuard`, 동적 `node.jsonSchema`, `FormHandle.reset` 의미, 플러그인 `options` 자유 칸 | 행 추가 |

@@ -231,6 +231,7 @@
   > | 선언·정책 키(`controls.children`, `controls.discriminator`, `controls.watch`, `controls.unsetOnInactive`) | 병합하지 않는다. `children`과 `unsetOnInactive`는 각 선언이 속한 층에서 그 선언을 담은 조각이 켜져 있는 동안(나감에서는 직전 커밋 기준) 각각 효력을 가진다(나감 비움 규칙과 같은 대상 규칙이 층으로 푼다). `watch`는 의존이 모든 선언의 경로 합집합(청사진, 정적)이고 입력에 가는 `watchValues`는 유효 스키마의 것(켜진 선언 가운데 전순서에서 나중 것)이다. `discriminator`는 호스트에 하나이며 선언이 여럿이면 같은 값만 허용하고 다르면 청사진 오류(14라운드 O-1, 15라운드, 17라운드 스웜 수렴(편집자 결정)) |
 - 보충:
   > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
+  > 소유자(473라운드 원문 106): "다른 충동조건도 무조건 error나 warning으로 기존을 무분별하게 따르지 말고, 이게 에러를 내서 알려줄 문젠지, 조용히 넘어가되 경고하면 되는 문제인지를 구분해서 적절한 에러를 설계하도록 해줘" (`reviews/round-473-owner-answers.md:8`, 2026-11-03). 현행 적용(C12): 같은 노드의 선언들이 서로 다른 discriminator 키를 지정해도 허용한다. 키는 선언마다 문자열 하나로 유지하며, 각 키는 그 선언의 oneOf·anyOf만 독립적으로 선택한다. 노드 전체 키 일치 검사와 DISCRIMINATOR_MISMATCH의 key 이유를 제거한다. 빠른 선택의 안정성을 입증하지 못하면 일반 gate 경로가 같은 뜻을 보존한다.
 - 상태: 현행
 - 출처: `03-mental-model.md:128-129,135`(정본), `08-design-a-to-z.md:329`, `adr/0005-blueprint-analysis-and-node-sharing.md:103`, `02-target-overview.md:136`, `reviews/round-15-decisions.md:75`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:7` O-1), 편집자 결정(15라운드 게이트 뒤, `reviews/round-15-decisions.md:75`), 17라운드 스웜 수렴(편집자 결정, `03-mental-model.md:135`)
@@ -621,7 +622,8 @@
   > 【추론】 (3) 레거시의 옛 `intersect*Schema`는 옮긴 `intersectConst`(깊은 비교)를 쓰고, 옛 `intersectPattern`은 레거시에 남겨 그대로 쓴다.
   > 【추론】 레거시는 PR-7에서 지워진다.
   > 【추론】 그래서 레거시의 `const` 비교는 깊은 비교로 바뀌며(결함 수정), 이는 옛 `intersect*Schema`가 옛 동작을 PR-7까지 지킨다는 규칙(LANDING-061)의 예외다.
-- 보충: 없음
+- 보충:
+  > 소유자(473라운드 원문 106): "다른 충동조건도 무조건 error나 warning으로 기존을 무분별하게 따르지 말고, 이게 에러를 내서 알려줄 문젠지, 조용히 넘어가되 경고하면 되는 문제인지를 구분해서 적절한 에러를 설계하도록 해줘" (`reviews/round-473-owner-answers.md:8`, 2026-11-03). 현행 적용(C11의 판별 태그 예외): 일반 잎 키워드 교차의 EMPTY_ENUM_INTERSECTION 계약은 유지한다. 판별 태그 수집에서 const·enum 교차가 비면 형 추론 전에 빈 gate 값을 기록하고 분기는 절대 활성화하지 않으며 DISCRIMINATOR_BRANCH_UNREACHABLE(reason: 'empty')로 경고한다. 태그를 끌어올리지 않고 태그 누락으로 세지 않는다.
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:186-196`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-08)

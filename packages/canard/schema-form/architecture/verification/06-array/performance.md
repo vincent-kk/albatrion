@@ -9,8 +9,8 @@
 패키지 루트의 재현 명령:
 
 ```sh
-NODE_ENV=development /Users/Vincent/.nvm/versions/node/v24.20.0/bin/node --import tsx bench/array.bench.ts --root-applied
-NODE_ENV=development /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
+NODE_ENV=development {node-home}/versions/node/v24.20.0/bin/node --import tsx bench/array.bench.ts --root-applied
+NODE_ENV=development {node-home}/bin/bun bench/array.bench.ts --root-applied
 ```
 
 새 엔진은 동기 `setValue` 반환, 레거시는 루트 `onChange` 진입까지입니다. 루트 값·방출 값과 통째 쓰기의 1,000개 아이템 전체를 확인합니다. 입력·트리·검증기 생성, Promise 대기자 준비·재개, 값 검사·표본 저장은 측정 밖이며 각 쓰기 뒤 두 이벤트 배출 턴도 측정 밖입니다. 두 런타임 모두 `bound setImmediate`이며 빈 await를 빼지 않습니다.
@@ -37,7 +37,7 @@ NODE_ENV=development /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
 | 10,000-item array key input | Bun | 1 | 16.25 [12.25–23.17] | 182.17 [170.96–206.29] | **0.0892×** | 2,001 |
 | 10,000-item array key input | Bun | 2 | 16.25 [12.21–22.67] | 179.83 [168.37–204.38] | **0.0904×** | 2,001 |
 
-빈 await 중앙값은 Node 두 실행 **0.083 µs**, Bun 두 실행 **0.042 µs**(각 2,001표본)입니다. `--root-applied`는 힙 자식 프로세스를 생략하므로 이번 실행은 노드당 메모리를 보고하지 않습니다. 기존 `103433634` 힙 기록은 그대로 유지하며 HEAD의 새 메모리 측정값으로 해석하지 않습니다. 원시 표본·부하·버전·시각은 로컬 `/tmp/stage06-{node,bun}-{1,2}.json`에 보관했습니다(커밋 제외).
+빈 await 중앙값은 Node 두 실행 **0.083 µs**, Bun 두 실행 **0.042 µs**(각 2,001표본)입니다. `--root-applied`는 힙 자식 프로세스를 생략하므로 이번 실행은 노드당 메모리를 보고하지 않습니다. 기존 `103433634` 힙 기록은 그대로 유지하며 HEAD의 새 메모리 측정값으로 해석하지 않습니다. 원시 표본·부하·버전·시각은 로컬 `{scratch}/stage06-{node,bun}-{1,2}.json`에 보관했습니다(커밋 제외).
 
 ### 단계별 통째 쓰기 요약
 
@@ -58,15 +58,15 @@ NODE_ENV=development /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
 
 ## 63C-01·63C-02 뒤 재측정
 
-2026-10-02(KST), `stage-06` worktree의 `feat/schema-form-array`, 현재 HEAD `92cfc853207ee994819ba99d776eb89e04de6261`에서 측정했습니다. 63C-02 (가) `e05050df8`과 (나) `84464ef2e`가 포함된 판입니다. 환경은 기존과 같은 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0/arm64, 논리 코어 10개, **Node.js 24.20.0/V8**(`/Users/Vincent/.nvm/versions/node/v24.20.0/bin/node`)·**Bun 1.4.2/JSC**(`/opt/homebrew/bin/bun`)입니다. 소스·벤치 파일은 변경하지 않았습니다.
+2026-10-02(KST), `stage-06` worktree의 `feat/schema-form-array`, 현재 HEAD `92cfc853207ee994819ba99d776eb89e04de6261`에서 측정했습니다. 63C-02 (가) `e05050df8`과 (나) `84464ef2e`가 포함된 판입니다. 환경은 기존과 같은 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0/arm64, 논리 코어 10개, **Node.js 24.20.0/V8**(`{node-home}/versions/node/v24.20.0/bin/node`)·**Bun 1.4.2/JSC**(`{node-home}/bin/bun`)입니다. 소스·벤치 파일은 변경하지 않았습니다.
 
 패키지 루트에서 아래 명령을 각 모드에 **Node 1차 → Bun 1차 → Node 2차 → Bun 2차**로 순차 실행했습니다. 개발 모드를 먼저 마친 뒤 프로덕션 모드를 실행했습니다. 프로덕션 빌드는 만들지 않고 **프로세스의 `NODE_ENV=production`으로 소스를 직접 실행**했습니다. 기존 입력·완료점·ABBA 표본 쌍 교대·쓰기 뒤 측정 밖 두 이벤트 배출 턴·엔진/행/실행마다 준비 5,000회와 **2,001표본 × 2회**를 유지했습니다. 새 엔진은 동기 반환, 레거시는 루트 `onChange` 진입까지이며 루트 값·출력과 통째 쓰기 1,000개 아이템 전체를 확인합니다. 두 런타임 모두 `bound setImmediate`입니다.
 
 ```sh
-NODE_ENV=development /Users/Vincent/.nvm/versions/node/v24.20.0/bin/node --import tsx bench/array.bench.ts --root-applied
-NODE_ENV=development /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
-NODE_ENV=production /Users/Vincent/.nvm/versions/node/v24.20.0/bin/node --import tsx bench/array.bench.ts --root-applied
-NODE_ENV=production /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
+NODE_ENV=development {node-home}/versions/node/v24.20.0/bin/node --import tsx bench/array.bench.ts --root-applied
+NODE_ENV=development {node-home}/bin/bun bench/array.bench.ts --root-applied
+NODE_ENV=production {node-home}/versions/node/v24.20.0/bin/node --import tsx bench/array.bench.ts --root-applied
+NODE_ENV=production {node-home}/bin/bun bench/array.bench.ts --root-applied
 ```
 
 부하 기준은 기존처럼 **1분 load average > 코어 수/2 = 5이면 45초 간격 대기, 실행 중 초과하면 해당 실행을 제외하고 재시도**입니다. 실행 전후와 실행 중 5초마다 `os.loadavg()`를 기록했고, 이번 8개 실행은 모두 기준 안이라 대기·제외·재시도는 0회입니다. 아래 부하는 1/5/15분 순서이며 최고값은 전후를 포함한 1분 평균입니다. 장기 평균이 5를 넘은 것은 이전 부하를 반영한 값입니다. 5초 관찰은 순간 부하나 무부하의 증명이 아닙니다.
@@ -112,7 +112,7 @@ NODE_ENV=production /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
 | P-13 키 입력 | Node | +0.50 / +0.37 | +2.42% / +1.82% |
 | P-13 키 입력 | Bun | +2.96 / −0.88 | +10.79% / −3.52% |
 
-측정 밖의 별도 탐침(`/private/tmp/stage06-63c-mode-probe.ts`)에서 두 아이템 로드·통째 쓰기·키 입력을 실행하고 `markCommitDeliveries` 호출 스택의 `Object.freeze`와 `NODE_ENV` 읽기를 셌습니다. **Node·Bun 모두 개발: 읽기 13회·비프로덕션 판정 13회·동결 13회, 프로덕션: 읽기 13회·비프로덕션 판정 0회·동결 0회**였습니다. 따라서 `process.env.NODE_ENV !== 'production'`의 동결 분기는 실제로 건너뛰었습니다. 다만 소스 직접 실행에서는 **조건을 평가하는 `process.env` 읽기가 프로덕션에도 남습니다**. 이 차이는 개발 전용 동결과 모드 변경의 관측 차이이며 동결·환경 읽기의 합산 비용을 모두 제거한 제품 번들의 차이는 아닙니다. 63C-01 보고의 약 19% 프로파일 추정은 이번 두 모드 차이로 재현되지 않았습니다. 양 모드의 10–90백분위가 겹치고 음수 차이도 있어 작은 차이는 실행 시점·JIT·GC 변동과 분리하지 못합니다. 환경 읽기 제거의 몫은 향후 상수 치환 제품 빌드 계측이 필요합니다.
+측정 밖의 별도 탐침(`{scratch}/stage06-63c-mode-probe.ts`)에서 두 아이템 로드·통째 쓰기·키 입력을 실행하고 `markCommitDeliveries` 호출 스택의 `Object.freeze`와 `NODE_ENV` 읽기를 셌습니다. **Node·Bun 모두 개발: 읽기 13회·비프로덕션 판정 13회·동결 13회, 프로덕션: 읽기 13회·비프로덕션 판정 0회·동결 0회**였습니다. 따라서 `process.env.NODE_ENV !== 'production'`의 동결 분기는 실제로 건너뛰었습니다. 다만 소스 직접 실행에서는 **조건을 평가하는 `process.env` 읽기가 프로덕션에도 남습니다**. 이 차이는 개발 전용 동결과 모드 변경의 관측 차이이며 동결·환경 읽기의 합산 비용을 모두 제거한 제품 번들의 차이는 아닙니다. 63C-01 보고의 약 19% 프로파일 추정은 이번 두 모드 차이로 재현되지 않았습니다. 양 모드의 10–90백분위가 겹치고 음수 차이도 있어 작은 차이는 실행 시점·JIT·GC 변동과 분리하지 못합니다. 환경 읽기 제거의 몫은 향후 상수 치환 제품 빌드 계측이 필요합니다.
 
 아래는 **이번 새/레거시 비율 ÷ 이전 같은 런타임·회차의 새/레거시 비율**입니다. `425c9975e`·`8a7159864`는 기존 개발 모드 기록이므로 프로덕션 열은 모드도 다른 참고 비교입니다.
 
@@ -127,15 +127,15 @@ NODE_ENV=production /opt/homebrew/bin/bun bench/array.bench.ts --root-applied
 | P-14 | Node 프로덕션 | 1.680× / 1.651× | 1.010× / 0.967× | 3.01% |
 | P-14 | Bun 프로덕션 | 1.233× / 1.229× | 1.003× / 1.015× | 0.21% |
 
-모두 기존 15% 재실행 기준 안입니다. 빈 await 중앙값은 개발 Node 0.083/0.083·Bun 0.042/0.083 µs, 프로덕션 Node 0.083/0.083·Bun 0.042/0.042 µs이며 기준선을 빼지 않았습니다. 힙은 재측정하지 않았습니다. 원시 표본·stderr·시각·부하 기록은 `/private/tmp/stage06-63c-auAoPc/`, 실행 스크립트는 `/private/tmp/stage06-63c-bench.cjs`입니다.
+모두 기존 15% 재실행 기준 안입니다. 빈 await 중앙값은 개발 Node 0.083/0.083·Bun 0.042/0.083 µs, 프로덕션 Node 0.083/0.083·Bun 0.042/0.042 µs이며 기준선을 빼지 않았습니다. 힙은 재측정하지 않았습니다. 원시 표본·stderr·시각·부하 기록은 `{scratch}/stage06-63c-auAoPc/`, 실행 스크립트는 `{scratch}/stage06-63c-bench.cjs`입니다.
 
 P-14의 54라운드 수용은 기존 06 배열 합성 원인까지 유지합니다. **05 배달 표시가 더한 원인은 P-23(소유자 수용 대기)**이며 63C-01대로 바뀐 노드 수에 비례하는 비용으로 기록하고 TEST-027의 PR-5 병합 조건에만 걸립니다. 이번 고정 크기 두 행은 P-23의 단독 비용이나 차수를 다시 입증하지 않습니다. 63C-02의 `remove` 수정은 이 두 행에서 큰 개선을 약속하는 수정이 아니며, 영향 범위 계수·`remove` 시간은 대장의 R-20·R-21에 별도로 기록합니다.
 
 ## 05 병합 뒤 재측정 (HEAD 8a7159864)
 
-2026-10-02(KST), `stage-06` worktree의 `feat/schema-form-array`, HEAD `8a7159864`에서 05단계 dispatch 진입 체인·검증 병합 뒤 `TEST-032`의 두 완료 시간 행을 재측정했습니다. 환경은 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0/arm64, 논리 코어 10개, **Node.js 24.20.0/V8**, `/opt/homebrew/bin/bun` **1.4.2/JSC**입니다. `425c9975e` 완료 시간 기록과 런타임 버전이 같습니다.
+2026-10-02(KST), `stage-06` worktree의 `feat/schema-form-array`, HEAD `8a7159864`에서 05단계 dispatch 진입 체인·검증 병합 뒤 `TEST-032`의 두 완료 시간 행을 재측정했습니다. 환경은 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0/arm64, 논리 코어 10개, **Node.js 24.20.0/V8**, `{node-home}/bin/bun` **1.4.2/JSC**입니다. `425c9975e` 완료 시간 기록과 런타임 버전이 같습니다.
 
-패키지 루트에서 `node --import tsx bench/array.bench.ts --root-applied`와 `/opt/homebrew/bin/bun bench/array.bench.ts --root-applied`를 **Node 1차 → Bun 1차 → Node 2차 → Bun 2차** 순서로 실행했습니다. 기존과 같은 입력·완료점·ABBA 교대·쓰기를 마친 뒤 측정 밖의 두 이벤트 배출 턴·각 엔진/행/실행의 준비 5,000회 및 **2,001표본 × 2회**를 유지했습니다. 새 엔진은 동기 `setValue` 반환, 레거시는 루트 `onChange` 진입까지이며 루트 값·출력과 통째 쓰기 1,000개 아이템 전체를 검증했습니다. 두 런타임의 매크로태스크는 `bound setImmediate`입니다. 벤치는 HEAD에서 이미 `createTestValidator`를 사용하므로 기계적 API 수정도 필요 없었으며, 소스와 벤치 파일은 변경하지 않았습니다.
+패키지 루트에서 `node --import tsx bench/array.bench.ts --root-applied`와 `{node-home}/bin/bun bench/array.bench.ts --root-applied`를 **Node 1차 → Bun 1차 → Node 2차 → Bun 2차** 순서로 실행했습니다. 기존과 같은 입력·완료점·ABBA 교대·쓰기를 마친 뒤 측정 밖의 두 이벤트 배출 턴·각 엔진/행/실행의 준비 5,000회 및 **2,001표본 × 2회**를 유지했습니다. 새 엔진은 동기 `setValue` 반환, 레거시는 루트 `onChange` 진입까지이며 루트 값·출력과 통째 쓰기 1,000개 아이템 전체를 검증했습니다. 두 런타임의 매크로태스크는 `bound setImmediate`입니다. 벤치는 HEAD에서 이미 `createTestValidator`를 사용하므로 기계적 API 수정도 필요 없었으며, 소스와 벤치 파일은 변경하지 않았습니다.
 
 부하 재시도 기준은 **1분 load average > 코어 수/2 = 5**로 적용했습니다. 최초 확인은 6.97/5.78/5.93이었고, 1분 부하가 4.95로 낮아진 뒤 시작했습니다. 실행 전후 및 실행 중 5초마다 `os.loadavg()`의 1/5/15분 값을 기록했습니다. 표의 부하는 1/5/15분 순서이며, 실행 중 최고값은 전후를 포함한 1분 평균입니다. 장기 평균은 이전 고부하를 반영하므로 일부 실행에서 5보다 높았습니다. `ps -A -o %cpu`는 샌드박스의 `EPERM`으로 수집하지 못했습니다.
 
@@ -146,7 +146,7 @@ P-14의 54라운드 수용은 기존 06 배열 합성 원인까지 유지합니�
 | Node 2차 | 4.34/8.66/8.15 → 3.84/7.22/7.65 | 4.73 |
 | Bun 2차 | 3.84/7.22/7.65 → 4.35/6.49/7.32 | 4.35 |
 
-Bun 1차의 앞선 세 시도는 최고 1분 부하 **6.68/29.01/9.04**, Node 2차의 첫 시도는 **27.50**으로 기준을 넘어서 결과에서 제외했습니다. 기준 초과 상태에서는 45초 간격으로 확인하며 총 **9분** 대기한 뒤 재시도했습니다. 채택한 네 실행은 기록된 모든 1분 부하가 5 이하였습니다. 5초 간격의 관찰이 순간 부하나 무부하를 보장하지는 않습니다. 실행 스크립트는 `/private/tmp/stage06-post05-bench.cjs`, 원시 표본·stderr·시각·부하·제외/대기 기록은 `/private/tmp/stage06-post05-K2MpSs/`에 있습니다.
+Bun 1차의 앞선 세 시도는 최고 1분 부하 **6.68/29.01/9.04**, Node 2차의 첫 시도는 **27.50**으로 기준을 넘어서 결과에서 제외했습니다. 기준 초과 상태에서는 45초 간격으로 확인하며 총 **9분** 대기한 뒤 재시도했습니다. 채택한 네 실행은 기록된 모든 1분 부하가 5 이하였습니다. 5초 간격의 관찰이 순간 부하나 무부하를 보장하지는 않습니다. 실행 스크립트는 `{scratch}/stage06-post05-bench.cjs`, 원시 표본·stderr·시각·부하·제외/대기 기록은 `{scratch}/stage06-post05-K2MpSs/`에 있습니다.
 
 시간은 **µs/쓰기**, 대괄호는 기존 `floor((n - 1) × p)` 방식의 10–90백분위입니다.
 
@@ -178,7 +178,7 @@ Bun 1차의 앞선 세 시도는 최고 1분 부하 **6.68/29.01/9.04**, Node 2�
 
 ## 환경과 재현
 
-2026-10-01에 `stage-06` worktree(`feat/schema-form-array`, HEAD `425c9975e`)에서 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0/arm64, **Node.js 24.20.0/V8**과 `/opt/homebrew/bin/bun` **1.4.2/JSC**로 루트 적용 완료를 재측정했습니다. 과거 실행의 Node 26.10.0과 버전이 다르므로 과거 절대 시간과 인과 비교하지 않습니다. 소유자의 추가 지시에 따라 다른 작업 세션은 유지하고, 벤치마크만 **Node 1차 → Bun 1차 → Node 2차 → Bun 2차**로 순차 실행했습니다. 각 실행 직전/직후의 `uptime` 부하(1/5/15분)와 `ps -A -o %cpu` 합계는 다음과 같습니다.
+2026-10-01에 `stage-06` worktree(`feat/schema-form-array`, HEAD `425c9975e`)에서 MacBookPro18,2(M1 Max, 64 GB), Darwin 25.6.0/arm64, **Node.js 24.20.0/V8**과 `{node-home}/bin/bun` **1.4.2/JSC**로 루트 적용 완료를 재측정했습니다. 과거 실행의 Node 26.10.0과 버전이 다르므로 과거 절대 시간과 인과 비교하지 않습니다. 소유자의 추가 지시에 따라 다른 작업 세션은 유지하고, 벤치마크만 **Node 1차 → Bun 1차 → Node 2차 → Bun 2차**로 순차 실행했습니다. 각 실행 직전/직후의 `uptime` 부하(1/5/15분)와 `ps -A -o %cpu` 합계는 다음과 같습니다.
 
 | 실행 | 직전 부하 → 직후 부하 | 직전 → 직후 CPU 합계(%) |
 | --- | --- | --- |
@@ -191,7 +191,7 @@ Bun 1차의 앞선 세 시도는 최고 1분 부하 **6.68/29.01/9.04**, Node 2�
 
 ```sh
 node --import tsx bench/array.bench.ts --root-applied
-/opt/homebrew/bin/bun bench/array.bench.ts --root-applied
+{node-home}/bin/bun bench/array.bench.ts --root-applied
 ```
 
 `TEST-032`의 입력은 그대로입니다. `keyInputRootApplied`(P-13)는 10,000개 객체 아이템 중 `/5000/key`에 매번 다른 숫자를 씁니다. `wholeWriteRootApplied`(P-14)는 1000개 객체 아이템 배열 두 개(모든 `key`가 각각 0/1)를 번갈아 루트 `setValue`로 씁니다. 첫 쓰기도 값을 바꾸며, 각 엔진·행·실행마다 준비 5,000회 뒤 **2,001표본**을 수집합니다. 트리 생성·청사진 분석·대기 Promise 할당·검증·표본 저장은 측정 구간 밖입니다.
@@ -289,7 +289,7 @@ Node `B6`의 기존 기록 대비 **1.20×**, Bun `18C-67` 깊이 4의 **1.19×*
 
 새 18C-15·SETTLE-045 관측 시험은 변경 전후 통과합니다. 하강 전 갱신을 제거하는 민감도 검사에서는 `current.value: 'in-progress'`가 이전 루트 출력에 섞여 이 시험이 실패했고, 탐침 변경을 복원했습니다. 기존 SETTLE-045·SETTLE-050 시험도 통과했습니다.
 
-제공된 `/tmp/claude-501/v4/p/rundiff.sh`의 `diff.mts`를 읽고, 스크립트에 고정된 옛 기준 경로 대신 보존한 초기 HEAD 경로를 넘겼습니다. 최종 코드로 24 seed × 7 schema × 600단계 = 100,800단계에서 차이 0: 값·`outputValue`·비활성 값·잠복 원본/메타데이터/순서·선언·형 불일치·규칙 저장소·스냅숏·기본값·진단·노드 revision. identity 검사 12,324건의 실패도 0이며, 이 harness는 이벤트를 계측하지 않습니다.
+제공된 `{scratch}/v4/p/rundiff.sh`의 `diff.mts`를 읽고, 스크립트에 고정된 옛 기준 경로 대신 보존한 초기 HEAD 경로를 넘겼습니다. 최종 코드로 24 seed × 7 schema × 600단계 = 100,800단계에서 차이 0: 값·`outputValue`·비활성 값·잠복 원본/메타데이터/순서·선언·misfit·규칙 저장소·스냅숏·기본값·진단·노드 revision. identity 검사 12,324건의 실패도 0이며, 이 harness는 이벤트를 계측하지 않습니다.
 
 패키지의 bare 명령 결과는 `npx vitest run --project unit src/core --reporter=dot` 158파일·1,290통과·2 todo, `npx vitest run --project render --reporter=dot` 52파일·539통과, `npx tsc --noEmit -p tsconfig.json`·`npx eslint src/core` 오류 0입니다. 로그·탐침·기준선은 `$TMPDIR/51c01.PeKqeR/`에 있습니다. P-03은 [속도 문제 대장](../performance-issues.md)의 R-17로 옮겼습니다.
 
@@ -321,7 +321,7 @@ D6 커밋은 선언 키 유틸리티를 실제 소비자들의 소유 경계인 
 
 ### 배열 1k 통째 쓰기 — 최종 빠른 측정
 
-기존 `bench/array.bench.ts`의 완료 기준과 `/tmp/claude-501/v12/p/drive2.mts` 방법을 사용했습니다. 새 구현은 동기 `setValue` 반환, 레거시는 루트 `onChange` 진입까지 측정했습니다. 각 쓰기 뒤 타이머 밖에서 두 macrotask를 비웠고, 입력 생성·검증기 생성·값 확인·표본 분석은 타이머 밖에 두었습니다. 실제 검증기를 사용했으며 `NODE_ENV`는 설정하지 않아 개발 모드 payload 동결을 유지했습니다.
+기존 `bench/array.bench.ts`의 완료 기준과 `{scratch}/v12/p/drive2.mts` 방법을 사용했습니다. 새 구현은 동기 `setValue` 반환, 레거시는 루트 `onChange` 진입까지 측정했습니다. 각 쓰기 뒤 타이머 밖에서 두 macrotask를 비웠고, 입력 생성·검증기 생성·값 확인·표본 분석은 타이머 밖에 두었습니다. 실제 검증기를 사용했으며 `NODE_ENV`는 설정하지 않아 개발 모드 payload 동결을 유지했습니다.
 
 Node `v24.20.0`·Bun `1.4.2`, 10코어에서 워밍업 **500회**, 각 엔진 **501표본 × 2회**, ABBA 순서로 실행했습니다. 1차는 Node→Bun·새 구현 우선, 2차는 Bun→Node·레거시 우선이며 각 패스 안에서도 쓰기 순서를 교대했습니다. 시작·종료·5초 간격의 1분 부하 평균을 기록했고, 5 초과 시 대기·제외·재실행하는 규칙을 사용했습니다. 채택한 최종 패스의 최대값은 4.89, 같은 방법으로 다시 잰 기준 패스는 2.34였습니다. 다른 검증 작업과 동시에 실행하지 않았습니다.
 
@@ -385,7 +385,7 @@ step 1의 `.seiri/tasks/array-constant-performance/differential.mts` 하네스�
 
 ### 배열 1k 통째 쓰기 — 501표본 × 2회 ABBA
 
-step 1의 `drive.mts`(진단의 `/tmp/claude-501/v12/p/drive2.mts`와 같은 완료점)를 재사용했습니다. 워밍업 **500회**, 엔진/패스당 **501표본**, Node **v24.20.0**·Bun **1.4.2**, 개발 모드와 실제 검증기입니다. 새 엔진은 동기 반환, 레거시는 루트 `onChange` 진입까지 측정하며 각 쓰기 뒤 두 macrotask를 타이머 밖에서 비웠습니다. 1차 Node→Bun·새 엔진 우선, 2차 Bun→Node·레거시 우선이고 각 패스 안에서도 ABBA 교대했습니다. 기준/수정본 실행 순서도 2차에 뒤집었습니다. 검사·차등 실행과 겹치지 않았으며 시작·종료·5초 간격 부하의 최대값은 **4.214**(5 초과 시 대기/제외)였습니다. 측정 시각은 **2026-10-02 12:41:02–12:42:11 KST**입니다.
+step 1의 `drive.mts`(진단의 `{scratch}/v12/p/drive2.mts`와 같은 완료점)를 재사용했습니다. 워밍업 **500회**, 엔진/패스당 **501표본**, Node **v24.20.0**·Bun **1.4.2**, 개발 모드와 실제 검증기입니다. 새 엔진은 동기 반환, 레거시는 루트 `onChange` 진입까지 측정하며 각 쓰기 뒤 두 macrotask를 타이머 밖에서 비웠습니다. 1차 Node→Bun·새 엔진 우선, 2차 Bun→Node·레거시 우선이고 각 패스 안에서도 ABBA 교대했습니다. 기준/수정본 실행 순서도 2차에 뒤집었습니다. 검사·차등 실행과 겹치지 않았으며 시작·종료·5초 간격 부하의 최대값은 **4.214**(5 초과 시 대기/제외)였습니다. 측정 시각은 **2026-10-02 12:41:02–12:42:11 KST**입니다.
 
 단위는 µs, 대괄호는 p10–p90, 비율은 새 엔진/레거시입니다.
 
@@ -402,7 +402,7 @@ step 1의 `drive.mts`(진단의 `/tmp/claude-501/v12/p/drive2.mts`와 같은 완
 
 같은 방법으로 잰 기준 대비 새 엔진 중앙값 평균은 Node **4,637.19→4,485.48 µs(3.27%)**, Bun **3,614.34→3,578.79 µs(0.98%)** 감소했습니다. 분위가 겹치고 Bun의 패스별 차이 방향이 달라 안정적인 기여율로 분리하지 않습니다. 이 행은 상태 키·watch 선언이 없는 스키마이며 step 1에서 상태 키 통과는 이미 생략했습니다. S3의 구조적 근거는 희소 선언 가드의 방문 감소와 의미 보존입니다. S1·S2 및 최종 워밍업 5,000회·2,001표본 측정이 남으므로 P-23은 **열림**으로 유지합니다.
 
-원시 표본·부하·시각은 로컬 `.seiri/tasks/ruling-65c-02/out/measure.json`, 차등 결과는 같은 디렉터리 `differential.log`, 실행기는 `measure.mjs`에 있습니다. 가드 red/green과 패키지 검사 로그는 `/tmp/65c-02-*.log`에 있으며 이 검증 자료는 커밋에서 제외했습니다.
+원시 표본·부하·시각은 로컬 `.seiri/tasks/ruling-65c-02/out/measure.json`, 차등 결과는 같은 디렉터리 `differential.log`, 실행기는 `measure.mjs`에 있습니다. 가드 red/green과 패키지 검사 로그는 `{scratch}/65c-02-*.log`에 있으며 이 검증 자료는 커밋에서 제외했습니다.
 
 ## P-23 S1 레코드 배달 기록과 단일 커밋 방문 뒤
 

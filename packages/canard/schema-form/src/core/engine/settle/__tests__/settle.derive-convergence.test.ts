@@ -4,20 +4,22 @@ import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { engineModes } from '../../utils/cache/engineModes';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { runDeriveConvergenceCase } from './fixtures/runDeriveConvergenceCase';
 
 /** Each counterexample restores the switch installed by package setup. */
-const setupEnabled = deriveShadowEvaluation.enabled;
+const setupEnabled = engineModes.deriveShadow;
 
 afterEach(() => {
-  deriveShadowEvaluation.enabled = setupEnabled;
+  engineModes.setMode('deriveShadow', setupEnabled);
   vi.unstubAllEnvs();
 });
 
 it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', () => {
+  // The exact decision trace includes the shadow confirmation evaluations.
+  engineModes.setMode('deriveShadow', true);
   const result = runDeriveConvergenceCase(
     {
       type: 'object',
@@ -184,7 +186,7 @@ it('consumes losing edges and preserves rank across subsequent caller writes', (
   expect(
     JSON.parse(result.snapshots[1]).nodes.find(
       (node: { path: string }) => node.path === '/target',
-    ).raw,
+    ).source,
   ).toBe(7);
 });
 
@@ -233,7 +235,7 @@ it('falls back for context expressions anywhere in the blueprint', () => {
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.structure!.target.raw).toBe(2);
+  expect(result.root.structure!.target.source).toBe(2);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -250,7 +252,7 @@ it('falls back for whole host expressions anywhere in the blueprint', () => {
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.structure!.target.raw).toBe(2);
+  expect(result.root.structure!.target.source).toBe(2);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -332,7 +334,7 @@ it('preserves derive budget rollback and iterations exactly', () => {
 });
 
 it('skips the confirmation evaluation in development while preserving its empty trace slot', () => {
-  deriveShadowEvaluation.enabled = false;
+  engineModes.setMode('deriveShadow', false);
   vi.stubEnv('NODE_ENV', 'development');
   vi.stubEnv('ROUND99_SKIP', 'on');
   const result = runDeriveConvergenceCase(
@@ -355,6 +357,7 @@ it('skips the confirmation evaluation in development while preserving its empty 
 });
 
 it('actually runs shadow and rejects a false proof with nonzero confirmation candidates', () => {
+  engineModes.setMode('deriveShadow', true);
   const { root, blueprint } = createTestTree({
     type: 'object',
     properties: {
@@ -366,6 +369,6 @@ it('actually runs shadow and rejects a false proof with nonzero confirmation can
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
-    writeFieldNode(root.structure!.source, 3, 'input', WriteOption.Overwrite),
+    writeFieldNode(root.structure!['source'], 3, 'input', WriteOption.Overwrite),
   ).toThrow('Derive convergence proof failed: confirmation was not empty');
 });

@@ -3,8 +3,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { fieldNodeFactory, mountFieldNode } from '@/schema-form/core/surface';
 
 import { blueprint } from '../blueprint';
-import type { BlueprintCacheEntry } from '../type';
-import * as convergence from '../utils/analyze/collectDeriveConvergenceTargets';
+import type { BlueprintCacheEntry } from '../types/blueprint';
+import * as convergence from '../utils/features/collectDeriveConvergenceTargets';
 
 afterEach(() => vi.restoreAllMocks());
 

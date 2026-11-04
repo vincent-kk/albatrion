@@ -1,27 +1,28 @@
-/** Last serialized identity for a live or latent declaration target. */
-const KEYS = new WeakMap<
-  object,
-  {
-    path: string;
-    kind: string;
-    key: string;
-  }
->();
+import type { TreeMemoStores } from '../../types/treeMemoStores';
+import { getBlueprintNodeIdentity } from '../nodeIdentity/getBlueprintNodeIdentity';
 
 /**
- * Reuse the exact path/kind pair identity until an occurrence is reindexed.
- * @param node - Declaration target with an absolute path and immutable kind
+ * Reuse the exact path/fold-inclusive-kind pair identity until an occurrence is reindexed.
+ * @param node - Declaration target with an absolute path and immutable fold-inclusive kind
+ * @param runtime - Root owner of this occurrence memo
  * @returns JSON pair key compatible with committed path-store moves
  */
-export const getCommittedDeclarationKey = (node: {
-  readonly path: string;
-  readonly blueprintNode: { readonly kind: string };
-}): string => {
+export const getCommittedDeclarationKey = (
+  node: {
+    readonly path: string;
+    readonly blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
+  },
+  runtime: Pick<TreeMemoStores, 'committedDeclarationKeys'>,
+): string => {
   const path = node.path;
-  const kind = node.blueprintNode.kind;
-  const cached = KEYS.get(node);
+  const kind = getBlueprintNodeIdentity(node.blueprintNode);
+  const cached = runtime.committedDeclarationKeys?.get(node);
   if (cached?.path === path && cached.kind === kind) return cached.key;
   const key = JSON.stringify([path, kind]);
-  KEYS.set(node, { path, kind, key });
+  (runtime.committedDeclarationKeys ??= new WeakMap()).set(node, {
+    path,
+    kind,
+    key,
+  });
   return key;
 };

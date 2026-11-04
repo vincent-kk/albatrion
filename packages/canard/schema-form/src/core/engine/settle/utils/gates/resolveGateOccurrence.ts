@@ -1,7 +1,13 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { maxLite } from '@winglet/common-utils/math';
+
+import {
+  type PointerSegment,
+  joinPointer,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate } from '../../../blueprint';
-import { bindTemplatePath } from '../paths/bindTemplatePath';
+import { bindTemplatePath } from '../templatePaths/bindTemplatePath';
 import { bindGateHostPath } from './bindGateHostPath';
 import type { GateOccurrence } from './type';
 
@@ -18,6 +24,9 @@ export const resolveGateOccurrence = (
   templatePath: string,
   occurrencePath: string,
   childHostPath?: string,
+  readSegments: (
+    path: string,
+  ) => readonly PointerSegment[] = parsePointerSegments,
 ): GateOccurrence => {
   const hostPath = bindGateHostPath(
     gate,
@@ -25,15 +34,15 @@ export const resolveGateOccurrence = (
     occurrencePath,
     childHostPath,
   );
-  let common = hostPath.split($.Separator).filter(Boolean);
+  let common = readSegments(hostPath);
   for (const read of gate.evaluationReads) {
     if (typeof read === 'number') {
-      common = common.slice(0, Math.max(0, common.length - read));
+      common = common.slice(0, maxLite(0, common.length - read));
       continue;
     }
-    const target = bindTemplatePath(read, childHostPath ?? occurrencePath)
-      .split($.Separator)
-      .filter(Boolean);
+    const target = readSegments(
+      bindTemplatePath(read, childHostPath ?? occurrencePath),
+    );
     let index = 0;
     while (
       index < common.length &&
@@ -46,6 +55,6 @@ export const resolveGateOccurrence = (
   return {
     gate,
     hostPath,
-    evaluationHostPath: common.length ? `/${common.join($.Separator)}` : '',
+    evaluationHostPath: joinPointer(common),
   };
 };

@@ -557,7 +557,7 @@
   - 【추론】 분배는 그 호스트에 대한 쓰기와 같다.
   - 【추론】 D의 키는 해당 자식의 원본이 된다(더 깊이 재귀).
   - 【추론】 선언되지 않은 키는 `extras`로 가고, D가 객체가 아니면 호스트가 그 값을 든다.
-  - 【추론】 객체 호스트가 없음이라는 것은 호스트와 모든 자손의 `raw`·`extras`가 없음인 것이다(상태 둘에서 계산, P3).
+  - 【추론】 객체 호스트가 없음이라는 것은 호스트와 모든 자손의 `source`·`extras`가 없음인 것이다(상태 둘에서 계산, P3).
   - 【추론】 그래서 로드한 V가 그 자리에 `{}`를 주어도 호스트는 D를 받는다.
   - 【추론】 채움은 부모부터 순회한다.
   - 【추론】 그래서 D가 준 키의 자손은 이미 없음이 아니어서 자기 `default`를 받지 않는다.
@@ -569,7 +569,7 @@
   - 이주(LANDING-144): 로드한 값이나 부모가 그 자리에 준 `{}`는 오늘 호스트 `default`를 막고(`AbstractNode.ts:1197-1199`), 새 설계에서는 `{}`여도 호스트가 `default`를 받는다(사용자에게 보이는 변화).
 - 근거:
   - WRITE-007 채움 행(`adr/0013-core-does-not-rewrite-values.md:38-47`, `03-mental-model.md:85` '처음 채워지는 전이 라운드의 유효 스키마')
-  - 없음은 상태 둘에서 계산한다(P3). VALUE-002는 가지 호스트의 `raw`가 잘못된 종류의 값일 때만 든다고 적고, WRITE-010은 `{}`와 없음이 다르다고 적는다.
+  - 없음은 상태 둘에서 계산한다(P3). VALUE-002는 가지 호스트의 `source`가 잘못된 종류의 값일 때만 든다고 적고, WRITE-010은 `{}`와 없음이 다르다고 적는다.
   - 프로토타입은 상태 밖의 `absent` 표지로 같은 판정을 했다(`spikes/round9/proto/loop-v5.mjs:548`, `:1266`). 새 설계는 이를 두 상태로부터 계산한다.
   - 프로토타입은 부모부터 순회한다(`spikes/round9/REPORT-proto.txt:228`, `spikes/round9/proto/loop-v5.mjs:1402-1427`).
   - 오늘 코드: 부모가 준 값이 있으면 자기 `default`를 쓰지 않는다(`src/core/nodes/AbstractNode/AbstractNode.ts:1197-1199`), `BranchStrategy.ts:343`
@@ -641,7 +641,7 @@
 - 근거:
   - 설계 가치: "follow the consistency the public interface leads a caller to expect"(`packages/canard/schema-form/CLAUDE.md:7`), "Speed first, minimal computation"(`:8`)
   - `adr/0014-error-policy.md:49`(사슬 안에서 난 오류는 `batch(fn)`의 fn이 던진 예외를 포함해 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다), EVENT-013
-  - `adr/0007-settle-cycle.md:36`(표시는 쓰기를 받은 노드의 `raw`·`extras`를 갱신한다 — 앞선 표시는 원본에 이미 있다)
+  - `adr/0007-settle-cycle.md:36`(표시는 쓰기를 받은 노드의 `source`·`extras`를 갱신한다 — 앞선 표시는 원본에 이미 있다)
   - VALUE-013(`adr/0006-single-value-ownership.md:70` "읽기는 계산하지 않는다"), EVENT-008(`adr/0008-event-system.md:66`)
   - SURFACE-031(`06-conclusions.md:358`)은 8·9라운드 편집자 결정이며 `batch`를 다루지 않았다.
   - GOAL-086과 `adr/0008-event-system.md:85`(배치와 순차의 값 차이는 채움과 `controls.injectTo`의 결과가 갈리는 것), `09-landing-and-test-strategy.md:90`
@@ -751,7 +751,7 @@
   - 【추론】 "각 PR은 새 코드와 그 시험만으로 독립 검증된다"(§17.1)는 각 PR이 자기가 들여오는 기제를 검증한다로 읽는다.
   - 【추론】 뒤 PR의 기제가 있어야 하는 사례는 그 기제를 들여오는 PR의 시험으로 넘기며, 잃지 않도록 PR-0의 처분 목록이 사례마다 PR 번호를 단다.
   - 【추론】 (가) PR-2는 예산 다섯 가운데 호스트 바퀴와 전이 라운드를 실제 코드로 시험한다: 초과 시 원본 B 커밋, `diagnostics`의 `'degraded'`·`cause: 'budget'`·`exceededBudget`(`'hostWheel'`·`'transition'`), 다음 로드까지의 지속.
-  - 【추론】 PR-2는 원본 B의 되돌림 기록 가운데 노드·이전 `raw`·이전 `extras`와 객체 자식의 생김·빠짐을 시험한다.
+  - 【추론】 PR-2는 원본 B의 되돌림 기록 가운데 노드·이전 `source`·이전 `extras`와 객체 자식의 생김·빠짐을 시험한다.
   - 【추론】 PR-2는 정착 오류의 throw를 시험한다.
   - 【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`).
   - 【추론】 커밋과 `diagnostics` 뒤 그 호출의 끝에서 던지는 것을 시험한다.
@@ -978,7 +978,7 @@
   - 【추론】 도구는 PR-2가 고른다.
 - 근거:
   - NODE-016(`Behavior`·`SchemaNodeFactory`를 `record/`에 두고 생성을 주입하는 같은 방식), `reviews/raw-round17-node-structure.md:72,186`(게이트 N5 수정안), NODE-017의 조건(타입 포함 비순환)
-  - 작업 공간 규칙(`/Users/Vincent/Workspace/.claude/CLAUDE.md` Type Safety): "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval." — 단언 없이 풀리는 안을 고른다.
+  - 작업 공간 규칙(`{agent-home}/CLAUDE.md` Type Safety): "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval." — 단언 없이 풀리는 안을 고른다.
   - 18C-55(`ValidationManager` → `PluginManager` import 분리)와 방향이 같다.
 
 ### 18C-36 S1 parse 함수의 자리
@@ -1012,7 +1012,7 @@
   - 【추론】 생성은 종류별 생성 표가 `AnyNode`를 돌려준다.
   - 【추론】 `InferSchemaNode<Schema>`로의 좁힘은 overload 선언으로 한다.
 - 근거:
-  - 작업 공간 규칙(`/Users/Vincent/Workspace/.claude/CLAUDE.md` Type Safety): "Fix type errors at declaration sites, not call sites."와 "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval."
+  - 작업 공간 규칙(`{agent-home}/CLAUDE.md` Type Safety): "Fix type errors at declaration sites, not call sites."와 "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval."
   - 검증자의 최소 모형(F-bounded `SchemaNodeRecord<Self>`, 제네릭 `find<Self>`, 제네릭 클래스가 `SchemaNodeRecord<AnyNode>`를 구현, `this: AnyNode`, 종류별 생성 표, overload로 `InferSchemaNode` 좁힘)이 `tsc 5.9.2 --strict`를 `as`·`any` 없이 통과했고 `children`이 저장 배열과 같은 참조였다(18라운드 실행 확인).
   - NODE-004, NODE-010, NODE-015(`InferSchemaNode` 사상 유지), NODE-016, `reviews/raw-round17-node-structure.md:187`(게이트 N6)
 - 게이트:
@@ -1082,7 +1082,7 @@
 - 닫는 항목: WRITE-057, REACT-018
 - 결정:
   - 【추론】 (1) 경고등은 VALUE-002의 분류로 '계산' 칸이다.
-  - 【추론】 원본과 노드의 형(`type`, nullable)만의 함수이므로 '상태는 `raw`와 `extras` 둘뿐'(P3)을 지킨다.
+  - 【추론】 원본과 노드의 형(`type`, nullable)만의 함수이므로 '상태는 `source`와 `extras` 둘뿐'(P3)을 지킨다.
   - 【추론】 소유자가 말한 '상태'는 사용자에게 보이는 뜻이다.
   - 【추론】 쓰기마다 `interpret`가 한 번 정한다.
   - 【추론】 켜지는 값은 자기 형이 아니고, 없음도 아니고, nullable 노드의 `null`도 아닌 값이다.
@@ -1380,7 +1380,7 @@
   - 【추론】 평범한 객체는 자기 열거 키의 목록(순서 포함)과 키마다의 값을 본다.
   - 【추론】 그 밖의 객체(함수, `Date`, 클래스 인스턴스, `File` 등)는 참조로 본다.
   - 【추론】 두 값의 참조가 같으면 더 내려가지 않는다(지름길).
-  - 【추론】 (나) 커밋 단계에서, 이번 정착에 쓰인 잎의 `raw`·`extras`가 직전 커밋의 것과 (가)로 같으면 직전 참조를 둔다.
+  - 【추론】 (나) 커밋 단계에서, 이번 정착에 쓰인 잎의 `source`·`extras`가 직전 커밋의 것과 (가)로 같으면 직전 참조를 둔다.
   - 【추론】 쓰기 경계에서 지금 값과 같으면 쓰지 않는 것은 오늘과 같다.
   - 【추론】 호스트의 `emit`은 VALUE-012대로 만든다.
   - 【추론】 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만).
@@ -1849,7 +1849,7 @@
 - 근거:
   - 소유자 축 열의 항목 8: "& 표현식과 injectTo 표현식은 모두 form 을 제어하는 특수 예약어로 취급되길 원한다"(`reviews/round-9-spec.md:26`), 항목 6(`reviews/round-9-spec.md:24`: & 규칙은 값을 바꾸는 확장 조작 계층)
   - Q2가 남긴 요구(`open-questions.md:19`): 자동 쓰기는 null 조상을 객체로 만들지 않는다.
-  - GOAL-063(T-12: "`injectTo`가 대상의 전체 교체라도 조상의 `raw`는 그대로"), WRITE-013(`adr/0013-core-does-not-rewrite-values.md:52`, `adr/0007-settle-cycle.md:91` F1·F10)
+  - GOAL-063(T-12: "`injectTo`가 대상의 전체 교체라도 조상의 `source`는 그대로"), WRITE-013(`adr/0013-core-does-not-rewrite-values.md:52`, `adr/0007-settle-cycle.md:91` F1·F10)
   - S2 상속을 없앤 결정은 4라운드 편집자의 F10(`reviews/round-4.md:131`)이고 U13은 "미정의"로 남았다(`reviews/round-4.md:65`). 뒤 라운드가 Q2의 "물려받아야 한다"를 이긴다(`ledger/README.md` §1의 4). 동작 변화로 소유자에게 보인 기록이 없어 통보 목록에 올린다.
   - WRITE-078(소유자 12-2: "자동 쓰기 아닙니까?", `reviews/round-18-owner-answers.md:12`), EVENT-060(소유자 12-5: "source 를 저장하는건 문제 없습니다", `reviews/round-18-owner-answers.md:15`), R12(`reviews/round-1.md`, 의도는 따로 기록해야 한다)
   - 오늘 S2의 상속: `src/core/nodes/ObjectNode/DETAIL.md:14,16`
@@ -2182,7 +2182,7 @@
   - 【추론】 같은 항목 객체를 조상들의 배열이 함께 쓴다(절대 경로라서 가능하다).
 - 근거:
   - VALUE-029, 12-8 셋째 소유자: "root node 에 핸들로 추가하고, 개별 노드는 rootNode 의 기능을 경유해서 node.inactiveValues 를 구현하면 어떨까 싶다."(`reviews/round-18-owner-answers.md:22`)
-  - VALUE-013(읽기는 계산하지 않는다), VALUE-012(참조 규칙), VALUE-004(저장되는 값은 자식 없는 노드에만), VALUE-002의 `raw` 행(VALUE-002), VALUE-023(루트의 JSON 값 트리는 버린 대안 — 중첩 객체 모양을 고르지 않는 까닭), 12-8 이어서(노드 인터페이스는 getter)
+  - VALUE-013(읽기는 계산하지 않는다), VALUE-012(참조 규칙), VALUE-004(저장되는 값은 자식 없는 노드에만), VALUE-002의 `source` 행(VALUE-002), VALUE-023(루트의 JSON 값 트리는 버린 대안 — 중첩 객체 모양을 고르지 않는 까닭), 12-8 이어서(노드 인터페이스는 getter)
   - Map이 아니라 배열인 까닭은 순서가 전순서로 고정되고, JSON으로 직렬화되며, 가장 직접적인 모양이기 때문이다.
 - 게이트:
   - PR: PR-2 벤치.
@@ -2517,7 +2517,7 @@
   - 【추론】 union 값 안(`/slot/key`)을 가리키는 `controls.injectTo` 대상은 동적 대상 없음 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`이다(CONTROLS-079).
   - 【추론】 어긋난 값을 로드하면 바꾸지 않고 그대로 들고, 경고등을 켜며, 받은 그대로 방출한다(WRITE-054, VALUE-033).
   - 【추론】 `trim`은 union 행의 `finishInput`이 맡으며, 현재 값이 문자열이면 자르고 그 결과를 `interpret`에 넘기고, 문자열이 아니면 아무것도 하지 않으며, 경고는 없다(CONTROLS-006).
-  - 【추론】 `valueTypeMismatch = raw !== undefined && !(raw === null && nullable) && !isMemberOfEffectiveList(raw)`이며, 원본과 노드의 현재 spec만의 함수다.
+  - 【추론】 `valueTypeMismatch = source !== undefined && !(source === null && nullable) && !isMemberOfEffectiveList(source)`이며, 원본과 노드의 현재 spec만의 함수다.
   - 【추론】 경고등은 커밋 때 원본이 바뀐 노드와, 같은 정착에서 유효 스키마가 바뀐 노드에서 다시 계산한다.
   - 【추론】 경고등은 그 노드의 경로가 루트의 경로 집합에 들어가는 커밋에 켜진다(ERROR-186).
   - 【추론】 `VALUE_TYPE_MISMATCH`는 경고등이 켜질 때마다 한 번 보내고, 켜진 채 다른 어긋난 값이 와도 다시 보내지 않는다.
@@ -2732,7 +2732,7 @@
   - 이주(LANDING-199): 호출자의 `setValue(V)`(`Overwrite`)는 오늘 브랜치에도 Refresh를 내어 하위 트리 전체를 다시 마운트하고(`08-design-a-to-z.md:471`의 오늘 칸), 새 설계에서는 원본이 실제로 바뀐 노드만 다시 마운트한다.
 - 근거:
   - T1-B #1(`reviews/raw-round18-tests/t1b-fill-consistency.md:41-59`): LANDING-042의 "reset과 같은 입력 판정이다"(`08-design-a-to-z.md:471`)와 LANDING-095의 "`setValue(V)`의 같은 입력 판정"(`09-landing-and-test-strategy.md:261`)은 "호출자의 전체 교체 `setValue(V)`(`Overwrite`)도 로드이므로"(`09-landing-and-test-strategy.md:94`)에 기대며, WRITE-090은 `setValue(V)`를 로드에서 뺐다.
-  - 출처 규칙: GOAL-053 보충의 "그 밖의 쓰기(전체 교체·`injectTo`·전이·다른 노드의 입력)가 raw를 바꾸면 낸다"(`reviews/round-4.md:128`), EVENT-039의 "로드는 값이 같아도 원본을 새로 쓰므로", WRITE-090의 "`setValue(getValue())`는 멱등이다"(`reviews/round-18-owner-answers.md:26`), WRITE-091(쓴 입력 자신은 Refresh를 받지 않음).
+  - 출처 규칙: GOAL-053 보충의 "그 밖의 쓰기(전체 교체·`injectTo`·전이·다른 노드의 입력)가 source를 바꾸면 낸다"(`reviews/round-4.md:128`), EVENT-039의 "로드는 값이 같아도 원본을 새로 쓰므로", WRITE-090의 "`setValue(getValue())`는 멱등이다"(`reviews/round-18-owner-answers.md:26`), WRITE-091(쓴 입력 자신은 Refresh를 받지 않음).
   - 실패 장면: 입력 중에 리스너가 `setValue(getValue())`를 부르면 LANDING-042의 읽기로는 모든 잎 입력이 다시 마운트되어 캐럿과 IME 상태를 잃는다(T-2, GOAL-053).
 - 게이트:
   - PR: PR-2(정착의 Refresh 대상)·PR-7(입력의 다시 마운트)

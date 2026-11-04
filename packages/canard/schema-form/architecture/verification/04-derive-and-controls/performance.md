@@ -2,11 +2,11 @@
 
 ## 환경과 재현
 
-2026-10-01에 `19c8d320e`에서 MacBookPro18,2(M1 Max, 64 GB), Darwin/arm64의 Node.js 26.10.0/V8과 `/opt/homebrew/bin/bun` 1.4.2/JSC를 순차 재실행했습니다. 다른 벤치·시험은 측정과 겹치지 않았습니다. 패키지 루트에서 실행한 명령은 다음과 같습니다.
+2026-10-01에 `19c8d320e`에서 MacBookPro18,2(M1 Max, 64 GB), Darwin/arm64의 Node.js 26.10.0/V8과 `{node-home}/bin/bun` 1.4.2/JSC를 순차 재실행했습니다. 다른 벤치·시험은 측정과 겹치지 않았습니다. 패키지 루트에서 실행한 명령은 다음과 같습니다.
 
 ```sh
 node --import tsx bench/derive-and-controls.bench.ts
-/opt/homebrew/bin/bun bench/derive-and-controls.bench.ts
+{node-home}/bin/bun bench/derive-and-controls.bench.ts
 ```
 
 TEST-071은 새 엔진의 `sameValue`를 직접 재어 **비교 비용**을 판정합니다. 같은 입력을 터미널 객체 원천의 `controls.injectTo`에 실제로 써서, 매 쓰기마다 대상이 바뀌고 규칙이 한 번 발화하는지도 확인했습니다. 배열 사례는 객체 원천의 `items`에 든 10,000원소 배열입니다. 배열 노드 자체를 `injectTo` 원천으로 삼는 경로는 06단계 범위입니다. 객체 사례의 `items`는 키 10,000개의 객체입니다.

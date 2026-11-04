@@ -13,7 +13,8 @@ import type {
 } from '@/schema-form/types';
 
 import { FormRoot } from './components/FormRoot';
-import type { FormHandle, FormProps } from './type';
+import type { FormHandle } from './types/handle';
+import type { FormProps } from './types/props';
 
 /** Root boundary is inside the instance reporter so fallback does not retire reporting. */
 const ErrorBoundedFormRoot = withErrorBoundaryForwardRef(

@@ -13,7 +13,7 @@ const profileSchema = {
 /** The value side of resetInteraction: edits and derived values survive the clear edge; state is read by the consumer. */
 export const resetInteractionScenario: FormScenario = {
   name: 'derivation.reset-interaction',
-  description: 'CONTROLS-029 resetInteraction (formerly pristine) resets dirty and touched on a rising edge and never touches values; SETTLE-006 it runs at commit beside derived, so the derived slug keeps following the name. Interaction stages come from resetInteractionStages.',
+  description: 'CONTROLS-029 resetInteraction (formerly pristine) resets edited and touched on a rising edge and never touches values; SETTLE-006 it runs at commit beside derived, so the derived slug keeps following the name. Interaction stages come from resetInteractionStages.',
   schema: profileSchema,
   initialValue: { name: 'kim', clear: false },
   steps: [
@@ -27,17 +27,17 @@ export interface ResetInteractionStage {
   readonly act: 'editName' | 'setClear' | 'unsetClear';
   /** Text typed into /name for editName, appended to the current value. */
   readonly text?: string;
-  /** dirty and touched of /name afterwards; a missing key is false. */
-  readonly nameState: Readonly<Partial<Record<'dirty' | 'touched', true>>>;
+  /** edited and touched of /name afterwards; a missing key is false. */
+  readonly nameState: Readonly<Partial<Record<'edited' | 'touched', true>>>;
   /** Values after the interaction; resetInteraction never changes them. */
   readonly values: Readonly<Record<string, unknown>>;
 }
 
 /** Interactions applied in order to resetInteractionScenario; only rising edges of /clear reset the state, so an edit while /clear stays true and the falling edge keep it. */
 export const resetInteractionStages: readonly ResetInteractionStage[] = [
-  { act: 'editName', text: 'a', nameState: { dirty: true, touched: true }, values: { '/name': 'kima', '/slug': 'kima' } },
+  { act: 'editName', text: 'a', nameState: { edited: true, touched: true }, values: { '/name': 'kima', '/slug': 'kima' } },
   { act: 'setClear', nameState: {}, values: { '/name': 'kima', '/slug': 'kima', '/clear': true } },
-  { act: 'editName', text: 'b', nameState: { dirty: true, touched: true }, values: { '/name': 'kimab', '/slug': 'kimab', '/clear': true } },
-  { act: 'unsetClear', nameState: { dirty: true, touched: true }, values: { '/name': 'kimab', '/clear': false } },
+  { act: 'editName', text: 'b', nameState: { edited: true, touched: true }, values: { '/name': 'kimab', '/slug': 'kimab', '/clear': true } },
+  { act: 'unsetClear', nameState: { edited: true, touched: true }, values: { '/name': 'kimab', '/clear': false } },
   { act: 'setClear', nameState: {}, values: { '/name': 'kimab', '/clear': true } },
 ];

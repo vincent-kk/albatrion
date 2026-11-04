@@ -6,6 +6,6 @@ export const warningScenario = {
   schema: { type: 'number' },
   steps: [
     { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'not a number' }],
-      expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.TYPE_MISMATCH'] } },
+      expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.MISFIT'] } },
   ],
 } satisfies FormScenario;

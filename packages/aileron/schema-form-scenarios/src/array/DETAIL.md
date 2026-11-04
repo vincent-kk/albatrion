@@ -17,7 +17,7 @@ prefixItems와 터미널 값은 minItems의 자동 채움을 전제하지 않으
 데이터는 관찰 가능한 기대값을 기록하며, 엔진·렌더 단언은 소비자가 소유한다.
 렌더 장면도 `array.` 주소와 각 최상위 단계의 기대값을 공유하며, reset 직전의 전체 값 쓰기 결과를 관찰한다(LANDING-149).
 
-일반 코어 표는 위치 재조정, 터미널 동사, Source-B 구조 장면을 제외한다. 전용 명세가 그 장면을 소비하고 상호 작용 상태, raw 사본, 이미 사용한 키의 단언을 더하며, 그 단언은 코어 소비자가 소유한다.
+일반 코어 표는 위치 재조정, 터미널 동사, Source-B 구조 장면을 제외한다. 전용 명세가 그 장면을 소비하고 상호 작용 상태, source 사본, 이미 사용한 키의 단언을 더하며, 그 단언은 코어 소비자가 소유한다.
 
 ## Acceptance Criteria
 
@@ -38,13 +38,13 @@ prefixItems와 터미널 값은 minItems의 자동 채움을 전제하지 않으
 | `extras-tail.scenario.ts` | `array.extras-tail` | push·pop에서 템플릿이 없는 꼬리 값을 extras에 보존한다. | TEST-018, NODE-052 |
 | `items-prefix.scenario.ts` | `array.items-prefix` | 선언된 자리에는 prefixItems를 쓰고 꼬리에는 반복되는 items 템플릿을 쓴다. | TEST-018, NODE-051, NODE-052 |
 | `landing-202.scenario.ts` | `array.landing-202` | 통째 쓰기에서 뒤쪽에 새로 생긴 객체 아이템만 채우고 기존의 빈 아이템은 유지한다. | LANDING-202, LANDING-203 |
-| `omit-trailing.scenario.ts` | `array.omit-trailing` | raw 아이템 자리를 유지하면서 방출 꼬리의 null 자리를 자른다. | TEST-018, VALUE-034, 37C-01 |
+| `omit-trailing.scenario.ts` | `array.omit-trailing` | source 아이템 자리를 유지하면서 방출 꼬리의 null 자리를 자른다. | TEST-018, VALUE-034, 37C-01 |
 | `pop-slot.scenario.ts` | `array.pop-slot` | 마지막 아이템과 그 스냅숏 자리만 제거한다. | TEST-018, NODE-051, WRITE-095 |
-| `position-reconcile.scenario.ts` | `array.position-reconcile` | 밀린 아이템의 키·노드 참조·dirty 상태·touched 상태를 새 위치에서 유지한다. | TEST-018, NODE-051, 41C-01 |
+| `position-reconcile.scenario.ts` | `array.position-reconcile` | 밀린 아이템의 키·노드 참조·edited 상태·touched 상태를 새 위치에서 유지한다. | TEST-018, NODE-051, 41C-01 |
 | `push-slot.scenario.ts` | `array.push-slot` | 기존 identity를 유지하고 push로 넣은 값을 스냅숏에 담으며 하위 트리 reset에서 그 값을 복원한다. | TEST-011, TEST-018, TEST-023, NODE-051, WRITE-099, 26C-02, 35C-03 |
 | `remove-slot.scenario.ts` | `array.remove-slot` | 남은 참조를 밀고 제거한 스냅숏 자리를 잘라 낸다. | TEST-018, NODE-051, WRITE-095, 41C-01 |
 | `source-b-structure.scenario.ts` | `array.source-b-structure` | 예산 초과 뒤 호출자의 Source B를 복원하고 생성된 아이템을 제거하며 이미 사용한 키를 보존한다. | TEST-018, NODE-051, WRITE-099 |
-| `terminal-verbs.scenario.ts` | `array.terminal-verbs` | 아이템 노드를 만들거나 직전 배열을 변경하지 않고 새로운 raw 배열 사본에 다섯 동사를 모두 적용한다. | TEST-018, NODE-005, NODE-053, 35C-03, 35C-12 |
+| `terminal-verbs.scenario.ts` | `array.terminal-verbs` | 아이템 노드를 만들거나 직전 배열을 변경하지 않고 새로운 source 배열 사본에 다섯 동사를 모두 적용한다. | TEST-018, NODE-005, NODE-053, 35C-03, 35C-12 |
 | `update-slot.scenario.ts` | `array.update-slot` | 아이템 identity와 기존 스냅숏을 보존하면서 한 자리에 쓴다. | TEST-018, NODE-051, WRITE-095 |
 | `whole-write.scenario.ts` | `array.whole-write` | 기존 자리를 재사용하고 뒤쪽의 새 아이템에는 undefined 스냅숏 자리를 준다. | NODE-051, NODE-053, WRITE-095 |
 

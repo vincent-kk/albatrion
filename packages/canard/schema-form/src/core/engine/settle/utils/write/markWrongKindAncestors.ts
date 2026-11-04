@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { isPlain } from './isPlain';
+import type { SettlementContext } from '../../types/settlement';
+import { isPlain } from '../input/isPlain';
 
 /**
  * Record object ancestors whose wrong-kind source may need conditional clearing.
@@ -17,8 +17,8 @@ export const markWrongKindAncestors = <Self extends FieldNodeRecord<Self>>(
     if (
       parent.behavior.type === 'object' &&
       parent.behavior.strategy === 'branch' &&
-      parent.raw !== undefined &&
-      !isPlain(parent.raw)
+      parent.source !== undefined &&
+      !isPlain(parent.source)
     )
       context.wrongKindHosts.add(parent);
     parent = parent.parent;

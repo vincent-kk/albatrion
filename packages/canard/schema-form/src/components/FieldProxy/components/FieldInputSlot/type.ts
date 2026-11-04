@@ -1,5 +1,7 @@
 import type { ComponentType, RefObject } from 'react';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 import { FieldNodeEventType } from '@/schema-form/core';
 import type { FieldInputBindingProps } from '@/schema-form/helpers/fieldInputDefinition';
@@ -15,7 +17,7 @@ export interface FieldInputSlotProps {
   onChangeRef: RefObject<ChildFieldProps['onChange']>;
   onFileAttachRef: RefObject<ChildFieldProps['onFileAttach']>;
   overrideProps: OverridableFieldInputProps;
-  PreferredFieldInput: ComponentType<FieldInputBindingProps> | null;
+  PreferredFieldInput: Nullable<ComponentType<FieldInputBindingProps>>;
   NodeProxy: ComponentType<FieldProxyProps>;
 }
 

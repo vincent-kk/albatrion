@@ -1,5 +1,7 @@
 import { expect, vi } from 'vitest';
 
+import { isTruthy } from '@winglet/common-utils/filter';
+
 import type {
   Blueprint,
   BlueprintSchema,
@@ -10,9 +12,9 @@ import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import * as blueprintApi from '../../../blueprint';
 import * as deriveApi from '../../../derive';
-import type { SettlementContext } from '../../type';
-import { deriveShadowEvaluation } from '../../utils/derivation/deriveShadowEvaluation';
-import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
+import { engineModes } from '../../../utils/cache/engineModes';
+import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
+import type { SettlementContext } from '../../types/settlement';
 import * as settlementApi from '../../utils/settlement/createSettlementContext';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 
@@ -41,7 +43,7 @@ export const runDeriveConvergenceCase = (
     | undefined;
   const enabled = process.env.ROUND99_SKIP !== 'off';
   const environment = process.env.NODE_ENV;
-  const shadowEnabled = deriveShadowEvaluation.enabled;
+  const shadowEnabled = engineModes.deriveShadow;
   const variants = enabled && environment === 'test' ? 3 : 2;
   if (enabled) expect(sidecar, 'first-write convergence proof').toBeDefined();
   const observations: string[][] = [];
@@ -49,7 +51,7 @@ export const runDeriveConvergenceCase = (
   for (let variant = 0; variant < variants; variant++) {
     if (variant === 2) {
       vi.stubEnv('NODE_ENV', 'development');
-      deriveShadowEvaluation.enabled = false;
+      engineModes.setMode('deriveShadow', false);
     }
     const { root, blueprint } = createTestTree(schema);
     if (variant === 0 || !enabled) sidecar?.set(blueprint, undefined);
@@ -87,7 +89,7 @@ export const runDeriveConvergenceCase = (
           else {
             const write = writes[step];
             let target = root;
-            const segments = write.path.split('/').filter(Boolean);
+            const segments = write.path.split('/').filter(isTruthy);
             for (const segment of segments) target = target.structure![segment];
             writeFieldNode(target, write.value, 'input', WriteOption.Overwrite);
           }
@@ -101,12 +103,12 @@ export const runDeriveConvergenceCase = (
           nodes.push({
             path: node.path,
             kind: node.blueprintNode.kind,
-            raw: node.raw,
+            source: node.source,
             emit: node.emit,
-            undeclaredValues: node.undeclaredValues,
-            readOnly: node.readOnly,
-            visible: node.visible,
-            disabled: node.disabled,
+            extras: node.extras,
+            isReadOnly: node.isReadOnly,
+            isVisible: node.isVisible,
+            isDisabled: node.isDisabled,
             errors: root.runtime.combinedErrors?.get(node.path),
             revisions: node.revisionLedger,
             delivery: node.pendingDelivery,
@@ -141,7 +143,7 @@ export const runDeriveConvergenceCase = (
       contextSpy.mockRestore();
       decisionSpy.mockRestore();
       if (variant === 2) {
-        deriveShadowEvaluation.enabled = shadowEnabled;
+        engineModes.setMode('deriveShadow', shadowEnabled);
         vi.stubEnv('NODE_ENV', environment);
       }
     }

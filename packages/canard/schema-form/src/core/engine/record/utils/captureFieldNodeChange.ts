@@ -1,5 +1,6 @@
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import type { FieldNodeRecord } from '../types/record';
+import { recordFieldNodeRevealBaseline } from './recordFieldNodeRevealBaseline';
 
 /** Field decisions that contribute to one committed event kind. */
 const CHANGE_BITS = {
@@ -7,10 +8,10 @@ const CHANGE_BITS = {
   emit: FieldNodeEventType.UpdateValue,
   path: FieldNodeEventType.UpdatePath,
   children: FieldNodeEventType.UpdateChildren,
-  active: FieldNodeEventType.UpdateControlledProperties,
-  visible: FieldNodeEventType.UpdateControlledProperties,
-  readOnly: FieldNodeEventType.UpdateControlledProperties,
-  disabled: FieldNodeEventType.UpdateControlledProperties,
+  isActive: FieldNodeEventType.UpdateControlledProperties,
+  isVisible: FieldNodeEventType.UpdateControlledProperties,
+  isReadOnly: FieldNodeEventType.UpdateControlledProperties,
+  isDisabled: FieldNodeEventType.UpdateControlledProperties,
   schema: FieldNodeEventType.UpdateJsonSchema,
   interactionState: FieldNodeEventType.UpdateState,
 };
@@ -33,6 +34,8 @@ export const captureFieldNodeChange = <
 ): Value => {
   if (node[field] === value || !node.deliveryInitialized || node.detached)
     return value;
+  if (field === 'interactionState' || field === 'isActive' || field === 'isVisible')
+    recordFieldNodeRevealBaseline(node);
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
     switch (bit) {
@@ -48,10 +51,10 @@ export const captureFieldNodeChange = <
         break;
       case FieldNodeEventType.UpdateControlledProperties:
         node.deliveryPreviousComputed =
-          +node.active |
-          (+node.visible << 1) |
-          (+node.readOnly << 2) |
-          (+node.disabled << 3);
+          +node.isActive |
+          (+node.isVisible << 1) |
+          (+node.isReadOnly << 2) |
+          (+node.isDisabled << 3);
         break;
       case FieldNodeEventType.UpdateJsonSchema:
         node.deliveryPreviousSchema = node.schema;

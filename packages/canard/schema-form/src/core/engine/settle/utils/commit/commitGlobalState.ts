@@ -1,17 +1,22 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
   publishGlobalStateDeltas,
 } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
- * Prepare ordered global-state candidates for the shared commit visitor.
+ * Accumulate global-state deltas for the departing and load sources and expose the visitor the commit uses for the five global sources.
+ * The visitor adds a node's state keys to the global counts when no state existed before, so `visit` must be called only for nodes
+ * from the five global sources (departing, entered, changed, stateDirty, load); `markCommitDeliveries` assembles the visit order and
+ * never passes an additional candidate to it.
  * @param context - Final shape facts, including revived perished candidates
- * @returns Candidate order, per-record delta accumulation and final publication
+ * @returns Departing/load sources, the global-source visitor and the delta publication
  */
 export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
@@ -28,39 +33,36 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
     departing.add(node);
     for (const child of node.children ?? []) pending.push(child);
   }
-  const nodes = new Set(departing);
-  for (const node of context.entered) nodes.add(node);
-  for (const node of context.changedNodes) nodes.add(node);
-  for (const node of context.stateDirtyNodes) nodes.add(node);
+  let loadNodes: Optional<Set<Self>>;
   if (
     context.kind === 'load' &&
     context.loadScope &&
     !context.loadScope.detached
   ) {
     const pending = [context.loadScope];
-    const visited = new Set<Self>();
+    loadNodes = new Set<Self>();
     while (pending.length) {
       const node = pending.pop();
-      if (!node || node.detached || visited.has(node)) continue;
-      visited.add(node);
-      nodes.add(node);
+      if (!node || node.detached || loadNodes.has(node)) continue;
+      loadNodes.add(node);
       for (const child of node.children ?? []) pending.push(child);
     }
   }
   return {
-    nodes,
+    departing,
+    loadNodes,
     visit(node: Self): void {
       const previousState =
         node.deliveryChanges & FieldNodeEventType.UpdateState
           ? (node.deliveryPreviousState ?? node.interactionState)
           : node.interactionState;
-      if (departing.has(node)) {
+      if (departing.size && departing.has(node)) {
         if (!context.entered.has(node) || node.deliveryInitialized)
           accumulateGlobalStateDeltas(deltas, previousState, {});
         if (node.detached) return;
       }
       if (node.detached) return;
-      if (context.entered.has(node)) {
+      if (context.entered.size && context.entered.has(node)) {
         accumulateGlobalStateDeltas(
           deltas,
           node.deliveryInitialized ? previousState : {},
@@ -68,7 +70,6 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
         );
         return;
       }
-      if (!nodes.has(node)) return;
       if (!hadGlobalState) {
         for (const key in node.interactionState)
           if (

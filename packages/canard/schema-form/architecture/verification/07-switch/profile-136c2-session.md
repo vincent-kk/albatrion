@@ -4,12 +4,12 @@
 
 ## 실행 환경과 입력
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`
-- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`
-- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`
+- 작업 트리: `{repo}`
+- D: `packages/canard/schema-form/architecture/verification/07-switch`
+- S: `{scratch}`
 - Node: `v26.11.1`
 - V8: `14.6.202.34-node.37`
-- Node 실제 경로: `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`
+- Node 실제 경로: `{node-home}/versions/node/v26.11.1/bin/node`
 - 엔진: Codex
 - 번들 매니페스트 기준 리비전: `e805074de8a9cb0c072a81284a166ab985a113be`
 
@@ -23,18 +23,18 @@
 
 ```sh
 "$HOME/.nvm/versions/node/v26.11.1/bin/node" \
-  /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
+  packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
   --kind=confirm --lane=react \
-  --rows=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/rows-fb-4.json \
-  --first-report=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136c/first-report.json \
-  --base=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r133-base \
-  --candidate=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r133-fbx \
+  --rows={scratch}/rows-fb-4.json \
+  --first-report={scratch}/session-136c/first-report.json \
+  --base={scratch}/bundles/r133-base \
+  --candidate={scratch}/bundles/r133-fbx \
   --blocks=24 \
-  --touch-counts=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-135-counts/react-counts.json \
-  --aa=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-132c/final.json \
+  --touch-counts={scratch}/session-135-counts/react-counts.json \
+  --aa={scratch}/session-132c/final.json \
   --node-version=v26.11.1 \
-  --out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136c2 \
-  > /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136c2.log 2>&1 &
+  --out={scratch}/session-136c2 \
+  > {scratch}/session-136c2.log 2>&1 &
 ```
 
 별도의 짧은 명령으로 최초 2초, 이후 각 55초를 sleep하고 진행 행을 한 줄씩 출력하였습니다. `final.json` 존재와 로그의 `SESSION_131_OK`를 함께 확인한 뒤 폴링을 종료하였습니다. 시작 셸에서 `nice(5) failed: operation not permitted`가 출력되었지만 러너는 사전 검사와 확인 worker 48개를 완료하였습니다. 옵션 또는 입력 거부는 없었으며 인수를 변경하거나 재실행하지 않았습니다.
@@ -134,3 +134,5 @@ round-128에서 수정한 124C-01의 최종 적용 결과, **면제된 회귀는
 최종 JSON은 2,927,601바이트로 5MB 이하이므로 압축하지 않았습니다. 요약은 3,845바이트, 입력 첫 보고는 34,237바이트, 러너의 first-report는 36,273바이트, SHA-256 목록은 14,538바이트입니다. 러너의 이번 first-report 파일에는 최종 `REJECT`가 기록되어 있으므로 원래 `CONFIRMATION_PENDING` 입력과 구별하여 둘 다 보존하였습니다. SHA-256 목록의 경로는 원 세션 디렉터리 기준이며 일부 첫 원자료는 136c 세션을 참조합니다. 원 worker 자료와 로그 `S/session-136c2.log`는 S에 남아 있습니다.
 
 최종 JSON의 SHA-256은 `377e1c0d8cff66b3eab60efca489709e76ef558a45b40f1e32f479a56f19cbe4`입니다. 입력 첫 보고의 SHA-256은 `75d6fa80d0cb7fc3d7872df01d08c6269937db546ad28c1be65f14e77f35939e`, 러너 first-report의 SHA-256은 `4adcea84061b04b26395bb4ebd28cc133dfb2bc6723836b58d3cea86cd00ddc4`입니다. 보존 파일의 원본과의 바이트 동일성, 각 파일의 5MB 상한 및 보고서의 산출물 링크 존재를 확인하였습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

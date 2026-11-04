@@ -5,7 +5,7 @@ import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
@@ -20,7 +20,7 @@ describe('settle derivation', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('A');
+    expect(root.structure?.target?.source).toBe('A');
   });
 
   it('SETTLE-048 no fire lets a caller value survive the same source', () => {
@@ -44,9 +44,9 @@ describe('settle derivation', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.raw).toBe('manual');
-    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('B');
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('B');
   });
 
   it('SETTLE-004 edge consumed does not reevaluate one source edge after its own write', () => {
@@ -58,7 +58,7 @@ describe('settle derivation', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe(2);
+    expect(root.structure?.target?.source).toBe(2);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 
@@ -75,8 +75,8 @@ describe('settle derivation', () => {
       { clear: true, target: 'X' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.raw).toBeUndefined();
-    expect(root.structure?.clear?.raw).toBe(true);
+    expect(root.structure?.target?.source).toBeUndefined();
+    expect(root.structure?.clear?.source).toBe(true);
   });
 
   it('WRITE-029 rebirth treats a newly active true unset rule as an edge', () => {
@@ -102,7 +102,7 @@ describe('settle derivation', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.target).toBeDefined();
-    expect(root.structure?.target?.raw).toBeUndefined();
+    expect(root.structure?.target?.source).toBeUndefined();
   });
 
   it('WRITE-015 suppress derive consumes the load edge without an automatic write', () => {
@@ -118,16 +118,16 @@ describe('settle derivation', () => {
       { source: 'A', target: 'manual' },
       WriteOption.DisableAutomaticWrites,
     );
-    expect(root.structure?.target?.raw).toBe('manual');
+    expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(
       root,
       { source: 'A', target: 'manual' },
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.raw).toBe('manual');
-    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('B');
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('B');
   });
 
   it('SETTLE-006 resetInteraction clears flags on a false to true edge', () => {
@@ -145,17 +145,17 @@ describe('settle derivation', () => {
     );
     const target = root.structure!.target;
     setTestInteractionState(target, {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
     const revision = target.revisionLedger[FieldNodeEventType.UpdateState] ?? 0;
     writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
-    expect(target.interactionState[FieldNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
     expect(
       target.revisionLedger[FieldNodeEventType.UpdateState],
     ).toBeGreaterThan(revision);
-    expect(target.raw).toBe('X');
+    expect(target.source).toBe('X');
   });
 
   it('28C-04 suppressed resetInteraction still clears flags on a load', () => {
@@ -179,7 +179,7 @@ describe('settle derivation', () => {
     );
     const target = root.structure!.target;
     setTestInteractionState(target, {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
     writeFieldNode(
@@ -188,8 +188,8 @@ describe('settle derivation', () => {
       'load',
       WriteOption.DisableAutomaticWrites,
     );
-    expect(root.structure?.target?.raw).toBe('manual');
-    expect(root.structure?.target?.interactionState[FieldNodeState.Dirty]).toBe(
+    expect(root.structure?.target?.source).toBe('manual');
+    expect(root.structure?.target?.interactionState[FieldNodeState.Edited]).toBe(
       false,
     );
     expect(
@@ -249,7 +249,7 @@ describe('settle derivation', () => {
         }),
       ]),
     );
-    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
     expect(root.runtime.settlementTrace).not.toBe(first);
   });
 
@@ -265,7 +265,7 @@ describe('settle derivation', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('A');
+    expect(root.structure?.target?.source).toBe('A');
   });
 
   it('CONTROLS-077 fragment derived uses the fragment host for each direct child', () => {
@@ -284,7 +284,7 @@ describe('settle derivation', () => {
       ],
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    expect(root.structure?.target?.raw).toBe('A');
+    expect(root.structure?.target?.source).toBe('A');
   });
 
   it('TEST-016 settle trace records a derived candidate that loses to unsetValue', () => {
@@ -367,7 +367,7 @@ describe('settle derivation', () => {
         },
       });
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-      expect(root.structure?.target?.raw).toBe('A');
+      expect(root.structure?.target?.source).toBe('A');
       expect('settlementTrace' in root.runtime).toBe(false);
     } finally {
       vi.unstubAllEnvs();

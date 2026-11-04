@@ -1,0 +1,80 @@
+# Ⅳ-3-0 프로파일 도구 재검토 판정 (수정 커밋 `5139642c2`)
+
+검토 범위는 `30f901de6..5139642c2`(커밋 1개, 20개 파일)입니다. 기준은 처음 계약서의 공식이 아니라, 코디네이터가 작업자에게 보낸 후보 1 결정 12항목입니다. 아래에서 `tools/iv-3-0/`는 `packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/`를 뜻합니다. 작업 트리의 파일은 수정하지 않았습니다. 정식 프로파일, build, 오래 걸리는 시험은 돌리지 않았습니다. 실행한 것은 `node --check`, 합성 시험 `checkTools.mjs`(1초 미만), 변경 파일에 한정한 Prettier·ESLint·`tsc --allowJs --checkJs`, 그리고 `prepare.mjs`의 새 사전 검사를 root를 만들지 않고 재현한 스크래치 스크립트입니다. 저장소 사본은 Prettier로 표를 정렬한 것 외에는 원본과 같으며, 추가로 치환할 기계 경로는 없었습니다.
+
+## 판정
+
+**조건부 PASS**입니다. P1 0건, P2 0건, P3 5건입니다.
+
+12항목은 모두 결정대로 반영되었고, 가중 self 계산도 맞습니다. 남은 것은 결과 문서의 표 하나가 깨지는 문제를 포함한 위생 항목뿐입니다. 조건은 하나입니다. **P3-1(교차 확인 표의 구분줄)을 `prepare.mjs`를 돌리기 전에 고쳐야 합니다.** `tools/iv-3-0/helpers/hashInputs.mjs:15`가 도구 디렉터리 전체를 입력 해시에 넣고, `profile.mjs:22,175`와 `checkResults.mjs:77`이 그 해시를 다시 대조합니다. 따라서 준비 뒤에 도구를 고치면 새 root가 필요합니다. 나머지 P3도 같은 이유로 준비 전에 고치는 편이 낫습니다.
+
+## 가중 self 계산의 검산
+
+- **표본 시각과 첫 표본.** `tools/iv-3-0/helpers/attributeSamples.mjs:31,39`는 표본 i의 시각을 `startTime`에 `timeDeltas[0..i]`를 누적해 구합니다. V8 형식에서 첫 간격은 `startTime` 기준이므로 맞습니다. 첫 간격은 시각 계산에만 쓰이고 가중치로는 쓰이지 않습니다. 예행의 간격 요약도 `rehearse.mjs:71`에서 첫 간격을 뺍니다.
+- **가중치.** `attributeSamples.mjs:47`은 `timeDeltas[index + 1]`(다음 표본까지의 시간)을 쓰고, 프로파일의 마지막 표본만 자기 간격으로 대신합니다. Chrome DevTools와 같은 관례입니다. 함수별 값(`:104`), 갈래 합(`:115-123`), 결정 합(`:136-143`), 백분율(`:107`)이 모두 이 가중치에서 나옵니다. 요청 간격 기준 값은 `:105-106`과 `:165`에 보조 값으로만 남습니다.
+- **예열 제외.** 선택은 여전히 표본 시각을 블록 구간과 비교해 정합니다(`:40-46`). 간격이 고르지 않아도 블록 경계마다 오차는 한 간격 이하입니다. 경계 앞뒤 오차는 평균적으로 서로 상쇄되므로, 경계 약 42개(양보 40번과 처음·끝)에서 생기는 흔들림은 관측 시간의 1 % 미만입니다. V8 시각이 약 41.7 µs 단위로 내림되어도 앞뒤 경계에 대칭으로 작용하므로 치우침이 생기지 않습니다.
+- **교차 확인.** `:125`는 활성 가중치 합 ÷ 20,000, `:155-157`은 그것을 같은 블록의 평균 벽시계(`summarizeWall.mjs:11-13`)와 ±15 %로 비교합니다. 비율은 사실상 1에서 `(program)`·`(idle)` 몫을 뺀 값이 됩니다.
+- **합성 시험 손 계산.** `checkTools.mjs:22-62`의 기대값을 다시 계산했습니다. 시각은 50, 130, 210, 250, 370, 450, 530, 610이고, 블록 [100, 550] 안의 표본은 6개입니다. 가중치는 `FieldNode` 80, `selectChildren` 40, GC 120, `(program)` 80, `(idle)` 80, `unknown` 80입니다. 따라서 self 320, nominal 200, 실측 평균 간격 80, 비율 320/450, 제외 비율 160/480, 결정 A 80·B 40이며, 모두 단언과 일치합니다. `node checkTools.mjs`는 `IV_3_0_TOOLS_OK`를 출력했습니다.
+- **음수 간격.** `summarizePeriods.mjs:8-12`는 음수 간격에서 예외를 던집니다. 앞선 탐침 프로파일 8개(표본 약 27만 개)에는 음수 간격이 하나도 없었습니다. 만약 생기더라도 `profile.mjs:139-151`의 귀속 실패 경로로 중단 기록이 남으므로 안전한 실패입니다.
+
+## 12항목 대조
+
+| 항목                          | 판정              | 근거                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1-1 실측 간격 가중           | 반영됨            | 위 검산. 결과 문서는 행마다 요청 간격, 실측 평균 간격, 양자화 대역 간격 추정, 표본 수(활성과 제외)를 냅니다(`renderReport.mjs:42-48`). 백분위와 0 간격 수는 `:56`에 있습니다. ±15 % 규칙과 50 µs에서 25 µs로 한 번 다시 도는 규칙은 `profile.mjs:83,162-169`에 그대로 있습니다. 예행은 실측 간격을 `rehearsal.json`에 남기고(`rehearse.mjs:71,87`), 실행 시작 때 출력합니다(`profile.mjs:56-61`).                                                                                                                                                                                                                                                                                      |
+| P1-2 게이트 평가 제외         | 반영됨            | `branches.json:84-107`의 `decisions.B`에 세 함수가 없습니다. `groups.B`에는 `:47-49`로 남고, 주석 칸은 `:136-141`의 `nonReplaceableGateEvaluation`입니다. 결과 문서는 그 합을 따로 출력합니다(`renderReport.mjs:109-121`). 합성 시험이 제외를 단언합니다(`checkTools.mjs:97-102`).                                                                                                                                                                                                                                                                                                                                                                                                     |
+| P2-1 평균 기준 교차 확인      | 반영됨            | `attributeSamples.mjs:124,155-157`. 중앙값 비율은 `:156`에 있고, 표에 함께 나옵니다(`renderReport.mjs:31-36`). 합성 시험은 꼬리가 긴 블록으로 평균과 중앙값을 구분합니다(`checkTools.mjs:75-93`).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| P2-2 매핑표 정리              | 반영됨            | 없는 이름 8개를 지우고 `branches.json:7`에 기록했습니다. 실제 `finalizeExits` 계열 4개가 `:25-28`에서 A로 갔고, `transitionSettlement`는 `:57`에서 B로 갔습니다. 이름 없는 방문 함수와 `inLoadScope`는 URL과 줄, 근거, 고정 문자열로 매핑했습니다(`:116-135`). 번들 15324행과 15315행이 그 문자열을 담고 있고 region도 `finalizeExits.ts`임을 확인했습니다. 준비 단계가 이를 다시 검사하며(`prepare.mjs:52-66`), 매핑된 모든 이름이 번들에 있는지도 검사합니다(`:67-75`). 재현 결과 누락은 0개였습니다. 근거가 없는 이름 없는 프레임은 OTHER로 남습니다(`attributeSamples.mjs:87-100`, `checkTools.mjs:144-151`). 계약서 밖에서 더한 이름의 근거는 `branches.json:142-157`에 있습니다. |
+| P2-3 결정 수치 정의           | 반영됨(P3-2 참고) | 주 A 합은 생성자, `cloneSlotSubtree`, `getRetainedChildEntry`이고 overlay Map 복사는 한 번만 셉니다(`branches.json:83`, 주석 `:4`). 확장 합은 `:109-115`와 `attributeSamples.mjs:172-174`, 참고 표기는 `renderReport.mjs:105-108`에 있습니다. B는 "보조 함수 제외" 표현으로 바뀌었고(`:98,136`, `branches.json:5`), 도구 안에 "상한"이 긍정문으로 남은 곳은 없습니다. 인라이닝 주의문은 탐침 사실로 줄었습니다(`renderReport.mjs:136`, `README.md`).                                                                                                                                                                                                                                   |
+| P2-4 실제 경로 정규화         | 반영됨            | `profile.mjs:17`, `rehearse.mjs:15,69`, `publish.mjs:10`은 실제 경로를 쓰고, `prepare.mjs:16-19`는 부모를 정규화합니다. 차이 여부는 `prepare.mjs:97`, `rehearse.mjs:90`, `profile.mjs:185`에 기록되고 결과 문서 `renderReport.mjs:19`에 나옵니다. 엔진 프레임이 하나도 없으면 실패합니다(`attributeSamples.mjs:111-114`, `checkTools.mjs:94-96`).                                                                                                                                                                                                                                                                                                                                      |
+| P2-5 별도 plain 프로세스      | 반영됨            | `helpers/runPlain.mjs:15-40`이 정숙 관문 뒤 수집기 없이 같은 작업 프로세스를 돌립니다. 예열 2,000회와 관측 20,000회입니다(`worker.mjs:19-21,26,33`). 행마다 한 번 돌고(`profile.mjs:76-82`), 행·횟수·Node가 같은지와 프로세스가 다른지를 단언합니다(`attributeSamples.mjs:127-135`). 부담 비율은 `:152-153`, 결과 문서는 `renderReport.mjs:25,42-48`입니다. Ⅳ-0과의 참고 비교는 plain만 씁니다(`:157-172`). 기준값 157.146, 56.708, 56.812는 `iv-0-results.md` 1절 E 열(37, 43, 32행)과 일치합니다.                                                                                                                                                                                    |
+| P3-1 TSDoc                    | 반영됨            | 내보낸 함수 9개(`attributeSamples`, `summarizePeriods`, `summarizeWall`, `runBlocks`, `runPlain`, `hashInputs`, `sanitizeProfile`, `setupOperation`, `renderReport`)가 모두 `@param`과 `@returns`를 갖추었고, 실패 조건이 있는 곳에는 `@throws`가 있습니다.                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| P3-2 제품 기준과 build 신선도 | 반영됨            | `prepare.mjs:23-46`이 기준 커밋과의 소스 차이, 작업 트리 변경, `dist` 수정 시각을 검사합니다. 재현 결과 기준 차이는 0이었고, `dist`(18:10:19Z)가 가장 늦은 소스(18:08:26Z)보다 늦었습니다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| P3-3 귀속 실패 기록           | 반영됨            | `profile.mjs:139-151`이 `attribute.stderr`를 남기고 `attribution-failure`로 중단 기록을 씁니다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| P3-4 범위 규칙 경로           | 반영됨            | `branches.json:77`이 전체 region 경로를 쓰고, `attributeSamples.mjs:85`가 정확히 같은지 비교합니다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| P3-5 필수 출력 명시           | 반영됨(P3-1 참고) | OTHER 전체 목록은 `renderReport.mjs:82-90`, 20 % 폐기 규칙은 `:123-133`, single-flat-1000 고정비 주인은 `:138-152`에 있습니다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+## P1 — 프로파일 수치나 판정을 틀리게 만드는 것
+
+없습니다.
+
+## P2 — 결과 문서의 독자를 오도하는 것
+
+없습니다.
+
+## P3 — 위생
+
+### P3-1. 교차 확인 표의 구분줄이 머리줄보다 한 칸 많아, 결과 문서에서 표로 그려지지 않습니다 (확인됨, 이번 커밋의 회귀)
+
+`tools/iv-3-0/helpers/renderReport.mjs:31`의 머리줄은 9칸이고, 데이터 줄(`:36`)도 9칸입니다. 그런데 `:32`의 구분줄은 10칸입니다. GitHub의 표 규칙은 머리줄과 구분줄의 칸 수가 다르면 표로 인식하지 않으므로, 결과 문서의 핵심 표가 파이프 문자로 이어진 문단으로 보입니다. 정렬 표시도 한 칸씩 밀려 있습니다. **수정 명세.** `:32`를 `'| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: |',`로 바꿉니다(행, 평균, 중앙값, self, 두 비율, ±15 %, nominal, 제외 비율 순서). 다시 생기지 않도록 `checkTools.mjs`의 보고서 단언 뒤에, 렌더링 결과에서 `| --- ` 또는 `| ---: `로 시작하는 줄마다 바로 윗줄과 칸 수가 같은지 단언을 더합니다. 검증은 `node tools/iv-3-0/checkTools.mjs`입니다. 이 수정은 `prepare.mjs` 전에 해야 합니다.
+
+### P3-2. A 확장 합의 `getSlotChildIndex`에는 갈래 A가 없애지 않는 호출도 들어갑니다 (확인됨, 첫 판정의 서술을 바로잡습니다)
+
+첫 판정에서 저는 `getSlotChildIndex`를 `getRetainedChildEntry` 탐색의 일부로만 적었는데, 이는 불완전했습니다. `src/core/engine/settle/utils/slots/` 아래에서 `getSlotChildIndex`는 `getRetainedChildEntry.ts:28` 말고도 `getSlotEntries.ts:48-49`(정렬 비교 함수), `getSlotOrder.ts:24`, `getSlotEntryPosition.ts:14`, `prepareSourcePruner.ts:46`에서도 불립니다. 이 네 호출은 슬롯 순서와 정리 작업이므로 본체를 보존해도 남습니다. 따라서 확장 합(`attributeSamples.mjs:172-174`)은 A가 없애는 몫보다 클 수 있습니다. 결과 문서가 확장 합을 "주 판정을 대체하지 않는 참고값"으로 적으므로 판정에는 영향이 없습니다. 또 `branches.json:29`에서 `getSlotChildIndex`를 A에 넣었지만 `familyEvidence`에 근거 줄이 없습니다. **수정 명세.** `renderReport.mjs:107`의 문장 끝에 "getSlotChildIndex는 슬롯 순서·정리 함수 네 곳에서도 불리므로 이 확장 합은 A가 없애는 몫보다 클 수 있습니다."를 더합니다. `branches.json`의 주석 `:4`에 같은 취지의 한 문장을, `familyEvidence`에 `"getSlotChildIndex": "Slot child-order lookup used by getRetainedChildEntry and by slot ordering/pruning; node lifetime A, over-approximates the A-removable share."`를 더합니다. 검증은 Prettier와 `checkTools.mjs`입니다.
+
+### P3-3. 게이트 평가 세 함수의 이름이 매핑표와 보고서에 따로 적혀 있습니다 (확인됨)
+
+`branches.json:137`에 `nonReplaceableGateEvaluation.names`가 있지만, `renderReport.mjs:113-117`은 같은 세 이름을 직접 적어 합산합니다. 한쪽만 고치면 보고서가 조용히 어긋납니다. **수정 명세.** `attributeSamples.mjs`의 반환값에 `nonReplaceableGateEvaluationUs: table.filter((entry) => mapping.nonReplaceableGateEvaluation.names.includes(entry.name)).reduce((sum, entry) => sum + entry.selfUsPerSwitch, 0)`을 더하고, `renderReport.mjs:111-120`은 `table.nonReplaceableGateEvaluationUs.toFixed(3)`을 출력하게 바꿉니다. `checkTools.mjs`의 합성 결과에 이 칸이 0인지 단언을 더합니다. 검증은 `checkTools.mjs`입니다.
+
+### P3-4. single-flat-1000은 표본이 적은데, 고정비 주인 목록에 함수별 표본 수가 없습니다 (개연성, Ⅳ-0 수치로 추정)
+
+Ⅳ-0 1절의 single-flat-1000 값은 10쓰기에 56.812 µs이므로 잎 한 쓰기는 약 5.7 µs입니다. 그러면 20,000회 관측은 약 114 ms이고, 실측 간격 약 80 µs에서 표본은 약 1,400개입니다. 표본 하나가 동작당 약 0.004 µs에 해당하므로, 표본이 수십 개인 함수의 몫은 상대 오차가 20 %를 넘을 수 있습니다. 행 전체 표본 수는 `renderReport.mjs:47`에 나오지만, `:149-151`의 고정비 주인 목록과 `:76`의 상위 40개 표에는 함수별 표본 수가 없습니다. **수정 명세.** `renderReport.mjs:150`의 출력에 `, 표본 ${entry.samples}개`를 더하고, `:71-77`의 상위 40개 표에 "표본" 열을 더합니다(`entry.samples`는 이미 표에 있습니다). 검증은 `checkTools.mjs`의 보고서 단언에 `/표본 \d+개/`를 더하는 것입니다.
+
+### P3-5. 저장소에 복사한 첫 판정이 원본과 다르지만, 그 사실이 적혀 있지 않습니다 (확인됨)
+
+`architecture/verification/branch-switch/reviews/iv-3-0-tools-candidate-1-claude.md`는 원본과 두 곳이 다릅니다. 하나는 Prettier의 표 정렬이고, 다른 하나는 72행의 임시 경로 세 개를 `<temporary-root>`, `<temporary-root-alias>`, `<canonical-temporary-root>`로 바꾼 것입니다. 기계 경로는 남아 있지 않습니다. 남은 경로 비슷한 문자열은 환경 변수 이름 `$TMPDIR`과 합성 `file:///fixture/...`뿐입니다. 다만 검토 기록이 원본과 다르다는 사실이 문서에 없습니다. **수정 명세.** 이 파일의 첫 문단 끝에 "저장소 사본은 기계 경로 세 곳을 자리표시자로 바꾸고 Prettier로 표를 정렬한 것 외에는 원본과 같습니다." 한 문장을 더합니다. 검증은 Prettier입니다.
+
+## 회귀 점검에서 통과한 항목
+
+- 변경은 `tools/iv-3-0/` 아래 19개 파일과 `reviews/` 아래 1개 파일뿐입니다. `510962d63..5139642c2` 범위에서 제품 소스, `package.json`, `rolldown.config.mjs` 변경은 0개입니다. 새로 더한 줄에 기계 경로는 없습니다.
+- `node --check`(모든 `.mjs`), `checkTools.mjs`, Prettier(도구, JSON, README, 복사한 판정), ESLint(`--max-warnings 0`), `tsc --allowJs --checkJs`가 모두 종료 코드 0이었습니다.
+- `prepare.mjs`의 새 사전 검사를 재현하면 이 작업 트리에서 모두 통과합니다. 프레임 주소 2개는 고정 문자열과 region이 맞고, 매핑 이름 누락은 0개이며, 기준 차이는 0이고, `dist`가 모든 소스보다 새것입니다.
+- 공개와 재검산의 흐름도 일관됩니다. plain 디렉터리는 `wall.json`과 `quiet.json`만 공개되고(`publish.mjs`), 재검산은 각 행의 plain 벽시계를 함께 읽어 표를 다시 만들며(`checkResults.mjs`), 두 곳 모두 표를 `outcome.results` 순서로 정렬합니다. 귀속 실패로 표가 없는 디렉터리도 프로파일은 공개됩니다.
+- 동작 변화가 하나 있습니다. `prepare.mjs:17`이 root의 부모를 실제 경로로 바꾸므로 부모 디렉터리가 없으면 측정 전에 실패합니다. 측정 전의 실패이므로 안전합니다.
+- 커밋 메시지는 개수를 담고 있고 공동 작성자나 세션 식별자가 없습니다.
+
+## 확인하지 못한 것
+
+- 실제 행의 프로파일은 돌리지 않았습니다. 그래서 실제 표본에서 교차 확인 비율, `(program)` 몫, 양자화 대역 추정이 기대대로 나오는지는 측정하지 않았습니다.
+- 음수 간격이 실제 행에서 나오지 않는다는 것은 합성 탐침 8개에 근거한 판단입니다.
+- 패키지 전체 lint와 build는 지시에 따라 돌리지 않았습니다.

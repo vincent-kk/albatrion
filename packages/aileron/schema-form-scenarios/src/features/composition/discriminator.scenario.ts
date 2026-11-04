@@ -9,7 +9,7 @@ const paymentSchema = {
   ],
 };
 
-/** A discriminator switch keeps raw values and reports an unmatched tag on the tag node. */
+/** A discriminator switch keeps source values and reports an unmatched tag on the tag node. */
 export const discriminatorScenario: FormScenario = {
   name: 'composition.discriminator-tag-switch',
   description: 'FRAGMENT-006 explicit discriminator gates; FRAGMENT-048 hoisted tag node; LANDING-011 no refill; VALIDATE-043 (6) unmatched tag errors on the tag node.',

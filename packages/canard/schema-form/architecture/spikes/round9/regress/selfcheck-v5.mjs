@@ -25,7 +25,7 @@ import {
   object,
   pathOf,
   prime,
-  rawTree,
+  sourceTree,
   remove,
   removeKey,
   reset,
@@ -64,7 +64,7 @@ const H = (name, kids) => {
   for (const k of kids) attach(h, k);
   return h;
 };
-const state = (r) => `emit=${J(valueOf(r))} raw=${J(rawTree(r))} active=${J(activeIds(r))} rounds=${lastSettle.rounds} status=${r.settle.status}`;
+const state = (r) => `emit=${J(valueOf(r))} source=${J(sourceTree(r))} active=${J(activeIds(r))} rounds=${lastSettle.rounds} status=${r.settle.status}`;
 const req = (k) => G({ required: [k] });
 const notReq = (k) => G({ not: { required: [k] } });
 const kConst = (k, v) => G({ required: [k], properties: { [k]: { const: v } } });
@@ -86,11 +86,11 @@ function scenarioA() {
     const r1 = mk(); write(r1.index.get('a'), 'x'); write(r1.index.get('b'), 'y');
     const r2 = mk(); write(r2.index.get('b'), 'y'); write(r2.index.get('a'), 'x');
     const r3 = mk(); setValue(r3, { a: 'x', b: 'y' });
-    const F = (r) => `emit=${J(valueOf(r))} raw=${J(rawTree(r))}`;
+    const F = (r) => `emit=${J(valueOf(r))} source=${J(sourceTree(r))}`;
     info('A3-1a a-then-b', F(r1));
     info('A3-1a b-then-a', F(r2));
     info('A3-1a setValue', F(r3));
-    check(valueOf(r1).x === rawTree(r1).x && valueOf(r2).x === rawTree(r2).x && valueOf(r3).x === 2, 'A3-1a: emit.x == raw.x in every order (history lives in raw, E1); full replacement picks the last active declaration (x=2)', `x: ${valueOf(r1).x}/${valueOf(r2).x}/${valueOf(r3).x}`);
+    check(valueOf(r1).x === sourceTree(r1).x && valueOf(r2).x === sourceTree(r2).x && valueOf(r3).x === 2, 'A3-1a: emit.x == source.x in every order (history lives in source, E1); full replacement picks the last active declaration (x=2)', `x: ${valueOf(r1).x}/${valueOf(r2).x}/${valueOf(r3).x}`);
   }
   // ---- redteam3 A3-1b
   {
@@ -126,11 +126,11 @@ function scenarioA() {
     ]);
     prime(r, {});
     setValue(r, { q: 'Q' });
-    check(same(valueOf(r), { q: 'Q' }) && rawTree(r).deep === undefined, 'A3-1d: nested fragment stays off (not traversed) while its enclosing then is off — round-3 defect gone', state(r));
+    check(same(valueOf(r), { q: 'Q' }) && sourceTree(r).deep === undefined, 'A3-1d: nested fragment stays off (not traversed) while its enclosing then is off — round-3 defect gone', state(r));
     setValue(r, { p: 'P', q: 'Q' });
     check(same(valueOf(r), { p: 'P', q: 'Q', inner: 'I', deep: 'DEEP' }), 'A3-1d: both on when p present', state(r));
   }
-  // ---- redteam3 A3-2 / codex A3-2-chain (raw present, and default-driven)
+  // ---- redteam3 A3-2 / codex A3-2-chain (source present, and default-driven)
   {
     const N = 30;
     const mk = (reverse, withDefaults) => {
@@ -147,7 +147,7 @@ function scenarioA() {
       resetCounters();
       const r = mk(rev, false);
       const keys = Object.keys(valueOf(r)).length;
-      check(keys === N + 1 && lastSettle.sweeps === (rev ? N + 1 : 2) && lastSettle.rounds === 1, `A3-2 ${rev ? 'reverse' : 'forward'} chain (raw present): ${rev ? 'N+1=31' : '2'} sweeps, 1 round`, `keys=${keys} sweeps=${lastSettle.sweeps} guards=${counters.guards} rounds=${lastSettle.rounds} status=${r.settle.status}`);
+      check(keys === N + 1 && lastSettle.sweeps === (rev ? N + 1 : 2) && lastSettle.rounds === 1, `A3-2 ${rev ? 'reverse' : 'forward'} chain (source present): ${rev ? 'N+1=31' : '2'} sweeps, 1 round`, `keys=${keys} sweeps=${lastSettle.sweeps} guards=${counters.guards} rounds=${lastSettle.rounds} status=${r.settle.status}`);
     }
     for (const rev of [false, true]) {
       resetCounters();
@@ -271,7 +271,7 @@ function scenarioA() {
       { from: r.index.get('u'), to: r.index.get('t'), map: (v) => (v ?? 0) + 1 },
     ]);
     setValue(r, { t: 0, u: 0 });
-    check(same(valueOf(r), rawTree(r)) && lastSettle.rounds === ROUND_CAP && r.settle.status === 'budget-exceeded', 'A4a: cap 25, committed emit == raw (last executed round)', state(r));
+    check(same(valueOf(r), sourceTree(r)) && lastSettle.rounds === ROUND_CAP && r.settle.status === 'budget-exceeded', 'A4a: cap 25, committed emit == source (last executed round)', state(r));
   }
   // ---- redteam3 A4b: injectTo from a child inside a fragment its own write turns off
   {
@@ -282,7 +282,7 @@ function scenarioA() {
     setValue(r, {});
     info('A4b load', state(r));
     write(r.index.get('t'), undefined);
-    check(same(valueOf(r), SWITCHES.INJECT_TO_EDGE ? undefined : { t: 'from-undefined' }) && r.index.get('c').raw === undefined, 'A4b: no provisional c survives; edge mode commits empty base, level mode derives from undefined', state(r));
+    check(same(valueOf(r), SWITCHES.INJECT_TO_EDGE ? undefined : { t: 'from-undefined' }) && r.index.get('c').source === undefined, 'A4b: no provisional c survives; edge mode commits empty base, level mode derives from undefined', state(r));
   }
   // ---- redteam3 A4c: injectTo 17 into a host
   {
@@ -292,9 +292,9 @@ function scenarioA() {
     setValue(r, { src: 'go', host: { a: 'A', b: 'B' } });
     const s1 = state(r);
     const host = r.index.get('host');
-    const bRaw = host.index.get('b').raw;
+    const bSource = host.index.get('b').source;
     write(host.index.get('a'), 'A2');
-    check((SWITCHES.INJECT_TO_EDGE ? same(valueOf(r).host, { a: 'A2', b: 'BD' }) && lastSettle.rounds === 1 : valueOf(r).host === 17 && lastSettle.rounds === 2) && bRaw === 'BD', 'A4c: an unchanged source preserves the partial host edit in edge mode; historical level mode replaces it', `after inject: ${s1} b.raw=${J(bRaw)}; after partial: ${state(r)}`);
+    check((SWITCHES.INJECT_TO_EDGE ? same(valueOf(r).host, { a: 'A2', b: 'BD' }) && lastSettle.rounds === 1 : valueOf(r).host === 17 && lastSettle.rounds === 2) && bSource === 'BD', 'A4c: an unchanged source preserves the partial host edit in edge mode; historical level mode replaces it', `after inject: ${s1} b.source=${J(bSource)}; after partial: ${state(r)}`);
   }
   // ---- redteam3 A5a: branches with different k defaults -> E8 first branch
   {
@@ -315,17 +315,17 @@ function scenarioA() {
     setValue(r, null);
     const s1 = state(r);
     write(r.index.get('note'), 'Z');
-    check(same(valueOf(r), { note: 'Z' }) && rawTree(r).keep === undefined, 'A6a/A6-C1-null: null is a full replacement — keep erased, note default injected under null, partial write un-nulls: {note:Z}', `null: ${s1}; write: ${state(r)}`);
+    check(same(valueOf(r), { note: 'Z' }) && sourceTree(r).keep === undefined, 'A6a/A6-C1-null: null is a full replacement — keep erased, note default injected under null, partial write un-nulls: {note:Z}', `null: ${s1}; write: ${state(r)}`);
   }
   // ---- redteam3 A6b: injection under a null host
   {
     const r = H('', [L('a'), L('d')]);
     declareFragments(r, [{ id: 'allOf0.then', guard: notReq('a'), declares: ['d'], defaults: { d: 'D' } }]);
     prime(r, null);
-    const s1 = `${state(r)} d.raw=${J(r.index.get('d').raw)}`;
-    const dRaw = r.index.get('d').raw;
+    const s1 = `${state(r)} d.source=${J(r.index.get('d').source)}`;
+    const dSource = r.index.get('d').source;
     write(r.index.get('a'), 'A');
-    check(dRaw === 'D' && same(valueOf(r), { a: 'A' }), 'A6b: under null, G={} turns `not required a` on and d default is injected (load contract (i) under null, D-1)', `null: ${s1}; write a: ${state(r)}`);
+    check(dSource === 'D' && same(valueOf(r), { a: 'A' }), 'A6b: under null, G={} turns `not required a` on and d default is injected (load contract (i) under null, D-1)', `null: ${s1}; write a: ${state(r)}`);
   }
   // ---- redteam3 A6c
   {
@@ -373,10 +373,10 @@ function scenarioA() {
     write(r2.index.get('kind'), 'b');
     const replaced = J(valueOf(r2));
     setValue(r2, initial);
-    const resetRawB = rawTree(r2).b;
+    const resetSourceB = sourceTree(r2).b;
     setValue(r2, valueOf(r2));
     write(r2.index.get('kind'), 'b');
-    check(partial === '{"kind":"b","base":"BASE","b":"SECRET","extra":7}' && replaced === '{"kind":"b","base":"BASE"}' && resetRawB === 'SECRET' && rawTree(r2).b === undefined, 'C1-write-kinds (codex): partial keeps latent b, replacement drops it, reset restores it, re-emit round-trip has no b', `partial=${partial} replaced=${replaced} resetRaw.b=${resetRawB} reemit=${J(valueOf(r2))}`);
+    check(partial === '{"kind":"b","base":"BASE","b":"SECRET","extra":7}' && replaced === '{"kind":"b","base":"BASE"}' && resetSourceB === 'SECRET' && sourceTree(r2).b === undefined, 'C1-write-kinds (codex): partial keeps latent b, replacement drops it, reset restores it, re-emit round-trip has no b', `partial=${partial} replaced=${replaced} resetSource.b=${resetSourceB} reemit=${J(valueOf(r2))}`);
   }
   // ---- redteam3 C2-extra
   {
@@ -385,7 +385,7 @@ function scenarioA() {
     prime(r, { kind: 'a', e: 'EXTRA' });
     const s1 = J(valueOf(r));
     write(r.index.get('kind'), 'b');
-    check(s1 === '{"kind":"a"}' && same(valueOf(r), { kind: 'b', e: 'EXTRA' }) && r.extras === null, 'C2-extra (E16): a key declared by an inactive fragment goes to the child raw, not extras; it appears when the fragment turns on, no default injected', `load=${s1} switch=${state(r)} extras=${J(r.extras)}`);
+    check(s1 === '{"kind":"a"}' && same(valueOf(r), { kind: 'b', e: 'EXTRA' }) && r.extras === null, 'C2-extra (E16): a key declared by an inactive fragment goes to the child source, not extras; it appears when the fragment turns on, no default injected', `load=${s1} switch=${state(r)} extras=${J(r.extras)}`);
   }
   // ---- redteam3 C3 / codex C3-host-type
   {
@@ -394,7 +394,7 @@ function scenarioA() {
     prime(r, { host: { a: 'A', b: 'B', x: 'EXTRA' } });
     const s0 = J(valueOf(r));
     setValue(r.index.get('host'), 17);
-    const s1 = `${J(valueOf(r))} ajv=${validate(schema, valueOf(r))} b.raw=${J(rawTree(r).host)}`;
+    const s1 = `${J(valueOf(r))} ajv=${validate(schema, valueOf(r))} b.source=${J(sourceTree(r).host)}`;
     write(r.index.get('host').index.get('a'), 'A2');
     check(s0 === '{"host":{"a":"A","b":"B","x":"EXTRA"}}' && same(valueOf(r), { host: { a: 'A2', b: 'BD' } }), 'C3: 17 = full replacement (extras and a erased, b default injected); partial write revives {a:A2, b:BD}', `load=${s0} after17=${s1} partial=${J(valueOf(r))}`);
     for (const input of ['broken', []]) {
@@ -427,7 +427,7 @@ function scenarioA() {
     out(rows.map((s) => `    ${s}`).join('\n'));
     const r = prime(mk(), { k: 'cat' });
     write(r.index.get('k'), 'dog');
-    check(same(valueOf(r), { k: 'dog' }) && rawTree(r).meow === 'M', 'a33: {} and {k:cat} are valid (k default = first branch, meow injected); zzz preserved and rejected; cat->dog drops meow from emit, keeps raw', `cat->dog: ${state(r)}`);
+    check(same(valueOf(r), { k: 'dog' }) && sourceTree(r).meow === 'M', 'a33: {} and {k:cat} are valid (k default = first branch, meow injected); zzz preserved and rejected; cat->dog drops meow from emit, keeps source', `cat->dog: ${state(r)}`);
   }
 
   // ---- codex A3-1-select (selection slot)
@@ -441,7 +441,7 @@ function scenarioA() {
     const first = J(valueOf(r));
     setValue(r, { a: 1, b: 2 });
     const second = J(valueOf(r));
-    check(first === '{"a":1,"b":2}' && second === first && same(rawTree(r), { a: 1, b: 2 }), 'A3-1-unconditional: both pure branches stay on; full replacement preserves both values', `sel0=${first} sel1=${second} raw=${J(rawTree(r))}`);
+    check(first === '{"a":1,"b":2}' && second === first && same(sourceTree(r), { a: 1, b: 2 }), 'A3-1-unconditional: both pure branches stay on; full replacement preserves both values', `sel0=${first} sel1=${second} source=${J(sourceTree(r))}`);
   }
   // ---- codex A3-1-value-guards
   {
@@ -482,7 +482,7 @@ function scenarioA() {
     const loaded = prime(mk(), { kind: 'cat' });
     const nul = prime(mk(), null);
     const scalar = prime(mk(), 17);
-    check(same(loaded.emit, { kind: 'cat', meow: true }) && nul.emit === null && scalar.emit === 17 && activeIds(nul).length === 0, 'A3-3/A3-4-host: null and 17 hosts emit their raw, no branch on (G={}), children exist', `empty=${J(valueOf(empty))} loaded=${J(valueOf(loaded))} null=${J(valueOf(nul))} nullChildren=${J(rawTree(nul))} scalar=${J(valueOf(scalar))}`);
+    check(same(loaded.emit, { kind: 'cat', meow: true }) && nul.emit === null && scalar.emit === 17 && activeIds(nul).length === 0, 'A3-3/A3-4-host: null and 17 hosts emit their source, no branch on (G={}), children exist', `empty=${J(valueOf(empty))} loaded=${J(valueOf(loaded))} null=${J(valueOf(nul))} nullChildren=${J(sourceTree(nul))} scalar=${J(valueOf(scalar))}`);
   }
   // ---- codex A4-cap (derive semantics)
   {
@@ -490,7 +490,7 @@ function scenarioA() {
     prime(r, { n: 0 });
     declareInjections(r, [{ from: r.index.get('n'), to: r.index.get('n'), map: (v) => Math.min(30, (v ?? 0) + 1) }]);
     write(r.index.get('n'), 0);
-    check(valueOf(r).n === rawTree(r).n && lastSettle.rounds === (SWITCHES.INJECT_TO_EDGE ? 1 : ROUND_CAP), 'A4-cap: same-value write costs one round in edge mode, historical level mode reaches the cap', state(r));
+    check(valueOf(r).n === sourceTree(r).n && lastSettle.rounds === (SWITCHES.INJECT_TO_EDGE ? 1 : ROUND_CAP), 'A4-cap: same-value write costs one round in edge mode, historical level mode reaches the cap', state(r));
   }
   // ---- codex A6-automatic (injectTo into a child under a null host)
   {
@@ -501,14 +501,14 @@ function scenarioA() {
     setValue(r.index.get('host'), null);
     const s1 = state(r);
     write(r.index.get('src'), 'b');
-    check(valueOf(r).host === null && rawTree(r).host === null, 'A6-automatic: injectTo into a child of a null host is a full replacement of the leaf, not a partial write — the host stays null (A5 literal)', `after null: ${s1}; after inject: ${state(r)}`);
+    check(valueOf(r).host === null && sourceTree(r).host === null, 'A6-automatic: injectTo into a child of a null host is a full replacement of the leaf, not a partial write — the host stays null (A5 literal)', `after null: ${s1}; after inject: ${state(r)}`);
   }
   // ---- codex C2-load
   {
     const rows = [];
     for (const input of [{}, { n: '' }, { n: null }, { n: {} }, { n: 0 }, { n: false }]) {
       const r = prime(H('', [L('n', 'D')]), { ...input, extra: 42 });
-      rows.push(`${J(input)} -> raw.n=${J(rawTree(r).n)} emit=${J(valueOf(r))}`);
+      rows.push(`${J(input)} -> source.n=${J(sourceTree(r).n)} emit=${J(valueOf(r))}`);
     }
     out(rows.map((s) => `    ${s}`).join('\n'));
     const rows2 = rows.map((s) => s.includes('extra":42'));
@@ -516,7 +516,7 @@ function scenarioA() {
     const tail = array('tail', () => L(0));
     tail.omitTrailing = true;
     const r = prime(H('', [tail]), { tail: ['a', null, null] });
-    check(same(valueOf(r), { tail: ['a'] }) && same(rawTree(r).tail, ['a', null, null]), 'C2-load omitTrailing: raw keeps [a,null,null], emit [a]', state(r));
+    check(same(valueOf(r), { tail: ['a'] }) && same(sourceTree(r).tail, ['a', null, null]), 'C2-load omitTrailing: source keeps [a,null,null], emit [a]', state(r));
   }
   // ---- codex C1-activation-default
   {
@@ -524,7 +524,7 @@ function scenarioA() {
     declareFragments(r, [{ id: 'then', guard: kConst('on', true), declares: ['child'], defaults: { child: 'D' } }]);
     prime(r, { on: false });
     write(r.index.get('on'), true);
-    check(same(rawTree(r), { on: true, child: 'D' }), 'C1-activation-default: a partial write that turns a fragment on injects the default (transition)', state(r));
+    check(same(sourceTree(r), { on: true, child: 'D' }), 'C1-activation-default: a partial write that turns a fragment on injects the default (transition)', state(r));
   }
 }
 
@@ -566,7 +566,7 @@ function scenarioC() {
     const r = prime(mk1(), filled);
     const t = r.index.get('target');
     setValue(r, { target: null });
-    check(same(valueOf(r), { target: null }) && t.index.get('note').raw === undefined && t.index.get('reason').raw === 'because', "line 31: after setValue({target:null}) emit {target:null}; note reads '' (absent), reason reads 'because'", `emit=${J(valueOf(r))} note.raw=${J(t.index.get('note').raw)} reason.raw=${J(t.index.get('reason').raw)} refreshed=${J(lastSettle.refreshed)}`);
+    check(same(valueOf(r), { target: null }) && t.index.get('note').source === undefined && t.index.get('reason').source === 'because', "line 31: after setValue({target:null}) emit {target:null}; note reads '' (absent), reason reads 'because'", `emit=${J(valueOf(r))} note.source=${J(t.index.get('note').source)} reason.source=${J(t.index.get('reason').source)} refreshed=${J(lastSettle.refreshed)}`);
     write(t.index.get('note'), 'again');
     check(same(valueOf(r), { target: { note: 'again', reason: 'because' } }), "line 42: typing note='again' promotes to exactly the blank form plus the write", J(valueOf(r)));
   }
@@ -610,7 +610,7 @@ function scenarioC() {
 // ======================================================================= d
 function scenarioD() {
   out('d. chains / negated guard fixpoint / self-negating budget');
-  info('chains', 'see a. A3-2 rows (raw-present: forward 2 sweeps, reverse 31; default-driven: ROUND_CAP)');
+  info('chains', 'see a. A3-2 rows (source-present: forward 2 sweeps, reverse 31; default-driven: ROUND_CAP)');
   info('negated guard + other activation', 'see a. A3-4A/option-B row (ajv-accepted fixpoint {seed:true,x:1})');
   info('self-negating', 'see a. A3-4C row (budget-exceeded, no throw in prod, dev throws after commit)');
   const r = H('', [L('x'), L('y'), L('z')]);
@@ -620,7 +620,7 @@ function scenarioD() {
   ]);
   prime(r, { x: 1, y: 1 });
   const composed = { type: 'object', allOf: [{ if: { not: { required: ['x'] } }, then: { properties: { y: {} } }, else: { not: { required: ['y'] } } }, { if: { required: ['y'] }, then: { properties: { x: {} } } }] };
-  check(r.settle.status === 'budget-exceeded', 'v3 scenario h (mutual: notX declares y, reqY declares x, raw {x:1,y:1}): NO fixpoint under option B -> budget-exceeded, A fixed at the last sweep; ajv rejects the emit while {} would pass -> A4-1 "reaches a fixpoint" is not general', `${state(r)} sweeps=${r.settle.sweeps} ajv=${validate(composed, valueOf(r))} ajv({})=${validate(composed, {})}`);
+  check(r.settle.status === 'budget-exceeded', 'v3 scenario h (mutual: notX declares y, reqY declares x, source {x:1,y:1}): NO fixpoint under option B -> budget-exceeded, A fixed at the last sweep; ajv rejects the emit while {} would pass -> A4-1 "reaches a fixpoint" is not general', `${state(r)} sweeps=${r.settle.sweeps} ajv=${validate(composed, valueOf(r))} ajv({})=${validate(composed, {})}`);
 }
 
 // ======================================================================= e
@@ -634,7 +634,7 @@ function scenarioE() {
   const s1 = state(r);
   check(same(valueOf(r), { flag: 'on', child: { p: 'P', r: 'R', q: 'Q' } }), 'lifted then declaring grandchild q: q injected and child fragment (required q) chains to r', `${s1} childActive=${J(activeIds(child))}`);
   write(r.index.get('flag'), undefined);
-  check(same(valueOf(r), { child: { p: 'P' } }) && rawTree(r).child.q === 'Q', 'parent guard off -> overlay off -> q and r disappear from emit (raw kept)', `${state(r)} childActive=${J(activeIds(child))}`);
+  check(same(valueOf(r), { child: { p: 'P' } }) && sourceTree(r).child.q === 'Q', 'parent guard off -> overlay off -> q and r disappear from emit (source kept)', `${state(r)} childActive=${J(activeIds(child))}`);
   write(r.index.get('flag'), 'on');
   check(same(valueOf(r), { flag: 'on', child: { p: 'P', r: 'R', q: 'Q' } }), 'parent guard on again -> q and r reappear', state(r));
 }

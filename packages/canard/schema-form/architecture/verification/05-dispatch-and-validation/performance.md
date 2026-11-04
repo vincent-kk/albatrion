@@ -2,22 +2,22 @@
 
 ## 환경과 재현
 
-2026-10-01에 MacBookPro18,2(Apple M1 Max, 64 GB), Darwin 25.6.0/arm64에서 순차 측정했습니다. 이 worktree의 HEAD는 `70ffd59a6`이며 05의 세 결함 수정과 벤치 공정성 보정이 적용되어 있습니다. 실제 측정 런타임은 일반 셸의 `/Users/Vincent/.nvm/versions/node/v24.20.0/bin/node`(**Node.js v24.20.0/V8**)와 `/opt/homebrew/bin/bun`(**Bun 1.4.2/JSC**)입니다. 로그인 셸의 `node`는 v26.10.0을 가리키므로 아래 명령은 일반 셸에서 실행했습니다. 측정 중 다른 벤치나 시험을 겹쳐 실행하지 않았습니다.
+2026-10-01에 MacBookPro18,2(Apple M1 Max, 64 GB), Darwin 25.6.0/arm64에서 순차 측정했습니다. 이 worktree의 HEAD는 `70ffd59a6`이며 05의 세 결함 수정과 벤치 공정성 보정이 적용되어 있습니다. 실제 측정 런타임은 일반 셸의 `{node-home}/versions/node/v24.20.0/bin/node`(**Node.js v24.20.0/V8**)와 `{node-home}/bin/bun`(**Bun 1.4.2/JSC**)입니다. 로그인 셸의 `node`는 v26.10.0을 가리키므로 아래 명령은 일반 셸에서 실행했습니다. 측정 중 다른 벤치나 시험을 겹쳐 실행하지 않았습니다.
 
 저장소 루트에서 실행한 05 명령은 다음과 같습니다. Node의 소스 별칭에는 `TSX_TSCONFIG_PATH`가 필요했고 Bun은 추가 설정 없이 실행됐습니다.
 
 ```sh
 TSX_TSCONFIG_PATH=packages/canard/schema-form/tsconfig.json node --import tsx packages/canard/schema-form/bench/dispatch-and-validation.bench.ts
-/opt/homebrew/bin/bun packages/canard/schema-form/bench/dispatch-and-validation.bench.ts
+{node-home}/bin/bun packages/canard/schema-form/bench/dispatch-and-validation.bench.ts
 ```
 
 03·04 벤치는 자식 프로세스의 `bench/...` 상대 경로를 위해 저장소 루트에서 아래처럼 패키지 디렉터리를 작업 디렉터리로 지정해, 각각 Node와 Bun에서 순차 실행했습니다. 출력은 `jq`로 표본 배열을 제외하고 집계값만 표시했습니다.
 
 ```sh
 (cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)
-(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/node-and-settle.bench.ts)
+(cd packages/canard/schema-form && {node-home}/bin/bun bench/node-and-settle.bench.ts)
 (cd packages/canard/schema-form && node --import tsx bench/derive-and-controls.bench.ts)
-(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/derive-and-controls.bench.ts)
+(cd packages/canard/schema-form && {node-home}/bin/bun bench/derive-and-controls.bench.ts)
 ```
 
 첫 측정은 레거시의 스키마 변형과 비동기 마운트 누락, 웨이브 타이머 바닥 비용 때문에 폐기했고 아래 수치로 대체했습니다.

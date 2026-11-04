@@ -32,7 +32,7 @@
 
 | Scene file | Scene name | Behavior verified | Why the ledger did not decide it |
 | --- | --- | --- | --- |
-| `finding-restricted-input.scenario.ts` | `values.finding-restricted-input-out-of-domain` | 문자열 enum 선택 상자는 집합 밖 값을 맨 앞의 비활성 선택지로 그대로 보이고, 날짜 입력은 형식에 맞지 않는 문자열을 고칠 수 있는 text 입력으로 그대로 보인다. | REACT-027은 형이 어긋난 값만 다루고(여기서 typeMismatch는 거짓), REACT-033은 기본 입력이 enum·format의 뜻을 약속하지 않는다고 적는다. |
+| `finding-restricted-input.scenario.ts` | `values.finding-restricted-input-out-of-domain` | 문자열 enum 선택 상자는 집합 밖 값을 맨 앞의 비활성 선택지로 그대로 보이고, 날짜 입력은 형식에 맞지 않는 문자열을 고칠 수 있는 text 입력으로 그대로 보인다. | REACT-027은 형이 어긋난 값만 다루고(여기서 misfit는 거짓), REACT-033은 기본 입력이 enum·format의 뜻을 약속하지 않는다고 적는다. |
 
 ## Last Updated
 

@@ -7,7 +7,11 @@ export function applyInteraction(
 ): void {
   const node = handle.findNode(interaction.path);
   if (!node) throw new Error(`Missing interaction path: ${interaction.path}`);
-  if (interaction.kind === 'remove') node.remove(interaction.index);
-  else if (interaction.kind === 'push') node.push(interaction.value);
-  else node.setValue(interaction.value);
+  if (interaction.kind === 'set') node.setValue(interaction.value);
+  else {
+    if (node.type !== 'array')
+      throw new Error(`Expected array interaction path: ${interaction.path}`);
+    if (interaction.kind === 'remove') node.remove(interaction.index);
+    else node.push(interaction.value);
+  }
 }

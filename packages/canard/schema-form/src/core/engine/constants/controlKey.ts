@@ -11,6 +11,7 @@ export const CONTROL_KEY = {
   unsetValue: 'unsetValue',
   resetInteraction: 'resetInteraction',
   unsetOnInactive: 'unsetOnInactive',
+  inactiveValue: 'inactiveValue',
   fields: 'fields',
   injectTo: 'injectTo',
   discriminator: 'discriminator',

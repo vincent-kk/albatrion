@@ -19,7 +19,7 @@ const contactSchema = {
 export const cx23NullableBranchObject: CompositeCase = {
   scenario: {
     name: 'composite.cx23-nullable-branch-object',
-    description: 'A null contact turns no channel branch on, so phone is absent while the output stays null (VALUE-015 keeps only fixed children); an object write promotes it without filling the sibling label default; a channel switch inside the promoted object swaps phone for email and keeps the phone raw value (LANDING-018); writing null drops every child again.',
+    description: 'A null contact turns no channel branch on, so phone is absent while the output stays null (VALUE-015 keeps only fixed children); an object write promotes it without filling the sibling label default; a channel switch inside the promoted object swaps phone for email and keeps the phone source value (LANDING-018); writing null drops every child again.',
     schema: contactSchema,
     initialValue: { contact: null },
     steps: [

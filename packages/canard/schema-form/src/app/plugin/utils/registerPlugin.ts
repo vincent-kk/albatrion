@@ -1,6 +1,8 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { createFingerprintFactory } from '@winglet/common-utils/object';
 
+import type { Nullable } from '@aileron/declare';
+
 import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 
 import type { SchemaFormPlugin } from '../type';
@@ -195,7 +197,7 @@ const getPluginKey = createFingerprintFactory();
  * - Use `null` parameter to reset ALL plugins to system defaults
  * - After reset, previously registered plugins need to be re-registered
  */
-export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
+export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
   if (plugin === null) {
     PluginManager.reset();
     RegisteredPlugin.clear();

@@ -130,7 +130,7 @@
 
 이주(LANDING-125): 단일 노드 파서(`parseNumber`는 숫자가 아닌 문자를 지우고 `Math.trunc`로 자름 `src/core/parsers/parseNumber.ts:31-39`, `parseBoolean`은 참 거짓 판정 `parseBoolean.ts:34-41`, `parseString(true)`는 `''` `parseString.ts:34-38`)는 공통 이주를 따른다(WRITE-075의 변환 목록, 실패는 값 보존과 경고등)(LANDING-125).
 
-`onError` 기록의 level은 `warning`이다(LANDING-126). 값을 보존하므로 폼의 약속은 지켜진다(LANDING-126). error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다(LANDING-126). `SCHEMA_FORM_WARNING.TYPE_MISMATCH`를 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)(LANDING-126, SURFACE-061). 소유자(12-7 답): "형변환 실패로 문제가 생기는 경우에 대한 대응은 FormType 이 하기로 했잖아. 그래서 개발단계에서는 중요한데, 리얼부터는 어쩔 수 없다고 생각하긴 해. warning 이면 되지않을까?"(LANDING-126) 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`."(LANDING-126)
+`onError` 기록의 level은 `warning`이다(LANDING-126). 값을 보존하므로 폼의 약속은 지켜진다(LANDING-126). error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다(LANDING-126). `SCHEMA_FORM_WARNING.MISFIT`을 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)(LANDING-126, SURFACE-061). 소유자(12-7 답): "형변환 실패로 문제가 생기는 경우에 대한 대응은 FormType 이 하기로 했잖아. 그래서 개발단계에서는 중요한데, 리얼부터는 어쩔 수 없다고 생각하긴 해. warning 이면 되지않을까?"(LANDING-126) 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`."(LANDING-126)
 
 검증기가 있든 없든 보낸다(core의 parse가 찾는 것이라 검증 결과가 아니다)(LANDING-127).
 
@@ -446,7 +446,7 @@ LANDING-081–LANDING-087 표의 '그대로 쓰는 것'은 가져오는 코드�
 
 | PR | 내용 | 의존 | 착수 전 닫을 것 |
 | --- | --- | --- | --- |
-| PR-2 노드 트리와 정착 | 노드: 상속 없는 단일 클래스 `SchemaNode`(`src/core/SchemaNode/`)와 `BEHAVIORS[type][strategy]`의 동작 행(잎 넷·객체·터미널 객체·가상. PR-2의 동작 행에 `union` 행이 다른 잎 행과 함께 든다(BLUEPRINT-035). 터미널 배열은 PR-5), `src/core/record/`·`src/core/behaviors/`·`src/core/navigation/`, 공개 `type`·`strategy` 게터와 `active` 게터(노드 게이트), 겉면 규칙의 기계 검사(파일 한정 린트, 멤버 목록 시험, 행 칸 순서 시험). `raw`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층과 하위 트리·잠복 자손으로 내려가는 정책, R17-2 ㄴ)·커밋, 예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `raw`, 이전 `extras`, 배열 아이템 구조의 생성·폐기이며 중간 라운드 채움의 철회보다 먼저 적용한다. 각 PR은 자기가 들여오는 기제를 검증하므로 PR-2가 실제 코드로 시험하는 예산은 호스트 바퀴와 전이 라운드이고, 파생 라운드 예산은 PR-3, 되먹임 파동과 `onChange` 중첩 예산은 PR-4, 원본 B의 배열 아이템 구조 기록은 PR-5가 맡는다(TEST-069)), `diagnostics`(`'stable'` 또는 `'degraded'`, `cause`, `commit`, R17-1 나), `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | 18라운드 안건 B·C·D(`controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면, 프로토타입 v7)와 노드 구조(N2(탐색이 기대는 `subnodes`·`variant`의 존폐), N5(런타임 형의 타입 순환), N6(레코드에서 공개 판별 합집합으로의 형 변환), N14, 공개 표면의 크기, `ContextNode`의 자리)(PROCESS-027) |
+| PR-2 노드 트리와 정착 | 노드: 상속 없는 단일 클래스 `SchemaNode`(`src/core/SchemaNode/`)와 `BEHAVIORS[type][strategy]`의 동작 행(잎 넷·객체·터미널 객체·가상. PR-2의 동작 행에 `union` 행이 다른 잎 행과 함께 든다(BLUEPRINT-035). 터미널 배열은 PR-5), `src/core/record/`·`src/core/behaviors/`·`src/core/navigation/`, 공개 `type`·`strategy` 게터와 `active` 게터(노드 게이트), 겉면 규칙의 기계 검사(파일 한정 린트, 멤버 목록 시험, 행 칸 순서 시험). `source`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층과 하위 트리·잠복 자손으로 내려가는 정책, R17-2 ㄴ)·커밋, 예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `source`, 이전 `extras`, 배열 아이템 구조의 생성·폐기이며 중간 라운드 채움의 철회보다 먼저 적용한다. 각 PR은 자기가 들여오는 기제를 검증하므로 PR-2가 실제 코드로 시험하는 예산은 호스트 바퀴와 전이 라운드이고, 파생 라운드 예산은 PR-3, 되먹임 파동과 `onChange` 중첩 예산은 PR-4, 원본 B의 배열 아이템 구조 기록은 PR-5가 맡는다(TEST-069)), `diagnostics`(`'stable'` 또는 `'degraded'`, `cause`, `commit`, R17-1 나), `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | 18라운드 안건 B·C·D(`controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면, 프로토타입 v7)와 노드 구조(N2(탐색이 기대는 `subnodes`·`variant`의 존폐), N5(런타임 형의 타입 순환), N6(레코드에서 공개 판별 합집합으로의 형 변환), N14, 공개 표면의 크기, `ContextNode`의 자리)(PROCESS-027) |
 
 (LANDING-082, WRITE-052, NODE-056, WRITE-056, BLUEPRINT-030, BLUEPRINT-044, NODE-043, BLUEPRINT-043, BLUEPRINT-035)
 
@@ -591,7 +591,7 @@ LANDING-081–LANDING-087 표의 '그대로 쓰는 것'은 가져오는 코드�
 
 **위험이 모이는 곳은 PR-7이다.**(LANDING-071) PR-1 – PR-6은 `<Form>`에 닿지 않으므로 사용자 관점의 동작은 PR-7에서 처음 검증된다(LANDING-071). 완화: PR-2부터 엔진 수준의 통합 시나리오(TEST-004의 상황 목록)를 각 PR에 넣고, PR-4 뒤에 차등 테스트(독립 검증기와의 판정 동치)를 돌린다(LANDING-071).
 
-**PR-7을 더 쪼갤 수 없는 이유.**(LANDING-072) 옛 엔진과 새 엔진은 값의 소유(다중 사본 대 `raw` 하나), 통지(마이크로태스크 배치 대 동기 1회), 분기(자동 감지 대 게이트)가 다르다(LANDING-072). `<Form>`이 둘을 동시에 섬길 수 없고, 렌더 시나리오의 기대값도 한 계약에만 맞는다(LANDING-072).
+**PR-7을 더 쪼갤 수 없는 이유.**(LANDING-072) 옛 엔진과 새 엔진은 값의 소유(다중 사본 대 `source` 하나), 통지(마이크로태스크 배치 대 동기 1회), 분기(자동 감지 대 게이트)가 다르다(LANDING-072). `<Form>`이 둘을 동시에 섬길 수 없고, 렌더 시나리오의 기대값도 한 계약에만 맞는다(LANDING-072).
 
 `src/__legacy__/`는 PR-7이 지우지 않고 정리·릴리스 PR(PR-8)까지 참고용으로 보존한다(LANDING-205, LANDING-067). PR-7은 진입점을 새 엔진으로 바꾸고 새 코드가 레거시를 가리키는 import가 0임을 점검한다(LANDING-205). 디렉토리 삭제는 PR-8이 한다(LANDING-205). 우산 브랜치에 딸려 들어온 무관한 파일(`.seiri/.gitignore`, 벤치 결과)은 정리하지 않는다(LANDING-205). 소유자(개발계획 P2): "레거시는 마지막까지 보존. 참고용."(LANDING-205). 소유자(개발계획 P2): "무관한 커밋을 굳이 정리할 필욘 없어."(LANDING-205).
 
@@ -756,7 +756,7 @@ PR-7의 시험: 터미널 입력의 다시 마운트(`reset.pristine:267-309`의
 
 【추론】 (가) PR-2는 예산 다섯 가운데 호스트 바퀴와 전이 라운드를 실제 코드로 시험한다: 초과 시 원본 B 커밋, `diagnostics`의 `'degraded'`·`cause: 'budget'`·`exceededBudget`(`'hostWheel'`·`'transition'`), 다음 로드까지의 지속(TEST-069). 【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다(TEST-069). 【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다(TEST-069).
 
-【추론】 PR-2는 원본 B의 되돌림 기록 가운데 노드·이전 `raw`·이전 `extras`와 객체 자식의 생김·빠짐을 시험한다(TEST-069). 【추론】 PR-2는 정착 오류의 throw를 시험한다(TEST-069). 【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`)(TEST-069). 【추론】 커밋과 `diagnostics` 뒤 그 호출의 끝에서 던지는 것을 시험한다(TEST-069). 【추론】 PR-2는 식·가드 실패의 자리별 값과 `cause: 'expression'`을 시험하며, 식은 PR-1의 실제 컴파일러를 쓴다(TEST-069). 【추론】 PR-2는 `SetValueOption` 넷(억제 비트는 PR-2에 있는 자동 쓰기인 채움에 대해)과 로드의 새 수명을 시험한다(TEST-069). 【추론】 PR-2는 나감 비움 가운데 노드 자신의 층과 Form 속성 층을 시험한다(TEST-069). 【추론】 그 값은 참·거짓 리터럴이고, 하위 트리로 내려감, 자손의 `false`가 이김, 선언의 나감, 잠복 자손 비움, `extras` 불변을 포함한다(TEST-069). 【추론】 PR-2는 노드 구조 시험 전부, 린트 설정, `active` 게터, SETTLE-042의 키 순서(직렬화 단언 포함), TEST-070의 형 게이트를 시험한다(TEST-069).
+【추론】 PR-2는 원본 B의 되돌림 기록 가운데 노드·이전 `source`·이전 `extras`와 객체 자식의 생김·빠짐을 시험한다(TEST-069). 【추론】 PR-2는 정착 오류의 throw를 시험한다(TEST-069). 【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`)(TEST-069). 【추론】 커밋과 `diagnostics` 뒤 그 호출의 끝에서 던지는 것을 시험한다(TEST-069). 【추론】 PR-2는 식·가드 실패의 자리별 값과 `cause: 'expression'`을 시험하며, 식은 PR-1의 실제 컴파일러를 쓴다(TEST-069). 【추론】 PR-2는 `SetValueOption` 넷(억제 비트는 PR-2에 있는 자동 쓰기인 채움에 대해)과 로드의 새 수명을 시험한다(TEST-069). 【추론】 PR-2는 나감 비움 가운데 노드 자신의 층과 Form 속성 층을 시험한다(TEST-069). 【추론】 그 값은 참·거짓 리터럴이고, 하위 트리로 내려감, 자손의 `false`가 이김, 선언의 나감, 잠복 자손 비움, `extras` 불변을 포함한다(TEST-069). 【추론】 PR-2는 노드 구조 시험 전부, 린트 설정, `active` 게터, SETTLE-042의 키 순서(직렬화 단언 포함), TEST-070의 형 게이트를 시험한다(TEST-069).
 
 "노드 구조 시험(행 칸 순서 시험: 모든 행의 칸 키와 순서가 같음. 겉면 멤버 목록 시험: 프로토타입 멤버 이름과 `SchemaNode/`의 `DETAIL.md` 목록의 일치. 공개 index 키 목록: 내부 통로가 `src/index.ts`에 없음. 행 고르기 함수의 조합 전수. 공개 형의 키 목록 타입 시험. `isTerminalNode`가 터미널 객체도 좁힘), `SchemaNode` 클래스 파일에 거는 린트 설정, `active` 게터"(TEST-069).
 
@@ -1092,3 +1092,56 @@ D-15 순환 스키마의 출발점: 2항(조건에 쓰는 프로퍼티는 `prope
 【추론】 측정 방법을 고정한다(TEST-075). 【추론】 ESM 진입(`dist/index.mjs`)을 esbuild로 minify하고 gzip -9 하며, 의존성은 외부로 둔다(TEST-075). 【추론】 기준은 v0.16.0(2026-09-21 빌드)의 37,023 B다(TEST-075). 【추론】 배포되는 minify 없는 gzip(51,632 B)도 함께 보고한다(TEST-075). 【추론】 기준보다 늘면 TEST-027과 같은 기록·수용 규칙을 따른다(TEST-075). 【추론】 이유를 적고 Vincent가 받아들여야 병합한다(TEST-075). 【추론】 비율 상한은 따로 두지 않는다(TEST-075). 【추론】 "현재 gzip 약 44KB"(GOAL-011)는 측정 방법이 적히지 않은 기록이라 기준으로 쓰지 않는다(TEST-075).
 
 【추론】 컴파일에는 따로 수치 예산을 두지 않는다(TEST-076). 【추론】 기준 플러그인(AJV)으로 재는 마운트 벤치는 가드 컴파일을 포함한다(TEST-076). 【추론】 그 컴파일은 따로 한 줄로 보고하고, 그 줄을 폼의 몫(청사진 분석·트리 생성·식 컴파일)과 검증기의 컴파일 몫(`compileGuard`)으로 나눈다(TEST-076). 【추론】 판정은 TEST-072의 선과 TEST-027을 따른다(TEST-076). 【추론】 선을 넘으면 이유를 적고 Vincent가 받아들여야 병합한다(TEST-076). 【추론】 알려진 느림은 미리 적는다(TEST-076). 【추론】 가드 200개인 조건부 폼 생성은 새 판 23.0 ms(트리 585 µs + AJV 컴파일 22.4 ms) 대 오늘 13.4 ms로 1.7배다(`spikes/work-loop/REPORT.txt:113-118`, `:196-200`)(TEST-076). 【추론】 이 항목을 PR-4(동기 `compileGuard`를 구현하는 PR)의 수용 필요 항목으로 미리 적고, 이유는 "검증기 컴파일"이다(TEST-076). 【추론】 미리 적는 것이지 미리 받아들이는 것이 아니다(TEST-076). 【추론】 수치는 PR-4의 실측으로 바꾼다(TEST-076).
+
+
+## IR-6 검증 시점 보충 — 2026-10-31
+
+현행 D1은 쓰기의 다음 프레임 선행·연속 이월·quiet 후행과 마지막 실제 실행 기준100ms cap을 사용하고 동기 정착·사건·onChange를 유지합니다(VALIDATE-052).
+화면 슬롯은 프레임 API 부재·숨김 문서에서 매크로태스크로 fallback하며100ms stall 타이머와 단일 실행을 경주하고 common-utils scheduler의0.16.1 선례를 유지합니다(VALIDATE-052).
+오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다(VALIDATE-052).
+OnChange만 이력을 기록하며 새 표시와 중간에 숨겨진 표시는 판정 정착·조용한 drop·수락한 explicit root 판정·폐기의 release를 기다리고 조용한 변경은 약2프레임 뒤 표시합니다(VALIDATE-052).
+기록은 write sequence당 node 한 번이며 모든 append가 generation을 전진시키고 예약 cutoff 이하만 해제하여 뒤 기록이 앞 기록의 수명을 늘리지 않습니다(VALIDATE-052).
+정책은 root별 layout effect에서만 commit하고 렌더 중에는 엔진을 바꾸지 않으며 표시 hook은 candidate만 memoized release-version 구독과 같은 client/server getter를 사용합니다(VALIDATE-052).
+renderer/input은 enabled를 검사하고 child-errors는 hidden 자식도 집계하며 inactive 값 제거와 off-branch 오류 제외를 유지합니다(VALIDATE-052).
+현재 stamp의 commit-only 폐기는 targets를 보존해 최신 commit을 cadence로 재요청하고 explicit 반환·submit 값은 호출 시점 snapshot 계약을 유지합니다(VALIDATE-052).
+Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
+숨긴 reset 재생성은 원래 load별 경고 범위로 옛 기록 뒤 새 reset 기록을 chain 끝에 전달하고 handler 실패는 각각 격리하며 다른 hidden 사슬·같은-schema reset은 reconnect까지 buffer합니다(VALIDATE-052).
+한계는 hook disabled의 즉시 reveal·drop 뒤 state/enabled render의 hold 생략·commit-only stream hold·release와 paint 사이 쓰기의1~2프레임 이전 판정·한 batch 안 미표시 조합의 이력 포함이며 G는 구현하지 않습니다(VALIDATE-052).
+
+마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
+
+if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
+
+
+## IR-7 숨김 전달 보충 — 2026-11-01
+
+위 IR-6의 숨김 buffer·reconnect·owed·unmount 배달 제한은 이 보충이 대체하며 원문은 기록으로 유지합니다 (VALIDATE-052). 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다 (VALIDATE-052). 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다 (VALIDATE-052). reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다 (VALIDATE-052). Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다 (VALIDATE-052). 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다 (VALIDATE-052). (ERROR-019, REACT-007, VALIDATE-052) (VALIDATE-052).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다 (VALIDATE-052). 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다 (VALIDATE-052). mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다 (VALIDATE-052). unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다 (VALIDATE-052).
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다 (VALIDATE-052). onError는 insertion effect로 최신입니다 (VALIDATE-052). 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다 (VALIDATE-052).
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다 (VALIDATE-052). prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다 (VALIDATE-052).
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다 (VALIDATE-052). mount-time 기록이 build-time 기록보다 먼저 도착합니다 (VALIDATE-052).
+
+근거는 [IR-7 계획](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01)의 소유자 원문39–41입니다 (VALIDATE-052). reset 기록별 handler 실패는 reportErrorToHost로 격리하고 이후 기록과 binding 교체를 계속합니다 (VALIDATE-052). 구독은 첫 commit 또는 reset에서 한 번만 설치하고 effect cleanup은 검증 루트 참조만 해제합니다 (VALIDATE-052).
+
+
+## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
+
+【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다 (VALIDATE-052). VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다 (ERROR-164). ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다 (VALIDATE-046). WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다 (TEST-021).
+
+
+## IR-9 — onError origin (2026-11-01)
+
+ERROR-019: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+ERROR-017·019·021: 필수 origin은 발생을 만든 연산이며 load·write·validate·submit·render로 닫힙니다.
+
+ERROR-019: load는 트리 구성·mount·reset·rebuild·검증기 변경과 그 사슬입니다. ERROR-019: write는 공개 쓰기·배열·상태·batch·맥락·finishInput·외부 오류와 통지 리스너입니다. ERROR-019: validate는 자동·명시적 전체 컴파일·실행·판정 전달과 그 리스너입니다. ERROR-019: submit은 SubmitWhileDegraded와 네이티브 capture에서 처음 드러난 실패이며 dispatchValidate가 보고한 실패는 validate를 유지합니다. ERROR-164·202: render는 RenderFailed 경계와 ChildNodeComponentsOnTerminal 같은 렌더 기록이며 warnDevelopmentIssue 개발 콘솔 경고는 기록이 아닙니다.
+
+ERROR-019·041: 최외곽 사슬의 origin을 중첩·adoption에서 보존하므로 write 리스너·onChange의 reset은 write이고 reset 안의 쓰기는 load입니다. ERROR-019: 첫 commit의 외부 errors 적용은 load, prop 변경은 write이며 검증 결과 리스너 실패는 validate, 로드 뒤 독립 state 리스너 실패는 write입니다.
+
+ERROR-005·023: 오류 묶음은 throw 값으로만 남기고 개별 기록에는 싣지 않으며 각 수집 호출의 첫 병합 오류·details를 보존합니다. ERROR-019·021·023: 전달·중복·호스트·호출자·console·재진입 규칙은 유지합니다.
+
+ERROR-017: `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+ERROR-139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 함께 따릅니다.

@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { isNumberSchema } from '@winglet/json-schema/filter';
 
 import type {
@@ -28,12 +29,23 @@ const FieldInputSlider = ({
   range,
   marks,
   lazy,
+  misfit,
 }: FieldInputSliderProps) => {
+  const initialValue = range
+    ? isArray(defaultValue) &&
+      defaultValue.length === 2 &&
+      defaultValue.every((value) => typeof value === 'number')
+      ? defaultValue
+      : undefined
+    : typeof defaultValue === 'number'
+      ? defaultValue
+      : undefined;
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
-      if (value === null) onChange(NaN);
-      else if (typeof value === 'number') onChange(value);
-      else onChange(value);
+      if (value === null) onChange(undefined);
+      else if (typeof value === 'number') {
+        if (!Number.isNaN(value)) onChange(value);
+      } else if (!value.some(Number.isNaN)) onChange(value);
     },
     [onChange],
   );
@@ -50,16 +62,18 @@ const FieldInputSlider = ({
   }, [handleChange, jsonSchema, lazy]);
 
   return (
-    <Slider
-      disabled={disabled}
-      min={min}
-      max={max}
-      step={step}
-      range={range}
-      marks={marks}
-      defaultValue={defaultValue ?? undefined}
-      {...changeHandler}
-    />
+    <div role="group" aria-invalid={misfit || undefined}>
+      <Slider
+        disabled={disabled}
+        min={min}
+        max={max}
+        step={step}
+        range={range}
+        marks={marks}
+        defaultValue={initialValue}
+        {...changeHandler}
+      />
+    </div>
   );
 };
 

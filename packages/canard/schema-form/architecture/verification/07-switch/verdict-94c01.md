@@ -107,9 +107,9 @@ HEAD `9383abcdaf22c7dd19dd6d6ddb7e66b4a9616dd4`, Node v26.10.0 / V8 14.6.202.34-
 ## 재현과 산출물
 
 ```sh
-/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs --self-check
+{node-home}/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs --self-check
 # 아래 명령은 한 픽스처를 자연 종료한 뒤 native apply_patch에 적용할 JSON patches를 출력합니다.
-/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs sample-0
+{node-home}/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/check-verdict-94c01-scheduling.mjs sample-0
 node packages/canard/schema-form/architecture/verification/07-switch/tools/report-verdict-94c01.mjs --check
 ```
 

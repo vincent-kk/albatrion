@@ -8,13 +8,13 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 ## 1. 목표와 완료 기준
 
-목표: 상속 없는 단일 클래스 `SchemaNode`와 동작 행을 세운다. 상태는 `raw`·`extras` 둘뿐이다. 그 위에 정착 루프(표시·계산·전이·커밋), 예산과 원본 B, `diagnostics`를 둔다(LANDING-062·082·092). 새 엔진은 07까지 `<Form>`에 닿지 않는다. 옛 시험 전체가 회귀 신호다(LANDING-159).
+목표: 상속 없는 단일 클래스 `SchemaNode`와 동작 행을 세운다. 상태는 `source`·`extras` 둘뿐이다. 그 위에 정착 루프(표시·계산·전이·커밋), 예산과 원본 B, `diagnostics`를 둔다(LANDING-062·082·092). 새 엔진은 07까지 `<Form>`에 닿지 않는다. 옛 시험 전체가 회귀 신호다(LANDING-159).
 
 | 완료 기준(`request.md`) | 단위 | 관찰할 증거 |
 | --- | --- | --- |
 | 새 fractal 다섯과 문서(INTENT·DETAIL), 겉면 기계 검사 셋 | U2, U7 | 문서 선행 커밋 검사(G4), 멤버 목록 시험·행 칸 순서 시험·클래스 파일 린트(G17) |
 | 규칙 A·U7·정착 루프·예산·원본 B·diagnostics 구현과 시험 | U4, U5, U6, U8 | 단위 시험과 게이트 추적표(§5)의 모든 행이 초록 |
-| `typeMismatch`·`typeMismatches`·`TYPE_MISMATCH` 기록 | U5, U8 | `union.mismatch-light` 시험, 경고 기록 모양 시험 |
+| `misfit`·`misfits`·`MISFIT` 기록 | U5, U8 | `union.mismatch-light` 시험, 경고 기록 모양 시험 |
 | 레거시 이동과 벤치 기준선 대조 보고 | U1, U9 | 옛 주소 파일 0, 이동 전후 시험 수 같음, 벤치 보고 |
 | `tsc --strict` 공개 형 시험, 벤치 게이트 통과(또는 소유자 수용) | U7, U9 | 형 시험과 단언 금지 검사, 벤치 표와 수용 기록 |
 | `verification.md`의 게이트 전부 통과 | U10 | 게이트 원장 전부 met, 리뷰 체크리스트 |
@@ -32,7 +32,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 
 | # | 물음 | 채택한 해석 | 근거 | 상태 |
 | --- | --- | --- | --- | --- |
-| I1 | 뒤 PR 기제의 겉면 멤버를 PR-2에 두는가 | 두지 않는다. PR-2의 겉면 계약은 `reviews/raw-round17-node-structure.md:74`의 식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, `settle`로 직접 위임하는 `setValue`에 `raw`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`, 경고등 게터 `typeMismatch`·`typeMismatches`(WRITE-093)와 공개 옵션 `SetValueOption`을 더한 것이다. 멤버 목록 시험은 클래스 멤버만 단언한다. 각 뒤 PR은 자기 멤버를 들일 때 `SchemaNode/DETAIL.md` 목록·멤버 목록 시험·공개 형을 함께 고친다. 시험용 주입 자리와 스텁 멤버는 없다 | 26C-01, NODE-010, EVENT-063, LANDING-064·066 | 닫힘 |
+| I1 | 뒤 PR 기제의 겉면 멤버를 PR-2에 두는가 | 두지 않는다. PR-2의 겉면 계약은 `reviews/raw-round17-node-structure.md:74`의 식별·값 게터, `active`, `find`·`findNodes`, 가드, 생성, `settle`로 직접 위임하는 `setValue`에 `source`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`, 경고등 게터 `typeMismatch`·`typeMismatches`(WRITE-093)와 공개 옵션 `SetValueOption`을 더한 것이다. 멤버 목록 시험은 클래스 멤버만 단언한다. 각 뒤 PR은 자기 멤버를 들일 때 `SchemaNode/DETAIL.md` 목록·멤버 목록 시험·공개 형을 함께 고친다. 시험용 주입 자리와 스텁 멤버는 없다 | 26C-01, NODE-010, EVENT-063, LANDING-064·066 | 닫힘 |
 | I2 | dispatch 없는 PR-2의 동사 진입 | `SchemaNode.setValue`가 `settle` 쓰기로 직접 위임한다. PR-2의 사슬은 `settle` 호출 하나이고 05(PR-4)가 `dispatch` 진입으로 옮긴다 | TEST-069, LANDING-064, 26C-01 | 닫힘 |
 | I3 | PR-2에 배정된 "렌더 시나리오" 게이트 | 시나리오를 SCN의 순수 데이터로 넣고 코어 러너로 새 트리에서 돌린다. 렌더 실행기는 07이다. `FormHandle.reset()`은 루트의 폼 수준 로드다. ERROR-204의 경고 중복 키 초기화는 05(PR-4), 제출 거부는 07(PR-7)로 넘긴다 | 26C-02, TEST-023, ERROR-032·204 | 닫힘 |
 | I4 | PR-2 게이트 문장이 뒤 PR 기제를 쓰는 경우(SETTLE-048·049, EVENT-071, WRITE-096) | PR-2는 로드가 비우는 기준(생김·채움), 표시의 쓰기 종류, 커밋의 Refresh 대상 집합을 단언한다. `derived`·`injectTo` 발화는 04(PR-3), 리스너·`RequestRefresh`·`UpdateValue` 배달은 05(PR-4), 캐럿·IME는 07(PR-7)에 사례별로 넘긴다 | 26C-03, TEST-069 (라) | 닫힘 |
@@ -66,7 +66,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 - `BlueprintGate`: `kind: 'if'|'active'|'discriminator'`, `condition`, `negated?`, `appliesWhen?`; PR-2가 평가 자리 L 칸과 계산을 더한다.
 - `Blueprint.dependencies`, `Blueprint.expressions`, `mergeEffectiveSchema`, `EffectiveSchema { schema, typeConflict }`.
 
-`schemaType` 배열은 청사진 칸마다 얼린 참조 하나다(NODE-057). 청사진 오류 코드는 `blueprint/utils/diagnostics/constant.ts`에 있다. 정착 오류·경고 코드(`SHARED_NODE_CONFLICT`, `SCHEMA_FORM_WARNING.TYPE_MISMATCH`, `NON_JSON_WHOLE_VALUE`, `DISPOSED_NODE_WRITE`)는 U2가 자리를 정한다. 기존 `src/helpers/warning/warningCode.ts`와 `src/errors/`를 먼저 재사용한다.
+`schemaType` 배열은 청사진 칸마다 얼린 참조 하나다(NODE-057). 청사진 오류 코드는 `blueprint/utils/diagnostics/constant.ts`에 있다. 정착 오류·경고 코드(`SHARED_NODE_CONFLICT`, `SCHEMA_FORM_WARNING.MISFIT`, `NON_JSON_WHOLE_VALUE`, `DISPOSED_NODE_WRITE`)는 U2가 자리를 정한다. 기존 `src/helpers/warning/warningCode.ts`와 `src/errors/`를 먼저 재사용한다.
 
 ## 4. 작업 단위
 
@@ -124,7 +124,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - `DETAIL.md`가 계약으로 드는 것:
   - 진입점이 이름으로 내보내는 기호와 서명.
   - `record/`의 형 전부: `SchemaNodeRecord<Self>`의 필드 목록과 순서, `Behavior`의 칸 목록과 순서, `SchemaNodeRuntime`의 `if` 술어·진단·예산·`nodeFactory`에 필요한 최소 칸. 뒤 PR 칸은 미리 두지 않는다(26C-01, NODE-045).
-  - `SchemaNode/DETAIL.md`의 PR-2 겉면 멤버 목록. `ARCH/reviews/raw-round17-node-structure.md:74`의 PR-2 목록에 `raw`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`·`typeMismatch`·`typeMismatches`(WRITE-093)를 더하고, `SetValueOption`은 공개 옵션 계약으로 적는다. 멤버 이름·종류·위임 대상을 적고 뒤 PR 멤버는 그 PR의 문서 변경으로 들인다(EVENT-063, 26C-01).
+  - `SchemaNode/DETAIL.md`의 PR-2 겉면 멤버 목록. `ARCH/reviews/raw-round17-node-structure.md:74`의 PR-2 목록에 `source`·`extras`·`diagnostics`·`defaultValue`·`resetSubtree`·`typeMismatch`·`typeMismatches`(WRITE-093)를 더하고, `SetValueOption`은 공개 옵션 계약으로 적는다. 멤버 이름·종류·위임 대상을 적고 뒤 PR 멤버는 그 PR의 문서 변경으로 들인다(EVENT-063, 26C-01).
   - `settle/DETAIL.md`의 단계 순서, 예산 다섯 가운데 PR-2가 여는 둘, 원본 B 기록 항목, 쓰기 종류 목록(VALUE-032·WRITE-096), 로드의 범위(마운트·폼 수준 reset·`resetSubtree`).
   - DAG와 organ 예외.
   - `behaviors/utils/parse/`의 문서(LANDING-150).
@@ -172,7 +172,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - 계산:
   - 루트에서 한 번 내려가는 하강.
   - 호스트 바퀴: 출발점 고정, 매 바퀴 모든 게이트, 가우스-자이델, 상한 = 게이트 가진 조각 수 + 노드 게이트 수 + 1(SETTLE-041의 셈).
-  - 게이트 입력은 투영과 `extras`이고, 비객체 `raw`이면 `{}`다.
+  - 게이트 입력은 투영과 `extras`이고, 비객체 `source`이면 `{}`다.
   - 판별 게이트의 `./<key>` 값과 `values` 판정, 분기의 `controls.active`와 AND. 노드·조각 `controls.active`는 PR-1의 실제 `BlueprintExpression.evaluate`로 제품 경로의 호스트 바퀴에서 평가한다. `if`만 `record/`의 술어 인터페이스를 호출한다(26C-04).
   - 상속 overlay 재계산. SETTLE-045의 옮긴 게이트.
   - 유효 스키마 메모(`mergeEffectiveSchema`)와 유효 목록.
@@ -181,8 +181,8 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - 커밋:
   - `sameValue`와 참조 유지(SETTLE-043, VALUE-012).
   - 배달 집합에 대한 `revision` 일괄 증가와 커밋 번호.
-  - 경고등과 루트 경로 집합, `typeMismatches` 메모.
-  - `TYPE_MISMATCH` 기록 `{ level, code, path, expected, received, reason, candidates?, source }`와 1회·재발송 규칙.
+  - 경고등과 루트 경로 집합, `misfits` 메모.
+  - `MISFIT` 기록 `{ level, code, path, expected, received, reason, candidates?, source }`와 1회·재발송 규칙.
   - 개발 모드의 `NON_JSON_WHOLE_VALUE`(VALUE-037).
   - 잠복 원본 열거 메모(WRITE-087).
   - Refresh 대상 집합(EVENT-071).
@@ -204,7 +204,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
   - 라운드 상한은 SETTLE-005.
 - 예산과 원본 B:
   - PR-2가 여는 예산은 호스트 바퀴와 전이 라운드다.
-  - 되돌림 기록은 노드, 이전 `raw`, 이전 `extras`이고, 중간 라운드 채움의 철회보다 먼저 적용한다. 배열 구조 항목은 06이다.
+  - 되돌림 기록은 노드, 이전 `source`, 이전 `extras`이고, 중간 라운드 채움의 철회보다 먼저 적용한다. 배열 구조 항목은 06이다.
   - 원본 B에는 쓰기 경계의 해석만 남는다. 원본 B로 형상을 한 번 더 계산한다.
   - `diagnostics { status, cause, exceededBudget, iterations, commit }`. PR-2는 폼 수준 로드에서 `diagnostics`만 초기화함을 단언한다. 경고 중복 키 초기화는 05(PR-4), 제출 거부는 07(PR-7)이다(26C-02, ERROR-204). 던지는 자리는 `settle` 호출 끝이고 모든 환경이다.
   - (c′) 재귀 펼침 멈춤은 `exceededBudget: 'recursion'`이다.
@@ -225,7 +225,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
   - 필드 집합 고정. 생성자는 대입만 한다.
   - 게터와 문장 하나짜리 위임만 둔다. `{@inheritDoc}` 관례(NODE-049)를 따른다.
   - `schemaNodeFactory`가 트리마다 하나다. `SchemaNodeRuntime`은 `if` 술어·진단·예산·`nodeFactory`에 필요한 최소 칸만 가진다. 뒤 PR용 스텁 멤버나 시험 전용 주입 자리는 만들지 않는다(26C-01).
-- 공개 형: 판별 합집합, `UnionNode`의 `typeMismatch` 판별 두 멤버, 종류별 `schemaType` 좁힘, 가드 열, `InferSchemaNode` 사상(overload).
+- 공개 형: 판별 합집합, `UnionNode`의 `misfit` 판별 두 멤버, 종류별 `schemaType` 좁힘, 가드 열, `InferSchemaNode` 사상(overload).
 - 겉면 기계 검사 셋:
   - 클래스 파일 한정 ESLint(`PKG/eslint.config.js`에 NODE-010 규칙 블록, 저장소의 `#` 비공개 금지 선택자를 함께 다시 적는다).
   - 멤버 목록 시험(`DETAIL.md` 목록과 프로토타입 멤버 이름).
@@ -259,11 +259,11 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 
 - 원장: NODE-018·055, TEST-027·032·072·073, SETTLE-044·045, WRITE-087, 18C-15·31·67·81.
 - 행:
-  - B1–B6: V8은 `node`, JavaScriptCore는 `bun` 1.4.2(`/opt/homebrew/bin/bun`)에서 잰다.
+  - B1–B6: V8은 `node`, JavaScriptCore는 `bun` 1.4.2(`{node-home}/bin/bun`)에서 잰다.
   - "켜진 조각 N개 호스트의 무관한 키 입력".
   - 잠복 원본 열거의 조상 메모 갱신.
   - 루트로 옮긴 게이트 N개일 때의 키 입력.
-- 두는 곳: 새 엔진 행은 `PKG/bench/node-and-settle.bench.ts`의 독립 스크립트로 두고 같은 입력·행 ID로 `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)`와 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/node-and-settle.bench.ts)`를 각각 실행한다. 옛 `<Form>`만 재는 `@aileron/benchmark-form/src/index.ts`에 새 엔진 행을 넣지 않는다.
+- 두는 곳: 새 엔진 행은 `PKG/bench/node-and-settle.bench.ts`의 독립 스크립트로 두고 같은 입력·행 ID로 `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)`와 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/node-and-settle.bench.ts)`를 각각 실행한다. 옛 `<Form>`만 재는 `@aileron/benchmark-form/src/index.ts`에 새 엔진 행을 넣지 않는다.
 - B1·B5·B6의 `guard:check` 선은 `packages/aileron/benchmark-form/package.json`의 `guard:check`가 읽는 `packages/aileron/benchmark-form/results/baseline.json`과 `src/utils/stat-regression.ts`의 기본 임계(평균 처리량 하락 15% 초과 **그리고** Welch `p < 0.05`)를 기준으로 대조한다. B2는 추정의 1.5배 이내이면서 오늘 이하, B3은 같은 맵, B4는 보고만 한다(NODE-055).
 - U1에서 이동 직전에 잰 옛 엔진 최종 기준선과 02 기준선(`ARCH/verification/02-foundation-and-blueprint/baseline/`)을 함께 표기해 `ARCH/verification/03-node-and-settle/bench-report.md`에 표로 적는다. 첫 열의 행 ID는 `B1`–`B6`, `18C-15`, `18C-67`, `18C-81`로 고정해 G15가 아홉 행을 센다. 각 행에 두 엔진 수치와 기준선·판정을 적는다. 02의 `55ed75504` 값은 #347·#349 전이므로 최종 비교 기준으로 쓰지 않는다(LANDING-159). 느린 행은 까닭을 적고 소유자 수용을 받는다(TEST-027, G31).
 - 완료: 보고서에 B1–B6·18C-15·18C-67·18C-81 행, 두 엔진의 실행 명령·수치·기준선·판정·수용 여부가 있다(G15).
@@ -367,7 +367,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md | tail -1)`
 - 옛 엔진 최종 기준선(이동 전, 단독 호출): `yarn workspace @canard/schema-form bench:baseline`
-- 새 엔진 독립 벤치: `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/node-and-settle.bench.ts)`
+- 새 엔진 독립 벤치: `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/node-and-settle.bench.ts)`
 - 공개 `<Form>` 가드: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 
 ## 9. 리뷰 기록

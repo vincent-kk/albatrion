@@ -13,7 +13,7 @@
 | 작성자 | 스키마를 쓰는 사람. 그룹 객체 셋과 표준 키워드를 적는다 |
 | 호출자 | `<Form>`이나 core를 쓰는 코드. `setValue`·`reset`·Form 속성을 준다 |
 | 사용자 | 입력란에 값을 넣는 사람 |
-| 원본(`raw`) | 노드가 실제로 소유하는 값. 리프와 터미널 노드만 든다 |
+| 원본(`source`) | 노드가 실제로 소유하는 값. 리프와 터미널 노드만 든다 |
 | 형상 | 어떤 노드가 지금 존재하는가. (스키마, 원본 전체)의 순수 함수 |
 | 조각 | 게이트가 켜고 끄는 선언 묶음(`then`·`else`, `allOf` 항목, `oneOf`·`anyOf`의 분기) |
 | 게이트 | 조각이나 노드를 켜는 조건. `if`(검증기가 판정)와 `controls.active`(작성자의 식) 둘뿐 |
@@ -149,7 +149,7 @@ P1이 가장 위다. P2·P3·P4는 값을 쓰기·계산·읽기로 나눈 것�
 ## 4. 상태 — 노드가 드는 것
 
 ```
-raw          원본. 리프와 터미널 노드만 값을 든다. 자식 있는 노드는 "잘못된 종류의 값"이 왔을 때만
+source          원본. 리프와 터미널 노드만 값을 든다. 자식 있는 노드는 "잘못된 종류의 값"이 왔을 때만
 extras       호스트가 받은, 청사진 어디에도 선언되지 않은 키와 그 순서(정적. if 안에만 적힌 키도 여기)
 --- 아래는 계산 결과 (P3) ---
 active       이번 커밋의 활성 조각·노드 집합
@@ -163,7 +163,7 @@ revision     통지 원장. 커밋 시 일괄 갱신
 diagnostics  마지막 로드 이후의 기록 { status: 'stable' | 'degraded', cause?, exceededBudget?, iterations?, commit? } (모양은 ADR 0014 §5. 다음 로드까지 남고(14라운드 답 O-2) 그 동안 폼의 제출 경로가 거부한다(17라운드 소유자 답 R17-1 나))
 ```
 
-- **상태는 `raw`와 `extras` 둘뿐이다.** 분기 선택(`selection`)은 폼이 분기를 고르지 않으므로 없다.
+- **상태는 `source`와 `extras` 둘뿐이다.** 분기 선택(`selection`)은 폼이 분기를 고르지 않으므로 없다.
 - **노드는 형상에 있거나 없다.** 없는 노드의 원본은 기본으로 남아 `getInactiveValues(path)`로 읽을 수 있고 방출에서 빠진다. 형상에 없는 노드의 규칙(`controls.derived` 등)은 평가하지 않는다.
 - **상호작용 상태** `dirty`·`touched`는 현행 유지다(C6).
 - **노드의 종류.** 리프(string·number·boolean·null), 객체, 배열, 터미널 객체·배열(`options.terminal: true`이거나, `options.terminal`이 없고 렌더 계층이 넘긴 판정이 참일 때. 판정은 인라인 `presentation.FormTypeInput`이 있고 `null`이 아닌가이며 청사진은 `presentation`을 읽지 않는다, §12. 자식 노드를 만들지 않고 값을 통째로 든다), 가상 노드(`options.virtual`). 터미널 아래 경로는 `find`·`findNodes` 모두 노드 없음으로 답한다(07 4.29).
@@ -224,7 +224,7 @@ diagnostics  마지막 로드 이후의 기록 { status: 'stable' | 'degraded', 
 
 ```mermaid
 flowchart TD
-  markStep["1 표시: raw와 extras 갱신, 조상 경로의 재계산 목록에 등록"]
+  markStep["1 표시: source와 extras 갱신, 조상 경로의 재계산 목록에 등록"]
   computeStep["2 계산: 루트에서 한 번 내려간다. 호스트 바퀴로 게이트 평가, local·emit·유효 스키마, 끝에서 잠금·보임 결정"]
   deriveStep["3 파생: controls.unsetValue, controls.derived, controls.injectTo를 완성된 트리에서 평가. 대상마다 하나"]
   transitionStep["4 전이: 생긴 노드의 없음에 채움, 나감 정책이 참으로 정해진 나간 노드의 비움"]
@@ -240,7 +240,7 @@ flowchart TD
 
 | 단계 | 하는 일 | 예산 |
 | --- | --- | --- |
-| 표시 | 쓰기를 받은 노드의 `raw`·`extras`를 갱신하고 조상 경로의 재계산 목록에 등록한다. 동기 | 없음 |
+| 표시 | 쓰기를 받은 노드의 `source`·`extras`를 갱신하고 조상 경로의 재계산 목록에 등록한다. 동기 | 없음 |
 | 계산 | 루트에서 한 번 내려간다. 재계산 목록의 자식을 먼저 완료하고 자기 `local`·`emit`·유효 스키마를 만든다. 호스트는 게이트 없는 조각만 켠 채 출발해(노드 게이트도 꺼진 채) 모든 게이트를 전순서로 평가하고 집합이 바뀌지 않을 때까지 반복한다. 게이트는 투영 뒤의 값을 본다. 계산의 끝에서 `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`를 한 번 결정한다. **원본을 읽기만 한다** | 호스트 바퀴 = 게이트 가진 조각 수 + 노드 게이트 수 + 1. 자식 호스트의 덧씌움 재계산도 이 예산에 함께 센다 |
 | 파생 | 완성된 트리에서 `controls.unsetValue`·`controls.derived`·`controls.injectTo`를 평가하고 같은 대상 규칙(§8.5)으로 대상마다 하나만 적용한다. 쓰기가 나오면 표시로 돌아간다 | 라운드 25(전이 뒤에도 이어 센다) |
 | 전이 | 생긴 노드의 없음인 값에 채움(`controls.default` > `default`. 값은 처음 채워지는 라운드의 유효 스키마에서 읽는다). 중간 라운드의 채움은 그 노드가 최종 형상에 없으면 버린다. 나감 정책이 참으로 정해진 노드가 나가면 한 번 비운다(하위 트리와 잠복 자손 포함, 공유 노드 제외, 로드에는 나감 없음, §8.4). 쓰기가 나오면 표시로 | 라운드 = 트리 전체의 게이트 가진 조각 수 + 노드 게이트 수 + 1. 쓰기를 낸 라운드만 세고 `if/then/else`는 게이트 하나로 센다 |
@@ -248,7 +248,7 @@ flowchart TD
 | 통지 | 루트 디스패처가 문서 순서 위에서 아래로 한 번 배달한다. 유효 스키마가 바뀐 노드도 배달 집합에 든다. 루트 `onChange`는 최외곽 동기 진입당 한 번 | 리스너 되먹임 파동 25, `onChange` 중첩 25 |
 | 검증 | `validator(작성된 스키마, 방출 값)`을 커밋 번호로 스탬프해 비동기로 요청하고 늦게 온 결과는 버린다 | 없음 |
 
-- **원본을 쓰는 단계는 파생과 전이뿐**이고 둘 다 표시로 돌아가 다시 계산된다. 그래서 커밋된 트리는 (스키마, 트리 전체의 `raw`·`extras`)의 순수 함수다.
+- **원본을 쓰는 단계는 파생과 전이뿐**이고 둘 다 표시로 돌아가 다시 계산된다. 그래서 커밋된 트리는 (스키마, 트리 전체의 `source`·`extras`)의 순수 함수다.
 - **에지의 기준점은 직전 커밋**이다. 한 규칙은 원천 값의 한 번의 변화에 대해 한 정착 안에서 한 번만 쓴다(재발화 금지). 기준점은 그 규칙이 이 정착에서 마지막으로 소비한 원천 값이며, 원천이 다른 값으로 다시 바뀌면 새 에지다. 진짜 순환은 그래서 예산에 잡힌다.
 - **로드는 새 수명이다.** 전체 교체(마운트, `setValue(V)`, `reset()`, `defaultValue`)는 형상의 모든 노드를 생긴 노드로 친다. 없음인 값은 모두 채움을 받고, `controls.injectTo`·`controls.derived`는 발화하며, `controls.unsetValue`는 로드된 값으로 평가해 참이면 지운다. 로드에는 나감이 없다.
 - **예산 초과.** 정착의 세 예산(호스트 바퀴, 파생, 전이)을 넘기면 그 정착의 자동 쓰기를 모두 뺀 **원본 B**를 커밋하고 `diagnostics`를 `status: 'degraded'`, `cause: 'budget'`으로 둔다(원본 B의 형상은 원본 B로 한 번 더 계산하며 그 바퀴도 걸리면 마지막 바퀴의 활성 집합으로 고정). 리스너 되먹임 파동을 넘기면 마지막 파동은 배달하되 그 파동 안의 되먹임 쓰기를 거부한다. `onChange` 중첩을 넘긴 쓰기는 적용하고 통지하되 그 `onChange` 하나는 부르지 않는다. 상한은 루프를 잇는 고리 하나만 끊고, 최외곽 쓰기는 결코 버리지 않으며, 커밋된 것은 반드시 통지된다. 그 뒤 **진입 사슬의 가장 바깥 끝에서 모든 환경에서 한 번 throw**한다. 끄는 스위치는 없다(`throwOnBudgetExceeded`는 없다). 17라운드 소유자 답 R17-1 나("나 허용. 망가진 값을 올리는게 더 위험하겠다.")이며, 12라운드 §4·10라운드 B-1·14라운드 O-4 가는 이 답으로 대체되었다. 되먹임 파동과 `onChange` 중첩의 초과도 모든 환경에서 던진다. `degraded`는 다음 로드까지 남고(지속은 14라운드 답 O-2 가) 그 동안 폼의 제출 경로가 `SchemaFormError`로 거부한다(`getValue()`는 막지 않는다, R17-1 나, §12의 진단). 마운트의 첫 정착이 예산을 넘기면 폼은 원본 B로 커밋해 서고, 커밋 뒤 `onError`와 주인 없는 오류 싱크로 드러낸다(마운트 정착 오류 가운데 폼이 서지 않는 것은 공유 충돌뿐이다, §11.3). 렌더 중에 던지지 않고 트리를 만드는 자리에서 잡으므로 서버 사이드 렌더링의 페이지는 실패하지 않는다. 소유자: "루프의 가능성을 제한하지는 않는다. 상한을 초과하면 오류를 표시한다. React 훅과 같은 설계다."
@@ -297,7 +297,7 @@ flowchart TD
 
 - 자리 둘: 노드의 `controls.unsetOnInactive`(그리고 `children` 항목·조각의 `controls`), Form 속성 `unsetOnInactive`. 형은 형용사 형(`boolean` 또는 식→`boolean`, 15라운드 결정 2)이고 Form 속성은 노드 문맥이 없으므로 `boolean`만이다(부류 표의 앞 판에 적힌 "`boolean`만, 13라운드"는 사실과 달랐다. 13라운드는 이름과 기본값만 정했다, 17라운드 스웜 수렴(편집자 결정)). 기본 꺼짐(유지).
 - 단위는 **노드의 나감**(직전 커밋의 형상에 있었고 최종 형상에 없음). 하위 트리를 포함하고, 다른 켜진 선언이 남은 공유 노드는 나가지 않는다. 로드에는 나감이 없다. 전이 단계의 다섯째 자동 쓰기이므로 억제 비트와 원본 B의 대상이다. 쓰기로 원본 자체가 없어져 노드가 사라지는 것(배열 아이템 `remove`, 통째 교체로 짧아진 배열, 로드)은 나감이 아니라 소멸이며 비움의 대상도, 억제 비트·원본 B의 기록 대상도 아니다. 비객체 호스트 아래 자식은 존재하므로 나감이 아니다. 부모 `controls.children` 항목의 `controls.active: false`(항목 게이트)는 노드 게이트와 같은 장치라 그 노드 자신의 나감이며 층(자기 키 > 그 항목을 포함한 `children` 항목 > 조각)을 그대로 센다(17라운드 스웜 수렴(편집자 결정)).
-- **무엇을 비우는가(17라운드 스웜 수렴(편집자 결정)).** 비움으로 정해진 노드는 상태 둘, `raw`(객체·배열 노드가 든 잘못된 종류의 값 포함)와 `extras`를 모두 없음으로 한다. 두 상태에는 자기 층이 없으므로 그 노드의 해석된 정책을 따른다.
+- **무엇을 비우는가(17라운드 스웜 수렴(편집자 결정)).** 비움으로 정해진 노드는 상태 둘, `source`(객체·배열 노드가 든 잘못된 종류의 값 포함)와 `extras`를 모두 없음으로 한다. 두 상태에는 자기 층이 없으므로 그 노드의 해석된 정책을 따른다.
 - **식과 Form 속성의 시점(17라운드 스웜 수렴(편집자 결정)).** 어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋(그 노드가 형상에 있던 마지막 커밋)의 것이다. 식은 다른 형용사 키처럼 노드가 형상에 있는 동안 계산된 값을 가지며 나감에서는 그 값을 쓴다. 나가는 순간 형상 밖의 노드를 새로 평가하지 않는다(§4, 12라운드 §9 "형상에 없는 노드의 규칙: 평가하지 않음", 소유자 동의). 그래서 식은 나감을 일으킨 변화를 보지 못한다(보게 하려면 12라운드 §9에 예외가 필요하다. 소유자 통보 2 허용: "예. 허용해야 합니다."). Form 속성 층은 정착이 시작될 때 core가 든 값(React가 마지막으로 커밋한 속성)이며, 속성이 바뀌는 것은 쓰기도 나감도 아니고 이미 잠복한 원본을 거슬러 비우지 않는다. Form 속성 층은 네 층의 가장 아래(포괄) 층이며 참일 때 로컬을 덮는 전체 잠금(`readOnly`·`disabled`)과 다르다.
 - **누가 정하는가 — 하위 트리로 내려간다(17라운드 소유자 답 R17-2 ㄴ).** 나가는 객체·분기에 켠 `unsetOnInactive`는 함께 나가는 하위 트리로 내려간다. 13라운드 답 1("모든 control 필드는 자체 노드만 지원. children 그룹은 예외")에 둔 둘째 예외다. 소유자: "해당 브랜치가 꺼질떄, 하위 트리노드가 모두 꺼진다고 봐야할거같아." 나가는 노드의 비움 여부는 그 노드와 그 위의 **나가는** 조상들을 가까운 순서로 보아, 직전 커밋에서 세 층(노드 자신 > 그 노드를 가리키는 `controls.children` 항목의 `controls` > 그 노드를 직접 선언한 조각의 `controls`) 가운데 하나라도 명시된 첫 마디가 정하고(한 마디의 같은 층에 여럿이면 하나라도 유지면 유지), 끝까지 없으면 Form 속성이 정한다. 그래서 자손이 스스로 적은 선언이 가까운 순서로 이긴다(자손의 `false`는 남긴다). 나가지 않는 조상과 나가지 않는 선언의 정책은 내려가지 않는다. 셈의 기준은 직전 커밋의 선언이다(P3). 조각 층은 그 조각이 꺼지는 순간에도 적용된다. 세부 셋을 더한다. 첫째, **선언의 나감**: 노드는 남고 그 노드를 선언한 조각만 꺼지는 것(판별 union의 공유 객체 `addr` 아래 A 분기에만 있는 `zip`)도 사슬의 한 마디로 센다. 그 층은 나가는 선언 안의 자기 키 > 나가는 선언 또는 나가는 노드의 부모 선언에 속한 `children` 항목 > 그 선언을 호스트의 직계 자식으로 적은 조각(§3.2의 조각 범위 제어)이며, 나가지 않는 선언의 층은 세지 않는다. 둘째, **잠복 자손도 비운다**: 앞서 자기 게이트로 나가 원본을 든 채 잠복한 자손도 조상이 비움으로 나가는 순간 같은 사슬로 정해 비운다. 잠복 자손 자신의 층은 직전 커밋에 효력이 있던 선언만 세므로 명시한 유지는 이긴다. 앞선 호출에서 `DisableAutomaticWrites`로 억제된 잠복 원본도 뒤의 다른 호출에서는 비운다. 셋째, 선언의 나감에서는 `extras`를 건드리지 않는다. 남는 순서 의존 하나(조각에 명시한 유지가 조상보다 먼저 꺼진 경우)는 조각 범위 규칙의 귀결이다. 앞 판의 "13라운드 답 1 '자체 노드만'의 유일한 귀결"은 사실과 달라 지웠다(소유자는 `reviews/round-13-owner-review.md:48`의 하위 트리 OR를 버렸다). 시나리오 점검은 `reviews/raw-round14-unset-subtree.md`와 `reviews/raw-round17-convergence.md`에 있다.
 - 노드 게이트 `controls.active: false`도 같은 장치라 정책대로 비우고, `controls.visible`은 언제나 보존한다.
@@ -569,7 +569,7 @@ flowchart TD
 | --- | --- | --- | --- |
 | PR-0 문서 | 이 문서, 14라운드 기록, ADR 최종 상태, HANDOFF. 프로토타입 v7(게이트 입력의 `extras` 정적 규칙, 같은 순위 동점·정착 단위 순위, 나감 에지, 전이 라운드 상한, 재계산 목록만 순회). 시나리오 패키지 `@aileron/schema-form-scenarios`의 뼈대, vitest `test.projects` 셋, addon-vitest(09 §7) | 없음 | 소유자의 O-1 – O-11 답, 이 문서의 절 단위 통과, 18라운드 정련(`reviews/round-18-agenda.md`) |
 | PR-1 청사진 | 순수 함수 `blueprint`: 조각 표와 전순서, 노드 공유, `controls.discriminator` 변환(끌어올림 포함), 유효 스키마 병합 함수(§9 병합표는 새로 쓴다. 렌더 계층이 넘긴 판정으로 정하는 원자(React 요소, ref 모양)와 한쪽 값의 참조 이동은 `@winglet/common-utils` `merge`의 선택 인자(배열 교체, 원자 판정, 참조 이동. 양쪽에 있는 객체는 새 객체에 병합한다: 쓰기 시 복사. 인자가 없으면 오늘 동작, changeset `minor`)로 쓴다(17라운드 스웜 수렴(편집자 결정)). 오늘의 교차 연산은 먼저 승·얕은 덮어쓰기·무조건 throw라 §9와 다르므로 잎 교차 함수 `intersectEnum`·`intersectConst`·`intersectMinimum`·`intersectMaximum`·`intersectMultipleOf`·`intersectPattern`·`validateRange`를 청사진 밖의 새 fractal로 옮겨(청사진 안에 두면 그것을 가져가는 옛 `helpers/jsonSchema`와 서로 가져오는 고리가 될 수 있다. 이름은 PR-1이 정한다) 이름으로 내보내되, `intersectEnum`·`intersectConst`·`validateRange`는 공집합·충돌에서 던지지 않고 공집합 표시를 돌려주도록 바꾼다. throw는 청사진이 정적 연언을 교차할 때만 한다(§9). 옛 `intersect*Schema`는 공집합 표시를 받으면 오늘처럼 `JSONSchemaError`를 던지도록 import와 함께 고쳐 옛 동작을 PR-7까지 지킨다(레거시로 옮긴 옛 코드가 PR-7까지 도는 방법은 18라운드 안건 '전환 방식의 세부'이며 이 문장은 그 안건의 한 안이다, §15)), 검증기 앞 제거 규칙 하나, `controls`의 식 컴파일(오늘의 컴파일러 `createDynamicFunction`과 그 `utils`, `JSON_POINTER_PATH_REGEX`, `getPathManager`, `DynamicFunction` 형은 `AbstractNode` 조직 안에 있으므로 PR-1에서 청사진으로 통째로 옮긴다. 새 엔진에서 식을 컴파일하는 곳은 청사진 하나뿐이고(filid 배치 규칙 §1), `helpers/dynamicExpression/`의 `INTENT.md`는 표현식 직접 실행(`eval`, `new Function`)을 금한다. PR-7까지는 옛 엔진도 쓰므로 청사진 진입점이 이름으로 내보내고 그 유지 이유를 청사진의 `DETAIL.md`에 적는다. 옛 소비자는 import만 고친다. 16라운드 편집자 결정, 답 10으로 확정)과 역의존 표, 청사진 오류·경고(선언 사이 `options.terminal`·렌더 계층 판정·`controls.discriminator` 불일치, `controls`·`options`의 모르는 키. 터미널 전략은 `options.terminal` → 렌더 계층이 인자로 넘긴 판정 함수 → `type`의 순서로 정하며 청사진은 `presentation`을 읽지 않는다, 17라운드 스웜 수렴(편집자 결정)), `controls.watch` 의존의 합집합, `options`의 닫힌 목록(`trim` 포함), 정적 `controls.injectTo` 대상 없음의 청사진 오류(R17-1 나), 청사진 오류·경고의 데이터화(수집기 인자로 코드·`schemaPath`·세부·판별 칸을 모으며 소비자가 없으면 모으지 않는다. 캐시 청사진의 늦은 경고 수집은 작성 루트마다 한 번, 17라운드 스웜 수렴(편집자 결정)). 테이블 테스트 | 없음 | 18라운드 안건 A(`$ref` 재귀, 다중 `type`, `dependentSchemas`·`patternProperties` 등)와 B(식 언어 명세), 전환 방식의 세부(레거시 디렉토리의 이름과 자리), 노드 구조 N14(행이 없는 조합, 청사진의 전략 결정)(§15) |
-| PR-2 노드 트리와 정착 | 노드: 상속 없는 단일 클래스 `SchemaNode`(`src/core/SchemaNode/`)와 `BEHAVIORS[type][strategy]`의 동작 행(잎 넷·객체·터미널 객체·가상. 터미널 배열은 PR-5), `src/core/record/`·`src/core/behaviors/`·`src/core/navigation/`, 공개 `type`·`strategy` 게터와 `active` 게터(노드 게이트), 겉면 규칙의 기계 검사(파일 한정 린트, 멤버 목록 시험, 행 칸 순서 시험). `raw`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층과 하위 트리·잠복 자손으로 내려가는 정책, R17-2 ㄴ)·커밋, 예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `raw`, 이전 `extras`, 배열 아이템 구조의 생성·폐기이며 중간 라운드 채움의 철회보다 먼저 적용한다), `diagnostics`(`'stable'` 또는 `'degraded'`, `cause`, `commit`, R17-1 나), `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | 18라운드 안건 B·C·D(`controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면, 프로토타입 v7)와 노드 구조(N2, N5, N6, N14, 공개 표면의 크기, `ContextNode`의 자리)(§15) |
+| PR-2 노드 트리와 정착 | 노드: 상속 없는 단일 클래스 `SchemaNode`(`src/core/SchemaNode/`)와 `BEHAVIORS[type][strategy]`의 동작 행(잎 넷·객체·터미널 객체·가상. 터미널 배열은 PR-5), `src/core/record/`·`src/core/behaviors/`·`src/core/navigation/`, 공개 `type`·`strategy` 게터와 `active` 게터(노드 게이트), 겉면 규칙의 기계 검사(파일 한정 린트, 멤버 목록 시험, 행 칸 순서 시험). `source`·`extras`, 표시·계산(호스트 바퀴, 노드 게이트, 투영)·전이(채움, 나감 비움 네 층과 하위 트리·잠복 자손으로 내려가는 정책, R17-2 ㄴ)·커밋, 예산 다섯과 원본 B(되돌림 기록. 기록 항목은 노드, 이전 `source`, 이전 `extras`, 배열 아이템 구조의 생성·폐기이며 중간 라운드 채움의 철회보다 먼저 적용한다), `diagnostics`(`'stable'` 또는 `'degraded'`, `cause`, `commit`, R17-1 나), `SetValueOption`, 게이트는 술어 인터페이스 뒤의 스텁. 정착 루프 테스트(프로토타입 회귀 이식) | PR-1 | 18라운드 안건 B·C·D(`controls.active` 식의 다른 호스트 읽기 순서, 비객체 V의 `Merge`, 되먹임 거부 표면, 프로토타입 v7)와 노드 구조(N2, N5, N6, N14, 공개 표면의 크기, `ContextNode`의 자리)(§15) |
 | PR-3 파생 | `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 같은 대상 규칙(종류 순위, 문서 순서, 층, 전순서, 정착 단위), 에지 소비, `DisableAutomaticWrites`, `controls.resetInteraction`, 개발 모드 정착 기록 | PR-2 | 에지의 값 동등 판정, `controls.derived` 의존 집합, 조각 `controls` 식의 나감 발화 |
 | PR-4 통지와 검증 | 루트 디스패처, `batch`, 진입당 `onChange` 1회, 진입 사슬과 사슬 끝의 throw, `onError` 로깅 채널의 core 쪽(기록 형 `FormErrorRecord`와 코드 형 `FormErrorCode`(가칭), core가 인자로 받는 보고기(`report`, `hasConsumer`), 사슬 끝 기록마다 전달, 핸들러 예외의 묶음 규칙, 전달 중 쓰기 거부, 경고의 구조 키 중복 억제, 정착 경고 판정의 소비자 조건, `ValidateFunction` 문서 주석 "판정은 돌려주고 던지지 않는다". `ValidationIssue` 개명이 `onError`의 공개보다 먼저 선다, 17라운드 스웜 수렴(편집자 결정)), 진입 사슬의 소유는 `dispatch`(쓰기 동사마다 진입 함수)이며 겉면의 쓰기 위임을 `dispatch` 진입으로 옮김, `SchemaFormError`의 집계 오류(`details.errors`), 주인 없는 오류 싱크, 검증 실행 실패와 검증 불가의 드러남, 가드의 늦은 컴파일(프로덕션)과 개발 모드 일괄 컴파일(어느 환경이든 실패는 그 게이트의 가드 실패)(ADR 0014, 17라운드 스웜 수렴(편집자 결정)), `UpdateDiagnostics`, 커밋 번호 스탬프 검증과 실행 합치기, 검증기 계약(`compileGuard`, `rejectedKey`)의 플러그인·`validatorFactory` 통일과 ajv6·7·8 플러그인 구현, 에러 라우팅, 오류 클래스(`ValidationIssue`), 훅 수준의 React 바인딩 시험(동기 통지와 `useSyncExternalStore`, StrictMode 이중 호출, 구독 뒤 따라잡기), 같은 `$id` 루트의 중복 등록 처리, 상태·오류·명령 사건과 검증 결과의 배달 경로(09 §2.4, 16라운드 답 3), 검증기 등록의 참조 세기와 최근 해제 목록, 재생성 reset의 같은 `$id`(09 §2.6의 여덟째, 16라운드 스웜 수렴(편집자 결정)) | PR-2 (PR-3과 병렬) | `compileGuard` 계약 세부, 에러 라우팅, 유효 스키마 변경 이벤트, core가 `ValidationManager` → `app/plugin`의 `PluginManager`를 거쳐 React 구성 요소 모듈을 가져오는 import의 분리(검증기 주입 경로, §15) |
 | PR-5 배열 | 배열·터미널 배열 행(`arrayBehavior/`의 `branch/`·`terminal/`), 겉면 배열 멤버, 배열 노드와 아이템 호스트, `items`·`prefixItems`, `push`·`remove`·`update`, 통째 교체의 identity, 아이템 채움 | PR-2 (PR-3·4와 병렬) | 배열 아이템의 생김과 채움, `contains` |
@@ -598,7 +598,7 @@ flowchart LR
 - **교체 규모.** `src/core` 178파일 9,884줄 가운데 `AbstractNode`(71파일 3,991줄, 계산 속성·검증 매니저·이벤트 캐스케이드)와 `ObjectNode`의 `BranchStrategy`(39파일 2,185줄), `ArrayNode` 전략(15파일 930줄), 오늘의 `schemaNodeFactory`(노드마다 넘기는 공장)가 교체 대상이다. 새 모듈 수준 생성 함수도 이름이 `schemaNodeFactory`이며 공장은 트리마다 하나다(옛 이름과의 중복은 기준이 아니다, §17.1). `helpers` 134파일 6,087줄 가운데 `jsonPointer`와 가상화는 그대로 쓰고, 교차 연산은 잎 함수만 옮겨 쓰며(§17.2의 PR-1 행), 식 컴파일러는 청사진으로 통째로 옮긴다(§17.2의 PR-1 행). 테스트 234파일의 처분은 09 §4.3을 따른다(17파일은 단언을 살린다, 16라운드 답 7)(`renderForm` 하니스는 재사용).
 - **형제 패키지.** ajv 플러그인 셋은 `ValidatorPlugin`·`ValidateFunction`·`JSONSchema`·`JSONSchemaError`·`SchemaFormPlugin` 타입을 가져오며(`JSONSchemaError`는 §14의 21행에 따라 `ValidationIssue`로 바뀐다) 모두 `$async: true`로 컴파일하므로, PR-4에서 동기 `compileGuard(root, pointer)` 경로를 세 플러그인에 구현해야 한다(캐시는 코어가 든다)(타입만 맞추면 되는 것이 아니다. 16라운드 정착 검토). UI 플러그인 넷은 `FormTypeRendererProps`뿐 아니라 `FormTypeInputDefinition`(11–19회)·`FormTypeInputPropsWithSchema`(8–15회)·스키마 타입을 가져오고, 27파일이 `jsonSchema.options.*`와 맨 키(`formType`·`radioLabels`·`switchLabels`·`switchSize`·`lazy`·`ampm`·`minRows`·`maxRows`)를 읽으며(mui 7/19, antd5 9/22, antd6 9/22, antd-mobile 2/14), 노드 표면 `push`·`remove`·`maxItems`·`length`도 쓴다. 그래서 PR-7의 UI 플러그인 이주는 타입과 등록 키 넷에 더해 스키마 읽기 27파일을 `presentation.*`로 옮기는 작업을 포함한다(§14의 31·32·37행). `@winglet/react-utils`의 ErrorBoundary와 감싸개 둘에는 렌더 때 보고 함수를 얻는 선택 인자를 더한다(주지 않으면 오늘 동작, 소유자 허용, 17라운드 스웜 수렴(편집자 결정), 09 §2.3의 넷째).
 - **위험이 모이는 곳은 PR-7이다.** PR-1 – PR-6은 `<Form>`에 닿지 않으므로 사용자 관점의 동작은 PR-7에서 처음 검증된다. 완화: PR-2부터 엔진 수준의 통합 시나리오(02 §9의 상황 목록)를 각 PR에 넣고, PR-4 뒤에 차등 테스트(독립 검증기와의 판정 동치)를 돌린다.
-- **PR-7을 더 쪼갤 수 없는 이유.** 옛 엔진과 새 엔진은 값의 소유(다중 사본 대 `raw` 하나), 통지(마이크로태스크 배치 대 동기 1회), 분기(자동 감지 대 게이트)가 다르다. `<Form>`이 둘을 동시에 섬길 수 없고, 렌더 시나리오의 기대값도 한 계약에만 맞는다.
+- **PR-7을 더 쪼갤 수 없는 이유.** 옛 엔진과 새 엔진은 값의 소유(다중 사본 대 `source` 하나), 통지(마이크로태스크 배치 대 동기 1회), 분기(자동 감지 대 게이트)가 다르다. `<Form>`이 둘을 동시에 섬길 수 없고, 렌더 시나리오의 기대값도 한 계약에만 맞는다.
 
 ## 18. 검증 전략 (02 §9)
 

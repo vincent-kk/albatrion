@@ -7,7 +7,7 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 
 afterEach(cleanup);
 
-it('REACT-027 LANDING-150 writes undefined for an empty nonnullable number and null for nullable', () => {
+it('REACT-027 LANDING-150 writes undefined for an empty number whether or not it is nullable', () => {
   const ref = createRef<FormHandle>();
   const view = render(
     <Form ref={ref} jsonSchema={{ type: 'number' }} defaultValue={2} />,
@@ -27,7 +27,7 @@ it('REACT-027 LANDING-150 writes undefined for an empty nonnullable number and n
   fireEvent.change(nullable.container.querySelector('input')!, {
     target: { value: '' },
   });
-  expect(ref.current!.getValue()).toBeNull();
+  expect(ref.current!.getValue()).toBeUndefined();
 });
 
 it('REACT-027 restores a bad numeric draft on blur without publishing it', () => {

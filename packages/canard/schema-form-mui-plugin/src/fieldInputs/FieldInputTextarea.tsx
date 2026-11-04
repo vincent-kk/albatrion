@@ -49,6 +49,7 @@ const FieldInputTextarea = ({
   minRows,
   maxRows,
   hideLabel,
+  misfit,
 }: FieldInputTextareaProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -75,7 +76,8 @@ const FieldInputTextarea = ({
   ]);
 
   const handleChange = useHandle((event: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(event.target.value);
+    const text = event.target.value;
+    onChange(text === '' ? undefined : text);
   });
 
   const finalMinRows = minRows ?? jsonSchema.minRows ?? 3;
@@ -92,9 +94,10 @@ const FieldInputTextarea = ({
       required={required}
       size={size}
       placeholder={placeholder}
-      defaultValue={defaultValue}
+      defaultValue={typeof defaultValue === 'string' ? defaultValue : undefined}
       onChange={handleChange}
       disabled={disabled}
+      error={misfit}
       minRows={finalMinRows}
       maxRows={finalMaxRows}
       slotProps={{

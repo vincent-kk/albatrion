@@ -125,7 +125,7 @@
 ### 중단 판정으로 숨기지 않은 구현 차단
 
 - 파일: `src/__tests__/scenarios/refSchema-context-provider.render.test.tsx`, 시험: `grows a self-recursive ($ref: "#") array item with the referenced fields`.
-- 구체적인 원인: `core/settle/utils/compute/hasRecursiveExpansion.ts`는 같은 청사진의 조상에서 raw·extras·분배 입력·잠복 값·자식 원본이 없으면 확장을 거부합니다. 배열을 경유해 push한 빈 객체 아래의 `/children/0/children`도 이 조건에 걸립니다. `selectChildren.ts`는 해당 자식을 만들기 전에 `RECURSIVE_SHAPE_DIVERGED`를 기록합니다. 실제 값은 `{id:'root',children:[{}]}`이고 `/children/0/id`는 있지만 중첩 children DOM이 없습니다.
+- 구체적인 원인: `core/settle/utils/compute/hasRecursiveExpansion.ts`는 같은 청사진의 조상에서 source·extras·분배 입력·잠복 값·자식 원본이 없으면 확장을 거부합니다. 배열을 경유해 push한 빈 객체 아래의 `/children/0/children`도 이 조건에 걸립니다. `selectChildren.ts`는 해당 자식을 만들기 전에 `RECURSIVE_SHAPE_DIVERGED`를 기록합니다. 실제 값은 `{id:'root',children:[{}]}`이고 `/children/0/id`는 있지만 중첩 children DOM이 없습니다.
 - BLUEPRINT-030·18C-01은 배열 아이템을 순환을 끊는 자리로 지정합니다. 이 시험은 끝없는 객체 프로퍼티 재귀가 아니므로 LANDING-128의 기대 변경으로 분류하지 않았습니다. 하니스가 넣는 임의 기본값이나 가짜 노드로 우회하지 않았습니다. 정착의 재귀 판정 구현을 수정해야 하며 U8의 하니스·표면 수정 범위를 넘습니다.
 - `deferred-mount`의 reveal 시험도 기대 변경 근거가 없습니다. 하니스는 실제 remove 버튼을 누르고 입력은 `node.remove(index)`를 호출합니다. 이전에 드러낸 노드가 이동한 `/items/10`에서 다시 placeholder가 되는 실패입니다. 이 파일은 마운트 onChange 충돌로 원문 보존 대상이며, 가상화의 노드별 reveal 유지 동작은 별도 U7 구현 확인이 필요합니다.
 
@@ -246,3 +246,5 @@ SURFACE-056·060, LANDING-157에 따라 `core/types/state.ts`의 enum을 `Schema
 | `npx --no-install eslint "src/**/*.{ts,tsx}"` | exit 0, 출력 없음 |
 | `node architecture/verification/07-switch/tools/extract-migration-rows.mjs --check architecture/verification/07-switch/migration-check.md` | exit 0, 이주 ID 128행 점검 통과 |
 | `grep -nE '\|[[:space:]]*\|' architecture/verification/07-switch/render-disposition.md`와 TBD 검사 | 출력 없음, 빈 셀 0·TBD 0 |
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `29d061941323`, `fc651e734d1c`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

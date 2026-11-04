@@ -1,4 +1,12 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  readPointerSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { NumericPathIndex } from './utils/NumericPathIndex';
 import { isCanonicalArraySlot } from './utils/isCanonicalArraySlot';
@@ -9,7 +17,7 @@ interface PathPrefix {
   path: string;
   /** Parent reference avoids slicing on every key deletion or insertion. */
   parent?: PathPrefix;
-  /** Last escaped segment, classified once when this prefix is constructed. */
+  /** Last decoded name, classified once when this prefix is constructed. */
   segment: string;
   /** Whether the segment addresses a canonical safe-integer array slot. */
   numeric: boolean;
@@ -35,11 +43,11 @@ export class PathStoreIndex {
   /** Add a new key using decoded paths; ancestors share cached prefix objects. */
   add(key: string, paths: readonly string[]): void {
     if (this.pathsByKey.has(key)) return;
-    const own = paths.map((path) => this.getPrefix(path));
+    const own = mapArray(paths, (path) => this.getPrefix(path));
     this.pathsByKey.set(key, own);
     for (const prefix of own) {
       prefix.exact.add(key);
-      let ancestor: PathPrefix | undefined = prefix;
+      let ancestor: Optional<PathPrefix> = prefix;
       while (ancestor) {
         ancestor.keys.add(key);
         ancestor = ancestor.parent;
@@ -54,7 +62,7 @@ export class PathStoreIndex {
     this.pathsByKey.delete(key);
     for (const prefix of paths) {
       prefix.exact.delete(key);
-      let ancestor: PathPrefix | undefined = prefix;
+      let ancestor: Optional<PathPrefix> = prefix;
       while (ancestor) {
         ancestor.keys.delete(key);
         if (!ancestor.keys.size) {
@@ -103,7 +111,7 @@ export class PathStoreIndex {
     const keys = new Set(this.under(path));
     let ancestor = path;
     while (ancestor) {
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+      ancestor = resolvePointer(ancestor, $.Parent);
       for (const key of this.prefixes.get(ancestor)?.exact ?? []) keys.add(key);
     }
     return keys;
@@ -119,17 +127,19 @@ export class PathStoreIndex {
     while (!parent) {
       missing.push(cursor);
       if (!cursor) break;
-      cursor = cursor.slice(0, cursor.lastIndexOf($.Separator));
+      cursor = resolvePointer(cursor, $.Parent);
       parent = this.prefixes.get(cursor);
     }
     for (let i = missing.length - 1; i >= 0; i--) {
       const current = missing[i];
-      const segment = current.slice(current.lastIndexOf($.Separator) + 1);
+      const segment = readPointerSegment(current, -1) ?? '';
+      if (typeof segment !== 'string')
+        throw new TypeError('Expected a named store path');
       const prefix: PathPrefix = {
         path: current,
         parent,
         segment,
-        numeric: current !== '' && isCanonicalArraySlot(segment),
+        numeric: current !== $.Root && isCanonicalArraySlot(segment),
         keys: new Set(),
         exact: new Set(),
       };

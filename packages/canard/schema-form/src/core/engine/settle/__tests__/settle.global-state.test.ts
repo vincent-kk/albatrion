@@ -6,7 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-write
+// filid:contract settle-write-global-state
 describe('EVENT-062 43C-01 settlement shape counts', () => {
   it('adds a true key on entry, removes it on exit, and adds it on re-entry', () => {
     const { root } = createTestTree({
@@ -20,7 +20,7 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     root.runtime.nodeFactory = (entry, parent, runtime) => {
       const node = createNode(entry, parent, runtime);
       if ('name' in entry && entry.name === 'target')
-        node.interactionState = { [FieldNodeState.Dirty]: true };
+        node.interactionState = { [FieldNodeState.Edited]: true };
       return node;
     };
     writeFieldNode(
@@ -29,7 +29,7 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.runtime.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    expect(root.runtime.globalState).toEqual({ [FieldNodeState.Edited]: true });
     writeFieldNode(
       root.structure!.flag,
       false,
@@ -43,6 +43,6 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.runtime.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    expect(root.runtime.globalState).toEqual({ [FieldNodeState.Edited]: true });
   });
 });

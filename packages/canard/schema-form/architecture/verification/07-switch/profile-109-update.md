@@ -81,7 +81,7 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 | `mark` · `src/core/settle/utils/commit/markCommitDeliveries.ts:92` | 1.31 | 3.29 | 0.396 | 0.997 |
 | `markWrite` · `src/core/settle/utils/write/markWrite.ts:23` | 1.31 | 1.87 | 0.396 | 0.568 |
 | `captureSchemaNodeChange` · `src/core/record/utils/captureSchemaNodeChange.ts:25` | 1.24 | 1.24 | 0.376 | 0.376 |
-| `pruneLatentRaw` · `src/core/settle/utils/write/pruneLatentRaw.ts:16` | 1.12 | 1.38 | 0.340 | 0.419 |
+| `pruneLatentSource` · `src/core/settle/utils/write/pruneLatentSource.ts:16` | 1.12 | 1.38 | 0.340 | 0.419 |
 | `beginPostOrder` · `src/core/settle/utils/write/DirtyPathSet.ts:22` | 1.08 | 1.08 | 0.327 | 0.327 |
 | `delete` · `src/core/settle/utils/write/DirtyPathSet.ts:83` | 1.07 | 1.07 | 0.323 | 0.323 |
 
@@ -306,8 +306,8 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 
 ### C1 — 커밋 진단·메모 정리
 
-소유자: `src/core/settle`; 변경 위치: `utils/commit/commitSettlement.ts`. 수정안 하나: 불일치 경로가 계속 비어 있는 경우의 typeMismatchesMemo 갱신을 기존 빈 경로 row의 commit 갱신으로 특화합니다. 비어 있지 않은 상태에서 비는 전이는 기존 초기화를 유지하고 현재 commit 검사와 경고·진단 방문은 보존합니다.
-제거 실험: commitNumber 증가와 markCommitDeliveries만 남깁니다. 진단 방문·타입 불일치 메모·refresh/비활성 값 메모 등을 함께 제거한 포괄 상한입니다.
+소유자: `src/core/settle`; 변경 위치: `utils/commit/commitSettlement.ts`. 수정안 하나: 불일치 경로가 계속 비어 있는 경우의 misfitsMemo 갱신을 기존 빈 경로 row의 commit 갱신으로 특화합니다. 비어 있지 않은 상태에서 비는 전이는 기존 초기화를 유지하고 현재 commit 검사와 경고·진단 방문은 보존합니다.
+제거 실험: commitNumber 증가와 markCommitDeliveries만 남깁니다. 진단 방문·misfit 메모·refresh/비활성 값 메모 등을 함께 제거한 포괄 상한입니다.
 계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. EVENT-007의 증가 루프와 VALUE-012의 조립은 기존 함수를 그대로 소비합니다. 진단/메모 의미를 건너뛰는 수정안은 아닙니다.
 
 ### F1 — 쓰기당 고정 진입·빈 단계 검사
@@ -348,15 +348,15 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 
 ### P1 — 빈 latent 저장소의 고정 작업
 
-소유자: `src/core/settle`; 변경 위치: `utils/write/pruneLatentRaw.ts`. 수정안 하나: runtime.latentRaw.size가 0일 때 childPaths와 call-local latent index를 만들기 전에 반환합니다. 비어 있지 않은 저장소의 prefix 제거·rollback 처리는 유지합니다.
-제거 실험: 측정 root의 latentRaw가 비어 있음을 단언한 뒤 pruneLatentRaw를 생략합니다.
+소유자: `src/core/settle`; 변경 위치: `utils/write/pruneLatentSource.ts`. 수정안 하나: runtime.latentSource.size가 0일 때 childPaths와 call-local latent index를 만들기 전에 반환합니다. 비어 있지 않은 저장소의 prefix 제거·rollback 처리는 유지합니다.
+제거 실험: 측정 root의 latentSource가 비어 있음을 단언한 뒤 pruneLatentSource를 생략합니다.
 계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. 빈 저장소의 작업만 제거하며 revision과 emit 조립은 고치지 않습니다.
 
 ### W1 — scalar 표시의 일반 분기
 
 소유자: `src/core/settle`; 변경 위치: `utils/write/markWrite.ts`. 수정안 하나: 기존 정상 terminal·명시적 scalar 쓰기를 단형 분기로 특화하여 branch/virtual/load/automatic 검사만 줄입니다. interpret와 SameValueZero, writtenInputs 및 모든 dirty/changed 표시는 유지합니다.
 제거 실험: 이 픽스처의 terminal 입력 몸통만 직접 실행합니다.
-계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. raw 표시의 분기 특화이며 assembly나 커밋 revision 증가를 고치지 않습니다.
+계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. source 표시의 분기 특화이며 assembly나 커밋 revision 증가를 고치지 않습니다.
 
 ### 첫 갱신의 크기 독립 고정 몫
 
@@ -503,7 +503,7 @@ A1/O1/F1/P1/Q1/W1의 일부 later 제거 변형은 회귀 조건을 채웁니다
 
 정확한 문장 (architecture/ledger/value.md:215):
 
-> **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `raw` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9).
+> **9. `emit`의 참조**는 (자식 `emit` 참조 ∪ `extras` ∪ 호스트 `source` ∪ 활성 키 집합) 가운데 하나라도 바뀌면 새로 만들고, 아니면 이전 참조를 그대로 둔다(F9).
 
 보충: 새로 만든 것이 직전 커밋의 것과 키 목록(순서 포함)도 같고 키마다의 자식 `emit` 참조도 같으면 직전 참조를 둔다(얕은 비교, 재계산 목록의 호스트만).
 
@@ -665,7 +665,7 @@ self+children은 inclusive total입니다. self와 total을 더하지 않습니�
 재현 CLI(한 worker씩, 순차 실행):
 
 ```sh
-TMPDIR='/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn exec /opt/homebrew/Cellar/node/26.10.0_2/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-109-update/measure.mjs --official flat-100 off 1 old
+TMPDIR='{scratch}/bundles' NODE_DISABLE_COMPILE_CACHE=1 GIT_OPTIONAL_LOCKS=0 yarn exec {node-home}/Cellar/node/26.10.0_2/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-109-update/measure.mjs --official flat-100 off 1 old
 ```
 
 동일 prefix로 --cpu <fixture> <first|later> <1|2|3>, --bound <fixture> <variant> <run>, --diagnose <fixture> <run> <original|shadow-unprofiled>를 실행합니다. official은 원 세 회차 순서를 유지하고 bound는 raw 파일의 3/9 회차 수를 유지합니다. stats.mjs --official/--historical/--bounds와 report.mjs --summary/--markdown은 stdout artifact renderer입니다. stdout은 native 파일 도구로 보존합니다. 원문·해시·시계 창·303/909쌍·진단·회차별 잡음은 [원시 자료](profile-109-update/)와 [구조화 요약](profile-109-update-summary.json)에 있습니다.

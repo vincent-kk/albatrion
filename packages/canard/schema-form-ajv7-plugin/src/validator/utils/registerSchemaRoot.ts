@@ -8,6 +8,9 @@ import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
+/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+
 /** Ajv instances and registration key retained for one root identity. */
 export interface SchemaRootRegistration {
   /** Direct schemas are owned and released with this root's guard instance. */
@@ -21,7 +24,11 @@ export interface SchemaRootRegistration {
   readonly key: string;
   readonly rootId: string;
   readonly ids: readonly string[];
+  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly hasDynamicKeywords: boolean;
   readonly validationCopy?: object;
+  /** Whether `validationCopy` is registered on `validation`; set only by a successful `registerValidationRoot`. */
+  validationRegistered: boolean;
   guardCopy?: object;
 }
 
@@ -35,7 +42,7 @@ export interface SchemaCompilerPool {
 /** Monotonic keys avoid collisions with registrations retained across binds. */
 let nextSchemaRootKey = 0;
 
-/** Register one copy, leaving its guard instance and ID-free validation cache empty. */
+/** Record one copy, leaving its guard instance, its validation registration and the ID-free validation cache empty. */
 export const registerSchemaRoot = (
   root: object,
   instance: Ajv,
@@ -47,8 +54,10 @@ export const registerSchemaRoot = (
   const previous = roots.get(root);
   if (previous) return previous;
   const ids: string[] = [];
+  let hasDynamicKeywords = false;
   JSON.stringify(root, (name, value: unknown) => {
     if (name === '$id' && typeof value === 'string') ids.push(value);
+    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
     return value;
   });
   if (ids.length)
@@ -61,20 +70,19 @@ export const registerSchemaRoot = (
     active.some((ref) => ref.deref()?.ids.includes(id)) ||
     shared.some((ref) => ref.deref()?.ids.includes(id)));
   if (!ids.length && pool.count === MAX_TRANSIENT_ROOTS) {
-    pool.current = cloneInstance(pool.base, Boolean(pool.base.opts.allErrors));
+    pool.current = cloneInstance(pool.base, !!pool.base.opts.allErrors);
     pool.count = 0;
   }
-  const validation = conflict ? cloneInstance(instance, Boolean(instance.opts.allErrors))
+  const validation = conflict ? cloneInstance(instance, !!instance.opts.allErrors)
     : ids.length ? instance : pool.current;
   if (!ids.length) pool.count++;
   const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
   const validationCopy: object | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
-  if (validationCopy) validation.addSchema(validationCopy, key);
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
-    base: instance, validation, key, rootId, ids, validationCopy,
-    directGuards: [], guardChecks: new WeakMap(),
+    base: instance, validation, key, rootId, ids, validationCopy, validationRegistered: false,
+    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
   };
   roots.set(root, registration);
   finalizer.register(root, registration, registration);

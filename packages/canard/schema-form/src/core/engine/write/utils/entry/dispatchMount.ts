@@ -1,5 +1,5 @@
 import { FormWarningCode } from '../../../../../errors';
-import type { FormErrorRecord } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { loadFieldNodeAtMount } from '../../../settle';
 import { ValidationMode } from '../../../types/state';
@@ -9,6 +9,9 @@ import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
+
+/** Shared mount settings for a load that validates immediately. */
+const NO_MOUNT_SETTINGS: { deferValidation?: boolean } = {};
 
 /**
  * Commit the first form source through the same entry boundary as later writes.
@@ -22,13 +25,14 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown = root.runtime.loadSnapshot,
   option: WriteOption = WriteOption.Overwrite,
-  settings: { deferValidation?: boolean } = {},
+  settings: { deferValidation?: boolean } = NO_MOUNT_SETTINGS,
 ): void => {
-  if (!enterFieldNodeChain(root)) return;
+  if (!enterFieldNodeChain(root, 'load')) return;
   clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
-  root.runtime.deferMountValidation = settings.deferValidation === true;
+  root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
+  root.runtime.deferLoadValidation = settings.deferValidation === true;
   if (!settings.deferValidation)
     (root.runtime.validationTargets ??= new Set()).add(root);
   root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
@@ -47,7 +51,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
       !runtime.warningKeys?.has(FormWarningCode.ValidatorMissing)
     ) {
       (runtime.warningKeys ??= new Set()).add(FormWarningCode.ValidatorMissing);
-      const record: FormErrorRecord = {
+      const record: PendingFormErrorRecord = {
         level: 'warning',
         code: FormWarningCode.ValidatorMissing,
         message: 'Validation is disabled because no validator was selected',
@@ -59,6 +63,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
     root.runtime.mountingGuardPass = false;
+    root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
     exitFieldNodeChain(root);
   }
 };

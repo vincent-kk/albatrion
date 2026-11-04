@@ -4,12 +4,12 @@
 
 ## 실행 환경과 입력
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`
-- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`
-- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`
+- 작업 트리: `{repo}`
+- D: `packages/canard/schema-form/architecture/verification/07-switch`
+- S: `{scratch}`
 - Node: `v26.11.1`
 - V8: `14.6.202.34-node.37`
-- Node 실제 경로: `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`
+- Node 실제 경로: `{node-home}/versions/node/v26.11.1/bin/node`
 - 엔진과 tier: **codex mid**
 - 기준 리비전: `af057ab024668315f9fad441c60dd6a6c38f0f36`
 

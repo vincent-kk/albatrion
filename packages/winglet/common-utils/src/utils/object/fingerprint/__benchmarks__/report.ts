@@ -39,13 +39,13 @@ const ratio = (first: any, second: any) => {
   return `${mean.toFixed(3)} [${Math.max(0, mean - margin).toFixed(3)}, ${(mean + margin).toFixed(3)}]`;
 };
 const lines = [
-  '# Fingerprint 전용 writer 실험',
+  '# Dedicated fingerprint writer experiment',
   '',
-  `환경: ${processes[0].metadata.node}, V8 ${processes[0].metadata.v8}, ${processes[0].metadata.cpu}. production 기준 ${processes[0].metadata.commit}.`,
+  `Environment: ${processes[0].metadata.node}, V8 ${processes[0].metadata.v8}, ${processes[0].metadata.cpu}. Production baseline ${processes[0].metadata.commit}.`,
   '',
-  '5개 독립 process × 30개 batch 평균. 키 생성과 Map 조회 포함 경로를 별도로 측정합니다. cold fixture 생성은 시간 밖입니다. 후보 실행 순서는 회전·반전합니다. trusted는 accessor/symbol/builtin-extra/byte 검사를 생략한 다른 계약이며 합격 후보가 아닙니다. no-byte-scan도 출력 byte 제한이 없어 계약이 다릅니다. direct는 plain object/dense array의 DFS 직접 출력이며 확장 타입·희소 배열·깊이 256 초과 시 BFS compact로 fallback합니다. compact는 참조 발견 목록은 유지하지만 graph token/node 배열 및 JSON.stringify는 사용하지 않습니다.',
+  '5 independent processes × 30 batch means. Key generation and paths including Map lookups are measured separately. Cold fixture creation is outside timing. Candidate order is rotated and reversed. trusted skips accessor/symbol/builtin-extra/byte checks, has a different contract and is not an eligible candidate. no-byte-scan also has a different contract because it has no output byte limit. direct emits plain objects/dense arrays directly using DFS and falls back to BFS compact for extended types, sparse arrays or depth exceeding 256. compact retains a reference-discovery list but uses neither graph token/node arrays nor JSON.stringify.',
   '',
-  'legacy-shaped 후보는 benchmark 전용 기준 구현입니다. cycle/extended 결과는 같은 데이터 구분 능력을 제공하지 않으며 비교값을 동등 계약의 승리로 해석하지 않습니다.',
+  'The legacy-shaped candidate is a benchmark-only baseline implementation. Its cycle/extended results do not provide the same data discrimination; comparisons do not establish a win under an equivalent contract.',
   '',
   '| fixture/mode/API | p50 µs | output bytes | samples |',
   '| --- | ---: | ---: | ---: |',
@@ -56,9 +56,9 @@ for (const [key, value] of Object.entries(summary))
   );
 lines.push(
   '',
-  '## 속도 비율',
+  '## Speed ratios',
   '',
-  '분자는 후보, 분모는 기존 함수입니다. 1 미만일수록 빠릅니다. 구간은 process별 중앙값 비율의 평균과 95% t CI(df=4)이며 검증 환경 밖으로 일반화하지 않습니다.',
+  'The numerator is the candidate and the denominator is the existing function. Values below 1 mean faster execution. Intervals show the mean of per-process median ratios and a 95% t CI(df=4); results are not generalized beyond the verified environment.',
   '',
   '| fixture/mode | candidate / baseline | ratio [95% CI] |',
   '| --- | --- | --- |',

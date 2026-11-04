@@ -1,7 +1,7 @@
 import type { Blueprint } from '../../../../blueprint';
+import { getBlueprintDerived } from '../../../../utils/cache/derivedRecords';
 
 /** Proof results share the lifetime of their immutable analyzed graph. */
-const INDEPENDENT = new WeakMap<Blueprint, boolean>();
 
 /**
  * Prove that filling cannot alter shape or observe an intermediate projection.
@@ -9,7 +9,9 @@ const INDEPENDENT = new WeakMap<Blueprint, boolean>();
  * @returns Whether only static object branches and scalar leaf defaults occur
  */
 export const hasIndependentLeafDefaults = (blueprint: Blueprint): boolean => {
-  const cached = INDEPENDENT.get(blueprint);
+  const cached = getBlueprintDerived<'independentLeafDefaults', boolean>(
+    blueprint,
+  ).independentLeafDefaults;
   if (cached !== undefined) return cached;
   let hasDefault = false;
   let independent = blueprint.expressions.length === 0;
@@ -58,6 +60,8 @@ export const hasIndependentLeafDefaults = (blueprint: Blueprint): boolean => {
     }
   }
   independent = independent && hasDefault;
-  INDEPENDENT.set(blueprint, independent);
+  getBlueprintDerived<'independentLeafDefaults', boolean>(
+    blueprint,
+  ).independentLeafDefaults = independent;
   return independent;
 };

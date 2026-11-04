@@ -10,10 +10,10 @@ export interface ScenarioExpectation {
   readonly values?: Readonly<Record<string, unknown>>;
   /** Local state keys observed on nodes at JSON Pointer paths. */
   readonly states?: Readonly<Record<string, Readonly<{
-    visible?: boolean;
-    readOnly?: boolean;
-    disabled?: boolean;
-    enabled?: boolean;
+    isVisible?: boolean;
+    isReadOnly?: boolean;
+    isDisabled?: boolean;
+    isPresent?: boolean;
   }>>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
@@ -26,7 +26,7 @@ export interface ScenarioExpectation {
   /** Blueprint schema types selected for array positions. */
   readonly schemaTypes?: Readonly<Record<string, unknown>>;
   /** Untemplated array tail values retained by a host. */
-  readonly undeclaredValues?: Readonly<Record<string, unknown>>;
+  readonly extras?: Readonly<Record<string, unknown>>;
   /** Paths receiving value deliveries, in document order for this step. */
   readonly deliveryOrder?: readonly string[];
   /** Whole-form change callbacks made by this step. */

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { default as headFixture } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
 
-import type { BlueprintSchema } from '../type';
+import type { BlueprintSchema } from '../types/schema';
 import { captureOwnedInlineObservables } from './fixtures/captureOwnedInlineObservables';
 
 /** Generated on the recorded HEAD before product edits; never refresh from a candidate. */

@@ -8,15 +8,15 @@ oneOf-5·10·20의 mount/update 종단은 기록 행입니다. 세션 122의 참
 
 측정 엔진은 **codex**, tier는 **high**입니다. HEAD는 `aa1433cba6a22898867fda0dd73692aadd1ce875`이며 제품 src tree `80c23cc2d0e389cc5e925b434a2d7a228d8532f0`는 마지막 제품 변경 `daca1d14a`와 같습니다. 이후 HEAD 커밋은 문서 전용입니다. 코어는 측정하지 않았습니다.
 
-D = `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`
+D = `packages/canard/schema-form/architecture/verification/07-switch`
 
-S = `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`
+S = `{scratch}`
 
 | 환경 | 세션 122 | 세션 136k |
 | --- | --- | --- |
 | Node | v26.10.0 | v26.11.1 |
 | V8 | 14.6.202.34-node.35 | 14.6.202.34-node.37 |
-| Node 바이너리 | /opt/homebrew/Cellar/node/26.10.0_2/bin/node | /Users/Vincent/.nvm/versions/node/v26.11.1/bin/node |
+| Node 바이너리 | {node-home}/Cellar/node/26.10.0_2/bin/node | {node-home}/versions/node/v26.11.1/bin/node |
 | React | 19.2.6 production profiling | 19.2.6 production profiling |
 | CPU / 메모리 | Apple M1 Max / 64 GiB | Apple M1 Max / 64 GiB |
 | OS | Darwin arm64 | Darwin 25.6.0 arm64 |
@@ -338,26 +338,26 @@ React·validation OFF·update 작업이 일치하는 TEST-027 소유자 수용�
 
 | 행 | 시간 열 | HEAD / 0.16.0 중앙값 ms | 배율 | 절대 차이 ms | 일치하는 소유자 수용과 근거 링크 | 수용 이유 원문 | 범위 판정 |
 | --- | --- | ---: | ---: | ---: | --- | --- | --- |
-| sample-1/update | wall ([profile-136k-final.md:44](profile-136k-final.md:44)) | 0.453958 / 0.404417 | 1.1225× | +0.049541 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| sample-1/update | event-loop active ([profile-136k-final.md:87](profile-136k-final.md:87)) | 0.455042 / 0.405584 | 1.1219× | +0.049458 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| sample-3/update | wall ([profile-136k-final.md:48](profile-136k-final.md:48)) | 0.431958 / 0.408916 | 1.0563× | +0.023042 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| sample-3/update | event-loop active ([profile-136k-final.md:91](profile-136k-final.md:91)) | 0.433166 / 0.410292 | 1.0558× | +0.022874 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| array-push-100/update | wall ([profile-136k-final.md:66](profile-136k-final.md:66)) | 91.837088 / 84.888170 | 1.0819× | +6.948918 | 없습니다([round-114-closing.md:9](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| array-push-100/update | event-loop active ([profile-136k-final.md:109](profile-136k-final.md:109)) | 91.888543 / 84.928706 | 1.0819× | +6.959837 | 없습니다([round-114-closing.md:9](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| array-replace-200/update | wall ([profile-136k-final.md:68](profile-136k-final.md:68)) | 113.781459 / 106.484833 | 1.0685× | +7.296626 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| array-replace-200/update | event-loop active ([profile-136k-final.md:111](profile-136k-final.md:111)) | 113.786000 / 106.489375 | 1.0685× | +7.296625 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| array-push-remove-100/update | wall ([profile-136k-final.md:70](profile-136k-final.md:70)) | 130.759743 / 122.520421 | 1.0672× | +8.239322 | 없습니다([round-114-closing.md:9](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| array-push-remove-100/update | event-loop active ([profile-136k-final.md:113](profile-136k-final.md:113)) | 130.823046 / 122.595790 | 1.0671× | +8.227256 | 없습니다([round-114-closing.md:9](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| computed-visible-derived/update | wall ([profile-136k-final.md:72](profile-136k-final.md:72)) | 1.361833 / 1.075207 | 1.2666× | +0.286626 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
-| computed-visible-derived/update | event-loop active ([profile-136k-final.md:115](profile-136k-final.md:115)) | 1.364791 / 1.077625 | 1.2665× | +0.287166 | 없습니다([round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| sample-1/update | wall ([profile-136k-final.md:44](profile-136k-final.md:44)) | 0.453958 / 0.404417 | 1.1225× | +0.049541 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| sample-1/update | event-loop active ([profile-136k-final.md:87](profile-136k-final.md:87)) | 0.455042 / 0.405584 | 1.1219× | +0.049458 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| sample-3/update | wall ([profile-136k-final.md:48](profile-136k-final.md:48)) | 0.431958 / 0.408916 | 1.0563× | +0.023042 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| sample-3/update | event-loop active ([profile-136k-final.md:91](profile-136k-final.md:91)) | 0.433166 / 0.410292 | 1.0558× | +0.022874 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5), [round-117-closing.md:5](packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| array-push-100/update | wall ([profile-136k-final.md:66](profile-136k-final.md:66)) | 91.837088 / 84.888170 | 1.0819× | +6.948918 | 없습니다([round-114-closing.md:9](packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| array-push-100/update | event-loop active ([profile-136k-final.md:109](profile-136k-final.md:109)) | 91.888543 / 84.928706 | 1.0819× | +6.959837 | 없습니다([round-114-closing.md:9](packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| array-replace-200/update | wall ([profile-136k-final.md:68](profile-136k-final.md:68)) | 113.781459 / 106.484833 | 1.0685× | +7.296626 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| array-replace-200/update | event-loop active ([profile-136k-final.md:111](profile-136k-final.md:111)) | 113.786000 / 106.489375 | 1.0685× | +7.296625 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| array-push-remove-100/update | wall ([profile-136k-final.md:70](profile-136k-final.md:70)) | 130.759743 / 122.520421 | 1.0672× | +8.239322 | 없습니다([round-114-closing.md:9](packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| array-push-remove-100/update | event-loop active ([profile-136k-final.md:113](profile-136k-final.md:113)) | 130.823046 / 122.595790 | 1.0671× | +8.227256 | 없습니다([round-114-closing.md:9](packages/canard/schema-form/architecture/reviews/round-114-closing.md:9)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| computed-visible-derived/update | wall ([profile-136k-final.md:72](profile-136k-final.md:72)) | 1.361833 / 1.075207 | 1.2666× | +0.286626 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
+| computed-visible-derived/update | event-loop active ([profile-136k-final.md:115](profile-136k-final.md:115)) | 1.364791 / 1.077625 | 1.2665× | +0.287166 | 없습니다([round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)). | 해당 React 수용 이유가 없습니다. | 수용이 없어 안쪽·경계·바깥 판정 대상이 아닙니다. |
 
-범위 임계값은 [profile-136j-final.md:226](profile-136j-final.md:226)처럼 먼저 fixture·설정·작업이 일치하는 수용을 찾고, 그 수용의 이유 문구에서만 유도합니다. core 예시의 [round-104-owner-answers.md:7](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-104-owner-answers.md:7)은 이유에 “절대값 0.06 ms 안팎”이라고 적었으므로, core 보고서는 차이 ≤0.060 ms를 안쪽, 0.060 ms 초과·0.090 ms 이하를 경계, 0.090 ms 초과를 바깥으로 해석했습니다(0.090 ms는 소유자가 정한 상한이 아니라 “안팎”에 대한 보고서의 해석입니다). [round-108-owner-answers.md:7](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-108-owner-answers.md:7)의 이유 원문은 “폼 생성 때 스키마 전체를 한 번 분석해 두는 청사진 단계(BLUEPRINT-001)가 옛 판에는 없는 첫 비용이며, 코드 수준의 큰 상한은 소진되었고(열세 개의 채택으로 nested-d5 13.5 → 5.9 ms), React 층 마운트는 24행 모두 목표 안이다.”이므로, core 보고서는 그 원인과 크기가 같은지로 판정했습니다. [round-110-owner-answers.md:7](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-110-owner-answers.md:7)의 이유 원문은 “첫 갱신에만 드는 1회 비용(조립의 첫 회, 진단·메모의 초기화)이며 같은 폼의 이후 갱신은 목표 안이고 절대 차이는 0.07–0.1 ms이다; 그 자리의 손질 둘은 다른 폼의 갱신 회귀로 기각되었다(23dcaec78).”이므로, core 보고서는 같은 첫 갱신 원인에서 차이가 0.1 ms보다 작은 경우도 안쪽으로 보았습니다. 그러나 이 세 수용은 각각 코어 작은 폼 갱신, 코어 마운트, 코어 flat-50·flat-100 첫 갱신에 한정되어 이 표의 React 행과 일치하지 않으므로 해당 임계값을 이 표에 적용하지 않았습니다.
+범위 임계값은 [profile-136j-final.md:226](profile-136j-final.md:226)처럼 먼저 fixture·설정·작업이 일치하는 수용을 찾고, 그 수용의 이유 문구에서만 유도합니다. core 예시의 [round-104-owner-answers.md:7](packages/canard/schema-form/architecture/reviews/round-104-owner-answers.md:7)은 이유에 “절대값 0.06 ms 안팎”이라고 적었으므로, core 보고서는 차이 ≤0.060 ms를 안쪽, 0.060 ms 초과·0.090 ms 이하를 경계, 0.090 ms 초과를 바깥으로 해석했습니다(0.090 ms는 소유자가 정한 상한이 아니라 “안팎”에 대한 보고서의 해석입니다). [round-108-owner-answers.md:7](packages/canard/schema-form/architecture/reviews/round-108-owner-answers.md:7)의 이유 원문은 “폼 생성 때 스키마 전체를 한 번 분석해 두는 청사진 단계(BLUEPRINT-001)가 옛 판에는 없는 첫 비용이며, 코드 수준의 큰 상한은 소진되었고(열세 개의 채택으로 nested-d5 13.5 → 5.9 ms), React 층 마운트는 24행 모두 목표 안이다.”이므로, core 보고서는 그 원인과 크기가 같은지로 판정했습니다. [round-110-owner-answers.md:7](packages/canard/schema-form/architecture/reviews/round-110-owner-answers.md:7)의 이유 원문은 “첫 갱신에만 드는 1회 비용(조립의 첫 회, 진단·메모의 초기화)이며 같은 폼의 이후 갱신은 목표 안이고 절대 차이는 0.07–0.1 ms이다; 그 자리의 손질 둘은 다른 폼의 갱신 회귀로 기각되었다(23dcaec78).”이므로, core 보고서는 같은 첫 갱신 원인에서 차이가 0.1 ms보다 작은 경우도 안쪽으로 보았습니다. 그러나 이 세 수용은 각각 코어 작은 폼 갱신, 코어 마운트, 코어 flat-50·flat-100 첫 갱신에 한정되어 이 표의 React 행과 일치하지 않으므로 해당 임계값을 이 표에 적용하지 않았습니다.
 
-[round-114-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)는 React 미달 행을 소유자에게 올리도록 하며 “편집자가 수용으로 넓혀 읽지 않는다”라고 명시했습니다. [round-117-closing.md:5](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)도 sample-0~3의 첫 갱신을 “수용으로 넓혀 읽지 않고 React 층 고침 뒤 남은 React 행과 함께 소유자에게 올린다”라고 정했습니다. 세션 122에 답한 [round-124-closing.md:9](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-124-closing.md:9)의 원문 역시 “React 표의 14행 미달은 F2 계열의 측정 대상 그대로다.”이며 소유자 수용을 부여하지 않았습니다. 따라서 이 여섯 행에는 이유에서 유도할 수 있는 React 수용 임계값 자체가 없고, 위의 **범위 밖 0행은 수용 범위 안이라는 뜻이 아니라 범위 판정 대상인 기존 수용이 없다는 뜻**입니다.
+[round-114-closing.md:5](packages/canard/schema-form/architecture/reviews/round-114-closing.md:5)는 React 미달 행을 소유자에게 올리도록 하며 “편집자가 수용으로 넓혀 읽지 않는다”라고 명시했습니다. [round-117-closing.md:5](packages/canard/schema-form/architecture/reviews/round-117-closing.md:5)도 sample-0~3의 첫 갱신을 “수용으로 넓혀 읽지 않고 React 층 고침 뒤 남은 React 행과 함께 소유자에게 올린다”라고 정했습니다. 세션 122에 답한 [round-124-closing.md:9](packages/canard/schema-form/architecture/reviews/round-124-closing.md:9)의 원문 역시 “React 표의 14행 미달은 F2 계열의 측정 대상 그대로다.”이며 소유자 수용을 부여하지 않았습니다. 따라서 이 여섯 행에는 이유에서 유도할 수 있는 React 수용 임계값 자체가 없고, 위의 **범위 밖 0행은 수용 범위 안이라는 뜻이 아니라 범위 판정 대상인 기존 수용이 없다는 뜻**입니다.
 
 ## G26 열 정의와 제공 범위
 
-G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-draft/performance.md](/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-draft/performance.md)에 공식 wall·active 76행, 기존 wall·Profiler·commit 기록과 pooled 초과 목록을 채웠습니다. 각 표의 if/then 행, 첫/확인 블록·감시/검출력·cluster A/A·소유자 판단·모바일·no-GC 열은 not provided by this procedure입니다. oneOf 층은 재시도로 측정한 6행을 채웁니다.
+G26 초안 [{scratch}/g26-draft/performance.md]({scratch}/g26-draft/performance.md)에 공식 wall·active 76행, 기존 wall·Profiler·commit 기록과 pooled 초과 목록을 채웠습니다. 각 표의 if/then 행, 첫/확인 블록·감시/검출력·cluster A/A·소유자 판단·모바일·no-GC 열은 not provided by this procedure입니다. oneOf 층은 재시도로 측정한 6행을 채웁니다.
 
 단일 쓰기는 같은 write index의 303표본을 따로 집계했습니다. 왕복·배치 합을 단일 쓰기로 쓰지 않았습니다. [16.67 ms 전체 표](profile-136k-final/frame-budget.md)는 mount 38행과 단일 쓰기 734행, 합 772행의 양쪽 판 median·p99·ratio와 HEAD 예산 사용률을 제공합니다. G26에는 mount와 fixture·지표마다 HEAD median이 가장 큰 단일 쓰기를 표시하고 전체 표를 연결했습니다. 모바일·GC 없는 조건의 결과는 만들지 않았습니다.
 
@@ -365,43 +365,43 @@ G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-
 
 두 앞선 시도는 각각 고정 HEAD·출력·bundle 상수와 reporter의 Node v26.10.0 단언 때문에 측정 전에 중단되었습니다. 이번에는 사용자 지시대로 Node 단언을 v26.11.1로 변경했습니다. 아래 복사본의 diff는 **HEAD·경로·Node 버전 상수만** 바꿉니다. warmup 20, samples 101, 228 records, worker <220초, 실행 순서, failedWrites 0 및 모든 커밋 단언을 유지했습니다. D/tools는 편집하지 않았습니다.
 
-122 reporter의 설명문에는 원래 /opt/homebrew/bin/node 문자열이 남아 있습니다. 어댑터를 추가로 편집하지 않았으며, 이 보고서는 raw environment와 실제 실행 바이너리의 nvm 경로를 명시합니다.
+122 reporter의 설명문에는 원래 {node-home}/bin/node 문자열이 남아 있습니다. 어댑터를 추가로 편집하지 않았으며, 이 보고서는 raw environment와 실제 실행 바이너리의 nvm 경로를 명시합니다.
 
-/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-122.mjs → /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-136k.mjs (HEAD·raw 출력·bundle 경로 상수). [measure-react-adapter.diff](profile-136k-final/measure-react-adapter.diff)
+{scratch}/measure-react-122.mjs → {scratch}/measure-react-136k.mjs (HEAD·raw 출력·bundle 경로 상수). [measure-react-adapter.diff](profile-136k-final/measure-react-adapter.diff)
 
 ```diff
---- /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-122.mjs	2026-10-08 03:23:30
-+++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-136k.mjs	2026-10-11 13:09:34
+--- {scratch}/measure-react-122.mjs	2026-10-08 03:23:30
++++ {scratch}/measure-react-136k.mjs	2026-10-11 13:09:34
 @@ -31,13 +31,13 @@
  const pkgRequire = createRequire(path.join(pkg, 'package.json'));
  const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
- assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+ assert.equal(repo, '{repo}');
 -assert.equal(head, '439fda3219ec6b42efbef4d7fa0f02a40111453f');
 +assert.equal(head, 'aa1433cba6a22898867fda0dd73692aadd1ce875');
  const started = performance.now();
  const lane = process.argv.includes('--old-wait') ? 'record' : 'immediate';
  const prepareOnly = process.argv.includes('--prepare');
  const calibrationOnly = process.argv.includes('--calibrate-all');
--const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-raw/react";
--const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/react-122-head.cjs";
-+const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k";
-+const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/react-136k-head.cjs";
+-const rawDirectory = "{scratch}/profile-122-raw/react";
+-const bundleFile = "{scratch}/bundles/react-122-head.cjs";
++const rawDirectory = "{scratch}/session-136k";
++const bundleFile = "{scratch}/bundles/react-136k-head.cjs";
  fs.mkdirSync(rawDirectory, { recursive: true });
  const fixtureName = process.argv[3];
  const run = Number(process.argv[4]);
 ```
 
-/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-react-report.mjs → /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-136k-react-report.mjs (raw 경로·Node 버전 단언 상수). [reporter-adapter.diff](profile-136k-final/reporter-adapter.diff)
+{scratch}/profile-122-react-report.mjs → {scratch}/profile-136k-react-report.mjs (raw 경로·Node 버전 단언 상수). [reporter-adapter.diff](profile-136k-final/reporter-adapter.diff)
 
 ```diff
---- /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-react-report.mjs	2026-10-08 04:40:55
-+++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-136k-react-report.mjs	2026-10-11 13:09:34
+--- {scratch}/profile-122-react-report.mjs	2026-10-08 04:40:55
++++ {scratch}/profile-136k-react-report.mjs	2026-10-11 13:09:34
 @@ -3,7 +3,7 @@
  import fs from 'node:fs';
  import path from 'node:path';
  
--const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-raw/react';
-+const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k';
+-const raw = '{scratch}/profile-122-raw/react';
++const raw = '{scratch}/session-136k';
  const fixtures = ['sample-0', 'sample-1', 'sample-2', 'sample-3', 'flat-50', 'flat-100', 'flat-500',
    'nested-d3-f4', 'nested-d5-f4', 'array-100', 'array-500', 'array-1000', 'array-push-100',
    'array-replace-200', 'array-push-remove-100', 'computed-visible-derived', 'oneOf-5', 'oneOf-10', 'oneOf-20'];
@@ -416,30 +416,30 @@ G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-
      records.push(report);
 ```
 
-/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/measure-react.mjs → /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-layer-136k.mjs (HEAD·import·repo·raw 경로 상수와, 원장 관리자가 승인한 0.16.0 import 연결 onResolve 한 줄). [react-layer-measure-adapter.diff](profile-136k-final/react-layer-measure-adapter.diff)
+packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/measure-react.mjs → {scratch}/measure-react-layer-136k.mjs (HEAD·import·repo·raw 경로 상수와, 원장 관리자가 승인한 0.16.0 import 연결 onResolve 한 줄). [react-layer-measure-adapter.diff](profile-136k-final/react-layer-measure-adapter.diff)
 
 ```diff
 --- profile-114-g26/measure-react.mjs	2026-10-07 15:42:38
-+++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-layer-136k.mjs	2026-10-11 14:45:13
++++ {scratch}/measure-react-layer-136k.mjs	2026-10-11 14:45:13
 @@ -8,18 +8,18 @@
  import path from 'node:path';
  import { fileURLToPath, pathToFileURL } from 'node:url';
  
 -import { instrumentRound93i } from '../tools/instrument-round-93i.mjs';
 -import { instrumentCore } from './instrument-core.mjs';
-+import { instrumentRound93i } from 'file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/instrument-round-93i.mjs';
-+import { instrumentCore } from 'file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/instrument-core.mjs';
++import { instrumentRound93i } from 'file://packages/canard/schema-form/architecture/verification/07-switch/tools/instrument-round-93i.mjs';
++import { instrumentCore } from 'file://packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/instrument-core.mjs';
  
 -const directory = path.dirname(fileURLToPath(import.meta.url));
 -const repo = path.resolve(directory, '../../../../../../..');
-+const directory = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k-layer';
-+const repo = '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07';
++const directory = '{scratch}/session-136k-layer';
++const repo = '{repo}';
  const pkg = path.join(repo, 'packages/canard/schema-form');
  const bf = path.join(repo, 'packages/aileron/benchmark-form');
  const bfRequire = createRequire(path.join(bf, 'package.json'));
  const pkgRequire = createRequire(path.join(pkg, 'package.json'));
  const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
- assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+ assert.equal(repo, '{repo}');
 -assert.equal(head, 'af3cd579b892393de3693f737afe68cfce3993f8');
 +assert.equal(head, 'f4e6aeb1b9abc9e8db5c2a4b26de023b4fe6b16f');
  const started = performance.now();
@@ -455,11 +455,11 @@ G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-
          builder.onResolve({ filter: /^@\/schema-form/ }, args => {
 ```
 
-/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/report.mjs → /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-136k-layer-report.mjs (HEAD·raw·원자료 경로 상수). [react-layer-reporter-adapter.diff](profile-136k-final/react-layer-reporter-adapter.diff)
+packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/report.mjs → {scratch}/profile-136k-layer-report.mjs (HEAD·raw·원자료 경로 상수). [react-layer-reporter-adapter.diff](profile-136k-final/react-layer-reporter-adapter.diff)
 
 ```diff
 --- profile-114-g26/report.mjs	2026-10-07 16:37:56
-+++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-136k-layer-report.mjs	2026-10-11 14:45:13
++++ {scratch}/profile-136k-layer-report.mjs	2026-10-11 14:45:13
 @@ -4,9 +4,9 @@
  import path from 'node:path';
  import { fileURLToPath } from 'node:url';
@@ -467,8 +467,8 @@ G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-
 -const directory = path.dirname(fileURLToPath(import.meta.url));
 -const evidenceDirectory = path.dirname(directory);
 -const head = 'af3cd579b892393de3693f737afe68cfce3993f8';
-+const directory = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k-layer';
-+const evidenceDirectory = '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch';
++const directory = '{scratch}/session-136k-layer';
++const evidenceDirectory = 'packages/canard/schema-form/architecture/verification/07-switch';
 +const head = 'f4e6aeb1b9abc9e8db5c2a4b26de023b4fe6b16f';
  const fixtures = ['sample-0', 'sample-1', 'sample-2', 'sample-3',
    'flat-50', 'flat-100', 'flat-500', 'nested-d3-f4', 'nested-d5-f4',
@@ -483,3 +483,5 @@ G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-
 최종 [verification.json](profile-136k-final/verification.json)은 원시 값과 표의 일치, 228 records / 114 pairs / warmup 20 / samples 101 / run order / worker <220초 / failedWrites 0, 원본 해시·상수 전용 diff, D/tools 불변, 제품 src 불변, Git 쓰기 없음, 각 파일 5 MB 미만 및 runtime bundle 없음의 근거를 기록합니다. oneOf 층은 실패했고 if/then은 절차에 없으므로 두 항목을 충족했다고 주장하지 않습니다.
 
 **상태:** React 종단·커밋 표와 oneOf React 계층 표를 완료했습니다. oneOf 계층 6행은 모두 충족합니다. update 미달 6행은 기존 React 소유자 수용이 없어 소유자 질의 대상입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `439fda3219ec`, `daca1d14a840`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

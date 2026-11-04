@@ -1,6 +1,6 @@
 # U9 — node and settlement benchmarks, stage 03 optimization round
 
-환경: MacBookPro18,2 (M1 Max, 64 GB), Darwin 25.6.0, Node.js 26.10.0/V8, Bun 1.4.2/JSC. 청사진을 준비한 뒤 `node --import tsx bench/node-and-settle.bench.ts`와 `/opt/homebrew/bin/bun bench/node-and-settle.bench.ts`를 단독·순차 실행했다. 각 시간 쌍은 같은 프로세스·같은 입력의 새/레거시 100표본(준비 20회, B6 5회)이다. B2는 7표본 중앙값이다. Node 후측정 B1은 첫 회에 7.74 ms 단일 표본이 섞여 재측정했고, 키 순서 보존 확인을 추가한 최종 코드로 다시 두 런타임의 전체 스크립트를 실행했다. 아래 표는 최종 실행값이다. `N=64` fixture는 활성 조각 64, 루트 평가 게이트 호스트 64, 잠복 원본 1을 확인했다.
+환경: MacBookPro18,2 (M1 Max, 64 GB), Darwin 25.6.0, Node.js 26.10.0/V8, Bun 1.4.2/JSC. 청사진을 준비한 뒤 `node --import tsx bench/node-and-settle.bench.ts`와 `{node-home}/bin/bun bench/node-and-settle.bench.ts`를 단독·순차 실행했다. 각 시간 쌍은 같은 프로세스·같은 입력의 새/레거시 100표본(준비 20회, B6 5회)이다. B2는 7표본 중앙값이다. Node 후측정 B1은 첫 회에 7.74 ms 단일 표본이 섞여 재측정했고, 키 순서 보존 확인을 추가한 최종 코드로 다시 두 런타임의 전체 스크립트를 실행했다. 아래 표는 최종 실행값이다. `N=64` fixture는 활성 조각 64, 루트 평가 게이트 호스트 64, 잠복 원본 1을 확인했다.
 
 추가 분석과 재측정: [performance.md](./performance.md).
 
@@ -34,7 +34,7 @@ B5 준비 뒤 한 번의 변경된 숫자 입력에 대한 코드 경로의 할�
 
 최적화: 게이트 없는 분석의 레지스트리·호스트 바퀴 우회(`settle/utils/write/writeSchemaNode.ts:49`, `settle/utils/compute/computeNode.ts:24`), 청사진별 유효 스키마와 선언 ID 재사용(`blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:14`, `settle/utils/compute/selectChildren.ts:18`), 선언 이름·정적 해석 캐시(`settle/utils/write/markWrite.ts:6`, `staticSpec.ts:5`), 안정된 객체 키 순서의 얕은 패치(`behaviors/objectBehavior/branch/utils/assembleObject.ts:17`), 빈 의존·잠복·경고 경로의 할당 생략(`settle/utils/write/getDependencyIndex.ts:50`, `settle/utils/commit/commitSettlement.ts:76`), 호출 뒤 작업 집합 해제(`settle/utils/write/releaseSettlementScratch.ts:8`). DETAIL 변경은 없으며 NODE-004·010과 SETTLE-047 계약을 유지했다.
 
-남은 차이: B5 Bun은 레거시가 입력을 부모 초안에 기록하고 루트 읽기에서 지연 합성하는 데 비해 새 엔진이 더러운 경로 계산, 루트 키 순서 보존 패치, revision·typeMismatch·Refresh 커밋을 수행한다(SETTLE-002·047, VALUE-037, EVENT-071). B6 Bun은 레거시의 직접 자식 생성과 달리 자식별 활성 선언 선택·유효 스키마 조회, 생김 노드의 기본값/유효형 전이 확인, 잠복 원본·경고등·revision 커밋을 수행한다(SETTLE-003·005·047, WRITE-087, VALUE-037). B2가 NODE-018 추정 상한을 넘는 이유는 노드 인스턴스만이 아닌 유효 스키마·출력·런타임과 경로 메모를 함께 재기 때문이다. 18C-15는 N개 활성 조각의 작성 순서 평가(SETTLE-044), 18C-67은 깊이에 따른 전체 루트 교체와 잠복 원본 갱신(WRITE-087, SETTLE-047), 18C-81은 L로 옮긴 N개 게이트의 평가·호스트 무효화(SETTLE-045)가 N=0/깊이 0 쌍에 없는 추가 작업이다. 모두 소유자 수용 (2026-09-30)이다.
+남은 차이: B5 Bun은 레거시가 입력을 부모 초안에 기록하고 루트 읽기에서 지연 합성하는 데 비해 새 엔진이 더러운 경로 계산, 루트 키 순서 보존 패치, revision·misfit·Refresh 커밋을 수행한다(SETTLE-002·047, VALUE-037, EVENT-071). B6 Bun은 레거시의 직접 자식 생성과 달리 자식별 활성 선언 선택·유효 스키마 조회, 생김 노드의 기본값/유효형 전이 확인, 잠복 원본·경고등·revision 커밋을 수행한다(SETTLE-003·005·047, WRITE-087, VALUE-037). B2가 NODE-018 추정 상한을 넘는 이유는 노드 인스턴스만이 아닌 유효 스키마·출력·런타임과 경로 메모를 함께 재기 때문이다. 18C-15는 N개 활성 조각의 작성 순서 평가(SETTLE-044), 18C-67은 깊이에 따른 전체 루트 교체와 잠복 원본 갱신(WRITE-087, SETTLE-047), 18C-81은 L로 옮긴 N개 게이트의 평가·호스트 무효화(SETTLE-045)가 N=0/깊이 0 쌍에 없는 추가 작업이다. 모두 소유자 수용 (2026-09-30)이다.
 
 검증: unit 278파일·3,777통과(4 todo), render 52파일·539통과, `npx tsc --noEmit` 통과, `npx eslint src/core bench` 통과, SCN 4파일·15통과. 새 키 순서 회귀 시험은 순서 확인을 뺐을 때 잘못된 `['b','a','ghost']`로 실패하고 확인을 복원하면 통과했다. `yarn build`는 실행하지 않았다.
 

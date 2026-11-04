@@ -1,6 +1,8 @@
 import type { ValidationIssue } from '@canard/schema-form';
 import type { ErrorObject } from 'ajv';
 
+import type { Dictionary } from '@aileron/declare';
+
 const JSON_POINTER_SEPARATOR = '/';
 
 /**
@@ -39,7 +41,7 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
       let target: unknown = root;
       for (const segment of segments) {
         if (typeof target !== 'object' || target === null) break;
-        target = (target as Record<string, unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+        target = (target as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
       }
       if (typeof target === 'object' && target !== null && 'required' in target &&
           Array.isArray(target.required) && target.required.length === 1 &&

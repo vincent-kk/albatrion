@@ -97,7 +97,7 @@ PR 순서: PR-1 blueprint. PR-2 `record/`, behaviors(잎 넷, 객체와 터미�
 | `ObjectNode`와 두 전략 | `objectBehavior/branch/`(입력 해석은 자식 분배, 합성은 키 순서), `objectBehavior/terminal/`(PR-2). 합성 분기 분석과 조각 표는 `blueprint/`, 게이트·활성 집합은 `settle`, 자식 만들기는 `declareChildren`의 선언과 `settle`의 생성 |
 | `ObjectNode/utils/omitEmptyObject` | `objectBehavior/utils`(이름과 시험을 그대로). 두 전략이 함께 쓰므로 그 종류의 `utils/`다 |
 | `ArrayNode`와 두 전략, `ArrayNode/utils` | `arrayBehavior/branch/`·`arrayBehavior/terminal/`(PR-5). `omitTrailingArray`·`omitEmptyArray`는 `arrayBehavior/utils`, `resolveArrayValueFilter`는 `project` 칸의 비트 분기로 다시 씀, `resolveArrayLimits`는 `blueprint/`, `ArrayNode/validate.ts`는 `blueprint/`(청사진 오류) |
-| `VirtualNode` | `behaviors/virtualBehavior`. `raw`·`emit`이 없고 `assemble`이 참조 노드 값의 튜플을 `local`에 둔다(`value` 게터는 `local`). 방출·가드·검증에는 나타나지 않는다. `strategy`는 `'branch'`(게이트 N16) |
+| `VirtualNode` | `behaviors/virtualBehavior`. `source`·`emit`이 없고 `assemble`이 참조 노드 값의 튜플을 `local`에 둔다(`value` 게터는 `local`). 방출·가드·검증에는 나타나지 않는다. `strategy`는 `'branch'`(게이트 N16) |
 | `ContextNode`와 `contextNodeFactory` | 대기. 08 §4의 노드 종류에 없고 오늘 `type`이 `'object'`다(`ContextNode.ts:12-13`). 18라운드 안건 |
 | `isSchemaNode`, `isBranchNode`·`isTerminalNode`, 종류별 가드 | `SchemaNode/utils/guards`(가드마다 파일 하나). `isSchemaNode`는 단일 클래스 `instanceof`. `isTerminalNode`의 좁히기를 바로잡는다(오늘 잎 넷으로 좁히지만 터미널 객체·배열도 `'terminal'`, `src/core/nodes/filter.ts:195-198`). `isNullNode`는 쓰는 곳이 없어 옮기지 않는다(게이트 N13) |
 | `core/types`의 `node.ts`·`constructor.ts` | 공개 합집합은 `SchemaNode/type.ts`에 새로 쓰고, `constructor.ts`의 후계는 `SchemaNodeFactory`의 입력이다 |
@@ -141,7 +141,7 @@ PR 순서: PR-1 blueprint. PR-2 `record/`, behaviors(잎 넷, 객체와 터미�
 
 **구조로 확실한 것.** 노드마다 객체 하나다. 행은 종류와 전략마다 하나를 모든 노드가 공유하므로 프로세스 전체에 아홉뿐이다(잎 넷, 가상, 객체 둘, 배열 둘). 노드마다의 매니저·클로저·전략 객체·구독은 없으며 규칙과 린트로 금한다. 옵션에서 나오는 선택은 유효 스키마 메모마다 한 번만 계산한다.
 
-**속도(추정, 확인 전).** 모든 노드가 한 클래스이고 필드를 같은 순서로 넣으면 한 숨은 클래스를 가지므로, 여러 종류를 도는 `settle`·`dispatch`의 필드 읽기가 단형 인라인 캐시로 남을 것이다. 오늘은 여덟 클래스라 섞인 종류를 보는 자리가 V8 기준 다형이나 거대형이 될 수 있으며, 소유자가 말한 "상속 클래스에 의한 캐싱 비효율"이 이것이다. 행 아홉이 칸을 같은 순서로 모두 가지면 `node.behavior.<칸>` 읽기도 단형이다. 칸 함수는 종류마다 달라 그 호출은 거대형이 되고 인라인되지 않으며 간접 호출 비용은 남는다. `type`이 필드에서 게터로 바뀌어 읽기가 한 단계 늘고, `raw` 필드에 문자열·숫자·객체가 섞이면 필드 표현이 한 번 일반화될 수 있다. iOS의 JavaScriptCore는 문턱이 V8과 달라 같은 결론이 보장되지 않는다.
+**속도(추정, 확인 전).** 모든 노드가 한 클래스이고 필드를 같은 순서로 넣으면 한 숨은 클래스를 가지므로, 여러 종류를 도는 `settle`·`dispatch`의 필드 읽기가 단형 인라인 캐시로 남을 것이다. 오늘은 여덟 클래스라 섞인 종류를 보는 자리가 V8 기준 다형이나 거대형이 될 수 있으며, 소유자가 말한 "상속 클래스에 의한 캐싱 비효율"이 이것이다. 행 아홉이 칸을 같은 순서로 모두 가지면 `node.behavior.<칸>` 읽기도 단형이다. 칸 함수는 종류마다 달라 그 호출은 거대형이 되고 인라인되지 않으며 간접 호출 비용은 남는다. `type`이 필드에서 게터로 바뀌어 읽기가 한 단계 늘고, `source` 필드에 문자열·숫자·객체가 섞이면 필드 표현이 한 번 일반화될 수 있다. iOS의 JavaScriptCore는 문턱이 V8과 달라 같은 결론이 보장되지 않는다.
 
 **메모리(추정).** 필드가 24–30개이면 포인터 압축 엔진에서 노드 하나가 약 110–140바이트, 압축이 없는 엔진에서 약 210–260바이트다. 오늘 노드 인스턴스와 부속 객체의 합과 비교해야 한다.
 
@@ -194,7 +194,7 @@ PR 순서: PR-1 blueprint. PR-2 `record/`, behaviors(잎 넷, 객체와 터미�
 | N13 | 낮음 | 가드 개수가 아홉과 열로 어긋나고 `isNullNode`는 쓰는 곳이 없다 | 적용. `isNullNode`는 옮기지 않는다 |
 | N14 | 낮음 | 행이 없는 조합(잎의 `options.terminal: false`는 오늘 `branch`가 되어 fieldset으로 그려지고, 가상의 `options.terminal: true`는 자식 구성 요소가 비워짐)을 무시하면 사용자에게 보이는 동작이 바뀌는데 이주 행이 없다 | 18라운드 안건(설계 빈틈). 처리와 이주를 함께 정한다. 가상에 인라인 `presentation.FormTypeInput`을 둔 경우(오늘은 `getNodeGroup.ts:22-23`이 `'terminal'`로 정함)도 같은 안건에 든다(반영 뒤 수정 게이트) |
 | N15 | 낮음 | `schemaPath`·`key`는 에러 라우팅(PR-4)만이 아니라 React key와 구성 요소 캐시 키(`useChildNodeComponents.tsx:61-62`, PR-7)에도 걸린다 | 적용(§6) |
-| N16 | 낮음 | 가상 노드의 값 칸 설명이 앞뒤가 맞지 않는다 | 적용. `raw`·`emit`이 없고 `assemble`이 튜플을 `local`에 둔다(§4) |
+| N16 | 낮음 | 가상 노드의 값 칸 설명이 앞뒤가 맞지 않는다 | 적용. `source`·`emit`이 없고 `assemble`이 튜플을 `local`에 둔다(§4) |
 | N17 | 낮음 | 작은 불일치 다섯(`shallowPatch`의 근거, 고르기 함수와 키의 노출, 시험 파일 수, 09 §4.4의 PR-5 시험 행, ADR 0011의 "전략 패턴이 필요한가") | 적용. `shallowPatch`는 소비자 둘의 불변식 근거로 `record/`에. 표가 `BEHAVIORS[type][strategy]`의 두 단계가 되어 고르기는 생성 때 표를 한 번 읽는 것이고 표는 behaviors 밖으로 내보내지 않는다. 시험은 87파일(보조 셋 포함 90파일). PR-5 시험에 터미널 배열 행을 더한다. ADR 0011의 "전략 패턴이 필요한가"는 17라운드 소유자 확정으로 닫는다(`behaviors/`의 `branch/`·`terminal/`) |
 
 ## 10. 18라운드로 넘긴 것

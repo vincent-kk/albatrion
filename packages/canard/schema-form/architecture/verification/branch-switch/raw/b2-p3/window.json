@@ -1,0 +1,61 @@
+{
+  "started": {
+    "startedAt": "2026-10-27T16:02:36.255Z",
+    "quietSince": "2026-10-27T16:02:41.382Z",
+    "durationSeconds": 5.123033125000001,
+    "heavy": [],
+    "highestCpuPercent": 18.348505212907433
+  },
+  "endedAt": "2026-10-27T16:13:13.734Z",
+  "ended": {
+    "startedAt": "2026-10-27T16:13:13.734Z",
+    "quietSince": "2026-10-27T16:13:18.872Z",
+    "durationSeconds": 5.135015084000001,
+    "heavy": [],
+    "highestCpuPercent": 21.226812037923327
+  },
+  "selectedCompleteWindows": 1,
+  "interruptedCollectionWindows": 1,
+  "artifactCheckerNote": {
+    "reason": "Existing optional-payload registry supports 22 rows, but the post-run checker still asserts exactly 21 rows.",
+    "recordedRows": 22,
+    "recordedProcesses": 440,
+    "timeCollectionCompleted": true,
+    "checkerExit": 1,
+    "replacement": "Independent 22-row protocol and artifact validation in b2-p3-judge.py; no timing rerun."
+  },
+  "callCountFixtureCorrection": {
+    "reason": "The initial oneOf call-count probe passed an unnormalized canonical row to the branch fixture helper; its zero-call result is excluded.",
+    "remedy": "Use the stage setupWrite normalizer for both rows.",
+    "timingSamplesRepeated": 0
+  },
+  "interruptedWindow": {
+    "reason": "AJV8 plugin dist was not built; switch-if-80 A0 failed at module loading.",
+    "collectedRows": 9,
+    "collectedProcesses": 180,
+    "currentTimedSamples": 18000,
+    "discardedForDecision": true,
+    "startedAt": "2026-10-27T15:51:54.851Z",
+    "endedAt": "2026-10-27T15:56:03.581Z",
+    "resumeAuthorization": "Coordinator authorized a new complete collection after fixing environment preparation."
+  },
+  "preflightAttempts": [
+    {
+      "startedAt": "2026-10-27T16:02:36.255Z",
+      "quietSince": "2026-10-27T16:02:41.382Z",
+      "durationSeconds": 5.123033125000001,
+      "heavy": [],
+      "highestCpuPercent": 18.348505212907433
+    }
+  ],
+  "setupFailures": [
+    {
+      "reason": "Copied A/B bundle source directories lacked a node_modules link; first worker failed during module resolution.",
+      "formalSamples": 0,
+      "warmups": 0,
+      "completedRows": 0,
+      "productChanged": false,
+      "remedy": "Linked the measurement root to the existing repository dependencies; no install."
+    }
+  ]
+}

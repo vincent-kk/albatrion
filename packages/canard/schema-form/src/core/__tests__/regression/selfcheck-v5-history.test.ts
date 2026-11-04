@@ -26,8 +26,8 @@ const historyTree = () =>
   }).root;
 
 // filid:contract factory-single-path
-describe('selfcheck-v5 raw history regression', () => {
-  it('selfcheck-v5.mjs:365 SETTLE-048 replaces latent raw and appends extras last', () => {
+describe('selfcheck-v5 source history regression', () => {
+  it('selfcheck-v5.mjs:365 SETTLE-048 replaces latent source and appends extras last', () => {
     const root = historyTree();
     root.setValue({ kind: 'b', b: 'SECRET' });
     root.setValue({ kind: 'a', a: 'NEW', extra: 1 });
@@ -36,7 +36,7 @@ describe('selfcheck-v5 raw history regression', () => {
     );
     root.find('/kind')?.setValue('b');
     expect(JSON.stringify(root.outputValue)).toBe('{"kind":"b","extra":1}');
-    expect(root.find('/b')?.raw).toBeUndefined();
+    expect(root.find('/b')?.source).toBeUndefined();
   });
 
   it('selfcheck-v5.mjs:379 distinguishes partial latent retention from replacement', () => {
@@ -51,6 +51,6 @@ describe('selfcheck-v5 raw history regression', () => {
     expect(root.inactiveValues).toContainEqual({ path: '/b', value: 'SECRET' });
     root.setValue(root.outputValue);
     root.find('/kind')?.setValue('b');
-    expect(root.find('/b')?.raw).toBeUndefined();
+    expect(root.find('/b')?.source).toBeUndefined();
   });
 });

@@ -5,20 +5,26 @@ import { blueprint } from '../blueprint';
 /** Count only the child producer's segment escaping, outside unrelated pointer work. */
 const work = vi.hoisted(() => ({ names: [] as string[] }));
 
-vi.mock('@winglet/json/pointer', async (importOriginal) => {
-  const original =
-    await importOriginal<typeof import('@winglet/json/pointer')>();
-  return {
-    ...original,
-    escapeSegment: (name: string) => {
-      if (
-        new Error().stack?.split('\n')[2]?.includes('populateNodeChildren.ts')
-      )
-        work.names.push(name);
-      return original.escapeSegment(name);
-    },
-  };
-});
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/formatSegment',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      formatSegment: (name: string) => string;
+    }>();
+    return {
+      ...original,
+      formatSegment: (name: string) => {
+        if (
+          new Error().stack?.includes('populateNodeChildren.ts') &&
+          name !== 'properties' &&
+          name !== 'allOf'
+        )
+          work.names.push(name);
+        return original.formatSegment(name);
+      },
+    };
+  },
+);
 
 afterEach(() => {
   work.names = [];

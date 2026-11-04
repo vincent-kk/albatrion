@@ -37,16 +37,14 @@ expectTypeOf<FieldInputHint['schemaType']>().toEqualTypeOf<
   FieldNode['schemaType']
 >();
 expectTypeOf<FieldInputHint['nullable']>().toEqualTypeOf<boolean>();
-expectTypeOf<FieldInputHint['typeMismatch']>().toEqualTypeOf<boolean>();
+expectTypeOf<FieldInputHint['misfit']>().toEqualTypeOf<boolean>();
 expectTypeOf<FieldInputProps<number>['type']>().toEqualTypeOf<
   NumberNode['type']
 >();
 expectTypeOf<FieldInputProps<number>['schemaType']>().toEqualTypeOf<
   NumberNode['schemaType']
 >();
-expectTypeOf<
-  FieldInputProps<number>['typeMismatch']
->().toEqualTypeOf<boolean>();
+expectTypeOf<FieldInputProps<number>['misfit']>().toEqualTypeOf<boolean>();
 expectTypeOf<FieldInputProps<number>['nullable']>().toEqualTypeOf<boolean>();
 
 const events: FieldNodeEventType[] = [

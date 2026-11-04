@@ -2,7 +2,7 @@
 
 기준은 HEAD `6b5758ec8`입니다. 고침 명세는 [branch-regression-diagnosis-122.md](branch-regression-diagnosis-122.md)의 F1~F4이고, 편집자의 답은 120라운드 닫기 문서의 덧붙임(Q122)입니다. 제품 변경은 세션 scratchpad(아래 S)의 패치로만 남겼고, 작업 트리에는 측정기 도구 파일과 이 문서만 남겼습니다. git 쓰기, 설치, 시간 측정은 하지 않았습니다. 측정기의 짧은 시험 실행(표본 5개)만 했습니다.
 
-S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+S는 `{scratch}`입니다.
 
 ## 패치
 
@@ -154,3 +154,5 @@ no-field 변형은 vitest의 변환 설정(ES2020 대상, define 의미 아님)�
 - F3은 변경 2 없이 존재할 수 없어서, 요청된 "HEAD 단독 F3"을 변경 2를 포함한 패치로 만들었습니다. 이 해석이 맞는지는 편집자가 정해야 합니다.
 - F1의 지시대로 `primeHost`는 항목이 없을 때 `prepare=false`로 함수를 부릅니다. 그 호출은 항목이 없으면 언제나 null을 반환하므로, `?? null`로 바꾸면 호출 하나를 더 줄일 수 있습니다. 시험에서는 if-then과 oneOf 모두 첫 쓰기의 2회 외에는 호출이 없었습니다.
 - pair 경로는 스케줄러 경계 감사를 반복하지 않습니다. (가)의 경계 검사는 기존 단일 판 worker가 맡습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `6b5758ec82f5`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

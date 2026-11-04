@@ -63,6 +63,7 @@ The plugin implements the `ValidatorPlugin` interface with validation, synchrono
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
 - **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility.
+- **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin binding starts a new registry and does not carry roots registered before it.
 
 Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 
@@ -78,8 +79,16 @@ unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It a
 every guard compiled at a root pointer, which is a limitation of that path; a self-contained
 guard compiled directly still evaluates, because a guard compile failure belongs to its own
 gate only.
+Guards compile without AJV's root meta-schema validation (`validateSchema: false`); AJV's root
+meta-schema check runs only in the whole-schema compile. Custom keyword meta-schema checks, strict
+options and code-generation checks still apply when a guard compiles. A root meta-schema violation
+outside the condition, such as `multipleOf: 0` in an unrelated field, fails no guard on either
+path; with the default schema validation, full validation reports `VALIDATOR_COMPILE_FAILED`,
+while an instance bound with `validateSchema: false` or `'log'` compiles as that option says.
+A meta-only violation inside the condition schema itself, such as `minLength: 1.5`, does not fail
+the guard; the guard evaluates as the code AJV generates for it.
 The guard instance retains the bound dialect, formats and keywords with
-`allErrors: false`. `release(root)` also removes its directly compiled guards.
+`allErrors: false` and `validateSchema: false`. `release(root)` also removes its directly compiled guards.
 
 AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` as contextual.
 
@@ -91,15 +100,18 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 
 #### **`compileGuard(root, pointer)`**
 
-- **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the authored root, retaining its `$ref` context
+- **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the engine-owned copy root, retaining its `$ref` context
+- **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy without registering it. Both kinds of guard work before whole-schema compilation.
+- **Identity**: Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 - **Limits**: Asynchronous formats and keywords are unsupported
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 
-Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+Strict options on a bound instance, such as `strictKeywords`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 #### **`release(root)`**
 
 - **Purpose**: Removes that root's Ajv registrations and compiled results when the form cache evicts it
+- **Call order**: Accepts the same engine-owned copy whether or not `compile` has run. Releasing an unregistered root is a no-op.
 
 ### **Default Configuration**
 

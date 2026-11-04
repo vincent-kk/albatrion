@@ -13,7 +13,7 @@
 | 1 | `FieldNodeEventType.UpdateComputedProperties` | `UpdateControlledProperties` | 공개 enum 멤버(비트 값 불변) |
 | 2 | `ChildNodeComponent`·`ChildNodeComponents`·`ChildNodeComponentProps`·`useChildNodeComponentMap`·`useChildNodeErrors` | `ChildField`·`ChildFields`·`ChildFieldProps`·`useChildFieldMap`·`useChildFieldErrors` | 공개 형·훅 |
 | 3 | `FieldNodeState.ShowError` | `FieldNodeState.ErrorVisible` | 비트 값 불변; `ShowError` 정책 enum·prop·메서드는 유지 |
-| 4 | 노드 멤버 `extras` | `undeclaredValues` | 공개 형 |
+| 4 | 노드 멤버 `extras` | `extras` | 공개 형 |
 | 5 | `Hint` | `FieldInputHint`; `FieldInputTestObject`는 그 부분형 | 공개 형 |
 | 7 | `SetValueOption` 셋 | 공개 `SetValueOption` 하나; 내부 enum은 다른 이름(예: `WriteOption`) | 런타임 불변 |
 | 8 | `JSONSchema` 셋 | 공개 하나; core·rolled 내부는 다른 이름 | 런타임 불변 |

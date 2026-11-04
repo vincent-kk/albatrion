@@ -122,8 +122,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | `SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE` | VALUE-037·ERROR-203 | 확정 | 동일 | 개발 모드의 JSON 부정합 검사. |
 | `SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID` | REACT-033·ERROR-203 | 확정 | 동일 | 입력 정의 시험 객체의 모르는 키. |
 | `SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM` | BLUEPRINT-044·ERROR-203 | 확정 | 동일 | 터미널 하위 예약 키는 폼에서 무시합니다. |
-| `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` | SURFACE-061·ERROR-186 | 삭제 | `SCHEMA_FORM_WARNING.TYPE_MISMATCH` | 소유자가 경고등 이름을 확정했습니다. |
-| `SCHEMA_FORM_WARNING.TYPE_MISMATCH` | SURFACE-061 | 확정 | 동일 | 확정된 경고등 코드입니다. |
+| `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` | SURFACE-061·ERROR-186 | 삭제 | `SCHEMA_FORM_WARNING.MISFIT` | 소유자가 경고등 이름을 확정했습니다. |
+| `SCHEMA_FORM_WARNING.MISFIT` | SURFACE-061 | 확정 | 동일 | 확정된 경고등 코드입니다. |
 | `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` | ERROR-164·198 | 삭제 | — | 소유자 판정으로 코드 행이 제거되었습니다. |
 | `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED` | VALIDATE-050·ERROR-100 | 확정 | 동일 | 플러그인 `bind`의 호출자 거부이며 폼 `onError` 대상이 아닙니다. |
 | `FormErrorRecord` | ERROR-013·017·032 | 확정 | 동일 | `src/errors/`가 기록 데이터를 소유합니다. |
@@ -140,9 +140,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | `NodeEventType` | SURFACE-056·LANDING-158 | 삭제 | `SchemaNodeEventType` | 새 엔진은 새 이름을 처음부터 쓰고 옛 소비자 이주는 07입니다. |
 | `SchemaNodeEventType` | SURFACE-056·060 | 확정 | 동일 | record가 소유하고 노드 진입점에서 공개합니다. |
 | `SchemaNodeRequestType` (`Focus`, `Select`, `Refresh`, `Remount`) | EVENT-063·073, SURFACE-056 | 확정 | 동일 | 공개 TS 열거이며 네 멤버는 각 `Request*` 비트의 별칭입니다. |
-| `valueTypeMismatch` | SURFACE-052·061 | 삭제 | `typeMismatch` | 소유자 확정 게터 이름이 이깁니다. |
-| `valueTypeMismatches` | VALUE-030, SURFACE-061 | 삭제 | `typeMismatches` | 같은 경고등의 경로 목록도 소유자 이름으로 맞춥니다. |
-| `typeMismatch`·`typeMismatches` | SURFACE-061 | 확정 | 동일 | `schemaType`·유효 목록 기준이며 검증 통과와 다릅니다. |
+| `valueTypeMismatch` | SURFACE-052·061 | 삭제 | `misfit` | 소유자 확정 게터 이름이 이깁니다. |
+| `valueTypeMismatches` | VALUE-030, SURFACE-061 | 삭제 | `misfits` | 같은 경고등의 경로 목록도 소유자 이름으로 맞춥니다. |
+| `misfit`·`misfits` | SURFACE-061 | 확정 | 동일 | `schemaType`·유효 목록 기준이며 검증 통과와 다릅니다. |
 | `union` | BLUEPRINT-035 | 확정 | 동일 | 종류 이름은 소유자가 이미 확정했습니다. |
 | `unionBehavior` | BLUEPRINT-035 | 확정 | 동일 | 동작 모듈 이름은 소유자가 이미 확정했습니다. |
 | `isUnionNode` | BLUEPRINT-035 | 확정 | 동일 | 공개 가드 이름은 소유자가 이미 확정했습니다. |

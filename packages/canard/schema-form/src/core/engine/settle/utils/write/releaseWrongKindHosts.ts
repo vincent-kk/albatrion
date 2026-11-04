@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
-import { isPlain } from './isPlain';
-import { registerRecalculation } from './registerRecalculation';
+import { registerRecalculation } from '../dependencies/registerRecalculation';
+import { isPlain } from '../input/isPlain';
 
 /**
  * Clear a caller-touched wrong-kind host only after a child emits.
@@ -19,12 +19,25 @@ export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
       (left, right) => right.depth - left.depth,
     );
     for (const host of hosts) {
-      if (host.detached || host.raw === undefined || isPlain(host.raw))
+      if (host.detached || host.source === undefined || isPlain(host.source))
         continue;
-      if (!(host.children ?? []).some((child) => child.emit !== undefined))
+      let hasEmittedChild = false;
+
+      const hostChildren = host.children ?? [];
+      for (let index = 0, count = hostChildren.length; index < count; index++) {
+        const child = hostChildren[index];
+
+        if (child.emit !== undefined) {
+          hasEmittedChild = true;
+          break;
+        }
+      }
+
+      if (!hasEmittedChild) {
         continue;
-      host.raw = undefined;
-      context.changedRaw.add(host.path);
+      }
+      host.source = undefined;
+      context.changedSource.add(host.path);
       context.changedNodes.add(host);
       context.dirtyPaths.add(host.path);
       context.shapeDirtyPaths.add(host.path);

@@ -3,42 +3,38 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRuntime } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { updateCommittedRuleValue } from '../commit/updateCommittedRuleValue';
-import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
+import { getRuntimePathStores } from '../pathStores/getRuntimePathStores';
 
 /**
  * Drop only entries indexed beneath perished item roots.
  * @param runtime - Tree-owned stores and their persistent path indexes
- * @param paths - Removed item roots, including latent descendants
+ * @param paths - Unique removed roots, including latent descendants; splice passes one root
  * @returns Nothing; unrelated entries and baselines retain their identity
  */
 export const prunePerishedPaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
-  paths: ReadonlySet<string>,
+  paths: ReadonlySet<string> | readonly string[],
 ): void => {
-  if (paths.size === 0) return;
+  if ('size' in paths ? paths.size === 0 : paths.length === 0) return;
   const stores = getRuntimePathStores(runtime);
   const warningKeys = new Set<string>();
-  for (const path of paths)
-    for (const key of runtime.warningKeysByPath?.get(path) ?? [])
-      warningKeys.add(key);
+  if (runtime.warningKeysByPath?.size)
+    for (const path of paths)
+      for (const key of runtime.warningKeysByPath.get(path) ?? [])
+        warningKeys.add(key);
   for (const key of warningKeys) {
     const parts: unknown = JSON.parse(key);
     if (isArray(parts) && typeof parts[1] === 'string')
       indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
   }
-  for (const path of paths) {
-    for (const key of stores.latent.pathIndex.under(path)) {
-      stores.latent.delete(key);
-      runtime.latentRawDirty = true;
-    }
-    for (const store of [
-      stores.metadata,
-      stores.mismatches,
-      stores.inactiveMemo,
-      stores.declarations,
-    ])
-      for (const key of store.pathIndex.under(path)) store.delete(key);
-    for (const key of stores.rules.pathIndex.under(path))
-      updateCommittedRuleValue(runtime, key, 'delete');
+  for (const store of [stores.misfits, stores.declarations]) {
+    if (!store) continue;
+    if (store.size)
+      for (const path of paths)
+        for (const key of store.pathIndex.under(path)) store.delete(key);
   }
+  if (stores.rules.size)
+    for (const path of paths)
+      for (const key of stores.rules.pathIndex.under(path))
+        updateCommittedRuleValue(runtime, key, 'delete');
 };

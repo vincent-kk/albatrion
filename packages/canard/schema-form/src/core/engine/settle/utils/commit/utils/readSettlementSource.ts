@@ -1,8 +1,14 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  getChildPointer,
+  isDescendantPath,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind } from '../../../../types/value';
-import type { SettlementContext } from '../../../type';
+import type { SettlementContext } from '../../../types/settlement';
 
 /**
  * Resolve the last marked write covering a committed path.
@@ -15,23 +21,18 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
   exact = false,
-): FieldNodeWriteKind | undefined => {
+): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
   for (let index = (origins?.length ?? 0) - 1; index >= 0; index--) {
     const origin = origins![index];
-    if (
-      origin.keys &&
-      path !== origin.path &&
-      !origin.keys.includes(
-        path
-          .slice(origin.path.length + 1)
-          .split($.Separator)[0]
-          .replace(/~1/g, $.Separator)
-          .replace(/~0/g, '~'),
-      )
-    )
-      continue;
-    if (path === origin.path || path.startsWith(`${origin.path}/`))
+    if (origin.keys && path !== origin.path) {
+      const child = getChildPointer(path, origin.path);
+      const name =
+        child === undefined ? undefined : readPointerSegment(child, -1);
+      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
+        continue;
+    }
+    if (path === origin.path || isDescendantPath(path, origin.path))
       return !exact || path === origin.path ? origin.source : undefined;
   }
   return !exact || path === context.target.path

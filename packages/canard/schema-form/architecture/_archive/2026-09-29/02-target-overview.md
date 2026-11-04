@@ -28,7 +28,7 @@ flowchart LR
   end
   validator["검증기 플러그인: 판정"]
   shapeOut["형상: 어떤 노드가 있는가"]
-  raw["노드의 원본 raw"]
+  source["노드의 원본 source"]
   display["표시 상태: 보임과 잠김"]
   interaction["상호작용 상태: dirty와 touched"]
 
@@ -36,16 +36,16 @@ flowchart LR
   validKw -.->|"폼은 읽지 않는다"| validator
   shapeKw -->|"폼이 읽는다"| shapeOut
   branchKw -->|"존재만 더한다"| shapeOut
-  defaultKw -->|"생긴 노드에 한 번 쓴다"| raw
+  defaultKw -->|"생긴 노드에 한 번 쓴다"| source
   readOnlyKw --> display
   discKey -->|"청사진에서 분기별 controls.active로 바뀐다"| gateKey
   gateKey --> shapeOut
   stateKey --> display
-  sourceKey -->|"쓴다"| raw
-  actionKey -->|"쓴다"| raw
+  sourceKey -->|"쓴다"| source
+  actionKey -->|"쓴다"| source
   resetKey --> interaction
   scopeKey -->|"명시한 자식에 건다"| display
-  scopeKey -->|"값 키도 허용"| raw
+  scopeKey -->|"값 키도 허용"| source
 ```
 
 | 층 | 폼이 읽는 것 | 폼이 쓰는 것 | 검증기 |
@@ -71,7 +71,7 @@ flowchart TD
     mergeTable["유효 스키마 병합표"]
   end
 
-  tree["노드 트리: 상태 칸은 raw와 extras 둘뿐"]
+  tree["노드 트리: 상태 칸은 source와 extras 둘뿐"]
 
   subgraph settleStage["정착 한 번: 동기, 단방향, 고정 순서"]
     markStep["표시"]
@@ -139,11 +139,11 @@ flowchart TD
 
 ### 2.2 노드 트리 — 상태는 둘뿐 (ADR 0006)
 
-노드 트리가 곧 상태다. 노드가 실제로 소유하는 상태 칸은 원본 `raw`와 `extras`(어디에도 선언되지 않은 키와 받은 순서) **둘뿐**이다. 나머지는 상태에서 계산되거나 작업의 기록이다.
+노드 트리가 곧 상태다. 노드가 실제로 소유하는 상태 칸은 원본 `source`와 `extras`(어디에도 선언되지 않은 키와 받은 순서) **둘뿐**이다. 나머지는 상태에서 계산되거나 작업의 기록이다.
 
 | 칸 | 성격 |
 | --- | --- |
-| `raw`, `extras` | 상태 |
+| `source`, `extras` | 상태 |
 | `active`(활성 조각과 노드의 집합), `local`(합성 값), `emit`(방출 값), `schema`(유효 스키마) | 계산 결과 |
 | 재계산 목록(상호작용 상태 `dirty`와 다른 것), `revision`, 커밋 번호, `diagnostics`(ADR 0014 4판 §5) | 작업의 기록 |
 
@@ -155,7 +155,7 @@ flowchart TD
 
 | 단계 | 하는 일 | 이 단계의 예약 층 키 | 예산 |
 | --- | --- | --- | --- |
-| 표시 | 쓰기를 받은 노드의 `raw`·`extras`를 갱신하고 조상 경로의 재계산 목록에 등록한다 | `controls.watch`(의존 경로 선언. 청사진과 표시 단계) | 없음 |
+| 표시 | 쓰기를 받은 노드의 `source`·`extras`를 갱신하고 조상 경로의 재계산 목록에 등록한다 | `controls.watch`(의존 경로 선언. 청사진과 표시 단계) | 없음 |
 | 계산 | 루트에서 한 번 내려간다. 재계산 목록의 자식을 먼저 완료하고 자기 `local`·`emit`·유효 스키마를 만든다. 호스트는 게이트 없는 조각만 켠 채 출발해 모든 게이트를 전순서로 평가하고, 집합이 바뀌지 않을 때까지 반복한다. 게이트는 검증기가 볼 값(투영 뒤의 값)을 본다. **원본을 읽기만 한다** | `if` 게이트(검증기 플러그인이 컴파일)와 `controls.active`(노드 게이트, 조각 게이트, 조각 범위 제어와 `controls.children`의 `active`)를 호스트 바퀴 안에서 함께 평가한다. 계산의 끝, 최종 트리에서 `controls.visible`·`controls.readOnly`·`controls.disabled`·표준 `readOnly`를 한 번 결정한다(글로벌 없음, 13라운드) | 호스트 바퀴 = 게이트 가진 조각 수 + 노드 게이트 수 + 1 |
 | 파생 | 완성된 트리에서 규칙을 평가한다. 쓰기가 나오면 표시로 돌아간다 | `controls.derived`(자기 값 덮기), `controls.injectTo`(대상에 대한 전체 교체), `controls.unsetValue`(자기 값을 없음으로) | 라운드 25 |
 | 전이 | **생긴 노드**(직전 커밋의 형상에 없고 이번 최종 형상에 있는 노드)의 없음인 값에 채움을 쓴다. 중간 라운드의 채움은 그 노드가 최종 형상에 없으면 버린다. 나감 정책이 참으로 정해진 노드가 **나가면**(직전 커밋의 형상에 있었고 이번 최종 형상에 없으면, 하위 트리 포함, 공유 노드 제외) 한 번 비운다. 로드에는 나감이 없다. 쓰기가 나오면 표시로 돌아간다 | 채움(`controls.default` > `default` > 없음), 나감의 비움(정책 키) | 라운드 = 게이트 가진 조각 수 + 노드 게이트 수 + 1(호스트 바퀴와 같은 식. 새 라운드는 채움이나 나감의 비움이 게이트를 뒤집어 새 노드를 내거나 노드를 내보낼 때만 생긴다) |
@@ -167,7 +167,7 @@ flowchart TD
 - **에지의 기준점은 직전 커밋이다.** 런타임에 `controls.injectTo`는 원천의 방출 값이 직전 커밋과 다를 때, `controls.derived`는 의존 값이 바뀔 때, `controls.unsetValue`는 식이 거짓에서 참이 될 때 쓴다. 참에서 거짓으로 돌아갈 때 `controls.unsetValue`는 아무것도 하지 않는다.
 - **로드는 새 수명이다.** 전체 교체(마운트, `setValue(V)`, `reset()`, `defaultValue`)는 기준점을 비운다. 그래서 형상의 모든 노드가 생긴 노드로서 채움을 받고, `controls.injectTo`는 발화하며(`fire`, 소유자 답 6), `controls.unsetValue`는 로드된 값으로 평가해 참이면 지운다(소유자 답 21).
 - **비수렴.** 예산은 다섯(호스트 바퀴, 파생 라운드, 전이 라운드, 리스너 되먹임 파동, `onChange` 중첩)이고, 상한은 루프를 잇는 고리 하나만 끊는다. 최외곽 쓰기는 결코 버리지 않고, 커밋된 것은 반드시 통지된다(P2, P5). 정착의 세 예산(호스트 바퀴, 파생 라운드, 전이 라운드)을 넘기면 그 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하고 `diagnostics.status = 'degraded'`(`cause`는 예산)로 둔다. 원본 B의 형상은 원본 B로 한 번 더 계산하며, 그 바퀴도 상한에 걸리면 마지막 바퀴의 활성 집합으로 고정한다. 리스너 되먹임 파동을 넘기면 마지막 파동은 배달하되 그 파동 안의 되먹임 쓰기를 거부한다. `onChange` 중첩을 넘긴 쓰기는 적용하고 통지하되 그 `onChange` 하나는 부르지 않는다. 이것이 "예산 초과 시에도 `onChange`는 불린다"의 유일한 예외다. 예산 초과는 모든 환경에서 커밋·통지 뒤 사슬 끝에서 throw하며 끄는 스위치는 없다(17라운드 소유자 답 R17-1 나, ADR 0014 4판). `degraded`는 다음 로드까지 남고(지속은 14라운드 답 O-2 가) 그 동안 폼의 제출 경로가 `SchemaFormError`로 거부한다(`getValue()`는 막지 않는다). 기록은 Form 속성 `onError`도 받는다. 루프의 가능성을 막지는 않지만 루프를 권하는 설계도 아니다.
-- 원본을 쓰는 단계는 파생과 전이뿐이고, 둘 다 표시로 돌아가 다시 계산된다. 그래서 커밋된 트리는 (스키마, 트리 전체의 `raw`·`extras`)의 순수 함수다(P3).
+- 원본을 쓰는 단계는 파생과 전이뿐이고, 둘 다 표시로 돌아가 다시 계산된다. 그래서 커밋된 트리는 (스키마, 트리 전체의 `source`·`extras`)의 순수 함수다(P3).
 - `controls.active` 표현식이 다른 호스트의 값을 읽을 때의 평가 순서와 재순회 규칙은 미정(07 11.2)이다.
 
 ### 2.4 검증기 플러그인 (ADR 0004, ADR 0001)
@@ -193,7 +193,7 @@ sequenceDiagram
 
   User->>Input: 키 입력
   Input->>Core: onChange 값, 부분 쓰기
-  Note over Core: 표시. raw 갱신, 조상의 재계산 목록에 등록
+  Note over Core: 표시. source 갱신, 조상의 재계산 목록에 등록
   loop 호스트 바퀴, 게이트 집합이 바뀌지 않을 때까지
     Core->>Plugin: if 게이트마다 compileGuard 함수 호출, 투영 뒤의 값
     Plugin-->>Core: boolean
@@ -325,7 +325,7 @@ sequenceDiagram
 | 3차안 | 5차 | 근거 |
 | --- | --- | --- |
 | 세 층(L0 유효성, L1 형상, L2 표현)이며, L1에 "비판별 분기의 수동 선택"이 폼 상태로 있었다 | 두 층(JSON Schema 층, 예약 층). 폼은 분기를 고르지 않는다 | 원장 §1.4, 07 4.25 |
-| 상태 칸에 `selection`(수동 분기 선택)이 있었고, 판별식 식별과 분기 선택 API(`setSelectedBranch`), 초기 분기 추론이 있었다 | 모두 지워졌다. 상태 칸은 `raw`와 `extras` 둘뿐이다. 오늘의 `oneOfIndex`·`anyOfIndices`도 대체물 없이 사라진다 | 07 4.25, 07 6.2의 N2 |
+| 상태 칸에 `selection`(수동 분기 선택)이 있었고, 판별식 식별과 분기 선택 API(`setSelectedBranch`), 초기 분기 추론이 있었다 | 모두 지워졌다. 상태 칸은 `source`와 `extras` 둘뿐이다. 오늘의 `oneOfIndex`·`anyOfIndices`도 대체물 없이 사라진다 | 07 4.25, 07 6.2의 N2 |
 | 판별식은 `const`·`enum`으로 식별했다 | 작성자가 명시한 `controls.discriminator`만 청사진에서 분기별 `controls.active`로 바꾼다 | ADR 0005 §4 |
 | 로드 계약과 전이 주입이 따로 있었다(조각이 켜질 때 조각 단위로 채움) | 채움은 노드 생성 사건이다. 노드가 생길 때 한 번, 노드 단위, 최종 형상 기준이며 원천은 `controls.default` > `default` | 07 4.22 |
 | 계산이 begin 하향과 complete 상향의 두 패스였고, 표시·계산·커밋의 세 단계였다 | 계산은 루트에서 한 번 내려가며, 파생과 전이가 별도 단계다. 정착은 일곱 단계다 | ADR 0007 §1 |
@@ -348,7 +348,7 @@ sequenceDiagram
 | --- | --- |
 | D1 스키마를 변형해 마커를 심는다 | 작성된 스키마는 불변이다. 분석 결과는 청사진에 둔다 |
 | D2 모든 분기 자식을 사전 생성한다 | 유지한다. 조각은 스키마에서 정적으로 열거된다 |
-| D4 값을 레벨마다 사본으로 든다 | 상태는 `raw`와 `extras` 둘뿐이고 위쪽은 계산된 메모다 |
+| D4 값을 레벨마다 사본으로 든다 | 상태는 `source`와 `extras` 둘뿐이고 위쪽은 계산된 메모다 |
 | D5 값 전파와 알림 전파가 다른 그래프다 | 값은 정착 루프가, 알림은 루트 디스패처가 맡는다. 역할이 겹치지 않는다 |
 | D6 10비트 `SetValueOption`을 다섯 곳에서 각자 해석한다 | 비트 넷. `Refresh`는 공개 옵션이 아니며 core가 쓰기의 출처로 판단한다 |
 | D7 루트 단독 검증과 enhancer | 루트 단독 검증은 유지하고 enhancer는 없앤다. 판정은 커밋 번호에 묶인다 |

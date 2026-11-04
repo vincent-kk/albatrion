@@ -16,11 +16,11 @@
 
 ### 1. 조사 대상과 방법
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`, HEAD `f22a7b89b8f17edd9977a280e3888e83442d9a72`입니다.
-- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`입니다.
-- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+- 작업 트리: `{repo}`, HEAD `f22a7b89b8f17edd9977a280e3888e83442d9a72`입니다.
+- D: `packages/canard/schema-form/architecture/verification/07-switch`입니다.
+- S: `{scratch}`입니다.
 - 이하 B는 S의 `fbx-a1000-diag/`입니다. 스크립트·작업 명세·원시 JSON·GC 로그·요약·상태 검증은 모두 여기에 있습니다.
-- 모든 프로브·빌드·분석은 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`를 사용했습니다. 프로세스마다 번들 하나를 로드했고, 타이밍 측정은 순차 실행했습니다. 판정 세션을 만들지 않았습니다.
+- 모든 프로브·빌드·분석은 `{node-home}/versions/node/v26.11.1/bin/node`를 사용했습니다. 프로세스마다 번들 하나를 로드했고, 타이밍 측정은 순차 실행했습니다. 판정 세션을 만들지 않았습니다.
 
 `fd-a500-diagnosis.md`, `harness-131.md`, `fb-ff-fe-implementation.md`와 S의 두 진단 키트를 먼저 읽었습니다. `fd-a500-diag`의 호출 계측, ABBA 쌍별 비교, 창 경계와 V8 trace 연결 방법을 재사용했습니다. 초기의 간소화 프로브는 base에서 GC가 거의 없고 후보에서 자주 발생하는 약 3 ms 차이를 만들었습니다. 원래 하네스의 calibration·마운트/업데이트 digest·DOM 경로 추출을 복원하자 그 GC 분포가 바뀌었습니다. **초기 간소화 프로브의 3 ms를 원래 회귀의 재현으로 채택하지 않았습니다.** 그 자료는 B의 `noneA*`, `exact*`, `trace*` 계열에 보존돼 있습니다.
 
@@ -383,3 +383,5 @@ no-fe는 GC 없는 업데이트를 만든 조합도 아닙니다. 후보의 GC �
 부분 조합 하나의 전체 네 항목 판정에는 기존 세션 wall time을 그대로 합산하면 **약 267.7분, 4시간 28분**이 듭니다. `profile-136a-session.md`의 66.7분, `profile-136b-session.md`의 74.0분, `profile-136c-session.md`의 81.0분, nested-d5의 약 46분을 합친 추정입니다. 어느 대안을 고르든 같은 범위의 판정을 실행하므로 추정 비용은 같습니다. 두 대안을 검증하면 약 535.4분, 네 대안을 모두 검증하면 약 1,070.8분입니다. 이는 기존 세션의 관측 시간을 사용한 일정 추정이며, 새 준비 작업이나 재시도 비용을 포함하지 않습니다.
 
 이번 비교는 array-1000의 강제 GC 업데이트 손실을 가르는 진단입니다. array-500 탐색 타이밍은 예산 때문에 생략했으며, 다른 flat/nested fixture의 업데이트·마운트·보유량과 공개 동작 계약을 부분 조합마다 다시 판정하지 않았습니다. 두 크기의 보유량과 leaf 쓰기 호출 벡터가 합본 이득의 일부를 유지한다는 사실은 그 전체 판정을 대신하지 않습니다. 후보별 95% 구간도 네 대안을 비교하는 진단 구간이며, 동등성 보장이나 공식 채택 판정은 아닙니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

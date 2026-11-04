@@ -4,7 +4,7 @@
 
 ## 1. 자리
 
-- 워크트리 `/tmp/claude-501/stage-tidy-3`, 브랜치 `feat/schema-form-tidy-3`, base `1.0.0-beta`(정돈-2 병합 뒤). 이동이 많으므로 **단계마다 커밋 하나**(문서 → 이동 → import 고침 → 검증)로 쪼개고, 각 커밋이 typecheck를 통과하게 한다. 이동은 `git mv`로 이력을 잇는다.
+- 워크트리 `{scratch}/stage-tidy-3`, 브랜치 `feat/schema-form-tidy-3`, base `1.0.0-beta`(정돈-2 병합 뒤). 이동이 많으므로 **단계마다 커밋 하나**(문서 → 이동 → import 고침 → 검증)로 쪼개고, 각 커밋이 typecheck를 통과하게 한다. 이동은 `git mv`로 이력을 잇는다.
 - codex는 `.claude/`·settings·`architecture/`를 건드리지 않는다. `.filid/config.json`의 수정(§2.6)은 codex가 아니라 fixy08이 직접 한다(설정 파일).
 
 ## 2. 할 일 (문서가 코드보다 먼저)

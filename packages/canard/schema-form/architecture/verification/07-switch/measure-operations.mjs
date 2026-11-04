@@ -13,13 +13,13 @@ await build({
   stdin: { contents: `export {nodeFromJSONSchema} from ${JSON.stringify(path.join(pkg, 'src/core/index.ts'))}; export {equivalentFixtures} from ${JSON.stringify(path.join(process.cwd(), 'fixtures/equivalent/index.ts'))};`, resolveDir: process.cwd(), loader: 'ts' },
   outfile, bundle: true, packages: 'external', platform: 'node', format: 'esm',
   plugins: [{ name: 'work-counters', setup(builder) {
-    builder.onLoad({ filter: /\/(DirtyPathSet|isMissingRaw|getDeriveRuleTable|withdrawDetachedFills)\.ts$/ }, ({ path: sourcePath }) => {
+    builder.onLoad({ filter: /\/(DirtyPathSet|isMissingSource|getDeriveRuleTable|withdrawDetachedFills)\.ts$/ }, ({ path: sourcePath }) => {
       let source = fs.readFileSync(sourcePath, 'utf8');
       if (sourcePath.endsWith('/DirtyPathSet.ts')) source = source
         .replaceAll('children.set(current, current.slice(slash + 1));', `${bump('directLinks')} children.set(current, current.slice(slash + 1));`)
         .replace('children.set(path, name);', `${bump('prefixLinks')} children.set(path, name);`);
-      if (sourcePath.endsWith('/isMissingRaw.ts')) source = source
-        .replace('if (node.raw !== undefined)', `${bump('sourceVisits')} if (node.raw !== undefined)`);
+      if (sourcePath.endsWith('/isMissingSource.ts')) source = source
+        .replace('if (node.source !== undefined)', `${bump('sourceVisits')} if (node.source !== undefined)`);
       if (sourcePath.endsWith('/getDeriveRuleTable.ts')) source = source
         .replace('const schema = declaration.schema;', `${bump('deriveDeclarations')} const schema = declaration.schema;`);
       if (sourcePath.endsWith('/withdrawDetachedFills.ts')) source = source

@@ -20,7 +20,7 @@ describe('round9 edge-case controls under the current local policy', () => {
       ],
     });
     root.setValue({ kind: 'no', b: 'B' });
-    expect(root.find('/b')?.readOnly).toBe(false);
+    expect(root.find('/b')?.isReadOnly).toBe(false);
   });
 
   it('edge-cases.mjs:66 CONTROLS-045 GOAL-048 local readOnly stays true without Form lock', () => {
@@ -32,7 +32,7 @@ describe('round9 edge-case controls under the current local policy', () => {
       },
     });
     root.setValue({ x: 'X' });
-    expect(root.find('/x')?.readOnly).toBe(true);
+    expect(root.find('/x')?.isReadOnly).toBe(true);
   });
 
   it('edge-cases.mjs:67 CONTROLS-045 GOAL-048 root disabled does not inherit', () => {
@@ -44,7 +44,7 @@ describe('round9 edge-case controls under the current local policy', () => {
       },
     });
     root.setValue({ x: 'X' });
-    expect(root.disabled).toBe(true);
-    expect(root.find('/x')?.disabled).toBe(false);
+    expect(root.isDisabled).toBe(true);
+    expect(root.find('/x')?.isDisabled).toBe(false);
   });
 });

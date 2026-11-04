@@ -1,7 +1,7 @@
 import { FieldNodeRequestType } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
-import { flushQueuedEvents } from '../chain/flushQueuedEvents';
+import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
@@ -29,5 +29,5 @@ export const dispatchRequest = <Self extends FieldNodeRecord<Self>>(
     return;
   if (refuseListenerFeedback(runtime)) return;
   queueNonSettleEvent(node, kind);
-  if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
+  closeNonSettleEntry(node);
 };

@@ -1,15 +1,15 @@
 import type { FormScenario } from '../../types';
 
-/** Node state keys a consumer tail reads; dirty and touched are not in the shared expectation vocabulary. */
+/** Node state keys a consumer tail reads; edited and touched are not in the shared expectation vocabulary. */
 export interface CompositeNodeState {
   /** Whether the node was edited since the last load. */
-  readonly dirty?: boolean;
+  readonly edited?: boolean;
   /** Whether the node's input was blurred since the last load. */
   readonly touched?: boolean;
   /** Whether the node is read-only after control evaluation. */
-  readonly readOnly?: boolean;
+  readonly isReadOnly?: boolean;
   /** Whether the node is visible after control evaluation. */
-  readonly visible?: boolean;
+  readonly isVisible?: boolean;
 }
 
 /** Form props a tail stage applies, as plain data; showError names a ShowError member. */
@@ -19,7 +19,7 @@ export interface CompositePropStage {
   /** context prop. */
   readonly context?: Readonly<Record<string, unknown>>;
   /** showError prop as a ShowError member name or a boolean. */
-  readonly showError?: boolean | 'Dirty' | 'Touched' | 'DirtyTouched';
+  readonly showError?: boolean | 'Edited' | 'Touched' | 'EditedTouched';
 }
 
 /**
