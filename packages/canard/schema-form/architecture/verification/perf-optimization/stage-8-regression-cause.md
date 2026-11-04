@@ -60,15 +60,16 @@ CI 경과 +28 %의 주원인은 측정 창 중첩입니다. 현재 트리에는 
 
 A는 이처럼 구조가 고정된 루트 if에서도 발생하는 실제 엔진 비용이며 B는 같은 경로를 따릅니다. C의 경과 증가는 키 처리 자체의 지연 증거로 사용할 수 없으므로 측정 창을 분리해야 합니다. 수정과 재측정, 지연 입력 잔여 비용 확인이 남아 있으므로 원인 설명만으로 8단계 전체 성능을 승인하지 않습니다. 이 커밋은 제품·벤치마크 코드를 변경하지 않으며, 로컬 실험의 계측 변경은 커밋하지 않았습니다.
 
+## 결말
+
+[최종 실행 41871054743](https://github.com/vincent-kk/albatrion/actions/runs/41871054743)은 PR #544와 PR #545를 포함한 `b039c3187`을 0.16.1과 비교했습니다. 위 분석은 당시의 계측·판정으로 보존하며, 수정·재측정과 남은 범위의 결론은 이 절과 [최종 브라우저 기록](./final-stage-8-browser.md)을 따릅니다.
+
+- A의 반복 자식 선택은 [PR #544](https://github.com/vincent-kk/albatrion/pull/544)의 구조 고정 루트 if 첫 로드가 줄였고, 노드별 빈 Map 할당은 [PR #545](https://github.com/vincent-kk/albatrion/pull/545)가 제거했습니다. 최종 `mount-if-flat-500-none`은 148.150 → 181.800 ms(+22.7 %)입니다. 0.16.1은 `flattenConditions.ts`의 `thenRequired?.length` 검사 때문에 `then.required`가 없는 이 fixture의 then-entry와 조건 맵을 만들지 않으며 `minLength` overlay를 적용하지 않았습니다. 현재 엔진은 이를 적용하므로 같은 작업량의 비교가 아닙니다. 위 none 표본의 compile 0회는 하네스가 `compile`만 세고 `compileGuard`를 세지 않은 결과였습니다. 수정 빌드의 로컬 120 Hz 계측에서 flat 대비 동기 엔진 차이 24.40 ms 중 7.90 ms가 조건 가드 컴파일이었고 나머지 대부분은 일반 정착 경로였으므로, 가드 컴파일을 원인에서 배제한 위 판단은 바로잡습니다. 검증기 없는 literal guard evaluator와 전용 root loader는 설계·리뷰했지만 공개 validator-plugin 계약 변경과 세 번째 마운트 경로가 필요하여 8단계에서는 채택하지 않았습니다. 조건을 건너뛴 버전과의 격차를 줄이기 위한 복잡도를 늘리지 않고 올바른 조건 처리를 유지합니다.
+- B에도 PR #544와 PR #545의 경로·할당 축소가 적용되었습니다. 최종 `mount-if-flat-500-validate`의 경과는 시도 2에서 265.000 → 281.550 ms(+6.2 %)이며, 검증기는 첫 프레임 전 73.200 → 0.000 ms, 뒤 13.300 → 82.200 ms로 이동했습니다. 가장 긴 Long Task는 167.500 → 139.000 ms로 줄고 창 안 합은 167.500 → 227.000 ms로 늘었습니다. 한 프레임의 경과 차이와 작업 이동을 확인한 결과이며, 과거 함수별 미확정 기여율을 새 수치로 추정하지 않습니다.
+- C는 입력 시점을 분리한 최종 하네스에서 확인했습니다. PR #544와 PR #545가 첫 키의 로드 컴파일 중첩을 제거한 것은 아닙니다. 즉시 첫 키는 147.200 → 188.900 ms(+28.3 %)이지만, 로드 검증 완료 뒤 첫 키는 77.450 → 74.700 ms(−3.6 %)로 잡음 폭 안입니다. 블로킹은 즉시 입력 −25.2 %, 로드 완료 뒤 입력 −27.8 %이며, 피드백도 각각 −8.9 %, −8.4 %입니다. 따라서 로컬에서 남았던 블로킹·피드백 비용은 이번 CI에서 회귀로 확인되지 않았고, 입력 시점 분리와 재측정 항목을 닫습니다.
+
+8단계의 원인 분석과 재측정 기록은 이 결과로 마칩니다. 검증이 꺼진 조건부 마운트의 조건 가드 컴파일과 일반 정착 비용은 위 계약·경로 복잡도 때문에 수용한 알려진 비용으로 남깁니다.
+
 ## 근거 색인
 
-다음 입력 보고서와 결과 디렉터리는 로컬 증거이며 이 문서와 함께 커밋하지 않았습니다. 절대 경로는 당시 증거 위치를 기록하며 다른 환경에서의 존재를 보장하지 않습니다.
-
-- 정적 경로 보고서는 `/private/tmp/claude-501/regress-static/report.md`입니다.
-- 로컬 실험 보고서는 `/private/tmp/claude-501/regress-experiment/report.md`입니다.
-- 커밋 이분 탐색 보고서는 `/Users/Vincent/Workspace/albatrion/regress-bisect/.bisect/report.md`입니다.
-- 즉시·지연 입력과 계측 전 마운트 채택 결과는 `/private/tmp/claude-501/regress-experiment/clean-loaded/`입니다.
-- 최종 마운트 계측 결과는 `/private/tmp/claude-501/regress-experiment/instrumented-mount-final/`이며, `/private/tmp/claude-501/regress-experiment/instrumented-mount/`는 대체된 중간 결과입니다.
-- 통계 추출 결과는 `/private/tmp/claude-501/regress-experiment/analysis.json`이며, `/private/tmp/claude-501/regress-experiment/reference/`와 `/private/tmp/claude-501/regress-experiment/clean/`은 정숙 거부 기록으로 측정 표본이 없습니다.
-- 이분 탐색의 실행별 원자료와 로그는 `/Users/Vincent/Workspace/albatrion/regress-bisect/results/bisect-*/`에 있습니다. 채택 실행명과 실패·재실행 구분은 이분 탐색 보고서의 표를 따릅니다.
-- 최종 CI 표 검증에 사용하는 로컬 원자료는 `/private/tmp/claude-501/final/browser-benchmark-41804126885/`입니다.
+원인 분석에 쓴 정적 경로 보고서, 로컬 실험·계측 결과, 커밋 이분 탐색의 보고서와 실행별 원자료는 로컬 작업 자료이며 저장소에 보존하지 않았습니다. 이 문서는 그 결론만 기록합니다. CI 원자료는 [실행 41804126885](https://github.com/vincent-kk/albatrion/actions/runs/41804126885)와 [실행 41871054743](https://github.com/vincent-kk/albatrion/actions/runs/41871054743)의 산출물로 올라가 있으며, GitHub 아티팩트는 30일 동안 보존됩니다.
