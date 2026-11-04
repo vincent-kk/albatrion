@@ -83,3 +83,13 @@
   font-size: var(--sf-text-code);
   overflow-wrap: anywhere;
 }
+
+.sf-form output[aria-label='Form output']::before {
+  content: 'Output';
+  display: block;
+  margin-bottom: var(--sf-space-1);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-sans);
+  font-size: var(--sf-text-xs);
+  font-weight: 500;
+}
