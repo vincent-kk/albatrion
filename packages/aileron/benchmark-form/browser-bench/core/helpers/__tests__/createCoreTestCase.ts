@@ -3,41 +3,7 @@ import type {
   CoreMetricComparison,
   CoreMetricName,
 } from '../../reportTypes';
-
-/** Numeric comparison with the given medians. */
-const comparison = (
-  candidate: number,
-  baseline: number,
-  verdict: CoreMetricComparison['verdict'],
-): CoreMetricComparison => ({
-  candidate: {
-    kind: 'numeric',
-    medianMs: candidate,
-    p95Ms: candidate,
-    maxMs: candidate,
-    samples: 3,
-  },
-  baseline: {
-    kind: 'numeric',
-    medianMs: baseline,
-    p95Ms: baseline,
-    maxMs: baseline,
-    samples: 3,
-  },
-  control: {
-    kind: 'numeric',
-    medianMs: baseline,
-    p95Ms: baseline,
-    maxMs: baseline,
-    samples: 3,
-  },
-  deltaMs: candidate - baseline,
-  deltaPercent: baseline ? ((candidate - baseline) / baseline) * 100 : null,
-  ratio: baseline ? candidate / baseline : null,
-  thresholdMs: 2,
-  controlBandMs: 2,
-  verdict,
-});
+import { createCoreTestComparison } from './createCoreTestCase/utils/createCoreTestComparison';
 
 /**
  * Build one compare-mode case result with every metric numeric.
@@ -55,7 +21,11 @@ export function createCoreTestCase(
 ): CoreCaseResult {
   const of = (name: CoreMetricName) => {
     const [candidate, baseline] = medians[name] ?? [10, 10];
-    return comparison(candidate, baseline, verdicts[name] ?? 'within noise');
+    return createCoreTestComparison(
+      candidate,
+      baseline,
+      verdicts[name] ?? 'within noise',
+    );
   };
   const metrics: Record<CoreMetricName, CoreMetricComparison> = {
     durationMs: of('durationMs'),

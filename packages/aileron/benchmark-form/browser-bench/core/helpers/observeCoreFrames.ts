@@ -1,4 +1,4 @@
-import type { CoreObservationEnv } from '../../../types';
+import type { CoreObservationEnv } from '../types';
 
 /** Running rAF loop and its evidence. */
 export interface CoreFrameObservation {

@@ -3,7 +3,7 @@ import type {
   CoreMarkerObservation,
   CoreMarkerTransition,
   CoreObservationEnv,
-} from '../../../types';
+} from '../../types';
 
 /** Element attribute carrying the marker's error state. */
 const ERROR_ATTRIBUTE = 'data-core-error';

@@ -5,10 +5,13 @@ import { parseCoreCaseId } from './utils/parseCoreCaseId.mjs';
 import { readCoreArtifacts } from './utils/readCoreArtifacts.mjs';
 import { rebuildCoreSummary } from './utils/rebuildCoreSummary.mjs';
 
+/** Raw-sample and summary artifact locations supplied by the caller. */
 const [samplesPath, summaryPath] = process.argv.slice(2);
 if (!samplesPath || !summaryPath)
   throw new Error('Usage: checkSmokeSamples.mjs <samples.json> <summary.json>');
+/** Parsed raw evidence and the corresponding summary for this verification run. */
 const { samples, summary } = readCoreArtifacts(samplesPath, summaryPath);
+/** Accumulated gate failures; any entry makes the process exit nonzero. */
 const problems = [];
 /** The required two-dist smoke, not an arbitrary subset of cases. */
 const cases = [
@@ -30,8 +33,10 @@ for (const ids of [Object.keys(samples), summary.cases.map((row) => row.id)])
 problems.push(...checkCoreSummaryCadence(summary, samples));
 if (summary.mode !== 'compare')
   problems.push(`summary mode is ${summary.mode}, expected compare`);
+/** Summary differences found by rebuilding its statistics from raw samples. */
 const { mismatches } = await rebuildCoreSummary(summary, samples);
 problems.push(...mismatches);
+/** Number of raw page samples inspected across variants and retry groups. */
 let checked = 0;
 for (const [id, groups] of Object.entries(samples)) {
   const { operation, validation } = parseCoreCaseId(id);

@@ -1,6 +1,6 @@
 import type { CoreTypingDistribution } from '../../../reportTypes';
 import type { CoreMeasurement } from '../../../types';
-import { CORE_FRAME_BUDGET_MS } from '../../observeCoreOperation/utils/coreFrameBudgetMs';
+import { CORE_FRAME_BUDGET_MS } from '../../coreFrameBudgetMs';
 import { summarizeCoreSamples } from '../../summarizeCoreSamples';
 
 /**

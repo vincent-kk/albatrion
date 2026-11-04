@@ -5,8 +5,8 @@ import type {
   CoreMetricName,
 } from '../../reportTypes';
 import type { CoreMeasurement } from '../../types';
+import { CORE_FRAME_BUDGET_120_MS } from '../coreFrameBudgetMs';
 import { decideCoreComparison } from '../decideCoreComparison';
-import { CORE_FRAME_BUDGET_120_MS } from '../observeCoreOperation/utils/coreFrameBudgetMs';
 import { selectCoreObservability } from '../selectCoreObservability';
 import { summarizeCoreSamples } from '../summarizeCoreSamples';
 import { compareCoreDuration } from './utils/compareCoreDuration';

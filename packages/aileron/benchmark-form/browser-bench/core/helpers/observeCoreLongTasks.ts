@@ -2,7 +2,7 @@ import type {
   CoreLongTaskEntry,
   CoreLongTaskSource,
   CoreObservationEnv,
-} from '../../../types';
+} from '../types';
 
 /** Window view of the Long Tasks delivered to one observer. */
 export interface CoreLongTaskSummary {

@@ -1,6 +1,11 @@
 import type { CoreCaseResult } from '../../../reportTypes';
 
-/** Feedback class cell: exact/censored/noChange/superseded plus repeat exact count. */
+/**
+ * Format observed feedback classes and the repeat exact count.
+ * @param typing - Per-variant typing distributions; absent for operations without typing.
+ * @param variant - Baseline or candidate distribution to display.
+ * @returns The class counts in attribution order, or an em dash without a distribution.
+ */
 export const formatCoreFeedbackClasses = (
   typing: CoreCaseResult['typing'],
   variant: 'baseline' | 'candidate',

@@ -5,14 +5,14 @@ import { getCoreFixture } from '../../fixtures/core/getCoreFixture';
 import type { CoreFixture } from '../../fixtures/core/types';
 import { mountCorePageFixture } from './harness/utils/mountCorePageFixture';
 import { observeCoreFixtureOperation } from './harness/utils/observeCoreFixtureOperation';
+import { observeCoreMarker } from './harness/utils/observeCoreMarker';
+import { observeCoreValidator } from './harness/utils/observeCoreValidator/observeCoreValidator';
+import type { CoreWrappedValidator } from './harness/utils/observeCoreValidator/observeCoreValidator';
 import { afterCorePaint } from './helpers/afterCorePaint';
 import { createCoreLongTaskSource } from './helpers/createCoreLongTaskSource';
 import { measureCoreWrites } from './helpers/measureCoreWrites';
 import { observeCoreInputs } from './helpers/observeCoreInputs';
 import type { CoreOperationResult } from './helpers/observeCoreOperation/observeCoreOperation';
-import { observeCoreMarker } from './helpers/observeCoreOperation/utils/observeCoreMarker';
-import { observeCoreValidator } from './helpers/observeCoreOperation/utils/observeCoreValidator';
-import type { CoreWrappedValidator } from './helpers/observeCoreOperation/utils/observeCoreValidator';
 import type {
   CoreMarkerObservation,
   CoreObservationEnv,

@@ -1,4 +1,4 @@
-import { detectCoreFrameIntervalNominal } from '../../helpers/observeCoreOperation/utils/detectCoreFrameIntervalNominal';
+import { detectCoreFrameIntervalNominal } from '../../helpers/detectCoreFrameIntervalNominal';
 import type { CoreFrameProbeResult } from '../frameProbeHarness';
 
 /**

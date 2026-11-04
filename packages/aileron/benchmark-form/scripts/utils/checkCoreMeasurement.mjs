@@ -3,6 +3,7 @@ import { parseCoreCaseId } from './parseCoreCaseId.mjs';
 
 /** Nominal rAF periods and tolerance, mirroring isCoreFrameIntervalNominal.ts. */
 const FRAME_PERIODS_MS = [1000 / 60, 1000 / 120];
+/** Maximum absolute deviation in milliseconds from a supported nominal rAF period. */
 const FRAME_TOLERANCE_MS = 3;
 
 /**

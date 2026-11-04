@@ -1,7 +1,11 @@
 import type { CoreMetricStatistics } from '../../../reportTypes';
 import { formatCoreNumber } from './formatCoreNumber';
 
-/** Median cell of a statistic; Long Task "<50" and other unobserved medians keep their own labels. */
+/**
+ * Format a metric median without converting censored Long Tasks to zero.
+ * @param stats - Metric statistics, absent when no baseline was measured.
+ * @returns The numeric median, a threshold label, or an em dash for unavailable statistics.
+ */
 export const formatCoreMedian = (stats: CoreMetricStatistics | undefined) =>
   !stats || stats.kind === 'not-observable'
     ? '—'

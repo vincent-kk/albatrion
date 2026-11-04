@@ -2,13 +2,13 @@ import { CORE_PROBE } from '../../../../fixtures/core/coreProbe';
 import type { CoreFixture } from '../../../../fixtures/core/types';
 import { observeCoreOperation } from '../../helpers/observeCoreOperation/observeCoreOperation';
 import type { CoreOperationOutcome } from '../../helpers/observeCoreOperation/observeCoreOperation';
-import type { CoreWrappedValidator } from '../../helpers/observeCoreOperation/utils/observeCoreValidator';
 import type {
   CoreLongTaskSource,
   CoreMarkerObservation,
   CoreObservationEnv,
   CoreValidationReport,
 } from '../../types';
+import type { CoreWrappedValidator } from './observeCoreValidator/observeCoreValidator';
 
 /**
  * Connect page-lifetime observers to one fixture's operation window.

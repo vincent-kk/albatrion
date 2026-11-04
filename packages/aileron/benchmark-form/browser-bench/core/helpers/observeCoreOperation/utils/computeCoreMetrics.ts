@@ -7,12 +7,12 @@ import type {
   CoreValidatorRecord,
   CoreWriteMetrics,
 } from '../../../types';
-import { classifyCoreWrites } from './classifyCoreWrites';
 import {
   CORE_FRAME_BUDGET_120_MS,
   CORE_FRAME_BUDGET_MS,
-} from './coreFrameBudgetMs';
-import type { CoreLongTaskSummary } from './observeCoreLongTasks';
+} from '../../coreFrameBudgetMs';
+import type { CoreLongTaskSummary } from '../../observeCoreLongTasks';
+import { classifyCoreWrites } from './classifyCoreWrites';
 import { splitCoreValidatorSegments } from './splitCoreValidatorSegments';
 import { summarizeCoreFrameGaps } from './summarizeCoreFrameGaps';
 

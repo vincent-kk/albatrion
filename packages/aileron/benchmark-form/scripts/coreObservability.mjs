@@ -1,5 +1,6 @@
 // Mirror of browser-bench/core/coreObservability.ts for dependency-free scripts; that file is canonical and a test keeps them equal.
 
+/** Shared validated-load expectations; operation-specific rows narrow these fields. */
 const loadMetrics = {
   blockingMs: 'null',
   maxLongTaskMs: 'nullable',

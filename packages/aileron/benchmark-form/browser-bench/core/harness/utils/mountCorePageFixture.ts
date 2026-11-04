@@ -3,12 +3,12 @@ import { CORE_PROBE } from '../../../../fixtures/core/coreProbe';
 import type { CoreFixture } from '../../../../fixtures/core/types';
 import { afterCorePaint } from '../../helpers/afterCorePaint';
 import { mountCoreFixture } from '../../helpers/mountCoreFixture/mountCoreFixture';
-import type { CoreWrappedValidator } from '../../helpers/observeCoreOperation/utils/observeCoreValidator';
 import type {
   CoreInputObservation,
   CoreObservationEnv,
   CoreValidationReport,
 } from '../../types';
+import type { CoreWrappedValidator } from './observeCoreValidator/observeCoreValidator';
 
 /**
  * Mount with page callbacks while retaining the render start and first-key measurement boundaries.

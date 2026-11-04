@@ -5,7 +5,7 @@ import type { Browser } from 'playwright';
 
 import { getCoreFixture } from '../../../fixtures/core/getCoreFixture';
 import type { CoreMeasurement } from '../types';
-import { detectCoreFrameIntervalNominal } from './observeCoreOperation/utils/detectCoreFrameIntervalNominal';
+import { detectCoreFrameIntervalNominal } from './detectCoreFrameIntervalNominal';
 import { selectCoreObservability } from './selectCoreObservability';
 
 /**

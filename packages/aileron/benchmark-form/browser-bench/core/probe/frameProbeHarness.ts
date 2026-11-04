@@ -1,8 +1,8 @@
 // Loaded by probeCoreFrames through esbuild into probe.js; frameProbe.html runs it and the driver calls window.__probe.
 import { createCoreLongTaskSource } from '../helpers/createCoreLongTaskSource';
-import { detectCoreFrameIntervalNominal } from '../helpers/observeCoreOperation/utils/detectCoreFrameIntervalNominal';
-import { observeCoreFrames } from '../helpers/observeCoreOperation/utils/observeCoreFrames';
-import { observeCoreLongTasks } from '../helpers/observeCoreOperation/utils/observeCoreLongTasks';
+import { detectCoreFrameIntervalNominal } from '../helpers/detectCoreFrameIntervalNominal';
+import { observeCoreFrames } from '../helpers/observeCoreFrames';
+import { observeCoreLongTasks } from '../helpers/observeCoreLongTasks';
 import type { CoreLongTaskEntry, CoreObservationEnv } from '../types';
 import { medianCoreProbeGaps } from './utils/medianCoreProbeGaps';
 

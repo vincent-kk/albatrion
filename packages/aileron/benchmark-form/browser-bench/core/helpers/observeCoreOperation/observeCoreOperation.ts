@@ -10,12 +10,12 @@ import type {
   CoreValidatorObservation,
   CoreWriteMetrics,
 } from '../../types';
+import { detectCoreFrameIntervalNominal } from '../detectCoreFrameIntervalNominal';
+import { observeCoreFrames } from '../observeCoreFrames';
+import { observeCoreLongTasks } from '../observeCoreLongTasks';
 import { awaitCoreSettled } from './utils/awaitCoreSettled';
 import { computeCoreMetrics } from './utils/computeCoreMetrics';
-import { detectCoreFrameIntervalNominal } from './utils/detectCoreFrameIntervalNominal';
 import { expectCoreMarkerState } from './utils/expectCoreMarkerState';
-import { observeCoreFrames } from './utils/observeCoreFrames';
-import { observeCoreLongTasks } from './utils/observeCoreLongTasks';
 
 /** What the operation body reports back once its driver work is done. */
 export interface CoreOperationOutcome {

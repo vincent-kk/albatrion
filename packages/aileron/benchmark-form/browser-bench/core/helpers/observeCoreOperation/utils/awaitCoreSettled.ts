@@ -1,5 +1,5 @@
 import type { CoreObservationEnv } from '../../../types';
-import type { CoreFrameObservation } from './observeCoreFrames';
+import type { CoreFrameObservation } from '../../observeCoreFrames';
 
 /** Settle inputs: the operation's own conditions and its activity counter. */
 export interface CoreSettleConditions {

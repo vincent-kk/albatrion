@@ -8,6 +8,7 @@ import { parseCoreCaseId } from './utils/parseCoreCaseId.mjs';
 import { parseScriptArgs } from './utils/parseScriptArgs.mjs';
 import { readCoreArtifacts } from './utils/readCoreArtifacts.mjs';
 
+/** Validated CLI options; unknown or duplicate flags are rejected before artifact inspection. */
 const options = parseScriptArgs(process.argv.slice(2), [
   '--run-json',
   '--baseline',
@@ -15,6 +16,7 @@ const options = parseScriptArgs(process.argv.slice(2), [
   '--runs',
   '--cases',
 ]);
+/** Summary and raw-sample artifact locations supplied as positional arguments. */
 const [summaryPath, samplesPath] = options._.split('\n');
 if (
   !options['--run-json'] ||
@@ -28,14 +30,18 @@ if (
   throw new Error(
     'Usage: checkFinalRun.mjs <summary.json> <samples.json> --run-json <run.json> --baseline <sha> --head <sha> --runs <n> --cases <a,b,...>',
   );
+/** Parsed raw evidence and the corresponding summary for this verification run. */
 const { samples, summary } = readCoreArtifacts(samplesPath, summaryPath);
+/** Accumulated gate failures; any entry makes the process exit nonzero. */
 const problems = checkCoreSummaryCadence(summary, samples);
 if (options['--run-json']) {
   const run = JSON.parse(readFileSync(options['--run-json'], 'utf8'));
   if (run.conclusion !== 'success')
     problems.push(`run conclusion is ${run.conclusion}`);
 }
+/** Required positive number of measured pages per case and variant. */
 const runs = Number(options['--runs']);
+/** Requested case identifiers whose complete comparison artifacts are required. */
 const cases = options['--cases'].split(',');
 if (!String(summary.baselineRevision ?? '').startsWith(options['--baseline']))
   problems.push(
@@ -44,6 +50,7 @@ if (!String(summary.baselineRevision ?? '').startsWith(options['--baseline']))
 if (!String(summary.revision ?? '').startsWith(options['--head']))
   problems.push(`revision ${summary.revision} ≠ ${options['--head']}`);
 if (summary.runs !== runs) problems.push(`runs ${summary.runs} ≠ ${runs}`);
+/** Case identifiers actually present in the summary, used to enforce set equality. */
 const ids = summary.cases.map((row) => row.id);
 if (ids.length !== cases.length || cases.some((id) => !ids.includes(id)))
   problems.push(`case set ${ids.join(',')} ≠ ${cases.join(',')}`);

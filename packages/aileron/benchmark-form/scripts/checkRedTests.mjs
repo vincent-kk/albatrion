@@ -9,13 +9,17 @@ import { fileURLToPath } from 'node:url';
 
 import { parseScriptArgs } from './utils/parseScriptArgs.mjs';
 
+/** Workspace root resolving the designated Vitest configuration and dependencies. */
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+/** Validated CLI options; unknown or duplicate flags are rejected before artifact inspection. */
 const options = parseScriptArgs(process.argv.slice(2), [
   '--out',
   '--targets',
   '--expect-failing',
 ]);
+/** Test target paths that must all be collected in the red-phase run. */
 const targets = (options['--targets'] ?? '').split(',').filter(Boolean);
+/** Required failing test names proving that the intended behavior is still absent. */
 const expected = (options['--expect-failing'] ?? '')
   .split(',')
   .map((name) => name.trim())
@@ -25,6 +29,7 @@ if (!targets.length || !expected.length || !options['--out'])
     'Usage: checkRedTests.mjs --out <file> --targets <a,b> --expect-failing <name,name>',
   );
 
+/** Installed Vitest entry resolved from this workspace without fetching executable code. */
 const vitest = join(
   dirname(
     createRequire(join(packageDir, 'package.json')).resolve(
@@ -33,7 +38,9 @@ const vitest = join(
   ),
   'vitest.mjs',
 );
+/** JSON evidence destination or report content used by this verification entry. */
 const report = join(mkdtempSync(join(tmpdir(), 'red-tests-')), 'vitest.json');
+/** Child Vitest exit status and captured output used to reject an unexpected green run. */
 const run = spawnSync(
   process.execPath,
   [
@@ -50,12 +57,16 @@ const run = spawnSync(
   ],
   { cwd: packageDir, encoding: 'utf8' },
 );
+/** Parsed Vitest evidence, including assertion failures and collection errors. */
 const results = JSON.parse(readFileSync(report, 'utf8'));
+/** Collected test-file results; every requested target must appear here. */
 const files = results.testResults ?? [];
+/** Accumulated gate failures; any entry makes the process exit nonzero. */
 const problems = [];
 for (const target of targets)
   if (!files.some((file) => file.name.includes(target)))
     problems.push(`target not collected: ${target}`);
+/** Names of tests that failed by assertion rather than import or runtime setup. */
 const failed = [];
 for (const file of files) {
   if (file.status === 'failed' && !file.assertionResults.length)

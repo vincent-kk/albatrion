@@ -1,7 +1,12 @@
 import type { CoreWeightedExchange } from '../../../reportTypes';
 import { formatCoreNumber } from './formatCoreNumber';
 
-/** Weighted exchange table of one metric. */
+/**
+ * Render the weighted per-event exchange and its raw weighted ratio.
+ * @param title - Display title stating the chosen blocking or feedback interpretation.
+ * @param value - Weighted row evidence with microsecond contributions and exclusion reasons.
+ * @returns Markdown lines for the rows, microsecond sums, ratio and exclusions.
+ */
 export const renderCoreWeightedExchange = (
   title: string,
   value: CoreWeightedExchange,

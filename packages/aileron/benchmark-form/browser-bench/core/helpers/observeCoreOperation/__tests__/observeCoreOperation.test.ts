@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import type { plugin } from '@canard/schema-form-ajv8-plugin';
-
 import type { CoreInputRecord, CoreValidationReport } from '../../../types';
 import { observeCoreOperation } from '../observeCoreOperation';
-import { observeCoreValidator } from '../utils/observeCoreValidator';
 import { createCoreFakeWorld } from './createCoreFakeWorld';
+import { createCoreFakeValidator } from './observeCoreOperationTest/utils/createCoreFakeValidator';
 
 /** The fake validator always returns a promise; narrow the engine's union for the tests. */
 const settled = (result: unknown): Promise<unknown> => {
@@ -14,44 +12,10 @@ const settled = (result: unknown): Promise<unknown> => {
   return result;
 };
 
-/** Validator double: compile spends 3 ms, each run spends 2 ms and settles 10 ms later unless the value is in `rejecting`. */
-function createFakeValidator(
-  world: ReturnType<typeof createCoreFakeWorld>,
-  rejecting: string[] = [],
-) {
-  const source: typeof plugin = {
-    validator: {
-      configure: () => {},
-      bind: () => {},
-      compileGuard: () => () => true,
-      release: () => {},
-      dialect: 'http://json-schema.org/draft-07/schema#',
-      compile: () => {
-        world.spend(3);
-        return (data: unknown) => {
-          world.spend(2);
-          const value =
-            typeof data === 'object' && data !== null && 'probe' in data
-              ? String(data.probe)
-              : '';
-          return new Promise<null>((resolve, reject) => {
-            world.schedule(world.env.now() + 10, () =>
-              rejecting.includes(value)
-                ? reject(new Error('validator rejected ' + value))
-                : resolve(null),
-            );
-          });
-        };
-      },
-    },
-  };
-  return observeCoreValidator(source, '/probe', world.env);
-}
-
 describe('observeCoreOperation', () => {
   it('settles a validated mount once the probe marker shows the load error', async () => {
     const world = createCoreFakeWorld();
-    const validator = createFakeValidator(world);
+    const validator = createCoreFakeValidator(world);
     const reports: CoreValidationReport[] = [];
     let start = 0;
     const result = await world.runUntil(
@@ -123,7 +87,7 @@ describe('observeCoreOperation', () => {
 
   it('attributes typing writes by probe value and waits for a run scheduled after the last key', async () => {
     const world = createCoreFakeWorld();
-    const validator = createFakeValidator(world);
+    const validator = createCoreFakeValidator(world);
     const values = ['a', 'ab', 'abc', 'abcd'];
     const records: CoreInputRecord[] = [];
     let start = 0;
@@ -218,7 +182,7 @@ describe('observeCoreOperation', () => {
 
   it('completes a none sample without validator or marker conditions', async () => {
     const world = createCoreFakeWorld();
-    const validator = createFakeValidator(world);
+    const validator = createCoreFakeValidator(world);
     let start = 0;
     const result = await world.runUntil(
       observeCoreOperation(
@@ -251,7 +215,7 @@ describe('observeCoreOperation', () => {
 
   it('records a rejected run as a failed call and still settles on the next verdict', async () => {
     const world = createCoreFakeWorld();
-    const validator = createFakeValidator(world, ['bad']);
+    const validator = createCoreFakeValidator(world, ['bad']);
     let start = 0;
     const result = await world.runUntil(
       observeCoreOperation(
@@ -289,7 +253,7 @@ describe('observeCoreOperation', () => {
 
   it('falls back to the 250 ms quiet timer when frames stall', async () => {
     const world = createCoreFakeWorld();
-    const validator = createFakeValidator(world);
+    const validator = createCoreFakeValidator(world);
     let start = 0;
     const result = await world.runUntil(
       observeCoreOperation(
@@ -324,7 +288,7 @@ describe('observeCoreOperation', () => {
 
   it('fails the sample at the independent 5000 ms cap', async () => {
     const world = createCoreFakeWorld();
-    const validator = createFakeValidator(world);
+    const validator = createCoreFakeValidator(world);
     await expect(
       world.runUntil(
         observeCoreOperation(
@@ -348,7 +312,7 @@ describe('observeCoreOperation', () => {
 
   it('fails calibration when the empty rAF interval is neither a 60 Hz nor a 120 Hz period', async () => {
     const world = createCoreFakeWorld(25);
-    const validator = createFakeValidator(world);
+    const validator = createCoreFakeValidator(world);
     await expect(
       world.runUntil(
         observeCoreOperation(

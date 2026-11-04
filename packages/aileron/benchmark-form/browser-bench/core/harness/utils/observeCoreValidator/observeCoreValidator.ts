@@ -5,7 +5,7 @@ import type {
   CoreValidatorObservation,
   CoreValidatorRecord,
 } from '../../../types';
-import { readCoreProbeValue } from './readCoreProbeValue';
+import { readCoreProbeValue } from './utils/readCoreProbeValue';
 
 /** Wrapped plugin and its page-lifetime records. */
 export interface CoreWrappedValidator {

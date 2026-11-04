@@ -3,7 +3,7 @@ import type {
   CoreFrameBudget,
   CoreMetricStatistics,
 } from '../../../reportTypes';
-import { CORE_FRAME_BUDGET_MS } from '../../observeCoreOperation/utils/coreFrameBudgetMs';
+import { CORE_FRAME_BUDGET_MS } from '../../coreFrameBudgetMs';
 
 /**
  * Express the blocking median in 16.7 ms frames.
