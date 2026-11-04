@@ -49,6 +49,8 @@ export const FormWarningCode = {
   WriteInInactiveResolver: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.WriteInInactiveResolver}`,
   /** Class: warning record; when: a discriminator has no union or object host and is ignored. */
   DiscriminatorIgnoredForForm: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DiscriminatorIgnoredForForm}`,
+  /** Class: warning record; when: an if sits on a host whose allowed types do not include object and is evaluated against an empty object. */
+  IfOnNonObjectHost: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.IfOnNonObjectHost}`,
 } as const;
 
 /** Closed union of the warning code values. */

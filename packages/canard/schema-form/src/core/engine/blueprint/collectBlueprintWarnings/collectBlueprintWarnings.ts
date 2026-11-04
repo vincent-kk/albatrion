@@ -80,6 +80,18 @@ export const collectBlueprintWarnings = (
             details: { propertyName, reason },
           });
       }
+      if (
+        schema.if !== undefined &&
+        node.kind !== 'object' &&
+        node.kind !== 'virtual' &&
+        (!isArray(node.schemaType) || !node.schemaType.includes('object'))
+      )
+        emit({
+          code: FormWarningCode.IfOnNonObjectHost,
+          level: 'warning',
+          schemaPath: appendSegment(declaration.schemaPath, 'if'),
+          details: { kind: node.kind },
+        });
       collectInactiveValueWarnings(
         schema.controls,
         declaration.schemaPath,
