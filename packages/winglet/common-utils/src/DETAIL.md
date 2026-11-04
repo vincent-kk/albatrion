@@ -8,14 +8,14 @@
 
 ## API Contracts
 
-- `index.ts`의 모든 export 문은 `export { A, B, ... } from '<모듈>'` 형태이며, 각 심볼 이름은 원본 모듈의 export 이름과 동일하다.
-- 재수출 대상은 `constant`·`errors`·`libs`와 `utils` 하위 각 organ이다 — 개별 대상의 동작 계약은 해당 fractal 자신의 문서가 소유한다.
+- `index.ts`는 값에는 `export { ... } from`, 타입 전용 심볼에는 `export type { ... } from` 형태의 이름 재수출을 사용한다. 어느 경우에도 심볼 이름은 원본 모듈의 export 이름과 동일하다.
+- 재수출 대상의 동작 계약은 해당 소유 모듈이 책임진다. 루트 계약은 이름과 공개 경계의 일관성만 다룬다.
 
 ## Acceptance Criteria
 
 ### root-barrel-surface — 진입점 재수출 구조
 
-- 모든 export 절은 이름 재수출(`export { ... } from ...`)이며 와일드카드 재수출은 없다.
+- 모든 export 절은 값 또는 타입 전용 이름 재수출이며 와일드카드 재수출은 없다.
 - `index.ts`에는 로컬에서 선언되는 값·함수·클래스·타입이 없다 — 모든 심볼은 하위 모듈에서 그대로 전달된다.
 - 재수출되는 이름은 원본 모듈의 export 이름과 항상 동일하다(별칭 없음).
 
@@ -25,4 +25,4 @@
 
 ## Last Updated
 
-2026-09-19 — object serializer 재수출 제거 반영
+2026-09-27 — 타입 전용 이름 재수출도 허용하도록 현재 경계 명시

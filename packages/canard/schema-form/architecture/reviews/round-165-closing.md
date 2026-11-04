@@ -1,0 +1,11 @@
+# 165라운드 닫기 — 개선-32 커밋 1(F-E)은 입력 제어 훅 안의 useSyncExternalStore 직접 사용을 유지하고, src/components/SchemaNode/INTENT.md:22의 구독 규약에 그 훅을 예외로 적는다; useSchemaNodeTracker를 넓혀 끼우는 길은 측정된 코드를 바꾸고 내부 API만 넓히므로 받지 않는다
+
+2026-10-12. 07b-1이 개선-32 커밋 1의 구현(codex)과 opus verifier 독립 리뷰(PASS, 차단 0)를 끝냈고 아직 커밋하지 않았다(요지 scratchpad/g07b-32/verify-commit1.md). 계약 여섯이 모두 유지되며 verifier가 변이 시험으로 하나씩 고정 여부를 확인했다(getter가 mountedChildren을 직접 읽게 바꾸면 커밋 202 → 203회로 실패, focus 구독을 useEffect로 옮기면 focus 시험 8건 실패 등); 통합 마스크는 이전 세 tracker 마스크의 합집합과 같고 한 번 읽기의 동치와 tearing 없음을 논증했다. 시험 482파일 3,487건 통과(새 시험 여섯은 HEAD에서 실패). 비차단 반영(시험의 as 단언 하나, core 내부 import 하나, DETAIL·JSDoc 문구, 구독 시작과 렌더에서의 유예 비트 갱신 두 절의 시험 추가)을 커밋 전에 진행 중이며, 그 뒤 replace-200 한 행으로 방향 확인, 맞으면 판정 세션이다. 물음: `src/components/SchemaNode/INTENT.md:22`의 규약 "노드 이벤트 구독은 useSchemaNodeTracker/useSchemaNodeSubscribe 훅 사용"에 대해 F-E가 입력 제어 훅 안에서 useSyncExternalStore를 직접 쓰므로, INTENT에 예외를 적을지 useSchemaNodeTracker를 넓혀 F-E가 그 훅을 쓰게 할지.
+
+### 165C-01 (1) 커밋 1은 입력 제어 훅(useFormTypeInputControl) 안의 useSyncExternalStore 직접 사용을 유지한다; (2) INTENT.md:22의 규약에 한 줄을 더한다 — "입력 제어 훅은 세 추적(자체 tracker, 자식 구성, refresh)을 하나의 스냅숏으로 합치려고 useSyncExternalStore를 직접 쓰며, 다른 컴포넌트와 훅은 그 훅을 거친다"; 규약의 목적(구독이 두 훅 밖에 흩어지지 않게)은 그대로이고 예외는 그 훅 하나뿐이다; (3) useSchemaNodeTracker를 넓히는 길은 받지 않는다 — 측정하려는 코드를 측정 전에 바꾸게 되고(136의 F-E 패치와 달라짐), 통합 스냅숏 getter(유예 마스크·generation)를 담으려면 내부 훅의 서명이 F-E 전용으로 넓어져 다른 호출자에게는 쓸모없는 매개변수가 생긴다; (4) INTENT 수정은 공개 경계의 변경이 아니라 내부 규약의 예외 기록이므로 편집자 결정으로 하되, 소유자에게 보고해 뒤집을 수 있게 한다; (5) 커밋 1의 나머지 절차(비차단 반영 → 방향 확인 → 판정 세션)는 161C-01대로다
+
+- 닫는 항목: LANDING-204(보충)
+- 결정:
+  - 【추론】 INTENT:22의 규약은 구독 로직이 컴포넌트마다 따로 자라지 않게 하려는 것이고, F-E는 반대로 입력의 구독 셋을 한 곳으로 모으는 변경이라 규약의 뜻과 같은 방향이다. 형식만 맞추려고 범용 훅을 넓히면 그 훅이 F-E의 특수한 getter를 알게 되어 오히려 경계가 흐려지고, 무엇보다 136에서 재고 161C-01이 범위로 확정한 코드와 달라져 판정 결과를 136과 비교할 수 없게 된다. filid 규칙은 INTENT를 공개 경계가 바뀔 때 고치라고 하는데 이 줄은 내부 규약이므로, 예외 한 줄을 적는 것이 문서가 코드를 앞서게 하는 바른 순서다. 소유자 직접 승인이 필요한 문서는 CLAUDE.md이고 INTENT는 그 목록에 없으나, 공개 경계 문서라는 07b-1의 이해도 틀리지 않으므로 보고해 뒤집을 길을 둔다.
+- 근거: 07b-1의 커밋 1 리뷰 요지(verify-commit1.md); 161C-01(범위); 136C-01과 fe.patch; filid code-placement §5(문서가 코드를 앞선다), fractal-boundaries §3; seiri reuse-first §1.
+- 다음: 07b-1은 INTENT 한 줄을 커밋 1에 포함하고 비차단 반영 뒤 방향 확인으로 간다. 원장 관리자는 소유자에게 이 결정을 보고한다.

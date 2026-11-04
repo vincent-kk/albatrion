@@ -5,7 +5,8 @@
 - 예약 멤버 이름(`__proto__`, `constructor`, `prototype`)을 불투명한 문자열, 즉 own 데이터 속성으로 취급하는 접근 프리미티브를 제공한다.
 - 어떤 프리미티브 호출에서도 대상 객체의 프로토타입과 상속 객체(`Object.prototype` 포함)는 변경되지 않는다.
 - 예약 멤버가 아닌 키에 대해서는 일반 프로퍼티 접근과 동일하게 동작하고, 배열 인덱스 접근을 방해하지 않는다.
-- `cloneLite`는 own `__proto__` 키를 가진 입력의 클론에서 모든 own 키를 보존하고, 클론의 프로토타입은 입력의 프로토타입과 동일하다.
+- `clone`과 `cloneLite`는 own `__proto__` 키를 가진 입력의 클론에서 그 키를 열거 가능한 own 데이터 속성으로 보존하고, 클론의 프로토타입은 입력의 프로토타입과 동일하다.
+- 재귀 병합은 merge 자식 모듈이 소유합니다. 부모는 공개 병합 API를 재수출하고 안전한 속성 프리미티브를 제공하며, 병합의 세부 계약은 자식 DETAIL을 따릅니다.
 
 ## API Contracts
 
@@ -20,12 +21,21 @@
   - key가 예약 멤버가 아니면 `target[key] = value` 일반 대입과 동일하다.
 - `deleteDataProperty(target, key)`:
   - own 속성만 제거한다(JS `delete` 의미론). 예약 멤버 key로 호출해도 프로토타입 체인의 속성은 제거되지 않으며, 반환값은 `delete` 연산 결과와 같다.
+- `clone(target, maxDepth?)`:
+  - own `__proto__` 키는 `setDataProperty`를 거쳐 열거 가능한 own 데이터 속성으로 복제된다 — 프로토타입 대입이 아니다. 그 값은 다른 키와 같은 규칙으로 깊은 복제된다.
+  - 예약 멤버 분기는 키가 `__proto__`일 때만 발생하고, 나머지 키의 대입과 쓰기 가능 여부 검사는 그대로다.
 - `cloneLite(target, maxDepth?)`:
   - own `__proto__` 키는 데이터 속성으로 복제된다 — 프로토타입 대입이 아니다.
   - `maxDepth`, 희소 배열, 중첩 구조, 비지원 타입 참조 반환 동작은 기존 계약 그대로다.
   - 일반 키 경로의 성능이 존재 이유다: 예약 멤버 분기는 키가 `__proto__`일 때만 발생한다.
 
 ## Acceptance Criteria
+
+### clone-reserved — clone 예약 멤버 정합
+
+- own `__proto__`를 가진 입력의 클론이 그 키를 한 단계와 두 단계 중첩 모두에서 열거 가능한 own 키로 보존하고 프로토타입이 `Object.prototype`이다.
+- 복제된 `__proto__` 값은 원본과 참조를 공유하지 않는다.
+- 기존 clone 스위트가 전량 통과하고, 일반 키 경로 bench에 유의미한 회귀가 없다.
 
 ### serialization-surface — 직렬화 공개 경계
 
@@ -53,11 +63,24 @@
 - **Direct import**: `allowed`
 - **Reason**: 함수당 한 파일의 flat 컬렉션이 이 fractal의 정본 형태다 — 하위 organ 재배치는 배럴 깊이만 늘리고 tree-shaking 단위를 바꾸지 못한다. 배럴 경유 시 재수출 그래프가 번들에 딸려오므로, 개별 파일이 필요한 소비자의 직접 import도 같은 이유로 허용된다.
 
+### `getDataProperty.ts` — merge 내부의 안전한 읽기
+
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__benchmarks__/merge-restructure/createMergeImplementation.ts`
+- **Direct import**: `allowed`
+- **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
+
+### `setDataProperty.ts` — merge 내부의 안전한 쓰기
+
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__benchmarks__/merge-restructure/createMergeImplementation.ts`
+- **Direct import**: `allowed`
+- **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
+
 ## History
 
+- 2026-11-04 — clone own `__proto__` 보존 계약 채택. clone은 own `__proto__`를 일반 대입으로 복사해 프로토타입 변경으로 바꿨고, JSON 왕복과 `structuredClone`과 달리 스키마 복사본에서 그 속성이 사라져 AJV 컴파일이 실패했다. cloneLite와 같은 프리미티브로 정합시켰다.
 - 2026-09-19 — 0.16.0: 0.15.0에서 교체 API와 공존하던 범용 serializer 네 개를 공개 경계에서 제거했다(breaking). 내부 성능 기준 구현은 공개하지 않는다.
 - 2026-08-18 — 예약 멤버 접근 프리미티브 신설 및 cloneLite own `__proto__` 보존 계약 채택. 이전 cloneLite는 own `__proto__`를 프로토타입 대입으로 처리해 형제 키를 소실시켰다(`@winglet/json` mergePatch RC-4의 원인). RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하는 것과 `JSON.parse`가 own `__proto__` 데이터 속성을 만드는 플랫폼 동작에 정합시켰다.
 
 ## Last Updated
 
-2026-09-19 — 0.16.0 serializer 공개 경계 정리
+2026-11-04 — clone own `__proto__` 보존

@@ -1,0 +1,101 @@
+REPORT — React caret harness: synchronous vs microtask notification
+Claims under test: round-4-spec.md B2-1, B2-2; 04-inherited-constraints.md T-1
+Date: 2026-09-22
+
+1. SETUP
+- Standalone store (mini-store.ts): nodes with value / revision / subscribe, setValue
+  settles synchronously, notification mode A = synchronous, mode B = one queued
+  microtask. Dispatcher follows spec §B3-4 (fixed-set wave, re-entrant write commits
+  now and is notified next wave, revision rises before listeners, cap 25). batch(fn).
+- React binding (react-binding.tsx): useSyncExternalStore(subscribe, () => node.revision)
+  + node.value read during render — same shape as hooks/useSchemaNodeTracker.ts and
+  SchemaNodeInput.tsx:116. Inputs: PlainControlledInput (no caret bookkeeping),
+  CardFormatterInput (copy of the library test's formatter with useLayoutEffect
+  setSelectionRange bookkeeping), CardFormatterNoBookkeeping, NodeField (1,000-node).
+- Commit counter (commit-counter.ts): __REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot,
+  installed before react-dom/client evaluates. hookInjected() asserted true.
+- Runtime: React 19.2.6, react-dom 19.2.6, jsdom 26.1.0, vitest 3.2.6,
+  @testing-library/react 16.3.0, @testing-library/user-event 14.6.1.
+- Run (from packages/canard/schema-form):
+    npx vitest run --config architecture/spikes/events/vitest.spike.config.mjs
+  Result: 20/20 green. Mode-B cases that break are declared `it.fails`; each failed on
+  its own assertion (the observation line is recorded before the assertion).
+- Nothing outside architecture/spikes/events/ was touched.
+
+2. RESULTS (observed value@selectionStart)
+
+| case | scenario                                              | mode A (sync)            | mode B (microtask)                 | verdict |
+|------|-------------------------------------------------------|--------------------------|------------------------------------|---------|
+| 1a   | formatter+bookkeeping, type 123456 at end            | 1@1 12@2 123@3 1234@4 1234-5@6 1234-56@7 | identical                 | both pass |
+| 1b   | formatter+bookkeeping, insert 9 at idx 2 of 1234-5678| 1293-4567-8@3            | 1293-4567-8@3                      | both pass (see §4) |
+| 1c   | formatter WITHOUT bookkeeping, same insert           | 1293-4567-8@11 (end)     | 1293-4567-8@11 (end)               | both jump — sync alone does not preserve a caret across a value rewrite |
+| 2    | plain controlled, type "xy" at idx 2 of "abcd"       | abxcd@3 abxycd@4         | abxcd@5 abxcdy@6, node=abxcdy      | A pass; B FAILS (caret to end, 2nd char lands at end) |
+| 2c   | DOM right after the `input` event returns (fireEvent)| dom=1234-5@6, renders=1  | dom=1234@4 (STALE), renders=0; after microtask 1234-5@6 | A pass; B FAILS (value lag) |
+| 5    | compositionstart → input ㄱ → input 가 → compositionend | dom "ㄱ" then "가"    | dom "" after ㄱ, "ㄱ" after 가 (one step behind) | A pass; B FAILS (DOM reset mid-composition) |
+| 3    | 1,000 setValue in one click handler (fireEvent/act)  | commits=1 renders=1000 dispatches=1000 stale=0 | commits=1 renders=1000 dispatches=1 | both 1 commit |
+| 3b   | same, native dispatchEvent outside act               | commits=1 (0 before microtask) renders=1000 | same                     | both 1 commit |
+| 3c   | same inside store.batch                              | commits=1 dispatches=1 waves=1 | same                         | both 1 commit |
+| 4    | listener writes node b during a's wave               | commits=1 waves=2 (both waves inside the handler), a renders ["a1"], b renders ["derived:a1"], 0 getSnapshot warnings, 0 listener errors | commits=1 waves=2 (waves run in the microtask) same renders | both pass |
+
+3. MECHANISM OBSERVED (react-dom 19.2.6, cjs/react-dom-client.development.js)
+- ChangeEventPlugin enqueues the controlled target for restoration when it fires onChange
+  (enqueueStateRestore, lines 3518-3522).
+- batchedUpdates$1 (3251-3272) runs the handler, then in `finally`, ONLY IF a restore
+  target exists: flushSyncWork$1() (16896) → then restoreStateOfTarget (3178) →
+  updateInput (1644): `element.value !== "" + value && (element.value = ...)` (1666-1667),
+  where `value` is the props currently attached to the DOM node (internalPropsKey).
+- Mode A: onStoreChange runs inside the handler → forceStoreRerender (8260, SyncLane 2)
+  → flushSyncWork$1 renders+commits BEFORE restore, so the attached props already carry
+  the new value. For a plain input the committed value equals the DOM text, updateInput
+  writes nothing, and the caret stays where the browser put it (case 2, 2c, 5).
+- Mode B: nothing is scheduled inside the handler, so restore runs against the OLD props
+  and writes the old value back into the DOM (jsdom, like browsers, moves the selection to
+  the end on a value write). The microtask then notifies → forceStoreRerender → React's
+  own microtask flush (scheduleImmediateRootScheduleTask, 18979) → commit writes the new
+  value → caret to the end again. Two DOM writes per keystroke; between them the DOM shows
+  the previous value (2c), and the next keystroke or the next composition step is applied
+  on top of the reset text (2: "y" lands at the end; 5: DOM one step behind the IME).
+- Batching (3/3b/3c): all 1,000 SyncLane updates coalesce into one root render and one
+  commit in both modes (3: act flush; 3b: React's microtask flush — a click enqueues no
+  restore target, so no in-handler flush happens; only onChange gets that). Sync notify
+  does not cost 1,000 commits: React batches, the store need not.
+- Re-entrancy (4): both waves run inside the same handler in mode A, so the single sync
+  flush sees final values for a and b; getSnapshot (revision) is stable within a render,
+  no tearing and no "getSnapshot should be cached" warning.
+
+4. SUB-CASE WHERE MODE B DOES NOT FAIL, AND WHY
+- 1a/1b (the library's own T-1 test shape: formatter + useLayoutEffect setSelectionRange):
+  the bookkeeping repositions the caret at every commit, and under userEvent the
+  microtask commit lands before the next key (userEvent awaits setTimeout(0) per key).
+  So the caret assertion at the end of `form.type()` passes in BOTH modes — the existing
+  test `controlled-interaction.render.test.tsx:340-368` does not discriminate sync from
+  microtask notification. It also passes because the typed text reaches the end position.
+- 1c shows the converse: with a value rewrite (dash insertion) and no bookkeeping the
+  caret jumps to the end even in mode A, because updateInput writes the differing value.
+  Sync notify buys "no DOM write when the value is unchanged"; formatting caret repair
+  remains the input's job (T-1's bookkeeping) in either design.
+- IME: user-event 14.6.1 has no composition API; case 5 uses fireEvent composition events
+  plus native value writes. jsdom does not model the browser behaviour that a programmatic
+  value write during composition cancels the composition; the observed DOM reset in mode
+  B is the trigger of that cancellation, not the cancellation itself.
+
+5. VERDICT
+- B2-1: PASS with a precision fix. Sync notify inside the onChange handler is what keeps
+  React's controlled-state restore from rewriting the DOM (cases 2, 2c, 5), and a microtask
+  delay breaks it exactly as claimed — for plain controlled inputs and IME. The claim's
+  wording "so the caret is preserved" holds only for edits that leave the committed value
+  equal to the DOM text; a formatter that rewrites the value needs the layout-effect
+  bookkeeping in both designs (1c), and with that bookkeeping the current T-1 acceptance
+  test cannot tell the two designs apart (1a/1b). Recommend adding case 2 (plain controlled
+  mid-text typing) and 2c (DOM value immediately after the event) to the T-1 acceptance
+  criteria — they are the ones that go red under deferred notification.
+- B2-2: PASS. 1,000 synchronous notifications in one handler → 1 commit, 1,000 component
+  renders, 0 stale fields (3, 3b, 3c). Note the mechanism is React's SyncLane batching,
+  not the store: for a click handler the commit happens in React's microtask, not inside
+  the handler; only the onChange path flushes in-handler (via the restore-target branch).
+- §B3-4 re-entrancy under sync notify: PASS — two waves inside one handler, one commit,
+  no tearing (4).
+
+FILES
+- mini-store.ts, react-binding.tsx, commit-counter.ts, caret.spike.test.tsx,
+  vitest.spike.config.mjs (all under architecture/spikes/events/)

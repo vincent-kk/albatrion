@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type FormTypeRendererProps,
+  type FieldRendererProps,
   type JSONSchema,
-  type JSONSchemaError,
-  NodeState,
+  type ValidationIssue,
+  FieldNodeState,
   ShowError,
   ValidationMode,
   registerPlugin,
@@ -21,7 +21,7 @@ export default {
   title: 'Form/13. FormError',
 };
 
-export const DirtyTouched = () => {
+export const EditedTouched = () => {
   const jsonSchema = {
     type: 'object',
     properties: {
@@ -47,11 +47,11 @@ export const DirtyTouched = () => {
     node,
     Input,
     errorMessage,
-  }: FormTypeRendererProps) => {
+  }: FieldRendererProps) => {
     const {
-      [NodeState.Dirty]: dirty,
-      [NodeState.Touched]: touched,
-      [NodeState.ShowError]: showError,
+      [FieldNodeState.Edited]: edited,
+      [FieldNodeState.Touched]: touched,
+      [FieldNodeState.ErrorVisible]: showError,
     } = node.state || {};
     return depth === 0 ? (
       <Input />
@@ -63,8 +63,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== true
-                ? node.setState({ [NodeState.ShowError]: true })
-                : node.setState({ [NodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: true })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Show Error
@@ -72,14 +72,14 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== false
-                ? node.setState({ [NodeState.ShowError]: false })
-                : node.setState({ [NodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: false })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Hide Error
           </button>
         </label>
-        <pre>{JSON.stringify({ dirty, touched, showError })}</pre>
+        <pre>{JSON.stringify({ edited, touched, showError })}</pre>
         <pre>{JSON.stringify(node.errors)}</pre>
         {errorMessage}
       </div>
@@ -87,7 +87,7 @@ export const DirtyTouched = () => {
   };
 
   const [showError, setShowError] = useState<ShowError | boolean>(
-    ShowError.DirtyTouched,
+    ShowError.EditedTouched,
   );
 
   const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -101,39 +101,39 @@ export const DirtyTouched = () => {
             checked={
               !!(
                 typeof showError === 'number' &&
-                showError & ShowError.DirtyTouched
+                showError & ShowError.EditedTouched
               )
             }
-            value={ShowError.DirtyTouched}
+            value={ShowError.EditedTouched}
             onChange={(e) => {
               setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.DirtyTouched;
+                if (typeof prev === 'boolean') return ShowError.EditedTouched;
                 return e.target.checked
-                  ? prev | ShowError.DirtyTouched
-                  : prev & ~ShowError.DirtyTouched;
+                  ? prev | ShowError.EditedTouched
+                  : prev & ~ShowError.EditedTouched;
               });
             }}
           />
-          DirtyTouched
+          EditedTouched
         </label>
         <label>
           <input
             type="checkbox"
             name="showError"
             checked={
-              !!(typeof showError === 'number' && showError & ShowError.Dirty)
+              !!(typeof showError === 'number' && showError & ShowError.Edited)
             }
-            value={ShowError.Dirty}
+            value={ShowError.Edited}
             onChange={(e) => {
               setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.Dirty;
+                if (typeof prev === 'boolean') return ShowError.Edited;
                 return e.target.checked
-                  ? prev | ShowError.Dirty
-                  : prev & ~ShowError.Dirty;
+                  ? prev | ShowError.Edited
+                  : prev & ~ShowError.Edited;
               });
             }}
           />
-          Dirty
+          Edited
         </label>
         <label>
           <input
@@ -229,7 +229,7 @@ export const DirtyTouched = () => {
           ref={refHandle}
           jsonSchema={jsonSchema}
           showError={showError}
-          CustomFormTypeRenderer={Renderer}
+          FieldRenderer={Renderer}
         />
       </StoryLayout>
     </div>
@@ -250,7 +250,7 @@ export const NoValidate = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -282,7 +282,7 @@ export const ValidateOnRequest = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -320,7 +320,7 @@ export const ExternalErrors = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([
     {
       keyword: 'maxLength',
       dataPath: '/message',
@@ -331,7 +331,7 @@ export const ExternalErrors = () => {
     },
   ]);
 
-  const [_errors, _setErrors] = useState<JSONSchemaError[]>([]);
+  const [_errors, _setErrors] = useState<readonly ValidationIssue[]>([]);
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
   const clearErrors = () => {
@@ -398,9 +398,9 @@ export const ErrorBoundary = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Group
+          <Form.Field
             path="#/name"
-            FormTypeInput={() => {
+            FieldInput={() => {
               throw new Error('Error accord from Input');
               // eslint-disable-next-line no-unreachable
               return <div>Input</div>;

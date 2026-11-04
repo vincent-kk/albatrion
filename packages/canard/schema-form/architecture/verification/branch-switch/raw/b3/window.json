@@ -1,0 +1,431 @@
+{
+  "start": {
+    "startedAt": "2026-10-27T23:51:59.548Z",
+    "quietSince": "2026-10-27T23:51:59.547Z"
+  },
+  "end": {
+    "startedAt": "2026-10-27T23:51:59.548Z",
+    "endedAt": "2026-10-28T00:01:32.242Z",
+    "immutableHashesVerified": true
+  },
+  "prechecks": [
+    {
+      "startedAt": "2026-10-27T23:49:49.241Z",
+      "quietSince": "2026-10-27T23:49:54.345Z",
+      "durationSeconds": 5.100464417,
+      "heavy": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 102.73574270089416
+        }
+      ],
+      "rows": [
+        {
+          "pid": 515,
+          "name": "mds_stores",
+          "cpuPercent": 102.73574270089416
+        },
+        {
+          "pid": 10795,
+          "name": "Orca Helper (Renderer)",
+          "cpuPercent": 10.97939234970435
+        },
+        {
+          "pid": 10717,
+          "name": "Orca Helper",
+          "cpuPercent": 8.822725995284765
+        },
+        {
+          "pid": 820,
+          "name": "BetterTouchTool",
+          "cpuPercent": 6.27393848555203
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 6.0778779078854255
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 4.509393286516921
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.136969242772672
+        },
+        {
+          "pid": 86870,
+          "name": "2.1.310",
+          "cpuPercent": 2.940908665094922
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.744848087417172
+        },
+        {
+          "pid": 408,
+          "name": "launchservicesd",
+          "cpuPercent": 1.568484621390794
+        },
+        {
+          "pid": 650,
+          "name": "ControlCenter",
+          "cpuPercent": 1.568484621386336
+        },
+        {
+          "pid": 726,
+          "name": "chronod",
+          "cpuPercent": 1.568484621386336
+        },
+        {
+          "pid": 654,
+          "name": "Finder",
+          "cpuPercent": 1.3724240437130437
+        },
+        {
+          "pid": 553,
+          "name": "com.apple.DriverKit-AppleBCMWLAN",
+          "cpuPercent": 1.176363466039752
+        },
+        {
+          "pid": 493,
+          "name": "airportd",
+          "cpuPercent": 0.980302888368689
+        },
+        {
+          "pid": 11058,
+          "name": "orca-terminal-host",
+          "cpuPercent": 0.98030288836646
+        },
+        {
+          "pid": 89643,
+          "name": "codex",
+          "cpuPercent": 0.7842423106940037
+        },
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 0.784242310693168
+        },
+        {
+          "pid": 10687,
+          "name": "Orca",
+          "cpuPercent": 0.784242310693168
+        },
+        {
+          "pid": 378,
+          "name": "configd",
+          "cpuPercent": 0.588181733019876
+        },
+        {
+          "pid": 62021,
+          "name": "node",
+          "cpuPercent": 0.588181733019876
+        },
+        {
+          "pid": 1,
+          "name": "launchd",
+          "cpuPercent": 0.588181733015418
+        },
+        {
+          "pid": 364,
+          "name": "logd",
+          "cpuPercent": 0.39212115535104186
+        },
+        {
+          "pid": 429,
+          "name": "bluetoothd",
+          "cpuPercent": 0.3921211553488129
+        },
+        {
+          "pid": 745,
+          "name": "NotificationCenter",
+          "cpuPercent": 0.3921211553476985
+        }
+      ],
+      "observedProcessCount": 919,
+      "rowsScope": "top25 by CPU; complete counters retained with local raw samples",
+      "beforeCountersSha256": "022a9df0f824d14fe0c219a73c0b819456d828e34de6abe67a9f088b3a787175",
+      "afterCountersSha256": "28ebe20ecdeee60f7f9420228e3584a87a04165ddabf8d55d5f02ce20e364636"
+    },
+    {
+      "startedAt": "2026-10-27T23:51:54.349Z",
+      "quietSince": "2026-10-27T23:51:59.547Z",
+      "durationSeconds": 5.19537595799999,
+      "heavy": [],
+      "rows": [
+        {
+          "pid": 394,
+          "name": "mds",
+          "cpuPercent": 20.21027945787931
+        },
+        {
+          "pid": 10795,
+          "name": "Orca Helper (Renderer)",
+          "cpuPercent": 12.318646526739734
+        },
+        {
+          "pid": 99467,
+          "name": "mdworker_shared",
+          "cpuPercent": 10.393858006916563
+        },
+        {
+          "pid": 10717,
+          "name": "Orca Helper",
+          "cpuPercent": 10.393858006898355
+        },
+        {
+          "pid": 99446,
+          "name": "mdworker_shared",
+          "cpuPercent": 9.81642145097675
+        },
+        {
+          "pid": 99448,
+          "name": "mdworker_shared",
+          "cpuPercent": 9.623942598996816
+        },
+        {
+          "pid": 99457,
+          "name": "mdworker_shared",
+          "cpuPercent": 7.891632931177392
+        },
+        {
+          "pid": 99447,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.736759819297773
+        },
+        {
+          "pid": 99461,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.544280967317833
+        },
+        {
+          "pid": 99463,
+          "name": "mdworker_shared",
+          "cpuPercent": 6.544280967317833
+        },
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 5.774365559401591
+        },
+        {
+          "pid": 99462,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.811971299498408
+        },
+        {
+          "pid": 99469,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.811971299498408
+        },
+        {
+          "pid": 99454,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.619492447518474
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 4.2345347435459955
+        },
+        {
+          "pid": 99453,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.042055891578671
+        },
+        {
+          "pid": 99452,
+          "name": "mdworker_shared",
+          "cpuPercent": 4.042055891578658
+        },
+        {
+          "pid": 99470,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.849577039598721
+        },
+        {
+          "pid": 99443,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.6570981876187894
+        },
+        {
+          "pid": 99468,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.4646193356388486
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.2721404836603183
+        },
+        {
+          "pid": 86870,
+          "name": "2.1.310",
+          "cpuPercent": 3.2721404836603183
+        },
+        {
+          "pid": 99449,
+          "name": "mdworker_shared",
+          "cpuPercent": 3.272140483658925
+        },
+        {
+          "pid": 404,
+          "name": "contextstored",
+          "cpuPercent": 3.27214048365813
+        },
+        {
+          "pid": 99442,
+          "name": "mdworker_shared",
+          "cpuPercent": 2.8871827796990432
+        }
+      ],
+      "observedProcessCount": 951,
+      "rowsScope": "top25 by CPU; complete counters retained with local raw samples",
+      "beforeCountersSha256": "da771ed9164c1b6eec905a24262f2935574b8e0bdbd06cf7dd011aee9717e144",
+      "afterCountersSha256": "8d90b359ab51efc9334df343fb12fe4023f0d75b958b4bd3e8ffc756de8cd727"
+    }
+  ],
+  "endCpu": {
+    "startedAt": "2026-10-28T00:01:32.242Z",
+    "quietSince": "2026-10-28T00:01:37.406Z",
+    "durationSeconds": 5.161481458000024,
+    "heavy": [],
+    "rows": [
+      {
+        "pid": 394,
+        "name": "mds",
+        "cpuPercent": 18.98679687167364
+      },
+      {
+        "pid": 10795,
+        "name": "Orca Helper (Renderer)",
+        "cpuPercent": 12.012055163697509
+      },
+      {
+        "pid": 10717,
+        "name": "Orca Helper",
+        "cpuPercent": 10.26836973673872
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.199770407074229
+      },
+      {
+        "pid": 9816,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.424799106194885
+      },
+      {
+        "pid": 9826,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.231056280973638
+      },
+      {
+        "pid": 9808,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.843570630531147
+      },
+      {
+        "pid": 9818,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.843570630531147
+      },
+      {
+        "pid": 9821,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.843570630531147
+      },
+      {
+        "pid": 9827,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.649827805309901
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 4.649827805305672
+      },
+      {
+        "pid": 9811,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.456084980088656
+      },
+      {
+        "pid": 9794,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.456084980088655
+      },
+      {
+        "pid": 9814,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.456084980088655
+      },
+      {
+        "pid": 9817,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.456084980088655
+      },
+      {
+        "pid": 9823,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.456084980088655
+      },
+      {
+        "pid": 9831,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.262342154867409
+      },
+      {
+        "pid": 9832,
+        "name": "mdworker_shared",
+        "cpuPercent": 4.068599329646163
+      },
+      {
+        "pid": 9820,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.874856504424918
+      },
+      {
+        "pid": 9812,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.8748565044249172
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 3.8748565044037724
+      },
+      {
+        "pid": 86870,
+        "name": "2.1.310",
+        "cpuPercent": 3.6811136792135395
+      },
+      {
+        "pid": 9810,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.4873708539824264
+      },
+      {
+        "pid": 9829,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.487370853982426
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 3.293628028762589
+      }
+    ],
+    "observedProcessCount": 946,
+    "rowsScope": "top25 by CPU; complete counters retained with local raw samples",
+    "beforeCountersSha256": "e61108a8dc2dee58fb6d208ca7bde67ed15c312c318c5394716fd360ac4141f1",
+    "afterCountersSha256": "af27f91722cb75985c3523614e00c7a672848d8ee4652cfdd0fcde4824cd4323"
+  },
+  "formalRetries": 0
+}

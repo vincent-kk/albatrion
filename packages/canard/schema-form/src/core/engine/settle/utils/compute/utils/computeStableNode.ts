@@ -1,0 +1,43 @@
+import type { FieldNodeRecord } from '../../../../record';
+import type { SettlementContext } from '../../../types/settlement';
+import { DirtyPathSet } from '../../scratch/DirtyPathSet';
+import { updateOutput } from '../../output/updateOutput';
+import { dirtyChildren } from '../dirtyChildren';
+import { selectNodeSchema } from '../selectNodeSchema';
+
+/**
+ * Consume a dirty frontier whose gates, appearances, and shape work are absent.
+ * @param node - Live record reached under the caller's branchless stable proof
+ * @param context - Call with empty entered and shapeDirtyPaths containers
+ * @returns Nothing; updates records in child post-order and consumes dirty paths
+ */
+export const computeStableNode = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  context: SettlementContext<Self>,
+): void => {
+  const epoch = context.writeEpoch;
+  const marked = epoch !== undefined && node.writeEpoch === epoch;
+  if (!marked && !context.dirtyPaths.has(node.path)) return;
+  context.stateDirtyNodes.add(node);
+  if (node.behavior.strategy === 'branch') {
+    const recalculated = marked
+      ? node.children ?? []
+      : dirtyChildren(node, context);
+    for (let index = 0; index < recalculated.length; index++) {
+      const child = recalculated[index];
+      if (!marked || child.writeEpoch === epoch)
+        computeStableNode(child, context);
+    }
+    updateOutput(node, context, recalculated);
+  } else {
+    if (node.parent === null) selectNodeSchema(node, context);
+    updateOutput(node, context);
+  }
+  if (marked) {
+    node.writeEpoch = 0;
+    if (node !== context.target || node.parent === null) return;
+  }
+  if (context.dirtyPaths instanceof DirtyPathSet)
+    context.dirtyPaths.consume(node.path);
+  else context.dirtyPaths.delete(node.path);
+};

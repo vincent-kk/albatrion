@@ -117,8 +117,8 @@
 </fieldset>
 
 // Array 타입도 그룹화
-<div role="group" aria-labelledby={`${path}-label`}>
-  <Typography id={`${path}-label`}>{name}</Typography>
+<div role="group" aria-labelledby={`label:${path}`}>
+  <Typography id={`label:${path}`}>{name}</Typography>
   {/* children */}
 </div>
 ```
@@ -206,11 +206,11 @@
 ```typescript
 <RadioGroup
   name={name}
-  aria-labelledby={`${path}-label`}
+  aria-labelledby={`label:${path}`}
   aria-describedby={hasError ? `${path}-error` : undefined}
   aria-required={required}
 >
-  <FormLabel id={`${path}-label`}>{label}</FormLabel>
+  <FormLabel id={`label:${path}`}>{label}</FormLabel>
   {options.map(option => (
     <FormControlLabel
       key={option.value}
@@ -225,8 +225,8 @@
 ### Array (동적 항목)
 
 ```typescript
-<Box role="group" aria-labelledby={`${path}-label`}>
-  <Typography id={`${path}-label`}>{label}</Typography>
+<Box role="group" aria-labelledby={`label:${path}`}>
+  <Typography id={`label:${path}`}>{label}</Typography>
   
   {items.map((item, index) => (
     <Box key={index} role="listitem">

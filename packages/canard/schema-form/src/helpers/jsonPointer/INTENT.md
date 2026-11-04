@@ -1,44 +1,33 @@
-# jsonPointer
+# jsonPointer — schema-form 경로 문법 경계
 
 ## Purpose
 
-RFC 6901 표준 JSONPointer에 schema-form 전용 확장 심볼(`..` Parent, `.` Current, `*` Wildcard, `@` Context)을 추가한 상수 열거형과 경로 조작 유틸을 제공한다.
-
-## Structure
-
-- `enum.ts` — `JSONPointer` 상수 객체 및 타입 (확장 심볼 포함)
-- `utils/` — 경로 조작 순수 함수
-  - `getAbsolutePointer.ts` — 상대 경로를 절대 경로로 변환 (`./`, `../` 처리)
-  - `isAbsolutePath.ts` — `/` 또는 `#/` 시작 여부 확인
-  - `isRelativePath.ts` — `./` 또는 `../` 시작 여부 확인
-  - `joinSegment.ts` — 경로에 세그먼트 결합
-  - `stripFragment.ts` — `#` 프리픽스 제거 및 루트 정규화
-- `index.ts` — `JSONPointer` 열거형과 `utils/*` 함수를 barrel export
+schema-form 경로 문자열의 유일한 해석기와 조립기입니다. 확장 경로의 연산자와 리터럴 이름을 구분하고 외부 생산자의 RFC 6901 포인터는 이름만으로 해석합니다. 노드 탐색이나 값 조회는 소비처가 소유합니다.
 
 ## Conventions
 
-- `JSONPointer.Index`는 deprecated — `Wildcard` 사용
-- `getAbsolutePath`: `./` → 현재 경로 append, `../` → 부모 경로로 ascend
-- `stripFragment`: `#`, `#/`, `/` 단독은 모두 루트(`''`)로 정규화
-- 모든 유틸은 순수 함수, 문자열 리터럴 비교로 성능 최적화
+- 정확히 `*`, `..`, `.`, `@`인 세그먼트만 고유 심볼 연산자로 해석합니다.
+- 정확히 `%2A`, `%2E%2E`, `%2E`, `%40`인 세그먼트는 대응하는 리터럴 이름입니다.
+- 그 밖의 이름은 `~1`과 `~0`만 풀며 보통 이름의 퍼센트 문자는 보존합니다.
+- 이름 조립은 예약 이름의 퍼센트 표기와 winglet pointer-escape를 사용합니다.
 
 ## Boundaries
 
 ### Always do
 
-- 확장 심볼(`..`, `.`, `*`, `@`)을 표준 JSONPointer 경로 연산에서 사용할 때 컨텍스트를 명시할 것
-- `stripFragment` 후 `getAbsolutePath`를 호출하는 순서를 지킬 것
+- 소비처가 문자열 문법을 재해석하지 않도록 파싱된 이름과 심볼을 제공합니다.
+- 뜨거운 소비처에는 결과 wrapper 없는 세그먼트 API와 절대 여부 술어를 제공하고 문법 캐시의 수명은 소비처 소유자에게 둡니다.
+- 표준 포인터는 연산자를 만들지 않으며 fragment 세그먼트 전체를 퍼센트 디코드합니다.
+- 두 파서는 `/`와 `#/`를 빈 이름 자식으로 읽고 루트는 빈 문자열과 `#`만 허용합니다. 검증 전용 루트 별칭을 두지 않습니다.
+- 패키지 공개 `JSONPointer` 상수의 값을 유지합니다.
 
 ### Ask first
 
-- 새 확장 심볼 추가 (computed 표현식 파서 및 경로 해석 전반에 영향)
-- `getAbsolutePath`의 `../` 처리 횟수 제한 또는 에러 처리 추가
+- 확장 연산자를 추가하거나 정확한 퍼센트 표기의 해석을 바꾸는 경우
+- 기존 루트·fragment 관례를 바꾸는 경우
 
 ### Never do
 
-- `JSONPointer.Index`를 신규 코드에서 사용 (deprecated)
-- `utils/` 내 함수에서 외부 상태 접근 또는 에러 throw
-
-## Dependencies
-
-- `@winglet/json/pointer` — `JSONPointer` (공식 RFC 6901 상수 기반)
+- 경로 해석에 노드 상태나 값 조회를 결합하지 않습니다.
+- 문자열 연산자를 파싱된 이름과 같은 값으로 표현하지 않습니다.
+- 세그먼트 escaping 정규식을 소비처에 내보내지 않습니다.

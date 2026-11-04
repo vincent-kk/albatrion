@@ -1,6 +1,6 @@
 {
   "name": "@canard/schema-form-ajv7-plugin",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "AJV 7.x validator plugin for @canard/schema-form providing JSON Schema validation with Draft-07 and Draft 2019-09 support",
   "keywords": [
     "react",
@@ -62,6 +62,7 @@
     "ajv": "^7.0.0"
   },
   "devDependencies": {
+    "@aileron/schema-form-scenarios": "workspace:*",
     "@canard/schema-form": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

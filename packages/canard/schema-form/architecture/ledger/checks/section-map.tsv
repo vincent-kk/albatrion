@@ -1,0 +1,421 @@
+00-goals.md	1	6	1	목표	745	GOAL	high	
+00-goals.md	7	12	2	배경	825	GOAL	high	
+00-goals.md	13	16	2	한 문장	224	GOAL	high	
+00-goals.md	17	18	2	목표	10	GOAL	high	
+00-goals.md	19	28	3	G1. 스키마는 공유 계약이다 — 판정의 동치	590	GOAL	high	
+00-goals.md	29	44	3	G2. 표준이 형상을 말하고, FE가 표현을 더한다 — 층의 분리	918	GOAL	high	
+00-goals.md	45	53	3	G3. 의미는 위임한다 — 재구현하지 않는다	545	GOAL	high	
+00-goals.md	54	64	3	G4. 하나의 개념에는 하나의 장치 — 구조의 정합성	725	GOAL	high	
+00-goals.md	65	74	3	G5. 한 장으로 설명되는 라이프사이클 — 결정성	591	GOAL	high	
+00-goals.md	75	85	3	G6. 정밀한 고속 제어 — 비용은 변경에 비례한다	627	GOAL	high	
+00-goals.md	86	91	3	G7. 반응의 척추를 보존한다	332	GOAL	high	
+00-goals.md	92	97	3	G8. 보편적인 관행을 따른다	266	GOAL	high	
+00-goals.md	98	112	2	추가로 채택한 목표 (2026-09-22)	3261	GOAL	high	
+00-goals.md	113	118	3	C3의 세부 — core와 렌더 계층의 경계	1346	GOAL	high	
+00-goals.md	119	125	2	비목표	539	GOAL	high	
+00-goals.md	126	129	2	진행 방식	305	GOAL	high	
+00-goals.md	130	136	2	목표 사이의 긴장	1210	GOAL	high	
+00-goals.md	137	153	2	출처 — 소유자의 원래 발언과의 대응	1789	GOAL	high	
+01-current-structure.md	1	6	1	현재 구조 (관찰)	430	PROCESS	high	
+01-current-structure.md	7	21	2	1. 전체 흐름	1016	PROCESS	high	
+01-current-structure.md	22	38	2	2. 하중을 지는 설계 결정	3119	PROCESS	high	
+01-current-structure.md	39	55	2	3. "조건부로 존재/필수"를 표현하는 장치 — 7개	2122	PROCESS	high	
+01-current-structure.md	56	70	2	4. 폼 내부가 작성된 스키마·`getValue()`와 달라지는 지점	2813	PROCESS	high	
+01-current-structure.md	71	82	2	5. 라이프사이클에서 확인된 문제	1925	PROCESS	high	
+01-current-structure.md	83	89	2	6. core와 React의 경계	1407	REACT	high	
+01-current-structure.md	90	96	2	7. 문서와 코드의 불일치	603	PROCESS	high	
+01-current-structure.md	97	105	2	8. 추적하지 않은 것	680	PROCESS	high	
+02-target-overview.md	1	6	1	목표 구조 개관	1048	PROCESS	high	
+02-target-overview.md	7	60	2	1. 두 층 — JSON Schema 층과 예약 층	7504	SCHEMA	high	
+02-target-overview.md	61	119	2	2. 파이프라인	1891	SETTLE	high	
+02-target-overview.md	120	139	3	2.1 청사진 — 정적 분석 (ADR 0005)	7463	BLUEPRINT	high	
+02-target-overview.md	140	151	3	2.2 노드 트리 — 상태는 둘뿐 (ADR 0006)	1284	VALUE	high	
+02-target-overview.md	152	172	3	2.3 정착 — 일곱 단계 (ADR 0007)	6805	SETTLE	high	
+02-target-overview.md	173	176	3	2.4 검증기 플러그인 (ADR 0004, ADR 0001)	1158	VALIDATE	high	
+02-target-overview.md	177	180	3	2.5 렌더 계층 (ADR 0008, ADR 0011)	645	REACT	low	ADR 0008(EVENT)·0011(NODE) 인용이나 표제가 "렌더 계층"이라 REACT로 판단
+02-target-overview.md	181	215	3	2.6 정착 한 번의 순서	1898	SETTLE	high	
+02-target-overview.md	216	267	2	3. 조각과 게이트 (ADR 0002)	7718	FRAGMENT	high	
+02-target-overview.md	268	288	2	4. 값 조작 표 (07 4.28)	3066	WRITE	high	
+02-target-overview.md	289	300	2	5. 상태 키는 그 노드에만 (ADR 0003 §5, 원장 §4)	3331	CONTROLS	high	
+02-target-overview.md	301	320	2	6. 공개 표면 요약	4201	SURFACE	high	
+02-target-overview.md	321	342	2	7. 3차안에서 달라진 것	3582	LANDING	high	
+02-target-overview.md	343	360	2	8. 현재 구조와의 대응	1838	LANDING	high	
+02-target-overview.md	361	372	2	9. 검증 전략	1866	TEST	high	
+02-target-overview.md	373	407	2	10. 어디에 무엇이 있는가	3271	PROCESS	high	
+03-mental-model.md	1	6	1	전체 구조의 멘탈 모델 — 질서와 원리 (원리 원장)	1864	PROCESS	high	
+03-mental-model.md	7	8	2	1. 원리	13	GOAL	high	
+03-mental-model.md	9	24	3	1.1 다섯 원리	3910	GOAL	high	
+03-mental-model.md	25	41	3	1.2 소유자의 축 열 항목 (2026-09-23, 원문은 `reviews/round-9-spec.md` §1)	3742	GOAL	high	
+03-mental-model.md	42	47	3	1.3 소유자의 답 셋 (원문은 `reviews/round-9-spec.md` §2)	1342	GOAL	high	
+03-mental-model.md	48	54	3	1.4 두 층	2602	CONTROLS	low	SCHEMA(JSON Schema 층 설명)도 포함된 두 층 대조표이며 예약 층 설명이 더 큼
+03-mental-model.md	55	73	2	2. 상태 — 노드가 드는 것	2060	VALUE	high	
+03-mental-model.md	74	95	2	3. 쓰기 — 원본을 바꾸는 사건 (P2)	9844	WRITE	high	
+03-mental-model.md	96	139	2	4. 계산 — 정착 한 번 (P3)	16928	SETTLE	high	
+03-mental-model.md	140	200	2	5. 원리에서 결정으로 — 도출표	18495	PROCESS	low	본문에 03의 오류 분류표(ERROR) 포함, 도출표 전체는 여러 결정을 다룸
+03-mental-model.md	201	217	2	6. 원리가 아직 답하지 않은 것 (설계 항목, `07-conclusions.md` 11.2)	3324	PROCESS	high	
+03-mental-model.md	218	238	2	7. 소유자 확인 상태	3824	PROCESS	high	
+04-inherited-constraints.md	1	18	1	계승할 제약 — 현재 코드의 트러블슈팅 기록	8531	GOAL	high	
+04-inherited-constraints.md	19	39	2	4라운드 스윕에서 추가된 제약 (antigravity 스윕 → 소스 대조 12/14 확인)	5136	GOAL	high	
+04-inherited-constraints.md	40	50	2	새 설계에서 사라지는 장치와 그 이유	916	GOAL	high	
+04-inherited-constraints.md	51	55	2	아직 확인하지 않은 것	622	GOAL	high	
+05-before-after.md	1	10	1	현재 구현과 새 설계의 대조 — 문법·인터페이스·기능	1450	LANDING	low	이주 전후 대조 문서 전체 표제, 하위에 SCHEMA/SURFACE도 혼재
+05-before-after.md	11	34	2	1. 표준 조건부 문법	6666	SCHEMA	high	
+05-before-after.md	35	67	2	2. `&` 문법과 FE 전용 키워드	6532	SCHEMA	high	
+05-before-after.md	68	69	2	3. 공개 인터페이스	29	SURFACE	high	
+05-before-after.md	70	82	3	3.1 `Form` props	1137	SURFACE	high	
+05-before-after.md	83	98	3	3.2 `FormHandle`	1431	SURFACE	high	
+05-before-after.md	99	118	3	3.3 `SetValueOption` 10비트의 행방	1476	SURFACE	high	
+05-before-after.md	119	131	3	3.4 이벤트·통지·검증	2037	SURFACE	high	
+05-before-after.md	132	141	3	3.5 값 읽기·분기 인덱스·배열·훅	1452	SURFACE	high	
+05-before-after.md	142	143	2	4. 기능의 증감	23	LANDING	high	
+05-before-after.md	144	164	3	4.1 사라지는 것	2764	LANDING	high	
+05-before-after.md	165	186	3	4.2 새로 생기는 것	2148	LANDING	high	
+05-before-after.md	187	205	2	5. 이주 시 소비자가 만나는 것	1889	LANDING	high	
+05-before-after.md	206	215	2	6. 아직 정해지지 않은 것	2636	PROCESS	low	D/Q 다수 번호에 걸친 미결 항목 나열, 도메인 혼재
+05-before-after.md	216	234	2	7. `then`/`else`에 넣을 수 있는 것 — 한계	3292	SCHEMA	high	
+06-conclusions.md	1	6	1	최종 결론 — 소유자 검토용	806	PROCESS	high	
+06-conclusions.md	7	14	2	0. 이 문서를 읽는 법	1455	PROCESS	high	
+06-conclusions.md	15	61	2	1. 용어	6318	PROCESS	high	
+06-conclusions.md	62	65	2	2. 축 — 결정을 낳는 원리와 목표	148	GOAL	high	
+06-conclusions.md	66	74	3	2.1 다섯 원리 (`03-mental-model.md` §1)	2062	GOAL	high	
+06-conclusions.md	75	86	3	2.2 이 문서가 인용하는 목표 (`00-goals.md`)	1643	GOAL	high	
+06-conclusions.md	87	90	3	2.3 이미 수락된 결정 (`HANDOFF.md` §1·§2)	857	GOAL	high	
+06-conclusions.md	91	109	2	3. 원리의 읽기 확인 — 결정이 아니라 읽기다	2663	GOAL	high	
+06-conclusions.md	110	111	2	4. 도출로 닫힌 결정 — 확인만 남는다	54	PROCESS	low	빈 헤딩, 하위 4.1–4.21이 여러 도메인에 걸침
+06-conclusions.md	112	120	3	4.1 `&derived`는 원본을 쓴다 (D-11 핵심)	1002	WRITE	high	
+06-conclusions.md	121	129	3	4.2 전이 주입은 최종 활성 집합 기준이다 (D-12)	1426	SETTLE	low	CONTROLS(injectTo) 성격도 있음
+06-conclusions.md	130	138	3	4.3 에지 발화의 기준점은 직전 커밋이고, 배치와 순차의 값 차이는 설계의 귀결이다 (D-13)	2035	EVENT	high	
+06-conclusions.md	139	146	3	4.4 초기 분기 선택에서 `required`를 읽지 않는다 (D-14)	792	FRAGMENT	high	
+06-conclusions.md	147	153	3	4.5 예산 초과 시에도 `onChange`는 불린다 (D-16)	651	EVENT	high	
+06-conclusions.md	154	162	3	4.6 리스너 되먹임만 거부하고, 파동 예산의 단위는 진입 사슬이다 (D-17)	1215	EVENT	high	
+06-conclusions.md	163	169	3	4.7 배열 `Merge`는 통째 교체다 (D-19)	991	WRITE	high	
+06-conclusions.md	170	178	3	4.8 터미널 아래 경로는 노드가 없다 (D-21)	1051	NODE	high	
+06-conclusions.md	179	185	3	4.9 관측 채널의 최소 (D-22 최소)	707	ERROR	low	EVENT(관측 채널) 성격도 있음
+06-conclusions.md	186	191	3	4.10 값의 세 읽기의 사상 (D-23 사상)	368	VALUE	high	
+06-conclusions.md	192	200	3	4.11 수렴하지 않을 때는 원본 B를 커밋한다 (D-31)	1761	SETTLE	high	
+06-conclusions.md	201	208	3	4.12 `extras`의 방출 순서는 받은 순서다 (D-32)	1331	VALUE	high	
+06-conclusions.md	209	217	3	4.13 원리 제안 P6–P9의 처리	1774	GOAL	high	
+06-conclusions.md	218	227	3	4.14 3라운드 결정 D-1–D-6 (5라운드 도출, 4차 본문에 이미 반영)	1404	PROCESS	high	
+06-conclusions.md	228	232	3	4.15 자동 쓰기를 포함한 고정점이 없을 때 (D-24, 편집자 판정)	524	SETTLE	high	
+06-conclusions.md	233	237	3	4.16 고정점이 여럿일 때 (D-25, 편집자 판정)	531	SETTLE	high	
+06-conclusions.md	238	241	3	4.17 해는 있으나 반복이 닿지 못할 때 (D-26, 편집자 판정)	441	SETTLE	high	
+06-conclusions.md	242	246	3	4.18 비활성 대상에도 `injectTo`가 쓴다 (D-28, 편집자 판정, 확신 중)	507	CONTROLS	high	
+06-conclusions.md	247	250	3	4.19 자동 쓰기 로그의 수명은 정착 범위다 (D-30, 편집자 판정)	547	WRITE	low	SETTLE(정착 범위) 성격도 있음
+06-conclusions.md	251	255	3	4.20 "값이 바뀌었다"는 값 비교다 (D-33, 편집자 판정, 비용은 실험)	574	VALUE	high	
+06-conclusions.md	256	259	3	4.21 원천이 비활성이면 `injectTo`는 없음을 읽는다 (D-34, 편집자 판정, 확신 중)	362	CONTROLS	high	
+06-conclusions.md	260	263	2	5. 소유자가 답할 가치 판단	206	PROCESS	low	빈 헤딩에 가까운 절 서문, 소유자 판단 기록 성격
+06-conclusions.md	264	275	3	5.1 작성자가 선언한 규칙이 로드된 데이터를 덮어도 되는가 (D-27, 로드 시 `injectTo`)	3676	CONTROLS	high	
+06-conclusions.md	276	287	3	5.2 사용자가 파생 필드를 덮어쓸 수 있는가 (D-11′)	2599	WRITE	high	
+06-conclusions.md	288	298	3	5.3 조건부 조각의 주석 키워드가 본체를 덮는가 (D-29)	2424	FRAGMENT	high	
+06-conclusions.md	299	307	3	5.4 예산 초과 시 제출을 막는가 (D-22′ 일부)	1405	SETTLE	high	
+06-conclusions.md	308	314	3	5.5 비판별 union의 동점 (D-14′)	970	FRAGMENT	high	
+06-conclusions.md	315	321	3	5.6 이름 제안에 섞인 작은 정책 넷 (6절에서 온 것)	922	SURFACE	high	
+06-conclusions.md	322	325	2	6. 이름과 표면 — 제안표	530	SURFACE	high	
+06-conclusions.md	326	343	3	N1. 쓰기 옵션 — 옵션 객체가 아니라 비트마스크	2586	SURFACE	high	
+06-conclusions.md	344	349	3	N2. 분기 선택 명령	732	SURFACE	high	
+06-conclusions.md	350	359	3	N3. 값의 세 읽기	1039	SURFACE	high	
+06-conclusions.md	360	376	3	N4. 진단 표면	1432	SURFACE	high	
+06-conclusions.md	377	383	3	N5. FE 전용 키 문법	987	SURFACE	high	
+06-conclusions.md	384	391	3	N6. 공개 쓰기 API와 배열 API	963	SURFACE	high	
+06-conclusions.md	392	395	3	N7. `find`의 반환	102	SURFACE	high	
+06-conclusions.md	396	403	2	7. 실험이 먼저인 것	1892	TEST	high	
+06-conclusions.md	404	422	2	8. 정정 기록	2496	PROCESS	high	
+06-conclusions.md	423	431	2	9. 통과 뒤에 일어나는 일	1815	LANDING	high	
+06-conclusions.md	432	443	2	10. 근거 파일	1037	PROCESS	high	
+07-conclusions.md	1	6	1	최종 결론 2판 — 소유자 검토용 (9라운드, 소유자의 축 열 항목 반영)	1669	PROCESS	high	
+07-conclusions.md	7	15	2	0. 이 문서를 읽는 법	1966	PROCESS	high	
+07-conclusions.md	16	38	2	1. 용어	4299	PROCESS	high	
+07-conclusions.md	39	40	2	2. 축 — 결정을 낳는 원리, 목표, 소유자의 열 항목	71	GOAL	high	
+07-conclusions.md	41	44	3	2.1 원리와 목표	302	GOAL	high	
+07-conclusions.md	45	63	3	2.2 소유자의 열 항목 (2026-09-23, 원문은 `reviews/round-9-spec.md` §1)	2581	GOAL	high	
+07-conclusions.md	64	69	3	2.3 소유자의 답 셋 (원문은 `reviews/round-9-spec.md` §2)	1153	GOAL	high	
+07-conclusions.md	70	83	2	3. 원리의 읽기 확인 — 결정이 아니라 읽기다	3003	GOAL	high	
+07-conclusions.md	84	85	2	4. 도출로 닫힌 결정 — 확인만 남는다	54	PROCESS	low	빈 헤딩, 하위 4.0·4.22–4.30이 여러 도메인에 걸침
+07-conclusions.md	86	105	3	4.0 06의 항목이 어떻게 되는가	2113	PROCESS	high	
+07-conclusions.md	106	114	3	4.22 채움은 노드가 생길 때 한 번, 원천은 `&default` > `default` (06의 4.2와 D-12를 대체)	1817	WRITE	low	CONTROLS/SETTLE 성격도 있음
+07-conclusions.md	115	134	3	4.23 예약 층의 단계와 같은 대상 규칙 (Q1, 새것)	3453	CONTROLS	low	예약 층 단계 관련, WRITE 성격도 있음
+07-conclusions.md	135	139	3	4.24 노드 게이트는 조각 게이트와 같은 장치다 (도출, 소유자 확인)	869	FRAGMENT	high	
+07-conclusions.md	140	155	3	4.25 폼은 분기를 고르지 않는다 — 지워지는 장치와 컨벤션 (Q5, 새것)	3955	FRAGMENT	low	NODE(Q5) 참조 있음
+07-conclusions.md	156	167	3	4.26 결합 규칙 — 13라운드에 "코어에 글로벌 없음, 상태 키는 그 노드에만"으로 확정 (Q3)	2971	CONTROLS	high	
+07-conclusions.md	168	188	3	4.27 노드의 유효 스키마 병합표 (Q4)	3520	SCHEMA	high	
+07-conclusions.md	189	204	3	4.28 값 조작 표 — 분기(조각)가 꺼질 때의 값 정책은 13라운드에 닫힘(기본 유지, 비움은 나감 정책 키) (Q2)	1931	WRITE	low	FRAGMENT 성격도 있음
+07-conclusions.md	205	211	3	4.29 `findNodes`도 터미널 아래 경로에 노드가 없다 (10라운드 추정 완료)	887	NODE	high	
+07-conclusions.md	212	219	3	4.30 한 정착 안에서 한 규칙의 에지는 한 번만 소비된다 (편집자 판정, 실행, 소유자 확인)	2509	SETTLE	high	
+07-conclusions.md	220	223	2	5. 소유자가 답할 것 (10라운드 추정 뒤에 다시 씀)	972	PROCESS	low	빈 헤딩에 가까운 절 서문, 소유자 판단 기록 성격
+07-conclusions.md	224	255	3	5.0 소유자의 답 반영 (2026-09-23, 원문은 `reviews/round-10-owner-answers.md`)	7769	PROCESS	low	다수 기술 도메인 혼재(WRITE/CONTROLS/FRAGMENT/NODE/SURFACE 등); 문서 기능은 소유자 결정 기록
+07-conclusions.md	256	263	3	5.1 소유자만 정할 것 (셋)	2658	PROCESS	low	다수 기술 도메인 혼재; 문서 기능은 소유자 결정 기록
+07-conclusions.md	264	277	3	5.2 확인만 받을 것 (도출·추정, 다섯)	2902	PROCESS	low	다수 기술 도메인 혼재; 문서 기능은 소유자 결정 기록
+07-conclusions.md	278	286	3	5.3 셋이 같은 방향으로 기울었으나 축이 강제하지 않는 것 (넷)	2131	PROCESS	low	다수 기술 도메인 혼재; 문서 기능은 소유자 결정 기록
+07-conclusions.md	287	301	3	5.4 수렴하지 않은 것 (열)	4206	PROCESS	low	다수 기술 도메인 혼재; 문서 기능은 소유자 결정 기록
+07-conclusions.md	302	303	2	6. 이름과 표면 — 확정과 제안	44	SURFACE	high	
+07-conclusions.md	304	340	3	6.1 소유자가 동의한 이름 (세 곳의 추천 원문: `reviews/raw-round9-naming-{antigravity,codex,local}.md`)	3818	SURFACE	high	
+07-conclusions.md	341	352	3	6.2 06의 이름 제안이 어떻게 되는가	1761	SURFACE	high	
+07-conclusions.md	353	354	2	7. 실측, 프로토타입, 실험	38	TEST	high	
+07-conclusions.md	355	370	3	7.1 실측: `oneOf`·`anyOf` 안의 `if` (ajv 8.17.1, draft-07과 2020-12 판정 동일)	1225	TEST	high	
+07-conclusions.md	371	390	3	7.2 프로토타입 v5 (`spikes/round9/proto/loop-v5.mjs`)	4057	TEST	high	
+07-conclusions.md	391	398	3	7.3 실험이 먼저인 것	446	TEST	high	
+07-conclusions.md	399	415	2	8. 정정 기록	1821	PROCESS	high	
+07-conclusions.md	416	425	2	9. 통과 뒤에 일어나는 일	3226	LANDING	high	
+07-conclusions.md	426	439	2	10. 근거 파일	857	PROCESS	high	
+07-conclusions.md	440	443	2	11. 개발 진입 평가 — 지금 코드를 시작할 수 있는가	402	LANDING	high	
+07-conclusions.md	444	453	3	11.1 판정: 단계적 진입 가능. 큰 설계 라운드는 더 필요 없고, 코드 착수 전에 할 일이 넷 있다	2784	LANDING	high	
+07-conclusions.md	454	469	3	11.2 아직 설계가 없는 것 (코드 전에 짧은 설계가 필요)	2334	LANDING	high	
+07-conclusions.md	470	477	3	11.3 위험 (다시 짜게 만들 수 있는 곳)	2486	LANDING	high	
+07-conclusions.md	478	493	3	11.4 구현 슬라이스 (두 검토의 순서를 합침)	2029	LANDING	high	
+07-conclusions.md	494	503	2	12. 10라운드 — 남은 정책의 추정 결과 (소유자 지시에 따른 것)	2057	PROCESS	high	
+07-conclusions.md	504	512	2	13. 11라운드 — 소유자 답의 정합성 검증 (소유자 지시에 따른 것)	1637	PROCESS	high	
+08-design-a-to-z.md	1	4	1	설계서 A부터 Z까지 — 소유자 최종 검토용	1307	PROCESS	high	
+08-design-a-to-z.md	5	24	2	0. 읽는 법	1621	PROCESS	high	
+08-design-a-to-z.md	25	40	2	1. 무엇을 만드는가 — 한 문장과 다섯 가치	2191	GOAL	high	
+08-design-a-to-z.md	41	42	2	2. 원리 다섯과 소유자의 축	40	GOAL	high	
+08-design-a-to-z.md	43	55	3	2.1 원리(원장 §1.1)	1698	GOAL	high	
+08-design-a-to-z.md	56	68	3	2.2 소유자의 축 열 항목(원장 §1.2, 요지)	1426	GOAL	high	
+08-design-a-to-z.md	69	74	3	2.3 소유자의 답 셋(원장 §1.3)	552	GOAL	high	
+08-design-a-to-z.md	75	76	2	3. 두 층과 키 목록	28	SCHEMA	high	
+08-design-a-to-z.md	77	90	3	3.1 JSON Schema 층	1014	SCHEMA	high	
+08-design-a-to-z.md	91	120	3	3.2 `controls` — 값·형상을 때에 따라 바꾸는 규칙과 정책	6696	CONTROLS	high	
+08-design-a-to-z.md	121	144	3	3.3 `options`와 `presentation` — 정적 설정과 표현	4192	CONTROLS	high	
+08-design-a-to-z.md	145	148	3	3.4 검증기에 넘기기 전 지우는 규칙 하나	762	VALIDATE	low	SCHEMA/CONTROLS 경계의 규칙(검증기에 넘기기 전 제거)
+08-design-a-to-z.md	149	171	2	4. 상태 — 노드가 드는 것	3050	VALUE	high	
+08-design-a-to-z.md	172	183	2	5. 청사진 — 스키마를 한 번 읽는다 (ADR 0005)	4433	BLUEPRINT	high	
+08-design-a-to-z.md	184	220	2	6. 조각과 게이트 (ADR 0002, ADR 0010)	4103	FRAGMENT	high	
+08-design-a-to-z.md	221	257	2	7. 정착 — 쓰기 하나가 커밋에 이르는 길 (ADR 0007)	7599	SETTLE	high	
+08-design-a-to-z.md	258	259	2	8. 쓰기 — 원본을 바꾸는 사건 (P2, ADR 0013)	59	WRITE	high	
+08-design-a-to-z.md	260	275	3	8.1 쓰기 표(원장 §3)	2392	WRITE	high	
+08-design-a-to-z.md	276	279	3	8.2 쓰기의 종류는 호출자가 선언한다	775	WRITE	high	
+08-design-a-to-z.md	280	295	3	8.3 값 조작 표(07 4.28)	1252	WRITE	high	
+08-design-a-to-z.md	296	306	3	8.4 나감의 비움 정책 `unsetOnInactive`	6685	WRITE	high	
+08-design-a-to-z.md	307	317	3	8.5 같은 대상 규칙(파생 단계)	1387	WRITE	high	
+08-design-a-to-z.md	318	332	2	9. 유효 스키마 병합표 (축 5항, 원장 §4)	5843	SCHEMA	high	
+08-design-a-to-z.md	333	340	2	10. 상태 키와 제어 — 그 노드에만 (ADR 0003 §5)	1966	CONTROLS	high	
+08-design-a-to-z.md	341	342	2	11. 검증기 플러그인, 검증, 오류와 경고 (ADR 0001, 0004, 원장 §5)	85	VALIDATE	low	ERROR 내용도 포함(하위 11.3)
+08-design-a-to-z.md	343	346	3	11.1 계약	4717	VALIDATE	high	
+08-design-a-to-z.md	347	350	3	11.2 검증	1494	VALIDATE	high	
+08-design-a-to-z.md	351	391	3	11.3 오류·경고 분류표(세 축: 언제, 누구 잘못, 어떻게 드러남)	17859	ERROR	high	
+08-design-a-to-z.md	392	402	2	12. 통지와 렌더 계층 (ADR 0008, 0011)	8308	REACT	low	EVENT(통지)·NODE(behavior 선택) 내용도 혼재
+08-design-a-to-z.md	403	426	2	13. 공개 표면	5467	SURFACE	high	
+08-design-a-to-z.md	427	480	2	14. 오늘과 달라지는 것 — 이주 항목	13392	LANDING	high	
+08-design-a-to-z.md	481	503	2	15. 아직 정하지 않은 것 — 슬라이스 안의 설계 항목	5670	PROCESS	high	
+08-design-a-to-z.md	504	507	2	16. 14라운드 검증 — 다섯 가치에 비춘 판정	338	PROCESS	high	
+08-design-a-to-z.md	508	519	3	16.1 판정	1976	PROCESS	high	
+08-design-a-to-z.md	520	528	3	16.2 가치끼리 부딪히는 자리에서 설계가 고른 쪽	1260	PROCESS	high	
+08-design-a-to-z.md	529	546	3	16.3 소유자의 답	6149	PROCESS	high	
+08-design-a-to-z.md	547	548	2	17. 개발 단계 — 독립 PR로 나눈 계획	52	LANDING	high	
+08-design-a-to-z.md	549	563	3	17.1 원칙	3790	LANDING	high	
+08-design-a-to-z.md	564	595	3	17.2 PR 목록	13692	LANDING	high	
+08-design-a-to-z.md	596	602	3	17.3 규모와 위험	2926	LANDING	high	
+08-design-a-to-z.md	603	611	2	18. 검증 전략 (02 §9)	1308	TEST	high	
+09-landing-and-test-strategy.md	1	6	1	09 — 정착 검토와 테스트 전략 (16라운드, 최종 검증 단계)	1533	PROCESS	high	
+09-landing-and-test-strategy.md	7	10	2	1. 한 문장	575	PROCESS	low	문서 전체의 한 문장 요약, LANDING/TEST 성격도 있음
+09-landing-and-test-strategy.md	11	12	2	2. 정착 검토	20	LANDING	high	
+09-landing-and-test-strategy.md	13	27	3	2.1 판정과 조건 여덟	3188	LANDING	high	
+09-landing-and-test-strategy.md	28	43	3	2.2 PR별 정착 지도	3703	LANDING	high	
+09-landing-and-test-strategy.md	44	55	3	2.3 React 바인딩 계약 다섯	7705	REACT	high	
+09-landing-and-test-strategy.md	56	65	3	2.4 배달 경로 (16라운드 답 3으로 확정)	1151	EVENT	low	배달 경로 — 통지·검증 결과 배달 관련 추정
+09-landing-and-test-strategy.md	66	70	3	2.5 그 밖의 판단(추정 포함)	577	VALUE	low	BLUEPRINT/SCHEMA(유효 스키마 메모이제이션) 성격도 있음
+09-landing-and-test-strategy.md	71	99	3	2.6 `reset` — 로드로 충분한가 (16라운드 답 2의 검토, 16라운드 스웜 수렴(편집자 결정))	27051	WRITE	low	reset을 쓰기 동작으로 분류; NODE/BLUEPRINT(트리·캐시 보존) 성격도 있음
+09-landing-and-test-strategy.md	100	117	2	3. 노드 구조 — 합성으로	12017	NODE	high	
+09-landing-and-test-strategy.md	118	119	2	4. 테스트 위계	23	TEST	high	
+09-landing-and-test-strategy.md	120	129	3	4.1 두 층과 그 아래	1006	TEST	high	
+09-landing-and-test-strategy.md	130	153	3	4.2 단일 원천 — 시나리오 데이터 모듈	3204	TEST	high	
+09-landing-and-test-strategy.md	154	163	3	4.3 기존 234파일의 처분	2212	TEST	high	
+09-landing-and-test-strategy.md	164	177	3	4.4 새로 있어야 하는 시험 (PR별)	6804	TEST	high	
+09-landing-and-test-strategy.md	178	181	3	4.5 `renderForm` 하니스	693	TEST	high	
+09-landing-and-test-strategy.md	182	183	2	5. 스토리북 개편	26	TEST	high	
+09-landing-and-test-strategy.md	184	187	3	5.1 원칙 셋	345	TEST	high	
+09-landing-and-test-strategy.md	188	200	3	5.2 구조	2312	TEST	high	
+09-landing-and-test-strategy.md	201	207	3	5.3 도구와 설정	1889	TEST	high	
+09-landing-and-test-strategy.md	208	213	3	5.4 옛 스토리 49파일 33,533줄의 처분 (16라운드 답 4: 전체 정리 허용)	725	TEST	high	
+09-landing-and-test-strategy.md	214	215	2	6. 벤치마크와 릴리스 테스트	42	TEST	high	
+09-landing-and-test-strategy.md	216	224	3	6.1 옛 판과 새 판의 속도 비교	2945	TEST	high	
+09-landing-and-test-strategy.md	225	251	3	6.2 릴리스와 릴리스 테스트 (16라운드 답 9: changesets로 바꾸고 다시 쓴다, 16라운드 스웜 수렴(편집자 결정), 판 번호는 소유자 답으로 확정)	15219	TEST	high	
+09-landing-and-test-strategy.md	252	264	2	7. PR 계획에 미치는 것 (08 §17 보정)	4497	LANDING	high	
+09-landing-and-test-strategy.md	265	281	2	8. Vincent의 확인과 답	6695	PROCESS	high	
+09-landing-and-test-strategy.md	282	292	2	9. 검증 기록	2540	PROCESS	high	
+open-questions.md	1	4	1	미결 질문	380	PROCESS	high	
+open-questions.md	5	16	2	Q1. 조각이 꺼질 때 값은 어떻게 되는가	2146	FRAGMENT	high	
+open-questions.md	17	20	2	Q2. null 계약(#338)의 장치를 새 구조에서 어떻게 표현하는가	811	VALUE	high	
+open-questions.md	21	26	2	Q3. (닫힘 — ADR 0006, 0007)	475	VALUE	high	
+open-questions.md	27	30	2	Q4. 표준 키워드 밖의 FE 전용 조건부 필드	396	FRAGMENT	high	
+open-questions.md	31	45	2	Q5. `virtual` (닫힘 — 10라운드 소유자 답 E-4, `07-conclusions.md:253`의 확정. 현행 유지)	2341	NODE	high	
+open-questions.md	46	53	2	Q6. `SetValueOption` (닫힘 — ADR 0013 4차 본문, 2026-09-23)	1133	WRITE	high	
+open-questions.md	54	57	2	Q7. `dependentSchemas` / `dependentRequired` / `dependencies`	344	FRAGMENT	high	
+open-questions.md	58	63	2	Q8. (방향 닫힘 — `00-goals.md` C3, ADR 0011 §3, 17라운드 소유자 답으로 통보 1 허용. 남은 일은 import 분리)	1695	NODE	high	
+open-questions.md	64	67	2	Q9. (닫힘 — `00-goals.md` C5)	406	NODE	high	
+open-questions.md	68	71	2	Q10. `if`의 공허한 참	330	FRAGMENT	high	
+open-questions.md	72	77	2	Q11. 금지 조각의 의미 (3라운드 D-3 — 원리에서 도출됨, 소유자 확정 대기)	1000	FRAGMENT	high	
+open-questions.md	78	81	2	Q12. 검증 에러의 라우팅	353	ERROR	high	
+open-questions.md	82	85	2	Q13. `contains` / `prefixItems`	233	FRAGMENT	high	
+open-questions.md	86	89	2	Q14. emit의 키 순서	214	WRITE	high	
+open-questions.md	90	93	2	Q15. 직전 커밋의 활성 집합을 출발 가설로 쓰는 최적화	564	SETTLE	high	
+open-questions.md	94	99	2	D-7 ~ D-10 (닫힘 — 2026-09-22, `reviews/round-4.md` §4)	467	EVENT	low	WRITE(D-7)·FRAGMENT(D-8) 내용도 포함
+adr/0001-validator-input-invariant.md	1	6	1	ADR 0001 — 검증기 입력 불변	2994	VALIDATE	high	
+adr/0001-validator-input-invariant.md	7	12	2	변경 이력	1040	VALIDATE	high	
+adr/0001-validator-input-invariant.md	13	18	2	맥락	517	VALIDATE	high	
+adr/0001-validator-input-invariant.md	19	27	2	결정	1398	VALIDATE	high	
+adr/0001-validator-input-invariant.md	28	39	3	이 불변식이 보장하는 범위 (`reviews/round-1.md` R1–R5)	1815	VALIDATE	high	
+adr/0001-validator-input-invariant.md	40	47	2	결과	1223	VALIDATE	high	
+adr/0001-validator-input-invariant.md	48	53	2	비용	639	VALIDATE	high	
+adr/0001-validator-input-invariant.md	54	57	2	되돌림 가능성	135	VALIDATE	high	
+adr/0002-guard-fragment-model.md	1	6	1	ADR 0002 — 조건부 장치를 "가드 → 조각" 단일 모델로 통합	887	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	7	15	2	변경 이력	2264	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	16	26	2	맥락	1114	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	27	36	2	폼이 스키마에서 읽는 것 (P1′)	1788	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	37	54	2	결정	1749	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	55	65	3	조각은 트리다 (E3)	1927	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	66	72	3	노드 게이트는 조각 게이트와 같은 장치다 (`07-conclusions.md` §4.24)	1010	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	73	102	3	명시 판별 `controls.discriminator` — 축 1항(폼은 JSON Schema 문법을 해석하지 않는다)의 유일한 예외	2017	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	103	108	3	게이트는 투영 후 값을 본다 (E5)	1094	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	109	120	3	출발점은 고정이고 재평가는 비단조다 (E6, D-2)	2150	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	121	147	3	금지 조각은 없다 (D-3 = (iii))	2632	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	148	167	3	따라 나오는 규칙	4492	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	168	173	3	수동 선택은 작성자가 선언한 판별 프로퍼티로 표현한다	764	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	174	186	2	합의 근거	2643	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	187	195	2	결과	1207	FRAGMENT	high	
+adr/0002-guard-fragment-model.md	196	205	2	미결	1885	FRAGMENT	high	
+adr/0003-group-namespace.md	1	4	1	ADR 0003 — 예약 층: 그룹 객체 셋 `controls`·`options`·`presentation`으로 값과 UI를 제어한다	1204	CONTROLS	high	
+adr/0003-group-namespace.md	5	12	2	변경 이력	2411	CONTROLS	high	
+adr/0003-group-namespace.md	13	22	2	맥락	1391	CONTROLS	high	
+adr/0003-group-namespace.md	23	24	2	결정	10	CONTROLS	high	
+adr/0003-group-namespace.md	25	47	3	1. 두 층	4808	CONTROLS	high	
+adr/0003-group-namespace.md	48	66	3	2. 철자 하나 — 그룹 객체만	1624	CONTROLS	high	
+adr/0003-group-namespace.md	67	96	3	3. `controls`의 키 — 부류·형·정착 단계	6202	CONTROLS	high	
+adr/0003-group-namespace.md	97	112	3	4. 조각 범위 제어와 식의 기준점	1879	CONTROLS	high	
+adr/0003-group-namespace.md	113	116	3	5. 상태 키는 그 노드에만	1197	CONTROLS	high	
+adr/0003-group-namespace.md	117	122	3	6. 같은 대상 규칙과 로드 스위치	1706	CONTROLS	high	
+adr/0003-group-namespace.md	123	129	3	7. 검증기에 넘기기 전의 제거	1882	CONTROLS	high	
+adr/0003-group-namespace.md	130	133	3	8. 이름 규칙 — 그룹과 렌더 계층	709	CONTROLS	high	
+adr/0003-group-namespace.md	134	140	2	남는 것과 사라지는 것	2316	CONTROLS	high	
+adr/0003-group-namespace.md	141	149	2	미결	2066	CONTROLS	high	
+adr/0003-group-namespace.md	150	153	2	되돌림 가능성	145	CONTROLS	high	
+adr/0004-validator-plugin-compile-guard.md	1	6	1	ADR 0004 — 검증기는 플러그인 유지, 동기 `compileGuard` 추가	368	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	7	12	2	변경 이력	1054	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	13	22	2	맥락	1012	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	23	38	2	결정	3400	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	39	43	3	검증기의 설정 (`reviews/round-1.md` R1)	678	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	44	49	3	가드의 컴파일 비용 (`reviews/round-1.md` §2, R18)	1731	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	50	56	2	합의 근거	588	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	57	61	2	기각한 대안	411	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	62	66	2	결과	915	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	67	70	2	되돌림 가능성	145	VALIDATE	high	
+adr/0004-validator-plugin-compile-guard.md	71	80	2	가드를 컴파일하는 방식 (`reviews/round-2.md` S12)	1741	VALIDATE	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	1	4	1	ADR 0005 — 스키마 → 청사진 분석 단계와 노드 공유 규칙	1007	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	5	14	2	변경 이력	2912	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	15	21	2	맥락	869	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	22	23	2	결정	10	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	24	51	3	1. 복잡도를 순수한 분석 단계로 옮긴다	2105	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	52	59	3	2. P1′와의 경계 — 구조는 읽고, 의미는 평가하지 않는다	1776	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	60	77	3	3. 같은 이름 필드의 규칙	4278	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	78	91	3	4. 명시 판별 `controls.discriminator`	3286	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	92	112	3	5. 노드의 유효 스키마 — 병합표	7504	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	113	119	2	합의 근거	1871	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	120	125	2	결과	831	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	126	135	2	미결	1895	BLUEPRINT	high	
+adr/0005-blueprint-analysis-and-node-sharing.md	136	139	2	되돌림 가능성	287	BLUEPRINT	high	
+adr/0006-single-value-ownership.md	1	4	1	ADR 0006 — 값의 소유: 노드 트리가 곧 상태다	592	VALUE	high	
+adr/0006-single-value-ownership.md	5	13	2	변경 이력	2141	VALUE	high	
+adr/0006-single-value-ownership.md	14	18	2	합의 근거	602	VALUE	high	
+adr/0006-single-value-ownership.md	19	22	2	맥락	476	VALUE	high	
+adr/0006-single-value-ownership.md	23	71	2	결정	5930	VALUE	high	
+adr/0006-single-value-ownership.md	72	77	3	null 계약 — D-1	855	VALUE	high	
+adr/0006-single-value-ownership.md	78	87	3	읽기가 쓰기보다 잦은 구조에서의 비용	829	VALUE	high	
+adr/0006-single-value-ownership.md	88	94	2	결과	1107	VALUE	high	
+adr/0006-single-value-ownership.md	95	100	2	남는 것	1417	VALUE	high	
+adr/0006-single-value-ownership.md	101	106	2	기각한 대안	612	VALUE	high	
+adr/0006-single-value-ownership.md	107	110	2	되돌림 가능성	63	VALUE	high	
+adr/0007-settle-cycle.md	1	4	1	ADR 0007 — 작업 루프: 표시 → 계산 → 파생 → 전이 → 커밋, 그 뒤에 통지와 검증	940	SETTLE	high	
+adr/0007-settle-cycle.md	5	16	2	변경 이력	3280	SETTLE	high	
+adr/0007-settle-cycle.md	17	23	2	합의 근거	1267	SETTLE	high	
+adr/0007-settle-cycle.md	24	27	2	맥락	485	SETTLE	high	
+adr/0007-settle-cycle.md	28	29	2	결정	10	SETTLE	high	
+adr/0007-settle-cycle.md	30	49	3	1. 정착 한 번 — 일곱 단계	8772	SETTLE	high	
+adr/0007-settle-cycle.md	50	65	3	2. 호스트가 조각을 정하는 법	3764	SETTLE	high	
+adr/0007-settle-cycle.md	66	95	3	3. 쓰기 — 호출자가 종류를 선언한다	6172	SETTLE	high	
+adr/0007-settle-cycle.md	96	108	3	4. 소유자 결정 — D-7, D-9, D-10	1842	SETTLE	high	
+adr/0007-settle-cycle.md	109	121	3	5. 원리에서 도출된 것 — D-1 ~ D-6	1694	SETTLE	high	
+adr/0007-settle-cycle.md	122	133	2	비용	785	SETTLE	high	
+adr/0007-settle-cycle.md	134	140	2	결과	498	SETTLE	high	
+adr/0007-settle-cycle.md	141	152	2	미결	1791	SETTLE	high	
+adr/0007-settle-cycle.md	153	156	2	되돌림 가능성	82	SETTLE	high	
+adr/0008-event-system.md	1	4	1	ADR 0008 — 이벤트 시스템 개편: 통지 전용 척추	1304	EVENT	high	
+adr/0008-event-system.md	5	14	2	변경 이력	2910	EVENT	high	
+adr/0008-event-system.md	15	25	2	맥락	1261	EVENT	high	
+adr/0008-event-system.md	26	37	2	결정	1079	EVENT	high	
+adr/0008-event-system.md	38	56	3	1. 통지의 시점 — 동기	2151	EVENT	high	
+adr/0008-event-system.md	57	77	3	2. 루트 단일 디스패처 — 여섯 규칙	5721	EVENT	high	
+adr/0008-event-system.md	78	103	3	3. 배치 — `batch(fn)`	5903	EVENT	high	
+adr/0008-event-system.md	104	111	3	4. payload와 커밋 번호	820	EVENT	high	
+adr/0008-event-system.md	112	131	3	5. 루트 `onChange` — 최외곽 동기 진입당 1회 (D-10, 수락)	4901	EVENT	high	
+adr/0008-event-system.md	132	139	3	6. React 이펙트의 쓰기는 새 진입이다 (C-10) — 문서화 대상	1708	EVENT	high	
+adr/0008-event-system.md	140	154	3	7. 명령 시그널 — `RequestRemount` 유지(D-9), 명령 publish의 공개 (C-11 도출)	2522	EVENT	high	
+adr/0008-event-system.md	155	183	3	8. 진단 표면 — `diagnostics` (06 N4)	2359	EVENT	high	
+adr/0008-event-system.md	184	198	2	계승할 제약과의 대응	1215	EVENT	high	
+adr/0008-event-system.md	199	210	2	미결	2011	EVENT	high	
+adr/0008-event-system.md	211	214	2	되돌림 가능성	589	EVENT	high	
+adr/0009-performance-budget-and-benchmarks.md	1	6	1	ADR 0009 — 성능 예산과 벤치마크 계획	1268	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	7	11	2	변경 이력	513	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	12	15	2	원칙 (G6)	166	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	16	17	2	현재 가진 것 (관찰)	30	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	18	34	3	측정 인프라	1914	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	35	48	3	지금 빠르게 만드는 장치와 새 구조에서의 운명	1691	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	49	61	2	측정 결과 (1차 스파이크)	1703	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	62	63	2	결정 (제안)	19	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	64	70	3	1. 기존 구현이 기준선이다	729	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	71	85	3	2. 시나리오 — G6의 네 상황에 대응시킨다	1594	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	86	89	3	3. 구조를 확정하기 전에 잰다	474	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	90	93	3	4. 게이트	442	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	94	103	2	미결 — 소유자가 정할 것	1826	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	104	107	2	확인이 필요한 관찰	377	TEST	high	
+adr/0009-performance-budget-and-benchmarks.md	108	111	2	2라운드 측정 — 작업 루프 프로토타입	636	TEST	high	
+adr/0010-branch-conventions.md	1	4	1	ADR 0010 — 작성자의 약속: 분기 관행과 폼이 검사하지 않는 것	381	FRAGMENT	high	
+adr/0010-branch-conventions.md	5	8	2	변경 이력	237	FRAGMENT	high	
+adr/0010-branch-conventions.md	9	12	2	결정	608	FRAGMENT	high	
+adr/0010-branch-conventions.md	13	22	2	약속	3330	FRAGMENT	high	
+adr/0010-branch-conventions.md	23	49	2	예	858	FRAGMENT	high	
+adr/0010-branch-conventions.md	50	55	2	결과	370	FRAGMENT	high	
+adr/0011-branch-node-composition.md	1	6	1	ADR 0011 — branch 노드(object·array)의 구성 전략	2735	NODE	high	
+adr/0011-branch-node-composition.md	7	13	2	변경 이력	1116	NODE	high	
+adr/0011-branch-node-composition.md	14	23	2	맥락 — 현재 전략의 문제 (관찰)	1797	NODE	high	
+adr/0011-branch-node-composition.md	24	36	2	노드의 종류 (제안)	1532	NODE	high	
+adr/0011-branch-node-composition.md	37	44	2	1. branch 노드에 남는 책임은 셋이다	536	NODE	high	
+adr/0011-branch-node-composition.md	45	50	2	2. object와 array는 자식 집합의 출처만 다르다	818	NODE	high	
+adr/0011-branch-node-composition.md	51	63	2	3. 터미널 전략 — 암묵 규칙은 유지하고, React 의존만 뺀다	4744	NODE	high	
+adr/0011-branch-node-composition.md	64	80	2	4. 참조 그룹 노드 — D-6 (a)의 도출	2046	NODE	high	
+adr/0011-branch-node-composition.md	81	91	2	이주 시 보존	574	NODE	high	
+adr/0011-branch-node-composition.md	92	102	2	미결	2607	NODE	high	
+adr/0011-branch-node-composition.md	103	106	2	되돌림 가능성	318	NODE	high	
+adr/0012-fe-overlay.md	1	6	1	ADR 0012 — FE 오버레이를 위한 별도의 입구를 두지 않는다	1716	SCHEMA	high	
+adr/0012-fe-overlay.md	7	11	2	변경 이력	989	SCHEMA	high	
+adr/0012-fe-overlay.md	12	15	2	맥락	250	SCHEMA	high	
+adr/0012-fe-overlay.md	16	27	2	결정	1360	SCHEMA	high	
+adr/0012-fe-overlay.md	28	33	2	결과	617	SCHEMA	high	
+adr/0012-fe-overlay.md	34	38	2	남는 것	559	SCHEMA	high	
+adr/0013-core-does-not-rewrite-values.md	1	4	1	ADR 0013 — core는 값을 고치지 않는다	889	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	5	14	2	변경 이력	2364	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	15	18	2	맥락	919	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	19	26	2	합의 근거	1036	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	27	33	2	결정	908	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	34	54	3	원본을 바꾸는 사건 (P2, E15·E19)	4262	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	55	71	3	쓰기 옵션 (D-4·D-5·D-7)	3197	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	72	79	3	값을 통째로 주입할 때 — 결론	1624	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	80	83	3	초기값 보존 옵션 — 결론	784	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	84	97	3	core가 값을 바꾸던 곳의 분류	3008	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	98	101	2	교차검증 결과 — codex	773	WRITE	high	
+adr/0013-core-does-not-rewrite-values.md	102	110	2	미결	1009	WRITE	high	
+adr/0014-error-policy.md	1	4	1	ADR 0014 — 오류는 삼키지 않는다: 오류·경고·검증 결과의 세 층	401	ERROR	high	
+adr/0014-error-policy.md	5	9	2	변경 이력	1188	ERROR	high	
+adr/0014-error-policy.md	10	19	2	맥락	3197	ERROR	high	
+adr/0014-error-policy.md	20	25	2	원리에서	758	ERROR	high	
+adr/0014-error-policy.md	26	27	2	결정	10	ERROR	high	
+adr/0014-error-policy.md	28	37	3	1. 세 층, 규칙 하나씩	2062	ERROR	high	
+adr/0014-error-policy.md	38	67	3	2. 오류가 드러나는 자리 — 사슬의 가장 바깥에서 한 번, 모든 환경에서	8050	ERROR	high	
+adr/0014-error-policy.md	68	185	3	3. 관찰자 `onError` — 검증 결과를 뺀 폼 내부의 오류와 경고를 받는 로깅 채널	22070	ERROR	high	
+adr/0014-error-policy.md	186	198	3	4. `controls`의 식이 던질 때 — 정착은 끝까지 돈다	1667	ERROR	high	
+adr/0014-error-policy.md	199	208	3	5. `diagnostics` — 마지막 로드 이후의 작업 기록	2954	ERROR	high	
+adr/0014-error-policy.md	209	221	3	6. 검증기 — 없으면 거부하지 않고 알리며, 컴파일이 실패하면 거부한다	4391	ERROR	high	
+adr/0014-error-policy.md	222	223	3	7. 분류표와 코드 목록	34	ERROR	high	
+adr/0014-error-policy.md	224	245	4	7.1 분류표 (원장 §5의 표를 대체한다)	7273	ERROR	high	
+adr/0014-error-policy.md	246	302	4	7.2 코드 목록	23408	ERROR	high	
+adr/0014-error-policy.md	303	322	3	8. 무엇이 바뀌는가	4349	ERROR	high	
+adr/0014-error-policy.md	323	330	2	합의 근거	2482	ERROR	high	
+adr/0014-error-policy.md	331	339	2	남은 것	1329	ERROR	high	

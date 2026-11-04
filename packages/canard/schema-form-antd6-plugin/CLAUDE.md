@@ -15,7 +15,7 @@ yarn storybook         # Storybook dev (port 6006)
 
 플러그인은 `SchemaFormPlugin` 객체를 export:
 - `FormGroup` / `FormLabel` / `FormInput` / `FormError` — 기본 레이아웃 컴포넌트
-- `formTypeInputDefinitions` — 18개 입력 컴포넌트 정의 (우선순위 순)
+- `fieldInputDefinitions` — 18개 입력 컴포넌트 정의 (우선순위 순)
 
 **입력 컴포넌트 카테고리**:
 - String: text, password, textarea, URI
@@ -27,7 +27,7 @@ yarn storybook         # Storybook dev (port 6006)
 
 ## Schema → Component 매핑 기준
 
-`type`, `format`, `formType`, `enum` JSON Schema 속성으로 컴포넌트 자동 선택.
+`type`, `format`, `inputType`, `enum` JSON Schema 속성으로 컴포넌트 자동 선택.
 
 ## Peer Dependencies
 

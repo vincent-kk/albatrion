@@ -4,6 +4,9 @@
  * Direct alias for the native Array.isArray method, providing reliable array
  * detection that works correctly across different execution contexts and frames.
  * More reliable than instanceof checks for cross-frame scenarios.
+ * For string or readonly-array input, the true branch retains the array's element
+ * type and readonly contract, and the false branch narrows to string.
+ * Other inputs retain the native Array.isArray signatures.
  *
  * @param value - Value to test for array type
  * @returns Type-safe boolean indicating whether the value is an array
@@ -123,4 +126,6 @@
  * **Note:** This function specifically detects JavaScript arrays. For typed arrays
  * (Uint8Array, Int32Array, etc.), use separate detection methods or `isTypedArray()`.
  */
-export const isArray = Array.isArray;
+export const isArray: {
+  <Element>(value: string | readonly Element[]): value is readonly Element[];
+} & typeof Array.isArray = Array.isArray;

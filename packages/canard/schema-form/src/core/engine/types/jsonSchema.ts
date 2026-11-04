@@ -1,0 +1,102 @@
+import type { BasicSchema } from '@winglet/json-schema';
+
+import type { Dictionary, Optional } from '@aileron/declare';
+
+import type { NonObjectSchemaControls, SchemaControls } from './controls';
+
+/** Scalar JSON Schema type names retained in unrestricted type arrays. */
+type JsonSchemaType =
+  | 'string'
+  | 'number'
+  | 'integer'
+  | 'boolean'
+  | 'null'
+  | 'object'
+  | 'array';
+
+/** Explicit object hosts that can select property branches. */
+type ObjectHostSchemaType =
+  | 'object'
+  | readonly ['object', 'null']
+  | readonly ['null', 'object'];
+
+/** Scalar hosts that cannot select object property branches. */
+type NonObjectSchemaType = Exclude<JsonSchemaType, 'object'>;
+
+/** Authored schema; the host supplies opaque presentation data without coupling core to React. */
+export type AuthoredSchema<
+  Options extends Dictionary = object,
+  Presentation extends object = { [key: string]: unknown },
+> =
+  | ObjectAuthoredSchema<Options, Presentation>
+  | NonObjectAuthoredSchema<Options, Presentation>;
+
+/** Object hosts alone admit an explicit discriminator. */
+interface ObjectAuthoredSchema<
+  Options extends Dictionary,
+  Presentation extends object,
+> extends AuthoredSchemaBase<Options, Presentation> {
+  /** Object or nullable-object shape required for property selection. */
+  type: ObjectHostSchemaType;
+  /** Node controls, including object branch selection. */
+  controls?: SchemaControls<AuthoredSchema<Options, Presentation>>;
+}
+
+/** Other hosts retain unrestricted type arrays when no discriminator is present. */
+interface NonObjectAuthoredSchema<
+  Options extends Dictionary,
+  Presentation extends object,
+> extends AuthoredSchemaBase<Options, Presentation> {
+  /** Scalar non-object kind or any authored type array. */
+  type?: NonObjectSchemaType | readonly JsonSchemaType[];
+  /** Node controls without object branch selection. */
+  controls?: NonObjectSchemaControls<AuthoredSchema<Options, Presentation>>;
+}
+
+/** Recursive schema keywords shared by every host. */
+interface AuthoredSchemaBase<
+  Options extends Dictionary,
+  Presentation extends object,
+> extends BasicSchema<unknown, Options, AuthoredSchema<Options, Presentation>> {
+  /** Opaque host binding data. */
+  presentation?: Presentation;
+  /** Numeric constraints retain their standard scalar types. */
+  minimum?: number;
+  maximum?: number;
+  exclusiveMinimum?: number;
+  exclusiveMaximum?: number;
+  multipleOf?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  minItems?: number;
+  maxItems?: number;
+  minContains?: number;
+  maxContains?: number;
+  uniqueItems?: boolean;
+  minProperties?: number;
+  maxProperties?: number;
+  required?: readonly string[];
+  dependentRequired?: Dictionary<readonly string[]>;
+  properties?: Dictionary<Optional<AuthoredSchema<Options, Presentation>>>;
+  patternProperties?: Dictionary<
+    Optional<AuthoredSchema<Options, Presentation>>
+  >;
+  additionalProperties?: boolean | AuthoredSchema<Options, Presentation>;
+  items?:
+    | false
+    | AuthoredSchema<Options, Presentation>
+    | readonly AuthoredSchema<Options, Presentation>[];
+  prefixItems?: readonly AuthoredSchema<Options, Presentation>[];
+  contains?: AuthoredSchema<Options, Presentation>;
+  /** Every schema-valued keyword carries the host's presentation parameter. */
+  definitions?: Dictionary<AuthoredSchema<Options, Presentation>>;
+  dependentSchemas?: Dictionary<AuthoredSchema<Options, Presentation>>;
+  dependencies?: Dictionary<
+    AuthoredSchema<Options, Presentation> | readonly string[]
+  >;
+  propertyNames?: AuthoredSchema<Options, Presentation>;
+  additionalItems?: boolean | AuthoredSchema<Options, Presentation>;
+  unevaluatedItems?: boolean | AuthoredSchema<Options, Presentation>;
+  unevaluatedProperties?: boolean | AuthoredSchema<Options, Presentation>;
+}

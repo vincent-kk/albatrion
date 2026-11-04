@@ -2,7 +2,7 @@ import { Space } from 'antd-mobile';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
 
-import type { FormTypeRendererProps } from '@canard/schema-form';
+import type { FieldRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,
@@ -12,10 +12,10 @@ export const FormGroup = ({
   required,
   Input,
   errorMessage,
-}: FormTypeRendererProps) => {
+}: FieldRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (node.group === 'branch') {
+  if (node.strategy === 'branch') {
     return (
       <Space direction="vertical" block>
         <Input />
@@ -26,7 +26,7 @@ export const FormGroup = ({
       <Space direction="vertical" block>
         <div>
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <label htmlFor={path}>
+            <label htmlFor={path} id={`label:${path}`}>
               {name}
               {required && (
                 <span style={{ marginLeft: 4, color: 'red' }}>*</span>

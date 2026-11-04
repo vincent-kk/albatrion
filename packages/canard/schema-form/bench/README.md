@@ -11,7 +11,7 @@ yarn bench:watch      # re-run on change
 
 ## Render-delay regression guard (version-to-version)
 
-`render-delay.bench.ts` exists to answer one question: **did a change between
+`src/core/__benchmarks__/render-delay.bench.ts` exists to answer one question: **did a change between
 two versions make the first render slower?** It does not freeze a single
 number — it measures live every run, so you diff a baseline against a candidate.
 
@@ -45,6 +45,12 @@ the ratio, so a render-delay regression shows up as a row that got slower.
   (`clone(schema)`, `clone(defaultValue)`), so their share of the mount can be
   read directly and watched version-to-version.
 
-The other `*.bench.ts` files cover adjacent hot paths (node construction, branch
+The other `src/core/__benchmarks__/*.bench.ts` files cover adjacent hot paths (node construction, branch
 init, compute recalculation, event cascade, node lookup, object value read across
 a pending child commit) and are included in the same baseline/compare run.
+
+## Layout
+
+- `src/**/__benchmarks__/*.bench.ts` — the `vitest bench` suites, picked by name in `vitest.bench.config.ts`.
+- `bench/legacy-compare/` — standalone scripts that measure the legacy core beside the new one; run each directly under the runtime its header names, not through `vitest bench`. They are removed with the legacy core.
+- `bench/scripts/` — diagnostic and report scripts (`*.mjs`) from earlier measurement rounds.

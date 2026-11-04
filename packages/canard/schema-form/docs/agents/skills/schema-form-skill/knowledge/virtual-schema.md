@@ -1,6 +1,6 @@
 # Virtual Schema
 
-`virtual` groups sibling fields into one synthetic field with a single `FormTypeInput`, without changing the stored data shape. Canonical case: a date-range picker over separate `startDate`/`endDate` properties.
+`options.virtual` groups sibling fields into one synthetic field with a single `FieldInput`, without changing the stored data shape. Canonical case: a date-range picker over separate `startDate`/`endDate` properties.
 
 ```typescript
 {
@@ -9,11 +9,13 @@
     startDate: { type: 'string', format: 'date' },
     endDate: { type: 'string', format: 'date' },
   },
-  virtual: {                       // sibling of `properties`, NOT inside it
-    period: {
-      fields: ['startDate', 'endDate'],
-      FormTypeInput: DateRangeInput,  // optional
-      computed: { /* … */ },          // optional
+  options: {                       // sibling of `properties`, NOT inside it
+    virtual: {
+      period: {
+        fields: ['startDate', 'endDate'],
+        presentation: { FieldInput: DateRangeInput },  // optional
+        controls: { /* … */ },          // optional
+      },
     },
   },
 }
@@ -27,9 +29,9 @@
 
 ## required Cascade
 
-`required: ['period']` (naming the virtual field) makes **every field it contains** required. Grouped error display for the tuple: `useChildNodeErrors` (`validation-and-state.md`).
+`required: ['period']` (naming the virtual field) makes **every field it contains** required. Grouped error display for the tuple: `useChildFieldErrors` (`validation-and-state.md`).
 
 ## Node Access
 
-- Inside the virtual `FormTypeInput`, reach constituent nodes via `node.children[i].node` (ordered like `fields`).
+- Inside the virtual `FieldInput`, reach constituent nodes via `node.children[i]` (ordered like `fields`).
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.

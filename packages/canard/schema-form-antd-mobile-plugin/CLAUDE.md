@@ -15,18 +15,18 @@ yarn storybook         # Storybook dev (port 6006)
 
 플러그인은 `SchemaFormPlugin` 객체를 export:
 - `FormGroup` / `FormLabel` / `FormInput` / `FormError` — 기본 레이아웃 컴포넌트
-- `formTypeInputDefinitions` — 10개 모바일 입력 컴포넌트 정의 (우선순위 순)
+- `fieldInputDefinitions` — 10개 모바일 입력 컴포넌트 정의 (우선순위 순)
 
-**FormTypeInput 우선순위**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Array → Slider → Textarea → String → Number → Boolean
+**FieldInput 우선순위**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Array → Slider → Textarea → String → Number → Boolean
 
 ## Schema → Component 매핑
 
 | 조건 | 컴포넌트 |
 |------|---------|
-| `type: boolean`, `formType: switch` | Switch |
-| `type: string`, `formType: checkbox` | Checkbox Group |
-| `type: string`, `formType: switch` | String Switch |
-| `type: string/integer`, `formType: radiogroup` | Radio Group |
+| `type: boolean`, `inputType: switch` | Switch |
+| `type: string`, `inputType: checkbox` | Checkbox Group |
+| `type: string`, `inputType: switch` | String Switch |
+| `type: string/integer`, `inputType: radiogroup` | Radio Group |
 | `type: array` | Dynamic List |
 | `format: slider` | Slider |
 | `format: textarea` | Textarea |

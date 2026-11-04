@@ -1,0 +1,129 @@
+import { describe, expect, it, vi } from 'vitest';
+
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
+
+// filid:contract settle-gates-error-exits
+describe('throwing gate exit isolation', () => {
+  it('SETTLE-017 active gates do not search the expression array per sibling', () => {
+    const properties: Record<string, BlueprintSchema> = {
+      source: { type: 'string' },
+    };
+    for (let index = 0; index < 64; index++)
+      properties[`child${index}`] = {
+        type: 'string',
+        controls: {
+          active: '../source !== "off"',
+        },
+      };
+    const { root, blueprint } = createTestTree({ type: 'object', properties });
+    const find = vi.spyOn(Array.prototype, 'find');
+    try {
+      loadFieldNodeAtMount(root, { source: 'on' }, WriteOption.Overwrite);
+      expect(
+        find.mock.contexts.filter((target) => target === blueprint.expressions),
+      ).toHaveLength(0);
+    } finally {
+      find.mockRestore();
+    }
+  });
+
+  it('ERROR-125 throwing ancestor gate preserves an earlier latent child exit', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        k: { type: 'boolean' },
+        z: { type: 'string' },
+        h: {
+          type: 'object',
+          controls: {
+            active: '@.gate()',
+            unsetOnInactive: true,
+          },
+          properties: {
+            d: { type: 'string', controls: { active: '../../k' } },
+            e: { type: 'string' },
+          },
+        },
+      },
+    });
+    root.runtime.context = { gate: () => true };
+    loadFieldNodeAtMount(
+      root,
+      { k: true, h: { d: 'D', e: 'E' } },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(root.structure!.k, false, 'input', WriteOption.Overwrite);
+    expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
+    root.runtime.context = {
+      gate: () => {
+        throw new Error('gate');
+      },
+    };
+    expect(() =>
+      writeFieldNode(root, { z: 'go' }, 'callerPartial', WriteOption.Merge),
+    ).toThrow('Gate evaluation failed');
+    expect(root.structure?.h).toBeUndefined();
+    expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
+  });
+
+  it('ERROR-125 throwing gate preserves its exit while another clears and derive runs', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        source: { type: 'string' },
+        bad: {
+          type: 'object',
+          properties: {
+            child: { type: 'string' },
+          },
+          controls: {
+            active: '@.gate()',
+            unsetOnInactive: true,
+          },
+        },
+        other: {
+          type: 'string',
+          controls: {
+            active: '../flag',
+            unsetOnInactive: true,
+          },
+        },
+        target: { type: 'string', controls: { derived: '../source' } },
+      },
+    });
+    root.runtime.context = { gate: () => true };
+    loadFieldNodeAtMount(
+      root,
+      { flag: true, source: 'A', bad: { child: 'B' }, other: 'O' },
+      WriteOption.Overwrite,
+    );
+    root.runtime.context = {
+      gate: () => {
+        throw new Error('gate');
+      },
+    };
+    expect(() =>
+      writeFieldNode(
+        root,
+        { flag: false, source: 'C' },
+        'callerPartial',
+        WriteOption.Merge,
+      ),
+    ).toThrow('Gate evaluation failed');
+    expect(root.structure?.bad).toBeUndefined();
+    expect(root.structure?.other).toBeUndefined();
+    expect(readRetainedSlotSource(root, '/bad/child', 'string')).toBe('B');
+    expect(hasRetainedSlotOwnSource(root, '/other', 'string')).toBe(false);
+    expect(root.structure?.target?.source).toBe('C');
+  });
+});

@@ -1,0 +1,3136 @@
+[
+  {
+    "file": "src/core/engine/settle/__tests__/selectChildren.head-differential.test.ts",
+    "destination": "src/core/engine/settle/__tests__/selectChildren.head-differential.test.ts",
+    "changes": [
+      {
+        "case": "file",
+        "action": "assertion-migration",
+        "before": [
+          "expect(actualSelection, label).toEqual(expectedSelection)"
+        ],
+        "after": [
+          "expect(withoutStorage(actualSelection), label).toEqual( withoutStorage(expectedSelection), )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.array-legacy-ports.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.array-legacy-ports.test.ts",
+    "changes": [
+      {
+        "case": "'GOAL-074 restores omitTrailing slots from raw after branch reactivation'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.get(JSON.stringify(['/tail', 'array']))?.raw).toEqual([ 'a', null, null, ])"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/tail', 'array')).toEqual([ 'a', null, null, ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.array-lifecycle.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.array-lifecycle.test.ts",
+    "changes": [
+      {
+        "case": "'35C-09 and WRITE-036 perish without exit latent or inactive entries'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.has(JSON.stringify(['/1', 'string']))).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/1', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'35C-10 captures an inactive array as one host latent and recreates items'",
+        "action": "assertion-migration",
+        "before": [
+          "expect([...latent.keys()]).toEqual([JSON.stringify(['/items', 'array'])])",
+          "expect(latent.get(JSON.stringify(['/items', 'array']))?.raw).toEqual([ 'a', 'b', ])",
+          "expect( Object.isFrozen(latent.get(JSON.stringify(['/items', 'array']))?.raw), ).toBe(true)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual( root.inactiveValues[0]?.value, )",
+          "expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual(['a', 'b'])",
+          "expect(Object.isFrozen(root.inactiveValues[0]?.value)).toBe(true)"
+        ]
+      },
+      {
+        "case": "'38C-02 captures raw item trees and folds latent children into one host'",
+        "action": "assertion-migration",
+        "before": [
+          "expect([...latent.keys()]).toEqual([JSON.stringify(['/items', 'array'])])",
+          "expect(latent.get(JSON.stringify(['/items', 'array']))?.raw).toEqual( rawTree, )"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual( root.inactiveValues[0]?.value, )",
+          "expect(readRetainedSlotRaw(root, '/items', 'array')).toEqual(rawTree)"
+        ]
+      },
+      {
+        "case": "'35C-09 drops latent and declaration paths below a perished item'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( [...latent.keys(), ...metadata.keys(), ...declarations.keys()].every( (key) => !key.includes('\"/1'), ), ).toBe(true)"
+        ],
+        "after": [
+          "expect([...declarations.keys()].every((key) => !key.includes('\"/1'))).toBe( true, )"
+        ]
+      },
+      {
+        "case": "'35C-08 gates out an item as an exit while retaining its array slot'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.get(JSON.stringify(['/items/0', 'string']))).toBe('a')",
+          "expect(latent.has(JSON.stringify(['/items/0', 'string']))).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/items/0', 'string')).toBe('a')",
+          "expect(hasRetainedSlotOwnSource(root, '/items/0', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.array-scaling.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.array-scaling.test.ts",
+    "changes": [
+      {
+        "case": "'48C-01 SETTLE-017 visits latent entries linearly on mass exit'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(visited).toBeLessThan(count * 12)"
+        ],
+        "replacementCheck": "The replacement slot-candidate query test in the same file preserves the public result and linear visitation bound."
+      },
+      {
+        "case": "'48C-01 retains mass exit and re-entry values and inactive sources'",
+        "action": "assertion-migration",
+        "before": [
+          "expect([...runtime.latentRaw]).toEqual( flag ? [] : inactive.map(({ path, value }) => [ JSON.stringify([path, 'string']), value, ]), )"
+        ],
+        "after": []
+      },
+      {
+        "case": "'48C-01 SETTLE-017 bounds slot entry queries on mass exit'",
+        "action": "added-case",
+        "assertions": [
+          "expect(visits).toBeLessThan(count * 12)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.array-verbs.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.array-verbs.test.ts",
+    "changes": [
+      {
+        "case": "'WRITE-085 updates a gated-out slot through the host raw tree'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.get(JSON.stringify(['/0', 'string']))).toBe('b')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/0', 'string')).toBe('b')"
+        ]
+      },
+      {
+        "case": "'47C-01 updates a gated slot through the raw tree without dropping nested slots'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.get(JSON.stringify(['/1', 'string']))).toBe('c')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/1', 'string')).toBe('c')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.array-write.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.array-write.test.ts",
+    "changes": [
+      {
+        "case": "'NODE-044 and WRITE-007 Merge whole-replaces an array and perishes its tail'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.has(JSON.stringify(['/1', 'string']))).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/1', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.branch-switch-const.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.branch-switch-const.test.ts",
+    "changes": [
+      {
+        "case": "'finds the identical pending exit when its gate throws in a later wheel'",
+        "action": "assertion-migration",
+        "before": [
+          "expect({ exits, local: root.local, detached: original.detached, latent: root.runtime.latentRaw.get(JSON.stringify(['/g', 'string'])), status: root.runtime.diagnostics.status, }).toMatchSnapshot()"
+        ],
+        "after": [
+          "expect({ exits, local: root.local, detached: original.detached, latent: readRetainedSlotRaw(root, '/g', 'string'), status: root.runtime.diagnostics.status, }).toMatchSnapshot()"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-controls.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-controls.test.ts",
+    "changes": [
+      {
+        "case": "'%s single-kind off-write retains whole raw, inactiveValues and entry interpretation'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent).toBeInstanceOf(HostLatent)",
+          "expect(latent).toEqual(new HostLatent(['7'], undefined))",
+          "expect([...runtime.latentRaw.keys()]).toEqual([ JSON.stringify(['/list', 'array']), ])",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/list', value: ['7'] }, ])",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual([])"
+        ],
+        "after": [
+          "expect(latent).toEqual(['7'])",
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/list', value: ['7'] }, ])",
+          "expect(readInactiveValuesAt(root, '')).toEqual([])"
+        ]
+      },
+      {
+        "case": "'candidate-free structural moves reuse their existing source records'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-exit-cost.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-exit-cost.test.ts",
+    "changes": [
+      {
+        "case": "'keeps base ownership-selector and filter cost for $slots suppressed single-kind exits with unrelated candidates'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(selectorCalls).toBe(slots)",
+          "expect(runtime.latentRaw.size).toBe(slots)",
+          "expect(runtime.latentRaw.get(key)).toBe('kept')",
+          "expect(runtime.latentRawMetadata?.get(key)?.path).toBe(path)",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual(inactive)"
+        ],
+        "after": [
+          "expect(selectorCalls).toBe(0)",
+          "expect(readRetainedSlotRaw(root, path, 'string')).toBe('kept')",
+          "expect(readInactiveValuesAt(root, '')).toEqual(inactive)"
+        ]
+      },
+      {
+        "case": "'reuses candidate ownership for $slots suppressed candidate-slot exits'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(selectorCalls).toBe(slots)",
+          "expect(runtime.latentRaw.size).toBe(slots)",
+          "expect( runtime.latentRaw.get(JSON.stringify(['/list/' + index, 'string'])), ).toBe('kept')"
+        ],
+        "after": [
+          "expect(selectorCalls).toBe(0)",
+          "expect(readRetainedSlotRaw(root, '/list/' + index, 'string')).toBe( 'kept', )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-gate.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-gate.test.ts",
+    "changes": [
+      {
+        "case": "'retains $value through $keyword gate exit at depth $depth with automatic writes disabled=$disabled'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(key)).toBe(value)",
+          "expect(runtime.latentRaw.get(key)).toBe(value)",
+          "expect(runtime.latentRawMetadata?.get(key)).toEqual(metadata)",
+          "expect(runtime.latentRaw.get(key)).toBe(value)",
+          "expect(runtime.latentRaw.has(JSON.stringify([path, 'string']))).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(value)",
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(value)",
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(value)",
+          "expect(hasRetainedSlotOwnSource(root, path, 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-inactive-write.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-inactive-write.test.ts",
+    "changes": [
+      {
+        "case": "'keeps declared off-write payload out of the host raw and inactive host value'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(JSON.stringify(['/list', 'array']))).toEqual( new HostLatent([undefined, 'tail'], undefined, ['0']), )",
+          "expect(runtime.latentRaw.get(JSON.stringify(['/list/0', 'number']))).toBe(7)",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/list', value: [undefined, 'tail'] }, { path: '/list/0', value: 7 }, ])"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual([ undefined, 'tail', ])",
+          "expect(readRetainedSlotRaw(root, '/list/0', 'number')).toBe(7)",
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/list', value: [undefined, 'tail'] }, { path: '/list/0', value: 7 }, ])"
+        ]
+      },
+      {
+        "case": "'replaces nested off-write array scope on a partial parent write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( runtime.latentRaw.get(JSON.stringify(['/host/list/1', 'number'])), ).toBe(71)",
+          "expect( runtime.latentRawMetadata?.has(JSON.stringify(['/host/list/1', 'number'])), ).toBe(true)",
+          "expect( runtime.latentRaw.has(JSON.stringify(['/host/list/1', 'number'])), ).toBe(false)",
+          "expect( runtime.latentRawMetadata?.has( JSON.stringify(['/host/list/1', 'number']), ) ?? false, ).toBe(false)",
+          "expect( runtime.latentRaw.get(JSON.stringify(['/host/list/0', 'number'])), ).toBe(8)",
+          "expect( runtime.latentRaw.get(JSON.stringify(['/host/list', 'array'])), ).toEqual(new HostLatent([undefined], undefined, ['0']))"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/host/list/1', 'number')).toBe(71)",
+          "expect(hasRetainedSlotOwnSource(root, '/host/list/1', 'number')).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/host/list/0', 'number')).toBe(8)",
+          "expect(readRetainedSlotRaw(root, '/host/list', 'array')).toEqual([undefined])"
+        ]
+      },
+      {
+        "case": "'$keyword $layout binds an off-write at write time, reversed=$reversed B-first=$bFirst'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(JSON.stringify([path, kind]))).toBe(value)",
+          "expect( runtime.latentRaw.has( JSON.stringify([path, reversed ? 'number' : 'string']), ), ).toBe(false)",
+          "expect(runtime.latentRaw.get(JSON.stringify([path, kind]))).toBe(value)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, path, kind)).toBe(value)",
+          "expect( hasRetainedSlotOwnSource(root, path, reversed ? 'number' : 'string'), ).toBe(false)",
+          "expect(readRetainedSlotRaw(root, path, kind)).toBe(value)"
+        ]
+      },
+      {
+        "case": "'retains off-write length and undeclared tails, reversed=%s'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(JSON.stringify(['/list/0', kind]))).toBe( reversed ? '7' : 7, )"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/list/0', kind)).toBe(reversed ? '7' : 7)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-stale.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-stale.test.ts",
+    "changes": [
+      {
+        "case": "'removes unreachable stale keys on a degraded candidate exit without suppressed policy writes'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => dispatchSetValue(getDispatchNode(root, 'tick'), 1)).toThrow( 'Gate evaluation failed', )",
+          "expect(runtime.diagnostics.status).toBe('degraded')",
+          "expect(root.emit).toEqual({ tick: 1 })",
+          "expect(root.structure?.v).toBeUndefined()",
+          "expect(runtime.latentRaw.has(stale)).toBe(false)",
+          "expect(runtime.latentRawMetadata?.has(stale) ?? false).toBe(false)",
+          "expect(runtime.latentRaw.get(retained)).toBe(37)",
+          "expect(runtime.latentRawMetadata?.get(retained)?.exitLayers).toEqual([ expect.objectContaining({ clear: true }), ])",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/v/x', value: 37 }, ])",
+          "expect(root.emit).toEqual({ tick: 2, v: { x: 37 } })"
+        ]
+      },
+      {
+        "case": "'preserves reachable explicit-clear descendants when exit writes are suppressed'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(key)).toBe(37)",
+          "expect(runtime.latentRawMetadata?.get(key)?.exitLayers).toEqual([ expect.objectContaining({ clear: true }), ])",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/v/x', value: 37 }, ])"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(37)",
+          "expect(readInactiveValuesAt(root, '')).toEqual([{ path: '/v/x', value: 37 }])"
+        ]
+      },
+      {
+        "case": "'removes unreachable $host keys under suppression, clear=$clear metadata=$metadata'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(root.emit).toEqual({ a: false })",
+          "expect(runtime.latentRaw.has(key)).toBe(false)",
+          "expect(runtime.latentRawMetadata?.has(key) ?? false).toBe(false)",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual( host === 'object' ? [{ path: '/v/x', value: 1 }] : [{ path: '/v', value: [1] }], )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.commit.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.commit.test.ts",
+    "changes": [
+      {
+        "case": "'WRITE-087 memoizes frozen inactive values after a gate leaves'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/secret', value: 'held' }, ])",
+          "expect(Object.isFrozen(root.runtime.inactiveValuesMemo.get(''))).toBe(true)"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/secret', value: 'held' }, ])",
+          "expect(Object.isFrozen(readInactiveValuesAt(root, ''))).toBe(true)"
+        ]
+      },
+      {
+        "case": "'WRITE-087 retains the raw of an initially inactive declared child'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/secret', value: 'latent' }, ])"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/secret', value: 'latent' }, ])"
+        ]
+      },
+      {
+        "case": "'WRITE-087 lists detached object leaves without duplicating their host'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/group/leaf', value: 'L' }, { path: '/group/other', value: 'O' }, ])"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/group/leaf', value: 'L' }, { path: '/group/other', value: 'O' }, ])"
+        ]
+      },
+      {
+        "case": "'WRITE-087 enumerates the same latent leaves after load or exit'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(initial.runtime.inactiveValuesMemo.get('')).toEqual(expected)",
+          "expect(exited.runtime.inactiveValuesMemo.get('')).toEqual(expected)"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(initial, '')).toEqual(expected)",
+          "expect(readInactiveValuesAt(exited, '')).toEqual(expected)"
+        ]
+      },
+      {
+        "case": "'26C-13 enumerates latent leaves under a path live as another kind'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])), ).toBe(false)",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/group/leaf', value: 'kept' }, ])"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/group', 'object')).toBe(false)",
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/group/leaf', value: 'kept' }, ])"
+        ]
+      },
+      {
+        "case": "'26C-13 enumerates one entry for explicit latents of two kinds at a path'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( [...root.runtime.latentRaw.keys()].filter((key) => key.startsWith('[\"/value\",'), ).length, ).toBe(2)",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/value', value: 'hello' }, ])"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/value', value: 'hello' }, ])"
+        ]
+      },
+      {
+        "case": "'WRITE-087 enumerates a replaced detached host like an initially inactive host'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual(expected)",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual( initial.runtime.inactiveValuesMemo.get(''), )"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual(expected)",
+          "expect(readInactiveValuesAt(root, '')).toEqual( readInactiveValuesAt(initial, ''), )"
+        ]
+      },
+      {
+        "case": "'WRITE-087 records a detached leaf write beside untouched latent siblings'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/group/leaf', value: 'newer' }, { path: '/group/deep/x', value: 1 }, ])",
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.find((entry) => entry.path === '/group/deep/x'), ).toBe(unchangedX)"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/group/leaf', value: 'newer' }, { path: '/group/deep/x', value: 1 }, ])",
+          "expect( readInactiveValuesAt(root, '')?.find( (entry) => entry.path === '/group/deep/x', ), ).toBe(unchangedX)"
+        ]
+      },
+      {
+        "case": "'WRITE-087 lists inactive values in blueprint document order'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.inactiveValuesMemo.get('')?.map((entry) => entry.path), ).toEqual(['/zeta', '/alpha'])"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')?.map((entry) => entry.path)).toEqual([ '/zeta', '/alpha', ])"
+        ]
+      },
+      {
+        "case": "'WRITE-087 reuses inactive array and entry references on unrelated commits'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toBe(inactive)",
+          "expect(root.runtime.inactiveValuesMemo.get('')?.[0]).toBe(entry)"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toBe(inactive)",
+          "expect(readInactiveValuesAt(root, '')?.[0]).toBe(entry)"
+        ]
+      },
+      {
+        "case": "'WRITE-087 includes a detached host that holds a wrong-kind value'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/group', value: 'wrong' }, ])"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/group', value: 'wrong' }, ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.conflict.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.conflict.test.ts",
+    "changes": [
+      {
+        "case": "'29C-03 shared conflict commits derive, fill, and unrelated exit clearing'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/departed', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/departed', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.context-preparation.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.context-preparation.test.ts",
+    "changes": [
+      {
+        "case": "'allocates no reused scratch containers and clears only populated work lists'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": [
+          "expect(scratch.literalStarAutomaticLog).toBeUndefined()"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.controls-context.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.controls-context.test.ts",
+    "changes": [
+      {
+        "case": "'ERROR-122 throwing visible leaves an unrelated unsetOnInactive exit clear'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.derive-shadow-setup.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.derive-shadow-setup.test.ts",
+    "changes": [
+      {
+        "case": "'enables shadow verification through the package test setup'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(engineModes.slots).toBe('verify')"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.empty-phases.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.empty-phases.test.ts",
+    "changes": [
+      {
+        "case": "'does not skip gates, rule evaluation or rule commits with actual work'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(snapshot).toHaveBeenCalledTimes(1)"
+        ],
+        "after": [
+          "expect(snapshot).not.toHaveBeenCalled()"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.error-gate-exits.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.error-gate-exits.test.ts",
+    "changes": [
+      {
+        "case": "'ERROR-125 throwing ancestor gate preserves an earlier latent child exit'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(latentKey)).toBe('D')",
+          "expect(root.runtime.latentRaw.get(latentKey)).toBe('D')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/h/d', 'string')).toBe('D')",
+          "expect(readRetainedSlotRaw(root, '/h/d', 'string')).toBe('D')"
+        ]
+      },
+      {
+        "case": "'ERROR-125 throwing gate preserves its exit while another clears and derive runs'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/bad/child', 'string'])), ).toBe('B')",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/other', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/bad/child', 'string')).toBe('B')",
+          "expect(hasRetainedSlotOwnSource(root, '/other', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.exit-and-budget.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.exit-and-budget.test.ts",
+    "changes": [
+      {
+        "case": "'SETTLE-005 withdraws a mid-round fill absent from the final shape'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/transient', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/transient', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'TEST-069 exit node clears its own raw while detached reads stay frozen'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-032 exit policy reads only the previous committed declarations'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'TEST-069 exit Form clears descendants except their nearer false policy'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])), ).toBe('K')"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe( false, )",
+          "expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K')"
+        ]
+      },
+      {
+        "case": "'WRITE-034 clears latent descendants of an exiting declaration with false override'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/drop', 'string'])), ).toBe('D')",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])), ).toBe('K')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/branch/drop', 'string')).toBe('D')",
+          "expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe( false, )",
+          "expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K')"
+        ]
+      },
+      {
+        "case": "'WRITE-034 applies a departing declaration policy while its host stays live'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/addr/zip', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.exit-direct-ownership.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.exit-direct-ownership.test.ts",
+    "changes": [
+      {
+        "case": "'bounds F=64 C=16 control collections while retaining the exit range'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(exitCalls).toBeGreaterThan(64)"
+        ],
+        "after": [
+          "expect(exitCalls).toBeGreaterThan(0)"
+        ]
+      },
+      {
+        "case": "'preserves $label and delivery through exit and reentry'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(scene.keep)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe( scene.keep, )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.exit-latent.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.exit-latent.test.ts",
+    "changes": [
+      {
+        "case": "'WRITE-038 simultaneous exit reads the previous committed policy value'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held')"
+        ]
+      },
+      {
+        "case": "'WRITE-038 updates a node expression while that node remains in shape'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-034 keeps a latent kind beside a live different kind'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/outer/value', 'string'])), ).toBe('held')",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/outer/value', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/outer/value', 'string')).toBe('held')",
+          "expect(readRetainedSlotRaw(root, '/outer/value', 'string')).toBe('held')"
+        ]
+      },
+      {
+        "case": "'WRITE-034 uses the last live expression after a suppressed exit'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/secret', 'string'])), ).toBe('held')",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/branch/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/branch/secret', 'string')).toBe('held')",
+          "expect(hasRetainedSlotOwnSource(root, '/branch/secret', 'string')).toBe( false, )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.exit-layers.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.exit-layers.test.ts",
+    "changes": [
+      {
+        "case": "'WRITE-031 node layer overrides the Form clear policy'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held')"
+        ]
+      },
+      {
+        "case": "'WRITE-031 fields layer clears a child when Form keeps it'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-031 fragment layer clears its directly declared child'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-031 form layer clears when no closer declaration exists'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-031 same-layer keep defeats another fields entry clear'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held')"
+        ]
+      },
+      {
+        "case": "'WRITE-032 fragment turning off applies to a departing declaration'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/addr/zip', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-033 fields subtree policy reaches exiting descendants'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])), ).toBe('K')"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe( false, )",
+          "expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K')"
+        ]
+      },
+      {
+        "case": "'WRITE-034 fragment latent policy reaches previously absent descendants'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])), ).toBe('K')"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe( false, )",
+          "expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K')"
+        ]
+      },
+      {
+        "case": "'WRITE-034 latent fields entry keep overrides a departing parent clear'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])), ).toBe('K')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K')"
+        ]
+      },
+      {
+        "case": "'WRITE-038 previous commit expression ignores the exiting write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'28C-05 throw keeps the committed value and degrades that commit'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held')"
+        ]
+      },
+      {
+        "case": "'WRITE-038 removes an exited occurrence expression baseline after using it'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'WRITE-039 visible preserved leaves a hidden value in shape'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'FRAGMENT-050 exit not edge evaluates no departing fragment value rule'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.exit-preparation.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.exit-preparation.test.ts",
+    "changes": [
+      {
+        "case": "'reuses child positions and preserves the first duplicate edge'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(getLatentOrder(repeated, 'z', entries[0].node)).toEqual([0])",
+          "expect(getLatentOrder(repeated, 'a', entries[1].node)).toEqual([1])",
+          "expect(getLatentOrder(repeated, 'z', entries[0].node)).toEqual([0])",
+          "expect(getLatentOrder(repeated, '7', entries[0].node)).toEqual([7])"
+        ],
+        "after": [
+          "expect(getSlotOrder(repeated, 'z', entries[0].node)).toEqual([0])",
+          "expect(getSlotOrder(repeated, 'a', entries[1].node)).toEqual([1])",
+          "expect(getSlotOrder(repeated, 'z', entries[0].node)).toEqual([0])",
+          "expect(getSlotOrder(repeated, '7', entries[0].node)).toEqual([7])"
+        ]
+      },
+      {
+        "case": "'captures exiting descendants in document order without child-edge rescans'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRawMetadata?.get('[\"/branch/z\",\"string\"]')?.order, ).toEqual([...position, 0])",
+          "expect( root.runtime.latentRawMetadata?.get('[\"/branch/a\",\"string\"]')?.order, ).toEqual([...position, 1])"
+        ],
+        "after": []
+      },
+      {
+        "case": "'retains %s policy precedence across exit and reentry'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.has('[\"/branch/value\",\"string\"]')).toBe( !clear, )",
+          "expect(root.runtime.latentRaw.get('[\"/branch/value\",\"string\"]')).toBe( 'V', )"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/branch/value', 'string')).toBe( !clear, )",
+          "expect(readRetainedSlotRaw(root, '/branch/value', 'string')).toBe('V')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.extras-single-compare.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.extras-single-compare.test.ts",
+    "changes": [
+      {
+        "case": "'retains the latent host and extras on a same-value inactive Merge'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(entry).toBeDefined()",
+          "expect(root.runtime.latentRaw.get(key)).toBe(previous)"
+        ],
+        "after": [
+          "expect( (readRetainedSlotRaw(root, '/h', 'object') as { extra: unknown }).extra, ).toBe(previous.extra)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.gate-selection-preparation-invariants.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.gate-selection-preparation-invariants.test.ts",
+    "changes": [
+      {
+        "case": "'preserves every non-visits section byte in the 25 selection histories'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( createHash('sha256').update(JSON.stringify(preserved)).digest('hex'), fixture.name, ).toBe(hashes['selection-' + index])"
+        ],
+        "after": [],
+        "replacementCheck": "snapshotGateTableCase compares original per-section goldens and manifest hashes; only the retired latent channel is omitted. Golden files are unchanged."
+      },
+      {
+        "case": "'preserves every non-visits section byte in the 15 wheel histories'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( createHash('sha256').update(JSON.stringify(preserved)).digest('hex'), fixture.name, ).toBe(hashes['wheel-' + index])"
+        ],
+        "after": [],
+        "replacementCheck": "snapshotGateTableCase compares original per-section goldens and manifest hashes; only the retired latent channel is omitted. Golden files are unchanged."
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.gate-table-loading.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.gate-table-loading.test.ts",
+    "changes": [
+      {
+        "case": "'load/reset fixture %i'",
+        "action": "assertion-migration",
+        "before": [
+          "expect({ ...observation, visits: undefined }).toEqual({ ...baseline, visits: undefined, })"
+        ],
+        "after": [
+          "expect({ ...observation, visits: undefined, latent: undefined, }).toEqual({ ...baseline, visits: undefined, latent: undefined, })"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.gate-table-mutations.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.gate-table-mutations.test.ts",
+    "changes": [
+      {
+        "case": "'V3 %s retains dormant distributed input without a fault injection'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get('[\"/a\",\"string\"]')).toBe('dormant')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/a', 'string')).toBe('dormant')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.item-fold-selection.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.item-fold-selection.test.ts",
+    "changes": [
+      {
+        "case": "'$keyword accepts $operation after restoring candidate-owned positions'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( distributions.mock.calls.some( ([host, distribution]) => host === list && distribution.retainedItemNames?.includes('1'), ), ).toBe(true)",
+          "expect( distributions.mock.calls .filter(([host]) => host.path === '/list') .every( ([, distribution]) => distribution.retainedItemNames === undefined, ), ).toBe(true)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'%s single-candidate distributions never retain candidate-owned positions'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(restored.length).toBeGreaterThan(0)",
+          "expect( restored.every( ([, distribution]) => distribution.retainedItemNames === undefined, ), ).toBe(true)",
+          "expect( written.every( ([, distribution]) => distribution.retainedItemNames === undefined, ), ).toBe(true)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'%s reads later-fold latent raw while the slot has no live node'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(readRawTree(root.structure!.list, context)).toEqual([42])",
+          "expect(readRawTree(list, context)).toEqual([12])",
+          "expect(captureArrayLatent(list, context).raw).toEqual([12])"
+        ],
+        "after": [
+          "expect(readSourceTree(root.structure!.list, context)).toEqual([42])",
+          "expect(readSourceTree(list, context)).toEqual([12])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-controls.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-controls.test.ts",
+    "changes": [
+      {
+        "case": "'[control] %s erases in-scope sources and retains out-of-scope sources'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(inScope)).toBe(5)",
+          "expect(root.runtime.latentRaw.get(outside)).toBe(7)",
+          "expect(root.runtime.latentRaw.get(inScope)).toBe( operation === 'subtree-reset' ? 1 : undefined, )",
+          "expect(root.runtime.latentRaw.get(outside)).toBe( operation === 'form-reset' ? undefined : 7, )",
+          "expect(root.runtime.latentRawMetadata?.get(outside)).toEqual( outsideMetadata, )"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/box/v/x', 'number')).toBe(5)",
+          "expect(readRetainedSlotRaw(root, '/outside/hidden', 'number')).toBe(7)",
+          "expect(readRetainedSlotRaw(root, '/box/v/x', 'number')).toBe( operation === 'subtree-reset' ? 1 : undefined, )",
+          "expect(readRetainedSlotRaw(root, '/outside/hidden', 'number')).toBe( operation === 'form-reset' ? undefined : 7, )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-enclosing.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-enclosing.test.ts",
+    "changes": [
+      {
+        "case": "'V1 independent nested exit preserves a source shared with an enclosing sibling'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(5)",
+          "expect(root.runtime.latentRaw.get(key)).toBe(5)",
+          "expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/v/0/0', 'number')).toBe(5)",
+          "expect(readRetainedSlotRaw(root, '/v/0/0', 'number')).toBe(5)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-inactive-move.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-inactive-move.test.ts",
+    "changes": [
+      {
+        "case": "'V2 %s preserves all candidate stores when destination slots become inactive'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(stringKey)).toBe(values[source])",
+          "expect(runtime.latentRaw.get(numberKey)).toBe(37)",
+          "expect(runtime.latentRawMetadata?.get(stringKey)).toEqual({ ...stringMetadata, path, order: [ stringMetadata.order[0], destination, ...stringMetadata.order.slice(2), ], })",
+          "expect(runtime.latentRawMetadata?.get(numberKey)).toEqual({ ...numberMetadata, path, order: [ numberMetadata.order[0], destination, ...numberMetadata.order.slice(2), ], })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, path, 'string')).toBe(values[source])",
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(37)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-policy.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-policy.test.ts",
+    "changes": [
+      {
+        "case": "'a terminal sibling clear cannot apply its policy to an object candidate'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(5)",
+          "expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(5)"
+        ]
+      },
+      {
+        "case": "'array clearing isolates siblings and honors owned latent retain overrides'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(drop)).toBe(11)",
+          "expect(root.runtime.latentRaw.get(keep)).toBe(12)",
+          "expect(root.runtime.latentRaw.get(sibling)).toBe(5)",
+          "expect(root.runtime.latentRaw.has(drop)).toBe(false)",
+          "expect(root.runtime.latentRaw.get(keep)).toBe(12)",
+          "expect(root.runtime.latentRawMetadata?.get(keep)).toEqual(retainedMetadata)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/v/0/drop', 'number')).toBe(11)",
+          "expect(readRetainedSlotRaw(root, '/v/0/keep', 'number')).toBe(12)",
+          "expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(5)",
+          "expect(hasRetainedSlotOwnSource(root, '/v/0/drop', 'number')).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/v/0/keep', 'number')).toBe(12)"
+        ]
+      },
+      {
+        "case": "'shared path/token survives an array candidate exit, clear=%s'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(5)",
+          "expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/v/0', 'number')).toBe(5)"
+        ]
+      },
+      {
+        "case": "'[control] single-candidate $host clear=$clear skips ownership selection and child-entry traversal'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify([child.path, 'array'])), ).toBe(!clear)"
+        ],
+        "after": [
+          "expect( root.runtime.literalStarRaw?.has( JSON.stringify([child.path, 'array']), ), ).toBe(!clear)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-retention.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-retention.test.ts",
+    "changes": [
+      {
+        "case": "'$label supplies explicit retention to owned descendants'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(owned)).toBe(5)",
+          "expect(metadata?.exitLayers).toContainEqual( expect.objectContaining({ clear: false }), )",
+          "expect(runtime.latentRaw.get(owned)).toBe(5)",
+          "expect(runtime.latentRawMetadata?.get(owned)).toEqual(ownedMetadata)",
+          "expect( runtime.latentRaw.get(JSON.stringify(['/v/0/extra', 'string'])), ).toBe('kept')",
+          "expect(runtime.latentRaw.get(ancestor)).toBe(value)",
+          "expect(runtime.latentRawMetadata?.get(ancestor)).toBe(metadata)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/v/0/x', 'number')).toBe(5)",
+          "expect(readRetainedSlotRaw(root, '/v/0/x', 'number')).toBe(5)",
+          "expect(readRetainedSlotRaw(root, '/v/0/extra', 'string')).toBe('kept')",
+          "expect(readRetainedSlotRaw(root, '/v/0', 'object')).toEqual(value)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale-policy.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale-policy.test.ts",
+    "changes": [
+      {
+        "case": "'$label $host clear=$clear removes an unreachable key without metadata'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(runtime.latentRawMetadata?.has(key) ?? false).toBe(false)",
+          "expect(runtime.latentRaw.has(key)).toBe(false)",
+          "expect(runtime.latentRawMetadata?.has(key) ?? false).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale.test.ts",
+    "changes": [
+      {
+        "case": "'K1 removes a stale key reached by no candidate on array exit'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(root.runtime.latentRaw.has(stale)).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership.test.ts",
+    "changes": [
+      {
+        "case": "'$slot preserves object descendants through $route'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(5)",
+          "expect(metadata?.path).toBe(path)",
+          "expect(root.runtime.latentRaw.get(key)).toBe(5)",
+          "expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(5)",
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(5)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.pending-exit-key.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.pending-exit-key.test.ts",
+    "changes": [
+      {
+        "case": "'marks an exit pending since an earlier wheel when its gate throws in a later wheel'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(JSON.stringify(['/g', 'string']))).toBe( 'G', )"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/g', 'string')).toBe('G')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.reentry.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.reentry.test.ts",
+    "changes": [
+      {
+        "case": "`WRITE-099 keeps alternate value kinds stable for ${name}`",
+        "action": "assertion-migration",
+        "before": [
+          "expect( mounted.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/value'), ).toBe(false)"
+        ],
+        "after": [
+          "expect( readInactiveValuesAt(mounted, '')?.some( (entry) => entry.path === '/value', ), ).toBe(false)"
+        ]
+      },
+      {
+        "case": "'26C-13 keeps the exited kind raw through input writes only'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/value', 'string'])), ).toBe('hello')",
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/value'), ).toBe(false)",
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/value'), ).toBe(false)",
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/value'), ).toBe(true)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/value', 'string')).toBe('hello')",
+          "expect( readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'), ).toBe(false)",
+          "expect( readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'), ).toBe(false)",
+          "expect( readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'), ).toBe(true)"
+        ]
+      },
+      {
+        "case": "'WRITE-094 makes a whole write the only raw of every kind in its scope'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/value', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'26C-13 replaces every kind at a path covered by a whole write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( [...root.runtime.latentRaw.keys()].filter((key) => key.startsWith('[\"/value\",'), ), ).toEqual([])",
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/value'), ).toBe(false)"
+        ],
+        "after": [
+          "expect( readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'), ).toBe(false)"
+        ]
+      },
+      {
+        "case": "'VALUE-025 enters an other-kind node from its own latent or absent'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/value'), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/value', 'string'])), ).toBe('hello')",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/value', 'number'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/value', 'number'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect( readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'), ).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/value', 'string')).toBe('hello')",
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(false)",
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'VALUE-025 enters a nested other-kind node from its own latent or absent'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.inactiveValuesMemo .get('') ?.some((entry) => entry.path === '/outer/value'), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/outer/value', 'string'])), ).toBe('hello')",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/outer/value', 'number'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/outer/value', 'number'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect( readInactiveValuesAt(root, '')?.some( (entry) => entry.path === '/outer/value', ), ).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/outer/value', 'string')).toBe('hello')",
+          "expect(hasRetainedSlotOwnSource(root, '/outer/value', 'number')).toBe( false, )",
+          "expect(hasRetainedSlotOwnSource(root, '/outer/value', 'number')).toBe( false, )"
+        ]
+      },
+      {
+        "case": "'WRITE-085 confines a subtree whole write to latents inside that subtree'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/inside/value', 'string'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/outside/value', 'string'])), ).toBe('out')"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/inside/value', 'string')).toBe( false, )",
+          "expect(readRetainedSlotRaw(root, '/outside/value', 'string')).toBe('out')"
+        ]
+      },
+      {
+        "case": "'26C-13 loads one latent kind when every declaration is gated off'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( [...root.runtime.latentRaw.keys()].filter((key) => key.startsWith('[\"/value\",'), ), ).toEqual([JSON.stringify(['/value', 'string'])])",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/value', value: '2' }, ])"
+        ],
+        "after": [
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/value', value: '2' }, ])"
+        ]
+      },
+      {
+        "case": "'26C-13 selects the live kind when its declaration precedes the old kind'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/value', 'string'])), ).toBe('hello')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/value', 'string')).toBe('hello')"
+        ]
+      },
+      {
+        "case": "'26C-13 form reset replaces previous kind latents with its loaded value'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/value', 'string'])), ).toBe(true)",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/value', 'string'])), ).toBe(false)",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([])",
+          "expect( [...root.runtime.latentRaw.keys()].filter((key) => key.startsWith('[\"/value\",'), ), ).toEqual([JSON.stringify(['/value', 'string'])])",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/value', value: '3' }, ])"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(false)",
+          "expect(readInactiveValuesAt(root, '')).toEqual([])",
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/value', value: '3' }, ])"
+        ]
+      },
+      {
+        "case": "'26C-13 subtree reset loads its snapshot without retaining another kind'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/host/value', 'number'])), ).toBe(false)",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([])"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/host/value', 'number')).toBe(false)",
+          "expect(readInactiveValuesAt(root, '')).toEqual([])"
+        ]
+      },
+      {
+        "case": "'WRITE-015 keeps exited raw when automatic writes are disabled'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held')"
+        ]
+      },
+      {
+        "case": "'SETTLE-011 keeps exited raw after a degraded host wheel'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('held')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-array-policy.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-array-policy.test.ts",
+    "changes": [
+      {
+        "case": "'matches array clearing with inactive=$inactive and candidateOwner=$candidateOwner'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(run('on')).toEqual(run('off'))"
+        ],
+        "after": [
+          "expect(actual.closed).toEqual( kept ? [{ path: '/list/0/keep', value: 12 }] : [], )",
+          "expect(actual.reopened).toEqual({ open: true, show: !inactive })",
+          "expect(actual.inactive).toEqual( kept ? [{ path: '/list/0/keep', value: 12 }] : [], )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-capture.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-capture.test.ts",
+    "changes": [
+      {
+        "case": "'keeps a detached instance in the host without capturing latent raw'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'keeps the latent reference path available when slots are disabled'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(root.inactiveSlots).toBeUndefined()",
+          "expect(runtime.latentRaw.get(JSON.stringify(['/value', 'string']))).toBe( 'held', )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-lazy-read.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-lazy-read.test.ts",
+    "changes": [
+      {
+        "case": "'publishes detached overlays only at a later commit while retaining old arrays'",
+        "replacementCase": "'publishes detached overlays only at the next live commit'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-shadow.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-shadow.test.ts",
+    "changes": [
+      {
+        "case": "'checks slot and latent public results after every verified commit'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(root.inactiveSlots).toBeInstanceOf(Map)",
+          "expect(getDispatchNode(root, 'value').raw).toBe('overlay')",
+          "expect(old.raw).toBe('held')",
+          "expect(root.runtime.slotVerification?.commits).toBeGreaterThanOrEqual(3)",
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ]
+      },
+      {
+        "case": "'rejects a cloned source mutation instead of counting an unchecked shadow pass'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => dispatchSetValue(getDispatchNode(root, 'open'), true)).toThrow( /slot.*shadow|shadow.*slot/i, )",
+          "expect(root.runtime.slotVerification?.differences).toBeGreaterThan(0)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-verify-delivery.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-verify-delivery.test.ts",
+    "changes": [
+      {
+        "case": "'checks payloads with subscribers while invoking public callbacks only once'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification).toEqual({ commits: 2, differences: 0 })"
+        ],
+        "after": []
+      },
+      {
+        "case": "'replays resolved inputs without invoking a public updater twice'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification).toEqual({ commits: 2, differences: 0 })"
+        ],
+        "after": []
+      },
+      {
+        "case": "'replays the resolved batch without invoking its callback again'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification).toEqual({ commits: 2, differences: 0 })"
+        ],
+        "after": []
+      },
+      {
+        "case": "'compares frozen detached reads after external state and error inputs'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-verify-nested.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-verify-nested.test.ts",
+    "changes": [
+      {
+        "case": "'compares schemas and revisions when a retained nested kind changes'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'compares inactive descendants after a gate changes while their host is absent'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'compares cloned array subtrees and a following structural move'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-verify-oracle.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-verify-oracle.test.ts",
+    "changes": [
+      {
+        "case": "'uses fresh off runtime stores and the unchanged latent path as its oracle'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(root.runtime.slots).toBe('on')",
+          "expect(shadow.runtime.slots).toBe('off')",
+          "expect(root.runtime.latentRaw).not.toBe(shadow.runtime.latentRaw)",
+          "expect(root.runtime.latentRaw.size).toBe(0)",
+          "expect(shadow.runtime.latentRaw.size).toBeGreaterThan(0)",
+          "expect(root.inactiveSlots?.size).toBe(1)",
+          "expect(shadow.inactiveSlots).toBeUndefined()"
+        ]
+      },
+      {
+        "case": "'keeps historical detached reads paired across overlay writes and re-entry'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(getDispatchNode(root, 'value')).not.toBe(old)",
+          "expect(old.raw).toBe('held')"
+        ]
+      },
+      {
+        "case": "'detects wrong public values independently of the retained clone algorithm'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => compareSlotShadowObservations(session)).toThrow(/slot.*shadow/i)",
+          "expect(root.runtime.slotVerification?.differences).toBe(1)"
+        ]
+      },
+      {
+        "case": "'rejects divergent diagnostics even when values and shapes are unchanged'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => compareSlotShadowObservations(session)).toThrow(/diagnostics/)"
+        ]
+      },
+      {
+        "case": "'rejects an extra delivery candidate payload'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => compareSlotShadowObservations(session)).toThrow( /pendingDelivery/, )"
+        ]
+      },
+      {
+        "case": "'rejects a per-event revision change with identical public values'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => compareSlotShadowObservations(session)).toThrow(/revision/)"
+        ]
+      },
+      {
+        "case": "'does not create an oracle or invoke replay on the normal on path'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(prepareSlotShadow(root, replay)).toBeUndefined()",
+          "expect(replay).not.toHaveBeenCalled()",
+          "expect(root.runtime.slotVerification).toBeUndefined()"
+        ]
+      },
+      {
+        "case": "'rejects changed references when the latent public value remains stable'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(() => compareSlotShadowObservations(session)).toThrow(/reference/)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-verify-policy.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-verify-policy.test.ts",
+    "changes": [
+      {
+        "case": "'verifies array clearing with inactive=$inactive and candidateOwner=$candidateOwner'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification?.commits).toBe(inactive ? 4 : 3)",
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'verifies explicit object keep with inactive=$inactive'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.slotVerification?.differences).toBe(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.retained-slot-wildcard.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.retained-slot-wildcard.test.ts",
+    "changes": [
+      {
+        "case": "'keeps the complete latent path when the root template reaches a literal star'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.size).toBeGreaterThan(0)",
+          "expect( [...runtime.latentRaw.keys()].map((key) => JSON.parse(key)[0]), ).toContain('/group/*/x')",
+          "expect( [...runtime.latentRaw.keys()].map((key) => JSON.parse(key)[0]), ).toContain('/group/plain')",
+          "expect( [...runtime.latentRaw.keys()].map((key) => JSON.parse(key)[0]), ).toContain('/sibling')"
+        ],
+        "after": [
+          "expect(runtime.literalStarRaw?.size ?? 0).toBeGreaterThan(0)",
+          "expect( [...(runtime.literalStarRaw?.keys() ?? [])].map( (key) => JSON.parse(key)[0], ), ).toContain('/group/*/x')",
+          "expect( [...(runtime.literalStarRaw?.keys() ?? [])].map( (key) => JSON.parse(key)[0], ), ).toContain('/group/plain')",
+          "expect( [...(runtime.literalStarRaw?.keys() ?? [])].map( (key) => JSON.parse(key)[0], ), ).toContain('/sibling')"
+        ]
+      },
+      {
+        "case": "'keeps star-like and escaped-slash names on the ordinary zero-capture path'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": [
+          "expect(runtime.literalStarRaw?.size ?? 0).toBe(0)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.scalar-latent-scope.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.scalar-latent-scope.test.ts",
+    "changes": [
+      {
+        "case": "'H4 keeps the scalar fast path when an exited array item owns an unrelated latent value'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(11)",
+          "expect(root.runtime.latentRaw.get(key)).toBe(11)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11)",
+          "expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11)"
+        ]
+      },
+      {
+        "case": "'H4 uses the ordinary path and clears covered latent slot %s'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(observed.fast).toEqual([false])",
+          "expect(observed.prunes).toBe(1)",
+          "expect(root.runtime.latentRaw.has(key)).toBe(false)",
+          "expect(root.emit).toEqual({ group: { stable: 1 }, other: [7] })",
+          "expect(seen).toEqual(['', '/group', '/group/stable'])"
+        ]
+      },
+      {
+        "case": "'H4 keeps the ordinary path for a same-path other-kind slot of an ancestor'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(observed.fast).toEqual([false])",
+          "expect(observed.prunes).toBe(1)",
+          "expect(root.runtime.latentRaw.get(key)).toBe('retained')",
+          "expect(root.emit).toEqual({ group: { stable: 1 }, other: [7] })",
+          "expect(seen).toEqual(['', '/group', '/group/stable'])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.static-same-value-write-fallback.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.static-same-value-write-fallback.test.ts",
+    "changes": [
+      {
+        "case": "'latent raw under the written host declines; latent raw outside it does not once its change is published'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'a root setValue(getValue()) turns the latent raw under it into none and falls back, its prune marking a pending latent change (18C-96)'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)",
+          "expect(root.runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.transition.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.transition.test.ts",
+    "changes": [
+      {
+        "case": "'WRITE-094 whole replacement clears latent raw and is idempotent on a second call'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)",
+          "expect(root.runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": []
+      },
+      {
+        "case": "'NODE-044 detached write changes only the latent raw for its path and kind'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('new')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('new')"
+        ]
+      },
+      {
+        "case": "'WRITE-085 repeated form load with the same source reconstructs inactive raw'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('latent')",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])), ).toBe('latent')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('latent')",
+          "expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('latent')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.union-fold-latent.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.union-fold-latent.test.ts",
+    "changes": [
+      {
+        "case": "'isolates pending exits and restores $from and $to raw independently'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(JSON.stringify(['/shared', own]))).toBe( first, )",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/shared', other])), ).toBe(second)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/shared', own)).toBe(first)",
+          "expect(readRetainedSlotRaw(root, '/shared', other)).toBe(second)"
+        ]
+      },
+      {
+        "case": "'permits a detached fold to write latent raw beside a different live union fold'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/shared', 'union:3'])), ).toBe(31)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(31)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.union-fold-rules.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.union-fold-rules.test.ts",
+    "changes": [
+      {
+        "case": "'keeps declaration, policy and latent metadata keys separate for keep and clear folds'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRawMetadata?.get( JSON.stringify(['/shared', 'union:3']), )?.exitLayers, ).toContainEqual({ layer: 'node', clear: false })",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/shared', 'union:5'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/shared', 'union:3'])), ).toBe(17)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/shared', 'union:5')).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(17)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.value-model.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.value-model.test.ts",
+    "changes": [
+      {
+        "case": "'WRITE-015 retains a suppressed exiting host and its child sources'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/g', 'object'])), ).toMatchObject({ undeclaredValues: { z: 1 } })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/g', 'object')).toMatchObject({ z: 1 })"
+        ]
+      },
+      {
+        "case": "'SETTLE-005/011 removes detached fills from Source B inputs and latents'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( [...root.runtime.latentRaw.values()].some( (value) => typeof value === 'string' && value === 'D', ), ).toBe(false)"
+        ],
+        "after": [
+          "expect( collectRetainedSlotSources(root) .map((source) => source.raw) .some((value) => typeof value === 'string' && value === 'D'), ).toBe(false)"
+        ]
+      },
+      {
+        "case": "'Q2/Q4 enumerates latent leaves beneath a path live as another kind'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])), ).toBe(false)",
+          "expect(root.runtime.inactiveValuesMemo.get('')).toEqual([ { path: '/group/leaf', value: 'kept' }, ])"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/group', 'object')).toBe(false)",
+          "expect(readInactiveValuesAt(root, '')).toEqual([ { path: '/group/leaf', value: 'kept' }, ])"
+        ]
+      },
+      {
+        "case": "'WRITE-035 clears a departing host extras and leaf together'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/branch', 'object'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/branch', 'object')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'26C-14 OPEN-1 replaces other-kind latents for an absent path write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/item', 'string'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/item', 'string'])), ).toBe('late')",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/item', 'object'])), ).toBe(false)",
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/item/leaf', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/item', 'string')).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/item', 'string')).toBe('late')",
+          "expect(hasRetainedSlotOwnSource(root, '/item', 'object')).toBe(false)",
+          "expect(hasRetainedSlotOwnSource(root, '/item/leaf', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'26C-14 OPEN-2 clears a wrong-kind latent host for emitting leaf input'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/g', 'object'])), ).toMatchObject({ raw: null })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/g', 'object')).toBeNull()"
+        ]
+      },
+      {
+        "case": "'26C-14 OPEN-4 suppresses a host default for another-kind latent'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/g/value', 'string'])), ).toBe('old')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/g/value', 'string')).toBe('old')"
+        ]
+      },
+      {
+        "case": "'SETTLE-005 withdraws a host fill from a child that exits mid-round'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.has(JSON.stringify(['/g/secret', 'string'])), ).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/g/secret', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'EVENT-072 keeps sources of nodes a subtree reset moves out of the shape'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/grp/x', 'string'])), ).toBe('typed')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/grp/x', 'string')).toBe('typed')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/__tests__/settle.write-epoch.test.ts",
+    "destination": "src/core/engine/settle/__tests__/settle.write-epoch.test.ts",
+    "changes": [
+      {
+        "case": "'falls back for latent sources even when replacement prunes them'",
+        "action": "removed-case",
+        "assertions": [
+          "expect( measure(root, () => dispatchSetValue(root, next)).adds, ).toBeGreaterThan(0)",
+          "expect(root.emit).toEqual(next)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-exits.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-exits.test.ts",
+    "changes": [
+      {
+        "case": "'preserves candidate sources when the %s array exits during its move settlement'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(JSON.stringify([pathAtExit, 'number']))).toBe( 37, )",
+          "expect(runtime.latentRaw.get(JSON.stringify([pathAtExit, 'string']))).toBe( 'live', )",
+          "expect( runtime.latentRawMetadata?.get(JSON.stringify([pathAtExit, 'number'])), ).toMatchObject({ path: pathAtExit })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, pathAtExit, 'number')).toBe(37)",
+          "expect(readRetainedSlotRaw(root, pathAtExit, 'string')).toBe('live')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail-scope.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail-scope.test.ts",
+    "changes": [
+      {
+        "case": "'keeps base undeclared-tail sources for $kind terminal=$terminal disabled=$disabled candidateHost=$candidateHost'",
+        "action": "assertion-migration",
+        "before": [
+          "expect([...runtime.latentRaw]).toEqual([ [ key, kind === 'array' && !terminal ? new HostLatent(replacement, undefined) : value, ], ])",
+          "expect(runtime.latentRawMetadata?.get(key)).toEqual( expect.objectContaining({ path: sourcePath, order: kind === 'object' && !terminal ? [1, index, 0] : [1, index], }), )",
+          "expect( [...(runtime.latentRawMetadata?.values() ?? [])].filter( (entry) => entry.path === destination || entry.path.startsWith(destination + '/'), ), ).toEqual([])",
+          "expect(runtime.inactiveValuesMemo.get('')).toEqual([ { path: sourcePath, value }, ])"
+        ],
+        "after": [
+          "expect(readFieldNodeInactiveValues(root)).toEqual([ { path: sourcePath, value }, ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail.test.ts",
+    "changes": [
+      {
+        "case": "'retains live and latent candidate sources while a slot is parked in an undeclared tail'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(metadata).toBeDefined()",
+          "expect(runtime.latentRaw.get(JSON.stringify(['/list/1/v', 'string']))).toBe( 'live', )",
+          "expect(runtime.latentRaw.get(JSON.stringify(['/list/1/v', 'number']))).toBe( 37, )",
+          "expect( runtime.latentRawMetadata?.get(JSON.stringify(['/list/1/v', 'number'])), ).toEqual({ ...metadata, path: '/list/1/v', order: [1, 1, 1], })",
+          "expect(runtime.latentRaw.get(JSON.stringify(['/list/0/v', 'string']))).toBe( 'live', )",
+          "expect(runtime.latentRaw.get(key)).toBe(37)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/list/1/v', 'string')).toBe('live')",
+          "expect(readRetainedSlotRaw(root, '/list/1/v', 'number')).toBe(37)",
+          "expect(readRetainedSlotRaw(root, '/list/0/v', 'string')).toBe('live')",
+          "expect(readRetainedSlotRaw(root, '/list/0/v', 'number')).toBe(37)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-absent-destinations.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-absent-destinations.test.ts",
+    "changes": [
+      {
+        "case": "'W4 absent $layout slots preserve base latent order and metadata on $operation'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(info?.exitLayers?.map((decision) => decision.clear)).toEqual([ false, ])",
+          "expect([...runtime.latentRaw]).toEqual( retained.map((entry) => [entry.key, entry.value]), )",
+          "expect([...(runtime.latentRawMetadata?.keys() ?? [])]).toEqual( retained.map((entry) => entry.key), )",
+          "expect(metadata).toEqual({ path: entry.path, blueprintNode: original.blueprintNode, order: entry.order, exitLayers: original.exitLayers, })",
+          "expect(metadata?.blueprintNode).toBe(original.blueprintNode)",
+          "expect(metadata?.exitLayers).toBe(original.exitLayers)",
+          "expect( metadata?.exitLayers?.map((decision) => decision.clear), ).toEqual([false])",
+          "expect(rekey).toHaveBeenCalledOnce()",
+          "expect([...runtime.latentRaw]).toEqual( expected.map((entry) => [entry.key, entry.value]), )",
+          "expect([...(runtime.latentRawMetadata?.keys() ?? [])]).toEqual( expected.map((entry) => entry.key), )",
+          "expect(metadata).toEqual({ path: entry.path, blueprintNode, order: entry.order, })",
+          "expect(metadata?.blueprintNode).toBe(blueprintNode)",
+          "expect(metadata?.exitLayers).toBeUndefined()"
+        ],
+        "after": [
+          "expect(frozen).toEqual( ['first', 'second', 'third'].map((value, index) => ({ path: `/list/${index}/v`, value, })), )",
+          "expect(readFieldNodeInactiveValues(root)).toEqual( values.map((value, index) => ({ path: `/list/${index}/v`, value })), )",
+          "expect(frozen).toEqual( ['first', 'second', 'third'].map((value, index) => ({ path: `/list/${index}/v`, value, })), )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-inactive-source.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-inactive-source.test.ts",
+    "changes": [
+      {
+        "case": "'C1 inactive source $operation restores its number through $depth'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(numberKey)).toBe(37)",
+          "expect(runtime.latentRaw.get(stringKey)).toBe('live')",
+          "expect(runtime.latentRaw.get(movedString)).toBe('live')",
+          "expect(runtime.latentRawMetadata?.get(movedString)).toEqual({ ...stringMetadata, path, order: [stringMetadata.order[0], to, ...stringMetadata.order.slice(2)], })",
+          "expect(runtime.latentRaw.has(numberKey)).toBe(false)",
+          "expect(runtime.latentRaw.has(stringKey)).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, sourcePath, 'number')).toBe(37)",
+          "expect(readRetainedSlotRaw(root, sourcePath, 'string')).toBe('live')",
+          "expect(readRetainedSlotRaw(root, path, 'string')).toBe('live')",
+          "expect(hasRetainedSlotOwnSource(root, sourcePath, 'number')).toBe(false)",
+          "expect(hasRetainedSlotOwnSource(root, sourcePath, 'string')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-live-descendants.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-live-descendants.test.ts",
+    "changes": [
+      {
+        "case": "'V3 $operation at depth $depth retains the previously live candidate on switch-back'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(stringKey)).toBe('live')",
+          "expect(root.runtime.latentRawMetadata?.get(stringKey)).toMatchObject({ path, blueprintNode: original.blueprintNode, })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, path, 'string')).toBe('live')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-nested-array.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-nested-array.test.ts",
+    "changes": [
+      {
+        "case": "'W1 %s preserves candidates beneath an array with one immediate item template'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.get(numberKey)).toBe(37)",
+          "expect(runtime.latentRaw.get(stringKey)).toBe('live')",
+          "expect(runtime.latentRawMetadata?.get(stringKey)).toMatchObject({ path })",
+          "expect(runtime.latentRaw.get(movedNumber)).toBe(37)",
+          "expect(runtime.latentRawMetadata?.get(movedNumber)).toEqual({ ...numberMetadata, blueprintNode: restoredBlueprint, path, order: [ numberMetadata.order[0], destination, ...numberMetadata.order.slice(2), ], })",
+          "expect(runtime.latentRaw.get(stringKey)).toBe('live')"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, sourcePath, 'number')).toBe(37)",
+          "expect(readRetainedSlotRaw(root, path, 'string')).toBe('live')",
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(37)",
+          "expect(readRetainedSlotRaw(root, path, 'string')).toBe('live')"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-contract.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-contract.test.ts",
+    "changes": [
+      {
+        "case": "'%s'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(123)",
+          "expect(root.runtime.latentRawMetadata?.get(key)).toMatchObject({ path, blueprintNode: { kind: 'number' }, })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, path, 'number')).toBe(123)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-mutations.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-mutations.test.ts",
+    "changes": [
+      {
+        "case": "'%s'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(held).toBeDefined()",
+          "expect(held).toMatchObject({ raw: undefined, undeclaredValues: { extra: 9 }, })",
+          "expect(Object.isFrozen(held)).toBe(true)",
+          "expect(latent.get(destinationKey)).toBe(held)",
+          "expect(latent.has(sourceKey)).toBe(false)",
+          "expect(root.runtime.latentRawMetadata?.get(destinationKey)?.path).toBe( '/list/' + to, )",
+          "expect(latent.has(destinationKey)).toBe(false)"
+        ],
+        "after": [
+          "expect(held).toEqual({ extra: 9 })",
+          "expect(readRetainedSlotRaw(root, '/list/' + to, 'object')).toEqual(held)",
+          "expect(hasRetainedSlotOwnSource(root, '/list/' + from, 'object')).toBe( false, )",
+          "expect(held).toEqual({ extra: 9 })",
+          "expect(hasRetainedSlotOwnSource(root, '/list/' + to, 'object')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-root.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-root.test.ts",
+    "changes": [
+      {
+        "case": "'%s'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(sourceKey)).toBe(stored)",
+          "expect(metadata).toBeDefined()",
+          "expect(root.runtime.latentRaw.has(sourceKey)).toBe(false)",
+          "expect(root.runtime.latentRaw.get(movedOwn)).toBe(stored)",
+          "expect(root.runtime.latentRaw.get(movedLive)).toBe(liveValue)",
+          "expect(root.runtime.latentRawMetadata?.get(movedOwn)).toEqual({ ...metadata, path: movedPath, order, })",
+          "expect(root.runtime.latentRawMetadata?.get(movedLive)).toEqual({ path: movedPath, blueprintNode: original.blueprintNode, order, })",
+          "expect(application).toHaveBeenCalledOnce()",
+          "expect(root.runtime.latentRaw.size).toBe(0)",
+          "expect(root.runtime.latentRaw.has(movedOwn)).toBe(false)",
+          "expect(root.runtime.latentRawMetadata?.has(movedOwn)).toBe(false)",
+          "expect(root.runtime.latentRaw.get(movedLive)).toBe(liveValue)",
+          "expect(root.runtime.latentRawMetadata?.get(movedLive)).toEqual({ path: movedPath, blueprintNode: original.blueprintNode, order: movedOrder, })",
+          "expect(root.runtime.latentRaw.get(sourceKey)).toBe(stored)",
+          "expect(root.runtime.latentRawMetadata?.get(sourceKey)).toMatchObject({ path: `/list/${sourceIndex}`, order: metadata.order, })",
+          "expect( root.runtime.latentRaw.get( JSON.stringify([`/list/${sourceIndex}`, live]), ), ).toBe(liveValue)",
+          "expect( root.runtime.latentRawMetadata?.get( JSON.stringify([`/list/${sourceIndex}`, live]), ), ).toMatchObject({ path: `/list/${sourceIndex}`, order: metadata.order })",
+          "expect(root.runtime.latentRaw.get(sourceKey)).toBe(stored)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe( stored, )",
+          "expect( hasRetainedSlotOwnSource(root, `/list/${sourceIndex}`, other), ).toBe(false)",
+          "expect(readFieldNodeInactiveValues(root).length).toBe(0)",
+          "expect(hasRetainedSlotOwnSource(root, movedPath, other)).toBe(false)",
+          "expect(readRetainedSlotRaw(root, movedPath, live)).toBe(liveValue)",
+          "expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe( stored, )",
+          "expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, live)).toBe( liveValue, )",
+          "expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe( stored, )"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-unrelated-slots.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-unrelated-slots.test.ts",
+    "changes": [
+      {
+        "case": "'R2 unused candidate at $position preserves unrelated inactive sources'",
+        "action": "assertion-migration",
+        "before": [
+          "expect([...runtime.latentRaw]).toEqual([ ['[\"/list/0/v\",\"number\"]', 0], ['[\"/list/1/v\",\"string\"]', '1'], ['[\"/list/2/v\",\"number\"]', 2], ])",
+          "expect([...(runtime.latentRawMetadata?.keys() ?? [])]).toEqual([ '[\"/list/0/v\",\"number\"]', '[\"/list/1/v\",\"string\"]', '[\"/list/2/v\",\"number\"]', ])",
+          "expect(metadata).toEqual({ path: entry.path, blueprintNode, order: [1, entry.index, 0], })",
+          "expect(metadata?.blueprintNode).toBe(blueprintNode)",
+          "expect(metadata?.exitLayers).toBeUndefined()"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership.test.ts",
+    "changes": [
+      {
+        "case": "'depth %s entering candidate prefers its retained source over tuple replay'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(numberKey)).toBe(37)"
+        ],
+        "after": [
+          "expect( readRetainedSlotRaw(root, '/list/0/' + names.join('/'), 'number'), ).toBe(37)"
+        ]
+      },
+      {
+        "case": "'[control] single-candidate tuple %s creates no replay marker or retained-source query'",
+        "replacementCase": "'[control] single-candidate tuple %s preserves its retained source'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/0/v', 'string'])), ).toBe('first')",
+          "expect(under).not.toHaveBeenCalled()",
+          "expect(distribution.preserveLatent).toBeUndefined()",
+          "expect( root.runtime.latentRaw.get( JSON.stringify([`/${destination}/v`, 'string']), ), ).toBe(expected)"
+        ],
+        "after": [
+          "expect( readFieldNodeInactiveValues(root).find( (entry) => entry.path === '/0/v' && typeof entry.value === 'string', )?.value, ).toBe('first')",
+          "expect( readFieldNodeInactiveValues(root).find( (entry) => entry.path === `/${destination}/v` && typeof entry.value === 'string', )?.value, ).toBe(expected)"
+        ]
+      },
+      {
+        "case": "'$operation before a latent $kind moves every candidate source'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(key)).toBe(value)",
+          "expect(metadata).toBeDefined()",
+          "expect(root.runtime.latentRaw.get(movedKey)).toBe(value)",
+          "expect(root.runtime.latentRawMetadata?.get(movedKey)).toEqual({ ...metadata, path: `/list/${destination}/v`, order: [metadata.order[0], destination, ...metadata.order.slice(2)], })",
+          "expect(root.runtime.latentRaw.has(key)).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, `/list/${sourceIndex}/v`, kind)).toBe( value, )",
+          "expect(readRetainedSlotRaw(root, `/list/${destination}/v`, kind)).toBe( value, )",
+          "expect( hasRetainedSlotOwnSource(root, `/list/${sourceIndex}/v`, kind), ).toBe(false)"
+        ]
+      },
+      {
+        "case": "'%s carries several already-latent candidates through record recreation'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(sourceString)).toBe( source === 0 ? 'first' : 'second', )",
+          "expect(root.runtime.latentRaw.get(sourceNumber)).toBe(37)",
+          "expect(root.runtime.latentRaw.get(stringKey)).toBe( source === 0 ? 'first' : 'second', )",
+          "expect(root.runtime.latentRaw.get(numberKey)).toBe(37)",
+          "expect(root.runtime.latentRawMetadata?.get(stringKey)?.path).toBe( `/list/${destination}/v`, )",
+          "expect(root.runtime.latentRawMetadata?.get(numberKey)?.path).toBe( `/list/${destination}/v`, )"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, `/list/${source}/v`, 'string')).toBe( source === 0 ? 'first' : 'second', )",
+          "expect(readRetainedSlotRaw(root, `/list/${source}/v`, 'number')).toBe(37)",
+          "expect( readRetainedSlotRaw(root, `/list/${destination}/v`, 'string'), ).toBe(source === 0 ? 'first' : 'second')",
+          "expect( readRetainedSlotRaw(root, `/list/${destination}/v`, 'number'), ).toBe(37)"
+        ]
+      },
+      {
+        "case": "'[control] true %s destroys all latent candidates in a slot'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(stringKey)).toBe('held')",
+          "expect(root.runtime.latentRaw.get(numberKey)).toBe(37)",
+          "expect(root.runtime.latentRaw.has(stringKey)).toBe(false)",
+          "expect(root.runtime.latentRaw.has(numberKey)).toBe(false)",
+          "expect(root.runtime.latentRawMetadata?.has(stringKey)).toBe(false)",
+          "expect(root.runtime.latentRawMetadata?.has(numberKey)).toBe(false)"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/list/0/v', 'string')).toBe('held')",
+          "expect(readRetainedSlotRaw(root, '/list/0/v', 'number')).toBe(37)",
+          "expect(hasRetainedSlotOwnSource(root, '/list/0/v', 'string')).toBe(false)",
+          "expect(hasRetainedSlotOwnSource(root, '/list/0/v', 'number')).toBe(false)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-absent.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-absent.test.ts",
+    "changes": [
+      {
+        "case": "'%s preserves %s absent %s source slots and frozen hosts'",
+        "replacementCase": "'preserves %s absent %s source slots and frozen hosts'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-deletion.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-deletion.test.ts",
+    "changes": [
+      {
+        "case": "'%s destroys %s sources and caller append replaces old-reference writes'",
+        "replacementCase": "'destroys %s sources and caller append replaces old-reference writes'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "'%s whole replacement prunes an unpublished write beneath a live array host'",
+        "replacementCase": "'whole replacement prunes an unpublished write beneath a live array host'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-nested.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-nested.test.ts",
+    "changes": [
+      {
+        "case": "'%s preserves nested array candidates on %s'",
+        "replacementCase": "'preserves nested array candidates on %s'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-packed.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-packed.test.ts",
+    "changes": [
+      {
+        "case": "'%s moves packed inactive arrays without publishing their internal leaves'",
+        "replacementCase": "'moves packed inactive arrays without publishing their internal leaves'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "'%s moves old descendant write addresses after an array has already re-entered'",
+        "replacementCase": "'moves old descendant write addresses after an array has already re-entered'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-policy.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-policy.test.ts",
+    "changes": [
+      {
+        "case": "'%s applies the exit policy after conversion, candidate=%s'",
+        "replacementCase": "'applies the exit policy after conversion, candidate=%s'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-pruning.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-pruning.test.ts",
+    "changes": [
+      {
+        "case": "'%s removes both source representations on %s'",
+        "replacementCase": "'removes retained sources on %s'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-relocation.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-relocation.test.ts",
+    "changes": [
+      {
+        "case": "'%s preserves inactive tuple sources across %s and old-reference writes'",
+        "replacementCase": "'preserves inactive tuple sources across %s and old-reference writes'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-root.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-root.test.ts",
+    "changes": [
+      {
+        "case": "'%s moves depth-zero %s root candidates from %s'",
+        "replacementCase": "'moves depth-zero %s root candidates from %s'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-tail.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-tail.test.ts",
+    "changes": [
+      {
+        "case": "'%s retains every candidate through an undeclared tail and old writes'",
+        "replacementCase": "'retains every candidate through an undeclared tail and old writes'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-fallback.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-fallback.test.ts",
+    "changes": [
+      {
+        "case": "'a detached array and a tree holding its latent write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear-cost.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear-cost.test.ts",
+    "changes": [
+      {
+        "case": "'does not grow host-prefix path-store lookups, re-keying, item load reads or registry lookups with the item count'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(large.under - small.under).toBe(7_000)",
+          "expect(small.under - 1_000 + small.intersecting).toBeLessThan(50)"
+        ],
+        "after": [
+          "expect(large.under - small.under).toBe(0)",
+          "expect(small.under + small.intersecting).toBeLessThan(50)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reference.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reference.test.ts",
+    "changes": [
+      {
+        "case": "'keeps a detached field write with its surviving array item after remove(0)'",
+        "action": "assertion-migration",
+        "before": [
+          "expect({ latentAfterWrite, firstSurvivor: root.find('/items/0/gated')!.value, movedSurvivor: root.find('/items/1/gated')!.value, absentTail: root.find('/items/2'), }).toEqual({ latentAfterWrite: { moved: 'x', former: undefined }, firstSurvivor: 'second', movedSurvivor: 'x', absentTail: null, })"
+        ],
+        "after": [
+          "expect(ref.path).toBe('/items/2/gated')",
+          "expect(ref.value).toBe('third')",
+          "expect({ retainedAfterWrite, firstSurvivor: root.find('/items/0/gated')!.value, movedSurvivor: root.find('/items/1/gated')!.value, absentTail: root.find('/items/2'), }).toEqual({ retainedAfterWrite: { moved: 'x', former: undefined }, firstSurvivor: 'second', movedSurvivor: 'x', absentTail: null, })"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reset-address.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reset-address.test.ts",
+    "changes": [
+      {
+        "case": "'preserves a rekeyed old reference address through %s reset'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.get(JSON.stringify(['/items/0/gated', 'string']))).toBe('x')",
+          "expect( latent.get(JSON.stringify(['/items/1/gated', 'string'])), ).toBeUndefined()"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/items/0/gated', 'string')).toBe('x')",
+          "expect( readRetainedSlotRaw(root, '/items/1/gated', 'string'), ).toBeUndefined()"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-insert.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-insert.test.ts",
+    "changes": [
+      {
+        "case": "'NODE-044 sends a detached host insert to its latent whole write, like remove'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/list', 'array'])), ).toMatchObject({ raw: ['a', 'x', 'b'] })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual([ 'a', 'x', 'b', ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-fallback.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-fallback.test.ts",
+    "changes": [
+      {
+        "case": "'a detached array and a tree holding its latent write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop.test.ts",
+    "changes": [
+      {
+        "case": "'retires a nested object item and keeps its detached reads and latent-free runtime'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(candidate.runtime.latentRaw.size).toBe(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-prefix.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-prefix.test.ts",
+    "changes": [
+      {
+        "case": "'prunes out-of-range latent sources before a newly appended item enters'",
+        "action": "removed-case",
+        "assertions": []
+      },
+      {
+        "case": "'removes rules with a tail source or target and invalidates intersecting memos'",
+        "action": "removed-case",
+        "assertions": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-rekey.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-rekey.test.ts",
+    "changes": [
+      {
+        "case": "'35C-02 removes latent slots outside the old plan before new items enter'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(root.runtime.latentRaw.has(key)).toBe(false)",
+          "expect(root.runtime.committedDeclarationIds.has(key)).toBe(false)",
+          "expect(root.runtime.misfitPaths.has('/0/hidden')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'35C-02 re-keys every path store in one collision-free pass'",
+        "action": "removed-case",
+        "assertions": [
+          "expect(runtime.latentRaw.has(oldLeaf)).toBe(false)",
+          "expect(runtime.latentRaw.has(JSON.stringify(['/0/old', 'string']))).toBe( false, )",
+          "expect(runtime.latentRaw.get(newLeaf)).toBe('secret')",
+          "expect(runtime.latentRawMetadata?.has(oldLeaf)).toBe(false)",
+          "expect(runtime.latentRawMetadata?.get(newLeaf)).toMatchObject({ path: '/0/hidden', order: [0], })",
+          "expect(runtime.committedDeclarationIds?.has(oldLeaf)).toBe(false)",
+          "expect(runtime.committedDeclarationIds?.get(newLeaf)).toBe(ids)",
+          "expect(runtime.committedRuleValues?.has(oldRule)).toBe(false)",
+          "expect(runtime.committedRuleValues?.get(newRule)).toBe(baseline)",
+          "expect(runtime.committedRuleValues?.pathIndex.under('')).toBe(ruleRootKeys)",
+          "expect(runtime.committedRuleKeysBySource?.has('/1/hidden')).toBe(false)",
+          "expect(runtime.committedRuleKeysBySource?.get('/0/hidden')).toEqual( new Set([newRule]), )",
+          "expect(runtime.committedRuleKeysByTarget?.has('/1/target')).toBe(false)",
+          "expect(runtime.committedRuleKeysByTarget?.get('/0/target')).toEqual( new Set([newRule]), )",
+          "expect(runtime.misfitPaths.has('/1/hidden')).toBe(false)",
+          "expect(runtime.misfitPaths.has('/0/hidden')).toBe(true)",
+          "expect(runtime.misfitsMemo?.has('')).toBe(false)",
+          "expect(runtime.inactiveValuesMemo.has('')).toBe(false)",
+          "expect(runtime.inactiveValueEntries?.has(oldLeaf)).toBe(false)"
+        ]
+      },
+      {
+        "case": "'NODE-051 moves latent sources and registered gates with a live item'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.has(oldKey)).toBe(true)",
+          "expect(root.runtime.latentRaw.has(oldKey)).toBe(false)",
+          "expect(root.runtime.latentRaw.get(newKey)).toBe('secret')"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/1/hidden', 'string')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/1/hidden', 'string')).toBe(false)",
+          "expect(readRetainedSlotRaw(root, '/0/hidden', 'string')).toBe('secret')"
+        ]
+      },
+      {
+        "case": "'NODE-044 lets a popped reference write latent but ignores a removed occupied path'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.get(JSON.stringify(['/1', 'string']))).toBe( 'latent', )",
+          "expect(root.runtime.latentRaw.has(JSON.stringify(['/0', 'string']))).toBe( false, )"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/1', 'string')).toBe('latent')",
+          "expect(hasRetainedSlotOwnSource(root, '/0', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'NODE-044 applies a detached array verb through its latent whole-write path'",
+        "action": "assertion-migration",
+        "before": [
+          "expect( root.runtime.latentRaw.get(JSON.stringify(['/list', 'array'])), ).toMatchObject({ raw: ['a', 'b'] })"
+        ],
+        "after": [
+          "expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a', 'b'])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-cost.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-cost.test.ts",
+    "changes": [
+      {
+        "case": "'%s counts the same admission, application, selection, registration and calculation work at 1,000 and 8,000 items for a fixed tail'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(large.calls.readRawTree).toBe(0)"
+        ],
+        "after": [
+          "expect(large.calls.readSourceTree).toBe(0)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-fallback.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-fallback.test.ts",
+    "changes": [
+      {
+        "case": "'a detached array and a tree holding its latent write'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice.test.ts",
+    "changes": [
+      {
+        "case": "'keeps the removed node detached with its reads and sends its later write to latent raw'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(root.runtime.latentRaw.size).toBeGreaterThan(0)"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts",
+    "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts",
+    "changes": [
+      {
+        "case": "'preserves a detached write address after %s without changing frozen reads or delivering'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(latent.size).toBe(0)"
+        ],
+        "after": [
+          "expect(root.inactiveValues).toEqual([])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/utils/latentStore/__tests__/setLatentRaw.test.ts",
+    "destination": "src/core/engine/settle/utils/literalStarStore/__tests__/setLatentRaw.test.ts",
+    "changes": [
+      {
+        "case": "'removes deleted keys from all path queries while retaining another kind and sibling'",
+        "action": "assertion-migration",
+        "before": [
+          "expect([...getLatentPathIndex(context).get('/rows')!]).toEqual([ deleted, otherKind, sibling, ])",
+          "expect(root.runtime.latentRaw.has(deleted)).toBe(false)",
+          "expect(getLatentPathIndex(context).has('/rows/0/child')).toBe(false)",
+          "expect(getLatentPathIndex(context).has('/rows/0')).toBe(false)",
+          "expect([...getLatentPathIndex(context).get('/rows')!]).toEqual([sibling])"
+        ],
+        "after": [
+          "expect([...getLiteralStarPathIndex(context).get('/rows')!]).toEqual([ deleted, otherKind, sibling, ])",
+          "expect(hasRetainedSlotOwnSource(root, '/rows/0/child', 'string')).toBe( false, )",
+          "expect(getLiteralStarPathIndex(context).has('/rows/0/child')).toBe(false)",
+          "expect(getLiteralStarPathIndex(context).has('/rows/0')).toBe(false)",
+          "expect([...getLiteralStarPathIndex(context).get('/rows')!]).toEqual([ sibling, ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/utils/slots/__tests__/createSlotValueOverlay.test.ts",
+    "destination": "src/core/engine/settle/utils/slots/__tests__/createSlotValueOverlay.test.ts",
+    "changes": [
+      {
+        "case": "'matches an inactive merge while cloning only the patched source channels'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(materializeInactiveSlotValues(root)).toEqual( runtime.inactiveValuesMemo.get(''), )"
+        ],
+        "after": [
+          "expect(materializeInactiveSlotValues(root)).toEqual([ { path: '/group/n', value: 7 }, { path: '/group/text', value: 'kept' }, ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/settle/utils/slots/__tests__/materializeInactiveSlotValues.test.ts",
+    "destination": "src/core/engine/settle/utils/slots/__tests__/materializeInactiveSlotValues.test.ts",
+    "changes": [
+      {
+        "case": "'matches the latent publication while preserving a detached host own view'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(materializeInactiveSlotValues(root)).toEqual( runtime.inactiveValuesMemo.get(''), )",
+          "expect(values).toEqual(runtime.inactiveValuesMemo.get(''))"
+        ],
+        "after": [
+          "expect(materializeInactiveSlotValues(root)).toEqual([ { path: '/group/hidden', value: 'hidden' }, ])",
+          "expect(values).toEqual([ { path: '/group/childOpen', value: false }, { path: '/group/leaf', value: 'kept' }, { path: '/group/hidden', value: 'hidden' }, { path: '/group/list', value: ['item'] }, ])"
+        ]
+      },
+      {
+        "case": "'represents inherited clearing as an overlay while leaving the source unchanged'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(materializeInactiveSlotValues(root)).toEqual( runtime.inactiveValuesMemo.get(''), )"
+        ],
+        "after": [
+          "expect(materializeInactiveSlotValues(root)).toEqual([ { path: '/group/keep', value: 'keep' }, ])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.batch.test.ts",
+    "destination": "src/core/engine/settle/__tests__/dispatch.batch.test.ts",
+    "changes": [
+      {
+        "case": "file",
+        "action": "assertion-migration",
+        "before": [
+          "expect(tree.root.runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(tree.root, '/vat', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'191C-01 LANDING-018 LANDING-032 keeps latent raw outside a two-write batch'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'191C-01 keeps latent raw outside array and object batches: %s'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/extra', 'string'))).toBe(true)",
+          "expect(runtime.latentRaw.has(latent('/extra', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/extra', 'string')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/extra', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'26C-10 clears latent raw under a root write inside a batch'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'191C-01 keeps latent raw under a shallow Merge batch'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'191C-01 keeps a single-write batch unchanged'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/vat', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'191C-01 keeps an unwritten sibling object intact across a two-write batch'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/side/nested', 'string'))).toBe(true)",
+          "expect(runtime.latentRaw.has(latent('/side/nested', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/side/nested', 'string')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/side/nested', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'191C-01 pins the replaced-exit clause for a written path inside a batch'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(false)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(false)"
+        ]
+      },
+      {
+        "case": "'191C-01 pins the automatic-origin skip: a batched trim keeps the other-kind latent raw'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true)",
+          "expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'191C-01 pins replacement without a root scope: a batched same-node double write keeps latent raw'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'restores the latent string on a single re-entry write (control)'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'restores the latent string when the re-entry write shares a batch with another path'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'leaves the other-kind node empty when a batched double write switches the branch'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(true)"
+        ]
+      },
+      {
+        "case": "'prunes only the latent raw of the sibling a batched virtual overwrite replaces while the branch switches'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/startDate', 'string'))).toBe(true)",
+          "expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true)",
+          "expect(runtime.latentRaw.has(latent('/tag', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/startDate', 'string')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(true)",
+          "expect(hasRetainedSlotOwnSource(root, '/tag', 'string')).toBe(true)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/engine/write/__tests__/dispatch.closing-branch.test.ts",
+    "destination": "src/core/engine/settle/__tests__/dispatch.closing-branch.test.ts",
+    "changes": [
+      {
+        "case": "'keeps string, object and array children on a whole write that closes the ancestor'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(runtime.latentRaw.has(latent('/info/b', 'string'))).toBe(true)"
+        ],
+        "after": [
+          "expect(hasRetainedSlotOwnSource(root, '/info/b', 'string')).toBe(true)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/detached.test.ts",
+    "destination": "src/core/surface/__tests__/detached.test.ts",
+    "changes": [
+      {
+        "case": "'26C-12 ignores old detached writes and reset while the same path is live'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(Reflect.get(runtime, 'latentRaw')).toBeInstanceOf(Map)",
+          "expect(Reflect.get(runtime, 'latentRaw')).toHaveProperty('size', 0)"
+        ],
+        "after": [
+          "expect(root.inactiveValues).toEqual([])"
+        ]
+      },
+      {
+        "case": "'26C-12 ignores Merge through an old detached object while its path is live'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(Reflect.get(runtime, 'latentRaw')).toBeInstanceOf(Map)",
+          "expect(Reflect.get(runtime, 'latentRaw')).toHaveProperty('size', 0)"
+        ],
+        "after": [
+          "expect(root.inactiveValues).toEqual([])"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/surface.slots-memory-bound.test.ts",
+    "destination": "src/core/surface/__tests__/surface.slots-memory-bound.test.ts",
+    "changes": [
+      {
+        "case": "'replaces the one visited host slot instead of retaining earlier lifetimes'",
+        "action": "assertion-migration",
+        "before": [
+          "expect(Reflect.get(tree.root, 'runtime').latentRaw.size).toBe(0)"
+        ],
+        "after": [
+          "expect(Reflect.get(tree.root, 'runtime').literalStarRaw?.size ?? 0).toBe(0)"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/surface.slots-wildcard-lifetimes.test.ts",
+    "destination": "src/core/surface/__tests__/surface.slots-wildcard-lifetimes.test.ts",
+    "changes": [
+      {
+        "case": "`${mode} renews a wildcard entry after a ${readHidden ? 'read' : 'unread'} hidden commit`",
+        "replacementCase": "`renews a wildcard entry after a ${readHidden ? 'read' : 'unread'} hidden commit`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "`${mode} preserves an unread detached wildcard host's ancestor-published entry after an overlay changes`",
+        "replacementCase": "`preserves an unread detached wildcard host's ancestor-published entry after an overlay changes`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "`${mode} preserves ancestor-star entry identity in an unread detached descendant`",
+        "replacementCase": "`preserves ancestor-star entry identity in an unread detached descendant`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "`${mode} keeps an unread detached host's entry when live wildcard visibility starts a new lifetime`",
+        "replacementCase": "`keeps an unread detached host's entry when live wildcard visibility starts a new lifetime`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/surface.slots-wildcard-mixed-storage.test.ts",
+    "destination": "src/core/surface/__tests__/surface.slots-wildcard-mixed-storage.test.ts",
+    "changes": [
+      {
+        "case": "`${mode} preserves starred input under an ordinary ${scenario} slot ancestor`",
+        "replacementCase": "`preserves starred input under an ordinary ${scenario} slot ancestor`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "'%s restores a detached star write when its ordinary parent is cloned'",
+        "replacementCase": "'restores a detached star write when its ordinary parent is cloned'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "'%s preserves document order for a detached deep ordinary write containing a star'",
+        "replacementCase": "'preserves document order for a detached deep ordinary write containing a star'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/surface.slots-wildcard-packed-array.test.ts",
+    "destination": "src/core/surface/__tests__/surface.slots-wildcard-packed-array.test.ts",
+    "changes": [
+      {
+        "case": "`%s preserves a packed array with previously inactive star child=${childInactive}`",
+        "replacementCase": "`preserves a packed array with previously inactive star child=${childInactive}`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/surface.slots-wildcard-policies.test.ts",
+    "destination": "src/core/surface/__tests__/surface.slots-wildcard-policies.test.ts",
+    "changes": [
+      {
+        "case": "`${mode} applies an ordinary parent's clearing policy to an inactive star with keep=${keep}`",
+        "replacementCase": "`applies an ordinary parent's clearing policy to an inactive star with keep=${keep}`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "`${mode} resets mixed sources while retaining an unread detached parent's wildcard entry`",
+        "replacementCase": "`resets mixed sources while retaining an unread detached parent's wildcard entry`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "`${mode} preserves caller Source B after an automatic wildcard fill is withdrawn`",
+        "replacementCase": "`preserves caller Source B after an automatic wildcard fill is withdrawn`",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      }
+    ]
+  },
+  {
+    "file": "src/core/surface/__tests__/surface.slots-wildcard-publication.test.ts",
+    "destination": "src/core/surface/__tests__/surface.slots-wildcard-publication.test.ts",
+    "changes": [
+      {
+        "case": "'%s preserves the wildcard query exclusion for an inactive literal star field'",
+        "replacementCase": "'preserves the wildcard query exclusion for an inactive literal star field'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "'%s preserves an unread publication when a fresh external wildcard match enters'",
+        "action": "mode-matrix-collapsed",
+        "assertions": [
+          "expect(star.inactiveValues).toEqual([])"
+        ],
+        "replacementCase": "preserves an unread publication when a fresh external wildcard match enters",
+        "replacementCheck": "Same public expectation, one sole-source-runtime case instead of off/on/verify rows."
+      },
+      {
+        "case": "'%s keeps an unread detached host query result when its live wildcard match later leaves'",
+        "replacementCase": "'keeps an unread detached host query result when its live wildcard match later leaves'",
+        "action": "assertion-migration",
+        "before": [],
+        "after": []
+      },
+      {
+        "case": "'preserves an unread publication when a fresh external wildcard match enters'",
+        "action": "added-case",
+        "assertions": [
+          "expect(star.inactiveValues).toEqual([])"
+        ]
+      }
+    ]
+  }
+]

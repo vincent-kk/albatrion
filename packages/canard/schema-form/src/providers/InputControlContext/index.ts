@@ -1,2 +1,2 @@
-export { InputControlContextProvider } from './InputControlContextProvider';
-export { useInputControlContext } from './useInputControlContext';
+export { InputControlContextProvider } from './components/InputControlContextProvider';
+export { useInputControlContext } from './hooks/useInputControlContext';

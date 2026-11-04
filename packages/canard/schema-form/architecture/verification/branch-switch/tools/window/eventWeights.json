@@ -1,0 +1,112 @@
+{
+  "mount-oneOf-80": {
+    "weight": 1,
+    "eventsPerSample": 1,
+    "basis": "One branch form mount per session."
+  },
+  "mount-flat-1000": {
+    "weight": 1,
+    "eventsPerSample": 1,
+    "basis": "One flat form mount per session."
+  },
+  "mount-nested-d6-f4": {
+    "weight": 1,
+    "eventsPerSample": 1,
+    "basis": "One nested form mount per session."
+  },
+  "single-flat-1000-subscribed": {
+    "weight": 5000,
+    "eventsPerSample": 10,
+    "basis": "Typing with subscribers is the most frequent input event."
+  },
+  "single-flat-1000": {
+    "weight": 3000,
+    "eventsPerSample": 10,
+    "basis": "Frequent typing without subscribers."
+  },
+  "single-nested-d6-f4": {
+    "weight": 3000,
+    "eventsPerSample": 10,
+    "basis": "Frequent typing in nested forms."
+  },
+  "leaf-gate-250": {
+    "weight": 1500,
+    "eventsPerSample": 1,
+    "basis": "Common leaf edits near a modest gate set."
+  },
+  "leaf-gate-1000": {
+    "weight": 500,
+    "eventsPerSample": 1,
+    "basis": "Leaf edits with a larger gate set occur less often."
+  },
+  "leaf-gate-4000": {
+    "weight": 100,
+    "eventsPerSample": 1,
+    "basis": "Very large gate forms are uncommon."
+  },
+  "leaf-gate-8000": {
+    "weight": 30,
+    "eventsPerSample": 1,
+    "basis": "Extreme gate counts are rare."
+  },
+  "wave-1000": {
+    "weight": 50,
+    "eventsPerSample": 1,
+    "basis": "One write reaching one thousand subscribers is rare."
+  },
+  "switch-if-80": {
+    "weight": 150,
+    "eventsPerSample": 2,
+    "basis": "Checkbox and selector changes commonly reveal if-then sections."
+  },
+  "switch-oneOf-80": {
+    "weight": 100,
+    "eventsPerSample": 2,
+    "basis": "A user changes a branch selector."
+  },
+  "switch-siblings-0": {
+    "weight": 100,
+    "eventsPerSample": 1,
+    "basis": "A branch selector changes without passive siblings."
+  },
+  "switch-discriminator-80": {
+    "weight": 60,
+    "eventsPerSample": 2,
+    "basis": "Tagged branch transitions are less frequent."
+  },
+  "switch-payload-12": {
+    "weight": 60,
+    "eventsPerSample": 2,
+    "basis": "Large payload branch transitions are less frequent."
+  },
+  "switch-siblings-100": {
+    "weight": 60,
+    "eventsPerSample": 1,
+    "basis": "Transitions with moderate passive siblings are less frequent."
+  },
+  "switch-nested-oneOf-20": {
+    "weight": 40,
+    "eventsPerSample": 2,
+    "basis": "A nested branch selector changes."
+  },
+  "switch-siblings-1000": {
+    "weight": 15,
+    "eventsPerSample": 1,
+    "basis": "Transitions with one thousand siblings are exceptional."
+  },
+  "switch-siblings-4000": {
+    "weight": 3,
+    "eventsPerSample": 1,
+    "basis": "Transitions with four thousand siblings are extreme."
+  },
+  "bulk-flat-2000": {
+    "weight": 5,
+    "eventsPerSample": 1,
+    "basis": "Programmatic bulk setValue or reset is rare."
+  },
+  "bulk-nested-d6-f4": {
+    "weight": 5,
+    "eventsPerSample": 1,
+    "basis": "Programmatic nested bulk setValue or reset is rare."
+  }
+}

@@ -6,24 +6,24 @@
 
 ## Conventions
 
-- `inputContext`는 `useSnapshot(inputContext)`로 내용 기반 안정화 — 참조가 바뀌어도 값이 같으면 리렌더 방지
-- `context` 병합 우선순위: `{ ...external.context, ...context }` (Form-level이 ExternalFormContext를 override)
-- `attachedFilesMap`은 `Form.tsx`의 `useRef`로 생성된 Map 인스턴스를 받아야 한다 — form 생명주기 동안 동일 참조 유지가 보장되어야 함
+- `inputContext`는 `useSnapshot(inputContext)`로 내용 기준으로 안정화한다. 참조가 바뀌어도 값이 같으면 리렌더하지 않는다.
+- `context` 병합 우선순위: `{ ...external.context, ...context }` (Form 수준 값이 ExternalFormContext 값을 덮어쓴다)
+- `attachedFilesMap`은 `Form.tsx`의 `useRef`로 생성된 Map 인스턴스를 받아야 한다. form 생명주기 동안 같은 참조가 유지되어야 한다.
 
 ## Boundaries
 
 ### Always do
 
 - `context`를 `useSnapshot`으로 안정화하여 불필요한 리렌더 방지
-- `ExternalFormContext.context`(base)에 Form-level `context`(override)를 spread 병합
+- `ExternalFormContext.context`(기본값)에 Form 수준 `context`(덮어쓰는 값)를 spread로 병합
 
 ### Ask first
 
 - `AttachedFilesMap` 타입 또는 파일 첨부 저장 방식 변경 시
-- `context` 병합 전략 변경 시 (현재: `external → form-level override`)
+- `context` 병합 전략 변경 시 (현재: `external → form-level override`, 외부 값을 Form 수준 값이 덮어쓴다)
 
 ### Never do
 
-- `attachedFilesMap`을 Context 내부에서 생성 — 반드시 `Form.tsx`의 ref에서 전달받아야 함
-- `context` 딕셔너리를 직접 변이(mutate) — 항상 새 객체로 교체
+- `attachedFilesMap`을 Context 내부에서 생성 (반드시 `Form.tsx`의 ref에서 전달받는다)
+- `context` 딕셔너리를 직접 변경 (항상 새 객체로 교체한다)
 - 폼 노드 상태(노드 값, 에러 등)를 이 Context에 저장

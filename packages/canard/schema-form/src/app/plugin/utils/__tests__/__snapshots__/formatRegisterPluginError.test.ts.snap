@@ -1,0 +1,34 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatRegisterPluginError > 에러 메시지 스냅샷 > formatRegisterPluginError 스냅샷 1`] = `
+"Failed to register schema form plugin.
+
+  ╭──────────────────────────────────────────────────
+  │  Plugin Features:
+  │    • FormInput
+  │    • FormLabel
+  │    • fieldInputDefinitions
+  │    • validator
+  ├──────────────────────────────────────────────────
+  │  Error:  Plugin conflict: fieldInputDefinitions[0] conflicts with existing definition
+  ╰──────────────────────────────────────────────────
+
+The plugin could not be registered with the form system.
+This may indicate a problem with the plugin's configuration
+or a conflict with existing registered plugins.
+
+How to fix:
+  1. Check that the plugin exports are correctly structured:
+     {
+       renderKit?: { ... },
+       fieldInputDefinitions?: [...],
+       validator?: ValidatorFactory,
+       formatError?: ErrorFormatter
+     }
+
+  2. Ensure the plugin is not already registered
+
+  3. Verify there are no conflicts with existing plugins
+
+  4. Check the error message above for specific details"
+`;

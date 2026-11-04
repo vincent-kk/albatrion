@@ -1,0 +1,52 @@
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
+import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
+import { getDependencyIndex } from '../dependencies/getDependencyIndex';
+
+/**
+ * Select hosts touched by source changes, new children, or declaration selection.
+ * @param context - Changed source paths, entered nodes, and selected declarations
+ * @returns Live source addresses for this non-load derive round
+ */
+export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
+  context: SettlementContext<Self>,
+): ReadonlySet<string> => {
+  const paths = new Set<string>();
+  for (const owner of context.contextOwners ?? []) paths.add(owner);
+  const dependencies = getDependencyIndex(context.root.runtime.blueprint);
+  for (const changed of context.changedSource) {
+    for (const owner of dependencies.affected(changed, context.root))
+      paths.add(owner);
+    let path = changed;
+    while (true) {
+      paths.add(path);
+      if (!path) break;
+      path = resolvePointer(path, $.Parent);
+    }
+  }
+  for (const node of context.entered) {
+    paths.add(node.path);
+    if (node.parent) paths.add(node.parent.path);
+  }
+  for (const [node, ids] of context.selectedDeclarationIds) {
+    const previous = node.runtime.committedDeclarationIds?.get(
+      JSON.stringify([node.path, getBlueprintNodeIdentity(node.blueprintNode)]),
+    );
+    let haveSourceIdsChanged = !previous || previous.length !== ids.length;
+    if (previous && previous.length === ids.length)
+      for (let index = 0; index < previous.length; index++)
+        if (previous[index] !== ids[index]) {
+          haveSourceIdsChanged = true;
+          break;
+        }
+    if (haveSourceIdsChanged) {
+      paths.add(node.path);
+    }
+  }
+  return paths;
+};

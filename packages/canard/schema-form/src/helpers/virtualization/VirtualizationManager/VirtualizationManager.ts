@@ -3,14 +3,12 @@ import type { ComponentType } from 'react';
 import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable, Optional } from '@aileron/declare';
 
-import type { SchemaNode } from '@/schema-form/core';
-import { formatVirtualizationDisabledWarning } from '@/schema-form/helpers/error';
-import {
-  VIRTUALIZATION_DISABLED_FOR_FORM,
-  warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
+import type { FieldNode } from '@/schema-form/core';
+import { FormWarningCode } from '@/schema-form/errors';
+import { warnDevelopmentIssue } from '@/schema-form/helpers/warning';
+import { usePlaceholderBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 
 import {
   type ResolvedVirtualizationOptions,
@@ -19,7 +17,8 @@ import {
   type VirtualizationPlaceholderProps,
   resolveVirtualizationOptions,
 } from '../resolveVirtualizationOptions';
-import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
+import { formatVirtualizationDisabledWarning } from './utils/formatVirtualizationDisabledWarning';
+import { type IdleDeadlineLike, scheduleIdle } from './utils/scheduleIdle';
 
 /** Maximum reveals per idle slice, bounding the size of a single React commit */
 const MAX_REVEALS_PER_SLICE = 25;
@@ -43,7 +42,9 @@ const MIN_IDLE_BUDGET_MS = 4;
  */
 export class VirtualizationManager {
   /** Custom placeholder visual for deferred fields, null for the bare box */
-  public readonly Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
+  public readonly Placeholder: Nullable<
+    ComponentType<VirtualizationPlaceholderProps>
+  >;
 
   /** Resolved virtualization options this manager was created with */
   private readonly options: ResolvedVirtualizationOptions;
@@ -52,20 +53,20 @@ export class VirtualizationManager {
   private readonly registry = new Map<Element, Fn>();
 
   /** Nodes revealed at least once — survives ChildComponent cache rebuilds (e.g. array renumbering) */
-  private readonly revealedNodes = new WeakSet<SchemaNode>();
+  private readonly revealedNodes = new WeakSet<FieldNode>();
 
   /** Shared IntersectionObserver, lazily created on first register */
-  private observer: IntersectionObserver | null = null;
+  private observer: Nullable<IntersectionObserver> = null;
 
   /** Cancel handle for the pending idle tick, null when the pump is stopped */
-  private cancelIdle: Fn | null = null;
+  private cancelIdle: Nullable<Fn> = null;
 
   /**
    * This manager when a branch with `childCount` children qualifies for
    * gating, else null.
    * @example `const gateManager = manager?.forBranch(children.length) ?? null;`
    */
-  public forBranch(childCount: number): VirtualizationManager | null {
+  public forBranch(childCount: number): Nullable<VirtualizationManager> {
     return childCount >= this.options.threshold ? this : null;
   }
 
@@ -76,8 +77,8 @@ export class VirtualizationManager {
    */
   public forChild(
     renderedIndex: number,
-    node: SchemaNode,
-  ): VirtualizationManager | null {
+    node: FieldNode,
+  ): Nullable<VirtualizationManager> {
     return renderedIndex >= this.options.eagerCount &&
       !this.revealedNodes.has(node)
       ? this
@@ -85,7 +86,7 @@ export class VirtualizationManager {
   }
 
   /** Placeholder height (px) for a node before reveal */
-  public estimateHeight(node: SchemaNode): number {
+  public estimateHeight(node: FieldNode): number {
     const estimate = this.options.estimateHeight;
     return typeof estimate === 'function' ? estimate(node) : estimate;
   }
@@ -112,12 +113,12 @@ export class VirtualizationManager {
   }
 
   /** Whether the node has been revealed before (must stay eager on re-bake) */
-  public hasRevealed(node: SchemaNode): boolean {
+  public hasRevealed(node: FieldNode): boolean {
     return this.revealedNodes.has(node);
   }
 
   /** Record a node as revealed (one-way, idempotent) */
-  public markRevealed(node: SchemaNode): void {
+  public markRevealed(node: FieldNode): void {
     this.revealedNodes.add(node);
   }
 
@@ -149,7 +150,7 @@ export class VirtualizationManager {
     }
   };
 
-  private ensureObserver(): IntersectionObserver | null {
+  private ensureObserver(): Nullable<IntersectionObserver> {
     if (this.observer !== null) return this.observer;
     if (typeof IntersectionObserver === 'undefined') return null;
     this.observer = new IntersectionObserver(this.handleIntersections, {
@@ -194,12 +195,12 @@ export class VirtualizationManager {
    *          through the context so no gate is ever created
    */
   public static create(
-    input: boolean | VirtualizationOptions | undefined,
-  ): VirtualizationManager | null {
+    input: Optional<boolean | VirtualizationOptions>,
+  ): Nullable<VirtualizationManager> {
     if (typeof IntersectionObserver === 'undefined') {
-      if (input)
+      if (input && typeof window !== 'undefined')
         warnDevelopmentIssue({
-          code: VIRTUALIZATION_DISABLED_FOR_FORM,
+          code: FormWarningCode.VirtualizationDisabledForForm,
           message: formatVirtualizationDisabledWarning(),
         });
       return null;
@@ -211,7 +212,11 @@ export class VirtualizationManager {
   constructor(options: ResolvedVirtualizationOptions) {
     this.options = options;
     this.Placeholder = isReactComponent(options.Placeholder)
-      ? withErrorBoundary(options.Placeholder)
+      ? withErrorBoundary(
+          options.Placeholder,
+          undefined,
+          usePlaceholderBoundaryReporter,
+        )
       : null;
   }
 }

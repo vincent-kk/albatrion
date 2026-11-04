@@ -12,6 +12,8 @@ This is a **yarn-based monorepo** with the following structure:
 
 ## 📋 Important Commands
 
+The `ci` workflow uses the default `pr` tier for pull requests to every branch and pushes to `master`. Its install-free selector compares the merge base, follows workspace manifest dependencies and tracked source imports to select affected consumers, lints changed workspaces, builds their dependency closures, and runs available typechecks and per-package tests. Shared inputs select all workspaces; ordinary Markdown and unrelated tooling select none. Schema-form runs only `test --run --project unit` in its separate shard in the `pr` tier, without Chromium. The separate manual `pre-release` workflow runs the `pre-release` tier, typically on the commit about to be published: it checks every workspace and runs schema-form's complete unit, render, React 18, Storybook, verification and production suites with Chromium. Publishing remains a separate workflow. Other workspaces use the same checks in both tiers. Check jobs run Node with a 4 GB heap (`NODE_OPTIONS`) because the schema-form typecheck needs about 2.4 GB and the runner default of about 2 GB fails intermittently. The runner gives every Vitest command a 120-second test timeout to accommodate variable CI compute; a workspace whose test script finds no test files passes; each check job retains its 90-minute limit. Hooks keep Vitest's project defaults because Vitest 3.2.6 does not propagate the CLI hookTimeout option to projects; a hook timeout in GitHub Actions is the signal to revisit this limitation. To inspect a range locally, run `node scripts/ci/selectAffectedWorkspaces.mjs --tier pr --base <sha> --head <sha> --output <plan.json>`, followed by `node scripts/ci/runCheckPlan.mjs --plan <plan.json> --dry-run`. For the full pre-release plan, run `node scripts/ci/selectAffectedWorkspaces.mjs --tier pre-release --output <plan.json>` and the same dry-run command; the pre-release tier ignores base and head arguments.
+
 Use **yarn** commands (not npm) for this project:
 
 - `yarn lint` - Check code style across all packages
@@ -60,6 +62,17 @@ Precedence: repository instructions (this document, per-package CLAUDE.md) > rep
 
 Any other slash command comes from Claude Code itself or from an installed plugin (seiri, filid, and so on); this repository does not define them.
 
+## 📐 Module Contract Principles
+
+Owner principles for every package that has adopted FCA (directories with `INTENT.md`). Per the precedence above, they outrank `.claude/rules/`.
+
+1. **`index.ts` is the contract record.** It records which interface a fractal promised, and it is the strict contract that keeps internal helpers and sub-fractal trees from multiplying complexity outward. Widening it is a contract change; it lists its exports by name, never with a wildcard.
+2. **The root is the first image.** The `index.ts` and the flat files at a fractal's root are what a reader sees first, while attention is highest. A fractal root holds its documents, its `index.ts` and at most one implementation file named after the fractal; everything else sits in a role compartment (`components/`, `utils/`, `hooks/`, `types/` and the like) or in a child fractal. Every root file and every index export must have a consumer.
+3. **A consumer is product code outside the fractal**: another fractal or another package. Tests, benchmarks and stories are not consumers.
+4. **Imports follow lineage.** Upward is open: a fractal may import its ancestors' organ files and root files directly. Downward is closed: a parent reaches a child fractal only through the child's `index.ts`. Sideways is closed: a non-lineage fractal is reached only through its own `index.ts`, like an external package. An organ has no `index.ts`; its files are imported directly, and an organ never imports a child fractal of its owner. A fractal never imports its own or an ancestor's `index.ts`.
+5. **Tests verify from inside.** A test lives in the fractal it verifies (its `__tests__/`) and imports that fractal's internal files directly, never through its own `index.ts`. Public-API tests that act as an external consumer sit in the package-level `src/__tests__/` and import the package entry point. The verification-file exemption in `filid_fractal-boundaries` §5 does not lift §3.
+6. **An unused root file or export is a defect**, on par with a broken feature. The "leave pre-existing dead code" allowance of `seiri_reuse-first` §3 does not apply to it: remove it or move it below the root.
+
 ## 🎯 Quick Reference for Claude Code
 
 When working on this monorepo:
@@ -89,6 +102,7 @@ When working on this monorepo:
 4. Run yarn lint, typecheck, and tests before completing tasks
 5. Follow the project structure and naming conventions
 6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
+7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)
 
 ### 4. **Available Packages**
 

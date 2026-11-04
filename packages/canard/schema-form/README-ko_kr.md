@@ -14,7 +14,7 @@
 
 JSON Schema 검증은 플러그인 시스템을 통해 지원되며, 다양한 validator plugin을 통해 사용할 수 있습니다.
 
-다양한 `FormTypeInput` 컴포넌트를 정의함으로써 복잡한 요구사항을 쉽게 충족시킬 수 있는 유연성을 제공합니다.
+다양한 `FieldInput` 컴포넌트를 정의함으로써 복잡한 요구사항을 쉽게 충족시킬 수 있는 유연성을 제공합니다.
 
 ---
 
@@ -64,35 +64,49 @@ interface FormProps<
   jsonSchema: Schema;
   /** 이 SchemaForm의 기본값 */
   defaultValue?: Value;
-  /** 모든 FormTypeInput 구성 요소에 readOnly 속성을 적용합니다 */
+  /** 모든 FieldInput 구성 요소에 readOnly 속성을 적용합니다 */
   readOnly?: boolean;
-  /** 모든 FormTypeInput 구성 요소에 disabled 속성을 적용합니다 */
+  /** 모든 FieldInput 구성 요소에 disabled 속성을 적용합니다 */
   disabled?: boolean;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: SetStateFn<Value>;
-  /** 이 SchemaForm이 유효성 검사를 통과했을 때 호출되는 함수 */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onChange?: Fn<[value: Value]>;
+  /** 검증 결과나 외부 오류 목록이 폼 오류 목록을 바꿀 때 호출되는 함수 */
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** 폼이 제출될 때 호출되는 함수 (검증 통과 후 실행) */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
-  /** FormTypeInput 정의 목록 */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput 경로 매핑 */
-  formTypeInputMap?: FormTypeInputMap;
-  /** 사용자 정의 형식 렌더러 컴포넌트 */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
+  /** 이 폼 인스턴스의 오류 기록(생성·렌더 실패 포함)마다 호출되는 함수 */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** 준비가 끝난 뒤 루트 진단이 바뀔 때 호출되는 함수 */
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
+  /** `controls.unsetOnInactive`의 폼 기본값: 형상에서 빠진 필드의 값을 지움 (노드 자신의 정책이 우선) */
+  unsetOnInactive?: boolean;
+  /** 명령형 쓰기는 막지 않고 자동 쓰기만 억제하는 폼 기본값 */
+  disableAutomaticWrites?: boolean;
+  /** FieldInput 정의 목록 */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput 경로 매핑 */
+  fieldInputMap?: FieldInputMap;
+  /** 그룹 렌더러 컴포넌트 */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  /** 레이블 렌더러 컴포넌트 */
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  /** 입력 렌더러 컴포넌트 */
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  /** 오류 렌더러 컴포넌트 */
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: JSONSchemaError[];
+  errors?: FieldNode['globalErrors'];
   /** 사용자 정의 오류 형식 함수 */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
-   * 오류 표시 조건 (기본: ShowError.DirtyTouched)
+   * 오류 표시 조건 (기본: ShowError.EditedTouched)
    *   - `true`: 항상 표시
    *   - `false`: 절대 표시하지 않음
-   *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
-   *   - `ShowError.Touched`: 입력 필드가 초점 받았을 때 표시
-   *   - `ShowError.DirtyTouched`: Dirty 및 Touched 조건이 모두 충족되었을 때 표시
+   *   - `ShowError.Edited`: 사용자 입력으로 필드를 편집한 뒤 표시
+   *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
+   *   - `ShowError.EditedTouched`: 사용자 입력으로 필드를 편집하고 touched 상태가 되었을 때 표시
    */
   showError?: boolean | ShowError;
   /**
@@ -102,7 +116,7 @@ interface FormProps<
    *  - `ValidationMode.OnRequest`: 요청 시 유효성 검사
    */
   validationMode?: ValidationMode;
-  /** 커스텀 Validator Factory 함수 */
+  /** 커스텀 검증기 객체(`compile`과 `compileGuard`); Form 속성 > FormProvider > 플러그인 */
   validatorFactory?: ValidatorFactory;
   /** 사용자 정의 컨텍스트 */
   context?: Dictionary;
@@ -115,31 +129,65 @@ interface FormProps<
 
 #### FormHandle
 
-```ts
+`getAttachedFilesMap`과 `showError`를 뺀 모든 멤버는 폼의 현재 루트 노드를 대상으로 합니다. 폼이 트리를 새로 만들면 핸들도 새 루트를 따릅니다.
+
+```typescript
 interface FormHandle<
-  Schema extends JSONSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
-  reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
-  getState: Fn<[], NodeStateFlags>;
-  setState: Fn<[state: NodeStateFlags]>;
+  /** 현재 루트 노드 (첫 마운트 전에는 undefined) */
+  node?: InferFieldNode<Schema>;
+  /** `path`의 입력에 포커스 (생략하면 루트) */
+  focus: Fn<[path?: FieldNode['path']]>;
+  /** `path`의 입력 값을 선택 (생략하면 루트) */
+  select: Fn<[path?: FieldNode['path']]>;
+  /** `path`의 입력이 커밋된 값을 다시 읽게 함 (생략하면 루트) */
+  refresh: Fn<[path?: FieldNode['path']]>;
+  /** `path`에 렌더된 하위 트리를 다시 마운트 (생략하면 루트) */
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** 커밋된 기본값을 다시 불러옴; 자동 쓰기 옵션만 받음 */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
+  /** JSONPointer 경로의 노드 찾기 */
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  /** JSONPointer 경로에 맞는 모든 노드 찾기 */
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  /** 하나 이상의 노드에서 참인 상호작용 플래그 */
+  getState: Fn<[], FieldNode['globalState']>;
+  /** 모든 노드의 상호작용 플래그 패치 */
+  setState: Fn<[state: FieldNode['state']]>;
+  /** 모든 노드의 상호작용 플래그 지우기 */
   clearState: Fn;
+  /** 현재 출력 값 (배열 출력 필터 적용) */
   getValue: Fn<[], Value>;
+  /** 값 설정 */
   setValue: SetStateFnWithOptions<Value>;
-  /** 폼 전역 오류를 반환합니다 */
-  getErrors: Fn<[], JSONSchemaError[]>;
-  /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
+  /** 현재 오류 전체 */
+  getErrors: Fn<[], FieldNode['globalErrors']>;
+  /** 첨부 파일 맵 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
-  showError: Fn<[visible: boolean]>;
-  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
+  /** 검증을 실행하고 오류를 반환 */
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** `true`(기본)는 모든 오류 표시, `false`는 `showError` prop으로 되돌림 */
+  showError: Fn<[visible?: boolean]>;
+  /** 폼 제출; `useFormSubmit`이 진행 상태를 읽음 */
+  submit: TrackableHandlerFunction;
 }
 ```
+
+- 노드가 없는 `path`를 주면 `focus`, `select`, `refresh`, `remount`는 아무것도 하지 않습니다.
+- 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
+- `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
+- `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
+- `rebuild(option?)`은 이 스키마 객체의 청사진 캐시를 폐기하고 `reset`과 같은 옵션으로 현재 폼의 트리를 새로 만듭니다. 같은 스키마 객체를 계속 쓰는 다른 폼은 일반 `reset`에서도 기존 트리를 유지하며, 그 폼 자신의 `rebuild`나 새 마운트에서 새 청사진을 받습니다.
 
 #### AttachedFilesMap
 
@@ -155,11 +203,11 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: FieldNode['globalErrors'];
 }
 ```
 
@@ -167,7 +215,7 @@ interface FormChildrenProps<
 
 ```tsx
 import { Form, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // Validator plugin 등록 (앱 시작 시 한 번만)
 registerPlugin(ajvValidatorPlugin);
@@ -211,20 +259,64 @@ export const App = () => {
 
 `@canard/schema-form`은 플러그인 기반의 검증 시스템을 제공합니다. JSON Schema 검증을 위해 다양한 validator plugin을 사용할 수 있습니다.
 
-### ValidatorFactory
+### 검증기 플러그인 계약 (Validator plugin contract)
 
-ValidatorFactory는 JSON Schema를 받아 검증 함수를 반환하는 함수입니다:
+검증기 플러그인의 `validator`와 `Form`·`FormProvider`가 받는 `validatorFactory` 객체는 한 계약을 따릅니다. 스키마를 컴파일하는 `compile`과 `if`·`then`·`else`가 쓰는 동기 가드를 컴파일하는 `compileGuard`가 필수이고, `release`와 `dialect`는 선택입니다:
 
 ```ts
+// The engine passes its own copy of the schema; it is typed as JSONSchema here.
 interface ValidatorFactory {
-  (schema: JSONSchema): ValidateFunction<any>;
+  compile(copy: JSONSchema): ValidateFunction;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  release?(root: JSONSchema): void;
+  readonly dialect?: string;
 }
 
-type ValidateFunction<Value = unknown> = Fn<
-  [data: Value],
-  Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
->;
+type ValidateFunction<Value = unknown> = (
+  data: Value,
+) =>
+  | Promise<readonly ValidationIssue[] | null>
+  | readonly ValidationIssue[]
+  | null;
 ```
+
+선택 순서는 Form 속성, FormProvider, 플러그인의 `validator` 순입니다. 참조가 바뀌면 트리가 다시 만들어지므로 참조를 안정적으로 유지하세요.
+
+#### 필수 의무
+
+- `compile(copy)`는 엔진이 가진 루트 스키마 사본에 대한 `ValidateFunction`을 돌려줍니다. 이 함수는 순서가 있는 `ValidationIssue` 목록을, 값이 유효하면 `null`을 돌려주며, 예외를 던지면 안 됩니다.
+- `compileGuard(root, pointer)`는 `pointer` 위치의 `if` 스키마에 대해 `true`나 `false`를 답하는 동기 판정 함수를 돌려줍니다. 스키마는 `root`의 문맥에서 평가하므로 가드는 루트의 `$ref` 대상, `$id`, 앵커를 봅니다. 동적 앵커에 따라 달라지는 판정이 전체 검증과 일치하는지는 각 플러그인이 문서로 밝힌 지원 조건과 한계를 따르며, [ajv8](../schema-form-ajv8-plugin/README-ko_kr.md)과 [ajv7](../schema-form-ajv7-plugin/README-ko_kr.md) 플러그인 README의 "가드의 동적 범위" 문단에 있습니다.
+- `compileGuard`는 같은 루트에 대한 `compile`보다 먼저 불릴 수 있으며, 필요한 등록은 스스로 합니다.
+- 두 메서드 모두 받은 스키마와 검증하는 값을 바꾸면 안 됩니다.
+
+#### 선택 항목
+
+- `bind(instance)`는 소비자가 자기 검증기 인스턴스를 주입하는 훅입니다. 엔진은 이를 부르지 않습니다. 첫 폼이 컴파일되기 전에 한 번 부르세요. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않습니다.
+- `release(root)`는 엔진이 루트를 캐시에서 내보낼 때 불립니다. 멱등이어야 하므로 등록된 적 없는 루트를 해제해도 아무 일도 일어나지 않아야 합니다.
+- `dialect`는 플러그인이 검증하는 JSON Schema 방언을 이름 붙일 수 있을 때 그 이름입니다. `$schema`가 다른 스키마는 `DIALECT_MISMATCH` 경고를 냅니다.
+
+#### 실패 격리
+
+- 컴파일에 실패하거나, 던지거나, 불리언이 아닌 값을 돌려준 가드는 자기 게이트의 두 분기를 모두 끄고 폼마다 가드 위치당 한 번 `GUARD_FAILED`를 기록합니다. 가드 실패가 다른 게이트를 끄지는 않지만, 루트의 다른 곳에 풀리지 않는 `$ref`가 있는 것처럼 루트 위치에서 컴파일하는 모든 가드가 공유하는 컴파일 오류가 있으면 그 가드들이 각자 실패합니다.
+- `compile`이 던지면 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하고 가드는 바뀌지 않습니다.
+- 같은 `$id`를 가진 두 살아 있는 루트는 저마다 자기 루트로 판정합니다. 둘을 격리하는 것은 플러그인의 책임이며 엔진은 `$id`를 고치지 않습니다.
+- 이미 쓰이는 `$id`의 스키마를 등록하지 못하는 사용자 정의 검증기는 메시지에 AJV 6·7·8의 중복 id 문구인 `already exists`나 `resolves to more than one schema`를 담은 오류를 던져야 하며, 이 두 문구만 `reason: 'duplicateSchemaId'`와 같은 `$id`의 다른 루트가 해제된 뒤의 한 번 재시도를 받습니다.
+
+#### 배포 AJV 플러그인의 기본값
+
+- 기본 인스턴스는 형식(format)을 검사하지 않으며, 바인딩한 인스턴스는 자기 형식 설정을 그대로 씁니다.
+- `@canard/schema-form-ajv8-plugin`의 기본 진입점은 Draft-07을 검증하고, 다른 방언은 각자의 진입점이 있습니다.
+- 원격 `$ref`는 불러오지 않으므로 참조하는 스키마는 모두 루트 안에 있거나 바인딩한 인스턴스에 등록되어 있어야 합니다.
+- 가드는 `allErrors: false`와 `validateSchema: false`인 형제 인스턴스에서 컴파일하므로 AJV의 루트 메타 스키마 검사는 전체 컴파일에서만 돕니다.
+- 기본값인 `directGuardCompile`이 켜져 있으면 자족한 가드는 자기 부분 스키마를 직접 컴파일하고, `$ref`·앵커·`$schema`가 필요한 가드는 루트 위치에서 컴파일합니다.
+- 같은 `$id`의 루트는 서로 다른 검증 인스턴스로 격리합니다.
+
+#### 지원하지 않는 것
+
+- 한 스키마 위치가 서로 다른 두 동적 범위로 도달되는 동적 참조는 지원하지 않으며, 가드는 한 범위의 답을 냅니다. 정확한 동적 범위 한계는 각 플러그인 README에 있습니다.
+- 형제나 부모 값을 가리키는 `$data` 참조처럼 호스트 밖의 데이터를 읽는 조건은 지원하지 않습니다.
+- 비동기 가드, 곧 `if` 안의 `$async` 스키마나 비동기 키워드는 지원하지 않습니다.
+- 바인딩한 인스턴스의 엄격 옵션 때문에 컴파일에 실패하는 가드는 그 게이트의 두 분기를 모두 끄고 `GUARD_FAILED`를 기록합니다.
 
 ### Validator Plugin 사용법
 
@@ -232,86 +324,104 @@ type ValidateFunction<Value = unknown> = Fn<
 
 ```tsx
 import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // 앱 시작 시 플러그인 등록
 registerPlugin(ajvValidatorPlugin);
 ```
 
-#### 2. 커스텀 ValidatorFactory 사용
+#### 2. 커스텀 AJV 인스턴스
 
-특정 Form에서만 다른 검증 로직을 사용하고 싶은 경우:
+직접 만든 AJV 인스턴스를 사용하려면 플러그인을 등록하기 전에 주입합니다:
 
 ```tsx
-import { Form } from '@canard/schema-form';
-// createValidatorFactory 가 ajv8.x 기반인 경우, ajv 역시 8.x 버전을 사용해야 합니다.
-// 만약 ajv7.x를 사용하고 싶다면, @canard/schema-form-ajv7-plugin을 사용하세요.
-// 또는 ajv6.x인 경우 @canard/schema-form-ajv6-plugin을 사용하세요.
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
+import { Form, registerPlugin } from '@canard/schema-form';
+// 플러그인이 ajv8.x 기반이므로 ajv 역시 8.x 버전을 사용해야 합니다.
+// ajv7.x를 사용하려면 @canard/schema-form-ajv7-plugin을,
+// ajv6.x를 사용하려면 @canard/schema-form-ajv6-plugin을 사용하세요.
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
+const customAjv = new Ajv({
+  allErrors: true,
+  strictSchema: false,
+  validateFormats: false,
+});
+
+// 커스텀 키워드 추가
+customAjv.addKeyword({
+  keyword: 'isEven',
+  type: 'number',
+  validate: (schema: boolean, data: number) => {
+    if (schema === false) return true;
+    return data % 2 === 0;
+  },
+  errors: false,
+});
+
+// 플러그인을 등록하기 전에 인스턴스를 주입
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
+
 export const CustomValidationForm = () => {
-  const validatorFactory = useMemo(() => {
-    // 커스텀 AJV 인스턴스 생성
-    const customAjv = new Ajv({
-      allErrors: true,
-      strictSchema: false,
-      validateFormats: false,
-    });
-
-    // 커스텀 키워드 추가
-    customAjv.addKeyword({
-      keyword: 'isEven',
-      type: 'number',
-      validate: (schema: boolean, data: number) => {
-        if (schema === false) return true;
-        return data % 2 === 0;
-      },
-      errors: false,
-    });
-    // ValidatorFactory 생성
-    return createValidatorFactory(customAjv);
-  }, []);
-
   const jsonSchema = {
     type: 'object',
     properties: {
       name: { type: 'string', maxLength: 10 },
       evenNumber: { type: 'number', isEven: true, maximum: 100 },
     },
-  };
+  } as const;
 
-  return <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />;
+  return <Form jsonSchema={jsonSchema} />;
 };
 ```
 
-#### 3. FormProvider를 통한 전역 ValidatorFactory 설정
+`coerceTypes`, `useDefaults`, `removeAdditional`이 설정된 인스턴스는 검증이 값을 바꾸면 안 되므로 거부됩니다.
 
-여러 Form에서 동일한 검증 로직을 사용하는 경우:
+#### 3. Form 또는 FormProvider용 커스텀 ValidatorFactory
+
+한 Form이나 FormProvider 아래의 모든 Form에서 검증기를 바꾸려면 `compile`과 `compileGuard`를 모두 선언한 객체를 전달합니다:
 
 ```tsx
-import { FormProvider } from '@canard/schema-form';
-// createValidatorFactory 가 ajv8.x 기반인 경우, ajv 역시 8.x 버전을 사용해야 합니다.
-// 만약 ajv7.x를 사용하고 싶다면, @canard/schema-form-ajv7-plugin을 사용하세요.
-// 또는 ajv6.x인 경우 @canard/schema-form-ajv6-plugin을 사용하세요.
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
-import Ajv from 'ajv';
+import { Form, FormProvider, type ValidatorFactory } from '@canard/schema-form';
 
-export const App = () => {
-  const validatorFactory = useMemo(() => {
-    const customAjv = new Ajv({
-      allErrors: true,
-      strictSchema: false,
-    });
-    return createValidatorFactory(customAjv);
-  }, []);
-  return (
-    <FormProvider validatorFactory={validatorFactory}>
-      <MyForms />
-    </FormProvider>
-  );
+// 컴포넌트 밖에서 한 번만 선언: 참조가 바뀌면 트리가 다시 만들어집니다.
+const validatorFactory: ValidatorFactory = {
+  compile: (copy) => compileWithMyEngine(copy),
+  compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
 };
+
+export const CustomValidationForm = () => (
+  <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />
+);
+
+export const App = () => (
+  <FormProvider validatorFactory={validatorFactory}>
+    <MyForms />
+  </FormProvider>
+);
 ```
+
+AJV 플러그인의 `createValidatorFactory(ajv)`는 compile 함수만 반환하므로 그 자체로는 유효한 `validatorFactory`가 아닙니다.
+
+### 조건 스키마: if, then, else
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: { country: { type: 'string' } },
+  if: { properties: { country: { const: 'KR' } }, required: ['country'] },
+  then: { properties: { phone: { type: 'string', pattern: '^010-' } } },
+  else: { properties: { phone: { type: 'string', pattern: '^\\+' } } },
+} as const;
+```
+
+- `if` 스키마는 호스트 값, 곧 `if`를 선언한 객체의 값을 검증기가 볼 형태 그대로 받아 평가합니다.
+- `then`은 판정이 참인 동안, `else`는 거짓인 동안 형상에 속합니다.
+- 값이 없거나 객체가 아닌 호스트는 `{}`에 대해 평가합니다. JSON Schema에 따라 `properties`는 `{}`에서 공허하게 참이므로, 필드에 값이 생길 때까지 분기를 기다리게 하려면 조건에 `required`를 더하세요.
+- 가드 실패는 거짓 판정이 아닙니다. 컴파일이나 평가에 실패한 가드는 `then`과 `else`를 모두 끄고 그 게이트에 대해서만 `GUARD_FAILED`를 기록합니다.
+- 선택된 검증기가 없으면, 곧 Form이나 FormProvider의 `validatorFactory`도 검증기 플러그인도 없으면 `then`과 `else`는 모두 꺼진 채로 남습니다.
+- 허용 형에 object가 없는 호스트(문자열, 숫자, 불리언, 배열, null 전용 필드)의 `if`는 유효한 JSON Schema이지만, 폼은 이를 `{}`에 대해 평가하므로 분기가 필드 자신의 값을 읽지 못합니다. 청사진은 진단 수집 한 번마다 `if` 위치당 한 번 details `{ kind }`와 함께 `IF_ON_NON_OBJECT_HOST` 경고를 냅니다. 조건을 감싸는 객체로 옮기거나 호스트 형에 `object`를 더하세요. `type: ['object', 'string']` 같은 union과 nullable 객체는 경고하지 않습니다.
 
 ### 오류 메시지 형식 지정
 
@@ -327,7 +437,7 @@ export const App = () => {
 
 📌 유효성 검증 메시지는 다음 규칙을 따르도록 정의해야 합니다:
 
-- 유효성 검증 메시지는 jsonSchema의 `errorMessages` 속성에 정의해야 합니다.
+- 유효성 검증 메시지는 jsonSchema의 `presentation.errorMessages` 속성에 정의해야 합니다.
 - 유효성 검증 메시지는 `{[keyword]:errorMessage}` 형태로 정의해야 합니다.
 - `default` 키를 정의하면 keyword가 매칭되지 않는 경우 기본값으로 사용됩니다.
 - 각각의 에러 메시지(errorMessage)는 다음과 같은 표현을 통해 동적으로 값을 치환할 수 있습니다
@@ -344,11 +454,14 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength:
-          '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
-        maxLength: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
-        required: '이름은 필수 입력 항목입니다.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+          maxLength:
+            '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+          required: '이름은 필수 입력 항목입니다.',
+        },
       },
     },
   },
@@ -382,20 +495,23 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength: {
-          ko_KR: '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at least {limit} characters long. Current value: {value}',
-        },
-        maxLength: {
-          ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at most {limit} characters long. Current value: {value}',
-        },
-        required: {
-          ko_KR: '이름은 필수 입력 항목입니다.',
-          en_US: 'Name is a required field.',
+      presentation: {
+        errorMessages: {
+          minLength: {
+            ko_KR:
+              '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at least {limit} characters long. Current value: {value}',
+          },
+          maxLength: {
+            ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at most {limit} characters long. Current value: {value}',
+          },
+          required: {
+            ko_KR: '이름은 필수 입력 항목입니다.',
+            en_US: 'Name is a required field.',
+          },
         },
       },
     },
@@ -427,18 +543,18 @@ const value = 'AB';
 
 ---
 
-## FormTypeInput 시스템
+## FieldInput 시스템
 
-`@canard/schema-form`은 강력하고 유연한 FormTypeInput 시스템을 제공합니다. 이 시스템은 사용자가 각 JSON 스키마 노드에 어떤 입력 컴포넌트를 사용할지 정확히 제어할 수 있도록 합니다.
+`@canard/schema-form`은 강력하고 유연한 FieldInput 시스템을 제공합니다. 이 시스템은 사용자가 각 JSON 스키마 노드에 어떤 입력 컴포넌트를 사용할지 정확히 제어할 수 있도록 합니다.
 
-### FormTypeInputDefinition
+### FieldInputDefinition
 
-FormTypeInputDefinition은 특정 조건에 맞는 JSON 스키마 노드에 사용될 입력 컴포넌트를 정의합니다:
+FieldInputDefinition은 특정 조건에 맞는 JSON 스키마 노드에 사용될 입력 컴포넌트를 정의합니다:
 
 ```ts
-type FormTypeInputDefinition<T = unknown> = {
-  test: FormTypeTestFn | FormTypeTestObject;
-  Component: ComponentType<InferFormTypeInputProps<T>>;
+type FieldInputDefinition<T = unknown> = {
+  test: FieldInputTestFn | FieldInputTestObject;
+  Component: ComponentType<InferFieldInputProps<T>>;
 };
 ```
 
@@ -449,82 +565,98 @@ type FormTypeInputDefinition<T = unknown> = {
 
 #### 테스트 함수 또는 테스트 객체
 
-FormTypeInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있습니다:
+FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있습니다:
 
 ```ts
-type Hint = {
-  jsonSchema: JSONSchema;
-  type: string;
-  format: string;
-  formType: string;
+type FieldInputHint = {
+  type: FieldNodeType;
+  schemaType: FieldNode['schemaType'];
+  misfit: boolean;
   path: string;
-  [alt: string]: any;
+  required: boolean;
+  nullable: boolean;
+  jsonSchema: JSONSchema | JSONSchemaWithVirtual;
+  format?: string;
+  inputType?: string;
 };
-type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
-type FormTypeTestObject = Partial<{
-  type: Array<string>;
-  jsonSchema: JSONSchema;
-  format: Array<string>;
-  formType: Array<string>;
-  [alt: string]: any;
+// type, schemaType, path, format, inputType은 값 하나 또는 목록 중 아무 값과 맞음
+type FieldInputTestObject = Partial<{
+  type: FieldNodeType | FieldNodeType[];
+  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
+  path: string | string[];
+  format: string | string[];
+  inputType: string | string[];
+  required: boolean;
+  nullable: boolean;
 }>;
 ```
 
-- **FormTypeTestFn**: Hint 객체를 받아 boolean을 반환하는 함수입니다. 더 복잡한 조건을 구현하는 데 유용합니다.
-- **FormTypeTestObject**: 조건을 단순히 객체로 정의할 수 있습니다. 예를 들어, `{ type: ['string'], format: ['email'] }`는 문자열 유형이고 이메일 형식인 노드를 일치시킵니다.
+inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input type과 같지 않습니다.
 
-#### FormTypeInput 속성
+- **FieldInputTestFn**: FieldInputHint 객체를 받아 boolean을 반환하는 함수입니다. 더 복잡한 조건을 구현하는 데 유용합니다.
+- **FieldInputTestObject**: 조건을 단순히 객체로 정의할 수 있습니다. 예를 들어, `{ type: ['string'], format: ['email'] }`는 문자열 유형이고 이메일 형식인 노드를 일치시킵니다.
+
+#### FieldInput 속성
 
 선택된 컴포넌트는 다음 props를 받습니다:
 
 ```ts
-interface FormTypeInputProps<
+interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
+    ? JSONSchema
+    : InferJSONSchema<Value>,
+  Node extends FieldNode = unknown extends Value
+    ? FieldNode
+    : InferFieldNode<Schema>,
 > {
-  /** FormTypeInput 컴포넌트의 JSON 스키마 */
+  /** FieldInput 컴포넌트의 JSON 스키마 */
   jsonSchema: Schema;
-  /** FormTypeInput 컴포넌트의 읽기 전용 상태 */
+  /** FieldInput 컴포넌트의 읽기 전용 상태 */
   readOnly: boolean;
-  /** FormTypeInput 컴포넌트의 비활성화 상태 */
+  /** FieldInput 컴포넌트의 비활성화 상태 */
   disabled: boolean;
-  /** FormTypeInput 컴포넌트에 할당된 스키마 노드가 필수인지 여부 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드가 필수인지 여부 */
   required: boolean;
-  /** FormTypeInput 컴포넌트에 할당된 스키마 노드 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드 */
   node: Node;
-  /** 이 필드의 JSON Schema 타입 (예: 'string', 'number', 'object', 'array') */
-  type: Node['schemaType'];
-  /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 이름 */
+  /** 노드 종류 (예: 'string', 'number', 'object', 'array') */
+  type: Node['type'];
+  /** 작성한 허용 종류('integer' 포함), virtual 노드는 undefined */
+  schemaType: Node['schemaType'];
+  /** 저장된 값이 허용 종류와 어긋나는지 */
+  misfit: Node['isMisfit'];
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
-  /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 경로 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
   path: Node['path'];
   /** 이 필드가 null 값을 허용하는지 여부 (스키마 타입 배열에 'null'이 포함된 경우에서 파생) */
   nullable: Node['nullable'];
-  /** FormTypeInput 컴포넌트에 할당된 스키마 노드의 오류 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 오류 */
   errors: Node['errors'];
   /** 이 필드의 에러를 표시할지 여부 */
   errorVisible: boolean;
-  /** JSONSchema에서 정의된 `computed.watch`(=`&watch`) 속성에 따라 모니터링되는 값 */
+  /** JSONSchema에서 정의된 `controls.watch` 경로에 따라 모니터링되는 값 */
   watchValues: WatchValues;
-  /** FormTypeInput 컴포넌트의 기본값 */
+  /** FieldInput 컴포넌트의 기본값 */
   defaultValue: Value | undefined;
-  /** FormTypeInput 컴포넌트의 값 */
+  /** FieldInput 컴포넌트의 값 */
   value: Value | undefined;
-  /** FormTypeInput 컴포넌트의 onChange 핸들러 */
+  /** FieldInput 컴포넌트의 onChange 핸들러 */
   onChange: SetStateFnWithOptions<Value | undefined>;
   /** 파일(들)을 폼의 파일 저장소에 첨부/해제합니다 */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  /** 이 FormTypeInput 컴포넌트의 자식 FormTypeInput 컴포넌트 */
-  ChildNodeComponents: ChildNodeComponent[];
+  /** 이 FieldInput 컴포넌트의 자식 FieldInput 컴포넌트 */
+  ChildFields: ChildField[];
   /** 입력 필드의 placeholder 텍스트 */
   placeholder: string | undefined;
   /** 스타일링을 위한 CSS 클래스 이름 */
   className: string | undefined;
-  /** FormTypeInput 컴포넌트의 스타일 */
+  /** FieldInput 컴포넌트의 스타일 */
   style: CSSProperties | undefined;
   /** Form에 전달되는 사용자 정의 컨텍스트 */
   context: Context;
@@ -535,26 +667,28 @@ interface FormTypeInputProps<
 
 ### 파일 관리 시스템 (onFileAttach)
 
-`@canard/schema-form`은 파일 자체는 별도의 저장소에 보관하고, 스키마 값에는 메타데이터(파일명, 크기 등)만 저장하는 방식을 지원합니다. 이를 위해 `FormTypeInput`에서 `onFileAttach`를 호출하여 파일을 첨부하고, 제출 시 `FormHandle.getAttachedFilesMap()`으로 실제 파일을 추출해 API로 전송합니다.
+`@canard/schema-form`은 파일 자체는 별도의 저장소에 보관하고, 스키마 값에는 메타데이터(파일명, 크기 등)만 저장하는 방식을 지원합니다. 이를 위해 `FieldInput`에서 `onFileAttach`를 호출하여 파일을 첨부하고, 제출 시 `FormHandle.getAttachedFilesMap()`으로 실제 파일을 추출해 API로 전송합니다.
 
 - **저장 위치**: `getAttachedFilesMap()`은 `Map<string, File[]>`을 반환합니다. 키는 해당 입력의 표준 JSONPointer 경로(`node.path`)입니다. 이때 키는 RFC 6901의 표준 JSONPointer만 사용하며, 확장 문법(`..`, `.`, `*`)은 사용하지 않습니다.
 - **자동 정리(cleanup)**:
   - 폼이 재구성되거나(unmount 포함) 입력 노드가 제거되면 해당 경로의 파일은 자동으로 제거됩니다.
   - 조건부 스키마(`if/then/else`, `oneOf`)로 필드가 사라질 때도 파일이 정리됩니다.
 
-#### 단일/다중 파일 FormTypeInput 예시
+#### 단일/다중 파일 FieldInput 예시
 
 ```tsx
-const FileFormTypeInput = ({
+const FileFieldInput = ({
   onFileAttach,
   onChange,
   readOnly,
   disabled,
   value,
   jsonSchema,
-}: FormTypeInputProps<any>) => {
-  const multiple: boolean = jsonSchema?.FormTypeInputProps?.multiple ?? false;
-  const accept: string | undefined = jsonSchema?.FormTypeInputProps?.accept;
+}: FieldInputProps<any>) => {
+  const multiple: boolean =
+    jsonSchema?.presentation?.FieldInputProps?.multiple ?? false;
+  const accept: string | undefined =
+    jsonSchema?.presentation?.FieldInputProps?.accept;
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const fileList = Array.from(e.target.files || []);
@@ -613,8 +747,10 @@ const schema = {
     title: { type: 'string' },
     attachment: {
       type: 'object',
-      FormTypeInput: FileFormTypeInput,
-      FormTypeInputProps: { multiple: false, accept: '*/*' },
+      presentation: {
+        FieldInput: FileFieldInput,
+        FieldInputProps: { multiple: false, accept: '*/*' },
+      },
       properties: {
         name: { type: 'string' },
         size: { type: 'number' },
@@ -671,58 +807,60 @@ export const UploadForm = () => {
 - 배열 파일의 FormData 키는 표준 JSONPointer 방식(예: "/0", "/1")을 사용하시고, 대괄호 `[]` 표기는 사용하지 마십시오.
 - 대용량 파일은 업로드 진행 상태/취소, 청크 업로드 등 추가 전략을 적용하십시오.
 
-### FormTypeInputMap
+### FieldInputMap
 
 구성 요소를 JSON 스키마의 특정 필드에 직접 매핑할 수 있습니다:
 
 ```ts
-type FormTypeInputMap = {
-  [path: string]: ComponentType<FormTypeInputProps>;
+type FieldInputMap = {
+  [path: string]: ComponentType<FieldInputProps>;
 };
 ```
 
 이것은 JSON 스키마의 특정 경로에 컴포넌트를 명시적으로 할당할 수 있도록 합니다.
 
-### FormTypeInput 선택 프로세스 및 우선순위
+### FieldInput 선택 프로세스 및 우선순위
 
 폼이 렌더링될 때 각 JSON 스키마 노드의 입력 컴포넌트는 다음과 같은 우선순위에 따라 결정됩니다:
 
-1. **직접 할당된 FormTypeInput**: JSON 스키마 객체의 `FormTypeInput` 속성을 통해 컴포넌트가 직접 할당된 경우
+1. **직접 할당된 FieldInput**: JSON 스키마 객체의 `presentation.FieldInput` 속성을 통해 컴포넌트가 직접 할당된 경우
 
 ```js
 const jsonSchema = {
   type: 'string',
-  FormTypeInput: CustomTextInput, // 가장 높은 우선순위
+  presentation: {
+    FieldInput: CustomTextInput, // 가장 높은 우선순위
+  },
 };
 ```
 
-2. **FormTypeInputMap**: `Form` 구성 요소에 전달된 `formTypeInputMap`에 일치하는 경로가 있을 때
+2. **FieldInputMap**: `Form` 구성 요소에 전달된 `fieldInputMap`에 일치하는 경로가 있을 때
 
    ```jsx
    <Form
      jsonSchema={jsonSchema}
-     formTypeInputMap={{
+     fieldInputMap={{
        '/user/email': EmailInput,
        '/user/profile/avatar': AvatarUploader,
      }}
    />
    ```
 
-3. **Form의 FormTypeInputDefinitions**: `Form` 컴포넌트에 전달된 `formTypeInputDefinitions` 배열에서 테스트 조건을 충족하는 첫 번째 정의
+3. **Form의 FieldInputDefinitions**: `Form` 컴포넌트에 전달된 `fieldInputDefinitions` 배열에서 테스트 조건을 충족하는 첫 번째 정의
    <Form
      jsonSchema={jsonSchema}
-     formTypeInputDefinitions={[
+     fieldInputDefinitions={[
        { test: { type: ['string'], format: ['email'] }, Component: EmailInput },
        { test: { type: ['string'], format: ['date'] }, Component: DatePicker },
      ]}
    />
    ```
 
-4. **FormProvider의 FormTypeInputDefinitions**: `FormProvider`를 통해 전역으로 제공된 `formTypeInputDefinitions`
+4. **FormProvider의 FieldInputDefinitions**: `FormProvider`를 통해 전역으로 제공된 `fieldInputDefinitions`
 
-5. **플러그인의 FormTypeInputDefinitions**: 등록된 플러그인에서 제공된 `formTypeInputDefinitions`
+5. **플러그인의 FieldInputDefinitions**: 등록된 플러그인에서 제공된 `fieldInputDefinitions`
 
-**중요**: 동일한 조건을 충족하는 여러 FormTypeInput이 존재할 경우, 위의 우선순위 순서대로 첫 번째로 발견된 것이 사용됩니다. 배열로 제공될 경우, 정의는 배열에 나타나는 순서대로 평가됩니다.
+**중요**: 동일한 조건을 충족하는 여러 FieldInput이 존재할 경우, 위의 우선순위 순서대로 첫 번째로 발견된 것이 사용됩니다. 배열로 제공될 경우, 정의는 배열에 나타나는 순서대로 평가됩니다.
 
 이 강력한 메커니즘은 **높은 수준의 커스터마이징**을 가능하게 합니다:
 
@@ -741,7 +879,7 @@ import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 registerPlugin(antd5Plugin);
 
 export const CustomizedForm = () => {
-  // 글로벌 FormTypeInput 정의 (중간 우선순위)
+  // 글로벌 FieldInput 정의 (중간 우선순위)
   const globalDefinitions = [
     {
       test: { type: ['string'] },
@@ -749,7 +887,7 @@ export const CustomizedForm = () => {
     },
   ];
 
-  // 양식별 FormTypeInput 정의 (더 높은 우선순위)
+  // 양식별 FieldInput 정의 (더 높은 우선순위)
   const formDefinitions = [
     {
       test: { type: ['string'], format: ['email'] },
@@ -778,7 +916,9 @@ export const CustomizedForm = () => {
               postalCode: { type: 'string' }, // PostalCodeInput 사용 (경로 매핑)
               country: {
                 type: 'string',
-                FormTypeInput: CountrySelector, // 직접 할당된 컴포넌트 사용 (최우선순위)
+                presentation: {
+                  FieldInput: CountrySelector, // 직접 할당된 컴포넌트 사용 (최우선순위)
+                },
               },
             },
           },
@@ -788,11 +928,11 @@ export const CustomizedForm = () => {
   };
 
   return (
-    <FormProvider formTypeInputDefinitions={globalDefinitions}>
+    <FormProvider fieldInputDefinitions={globalDefinitions}>
       <Form
         jsonSchema={jsonSchema}
-        formTypeInputDefinitions={formDefinitions}
-        formTypeInputMap={formInputMap}
+        fieldInputDefinitions={formDefinitions}
+        fieldInputMap={formInputMap}
       />
     </FormProvider>
   );
@@ -800,6 +940,80 @@ export const CustomizedForm = () => {
 ```
 
 이 강력한 시스템은 개발자가 양식의 모든 측면에 대해 세밀한 제어를 유지하면서 코드 중복을 최소화할 수 있도록 합니다.
+
+---
+
+## 오류 처리
+
+오류 클래스는 네 가드 `isJSONSchemaError`, `isSchemaFormError`, `isValidationError`, `isUnhandledError`로 가르고, `error.code`(`onError`에서는 `record.code`)는 문자열 리터럴 대신 `FormErrorCode`·`FormWarningCode` 상수와 비교하십시오. 값은 `'SCHEMA_FORM_ERROR.RENDER_FAILED'` 같은 그룹 한정 문자열입니다. 상수는 패키지 안의 이름 변경을 따라가지만, 리터럴은 조용히 더는 맞지 않게 됩니다.
+
+```tsx
+import { useRef } from 'react';
+import {
+  Form,
+  FormErrorCode,
+  FormWarningCode,
+  isValidationError,
+  useFormSubmit,
+  type FormHandle,
+} from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+declare function reportToMonitoring(error: unknown): void;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async () => {
+    try {
+      await submit();
+    } catch (error) {
+      if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
+        return; // field errors are already on the form; formRef.current?.getErrors() lists them
+      throw error;
+    }
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onError={(record) => {
+          if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
+        }}
+      />
+      <button onClick={handleSubmit} disabled={pending}>Submit</button>
+    </>
+  );
+}
+```
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. submit()·validate()의 caller에게 거부되는 묶음은 거부 값 하나로 유지하며 개별 onError 기록에는 묶음을 싣지 않습니다. 명시적 validate 중 검증 결과 리스너 실패는 caller가 없는 별도 통로여서 host에 전달하고 validate 자체는 resolve할 수 있습니다. 부른 쪽이 없는 실패는 기존 호스트 채널에 깊이 우선·원소 순서로 잎마다 보냅니다. 비어 있지 않고 모든 index가 own인 배열을 가진 SchemaFormError MultipleErrors만 펼치며 형식이 어긋나거나 읽을 수 없거나 다시 만난 묶음과 그 밖의 값은 그대로 보냅니다. engine 검증 결과 파동·자동 OnChange 검증·load flush의 handler-first 순서와 native submit·load slot의 original-first 순서는 유지합니다. React와 렌더 ErrorBoundary는 던진 값을 그대로 기록합니다. 이미 보고한 오류·핸들러 예외만 담은 유효한 중첩 묶음은 capture를 생략하며 미지·malformed·순환·재방문 중첩 묶음은 기록합니다. 배열 길이는 1..2^32 − 1 정수이며 처음과 마지막 읽기가 같아야 하고 각 순회는 호출 전체에서 원소 점검 예산 1,000,000개를 공유합니다. 읽을 수 없거나 길이가 변하거나 예산을 넘은 묶음은 같은 identity의 잎이므로 host도 묶음을 받을 수 있습니다. capture는 최상위 메타데이터·문자열 변환도 보호하며 읽기 실패 때 원래 값을 고정 fallback 메시지의 기록 하나로 전달합니다. 전달 시점·호출자 거부·재진입·sink 예외 전파는 유지합니다.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+`onError`는 그 폼 인스턴스의 모든 오류와 경고 기록을 받고, `submit()`은 검증이 실패하면 `ValidationError`(`FormErrorCode.SchemaValidationFailed`)로 거부합니다. 전체 코드 일람은 [SPECIFICATION — 오류 처리](./docs/ko/SPECIFICATION.md#오류-처리)에 있습니다.
 
 ---
 
@@ -815,7 +1029,7 @@ import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 registerPlugin(antd5Plugin);
-registerPlugin(AjvValidatorPlugin);
+registerPlugin(ajvValidatorPlugin);
 ```
 
 ### 사용 가능한 플러그인
@@ -840,16 +1054,16 @@ registerPlugin(AjvValidatorPlugin);
 
 ```ts
 export interface SchemaFormPlugin {
-  /** Form.Group 컴포넌트 */
-  FormGroup?: ComponentType<FormTypeRendererProps>;
+  /** Form.Field 컴포넌트 */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label 컴포넌트 */
-  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Input 컴포넌트 */
-  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Error 컴포넌트 */
-  FormError?: ComponentType<FormTypeRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** 사용자 정의 입력 타입 정의 */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  fieldInputDefinitions?: FieldInputDefinition[];
   /** 사용자 정의 유효성 검사기 플러그인 */
   validator?: ValidatorPlugin;
   /** 에러 메시지 포매팅 함수 */
@@ -858,13 +1072,15 @@ export interface SchemaFormPlugin {
 
 export interface ValidatorPlugin {
   /** 외부 Validator 인스턴스 주입 */
-  bind: Fn<[instance: any]>;
+  bind?: Fn<[instance: any]>;
   /** 스키마 기반 Validator 생성 함수 */
-  compile: ValidatorFactory;
-}
-
-export interface ValidatorFactory {
-  (schema: JSONSchema): ValidateFunction<any>;
+  compile(jsonSchema: JSONSchema): ValidateFunction;
+  /** 작성된 스키마 포인터에 대한 동기 가드 컴파일러 */
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  /** 루트의 검증기 자원 해제 */
+  release?(root: JSONSchema): void;
+  /** 선언된 JSON Schema 방언 */
+  readonly dialect?: string;
 }
 ```
 
@@ -872,13 +1088,17 @@ export interface ValidatorFactory {
 
 동일한 속성에 대해 여러 개의 플러그인이 등록된 경우, 다음과 같은 우선순위 규칙이 적용됩니다.
 
-| 속성                                               | 허용 개수         | 우선순위 규칙                                     |
-| -------------------------------------------------- | ----------------- | ------------------------------------------------- |
-| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | 하나만 허용       | 마지막에 등록한 컴포넌트가 적용됩니다.            |
-| `formTypeInputDefinitions`                         | 여러 개 병합 가능 | 병합되며, 마지막에 등록한 항목이 우선 적용됩니다. |
-| `validator`, `formatError`                         | 하나만 허용       | 마지막에 등록한 항목이 적용됩니다.                |
+| 속성                                                                           | 허용 개수         | 우선순위 규칙                                     |
+| ------------------------------------------------------------------------------ | ----------------- | ------------------------------------------------- |
+| `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` | 하나만 허용       | 마지막에 등록한 컴포넌트가 적용됩니다.            |
+| `fieldInputDefinitions`                                                        | 여러 개 병합 가능 | 병합되며, 마지막에 등록한 항목이 우선 적용됩니다. |
+| `validator`, `formatError`                                                     | 하나만 허용       | 마지막에 등록한 항목이 적용됩니다.                |
 
 이 구조는 다양한 플러그인을 조합해 사용하는 경우에도 일관된 우선순위와 확장성을 제공합니다.
+
+기본 그룹 렌더러는 자체 레이블과 메시지를 그리므로 `FormLabelRenderer`와 `FormErrorRenderer`는 컴포지션 API(`Form.Label`, `Form.Error`)나 이를 호출하는 사용자 그룹 렌더러를 통해서만 나타납니다.
+
+렌더러 속성은 폼이 마운트될 때 한 번 읽히므로, 마운트 이후에 렌더러를 교체해도 반영된다고 보장하지 않습니다.
 
 ---
 
@@ -917,8 +1137,8 @@ JSONPointer는 RFC 6901 사양을 따릅니다:
 
 **사용 컨텍스트**: 확장 JSONPointer 문법은 특정 컨텍스트에서만 사용할 수 있습니다:
 
-- `FormTypeInputMap` 키 (와일드카드 `*` 사용)
-- `computed`(`&`) 속성 (상대 경로 `..`, `.` 사용)
+- `FieldInputMap` 키 (와일드카드 `*` 사용)
+- `controls` 표현식 (상대 경로 `..`, `.` 사용)
 - `node.find()` 메서드를 통한 프로그래밍적 노드 탐색
 
 **주의**: 확장 문법은 `<Form.Render path="..." />` 컴포넌트에서는 **지원되지 않으며**, 표준 JSONPointer 경로만 허용됩니다. `node.find()`는 상대 경로 탐색(`..`, `.`)을 지원하지만 와일드카드는 지원하지 않습니다 — 와일드카드 매칭에는 `findNodes()`를 사용하세요.
@@ -927,7 +1147,7 @@ JSONPointer는 RFC 6901 사양을 따릅니다:
 
 #### 부모 탐색 (`..`)
 
-부모 노드로 탐색, 주로 computed 속성에서 사용:
+부모 노드로 탐색, 주로 `controls` 표현식에서 사용:
 
 ```tsx
 const jsonSchema = {
@@ -939,8 +1159,8 @@ const jsonSchema = {
         type: { type: 'string', enum: ['admin', 'user'] },
         permissions: {
           type: 'array',
-          computed: {
-            watch: '../type', // 부모의 type 필드 감시
+          controls: {
+            watch: ['../type'], // 부모의 type 필드 감시
             active: "../type === 'admin'", // admin일 때만 표시
           },
         },
@@ -964,9 +1184,9 @@ const jsonSchema = {
   properties: {
     settings: {
       type: 'object',
-      computed: {
-        watch: '.', // 현재 노드 감시
-        // 기타 computed 로직
+      controls: {
+        watch: ['.'], // 현재 노드 감시
+        // 기타 controls 로직
       },
     },
   },
@@ -978,7 +1198,7 @@ const currentNode = node.find('.'); // 현재 노드 참조
 
 #### 와일드카드 (`*`)
 
-경로의 모든 세그먼트를 매칭, 주로 FormTypeInputMap에서 사용됩니다. 와일드카드는 배열 인덱스와 동적 객체 키(`additionalProperties` 등) 모두를 매칭합니다:
+경로의 모든 세그먼트를 매칭, 주로 FieldInputMap에서 사용됩니다. 와일드카드는 배열 인덱스와 동적 객체 키(`additionalProperties` 등) 모두를 매칭합니다:
 
 ```tsx
 const formInputMap = {
@@ -1010,11 +1230,11 @@ const jsonSchema = {
 // '/config/*/value'는 /config/theme/value, /config/language/value 등을 매칭
 ```
 
-**참고**: 와일드카드 `*`는 `FormTypeInputMap` 키와 복수형 `findNodes()` 메서드에서 사용 가능합니다. `<Form.Render path="..." />` 또는 단수형 `node.find()` 메서드에서는 지원되지 않습니다.
+**참고**: 와일드카드 `*`는 `FieldInputMap` 키와 복수형 `findNodes()` 메서드에서 사용 가능합니다. `<Form.Render path="..." />` 또는 단수형 `node.find()` 메서드에서는 지원되지 않습니다.
 
 #### Context 참조 (`@`)
 
-Form에 전달된 외부 context 데이터를 참조합니다. 주로 computed 속성에서 사용됩니다.
+Form에 전달된 외부 context 데이터를 참조합니다. 주로 `controls` 표현식에서 사용됩니다.
 
 **중요:** `@` 심볼은 context 객체 자체를 직접 참조하며, JSON Pointer 경로가 아닙니다. 따라서 JSON Pointer 형식이 아닌 **JavaScript 속성 접근자 문법**(점 표기법 또는 대괄호 표기법)을 사용해야 합니다:
 
@@ -1029,7 +1249,7 @@ Form에 전달된 외부 context 데이터를 참조합니다. 주로 computed �
 '@/user/role'; // 작동하지 않음
 ```
 
-**computed 속성에서의 사용:**
+**`controls` 표현식에서의 사용:**
 
 ```tsx
 const jsonSchema = {
@@ -1037,7 +1257,7 @@ const jsonSchema = {
   properties: {
     secretField: {
       type: 'string',
-      computed: {
+      controls: {
         visible: '@.userRole === "admin"', // admin 사용자에게만 표시
         readOnly: '@.mode === "view"', // 보기 모드에서 읽기 전용
         disabled: '@.permissions?.canEdit === false', // 권한에 따라 비활성화
@@ -1045,7 +1265,7 @@ const jsonSchema = {
     },
     combinedCondition: {
       type: 'string',
-      computed: {
+      controls: {
         // context (@)와 폼 필드 참조 (..)를 조합
         active: '@.featureEnabled && ../category === "premium"',
       },
@@ -1067,9 +1287,9 @@ const jsonSchema = {
 
 **주요 특징:**
 
-- Context 값은 반응형으로 업데이트됩니다 - context가 변경되면 computed 속성이 재평가됩니다
+- Context 값은 반응형으로 업데이트됩니다 - context가 변경되면 `controls` 표현식이 재평가됩니다
 - 안전한 중첩 접근을 위한 옵셔널 체이닝(`?.`) 지원
-- `computed` 속성에서만 사용 가능하며, `FormTypeInputMap`이나 `Form.Render`에서는 사용 불가
+- `controls` 표현식에서만 사용 가능하며, `FieldInputMap`이나 `Form.Render`에서는 사용 불가
 
 > ⚠️ **권장사항:** `@`는 런타임에 동적으로 변경될 수 있는 context 객체를 참조하므로, 중첩 속성에 안전하게 접근하기 위해 **옵셔널 체이닝(`?.`)**을 사용하는 것을 권장합니다. 이렇게 하면 context 속성이 undefined 또는 null일 때 발생할 수 있는 런타임 오류를 방지할 수 있습니다.
 >
@@ -1099,8 +1319,8 @@ const jsonSchema = {
             email: { type: 'string' },
             adminSettings: {
               type: 'object',
-              computed: {
-                watch: '../role',  // 형제 필드 감시
+              controls: {
+                watch: ['../role'],  // 형제 필드 감시
                 active: "../role === 'admin'"  // admin일 때만 표시
               },
               properties: {
@@ -1119,8 +1339,8 @@ const jsonSchema = {
               city: { type: 'string' },
               isDefault: {
                 type: 'boolean',
-                computed: {
-                  watch: '../type',  // 형제 type 감시
+                controls: {
+                  watch: ['../type'],  // 형제 type 감시
                   active: "../type === 'home'"  // 집 주소일 때만 표시
                 }
               }
@@ -1132,7 +1352,7 @@ const jsonSchema = {
   }
 };
 
-// 와일드카드를 사용한 FormTypeInputMap
+// 와일드카드를 사용한 FieldInputMap
 const formInputMap = {
   '/user/profile/name': CustomNameInput,
   '/user/addresses/*/street': AddressInput,      // 모든 주소의 거리
@@ -1162,9 +1382,9 @@ JSONPointer는 RFC 6901에 따라 특수 문자를 이스케이프해야 합니�
 <Form.Render path="/field~1with~0special" />
 ```
 
-### 확장 경로를 사용한 FormTypeInputMap
+### 확장 경로를 사용한 FieldInputMap
 
-`FormTypeInputMap`을 사용할 때, 와일드카드 문법을 사용하여 모든 경로 세그먼트를 매칭할 수 있습니다 (배열 인덱스 또는 동적 객체 키):
+`FieldInputMap`을 사용할 때, 와일드카드 문법을 사용하여 모든 경로 세그먼트를 매칭할 수 있습니다 (배열 인덱스 또는 동적 객체 키):
 
 ```tsx
 const formInputMap = {
@@ -1180,7 +1400,7 @@ const formInputMap = {
   '/features/*/*': FeatureInput, // ✅ 중첩된 와일드카드 지원
 };
 
-<Form jsonSchema={jsonSchema} formTypeInputMap={formInputMap} />;
+<Form jsonSchema={jsonSchema} fieldInputMap={formInputMap} />;
 ```
 
 **와일드카드 매칭 예시:**
@@ -1213,6 +1433,27 @@ export const AdvancedForm = () => {
 ```
 
 **참고**: 확장 JSONPointer 문법 (`..`, `.`, `*`)은 RFC 6901 사양에 대한 의도적인 확장으로, 향상된 폼 조작 기능을 제공하기 위해 구현되었습니다. 이러한 확장은 표준에서 벗어나지만, 실제 애플리케이션에서 일반적으로 요구되는 복잡한 폼 상호작용 및 탐색 패턴을 지원하는 데 필수적입니다.
+
+### 하위 트리 방문
+
+`node.visitSubtree(visitor)`는 노드 자신과 그 아래의 모든 노드에 `visitor`를 부릅니다. 폼의 한 구역을 한 번에 읽거나 고칠 때 씁니다.
+
+```typescript
+// /profile 아래의 문자열 필드를 모두 비우되, /profile/locked와 그 아래는 그대로 둡니다.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // 이 노드의 하위를 건너뜀
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **순서.** 노드 자신이 먼저이고, 하위는 전위 순서로, 형제는 `children` 순서로 방문합니다. 터미널 노드는 잎입니다.
+- **건너뛰기.** `false`를 돌려주면 그 노드의 하위만 건너뛰고 다음 형제로 이어 갑니다. `undefined`를 포함한 다른 반환값은 자식으로 들어갑니다.
+- **범위.** 폼 안의 노드에서는 현재 형상만 방문하므로, 조건이 제외한 필드는 방문하지 않습니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는 방문된다는 보장이 없습니다. 폼에서 빠진 노드(조건이나 배열 변경으로 필드가 빠지기 전에 보관한 참조)에서 부르면, 그 노드와 함께 빠진 하위 트리를 걷습니다.
+- **쓰기.** 순회 중의 값 쓰기는 순회가 끝날 때 한 번에 반영되므로, 순회 중에 읽는 값은 순회 전의 값입니다. 상태와 외부 오류의 변경(`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`)은 데이터를 바로 바꾸지만, 그 이벤트는 `request`의 이벤트처럼 순회가 끝날 때 한 번 전달됩니다. 바깥 `node.batch(fn)` 안에서는 모두 그 batch의 끝까지 기다립니다. 순회 안의 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다.
+- **폼에서 빠진 노드에 쓰기.** 이런 쓰기는 순회나 batch 안에서도 폼 안의 필드를 바꾸지 않습니다. 그 경로에 같은 종류의 필드가 있으면 아무 일도 하지 않고, 없으면 값을 그 경로에 맡겨 두었다가 그런 필드가 돌아올 때 불러옵니다. 그 경로에 필드가 있는지는 같은 batch나 순회 안의 앞선 변경이 아니라 마지막으로 커밋된 형상으로 판단하므로, 같은 batch나 순회가 그 필드를 막 제거했더라도 이런 쓰기는 버려집니다. 같은 batch나 순회가 제거하는 필드의 참조는 쓰는 때에 아직 폼 안에 있으므로, 그 쓰기는 다른 쓰기와 똑같이 처리됩니다.
+- **예외.** visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 리스너 안의 순회가 값 쓰기를 했다면, `batch`와 같이 그 예외는 `visitSubtree`를 부른 코드에 닿지 않습니다.
+- **비용.** 순회는 쓰기가 있을 때까지 아무것도 열지 않으므로, 읽기만 하는 순회는 추가 비용이 없고 리스너 안에서도 됩니다. 리스너 안의 쓰기는 다른 리스너 쓰기와 같은 규칙을 따릅니다.
+- **FormHandle.** `FormHandle`에는 `visitSubtree`가 없습니다. `formRef.current?.node`나 `findNode`로 얻은 노드에서 부르십시오.
 
 ---
 
@@ -1296,6 +1537,8 @@ export const CustomLayoutForm = () => {
 };
 ```
 
+**참고**: 두 입력(예: 두 개의 `Form.Input` 컴포넌트나 두 개의 `Input` 슬롯)이 같은 경로에 바인딩되어 있어도 타이핑하는 동안에는 서로를 미러링하지 않습니다. 타이핑은 Refresh를 일으키지 않고 각 입력이 자신의 초안을 소유하므로, 다른 입력은 값을 바꾸는 `setValue`, `reset`, 폼 핸들의 `refresh(path)`처럼 Refresh가 닿을 때까지 자신의 글자를 그대로 보여 줍니다.
+
 ### 배열 처리
 
 이 라이브러리는 배열 데이터 처리를 위한 강력한 기능을 제공합니다:
@@ -1320,7 +1563,7 @@ export const ArrayForm = () => {
         },
       },
     },
-  };
+  } as const;
 
   return (
     <Form jsonSchema={jsonSchema}>
@@ -1328,8 +1571,14 @@ export const ArrayForm = () => {
         <div className="array-form">
           <h3>사용자</h3>
 
-          {node && isArrayNode(node.find('/users')) && (
-            <button onClick={() => node.find('/users').push()} type="button">
+          {node?.find('/users')?.type === 'array' && (
+            <button
+              onClick={() => {
+                const users = node.find('/users');
+                if (users && isArrayNode(users)) users.push();
+              }}
+              type="button"
+            >
               사용자 추가
             </button>
           )}
@@ -1342,51 +1591,26 @@ export const ArrayForm = () => {
 };
 ```
 
-#### 배열 minItems 자동 채우기 동작
+#### 배열 한도 (minItems / maxItems)
 
-배열에 `minItems`를 사용할 때, 자동 채우기 동작은 기본값(default value) 제공 여부에 따라 달라집니다:
-
-**규칙**: `defaultValue` 또는 `schema.default`가 제공되면 minItems 자동 채우기가 **비활성화**됩니다. 제공된 기본값이 `minItems`보다 적은 항목을 가지고 있어도 그대로 사용됩니다.
+core는 채우지도 막지도 않습니다. `minItems`는 마운트·reset·분기 재활성화 때 항목을 만들지 않고, `maxItems`는 `push`나 `setValue`를 거부하지 않습니다. 두 한도는 `node.jsonSchema`에 남고, 위반은 검증이 알립니다. 기본 배열 입력은 `minItems`만큼 빈 슬롯을 UI로만 그리고 사용자가 입력하기 전에는 값을 쓰지 않으며, `maxItems`에 이르면 추가 버튼을 숨깁니다.
 
 ```tsx
 const jsonSchema = {
   type: 'object',
   properties: {
-    // Case 1: 기본값 없음 → minItems 자동 채우기 활성화
-    autoFillArray: {
+    tags: {
       type: 'array',
       items: { type: 'string', default: 'item' },
       minItems: 3,
+      maxItems: 5,
     },
-    // 결과: ['item', 'item', 'item'] (minItems까지 자동 채우기)
-
-    // Case 2: schema.default 제공 → minItems 자동 채우기 비활성화
-    schemaDefaultArray: {
-      type: 'array',
-      items: { type: 'string', default: 'item' },
-      minItems: 3,
-      default: ['one'],
-    },
-    // 결과: ['one'] (기본값 사용, minItems 무시)
-
-    // Case 3: 빈 schema.default → minItems 자동 채우기 비활성화
-    emptyDefaultArray: {
-      type: 'array',
-      items: { type: 'string', default: 'item' },
-      minItems: 3,
-      default: [],
-    },
-    // 결과: [] (빈 기본값 사용, minItems 무시)
   },
 };
 
-// Form의 defaultValue prop도 minItems 자동 채우기를 제어합니다
-<Form
-  jsonSchema={jsonSchema}
-  defaultValue={{
-    partialArray: ['a', 'b'], // minItems=5여도 2개 항목만 사용
-  }}
-/>;
+// default 없음: tags는 []로 로드 — 항목이 셋이 될 때까지 검증이 minItems를 알림
+// default: ['one'] 또는 defaultValue={{ tags: ['one'] }}: tags는 ['one']으로 로드
+// push()는 ('item')을 덧붙이고 새 길이를 돌려줌 — maxItems를 넘어도 마찬가지
 ```
 
 #### 배열 prefixItems 지원 (JSON Schema 2020-12)
@@ -1425,8 +1649,7 @@ const jsonSchema = {
 
 - **위치 기반 스키마**: 각 배열 인덱스는 해당하는 `prefixItems` 스키마를 사용합니다
 - **items로 폴백**: `prefixItems.length`를 초과하는 인덱스는 `items` 스키마를 사용합니다
-- **items: false**: `prefixItems.length`를 초과하는 항목 추가를 방지합니다
-- **자동 maxItems**: `items`가 undefined이거나 `false`일 때, `maxItems`는 자동으로 `prefixItems.length`로 설정됩니다
+- **items: false**: `prefixItems.length`를 넘는 항목은 유효하지 않으며 검증이 알립니다. core는 튜플 뒤로의 push를 막지 않고, `maxItems`를 `prefixItems`에서 끌어내지 않습니다
 
 **검증 요구사항:**
 
@@ -1438,7 +1661,7 @@ const jsonSchema = {
 
 #### 배열 출력 필터 (omitTrailing / omitEmpty)
 
-배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 미리 노출한 빈 input이 그대로 렌더링됩니다:
+배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 사용자가 추가한 빈 행이 그대로 렌더링됩니다:
 
 ```tsx
 const jsonSchema = {
@@ -1447,25 +1670,24 @@ const jsonSchema = {
     tags: {
       type: 'array',
       title: 'Tags',
-      minItems: 3, // 빈 input 3개가 먼저 렌더링됨
       items: { type: 'string' },
       options: { omitTrailing: true },
     },
   },
 };
 
-// UI에는 input 3개가 보이고, 사용자가 첫 번째만 채우면
+// 사용자가 행 3개를 추가하고 첫 번째만 채우면
 // onChange / getValue() / validation 값은: { tags: ['first'] }
-// node.find('/tags').value 는 ['first', undefined, undefined] 유지
+// node.find('/tags').value는 ['first', undefined, undefined]로 유지
 ```
 
 **주요 동작:**
 
 - **`omitTrailing` (opt-in)**: **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - **`omitEmpty` (기본 활성)**: 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
-- **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
-- **Reset 의미**: Reset 계열 초기화(폼 reset, oneOf/anyOf 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
-- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildNodeComponents`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
+- **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 후행 빈 항목은 `minItems`에 세지 않고, 선행·중간 빈 항목은 셉니다.
+- **Reset 의미**: reset은 배열이 로드된 값을 되돌리며 `minItems`를 위해 항목을 만들지 않고, 일반 `setValue(undefined)`는 전부 비웁니다.
+- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildFields`) 기준으로 세야 합니다 — 후행 행이 비어 있으면 방출 값이 렌더된 행보다 짧습니다.
 
 ### 명령형 핸들을 사용한 양식
 
@@ -1530,14 +1752,14 @@ export const ImperativeForm = () => {
 };
 ```
 
-### 사용자 정의 양식 유형 입력 구성 요소
+### 사용자 정의 FieldInput 구성 요소
 
 폼 기능을 확장하려면 사용자 정의 입력 컴포넌트를 생성할 수 있습니다:
 
 ```tsx
 import React from 'react';
 
-import { Form, FormTypeInputDefinition } from '@canard/schema-form';
+import { FieldInputDefinition, Form } from '@canard/schema-form';
 
 // 사용자 정의 날짜 선택기 컴포넌트
 const DatePickerInput = (props) => {
@@ -1556,8 +1778,8 @@ const DatePickerInput = (props) => {
   );
 };
 
-// FormTypeInput 정의
-const datePickerDefinition: FormTypeInputDefinition = {
+// FieldInput 정의
+const datePickerDefinition: FieldInputDefinition = {
   test: { format: ['date'] },
   Component: DatePickerInput,
 };
@@ -1577,7 +1799,7 @@ export const FormWithCustomInput = () => {
   return (
     <Form
       jsonSchema={jsonSchema}
-      formTypeInputDefinitions={[datePickerDefinition]}
+      fieldInputDefinitions={[datePickerDefinition]}
     />
   );
 };
@@ -1587,25 +1809,24 @@ export const FormWithCustomInput = () => {
 
 #### 종류
 
+아래 속성은 모두 `controls` 객체의 키입니다.
+
 - `watch`: 다른 Node의 값을 구독할 수 있습니다. (watchValues 속성으로 전달됨)
-- `derived`: JSONPointer 표현식을 사용하여 다른 필드 값을 참조해 자동으로 값을 계산합니다. `&derived` 또는 `computed.derived` 속성을 사용합니다
+- `derived`: JSONPointer 표현식을 사용하여 다른 필드 값을 참조해 자동으로 값을 계산합니다. `controls.derived` 속성을 사용합니다
 - `active`: 해당 Node가 활성화될지 여부를 결정합니다. 활성화 되지 않은 Node의 Input은 표시되지 않으며 그 값은 제거됩니다.
 - `visible`: 해당 Node가 표시될지 여부를 결정합니다. Input의 표시 여부를 결정합니다.
-- `pristine`: 해당 Node의 상태를 초기화할지 여부를 결정합니다. 표현식이 `true`로 평가되면 Node의 상태를 초기화합니다.
+- `resetInteraction`: 해당 Node의 상호작용 상태를 초기화합니다. 표현식이 `false`에서 `true`로 바뀌면 Node의 `edited`와 `touched` 상태를 비웁니다.
 - `readOnly`: 해당 Node가 읽기 전용일지 여부를 결정합니다. readOnly 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `disabled`: 해당 Node가 비활성화될 때 표시될지 여부를 결정합니다. disabled 상태인 경우 Input에서 값을 수정할 수 없습니다.
-- `if` + `oneOf`: oneOf 정의 중 if 조건을 만족하는 정의를 표시합니다. ObjectNode 에서만 사용할 수 있습니다.
+- `oneOf`/`anyOf` 분기의 `active`, 또는 호스트의 `discriminator`: 표시할 분기를 선택합니다. 각 분기에 `controls.active` 표현식을 주거나, `controls.discriminator`에 속성 이름을 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다. ObjectNode 에서만 사용할 수 있습니다. 두 게이트가 모두 없으면 모든 분기가 켜집니다. 모든 분기의 필드가 존재하며 어느 분기가 맞는지는 검증기만 정합니다.
 
-#### 우선순위
+  키는 객체·nullable 객체 호스트(`type: 'object'`, `['object', 'null']`, `['null', 'object']`)에 선언합니다. union 없는 선언이나 알려진 비객체 런타임 호스트는 경고와 함께 키를 무시합니다. anyOf 태그 중복, 여러 종류를 포괄하는 호스트 태그 형, 선언마다의 독립 키는 허용합니다. union 전체 태그 누락·oneOf 중복·호스트 태그 형 없이 모호한 분기 종류는 오류이고, 도달 불가능한 종류·빈 교차는 태그를 끌어올리지 않고 경고합니다. C1–C13과 터미널 객체 예외는 [판별자 규칙](docs/ko/SPECIFICATION.md#판별자-규칙)을 참고하세요.
 
-`active`, `visible`, `readOnly`, `disabled` 속성은 다음과 같은 우선순위를 가집니다.
+#### 계층 규칙
 
-1. root jsonSchema 의 속성 (boolean)
-2. shortcut 속성 (`jsonSchema[{fieldName}]`, boolean)
-3. computed 속성 (`jsonSchema.computed[{fieldName}]`, boolean | string)
-4. alias computed (`jsonSchema['&{fieldName}']`, boolean | string)
+`controls`는 Node 자신, 그 Node를 가리키는 부모의 `controls.fields` 항목, 그 Node를 선언한 조각(예: `allOf` 항목)에 선언할 수 있습니다. 계층은 서로를 덮어쓰지 않고 합쳐집니다. 표준 `readOnly`와 `readOnly` / `disabled` 제어는 OR로, `visible`은 AND로 결합합니다.
 
-위 우선순위 중 상위 우선순위에 정의한 값을 우선 적용합니다.
+`default`는 Node 자신의 `controls.default`, 부모의 `fields` 항목, 조각의 `controls.default`, 표준 `default` 순으로 우선합니다.
 
 #### 기본 예제
 
@@ -1627,8 +1848,8 @@ export const ConditionalForm = () => {
       commonField: {
         type: 'string',
         title: '공통 필드',
-        computed: {
-          watch: '../employmentType',
+        controls: {
+          watch: ['../employmentType'],
           active: '../employmentType !== null',
           visible: '../employmentType !== null',
         },
@@ -1636,8 +1857,8 @@ export const ConditionalForm = () => {
     },
     oneOf: [
       {
-        computed: {
-          if: "./employmentType === 'fulltime'",
+        controls: {
+          active: "./employmentType === 'fulltime'",
         },
         properties: {
           salary: {
@@ -1671,8 +1892,8 @@ export const ConditionalForm = () => {
         },
       },
       {
-        computed: {
-          if: "./employmentType === 'parttime'",
+        controls: {
+          active: "./employmentType === 'parttime'",
         },
         properties: {
           hourlyRate: {
@@ -1688,8 +1909,8 @@ export const ConditionalForm = () => {
         },
       },
       {
-        computed: {
-          if: "./employmentType === 'contractor'",
+        controls: {
+          active: "./employmentType === 'contractor'",
         },
         properties: {
           hourlyRate: {
@@ -1706,7 +1927,7 @@ export const ConditionalForm = () => {
             title: '주당 근무시간',
             minimum: 1,
             maximum: 168,
-            computed: {
+            controls: {
               active: '../contractType === "hourly"',
             },
           },
@@ -1725,7 +1946,7 @@ export const ConditionalForm = () => {
 
 #### 기본 사용법
 
-JSON Schema에 타겟 경로와 값을 매핑하는 객체를 반환하는 `injectTo` 핸들러 함수를 정의합니다:
+JSON Schema의 `controls` 안에 타겟 경로와 값을 매핑하는 객체를 반환하는 `injectTo` 핸들러 함수를 정의합니다:
 
 ```tsx
 const jsonSchema = {
@@ -1734,9 +1955,11 @@ const jsonSchema = {
     source: {
       type: 'string',
       title: '소스',
-      injectTo: (value: string) => ({
-        '../target': `주입됨: ${value}`,
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../target': `주입됨: ${value}`,
+        }),
+      },
     },
     target: {
       type: 'string',
@@ -1756,20 +1979,24 @@ const jsonSchema = {
 **상대 경로** (현재 노드 기준):
 
 ```tsx
-injectTo: (value) => ({
-  '../sibling': value, // 형제 필드
-  '../nested/child': value, // 중첩된 형제의 자식
-  '../../uncle': value, // 부모의 형제
-});
+controls: {
+  injectTo: (value) => ({
+    '../sibling': value, // 형제 필드
+    '../nested/child': value, // 중첩된 형제의 자식
+    '../../uncle': value, // 부모의 형제
+  }),
+},
 ```
 
 **절대 경로** (루트 기준):
 
 ```tsx
-injectTo: (value) => ({
-  '/rootField': value, // 루트 레벨 필드
-  '/user/profile/name': value, // 깊이 중첩된 필드
-});
+controls: {
+  injectTo: (value) => ({
+    '/rootField': value, // 루트 레벨 필드
+    '/user/profile/name': value, // 깊이 중첩된 필드
+  }),
+},
 ```
 
 #### 다중 타겟
@@ -1782,14 +2009,16 @@ const jsonSchema = {
   properties: {
     fullName: {
       type: 'string',
-      injectTo: (value: string) => ({
-        '../displayName': value,
-        '../searchName': value.toLowerCase(),
-        '../initials': value
-          .split(' ')
-          .map((n) => n[0])
-          .join(''),
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../displayName': value,
+          '../searchName': value.toLowerCase(),
+          '../initials': value
+            .split(' ')
+            .map((n) => n[0])
+            .join(''),
+        }),
+      },
     },
     displayName: { type: 'string' },
     searchName: { type: 'string' },
@@ -1803,10 +2032,12 @@ const jsonSchema = {
 동적 경로나 순서가 중요한 경우 배열 형식을 사용합니다:
 
 ```tsx
-injectTo: (value: number) => [
-  ['/calculations/doubled', value * 2],
-  ['/calculations/squared', value * value],
-];
+controls: {
+  injectTo: (value: number) => [
+    ['/calculations/doubled', value * 2],
+    ['/calculations/squared', value * value],
+  ],
+},
 ```
 
 #### 컨텍스트 접근
@@ -1848,12 +2079,14 @@ const jsonSchema = {
   properties: {
     secretField: {
       type: 'string',
-      injectTo: (value, ctx) => {
-        // admin 사용자에게만 주입
-        if (ctx.context.userRole === 'admin') {
-          return { '/adminCopy': value };
-        }
-        return null;
+      controls: {
+        injectTo: (value, ctx) => {
+          // admin 사용자에게만 주입
+          if (ctx.context.userRole === 'admin') {
+            return { '/adminCopy': value };
+          }
+          return null;
+        },
       },
     },
   },
@@ -1863,9 +2096,9 @@ const jsonSchema = {
 <Form jsonSchema={jsonSchema} context={{ userRole: 'admin' }} />;
 ```
 
-#### 순환 참조 방지
+#### 순환 참조
 
-라이브러리는 필드가 서로를 주입할 때 무한 루프를 자동으로 방지합니다:
+주입 순환은 감지하지 않습니다. 각 정착은 소스 값이 더 바뀌지 않을 때까지 규칙을 다시 실행하며, 최대 25라운드까지 반복합니다:
 
 ```tsx
 const jsonSchema = {
@@ -1873,39 +2106,42 @@ const jsonSchema = {
   properties: {
     fieldA: {
       type: 'string',
-      injectTo: (value) => ({ '../fieldB': `A에서: ${value}` }),
+      controls: {
+        injectTo: (value) => ({ '../fieldB': `A에서: ${value}` }),
+      },
     },
     fieldB: {
       type: 'string',
-      injectTo: (value) => ({ '../fieldA': `B에서: ${value}` }),
+      controls: {
+        injectTo: (value) => ({ '../fieldA': `B에서: ${value}` }),
+      },
     },
   },
 };
 
 // 사용자가 fieldA에 입력:
-// 1. fieldA → fieldB (주입 성공)
-// 2. fieldB → fieldA (차단됨 - 순환 참조 방지)
+// 1. fieldA → fieldB, 이어서 fieldB → fieldA로 이어지며 매 홉이 새 값을 만듭니다
+// 2. 25라운드 뒤 정착이 예산을 초과합니다
 ```
 
-순환 참조 방지는 동일한 매크로태스크 실행 컨텍스트 내에서 모든 체인 길이(A→B→C→A 등)에 대해 작동합니다.
+같은 값이 되돌아오는 순환은 스스로 멈춥니다. 위 예제처럼 계속 새 값을 만드는 순환은 예산을 초과합니다. 호출자의 쓰기는 유지되고, 그 정착의 모든 자동 쓰기는 되돌려지며, `diagnostics`는 `exceededBudget: 'derive'`인 `degraded`가 되고 쓰기는 예외를 던집니다. 주입 체인은 순환 없는 그래프로 설계하세요.
 
 #### 에러 처리
 
-`injectTo` 핸들러의 에러는 캡처되어 상세한 컨텍스트와 함께 `JSONSchemaError`로 래핑됩니다:
+`injectTo` 핸들러가 예외를 던지면 그 규칙은 해당 라운드에서 건너뛰고, 정착은 `cause: 'expression'`인 `degraded`가 되며, 쓰기는 코드 `EXPRESSION_THREW`인 `SchemaFormError`를 던지며 끝납니다:
 
 ```tsx
-injectTo: (value) => {
-  if (!value) {
-    throw new Error('값이 필요합니다');
-  }
-  return { '../target': value };
-};
+controls: {
+  injectTo: (value) => {
+    if (!value) {
+      throw new Error('값이 필요합니다');
+    }
+    return { '../target': value };
+  },
+},
 
-// 에러에 포함되는 정보:
-// - 소스 노드 경로
-// - 시도된 타겟 경로들
-// - 원본 에러 메시지
-// - 권장 해결 방법
+// 그 규칙은 해당 라운드에서 건너뛰고 정착은 degraded가 되며,
+// 쓰기는 SchemaFormError(EXPRESSION_THREW)를 던집니다
 ```
 
 #### TypeScript 지원
@@ -1947,7 +2183,11 @@ const typedHandler: InjectToHandler<
 ```tsx
 import React, { useState } from 'react';
 
-import { Form, JSONSchemaError, isValidationError } from '@canard/schema-form';
+import {
+  Form,
+  type ValidationIssue,
+  isValidationError,
+} from '@canard/schema-form';
 
 export const FormWithSubmit = () => {
   const jsonSchema = {
@@ -1959,7 +2199,7 @@ export const FormWithSubmit = () => {
     required: ['name', 'email'],
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const handleSubmit = async (value: any) => {
     try {
@@ -2001,7 +2241,7 @@ import React, { useRef, useState } from 'react';
 import {
   Form,
   FormHandle,
-  JSONSchemaError,
+  type ValidationIssue,
   isValidationError,
   useFormSubmit,
 } from '@canard/schema-form';
@@ -2018,7 +2258,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   // 비동기 제출 핸들러
   const handleSubmit = async (value: any) => {
@@ -2028,7 +2268,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   // 제출 상태 관리
-  const { submit, loading } = useFormSubmit(formRef);
+  const { submit, pending } = useFormSubmit(formRef);
 
   const onSubmitClick = async () => {
     try {
@@ -2056,13 +2296,13 @@ export const AdvancedSubmitForm = () => {
 
       <button
         onClick={onSubmitClick}
-        disabled={loading}
+        disabled={pending}
         style={{ marginTop: '16px' }}
       >
-        {loading ? '제출 중...' : '제출'}
+        {pending ? '제출 중...' : '제출'}
       </button>
 
-      {loading && (
+      {pending && (
         <div style={{ marginTop: '8px', color: '#666' }}>
           처리 중입니다. 잠시만 기다려주세요...
         </div>
@@ -2101,6 +2341,8 @@ export const EnterSubmitForm = () => {
   );
 };
 ```
+
+Enter는 Form의 `form` 요소를 통해 제출합니다. 텍스트류 필드가 둘 이상이면 브라우저는 폼에 제출 버튼이 있을 때만 Enter로 제출합니다(암묵적 제출은 이를 막는 필드만 세므로, 텍스트 필드 하나와 체크박스 하나는 그대로 제출됩니다).
 
 #### 제출 오류 처리
 
@@ -2146,7 +2388,7 @@ export const ErrorHandlingForm = () => {
     return response.json();
   };
 
-  const { submit, loading } = useFormSubmit(formRef);
+  const { submit, pending } = useFormSubmit(formRef);
 
   const onSubmitClick = async () => {
     setSubmitError(''); // 이전 오류 초기화
@@ -2191,10 +2433,10 @@ export const ErrorHandlingForm = () => {
 
       <button
         onClick={onSubmitClick}
-        disabled={loading}
+        disabled={pending}
         style={{ marginTop: '16px' }}
       >
-        {loading ? '로그인 중...' : '로그인'}
+        {pending ? '로그인 중...' : '로그인'}
       </button>
     </div>
   );
@@ -2222,8 +2464,8 @@ export const ErrorHandlingForm = () => {
 <Form jsonSchema={jsonSchema} validationMode={ValidationMode.OnRequest} />
 ```
 
-2. **FormTypeInput 캐싱**:
-   자주 사용하는 커스텀 FormTypeInput을 컴포넌트 외부에서 정의하여 불필요한 재생성을 방지합니다.
+2. **FieldInput 캐싱**:
+   자주 사용하는 커스텀 FieldInput을 컴포넌트 외부에서 정의하여 불필요한 재생성을 방지합니다.
 
 ```jsx
 // 전역에서 한 번 정의
@@ -2232,7 +2474,7 @@ const CUSTOM_INPUTS = [
 ];
 
 // 컴포넌트 내에서 재사용
-<Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
+<Form jsonSchema={jsonSchema} fieldInputDefinitions={CUSTOM_INPUTS} />;
 ```
 
 ---
@@ -2242,7 +2484,7 @@ const CUSTOM_INPUTS = [
 `@canard/schema-form`은 TypeScript로 구축되었으며 포괄적인 유형 정의를 제공합니다. 주요 유형 유틸리티에는 다음과 같습니다:
 
 - `InferValueType<Schema>`: JSON Schema에서 값 유형을 추론합니다
-- `InferSchemaNode<Schema>`: JSON Schema에서 스키마 노드 유형을 추론합니다
+- `InferFieldNode<Schema>`: JSON Schema에서 필드 노드 유형을 추론합니다
 - `FormHandle<Schema, Value>`: 스키마 특정 메서드를 가진 양식 참조 핸들러의 유형
 
 ### `InferValueType`이 보장하는 것
@@ -2267,9 +2509,11 @@ type Value = InferValueType<typeof jsonSchema>;
 
 이 결과에는 의도된 성질이 세 가지 있습니다:
 
-- **`required`에 있는 필드까지 포함해 모든 필드가 optional입니다.** 폼은 런타임에 필드를 값에서 제외할 수 있습니다 — `computed.active`가 false인 분기, `options.omitEmpty` 등. 필수로 표시하면 `value.name.trim()`이 컴파일을 통과한 뒤 터집니다.
+- **`required`에 있는 필드까지 포함해 모든 필드가 optional입니다.** 폼은 런타임에 필드를 값에서 제외할 수 있습니다 — `controls.active`가 false인 분기, `options.omitEmpty` 등. 필수로 표시하면 `value.name.trim()`이 컴파일을 통과한 뒤 터집니다.
 - **스키마가 `additionalProperties: false`를 지정하지 않는 한 객체 타입은 열려 있습니다.** JSON Schema의 기본값이 그렇습니다. 이 덕분에 `oneOf`/`anyOf` 분기, `if`/`then`/`else`, `patternProperties`가 기여하는 키가 초과 속성으로 거부되지 않습니다. `additionalProperties: false`를 지정하면 추론 타입이 닫혀서 오타를 잡아줍니다.
-- **nullable 스키마에는 `| null`이 붙습니다.** 타입 배열(`type: ['string', 'null']`)과 deprecated된 `nullable: true` 키워드 모두 `T | null`을 만듭니다. 런타임이 nullable 노드에 `null`을 허용하므로, `null`을 거부하는 타입은 폼이 정상 처리하는 `setValue({ field: null })`을 컴파일 실패로 만듭니다.
+- **nullable 스키마에는 `| null`이 붙습니다.** 타입 배열(`type: ['string', 'null']`)과 `nullable: true` 키워드 모두 `T | null`을 만듭니다. 런타임이 nullable 노드에 `null`을 허용하므로, `null`을 거부하는 타입은 폼이 정상 처리하는 `setValue({ field: null })`을 컴파일 실패로 만듭니다.
+
+`nullable: true`는 공식 지원하는 OpenAPI 3.0 호환 표기입니다. `type`에 `'null'`을 추가하는 것과 동등하여, `{ type: 'string', nullable: true }`는 `{ type: ['string', 'null'] }`를 뜻합니다. 이 표기를 사용해도 경고나 오류가 발생하지 않습니다.
 
 ### 값 타입을 직접 정의해 주입하기
 
@@ -2290,6 +2534,117 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 ```
 
 `defaultValue`를 넘기면 그 값으로부터도 `Value`가 추론되므로, 명시적 타입 인자가 항상 필요하지는 않습니다.
+
+---
+
+## 마이그레이션 (1.0.0)
+
+1.0.0은 스키마 설정을 `presentation`·`controls`·`options` 세 묶음으로 옮기고, 공개 API 이름을 "field" 중심으로 다시 짓고, 노드 엔진을 교체합니다. 옛 이름은 별칭으로도 남지 않습니다. 스키마, 컴포넌트와 형 import, 노드 상태나 검증 오류를 읽는 코드 순서로 고치세요.
+
+> **옛 스키마 키는 오류 없이 무시됩니다.** 제거된 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `terminal`, `virtual`, `propertyKeys`, `injectTo`, `errorMessages`, `placeholder`)는 오류도 경고도 없이 무시됩니다. 이는 의도된 것입니다. 1.0.0은 0.16과의 단절이므로 이 키들에는 별칭도 개발 경고도 두지 않으며, 이주할 때 키마다 직접 옮겨야 합니다. 이런 키가 남은 스키마도 화면은 그려지지만 조건, 파생 값, 입력 선택이 동작하지 않으니, 아래 표의 키를 스키마에서 모두 찾아 바꾸세요. 새 묶음 안에서는 규칙이 다릅니다. `controls`와 `options` 안의 모르는 키는 폼을 만들 때 `UNKNOWN_GROUP_KEY`를 던지고, `presentation`은 어떤 키든 받는 열린 묶음입니다.
+
+### 스키마 키
+
+| 0.16                                                                   | 1.0.0                                                                    |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `formType`                                                             | `presentation.inputType`                                                 |
+| `FormTypeInput`                                                        | `presentation.FieldInput`                                                |
+| `FormTypeInputProps` (`placeholder`, `alias`, `className`, `style` 등) | `presentation.FieldInputProps`                                           |
+| `FormTypeRendererProps` (`label`, `className`, `style` 등)             | `presentation.FieldRendererProps`                                        |
+| `errorMessages`                                                        | `presentation.errorMessages`                                             |
+| `computed.active` / `&active`                                          | `controls.active`                                                        |
+| `computed.visible` / `&visible`                                        | `controls.visible`                                                       |
+| `computed.readOnly` / `&readOnly`                                      | `controls.readOnly`                                                      |
+| `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                      |
+| `computed.derived` / `&derived`                                        | `controls.derived`                                                       |
+| `computed.watch` / `&watch` (문자열 또는 배열)                         | `controls.watch` (배열만)                                                |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (조건이 참으로 바뀔 때 edited·touched 초기화) |
+| `oneOf` / `anyOf` 분기의 `computed.if` / `&if`                         | 그 분기의 `controls.active`                                              |
+| `injectTo`                                                             | `controls.injectTo` (핸들러 모양은 같음)                                 |
+| `terminal`                                                             | `options.terminal` (객체·배열 스키마)                                    |
+| `propertyKeys` (객체)                                                  | `options.propertyOrder` (출력 값의 키 순서)                              |
+| `virtual` (객체)와 `type: 'virtual'`                                   | `options.virtual: { <이름>: { fields: [...] } }` (객체 스키마)           |
+
+```ts
+// 0.16
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], formType: 'radio' },
+    note: {
+      type: 'string',
+      FormTypeInputProps: { placeholder: 'Note' },
+      computed: { visible: '../kind === "b"' },
+    },
+  },
+}
+
+// 1.0.0
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], presentation: { inputType: 'radio' } },
+    note: {
+      type: 'string',
+      presentation: { FieldInputProps: { placeholder: 'Note' } },
+      controls: { visible: '../kind === "b"' },
+    },
+  },
+}
+```
+
+- `controls`에는 0.16에 없던 키도 있습니다: `default`, `unsetValue`, `unsetOnInactive`, `fields`(이름으로 지정한 하위 필드의 controls), `discriminator`.
+- `options`는 `omitEmpty`, `trim`(문자열), `omitTrailing`(배열), `terminal`(객체·배열), `propertyOrder`·`virtual`(객체)만 받습니다. `min`·`max` 같은 입력 설정은 `presentation.FieldInputProps`에 두세요.
+
+### 이름이 바뀐 API
+
+| 0.16                                                                                                                                                                      | 1.0.0                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Form prop `formTypeInputDefinitions`                                                                                                                                      | `fieldInputDefinitions`                                                                                                                                        |
+| Form prop `formTypeInputMap`                                                                                                                                              | `fieldInputMap`                                                                                                                                                |
+| Form prop `CustomFormTypeRenderer`                                                                                                                                        | `FieldRenderer` (Form은 `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`도 받음)                                                                  |
+| 플러그인 키 `FormGroup`, `FormLabel`, `FormInput`, `FormError`                                                                                                            | `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`                                                                                 |
+| 플러그인 키 `formTypeInputDefinitions`                                                                                                                                    | `fieldInputDefinitions`                                                                                                                                        |
+| `Form.Group`, `FormGroupProps`                                                                                                                                            | `Form.Field`, `FormFieldProps`                                                                                                                                 |
+| `FormTypeInputDefinition`, `FormTypeInputMap`, `FormTypeInputProps`, `FormTypeInputPropsWithNode`, `FormTypeInputPropsWithSchema`, `FormTypeTestFn`, `FormTypeTestObject` | `FieldInputDefinition`, `FieldInputMap`, `FieldInputProps`, `FieldInputPropsWithNode`, `FieldInputPropsWithSchema`, `FieldInputTestFn`, `FieldInputTestObject` |
+| `FormTypeRendererProps`                                                                                                                                                   | `FieldRendererProps`                                                                                                                                           |
+| `Hint`                                                                                                                                                                    | `FieldInputHint` (키는 `inputType`)                                                                                                                            |
+| `FormTypeInputProps.FormTypeRenderer`                                                                                                                                     | `FieldInputProps.FieldRenderer`                                                                                                                                |
+| `FormTypeInputProps.ChildNodeComponents`                                                                                                                                  | `FieldInputProps.ChildFields` (각 항목은 `ChildField`)                                                                                                         |
+| `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
+| `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
+| `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
+| `ShowError.Dirty` | `ShowError.Edited` |
+| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
+| `node.required` | `node.isRequired` |
+| `node.active` | `node.isActive` |
+| `node.visible` | `node.isVisible` |
+| `node.enabled` | `node.isPresent` |
+| `node.readOnly` | `node.isReadOnly` |
+| `node.disabled` | `node.isDisabled` |
+| `node.misfit` | `node.isMisfit` |
+| `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (같은 비트)                                                                                                                      |
+| `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (`UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`는 그대로이고 이벤트가 더 공개됨)          |
+| `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
+| 형 `JSONSchemaError` (`errors` prop과 `onValidate` 인자)                                                                                                                  | `ValidationIssue` (필드는 같고 선택 필드 `rejectedKey` 추가, `isJSONSchemaError`는 유지)                                                                       |
+
+- 노드 상태와 ShowError 정책 멤버는 Edited·EditedTouched를 씁니다. Form `showError` prop과 `FormHandle.showError()`는 그대로이며 기본 정책은 같은 비트·동작의 `ShowError.EditedTouched`입니다.
+
+### 동작 변경
+
+- **불러온 `null`이나 종류가 다른 값 아래의 자식 필드는 채워지지 않습니다.** 객체나 배열 필드가 `defaultValue`, 불러오기, `reset`, `resetSubtree`로 `null`이나 종류가 다른 값(예: 객체 자리에 문자열)을 받으면, 직접 `null`을 쓸 때와 똑같이 자식 필드에 기본값이 채워지지 않습니다. 자식에 입력하면 부모가 객체로 승격되고, 그 승격으로 새로 생긴 필드만 기본값을 받습니다. `derived`와 `injectTo` 값은 그대로 보입니다. 기본값이 필요하면 `null` 대신 값이 든 객체를 불러오거나 객체 자체에 `default`를 주세요. 객체 스키마에 `<Form defaultValue={null}>`을 줄 때도 같습니다.
+- **enum select는 `undefined`를 선택 없음으로 보여 줍니다.** 기본 문자열 enum select는 값이 `undefined`이면 맨 앞에 선택된 빈 비활성 선택지를 보여 주며, enum에 `''`가 있어도 같습니다. enum 밖의 값은 지금처럼 맨 앞 비활성 선택지로 보입니다.
+- **체크박스와 라디오 선택지 id에 순번이 붙습니다.** 각 선택지의 `id`는 이제 `${path}-${index}`이고, 레이블의 `htmlFor`도 같이 바뀝니다. 이 입력을 `#<path>`로 찾던 선택자는 고쳐야 합니다. 기본 렌더러의 label과 `Form.Label`은 항상 `htmlFor={path}`와 `id="label:${path}"`를 둘 다 가지며, branch의 legend는 id만 가집니다. 라벨을 그리는 곳은 어떤 입력이 선택되었는지 알 수 없기 때문입니다. 입력 id는 루트에서 빈 문자열이고 나머지는 `/`로 시작하므로, `label:` 접두어는 어떤 입력 id와도 겹치지 않습니다. 내장 checkbox·radio의 선택지 컨테이너는 `role="group"`과 `aria-labelledby="label:${path}"`를 가지므로 묶음을 제목으로 찾을 수 있습니다(`getByRole('group', { name })`). 이런 묶음에서는 `htmlFor`가 가리키는 요소가 없지만 해롭지 않습니다. 사용자 `FieldInput`과 `FieldRenderer`도 같은 규약을 따릅니다. 단일 입력은 `id={path}`를 달아 제목과 연결하고, 묶음 컨테이너는 `aria-labelledby`로 `label:${path}`를 참조합니다. 기본 렌더러에서 checkbox 배열은 같은 legend로 이름 붙은 fieldset이기도 하므로, 그 fieldset 안에서 찾으세요. `id="label:${path}"`를 가진 제목을 그리지 않는 자리(루트, 배열 항목, `Form.Label` 없는 `Form.Input`, 그 id를 빠뜨린 사용자·플러그인 렌더러)에서는 묶음 컨테이너의 `aria-labelledby`가 가리킬 대상이 없으므로 렌더러가 묶음의 이름을 직접 주어야 합니다. `Form.Label`은 두 속성을 `path` prop 그대로 만들므로, 입력·묶음과 맞으려면 절대 경로(`size`나 `./size`가 아닌 `/size`)를 넘기세요.
+- **`oneOf` / `anyOf` 분기를 더 이상 `const` 태그로 고르지 않습니다.** 분기끼리 `const` 태그만 다르면 호스트에 `controls.discriminator: '<속성>'`을 선언하거나 각 분기에 `controls.active`를 선언하세요. 둘 다 없으면 모든 분기가 활성 상태로 남습니다.
+- **FieldInput 시험 객체의 `schemaType: 'virtual'`은 더 이상 virtual 노드에 맞지 않습니다.** `schemaType`은 JSON 형만 담으므로 virtual 노드의 `schemaType`은 `undefined`이고, `jsonSchema.type`은 그대로 `'virtual'`입니다. virtual 노드는 `type: 'virtual'`로, 또는 `schemaType: undefined`를 직접 적은 시험 객체로 고르십시오.
+- **직접 만든 검증기 플러그인은 `compileGuard`를 구현해야 합니다.** `ValidatorPlugin`은 이제 `compile` 옆에 `compileGuard(root, pointer)`가 필요하고, `release(root)`는 선택입니다. 공식 ajv6·ajv7·ajv8 플러그인은 이미 구현되어 있습니다.
+
+`onValidate`는 0.16과 같이 동작합니다. 보고할 오류 목록이나 `errors` prop이 바뀔 때 호출되고, 결과가 같은 재검증에서는 호출되지 않습니다.
+
+### `nullable: true`
+
+`nullable: true`는 공식 지원 표기입니다. OpenAPI 3.0 표기이며 `type`에 `'null'`을 더한 것(`type: ['string', 'null']`)과 같습니다. 경고도 나지 않습니다.
 
 ---
 
@@ -2372,3 +2727,23 @@ export const AntdForm = () => {
   return <Form jsonSchema={jsonSchema} />;
 };
 ```
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

@@ -1,0 +1,9 @@
+# 282라운드 — Vincent의 메모 (08단계 씨앗: 최소 export 계약 위반, nodeFromJSONSchema root export, FormContents 이름·위계; 시험·bench가 index를 경유하는 계약이 filid의 한계인지)
+
+2026-10-14. 281라운드 뒤 소유자가 08단계(디렉터리·구성 다듬기)의 출발 목록을 적었고, 시험·bench가 fractal index를 경유하는 것이 filid의 한계인지 물었다. 원장 관리자가 stage-07d(04834224e 기준 작업 트리)에서 진입점 export의 소비자를 세어 답했다.
+
+| 확인 | 물음(요지) | 답 원문 | 반영 |
+| --- | --- | --- | --- |
+| 08 씨앗 | 최소 export 위반, nodeFromJSONSchema root export, FormContents 이름, 시험·bench의 index 경유가 filid 한계인지 | "아 그래. 그럼 그냥 적어둘게.\n\n1. core 의 표면 외부에서 nodeFromJSONSchema 를 쓰는 곳이 없는거같은데, 왜 이게 root export 인가? 사실 node 에 대한건 node 자체를 만드는 브랜치노드와 root 노드를 만드는 RootNode provider 를 제외하면 몇가지 유틸리티 함수와 타입만 있을텐데. export 구조가 지나치게 복잡하고 최소 export 원칙을 지키지 못하는 것 같아서 점검이 필요해보인다. 밴치마크나 test 는 import 규칙 등에서 면제인 이유는 보조함수가 본 코드의 가독성을 해치는 것을 막기 위함인데, 이게 좀 그런 느낌이 드는군 \n\n2. 이전에 FormInner 로 Form 본체 역할을 하던 컴포논트가 Form/components/FormContents.tsx  로 이름이 변경된거같은데. FormRoot 나 FormCore 나 좀 명확하게 다른 항목(FromInput / Group / Label / Error)과 위계구분이 되어야 하지 않을까 싶다. 지금은 약간 햇갈리는군?\n\n\n\n지금으로서는 가장 거슬리는건 프렉탈들의 최소 export 계약 위반이야.\n이래서 test 들이나 벤치마크를 프렉탈 내부에 두고, 프렉탈 index 를 경유해서 테스트나 벤치마크를 구성하지 않게 한건데, 지금 보니까 테스트나 벤치마크 등도 전부 프렉탈 index 를 경유하는 계약인거같군. 하지만 이건 문제가 있어. 이렇게 되면 사실상 프렉탈 내에 모든 기능코드가 다 index 로 export 되는데 이럼 어떤 함수가 외부계약인지 파악이 어렵잖아.\n\n이건 filid 플러그인의 한계인건가?" | 원장 관리자 답(요지): filid의 한계가 아니다. filid 규칙 §5는 "검증 파일은 검증 대상 안에 두고 그 안에서는 내부 파일을 직접 import한다"이고 index 경유는 요구하지 않는다. 07c·07d에서 시험 import를 진입점으로 돌리거나 면제로 선언한 것은 원장 관리자와 verifier의 선택이었다. 셈: engine index 56 이름 중 제품 소비 54·시험 전용 2, surface 25 중 25 제품 소비, core index 51 중 제품 소비 45·시험·bench·스토리 전용 3(fieldNodeFactory, nodeFromJSONSchema, readFieldNodeGuard)·미사용 형 3(UnionMemberType, UnionSchemaType, FieldNodeInputProps). nodeFromJSONSchema는 패키지 안 제품 코드 소비자가 없고 명세 "Node Initialization" 절에 공개 API로 적혀 있으며 aileron 벤치마크 패키지가 쓴다. 08 계획의 출발 목록으로 기록 |
+
+다음 라운드 번호는 283이다.

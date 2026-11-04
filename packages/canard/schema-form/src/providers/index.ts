@@ -5,14 +5,14 @@ export {
 export type { ExternalFormContextProviderProps } from './ExternalFormContext';
 
 export {
-  FormTypeInputsContextProvider,
-  useFormTypeInputsContext,
-} from './FormTypeInputsContext';
+  FieldInputsContextProvider,
+  useFieldInputsContext,
+} from './FieldInputsContext';
 
 export {
-  FormTypeRendererContextProvider,
-  useFormTypeRendererContext,
-} from './FormTypeRendererContext';
+  FieldRendererContextProvider,
+  useFieldRendererContext,
+} from './FieldRendererContext';
 
 export {
   InputControlContextProvider,

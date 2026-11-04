@@ -1,33 +1,41 @@
 # CLAUDE.md
 
-`@canard/schema-form-ajv8-plugin` — AJV 8.x validator plugin for `@canard/schema-form`. JSON Schema Draft 2020-12 / Draft 2019-09 지원.
+`@canard/schema-form-ajv8-plugin` provides AJV 8 validation for `@canard/schema-form`, with Draft-07, 2019-09, and 2020-12 entry points.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
-yarn test --watch      # watch 모드
+yarn build             # ESM, CJS, and declarations
+yarn test              # Vitest
 yarn lint              # ESLint
-yarn storybook         # Storybook dev (port 6006)
+yarn storybook         # Storybook development server
 ```
 
 ## Architecture
 
-- `src/index.ts` — 플러그인 진입점
-- `src/validator/validatorPlugin.ts` — `bind()` / `compile()` 구현
-- `src/validator/createValidatorFactory.ts` — validator 팩토리
-- `src/validator/utils/transformErrors.ts` — AJV 에러 → schema-form 포맷 변환
+- `src/{default,2019,2020}/index.ts` are the three public entry points; each exports `plugin`, `createValidatorFactory` and `createValidator`.
+- `src/validator/createInstanceValidator.ts` builds a per-instance validator object with its own root registry; the entry points fix its dialect.
+- Each entry point owns a process-wide `bind` selection and a schema-root registry.
+- `src/validator/createValidatorFactory.ts` compiles full asynchronous validation.
+- `src/validator/createGuardCompiler.ts` compiles synchronous guards: a self-contained `if` subschema (no `$schema`, `$ref`, `$dynamicRef`, `$recursiveRef`, `$id`, or anchor keyword anywhere) directly on the guard instance only when the root has no own `$schema`; a root declaring `$schema` or a guard containing `$schema` uses the root pointer, as do other contextual guards. Each entry point's `configure({ directGuardCompile: false })` restores the root pointer for later compiles (ledger round 52, 46C-01 Option A).
+- A compile error that only appears when another part of the root is compiled (an unresolved `$ref`, an invalid regex) makes full validation report `VALIDATOR_COMPILE_FAILED` and fails every root-pointer guard, a limitation of that path; a directly compiled self-contained guard still evaluates, as ERROR-041's per-gate failure rule prescribes (ledger 53C-01). Do not make the direct path reproduce the root-wide failure.
+- `src/validator/utils/transformErrors.ts` maps AJV issues to `ValidationIssue`.
+- `src/__tests__/parity.{guard,guard.dynamic,validation,lifetime}.test.ts` run the shared validator parity scenarios of `@aileron/schema-form-scenarios/validator` (a devDependency) on this plugin's entries; conformance rows assert, observation rows only record (IR-11 PR-D).
 
 ## Key Details
 
-- **AJV 기본 설정**: `allErrors: true`, `strictSchema: false`, `validateFormats: false`
-- **에러 변환**: `required` 에러는 `JSON_POINTER_SEPARATOR`로 missing property를 instancePath에 append, 나머지는 그대로 사용
-- **비동기 검증**: 모든 validator는 `$async: true`로 컴파일
-- **빌드 타겟**: ES2022, ESM(.mjs) + CJS(.cjs), Rolldown 사용
+- Default options: `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
+- **Registration and call order**: `compileGuard(copy, pointer)` and `release(copy)` accept the engine-owned copy whether or not `compile(copy)` has run. Only guards that need the root location (for example a `$ref` into root definitions) register the root, on the guard instance; `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy, and full validation can be compiled later. Pass the same copy object to `compile`, every `compileGuard`, and `release`. Releasing an unregistered root is a no-op.
+- **Guard meta-schema**: the guard instance uses `allErrors: false` and `validateSchema: false`; AJV's root meta-schema check runs only in the whole-schema compile, so a root meta-schema violation outside the condition fails no guard, and a meta-only violation inside the condition schema is evaluated by the generated code; custom keyword meta-schema checks, strict options and code-generation checks still apply to guards (IR-10, VALIDATE-033, ERROR-041).
+- `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
+- Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
+- `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
+- Validation returns `null` or normalized issues; root `dataPath` is `''`.
+- **Guard scope**: on an instance with `opts.dynamicRef` (Ajv2019, Ajv2020) and a root that has a dynamic-scope key, a root-pointer guard prefills AJV dynamic anchors from the outermost chain resource declaring each name, then compiles `$ref` (`src/validator/utils/dynamicScope/collectGuardDynamicAnchors.ts`); other root assertions never affect it, it matches whole validation's `if` verdict under the README's support condition, an inline reference that neither a chain resource nor an ancestor of the reference inside the `if` binds, or a selected `$async` declaration, fails `compileGuard`, and VALIDATE-047 case (iv) and a first binding outside the chain stay unsupported.
+- **Bound strict options**: `strictTypes` and `strictRequired` on a bound instance may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+- Builds target ES2022, ESM (`.mjs`), and CJS (`.cjs`).
 
-## AJV 7.x와의 차이점
+## AJV 7 differences
 
-- `strict: false` → `strictSchema: false`
-- `dataPath` → `instancePath` (AJV 8.x 변경사항)
-- Draft 2020-12 지원 추가
+- AJV 8 uses `strictSchema: false` and `instancePath`.
+- The 2020 entry point supports Draft 2020-12.

@@ -1,0 +1,10 @@
+# 50라운드 닫기 — 05의 원장 해석 하나: PR-7까지 남기는 옛 이름 `JSONSchemaError`는 `ValidationIssue`의 호환 확장이어도 된다
+
+2026-10-01. 05 작업자(브랜치 `feat/schema-form-dispatch-and-validation`)가 물었다: 34C-02는 옛 이름 `JSONSchemaError`를 "같은 형의 별칭으로" PR-7까지 남기라고 했는데, 같은 형으로 두면 옛 공개 형의 `details?: Record<string, any>`(와 옛 엔진이 쓰는 `key?: number`)가 새 `ValidationIssue`의 `details?: Record<string, unknown>`으로 좁아져 `error.details.foo`를 값으로 읽던 소비자 코드가 PR-7 전에 컴파일되지 않는다(독립 verifier G51 N2). 작업 트리의 수정은 `export interface JSONSchemaError extends ValidationIssue { details?: Record<string, any>; key?: number }`를 이름으로 내보내고 `ValidationIssue`는 `unknown` 그대로 함께 내보내는 것이다. 34C-02의 까닭과 LANDING-159 규칙 3에서 유도되므로 편집자 결정으로 닫는다. 소유자에게 물을 것은 없다.
+
+### 50C-01 옛 이름 `JSONSchemaError`는 PR-7까지 `ValidationIssue`의 호환 확장(옛 공개 형의 `details?: Record<string, any>`·`key?: number`를 더한 인터페이스)으로 남기고, 새 `ValidationIssue`는 `unknown`을 지킨다 — 34C-02의 "같은 형의 별칭"은 수단이었고 뜻은 "PR-7 전에 공개 형이 바뀌지 않는다"다
+
+- 닫는 항목: LANDING-024(보충), LANDING-159(보충)
+- 결정:
+  - 【추론】 34C-02가 옛 이름을 남기라고 한 까닭은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진이고 PR-4 전에는 공개 동작 변경이 없다, 32C-01)대로 옛 `<Form>` 형과 플러그인 스토리, 그리고 소비자 코드가 계속 컴파일되게 하는 것이므로, 같은 형의 별칭이 `details`를 `unknown`으로 좁혀 소비자 코드를 PR-7 전에 깨뜨린다면 그 수단이 뜻을 거스른다; 그래서 `JSONSchemaError`는 옛 공개 형과 같은 모양을 지키는 `ValidationIssue`의 호환 확장(`details?: Record<string, any>`, `key?: number`)으로 `src/index.ts`에서 이름으로 내보내고, 새 엔진의 `ValidationIssue`는 `details?: Record<string, unknown>`을 지키며 함께 내보낸다(새 엔진의 값은 확장에 대입 가능하고, 새 엔진은 `key`를 쓰지 않는다). 옛 이름을 지우는 것은 34C-02·LANDING-024대로 PR-7 또는 PR-8의 몫이고, 그때 `any`와 `key`도 함께 사라진다; `ValidationIssue.details`를 `any`로 넓히거나 소비자의 좁힘을 받아들이는 길은 택하지 않는다.
+- 근거: 34C-02 "옛 이름 `JSONSchemaError`를 같은 형의 별칭으로 PR-7까지 남기는 것은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진)과 맞다; 옛 `<Form>` 형과 플러그인 스토리 파일이 아직 옛 이름을 가져오기 때문이다."(`reviews/round-34-closing.md:18`); 32C-01 "PR-4 전에는 공개 동작 변경이 없다"(`reviews/round-32-closing.md:10`); LANDING-024(이주 21: 인터페이스 `JSONSchemaError`는 `ValidationIssue`); 옛 공개 형 `src/types/error.ts:291`(`details?: Record<string, any>`); 05 verifier G51 N2.

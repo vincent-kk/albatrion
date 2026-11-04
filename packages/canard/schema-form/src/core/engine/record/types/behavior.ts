@@ -1,0 +1,88 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
+import type {
+  BlueprintChildEntry,
+  BlueprintNode,
+  BlueprintNodeKind,
+} from '../../blueprint';
+import type { NodeStrategy } from '../../types/strategy';
+import type { UnionSpec } from '../../types/unionSpec';
+import type { FieldNodeRecord } from './record';
+import type { FieldNodeRuntime } from './runtime';
+
+export type { UnionSpec } from '../../types/unionSpec';
+
+/** Caller verb represented without changing a node or its children. */
+export type ArrayOperation =
+  | { kind: 'push'; value: unknown }
+  | { kind: 'pop' }
+  | { kind: 'update'; index: number; value: unknown }
+  | { kind: 'remove'; index: number }
+  | { kind: 'insert'; index: number; value: unknown }
+  | { kind: 'clear' };
+
+/** Where settlement obtains the synchronous result of an array verb. */
+export type ArrayArrangeResult =
+  | { source: 'length' }
+  | { source: 'removed'; index: number }
+  | { source: 'updated'; index: number }
+  | { source: 'void' };
+
+/** Pure structural proposal for a branch or a whole-value terminal array. */
+export type ArrayArrangePlan =
+  | { kind: 'noop' }
+  | {
+      kind: 'slots';
+      slots: readonly ({ from: number } | { value: unknown })[];
+      result: ArrayArrangeResult;
+    }
+  | { kind: 'update'; index: number; value: unknown }
+  | { kind: 'source'; source: readonly unknown[]; result: ArrayArrangeResult };
+
+/** Pure calculation slots shared across nodes of one kind and strategy. */
+export interface Behavior<Self = unknown> {
+  /** Interpret caller input under the current allowed types. */
+  interpret(input: unknown, spec: UnionSpec): unknown;
+  /** Assemble the current child values without committing them. */
+  assemble<Node extends Self>(
+    node: FieldNodeRecord<Node>,
+    children: readonly Node[],
+    recalculated?: readonly Node[],
+    hint?: {
+      /** Set by the row when it compared only recalculated or appended slots, or truncated its previous local. */
+      incremental: boolean;
+      /** Previous item count when settlement holds a valid append proof for this host. */
+      append?: number;
+      /** Remaining item count when settlement holds a valid pop proof for this host. */
+      truncate?: number;
+    },
+  ): unknown;
+  /** Project a local value into the outgoing value. */
+  project<Node extends Self>(
+    node: FieldNodeRecord<Node>,
+    local: unknown,
+  ): unknown;
+  /** Return a completed input string, or undefined when there is no write. */
+  finishInput<Node extends Self>(node: FieldNodeRecord<Node>): Optional<string>;
+  /** Describe children to be created by the caller. */
+  declareChildren<Node extends Self>(
+    node: FieldNodeRecord<Node>,
+  ): readonly BlueprintChildEntry[];
+  /** Propose an array verb without writing source, shape, or notifications. */
+  arrange<Node extends Self>(
+    node: FieldNodeRecord<Node>,
+    operation: ArrayOperation,
+  ): ArrayArrangePlan;
+  /** Stable dispatch kind of this row. */
+  readonly type: BlueprintNodeKind;
+  /** Fixed branch or terminal shape of this row. */
+  readonly strategy: NodeStrategy;
+}
+
+/** Per-tree creation callback supplied by the composition root. */
+export type FieldNodeFactory<Self> = (
+  entry: BlueprintChildEntry | BlueprintNode,
+  parent: Nullable<Self>,
+  runtime: FieldNodeRuntime<Self>,
+  instance?: Self,
+) => Self;

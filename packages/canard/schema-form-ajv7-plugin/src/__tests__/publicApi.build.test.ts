@@ -1,5 +1,6 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-ajv7-plugin';
+import { createValidator, plugin } from '@canard/schema-form-ajv7-plugin';
+import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
 
 /**
@@ -22,6 +23,13 @@ type CompilableSchema = Parameters<ValidatorPlugin['compile']>[0];
 const stringSchema: CompilableSchema = { type: 'string' };
 
 describe('@canard/schema-form-ajv7-plugin 빌드 산출물', () => {
+  it('published entry point 의 createValidator 객체가 검증한다', async () => {
+    const validator = createValidator(new Ajv({ strict: false }));
+
+    await expect(validator.compile(stringSchema)('x')).resolves.toBeNull();
+    expect(validator.compileGuard).toBeTypeOf('function');
+  });
+
   it('published entry point 로 유효한 데이터를 검증한다', async () => {
     const validate = plugin.validator.compile(stringSchema);
 

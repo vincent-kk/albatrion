@@ -1,0 +1,104 @@
+/// <reference lib="es2021.weakref" />
+
+import type { JSONSchema } from '@canard/schema-form';
+import type Ajv from 'ajv';
+
+import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
+import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
+
+/** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
+const MAX_TRANSIENT_ROOTS = 64;
+
+/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+
+/** One root's validation and optional guard registrations. */
+export interface SchemaRootRegistration {
+  /** Direct schemas are owned and released with this root's guard instance. */
+  readonly directGuards: (object | boolean)[];
+  /** Self-containment is computed once per object in this bound profile. */
+  readonly guardChecks: WeakMap<object, boolean>;
+  readonly baseAjv: Ajv;
+  readonly validationAjv: Ajv;
+  guardAjv?: Ajv;
+  readonly validationCopy?: JSONSchema;
+  guardCopy?: JSONSchema;
+  /** `refs` entries the validation registration added; empty until `registerValidationRoot` succeeds. */
+  validationRefs: readonly string[];
+  /** Whether `validationCopy` is registered on `validationAjv`; set only by a successful `registerValidationRoot`. */
+  validationRegistered: boolean;
+  guardRefs?: readonly string[];
+  readonly key: string;
+  readonly ids: readonly string[];
+  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly hasDynamicKeywords: boolean;
+}
+
+/** Mutable registration ownership retained by one plugin entry point. */
+export interface SchemaRootRegistry {
+  readonly entries: WeakMap<JSONSchema, SchemaRootRegistration[]>;
+  readonly active: WeakRef<SchemaRootRegistration>[];
+  readonly finalizer: FinalizationRegistry<SchemaRootRegistration>;
+  compilerBase?: Ajv;
+  compilerCurrent?: Ajv;
+  compilerCount: number;
+}
+
+/** Monotonic keys stay unique across every registry that shares one instance. */
+let nextSchemaRootKey = 0;
+
+/** Records a copy once for each bound instance and authored root identity; `registerValidationRoot` registers it with AJV. */
+export const registerSchemaRoot = (
+  registry: SchemaRootRegistry,
+  baseAjv: Ajv,
+  root: JSONSchema,
+): SchemaRootRegistration => {
+  const registrations = registry.entries.get(root) ?? [];
+  const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
+  if (existing) return existing;
+  const ids: string[] = [];
+  let hasDynamicKeywords = false;
+  JSON.stringify(root, (name, value: unknown) => {
+    if (name === '$id' && typeof value === 'string') ids.push(value);
+    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
+    return value;
+  });
+  if (ids.length)
+    for (let index = registry.active.length - 1; index >= 0; index--)
+      if (!registry.active[index].deref()) registry.active.splice(index, 1);
+  const shared = ids.length ? instanceIdRegistrationsOf(baseAjv) : [];
+  for (let index = shared.length - 1; index >= 0; index--)
+    if (!shared[index].deref()) shared.splice(index, 1);
+  const conflict = ids.some((id) => registry.active.some((ref) => {
+    const entry = ref.deref();
+    return entry?.baseAjv === baseAjv && entry.ids.includes(id);
+  }) || shared.some((ref) => ref.deref()?.ids.includes(id)));
+  if (!ids.length && registry.compilerBase !== baseAjv) {
+    registry.compilerBase = baseAjv;
+    registry.compilerCurrent = baseAjv;
+    registry.compilerCount = 0;
+  }
+  if (!ids.length && registry.compilerCount === MAX_TRANSIENT_ROOTS) {
+    registry.compilerCurrent = makeSibling(baseAjv, !!baseAjv.opts.allErrors);
+    registry.compilerCount = 0;
+  }
+  const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
+    : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
+  if (!ids.length) registry.compilerCount++;
+  const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
+  const validationCopy: JSONSchema | undefined = ids.length
+    ? JSON.parse(JSON.stringify(root)) : undefined;
+  const registration: SchemaRootRegistration = {
+    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids,
+    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
+  };
+  registrations.push(registration);
+  registry.entries.set(root, registrations);
+  registry.finalizer.register(root, registration, registration);
+  if (ids.length) {
+    const ref = new WeakRef(registration);
+    registry.active.push(ref);
+    shared.push(ref);
+  }
+  return registration;
+};

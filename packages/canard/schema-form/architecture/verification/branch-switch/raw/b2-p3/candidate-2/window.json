@@ -1,0 +1,32 @@
+{
+  "started": {
+    "startedAt": "2026-10-27T16:42:09.250Z",
+    "quietSince": "2026-10-27T16:42:14.334Z",
+    "durationSeconds": 5.0793269169999995,
+    "heavy": [],
+    "highestCpuPercent": 18.309512563312655
+  },
+  "endedAt": "2026-10-27T16:51:08.038Z",
+  "ended": {
+    "startedAt": "2026-10-27T16:51:08.038Z",
+    "quietSince": "2026-10-27T16:51:13.115Z",
+    "durationSeconds": 5.074773042000015,
+    "heavy": [],
+    "highestCpuPercent": 22.26700565026186
+  },
+  "selectedCompleteWindows": 1,
+  "interruptedCollectionWindows": 0,
+  "artifactCheckerNote": null,
+  "callCountFixtureCorrection": null,
+  "interruptedWindow": null,
+  "preflightAttempts": [
+    {
+      "startedAt": "2026-10-27T16:42:09.250Z",
+      "quietSince": "2026-10-27T16:42:14.334Z",
+      "durationSeconds": 5.0793269169999995,
+      "heavy": [],
+      "highestCpuPercent": 18.309512563312655
+    }
+  ],
+  "setupFailures": []
+}

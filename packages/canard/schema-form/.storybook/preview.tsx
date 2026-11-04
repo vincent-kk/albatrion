@@ -2,6 +2,8 @@ import React from 'react';
 
 import type { Preview } from '@storybook/react-vite';
 
+import { withStoryPanels } from '../stories/components/panels/withStoryPanels';
+
 import {
   LOCAL_STORAGE_THEME_KEY,
   Theme,
@@ -10,6 +12,7 @@ import {
 const preview: Preview = {
   parameters: {
     controls: {
+      exclude: /^(scenario|propStages|formProps|providerProps|layout|on[A-Z]\w*)$/,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
@@ -47,6 +50,7 @@ export const decorators = [
     }
     return <Story />;
   },
+  withStoryPanels,
 ];
 
 export default preview;

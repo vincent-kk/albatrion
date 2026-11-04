@@ -1,0 +1,272 @@
+import { describe, expect, test } from 'vitest';
+
+import type { ArraySchema, JSONSchema, ObjectSchema } from '@/schema-form/__legacy__/types/jsonSchema';
+
+import {
+  distributeAllOfItems,
+  distributeAllOfProperties,
+} from '../distributeSubSchema';
+
+describe('distributeAllOfProperties', () => {
+  test('does nothing when source properties is empty', () => {
+    const base: ObjectSchema = { type: 'object' };
+    const source: Partial<ObjectSchema> = {};
+
+    distributeAllOfProperties(base, source);
+
+    expect(base.properties).toBeUndefined();
+  });
+
+  test('assigns source properties when base properties is empty', () => {
+    const base: ObjectSchema = { type: 'object' };
+    const source: Partial<ObjectSchema> = {
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+      },
+    };
+
+    distributeAllOfProperties(base, source);
+
+    expect(base.properties).toEqual({
+      name: { type: 'string' },
+      age: { type: 'number' },
+    });
+  });
+
+  test('adds new property to existing properties', () => {
+    const base: ObjectSchema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    };
+    const source: Partial<ObjectSchema> = {
+      properties: {
+        age: { type: 'number' },
+      },
+    };
+
+    distributeAllOfProperties(base, source);
+
+    expect(base.properties).toEqual({
+      name: { type: 'string' },
+      age: { type: 'number' },
+    });
+  });
+
+  test('distributes duplicate property to allOf', () => {
+    const base: ObjectSchema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    };
+    const source: Partial<ObjectSchema> = {
+      properties: {
+        name: { minLength: 3 } as JSONSchema,
+      },
+    };
+
+    distributeAllOfProperties(base, source);
+
+    expect(base.properties?.name).toEqual({
+      type: 'string',
+      allOf: [{ minLength: 3 }],
+    });
+  });
+
+  test('handles multiple properties simultaneously', () => {
+    const base: ObjectSchema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+      },
+    };
+    const source: Partial<ObjectSchema> = {
+      properties: {
+        name: { minLength: 3 } as JSONSchema,
+        email: { type: 'string', format: 'email' },
+      },
+    };
+
+    distributeAllOfProperties(base, source);
+
+    expect(base.properties).toEqual({
+      name: {
+        type: 'string',
+        allOf: [{ minLength: 3 }],
+      },
+      age: { type: 'number' },
+      email: { type: 'string', format: 'email' },
+    });
+  });
+
+  test('original base object is mutated', () => {
+    const base: ObjectSchema = { type: 'object' };
+    const originalBase = base;
+    const source: Partial<ObjectSchema> = {
+      properties: {
+        name: { type: 'string' },
+      },
+    };
+
+    distributeAllOfProperties(base, source);
+
+    expect(base).toBe(originalBase);
+    expect(base.properties).toBeDefined();
+  });
+});
+
+describe('distributeAllOfItems', () => {
+  test('does nothing when source items is empty', () => {
+    const base: ArraySchema = { type: 'array', items: { type: 'string' } };
+    const source: Partial<ArraySchema> = {};
+
+    distributeAllOfItems(base, source);
+
+    expect(base.items).toEqual({ type: 'string' });
+  });
+
+  test('assigns source items when base items is empty', () => {
+    const base = { type: 'array' } as ArraySchema;
+    const source: Partial<ArraySchema> = {
+      items: { type: 'string' },
+    };
+
+    distributeAllOfItems(base, source);
+
+    expect(base.items).toEqual({ type: 'string' });
+  });
+
+  test('distributes to allOf for existing items', () => {
+    const base: ArraySchema = {
+      type: 'array',
+      items: { type: 'string' },
+    };
+    const source: Partial<ArraySchema> = {
+      items: { minLength: 3 } as JSONSchema,
+    };
+
+    distributeAllOfItems(base, source);
+
+    expect(base.items).toEqual({
+      type: 'string',
+      allOf: [{ minLength: 3 }],
+    });
+  });
+
+  test('handles complex items schema', () => {
+    const base: ArraySchema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+      },
+    };
+    // A bare `{ required }` fragment carries no `type`, so it is not a whole
+    // JSONSchema — `Partial<JSONSchema>` is what distributeSchema() accepts.
+    const items: Partial<JSONSchema> = { required: ['name'] };
+    const source = { items } as Partial<ArraySchema>;
+
+    distributeAllOfItems(base, source);
+
+    expect(base.items).toEqual({
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+      allOf: [{ required: ['name'] }],
+    });
+  });
+
+  test('original base object is mutated', () => {
+    const base = { type: 'array' } as ArraySchema;
+    const originalBase = base;
+    const source: Partial<ArraySchema> = {
+      items: { type: 'string' },
+    };
+
+    distributeAllOfItems(base, source);
+
+    expect(base).toBe(originalBase);
+    expect(base.items).toBeDefined();
+  });
+
+  test('continues to add to allOf on multiple calls', () => {
+    const base: ArraySchema = {
+      type: 'array',
+      items: { type: 'string' },
+    };
+
+    distributeAllOfItems(base, { items: { minLength: 3 } as JSONSchema });
+    distributeAllOfItems(base, { items: { maxLength: 10 } as JSONSchema });
+
+    expect(base.items).toEqual({
+      type: 'string',
+      allOf: [{ minLength: 3 }, { maxLength: 10 }],
+    });
+  });
+
+  describe('items: false handling (allOf AND logic)', () => {
+    test('sets base.items to false when source.items is false and base.items is undefined', () => {
+      const base = { type: 'array' } as ArraySchema;
+      const source: Partial<ArraySchema> = { items: false };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('sets base.items to false when source.items is false and base.items has schema', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: { type: 'string' },
+      };
+      const source: Partial<ArraySchema> = { items: false };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('keeps base.items as false when base.items is false and source.items is undefined', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: false,
+      };
+      const source: Partial<ArraySchema> = {};
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('keeps base.items as false when base.items is false and source.items has schema', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: false,
+      };
+      const source: Partial<ArraySchema> = { items: { type: 'string' } };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+
+    test('keeps base.items as false when both are false', () => {
+      const base: ArraySchema = {
+        type: 'array',
+        items: false,
+      };
+      const source: Partial<ArraySchema> = { items: false };
+
+      distributeAllOfItems(base, source);
+
+      expect(base.items).toBe(false);
+    });
+  });
+});

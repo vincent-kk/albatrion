@@ -1,0 +1,866 @@
+import { describe, expect, it, vi } from 'vitest';
+
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
+
+// filid:contract settle-derive-selection
+describe('active derive declarations', () => {
+  it('FRAGMENT-050 shared node baseline only on depth-one if activation', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        H: {
+          type: 'object',
+          properties: {
+            enabled: { type: 'boolean' },
+            s: { type: 'string' },
+            x: { type: 'string' },
+          },
+          if: {
+            properties: { enabled: { const: true } },
+            required: ['enabled'],
+          },
+          then: {
+            controls: { derived: './s' },
+            properties: {
+              x: { type: 'string' },
+            },
+          },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { H: { enabled: false, s: 'S1', x: 'own' } },
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.H?.structure?.x?.source).toBe('own');
+    writeFieldNode(
+      root.structure!.H.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.H?.structure?.x?.source).toBe('own');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for resetInteraction', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        H: {
+          type: 'object',
+          properties: {
+            enabled: { type: 'boolean' },
+            x: { type: 'string' },
+          },
+          if: {
+            properties: { enabled: { const: true } },
+            required: ['enabled'],
+          },
+          then: {
+            controls: { resetInteraction: 'true' },
+            properties: { x: { type: 'string' } },
+          },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { H: { enabled: false, x: 'own' } },
+      WriteOption.Overwrite,
+    );
+    const target = root.structure!.H.structure!.x;
+    target.interactionState = {
+      [FieldNodeState.Edited]: true,
+      [FieldNodeState.Touched]: true,
+    };
+    writeFieldNode(
+      root.structure!.H.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
+  });
+
+  it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        G: {
+          type: 'object',
+          properties: {
+            H: {
+              type: 'object',
+              properties: {
+                enabled: { type: 'boolean' },
+                s: { type: 'string' },
+                x: { type: 'string' },
+              },
+              if: {
+                properties: { enabled: { const: true } },
+                required: ['enabled'],
+              },
+              then: {
+                controls: { derived: './s' },
+                properties: {
+                  x: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { G: { H: { enabled: false, s: 'S1', x: 'own' } } },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.G.structure!.H.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.G?.structure?.H?.structure?.x?.source).toBe('own');
+  });
+
+  it('SETTLE-003 non-root effective schema and selection match a fresh load on both flips', () => {
+    const schema: BlueprintSchema = {
+      type: 'object',
+      properties: {
+        H: {
+          type: 'object',
+          properties: {
+            enabled: { type: 'boolean' },
+            s: { type: 'string' },
+            x: { type: 'string' },
+          },
+          if: {
+            properties: { enabled: { const: true } },
+            required: ['enabled'],
+          },
+          then: {
+            controls: { derived: './s' },
+            properties: {
+              x: { type: 'string', minLength: 3 },
+              extra: { type: 'string' },
+            },
+          },
+        },
+      },
+    };
+    const { root } = createTestTree(schema);
+    loadFieldNodeAtMount(
+      root,
+      { H: { enabled: false, s: 'S1', x: 'own' } },
+      WriteOption.Overwrite,
+    );
+    const selectedKey = JSON.stringify(['/H', 'object']);
+    for (const enabled of [true, false]) {
+      writeFieldNode(
+        root.structure!.H.structure!.enabled,
+        enabled,
+        'input',
+        WriteOption.Overwrite,
+      );
+      const { root: fresh } = createTestTree(schema);
+      loadFieldNodeAtMount(fresh, root.emit, WriteOption.Overwrite);
+      expect(root.structure?.H?.schema).toEqual(fresh.structure?.H?.schema);
+      expect(root.runtime.committedDeclarationIds?.get(selectedKey)).toEqual(
+        fresh.runtime.committedDeclarationIds?.get(selectedKey),
+      );
+      expect(Object.keys(root.structure!.H.structure!)).toEqual(
+        Object.keys(fresh.structure!.H.structure!),
+      );
+    }
+  });
+
+  it('CONTROLS-077 nested fragment derived follows outer dependency after mount', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        t: { type: 'string' },
+        H: {
+          type: 'object',
+          allOf: [
+            {
+              controls: { derived: '../t' },
+              properties: { x: { type: 'string' } },
+            },
+          ],
+        },
+      },
+    });
+    loadFieldNodeAtMount(root, { t: 'T1' }, WriteOption.Overwrite);
+    expect(root.structure?.H?.structure?.x?.source).toBe('T1');
+    writeFieldNode(root.structure!.t, 'T2', 'input', WriteOption.Overwrite);
+    expect(root.structure?.H?.structure?.x?.source).toBe('T2');
+    writeFieldNode(root.structure!.t, 'T3', 'input', WriteOption.Overwrite);
+    expect(root.structure?.H?.structure?.x?.source).toBe('T3');
+  });
+
+  it('CONTROLS-077 fragment unsetValue consumes a false-to-true dependency edge', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        c: { type: 'boolean' },
+        H: {
+          type: 'object',
+          allOf: [
+            {
+              controls: { unsetValue: '../c' },
+              properties: { x: { type: 'string' } },
+            },
+          ],
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { c: false, H: { x: 'v' } },
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.H?.structure?.x?.source).toBe('v');
+    writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.H?.structure?.x?.source).toBeUndefined();
+  });
+
+  it('SETTLE-049 inactive ancestor fragment does not derive on a nested write', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        H: {
+          type: 'object',
+          properties: {
+            P: {
+              type: 'object',
+              properties: {
+                q: { type: 'string' },
+                r: { type: 'string' },
+              },
+            },
+          },
+          allOf: [
+            {
+              controls: { active: '../flag' },
+              properties: {
+                P: { type: 'object', controls: { derived: '@.derive()' } },
+              },
+            },
+          ],
+        },
+      },
+    });
+    const derive = vi.fn(() => ({ q: 'DQ', r: 'DR' }));
+    root.runtime.context = { derive };
+    loadFieldNodeAtMount(
+      root,
+      { flag: false, H: { P: { q: 'q0', r: 'r0' } } },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.H.structure!.P.structure!.q,
+      'user',
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.H?.structure?.P?.structure?.q?.source).toBe('user');
+    expect(root.structure?.H?.structure?.P?.structure?.r?.source).toBe('r0');
+    expect(derive).not.toHaveBeenCalled();
+  });
+
+  it('SETTLE-049 inactive fragment does not reset interaction on a nested write', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        H: {
+          type: 'object',
+          properties: {
+            P: { type: 'object', properties: { q: { type: 'string' } } },
+          },
+          allOf: [
+            {
+              controls: { active: '../flag' },
+              properties: {
+                P: { type: 'object', controls: { resetInteraction: 'true' } },
+              },
+            },
+          ],
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: false, H: { P: { q: 'q0' } } },
+      WriteOption.Overwrite,
+    );
+    const target = root.structure!.H.structure!.P;
+    target.interactionState = {
+      [FieldNodeState.Edited]: true,
+      [FieldNodeState.Touched]: true,
+    };
+    writeFieldNode(target.structure!.q, 'user', 'input', WriteOption.Overwrite);
+    expect(target.structure?.q?.source).toBe('user');
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
+  });
+
+  it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        source: { type: 'string' },
+        target: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './flag' },
+          properties: {
+            target: { type: 'string', controls: { derived: '../source' } },
+          },
+        },
+      ],
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: false, source: 'A', target: 'manual' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!['source'], 'C', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for allOf derived, then source change fires', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        source: { type: 'string' },
+        target: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './flag' },
+          properties: {
+            target: { type: 'string', controls: { derived: '../source' } },
+          },
+        },
+      ],
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: false, source: 'A', target: 'manual' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('manual');
+    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('B');
+  });
+
+  it('FRAGMENT-050 newly entered node fires for allOf derived', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        source: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './flag' },
+          properties: {
+            target: { type: 'string', controls: { derived: '../source' } },
+          },
+        },
+      ],
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: false, source: 'A', target: 'manual' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('A');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for then derived, then source change fires', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        s: { type: 'string' },
+        x: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        controls: { derived: './s' },
+        properties: {
+          x: { type: 'string' },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, s: 'S1', x: 'own' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.x?.source).toBe('own');
+    writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('S2');
+  });
+
+  it('FRAGMENT-050 newly entered node fires for then derived', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        s: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        controls: { derived: './s' },
+        properties: {
+          x: { type: 'string' },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, s: 'S1', x: 'own' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.x?.source).toBe('S1');
+  });
+
+  it('FRAGMENT-050 shared node baseline only for unsetValue, then false-to-true fires', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        clear: { type: 'boolean' },
+        target: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './flag' },
+          properties: {
+            target: { type: 'string', controls: { unsetValue: '../clear' } },
+          },
+        },
+      ],
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: false, clear: true, target: 'held' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBe('held');
+    writeFieldNode(
+      root.structure!.clear,
+      false,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.target?.source).toBe('held');
+    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.target?.source).toBeUndefined();
+  });
+
+  it('FRAGMENT-050 shared injectTo baseline only and newly entered source fires', () => {
+    const injectTo = vi.fn((value: unknown) => ({
+      '../output': `from-${value}`,
+    }));
+    const shared = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        source: { type: 'string' },
+        output: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './flag' },
+          properties: {
+            source: { type: 'string', controls: { injectTo } },
+          },
+        },
+      ],
+    }).root;
+    loadFieldNodeAtMount(
+      shared,
+      { flag: false, source: 'A', output: 'manual' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      shared.structure!.flag,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(shared.structure?.output?.source).toBe('manual');
+    expect(injectTo).not.toHaveBeenCalled();
+    writeFieldNode(
+      shared.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
+    expect(shared.structure?.output?.source).toBe('from-B');
+
+    injectTo.mockClear();
+    const entered = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        output: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './flag' },
+          properties: {
+            source: { type: 'string', controls: { injectTo } },
+          },
+        },
+      ],
+    }).root;
+    loadFieldNodeAtMount(
+      entered,
+      { flag: false, source: 'A' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      entered.structure!.flag,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(entered.structure?.['source']?.source).toBe('A');
+    expect(injectTo).toHaveBeenCalledWith('A', expect.any(Object));
+    expect(entered.structure?.output?.source).toBe('from-A');
+  });
+});
+
+describe('newly selected declaration baselines', () => {
+  it('FRAGMENT-050 same-length selection swap takes the new branch baseline', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        s: { type: 'string' },
+        t: { type: 'string' },
+        x: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        properties: {
+          x: { type: 'string', controls: { derived: '../s' } },
+        },
+      },
+      else: {
+        properties: {
+          x: { type: 'string', controls: { derived: '../t' } },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, s: 'S1', t: 'T1', x: '' },
+      WriteOption.Overwrite,
+    );
+    const key = JSON.stringify(['/x', 'string']);
+    const before = root.runtime.committedDeclarationIds?.get(key);
+    writeFieldNode(root.structure!.x, 'm', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    const after = root.runtime.committedDeclarationIds?.get(key);
+    expect(after?.length).toBe(before?.length);
+    expect(after).not.toEqual(before);
+    expect(root.structure?.x?.source).toBe('m');
+    writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('S2');
+  });
+
+  it('FRAGMENT-050 root if/then shared derived fires on its next source edge', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        s: { type: 'string' },
+        x: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        properties: {
+          x: { type: 'string', controls: { derived: '../s' } },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, s: 'S1', x: 'own' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.x?.source).toBe('own');
+    writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('S2');
+    writeFieldNode(root.structure!.s, 'S3', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('S3');
+  });
+
+  it('FRAGMENT-050 depth-one if/then shared derived fires on its next source edge', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        H: {
+          type: 'object',
+          properties: {
+            enabled: { type: 'boolean' },
+            s: { type: 'string' },
+            x: { type: 'string' },
+          },
+          if: {
+            properties: { enabled: { const: true } },
+            required: ['enabled'],
+          },
+          then: {
+            properties: {
+              x: { type: 'string', controls: { derived: '../s' } },
+            },
+          },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { H: { enabled: false, s: 'S1', x: 'own' } },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.H.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.H?.structure?.x?.source).toBe('own');
+    writeFieldNode(
+      root.structure!.H.structure!.s,
+      'S2',
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.H?.structure?.x?.source).toBe('S2');
+  });
+
+  it('FRAGMENT-050 allOf if/then shared derived fires on its next source edge', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        s: { type: 'string' },
+        x: { type: 'string' },
+      },
+      allOf: [
+        {
+          if: {
+            properties: { enabled: { const: true } },
+            required: ['enabled'],
+          },
+          then: {
+            properties: {
+              x: { type: 'string', controls: { derived: '../s' } },
+            },
+          },
+        },
+      ],
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, s: 'S1', x: 'own' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.x?.source).toBe('own');
+    writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('S2');
+  });
+
+  it('FRAGMENT-050 discriminator shared derived fires after switching branch', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      controls: {
+        discriminator: 'kind',
+      },
+      properties: {
+        kind: { type: 'string' },
+        s: { type: 'string' },
+        x: { type: 'string' },
+      },
+      oneOf: [
+        {
+          properties: {
+            kind: { type: 'string', const: 'a' },
+            x: { type: 'string', controls: { derived: '../s' } },
+          },
+        },
+        { properties: { kind: { type: 'string', const: 'b' } } },
+      ],
+    });
+    loadFieldNodeAtMount(
+      root,
+      { kind: 'b', s: 'S1', x: 'own' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(root.structure!.kind, 'a', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('own');
+    writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBe('S2');
+  });
+
+  it('FRAGMENT-050 if/then shared unsetValue fires on its next false-to-true edge', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        c: { type: 'boolean' },
+        x: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        properties: {
+          x: { type: 'string', controls: { unsetValue: '../c' } },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, c: false, x: 'keep' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.x?.source).toBe('keep');
+    writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
+    expect(root.structure?.x?.source).toBeUndefined();
+  });
+
+  it('FRAGMENT-050 if/then shared resetInteraction fires on its next edge', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        c: { type: 'boolean' },
+        x: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        properties: {
+          x: { type: 'string', controls: { resetInteraction: '../c' } },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, c: false, x: 'keep' },
+      WriteOption.Overwrite,
+    );
+    const target = root.structure!.x;
+    target.interactionState = {
+      [FieldNodeState.Edited]: true,
+      [FieldNodeState.Touched]: true,
+    };
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
+    writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
+    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
+  });
+
+  it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {
+    const injectTo = vi.fn((value: unknown) => ({ '../out': `from-${value}` }));
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        src: { type: 'string' },
+        out: { type: 'string' },
+      },
+      if: { properties: { enabled: { const: true } }, required: ['enabled'] },
+      then: {
+        properties: {
+          src: { type: 'string', controls: { injectTo } },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { enabled: false, src: 'A', out: 'manual' },
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.enabled,
+      true,
+      'input',
+      WriteOption.Overwrite,
+    );
+    expect(root.structure?.out?.source).toBe('manual');
+    expect(injectTo).not.toHaveBeenCalled();
+    writeFieldNode(root.structure!.src, 'B', 'input', WriteOption.Overwrite);
+    expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
+    expect(root.structure?.out?.source).toBe('from-B');
+  });
+});
