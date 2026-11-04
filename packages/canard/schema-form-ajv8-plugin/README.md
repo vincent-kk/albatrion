@@ -101,6 +101,7 @@ The plugin implements the `ValidatorPlugin` interface providing two main methods
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Custom keywords, formats, and validation settings that preserve input values
 - **Binding rule**: Instances with enabled `coerceTypes`, `useDefaults`, or `removeAdditional` are rejected immediately. The previous instance remains bound.
+- **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin roots that are already registered stay on the instance that registered them.
 
 Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 
@@ -292,7 +293,6 @@ import Ajv from 'ajv';
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
-  errorDataPath: 'property', // AJV 8.x uses 'instancePath' by default
 });
 
 // Add custom keywords or formats

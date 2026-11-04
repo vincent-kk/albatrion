@@ -155,7 +155,7 @@ controls: { active: "./type === 'A'" }
 | `oneOf`        | 배타적 선택   | ❌ 하나만   | 비활성 브랜치 값 제거                                    |
 | `anyOf`        | 비배타적 선택 | ✅ 여러 개  | 비활성 브랜치 값 제거                                    |
 | `allOf`        | 스키마 병합   | ✅ 모두     | 항상 모든 값 포함                                        |
-| `if-then-else` | 조각 게이트   | -           | `then`은 가드 통과 시, `else`는 가드 실패 시 형상에 포함 |
+| `if-then-else` | 조각 게이트   | -           | `then`은 참 판정 시, `else`는 거짓 판정 시 형상에 포함되고 가드 실패 시 둘 다 꺼짐 |
 
 ### oneOf 예시
 
@@ -172,7 +172,7 @@ controls: { active: "./type === 'A'" }
 }
 ```
 
-분기는 게이트가 통과하는 동안에만 켜집니다. 분기 객체의 `controls.active` 표현식을 쓰거나, 호스트에 `controls.discriminator: '<property>'`를 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다(`===`로 비교하고 분기의 `controls.active`와 AND). 게이트가 없으면 모든 분기가 켜집니다. `if` 가드는 검증기의 `compileGuard`로 동기 평가하며, 선택된 검증기가 없으면(Form이나 FormProvider의 `validatorFactory`도, 검증기 플러그인도 없으면) `then`과 `else` 모두 꺼진 채로 남습니다.
+분기는 게이트가 통과하는 동안에만 켜집니다. 분기 객체의 `controls.active` 표현식을 쓰거나, 호스트에 `controls.discriminator: '<property>'`를 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다(`===`로 비교하고 분기의 `controls.active`와 AND). 게이트가 없으면 모든 분기가 켜집니다. `if` 가드는 검증기의 `compileGuard`로 동기 평가하며, 선택된 검증기가 없으면(Form이나 FormProvider의 `validatorFactory`도, 검증기 플러그인도 없으면) `then`과 `else` 모두 꺼진 채로 남습니다. 거짓 판정은 `else`를 켜지만, 컴파일이나 평가에 실패한 가드는 두 분기를 모두 끄고 `GUARD_FAILED`를 기록합니다. 허용 형에 object가 없는 호스트의 `if`는 `{}`에 대해 평가되며 `IF_ON_NON_OBJECT_HOST` 경고를 냅니다([조건 스키마 계약](../README-ko_kr.md#조건-스키마-if-then-else)).
 
 ### anyOf 예시
 

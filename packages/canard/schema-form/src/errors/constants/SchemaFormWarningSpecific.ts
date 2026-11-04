@@ -24,4 +24,6 @@ export const SchemaFormWarningSpecific = {
   WriteInInactiveResolver: 'WRITE_IN_INACTIVE_RESOLVER',
   /** A valid discriminator cannot select branches on this declaration. */
   DiscriminatorIgnoredForForm: 'DISCRIMINATOR_IGNORED_FOR_FORM',
+  /** An `if` on a host whose allowed types do not include object is evaluated against `{}`; its then/else cannot read the host value. */
+  IfOnNonObjectHost: 'IF_ON_NON_OBJECT_HOST',
 } as const;

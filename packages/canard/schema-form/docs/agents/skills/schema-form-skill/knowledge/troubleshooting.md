@@ -49,6 +49,8 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 **`DISCRIMINATOR_IGNORED_FOR_FORM` / `DISCRIMINATOR_BRANCH_UNREACHABLE`** — ignored keys have reason `union` (no union on that object declaration) or `host` (known non-object host). Unreachable tags have reason `kind` (outside host tag type) or `empty` (empty const/enum intersection) and are not lifted. These warnings and mismatch errors have details `{ propertyName, reason }`, without values. Terminal objects omit unreachable warnings. Ordinary static enum intersection errors still use `EMPTY_ENUM_INTERSECTION`; see `expressions.md` for C1–C13.
 
+**`IF_ON_NON_OBJECT_HOST`** — symptom: `then` or `else` never reacts to the field's own value, and the warning `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST` arrives with details `{ kind }` at `#/…/if`. Cause: the `if` sits on a host whose allowed types do not include object (a string, number, boolean, array or null-only field), so the guard is evaluated against `{}`, not the host value. Fix: move the condition to the enclosing object and test the field through `properties`, or widen the host type to include `object`.
+
 **A nullable object fails validation while `null`** (no warning is printed) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
 
 **Warning `NULL_BRANCH_IGNORED_FOR_FORM`** — a `{ type: 'null' }` branch carries a condition or `properties`. The form reads neither; keep the null branch bare.
