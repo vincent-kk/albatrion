@@ -90,6 +90,10 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 만들어 대조한 뒤 범례와 표 다섯 개를 출력), `scripts/checkReportTables.mjs <summary.json> <samples.json> <report.md>`
 (보고서의 생성 블록이 재생성 결과와 같은지)는 플레인 Node로 실행합니다.
 
+`checkSmokeSamples.mjs`의 기본 프로파일은 지정된 다섯 사례·2회·예열 1회를 요구합니다.
+`--profile remaining`은 조건부 none/validate 마운트·중첩 마운트·배열 타이핑 네 사례·1회·예열 1회를
+검사합니다. 두 프로파일은 같은 관측값 단언과 원시 표본 재계산을 적용하며 임의의 사례 집합은 허용하지 않습니다.
+
 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1`
 은 공개 L과 작업 공간 dist E를 AB/BA로 교대하며 각 판 10예열·최소 100표본을 기록합니다.
 `--out=<path>.json`에 원시 표본, `<path>-summary.json`에 중앙값·p99·비율을 저장하고 표를 출력합니다.

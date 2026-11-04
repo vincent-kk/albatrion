@@ -1,35 +1,30 @@
 // Gate G4: every variant's samples of the two-dist smoke satisfy the per-operation observability table and the renderer/probe proofs.
+import { checkCoreSmokeProfile } from './checkSmokeSamples/utils/checkCoreSmokeProfile.mjs';
 import { checkCoreMeasurement } from './utils/checkCoreMeasurement.mjs';
 import { checkCoreSummaryCadence } from './utils/checkCoreSummaryCadence.mjs';
 import { parseCoreCaseId } from './utils/parseCoreCaseId.mjs';
+import { parseScriptArgs } from './utils/parseScriptArgs.mjs';
 import { readCoreArtifacts } from './utils/readCoreArtifacts.mjs';
 import { rebuildCoreSummary } from './utils/rebuildCoreSummary.mjs';
 
+/** Named workload selection; omitted profile preserves the mandatory five-case smoke. */
+const options = parseScriptArgs(process.argv.slice(2), ['--profile']);
 /** Raw-sample and summary artifact locations supplied by the caller. */
-const [samplesPath, summaryPath] = process.argv.slice(2);
+const [samplesPath, summaryPath] = options._.split('\n');
 if (!samplesPath || !summaryPath)
-  throw new Error('Usage: checkSmokeSamples.mjs <samples.json> <summary.json>');
+  throw new Error(
+    'Usage: checkSmokeSamples.mjs <samples.json> <summary.json> [--profile required|remaining]',
+  );
 /** Parsed raw evidence and the corresponding summary for this verification run. */
 const { samples, summary } = readCoreArtifacts(samplesPath, summaryPath);
-/** Accumulated gate failures; any entry makes the process exit nonzero. */
-const problems = [];
-/** The required two-dist smoke, not an arbitrary subset of cases. */
-const cases = [
-  'mount-flat-500-validate',
-  'mount-flat-500-none',
-  'mount-array-1000-validate',
-  'type-flat-500-validate-nonburst',
-  'first-key-flat-500-validate',
-];
-if (summary.runs !== 2 || summary.warmup !== 1)
-  problems.push('smoke requires runs 2 and warmup 1');
+/** Fixed case membership and required sample count for the selected workload. */
+const { runs, problems } = checkCoreSmokeProfile(
+  summary,
+  samples,
+  options['--profile'],
+);
 if (!String(summary.baselineRevision ?? '').startsWith('7b49d62c7'))
   problems.push('smoke baselineRevision must be 7b49d62c7');
-for (const ids of [Object.keys(samples), summary.cases.map((row) => row.id)])
-  if (ids.length !== cases.length || cases.some((id) => !ids.includes(id)))
-    problems.push(
-      'smoke case set must contain exactly the five required cases',
-    );
 problems.push(...checkCoreSummaryCadence(summary, samples));
 if (summary.mode !== 'compare')
   problems.push(`summary mode is ${summary.mode}, expected compare`);
@@ -42,9 +37,9 @@ for (const [id, groups] of Object.entries(samples)) {
   const { operation, validation } = parseCoreCaseId(id);
   for (const group of groups) {
     for (const variant of ['candidate', 'baseline', 'control'])
-      if (group.samples[variant]?.length !== 2)
+      if (group.samples[variant]?.length !== runs)
         problems.push(
-          `${id} ${variant}: smoke requires two samples per variant`,
+          `${id} ${variant}: smoke requires ${runs} samples per variant`,
         );
     for (const [variant, measurements] of Object.entries(group.samples)) {
       if (!measurements.length)

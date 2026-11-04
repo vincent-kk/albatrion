@@ -68,6 +68,9 @@ with a silent host-specific exemption.
 
 Run `node packages/aileron/benchmark-form/scripts/checkSmokeSamples.mjs
 <samples.json> <summary.json>` on the prescribed five-case, two-run smoke.
+Use `--profile remaining` for the prescribed four remaining browser cases with
+one run and one warmup; all observability assertions and raw-summary checks stay
+mandatory in both profiles.
 `checkFinalRun.mjs` verifies CI artifacts; `renderFinalReport.mjs` recomputes
 statistics and weighted exchanges from samples; `checkReportTables.mjs` compares
 the generated report block. The report preserves the legend and five tables.
