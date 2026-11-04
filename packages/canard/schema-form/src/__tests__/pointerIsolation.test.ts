@@ -9,14 +9,13 @@ import { expect, it } from 'vitest';
 const sourceRoot = resolve(fileURLToPath(new URL('../', import.meta.url)));
 
 /**
- * Enumerate product TypeScript without legacy and verification compartments.
+ * Enumerate product TypeScript without verification compartments.
  * @param directory - Existing source directory to scan recursively.
  * @returns Source files that can ship in the product.
  */
 function walkFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (['__legacy__', '__tests__', '__benchmarks__'].includes(entry.name))
-      return [];
+    if (['__tests__', '__benchmarks__'].includes(entry.name)) return [];
     const file = join(directory, entry.name);
     return entry.isDirectory()
       ? walkFiles(file)

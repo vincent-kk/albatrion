@@ -30,14 +30,13 @@ interface ImportViolation {
 }
 
 /**
- * Enumerates source and contract files without legacy or generated compartments.
+ * Enumerates source and contract files without generated compartments.
  * @param directory - Existing directory beneath the package source root.
  * @returns Files available to the import-model census.
  */
 function walkFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     if (
-      entry.name.includes('__legacy__') ||
       entry.name.startsWith('.') ||
       ['node_modules', 'dist', 'build'].includes(entry.name)
     )
@@ -185,12 +184,7 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
   for (const importer of files.filter((file) => /\.tsx?$/.test(file))) {
     for (const { specifier, line } of readImports(importer)) {
       const target = resolveImport(specifier, importer);
-      if (
-        !target ||
-        !isWithin(target, sourceRoot) ||
-        target.includes('__legacy__')
-      )
-        continue;
+      if (!target || !isWithin(target, sourceRoot)) continue;
       const verdict = classifyImport(importer, target, fractals);
       if (!verdict) continue;
       const importerPath = relative(sourceRoot, importer).split(sep).join('/');
@@ -283,12 +277,7 @@ it('B1: organ files do not import a direct child fractal of their owner', () => 
     );
     for (const { specifier, line } of readImports(importer)) {
       const target = resolveImport(specifier, importer);
-      if (
-        !target ||
-        !isWithin(target, sourceRoot) ||
-        target.includes('__legacy__')
-      )
-        continue;
+      if (!target || !isWithin(target, sourceRoot)) continue;
       const child = children.find((fractal) => isWithin(target, fractal));
       if (!child || relative(owner, child).split(sep)[0] === importerOrgan)
         continue;

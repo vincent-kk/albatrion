@@ -63,12 +63,7 @@ export default defineConfig({
           ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [
-            ...renderTests,
-            ...verifyOnlyTests,
-            ...bundleTests,
-            'src/__legacy__/**',
-          ],
+          exclude: [...renderTests, ...verifyOnlyTests, ...bundleTests],
         },
       },
       {
@@ -80,7 +75,6 @@ export default defineConfig({
           ],
           environment: 'jsdom',
           include: renderTests,
-          exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '19' },
         },
       },
@@ -119,7 +113,6 @@ export default defineConfig({
           ],
           environment: 'jsdom',
           include: renderTests,
-          exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '18' },
           server: {
             deps: {
@@ -164,7 +157,7 @@ export default defineConfig({
           ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, ...bundleTests, 'src/__legacy__/**'],
+          exclude: [...renderTests, ...bundleTests],
         },
       },
       {
@@ -177,7 +170,6 @@ export default defineConfig({
           ],
           environment: 'jsdom',
           include: renderTests,
-          exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '19' },
         },
       },

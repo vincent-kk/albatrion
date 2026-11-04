@@ -44,33 +44,6 @@ const environmentTokenRules = [
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
   {
-    files: ['src/__legacy__/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          paths: [
-            {
-              name: '@/schema-form',
-              message: 'Legacy modules must use local legacy copies.',
-            },
-          ],
-          patterns: [
-            {
-              group: [
-                '@/schema-form/*',
-                '!@/schema-form/__legacy__',
-                '!@/schema-form/__legacy__/**',
-              ],
-              message:
-                'Legacy modules must use local legacy copies. Relative escapes are checked by check-legacy-isolation.mjs.',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     files: [
       'src/core/engine/record/**/*.ts',
       'src/core/engine/behaviors/**/*.ts',
@@ -197,45 +170,12 @@ export default [
     },
   },
   {
-    files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/__legacy__/**'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: [
-                '@/schema-form/__legacy__',
-                '@/schema-form/__legacy__/**',
-                '**/__legacy__',
-                '**/__legacy__/**',
-              ],
-              message:
-                'Source modules must not import the preserved legacy implementation (LANDING-159, LANDING-205).',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     files: ['src/core/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
-            {
-              group: [
-                '@/schema-form/__legacy__',
-                '@/schema-form/__legacy__/**',
-                '**/__legacy__',
-                '**/__legacy__/**',
-              ],
-              message:
-                'New engine modules must not import the preserved legacy implementation (LANDING-159).',
-            },
             {
               group: [
                 '@/schema-form/app/plugin',

@@ -8,7 +8,7 @@
 - Speed first, minimal computation, and the same value read twice returns the same reference — every change states its speed and memory cost.
 - For a small, fixed set of checks known at build time, use direct `&&` or `||` conditions. Hoist a constant key array when iteration is clearer; never allocate the same fixed list on every call.
 - Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
-- Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (`src/__legacy__` keeps its moved code as is; consumer-facing doc examples may show the native call).
+- Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (consumer-facing doc examples may show the native call).
 
 ## Commands
 
@@ -106,16 +106,14 @@ Applies the root `Module Contract Principles` to this package.
 - Standard fractal shape: the root holds `INTENT.md`, `DETAIL.md`, `index.ts` and at most one implementation file named after the fractal (`components/Form/Form.tsx`). Child fractals sit under a role compartment (`components/Form/components/FormCore/`, `components/FieldProxy/components/FieldInputSlot/`), each with `index.ts`, its documents, and its own `components/`·`utils/` for helpers only it uses. Types live in a `types/` compartment split by concern (`src/core/engine/record/types/`), not in a root `type.ts`. Compartments are organs: no `index.ts` inside them, files are imported directly (`src/constants/bitmask`, not `src/constants`). Inside one organ, entry functions follow their siblings' shape: all files or all directories, never a mix.
 - A fractal named after a role (`hooks`, `types`) keeps its files in topic compartments, never in a compartment that repeats the role name (`src/hooks/fieldNode/`·`src/hooks/form/`, `src/types/schema/`·`field/`·`error/`·`rolled/`; never `hooks/hooks/` or `types/types/`). Helpers extracted from a function go into a topic compartment beside their siblings, not into a directory named after the function with its own `utils/` (no `analyze/populateNodeChildren/utils/`). `src/hooks` stays a fractal because it composes `core`, `providers` and `components`; an organ may not import its owner's child fractals (model B1, guarded by `src/__tests__/importModel.test.ts`).
 - Tests live in each fractal's `__tests__/` and import that fractal's internal files directly (`../runtime/FieldNode`, not `..` or `@/schema-form/core`). A test that needs another fractal's internals moves into that fractal; a fixture shared by two fractals sits in the `__tests__/fixtures/` of their lowest common fractal. `src/__tests__/e2e`, `scenarios` and `migration` are external consumers and import the root `index.ts`. A parent-level test that must reach a child fractal's internals (for example through `vi.mock`) is declared in the parent's `DETAIL.md` (see `src/core/engine/DETAIL.md`).
-- Benchmarks live inside the nearest fractal's `__benchmarks__/` and import internals directly. The standalone legacy-comparison scripts in `bench/legacy-compare/` read internals under a scoped `.filid/config.json` exemption; `bench/` and `stories/` are ignored by filid, so reviewers check those imports by hand. A bench never justifies adding a name to an `index.ts`.
+- Benchmarks live inside the nearest fractal's `__benchmarks__/` and import internals directly. `bench/distEngine/` loads built workspace bundles and installed 0.16.x bundles for diagnostic and version comparisons. `bench/` and `stories/` are ignored by filid, so reviewers check those imports by hand. A bench never justifies adding a name to an `index.ts`.
 - Error codes come from one place: `FormErrorCode` and `FormWarningCode` (`src/errors/`), exported from the root. Product code emits codes through these constants, never as string literals.
-- `src/__legacy__` is frozen and is deleted in stage 09. Do not extend it, and do not count its imports as consumers.
 
 ## Render-Level Test Harness (`src/__tests__/`)
 
 Vitest uses five projects: `unit` runs TypeScript core tests in Node, `render`
 runs React tests and DOM-dependent TypeScript tests in jsdom, and `storybook`
-runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Source globs
-include `src/__legacy__/**`; architecture spike tests remain outside these
+runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Architecture spike tests remain outside these
 product projects. Run `yarn test --run --project <name>` to select a project.
 The dedicated `verify-unit` and `verify-render` bundle runs shadow wheel, verify table, and derive shadow checks via `yarn workspace @canard/schema-form test:verify --run`; default `unit`, `render`, and `react18` projects exercise the shipped skip/table configuration with derive shadow disabled.
 

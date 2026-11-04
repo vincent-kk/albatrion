@@ -52,5 +52,5 @@ a pending child commit) and are included in the same baseline/compare run.
 ## Layout
 
 - `src/**/__benchmarks__/*.bench.ts` — the `vitest bench` suites, picked by name in `vitest.bench.config.ts`.
-- `bench/legacy-compare/` — standalone scripts that measure the legacy core beside the new one; run each directly under the runtime its header names, not through `vitest bench`. They are removed with the legacy core.
+- `bench/distEngine/` — loaders for built workspace bundles and installed 0.16.x bundles used by diagnostic and version comparisons.
 - `bench/scripts/` — diagnostic and report scripts (`*.mjs`) from earlier measurement rounds.
