@@ -1,0 +1,57 @@
+/* Loaded by the core Storybook preview; data-theme selects the palette. */
+:root {
+  --sf-bg: #ffffff;
+  --sf-surface: #f8fafc;
+  --sf-surface-2: #f1f5f9;
+  --sf-border: #e2e8f0;
+  --sf-border-strong: #cbd5e1;
+  --sf-text: #0f172a;
+  --sf-text-muted: #475569;
+  --sf-accent: #2563eb;
+  --sf-on-accent: #ffffff;
+  --sf-danger: #b91c1c;
+  --sf-danger-surface: #fef2f2;
+  --sf-success: #15803d;
+  --sf-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  --sf-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sf-text-xs: 12px;
+  --sf-text-sm: 14px;
+  --sf-text-md: 16px;
+  --sf-text-lg: 20px;
+  --sf-text-code: 13px;
+  --sf-space-1: 4px;
+  --sf-space-2: 8px;
+  --sf-space-3: 12px;
+  --sf-space-4: 16px;
+  --sf-space-5: 24px;
+  --sf-space-6: 32px;
+  --sf-space-7: 48px;
+  --sf-radius-sm: 6px;
+  --sf-radius-md: 8px;
+  --sf-duration: 150ms;
+}
+
+:root[data-theme='dark'] {
+  --sf-bg: #0b1120;
+  --sf-surface: #111827;
+  --sf-surface-2: #1e293b;
+  --sf-border: #334155;
+  --sf-border-strong: #475569;
+  --sf-text: #e2e8f0;
+  --sf-text-muted: #94a3b8;
+  --sf-accent: #60a5fa;
+  --sf-on-accent: #0b1120;
+  --sf-danger: #f87171;
+  --sf-danger-surface: #3b1212;
+  --sf-success: #4ade80;
+}
+
+body {
+  background: var(--sf-bg);
+  color: var(--sf-text);
+  font-family: var(--sf-font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --sf-duration: 0ms; }
+}

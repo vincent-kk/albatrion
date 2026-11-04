@@ -1,10 +1,18 @@
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 
+import { describeFirstStep } from './utils/describeFirstStep';
+
 /**
- * Display the shared scenario's authored name and explanation.
- * @param props - Optional scenario data for parameter-only panel consumers.
- * @returns A fieldset that introduces the form without adding interactive DOM.
+ * Introduce a scenario using display-only prose and its first operation.
+ * @param props - Optional authored scenario; its ledger-prefixed data stays intact.
+ * @returns A heading, explanation and short instruction above the form.
  */
 export function DescriptionPanel({ scenario }: { scenario?: FormScenario }) {
-  return <fieldset><legend>Description</legend><strong>{scenario?.name}</strong><p>{scenario?.description ?? 'No description'}</p></fieldset>;
+  const description = (scenario?.description ?? 'No description')
+    .replace(/^(?:[A-Z][A-Z0-9]*-\d+[A-Z]?(?:[ -]\d+)?\s*)+:\s*/, '');
+  return <header className="sf-story-header">
+    <h2>{scenario?.name}</h2>
+    <p className="sf-description">{description.charAt(0).toUpperCase() + description.slice(1)}</p>
+    <p className="sf-try"><span>Try this</span>{describeFirstStep(scenario?.steps ?? [])}</p>
+  </header>;
 }
