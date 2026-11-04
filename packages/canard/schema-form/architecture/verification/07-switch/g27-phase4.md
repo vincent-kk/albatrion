@@ -230,7 +230,7 @@ npx --offline --no-install vitest run --config "$S/scn.config.mjs" --configLoade
 npx --offline --no-install vitest run --config "$S/variant.config.mjs" --configLoader runner --project unit --reporter=json --outputFile "$S/<variant>.json" <target-files>
 ```
 
-수정 전 ①의 작업량 시험은 `applyArraySlots.prefix-work.test.ts:18`에서 readRawTree 호출 2회 때문에 실패했습니다. 수정 전 ②는 `settle.array-selection-reuse.test.ts:145`부터의 접두 active capture/방문 0회 조건 때문에 실패했습니다. 꼬리 생략 변형은 compareArrayTail.ts:54의 실제 반환 차이로 실패했고, active 훼손 변형은 compareArraySelection.ts:63의 일반 경로 관측 차이로 실패했습니다. setup 오류나 시험 0건의 결과를 변경 증거로 사용하지 않았습니다.
+수정 전 ①의 작업량 시험은 `applyArraySlots.prefix-work.test.ts:18`에서 readSourceTree 호출 2회 때문에 실패했습니다. 수정 전 ②는 `settle.array-selection-reuse.test.ts:145`부터의 접두 active capture/방문 0회 조건 때문에 실패했습니다. 꼬리 생략 변형은 compareArrayTail.ts:54의 실제 반환 차이로 실패했고, active 훼손 변형은 compareArraySelection.ts:63의 일반 경로 관측 차이로 실패했습니다. setup 오류나 시험 0건의 결과를 변경 증거로 사용하지 않았습니다.
 
 G4·G13b·G17b·G19b·G20·G30·G33도 원장 CHECK 원문을 실행했습니다. 각각 종료 0이며 시간은 0.045·3.669·0.019·0.011·0.056·0.070·0.010초였습니다. 기대 표지는 모두 출력되었습니다. 전체 시험 stderr에는 module.register deprecation과 Storybook annotation 안내가 있었지만 실패 시험이나 미처리 오류 실패는 없었습니다.
 

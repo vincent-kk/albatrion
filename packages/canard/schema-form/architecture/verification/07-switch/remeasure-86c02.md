@@ -3380,9 +3380,9 @@ blueprint·record·settle·behaviors의 TypeScript AST에서 객체 생산 지�
 | 324: object spread | `src/core/settle/utils/latent/readLatentSlotSource.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 325: conditional object | `src/core/settle/utils/latent/readLatentSlotSource.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 326: fixed literal | `src/core/settle/utils/latent/readLatentSlotSource.ts:47` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
-| 327: object spread | `src/core/settle/utils/latent/readRawTree.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
-| 328: conditional object | `src/core/settle/utils/latent/readRawTree.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
-| 329: fixed literal | `src/core/settle/utils/latent/readRawTree.ts:48` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
+| 327: object spread | `src/core/settle/utils/latent/readSourceTree.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
+| 328: conditional object | `src/core/settle/utils/latent/readSourceTree.ts:40` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
+| 329: fixed literal | `src/core/settle/utils/latent/readSourceTree.ts:48` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 330: conditional object | `src/core/settle/utils/latent/setLatentSource.ts:37` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 331: conditional object | `src/core/settle/utils/latent/setLatentSource.ts:45` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |
 | 332: object spread | `src/core/settle/utils/load/alignArraySnapshotSlots.ts:36` | 0 | 0 | 0 | 미선택: 세 fixture mount에서 0회 |

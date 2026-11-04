@@ -28,7 +28,7 @@ Rules of thumb:
 - Primary use case: let users add rows and leave the trailing ones empty without polluting the submitted/validated value. Validation sees the trimmed value, so trailing empty items do not count toward `minItems`.
 - A reset restores the loaded value and creates no items for `minItems`; a plain `setValue(undefined)` clears every item.
 - In a custom array `FieldInput`, derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
-- `injectTo` handlers receive the **raw** source value, not the filtered one; mirror targets therefore hold the untrimmed copy.
+- `injectTo` handlers receive the **filtered** value (`node.outputValue`), so mirror targets hold the trimmed copy, not the rendered rows.
 
 ## Terminal vs Branch Strategy
 

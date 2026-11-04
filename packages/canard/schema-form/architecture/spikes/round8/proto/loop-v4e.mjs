@@ -286,7 +286,7 @@ function makeNode(kind, name) {
     declaredBy: null,
     defaultValue: undefined,
     source: undefined,
-    pendingRaw: undefined,
+    pendingSource: undefined,
     hasPending: false,
     reported: NOREPORT,
     selection: 0,
@@ -648,13 +648,13 @@ function touch(node) {
   return node.root;
 }
 
-function stageRaw(node, value) {
-  node.pendingRaw = value;
+function stageSource(node, value) {
+  node.pendingSource = value;
   node.hasPending = true;
   touch(node);
 }
 
-const rawOf = (n) => (n.hasPending ? n.pendingRaw : n.source);
+const sourceOf = (n) => (n.hasPending ? n.pendingSource : n.source);
 const emitOf = (n, sid) => (n.stamp === sid ? n.nextEmit : n.emit);
 const selectionOf = (n) => (n.hasPendingSelection ? n.pendingSelection : n.selection);
 const extrasOf = (n) => (n.hasPendingExtras ? n.pendingExtras : n.extras);
@@ -671,7 +671,7 @@ function markReplaced(host) {
 }
 
 /** Absent = a leaf without source, or a host that received no value (A2 "없음"). */
-const isAbsent = (n) => (n.kind === 'leaf' ? rawOf(n) === undefined : n.absent);
+const isAbsent = (n) => (n.kind === 'leaf' ? sourceOf(n) === undefined : n.absent);
 
 /** A value landed on `node`: it and every ancestor host exist now. */
 function markPresent(node) {
@@ -683,11 +683,11 @@ function erase(node) {
   if (loadDepth > 0 && node.isSource) markSourceLoaded(node);
   if (node.isSource && inSettle === false) markSourceWritten(node);
   if (node.kind === 'leaf') {
-    if (rawOf(node) !== undefined) stageRaw(node, undefined);
+    if (sourceOf(node) !== undefined) stageSource(node, undefined);
     else touch(node);
     return;
   }
-  if (rawOf(node) !== undefined) stageRaw(node, undefined);
+  if (sourceOf(node) !== undefined) stageSource(node, undefined);
   else touch(node);
   node.absent = true;
   if (node.kind === 'object') {
@@ -753,13 +753,13 @@ function applyValue(node, value, merge) {
   if (node.isSource && inSettle === false) markSourceWritten(node);
   markPresent(node);
   if (node.kind === 'leaf') {
-    stageRaw(node, value);
+    stageSource(node, value);
     return;
   }
   const isArray = node.kind === 'array';
   const wrongKind = value === null || typeof value !== 'object' || Array.isArray(value) !== isArray;
   if (wrongKind) {
-    stageRaw(node, value);
+    stageSource(node, value);
     if (isArray === false) {
       node.pendingExtras = null;
       node.hasPendingExtras = true;
@@ -773,7 +773,7 @@ function applyValue(node, value, merge) {
     for (let i = 0; i < kids.length; i++) erase(kids[i]);
     return;
   }
-  if (rawOf(node) !== undefined) stageRaw(node, undefined);
+  if (sourceOf(node) !== undefined) stageSource(node, undefined);
   else touch(node);
   if (isArray) {
     applyArray(node, value);
@@ -876,7 +876,7 @@ export function setValue(node, value, mode = 'Overwrite') {
 function clearNonObjectAncestors(node) {
   markPresent(node);
   for (let p = node.parent; p !== null; p = p.parent) {
-    if (rawOf(p) !== undefined) stageRaw(p, undefined);
+    if (sourceOf(p) !== undefined) stageSource(p, undefined);
   }
 }
 
@@ -892,7 +892,7 @@ export function write(node, value) {
     noteCallerWrite(root, node);
     stagingDepth++;
     try {
-      stageRaw(node, value);
+      stageSource(node, value);
       node.reported = value;
       if (node.isSource) markSourceWritten(node);
       clearNonObjectAncestors(node);
@@ -1080,7 +1080,7 @@ function sortDirty(kids) {
 function compute(node, sid) {
   counters.visited++;
   if (node.kind === 'leaf') {
-    const r = rawOf(node);
+    const r = sourceOf(node);
     const e = r === '' || r === undefined ? MISSING : r;
     publish(node, sid, e, e);
     return;
@@ -1094,7 +1094,7 @@ function compute(node, sid) {
 }
 
 function computeArray(node, sid) {
-  const source = rawOf(node);
+  const source = sourceOf(node);
   if (source !== undefined) {
     publish(node, sid, MISSING, source);
     return;
@@ -1261,7 +1261,7 @@ function sweepOnce(node, on, sid, nonObject) {
  * sweep, option B, repeat while A changed, cap = fragments + 1.
  */
 function computeObject(node, sid) {
-  const source = rawOf(node);
+  const source = sourceOf(node);
   const nonObject = source !== undefined;
   const frags = node.fragments;
   const nFrag = frags.length;
@@ -1328,7 +1328,7 @@ function derive(root, sid, dryRun) {
     if (edgeGated(rule) && fires(rule, e) === false) continue;
     const v = rule.map(e === MISSING ? undefined : e);
     const to = rule.to;
-    const current = to.kind === 'leaf' ? rawOf(to) : emitOf(to, sid);
+    const current = to.kind === 'leaf' ? sourceOf(to) : emitOf(to, sid);
     if (to.kind === 'leaf' ? v === current : deepEqual(v, current === MISSING ? undefined : current)) continue;
     wrote = true;
     if (dryRun) return true;
@@ -1543,7 +1543,7 @@ function snapshot(node) {
 
 function snapNode(n, recs) {
   const obj = n.kind === 'object';
-  recs.push({ n, source: rawOf(n), absent: n.absent, extras: obj ? extrasOf(n) : null, selection: obj ? selectionOf(n) : 0, kids: n.kind === 'array' ? n.children.slice() : null });
+  recs.push({ n, source: sourceOf(n), absent: n.absent, extras: obj ? extrasOf(n) : null, selection: obj ? selectionOf(n) : 0, kids: n.kind === 'array' ? n.children.slice() : null });
   const kids = n.children;
   if (kids !== null) for (let i = 0; i < kids.length; i++) snapNode(kids[i], recs);
 }
@@ -1555,7 +1555,7 @@ function restore(snap) {
     const r = recs[i];
     const n = r.n;
     if (r.kids !== null) restoreItems(n, r.kids);
-    if (rawOf(n) !== r.source) stageRaw(n, r.source);
+    if (sourceOf(n) !== r.source) stageSource(n, r.source);
     else touch(n);
     n.absent = r.absent;
     if (n.kind !== 'object') continue;
@@ -1709,7 +1709,7 @@ function reconcileDerive(root, sid, dryRun) {
       continue;
     }
     const v = rule.map(e === MISSING ? undefined : e);
-    const current = to.kind === 'leaf' ? rawOf(to) : emitOf(to, sid);
+    const current = to.kind === 'leaf' ? sourceOf(to) : emitOf(to, sid);
     if (to.kind === 'leaf' ? v === current : deepEqual(v, current === MISSING ? undefined : current)) continue;
     wrote = true;
     if (dryRun) return true;
@@ -1815,9 +1815,9 @@ const valueOrUndefined = (v) => (v === MISSING ? undefined : v);
 function commit(node, sid, out, signalOnly) {
   let changed = false;
   if (node.hasPending) {
-    node.source = node.pendingRaw;
+    node.source = node.pendingSource;
     node.hasPending = false;
-    node.pendingRaw = undefined;
+    node.pendingSource = undefined;
     if (node.kind === 'leaf' && node.source !== node.reported) {
       node.signals |= REFRESH;
       if (trace) lastSettle.refreshed.push(pathOf(node));

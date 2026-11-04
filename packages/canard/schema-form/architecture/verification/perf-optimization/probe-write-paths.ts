@@ -258,7 +258,7 @@ const gatedHostSchema = (width: number): Plain => ({
 /** Read an internal runtime store size from the root record, outside timing. */
 const runtimeStoreSize = (
   root: WriteNode,
-  store: 'latentRaw' | 'misfitPaths',
+  store: 'latentSource' | 'misfitPaths',
 ): number => {
   const runtime: unknown = Reflect.get(root, 'runtime');
   const value: unknown =
@@ -444,7 +444,7 @@ const operationSpecs: OperationSpec[] = [
     }),
     loaded: (width) => ({ mode: false, h: flatInput(width) }),
     fixture: (root, width) => {
-      const latentEntries = runtimeStoreSize(root, 'latentRaw');
+      const latentEntries = runtimeStoreSize(root, 'latentSource');
       if (latentEntries !== width)
         throw new Error(
           `Expected ${width} latent entries, got ${latentEntries}`,
@@ -588,7 +588,7 @@ function createTree(
   const root = fieldNodeFactory(blueprint(schema as SchemaInput), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+    latentSource: new PathKeyedMap('pair'),
     misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]

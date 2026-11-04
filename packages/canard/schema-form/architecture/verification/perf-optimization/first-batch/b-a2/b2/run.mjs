@@ -14,7 +14,7 @@ const spec = scene('object', 'BN', 1000, 'all-keys'), schema = schemaOf(spec), i
 function engineOf(M) {
   const engine = { M, legacy: false };
   engine.make = (jsonSchema, value, onChange) => {
-    const root = M.fieldNodeFactory(M.blueprint(jsonSchema), { diagnostics: { status: 'stable' }, loadSnapshot: undefined, latentRaw: new M.PathKeyedMap('pair'), misfitPaths: new M.PathKeyedSet(), inactiveValuesMemo: new M.PathKeyedMap('path'), onChange });
+    const root = M.fieldNodeFactory(M.blueprint(jsonSchema), { diagnostics: { status: 'stable' }, loadSnapshot: undefined, latentSource: new M.PathKeyedMap('pair'), misfitPaths: new M.PathKeyedSet(), inactiveValuesMemo: new M.PathKeyedMap('path'), onChange });
     M.mountFieldNode(root, value, M.SetValueOption.Overwrite);
     return root;
   };

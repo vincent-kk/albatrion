@@ -5,14 +5,14 @@ import { getDeriveChildEntry } from './getDeriveChildEntry';
 
 /**
  * Read a live occurrence's position in tree preorder.
- * @param instance - Rule source in the current complete shape
+ * @param source - Rule source in the current complete shape
  * @returns Root-to-source child positions
  */
 export const getDeriveSourceOrder = <Self extends FieldNodeRecord<Self>>(
-  instance: Self,
+  source: Self,
 ): readonly number[] => {
   const order: number[] = [];
-  let node: Nullable<Self> = instance;
+  let node: Nullable<Self> = source;
   while (node?.parent) {
     const current: Self = node;
     const parent: Nullable<Self> = current.parent;

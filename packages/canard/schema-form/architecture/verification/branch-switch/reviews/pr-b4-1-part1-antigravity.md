@@ -146,7 +146,7 @@
   - `writeSlotPath.ts:35-138`: 활성 트리를 따라 내려가다 비활성 경계 호스트를 만나면 `createSlotValueOverlay`로 `InactiveSlotOverlay` 객체를 생성해 `host.inactiveSlotOverlays.set(entry, nextOverlay)`에만 저장합니다. 같은 경로·같은 종류가 현재 활성인 경우(`current && !current.detached && isSameKind`) 옛 참조의 쓰기는 무동작으로 무시되고, 다른 종류가 활성인 경우 다른 비활성 후보들의 슬롯과 오버레이를 정리합니다(`clearOtherSlotKinds.ts:13-48`).
   - `markSlotChange.ts:18-52`: 정착 밖의 분리된 쓰기(`!context`)가 `inactiveSlotOverlays`를 갱신할 때, 아직 커밋되지 않은 변경 이전 상태를 `host.inactiveSlotBaselines`에 보존합니다. 따라서 살아 있는 호스트의 `inactiveValues`는 다음 커밋(`commitSlotChanges.ts:17-66`) 전까지 직전 커밋 결과를 그대로 반환합니다.
 - **전체 교체 및 `load`/`reset` 폐기**:
-  - 전체 교체 쓰기(`markWrite.ts:136`)와 `resetFieldNodeSubtree.ts:56`, `loadFieldNodeAtMount.ts:102`는 `pruneLatentRaw`를 호출하며, `pruneLatentRaw.ts:30-31`이 `pruneSlotSources(context.root, path, names, context)`를 호출해 해당 범위의 `inactiveSlots`와 `inactiveSlotOverlays`를 모두 폐기합니다.
+  - 전체 교체 쓰기(`markWrite.ts:136`)와 `resetFieldNodeSubtree.ts:56`, `loadFieldNodeAtMount.ts:102`는 `pruneLatentSource`를 호출하며, `pruneLatentSource.ts:30-31`이 `pruneSlotSources(context.root, path, names, context)`를 호출해 해당 범위의 `inactiveSlots`와 `inactiveSlotOverlays`를 모두 폐기합니다.
 - **배열 재배치 (이동 및 B4-1 일회 잠복 변환 fallback)**:
   - `arrangeFieldNodeItems.ts:110-149` 및 `applyArraySlots.ts:144-169`, `applyArrayTail.ts:96-119`, `applyArraySplice.ts:112-122`에서:
     1. 같은 템플릿으로 이동하는 살아남은 아이템 호스트는 자신의 `inactiveSlots`와 `inactiveSlotOverlays`를 그대로 달고 이동하며, `rekeySlotSubtree.ts:19-83`가 보유 슬롯 내부 노드들의 `DetachedWriteAddress`와 `inactiveValueMemo` 키만 새 경로·문서 순서로 갱신합니다(**분리된 노드 인스턴스의 `node.path`는 절대 변경하지 않음**).
@@ -157,7 +157,7 @@
 #### (d) `inactiveValues` 계산 동치성 및 참조 안정성
 - `materializeInactiveSlotValues.ts:20-74`는 호스트별 첫 읽기에 `collectHostSlotValues`를 호출해 문서 순서(`compareLatentOrders`)로 정렬하고, 각 `{ path, value }` 항목을 `Object.freeze`한 뒤 `host.inactiveValueMemo`에 캐시하여 값이 `Object.is`로 같으면 이전 동결 항목 참조를 재사용합니다.
 - 완성된 배열은 `Object.freeze` 후 `host.inactiveValuesCache`에 저장되며, 모든 항목이 직전 캐시 배열과 동일한 참조이면 직전 동결 배열 참조 자체를 그대로 반환합니다(라인 57-68).
-- 분리된 호스트(`host.detached === true`)는 `host.retainedSourceOverlay`와 자신이 보유한 `host.inactiveSlots`만 읽어 계산하고 `runtime.latentRaw`를 합치지 않으므로, 퇴장 이후 루트나 형제에서 일어난 오버레이·재진입·초기화가 분리된 호스트의 지연 읽기에 영향을 주지 않습니다.
+- 분리된 호스트(`host.detached === true`)는 `host.retainedSourceOverlay`와 자신이 보유한 `host.inactiveSlots`만 읽어 계산하고 `runtime.latentSource`를 합치지 않으므로, 퇴장 이후 루트나 형제에서 일어난 오버레이·재진입·초기화가 분리된 호스트의 지연 읽기에 영향을 주지 않습니다.
 
 #### (e) `WRITE-034` 및 단일 후보 배열 clear 특이 동작(quirk) 재현
 - `createExitSlotOverlay.ts:47-56`: `clear && node.behavior.type === 'array' && !hasSlotCandidateOwner(node)`일 때 `{ overlay: { replace: true, source: undefined, extras: undefined, itemCount: 0 }, hasSource: false, retain: false }`를 반환하여, 배열 아래에 명시적 `unsetOnInactive: false` 자손이 있더라도 모두 버리고 재진입 시 길이 0이 되는 기존 동작을 정확히 재현합니다.
@@ -237,7 +237,7 @@
 판정에 영향을 주는 결함은 없으나, B4-2 후속 단계 및 운영 관점에서 유의할 잠재 리스크는 다음과 같습니다.
 
 1. **[중간] B4-1 배열 튜플/꼬리 이동 시 슬롯-잠복 표현 공존 복잡도 (`convertArraySlotSources.ts:29-145`, `collectHostSlotValues.ts:94-110`)**:
-   - 후보가 있는 배열 아이템이 다른 튜플 청사진이나 미선언 꼬리로 이동할 때 B4-1에서는 슬롯을 잠복 저장소(`latentRaw` + `inactiveValueEntries`)로 일회 변환하여 두 표현이 한 트리 안에 공존할 수 있습니다.
+   - 후보가 있는 배열 아이템이 다른 튜플 청사진이나 미선언 꼬리로 이동할 때 B4-1에서는 슬롯을 잠복 저장소(`latentSource` + `inactiveValueEntries`)로 일회 변환하여 두 표현이 한 트리 안에 공존할 수 있습니다.
    - 현재 `collectHostSlotValues.ts`와 `pruneSlotSources.ts`, `retainExitedSlot.ts`(`deleteLatentSlotKind`)가 양쪽 저장소의 우선순위와 정리를 정합하게 맞추고 있으나, 상태 전이 조합이 복잡하므로 `settle/DETAIL.md:9` 및 `arrangeFieldNodeItems/DETAIL.md:7-10`에 명시된 대로 **B4-2에서 잠복 변환 없이 직접 슬롯 이전으로 단일화**하는 작업을 누락 없이 완수해야 합니다.
 2. **[낮음] 중첩 호스트 복제 시 직전 활성 자식의 선제 복제 후 탈락 비용 (`cloneSlotSubtree.ts:65-99`, `finalizeRestoredSlotSource.ts:10-25`)**:
    - `cloneSlotSubtree`는 보유 슬롯의 `source.children`(퇴장 당시 활성이었던 중첩 자식들)도 함께 복제하여 `node.structure`에 넣은 뒤 `enterSlotClone`에서 중첩 호스트를 `shapeDirtyPaths`로 표시합니다.

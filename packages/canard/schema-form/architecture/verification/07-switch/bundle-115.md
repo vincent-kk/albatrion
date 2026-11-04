@@ -506,7 +506,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/other` | `src/core/settle/utils/settlement/createSettlementContext.ts` | 1,171 |
 | `core/settle/other` | `src/core/settle/utils/latent/distributeLatentValue.ts` | 1,109 |
 | `core/settle/other` | `src/core/settle/utils/latent/readLatentSlotSource.ts` | 702 |
-| `core/settle/other` | `src/core/settle/utils/latent/readRawTree.ts` | 651 |
+| `core/settle/other` | `src/core/settle/utils/latent/readSourceTree.ts` | 651 |
 | `core/settle/other` | `src/core/settle/utils/latent/setLatentSource.ts` | 612 |
 | `core/settle/other` | `src/core/settle/utils/context/changeSchemaNodeContext.ts` | 537 |
 | `core/settle/other` | `src/core/settle/utils/paths/expandTemplatePaths.ts` | 520 |
@@ -574,7 +574,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/write` | `src/core/settle/utils/write/registerRecalculation.ts` | 747 |
 | `core/settle/write` | `src/core/settle/utils/write/interpretSchemaNodeInput.ts` | 673 |
 | `core/settle/write` | `src/core/settle/utils/write/getSettlementScratch.ts` | 666 |
-| `core/settle/write` | `src/core/settle/utils/write/pruneLatentRaw.ts` | 403 |
+| `core/settle/write` | `src/core/settle/utils/write/pruneLatentSource.ts` | 403 |
 | `core/settle/write` | `src/core/settle/utils/write/staticSpec.ts` | 373 |
 | `core/settle/write` | `src/core/settle/utils/write/nextExtras.ts` | 369 |
 | `core/settle/write` | `src/core/settle/utils/write/releaseWrongKindHosts.ts` | 331 |
@@ -783,7 +783,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 - `src/core/settle/utils/latent/captureOwnLatent.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/getEnteredLatentKeys.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/readLatentSlotSource.ts`를 측정용 스텁으로 바꿨습니다.
-- `src/core/settle/utils/latent/readRawTree.ts`를 측정용 스텁으로 바꿨습니다.
+- `src/core/settle/utils/latent/readSourceTree.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/latent/captureArrayLatent.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/detached/readSchemaNodeInactiveValues.ts`를 측정용 스텁으로 바꿨습니다.
 - `src/core/settle/utils/detached/readSchemaNodeTypeMismatch.ts`를 측정용 스텁으로 바꿨습니다.

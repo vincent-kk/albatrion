@@ -225,7 +225,7 @@ L2 설계의 W4입니다. 판정 기준은 370라운드("늘리는 코드가 지
 | gate-form-one-key             | 1.291     | 7.418(+475%) | `selectChildren` 6,202(2회), `evaluateGate` 846(2,000회), `registerRecalculation` 698, `getGateRegistry` 227(7,008회) |
 | gate-toggle-exit(감시자 1000) | 1.785     | 4.288(+140%) | 재선택 1,795, `primeHost` 874, 합성 778, 나감 때 감시자 후보 훑기 `markCommitDeliveries` 1,084, `finalizeExits` 269   |
 | misfit-object-one-key         | 개념 없음 | 2.656        | 불일치가 있어 W1 밖, 불일치 메모 다시 짓기 `commitSettlement` 680(보통 183)                                           |
-| latent-object-one-key         | 개념 없음 | 5.073        | if/then 때문에 게이트 폼이라 W1 밖, `selectChildren` 2,412, 잠복 색인 다시 짓기 273, `pruneLatentRaw` 274             |
+| latent-object-one-key         | 개념 없음 | 5.073        | if/then 때문에 게이트 폼이라 W1 밖, `selectChildren` 2,412, 잠복 색인 다시 짓기 273, `pruneLatentSource` 274             |
 
 - **잠복 색인 캐시(e):** 273 µs, 약 5%로 몫이 작아 기록만 합니다(원장 관리자 결정).
 
@@ -403,7 +403,7 @@ L2 설계의 W4입니다. 판정 기준은 370라운드("늘리는 코드가 지
 | 이탈 대기(`pendingExits`) 키 | `selectChildren.ts:219`·`:320`·`:450`, `primeHost.ts:61`, `transitionSettlement.ts:76`·`:155`                                                                                     | 안 함. 이 여섯 자리 밖에서 키를 읽지 않음                                          | `:219` 갱신당 330회, 마운트당 288회. 나머지는 갱신당 6–20회 |
 | 지역 집합·캐시               | `transitionSettlement.ts:84`(채움 집합), `calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`, `getControlExpression.ts:31`·`:42`, `commitExitPolicyValues.ts:38`·`:154` | 안 함                                                                              | 정착당 몇 회. P-08 F=128에서 `:118`과 `:42`가 각 128회      |
 | 청사진 시점                  | `resolveNodeStrategy.ts:48`, `getTemplateKey.ts:15`·`:64`                                                                                                                         | 안 함. `getTemplateKey`는 일부러 JSON 모양을 바이트 그대로 맞춘 키                 | 마운트당 20·123·60회                                        |
-| 쌍 키 `[경로, 종류]`         | `latentRaw`·`committedDeclarationIds`에 들어가는 13곳(`getCommittedDeclarationKey`, `captureExitedSource`, `finalizeExits`, `enterFieldNode`, `selectChildren.ts:287` 등)            | 함(`getStoreKeyPaths`, `getLatentPathIndex`, `setLatentSource`, `pruneLatentRaw` 등)  | 갱신당 3–12회                                               |
+| 쌍 키 `[경로, 종류]`         | `latentSource`·`committedDeclarationIds`에 들어가는 13곳(`getCommittedDeclarationKey`, `captureExitedSource`, `finalizeExits`, `enterFieldNode`, `selectChildren.ts:287` 등)            | 함(`getStoreKeyPaths`, `getLatentPathIndex`, `setLatentSource`, `pruneLatentSource` 등)  | 갱신당 3–12회                                               |
 | 경고 키                      | `dedupeWarningRecord`, `commitSettlement.ts:156`·`:173`, `selectNodeSchema`, `finishStaticFirstLoad`, `adoptFieldNodeChain.ts:93`, `rekeyArrayRuntimePaths`, `fieldNodeFactory`   | 함(`clearWarningKeys`, `exitFieldNodeChain.ts:57`, `adoptFieldNodeChain.ts:66` 등) | 경고가 날 때만                                              |
 | 규칙 키                      | `getDeriveRuleKey`, `getExitPolicyKey`, `rekeyCommittedRules`, `rekeyPairedPathStore`                                                                                             | 함(`updateCommittedRuleValue`, `pruneCommittedRuleKeys`)                           | 파생 폼에서만                                               |
 

@@ -17,14 +17,14 @@ import { getInjectToContext } from './getInjectToContext';
 const NO_INJECT_WRITES = Object.freeze({ writes: Object.freeze([]) });
 
 /**
- * Evaluate one fired handler without writing source or latent state.
- * @param instance - Live rule source
+ * Evaluate one fired handler without writing any node source or latent state.
+ * @param source - Live rule source
  * @param root - Calculated root for this round
  * @param rule - Authored function and declaration order
  * @returns Candidates or one failure that excludes the entire rule
  */
 export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
-  instance: Self,
+  source: Self,
   root: Self,
   rule: DeriveRule,
 ): {
@@ -34,12 +34,12 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
   if (typeof rule.literal !== 'function') return NO_INJECT_WRITES;
   let result: unknown;
   try {
-    result = rule.literal(instance.emit, getInjectToContext(instance, root));
+    result = rule.literal(source.emit, getInjectToContext(source, root));
   } catch (cause) {
     return {
       writes: [],
       failure: {
-        sourcePath: instance.path,
+        sourcePath: source.path,
         schemaPath: rule.schemaPath,
         cause,
         kind: 'expression',
@@ -51,13 +51,13 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < entries.length; index++) {
     const [relative, value] = entries[index];
     if (value === undefined) continue;
-    const targetPath = resolveDependencyPath(instance.path, relative);
+    const targetPath = resolveDependencyPath(source.path, relative);
     const resolved = getInjectTarget(root, targetPath);
     if (!resolved)
       return {
         writes: [],
         failure: {
-          sourcePath: instance.path,
+          sourcePath: source.path,
           schemaPath: rule.schemaPath,
           cause: relative,
           kind: 'injectTarget',
@@ -65,7 +65,7 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
         },
       };
     const invalid = getVirtualWriteFailure(
-      instance.path,
+      source.path,
       rule.schemaPath,
       targetPath,
       resolved.template,
@@ -82,7 +82,7 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
       kind: 'injectTo',
       rank: KIND_RANK.injectTo,
       layer: LAYER_RANK[rule.layer],
-      sourceOrder: getDeriveSourceOrder(instance),
+      sourceOrder: getDeriveSourceOrder(source),
       ruleOrder: rule.order,
       returnOrder: index,
     });

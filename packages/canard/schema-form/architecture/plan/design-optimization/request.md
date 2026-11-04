@@ -53,7 +53,7 @@
 | H1 호스트별 정적 분할 | 게이트 있는 폼에서 호스트의 정적 형제까지 매 정착 다시 고르는 것 | 청사진에 호스트별 `{ gated, staticEntries, readers }` 사이드카(`StaticFirstLoadCapability`와 같은 모양, D3의 `getHostDerived` 슬롯), `selectChildren.ts:53`의 전역 가드를 호스트 판정으로, `staticShape.ts:46`이 자식 하나의 게이트로 호스트 전체를 거절하는 것을 엔트리 단위로, `primeHost.ts:53-113`·`selectEntryStep.ts:276`에서 일치하는 정적 자식의 병합·등록·변경 캡처 생략 | 형제 0·1,000·4,000의 분기 전환이 작은 상수 배 안(선형항 제거). 처음에는 기존 인스턴스·경로·스키마가 일치하고 입력 분배·이동·virtual·동명 후보가 없는 경우로 제한한다. 고정 출발점의 정적 부분만 재사용하므로 SETTLE-044를 지킨다 |
 | H2 깊은 비교 생략 | 바퀴가 돌지 않은 경로에서 `updateOutput.ts:72`가 이미 한 같음 비교를 `preserveReferences.ts:28-31`이 호스트 전체에 다시 하는 것 | `computeNode.ts:119-153`의 바퀴 없는 경로 | 게이트 있는 폼의 잎 쓰기가 없는 폼의 두 배 안. shadow 검증 뒤 적용 |
 | H3 문서 순서 인덱스 | `compareDocumentOrder.ts:16-23`가 비교마다 조상 배열 둘을 할당하는 것 | 파동마다 한 번 계산하는 순서 인덱스(고정 정수가 아니라 파동별 캐시 — 순서가 부모의 현재 children에 의존한다) | 일괄 쓰기의 배달 팬아웃 비중 감소, 비교당 할당 0 |
-| H4 잠복 조건의 범위 축소 | `writeFieldNode.ts:59`의 `latentRaw.size === 0`이 폼 전체의 스칼라 빠른 경로를 끄는 것 | 조건을 "대상 경로 아래에 잠복 값 없음"으로 | 잠복 값이 다른 하위 트리에 있을 때 스칼라 쓰기가 빠른 경로를 탐 |
+| H4 잠복 조건의 범위 축소 | `writeFieldNode.ts:59`의 `latentSource.size === 0`이 폼 전체의 스칼라 빠른 경로를 끄는 것 | 조건을 "대상 경로 아래에 잠복 값 없음"으로 | 잠복 값이 다른 하위 트리에 있을 때 스칼라 쓰기가 빠른 경로를 탐 |
 | H5 배달 후보 큐 | 커밋이 후보 집합 여섯의 합집합을 돌고 Set과 revision 원장 객체를 새로 만드는 것 | `captureFieldNodeChange.ts:62`에 후보 큐를 붙이고 `markCommitDeliveries.ts`는 그 목록만 순회; 리스너 없는 노드는 payload를 만들지 않되 revision 비트 계수는 유지(공개 API `revision()`); 원장 객체는 재사용 | 마운트·일괄 쓰기의 배달 표식 비중 감소, 전후 배달 비교 차이 0 |
 | H6 청사진 캐시 연결 | 같은 스키마 객체의 재마운트·StrictMode 이중 마운트·여러 폼에서 청사진을 다시 분석하는 것 | D3의 `src/app/cache` 청사진 도메인을 `createRootLoad.ts`가 `buildFieldNodeTree` props의 `cache`로 넘김; `BlueprintCacheEntry`가 경고 목록을 보관해 소비자마다 재생; `FormHandle.rebuild(option?)` | 같은 스키마 객체의 둘째 마운트에서 청사진 몫이 사라지고 경고는 받으며, `rebuild` 뒤 새 청사진 |
 
@@ -83,7 +83,7 @@ D0와 같은 장치·같은 창에서 세 속도 표와 React 표를 다시 잰�
 
 ### D5 설계 Ⅱ — 슬롯 테이블과 수명별 핸들 (조건부)
 
-- (호스트 슬롯, 엔트리) 쌍을 내부 식별자로 두고 source·extras·parent·전순서를 슬롯이 든다. 슬롯은 비활성일 때도 자기 source를 들어 `latentRaw`·`latentRawMetadata`·`pendingExits`·`revived`·잠복 재분배가 사라진다. 한 번도 생기지 않은 자리는 분배할 때 슬롯만 싸게 만든다(값이 이끄는 지연 생성; 스키마에서 미리 전부 만드는 것은 재귀 템플릿에서 무한이라 금지). 공개 `FieldNode`는 수명마다 발급하는 핸들이라 NODE-044가 유지된다. 더티 집합은 노드가 생긴 뒤의 식별자에 한해 참조로 바뀐다 — 게이트 읽기·의존 표식·changedSource는 아직 없는 노드를 가리켜야 하므로 경로 키로 남는다.
+- (호스트 슬롯, 엔트리) 쌍을 내부 식별자로 두고 source·extras·parent·전순서를 슬롯이 든다. 슬롯은 비활성일 때도 자기 source를 들어 `latentSource`·`latentSourceMetadata`·`pendingExits`·`revived`·잠복 재분배가 사라진다. 한 번도 생기지 않은 자리는 분배할 때 슬롯만 싸게 만든다(값이 이끄는 지연 생성; 스키마에서 미리 전부 만드는 것은 재귀 템플릿에서 무한이라 금지). 공개 `FieldNode`는 수명마다 발급하는 핸들이라 NODE-044가 유지된다. 더티 집합은 노드가 생긴 뒤의 식별자에 한해 참조로 바뀐다 — 게이트 읽기·의존 표식·changedSource는 아직 없는 노드를 가리켜야 하므로 경로 키로 남는다.
 - 다시 정의할 것(코드 감사 19행 표): 잠복 값과 `inactiveValues`의 읽기 경로, 나감 정책(`unsetOnInactive`는 슬롯 source 비우기, 정책 상속은 평면 경로 목록 대신 트리 걷기), 재활성화는 `entered`에 넣어 채움과 `resetInteraction`을 받음, 전체 교체 쓰기는 비활성 슬롯 걷기로 V에 없는 경로의 source를 지움, 같은 이름·다른 종류는 청사진 노드별 슬롯, 중첩 게이트는 비활성 동안 평가하지 않고 재활성화 때 하위 호스트를 모두 형상 더티로, 배열 아이템의 소멸(perished)은 그대로, `.detached`를 읽는 82곳을 "비활성"과 "파괴됨"으로 가름, 메모리 상한은 호스트당 K·M.
 - **끝났다는 것:** 여섯 의미 시험(`verification.md`)이 초록이고, 다른 키 분기 전환과 일괄 쓰기가 폭 (다) 밖으로 개선되며, 메모리 상한이 적힌다.
 

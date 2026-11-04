@@ -249,7 +249,7 @@
 | wildcard | hide-descendant | 1/1                        | 1/1                    | 1/1            |
 | wildcard | close-host      | 1/1                        | 1/1                    | 1/1            |
 
-| 폼       | 전체fixture B | latentRaw 항목/독점B | metadata 항목/독점B | entries 항목/독점B | memo 항목/독점B |
+| 폼       | 전체fixture B | latentSource 항목/독점B | metadata 항목/독점B | entries 항목/독점B | memo 항목/독점B |
 | -------- | ------------- | -------------------- | ------------------- | ------------------ | --------------- |
 | normal   | 123576        | 0/968                | 0/0                 | 0/0                | 0/968           |
 | wildcard | 126840        | 1/2152               | 1/2568              | 0/968              | 1/1400          |
@@ -527,8 +527,8 @@ reset 뒤 슬롯 호스트가 남는지와 바이트를 보고합니다. 서로 
 
 | 잠복 저장소          | 일반 배타 B | 별표 배타 B |
 | -------------------- | ----------- | ----------- |
-| latentRaw            | 968         | 2152        |
-| latentRawMetadata    | 0           | 2568        |
+| latentSource            | 968         | 2152        |
+| latentSourceMetadata    | 0           | 2568        |
 | inactiveValueEntries | 0           | 968         |
 | inactiveValuesMemo   | 968         | 1400        |
 

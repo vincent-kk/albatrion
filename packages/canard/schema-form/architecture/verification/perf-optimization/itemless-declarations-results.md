@@ -89,7 +89,7 @@ legacy/tests/barrel/type 선언을 제외한 소비자21파일은 다음과 같�
 | `src/core/engine/settle/utils/input/interpretFieldNodeInput.ts:49` | live 또는 단일 후보 해석; 빈 경우 입력 그대로 |
 | `src/core/engine/settle/utils/latent/captureArrayLatent.ts:30` | 빈 후보이면 extras 저장 |
 | `src/core/engine/settle/utils/latent/distributeMovedLatentInput.ts:58` | 이동 대상 후보 부재이면 continue |
-| `src/core/engine/settle/utils/latent/readRawTree.ts:29` | 빈 후보이면 extras에서 source 구성 |
+| `src/core/engine/settle/utils/latent/readSourceTree.ts:29` | 빈 후보이면 extras에서 source 구성 |
 | `src/core/engine/settle/utils/latent/utils/distributeLatentArrayValue.ts:41` | 첫 후보가 없으면 continue |
 | `src/core/engine/settle/utils/transition/captureExitedSource.ts:51` | 후보 수로 fold 퇴장 캡처 판단 |
 | `src/core/engine/settle/utils/transition/utils/visitLatentPath.ts:29` | 모든 후보 순회; 빈 경우 하위 방문 없음 |

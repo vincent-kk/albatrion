@@ -4,7 +4,7 @@
 
 ## 가설과 고정 판정
 
-근거는 VALUE-031·TEST-080 D1-H4·GOAL-011입니다. 기존 조건은 폼 어디든 잠복 값이 하나 있으면 무관한 scalar 잎 쓰기도 일반 경로로 보냅니다. 그 경로의 pruneLatentRaw는 호출별 getLatentPathIndex를 전체 잠복 키에서 다시 만들므로 변경 대상과 무관한 M에 비례하는 일이 남습니다. 후보는 기존 branchless·derive 없음·동일한 유한 scalar 형 등의 증명을 유지하고, 기존 latentRaw.pathIndex의 under·intersecting으로 대상 하위(자기 포함)와 조상 정확 슬롯에 잠복 값이 없는지 확인합니다. 겹치는 항목은 보수적으로 모두 일반 경로에 남깁니다.
+근거는 VALUE-031·TEST-080 D1-H4·GOAL-011입니다. 기존 조건은 폼 어디든 잠복 값이 하나 있으면 무관한 scalar 잎 쓰기도 일반 경로로 보냅니다. 그 경로의 pruneLatentSource는 호출별 getLatentPathIndex를 전체 잠복 키에서 다시 만들므로 변경 대상과 무관한 M에 비례하는 일이 남습니다. 후보는 기존 branchless·derive 없음·동일한 유한 scalar 형 등의 증명을 유지하고, 기존 latentSource.pathIndex의 under·intersecting으로 대상 하위(자기 포함)와 조상 정확 슬롯에 잠복 값이 없는지 확인합니다. 겹치는 항목은 보수적으로 모두 일반 경로에 남깁니다.
 
 측정 전에 다음 판정을 고정했습니다.
 

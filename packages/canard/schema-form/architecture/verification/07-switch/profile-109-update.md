@@ -81,7 +81,7 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 | `mark` · `src/core/settle/utils/commit/markCommitDeliveries.ts:92` | 1.31 | 3.29 | 0.396 | 0.997 |
 | `markWrite` · `src/core/settle/utils/write/markWrite.ts:23` | 1.31 | 1.87 | 0.396 | 0.568 |
 | `captureSchemaNodeChange` · `src/core/record/utils/captureSchemaNodeChange.ts:25` | 1.24 | 1.24 | 0.376 | 0.376 |
-| `pruneLatentRaw` · `src/core/settle/utils/write/pruneLatentRaw.ts:16` | 1.12 | 1.38 | 0.340 | 0.419 |
+| `pruneLatentSource` · `src/core/settle/utils/write/pruneLatentSource.ts:16` | 1.12 | 1.38 | 0.340 | 0.419 |
 | `beginPostOrder` · `src/core/settle/utils/write/DirtyPathSet.ts:22` | 1.08 | 1.08 | 0.327 | 0.327 |
 | `delete` · `src/core/settle/utils/write/DirtyPathSet.ts:83` | 1.07 | 1.07 | 0.323 | 0.323 |
 
@@ -348,8 +348,8 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 
 ### P1 — 빈 latent 저장소의 고정 작업
 
-소유자: `src/core/settle`; 변경 위치: `utils/write/pruneLatentRaw.ts`. 수정안 하나: runtime.latentRaw.size가 0일 때 childPaths와 call-local latent index를 만들기 전에 반환합니다. 비어 있지 않은 저장소의 prefix 제거·rollback 처리는 유지합니다.
-제거 실험: 측정 root의 latentRaw가 비어 있음을 단언한 뒤 pruneLatentRaw를 생략합니다.
+소유자: `src/core/settle`; 변경 위치: `utils/write/pruneLatentSource.ts`. 수정안 하나: runtime.latentSource.size가 0일 때 childPaths와 call-local latent index를 만들기 전에 반환합니다. 비어 있지 않은 저장소의 prefix 제거·rollback 처리는 유지합니다.
+제거 실험: 측정 root의 latentSource가 비어 있음을 단언한 뒤 pruneLatentSource를 생략합니다.
 계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. 빈 저장소의 작업만 제거하며 revision과 emit 조립은 고치지 않습니다.
 
 ### W1 — scalar 표시의 일반 분기

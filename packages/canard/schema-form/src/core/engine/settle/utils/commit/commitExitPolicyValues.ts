@@ -81,22 +81,22 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       { owned: true },
     );
   const candidates = new Set(context.stateDirtyNodes);
-  for (const instance of context.stateDirtyNodes) {
-    if (instance.detached || !instance.structure) continue;
+  for (const source of context.stateDirtyNodes) {
+    if (source.detached || !source.structure) continue;
     if (
       context.kind !== 'load' &&
-      !isDependencyOwner(context, instance.path) &&
-      !context.shapeDirtyPaths.has(instance.path)
+      !isDependencyOwner(context, source.path) &&
+      !context.shapeDirtyPaths.has(source.path)
     )
       continue;
     const sourceKey = JSON.stringify([
-      instance.path,
-      getBlueprintNodeIdentity(instance.blueprintNode),
+      source.path,
+      getBlueprintNodeIdentity(source.blueprintNode),
     ]);
     const selected =
-      context.selectedDeclarationIds.get(instance) ??
-      instance.runtime.committedDeclarationIds?.get(sourceKey);
-    for (const declaration of instance.blueprintNode.declarations) {
+      context.selectedDeclarationIds.get(source) ??
+      source.runtime.committedDeclarationIds?.get(sourceKey);
+    for (const declaration of source.blueprintNode.declarations) {
       if (selected && selected.indexOf(declaration.id) === -1) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
@@ -108,7 +108,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         declaration.scope === 'fragment' &&
         typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
       ) {
-        for (const child of instance.children ?? []) {
+        for (const child of source.children ?? []) {
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
@@ -151,10 +151,10 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         for (const name of targets) {
           if (
             typeof name !== 'string' ||
-            !hasOwnProperty(instance.structure, name)
+            !hasOwnProperty(source.structure, name)
           )
             continue;
-          candidates.add(instance.structure[name]);
+          candidates.add(source.structure[name]);
           break;
         }
       }

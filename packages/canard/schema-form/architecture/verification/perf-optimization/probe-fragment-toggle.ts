@@ -46,7 +46,7 @@ const sizes = (smoke ? [16] : [16, 32, 64, 128]).map((n) => {
   const root = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+    latentSource: new PathKeyedMap('pair'),
     misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]

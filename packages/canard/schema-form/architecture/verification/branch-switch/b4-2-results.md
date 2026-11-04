@@ -313,8 +313,8 @@ FCA는 scan376노드·depth9·위반200, validate201지적, verification691파�
 | src/core/engine/settle/utils/commit/commitSettlement.ts              | 261                        |
 | src/core/engine/settle/utils/commit/commitSettlement.ts              | 275                        |
 | src/core/engine/settle/utils/latent/readLatentSlotSource.ts          | 51                         |
-| src/core/engine/settle/utils/latent/readRawTree.ts                   | 29                         |
-| src/core/engine/settle/utils/latent/readRawTree.ts                   | 33                         |
+| src/core/engine/settle/utils/latent/readSourceTree.ts                   | 29                         |
+| src/core/engine/settle/utils/latent/readSourceTree.ts                   | 33                         |
 | src/core/engine/settle/utils/latentStore/hasLatentUnder.ts           | 23                         |
 | src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts  | 21                         |
 | src/core/engine/settle/utils/transition/applyExitClearing.ts         | 23                         |

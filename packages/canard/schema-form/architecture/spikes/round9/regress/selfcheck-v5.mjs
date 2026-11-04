@@ -292,9 +292,9 @@ function scenarioA() {
     setValue(r, { src: 'go', host: { a: 'A', b: 'B' } });
     const s1 = state(r);
     const host = r.index.get('host');
-    const bRaw = host.index.get('b').source;
+    const bSource = host.index.get('b').source;
     write(host.index.get('a'), 'A2');
-    check((SWITCHES.INJECT_TO_EDGE ? same(valueOf(r).host, { a: 'A2', b: 'BD' }) && lastSettle.rounds === 1 : valueOf(r).host === 17 && lastSettle.rounds === 2) && bRaw === 'BD', 'A4c: an unchanged source preserves the partial host edit in edge mode; historical level mode replaces it', `after inject: ${s1} b.source=${J(bRaw)}; after partial: ${state(r)}`);
+    check((SWITCHES.INJECT_TO_EDGE ? same(valueOf(r).host, { a: 'A2', b: 'BD' }) && lastSettle.rounds === 1 : valueOf(r).host === 17 && lastSettle.rounds === 2) && bSource === 'BD', 'A4c: an unchanged source preserves the partial host edit in edge mode; historical level mode replaces it', `after inject: ${s1} b.source=${J(bSource)}; after partial: ${state(r)}`);
   }
   // ---- redteam3 A5a: branches with different k defaults -> E8 first branch
   {
@@ -323,9 +323,9 @@ function scenarioA() {
     declareFragments(r, [{ id: 'allOf0.then', guard: notReq('a'), declares: ['d'], defaults: { d: 'D' } }]);
     prime(r, null);
     const s1 = `${state(r)} d.source=${J(r.index.get('d').source)}`;
-    const dRaw = r.index.get('d').source;
+    const dSource = r.index.get('d').source;
     write(r.index.get('a'), 'A');
-    check(dRaw === 'D' && same(valueOf(r), { a: 'A' }), 'A6b: under null, G={} turns `not required a` on and d default is injected (load contract (i) under null, D-1)', `null: ${s1}; write a: ${state(r)}`);
+    check(dSource === 'D' && same(valueOf(r), { a: 'A' }), 'A6b: under null, G={} turns `not required a` on and d default is injected (load contract (i) under null, D-1)', `null: ${s1}; write a: ${state(r)}`);
   }
   // ---- redteam3 A6c
   {
@@ -373,10 +373,10 @@ function scenarioA() {
     write(r2.index.get('kind'), 'b');
     const replaced = J(valueOf(r2));
     setValue(r2, initial);
-    const resetRawB = sourceTree(r2).b;
+    const resetSourceB = sourceTree(r2).b;
     setValue(r2, valueOf(r2));
     write(r2.index.get('kind'), 'b');
-    check(partial === '{"kind":"b","base":"BASE","b":"SECRET","extra":7}' && replaced === '{"kind":"b","base":"BASE"}' && resetRawB === 'SECRET' && sourceTree(r2).b === undefined, 'C1-write-kinds (codex): partial keeps latent b, replacement drops it, reset restores it, re-emit round-trip has no b', `partial=${partial} replaced=${replaced} resetRaw.b=${resetRawB} reemit=${J(valueOf(r2))}`);
+    check(partial === '{"kind":"b","base":"BASE","b":"SECRET","extra":7}' && replaced === '{"kind":"b","base":"BASE"}' && resetSourceB === 'SECRET' && sourceTree(r2).b === undefined, 'C1-write-kinds (codex): partial keeps latent b, replacement drops it, reset restores it, re-emit round-trip has no b', `partial=${partial} replaced=${replaced} resetSource.b=${resetSourceB} reemit=${J(valueOf(r2))}`);
   }
   // ---- redteam3 C2-extra
   {
@@ -610,7 +610,7 @@ function scenarioC() {
 // ======================================================================= d
 function scenarioD() {
   out('d. chains / negated guard fixpoint / self-negating budget');
-  info('chains', 'see a. A3-2 rows (raw-present: forward 2 sweeps, reverse 31; default-driven: ROUND_CAP)');
+  info('chains', 'see a. A3-2 rows (source-present: forward 2 sweeps, reverse 31; default-driven: ROUND_CAP)');
   info('negated guard + other activation', 'see a. A3-4A/option-B row (ajv-accepted fixpoint {seed:true,x:1})');
   info('self-negating', 'see a. A3-4C row (budget-exceeded, no throw in prod, dev throws after commit)');
   const r = H('', [L('x'), L('y'), L('z')]);

@@ -115,7 +115,7 @@ export async function loadEngine(name = 'current', variant = 'baseline', instrum
       if (!M.isObjectNode(captured)) throw new Error('Legacy Form did not return an object node');
       return captured;
     }
-    const root = M.fieldNodeFactory(M.blueprint(schema), { diagnostics: { status: 'stable' }, loadSnapshot: undefined, latentRaw: new M.PathKeyedMap('pair'), misfitPaths: new M.PathKeyedSet(), inactiveValuesMemo: new M.PathKeyedMap('path'), onChange });
+    const root = M.fieldNodeFactory(M.blueprint(schema), { diagnostics: { status: 'stable' }, loadSnapshot: undefined, latentSource: new M.PathKeyedMap('pair'), misfitPaths: new M.PathKeyedSet(), inactiveValuesMemo: new M.PathKeyedMap('path'), onChange });
     M.mountFieldNode(root, input, M.SetValueOption.Overwrite);
     return root;
   };

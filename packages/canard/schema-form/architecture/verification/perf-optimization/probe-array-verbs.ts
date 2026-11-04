@@ -231,7 +231,7 @@ function warmEngine(): void {
   const tiny = fieldNodeFactory(analysis, {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+    latentSource: new PathKeyedMap('pair'),
     misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]
@@ -308,7 +308,7 @@ const sizes = selectedLanes.flatMap(({ lane, label }) =>
         const root = fieldNodeFactory(analysis, {
           diagnostics: { status: 'stable' },
           loadSnapshot: undefined,
-          latentRaw: new PathKeyedMap('pair'),
+          latentSource: new PathKeyedMap('pair'),
           misfitPaths: new PathKeyedSet(),
           inactiveValuesMemo: new PathKeyedMap<
             readonly { path: string; value: unknown }[]

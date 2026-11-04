@@ -33,7 +33,7 @@
    - `cloneSlotSubtree.ts:68-89`에서 `source.children`에 대해서도 각 자식마다 `cloneSlotSubtree(node, binding, child, context, entering)`를 재귀 호출합니다.
    - 따라서 스크래치에서 시도되었던 "비활성 자식 인스턴스 재귀 복제 생략/공유" 실험은 코드에 일절 반영되지 않았으며, 분리된 인스턴스와 활성 트리 사이에 어떤 노드 참조나 부모 사슬도 공유되지 않습니다.
 2. **후보 1의 모든 의미론 보장 유지**:
-   - 새 배열 `itemKey` 발급(`cloneSlotSubtree.ts:50-51`), 빈 `interactionState`/`errors`/구독 상태(`fieldNodeFactory.ts:95-114`), 중첩 분기 호스트 `shapeDirtyPaths` 등록(`cloneSlotSubtree.ts:98-99`), 오버레이 적용(`cloneFromSlot.ts:23-24`, `applySlotOverlay.ts:18-81`), `WRITE-034` 및 단일 후보 배열 clear 특이 동작(`createExitSlotOverlay.ts:47-56`), 리터럴 `*` 정적 배제(`isSlotEligible.ts:10-12`), `load`/`reset`/전체 교체 시 `pruneSlotSources` 폐기(`pruneLatentRaw.ts:30-31`), 배열 재배치 시 슬롯 이동 및 일회 잠복 변환(`applyArraySlots.ts:47-49,170-171,191`), `inactiveValues` 계산 동치성(`materializeInactiveSlotValues.ts:15-56`)이 후보 1과 동일하게 유지됩니다.
+   - 새 배열 `itemKey` 발급(`cloneSlotSubtree.ts:50-51`), 빈 `interactionState`/`errors`/구독 상태(`fieldNodeFactory.ts:95-114`), 중첩 분기 호스트 `shapeDirtyPaths` 등록(`cloneSlotSubtree.ts:98-99`), 오버레이 적용(`cloneFromSlot.ts:23-24`, `applySlotOverlay.ts:18-81`), `WRITE-034` 및 단일 후보 배열 clear 특이 동작(`createExitSlotOverlay.ts:47-56`), 리터럴 `*` 정적 배제(`isSlotEligible.ts:10-12`), `load`/`reset`/전체 교체 시 `pruneSlotSources` 폐기(`pruneLatentSource.ts:30-31`), 배열 재배치 시 슬롯 이동 및 일회 잠복 변환(`applyArraySlots.ts:47-49,170-171,191`), `inactiveValues` 계산 동치성(`materializeInactiveSlotValues.ts:15-56`)이 후보 1과 동일하게 유지됩니다.
 
 ### 2.2 제거된 등록·주소 단계의 중복성 및 정확성 추적 (항목 2)
 
@@ -47,13 +47,13 @@
    - **분리 참조 읽기/쓰기 지점(`hasLivePathKind`) 영향 확인**:
      - `src/core/engine/settle/utils/detached/hasLivePathKind.ts:16-26`은 `getGateRegistry(node.runtime).hasRegisteredPathKind(path, kind)`가 `undefined`를 반환하면 `find(node.rootNode, path)`로 활성 트리를 직접 탐색합니다. 또한 `GateRegistry.hasRegisteredPathKind`(`getGateRegistry.ts:156-159`)는 정착이 끝난 시점에 모든 활성 노드가 선택 단계에서 등록되어 있으므로 동일한 결과를 반환하며, 정착 도중에는 `writeFieldNode`나 `resetFieldNodeSubtree`의 외부 분리 진입이 발생하지 않습니다.
 2. **활성 복제본의 `DetachedWriteAddress` 및 `getLatentOrder` 지연 포착 (`b40089fec`)**:
-   - `DetachedWriteAddress`는 `writeFieldNode.ts:102`(`if (!scalarWrite && node.detached)`)와 `readRawTree.ts:39,51`에서 **분리된(`detached === true`) 노드**의 현재 쓰기 주소를 조회할 때만 읽힙니다.
+   - `DetachedWriteAddress`는 `writeFieldNode.ts:102`(`if (!scalarWrite && node.detached)`)와 `readSourceTree.ts:39,51`에서 **분리된(`detached === true`) 노드**의 현재 쓰기 주소를 조회할 때만 읽힙니다.
    - 후보 1에서는 `cloneSlotSubtree`가 `entering === true`인 새 활성 복제본에 대해서도 즉시 `getLatentOrder` 배열과 `{ path, order }` 셀을 할당해 `DetachedWriteAddress.retain(node, address, node.runtime)`를 호출했으나, 활성 노드는 `node.detached === false`이므로 활성 수명 동안 이 셀을 읽는 곳이 없습니다. 이후 해당 복제본이 실제로 퇴장할 때 `retainExitedSlot.ts:42-48`(또는 잠복 폴백 시 `captureExitedSource.ts:134`)에서 새 `{ path, order }`를 만들어 덮어쓰고 있었습니다.
    - 후보 2(`cloneSlotSubtree.ts:29-36`)는 `if (!entering)`일 때만(즉, 중첩 `inactiveSlots`에 남아 있는 비활성 후보를 새 부모 아래로 복제할 때만) `DetachedWriteAddress.transfer(source, address, node.runtime)`와 `DetachedWriteAddress.retain(node, address, node.runtime)`를 수행합니다.
    - 이때 옛 분리 참조 `source`가 활성 복제본(`entering === true`)으로 복제될 때는 `source`의 `DetachedWriteAddress` 셀이 변경되지 않고 그대로 유지되므로, 옛 참조 `source`에 대한 이후 비활성 쓰기는 계속 `/value` 등 올바른 주소로 라우팅됩니다(`settle.retained-slot-active-address.test.ts:36-44`에서 검증 완료).
 3. **평문 쓰기(Plain write) 빠른 경로 및 쓰기 커널 직접 진입 (`68077387d`, `04d56b5a9`)**:
    - `commitSettlement.ts:40`: `if (!isSlotEligible(runtime) && context.exited.size > 0)`을 `if (context.exited.size > 0 && !isSlotEligible(runtime))`로 단락 평가 순서를 바꾸어, 퇴장 노드가 없는 평문 쓰기마다 호출되던 `isSlotEligible` 1회를 제거했습니다.
-   - `commitSettlement.ts:248-286`: 출하 모드(`runtime.slots === 'on'`)에서 `context.entered.size === 0 && context.exited.size === 0 && runtime.latentRaw.size === 0 && !runtime.slotDirtyHosts?.size && !runtime.latentRawDirty && !runtime.inactiveValueEntries?.size && runtime.inactiveValuesMemo.size === 0`이면 비활성 슬롯이나 잠복 상태에 어떠한 변화도 없으므로 `isSlotEligible` 검사 및 `commitSlotChanges` 호출 전체를 건너뜁니다.
+   - `commitSettlement.ts:248-286`: 출하 모드(`runtime.slots === 'on'`)에서 `context.entered.size === 0 && context.exited.size === 0 && runtime.latentSource.size === 0 && !runtime.slotDirtyHosts?.size && !runtime.latentSourceDirty && !runtime.inactiveValueEntries?.size && runtime.inactiveValuesMemo.size === 0`이면 비활성 슬롯이나 잠복 상태에 어떠한 변화도 없으므로 `isSlotEligible` 검사 및 `commitSlotChanges` 호출 전체를 건너뜁니다.
      - 만약 이전에 이미 비활성 슬롯이 존재하던 트리에서 평문 쓰기가 일어나면 `runtime.slotDirtyHosts?.size`도 0이고 `entered`/`exited`도 0이므로 `commitSlotChanges`를 부르지 않으며, 기존 호스트들의 `inactiveValuesCache`는 유효한 상태로 그대로 보존됩니다.
      - 만약 정착 밖에서 분리된 참조에 비활성 쓰기(`writeSlotPath` → `markSlotChange`)가 일어났거나 배열 이동(`rekeySlotWriteAddresses`)이 일어났다면 `runtime.slotDirtyHosts`에 호스트가 추가되어 있으므로(`markSlotChange.ts:41`, `rekeySlotWriteAddresses.ts:54`) 가드를 통과해 `commitSlotChanges`가 정상 실행됩니다.
      - 만약 `slots === 'off'`이거나 `slots === 'verify'`이면 `runtime.slots !== 'on'`이 참이 되어 기존과 동일하게 분기 및 `compareSlotShadowCommit(context.root)`(`288`행)가 실행됩니다.

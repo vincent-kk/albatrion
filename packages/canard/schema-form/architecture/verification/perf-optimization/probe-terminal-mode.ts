@@ -62,7 +62,7 @@ function createTree(
     {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
+      latentSource: new PathKeyedMap('pair'),
       misfitPaths: new PathKeyedSet(),
       inactiveValuesMemo: new PathKeyedMap<
         readonly { path: string; value: unknown }[]
@@ -322,7 +322,7 @@ function hostOf(root: ProbeNode): ProbeNode {
   if (!host) throw new Error('Missing /h host node');
   return host;
 }
-/** Return the child count dictated by the host schema, rather than by raw value size. */
+/** Return the child count dictated by the host schema, rather than by source value size. */
 function expectedChildCount(spec: Scene, expected: RootValue): number {
   if (spec.host === 'B1') return 1;
   return spec.host === 'BN' ? Object.keys(expected.h).length : 0;

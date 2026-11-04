@@ -71,7 +71,7 @@ oneOf-80의 메모 할당은 23,011 → 23,559 B/쓰기로 감소하지 않았�
 
 ## 증분 경로에 도달하지 않은 원인
 
-B의 계측 manifest에는 목록 갱신 함수가 포함되지만, 모든 oneOf-80·payload-12 단계 표본에서 그 타이머 호출은 0이다. 공개 판별자 `setValue`는 `callerReplace`이고, 게이트가 있는 폼은 `writeFieldNode`의 `branchless` 스칼라 자격을 얻지 못한다. 따라서 실제 잠복 키가 없는 판별자 경로에도 `pruneLatentRaw`가 호출된다. 후보가 함수 진입 시 무조건 `inactiveValuesRebuild = true`를 세웠기 때문에, 뒤의 commit은 전체 재구성으로 후퇴했다.
+B의 계측 manifest에는 목록 갱신 함수가 포함되지만, 모든 oneOf-80·payload-12 단계 표본에서 그 타이머 호출은 0이다. 공개 판별자 `setValue`는 `callerReplace`이고, 게이트가 있는 폼은 `writeFieldNode`의 `branchless` 스칼라 자격을 얻지 못한다. 따라서 실제 잠복 키가 없는 판별자 경로에도 `pruneLatentSource`가 호출된다. 후보가 함수 진입 시 무조건 `inactiveValuesRebuild = true`를 세웠기 때문에, 뒤의 commit은 전체 재구성으로 후퇴했다.
 
 계수 red/green은 `writeFieldNode(..., input, ...)` 경로를 고정했다. 공개 `setValue`의 이 후퇴를 측정 전에 고정하지 못한 시험 범위 결함이다. 이번 수치는 후보의 전체 후퇴 경로 비용이며, 정상적으로 도달한 증분 알고리즘이나 루트 배열 복사의 독립 비용을 재는 수치가 아니다. 따라서 루트 복사가 3 µs 초과의 원인이라고 단정하거나 이를 근거로 getter 지연 계산 B2-P1b를 채택하지 않는다. 후속 실험은 실제 공개 `setValue` 전환의 증분 도달과 빈 가지치기의 무효과를 먼저 계수로 고정해야 한다. 후보 1은 재측정하지 않았다. 코디네이터는 이 결과를 정상 증분 가설의 측정으로 볼 수 없는 구현 결함으로 판단하여, 결함을 보정한 후보 2의 별도 창을 지시했다.
 

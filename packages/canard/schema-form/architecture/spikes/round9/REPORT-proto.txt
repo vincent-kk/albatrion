@@ -60,7 +60,7 @@ AJV 연결은 round8의 build-v4e.mjs와 같은 Ajv2020 및 strict:false 설정�
   정본은 make-v5.mjs와 runtime-v5.inc.txt입니다. loop-v5.mjs 직접 수정은 없습니다.
 
 | 항목 | 구현 위치 | 구현한 동작 |
-| 상태 칸 | LV5:138 | raw/extras만 남겼습니다. selection 필드·API·점수·동점 코드가 없습니다. |
+| 상태 칸 | LV5:138 | source/extras만 남겼습니다. selection 필드·API·점수·동점 코드가 없습니다. |
 | 조각 | LV5:382, B5:33 | guard 없는 조각은 참입니다. if는 AJV에 넘기고 &active는 함수/상수로 평가합니다. |
 | union 경고 | B5:63 | dev 모드에서 oneOf/anyOf 분기의 if 및 else:false 유무만 검사합니다. 원문은 바꾸지 않습니다. |
 | 예약 키 연결 | B5:98 | derived는 from 경로의 emit edge로 자기 노드를 쓰고, injectTo는 자기 emit edge로 to 경로를 씁니다. |
@@ -270,7 +270,7 @@ a는 b+1로 derived, a는 b에 a+1을 injectTo합니다. 시작 source는 {a:0,b
 | 정정 프로브 | r9b.mjs:18,33,50,73,86 | 해당 파일 직접 실행 | a1–a4, shape/raw 게이트, 비활성 조상, oneOf/anyOf 힌트를 검사합니다. |
 | 회귀 연결 | regress/run.mjs:28,99,100,117 | 해당 파일 직접 실행 | r9b 실행, r8 변경 수 및 공유 노드 6행 단언, 결과 원장을 추가했습니다. |
 
-shapePresent와 effectiveSchema는 계산 메모/힌트입니다. 상태 칸은 여전히 raw/extras입니다.
+shapePresent와 effectiveSchema는 계산 메모/힌트입니다. 상태 칸은 여전히 source/extras입니다.
 이미 존재하던 노드의 값을 지운 뒤 다른 선언이 켜져도 다시 채우지 않습니다.
 존재하지 않던 노드가 게이트 활성화로 생겼을 때만 missing 값을 채웁니다.
 비활성화는 source를 삭제하지 않으며 sourceTree로 읽을 수 있습니다.
@@ -330,7 +330,7 @@ P !== undefined로 실패했고, 원인은 파생 쓰기와 같은 라운드의 
 최종 born과 채움 확정은 커밋 직전 한 번 수행합니다. 계산 중에는 후보를 staged
 영역에 두고 의존 계산에 사용합니다. 후보값도 derived/guard의 입력이므로, 후보를
 전혀 계산하지 않은 shape만으로 최종 형태를 결정하지 않습니다. 후보와 shape의
-공동 수렴을 검사한 뒤 raw/extras를 커밋하고 통지합니다. 중간 후보는 커밋하지 않습니다.
+공동 수렴을 검사한 뒤 source/extras를 커밋하고 통지합니다. 중간 후보는 커밋하지 않습니다.
 
 | 수정 | 정본 위치 | 생성본 위치 | 동작 |
 | 생성 후보/확정 구분 | proto/make-v5.mjs:123,224 | proto/loop-v5.mjs:1337,1605 | 중간 판정은 candidate입니다. 수렴 후 born 목록을 birthsAtCommit에 한 번 기록합니다. |
