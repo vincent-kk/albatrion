@@ -27,8 +27,8 @@
 ### validator-scenario-bundles — 적합성과 관찰의 분리
 
 - 적합성 사례는 문서화된 지원 범위 안에서만 기대값을 둔다: VALIDATE-047 사례 (i)–(iii), 결함 A의 T1·T2, 계획 T8 (가)·T9, IR-10 T1·T2·T7·T8·T9 (가)·(다), 자족 가드, `$ref` 가드, 중첩 `$id`, `$schema`를 선언한 루트, 비동기 조건의 컴파일 거부, 같은 `$id` 두 루트의 격리, release 멱등, 기본 프로필의 형식 검사 끔, ajv8의 `allowUnionTypes`.
-- 플러그인이 컴파일 단계에서 반드시 거부하는 형태는 지원 밖이라도 적합성 사례이며 `expected: 'rejects'`를 둔다: L8′ 사슬 밖 `$id` 래퍼와 계획 T8 (나)의 자원 루트가 아닌 `$recursiveAnchor`(L12)이다. 둘은 2019-09 동적 어휘가 있는 진입점에만 적용한다.
-- 관찰 사례는 기대값이 없다: VALIDATE-047 사례 (iv)의 ajv8·ajv7 모양과 L16(2019-09에서 `if` 밖의 자원 루트가 아닌 `$recursiveAnchor: true`와 `if` 안 조상 선언이 함께 있는 경우)이다. L16 사례는 원본 시험이 없어 ajv8 README의 L16 설명으로 만든 스키마다.
+- 불리언 기대값은 지원 조건 안에서만 AJV 전체 검증의 판정과 같다. 플러그인이 컴파일 단계에서 반드시 거부하는 형태는 지원 조건 밖이라도 적합성 사례이며 `expected: 'rejects'`를 둔다: L8′ 사슬 밖 `$id` 래퍼, 계획 T8 (나)의 자원 루트가 아닌 `$recursiveAnchor`(L12), 사슬과 참조의 조상이 이름을 선언하지 않는 VALIDATE-047 사례 (iv)의 ajv7 모양이다. 셋은 2019-09 동적 어휘가 있는 진입점에만 적용하고, 소비자는 `compileGuard` 호출만 감싸 거부를 단언하며 돌려받은 가드를 부르지 않는다.
+- 관찰 사례는 기대값이 없다: VALIDATE-047 사례 (iv)의 ajv8 모양과 L16(2019-09에서 `if` 밖의 자원 루트가 아닌 `$recursiveAnchor: true`와 `if` 안 조상 선언이 함께 있는 경우)이다. L16 사례는 원본 시험이 없어 ajv8 README의 L16 설명으로 만든 스키마다.
 
 ### validator-scenario-size — 파일 상한
 

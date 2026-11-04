@@ -218,7 +218,7 @@ const twoScopesCommon = {
   },
 } as const;
 
-/** VALIDATE-047 case (iv), ajv7 shape: two off-chain resources reach one `if` (unsupported). */
+/** VALIDATE-047 case (iv), ajv7 shape: two off-chain resources reach one `if`; no chain resource binds `node`, so the guard refuses it. */
 const twoScopesAjv7Root = {
   $id: 'https://example.test/ajv7/two-scopes.json',
   type: 'object',
@@ -347,8 +347,8 @@ export const guardScenarios: readonly GuardScenario[] = [
   { kind: 'guard', bundle: 'observation', id: 'observe.two-scopes.2020', source: 'VALIDATE-047 (iv), ajv8 shape', drafts: ['2020'], applies: onEveryEntry,
     schema: { ...twoScopesCommon, $ref: '#/$defs/stringScope' }, pointer: '/$defs/shared/if',
     hostValue: { stringKey: true, numberKey: true, next: { stringKey: true } }, expected: null },
-  { kind: 'guard', bundle: 'observation', id: 'observe.two-scopes.2019', source: 'VALIDATE-047 (iv), ajv7 shape', drafts: ['2019'], applies: onEveryEntry,
-    schema: twoScopesAjv7Root, pointer: '/$defs/common/if', hostValue: { next: { kind: 'left' } }, expected: null },
+  { kind: 'guard', bundle: 'conformance', id: 'guard.two-scopes-off-chain.2019', source: 'VALIDATE-047 (iv), ajv7 shape', drafts: ['2019'], applies: on2019Vocabulary,
+    schema: twoScopesAjv7Root, pointer: '/$defs/common/if', hostValue: { next: { kind: 'left' } }, expected: 'rejects' },
   { kind: 'guard', bundle: 'observation', id: 'observe.non-root-anchor-with-inner-ancestor.2019', source: 'IR-11 L16', drafts: ['2019'], applies: on2019Vocabulary,
     schema: nonRootAnchorWithInnerAncestorRoot, pointer: '/properties/host/if', hostValue: { ok: true, next: { ok: true, rejected: true } }, expected: null },
 ];

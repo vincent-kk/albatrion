@@ -35,14 +35,16 @@ export const runLifetimeStep = async (
     for (const check of step.guardChecks) expect(guard(check.hostValue)).toBe(check.expected);
     validator.release?.(root);
   } else if (step.action === 'releaseTwice') {
-    for (const root of [copyOf(step.schema), copyOf(step.schema)]) {
-      validator.release?.(root);
-      validator.release?.(root);
-      const validate = validator.compile(root);
-      for (const check of step.validationChecks) expect(await readValidation(validate, check.value)).toEqual(check.expected);
-      validator.release?.(root);
-      validator.release?.(root);
-    }
+    const root = copyOf(step.schema);
+    validator.release?.(root);
+    validator.release?.(root);
+    const validate = validator.compile(root);
+    for (const check of step.validationChecks) expect(await readValidation(validate, check.value)).toEqual(check.expected);
+    validator.release?.(root);
+    validator.release?.(root);
+    const recompiled = validator.compile(root);
+    for (const check of step.validationChecks) expect(await readValidation(recompiled, check.value)).toEqual(check.expected);
+    validator.release?.(root);
   } else if (step.action === 'twoRootsSameId') {
     const first = copyOf(step.first);
     const second = copyOf(step.second);

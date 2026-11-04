@@ -39,7 +39,7 @@ const rows = [
   ['guard.async-condition', 'default', 'default', false],
   ['guard.off-chain-wrapper.2019', '2019', 'default', true],
   ['guard.non-root-recursive-anchor.2019', '2019', 'default', true],
-  ['observe.two-scopes.2019', '2019', 'default', true],
+  ['guard.two-scopes-off-chain.2019', '2019', 'default', true],
   ['observe.non-root-anchor-with-inner-ancestor.2019', '2019', 'default', true],
 ] as const satisfies readonly ParityRow[];
 
@@ -64,13 +64,17 @@ describe('validator parity: guard scenarios (ajv7)', () => {
     if (!scenario) throw new Error(`Unknown parity scenario ${id}`);
     const { validator } = await loadParityValidator(entry, profile, directGuardCompile);
     const root = copyOf(scenario.schema);
+    if (scenario.expected === 'rejects') {
+      expect(() => validator.compileGuard(root, scenario.pointer)).toThrow();
+      validator.release?.(root);
+      return;
+    }
     const verdict = verdictOf(() => validator.compileGuard(root, scenario.pointer)(copyOf(scenario.hostValue)));
     validator.release?.(root);
     if (scenario.bundle === 'observation') {
       if (process.env.PARITY_OBSERVE) console.info(`| ${id} | ajv7 ${entry} ${profile} directGuardCompile=${directGuardCompile} | guard ${verdict} |`);
       return;
     }
-    if (scenario.expected === 'rejects') expect(String(verdict)).toMatch(/^rejects: /);
-    else expect(verdict).toBe(scenario.expected);
+    expect(verdict).toBe(scenario.expected);
   });
 });

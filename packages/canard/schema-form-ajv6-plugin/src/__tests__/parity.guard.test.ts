@@ -49,13 +49,17 @@ describe('validator parity: guard scenarios (ajv6)', () => {
     if (!scenario) throw new Error(`Unknown parity scenario ${id}`);
     const { validator } = await loadParityValidator(entry, profile, directGuardCompile);
     const root = copyOf(scenario.schema);
+    if (scenario.expected === 'rejects') {
+      expect(() => validator.compileGuard(root, scenario.pointer)).toThrow();
+      validator.release?.(root);
+      return;
+    }
     const verdict = verdictOf(() => validator.compileGuard(root, scenario.pointer)(copyOf(scenario.hostValue)));
     validator.release?.(root);
     if (scenario.bundle === 'observation') {
       if (process.env.PARITY_OBSERVE) console.info(`| ${id} | ajv6 ${entry} ${profile} directGuardCompile=${directGuardCompile} | guard ${verdict} |`);
       return;
     }
-    if (scenario.expected === 'rejects') expect(String(verdict)).toMatch(/^rejects: /);
-    else expect(verdict).toBe(scenario.expected);
+    expect(verdict).toBe(scenario.expected);
   });
 });
