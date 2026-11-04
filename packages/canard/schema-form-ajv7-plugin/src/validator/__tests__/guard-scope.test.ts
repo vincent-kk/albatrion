@@ -97,7 +97,7 @@ describe('VALIDATE-033 VALIDATE-047 guard scope', () => {
     }
   });
 
-  it('case (iv): records one location used from two dynamic scopes as unsupported', () => {
+  it('case (iv): refuses one location used from two off-chain dynamic scopes at compile time', () => {
     ajvValidatorPlugin.bind?.(new Ajv2019({ allErrors: true, strict: false, validateFormats: false }));
     const id = 'https://example.test/ajv7/two-scopes.json';
     const root = {
@@ -127,9 +127,7 @@ describe('VALIDATE-033 VALIDATE-047 guard scope', () => {
     const left = direct({ left: { kind: 'left', item: { ...value, accepted: true } } });
     const right = direct({ right: { kind: 'right', item: { ...value, accepted: true } } });
     expect(left).not.toBe(right);
-    const guard = ajvValidatorPlugin.compileGuard(JSON.parse(JSON.stringify(root)) as JSONSchema, '/$defs/common/if');
-    const verdict = guard(value);
-    expect(verdict === left && verdict === right).toBe(false);
+    expect(() => ajvValidatorPlugin.compileGuard(JSON.parse(JSON.stringify(root)) as JSONSchema, '/$defs/common/if')).toThrow(/not bound/);
   });
 });
 
