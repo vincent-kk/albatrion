@@ -9,6 +9,9 @@ import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
+/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+
 /** One root's validation and optional guard registrations. */
 export interface SchemaRootRegistration {
   /** Direct schemas are owned and released with this root's guard instance. */
@@ -27,7 +30,8 @@ export interface SchemaRootRegistration {
   guardRefs?: readonly string[];
   readonly key: string;
   readonly ids: readonly string[];
-  readonly probes: SchemaRootRegistration[];
+  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly hasDynamicKeywords: boolean;
 }
 
 /** Mutable registration ownership retained by one plugin entry point. */
@@ -53,8 +57,10 @@ export const registerSchemaRoot = (
   const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
   if (existing) return existing;
   const ids: string[] = [];
+  let hasDynamicKeywords = false;
   JSON.stringify(root, (name, value: unknown) => {
     if (name === '$id' && typeof value === 'string') ids.push(value);
+    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
     return value;
   });
   if (ids.length)
@@ -83,8 +89,8 @@ export const registerSchemaRoot = (
   const validationCopy: JSONSchema | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
   const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids, probes: [],
-    directGuards: [], guardChecks: new WeakMap(),
+    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids,
+    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
   };
   registrations.push(registration);
   registry.entries.set(root, registrations);
