@@ -1,6 +1,6 @@
 import type { SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Preserve one failure occurrence and forward it once to an open dispatch chain.

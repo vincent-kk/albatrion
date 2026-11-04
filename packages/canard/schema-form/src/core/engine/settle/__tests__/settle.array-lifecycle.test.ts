@@ -5,11 +5,15 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotSource,
+} from './fixtures/readRetainedSlotSource';
 
-// filid:contract settle-array
+// filid:contract settle-array-lifecycle
 describe('array settlement lifecycle', () => {
   it('35C-09 and WRITE-036 perish without exit latent or inactive entries', () => {
-    const { root, runtime } = makeFieldNodeTree(
+    const { root } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['a', 'b'] },
     );
@@ -17,12 +21,11 @@ describe('array settlement lifecycle', () => {
     const perished = root.children![1];
     root.setValue(['x']);
     expect(root.children).toHaveLength(1);
-    expect(perished.active).toBe(false);
+    expect(perished.isActive).toBe(false);
     expect(perished.value).toBe('b');
     expect(perished.defaultValue).toBe('b');
     expect(root.inactiveValues).toEqual([]);
-    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
-    expect(latent.has(JSON.stringify(['/1', 'string']))).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/1', 'string')).toBe(false);
     root.setValue(['x', 'c']);
     expect(root.children![1]).not.toBe(perished);
     expect(Reflect.get(root.children![1], 'itemKey')).toBeGreaterThan(
@@ -31,7 +34,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 captures an inactive array as one host latent and recreates items', () => {
-    const { root, runtime } = makeFieldNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -46,29 +49,22 @@ describe('array settlement lifecycle', () => {
     const former = root.find('/items')!;
     const formerFirst = former.children![0];
     root.find('/flag')?.setValue(false);
-    const latent: Map<string, { raw?: unknown }> = Reflect.get(
-      runtime,
-      'latentRaw',
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(
+      root.inactiveValues[0]?.value,
     );
-    expect([...latent.keys()]).toEqual([JSON.stringify(['/items', 'array'])]);
     expect(root.inactiveValues).toEqual([
       { path: '/items', value: ['a', 'b'] },
     ]);
-    expect(latent.get(JSON.stringify(['/items', 'array']))?.raw).toEqual([
-      'a',
-      'b',
-    ]);
-    expect(
-      Object.isFrozen(latent.get(JSON.stringify(['/items', 'array']))?.raw),
-    ).toBe(true);
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(['a', 'b']);
+    expect(Object.isFrozen(root.inactiveValues[0]?.value)).toBe(true);
     root.find('/flag')?.setValue(true);
     expect(root.find('/items')?.value).toEqual(['a', 'b']);
     expect(root.find('/items')).not.toBe(former);
     expect(root.find('/items')?.children?.[0]).not.toBe(formerFirst);
   });
 
-  it('38C-02 captures raw item trees and folds latent children into one host', () => {
-    const { root, runtime } = makeFieldNodeTree({
+  it('38C-02 captures source item trees and folds latent children into one host', () => {
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showHost: { type: 'boolean' },
@@ -117,11 +113,7 @@ describe('array settlement lifecycle', () => {
     root.find('/items/0/show')?.setValue(false);
     expect(root.find('/items/0/hidden')).toBeNull();
     root.find('/showHost')?.setValue(false);
-    const latent: Map<string, { raw?: unknown }> = Reflect.get(
-      runtime,
-      'latentRaw',
-    );
-    const rawTree = [
+    const sourceTree = [
       {
         show: false,
         visible: 'v',
@@ -132,11 +124,11 @@ describe('array settlement lifecycle', () => {
       },
       { nestedArray: [] },
     ];
-    expect([...latent.keys()]).toEqual([JSON.stringify(['/items', 'array'])]);
-    expect(latent.get(JSON.stringify(['/items', 'array']))?.raw).toEqual(
-      rawTree,
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(
+      root.inactiveValues[0]?.value,
     );
-    expect(root.inactiveValues).toEqual([{ path: '/items', value: rawTree }]);
+    expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(sourceTree);
+    expect(root.inactiveValues).toEqual([{ path: '/items', value: sourceTree }]);
     root.find('/showHost')?.setValue(true);
     expect(root.find('/items')?.value).toEqual([
       {
@@ -204,20 +196,13 @@ describe('array settlement lifecycle', () => {
     expect(old.inactiveValues).toEqual([
       { path: '/1/hidden', value: 'secret' },
     ]);
-    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
-    const metadata: Map<string, unknown> = Reflect.get(
-      runtime,
-      'latentRawMetadata',
-    );
     const declarations: Map<string, unknown> = Reflect.get(
       runtime,
       'committedDeclarationIds',
     );
-    expect(
-      [...latent.keys(), ...metadata.keys(), ...declarations.keys()].every(
-        (key) => !key.includes('"/1'),
-      ),
-    ).toBe(true);
+    expect([...declarations.keys()].every((key) => !key.includes('"/1'))).toBe(
+      true,
+    );
   });
 
   it('35C-10 retains a gated-out item source when its array host exits', () => {
@@ -394,7 +379,7 @@ describe('array settlement lifecycle', () => {
     const first = host.children![0];
     const tuple = root.structure!.tuple;
     const tupleFirst = tuple.children![0];
-    const previousExtras = tuple.undeclaredValues;
+    const previousExtras = tuple.extras;
     expect(() =>
       writeFieldNode(
         root,
@@ -410,16 +395,16 @@ describe('array settlement lifecycle', () => {
     expect(host.children).toEqual([first]);
     expect(host.children![0]).toBe(first);
     expect(host.itemCount).toBe(1);
-    expect(host.undeclaredValues).toBeUndefined();
+    expect(host.extras).toBeUndefined();
     expect(host.nextItemKey).toBeGreaterThan(first.itemKey! + 1);
     expect(tuple.children![0]).toBe(tupleFirst);
     expect(tuple.itemCount).toBe(2);
-    expect(tuple.undeclaredValues).toBe(previousExtras);
-    expect(tuple.undeclaredValues).toEqual(['extra']);
+    expect(tuple.extras).toBe(previousExtras);
+    expect(tuple.extras).toEqual(['extra']);
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {
-    const { root, runtime } = makeFieldNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -434,10 +419,9 @@ describe('array settlement lifecycle', () => {
     root.find('/flag')?.setValue(false);
     expect(root.find('/items')?.children).toEqual([]);
     expect(root.find('/items')?.value).toEqual([null]);
-    expect(former.active).toBe(false);
-    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
-    expect(latent.get(JSON.stringify(['/items/0', 'string']))).toBe('a');
+    expect(former.isActive).toBe(false);
+    expect(readRetainedSlotSource(root, '/items/0', 'string')).toBe('a');
     root.find('/items')?.setValue([]);
-    expect(latent.has(JSON.stringify(['/items/0', 'string']))).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/items/0', 'string')).toBe(false);
   });
 });

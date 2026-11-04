@@ -1,37 +1,32 @@
+import { advanceFieldNodeRevealSequence } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
+import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
+import { openVisitBatch } from './openVisitBatch';
 import { refuseListenerFeedback } from './refuseListenerFeedback';
+import { startFieldNodeChain } from './startFieldNodeChain';
 
 /**
  * Enter one public write on the tree shared by a record.
+ * Inside a `visitSubtree` walk with no batch open, the first write also opens
+ * a batch that the walk closes, so later writes are only marked.
  * @param node - Target whose live root owns the chain
+ * @param origin - Entry operation; an enclosed chain retains its existing origin
  * @returns Whether the write entered; refused feedback leaves depth unchanged
  */
 export const enterFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
+  origin: 'load' | 'write' = 'write',
 ): boolean => {
+  if (refuseInactiveResolverWrite(node, origin)) return false;
   assertFieldNodeWritable(node);
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
-  if (!runtime.entryDepth) {
-    runtime.enclosingChain =
-      runtime.chainErrors && runtime.chainOccurrences
-        ? {
-            errors: runtime.chainErrors,
-            occurrences: runtime.chainOccurrences,
-            outer: runtime.enclosingChain,
-          }
-        : undefined;
-    runtime.chainRoot = node.rootNode;
-    runtime.chainInitialEmit = node.rootNode.emit;
-    runtime.chainErrors = [];
-    runtime.chainOccurrences = [];
-    runtime.feedbackBudget = 0;
-    runtime.feedbackBlockedListeners = undefined;
-    runtime.feedbackLimitReported = false;
-  }
+  advanceFieldNodeRevealSequence(node);
+  if (!runtime.entryDepth) startFieldNodeChain(node.rootNode, origin);
   if (refuseListenerFeedback(runtime)) return false;
+  if (runtime.visitDepth && !runtime.batchDepth) openVisitBatch(node);
   runtime.entryDepth = (runtime.entryDepth ?? 0) + 1;
   return true;
 };

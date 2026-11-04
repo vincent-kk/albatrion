@@ -7,7 +7,7 @@ Every node publishes typed events (`FieldNodeEventType`). This file is the menta
 - A public write settles and commits synchronously. Listeners are notified when the outermost write returns, with the events of one write merged per node.
 - A write made inside a listener joins the same chain as its next wave and is also delivered before the outermost call returns. `onChange` runs once per outermost write, after the last wave.
 
-Consequence: after `setValue()` returns, values and controls state are current and can be read synchronously. Validation runs on a microtask, so `errors` are stale until it finishes.
+Consequence: after `setValue()` returns, values and controls state are current and can be read synchronously. Write-triggered validation runs once after the frame that renders the newest edit; several writes before that frame share one verdict. `errors`, `getErrors()`, `onValidate`, and error UI retain the previous verdict for at least that frame. Explicit `validate()` and submit start a fresh verdict immediately; submit awaits it. OnChange mount validation also follows the first frame. A subtree `validate()` preserves pending and in-flight whole-form write validation.
 
 ## setValue Synchronicity
 
@@ -25,7 +25,7 @@ Consequence: after `setValue()` returns, values and controls state are current a
 
 Events are delivered from the committed result of a settlement, not while it is still computing. The settlement marks which bits changed per node, and each outermost write then delivers them once in document order, so a listener reading the tree sees the final committed state. Nodes without listeners still count their bits, so `revision(mask)` stays correct for late subscribers.
 
-Aggregate flags are published at the root. `UpdateGlobalState` is raised once per outermost entry, and only when a state key (such as `dirty` or `touched`) crosses between "no node has it" and "some node has it"; further nodes joining or leaving a key that is already set raise nothing.
+Aggregate flags are published at the root. `UpdateGlobalState` is raised once per outermost entry, and only when a state key (such as `edited` or `touched`) crosses between "no node has it" and "some node has it"; further nodes joining or leaving a key that is already set raise nothing.
 
 ## Subscribing
 

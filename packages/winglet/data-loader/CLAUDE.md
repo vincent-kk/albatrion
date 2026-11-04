@@ -52,19 +52,19 @@ This is a TypeScript package that implements a batching and caching utility for 
 
 ### Core Components
 
-**DataLoader Class** (`/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/DataLoader.ts`)
+**DataLoader Class** (`src/DataLoader.ts`)
 - Main export that provides batching and caching functionality
 - Handles automatic request batching through a scheduler system
 - Implements a cache system using Map-like interfaces
 - Provides methods: `load()`, `loadMany()`, `clear()`, `clearAll()`, `prime()`
 
-**Type Definitions** (`/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/type.ts`)
+**Type Definitions** (`src/type.ts`)
 - `BatchLoader<Key, Value>`: Function type for batch loading operations
 - `DataLoaderOptions<Key, Value, CacheKey>`: Configuration options
 - `Batch<Key, Value>`: Internal batching structure
 - `MapLike<Key, Value>`: Cache interface definition
 
-**Utility Modules** (`/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/utils/`)
+**Utility Modules** (`src/utils/`)
 - `dispatch.ts`: Handles batch processing and cache hit resolution
 - `error.ts`: Custom error types for DataLoader operations
 - `prepare.ts`: Utility functions for preparing configuration options
@@ -89,7 +89,7 @@ This is a TypeScript package that implements a batching and caching utility for 
 
 ## Testing Strategy
 
-Tests are located in `/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/__tests__/` and cover:
+Tests are located in `src/__tests__/` and cover:
 - Basic batching functionality
 - Cache behavior and invalidation
 - Error handling scenarios

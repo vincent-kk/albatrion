@@ -35,7 +35,6 @@ export const checkGuardRootCollection = (
     const source = path.join(packageRoot, 'src/validator');
     const { createGuardCompiler } = require(path.join(source, 'createGuardCompiler.ts'));
     const { registerSchemaRoot } = require(path.join(source, 'utils/registerSchemaRoot.ts'));
-    const { registerSchemaGuard } = require(path.join(source, 'utils/registerSchemaGuard.ts'));
     const { disposeSchemaRoot } = require(path.join(source, 'utils/disposeSchemaRoot.ts'));
     const finalizer = new FinalizationRegistry(disposeSchemaRoot);
     const roots = new WeakMap();
@@ -49,8 +48,7 @@ export const checkGuardRootCollection = (
       if (version === 8) createGuardCompiler(instance, registry, root, pointer, direct === 'true');
       else {
         const registration = registerSchemaRoot(root, instance, roots, active, finalizer, pool);
-        registerSchemaGuard(root, instance, registration);
-        createGuardCompiler(registration, pointer, root, direct === 'true', finalizer);
+        createGuardCompiler(instance, registration, pointer, root, direct === 'true', finalizer);
       }
       return reference;
     };

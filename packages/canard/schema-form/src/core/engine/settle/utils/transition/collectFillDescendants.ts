@@ -1,5 +1,7 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Continue one parent-first fill traversal through nodes produced by host writes.
@@ -16,8 +18,8 @@ export const collectFillDescendants = <Self extends FieldNodeRecord<Self>>(
   count: number,
   ancestors: Map<Self, number>,
   newArrayHosts?: ReadonlySet<Self>,
-): Self[][] | undefined => {
-  let byDepth: Self[][] | undefined;
+): Optional<Self[][]> => {
+  let byDepth: Optional<Self[][]>;
   const firstEvaluations = context.hasGates ? new Set<Self>() : undefined;
   for (let index = 0; index < count; index++) {
     const node = appearances.next().value!;

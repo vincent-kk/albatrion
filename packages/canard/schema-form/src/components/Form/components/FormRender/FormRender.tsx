@@ -5,7 +5,7 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-import type { FormRenderProps } from './type';
+import type { FormRenderProps } from './types/props';
 
 /**
  * Renders form fields with complete control through a custom render function.
@@ -41,12 +41,12 @@ import type { FormRenderProps } from './type';
  * ```tsx
  * <Form.Render path="/password">
  *   {({ value, onChange, node, errors }) => {
- *     const { touched, dirty } = node.state;
+ *     const { isTouched, isEdited } = node;
  *     return (
  *       <div
  *         className={cx('field', {
- *           'field--touched': touched,
- *           'field--dirty': dirty,
+ *           'field--touched': isTouched,
+ *           'field--edited': isEdited,
  *           'field--error': errors?.length > 0,
  *         })}
  *       >

@@ -190,12 +190,12 @@ interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show
    *   - `false`: Never show
-   *   - `ShowError.Dirty`: Show when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched conditions are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: boolean | ShowError;
   /**
@@ -214,8 +214,8 @@ interface FormProps<
    *  - Off-screen fields render as placeholders and mount when they approach the
    *    viewport, on browser idle time, or on focus/select commands
    *  - The node tree is always fully built — values, validation and submit are unaffected
-   *  - Client-side rendering only: requires IntersectionObserver; do NOT enable it in
-   *    SSR/hydration apps (hydration mismatch)
+   *  - Requires IntersectionObserver for gating; SSR renders all fields and hydrates
+   *    unchanged, then gates branches and children added after hydration
    */
   virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
@@ -254,6 +254,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** Find the node at a JSONPointer path */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find every node matching a JSONPointer path */
@@ -285,6 +287,7 @@ interface FormHandle<
 - Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
 - `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
 - `reset()` also empties the attached-files map and drops a `showError(true)` override, so error display follows the `showError` prop again.
+- `rebuild(option?)` invalidates this schema object's cached blueprint and replaces this form's tree using the same options as `reset`. Other forms using the same schema object keep their existing tree during ordinary `reset`; their own `rebuild` or a new mount resolves fresh analysis.
 
 ### FormChildrenProps
 
@@ -397,6 +400,26 @@ function ProfileForm() {
 
 Changing the `jsonSchema` or `defaultValue` prop alone keeps the current tree; `reset` reads both again. The form builds a new tree when the validator changes and when `reset` runs with a different `jsonSchema`, while a `reset` with the same schema reloads values into the existing tree. A node you stored before a rebuild belongs to the discarded tree, so read `formRef.current.node` or call `findNode` at the moment you need a node instead of keeping a reference.
 
+### Node boolean properties and load divergence
+
+Node boolean properties use `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled` and `isMisfit`. `isPresent` is `isActive && isVisible`, independent of `isDisabled`. React props, schema keys and `controls` keys keep their names.
+
+```ts
+node.isEdited;    // truthiness of state[FieldNodeState.Edited]
+node.isTouched;   // truthiness of state[FieldNodeState.Touched]
+node.isDivergent; // current form output differs from the last root load at node.path
+```
+
+`isEdited` and `isTouched` are read-only booleans; re-read them on `FieldNodeEventType.UpdateState`. Only input writes set Edited. `setValue`, array verbs and automatic fills do not. Reset, `clearState` and `controls.resetInteraction` clear the interaction flags. Detached references keep their last-commit interaction state.
+
+`isDivergent` compares the current root output and the last committed root-load output at the same node path. The first mount, form reset with a value or explicit undefined, rebuild, validator change and `root.resetSubtree()` take a new baseline after the output is final. Before the first load commits it reads false. Changing the Form `defaultValue` prop alone, ordinary writes and a child `resetSubtree()` do not move that baseline. A load that throws before commit keeps the preceding baseline; a failure reported after commit establishes the degraded output as the new baseline.
+
+Reverting to the baseline reads false. Hidden fields remain in the output; array holes use their actual output contribution. Items compare by position: a moved or added item can read true, while an added item matching the value originally at that position reads false. Child reset follows its load source by item identity, so after array movement, or with dependencies outside its subtree, the restored subtree can remain divergent. Detached nodes read false because they no longer contribute to the output.
+
+The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
+
+Writes perform no divergence reads or comparisons. A root load allocates one baseline box retaining its output reference. Each getter read walks two cached paths, O(depth), and compares only when either path value changes by `Object.is`; repeated unchanged reads call `sameValue` zero times, including NaN. A first comparison skips unchanged references. The baseline retains replaced parts until the next root load, and each node memo retains only its own two path values and result.
+
 ### Node State Flags
 
 A node's interaction flags live in `node.state`, keyed by the `FieldNodeState` enum. Other keys are allowed for your own flags.
@@ -404,7 +427,7 @@ A node's interaction flags live in `node.state`, keyed by the `FieldNodeState` e
 ```typescript
 import { FieldNodeState } from '@canard/schema-form';
 
-node.state[FieldNodeState.Dirty]; // true after the user changed this field's value
+node.state[FieldNodeState.Edited]; // true after the user changed this field's value
 node.state[FieldNodeState.Touched]; // true after the user left (blurred) this field
 node.state[FieldNodeState.ErrorVisible]; // explicit error display override, if set
 
@@ -414,24 +437,61 @@ node.rootNode.globalState; // flags that are true on at least one node
 
 | Flag           | Set by                          | Effect                                                           |
 | -------------- | ------------------------------- | ---------------------------------------------------------------- |
-| `Dirty`        | every user input write          | used by `ShowError.Dirty` and `ShowError.DirtyTouched`           |
-| `Touched`      | blur, one animation frame later | used by `ShowError.Touched` and `ShowError.DirtyTouched`         |
+| `Edited`        | every user input write          | used by `ShowError.Edited` and `ShowError.EditedTouched`           |
+| `Touched`      | blur, one animation frame later | used by `ShowError.Touched` and `ShowError.EditedTouched`         |
 | `ErrorVisible` | you, through `setState`         | `true` or `false` overrides the `showError` policy for that node |
 
-A `controls.resetInteraction` rule clears `Dirty` and `Touched` when its condition turns from false to true, or when the field loads or enters the form while the condition is true. `FormHandle.setState` patches every node, and `FormHandle.reset()` and `clearState()` remove every flag, including your own keys.
+A `controls.resetInteraction` rule clears `Edited` and `Touched` when its condition turns from false to true, or when the field loads or enters the form while the condition is true. `FormHandle.setState` patches every node, and `FormHandle.reset()` and `clearState()` remove every flag, including your own keys.
 
 Other node properties report the field's current condition:
 
 ```typescript
 node.errors; // errors displayed for this field (validation and external)
-node.active; // false while a condition (`controls.active`, if/then/else, oneOf) excludes the field
-node.visible; // visibility after every active declaration is combined
-node.enabled; // active and visible
-node.readOnly; // read-only, including schema `readOnly`
-node.disabled; // disabled, independent of `enabled`
+node.isActive; // false while a condition (`controls.active`, if/then/else, oneOf) excludes the field
+node.isVisible; // visibility after every active declaration is combined
+node.isPresent; // active and visible
+node.isReadOnly; // read-only, including schema `readOnly`
+node.isDisabled; // disabled, independent of `isPresent`
 ```
 
+### Walking a Subtree
+
+`node.visitSubtree(visitor)` calls `visitor` on the node itself and then on every node below it. Use it to read or update a whole section of the form in one pass.
+
+```typescript
+// Clear every string field under /profile, but leave /profile/locked and everything under it as is.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // skip this node's descendants
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **Order.** The node itself comes first, then its descendants in preorder, with siblings in `children` order. Terminal nodes are leaves.
+- **Skipping.** Returning `false` skips that node's descendants only, and the walk goes on with the next sibling. Any other return value, `undefined` included, continues into the children.
+- **Range.** From a node in the form, only the current shape is visited, so fields that a condition excludes are not. A node reachable twice is visited once, and a node created during the walk is not guaranteed to be visited. From a node that is no longer in the form (a reference kept after a condition or an array change took its field out), the walk covers the subtree that left the form with it.
+- **Writes.** Value writes made during the walk are applied together when the walk ends, so value reads during the walk return the values from before it. State and external-error changes (`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`) change the data at once, but their events, like those of `request`, are delivered once when the walk ends. Inside an enclosing `node.batch(fn)`, everything waits for the end of that batch instead. A form `reset` or a `resetSubtree()` inside the walk still takes effect at once.
+- **Writes to a node that left the form.** Such a write never changes a field in the form, also during a walk or a batch. If a field of the same kind is at that path, the write does nothing; otherwise the value is kept for that path and loads when such a field comes back. Whether a field is at that path is judged by the last committed shape, not by changes made earlier in the same batch or walk, so such a write is still dropped when the same batch or walk has just removed that field. A reference to a field that the same batch or walk removes is still in the form when written, so its write is handled like any other write.
+- **Errors.** If the visitor throws, the writes it already made are applied and the error is rethrown. If a walk inside a listener has made a value write, the error does not reach the code that called `visitSubtree`, as with `batch`.
+- **Cost.** The walk opens nothing until something writes, so a read-only walk adds no cost and also works inside a listener. A write inside a listener follows the same rules as any other listener write.
+- **FormHandle.** `FormHandle` has no `visitSubtree`. Call it on `formRef.current?.node` or on a node from `findNode`.
+
 ---
+
+### Detached node references
+
+A node that leaves the active tree keeps its last committed reads. Its subscriptions do not fire. Calling `setValue` or an array operation (`push`, `pop`, `insert`, `remove`, `update`, `clear`) through that reference has no effect on its frozen value, retained values, overlays, or a later active instance. Development mode reports `FormWarningCode.DetachedNodeWrite`; production bundles stay silent. `push` and `insert` return the frozen array length; the other array operations return `undefined`.
+
+Write inactive values by including their paths in a live root or host's `setValue` JSON. These writes update retained overlays and `inactiveValues` without creating inactive nodes. Re-entry creates a fresh node and consumes that entry's retained slot and overlay.
+
+Migration: obtain node references again with `find` after re-entry; write inactive values through a live host's `setValue` JSON. `find` keeps returning `null` for every path without an active node.
+
+### Resolving a Node's Exit Value
+
+`node.onInactive(listener): () => void` registers a synchronous resolver for that node instance and returns an unsubscribe function. It runs once immediately before a retained gate exit, with the preceding commit's value and `InactiveValueContext`. It does not run for form unmount/disposal, array item deletion, or an old instance consumed during re-entry. Register again on a new instance after re-entry.
+
+Listeners run in registration order; the last non-`undefined` result wins. A defined listener result skips `controls.inactiveValue`; when all listeners return `undefined`, the declaration applies. A thrown listener cancels that node's entire override and records a settlement failure while preserving its original retained source. Exceptions do not prevent the exit from committing. The write that caused the exit then reports `FormErrorCode.ExpressionThrew` to `onError` and throws it, as a failed expression does. `setValue`, array operations, `batch` and `resetSubtree` inside a resolver are ignored; development builds report `FormWarningCode.WriteInInactiveResolver` and production bundles remain silent. Only these four write families are refused; state, external-error, request and validation commands keep their existing behavior.
+
+Migration: move cleanup writes to the component's own node to `controls.inactiveValue` or `node.onInactive`; both take the same `(value, context) => next` resolver.
 
 ## FieldInput System
 
@@ -465,8 +525,8 @@ type FieldInputTestObject = Partial<{
 // FieldInputHint object
 type FieldInputHint = {
   type: FieldNodeType; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: FieldNode['schemaType']; // authored accepted kind(s), including 'integer'
-  typeMismatch: boolean; // the stored value mismatches the accepted kinds
+  schemaType: FieldNode['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
+  misfit: boolean; // the stored value mismatches the accepted kinds
   path: string;
   required: boolean;
   nullable: boolean;
@@ -498,8 +558,8 @@ interface FieldInputProps<
   required: boolean; // Required field
   node: Node; // Field node
   type: Node['type']; // Node kind
-  schemaType: Node['schemaType']; // Authored accepted kind(s), including 'integer'
-  typeMismatch: Node['typeMismatch']; // Stored value mismatches the accepted kinds
+  schemaType: Node['schemaType']; // Authored accepted kind(s), including 'integer'; undefined on a virtual node
+  misfit: Node['isMisfit']; // Stored value mismatches the accepted kinds
   name: Node['name']; // Node name
   path: Node['path']; // Node path
   nullable: Node['nullable']; // Accepts null
@@ -583,19 +643,41 @@ const formInputMap = {
     default: any;                        // Fill value for an appearing node
     derived: string;                     // Derived value
     unsetValue: boolean | string;        // Clears the value when it turns from false to true
-    resetInteraction: boolean | string;  // Clears dirty/touched when it turns from false to true
+    resetInteraction: boolean | string;  // Clears edited/touched when it turns from false to true
     unsetOnInactive: boolean | string;   // Drops the retained value when the node leaves the shape
-    fields: { targets: string[]; controls: { /* first nine keys */ } }[];
+    fields: { targets: string[]; controls: { /* first nine keys plus inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
-    discriminator: string;               // oneOf/anyOf host: branch tag property
+    inactiveValue: literal | ((value, ctx) => next); // Retained value when leaving the shape
     watch: string[];                     // Value subscription (array of paths)
   }
 }
 ```
 
-The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
+`controls.discriminator` is available only on an object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`. Other host types are rejected by TypeScript.
+
+TypeScript enforces the object-host type; union presence is checked at run time. An object declaration without a union is accepted and its discriminator is ignored with a warning.
+
+```typescript
+{
+  type: 'object',
+  controls: { discriminator: 'kind' },
+  oneOf: [
+    { properties: { kind: { const: 'cat' }, name: { type: 'string' } } },
+    { properties: { kind: { const: 'dog' }, age: { type: 'number' } } }
+  ]
+}
+```
+
+
+The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), the first nine keys (`active` through `unsetOnInactive`) and `inactiveValue` are allowed; any of the other four throws.
 
 The closed list applies inside `controls` and `options`. Outside the three groups, the top-level keys of 0.16 (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`) are not read at all: 1.0.0 ignores them with no error or warning. There is no alias and no warning for them by design, so a schema migrated from 0.16 must move each key itself (see Migration (1.0.0) in the README).
+
+### Retained Value at Exit
+
+`controls.inactiveValue` accepts a literal (including strings, `false`, `0`, `null`, objects and arrays) or an `InactiveValueResolver<V>`. Strings are never compiled as expressions. The resolver has the same `(value, context) => next` signature as `node.onInactive(listener)` and the same context fields as `injectTo`: `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, and form `context`. Every value and schema comes from the preceding commit; `undefined` leaves the retained source unchanged. No dependencies are tracked. If the closing write explicitly supplies this path in its JSON, that value takes precedence and neither resolver runs. Within the departing subtree, an explicitly supplied whole ancestor also covers omitted descendants; a merge covers only supplied keys. A merge from a form input follows the same rule. Inside a multi-write batch a merge is shallow, so a supplied key replaces its subtree whole. Explicit coverage is the union of the batch: a later empty or partial merge does not remove an earlier whole replacement. A later automatic write also preserves the earlier caller whole coverage. Omitting the departing subtree itself still permits its resolvers. After an array move, value reads and `dataPath` use the preceding committed address; the result is retained at the current address.
+
+Only normal retained gate exits with automatic writes enabled run these resolvers. Automatic-write suppression, failed or budget-limited settlement, load/reset scope, throwing gates and instances entered only within the same settlement skip them. A true `unsetOnInactive` policy skips them, and declaring both on the same layer reports `FormWarningCode.InactiveValueWithUnsetOnInactive`. Node controls take precedence over fields controls, which take precedence over fragment controls. A descendant result overwrites its path inside an ancestor result. Results use the existing inactive JSON write rules: undeclared keys remain extras, wrong-kind values remain retained, and re-entry consumes the overlay.
 
 ### Nested Controls
 
@@ -704,9 +786,33 @@ A branch usually omits `type` and takes its parent's. The parent's own `type` de
 
 - A branch whose `type` differs from the parent's is not rejected when the schema loads. The form keeps the parent's kind, and the validator still evaluates the branch with its own `type`, so the branch matches only values of that type.
 - A property declared by the parent and again by an ungated branch (one without `controls.active` that `controls.discriminator` does not select) must stay within the parent property's `type`. A narrower `type` is accepted and the parent's wins; a `type` outside it throws `SHARED_NODE_KIND_CONFLICT`. When only ungated branches declare a property, they must agree on its kind, or the same error is thrown. A property in a gated branch is not compared: when the parent declares it, the parent's `type` wins; otherwise the gated branch's field keeps its own kind.
-- Discriminator tags may carry a `type`, as in `kind: { type: 'string', const: 'cat' }`. Tags of different kinds across branches, or overlapping tag values, throw `DISCRIMINATOR_MISMATCH`; tag `const` / `enum` values with nothing in common throw `EMPTY_ENUM_INTERSECTION`; a tag value outside the tag's own `type` gives the warning `DISCRIMINATOR_BRANCH_UNREACHABLE`.
+- Discriminator tags may carry a `type`; the rules below classify their effect.
 
-These errors are schema errors (recognized by `isJSONSchemaError`). An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no child nodes, so the property check above does not run for its branches. `DISCRIMINATOR_MISMATCH`, `EMPTY_ENUM_INTERSECTION` and the `NULL_BRANCH_IGNORED_FOR_FORM` warning below still apply; `DISCRIMINATOR_BRANCH_UNREACHABLE` is not reported, because it is checked against a child field the object does not build, and the validator still sees the schema as written.
+These errors are schema errors (recognized by `isJSONSchemaError`). An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no child nodes, so the property check above does not run for its branches. `DISCRIMINATOR_MISMATCH` and the `NULL_BRANCH_IGNORED_FOR_FORM` warning below still apply; `EMPTY_ENUM_INTERSECTION` remains an error for ordinary static conjunctions; `DISCRIMINATOR_BRANCH_UNREACHABLE` is not reported, because it is checked against a child field the object does not build, and the validator still sees the schema as written.
+
+#### Discriminator Rules
+
+A discriminator is one property name per declaration. Separate declarations on the same node may name different keys; each key gates only the `oneOf` / `anyOf` written beside it. A branch's own `controls.active` remains AND-ed with its discriminator gate.
+
+| Case | Condition | Result |
+| --- | --- | --- |
+| C1 | Key is not a non-empty string | `INVALID_CONTROL_SHAPE`, details `{ group: 'controls', key: 'discriminator', expected: 'string' }`; checked before ignored-host cases |
+| C2 | Object declaration has no `oneOf` or `anyOf` array | Ignore the key; `DISCRIMINATOR_IGNORED_FOR_FORM`, `reason: 'union'` |
+| C3 | The host's static conjunction has a known non-object type, including a multi-kind union host | Ignore the key without reading tags; `DISCRIMINATOR_IGNORED_FOR_FORM`, `reason: 'host'` |
+| C4 | Object union exists but no branch tags the key with `const` / `enum` | `DISCRIMINATOR_MISMATCH`, `reason: 'missing'` |
+| C5 | Only some branches carry tags | Allowed; an untagged branch has no discriminator gate and still follows its own `active` |
+| C6 | Two branches of the same `oneOf` share a tag value | `DISCRIMINATOR_MISMATCH`, `reason: 'overlap'` |
+| C7 | Two branches of the same `anyOf` share a tag value | Allowed; all matching branches participate |
+| C8 | Host does not declare the tag field's type and branch tags require different node kinds | `DISCRIMINATOR_MISMATCH`, `reason: 'kind'` |
+| C9 | Host tag field's declared type covers several branch tag kinds | Allowed; the tag field can be a union and select across kinds |
+| C10 | A branch tag lies outside the host tag field's declared type, with or without an explicit branch tag `type` | `DISCRIMINATOR_BRANCH_UNREACHABLE`, `reason: 'kind'`; do not lift the unreachable tag declaration |
+| C11 | Tag `const` / `enum` intersection is empty, including `enum: []` | `DISCRIMINATOR_BRANCH_UNREACHABLE`, `reason: 'empty'`; keep a never-active gate and do not lift the tag |
+| C12 | Declarations on the same node name different keys | Allowed; their unions select independently |
+| C13 | A reachable tag field exists only in branches | Allowed; lift it into an always-mounted child |
+
+`DISCRIMINATOR_MISMATCH` and both discriminator warnings have details `{ propertyName, reason }`, without tag values. Mismatch reasons are `'missing' | 'kind' | 'overlap'`; there is no `'key'` reason. Ignored-key warnings use `'union' | 'host'` and point to the declaration's `controls/discriminator`, once per declaration. Unreachable warnings use `'kind' | 'empty'` and point to the branch's schemaPath.
+
+Read tag values before inferring their types: a tagged branch with an empty intersection is never active and still counts as tagged, so it does not cause C4. Unreachable C10/C11 tags are not lifted; when the host already owns that child, they are also omitted from its declarations, preserving its type and selection fast-path stability. An untyped host with a union still reads tags and cannot infer its own type from discriminator-gated branches. Ignoring a discriminator creates no gates and does not by itself disable the branchless path. Values outside the host tag's `enum` are not newly checked.
 
 #### The null-branch pattern
 
@@ -755,6 +861,8 @@ These errors are schema errors (recognized by `isJSONSchemaError`). An object ha
 
 The `then` properties belong to the shape only while the `if` guard passes, and the `else` properties only while it fails. The guard is evaluated synchronously through the validator's guard entry point; with no validator selected (no `validatorFactory` on the Form or a FormProvider, and no validator plugin), both `then` and `else` stay off.
 
+A false verdict and a guard failure are different outcomes. A false verdict turns `else` on, while a guard that fails to compile or to evaluate turns both `then` and `else` off and records `GUARD_FAILED` for that gate only. The guard reads the host value, and a host whose value is absent or not an object is evaluated against `{}`; an `if` on a host whose allowed types do not include object raises the `IF_ON_NON_OBJECT_HOST` warning. The full rules are in the README section [Conditional schemas: if, then, else](../../README.md#conditional-schemas-if-then-else).
+
 ### allOf (Composition)
 
 ```typescript
@@ -785,13 +893,24 @@ node.find('./childField'); // Relative path from current node
 | ------ | ----------------- | --------------------------------- |
 | `..`   | Parent navigation | controls expressions, node.find() |
 | `.`    | Current node      | controls expressions, node.find() |
-| `*`    | Wildcard          | FieldInputMap only                |
+| `*`    | Wildcard          | node.find(), FieldInputMap        |
 | `@`    | Context reference | controls expressions only         |
 
 ### Escape Rules
 
-- `~0` → `~`
-- `~1` → `/`
+Segments are interpreted in this order:
+
+1. A segment exactly equal to `*`, `..`, `.`, or `@` is an operator (wildcard, parent, current, or context).
+2. A segment exactly equal to `%2A`, `%2E%2E`, `%2E`, or `%40` is the literal property name `*`, `..`, `.`, or `@`, respectively.
+3. Every other segment decodes only `~1` → `/` and `~0` → `~`. Ordinary names containing `%`, such as `rate%20`, remain unchanged.
+
+`#` is a fragment prefix only at the beginning of a path; an interior `#` segment is an ordinary name. Node paths, inactive-value paths, and reported error paths use the literal percent form for reserved names, so `node.find('/branch/%2A')` addresses the child named `*`, while `/branch/*` remains a wildcard.
+
+The root pointer is the empty string or `#`; `/` and `#/` each address the root's empty-string key. Validator paths and fieldInputMap keys follow the same rule.
+
+Known limit: property names exactly equal to `%2A`, `%2E`, `%2E%2E`, or `%40` are not supported. Their path would read back as the reserved operator name (`*`, `.`, `..`, `@`), which would misdirect value loading, inactive values, and validation routing, so building the form rejects the schema with `FormErrorCode.ReservedPropertyName`; the error names the property and this rule. Percent-containing names other than those exact four spellings follow rule 3.
+
+Standard RFC 6901 pointers from validators and `$ref` are interpreted without these operators. An AJV path `/*` refers to the property named `*`; standard fragment pointers (`#/...`) percent-decode every segment.
 
 ```typescript
 // Field name with special characters: "field/with~special"
@@ -814,6 +933,18 @@ enum ValidationMode {
 // Can be combined
 ValidationMode.OnChange | ValidationMode.OnRequest;
 ```
+
+### Validation timing
+
+`OnChange` writes run after the next frame; continuous input carries across active frames, with a trailing run after a quiet frame and a 100 ms cap measured from the last automatic run that actually started. A cap returns to watch. Debouncing belongs to `FieldInput`. Missing frame APIs or a hidden document use a macrotask fallback; a 100 ms stalled-frame timer races the frame-backed task so it runs once. Explicit `validate()` and submit start immediately, and submit awaits the verdict.
+
+An error shows only when eligible now and continuously eligible across every engine state, isPresent value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. Within one public `batch()` or walk, only the first state of that write sequence enters history; intermediate states do not. Separate public calls inside one React batch still record their intermediate states. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
+
+All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `origin: 'validate'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject; their record carries `origin: 'validate'`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
+
+Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
+
+Known limits: the hook's React-only `disabled` argument reveals at once; state/isPresent renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/isPresent/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.
 
 ### Error Message Formatting
 
@@ -861,9 +992,27 @@ Errors from `@canard/schema-form` reach you in three places:
 
 | Where | What arrives |
 | --- | --- |
-| `onError` prop of `<Form>` | Every error **and** warning record of that form instance: `level` (`'error'` or `'warning'`), `code`, `message`, and, when known, `path`, `schemaPath`, `details` and the `error` itself |
+| `onError` prop of `<Form>` | Every error **and** warning record of that form instance: `level` (`'error'` or `'warning'`), `code`, `message`, required `origin`, and, when known, `path`, `schemaPath`, `details` and the `error` itself |
 | `submit()` (`FormHandle.submit`, `useFormSubmit`) | Rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails, and with a `SchemaFormError` (`FormErrorCode.SubmitWhileDegraded`) when the form's diagnostics are degraded |
 | `registerPlugin` | Throws an `UnhandledError` (`FormErrorCode.RegisterPlugin`) |
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. A bundle rejected to a submit() or validate() caller remains one rejection value; individual onError records never contain it. Validation-result listener failures remain ownerless even during an explicit validate(), which can resolve while those failures reach the host. Unowned failures reach the existing host channel one leaf at a time, depth-first in element order. Only SchemaFormError MultipleErrors with a nonempty array and every index owned by that array expands; malformed, unreadable or revisited bundles and other values are reported as themselves. Engine validation waves, automatic OnChange validation and load flush retain handler-first order; native submit and the load slot retain original-first order. React and the render ErrorBoundary log the thrown value unchanged. Capture suppresses valid nested bundles containing only already-reported errors or handler exceptions; unknown, malformed, cyclic or revisited nested bundles are still captured. Array lengths must be stable integers from 1 through 2^32 - 1; each traversal has a shared 1,000,000-element inspection budget. An unreadable, unstable or over-budget bundle remains an opaque leaf, so the host can receive a bundle. Capture also guards top-level metadata and string conversion, delivering the original value once with a fixed fallback message when inspection fails. Delivery timing, caller rejection, reentrancy and sink exception propagation remain unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
 
 Four error classes, each with its own guard: `isJSONSchemaError` (the schema cannot become a form), `isSchemaFormError` (runtime failures of a form instance), `isValidationError` (submission rejected by validation), `isUnhandledError` (failures outside a form instance). The classes are siblings checked with `instanceof`, so at most one guard matches; an error thrown by your own code or a plugin matches none. Every error carries `code` (`'<GROUP>.<CODE>'`, for example `'SCHEMA_FORM_ERROR.RENDER_FAILED'`), `group`, `specific` and `details`.
 
@@ -908,7 +1057,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -926,6 +1075,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | Constant | `error.code` value | When | Note |
 | --- | --- | --- | --- |
 | `FormErrorCode.UnknownJsonSchema` | `'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA'` | schema analysis cannot determine a supported shape |  |
+| `FormErrorCode.ReservedPropertyName` | `'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME'` | a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` | `details.property` names the rejected property. |
 | `FormErrorCode.UnexpectedArraySchema` | `'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA'` | schema analysis finds an invalid array declaration |  |
 | `FormErrorCode.AllOfTypeRedefinition` | `'JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION'` | static allOf types have an empty intersection |  |
 | `FormErrorCode.ConflictingConstValues` | `'JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES'` | static allOf constants conflict |  |
@@ -936,7 +1086,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormErrorCode.CreateDynamicFunction` | `'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION'` | a controls expression cannot be compiled |  |
 | `FormErrorCode.ObservedValues` | `'JSON_SCHEMA_ERROR.OBSERVED_VALUES'` | observed-value expression analysis fails |  |
 | `FormErrorCode.UnknownGroupKey` | `'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY'` | a controls, options, or child controls key is outside its closed list |  |
-| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | a discriminator key or branch value is inconsistent |  |
+| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | no union branch tags the key (`missing`), untyped-host tag kinds differ (`kind`), or oneOf tags overlap (`overlap`) |  |
 | `FormErrorCode.SharedNodeKindConflict` | `'JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT'` | static and ungated branch node kinds conflict |  |
 | `FormErrorCode.TerminalStrategyMismatch` | `'JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH'` | declarations disagree on a node's terminal strategy |  |
 | `FormErrorCode.RecursiveShapeUnbounded` | `'JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED'` | schema analysis finds an unbounded recursive shape |  |
@@ -962,7 +1112,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormErrorCode.DisposedNodeWrite` | `'SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE'` | a caller writes through a disposed node reference |  |
 | `FormErrorCode.WriteInObserver` | `'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER'` | onError tries to write to its own form |  |
 | `FormErrorCode.SubmitWhileDegraded` | `'SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED'` | submission is attempted while diagnostics are degraded |  |
-| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | whole-schema compilation fails on the first validation request |  |
+| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | the load slot reports one onError record with origin 'validate' and one host error; explicit validate() or submit() reports origin 'validate' and then rejects |  |
 | `FormErrorCode.ValidatorThrew` | `'SCHEMA_FORM_ERROR.VALIDATOR_THREW'` | a compiled validator throws during validation |  |
 | `FormErrorCode.RenderFailed` | `'SCHEMA_FORM_ERROR.RENDER_FAILED'` | an injected renderer or root render throws |  |
 | `FormErrorCode.InvalidVirtualNodeValues` | `'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'` | a virtual node receives values with the wrong shape |  |
@@ -998,10 +1148,12 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormWarningCode.DependentSchemasIgnoredForForm` | `'SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM'` | dependentSchemas is unsupported for form shape |  |
 | `FormWarningCode.ChildNodeComponentsOnTerminal` | `'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL'` | a terminal input reads empty child-node components |  |
 | `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | a terminal subtree declares a reserved key ignored by the form |  |
-| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | a branch discriminator literal is outside the allowed list |  |
+| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | tag kind is outside the host tag type (`kind`) or tag intersection is empty (`empty`); details `{ propertyName, reason }` |  |
+| `FormWarningCode.DiscriminatorIgnoredForForm` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM'` | discriminator ignored: no union (`union`) or known non-object host (`host`); details `{ propertyName, reason }` |  |
+| `FormWarningCode.IfOnNonObjectHost` | `'SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST'` | an `if` sits on a host whose allowed types do not include object; the guard is evaluated against `{}`, so `then` and `else` cannot read the host value; details `{ kind }` |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | a development-mode whole value is not JSON-compatible |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | an input definition test object has an unknown key |  |
-| `FormWarningCode.TypeMismatch` | `'SCHEMA_FORM_WARNING.TYPE_MISMATCH'` | a value cannot be converted to the active type unambiguously |  |
+| `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | a value cannot be converted to the active type unambiguously |  |
 | `FormWarningCode.DialectMismatch` | `'SCHEMA_FORM_WARNING.DIALECT_MISMATCH'` | a schema dialect differs from the selected validator dialect |  |
 
 ---
@@ -1097,7 +1249,25 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 | `Placeholder`    | `ComponentType<{ node, height }>`         | `null`   | Component rendered inside each placeholder                                                 |
 
 - **Placeholder styling**: placeholders are boxes carrying `[data-path]` and a `[data-deferred]` marker. Style them with a CSS attribute selector (`[data-deferred] { … }`) or pass a `Placeholder` component; space reservation always stays with `estimateHeight`.
-- **⚠️ Client-side rendering only**: requires `IntersectionObserver`. Do NOT enable it in SSR/hydration apps — the server renders all fields while the client gates them, causing a hydration mismatch. When `IntersectionObserver` is unavailable it is silently disabled (with a development warning).
+- **SSR and hydration**: every field renders on the server and hydrates unchanged. Gating applies to branches and children added after hydration and requires `IntersectionObserver`; browsers without it render eagerly with a development warning. The server does not warn.
+
+- Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
+
+#### Input responsiveness at scale
+
+Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In [IR-1](../../architecture/verification/input-responsiveness/ir-1-results.md#기본값-결정-자료), replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
+
+| Form | Off: eager paint / all revealed | On: eager paint / all revealed |
+| --- | ---: | ---: |
+| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
+| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
+| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. See [IR-5](../../architecture/verification/input-responsiveness/ir-5-results.md). The default remains off.
+
+- **Validation:** cost grows with schema size. The desktop Chromium flat-2000 [IR-2 diagnosis](../../architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31) attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
+- **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
+- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. [IR-0](../../architecture/verification/input-responsiveness/ir-0-results.md#type-onchange-state-plain) E lane event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
 
 ### Custom Layout (Form.Render)
 
@@ -1126,6 +1296,7 @@ const arrayNode = node.find('/items') as ArrayNode;
 arrayNode.push(); // Add item with default value
 arrayNode.push('custom'); // Add item with custom value
 arrayNode.remove(index); // Remove item at index
+arrayNode.insert(index, 'custom'); // Insert at index in [0, length]; returns the new length (length appends like push; out of range does nothing)
 arrayNode.clear(); // Remove all items
 
 arrayNode.children?.length; // Current number of item nodes (null on an array rendered as a single input)
@@ -1378,7 +1549,7 @@ A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']
 - It becomes `null` through `defaultValue` / schema `default: null`, or `setValue(null)` on the node or through an ancestor.
 - It becomes an object/array when one is assigned to the node itself — `setValue({})`, `setValue([])`, or `setValue({ ... }, SetValueOption.Merge)` with keys — or when a write **that carries a value** reaches an active descendant: user input, `setValue`, array `push`, or an `injectTo` the user caused. Confirming the value a field already shows counts.
 - It stays `null` for values the form produces by itself: a child's `default`, `controls.derived`, `oneOf`/`anyOf` branch restore, reactivation by `controls.active`, the restore of a child during a reset, and an `injectTo` triggered only by such values (a source that merely has a `default` or a derived value).
-- It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
+- It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` and `insert()` at an index other than 0 on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
 
 A field is _emptied_ when its node emits `undefined`. Under the default `omitEmpty` an empty string is emptying; `false`, `0` and `null` are values. With `options: { omitEmpty: false }` an empty string is a value too. A write into an inactive field reaches nobody.
 

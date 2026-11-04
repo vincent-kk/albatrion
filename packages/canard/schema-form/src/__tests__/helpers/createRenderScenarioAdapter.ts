@@ -124,7 +124,7 @@ export const createRenderScenarioAdapter = (
       for (const key of [
         'defaultValues',
         'schemaTypes',
-        'undeclaredValues',
+        'extras',
       ] as const)
         for (const [path, value] of Object.entries(observation[key] ?? {})) {
           const property =
@@ -132,7 +132,7 @@ export const createRenderScenarioAdapter = (
               ? 'defaultValue'
               : key === 'schemaTypes'
                 ? 'schemaType'
-                : 'undeclaredValues';
+                : key;
           expect(form.node(path)?.[property], `${property} ${path}`).toEqual(
             value,
           );

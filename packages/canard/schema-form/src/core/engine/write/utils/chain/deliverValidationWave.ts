@@ -33,5 +33,5 @@ export const deliverValidationWave = <Self extends FieldNodeRecord<Self>>(
       issues,
     );
   runtime.validationListChanged = undefined;
-  flushQueuedEvents(node.rootNode, false);
+  flushQueuedEvents(node.rootNode, false, 'validate');
 };

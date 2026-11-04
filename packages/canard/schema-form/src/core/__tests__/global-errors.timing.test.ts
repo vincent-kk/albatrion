@@ -9,13 +9,14 @@ import {
 } from '@/schema-form/core/engine';
 import { type FieldNode } from '@/schema-form/core/surface';
 
+/** Field count held fixed across scales so the ratio isolates the per-entry rebuild cost. */
 const FIELDS = 100;
 const ISSUES = 1000;
 /** Independent measurements per scale, each with a freshly loaded root. */
 const SAMPLES = 5;
 /** Floor for the small measurement so timer noise cannot fail the ratio (ms). */
 const NOISE_FLOOR = 5;
-/** Allowed ratio between the 4n and n timings; linear work gives 4. */
+/** Allowed ratio between the 4n and n issue timings; a rebuild linear in the root list gives 4. */
 const LINEAR_RATIO = 8;
 
 /**
@@ -57,9 +58,10 @@ const createLoadedRoot = (
 };
 
 /**
- * Sample one clearing strategy SAMPLES times at n and 4n, using a fresh root per sample.
+ * Sample one clearing strategy SAMPLES times at n and 4n root issues over the same field count, using a fresh root per sample.
+ * Scaling the issue list alone keeps the number of entries constant, so the ratio measures only how the per-entry rebuild grows with the root list.
  * @param clear - Clears every field of a loaded root
- * @returns Median elapsed milliseconds for the n and the 4n tree
+ * @returns Median elapsed milliseconds for the n and the 4n issue list
  */
 const measure = (
   clear: (root: FieldNode, fields: FieldNode[]) => void,
@@ -67,7 +69,7 @@ const measure = (
   const time = (scale: number): number => {
     const samples: number[] = [];
     for (let sample = 0; sample < SAMPLES; sample++) {
-      const { root, fields } = createLoadedRoot(FIELDS * scale, ISSUES * scale);
+      const { root, fields } = createLoadedRoot(FIELDS, ISSUES * scale);
       const start = performance.now();
       clear(root, fields);
       samples.push(performance.now() - start);

@@ -31,7 +31,7 @@ U9 렌더 장면은 presentation 전달과 빈 입력의 undefined 방출, 가�
 
 | Scene file | Scene name | Behavior verified | Ledger evidence |
 | --- | --- | --- | --- |
-| `exit-layers.scenario.ts` | `controls.fields-exit-policy-layer` | 대상이 나갈 때 fields 항목의 나감 정책을 적용하고 보존한 raw 값을 비운다. | — |
+| `exit-layers.scenario.ts` | `controls.fields-exit-policy-layer` | 대상이 나갈 때 fields 항목의 나감 정책을 적용하고 보존한 source 값을 비운다. | — |
 | `exit-layers.scenario.ts` | `controls.fragment-exit-policy-layer` | 조각이 꺼질 때 나가는 조각의 나감 정책을 적용한다. | — |
 | `exit-layers.scenario.ts` | `controls.expression-exit-previous-commit` | 직전의 살아 있는 커밋에서 나감 정책 식을 읽는다. | — |
 | `exit-layers.scenario.ts` | `controls.visible-preserves-value` | 숨겨져 있지만 활성인 선언은 쓸 수 있게 유지하고 방출 값을 보존한다. | — |

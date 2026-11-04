@@ -1,6 +1,9 @@
-import { type ChangeEvent, memo } from 'react';
+import { type CSSProperties, type ChangeEvent, memo } from 'react';
 
 import type { SlotKind } from '../utils/readSlotKind';
+
+/** One empty array row laid out horizontally. */
+const FLEX_ROW_STYLE: CSSProperties = { display: 'flex' };
 
 /**
  * Draw one empty array position that holds no node and writes only when the user acts on it.
@@ -24,7 +27,7 @@ export const EmptySlot = memo(function EmptySlot({
 }) {
   if (kind === 'fill')
     return (
-      <div style={{ display: 'flex' }}>
+      <div style={FLEX_ROW_STYLE}>
         <button
           type="button"
           title="fill item"
@@ -40,7 +43,7 @@ export const EmptySlot = memo(function EmptySlot({
     if (!readOnly && value !== undefined) onWrite(index, value);
   };
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={FLEX_ROW_STYLE}>
       <input
         type={kind}
         readOnly={readOnly}

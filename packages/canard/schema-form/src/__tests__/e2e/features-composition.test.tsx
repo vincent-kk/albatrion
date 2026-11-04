@@ -51,7 +51,7 @@ describe('features — composition shared screen runner (TEST-025)', () => {
     await run('composition.discriminator-tag-switch');
   });
 
-  it('FRAGMENT-021 three nested oneOf levels keep raw values across inner and outer round trips', async () => {
+  it('FRAGMENT-021 three nested oneOf levels keep source values across inner and outer round trips', async () => {
     await run('composition.nested-oneof-three-levels');
   });
 
@@ -91,12 +91,12 @@ describe('features — composition shared screen runner (TEST-025)', () => {
     await run('composition.off-branch-error-filter');
   });
 
-  it('FRAGMENT-009 a pattern guard reveals a dependent field and keeps its raw value', async () => {
+  it('FRAGMENT-009 a pattern guard reveals a dependent field and keeps its source value', async () => {
     await run('composition.guard-pattern-reveal');
   });
 
-  it('LANDING-018 a two-write batch on an unrelated field keeps a retained inactive raw value', async () => {
-    await run('composition.batch-keeps-inactive-raw');
+  it('LANDING-018 a two-write batch on an unrelated field keeps a retained inactive source value', async () => {
+    await run('composition.batch-keeps-inactive-source');
   });
 
   it('LANDING-011 a batched triple toggle that reopens a hidden then branch restores its edited value', async () => {

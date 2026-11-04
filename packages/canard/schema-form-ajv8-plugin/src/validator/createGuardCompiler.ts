@@ -1,9 +1,13 @@
 import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
+import type { ValidateFunction } from 'ajv';
+
+import type { Dictionary } from '@aileron/declare';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
-import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
+import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
+import { makeSibling } from './utils/makeSibling';
 import { registerSchemaGuard } from './utils/registerSchemaGuard';
 import {
   type SchemaRootRegistry,
@@ -20,6 +24,8 @@ import { resolveGuardSchema } from './utils/resolveGuardSchema';
  * @param directGuardCompile - Compile self-contained guards directly when enabled.
  * @returns A boolean predicate evaluated without changing its input.
  * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
+ * @throws Error when the guard or a declaration selected as its dynamic anchor is asynchronous, or when the guard
+ * references a dynamic anchor inline that no chain resource and no ancestor of the reference inside the guard declares
  */
 export const createGuardCompiler = (
   ajv: Ajv,
@@ -29,7 +35,6 @@ export const createGuardCompiler = (
   directGuardCompile: boolean,
 ): ((value: unknown) => boolean) => {
   const registration = registerSchemaRoot(registry, ajv, root);
-  const guard = registerSchemaGuard(ajv, root, registration);
   const rootId = typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
   if (located === undefined)
@@ -45,29 +50,26 @@ export const createGuardCompiler = (
     if (schema === root) registry.finalizer.unregister(registration);
     if (!registration.directGuards.includes(schema))
       registration.directGuards.push(schema);
-    const validate = guard.compile(schema);
+    registration.guardAjv ??= makeSibling(ajv, false, false);
+    const validate = registration.guardAjv.compile(schema);
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
-    return (value) => Boolean(validate(value));
+    return (value) => !!validate(value);
   }
-  if (
-    pointer === '/if' &&
-    ('$dynamicAnchor' in root || '$recursiveAnchor' in root)
-  ) {
-    // Boolean subschemas are valid JSON Schema but not expressible in the public JSONSchema type.
-    const probe = {
-      ...structuredClone(root),
-      then: false,
-      else: true,
-    } as unknown as JSONSchema;
-    const probeRegistry = createSchemaRootRegistry();
-    probeRegistry.active.push(new WeakRef(registration));
-    const probeRegistration = registerSchemaRoot(probeRegistry, ajv, probe);
-    registration.probes.push(probeRegistration);
-    const probeGuard = registerSchemaGuard(ajv, probe, probeRegistration);
-    const validateProbe = probeGuard.compile({ $ref: probeRegistration.key });
-    return (value) => !validateProbe(value);
-  }
+  const guard = registerSchemaGuard(ajv, root, registration);
+  // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
+  // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
+  const dynamicAnchors: Dictionary<ValidateFunction> = guard.opts.dynamicRef && registration.hasDynamicKeywords
+    ? collectGuardDynamicAnchors(root, registration.key, pointer, guard)
+    : {};
   const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
-  return (value) => Boolean(validate(value));
+  if (Object.keys(dynamicAnchors).length === 0) return (value) => !!validate(value);
+  return (value) =>
+    !!validate(value, {
+      instancePath: '',
+      parentData: {},
+      parentDataProperty: '',
+      rootData: value as Dictionary<unknown>,
+      dynamicAnchors: { ...dynamicAnchors },
+    });
 };

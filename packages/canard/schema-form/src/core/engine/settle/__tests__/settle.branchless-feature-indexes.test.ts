@@ -7,7 +7,7 @@ import {
 } from '@/schema-form/core/engine/blueprint';
 
 import { getDeriveRuleTable } from '../../derive';
-import { getDependencyIndex } from '../utils/write/getDependencyIndex';
+import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 
 // filid:contract settle-branchless-feature-indexes
 describe('branchless feature indexes and empty rule tables', () => {
@@ -50,7 +50,7 @@ describe('branchless feature indexes and empty rule tables', () => {
     expect(target.value).toBe(6);
     root.find('/source')!.setValue(-1);
     expect(target.value).toBe(-2);
-    expect(target.visible).toBe(false);
+    expect(target.isVisible).toBe(false);
   });
 
   it('shares empty rule tables only when derive absence is proven as a capability', () => {

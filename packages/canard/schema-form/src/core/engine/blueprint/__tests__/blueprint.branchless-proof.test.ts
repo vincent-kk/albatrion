@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../blueprint';
-import { getFeatureNodeIndex } from '../utils/features/getFeatureNodeIndex/getFeatureNodeIndex';
+import { getFeatureNodeIndex } from '../utils/features/getFeatureNodeIndex';
 
 // filid:contract branchless-proof branchless-features
 describe('branchless declaration reach and independent capabilities', () => {

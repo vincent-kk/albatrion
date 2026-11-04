@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
 
 describe('settle status parity regressions', () => {
@@ -51,8 +51,8 @@ describe('settle status parity regressions', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { a: 0 }, WriteOption.Overwrite),
     ).toThrow();
-    expect(root.raw).toBeUndefined();
-    expect(root.structure?.a?.raw).toBe(0);
+    expect(root.source).toBeUndefined();
+    expect(root.structure?.a?.source).toBe(0);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

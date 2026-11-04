@@ -1,9 +1,11 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../constants/FormErrorGroup';
+import { getCodeSpecific } from '../utils/getCodeSpecific';
 import type { JSONSchemaErrorCode } from '../type';
 
 /** Group every JSONSchemaError code carries; the code value repeats it before the bare name. */
-const GROUP = 'JSON_SCHEMA_ERROR';
+const GROUP = FormErrorGroup.JsonSchema;
 
 /**
  * Error class for json schema errors.
@@ -32,8 +34,8 @@ export class JSONSchemaError extends BaseError {
     message: string,
     details: ErrorDetails = {},
   ) {
-    super(GROUP, code.slice(GROUP.length + 1), message, details);
-    this.name = 'JSONSchemaError';
+    super(GROUP, getCodeSpecific(code), message, details);
+    this.name = GROUP;
   }
 }
 

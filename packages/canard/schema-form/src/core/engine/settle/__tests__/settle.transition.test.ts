@@ -4,11 +4,12 @@ import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { readFieldNodeDefaultValue } from '../utils/load/readFieldNodeDefaultValue';
-import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { readFieldNodeDefaultValue } from '../utils/loadValues/readFieldNodeDefaultValue';
+import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
 // filid:contract settle-write
@@ -21,14 +22,14 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.name?.raw).toBe('filled');
+    expect(root.structure?.name?.source).toBe('filled');
     writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
-    expect(root.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.name?.source).toBeUndefined();
     resetFieldNodeForm(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.name?.raw).toBe('filled');
+    expect(root.structure?.name?.source).toBe('filled');
   });
 
-  it('TEST-069 SetValueOption Overwrite replaces missing child raw without a new lifetime', () => {
+  it('TEST-069 SetValueOption Overwrite replaces missing child source without a new lifetime', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -52,8 +53,8 @@ describe('settle transitions and loads', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.name?.raw).toBeUndefined();
-    expect(root.structure?.gated?.raw).toBe('new');
+    expect(root.structure?.name?.source).toBeUndefined();
+    expect(root.structure?.gated?.source).toBe('new');
     expect(root.runtime.loadSnapshot).toEqual({
       name: 'original',
       flag: false,
@@ -88,9 +89,9 @@ describe('settle transitions and loads', () => {
     );
     expect(root.emit).toEqual({ a: 'new', b: 'B', flag: true, gated: 'new' });
     writeFieldNode(root, null, 'callerPartial', WriteOption.Merge);
-    expect(root.raw).toBeNull();
-    expect(root.structure?.a?.raw).toBeUndefined();
-    expect(root.runtime.typeMismatchPaths.has('')).toBe(true);
+    expect(root.source).toBeNull();
+    expect(root.structure?.a?.source).toBeUndefined();
+    expect(root.runtime.misfitPaths.has('')).toBe(true);
   });
 
   it('TEST-069 SetValueOption DisableAutomaticWrites suppresses an actual fill', () => {
@@ -105,9 +106,9 @@ describe('settle transitions and loads', () => {
       {},
       WriteOption.Overwrite | WriteOption.DisableAutomaticWrites,
     );
-    expect(root.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.name?.source).toBeUndefined();
     resetFieldNodeForm(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.name?.raw).toBe('filled');
+    expect(root.structure?.name?.source).toBe('filled');
   });
 
   it('TEST-069 SetValueOption EnableAutomaticWrites overrides Form suppression', () => {
@@ -123,7 +124,7 @@ describe('settle transitions and loads', () => {
       {},
       WriteOption.Overwrite | WriteOption.EnableAutomaticWrites,
     );
-    expect(root.structure?.name?.raw).toBe('filled');
+    expect(root.structure?.name?.source).toBe('filled');
   });
 
   it('WRITE-015 suppression wins when a call sets both automatic-write bits', () => {
@@ -138,10 +139,10 @@ describe('settle transitions and loads', () => {
       WriteOption.DisableAutomaticWrites |
       WriteOption.EnableAutomaticWrites;
     loadFieldNodeAtMount(root, {}, both);
-    expect(root.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.name?.source).toBeUndefined();
     root.runtime.disableAutomaticWrites = true;
     resetFieldNodeForm(root, {}, both);
-    expect(root.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.name?.source).toBeUndefined();
   });
 
   it('SETTLE-049 and EVENT-072 resetSubtree loads only its subtree snapshot', () => {
@@ -173,8 +174,8 @@ describe('settle transitions and loads', () => {
       WriteOption.Overwrite,
     );
     resetFieldNodeSubtree(root.structure!.left, WriteOption.Overwrite);
-    expect(root.structure?.left?.structure?.a?.raw).toBe('D');
-    expect(root.structure?.right?.raw).toBe('changed');
+    expect(root.structure?.left?.structure?.a?.source).toBe('D');
+    expect(root.structure?.right?.source).toBe('changed');
   });
 
   it('ERROR-204 form-level load resets diagnostics but subtree load does not', () => {
@@ -213,9 +214,9 @@ describe('settle transitions and loads', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.user?.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.user?.structure?.name?.source).toBeUndefined();
     resetFieldNodeForm(root, { user: null }, WriteOption.Overwrite);
-    expect(root.structure?.user?.structure?.name?.raw).toBeUndefined();
+    expect(root.structure?.user?.structure?.name?.source).toBeUndefined();
     expect(root.emit).toEqual({ user: null });
   });
 
@@ -246,8 +247,8 @@ describe('settle transitions and loads', () => {
     for (const root of [loaded, written]) {
       const account = root.structure!.account!;
       expect(root.emit).toEqual({ account: null });
-      expect(account.structure?.first?.raw).toBeUndefined();
-      expect(account.structure?.second?.raw).toBeUndefined();
+      expect(account.structure?.first?.source).toBeUndefined();
+      expect(account.structure?.second?.source).toBeUndefined();
       writeFieldNode(
         account.structure!.first!,
         'typed',
@@ -258,7 +259,7 @@ describe('settle transitions and loads', () => {
     }
   });
 
-  it('VALUE-036 a non-array raw loaded into an array leaves its items unfilled', () => {
+  it('VALUE-036 a non-array source loaded into an array leaves its items unfilled', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -269,11 +270,11 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, { list: 'x' }, WriteOption.Overwrite);
-    expect(root.structure!.list!.raw).toBe('x');
+    expect(root.structure!.list!.source).toBe('x');
     expect(root.structure!.list!.children).toEqual([]);
   });
 
-  it('WRITE-094 whole replacement clears latent raw and is idempotent on a second call', () => {
+  it('WRITE-094 whole replacement clears latent source and is idempotent on a second call', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -286,10 +287,8 @@ describe('settle transitions and loads', () => {
       { flag: false, secret: 'latent' },
       WriteOption.Overwrite,
     );
-    expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
     const emitted = root.emit;
     writeFieldNode(root, emitted, 'callerReplace', WriteOption.Overwrite);
-    expect(root.runtime.latentRaw.size).toBe(0);
     expect(root.emit).toEqual(emitted);
     const afterFirst = root.emit;
     writeFieldNode(root, afterFirst, 'callerReplace', WriteOption.Overwrite);
@@ -297,7 +296,7 @@ describe('settle transitions and loads', () => {
     expect(root.runtime.refreshTargets?.size).toBe(0);
   });
 
-  it('WRITE-097 a whole undefined clears old raw but fills a newly gated node', () => {
+  it('WRITE-097 a whole undefined clears old source but fills a newly gated node', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -312,11 +311,11 @@ describe('settle transitions and loads', () => {
     loadFieldNodeAtMount(root, { flag: true }, WriteOption.Overwrite);
     expect(root.structure?.appeared).toBeUndefined();
     writeFieldNode(root, undefined, 'callerReplace', WriteOption.Overwrite);
-    expect(root.structure?.flag?.raw).toBeUndefined();
-    expect(root.structure?.appeared?.raw).toBe('A');
+    expect(root.structure?.flag?.source).toBeUndefined();
+    expect(root.structure?.appeared?.source).toBe('A');
   });
 
-  it('NODE-044 detached write changes only the latent raw for its path and kind', () => {
+  it('NODE-044 detached write leaves every source unchanged', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -333,13 +332,11 @@ describe('settle transitions and loads', () => {
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     const commit = root.runtime.commitNumber;
     writeFieldNode(former, 'new', 'input', WriteOption.Overwrite);
-    expect(former.raw).toBe('old');
+    expect(former.source).toBe('old');
     expect(root.runtime.commitNumber).toBe(commit);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('new');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('old');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.secret?.raw).toBe('new');
+    expect(root.structure?.secret?.source).toBe('old');
   });
 
   it('WRITE-082 fills a host from controls.default before default and distributes through interpret', () => {
@@ -358,11 +355,11 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.host?.structure?.x?.raw).toBe(3);
-    expect(root.structure?.host?.structure?.y?.raw).toBe('Y');
-    expect(root.structure?.host?.undeclaredValues).toEqual({ extra: 'E' });
+    expect(root.structure?.host?.structure?.x?.source).toBe(3);
+    expect(root.structure?.host?.structure?.y?.source).toBe('Y');
+    expect(root.structure?.host?.extras).toEqual({ extra: 'E' });
     resetFieldNodeForm(root, { host: {} }, WriteOption.Overwrite);
-    expect(root.structure?.host?.structure?.x?.raw).toBe(3);
+    expect(root.structure?.host?.structure?.x?.source).toBe(3);
   });
 
   it('VALUE-030 subtree load resets only scoped interaction and mismatch records', () => {
@@ -391,17 +388,14 @@ describe('settle transitions and loads', () => {
     expect(
       root.structure?.right?.interactionState[FieldNodeState.Touched],
     ).toBe(true);
-    expect([...root.runtime.typeMismatchPaths].sort()).toEqual([
+    expect([...root.runtime.misfitPaths].sort()).toEqual(['/left', '/right']);
+    expect(root.runtime.misfitRecords?.map((record) => record.path)).toEqual([
       '/left',
-      '/right',
     ]);
-    expect(
-      root.runtime.typeMismatchRecords?.map((record) => record.path),
-    ).toEqual(['/left']);
-    expect(root.runtime.typeMismatchRecords?.[0]?.source).toBe('load');
+    expect(root.runtime.misfitRecords?.[0]?.source).toBe('load');
   });
 
-  it('WRITE-085 repeated form load with the same source reconstructs inactive raw', () => {
+  it('WRITE-085 repeated form load with the same source reconstructs inactive source', () => {
     const source = { flag: false, secret: 'latent' };
     const { root } = createTestTree({
       type: 'object',
@@ -411,13 +405,9 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, source, WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('latent');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('latent');
     resetFieldNodeForm(root, source, WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('latent');
+    expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('latent');
     expect(readFieldNodeDefaultValue(root)).toBe(source);
   });
 });

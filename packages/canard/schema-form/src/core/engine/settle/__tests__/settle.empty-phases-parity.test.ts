@@ -4,7 +4,7 @@ import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 it('preserves values, errors, delivery payloads, revisions, commits and empty rounds', () => {
@@ -65,7 +65,7 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
     node.pendingDelivery = undefined;
   root.runtime.deliveries?.clear();
   const revision = target.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
-  writeFieldNode(root.structure!.source, 2, 'input', WriteOption.Overwrite);
+  writeFieldNode(root.structure!['source'], 2, 'input', WriteOption.Overwrite);
   expect(root.emit).toEqual({ source: 2, target: 3 });
   expect(root.runtime.commitNumber).toBe(2);
   expect(target.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(

@@ -58,10 +58,10 @@ export const runStoryTail = async (tail: readonly CompositeTailStep[], context: 
       await expectEventually(() => Object.fromEntries(Object.entries(step.states).map(([path, expected]) => {
         const target = node(path)!;
         return [path, {
-          ...('dirty' in expected && { dirty: Boolean(target.state?.[FieldNodeState.Dirty]) }),
+          ...('edited' in expected && { edited: Boolean(target.state?.[FieldNodeState.Edited]) }),
           ...('touched' in expected && { touched: Boolean(target.state?.[FieldNodeState.Touched]) }),
-          ...('readOnly' in expected && { readOnly: target.readOnly }),
-          ...('visible' in expected && { visible: target.visible }),
+          ...('isReadOnly' in expected && { isReadOnly: target.isReadOnly }),
+          ...('isVisible' in expected && { isVisible: target.isVisible }),
         }];
       })), step.states, label);
     if (step.act === 'errors')

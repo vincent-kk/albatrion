@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FormErrorCode, FormWarningCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { type BlueprintCacheEntry, type BlueprintDiagnostic } from '../type';
+import {
+  type BlueprintCacheEntry,
+  type BlueprintDiagnostic,
+} from '../types/blueprint';
 
 // filid:contract diagnostics
 describe('blueprint diagnostic data and late collection', () => {
@@ -82,6 +85,10 @@ describe('blueprint diagnostic data and late collection', () => {
     ).toThrow(
       expect.objectContaining({
         code: FormErrorCode.ChildrenTargetNotFound,
+        details: expect.objectContaining({
+          schemaPath: '#/controls/fields/0',
+          target: 'missing',
+        }),
       }),
     );
   });
@@ -242,11 +249,11 @@ describe('blueprint diagnostic data and late collection', () => {
     const collect = vi.fn();
     const schema = { type: 'object', dependentSchemas: {} };
     const first = blueprint(schema, { cache });
-    expect(cache.get(schema)![0].warningsCollected).toBe(false);
+    expect(cache.get(schema)![0].diagnostics).toBeUndefined();
     expect(blueprint(schema, { cache, collect })).toBe(first);
     expect(blueprint(schema, { cache, collect })).toBe(first);
     expect(collect).toHaveBeenCalledTimes(1);
-    expect(cache.get(schema)![0].warningsCollected).toBe(true);
+    expect(cache.get(schema)![0].collectors.has(collect)).toBe(true);
   });
   it('separates cached predicate identities', () => {
     const cache = new WeakMap<object, BlueprintCacheEntry[]>();

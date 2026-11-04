@@ -6,13 +6,13 @@ import { omitEmptyArray } from './omitEmptyArray';
 import { omitTrailingArray } from './omitTrailingArray';
 
 /**
- * Project an opaque array with cached omission bits and no raw mutation.
- * @param node - Terminal record supplying raw kind and effective options
- * @param local - Whole raw array proposed for output
- * @returns Emitted raw or undefined when omitted by shape or options
+ * Project an opaque array with cached omission bits and no source mutation.
+ * @param node - Terminal record supplying source kind and effective options
+ * @param local - Whole source array proposed for output
+ * @returns Emitted source or undefined when omitted by shape or options
  */
 export const projectTerminalArray: Behavior['project'] = (node, local) => {
-  if (node.raw !== undefined && !isArray(node.raw)) return node.raw;
+  if (node.source !== undefined && !isArray(node.source)) return node.source;
   if (!isArray(local)) return undefined;
   const choices = getStaticChoices(node.schema);
   const projected = choices.omitTrailing ? omitTrailingArray(local) : local;

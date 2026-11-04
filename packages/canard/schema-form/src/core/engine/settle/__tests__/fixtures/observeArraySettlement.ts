@@ -1,4 +1,6 @@
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
+import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
+import { collectRetainedSlotSources } from './collectRetainedSlotSources';
 
 /**
  * Capture array settlement results without comparing runtime object identities.
@@ -16,16 +18,16 @@ export const observeArraySettlement = (root: PlainNode): unknown => {
       key: node.itemKey,
       count: node.itemCount,
       nextKey: node.nextItemKey,
-      raw: node.raw,
-      undeclaredValues: node.undeclaredValues,
+      source: node.source,
+      extras: node.extras,
       value: node.local,
       output: node.emit,
       schema: node.schema.schema,
-      active: node.active,
-      visible: node.visible,
-      readOnly: node.readOnly,
-      disabled: node.disabled,
-      required: node.required,
+      isActive: node.isActive,
+      isVisible: node.isVisible,
+      isReadOnly: node.isReadOnly,
+      isDisabled: node.isDisabled,
+      isRequired: node.isRequired,
       state: node.interactionState,
       revisions: { ...node.revisionLedger },
       delivery: node.pendingDelivery,
@@ -43,15 +45,15 @@ export const observeArraySettlement = (root: PlainNode): unknown => {
     globalState: runtime.globalState,
     counts: [...runtime.globalStateCounts],
     deliveryOrder: [...(runtime.deliveries ?? [])].map((node) => node.path),
-    latent: [...runtime.latentRaw],
-    mismatches: [...runtime.typeMismatchPaths],
+    latent: collectRetainedSlotSources(root),
+    misfits: [...runtime.misfitPaths],
     declarations: [...(runtime.committedDeclarationIds ?? [])],
     rules: [...(runtime.committedRuleValues ?? [])],
     ruleSources: [...(runtime.committedRuleKeysBySource ?? [])],
     ruleTargets: [...(runtime.committedRuleKeysByTarget ?? [])],
-    inactive: [...(runtime.inactiveValueEntries ?? [])],
-    inactiveMemo: [...runtime.inactiveValuesMemo],
-    mismatchMemo: [...(runtime.typeMismatchesMemo ?? [])],
+    inactive: readFieldNodeInactiveValues(root),
+    inactiveMemo: readFieldNodeInactiveValues(root),
+    misfitsMemo: [...(runtime.misfitsMemo ?? [])],
     warnings: [...(runtime.warningKeys ?? [])],
     warningRecords: [...(runtime.pendingWarningRecords ?? [])],
   };

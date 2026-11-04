@@ -45,7 +45,11 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 **`SHARED_NODE_KIND_CONFLICT`** — an ungated branch (no `controls.active`, not selected by `controls.discriminator`) redeclares a parent property with a `type` outside the parent's, or ungated branches disagree on a property's kind. Narrow the branch `type` to the parent's, drop it, or gate the branch.
 
-**`DISCRIMINATOR_MISMATCH` / `EMPTY_ENUM_INTERSECTION`** — discriminator tags differ in kind across branches or overlap (`DISCRIMINATOR_MISMATCH`), or a tag's `const`/`enum` values have nothing in common (`EMPTY_ENUM_INTERSECTION`). Typed tags (`{ type: 'string', const: 'cat' }`) are fine.
+**`DISCRIMINATOR_MISMATCH`** — an existing object union has no tagged branch (`missing`), branch tags require different kinds without a host-declared tag type (`kind`), or tags overlap within one `oneOf` (`overlap`). `anyOf` overlap and different keys on separate declarations are allowed. A host-declared tag union can cover multiple kinds.
+
+**`DISCRIMINATOR_IGNORED_FOR_FORM` / `DISCRIMINATOR_BRANCH_UNREACHABLE`** — ignored keys have reason `union` (no union on that object declaration) or `host` (known non-object host). Unreachable tags have reason `kind` (outside host tag type) or `empty` (empty const/enum intersection) and are not lifted. These warnings and mismatch errors have details `{ propertyName, reason }`, without values. Terminal objects omit unreachable warnings. Ordinary static enum intersection errors still use `EMPTY_ENUM_INTERSECTION`; see `expressions.md` for C1–C13.
+
+**`IF_ON_NON_OBJECT_HOST`** — symptom: `then` or `else` never reacts to the field's own value, and the warning `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST` arrives with details `{ kind }` at `#/…/if`. Cause: the `if` sits on a host whose allowed types do not include object (a string, number, boolean, array or null-only field), so the guard is evaluated against `{}`, not the host value. Fix: move the condition to the enclosing object and test the field through `properties`, or widen the host type to include `object`.
 
 **A nullable object fails validation while `null`** (no warning is printed) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
 
@@ -65,4 +69,25 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 - Register the validator plugin once in the test setup file, before any render — not per test.
 - `formRef.current` is `null` on first render — `await waitFor(() => expect(formRef.current).not.toBeNull())` before driving it.
-- Values and controls state settle synchronously inside `setValue()`; validation results arrive after a microtask and the DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).
+- Values and controls state settle synchronously inside `setValue()`; write-triggered validation results arrive after the frame that renders the edit and the error DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).
+
+
+## onError record origin
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
+
+| origin | Operation |
+| --- | --- |
+| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
+| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
+| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
+| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
+| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
+
+Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
+
+The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. A bundle rejected to a submit() or validate() caller remains one rejection value; individual onError records never contain it. Validation-result listener failures remain ownerless even during an explicit validate(), which can resolve while those failures reach the host. Unowned failures reach the existing host channel one leaf at a time, depth-first in element order. Only SchemaFormError MultipleErrors with a nonempty array and every index owned by that array expands; malformed, unreadable or revisited bundles and other values are reported as themselves. Engine validation waves, automatic OnChange validation and load flush retain handler-first order; native submit and the load slot retain original-first order. React and the render ErrorBoundary log the thrown value unchanged. Capture suppresses valid nested bundles containing only already-reported errors or handler exceptions; unknown, malformed, cyclic or revisited nested bundles are still captured. Array lengths must be stable integers from 1 through 2^32 - 1; each traversal has a shared 1,000,000-element inspection budget. An unreadable, unstable or over-budget bundle remains an opaque leaf, so the host can receive a bundle. Capture also guards top-level metadata and string conversion, delivering the original value once with a fixed fallback message when inspection fails. Delivery timing, caller rejection, reentrancy and sink exception propagation remain unchanged.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

@@ -8,9 +8,10 @@ import type { FormProps } from '@/schema-form/components/Form';
 import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
+import { createShowErrorChecker } from '../utils/createShowErrorChecker';
 import { FieldRendererContext } from './FieldRendererContext';
 
-const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
+const DEFAULT_SHOW_ERROR = ShowError.EditedTouched;
 
 interface FieldRendererContextProviderProps {
   /** Custom field renderer component */
@@ -21,12 +22,12 @@ interface FieldRendererContextProviderProps {
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show errors
    *   - `false`: Never show errors
-   *   - `ShowError.Dirty`: Show errors when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show errors when both Dirty and Touched states are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: FormProps['showError'];
 }
@@ -46,30 +47,11 @@ export const FieldRendererContextProvider = ({
     showError: externalShowError,
   } = useExternalFormContext();
 
-  const checkShowError = useMemo<FieldRendererContext['checkShowError']>(() => {
-    const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
-    const errorState =
-      typeof showError === 'boolean'
-        ? showError
-          ? ShowError.Always
-          : ShowError.Never
-        : showError;
-    return (
-      condition: Parameters<FieldRendererContext['checkShowError']>[0],
-    ) => {
-      const showError = condition?.[4],
-        dirty = condition?.[1],
-        touched = condition?.[2];
-      if (showError !== undefined) return showError;
-      if (errorState & ShowError.Always) return true;
-      if (errorState & ShowError.Never) return false;
-      if (errorState & ShowError.Dirty && dirty) return true;
-      if (errorState & ShowError.Touched && touched) return true;
-      if (errorState & ShowError.DirtyTouched && dirty && touched) return true;
-      return false;
-    };
-  }, [inputShowError, externalShowError]);
-
+  const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
+  const checkShowError = useMemo(
+    () => createShowErrorChecker(showError),
+    [showError],
+  );
   const constant = useConstant({
     FieldRenderer,
     FormLabelRenderer,
@@ -91,12 +73,14 @@ export const FieldRendererContextProvider = ({
       FormErrorRenderer: constant.FormErrorRenderer,
       formatError,
       checkShowError,
+      showError,
     };
   }, [
     constant,
     checkShowError,
     ExternalFormFieldRenderer,
     externalFormatError,
+    showError,
   ]);
 
   return (

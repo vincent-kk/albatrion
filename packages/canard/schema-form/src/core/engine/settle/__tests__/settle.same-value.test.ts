@@ -6,7 +6,7 @@ import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { sameValue } from '../../utils/compute/sameValue';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-derive
+// filid:contract settle-derive-same-value
 describe('settle value equivalence', () => {
   it('18C-50 sameValue compares nested plain values and SameValueZero primitives', () => {
     expect(sameValue(NaN, NaN)).toBe(true);
@@ -36,7 +36,7 @@ describe('settle value equivalence', () => {
     expect(visits).toBe(0);
   });
 
-  it('18C-50 keeps an equal terminal raw source reference at the write boundary', () => {
+  it('18C-50 keeps an equal terminal source reference at the write boundary', () => {
     const { root } = createTestTree({ type: 'string' });
     const first = { nested: { value: 1 } };
     writeFieldNode(root, first, 'callerReplace', WriteOption.Overwrite);
@@ -46,6 +46,6 @@ describe('settle value equivalence', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.raw).toBe(first);
+    expect(root.source).toBe(first);
   });
 });

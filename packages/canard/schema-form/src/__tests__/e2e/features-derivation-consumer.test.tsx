@@ -8,6 +8,8 @@ import { type FormHandle, Form, type JSONSchema, FieldNodeState } from '@/schema
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 /** GOAL-061 touched lands in the animation frame after blur; jsdom runs frames on a timer, so waits cover one. */
 const BLUR_FRAME_MS = 50;
 
@@ -25,17 +27,17 @@ const scenarioNamed = (name: string) => {
 };
 
 /**
- * Read dirty and touched from one node state record.
+ * Read edited and touched from one node state record.
  * @param state - Node state keyed by FieldNodeState flags.
  * @returns Only the flags that are true, by name.
  */
 const interaction = (state: Readonly<Record<string, boolean | undefined>> = {}) => ({
-  ...(state[FieldNodeState.Dirty] && { dirty: true }),
+  ...(state[FieldNodeState.Edited] && { edited: true }),
   ...(state[FieldNodeState.Touched] && { touched: true }),
 });
 
 describe('features — derivation consumer-only', () => {
-  it('CONTROLS-029 only a rising /clear edge resets dirty and touched of /name and no value changes', async () => {
+  it('CONTROLS-029 only a rising /clear edge resets edited and touched of /name and no value changes', async () => {
     const scenario = scenarioNamed('derivation.reset-interaction');
     const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue });
     try {
@@ -67,10 +69,10 @@ describe('features — derivation consumer-only', () => {
       for (const [index, stage] of contextStages.entries()) {
         const before = onChange.mock.calls.length;
         if (index > 0) rerender(view(stage.context));
-        await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+        await act(async () => { await settleValidation(() => handle?.node); });
         const current = handle!;
         expect({
-          states: { titleReadOnly: current.findNode('/title')!.readOnly, secretVisible: current.findNode('/secret')!.visible },
+          states: { titleReadOnly: current.findNode('/title')!.isReadOnly, secretVisible: current.findNode('/secret')!.isVisible },
           values: Object.fromEntries(Object.keys(stage.values).map((path) => [path, current.findNode(path)?.value])),
           changes: onChange.mock.calls.length - before,
         }, `context stage ${stage.label}`).toEqual({ states: stage.states, values: stage.values, changes: stage.changes });

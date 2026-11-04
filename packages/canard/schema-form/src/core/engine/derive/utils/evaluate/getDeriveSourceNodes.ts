@@ -1,0 +1,41 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
+
+import type { FieldNodeRecord } from '../../../record';
+import type { DeriveState } from '../../types/state';
+
+/**
+ * Resolve affected declaration hosts without descending unrelated branches.
+ * @param root - Current live root
+ * @param state - Load-wide or indexed non-load source addresses
+ * @returns Roots for a full load scan or exact affected live sources
+ */
+export const getDeriveSourceNodes = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+  state: Pick<DeriveState<Self>, 'sourcePaths'>,
+): Self[] => {
+  if (!state.sourcePaths) return [root];
+  const nodes: Self[] = [];
+  const seen = new Set<Self>();
+  for (const path of state.sourcePaths) {
+    let node: Optional<Self> = root;
+    for (const name of parsePointerSegments(path)) {
+      if (typeof name !== 'string') {
+        node = undefined;
+        break;
+      }
+      const children: Nullable<Dictionary<Self>> = node?.structure ?? null;
+      node =
+        children && hasOwnProperty(children, name) ? children[name] : undefined;
+      if (!node) break;
+    }
+    if (node && !seen.has(node)) {
+      seen.add(node);
+      nodes.push(node);
+    }
+  }
+  return nodes;
+};

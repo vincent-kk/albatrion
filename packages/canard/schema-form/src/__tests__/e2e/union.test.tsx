@@ -36,7 +36,7 @@ describe('union — TEST-011 / TEST-023 shared screen runner', () => {
     await run('union.first-screen-active-defaults');
   });
 
-  it('LANDING-032 branch round trips retain shared nodes and edited raw values', async () => {
+  it('LANDING-032 branch round trips retain shared nodes and edited source values', async () => {
     await run('union.branch-round-trip-shared-values');
   });
 

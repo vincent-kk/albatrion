@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
-import { SetValueOption, isUnionNode } from '@/schema-form/core/surface';
+import {
+  SetValueOption,
+  finishFieldNodeInput,
+  isUnionNode,
+  writeFieldNodeInput,
+} from '@/schema-form/core/surface';
 
 // filid:contract union-rule-a
 describe('TEST-077 union write paths', () => {
@@ -11,7 +16,7 @@ describe('TEST-077 union write paths', () => {
     expect(isUnionNode(root)).toBe(true);
     expect(root.value).toBe(42);
     expect(root.outputValue).toBe(42);
-    expect(root.typeMismatch).toBe(false);
+    expect(root.isMisfit).toBe(false);
   });
 
   it('interprets a nested node write without replacing its sibling', () => {
@@ -24,7 +29,7 @@ describe('TEST-077 union write paths', () => {
     });
     root.setValue({ a: 1, keep: 'retained' });
     root.find('/a')?.setValue('false');
-    expect(root.find('/a')?.raw).toBe(false);
+    expect(root.find('/a')?.source).toBe(false);
     expect(root.outputValue).toEqual({ a: false, keep: 'retained' });
   });
 
@@ -40,7 +45,7 @@ describe('TEST-077 union write paths', () => {
     );
     root.setValue({ a: false });
     root.find('/a')?.resetSubtree();
-    expect(root.find('/a')?.raw).toBe(42);
+    expect(root.find('/a')?.source).toBe(42);
     expect(root.outputValue).toEqual({ a: 42 });
   });
 
@@ -50,7 +55,7 @@ describe('TEST-077 union write paths', () => {
     const { root } = makeFieldNodeTree({ type: ['object', 'string'] });
     root.setValue(first);
     root.setValue(second, SetValueOption.Merge);
-    expect(root.raw).toBe(second);
+    expect(root.source).toBe(second);
     expect(root.value).toBe(second);
     expect(root.outputValue).toBe(second);
     expect(root.children).toBeNull();
@@ -60,7 +65,7 @@ describe('TEST-077 union write paths', () => {
     const value = [1, { a: 2 }];
     const { root } = makeFieldNodeTree({ type: ['array', 'string'] });
     root.setValue(value);
-    expect(root.raw).toBe(value);
+    expect(root.source).toBe(value);
     expect(root.outputValue).toBe(value);
     expect(root.children).toBeNull();
   });
@@ -71,7 +76,7 @@ describe('TEST-077 union write paths', () => {
       options: { trim: true },
     });
     root.setValue('  text  ');
-    expect(root.raw).toBe('  text  ');
+    expect(root.source).toBe('  text  ');
     expect(root.outputValue).toBe('  text  ');
     root.setValue(false);
     expect(root.outputValue).toBe(false);
@@ -118,8 +123,8 @@ describe('TEST-077 union write paths', () => {
       },
     });
     root.setValue({ source: '42' });
-    expect(root.find('/target')?.raw).toBe(42);
-    expect(root.find('/target')?.typeMismatch).toBe(false);
+    expect(root.find('/target')?.source).toBe(42);
+    expect(root.find('/target')?.isMisfit).toBe(false);
   });
 
   it('TEST-077 injectTo writes through the effective union list', () => {
@@ -136,10 +141,30 @@ describe('TEST-077 union write paths', () => {
       },
     });
     root.setValue({ source: '42' });
-    expect(root.find('/target')?.raw).toBe(42);
-    expect(root.find('/target')?.typeMismatch).toBe(false);
+    expect(root.find('/target')?.source).toBe(42);
+    expect(root.find('/target')?.isMisfit).toBe(false);
   });
-  it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
+  it('TEST-077 stage 07 (PR-7): finished string input applies trim', () => {
+    const { root } = makeFieldNodeTree({
+      type: ['string', 'number'],
+      options: { trim: true },
+    });
+    writeFieldNodeInput(root, ' 42 ');
+    expect(isUnionNode(root)).toBe(true);
+    expect(root.source).toBe(' 42 ');
+    expect(root.outputValue).toBe(' 42 ');
+    finishFieldNodeInput(root);
+    expect(root.source).toBe('42');
+    expect(root.value).toBe('42');
+    expect(root.outputValue).toBe('42');
+    expect(root.isMisfit).toBe(false);
+
+    writeFieldNodeInput(root, 42);
+    finishFieldNodeInput(root);
+    expect(root.source).toBe(42);
+    expect(root.outputValue).toBe(42);
+    expect(root.isMisfit).toBe(false);
+  });
   it('25C-11 completes all eight node.type values with the array node', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',

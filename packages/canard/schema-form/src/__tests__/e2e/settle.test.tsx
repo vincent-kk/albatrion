@@ -88,7 +88,7 @@ it('LANDING-157 reset clears interaction state and remounts terminal inputs', as
   await form.type('/name', 'changed');
   await form.user.tab();
   await form.flush();
-  expect(node!.state[FieldNodeState.Dirty]).toBe(true);
+  expect(node!.state[FieldNodeState.Edited]).toBe(true);
   await form.reset();
   expect(form.handle.node).toBe(root);
   expect(form.node('/name')).toBe(node);

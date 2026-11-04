@@ -5,12 +5,12 @@ import { describe, expectTypeOf, it } from 'vitest';
 import type {
   FieldInputProps,
   FieldInputPropsWithSchema,
-} from '../types/fieldInput';
+} from '../field/fieldInput';
 import type {
   BooleanSchema,
   JSONSchema,
   SchemaPresentation,
-} from '../types/jsonSchema';
+} from '../schema/jsonSchema';
 
 /** Component alternatives admitted by the schema's presentation input slot. */
 type Slot = NonNullable<SchemaPresentation['FieldInput']>;

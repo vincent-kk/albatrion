@@ -1,5 +1,7 @@
 import { equals } from '@winglet/common-utils/object';
 
+import type { Optional } from '@aileron/declare';
+
 import { EMPTY_INTERSECTION } from './constant';
 
 /**
@@ -11,7 +13,7 @@ import { EMPTY_INTERSECTION } from './constant';
 export const intersectConst = <T>(
   baseConst?: T,
   sourceConst?: T,
-): T | undefined | typeof EMPTY_INTERSECTION => {
+): Optional<T | typeof EMPTY_INTERSECTION> => {
   if (baseConst === undefined) return sourceConst;
   if (sourceConst === undefined) return baseConst;
   return equals(baseConst, sourceConst) ? baseConst : EMPTY_INTERSECTION;

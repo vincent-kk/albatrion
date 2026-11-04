@@ -101,12 +101,12 @@ interface FormProps<
   /** 사용자 정의 오류 형식 함수 */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * 오류 표시 조건 (기본: ShowError.DirtyTouched)
+   * 오류 표시 조건 (기본: ShowError.EditedTouched)
    *   - `true`: 항상 표시
    *   - `false`: 절대 표시하지 않음
-   *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
+   *   - `ShowError.Edited`: 사용자 입력으로 필드를 편집한 뒤 표시
    *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
-   *   - `ShowError.DirtyTouched`: Dirty 및 Touched 조건이 모두 충족되었을 때 표시
+   *   - `ShowError.EditedTouched`: 사용자 입력으로 필드를 편집하고 touched 상태가 되었을 때 표시
    */
   showError?: boolean | ShowError;
   /**
@@ -154,6 +154,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** JSONPointer 경로의 노드 찾기 */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** JSONPointer 경로에 맞는 모든 노드 찾기 */
@@ -185,6 +187,7 @@ interface FormHandle<
 - 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
 - `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
 - `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
+- `rebuild(option?)`은 이 스키마 객체의 청사진 캐시를 폐기하고 `reset`과 같은 옵션으로 현재 폼의 트리를 새로 만듭니다. 같은 스키마 객체를 계속 쓰는 다른 폼은 일반 `reset`에서도 기존 트리를 유지하며, 그 폼 자신의 `rebuild`나 새 마운트에서 새 청사진을 받습니다.
 
 #### AttachedFilesMap
 
@@ -256,9 +259,9 @@ export const App = () => {
 
 `@canard/schema-form`은 플러그인 기반의 검증 시스템을 제공합니다. JSON Schema 검증을 위해 다양한 validator plugin을 사용할 수 있습니다.
 
-### ValidatorFactory
+### 검증기 플러그인 계약 (Validator plugin contract)
 
-ValidatorFactory는 스키마를 컴파일하는 `compile`과 `if/then/else`가 쓰는 동기 가드를 컴파일하는 `compileGuard`를 필수로 갖고, `release`와 `dialect`를 선택으로 갖는 객체입니다:
+검증기 플러그인의 `validator`와 `Form`·`FormProvider`가 받는 `validatorFactory` 객체는 한 계약을 따릅니다. 스키마를 컴파일하는 `compile`과 `if`·`then`·`else`가 쓰는 동기 가드를 컴파일하는 `compileGuard`가 필수이고, `release`와 `dialect`는 선택입니다:
 
 ```ts
 // The engine passes its own copy of the schema; it is typed as JSONSchema here.
@@ -277,7 +280,43 @@ type ValidateFunction<Value = unknown> = (
   | null;
 ```
 
-`ValidateFunction`은 순서가 있는 `ValidationIssue` 목록을 반환하고 값이 유효하면 `null`을 반환하며, 예외를 던지면 안 됩니다. `Form`과 `FormProvider`의 `validatorFactory` 속성이 이 객체를 받습니다. 선택 순서는 Form 속성, FormProvider, 플러그인의 `validator` 순입니다. 참조가 바뀌면 트리가 다시 만들어지므로 참조를 안정적으로 유지하세요.
+선택 순서는 Form 속성, FormProvider, 플러그인의 `validator` 순입니다. 참조가 바뀌면 트리가 다시 만들어지므로 참조를 안정적으로 유지하세요.
+
+#### 필수 의무
+
+- `compile(copy)`는 엔진이 가진 루트 스키마 사본에 대한 `ValidateFunction`을 돌려줍니다. 이 함수는 순서가 있는 `ValidationIssue` 목록을, 값이 유효하면 `null`을 돌려주며, 예외를 던지면 안 됩니다.
+- `compileGuard(root, pointer)`는 `pointer` 위치의 `if` 스키마에 대해 `true`나 `false`를 답하는 동기 판정 함수를 돌려줍니다. 스키마는 `root`의 문맥에서 평가하므로 가드는 루트의 `$ref` 대상, `$id`, 앵커를 봅니다. 동적 앵커에 따라 달라지는 판정이 전체 검증과 일치하는지는 각 플러그인이 문서로 밝힌 지원 조건과 한계를 따르며, [ajv8](../schema-form-ajv8-plugin/README-ko_kr.md)과 [ajv7](../schema-form-ajv7-plugin/README-ko_kr.md) 플러그인 README의 "가드의 동적 범위" 문단에 있습니다.
+- `compileGuard`는 같은 루트에 대한 `compile`보다 먼저 불릴 수 있으며, 필요한 등록은 스스로 합니다.
+- 두 메서드 모두 받은 스키마와 검증하는 값을 바꾸면 안 됩니다.
+
+#### 선택 항목
+
+- `bind(instance)`는 소비자가 자기 검증기 인스턴스를 주입하는 훅입니다. 엔진은 이를 부르지 않습니다. 첫 폼이 컴파일되기 전에 한 번 부르세요. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않습니다.
+- `release(root)`는 엔진이 루트를 캐시에서 내보낼 때 불립니다. 멱등이어야 하므로 등록된 적 없는 루트를 해제해도 아무 일도 일어나지 않아야 합니다.
+- `dialect`는 플러그인이 검증하는 JSON Schema 방언을 이름 붙일 수 있을 때 그 이름입니다. `$schema`가 다른 스키마는 `DIALECT_MISMATCH` 경고를 냅니다.
+
+#### 실패 격리
+
+- 컴파일에 실패하거나, 던지거나, 불리언이 아닌 값을 돌려준 가드는 자기 게이트의 두 분기를 모두 끄고 폼마다 가드 위치당 한 번 `GUARD_FAILED`를 기록합니다. 가드 실패가 다른 게이트를 끄지는 않지만, 루트의 다른 곳에 풀리지 않는 `$ref`가 있는 것처럼 루트 위치에서 컴파일하는 모든 가드가 공유하는 컴파일 오류가 있으면 그 가드들이 각자 실패합니다.
+- `compile`이 던지면 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하고 가드는 바뀌지 않습니다.
+- 같은 `$id`를 가진 두 살아 있는 루트는 저마다 자기 루트로 판정합니다. 둘을 격리하는 것은 플러그인의 책임이며 엔진은 `$id`를 고치지 않습니다.
+- 이미 쓰이는 `$id`의 스키마를 등록하지 못하는 사용자 정의 검증기는 메시지에 AJV 6·7·8의 중복 id 문구인 `already exists`나 `resolves to more than one schema`를 담은 오류를 던져야 하며, 이 두 문구만 `reason: 'duplicateSchemaId'`와 같은 `$id`의 다른 루트가 해제된 뒤의 한 번 재시도를 받습니다.
+
+#### 배포 AJV 플러그인의 기본값
+
+- 기본 인스턴스는 형식(format)을 검사하지 않으며, 바인딩한 인스턴스는 자기 형식 설정을 그대로 씁니다.
+- `@canard/schema-form-ajv8-plugin`의 기본 진입점은 Draft-07을 검증하고, 다른 방언은 각자의 진입점이 있습니다.
+- 원격 `$ref`는 불러오지 않으므로 참조하는 스키마는 모두 루트 안에 있거나 바인딩한 인스턴스에 등록되어 있어야 합니다.
+- 가드는 `allErrors: false`와 `validateSchema: false`인 형제 인스턴스에서 컴파일하므로 AJV의 루트 메타 스키마 검사는 전체 컴파일에서만 돕니다.
+- 기본값인 `directGuardCompile`이 켜져 있으면 자족한 가드는 자기 부분 스키마를 직접 컴파일하고, `$ref`·앵커·`$schema`가 필요한 가드는 루트 위치에서 컴파일합니다.
+- 같은 `$id`의 루트는 서로 다른 검증 인스턴스로 격리합니다.
+
+#### 지원하지 않는 것
+
+- 한 스키마 위치가 서로 다른 두 동적 범위로 도달되는 동적 참조는 지원하지 않으며, 가드는 한 범위의 답을 냅니다. 정확한 동적 범위 한계는 각 플러그인 README에 있습니다.
+- 형제나 부모 값을 가리키는 `$data` 참조처럼 호스트 밖의 데이터를 읽는 조건은 지원하지 않습니다.
+- 비동기 가드, 곧 `if` 안의 `$async` 스키마나 비동기 키워드는 지원하지 않습니다.
+- 바인딩한 인스턴스의 엄격 옵션 때문에 컴파일에 실패하는 가드는 그 게이트의 두 분기를 모두 끄고 `GUARD_FAILED`를 기록합니다.
 
 ### Validator Plugin 사용법
 
@@ -364,6 +403,25 @@ export const App = () => (
 ```
 
 AJV 플러그인의 `createValidatorFactory(ajv)`는 compile 함수만 반환하므로 그 자체로는 유효한 `validatorFactory`가 아닙니다.
+
+### 조건 스키마: if, then, else
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: { country: { type: 'string' } },
+  if: { properties: { country: { const: 'KR' } }, required: ['country'] },
+  then: { properties: { phone: { type: 'string', pattern: '^010-' } } },
+  else: { properties: { phone: { type: 'string', pattern: '^\\+' } } },
+} as const;
+```
+
+- `if` 스키마는 호스트 값, 곧 `if`를 선언한 객체의 값을 검증기가 볼 형태 그대로 받아 평가합니다.
+- `then`은 판정이 참인 동안, `else`는 거짓인 동안 형상에 속합니다.
+- 값이 없거나 객체가 아닌 호스트는 `{}`에 대해 평가합니다. JSON Schema에 따라 `properties`는 `{}`에서 공허하게 참이므로, 필드에 값이 생길 때까지 분기를 기다리게 하려면 조건에 `required`를 더하세요.
+- 가드 실패는 거짓 판정이 아닙니다. 컴파일이나 평가에 실패한 가드는 `then`과 `else`를 모두 끄고 그 게이트에 대해서만 `GUARD_FAILED`를 기록합니다.
+- 선택된 검증기가 없으면, 곧 Form이나 FormProvider의 `validatorFactory`도 검증기 플러그인도 없으면 `then`과 `else`는 모두 꺼진 채로 남습니다.
+- 허용 형에 object가 없는 호스트(문자열, 숫자, 불리언, 배열, null 전용 필드)의 `if`는 유효한 JSON Schema이지만, 폼은 이를 `{}`에 대해 평가하므로 분기가 필드 자신의 값을 읽지 못합니다. 청사진은 진단 수집 한 번마다 `if` 위치당 한 번 details `{ kind }`와 함께 `IF_ON_NON_OBJECT_HOST` 경고를 냅니다. 조건을 감싸는 객체로 옮기거나 호스트 형에 `object`를 더하세요. `type: ['object', 'string']` 같은 union과 nullable 객체는 경고하지 않습니다.
 
 ### 오류 메시지 형식 지정
 
@@ -513,7 +571,7 @@ FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있�
 type FieldInputHint = {
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   path: string;
   required: boolean;
   nullable: boolean;
@@ -568,10 +626,10 @@ interface FieldInputProps<
   node: Node;
   /** 노드 종류 (예: 'string', 'number', 'object', 'array') */
   type: Node['type'];
-  /** 작성한 허용 종류('integer' 포함) */
+  /** 작성한 허용 종류('integer' 포함), virtual 노드는 undefined */
   schemaType: Node['schemaType'];
   /** 저장된 값이 허용 종류와 어긋나는지 */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['isMisfit'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
@@ -928,7 +986,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -936,6 +994,24 @@ function ProfileForm() {
   );
 }
 ```
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. submit()·validate()의 caller에게 거부되는 묶음은 거부 값 하나로 유지하며 개별 onError 기록에는 묶음을 싣지 않습니다. 명시적 validate 중 검증 결과 리스너 실패는 caller가 없는 별도 통로여서 host에 전달하고 validate 자체는 resolve할 수 있습니다. 부른 쪽이 없는 실패는 기존 호스트 채널에 깊이 우선·원소 순서로 잎마다 보냅니다. 비어 있지 않고 모든 index가 own인 배열을 가진 SchemaFormError MultipleErrors만 펼치며 형식이 어긋나거나 읽을 수 없거나 다시 만난 묶음과 그 밖의 값은 그대로 보냅니다. engine 검증 결과 파동·자동 OnChange 검증·load flush의 handler-first 순서와 native submit·load slot의 original-first 순서는 유지합니다. React와 렌더 ErrorBoundary는 던진 값을 그대로 기록합니다. 이미 보고한 오류·핸들러 예외만 담은 유효한 중첩 묶음은 capture를 생략하며 미지·malformed·순환·재방문 중첩 묶음은 기록합니다. 배열 길이는 1..2^32 − 1 정수이며 처음과 마지막 읽기가 같아야 하고 각 순회는 호출 전체에서 원소 점검 예산 1,000,000개를 공유합니다. 읽을 수 없거나 길이가 변하거나 예산을 넘은 묶음은 같은 identity의 잎이므로 host도 묶음을 받을 수 있습니다. capture는 최상위 메타데이터·문자열 변환도 보호하며 읽기 실패 때 원래 값을 고정 fallback 메시지의 기록 하나로 전달합니다. 전달 시점·호출자 거부·재진입·sink 예외 전파는 유지합니다.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
 
 `onError`는 그 폼 인스턴스의 모든 오류와 경고 기록을 받고, `submit()`은 검증이 실패하면 `ValidationError`(`FormErrorCode.SchemaValidationFailed`)로 거부합니다. 전체 코드 일람은 [SPECIFICATION — 오류 처리](./docs/ko/SPECIFICATION.md#오류-처리)에 있습니다.
 
@@ -1358,6 +1434,27 @@ export const AdvancedForm = () => {
 
 **참고**: 확장 JSONPointer 문법 (`..`, `.`, `*`)은 RFC 6901 사양에 대한 의도적인 확장으로, 향상된 폼 조작 기능을 제공하기 위해 구현되었습니다. 이러한 확장은 표준에서 벗어나지만, 실제 애플리케이션에서 일반적으로 요구되는 복잡한 폼 상호작용 및 탐색 패턴을 지원하는 데 필수적입니다.
 
+### 하위 트리 방문
+
+`node.visitSubtree(visitor)`는 노드 자신과 그 아래의 모든 노드에 `visitor`를 부릅니다. 폼의 한 구역을 한 번에 읽거나 고칠 때 씁니다.
+
+```typescript
+// /profile 아래의 문자열 필드를 모두 비우되, /profile/locked와 그 아래는 그대로 둡니다.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // 이 노드의 하위를 건너뜀
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **순서.** 노드 자신이 먼저이고, 하위는 전위 순서로, 형제는 `children` 순서로 방문합니다. 터미널 노드는 잎입니다.
+- **건너뛰기.** `false`를 돌려주면 그 노드의 하위만 건너뛰고 다음 형제로 이어 갑니다. `undefined`를 포함한 다른 반환값은 자식으로 들어갑니다.
+- **범위.** 폼 안의 노드에서는 현재 형상만 방문하므로, 조건이 제외한 필드는 방문하지 않습니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는 방문된다는 보장이 없습니다. 폼에서 빠진 노드(조건이나 배열 변경으로 필드가 빠지기 전에 보관한 참조)에서 부르면, 그 노드와 함께 빠진 하위 트리를 걷습니다.
+- **쓰기.** 순회 중의 값 쓰기는 순회가 끝날 때 한 번에 반영되므로, 순회 중에 읽는 값은 순회 전의 값입니다. 상태와 외부 오류의 변경(`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`)은 데이터를 바로 바꾸지만, 그 이벤트는 `request`의 이벤트처럼 순회가 끝날 때 한 번 전달됩니다. 바깥 `node.batch(fn)` 안에서는 모두 그 batch의 끝까지 기다립니다. 순회 안의 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다.
+- **폼에서 빠진 노드에 쓰기.** 이런 쓰기는 순회나 batch 안에서도 폼 안의 필드를 바꾸지 않습니다. 그 경로에 같은 종류의 필드가 있으면 아무 일도 하지 않고, 없으면 값을 그 경로에 맡겨 두었다가 그런 필드가 돌아올 때 불러옵니다. 그 경로에 필드가 있는지는 같은 batch나 순회 안의 앞선 변경이 아니라 마지막으로 커밋된 형상으로 판단하므로, 같은 batch나 순회가 그 필드를 막 제거했더라도 이런 쓰기는 버려집니다. 같은 batch나 순회가 제거하는 필드의 참조는 쓰는 때에 아직 폼 안에 있으므로, 그 쓰기는 다른 쓰기와 똑같이 처리됩니다.
+- **예외.** visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 리스너 안의 순회가 값 쓰기를 했다면, `batch`와 같이 그 예외는 `visitSubtree`를 부른 코드에 닿지 않습니다.
+- **비용.** 순회는 쓰기가 있을 때까지 아무것도 열지 않으므로, 읽기만 하는 순회는 추가 비용이 없고 리스너 안에서도 됩니다. 리스너 안의 쓰기는 다른 리스너 쓰기와 같은 규칙을 따릅니다.
+- **FormHandle.** `FormHandle`에는 `visitSubtree`가 없습니다. `formRef.current?.node`나 `findNode`로 얻은 노드에서 부르십시오.
+
 ---
 
 ## 고급 사용법
@@ -1718,10 +1815,12 @@ export const FormWithCustomInput = () => {
 - `derived`: JSONPointer 표현식을 사용하여 다른 필드 값을 참조해 자동으로 값을 계산합니다. `controls.derived` 속성을 사용합니다
 - `active`: 해당 Node가 활성화될지 여부를 결정합니다. 활성화 되지 않은 Node의 Input은 표시되지 않으며 그 값은 제거됩니다.
 - `visible`: 해당 Node가 표시될지 여부를 결정합니다. Input의 표시 여부를 결정합니다.
-- `resetInteraction`: 해당 Node의 상호작용 상태를 초기화합니다. 표현식이 `false`에서 `true`로 바뀌면 Node의 `dirty`와 `touched` 상태를 비웁니다.
+- `resetInteraction`: 해당 Node의 상호작용 상태를 초기화합니다. 표현식이 `false`에서 `true`로 바뀌면 Node의 `edited`와 `touched` 상태를 비웁니다.
 - `readOnly`: 해당 Node가 읽기 전용일지 여부를 결정합니다. readOnly 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `disabled`: 해당 Node가 비활성화될 때 표시될지 여부를 결정합니다. disabled 상태인 경우 Input에서 값을 수정할 수 없습니다.
 - `oneOf`/`anyOf` 분기의 `active`, 또는 호스트의 `discriminator`: 표시할 분기를 선택합니다. 각 분기에 `controls.active` 표현식을 주거나, `controls.discriminator`에 속성 이름을 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다. ObjectNode 에서만 사용할 수 있습니다. 두 게이트가 모두 없으면 모든 분기가 켜집니다. 모든 분기의 필드가 존재하며 어느 분기가 맞는지는 검증기만 정합니다.
+
+  키는 객체·nullable 객체 호스트(`type: 'object'`, `['object', 'null']`, `['null', 'object']`)에 선언합니다. union 없는 선언이나 알려진 비객체 런타임 호스트는 경고와 함께 키를 무시합니다. anyOf 태그 중복, 여러 종류를 포괄하는 호스트 태그 형, 선언마다의 독립 키는 허용합니다. union 전체 태그 누락·oneOf 중복·호스트 태그 형 없이 모호한 분기 종류는 오류이고, 도달 불가능한 종류·빈 교차는 태그를 끌어올리지 않고 경고합니다. C1–C13과 터미널 객체 예외는 [판별자 규칙](docs/ko/SPECIFICATION.md#판별자-규칙)을 참고하세요.
 
 #### 계층 규칙
 
@@ -2459,7 +2558,7 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 | `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                      |
 | `computed.derived` / `&derived`                                        | `controls.derived`                                                       |
 | `computed.watch` / `&watch` (문자열 또는 배열)                         | `controls.watch` (배열만)                                                |
-| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (조건이 참으로 바뀔 때 dirty·touched 초기화) |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (조건이 참으로 바뀔 때 edited·touched 초기화) |
 | `oneOf` / `anyOf` 분기의 `computed.if` / `&if`                         | 그 분기의 `controls.active`                                              |
 | `injectTo`                                                             | `controls.injectTo` (핸들러 모양은 같음)                                 |
 | `terminal`                                                             | `options.terminal` (객체·배열 스키마)                                    |
@@ -2515,12 +2614,22 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 | `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
 | `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
 | `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
+| `ShowError.Dirty` | `ShowError.Edited` |
+| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
+| `node.required` | `node.isRequired` |
+| `node.active` | `node.isActive` |
+| `node.visible` | `node.isVisible` |
+| `node.enabled` | `node.isPresent` |
+| `node.readOnly` | `node.isReadOnly` |
+| `node.disabled` | `node.isDisabled` |
+| `node.misfit` | `node.isMisfit` |
 | `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (같은 비트)                                                                                                                      |
 | `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (`UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`는 그대로이고 이벤트가 더 공개됨)          |
 | `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
 | 형 `JSONSchemaError` (`errors` prop과 `onValidate` 인자)                                                                                                                  | `ValidationIssue` (필드는 같고 선택 필드 `rejectedKey` 추가, `isJSONSchemaError`는 유지)                                                                       |
 
-- 이름이 바뀐 것은 노드 상태 비트뿐입니다. `ShowError` 정책 enum(`Dirty`, `Touched`, `DirtyTouched` 등), Form의 `showError` prop, `FormHandle.showError()`는 이름이 그대로입니다.
+- 노드 상태와 ShowError 정책 멤버는 Edited·EditedTouched를 씁니다. Form `showError` prop과 `FormHandle.showError()`는 그대로이며 기본 정책은 같은 비트·동작의 `ShowError.EditedTouched`입니다.
 
 ### 동작 변경
 
@@ -2528,6 +2637,7 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 - **enum select는 `undefined`를 선택 없음으로 보여 줍니다.** 기본 문자열 enum select는 값이 `undefined`이면 맨 앞에 선택된 빈 비활성 선택지를 보여 주며, enum에 `''`가 있어도 같습니다. enum 밖의 값은 지금처럼 맨 앞 비활성 선택지로 보입니다.
 - **체크박스와 라디오 선택지 id에 순번이 붙습니다.** 각 선택지의 `id`는 이제 `${path}-${index}`이고, 레이블의 `htmlFor`도 같이 바뀝니다. 이 입력을 `#<path>`로 찾던 선택자는 고쳐야 합니다. 기본 렌더러의 label과 `Form.Label`은 항상 `htmlFor={path}`와 `id="label:${path}"`를 둘 다 가지며, branch의 legend는 id만 가집니다. 라벨을 그리는 곳은 어떤 입력이 선택되었는지 알 수 없기 때문입니다. 입력 id는 루트에서 빈 문자열이고 나머지는 `/`로 시작하므로, `label:` 접두어는 어떤 입력 id와도 겹치지 않습니다. 내장 checkbox·radio의 선택지 컨테이너는 `role="group"`과 `aria-labelledby="label:${path}"`를 가지므로 묶음을 제목으로 찾을 수 있습니다(`getByRole('group', { name })`). 이런 묶음에서는 `htmlFor`가 가리키는 요소가 없지만 해롭지 않습니다. 사용자 `FieldInput`과 `FieldRenderer`도 같은 규약을 따릅니다. 단일 입력은 `id={path}`를 달아 제목과 연결하고, 묶음 컨테이너는 `aria-labelledby`로 `label:${path}`를 참조합니다. 기본 렌더러에서 checkbox 배열은 같은 legend로 이름 붙은 fieldset이기도 하므로, 그 fieldset 안에서 찾으세요. `id="label:${path}"`를 가진 제목을 그리지 않는 자리(루트, 배열 항목, `Form.Label` 없는 `Form.Input`, 그 id를 빠뜨린 사용자·플러그인 렌더러)에서는 묶음 컨테이너의 `aria-labelledby`가 가리킬 대상이 없으므로 렌더러가 묶음의 이름을 직접 주어야 합니다. `Form.Label`은 두 속성을 `path` prop 그대로 만들므로, 입력·묶음과 맞으려면 절대 경로(`size`나 `./size`가 아닌 `/size`)를 넘기세요.
 - **`oneOf` / `anyOf` 분기를 더 이상 `const` 태그로 고르지 않습니다.** 분기끼리 `const` 태그만 다르면 호스트에 `controls.discriminator: '<속성>'`을 선언하거나 각 분기에 `controls.active`를 선언하세요. 둘 다 없으면 모든 분기가 활성 상태로 남습니다.
+- **FieldInput 시험 객체의 `schemaType: 'virtual'`은 더 이상 virtual 노드에 맞지 않습니다.** `schemaType`은 JSON 형만 담으므로 virtual 노드의 `schemaType`은 `undefined`이고, `jsonSchema.type`은 그대로 `'virtual'`입니다. virtual 노드는 `type: 'virtual'`로, 또는 `schemaType: undefined`를 직접 적은 시험 객체로 고르십시오.
 - **직접 만든 검증기 플러그인은 `compileGuard`를 구현해야 합니다.** `ValidatorPlugin`은 이제 `compile` 옆에 `compileGuard(root, pointer)`가 필요하고, `release(root)`는 선택입니다. 공식 ajv6·ajv7·ajv8 플러그인은 이미 구현되어 있습니다.
 
 `onValidate`는 0.16과 같이 동작합니다. 보고할 오류 목록이나 `errors` prop이 바뀔 때 호출되고, 결과가 같은 재검증에서는 호출되지 않습니다.
@@ -2617,3 +2727,23 @@ export const AntdForm = () => {
   return <Form jsonSchema={jsonSchema} />;
 };
 ```
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

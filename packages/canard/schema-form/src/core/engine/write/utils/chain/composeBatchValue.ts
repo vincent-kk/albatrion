@@ -1,9 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /**
@@ -20,12 +21,9 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   let value = root.local;
   for (const write of writes) {
-    const names = write.node.path
-      ? write.node.path
-          .slice(1)
-          .split($.Separator)
-          .map((name) => name.replace(/~1/g, $.Separator).replace(/~0/g, '~'))
-      : [];
+    const names = parsePointerSegments(write.node.path);
+    if (!isNamedPointerSegments(names))
+      throw new TypeError('Expected a named node path');
     const fields =
       write.node.behavior.type === 'virtual'
         ? (write.node.blueprintNode.fields ?? [])

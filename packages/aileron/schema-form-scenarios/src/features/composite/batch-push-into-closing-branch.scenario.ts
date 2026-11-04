@@ -12,7 +12,7 @@ const listSchema = {
 /** Regression (from CX-08): a write that grows an array while the same write closes its branch keeps the new item value. */
 export const batchPushIntoClosingBranchScenario: FormScenario = {
   name: 'composite.batch-push-into-closing-branch',
-  description: 'A batch is one whole write of its composed value (EVENT-013), and a whole write makes the value at every path in V that path\'s new raw value, latent or not (LANDING-018). So batch[push "d", kind = single] and the equivalent whole write {kind: "single", tags: [a, b, c, d]} restore four rows ending in "d" when the list branch returns, as a push and a switch in separate entries do.',
+  description: 'A batch is one whole write of its composed value (EVENT-013), and a whole write makes the value at every path in V that path\'s new source value, latent or not (LANDING-018). So batch[push "d", kind = single] and the equivalent whole write {kind: "single", tags: [a, b, c, d]} restore four rows ending in "d" when the list branch returns, as a push and a switch in separate entries do.',
   schema: listSchema,
   initialValue: { kind: 'list', tags: ['a', 'b', 'c'] },
   steps: [

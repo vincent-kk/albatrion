@@ -1,10 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { FieldNodeRuntime } from '@/schema-form/core/engine/record';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import {
   SetValueOption,
@@ -21,11 +20,8 @@ const createContextTree = (
     context,
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
+
+    misfitPaths: new PathKeyedSet(),
   });
 
 // filid:contract settle-context
@@ -49,16 +45,16 @@ describe('context change settlement', () => {
     if (!reset) return;
     const runtime: FieldNodeRuntime<unknown> = Reflect.get(root, 'runtime');
     Reflect.set(reset, 'state', {
-      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     });
 
     setContext(root, { show: true, label: 'new', clear: true, reset: true });
 
-    expect(root.find('/shown')?.active).toBe(true);
+    expect(root.find('/shown')?.isActive).toBe(true);
     expect(root.find('/derived')?.value).toBe('new');
     expect(root.find('/cleared')?.value).toBeUndefined();
-    expect(Reflect.get(reset, 'state')[FieldNodeState.Dirty]).toBe(false);
+    expect(Reflect.get(reset, 'state')[FieldNodeState.Edited]).toBe(false);
     expect(Reflect.get(reset, 'state')[FieldNodeState.Touched]).toBe(false);
     expect(runtime.settlementTrace?.entry.api).toBe('setContext');
   });

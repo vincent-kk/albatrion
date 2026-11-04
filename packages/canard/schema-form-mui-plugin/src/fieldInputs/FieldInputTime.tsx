@@ -42,6 +42,7 @@ const FieldInputTime = ({
   fullWidth: fullWidthProp,
   ampm: ampmProp,
   hideLabel,
+  misfit,
 }: FieldInputTimeProps) => {
   const [label, size, variant, fullWidth, ampm] = useMemo(() => {
     if (hideLabel)
@@ -72,7 +73,7 @@ const FieldInputTime = ({
   ]);
 
   const timeValue = useMemo(() => {
-    if (!defaultValue) return null;
+    if (typeof defaultValue !== 'string' || !defaultValue) return null;
 
     // time 형식이 HH:mm 또는 HH:mm:ss인 경우
     // dayjs에서 파싱하기 위해 오늘 날짜와 결합
@@ -81,11 +82,12 @@ const FieldInputTime = ({
   }, [defaultValue]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue && newValue.isValid()) {
-      onChange(newValue.format('HH:mm:ss'));
-    } else {
-      onChange(null);
+    if (newValue === null) {
+      onChange(undefined);
+      return;
     }
+    if (!newValue.isValid()) return;
+    onChange(newValue.format('HH:mm:ss'));
   });
 
   return (
@@ -104,6 +106,7 @@ const FieldInputTime = ({
             size,
             variant,
             fullWidth,
+            error: misfit,
           },
         }}
       />

@@ -42,6 +42,7 @@ const FieldInputStringEnum = ({
   variant: variantProp,
   fullWidth: fullWidthProp,
   hideLabel,
+  misfit,
 }: FieldInputStringEnumProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -91,13 +92,13 @@ const FieldInputStringEnum = ({
   const labelId = useMemo(() => `label-${path}`, [path]);
 
   const initialValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
     if (defaultValue === null) return '' + null;
-    return defaultValue;
+    if (typeof defaultValue === 'string') return defaultValue;
+    return undefined;
   }, [defaultValue]);
 
   return (
-    <FormControl fullWidth={fullWidth} variant={variant}>
+    <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
       <InputLabel id={labelId}>{label}</InputLabel>
       <Select
         id={path}

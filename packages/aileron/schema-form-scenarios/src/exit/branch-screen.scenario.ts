@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** LANDING-032 keeps branch raw values; LANDING-148 hides inactive variants. */
+/** LANDING-032 keeps branch source values; LANDING-148 hides inactive variants. */
 export const branchExitScenario = {
   name: 'LANDING-032 branch roundtrip preserves user input and excludes inactive output',
   schema: { type: 'object', properties: { kind: { type: 'string' } }, oneOf: [

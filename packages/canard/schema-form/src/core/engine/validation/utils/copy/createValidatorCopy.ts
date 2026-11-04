@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import type { BlueprintSchema } from '../../../blueprint';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 
@@ -41,8 +43,8 @@ export const createValidatorCopy = (
   authored: BlueprintSchema,
 ): BlueprintSchema => {
   if (typeof authored !== 'object' || authored === null) return authored;
-  const copy: Record<string, unknown> = {};
-  const seen = new WeakMap<object, object>([[authored, copy]]);
+  const copy: Dictionary<unknown> = {};
+  const seen = new Map<object, object>([[authored, copy]]);
   const pending: {
     source: object;
     target: object;

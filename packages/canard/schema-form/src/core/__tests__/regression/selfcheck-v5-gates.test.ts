@@ -130,7 +130,7 @@ describe('selfcheck-v5 lifted and budget gates', () => {
     });
   });
 
-  it('selfcheck-v5.mjs:637 hides lifted descendants while retaining their raw', () => {
+  it('selfcheck-v5.mjs:637 hides lifted descendants while retaining their source', () => {
     const root = overlayTree();
     root.find('/flag')?.setValue(undefined);
     expect(root.outputValue).toEqual({ child: { p: 'P' } });

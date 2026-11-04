@@ -34,7 +34,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
     const root = fragmentTree();
     root.setValue({ on: false });
     root.find('/on')?.setValue(true);
-    expect(root.find('/group/x')?.raw).toBe('D');
+    expect(root.find('/group/x')?.source).toBe('D');
     expect(root.outputValue).toEqual({ on: true, group: { x: 'D' } });
   });
 
@@ -63,7 +63,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
     const root = elseTree();
     root.setValue({ kind: 'no' });
     expect(root.diagnostics.status).toBe('stable');
-    expect(root.find('/b')?.raw).toBe('B');
+    expect(root.find('/b')?.source).toBe('B');
   });
 
   it('edge-cases.mjs:84 fills an object default before its child default', () => {
@@ -79,7 +79,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
     });
     root.setValue({});
     expect(root.outputValue).toEqual({ group: { x: 'parent' } });
-    expect(root.find('/group/x')?.raw).toBe('parent');
+    expect(root.find('/group/x')?.source).toBe('parent');
   });
 
   const overlayTree = () =>
@@ -102,7 +102,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   it('edge-cases.mjs:90 lets an active overlay default beat the base default', () => {
     const root = overlayTree();
     root.setValue({ on: true });
-    expect(root.find('/x')?.raw).toBe('fragment');
+    expect(root.find('/x')?.source).toBe('fragment');
   });
 
   it('edge-cases.mjs:93 does not rebirth a base node when its overlay returns', () => {
@@ -111,7 +111,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
     root.find('/x')?.setValue(undefined);
     root.find('/on')?.setValue(false);
     root.find('/on')?.setValue(true);
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
   it('edge-cases.mjs:65 lets controls.default beat ordinary default', () => {
@@ -126,7 +126,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
       },
     });
     root.setValue({});
-    expect(root.find('/x')?.raw).toBe('control');
+    expect(root.find('/x')?.source).toBe('control');
   });
 
   it('edge-cases.mjs:65 keeps controls.default priority under a disabled parent', () => {
@@ -142,6 +142,6 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
       },
     });
     root.setValue({});
-    expect(root.find('/x')?.raw).toBe('control');
+    expect(root.find('/x')?.source).toBe('control');
   });
 });

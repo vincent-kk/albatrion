@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** The fields entry policy clears an exiting target's retained raw. */
+/** The fields entry policy clears an exiting target's retained source. */
 const childrenExitScenario = {
   name: 'controls.fields-exit-policy-layer',
   schema: { type: 'object', controls: { fields: [
@@ -51,7 +51,7 @@ const previousCommitExitScenario = {
   ],
 } satisfies FormScenario;
 
-/** A hidden but active declaration retains its raw value. */
+/** A hidden but active declaration retains its source value. */
 const visiblePreservesValueScenario = {
   name: 'controls.visible-preserves-value',
   schema: { type: 'object', properties: {
@@ -61,7 +61,7 @@ const visiblePreservesValueScenario = {
   } },
   initialValue: { secret: 'held' },
   steps: [{ action: 'setValue', path: '/secret', value: 'edited',
-    expect: { states: { '/secret': { visible: false, enabled: false } },
+    expect: { states: { '/secret': { isVisible: false, isPresent: false } },
       outputValue: { secret: 'edited' } } }],
 } satisfies FormScenario;
 

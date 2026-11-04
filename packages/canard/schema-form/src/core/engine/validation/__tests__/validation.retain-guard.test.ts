@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../blueprint';
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { readFieldNodeGuard } from '../utils/guard/readFieldNodeGuard';
 import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
 import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
@@ -28,7 +28,7 @@ describe('validator lifetime and guard read', () => {
     expect(
       readFieldNodeGuard({ blueprint: analysis, validator }, gate)?.('ready'),
     ).toBe(true);
-    expect(compile).toHaveBeenCalledTimes(1);
+    expect(compile).not.toHaveBeenCalled();
     expect(compileGuard).toHaveBeenCalledTimes(1);
     releaseValidationRoot(validator, authored);
     expect(release).not.toHaveBeenCalled();

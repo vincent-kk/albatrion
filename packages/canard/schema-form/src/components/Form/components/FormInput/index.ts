@@ -1,3 +1,3 @@
 export { FormInput } from './FormInput';
 
-export type { FormInputProps } from './type';
+export type { RolledFormInputProps } from './types/props';

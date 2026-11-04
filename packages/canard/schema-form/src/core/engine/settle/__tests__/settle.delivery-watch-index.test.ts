@@ -7,10 +7,10 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { changeFieldNodeContext } from '../utils/context/changeFieldNodeContext';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-delivery
+// filid:contract settle-delivery-watch-index
 describe('44C-01 EVENT-064 watch delivery candidates', () => {
   it('skips all 1,000 unrelated watch reads, then delivers every anchor watcher', () => {
     const properties: Record<string, BlueprintSchema> = {
@@ -177,12 +177,12 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    const source = root.structure!.source;
+    const instance = root.structure!['source'];
     const watcher = root.structure!.watcher;
-    source.interactionState = { [FieldNodeState.Touched]: true };
+    instance.interactionState = { [FieldNodeState.Touched]: true };
     const before = root.runtime.commitNumber;
 
-    writeFieldNode(source, 'same', 'input', WriteOption.Overwrite);
+    writeFieldNode(instance, 'same', 'input', WriteOption.Overwrite);
     expect(root.runtime.commitNumber).toBe((before ?? 0) + 1);
     expect(
       (watcher.pendingDelivery?.type ?? 0) &

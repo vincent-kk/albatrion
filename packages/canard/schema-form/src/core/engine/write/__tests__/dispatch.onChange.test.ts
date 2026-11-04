@@ -38,10 +38,11 @@ describe('dispatcher onChange', () => {
     const seen: unknown[] = [];
     runtime.onChange = (value) => seen.push(value);
     runtime.validationMode = ValidationMode.OnChange;
-    const before = runtime.validationStamp ?? 0;
+    const stampBefore = runtime.validationStamp ?? 0;
     dispatchResetForm(root, 'same');
+    expect(runtime.validationLoadStamp).toBe(stampBefore + 1);
     expect(seen).toEqual([]);
-    expect(runtime.validationStamp).toBe(before + 1);
+    expect(runtime.validationStamp! - runtime.validationLoadStamp!).toBe(1);
     expect(runtime.validationPendingTargets?.has(root)).toBe(true);
   });
 

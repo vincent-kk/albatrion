@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { blueprint } from '../blueprint';
 import { getItemEntry } from '../utils/itemEntry/getItemEntry';
 
-// filid:contract array-limits-and-slots
+// filid:contract array-slots
 describe('getItemEntry', () => {
   it('NODE-052 chooses prefixItems before items by slot', () => {
     const template = blueprint({

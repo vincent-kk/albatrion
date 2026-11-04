@@ -19,7 +19,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `controls`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `resetInteraction`, `derived`, `discriminator`, expression syntax, `oneOf`, `anyOf`, `allOf`, `if/then/else`, conditional fields, `context`, `@` references | `knowledge/expressions.md`           |
 | `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `outputValue`, performance, slow, large forms, `virtualization`                      | `knowledge/arrays-and-scale.md`      |
-| `validate`, `ValidationMode`, `errorMessages`, `formatError`, `ShowError`, `showError`, `NodeState`, `dirty`, `touched`, `globalState`, `onStateChange`, `clearState`, `useChildFieldErrors`                                  | `knowledge/validation-and-state.md`  |
+| `validate`, `ValidationMode`, `errorMessages`, `formatError`, `ShowError`, `showError`, `NodeState`, `edited`, `touched`, `globalState`, `onStateChange`, `clearState`, `useChildFieldErrors`                                  | `knowledge/validation-and-state.md`  |
 | `FormHandle`, `getValue`, `setValue`, `reset`, `submit`, `focus`, `getAttachedFilesMap`, `Form.Render`, `Form.Input`, `Form.Label`, custom layout                                                                             | `knowledge/imperative-and-layout.md` |
 | `FieldInput`, `fieldInputDefinitions`, `fieldInputMap`, `inputType`, custom input, `ChildFields`                                                                                                                              | `knowledge/field-input.md`           |
 | JSONPointer paths, `..`, `.`, `*`, `~0`/`~1` escaping, `find`, `findNodes`                                                                                                                                                    | `knowledge/jsonpointer.md`           |
@@ -76,3 +76,7 @@ Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/
 | Quick reference (Korean, table-first) | `docs/QUICK_REFERENCE.md`                       |
 | API shapes (authoritative)            | `dist/index.d.ts`                               |
 | Storybook examples                    | `stories/*.stories.tsx` (repository)            |
+
+`controls.discriminator` requires an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`; other host types are TypeScript errors.
+
+For runtime classification (C1–C13), read `knowledge/expressions.md`: union-less declarations and known non-object hosts warn and ignore the key; anyOf overlap, host-declared tag unions, and independent keys per declaration are allowed. Mismatch errors retain only missing, kind, and overlap reasons. Unreachable kind/empty branches warn without lifting their tag declarations. Discriminator diagnostics use `{ propertyName, reason }`, without values; terminal objects keep mismatch errors and omit unreachable warnings.

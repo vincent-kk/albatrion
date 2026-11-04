@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FormErrorCode } from '../../../../errors';
+import { FormErrorCode, FormWarningCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
 
 // filid:contract discriminator
@@ -144,48 +144,38 @@ describe('blueprint explicit discriminators', () => {
       }),
     );
   });
-  it('rejects declarations of one node that name different discriminator keys', () => {
+  it('accepts declarations of one node that name different discriminator keys', () => {
     const collect = vi.fn();
-    expect(() =>
-      blueprint(
-        {
-          type: 'object',
-          properties: {
-            a: {
-              type: 'object',
-              controls: { discriminator: 'k' },
-              oneOf: [{ properties: { k: { type: 'string', const: 'x' } } }],
-            },
+    const result = blueprint(
+      {
+        type: 'object',
+        properties: {
+          a: {
+            type: 'object',
+            controls: { discriminator: 'k' },
+            oneOf: [{ properties: { k: { type: 'string', const: 'x' } } }],
           },
-          oneOf: [
-            {
-              properties: {
-                a: {
-                  type: 'object',
-                  controls: { discriminator: 'j' },
-                  oneOf: [
-                    { properties: { j: { type: 'string', const: 'y' } } },
-                  ],
-                },
+        },
+        oneOf: [
+          {
+            properties: {
+              a: {
+                type: 'object',
+                controls: { discriminator: 'j' },
+                oneOf: [{ properties: { j: { type: 'string', const: 'y' } } }],
               },
             },
-          ],
-        },
-        { collect },
-      ),
-    ).toThrow(
-      expect.objectContaining({
-        code: FormErrorCode.DiscriminatorMismatch,
-      }),
+          },
+        ],
+      },
+      { collect },
     );
-    expect(collect).toHaveBeenCalledWith({
-      code: FormErrorCode.DiscriminatorMismatch,
-      level: 'error',
-      schemaPath: '#/oneOf/0/properties/a',
-      details: { propertyName: 'k', other: 'j', reason: 'key' },
-    });
+    expect(
+      result.root.childEntries[0].node.childEntries.map(({ name }) => name),
+    ).toEqual(['k', 'j']);
+    expect(collect).not.toHaveBeenCalled();
   });
-  it('rejects different tag kinds and empty static tag intersections', () => {
+  it('rejects different tag kinds without a host tag type', () => {
     expect(() =>
       blueprint({
         ...tagged,
@@ -199,21 +189,33 @@ describe('blueprint explicit discriminators', () => {
         code: FormErrorCode.DiscriminatorMismatch,
       }),
     );
-    expect(() =>
-      blueprint({
+  });
+  it('warns for an empty static tag intersection and keeps its branch gated', () => {
+    const collect = vi.fn();
+    const root = blueprint(
+      {
         ...tagged,
         oneOf: [
           {
             properties: {
               kind: { type: 'string', enum: ['a'], allOf: [{ enum: ['b'] }] },
+              value: { type: 'string' },
             },
           },
         ],
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: FormErrorCode.EmptyEnumIntersection,
-      }),
-    );
+      },
+      { collect },
+    ).root;
+    expect(root.childEntries.map(({ name }) => name)).toEqual(['value']);
+    expect(root.childEntries[0].node.declarations[0].gates[0]).toMatchObject({
+      kind: 'discriminator',
+      condition: { propertyName: 'kind', values: [] },
+    });
+    expect(collect).toHaveBeenCalledWith({
+      code: FormWarningCode.DiscriminatorBranchUnreachable,
+      level: 'warning',
+      schemaPath: '#/oneOf/0',
+      details: { propertyName: 'kind', reason: 'empty' },
+    });
   });
 });

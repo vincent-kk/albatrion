@@ -49,3 +49,7 @@ export const JSONPointer = {
 } as const;
 
 export type JSONPointer = (typeof JSONPointer)[keyof typeof JSONPointer];
+
+/** Encoded fragment-root prefix shared by the internal pointer parsers. */
+export const FragmentPrefix =
+  `${JSONPointer.Fragment}${JSONPointer.Separator}` as const;

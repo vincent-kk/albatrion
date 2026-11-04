@@ -76,7 +76,7 @@ it.each([
   },
 );
 
-it('REACT-009 REACT-011 batches input write, error clear and dirty without refreshing itself', () => {
+it('REACT-009 REACT-011 batches input write, error clear and edited without refreshing itself', () => {
   let props: FieldInputProps;
   const Input = (input: FieldInputProps) => {
     props = input;

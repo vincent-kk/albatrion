@@ -14,7 +14,7 @@
 ### Always do
 
 - branch는 현재 형상의 자식만 합성하고, terminal은 자식 없이 원본 참조를 유지한다(NODE-043, VALUE-002).
-- 키 순서는 청사진 전순서와 `propertyOrder`·`undeclaredValues`의 계약을 지킨다(SETTLE-042).
+- 키 순서는 청사진 전순서와 `propertyOrder`·`extras`의 계약을 지킨다(SETTLE-042).
 
 ### Ask first
 

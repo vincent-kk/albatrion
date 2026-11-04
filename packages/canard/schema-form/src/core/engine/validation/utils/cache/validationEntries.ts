@@ -1,4 +1,4 @@
-import type { Validator } from '../../type';
+import type { Validator } from '../../types/validator';
 import type { ValidationEntry } from './readValidationEntry';
 
 /** Validator-owned cache rows, keyed by the original authored root. */

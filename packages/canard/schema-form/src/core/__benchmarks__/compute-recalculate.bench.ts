@@ -20,10 +20,10 @@ function createRecalculation(schema: AuthoredSchema) {
       },
     },
   });
-  const source = root.find('/a')!;
+  const instance = root.find('/a')!;
   let value = 1;
   return () => {
-    source.setValue((value = value === 1 ? 2 : 1));
+    instance.setValue((value = value === 1 ? 2 : 1));
   };
 }
 

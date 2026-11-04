@@ -70,7 +70,7 @@ function describeExport(
   return `${exported.getName()}\t${kind}\t${typeText}`;
 }
 
-it('preserves the 94-name package public surface', () => {
+it('preserves the 97-name package public surface', () => {
   const entryPath = join(packageRoot, 'src/index.ts');
   const program = ts.createProgram([entryPath], readCompilerOptions());
   const checker = program.getTypeChecker();
@@ -82,6 +82,32 @@ it('preserves the 94-name package public surface', () => {
     .getExportsOfModule(module)
     .map((symbol) => describeExport(symbol, checker, entry))
     .sort();
-  expect(lines).toHaveLength(94);
+  expect(lines).toHaveLength(97);
   expect(lines.join('\n')).toMatchSnapshot();
+}, 60000);
+
+it('SURFACE-063 adds rebuild with the reset option contract to FormHandle', () => {
+  const entryPath = join(packageRoot, 'src/index.ts');
+  const program = ts.createProgram([entryPath], readCompilerOptions());
+  const checker = program.getTypeChecker();
+  const entry = program.getSourceFile(entryPath)!;
+  const module = checker.getSymbolAtLocation(entry)!;
+  let symbol = checker
+    .getExportsOfModule(module)
+    .find((value) => value.name === 'FormHandle')!;
+  while (symbol.flags & ts.SymbolFlags.Alias)
+    symbol = checker.getAliasedSymbol(symbol);
+  const handle = checker.getDeclaredTypeOfSymbol(symbol);
+  const properties = checker.getPropertiesOfType(handle);
+  const reset = properties.find((value) => value.name === 'reset')!;
+  const rebuild = properties.find((value) => value.name === 'rebuild');
+  expect(rebuild).toBeDefined();
+  const describe = (value: ts.Symbol) =>
+    checker.typeToString(
+      checker.getTypeOfSymbolAtLocation(value, value.valueDeclaration!),
+      undefined,
+      ts.TypeFormatFlags.NoTruncation,
+    );
+  expect(describe(rebuild!)).toBe(describe(reset));
+  expect(properties.map((value) => value.name).sort()).toMatchSnapshot();
 }, 60000);

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
+import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 
 describe('validator cache', () => {
@@ -16,6 +17,11 @@ describe('validator cache', () => {
     const entry = readValidationEntry(first, root);
     expect(readValidationEntry(first, root)).toBe(entry);
     expect(entry.copy).not.toBe(root);
+    expect(compile).not.toHaveBeenCalled();
+    expect(entry.compiled).toBe(false);
+    compileValidationEntry(first, root, entry);
+    compileValidationEntry(first, root, entry);
+    expect(entry.compiled).toBe(true);
     expect(compile).toHaveBeenCalledTimes(1);
     expect(compile).toHaveBeenCalledWith(entry.copy);
     expect(readValidationEntry(first, { ...root })).not.toBe(entry);

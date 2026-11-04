@@ -71,8 +71,8 @@ it('LANDING-157 LANDING-158 public state and event names have no old aliases', a
   form = await renderForm({ type: 'string' });
   const events: number[] = [];
   const stop = form.handle.node!.subscribe(({ type }) => events.push(type));
-  await act(async () => form.handle.setState({ [FieldNodeState.Dirty]: true }));
-  expect(form.handle.getState()[FieldNodeState.Dirty]).toBe(true);
+  await act(async () => form.handle.setState({ [FieldNodeState.Edited]: true }));
+  expect(form.handle.getState()[FieldNodeState.Edited]).toBe(true);
   expect(events.some((type) => type & FieldNodeEventType.UpdateState)).toBe(
     true,
   );

@@ -1,5 +1,7 @@
 import type { ErrorObject } from 'ajv';
 
+import type { Dictionary } from '@aileron/declare';
+
 /**
  * Resolves an authored subschema from an AJV fragment path.
  * @param root - Authored root supplied to error transformation.
@@ -12,7 +14,7 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
   let current = root;
   for (const part of fragment.slice(1).split('/')) {
     if (typeof current !== 'object' || current === null) return undefined;
-    current = (current as Record<string, unknown>)[part.replace(/~1/g, '/').replace(/~0/g, '~')];
+    current = (current as Dictionary<unknown>)[part.replace(/~1/g, '/').replace(/~0/g, '~')];
   }
   return current;
 };
@@ -35,7 +37,7 @@ export const getRejectedKey = (error: ErrorObject, root: unknown): string | unde
   if (error.keyword !== 'not') return undefined;
   const schema = schemaAtPath(root, error.schemaPath);
   if (typeof schema !== 'object' || schema === null) return undefined;
-  const required = (schema as Record<string, unknown>).required;
+  const required = (schema as Dictionary<unknown>).required;
   return Array.isArray(required) && required.length === 1 && typeof required[0] === 'string'
     ? required[0]
     : undefined;

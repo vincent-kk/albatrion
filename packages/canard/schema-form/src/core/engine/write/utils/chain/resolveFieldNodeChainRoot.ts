@@ -16,13 +16,18 @@ const isFieldNodeChainRoot = <Self extends FieldNodeRecord<Self>>(
 /**
  * Follow a rebuilt root to the current owner of an open entry.
  * @param root - Root on which the public call began
+ * @param passed - Optional set that receives every runtime on the way, `root`'s and the result's included
  * @returns Most recent replacement root, or the original when unchanged
  */
 export const resolveFieldNodeChainRoot = <Self extends FieldNodeRecord<Self>>(
   root: Self,
+  passed?: Set<Self['runtime']>,
 ): Self => {
   let active = root;
-  while (isFieldNodeChainRoot<Self>(active.runtime.adoptedRoot))
+  passed?.add(active.runtime);
+  while (isFieldNodeChainRoot<Self>(active.runtime.adoptedRoot)) {
     active = active.runtime.adoptedRoot;
+    passed?.add(active.runtime);
+  }
   return active;
 };

@@ -4,14 +4,14 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
-import type { FormErrorProps } from './type';
+import type { FormErrorProps } from './types/props';
 
 /**
  * Renders validation error messages for form fields.
  *
  * Displays field-specific validation errors with customizable styling.
  * Error visibility is controlled by the form's `showError` prop and field state
- * (touched, dirty, etc.). Automatically handles error formatting and display logic.
+ * (touched, edited, etc.). Automatically handles error formatting and display logic.
  *
  * @example
  * Basic error display:

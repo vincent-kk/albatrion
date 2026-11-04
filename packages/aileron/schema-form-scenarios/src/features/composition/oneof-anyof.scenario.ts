@@ -18,7 +18,7 @@ const planSchema = {
 /** The shared anyOf field lives while either add-on is on and returns after the outer branch round trip. */
 export const oneOfAnyOfScenario: FormScenario = {
   name: 'composition.oneof-with-anyof-addons',
-  description: 'LANDING-032 active anyOf fragments share one node for a field they both declare; LANDING-018 and LANDING-032 raw values survive the outer oneOf round trip; FRAGMENT-021 nesting is recursive.',
+  description: 'LANDING-032 active anyOf fragments share one node for a field they both declare; LANDING-018 and LANDING-032 source values survive the outer oneOf round trip; FRAGMENT-021 nesting is recursive.',
   schema: planSchema,
   initialValue: { plan: 'paid', addons: { storage: true, support: false } },
   steps: [

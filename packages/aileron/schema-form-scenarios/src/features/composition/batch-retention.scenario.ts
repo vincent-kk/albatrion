@@ -8,11 +8,11 @@ const noteSchema = {
   then: { properties: { vat: { type: 'string' } } },
 };
 
-/** Multi-write batches keep retained inactive raw values: replacement is bounded to the paths the batch wrote. */
+/** Multi-write batches keep retained inactive source values: replacement is bounded to the paths the batch wrote. */
 export const batchRetentionScenarios: readonly FormScenario[] = [
   {
-    name: 'composition.batch-keeps-inactive-raw',
-    description: 'LANDING-018 and LANDING-032 keep inactive raw values and 26C-10 clears them only under a replaced path, so a two-write batch on an unrelated field keeps the hidden /vat value and reopening the branch restores it.',
+    name: 'composition.batch-keeps-inactive-source',
+    description: 'LANDING-018 and LANDING-032 keep inactive source values and 26C-10 clears them only under a replaced path, so a two-write batch on an unrelated field keeps the hidden /vat value and reopening the branch restores it.',
     schema: noteSchema,
     initialValue: { company: true, vat: 'VAT-9' },
     steps: [

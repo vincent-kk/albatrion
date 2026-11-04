@@ -26,10 +26,10 @@ API.
 | `onChange`               | `(value: Value) => void`                               | —                        | Called when the form value changes                                                                                                            |
 | `onSubmit`               | `(value: Value) => Promise<void> \| void`              | —                        | Called by `submit()` after validation passes                                                                                                  |
 | `onValidate`             | `(errors: FieldNode['globalErrors']) => void`          | —                        | Called with the form error list when a validation result or the external error list changes it; a result equal to the previous one is skipped |
-| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | Called when the form's interaction flags (dirty, touched) change                                                                              |
+| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | Called when the form's interaction flags (edited, touched) change                                                                              |
 | `onError`                | `(record: FormErrorRecord) => void`                    | —                        | Called with each error record of this form instance, including construction and render failures                                               |
 | `onDiagnosticsChange`    | `(diagnostics: FieldNode['diagnostics']) => void`      | —                        | Called when the root diagnostics change after preparation                                                                                     |
-| `showError`              | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                                                                                             |
+| `showError`              | `boolean \| ShowError`                                 | `ShowError.EditedTouched` | When to display validation errors                                                                                                             |
 | `validationMode`         | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                                                                                                          |
 | `validatorFactory`       | `ValidatorFactory`                                     | plugin validator         | Validator object (`compile` and `compileGuard`); Form prop, then `FormProvider`, then plugin                                                  |
 | `readOnly`               | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                                                                                                |
@@ -58,9 +58,9 @@ import { ShowError } from '@canard/schema-form';
 
 ShowError.Always; // always show (same as true)
 ShowError.Never; // never show (same as false)
-ShowError.Dirty; // show when node.state[FieldNodeState.Dirty] is true
+ShowError.Edited; // show when node.state[FieldNodeState.Edited] is true
 ShowError.Touched; // show when node.state[FieldNodeState.Touched] is true
-ShowError.DirtyTouched; // show when dirty AND touched (default)
+ShowError.EditedTouched; // show when edited AND touched (default)
 // A node's own node.state[FieldNodeState.ErrorVisible] overrides this policy.
 ```
 
@@ -500,8 +500,8 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   required: boolean;
   node: Node;
   type: Node['type']; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'
-  typeMismatch: Node['typeMismatch']; // stored value mismatches the accepted kinds
+  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
+  misfit: Node['isMisfit']; // stored value mismatches the accepted kinds
   name: Node['name'];
   path: Node['path'];
   nullable: Node['nullable'];
@@ -545,9 +545,9 @@ interface FieldNode {
     | 'virtual'
     | 'union';
   readonly strategy: 'branch' | 'terminal'; // branch nodes own child nodes
-  readonly schemaType: string | readonly string[]; // authored kind(s), including 'integer'
+  readonly schemaType: string | readonly string[] | undefined; // authored kind(s), including 'integer'; undefined on a virtual node
   readonly jsonSchema: Readonly<Record<string, unknown>> | boolean;
-  readonly required: boolean;
+  readonly isRequired: boolean;
   readonly nullable: boolean;
 
   // Tree structure
@@ -568,18 +568,21 @@ interface FieldNode {
   resetSubtree(option?: SetValueOption): void;
 
   // Computed properties
-  readonly active: boolean; // false while a condition excludes the field
-  readonly visible: boolean;
-  readonly enabled: boolean; // active and visible
-  readonly readOnly: boolean;
-  readonly disabled: boolean;
+  readonly isActive: boolean; // false while a condition excludes the field
+  readonly isVisible: boolean;
+  readonly isPresent: boolean; // isActive and isVisible
+  readonly isReadOnly: boolean;
+  readonly isDisabled: boolean;
   readonly watchValues: readonly unknown[];
   readonly context: Readonly<Record<string, unknown>>;
-  readonly typeMismatch: boolean;
+  readonly isMisfit: boolean; // stored value mismatches the accepted kinds
+  readonly isEdited: boolean; // user input edited the field; re-read on UpdateState
+  readonly isTouched: boolean; // blur flag; re-read on UpdateState
+  readonly isDivergent: boolean; // root output versus last root load at this path; re-read on root UpdateValue/UpdateState/RequestRefresh and own UpdatePath
 
   // State
   state: {
-    [FieldNodeState.Dirty]?: boolean; // set on every user input write
+    [FieldNodeState.Edited]?: boolean; // set on every user input write
     [FieldNodeState.Touched]?: boolean; // set on blur
     [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
     [key: string]: any; // your own flags
@@ -599,6 +602,7 @@ interface FieldNode {
   // Navigation
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void; // self, then preorder; false skips that node's descendants
 
   // Events and requests
   subscribe(listener: (event: { type: number }) => void): () => void; // event.type holds FieldNodeEventType bits
@@ -627,6 +631,26 @@ node.setState({ [FieldNodeState.ErrorVisible]: true });
 unsubscribe();
 ```
 
+`visitSubtree` calls the visitor on the node itself, then on its descendants in
+preorder with siblings in `children` order. Returning `false` skips that node's
+descendants only. From a node in the form only the current shape is visited;
+from a node that left the form, the subtree that left with it. A node reachable
+twice is visited once, and nodes created during the walk are not guaranteed to
+be visited. Value writes during the walk are applied once when it ends, so reads
+during the walk return the values from before it; state and external-error
+changes apply at once and their events wait for the end; inside an enclosing
+`batch` everything waits for that batch's end; a form `reset` or a
+`resetSubtree()` still takes effect at once. If the visitor throws outside a
+listener, the writes it made are applied and the error is rethrown. A write to a node that left the form never changes a field in
+the form. `FormHandle` has no `visitSubtree`; call it on `formRef.current?.node`.
+
+```ts
+node.visitSubtree((child) => {
+  if (child.path === '/profile/locked') return false; // skip its descendants
+  if (child.type === 'string') child.setValue(''); // applied once at the end
+});
+```
+
 ## `ArrayNode` Methods
 
 ```ts
@@ -636,6 +660,7 @@ interface ArrayNodeMethods<Item> {
   pop(): Item | undefined; // remove the last item; returns its value
   update(index: number, value: Item): Item | undefined; // replace one position
   remove(index: number): Item | undefined; // remove one position; returns its value
+  insert(index: number, value?: Item): number; // insert at a position in [0, length]; returns the new length
   clear(): void; // remove every item
 }
 ```
@@ -750,7 +775,7 @@ onValidate?:            (errors: FieldNode['globalErrors']) => void
 onStateChange?:         (state: FieldNode['globalState']) => void
 onError?:               (record: FormErrorRecord) => void
 onDiagnosticsChange?:   (diagnostics: FieldNode['diagnostics']) => void
-showError?:             boolean | ShowError              // default: DirtyTouched
+showError?:             boolean | ShowError              // default: EditedTouched
 validationMode?:        ValidationMode                   // default: OnChange|OnRequest
 validatorFactory?:      ValidatorFactory
 readOnly?:              boolean
@@ -794,11 +819,12 @@ getAttachedFilesMap(): AttachedFilesMap
 node.value / node.outputValue / node.defaultValue
 node.setValue(value, option?)
 node.errors / node.globalErrors / node.setExternalErrors(list) / node.clearExternalErrors()
-node.state[FieldNodeState.Dirty | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
-node.active / node.visible / node.enabled / node.readOnly / node.disabled
-node.required / node.nullable / node.type / node.strategy / node.schemaType
+node.state[FieldNodeState.Edited | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
+node.isActive / node.isVisible / node.isPresent / node.isReadOnly / node.isDisabled
+node.isRequired / node.nullable / node.type / node.strategy / node.schemaType
 node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
 node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
+node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
 node.validate() → Promise<readonly ValidationIssue[]>
 node.request(FieldNodeRequestType.Focus | Select | Refresh | Remount)
 node.subscribe(listener) → unsubscribe   // event.type & FieldNodeEventType.X
@@ -807,7 +833,7 @@ node.revision(mask?) / node.batch(fn)
 // ── ArrayNode additional ────────────────────────────────────────
 arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
 arrayNode.push(value?) → length / arrayNode.pop() / arrayNode.update(index, value)
-arrayNode.remove(index) / arrayNode.clear()
+arrayNode.remove(index) / arrayNode.insert(index, value?) → length / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
 useFormSubmit(ref)                              → { submit, pending }
@@ -818,3 +844,23 @@ useChildFieldErrors(node, disabled?)            → { errorMessage, showError, f
 ```
 
 </ForAI>
+
+### Node boolean properties and load divergence
+
+Node boolean properties use `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled` and `isMisfit`. `isPresent` is `isActive && isVisible`, independent of `isDisabled`. React props, schema keys and `controls` keys keep their names.
+
+```ts
+node.isEdited;    // truthiness of state[FieldNodeState.Edited]
+node.isTouched;   // truthiness of state[FieldNodeState.Touched]
+node.isDivergent; // current form output differs from the last root load at node.path
+```
+
+`isEdited` and `isTouched` are read-only booleans; re-read them on `FieldNodeEventType.UpdateState`. Only input writes set Edited. `setValue`, array verbs and automatic fills do not. Reset, `clearState` and `controls.resetInteraction` clear the interaction flags. Detached references keep their last-commit interaction state.
+
+`isDivergent` compares the current root output and the last committed root-load output at the same node path. The first mount, form reset with a value or explicit undefined, rebuild, validator change and `root.resetSubtree()` take a new baseline after the output is final. Before the first load commits it reads false. Changing the Form `defaultValue` prop alone, ordinary writes and a child `resetSubtree()` do not move that baseline. A load that throws before commit keeps the preceding baseline; a failure reported after commit establishes the degraded output as the new baseline.
+
+Reverting to the baseline reads false. Hidden fields remain in the output; array holes use their actual output contribution. Items compare by position: a moved or added item can read true, while an added item matching the value originally at that position reads false. Child reset follows its load source by item identity, so after array movement, or with dependencies outside its subtree, the restored subtree can remain divergent. Detached nodes read false because they no longer contribute to the output.
+
+The comparison uses the engine's ordered `sameValue`: undeclared object keys restored in another order can still read true. A read during settlement can be transient, like `value` and `outputValue`. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
+
+Writes perform no divergence reads or comparisons. A root load allocates one baseline box retaining its output reference. Each getter read walks two cached paths, O(depth), and compares only when either path value changes by `Object.is`; repeated unchanged reads call `sameValue` zero times, including NaN. A first comparison skips unchanged references. The baseline retains replaced parts until the next root load, and each node memo retains only its own two path values and result.

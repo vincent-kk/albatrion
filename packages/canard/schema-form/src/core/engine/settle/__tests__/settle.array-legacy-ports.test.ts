@@ -5,6 +5,8 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
+import { readRetainedSlotSource } from './fixtures/readRetainedSlotSource';
+
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
   if (!isTestFieldNode(tree.root))
@@ -13,7 +15,7 @@ const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   return { ...tree, root };
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-legacy-ports
 describe('array legacy contract ports', () => {
   it('VALUE-034 exposes an empty nested array on load before child writes', () => {
     const { root } = makeRecordTree(
@@ -170,13 +172,13 @@ describe('array legacy contract ports', () => {
       items: { type: 'string' },
     });
     expect((root as ArrayNode).push()).toBe(1);
-    expect(root.children?.map((item) => item.raw)).toEqual([undefined]);
+    expect(root.children?.map((item) => item.source)).toEqual([undefined]);
     expect(root.value).toEqual([null]);
     expect(root.outputValue).toEqual([null]);
   });
 
-  it('GOAL-074 restores omitTrailing slots from raw after branch reactivation', () => {
-    const { root, runtime } = makeRecordTree({
+  it('GOAL-074 restores omitTrailing slots from source after branch reactivation', () => {
+    const { root } = makeRecordTree({
       type: 'object',
       properties: {
         active: { type: 'boolean' },
@@ -191,17 +193,13 @@ describe('array legacy contract ports', () => {
     root.setValue({ active: true, tail: ['a', null, null] });
     expect(root.outputValue).toEqual({ active: true, tail: ['a'] });
     root.find('/active')?.setValue(false);
-    const latent: Map<string, { raw?: unknown }> = Reflect.get(
-      runtime,
-      'latentRaw',
-    );
-    expect(latent.get(JSON.stringify(['/tail', 'array']))?.raw).toEqual([
+    expect(readRetainedSlotSource(root, '/tail', 'array')).toEqual([
       'a',
       null,
       null,
     ]);
     root.find('/active')?.setValue(true);
-    expect(root.find('/tail')?.children?.map((item) => item.raw)).toEqual([
+    expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
       null,
       null,

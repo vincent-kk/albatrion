@@ -32,6 +32,7 @@ const makeFeatureTree = (features: boolean) => {
 
 describe('65C-02 feature visits intersect static declarations and changed scope', () => {
   it('bounds state-key visits on whole writes and skips unrelated leaf writes', () => {
+    // Shipping visit counts exclude the independent slot-verification tree.
     const { root, value } = makeFeatureTree(true);
     const calculate = stateKeys.calculateStateKeys;
     let visits = 0;
@@ -45,19 +46,20 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
     try {
       root.setValue(value(1));
       expect(visits, `state-key whole-write visits: ${visits}`).toBe(1);
-      expect((root.find('/controlled') as NumberNode).disabled).toBe(true);
+      expect((root.find('/controlled') as NumberNode).isDisabled).toBe(true);
       visits = 0;
       (root.find('/f1') as NumberNode).setValue(2);
       expect(visits, `state-key unrelated-write visits: ${visits}`).toBe(0);
       (root.find('/f0') as NumberNode).setValue(0);
       expect(visits).toBe(1);
-      expect((root.find('/controlled') as NumberNode).disabled).toBe(false);
+      expect((root.find('/controlled') as NumberNode).isDisabled).toBe(false);
     } finally {
       spy.mockRestore();
     }
   });
 
   it('bounds candidate watch reads on whole writes and skips unrelated leaves', () => {
+    // Shipping watch-read counts exclude the independent slot-verification tree.
     const { root, value } = makeFeatureTree(true);
     const spy = vi.spyOn(watchValues, 'readFieldNodeWatchValues');
     try {
@@ -77,6 +79,7 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
   });
 
   it('visits neither scoped pass when the blueprint declares neither feature', () => {
+    // Shipping scoped-pass counts exclude independent verification observations.
     const { root, value } = makeFeatureTree(false);
     const stateSpy = vi.spyOn(stateKeys, 'calculateStateKeys');
     const watchSpy = vi.spyOn(watchValues, 'readFieldNodeWatchValues');

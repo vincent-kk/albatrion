@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../blueprint';
 
-// filid:contract array-limits-and-slots
+// filid:contract array-slots
 describe('legacy tuple additionalItems', () => {
   it('36C-02 compiles a schema additionalItems as the tail item template', () => {
     const node = blueprint({

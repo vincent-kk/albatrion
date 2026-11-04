@@ -30,12 +30,12 @@ export interface ExternalFormContextProviderProps {
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show errors
    *   - `false`: Never show errors
-   *   - `ShowError.Dirty`: Show errors when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.DirtyTouched`: Show errors when both Dirty and Touched states are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: boolean | ShowError;
   /**
@@ -158,7 +158,7 @@ export interface ExternalFormContextProviderProps {
  *
  *   // Error handling
  *   formatError={customFormatError}
- *   showError={ShowError.DirtyTouched}
+ *   showError={ShowError.EditedTouched}
  *
  *   // Validation
  *   validationMode={ValidationMode.OnChange}

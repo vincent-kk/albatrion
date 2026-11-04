@@ -3,11 +3,125 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotSource';
 
-// filid:contract settle-gates
+// filid:contract settle-gates-conflicts
 describe('shared declaration conflicts', () => {
+  it.each([
+    {
+      label: 'A: reordered union members',
+      left: ['string', 'number'],
+      right: ['number', 'string'],
+      conflict: false,
+      partial: false,
+    },
+    {
+      label: 'B: nullable and non-nullable string',
+      left: ['null', 'string'],
+      right: 'string',
+      conflict: false,
+      partial: false,
+    },
+    {
+      label: 'C: different union folds',
+      left: ['string', 'number'],
+      right: ['string', 'boolean'],
+      conflict: true,
+      partial: false,
+    },
+    {
+      label: 'D: different scalar folds',
+      left: 'number',
+      right: 'string',
+      conflict: true,
+      partial: false,
+    },
+    {
+      label: 'E: identical string folds',
+      left: 'string',
+      right: 'string',
+      conflict: false,
+      partial: false,
+    },
+    {
+      label: 'A with a rejected same-fold declaration',
+      left: ['string', 'number'],
+      right: ['number', 'string'],
+      conflict: false,
+      partial: true,
+    },
+    {
+      label: 'B with a rejected same-fold declaration',
+      left: ['null', 'string'],
+      right: 'string',
+      conflict: false,
+      partial: true,
+    },
+  ])('$label', ({ left, right, conflict, partial }) => {
+    const { root, blueprint } = createTestTree({
+      type: 'object',
+      properties: { enabled: { type: 'boolean' } },
+      allOf: [
+        {
+          controls: { active: './enabled' },
+          properties: { shared: { type: left } },
+        },
+        {
+          controls: { active: './enabled' },
+          properties: { shared: { type: right } },
+        },
+        ...(partial
+          ? [
+              {
+                controls: { active: 'false' },
+                properties: { shared: { type: left } },
+              },
+            ]
+          : []),
+      ],
+    });
+    loadFieldNodeAtMount(root, { enabled: false }, WriteOption.Overwrite);
+    expect(root.structure?.shared).toBeUndefined();
+    expect(root.runtime.diagnostics.status).toBe('stable');
+
+    let caught: unknown;
+    try {
+      writeFieldNode(
+        root.structure!.enabled,
+        true,
+        'callerReplace',
+        WriteOption.Overwrite,
+      );
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(
+      root.children?.filter((child) => child.name === 'shared'),
+    ).toHaveLength(1);
+    expect(root.structure?.shared?.blueprintNode).toBe(
+      blueprint.root.childEntries.find((entry) => entry.name === 'shared')
+        ?.node,
+    );
+    expect(root.structure?.enabled?.source).toBe(true);
+    if (conflict) {
+      expect(caught).toMatchObject({
+        code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
+        message: 'Active declarations conflict at /shared',
+      });
+      expect(root.runtime.diagnostics).toMatchObject({
+        status: 'degraded',
+        cause: 'sharedConflict',
+        commit: 2,
+      });
+    } else {
+      expect(caught).toBeUndefined();
+      expect(root.runtime.diagnostics.status).toBe('stable');
+    }
+  });
+
   it('29C-03 shared conflict commits derive, fill, and unrelated exit clearing', () => {
     const { root } = createTestTree({
       type: 'object',
@@ -57,9 +171,9 @@ describe('shared declaration conflicts', () => {
       WriteOption.Overwrite,
     );
     expect(root.runtime.diagnostics.status).toBe('stable');
-    expect(root.structure?.target?.raw).toBe('A');
+    expect(root.structure?.target?.source).toBe('A');
     expect(root.structure?.filled).toBeUndefined();
-    expect(root.structure?.departed?.raw).toBe('held');
+    expect(root.structure?.departed?.source).toBe('held');
 
     let caught: unknown;
     try {
@@ -76,12 +190,10 @@ describe('shared declaration conflicts', () => {
       code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
     });
     expect(root.structure?.shared?.blueprintNode.kind).toBe('number');
-    expect(root.structure?.target?.raw).toBe('B');
-    expect(root.structure?.filled?.raw).toBe('F');
+    expect(root.structure?.target?.source).toBe('B');
+    expect(root.structure?.filled?.source).toBe('F');
     expect(root.structure?.departed).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/departed', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/departed', 'string')).toBe(false);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'sharedConflict',
@@ -89,7 +201,7 @@ describe('shared declaration conflicts', () => {
     });
   });
 
-  it('26C-05 typeConflict commits the raw source then throws', () => {
+  it('26C-05 typeConflict commits the source then throws', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -106,9 +218,9 @@ describe('shared declaration conflicts', () => {
         WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
-    expect(root.raw).toBeUndefined();
-    expect(root.undeclaredValues).toEqual({ enabled: true });
-    expect(root.structure?.value?.raw).toBe(3);
+    expect(root.source).toBeUndefined();
+    expect(root.extras).toEqual({ enabled: true });
+    expect(root.structure?.value?.source).toBe(3);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'sharedConflict',

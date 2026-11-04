@@ -5,7 +5,9 @@ import { FormWarningCode } from '@/schema-form/errors';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
 import type { ChildField } from '../type';
-import { isDetectableTerminal } from './utils/isDetectableTerminal';
+
+/** A property key made only of digits, as an array index read. */
+const NUMERIC_KEY = /^\d+$/;
 
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
 const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
@@ -14,6 +16,8 @@ const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 const COMMITTED = 1;
 /** Read-detector state after the first observable empty-list access. */
 const ACCESSED = 2;
+/** Mask that clears the accessed bit from the read-detector state. */
+const CLEAR_ACCESSED_MASK = ~ACCESSED;
 
 /**
  * The input's child list and the marker its owning layout effect calls on every commit
@@ -22,11 +26,11 @@ const ACCESSED = 2;
 type TerminalChildren = readonly [children: ChildField[], commit: () => void];
 
 /** Child list and commit marker of an input whose children need no read detector. */
-const UNDETECTED: TerminalChildren = [EMPTY_CHILDREN, () => {}];
-Object.freeze(UNDETECTED);
+const UNDETECTED: TerminalChildren = Object.freeze([EMPTY_CHILDREN, () => {}]);
 
 /**
- * Detect terminal child-list reads using the input's committed layout effect and a post-commit microtask.
+ * Detect terminal child-list reads; deferred warnings retain the read's load scope
+ * and are dropped after the input's own root retires.
  * @param node - Live node whose terminal strategy has no child components.
  * @returns A pair that stays the same object until the node or error reporter changes: a stable
  *          empty list (only development builds of an object or array made terminal by an inline
@@ -45,31 +49,37 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
     ) {
       let readLoad = reporter.load;
       const get = (
-        target: object = EMPTY_CHILDREN,
-        key?: string | symbol,
+        target: object,
+        key: string | symbol,
         receiver?: unknown,
       ): unknown => {
         if (readLoad !== reporter.load) {
           readLoad = reporter.load;
-          accessed.current &= ~ACCESSED;
-        }
-        if (key === undefined) {
-          reporter.report({
-            level: 'warning',
-            code: FormWarningCode.ChildNodeComponentsOnTerminal,
-            message: 'Terminal inputs have no child components',
-            path: node.path,
-          });
-          return;
+          accessed.current &= CLEAR_ACCESSED_MASK;
         }
         if (
           !(accessed.current & ACCESSED) &&
           (key === 'length' ||
             key === Symbol.iterator ||
-            (typeof key === 'string' && /^\d+$/.test(key)))
+            (typeof key === 'string' && NUMERIC_KEY.test(key)))
         ) {
           accessed.current |= ACCESSED;
-          if (accessed.current & COMMITTED) queueMicrotask(get);
+          if (accessed.current & COMMITTED) {
+            const scope = reporter.warningScope;
+            queueMicrotask(() => {
+              if (reporter.root !== node.rootNode) return;
+              reporter.reportInLoad(
+                {
+                  level: 'warning',
+                  origin: 'render',
+                  code: FormWarningCode.ChildNodeComponentsOnTerminal,
+                  message: 'Terminal inputs have no child components',
+                  path: node.path,
+                },
+                scope,
+              );
+            });
+          }
         }
         return Reflect.get(target, key, receiver);
       };
@@ -78,6 +88,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
         if (accessed.current & ACCESSED)
           reporter.report({
             level: 'warning',
+            origin: 'render',
             code: FormWarningCode.ChildNodeComponentsOnTerminal,
             message: 'Terminal inputs have no child components',
             path: node.path,
@@ -91,3 +102,15 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
     return UNDETECTED;
   }, [node, reporter]);
 };
+
+/**
+ * Whether a terminal node's input can mistakenly read ChildFields (round 180).
+ * Only an object or array node can be made terminal by an inline input while a container
+ * input for the same schema would render children; string, number, boolean, null and union
+ * nodes are terminal by nature, so a shared input reading the empty list there is no mistake.
+ * @param node - Live node whose input receives ChildFields
+ * @returns `true` for an object or array node rendered with the terminal strategy
+ */
+const isDetectableTerminal = (node: FieldNode): boolean =>
+  node.strategy === 'terminal' &&
+  (node.type === 'object' || node.type === 'array');

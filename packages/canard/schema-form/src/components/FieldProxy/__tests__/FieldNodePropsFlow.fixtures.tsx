@@ -8,8 +8,7 @@ import {
   FieldNodeEventType,
   SetValueOption,
 } from '@/schema-form/core';
-import type { FieldInputProps } from '@/schema-form/types';
-import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+import type { FieldInputProps, JSONSchema } from '@/schema-form/types';
 
 /**
  * Type for mock node overrides.
@@ -23,11 +22,11 @@ type MockFieldNodeOverrides = {
   jsonSchema?: FieldNode['jsonSchema'];
   value?: any;
   defaultValue?: any;
-  required?: boolean;
-  readOnly?: boolean;
-  disabled?: boolean;
+  isRequired?: boolean;
+  isReadOnly?: boolean;
+  isDisabled?: boolean;
   nullable?: boolean;
-  enabled?: boolean;
+  isPresent?: boolean;
   isRoot?: boolean;
   depth?: number;
   parentNode?: FieldNode | null;
@@ -58,18 +57,18 @@ export const createMockFieldNode = (
     // Schema type properties
     schemaType: 'string',
     type: 'string',
-    jsonSchema: { type: 'string' } as JSONSchemaWithVirtual,
+    jsonSchema: { type: 'string' } as JSONSchema,
 
     // Value properties
     value: '',
     defaultValue: undefined,
 
     // State flags
-    required: false,
-    readOnly: false,
-    disabled: false,
+    isRequired: false,
+    isReadOnly: false,
+    isDisabled: false,
     nullable: false,
-    enabled: true,
+    isPresent: true,
 
     // Tree properties
     isRoot: false,
@@ -278,7 +277,7 @@ export const testScenarios = {
       path: 'user.id',
       name: 'id',
       value: 'user-123',
-      readOnly: true,
+      isReadOnly: true,
     }),
 
   /**
@@ -289,7 +288,7 @@ export const testScenarios = {
       path: 'user.status',
       name: 'status',
       value: 'inactive',
-      disabled: true,
+      isDisabled: true,
     }),
 
   /**
@@ -300,7 +299,7 @@ export const testScenarios = {
       path: 'user.email',
       name: 'email',
       value: '',
-      required: true,
+      isRequired: true,
     }),
 
   /**
@@ -321,7 +320,7 @@ export const testScenarios = {
     }),
 
   /**
-   * Dirty and touched field
+   * Edited and touched field
    */
   dirtyTouchedField: () =>
     createStringNode({
@@ -341,7 +340,7 @@ export const testScenarios = {
     createStringNode({
       path: 'hidden.field',
       name: 'field',
-      enabled: false,
+      isPresent: false,
     }),
 
   /**

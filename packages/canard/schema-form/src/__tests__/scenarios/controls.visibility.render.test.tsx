@@ -5,23 +5,7 @@ import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
-/**
- * GAP-10 — Visibility controls (`controls.visible` / `controls.active`) proxy null-gating.
- *
- * `FieldProxy` renders `null` when `!node.enabled`
- * (`enabled = __scoped__ && active && visible`). A hidden child stays in the
- * parent's child-component list but self-gates to `null`, so its `[data-path]`
- * wrapper is ABSENT from the DOM.
- *
- * The render-vs-tree contract this suite pins:
- *   - `visible:false`  → `[data-path]` absent, but the value is PRESERVED in the
- *     parent value and repopulates the (re-mounted) input when shown again.
- *   - `active:false`   → `[data-path]` absent AND the key is OMITTED from the
- *     parent value (`__processComputedProperties__` strips inactive children).
- *
- * Every case asserts BOTH layers: rendered DOM (`exists` / `value` /
- * `renderedPaths`) AND node tree (`node(path)?.value` / `getValue()`).
- */
+/** Verify isPresent DOM gating: controls.visible preserves values while controls.active removes the field contribution. */
 
 // ---------------------------------------------------------------------------
 // Schemas (mirrored from stories/29.VisibleUsecase + 11.ComputedProps)

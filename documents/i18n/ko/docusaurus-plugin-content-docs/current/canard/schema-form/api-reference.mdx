@@ -25,10 +25,10 @@ import ForAI from '@site/src/components/ForAI';
 | `onChange`               | `(value: Value) => void`                               | —                        | 폼 값이 바뀔 때 호출됩니다                                                                                   |
 | `onSubmit`               | `(value: Value) => Promise<void> \| void`              | —                        | `submit()`이 검증을 통과한 뒤 호출됩니다                                                                     |
 | `onValidate`             | `(errors: FieldNode['globalErrors']) => void`          | —                        | 검증 결과나 외부 오류 목록이 폼 오류 목록을 바꿀 때 그 목록과 함께 호출됩니다. 이전과 같은 결과는 건너뜁니다 |
-| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | 폼의 상호작용 플래그(dirty, touched)가 바뀔 때 호출됩니다                                                    |
+| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | 폼의 상호작용 플래그(edited, touched)가 바뀔 때 호출됩니다                                                    |
 | `onError`                | `(record: FormErrorRecord) => void`                    | —                        | 생성 실패와 렌더 실패를 포함해, 이 폼 인스턴스의 오류 기록마다 호출됩니다                                    |
 | `onDiagnosticsChange`    | `(diagnostics: FieldNode['diagnostics']) => void`      | —                        | 준비가 끝난 뒤 루트 진단이 바뀔 때 호출됩니다                                                                |
-| `showError`              | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | 검증 오류를 표시할 시점                                                                                      |
+| `showError`              | `boolean \| ShowError`                                 | `ShowError.EditedTouched` | 검증 오류를 표시할 시점                                                                                      |
 | `validationMode`         | `ValidationMode`                                       | `OnChange \| OnRequest`  | 검증이 실행되는 시점                                                                                         |
 | `validatorFactory`       | `ValidatorFactory`                                     | 플러그인 validator       | validator 객체(`compile`과 `compileGuard`). Form prop, `FormProvider`, 플러그인 순으로 적용됩니다            |
 | `readOnly`               | `boolean`                                              | `false`                  | 모든 입력에 `readOnly`를 적용합니다                                                                          |
@@ -57,9 +57,9 @@ import { ShowError } from '@canard/schema-form';
 
 ShowError.Always; // always show (same as true)
 ShowError.Never; // never show (same as false)
-ShowError.Dirty; // show when node.state[FieldNodeState.Dirty] is true
+ShowError.Edited; // show when node.state[FieldNodeState.Edited] is true
 ShowError.Touched; // show when node.state[FieldNodeState.Touched] is true
-ShowError.DirtyTouched; // show when dirty AND touched (default)
+ShowError.EditedTouched; // show when edited AND touched (default)
 // A node's own node.state[FieldNodeState.ErrorVisible] overrides this policy.
 ```
 
@@ -494,8 +494,8 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   required: boolean;
   node: Node;
   type: Node['type']; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'
-  typeMismatch: Node['typeMismatch']; // stored value mismatches the accepted kinds
+  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
+  misfit: Node['isMisfit']; // stored value mismatches the accepted kinds
   name: Node['name'];
   path: Node['path'];
   nullable: Node['nullable'];
@@ -539,9 +539,9 @@ interface FieldNode {
     | 'virtual'
     | 'union';
   readonly strategy: 'branch' | 'terminal'; // branch nodes own child nodes
-  readonly schemaType: string | readonly string[]; // authored kind(s), including 'integer'
+  readonly schemaType: string | readonly string[] | undefined; // authored kind(s), including 'integer'; undefined on a virtual node
   readonly jsonSchema: Readonly<Record<string, unknown>> | boolean;
-  readonly required: boolean;
+  readonly isRequired: boolean;
   readonly nullable: boolean;
 
   // Tree structure
@@ -562,18 +562,21 @@ interface FieldNode {
   resetSubtree(option?: SetValueOption): void;
 
   // Computed properties
-  readonly active: boolean; // false while a condition excludes the field
-  readonly visible: boolean;
-  readonly enabled: boolean; // active and visible
-  readonly readOnly: boolean;
-  readonly disabled: boolean;
+  readonly isActive: boolean; // false while a condition excludes the field
+  readonly isVisible: boolean;
+  readonly isPresent: boolean; // isActive and isVisible
+  readonly isReadOnly: boolean;
+  readonly isDisabled: boolean;
   readonly watchValues: readonly unknown[];
   readonly context: Readonly<Record<string, unknown>>;
-  readonly typeMismatch: boolean;
+  readonly isMisfit: boolean; // stored value mismatches the accepted kinds
+  readonly isEdited: boolean; // user input edited the field; re-read on UpdateState
+  readonly isTouched: boolean; // blur flag; re-read on UpdateState
+  readonly isDivergent: boolean; // root output versus last root load at this path; re-read on root UpdateValue/UpdateState/RequestRefresh and own UpdatePath
 
   // State
   state: {
-    [FieldNodeState.Dirty]?: boolean; // set on every user input write
+    [FieldNodeState.Edited]?: boolean; // set on every user input write
     [FieldNodeState.Touched]?: boolean; // set on blur
     [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
     [key: string]: any; // your own flags
@@ -593,6 +596,7 @@ interface FieldNode {
   // Navigation
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void; // self, then preorder; false skips that node's descendants
 
   // Events and requests
   subscribe(listener: (event: { type: number }) => void): () => void; // event.type holds FieldNodeEventType bits
@@ -621,6 +625,25 @@ node.setState({ [FieldNodeState.ErrorVisible]: true });
 unsubscribe();
 ```
 
+`visitSubtree`는 노드 자신에게 먼저 visitor를 부르고, 하위는 전위 순서로, 형제는
+`children` 순서로 부릅니다. `false`를 돌려주면 그 노드의 하위만 건너뜁니다. 폼 안의
+노드에서는 현재 형상만 방문하고, 폼에서 빠진 노드에서는 그 노드와 함께 빠진 하위
+트리를 방문합니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는
+방문된다는 보장이 없습니다. 순회 중의 값 쓰기는 순회가 끝날 때 한 번 반영되므로
+순회 중 읽기는 순회 전의 값을 돌려줍니다. 상태와 외부 오류의 변경은 바로 적용되고
+그 이벤트만 끝까지 기다리며, 바깥 `batch` 안에서는 모두 그 batch의 끝까지
+기다리고, 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다. 리스너 밖에서
+visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 폼에서 빠진 노드에 쓰면 폼 안의 필드는 바뀌지
+않습니다. `FormHandle`에는 `visitSubtree`가 없으므로 `formRef.current?.node`에서
+부르십시오.
+
+```ts
+node.visitSubtree((child) => {
+  if (child.path === '/profile/locked') return false; // skip its descendants
+  if (child.type === 'string') child.setValue(''); // applied once at the end
+});
+```
+
 ## `ArrayNode` Methods
 
 ```ts
@@ -630,6 +653,7 @@ interface ArrayNodeMethods<Item> {
   pop(): Item | undefined; // remove the last item; returns its value
   update(index: number, value: Item): Item | undefined; // replace one position
   remove(index: number): Item | undefined; // remove one position; returns its value
+  insert(index: number, value?: Item): number; // insert at a position in [0, length]; returns the new length
   clear(): void; // remove every item
 }
 ```
@@ -744,7 +768,7 @@ onValidate?:            (errors: FieldNode['globalErrors']) => void
 onStateChange?:         (state: FieldNode['globalState']) => void
 onError?:               (record: FormErrorRecord) => void
 onDiagnosticsChange?:   (diagnostics: FieldNode['diagnostics']) => void
-showError?:             boolean | ShowError              // default: DirtyTouched
+showError?:             boolean | ShowError              // default: EditedTouched
 validationMode?:        ValidationMode                   // default: OnChange|OnRequest
 validatorFactory?:      ValidatorFactory
 readOnly?:              boolean
@@ -788,11 +812,12 @@ getAttachedFilesMap(): AttachedFilesMap
 node.value / node.outputValue / node.defaultValue
 node.setValue(value, option?)
 node.errors / node.globalErrors / node.setExternalErrors(list) / node.clearExternalErrors()
-node.state[FieldNodeState.Dirty | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
-node.active / node.visible / node.enabled / node.readOnly / node.disabled
-node.required / node.nullable / node.type / node.strategy / node.schemaType
+node.state[FieldNodeState.Edited | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
+node.isActive / node.isVisible / node.isPresent / node.isReadOnly / node.isDisabled
+node.isRequired / node.nullable / node.type / node.strategy / node.schemaType
 node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
 node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
+node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
 node.validate() → Promise<readonly ValidationIssue[]>
 node.request(FieldNodeRequestType.Focus | Select | Refresh | Remount)
 node.subscribe(listener) → unsubscribe   // event.type & FieldNodeEventType.X
@@ -801,7 +826,7 @@ node.revision(mask?) / node.batch(fn)
 // ── ArrayNode additional ────────────────────────────────────────
 arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
 arrayNode.push(value?) → length / arrayNode.pop() / arrayNode.update(index, value)
-arrayNode.remove(index) / arrayNode.clear()
+arrayNode.remove(index) / arrayNode.insert(index, value?) → length / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
 useFormSubmit(ref)                              → { submit, pending }
@@ -812,3 +837,23 @@ useChildFieldErrors(node, disabled?)            → { errorMessage, showError, f
 ```
 
 </ForAI>
+
+### 노드 boolean 속성과 로드 기준의 차이
+
+노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
+
+```ts
+node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
+node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
+node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
+```
+
+`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
+
+`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
+
+기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
+
+비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
+
+쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.

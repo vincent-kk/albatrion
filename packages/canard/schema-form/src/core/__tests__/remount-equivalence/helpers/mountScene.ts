@@ -1,0 +1,41 @@
+import { createSceneValidator } from '@/schema-form/__tests__/fixtures/remountEquivalence/createSceneValidator';
+import type { RemountScene } from '@/schema-form/__tests__/fixtures/remountEquivalence/types';
+import { type AuthoredSchema, ValidationMode } from '@/schema-form/core/engine';
+import {
+  type FieldNode,
+  buildFieldNodeTree,
+  mountFieldNode,
+} from '@/schema-form/core/surface';
+
+/**
+ * Compile and mount a wholly independent tree; no blueprint is reused.
+ * @param scene - Authored schema and initial context.
+ * @param value - Value loaded by this tree's mount.
+ * @param context - Current context, shared as immutable data only.
+ * @returns Public root and all reported warnings/errors for that lifetime.
+ */
+export function mountScene(
+  scene: RemountScene,
+  value: unknown,
+  context = scene.context ?? {},
+): {
+  /** Independently mounted public root. */
+  root: FieldNode;
+  /** Diagnostics observed during this tree's lifetime. */
+  records: { code: string; path?: string; level: string }[];
+} {
+  const records: { code: string; path?: string; level: string }[] = [];
+  const root = buildFieldNodeTree({
+    jsonSchema: scene.schema as AuthoredSchema,
+    defaultValue: value,
+    context,
+    validationMode: ValidationMode.OnChange,
+    validator: createSceneValidator(scene),
+    errorReporter: {
+      hasConsumer: () => true,
+      report: (record) => records.push(record),
+    },
+  });
+  mountFieldNode(root);
+  return { root, records };
+}

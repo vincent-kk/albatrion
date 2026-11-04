@@ -1,5 +1,7 @@
 import { maxLite } from '@winglet/common-utils/math';
 
+import type { Optional } from '@aileron/declare';
+
 /**
  * Select the stricter lower bound without modifying either declaration.
  * @param baseMin - Earlier optional minimum
@@ -9,7 +11,7 @@ import { maxLite } from '@winglet/common-utils/math';
 export const intersectMinimum = (
   baseMin?: number,
   sourceMin?: number,
-): number | undefined => {
+): Optional<number> => {
   if (baseMin === undefined) return sourceMin;
   if (sourceMin === undefined) return baseMin;
   return maxLite(baseMin, sourceMin);

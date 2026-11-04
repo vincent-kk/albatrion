@@ -88,7 +88,7 @@ describe('ERROR-017 ERROR-195 59C-01 automatic write source details', () => {
         expect(record.path).toBe(path);
         expect(record.error).toBe(errors[index]);
         expect(record.details).toBe(errors[index].details);
-        expect(record.aggregate).toBe(caught);
+        expect(record).not.toHaveProperty('aggregate');
         if (code === 'INVALID_VIRTUAL_NODE_VALUES')
           expect(record.details).toMatchObject({
             expectedLength: 1,

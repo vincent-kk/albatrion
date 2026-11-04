@@ -1,8 +1,10 @@
+import type { Dictionary } from '@aileron/declare';
+
 import { JSONSchemaError } from '@/schema-form/errors';
 import type { JSONSchemaErrorCode } from '@/schema-form/errors';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type { BlueprintOptions } from '../../type';
+import type { BlueprintOptions } from '../../types/blueprint';
 
 /**
  * Report and throw a path-aware schema failure without rendering its presentation.
@@ -15,12 +17,12 @@ import type { BlueprintOptions } from '../../type';
 export const throwBlueprintError: (
   code: JSONSchemaErrorCode,
   schemaPath: string,
-  details?: Record<string, unknown>,
+  details?: Dictionary<unknown>,
   options?: Pick<BlueprintOptions, 'collect'>,
 ) => never = (
   code: JSONSchemaErrorCode,
   schemaPath: string,
-  details: Record<string, unknown> = {},
+  details: Dictionary<unknown> = {},
   options?: Pick<BlueprintOptions, 'collect'>,
 ): never => {
   options?.collect?.({ code, level: 'error', schemaPath, details });

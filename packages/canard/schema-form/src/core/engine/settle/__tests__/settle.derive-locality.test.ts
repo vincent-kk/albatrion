@@ -4,10 +4,10 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-derive
+// filid:contract settle-derive-locality
 describe('derive rule locality', () => {
   it('FRAGMENT-050 reactivated shared declaration takes a baseline without firing', () => {
     const { root } = createTestTree({
@@ -31,13 +31,13 @@ describe('derive rule locality', () => {
       { t: 'T1', flag: true, x: '' },
       WriteOption.Overwrite,
     );
-    const observed = [root.structure?.x?.raw];
+    const observed = [root.structure?.x?.source];
     writeFieldNode(root.structure!.x, 'manual', 'input', WriteOption.Overwrite);
-    observed.push(root.structure?.x?.raw);
+    observed.push(root.structure?.x?.source);
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    observed.push(root.structure?.x?.raw);
+    observed.push(root.structure?.x?.source);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    observed.push(root.structure?.x?.raw);
+    observed.push(root.structure?.x?.source);
     expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
 
@@ -85,7 +85,7 @@ describe('derive rule locality', () => {
         'input',
         WriteOption.Overwrite,
       );
-      expect(root.structure?.H?.structure?.x?.raw).toBe('manual');
+      expect(root.structure?.H?.structure?.x?.source).toBe('manual');
     },
   );
 
@@ -161,11 +161,11 @@ describe('derive rule locality', () => {
       },
     });
     writeFieldNode(
-      root.structure!.left.structure!.source,
+      root.structure!.left.structure!['source'],
       'B',
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.structure?.left?.structure?.target?.raw).toBe('B');
+    expect(root.structure?.left?.structure?.target?.source).toBe('B');
   });
 });

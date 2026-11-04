@@ -36,9 +36,10 @@ const FieldInputMonth = ({
   size,
   minimum,
   maximum,
+  misfit,
 }: FieldInputMonthProps) => {
-  const handleChange = useHandle((value: Dayjs | undefined) => {
-    onChange(value?.format(DATA_FORMAT) || '');
+  const handleChange = useHandle((value: Dayjs | null) => {
+    onChange(value ? value.format(DATA_FORMAT) : undefined);
   });
   const initialValue = useMemo(
     () => (defaultValue ? dayjs(defaultValue, DATA_FORMAT) : undefined),
@@ -65,6 +66,8 @@ const FieldInputMonth = ({
       defaultValue={initialValue}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };

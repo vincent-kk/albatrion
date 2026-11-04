@@ -75,7 +75,6 @@ it('REACT-033 marks container serialization failures without replacing them with
   expect(input.value).toBe('');
   expect(input.readOnly).toBe(true);
   expect(input.getAttribute('aria-invalid')).toBe('true');
-  expect(view.getByRole('status').textContent).toContain('Invalid');
 });
 
 it('REACT-033 keeps IME composition entirely in the input draft', () => {
@@ -176,7 +175,6 @@ it('REACT-033 displays containers read-only and marks mismatched primitives', ()
   expect(current.readOnly).toBe(true);
   expect(current.value).toBe('["invalid"]');
   expect(current.getAttribute('aria-invalid')).toBe('true');
-  expect(view.getByRole('status').textContent).toContain('Invalid');
 });
 
 it('REACT-033 renders an empty read-only display when no primitive kind is effective', () => {

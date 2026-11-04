@@ -1,10 +1,9 @@
 import { blueprint } from '@/schema-form/core/engine/blueprint';
-import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import type {
   FieldNodeRecord,
   FieldNodeRuntime,
 } from '@/schema-form/core/engine/record';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 
 /** Plain node used to exercise navigation without the later engine class. */
@@ -37,11 +36,8 @@ export const createNode = (
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
-      typeMismatchPaths: new PathKeyedSet(),
-      inactiveValuesMemo: new PathKeyedMap<
-        readonly { path: string; value: unknown }[]
-      >('path'),
+
+      misfitPaths: new PathKeyedSet(),
     };
   const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
   const node: TestNode = {
@@ -65,7 +61,7 @@ export const createNode = (
     escapedName,
     path: parent === null ? '' : `${parent.path}/${escapedName}`,
     depth: parent === null ? 0 : parent.depth + 1,
-    required: false,
+    isRequired: false,
     nullable: false,
     schemaType: template.schemaType,
     structure: strategy === 'branch' ? {} : null,
@@ -73,14 +69,19 @@ export const createNode = (
     itemKey: null,
     itemCount: 0,
     nextItemKey: 0,
-    raw: undefined,
-    undeclaredValues: undefined,
-    active: true,
-    visible: true,
-    readOnly: false,
-    disabled: false,
+    source: undefined,
+    extras: undefined,
+    isActive: true,
+    isVisible: true,
+    isReadOnly: false,
+    isDisabled: false,
     local: undefined,
     emit: undefined,
+    divergenceCurrent: undefined,
+    divergencePath: undefined,
+    divergenceSegments: undefined,
+    divergenceBase: undefined,
+    divergenceResult: false,
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,

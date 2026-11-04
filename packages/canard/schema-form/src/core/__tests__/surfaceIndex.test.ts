@@ -9,7 +9,9 @@ describe('FieldNode PR-2 surface', () => {
       'FieldNodeRequestType',
       'SetValueOption',
       'adoptFieldNodeTree',
+      'batchFieldNodeLoad',
       'buildFieldNodeTree',
+      'commitFieldNodeRevealPolicy',
       'fieldNodeFactory',
       'finishFieldNodeInput',
       'interpretFieldNodeDraft',
@@ -26,8 +28,13 @@ describe('FieldNode PR-2 surface', () => {
       'mountFieldNode',
       'observeFieldNodeReports',
       'readFieldNodeInteractionReset',
+      'readFieldNodeRevealBaseline',
+      'readFieldNodeRevealPolicy',
+      'readFieldNodeRevealVersion',
       'reloadFieldNodeForm',
       'setContext',
+      'startFieldNodeLoadValidation',
+      'subscribeFieldNodeRevealReleased',
       'writeFieldNodeInput',
     ]);
     expect(Object.keys(surface.SetValueOption)).toEqual([

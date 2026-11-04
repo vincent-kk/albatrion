@@ -30,12 +30,13 @@ const FieldInputBooleanSwitch = ({
   name,
   required,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
+  misfit,
 }: FieldInputBooleanSwitchProps) => {
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,10 +60,13 @@ const FieldInputBooleanSwitch = ({
         <Switch
           id={path}
           name={name}
-          defaultChecked={defaultValue === true}
+          checked={value === true}
           onChange={handleChange}
           disabled={disabled}
           size={size}
+          slotProps={{
+            input: { role: 'switch', 'aria-invalid': misfit || undefined },
+          }}
         />
       }
     />

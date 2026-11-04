@@ -15,6 +15,7 @@ export const readFieldNodeRevision = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   mask = Number.MAX_SAFE_INTEGER,
 ): number => {
+  node.runtime.revisionObserved = true;
   const ledger = node.revisionLedger;
   if (ledger === EMPTY_REVISION_LEDGER) return 0;
   if (ledger instanceof FieldNodeRevisionLedger) return ledger.read(mask);

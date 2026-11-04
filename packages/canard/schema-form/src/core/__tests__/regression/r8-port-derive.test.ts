@@ -76,7 +76,7 @@ describe('round8 derive and injection observations', () => {
     root.setValue({ a: 1 });
     expect(root.outputValue).toEqual({ a: 1, d: 'f(1)' });
     root.find('/d')?.setValue('mine');
-    expect(root.find('/d')?.raw).toBe('mine');
+    expect(root.find('/d')?.source).toBe('mine');
     root.find('/a')?.setValue(2);
     expect(root.outputValue).toEqual({ a: 2, d: 'f(2)' });
   });
@@ -85,21 +85,21 @@ describe('round8 derive and injection observations', () => {
     root.setValue({ a: 1 });
     root.find('/d')?.setValue('mine');
     root.find('/a')?.setValue(1);
-    expect(root.find('/d')?.raw).toBe('mine');
+    expect(root.find('/d')?.source).toBe('mine');
   });
   it('r8-port.mjs:86 P1 iii sequential source then target leaves manual value', () => {
     const root = derivedTree();
     root.setValue({ a: 1 });
     root.find('/a')?.setValue(2);
     root.find('/d')?.setValue('mine');
-    expect(root.find('/d')?.raw).toBe('mine');
+    expect(root.find('/d')?.source).toBe('mine');
   });
   it('r8-port.mjs:86 P1 iii sequential target then source rederives', () => {
     const root = derivedTree();
     root.setValue({ a: 1 });
     root.find('/d')?.setValue('mine');
     root.find('/a')?.setValue(2);
-    expect(root.find('/d')?.raw).toBe('f(2)');
+    expect(root.find('/d')?.source).toBe('f(2)');
   });
   for (const [name, input] of [
     ['r8-port.mjs:95 P1 iv load_a1 settles to the final fragment', { a: 1 }],
@@ -125,7 +125,7 @@ describe('round8 derive and injection observations', () => {
     second.setValue({ a: 1 });
     second.find('/a')?.setValue(2);
     second.find('/d')?.setValue('mine');
-    expect([first.find('/d')?.raw, second.find('/d')?.raw]).toEqual([
+    expect([first.find('/d')?.source, second.find('/d')?.source]).toEqual([
       'f(2)',
       'mine',
     ]);
@@ -175,7 +175,7 @@ describe('round8 derive and injection observations', () => {
       root.setValue({ src: 'x', tgt: 'custom' });
       root.find('/tgt')?.setValue('mine');
       root.setValue(replacement);
-      expect(root.find('/tgt')?.raw).toBe(expected);
+      expect(root.find('/tgt')?.source).toBe(expected);
     });
   }
   for (const [title, edit] of [

@@ -29,7 +29,7 @@ describe('Form engine binding', () => {
     expect(onChange).toHaveBeenCalledExactlyOnceWith('next');
   });
 
-  it('SURFACE-059 EVENT-073 exposes exactly eighteen handle members and optional-path commands', () => {
+  it('SURFACE-059 EVENT-073 exposes exactly nineteen handle members and optional-path commands', () => {
     const ref = createRef<FormHandle>();
     render(
       <FormCore ref={ref} jsonSchema={{ type: 'string' }}>
@@ -44,6 +44,7 @@ describe('Form engine binding', () => {
         'refresh',
         'remount',
         'reset',
+        'rebuild',
         'findNode',
         'findNodes',
         'getState',
@@ -81,7 +82,7 @@ describe('Form engine binding', () => {
     const node = ref.current!.node;
     act(() => {
       ref.current!.setValue('edited');
-      ref.current!.setState({ dirty: true, touched: true });
+      ref.current!.setState({ edited: true, touched: true });
     });
     act(() => {
       ref.current!.reset();
@@ -115,7 +116,7 @@ describe('Form engine binding', () => {
     expect(() => previous.setValue('late')).toThrow();
   });
 
-  it('LANDING-067 submits outputValue and retains raw array positions', async () => {
+  it('LANDING-067 submits outputValue and retains source array positions', async () => {
     const ref = createRef<FormHandle>();
     const submit = vi.fn();
     render(

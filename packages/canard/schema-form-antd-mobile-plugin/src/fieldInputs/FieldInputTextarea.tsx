@@ -24,8 +24,11 @@ const FieldInputTextarea = ({
   defaultValue,
   onChange,
   placeholder,
+  misfit,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
-  const handleChange = useHandle(onChange);
+  const handleChange = useHandle((text: string) =>
+    onChange(text === '' ? undefined : text),
+  );
   const autoSize = useMemo(
     () => ({
       minRows: jsonSchema.minRows,
@@ -34,16 +37,20 @@ const FieldInputTextarea = ({
     [jsonSchema],
   );
   return (
-    <TextArea
-      id={path}
-      name={name}
-      disabled={disabled}
-      readOnly={readOnly}
-      autoSize={autoSize}
-      placeholder={placeholder}
-      defaultValue={defaultValue ?? undefined}
-      onChange={handleChange}
-    />
+    <div role="group" aria-invalid={misfit || undefined}>
+      <TextArea
+        id={path}
+        name={name}
+        disabled={disabled}
+        readOnly={readOnly}
+        autoSize={autoSize}
+        placeholder={placeholder}
+        defaultValue={
+          typeof defaultValue === 'string' ? defaultValue : undefined
+        }
+        onChange={handleChange}
+      />
+    </div>
   );
 };
 

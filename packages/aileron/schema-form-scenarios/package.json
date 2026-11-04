@@ -5,7 +5,8 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./validator": "./src/validator/index.ts"
   },
   "scripts": {
     "test": "vitest run --config vite.config.ts",

@@ -38,7 +38,7 @@ describe('dispatcher commands', () => {
     dispatchRequest(root, FieldNodeRequestType.Remount);
 
     expect(seen).toEqual([FieldNodeEventType.RequestRemount]);
-    expect(root.raw).toBeUndefined();
+    expect(root.source).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(runtime.entryDepth).toBe(0);

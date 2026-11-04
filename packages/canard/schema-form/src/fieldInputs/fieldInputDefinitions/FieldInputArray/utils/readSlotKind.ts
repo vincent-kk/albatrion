@@ -7,13 +7,16 @@ export type SlotKind = 'text' | 'number' | 'checkbox' | 'fill';
  * Choose the control for one empty slot from the schema of its position.
  * @param jsonSchema - Effective array schema; `prefixItems[index]` wins over `items`.
  * @param index - Slot position in the array.
+ * @param itemSchema - Selected live candidate schema, when the slot already has a node.
  * @returns `text`, `number` or `checkbox` for a plain primitive position, otherwise `fill`.
  */
 export const readSlotKind = (
   jsonSchema: FieldInputProps<any[]>['jsonSchema'],
   index: number,
+  itemSchema?: FieldInputProps<any[]>['node']['jsonSchema'],
 ): SlotKind => {
-  const schema = jsonSchema.prefixItems?.[index] ?? jsonSchema.items;
+  const schema =
+    itemSchema ?? jsonSchema.prefixItems?.[index] ?? jsonSchema.items;
   if (!schema || typeof schema !== 'object' || schema.enum || schema.format)
     return 'fill';
   const type = [schema.type].flat().find((item) => item !== 'null');

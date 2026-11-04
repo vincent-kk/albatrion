@@ -2,12 +2,12 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
-import type { SettlementContext } from '../../../type';
-import { distributeLatentValue } from '../../latent/distributeLatentValue';
-import { markWrite } from '../../write/markWrite';
+import type { SettlementContext } from '../../../types/settlement';
+import { markWrite } from '../../input/markWrite';
+import { writeInactiveSource } from '../../slots/writeInactiveSource';
 
 /**
- * Apply one selected automatic replacement to live or latent raw.
+ * Apply one selected automatic replacement to live or latent source.
  * @param write - Winner from derive's pure decision
  * @param context - Reversible settlement work list
  * @returns Nothing; marking and latent distribution are recorded for rollback
@@ -18,8 +18,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (!write.target) {
     if (write.template && write.siblings && write.targetOrder)
-      distributeLatentValue(
-        context.root.runtime,
+      writeInactiveSource(
         context,
         write.targetPath,
         write.template,

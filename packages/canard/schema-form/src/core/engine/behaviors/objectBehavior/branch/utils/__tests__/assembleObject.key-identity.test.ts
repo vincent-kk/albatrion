@@ -4,7 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
 
-import { objectKeyCounts } from '../../../utils/objectKeyCounts';
+import { objectKeyCounts } from '../../../../../utils/cache/valueMemos';
 import { assembleObject } from '../assembleObject';
 
 afterEach(() => vi.restoreAllMocks());
@@ -25,8 +25,9 @@ const fixture = (numeric = true) => {
     { name: 'group', emit: nested },
   ];
   const node = {
+    runtime: {},
     local: undefined,
-    undeclaredValues: undefined,
+    extras: undefined,
     schema: { schema: { type: 'object' } },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
@@ -135,7 +136,7 @@ it('rebuilds authored key order when schema identity changes', () => {
 
 it('rebuilds extras and key insertion/deletion through the existing path', () => {
   const { node, children } = fixture();
-  node.undeclaredValues = { extra: { retained: true } };
+  node.extras = { extra: { retained: true } };
   children[0].emit = 'changed';
   const hint = { incremental: false };
   let result = assembleObject(node, children, [children[0]], hint) as Record<
@@ -144,7 +145,7 @@ it('rebuilds extras and key insertion/deletion through the existing path', () =>
   >;
   expect(hint.incremental).toBe(false);
   expect(result.extra).toBe(
-    (node.undeclaredValues as Record<string, unknown>).extra,
+    (node.extras as Record<string, unknown>).extra,
   );
   node.local = result;
   children[4].emit = undefined!;

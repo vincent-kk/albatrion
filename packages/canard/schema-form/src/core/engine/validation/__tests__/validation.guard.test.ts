@@ -7,7 +7,8 @@ import type {
   BlueprintSchema,
 } from '@/schema-form/core/engine/blueprint';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
+import { compileValidationEntry } from '../utils/cache/compileValidationEntry';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { compileEntryGuards } from '../utils/guard/compileEntryGuards';
 import { readFieldNodeGuard } from '../utils/guard/readFieldNodeGuard';
@@ -49,10 +50,13 @@ describe('schema node guards', () => {
     readFieldNodeGuard(runtime, gate);
     const entry = readValidationEntry(validator, schema);
     compileEntryGuards(entry, validator, analysis);
+    expect(compile).not.toHaveBeenCalled();
+    compileValidationEntry(validator, schema, entry);
+    expect(compile).toHaveBeenCalledExactlyOnceWith(entry.copy);
     evictValidationRoot(validator, schema);
     evictValidationRoot(validator, schema);
 
-    const copy = compile.mock.calls[0][0];
+    const copy = entry.copy;
     expect(copy).not.toBe(schema);
     expect(copy).toHaveProperty('$defs.enabled');
     expect(compileGuard).toHaveBeenCalledTimes(2);

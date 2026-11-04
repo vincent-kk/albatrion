@@ -1,13 +1,13 @@
 import type { BlueprintSchema } from '../../../blueprint';
-import type { Validator } from '../../type';
-import { evictValidationRoot } from './evictValidationRoot';
+import type { Validator } from '../../types/validator';
+import { evictRecentValidationRoots } from './evictRecentValidationRoots';
 import { recentReleaseList } from './recentReleaseList';
 
 /**
- * Release one committed consumer, retaining eight zero-consumer roots for reuse.
+ * Release one committed consumer, retaining recent zero-consumer roots for reuse.
  * @param validator - Instance whose registrations are reference counted.
  * @param authoredRoot - Original root whose committed consumer was cleaned up.
- * @returns Nothing; the oldest zero-consumer registration may be evicted.
+ * @returns Nothing; oldest unpinned registrations are evicted above eight, with pinned overflow retained.
  */
 export const releaseValidationRoot = (
   validator: Validator,
@@ -19,5 +19,5 @@ export const releaseValidationRoot = (
   list.counts.set(authoredRoot, count - 1);
   if (count > 1) return;
   list.recent.push(authoredRoot);
-  if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
+  evictRecentValidationRoots(validator);
 };

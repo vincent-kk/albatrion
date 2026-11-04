@@ -56,7 +56,7 @@ function BasicForm() {
   return (
     <Form
       jsonSchema={schema}
-      showError={ShowError.DirtyTouched}
+      showError={ShowError.EditedTouched}
       onSubmit={async (value) => {
         console.log(value);
         // value is typed as { name: string; age?: number; email: string; ... }
@@ -405,7 +405,7 @@ const schema = {
 // Show errors only after submission attempt
 <Form
   jsonSchema={schema}
-  showError={ShowError.Dirty}
+  showError={ShowError.Edited}
   validationMode={ValidationMode.OnRequest}
   ref={formRef}
 />
@@ -524,9 +524,9 @@ function FieldStatus({ node }: { node: FieldNode }) {
   return (
     <div>
       <span>Value: {JSON.stringify(node.value)}</span>
-      <span>Dirty: {node.state[FieldNodeState.Dirty] ? 'yes' : 'no'}</span>
+      <span>Edited: {node.state[FieldNodeState.Edited] ? 'yes' : 'no'}</span>
       <span>Errors: {node.errors.length}</span>
-      <span>Visible: {node.visible ? 'yes' : 'no'}</span>
+      <span>Visible: {node.isVisible ? 'yes' : 'no'}</span>
     </div>
   );
 }

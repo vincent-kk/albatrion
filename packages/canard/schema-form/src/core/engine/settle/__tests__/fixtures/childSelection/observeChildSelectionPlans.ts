@@ -1,6 +1,6 @@
 import { expect, vi } from 'vitest';
 
-import * as planning from '../../../utils/compute/selectChildren/utils/getDirectChildSelectionPlan';
+import * as planning from '../../../utils/compute/childSelection/getDirectChildSelectionPlan';
 
 /**
  * Observe first successful preparation by its runtime identity, excluding cache reads.

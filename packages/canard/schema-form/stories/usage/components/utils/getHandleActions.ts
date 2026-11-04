@@ -48,7 +48,7 @@ export function getHandleActions(example: HandleExampleName): readonly HandleAct
     ];
     }
     case 'InteractionState': {
-      const state = { [FieldNodeState.Dirty]: true, [FieldNodeState.Touched]: true, [FieldNodeState.ErrorVisible]: true };
+      const state = { [FieldNodeState.Edited]: true, [FieldNodeState.Touched]: true, [FieldNodeState.ErrorVisible]: true };
       return [
       { label: 'Read state', method: 'getState', args: [], run: (handle) => handle.getState() },
       { label: 'Set interaction flags', method: 'setState', args: [state], run: (handle) => {

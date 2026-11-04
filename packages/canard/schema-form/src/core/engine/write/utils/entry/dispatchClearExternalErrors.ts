@@ -2,7 +2,7 @@ import { FieldNodeEventType } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import type { ValidationIssue } from '../../../validation';
-import { flushQueuedEvents } from '../chain/flushQueuedEvents';
+import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
@@ -29,5 +29,5 @@ export const dispatchClearExternalErrors = <Self extends FieldNodeRecord<Self>>(
   if (node === node.rootNode) publishRootExternalErrors(node);
   else propagateExternalErrorsToRoot(node);
   queueNonSettleEvent(node, FieldNodeEventType.UpdateError, NO_ISSUES);
-  if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
+  closeNonSettleEntry(node);
 };

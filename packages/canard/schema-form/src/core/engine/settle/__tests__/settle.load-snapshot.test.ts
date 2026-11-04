@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { readFieldNodeDefaultValue } from '../utils/load/readFieldNodeDefaultValue';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { readFieldNodeDefaultValue } from '../utils/loadValues/readFieldNodeDefaultValue';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 
 describe('settle load snapshot', () => {
   it('WRITE-085 preserves the root default snapshot on an equal subtree reset', () => {

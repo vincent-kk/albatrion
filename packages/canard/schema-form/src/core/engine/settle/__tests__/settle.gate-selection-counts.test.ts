@@ -3,8 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import { engineModes } from '../../utils/cache/engineModes';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gate-selection-counts
@@ -26,7 +27,11 @@ describe('baseline fixed-width branch-axis characterization', () => {
             return evaluate(dependencies);
           };
         });
+      const previousMode = engineModes.gateWheel;
+      const previousSelectionMode = engineModes.gateSelection;
       try {
+        engineModes.setMode('gateWheel', 'record');
+        engineModes.setMode('gateSelection', 'table');
         const schema = {
           type: 'object',
           properties: {
@@ -48,10 +53,10 @@ describe('baseline fixed-width branch-axis characterization', () => {
         const { root } = createTestTree(schema);
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         const transitions = [
-          { kind: 'kind_4', calls: 16 * count },
-          { kind: 'kind_0', calls: 8 * count },
-          { kind: 'kind_4', calls: 8 * count },
-          { kind: 'kind_0', calls: 8 * count },
+          { kind: 'kind_4', calls: 0 },
+          { kind: 'kind_0', calls: 0 },
+          { kind: 'kind_4', calls: 0 },
+          { kind: 'kind_0', calls: 0 },
         ];
         for (const transition of transitions) {
           evaluations = 0;
@@ -68,6 +73,8 @@ describe('baseline fixed-width branch-axis characterization', () => {
         }
       } finally {
         compiling.mockRestore();
+        engineModes.setMode('gateWheel', previousMode);
+        engineModes.setMode('gateSelection', previousSelectionMode);
       }
     },
   );

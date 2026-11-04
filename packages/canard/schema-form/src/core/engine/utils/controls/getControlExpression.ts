@@ -1,7 +1,11 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Optional } from '@aileron/declare';
+
 import type { ControlKey } from '../../types/controls';
+import { getBlueprintDerived } from '../cache/derivedRecords';
 
 /** Authored control expression positions indexed once per immutable analysis. */
-const CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
 
 /**
  * Find one compiled control expression without scanning the analysis each time.
@@ -23,11 +27,14 @@ export const getControlExpression = <
   declarationId: number,
   schemaPath: string,
   key: ControlKey,
-): Expression | undefined => {
-  let expressions = CONTROL_EXPRESSIONS.get(blueprint);
+): Optional<Expression> => {
+  let expressions = getBlueprintDerived<
+    'controlExpressions',
+    ReadonlyMap<string, number>
+  >(blueprint).controlExpressions;
   if (!expressions) {
     expressions = new Map(
-      blueprint.expressions.map((expression, index) => [
+      mapArray(blueprint.expressions, (expression, index) => [
         JSON.stringify([
           expression.declarationId,
           expression.schemaPath,
@@ -36,7 +43,9 @@ export const getControlExpression = <
         index,
       ]),
     );
-    CONTROL_EXPRESSIONS.set(blueprint, expressions);
+    getBlueprintDerived<'controlExpressions', ReadonlyMap<string, number>>(
+      blueprint,
+    ).controlExpressions = expressions;
   }
   const index = expressions.get(
     JSON.stringify([declarationId, schemaPath, key]),

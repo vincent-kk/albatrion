@@ -9,6 +9,9 @@ import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
+/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+
 /** One root's validation and optional guard registrations. */
 export interface SchemaRootRegistration {
   /** Direct schemas are owned and released with this root's guard instance. */
@@ -20,11 +23,15 @@ export interface SchemaRootRegistration {
   guardAjv?: Ajv;
   readonly validationCopy?: JSONSchema;
   guardCopy?: JSONSchema;
-  readonly validationRefs: readonly string[];
+  /** `refs` entries the validation registration added; empty until `registerValidationRoot` succeeds. */
+  validationRefs: readonly string[];
+  /** Whether `validationCopy` is registered on `validationAjv`; set only by a successful `registerValidationRoot`. */
+  validationRegistered: boolean;
   guardRefs?: readonly string[];
   readonly key: string;
   readonly ids: readonly string[];
-  readonly probes: SchemaRootRegistration[];
+  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly hasDynamicKeywords: boolean;
 }
 
 /** Mutable registration ownership retained by one plugin entry point. */
@@ -40,7 +47,7 @@ export interface SchemaRootRegistry {
 /** Monotonic keys stay unique across every registry that shares one instance. */
 let nextSchemaRootKey = 0;
 
-/** Registers a copy once for each bound instance and authored root identity. */
+/** Records a copy once for each bound instance and authored root identity; `registerValidationRoot` registers it with AJV. */
 export const registerSchemaRoot = (
   registry: SchemaRootRegistry,
   baseAjv: Ajv,
@@ -50,8 +57,10 @@ export const registerSchemaRoot = (
   const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
   if (existing) return existing;
   const ids: string[] = [];
+  let hasDynamicKeywords = false;
   JSON.stringify(root, (name, value: unknown) => {
     if (name === '$id' && typeof value === 'string') ids.push(value);
+    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
     return value;
   });
   if (ids.length)
@@ -70,21 +79,18 @@ export const registerSchemaRoot = (
     registry.compilerCount = 0;
   }
   if (!ids.length && registry.compilerCount === MAX_TRANSIENT_ROOTS) {
-    registry.compilerCurrent = makeSibling(baseAjv, Boolean(baseAjv.opts.allErrors));
+    registry.compilerCurrent = makeSibling(baseAjv, !!baseAjv.opts.allErrors);
     registry.compilerCount = 0;
   }
-  const validationAjv = conflict ? makeSibling(baseAjv, Boolean(baseAjv.opts.allErrors))
+  const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
     : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
   if (!ids.length) registry.compilerCount++;
   const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
-  const validationCopy = ids.length ? structuredClone(root) : undefined;
-  const validationRefsBefore = validationCopy ? Object.keys(validationAjv.refs) : [];
-  if (validationCopy) validationAjv.addSchema(validationCopy, key);
-  const validationRefs = validationCopy
-    ? Object.keys(validationAjv.refs).filter((ref) => !validationRefsBefore.includes(ref)) : [];
+  const validationCopy: JSONSchema | undefined = ids.length
+    ? JSON.parse(JSON.stringify(root)) : undefined;
   const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRefs, key, ids, probes: [],
-    directGuards: [], guardChecks: new WeakMap(),
+    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids,
+    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
   };
   registrations.push(registration);
   registry.entries.set(root, registrations);

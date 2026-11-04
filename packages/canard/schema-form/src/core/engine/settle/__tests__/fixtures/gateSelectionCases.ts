@@ -10,6 +10,7 @@ export const gateSelectionCases: {
     value: unknown;
     merge?: boolean;
     context?: Record<string, unknown>;
+    reset?: 'form' | 'subtree';
   }[];
 }[] = [
   {
@@ -224,7 +225,7 @@ export const gateSelectionCases: {
     ],
   },
   {
-    name: 'overlay omitEmpty and root host schema changes without key raw changes',
+    name: 'overlay omitEmpty and root host schema changes without key source changes',
     schema: {
       type: 'object',
       properties: { kind: { type: 'string' }, flag: { type: 'boolean' } },

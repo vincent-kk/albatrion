@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** An inactive field can retain its raw value for a later appearance. */
+/** An inactive field can retain its source value for a later appearance. */
 export const retainInactiveScenario = {
   name: 'exit.retain-inactive',
   schema: { type: 'object', properties: {

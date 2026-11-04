@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { DeclarationLayer } from '../../../types/controls';
 
 /** Exit policy specificity shared by latent decisions. */
@@ -10,12 +12,37 @@ const EXIT_LAYERS = ['node', 'fields', 'fragment'] as const;
  * @returns The nearest layer's unanimous clear, or inherited when undeclared
  */
 export const readLatentExitPolicy = (
-  decisions: readonly { layer: DeclarationLayer; clear: boolean }[] | undefined,
+  decisions: Optional<readonly { layer: DeclarationLayer; clear: boolean }[]>,
   inherited: boolean,
 ): boolean => {
   for (const layer of EXIT_LAYERS) {
-    const matching = decisions?.filter((decision) => decision.layer === layer);
-    if (matching?.length) return matching.every((decision) => decision.clear);
+    let matching: Optional<{ layer: DeclarationLayer; clear: boolean }[]>;
+
+    const layerDecisions = decisions;
+    if (layerDecisions != null) {
+      const result: Array<(typeof layerDecisions)[number]> = [];
+      for (
+        let index = 0, count = layerDecisions.length;
+        index < count;
+        index++
+      ) {
+        const decision = layerDecisions[index];
+
+        if (decision.layer === layer) result.push(decision);
+      }
+      matching = result;
+    }
+
+    if (matching?.length) {
+      for (let index = 0, count = matching.length; index < count; index++) {
+        const decision = matching[index];
+
+        if (!decision.clear) {
+          return false;
+        }
+      }
+      return true;
+    }
   }
   return inherited;
 };

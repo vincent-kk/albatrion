@@ -1,14 +1,63 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
-import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
+import {
+  FormErrorCode,
+  FormWarningCode,
+  SchemaFormError,
+} from '@/schema-form/errors';
 
+import { dispatchMount } from '../utils/entry/dispatchMount';
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { reportOwnerlessError } from '../utils/report/reportOwnerlessError';
 
 // filid:contract dispatch-report
 describe('observer write boundary', () => {
+  it('keeps live writes blocked after a detached warning is reported inside an error observer', () => {
+    const seen: unknown[] = [];
+    let observing = false;
+    const { root } = createDispatchTree(
+      {
+        type: 'object',
+        properties: {
+          open: { type: 'boolean' },
+          leaf: { type: 'string', controls: { active: '../open' } },
+          other: { type: 'string' },
+        },
+      },
+      undefined,
+      undefined,
+      {
+        hasConsumer: () => true,
+        report: (record) => {
+          if (!observing || record.code === FormWarningCode.DetachedNodeWrite)
+            return;
+          dispatchSetValue(old, 'x');
+          try {
+            dispatchSetValue(other, 'blocked');
+          } catch (error) {
+            seen.push(error);
+          }
+        },
+      },
+    );
+    dispatchMount(root, { open: true, leaf: 'a', other: 'b' });
+    const old = root.structure!.leaf;
+    const other = root.structure!.other;
+    dispatchSetValue(root.structure!.open, false);
+    observing = true;
+    subscribeFieldNode(root, () => {
+      throw new Error('listener');
+    });
+    expect(() => dispatchSetValue(other, 'value')).toThrow();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toBeInstanceOf(SchemaFormError);
+    if (!(seen[0] instanceof SchemaFormError))
+      throw new Error('Expected write failure');
+    expect(seen[0].code).toBe(FormErrorCode.WriteInObserver);
+    expect(other.local).toBe('value');
+  });
   it('ERROR-029 WRITE-099 rejects a same-form write immediately without recursion', () => {
     const seen: unknown[] = [];
     const failure = new Error('listener');

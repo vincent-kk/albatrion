@@ -116,30 +116,30 @@ const budgetTree = () => {
 
 // filid:contract factory-single-path
 describe('round9 PR-3 derive regression', () => {
-  it('r9.mjs:50 unsetValue clears raw on its rising edge', () => {
-    expect(clearTree().find('/x')?.raw).toBeUndefined();
+  it('r9.mjs:50 unsetValue clears source on its rising edge', () => {
+    expect(clearTree().find('/x')?.source).toBeUndefined();
   });
   it('r9.mjs:51 unsetValue keeps the input active and visible', () => {
     const x = clearTree().find('/x');
-    expect(x?.active).toBe(true);
-    expect(Reflect.get(x ?? {}, 'visible')).toBe(true);
+    expect(x?.isActive).toBe(true);
+    expect(Reflect.get(x ?? {}, 'isVisible')).toBe(true);
   });
   it('r9.mjs:54 an unrelated write does not refill after unsetValue', () => {
     const root = clearTree();
     root.find('/note')?.setValue('n');
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
   it('r9.mjs:56 a held true unsetValue is not another edge', () => {
     const root = clearTree();
     root.find('/x')?.setValue('typed');
-    expect(root.find('/x')?.raw).toBe('typed');
+    expect(root.find('/x')?.source).toBe('typed');
   });
   it('r9.mjs:58 a second rising edge clears again', () => {
     const root = clearTree();
     root.find('/x')?.setValue('typed');
     root.find('/clear')?.setValue(false);
     root.find('/clear')?.setValue(true);
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
   it('r9.mjs:63 unsetValue suppresses a same-settle birth default', () => {
     const { root } = makeFieldNodeTree({
@@ -149,11 +149,11 @@ describe('round9 PR-3 derive regression', () => {
       },
     });
     root.setValue({});
-    expect(root.find('/x')?.raw).toBeUndefined();
+    expect(root.find('/x')?.source).toBeUndefined();
   });
 
   it('r9.mjs:128 SETTLE-004 derived wins over injectTo for the same target', () => {
-    expect(conflictTree().find('/target')?.raw).toBe('D:1');
+    expect(conflictTree().find('/target')?.source).toBe('D:1');
   });
   it('r9.mjs:129 SETTLE-004 losing injection settles without oscillation', () => {
     expect(conflictTree().diagnostics.status).toBe('stable');
@@ -162,40 +162,40 @@ describe('round9 PR-3 derive regression', () => {
     const root = conflictTree();
     root.find('/target')?.setValue('manual');
     root.find('/dep')?.setValue(1);
-    expect(root.find('/target')?.raw).toBe('manual');
+    expect(root.find('/target')?.source).toBe('manual');
   });
   it('r9.mjs:134 SETTLE-004 changed dependency derives its own target', () => {
     const root = conflictTree();
     root.find('/target')?.setValue('manual');
     root.find('/dep')?.setValue(3);
-    expect(root.find('/target')?.raw).toBe('D:3');
+    expect(root.find('/target')?.source).toBe('D:3');
   });
 
   for (const [title, check] of [
     [
       'r9.mjs:151 WRITE-015 suppresses ordinary default',
       (root: ReturnType<typeof suppressionTree>) =>
-        expect(root.find('/filled')?.raw).toBeUndefined(),
+        expect(root.find('/filled')?.source).toBeUndefined(),
     ],
     [
       'r9.mjs:152 WRITE-015 suppresses controls.default',
       (root: ReturnType<typeof suppressionTree>) =>
-        expect(root.find('/expression')?.raw).toBeUndefined(),
+        expect(root.find('/expression')?.source).toBeUndefined(),
     ],
     [
-      'r9.mjs:153 WRITE-015 preserves caller derived raw',
+      'r9.mjs:153 WRITE-015 preserves caller derived source',
       (root: ReturnType<typeof suppressionTree>) =>
-        expect(root.find('/derived')?.raw).toBe(90),
+        expect(root.find('/derived')?.source).toBe(90),
     ],
     [
       'r9.mjs:154 WRITE-015 preserves caller injectTo target',
       (root: ReturnType<typeof suppressionTree>) =>
-        expect(root.find('/injected')?.raw).toBe(80),
+        expect(root.find('/injected')?.source).toBe(80),
     ],
     [
       'r9.mjs:155 WRITE-015 preserves caller data under unsetValue',
       (root: ReturnType<typeof suppressionTree>) =>
-        expect(root.find('/erased')?.raw).toBe('loaded'),
+        expect(root.find('/erased')?.source).toBe('loaded'),
     ],
     [
       'r9.mjs:156 WRITE-015 still projects inactive nodes out',
@@ -212,31 +212,31 @@ describe('round9 PR-3 derive regression', () => {
     root.find('/on')?.setValue(true);
     return root;
   };
-  it('r9.mjs:159 WRITE-015 Form suppression keeps derived caller raw', () => {
-    expect(afterUserWrites().find('/derived')?.raw).toBe(90);
+  it('r9.mjs:159 WRITE-015 Form suppression keeps derived caller source', () => {
+    expect(afterUserWrites().find('/derived')?.source).toBe(90);
   });
-  it('r9.mjs:160 WRITE-015 Form suppression keeps injection target raw', () => {
-    expect(afterUserWrites().find('/injected')?.raw).toBe(80);
+  it('r9.mjs:160 WRITE-015 Form suppression keeps injection target source', () => {
+    expect(afterUserWrites().find('/injected')?.source).toBe(80);
   });
   it('r9.mjs:161 WRITE-015 Form suppression leaves new node unfilled', () => {
-    expect(afterUserWrites().find('/later')?.raw).toBeUndefined();
+    expect(afterUserWrites().find('/later')?.source).toBeUndefined();
   });
   it('r9.mjs:162 WRITE-015 suppressed birth is not retried', () => {
-    expect(afterUserWrites().find('/filled')?.raw).toBeUndefined();
+    expect(afterUserWrites().find('/filled')?.source).toBeUndefined();
   });
   it('r9.mjs:164 WRITE-015 per-load enable overrides Form suppression', () => {
     const root = suppressionTree();
     root.resetSubtree(
       SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites,
     );
-    expect(root.find('/filled')?.raw).toBe('D');
+    expect(root.find('/filled')?.source).toBe('D');
   });
   it('r9.mjs:165 CONTROLS-028 reset load re-evaluates true unsetValue', () => {
     const root = suppressionTree();
     root.resetSubtree(
       SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites,
     );
-    expect(root.find('/erased')?.raw).toBeUndefined();
+    expect(root.find('/erased')?.source).toBeUndefined();
   });
 
   it('r9.mjs:176 ERROR-070 feedback degrades after exhausting budget', () => {
@@ -248,15 +248,15 @@ describe('round9 PR-3 derive regression', () => {
   it('r9.mjs:178 SETTLE-011 commits the caller base on budget failure', () => {
     expect(budgetTree().outputValue).toEqual({ a: 0, b: 0 });
   });
-  it('r9.mjs:179 SETTLE-011 emit agrees with committed raw', () => {
+  it('r9.mjs:179 SETTLE-011 emit agrees with committed source', () => {
     const root = budgetTree();
     expect(root.outputValue).toEqual({
-      a: root.find('/a')?.raw,
-      b: root.find('/b')?.raw,
+      a: root.find('/a')?.source,
+      b: root.find('/b')?.source,
     });
   });
   it('r9.mjs:180 SETTLE-011 retains no automatic feedback writes', () => {
     const root = budgetTree();
-    expect([root.find('/a')?.raw, root.find('/b')?.raw]).toEqual([0, 0]);
+    expect([root.find('/a')?.source, root.find('/b')?.source]).toEqual([0, 0]);
   });
 });

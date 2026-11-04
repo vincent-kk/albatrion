@@ -8,8 +8,8 @@ import type { FieldInputProps } from '@/schema-form';
 import { renderForm } from '../renderForm';
 
 /** Format the consumer's card draft; caret restoration is separately owned. */
-const format = (raw: string) =>
-  raw.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1-');
+const format = (rawValue: string) =>
+  rawValue.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1-');
 
 /** Render an ordinary controlled consumer with optional card caret bookkeeping. */
 const Input = ({
@@ -37,11 +37,11 @@ const Input = ({
       value={value ?? ''}
       onCompositionEnd={compositionEnded}
       onChange={(event) => {
-        const raw = event.target.value;
-        const next = formatter ? format(raw) : raw;
+        const rawValue = event.target.value;
+        const next = formatter ? format(rawValue) : rawValue;
         if (bookkeeping) {
-          const digits = raw
-            .slice(0, event.target.selectionStart ?? raw.length)
+          const digits = rawValue
+            .slice(0, event.target.selectionStart ?? rawValue.length)
             .replace(/\D/g, '').length;
           let position = 0;
           let seen = 0;

@@ -1,3 +1,9 @@
+/** Display of an absent or empty-null union value. */
+const EMPTY_DISPLAY = { text: '', structured: false, invalid: false };
+
+/** Display of a value that cannot be serialized. */
+const INVALID_DISPLAY = { text: '', structured: true, invalid: true };
+
 /**
  * Format a union value for the default input without creating editable containers.
  * @param value - Current node value; containers remain owned by the node
@@ -5,14 +11,13 @@
  * @returns Display text, container status, and a serialization failure marker
  */
 export const readUnionDisplay = (value: unknown, nullable: boolean) => {
-  if (value === undefined || (value === null && nullable))
-    return { text: '', structured: false, invalid: false };
+  if (value === undefined || (value === null && nullable)) return EMPTY_DISPLAY;
   if (value === null || typeof value !== 'object')
     return { text: String(value), structured: false, invalid: false };
   try {
     const text = JSON.stringify(value);
     return { text: text ?? '', structured: true, invalid: text === undefined };
   } catch {
-    return { text: '', structured: true, invalid: true };
+    return INVALID_DISPLAY;
   }
 };

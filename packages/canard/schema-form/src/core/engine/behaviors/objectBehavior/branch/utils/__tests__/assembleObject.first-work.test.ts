@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest';
 
-import { objectKeyCounts } from '../../../utils/objectKeyCounts';
+import { objectKeyCounts } from '../../../../../utils/cache/valueMemos';
 import { assembleObject } from '../assembleObject';
 
 it('assembles aligned first children without Map or Set allocation and preserves omitted/prototype keys', () => {
@@ -10,8 +10,9 @@ it('assembles aligned first children without Map or Set allocation and preserves
     { name: '__proto__', emit: 2 },
   ];
   const node = {
+    runtime: {},
     local: undefined,
-    undeclaredValues: undefined,
+    extras: undefined,
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
@@ -56,8 +57,9 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
     { name: 'first', emit: 1 },
   ];
   const node = {
+    runtime: {},
     local: undefined,
-    undeclaredValues: { extra: 3 },
+    extras: { extra: 3 },
     schema: {
       schema: {
         type: 'object',
@@ -72,7 +74,7 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
     'second',
     'first',
   ]);
-  node.undeclaredValues = undefined;
+  node.extras = undefined;
   node.schema = { schema: { type: 'object' }, typeConflict: false };
   expect(Object.keys(assembleObject(node, children) as object)).toEqual([
     'first',

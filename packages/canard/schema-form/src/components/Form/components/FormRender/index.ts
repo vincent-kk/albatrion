@@ -1,3 +1,3 @@
 export { FormRender } from './FormRender';
 
-export type { FormRenderProps } from './type';
+export type { RolledFormRenderProps } from './types/props';

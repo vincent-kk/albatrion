@@ -1,5 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Nullable } from '@aileron/declare';
+
+import { batchFieldNodeLoad } from '@/schema-form/core';
 import type { FieldNode, ValidationIssue } from '@/schema-form/core';
 
 /** Shared empty list for a non-array errors prop, read as empty (178C-01). */
@@ -10,11 +13,12 @@ export const applyFormErrors = (
   root: FieldNode,
   errors: readonly ValidationIssue[] = NO_ERRORS,
   previous: readonly ValidationIssue[] = NO_ERRORS,
+  origin: 'load' | 'write' = 'write',
 ): void => {
   if (!isArray(errors)) errors = NO_ERRORS;
   if (!isArray(previous)) previous = NO_ERRORS;
-  const resolved = new Map<string, FieldNode | null>();
-  const resolve = (dataPath: string): FieldNode | null => {
+  const resolved = new Map<string, Nullable<FieldNode>>();
+  const resolve = (dataPath: string): Nullable<FieldNode> => {
     let node = resolved.get(dataPath);
     if (node === undefined) {
       node = root.find(dataPath);
@@ -23,7 +27,6 @@ export const applyFormErrors = (
     return node;
   };
   const groups = new Map<FieldNode, ValidationIssue[]>();
-  const nodes: FieldNode[] = [];
   for (let index = 0; index < errors.length; index++) {
     const issue = errors[index];
     const node = resolve(issue.dataPath);
@@ -32,7 +35,6 @@ export const applyFormErrors = (
     if (!group) {
       group = [];
       groups.set(node, group);
-      nodes.push(node);
     }
     group.push(issue);
   }
@@ -40,11 +42,11 @@ export const applyFormErrors = (
     const node = resolve(previous[index].dataPath);
     if (!node || node === root || groups.has(node)) continue;
     groups.set(node, []);
-    nodes.push(node);
   }
-  root.batch(() => {
+  const apply = () => {
     root.setExternalErrors(errors);
-    for (let index = 0; index < nodes.length; index++)
-      nodes[index].setExternalErrors(groups.get(nodes[index])!);
-  });
+    for (const [node, group] of groups) node.setExternalErrors(group);
+  };
+  if (origin === 'load') batchFieldNodeLoad(root, apply);
+  else root.batch(apply);
 };

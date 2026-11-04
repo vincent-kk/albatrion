@@ -6,11 +6,11 @@ import {
 } from '@/schema-form/core/engine/record';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { getSettlementScratch } from '../utils/write/getSettlementScratch';
-import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 
 describe('commit candidate membership', () => {
   it('visits global-state candidates before extra event candidates exactly once', () => {

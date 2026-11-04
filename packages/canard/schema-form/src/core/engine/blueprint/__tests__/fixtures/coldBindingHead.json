@@ -18338,10 +18338,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_JSON_SCHEMA at #; Specify a nonempty type without duplicate or unknown names.",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_JSON_SCHEMA at #; Specify a nonempty type without duplicate or unknown names.",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_JSON_SCHEMA",
@@ -18373,10 +18373,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_JSON_SCHEMA at #; Specify a nonempty type without duplicate or unknown names.",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_JSON_SCHEMA at #; Specify a nonempty type without duplicate or unknown names.",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_JSON_SCHEMA",
@@ -18411,10 +18411,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_JSON_SCHEMA at #; Specify a nonempty type without duplicate or unknown names.",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_JSON_SCHEMA at #; Specify a nonempty type without duplicate or unknown names.",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_JSON_SCHEMA",
@@ -19773,10 +19773,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_JSON_SCHEMA at #; Specify type explicitly for object or array branches mixed with another kind.",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_JSON_SCHEMA at #; Specify type explicitly for object or array branches mixed with another kind.",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_JSON_SCHEMA",
@@ -19813,10 +19813,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_JSON_SCHEMA at #; Specify type explicitly; no nonempty branch union or primitive literal determines this slot.",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_JSON_SCHEMA at #; Specify type explicitly; no nonempty branch union or primitive literal determines this slot.",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_JSON_SCHEMA",
@@ -20851,10 +20851,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "ALL_OF_TYPE_REDEFINITION at #/allOf/1/properties/a; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "ALL_OF_TYPE_REDEFINITION at #/allOf/1/properties/a; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "ALL_OF_TYPE_REDEFINITION",
@@ -20896,10 +20896,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "INVALID_RANGE at #/allOf/0; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "INVALID_RANGE at #/allOf/0; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_RANGE",
@@ -20945,10 +20945,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "EMPTY_ENUM_INTERSECTION at #/allOf/0; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "EMPTY_ENUM_INTERSECTION at #/allOf/0; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "EMPTY_ENUM_INTERSECTION",
@@ -20980,10 +20980,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "RECURSIVE_SHAPE_UNBOUNDED at #; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "RECURSIVE_SHAPE_UNBOUNDED at #; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "RECURSIVE_SHAPE_UNBOUNDED",
@@ -21021,10 +21021,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "RECURSIVE_SHAPE_UNBOUNDED at #; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "RECURSIVE_SHAPE_UNBOUNDED at #; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "RECURSIVE_SHAPE_UNBOUNDED",
@@ -21237,10 +21237,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "INVALID_CONTROL_SHAPE at #/controls; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "INVALID_CONTROL_SHAPE at #/controls; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
@@ -21277,10 +21277,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_GROUP_KEY at #/controls/typo; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_GROUP_KEY at #/controls/typo; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_GROUP_KEY",
@@ -21315,10 +21315,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_GROUP_KEY at #/options/unknown; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_GROUP_KEY at #/options/unknown; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_GROUP_KEY",
@@ -21353,10 +21353,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "INVALID_CONTROL_SHAPE at #/controls/fields; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "INVALID_CONTROL_SHAPE at #/controls/fields; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
@@ -21397,10 +21397,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "INVALID_CONTROL_SHAPE at #/controls/fields/0; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "INVALID_CONTROL_SHAPE at #/controls/fields/0; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
@@ -21444,10 +21444,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "CHILDREN_TARGET_NOT_FOUND at #/controls/fields/0; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "CHILDREN_TARGET_NOT_FOUND at #/controls/fields/0; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "CHILDREN_TARGET_NOT_FOUND",
@@ -21483,10 +21483,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "INVALID_CONTROL_SHAPE at #/controls/discriminator; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "INVALID_CONTROL_SHAPE at #/controls/discriminator; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
@@ -21525,10 +21525,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "INVALID_CONTROL_SHAPE at #/controls/injectTo; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "INVALID_CONTROL_SHAPE at #/controls/injectTo; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
@@ -21563,10 +21563,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNEXPECTED_ARRAY_SCHEMA at #; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNEXPECTED_ARRAY_SCHEMA at #; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNEXPECTED_ARRAY_SCHEMA",
@@ -21603,10 +21603,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "VIRTUAL_FIELDS_NOT_VALID at #/options/virtual/bad; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "VIRTUAL_FIELDS_NOT_VALID at #/options/virtual/bad; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "VIRTUAL_FIELDS_NOT_VALID",
@@ -21643,10 +21643,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "UNKNOWN_GROUP_KEY at #/allOf/0/controls/watch; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "UNKNOWN_GROUP_KEY at #/allOf/0/controls/watch; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "UNKNOWN_GROUP_KEY",
@@ -21683,10 +21683,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "OBSERVED_VALUES at #/controls/watch; Dependencies must be strings without wildcard path segments.",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "OBSERVED_VALUES at #/controls/watch; Dependencies must be strings without wildcard path segments.",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "OBSERVED_VALUES",
@@ -21721,10 +21721,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "CREATE_DYNAMIC_FUNCTION at #/controls/visible; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "CREATE_DYNAMIC_FUNCTION at #/controls/visible; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "CREATE_DYNAMIC_FUNCTION",
@@ -21744,7 +21744,7 @@
                     "message": "Unexpected token ')'"
                   }
                 },
-                "name": "JSONSchemaError",
+                "name": "JSON_SCHEMA_ERROR",
                 "message": "Failed to create dynamic function for a controls expression.\n\n  ╭──────────────────────────────────────────────────\n  │  Field:       visible\n  │  Expression:  '(()'\n  ├──────────────────────────────────────────────────\n  │  Generated Function Body:\n  │    return !!((())\n  ├──────────────────────────────────────────────────\n  │  Error: Unexpected token ')'\n  ╰──────────────────────────────────────────────────\n\nThe expression could not be compiled into a valid JavaScript function.\nThis usually indicates a syntax error in the controls expression.\n\nHow to fix:\n  1. Check the expression syntax for typos or invalid JavaScript\n  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid\n  3. Verify that the expression returns a valid value\n  4. Check for unbalanced parentheses or brackets"
               },
               "expression": "(()"
@@ -21758,7 +21758,7 @@
             "schemaPath": "#/controls/visible",
             "details": {
               "cause": {
-                "name": "JSONSchemaError",
+                "name": "JSON_SCHEMA_ERROR",
                 "message": "Failed to create dynamic function for a controls expression.\n\n  ╭──────────────────────────────────────────────────\n  │  Field:       visible\n  │  Expression:  '(()'\n  ├──────────────────────────────────────────────────\n  │  Generated Function Body:\n  │    return !!((())\n  ├──────────────────────────────────────────────────\n  │  Error: Unexpected token ')'\n  ╰──────────────────────────────────────────────────\n\nThe expression could not be compiled into a valid JavaScript function.\nThis usually indicates a syntax error in the controls expression.\n\nHow to fix:\n  1. Check the expression syntax for typos or invalid JavaScript\n  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid\n  3. Verify that the expression returns a valid value\n  4. Check for unbalanced parentheses or brackets",
                 "group": "JSON_SCHEMA_ERROR",
                 "specific": "CREATE_DYNAMIC_FUNCTION",
@@ -22855,10 +22855,10 @@
       },
       "expected": {
         "error": {
-          "name": "JSONSchemaError",
+          "name": "JSON_SCHEMA_ERROR",
           "message": "SHARED_NODE_KIND_CONFLICT at #/oneOf/1/properties/a; check the authored schema",
           "data": {
-            "name": "JSONSchemaError",
+            "name": "JSON_SCHEMA_ERROR",
             "message": "SHARED_NODE_KIND_CONFLICT at #/oneOf/1/properties/a; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "SHARED_NODE_KIND_CONFLICT",

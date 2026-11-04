@@ -9,6 +9,7 @@ import {
 } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { ValidationMode, type Validator } from '@/schema-form/core';
 import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFormContext';
 import type { FieldInputProps } from '@/schema-form/types';
@@ -44,7 +45,7 @@ it('LANDING-067 REACT-009 combines root locks without blocking imperative writes
   expect(input!.readOnly && input!.disabled).toBe(true);
 });
 
-it('VALIDATE-044 retains authored schema identity and replaces the root on validator change', () => {
+it('VALIDATE-044 retains authored schema identity and replaces the root on validator change', async () => {
   const first: Validator = {
     compile: vi.fn(() => () => []),
     compileGuard: () => () => true,
@@ -56,18 +57,21 @@ it('VALIDATE-044 retains authored schema identity and replaces the root on valid
   const schema = { type: 'string' } as const;
   const ref = createRef<FormHandle>();
   const view = render(
-    <FormCore ref={ref} jsonSchema={schema} validatorFactory={first}>
+    <FormCore ref={ref} jsonSchema={schema} validatorFactory={first} errors={[]}>
       <span />
     </FormCore>,
   );
   const before = ref.current!.node;
+  await settleValidation(() => ref.current?.node);
   expect(first.compile).toHaveBeenCalledWith(schema);
   view.rerender(
-    <FormCore ref={ref} jsonSchema={schema} validatorFactory={second}>
+    <FormCore ref={ref} jsonSchema={schema} validatorFactory={second} errors={[]}>
       <span />
     </FormCore>,
   );
   expect(ref.current!.node).not.toBe(before);
+  expect(second.compile).not.toHaveBeenCalled();
+  await settleValidation(() => ref.current?.node);
   expect(second.compile).toHaveBeenCalledWith(schema);
 });
 

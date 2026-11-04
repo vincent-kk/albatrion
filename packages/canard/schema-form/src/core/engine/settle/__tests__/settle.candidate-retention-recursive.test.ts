@@ -1,0 +1,74 @@
+import { expect, it } from 'vitest';
+
+import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
+import type { BlueprintSchema } from '../../blueprint';
+import { dispatchMount, dispatchSetValue } from '../../write';
+import { getDispatchNode } from './fixtures/getDispatchNode';
+
+it('R2 recursive candidate clearing preserves the closed root at each depth', () => {
+  for (const depth of [4, 8, 12]) {
+    const schema: BlueprintSchema = {
+      type: 'object',
+      $defs: {
+        owned: {
+          type: 'object',
+          properties: {
+            more: { type: 'boolean' },
+            '0': {
+              $ref: '#/$defs/owned',
+              nullable: true,
+              controls: { active: '../more' },
+            },
+            value: { type: 'string' },
+          },
+        },
+        other: {
+          type: 'array',
+          allOf: [
+            {
+              controls: { active: false },
+              items: { $ref: '#/$defs/altObject' },
+            },
+            {
+              controls: { active: false },
+              items: { $ref: '#/$defs/other' },
+            },
+          ],
+        },
+        altObject: {
+          type: 'object',
+          allOf: [
+            {
+              controls: { active: false },
+              properties: { '0': { $ref: '#/$defs/altObject' } },
+            },
+            {
+              controls: { active: false },
+              properties: { '0': { $ref: '#/$defs/other' } },
+            },
+          ],
+        },
+      },
+      properties: { a: { type: 'boolean' }, b: { type: 'boolean' } },
+      allOf: [
+        {
+          controls: { active: './a' },
+          properties: {
+            v: { $ref: '#/$defs/owned', controls: { unsetOnInactive: true } },
+          },
+        },
+        {
+          controls: { active: './b' },
+          properties: { v: { $ref: '#/$defs/other' } },
+        },
+      ],
+    };
+    let input: Record<string, unknown> = { more: false, value: 'leaf' };
+    for (let level = 0; level < depth; level++)
+      input = { more: true, '0': input, value: 'branch' };
+    const { root } = createDispatchTree(schema);
+    dispatchMount(root, { a: true, b: false, v: input });
+    dispatchSetValue(getDispatchNode(root, 'a'), false);
+    expect(root.local).toEqual({ a: false, b: false });
+  }
+});

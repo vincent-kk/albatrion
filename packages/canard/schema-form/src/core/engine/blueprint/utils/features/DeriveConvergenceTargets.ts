@@ -1,13 +1,12 @@
-import type { Blueprint } from '../../type';
-import { collectDeriveConvergenceTargets } from '../analyze/collectDeriveConvergenceTargets';
+import type { Nullable, Optional } from '@aileron/declare';
+
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import type { Blueprint } from '../../types/blueprint';
+import { collectDeriveConvergenceTargets } from './collectDeriveConvergenceTargets';
 
 /** First-write proof consumed by settle; no public Blueprint slots are added. */
 export class DeriveConvergenceTargets {
   /** Null memoizes conservative fallback for the immutable analysis lifetime. */
-  private static readonly targets = new WeakMap<
-    Blueprint,
-    ReadonlySet<string> | null
-  >();
 
   /**
    * Retain proven targets, or disable skipping for a reference run.
@@ -17,9 +16,12 @@ export class DeriveConvergenceTargets {
    */
   static set(
     blueprint: Blueprint,
-    targets: ReadonlySet<string> | undefined,
+    targets: Optional<ReadonlySet<string>>,
   ): void {
-    this.targets.set(blueprint, targets ?? null);
+    getBlueprintDerived<
+      'deriveConvergenceTargets',
+      Nullable<ReadonlySet<string>>
+    >(blueprint).deriveConvergenceTargets = targets ?? null;
   }
 
   /**
@@ -27,8 +29,13 @@ export class DeriveConvergenceTargets {
    * @param blueprint - Immutable analysis used by the current form
    * @returns Proven paths, or undefined for conservative fallback
    */
-  static get(blueprint: Blueprint): ReadonlySet<string> | undefined {
-    return this.targets.get(blueprint) ?? undefined;
+  static get(blueprint: Blueprint): Optional<ReadonlySet<string>> {
+    return (
+      getBlueprintDerived<
+        'deriveConvergenceTargets',
+        Nullable<ReadonlySet<string>>
+      >(blueprint).deriveConvergenceTargets ?? undefined
+    );
   }
 
   /**
@@ -36,8 +43,11 @@ export class DeriveConvergenceTargets {
    * @param blueprint - Immutable analysis shared by forms of the same schema
    * @returns Proven paths, or undefined for conservative fallback
    */
-  static getOrCollect(blueprint: Blueprint): ReadonlySet<string> | undefined {
-    const cached = this.targets.get(blueprint);
+  static getOrCollect(blueprint: Blueprint): Optional<ReadonlySet<string>> {
+    const cached = getBlueprintDerived<
+      'deriveConvergenceTargets',
+      Nullable<ReadonlySet<string>>
+    >(blueprint).deriveConvergenceTargets;
     if (cached !== undefined) return cached ?? undefined;
     const targets = collectDeriveConvergenceTargets(blueprint);
     this.set(blueprint, targets);

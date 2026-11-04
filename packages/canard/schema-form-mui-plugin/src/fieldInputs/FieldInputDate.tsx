@@ -42,6 +42,7 @@ const FieldInputDate = ({
   variant: variantProp,
   fullWidth: fullWidthProp,
   hideLabel,
+  misfit,
 }: FieldInputDateProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -75,11 +76,12 @@ const FieldInputDate = ({
   }, [jsonSchema.minimum, jsonSchema.maximum]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue && newValue.isValid()) {
-      onChange(newValue.format('YYYY-MM-DD'));
-    } else {
-      onChange(null);
+    if (newValue === null) {
+      onChange(undefined);
+      return;
     }
+    if (!newValue.isValid()) return;
+    onChange(newValue.format('YYYY-MM-DD'));
   });
 
   const disableDate = useHandle((date: Dayjs) => {
@@ -92,7 +94,11 @@ const FieldInputDate = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
         label={label}
-        defaultValue={defaultValue ? dayjs(defaultValue) : null}
+        defaultValue={
+          typeof defaultValue === 'string' && defaultValue
+            ? dayjs(defaultValue)
+            : null
+        }
         onChange={handleChange}
         disabled={disabled}
         minDate={minDate}
@@ -106,6 +112,7 @@ const FieldInputDate = ({
             size,
             variant,
             fullWidth,
+            error: misfit,
           },
         }}
       />
