@@ -1,1 +1,0 @@
-export { processAllOfSchema } from './processAllOfSchema';

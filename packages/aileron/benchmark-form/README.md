@@ -116,9 +116,10 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 
 정착 장벽은 **마이크로태스크 비움 → setImmediate → setTimeout(0) 한 번 → setImmediate**입니다.
 `setImmediate`가 없으면 `MessageChannel`을 사용합니다. `drainTicks` 자체에는 타이머가 없습니다.
-L의 `src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112,120`
+L의 0.16.1 커밋 `7b49d62c7`에 있는
+`packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112,120`
 은 배치 카운터 초기화를 매크로태스크로, 이벤트 배달을 마이크로태스크로 예약합니다.
-`src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1219`의 루트 변경 배달은
+같은 커밋의 `packages/canard/schema-form/src/core/nodes/AbstractNode/AbstractNode.ts:1219`에서 루트 변경 배달은
 `afterMicrotask`를 거쳐 타이머로 지연됩니다. 이 지연까지 지나야 다음 상호작용을 시작할 수 있습니다.
 이는 현재 픽스처의 정착 정의이며 임의의 지연 타이머 전체를 기다리는 일반 목적 idle 검출기는 아닙니다.
 

@@ -909,12 +909,6 @@
 - **Direct import**: `not allowed`
 - **Reason**: changeFieldNodeContext는 write의 바인딩용 맥락 변경 진입이 이름으로 소비하며, 의존 소유자 등록과 동기 정착 조율을 context organ에 둔다.
 
-### `utils/gates/getGateRegistry.ts` — 레거시 비교 스크립트의 직접 import
-
-- **Consumers**: `**/bench/legacy-compare/**`
-- **Direct import**: `allowed`
-- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지운다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제된다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽는다.
-
 ## History
 
 - 2026-10-22. 기본 시험을 출하 skip/table 경로로 전환하고 그림자 검증과 기존 방문 이력 스냅샷을 전용 verify 번들로 분리합니다. 기본 시험에서도 실제 단계 생략을 실행하고 별도 번들에서 전수 비교 검증을 유지하기 위한 결정입니다.
@@ -923,4 +917,4 @@
 
 ## Last Updated
 
-2026-10-31. IR-1b: 컨트롤 템플릿 ID 목록의 개발 전용 동결과 production 읽기 전용 계약.
+2026-11-05

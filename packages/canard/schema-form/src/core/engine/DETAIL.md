@@ -138,7 +138,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 ### 수출의 이유와 도달 범위
 
 - `scheduleValidationSlot`은 RootNodeContext의 모든 로드 검증이 쓰기 검증과 같은 화면 뒤 실행 시점을 재사용하는 바인딩 전용 통로다. core가 명명 재수출하며 패키지 공개 표면은 넓히지 않는다. 예약 구현은 validationScheduling이 소유한다(IR-6 amendment3).
-- `loadFieldNodeAtMount`와 `resetFieldNodeForm`을 수출하는 이유는 다음과 같다. core 시나리오 실행기(`createCoreScenarioAdapter`, `createObservedCoreScenarioAdapter`, `executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`, 그리고 `bench/legacy-compare/`의 독립 비교 스크립트(`array`, `derive-and-controls`, `node-and-settle`)가 engine index를 통해 이 적재 통로를 쓴다. 제품 소비자는 없다.
+- `loadFieldNodeAtMount`와 `resetFieldNodeForm`을 수출하는 이유는 다음과 같다. core 시나리오 실행기(`createCoreScenarioAdapter`, `createObservedCoreScenarioAdapter`, `executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`가 engine index를 통해 이 적재 통로를 쓴다. 제품 소비자는 없다.
 - `blueprint`는 bench와 `src/hooks/__tests__/createHookNode.ts`가 쓰는 생성 통로이므로 core index가 다시 내보내고, 패키지 src/index 표면에는 추가하지 않는다. `readFieldNodeGuard`는 validation 내부 계약이라서 engine과 core의 집계 진입점이 재수출하지 않는다.
 - 이름 목록은 승인된 내부 계약이며, 자식 모듈의 모든 수출을 대신하지는 않는다. 시험은 검사 대상이 속한 구획에서 구체적인 내부 단위를 검증한다.
 - `__tests__/fixtures`는 engine 층의 공용 시험 fixture를 소유한다. `createDispatchTree.ts`는 write와 validation 시험이 함께 쓰는 생성 도우미이고, `createTestTree.ts`와 `createPlainNode.ts`는 settle과 derive 시험이 함께 쓰는 트리 도우미이며, `ownedInlineHead.json`은 blueprint와 settle 시험이 함께 쓰는 기준 데이터이다. 모두 여러 자식이 공유하므로, 이들을 아우르는 가장 낮은 공통 소유자인 이곳에 둔다.
@@ -185,16 +185,8 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 - 기존 청사진, 동작 행, 정착, 쓰기, 검증 시험이 값, 형상, 오류, 사건에 대해 같은 단언 결과를 낸다. 고정 리비전 대조 시험은 옛 경로를 현재 배치로 바꿔 해석한다.
 
-## Boundary Exemptions
-
-### `utils/compute/sameValue.ts` — 레거시 비교 스크립트의 직접 import
-
-- **Consumers**: `**/bench/legacy-compare/**`
-- **Direct import**: `allowed`
-- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`, `derive-and-controls`, `dispatch-and-validation`, `node-and-settle`)이 있는 자리이며, 레거시를 지울 때 함께 지운다. 그때까지는 소유자 결정(276라운드, 대기열 49)에 따라 fractal import 규칙의 직접 import 금지에서 면제된다. 값 비교 비용만 따로 재려는 것이라서 진입점에 올리지 않고 그대로 읽는다.
-
 ## Last Updated
 
-2026-11-03
+2026-11-05
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).

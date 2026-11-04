@@ -29,5 +29,5 @@
 
 ### Never do
 
-- `__legacy__`, `app/plugin`, React, `FieldNode` 겉면, `src/types` 색인을 값이나 타입으로 가져오지 않는다(LANDING-159, CONTROLS-075, GOAL-088, NODE-016).
+- `app/plugin`, React, `FieldNode` 겉면, `src/types` 색인을 값이나 타입으로 가져오지 않는다(LANDING-159, CONTROLS-075, GOAL-088, NODE-016).
 - 커밋 뒤에 전체 트리를 다시 비교해서 배달 집합을 만들지 않고, 검증 라우팅을 직접 구현하지도 않는다(SETTLE-017, VALIDATE-043, LANDING-084).

@@ -4,7 +4,6 @@
   "ignore": [
     "**/architecture",
     "**/legacy",
-    "**/__legacy__",
     "**/fixtures",
     "**/__fixtures__",
     "**/mock",

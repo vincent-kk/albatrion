@@ -30,5 +30,5 @@
 
 ### Never do
 
-- `settle`, `write`, `FieldNode`, `__legacy__`, `app/plugin`, React, `src/types` 색인을 값이나 타입으로 가져오지 않는다(NODE-016·045, CONTROLS-075, GOAL-088, LANDING-159).
+- `settle`, `write`, `FieldNode`, `app/plugin`, React, `src/types` 색인을 값이나 타입으로 가져오지 않는다(NODE-016·045, CONTROLS-075, GOAL-088, LANDING-159).
 - 검증 결과의 파동을 직접 배달하지 않고, 전역 등록소에서 플러그인을 고르지도 않는다(LANDING-084, CONTROLS-075).
