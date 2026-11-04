@@ -4,6 +4,12 @@
 
 ## 1. 최종 기록
 
+### 8단계 최종 측정 — 브라우저 (PR #539 하네스, 실행 41804126885, 2026-11-04)
+
+[최종 브라우저 보고서](./final-stage-8-browser.md)는 0.16.1(`7b49d62c7`)과 스테이지 끝 `bd2141098`을 GitHub Actions의 60 Hz 헤드리스 Chromium에서 변형별 3회 예열·20회 측정한 아홉 사례를 기록합니다. 배열 타이핑 블로킹은 7.23 → 1.34 ms(−81 %), 중첩 검증 마운트 경과는 507 → 431 ms(−15 %), 배열 검증 마운트는 648 → 582 ms(−10 %)로 개선되었습니다. 가중 블로킹 교환비는 −5.89 s(비율 0.557), 가중 피드백 교환비는 +3.01 s(비율 1.048)이며 마운트의 직접 블로킹은 미측정이라 블로킹 교환비에서 제외합니다.
+
+if-flat 비검증 마운트 경과 +38 %, if-flat 검증 마운트 경과 +7 %·피드백 +10 %, 첫 키 경과 +28 %의 세 회귀는 열린 원인 분석 항목입니다. 이 분석 전에는 8단계 성능 결론을 확정하지 않습니다. 배열 타이핑도 블로킹 감소와 함께 피드백은 22.5 → 25.7 ms(+14 %)로 늦어졌습니다. 이전 실행 41651117812를 인용한 브라우저 비교는 0.16.1에 라벨·오류 DOM이 더 그려지는 렌더러 편향이 있어 이 보고서로 대체합니다. 하네스 [PR #539](https://github.com/vincent-kk/albatrion/pull/539), 워크플로 보정 [PR #540](https://github.com/vincent-kk/albatrion/pull/540), [기록 실행](https://github.com/vincent-kk/albatrion/actions/runs/41804126885)의 출처와 A7 허용 항목은 보고서에 명시했습니다.
+
 ### 8단계 최종 측정(443b, 제품 `a63db97c2`, 2026-10-22~23)
 
 아래는 최종 PR #445 본문의 성능 절을 그대로 옮긴 것이다. 그 뒤의 제품 변경(#451 과 플러그인·내장 fallback 수정 #452~#457·#460)은 이 창에서 재지 않았고, #451 의 변화는 수정 PR 의 20행 창에서 따로 쟀다(`../../reviews/round-444-closing.md` 444C-06). 전체 47행·38행 표의 복구본은 [final-measure-443b.md](./final-measure-443b.md)에 있다.
@@ -73,6 +79,7 @@
 
 ## 3. 측정 도구
 
+- 브라우저 최종 기록은 `packages/aileron/benchmark-form/scripts/`의 `checkFinalRun.mjs`(G6, `--allow-void`의 지정 지표만 허용하고 각 항목을 출력합니다), `renderFinalReport.mjs`(원시 표본에서 범례·표를 재생성합니다), `checkReportTables.mjs`(G7, 원자료 재계산과 보고서 생성 구역의 바이트 일치를 검사합니다)를 사용합니다. 같은 디렉터리의 `checkSmokeSamples.mjs`는 두 판의 사례별 관측 계약을, `checkRedTests.mjs`는 구현 전 의도한 시험 실패를 확인합니다.
 - [run-baseline.mjs](./run-baseline.mjs): M0 기준선을 재는 러너. 재현 명령은 [baseline.md](./baseline.md)의 재현 절에 있다.
 - `probe-*.ts`: 쓰기 경로·terminal mode·배열 동사·조각 토글·게이트 형제·if 호스트 형제의 계측 탐침(옛 판 대조용 `probe-legacy-*` 포함). 결과는 [write-paths-measurement.md](./write-paths-measurement.md), [array-verbs-measurement.md](./array-verbs-measurement.md), [mount-breakdown-results.md](./mount-breakdown-results.md)에 있다.
 - `first-batch/`: 전후 배달 비교 러너와 첫 묶음 측정([first-batch-measurement.md](./first-batch-measurement.md)). `first-batch/b-a2/bench-common.mjs` 는 패키지의 `bench/distEngine/check-mount-readiness.mjs` 가 쓴다.

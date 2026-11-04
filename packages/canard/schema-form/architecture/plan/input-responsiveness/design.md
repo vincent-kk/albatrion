@@ -608,7 +608,7 @@ IR-8 L1이 다음 단계로 남긴 가드 단독 컴파일(항목 G)을 이 절�
 - L3: 루트 위치 경로의 가드는 참조를 풀 때 루트를 컴파일하므로, 루트 다른 곳의 코드 생성 오류(풀리지 않는 `$ref`)와 사용자 정의 키워드의 메타 검사 위반에는 여전히 함께 실패합니다(README가 적은 한계, 유지).
 - L4: 검증을 쓰는 `if` 폼에서는 총 작업량이 줄지 않습니다. 가드 단계가 하던 루트 등록과 메타 검사 약 10 ms가 다음 프레임 뒤의 검증 컴파일로 옮겨 갑니다.
 - L5: 1,020이라는 값은 V8의 빠른 속성 한계입니다. 엔진별 상수가 코드에 들어가며 문서 주석이 그 까닭을 적습니다.
-- L6: 0.16.1 대비 남는 격차(키 입력 +27.7%, 검증 없는 `if` 마운트 +19.0%, 첫 키 입력 +35.1%)는 이 작업의 범위 밖입니다.
+- L6: 0.16.1 대비 남는 격차(키 입력 +27.7%, 검증 없는 `if` 마운트 +19.0%, 첫 키 입력 +35.1%)는 이 작업의 범위 밖입니다. 이 수치는 렌더러 편향이 있는 실행 41651117812에서 나왔으며 [8단계 최종 브라우저 보고서](../../verification/perf-optimization/final-stage-8-browser.md)로 대체합니다.
 - L7: 배포 AJV의 루트 간 `$id` 격리는 그대로입니다(충돌 판정이 별도 검증 인스턴스를 고르고, 가드도 루트별 형제를 씁니다; 같은 `$id` 자체는 오류가 아닙니다, ERROR-201). 바뀌는 것은 실제 검증용 등록 실패(격리하지 못한 충돌, 메타 스키마 위반)의 발생 시점이 가드 시점에서 전체 `compile`로 옮겨 간다는 것뿐입니다. 471C-05가 적은 사용자 정의 검증기의 한계는 유지됩니다. 기존 같은-`$id` 시험의 기대값은 바꾸지 않습니다.
 
 ### Acceptance criteria
@@ -622,6 +622,8 @@ IR-8 L1이 다음 단계로 남긴 가드 단독 컴파일(항목 G)을 이 절�
 ### Gates
 
 lint (0 warnings), typecheck and build in schema-form and the three plugins; schema-form `unit` and `render` projects; the full suites of the three plugins; public declaration and `package.json` diff zero; no machine path; no new FCA finding (coordinator, filid). The browser measurement already exists (F9: runs 41650676406 and 41651117812); after implementation the coordinator runs the CI measurement once more on the final branch (nine cases, 20 runs, baseline `feat/schema-form-08-review-and-perf`) to confirm the same direction. Documents first, then the test text with its red run stored, then the product commits, then the results.
+
+실행 41651117812와 41605464351의 0.16.1 비교는 렌더러 속성 차이에 따른 기준판의 추가 DOM 편향이 있어 [8단계 최종 브라우저 보고서](../../verification/perf-optimization/final-stage-8-browser.md)로 대체합니다.
 
 ### Changes
 
