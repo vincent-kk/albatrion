@@ -66,9 +66,9 @@ interface RegisteredNode {
   node: object;
   /** Fold-inclusive kind token at this live path. */
   kind: string;
-  /** Gate memo bound to this exact live node lifetime. */
+  /** Gate memo bound to this exact live node lifetime; the shared read-only empty memo until a gate is added. */
   memo: ReadonlyMap<BlueprintGate, RegisteredGateOccurrence>;
-  /** Direct edge bindings owned by the same live registration. */
+  /** Direct edge bindings owned by the same live registration; absent until a direct edge gate is bound. */
   edges?: Map<string, Map<BlueprintGate, RegisteredGateOccurrence>>;
   /** Gate occurrences registered by its template and direct edges. */
   occurrences: readonly RegisteredGateOccurrence[];
@@ -253,7 +253,6 @@ class GateRegistry {
       registration.memo instanceof Map && registration.memo !== EMPTY_GATE_MEMO
         ? registration.memo
         : new Map<BlueprintGate, RegisteredGateOccurrence>();
-    registration.memo = memo;
     this.add(node, gate, memo);
     const edges = registration.edges;
     this.byPath.set(node.path, {
@@ -578,7 +577,7 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   pathSegments: decodePointerSegments,
   occurrenceCount: () => 0,
 });
-/** Repeated absent relocation reads preserve reference identity. */
+/** Shared frozen empty occurrence list for absent relocation reads and gate-free registrations. */
 const EMPTY_OCCURRENCES: readonly RegisteredGateOccurrence[] = Object.freeze([]);
 /** Private read-only absence marker, replaced before any occurrence is inserted. */
 const EMPTY_GATE_MEMO: ReadonlyMap<BlueprintGate, RegisteredGateOccurrence> =
