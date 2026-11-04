@@ -8,9 +8,9 @@ describe('describeFirstStep', () => {
     expect(describeFirstStep([{ action: 'setValue', path: '/age', value: 15 }, { action: 'reset' }]))
       .toBe('Set /age to 15, then watch Value and Errors.');
   });
-  it('names the root and serializes structured values for display', () => {
-    expect(describeFirstStep([{ action: 'setValue', path: '', value: { name: 'Ada' } }]))
-      .toBe('Set the form to {"name":"Ada"}, then watch Value and Errors.');
+  it('serializes structured field values for display', () => {
+    expect(describeFirstStep([{ action: 'setValue', path: '/profile', value: { name: 'Ada' } }]))
+      .toBe('Set /profile to {"name":"Ada"}, then watch Value and Errors.');
   });
   it('describes clearing a field', () => {
     expect(describeFirstStep([{ action: 'clear', path: '/name' }]))

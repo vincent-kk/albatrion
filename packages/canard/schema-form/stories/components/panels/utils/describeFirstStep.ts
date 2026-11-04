@@ -3,9 +3,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import { toDisplayJSON } from '../toDisplayJSON';
 
 /**
- * Find the first operation through nested batches, leaving observations untouched.
+ * Find the first UI operation through nested batches, skipping root writes.
  * @param steps - Authored operations or observation-only records in execution order.
- * @returns The first non-batch operation, or undefined when no operation exists.
+ * @returns The first non-batch operation with a field path or a form action.
  */
 function findFirstOperation(steps: readonly object[]): Record<string, unknown> | undefined {
   for (const step of steps) {
@@ -13,9 +13,18 @@ function findFirstOperation(steps: readonly object[]): Record<string, unknown> |
     if (record.action === 'batch') {
       const nested = isArray(record.steps) ? findFirstOperation(record.steps) : undefined;
       if (nested) return nested;
-    } else if (record.action) return record;
+    } else if (record.action && record.path !== '') return record;
   }
   return undefined;
+}
+
+/**
+ * Normalize array slots to the JSON values shown by the form's Value panel.
+ * @param value - An authored value; array slots may contain undefined or holes.
+ * @returns A copied array with null slots, or the original non-array value.
+ */
+function toStepValue(value: unknown): unknown {
+  return isArray(value) ? Array.from(value, (item) => item === undefined ? null : toStepValue(item)) : value;
 }
 
 /**
@@ -26,16 +35,16 @@ function findFirstOperation(steps: readonly object[]): Record<string, unknown> |
 export function describeFirstStep(steps: readonly object[]): string {
   const step = findFirstOperation(steps);
   const follow = ', then watch Value and Errors.';
-  const path = typeof step?.path === 'string' ? step.path || 'the form' : undefined;
+  const path = typeof step?.path === 'string' ? step.path : undefined;
   switch (step?.action) {
     case 'setValue':
-      if (path && 'value' in step) return `Set ${path} to ${toDisplayJSON(step.value, 0)}${follow}`;
+      if (path && 'value' in step) return `Set ${path} to ${toDisplayJSON(toStepValue(step.value), 0)}${follow}`;
       break;
     case 'clear':
       if (path) return `Clear ${path}${follow}`;
       break;
     case 'push':
-      if (path) return `Add ${'value' in step ? toDisplayJSON(step.value, 0) : 'an item'} to ${path}${follow}`;
+      if (path) return `Add ${'value' in step ? toDisplayJSON(toStepValue(step.value), 0) : 'an item'} to ${path}${follow}`;
       break;
     case 'pop':
       if (path) return `Remove the last item from ${path}${follow}`;
@@ -44,7 +53,7 @@ export function describeFirstStep(steps: readonly object[]): string {
       if (path && typeof step.index === 'number') return `Remove item ${step.index + 1} from ${path}${follow}`;
       break;
     case 'update':
-      if (path && typeof step.index === 'number' && 'value' in step) return `Set item ${step.index + 1} in ${path} to ${toDisplayJSON(step.value, 0)}${follow}`;
+      if (path && typeof step.index === 'number' && 'value' in step) return `Set item ${step.index + 1} in ${path} to ${toDisplayJSON(toStepValue(step.value), 0)}${follow}`;
       break;
     case 'resetSubtree':
       if (path) return `Reset ${path}${follow}`;

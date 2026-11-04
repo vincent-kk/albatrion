@@ -1,5 +1,6 @@
 /* Loaded by the core Storybook preview; data-theme selects the palette. */
 :root {
+  color-scheme: light;
   --sf-bg: #ffffff;
   --sf-surface: #f8fafc;
   --sf-surface-2: #f1f5f9;
@@ -32,6 +33,7 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --sf-bg: #0b1120;
   --sf-surface: #111827;
   --sf-surface-2: #1e293b;

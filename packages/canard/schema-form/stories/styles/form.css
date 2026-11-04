@@ -1,4 +1,4 @@
-:is(.sf-form, .sf-usage) label {
+:is(.sf-form, .sf-usage) label:not([hidden]) {
   display: block;
   margin-bottom: var(--sf-space-1);
   font-size: var(--sf-text-sm);
@@ -33,7 +33,7 @@
   height: 16px;
   accent-color: var(--sf-accent);
 }
-:is(.sf-form, .sf-usage) label:has(input:is([type='checkbox'], [type='radio'])) {
+:is(.sf-form, .sf-usage) label:not([hidden]):has(input:is([type='checkbox'], [type='radio'])) {
   display: inline-flex;
   align-items: center;
   gap: var(--sf-space-2);
@@ -75,7 +75,7 @@
   background: color-mix(in srgb, var(--sf-accent), var(--sf-text) 8%);
 }
 :is(.sf-form, .sf-usage) button[aria-label='Apply next form props'] { margin-bottom: var(--sf-space-4); }
-:is(.sf-form, .sf-usage) output[aria-label='Form output'] {
+:is(.sf-form, .sf-usage) output[aria-label='Form output']:not([hidden]) {
   display: block;
   margin-top: var(--sf-space-4);
   color: var(--sf-text-muted);
@@ -84,7 +84,7 @@
   overflow-wrap: anywhere;
 }
 
-:is(.sf-form, .sf-usage) output[aria-label='Form output']::before {
+:is(.sf-form, .sf-usage) output[aria-label='Form output']:not([hidden])::before {
   content: 'Output';
   display: block;
   margin-bottom: var(--sf-space-1);
