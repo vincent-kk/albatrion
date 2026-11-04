@@ -95,6 +95,14 @@ const rows = [
     validation: true,
   },
   {
+    id: 'first-key-flat-500-validate-after-load',
+    operation: 'first-key',
+    target: '/field_000',
+    expectedInputs: 501,
+    measuredPath: '/field_000',
+    validation: true,
+  },
+  {
     id: 'rebuild-flat-500',
     operation: 'rebuild',
     target: '/field_000',
@@ -105,7 +113,7 @@ const rows = [
 ];
 
 describe('core fixture contract', () => {
-  it('keeps exactly the ten approved cases in their reporting order', () => {
+  it('keeps exactly the eleven approved cases in their reporting order', () => {
     expect(cases).toEqual(rows.map((row) => row.id));
   });
 
@@ -128,6 +136,9 @@ describe('core fixture contract', () => {
       'type-flat-500-validate-burst',
       'type-if-flat-500-validate-nonburst',
       'first-key-array-1000-validate',
+      'first-key-array-1000-validate-after-load',
+      'mount-flat-500-validate-after-load',
+      'first-key-flat-500-validate-after-load-extra',
       'rebuild-flat-500-validate',
       'mount-flat-500-validate-extra',
     ])
@@ -184,6 +195,13 @@ describe('core fixture contract', () => {
     expect(fixture.schema.then).toEqual({
       properties: { field_0: { minLength: 2 } },
     });
+  });
+
+  it('keeps both first-key variants identical except for their case ID', () => {
+    const immediate = getCoreFixture('first-key-flat-500-validate');
+    const afterLoad = getCoreFixture('first-key-flat-500-validate-after-load');
+    expect(afterLoad).toEqual({ ...immediate, id: afterLoad.id });
+    expect(afterLoad.schema).not.toBe(immediate.schema);
   });
 
   it('alternates validation only at the typed leaf without sharing schemas', () => {

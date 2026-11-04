@@ -11,7 +11,7 @@ yarn workspace @aileron/benchmark-form bench:form --runs 20 --warmup 3 --out res
 yarn workspace @aileron/benchmark-form bench:form --baseline master --cases mount-flat-500-none,rebuild-flat-500 --runs 20 --out results/compare
 ```
 
-`--cases`를 생략하면 열 가지 코어 사례를 측정합니다. 기준 ref는 독립적으로 설치·빌드한
+`--cases`를 생략하면 열한 가지 코어 사례를 측정합니다. 기준 ref는 독립적으로 설치·빌드한
 임시 Git worktree에서 준비하며, 이미 준비한 체크아웃은 `--baseline-dir <path>`로 지정합니다.
 후보는 현재 워크스페이스의 빌드 결과를 사용합니다. 매 표본은 새 페이지에서 실행하고 기준·후보·
 기준 번들의 동일 바이트 대조군을 교차 측정합니다. `summary.json`, `summary.md`, `samples.json`,
@@ -36,6 +36,13 @@ capture→bubble 핸들러 평균)를 그대로 두고 `metrics`와 쓰기별 `w
 `browser-bench/core/types.ts`의 `CoreMetrics`에, 작업별 관측 가능 여부는 `browser-bench/core/coreObservability.ts`
 (스크립트용 사본 `scripts/coreObservability.mjs`, 시험이 둘의 동일성을 확인)에 있습니다.
 
+- **첫 키 두 시점**: `first-key-flat-500-validate`는 첫 paint에서 즉시 입력하므로, 뒤에 예약된 로드 검증의
+  컴파일이 입력 측정 창과 겹칠 수 있습니다. 같은 fixture의 `first-key-flat-500-validate-after-load`는 첫 paint 후
+  onValidate 보고가 하나 이상 있고, 검증 실행 기록이 있으며 진행 중 실행이 없을 때 입력합니다. 두 판에 같은 조건을
+  적용하며 1,000 ms 안에 충족하지 못하면 표본을 실패시킵니다. 대기는 `durationMs`에서 제외하고 드라이버 호출
+  직전부터 입력 후 paint까지 측정합니다. 0.16.1은 생성자에서 컴파일하므로 첫 검증이 이미 끝났다면 추가 대기가
+  없습니다. 두 행을 함께 보고해 초기 로드와 겹친 입력 지연과 로드 검증 이후의 입력 지연을 구분하며, 가중 교환비에도
+  두 행을 같은 가중치 1로 포함합니다.
 - **블로킹**: 직접 잰 값만 `blockingMs`라 부릅니다(타이핑은 쓰기 2–20의 핸들러 평균, 첫 키는 그 핸들러 시간).
   마운트·재구성에는 50 ms 미만을 재는 수단이 없어 `null`이고, Long Tasks API로 창과 겹친 작업의 원래 길이
   최댓값(`maxLongTaskMs`, 관측 없음은 "< 50 ms"이지 0이 아님)과 창 안 겹침 합(`longTaskOverlapMs`)을 적습니다.
@@ -90,7 +97,7 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 만들어 대조한 뒤 범례와 표 다섯 개를 출력), `scripts/checkReportTables.mjs <summary.json> <samples.json> <report.md>`
 (보고서의 생성 블록이 재생성 결과와 같은지)는 플레인 Node로 실행합니다.
 
-`checkSmokeSamples.mjs`의 기본 프로파일은 지정된 다섯 사례·2회·예열 1회를 요구합니다.
+`checkSmokeSamples.mjs`의 기본 프로파일은 지정된 여섯 사례·2회·예열 1회를 요구합니다.
 `--profile remaining`은 조건부 none/validate 마운트·중첩 마운트·배열 타이핑 네 사례·1회·예열 1회를
 검사합니다. 두 프로파일은 같은 관측값 단언과 원시 표본 재계산을 적용하며 임의의 사례 집합은 허용하지 않습니다.
 

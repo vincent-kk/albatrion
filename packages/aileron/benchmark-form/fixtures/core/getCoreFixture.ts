@@ -13,11 +13,15 @@ import type { CoreFixture } from './types';
  * @throws If the identifier or its operation/shape/validation combination is unsupported.
  */
 export function getCoreFixture(id: string): CoreFixture {
+  const fixtureId =
+    id === 'first-key-flat-500-validate-after-load'
+      ? 'first-key-flat-500-validate'
+      : id;
   const parsed =
     /^(mount|type|first-key|rebuild)-(if-flat-500|flat-500|nested-d5-f4|array-1000)(?:-(none|validate)(?:-(nonburst))?)?$/.exec(
-      id,
+      fixtureId,
     );
-  if (!parsed || parsed[0] !== id)
+  if (!parsed || parsed[0] !== fixtureId)
     throw new Error('Unknown core fixture: ' + id);
   const [, , shape, mode, interval] = parsed;
   const operation = id.startsWith('mount-')

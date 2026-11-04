@@ -5,7 +5,7 @@ import { createCoreFinalFixture } from './checkFinalRun/utils/createCoreFinalFix
 import { runCoreFinalCheck } from './checkFinalRun/utils/runCoreFinalCheck';
 
 describe('checkFinalRun complete comparison evidence', () => {
-  it('accepts a complete nine-case 20-run synthetic fixture', () => {
+  it('accepts a complete ten-case 20-run synthetic fixture', () => {
     const result = runCoreFinalCheck(createCoreFinalFixture());
     expect(result.status, result.stdout + result.stderr).toBe(0);
     expect(result.stdout).toContain('FINAL_RUN_OK');

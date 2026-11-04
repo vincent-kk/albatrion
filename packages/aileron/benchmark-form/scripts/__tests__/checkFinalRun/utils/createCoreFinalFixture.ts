@@ -28,6 +28,7 @@ export function createCoreFinalFixture(
     'type-flat-500-validate-nonburst',
     'type-array-1000-validate-nonburst',
     'first-key-flat-500-validate',
+    'first-key-flat-500-validate-after-load',
   ];
   const samples: Record<string, { attempt: 1 | 2; samples: CoreVariantGroups }[]> =
     {};

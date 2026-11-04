@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import coreWeights from '../../../../fixtures/core-weights.json';
 import type { CoreWeights } from '../../reportTypes';
 import { computeCoreWeightedExchange } from '../computeCoreWeightedExchange';
 import { createCoreTestCase } from './createCoreTestCase';
@@ -67,6 +68,32 @@ describe('computeCoreWeightedExchange', () => {
     expect(exchange.weightedRatio).toBeCloseTo(
       (5000 * 1200 + 30000) / (5000 * 1000 + 31000),
     );
+  });
+
+  it('keeps both first-key cases in the canonical weighted exchange at equal weight', () => {
+    const ids = [
+      'first-key-flat-500-validate',
+      'first-key-flat-500-validate-after-load',
+    ];
+    const exchange = computeCoreWeightedExchange(
+      'blockingMs',
+      ids.map((id) =>
+        createCoreTestCase(
+          id,
+          { blockingMs: [2, 1] },
+          { blockingMs: 'slower' },
+        ),
+      ),
+      coreWeights,
+    );
+    for (const id of ids)
+      expect(exchange.rows.find((row) => row.id === id)).toMatchObject({
+        weight: 1,
+        k: 1,
+        counted: true,
+        contributionMicros: 1000,
+      });
+    expect(exchange.exchangeMicros).toBe(2000);
   });
 
   it('lists excluded rows and keeps the ratio null without a baseline sum', () => {

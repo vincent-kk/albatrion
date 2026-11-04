@@ -8,6 +8,7 @@ const PROFILES = {
       'mount-array-1000-validate',
       'type-flat-500-validate-nonburst',
       'first-key-flat-500-validate',
+      'first-key-flat-500-validate-after-load',
     ],
   },
   remaining: {
@@ -25,7 +26,7 @@ const PROFILES = {
  * Validate exact case membership and run counts for an explicitly named smoke workload.
  * @param {object} summary - Summary with its runs, warmup and case identifiers.
  * @param {object} samples - Raw case groups whose keys must match the same workload.
- * @param {string} name - Required five-case smoke by default; remaining selects the four complementary browser cases.
+ * @param {string} name - Required six-case smoke by default; remaining selects the four complementary browser cases.
  * @returns {{ runs: number, problems: string[] }} Expected per-variant sample count and metadata failures; unknown names throw.
  */
 export function checkCoreSmokeProfile(summary, samples, name = 'required') {

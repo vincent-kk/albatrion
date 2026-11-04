@@ -60,6 +60,12 @@ latencies cannot be missing; only Long Task statistics use below-threshold and
 mixed null semantics. Preserve metric thresholds and null ratios for a zero
 baseline. Weights and their rationale live in `fixtures/core-weights.json`.
 
+The after-load first-key case waits for at least one onValidate report, a recorded
+validation run, and no pending run. Its 1,000 ms ceiling fails the sample when
+the condition is unmet. Both bundles use this wait, which is excluded from
+durationMs. Report both first-key rows: the immediate row includes deferred
+compile overlap, while the after-load row isolates key latency.
+
 ## Evidence and reports
 
 `bench:probe` reports nominal cadence and raw/floor/net observer overhead. Require
@@ -67,7 +73,7 @@ net ≤1 ms/s, the same-run bare-loop floor ≤2.5 ms/s, and raw self-time ≤2.
 with a silent host-specific exemption.
 
 Run `node packages/aileron/benchmark-form/scripts/checkSmokeSamples.mjs
-<samples.json> <summary.json>` on the prescribed five-case, two-run smoke.
+<samples.json> <summary.json>` on the prescribed six-case, two-run smoke.
 Use `--profile remaining` for the prescribed four remaining browser cases with
 one run and one warmup; all observability assertions and raw-summary checks stay
 mandatory in both profiles.

@@ -200,7 +200,7 @@ export type CoreLongTaskSource = (
 
 /** Browser API consumed by the core Playwright runner. */
 export interface CoreAPI {
-  /** Mount exactly one fixture; first-key starts from the first-paint hook. */
+  /** Mount exactly one fixture; first-key is driven from the first-paint hook, after any case-specific load wait. */
   prepare(id: string): Promise<void>;
   /** Complete the selected operation and return validated evidence. */
   run(): Promise<CoreMeasurement>;
@@ -241,7 +241,7 @@ declare global {
   interface Window {
     /** Bundle-owned lifecycle for one fresh page. */
     __core: CoreAPI;
-    /** Driver sends the first trusted key when the initial paint hook fires. */
+    /** Driver sends the first trusted key from the initial paint hook, after any requested load wait. */
     __coreFirstKey: () => Promise<void>;
     /** Driver sends twenty trusted keys with the fixture's nonburst spacing. */
     __coreType: () => Promise<void>;
