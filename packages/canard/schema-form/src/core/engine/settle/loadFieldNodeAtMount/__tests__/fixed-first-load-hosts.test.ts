@@ -1,7 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../../blueprint';
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 /** Fixed membership with scalar defaults and both constraint branches. */
 const schema: BlueprintSchema = {
@@ -38,7 +41,7 @@ it('T8 binds independent nested hosts and integer/escaped names in ordinary orde
     'a/b',
     '~tail',
   ]);
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
 });
 it.each([
   {

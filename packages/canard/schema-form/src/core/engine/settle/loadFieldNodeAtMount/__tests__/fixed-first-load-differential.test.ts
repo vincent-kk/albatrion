@@ -3,7 +3,10 @@ import { afterEach, expect, it, vi } from 'vitest';
 import type { BlueprintSchema } from '../../../blueprint';
 import { WriteOption } from '../../../types/value';
 import { dispatchSetValue } from '../../../write';
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 /** Fixed membership with scalar defaults and both constraint branches. */
 const schema: BlueprintSchema = {
@@ -46,7 +49,7 @@ it.each([
     });
     expect(actual.snapshot()).toEqual(oracle.snapshot());
     expect(actual.work.commits).toBe(oracle.work.commits);
-    expect(actual.prepared).toBe(true);
+    expectFixedFirstLoadRoute(actual);
   },
 );
 it('T5 preserves first writes, schema events, identities and selected IDs across both flips', () => {
@@ -68,7 +71,7 @@ it('T5 preserves first writes, schema events, identities and selected IDs across
       kind === 'a' ? { minLength: 2 } : { maxLength: 3 },
     );
   }
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
 });
 
 it('T4 preserves call-sensitive synchronous guards without a purity assumption', () => {
@@ -87,5 +90,5 @@ it('T4 preserves call-sensitive synchronous guards without a purity assumption',
   expect(actual.snapshot()).toEqual(oracle.snapshot());
   expect(actual.work.rootRounds).toBe(oracle.work.rootRounds);
   expect(actual.work.commits).toBe(oracle.work.commits);
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
 });

@@ -2,6 +2,8 @@ import { expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 
+import { isFixedFirstLoadAdmissible } from '../settle/loadFieldNodeAtMount/__tests__/fixtures/observeFixedFirstLoad';
+import * as fixedLoader from '../settle/loadFieldNodeAtMount/utils/staticFirst/loadFixedFirstTree';
 import { dispatchMount, dispatchValidate, subscribeFieldNode } from '../write';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -30,7 +32,13 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
     root.runtime.validationMode = 2;
     const deliveries: unknown[] = [];
     subscribeFieldNode(root, (event) => deliveries.push(event));
+    const loader = vi.spyOn(fixedLoader, 'loadFixedFirstTree');
     dispatchMount(root, undefined, undefined, { deferValidation: true });
+    expect(
+      loader.mock.calls.length,
+      'Verifier modes retain the plan but use the general loader',
+    ).toBe(!general && isFixedFirstLoadAdmissible() ? 1 : 0);
+    loader.mockRestore();
     const selectedSlots = visits.filter((visit) =>
       visit.startsWith('select:'),
     ).length;
@@ -66,5 +74,11 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
   } = await run(true);
   expect(actual).toEqual(oracle);
   expect(plan).toBeDefined();
-  expect(selectedSlots).toBeLessThan(generalSlots);
+  if (isFixedFirstLoadAdmissible())
+    expect(selectedSlots).toBeLessThan(generalSlots);
+  else
+    expect(
+      selectedSlots,
+      'Verifier fallback retains general selection work',
+    ).toBe(generalSlots);
 });

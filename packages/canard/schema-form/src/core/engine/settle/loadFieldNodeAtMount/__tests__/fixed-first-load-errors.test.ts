@@ -1,7 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../../blueprint';
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 /** Fixed membership with scalar defaults and both constraint branches. */
 const schema: BlueprintSchema = {
@@ -47,7 +50,7 @@ it.each([
     expect(actual.root.structure!.value.schema.schema).not.toHaveProperty(
       'maxLength',
     );
-    expect(actual.prepared).toBe(true);
+    expectFixedFirstLoadRoute(actual);
   },
 );
 it.each(['compile', 'evaluate', 'promise', 'nonboolean'])(
@@ -73,6 +76,6 @@ it.each(['compile', 'evaluate', 'promise', 'nonboolean'])(
     });
     expect(actual.snapshot()).toEqual(oracle.snapshot());
     expect(actual.work.commits).toBe(1);
-    expect(actual.prepared).toBe(true);
+    expectFixedFirstLoadRoute(actual);
   },
 );

@@ -9,7 +9,10 @@ import * as compute from '../../utils/compute/computeNode';
 import * as output from '../../utils/output/updateOutput';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as fixedLoader from '../utils/staticFirst/loadFixedFirstTree';
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 /** Fixed membership with scalar defaults and both constraint branches. */
 const schema: BlueprintSchema = {
@@ -30,7 +33,7 @@ afterEach(() => {
 // filid:contract fixed-first-load-lifetime
 it('T12 releases preparation after successful and failed assembly', () => {
   const actual = observeFixedFirstLoad(schema);
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
   expect(
     actual.contexts.every(
       (context) => Reflect.get(context, 'fixedFirstLoad') === undefined,

@@ -4,7 +4,10 @@ import type { BlueprintSchema } from '../../../blueprint';
 import { ValidationMode } from '../../../types/state';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { dispatchValidate } from '../../../write';
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 /** Independent root and nested guards share fixed membership, not guard verdicts. */
 const schema = {
@@ -29,7 +32,7 @@ it.each([ValidationMode.None, ValidationMode.OnRequest])(
       dispatch: true,
       general: true,
     });
-    expect(actual.prepared).toBe(true);
+    expectFixedFirstLoadRoute(actual);
     expect(actual.calls.length).toBeGreaterThan(0);
     expect(actual.snapshot()).toEqual(oracle.snapshot());
     const actualIssues = await dispatchValidate(actual.root);
@@ -50,7 +53,7 @@ it.each([false, true])(
     };
     const actual = observeFixedFirstLoad(fixture);
     const oracle = observeFixedFirstLoad(fixture, { general: true });
-    expect(actual.prepared).toBe(true);
+    expectFixedFirstLoadRoute(actual);
     expect(actual.snapshot()).toEqual(oracle.snapshot());
     expect(actual.work.rootRounds).toBe(oracle.work.rootRounds);
     expect(actual.calls).toEqual(oracle.calls);
@@ -117,7 +120,7 @@ it('T4 crossing baseline and selected constraints remain runtime validation outc
     mode: ValidationMode.OnRequest,
     general: true,
   });
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
   expect(actual.error).toBeUndefined();
   expect(actual.snapshot()).toEqual(oracle.snapshot());
   expect(actual.root.structure!.value.schema.schema).toMatchObject({
@@ -137,7 +140,7 @@ it('T4 opaque reference guard retains whole-host reads and ordinary inputs', () 
   };
   const actual = observeFixedFirstLoad(fixture);
   const oracle = observeFixedFirstLoad(fixture, { general: true });
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
   expect(actual.error).toBeUndefined();
   expect(actual.calls.length).toBeGreaterThan(0);
   expect(actual.snapshot()).toEqual(oracle.snapshot());

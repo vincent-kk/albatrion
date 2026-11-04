@@ -2,7 +2,10 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../../blueprint';
 import { WriteOption } from '../../../types/value';
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 /** Fixed membership with scalar defaults and both constraint branches. */
 const schema: BlueprintSchema = {
@@ -37,7 +40,7 @@ it.each([
   });
   expect(actual.snapshot()).toEqual(oracle.snapshot());
   expect(actual.calls.length).toBeGreaterThan(0);
-  expect(actual.prepared).toBe(true);
+  expectFixedFirstLoadRoute(actual);
 });
 it.each(['development', 'production'])(
   'T6 preserves a pre-default failure and later success in %s',
@@ -65,7 +68,7 @@ it.each(['development', 'production'])(
     expect(
       actual.calls.some((call) => JSON.stringify(call).includes('"kind":"a"')),
     ).toBe(true);
-    expect(actual.prepared).toBe(true);
+    expectFixedFirstLoadRoute(actual);
   },
 );
 

@@ -6,6 +6,7 @@ import type { PlainNode } from '../../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../../__tests__/fixtures/createTestTree';
 import type { BlueprintSchema } from '../../../../blueprint';
 import { WriteOption } from '../../../../types/value';
+import { engineModes } from '../../../../utils/cache/engineModes';
 import { getCommittedDeclarationKey } from '../../../../utils/controls/getCommittedDeclarationKey';
 import type { Validator } from '../../../../validation';
 import { dispatchMount, subscribeFieldNode } from '../../../../write';
@@ -201,4 +202,26 @@ export const observeFixedFirstLoad = (
     contexts,
     visits,
   };
+};
+
+/** Mirror mount admission: verifier modes require the ordinary evaluator. */
+export const isFixedFirstLoadAdmissible = (): boolean =>
+  engineModes.gateSelection !== 'verify' &&
+  engineModes.gateWheel !== 'shadow' &&
+  !engineModes.deriveShadow;
+
+/** Assert route evidence while retaining compiler eligibility in verifier projects. */
+export const expectFixedFirstLoadRoute = (
+  actual: ReturnType<typeof observeFixedFirstLoad>,
+): void => {
+  const admitted = isFixedFirstLoadAdmissible();
+  const reason =
+    'Verifier modes use the general fallback until prepared-mode equivalence is covered';
+  expect(actual.root.runtime.blueprint.fixedFirstLoadPlan).toBeDefined();
+  expect(actual.prepared, reason).toBe(admitted);
+  expect(actual.loaderCalls, reason).toBe(admitted ? 1 : 0);
+  if (!admitted) {
+    expect(actual.contexts.length, reason).toBeGreaterThan(0);
+    expect(actual.work.entries, reason).toBeGreaterThan(0);
+  }
 };

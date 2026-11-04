@@ -1,6 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
+import {
+  expectFixedFirstLoadRoute,
+  observeFixedFirstLoad,
+} from './fixtures/observeFixedFirstLoad';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -39,8 +42,14 @@ it.each([true, false])(
     );
     expect(actual.work.commits).toBe(1);
     expect(actual.work.assemblies).toBe(oracle.work.assemblies);
-    expect(actual.work.entries).toBe(actual.work.rootRounds);
-    expect(actual.prepared).toBe(true);
+    if (actual.prepared)
+      expect(actual.work.entries).toBe(actual.work.rootRounds);
+    else
+      expect(
+        actual.work.entries,
+        'Verifier fallback retains general selection work',
+      ).toBe(oracle.work.entries);
+    expectFixedFirstLoadRoute(actual);
     expect(oracle.work.entries).toBeGreaterThanOrEqual(501);
   },
 );
