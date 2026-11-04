@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Blueprint } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
@@ -30,6 +31,7 @@ import { releaseWrongKindHosts } from './releaseWrongKindHosts';
  * @param option - Caller flags whose automatic-write bits override the form default
  * @param source - Binding origin independent of merge and replacement semantics
  * @param writeOrigins - Call-ordered batch origins for delivery and Refresh
+ * @param fixedFirstLoadPlan - Mount-only compiler proof supplied after freshness admission
  * @returns Nothing; live records carry the committed shape and values
  * @throws A deferred gate or shared declaration failure after commit
  */
@@ -40,6 +42,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   option: WriteOption,
   source: FieldNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
+  fixedFirstLoadPlan?: Blueprint['fixedFirstLoadPlan'],
 ): void => {
   if (node.detached) return;
   const root = node.rootNode;
@@ -92,6 +95,8 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     scratch,
     replaces && !batch,
   );
+  if (kind === 'load' && fixedFirstLoadPlan)
+    context.fixedFirstLoad = { plan: fixedFirstLoadPlan, hosts: new Map() };
   context.source = source;
   context.writeOrigins = writeOrigins;
   if (batch) context.replacePaths = collectReplacePaths(writeOrigins);
@@ -127,6 +132,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       releaseWrongKindHosts(context);
     finishSettlement(context, scratch, scalarWrite);
   } finally {
+    if (context.fixedFirstLoad) {
+      context.fixedFirstLoad.hosts.clear();
+      context.fixedFirstLoad = undefined;
+    }
     releaseSettlementScratch(scratch);
   }
 };

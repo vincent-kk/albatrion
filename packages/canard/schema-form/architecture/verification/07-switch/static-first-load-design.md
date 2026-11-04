@@ -2,6 +2,19 @@
 
 상태: 원장 관리자 검토용 설계만입니다. 이 문서의 제품 경로는 구현하지 않았습니다. 기준 소스는 `0189c443b`, 결정은 85C-01·86C-02와 `origin/1.0.0-beta`의 87라운드 답입니다. 86라운드가 유보한 b1(분석을 최초 접근까지 지연), b2(노드 지연 생성)는 제안하지 않습니다. 생성 반환 전에 모든 노드·값·오류·revision을 확정합니다.
 
+## 적용 범위: 무게이트와 조건부 fixed-first
+
+아래 기존 설계와 비용 기록의 단일 assembly·범용 scratch 생략·branchless 최적화는 무게이트 경로에 한정합니다. 조건부 fixed-first는 별도 mount-only `fixedFirstLoadPlan`으로 자격을 증명하며 기존 branchless/정적 capability의 뜻을 넓히지 않습니다. 일반 정착의 default epoch·guard 호출·라운드·출력 조립·검증 scheduling을 유지하면서 고정 baseline과 희소 entry 재생만 적용합니다.
+
+| 유지하는 계약 | 조건부 경로의 증거와 별도 계수 |
+| --- | --- |
+| SETTLE-001/003, 89C-01 | 새 경로 변경 전 자격 판정, 단일 commit, 중간 상태 비노출; 반복 compute/assembly는 일반 경로와 비교 |
+| SETTLE-017, 89C-04 | 계산과 필수 delivery를 구별; O(N) 최초 생성·scratch와 O(G+K) 추가 plan 보유량을 따로 기록 |
+| EVENT-005/007 | 기존 순서로 배달하며 전체 revision 확정 뒤 listener 실행 |
+| VALIDATE-044 | validatorFactory identity 교체와 동기 boolean guard 계약 유지; 기존 Form.policies binding 교체 시험에 T11 absent→present/StrictMode를 추가 |
+
+조건부 oracle은 같은 스키마·validator에서 새 plan만 없애 일반 경로로 보냅니다. 두 runtime 간 객체 identity 일치를 요구하지 않고 각 경로 내부의 반복 읽기·write 후 참조 안정성을 비교합니다. route/work red, 의미 보존 characterization, 예외 주입 cleanup을 구분하며 route assertion과 fallback assertion을 함께 둡니다. 기존 단일 assembly 단언을 조건부 경로에 적용하지 않습니다. 미지원 mode·shape는 loader 진입 전에 fallback하며 공통 mount prologue/finally는 유지합니다.
+
 ## 현재 비용과 제안 경계
 
 현재 `loadSchemaNodeAtMount → writeSchemaNode → computeNode → finishSettlement`는 정적 폼에도 범용 scratch, 선언 선택, 전이, 상태 및 배달 후보를 마련합니다. 후보 v는 독립 스칼라 기본값을 가진 객체에서 compute를 2N에서 N으로 줄였지만, 후위 `initialOutputs` 목록과 깊이별 채움, 별도 커밋 방문은 남습니다. `array-1000`은 4,002개 노드 중 루트와 배열 두 노드가 각각 두 번 계산되어 4,004회이고 나머지 4,000개는 한 번입니다. 모두 두 번 계산한다고 일반화하지 않습니다.
@@ -101,7 +114,7 @@
 | [VALUE-013](../../ledger/value.md) | 읽기는 계산하지 않고 같은 참조 반환 | getter 전 eager memo 완료, 읽기 시 분석/생성 없음 | 없음 |
 | [VALUE-035](../../ledger/value.md) | 채움은 생김 사건, visible은 생성 아님 | 최초 노드 생성과 fill 결합, 기존 노드 reload/visible 제외 | 없음 |
 
-## 차등 테스트 설계
+## 차등 테스트 설계 — 기존 무게이트 경로
 
 `src/core/settle/__tests__/static-first-load-differential.test.ts` 및 blueprint owner의 `__tests__`에 배치합니다. 일반 경로와 제안 경로에 별도 runtime을 만들고 같은 작성 스키마/입력을 공급합니다. 내부 eligibility 함수를 테스트 mock으로 false로 고정하여 generic oracle을 얻으며 공개 force 옵션은 만들지 않습니다. 기존 후보 v도 oracle에서 제외해 일반 shape→transition→commit 경로를 비교합니다.
 

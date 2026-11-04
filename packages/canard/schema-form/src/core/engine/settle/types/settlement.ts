@@ -22,6 +22,7 @@ import type { DependencyPresenceMemo } from '../utils/dependencies/getDependency
 import type { GateHostView } from '../utils/gates/readGateHostView';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
+import type { FixedFirstLoadPreparation } from './fixedFirstLoad';
 import type { GateSelectionRound } from './gateSelectionRound';
 import type { GateWheelFrame, RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
@@ -111,6 +112,8 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
 
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
+  /** Mount-only fixed shape witnesses; cleared before returning to the dispatcher. */
+  fixedFirstLoad?: FixedFirstLoadPreparation<Self>;
   /** Prepared occurrence owners touched by this settlement, invalidated on failure. */
   preparedStaticHosts?: Set<Self>;
   /** Dynamic cleanup names captured before each host wheel's fixed start. */
