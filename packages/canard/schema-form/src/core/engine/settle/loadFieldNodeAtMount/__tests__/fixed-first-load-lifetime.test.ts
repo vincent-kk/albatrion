@@ -8,6 +8,7 @@ import { dispatchResetForm, subscribeFieldNode } from '../../../write';
 import * as compute from '../../utils/compute/computeNode';
 import * as output from '../../utils/output/updateOutput';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import * as fixedLoader from '../utils/staticFirst/loadFixedFirstTree';
 import { observeFixedFirstLoad } from './fixtures/observeFixedFirstLoad';
 
 /** Fixed membership with scalar defaults and both constraint branches. */
@@ -83,15 +84,26 @@ it('T12 a reused root and listener-triggered input cannot reuse mount preparatio
 it('T12 explicit caller input declines preparation before the ordinary commit', () => {
   const { root } = createTestTree(schema);
   const computeSpy = vi.spyOn(compute, 'computeNode');
+  const loaderSpy = vi.spyOn(fixedLoader, 'loadFixedFirstTree');
   loadFieldNodeAtMount(
     root,
     { kind: 'b', value: 'explicit' },
     WriteOption.Overwrite,
   );
+  expect(loaderSpy).not.toHaveBeenCalled();
   expect(computeSpy.mock.calls.length).toBeGreaterThan(0);
   for (const [, context] of computeSpy.mock.calls)
     expect(Reflect.get(context, 'fixedFirstLoad')).toBeUndefined();
   expect(root.runtime.commitNumber).toBe(1);
   expect(root.emit).toEqual({ kind: 'b', value: 'explicit' });
   expect(root.structure!.value.schema.schema).toMatchObject({ maxLength: 3 });
+});
+
+it('T12 an absent plan never enters the fixed loader', () => {
+  const actual = observeFixedFirstLoad(schema, { general: true });
+  expect(actual.root.runtime.blueprint.fixedFirstLoadPlan).toBeUndefined();
+  expect(actual.loaderCalls).toBe(0);
+  expect(actual.prepared).toBe(false);
+  expect(actual.work.commits).toBe(1);
+  expect(actual.error).toBeUndefined();
 });

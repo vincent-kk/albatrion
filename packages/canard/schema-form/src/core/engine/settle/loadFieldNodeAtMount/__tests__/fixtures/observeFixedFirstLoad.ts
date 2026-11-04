@@ -15,6 +15,7 @@ import * as entries from '../../../utils/compute/childSelection/selectEntryStep'
 import * as compute from '../../../utils/compute/computeNode';
 import * as assembly from '../../../utils/output/updateOutput';
 import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
+import * as fixedLoader from '../../utils/staticFirst/loadFixedFirstTree';
 
 /** Differential controls preserve the ordinary evaluator and disable only the new plan. */
 interface ObservationOptions {
@@ -105,6 +106,7 @@ export const observeFixedFirstLoad = (
       prepared ||= Reflect.get(context, 'fixedFirstLoad') !== undefined;
       body(node, context);
     });
+  const loaderSpy = vi.spyOn(fixedLoader, 'loadFixedFirstTree');
   const entrySpy = vi.spyOn(entries, 'selectEntryStep');
   const roundSpy = vi.spyOn(selection, 'selectChildren');
   const assemblySpy = vi.spyOn(assembly, 'updateOutput');
@@ -124,6 +126,10 @@ export const observeFixedFirstLoad = (
   } catch (caught) {
     error = caught;
   }
+  const loaderCalls = loaderSpy.mock.calls.length;
+  expect(loaderCalls).toBe(prepared ? 1 : 0);
+  if (root.runtime.blueprint.fixedFirstLoadPlan === undefined)
+    expect(loaderCalls).toBe(0);
   const work = {
     allocations,
     rootRounds: roundSpy.mock.calls.filter(([node]) => node === root).length,
@@ -131,6 +137,7 @@ export const observeFixedFirstLoad = (
     assemblies: assemblySpy.mock.calls.length,
     commits: commitSpy.mock.calls.length,
   };
+  loaderSpy.mockRestore();
   computeSpy.mockRestore();
   entrySpy.mockRestore();
   roundSpy.mockRestore();
@@ -190,6 +197,7 @@ export const observeFixedFirstLoad = (
     error,
     work,
     prepared,
+    loaderCalls,
     contexts,
     visits,
   };

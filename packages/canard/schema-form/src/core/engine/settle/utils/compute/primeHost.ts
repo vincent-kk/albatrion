@@ -23,6 +23,7 @@ import { createStaticEntryReuser } from './childSelection/utils/createStaticEntr
 import { prepareStaticHost } from './childSelection/utils/prepareStaticHost';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
+import { prepareFixedFirstHost } from './firstLoad/prepareFixedFirstHost';
 
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
@@ -41,6 +42,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   hasRelocated = true,
 ): void => {
+  if (context.fixedFirstLoad && prepareFixedFirstHost(node, context)) return;
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
     (context.presenceSelections ??= new Map()).set(node, {
@@ -174,4 +176,5 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     'children',
     isSameChildList(published, children) ? published : children,
   );
+  if (context.fixedFirstLoad) prepareFixedFirstHost(node, context, true);
 };

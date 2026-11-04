@@ -9,6 +9,7 @@ import type {
 import type { ChildControlKey } from '../../types/controls';
 import type { BlueprintNode, SchemaFragment } from './node';
 import type { BlueprintSchema } from './schema';
+import type { FixedFirstLoadPlan } from './staticFirstLoad';
 
 /** Renderer-independent diagnostic data suitable for an optional collector. */
 export interface BlueprintDiagnostic {
@@ -24,6 +25,8 @@ export interface BlueprintDiagnostic {
 
 /** Immutable result of analyzing one authored root. */
 export interface Blueprint {
+  /** Separate mount-only fixed-membership proof; absence requires ordinary load. */
+  readonly fixedFirstLoadPlan?: FixedFirstLoadPlan;
   /** Compiler-only creation fact, retained across derived-record resets. */
   readonly staticFirstLoadEligible?: boolean;
   /** Independent absence proofs over every authored position declaration collection reaches. */

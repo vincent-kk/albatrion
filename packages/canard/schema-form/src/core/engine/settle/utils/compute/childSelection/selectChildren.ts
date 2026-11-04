@@ -25,6 +25,7 @@ import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 import { reuseArrayChildren } from './reuseArrayChildren';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
+import { selectFixedFirstContributions } from './selectFixedFirstContributions';
 import { staticShape } from './staticShape';
 import { createPreparedSelectionStructure } from './utils/createPreparedSelectionStructure';
 import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
@@ -54,6 +55,17 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   preserveStructure = true,
   publication?: { flushed: boolean },
 ): boolean => {
+  const fixed =
+    context.fixedFirstLoad &&
+    selectFixedFirstContributions(
+      node,
+      context,
+      prior,
+      computeChild,
+      immediate,
+      publication,
+    );
+  if (fixed !== undefined) return fixed;
   if (
     node.behavior.type === 'array' &&
     canReuseArrayChildren(node, context, prior)
