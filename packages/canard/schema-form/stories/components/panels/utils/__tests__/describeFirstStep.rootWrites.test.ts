@@ -7,11 +7,11 @@ describe('describeFirstStep root writes', () => {
     expect(describeFirstStep([{ action: 'setValue', path: '', value: [undefined, 'x', undefined] }]))
       .toBe('Edit the fields and watch Value and Errors.');
   });
-  it('skips root writes inside batches and finds the first field operation', () => {
+  it('falls back when the first operation targets the root, even if a field operation follows', () => {
     expect(describeFirstStep([
       { action: 'batch', steps: [{ action: 'setValue', path: '', value: {} }] },
       { action: 'clear', path: '/name' },
-    ])).toBe('Clear /name, then watch Value and Errors.');
+    ])).toBe('Edit the fields and watch Value and Errors.');
   });
   it('displays undefined array items as null without changing the source', () => {
     const value = Object.freeze([undefined, 'x', undefined]);

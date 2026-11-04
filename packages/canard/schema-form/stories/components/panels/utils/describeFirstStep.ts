@@ -3,9 +3,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import { toDisplayJSON } from '../toDisplayJSON';
 
 /**
- * Find the first UI operation through nested batches, skipping root writes.
+ * Find the first operation through nested batches, skipping observation-only records.
  * @param steps - Authored operations or observation-only records in execution order.
- * @returns The first non-batch operation with a field path or a form action.
+ * @returns The first non-batch operation, or undefined when there is none.
  */
 function findFirstOperation(steps: readonly object[]): Record<string, unknown> | undefined {
   for (const step of steps) {
@@ -13,7 +13,7 @@ function findFirstOperation(steps: readonly object[]): Record<string, unknown> |
     if (record.action === 'batch') {
       const nested = isArray(record.steps) ? findFirstOperation(record.steps) : undefined;
       if (nested) return nested;
-    } else if (record.action && record.path !== '') return record;
+    } else if (record.action) return record;
   }
   return undefined;
 }
@@ -30,10 +30,12 @@ function toStepValue(value: unknown): unknown {
 /**
  * Describe the first authored operation without changing the scenario data.
  * @param steps - Shared scenario operations in their authored order.
- * @returns One instruction; unsupported operations invite manual field editing.
+ * @returns One instruction; a root-level first operation or an unsupported one invites manual field editing.
  */
 export function describeFirstStep(steps: readonly object[]): string {
-  const step = findFirstOperation(steps);
+  const first = findFirstOperation(steps);
+  // A root write has no matching control, and later steps act on fields it creates, so it falls back.
+  const step = first?.path === '' ? undefined : first;
   const follow = ', then watch Value and Errors.';
   const path = typeof step?.path === 'string' ? step.path : undefined;
   switch (step?.action) {

@@ -1,5 +1,5 @@
 :is(.sf-story, .sf-usage), :is(.sf-story, .sf-usage) * { box-sizing: border-box; }
-.sf-usage { overflow-x: auto; width: 100%; max-width: 1280px; min-width: 0; font-size: var(--sf-text-md); line-height: 1.5; }
+.sf-usage { overflow-x: auto; padding: var(--sf-space-1); width: 100%; max-width: 1280px; min-width: 0; font-size: var(--sf-text-md); line-height: 1.5; }
 .sf-story {
   width: 100%;
   max-width: 1280px;
