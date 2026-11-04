@@ -413,7 +413,8 @@
   > | 규칙 | 내용 | 근거 |
   > | ---- | ---- | ---- |
   > | 게이트 입력 | 게이트는 **검증기가 볼 값**을 본다 — `A`로 합성한 local에 투영(`omitEmpty`·`omitTrailing`·null)을 적용한 것. `if`는 검증기 플러그인이 컴파일한 것으로, `controls.active`는 표현식으로 평가한다. `extras`(선언되지 않은 키의 값)도 게이트 입력에 든다(원장 §5). 폼은 `if`의 내용에 관여하지 않는다. 예외는 하나: 호스트 자신의 `raw`가 비객체이면 `G = {}` | E5, P1 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(IR-11 PR-C): "【추론】 정적 비객체 호스트의 `if`는 경고 `IfOnNonObjectHost`, 판정은 그대로 `{}` (2026-11-04). 허용 형에 object가 없는 호스트 선언(`kind`가 object·virtual이 아니고, union이면 `schemaType`에 object가 없음)의 `if`는 판정을 그대로 `{}`로 하되 청사진 경고 `IfOnNonObjectHost`(`SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`)를 낸다. 경고는 `if`의 존재만 보고 내용은 읽지 않으며, 객체 종류 호스트의 값이 실행 시 객체가 아닌 경우는 경고하지 않는다." (`plan/input-responsiveness/design.md:727`)
 - 상태: 현행
 - 출처: `adr/0007-settle-cycle.md:57`(정본), `02-target-overview.md:159`, `08-design-a-to-z.md:244`, `03-mental-model.md:104`
 - 닫은 사람: 소유자 답(`reviews/round-1.md:177` 가드는 방출 값), 소유자 답(`reviews/round-10-owner-answers.md:38,40` E-23·E-19, 폼은 if의 내용에 관여하지 않음), 편집자 결정(3–5라운드 반영 4차 본문, `adr/0007-settle-cycle.md:12`)

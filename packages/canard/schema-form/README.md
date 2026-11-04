@@ -264,9 +264,9 @@ export const App = () => {
 
 `@canard/schema-form` provides a plugin-based validation system. Various validator plugins can be used for JSON Schema validation.
 
-### ValidatorFactory
+### Validator plugin contract
 
-ValidatorFactory is an object with two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if/then/else`, plus optional `release` and `dialect`:
+A validator plugin's `validator`, and the `validatorFactory` object that `Form` and `FormProvider` accept, follow one contract: two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if`, `then` and `else`, plus optional `release` and `dialect`:
 
 ```ts
 // The engine passes its own copy of the schema; it is typed as JSONSchema here.
@@ -285,7 +285,43 @@ type ValidateFunction<Value = unknown> = (
   | null;
 ```
 
-A `ValidateFunction` returns the ordered `ValidationIssue`s, or `null` when the value is valid, and must not throw. The `validatorFactory` prop of `Form` and `FormProvider` takes this object. The selection order is the Form prop, then FormProvider, then the plugin's `validator`. Keep the reference stable, because changing it rebuilds the tree.
+The selection order is the Form prop, then FormProvider, then the plugin's `validator`. Keep the reference stable, because changing it rebuilds the tree.
+
+#### Required duties
+
+- `compile(copy)` returns a `ValidateFunction` for the engine's copy of the root schema. The function returns the ordered `ValidationIssue`s, or `null` when the value is valid, and must not throw.
+- `compileGuard(root, pointer)` returns a synchronous predicate that answers `true` or `false` for the `if` schema at `pointer`. The schema is evaluated in the context of `root`, so the guard sees the root's `$ref` targets, `$id`s and anchors. Whether a verdict that depends on dynamic anchors matches full validation follows each plugin's documented support condition and limits, given in the "Guard dynamic scope" paragraph of the [ajv8](../schema-form-ajv8-plugin/README.md) and [ajv7](../schema-form-ajv7-plugin/README.md) plugin READMEs.
+- `compileGuard` may be called before `compile` has run for the same root, and it registers whatever it needs on its own.
+- Neither method may modify the schema it receives or the value it validates.
+
+#### Optional members
+
+- `bind(instance)` is a hook for consumers who inject their own validator instance. The engine never calls it. Call it once, before the first form compiles; re-binding after a root is registered is not supported.
+- `release(root)` is called when the engine evicts a root from its cache. It must be idempotent, so releasing a root that was never registered does nothing.
+- `dialect` names the JSON Schema dialect the plugin validates, when it can name one. A schema whose `$schema` differs raises the `DIALECT_MISMATCH` warning.
+
+#### Failure isolation
+
+- A guard that fails to compile, throws, or returns a non-boolean turns off both branches of its own gate and records `GUARD_FAILED` once per guard location in each form. A guard failure does not switch off other gates, but a compile error that every guard at a root pointer shares, such as an unresolved `$ref` elsewhere in the root, makes each of those guards fail on its own.
+- A `compile` that throws makes full validation report `VALIDATOR_COMPILE_FAILED` and leaves the guards unchanged.
+- Two live roots with the same `$id` are each judged by their own root. Isolating them is the plugin's job, and the engine never rewrites `$id`.
+- A custom validator that cannot register a schema whose `$id` is already in use should throw an error whose message contains `already exists` or `resolves to more than one schema`, the duplicate-id messages of AJV 6, 7 and 8, because only those messages receive `reason: 'duplicateSchemaId'` and the one retry after the other root with that `$id` is released.
+
+#### Defaults of the published AJV plugins
+
+- The default instance does not validate formats; a bound instance keeps its own format setting.
+- The default entry point of `@canard/schema-form-ajv8-plugin` validates Draft-07; the other dialects have their own entry points.
+- Remote `$ref`s are not loaded, so every referenced schema must be inside the root or registered on a bound instance.
+- Guards compile on a sibling instance with `allErrors: false` and `validateSchema: false`, so AJV's root meta-schema check runs only in the full compile.
+- With `directGuardCompile` on, which is the default, a self-contained guard compiles its own subschema directly; a guard that needs `$ref`, anchors or `$schema` compiles at the root pointer.
+- Roots with the same `$id` are isolated on separate validation instances.
+
+#### Not supported
+
+- A dynamic reference that one schema location reaches through two different dynamic scopes; the guard answers for one scope. Each plugin README lists its exact dynamic-scope limits.
+- A condition that reads data outside its host, such as a `$data` reference to a sibling or parent value.
+- Asynchronous guards, meaning an `$async` schema or an asynchronous keyword inside `if`.
+- A guard that fails to compile under the strict options of a bound instance; that gate turns both branches off and records `GUARD_FAILED`.
 
 ### Validator Plugin Usage
 
@@ -373,7 +409,24 @@ export const App = () => (
 
 `createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
 
-A custom validator that cannot register a schema whose `$id` is already in use should throw an error whose message contains `already exists` or `resolves to more than one schema`, the duplicate-id messages of AJV 6, 7 and 8, because only those messages receive `reason: 'duplicateSchemaId'` and the one retry after the other root with that `$id` is released.
+### Conditional schemas: if, then, else
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: { country: { type: 'string' } },
+  if: { properties: { country: { const: 'KR' } }, required: ['country'] },
+  then: { properties: { phone: { type: 'string', pattern: '^010-' } } },
+  else: { properties: { phone: { type: 'string', pattern: '^\\+' } } },
+} as const;
+```
+
+- The `if` schema is evaluated against the host value, which is the value of the object that declares `if` as the validator would see it.
+- `then` belongs to the shape while the verdict is true, and `else` while it is false.
+- A host whose value is absent or is not an object is evaluated against `{}`. Following JSON Schema, `properties` is vacuously true on `{}`, so add `required` to the condition when a branch should wait until the field has a value.
+- A guard failure is not a false verdict. A guard that fails to compile or to evaluate turns both `then` and `else` off and records `GUARD_FAILED` for that gate only.
+- With no validator selected, meaning no `validatorFactory` on the Form or a FormProvider and no validator plugin, both `then` and `else` stay off.
+- An `if` on a host whose allowed types do not include object, such as a string, number, boolean, array or null-only field, is valid JSON Schema, but the form evaluates it against `{}`, so its branches cannot read the field's own value. The blueprint reports the `IF_ON_NON_OBJECT_HOST` warning with details `{ kind }` at the `if` location, once per location in each diagnostics collection. Move the condition to the enclosing object, or widen the host type to include `object`. A union such as `type: ['object', 'string']` and a nullable object do not warn.
 
 ### Available Validator Plugins
 

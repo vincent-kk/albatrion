@@ -63,6 +63,7 @@ The plugin implements the `ValidatorPlugin` interface with validation, synchrono
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
 - **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility.
+- **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin binding starts a new registry and does not carry roots registered before it.
 
 Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 
@@ -105,7 +106,7 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 - **Limits**: Asynchronous formats and keywords are unsupported
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 
-Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+Strict options on a bound instance, such as `strictKeywords`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 #### **`release(root)`**
 

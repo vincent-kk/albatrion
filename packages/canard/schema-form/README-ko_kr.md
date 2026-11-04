@@ -259,9 +259,9 @@ export const App = () => {
 
 `@canard/schema-form`은 플러그인 기반의 검증 시스템을 제공합니다. JSON Schema 검증을 위해 다양한 validator plugin을 사용할 수 있습니다.
 
-### ValidatorFactory
+### 검증기 플러그인 계약 (Validator plugin contract)
 
-ValidatorFactory는 스키마를 컴파일하는 `compile`과 `if/then/else`가 쓰는 동기 가드를 컴파일하는 `compileGuard`를 필수로 갖고, `release`와 `dialect`를 선택으로 갖는 객체입니다:
+검증기 플러그인의 `validator`와 `Form`·`FormProvider`가 받는 `validatorFactory` 객체는 한 계약을 따릅니다. 스키마를 컴파일하는 `compile`과 `if`·`then`·`else`가 쓰는 동기 가드를 컴파일하는 `compileGuard`가 필수이고, `release`와 `dialect`는 선택입니다:
 
 ```ts
 // The engine passes its own copy of the schema; it is typed as JSONSchema here.
@@ -280,7 +280,43 @@ type ValidateFunction<Value = unknown> = (
   | null;
 ```
 
-`ValidateFunction`은 순서가 있는 `ValidationIssue` 목록을 반환하고 값이 유효하면 `null`을 반환하며, 예외를 던지면 안 됩니다. `Form`과 `FormProvider`의 `validatorFactory` 속성이 이 객체를 받습니다. 선택 순서는 Form 속성, FormProvider, 플러그인의 `validator` 순입니다. 참조가 바뀌면 트리가 다시 만들어지므로 참조를 안정적으로 유지하세요.
+선택 순서는 Form 속성, FormProvider, 플러그인의 `validator` 순입니다. 참조가 바뀌면 트리가 다시 만들어지므로 참조를 안정적으로 유지하세요.
+
+#### 필수 의무
+
+- `compile(copy)`는 엔진이 가진 루트 스키마 사본에 대한 `ValidateFunction`을 돌려줍니다. 이 함수는 순서가 있는 `ValidationIssue` 목록을, 값이 유효하면 `null`을 돌려주며, 예외를 던지면 안 됩니다.
+- `compileGuard(root, pointer)`는 `pointer` 위치의 `if` 스키마에 대해 `true`나 `false`를 답하는 동기 판정 함수를 돌려줍니다. 스키마는 `root`의 문맥에서 평가하므로 가드는 루트의 `$ref` 대상, `$id`, 앵커를 봅니다. 동적 앵커에 따라 달라지는 판정이 전체 검증과 일치하는지는 각 플러그인이 문서로 밝힌 지원 조건과 한계를 따르며, [ajv8](../schema-form-ajv8-plugin/README-ko_kr.md)과 [ajv7](../schema-form-ajv7-plugin/README-ko_kr.md) 플러그인 README의 "가드의 동적 범위" 문단에 있습니다.
+- `compileGuard`는 같은 루트에 대한 `compile`보다 먼저 불릴 수 있으며, 필요한 등록은 스스로 합니다.
+- 두 메서드 모두 받은 스키마와 검증하는 값을 바꾸면 안 됩니다.
+
+#### 선택 항목
+
+- `bind(instance)`는 소비자가 자기 검증기 인스턴스를 주입하는 훅입니다. 엔진은 이를 부르지 않습니다. 첫 폼이 컴파일되기 전에 한 번 부르세요. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않습니다.
+- `release(root)`는 엔진이 루트를 캐시에서 내보낼 때 불립니다. 멱등이어야 하므로 등록된 적 없는 루트를 해제해도 아무 일도 일어나지 않아야 합니다.
+- `dialect`는 플러그인이 검증하는 JSON Schema 방언을 이름 붙일 수 있을 때 그 이름입니다. `$schema`가 다른 스키마는 `DIALECT_MISMATCH` 경고를 냅니다.
+
+#### 실패 격리
+
+- 컴파일에 실패하거나, 던지거나, 불리언이 아닌 값을 돌려준 가드는 자기 게이트의 두 분기를 모두 끄고 폼마다 가드 위치당 한 번 `GUARD_FAILED`를 기록합니다. 가드 실패가 다른 게이트를 끄지는 않지만, 루트의 다른 곳에 풀리지 않는 `$ref`가 있는 것처럼 루트 위치에서 컴파일하는 모든 가드가 공유하는 컴파일 오류가 있으면 그 가드들이 각자 실패합니다.
+- `compile`이 던지면 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하고 가드는 바뀌지 않습니다.
+- 같은 `$id`를 가진 두 살아 있는 루트는 저마다 자기 루트로 판정합니다. 둘을 격리하는 것은 플러그인의 책임이며 엔진은 `$id`를 고치지 않습니다.
+- 이미 쓰이는 `$id`의 스키마를 등록하지 못하는 사용자 정의 검증기는 메시지에 AJV 6·7·8의 중복 id 문구인 `already exists`나 `resolves to more than one schema`를 담은 오류를 던져야 하며, 이 두 문구만 `reason: 'duplicateSchemaId'`와 같은 `$id`의 다른 루트가 해제된 뒤의 한 번 재시도를 받습니다.
+
+#### 배포 AJV 플러그인의 기본값
+
+- 기본 인스턴스는 형식(format)을 검사하지 않으며, 바인딩한 인스턴스는 자기 형식 설정을 그대로 씁니다.
+- `@canard/schema-form-ajv8-plugin`의 기본 진입점은 Draft-07을 검증하고, 다른 방언은 각자의 진입점이 있습니다.
+- 원격 `$ref`는 불러오지 않으므로 참조하는 스키마는 모두 루트 안에 있거나 바인딩한 인스턴스에 등록되어 있어야 합니다.
+- 가드는 `allErrors: false`와 `validateSchema: false`인 형제 인스턴스에서 컴파일하므로 AJV의 루트 메타 스키마 검사는 전체 컴파일에서만 돕니다.
+- 기본값인 `directGuardCompile`이 켜져 있으면 자족한 가드는 자기 부분 스키마를 직접 컴파일하고, `$ref`·앵커·`$schema`가 필요한 가드는 루트 위치에서 컴파일합니다.
+- 같은 `$id`의 루트는 서로 다른 검증 인스턴스로 격리합니다.
+
+#### 지원하지 않는 것
+
+- 한 스키마 위치가 서로 다른 두 동적 범위로 도달되는 동적 참조는 지원하지 않으며, 가드는 한 범위의 답을 냅니다. 정확한 동적 범위 한계는 각 플러그인 README에 있습니다.
+- 형제나 부모 값을 가리키는 `$data` 참조처럼 호스트 밖의 데이터를 읽는 조건은 지원하지 않습니다.
+- 비동기 가드, 곧 `if` 안의 `$async` 스키마나 비동기 키워드는 지원하지 않습니다.
+- 바인딩한 인스턴스의 엄격 옵션 때문에 컴파일에 실패하는 가드는 그 게이트의 두 분기를 모두 끄고 `GUARD_FAILED`를 기록합니다.
 
 ### Validator Plugin 사용법
 
@@ -368,7 +404,24 @@ export const App = () => (
 
 AJV 플러그인의 `createValidatorFactory(ajv)`는 compile 함수만 반환하므로 그 자체로는 유효한 `validatorFactory`가 아닙니다.
 
-이미 쓰이는 `$id`의 스키마를 등록하지 못하는 사용자 정의 검증기는 메시지에 AJV 6·7·8의 중복 id 문구인 `already exists`나 `resolves to more than one schema`를 담은 오류를 던져야 하며, 이 두 문구만 `reason: 'duplicateSchemaId'`와 같은 `$id`의 다른 루트가 해제된 뒤의 한 번 재시도를 받습니다.
+### 조건 스키마: if, then, else
+
+```tsx
+const jsonSchema = {
+  type: 'object',
+  properties: { country: { type: 'string' } },
+  if: { properties: { country: { const: 'KR' } }, required: ['country'] },
+  then: { properties: { phone: { type: 'string', pattern: '^010-' } } },
+  else: { properties: { phone: { type: 'string', pattern: '^\\+' } } },
+} as const;
+```
+
+- `if` 스키마는 호스트 값, 곧 `if`를 선언한 객체의 값을 검증기가 볼 형태 그대로 받아 평가합니다.
+- `then`은 판정이 참인 동안, `else`는 거짓인 동안 형상에 속합니다.
+- 값이 없거나 객체가 아닌 호스트는 `{}`에 대해 평가합니다. JSON Schema에 따라 `properties`는 `{}`에서 공허하게 참이므로, 필드에 값이 생길 때까지 분기를 기다리게 하려면 조건에 `required`를 더하세요.
+- 가드 실패는 거짓 판정이 아닙니다. 컴파일이나 평가에 실패한 가드는 `then`과 `else`를 모두 끄고 그 게이트에 대해서만 `GUARD_FAILED`를 기록합니다.
+- 선택된 검증기가 없으면, 곧 Form이나 FormProvider의 `validatorFactory`도 검증기 플러그인도 없으면 `then`과 `else`는 모두 꺼진 채로 남습니다.
+- 허용 형에 object가 없는 호스트(문자열, 숫자, 불리언, 배열, null 전용 필드)의 `if`는 유효한 JSON Schema이지만, 폼은 이를 `{}`에 대해 평가하므로 분기가 필드 자신의 값을 읽지 못합니다. 청사진은 진단 수집 한 번마다 `if` 위치당 한 번 details `{ kind }`와 함께 `IF_ON_NON_OBJECT_HOST` 경고를 냅니다. 조건을 감싸는 객체로 옮기거나 호스트 형에 `object`를 더하세요. `type: ['object', 'string']` 같은 union과 nullable 객체는 경고하지 않습니다.
 
 ### 오류 메시지 형식 지정
 
