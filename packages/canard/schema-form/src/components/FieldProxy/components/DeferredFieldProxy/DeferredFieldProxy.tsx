@@ -5,6 +5,7 @@ import { useLazyConstant } from '@winglet/react-utils/hook';
 import type { Nullable } from '@aileron/declare';
 
 import { FieldNodeEventType, FieldNodeRequestType } from '@/schema-form/core';
+import type { DeferredGate } from '@/schema-form/helpers/virtualization';
 import { useFieldNodeSubscribe } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import { FormErrorPathContext } from '@/schema-form/providers/FormErrorContext';
@@ -40,7 +41,7 @@ export const DeferredFieldProxy = ({
 }: DeferredFieldProxyProps) => {
   const node = proxyProps.node;
   const [revealed, setRevealed] = useState(() => manager.hasRevealed(node));
-  const gate = useLazyConstant(() => ({
+  const gate = useLazyConstant<DeferredGate>(() => ({
     node,
     reveal: () => setRevealed(true),
   }));
@@ -59,7 +60,7 @@ export const DeferredFieldProxy = ({
   useLayoutEffect(() => {
     if (!revealed) return;
     manager.markRevealed(node);
-    manager.settleReveal(node);
+    manager.settleReveal(gate);
     const pending = pendingEventsRef.current;
     if (pending === 0) return;
     pendingEventsRef.current = 0;
@@ -69,7 +70,7 @@ export const DeferredFieldProxy = ({
       node.request(FieldNodeRequestType.Focus);
     if (pending & FieldNodeEventType.RequestSelect)
       node.request(FieldNodeRequestType.Select);
-  }, [revealed, manager, node]);
+  }, [revealed, manager, node, gate]);
 
   const handlePlaceholder = useCallback(
     (element: Nullable<HTMLDivElement>) => {

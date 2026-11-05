@@ -32,13 +32,14 @@ it('records the render path before synchronous reveal and settles once after com
   const reveal = vi.fn(() => {
     expect(manager.hasRevealed(target)).toBe(true);
     manager.unregister(element);
-    manager.settleReveal(root);
+    manager.settleReveal(gate);
   });
-  manager.register(element, { node: root, reveal });
+  const gate = { node: root, reveal };
+  manager.register(element, gate);
   expect(manager.revealPath(target, settled)).toBe(true);
   expect(reveal).toHaveBeenCalledTimes(1);
   expect(settled).toHaveBeenCalledTimes(1);
-  manager.settleReveal(root);
+  manager.settleReveal(gate);
   expect(settled).toHaveBeenCalledTimes(1);
   expect(manager.revealPath(target, vi.fn())).toBe(false);
 });
@@ -48,14 +49,15 @@ it('reuses an opening gate, preserves it on disconnect and replaces the settled 
   const reveal = vi.fn();
   const first = vi.fn();
   const second = vi.fn();
-  manager.register(element, { node: root, reveal });
+  const gate = { node: root, reveal };
+  manager.register(element, gate);
   manager.revealPath(target, first);
   manager.disconnect();
   expect(manager.revealPath(target, second)).toBe(true);
   expect(reveal).toHaveBeenCalledTimes(1);
-  manager.settleReveal(target);
+  manager.settleReveal({ node: target, reveal: vi.fn() });
   expect(second).not.toHaveBeenCalled();
-  manager.settleReveal(root);
+  manager.settleReveal(gate);
   expect(first).not.toHaveBeenCalled();
   expect(second).toHaveBeenCalledTimes(1);
 });
@@ -90,7 +92,7 @@ it('preserves same-task re-registration and ignores stale release callbacks', as
   manager.revealPath(target, newer);
   await Promise.resolve();
   expect(newer).not.toHaveBeenCalled();
-  manager.settleReveal(root);
+  manager.settleReveal(gate);
   expect(newer).toHaveBeenCalledTimes(1);
 });
 it('records nothing when no blocking gate exists', () => {
@@ -98,4 +100,23 @@ it('records nothing when no blocking gate exists', () => {
   expect(manager.revealPath(target, vi.fn())).toBe(false);
   expect(manager.hasRevealed(target)).toBe(false);
   expect(manager.hasRevealed(root)).toBe(false);
+});
+
+it('settles only the tracked gate when two positions share the same node', () => {
+  const manager = createManager();
+  const first = document.body.appendChild(document.createElement('div'));
+  const second = document.body.appendChild(document.createElement('div'));
+  const gateA = { node: root, reveal: vi.fn() };
+  const gateB = { node: root, reveal: vi.fn() };
+  manager.register(first, gateA);
+  manager.register(second, gateB);
+  manager.revealPath(target, vi.fn());
+  manager.unregister(first);
+  const settled = vi.fn();
+  expect(manager.revealPath(target, settled)).toBe(true);
+  expect(gateB.reveal).toHaveBeenCalledTimes(1);
+  manager.settleReveal(gateA);
+  expect(settled).not.toHaveBeenCalled();
+  manager.settleReveal(gateB);
+  expect(settled).toHaveBeenCalledTimes(1);
 });
