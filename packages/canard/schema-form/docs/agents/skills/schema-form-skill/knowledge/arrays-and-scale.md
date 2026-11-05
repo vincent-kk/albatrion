@@ -77,7 +77,7 @@ formRef.current?.setValue((prev) => ({
 }));
 ```
 
-Inside `batch`, value writes are marked and settle only when the outermost batch ends. Reads of `value` and `children` still see the last committed values and shape. Array methods compute their synchronous results from earlier queued writes; that does not make node getters current. Never use a shrinking `children.length` or `value.length` as a loop condition inside the batch: it does not shrink there and can loop forever.
+Inside `batch`, value writes are marked and settle only when the outermost batch ends. Form `reset()` and `node.resetSubtree()` are exceptions: they settle their loads immediately even inside a batch. Reads of `value` and `children` still see the last committed values and shape. Array methods compute their synchronous results from earlier queued writes; that does not make node getters current. Never use a shrinking `children.length` or `value.length` as a loop condition inside the batch: it does not shrink there and can loop forever.
 
 Compute the number of removals from the committed shape before entering the batch, then use a bounded loop:
 
