@@ -16,10 +16,9 @@
 
 ## Acceptance Criteria
 
-### shared-empty-values — 불변 빈 값과 안정된 참조
+### shared-empty-values — 동결된 공유 빈 값
 
 - 두 값은 비어 있고 `Object.isFrozen`이 참이다.
-- 각 상수는 정적 import와 반복 동적 import에서 같은 참조를 유지한다.
 
 ### time-unit-arithmetic — 시간 단위 상수의 배수 관계
 
