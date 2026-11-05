@@ -30,6 +30,7 @@ export const dispatchUpdateSettings = <Self extends FieldNodeRecord<Self>>(
   if (
     runtime.entryDepth ||
     runtime.chainRoot ||
+    runtime.chainErrors ||
     runtime.flushingQueuedEvents ||
     runtime.reportingErrors
   ) {

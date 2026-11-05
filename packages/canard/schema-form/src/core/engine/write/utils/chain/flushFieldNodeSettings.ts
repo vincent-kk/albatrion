@@ -11,6 +11,7 @@ export const flushFieldNodeSettings = (
     | 'pendingSettings'
     | 'entryDepth'
     | 'chainRoot'
+    | 'chainErrors'
     | 'flushingQueuedEvents'
     | 'reportingErrors'
   >,
@@ -18,6 +19,7 @@ export const flushFieldNodeSettings = (
   if (
     runtime.entryDepth ||
     runtime.chainRoot ||
+    runtime.chainErrors ||
     runtime.flushingQueuedEvents ||
     runtime.reportingErrors
   )

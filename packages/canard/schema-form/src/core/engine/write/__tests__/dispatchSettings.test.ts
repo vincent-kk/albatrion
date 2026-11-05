@@ -6,6 +6,7 @@ import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { flushFieldNodeSettings } from '../utils/chain/flushFieldNodeSettings';
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchFinishInput } from '../utils/entry/dispatchFinishInput';
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
@@ -15,6 +16,55 @@ import { dispatchValidate } from '../utils/entry/dispatchValidate';
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
+});
+
+it('keeps settings deferred after a nested onChange write returns', () => {
+  const { root, runtime } = createDispatchTree({
+    type: 'string',
+    options: { trim: true },
+  });
+  runtime.validationMode = ValidationMode.None;
+  let armed = true;
+  let settingInside: boolean | undefined;
+  runtime.onChange = () => {
+    if (!armed) return;
+    armed = false;
+    dispatchSetValue(root, ' nested ');
+    dispatchUpdateSettings(root, {
+      validationMode: ValidationMode.None,
+      disableAutomaticWrites: true,
+    });
+    settingInside = runtime.disableAutomaticWrites;
+    dispatchFinishInput(root);
+  };
+  dispatchSetValue(root, ' outer ');
+  expect(settingInside).not.toBe(true);
+  expect(root.emit).toBe('nested');
+  expect(runtime.disableAutomaticWrites).toBe(true);
+});
+
+it('flushes only the last deferred settings at the outermost chain exit', () => {
+  const { root, runtime } = createDispatchTree({ type: 'string' });
+  runtime.validationMode = ValidationMode.None;
+  const applyFirst = vi.fn();
+  const applyLast = vi.fn();
+  let armed = true;
+  let pendingInside: typeof runtime.pendingSettings;
+  runtime.onChange = () => {
+    if (!armed) return;
+    armed = false;
+    dispatchSetValue(root, 'nested');
+    runtime.pendingSettings = applyFirst;
+    flushFieldNodeSettings(runtime);
+    runtime.pendingSettings = applyLast;
+    flushFieldNodeSettings(runtime);
+    pendingInside = runtime.pendingSettings;
+  };
+  dispatchSetValue(root, 'outer');
+  expect(pendingInside).toBe(applyLast);
+  expect(applyFirst).not.toHaveBeenCalled();
+  expect(applyLast).toHaveBeenCalledOnce();
+  expect(runtime.pendingSettings).toBeUndefined();
 });
 
 it('defers write defaults through reentrant writes until the outer batch ends', () => {

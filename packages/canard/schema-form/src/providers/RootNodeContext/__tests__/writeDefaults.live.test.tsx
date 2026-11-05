@@ -1,12 +1,57 @@
-import { createRef } from 'react';
+import { createRef, useState } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
+import { flushSync } from 'react-dom';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { SetValueOption, ValidationMode } from '@/schema-form/core';
 
 afterEach(cleanup);
+
+it('keeps outer onChange settings after a nested write returns', () => {
+  const ref = createRef<FormHandle>();
+  let armed = false;
+  const schema = {
+    type: 'object',
+    properties: {
+      source: { type: 'string' },
+      target: { type: 'string', controls: { derived: '../source' } },
+    },
+  } as const;
+  const App = () => {
+    const [disabled, setDisabled] = useState(false);
+    return (
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        validationMode={ValidationMode.None}
+        disableAutomaticWrites={disabled}
+        onChange={() => {
+          if (!armed) return;
+          armed = false;
+          ref.current!.findNode('/source')!.setValue('nested');
+          flushSync(() => setDisabled(true));
+          ref.current!.findNode('/source')!.setValue('last-in-outer');
+        }}
+      >
+        <span />
+      </Form>
+    );
+  };
+  render(<App />);
+  armed = true;
+  act(() => ref.current!.findNode('/source')!.setValue('outer'));
+  expect(ref.current!.getValue()).toEqual({
+    source: 'last-in-outer',
+    target: 'last-in-outer',
+  });
+  act(() => ref.current!.findNode('/source')!.setValue('after-outer'));
+  expect(ref.current!.getValue()).toEqual({
+    source: 'after-outer',
+    target: 'last-in-outer',
+  });
+});
 
 it('disableAutomaticWrites changes the next entry without retroactive writes and preserves call overrides', () => {
   const ref = createRef<FormHandle>();
