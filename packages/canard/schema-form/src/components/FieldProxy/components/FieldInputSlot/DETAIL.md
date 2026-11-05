@@ -25,6 +25,7 @@
 - Refresh 때 다시 마운트할지는 노드 종류만 보지 않고 자식 프록시가 실제로 마운트되어 있는지로 가립니다. 터미널, 값 전체를 다루는 브랜치, 빈 배열, 접힌 입력은 다시 마운트합니다. 자식을 그리는 기본 객체·배열 입력은 추적 스냅숏을 유지하므로 Refresh만으로는 다시 렌더링하지 않습니다. 컨테이너 입력에는 대체된 입력의 Refresh 번호 검사를 적용하지 않습니다(REACT-024·028).
 - 통합 tracker의 스냅숏 getter는 Refresh 유예가 없으면 `node.revision(INPUT_TRACKING_EVENTS)`를 한 번 읽습니다. 유예 중에는 모듈 상수로 분리한 Refresh 제외 마스크의 개정과 적용 세대 `generation.current`를 더합니다. `revision(mask)`는 선택한 비트별 전달 횟수를 합한 값이므로, 유예가 없을 때 통합해서 읽은 값은 분리해서 읽은 두 값의 합과 같습니다. 적용 세대는 렌더에서 따로 읽으며, 자식이 소유한 유예 비트, IME 억제, 구독 전 catch-up 계약은 그대로 유지합니다.
 - 입력의 `compositionstart`부터 `compositionend`까지는 다시 마운트가 필요한 Refresh를 보류합니다. 조합 중에는 Refresh가 입력 DOM을 교체하거나 값을 복원하지 않으며, 중복 요청은 하나로 모아서 `compositionend`에서 적용합니다. 노드의 Refresh 번호와 동기 통지는 바로 진행하므로, 이전 입력에서 뒤늦게 온 조합 완료 콜백이나 변경 콜백은 번호 검사로 버립니다. 조합 중에 Refresh가 없었다면 완료된 텍스트는 평소처럼 노드에 전달합니다(EVENT-065, REACT-024).
+- React가 Activity 또는 Suspense로 입력의 layout effect를 해제하면 해당 조합의 Refresh 보류도 끝납니다. 숨김 동안 끝 이벤트가 오지 않아도 재연결한 입력은 현재 노드 값과 Refresh 세대를 따라잡으며, 활성 조합과 마운트된 자식의 보류는 유지합니다. 기존 layout 정리에 비트 해제 한 번과 cleanup 클로저 하나를 더하므로 필드당 시간·메모리 비용은 O(1)이고 구독·effect·ref는 늘지 않습니다.
 - `useFieldInput`의 메모 의존에는 유효한 `jsonSchema` 참조가 들어갑니다. `FieldInputHint`는 `{ type: node.type, schemaType: node.schemaType, nullable: node.nullable, path, required, jsonSchema, format, inputType }`이며, 입력 props에 같은 이름이 있으면 같은 값입니다. `schemaType`은 integer와 union 목록을 보존하고, 입력 props에는 `misfit`과 `watchValues`도 전달합니다(REACT-012·032, LANDING-137·181·185).
 - 객체 시험의 키는 `type`·`schemaType`·`path`·`required`·`nullable`·`format`·`inputType`입니다. 모르는 키는 대조에서 빼고, `type`이 integer인 경우도 무효 시험으로 다룹니다. 개발 모드의 `FORM_TYPE_TEST_INVALID`는 정의마다 한 번 보고합니다. union은 `{ type: 'union' }` 또는 함수 시험으로 선택합니다(REACT-032·033).
 - 터미널 입력의 `ChildFields`는 빈 배열입니다. 개발 모드(`process.env.NODE_ENV !== 'production'`)에서 object·array 노드가 인라인 입력 때문에 터미널이 된 경우에만(`hooks/utils/isDetectableTerminal`) 읽기를 감지하는 동결 빈 배열을 전달합니다. 이 배열은 첫 색인, length, 순회 읽기를 `CHILD_NODE_COMPONENTS_ON_TERMINAL`로 기록합니다. 보고는 필드 커밋 뒤 입력의 focus/select layout effect가 가장 먼저 호출하는 커밋 표시에서 하고, 로드마다 `(code, path)` 기준으로 한 번만 전달합니다. 프로덕션이거나 원래부터 터미널인 노드(string·number·boolean·null·union)는 오류 핸들러가 있어도 보통의 빈 배열을 받습니다. 컨테이너 입력이라면 자식을 그렸을 스키마에서만 빈 목록을 읽는 것이 실수이기 때문입니다(ERROR-202, 18C-73, 180라운드).
@@ -43,10 +44,11 @@
 - refresh는 자식 프록시가 마운트되어 있는지에 따라 입력 버전을 갱신하고, focus/select는 해당 입력의 DOM 명령으로 이어집니다. focus는 입력 컨테이너 안 첫 `input`·`textarea`·`select`·`button`에, select는 글자를 고를 수 있는 첫 `input`·`textarea`에 갑니다. 앞에 놓인 버튼이나 `<select>`가 select 요청을 가로채면 `select()`가 아무것도 하지 않기 때문입니다(REACT-028, EVENT-063).
 - 실패한 입력은 피어의 쓰기로 생긴 자동 Refresh와 명시적인 Refresh를 거쳐도 fallback을 유지하고, RequestRemount나 폼 key 교체 뒤에는 다시 실행됩니다. 정상 입력의 Refresh는 원본 입력만 교체하며, 피어 입력의 DOM 상태와 입력 오류 경계는 유지합니다(EVENT-039·040·042·070, 112C-01).
 - 조합 중에 Refresh가 와도 매 단계의 IME 텍스트와 입력 인스턴스를 보존하고 `value` setter를 호출하지 않습니다. `compositionend`가 한 번 오면 그 뒤에 입력을 다시 마운트하며, 이전 입력의 조합 텍스트가 노드에 뒤늦게 쓰이는 일은 없습니다(EVENT-065, REACT-024).
+- 일반·StrictMode의 React 19 Activity와 React 18/19 Suspense에서 조합 중인 입력을 숨기고 retained handle의 setValue/reset 또는 root.setValue로 쓰면, 다시 표시한 입력은 노드의 현재 값을 보이고 다음 사용자 입력도 수락합니다. 숨김 중 onChange는 한 번 전달되며 재표시만으로 재생하지 않습니다. React 18 legacy root의 일반 숨김 쓰기도 현재 값을 표시합니다.
 - Refresh 유예가 없는 스냅숏은 통합 마스크로 한 번에 읽고, 유예 중에는 Refresh 제외 개정과 적용 세대만 읽습니다. 렌더와 구독 사이에 전달된 자식·값 갱신은 화면이 따라잡습니다. 마운트된 자식이 보류한 Refresh는 자식을 해제하는 것만으로는 추가 커밋하지 않고, 다음 전달 때 한 번 적용합니다. `array-push-remove-100`의 커밋은 202회로 유지됩니다.
 - 가상화 없이 마운트한 터미널 배열 항목 하나는 라이브러리 layout effect를 두 번(부모 입력의 자식 마운트 계수, 항목 입력의 커밋) 실행합니다. H는 엔진 이력으로 표시를 계산하며 일반 입력 쓰기의 표시가 같으면 layout effect0회를 유지합니다. G8의 None·OnChange 마운트 행으로 이 비용을 정식 측정하고 기준을 넘으면 병합하지 않습니다(코디네이터 msg_cc8e08d106e0; REACT-028, ERROR-202).
 - 입력 변경 한 번에 담긴 세 단계는 한 번의 진입으로 정착하고 통지하며, 유효 스키마가 바뀌면 입력 선택에 반영됩니다. 대체되었거나 폐기된 입력이 뒤늦게 하는 값·파일 쓰기와, 초기화 뒤로 미룬 touched는 살아 있는 폼 상태를 바꾸지 않습니다(REACT-011·012·024, 69C-01·02).
 
 ## Last Updated
 
-이 fractal의 API 계약, 불변식 또는 경계가 바뀔 때 갱신합니다.
+입력 선택·값 동기화·Refresh 보류·오류 표시·가상화의 계약이 바뀔 때 갱신합니다.

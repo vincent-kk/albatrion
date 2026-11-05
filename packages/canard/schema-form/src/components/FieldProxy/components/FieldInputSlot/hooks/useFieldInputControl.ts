@@ -46,6 +46,8 @@ const MOUNTED_CHILDREN = 2;
  * Design Note:
  * - Input-origin writes exclude their own Refresh through the core binding.
  * - A container with mounted child proxies preserves its input instance.
+ * - Layout disconnection ends composition so reconnect can apply missed Refresh
+ *   without waiting for a compositionend event from a hidden input.
  *
  * @param node - The FieldNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
@@ -125,7 +127,10 @@ export const useFieldInputControl = <Node extends FieldNode>(
         if (element && typeof element.select === 'function') element.select();
       }
     });
-    return unsubscribe;
+    return () => {
+      refreshDeferral.current &= CLEAR_COMPOSING_MASK;
+      unsubscribe();
+    };
   }, [
     node,
     ref,
