@@ -8,7 +8,7 @@
 
 - 빈 값과 진단의 공통 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
 - 비제어 입력을 기본으로 두며, 형제 union 입력에는 진입점으로 같은 컴포넌트를 제공합니다. union은 `inputProps`로 제어 값과 이벤트를 대체하므로, 공통 문자열 입력에 union 전용 상태를 더하지 않습니다.
-- Refresh와 조합 중 DOM 수명은 [FieldInputSlot 계약](../../../components/FieldProxy/components/FieldInputSlot/DETAIL.md)에 둡니다. 이 입력의 이벤트 처리만으로 조합 중 미전송을 보장하지 않습니다.
+- Refresh와 조합 중 DOM 수명은 [FieldInputBridge 계약](../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)에 둡니다. 이 입력의 이벤트 처리만으로 조합 중 미전송을 보장하지 않습니다.
 
 ## Acceptance Criteria
 

@@ -1,3 +1,3 @@
 export { FieldProxy } from './FieldProxy';
 
-export type { ChildField } from './components/FieldInputSlot';
+export type { ChildField } from './components/FieldInputBridge';

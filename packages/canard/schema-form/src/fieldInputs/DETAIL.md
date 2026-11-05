@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- 입력 선택의 전체 우선순위와 수명은 [FieldInputSlot 계약](../components/FieldProxy/components/FieldInputSlot/DETAIL.md)에 둡니다. 이곳은 기본 정의 사이의 우선순위와 표현 정책을 소유합니다.
+- 입력 선택의 전체 우선순위와 수명은 [FieldInputBridge 계약](../components/FieldProxy/components/FieldInputBridge/DETAIL.md)에 둡니다. 이곳은 기본 정의 사이의 우선순위와 표현 정책을 소유합니다.
 - 공개 Hint·props·presentation 형은 [types 계약](../types/DETAIL.md), 시험 객체의 실행 의미는 [fieldInputDefinition 계약](../helpers/fieldInputDefinition/DETAIL.md)을 따릅니다. 같은 형과 시험 규칙을 입력마다 다시 정의하지 않습니다.
 
 ## Acceptance Criteria
@@ -25,7 +25,7 @@
 
 ### CONTROLS-083 — 잠금의 표현과 쓰기 차단을 구별합니다
 
-- 입력은 전달된 readOnly·disabled의 표현을 맡으며, 모든 입력 쓰기를 거부하는 경계는 FieldInputSlot입니다. 네이티브 속성만으로 같은 차단을 보장한다고 가정하면 사용자 정의 입력이나 체크박스 계열에서 잠금이 새어 나갈 수 있습니다.
+- 입력은 전달된 readOnly·disabled의 표현을 맡으며, 모든 입력 쓰기를 거부하는 경계는 FieldInputBridge입니다. 네이티브 속성만으로 같은 차단을 보장한다고 가정하면 사용자 정의 입력이나 체크박스 계열에서 잠금이 새어 나갈 수 있습니다.
 
 ### form-type-definitions-contract — 기본 정의의 변경 범위
 

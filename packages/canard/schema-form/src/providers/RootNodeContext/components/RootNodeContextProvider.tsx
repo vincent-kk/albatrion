@@ -4,12 +4,15 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
   useSyncExternalStore,
 } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
-import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
+import {
+  useHandle,
+  useLazyConstant,
+  useVersion,
+} from '@winglet/react-utils/hook';
 
 import type { Optional } from '@aileron/declare';
 
@@ -113,7 +116,7 @@ export const RootNodeContextProvider = ({
       option: Parameters<RootBinding['reset']>[0];
     }>
   >(undefined);
-  const [, schedule] = useState(0);
+  const [, update] = useVersion();
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
       const used = committed.current;
@@ -125,7 +128,7 @@ export const RootNodeContextProvider = ({
       attachedFilesMap.clear();
       onReset();
       pending.current = { props: used, option };
-      schedule((version) => version + 1);
+      update();
       for (const listener of store.listeners) listener();
       try {
         if (
@@ -210,10 +213,18 @@ export const RootNodeContextProvider = ({
       store.load = createRootLoad(committed.current, reporter);
       binding.current.root = store.load.root;
       onReset();
-      schedule((version) => version + 1);
+      update();
       for (const listener of store.listeners) listener();
     }
-  }, [errorVisibilityError, load.error, store, reporter, binding, onReset]);
+  }, [
+    errorVisibilityError,
+    load.error,
+    store,
+    reporter,
+    binding,
+    onReset,
+    update,
+  ]);
 
   useLayoutEffect(() => {
     const root = load.root;

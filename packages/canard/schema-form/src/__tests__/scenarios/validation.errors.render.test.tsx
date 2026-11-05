@@ -16,7 +16,7 @@ import { renderForm } from '../renderForm';
  * Validation drives TWO independent React subscriptions from the same merged
  * node-event batch: `FieldProxy` (re-renders the `<em>` error text via
  * `errorMessage`, gated by `errorVisible = checkErrorVisibility(node.state)`) and
- * `FieldInputSlot` (the uncontrolled input value). A single value change must
+ * `FieldInputBridge` (the uncontrolled input value). A single value change must
  * update BOTH the displayed value AND the error text together; the node tree's
  * `getErrors()` is the source of truth the DOM must mirror.
  *

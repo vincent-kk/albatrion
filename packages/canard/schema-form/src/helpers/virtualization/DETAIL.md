@@ -8,7 +8,7 @@
 
 - 선택적 활성화와 옵션 의미는 [resolveVirtualizationOptions](./resolveVirtualizationOptions/DETAIL.md), 노출 기록·idle 예산·Placeholder 경계는 [VirtualizationManager](./VirtualizationManager/DETAIL.md)가 소유합니다.
 - DOM 제약과 명령 재실행은 [DeferredFieldProxy](../../components/FieldProxy/components/DeferredFieldProxy/DETAIL.md)가 소유합니다. 입력이 아직 없다는 사실을 완전한 UI로 오인하지 않도록 연결합니다.
-- SSR·하이드레이션의 게이트 준비와 실제 입력 커밋은 [FieldInputSlot](../../components/FieldProxy/components/FieldInputSlot/DETAIL.md)의 계약입니다. 이 조율자에 hydration 상태나 React 수명 판정을 복제하지 않습니다.
+- SSR·하이드레이션의 게이트 준비와 실제 입력 커밋은 [FieldInputBridge](../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)의 계약입니다. 이 조율자에 hydration 상태나 React 수명 판정을 복제하지 않습니다.
 
 ## Acceptance Criteria
 

@@ -68,7 +68,7 @@ export interface RootLoadStore {
   unsubscribe: () => void;
 }
 
-/** Bridge exposing current root and reset to the Form handle. */
+/** Binding that exposes the current root and reset to the Form handle. */
 export interface RootBinding {
   /** Root of the committed load; undefined while no root could be built. */
   root?: FieldNode;

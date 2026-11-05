@@ -8,7 +8,7 @@
 
 - 상태 확정·배달 후보와 payload 생성은 [settle](../settle/DETAIL.md), 판정의 최신성·라우팅은 [validation](../validation/DETAIL.md), 실제 예약 시점은 [validationScheduling](../validationScheduling/DETAIL.md)이 소유합니다. write는 이 결과를 연결하며 자체 비교·검증 엔진을 만들지 않습니다.
 - 오류 분류·공개 코드·기록 형은 [errors](../../../errors/DETAIL.md)에 둡니다. 이 문서는 발생을 모으고 전달하는 책임만 정합니다.
-- 캐럿·IME·Refresh/Remount의 입력 수명은 [FieldInputSlot](../../../components/FieldProxy/components/FieldInputSlot/DETAIL.md), 늦은 구독의 catch-up과 제출은 [hooks](../../../hooks/DETAIL.md), 트리 선택·재생성·첫 로드 보고는 [RootNodeContext](../../../providers/RootNodeContext/DETAIL.md)를 따릅니다. 동기 배달을 지연해 해당 계층의 수명 문제를 숨기지 않습니다.
+- 캐럿·IME·Refresh/Remount의 입력 수명은 [FieldInputBridge](../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 늦은 구독의 catch-up과 제출은 [hooks](../../../hooks/DETAIL.md), 트리 선택·재생성·첫 로드 보고는 [RootNodeContext](../../../providers/RootNodeContext/DETAIL.md)를 따릅니다. 동기 배달을 지연해 해당 계층의 수명 문제를 숨기지 않습니다.
 
 ## Acceptance Criteria
 

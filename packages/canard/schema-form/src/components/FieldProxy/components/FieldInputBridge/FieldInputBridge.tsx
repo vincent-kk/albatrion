@@ -31,7 +31,7 @@ import { useChildFields } from './hooks/useChildFields';
 import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
-import type { FieldInputSlotProps } from './type';
+import type { FieldInputBridgeProps } from './type';
 
 /** State patch that marks the field edited after a controlled change. */
 const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
@@ -40,7 +40,7 @@ const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
 const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
-export const FieldInputSlot = memo(
+export const FieldInputBridge = memo(
   ({
     node,
     onChangeRef,
@@ -48,7 +48,7 @@ export const FieldInputSlot = memo(
     overrideProps,
     PreferredFieldInput,
     NodeProxy,
-  }: FieldInputSlotProps) => {
+  }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || selected;
     const mountedChildren = useRef(0);

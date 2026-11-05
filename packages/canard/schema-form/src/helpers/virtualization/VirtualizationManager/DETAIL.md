@@ -7,7 +7,7 @@
 ## API Contracts
 
 - 옵션의 의미는 [resolveVirtualizationOptions](../resolveVirtualizationOptions/DETAIL.md)를 따르며 매니저 수명과 섞지 않습니다.
-- `markRevealed`는 소비층이 커밋한 노출을 기록하는 통로입니다. 게이트 객체를 준비하거나 placeholder를 등록했다는 이유만으로 호출하지 않습니다. 실제 입력 커밋의 판정은 [FieldInputSlot](../../../components/FieldProxy/components/FieldInputSlot/DETAIL.md)이 소유합니다.
+- `markRevealed`는 소비층이 커밋한 노출을 기록하는 통로입니다. 게이트 객체를 준비하거나 placeholder를 등록했다는 이유만으로 호출하지 않습니다. 실제 입력 커밋의 판정은 [FieldInputBridge](../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)가 소유합니다.
 - Placeholder의 경로 연결은 [DeferredFieldProxy](../../../components/FieldProxy/components/DeferredFieldProxy/DETAIL.md), 보고·중복 제거는 [FormErrorContext](../../../providers/FormErrorContext/DETAIL.md)가 소유합니다.
 
 ## Acceptance Criteria

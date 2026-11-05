@@ -10,7 +10,7 @@
 - 노드 추적과 메모된 선택은 훅에 두며, 별도의 필드 컴포넌트나 필드 경로 Provider는 만들지 않는다.
 - 렌더러는 한 번 선택해서 memo 없이 ErrorBoundary로 직접 감싸고, errorMessage는 그 경계 안에서 계산한다. 현재 필드 경로는 보고기 훅에 넘긴다.
 - display-contents 래퍼(`data-path`, `role="none"`)와 RequestRemount 래퍼 key를 유지한다.
-- 노드 추적과 구독은 React 수명에 묶습니다. 입력의 결합 스냅숏과 직접 구독의 예외는 [FieldInputSlot](./components/FieldInputSlot/DETAIL.md)의 계약을 따릅니다.
+- 노드 추적과 구독은 React 수명에 묶습니다. 입력의 결합 스냅숏과 직접 구독의 예외는 [FieldInputBridge](./components/FieldInputBridge/DETAIL.md)의 계약을 따릅니다.
 
 ## Boundaries
 
@@ -27,7 +27,7 @@
 
 ### Never do
 
-- `FieldInputSlot`·`DeferredFieldProxy`를 이 fractal 바깥에서 직접 import
+- `FieldInputBridge`·`DeferredFieldProxy`를 이 fractal 바깥에서 직접 import
 - 프록시에서 필드 노드를 만들거나 변경, 소비자 props로 노드 식별 props를 덮어쓰기
 - 필드 전체에 중복 경계나 경로 Provider를 추가하는 것. 오류를 소유한 경계와 수명이 중복되어서는 안 됩니다.
 - `type.ts`의 `FieldProxyProps` 계약에 렌더 컴포넌트 구현을 import (부품은 형만 읽는다)

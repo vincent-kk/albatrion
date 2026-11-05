@@ -16,7 +16,7 @@
 
 - 새 입력의 소유 경계와 기존 정의보다 앞서야 하는 이유를 명시합니다.
 - 초안·빈 값·무효 표시를 변경할 때 DETAIL의 공통 계약과 대조합니다.
-- 입력 선택과 수명은 FieldInputSlot에, 시험 정규화는 fieldInputDefinition에 남겨 둡니다.
+- 입력 선택과 수명은 FieldInputBridge에, 시험 정규화는 fieldInputDefinition에 남겨 둡니다.
 
 ### Ask first
 

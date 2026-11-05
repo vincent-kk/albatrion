@@ -8,7 +8,7 @@
 
 - 오류 표시의 자격·보류·해제는 [FieldRendererContext](../../providers/FieldRendererContext/DETAIL.md)와 [validation](../../core/engine/validation/DETAIL.md)의 계약을 소비합니다. 현재 `errorVisibility`와 `checkErrorVisibility(node.state)`를 사용하므로 정책을 최초 마운트 값으로 고정하지 않습니다. renderer.errors는 원본 목록이며 표시 여부로 목록을 고치지 않습니다.
 - ErrorBoundary를 항상 첫 자식에 두고 보류 해제 구독자를 그 뒤에 두어, 표시 대기가 시작·종료될 때 렌더러와 입력이 교체되지 않게 합니다.
-- 재귀 입력 수명은 [FieldInputSlot](./components/FieldInputSlot/DETAIL.md), 지연 DOM은 [DeferredFieldProxy](./components/DeferredFieldProxy/DETAIL.md)가 소유합니다. 재귀 렌더 props 형은 본체가 소유하고 NodeProxy prop으로 구현을 전달하여 자식의 역참조 순환을 막습니다.
+- 재귀 입력 수명은 [FieldInputBridge](./components/FieldInputBridge/DETAIL.md), 지연 DOM은 [DeferredFieldProxy](./components/DeferredFieldProxy/DETAIL.md)가 소유합니다. 재귀 렌더 props 형은 본체가 소유하고 NodeProxy prop으로 구현을 전달하여 자식의 역참조 순환을 막습니다.
 - 노드 값은 가지 렌더러에도 전달되는 계약이므로 UpdateValue 구독을 성능만을 이유로 제거하지 않습니다. 형제 입력이 memo여도 부모가 받는 value가 낡아질 수 있습니다.
 
 ## Acceptance Criteria
@@ -24,7 +24,7 @@
 ### field-proxy-contract — 오류 표시와 복구 수명을 구별합니다
 
 - 오류 표시가 꺼지면 포맷 결과를 숨기되 렌더 실패 경계와 원본 오류 목록은 유지합니다. 검증 표시를 숨기는 동작이 오류 격리까지 해제해서는 안 됩니다.
-- Refresh는 렌더러 경계를 유지하고 원본 입력의 재마운트 범위는 FieldInputSlot의 계약을 따릅니다. 실패한 경계를 Refresh나 형제 쓰기로 복구하지 않습니다. RequestRemount는 래퍼 key를 바꾸므로 경계까지 교체하는 별개의 복구 수단입니다.
+- Refresh는 렌더러 경계를 유지하고 원본 입력의 재마운트 범위는 FieldInputBridge의 계약을 따릅니다. 실패한 경계를 Refresh나 형제 쓰기로 복구하지 않습니다. RequestRemount는 래퍼 key를 바꾸므로 경계까지 교체하는 별개의 복구 수단입니다.
 
 ### field-contract — 재배치로 입력을 다시 지연하지 않습니다
 

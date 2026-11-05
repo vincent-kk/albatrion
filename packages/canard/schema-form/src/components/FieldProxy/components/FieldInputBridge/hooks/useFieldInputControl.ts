@@ -2,10 +2,11 @@ import {
   type RefObject,
   useCallback,
   useLayoutEffect,
-  useReducer,
   useRef,
   useSyncExternalStore,
 } from 'react';
+
+import { useVersion } from '@winglet/react-utils/hook';
 
 import type { Nullable } from '@aileron/declare';
 
@@ -40,7 +41,7 @@ const MOUNTED_CHILDREN = 2;
  * - `RequestFocus`: Focuses the first focusable element (input, textarea, select, button) in container
  * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
- * Usage in FieldInputSlot:
+ * Usage in FieldInputBridge:
  * - The returned generation keys the input and captures its current value.
  *
  * Design Note:
@@ -69,7 +70,8 @@ export const useFieldInputControl = <Node extends FieldNode>(
   virtualizationManager?: VirtualizationManager | null,
 ) => {
   const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
-  const [, rerender] = useReducer((value: number) => value + 1, 0);
+
+  const [, update] = useVersion();
   const ref = useRef<HTMLDivElement>(null);
   const refreshDeferral = useRef(0);
   refreshDeferral.current =
@@ -113,8 +115,8 @@ export const useFieldInputControl = <Node extends FieldNode>(
       mountedChildren.current === 0 &&
       generation.current !== node.revision(FieldNodeEventType.RequestRefresh)
     )
-      rerender();
-  }, [node, mountedChildren]);
+      update();
+  }, [mountedChildren, node, update]);
   useLayoutEffect(() => {
     commitTerminalChildren();
     if (hydrationCommitRef) hydrationCommitRef.current = true;
@@ -147,7 +149,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
     generation.current,
     handleCompositionStart,
     handleCompositionEnd,
-    rerender,
+    update,
   ] as const;
 };
 

@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- 게이트 선택과 SSR·Suspense 하이드레이션의 준비 시점은 [FieldInputSlot](../FieldInputSlot/DETAIL.md)의 계약입니다. 이 컴포넌트가 렌더 중 매니저를 다시 고르거나 훅 집합을 바꾸지 않습니다.
+- 게이트 선택과 SSR·Suspense 하이드레이션의 준비 시점은 [FieldInputBridge](../FieldInputBridge/DETAIL.md)의 계약입니다. 이 컴포넌트가 렌더 중 매니저를 다시 고르거나 훅 집합을 바꾸지 않습니다.
 - Placeholder는 매니저가 소유한 경계 컴포넌트를 사용합니다. 이 자리는 현재 node.path만 경로 문맥에 제공하고, [FormErrorContext](../../../../providers/FormErrorContext/DETAIL.md)의 전용 훅이 렌더 때 보고기를 읽습니다. 여기서 다시 감싸면 경계 수명이 중복됩니다.
 - placeholder는 실제 높이를 갖는 관찰 대상입니다. display: contents로 바꾸면 공간 예약과 관찰 대상을 잃으므로 사용자 Placeholder는 wrapper 내부의 장식만 맡습니다.
 

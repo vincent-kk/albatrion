@@ -1,4 +1,4 @@
-import { Fragment, memo, useMemo, useReducer } from 'react';
+import { Fragment, memo, useMemo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent } from '@winglet/react-utils/filter';
@@ -7,6 +7,7 @@ import {
   useConstant,
   useLazyConstant,
   useReference,
+  useVersion,
 } from '@winglet/react-utils/hook';
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
@@ -27,13 +28,8 @@ import {
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
-import { FieldInputSlotWrapper } from './components/FieldInputSlot';
+import { createFieldInputBridge } from './components/FieldInputBridge';
 import type { FieldProxyProps } from './type';
-
-/** Advance a held display without allocating a reducer per render.
- * @param value - Previous render sequence.
- * @returns Next render sequence. */
-const increment = (value: number) => value + 1;
 
 const RERENDERING_EVENT =
   FieldNodeEventType.UpdateValue |
@@ -61,7 +57,7 @@ export const FieldProxy = ({
 
   const Input = useMemo<FieldRendererProps['Input']>(
     () =>
-      FieldInputSlotWrapper(
+      createFieldInputBridge(
         node,
         onChangeRef,
         onFileAttachRef,
@@ -103,7 +99,7 @@ export const FieldProxy = ({
   });
   const Wrapper = useConstant(InputWrapper || Fragment);
   const { context } = useWorkspaceContext();
-  const [, rerender] = useReducer(increment, 0);
+  const [, update] = useVersion();
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
   if (!node?.isPresent) return null;
@@ -142,7 +138,7 @@ export const FieldProxy = ({
           <ErrorRevealSubscriber
             node={node}
             version={revealVersion}
-            onRelease={rerender}
+            onRelease={update}
           />
         )}
       </div>

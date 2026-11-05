@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-제한된 문자열 변환의 표는 [unionBehavior의 WRITE-075](../unionBehavior/DETAIL.md), 공통 행 경계는 [behaviors 계약](../DETAIL.md)을 따릅니다. 포커스 아웃 신호를 보내는 입력 수명은 [FieldInputSlot 계약](../../../../components/FieldProxy/components/FieldInputSlot/DETAIL.md), 결과를 자동 쓰기로 적용하는 경계는 [write 계약](../../write/DETAIL.md)이 소유합니다.
+제한된 문자열 변환의 표는 [unionBehavior의 WRITE-075](../unionBehavior/DETAIL.md), 공통 행 경계는 [behaviors 계약](../DETAIL.md)을 따릅니다. 포커스 아웃 신호를 보내는 입력 수명은 [FieldInputBridge 계약](../../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 결과를 자동 쓰기로 적용하는 경계는 [write 계약](../../write/DETAIL.md)이 소유합니다.
 
 ## Acceptance Criteria
 

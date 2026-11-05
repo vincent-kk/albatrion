@@ -12,7 +12,7 @@ import type {
 
 import type { FieldProxyProps } from '../../type';
 
-export interface FieldInputSlotProps {
+export interface FieldInputBridgeProps {
   node: FieldNode;
   onChangeRef: RefObject<ChildFieldProps['onChange']>;
   onFileAttachRef: RefObject<ChildFieldProps['onFileAttach']>;

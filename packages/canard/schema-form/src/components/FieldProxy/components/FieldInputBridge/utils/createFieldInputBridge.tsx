@@ -19,7 +19,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { FieldProxyProps } from '../../../type';
-import { FieldInputSlot } from '../FieldInputSlot';
+import { FieldInputBridge } from '../FieldInputBridge';
 
 /**
  * Bind a real node to an input component, or reuse the shared empty component.
@@ -31,7 +31,7 @@ import { FieldInputSlot } from '../FieldInputSlot';
  * @param NodeProxy - Required renderer for real child nodes
  * @returns A bound input component, or the shared NULL_FUNCTION for absence
  */
-export const FieldInputSlotWrapper = (
+export const createFieldInputBridge = (
   node: FieldNode | Nullish,
   overrideOnChangeRef: Optional<RefObject<ChildFieldProps['onChange']>>,
   overrideOnFileAttachRef: Optional<RefObject<ChildFieldProps['onFileAttach']>>,
@@ -64,7 +64,7 @@ export const FieldInputSlotWrapper = (
         : null,
     );
     return (
-      <FieldInputSlot
+      <FieldInputBridge
         node={node}
         onChangeRef={onChangeRef}
         onFileAttachRef={onFileAttachRef}
