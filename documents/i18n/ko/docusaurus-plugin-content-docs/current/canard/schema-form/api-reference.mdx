@@ -134,7 +134,10 @@ resolver 안의 값 쓰기·배열 verb·batch·resetSubtree는 무시하고 개
 
 첫 layout 준비 뒤의 current load는 숨김 중에도 callback을 전달하고 다시 표시할 때 replay하지 않습니다. 준비되지 않은 load는 construction record만 buffer하고 일반 callback은 버리며 retired load의 이후 record도 버립니다. root 교체 reset은 handle binding 전환 전에 mount record, buffered build record 순으로 전달하며 각 handler 실패를 격리합니다.
 
-React에서는 이 binding이 hidden·unmounted를 확실히 구분할 수 없어 retained handle·node가 unmount 뒤에도 callback을 전달할 수 있으므로 소비자 구독을 정리하십시오. 숨김 동안 일반 callback은 마지막 연결 commit, onError는 최신 handler를 사용하며 React ref는 null입니다. field layout-effect 쓰기와 render warning은 다시 표시할 때 도착합니다.
+React에서는 이 binding이 hidden·unmounted를 확실히 구분할 수 없어 retained handle·node가 unmount 뒤에도 callback을 전달할 수 있으므로 소비자 구독을 정리하십시오. 숨김 동안 일반 callback은 마지막 연결 commit, onError는 최신 handler를 사용합니다. field layout-effect 쓰기와 render warning은 다시 표시할 때 도착합니다.
+
+React가 숨겨진 폼을 다시 표시하면 입력은 현재 노드 값을 보여줍니다. 숨겨진 동안 기록한 값과 숨겨질 때 끝나지 않은 IME 조합도 여기에 포함됩니다.
+폼이 숨겨진 동안에는 React가 ref를 분리하므로 `formRef.current`는 null입니다. 숨김 중에 값을 쓰려면 폼이 표시되어 마운트된 뒤 보관한 `FormHandle`이나 노드 참조를 사용하십시오.
 
 ## JSONPointer query와 표현식 {#paths}
 

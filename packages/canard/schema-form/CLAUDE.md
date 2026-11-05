@@ -96,7 +96,7 @@ controls: {
 ```
 
 The closed key list is defined by `CONTROL_KEYS` in `src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts`: active, visible, readOnly, disabled, default, derived, unsetValue, resetInteraction, unsetOnInactive, inactiveValue, fields, injectTo, discriminator, watch. Unknown keys raise `UNKNOWN_GROUP_KEY`. Fields and fragment controls accept the first ten keys; `inactiveValue` is a literal or synchronous resolver and is never compiled as an expression.
-값의 형과 예는 `docs/en/SPECIFICATION.md`의 controls 절을 기준으로 한다.
+For control value types and examples, use the [schema reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#controls).
 
 ### Validation Modes
 
@@ -152,8 +152,8 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Type Utilities
 
-- `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (모두 공개 index 노출 — README `TypeScript Support` 절이 문서화)
-- Apply `as const` for useful `InferValueType` inference; widened `type` falls back to `any`. It recurses through `properties`, finite `prefixItems` tuples and `items`. Object keys are optional because inactive or omitted fields can disappear, and objects stay open unless `additionalProperties: false` so keys from `oneOf`/`anyOf` branches are not rejected as excess properties. Finite literal `prefixItems` infer optional-position tuples (rules and consumer impact: README `TypeScript Support`). See README `TypeScript Support` for the value contract. Supply `Form<Schema, Value>` / `FormHandle<Schema, Value>` explicitly when exact values are required; a concrete `defaultValue` can infer required keys that differ from the handle's default `Value`, so use the same explicit type with a ref.
+- `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (public exports; see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript))
+- Apply `as const` for useful `InferValueType` inference; widened `type` falls back to `any`. It recurses through `properties`, finite `prefixItems` tuples and `items`. Object keys are optional because inactive or omitted fields can disappear, and objects stay open unless `additionalProperties: false` so keys from `oneOf`/`anyOf` branches are not rejected as excess properties. Finite literal `prefixItems` infer optional-position tuples (see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript) for the value contract and consumer impact). Supply `Form<Schema, Value>` / `FormHandle<Schema, Value>` explicitly when exact values are required; a concrete `defaultValue` can infer required keys that differ from the handle's default `Value`, so use the same explicit type with a ref.
 - nullable 스키마는 `type: [..., 'null']` 과 `nullable: true` 둘 다 값 타입에 `| null` 을 붙인다 — 런타임(`BranchStrategy`·`validateSchemaType`)이 null 을 허용하므로 타입도 같은 계약을 따른다. `nullable: true` 는 공식 지원 표기로 `type` 배열에 `'null'` 을 더한 것과 같으며 오류·경고가 없다
 
 ## Dependencies

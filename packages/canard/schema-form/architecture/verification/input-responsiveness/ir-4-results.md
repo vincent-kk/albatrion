@@ -13,7 +13,7 @@
 | React 18, off | 40 / 0 | 40 / 0 | 40 | 0 | 0 |
 | React 18, on | 40 / 0 | 20 / 20 | 0 | 24 | 2 |
 
-on은 두 프로젝트에서 hydration mismatch 때문에 실패했습니다. React 19는 서버 HTML과 클라이언트 불일치 및 트리 재생성을 보고했고, React 18은 불일치와 전체 루트의 client rendering 전환을 보고했습니다. hydration 뒤 남은 실제 입력은 `value_0`부터 `value_19`까지이며 서버 input 노드는 하나도 재사용되지 않았습니다. 오류 개수는 이 실행의 관측값이며 React 버전 간 안정 계약으로 삼지 않습니다. 구조화한 [관측 원시](raw/ir-4/hydration-observations.json)에 명령·메시지·DOM 수와 값을 보존했습니다.
+on은 두 프로젝트에서 hydration mismatch 때문에 실패했습니다. React 19는 서버 HTML과 클라이언트 불일치 및 트리 재생성을 보고했고, React 18은 불일치와 전체 루트의 client rendering 전환을 보고했습니다. hydration 뒤 남은 실제 입력은 `value_0`부터 `value_19`까지이며 서버 input 노드는 하나도 재사용되지 않았습니다. 오류 개수는 이 실행의 관측값이며 React 버전 간 안정 계약으로 삼지 않습니다. 구조화한 관측 원시(`raw/ir-4/hydration-observations.json`, 현재 저장소에는 포함되어 있지 않음)에 명령·메시지·DOM 수와 값을 보존했습니다.
 
 첫 실행은 의존 workspace의 dist 부재로 수집 단계에서 실패하여 증거에서 제외했습니다. 지정된 로컬 common-utils/json/react-utils/json-schema 빌드 후 같은 명령을 실행했습니다. React 18의 renderToString은 기존 useLayoutEffect 경고도 출력하므로, 서버 렌더가 끝난 시점에 console.error 수집을 비운 뒤 hydration 오류만 관찰했습니다. 이 구분을 적용하기 전 off 시험은 SSR 경고 때문에 실패했으며, 구분 적용 후 off 대조군은 두 프로젝트에서 오류 없이 서버 입력의 동일성과 값을 보존했습니다.
 
@@ -27,9 +27,9 @@ on은 두 프로젝트에서 hydration mismatch 때문에 실패했습니다. Re
 
 | 문서 | 반영 내용 |
 | --- | --- |
-| [README](../../../README.md#virtualization-for-very-large-forms) | virtualization 절에 단계 수치와 네 가지 조절 수단을 추가하고 근거가 다른 기존 마운트 요약을 대체했습니다. |
-| [영어 SPECIFICATION](../../../docs/en/SPECIFICATION.md#render-level-virtualization) | 같은 조건·비용·SSR 제한과 검증·스타일·소비자 상태 지침을 영어로 추가했습니다. |
-| [한국어 SPECIFICATION](../../../docs/ko/SPECIFICATION.md#렌더-가상화-virtualization) | 같은 지침과 측정 범위를 한국어로 추가했습니다. |
+| [사이트 가상화 참조](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#virtualization) | virtualization 절에 단계 수치와 네 가지 조절 수단을 추가하고 근거가 다른 기존 마운트 요약을 대체했습니다. |
+| [영문 사이트 가상화 참조](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#virtualization) | 같은 조건·비용·SSR 제한과 검증·스타일·소비자 상태 지침을 영어로 추가했습니다. |
+| [국문 사이트 가상화 참조](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/api-reference#virtualization) | 같은 지침과 측정 범위를 한국어로 추가했습니다. |
 | [arrays-and-scale](../../../docs/agents/skills/schema-form-skill/knowledge/arrays-and-scale.md#input-responsiveness-at-scale) | 에이전트가 찾는 대형 폼 지식에 수치와 실제 SSR 결과를 영어로 추가하고, 소비자 프로젝트에 복사되는 자산에서 패키지 밖 상대 링크를 제거했습니다. |
 
 IR-1 기본값 결정 자료의 **채택 A** 마운트 중앙값을 사용했습니다. flat-500 off eager/all 51.750/51.750ms → on 31.600/174.250ms, array-1000 201.350/201.350ms → 59.200/473.100ms이며 nested-d5-f4는 89.250/89.250ms → 89.700/89.700ms입니다. 미채택 AB를 채택 결과로 인용하지 않습니다. replace-200 off 최장은 채택 A에서 62.3ms이며 측정한 모든 빌드는 50ms를 초과했습니다. on은 50ms 이상 프레임 검출 0입니다. 이 수치는 정숙 관찰을 통과한 창의 결과입니다. IR-1 같은 창의 마운트 비교와 다른 창의 절대 수치를 섞어 효과를 계산하지 않습니다. placeholder 동안 페이지 내 검색·보조 기술·자동완성의 제한과 Focus/Select 강제 노출도 명시했습니다.

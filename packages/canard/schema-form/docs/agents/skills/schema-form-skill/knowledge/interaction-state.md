@@ -29,6 +29,10 @@ Do not infer touch from validation or force it on every render.
 Explicit `setState` can also set these flags, so they are application-controlled interaction state, not an audit log proving a human acted.
 For message eligibility, use the centralized policy in [validation UX](validation-ux.md).
 
+## Observe a state mirror while a node is unavailable
+
+Both observation hooks accept a node, null, or undefined. Absence creates no subscription and gives a tracker snapshot of 0; a subscription listener and its catch-up do not run without a node. Switching to absence releases the old subscription. For replacement, attachment catch-up, and subscription lifetime, use [the event-system contract](event-system.md#observation-and-absent-nodes). State mutation and formatting still require a real node; accepting absence for observation does not make writes or formatter callbacks optional.
+
 ## Observe whether any field has been edited
 
 Use Form's `onStateChange` for a form-wide indicator and `getState()` for an imperative read.
