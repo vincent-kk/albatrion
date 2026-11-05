@@ -37,7 +37,7 @@ const MOUNTED_CHILDREN = 2;
  * Event Handling:
  * - `REACTIVE_RERENDERING_EVENTS | UpdateChildren`: Re-renders the caller through the shared snapshot
  * - `RequestRefresh`: Tracks the node revision, deferring replacement until composition ends
- * - `RequestFocus`: Focuses the first focusable element (input, textarea, button) in container
+ * - `RequestFocus`: Focuses the first focusable element (input, textarea, select, button) in container
  * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
  * Usage in FieldInputSlot:
@@ -116,9 +116,12 @@ export const useFieldInputControl = <Node extends FieldNode>(
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & FieldNodeEventType.RequestFocus)
-        queryElement(ref.current)?.focus();
+        queryElement(ref.current, FOCUS_SELECTOR)?.focus();
       if (type & FieldNodeEventType.RequestSelect) {
-        const element = queryElement(ref.current) as SelectableElement;
+        const element = queryElement(
+          ref.current,
+          SELECT_SELECTOR,
+        ) as SelectableElement;
         if (element && typeof element.select === 'function') element.select();
       }
     });
@@ -139,17 +142,30 @@ export const useFieldInputControl = <Node extends FieldNode>(
   ] as const;
 };
 
-const FOCUS_SELECT_SELECTOR = 'input, textarea, button' as const;
+/** Focus targets, in document order: every native control, `<select>` included. */
+const FOCUS_SELECTOR = 'input, textarea, select, button' as const;
 
+/** Select targets: a `<select>` has no text selection, so a following text input is still found. */
+const SELECT_SELECTOR = 'input, textarea, button' as const;
+
+/** Elements whose text `select()` can select. */
 type SelectableElement = HTMLInputElement | HTMLTextAreaElement;
-type FocusableElement = SelectableElement | HTMLButtonElement;
+/** Elements a Focus or Select request can reach. */
+type FocusableElement =
+  | SelectableElement
+  | HTMLSelectElement
+  | HTMLButtonElement;
 
+/**
+ * Find the first element matching a request's selector inside an input container.
+ * @param container - The slot's container element; null before mount.
+ * @param selector - {@link FOCUS_SELECTOR} or {@link SELECT_SELECTOR}.
+ * @returns The first match in document order, or null.
+ */
 const queryElement = (
   container: Nullable<HTMLElement>,
+  selector: string,
 ): Nullable<FocusableElement> => {
   if (!container) return null;
-  const element = container.querySelector<FocusableElement>(
-    FOCUS_SELECT_SELECTOR,
-  );
-  return element ?? null;
+  return container.querySelector<FocusableElement>(selector) ?? null;
 };

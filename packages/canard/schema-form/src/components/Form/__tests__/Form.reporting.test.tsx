@@ -12,6 +12,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { ValidationMode } from '@/schema-form/core';
 
 import { FormCore, type FormHandle } from '../components/FormCore';
+import { awaitNativeSubmitVerdict } from './fixtures/awaitNativeSubmitVerdict';
 
 afterEach(() => {
   cleanup();
@@ -22,6 +23,7 @@ it('ERROR-026 excludes schema-validation submission results from onError', async
   const sink = vi.fn();
   vi.stubGlobal('reportError', sink);
   const onError = vi.fn();
+  const ref = createRef<FormHandle>();
   const validatorFactory = {
     compile: () => () => [
       { dataPath: '', keyword: 'required', message: 'required' },
@@ -30,6 +32,7 @@ it('ERROR-026 excludes schema-validation submission results from onError', async
   };
   const view = render(
     <FormCore
+      ref={ref}
       jsonSchema={{ type: 'string' }}
       validatorFactory={validatorFactory}
       validationMode={ValidationMode.OnRequest}
@@ -38,8 +41,11 @@ it('ERROR-026 excludes schema-validation submission results from onError', async
       <span />
     </FormCore>,
   );
+  const validate = vi.spyOn(ref.current!.node!, 'validate');
   fireEvent.submit(view.container.querySelector('form')!);
-  await waitFor(() => expect(sink).toHaveBeenCalledOnce());
+  await waitFor(() => expect(validate).toHaveBeenCalledOnce());
+  await awaitNativeSubmitVerdict(validate);
+  expect(sink).not.toHaveBeenCalled();
   expect(onError).not.toHaveBeenCalled();
 });
 

@@ -65,23 +65,25 @@ export const EnterSubmit: Story = {
   },
 };
 
-/** Shared scenario `validation-state.submit-rejected` submitted with Enter while invalid: the rejection reaches the host sink. */
+/** Shared scenario `validation-state.submit-rejected` submitted with Enter while invalid: the errors are revealed, the field is focused, and nothing reaches the host sink. */
 export const EnterRejected: Story = {
   args: { scenario: rejected, formProps: { onSubmit: enterRejectedSubmit } },
-  parameters: { docs: { description: { story: 'ERROR-139 nobody awaits a native submit, so its rejection goes to the host sink (globalThis.reportError); onSubmit is not called.' } } },
+  parameters: { docs: { description: { story: 'ERROR-139 an invalid native submit is a verdict, not an error: it reveals the errors and focuses the first invalid field; nothing goes to the host sink (globalThis.reportError) and onSubmit is not called.' } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     enterRejectedSubmit.mockClear();
     const sink: unknown[] = [];
-    // The play stands in for the host: spying on reportError receives the sink delivery without dispatching an error event.
+    // The play stands in for the host: spying on reportError records any sink delivery without dispatching an error event.
     const report = spyOn(window, 'reportError').mockImplementation((error) => { sink.push(error); });
     try {
       await playScenario(args.scenario, canvasElement);
-      await userEvent.type(canvasElement.querySelector<HTMLInputElement>('input[id="/email"]')!, '{Enter}');
-      await waitFor(() => expect(sink).toHaveLength(1));
+      const email = canvasElement.querySelector<HTMLInputElement>('input[id="/email"]')!;
+      expect(canvasElement.querySelector('em')?.textContent ?? '').toBe('');
+      await userEvent.type(email, '{Enter}');
+      await waitFor(() => expect(canvasElement.querySelector('em')?.textContent ?? '').not.toBe(''));
+      expect(document.activeElement).toBe(email);
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-      expect(sink).toHaveLength(1);
-      expect(sink[0]).toMatchObject({ code: submitOutcomes.rejectionCode });
+      expect(sink).toEqual([]);
       expect(enterRejectedSubmit).not.toHaveBeenCalled();
     } finally {
       report.mockRestore();

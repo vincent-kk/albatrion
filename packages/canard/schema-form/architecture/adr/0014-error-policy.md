@@ -320,7 +320,7 @@ compileGuard(root, pointer): (value) => boolean                           // 동
 | --- | --- | --- | --- |
 | **오류** | 폼의 약속이 깨진 사건. 형상이 서지 않거나(청사진), 작성자의 선언이나 호출자의 쓰기가 커밋에서 빠지거나 바뀌거나(정착), 검증기가 있으나 검증이 불가능하거나(검증기), 호출자·소비자 코드가 계약을 어겼다 | **드러낸다.** 기본 드러남은 throw, 프로미스 거부, 주인 없는 오류 싱크(ERROR-008) 가운데 정확히 하나다. 삼키지 않고, 끌 스위치도 없다. 마운트 뒤에는 폼이 이미 커밋한 값을 잃지 않는다 | 없음. 개발과 프로덕션이 같다(R17-1 나). 메시지도 줄이지 않는다 |
 | **경고** | 약속은 지켜지나 작성자의 의도가 의심되는 것, 또는 동작을 바꾸지 않는 알림 | **개발 모드 로그**(코드+메시지로 중복 억제). 동작을 바꾸지 않는다 | 기본 출력(개발 모드 로그)은 프로덕션에서 침묵한다(경고는 결과를 바꾸지 않으므로 침묵해도 계약이 깨지지 않는다). `onError` 핸들러는 모든 환경에서 경고 기록을 받는다(ERROR-021) |
-| **검증 결과** | 사용자의 값이 스키마에 맞지 않음 | 노드 `errors`(`ValidationIssue`)로 흘리고, 제출 시 `ValidationError`. `onError`에는 가지 않는다 | 없음 |
+| **검증 결과** | 사용자의 값이 스키마에 맞지 않음 | 노드 `errors`(`ValidationIssue`)로 흘리고, 명시적 제출 시 `ValidationError`. 네이티브 submit에서는 오류 공개와 첫 무효 필드 초점(ERROR-139). `onError`에는 가지 않는다 | 없음 |
 
 **폼의 약속**은 원장이 적은 규칙이다(ERROR-002). 스키마가 작성된 그대로 판정되는 한(원리 P1(판정은 검증기의 것이다)) **스키마의 뜻이 작성자의 의도와 다른 것은 경고**다(`else: false`가 빠져 거짓 분기가 공허하게 통과하는 것, 터미널이 아닌 객체 노드의 표준 `readOnly`가 자식 편집을 막지 않는 것)(ERROR-002). "조용한 데이터 손상"이라는 말은 **폼이 작성자의 선언이나 호출자의 쓰기를 빼거나 바꾼 커밋**에만 쓴다(ERROR-002). 가르는 물음은 하나다(ERROR-002). "이 사건 뒤에도 원장의 규칙이 지켜지는가"(ERROR-002). `onError` 기록의 `level`은 이 층을 따른다(`'error'`는 오류 층, `'warning'`은 경고 층)(ERROR-002).
 
@@ -362,7 +362,7 @@ R17-1 나에 따라 예산 초과, 식·가드 실패, 동적 `controls.injectTo
 | 검증기 오류 | 오류 | 검증 요청 | 플러그인·호출자 | `validate()`와 제출의 거부, `OnChange` 검증이면 `onError` 뒤 싱크, 모든 환경 | 검증기는 있으나 전체 스키마 컴파일 실패(검증 불가, 한 로드에 한 번); 검증 함수의 런타임 throw, 요청 시점의 `$ref` 순환 |
 | 렌더 오류 | 오류 | 렌더 | 소비자 코드(사용자 주입 구성 요소) 또는 호출자 | 바운더리가 가두어 대체 화면을 그리고 `componentDidCatch`에서 `onError`와 싱크. 다시 던지지 않는다 | 필드 바운더리가 감싼 구성 요소(`FormTypeInput`, 렌더러, `Placeholder`)의 렌더 오류, 루트의 렌더 오류, `formTypeInputMap` 정규화 오류 |
 | 렌더 계층 경고 | 경고 | 렌더 계층 | 작성자·호출자 | 개발 모드 로그. `onError` 경고 기록 | 가상화를 켰는데 `IntersectionObserver`가 없음; `presentation` 키 의심(코어 키와 대소문자만 다름, 또는 `controls`·`options`의 키 이름) |
-| 검증 결과 | 검증 결과 | 검증 뒤 | 사용자 입력 | 노드 `errors`(`ValidationIssue`), 제출 시 `ValidationError`. `onError`에 가지 않는다 | 검증기가 낸 항목 |
+| 검증 결과 | 검증 결과 | 검증 뒤 | 사용자 입력 | 노드 `errors`(`ValidationIssue`), 명시적 제출 시 `ValidationError`, 네이티브 submit에서는 오류 공개와 첫 무효 필드 초점(ERROR-139). `onError`에 가지 않는다 | 검증기가 낸 항목 |
 
 `controls.discriminator`의 "선언 사이 값이 다름"은 한 분기의 정적 연언 안 판별 선언들의 교차가 공집합일 때로 읽는다(ERROR-159, ERROR-164, FRAGMENT-048). 【추론】 한 분기의 정적 연언 안에서 판별 키의 `const`·`enum` 교차가 공집합이면 오류 코드는 ERROR-164의 정적 연언 행(`EMPTY_ENUM_INTERSECTION`)이며 `DISCRIMINATOR_MISMATCH`가 아니다(ERROR-159, ERROR-164). 【추론】 ERROR-164 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름"은 별도 코드가 아니라 정적 연언 행의 사건을 판별 관점에서 적은 것이다(ERROR-159, ERROR-164). 【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다(ERROR-159, ERROR-164). 【추론】 한 분기의 정적 연언 안 판별 값의 공집합이 `EMPTY_ENUM_INTERSECTION`인 것(25C-01 첫 문장)은 그대로다(ERROR-164).
 
@@ -515,7 +515,7 @@ R17-1 나에 따라 예산 초과, 식·가드 실패, 동적 `controls.injectTo
 
 그 동안 `<Form>`의 제출 경로(`FormHandle.submit`, `useFormSubmit`, 네이티브 submit — 모두 `async onSubmit` 하나로 모인다)는 `SchemaFormError`(가칭 코드 `SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED`, 제출 시도마다 새 객체)로 거부한다(ERROR-138).
 
-`FormHandle.submit`과 `useFormSubmit`은 그 프로미스를 거부하고, 부른 쪽이 기다리지 않는 네이티브 submit은 `onError` 뒤 싱크로 보낸다(ERROR-139).
+`FormHandle.submit`과 `useFormSubmit`은 그 프로미스를 거부하고, 부른 쪽이 기다리지 않는 네이티브 submit은 `onError` 뒤 싱크로 보낸다. 네이티브 submit의 검증 판정은 거부가 아니므로 `onError`에도 싱크에도 보내지 않고, 판정이 도착한 시점에 그 제출이 유효하고 커밋된 표시 정책이 꺼져 있지 않으면 폼의 오류를 공개하고 트리 순서의 첫 무효 필드에 초점을 준다(ERROR-139).
 
 core는 제출을 모르므로 거부는 렌더 계층의 일이다(원리 P5(core는 렌더러를 모른다), ERROR-140).
 
@@ -611,7 +611,7 @@ Form 속성 `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 �
 
 1. 렌더 중에 트리를 만드는 자리가 하는 일(청사진, 마운트 정착)의 기록은 그 로드 객체(`useMemo`의 결과)에 모은다(ERROR-019). 폼이 커밋된 뒤 준비 이펙트에서 초기 `onChange` 다음에 부른다(ERROR-019). 청사진 오류로 폼이 서지 않으면, 생성 자리가 돌려준 실패 로드가 그 오류와 그 전에 모인 경고를 들고 대체 화면의 이펙트가 부른다(ERROR-019). 커밋되지 않은 로드의 기록은 부르지 않는다(ERROR-019). 다만 루트 바운더리가 하위 트리를 버리고 대체 화면을 그리면, 바깥 감싸개의 보고기가 가장 최근에 만든 로드를 들고 있다가 루트 바운더리의 `componentDidCatch`가 그 로드의 오류 층 기록을 렌더 실패 기록보다 먼저 `onError`와 싱크로 보낸다(ERROR-019). 경고 기록은 버린다(청사진 경고는 캐시에 남는다)(ERROR-019). 입력 맵 정규화의 오류는 트리보다 먼저 던져져 루트 바운더리가 잡으므로 여섯째를 따르고, 가상화 관리자 생성의 경고는 일곱째를 따른다(ERROR-019).
 2. 마운트 뒤의 사슬은 커밋 → 통지 → 검증 요청 → `onChange` → 기록마다 `onError`(경고 포함) → throw의 순서다(ERROR-019). 정착 도중에는 부르지 않는다(ERROR-019). reset의 재생성과 첫 로드도 reset 사슬의 끝에서 부른다(ERROR-019).
-3. `validate()`와 제출은 오류 층의 원인(검증기 실행 실패, 검증 불가, `degraded`)일 때만 거부 직전에 부른다(ERROR-019). 부른 쪽이 기다리지 않는 네이티브 submit 경로에서는 거부 대신 `onError` 뒤 싱크로 보낸다(ERROR-019).
+3. `validate()`와 제출은 오류 층의 원인(검증기 실행 실패, 검증 불가, `degraded`)일 때만 거부 직전에 부른다(ERROR-019). 부른 쪽이 기다리지 않는 네이티브 submit 경로에서는 거부 대신 `onError` 뒤 싱크로 보낸다(ERROR-019). 네이티브 submit의 검증 판정은 오류 층의 원인이 아니므로 부르지 않는다(ERROR-139).
 4. 호출자 오류는 throw 직전에 부른다(ERROR-019).
 5. `OnChange` 검증의 실행 실패와 검증 결과 파동의 리스너 예외는 그것을 알게 된 마이크로태스크에서 `onError` 뒤 싱크로 보낸다(ERROR-019).
 6. 바운더리가 잡은 오류는 `componentDidCatch`에서 `onError` 뒤 싱크로 보낸다(ERROR-019).
@@ -739,7 +739,7 @@ Form 속성 `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 �
 | (가칭) `SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE` | `warning` | 정착: 같은 oneOf에서 게이트 가진 분기가 둘 이상 켜짐 | ERROR-159의 정착 경고 행. 기록에 호스트의 path | 개발 모드 콘솔 | 마운트면 준비 이펙트, 그 뒤면 사슬 끝(발생 순서). 로드마다 구조 키(code, path)로 한 번. 핸들러가 없는 프로덕션에서는 판정하지 않음 | 새 설계에만 |
 | (가칭) `SCHEMA_FORM_WARNING.PRESENTATION_KEY_SUSPECT` | `warning` | 렌더 계층이 한 노드의 presentation을 처음 읽을 때: 코어 키 다섯과 대소문자만 다른 키, 또는 controls·options의 키 이름(R17-3이 `options.trim`으로 확정되어 `presentation.trim`도 둘째 경우에 든다) | R15-9. 판별 칸은 키 이름 | 개발 모드 콘솔 | 그 필드가 커밋된 뒤의 이펙트(지연 마운트 필드 포함) | 새 설계에만 |
 | 【추론】 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` | 【추론】 `warning` | 【추론】 렌더 계층에서, 터미널 전략인 노드의 입력 구성 요소가 받은 빈 `ChildNodeComponents`를 처음 읽을 때(색인·`length`·순회) | 【추론】 ERROR-185와 ERROR-159의 렌더 계층 경고 행. 기록에 path | 【추론】 개발 모드 콘솔, 프로덕션 기본 출력 없음. 개발 모드와 핸들러가 있는 프로덕션에서는 빈 배열 대신 읽기를 감지하는 얼린 빈 배열을 넘기고, 핸들러가 없는 프로덕션에서는 판정하지 않고 보통의 빈 배열을 넘김 | 【추론】 그 필드가 커밋된 뒤의 이펙트에서 전달, 로드마다 구조 키(code, path)로 한 번 | 【추론】 새 설계에만 |
-| (제외) 검증 결과: ValidationIssue(오늘 이름 JSONSchemaError), onValidate, errors 속성, setExternalErrors·clearExternalErrors, `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | `error` | 검증 뒤, 제출 | src/components/Form/type.ts:54, :66; src/core/nodes/AbstractNode/AbstractNode.ts:816-839; src/components/Form/Form.tsx:117-123 | 노드 errors, onValidate, 필드 오류 표시, 제출 거부. 네이티브 submit에서는 오늘 미처리 거부(Form.tsx:127-133, packages/winglet/common-utils/src/utils/function/enhance/getTrackableHandler/getTrackableHandler.ts:429-431)이며 PR-7 설계 항목 | 받지 않음(둘째 답 고정) | 오늘과 새 설계 모두 |
+| (제외) 검증 결과: ValidationIssue(오늘 이름 JSONSchemaError), onValidate, errors 속성, setExternalErrors·clearExternalErrors, `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | `error` | 검증 뒤, 제출 | src/components/Form/type.ts:54, :66; src/core/nodes/AbstractNode/AbstractNode.ts:816-839; src/components/Form/Form.tsx:117-123 | 노드 errors, onValidate, 필드 오류 표시, 제출 거부. 네이티브 submit에서는 거부가 아닌 판정이므로 `onError`·싱크 없이, 제출이 유효하고 표시 정책이 꺼져 있지 않으면 오류를 공개하고 첫 무효 필드에 초점을 준다(ERROR-139) | 받지 않음(둘째 답 고정) | 오늘과 새 설계 모두 |
 | (제외) 정착 추적 | `warning` | 개발 모드에서 정착마다 | ERROR-159의 정착 추적 행 | 개발 모드 기록, 프로덕션은 없음 | 받지 않음(사건이 아니라 추적이며 양이 정착 수에 비례함) | 새 설계에만 |
 | (제외) diagnostics의 상태 변화 | `error` | degraded로 바뀌는 커밋, 로드 | ERROR-129, ERROR-132 | UpdateDiagnostics, onDiagnosticsChange | 받지 않음(상태이며, 그 원인 오류가 따로 기록됨) | 새 설계에만 |
 | (제외) 호스트 onSubmit이 던지거나 거부한 것 | `error` | 제출 | src/components/Form/Form.tsx:124 | 제출 프로미스의 거부로 부른 쪽에 감(네이티브 submit이면 호스트 자신의 미처리 거부) | 받지 않음(호스트 자신의 코드) | 오늘과 새 설계 모두 |

@@ -494,7 +494,7 @@ R17-1 나에 따라 예산 초과, 식·가드 실패, 동적 `controls.injectTo
 
 그 동안 `<Form>`의 제출 경로(`FormHandle.submit`, `useFormSubmit`, 네이티브 submit — 모두 `async onSubmit` 하나로 모인다)는 `SchemaFormError`(가칭 코드 `SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED`, 제출 시도마다 새 객체)로 거부한다(ERROR-138).
 
-`FormHandle.submit`과 `useFormSubmit`은 그 프로미스를 거부하고, 부른 쪽이 기다리지 않는 네이티브 submit은 `onError` 뒤 싱크로 보낸다(ERROR-139).
+`FormHandle.submit`과 `useFormSubmit`은 그 프로미스를 거부하고, 부른 쪽이 기다리지 않는 네이티브 submit은 `onError` 뒤 싱크로 보낸다. 네이티브 submit의 검증 판정은 거부가 아니므로 `onError`에도 싱크에도 보내지 않고, 판정이 도착한 시점에 그 제출이 유효하고 커밋된 표시 정책이 꺼져 있지 않으면 폼의 오류를 공개하고 트리 순서의 첫 무효 필드에 초점을 준다(ERROR-139).
 
 core는 제출을 모르므로 거부는 렌더 계층의 일이다(원리 P5(core는 렌더러를 모른다), ERROR-140).
 
@@ -718,7 +718,7 @@ Form 속성 `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 �
 | (가칭) `SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE` | `warning` | 정착: 같은 oneOf에서 게이트 가진 분기가 둘 이상 켜짐 | ERROR-159의 정착 경고 행. 기록에 호스트의 path | 개발 모드 콘솔 | 마운트면 준비 이펙트, 그 뒤면 사슬 끝(발생 순서). 로드마다 구조 키(code, path)로 한 번. 핸들러가 없는 프로덕션에서는 판정하지 않음 | 새 설계에만 |
 | (가칭) `SCHEMA_FORM_WARNING.PRESENTATION_KEY_SUSPECT` | `warning` | 렌더 계층이 한 노드의 presentation을 처음 읽을 때: 코어 키 다섯과 대소문자만 다른 키, 또는 controls·options의 키 이름(R17-3이 `options.trim`으로 확정되어 `presentation.trim`도 둘째 경우에 든다) | R15-9. 판별 칸은 키 이름 | 개발 모드 콘솔 | 그 필드가 커밋된 뒤의 이펙트(지연 마운트 필드 포함) | 새 설계에만 |
 | 【추론】 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` | 【추론】 `warning` | 【추론】 렌더 계층에서, 터미널 전략인 노드의 입력 구성 요소가 받은 빈 `ChildFields`를 처음 읽을 때(색인·`length`·순회) | 【추론】 ERROR-185와 ERROR-159의 렌더 계층 경고 행. 기록에 path | 【추론】 개발 모드 콘솔, 프로덕션 기본 출력 없음. 개발 모드와 핸들러가 있는 프로덕션에서는 빈 배열 대신 읽기를 감지하는 얼린 빈 배열을 넘기고, 핸들러가 없는 프로덕션에서는 판정하지 않고 보통의 빈 배열을 넘김 | 【추론】 그 필드가 커밋된 뒤의 이펙트에서 전달, 로드마다 구조 키(code, path)로 한 번 | 【추론】 새 설계에만 |
-| (제외) 검증 결과: ValidationIssue(오늘 이름 JSONSchemaError), onValidate, errors 속성, setExternalErrors·clearExternalErrors, `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | `error` | 검증 뒤, 제출 | src/components/Form/type.ts:54, :66; src/core/nodes/AbstractNode/AbstractNode.ts:816-839; src/components/Form/Form.tsx:117-123 | 노드 errors, onValidate, 필드 오류 표시, 제출 거부. 네이티브 submit에서는 오늘 미처리 거부(Form.tsx:127-133, packages/winglet/common-utils/src/utils/function/enhance/getTrackableHandler/getTrackableHandler.ts:429-431)이며 PR-7 설계 항목 | 받지 않음(둘째 답 고정) | 오늘과 새 설계 모두 |
+| (제외) 검증 결과: ValidationIssue(오늘 이름 JSONSchemaError), onValidate, errors 속성, setExternalErrors·clearExternalErrors, `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | `error` | 검증 뒤, 제출 | src/components/Form/type.ts:54, :66; src/core/nodes/AbstractNode/AbstractNode.ts:816-839; src/components/Form/Form.tsx:117-123 | 노드 errors, onValidate, 필드 오류 표시, 제출 거부. 네이티브 submit에서는 거부가 아닌 판정이므로 `onError`·싱크 없이, 제출이 유효하고 표시 정책이 꺼져 있지 않으면 오류를 공개하고 첫 무효 필드에 초점을 준다(ERROR-139) | 받지 않음(둘째 답 고정) | 오늘과 새 설계 모두 |
 | (제외) 정착 추적 | `warning` | 개발 모드에서 정착마다 | ERROR-159의 정착 추적 행 | 개발 모드 기록, 프로덕션은 없음 | 받지 않음(사건이 아니라 추적이며 양이 정착 수에 비례함) | 새 설계에만 |
 | (제외) diagnostics의 상태 변화 | `error` | degraded로 바뀌는 커밋, 로드 | ERROR-129, ERROR-132 | UpdateDiagnostics, onDiagnosticsChange | 받지 않음(상태이며, 그 원인 오류가 따로 기록됨) | 새 설계에만 |
 | (제외) 호스트 onSubmit이 던지거나 거부한 것 | `error` | 제출 | src/components/Form/Form.tsx:124 | 제출 프로미스의 거부로 부른 쪽에 감(네이티브 submit이면 호스트 자신의 미처리 거부) | 받지 않음(호스트 자신의 코드) | 오늘과 새 설계 모두 |

@@ -1414,6 +1414,8 @@ const handleClick = async () => {
 
 Enter는 Form의 `form` 요소를 통해 제출합니다. 텍스트류 필드가 둘 이상이면 브라우저는 폼에 제출 버튼이 있을 때만 Enter로 제출합니다(암묵적 제출은 이를 막는 필드만 세므로, 텍스트 필드 하나와 체크박스 하나는 그대로 제출됩니다).
 
+네이티브 제출(Enter, 또는 Form 안의 제출 버튼)이 Form 자신의 검증에 실패하면 그것은 오류가 아니라 판정입니다. `onError`와 호스트의 `reportError`에는 아무것도 가지 않고 `onSubmit`도 불리지 않습니다. Form은 `showError(true)`처럼 오류를 공개하고 첫 무효 필드에 초점을 줍니다. 다만 해석된 `showError` 정책(Form의 값, 없으면 `FormProvider`의 값)이 `false`이거나 `ShowError.Always` 없이 `ShowError.Never`를 포함하면 공개도 초점도 하지 않습니다. 초점을 받는 필드는 트리 순서에서 자기 오류가 있고, disabled도 read-only도 아니며, `ErrorVisible` 상태를 `false`로 두지 않은 첫 노드입니다. 루트는 다른 노드가 없을 때만 고릅니다. 트리 순서는 기본 렌더링에서 화면 순서와 같지만, 사용자 레이아웃은 필드를 다른 순서로 둘 수 있습니다. 그 필드의 입력이 초점을 받을 수 없으면(입력 단위의 `disabled` 지정, 레이아웃이 그리지 않은 필드, 오류 대체 화면, 아직 드러나지 않은 가상화 자리표시자 안의 필드) 초점은 그대로이고 다른 필드로 넘어가지 않습니다. Form의 `disabled`나 `readOnly`가 켜져 있으면 공개만 하고 초점은 주지 않으며, Form이 reset, rebuild, 언마운트된 뒤 도착한 판정은 버립니다. `formRef.current.submit()`과 `useFormSubmit`은 `ValidationError`로 거부하고 아무것도 공개하지 않습니다.
+
 ### children 함수 사용
 
 `Form` 컴포넌트의 `children`을 함수로 전달하면 폼의 상태와 노드에 접근할 수 있습니다.
