@@ -2,25 +2,26 @@
 
 ## Purpose
 
-Provider 고정 중첩과 `FormHandle`을 조립하고, 인스턴스 보고기와 루트 오류 경계로 감싼 폼 본체를 부모 `Form`에 제공합니다.
+Provider 조립과 현재 루트 핸들, 제출 및 Form 오류 공개 수명을 소유합니다.
 
 ## Conventions
 
-- 진입점은 오류 경계를 입힌 `FormCore`와 형 셋(`FormProps`·`FormHandle`·`FormChildrenProps`)을 이름으로 내보냅니다.
-- 소비자는 부모 `Form`이며, 정적 멤버(`Form.Render` 등)를 붙이는 일은 부모가 합니다.
+- [DETAIL](DETAIL.md)의 제출 판정·실패·정책 수명을 유지합니다.
+- 노드 로드는 RootNodeContext, 오류 기록 서비스는 FormErrorContext가 소유합니다. 같은 상태를 복제하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- Provider 중첩 순서와 공개 `FormHandle` 선언를 부모 Form 계약대로 유지합니다.
-- 인스턴스 보고기를 루트 오류 경계 바깥에 둡니다.
+- 보고기를 루트 오류 경계 바깥에 두어 fallback이 보고 수명을 끝내지 않게 합니다.
+- Provider 의존 순서와 현재 schema·node 쌍을 유지하여 설정과 트리가 엇갈리지 않게 합니다.
+- 비동기 판정의 UI 게시와 시작 snapshot Promise의 정착을 구별합니다.
 
 ### Ask first
 
-- 진입점에 심볼을 더하거나 내보내는 형의 모양을 바꿀 때
+- 제출 거부·공개·focus 조건, Provider 순서 또는 공개 핸들 형을 바꿀 때
 
 ### Never do
 
-- 형제 조각(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)을 가져오지 않습니다.
-- 노드를 직접 생성하지 않습니다. `RootNodeContextProvider`가 담당합니다.
+- 노드를 직접 생성하거나 형제 Form 조각을 조립하지 않습니다.
+- 검증 판정을 실행 실패로 보고하거나 중단된 render를 committed 설정으로 사용하지 않습니다.

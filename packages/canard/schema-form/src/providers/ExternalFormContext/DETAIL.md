@@ -2,24 +2,22 @@
 
 ## Requirements
 
-여러 폼이 공통으로 사용할 외부 설정을 제공하며 폼별로 덮어쓰는 것을 허용합니다.
+FormProvider는 여러 폼의 기본 설정을 공급하며 인스턴스 선택을 대신하지 않습니다. 전역 플러그인 변경 없이 일부 폼만 다르게 구성할 수 있는 경계입니다.
 
 ## API Contracts
 
-`errorVisibility`는 실시간 기본 정책입니다. Form 설정이 우선하며 같은 실효 정책의 재전달은 Form 공개를 해제하지 않습니다. 입력 정의와 렌더러·포맷터도 불변 참조 교체로 갱신합니다.
-
-- 입력 정의는 참조별로 정규화하고 사용자 context는 내용 기준으로 안정화합니다.
-- 외부 설정은 폼 수준 props보다 낮은 우선순위이며 기본 Context는 빈 설정입니다.
-
-- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+입력 정의·렌더러·포맷터는 불변 참조 교체로 전달하고 context는 내용 기준으로 안정화합니다. 정의 참조가 그대로일 때 무관한 설정 변경이 입력 재정규화를 일으키지 않게 합니다. 빈 기본 Context에 렌더러를 하드코딩하지 않아 [플러그인 폴백](../../app/plugin/DETAIL.md)을 유지합니다.
 
 ## Acceptance Criteria
 
-### external-form-context-contract — 관찰 가능한 동작
+### external-form-context-contract — 기본값과 실효 설정을 구별합니다
 
-- 외부 Provider가 없어도 소비자는 빈 설정에서 폴백을 선택할 수 있습니다.
-- 마운트 후 정의를 교체하면 입력을 다시 선택하고 같은 컴포넌트의 DOM은 유지합니다.
+Form override에 가려진 Provider 변경은 선택된 설정을 바꾸지 않습니다. 오류 공개 세대는 [FormCore](../../components/Form/components/FormCore/DETAIL.md), 렌더러 선택은 [FieldRendererContext](../FieldRendererContext/DETAIL.md)가 소유합니다. Provider 입력 정의의 갱신도 [입력 선택 수명](../FieldInputsContext/DETAIL.md)을 따릅니다.
+
+### VALIDATE-044 — 검증기 인스턴스를 전달합니다
+
+validatorFactory는 전역 등록의 대체물이 아니라 폼군에 공급할 검증기 인스턴스입니다. Form > FormProvider > 플러그인 선택과 참조 교체 시 루트 재생성은 [RootNodeContext](../RootNodeContext/DETAIL.md)가 소유합니다. 인스턴스별 캐시·등록 수명을 유지해야 하므로 매 render 새 검증기를 만드는 설정은 피합니다(VALIDATE-040·VALIDATE-041·VALIDATE-042). validationMode의 실시간 적용도 같은 소유자에 맡깁니다.
 
 ## Last Updated
 
-외부 설정의 우선순위 또는 갱신 수명이 바뀌면 갱신합니다.
+외부 기본값의 우선순위 또는 참조·내용 안정화 계약이 바뀌면 갱신합니다.

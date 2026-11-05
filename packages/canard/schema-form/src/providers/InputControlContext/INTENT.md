@@ -2,31 +2,22 @@
 
 ## Purpose
 
-폼 전체의 `readOnly`와 `disabled` 상태를 Context로 공급하는 단순 제어 레이어. `FieldInputBridge`이 이 값과 개별 노드 속성을 OR 결합하여 최종 입력 제어 상태를 결정한다.
+폼 전체 UI 잠금 설정을 공급하고 노드별 결합은 소비자에게 맡깁니다.
 
 ## Conventions
 
-- `InputControlContextProvider`는 `useMemo(() => ({ readOnly, disabled }), [readOnly, disabled])`로 객체 참조를 안정화한다. props가 바뀌지 않으면 하위 트리가 리렌더되지 않는다.
-- 최종 제어값은 소비처 `FieldInputBridge`에서 `readOnly={rootReadOnly || node.isReadOnly}`, `disabled={rootDisabled || node.isDisabled}` 형태로 OR 결합한다. Context 자체는 결합 로직을 포함하지 않는다.
-- Context 기본값은 `{} as InputControlContext`이므로 `readOnly`·`disabled` 모두 `undefined`(falsy)다. 따라서 Provider 없이 소비해도 항상 안전하다.
+- 세부 선택·수명과 소유자 연결은 [DETAIL](DETAIL.md)에 둡니다.
 
 ## Boundaries
 
 ### Always do
 
-- `readOnly`와 `disabled` 두 prop을 `useMemo`로 묶어 Context 값으로 제공
-- OR 결합(`rootReadOnly || node.isReadOnly`)은 반드시 소비 측(`FieldInputBridge`)에서 수행
+- 설정 참조를 안정화하고 전체 잠금이 노드별 false로 풀리지 않는 소비자 계약을 유지합니다.
 
 ### Ask first
 
-- `readOnly`/`disabled` 외 새로운 전역 입력 제어 속성 추가 시 (Context 계약 변경)
-- 기본값(`{} as InputControlContext`) 변경 시
+- 전역 입력 제어를 추가하거나 Provider 부재 기본값을 바꿀 때
 
 ### Never do
 
-- 이 Context에서 노드별 `isReadOnly`/`isDisabled` 계산 로직 수행
-- `FieldInputBridge` 외 컴포넌트에서 Context 값을 직접 변형하여 전달
-
-## Dependencies
-
-- `react` — `createContext`, `useMemo`, `useContext`, `PropsWithChildren`
+- 노드별 잠금을 계산하거나 core 명령형 쓰기를 막지 않습니다.

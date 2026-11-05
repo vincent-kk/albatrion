@@ -2,23 +2,23 @@
 
 ## Purpose
 
-`Form.Field`로 쓰이는 조각으로, 경로의 필드를 렌더러·입력·감싸개와 함께 한 묶음으로 그립니다.
+Form.Field는 한 경로의 입력·렌더러·감싸개를 조합하고 노드 상태를 별도로 소유하지 않습니다.
 
 ## Conventions
 
-- 진입점은 `FormField`와 `FormFieldProps`를 이름으로 내보내고, 부모 `Form`이 정적 멤버로 붙입니다.
-- `FieldInput`·`FieldRenderer`·`Wrapper`를 주면 그 필드에서만 기본 구성 요소를 바꿉니다.
+- 부모 Form의 정적 조각으로 제공하며 별도 폼 상태를 소유하지 않습니다.
+- 조각별 설정 수명과 이유는 [DETAIL](DETAIL.md)에 둡니다.
 
 ## Boundaries
 
 ### Always do
 
-- 필드 해석과 오류 경계는 `FieldProxy`에 맡깁니다.
+- 필드 해석과 오류 격리는 FieldProxy에 맡겨 같은 정책의 이중 구현을 막습니다.
 
 ### Ask first
 
-- `FormFieldProps`의 공개 속성을 바꿀 때
+- 공개 props, 조각 설정 수명 또는 접근성 규약을 바꿀 때
 
 ### Never do
 
-- `FormCore`나 형제 조각을 가져오지 않고, 폼 상태를 따로 소유하지 않습니다.
+- FormCore나 형제 조각을 가져오거나 입력·노드 상태를 중복 소유하지 않습니다.
