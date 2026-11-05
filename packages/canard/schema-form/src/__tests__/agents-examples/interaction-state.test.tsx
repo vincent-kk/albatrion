@@ -1,7 +1,8 @@
-import { createRef, useRef, useState } from 'react';
+import { createRef, useEffect, useRef, useState } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Ajv from 'ajv';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
@@ -12,12 +13,48 @@ import {
   Form,
   type FormHandle,
   type FormProps,
+  FormProvider,
   type JSONSchema,
+  type ValidationIssue,
   ValidationMode,
+  type ValidatorFactory,
   useFieldNodeTracker,
 } from '@/schema-form';
 
-import { setupValidatorPlugin } from '../renderForm';
+/** Builds an isolated synchronous AJV adapter; applications select a validator plugin.
+ * @param urn - Schema identifier the guard lookup registers under.
+ * @returns Validator factory for the examples. */
+const createValidator = (urn: string): ValidatorFactory => ({
+  compile(schema) {
+    const validate = new Ajv({ allErrors: true, strict: false }).compile(
+      schema,
+    );
+    return (value) =>
+      validate(value)
+        ? null
+        : (validate.errors ?? []).map(
+            (error): ValidationIssue => ({
+              dataPath:
+                error.keyword === 'required'
+                  ? `${error.instancePath}/${String(error.params.missingProperty)}`
+                  : error.instancePath,
+              keyword: error.keyword,
+              message: error.message,
+              schemaPath: error.schemaPath,
+            }),
+          );
+  },
+  compileGuard(schema, pointer) {
+    const ajv = new Ajv({ strict: false });
+    ajv.addSchema(schema, urn);
+    const guard = ajv.getSchema(`${urn}#${pointer}`);
+    if (!guard) throw new Error('Example guard was not found');
+    return (value) => guard(value) === true;
+  },
+});
+
+const validatorA = createValidator('urn:example:interaction-state');
+const validatorB = createValidator('urn:example:interaction-state-b');
 
 /** React owns the tracker subscriptions; root output changes can affect a child's divergence.
  * @param props - Current node supplied by a Form render callback.
@@ -168,18 +205,36 @@ const profileSchema = {
 
 type Profile = { name: string; bio?: string };
 
+function ReportDivergence({
+  divergent,
+  onDivergence,
+}: {
+  divergent: boolean;
+  onDivergence: (divergent: boolean) => void;
+}) {
+  useEffect(() => {
+    onDivergence(divergent);
+  }, [divergent, onDivergence]);
+  return null;
+}
+
 function ProfileEditor({ loaded }: { loaded: Profile }) {
   const formRef = useRef<FormHandle<typeof profileSchema>>(null);
   const [changed, setChanged] = useState(false);
   return (
     <>
       {changed && <p>Changed</p>}
-      <Form
-        ref={formRef}
-        jsonSchema={profileSchema}
-        defaultValue={loaded}
-        onChange={() => setChanged(formRef.current?.node?.isDivergent ?? false)}
-      />
+      <Form ref={formRef} jsonSchema={profileSchema} defaultValue={loaded}>
+        {({ node }) => (
+          <>
+            <Form.Field path="" />
+            <ReportDivergence
+              divergent={node?.isDivergent ?? false}
+              onDivergence={setChanged}
+            />
+          </>
+        )}
+      </Form>
       <button type="button" onClick={() => formRef.current?.reset()}>
         Discard changes
       </button>
@@ -187,11 +242,12 @@ function ProfileEditor({ loaded }: { loaded: Profile }) {
   );
 }
 
-it('shows the divergence indicator outside the form from onChange state', async () => {
-  setupValidatorPlugin();
+it('shows the divergence indicator outside the form from function children', async () => {
   const user = userEvent.setup();
   const view = render(
-    <ProfileEditor loaded={{ name: 'Ada', bio: 'Engineer' }} />,
+    <FormProvider validatorFactory={validatorA}>
+      <ProfileEditor loaded={{ name: 'Ada', bio: 'Engineer' }} />
+    </FormProvider>,
   );
   expect(view.queryByText('Changed')).toBeNull();
   const name = view.getByDisplayValue('Ada');
@@ -204,4 +260,41 @@ it('shows the divergence indicator outside the form from onChange state', async 
   await user.click(view.getByText('Discard changes'));
   expect(view.queryByText('Changed')).toBeNull();
   expect((view.getByDisplayValue('Ada') as HTMLInputElement).value).toBe('Ada');
+});
+
+it('clears the indicator when a new validator reloads the same loaded value', async () => {
+  const user = userEvent.setup();
+  const loaded = { name: 'Ada', bio: 'Engineer' };
+  const view = render(
+    <FormProvider validatorFactory={validatorA}>
+      <ProfileEditor loaded={loaded} />
+    </FormProvider>,
+  );
+  await user.type(view.getByDisplayValue('Ada'), 'x');
+  expect(view.getByText('Changed')).toBeTruthy();
+  view.rerender(
+    <FormProvider validatorFactory={validatorB}>
+      <ProfileEditor loaded={loaded} />
+    </FormProvider>,
+  );
+  expect((view.getByDisplayValue('Ada') as HTMLInputElement).value).toBe('Ada');
+  expect(view.queryByText('Changed')).toBeNull();
+});
+
+it('clears the indicator when reset leaves the output unchanged', async () => {
+  const user = userEvent.setup();
+  const view = render(
+    <FormProvider validatorFactory={validatorA}>
+      <ProfileEditor loaded={{ name: 'Ada', bio: 'Engineer' }} />
+    </FormProvider>,
+  );
+  await user.type(view.getByDisplayValue('Ada'), 'x');
+  expect(view.getByText('Changed')).toBeTruthy();
+  view.rerender(
+    <FormProvider validatorFactory={validatorA}>
+      <ProfileEditor loaded={{ name: 'Adax', bio: 'Engineer' }} />
+    </FormProvider>,
+  );
+  await user.click(view.getByText('Discard changes'));
+  expect(view.queryByText('Changed')).toBeNull();
 });

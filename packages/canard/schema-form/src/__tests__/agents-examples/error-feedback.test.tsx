@@ -103,6 +103,21 @@ it('uses keyword, locale, default and original-message fallbacks without changin
     ]),
   );
   expect(view.getByText('Check this value')).toBeTruthy();
+  const emptyKeyword = render(
+    <Form
+      jsonSchema={{
+        type: 'string',
+        presentation: { errorMessages: { minLength: '', default: 'Check' } },
+      }}
+      defaultValue="ab"
+      errors={[issue]}
+      validationMode={ValidationMode.None}
+      showError
+    >
+      <Form.Error path="" />
+    </Form>,
+  );
+  expect(emptyKeyword.getByText('Check')).toBeTruthy();
 });
 
 it('renders ReactNode formatter output using node and context', () => {

@@ -238,7 +238,7 @@ it('activates a conditional required field without duplicating the condition in 
     await formRef.current!.validate();
   });
   expect(formRef.current!.getErrors()).toEqual([]);
-  act(() => formRef.current!.setValue({ receipt: false }));
+  act(() => formRef.current!.findNode('/receipt')!.setValue(false));
   await act(async () => {
     await formRef.current!.validate();
   });
@@ -257,15 +257,23 @@ it.each([
     vi.useFakeTimers();
     const formRef = createRef<FormHandle>();
     const onValidate = vi.fn();
+    const onSubmit = vi.fn();
     const view = render(
       <Form
         ref={formRef}
         {...formProps}
         validationMode={mode}
         onValidate={onValidate}
+        onSubmit={onSubmit}
       />,
     );
     expect(onValidate).not.toHaveBeenCalled();
+    if (mode === ValidationMode.None) {
+      await act(async () => {
+        await formRef.current!.submit();
+      });
+      expect(onSubmit).toHaveBeenCalledWith({ name: 'ab' });
+    }
     await act(async () => {
       await vi.advanceTimersByTimeAsync(150);
     });

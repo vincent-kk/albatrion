@@ -9,7 +9,7 @@ Use public imports from `@canard/schema-form` for the types, flags and hooks bel
 
 FieldInput's `onChange` is the user-input path and marks Edited.
 `setValue`, array operations and automatic fills do not mark Edited merely because they change a value.
-Touched is recorded by the input's interaction handling; a custom input can set it on blur:
+Form records Touched one frame after blur by itself; an input that also sets it on blur, as below, only makes it immediate:
 
 ```tsx
 function EditableName({ value, onChange, node }: FieldInputProps<string>) {
@@ -66,21 +66,39 @@ Changing `defaultValue` alone, ordinary writes and a child resetSubtree do not m
 A load that throws before commit leaves the prior baseline; a failure reported after commit leaves the committed degraded output as the baseline.
 Reverting output to its loaded value makes divergence false without clearing interaction flags.
 
-To show the indicator outside the form, read the root's property in Form's `onChange` and keep only that boolean in state. `formRef.current` is still empty during the first render, so do not read the root node while rendering.
+To show the indicator outside the form, read `node.isDivergent` in Form's function children and pass the boolean out with an effect. The children re-render with the form's current root after every edit, after `reset()`, and after anything that rebuilds the form: `rebuild()`, a new validator, or `reset()` after a `jsonSchema` change. Do not compute it in `onChange` from `formRef.current.node`: while the form rebuilds, `onChange` runs before the handle points at the new root, and a `reset()` that leaves the value unchanged calls no `onChange`.
 
 ```tsx
+function ReportDivergence({
+  divergent,
+  onDivergence,
+}: {
+  divergent: boolean;
+  onDivergence: (divergent: boolean) => void;
+}) {
+  useEffect(() => {
+    onDivergence(divergent);
+  }, [divergent, onDivergence]);
+  return null;
+}
+
 function ProfileEditor({ loaded }: { loaded: Profile }) {
   const formRef = useRef<FormHandle<typeof profileSchema>>(null);
   const [changed, setChanged] = useState(false);
   return (
     <>
       {changed && <p>Changed</p>}
-      <Form
-        ref={formRef}
-        jsonSchema={profileSchema}
-        defaultValue={loaded}
-        onChange={() => setChanged(formRef.current?.node?.isDivergent ?? false)}
-      />
+      <Form ref={formRef} jsonSchema={profileSchema} defaultValue={loaded}>
+        {({ node }) => (
+          <>
+            <Form.Field path="" />
+            <ReportDivergence
+              divergent={node?.isDivergent ?? false}
+              onDivergence={setChanged}
+            />
+          </>
+        )}
+      </Form>
       <button type="button" onClick={() => formRef.current?.reset()}>
         Discard changes
       </button>

@@ -10,13 +10,13 @@ Use public imports from `@canard/schema-form`. These examples assume an applicat
 - `OnRequest` prepares validation after loading but produces no verdict until `validate()` or submit. Edits alone can leave the previous errors in place.
 - `None` skips whole-schema validation, including explicit requests; it does not provide a successful verdict. Conditional if guards can still run while fields settle.
 
-Explicit validation and submit start immediately in validating modes. Await the result instead of reading errors immediately after render or after a change. Submit validates the value captured by that call; invalid input rejects its promise and does not reach `onSubmit`. For an imperative submit flow, call `showError()` when you want to reveal untouched fields.
+Explicit validation and submit start immediately in validating modes. Await the result instead of reading errors immediately after render or after a change. With a validator in a validating mode, submit validates the value captured by that call; invalid input rejects its promise and does not reach `onSubmit`. In `None`, or without a validator, submit passes the captured value to `onSubmit` without a verdict. For an imperative submit flow, call `showError()` when you want to reveal untouched fields.
 
 ## Show errors after the relevant interaction
 
 Use `ShowError.Touched` for feedback after blur, or `EditedTouched` when both editing and blur should be required. Programmatic `setValue` does not mark a field edited, so it does not simulate user input in a test.
 
-A custom input publishes edits through `onChange`, marks blur through node state, and renders messages behind `errorVisible`:
+A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; Form records Touched one frame after blur, and this input also sets it on blur so a test can assert immediately:
 
 ```tsx
 function NameInput({
@@ -41,6 +41,8 @@ function NameInput({
   );
 }
 ```
+
+This input prints the validator's raw message, so `presentation.errorMessages` and `formatError` do not apply to it; to keep formatted copy, render `errorMessage` from a FieldRenderer instead ([error feedback](error-feedback.md)).
 
 Let this input own its message instead of drawing it again in the surrounding renderer:
 
@@ -117,7 +119,7 @@ This Testing Library/Vitest check uses React's `createRef`. It starts with an in
   expect(view.getByRole('alert').textContent).not.toBe('');
 ```
 
-Then type a valid name, await `validate()`, and assert the output value, an empty error list, and no alert. For OnChange, wait for the observable verdict and message; one microtask is not proof of completion. For OnRequest, assert that editing alone produces no new verdict. For None, assert that the validator is not called and do not label that case valid.
+Then type a valid name, await `validate()`, and assert the output value, an empty error list, and no alert. For OnChange, wait for the observable verdict and message; one microtask is not proof of completion. For OnRequest, assert that editing alone produces no new verdict. For `None`, assert that `validate()` resolves to an empty list and that the validator's whole-schema `compile` is not called; do not label that case valid.
 
 ## Deliver server errors through the form
 

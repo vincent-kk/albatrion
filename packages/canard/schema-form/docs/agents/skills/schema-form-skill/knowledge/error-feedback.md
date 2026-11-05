@@ -22,9 +22,9 @@ const messageSchema = {
 } satisfies JSONSchema;
 ```
 
-The formatter selects the keyword entry, otherwise `default`, then the locale within that selected entry.
+The formatter takes the keyword entry unless it is missing or an empty string, otherwise `default`, and then the locale within the entry it took.
 A missing locale in a selected keyword dictionary falls back to the issue's original message, not to the default dictionary.
-An issue without `error.keyword`, or an empty/unresolved selected message, also keeps the original message.
+An issue without `error.keyword`, or a selected message that is empty or unresolved, keeps the original message.
 Placeholders use `error.details` supplied by the validator and the node's current value for `{value}`.
 Each key replaces its first placeholder occurrence; keep each placeholder once rather than treating this as a template engine.
 Formatting changes presentation only: raw `getErrors()` and `node.errors` still contain the original issues.
