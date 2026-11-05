@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- 제출 어댑터 `submitForm`은 `FieldNode | Nullish`를 받고 루트가 null·undefined이면 callback을 호출하지 않고 성공 종료한다. `FormHandle.node`의 미연결 상태는 undefined, `findNode`의 부재는 null, `findNodes`의 부재는 빈 배열이다. 이 값을 구독 훅에 전달할 때의 동작과 ref 할당 제한은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
+
 - H: handle.showError와 onReset은 facd72a71의 setShowError와 useImperativeHandle dependency 모양을 유지한다. 정책 기록은 FormRoot가 하지 않으며 RootNodeContext의 root별 layout commit이 소유한다. validate 반환과 submit 값은 호출 시점 snapshot 계약이다.
 
 - SURFACE-063: FormHandle.rebuild(option?) delegates to the current root binding, invalidates its schema cache entry and forces tree replacement through reset semantics. Other forms retain their existing roots until their own rebuild; ordinary reset stays unchanged. The package export names do not change.
@@ -33,4 +35,4 @@
 
 ## Last Updated
 
-2026-11-02
+이 fractal의 API 계약, 불변식 또는 경계가 바뀔 때 갱신합니다.

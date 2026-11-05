@@ -216,6 +216,11 @@ interface FormChildrenProps<
 }
 ```
 
+#### Node observation and absence
+
+`useFieldNodeTracker` and `useFieldNodeSubscribe` also accept `null` and `undefined`; see [SPECIFICATION — Node observation and absence](./docs/en/SPECIFICATION.md#node-observation-and-absence) for what absence does and why assigning a ref alone does not connect them.
+
+
 ### Basic Usage
 
 ```tsx

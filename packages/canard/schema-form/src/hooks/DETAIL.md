@@ -7,6 +7,9 @@
 
 ## API Contracts
 
+- `useFieldNodeTracker`와 `useFieldNodeSubscribe`는 `Node | Nullish`를 받는다. 부재는 관찰 없는 상태이며 tracker는 클라이언트·서버에서 0을 반환하고 subscribe는 listener·onSubscribe를 호출하지 않는다. 노드 교체·부재 전환·unmount는 이전 구독을 해제하고 StrictMode 재연결 뒤에는 구독 하나만 남는다. 실제 노드로 연결할 때만 필수 subtype 인자로 `onSubscribe`를 호출하여 구독 전 배달을 따라잡는다.
+- ref 할당은 재렌더를 일으키지 않는다. `useFieldNodeTracker(formRef.current?.node)`와 subscribe의 같은 입력은 다음 렌더가 실제 노드를 전달할 때 연결된다. React state 갱신으로 렌더를 공급해야 하며 callback ref도 state를 갱신해야 한다. 루트 교체(rebuild, 스키마 변경, 검증기 변경)는 소비자를 다시 렌더하지 않고 `FormHandle.node`를 바꾸므로, 그 노드를 받은 훅은 소비자가 다시 렌더할 때까지 이전 루트를 관찰한다. `useFieldNode`의 생략된 입력은 루트 선택이므로 이 부재 무동작 규칙을 적용하지 않는다.
+
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
 - useChildFieldErrors는 자기/child 각각의 state·정책 이력에 hold를 적용하되 isPresent는 읽지 않는다. hidden 자식은 값과 오류가 aggregate에 남고 inactive는 값 제거·off-branch issue 라우팅 제외다. 기존 subscription mask·formatting·unformatted 목록을 유지한다.
 
@@ -27,4 +30,4 @@
 
 ## Last Updated
 
-계약 기준: 정돈-3(2026-10-14), 모델 B1.
+이 fractal의 API 계약, 불변식 또는 경계가 바뀔 때 갱신합니다.

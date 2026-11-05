@@ -1,3 +1,5 @@
+import type { Nullish } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 
 import { CHILD_ERROR_EVENTS } from './childErrorEvents';
@@ -14,7 +16,7 @@ import type { ChildErrorStoreState } from './types';
  */
 export const subscribeChildErrorStore = (
   node: FieldNode,
-  children: readonly FieldNode[] | null | undefined,
+  children: readonly FieldNode[] | Nullish,
   state: ChildErrorStoreState,
   listener: () => void,
 ): (() => void) => {

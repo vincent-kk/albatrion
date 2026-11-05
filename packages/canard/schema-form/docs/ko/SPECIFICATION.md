@@ -309,6 +309,14 @@ interface FormChildrenProps<
 type AttachedFilesMap = Map<string, File[]>;
 ```
 
+### 노드 관찰과 부재
+
+`useFieldNodeTracker`와 `useFieldNodeSubscribe`는 노드, `null`, `undefined`를 받습니다. 노드가 없으면 구독하지 않습니다. tracker는 서버 스냅숏을 포함해 0을 반환하고, 구독 훅은 listener와 `onSubscribe`를 호출하지 않습니다. 노드가 바뀌면 이전 구독을 해제하며, 실제 노드에 연결할 때 `onSubscribe`에 필수 노드와 추론한 subtype을 전달해 현재 상태를 따라잡습니다. 연결 전에 전달된 이벤트는 재생하지 않습니다.
+
+`formRef.current?.node`를 직접 전달할 수 있지만 ref 할당은 React 재렌더를 유발하지 않습니다. 최초 렌더에서 `undefined`를 읽었다면 다음 렌더가 실제 노드를 전달할 때 구독을 시작합니다. React state를 갱신하거나 callback ref에서 state를 갱신하여 그 렌더를 공급해야 하며 ref 할당만으로는 훅이 연결되지 않습니다. 루트 교체(rebuild, 스키마 변경, 검증기 변경)는 소비자를 다시 렌더하지 않고 `FormHandle.node`를 바꾸므로, 그 노드를 받은 훅은 소비자가 다시 렌더할 때까지 이전 루트를 관찰합니다.
+
+종류·전략 가드는 양쪽 부재에서 false를 반환하고 실제 노드의 subtype narrowing을 유지합니다. 관찰 경계는 부재를 받지만 작업·콜백에는 여전히 필수 노드를 전달합니다. `FieldInputProps.node`, `FieldRendererProps.node`, `formatError`, `onSubscribe`, visitor, 가상화 `Placeholder`와 `estimateHeight`도 필수 노드를 사용합니다. 트리 관계·단일 탐색의 부재는 `null`, 선택적 생명주기는 `undefined`, 복수 조회는 빈 배열입니다. JSON 값 null, `NullNode`, nullable 스키마는 값의 의미이며 노드 참조 부재와 다릅니다.
+
 ---
 
 ## 노드 시스템

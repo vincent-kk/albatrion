@@ -2,7 +2,7 @@ import { useLayoutEffect } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type { Fn, Nullable } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
@@ -38,9 +38,10 @@ export interface FieldNodeSubscribeOptions<
  * rendering. For plain "re-render on node change" use `useFieldNodeTracker`
  * instead.
  *
- * @param node - Node to subscribe to
+ * @param node - Node to subscribe to; null or undefined creates no subscription
  * @param listener - Event listener function
- * @param options - Subscription options (see `FieldNodeSubscribeOptions`)
+ * @param options - Catch-up for a required node, never invoked for absence
+ * @returns Nothing; the subscription is released on node changes and unmount
  */
 export const useFieldNodeSubscribe = <
   Node extends {
@@ -48,14 +49,14 @@ export const useFieldNodeSubscribe = <
     revision(mask?: number): number;
   },
 >(
-  node: Nullable<Node>,
+  node: Node | Nullish,
   listener: Parameters<FieldNode['subscribe']>[0],
   options?: FieldNodeSubscribeOptions<Node>,
 ) => {
   const handleListener = useHandle(listener);
   const handleSubscribe = useHandle(options?.onSubscribe);
   useLayoutEffect(() => {
-    if (node === null) return;
+    if (node == null) return;
     const unsubscribe = node.subscribe(handleListener);
     handleSubscribe(node);
     return unsubscribe;

@@ -211,6 +211,11 @@ interface FormChildrenProps<
 }
 ```
 
+#### 노드 관찰과 부재
+
+`useFieldNodeTracker`와 `useFieldNodeSubscribe`는 `null`과 `undefined`도 받습니다. 부재일 때의 동작과 ref 할당만으로 연결되지 않는 이유는 [SPECIFICATION — 노드 관찰과 부재](./docs/ko/SPECIFICATION.md#노드-관찰과-부재)를 참고하세요.
+
+
 ### 기본 사용법
 
 ```tsx
