@@ -127,7 +127,7 @@ describe.each([false, true])('native exact focus strict=%s', (strictMode) => {
     expect(document.activeElement).toBe(form.field('/later'));
     expect(form.deferred('/late')).toBe(true);
   });
-  it('searches placeholders only inside the requesting form', async () => {
+  it('reveals and focuses only the requesting form with identical deferred paths', async () => {
     const other = await renderForm(focusSchema, {
       validator: true,
       strictMode,
@@ -137,10 +137,24 @@ describe.each([false, true])('native exact focus strict=%s', (strictMode) => {
       form = await renderForm(focusSchema, {
         validator: true,
         strictMode,
-        virtualization: false,
+        virtualization: focusVirtualization,
       });
+      expect(form.deferred('/outer')).toBe(true);
+      expect(other.deferred('/outer')).toBe(true);
+      const focus = vi.spyOn(HTMLElement.prototype, 'focus');
       await act(async () => form.handle.focus(focusTarget));
-      expect(document.activeElement).toBe(form.field(focusTarget));
+      const target = form.field(focusTarget);
+      expect(target).not.toBeNull();
+      expect(document.activeElement).toBe(target);
+      expect(
+        focus.mock.contexts.filter((element) => element === target),
+      ).toHaveLength(1);
+      expect(
+        focus.mock.contexts.filter((element) =>
+          element instanceof Node && other.container.contains(element),
+        ),
+      ).toHaveLength(0);
+      expect(other.field(focusTarget)).toBeNull();
       expect(other.deferred('/outer')).toBe(true);
     } finally {
       other.unmount();

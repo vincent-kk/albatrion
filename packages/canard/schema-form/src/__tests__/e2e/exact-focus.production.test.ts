@@ -102,12 +102,17 @@ it('focuses the exact invalid field after native submission', async () => {
   await vi.waitFor(() => expect(document.activeElement?.id).toBe(target));
 });
 it('lets a newer request replace a pending reveal', async () => {
+  const focus = vi.spyOn(HTMLElement.prototype, 'focus');
   handle.current!.focus(target);
   handle.current!.focus('/sibling');
   await vi.waitFor(() =>
     expect(container.querySelector(`input[id="${target}"]`)).not.toBeNull(),
   );
   expect(document.activeElement?.id).toBe('/sibling');
+  const older = container.querySelector(`input[id="${target}"]`);
+  expect(
+    focus.mock.contexts.filter((element) => element === older),
+  ).toHaveLength(0);
 });
 it('calls the target input focus exactly once', async () => {
   const focus = vi.spyOn(HTMLElement.prototype, 'focus');

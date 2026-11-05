@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
-import { expect, it, vi } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
 import { isInputMounted } from '../isInputMounted';
+
+afterEach(() => vi.unstubAllGlobals());
 
 it('uses actual registered input containers and their first non-disabled focus target', () => {
   vi.stubGlobal(
@@ -29,5 +31,4 @@ it('uses actual registered input containers and their first non-disabled focus t
   manager.detachInput(second);
   manager.detachInput(first);
   manager.disconnect();
-  vi.unstubAllGlobals();
 });

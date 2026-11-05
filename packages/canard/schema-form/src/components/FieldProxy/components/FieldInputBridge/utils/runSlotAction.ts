@@ -1,7 +1,10 @@
 import type { Nullable } from '@aileron/declare';
 
-import { FOCUS_SELECTOR, SELECT_SELECTOR } from '@/schema-form/constants/focus';
+import { FOCUS_SELECTOR } from '@/schema-form/constants/focus';
 import { FieldLifecycleAction } from '@/schema-form/helpers/fieldLifecycle';
+
+/** First text-selectable control; buttons and selects must not intercept selection. */
+const SELECT_SELECTOR = 'input, textarea';
 
 /** Native text controls understood by the Select action. */
 type SelectableElement = HTMLInputElement | HTMLTextAreaElement;

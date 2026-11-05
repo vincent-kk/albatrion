@@ -28,11 +28,17 @@ describe.each([false, true])('focus races strict=%s', (strictMode) => {
       strictMode,
       virtualization: focusVirtualization,
     });
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     await act(async () => {
       form.handle.focus(focusTarget);
       form.handle.focus('/sibling');
     });
     expect(document.activeElement).toBe(form.field('/sibling'));
+    const older = form.field(focusTarget);
+    expect(older).not.toBeNull();
+    expect(
+      focus.mock.contexts.filter((element) => element === older),
+    ).toHaveLength(0);
   });
   it('reuses an opening gate for the later request below it', async () => {
     form = await renderForm(focusSchema, {
@@ -92,14 +98,21 @@ describe.each([false, true])('focus races strict=%s', (strictMode) => {
       },
       { validator: true, strictMode, virtualization: focusVirtualization },
     );
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     await act(async () => {
       form.handle.focus(focusTarget);
       form.node('/show')!.setValue(false);
     });
     await form.flush();
+    expect(form.field(focusTarget)).toBeNull();
     await act(async () => form.node('/show')!.setValue(true));
     expect(form.field(focusTarget)).not.toBeNull();
     expect(document.activeElement).not.toBe(form.field(focusTarget));
+    expect(
+      focus.mock.contexts.filter(
+        (element) => element === form.field(focusTarget),
+      ),
+    ).toHaveLength(0);
   });
   it('handles a nested focus request from a mounted input onFocus without replay stealing it', async () => {
     const First = ({ path }: FieldInputProps) => (
