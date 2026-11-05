@@ -106,4 +106,5 @@ it('useChildFieldErrors on a childless terminal root stays empty while the root 
     await ref.current!.validate();
   });
   expect(screen.getByTestId('child-errors').textContent).toBe('0|0');
+  expect(ref.current!.node!.errors).toHaveLength(1);
 });
