@@ -69,11 +69,16 @@ it('ERROR-139 a native submit whose first invalid field is a placeholder reveals
     { virtualization, validator: true, fieldInputMap: { '': RootWithSubmit } },
   );
   expect(form.deferred('/f7')).toBe(true);
+  const focuses: string[] = [];
+  form.container.addEventListener('focusin', (event) =>
+    focuses.push((event.target as HTMLElement).id),
+  );
   await form.user.click(
     form.container.querySelector<HTMLButtonElement>('button[type="submit"]')!,
   );
   await waitFor(() => expect(document.activeElement).toBe(form.field('/f7')));
   await form.flush();
+  expect(focuses.filter((path) => path === '/f7')).toEqual(['/f7']);
   expect(form.sinkErrors()).toEqual([]);
   expect(form.errorRecords()).toEqual([]);
 });

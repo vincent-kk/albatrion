@@ -6,7 +6,7 @@ import { expect, vi } from 'vitest';
 
 import { observeErrorSink } from '@/schema-form/__tests__/helpers/observeErrorSink';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
-import type { ValidationIssue } from '@/schema-form/core';
+import { FieldNodeRequestType, type ValidationIssue } from '@/schema-form/core';
 import type {
   FieldInputProps,
   FieldRendererProps,
@@ -65,7 +65,9 @@ export interface NativeSubmitFormOptions {
  * output such as React 18's legacy-root deprecation warning is not counted.
  * @param options - Schema, issue check, Form props and wrapping for the case.
  * @returns The handle ref, the render result, the `onError`/`onSubmit` spies (cleared after
- *   mount), the sink and validator controls, a user-event session, DOM finders and
+ *   mount), the sink and validator controls, a user-event session, DOM finders,
+ *   `spyFocusRequests(path)`, which spies on that node's `request` and returns a Focus-request counter,
+ *   and
  *   `expectNothingReported()`, which asserts no host report, no onError and no onSubmit.
  */
 export const mountNativeSubmitForm = async ({
@@ -117,6 +119,13 @@ export const mountNativeSubmitForm = async ({
       view.container.querySelector<HTMLElement>(`[id="${path}"]`),
     errorText: (path: string) => view.getByTestId('error:' + path).textContent,
     button: () => view.getByRole('button', { name: 'submit' }),
+    spyFocusRequests: (path: string) => {
+      const request = vi.spyOn(handle.current!.findNode(path)!, 'request');
+      return () =>
+        request.mock.calls.filter(
+          ([type]) => type === FieldNodeRequestType.Focus,
+        ).length;
+    },
     expectNothingReported: () => {
       expect(
         sink.errors().map((error) => String(error).slice(0, 200)),

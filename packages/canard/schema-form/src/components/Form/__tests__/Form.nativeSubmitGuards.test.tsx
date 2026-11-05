@@ -49,8 +49,7 @@ it.each([
     await form.user.click(form.button());
     await awaitNativeSubmitVerdict(validate);
     await settleValidation(() => form.ref.current?.node);
-    expect(form.onSubmit).not.toHaveBeenCalled();
-    expect(form.onError).not.toHaveBeenCalled();
+    form.expectNothingReported();
     expect(form.errorText('/a')).toBe('');
     expect(form.errorText('/b')).toBe('');
     expect(document.activeElement).toBe(form.button());
@@ -123,7 +122,34 @@ it("ERROR-139 onSubmit rethrowing another form's verdict reaches the host channe
   });
   await form.user.click(form.button());
   await waitFor(() => expect(form.sink.errors()).toEqual([verdict]));
+  expect(form.onError).not.toHaveBeenCalled();
   expect(form.errorText('/a')).toBe('');
+});
+
+it('ERROR-139 handle.submit passed straight to a click listener still rejects with the verdict', async () => {
+  const form = await mountNativeSubmitForm();
+  const focusRequests = form.spyFocusRequests('/a');
+  const submit = form.ref.current!.submit;
+  const outer = document.createElement('button');
+  document.body.append(outer);
+  const results: Promise<void>[] = [];
+  outer.addEventListener('click', (event) =>
+    results.push(Reflect.apply(submit, undefined, [event])),
+  );
+  try {
+    outer.click();
+    await act(async () => {
+      await expect(results[0]).rejects.toMatchObject({
+        code: 'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
+      });
+    });
+    await settleValidation(() => form.ref.current?.node);
+    expect(form.errorText('/a')).toBe('');
+    expect(focusRequests()).toBe(0);
+    form.expectNothingReported();
+  } finally {
+    outer.remove();
+  }
 });
 
 it('FormHandle.select() still selects the text input after a <select>', async () => {

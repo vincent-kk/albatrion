@@ -456,7 +456,7 @@
   > 같은 제출 거부라도 `degraded`는 기록되고 검증 실패는 기록되지 않는다. 앞의 것은 폼의 약속이 깨진 사건이고 뒤의 것은 검증 결과이기 때문이다.
 - 보충:
   > 편집자 결정(201C-01): "【추론】 ERROR-139는 "어디로 드러나는가"를 적었고 ERROR-016·019는 "무엇이 기록되는가"를 적어 둘을 합치면 검증 거부는 싱크만이다. 제품이 이미 그렇고 스토리가 고정하니 문서 한 문장만 맞추면 된다." (`reviews/round-201-closing.md:9`)
-  > 소유자 결정(native-submit-reveal): 네이티브 submit의 검증 실패도 기록되지 않으며, 싱크에도 보내지 않고 오류 공개와 첫 무효 필드 초점으로 드러낸다(ERROR-139). 앞 보충의 "검증 거부는 싱크만"은 이 결정으로 대체한다. (`.seiri/tasks/native-submit-reveal/plan.md`)
+  > 소유자 결정(native-submit-reveal): 네이티브 submit의 검증 실패도 기록되지 않으며, 싱크에도 보내지 않고 오류 공개와 첫 무효 필드 초점으로 드러낸다(ERROR-139). 앞 보충의 "검증 거부는 싱크만"은 이 결정으로 대체한다. (`adr/0014-error-policy.md:518`; 시험 `src/components/Form/__tests__/Form.nativeSubmitReveal.test.tsx`, `Form.nativeSubmitLifetime.test.tsx`, `Form.nativeSubmitGuards.test.tsx`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:104`(정본), `08-design-a-to-z.md:358`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -2164,7 +2164,7 @@
   > 편집자 결정(201C-01): "【추론】 ERROR-139는 "어디로 드러나는가"를 적었고 ERROR-016·019는 "무엇이 기록되는가"를 적어 둘을 합치면 검증 거부는 싱크만이다. 제품이 이미 그렇고 스토리가 고정하니 문서 한 문장만 맞추면 된다." (`reviews/round-201-closing.md:9`)
   > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 전체 컴파일 실패는 캐시 항목마다 거부 객체 하나를 쓰므로, 폼이 이미 onError로 보고한 그 객체의 네이티브 submit 거부는 onError에 다시 보내지 않고 호스트 싱크에만 보고한다." (`reviews/ir-8-round-b.md:3`)
   > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
-  > 소유자 결정(native-submit-reveal): 네이티브 submit의 검증 판정은 호스트 싱크와 `onError`에 보내지 않고 오류 공개와 첫 무효 필드 초점으로 드러낸다. 앞선 201C-01 보충의 "검증 거부는 싱크만"은 이 결정으로 대체한다. `FormHandle.submit`·`useFormSubmit`의 `ValidationError` 거부, `onSubmit` 실패와 검증 불가 원인의 싱크 전달은 그대로다. 공개 정책·후보·수명 규칙은 `src/components/Form/DETAIL.md`의 제출 항목이 정본이다. (`.seiri/tasks/native-submit-reveal/plan.md`)
+  > 소유자 결정(native-submit-reveal): 네이티브 submit의 검증 판정은 호스트 싱크와 `onError`에 보내지 않고 오류 공개와 첫 무효 필드 초점으로 드러낸다. 앞선 201C-01 보충의 "검증 거부는 싱크만"은 이 결정으로 대체한다. `FormHandle.submit`·`useFormSubmit`의 `ValidationError` 거부, `onSubmit` 실패와 검증 불가 원인의 싱크 전달은 그대로다. 공개 정책·후보·수명 규칙은 `src/components/Form/DETAIL.md`의 제출 항목이 정본이다. (`adr/0014-error-policy.md:518`; 시험 `src/components/Form/__tests__/Form.nativeSubmitReveal.test.tsx`, `Form.nativeSubmitLifetime.test.tsx`, `Form.nativeSubmitGuards.test.tsx`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:203#5`(정본, ERROR-034에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:203`)

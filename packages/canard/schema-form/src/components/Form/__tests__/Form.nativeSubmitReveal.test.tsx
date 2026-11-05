@@ -5,6 +5,7 @@ import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidati
 import { FieldNodeState } from '@/schema-form/core';
 import type { FieldInputProps, JSONSchema } from '@/schema-form/types';
 
+import { awaitNativeSubmitVerdict } from './fixtures/awaitNativeSubmitVerdict';
 import { mountNativeSubmitForm } from './fixtures/mountNativeSubmitForm';
 import { requireKeys } from './fixtures/requireKeys';
 
@@ -133,3 +134,30 @@ it('ERROR-139 reveals and focuses once for two overlapping Enter presses', async
   expect(focuses.filter((path) => path === '/a')).toEqual(['/a']);
   form.expectNothingReported();
 });
+
+it('ERROR-139 StrictMode: an invalid native submit reveals the errors and focuses the first invalid field', async () => {
+  const form = await mountNativeSubmitForm({ strictMode: true });
+  const focusRequests = form.spyFocusRequests('/a');
+  await form.user.click(form.button());
+  await waitFor(() => expect(document.activeElement).toBe(form.field('/a')));
+  await settleValidation(() => form.ref.current?.node);
+  expect(focusRequests()).toBe(1);
+  expect(form.errorText('/a')).toBe('a required');
+  form.expectNothingReported();
+});
+
+it.each([['readOnly'], ['disabled']] as const)(
+  'ERROR-139 a Form with %s reveals the errors without a Focus request',
+  async (lock) => {
+    const form = await mountNativeSubmitForm({ formProps: { [lock]: true } });
+    const focusRequests = form.spyFocusRequests('/a');
+    const validate = vi.spyOn(form.ref.current!.node!, 'validate');
+    await form.user.click(form.button());
+    await awaitNativeSubmitVerdict(validate);
+    await settleValidation(() => form.ref.current?.node);
+    expect(form.errorText('/a')).toBe('a required');
+    expect(focusRequests()).toBe(0);
+    expect(document.activeElement).toBe(form.button());
+    form.expectNothingReported();
+  },
+);

@@ -12,7 +12,8 @@ import {
  * @param root - Current root; nothing happens without one.
  * @param onSubmit - Receives the projected value, only when validation found no issue; its
  *   failure rejects the returned promise unreported.
- * @param onFailure - Receives every rejection cause other than the validation verdict.
+ * @param onFailure - Receives a rejection cause raised before the verdict check (degraded settlement,
+ *   validator failure); never the verdict, an `onSubmit` failure or an `onInvalid` failure.
  * @param onInvalid - Receives the validation verdict instead of a rejection. Only `onSubmit` runs
  *   after the verdict check, so a `ValidationError` a consumer throws never reaches it.
  * @returns Resolves after `onSubmit`, or after `onInvalid` handled a verdict; rejects with the

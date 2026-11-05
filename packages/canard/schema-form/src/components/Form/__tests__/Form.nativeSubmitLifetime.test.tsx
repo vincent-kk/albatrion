@@ -11,6 +11,7 @@ import { act, cleanup, waitFor } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
+import { ValidationMode } from '@/schema-form/core';
 import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFormContext';
 import type { FieldRendererProps } from '@/schema-form/types';
 
@@ -22,7 +23,7 @@ import {
   mountNativeSubmitForm,
 } from './fixtures/mountNativeSubmitForm';
 
-// A native-submit verdict acts only while the submit's load, root and mount are current, under the committed policy (ERROR-139).
+// A native-submit verdict acts only while the submit's load and mount are current, under the committed policy (ERROR-139).
 
 afterEach(() => {
   cleanup();
@@ -48,6 +49,7 @@ const expectDroppedVerdict = async (
 ) => {
   const form = await mountNativeSubmitForm(options);
   const validate = vi.spyOn(form.ref.current!.node!, 'validate');
+  const focusRequests = form.spyFocusRequests('/a');
   form.validator.hold();
   await form.user.click(form.button());
   await waitFor(() => expect(form.validator.heldCount()).toBe(1));
@@ -55,6 +57,7 @@ const expectDroppedVerdict = async (
   await act(async () => form.validator.release());
   await awaitNativeSubmitVerdict(validate);
   form.expectNothingReported();
+  expect(focusRequests(), 'Focus requests on /a').toBe(0);
   if (name === 'unmount') return;
   await settleValidation(() => form.ref.current?.node);
   expect(form.errorText('/a')).toBe('');
@@ -146,31 +149,44 @@ it('ERROR-139 a discarded render that turns the policy on is not read: no reveal
 });
 
 it.skipIf(inject('reactMajor') !== '18')(
-  'ERROR-139 React 18 legacy root: a layout effect that resets on reveal leaves no throw and no stale focus (React 19 has no legacy root)',
+  'ERROR-139 React 18 legacy root: a layout effect that rebuilds on reveal leaves no Focus request on the replaced tree and nothing reported (React 19 has no legacy root)',
   async () => {
     const handle = createRef<FormHandle>();
     let armed = false;
-    let resets = 0;
-    const ResettingRenderer = ({ Input, errorVisible }: FieldRendererProps) => {
+    let rebuilds = 0;
+    const RebuildingRenderer = ({
+      Input,
+      errorVisible,
+    }: FieldRendererProps) => {
       useLayoutEffect(() => {
         if (!armed || !errorVisible) return;
         armed = false;
-        resets++;
-        handle.current!.reset();
+        rebuilds++;
+        handle.current!.rebuild();
       }, [errorVisible]);
       return <Input />;
     };
     const form = await mountNativeSubmitForm({
       legacyRoot: true,
-      formProps: { ref: handle, FieldRenderer: ResettingRenderer },
+      formProps: {
+        ref: handle,
+        FieldRenderer: RebuildingRenderer,
+        validationMode: ValidationMode.OnRequest,
+      },
     });
-    const validate = vi.spyOn(handle.current!.node!, 'validate');
+    const root = handle.current!.node!;
+    const validate = vi.spyOn(root, 'validate');
+    const focusRequests = form.spyFocusRequests('/a');
     armed = true;
     await form.user.click(form.button());
     await awaitNativeSubmitVerdict(validate);
-    await settleValidation(() => handle.current?.node);
-    expect(resets).toBe(1);
+    expect(rebuilds, 'the reveal ran the rebuild').toBe(1);
+    expect(handle.current!.node, 'the rebuild replaced the root').not.toBe(
+      root,
+    );
     form.expectNothingReported();
+    expect(focusRequests(), 'Focus requests on the replaced /a').toBe(0);
+    await settleValidation(() => handle.current?.node);
     expect(document.activeElement).not.toBe(form.field('/a'));
   },
 );

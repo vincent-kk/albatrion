@@ -75,18 +75,16 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     loads.current++;
     setShowError(props.showError);
   });
-  const submit = useHandle((native = false) => {
+  const submit = useHandle((native?: unknown) => {
+    const isNative = native === true;
     const root = binding.current.root;
     const load = loads.current;
-    const isCurrent = () =>
-      mounted.current &&
-      loads.current === load &&
-      binding.current.root === root;
+    const isCurrent = () => mounted.current && loads.current === load;
     return submitForm(
       root,
       props.onSubmit,
-      (error) => reportSubmitFailure(reporter, error, native),
-      native
+      (error) => reportSubmitFailure(reporter, error, isNative),
+      isNative
         ? () => {
             const policy = committed.current;
             if (
@@ -96,10 +94,10 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
               return;
             setShowError(true);
             // A React 18 legacy root commits the reveal synchronously; its layout effects may reset.
-            if (!isCurrent()) return;
+            if (!root || !isCurrent()) return;
             if (committed.current.disabled || committed.current.readOnly)
               return;
-            findFirstInvalidNode(root!)?.request(FieldNodeRequestType.Focus);
+            findFirstInvalidNode(root)?.request(FieldNodeRequestType.Focus);
           }
         : undefined,
     );
