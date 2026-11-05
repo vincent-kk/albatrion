@@ -1711,7 +1711,7 @@ export const ImperativeForm = () => {
       },
       password: {
         type: 'string',
-        format: '비밀번호',
+        format: 'password',
         minLength: 8,
         title: '비밀번호',
       },

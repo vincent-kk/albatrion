@@ -1,38 +1,38 @@
-# @canard/schema-form-antd5-plugin
+# @canard/schema-form-antd6-plugin
 
 [![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
 [![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
 [![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
-[![Ant Design](https://img.shields.io/badge/antd-✔-blue.svg)]()
+[![Ant Design v6](https://img.shields.io/badge/antd-v6-blue.svg)]()
 [![JSON Schema Form Plugin](https://img.shields.io/badge/JSONSchemaForm-plugin-pink.svg)]()
 
 ---
 
-## 패키지 이름 변경 안내
+## 이 패키지에 대하여
 
-> **알림**: 이 패키지는 이전에 `@canard/schema-form-antd-plugin`으로 배포되었습니다.
-> 이전 패키지명은 더 이상 유지보수되지 않습니다. `@canard/schema-form-antd5-plugin`을 사용해 주세요.
->
-> 마이그레이션 방법:
->
-> ```bash
-> # 이전 패키지 제거
-> yarn remove @canard/schema-form-antd-plugin
-> # 새 패키지 설치
-> yarn add @canard/schema-form-antd5-plugin
-> ```
+`@canard/schema-form-antd6-plugin`은 schema-form 플러그인의 Ant Design **v6** 버전입니다.
+
+Ant Design v5를 사용하신다면 [`@canard/schema-form-antd5-plugin`](../schema-form-antd5-plugin)을 사용해 주세요.
 
 ---
 
 ## 개요
 
-`@canard/schema-form-antd5-plugin`은 Ant Design 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
+`@canard/schema-form-antd6-plugin`은 Ant Design v6 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
+
+---
+
+## 요구 사항
+
+- **React**: 18 이상 (Ant Design v6에 필요)
+- **Ant Design**: 6.0.0 이상
+- **@ant-design/icons**: 6.0.0 이상
 
 ---
 
 ## 안내사항
 
-⚠️ 이 플러그인은 Ant Design Mobile 환경에서 `@canard/schema-form`을 사용할 때 자주 필요한 핵심 컴포넌트들을 미리 구현해 놓은 것입니다.
+⚠️ 이 플러그인은 Ant Design 환경에서 `@canard/schema-form`을 사용할 때 자주 필요한 핵심 컴포넌트들을 미리 구현해 놓은 것입니다.
 
 📌 플러그인의 목적은 개발 편의성을 높이는 것이므로, 모든 가능한 컴포넌트를 포함하지는 않습니다.
 
@@ -43,7 +43,7 @@
 ## 사용 방법
 
 ```bash
-yarn add @canard/schema-form @canard/schema-form-antd5-plugin
+yarn add @canard/schema-form @canard/schema-form-antd6-plugin
 ```
 
 ```tsx
@@ -56,9 +56,30 @@ registerPlugin(plugin);
 
 ---
 
+## antd5-plugin에서 마이그레이션
+
+`@canard/schema-form-antd5-plugin`에서 마이그레이션하는 경우:
+
+```bash
+# 이전 패키지 제거
+yarn remove @canard/schema-form-antd5-plugin
+
+# 새 패키지 설치
+yarn add @canard/schema-form-antd6-plugin
+```
+
+import 구문을 수정해 주세요:
+
+```diff
+- import { plugin } from '@canard/schema-form-antd5-plugin';
++ import { plugin } from '@canard/schema-form-antd6-plugin';
+```
+
+---
+
 ## 지원하는 컴포넌트
 
-이 플러그인은 다음과 같은 Ant Design 컴포넌트들을 제공합니다:
+이 플러그인은 다음과 같은 Ant Design v6 컴포넌트들을 제공합니다:
 
 ### **[`FieldInputBooleanSwitch.tsx`](./src/fieldInputs/FieldInputBooleanSwitch.tsx)**
 
@@ -209,7 +230,7 @@ const jsonSchema = {
 
 ## 호환성 안내
 
-`@canard/schema-form-antd5-plugin`은 ECMAScript 2020 (ES2020) 문법으로 작성되었습니다.
+`@canard/schema-form-antd6-plugin`은 ECMAScript 2020 (ES2020) 문법으로 작성되었습니다.
 
 ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, 별도의 트랜스파일 과정이 필요합니다.
 
@@ -217,9 +238,22 @@ ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, �
 
 - Node.js 14.17.0 이상
 - 최신 브라우저 (Chrome 91+, Firefox 90+, Safari 14+)
+- React 18 이상 (Ant Design v6에 필요)
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+---
+
+## Ant Design v6 참고 사항
+
+이 플러그인은 Ant Design v6용으로 작성되었으며, v5와 비교해 다음이 달라졌습니다:
+
+- CSS 변수가 기본으로 활성화됩니다
+- React 18 이상이 필요합니다
+- `@ant-design/icons` v6이 필요합니다 (antd v5와 호환되지 않습니다)
+
+Ant Design v6의 변경 사항에 대한 자세한 내용은 [공식 마이그레이션 가이드](https://ant.design/docs/react/migration-v6/)를 참고해 주세요.
 
 ---
 

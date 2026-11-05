@@ -224,6 +224,7 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // import 업데이트
+import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
@@ -233,6 +234,9 @@ const customAjv = new Ajv({
   strict: false, // 호환성 문제가 있는 경우 strict 모드 비활성화
   validateFormats: true, // AJV 8.x에서 포맷 검증은 기본적으로 활성화됨
 });
+
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ### 수동 AJV 사용에서 마이그레이션

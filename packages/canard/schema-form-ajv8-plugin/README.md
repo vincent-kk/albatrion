@@ -252,6 +252,7 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // Update import
+import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
@@ -261,6 +262,9 @@ const customAjv = new Ajv({
   strict: false, // Disable strict mode if you have compatibility issues
   validateFormats: true, // Format validation is enabled by default in AJV 8.x
 });
+
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ### From Manual AJV Usage
