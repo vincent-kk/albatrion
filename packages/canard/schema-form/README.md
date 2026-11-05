@@ -2371,6 +2371,8 @@ export const EnterSubmitForm = () => {
 
 Enter submits through the Form's `form` element. With more than one text-like field, the browser submits on Enter only when the form has a submit button (implicit submission counts the fields that block it; one text field plus a checkbox still submits).
 
+A native submission (Enter, or a submit button inside the Form) that fails the Form's own validation is a verdict, not an error: nothing reaches `onError` or the host's `reportError`, and `onSubmit` is not called. The Form reveals its errors, as `showError(true)` does, and focuses the first invalid field, unless the resolved `showError` policy (the Form's, else the `FormProvider`'s) is `false`, or includes `ShowError.Never` without `ShowError.Always`; then it neither reveals nor focuses. The focused field is the first node in tree order that has its own errors, is neither disabled nor read-only, and does not set its `ErrorVisible` state to `false`; the root is chosen only when no other node qualifies. Tree order matches screen order for default rendering; a custom layout can place fields in a different order. When that field's input cannot take focus (an input-level `disabled` override, a field the layout does not render, an error fallback, or a field inside a virtualization placeholder that has not been revealed), focus stays where it is and no other field is tried. A Form with `disabled` or `readOnly` reveals without focusing, and a verdict that arrives after the Form was reset, rebuilt or unmounted is dropped. `formRef.current.submit()` and `useFormSubmit` still reject with a `ValidationError` and reveal nothing.
+
 #### Handling Submission Errors
 
 How to handle various errors that can occur during submission:

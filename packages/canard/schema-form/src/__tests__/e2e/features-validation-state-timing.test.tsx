@@ -115,15 +115,17 @@ describe('features — validation-state timing and submit (consumer-only)', () =
     }
   });
 
-  it('ERROR-139 Enter submits the native form: valid reaches onSubmit, invalid reaches the host sink', async () => {
+  it('ERROR-139 Enter submits the native form: valid reaches onSubmit, invalid reveals the errors without a host report', async () => {
     const scenario = scenarioNamed('validation-state.submit-rejected');
     const onSubmit = vi.fn();
     const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true, onSubmit });
     try {
+      expect(form.errorTexts()).toEqual([]);
       await form.user.type(form.field('/email')!, '{Enter}');
       await form.flush();
+      expect(form.errorTexts(), 'the invalid native submit revealed its errors').not.toEqual([]);
       expect(onSubmit).not.toHaveBeenCalled();
-      expect(form.sinkErrors()).toEqual([expect.objectContaining({ code: submitOutcomes.rejectionCode })]);
+      expect(form.sinkErrors(), 'a native verdict never reaches the host sink').toEqual([]);
       expect(form.errorRecords(), 'ERROR-016 a validation failure is not recorded').toEqual([]);
       await form.type('/email', `${submitOutcomes.validEmail}{Enter}`);
       await form.flush();

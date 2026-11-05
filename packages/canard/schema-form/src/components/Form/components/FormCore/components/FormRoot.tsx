@@ -4,7 +4,9 @@ import {
   type SyntheticEvent,
   useCallback,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -21,6 +23,7 @@ import {
   VirtualizationContextProvider,
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
+import { useExternalFormContext } from '@/schema-form/providers/ExternalFormContext';
 import {
   reportFailureToHost,
   useFormErrorContext,
@@ -31,6 +34,8 @@ import type { AttachedFilesMap } from '@/schema-form/types';
 import type { FormHandle } from '../types/handle';
 import type { FormProps } from '../types/props';
 import { createChildren } from '../utils/createChildren';
+import { findFirstInvalidNode } from '../utils/findFirstInvalidNode';
+import { isShowErrorDisabled } from '../utils/isShowErrorDisabled';
 import { reportSubmitFailure } from '../utils/reportSubmitFailure';
 import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
@@ -43,12 +48,60 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
   const [showError, setShowError] = useState(props.showError);
-  const onReset = useHandle(() => setShowError(props.showError));
-  const submit = useHandle((native = false) =>
-    submitForm(binding.current.root, props.onSubmit, (error) =>
-      reportSubmitFailure(reporter, error, native),
-    ),
-  );
+  const providerShowError = useExternalFormContext().showError;
+  const loads = useRef(0);
+  const mounted = useRef(false);
+  const committed = useRef({
+    showError,
+    providerShowError,
+    disabled: props.disabled,
+    readOnly: props.readOnly,
+  });
+  useLayoutEffect(() => {
+    committed.current = {
+      showError,
+      providerShowError,
+      disabled: props.disabled,
+      readOnly: props.readOnly,
+    };
+  });
+  useLayoutEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+  const onReset = useHandle(() => {
+    loads.current++;
+    setShowError(props.showError);
+  });
+  const submit = useHandle((native?: unknown) => {
+    const isNative = native === true;
+    const root = binding.current.root;
+    const load = loads.current;
+    const isCurrent = () => mounted.current && loads.current === load;
+    return submitForm(
+      root,
+      props.onSubmit,
+      (error) => reportSubmitFailure(reporter, error, isNative),
+      isNative
+        ? () => {
+            const policy = committed.current;
+            if (
+              !isCurrent() ||
+              isShowErrorDisabled(policy.showError ?? policy.providerShowError)
+            )
+              return;
+            setShowError(true);
+            // A React 18 legacy root commits the reveal synchronously; its layout effects may reset.
+            if (!root || !isCurrent()) return;
+            if (committed.current.disabled || committed.current.readOnly)
+              return;
+            findFirstInvalidNode(root)?.request(FieldNodeRequestType.Focus);
+          }
+        : undefined,
+    );
+  });
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
   const handleNativeSubmit = useCallback(
     async (event: SyntheticEvent) => {

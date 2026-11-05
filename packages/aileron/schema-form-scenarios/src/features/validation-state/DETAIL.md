@@ -31,7 +31,7 @@
 | `show-error.scenario.ts` | `validation-state.show-error` | 표시 정책은 노드가 든 issue의 표시만 정하고, touched는 blur 뒤에 붙으며, 핸들의 showError가 정책보다 앞선다. | GOAL-061, VALUE-022 |
 | `format-error.scenario.ts` | `validation-state.format-error` | formatError가 문구를 바꾸고, null이면 다음 issue로 넘어가며, 없으면 검증기 문구를 그린다. | REACT-026 |
 | `interaction-state.scenario.ts` | `validation-state.interaction-state` | globalState는 참인 키만 들고, onStateChange는 노드 상태를 바꾼 진입마다 한 번 부른다(전역 키가 0을 넘지 않아도). | VALUE-022, EVENT-062, EVENT-067, LANDING-152, LANDING-153 |
-| `submit-rejected.scenario.ts` | `validation-state.submit-rejected` | 핸들 제출은 거부로 돌아오고 싱크에 가지 않으며, Enter 제출의 거부는 호스트 싱크로 가고 onSubmit은 불리지 않는다. | VALIDATE-006, ERROR-139, ERROR-016 |
+| `submit-rejected.scenario.ts` | `validation-state.submit-rejected` | 핸들 제출은 거부로 돌아오고 싱크에 가지 않으며, 무효 Enter 제출은 호스트 싱크에도 onError에도 가지 않고 onSubmit도 불리지 않으며, 오류를 공개하고 첫 무효 필드에 초점을 준다. | VALIDATE-006, ERROR-139, ERROR-016 |
 | `error-routing.scenario.ts` | `validation-state.error-routing` | required issue는 빠진 자식이, 항목 issue는 항목이 받고, 값을 고치면 그 issue만 지워진다. | VALIDATE-043, VALUE-034, VALIDATE-001 |
 
 ## Last Updated
