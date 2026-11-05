@@ -102,24 +102,24 @@ VirtualizationBackfill	value+type	typeof VirtualizationBackfill
 VirtualizationOptions	type	VirtualizationOptions
 VirtualizationPlaceholderProps	type	VirtualizationPlaceholderProps
 VirtualizationRootMargin	type	VirtualizationRootMargin
-isArrayNode	value	(node: FieldNode) => node is ArrayNode
-isBooleanNode	value	(node: FieldNode) => node is BooleanNode
-isBranchNode	value	(node: FieldNode) => node is BranchNode
+isArrayNode	value	(node: FieldNode | Nullish) => node is ArrayNode
+isBooleanNode	value	(node: FieldNode | Nullish) => node is BooleanNode
+isBranchNode	value	(node: FieldNode | Nullish) => node is BranchNode
 isFieldNode	value	(value: unknown) => value is FieldNode
 isJSONSchemaError	value	(error: unknown) => error is JSONSchemaError
-isNumberNode	value	(node: FieldNode) => node is NumberNode
-isObjectNode	value	(node: FieldNode) => node is ObjectNode
+isNumberNode	value	(node: FieldNode | Nullish) => node is NumberNode
+isObjectNode	value	(node: FieldNode | Nullish) => node is ObjectNode
 isSchemaFormError	value	(error: unknown) => error is SchemaFormError
-isStringNode	value	(node: FieldNode) => node is StringNode
-isTerminalNode	value	(node: FieldNode) => node is TerminalNode
+isStringNode	value	(node: FieldNode | Nullish) => node is StringNode
+isTerminalNode	value	(node: FieldNode | Nullish) => node is TerminalNode
 isUnhandledError	value	(error: unknown) => error is UnhandledError
-isUnionNode	value	(node: FieldNode) => node is UnionNode
+isUnionNode	value	(node: FieldNode | Nullish) => node is UnionNode
 isValidationError	value	(error: unknown) => error is ValidationError
-isVirtualNode	value	(node: FieldNode) => node is VirtualNode
+isVirtualNode	value	(node: FieldNode | Nullish) => node is VirtualNode
 registerPlugin	value	(plugin: Nullable<SchemaFormPlugin>) => void
 useChildFieldErrors	value	(node: FieldNode, disabled?: boolean | undefined) => { errorMessage: ReactNode; showError: boolean; formattedError: ReactNode; showErrors: boolean[]; formattedErrors: ReactNode[]; errorMatrix: (readonly ValidationIssue<unknown>[])[]; }
 useChildFieldMap	value	<Value extends Dictionary>(ChildFields: ChildField[]) => ChildFieldMap<Required<Value>>
-useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullable<Node>, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
-useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullable<Node>, tracking?: number) => number
+useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullish | Node, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
+useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullish | Node, tracking?: number) => number
 useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(ref: RefObject<Nullable<FormHandle<Schema, Value>>>) => { submit: () => Promise<void | undefined>; pending: boolean | undefined; }"
 `;

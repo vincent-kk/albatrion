@@ -29,7 +29,7 @@ Import consumer APIs from `@canard/schema-form`. Types inferred from callbacks c
 | `validatorFactory` | Complete validator object; see Validation. |
 | `FieldRenderer` | Group renderer for fields. |
 | `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | Composition renderers. |
-| `formatError` | Error-to-ReactNode formatter. |
+| `formatError` | Error-to-ReactNode formatter with a required node argument. |
 | `fieldInputDefinitions / fieldInputMap` | Ordered tests and path overrides; see input resolution. |
 | `virtualization` | Deferred input mounting, off by default. |
 | `context` | Live form context merged over provider context. |
@@ -52,9 +52,9 @@ Changing the `validatorFactory` reference rebuilds the Form tree, so use a stabl
 
 | Member | Use |
 | --- | --- |
-| `node` | Current root, absent before mount. |
+| `node` | Current root, undefined before mount. |
 | `getValue() / setValue(valueOrUpdater, options?)` | Read output / write the root. |
-| `findNode(path) / findNodes(path)` | First or all matching live nodes. |
+| `findNode(path) / findNodes(path)` | First or all matching live nodes; no match returns null or [], respectively. |
 | `getState() / setState(flags) / clearState()` | Read aggregate flags / patch or clear the whole tree. |
 | `getErrors() / validate()` | Raw issues / a promise for a fresh verdict. |
 | `focus(path?) / select(path?)` | Request focus on the first input, textarea, select, or button in the node's input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
@@ -70,7 +70,7 @@ Focus/select/refresh/remount with no matching node do nothing. Before mount, `fi
 
 Use `SetValueOption.Overwrite` (default) or `Merge`, with an optional `DisableAutomaticWrites` or `EnableAutomaticWrites` override. Do not combine Overwrite and Merge or conflicting automatic-write flags. [Value rules](./schema-reference#value-states) explain object/array consequences.
 
-`node.batch(fn)` groups synchronous writes. `visitSubtree(visitor)` visits self, then descendants in preorder/sibling order; returning false skips that node's descendants. A live walk visits current shape; a detached walk visits the frozen subtree. A node reachable twice is visited once, and new nodes created during the walk may be missed.
+`node.batch(fn)` groups synchronous writes. `visitSubtree(visitor)` visits self, then descendants in preorder/sibling order; returning false skips that node's descendants. The visitor receives a required FieldNode. A live walk visits current shape; a detached walk visits the frozen subtree. A node reachable twice is visited once, and new nodes created during the walk may be missed.
 
 Value writes settle once at the end, so intermediate value reads see the preceding commit. State/external-error changes apply immediately but their events wait; an enclosing batch postpones everything to its end. A Form reset or `resetSubtree()` still settles its load immediately outside that enclosing batch. A read-only walk opens no write boundary until a write occurs and can run inside listeners.
 
@@ -84,6 +84,8 @@ Use the supplied `Input` in a custom renderer when you need input-write interact
 
 `FieldInputProps` supplies `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, raw `errors`, `errorVisible`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, and presentation props. Empty input publishes undefined; null is published only deliberately. Honor resolved input locks and [accessible naming](./schema-reference#accessibility).
 
+The node prop is required in both FieldInputProps and FieldRendererProps.
+
 `ChildFields` contains components with key/path/field metadata; use `FieldInputProps['ChildFields'][number]` when you need their type. `ChildFieldProps` allows per-child overrides including `FieldRenderer`. A FieldInput does not receive a built-in `FieldRenderer` prop; choose the renderer on Form, Form.Field, or child components instead.
 
 ## Plugins and FormProvider {#plugins}
@@ -96,11 +98,13 @@ Use the supplied `Input` in a custom renderer when you need input-write interact
 
 Read node identity/tree through `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, and `children`. Terminals have null children. `value` is the interpreted/local value; `outputValue` is emitted JSON; `source`, `extras`, and `inactiveValues` describe retained input. `isRequired`, `nullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, and `diagnostics` describe the current node. `isPresent` means active and visible, independent of disabled state.
 
+The root's parentNode is null. A missing `find()` result is null; `findNodes()` returns [] when nothing matches.
+
 `FieldNodeState.Edited` records user input, not programmatic/automatic writes. Default input blur records Touched in the next animation frame; custom inputs can write flags explicitly. `isEdited` and `isTouched` read those flags. `node.state`/`setState` also accept user flags; Form reset and clearState remove user flags as well. `globalState` publishes true-or-absent aggregate flags. Use subtree state/error methods for bulk changes.
 
 Array nodes provide `push(value?)` and `insert(index, value?)` returning length; `pop()` / `remove(index)` returning the removed value, `update(index, value)` returning the updated value; and `clear()` returning void. Insert accepts integer indices from zero through length; invalid indices return the unchanged length. These operations do not enforce minItems/maxItems. In a batch they compute on prior marks at the call site; whole-array settlement carries item identity by position. Use `isArrayNode` before array operations.
 
-Public guards include isFieldNode (unknown input) and isArrayNode, isBooleanNode, isBranchNode, isNumberNode, isObjectNode, isStringNode, isTerminalNode, isUnionNode, and isVirtualNode (FieldNode input).
+Public guards include isFieldNode (unknown input) and isArrayNode, isBooleanNode, isBranchNode, isNumberNode, isObjectNode, isStringNode, isTerminalNode, isUnionNode, and isVirtualNode (FieldNode, null, or undefined input). These nine kind and strategy guards return false for null and undefined.
 
 ## Divergence from the load baseline {#divergence}
 
@@ -156,10 +160,14 @@ Events deliver synchronously when the outermost public write ends, merging bits 
 | Hook | Consumer contract |
 | --- | --- |
 | `useFormSubmit(ref)` | Returns submit and boolean-or-undefined pending; before binding submit resolves harmlessly. Catch rejection from event handlers. |
-| `useFieldNodeTracker(node, mask?)` | Re-renders on selected delivery revisions, all by default; null tracks nothing. Its snapshot catches concurrent render→commit changes. |
-| `useFieldNodeSubscribe(node, listener, options?)` | Raw subscription, no automatic render. Use `options.onSubscribe` to catch up a mirrored state after attach; earlier events are not replayed. |
+| `useFieldNodeTracker(node: Node \| null \| undefined, mask?)` | Re-renders on selected delivery revisions, all by default; null or undefined creates no subscription and returns 0 on client and server. Its snapshot catches concurrent render→commit changes. |
+| `useFieldNodeSubscribe(node: Node \| null \| undefined, listener, options?)` | Raw subscription, no automatic render. Null or undefined calls neither listener nor onSubscribe. Use `options.onSubscribe(node: Node)` with a required, inferred node subtype to catch up a mirrored state after attach; earlier events are not replayed. |
 | `useChildFieldMap(ChildFields)` | Components keyed by direct child name; missing names render nothing. |
-| `useChildFieldErrors(node, disabled?)` | Raw child errorMatrix, formattedErrors/formattedError, showErrors/showError, and gated errorMessage. Disabled empties child error reads and show flags. |
+| `useChildFieldErrors(node, disabled?)` | Requires a FieldNode. Raw child errorMatrix, formattedErrors/formattedError, showErrors/showError, and gated errorMessage. Disabled empties child error reads and show flags. |
+
+When the node input changes, both observation hooks release the previous subscription and attach to the new node if present; unmount releases the subscription.
+
+Assigning a ref does not re-render its consumer. With `formRef.current?.node`, these hooks attach only when a later render supplies the node; trigger that render with a React state update, including when using a callback ref. Root replacement through `rebuild()`, `reset()` with a changed schema, or a validatorFactory change updates FormHandle.node without re-rendering the consumer. The hooks keep observing the old root until the consumer renders again.
 
 Read live node getters during render with useFieldNodeTracker instead of maintaining a redundant event mirror when possible.
 
@@ -173,8 +181,8 @@ Opt in with `virtualization: true` or an options object. The complete node tree 
 | eagerCount | 20 | Leading children mounted immediately per gated branch |
 | rootMargin | '100%' | Viewport reveal margin, using px/% units |
 | backfill | VirtualizationBackfill.Idle | Idle reveals progressively; None waits for visibility or a focus/select command delivered to the placeholder's node |
-| estimateHeight | 40 | Number or node-to-height function, in px |
-| Placeholder | none | Component receiving node and height |
+| estimateHeight | 40 | Number or `(node: FieldNode) => number`, in px; the node argument is required |
+| Placeholder | none | Component receiving a required FieldNode and height |
 
 Placeholders use `data-path`, `data-deferred`, and aria-hidden with an estimated height. Deferred inputs are unavailable to page search, screen readers, and autofill until revealed; backfill has no fixed completion-time promise. For the focus limit on an invalid native submission, see [submission](./error-reference#submission).
 

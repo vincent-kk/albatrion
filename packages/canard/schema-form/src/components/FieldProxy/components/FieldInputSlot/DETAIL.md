@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- `FieldInputSlotWrapper`만 `FieldNode | Nullish`를 받아 양쪽 부재에서 동일한 공유 `NULL_FUNCTION`을 반환한다. 실제 슬롯·`FieldInputProps.node`·`FieldRendererProps.node`·formatter·Placeholder·estimateHeight는 필수 노드로 작업하므로 부재 검사를 사용자 구현에 전파하지 않는다. 구독 훅의 null·undefined 허용과 ref 할당만으로 재렌더되지 않는 제한은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
+- `FieldInputSlotWrapper`만 `FieldNode | Nullish`를 받아 양쪽 부재에서 동일한 공유 `NULL_FUNCTION`을 반환한다. 실제 슬롯과 `FieldInputProps.node`는 필수 노드로 작업하므로 부재 검사를 사용자 입력 구현에 전파하지 않는다. 구독 훅이 부재를 다루는 방식은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
 - input도 renderer와 동일한 순수 이력 조건을 사용하며 enabled/live가 거짓이면 reveal을 읽지 않는다. held일 때만 동일 렌더 release version으로 passive 구독자를 기존 FieldInput 다음 자리에 마운트한다. useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch를 반환하며 표시 release와 composition 종료가 같은 reducer를 재사용한다. user-input batch 안 edited 설정과 resetInteraction clear는 한 write sequence로 합치며 live cleared state를 따른다. mount layout은2회·ordinary write0회다.
@@ -49,4 +49,4 @@
 
 ## Last Updated
 
-관찰 경계, 구독 수명 또는 부재 표현 계약이 바뀔 때 갱신합니다.
+이 fractal의 API 계약, 불변식 또는 경계가 바뀔 때 갱신합니다.

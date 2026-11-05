@@ -29,7 +29,7 @@ sidebar_position: 6
 | `validatorFactory` | 완전한 검증기 객체이며 검증 페이지를 참조하십시오. |
 | `FieldRenderer` | 필드 그룹 렌더러입니다. |
 | `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | 조합 렌더러입니다. |
-| `formatError` | 오류를 ReactNode로 바꾸는 formatter입니다. |
+| `formatError` | 필수 노드 인자를 받아 오류를 ReactNode로 바꾸는 formatter입니다. |
 | `fieldInputDefinitions / fieldInputMap` | 순서 있는 검사와 경로 재정의이며 입력 선택을 참조하십시오. |
 | `virtualization` | 입력 마운트 지연이며 기본값은 꺼짐입니다. |
 | `context` | provider context 위에 병합하는 live form context입니다. |
@@ -52,9 +52,9 @@ sidebar_position: 6
 
 | 멤버 | 용도 |
 | --- | --- |
-| `node` | 현재 root이며 마운트 전에는 없습니다. |
+| `node` | 현재 root이며 마운트 전에는 undefined입니다. |
 | `getValue() / setValue(valueOrUpdater, options?)` | 출력 읽기·root 쓰기입니다. |
-| `findNode(path) / findNodes(path)` | 일치하는 live 노드 하나 또는 전부입니다. |
+| `findNode(path) / findNodes(path)` | 일치하는 live 노드 하나 또는 전부이며 없으면 각각 null 또는 []를 반환합니다. |
 | `getState() / setState(flags) / clearState()` | aggregate flag 읽기·전체 트리 patch·clear입니다. |
 | `getErrors() / validate()` | 원시 오류·새 판정 promise입니다. |
 | `focus(path?) / select(path?)` | 노드 입력 container의 DOM 순서상 첫 input·textarea·select·button에 focus를 요청합니다. 텍스트 선택은 button·select를 건너뛰고 첫 input·textarea에 요청하며, 해당 요소에 select 메서드가 있으면 호출합니다. |
@@ -70,7 +70,7 @@ sidebar_position: 6
 
 `SetValueOption.Overwrite`(기본값) 또는 `Merge`를 사용하고 필요하면 `DisableAutomaticWrites`·`EnableAutomaticWrites`로 덮어쓰십시오. Overwrite·Merge 또는 충돌하는 자동 쓰기 flag를 함께 지정하지 마십시오. object·array 결과는 [값 규칙](./schema-reference#value-states)에 있습니다.
 
-`node.batch(fn)`은 동기 쓰기를 묶습니다. `visitSubtree(visitor)`는 자기 노드, 자손을 preorder·형제 순서로 방문하며 false 반환은 그 노드의 자손을 건너뜁니다. live walk는 현재 형상, detached walk는 고정된 subtree를 방문합니다. 중복 도달 노드는 한 번만 방문하고 walk 중 생긴 노드는 놓칠 수 있습니다.
+`node.batch(fn)`은 동기 쓰기를 묶습니다. `visitSubtree(visitor)`는 자기 노드, 자손을 preorder·형제 순서로 방문하며 false 반환은 그 노드의 자손을 건너뜁니다. visitor는 필수 FieldNode를 받습니다. live walk는 현재 형상, detached walk는 고정된 subtree를 방문합니다. 중복 도달 노드는 한 번만 방문하고 walk 중 생긴 노드는 놓칠 수 있습니다.
 
 값 쓰기는 끝에서 한 번 정착하므로 중간 값 읽기는 직전 commit을 봅니다. state·external-error 변경은 즉시 적용하고 이벤트만 기다리며 외부 batch가 있으면 모두 그 끝까지 미룹니다. 그런 외부 batch 밖에서는 Form reset·`resetSubtree()`의 load는 즉시 정착합니다. 읽기 전용 walk는 쓰기가 발생할 때까지 write 경계를 열지 않고 listener 안에서도 사용할 수 있습니다.
 
@@ -84,6 +84,8 @@ visitor 실패는 이미 수행한 쓰기를 적용한 뒤 전파합니다. list
 
 `FieldInputProps`는 `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, 원시 `errors`, `errorVisible`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, presentation props를 제공합니다. 빈 입력은 undefined를, null은 의도적으로 선택할 때만 발행합니다. 계산된 입력 잠금과 [접근 가능한 이름](./schema-reference#accessibility)을 지키십시오.
 
+FieldInputProps와 FieldRendererProps의 node prop은 모두 필수입니다.
+
 `ChildFields`는 key·path·field metadata가 있는 컴포넌트이며 형은 `FieldInputProps['ChildFields'][number]`로 얻습니다. `ChildFieldProps`에는 `FieldRenderer` 등 자식별 재정의가 있습니다. FieldInput에 내장 `FieldRenderer` prop을 제공하지는 않으므로 Form·Form.Field·자식 컴포넌트에서 렌더러를 선택하십시오.
 
 ## 플러그인과 FormProvider {#plugins}
@@ -96,11 +98,13 @@ visitor 실패는 이미 수행한 쓰기를 적용한 뒤 전파합니다. list
 
 identity·tree는 `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, `children`으로 읽습니다. terminal children은 null입니다. `value`는 해석된 로컬 값, `outputValue`는 방출 JSON, `source`, `extras`, `inactiveValues`는 retained 입력을 나타냅니다. `isRequired`, `nullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, `diagnostics`는 현재 노드 상태입니다. `isPresent`는 disabled와 무관하게 active이면서 visible임을 뜻합니다.
 
+root의 parentNode는 null입니다. `find()`의 일치 노드가 없으면 null, `findNodes()`는 []를 반환합니다.
+
 `FieldNodeState.Edited`는 사용자 입력을 기록하며 프로그램·자동 쓰기에는 설정하지 않습니다. 기본 입력 blur는 다음 animation frame에 Touched를 기록하고 사용자 입력은 flag를 명시적으로 쓸 수 있습니다. `isEdited`, `isTouched`는 해당 flag입니다. `node.state`·`setState`는 사용자 flag도 받고 Form reset·clearState는 사용자 flag도 지웁니다. `globalState`는 true 또는 부재인 aggregate flag를 방출합니다. 일괄 변경에는 subtree state·error 메서드를 사용하십시오.
 
 array 노드의 `push(value?)`, `insert(index, value?)`는 길이를, `pop()`·`remove(index)`는 제거한 값을, `update(index, value)`는 갱신한 값을, `clear()`는 void를 반환합니다. insert는 0부터 length까지 정수 index를 받고 잘못된 index에서는 원래 길이를 반환합니다. minItems·maxItems는 강제하지 않습니다. batch에서는 앞선 mark를 반영해 호출 위치에서 계산하고 전체 배열 정착 때 항목 identity를 위치로 이어갑니다. 배열 연산 전에 `isArrayNode`로 확인하십시오.
 
-공개 guard는 unknown을 받는 isFieldNode와 FieldNode를 받는 isArrayNode·isBooleanNode·isBranchNode·isNumberNode·isObjectNode·isStringNode·isTerminalNode·isUnionNode·isVirtualNode입니다.
+공개 guard는 unknown을 받는 isFieldNode와 FieldNode·null·undefined를 받는 isArrayNode·isBooleanNode·isBranchNode·isNumberNode·isObjectNode·isStringNode·isTerminalNode·isUnionNode·isVirtualNode입니다. 이 아홉 kind·strategy guard는 null·undefined에 false를 반환합니다.
 
 ## load baseline과 divergence {#divergence}
 
@@ -156,10 +160,14 @@ canonical node·inactive-value·오류 경로는 이 percent literal 표기를 �
 | 훅 | 소비자 계약 |
 | --- | --- |
 | `useFormSubmit(ref)` | submit·boolean 또는 undefined인 pending을 반환하며 binding 전 submit은 문제없이 resolve합니다. 이벤트 handler에서 rejection을 처리하십시오. |
-| `useFieldNodeTracker(node, mask?)` | 선택한 revision에 다시 렌더링하며 기본은 전체, null은 추적하지 않습니다. snapshot이 동시 render→commit 변경을 잡습니다. |
-| `useFieldNodeSubscribe(node, listener, options?)` | 자동 렌더링 없는 구독이며 이전 이벤트는 replay하지 않습니다. state mirror는 `options.onSubscribe`로 attach 시 현재 상태를 읽으십시오. |
+| `useFieldNodeTracker(node: Node \| null \| undefined, mask?)` | 선택한 revision에 다시 렌더링하며 기본은 전체입니다. null·undefined이면 구독하지 않고 클라이언트·서버에서 0을 반환합니다. snapshot이 동시 render→commit 변경을 잡습니다. |
+| `useFieldNodeSubscribe(node: Node \| null \| undefined, listener, options?)` | 자동 렌더링 없는 구독이며 null·undefined이면 listener·onSubscribe를 모두 호출하지 않습니다. state mirror는 `options.onSubscribe(node: Node)`로 attach 시 현재 상태를 읽으십시오. 이 인자는 추론된 노드 subtype의 필수 값이며 이전 이벤트는 replay하지 않습니다. |
 | `useChildFieldMap(ChildFields)` | 직접 자식 이름별 컴포넌트이며 없는 이름은 아무것도 렌더링하지 않습니다. |
-| `useChildFieldErrors(node, disabled?)` | 원시 child errorMatrix, formattedErrors·formattedError, showErrors·showError, 표시를 반영한 errorMessage입니다. disabled는 자식 오류 읽기와 표시 flag를 비웁니다. |
+| `useChildFieldErrors(node, disabled?)` | FieldNode가 필수입니다. 원시 child errorMatrix, formattedErrors·formattedError, showErrors·showError, 표시를 반영한 errorMessage입니다. disabled는 자식 오류 읽기와 표시 flag를 비웁니다. |
+
+노드 입력이 바뀌면 두 관찰 훅은 이전 구독을 해제하고 새 노드가 있을 때 다시 연결합니다. unmount에서도 구독을 해제합니다.
+
+ref 할당은 소비자를 다시 렌더하지 않습니다. `formRef.current?.node`를 전달한 두 훅은 다음 렌더가 실제 노드를 넘길 때 연결되므로 React state 갱신으로 렌더를 일으켜야 하며 callback ref도 마찬가지입니다. `rebuild()`, 바뀐 schema를 읽는 `reset()`, validatorFactory 변경에 따른 root 교체는 소비자를 다시 렌더하지 않고 FormHandle.node를 바꿉니다. 소비자가 다시 렌더할 때까지 훅은 이전 root를 관찰합니다.
 
 가능하면 중복 이벤트 mirror 대신 useFieldNodeTracker와 render 중 live getter 읽기를 사용하십시오.
 
@@ -173,8 +181,8 @@ canonical node·inactive-value·오류 경로는 이 percent literal 표기를 �
 | eagerCount | 20 | gate branch마다 즉시 마운트할 선두 자식 수 |
 | rootMargin | '100%' | px·% 단위의 viewport 공개 여백 |
 | backfill | VirtualizationBackfill.Idle | Idle은 순차 공개, None은 표시 또는 placeholder 노드에 전달되는 focus·select 명령 대기 |
-| estimateHeight | 40 | px 숫자 또는 node→높이 함수 |
-| Placeholder | 없음 | node·height를 받는 컴포넌트 |
+| estimateHeight | 40 | px 숫자 또는 `(node: FieldNode) => number`이며 노드 인자는 필수 |
+| Placeholder | 없음 | 필수 FieldNode·height를 받는 컴포넌트 |
 
 placeholder는 추정 높이와 `data-path`, `data-deferred`, aria-hidden을 사용합니다. 지연 입력은 공개 전까지 페이지 검색·화면 읽기·autofill에 사용할 수 없으며 backfill 완료 시간을 보장하지 않습니다. 유효하지 않은 native 제출의 focus 제한은 [제출](./error-reference#submission)을 참조하십시오.
 

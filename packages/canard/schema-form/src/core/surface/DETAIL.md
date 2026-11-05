@@ -192,4 +192,4 @@ batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전�
 
 ## Last Updated
 
-관찰 경계, 구독 수명 또는 부재 표현 계약이 바뀔 때 갱신합니다.
+이 fractal의 API 계약, 불변식 또는 경계가 바뀔 때 갱신합니다.
