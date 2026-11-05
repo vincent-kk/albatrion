@@ -2,7 +2,7 @@
 
 ## Purpose
 
-JSON Schema 노드 하나를 React 컴포넌트 트리로 변환하는 렌더링 경계. 본체 `FieldProxy`가 필드 노드 하나를 찾아 구독, 렌더러 선택, 입력 팩토리를 한 프록시 컴포넌트에서 소유하고, 주입된 포맷의 실패와 렌더 실패는 렌더러 경계가 맡는다. 본체의 내부 부품 둘(`FieldInputSlot`은 입력 처리, `DeferredFieldProxy`는 지연 마운트)은 `components/` 아래에 있다.
+JSON Schema 노드 하나를 React 컴포넌트 트리로 변환하는 렌더링 경계. 본체 `FieldProxy`가 필드 노드 하나를 찾아 구독, 렌더러 선택, 입력 팩토리를 한 프록시 컴포넌트에서 소유하고, 주입된 포맷의 실패와 렌더 실패는 렌더러 경계가 맡는다. 본체의 내부 부품 둘(`FieldInputBridge`은 입력 처리, `DeferredFieldProxy`는 지연 마운트)은 `components/` 아래에 있다.
 
 ## Structure
 
@@ -12,7 +12,7 @@ FieldProxy/
   FieldProxy.tsx            — 본체: 노드를 렌더러에 연결하는 조율 레이어
   type.ts                   — 재귀 렌더 props 계약 FieldProxyProps
   components/               — 본체의 부품 fractal 칸 (index 없음)
-    FieldInputSlot/         — 실제 FieldInput 마운트 및 이벤트 처리 레이어
+    FieldInputBridge/       — 실제 FieldInput 마운트 및 이벤트 처리 레이어
     DeferredFieldProxy/     — 렌더 가상화 게이트 (placeholder ↔ NodeProxy 지연 전환)
 ```
 
@@ -39,7 +39,7 @@ FieldProxy/
 
 ### Never do
 
-- `FieldInputSlot`·`DeferredFieldProxy`를 이 fractal 바깥에서 직접 import
+- `FieldInputBridge`·`DeferredFieldProxy`를 이 fractal 바깥에서 직접 import
 - 프록시에서 필드 노드를 만들거나 변경, 소비자 props로 노드 식별 props를 덮어쓰기
 - 필드 전체를 감싸는 두 번째 경계 추가
 - `type.ts`의 `FieldProxyProps` 계약에 렌더 컴포넌트 구현을 import (부품은 형만 읽는다)

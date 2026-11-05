@@ -22,7 +22,7 @@ import { type FormHarness, renderForm } from '../renderForm';
  *
  * Load-bearing facts (verified against src/):
  *   - Typing fires the input `onChange`, which sets `FieldNodeState.Edited` on that
- *     node (`FieldInputSlot.handleChange`). `FieldNodeState.Touched` is set on BLUR
+ *     node (`FieldInputBridge.handleChange`). `FieldNodeState.Touched` is set on BLUR
  *     via a `requestAnimationFrame` callback (`handleBlur`), so a touched
  *     assertion needs a focus-out + a macrotask drain (`flush(>16ms)`).
  *   - `handle.setState(s)` → `rootNode.setSubtreeState(s)`; `handle.clearState()`

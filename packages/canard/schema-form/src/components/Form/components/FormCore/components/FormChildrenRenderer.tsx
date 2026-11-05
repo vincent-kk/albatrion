@@ -51,7 +51,7 @@ const FormChildrenRendererInner = <
 };
 
 /**
- * Bridges function children (render-prop) to the node event system with the
+ * Connects function children (render-prop) to the node event system with the
  * same tracker idiom `FieldProxy` uses: matching root events bump a
  * version and the render-prop reads live node state during render. React
  * batches version bumps raised in the same event/microtask, so one edit

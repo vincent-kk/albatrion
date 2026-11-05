@@ -28,7 +28,7 @@ import {
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
-import { FieldInputSlotWrapper } from './components/FieldInputSlot';
+import { createFieldInputBridge } from './components/FieldInputBridge';
 import type { FieldProxyProps } from './type';
 
 const RERENDERING_EVENT =
@@ -57,7 +57,7 @@ export const FieldProxy = ({
 
   const Input = useMemo<FieldRendererProps['Input']>(
     () =>
-      FieldInputSlotWrapper(
+      createFieldInputBridge(
         node,
         onChangeRef,
         onFileAttachRef,

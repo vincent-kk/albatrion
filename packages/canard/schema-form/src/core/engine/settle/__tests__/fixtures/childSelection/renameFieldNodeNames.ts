@@ -13,7 +13,7 @@ export const renameFieldNodeNames = (text: string): string =>
       (token) =>
         token
           .replace(/SchemaNodeProxy/g, 'FieldProxy')
-          .replace(/^SchemaNodeInput/, 'FieldInputSlot')
+          .replace(/^SchemaNodeInput/, 'FieldInputBridge')
           .replace(/SchemaNode/g, 'FieldNode')
           .replace(/schemaNode/g, 'fieldNode'),
     );

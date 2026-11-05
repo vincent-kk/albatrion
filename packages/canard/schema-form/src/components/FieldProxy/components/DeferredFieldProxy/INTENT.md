@@ -38,5 +38,5 @@ DeferredFieldProxy/
 ### Never do
 
 - 노출된 뒤에 다시 placeholder로 되돌리는 로직 추가
-- `FieldInputSlot`/`FieldProxy`의 내부 구현을 직접 import
+- `FieldInputBridge`/`FieldProxy`의 내부 구현을 직접 import
 - placeholder에서 `data-deferred` 마커 생략 (마커 없는 `data-path`는 "실제로 마운트됨"을 뜻한다)

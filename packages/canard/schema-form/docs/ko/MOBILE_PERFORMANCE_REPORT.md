@@ -30,12 +30,12 @@
 
 ```
 FieldProxy (memo 없음)
-  ├─ useMemo: Input (FieldInputSlotWrapper) — node 참조 기반 캐시
+  ├─ useMemo: Input (createFieldInputBridge) — node 참조 기반 캐시
   ├─ useMemorize: FieldRenderer — memo(withErrorBoundary()) 래핑
   ├─ useConstant: Wrapper — 최초 1회만 생성
   ├─ useMemo: errorMessage — refresh 기반 재계산
   │
-  └─ FieldInputSlot (memo) ← 실제 렌더링 비용의 대부분
+  └─ FieldInputBridge (memo) ← 실제 렌더링 비용의 대부분
        ├─ useFieldInput: useMemo 캐시
        ├─ useChildFields: Map 캐시 + memo 래핑된 자식
        ├─ useCallback: handleChange, handleFileAttach, handleFocus, handleBlur
@@ -50,9 +50,9 @@ FieldProxy (memo 없음)
 3. `useMemorize(FieldRenderer)` — 이미 생성된 인스턴스 반환
 4. `useConstant(Wrapper)` — 캐시된 값 반환
 5. `useMemo(errorMessage)` — deps 비교 (refresh 미변경 → skip)
-6. `FieldInputSlot` — **`memo`로 래핑**, props 동일 시 완전 skip
+6. `FieldInputBridge` — **`memo`로 래핑**, props 동일 시 완전 skip
 
-**결론**: FieldProxy의 re-render 비용은 hooks deps 비교 5-6회 + JSX 객체 생성 1회로, **~0.01ms 수준**입니다. `FieldInputSlot`이 `memo`로 래핑되어 있어 실제 DOM 갱신은 발생하지 않습니다.
+**결론**: FieldProxy의 re-render 비용은 hooks deps 비교 5-6회 + JSX 객체 생성 1회로, **~0.01ms 수준**입니다. `FieldInputBridge`이 `memo`로 래핑되어 있어 실제 DOM 갱신은 발생하지 않습니다.
 
 ### 어떤 경우에 FieldProxy가 불필요하게 re-render되는가
 
@@ -147,7 +147,7 @@ FieldProxy (memo 없음)
 
 - participantType/participantRegion 변경 시: 해당 필드 1개 re-render + 조건 평가 후 required 변경
 - required 변경은 `UpdateState` 이벤트를 발행 → 영향받는 필드의 Proxy가 re-render
-- 그러나 `FieldInputSlot`이 `memo`이므로, required 마커 표시 변경만 일어나고 input 위젯 자체의 re-render는 최소화
+- 그러나 `FieldInputBridge`이 `memo`이므로, required 마커 표시 변경만 일어나고 input 위젯 자체의 re-render는 최소화
 
 **조건 평가 비용**: JSON Schema의 `const`/`enum` 비교는 표준 AJV 검증 경로를 따르지만, 이 예제에서는 validator 플러그인이 미등록이므로 순수 노드 레벨의 조건 평가만 수행 → < 1ms
 
@@ -176,7 +176,7 @@ FieldProxy (memo 없음)
 
 - accountType 변경 → 해당 필드 1개 re-render + required 상태 변경으로 영향받는 필드들 re-render
 - 최대 6개 필드가 required 변경 대상 (`business + invoice` → 6필드 required)
-- 각 필드의 `FieldInputSlot`이 `memo`이므로 실제 DOM 갱신은 required 마커 변경분만
+- 각 필드의 `FieldInputBridge`이 `memo`이므로 실제 DOM 갱신은 required 마커 변경분만
 
 **판정: PASS**
 
@@ -220,7 +220,7 @@ employmentType 변경: 'full_time' → 'part_time'
 - `workingHours`는 `contractType`에 의존 → contractor 분기 내에서만 active 상태 전환
 - 의존성 체인이 단순 (1-hop)하여 연쇄 비용 < 1ms
 
-**FieldProxy 비용**: oneOf 전환 시 `UPDATE_CHILDREN_MASK`에 해당하는 이벤트가 발생할 수 있으나, `FieldInputSlot`의 `memo`가 실질적 DOM 갱신을 방어. enabled=false 노드는 즉시 null 반환하여 비용 최소.
+**FieldProxy 비용**: oneOf 전환 시 `UPDATE_CHILDREN_MASK`에 해당하는 이벤트가 발생할 수 있으나, `FieldInputBridge`의 `memo`가 실질적 DOM 갱신을 방어. enabled=false 노드는 즉시 null 반환하여 비용 최소.
 
 **판정: PASS**
 
@@ -307,13 +307,13 @@ notifications.email 변경 (depth 5)
 ```
 
 - 각 중간 ObjectNode의 UpdateValue는 해당 ObjectNode를 구독하는 Proxy만 re-render
-- 중간 ObjectNode의 Proxy는 `FieldInputSlot`의 `memo`로 인해 실질적 DOM 갱신 없음
+- 중간 ObjectNode의 Proxy는 `FieldInputBridge`의 `memo`로 인해 실질적 DOM 갱신 없음
 - **깊이 5의 value 전파 비용**: microtask 5회 ≈ < 1ms (이벤트 배칭)
 
 **backupCodes 배열 (minItems: 5)**:
 
 - 초기화 시 5개 string input 자동 생성
-- 각 아이템은 Terminal Node → 5개 FieldProxy + FieldInputSlot
+- 각 아이템은 Terminal Node → 5개 FieldProxy + FieldInputBridge
 - 최대 10개까지 추가 가능 (maxItems: 10)
 - 10개 아이템이어도 총 노드 ~35개 수준 — 가상화 불필요
 
@@ -391,12 +391,12 @@ userType 변경: 'guest' → 'admin'
 
 - **최대 동시 re-render**: userType 1개 + 의존 필드 6개 = **7개 Proxy re-render**
 - 이 중 visible=false가 되는 필드: `if (!node?.enabled) return null` → 즉시 반환
-- visible=true가 되는 필드: FieldInputSlot `memo` 통과 시 FieldInput 마운트
+- visible=true가 되는 필드: FieldInputBridge `memo` 통과 시 FieldInput 마운트
 
 **이것이 모바일에서 문제가 되는가?**
 
 - 7개 Proxy 동시 re-render: 7 × 0.01ms (Proxy 자체 비용) = ~0.07ms
-- FieldInputSlot memo를 통과하는 필드 (상태 변경분): 최대 6개 × 0.5ms = ~3ms
+- FieldInputBridge memo를 통과하는 필드 (상태 변경분): 최대 6개 × 0.5ms = ~3ms
 - 총 userType 전환 비용: **< 5ms** — 모바일에서도 16ms 프레임 예산 내
 
 **RERENDERING_EVENT 4중 마스크 영향**:
@@ -433,7 +433,7 @@ userType 변경: 'guest' → 'admin'
 
 - tuple 아이템은 `prefixItems`로 고정 → 동적 추가/삭제 없음
 - 각 아이템 변경 시: 해당 Terminal Node Proxy 1개 + 부모 ArrayNode Proxy 1개 re-render
-- 부모 ArrayNode의 `FieldInputSlot`은 `memo`이므로, children이 변경되지 않으면 하위 아이템 re-render 안 됨
+- 부모 ArrayNode의 `FieldInputBridge`은 `memo`이므로, children이 변경되지 않으면 하위 아이템 re-render 안 됨
 
 **AJV 검증 비용**:
 
@@ -471,10 +471,10 @@ userType 변경: 'guest' → 'admin'
 2. **노드별 독립 구독**: `useFieldNodeTracker`가 각 Proxy를 자신의 노드에만 바인딩. 다른 필드의 이벤트가 전파되지 않음
 
 3. **내부 memo 방어**:
-   - `FieldInputSlot`: `memo` 래핑 — props 동일 시 완전 skip
+   - `FieldInputBridge`: `memo` 래핑 — props 동일 시 완전 skip
    - `FieldRenderer`: `useMemorize(() => memo(withErrorBoundary(...)))` — 최초 1회만 생성
    - `useChildFields`: `Map` 캐시 + 각 child를 `memo` 래핑
-   - `FieldInputSlotWrapper` 내부: `useReference`로 ref 안정화
+   - `createFieldInputBridge` 내부: `useReference`로 ref 안정화
 
 4. **Proxy 자체의 re-render 비용이 극히 낮음**: hooks deps 비교 5-6회 + 조건부 null 반환. DOM 접근 없음.
 
@@ -525,11 +525,11 @@ userType 변경: 'guest' → 'admin'
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | Input `useMemo` 캐시                      |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | FieldRenderer `memo` 래핑                 |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | `enabled=false` 시 null 반환              |
-| `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx`                                  | FieldInputSlot `memo` 래핑                |
-| `src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx`                | `useReference` ref 안정화                 |
-| `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx`                            | `Map` 캐시 + child `memo` 래핑            |
-| `src/components/FieldProxy/components/FieldInputSlot/hooks/useFieldInputControl.ts`                       | RequestRefresh/Focus/Select 구독          |
-| `src/components/FieldProxy/components/FieldInputSlot/type.ts`                                             | `REACTIVE_RERENDERING_EVENTS`             |
+| `src/components/FieldProxy/components/FieldInputBridge/FieldInputBridge.tsx`                                  | FieldInputBridge `memo` 래핑                |
+| `src/components/FieldProxy/components/FieldInputBridge/utils/createFieldInputBridge.tsx`                | `useReference` ref 안정화                 |
+| `src/components/FieldProxy/components/FieldInputBridge/hooks/useChildFields.tsx`                            | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/FieldProxy/components/FieldInputBridge/hooks/useFieldInputControl.ts`                       | RequestRefresh/Focus/Select 구독          |
+| `src/components/FieldProxy/components/FieldInputBridge/type.ts`                                             | `REACTIVE_RERENDERING_EVENTS`             |
 | `src/hooks/fieldNode/useFieldNodeTracker.ts`                                                              | 노드별 독립 구독 메커니즘                 |
 | `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` (v0.10.6에만 있음) | microtask 배칭                            |
 | `src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/createDynamicFunction.ts`    | `new Function()` — CSP 관련               |

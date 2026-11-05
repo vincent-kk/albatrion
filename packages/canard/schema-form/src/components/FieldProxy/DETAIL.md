@@ -11,8 +11,8 @@
 
 - U2: renderer.errorVisible과 formatError 선택은 FieldRendererContext의 순수 isErrorRevealed를 사용한다. isPresent이며 live인 조건을 한 번 판정하고 held일 때만 동일 렌더 version과 passive ErrorRevealSubscriber로 해제를 따라잡는다. 기존 ErrorBoundary는 항상 첫 자식이며 구독자는 마지막 자식이므로 hold 시작·종료에도 렌더러와 입력의 identity·focus를 유지한다. checkErrorVisibility 조건은 그대로이며 엔진 기준에서 적격했던 오류만 이전 판정을 유지한다. 노드가 바뀌면 그 노드 기준을 읽고 isPresent가 거짓이면 즉시 숨긴다. renderer.errors는 보정하지 않는 unformatted 목록이다.
 
-- 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputSlot`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputSlot`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.
-- 재귀 렌더 props 계약 `FieldProxyProps`는 본체가 소유하며 `type.ts`에 선언합니다. 진입점은 이 형을 내보내지 않습니다. 부품 `FieldInputSlot`·`DeferredFieldProxy`는 `type.ts`를 타입 전용 import로만 읽고, 입력 구현은 본체 구현을 값으로 역참조하지 않습니다. 본체는 자신을 `NodeProxy` prop으로 넘겨서 재귀합니다.
+- 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputBridge`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputBridge`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.
+- 재귀 렌더 props 계약 `FieldProxyProps`는 본체가 소유하며 `type.ts`에 선언합니다. 진입점은 이 형을 내보내지 않습니다. 부품 `FieldInputBridge`·`DeferredFieldProxy`는 `type.ts`를 타입 전용 import로만 읽고, 입력 구현은 본체 구현을 값으로 역참조하지 않습니다. 본체는 자신을 `NodeProxy` prop으로 넘겨서 재귀합니다.
 - 비활성 노드는 렌더하지 않습니다. 하위 노드는 전달받은 NodeProxy를 통해 같은 렌더 계약을 재사용합니다. 노드가 없을 때도 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.
 - 마운트된 노드는 data-path로 경로를 노출합니다. 경로 주소는 prefix container들의 UpdateChildren을 따라 다시 해석하고 구독은 React 생명주기에 맞춰 해제합니다. node·undefined·root 주소는 고정 snapshot으로 추가 구독하지 않습니다.
 - `UpdateJsonSchema`를 구독하다가 유효 스키마가 바뀌면 렌더 props와 입력 선택을 갱신합니다. 프록시 하나가 노드 추적 구독과 스냅샷 ref를 소유하고 경로 해석은 useFieldNode의 외부 저장소 구독이 소유하며, 별도의 필드 컴포넌트나 필드별 경로 Provider는 만들지 않습니다(REACT-012, 119라운드, 121C-01 F-A).
@@ -24,7 +24,7 @@
 - `request(kind)`의 focus, select, refresh, remount 사건을 실행합니다. `RequestRemount`는 래퍼 key를 바꾸며, 사용자 override는 노드 식별 정보처럼 덮어쓸 수 없는 필드를 대체하지 못합니다(EVENT-063·073).
 - 입력의 자식 프록시가 마운트되었는지 판정할 때는 본체와 가상화의 `DeferredFieldProxy` 자리를 모두 포함합니다. 입력은 실제로 자식 프록시가 마운트되어 있는지를 보고 Refresh에서 다시 마운트할지 가립니다(REACT-028).
 - 가상화의 노출(reveal) 기록은 매니저가 가진 노드 identity 기록을 가져다 씁니다. 한 번 노출된 필드는 배열 인덱스가 다시 매겨져도 placeholder가 되지 않으며, 미노출 형제의 placeholder도 현재 경로를 표시합니다(LANDING-087).
-- 런타임 계수 도우미 `__tests__/helpers/runtimeCounts.mjs`는 이 fractal의 시험과 부품 `FieldInputSlot`, 형제 `Form`의 계수 시험이 함께 씁니다(검증 코드이므로 소비자가 아닙니다). 번들 준비와 계수 CLI는 같은 시험 도우미 구획의 정본을 실행하며, 역사 자료 디렉토리의 도구를 읽지 않습니다.
+- 런타임 계수 도우미 `__tests__/helpers/runtimeCounts.mjs`는 이 fractal의 시험과 부품 `FieldInputBridge`, 형제 `Form`의 계수 시험이 함께 씁니다(검증 코드이므로 소비자가 아닙니다). 번들 준비와 계수 CLI는 같은 시험 도우미 구획의 정본을 실행하며, 역사 자료 디렉토리의 도구를 읽지 않습니다.
 
 ## Acceptance Criteria
 
@@ -48,7 +48,7 @@
 
 - **Consumers**: `**/packages/canard/schema-form/src/components/FieldProxy/components/**`
 - **Direct import**: `allowed`
-- **Reason**: 부품 `FieldInputSlot`·`DeferredFieldProxy`는 이 fractal의 자식입니다. 루트의 Module Contract Principles 4(위로는 열려 있어 조상의 뿌리 파일을 직접 가져올 수 있고, 조상의 `index.ts`는 가져올 수 없음)에 따라, 재귀 렌더 props 계약 `FieldProxyProps`를 뿌리의 `type.ts`에서 타입 전용으로 직접 읽습니다. 진입점은 이 형을 쓰는 바깥 소비자가 없어서 내보내지 않습니다. filid의 기본 판정은 자식에서 조상의 뿌리 파일로 가는 import를 경계 우회로 보기 때문에, 저장소 원칙에 따라 여기에 선언합니다.
+- **Reason**: 부품 `FieldInputBridge`·`DeferredFieldProxy`는 이 fractal의 자식입니다. 루트의 Module Contract Principles 4(위로는 열려 있어 조상의 뿌리 파일을 직접 가져올 수 있고, 조상의 `index.ts`는 가져올 수 없음)에 따라, 재귀 렌더 props 계약 `FieldProxyProps`를 뿌리의 `type.ts`에서 타입 전용으로 직접 읽습니다. 진입점은 이 형을 쓰는 바깥 소비자가 없어서 내보내지 않습니다. filid의 기본 판정은 자식에서 조상의 뿌리 파일로 가는 import를 경계 우회로 보기 때문에, 저장소 원칙에 따라 여기에 선언합니다.
 
 ## Last Updated
 

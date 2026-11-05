@@ -41,7 +41,7 @@ const MOUNTED_CHILDREN = 2;
  * - `RequestFocus`: Focuses the first focusable element (input, textarea, select, button) in container
  * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
- * Usage in FieldInputSlot:
+ * Usage in FieldInputBridge:
  * - The returned generation keys the input and captures its current value.
  *
  * Design Note:
