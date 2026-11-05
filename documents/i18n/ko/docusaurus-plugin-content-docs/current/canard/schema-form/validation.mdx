@@ -23,7 +23,7 @@ root load마다 다음 프레임 뒤의 검증 슬롯 하나를 예약합니다.
 
 `ShowError.Always`·true는 항상, `Never`·false는 전혀 표시하지 않으며 `Edited`, `Touched`는 해당 interaction flag를 요구합니다. 기본 `EditedTouched`는 둘 다 필요합니다. 노드의 `FieldNodeState.ErrorVisible`은 이 정책을 덮어씁니다.
 
-Form의 `showError` prop은 로컬 정책의 초기값이며 prop 변경만으로 현재 정책을 동기화하지 않습니다. `handle.showError(true)`는 정책을 true로 설정합니다. 새 prop이 commit된 뒤 `handle.showError(false)`를 호출하면 최신 Form prop을 적용하므로 반드시 숨긴다는 뜻은 아닙니다. `reset()`도 다른 [load 연산](./api-reference#configuration-lifetime)과 함께 해당 prop을 다시 적용합니다. 새 React `key` 등으로 Form을 다시 마운트하면 새 prop으로 정책을 초기화합니다. FormProvider의 `showError`는 Form의 현재 로컬 정책이 undefined라서 fallback을 사용할 때만 live 갱신됩니다.
+Form의 `showError` prop은 로컬 정책의 초기값이며 prop 변경만으로 현재 정책을 동기화하지 않습니다. `handle.showError(true)`는 정책을 true로 설정합니다. 새 prop이 commit된 뒤 `handle.showError(false)`를 호출하면 최신 Form prop을 적용하므로 반드시 숨긴다는 뜻은 아닙니다. `reset()`도 다른 [load 연산](./api-reference#configuration-lifetime)과 함께 해당 prop을 다시 적용합니다. 새 React `key` 등으로 Form을 다시 마운트하면 새 prop으로 정책을 초기화합니다. FormProvider의 `showError`는 Form의 현재 로컬 정책이 undefined라서 fallback을 사용할 때만 live 갱신됩니다. 유효하지 않은 native 제출 후의 자동 오류 공개와 정책 예외는 [제출](./error-reference#submission)을 참조하십시오.
 
 OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하며 마지막 release 이후 계속 적격이어야 합니다. 부적격에 따른 숨김은 즉시 적용합니다. release는 pending true→false 정착, quiet post-paint 이력 drop, 수락한 명시적 root 판정, dispose 때 발생합니다. OnRequest·None은 이력 없이 현재 적격성을 사용합니다.
 

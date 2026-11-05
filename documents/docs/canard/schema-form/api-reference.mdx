@@ -57,12 +57,12 @@ Changing the `validatorFactory` reference rebuilds the Form tree, so use a stabl
 | `findNode(path) / findNodes(path)` | First or all matching live nodes. |
 | `getState() / setState(flags) / clearState()` | Read aggregate flags / patch or clear the whole tree. |
 | `getErrors() / validate()` | Raw issues / a promise for a fresh verdict. |
-| `focus(path?) / select(path?)` | Ask the input for focus or selection. |
+| `focus(path?) / select(path?)` | Request focus on the first input, textarea, select, or button in the node's input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
 | `refresh(path?) / remount(path?)` | Re-read committed input values / remount a rendered subtree. |
 | `reset(option?) / rebuild(option?)` | Root load operations described above. |
 | `showError(visible?)` | Display override; see Validation. |
 | `getAttachedFilesMap()` | Map&lt;string, File[]&gt;; see the file example. |
-| `submit()` | Promise-returning submission; handler also exposes pending and subscribe. |
+| `submit()` | Promise-returning imperative submission; handler also exposes pending and subscribe. See [native and imperative submission](./error-reference#submission) for rejection and reveal behavior. |
 
 Focus/select/refresh/remount with no matching node do nothing. Before mount, `findNode` returns null, `findNodes`/`getErrors` return empty arrays, `validate()` resolves an empty array, and `getState()` returns an empty object. These empty query results do not establish a validation verdict.
 
@@ -172,11 +172,11 @@ Opt in with `virtualization: true` or an options object. The complete node tree 
 | threshold | 30 | Minimum rendered child count before gating a branch |
 | eagerCount | 20 | Leading children mounted immediately per gated branch |
 | rootMargin | '100%' | Viewport reveal margin, using px/% units |
-| backfill | VirtualizationBackfill.Idle | Idle reveals progressively; None waits for visibility or focus/select commands |
+| backfill | VirtualizationBackfill.Idle | Idle reveals progressively; None waits for visibility or a focus/select command delivered to the placeholder's node |
 | estimateHeight | 40 | Number or node-to-height function, in px |
 | Placeholder | none | Component receiving node and height |
 
-Placeholders use `data-path`, `data-deferred`, and aria-hidden with an estimated height. Deferred inputs are unavailable to page search, screen readers, and autofill until revealed; backfill has no fixed completion-time promise.
+Placeholders use `data-path`, `data-deferred`, and aria-hidden with an estimated height. Deferred inputs are unavailable to page search, screen readers, and autofill until revealed; backfill has no fixed completion-time promise. For the focus limit on an invalid native submission, see [submission](./error-reference#submission).
 
 SSR renders all inputs and hydration preserves them. Gating applies to branches/children added after hydration; prepared children retain their gate decision even when a tab or accordion first displays them later. Without IntersectionObserver browsers render eagerly, while servers do not warn.
 

@@ -26,7 +26,7 @@ Use the interactive examples to inspect behavior, then adapt the complete consum
 
 ## Custom layout {#composition}
 
-Arrange namespace components inside the native form. The layout owns which inputs appear; see [rendering](../core-concepts#rendering).
+Arrange namespace components inside the native form. The submit button uses the [native submission flow](../error-reference#submission). The layout owns which inputs appear; see [rendering](../core-concepts#rendering).
 
 ```tsx
 import { Form } from '@canard/schema-form';
@@ -99,7 +99,7 @@ export function CustomInputForm() {
 
 ## Submit with a typed handle {#submit}
 
-The button calls the promise-returning handle and catches rejection. Validation issues stay on the form; other failures appear in the output. Explicit Value parameters keep the defaultValue and ref types aligned; see [inference](../api-reference#typescript).
+The button calls the promise-returning handle and catches rejection. Validation issues stay on the form; other failures appear in the output. For rejection and reveal behavior by submission path, see [submission](../error-reference#submission). Explicit Value parameters keep the defaultValue and ref types aligned; see [inference](../api-reference#typescript).
 
 ```tsx
 import { useRef, useState } from 'react';

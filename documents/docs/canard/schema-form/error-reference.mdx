@@ -24,10 +24,10 @@ Compare group-qualified `error.code` or record.code with `FormErrorCode` / `Form
 | load | Construction, mount, reset, rebuild, or validator-replacement load chains |
 | write | Value/state/array/context/external-issue writes and their notification listeners |
 | validate | Whole-schema compile, verdict, result delivery, and their listeners |
-| submit | Degraded submission rejection or a failure first caught by native submit |
+| submit | Degraded submission rejection or a failure before the verdict first captured by native submit; excludes the schema verdict and onSubmit failures |
 | render | Renderer boundaries and render warnings |
 
-An already open chain retains its outer origin through nested writes/resets; tree-construction occurrences are always load. Initial external-errors application is load, later prop replacement is write, and a validation failure already reported inside submit retains validate origin. Some development console warnings have no onError record, so those channels need not match.
+An already open chain retains its outer origin through nested writes/resets; tree-construction occurrences are always load. Initial external-errors application is load, later prop replacement is write, and a validator execution or compilation failure already reported inside submit retains validate origin. For schema verdicts and callback failures, see [submission](#submission). Some development console warnings have no onError record, so those channels need not match.
 
 ## Rejections, listeners, and host failures {#host-failures}
 
@@ -35,11 +35,19 @@ A validate/submit caller can receive one aggregate rejection while onError recei
 
 Callerless failure delivery unfolds only well-formed, nonempty MultipleErrors bundles, in element order and depth-first. Arrays need stable integer length from 1 through 2^32−1 and own indices; each traversal shares a 1,000,000-element inspection budget. Malformed, unreadable, cyclic, revisited, length-changing, or over-budget bundles are opaque leaves retaining identity, so the host can receive the bundle itself.
 
-Engine validation waves, automatic OnChange, and load flush preserve handler-first failure order. Native submit and the load slot preserve original-first order. React/render boundaries record the original thrown value. Capture suppresses only valid already-reported bundles; unreadable metadata falls back to one fixed-message record containing the original value. These details matter when correlating host failures with onError rather than counting them as separate root causes.
+Engine validation waves, automatic OnChange, and load flush preserve handler-first failure order. Failures reported by native submit and the load slot preserve original-first order; the native schema verdict follows the separate [reveal flow](#submission). React/render boundaries record the original thrown value. Capture suppresses only valid already-reported bundles; unreadable metadata falls back to one fixed-message record containing the original value. These details matter when correlating host failures with onError rather than counting them as separate root causes.
 
 ## Submission failures and native Enter {#submission}
 
-A schema-invalid submission rejects with `FormErrorCode.SchemaValidationFailed`; degraded diagnostics reject with `FormErrorCode.SubmitWhileDegraded`. An accepted submission passes the captured emitted value to onSubmit, awaiting its promise. Catch imperative submit rejections in event handlers. For visibility policy use [Validation](./validation#visibility).
+An accepted submission passes the captured emitted value to `onSubmit`, awaiting its promise. An imperative `formRef.current.submit()` or `useFormSubmit` call rejects an invalid schema verdict with a validation error carrying `FormErrorCode.SchemaValidationFailed` and does not automatically reveal errors. Catch its rejection in event handlers; use [showError](./validation#visibility) when that flow needs to reveal untouched fields.
+
+A native submission, from Enter in a field or a submit button inside the Form, handles the Form's own invalid schema verdict without calling `onSubmit`. That verdict reaches neither `onError` nor the host error sink. The Form reveals errors as `showError(true)` does and requests focus on the first eligible invalid node.
+
+The committed error-display policy is the Form's current local `showError` state, falling back to the FormProvider's policy. If it is `false`, or contains `ShowError.Never` without `ShowError.Always`, native submission neither reveals nor focuses. A node's own `ErrorVisible` still overrides error display; see [visibility and policy lifetime](./validation#visibility). A Form-level `disabled` or `readOnly` permits reveal but prevents focus. A verdict arriving after reset, rebuild, validator replacement, or unmount is discarded; focus also requires the same mounted load after reveal.
+
+Focus candidates have their own `node.errors`, are present under present ancestors, are neither disabled nor read-only, and do not set `FieldNodeState.ErrorVisible` to false. The first candidate below the root in tree preorder wins; the root is used only when no descendant qualifies. Tree order matches screen order with default rendering; a custom layout can differ. The request uses the [focus targets](./api-reference#form-handle). If the chosen input cannot take focus, focus stays where it is and no later candidate is tried. This includes an input-level disabled override, an omitted input or error fallback, and a field inside an unrevealed ancestor's virtualization placeholder.
+
+Degraded diagnostics reject submission with `FormErrorCode.SubmitWhileDegraded`. On the native path, degraded and validation-unavailable failures reach `onError` and then the host sink; an identical compilation failure already reported by the Form reaches only the sink. An `onSubmit` exception or rejected promise reaches only the host sink, without `onError`, even if it is a validation error thrown by application code. Imperative callers receive these rejections instead of forwarding them to the host sink.
 
 Enter submission follows the native form algorithm. Include a submit button when there are several text-like fields. A form with a single blocking text input and checkboxes may submit without a button; do not generalize that case to multiple text inputs. A button outside the form needs an explicit handle call or native form association.
 
@@ -87,7 +95,7 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormErrorCode.TerminalOptionUnsupported` | `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` | a single-row kind declares a different terminal option. |
 | `FormErrorCode.ValidatorBindRefused` | `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED` | a plugin refuses a bound validator instance outside a form. |
 | `FormErrorCode.InvalidControlShape` | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE` | a controls/options group or an explicitly checked shape such as injectTo, fields, or discriminator is malformed. |
-| `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | schema validation rejects a submission. |
+| `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | invalid submission verdict; [handling depends on the submission path](#submission). |
 | `FormErrorCode.ReservedPropertyName` | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME` | a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` and cannot round-trip through a form pointer. |
 
 ## Warning codes {#warning-codes}

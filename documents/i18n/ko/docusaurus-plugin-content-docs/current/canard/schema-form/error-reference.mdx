@@ -24,10 +24,10 @@ group-qualified `error.code`·record.code를 `FormErrorCode`, `FormWarningCode` 
 | load | 생성·mount·reset·rebuild·검증기 교체의 load chain |
 | write | 값·state·배열·context·외부 오류 쓰기와 통지 listener |
 | validate | 전체 schema compile·판정·결과 전달과 listener |
-| submit | degraded 제출 거부 또는 native submit에서 처음 잡은 실패 |
+| submit | degraded 제출 거부 또는 판정 전에 native submit이 처음 capture한 실패. 스키마 판정과 onSubmit 실패는 제외 |
 | render | renderer 경계와 render warning |
 
-이미 열린 chain은 중첩 쓰기·reset에도 바깥 origin을 유지하며 트리 생성 발생은 항상 load입니다. 외부 errors의 최초 적용은 load, 이후 prop 교체는 write이며 submit 안에서 이미 보고한 검증 실패는 validate를 유지합니다. 일부 개발 console 경고에는 onError record가 없어 두 채널이 같지 않을 수 있습니다.
+이미 열린 chain은 중첩 쓰기·reset에도 바깥 origin을 유지하며 트리 생성 발생은 항상 load입니다. 외부 errors의 최초 적용은 load, 이후 prop 교체는 write이며 submit 안에서 이미 보고한 검증기 실행·컴파일 실패는 validate를 유지합니다. 스키마 판정과 callback 실패는 [제출](#submission)을 참조하십시오. 일부 개발 console 경고에는 onError record가 없어 두 채널이 같지 않을 수 있습니다.
 
 ## rejection·listener·host 실패 {#host-failures}
 
@@ -35,11 +35,19 @@ validate·submit caller는 aggregate rejection 하나를 받고 onError는 개�
 
 caller 없는 실패 전달은 정상적이고 비어 있지 않은 MultipleErrors bundle만 원소 순서·깊이 우선으로 펼칩니다. 배열은 1부터 2^32−1까지의 안정된 정수 길이와 own index가 필요하고 각 순회는 원소 1,000,000개의 검사 budget을 공유합니다. malformed·읽기 불가·순환·재방문·길이 변경·budget 초과 bundle은 같은 identity의 불투명 leaf이므로 host가 bundle 자체를 받을 수 있습니다.
 
-engine 검증 wave·자동 OnChange·load flush는 handler-first, native submit·load slot은 original-first 실패 순서를 유지합니다. React·render 경계는 원래 thrown 값을 기록합니다. capture는 정상적으로 이미 보고된 bundle만 억제하고 읽기 불가 metadata는 원래 값을 담은 고정 fallback 메시지 record 하나로 보고합니다. host 실패와 onError를 연결할 때 각각을 별개 원인으로 세지 않도록 이 조건을 고려하십시오.
+engine 검증 wave·자동 OnChange·load flush는 handler-first, native submit·load slot에서 보고하는 실패는 original-first 순서를 유지합니다. native 스키마 판정은 별도의 [오류 공개 흐름](#submission)을 따릅니다. React·render 경계는 원래 thrown 값을 기록합니다. capture는 정상적으로 이미 보고된 bundle만 억제하고 읽기 불가 metadata는 원래 값을 담은 고정 fallback 메시지 record 하나로 보고합니다. host 실패와 onError를 연결할 때 각각을 별개 원인으로 세지 않도록 이 조건을 고려하십시오.
 
 ## 제출 실패와 native Enter {#submission}
 
-스키마 검증에 실패한 제출은 `FormErrorCode.SchemaValidationFailed`, degraded 진단 상태의 제출은 `FormErrorCode.SubmitWhileDegraded`로 거부합니다. 수락한 제출은 캡처한 방출 값을 onSubmit에 전달하고 promise를 기다립니다. 이벤트 handler에서는 명령형 submit rejection을 처리하십시오. 표시 정책은 [검증](./validation#visibility)에 있습니다.
+수락한 제출은 캡처한 방출 값을 `onSubmit`에 전달하고 promise를 기다립니다. 명령형 `formRef.current.submit()` 또는 `useFormSubmit` 호출은 유효하지 않은 스키마 판정을 `FormErrorCode.SchemaValidationFailed`를 가진 검증 오류로 거부하며 오류를 자동 공개하지 않습니다. 이벤트 handler에서 rejection을 처리하고, 해당 흐름에서 미조작 필드의 오류를 공개하려면 [showError](./validation#visibility)를 사용하십시오.
+
+필드에서 Enter를 누르거나 Form 안의 submit 버튼으로 시작한 native 제출은 `onSubmit`을 호출하지 않고 Form 자체의 유효하지 않은 스키마 판정을 처리합니다. 이 판정은 `onError`·host 오류 sink에 전달하지 않습니다. Form은 `showError(true)`처럼 오류를 공개하고 첫 번째 적격 오류 노드에 focus를 요청합니다.
+
+commit된 오류 표시 정책은 Form의 현재 로컬 `showError` state이며, 없으면 FormProvider 정책을 사용합니다. 이 값이 `false`이거나 `ShowError.Always` 없이 `ShowError.Never`를 포함하면 native 제출은 오류 공개와 focus를 모두 하지 않습니다. 노드 자체의 `ErrorVisible`은 여전히 오류 표시를 덮어씁니다. [표시와 정책 수명](./validation#visibility)을 참조하십시오. Form 수준의 `disabled`·`readOnly`는 공개를 허용하지만 focus는 막습니다. reset·rebuild·검증기 교체·unmount 이후 도착한 판정은 버리며, 공개 후 focus 직전에도 같은 load가 마운트되어 있어야 합니다.
+
+focus 후보는 자기 `node.errors`가 있고, 표시 중인 조상 아래에서 자신도 표시 중이며, disabled·readOnly가 아니고, `FieldNodeState.ErrorVisible`을 false로 지정하지 않은 노드입니다. 루트 아래의 트리 전위 순서에서 첫 후보를 선택하고, 적격 자손이 없을 때만 루트를 사용합니다. 기본 렌더링에서는 트리 순서가 화면 순서와 같지만 사용자 레이아웃은 다를 수 있습니다. 요청에는 [focus 대상 규칙](./api-reference#form-handle)을 적용합니다. 선택한 입력이 focus를 받지 못하면 초점은 그대로이며 다음 후보를 시도하지 않습니다. 입력 수준의 disabled 덮어쓰기, 생략된 입력이나 오류 fallback, 아직 공개하지 않은 조상 노드의 가상화 placeholder 안의 필드가 이에 해당합니다.
+
+degraded 진단 상태의 제출은 `FormErrorCode.SubmitWhileDegraded`로 거부합니다. native 경로에서는 degraded·검증 불가 실패를 `onError`, 그다음 host sink로 전달합니다. 단, Form이 이미 보고한 동일한 컴파일 실패는 sink로만 전달합니다. `onSubmit`의 예외나 promise 거부는 `onError` 없이 host sink로만 전달하며, 애플리케이션 코드가 검증 오류를 던져도 같습니다. 명령형 호출자는 이런 거부를 직접 받으며 host sink로 전달하지 않습니다.
 
 Enter 제출은 native form 알고리즘을 따릅니다. text-like 필드가 여러 개이면 submit 버튼을 포함하십시오. blocking text 입력 하나와 checkbox 조합은 버튼 없이 제출할 수 있지만 이를 여러 text 입력에 일반화하지 마십시오. form 밖 버튼에는 명시적 handle 호출 또는 native form 연결이 필요합니다.
 
@@ -87,7 +95,7 @@ Enter 제출은 native form 알고리즘을 따릅니다. text-like 필드가 �
 | `FormErrorCode.TerminalOptionUnsupported` | `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` | 전략이 고정된 종류에 반대 terminal 옵션을 지정한 경우 |
 | `FormErrorCode.ValidatorBindRefused` | `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED` | 값을 변경하는 AJV instance의 bind가 거부되는 경우 |
 | `FormErrorCode.InvalidControlShape` | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE` | controls·options 그룹 또는 injectTo·fields·discriminator 등 명시적으로 검사하는 형상을 위반한 경우 |
-| `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | 검증에 따라 제출이 거부되는 경우 |
+| `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | 유효하지 않은 제출 판정. [처리는 제출 경로에 따라 다릅니다](#submission). |
 | `FormErrorCode.ReservedPropertyName` | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME` | property 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40` 중 하나여서 form pointer로 round-trip할 수 없는 경우 |
 
 ## 경고 코드 {#warning-codes}
