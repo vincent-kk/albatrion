@@ -62,7 +62,10 @@ export default defineConfig({
             'src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts',
           ],
           environment: 'node',
-          include: ['src/**/*.{spec,test}.ts'],
+          include: [
+            'src/**/*.{spec,test}.ts',
+            'stories/components/panels/utils/__tests__/*.test.ts',
+          ],
           exclude: [...renderTests, ...verifyOnlyTests, ...bundleTests],
         },
       },
