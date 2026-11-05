@@ -145,8 +145,8 @@ export const useFieldInputControl = <Node extends FieldNode>(
 /** Focus targets, in document order: every native control, `<select>` included. */
 const FOCUS_SELECTOR = 'input, textarea, select, button' as const;
 
-/** Select targets: a `<select>` has no text selection, so a following text input is still found. */
-const SELECT_SELECTOR = 'input, textarea, button' as const;
+/** Select targets: only controls whose text `select()` can select, so a leading button or `<select>` is passed over. */
+const SELECT_SELECTOR = 'input, textarea' as const;
 
 /** Elements whose text `select()` can select. */
 type SelectableElement = HTMLInputElement | HTMLTextAreaElement;

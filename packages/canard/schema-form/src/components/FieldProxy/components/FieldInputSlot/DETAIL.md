@@ -38,7 +38,7 @@
 
 - 가상화가 켜진 SSR 입력은 React 18/19의 일반·StrictMode 하이드레이션에서 DOM identity와 값을 보존하고 placeholder나 recoverable error를 만들지 않습니다. 중첩 브랜치 remount 뒤에도 노출을 유지하며, 배열에 나중에 추가한 eager window 밖 항목은 지연합니다. 문턱 미만에서 실제 마운트한 항목도 문턱 도달 뒤 remount하면 계속 노출합니다.
 - 언마운트하면 해당 경로의 첨부 파일 상태를 제거합니다.
-- refresh는 자식 프록시가 마운트되어 있는지에 따라 입력 버전을 갱신하고, focus/select는 해당 입력의 DOM 명령으로 이어집니다(REACT-028, EVENT-063).
+- refresh는 자식 프록시가 마운트되어 있는지에 따라 입력 버전을 갱신하고, focus/select는 해당 입력의 DOM 명령으로 이어집니다. focus는 입력 컨테이너 안 첫 `input`·`textarea`·`select`·`button`에, select는 글자를 고를 수 있는 첫 `input`·`textarea`에 갑니다. 앞에 놓인 버튼이나 `<select>`가 select 요청을 가로채면 `select()`가 아무것도 하지 않기 때문입니다(REACT-028, EVENT-063).
 - 실패한 입력은 피어의 쓰기로 생긴 자동 Refresh와 명시적인 Refresh를 거쳐도 fallback을 유지하고, RequestRemount나 폼 key 교체 뒤에는 다시 실행됩니다. 정상 입력의 Refresh는 원본 입력만 교체하며, 피어 입력의 DOM 상태와 입력 오류 경계는 유지합니다(EVENT-039·040·042·070, 112C-01).
 - 조합 중에 Refresh가 와도 매 단계의 IME 텍스트와 입력 인스턴스를 보존하고 `value` setter를 호출하지 않습니다. `compositionend`가 한 번 오면 그 뒤에 입력을 다시 마운트하며, 이전 입력의 조합 텍스트가 노드에 뒤늦게 쓰이는 일은 없습니다(EVENT-065, REACT-024).
 - Refresh 유예가 없는 스냅숏은 통합 마스크로 한 번에 읽고, 유예 중에는 Refresh 제외 개정과 적용 세대만 읽습니다. 렌더와 구독 사이에 전달된 자식·값 갱신은 화면이 따라잡습니다. 마운트된 자식이 보류한 Refresh는 자식을 해제하는 것만으로는 추가 커밋하지 않고, 다음 전달 때 한 번 적용합니다. `array-push-remove-100`의 커밋은 202회로 유지됩니다.
