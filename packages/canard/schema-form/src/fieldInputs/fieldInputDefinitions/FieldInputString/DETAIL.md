@@ -2,22 +2,24 @@
 
 ## Requirements
 
-- 부모 `fieldInputs`의 기본 입력 계약 중 문자열 입력 몫을 구현합니다(REACT-027).
+기본 문자열 입력의 표시는 브라우저 DOM에 맡깁니다. union의 형 해석까지 일반 문자열 입력에 넣으면 모든 문자열 입력이 불필요한 초안 상태를 갖게 됩니다.
 
 ## API Contracts
 
-- 진입점은 정의 `FieldInputStringDefinition`과 함께 컴포넌트 `FieldInputString`을 이름으로 내보냅니다. 형제 `FieldInputUnion`이 이 진입점으로 컴포넌트를 가져옵니다.
-- 치다 만 글과 입력기 조합은 노드가 아닌 입력의 초안입니다(REACT-027).
-- 빈 칸은 `nullable` 과 무관하게 `undefined` 를 보냅니다. 입력은 `null` 을 자동으로 만들지 않습니다(REACT-027, 444C-09).
-
-- `misfit` 값은 조작 요소에 `aria-invalid="true"`로 표시하며 노드 값은 바꾸지 않습니다(REACT-027, SURFACE-061).
+- 빈 값과 진단의 공통 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
+- 비제어 입력을 기본으로 두며, 형제 union 입력에는 진입점으로 같은 컴포넌트를 제공합니다. union은 `inputProps`로 제어 값과 이벤트를 대체하므로, 공통 문자열 입력에 union 전용 상태를 더하지 않습니다.
+- Refresh와 조합 중 DOM 수명은 [FieldInputBridge 계약](../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)에 둡니다. 이 입력의 이벤트 처리만으로 조합 중 미전송을 보장하지 않습니다.
 
 ## Acceptance Criteria
 
-### string-drafts — 조합 중 초안
+### REACT-027 — 표시를 수리하려고 노드에 쓰지 않습니다
 
-- 입력기 조합 중에는 노드에 쓰지 않습니다(REACT-027).
+- 받은 기본값을 표시하는 일이 형 변환이나 빈 값의 자동 저장을 일으키지 않습니다. 표현과 노드 값의 소유권을 섞지 않아야 외부 쓰기를 사용자의 수정으로 처리하지 않습니다.
+
+### string-drafts — 특수 초안은 호출자가 소유합니다
+
+- 일반 변경 처리기는 DOM 문자열을 전달하며 별도의 조합 판정 상태를 두지 않습니다. union의 조합 차단·흐림 복귀는 [union 계약](../FieldInputUnion/DETAIL.md)에 따라 호출자가 제공합니다.
 
 ## Last Updated
 
-2026-10-26: 무효 값의 aria-invalid 표지와 노드 값 보존 계약을 명시합니다.
+비제어 표시와 이벤트 대체의 경계 또는 일반 문자열과 union의 초안 책임이 바뀔 때 갱신합니다.

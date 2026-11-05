@@ -2,21 +2,25 @@
 
 ## Requirements
 
-- 부모 `fieldInputs`의 기본 입력 계약 중 문자열 enum 입력 몫을 구현합니다(대기열 38).
+선택되지 않은 값과 enum의 첫 항목을 구별합니다. 브라우저의 기본 선택 때문에 저장하지 않은 값이 선택된 것처럼 보이지 않아야 합니다.
 
 ## API Contracts
 
-- undefined를 맨 앞의 빈 비활성 옵션으로 표시하며, enum에 빈 문자열이 있어도 이 옵션이 초기 선택을 차지합니다. null·undefined가 아닌 집합 밖 기본값은 맨 앞의 비활성 옵션으로 표시하고, null의 기존 선택 동작은 유지합니다. 추가 판정은 O(1)이며 undefined일 때 옵션 DOM 하나만 추가합니다.
-- `type.ts`는 이 입력의 문맥 형을 정의합니다.
-
-- `misfit` 값은 조작 요소에 `aria-invalid="true"`로 표시하며 노드 값은 바꾸지 않습니다(REACT-027, SURFACE-061).
+- 공통 무효 표시와 값 보존 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
+- 라벨 alias는 전달된 입력 props로 소비합니다. [presentation 계약](../../../types/DETAIL.md)이 정한 설정 위치를 입력 내부에서 다른 그룹으로 해석하지 않습니다.
 
 ## Acceptance Criteria
 
-### enum-placeholder — 빈 선택
+### REACT-027 — 영역 밖 값의 표시가 데이터를 바꾸지 않습니다
 
-- undefined와 집합 밖 기본값은 맨 앞의 비활성 옵션으로 표시됩니다.
+- `undefined`는 맨 앞의 빈 비활성 옵션으로 표시합니다. enum에 빈 문자열이 있어도 값 부재가 그 리터럴의 선택으로 보이지 않게 합니다.
+- null·undefined가 아닌 집합 밖 기본값은 원문을 담은 비활성 옵션으로 표시합니다. 첫 유효 옵션으로 수리하거나 렌더 때문에 값을 발행하지 않습니다.
+- null에는 위 영역 밖 옵션을 자동으로 추가하지 않으며 enum의 기존 선택 방식에 맡깁니다. 일반적인 nullable 비우기 편집기까지 제공한다고 약속하지 않습니다.
+
+### enum-placeholder — 선택 범위의 한계
+
+- 이 입력의 표시 보완은 단일 문자열 노드의 enum용입니다. union 리터럴 선택은 [기본 union의 한계](../FieldInputUnion/DETAIL.md)를 따릅니다.
 
 ## Last Updated
 
-2026-10-26: 무효 값의 aria-invalid 표지와 노드 값 보존 계약을 명시합니다.
+값 부재·집합 밖 값·null의 선택 표시나 라벨 설정의 책임이 바뀔 때 갱신합니다.

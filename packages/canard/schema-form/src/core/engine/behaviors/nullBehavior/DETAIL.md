@@ -2,19 +2,18 @@
 
 ## Requirements
 
-- 의존 방향은 `blueprint·record·behaviors/utils < nullBehavior < behaviors 뿌리 < FieldNode`입니다. 이 종류 fractal은 정착·겉면·레거시를 가져오지 않으며 경계 예외가 없습니다(NODE-009·016, LANDING-159).
+null은 명시 값이고 undefined는 없음입니다. 둘을 합치면 사용자가 준 null이 채움이나 생략으로 바뀌므로 이 행의 해석과 투영은 항등을 유지합니다.
 
 ## API Contracts
 
-- 진입점은 `nullBehavior: Behavior`를 이름으로 내보냅니다. 공통 여덟 칸 순서(`arrange`는 공유 거부 칸, 36C-01), `type: 'null'`, `strategy: 'terminal'`, 빈 자식 선언을 지킵니다(NODE-002·006·047).
-- `interpret`는 모든 값을 항등으로 돌려줍니다. `null`만 이 종류의 멤버이고 `undefined`는 없음으로 남으며, 다른 값은 경고등을 켤 수 있어도 행이 바꾸지 않습니다. `assemble`과 `project`는 방출 정책 외에는 원본 참조를 보존합니다(WRITE-075·084·093, VALUE-030·037).
+null을 받은 뒤의 멤버십·misfit과 채움 판단은 [settle 계약](../../settle/DETAIL.md)에 둡니다. 이 행은 다른 값을 null로 바꾸어 정합성을 만들지 않습니다.
 
 ## Acceptance Criteria
 
-### null-row — 항등 해석
+### null-row — 항등은 정합성을 보장하지 않습니다
 
-- null·없음·잘못된 종류의 입력은 모두 같은 값과 참조로 돌아오고, 멤버십만 구별합니다(WRITE-084·093).
+null·undefined·잘못된 종류의 입력을 같은 값과 참조로 돌려줍니다. 반환되었다는 사실은 null 멤버라는 판정이 아니며, 잘못된 원본도 그대로 투영합니다. 다른 값의 오류를 해석 단계에서 숨기지 않기 위한 경계입니다.
 
 ## Last Updated
 
-2026-09-29
+null과 없음의 구분 또는 항등 해석·투영 경계가 바뀔 때 갱신합니다.

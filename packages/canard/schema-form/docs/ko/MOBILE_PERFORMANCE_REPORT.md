@@ -525,11 +525,11 @@ userType 변경: 'guest' → 'admin'
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | Input `useMemo` 캐시                      |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | FieldRenderer `memo` 래핑                 |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | `enabled=false` 시 null 반환              |
-| `src/components/FieldProxy/components/FieldInputBridge/FieldInputBridge.tsx`                                  | FieldInputBridge `memo` 래핑                |
-| `src/components/FieldProxy/components/FieldInputBridge/utils/createFieldInputBridge.tsx`                | `useReference` ref 안정화                 |
-| `src/components/FieldProxy/components/FieldInputBridge/hooks/useChildFields.tsx`                            | `Map` 캐시 + child `memo` 래핑            |
-| `src/components/FieldProxy/components/FieldInputBridge/hooks/useFieldInputControl.ts`                       | RequestRefresh/Focus/Select 구독          |
-| `src/components/FieldProxy/components/FieldInputBridge/type.ts`                                             | `REACTIVE_RERENDERING_EVENTS`             |
+| `src/components/FieldProxy/components/FieldInputBridge/FieldInputBridge.tsx`                              | FieldInputBridge `memo` 래핑              |
+| `src/components/FieldProxy/components/FieldInputBridge/utils/createFieldInputBridge.tsx`                  | `useReference` ref 안정화                 |
+| `src/components/FieldProxy/components/FieldInputBridge/hooks/useChildFields.tsx`                          | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/FieldProxy/components/FieldInputBridge/hooks/useFieldInputControl.ts`                     | RequestRefresh/Focus/Select 구독          |
+| `src/components/FieldProxy/components/FieldInputBridge/type.ts`                                           | `REACTIVE_RERENDERING_EVENTS`             |
 | `src/hooks/fieldNode/useFieldNodeTracker.ts`                                                              | 노드별 독립 구독 메커니즘                 |
 | `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` (v0.10.6에만 있음) | microtask 배칭                            |
 | `src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/createDynamicFunction.ts`    | `new Function()` — CSP 관련               |

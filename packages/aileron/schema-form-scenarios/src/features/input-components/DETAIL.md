@@ -2,37 +2,27 @@
 
 ## Requirements
 
-184라운드 검토안의 G6 표가 이 부류의 범위를 정한다.
-React 컴포넌트·정의·File 객체는 소비자가 만들고, 이 부류는 스키마·라벨·경로·기대값만 든다.
-숫자 badInput·포매터 캐럿·IME는 `Scenarios/Browser gates`(G23) 스토리가 이미 실제 브라우저에서 재므로 이 부류가 다시 만들지 않는다.
-장면을 가져올 때 실행을 수행하거나 엔진 의존성을 도입하지 않는다(TEST-010).
+입력 해석·정의 우선순위·파일 첨부의 소비자 사례를 소유합니다. React 컴포넌트와 File 객체는 소비자가 만들고 장면은 라벨·경로·기대값만 가져 런타임 결합을 막습니다.
 
 ## API Contracts
 
-`inputComponentsFeatureScenarios`는 `index.ts`를 통해 이 부류의 순서 있는 장면 목록을 내보낸다.
-`LabeledDefinition`은 엔진 없는 test 부분집합(`inputType`, `path`)과 라벨이며, 소비자의 컴포넌트는 `data-winner`에 그 라벨을 그린다. `InputWinner`는 라벨, 내장 입력 `default`, 입력 없음 `none` 가운데 하나다.
-`inputResolutionPluginDefinition`은 소비자가 한 번 등록하는 플러그인 정의다. 등록은 전역이고 누적되므로 test는 이 부류의 probe inputType만 맞춘다.
-`trimStages`, `fileAttachStages`, `childComponentStages`, `mapEntryStages`는 소비자 상호작용의 순서와 그 뒤의 값·첨부·자식 표시를 적는다.
+전역으로 누적되는 플러그인 정의는 이 부류의 probe inputType만 맞춥니다. 넓은 test가 다른 장면의 입력 해석까지 바꾸지 않게 합니다.
+
+실제 컴포넌트는 소비자가 라벨로 해석하고 같은 승자 표식을 관찰합니다. 숫자 badInput·포매터 캐럿·IME는 전용 Browser gates가 실제 브라우저에서 확인하므로 이 부류의 jsdom 결과로 대체하지 않습니다.
+
+`useChildFieldErrors`의 표시 관찰은 `errorVisible`·`childErrorVisibleList`를 사용하고 원시 `errorMatrix`와 구별합니다. 자식의 오류가 남아 있어도 정책이 표시를 가릴 수 있으므로, 메시지 유무만으로 자식 상태나 오류 보유를 추정하지 않습니다.
 
 ## Acceptance Criteria
 
-### input-components-scene-data — Shared data boundary
+### input-components-scene-data — 공유 장면 경계
 
-- 목록의 모든 장면은 데이터 전용이며 엔진·테스트 러너 가져오기와 독립적이다.
-- 장면 이름은 `input-components.` 접두사로 시작하고 모든 최상위 단계에 기대값을 둔다.
-- 해석 사례는 라벨이 겹치지 않고 probe 필드 셋 모두에 승자를 적는다.
+- 공유 형식의 수용 기준은 [패키지의 scenario-data 계약](../../../DETAIL.md)에 둡니다.
 
-### input-components-scene-coverage — Scene evidence
+### input-components-scene-coverage — 관찰을 보존하는 기준
 
-| Scene file                     | Scene name                          | Behavior verified                                                                                                                                                        | Ledger evidence                          |
-| ------------------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| `input-resolution.scenario.ts` | `input-components.input-resolution` | 인라인 → 맵 → Form 정의 → Provider 정의 → 플러그인 순서로 첫 일치가 이기고, 인라인 null은 노드를 두고 입력만 그리지 않는다.                                              | FieldInputBridge INTENT, REACT-033       |
-| `input-map.scenario.ts`        | `input-components.input-map`        | 맵 키는 정확한 포인터, 앵커 없는 정규식, 한 칸을 맞추는 `*`로 맞으며, 동적 키는 노드가 아니라 `*`도 선언된 자식만 닿는다.                                                | CONTROLS-080, SCHEMA-040                 |
-| `trim-on-blur.scenario.ts`     | `input-components.trim-on-blur`     | `options.trim`은 입력 중에는 공백을 두고 blur에서만 자르며, trim이 없는 칸은 공백을 지킨다.                                                                              | CONTROLS-004, CONTROLS-005, CONTROLS-006 |
-| `file-attach.scenario.ts`      | `input-components.file-attach`      | 첨부는 경로별 목록으로 들고, 입력이 내려가면 그 항목이 빠지며, reset은 맵을 비운다.                                                                                      | LANDING-148, TEST-020, TEST-023          |
-| `props-flow.scenario.ts`       | `input-components.props-flow`       | presentation의 입력 props와 readOnly·disabled 제어가 내장 입력의 속성으로 닿는다.                                                                                        | CONTROLS-023, LANDING-168                |
-| `child-components.scenario.ts` | `input-components.child-components` | 사용자 객체 입력이 ChildFields로 자식을 그리고 useChildFieldErrors가 자식 상태로 childErrorVisibleList를 내며, 열린 객체는 한 노드로 남아 터미널 입력이 통째로 편집한다. | LANDING-167, SCHEMA-040                  |
+- 입력 해석의 각 출처를 같은 라벨 계약으로 비교하여 컴포넌트 구현에 종속된 기대값을 만들지 않습니다.
+- 전역 등록의 적용 범위를 유지하고 브라우저 전용 입력 계측을 데이터 장면으로 흉내 내지 않습니다.
 
 ## Last Updated
 
-2026-10-13
+이 부류의 관찰 범위·실행 전제·소비자 계측 경계가 바뀔 때 갱신합니다.

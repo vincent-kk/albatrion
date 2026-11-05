@@ -2,28 +2,36 @@
 
 ## Requirements
 
-폼 단위로 관찰, 대기열, 노출 기록을 관리하고 중복 노출을 방지합니다.
-`__tests__/VirtualizationManager.test.ts`는 이 소유 구획 안에서 내부 조율을 검증하며, Vitest render·react18 프로젝트가 DOM 환경에서 실행합니다.
+폼 단위로 관찰과 대기열을 공유하여 필드마다 observer·스케줄러를 만들지 않습니다. 노출 기록은 DOM 경로와 별개로 유지해 배열 재배치가 마운트 정책을 되돌리지 않게 합니다.
 
 ## API Contracts
 
-- 이 fractal은 진단 문자열 포맷터 `formatVirtualizationDisabledWarning`을 `utils/`에 소유하며, 상자 원소는 `helpers/error` 진입점에서 가져옵니다.
-- 옵션과 backfill 값의 계약은 resolveVirtualizationOptions 진입점에서 소비합니다. 부모의 집계 진입점이나 호환 타입 파일은 거꾸로 참조하지 않습니다.
-- create는 비활성이거나 관찰 API가 없으면 null을 반환합니다. forBranch와 forChild는 설정에 맞는 대상일 때만 매니저를 반환합니다.
-- 서버의 관찰 API 부재는 지원하는 전체 렌더링 경로이며 경고하지 않습니다. 가상화를 요청한 브라우저에서 관찰 API가 없을 때만 개발 경고를 전달합니다. 하이드레이션 때 마운트한 노드도 노출 원장에 기록할 수 있으며, 이후 게이트 판정은 이 기록을 보존합니다.
-- 노출이 일어나면 등록을 삭제하고 unobserve한 뒤 콜백을 실행합니다. idle backfill은 지정된 모드에서만 시작합니다.
-- Placeholder 경계는 폼마다 한 번 감싸고, 전용 보고 훅으로 DeferredFieldProxy가 제공하는 경로 문맥을 읽습니다. 경로 문맥은 이 Placeholder 용도로만 유지하며, 일반 필드는 path를 명시적으로 전달합니다(ERROR-090·114, 121C-01 F-A). Placeholder의 fiber와 보고 비용은 바뀌지 않습니다.
-
-- 유휴 예약 보조 `scheduleIdle`은 `utils/`에 있습니다. 뿌리에는 문서, 진입점, 형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+- 옵션의 의미는 [resolveVirtualizationOptions](../resolveVirtualizationOptions/DETAIL.md)를 따르며 매니저 수명과 섞지 않습니다.
+- `markRevealed`는 소비층이 커밋한 노출을 기록하는 통로입니다. 게이트 객체를 준비하거나 placeholder를 등록했다는 이유만으로 호출하지 않습니다. 실제 입력 커밋의 판정은 [FieldInputBridge](../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)가 소유합니다.
+- Placeholder의 경로 연결은 [DeferredFieldProxy](../../../components/FieldProxy/components/DeferredFieldProxy/DETAIL.md), 보고·중복 제거는 [FormErrorContext](../../../providers/FormErrorContext/DETAIL.md)가 소유합니다.
 
 ## Acceptance Criteria
 
-### virtualization-manager-contract — 관찰 가능한 동작
+### virtualization-manager-contract — 정리 뒤에도 다시 등록할 수 있습니다
 
-- register·unregister·disconnect를 반복해도 등록과 자원이 중복되지 않으며, disconnect 후에 다시 등록할 수 있습니다.
-- 노출 기록은 단방향으로 유지되고, idle 구간 하나에서 처리하는 양과 시간 예산을 제한합니다.
-- IO가 없는 서버는 경고 없이 null을 반환하고, IO가 없는 브라우저는 비활성 경고와 함께 null을 반환합니다.
+등록·해제·disconnect를 멱등하게 유지하고 disconnect 이후 등록을 허용합니다. StrictMode의 effect 재실행을 영구 폐기로 오인해 관찰이나 backfill이 멈추지 않아야 합니다.
+
+### GOAL-066 — 한 번 노출한 노드를 다시 지연하지 않습니다
+
+같은 노드의 노출 기록은 값 변경·스크롤 아웃·배열 인덱스 변경에도 유지합니다. 주소를 기록의 키로 쓰면 이동한 입력이 placeholder로 바뀌어 포커스·선택을 잃습니다. 새 노드는 별개의 수명이며, 기록을 역전시키는 API는 두지 않습니다.
+
+### IR-idle-budget — backfill의 묶음 크기와 화면 기회를 보존합니다
+
+현재의 25개 상한과 잔여 idle 예산 기준을 유지합니다. 개수는 placeholder 노출 횟수이며 각 하위 트리의 작업량이나 React 커밋 시간을 제한하지 않습니다. 더 큰 묶음이 모든 폼의 전체 노출을 줄이지는 않으므로 한 폼의 처리량만 보고 확대하지 않습니다. requestIdleCallback이 없으면 취소 가능한 safe macrotask로 화면 기회를 남깁니다. 폴백의 합성 deadline은 실제 경과 시간의 상한이 아니며, timeout이면 잔여 시간 검사보다 개수 상한이 제한을 맡습니다.
+
+### ERROR-090 — Placeholder를 해석하는 자리에서 한 번 격리합니다
+
+생성자는 Placeholder의 경계 컴포넌트를 한 번 만들고 지연 필드들이 같은 컴포넌트 타입을 공유합니다. 소비 위치마다 다시 감싸면 불필요한 경계가 늘고 재렌더가 입력 수명 변경으로 번질 수 있습니다. helpers의 React·provider 런타임 의존은 이 방어와 전용 보고 훅에 한정합니다.
+
+### IR-no-observer — 관찰 불가를 렌더 실패로 바꾸지 않습니다
+
+IO가 없는 서버는 경고 없이 null 매니저로 전체 렌더링합니다. IO가 없는 브라우저에서 가상화를 요청하면 개발 경고와 함께 같은 경로로 돌아갑니다. SSR은 정상 사용 경로이므로 브라우저 기능 누락 경고의 대상으로 취급하지 않습니다.
 
 ## Last Updated
 
-2026-10-31 — IR-5; ERROR-090·114, 121C-01 F-A.
+노출 기록의 수명, 자원 정리, idle 예산, 관찰 미지원 처리 또는 Placeholder 경계가 바뀌면 갱신합니다.

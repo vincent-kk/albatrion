@@ -2,33 +2,25 @@
 
 ## Requirements
 
-184라운드 검토안의 G4 표가 이 부류의 범위를 정한다.
-controls·exit·derive·union 부류가 이미 가진 장면은 스토리가 가져오고, 이 부류는 기존 장면에 없는 동작만 더한다.
-191라운드 공통 결정에 따라 장면 형식을 넓히지 않고, Form 속성(context)과 소비자 전용 상호작용은 사례 상수로 둔다.
-장면을 가져올 때 실행을 수행하거나 엔진 의존성을 도입하지 않는다(TEST-010).
+파생·주입·감시의 기능 장면과 소비자 사례를 소유합니다. controls·exit·derive·union의 기존 장면은 복사하지 않아 같은 동작의 기대값이 갈라지지 않게 합니다.
 
 ## API Contracts
 
-`derivationFeatureScenarios`는 `index.ts`를 통해 이 부류의 순서 있는 장면 목록을 내보낸다.
-`resetInteractionStages`는 `/name` 편집과 `/clear` 토글의 순서와 그 뒤 `/name`의 edited·touched, 값을 적는다.
-`contextStages`는 Form `context` 값의 순서와 그 뒤 제어 상태, 값, 그 단계만의 onChange 호출 수를 적는다. 첫 단계는 마운트할 때의 맥락이다.
+Form 맥락과 소비자 전용 상호작용은 사례 상수로 둡니다. 범용 장면 어휘를 props 교체와 UI 조작으로 넓히면 코어 러너까지 렌더 계층에 묶이므로 소비자가 해석합니다.
+
+맥락 사례의 첫 단계는 마운트 맥락이며 onChange 수는 그 단계에서 발생한 수입니다. 누적 횟수로 대조하여 이전 단계의 통지를 잘못 귀속하지 않습니다.
 
 ## Acceptance Criteria
 
-### derivation-scene-data — Shared data boundary
+### derivation-scene-data — 공유 장면 경계
 
-- 목록의 모든 장면은 데이터 전용이며 엔진·테스트 러너 가져오기와 독립적이다.
-- 장면 이름은 `derivation.` 접두사로 시작하고 모든 최상위 단계에 기대값을 둔다.
+- 공유 형식의 수용 기준은 [패키지의 scenario-data 계약](../../../DETAIL.md)에 둡니다.
 
-### derivation-scene-coverage — Scene evidence
+### derivation-scene-coverage — 관찰을 보존하는 기준
 
-| Scene file | Scene name | Behavior verified | Ledger evidence |
-| --- | --- | --- | --- |
-| `visible-versus-active.scenario.ts` | `derivation.visible-versus-active` | 같은 토글에서 visible은 숨기기만 하고 출력을 지키며, active는 노드와 출력을 지우고 돌아올 때 원본 값으로 다시 만든다. | CONTROLS-021, CONTROLS-022, LANDING-011 |
-| `watch-dependency.scenario.ts` | `derivation.watch-dependency` | 식이 읽지 않는 경로도 watch에 적으면 derived의 의존이 되어, 수동 편집 뒤 그 경로의 변화가 다시 계산한다. | CONTROLS-026, CONTROLS-032, SETTLE-043 |
-| `reset-interaction.scenario.ts` | `derivation.reset-interaction` | resetInteraction은 상승 변화에서만 edited·touched를 초기화하고 값과 derived 값은 건드리지 않는다. | CONTROLS-029, SETTLE-006 |
-| `context-reference.scenario.ts` | `derivation.context-reference` | `@`가 Form 맥락을 읽고, 맥락 변경은 정착 하나로 제어와 derived를 다시 계산하며, 깊이 같은 새 맥락은 정착을 돌리지 않는다. | CONTROLS-080, 28C-08 |
+- watch의 실제 의존 변화 전에 수동 편집을 관찰하여 무조건 재계산을 검출합니다.
+- resetInteraction은 상태와 값을 함께 관찰하며 맥락은 실제 prop 교체로 실행합니다.
 
 ## Last Updated
 
-2026-10-13
+이 부류의 관찰 범위·실행 전제·소비자 계측 경계가 바뀔 때 갱신합니다.
