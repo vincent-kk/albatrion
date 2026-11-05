@@ -48,6 +48,8 @@ const MOUNTED_CHILDREN = 2;
  * - A container with mounted child proxies preserves its input instance.
  * - Layout disconnection ends composition so reconnect can apply missed Refresh
  *   without waiting for a compositionend event from a hidden input.
+ * - Each subscription checks the snapshot on attach, including Activity reconnects
+ *   after a render with an unchanged revision.
  *
  * @param node - The FieldNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
@@ -78,13 +80,15 @@ export const useFieldInputControl = <Node extends FieldNode>(
       refreshDeferral.current =
         (refreshDeferral.current & COMPOSING) |
         (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
-      return node.subscribe(({ type }) => {
+      const unsubscribe = node.subscribe(({ type }) => {
         if (!(type & INPUT_TRACKING_EVENTS)) return;
         refreshDeferral.current =
           (refreshDeferral.current & COMPOSING) |
           (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
         onStoreChange();
       });
+      onStoreChange();
+      return unsubscribe;
     },
     [node, mountedChildren],
   );

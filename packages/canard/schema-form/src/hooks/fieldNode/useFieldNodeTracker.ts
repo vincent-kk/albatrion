@@ -17,6 +17,8 @@ import type { FieldNode } from '@/schema-form/core';
  * gap between the render phase and the commit phase — before any subscription
  * exists. React re-checks the snapshot at commit and forces a resync render
  * when it diverged, so deliveries in that gap are never lost.
+ * The subscription also checks on every attach, including Activity reconnects
+ * after a render with an unchanged snapshot.
  *
  * Prefer this hook (plus reading node getters during render) over manually
  * mirroring node state from a `node.subscribe` listener — a manual mirror
@@ -41,9 +43,11 @@ export const useFieldNodeTracker = <
   const subscribe = useCallback(
     (onStoreChange: Fn) => {
       if (node == null) return NOOP_FUNCTION;
-      return node.subscribe(({ type }) => {
+      const unsubscribe = node.subscribe(({ type }) => {
         if (type & tracking) onStoreChange();
       });
+      onStoreChange();
+      return unsubscribe;
     },
     [node, tracking],
   );

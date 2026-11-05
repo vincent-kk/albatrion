@@ -5,10 +5,35 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core';
 
+import { hideCommittedForm } from '../../__tests__/helpers/hideCommittedForm';
 import { useFieldNodeTracker } from '../fieldNode/useFieldNodeTracker';
 import { createHookNode } from './createHookNode';
 
 describe('useFieldNodeTracker with a new-engine node', () => {
+  it('rechecks a reconnected snapshot after a render with an unchanged revision', () => {
+    const node = createHookNode();
+    node.setValue('initial');
+    const Probe = ({ tick }: { tick: number }) => {
+      const revision = useFieldNodeTracker(
+        node,
+        FieldNodeEventType.UpdateValue,
+      );
+      return (
+        <output data-tick={tick} data-revision={revision}>
+          {String(node.value)}
+        </output>
+      );
+    };
+    const view = render(hideCommittedForm(<Probe tick={0} />, false));
+    const probe = <Probe tick={1} />;
+    view.rerender(hideCommittedForm(probe, false));
+    view.rerender(hideCommittedForm(probe, true));
+    act(() => node.setValue('hidden'));
+    view.rerender(hideCommittedForm(probe, false));
+    expect(view.container.querySelector('output')!.textContent).toBe('hidden');
+    view.unmount();
+  });
+
   it('REACT-021 renders once per synchronous matching write and reads the masked revision', () => {
     const node = createHookNode();
     const renders: number[] = [];
