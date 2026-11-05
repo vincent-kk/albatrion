@@ -10,6 +10,7 @@ import type { Fn } from '@aileron/declare';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 
 interface FormRootProxyProps {
+  /** Owned by FormRoot; locates the requesting form's document for pending focus guards. */
   formRef: Ref<HTMLFormElement>;
   onSubmit: Fn<[SubmitEvent<HTMLFormElement>]>;
 }

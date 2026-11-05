@@ -62,6 +62,7 @@ describe.each([false, true])('field lifecycle, strict=%s', (strict) => {
     const registry = new FieldLifecycleRegistry(vi.fn());
     const order: string[] = [];
     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    const select = vi.spyOn(HTMLInputElement.prototype, 'select');
     registry.reserve(node, FieldLifecycle.Mount, () => {
       expect(document.querySelector('input')).not.toBeNull();
       order.push('mount');
@@ -78,6 +79,9 @@ describe.each([false, true])('field lifecycle, strict=%s', (strict) => {
     expect(order).toEqual(['mount', 'render']);
     expect(document.activeElement).toBe(input);
     expect([input.selectionStart, input.selectionEnd]).toEqual([0, 4]);
+    expect(
+      select.mock.contexts.filter((element) => element === input),
+    ).toHaveLength(1);
     expect(
       focus.mock.contexts.filter((element) => element === input),
     ).toHaveLength(1);
