@@ -1,4 +1,4 @@
-import type { Optional } from '@aileron/declare';
+import type { Nullish, Optional } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import {
@@ -9,7 +9,7 @@ import {
 
 /**
  * Submit the emitted snapshot, rejecting degraded settlement or failed validation.
- * @param root - Current root; nothing happens without one.
+ * @param root - Current root; null or undefined resolves without invoking callbacks.
  * @param onSubmit - Receives the projected value, only when validation found no issue; its
  *   failure rejects the returned promise unreported.
  * @param onFailure - Receives a rejection cause raised before the verdict check (degraded settlement,
@@ -20,12 +20,12 @@ import {
  *   verdict when `onInvalid` is absent, and with any other failure.
  */
 export const submitForm = async (
-  root: Optional<FieldNode>,
+  root: FieldNode | Nullish,
   onSubmit?: (value: any) => void | Promise<void>,
   onFailure?: (error: unknown) => void,
   onInvalid?: (verdict: ValidationError) => void,
 ): Promise<void> => {
-  if (!root) return;
+  if (root == null) return;
   let value: unknown;
   let verdict: Optional<ValidationError>;
   try {

@@ -216,6 +216,14 @@ interface FormChildrenProps<
 }
 ```
 
+#### Node observation and absence
+
+`useFieldNodeTracker` and `useFieldNodeSubscribe` accept a node, `null`, or `undefined`. An absent reference creates no subscription: the tracker returns 0 (including its server snapshot), and the subscription hook calls neither the listener nor `onSubscribe`. Changing the node releases the old subscription; attaching a real node calls `onSubscribe` with that required node and its inferred subtype to catch up with current state. Events delivered before attachment are not replayed.
+
+Passing `formRef.current?.node` directly is allowed, but assigning a ref does not trigger a React render. If the first render sees `undefined`, subscription starts only when a later render passes the node. Supply that render through a React state update, for example from a callback ref; ref assignment alone does not connect the hooks.
+
+Kind and strategy guards return false for both absent references and retain subtype narrowing for real nodes. Observation accepts absence; operations and callbacks still require nodes, including `FieldInputProps.node`, `FieldRendererProps.node`, `formatError`, `onSubscribe`, visitors, virtualization `Placeholder`, and `estimateHeight`. Tree relations and single lookups use `null` for absence, optional lifecycle values use `undefined`, and plural lookups return empty arrays. A null JSON value, `NullNode`, and a nullable schema describe values, not absent node references.
+
 ### Basic Usage
 
 ```tsx

@@ -26,6 +26,8 @@
 
 ## API Contracts
 
+- 종류·전략 가드 아홉 개는 `FieldNode | Nullish`에서 부재를 false로 판정하고 실제 노드의 subtype narrowing을 보존한다. 부재 검사만 호출당 O(1)로 더하며 추가 할당은 없다. 실제 노드 작업·visitor는 필수 노드를 유지한다. parent·terminal children·단일 탐색의 부재는 null, 복수 탐색은 빈 배열이며 생명주기 출력의 undefined와 구별한다. JSON 값 null·NullNode·nullable은 노드 참조 부재가 아니다. 구독 훅의 부재 연결과 ref 할당 제한은 [hooks 계약](../../hooks/DETAIL.md)에 따른다.
+
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
 - `startFieldNodeLoadValidation(node)`는 surface가 공개 노드를 좁혀 engine의 `dispatchLoadValidation`을 호출하고 core가 재수출하는 로드 슬롯 바인딩이다. 요청 조회는 validation 내부에 남는다.
@@ -190,4 +192,4 @@ batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전�
 
 ## Last Updated
 
-2026-10-28
+관찰 경계, 구독 수명 또는 부재 표현 계약이 바뀔 때 갱신합니다.

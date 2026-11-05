@@ -36,7 +36,7 @@ const FormChildrenRendererInner = <
   render,
 }: FormChildrenRendererProps<Schema, Value>) => {
   const rootNode = useRootNodeContext();
-  useFieldNodeTracker(rootNode ?? null, RERENDERING_EVENT);
+  useFieldNodeTracker(rootNode, RERENDERING_EVENT);
   return (
     <>
       {render({

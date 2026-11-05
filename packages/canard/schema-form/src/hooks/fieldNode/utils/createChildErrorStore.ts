@@ -1,5 +1,7 @@
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
+import type { Nullish } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 
 import { readChildErrorSnapshot } from './childErrorStore/readChildErrorSnapshot';
@@ -18,7 +20,7 @@ import type {
  */
 export const createChildErrorStore = (
   node: FieldNode,
-  children: readonly FieldNode[] | null | undefined,
+  children: readonly FieldNode[] | Nullish,
   disabled?: boolean,
 ): ChildErrorStore => {
   const state: ChildErrorStoreState = {

@@ -2,7 +2,7 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import type { Fn, Nullable } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import { BIT_MASK_ALL } from '@/schema-form/constants/bitmask';
 import type { FieldNode } from '@/schema-form/core';
@@ -23,11 +23,11 @@ import type { FieldNode } from '@/schema-form/core';
  * silently misses pre-subscription deliveries unless it also implements
  * catch-up (see `useFieldNodeSubscribe`'s `onSubscribe` option).
  *
- * @param node - FieldNode to track (null is allowed and tracks nothing)
+ * @param node - FieldNode to track; null or undefined creates no subscription
  * @param tracking - Bitmask of `FieldNodeEventType`s that trigger a re-render
  *                   (defaults to all events)
- * @returns Monotonic revision of matching deliveries — usable as a dependency
- *          or key that changes with every tracked delivery
+ * @returns Current node's revision of matching deliveries — usable as a dependency
+ *          or key that changes with every tracked delivery; 0 without a node
  */
 export const useFieldNodeTracker = <
   Node extends {
@@ -35,12 +35,12 @@ export const useFieldNodeTracker = <
     revision(mask?: number): number;
   },
 >(
-  node: Nullable<Node>,
+  node: Node | Nullish,
   tracking: number = BIT_MASK_ALL,
 ): number => {
   const subscribe = useCallback(
     (onStoreChange: Fn) => {
-      if (node === null) return NOOP_FUNCTION;
+      if (node == null) return NOOP_FUNCTION;
       return node.subscribe(({ type }) => {
         if (type & tracking) onStoreChange();
       });
@@ -48,7 +48,7 @@ export const useFieldNodeTracker = <
     [node, tracking],
   );
   const getRevision = useCallback(
-    () => (node === null ? 0 : node.revision(tracking)),
+    () => (node == null ? 0 : node.revision(tracking)),
     [node, tracking],
   );
   return useSyncExternalStore(subscribe, getRevision, getRevision);

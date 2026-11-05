@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- 제출 어댑터 `submitForm`은 `FieldNode | Nullish`를 받고 루트가 null·undefined이면 callback을 호출하지 않고 성공 종료한다. Provider 문맥은 필수 노드를 보장하며 binding·FormHandle.node의 미연결 상태는 undefined를 유지한다. 단일 탐색은 null, 복수 탐색은 빈 배열이다. 구독 훅에는 양쪽 부재를 직접 전달할 수 있지만 ref 할당만으로 다음 렌더나 구독이 생기지 않는다. 연결 수명과 catch-up은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
+
 - H: handle.showError와 onReset은 facd72a71의 setShowError와 useImperativeHandle dependency 모양을 유지한다. 정책 기록은 FormRoot가 하지 않으며 RootNodeContext의 root별 layout commit이 소유한다. validate 반환과 submit 값은 호출 시점 snapshot 계약이다.
 
 - SURFACE-063: FormHandle.rebuild(option?) delegates to the current root binding, invalidates its schema cache entry and forces tree replacement through reset semantics. Other forms retain their existing roots until their own rebuild; ordinary reset stays unchanged. The package export names do not change.
@@ -33,4 +35,4 @@
 
 ## Last Updated
 
-2026-11-02
+관찰 경계, 구독 수명 또는 부재 표현 계약이 바뀔 때 갱신합니다.

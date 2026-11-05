@@ -4,6 +4,8 @@ import { expect, expectTypeOf, it } from 'vitest';
 
 import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 
+import type { Nullish } from '@aileron/declare';
+
 import type { FormErrorRecord } from '../../errors';
 import {
   type FieldInputDefinition,
@@ -163,13 +165,13 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
   >().toEqualTypeOf<number>();
   expectTypeOf<
     Parameters<typeof useFieldNodeTracker<FieldNode>>
-  >().toEqualTypeOf<[node: FieldNode | null, tracking?: number]>();
+  >().toEqualTypeOf<[node: FieldNode | Nullish, tracking?: number]>();
   expectTypeOf<
     ReturnType<typeof useFieldNodeSubscribe<FieldNode>>
   >().toEqualTypeOf<void>();
   expectTypeOf<
     Parameters<typeof useFieldNodeSubscribe<FieldNode>>[0]
-  >().toEqualTypeOf<FieldNode | null>();
+  >().toEqualTypeOf<FieldNode | Nullish>();
   expectTypeOf<
     Parameters<typeof useFieldNodeSubscribe<FieldNode>>[1]
   >().toEqualTypeOf<Parameters<FieldNode['subscribe']>[0]>();
