@@ -148,4 +148,4 @@ Heavy controls expressions run on every dependency tick. Move reductions out of 
 
 ## Validation timing
 
-Validation scheduling, display holds and load behavior are described in [validation UX](validation-ux.md) and [validation failures](validation-failures.md). For a large form, debounce input publication in `FieldInput`, because validation groups published edits but does not buffer local text, and expect a slow validator to delay the result.
+For validation timing, debouncing, local text and slow validators, see [validation UX](validation-ux.md).

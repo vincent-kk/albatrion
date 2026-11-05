@@ -16,16 +16,15 @@ import {
  * @param props - The node whose events the effect watches.
  * @returns Nothing; the effect is the example. */
 function Watcher({ node }: { node: FieldNode }) {
-  // prettier-ignore
   useEffect(
-  () =>
-    node.subscribe(({ type }) => {
-      if (type & FieldNodeEventType.UpdateValue) {
-        // the event type is a bit mask; one delivery may merge several bits
-      }
-    }),
-  [node],
-); // subscribe returns its own cleanup
+    () =>
+      node.subscribe(({ type }) => {
+        if (type & FieldNodeEventType.UpdateValue) {
+          // the event type is a bit mask; one delivery may merge several bits
+        }
+      }),
+    [node],
+  ); // subscribe returns its own cleanup
   return null;
 }
 

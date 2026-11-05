@@ -15,28 +15,36 @@ const checkedDocuments = readdirSync(resolve(packageRoot, 'docs/agents'), {
   .map((file) => `docs/agents/${file.split(sep).join('/')}`)
   .sort();
 
-/** Largest uniform extra indentation, in spaces, an example may add around a document block. */
-const maxExtraIndent = 12;
+/** Reduce text to its trimmed lines, so indentation and line-end spacing never matter. */
+const toTrimmedLines = (text: string): string[] =>
+  text.split('\n').map((line) => line.trim());
 
 /**
  * Tell whether a test source contains a document block as written.
  * @param source - Text of one agents-examples test file.
  * @param snippet - Document block with its fence indentation removed.
- * @returns True when the block occurs with the same uniform extra indentation added to
- *   every non-empty line (0, 2, 4, ... up to 12 spaces); its inner relative indentation
- *   must match exactly, so a block whose inner indentation differs does not match.
+ * @returns True when the block's lines, each trimmed of leading and trailing whitespace,
+ *   equal a contiguous run of the source's trimmed lines. Whole lines must be equal, so a
+ *   match cannot start or end in the middle of a source line; indentation is ignored.
  */
 const containsBlock = (source: string, snippet: string): boolean => {
-  for (let indent = 0; indent <= maxExtraIndent; indent += 2) {
-    const padding = ' '.repeat(indent);
-    const indented = snippet
-      .split('\n')
-      .map((line) => (line === '' ? line : padding + line))
-      .join('\n');
-    if (source.includes(indented)) return true;
+  const wanted = toTrimmedLines(snippet.replace(/\n$/, ''));
+  const lines = toTrimmedLines(source);
+  for (let start = 0; start + wanted.length <= lines.length; start++) {
+    let offset = 0;
+    while (offset < wanted.length && lines[start + offset] === wanted[offset])
+      offset++;
+    if (offset === wanted.length) return true;
   }
   return false;
 };
+
+it('matches whole trimmed lines only, ignoring indentation', () => {
+  const block = 'if (ok) {\n  go();\n}\n';
+  expect(containsBlock('      if (ok) {\n go();\n    }\n', block)).toBe(true);
+  expect(containsBlock(block, block)).toBe(true);
+  expect(containsBlock('} else if (ok) {\n  go();\n}\n', block)).toBe(false);
+});
 
 it('keeps agent examples verbatim in executable public-API tests', () => {
   expect(

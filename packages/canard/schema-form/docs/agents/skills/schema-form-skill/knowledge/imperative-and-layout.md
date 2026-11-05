@@ -68,5 +68,5 @@ Use sibling Forms under FormProvider for independent forms sharing default rende
 
 Changing a `jsonSchema` or `defaultValue` prop alone keeps the current tree and values.
 Reset reads the latest committed props; an equivalent schema can reuse the tree, while a different schema can replace it.
-`rebuild()` builds a new tree from the current schema; re-read nodes from the handle afterwards. It reloads the committed `defaultValue`, so edits made before it are discarded; supplying a new validator does the same. It does not recompile validation for the same schema object and validator: a cached compile failure is reused, except a failure caused by another mounted form registering the same `$id`, which the next full validation retries once after that form releases it.
+`rebuild()` builds a new tree from the current schema; re-read nodes from the handle afterwards. It reloads the committed `defaultValue`, so edits made before it are discarded; supplying a new validator does the same. It does not recompile validation for the same schema object and validator; a cached compile failure and its one retry are described in [validation failures](validation-failures.md).
 Keep stable schema references to avoid accidental configuration churn and clarify which schema reset will load, not because every new reference discards editing state.

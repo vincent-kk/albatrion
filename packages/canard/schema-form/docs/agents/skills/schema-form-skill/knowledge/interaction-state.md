@@ -40,7 +40,7 @@ Use `node.setState` when only one field should change; its ancestors' aggregate 
 ## Observe whether the output differs from the loaded value
 
 Read `node.isDivergent` after the call that changed the value has returned for a field, or read the root's property for the whole form.
-The comparison is against the output of the form's last load (mount, `reset()`, `rebuild()` or a validator change) at the same path, not against Edited or an independently copied React value.
+The comparison is against the output of the form's last load (see [validation UX](validation-ux.md) for what counts as a load) or of the root's `resetSubtree()`, at the same path, not against Edited or an independently copied React value.
 Subscribe to root output/load changes as well as the node's path so array movement and output filtering cannot leave the indicator stale:
 
 ```tsx

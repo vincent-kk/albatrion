@@ -92,11 +92,13 @@ const rowsDefinition: FieldInputDefinition[] = [
 ];
 
 // prettier-ignore
-const terminalSchema: JSONSchema = { type: 'array', items: { type: 'string' }, options: { terminal: true } }
+const terminalSchema: JSONSchema =
+{ type: 'array', items: { type: 'string' }, options: { terminal: true } }
 // one input owns the whole array — no per-item node tree or per-item state
 
 // prettier-ignore
-const tupleSchema = defineSchema({
+const tupleSchema = defineSchema(
+{
   type: 'array',
   prefixItems: [
     { type: 'number', title: 'X' },

@@ -336,3 +336,68 @@ it('submit rejects invalid input and sends a fresh valid value after explicit er
   expect(onSubmit).toHaveBeenCalledExactlyOnceWith({ name: 'Ada' });
   expect(view.queryByRole('alert')).toBeNull();
 });
+
+const unionSchema: JSONSchema = {
+  type: 'object',
+  properties: { kind: { type: 'string' }, shared: { type: 'string' } },
+  oneOf: [
+    {
+      controls: { active: './kind === "a"' },
+      properties: {
+        kind: { const: 'a' },
+        shared: { minLength: 3 },
+        a: { type: 'string' },
+      },
+      required: ['kind', 'a'],
+    },
+    {
+      controls: { active: './kind === "b"' },
+      properties: { kind: { const: 'b' }, shared: { maxLength: 1 } },
+      required: ['kind'],
+    },
+  ],
+};
+
+it('an inactive oneOf branch issue skips node assignment but stays in getErrors() and the submit verdict', async () => {
+  const ref = createRef<FormHandle>();
+  const onSubmit = vi.fn();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={unionSchema}
+      defaultValue={{ kind: 'a', shared: 'xy' }}
+      validatorFactory={validator}
+      validationMode={ValidationMode.OnRequest}
+      onSubmit={onSubmit}
+    />,
+  );
+  await act(async () => {});
+  let issues: readonly ValidationIssue[] = [];
+  await act(async () => {
+    issues = await ref.current!.validate();
+  });
+  const offBranch = issues.filter((issue) =>
+    issue.schemaPath?.startsWith('#/oneOf/1/'),
+  );
+  expect(offBranch.map((issue) => issue.keyword).sort()).toEqual([
+    'const',
+    'maxLength',
+  ]);
+  expect(ref.current!.getErrors()).toEqual(issues);
+  const nodeIssues = ['', '/kind', '/shared', '/a'].flatMap(
+    (path) => ref.current!.findNode(path)?.errors ?? [],
+  );
+  for (const issue of offBranch) expect(nodeIssues).not.toContain(issue);
+  expect(
+    (ref.current!.findNode('/shared')?.errors ?? []).map((i) => i.keyword),
+  ).toEqual(['minLength']);
+
+  let rejection: unknown;
+  await act(async () => {
+    await ref.current!.submit().catch((error: unknown) => {
+      rejection = error;
+    });
+  });
+  expect(isValidationError(rejection)).toBe(true);
+  expect(onSubmit).not.toHaveBeenCalled();
+});

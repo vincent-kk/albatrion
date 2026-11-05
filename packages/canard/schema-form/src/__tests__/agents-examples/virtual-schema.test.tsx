@@ -31,7 +31,8 @@ const DateRangeInput: FC<FieldInputProps<[string, string]>> = ({
 );
 
 // prettier-ignore
-const virtualSchema: JSONSchema = {
+const virtualSchema: JSONSchema =
+{
   type: 'object',
   properties: {
     startDate: { type: 'string', format: 'date' },

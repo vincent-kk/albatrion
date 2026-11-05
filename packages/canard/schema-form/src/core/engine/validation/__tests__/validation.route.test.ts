@@ -37,7 +37,7 @@ describe('validation issue attribution', () => {
     expect(readFieldNodeErrors(root)).toEqual([]);
   });
 
-  it('VALIDATE-051 climbs a rejected-key issue from a non-root terminal object to its branch parent', () => {
+  it('VALIDATE-051 climbs a non-empty rejected-key issue from a non-root terminal object to its branch parent and keeps an empty key on the terminal', () => {
     const { root } = createDispatchTree({
       type: 'object',
       properties: {
@@ -58,8 +58,9 @@ describe('validation issue attribution', () => {
       rejectedKey: 'extra',
       message: 'rejected',
     };
-    routeValidationIssues([root], [inner, rejected]);
-    expect(readFieldNodeErrors(held)).toEqual([inner]);
+    const emptyKey = { dataPath: '/held', rejectedKey: '', message: 'empty' };
+    routeValidationIssues([root], [inner, rejected, emptyKey]);
+    expect(readFieldNodeErrors(held)).toEqual([inner, emptyKey]);
     expect(readFieldNodeErrors(root)).toEqual([rejected]);
   });
 

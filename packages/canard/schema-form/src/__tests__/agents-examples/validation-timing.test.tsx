@@ -205,3 +205,59 @@ it('an automatic load compile failure is reported once per load', async () => {
   expect(hostReport).toHaveBeenCalledTimes(2);
   vi.unstubAllGlobals();
 });
+
+class Point {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+  ) {}
+}
+
+/** Re-renders a Form with a fresh context value each time and records the context its field receives.
+ * @param make - Builds the context for the n-th render.
+ * @returns The distinct context objects the field received, in order. */
+const observeContextSnapshots = async (make: (render: number) => object) => {
+  const seen: object[] = [];
+  const element = (renderNumber: number) => (
+    <Form jsonSchema={nameSchema} context={make(renderNumber)}>
+      <Form.Render path="/name">
+        {({ context }) => {
+          seen.push(context);
+          return <span />;
+        }}
+      </Form.Render>
+    </Form>
+  );
+  const view = render(element(0));
+  await pass();
+  view.rerender(element(1));
+  await pass();
+  view.rerender(element(2));
+  await pass();
+  return seen;
+};
+
+it.each([
+  ['a fresh Date with the same time', () => ({ at: new Date(1000) })],
+  ['a fresh Map with the same entries', () => ({ map: new Map([['a', 1]]) })],
+  ['a fresh class instance with equal fields', () => ({ p: new Point(1, 2) })],
+])(
+  'Form compares context by content, so %s keeps the snapshot',
+  async (_, make) => {
+    const seen = await observeContextSnapshots(make);
+    expect(new Set(seen).size).toBe(1);
+  },
+);
+
+it.each([
+  ['a fresh function', (n: number) => ({ fn: () => n })],
+  ['a Date with another time', (n: number) => ({ at: new Date(1000 + n) })],
+  ['a Map with other entries', (n: number) => ({ map: new Map([['a', n]]) })],
+  [
+    'a class instance with other fields',
+    (n: number) => ({ p: new Point(n, 2) }),
+  ],
+])('Form treats %s as changed context', async (_, make) => {
+  const seen = await observeContextSnapshots(make);
+  expect(new Set(seen).size).toBeGreaterThan(1);
+});

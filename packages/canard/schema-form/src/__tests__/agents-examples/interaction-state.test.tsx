@@ -299,3 +299,25 @@ it('clears the indicator when reset leaves the output unchanged', async () => {
   await user.click(view.getByText('Discard changes'));
   expect(view.queryByText('Changed')).toBeNull();
 });
+
+it('root resetSubtree() loads the default again and clears divergence, like a reset', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: { name: { type: 'string' } },
+      }}
+      defaultValue={{ name: 'loaded' }}
+    />,
+  );
+  await act(async () => {});
+  const root = ref.current!.node as FieldNode;
+  act(() => ref.current!.setValue({ name: 'edited' }));
+  expect(root.isDivergent).toBe(true);
+
+  act(() => root.resetSubtree());
+  expect(ref.current!.getValue()).toEqual({ name: 'loaded' });
+  expect(root.isDivergent).toBe(false);
+});
