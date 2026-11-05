@@ -23,7 +23,7 @@ Inference into `properties`, `prefixItems` and `items` needs literal types. With
 | no `type` at all                                                        | `any`                           |
 | `{ type: 'array' }` / `{ type: 'object' }` with no `items`/`properties` | `any[]` / `Record<string, any>` |
 
-A multi-type array is the exception to "falls back": `{ type: ['string', 'number'] }` infers `string | number`, **not** `any`. Older documentation claimed `any` here; the primary type is now extracted from every `type` array, so the union survives. A single-member array is unwrapped the same way, matching the runtime, which normalizes `['string']` to `'string'`.
+A multi-type array is the exception to "falls back": `{ type: ['string', 'number'] }` infers `string | number`, **not** `any`: the primary type is extracted from every `type` array, so the union survives. A single-member array is unwrapped the same way, matching the runtime, which normalizes `['string']` to `'string'`.
 
 ```typescript
 type A = InferValueType<{ type: 'string' }>; // string
@@ -51,15 +51,7 @@ type J = InferValueType<{
 
 ## Tuple inference
 
-A finite literal `prefixItems` infers a mutable tuple whose positions are all optional, because `prefixItems` sets no minimum length; `minItems` is not used. `items: false` closes the tuple, omitted or `true` `items` adds `...any[]`, and an `items` schema types only the positions after the prefix (`...boolean[]`). This is narrower than `any[]`, and a typed `items` no longer types the prefix positions, so code that relied on free positions, extra items or rest-typed prefix positions can stop compiling. Widened or non-literal `prefixItems`, and legacy `items` arrays with `additionalItems`, keep the `items` inference.
-
-```typescript
-type K = InferValueType<{
-  type: 'array';
-  prefixItems: readonly [{ type: 'string' }, { type: 'number' }];
-  items: false;
-}>; // [string?, number?]
-```
+A finite literal `prefixItems` infers a tuple whose positions are all optional, because `prefixItems` sets no minimum length: `items: false` closes it (`[string?, number?]`), omitted or `true` `items` leaves `...any[]`, and an `items` schema types only the positions after the prefix.
 
 ## The reverse direction — `InferJSONSchema`
 
