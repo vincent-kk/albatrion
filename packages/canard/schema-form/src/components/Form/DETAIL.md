@@ -10,6 +10,10 @@ Form의 설정은 불변 참조 교체로 전달합니다. `jsonSchema`·`defaul
 
 폼 전체 잠금은 [InputControlContext](../../providers/InputControlContext/DETAIL.md)의 UI 계약입니다. core 명령형 쓰기를 잠그는 정책으로 확대하지 않습니다. `onError`의 기록과 검증 판정은 [오류 계약](../../errors/DETAIL.md)에 따라 서로 다른 채널로 유지합니다(SURFACE-012).
 
+### 가상화 초점
+
+- `FormHandle.focus(path)`와 네이티브 무효 제출은 대상에 도달하는 현재 자식 그래프를 가진 자리표시자 중 폼 DOM 순서의 첫 항목을 공개하고, 그 조상 슬롯의 첫 초점 가능 요소에 초점을 요청합니다. 가상 그룹의 형제 참조도 포함하며 정확한 자손 초점이나 중첩 자리표시자의 공개는 보장하지 않습니다. 대상 자체가 자리표시자이면 자기 슬롯을 공개하며 관련 자리표시자가 없으면 대상에 직접 요청합니다. 구현 소유권은 FormCore에 있습니다.
+
 ## Acceptance Criteria
 
 ### SCHEMA-016 — 스키마 입구는 하나입니다

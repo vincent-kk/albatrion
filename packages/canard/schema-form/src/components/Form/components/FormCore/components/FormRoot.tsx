@@ -39,6 +39,7 @@ import type { FormHandle } from '../types/handle';
 import type { FormProps } from '../types/props';
 import { createChildren } from '../utils/createChildren';
 import { findFirstInvalidNode } from '../utils/findFirstInvalidNode';
+import { focusFieldNode } from '../utils/focusFieldNode';
 import { reportSubmitFailure } from '../utils/reportSubmitFailure';
 import { resolveErrorVisibilityPolicy } from '../utils/resolveErrorVisibilityPolicy';
 import { submitForm } from '../utils/submitForm';
@@ -46,6 +47,7 @@ import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
 export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
+  const formRef = useRef<HTMLFormElement>(null);
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
     current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
   }));
@@ -162,7 +164,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                 committed.current.readOnly
               )
                 return;
-              findFirstInvalidNode(root)?.request(FieldNodeRequestType.Focus);
+              focusFieldNode(findFirstInvalidNode(root), formRef.current);
             }
           : undefined,
       );
@@ -189,7 +191,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
         return binding.current.root;
       },
       focus: (path) =>
-        binding.current.root?.find(path)?.request(FieldNodeRequestType.Focus),
+        focusFieldNode(binding.current.root?.find(path), formRef.current),
       select: (path) =>
         binding.current.root?.find(path)?.request(FieldNodeRequestType.Select),
       refresh: (path) =>
@@ -255,7 +257,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                 onReset={onReset}
                 errorVisibilityError={policyError}
               >
-                <FormRootProxy onSubmit={handleNativeSubmit}>
+                <FormRootProxy formRef={formRef} onSubmit={handleNativeSubmit}>
                   {children}
                 </FormRootProxy>
               </RootNodeContextProvider>
