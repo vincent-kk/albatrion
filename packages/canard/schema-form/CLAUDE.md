@@ -9,6 +9,7 @@
 - For a small, fixed set of checks known at build time, use direct `&&` or `||` conditions. Hoist a constant key array when iteration is clearer; never allocate the same fixed list on every call.
 - Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
 - Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (consumer-facing doc examples may show the native call).
+- Use `EMPTY_ARRAY`/`EMPTY_OBJECT` from `@winglet/common-utils/constant` for shared empty values, except identity sentinels.
 
 ## Commands
 

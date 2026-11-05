@@ -39,7 +39,6 @@ export {
 } from './blueprint';
 export {
   compileEntryGuards,
-  EMPTY_GLOBAL_ERRORS,
   readFieldNodeErrors,
   readValidationEntry,
   retainValidationRoot,

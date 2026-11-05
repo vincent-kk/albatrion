@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Nullable, PartialBy } from '@aileron/declare';
 
 import {
@@ -34,7 +36,7 @@ import type {
 } from '../type';
 
 /** Empty active-declaration list: only ungated contributions apply. */
-const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
 /**
  * Kind-independent public node shape the runtime class is checked against at compile time.
@@ -101,7 +103,8 @@ const createFieldNode = (
     ? appendFormattedSegment(parent.path, escapedName)
     : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
-  const row = instance?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
+  const row =
+    instance?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,

@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
@@ -15,12 +16,6 @@ import { unionAllowedTypes } from '../../../utils/allowedTypes/unionAllowedTypes
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import { collectStaticSchemas } from '../references/collectStaticSchemas';
 import { inferLiteralTypes } from './inferLiteralTypes';
-
-/** Shared frozen result for a branch cut by recursion. */
-const NO_TYPES: readonly SchemaTypeName[] = Object.freeze([]);
-
-/** Shared frozen empty inference path. */
-const NO_VISITING: readonly string[] = Object.freeze([]);
 
 /** Authored disjunctions examined in S3 order without per-call allocation. */
 const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
@@ -40,16 +35,16 @@ export const inferAllowedTypes = (
   schema: BlueprintSchema,
   schemaPath: string,
   allowTop = false,
-  visiting: readonly string[] = NO_VISITING,
+  visiting: readonly string[] = EMPTY_ARRAY,
   isBranch = false,
 ): Optional<readonly SchemaTypeName[]> => {
-  if (visiting.includes(schemaPath)) return NO_TYPES;
+  if (visiting.includes(schemaPath)) return EMPTY_ARRAY;
   const cycle = isBranch ? { found: false } : undefined;
   const parts = collectStaticSchemas(
     context,
     schema,
     schemaPath,
-    NO_VISITING,
+    EMPTY_ARRAY,
     cycle,
   );
   const hasBranchCycle = isBranch && cycle?.found;
@@ -68,7 +63,7 @@ export const inferAllowedTypes = (
     hasTypeCycle = hasBranchCycle;
   }
   if (hasTypeCycle) {
-    return NO_TYPES;
+    return EMPTY_ARRAY;
   }
   const stack = [...visiting, ...mapArray(parts, (part) => part.schemaPath)];
   let allowed: Optional<readonly SchemaTypeName[]>;

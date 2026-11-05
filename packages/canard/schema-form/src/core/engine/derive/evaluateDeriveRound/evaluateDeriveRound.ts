@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
@@ -28,14 +30,11 @@ import { LAYER_RANK } from './utils/rank/layerRank';
 import { chooseDeriveWrite } from './utils/writes/chooseDeriveWrite';
 import { getVirtualWriteFailure } from './utils/writes/getVirtualWriteFailure';
 
-/** Frozen result reused when no expression fails. */
-const NO_FAILURES: readonly [] = Object.freeze([]);
-
 /** Shared frozen decision for a blueprint without derive rules. */
 const EMPTY_DECISION: DeriveRoundDecision<never> = Object.freeze({
-  writes: Object.freeze([]),
-  trace: Object.freeze([]),
-  failures: NO_FAILURES,
+  writes: EMPTY_ARRAY,
+  trace: EMPTY_ARRAY,
+  failures: EMPTY_ARRAY,
 });
 
 /**
@@ -251,6 +250,6 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   return {
     writes: [...winners.values()],
     trace,
-    failures: failures ?? NO_FAILURES,
+    failures: failures ?? EMPTY_ARRAY,
   };
 };

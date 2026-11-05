@@ -23,13 +23,15 @@ export function StoryPanels({ scenario, parameters, docs, children }: { scenario
     settings: { mountProps: parameters?.mountProps }, stage: { current: 1, total: 1, schema: scenario?.schema ?? {} },
   }));
   return <StoryPanelsContext.Provider value={store}>
-    <div style={{ display: 'grid', gap: 12 }}>
-      <DescriptionPanel scenario={scenario} /><StepsTable scenario={scenario} parameters={parameters} collapsed={docs} />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-        <div style={{ flex: '1 1 320px', minWidth: 0 }}>{children}</div>
-        <div style={{ flex: '1 1 320px', minWidth: 0 }}><ValuePanel /><ErrorsPanel /></div>
+    <div className={`sf-story${docs ? ' sf-story-docs' : ''}`}>
+      <DescriptionPanel scenario={scenario} />
+      <div className="sf-story-body">
+        <div className="sf-form">{children}</div>
+        <aside className="sf-inspector" aria-label="Form inspector">
+          <ValuePanel /><ErrorsPanel /><SchemaPanel /><SettingsPanel />
+          <StepsTable scenario={scenario} parameters={parameters} />
+        </aside>
       </div>
-      <SettingsPanel /><SchemaPanel />
     </div>
   </StoryPanelsContext.Provider>;
 }

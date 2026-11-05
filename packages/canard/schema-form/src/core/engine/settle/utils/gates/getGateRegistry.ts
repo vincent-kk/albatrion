@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { Optional } from '@aileron/declare';
 
@@ -577,8 +578,9 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   pathSegments: decodePointerSegments,
   occurrenceCount: () => 0,
 });
+
 /** Shared frozen empty occurrence list for absent relocation reads and gate-free registrations. */
-const EMPTY_OCCURRENCES: readonly RegisteredGateOccurrence[] = Object.freeze([]);
+const EMPTY_OCCURRENCES: readonly RegisteredGateOccurrence[] = EMPTY_ARRAY;
 /** Private read-only absence marker, replaced before any occurrence is inserted. */
 const EMPTY_GATE_MEMO: ReadonlyMap<BlueprintGate, RegisteredGateOccurrence> =
   Object.freeze(new Map<BlueprintGate, RegisteredGateOccurrence>());

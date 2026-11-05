@@ -1,9 +1,8 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import { FieldNodeEventType } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
-import {
-  EMPTY_GLOBAL_ERRORS,
-  updateFieldNodeGlobalErrors,
-} from '../../../../validation';
+import { updateFieldNodeGlobalErrors } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 
 /**
@@ -16,7 +15,7 @@ import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 export const publishRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
-  const previous = root.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS;
+  const previous = root.runtime.globalErrors ?? EMPTY_ARRAY;
   updateFieldNodeGlobalErrors(root);
   if (root.runtime.globalErrors !== previous)
     queueNonSettleEvent(

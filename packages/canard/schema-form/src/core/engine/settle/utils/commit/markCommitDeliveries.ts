@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
@@ -26,11 +27,6 @@ import { getRequiredChildren } from './utils/getRequiredChildren';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 import { readSettlementSource } from './utils/readSettlementSource';
-
-/** Candidates without a watch declaration share the same immutable empty value. */
-const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
-/** Hosts without arrivals share an immutable empty candidate list. */
-const NO_ENTERED = Object.freeze([]);
 
 /**
  * Mark one committed delivery set and advance its per-bit revision ledgers.
@@ -70,7 +66,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         let ancestor = path;
         while (ancestor) {
           ancestor = resolvePointer(ancestor, $.Parent);
-          if (!context.changedSource.has(ancestor)) affectedPaths.delete(ancestor);
+          if (!context.changedSource.has(ancestor))
+            affectedPaths.delete(ancestor);
         }
       }
     }
@@ -100,7 +97,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       const required = typeof schema === 'object' ? schema.required : undefined;
       const children = getRequiredChildren(
         host,
-        enteredByParent.get(host) ?? NO_ENTERED,
+        enteredByParent.get(host) ?? EMPTY_ARRAY,
       );
       for (let index = 0; index < children.length; index++) {
         const child = children[index];
@@ -204,13 +201,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       }
       const initialized = node.deliveryInitialized;
       const changes = node.deliveryChanges;
-      const previousWatchValues =
-        node.deliveryWatchValues ?? EMPTY_WATCH_VALUES;
+      const previousWatchValues = node.deliveryWatchValues ?? EMPTY_ARRAY;
       const pending = node.pendingDelivery?.payload;
       const hasWatch = watchNodes.has(node.blueprintNode.id);
-      const watched = hasWatch
-        ? readFieldNodeWatchValues(node)
-        : EMPTY_WATCH_VALUES;
+      const watched = hasWatch ? readFieldNodeWatchValues(node) : EMPTY_ARRAY;
       if (hasWatch) {
         if (watched.length) {
           const index = (runtime.deliveryWatchIndex ??=

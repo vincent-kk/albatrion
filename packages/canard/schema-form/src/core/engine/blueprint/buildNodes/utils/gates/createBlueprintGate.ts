@@ -23,5 +23,6 @@ export const createBlueprintGate = (gate: BlueprintGateInput): BlueprintGate =>
     evaluationReads:
       gate.kind === 'active'
         ? collectGateEvaluationReads(gate.condition)
-        : Object.freeze([]),
+        : // eslint-disable-next-line no-restricted-syntax -- Per-gate ownership; evaluationReads arrays are compared by reference.
+          Object.freeze([]),
   });

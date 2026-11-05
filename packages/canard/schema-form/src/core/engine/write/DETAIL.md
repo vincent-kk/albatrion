@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+
 - `onInactive`의 옛 해제 함수를 반복 호출해도 더 새 등록 집합은 제거하지 않습니다. resolver 쓰기 거부의 경고 보고기 안에서 시도한 쓰기는 재보고 없이 무시하여 재귀 배달을 막습니다.
 
 - B12 resolver는 자동 쓰기가 허용되는 정상 보존 gate exit에서만 실행합니다. load/reset 범위·throwingGateExits·entered-only 퇴장과 자동 쓰기 억제·실패/예산 억제에서는 호출하지 않습니다. 다중 콜백은 등록 순서로 모두 실행하고 마지막 non-undefined를 채택하며 하나라도 던지면 해당 노드의 override 전체를 취소합니다.

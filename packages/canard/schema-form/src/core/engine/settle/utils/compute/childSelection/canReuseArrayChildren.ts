@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 import { minLite } from '@winglet/common-utils/math';
 
@@ -14,7 +15,7 @@ import { canReuseSplicedChildren } from './canReuseSplicedChildren';
 import { canReuseTruncatedChildren } from './canReuseTruncatedChildren';
 
 /** Ungated effective schemas select their immutable static contributions. */
-const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
 
 /**
  * Prove that a static array shape survives a prefix-preserving length change.

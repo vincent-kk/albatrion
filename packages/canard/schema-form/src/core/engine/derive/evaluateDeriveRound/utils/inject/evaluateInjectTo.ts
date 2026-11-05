@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { FieldNodeRecord } from '../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type {
@@ -14,7 +16,7 @@ import { getInjectTarget } from './getInjectTarget';
 import { getInjectToContext } from './getInjectToContext';
 
 /** Shared frozen result for a rule whose handler is not a function. */
-const NO_INJECT_WRITES = Object.freeze({ writes: Object.freeze([]) });
+const NO_INJECT_WRITES = Object.freeze({ writes: EMPTY_ARRAY });
 
 /**
  * Evaluate one fired handler without writing any node source or latent state.
