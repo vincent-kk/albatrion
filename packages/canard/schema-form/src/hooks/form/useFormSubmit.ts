@@ -19,6 +19,7 @@ import type {
 /**
  * Hook for handling form submission with pending state management.
  * Provides a submit function and pending state synchronized with the form's internal submit handler.
+ * Every subscription checks pending on attach, including Activity reconnects.
  *
  * @example
  * ```typescript
@@ -52,8 +53,12 @@ export const useFormSubmit = <
 ) => {
   const [subscribe, getSnapshot] = useMemo(
     () => [
-      (onStoreChange: Fn) =>
-        ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION,
+      (onStoreChange: Fn) => {
+        const unsubscribe =
+          ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION;
+        onStoreChange();
+        return unsubscribe;
+      },
       () => ref?.current?.submit?.pending,
     ],
     [ref],

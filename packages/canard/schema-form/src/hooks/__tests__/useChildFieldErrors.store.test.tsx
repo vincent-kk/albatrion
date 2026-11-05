@@ -1,11 +1,12 @@
 import { type PropsWithChildren, StrictMode, useLayoutEffect } from 'react';
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { act, cleanup, render, renderHook } from '@testing-library/react';
+import { afterEach, expect, inject, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
 
+import { hideCommittedForm } from '../../__tests__/helpers/hideCommittedForm';
 import { useChildFieldErrors } from '../fieldNode/useChildFieldErrors';
 
 afterEach(() => {
@@ -26,6 +27,50 @@ const createRoot = () =>
     deferMountValidation: true,
     validationMode: 2,
   });
+
+it.each([
+  [false, false],
+  [false, true],
+  [true, false],
+  [true, true],
+])(
+  'reconnects with stable error tokens (StrictMode=%s, changed=%s)',
+  (strict, changed) => {
+    const root = createRoot();
+    const child = root.children![0];
+    let renders = 0;
+    const Probe = ({ tick }: { tick: number }) => {
+      renders++;
+      const { errorMatrix } = useChildFieldErrors(root);
+      return (
+        <output data-tick={tick}>{errorMatrix[0][0]?.message ?? 'none'}</output>
+      );
+    };
+    const tree = (probe: React.ReactNode, hidden: boolean) => {
+      const content = <Wrapper>{hideCommittedForm(probe, hidden)}</Wrapper>;
+      return strict ? <StrictMode>{content}</StrictMode> : content;
+    };
+    const view = render(tree(<Probe tick={0} />, false));
+    act(() => child.setExternalErrors([{ dataPath: '/0', message: 'before' }]));
+    const probe = <Probe tick={1} />;
+    view.rerender(tree(probe, false));
+    const before = renders;
+    view.rerender(tree(probe, true));
+    if (changed)
+      act(() =>
+        child.setExternalErrors([{ dataPath: '/0', message: 'hidden' }]),
+      );
+    view.rerender(tree(probe, false));
+    expect(view.container.querySelector('output')!.textContent).toBe(
+      changed ? 'hidden' : 'before',
+    );
+    if (!changed || inject('reactMajor') === '19')
+      expect(renders - before).toBe(changed ? (strict ? 2 : 1) : 0);
+    console.info(
+      `child-error reconnect strict=${strict} changed=${changed}: ${before}->${renders} renders`,
+    );
+  },
+);
 
 it('catches an error change between render and the subscription effect', () => {
   const root = createRoot();

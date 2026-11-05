@@ -15,8 +15,9 @@ export interface FieldNodeSubscribeOptions<
 > {
   /**
    * Called once right after the subscription attaches (and again whenever it
-   * re-attaches for a new node). Use it to catch up: re-read the current node
-   * state that `listener` would otherwise have derived from events.
+   * re-attaches for a new node or reconnects after hiding). Use it to catch up:
+   * re-read the current node state that `listener` would otherwise have derived
+   * from events.
    *
    * Node events are synchronous and this subscription only attaches at
    * commit, so events delivered in the render→commit gap of a concurrent
