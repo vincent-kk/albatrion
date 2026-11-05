@@ -59,7 +59,7 @@ export class VirtualizationManager {
 
   /** One active focus reveal, installed before a potentially synchronous commit. */
   private trackedReveal:
-    | { element: Element; node: FieldNode; onSettled: Fn }
+    | { element: Element; gate: DeferredGate; onSettled: Fn }
     | undefined;
 
   /** Input containers keyed by position; only focus requests search by node. */
@@ -126,17 +126,30 @@ export class VirtualizationManager {
     if (this.registry.size === 0) this.stopIdlePump();
   }
 
-  /** Register a real input container; replacing the same position is idempotent. */
+  /**
+   * Register a real input container; replacing the same position is idempotent.
+   * @param element - Mounted input position, distinct from its renderer wrapper.
+   * @param node - Field rendered by this input position.
+   * @returns Nothing; focus lookup can now find this position.
+   */
   public attachInput(element: Element, node: FieldNode): void {
     this.inputs.set(element, node);
   }
 
-  /** Release the input position captured by its layout effect. */
+  /**
+   * Release the input position captured by its layout effect.
+   * @param element - Position whose input effect is being cleaned up.
+   * @returns Nothing; repeated removal is harmless.
+   */
   public detachInput(element: Element): void {
     this.inputs.delete(element);
   }
 
-  /** Return this field's input containers in registration order; called only on focus requests. */
+  /**
+   * Find this field's input containers only when focus is requested.
+   * @param node - Exact field identity; paths do not distinguish duplicate positions.
+   * @returns Matching containers in registration order, empty when none are mounted.
+   */
   public inputsOf(node: FieldNode): Element[] {
     const elements: Element[] = [];
     for (const [element, input] of this.inputs)
@@ -154,29 +167,42 @@ export class VirtualizationManager {
     this.revealedNodes.add(node);
   }
 
-  /** Mark the target render path and open its first gate; false means no blocking gate exists. */
+  /**
+   * Mark the target render path and open its first gate.
+   * @param target - Present field whose physical and virtual render ancestors are searched.
+   * @param onSettled - Called when the tracked gate commits or its removal is confirmed.
+   * @returns Whether a blocking gate was found, including one already opening.
+   */
   public revealPath(target: FieldNode, onSettled: Fn): boolean {
     const path = findRevealPath(target, this.registry, this.revealing);
     if (!path) return false;
     for (const node of path.renderPath) this.revealedNodes.add(node);
     this.trackedReveal = {
       element: path.element,
-      node: path.gate.node,
+      gate: path.gate,
       onSettled,
     };
     if (this.registry.has(path.element)) this.reveal(path.element);
     return true;
   }
 
-  /** Settle after child input layout effects have consumed the target Mount queue. */
-  public settleReveal(node: FieldNode): void {
+  /**
+   * Settle after child input layout effects have consumed the target Mount queue.
+   * @param gate - Stable object belonging to the position that committed the reveal.
+   * @returns Nothing; another position of the same field cannot settle this request.
+   */
+  public settleReveal(gate: DeferredGate): void {
     const tracked = this.trackedReveal;
-    if (!tracked || tracked.node !== node) return;
+    if (!tracked || tracked.gate !== gate) return;
     this.trackedReveal = undefined;
     tracked.onSettled();
   }
 
-  /** Confirm removal after synchronous effect replay has had a chance to register again. */
+  /**
+   * Confirm removal after synchronous effect replay has had a chance to register again.
+   * @param element - Placeholder position released by its owning effect cleanup.
+   * @returns Nothing; a microtask settles only the same still-absent tracked position.
+   */
   public releaseGate(element: Element): void {
     const tracked = this.trackedReveal;
     if (!tracked || tracked.element !== element) return;
