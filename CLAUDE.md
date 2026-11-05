@@ -75,9 +75,14 @@ Owner principles for every package that has adopted FCA (directories with `INTEN
 
 ## 📝 Documentation
 
-Every document this repository writes follows `DOCUMENTATION.md`, the only home of its principles.
+`DOCUMENTATION.md` holds the principles for the documents within the scope it states, and nothing else restates them. If its text is not already in your context, read it before writing or editing a document.
 
 @DOCUMENTATION.md
+
+## 📏 Repository Requirements
+
+- For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
+- Keep build outputs out of source commits: run the designated builds and artifact checks, then commit regenerated runtime bundles and adapters in their own build commit.
 
 ## 🎯 Quick Reference for Claude Code
 

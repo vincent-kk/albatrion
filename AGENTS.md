@@ -2,13 +2,10 @@
 
 Codex loads this file. The guidance it relies on lives in two other files, which this file does not copy; read both before any task:
 
-- `CLAUDE.md`: project structure, commands, agent assets, module contract principles and the development workflow. It applies to Codex as written.
-- `DOCUMENTATION.md`: the principles for every document this repository writes.
+- `CLAUDE.md`: project structure, commands, agent assets, module contract principles, repository requirements and the development workflow. It applies to Codex as written.
+- `DOCUMENTATION.md`: the principles for the documents this repository writes, within the scope it states.
 
 # Repository Requirements
-
-- For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
-- Keep build outputs out of source commits: run the designated builds and artifact checks, then commit regenerated runtime bundles and adapters in their own build commit.
 
 <!-- FILID:START:filid_fractal-boundaries.md -->
 # Fractal Boundaries
