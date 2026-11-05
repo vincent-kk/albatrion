@@ -16,9 +16,9 @@ The `ci` workflow uses the default `pr` tier for pull requests to every branch a
 
 Use **yarn** commands (not npm) for this project:
 
-- `yarn lint` - Check code style across all packages
-- `yarn typecheck` - Verify TypeScript types across all packages
-- `yarn test` - Run tests across all packages
+- `yarn run:all lint` - Check code style across all packages
+- `yarn run:all typecheck` - Verify TypeScript types across all packages
+- `yarn run:all test` - Run tests across all packages
 - `yarn run:all <command>` - Run command across all workspaces
 
 ## 📦 Working with Individual Packages
@@ -97,7 +97,7 @@ When working on this monorepo:
 ### 2. **Command Strategy**
 
 - Use `yarn` (not npm) for all commands
-- For monorepo-wide operations: `yarn <command>` (lint, typecheck, test)
+- For monorepo-wide operations: `yarn run:all <command>` (lint, typecheck, test)
 - For package-specific operations, you have two options:
   - **Full syntax**: `yarn workspace @scope/package-name <command>`
   - **Shortcut commands**: Many packages have shortcuts defined in root package.json
@@ -110,7 +110,7 @@ When working on this monorepo:
 1. Read and follow all rules in the `.claude/rules` directory
 2. Check the specific package's CLAUDE.md for detailed guidance
 3. Use yarn workspace commands for package-specific operations
-4. Run yarn lint, typecheck, and tests before completing tasks
+4. Run `yarn run:all lint`, `yarn run:all typecheck`, and `yarn run:all test` before completing tasks; use the affected-workspace procedure under Important Commands to reproduce CI checks
 5. Follow the project structure and naming conventions
 6. Record releases as the change records section of `DOCUMENTATION.md` describes, and publish as `scripts/PUBLISHING.md` describes; `yarn changeset:version` needs a `GITHUB_TOKEN`
 7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)

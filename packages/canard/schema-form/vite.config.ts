@@ -143,6 +143,7 @@ export default defineConfig({
                   '@testing-library/react',
                   '@testing-library/dom',
                   '@testing-library/user-event',
+                  '@canard/schema-form-antd5-plugin > antd',
                 ],
               },
             },
