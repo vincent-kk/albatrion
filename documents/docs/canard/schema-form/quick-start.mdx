@@ -3,170 +3,62 @@ sidebar_label: 'Quick Start'
 sidebar_position: 2
 ---
 
-import ForAI from '@site/src/components/ForAI';
+
 
 # Quick Start
 
-## Installation
+
+
+## Installation and plugin choice {#installation}
 
 ```bash
-# Core library
 yarn add @canard/schema-form
-
-# Validator plugin (AJV 8)
-yarn add @canard/schema-form-ajv8-plugin ajv
-
-# UI plugin — pick one
-yarn add @canard/schema-form-antd5-plugin   # Ant Design 5
-yarn add @canard/schema-form-mui6-plugin    # MUI 6
+# Optional validator and UI integration:
+yarn add @canard/schema-form-ajv8-plugin @canard/schema-form-antd6-plugin
 ```
 
-## Register Plugins
+The core includes fallback renderers and inputs, so a UI plugin is optional. Without a selected validator, validation requests have no verdict and produce a warning; `if` gates require a synchronous validator guard. Select a published validator plugin or pass a complete `validatorFactory` object. See [validation](./validation#validator-contract).
 
-Register plugins **once** at application entry point, before any
-`<Form>` renders. The call is idempotent — duplicate registrations
-are ignored by content hash.
+Use `@canard/schema-form-antd5-plugin` for Ant Design 5, `@canard/schema-form-antd6-plugin` for Ant Design 6, `@canard/schema-form-antd-mobile-plugin` for Ant Design Mobile, or `@canard/schema-form-mui-plugin` for MUI. The package name is `schema-form-mui-plugin`. Replace `@canard/schema-form-antd-plugin` with `@canard/schema-form-antd5-plugin`.
 
-```ts title="src/main.tsx (or index.tsx)"
-import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
+## Declared environment requirements {#compatibility}
 
-registerPlugin(ajvValidatorPlugin);
-registerPlugin(antd5Plugin);
-```
+The core's peer ranges are `react >=18 <20` and `react-dom >=18 <20`. The core and the plugins below declare no `engines` field and no browser minimum versions. Their syntax target is not a promise that a particular Node.js or browser version supplies every runtime API or UI dependency.
 
-## Minimal Form
+| Package | Declared peers and direct UI / validator dependencies |
+| --- | --- |
+| AJV 6 / 7 / 8 plugins | Direct dependency `ajv ^6.0.0` / `^7.0.0` / `^8.0.0`; no core peer declaration |
+| antd-mobile | React / React DOM `>=18 <20`, dayjs `>=1`; direct `antd-mobile ^5.0.0`, dayjs `^1.0.0` |
+| antd5 | React / React DOM `>=18 <20`, antd `>=5.10.0`, dayjs `>=1`; direct antd `^5.10.0`, icons `^5.0.0` |
+| antd6 | React / React DOM `>=18 <20`, antd `>=6.0.0`, dayjs `>=1`; direct antd `^6.0.0`, icons `^6.0.0` |
+| MUI | React / React DOM `>=18 <20`, Material / icons `>=7.0.0`, X date pickers `>=8.0.0`, Emotion react / styled `>=11.0.0`, dayjs `>=1` |
+
+The MUI plugin depends on MUI 7, MUI X 8, Emotion 11, and dayjs 1 ranges. Keep the UI library and its plugin aligned. For Ant Design CSS-variable defaults and theme configuration, follow [Ant Design's v6 migration documentation](https://ant.design/docs/react/migration-v6/); this guide does not assign that dependency's defaults.
+
+## Transpilation and CSP {#transpilation-csp}
+
+For targets that cannot parse the distributed ES2020 syntax, include the core and the external `@winglet` packages you actually consume in transpilation: `@winglet/common-utils`, `@winglet/json`, `@winglet/json-schema`, and `@winglet/react-utils`. Apply the same check to the UI plugin bundles. Transpilation alone does not supply missing APIs; AJV adapters use `WeakRef` and `FinalizationRegistry`.
+
+String controls expressions compile with `new Function`. A CSP that prohibits dynamic function compilation cannot run those expressions unchanged. Check this policy before adopting expression-based controls.
+
+## Register before rendering {#registration}
 
 ```tsx
-import { Form } from '@canard/schema-form';
+import { Form, registerPlugin } from '@canard/schema-form';
+import { plugin as validatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as uiPlugin } from '@canard/schema-form-antd6-plugin';
 
-const schema = {
-  type: 'object',
-  properties: {
-    name:  { type: 'string',  title: 'Name',  minLength: 1 },
-    email: { type: 'string',  title: 'Email', format: 'email' },
-    age:   { type: 'number',  title: 'Age',   minimum: 0 },
-  },
-  required: ['name', 'email'],
-} as const;
-
-function MyForm() {
-  return (
-    <Form
-      jsonSchema={schema}
-      onSubmit={async (value) => {
-        console.log('submitted:', value);
-      }}
-    />
-  );
-}
-```
-
-## With onChange and Ref
-
-```tsx
-import { useRef, useState } from 'react';
-import { Form, type FormHandle, ShowError } from '@canard/schema-form';
-
-const schema = {
-  type: 'object',
-  properties: {
-    username: { type: 'string', title: 'Username', minLength: 3 },
-    password: { type: 'string', title: 'Password', minLength: 8 },
-  },
-  required: ['username', 'password'],
-} as const;
-
-function LoginForm() {
-  const formRef = useRef<FormHandle<typeof schema>>(null);
-  const [value, setValue] = useState<any>({});
-
-  const handleSubmit = async (data: typeof value) => {
-    await api.login(data);
-  };
-
-  return (
-    <>
-      <Form
-        ref={formRef}
-        jsonSchema={schema}
-        onChange={setValue}
-        onSubmit={handleSubmit}
-        showError={ShowError.EditedTouched}
-      />
-      <button onClick={() => formRef.current?.submit()}>
-        Login
-      </button>
-    </>
-  );
-}
-```
-
-## Custom Layout with Form.Field
-
-Use `Form.Field`, `Form.Label`, `Form.Input`,
-and `Form.Error` sub-components to build a custom layout.
-Each takes a `path` prop (JSONPointer string).
-
-```tsx
-<Form jsonSchema={schema} onSubmit={handleSubmit}>
-  <div className="form-row">
-    <Form.Field path="/firstName" />
-    <Form.Field path="/lastName" />
-  </div>
-  <Form.Field path="/email" />
-  <Form.Field path="/birthDate" />
-</Form>
-```
-
-## Using the Children Render Prop
-
-```tsx
-<Form jsonSchema={schema}>
-  {({ value, errors, node }) => (
-    <>
-      <Form.Input path="/email" />
-      <Form.Error path="/email" />
-      {value?.role === 'admin' && <Form.Field path="/permissions" />}
-      <button disabled={(errors?.length ?? 0) > 0}>Submit</button>
-    </>
-  )}
-</Form>
-```
-
-<ForAI>
-
-## AI Quick Reference
-
-```ts
-// 1. Register at app entry (once)
 registerPlugin(validatorPlugin);
 registerPlugin(uiPlugin);
 
-// 2. Render
-<Form
-  jsonSchema={schema}          // required
-  defaultValue={initialValue}  // optional
-  onChange={setValue}
-  onSubmit={async (value) => { /* validated value */ }}
-  onValidate={(errors) => { /* called after each validation */ }}
-  showError={ShowError.EditedTouched}  // default
-  validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
-  ref={formRef}
-/>
+const schema = {
+  type: 'object',
+  properties: { text: { type: 'string' } },
+} as const;
 
-// 3. Imperative API via ref
-formRef.current?.submit()
-formRef.current?.validate()     // Promise<JSONSchemaError[]>
-formRef.current?.getValue()
-formRef.current?.setValue(val)
-formRef.current?.reset()
-formRef.current?.focus('/path')
-formRef.current?.showError(true)
-
-// 4. Submit with loading state
-const { submit, pending } = useFormSubmit(formRef);
+export function BasicForm() {
+  return <Form jsonSchema={schema} onChange={console.log} />;
+}
 ```
 
-</ForAI>
+Registration is global. Identical plugin content is deduplicated by hash; there is no fixed ordering requirement between a validator plugin and a UI plugin. Register before mounting forms so their captured configuration is ready. Use [FormProvider](./api-reference#plugins) for subtree defaults.

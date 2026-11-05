@@ -1,859 +1,189 @@
 ---
-sidebar_label: 'API Reference'
-sidebar_position: 4
+sidebar_label: 'API 참조'
+sidebar_position: 6
 ---
 
-import ForAI from '@site/src/components/ForAI';
-
-# API Reference
-
-참고용으로만 표시한다고 밝힌 타입을 제외하면, 이 페이지의 모든 항목은
-`@canard/schema-form`에서 export됩니다.
-
-## `<Form>`
-
-스키마 기반 폼 컴포넌트입니다. JSON Schema를 받아 `jsonSchema`와
-`defaultValue`로 노드 트리를 만들고 렌더링합니다. `value` prop은 없으므로
-값은 `onChange`, `children` 함수, 또는 명령형 `ref` API로 읽습니다.
-
-### Props
-
-| Prop                     | Type                                                   | Default                  | Description                                                                                                  |
-| ------------------------ | ------------------------------------------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `jsonSchema`             | `JSONSchema`                                           | —                        | **필수.** 폼 구조를 정의하는 JSON Schema                                                                     |
-| `defaultValue`           | `Value`                                                | `undefined`              | 폼의 초기 값                                                                                                 |
-| `onChange`               | `(value: Value) => void`                               | —                        | 폼 값이 바뀔 때 호출됩니다                                                                                   |
-| `onSubmit`               | `(value: Value) => Promise<void> \| void`              | —                        | `submit()`이 검증을 통과한 뒤 호출됩니다                                                                     |
-| `onValidate`             | `(errors: FieldNode['globalErrors']) => void`          | —                        | 검증 결과나 외부 오류 목록이 폼 오류 목록을 바꿀 때 그 목록과 함께 호출됩니다. 이전과 같은 결과는 건너뜁니다 |
-| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | 폼의 상호작용 플래그(edited, touched)가 바뀔 때 호출됩니다                                                    |
-| `onError`                | `(record: FormErrorRecord) => void`                    | —                        | 생성 실패와 렌더 실패를 포함해, 이 폼 인스턴스의 오류 기록마다 호출됩니다                                    |
-| `onDiagnosticsChange`    | `(diagnostics: FieldNode['diagnostics']) => void`      | —                        | 준비가 끝난 뒤 루트 진단이 바뀔 때 호출됩니다                                                                |
-| `showError`              | `boolean \| ShowError`                                 | `ShowError.EditedTouched` | 검증 오류를 표시할 시점                                                                                      |
-| `validationMode`         | `ValidationMode`                                       | `OnChange \| OnRequest`  | 검증이 실행되는 시점                                                                                         |
-| `validatorFactory`       | `ValidatorFactory`                                     | 플러그인 validator       | validator 객체(`compile`과 `compileGuard`). Form prop, `FormProvider`, 플러그인 순으로 적용됩니다            |
-| `readOnly`               | `boolean`                                              | `false`                  | 모든 입력에 `readOnly`를 적용합니다                                                                          |
-| `disabled`               | `boolean`                                              | `false`                  | 모든 입력에 `disabled`를 적용합니다                                                                          |
-| `unsetOnInactive`        | `boolean`                                              | —                        | `controls.unsetOnInactive`의 폼 기본값입니다. 필드가 형태에서 빠지면 값을 지웁니다(노드 자체 정책이 우선)    |
-| `disableAutomaticWrites` | `boolean`                                              | —                        | 명령형 쓰기는 막지 않고 자동 쓰기만 억제합니다                                                               |
-| `errors`                 | `FieldNode['globalErrors']`                            | `undefined`              | 외부 검증 오류. 마운트 뒤 적용되고, 배열 참조가 바뀌거나 폼이 reset될 때마다 다시 적용됩니다                 |
-| `fieldInputDefinitions`  | `FieldInputDefinition[]`                               | —                        | 폼 수준 입력 컴포넌트 정의                                                                                   |
-| `fieldInputMap`          | `FieldInputMap`                                        | —                        | 경로 기반 입력 컴포넌트 재정의                                                                               |
-| `FieldRenderer`          | `ComponentType<FieldRendererProps>`                    | 플러그인 렌더러          | 모든 필드와 `Form.Field`가 쓰는 그룹 렌더러                                                                  |
-| `FormLabelRenderer`      | `ComponentType<FieldRendererProps>`                    | 플러그인 렌더러          | `Form.Label`이 쓰는 렌더러                                                                                   |
-| `FormInputRenderer`      | `ComponentType<FieldRendererProps>`                    | 플러그인 렌더러          | `Form.Input`이 쓰는 렌더러                                                                                   |
-| `FormErrorRenderer`      | `ComponentType<FieldRendererProps>`                    | 플러그인 렌더러          | `Form.Error`가 쓰는 렌더러                                                                                   |
-| `formatError`            | `FormatError`                                          | 플러그인 포매터          | 커스텀 오류 메시지 포매터                                                                                    |
-| `virtualization`         | `boolean \| VirtualizationOptions`                     | off                      | 초대형 폼을 위한 렌더 레벨 가상화(지연 마운트)                                                               |
-| `context`                | `Dictionary`                                           | —                        | 모든 입력 컴포넌트에서 쓸 수 있는 사용자 정의 컨텍스트. `FormProvider`의 context 위에 병합됩니다             |
-| `children`               | `ReactNode \| (props: FormChildrenProps) => ReactNode` | —                        | 커스텀 레이아웃, 또는 `{ node, jsonSchema, defaultValue, value, errors }`를 받는 함수                        |
-| `ref`                    | `Ref<FormHandle>`                                      | —                        | 명령형 핸들                                                                                                  |
-
-`FormErrorRecord`는 참고용으로만 표시하며 export되지 않습니다. `Dictionary`(`Record<string, any>`)도 export되지 않습니다.
-
-### ShowError Values
-
-```ts
-import { ShowError } from '@canard/schema-form';
-
-ShowError.Always; // always show (same as true)
-ShowError.Never; // never show (same as false)
-ShowError.Edited; // show when node.state[FieldNodeState.Edited] is true
-ShowError.Touched; // show when node.state[FieldNodeState.Touched] is true
-ShowError.EditedTouched; // show when edited AND touched (default)
-// A node's own node.state[FieldNodeState.ErrorVisible] overrides this policy.
-```
-
-### ValidationMode Values
-
-```ts
-import { ValidationMode } from '@canard/schema-form';
-
-ValidationMode.None; // disable validation
-ValidationMode.OnChange; // validate when the value changes
-ValidationMode.OnRequest; // validate only on request; validate() and submit() validate under every mode except None
-// Combine with bitwise OR: ValidationMode.OnChange | ValidationMode.OnRequest
-```
-
-### Virtualization
-
-초대형 폼을 위한 렌더 레벨 가상화입니다. node tree는 항상 전량 생성되므로
-값·검증·submit은 영향을 받지 않고, 화면 밖 필드만 경량 placeholder로
-마운트됐다가 뷰포트 근접, 브라우저 idle 시간, 또는 `focus`/`select` 명령
-시점에 실제 컴포넌트로 교체(reveal)됩니다. reveal은 단방향이라 한 번
-마운트된 필드는 placeholder로 되돌아가지 않습니다. 기본값은 꺼짐(opt-in)이며,
-`true`(기본 옵션) 또는 `VirtualizationOptions` 객체를 전달합니다.
-
-```tsx
-import { Form, VirtualizationBackfill } from '@canard/schema-form';
-
-<Form jsonSchema={largeSchema} virtualization />;
-<Form
-  jsonSchema={largeSchema}
-  virtualization={{ threshold: 50, backfill: VirtualizationBackfill.None }}
-/>;
-```
-
-| Option           | Type                                            | Default  | Description                                                                                         |
-| ---------------- | ----------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `threshold`      | `number`                                        | `30`     | 렌더되는 자식이 이 수 이상인 branch만 자식을 게이트합니다                                           |
-| `eagerCount`     | `number`                                        | `20`     | 게이트된 branch마다 즉시 마운트하는 앞쪽 자식 수(첫 프레임이 비지 않게 함)                          |
-| `rootMargin`     | `VirtualizationRootMargin`                      | `'100%'` | 뷰포트 주변 사전 마운트 거리. `px`/`%` 단위만 유효합니다(IntersectionObserver 사양)                 |
-| `backfill`       | `VirtualizationBackfill`                        | `Idle`   | `Idle`은 브라우저 idle 시간에 나머지를 점진적으로 마운트하고, `None`은 가시성이나 명령으로만 reveal |
-| `estimateHeight` | `number \| (node: FieldNode) => number`         | `40`     | placeholder 높이(px). reveal 전까지 스크롤 형상을 근사합니다                                        |
-| `Placeholder`    | `ComponentType<VirtualizationPlaceholderProps>` | —        | placeholder 안에 렌더하는 선택적 컴포넌트(Suspense fallback 방식). `{ node, height }`를 받습니다    |
-
-**Placeholder DOM 계약** — 지연된 필드는
-`<div data-path={path} data-deferred aria-hidden style={{ height }} />`로
-렌더됩니다: 마운트된 wrapper와 동일한 `data-path` identity에 `data-deferred`
-마커가 상태를 표시합니다. 스켈레톤은 CSS 속성 셀렉터(`[data-deferred] { … }`)
-또는 `Placeholder` 컴포넌트로 스타일링하세요.
-
-:::warning SSR / hydration
-`IntersectionObserver`가 필요하며, 없으면 옵션이 무시되고(개발 모드에서는 경고 출력) 전체가 즉시 마운트됩니다. SSR/hydration 앱에서는 켜지 마세요 — 서버는 전체를 렌더하고
-클라이언트는 게이트를 렌더해 hydration mismatch가 발생합니다.
-:::
-
-라이브 데모는 [가상화 폼 예제](./examples/virtualized-form)를 참고하세요.
-
-## `FormHandle` (ref API)
-
-`useRef<FormHandle<typeof schema>>(null)`로 얻어 `ref` prop에 전달합니다.
-`getAttachedFilesMap`과 `showError`를 제외한 모든 멤버는 폼의 현재 루트 노드를
-대상으로 하며, 폼이 트리를 다시 만들면 핸들도 새 루트를 따라갑니다.
-
-```ts
-interface FormHandle<Schema, Value> {
-  node?: InferFieldNode<Schema>; // current root node (undefined before the first mount)
-  focus(path?: string): void; // focus the input at path (root when omitted)
-  select(path?: string): void; // select the input's value at path (root when omitted)
-  refresh(path?: string): void; // make the input at path re-read its committed value
-  remount(path?: string): void; // remount the rendered subtree at path
-  reset(
-    option?:
-      | typeof SetValueOption.DisableAutomaticWrites
-      | typeof SetValueOption.EnableAutomaticWrites,
-  ): void; // reload the committed defaults (re-reads jsonSchema and defaultValue)
-  findNode(path: string): FieldNode | null;
-  findNodes(path: string): readonly FieldNode[];
-  getState(): FieldNode['globalState']; // flags true on at least one node
-  setState(state: FieldNode['state']): void; // patch flags on every node
-  clearState(): void; // clear flags on every node
-  getValue(): Value; // current output value
-  setValue(
-    value: Value | ((prev: Value) => Value),
-    options?: SetValueOption,
-  ): void;
-  getErrors(): FieldNode['globalErrors'];
-  getAttachedFilesMap(): AttachedFilesMap; // Map<path, File[]>
-  validate(): Promise<FieldNode['globalErrors']>;
-  showError(visible?: boolean): void; // true (default) shows every error; false returns to the showError prop
-  submit: TrackableHandlerFunction; // callable + subscribe(listener) + pending
-}
-```
-
-- 어떤 노드와도 맞지 않는 `path`를 주면 `focus`, `select`, `refresh`,
-  `remount`는 아무 일도 하지 않습니다.
-- 첫 마운트 전에도 조회 메서드는 예외를 던지지 않습니다. `findNode`는
-  `null`을, `findNodes`·`getErrors`·`validate`는 빈 배열을, `getState`는 빈
-  객체를 반환합니다.
-- `reset()`은 첨부 파일 맵도 비우고 `showError(true)` 재정의를 해제합니다.
-- `submit()`은 먼저 검증하며, 검증이 실패하면 `ValidationError`로
-  reject됩니다. `onSubmit`은 검증을 통과한 뒤에만 실행됩니다. 폼 진단이 degraded이면 `SchemaFormError`(`SUBMIT_WHILE_DEGRADED`)로도 거부합니다.
-- `AttachedFilesMap`과 `TrackableHandlerFunction`은 참고용으로만 표시하며
-  export되지 않습니다.
-
-```ts
-import { useRef } from 'react';
-
-import type { FormHandle } from '@canard/schema-form';
-
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    email: { type: 'string', format: 'email' },
-  },
-} as const;
-
-const formRef = useRef<FormHandle<typeof schema>>(null);
-
-async function save() {
-  const errors = await formRef.current?.validate();
-  if (errors?.length) formRef.current?.focus('/email');
-}
-
-formRef.current?.setValue({ name: 'Alice' });
-formRef.current?.setValue((prev) => ({ ...prev, name: 'Bob' }));
-formRef.current?.reset();
-```
-
-### SetValueOption
-
-```ts
-import { SetValueOption } from '@canard/schema-form';
-
-// Bit flags
-SetValueOption.Overwrite; // replace the addressed value (default)
-SetValueOption.Merge; // keep omitted object keys, replace the supplied ones
-SetValueOption.DisableAutomaticWrites; // suppress automatic writes caused by this call
-SetValueOption.EnableAutomaticWrites; // allow automatic writes even when the form suppresses them
-// Overwrite and Merge cannot be combined.
-```
-
-## Form Sub-Components
-
-모든 `Form.*` 서브 컴포넌트는 `<Form>` 조상이 필요하며 그 내부 컨텍스트를 사용합니다.
-렌더러는 `<Form>` prop, `FormProvider`, 등록된 플러그인 순으로 우선합니다.
-
-### `Form.Field`
-
-그룹 렌더러(`FieldRenderer`)로 완전한 필드 그룹(레이블, 입력, 오류)을
-렌더링합니다.
-
-```ts
-type FormFieldProps<Value> = {
-  path?: string;
-  FieldInput?: ComponentType<FieldInputProps<Value>>;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
-  Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & ChildFieldProps;
-
-type ChildFieldProps<Value> = {
-  required?: boolean;
-  readOnly?: boolean;
-  disabled?: boolean;
-  defaultValue?: Value;
-  value?: Value;
-  onChange?: (
-    value: Value | ((prev: Value) => Value),
-    options?: SetValueOption,
-  ) => void;
-  onFileAttach?: (file: File | File[] | undefined) => void;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
-  className?: string;
-  style?: CSSProperties;
-  [alt: string]: any; // extra props forwarded to the input component
-};
-```
-
-```tsx
-<Form.Field path="/email" />
-<Form.Field path="/birthDate" FieldInput={DatePicker} />
-<Form.Field path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
-```
-
-### `Form.Label`
-
-`FormLabelRenderer`로 레이블만 렌더링하며,
-`<label htmlFor={path} id={'label:' + path}>` 안에 그립니다. `path`,
-`className`, `style`을 받습니다.
-
-```tsx
-<Form.Label path="/email" className="required-label" />
-```
-
-### `Form.Input`
-
-`FormInputRenderer`로 입력만 렌더링합니다. `path`, `FieldInput`, 위의
-`ChildFieldProps`를 받으며, 추가 props는 입력 컴포넌트로 전달됩니다.
-
-```tsx
-<Form.Input path="/email" placeholder="user@example.com" autoComplete="email" />
-```
-
-### `Form.Error`
-
-`FormErrorRenderer`로 오류 메시지만 렌더링하며, `<span>` 안에 그립니다.
-`path`, `className`, `style`을 받습니다.
-
-```tsx
-<Form.Error path="/email" className="error-text" />
-```
-
-### `Form.Render`
-
-커스텀 렌더링을 위한 저수준 슬롯입니다. 자식은 필드의 `FieldRendererProps`를
-받아 렌더할 내용을 반환하는 함수입니다. `path`, `FieldInput`, `Wrapper`, 위의
-`ChildFieldProps`도 받습니다.
-
-```tsx
-<Form.Render path="/status">
-  {(props) => (
-    <div className={`status-field ${props.value}`}>
-      <props.Input />
-      {props.errorVisible && <span>{props.errorMessage}</span>}
-    </div>
-  )}
-</Form.Render>
-```
-
-### `FormProvider`
-
-전역 등록 없이 서브트리 전체에 설정을 공유하는 컨텍스트 프로바이더입니다.
-같은 앱의 폼들이 서로 다른 설정을 써야 할 때 유용합니다. `<Form>`에 지정한
-props가 프로바이더보다 우선합니다.
-
-| Prop                                                                           | Description                                                   |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `fieldInputDefinitions`                                                        | 입력 정의. Form 자체 정의보다 낮고 플러그인 정의보다 높습니다 |
-| `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` | 서브트리의 모든 폼이 쓰는 렌더러                              |
-| `formatError`                                                                  | 오류 메시지 포매터                                            |
-| `showError`                                                                    | 오류 표시 조건                                                |
-| `validationMode`                                                               | 검증이 실행되는 시점                                          |
-| `validatorFactory`                                                             | validator 객체                                                |
-| `context`                                                                      | 각 Form의 `context` 아래에 병합되는 컨텍스트                  |
-
-```tsx
-import { Form, FormProvider } from '@canard/schema-form';
-
-<FormProvider
-  fieldInputDefinitions={customDefinitions}
-  FieldRenderer={MyRenderer}
-  formatError={myFormatError}
->
-  <Form jsonSchema={schema} />
-</FormProvider>;
-```
-
-## Hooks
-
-### `useFormSubmit`
-
-```ts
-const { submit, pending } = useFormSubmit(formRef);
-// submit: () => Promise<void>
-// pending: boolean | undefined
-```
-
-`useSyncExternalStore`를 통해 폼의 `submit` 핸들러와 동기화됩니다. 제출이
-진행 중일 때 `pending`은 `true`입니다.
-
-```tsx
-import type { RefObject } from 'react';
-
-import { type FormHandle, useFormSubmit } from '@canard/schema-form';
-
-function SubmitButton({ formRef }: { formRef: RefObject<FormHandle | null> }) {
-  const { submit, pending } = useFormSubmit(formRef);
-  return (
-    <button onClick={submit} disabled={pending}>
-      {pending ? 'Submitting…' : 'Submit'}
-    </button>
-  );
-}
-```
-
-### `useFieldNodeTracker`
-
-```ts
-const revision = useFieldNodeTracker(node, tracking?);
-// node: FieldNode | null (null tracks nothing)
-// tracking: FieldNodeEventType bitmask; default: all events
-// Returns a revision number that changes with every matching event and re-renders the component.
-```
-
-```tsx
-import {
-  FieldNodeEventType,
-  type NumberNode,
-  useFieldNodeTracker,
-} from '@canard/schema-form';
-
-function PriceDisplay({ node }: { node: NumberNode }) {
-  useFieldNodeTracker(node, FieldNodeEventType.UpdateValue);
-  return <span>{node.value}</span>;
-}
-```
-
-### `useFieldNodeSubscribe`
-
-```ts
-useFieldNodeSubscribe(
-  node,
-  (event) => {
-    console.log(event.type, node.value);
-  },
-  { onSubscribe: (node) => console.log(node.value) }, // optional catch-up
-);
-// Raw event subscription — does NOT trigger re-render by itself.
-```
-
-리스너는 커밋 시점에 구독이 붙은 뒤 전달된 이벤트만 받습니다. 리스너가 노드
-상태를 따라 복제한다면 `onSubscribe`를 전달해 구독이 붙을 때 현재 상태를 다시
-읽거나, 대신 `useFieldNodeTracker`를 사용하세요.
-
-### `useChildFieldMap`
-
-```ts
-const fields = useChildFieldMap<Value>(ChildFields);
-// Takes the ChildFields prop of a FieldInput and returns an object keyed by field name.
-// A name with no child field returns a component that renders nothing.
-```
-
-```tsx
-import { type FieldInputProps, useChildFieldMap } from '@canard/schema-form';
-
-function AddressInput({ ChildFields }: FieldInputProps) {
-  const fields = useChildFieldMap<{ street: string; city: string }>(
-    ChildFields,
-  );
-  return (
-    <div>
-      <fields.street />
-      <fields.city />
-    </div>
-  );
-}
-```
-
-### `useChildFieldErrors`
-
-```ts
-const {
-  errorMessage, // formattedError when showError is true, otherwise null
-  showError, // the node itself or any direct child passes the showError policy
-  formattedError, // first formatted error among the direct children
-  showErrors, // showError policy result per direct child
-  formattedErrors, // first error of each direct child, formatted with formatError
-  errorMatrix, // errors of each direct child
-} = useChildFieldErrors(node, disabled?);
-```
-
-`node`의 직속 자식 오류를 읽고, 자식 목록·상태·경로·오류가 바뀌면 다시
-렌더링합니다. `disabled`를 지정하면 각 자식의 오류 목록은 비고 모든 표시
-플래그는 `false`입니다.
-
-## `registerPlugin`
-
-```ts
-registerPlugin(plugin: SchemaFormPlugin | null): void
-```
-
-플러그인을 전역으로 등록합니다. 콘텐츠 지문이 이미 등록된 플러그인은
-건너뛰므로, 같은 플러그인 객체로 두 번 호출해도 아무 일도 일어나지 않습니다.
-나중에 등록한 플러그인의 렌더러·validator·`formatError`가 앞선 것을
-덮어쓰고, 입력 정의는 앞선 정의보다 높은 순위로 들어갑니다.
-
-`registerPlugin(null)`을 호출하면 모든 플러그인이 시스템 기본값으로 재설정됩니다.
-
-## `SchemaFormPlugin` Interface
-
-```ts
-interface SchemaFormPlugin {
-  FieldRenderer?: ComponentType<FieldRendererProps>;
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
-  fieldInputDefinitions?: FieldInputDefinition[];
-  validator?: ValidatorPlugin;
-  formatError?: FormatError;
-}
-```
-
-## `ValidatorPlugin` Interface
-
-```ts
-interface ValidatorPlugin {
-  bind?(instance: any): void; // never called by the core; call it yourself before registerPlugin
-  compile(jsonSchema: JSONSchema): ValidateFunction;
-  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
-  release?(root: JSONSchema): void; // release a root's resources when its cache entry is evicted
-  readonly dialect?: string;
-}
-
-type ValidateFunction = (
-  data: unknown,
-) =>
-  | readonly ValidationIssue[]
-  | null
-  | Promise<readonly ValidationIssue[] | null>;
-
-interface ValidationIssue {
-  dataPath: string; // JSON Pointer of the rejected value ('' for the root)
-  keyword?: string;
-  message?: string;
-  schemaPath?: string;
-  rejectedKey?: string;
-  details?: Record<string, unknown>;
-  source?: unknown; // the validator's original issue
-}
-```
-
-validator는 유효한 데이터에 대해 `null`을 반환합니다. guard는 동기 함수이며,
-비동기 format과 keyword는 guard에서 지원하지 않습니다.
-
-## `FieldInputProps` Interface
-
-`fieldInputDefinitions`로 등록된 모든 커스텀 입력 컴포넌트는 다음 props를 받습니다.
-
-```ts
-interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
-  jsonSchema: Schema;
-  readOnly: boolean;
-  disabled: boolean;
-  required: boolean;
-  node: Node;
-  type: Node['type']; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
-  misfit: Node['isMisfit']; // stored value mismatches the accepted kinds
-  name: Node['name'];
-  path: Node['path'];
-  nullable: Node['nullable'];
-  errors: Node['errors'];
-  errorVisible: boolean;
-  watchValues: WatchValues; // values read from the controls.watch paths
-  defaultValue: Value | undefined;
-  value: Value | undefined;
-  onChange: (
-    value: Value | undefined | ((prev: Value | undefined) => Value | undefined),
-    options?: SetValueOption,
-  ) => void;
-  onFileAttach: (file: File | File[] | undefined) => void;
-  ChildFields: ChildField[];
-  placeholder: string | undefined;
-  className: string | undefined;
-  style: CSSProperties | undefined;
-  context: Context;
-  [alt: string]: any; // extra props from Form.Field / Form.Input
-}
-```
-
-`ChildField`는 참고용으로만 표시하며 export되지 않습니다. `key`, `path`, `field`를 지닌 컴포넌트 타입이며, 타입이 필요하면 `FieldInputProps['ChildFields'][number]`를 사용하세요.
-
-## `FieldNode` Interface
-
-`FieldNode`는 노드 타입(`StringNode`, `NumberNode`, `BooleanNode`,
-`NullNode`, `ObjectNode`, `ArrayNode`, `VirtualNode`, `UnionNode`)의
-유니온입니다. 모든 노드 타입이 아래 멤버를 공유합니다(일부만 표시).
-
-```ts
-interface FieldNode {
-  // Identity
-  readonly type:
-    | 'string'
-    | 'number'
-    | 'boolean'
-    | 'null'
-    | 'object'
-    | 'array'
-    | 'virtual'
-    | 'union';
-  readonly strategy: 'branch' | 'terminal'; // branch nodes own child nodes
-  readonly schemaType: string | readonly string[] | undefined; // authored kind(s), including 'integer'; undefined on a virtual node
-  readonly jsonSchema: Readonly<Record<string, unknown>> | boolean;
-  readonly isRequired: boolean;
-  readonly nullable: boolean;
-
-  // Tree structure
-  readonly depth: number;
-  readonly isRoot: boolean;
-  readonly rootNode: FieldNode;
-  readonly parentNode: FieldNode | null;
-  readonly name: string;
-  readonly escapedName: string;
-  readonly path: string;
-  readonly children: readonly FieldNode[] | null; // null on terminal nodes
-
-  // Value
-  readonly value: unknown; // typed per node kind
-  readonly outputValue: unknown; // emitted value (getValue()): '', [] and {} are omitted unless options.omitEmpty is false
-  readonly defaultValue: unknown;
-  setValue(value: unknown, option?: SetValueOption): void;
-  resetSubtree(option?: SetValueOption): void;
-
-  // Computed properties
-  readonly isActive: boolean; // false while a condition excludes the field
-  readonly isVisible: boolean;
-  readonly isPresent: boolean; // isActive and isVisible
-  readonly isReadOnly: boolean;
-  readonly isDisabled: boolean;
-  readonly watchValues: readonly unknown[];
-  readonly context: Readonly<Record<string, unknown>>;
-  readonly isMisfit: boolean; // stored value mismatches the accepted kinds
-  readonly isEdited: boolean; // user input edited the field; re-read on UpdateState
-  readonly isTouched: boolean; // blur flag; re-read on UpdateState
-  readonly isDivergent: boolean; // root output versus last root load at this path; re-read on root UpdateValue/UpdateState/RequestRefresh and own UpdatePath
-
-  // State
-  state: {
-    [FieldNodeState.Edited]?: boolean; // set on every user input write
-    [FieldNodeState.Touched]?: boolean; // set on blur
-    [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
-    [key: string]: any; // your own flags
-  };
-  setState(state: FieldNode['state']): void;
-  readonly globalState: Readonly<Record<string, boolean | undefined>>; // flags true on at least one node
-  setSubtreeState(state: FieldNode['state']): void;
-  clearSubtreeState(): void;
-
-  // Errors and validation
-  readonly errors: readonly ValidationIssue[]; // displayed validator and external issues
-  readonly globalErrors: readonly ValidationIssue[]; // root external issues, then whole-tree validator issues
-  setExternalErrors(errors: readonly ValidationIssue[]): void;
-  clearExternalErrors(): void;
-  validate(): Promise<readonly ValidationIssue[]>;
-
-  // Navigation
-  find(pointer?: string | readonly string[] | null): FieldNode | null;
-  findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
-  visitSubtree(visitor: (node: FieldNode) => void | boolean): void; // self, then preorder; false skips that node's descendants
-
-  // Events and requests
-  subscribe(listener: (event: { type: number }) => void): () => void; // event.type holds FieldNodeEventType bits
-  revision(mask?: FieldNodeEventType): number;
-  request(kind: FieldNodeRequestType): void;
-  batch(fn: () => void): void; // group synchronous writes into one delivery
-}
-```
-
-이벤트와 요청은 별도의 enum을 사용합니다. `subscribe`는 `FieldNodeEventType`
-비트를 전달하고, `request`는 렌더러에 동작 하나를 요청합니다.
-
-```ts
-import {
-  FieldNodeEventType,
-  FieldNodeRequestType,
-  FieldNodeState,
-} from '@canard/schema-form';
-
-const unsubscribe = node.subscribe((event) => {
-  if (event.type & FieldNodeEventType.UpdateValue) console.log(node.value);
-});
-
-node.request(FieldNodeRequestType.Focus); // also Select, Refresh, Remount
-node.setState({ [FieldNodeState.ErrorVisible]: true });
-unsubscribe();
-```
-
-`visitSubtree`는 노드 자신에게 먼저 visitor를 부르고, 하위는 전위 순서로, 형제는
-`children` 순서로 부릅니다. `false`를 돌려주면 그 노드의 하위만 건너뜁니다. 폼 안의
-노드에서는 현재 형상만 방문하고, 폼에서 빠진 노드에서는 그 노드와 함께 빠진 하위
-트리를 방문합니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는
-방문된다는 보장이 없습니다. 순회 중의 값 쓰기는 순회가 끝날 때 한 번 반영되므로
-순회 중 읽기는 순회 전의 값을 돌려줍니다. 상태와 외부 오류의 변경은 바로 적용되고
-그 이벤트만 끝까지 기다리며, 바깥 `batch` 안에서는 모두 그 batch의 끝까지
-기다리고, 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다. 리스너 밖에서
-visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 폼에서 빠진 노드에 쓰면 폼 안의 필드는 바뀌지
-않습니다. `FormHandle`에는 `visitSubtree`가 없으므로 `formRef.current?.node`에서
-부르십시오.
-
-```ts
-node.visitSubtree((child) => {
-  if (child.path === '/profile/locked') return false; // skip its descendants
-  if (child.type === 'string') child.setValue(''); // applied once at the end
-});
-```
-
-## `ArrayNode` Methods
-
-```ts
-// ArrayNode = FieldNode members + these methods
-interface ArrayNodeMethods<Item> {
-  push(value?: Item): number; // append an item; returns the new length
-  pop(): Item | undefined; // remove the last item; returns its value
-  update(index: number, value: Item): Item | undefined; // replace one position
-  remove(index: number): Item | undefined; // remove one position; returns its value
-  insert(index: number, value?: Item): number; // insert at a position in [0, length]; returns the new length
-  clear(): void; // remove every item
-}
-```
-
-`ArrayNodeMethods`는 설명용 이름이며 export되지 않으므로 `ArrayNode`를 사용하세요. `arrayNode.children`은 branch 배열에서는 항목 노드 목록이고, 하나의 입력으로
-렌더되는 배열에서는 `null`입니다. 따라서 항목 수는 `arrayNode.children?.length`로
-읽습니다. 이 메서드들은 `minItems`나 `maxItems`를 강제하지 않으며, 위반은
-검증이 보고합니다.
-
-## Node Type Guards
-
-```ts
-import {
-  isArrayNode,
-  isBooleanNode,
-  isBranchNode,
-  isFieldNode,
-  isNumberNode,
-  isObjectNode,
-  isStringNode,
-  isTerminalNode,
-  isUnionNode,
-  isVirtualNode,
-} from '@canard/schema-form';
-
-const items = formRef.current?.findNode('/items');
-if (items && isArrayNode(items)) {
-  items.push(); // TypeScript knows it's ArrayNode here
-  items.children?.length;
-}
-```
-
-`isFieldNode(value: unknown)`는 어떤 값이든 검사하고, 나머지 가드는
-`FieldNode`를 받습니다.
-
-## Error Guards
-
-```ts
-import {
-  isJSONSchemaError,
-  isSchemaFormError,
-  isUnhandledError,
-  isValidationError,
-} from '@canard/schema-form';
-
-try {
-  await formRef.current?.submit();
-} catch (error) {
-  if (isValidationError(error)) console.log('validation failed');
-}
-```
-
-## `FormatError` Function
-
-```ts
-type FormatError = (
-  error: ValidationIssue, // plus an internal `key` for array items
-  node: FieldNode,
-  context: Dictionary,
-) => ReactNode;
-```
-
-기본 포매터는 스키마의 `presentation.errorMessages`를 읽고, 해당 메시지가
-없으면 `error.message`를 사용합니다.
-
-```ts
-import type { FormatError } from '@canard/schema-form';
-
-const formatError: FormatError = (error, node) => {
-  if (error.keyword === 'required') return `${node.name} is required`;
-  if (error.keyword === 'minLength')
-    return `Minimum ${error.details?.limit} characters required`;
-  return error.message;
-};
-```
-
-## `JSONPointer`
-
-노드 경로, `find()`, `controls` 표현식에서 쓰는 경로 기호를 담은 상수
-객체입니다.
-
-```ts
-import { JSONPointer } from '@canard/schema-form';
-
-JSONPointer.Root; // '' — the whole document
-JSONPointer.Fragment; // '#'
-JSONPointer.Separator; // '/'
-JSONPointer.Parent; // '..' (extended syntax)
-JSONPointer.Current; // '.' (extended syntax)
-JSONPointer.Wildcard; // '*' (extended syntax; matches every child in findNodes())
-JSONPointer.Context; // '@' (extended syntax)
-```
-
-키는 RFC 6901 방식으로 이스케이프합니다. `~`는 `~0`, `/`는 `~1`로 쓰며, 예를
-들면 `node.find('/field~1with~0special')`입니다.
-
-<ForAI>
-
-## AI API Quick-Reference
-
-```ts
-// ── registerPlugin ─────────────────────────────────────────────
-registerPlugin(plugin: SchemaFormPlugin | null): void
-// null → reset all plugins
-
-// ── Form props (all optional except jsonSchema) ─────────────────
-jsonSchema:             Schema                           // required
-defaultValue?:          Value
-onChange?:              (value: Value) => void
-onSubmit?:              (value: Value) => Promise<void> | void
-onValidate?:            (errors: FieldNode['globalErrors']) => void
-onStateChange?:         (state: FieldNode['globalState']) => void
-onError?:               (record: FormErrorRecord) => void
-onDiagnosticsChange?:   (diagnostics: FieldNode['diagnostics']) => void
-showError?:             boolean | ShowError              // default: EditedTouched
-validationMode?:        ValidationMode                   // default: OnChange|OnRequest
-validatorFactory?:      ValidatorFactory
-readOnly?:              boolean
-disabled?:              boolean
-unsetOnInactive?:       boolean
-disableAutomaticWrites?: boolean
-errors?:                FieldNode['globalErrors']
-fieldInputDefinitions?: FieldInputDefinition[]
-fieldInputMap?:         FieldInputMap
-FieldRenderer?:         ComponentType<FieldRendererProps>
-FormLabelRenderer?:     ComponentType<FieldRendererProps>
-FormInputRenderer?:     ComponentType<FieldRendererProps>
-FormErrorRenderer?:     ComponentType<FieldRendererProps>
-formatError?:           FormatError
-virtualization?:        boolean | VirtualizationOptions
-context?:               Dictionary
-children?:              ReactNode | (props: FormChildrenProps) => ReactNode
-ref?:                   Ref<FormHandle>
-
-// ── FormHandle ──────────────────────────────────────────────────
-node?:                 FieldNode
-getValue():            Value
-setValue(v | (prev) => v, opts?): void
-getState():            FieldNode['globalState']
-setState(s):           void
-clearState():          void
-getErrors():           FieldNode['globalErrors']
-validate():            Promise<FieldNode['globalErrors']>
-showError(b?):         void
-focus(path?):          void
-select(path?):         void
-refresh(path?):        void
-remount(path?):        void
-findNode(path):        FieldNode | null
-findNodes(path):       readonly FieldNode[]
-reset(opts?):          void
-submit:                TrackableHandlerFunction   // .pending, .subscribe()
-getAttachedFilesMap(): AttachedFilesMap
-
-// ── FieldNode key members ──────────────────────────────────────
-node.value / node.outputValue / node.defaultValue
-node.setValue(value, option?)
-node.errors / node.globalErrors / node.setExternalErrors(list) / node.clearExternalErrors()
-node.state[FieldNodeState.Edited | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
-node.isActive / node.isVisible / node.isPresent / node.isReadOnly / node.isDisabled
-node.isRequired / node.nullable / node.type / node.strategy / node.schemaType
-node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
-node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
-node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
-node.validate() → Promise<readonly ValidationIssue[]>
-node.request(FieldNodeRequestType.Focus | Select | Refresh | Remount)
-node.subscribe(listener) → unsubscribe   // event.type & FieldNodeEventType.X
-node.revision(mask?) / node.batch(fn)
-
-// ── ArrayNode additional ────────────────────────────────────────
-arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
-arrayNode.push(value?) → length / arrayNode.pop() / arrayNode.update(index, value)
-arrayNode.remove(index) / arrayNode.insert(index, value?) → length / arrayNode.clear()
-
-// ── Hooks ───────────────────────────────────────────────────────
-useFormSubmit(ref)                              → { submit, pending }
-useFieldNodeTracker(node, mask?)                → revision: number
-useFieldNodeSubscribe(node, listener, options?) → void
-useChildFieldMap(ChildFields)                   → { [field]: ChildField }
-useChildFieldErrors(node, disabled?)            → { errorMessage, showError, formattedError, showErrors, formattedErrors, errorMatrix }
-```
-
-</ForAI>
-
-### 노드 boolean 속성과 로드 기준의 차이
-
-노드 boolean 속성은 `isRequired`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`입니다. `isPresent`는 `isActive && isVisible`이며 `isDisabled`와는 별개입니다. React props, 스키마 키, `controls` 키는 그대로입니다.
-
-```ts
-node.isEdited;    // state[FieldNodeState.Edited]의 truthiness
-node.isTouched;   // state[FieldNodeState.Touched]의 truthiness
-node.isDivergent; // 현재 폼 출력과 마지막 루트 로드 출력의 같은 경로 값이 다른지
-```
-
-`isEdited`와 `isTouched`는 읽기 전용 boolean이며 `UpdateState`에서 다시 읽습니다. Edited는 사용자 입력만 켭니다. `setValue`, 배열 동사, 자동 채움은 켜지 않으며 reset, `clearState`, `controls.resetInteraction`은 상호작용 플래그를 비웁니다. 떼어진 참조는 마지막 커밋의 상호작용 상태를 유지합니다.
-
-`isDivergent`는 현재 루트 출력과 마지막 루트 로드 커밋의 출력에서 노드의 같은 경로 값을 비교합니다. 최초 마운트, 값 또는 명시적 undefined를 받는 폼 reset, rebuild, validator 변경, `root.resetSubtree()`는 최종 출력을 새 기준으로 삼습니다. 첫 커밋 전에는 false입니다. Form `defaultValue` prop 변경만으로는 기준이 이동하지 않습니다. 일반 쓰기와 자식 `resetSubtree()`도 기준을 옮기지 않습니다. 커밋 전 실패는 이전 기준을 유지하며 커밋 뒤 보고된 실패는 degraded 출력을 새 기준으로 삼습니다.
-
-기준값으로 되돌리면 false입니다. 숨긴 노드는 출력에 남고 배열의 빈 자리는 실제 출력 기여 값으로 비교합니다. 배열 아이템은 위치 기준이므로 이동하거나 새로 넣은 아이템은 true일 수 있으며, 그 위치의 기준값과 같은 값을 넣으면 false입니다. 자식 reset은 아이템 정체성을 따라가는 로드 원본을 복원하므로 배열 이동 뒤 또는 범위 밖 의존성이 있으면 복원 뒤에도 true일 수 있습니다. 떼어진 노드는 출력에 기여하지 않으므로 false입니다.
-
-비교는 엔진의 `sameValue`를 따르므로 선언 밖 객체 키를 다른 순서로 복원하면 true일 수 있습니다. 정착 도중에는 `value`·`outputValue`처럼 일시 값을 읽을 수 있습니다. 루트 노드의 UpdateValue·UpdateState·RequestRefresh와 이 노드의 UpdatePath에서 다시 읽고 루트나 노드 교체 때 구독을 다시 연결합니다. 두 루트 로드 경로 모두 같은 출력 reset을 포함해 RequestRefresh를 전달합니다. 떼어진 참조에 새 이벤트를 추가하지 않습니다.
-
-쓰기는 divergence 읽기·비교를 추가하지 않습니다. 루트 로드마다 최종 출력 참조를 보유하는 박스 하나를 만듭니다. getter는 캐시된 두 경로를 O(depth)로 걷고 두 경로 값 중 하나가 Object.is 기준으로 바뀔 때만 비교합니다. 변화 없는 반복 읽기는 NaN도 `sameValue` 호출 0회이며 첫 비교는 바뀌지 않은 참조를 건너뜁니다. 기준은 다음 루트 로드까지 교체된 부분을 보유하고 노드 메모는 자기 경로의 두 값과 결과만 보유합니다.
+
+
+# API 참조
+
+소비자 API는 `@canard/schema-form`에서 import하십시오. callback에서 추론되는 record 형이 이름 있는 패키지 export는 아닐 수 있으므로 내부 형 이름을 추측해 import하지 마십시오.
+
+## Form props {#form}
+
+| Prop | 용도 |
+| --- | --- |
+| `jsonSchema` | root load에 사용하는 필수 스키마입니다. |
+| `defaultValue` | root load에서 읽는 초기 값이며 controlled value prop은 없습니다. |
+| `onChange` | 동기 출력 callback입니다. |
+| `onSubmit` | 수락한 제출의 값 callback이며 promise를 반환할 수 있습니다. |
+| `onValidate` | 원시 오류 목록 변경이며 같은 검증 결과는 생략합니다. |
+| `onStateChange` | 전체 트리 interaction aggregate 변경입니다. |
+| `onError` | 발생 채널이며 오류 참조를 확인하십시오. |
+| `onDiagnosticsChange` | 준비 후 root 진단 변경이며 초기 진단은 handle.node에 있습니다. |
+| `readOnly / disabled` | 폼 전체 입력 잠금이며 기본값은 false입니다. |
+| `unsetOnInactive` | 기본 이탈 제거 정책이며 노드 controls가 우선합니다. |
+| `disableAutomaticWrites` | 명령형 쓰기는 허용하면서 자동 쓰기를 억제합니다. |
+| `errors` | 외부 오류이며 배열 참조 변경과 reset에 다시 적용합니다. |
+| `showError / validationMode` | 검증 페이지의 표시·실행 정책입니다. |
+| `validatorFactory` | 완전한 검증기 객체이며 검증 페이지를 참조하십시오. |
+| `FieldRenderer` | 필드 그룹 렌더러입니다. |
+| `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | 조합 렌더러입니다. |
+| `formatError` | 오류를 ReactNode로 바꾸는 formatter입니다. |
+| `fieldInputDefinitions / fieldInputMap` | 순서 있는 검사와 경로 재정의이며 입력 선택을 참조하십시오. |
+| `virtualization` | 입력 마운트 지연이며 기본값은 꺼짐입니다. |
+| `context` | provider context 위에 병합하는 live form context입니다. |
+| `children` | 레이아웃 또는 node·jsonSchema·defaultValue·value·errors를 받는 함수입니다. |
+| `ref` | 현재 root를 다루는 FormHandle입니다. |
+
+각 prop의 조건은 [렌더링](./core-concepts#rendering), [입력 선택](./schema-reference#input-resolution), [검증](./validation), [오류 보고](./error-reference#occurrences)에 있습니다.
+
+## root load와 설정 수명 {#configuration-lifetime}
+
+`jsonSchema`, `defaultValue` prop만 바꿔서는 현재 트리가 교체되지 않습니다. `reset()`은 최신 committed props를 읽고 첨부 파일을 지운 뒤 기본값을 로드합니다. 대체 값이 아니라 automatic-write override flag만 받습니다.
+
+`rebuild()`는 schema 객체의 cached analysis를 무효화하고 reset의 load 옵션으로 이 Form의 root를 교체합니다. 같은 schema 객체를 쓰는 다른 Form은 기존 트리를 유지합니다. 교체 후에는 현재 handle에서 노드를 다시 조회하십시오.
+
+`validatorFactory` 참조를 교체하면 Form 트리를 다시 만들므로 설정이 같으면 안정된 객체를 사용하십시오. context·입력 잠금은 live 변경을 지원하며 renderer·입력 설정에는 [마운트 시 캡처 규칙](./core-concepts#rendering)이 적용됩니다.
+
+`validationMode`는 트리를 만들 때 선택합니다. Form prop을 바꿔도 기존 트리의 모드는 갱신하지 않습니다. 바꾼 prop이 commit된 뒤 `handle.rebuild()`를 호출하거나 React `key` 변경 등으로 Form을 다시 마운트하십시오. 같은 schema·검증기의 `reset()`은 트리와 모드를 유지합니다. 별도의 수명을 갖는 Form `showError` 정책과 새 prop 적용 방법은 [오류 표시](./validation#visibility)를 참조하십시오.
+
+## FormHandle {#form-handle}
+
+| 멤버 | 용도 |
+| --- | --- |
+| `node` | 현재 root이며 마운트 전에는 없습니다. |
+| `getValue() / setValue(valueOrUpdater, options?)` | 출력 읽기·root 쓰기입니다. |
+| `findNode(path) / findNodes(path)` | 일치하는 live 노드 하나 또는 전부입니다. |
+| `getState() / setState(flags) / clearState()` | aggregate flag 읽기·전체 트리 patch·clear입니다. |
+| `getErrors() / validate()` | 원시 오류·새 판정 promise입니다. |
+| `focus(path?) / select(path?)` | 노드 입력 container의 DOM 순서상 첫 input·textarea·select·button에 focus를 요청합니다. 텍스트 선택은 button·select를 건너뛰고 첫 input·textarea에 요청하며, 해당 요소에 select 메서드가 있으면 호출합니다. |
+| `refresh(path?) / remount(path?)` | committed 입력 값 재읽기·렌더 subtree 재마운트입니다. |
+| `reset(option?) / rebuild(option?)` | 위에서 설명한 root load 연산입니다. |
+| `showError(visible?)` | 표시 override이며 검증 페이지를 참조하십시오. |
+| `getAttachedFilesMap()` | Map&lt;string, File[]&gt;이며 파일 예제를 참조하십시오. |
+| `submit()` | promise를 반환하는 명령형 제출이며 handler에 pending·subscribe도 있습니다. 거부와 오류 공개는 [native·명령형 제출](./error-reference#submission)을 참조하십시오. |
+
+일치 노드가 없는 focus·select·refresh·remount는 아무 작업도 하지 않습니다. 마운트 전에 `findNode`는 null, `findNodes`·`getErrors`는 빈 배열, `validate()`는 빈 배열을 resolve하고 `getState()`는 빈 객체를 반환합니다. 이런 빈 query 결과는 검증 판정을 뜻하지 않습니다.
+
+## 쓰기 옵션과 subtree walk {#write-options}
+
+`SetValueOption.Overwrite`(기본값) 또는 `Merge`를 사용하고 필요하면 `DisableAutomaticWrites`·`EnableAutomaticWrites`로 덮어쓰십시오. Overwrite·Merge 또는 충돌하는 자동 쓰기 flag를 함께 지정하지 마십시오. object·array 결과는 [값 규칙](./schema-reference#value-states)에 있습니다.
+
+`node.batch(fn)`은 동기 쓰기를 묶습니다. `visitSubtree(visitor)`는 자기 노드, 자손을 preorder·형제 순서로 방문하며 false 반환은 그 노드의 자손을 건너뜁니다. live walk는 현재 형상, detached walk는 고정된 subtree를 방문합니다. 중복 도달 노드는 한 번만 방문하고 walk 중 생긴 노드는 놓칠 수 있습니다.
+
+값 쓰기는 끝에서 한 번 정착하므로 중간 값 읽기는 직전 commit을 봅니다. state·external-error 변경은 즉시 적용하고 이벤트만 기다리며 외부 batch가 있으면 모두 그 끝까지 미룹니다. 그런 외부 batch 밖에서는 Form reset·`resetSubtree()`의 load는 즉시 정착합니다. 읽기 전용 walk는 쓰기가 발생할 때까지 write 경계를 열지 않고 listener 안에서도 사용할 수 있습니다.
+
+visitor 실패는 이미 수행한 쓰기를 적용한 뒤 전파합니다. listener 안의 값 쓰기 walk에서는 실패가 직접 caller 대신 listener 채널로 보고될 수 있습니다. handle에는 visitSubtree가 없으므로 `handle.node`를 사용하십시오.
+
+## Form 조합과 사용자 입력 {#composition}
+
+`Form.Field`는 그룹을, `Form.Label`, `Form.Input`, `Form.Error`는 개별 슬롯을 렌더링합니다. `Form.Render`의 함수 children은 `node`, `value`, `Input`, `errorVisible`, `errorMessage` 등을 가진 `FieldRendererProps`를 받습니다. 모두 Form 조상이 필요합니다. `Form.Input`, `Form.Render`의 path도 상대·wildcard를 포함한 [확장 query 규칙](#paths)을 사용합니다.
+
+입력 쓰기의 interaction 동작이 필요하면 사용자 렌더러에서 제공된 `Input`을 사용하십시오. 직접 `node.setValue()`는 프로그램 쓰기이므로 Edited를 표시하지 않습니다. 추가 입력 props는 선택한 입력 컴포넌트로 전달하며 native element에 자동 적용하지 않습니다. 내장 string 입력의 autoComplete 같은 native 속성은 `inputProps`에 둡니다.
+
+`FieldInputProps`는 `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, 원시 `errors`, `errorVisible`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, presentation props를 제공합니다. 빈 입력은 undefined를, null은 의도적으로 선택할 때만 발행합니다. 계산된 입력 잠금과 [접근 가능한 이름](./schema-reference#accessibility)을 지키십시오.
+
+`ChildFields`는 key·path·field metadata가 있는 컴포넌트이며 형은 `FieldInputProps['ChildFields'][number]`로 얻습니다. `ChildFieldProps`에는 `FieldRenderer` 등 자식별 재정의가 있습니다. FieldInput에 내장 `FieldRenderer` prop을 제공하지는 않으므로 Form·Form.Field·자식 컴포넌트에서 렌더러를 선택하십시오.
+
+## 플러그인과 FormProvider {#plugins}
+
+`SchemaFormPlugin`은 renderer 컴포넌트, `fieldInputDefinitions`, `validator`, `formatError`를 받습니다. 뒤의 등록은 제공한 renderer·validator·formatter를 대체하고 입력 정의를 앞에 붙입니다. `registerPlugin(null)`은 플러그인 상태를 내장 기본값으로 초기화합니다. 등록은 이후 마운트에서 캡처하는 설정에 적용됩니다.
+
+`FormProvider`는 subtree에 renderer 기본값·입력 정의·formatError·showError·validationMode·validatorFactory·context를 공유합니다. 명시적인 Form props가 우선하고 Form context는 provider context 위에 병합합니다. 공개 이름 `FormProvider`를 사용하십시오. 검증기 요구사항은 [검증기 객체 계약](./validation#validator-contract)에 있습니다.
+
+## 노드 값·state·배열 연산 {#nodes}
+
+identity·tree는 `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, `children`으로 읽습니다. terminal children은 null입니다. `value`는 해석된 로컬 값, `outputValue`는 방출 JSON, `source`, `extras`, `inactiveValues`는 retained 입력을 나타냅니다. `isRequired`, `nullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, `diagnostics`는 현재 노드 상태입니다. `isPresent`는 disabled와 무관하게 active이면서 visible임을 뜻합니다.
+
+`FieldNodeState.Edited`는 사용자 입력을 기록하며 프로그램·자동 쓰기에는 설정하지 않습니다. 기본 입력 blur는 다음 animation frame에 Touched를 기록하고 사용자 입력은 flag를 명시적으로 쓸 수 있습니다. `isEdited`, `isTouched`는 해당 flag입니다. `node.state`·`setState`는 사용자 flag도 받고 Form reset·clearState는 사용자 flag도 지웁니다. `globalState`는 true 또는 부재인 aggregate flag를 방출합니다. 일괄 변경에는 subtree state·error 메서드를 사용하십시오.
+
+array 노드의 `push(value?)`, `insert(index, value?)`는 길이를, `pop()`·`remove(index)`는 제거한 값을, `update(index, value)`는 갱신한 값을, `clear()`는 void를 반환합니다. insert는 0부터 length까지 정수 index를 받고 잘못된 index에서는 원래 길이를 반환합니다. minItems·maxItems는 강제하지 않습니다. batch에서는 앞선 mark를 반영해 호출 위치에서 계산하고 전체 배열 정착 때 항목 identity를 위치로 이어갑니다. 배열 연산 전에 `isArrayNode`로 확인하십시오.
+
+공개 guard는 unknown을 받는 isFieldNode와 FieldNode를 받는 isArrayNode·isBooleanNode·isBranchNode·isNumberNode·isObjectNode·isStringNode·isTerminalNode·isUnionNode·isVirtualNode입니다.
+
+## load baseline과 divergence {#divergence}
+
+`isDivergent`는 같은 경로에서 현재 방출 출력과 마지막 성공 root load의 최종 출력을 비교합니다. 첫 load 전·detach 후에는 false이며 배열 위치와 키 순서도 비교합니다.
+
+쓰기 때 divergence 비교를 추가하지 않습니다. root load는 다음 load까지 baseline 출력 참조 하나를 유지하므로 그동안 바뀐 output 조각이 남습니다. getter는 O(depth)로 경로를 읽고 두 값·결과를 Object.is로 cache하므로 NaN을 포함해 값이 그대로이면 깊은 비교를 반복하지 않습니다. 노드 memo는 해당 경로의 두 값과 결과만 가집니다.
+
+root의 UpdateValue·UpdateState·RequestRefresh와 노드의 UpdatePath를 관찰하고 root·node가 바뀌면 다시 연결하십시오. 두 load 경로 모두 출력이 같은 reset에도 RequestRefresh를 전달합니다.
+
+## detached·inactive 노드 수명 {#detached-nodes}
+
+detached 노드는 마지막 committed 읽기와 고정 subtree를 유지하고 구독 전달을 멈추며 setValue·배열 연산으로 현재·retained·미래 instance를 바꿀 수 없습니다. detached array의 push·insert는 고정 길이, 나머지 배열 메서드는 undefined를 반환하며 개발 경고 외에는 값을 바꾸지 않습니다.
+
+inactive JSON을 갱신하려면 live root·host를 통해 쓰십시오. 재진입은 해당 overlay를 소비하는 새 노드를 만듭니다. 활성 노드가 없으면 `find`는 null이므로 재진입 후 경로를 다시 조회하고 오래된 구독을 교체하십시오.
+
+## onInactive와 이탈 정리 {#inactive-listeners}
+
+`node.onInactive(resolver)`는 이 instance의 정상 retained gate 이탈에 동기 resolver를 등록하고 unsubscribe를 반환합니다. unmount·dispose·배열 삭제·재진입에 소비되는 옛 instance에서는 실행하지 않으므로 새 instance에 다시 등록하십시오.
+
+listener는 등록 순서로 실행하고 마지막 non-undefined 결과를 사용하며 defined listener 결과가 `controls.inactiveValue`보다 우선합니다. listener가 throw하면 노드 override 전체를 취소하고 retained 원본을 유지하되 이탈은 commit하고 `ExpressionThrew`를 보고합니다.
+
+resolver 안의 값 쓰기·배열 verb·batch·resetSubtree는 무시하고 개발에서 `WriteInInactiveResolver`로 경고합니다. state·external-error·request·validation 명령은 유지합니다. 쓰기 메서드 대신 retained 값을 반환하십시오. component cleanup의 값 쓰기는 같은 resolver 서명의 `controls.inactiveValue` 또는 onInactive로 옮기십시오. [이탈 coverage 규칙](./schema-reference#inactive-values)도 적용됩니다.
+
+## 숨김 Form과 callback 수명 {#hidden-lifecycle}
+
+첫 layout 준비 뒤의 current load는 숨김 중에도 callback을 전달하고 다시 표시할 때 replay하지 않습니다. 준비되지 않은 load는 construction record만 buffer하고 일반 callback은 버리며 retired load의 이후 record도 버립니다. root 교체 reset은 handle binding 전환 전에 mount record, buffered build record 순으로 전달하며 각 handler 실패를 격리합니다.
+
+React에서는 이 binding이 hidden·unmounted를 확실히 구분할 수 없어 retained handle·node가 unmount 뒤에도 callback을 전달할 수 있으므로 소비자 구독을 정리하십시오. 숨김 동안 일반 callback은 마지막 연결 commit, onError는 최신 handler를 사용하며 React ref는 null입니다. field layout-effect 쓰기와 render warning은 다시 표시할 때 도착합니다.
+
+## JSONPointer query와 표현식 {#paths}
+
+| token | Form query 의미 |
+| --- | --- |
+| `#` | 절대 root |
+| 빈 문자열 | 현재 origin |
+| `/` 또는 `#/` | root의 빈 이름 자식 |
+| `.` / `..` | 현재·부모 노드 |
+| `*` | wildcard이며 find는 첫 match, findNodes는 전부 반환 |
+| `@` | context 표현식 token이며 query 노드가 아니므로 find=null·findNodes=[] |
+
+controls의 `@.prop`와 optional chaining은 live form context를 읽습니다. 분기 표현식의 `./`는 host 자식, 일반 노드 표현식의 `../`는 부모를 통한 형제 경로입니다. 표현식 origin을 기준으로 깊이를 계산하십시오.
+
+segment 자체가 `*`, `..`, `.`, `@`이면 연산자로 먼저 해석합니다. literal 이름은 `%2A`, `%2E%2E`, `%2E`, `%40`으로 escape합니다. 그 밖의 percent 문자는 그대로 두고 다른 segment는 `~1`, `~0`만 decode합니다. 맨 앞의 `#`만 fragment prefix이며 내부 `#`는 일반 이름입니다. literal property 이름 `%2A`, `%2E`, `%2E%2E`, `%40` 자체는 round-trip할 수 없어 ReservedPropertyName으로 거부합니다.
+
+canonical node·inactive-value·오류 경로는 이 percent literal 표기를 사용합니다. 첨부 키에는 [파일 전송 예제](./examples/media-registration#files)의 규칙을 적용하십시오. 검증기·`$ref`의 RFC6901 pointer에는 폼 연산자를 적용하지 않으며 표준 URI fragment는 모든 segment를 percent-decode합니다. `JSONPointer`는 라이브러리 상수를 제공하며 일반 JSON 값 reader는 아닙니다.
+
+## 이벤트와 훅 {#events-hooks}
+
+이벤트는 최외곽 public 쓰기가 끝날 때 노드별 bit를 병합하여 동기 전달하며 다음 microtask까지 기다리지 않습니다. `FieldNodeEventType`은 Initialized, UpdatePath, UpdateValue, UpdateState, UpdateGlobalState, UpdateError, UpdateGlobalError, UpdateChildren, UpdateControlledProperties, Focused, Blurred, RequestFocus, RequestSelect, RequestRefresh, RequestRemount, UpdateJsonSchema, UpdateDiagnostics입니다. 각각 초기화, 경로·값·interaction·오류·자식·controls, 입력 동작, schema 참조, root 진단을 나타냅니다.
+
+`node.request`에는 `FieldNodeRequestType.Focus`, `Select`, `Refresh`, `Remount` 중 하나를 전달하십시오. 한 번의 호출은 한 동작이며 bit mask를 결합하지 않습니다. `subscribe`는 cleanup, `revision(mask?)`는 전달 revision을 반환합니다.
+
+| 훅 | 소비자 계약 |
+| --- | --- |
+| `useFormSubmit(ref)` | submit·boolean 또는 undefined인 pending을 반환하며 binding 전 submit은 문제없이 resolve합니다. 이벤트 handler에서 rejection을 처리하십시오. |
+| `useFieldNodeTracker(node, mask?)` | 선택한 revision에 다시 렌더링하며 기본은 전체, null은 추적하지 않습니다. snapshot이 동시 render→commit 변경을 잡습니다. |
+| `useFieldNodeSubscribe(node, listener, options?)` | 자동 렌더링 없는 구독이며 이전 이벤트는 replay하지 않습니다. state mirror는 `options.onSubscribe`로 attach 시 현재 상태를 읽으십시오. |
+| `useChildFieldMap(ChildFields)` | 직접 자식 이름별 컴포넌트이며 없는 이름은 아무것도 렌더링하지 않습니다. |
+| `useChildFieldErrors(node, disabled?)` | 원시 child errorMatrix, formattedErrors·formattedError, showErrors·showError, 표시를 반영한 errorMessage입니다. disabled는 자식 오류 읽기와 표시 flag를 비웁니다. |
+
+가능하면 중복 이벤트 mirror 대신 useFieldNodeTracker와 render 중 live getter 읽기를 사용하십시오.
+
+## 가상화 {#virtualization}
+
+`virtualization: true` 또는 옵션 객체로 켭니다. 노드 트리는 항상 완전하며 값·검증·제출에 참여합니다. 화면 밖 입력 DOM은 placeholder로 지연할 수 있고 한 번 공개하면 다시 지연하지 않습니다.
+
+| 옵션 | 기본값 | 의미 |
+| --- | --- | --- |
+| threshold | 30 | branch의 gate를 켤 최소 렌더 자식 수 |
+| eagerCount | 20 | gate branch마다 즉시 마운트할 선두 자식 수 |
+| rootMargin | '100%' | px·% 단위의 viewport 공개 여백 |
+| backfill | VirtualizationBackfill.Idle | Idle은 순차 공개, None은 표시 또는 placeholder 노드에 전달되는 focus·select 명령 대기 |
+| estimateHeight | 40 | px 숫자 또는 node→높이 함수 |
+| Placeholder | 없음 | node·height를 받는 컴포넌트 |
+
+placeholder는 추정 높이와 `data-path`, `data-deferred`, aria-hidden을 사용합니다. 지연 입력은 공개 전까지 페이지 검색·화면 읽기·autofill에 사용할 수 없으며 backfill 완료 시간을 보장하지 않습니다. 유효하지 않은 native 제출의 focus 제한은 [제출](./error-reference#submission)을 참조하십시오.
+
+SSR은 모든 입력을 렌더링하고 hydration은 이를 그대로 유지합니다. hydration 뒤 추가한 branch·children에 gate를 적용하며 준비된 자식은 나중에 탭·아코디언에서 처음 표시해도 준비 시의 gate 결정을 유지합니다. IntersectionObserver가 없으면 브라우저는 eager 렌더링하고 서버는 경고하지 않습니다.
+
+hydration 자체는 사용자 branch 입력의 Suspense에 추가 갱신을 보내지 않습니다. React 18에서 hydration 완료 전 후속 갱신은 해당 경계를 client 렌더링으로 바꿀 수 있습니다. [가상화 예제](./examples/virtualized-form)와 실제 branch 레이아웃을 검증하십시오.
+
+## TypeScript 추론 {#typescript}
+
+`as const`로 schema literal을 보존하십시오. type이 string으로 넓어지면 추론이 any로 퇴화할 수 있습니다. inactive controls·omitEmpty가 키를 제거할 수 있으므로 `InferValueType`은 required와 무관하게 객체 키를 optional로 만듭니다. `additionalProperties: false`가 아니면 열린 객체입니다. 추론 값을 검증이 끝난 업무 데이터라고 가정하지 마십시오.
+
+정확한 소비자 형상은 `Form<Schema, Value>`, `FormHandle<Schema, Value>` 양쪽의 두 번째 generic으로 지정하십시오. 특히 구체적 defaultValue가 handle과 다르게 required 키를 추론할 때 필요합니다. `InferFieldNode`는 정적 근거가 있으면 노드 형을 추론하며 동적 reference·gate에서는 전체 노드 union이 남을 수 있습니다.
