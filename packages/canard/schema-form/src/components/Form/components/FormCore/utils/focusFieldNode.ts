@@ -32,6 +32,7 @@ export const focusFieldNode = (
     return;
   }
   const document = form.ownerDocument;
+  const focused = document.activeElement;
   let moved = false;
   let mountHandled = false;
   const onFocus = () => {
@@ -45,7 +46,9 @@ export const focusFieldNode = (
   request.onCancel(
     lifecycle.reserve(target, FieldLifecycle.Mount, () => {
       mountHandled = true;
-      return request.live && !moved
+      return request.live &&
+        !moved &&
+        (!focused?.isConnected || document.activeElement === focused)
         ? FieldLifecycleAction.Focus
         : FieldLifecycleAction.None;
     }),
