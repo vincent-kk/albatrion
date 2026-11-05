@@ -1,6 +1,7 @@
-import { createRef } from 'react';
+import { createRef, useRef, useState } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
@@ -11,9 +12,12 @@ import {
   Form,
   type FormHandle,
   type FormProps,
+  type JSONSchema,
   ValidationMode,
   useFieldNodeTracker,
 } from '@/schema-form';
+
+import { setupValidatorPlugin } from '../renderForm';
 
 /** React owns the tracker subscriptions; root output changes can affect a child's divergence.
  * @param props - Current node supplied by a Form render callback.
@@ -151,4 +155,53 @@ it('keeps the tree and baseline on schema/default prop replacement until reset',
   expect(ref.current!.node).not.toBe(root);
   expect(ref.current!.getValue()).toBe('Grace');
   expect(ref.current!.node!.isDivergent).toBe(false);
+});
+
+const profileSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    bio: { type: 'string' },
+  },
+  required: ['name'],
+} satisfies JSONSchema;
+
+type Profile = { name: string; bio?: string };
+
+function ProfileEditor({ loaded }: { loaded: Profile }) {
+  const formRef = useRef<FormHandle<typeof profileSchema>>(null);
+  const [changed, setChanged] = useState(false);
+  return (
+    <>
+      {changed && <p>Changed</p>}
+      <Form
+        ref={formRef}
+        jsonSchema={profileSchema}
+        defaultValue={loaded}
+        onChange={() => setChanged(formRef.current?.node?.isDivergent ?? false)}
+      />
+      <button type="button" onClick={() => formRef.current?.reset()}>
+        Discard changes
+      </button>
+    </>
+  );
+}
+
+it('shows the divergence indicator outside the form from onChange state', async () => {
+  setupValidatorPlugin();
+  const user = userEvent.setup();
+  const view = render(
+    <ProfileEditor loaded={{ name: 'Ada', bio: 'Engineer' }} />,
+  );
+  expect(view.queryByText('Changed')).toBeNull();
+  const name = view.getByDisplayValue('Ada');
+  await user.type(name, 'x');
+  expect(view.getByText('Changed')).toBeTruthy();
+  await user.type(name, '{Backspace}');
+  expect(view.queryByText('Changed')).toBeNull();
+  await user.type(name, 'y');
+  expect(view.getByText('Changed')).toBeTruthy();
+  await user.click(view.getByText('Discard changes'));
+  expect(view.queryByText('Changed')).toBeNull();
+  expect((view.getByDisplayValue('Ada') as HTMLInputElement).value).toBe('Ada');
 });

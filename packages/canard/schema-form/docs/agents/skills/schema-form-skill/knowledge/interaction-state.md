@@ -66,6 +66,29 @@ Changing `defaultValue` alone, ordinary writes and a child resetSubtree do not m
 A load that throws before commit leaves the prior baseline; a failure reported after commit leaves the committed degraded output as the baseline.
 Reverting output to its loaded value makes divergence false without clearing interaction flags.
 
+To show the indicator outside the form, read the root's property in Form's `onChange` and keep only that boolean in state. `formRef.current` is still empty during the first render, so do not read the root node while rendering.
+
+```tsx
+function ProfileEditor({ loaded }: { loaded: Profile }) {
+  const formRef = useRef<FormHandle<typeof profileSchema>>(null);
+  const [changed, setChanged] = useState(false);
+  return (
+    <>
+      {changed && <p>Changed</p>}
+      <Form
+        ref={formRef}
+        jsonSchema={profileSchema}
+        defaultValue={loaded}
+        onChange={() => setChanged(formRef.current?.node?.isDivergent ?? false)}
+      />
+      <button type="button" onClick={() => formRef.current?.reset()}>
+        Discard changes
+      </button>
+    </>
+  );
+}
+```
+
 ## Return to the loaded values and interaction state
 
 Keep the intended loaded defaults in `defaultValue` and call the handle's `reset()` to load them and clear interaction state.
