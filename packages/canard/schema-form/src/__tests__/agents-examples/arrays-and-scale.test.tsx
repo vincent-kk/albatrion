@@ -238,6 +238,46 @@ formRef.current?.setValue((prev) => ({
   expect(FieldNodeEventType.UpdateValue).toBeGreaterThan(0);
 });
 
+it('uses a fixed removal count while batch getters retain the committed array', () => {
+  const formRef = createRef<FormHandle<typeof bulkSchema>>();
+  render(
+    <Form
+      ref={formRef}
+      jsonSchema={bulkSchema}
+      defaultValue={{ items: [{ id: 1 }, { id: 2 }, { id: 3 }] }}
+      fieldInputDefinitions={rowsDefinition}
+    />,
+  );
+  const arrayNode = formRef.current!.findNode('/items') as ArrayNode;
+  const committedValue = arrayNode.value;
+  const committedChildren = arrayNode.children;
+  const listener = vi.fn();
+  const unsubscribe = arrayNode.subscribe(listener);
+
+  act(() => {
+    arrayNode.batch(() => {
+      // prettier-ignore
+      {
+const removeCount = Math.max(0, arrayNode.children!.length - 1);
+arrayNode.batch(() => {
+  for (let remaining = removeCount; remaining > 0; remaining--)
+    arrayNode.pop();
+});
+      }
+      expect(arrayNode.value).toBe(committedValue);
+      expect(arrayNode.children).toBe(committedChildren);
+      expect(arrayNode.children).toHaveLength(3);
+      expect(listener).not.toHaveBeenCalled();
+    });
+  });
+
+  expect(arrayNode.value).toEqual([{ id: 1 }]);
+  expect(arrayNode.children).toHaveLength(1);
+  expect(formRef.current!.getValue()).toEqual({ items: [{ id: 1 }] });
+  expect(listener).toHaveBeenCalledTimes(1);
+  unsubscribe();
+});
+
 it('a listener that writes again starts another delivery, so one setValue no longer notifies once', async () => {
   const formRef = createRef<FormHandle<typeof bulkSchema>>();
   render(

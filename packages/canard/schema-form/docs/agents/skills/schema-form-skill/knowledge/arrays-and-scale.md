@@ -75,6 +75,20 @@ formRef.current?.setValue((prev) => ({
 }));
 ```
 
+Inside `batch`, value writes are marked and settle only when the outermost batch ends. Reads of `value` and `children` still see the last committed values and shape. Array methods compute their synchronous results from earlier queued writes; that does not make node getters current. Never use a shrinking `children.length` or `value.length` as a loop condition inside the batch: it does not shrink there and can loop forever.
+
+Compute the number of removals from the committed shape before entering the batch, then use a bounded loop:
+
+```typescript
+const removeCount = Math.max(0, arrayNode.children!.length - 1);
+arrayNode.batch(() => {
+  for (let remaining = removeCount; remaining > 0; remaining--)
+    arrayNode.pop();
+});
+```
+
+This example requires a branch array with item children. Alternatively, read the array before the batch, compute the final array, and call `setValue(finalArray)` once. For a terminal array, compute from its array value rather than `children`, which is null.
+
 ## Rendering Items in a Custom Input
 
 A custom array `FieldInput` renders children through `ChildFields` — omitting it makes items disappear:
