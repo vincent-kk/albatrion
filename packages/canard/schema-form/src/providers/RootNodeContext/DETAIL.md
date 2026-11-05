@@ -2,83 +2,72 @@
 
 ## Requirements
 
-루트 트리를 생성하고 검증·상태·변경 콜백과 외부 오류를 연결합니다.
+루트 트리의 생성·교체와 React commit을 연결합니다. 추측성 렌더의 트리 생성, 확정된 load의 콜백 수명, 검증 결과 수명을 분리하여 폐기된 렌더가 소비자에게 보고되거나 숨김이 엔진 정지로 취급되지 않게 합니다.
 
 ## API Contracts
 
-스키마·기본값 prop 변경은 현재 트리를 교체하지 않으며 다음 reset이 최신 committed props를 사용합니다. 렌더 함수에 제공하는 스키마는 현재 루트와 일치해야 합니다.
+### REACT-003 — 렌더 독립 생성 경계
 
-표시 정책은 load props 계약에 포함하지 않고 reset 재대조의 기준으로 삼지 않습니다. 유효 정책은 현재 root에 커밋하고 기존 generation 이력과 release 구독을 유지합니다. 잘못된 초기 정책은 트리 생성을 막고, 유효한 값으로 복구하면 새 load를 구성합니다. 아직 루트가 없는 복구는 명령형 reset의 caller-throw 경로를 쓰지 않습니다. 복구 때 다른 스키마 구성 오류가 드러나도 handle과 load fallback을 유지하고 새 구성 오류를 load로 보고하여, 이미 보고한 정책 오류가 렌더 경계로 다시 던져지는 일을 막습니다. 잘못된 live 정책은 기존 load를 보존하고 같은 commit의 검증기 교체를 미룹니다. 정책이 유효해지는 첫 commit은 실제 load와 최신 검증기를 재대조해 미룬 교체를 한 번 적용합니다. 검증기 구성 실패 뒤에는 검증기 참조 변경이나 명시적 reset에서 다시 시도하며 매 렌더마다 반복하지 않습니다. 잘못된 정책 오류는 origin `load`로 커밋에서 한 번 보고합니다. 표시 정책은 검증 모드나 검증 일정을 바꾸지 않습니다.
+React의 터미널·원자 판정과 app 소유 청사진 캐시는 생성 인자로 전달합니다. 초기 생성과 재생성은 같은 판정을 사용하여 같은 스키마의 형상이 경로마다 달라지지 않게 합니다. core는 React 표식이나 app 전역을 알 필요가 없습니다. 판정과 캐시 identity의 정의는 [schemaIdentity](../../helpers/schemaIdentity/DETAIL.md)와 [cache](../../app/cache/DETAIL.md)가 소유합니다.
 
-- 입력 맵 정규화의 구성 오류는 트리를 만들지 않는 실패 load로 보관합니다. 확정된 루트 fallback의 첫 commit에서 기존 `flushRootLoad`를 통해 원래 오류·코드와 `origin: load`를 한 번 전달하며 StrictMode effect 재실행도 중복 보고하지 않습니다. 맵 참조 변경은 다시 평가하며 새 구성 오류를 한 번 보고합니다. 유효한 맵으로 초기 실패에서 복구할 수 있고, 잘못된 live 맵은 기존 트리를 유지합니다. 정상 load에는 추가 트리 순회나 구독이 없고, 실패 load와 해당 구성 props만 오류 참조를 보유합니다.
-- H: no-cleanup layout commit의 통합 settings 진입이 해석된 policy를 현행 root에 기록한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
-- 자동 로드 컴파일 실패는 공통 슬롯에서 origin validate로 한 번 보고하고 호스트에 한 번 보내며 명시적 검증의 프로미스 거부는 유지한다.
-- P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 은퇴 뒤의 engine 기록에 호스트 보고를 추가하지 않고 기존 reportOwnerlessError를 유지합니다. 결과 게시와 늦은 슬롯 실패의 보고 수명은 아래 실행 설정 수명 계약을 따릅니다.
+### WRITE-043 — reset과 실제 루트
 
-- R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportFailureToHost로 잎마다 보낸 뒤 나머지 기록·binding 교체를 계속합니다. load flush도 handler 실패를 먼저 host에 보내고 원래 load 오류를 뒤에 보냅니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
+스키마·기본값 prop 변경만으로 현재 트리를 교체하지 않습니다. reset은 최신 committed props를 읽으며 함수 children에 주는 스키마는 실제 루트와 일치해야 합니다. 같은 스키마·검증기의 reset은 기존 트리를 재로드하고, 다른 구조·검증기는 동기적으로 교체합니다. binding은 새 루트를 즉시 가리키고 React는 외부 저장소로 따라갑니다. 자식 layout이 commit 전에 시작한 호출은 마지막 committed 설정을 사용합니다.
 
-- W4: 로드 검증 helper는 engine이 이미 보고한 실패를 다시 capture하지 않는다. non-bundle compile 실패만 생략하고 나머지는 공통 failure-leaf 순회로 host에 보낸다. 유효한 중첩 MultipleErrors는 첫 원인부터 handler 오류까지 깊이 우선·원소 순서로 보내며 빈 배열·hole·배열 없는 묶음은 버리지 않고 그 값 그대로 한 번 보낸다. caller의 묶음 거부와 렌더 경계의 원래 thrown-value 로그는 유지한다.
-- W5: buffered record의 원래 root를 reporter.root에 보존하고 현재 load.root에도 observeFieldNodeReports guard를 적용해 onError가 현행 폼에 쓸 수 없게 한다.
-- 표시 정책은 로드 검증 예약을 바꾸지 않으며 Always 전용 ref·effect는 없다.
-- 로드 슬롯 전에 쓰기 요청이나 명시적 루트 검증이 있으면 컴파일 후 슬롯 판정은 생략한다. 하위 명시적 검증은 로드 판정을 대체하지 않는다.
-- Always의 첫 오류 표시도 다음 프레임 뒤 슬롯까지 늦어지며 조상 layout 쓰기는 같은 요청 스탬프 규칙을 따른다.
+재대조 reset은 호출에 사용한 props와 이번 commit을 비교하고 원래 호출 옵션을 유지합니다. 같은 처리기에서 prop을 바꾼 뒤 reset하면 마지막 committed 값의 동기 로드와 새 prop의 재대조 로드가 각각 통지할 수 있습니다. 재대조 전에 unmount하면 그 재대조는 실행되지 않으며 prop만 transition 안에서 갱신하고 reset을 밖에서 호출한 경우 새 prop 반영을 약속하지 않습니다. reset 옵션은 자동 쓰기 억제·허용 비트만 받으며 같은 루트에서 옵션이 없으면 엔진의 현재 기본값을 따릅니다. 열린 바깥 사슬에서 대기 중인 설정을 임의 호출 옵션으로 바꿔 조기 적용하지 않습니다. 렌더 중 reset의 전달 시점은 소비자 오용이므로 보증하지 않습니다.
 
-- `ErrorVisibility.Always`를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 슬롯을 거치지 않고 즉시 시작하며, 검증기 실패로 거부하면 기록의 origin은 `validate`이고 degraded 제출 거부는 origin `submit`입니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
-- V6: prepared 현행 load의 hidden 기록은 chain 끝에 바로 전달합니다. reset의 build 기록은 각각 try/catch하여 handler 실패 뒤에도 다음 기록과 binding 교체를 계속합니다.
-- V7: never-prepared load가 reset으로 교체될 때 batch try/catch 뒤에 records를 새 load 앞에 옮깁니다. reset 사슬에서 새로 생긴 기록까지 원래 root·warning scope로 한 번 전달하며 이전 load의 전체 기록이 새 build 기록보다 앞섭니다. 교체 load는 prepared와 함께 reported를 확정하여 pendingLoad가 caller에게 던진 오류를 다시 flush하지 않습니다. next.error는 caller throw를 위해 보존합니다. 이미 준비된 load는 숨김 중에도 buffer하지 않습니다. 첫 commit의 reported 가드는 유지합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 한 번 capture·호스트 보고합니다.
+같은 스키마 reset은 트리·노드 신원·노드 소비자의 구독·캐시를 유지하고 첨부 파일을 비웁니다. 입력 DOM의 보존 범위는 [FieldInputBridge](../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)가 소유합니다. 교체된 트리는 부모·자식·루트 참조를 끊지 않으므로 소비자가 옛 노드 하나를 보유하면 옛 트리 전체가 수거되지 않을 수 있습니다. 수명을 이어 가려면 현재 핸들에서 다시 찾습니다. 일반 reset의 로드 비용과 참조가 다른 스키마의 비교 비용은 각각 트리와 스키마 크기에 비례하며, 검증 캐시 축출 뒤의 재컴파일까지 없다고 보장하지 않습니다.
 
-- 최초 마운트·모든 reset·rebuild·검증기 교체는 scheduleLoadValidation 하나를 사용한다. 최초 예약은 !load.prepared 안에 있어 StrictMode replay에서 중복되지 않는다.
-- 예약 슬롯은 현행 load·root와 loadValidation 토큰을 모두 확인한다. 같은 load의 다음 reset도 이전 토큰을 버린다. cleanup·숨김은 취소하지 않는다.
-- startFieldNodeLoadValidation이 컴파일·실패 보고·현재 로드 이후 요청 조회를 담당하며 true일 때만 validateLoadRoot를 호출한다.
-- Provider의 mount·같은 스키마 reload·교체 mount는 모두 deferValidation을 켜 엔진 사슬의 자동 요청을 미룬다. reset 구독 교체 뒤 공통 슬롯을 예약한다.
-- BLUEPRINT-052 / SURFACE-063: createRootLoad injects the app-owned schema identity cache with stable renderer predicates. Explicit rebuild invalidates the committed schema and forces the existing replacement-load path with the same reset option. Ordinary reset preserves its existing root, even after another form invalidates the shared cache (round-447 coordinator clarification).
+### SURFACE-064 — 청사진 보존과 rebuild
 
-- 스키마와 기본값 의존성에 맞춰 루트 생성 결과를 재사용하거나 재생성합니다.
-- `onValidate`는 보고된 오류 목록이 바뀔 때만 부릅니다. 같은 목록 참조는 연속으로 두 번 보고하지 않으며(246C-01), 직전 보고가 빈 목록이면 검증 모드와 경로(reset 안팎)에 관계없이 이어지는 빈 집계는 다시 보고하지 않습니다(245C-01).
-- reset의 빈 목록 보충 보고에서 소비자 `onValidate`가 던져도 로드 오류가 있으면 그 오류를 우선 던집니다. 첫 보고 전 OnRequest 재생성 reset은 빈 목록을 보고하지 않습니다(246C-01).
-- 모든 검증 모드에서 reset 후 루트의 집계 오류가 비어 있고 마지막 `onValidate` 보고가 비어 있지 않았으면 빈 목록을 한 번 보고하며, 마지막 보고가 이미 비어 있거나 새 집계 오류가 남아 있으면 추가 보고하지 않습니다(243C-01).
-- 살아 있는 노드 판정은 호출 시점의 binding 루트를 읽고 첫 commit에서 아직 binding이 준비되지 않았으면 Context 루트를 사용하여 자식 layout effect의 초기 입력 쓰기를 허용합니다. 재생성 reset 후에는 새 binding 루트로 옛 노드의 늦은 쓰기를 차단합니다(WRITE-046).
-- `reset(option?)`의 자동 쓰기 억제 비트를 같은 트리의 reload와 재생성 트리의 mount에 전달합니다. 호출 옵션은 호출 직후 로드와 validator·props 커밋 재대조에서 Form 기본값보다 우선하며, 재대조 reset도 원래 호출 옵션을 유지하고 다른 비트는 무시합니다(WRITE-015·044, LANDING-039).
-- 같은 루트의 reset은 명시된 자동 쓰기 옵션만 전달하고, 옵션이 없으면 엔진의 현재 기본값을 따릅니다. 열린 바깥 `onChange` 사슬에서 커밋된 prop을 호출 옵션으로 바꾸지 않아, 지연된 설정이 reset을 통해 최외곽 종료 전에 적용되지 않게 합니다.
-- 외부 오류는 전체 목록을 루트에 적용한 뒤 경로별 비루트 노드에도 전달합니다. 같은 스키마와 재생성 reset은 현재 트리에 두 적용을 동기로 다시 수행하므로 `getErrors()`는 루트 외부 오류 + 검증 목록을 읽습니다(WRITE-045, SURFACE-053, VALIDATE-043, 69C-03, 79C-01).
-- errors effect는 같은 commit의 validator 교체·pending reset 재대조가 끝난 store.load.root에 적용하며 reset의 applyFormErrors는 load origin을 명시합니다. 외부 오류의 dataPath는 현재·이전 목록에서 각각 한 번만 읽어 `find()`로 찾은 노드의 표준 경로별로 묶고(`#/field`·`field`는 `/field`로) 원래 순서로 적용합니다. 이전 목록에만 남은 경로는 빈 오류로 지우며 누락 노드는 건너뜁니다(79C-01).
-- 배열이 아닌 `errors` prop과 이전 목록은 0.16.0과 같이 빈 목록으로 받습니다. `null`·객체 입력은 예외 없이 루트의 외부 오류를 비우고 비루트 노드에는 아무것도 전달하지 않습니다(178C-01).
+동일 스키마 reset은 다른 폼이 공유 캐시를 무효화해도 이 폼의 청사진을 유지합니다. rebuild는 committed 스키마의 캐시를 무효화하고 같은 reset 옵션으로 교체 경로를 강제합니다. 캐시 무효화만으로 살아 있는 폼을 몰래 바꾸지 않기 위한 규칙입니다. 스키마·검증기 변경에 의한 reset 교체까지 금지한다는 뜻은 아닙니다.
 
-- Context 객체(`RootNodeContext`·`RootBindingContext`)와 Provider는 `components/`, 훅(`useRootNodeContext`·`useLiveNode`)은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+### REACT-007 — 준비된 load의 수명
 
-- 첫 commit은 기존 구독 해제 → 구독 → prepared → flushRootLoad → applyFormErrors → 로드 검증 슬롯 예약 순서입니다. 그 전에 reset으로 교체된 load는 prepared만 설정하고 나머지는 생략합니다. reset이 현행 load를 구독했으므로 show·StrictMode replay는 재구독하지 않습니다.
+첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 확정 commit은 루트 구독과 prepared 표시 뒤 기록을 flush하고 외부 오류·로드 검증을 연결합니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
 
-### Hidden delivery limits
+React는 숨김과 실제 unmount를 같은 cleanup으로 표현하므로 루트 구독은 cleanup에서 끊지 않습니다. retained handle·노드의 쓰기·reset·rebuild·validate·submit과 예약 슬롯은 unmount 뒤에도 전달할 수 있습니다. cleanup은 검증 캐시 retain만 해제하며 그 뒤 만든 새 루트는 retain하지 않아 축출 후 재컴파일할 수 있습니다.
 
-- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
-- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
-- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다. 개발 StrictMode replay도 React가 hide/show로 모델링하므로 비멱등 자식 layout 쓰기가 replay에서 전달되며 production 렌더는 영향을 받지 않습니다.
-- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+숨김 중 일반 콜백은 마지막 연결 commit의 props를 쓰고 show에서 새 props가 반영됩니다. onError의 최신 insertion-effect 수명은 [FormErrorContext](../FormErrorContext/DETAIL.md)가 소유합니다. 숨김 중 ref는 null일 수 있으므로 보유 핸들이 필요합니다. show의 자식 layout 쓰기는 prepared load에서 즉시 전달되며 개발 StrictMode의 비멱등 replay도 전달될 수 있습니다.
 
-- 루트 교체 reset의 옛 load는 batch try/catch 뒤 은퇴한다. adoption은 컴파일하지 않으며 새 트리를 유지한다. 다음 프레임 뒤 슬롯의 컴파일 실패는 onError origin validate 한 번과 host 한 번이다. never-prepared build 오류 이관·handler 격리 규칙은 유지한다.
+### ERROR-077 — 생성 실패와 보고
 
-### onError origin
+생성·mount 실패는 렌더에서 잡아 load에 보관합니다. 공유 충돌은 루트를 제거하여 fallback으로 가고, 커밋 가능한 정착 실패는 degraded 트리를 유지합니다. 렌더 중 소비자 callback을 호출하지 않으며 SSR에는 commit 보고가 없습니다. 확정 load가 오류를 한 번 보고하고 host에 전달합니다. reset의 caller 오류와 자동 슬롯 실패는 별도 경로입니다.
 
-reset·rebuild·검증기 교체는 batchFieldNodeLoad로 load 사슬을 엽니다. 중첩 시 바깥 사슬의 origin을 보존합니다. 최초 applyFormErrors는 load, errors prop 변경은 write입니다. 내부 recordScopes는 공개 origin이 아닌 원래 root·warning scope를 추적합니다.
+교체 전 never-prepared load의 기록은 원래 root·warning scope를 보존해 새 build 기록 앞에 옮깁니다. mount 사슬 기록이 build 기록보다 먼저 전달될 수 있고 binding 교체 전 보고 중 handle.node는 옛 루트일 수 있습니다. 기록별 handler 실패를 격리하여 나머지 기록과 교체를 계속합니다. 새 load는 prepared·reported를 함께 확정하되 caller에게 던질 error는 보존하여 pending flush에서 같은 실패를 재보고하지 않습니다. 옛 생성 실패도 한 번만 capture·host 보고합니다.
+
+버퍼 기록의 원래 root뿐 아니라 현행 root에도 오류 관찰자 guard를 적용하여 onError가 새 폼에 쓰는 우회를 막습니다. 실패 묶음의 잎 순회·빈 묶음 처리는 FormErrorContext의 책임입니다. 검증 슬롯은 엔진이 보고한 오류를 다시 capture하지 않습니다.
+
+### VALIDATE-052 — 공통 로드 슬롯
+
+최초 mount·reset·rebuild·검증기 교체는 표시 정책과 무관하게 다음 프레임 뒤 공통 슬롯을 사용합니다. None은 컴파일하지 않고 OnRequest-only는 컴파일만 하며 OnChange는 로드 이후 대체 요청이 없을 때 현재 snapshot을 판정합니다. 앞선 자동 요청·명시 root.validate는 슬롯 판정을 대체하고 하위 validate는 대체하지 않습니다. ErrorVisibility.Always도 최초 inline 판정을 만들지 않습니다. if 게이트의 동기 컴파일과 명시 validate·submit은 이 미룸과 별개입니다. 첫 결과 전 빈 목록을 성공으로 단정하지 않습니다.
+
+adoption은 컴파일하지 않으므로 자동 compile 실패가 새 트리를 되돌리거나 reset·rebuild를 던지게 하지 않습니다. 자동 실패는 validate origin과 host에 한 번씩 보고하고 명시 호출은 거부를 유지합니다. 결과·요청 snapshot과 release 의미는 [validation](../../core/engine/validation/DETAIL.md)이 소유합니다.
 
 ### root-live-settings — 실행 설정 수명
 
-연결 commit은 최신 props를 확정하고 구조 교체를 처리한 뒤 현행 root에 실행 설정을 적용하고 context·errors를 전달합니다. 자식 layout에서 이 commit 전에 시작한 호출은 마지막 committed 설정을 사용합니다. 동일 설정의 최초 commit·StrictMode replay는 활성화를 추가 예약하지 않습니다. load와 activation은 하나의 유효 토큰만 소유하며 mode 전환으로 이전 슬롯을 무효화합니다. None→OnRequest는 다음 공통 슬롯에서 compile만 준비합니다. None 또는 OnRequest→OnChange는 다음 변경을 기다리지 않고 현재 snapshot을 한 번 판정합니다. 그 전에 전체 자동 요청이나 명시적 root.validate가 시작하면 슬롯 판정을 대체하며 subtree.validate는 대체하지 않습니다. load·activation의 catch는 시작 root 동일성과 validation epoch 및 load의 은퇴 여부로 host 보고를 판정합니다. 요청 stamp·commit·슬롯 token의 교체나 같은 root reset만으로 실행 실패 보고를 버리지 않아, 같은 epoch의 대체된 슬롯과 같은 root reset의 거부도 기존처럼 onError와 host에 한 번씩 전달합니다. 루트 교체·은퇴 또는 실효 모드 전환은 늦은 실패를 차단합니다. hidden cleanup은 설정·슬롯을 되돌리지 않습니다.
+commit은 구조 교체를 처리한 현행 root에 validationMode·자동 쓰기·비활성 정책·표시 정책을 함께 적용한 뒤 context와 외부 오류를 전달합니다. 표시 정책 변경은 reset 사유가 아니며 검증 모드·예약을 바꾸지 않습니다. 숨김 cleanup은 committed 설정을 지우지 않습니다.
+
+load·activation은 하나의 유효 슬롯 토큰을 공유합니다. 실효 모드 변경은 이전 슬롯을 무효화하고 None→OnRequest는 컴파일 준비, None 또는 OnRequest→OnChange는 다음 쓰기를 기다리지 않고 판정을 예약합니다. 같은 설정의 최초 commit·StrictMode replay는 추가 활성화를 만들지 않습니다. 실행을 시작한 슬롯의 늦은 실패는 시작 root·validation epoch·은퇴 여부로 판정합니다. 같은 root reset·요청 stamp·token 교체만으로 같은 epoch의 실패를 버리지 않으며 루트 교체·은퇴·실효 모드 전환은 늦은 보고를 차단합니다.
+
+### WRITE-045 — 외부 오류와 검증 콜백
+
+외부 오류는 루트의 전체 목록과 실제 해석된 비루트별 목록에 함께 적용합니다. 별칭 경로를 같은 노드로 묶고 원래 순서를 유지하며 이전 목록에만 남은 경로는 비웁니다. 누락 노드는 건너뜁니다. 배열이 아닌 errors는 빈 목록으로 취급합니다. reset의 두 경로는 외부 오류를 동기 재적용하고 prop effect는 같은 commit의 구조 교체가 끝난 store.load.root에 적용하여 옛 트리로 새 오류가 새지 않게 합니다.
+
+onValidate는 같은 참조와 연속 빈 목록을 중복 보고하지 않습니다. reset 뒤 집계가 비고 마지막 보고가 비어 있지 않으면 모드와 무관하게 빈 목록을 한 번 보충합니다. 첫 보고 전 OnRequest 재생성에 빈 보고를 합성하지 않습니다. 보충 callback이 던져도 load 자체 오류가 있으면 그 오류를 우선 caller에게 던집니다. 최초 오류 적용·reset은 load origin, errors prop 변경은 write이며 중첩하면 바깥 origin을 따릅니다.
 
 ## Acceptance Criteria
 
-### live-configuration — 설정 교체 수명
+### live-configuration — 구성 오류와 복구
 
-- schema prop 변경 뒤 reset 전에는 기존 루트를 유지하고, reset 전후 함수 children은 실제 루트와 일치하는 스키마를 받습니다.
-- 새 잘못된 맵은 FormTypeInputMap·load로 한 번 보고하며 기존 루트와 입력을 유지합니다.
+초기 잘못된 입력 맵·표시 정책은 트리를 만들지 않는 실패 load로 보관하고 확정 fallback에서 load origin으로 한 번 보고합니다. 유효한 구성으로 복구하면 새 load를 만들며 다른 스키마 오류가 나타나도 이미 보고한 구성 오류를 렌더 경계로 다시 던지지 않습니다. 잘못된 live 구성은 기존 루트·입력을 보존하고 같은 commit의 검증기 교체를 미룹니다. 복구 commit은 실제 load와 최신 검증기를 재대조합니다. 검증기 구성 실패는 참조 변경·명시 reset에서 재시도하며 매 렌더 반복하지 않습니다.
 
 ### root-node-context-contract — 관찰 가능한 동작
 
-- 입력 맵 구성 오류는 추측성 생성 중 보고하지 않고 확정 fallback에서 한 번 보고하며, 루트 트리를 생성하거나 사용자 입력을 실행하지 않습니다.
-- Always를 포함한 모든 모드는 최초 프레임 전 로드 판정이 없으며 숨김·unmount 뒤에도 슬롯을 실행한다. OnRequest-only는 컴파일만 하고 None은 생략한다.
-- Provider cleanup은 검증 루트 retain을 해제하며 load 구독은 reset 교체 또는 GC까지 유지합니다.
-- 검증과 상태 이벤트는 대응 콜백으로 전달되며 외부 오류는 경로별로 묶어 주입합니다.
+WRITE-046·WRITE-086. 살아 있는 노드 판정은 호출 시점 binding으로 하되 첫 준비 전에는 Context 루트를 사용하여 자식 layout 입력을 허용합니다. 교체된 노드의 늦은 입력은 거부합니다. 숨김·unmount는 준비된 load의 콜백·슬롯을 취소하지 않으며 옛 load의 은퇴와 구분합니다. 자동 검증 실패에서도 교체 트리를 유지하고 기록·host 보고를 중복하지 않습니다.
+
+ERROR-196의 참조 차이 경고는 adoption을 소유한 [write](../../core/engine/write/DETAIL.md)가 판정합니다. 이 Provider는 오류 보고를 위해 별도 스키마 전수 비교를 추가하지 않습니다.
 
 ## Last Updated
 
-계약·경계·검증 조건이 변경될 때 갱신합니다.
+루트 교체·commit·구성 복구·숨김·외부 오류 또는 검증 슬롯 수명이 바뀔 때 갱신합니다.

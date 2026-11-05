@@ -2,32 +2,29 @@
 
 ## Purpose
 
-Build and mount a root FieldNode tree from JSON Schema, expose the current root through Context and the imperative binding, and connect validation, external errors and Form callbacks.
+루트의 생성·교체·React commit을 연결하고 현재 루트의 콜백·외부 오류·검증 슬롯 수명을 소유합니다.
 
 ## Conventions
 
-- Deliver callbacks from prepared current loads at engine-chain end while hidden; retire replaced loads and preserve each buffered record's original root and warning scope.
-- Use typed generic React providers and the createRootLoad construction channel.
-- Schedule validation for every mount, reset, rebuild and validator replacement in the shared after-frame load slot.
-- Default to ValidationMode.OnChange | ValidationMode.OnRequest.
-- Apply the full external-error list to the current root, then group non-root issues by resolved node path.
-- Keep the Context node until a structural load replaces it; WorkspaceContext supplies the consumer context.
+- 추측성 생성과 확정된 load의 보고를 분리하여 폐기 렌더의 부작용을 막습니다.
+- 구조 입력과 live 실행 설정의 수명을 구분합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Build speculative roots through createRootLoad and the core construction/mount boundary.
-- Keep the root subscription for the load lifetime; effect cleanup releases only validation-cache consumer references.
-- Resolve errors against store.load.root after earlier commit effects have replaced the binding.
-- Mark replacement loads prepared and reported together while retaining their caller error.
+- 트리 생성·마운트·인계는 core 경계를 사용하고 React 판정은 인자로 주입합니다.
+- prepared load의 구독을 load 수명 동안 유지하고 effect cleanup은 검증 캐시 retain만 해제합니다.
+- 외부 오류는 구조 교체가 끝난 현행 루트에 적용하여 옛 binding으로 새 오류가 새지 않게 합니다.
+- 버퍼 기록의 원래 root·warning scope를 보존하고 replacement의 caller 오류와 보고 완료를 구분합니다.
+- 자동 검증은 공통 슬롯으로 연결하여 표시 정책이 검증 일정을 바꾸지 않게 합니다.
 
 ### Ask first
 
-- Change the default validation mode or Context node update semantics.
+- 기본 검증 모드·루트 교체·숨김 보고·reset과 rebuild의 관계를 바꾸는 경우.
 
 ### Never do
 
-- Build or inject roots outside the established core construction channel.
-- Apply external errors without grouping resolved non-root paths.
-- Consume RootNodeContext outside the Form tree.
+- 렌더 중 추측성 load의 소비자 callback을 호출하지 않습니다.
+- cleanup을 루트 폐기로 취급하거나 root 교체 전 외부 오류를 적용하지 않습니다.
+- Form 트리 바깥에서 이 Context를 사용하지 않습니다.

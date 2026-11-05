@@ -2,31 +2,29 @@
 
 ## Purpose
 
-`FieldProxy` 본체 안에서 입력을 처리하는 부품. 선택된 `FieldInput` 컴포넌트를 마운트하고, 사용자 이벤트(change·focus·blur·fileAttach)를 FieldNode 이벤트 시스템의 이벤트로 바꾸며, 포커스·선택·리프레시 명령을 처리한다.
+FieldProxy 안에서 입력 컴포넌트의 선택·DOM 수명을 노드 값·상태·명령에 연결합니다. 입력 초안과 자식 프록시 수명을 구분하여 값 갱신이 캐럿과 자식을 불필요하게 지우지 않게 합니다.
 
 ## Conventions
 
-- TypeScript와 React(TSX)로 작성한 내부 전용 모듈로, `FieldProxy`에서만 사용한다. `createFieldInputBridge`는 React 컴포넌트가 아니라 팩토리 함수이며 클로저로 node를 붙잡는다.
-- `HANDLE_CHANGE_OPTION`은 `Replace | Propagate | EmitChange | PublishUpdateEvent`이며 사용자 입력의 기본값이다.
-- FieldInput 선택 우선순위: InlineFieldInput → FieldInputMap → FieldInputDefinitions → ExternalFieldInputDefinitions → PluginManager fallback
-- `useFieldInputControl`은 `RequestRefresh`에서 version을 올리고(key가 바뀐다), `RequestFocus`에서 DOM focus를, `RequestSelect`에서 DOM select를 실행한다.
+- createFieldInputBridge는 노드를 붙잡은 컴포넌트를 반환하는 팩토리이며 React 컴포넌트 자체가 아닙니다.
+- 입력 오류 경계는 해석 지점의 안정된 어댑터를 재사용합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Accepted input changes clear external errors and set `FieldNodeState.Edited` in the input write batch.
-- 언마운트할 때 `attachedFilesMap`에서 해당 경로의 항목 삭제
-- Block `onChange` when Form `readOnly`/`disabled` props or `node.isReadOnly`/`node.isDisabled` require it.
+- 사용자 값 쓰기에 Form·노드 잠금을 적용하고 입력 출처 통로로 전달합니다.
+- 값·파일 callback은 현재 노드·선택·적용 세대를 검사하여 교체된 입력이 새 폼을 바꾸지 못하게 합니다.
+- Refresh는 조합과 실제 자식 소유권을 존중하며, 숨김 재연결에서 현재 스냅숏을 확인합니다.
+- unmount에서 입력의 첨부 파일과 미룬 touched 예약을 정리합니다.
 
 ### Ask first
 
-- `HANDLE_CHANGE_OPTION` 비트마스크를 바꿀 때
-- `REACTIVE_RERENDERING_EVENTS` 마스크를 바꿀 때 (리렌더 범위에 영향)
-- FieldInput 선택 우선순위를 바꿀 때
+- 입력 선택 우선순위·추적 마스크·입력 쓰기 옵션 또는 Refresh 범위를 바꾸는 경우.
+- 자식 캐시·하이드레이션 수명을 바꾸는 경우.
 
 ### Never do
 
-- `FieldProxy` 바깥에서 이 모듈을 직접 import
-- `createFieldInputBridge`를 React 컴포넌트처럼 JSX에서 직접 사용
-- `onChangeRef`를 거치지 않고 `node.setValue()`를 직접 호출 (onChangeRef 확인 필수)
+- 입력의 onChange 덮어쓰기를 무시하거나 일반 공개 쓰기로 입력 출처를 우회하지 않습니다.
+- Refresh만으로 입력 오류 경계를 다시 마운트하지 않습니다.
+- 자식을 보존하려고 terminal 전략을 권하지 않습니다.
