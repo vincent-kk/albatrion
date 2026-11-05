@@ -26,6 +26,10 @@ OnChange의 표시는 마지막 보류 해제 이후 계속 적격이었던 오�
 
 검증의 실패는 입력의 오류 목록과 분리합니다. 판정할 수 없다는 사실을 빈 목록으로 바꾸면 호출자는 정상 입력과 실행 실패를 구별할 수 없고, 필드 오류로 바꾸면 사용자가 입력을 고쳐 해결할 수 있는 문제처럼 보이기 때문입니다.
 
+### validation-mode-lifetime — 실행 설정 수명
+
+실효 모드는 off·manual·automatic으로 비교합니다. 같은 모드와 OnChange 비트 조합 replay는 raw 값만 저장하며 epoch·cadence·compile·오류 참조를 유지합니다. 다른 모드로 전환하면 epoch와 stamp를 올리고 cadence를 cancel한 뒤 참조·run·pending 대상·running·entry stamp를 비웁니다. OnChange 이탈은 표시 이력과 quiet token을 지우고 새 불투명 정책을 설치한 뒤 release를 알립니다. None은 검증이 만든 오류만 비우며 외부 오류를 유지합니다. 다른 전환은 오류를 유지합니다. 결과 게시에는 시작 root·load·epoch·stamp·commit을 검사하고 release 뒤 최종 배달 직전 다시 검사합니다. 명시적 검증과 로드·활성화 실행 실패의 보고 수명은 시작 root와 실효 모드 epoch입니다. 루트가 교체·은퇴하거나 epoch가 바뀌면 늦은 실패를 보고하지 않으며, 같은 루트·epoch의 요청 대체나 같은 루트 reset만으로 기존 실패 보고를 막지 않습니다. 자동 cadence의 기존 최신 요청 선택과 컴파일 실패의 로드별 상태 보호는 유지합니다. 명시적 Promise는 게시·보고 여부와 별개로 자체 결과나 거부로 정착합니다. compile 실패·보고 상태와 캐시는 mode toggle로 초기화하지 않습니다.
+
 ## Acceptance Criteria
 
 ### VALIDATE-001 — 작성한 의미를 기준으로 판정합니다

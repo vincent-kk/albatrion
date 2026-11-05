@@ -47,6 +47,10 @@
 
 - 위계: `components/`에 fractal 여섯이 있다. `components/FormCore/`는 Provider 조립·핸들·오류 경계를 소유하며, 경계를 입힌 바깥 `FormCore`와 경계 없는 안쪽 `FormRoot`를 둔다. 공개 조각 다섯(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)도 각자의 fractal이다. `components/`에는 index를 두지 않으며, `Form.tsx`와 `index.ts`가 여섯 자식의 진입점(`./components/FormCore` 등)을 직접 가리킨다. `Form.tsx`는 `FormCore`에 정적 멤버 다섯을 붙여 `Form`을 만든다. 뿌리에는 문서·진입점·`Form.tsx`만 둔다(filid zero-peer-file).
 
+### form-live-defaults — 실행 설정 수명
+
+validationMode는 Form > FormProvider > 기본값 순서로 선택하고 commit에서 기존 root에 적용합니다. None 전환은 검증 오류만 지우며 외부 오류를 유지하고 다른 모드 전환은 오류를 보존합니다. 재활성화는 검증 문서의 공통 슬롯을 따릅니다. unsetOnInactive와 disableAutomaticWrites 변경은 다음 엔진 진입부터 적용하며 보유한 비활성 값을 소급 삭제하거나 자동 쓰기를 소급 실행하지 않습니다. 호출 옵션과 노드별 정책의 기존 우선순위는 유지합니다.
+
 ## Acceptance Criteria
 
 ### reset-options — 로드별 자동 쓰기 억제

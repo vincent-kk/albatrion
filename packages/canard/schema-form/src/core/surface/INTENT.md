@@ -17,6 +17,8 @@
 
 ### Always do
 
+- Keep live settings and validation-epoch reads on the binding-only channel; never widen the package surface.
+
 - 멤버를 추가할 때는 DETAIL의 PR별 목록, 멤버 목록 시험, 공개 형을 함께 고친다(26C-01).
 - 생성할 때 청사진의 종류와 전략으로 행을 한 번 선택한다(NODE-002·008).
 - 배열 동사는 engine 진입점을 거쳐 쓰기 진입 함수에 한 문장으로 위임하며, 공통 동작 행이 배열이 아닌 호스트를 거부한다(NODE-010·014, 35C-01, 62C-01).

@@ -21,7 +21,6 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   ValidationMode,
-  commitFieldNodeRevealPolicy,
   releaseValidationRoot,
   retainValidationRoot,
   setContext,
@@ -36,6 +35,7 @@ import { useFormErrorContext } from '../../FormErrorContext';
 import { useWorkspaceContext } from '../../WorkspaceContext';
 import type { RootBinding, RootLoadProps, RootLoadStore } from '../type';
 import { applyFormErrors } from '../utils/applyFormErrors';
+import { commitRootLoadSettings } from '../utils/commitRootLoadSettings';
 import { createRootLoad } from '../utils/createRootLoad';
 import { flushRootLoad } from '../utils/flushRootLoad';
 import { reportRootLoadValidation } from '../utils/reportRootLoadValidation';
@@ -83,6 +83,7 @@ export const RootNodeContextProvider = ({
       DEFAULT_VALIDATION_MODE,
   };
   const committed = useRef(current);
+  const committedPolicy = useRef(errorVisibility);
   // Construction belongs to the speculative render; only committed loads are prepared.
   // eslint-disable-next-line react-hooks/exhaustive-deps -- Reset reconsumes props; input-map normalization stays fixed.
   const initial = useMemo(() => createRootLoad(current, reporter), []);
@@ -103,9 +104,6 @@ export const RootNodeContextProvider = ({
   const getSnapshot = useMemo(() => () => store.load, [store]);
   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const reportedPolicyError = useRef<SchemaFormError>(undefined);
-  useLayoutEffect(() => {
-    if (load.root) commitFieldNodeRevealPolicy(load.root, errorVisibility);
-  }, [load.root, errorVisibility]);
   if (reporter) {
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
@@ -120,6 +118,7 @@ export const RootNodeContextProvider = ({
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
       const used = committed.current;
+      commitRootLoadSettings(store.load, store, used, committedPolicy.current);
       store.load = resetRootLoad(store.load, used, option, rebuild);
       store.unsubscribe();
       store.unsubscribe = subscribeRootLoad(store.load, store);
@@ -156,6 +155,7 @@ export const RootNodeContextProvider = ({
   useLayoutEffect(() => {
     const previous = committed.current;
     committed.current = current;
+    committedPolicy.current = errorVisibility;
     binding.current = { root: store.load.root, reset, rebuild };
     store.load.props = {
       ...store.load.props,
@@ -164,8 +164,6 @@ export const RootNodeContextProvider = ({
       onValidate: current.onValidate,
       onDiagnosticsChange: current.onDiagnosticsChange,
     };
-    if (store.load.root && previous.context !== current.context)
-      setContext(store.load.root, context);
     const requested = pending.current;
     pending.current = undefined;
     const policyRecovered =
@@ -186,6 +184,11 @@ export const RootNodeContextProvider = ({
       )
         reset(option);
     }
+    const active = store.load;
+    const root = active.root;
+    commitRootLoadSettings(active, store, current, errorVisibility);
+    if (root && store.load === active && previous.context !== current.context)
+      setContext(root, context);
   });
 
   useLayoutEffect(() => {

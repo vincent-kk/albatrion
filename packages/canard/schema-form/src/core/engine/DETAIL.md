@@ -35,7 +35,6 @@
 - 내부 `gatePredicate` 모드는 출하 기본 `on`과 전수 입력·메모 없는 기준 경로 `off`를 제공한다. 공개 API나 환경 변수로 노출하지 않으며 기존 setMode와 같은 파생 자료 초기화·시험 복구 규칙을 따른다. off는 새로운 if·discriminator 표를 사용하지 않고 기존 전체 호스트 증인을 유지한다. 역사적 계수 단언은 명시적인 기준 경로에서 유지하고, 출하 기본과 그림자의 동등성·바퀴 수는 별도로 검사한다.
 - B1의 if 읽기 증거도 공통 청사진 파생 레코드의 지연 슬롯에 둔다. 조건 객체는 해당 청사진의 정적 Map 키이며 라이브 발생이나 입력 값을 저장하지 않는다. blueprint 없이 호출하는 시험용 순수 분석은 캐시를 만들지 않는다.
 
-
 - 청사진에서 쓰기까지의 실행 규칙과 원본, 계산, 투영 채널을 보존한다. 재배치를 하더라도 노드 형상, 값, 오류, 리비전, 경고, 통지는 달라지지 않는다.
 - 의존 순서는 blueprint < record < {behaviors, navigation} < validation < derive < settle < write이다. `derive`와 `settle`은 형제이며, settle이 derive 진입점을 소비한다. 둘이 함께 쓰는 순수 보조는 engine의 `utils/compute/sameValue.ts`, `utils/paths/resolveDependencyPath.ts`, `utils/controls/getCommittedDeclarationKey.ts`, `utils/controls/getControlExpression.ts`에 있으며, 두 자식이 위로 열린 방향으로 직접 가져온다. 이 보조들은 engine의 organ이므로 자식 fractal(`blueprint` 등)의 형도 가져오지 않는다(모델 B1). 필요한 칸만 구조 형으로 받는다. `getControlExpression`은 청사진의 식 목록을 받은 그대로의 원소 형으로 돌려준다. 검증은 결과 콜백으로 쓰기에 돌려주며 타입 간선도 거꾸로 만들지 않는다(NODE-016·045).
 - surface는 이 진입점만 거쳐서 엔진 계약을 소비한다. 자식 엔진 모듈은 형제의 진입점을 직접 소비한다.
@@ -51,44 +50,44 @@
 
 ### 청사진 레코드
 
-| 계획서 이름 | 실제 슬롯 또는 슬롯이 아닌 이유 |
-| --- | --- |
-| 파생 규칙 표 | `deriveRuleTable` |
-| 기능 색인 | `featureNodeIndex` |
-| 수렴 대상 | `deriveConvergenceTargets` |
+| 계획서 이름       | 실제 슬롯 또는 슬롯이 아닌 이유                          |
+| ----------------- | -------------------------------------------------------- |
+| 파생 규칙 표      | `deriveRuleTable`                                        |
+| 기능 색인         | `featureNodeIndex`                                       |
+| 수렴 대상         | `deriveConvergenceTargets`                               |
 | 정적 첫 로드 자격 | `슬롯 아님: Blueprint.staticFirstLoadEligible 생성 사실` |
-| 게이트 예산 색인 | `gateBudgetIndex` |
-| 게이트 식 | `gateExpressions` |
-| 종료 정책 식 | `exitPolicyExpressions` |
-| 의존 색인 | `dependencyIndex (정적 자료만)` |
-| 컨텍스트 소유자 | `contextOwners` |
-| 가상 참조 색인 | `virtualReferenceIndex` |
-| 순환 여부 | `recursiveExpansion` |
-| 상대 간격 | `recursiveRelativeSpan` |
-| 독립 잎 기본값 | `independentLeafDefaults` |
-| 분할 소유자 준비 | `splitOwnersPrepared` |
+| 게이트 예산 색인  | `gateBudgetIndex`                                        |
+| 게이트 식         | `gateExpressions`                                        |
+| 종료 정책 식      | `exitPolicyExpressions`                                  |
+| 의존 색인         | `dependencyIndex (정적 자료만)`                          |
+| 컨텍스트 소유자   | `contextOwners`                                          |
+| 가상 참조 색인    | `virtualReferenceIndex`                                  |
+| 순환 여부         | `recursiveExpansion`                                     |
+| 상대 간격         | `recursiveRelativeSpan`                                  |
+| 독립 잎 기본값    | `independentLeafDefaults`                                |
+| 분할 소유자 준비  | `splitOwnersPrepared`                                    |
 
 ### 호스트 레코드
 
-| 계획서 이름 | 실제 슬롯 또는 슬롯이 아닌 이유 |
-| --- | --- |
-| 감시 경로 | `watchPaths` |
-| 파생 자식 위치 | `deriveChildren` |
-| 선언 이름 | `declaredNames` |
-| 선언 id | `declarationIds` |
-| 객체 자식 | `objectChildren` |
-| 읽기 계획 | `readPlans` |
-| 정적 게이트 목록 | `staticGateList` |
-| 선택 표 | `gateSelectionTable` |
-| 직접 선택 계획 | `directChildSelectionPlan` |
-| 정적 모양 | `staticShape.entries; byEntry는 독립 지연 하위 색인` |
-| 정적 id | `staticIds: child entry별 WeakMap` |
-| 허용 간선 스키마 | `admittedEdgeSchemas: child entry별 WeakMap` |
-| 정적 객체 항목 | `staticObjectEntries` |
-| 아이템 항목 | `itemEntries` |
-| 배열 자식 선언 | `슬롯 아님: count/result는 D3b-1 runtime.arrayChildEntries; 정적 아이템 사실은 itemEntries` |
-| 기본 유효 스키마 | `defaultEffectiveSchema` |
-| 유효 스키마 메모 | `effectiveSchemaMemo` |
+| 계획서 이름      | 실제 슬롯 또는 슬롯이 아닌 이유                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| 감시 경로        | `watchPaths`                                                                                |
+| 파생 자식 위치   | `deriveChildren`                                                                            |
+| 선언 이름        | `declaredNames`                                                                             |
+| 선언 id          | `declarationIds`                                                                            |
+| 객체 자식        | `objectChildren`                                                                            |
+| 읽기 계획        | `readPlans`                                                                                 |
+| 정적 게이트 목록 | `staticGateList`                                                                            |
+| 선택 표          | `gateSelectionTable`                                                                        |
+| 직접 선택 계획   | `directChildSelectionPlan`                                                                  |
+| 정적 모양        | `staticShape.entries; byEntry는 독립 지연 하위 색인`                                        |
+| 정적 id          | `staticIds: child entry별 WeakMap`                                                          |
+| 허용 간선 스키마 | `admittedEdgeSchemas: child entry별 WeakMap`                                                |
+| 정적 객체 항목   | `staticObjectEntries`                                                                       |
+| 아이템 항목      | `itemEntries`                                                                               |
+| 배열 자식 선언   | `슬롯 아님: count/result는 D3b-1 runtime.arrayChildEntries; 정적 아이템 사실은 itemEntries` |
+| 기본 유효 스키마 | `defaultEffectiveSchema`                                                                    |
+| 유효 스키마 메모 | `effectiveSchemaMemo`                                                                       |
 
 ### 계획서 목록에 없던 자료
 
@@ -109,9 +108,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 - `AuthoredSchema`의 두 보조 멤버 `ObjectAuthoredSchema`·`NonObjectAuthoredSchema`는 내부에 남습니다. `NonObjectSchemaControls`만 바인딩 소비를 위해 engine·core 경계에서 명명 재수출하며 패키지 공개 이름을 늘리지 않습니다. 판별자의 C1–C13 정적 분석은 blueprint가 소유하고, 정착은 anyOf 중복의 동시 선택(C7), 여러 태그 종류(C9), 선언마다의 독립 키(C12)를 보존합니다.
 
 - write의 `forEachFailureLeaf`는 호스트 바인딩이 engine과 같은 실패 묶음의 잎 순서·identity를 쓰도록 core에 명명 재수출한다. 구현과 의미는 write에 남기며 패키지 공개 진입점에는 노출하지 않는다.
-
-- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
-
 
 - validationScheduling은 도메인 없는 주기의 독립 자식 경계다. record는 cadence 형, validation은 생성 API, engine은 마운트용 일회성 슬롯을 소비하며 스탬프나 노드를 이 경계로 넘기지 않는다(IR-6 amendment3).
 

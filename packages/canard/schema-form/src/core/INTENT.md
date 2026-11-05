@@ -15,6 +15,8 @@
 
 ### Always do
 
+- Keep live settings and validation-epoch reads on the binding-only channel; never widen the package surface.
+
 - 공개 계약과 바인딩 전용 채널은 진입점에서 이름을 붙여 re-export한다.
 - 트리를 구성하고 마운트하는 동안 호스트 predicate 참조를 그대로 유지한다.
 - node 값은 공개 write 계약과 이름이 붙은 바인딩 채널로 바꾼다.

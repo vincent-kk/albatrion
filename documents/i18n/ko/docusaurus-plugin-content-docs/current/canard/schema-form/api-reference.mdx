@@ -46,7 +46,7 @@ sidebar_position: 6
 
 `reset()`·`rebuild()`는 마운트 때 캡처한 입력 map을 교체하지 않습니다. [입력 map 구성 실패](./error-reference#occurrences)는 치명적 오류로 유지되므로 map을 고쳐 Form을 다시 마운트하십시오.
 
-`validationMode`는 트리를 만들 때 선택합니다. Form prop을 바꿔도 기존 트리의 모드는 갱신하지 않습니다. 바꾼 prop이 commit된 뒤 `handle.rebuild()`를 호출하거나 React `key` 변경 등으로 Form을 다시 마운트하십시오. 같은 schema·검증기의 `reset()`은 트리와 모드를 유지합니다. 실시간 Form `errorVisibility` 정책과 공개 명령은 [오류 표시](./validation#visibility)를 참조하십시오.
+`validationMode`, `unsetOnInactive`, `disableAutomaticWrites`는 commit에서 기존 트리에 적용됩니다. 값·상호작용·노드 정체성을 유지하며 두 쓰기 기본값은 다음 엔진 진입부터 적용하고 소급 쓰기를 하지 않습니다. 모드 전환의 취소·오류·재활성화 조건은 [검증 모드](./validation#modes)를 참조하십시오. Form commit 전에 자식 layout에서 시작한 호출은 마지막 committed 설정을 사용합니다.
 
 ## FormHandle {#form-handle}
 

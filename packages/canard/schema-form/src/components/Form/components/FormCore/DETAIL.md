@@ -23,6 +23,10 @@ Form과 Provider 중 실제 선택한 입력 값만 정책 해석의 기준으�
 - `types/props.ts`는 FormChildrenProps·FormProps를, `types/handle.ts`는 FormHandle을 선언하고 진입점이 세 형을 이름으로 내보냅니다.
 - 뿌리에는 문서, 진입점과 `FormCore.tsx`만 두며 형은 관심사별 칸에 둡니다(filid zero-peer-file).
 
+### submit-validation-epoch — 실행 설정 수명
+
+네이티브 제출의 판정 표시와 focus는 시작 load·root·validation epoch 및 연결 상태를 판정 도착과 reveal 뒤 다시 검사합니다. 비동기 실패의 capture와 host 보고는 시작 root 동일성과 epoch만 검사하여 루트 교체·은퇴와 실효 모드 전환 뒤의 실패를 차단하며, 같은 root reset이나 ordinary supersession만으로 기존 보고를 버리지 않습니다. 명시적 submit·validate의 Promise는 게시·보고 여부와 별개로 시작 snapshot의 결과나 거부로 정착합니다. 제출 callback은 호출 시작 시점의 마지막 committed props에서 읽으며, mode 전환이 이미 시작한 유효 제출의 callback까지 취소하지는 않습니다. 중단된 render는 명령 동작을 바꾸지 않습니다.
+
 ## Acceptance Criteria
 
 ### root-boundary — 경계와 보고기의 순서

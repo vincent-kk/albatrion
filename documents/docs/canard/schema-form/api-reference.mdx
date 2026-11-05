@@ -46,7 +46,7 @@ Changing the `validatorFactory` reference rebuilds the Form tree, so use a stabl
 
 Neither `reset()` nor `rebuild()` replaces the mount-time input map. A [failed input-map configuration](./error-reference#occurrences) remains fatal; correct the map and remount the Form to recover.
 
-`validationMode` is selected when the tree is created. Changing the Form prop does not update the existing tree's mode. After the changed prop commits, call `handle.rebuild()` or remount the Form, for example by changing its React `key`. A `reset()` with the same schema and validator retains the tree and its mode. For the separate lifetime of the Form's `errorVisibility` policy and its live updates, see [error visibility](./validation#visibility).
+`validationMode`, `unsetOnInactive`, and `disableAutomaticWrites` apply to the existing tree at commit, preserving values, interaction and node identity. Write defaults affect the next engine entry without retroactive writes. See [validation modes](./validation#modes) for cancellation, errors and reactivation. Calls from child layout effects before the Form settings commit use the last committed settings.
 
 ## FormHandle {#form-handle}
 

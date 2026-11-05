@@ -58,9 +58,12 @@ export const resetRootLoad = (
     previous.error = undefined;
     try {
       batchFieldNodeLoad(root, () => {
-        reloadFieldNodeForm(root, clone(props.defaultValue), loadOption, {
-          deferValidation: true,
-        });
+        reloadFieldNodeForm(
+          root,
+          clone(props.defaultValue),
+          automaticWrites || undefined,
+          { deferValidation: true },
+        );
         applyFormErrors(root, props.errors);
       });
     } catch (error) {

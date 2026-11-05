@@ -15,6 +15,7 @@ import { bundleChainErrors } from '../report/bundleChainErrors';
 import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
 import { captureChainError } from './captureChainError';
+import { flushFieldNodeSettings } from './flushFieldNodeSettings';
 import { flushQueuedEvents } from './flushQueuedEvents';
 import { requestFieldNodeValidationWave } from './requestFieldNodeValidationWave';
 import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
@@ -199,6 +200,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     : handlerErrors.length
       ? bundleChainErrors([original, ...handlerErrors])
       : original;
+  flushFieldNodeSettings(runtime);
   if (!errors.length && !handlerErrors.length) return;
   throw exposed;
 };
