@@ -1485,7 +1485,7 @@ type RootNode = InferFieldNode<typeof jsonSchema>;
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
 ```
 
-`InferValueType`은 스키마에 `as const`가 필요합니다. 없으면 `type`이 `string`으로 넓어져 결과가 `any`로 떨어집니다. `as const`가 있으면 `properties`와 `items`를 재귀 순회하며, 모든 필드를 **optional**로 만들고 `Record<string, any>`와 교차한 타입을 냅니다:
+`InferValueType`은 스키마에 `as const`가 필요합니다. 없으면 `type`이 `string`으로 넓어져 결과가 `any`로 떨어집니다. `as const`가 있으면 `properties`, 유한한 `prefixItems` 튜플, `items`를 재귀 순회하며(튜플 규칙: README `TypeScript Support`), 모든 필드를 **optional**로 만들고 `Record<string, any>`와 교차한 타입을 냅니다:
 
 ```typescript
 const jsonSchema = {

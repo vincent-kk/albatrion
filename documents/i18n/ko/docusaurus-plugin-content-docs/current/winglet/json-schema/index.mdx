@@ -47,6 +47,42 @@ Type-guard functions for each JSON Schema type:
 
 - `InferValueType<Schema>` — infers TypeScript type from a JSON Schema definition
 
+#### 튜플 추론 {#tuple-inference}
+
+`as const`로 스키마 리터럴을 보존하십시오. 정적으로 길이가 유한한 readonly `prefixItems` 튜플은 각 위치를 재귀 추론하여 수정 가능한 optional 튜플이 됩니다. `prefixItems`는 최소 길이를 강제하지 않고 추론은 `minItems`를 사용하지 않으므로 빈 배열이나 짧은 접두부도 대입할 수 있습니다.
+
+문자열·숫자 접두부에서 `items`는 rest만 결정합니다:
+
+| `items` | 추론한 값 |
+| --- | --- |
+| `false` | `[string?, number?]` |
+| 생략 또는 `true` | `[string?, number?, ...any[]]` |
+| `{ type: 'boolean' }` | `[string?, number?, ...boolean[]]` |
+
+```ts
+import type { InferValueType } from '@winglet/json-schema';
+
+const pairSchema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+
+type Pair = InferValueType<typeof pairSchema>;
+// [string?, number?]
+const empty: Pair = [];
+const partial: Pair = ['label'];
+
+const restSchema = { ...pairSchema, items: { type: 'boolean' } } as const;
+type WithRest = InferValueType<typeof restSchema>;
+// [string?, number?, ...boolean[]]
+const value: WithRest = ['label', 3, true, false];
+```
+
+넓어진 배열·비리터럴 접두부는 기존 `items` 폴백을 유지합니다. homogeneous `items` 스키마는 항목의 값 타입으로 된 배열을 추론합니다. 유한 접두부가 없으면 `items: false`와 `additionalItems`를 쓰는 구식 draft의 `items` 배열은 계속 `any[]`를 추론하며 튜플 추론을 적용하지 않습니다.
+
+유한 접두부 추론은 `any[]`보다 좁으므로 자유로운 위치나 초과 항목에 의존하는 코드에는 컴파일 오류가 날 수 있습니다. 접두부와 rest 스키마에 맞는 값을 사용하거나 다른 계약이 필요하면 애플리케이션의 값 타입을 명시하십시오.
+
 ## Usage Examples
 
 ```ts
