@@ -116,6 +116,31 @@ describe('validation issue attribution', () => {
       expect(runtime.globalErrors).toEqual([issue]);
     });
 
+    it('VALIDATE-043 routes an issue whose dataPath has an undecodable percent escape to a terminal root unchanged', () => {
+      const { root } = createDispatchTree({
+        type: 'object',
+        options: { terminal: true },
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issue = { dataPath: '#/na%me', message: 'malformed' };
+      routeValidationIssues([root], [issue]);
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+      expect(readFieldNodeErrors(root)[0].dataPath).toBe('#/na%me');
+    });
+
+    it('VALIDATE-051 keeps a rejected-key issue on a terminal root because it has no parent to climb to', () => {
+      const { root } = createDispatchTree({
+        type: 'object',
+        options: { terminal: true },
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issue = { dataPath: '', rejectedKey: 'extra', message: 'rejected' };
+      routeValidationIssues([root], [issue]);
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+    });
+
     it('VALIDATE-043 routes an item issue of a terminal array root to the root', () => {
       const { root } = createDispatchTree({
         type: 'array',
