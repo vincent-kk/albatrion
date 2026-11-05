@@ -57,18 +57,18 @@ A terminal object or array is a contract: the FieldInput owns the whole subtree 
   ],
   items: false,   // closes the tuple; omit or set a schema to allow a rest type
 }
-// [number, number] — with items: { type: 'string' } instead: [number, number, ...string[]]
+// the value type is not inferred as a tuple; annotate it yourself if you need one
 ```
 
 ## Bulk Mutation
 
-Per-item `push()` in a loop fires an event per call. For N items, set the value once:
+Each `push()` delivers its own events, so a loop of N pushes notifies subscribers N times. Write the whole array once with `setValue`, which notifies each affected node once, or group the writes in `node.batch(fn)`:
 
 ```typescript
-// ❌ 100 events
+// ❌ notifies 100 times
 for (let i = 0; i < 100; i++) arrayNode.push(createItem(i));
 
-// ✅ one event
+// ✅ notifies once per affected node
 formRef.current?.setValue((prev) => ({
   ...prev,
   items: Array.from({ length: 100 }, (_, i) => createItem(i)),
@@ -92,6 +92,8 @@ const ArrayInput: FC<FieldInputProps<any[]>> = ({ node, ChildFields }) => (
   </div>
 );
 ```
+
+Register this input through `fieldInputMap` or a field input definition. A `presentation.FieldInput` on the array schema makes the array terminal (see Terminal vs Branch Strategy above), and `ChildFields` is then empty.
 
 ## Render-Level Virtualization (built-in)
 

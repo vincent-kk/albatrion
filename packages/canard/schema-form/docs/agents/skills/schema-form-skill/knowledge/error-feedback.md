@@ -84,8 +84,8 @@ Choose whether the section or each input owns the displayed messages to avoid du
 The hook's raw `errorMatrix` is ungated and `formattedErrors` contains the first issue per child.
 `formattedError` picks the first non-null formatted child message; `showError` is true when the parent or any child is eligible.
 Consequently `errorMessage` can be the first child's message when a different child makes the section eligible; it is a group summary, not a per-child visibility filter.
-The hook does not add the renderer's `isActive && isVisible` check. Filter by the child's presence yourself if hidden children must be absent from the summary.
-With `disabled=true`, the hook stops error subscriptions and suppresses messages; this React-only switch is not a validation operation.
+The hook does not exclude inactive or hidden children; check `isActive` and `isVisible` on each child yourself if they must be absent.
+Passing `true` for `disabled` returns empty errors and no visibility without changing the form's errors or validation; switching it back to `false` shows eligible messages at once, without waiting for pending validation.
 
 ## Check the result the reader will see
 

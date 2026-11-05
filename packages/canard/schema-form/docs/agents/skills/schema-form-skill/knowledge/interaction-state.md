@@ -58,13 +58,13 @@ function UnsavedIndicator({ node }: { node: FieldNode }) {
 }
 ```
 
-Render this component with the current node from Form's children callback or Form.Render.
-The hooks bind to the supplied node/root and clean up when they change; retaining a replaced node cannot observe the new tree.
-Before the first root load commits the comparison is false; detached nodes also read false because they no longer contribute output.
-Mount, Form reset, rebuild, validator replacement and root resetSubtree establish a baseline after their output settles.
-Changing `defaultValue` alone, ordinary writes and a child resetSubtree do not move that baseline.
-A load that throws before commit leaves the prior baseline; a failure reported after commit leaves the committed degraded output as the baseline.
-Reverting output to its loaded value makes divergence false without clearing interaction flags.
+Render this component with the `node` from Form's function children or from Form.Render, so it always receives the form's current root.
+`reset()` and `rebuild()` on the handle, a new validator, and the root node's `resetSubtree()` make the current output the new comparison point, so `isDivergent` reads false right after them.
+Changing the `defaultValue` or `jsonSchema` prop alone, writing values, and calling `resetSubtree()` on a child node leave the comparison point unchanged.
+`rebuild()`, a new validator, and `reset()` after a `jsonSchema` change replace the root node, so read `formRef.current.node` again or use the children's `node` afterwards.
+A root node kept from before a replacement receives no more events and keeps reporting the divergence it had when it was replaced.
+A field node kept after its field becomes inactive reads false and receives no more events; find the field again once it is active.
+Returning the output to its loaded value makes `isDivergent` false without clearing `isEdited` or `isTouched`.
 
 To show the indicator outside the form, read `node.isDivergent` in Form's function children and pass the boolean out with an effect. The children re-render with the form's current root after every edit, after `reset()`, and after anything that rebuilds the form: `rebuild()`, a new validator, or `reset()` after a `jsonSchema` change. Do not compute it in `onChange` from `formRef.current.node`: while the form rebuilds, `onChange` runs before the handle points at the new root, and a `reset()` that leaves the value unchanged calls no `onChange`.
 
@@ -120,10 +120,9 @@ Dependencies outside that subtree can also leave the restored child divergent.
 
 ## Account for output shape
 
-Array items compare by position. A moved or newly added item can match the original output at that position and read false.
+Array items compare by position. A moved or newly added item can match the original output at that position and `isDivergent` can read false.
 Hidden fields still contribute their output; inactive fields and array output filters can change what contributes.
 Undeclared object keys restored in a different order can remain divergent because comparison preserves output key order.
-A read made during settlement can be transient, just like a value read during settlement; observe after the operation or delivered notification.
 Use specific event masks for trackers: omitting the mask listens to all node events and can cause unrelated re-renders.
 
 ## Check the distinction

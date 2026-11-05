@@ -2,11 +2,9 @@
 
 Plugins supply the pieces the core does not ship: UI component sets and validators. Register once at app bootstrap, **before the first `<Form>` renders**, UI plugin before validator plugin — late or repeated registration makes input resolution nondeterministic.
 
-```typescript
-import { registerPlugin } from '@canard/schema-form';
-import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
+Each plugin package exports its plugin as `plugin`; import it under a name of your choice, for example `import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';` and `import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';`, then register the UI plugin before the validator plugin:
 
+```typescript
 registerPlugin(antd5Plugin); // 1. UI
 registerPlugin(ajvValidatorPlugin); // 2. validator
 ```
@@ -15,35 +13,17 @@ Available plugins — validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `
 
 ## SchemaFormPlugin Shape
 
-Every property is optional — a plugin customizes only what it needs:
-
-```typescript
-interface SchemaFormPlugin {
-  FieldRenderer?: ComponentType<FieldRendererProps>;
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
-  fieldInputDefinitions?: FieldInputDefinition[];
-  validator?: ValidatorPlugin;
-  formatError?: FormatError;
-}
-```
+Every property of the exported `SchemaFormPlugin` type is optional, so a plugin customizes only what it needs.
 
 - When multiple registered plugins define the same property, **the last one wins**.
 - Plugin-provided `fieldInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
-- Plugins can also be applied locally (per-subtree) via `ExternalFormContextProvider` instead of globally.
+- A subtree can override plugin pieces locally with `FormProvider` instead of globally. It accepts `fieldInputDefinitions`, `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`, `formatError` and `validatorFactory`, which correspond to plugin members, plus `showError`, `validationMode` and `context`, which do not.
 
 ## Custom Validator
 
 The plugin `validator` member is an object with a schema compiler and a synchronous guard compiler:
 
 ```typescript
-import {
-  type SchemaFormPlugin,
-  type ValidateFunction,
-  type ValidationIssue,
-} from '@canard/schema-form';
-
 const customValidatorPlugin: SchemaFormPlugin = {
   validator: {
     // compile once per schema; return the validate function

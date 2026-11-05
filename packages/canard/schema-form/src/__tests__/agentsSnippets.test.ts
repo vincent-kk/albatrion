@@ -1,23 +1,23 @@
 import { readFileSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, it } from 'vitest';
 
 /** Package-relative discovery keeps this check independent of the checkout location. */
 const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
 
-/** Only documents with executable examples migrated to this harness are checked. */
-const migratedDocuments = [
-  'docs/agents/skills/schema-form-skill/knowledge/validation-ux.md',
-  'docs/agents/skills/schema-form-skill/knowledge/error-feedback.md',
-  'docs/agents/skills/schema-form-skill/knowledge/interaction-state.md',
-  'docs/agents/skills/schema-form-skill/knowledge/validation-failures.md',
-  'docs/agents/rules/schema-form-rule.md',
-];
+/** Every agent document is checked, so a new document or example cannot skip execution. */
+const checkedDocuments = readdirSync(resolve(packageRoot, 'docs/agents'), {
+  recursive: true,
+  encoding: 'utf8',
+})
+  .filter((file) => file.endsWith('.md'))
+  .map((file) => `docs/agents/${file.split(sep).join('/')}`)
+  .sort();
 
-it('keeps migrated agent examples verbatim in executable public-API tests', () => {
+it('keeps agent examples verbatim in executable public-API tests', () => {
   expect(
-    migratedDocuments.length,
+    checkedDocuments.length,
     'checked documents must not be empty',
   ).toBeGreaterThan(0);
   let checkedBlocks = 0;
@@ -30,7 +30,7 @@ it('keeps migrated agent examples verbatim in executable public-API tests', () =
     .map((file) => readFileSync(resolve(examplesRoot, file), 'utf8'));
   expect(examples.length).toBeGreaterThan(0);
 
-  for (const document of migratedDocuments) {
+  for (const document of checkedDocuments) {
     const markdown = readFileSync(resolve(packageRoot, document), 'utf8');
     const blocks = [
       ...markdown.matchAll(

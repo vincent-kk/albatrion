@@ -50,7 +50,7 @@ Let this input own its message instead of drawing it again in the surrounding re
 const InputOnly = ({ Input }: FieldRendererProps) => <Input />;
 ```
 
-In OnChange mode, a newly eligible error waits for the validation/display release; hiding is immediate. An already visible error can remain until the next verdict. Raw `node.errors` and `getErrors()` are not filtered by this policy. OnRequest and None use the live display policy without this hold.
+In `OnChange` mode, an error that newly becomes eligible to show waits until pending validation settles (about two frames when none is pending), so an older verdict never looks like the answer to new input; hiding is immediate. An already visible error can remain until the next verdict. Raw `node.errors` and `getErrors()` are not filtered by this policy. OnRequest and None use the live display policy without this hold.
 
 ## Declare required and conditional fields
 
@@ -141,9 +141,9 @@ For message copy and section summaries, read [error feedback](error-feedback.md)
 
 ## Account for display timing limits
 
-Debounce input publication in FieldInput when needed; validation scheduling groups published edits rather than buffering the widget's local text. Hidden documents or missing frame APIs use a task fallback, and a stalled frame has a timer fallback, so completion is not tied to visible animation.
-Background timer throttling and the validator's computation can still delay completion; conditional guards can still compile during render.
+Debounce input publication in FieldInput when needed; validation scheduling groups published edits rather than buffering the widget's local text. Validation still completes in background tabs and without `requestAnimationFrame`: the form falls back to a task, and to a 100 ms timer when a frame never arrives.
+Background tabs throttle that timer, and a slow validator delays the result. Schemas with `if` compile those conditions when the form is built or a condition is first evaluated.
 
-Continuous eligibility is observed at engine-write and committed-policy boundaries, not at painted pixels. One public batch contributes its first state; separate writes inside one React batch can record intermediate states that never paint. React-only remounts do not reset this history. A current request whose commit became stale is rescheduled; continuously changing context content can keep new messages held until the stream stops.
+If your application changes `context` contents on every frame, newly eligible messages in `OnChange` mode can stay hidden until those changes stop.
 
-Known display limits: the child-error hook's React-only disabled switch can reveal immediately when re-enabled; a state/presence render deferred past history release can miss the hold; and a write between release and paint can leave the released verdict visible for one or two frames. Check these transitions in the actual UI if their timing matters.
+Known display limits: when React defers a field's render (a transition, Suspense or time slicing) past the next result, its message can appear without waiting; a write between a result and the next paint can leave that result's message visible for one or two frames. Check timing-sensitive transitions in the real UI.

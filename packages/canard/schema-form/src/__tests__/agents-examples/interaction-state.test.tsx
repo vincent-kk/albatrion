@@ -190,6 +190,7 @@ it('keeps the tree and baseline on schema/default prop replacement until reset',
   expect(root!.isDivergent).toBe(true);
   act(() => ref.current!.reset());
   expect(ref.current!.node).not.toBe(root);
+  expect(root!.isDivergent).toBe(true);
   expect(ref.current!.getValue()).toBe('Grace');
   expect(ref.current!.node!.isDivergent).toBe(false);
 });

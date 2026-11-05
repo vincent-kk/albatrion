@@ -27,7 +27,7 @@ fieldInputMap: {
 }
 ```
 
-- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). `**` does not exist.
+- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). A key containing `**` is not supported: the form throws `Invalid key pattern in FieldInputMap` when it mounts, so list each depth with `*`.
 - Escape literal `/` in a property name as `~1`, `~` as `~0` — inside map keys as well (`jsonpointer.md`).
 
 ## Custom Input Contract
@@ -47,6 +47,8 @@ const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
   </div>
 );
 ```
+
+Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object schema makes the object terminal, and `ChildFields` is then empty.
 
 ## Keep configuration stable for a mounted form
 

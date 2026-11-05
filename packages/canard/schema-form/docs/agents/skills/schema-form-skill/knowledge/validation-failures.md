@@ -31,31 +31,23 @@ An input-validation rejection is different from a compile/run failure: the forme
 Use the public error guards and record codes instead of relying on message text or importing internal error classes.
 A failure record does not consume the caller's rejection; both channels can describe the same occurrence for different purposes.
 Do not put compile/run failures in Form's `errors` prop: the user cannot repair a broken validator by changing a field.
-The automatic load validation slot keeps an adopted tree when compilation fails and reports the failure rather than undoing that tree.
-An explicit validate/submit can still reject; the asynchronous load-slot failure itself is not a synchronous reset exception.
-Repeated input does not repair a cached compile failure. Resolve configuration or registration conflicts and use the supported reset/rebuild/validator lifecycle as appropriate.
-With no validator selected, an empty issue list means no verdict, and if branches cannot be evaluated; a warning can explain the configuration omission.
-The missing-validator warning is suppressed in None mode; an if condition without a validator can still produce its separate conditional-schema warning. A missing validator is not itself a fatal load failure. Check the code/severity before disabling the form.
+If the validator cannot compile the schema, the form still mounts or resets to it; the failure reaches onError with origin `validate` instead of being thrown by `reset()` or `rebuild()`. `validate()` and `submit()` reject with it.
+Editing fields never retries a failed compilation. Fix the cause, then supply a corrected schema object or a different validator instance; `rebuild()` with the same schema object and validator reuses the cached failure.
+Without a validator, `validate()` resolves to an empty list without checking anything, and every `if` condition is treated as false.
+`onError` then receives `FormWarningCode.ValidatorMissing` (not in `None` mode) and, for a schema with `if` conditions, `FormWarningCode.ConditionalSchemaWithoutValidator` (in every mode). Both are warning-level records, not load failures; check `record.level` and `record.code` before disabling the form.
 
 ## Keep diagnostics from causing another failure
 
 Keep onError handlers small and non-throwing; send records to application diagnostics and let the operation's caller own recovery UI.
 A handler exception is itself a failure and does not replace the original one.
-Automatic work and failures without a caller also use the host error channel; adding onError does not make those failures disappear.
-Validation-result listener failures are callerless even during explicit validation, so validate can resolve while a failing listener is reported to the host.
-A rejected aggregate can remain one value for its caller while onError delivers individual occurrence records.
-Do not rely on the host always receiving individual leaves: malformed, cyclic, unreadable or over-budget aggregates remain opaque.
+Failures with no caller to reject, such as automatic validation and listener exceptions, also go to `globalThis.reportError` (else a window `error` event, else `console.error`); onError does not replace that report.
+An exception thrown by a callback that receives a validation result, such as `onValidate`, does not reject `validate()`; it goes to that global report.
+If your onError handler throws while a `validate()` or `submit()` failure is reported, the call rejects once with a `FormErrorCode.MultipleErrors` error that holds the original failure and the handler's exception.
 Render error boundaries and React can log the original thrown value; duplicate-looking host output is not proof of duplicate onError records.
 
 ## Keep reporting valid when a form is hidden
 
-After the first layout preparation, a current load continues delivering engine-chain callbacks while hidden; showing it does not replay them.
-A never-prepared load buffers construction records but drops ordinary changes, state notifications and diagnostics.
-On a root-replacing reset, mount records precede buffered construction records and are delivered before the handle binding switches, so onError can still read the old handle.node. A retired load drops subsequent records. Do not retain an old node to observe the replacement form.
-React hiding and unmounting cannot be distinguished by this binding, so retained handles/nodes can still deliver callbacks after unmount.
-Release subscriptions you own and stop external producers when the application retires a form.
-While hidden, ordinary callbacks use the last connected commit, whereas onError stays current; the Form ref is null.
-Render-time warnings and child layout-effect writes can arrive when the form is shown again.
+A Form that has been visible once keeps calling onChange, onStateChange, onValidate, onDiagnosticsChange and onError while hidden (a hidden `<Activity>` or a Suspense fallback); showing it again does not replay them. A Form whose first render is hidden calls nothing until first shown; it then delivers the onError records raised while it was built and mounted, and drops the other callbacks from that period. When `reset()` or `rebuild()` replaces the tree (`reset()` after a `jsonSchema` change, a new validator, or `rebuild()`), its records reach onError before the handle switches, so `formRef.current.node` in the handler is still the old root, and the old tree reports nothing afterwards. Unmounting does not stop a retained handle or node from writing and calling these callbacks; drop references and stop your own producers when you retire a form. Warnings from rendering fields and writes in their layout effects arrive when the form is shown again.
 These lifetime rules matter for diagnostics ownership: a record can arrive without a visible input to focus.
 
 ## Verify the recovery flow

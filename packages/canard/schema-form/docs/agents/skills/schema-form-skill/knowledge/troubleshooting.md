@@ -8,12 +8,12 @@ Symptom → cause → fix, grouped by subsystem.
 
 ## fieldInputMap
 
-A `/items/**/name` entry never matches — the double-star wildcard is not a thing. `*` matches exactly ONE segment (array indexes and dynamic object keys alike):
+A key containing `**`, such as `/items/**/name`, is not supported: the form throws `Invalid key pattern in FieldInputMap` when it mounts. `*` matches exactly ONE segment (array indexes and dynamic object keys alike), so list each depth with `*`:
 
 ```typescript
 fieldInputMap: {
   '/items/*/name': ItemNameInput,   // ✅
-  '/items/**/name': ItemNameInput,  // ❌ never matches
+  '/items/**/name': ItemNameInput,  // ❌ throws when the form mounts
 }
 ```
 

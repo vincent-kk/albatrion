@@ -66,5 +66,5 @@ Use sibling Forms under FormProvider for independent forms sharing default rende
 
 Changing a `jsonSchema` or `defaultValue` prop alone keeps the current tree and values.
 Reset reads the latest committed props; an equivalent schema can reuse the tree, while a different schema can replace it.
-Use rebuild to discard the schema's cached blueprint analysis and replace this form's tree, and reacquire nodes after a root replacement. It does not independently invalidate the validator's identity cache.
+`rebuild()` builds a new tree from the current schema; re-read nodes from the handle afterwards. It does not recompile validation for the same schema object and validator.
 Keep stable schema references to avoid accidental configuration churn and clarify which schema reset will load, not because every new reference discards editing state.

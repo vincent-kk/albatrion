@@ -30,8 +30,6 @@ Aggregate flags are published at the root. `UpdateGlobalState` is raised once pe
 ## Subscribing
 
 ```typescript
-import { FieldNodeEventType } from '@canard/schema-form';
-
 useEffect(
   () =>
     node.subscribe(({ type }) => {
