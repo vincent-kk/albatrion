@@ -1,4 +1,5 @@
 import {
+  readFieldNodeValidationEpoch,
   scheduleValidationSlot,
   startFieldNodeLoadValidation,
 } from '@/schema-form/core';
@@ -14,11 +15,18 @@ export const scheduleLoadValidation = (
   load: RootLoad,
   store: RootLoadStore,
 ): void => {
+  const root = load.root;
+  if (!root) return;
+  const epoch = readFieldNodeValidationEpoch(root);
   const token = (load.loadValidation = {});
   scheduleValidationSlot(() => {
-    if (store.load !== load || load.loadValidation !== token) return;
-    const root = load.root;
-    if (!root) return;
+    if (
+      store.load !== load ||
+      load.root !== root ||
+      load.loadValidation !== token ||
+      readFieldNodeValidationEpoch(root) !== epoch
+    )
+      return;
     if (startFieldNodeLoadValidation(root)) validateLoadRoot(root, load);
   });
 };

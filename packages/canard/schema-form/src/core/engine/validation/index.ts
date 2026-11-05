@@ -22,5 +22,7 @@ export { readFieldNodeRevealBaseline } from './utils/read/readFieldNodeRevealBas
 export { readFieldNodeRevealPolicy } from './utils/read/readFieldNodeRevealPolicy';
 export { readFieldNodeRevealVersion } from './utils/read/readFieldNodeRevealVersion';
 export { subscribeFieldNodeRevealReleased } from './utils/read/subscribeFieldNodeRevealReleased';
-export { commitFieldNodeRevealPolicy } from './utils/lifetime/commitFieldNodeRevealPolicy';
 export { releaseFieldNodeRevealHistory } from './utils/lifetime/releaseFieldNodeRevealHistory';
+export { transitionFieldNodeValidation } from './utils/lifetime/transitionFieldNodeValidation';
+export { isFieldNodeValidationCurrent } from './utils/read/isFieldNodeValidationCurrent';
+export { isFieldNodeValidationLifetimeCurrent } from './utils/read/isFieldNodeValidationLifetimeCurrent';

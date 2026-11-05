@@ -96,4 +96,4 @@ export type {
 export { readFieldNodeRevealPolicy } from './validation';
 export { readFieldNodeRevealVersion } from './validation';
 export { subscribeFieldNodeRevealReleased } from './validation';
-export { commitFieldNodeRevealPolicy } from './validation';
+export { dispatchUpdateSettings } from './write';

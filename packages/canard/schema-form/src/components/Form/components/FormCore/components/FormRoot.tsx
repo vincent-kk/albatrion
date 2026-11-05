@@ -12,9 +12,12 @@ import {
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { getTrackableHandler } from '@winglet/common-utils/function';
-import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
+import { useLazyConstant } from '@winglet/react-utils/hook';
 
-import { FieldNodeRequestType } from '@/schema-form/core';
+import {
+  FieldNodeRequestType,
+  readFieldNodeValidationEpoch,
+} from '@/schema-form/core';
 import {
   FieldInputsContextProvider,
   FieldRendererContextProvider,
@@ -61,6 +64,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     errorVisibility: ErrorVisibility.AfterEditAndTouch,
     disabled: props.disabled,
     readOnly: props.readOnly,
+    onSubmit: props.onSubmit,
   });
   const policyError =
     typeof resolvedPolicy === 'string' ? undefined : resolvedPolicy;
@@ -86,6 +90,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       errorVisibility: basePolicy,
       disabled: props.disabled,
       readOnly: props.readOnly,
+      onSubmit: props.onSubmit,
     };
     if (
       reveal &&
@@ -94,7 +99,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
         reveal.generation !== policyGeneration.current)
     )
       setReveal(undefined);
-  }, [basePolicy, props.disabled, props.readOnly, reveal]);
+  }, [basePolicy, props.disabled, props.readOnly, props.onSubmit, reveal]);
   useLayoutEffect(() => {
     mounted.current = true;
     return () => {
@@ -118,51 +123,64 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     );
   }, []);
   const resetErrorVisibility = useCallback(() => setReveal(undefined), []);
-  const submit = useHandle((native?: unknown) => {
-    const isNative = native === true;
+  const captureValidationLifetime = useCallback(() => {
     const root = binding.current.root;
-    const load = loads.current;
-    const isCurrent = () =>
-      mounted.current &&
-      loads.current === load &&
-      binding.current.root === root;
-    return submitForm(
-      root,
-      props.onSubmit,
-      (error) => reportSubmitFailure(reporter, error, isNative),
-      isNative
-        ? () => {
-            const policy = committed.current;
-            if (
-              !isCurrent() ||
-              policy.errorVisibility === ErrorVisibility.Never
-            )
-              return;
-            revealErrors();
-            // A React 18 legacy root commits the reveal synchronously; its layout effects may reset.
-            if (!root || !isCurrent()) return;
-            if (
-              committed.current.errorVisibility === ErrorVisibility.Never ||
-              committed.current.disabled ||
-              committed.current.readOnly
-            )
-              return;
-            findFirstInvalidNode(root)?.request(FieldNodeRequestType.Focus);
-          }
-        : undefined,
-    );
-  });
+    const epoch = root ? readFieldNodeValidationEpoch(root) : undefined;
+    return () =>
+      binding.current.root === root &&
+      (!root || readFieldNodeValidationEpoch(root) === epoch);
+  }, [binding]);
+  const submit = useCallback(
+    (native?: unknown) => {
+      const isNative = native === true;
+      const root = binding.current.root;
+      const load = loads.current;
+      const isCurrentValidation = captureValidationLifetime();
+      const isCurrent = () =>
+        mounted.current && loads.current === load && isCurrentValidation();
+      return submitForm(
+        root,
+        committed.current.onSubmit,
+        (error) => {
+          if (isCurrentValidation())
+            reportSubmitFailure(reporter, error, isNative);
+        },
+        isNative
+          ? () => {
+              const policy = committed.current;
+              if (
+                !isCurrent() ||
+                policy.errorVisibility === ErrorVisibility.Never
+              )
+                return;
+              revealErrors();
+              // A React 18 legacy root commits the reveal synchronously; its layout effects may reset.
+              if (!root || !isCurrent()) return;
+              if (
+                committed.current.errorVisibility === ErrorVisibility.Never ||
+                committed.current.disabled ||
+                committed.current.readOnly
+              )
+                return;
+              findFirstInvalidNode(root)?.request(FieldNodeRequestType.Focus);
+            }
+          : undefined,
+      );
+    },
+    [binding, captureValidationLifetime, reporter, revealErrors],
+  );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
   const handleNativeSubmit = useCallback(
     async (event: SyntheticEvent) => {
       event.preventDefault();
+      const isCurrent = captureValidationLifetime();
       try {
         await handleSubmit(true);
       } catch (error) {
-        reportFailureToHost(error);
+        if (isCurrent()) reportFailureToHost(error);
       }
     },
-    [handleSubmit],
+    [handleSubmit, captureValidationLifetime],
   );
   useImperativeHandle(
     ref,
