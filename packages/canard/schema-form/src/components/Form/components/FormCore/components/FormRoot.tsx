@@ -60,12 +60,18 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
   const reportLifecycleError = useHandle((error: unknown, node: FieldNode) => {
+    let message: string;
+    try {
+      message = error instanceof Error ? error.message : String(error);
+    } catch {
+      message = 'Field lifecycle handler threw an unstringifiable value';
+    }
     try {
       reporter?.report({
         level: 'error',
         code: FormErrorCode.ListenerThrew,
         origin: 'render',
-        message: error instanceof Error ? error.message : String(error),
+        message,
         path: node.path,
         error,
       });
