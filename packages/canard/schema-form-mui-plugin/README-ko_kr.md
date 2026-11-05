@@ -31,7 +31,7 @@ yarn add @canard/schema-form @canard/schema-form-mui-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-mui-plugin';
 
 // 플러그인이 전역으로 등록됩니다

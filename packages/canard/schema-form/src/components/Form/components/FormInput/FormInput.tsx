@@ -57,14 +57,13 @@ import type { FormInputProps } from './types/props';
  * ```
  *
  * @example
- * Controlled input with validation feedback:
+ * Input with blur handler and validation feedback:
  * ```tsx
  * <div className="field">
  *   <Form.Input
  *     path="/username"
  *     // This Input should support onBlur handler
- *     onBlur={(e) => console.log('Field blurred:', e.target.value)}
- *     onChange={(value) => console.log('Value changed:', value)}
+ *     onBlur={(e: React.FocusEvent<HTMLInputElement>) => console.log('Field blurred:', e.target.value)}
  *   />
  *   <Form.Error path="/username" />
  * </div>

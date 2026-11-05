@@ -58,15 +58,13 @@ const getInstance = (): Ajv => {
  *
  * @example
  * ```typescript
- * import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin/2020';
+ * import { registerPlugin } from '@canard/schema-form';
+ * import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+ * import Ajv2020 from 'ajv/dist/2020';
  *
- * // Use with custom AJV instance
- * const customAjv = new Ajv({ allErrors: false });
- * ajvValidatorPlugin.bind(customAjv);
- *
- * // Compile a validator
- * const validator = ajvValidatorPlugin.compile(schema);
- * const errors = await validator(data);
+ * // Use a custom AJV instance: bind it before registering
+ * plugin.validator.bind(new Ajv2020({ allErrors: false }));
+ * registerPlugin(plugin);
  * ```
  */
 export const ajvValidatorPlugin = {

@@ -24,10 +24,17 @@ import type {
  * ```typescript
  * const formRef = useRef<FormHandle<typeof schema>>(null);
  * const { submit, pending } = useFormSubmit(formRef);
+ * const handleClick = async () => {
+ *   try {
+ *     await submit();
+ *   } catch (error) {
+ *     // a ValidationError leaves the field errors on the form
+ *     if (!isValidationError(error)) reportError(error);
+ *   }
+ * };
  *
- * // In component
  * <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
- * <button onClick={submit} disabled={pending}>
+ * <button type="button" onClick={handleClick} disabled={pending}>
  *   {pending ? 'Submitting...' : 'Submit'}
  * </button>
  * ```

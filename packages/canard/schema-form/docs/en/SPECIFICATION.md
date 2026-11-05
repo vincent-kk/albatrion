@@ -1046,7 +1046,7 @@ function ProfileForm() {
     } catch (error) {
       if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
         return; // field errors are already on the form; formRef.current?.getErrors() lists them
-      throw error;
+      reportError(error);
     }
   };
 

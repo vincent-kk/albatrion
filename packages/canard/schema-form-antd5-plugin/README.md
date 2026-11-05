@@ -47,7 +47,7 @@ yarn add @canard/schema-form @canard/schema-form-antd5-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd5-plugin';
 
 // Plugin will be registered globally
