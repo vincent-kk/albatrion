@@ -29,7 +29,11 @@ OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하�
 
 하나의 public batch·subtree walk는 첫 상태만 기록하지만 React batch 안의 별도 public 쓰기는 중간 상태도 기록할 수 있습니다. React remount·가상화는 노드 적격성 이력을 지우지 않으며 context가 계속 바뀌면 새 오류 표시도 계속 지연될 수 있습니다.
 
-전체 스키마 검증이 실행되면 `validate()`는 필터링하지 않은 판정을 반환합니다. `getErrors()`·Form 함수 children은 표시 정책과 별개로 폼 전체 원시 목록을 제공합니다. off-branch 이슈도 이 결과에 남습니다. `node.errors`·`Form.Render`는 해당 노드에 배분된 원시 이슈를 제공합니다. schemaPath로 비활성 gated oneOf·anyOf 분기에 유일하게 귀속되고 활성 형제 분기가 있는 이슈만 노드 배분에서 생략하며 전체 판정에서 제거하지는 않습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
+전체 스키마 검증이 실행되면 `validate()`는 필터링하지 않은 판정을 반환합니다. `getErrors()`·Form 함수 children은 표시 정책과 별개로 폼 전체 원시 목록을 제공합니다. `node.errors`·`Form.Render`는 해당 노드에 배분된 원시 이슈를 제공합니다.
+
+새 판정을 배분할 때 dataPath를 해석할 수 없거나 해당 노드가 없는 이슈와 배분 대상이 검증한 subtree 밖에 있는 이슈는 생략합니다. schemaPath로 비활성 gated oneOf·anyOf 분기에 유일하게 귀속되고 활성 형제 분기가 있는 경우도 배분 제외 규칙 중 하나입니다. 이 규칙들은 전체 판정이나 폼 전체 원시 목록에서 이슈를 제거하지 않습니다.
+
+객체·배열·여러 타입의 값 전체를 입력 하나로 편집하는 비루트 terminal 노드 등에 도달하면 경로 탐색을 멈춥니다. 위 제외 규칙에 해당하지 않는 하위 이슈는 dataPath를 바꾸지 않고 해당 terminal에 배분합니다. 다만 rejectedKey가 비어 있지 않으면 terminal에서 이를 감싸는 branch로 소유 대상을 옮긴 뒤 검증 범위를 검사합니다. 루트가 terminal이면 현재 배분기는 루트 자체를 가리키는 이슈만 배분하며 하위 경로의 이슈는 전체 판정과 폼 전체 목록에 남습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
 
 React-only disabled 토글, 지연된 presence commit, release와 paint 사이의 쓰기는 hold를 생략하거나 1~2프레임 전 판정을 보이게 할 수 있습니다. 업무 흐름은 원시 오류로, 표시는 렌더러의 적격성 결정으로 처리하십시오.
 

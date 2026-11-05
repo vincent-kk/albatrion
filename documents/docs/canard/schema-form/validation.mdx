@@ -29,7 +29,11 @@ OnChange holds newly eligible errors until release: eligibility must stay true c
 
 One public batch or subtree walk records its first state only, while separate public writes inside a React batch can record intermediate states. React remounting and virtualization do not clear node eligibility history; a continuously changing context stream can continue delaying newly visible errors.
 
-When whole-schema validation runs, `validate()` returns its unfiltered verdict. `getErrors()` and Form function children expose the form-wide raw list, independently of display policy. Off-branch issues remain in these results. `node.errors` and `Form.Render` expose raw issues routed to that node. Routing skips an issue only when its schemaPath uniquely attributes it to an inactive gated oneOf/anyOf branch with an active sibling; this is not a filter on the whole verdict. For the separate active/visible policies, see [controls](./schema-reference#controls).
+When whole-schema validation runs, `validate()` returns its unfiltered verdict. `getErrors()` and Form function children expose the form-wide raw list, independently of display policy. `node.errors` and `Form.Render` expose raw issues routed to that node.
+
+Routing a fresh verdict omits issues whose dataPath cannot be resolved or names no node, and issues whose assigned owner is outside the validated subtree. Another exclusion applies when schemaPath uniquely attributes an issue to an inactive gated oneOf/anyOf branch with an active sibling. These exclusions do not remove issues from the whole verdict or form-wide raw list.
+
+Path resolution stops at a non-root terminal node, such as one input editing a whole object, array, or multi-type value: descendant issues are assigned there with dataPath unchanged, subject to those exclusions. A nonempty rejectedKey instead moves ownership from that terminal to its enclosing branch before the scope check. At a terminal root, the current router assigns only issues addressed to the root itself; descendant-path issues stay in the whole verdict and form-wide list. For the separate active/visible policies, see [controls](./schema-reference#controls).
 
 React-only disabled toggles, delayed presence commits, and writes between release and paint can bypass the hold or show a verdict from one or two frames earlier. Use raw issues for workflow decisions and the renderer's visibility decision for presentation.
 
