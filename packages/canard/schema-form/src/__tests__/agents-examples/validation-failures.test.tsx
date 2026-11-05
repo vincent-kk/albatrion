@@ -2,7 +2,7 @@ import { createRef } from 'react';
 
 import { act, cleanup, render, screen } from '@testing-library/react';
 import Ajv from 'ajv';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, expect, inject, it, vi } from 'vitest';
 
 import {
   Form,
@@ -12,6 +12,8 @@ import {
   ValidationMode,
   type ValidatorFactory,
 } from '@/schema-form';
+
+import { hideCommittedForm } from '../helpers/hideCommittedForm';
 
 afterEach(cleanup);
 
@@ -204,4 +206,30 @@ it('with a validator the same schema activates exactly one branch', async () => 
   );
   await act(async () => {});
   expect(presentBranchFields(falseRef)).toEqual(['/elseField']);
+});
+
+it('writes through a retained handle while hidden and shows the new value on reveal', () => {
+  const formRef = createRef<FormHandle>();
+  const form = (
+    <Form
+      ref={formRef}
+      jsonSchema={{
+        type: 'object',
+        properties: { name: { type: 'string' } },
+      }}
+      defaultValue={{ name: 'Initial' }}
+      validationMode={ValidationMode.None}
+    />
+  );
+  const view = render(hideCommittedForm(form, false));
+  const handle = formRef.current!; // Capture after the visible form has mounted.
+  const writeWhileHidden = () =>
+    handle.setValue({ name: 'Updated while hidden' });
+
+  view.rerender(hideCommittedForm(form, true));
+  if (inject('reactMajor') === '19') expect(formRef.current).toBeNull();
+  act(writeWhileHidden);
+  expect(handle.findNode('/name')!.value).toBe('Updated while hidden');
+  view.rerender(hideCommittedForm(form, false));
+  expect(view.getByDisplayValue('Updated while hidden')).toBeTruthy();
 });

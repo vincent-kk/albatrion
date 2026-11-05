@@ -134,9 +134,10 @@ Inside a resolver, value writes, array verbs, batch, and resetSubtree are ignore
 
 After first layout preparation, a current load delivers callbacks while hidden and does not replay them on showing. A never-prepared load buffers construction records only and drops ordinary callbacks; retired loads drop later records. During a root-replacing reset, mount records then buffered build records are delivered before handle binding switches, with each handler failure isolated.
 
-React does not let this binding distinguish hidden from unmounted reliably: retained handles/nodes can still deliver callbacks after unmount, so clean up consumer subscriptions. While hidden, ordinary callbacks use the last connected commit, onError stays latest, and the React ref is null. Field layout-effect writes and render warnings arrive on showing.
+React does not let this binding distinguish hidden from unmounted reliably: retained handles/nodes can still deliver callbacks after unmount, so clean up consumer subscriptions. While hidden, ordinary callbacks use the last connected commit and onError stays latest. Field layout-effect writes and render warnings arrive on showing.
 
 When React shows a hidden form again, its inputs show the current node values, including writes made while it was hidden and an IME composition left unfinished when it was hidden.
+While the form is hidden, React detaches its ref, so `formRef.current` is null. Write through a `FormHandle` or node reference retained after the visible form has mounted instead.
 
 ## JSONPointer queries and expressions {#paths}
 
