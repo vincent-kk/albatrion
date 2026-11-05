@@ -6,7 +6,6 @@ import type { Optional } from '@aileron/declare';
 
 import { dispatchRemove } from '@/schema-form/core/engine/write';
 import {
-  JSONPointer as $,
   isDescendantPath,
   parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -58,6 +57,7 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
     if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
     const path = issue.dataPath;
     let node = root;
+    let resolved = true;
     if (path) {
       const parsed = parsePointer(path);
       if (!parsed.absolute) continue;
@@ -69,22 +69,22 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
       ) {
         const key = segments[segmentIndex];
         if (typeof key !== 'string') {
-          node = root;
+          resolved = false;
           break;
         }
         if (node.structure === null) break;
         if (!hasOwnProperty(node.structure, key)) {
-          node = root;
+          resolved = false;
           break;
         }
         const child = node.structure[key];
         if (!child) {
-          node = root;
+          resolved = false;
           break;
         }
         node = child;
       }
-      if (node === root && path !== $.Root) continue;
+      if (!resolved) continue;
     }
     if (issue.rejectedKey) {
       while (node.parent && node.structure === null) node = node.parent;
