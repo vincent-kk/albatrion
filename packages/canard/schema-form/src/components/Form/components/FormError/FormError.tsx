@@ -46,14 +46,8 @@ import type { FormErrorProps } from './types/props';
  * Conditional error display:
  * ```tsx
  * <Form jsonSchema={schema} showError={ShowError.Touched}>
- *   {({ node }) => (
- *     <>
- *       <Form.Input path="/email" />
- *       {node?.find('/email')?.state.touched && (
- *         <Form.Error path="/email" />
- *       )}
- *     </>
- *   )}
+ *   <Form.Input path="/email" />
+ *   <Form.Error path="/email" />
  * </Form>
  * ```
  */

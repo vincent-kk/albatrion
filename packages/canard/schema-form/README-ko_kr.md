@@ -214,6 +214,8 @@ interface FormChildrenProps<
 ### 기본 사용법
 
 ```tsx
+import { useState } from 'react';
+
 import { Form, registerPlugin } from '@canard/schema-form';
 import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
@@ -231,7 +233,7 @@ export const App = () => {
         type: 'number',
       },
     },
-  };
+  } as const;
 
   const defaultValues = {
     name: 'Woody',
@@ -246,7 +248,7 @@ export const App = () => {
   return (
     <Form
       jsonSchema={jsonSchema}
-      defaultValues={defaultValues}
+      defaultValue={defaultValues}
       onChange={setValue}
     />
   );
@@ -975,7 +977,7 @@ function ProfileForm() {
     } catch (error) {
       if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
         return; // field errors are already on the form; formRef.current?.getErrors() lists them
-      throw error;
+      reportError(error);
     }
   };
 
@@ -1485,7 +1487,7 @@ export const CustomLayoutForm = () => {
         },
       },
     },
-  };
+  } as const;
 
   return (
     <Form jsonSchema={jsonSchema}>
@@ -1493,18 +1495,18 @@ export const CustomLayoutForm = () => {
         <div className="section">
           <h3>개인 정보</h3>
           <Form.Render path="/personalInfo/name">
-            {({ Input, path, node }) => (
+            {({ Input, path }) => (
               <div className="form-field">
-                <label htmlFor={path}>{node.jsonSchema.title}</label>
+                <label htmlFor={path}>이름</label>
                 <Input />
               </div>
             )}
           </Form.Render>
 
           <Form.Render path="/personalInfo/age">
-            {({ Input, path, node }) => (
+            {({ Input, path }) => (
               <div className="form-field">
-                <label htmlFor={path}>{node.jsonSchema.title}</label>
+                <label htmlFor={path}>나이</label>
                 <Input />
               </div>
             )}
@@ -1514,18 +1516,18 @@ export const CustomLayoutForm = () => {
         <div className="section">
           <h3>연락처 정보</h3>
           <Form.Render path="/contactInfo/email">
-            {({ Input, path, node }) => (
+            {({ Input, path }) => (
               <div className="form-field">
-                <label htmlFor={path}>{node.jsonSchema.title}</label>
+                <label htmlFor={path}>이메일</label>
                 <Input />
               </div>
             )}
           </Form.Render>
 
           <Form.Render path="/contactInfo/phone">
-            {({ Input, path, node }) => (
+            {({ Input, path }) => (
               <div className="form-field">
-                <label htmlFor={path}>{node.jsonSchema.title}</label>
+                <label htmlFor={path}>전화번호</label>
                 <Input />
               </div>
             )}
@@ -1709,18 +1711,19 @@ export const ImperativeForm = () => {
       },
       password: {
         type: 'string',
-        format: '비밀번호',
+        format: 'password',
         minLength: 8,
         title: '비밀번호',
       },
     },
     required: ['username', 'password'],
-  };
+  } as const;
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
 
-  const handleSubmit = () => {
-    formRef.current?.validate();
+  const handleSubmit = async () => {
+    const errors = await formRef.current?.validate();
+    if (errors?.length) return;
     const values = formRef.current?.getValue();
 
     // 유효한 양식 값 처리

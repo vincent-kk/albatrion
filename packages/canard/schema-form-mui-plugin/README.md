@@ -31,7 +31,7 @@ yarn add @canard/schema-form @canard/schema-form-mui-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-mui-plugin';
 
 // Plugin will be registered globally
