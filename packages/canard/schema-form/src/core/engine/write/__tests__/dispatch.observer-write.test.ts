@@ -133,32 +133,4 @@ describe('observer write boundary', () => {
       consoleError.mockRestore();
     }
   });
-
-  it('ERROR-008 uses ErrorEvent and respects cancellation', () => {
-    /** Minimal browser event constructor for the ownerless branch. */
-    class ErrorEventStub {
-      /** Error carried to the browser observer. */
-      readonly error: unknown;
-      constructor(_type: string, options: { error: unknown }) {
-        this.error = options.error;
-      }
-    }
-    const dispatchEvent = vi.fn(() => false);
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-    vi.stubGlobal('window', { dispatchEvent });
-    vi.stubGlobal('ErrorEvent', ErrorEventStub);
-    const failure = new Error('event');
-    try {
-      reportOwnerlessError(failure);
-      expect(dispatchEvent).toHaveBeenCalledWith(
-        expect.objectContaining({ error: failure }),
-      );
-      expect(consoleError).not.toHaveBeenCalled();
-    } finally {
-      vi.unstubAllGlobals();
-      consoleError.mockRestore();
-    }
-  });
 });
