@@ -3,6 +3,7 @@ import { createRef, useEffect, useRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   Form,
   type FormHandle,
@@ -95,7 +96,7 @@ it('hands Input and errorMessage to the Form.Render callback', () => {
       jsonSchema={schema}
       defaultValue={{ password: 'abc' }}
       errors={errors}
-      showError
+      errorVisibility={ErrorVisibility.Always}
     >
       {passwordField}
     </Form>,

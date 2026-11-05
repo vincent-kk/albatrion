@@ -3,11 +3,7 @@ sidebar_label: 'Validation'
 sidebar_position: 5
 ---
 
-
-
 # Validation
-
-
 
 ## Validation modes and scheduling {#modes}
 
@@ -21,9 +17,13 @@ An initially empty error array can precede a verdict: await `validate()` when yo
 
 ## Raw issues and error visibility {#visibility}
 
-`ShowError.Always` / true always qualifies, `Never` / false never qualifies, `Edited` and `Touched` require their interaction flags, and default `EditedTouched` requires both. A node's `FieldNodeState.ErrorVisible` overrides that policy.
+The live base policy is `Form.errorVisibility ?? FormProvider.errorVisibility ?? ErrorVisibility.AfterEditAndTouch`. The string enum has six values: `Always='always'`, `Never='never'`, `AfterEdit='afterEdit'`, `AfterTouch='afterTouch'`, `AfterEditAndTouch='afterEditAndTouch'`, and `AfterEditOrTouch='afterEditOrTouch'`. Booleans, numbers and arbitrary strings are rejected.
 
-The Form's `showError` prop initializes its local policy; changing the prop alone does not synchronize that policy. `handle.showError(true)` sets it to true. After a new prop commits, `handle.showError(false)` applies the latest Form prop rather than necessarily hiding errors; `reset()` also reapplies that prop while performing its other [load operations](./api-reference#configuration-lifetime). Remounting the Form, for example with a new React `key`, initializes the policy from the new prop. A FormProvider's `showError` can update live only while the Form's current local policy is undefined and therefore uses that fallback. For automatic reveal after an invalid native submission and its policy exceptions, see [submission](./error-reference#submission).
+`revealErrors()` temporarily selects Always; `resetErrorVisibility()` restores the latest base policy. Neither validates nor writes node state. A committed base-policy change, reset, rebuild or root replacement clears the Form reveal. A same-value rerender or a Provider change masked by a Form prop keeps it. Returning to an earlier policy does not revive a cleared reveal; abandoned renders do not clear it.
+
+`FieldNodeState.ErrorVisibility` is a node override: undefined inherits, true allows display, and false suppresses it, including during Form reveal. Clear only this key with `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })` to inherit without clearing Edited/Touched. Renderer and input visibility still require `isPresent` and follow OnChange release rules. `useChildFieldErrors` preserves its aggregate contract including hidden children, returning `errorVisible` and `childErrorVisibleList` without a presence filter. Raw errors remain available independently of display.
+
+An invalid JavaScript policy reports `FormErrorCode.InvalidErrorVisibility` once per committed invalid value with origin `load`, without a RenderFailed boundary error. An initially invalid policy prevents tree construction and shows the load fallback; a later valid policy constructs the tree. An invalid live change preserves the current tree, values, interaction state and last valid policy; a valid replacement applies live. The next invalid occurrence after recovery reports again. Explicit Form configuration takes precedence over Provider configuration.
 
 OnChange holds newly eligible errors until release: eligibility must stay true continuously since the last release. Ineligibility hides errors immediately. Release occurs at pending true→false settlement, a quiet post-paint history drop, an accepted explicit root verdict, or disposal. OnRequest and None use live eligibility without this history.
 
@@ -55,13 +55,13 @@ Guards do not support `$async`, asynchronous keywords/formats, or keywords that 
 
 ## AJV versions and dialects {#ajv-entries}
 
-| Package entry | Default dialect / configuration |
-| --- | --- |
-| `@canard/schema-form-ajv6-plugin` | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false` |
-| `@canard/schema-form-ajv7-plugin` | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false` |
-| `@canard/schema-form-ajv8-plugin` | Draft-07; `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true` |
-| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09 |
-| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12 |
+| Package entry                          | Default dialect / configuration                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `@canard/schema-form-ajv6-plugin`      | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false`                       |
+| `@canard/schema-form-ajv7-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`                                |
+| `@canard/schema-form-ajv8-plugin`      | Draft-07; `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true` |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09                                                                                         |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12                                                                                         |
 
 Import `plugin` from the selected entry and register it. Its validator lives at `plugin.validator`. AJV 6 Draft-04/06 use requires a matching instance, meta-schema, and schemaId setting; `$id` is the default identifier, while `schemaId: 'id'` or `'auto'` recognizes Draft-04 `id`. AJV 7's 2019-09 use requires that constructor in the bound instance. AJV 8's supplied entries do not promise full Draft-04/06 support; choose a validator supporting that dialect.
 
@@ -80,9 +80,9 @@ AJV 6/7 bind starts a fresh root registry. AJV 8 keeps an already registered roo
 `createValidatorFactory(ajv)` returns only a compile function; passing it directly as `validatorFactory` does not satisfy the object contract. AJV 6/7 factory calls compile/remove a transient schema and normalize asynchronous results to issues or null. AJV 8 reuses the root registration until release.
 
 ```tsx
-import Ajv from 'ajv';
 import { Form } from '@canard/schema-form';
 import { createValidator } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
 
 const ajv = new Ajv({ strictSchema: false, validateFormats: false });
 ajv.addKeyword({
@@ -119,23 +119,23 @@ For a dynamic-vocabulary instance and a root containing dynamic/recursive keys, 
 
 An inline reference inside `if` must bind from a chain resource or its lexical ancestor inside the guard. Missing bindings fail compileGuard. Selected `$async: true` declarations are rejected. The following cases limit equivalence or are unsupported:
 
-| Condition | Consequence |
-| --- | --- |
-| One schema location reached through several dynamic scopes | A single guard uses its lexical chain or fails compilation; outside the supported equivalence |
-| An off-chain resource binds first, or URI entry skips an on-path resource | Whole-validation equivalence is unsupported |
-| Binding exists only in a sibling, descendant, or guard-local `$defs` | Cannot supply an inline binding |
-| `$recursiveAnchor: true` outside a resource root | Does not enter the chain table; a required missing binding is rejected with a suggested correction |
-| 2019-09 non-root external recursive anchor plus guard-local ancestor anchor | Guard and whole validation can differ; unsupported |
-| Dynamic/recursive ref fragment `#/...` | Not an anchor name; compileGuard rejects it; use static `$ref` for locations |
-| Current static `$anchor` conflicts with outer dynamic anchor | AJV and guard may use the dynamic table instead of the specification's static handling |
-| Custom-keyword subschemas or declarations executed only by `$ref` through guard-local `$defs` | Not recognized in dynamic chain collection |
-| Relative ref in an inline anchor of a nested resource | Guard uses that resource's base URI; whole validation may use root base URI |
-| Runtime anchor of an off-chain resource | Can leak into whole validation but not guard scope; sibling declarations inside a chain resource are collected |
-| A declaration in a chain resource not yet executed by whole validation | Guard still collects it; enclosing-function fallback can differ |
-| Whole validation skips a resource with no `$id` | Guard and whole validation can differ |
-| AJV does not check dynamic-ref bookending | Guard follows it; the initial target is not independently guaranteed to be a dynamic anchor |
-| Root anchor flag absent at compile time | Both keep the enclosing compiled-function fallback without a table lookup |
-| DynamicRef does not start with `#` | Both whole validation and guard fail compilation |
-| Anchor name is `constructor`, `toString`, `__proto__`, or another Object.prototype collision | AJV's plain-object table prevents binding |
+| Condition                                                                                     | Consequence                                                                                                    |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| One schema location reached through several dynamic scopes                                    | A single guard uses its lexical chain or fails compilation; outside the supported equivalence                  |
+| An off-chain resource binds first, or URI entry skips an on-path resource                     | Whole-validation equivalence is unsupported                                                                    |
+| Binding exists only in a sibling, descendant, or guard-local `$defs`                          | Cannot supply an inline binding                                                                                |
+| `$recursiveAnchor: true` outside a resource root                                              | Does not enter the chain table; a required missing binding is rejected with a suggested correction             |
+| 2019-09 non-root external recursive anchor plus guard-local ancestor anchor                   | Guard and whole validation can differ; unsupported                                                             |
+| Dynamic/recursive ref fragment `#/...`                                                        | Not an anchor name; compileGuard rejects it; use static `$ref` for locations                                   |
+| Current static `$anchor` conflicts with outer dynamic anchor                                  | AJV and guard may use the dynamic table instead of the specification's static handling                         |
+| Custom-keyword subschemas or declarations executed only by `$ref` through guard-local `$defs` | Not recognized in dynamic chain collection                                                                     |
+| Relative ref in an inline anchor of a nested resource                                         | Guard uses that resource's base URI; whole validation may use root base URI                                    |
+| Runtime anchor of an off-chain resource                                                       | Can leak into whole validation but not guard scope; sibling declarations inside a chain resource are collected |
+| A declaration in a chain resource not yet executed by whole validation                        | Guard still collects it; enclosing-function fallback can differ                                                |
+| Whole validation skips a resource with no `$id`                                               | Guard and whole validation can differ                                                                          |
+| AJV does not check dynamic-ref bookending                                                     | Guard follows it; the initial target is not independently guaranteed to be a dynamic anchor                    |
+| Root anchor flag absent at compile time                                                       | Both keep the enclosing compiled-function fallback without a table lookup                                      |
+| DynamicRef does not start with `#`                                                            | Both whole validation and guard fail compilation                                                               |
+| Anchor name is `constructor`, `toString`, `__proto__`, or another Object.prototype collision  | AJV's plain-object table prevents binding                                                                      |
 
 These are adapter conditions, not a claim of arbitrary dynamic-scope equivalence.

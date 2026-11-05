@@ -4,23 +4,23 @@
 
 ### 261C-01 추가 이름 변경 후보(소유자 결정 입력) — 승인되면 259C-01 대응표에 더해 07b-5로 한 번에 치환
 
-| 번호 | 후보 | 권고 |
-| --- | --- | --- |
-| 1 | `SchemaNodeEventType.UpdateComputedProperties` → `UpdateControlledProperties` | 변경(옛 낱말 `computed`) |
-| 2 | `ChildNodeComponentProps`·`ChildNodeComponents`·`useChildNodeComponentMap`·`useChildNodeErrors` → `ChildField*` | 변경(FieldNode와 어휘 통일) |
-| 3 | `SchemaNodeState.ShowError` → `FieldNodeState.ErrorVisible` | 변경(ShowError 네 겹 해소; prop·메서드는 유지) |
-| 4 | 노드 멤버 `extras` → `extras` | 변경(담는 것을 말함; 대안 `passthrough`) |
-| 5 | `Hint` → `FieldInputHint`, `FieldInputTestObject`는 그 부분형 | 변경 |
-| 6 | `dispatch` 디렉터리 → 역할 이름(예: `write`) | C 재배치에서 |
-| 7 | `SetValueOption` 셋 → 공개 하나, 내부는 다른 이름 | 정리(런타임 불변) |
-| 8 | `JSONSchema` 셋 → 공개 하나, 내부는 다른 이름 | 정리 |
-| 9 | core/SchemaNode/type.ts:235의 `FieldInputProps` → 내부 이름 | 정리 |
-| 10 | `src/types` 대 `src/core/types` | C 재배치에서 `engine/types` |
-| 11 | `Form.Group`·`FormGroupProps` → `Form.Field`·`FormFieldProps`; 문서 사이트 api-reference.mdx:158의 "FormGroup" 플러그인 칸 오기 정정 | 변경(묶음이 아니라 필드 하나를 그림) |
-| 12 | `controls.children` 작성 키 | 질문(유지 권고 — 명세에 든 작성 API) |
-| 13 | `options.virtual`은 유지(공개 형에 없으면 36처럼 추가); `options.propertyKeys`는 문서화할지 제거할지 | 질문 |
-| 14 | `VirtualNode`·`type: 'virtual'` | 유지 권고 |
-| 15 | `UnionNode`·`BranchNode`·`TerminalNode`·`strategy` | 유지 권고 |
+| 번호 | 후보                                                                                                                                 | 권고                                                 |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| 1    | `SchemaNodeEventType.UpdateComputedProperties` → `UpdateControlledProperties`                                                        | 변경(옛 낱말 `computed`)                             |
+| 2    | `ChildNodeComponentProps`·`ChildNodeComponents`·`useChildNodeComponentMap`·`useChildNodeErrors` → `ChildField*`                      | 변경(FieldNode와 어휘 통일)                          |
+| 3    | `SchemaNodeState.ErrorVisibility` → `FieldNodeState.ErrorVisibility`                                                                 | 변경(ErrorVisibility 네 겹 해소; prop·메서드는 유지) |
+| 4    | 노드 멤버 `extras` → `extras`                                                                                                        | 변경(담는 것을 말함; 대안 `passthrough`)             |
+| 5    | `Hint` → `FieldInputHint`, `FieldInputTestObject`는 그 부분형                                                                        | 변경                                                 |
+| 6    | `dispatch` 디렉터리 → 역할 이름(예: `write`)                                                                                         | C 재배치에서                                         |
+| 7    | `SetValueOption` 셋 → 공개 하나, 내부는 다른 이름                                                                                    | 정리(런타임 불변)                                    |
+| 8    | `JSONSchema` 셋 → 공개 하나, 내부는 다른 이름                                                                                        | 정리                                                 |
+| 9    | core/SchemaNode/type.ts:235의 `FieldInputProps` → 내부 이름                                                                          | 정리                                                 |
+| 10   | `src/types` 대 `src/core/types`                                                                                                      | C 재배치에서 `engine/types`                          |
+| 11   | `Form.Group`·`FormGroupProps` → `Form.Field`·`FormFieldProps`; 문서 사이트 api-reference.mdx:158의 "FormGroup" 플러그인 칸 오기 정정 | 변경(묶음이 아니라 필드 하나를 그림)                 |
+| 12   | `controls.children` 작성 키                                                                                                          | 질문(유지 권고 — 명세에 든 작성 API)                 |
+| 13   | `options.virtual`은 유지(공개 형에 없으면 36처럼 추가); `options.propertyKeys`는 문서화할지 제거할지                                 | 질문                                                 |
+| 14   | `VirtualNode`·`type: 'virtual'`                                                                                                      | 유지 권고                                            |
+| 15   | `UnionNode`·`BranchNode`·`TerminalNode`·`strategy`                                                                                   | 유지 권고                                            |
 
 - 닫는 항목: LANDING-210(보충)
 - 결정:

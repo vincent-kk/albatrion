@@ -10,6 +10,8 @@
 
 ## API Contracts
 
+`FormErrorCode.InvalidErrorVisibility`는 잘못된 JavaScript 오류 표시 정책의 구성 오류입니다. 렌더 중 보관하고 커밋에서 origin `load`로 한 번 보고하며 렌더 경계의 RenderFailed로 변환하지 않습니다. 동일 invalid 값의 재렌더·StrictMode는 중복 발생이 아닙니다.
+
 - `FormTypeInputMap`은 입력 맵 패턴 컴파일 실패를 나타내는 치명적 구성 오류입니다. 폼은 fallback을 유지하며 확정 로드에서 `level: error`·`origin: load`로 한 번 보고합니다. 사용자 입력 컴포넌트 자체의 throw는 원래 오류에 같은 코드가 있어도 `RenderFailed`·`render`로 격리합니다.
 - `ReservedPropertyName`은 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 청사진을 `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME`으로 거부합니다. `details.property`와 작성 위치가 원인을 가리키며 기존 `UnknownJsonSchema`와 코드로 구별됩니다. 소유자가 승인한 공개 enum 멤버 하나의 확장이며 오류 생성의 시간·메모리 비용은 기존과 같습니다.
 

@@ -10,19 +10,19 @@
 
 가중치는 하네스의 `fixtures/core-weights.json`을 따릅니다. 배열 타이핑의 빈도는 실제 사용자 계측이 아니라 평탄 타이핑의 5분의 1이라는 하네스 가정입니다.
 
-| 사례 | 가중치 | k | 근거 |
-| --- | ---: | ---: | --- |
-| mount-flat-500-none | 1 | 1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다. |
-| mount-flat-500-validate | 1 | 1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다. |
-| mount-if-flat-500-none | 1 | 1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다. |
-| mount-if-flat-500-validate | 1 | 1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다. |
-| mount-nested-d5-f4-validate | 1 | 1 | 세션당 마운트 한 번을 가정하며 Node 중첩 마운트 행과 맞춥니다. |
-| mount-array-1000-validate | 1 | 1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다. |
-| type-flat-500-validate-nonburst | 5,000 | 1 | FieldProxy 구독을 거치는 경로이므로 Node의 구독 타이핑 행과 맞춥니다. |
-| type-array-1000-validate-nonburst | 1,000 | 1 | 대응하는 Node 행이 없으므로 평탄 타이핑의 5분의 1 빈도를 가정합니다. |
-| first-key-flat-500-validate | 1 | 1 | 세션당 첫 키 한 번의 일회성 비용을 별도 행으로 둡니다. |
-| first-key-flat-500-validate-after-load | 1 | 1 | 로드 검증 완료 뒤 첫 키 한 번을 즉시 입력과 같은 가중치로 별도 보고합니다. |
-| rebuild-flat-500 | 5 | 1 | Node 일괄 입력 행과 맞추지만 0.16.1에 rebuild가 없어 이번 비교에서 제외합니다. |
+| 사례                                   | 가중치 |   k | 근거                                                                           |
+| -------------------------------------- | -----: | --: | ------------------------------------------------------------------------------ |
+| mount-flat-500-none                    |      1 |   1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다.                      |
+| mount-flat-500-validate                |      1 |   1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다.                      |
+| mount-if-flat-500-none                 |      1 |   1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다.                      |
+| mount-if-flat-500-validate             |      1 |   1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다.                      |
+| mount-nested-d5-f4-validate            |      1 |   1 | 세션당 마운트 한 번을 가정하며 Node 중첩 마운트 행과 맞춥니다.                 |
+| mount-array-1000-validate              |      1 |   1 | 세션당 마운트 한 번을 가정하며 Node 마운트 행과 맞춥니다.                      |
+| type-flat-500-validate-nonburst        |  5,000 |   1 | FieldProxy 구독을 거치는 경로이므로 Node의 구독 타이핑 행과 맞춥니다.          |
+| type-array-1000-validate-nonburst      |  1,000 |   1 | 대응하는 Node 행이 없으므로 평탄 타이핑의 5분의 1 빈도를 가정합니다.           |
+| first-key-flat-500-validate            |      1 |   1 | 세션당 첫 키 한 번의 일회성 비용을 별도 행으로 둡니다.                         |
+| first-key-flat-500-validate-after-load |      1 |   1 | 로드 검증 완료 뒤 첫 키 한 번을 즉시 입력과 같은 가중치로 별도 보고합니다.     |
+| rebuild-flat-500                       |      5 |   1 | Node 일괄 입력 행과 맞추지만 0.16.1에 rebuild가 없어 이번 비교에서 제외합니다. |
 
 ## 결과 요약
 
@@ -48,7 +48,7 @@
 
 ## 이전 비교의 렌더러 편향 공개
 
-이전 0.16.1 비교인 실행 41651117812와 41605464351 및 이를 인용한 IR-10 결과와 입력 반응성 설계의 F9 기록은 입력만 그리는 통과 렌더러를 `FieldRenderer`로만 전달했습니다. 0.16.1은 그 속성을 사용하지 않아 라벨·오류 DOM이 더 있는 기본 렌더러를 그렸습니다. 따라서 이전 숫자는 0.16.1에 불리하게 치우쳐 있으며 이 보고서로 대체합니다. 기존 인용 위치인 [IR-10 결과](../input-responsiveness/ir-10-results.md#브라우저-측정f9-계획에서-옮김)와 [입력 반응성 설계](../../plan/input-responsiveness/design.md)의 실행 참조에 이 보고서 포인터를 추가했습니다. 현재 하네스는 같은 렌더러를 `FieldRenderer`와 `CustomFormTypeRenderer` 두 이름으로 전달하고 두 판에 `showError={true}`를 지정합니다.
+이전 0.16.1 비교인 실행 41651117812와 41605464351 및 이를 인용한 IR-10 결과와 입력 반응성 설계의 F9 기록은 입력만 그리는 통과 렌더러를 `FieldRenderer`로만 전달했습니다. 0.16.1은 그 속성을 사용하지 않아 라벨·오류 DOM이 더 있는 기본 렌더러를 그렸습니다. 따라서 이전 숫자는 0.16.1에 불리하게 치우쳐 있으며 이 보고서로 대체합니다. 기존 인용 위치인 [IR-10 결과](../input-responsiveness/ir-10-results.md#브라우저-측정f9-계획에서-옮김)와 [입력 반응성 설계](../../plan/input-responsiveness/design.md)의 실행 참조에 이 보고서 포인터를 추가했습니다. 현재 하네스는 같은 렌더러를 `FieldRenderer`와 `CustomFormTypeRenderer` 두 이름으로 전달하고 두 판에 `errorVisibility={ErrorVisibility.Always}`를 지정합니다.
 
 ## 관문과 출처
 
@@ -57,6 +57,7 @@
 문서 검증은 아래 생성 구역을 새 `summary.md` 전체와 바이트 단위로 대조하고, 측정 모델·렌더러 편향 공개 절의 보존 및 원인 분석의 기존 본문 보존을 확인합니다. 생성 요약의 반올림과 판정을 수작업으로 바꾸지 않았으며, 서로 다른 실행의 표본을 합치지 않았습니다.
 
 <!-- core-summary:begin -->
+
 # Core form browser benchmark
 
 compare; 20 runs and 3 warmup pages per variant.
@@ -76,103 +77,104 @@ compare; 20 runs and 3 warmup pages per variant.
 
 ## 1. 경과·동기
 
-| 사례 | 기준 ms | 후보 ms | 후보 p95 | 비율 | Δ ms | Δ % | 판정 | 시도 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: |
-| mount-flat-500-none | 148.350 | 164.900 | 165.200 | 1.112 | 16.550 | 11.2 | slower | 1 |
-| mount-flat-500-validate | 265.000 | 248.400 | 265.000 | 0.937 | -16.600 | -6.3 | faster | 1 |
-| mount-if-flat-500-none | 148.150 | 181.800 | 198.400 | 1.227 | 33.650 | 22.7 | slower | 1 |
-| mount-if-flat-500-validate | 265.000 | 281.550 | 281.800 | 1.062 | 16.550 | 6.2 | slower | 2 |
-| mount-nested-d5-f4-validate | 548.200 | 465.150 | 481.900 | 0.849 | -83.050 | -15.1 | faster | 1 |
-| mount-array-1000-validate | 731.750 | 664.900 | 748.300 | 0.909 | -66.850 | -9.1 | faster | 1 |
-| type-flat-500-validate-nonburst | 1.480 | 1.365 | 1.425 | 0.922 | -0.115 | -7.8 | faster | 1 |
-| type-array-1000-validate-nonburst | 7.695 | 1.572 | 1.670 | 0.204 | -6.123 | -79.6 | faster | 1 |
-| first-key-flat-500-validate | 147.200 | 188.900 | 201.500 | 1.283 | 41.700 | 28.3 | slower | 1 |
-| first-key-flat-500-validate-after-load | 77.450 | 74.700 | 79.000 | 0.964 | -2.750 | -3.6 | within noise | 1 |
+| 사례                                   | 기준 ms | 후보 ms | 후보 p95 |  비율 |    Δ ms |   Δ % | 판정         | 시도 |
+| -------------------------------------- | ------: | ------: | -------: | ----: | ------: | ----: | ------------ | ---: |
+| mount-flat-500-none                    | 148.350 | 164.900 |  165.200 | 1.112 |  16.550 |  11.2 | slower       |    1 |
+| mount-flat-500-validate                | 265.000 | 248.400 |  265.000 | 0.937 | -16.600 |  -6.3 | faster       |    1 |
+| mount-if-flat-500-none                 | 148.150 | 181.800 |  198.400 | 1.227 |  33.650 |  22.7 | slower       |    1 |
+| mount-if-flat-500-validate             | 265.000 | 281.550 |  281.800 | 1.062 |  16.550 |   6.2 | slower       |    2 |
+| mount-nested-d5-f4-validate            | 548.200 | 465.150 |  481.900 | 0.849 | -83.050 | -15.1 | faster       |    1 |
+| mount-array-1000-validate              | 731.750 | 664.900 |  748.300 | 0.909 | -66.850 |  -9.1 | faster       |    1 |
+| type-flat-500-validate-nonburst        |   1.480 |   1.365 |    1.425 | 0.922 |  -0.115 |  -7.8 | faster       |    1 |
+| type-array-1000-validate-nonburst      |   7.695 |   1.572 |    1.670 | 0.204 |  -6.123 | -79.6 | faster       |    1 |
+| first-key-flat-500-validate            | 147.200 | 188.900 |  201.500 | 1.283 |  41.700 |  28.3 | slower       |    1 |
+| first-key-flat-500-validate-after-load |  77.450 |  74.700 |   79.000 | 0.964 |  -2.750 |  -3.6 | within noise |    1 |
 
 ## 2. 블로킹
 
-| 사례 | 기준 블로킹 ms | 후보 블로킹 ms | Δ % | 판정 | 16.7 ms 프레임(기준/후보) | 16.7 ms 넘침 ms(기준/후보) | 16.7 ms 기준판도 초과 | 8.3 ms 프레임(기준/후보) | 8.3 ms 넘침 ms(기준/후보) | 8.3 ms 기준판도 초과 | 가장 긴 Long Task ms(기준/후보) | 창 안 Long Task 합 ms(기준/후보) | 첫 프레임 전 검증기 ms(기준/후보) | 첫 프레임 뒤 검증기 ms(기준/후보) |
-| --- | ---: | ---: | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| mount-flat-500-none | — | — | — | not observable | N/A / N/A | N/A / N/A | N/A | N/A / N/A | N/A / N/A | N/A | 71.000 / 102.500 (관측 20/20 / 20/20) | 71.000 / 102.500 | 0.000 / 0.000 | 0.000 / 0.000 |
-| mount-flat-500-validate | — | — | — | not observable | N/A / N/A | N/A / N/A | N/A | N/A / N/A | N/A / N/A | N/A | 163.500 / 105.500 (관측 20/20 / 20/20) | 163.500 / 195.500 | 65.700 / 0.000 | 14.200 / 86.600 |
-| mount-if-flat-500-none | — | — | — | not observable | N/A / N/A | N/A / N/A | N/A | N/A / N/A | N/A / N/A | N/A | 69.500 / 137.500 (관측 20/20 / 20/20) | 69.500 / 137.500 | 0.000 / 0.000 | 0.000 / 0.000 |
-| mount-if-flat-500-validate | — | — | — | not observable | N/A / N/A | N/A / N/A | N/A | N/A / N/A | N/A / N/A | N/A | 167.500 / 139.000 (관측 20/20 / 20/20) | 167.500 / 227.000 | 73.200 / 0.000 | 13.300 / 82.200 |
-| mount-nested-d5-f4-validate | — | — | — | not observable | N/A / N/A | N/A / N/A | N/A | N/A / N/A | N/A / N/A | N/A | 353.500 / 198.500 (관측 20/20 / 20/20) | 422.000 / 391.000 | 145.900 / 0.000 | 39.500 / 190.200 |
-| mount-array-1000-validate | — | — | — | not observable | N/A / N/A | N/A / N/A | N/A | N/A / N/A | N/A / N/A | N/A | 390.500 / 402.000 (관측 20/20 / 20/20) | 652.000 / 530.500 | 23.100 / 0.000 | 2.400 / 27.050 |
-| type-flat-500-validate-nonburst | 1.005 | 1.039 | 3.4 | within noise | 0.06 / 0.06 | 0.000 / 0.000 | 아니요 | 0.12 / 0.13 | 0.000 / 0.000 | 아니요 | < 50 / < 50 (관측 0/20 / 0/20) | 0.000 / 0.000 | 0.000 / 0.000 | 0.432 / 0.434 |
-| type-array-1000-validate-nonburst | 7.284 | 1.232 | -83.1 | faster | 0.44 / 0.07 | 0.000 / 0.000 | 아니요 | 0.88 / 0.15 | 0.000 / 0.000 | 아니요 | < 50 / < 50 (관측 0/20 / 0/20) | 0.000 / 0.000 | 0.000 / 0.000 | 0.134 / 0.174 |
-| first-key-flat-500-validate | 10.700 | 8.000 | -25.2 | faster | 0.64 / 0.48 | 0.000 / 0.000 | 아니요 | 1.29 / 0.96 | 2.400 / 0.000 | 예 | < 50 / < 50 (관측 0/20 / 0/20) | 0.000 / 0.000 | 0.000 / 0.000 | 0.400 / 0.500 |
-| first-key-flat-500-validate-after-load | 10.600 | 7.650 | -27.8 | faster | 0.63 / 0.46 | 0.000 / 0.000 | 아니요 | 1.28 / 0.92 | 2.300 / 0.000 | 예 | < 50 / < 50 (관측 0/20 / 0/20) | 0.000 / 0.000 | 0.000 / 0.000 | 0.400 / 0.600 |
+| 사례                                   | 기준 블로킹 ms | 후보 블로킹 ms |   Δ % | 판정           | 16.7 ms 프레임(기준/후보) | 16.7 ms 넘침 ms(기준/후보) | 16.7 ms 기준판도 초과 | 8.3 ms 프레임(기준/후보) | 8.3 ms 넘침 ms(기준/후보) | 8.3 ms 기준판도 초과 | 가장 긴 Long Task ms(기준/후보)        | 창 안 Long Task 합 ms(기준/후보) | 첫 프레임 전 검증기 ms(기준/후보) | 첫 프레임 뒤 검증기 ms(기준/후보) |
+| -------------------------------------- | -------------: | -------------: | ----: | -------------- | ------------------------- | -------------------------- | --------------------- | ------------------------ | ------------------------- | -------------------- | -------------------------------------- | -------------------------------- | --------------------------------- | --------------------------------- |
+| mount-flat-500-none                    |              — |              — |     — | not observable | N/A / N/A                 | N/A / N/A                  | N/A                   | N/A / N/A                | N/A / N/A                 | N/A                  | 71.000 / 102.500 (관측 20/20 / 20/20)  | 71.000 / 102.500                 | 0.000 / 0.000                     | 0.000 / 0.000                     |
+| mount-flat-500-validate                |              — |              — |     — | not observable | N/A / N/A                 | N/A / N/A                  | N/A                   | N/A / N/A                | N/A / N/A                 | N/A                  | 163.500 / 105.500 (관측 20/20 / 20/20) | 163.500 / 195.500                | 65.700 / 0.000                    | 14.200 / 86.600                   |
+| mount-if-flat-500-none                 |              — |              — |     — | not observable | N/A / N/A                 | N/A / N/A                  | N/A                   | N/A / N/A                | N/A / N/A                 | N/A                  | 69.500 / 137.500 (관측 20/20 / 20/20)  | 69.500 / 137.500                 | 0.000 / 0.000                     | 0.000 / 0.000                     |
+| mount-if-flat-500-validate             |              — |              — |     — | not observable | N/A / N/A                 | N/A / N/A                  | N/A                   | N/A / N/A                | N/A / N/A                 | N/A                  | 167.500 / 139.000 (관측 20/20 / 20/20) | 167.500 / 227.000                | 73.200 / 0.000                    | 13.300 / 82.200                   |
+| mount-nested-d5-f4-validate            |              — |              — |     — | not observable | N/A / N/A                 | N/A / N/A                  | N/A                   | N/A / N/A                | N/A / N/A                 | N/A                  | 353.500 / 198.500 (관측 20/20 / 20/20) | 422.000 / 391.000                | 145.900 / 0.000                   | 39.500 / 190.200                  |
+| mount-array-1000-validate              |              — |              — |     — | not observable | N/A / N/A                 | N/A / N/A                  | N/A                   | N/A / N/A                | N/A / N/A                 | N/A                  | 390.500 / 402.000 (관측 20/20 / 20/20) | 652.000 / 530.500                | 23.100 / 0.000                    | 2.400 / 27.050                    |
+| type-flat-500-validate-nonburst        |          1.005 |          1.039 |   3.4 | within noise   | 0.06 / 0.06               | 0.000 / 0.000              | 아니요                | 0.12 / 0.13              | 0.000 / 0.000             | 아니요               | < 50 / < 50 (관측 0/20 / 0/20)         | 0.000 / 0.000                    | 0.000 / 0.000                     | 0.432 / 0.434                     |
+| type-array-1000-validate-nonburst      |          7.284 |          1.232 | -83.1 | faster         | 0.44 / 0.07               | 0.000 / 0.000              | 아니요                | 0.88 / 0.15              | 0.000 / 0.000             | 아니요               | < 50 / < 50 (관측 0/20 / 0/20)         | 0.000 / 0.000                    | 0.000 / 0.000                     | 0.134 / 0.174                     |
+| first-key-flat-500-validate            |         10.700 |          8.000 | -25.2 | faster         | 0.64 / 0.48               | 0.000 / 0.000              | 아니요                | 1.29 / 0.96              | 2.400 / 0.000             | 예                   | < 50 / < 50 (관측 0/20 / 0/20)         | 0.000 / 0.000                    | 0.000 / 0.000                     | 0.400 / 0.500                     |
+| first-key-flat-500-validate-after-load |         10.600 |          7.650 | -27.8 | faster         | 0.63 / 0.46               | 0.000 / 0.000              | 아니요                | 1.28 / 0.92              | 2.300 / 0.000             | 예                   | < 50 / < 50 (관측 0/20 / 0/20)         | 0.000 / 0.000                    | 0.000 / 0.000                     | 0.400 / 0.600                     |
 
 ## 3. 피드백
 
-| 사례 | 검증기 완료 ms(기준/후보) | 화면 반영 ms(기준/후보) | 비율 | Δ % | 판정 | 보고 콜백 ms(기준/후보, 로드만) | 피드백 부류 exact/censored/noChange/superseded (기준) | 피드백 부류 (후보) | 합쳐진 쓰기 수(기준/후보) |
-| --- | --- | --- | ---: | ---: | --- | --- | --- | --- | --- |
-| mount-flat-500-none | — / — | — / — | — | — | not observable | — / — | — | — | — |
-| mount-flat-500-validate | 197.100 / 224.250 | 239.400 / 227.350 | 0.950 | -5.0 | faster | 239.500 / 225.100 | — | — | — |
-| mount-if-flat-500-none | — / — | — / — | — | — | not observable | — / — | — | — | — |
-| mount-if-flat-500-validate | 194.500 / 247.650 | 235.450 / 250.850 | 1.065 | 6.5 | slower | 235.550 / 248.750 | — | — | — |
-| mount-nested-d5-f4-validate | 437.000 / 443.400 | 515.100 / 445.600 | 0.865 | -13.5 | faster | 515.150 / 444.250 | — | — | — |
-| mount-array-1000-validate | 529.950 / 629.300 | 698.950 / 631.200 | 0.903 | -9.7 | faster | 699.000 / 630.050 | — | — | — |
-| type-flat-500-validate-nonburst | 14.842 / 15.129 | 15.421 / 16.061 | 1.041 | 4.1 | within noise | — / — | 400/0/0/0 (2–20 exact 380) | 400/0/0/0 (2–20 exact 380) | 0 / 0 |
-| type-array-1000-validate-nonburst | 22.034 / 18.600 | 23.321 / 26.434 | 1.133 | 13.3 | slower | — / — | 400/0/0/0 (2–20 exact 380) | 400/0/0/0 (2–20 exact 380) | 0 / 0 |
-| first-key-flat-500-validate | 24.800 / 21.300 | 25.750 / 23.450 | 0.911 | -8.9 | faster | — / — | — | — | — |
-| first-key-flat-500-validate-after-load | 24.600 / 21.450 | 25.600 / 23.450 | 0.916 | -8.4 | faster | — / — | — | — | — |
+| 사례                                   | 검증기 완료 ms(기준/후보) | 화면 반영 ms(기준/후보) |  비율 |   Δ % | 판정           | 보고 콜백 ms(기준/후보, 로드만) | 피드백 부류 exact/censored/noChange/superseded (기준) | 피드백 부류 (후보)         | 합쳐진 쓰기 수(기준/후보) |
+| -------------------------------------- | ------------------------- | ----------------------- | ----: | ----: | -------------- | ------------------------------- | ----------------------------------------------------- | -------------------------- | ------------------------- |
+| mount-flat-500-none                    | — / —                     | — / —                   |     — |     — | not observable | — / —                           | —                                                     | —                          | —                         |
+| mount-flat-500-validate                | 197.100 / 224.250         | 239.400 / 227.350       | 0.950 |  -5.0 | faster         | 239.500 / 225.100               | —                                                     | —                          | —                         |
+| mount-if-flat-500-none                 | — / —                     | — / —                   |     — |     — | not observable | — / —                           | —                                                     | —                          | —                         |
+| mount-if-flat-500-validate             | 194.500 / 247.650         | 235.450 / 250.850       | 1.065 |   6.5 | slower         | 235.550 / 248.750               | —                                                     | —                          | —                         |
+| mount-nested-d5-f4-validate            | 437.000 / 443.400         | 515.100 / 445.600       | 0.865 | -13.5 | faster         | 515.150 / 444.250               | —                                                     | —                          | —                         |
+| mount-array-1000-validate              | 529.950 / 629.300         | 698.950 / 631.200       | 0.903 |  -9.7 | faster         | 699.000 / 630.050               | —                                                     | —                          | —                         |
+| type-flat-500-validate-nonburst        | 14.842 / 15.129           | 15.421 / 16.061         | 1.041 |   4.1 | within noise   | — / —                           | 400/0/0/0 (2–20 exact 380)                            | 400/0/0/0 (2–20 exact 380) | 0 / 0                     |
+| type-array-1000-validate-nonburst      | 22.034 / 18.600           | 23.321 / 26.434         | 1.133 |  13.3 | slower         | — / —                           | 400/0/0/0 (2–20 exact 380)                            | 400/0/0/0 (2–20 exact 380) | 0 / 0                     |
+| first-key-flat-500-validate            | 24.800 / 21.300           | 25.750 / 23.450         | 0.911 |  -8.9 | faster         | — / —                           | —                                                     | —                          | —                         |
+| first-key-flat-500-validate-after-load | 24.600 / 21.450           | 25.600 / 23.450         | 0.916 |  -8.4 | faster         | — / —                           | —                                                     | —                          | —                         |
 
 ## 4. 프레임 관측·UX
 
-| 사례 | 명목 간격 ms(기준/후보) | 가장 긴 간격 ms(기준/후보) | 초과 합 ms(기준/후보) | 초과 프레임 수(기준/후보) | 8.3 ms 초과 합 ms(기준/후보) | 8.3 ms 초과 프레임 수(기준/후보) | 초과 프레임 판정 | 타이핑 첫 쓰기 ms · max 핸들러 ms · 초과 횟수(기준) | 같은 값(후보) | UX 블로킹(기준/후보) | UX 피드백(기준/후보) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| mount-flat-500-none | 16.667 / 16.667 | 75.450 / 105.450 | 93.250 / 101.450 | 3.0 / 3.0 | 135.100 / 149.800 | 5.0 / 5.5 | slower | — | — | perceptible / janky | n/a / n/a |
-| mount-flat-500-validate | 16.667 / 16.667 | 166.800 / 121.700 | 207.950 / 195.700 | 3.0 / 3.0 | 249.850 / 237.650 | 5.5 / 6.0 | faster | — | — | janky / janky | ok / ok |
-| mount-if-flat-500-none | 16.667 / 16.667 | 72.550 / 140.500 | 85.700 / 129.050 | 3.0 / 3.0 | 133.100 / 171.000 | 5.5 / 6.0 | slower | — | — | perceptible / janky | n/a / n/a |
-| mount-if-flat-500-validate | 16.667 / 16.667 | 170.350 / 141.700 | 204.100 / 219.200 | 3.0 / 3.0 | 249.750 / 266.300 | 5.0 / 5.0 | slower | — | — | janky / janky | ok / ok |
-| mount-nested-d5-f4-validate | 16.667 / 16.667 | 356.150 / 248.400 | 483.600 / 414.000 | 3.0 / 3.0 | 532.600 / 455.350 | 6.0 / 5.0 | faster | — | — | janky / janky | ok / ok |
-| mount-array-1000-validate | 16.667 / 16.667 | 393.600 / 404.550 | 667.400 / 600.500 | 3.0 / 3.0 | 713.800 / 643.450 | 6.0 / 6.0 | faster | — | — | janky / janky | ok / ok |
-| type-flat-500-validate-nonburst | 16.667 / 16.667 | 18.650 / 19.150 | 10.000 / 10.750 | 34.0 / 33.5 | 1069.300 / 1070.800 | 128.0 / 128.0 | void | 10.550 · 11.200 · 0 | 7.600 · 10.100 · 0 | ok / ok | ok / ok |
-| type-array-1000-validate-nonburst | 16.667 / 16.667 | 28.550 / 25.350 | 91.350 / 66.150 | 39.5 / 40.5 | 1246.800 / 1148.950 | 148.0 / 138.0 | void | 15.600 · 18.300 · 3 | 7.900 · 9.100 · 0 | ok / ok | ok / ok |
-| first-key-flat-500-validate | 16.667 / 16.667 | 20.500 / 17.800 | 4.000 / 1.150 | 2.0 / 1.0 | 47.250 / 41.000 | 6.0 / 5.0 | faster | — | — | ok / ok | ok / ok |
-| first-key-flat-500-validate-after-load | 16.667 / 16.667 | 20.700 / 18.100 | 4.100 / 1.450 | 1.0 / 1.0 | 46.550 / 43.550 | 6.0 / 6.0 | faster | — | — | ok / ok | ok / ok |
+| 사례                                   | 명목 간격 ms(기준/후보) | 가장 긴 간격 ms(기준/후보) | 초과 합 ms(기준/후보) | 초과 프레임 수(기준/후보) | 8.3 ms 초과 합 ms(기준/후보) | 8.3 ms 초과 프레임 수(기준/후보) | 초과 프레임 판정 | 타이핑 첫 쓰기 ms · max 핸들러 ms · 초과 횟수(기준) | 같은 값(후보)      | UX 블로킹(기준/후보) | UX 피드백(기준/후보) |
+| -------------------------------------- | ----------------------- | -------------------------- | --------------------- | ------------------------- | ---------------------------- | -------------------------------- | ---------------- | --------------------------------------------------- | ------------------ | -------------------- | -------------------- |
+| mount-flat-500-none                    | 16.667 / 16.667         | 75.450 / 105.450           | 93.250 / 101.450      | 3.0 / 3.0                 | 135.100 / 149.800            | 5.0 / 5.5                        | slower           | —                                                   | —                  | perceptible / janky  | n/a / n/a            |
+| mount-flat-500-validate                | 16.667 / 16.667         | 166.800 / 121.700          | 207.950 / 195.700     | 3.0 / 3.0                 | 249.850 / 237.650            | 5.5 / 6.0                        | faster           | —                                                   | —                  | janky / janky        | ok / ok              |
+| mount-if-flat-500-none                 | 16.667 / 16.667         | 72.550 / 140.500           | 85.700 / 129.050      | 3.0 / 3.0                 | 133.100 / 171.000            | 5.5 / 6.0                        | slower           | —                                                   | —                  | perceptible / janky  | n/a / n/a            |
+| mount-if-flat-500-validate             | 16.667 / 16.667         | 170.350 / 141.700          | 204.100 / 219.200     | 3.0 / 3.0                 | 249.750 / 266.300            | 5.0 / 5.0                        | slower           | —                                                   | —                  | janky / janky        | ok / ok              |
+| mount-nested-d5-f4-validate            | 16.667 / 16.667         | 356.150 / 248.400          | 483.600 / 414.000     | 3.0 / 3.0                 | 532.600 / 455.350            | 6.0 / 5.0                        | faster           | —                                                   | —                  | janky / janky        | ok / ok              |
+| mount-array-1000-validate              | 16.667 / 16.667         | 393.600 / 404.550          | 667.400 / 600.500     | 3.0 / 3.0                 | 713.800 / 643.450            | 6.0 / 6.0                        | faster           | —                                                   | —                  | janky / janky        | ok / ok              |
+| type-flat-500-validate-nonburst        | 16.667 / 16.667         | 18.650 / 19.150            | 10.000 / 10.750       | 34.0 / 33.5               | 1069.300 / 1070.800          | 128.0 / 128.0                    | void             | 10.550 · 11.200 · 0                                 | 7.600 · 10.100 · 0 | ok / ok              | ok / ok              |
+| type-array-1000-validate-nonburst      | 16.667 / 16.667         | 28.550 / 25.350            | 91.350 / 66.150       | 39.5 / 40.5               | 1246.800 / 1148.950          | 148.0 / 138.0                    | void             | 15.600 · 18.300 · 3                                 | 7.900 · 9.100 · 0  | ok / ok              | ok / ok              |
+| first-key-flat-500-validate            | 16.667 / 16.667         | 20.500 / 17.800            | 4.000 / 1.150         | 2.0 / 1.0                 | 47.250 / 41.000              | 6.0 / 5.0                        | faster           | —                                                   | —                  | ok / ok              | ok / ok              |
+| first-key-flat-500-validate-after-load | 16.667 / 16.667         | 20.700 / 18.100            | 4.100 / 1.450         | 1.0 / 1.0                 | 46.550 / 43.550              | 6.0 / 6.0                        | faster           | —                                                   | —                  | ok / ok              | ok / ok              |
 
 ## 5. 가중 교환비
 
 ### 블로킹 교환비 (blockingMs)
 
-| 사례 | 가중치 | k | 기준 µs | 후보 µs | Δ µs/event | 계산 | 기여 µs | 근거 |
-| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- |
-| mount-flat-500-none | 1 | 1 | — | — | — | < 50 ms 관측 불가 | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-flat-500-validate | 1 | 1 | — | — | — | < 50 ms 관측 불가 | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-if-flat-500-none | 1 | 1 | — | — | — | < 50 ms 관측 불가 | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-if-flat-500-validate | 1 | 1 | — | — | — | < 50 ms 관측 불가 | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-nested-d5-f4-validate | 1 | 1 | — | — | — | < 50 ms 관측 불가 | 0 | One mount per session; matches the Node table's mount-nested row (weight 1). |
-| mount-array-1000-validate | 1 | 1 | — | — | — | < 50 ms 관측 불가 | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| type-flat-500-validate-nonburst | 5000 | 1 | 1005 | 1039 | 34 | within noise | 0 | The browser path goes through the FieldProxy subscription, so it matches the Node 'typing with subscribers' row (weight 5000). |
-| type-array-1000-validate-nonburst | 1000 | 1 | 7284 | 1232 | -6053 | counted | -6052632 | No Node counterpart; harness assumption that typing inside an array is one fifth as frequent as flat typing. |
-| first-key-flat-500-validate | 1 | 1 | 10700 | 8000 | -2700 | counted | -2700 | One first key per session: the owner rule's one-off first-write term, kept as its own row. |
-| first-key-flat-500-validate-after-load | 1 | 1 | 10600 | 7650 | -2950 | counted | -2950 | One first key after load validation settles; kept alongside the immediate first key at the same weight to distinguish load overlap from settled-load input cost. |
-| rebuild-flat-500 | 5 | 1 | — | — | — | 0.16.1 has no rebuild, so the row is excluded from this comparison. | 0 | Matches the Node bulk rows (weight 5). |
+| 사례                                   | 가중치 |   k | 기준 µs | 후보 µs | Δ µs/event | 계산                                                                |  기여 µs | 근거                                                                                                                                                             |
+| -------------------------------------- | -----: | --: | ------: | ------: | ---------: | ------------------------------------------------------------------- | -------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| mount-flat-500-none                    |      1 |   1 |       — |       — |          — | < 50 ms 관측 불가                                                   |        0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-flat-500-validate                |      1 |   1 |       — |       — |          — | < 50 ms 관측 불가                                                   |        0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-if-flat-500-none                 |      1 |   1 |       — |       — |          — | < 50 ms 관측 불가                                                   |        0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-if-flat-500-validate             |      1 |   1 |       — |       — |          — | < 50 ms 관측 불가                                                   |        0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-nested-d5-f4-validate            |      1 |   1 |       — |       — |          — | < 50 ms 관측 불가                                                   |        0 | One mount per session; matches the Node table's mount-nested row (weight 1).                                                                                     |
+| mount-array-1000-validate              |      1 |   1 |       — |       — |          — | < 50 ms 관측 불가                                                   |        0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| type-flat-500-validate-nonburst        |   5000 |   1 |    1005 |    1039 |         34 | within noise                                                        |        0 | The browser path goes through the FieldProxy subscription, so it matches the Node 'typing with subscribers' row (weight 5000).                                   |
+| type-array-1000-validate-nonburst      |   1000 |   1 |    7284 |    1232 |      -6053 | counted                                                             | -6052632 | No Node counterpart; harness assumption that typing inside an array is one fifth as frequent as flat typing.                                                     |
+| first-key-flat-500-validate            |      1 |   1 |   10700 |    8000 |      -2700 | counted                                                             |    -2700 | One first key per session: the owner rule's one-off first-write term, kept as its own row.                                                                       |
+| first-key-flat-500-validate-after-load |      1 |   1 |   10600 |    7650 |      -2950 | counted                                                             |    -2950 | One first key after load validation settles; kept alongside the immediate first key at the same weight to distinguish load overlap from settled-load input cost. |
+| rebuild-flat-500                       |      5 |   1 |       — |       — |          — | 0.16.1 has no rebuild, so the row is excluded from this comparison. |        0 | Matches the Node bulk rows (weight 5).                                                                                                                           |
 
 가중 교환비 Σ(가중치 × Δ) = -6058282 µs (폭 안 행은 0, 음수가 개선); 가중 기준 합 = 12331826 µs; 가중 후보 합 = 6444597 µs; 가중 비율 = 0.523.
 제외 행: mount-flat-500-none: < 50 ms 관측 불가; mount-flat-500-validate: < 50 ms 관측 불가; mount-if-flat-500-none: < 50 ms 관측 불가; mount-if-flat-500-validate: < 50 ms 관측 불가; mount-nested-d5-f4-validate: < 50 ms 관측 불가; mount-array-1000-validate: < 50 ms 관측 불가; rebuild-flat-500: 0.16.1 has no rebuild, so the row is excluded from this comparison.
 
 ### 피드백 교환비 (exact 쓰기의 조건부 평균) (feedbackCommittedMs)
 
-| 사례 | 가중치 | k | 기준 µs | 후보 µs | Δ µs/event | 계산 | 기여 µs | 근거 |
-| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- |
-| mount-flat-500-none | 1 | 1 | — | — | — | not observable | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-flat-500-validate | 1 | 1 | 239400 | 227350 | -12050 | counted | -12050 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-if-flat-500-none | 1 | 1 | — | — | — | not observable | 0 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-if-flat-500-validate | 1 | 1 | 235450 | 250850 | 15400 | counted | 15400 | One mount per session; matches the Node table's mount rows (weight 1). |
-| mount-nested-d5-f4-validate | 1 | 1 | 515100 | 445600 | -69500 | counted | -69500 | One mount per session; matches the Node table's mount-nested row (weight 1). |
-| mount-array-1000-validate | 1 | 1 | 698950 | 631200 | -67750 | counted | -67750 | One mount per session; matches the Node table's mount rows (weight 1). |
-| type-flat-500-validate-nonburst | 5000 | 1 | 15421 | 16061 | 639 | within noise | 0 | The browser path goes through the FieldProxy subscription, so it matches the Node 'typing with subscribers' row (weight 5000). |
-| type-array-1000-validate-nonburst | 1000 | 1 | 23321 | 26434 | 3113 | counted | 3113158 | No Node counterpart; harness assumption that typing inside an array is one fifth as frequent as flat typing. |
-| first-key-flat-500-validate | 1 | 1 | 25750 | 23450 | -2300 | counted | -2300 | One first key per session: the owner rule's one-off first-write term, kept as its own row. |
-| first-key-flat-500-validate-after-load | 1 | 1 | 25600 | 23450 | -2150 | counted | -2150 | One first key after load validation settles; kept alongside the immediate first key at the same weight to distinguish load overlap from settled-load input cost. |
-| rebuild-flat-500 | 5 | 1 | — | — | — | 0.16.1 has no rebuild, so the row is excluded from this comparison. | 0 | Matches the Node bulk rows (weight 5). |
+| 사례                                   | 가중치 |   k | 기준 µs | 후보 µs | Δ µs/event | 계산                                                                | 기여 µs | 근거                                                                                                                                                             |
+| -------------------------------------- | -----: | --: | ------: | ------: | ---------: | ------------------------------------------------------------------- | ------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| mount-flat-500-none                    |      1 |   1 |       — |       — |          — | not observable                                                      |       0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-flat-500-validate                |      1 |   1 |  239400 |  227350 |     -12050 | counted                                                             |  -12050 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-if-flat-500-none                 |      1 |   1 |       — |       — |          — | not observable                                                      |       0 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-if-flat-500-validate             |      1 |   1 |  235450 |  250850 |      15400 | counted                                                             |   15400 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| mount-nested-d5-f4-validate            |      1 |   1 |  515100 |  445600 |     -69500 | counted                                                             |  -69500 | One mount per session; matches the Node table's mount-nested row (weight 1).                                                                                     |
+| mount-array-1000-validate              |      1 |   1 |  698950 |  631200 |     -67750 | counted                                                             |  -67750 | One mount per session; matches the Node table's mount rows (weight 1).                                                                                           |
+| type-flat-500-validate-nonburst        |   5000 |   1 |   15421 |   16061 |        639 | within noise                                                        |       0 | The browser path goes through the FieldProxy subscription, so it matches the Node 'typing with subscribers' row (weight 5000).                                   |
+| type-array-1000-validate-nonburst      |   1000 |   1 |   23321 |   26434 |       3113 | counted                                                             | 3113158 | No Node counterpart; harness assumption that typing inside an array is one fifth as frequent as flat typing.                                                     |
+| first-key-flat-500-validate            |      1 |   1 |   25750 |   23450 |      -2300 | counted                                                             |   -2300 | One first key per session: the owner rule's one-off first-write term, kept as its own row.                                                                       |
+| first-key-flat-500-validate-after-load |      1 |   1 |   25600 |   23450 |      -2150 | counted                                                             |   -2150 | One first key after load validation settles; kept alongside the immediate first key at the same weight to distinguish load overlap from settled-load input cost. |
+| rebuild-flat-500                       |      5 |   1 |       — |       — |          — | 0.16.1 has no rebuild, so the row is excluded from this comparison. |       0 | Matches the Node bulk rows (weight 5).                                                                                                                           |
 
 가중 교환비 Σ(가중치 × Δ) = 2974808 µs (폭 안 행은 0, 음수가 개선); 가중 기준 합 = 102166566 µs; 가중 후보 합 = 108338742 µs; 가중 비율 = 1.060.
 제외 행: mount-flat-500-none: not observable; mount-if-flat-500-none: not observable; rebuild-flat-500: 0.16.1 has no rebuild, so the row is excluded from this comparison.
 
 An invalid baseline/control group is retried once, then marked void.
+
 <!-- core-summary:end -->

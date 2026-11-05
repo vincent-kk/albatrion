@@ -36,7 +36,7 @@ it('IR-6 H same-commit transition reveal stays hidden before a child layout norm
     const context = useFieldRendererContext();
     const [visible] = useErrorVisibility(
       [node],
-      [context.checkShowError(node.state)],
+      [context.checkErrorVisibility(node.state)],
     );
     return (
       <>

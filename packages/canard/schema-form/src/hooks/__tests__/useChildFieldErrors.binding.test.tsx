@@ -33,7 +33,7 @@ it('LANDING-170 REACT-019 tracks child errors, state and reordered paths under S
     second.setState({ 4: true });
   });
   expect(result.current.errorMatrix[1]).toEqual([issue]);
-  expect(result.current.showErrors).toEqual([false, true]);
+  expect(result.current.childErrorVisibleList).toEqual([false, true]);
   act(() => {
     if (root.type === 'array') root.remove(0);
   });
@@ -62,14 +62,14 @@ it('IR-6 removing a visible array child never transfers eligibility to the held 
   });
   act(() => first.setState({ 4: true }));
   await advanceValidationFrame();
-  expect(result.current.showErrors).toEqual([true, false]);
+  expect(result.current.childErrorVisibleList).toEqual([true, false]);
   act(() => {
     if (root.type === 'array') root.remove(0);
     second.setState({ 4: true });
   });
-  expect(result.current.showErrors).toEqual([false]);
-  expect(result.current.showError).toBe(false);
+  expect(result.current.childErrorVisibleList).toEqual([false]);
+  expect(result.current.errorVisible).toBe(false);
   await settleValidation(root);
-  expect(result.current.showErrors).toEqual([true]);
-  expect(result.current.showError).toBe(true);
+  expect(result.current.childErrorVisibleList).toEqual([true]);
+  expect(result.current.errorVisible).toBe(true);
 });

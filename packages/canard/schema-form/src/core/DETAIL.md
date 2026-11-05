@@ -44,18 +44,18 @@
 
 ### 진입점 표면
 
-| 심볼                                                                                               | 계약                                                                                                                                                             |
-| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `FieldNode` 및 타입별 노드                                                                         | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면                                                                      |
-| `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드                                    | 런타임 타입 판별                                                                                                                                                 |
-| `FieldNodeState`                                                                                   | Edited=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않는다(SURFACE-056·060, LANDING-157).                               |
-| `SetValueOption` · `ValidationMode`                                                                | 쓰기 옵션 비트·검증 모드 열거값                                                                                                                                  |
-| `FieldNodeEventType` · `FieldNodeRequestType`                                                      | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067)                                                                                                          |
-| 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                       |
-| `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
+| 심볼                                                                                               | 계약                                                                                                                                                                                                                             |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `FieldNode` 및 타입별 노드                                                                         | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면                                                                                                                                      |
+| `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드                                    | 런타임 타입 판별                                                                                                                                                                                                                 |
+| `FieldNodeState`                                                                                   | Edited=1·Touched=2·ErrorVisibility=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않는다(SURFACE-056·060, LANDING-157).                                                                                             |
+| `SetValueOption` · `ValidationMode`                                                                | 쓰기 옵션 비트·검증 모드 열거값                                                                                                                                                                                                  |
+| `FieldNodeEventType` · `FieldNodeRequestType`                                                      | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067)                                                                                                                                                                          |
+| 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                                                                                       |
+| `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                                                                                              |
 | `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 커밋 소비자 수명 증감 통로이며 실행 중 핀은 validation 내부에서 별도로 관리합니다. 바인딩은 이를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
-| `scheduleValidationSlot(run)` | RootNodeContext의 모든 로드 검증이 쓰기 검증과 같은 다음 화면 뒤 슬롯을 쓰도록 validationScheduling·engine 경계를 통해 명명 재수출한다. 패키지 공개 `src/index.ts`와 공개 선언에는 노출하지 않는다(IR-6). |
-| `startFieldNodeLoadValidation(node)` | 다음 프레임 뒤 로드 슬롯에서 engine의 dispatchLoadValidation을 호출하는 바인딩 전용 통로다. 패키지 공개 표면은 유지한다. |
+| `scheduleValidationSlot(run)`                                                                      | RootNodeContext의 모든 로드 검증이 쓰기 검증과 같은 다음 화면 뒤 슬롯을 쓰도록 validationScheduling·engine 경계를 통해 명명 재수출한다. 패키지 공개 `src/index.ts`와 공개 선언에는 노출하지 않는다(IR-6).                        |
+| `startFieldNodeLoadValidation(node)`                                                               | 다음 프레임 뒤 로드 슬롯에서 engine의 dispatchLoadValidation을 호출하는 바인딩 전용 통로다. 패키지 공개 표면은 유지한다.                                                                                                         |
 
 시험·측정 도우미 서명: `src/__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환한다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓이다(70C-01, VALIDATE-010, CONTROLS-075).
 
@@ -195,6 +195,6 @@ RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이�
 
 ## Last Updated
 
-2026-11-05
+계약·경계·검증 조건이 변경될 때 갱신합니다.
 
 계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

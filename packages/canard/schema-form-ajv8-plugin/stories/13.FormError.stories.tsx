@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 
 import {
+  ErrorVisibility,
+  FieldNodeState,
+  type FieldRendererProps,
   Form,
   type FormHandle,
-  type FieldRendererProps,
   type JSONSchema,
   type ValidationIssue,
-  FieldNodeState,
-  ShowError,
   ValidationMode,
   registerPlugin,
 } from '@canard/schema-form';
@@ -21,7 +21,7 @@ export default {
   title: 'Form/13. FormError',
 };
 
-export const EditedTouched = () => {
+export const LiveErrorVisibility = () => {
   const jsonSchema = {
     type: 'object',
     properties: {
@@ -51,7 +51,7 @@ export const EditedTouched = () => {
     const {
       [FieldNodeState.Edited]: edited,
       [FieldNodeState.Touched]: touched,
-      [FieldNodeState.ErrorVisible]: showError,
+      [FieldNodeState.ErrorVisibility]: errorVisibility,
     } = node.state || {};
     return depth === 0 ? (
       <Input />
@@ -62,156 +62,50 @@ export const EditedTouched = () => {
           <Input />
           <button
             onClick={() =>
-              showError !== true
-                ? node.setState({ [FieldNodeState.ErrorVisible]: true })
-                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
+              errorVisibility !== true
+                ? node.setState({ [FieldNodeState.ErrorVisibility]: true })
+                : node.setState({ [FieldNodeState.ErrorVisibility]: undefined })
             }
           >
             Show Error
           </button>
           <button
             onClick={() =>
-              showError !== false
-                ? node.setState({ [FieldNodeState.ErrorVisible]: false })
-                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
+              errorVisibility !== false
+                ? node.setState({ [FieldNodeState.ErrorVisibility]: false })
+                : node.setState({ [FieldNodeState.ErrorVisibility]: undefined })
             }
           >
             Hide Error
           </button>
         </label>
-        <pre>{JSON.stringify({ edited, touched, showError })}</pre>
+        <pre>{JSON.stringify({ edited, touched, errorVisibility })}</pre>
         <pre>{JSON.stringify(node.errors)}</pre>
         {errorMessage}
       </div>
     );
   };
 
-  const [showError, setShowError] = useState<ShowError | boolean>(
-    ShowError.EditedTouched,
+  const [errorVisibility, setErrorVisibility] = useState<ErrorVisibility>(
+    ErrorVisibility.AfterEditAndTouch,
   );
 
   const refHandle = useRef<FormHandle<typeof jsonSchema>>(null);
   return (
     <div>
       <div style={{ display: 'flex', gap: 10 }}>
-        <label>
-          <input
-            type="checkbox"
-            name="showError"
-            checked={
-              !!(
-                typeof showError === 'number' &&
-                showError & ShowError.EditedTouched
-              )
-            }
-            value={ShowError.EditedTouched}
-            onChange={(e) => {
-              setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.EditedTouched;
-                return e.target.checked
-                  ? prev | ShowError.EditedTouched
-                  : prev & ~ShowError.EditedTouched;
-              });
-            }}
-          />
-          EditedTouched
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="showError"
-            checked={
-              !!(typeof showError === 'number' && showError & ShowError.Edited)
-            }
-            value={ShowError.Edited}
-            onChange={(e) => {
-              setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.Edited;
-                return e.target.checked
-                  ? prev | ShowError.Edited
-                  : prev & ~ShowError.Edited;
-              });
-            }}
-          />
-          Edited
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="showError"
-            checked={
-              !!(typeof showError === 'number' && showError & ShowError.Touched)
-            }
-            value={ShowError.Touched}
-            onChange={(e) => {
-              setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.Touched;
-                return e.target.checked
-                  ? prev | ShowError.Touched
-                  : prev & ~ShowError.Touched;
-              });
-            }}
-          />
-          Touched
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="showError"
-            checked={
-              !!(typeof showError === 'number' && showError & ShowError.Always)
-            }
-            value={ShowError.Always}
-            onChange={(e) => {
-              setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.Always;
-                return e.target.checked
-                  ? prev | ShowError.Always
-                  : prev & ~ShowError.Always;
-              });
-            }}
-          />
-          Always
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="showError"
-            checked={
-              !!(typeof showError === 'number' && showError & ShowError.Never)
-            }
-            value={ShowError.Never}
-            onChange={(e) => {
-              setShowError((prev) => {
-                if (typeof prev === 'boolean') return ShowError.Never;
-                return e.target.checked
-                  ? prev | ShowError.Never
-                  : prev & ~ShowError.Never;
-              });
-            }}
-          />
-          Never
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="showError"
-            checked={showError === true}
-            value={'true'}
-            onChange={() => setShowError(true)}
-          />
-          true
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="showError"
-            checked={showError === false}
-            value={'false'}
-            onChange={() => setShowError(false)}
-          />
-          false
-        </label>
+        {Object.values(ErrorVisibility).map((policy) => (
+          <label key={policy}>
+            <input
+              type="radio"
+              name="errorVisibility"
+              checked={errorVisibility === policy}
+              value={policy}
+              onChange={() => setErrorVisibility(policy)}
+            />
+            {policy}
+          </label>
+        ))}
       </div>
       <hr />
       <div>
@@ -225,10 +119,9 @@ export const EditedTouched = () => {
       <hr />
       <StoryLayout jsonSchema={jsonSchema}>
         <Form
-          key={`${showError}`}
           ref={refHandle}
           jsonSchema={jsonSchema}
-          showError={showError}
+          errorVisibility={errorVisibility}
           FieldRenderer={Renderer}
         />
       </StoryLayout>
@@ -261,7 +154,7 @@ export const NoValidate = () => {
         jsonSchema={schema}
         onChange={handleChange}
         onValidate={(errors) => setErrors(errors || [])}
-        showError={true}
+        errorVisibility={ErrorVisibility.Always}
         validationMode={ValidationMode.None}
       />
     </StoryLayout>
@@ -298,7 +191,7 @@ export const ValidateOnRequest = () => {
         jsonSchema={schema}
         onChange={handleChange}
         onValidate={(errors) => setErrors(errors || [])}
-        showError={true}
+        errorVisibility={ErrorVisibility.Always}
         validationMode={ValidationMode.OnRequest}
       />
       <button onClick={handleValidate}>Request Validate</button>
@@ -363,7 +256,7 @@ export const ExternalErrors = () => {
         onChange={handleChange}
         onValidate={(errors) => _setErrors(errors || [])}
         errors={errors}
-        showError={true}
+        errorVisibility={ErrorVisibility.Always}
       />
       <button onClick={clearErrors}>clear external errors</button>
       <button onClick={setExternalErrors}>set external errors</button>

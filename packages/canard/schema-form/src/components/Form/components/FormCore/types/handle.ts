@@ -45,7 +45,9 @@ export interface FormHandle<
   getErrors: Fn<[], FieldNode['globalErrors']>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<FieldNode['globalErrors']>>;
-  /** Change the Form error policy. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. Only the OnChange validation mode holds errors; other modes follow the live condition. */
-  showError: Fn<[visible?: boolean]>;
+  /** Temporarily reveal errors without validating or writing node state; explicit node suppression and OnChange release still apply. */
+  revealErrors: Fn;
+  /** Restore the latest base policy without validating or writing node state. */
+  resetErrorVisibility: Fn;
   submit: TrackableHandlerFunction;
 }

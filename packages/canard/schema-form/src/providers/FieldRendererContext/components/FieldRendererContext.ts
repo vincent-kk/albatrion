@@ -7,13 +7,13 @@ import type { FieldRendererProps } from '@/schema-form/types';
 
 export interface FieldRendererContext {
   /** Resolved policy rendered by this context; RootNodeContext commits it after layout. */
-  showError: unknown;
+  errorVisibility: unknown;
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FieldRendererProps['formatError'];
-  /** CheckShowError function declared externally */
-  checkShowError: Fn<[condition?: FieldNode['state']], boolean>;
+  /** CheckErrorVisibility function declared externally */
+  checkErrorVisibility: Fn<[condition?: FieldNode['state']], boolean>;
   /** Optional specialized renderers supplied by this form. */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;
   FormInputRenderer?: ComponentType<FieldRendererProps>;

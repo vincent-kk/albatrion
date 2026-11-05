@@ -18,12 +18,13 @@ export type RootLoadProps = Pick<
   | 'context'
   | 'unsetOnInactive'
   | 'disableAutomaticWrites'
-  | 'showError'
 > & {
   /** Resolved validator for this load. */
   validator?: Validator;
   /** Fixed input-map configuration failure retained by every reset and rebuild. */
   inputMapError?: SchemaFormError;
+  /** Invalid display configuration blocks only initial tree construction. */
+  errorVisibilityError?: SchemaFormError;
 };
 
 /** A committed or speculative root and its buffered load reports. */

@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { useChildFieldErrors } from '@/schema-form/hooks';
+import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { requireRuntimeFieldNode } from '../../../runtime/requireRuntimeFieldNode';
@@ -92,14 +93,14 @@ it('IR-6 W9 changing the Always policy does not reconnect the root load', async 
       ref={ref}
       jsonSchema={schema}
       validatorFactory={validator}
-      showError={false}
+      errorVisibility={ErrorVisibility.Never}
     />,
   );
   await settleValidation(() => ref.current?.node);
   const root = requireRuntimeFieldNode(ref.current!.node!);
   const before = [...(root.runtime.listeners?.get(root) ?? [])];
   expect(before.length).toBeGreaterThan(0);
-  act(() => ref.current!.showError());
+  act(() => ref.current!.revealErrors());
   const after = [...(root.runtime.listeners?.get(root) ?? [])];
   expect(after).toEqual(before);
 });

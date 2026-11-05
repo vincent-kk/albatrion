@@ -10,7 +10,7 @@ import type { FormErrorProps } from './types/props';
  * Renders validation error messages for form fields.
  *
  * Displays field-specific validation errors with customizable styling.
- * Error visibility is controlled by the form's `showError` prop and field state
+ * Error visibility is controlled by the form's `errorVisibility` prop and field state
  * (touched, edited, etc.). Automatically handles error formatting and display logic.
  *
  * @example
@@ -45,7 +45,7 @@ import type { FormErrorProps } from './types/props';
  * @example
  * Conditional error display:
  * ```tsx
- * <Form jsonSchema={schema} showError={ShowError.Touched}>
+ * <Form jsonSchema={schema} errorVisibility={ErrorVisibility.AfterTouch}>
  *   <Form.Input path="/email" />
  *   <Form.Error path="/email" />
  * </Form>

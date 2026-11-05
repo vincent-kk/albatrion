@@ -56,9 +56,9 @@ export const FieldInputSlot = memo(
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { checkShowError, showError } = useFieldRendererContext();
-    const live = node.isPresent && checkShowError(node.state);
-    const errorVisible = live && isErrorRevealed(node, showError, true);
+    const { checkErrorVisibility, errorVisibility } = useFieldRendererContext();
+    const live = node.isPresent && checkErrorVisibility(node.state);
+    const errorVisible = live && isErrorRevealed(node, errorVisibility, true);
     const revealVersion =
       live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
     const { attachedFilesMap, context } = useWorkspaceContext();

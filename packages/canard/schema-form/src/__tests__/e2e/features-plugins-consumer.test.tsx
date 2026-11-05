@@ -11,11 +11,18 @@ import {
   validatorSourceCases,
 } from '@aileron/schema-form-scenarios';
 
-import { type FormHandle, type FieldRendererProps, Form, FormProvider, type JSONSchema, ValidationMode } from '@/schema-form';
-
-import { renderForm, setupValidatorPlugin } from '../renderForm';
+import { ErrorVisibility } from '@/schema-form';
+import {
+  type FieldRendererProps,
+  Form,
+  type FormHandle,
+  FormProvider,
+  type JSONSchema,
+  ValidationMode,
+} from '@/schema-form';
 
 import { settleValidation } from '../helpers/settleValidation';
+import { renderForm, setupValidatorPlugin } from '../renderForm';
 
 // Consumer-only checks for plugins cases. The 'none' validator cases run first, before any test registers the plugin.
 
@@ -35,10 +42,25 @@ const scenarioNamed = (name: string): FormScenario => {
  * @param source - Marker prefix.
  * @returns Renderers keyed by slot.
  */
-const markedRenderers = (source: string): Record<RendererSlot, ComponentType<FieldRendererProps>> => ({
-  group: ({ Input, path }) => <div data-renderer={`${source}-group`} data-field={path}><Input /></div>,
-  label: ({ name, path }) => <label data-renderer={`${source}-label`} htmlFor={path}>{name}</label>,
-  error: ({ errorVisible, errors }) => (errorVisible && errors?.length ? <em data-renderer={`${source}-error`}>{errors.map((issue) => issue.keyword).join(',')}</em> : null),
+const markedRenderers = (
+  source: string,
+): Record<RendererSlot, ComponentType<FieldRendererProps>> => ({
+  group: ({ Input, path }) => (
+    <div data-renderer={`${source}-group`} data-field={path}>
+      <Input />
+    </div>
+  ),
+  label: ({ name, path }) => (
+    <label data-renderer={`${source}-label`} htmlFor={path}>
+      {name}
+    </label>
+  ),
+  error: ({ errorVisible, errors }) =>
+    errorVisible && errors?.length ? (
+      <em data-renderer={`${source}-error`}>
+        {errors.map((issue) => issue.keyword).join(',')}
+      </em>
+    ) : null,
 });
 
 /**
@@ -60,18 +82,34 @@ const rendererProps = (slots: readonly RendererSlot[], source: string) => {
  * Settle React work and timers in jsdom.
  * @returns Completion after the act scope.
  */
-const settle = (current: () => FormHandle['node'] | undefined) => act(async () => { await settleValidation(current); });
+const settle = (current: () => FormHandle['node'] | undefined) =>
+  act(async () => {
+    await settleValidation(current);
+  });
 
 describe('features — plugins consumer-only', () => {
   it('VALIDATE-042 and ERROR-024 a form with no validator warns once, and validation mode None removes the warning', async () => {
     const scenario = scenarioNamed('plugins.validator-sources');
-    for (const item of validatorSourceCases.filter((entry) => entry.source === 'none')) {
-      const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue,
-        ...(item.validationMode && { validationMode: ValidationMode[item.validationMode] }) });
+    for (const item of validatorSourceCases.filter(
+      (entry) => entry.source === 'none',
+    )) {
+      const form = await renderForm(scenario.schema as JSONSchema, {
+        defaultValue: scenario.initialValue,
+        ...(item.validationMode && {
+          validationMode: ValidationMode[item.validationMode],
+        }),
+      });
       try {
         await form.validate();
-        expect({ warnings: form.errorRecords().map(({ code }) => code), keywords: (form.node('/name')?.errors ?? []).map((issue) => issue.keyword) }, item.label)
-          .toEqual({ warnings: item.warnings, keywords: item.keywords });
+        expect(
+          {
+            warnings: form.errorRecords().map(({ code }) => code),
+            keywords: (form.node('/name')?.errors ?? []).map(
+              (issue) => issue.keyword,
+            ),
+          },
+          item.label,
+        ).toEqual({ warnings: item.warnings, keywords: item.keywords });
       } finally {
         form.unmount();
       }
@@ -80,16 +118,32 @@ describe('features — plugins consumer-only', () => {
 
   it('VALIDATE-041 the Form validatorFactory precedes the registered plugin', async () => {
     const scenario = scenarioNamed('plugins.validator-sources');
-    for (const item of validatorSourceCases.filter((entry) => entry.source !== 'none')) {
-      const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true,
-        ...(item.factoryKeyword && { validatorFactory: {
-          compile: () => () => [{ dataPath: '/name', keyword: item.factoryKeyword }],
-          compileGuard: () => () => true,
-        } }) });
+    for (const item of validatorSourceCases.filter(
+      (entry) => entry.source !== 'none',
+    )) {
+      const form = await renderForm(scenario.schema as JSONSchema, {
+        defaultValue: scenario.initialValue,
+        validator: true,
+        ...(item.factoryKeyword && {
+          validatorFactory: {
+            compile: () => () => [
+              { dataPath: '/name', keyword: item.factoryKeyword },
+            ],
+            compileGuard: () => () => true,
+          },
+        }),
+      });
       try {
         await form.validate();
-        expect({ warnings: form.errorRecords().map(({ code }) => code), keywords: (form.node('/name')?.errors ?? []).map((issue) => issue.keyword) }, item.label)
-          .toEqual({ warnings: item.warnings, keywords: item.keywords });
+        expect(
+          {
+            warnings: form.errorRecords().map(({ code }) => code),
+            keywords: (form.node('/name')?.errors ?? []).map(
+              (issue) => issue.keyword,
+            ),
+          },
+          item.label,
+        ).toEqual({ warnings: item.warnings, keywords: item.keywords });
       } finally {
         form.unmount();
       }
@@ -101,19 +155,45 @@ describe('features — plugins consumer-only', () => {
     setupValidatorPlugin();
     for (const item of rendererCases) {
       let handle: FormHandle | null = null;
-      const { container, unmount } = render(<FormProvider {...rendererProps(item.provider, 'provider')}>
-        <Form<JSONSchema> ref={(next) => { handle = next; }} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}
-          showError {...rendererProps(item.form, 'form')}>
-          {item.composed ? <><Form.Label path="/title" /><Form.Input path="/title" /><Form.Error path="/title" /></> : undefined}
-        </Form>
-      </FormProvider>);
+      const { container, unmount } = render(
+        <FormProvider {...rendererProps(item.provider, 'provider')}>
+          <Form<JSONSchema>
+            ref={(next) => {
+              handle = next;
+            }}
+            jsonSchema={scenario.schema as JSONSchema}
+            defaultValue={scenario.initialValue}
+            errorVisibility={ErrorVisibility.Always}
+            {...rendererProps(item.form, 'form')}
+          >
+            {item.composed ? (
+              <>
+                <Form.Label path="/title" />
+                <Form.Input path="/title" />
+                <Form.Error path="/title" />
+              </>
+            ) : undefined}
+          </Form>
+        </FormProvider>,
+      );
       try {
         await settle(() => handle?.node);
-        await act(async () => { await handle!.validate(); });
+        await act(async () => {
+          await handle!.validate();
+        });
         await settle(() => handle?.node);
-        const drawn = new Set(Array.from(container.querySelectorAll<HTMLElement>('[data-renderer]')).map((element) => element.dataset.renderer));
-        expect({ markers: item.markers.filter((marker) => drawn.has(marker)), absent: item.absent.filter((marker) => drawn.has(marker)) }, item.label)
-          .toEqual({ markers: [...item.markers], absent: [] });
+        const drawn = new Set(
+          Array.from(
+            container.querySelectorAll<HTMLElement>('[data-renderer]'),
+          ).map((element) => element.dataset.renderer),
+        );
+        expect(
+          {
+            markers: item.markers.filter((marker) => drawn.has(marker)),
+            absent: item.absent.filter((marker) => drawn.has(marker)),
+          },
+          item.label,
+        ).toEqual({ markers: [...item.markers], absent: [] });
       } finally {
         unmount();
       }

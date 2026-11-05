@@ -6,7 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { FieldNodeState } from '@/schema-form/core';
 import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFormContext';
-import { ShowError } from '@/schema-form/types';
+import { ErrorVisibility } from '@/schema-form/types';
 
 import { awaitNativeSubmitVerdict } from './fixtures/awaitNativeSubmitVerdict';
 import {
@@ -23,23 +23,36 @@ afterEach(() => {
 });
 
 /**
- * Wrap a Form in a FormProvider with the given showError.
- * @param showError - Provider policy.
+ * Wrap a Form in a FormProvider with the given errorVisibility.
+ * @param errorVisibility - Provider policy.
  * @returns A wrapper for {@link mountNativeSubmitForm}.
  */
-const withProvider = (showError: boolean) => (node: ReactNode) => (
-  <ExternalFormContextProvider showError={showError}>
-    {node}
-  </ExternalFormContextProvider>
-);
+const withProvider =
+  (errorVisibility: ErrorVisibility) => (node: ReactNode) => (
+    <ExternalFormContextProvider errorVisibility={errorVisibility}>
+      {node}
+    </ExternalFormContextProvider>
+  );
 
 it.each([
-  ['showError={false}', { formProps: { showError: false } }],
-  ['ShowError.Never', { formProps: { showError: ShowError.Never } }],
-  ['FormProvider showError false only', { wrap: withProvider(false) }],
+  [
+    'errorVisibility={ErrorVisibility.Never}',
+    { formProps: { errorVisibility: ErrorVisibility.Never } },
+  ],
+  [
+    'ErrorVisibility.Never',
+    { formProps: { errorVisibility: ErrorVisibility.Never } },
+  ],
+  [
+    'FormProvider errorVisibility false only',
+    { wrap: withProvider(ErrorVisibility.Never) },
+  ],
   [
     'Form false over FormProvider true',
-    { formProps: { showError: false }, wrap: withProvider(true) },
+    {
+      formProps: { errorVisibility: ErrorVisibility.Never },
+      wrap: withProvider(ErrorVisibility.Always),
+    },
   ],
 ] as const)(
   'ERROR-139 %s: an invalid native submit neither reveals nor focuses',
@@ -56,9 +69,9 @@ it.each([
   },
 );
 
-it('ERROR-139 ShowError.Always | ShowError.Never shows the errors after an invalid native submit', async () => {
+it('ERROR-139 ErrorVisibility.AfterTouch shows the errors after an invalid native submit', async () => {
   const form = await mountNativeSubmitForm({
-    formProps: { showError: ShowError.Always | ShowError.Never },
+    formProps: { errorVisibility: ErrorVisibility.AfterTouch },
   });
   const validate = vi.spyOn(form.ref.current!.node!, 'validate');
   await form.user.click(form.button());
@@ -68,11 +81,13 @@ it('ERROR-139 ShowError.Always | ShowError.Never shows the errors after an inval
   expect(form.onSubmit).not.toHaveBeenCalled();
 });
 
-it('ERROR-139 an explicit ErrorVisible false keeps its error hidden after an invalid native submit', async () => {
-  const form = await mountNativeSubmitForm({ formProps: { showError: true } });
+it('ERROR-139 an explicit ErrorVisibility false keeps its error hidden after an invalid native submit', async () => {
+  const form = await mountNativeSubmitForm({
+    formProps: { errorVisibility: ErrorVisibility.Always },
+  });
   act(() =>
     form.ref.current!.findNode('/a')!.setState({
-      [FieldNodeState.ErrorVisible]: false,
+      [FieldNodeState.ErrorVisibility]: false,
     }),
   );
   const validate = vi.spyOn(form.ref.current!.node!, 'validate');

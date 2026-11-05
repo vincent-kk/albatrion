@@ -28,8 +28,8 @@ export const createRootLoad = (
     reporter,
     warningScope: reporter?.warningScope,
   };
-  if (props.inputMapError) {
-    load.error = props.inputMapError;
+  if (props.inputMapError || props.errorVisibilityError) {
+    load.error = props.inputMapError ?? props.errorVisibilityError;
     return load;
   }
   try {

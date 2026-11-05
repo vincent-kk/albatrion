@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+표시 정책은 load props 계약에 포함하지 않고 reset 재대조의 기준으로 삼지 않습니다. 유효 정책은 현재 root에 커밋하고 기존 generation 이력과 release 구독을 유지합니다. 잘못된 초기 정책은 트리 생성을 막고, 유효한 값으로 복구하면 새 load를 구성합니다. 아직 루트가 없는 복구는 명령형 reset의 caller-throw 경로를 쓰지 않습니다. 복구 때 다른 스키마 구성 오류가 드러나도 handle과 load fallback을 유지하고 새 구성 오류를 load로 보고하여, 이미 보고한 정책 오류가 렌더 경계로 다시 던져지는 일을 막습니다. 잘못된 live 정책은 기존 load를 보존하고 같은 commit의 검증기 교체를 미룹니다. 정책이 유효해지는 첫 commit은 실제 load와 최신 검증기를 재대조해 미룬 교체를 한 번 적용합니다. 검증기 구성 실패 뒤에는 검증기 참조 변경이나 명시적 reset에서 다시 시도하며 매 렌더마다 반복하지 않습니다. 잘못된 정책 오류는 origin `load`로 커밋에서 한 번 보고합니다. 표시 정책은 검증 모드나 검증 일정을 바꾸지 않습니다.
+
 - 입력 맵 정규화의 구성 오류는 트리를 만들지 않는 실패 load로 보관합니다. 확정된 루트 fallback의 첫 commit에서 기존 `flushRootLoad`를 통해 원래 오류·코드와 `origin: load`를 한 번 전달하며 StrictMode effect 재실행도 중복 보고하지 않습니다. 입력 맵은 폼 수명 동안 고정되므로 reset·rebuild도 이 구성 실패를 유지하고 호출자에게 거부합니다. 정상 load에는 추가 트리 순회나 구독이 없고, 실패 load와 해당 구성 props만 오류 참조를 보유합니다.
 - H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
 - 자동 로드 컴파일 실패는 공통 슬롯에서 origin validate로 한 번 보고하고 호스트에 한 번 보내며 명시적 검증의 프로미스 거부는 유지한다.
@@ -19,7 +21,7 @@
 - 로드 슬롯 전에 쓰기 요청이나 명시적 루트 검증이 있으면 컴파일 후 슬롯 판정은 생략한다. 하위 명시적 검증은 로드 판정을 대체하지 않는다.
 - Always의 첫 오류 표시도 다음 프레임 뒤 슬롯까지 늦어지며 조상 layout 쓰기는 같은 요청 스탬프 규칙을 따른다.
 
-- Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 슬롯을 거치지 않고 즉시 시작하며, 검증기 실패로 거부하면 기록의 origin은 `validate`이고 degraded 제출 거부는 origin `submit`입니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+- `ErrorVisibility.Always`를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 슬롯을 거치지 않고 즉시 시작하며, 검증기 실패로 거부하면 기록의 origin은 `validate`이고 degraded 제출 거부는 origin `submit`입니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 - V6: prepared 현행 load의 hidden 기록은 chain 끝에 바로 전달합니다. reset의 build 기록은 각각 try/catch하여 handler 실패 뒤에도 다음 기록과 binding 교체를 계속합니다.
 - V7: never-prepared load가 reset으로 교체될 때 batch try/catch 뒤에 records를 새 load 앞에 옮깁니다. reset 사슬에서 새로 생긴 기록까지 원래 root·warning scope로 한 번 전달하며 이전 load의 전체 기록이 새 build 기록보다 앞섭니다. 교체 load는 prepared와 함께 reported를 확정하여 pendingLoad가 caller에게 던진 오류를 다시 flush하지 않습니다. next.error는 caller throw를 위해 보존합니다. 이미 준비된 load는 숨김 중에도 buffer하지 않습니다. 첫 commit의 reported 가드는 유지합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 한 번 capture·호스트 보고합니다.
 
@@ -67,4 +69,4 @@ reset·rebuild·검증기 교체는 batchFieldNodeLoad로 load 사슬을 엽니�
 
 ## Last Updated
 
-루트 생성·commit·오류 전달 또는 로드 수명 계약이 바뀔 때 갱신합니다.
+계약·경계·검증 조건이 변경될 때 갱신합니다.

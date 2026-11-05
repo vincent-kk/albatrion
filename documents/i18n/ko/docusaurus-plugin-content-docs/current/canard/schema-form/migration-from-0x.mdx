@@ -3,11 +3,7 @@ sidebar_label: '0.x 이전 안내'
 sidebar_position: 8
 ---
 
-
-
 # 0.x 이전 안내
-
-
 
 ## 이전 순서와 무시되는 키 {#migration-order}
 
@@ -17,75 +13,75 @@ sidebar_position: 8
 
 ## 스키마 키 대응 {#schema-keys}
 
-| 0.x 표기 | 현재 위치 |
-| --- | --- |
-| `formType` | `presentation.inputType` |
-| `FormTypeInput` | `presentation.FieldInput` |
-| `FormTypeInputProps` | `presentation.FieldInputProps` |
-| `FormTypeRendererProps` | `presentation.FieldRendererProps` |
-| `errorMessages` | `presentation.errorMessages` |
-| `computed.active / &active` | `controls.active` |
-| `computed.visible / &visible` | `controls.visible` |
-| `computed.readOnly / &readOnly` | `controls.readOnly` |
-| `computed.disabled / &disabled` | `controls.disabled` |
-| `computed.derived / &derived` | `controls.derived` |
-| `computed.watch / &watch` | `controls.watch (array of paths)` |
-| `computed.pristine / &pristine` | `controls.resetInteraction` |
-| `computed.if / &if` | `controls.active (on the branch)` |
-| `injectTo` | `controls.injectTo` |
-| `terminal` | `options.terminal` |
-| `propertyKeys` | `options.propertyOrder` |
-| `virtual / type: 'virtual'` | `options.virtual: { <name>: { fields: [...] } }` |
+| 0.x 표기                        | 현재 위치                                        |
+| ------------------------------- | ------------------------------------------------ |
+| `formType`                      | `presentation.inputType`                         |
+| `FormTypeInput`                 | `presentation.FieldInput`                        |
+| `FormTypeInputProps`            | `presentation.FieldInputProps`                   |
+| `FormTypeRendererProps`         | `presentation.FieldRendererProps`                |
+| `errorMessages`                 | `presentation.errorMessages`                     |
+| `computed.active / &active`     | `controls.active`                                |
+| `computed.visible / &visible`   | `controls.visible`                               |
+| `computed.readOnly / &readOnly` | `controls.readOnly`                              |
+| `computed.disabled / &disabled` | `controls.disabled`                              |
+| `computed.derived / &derived`   | `controls.derived`                               |
+| `computed.watch / &watch`       | `controls.watch (array of paths)`                |
+| `computed.pristine / &pristine` | `controls.resetInteraction`                      |
+| `computed.if / &if`             | `controls.active (on the branch)`                |
+| `injectTo`                      | `controls.injectTo`                              |
+| `terminal`                      | `options.terminal`                               |
+| `propertyKeys`                  | `options.propertyOrder`                          |
+| `virtual / type: 'virtual'`     | `options.virtual: { <name>: { fields: [...] } }` |
 
 허용 옵션은 [설정 그룹](./schema-reference#authoring-groups)을 따릅니다. 입력 설정은 presentation.FieldInputProps로 옮기고 oneOf가 폼 분기를 자동으로 하나만 고른다고 가정하지 말고 [분기 선택](./schema-reference#composition)을 확인하십시오.
 
 ## 컴포넌트·형·훅·노드 이름 {#consumer-names}
 
-| 0.x 표기 | 현재 API |
-| --- | --- |
-| `formTypeInputDefinitions` | `fieldInputDefinitions` |
-| `formTypeInputMap` | `fieldInputMap` |
-| `CustomFormTypeRenderer` | `FieldRenderer` |
-| `plugin.FormGroup` | `plugin.FieldRenderer` |
-| `plugin.FormLabel` | `plugin.FormLabelRenderer` |
-| `plugin.FormInput` | `plugin.FormInputRenderer` |
-| `plugin.FormError` | `plugin.FormErrorRenderer` |
-| `plugin.formTypeInputDefinitions` | `plugin.fieldInputDefinitions` |
-| `Form.Group` | `Form.Field` |
-| `FormGroupProps` | `FormFieldProps` |
-| `FormTypeInputDefinition` | `FieldInputDefinition` |
-| `FormTypeInputMap` | `FieldInputMap` |
-| `FormTypeInputProps` | `FieldInputProps` |
-| `FormTypeInputPropsWithNode` | `FieldInputPropsWithNode` |
-| `FormTypeInputPropsWithSchema` | `FieldInputPropsWithSchema` |
-| `FormTypeTestFn` | `FieldInputTestFn` |
-| `FormTypeTestObject` | `FieldInputTestObject` |
-| `FormTypeRendererProps` | `FieldRendererProps` |
-| `Hint` | `FieldInputHint` |
-| `FormTypeInputProps.ChildNodeComponents` | `FieldInputProps.ChildFields` |
-| `ChildNodeComponentProps` | `ChildFieldProps` |
-| `useChildNodeComponentMap` | `useChildFieldMap` |
-| `useChildNodeErrors` | `useChildFieldErrors` |
-| `SchemaNode` | `FieldNode` |
-| `InferSchemaNode` | `InferFieldNode` |
-| `isSchemaNode` | `isFieldNode` |
-| `NodeState` | `FieldNodeState` |
-| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
-| `ShowError.Dirty` | `ShowError.Edited` |
-| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
-| `node.required` | `node.isRequired` |
-| `node.active` | `node.isActive` |
-| `node.visible` | `node.isVisible` |
-| `node.enabled` | `node.isPresent` |
-| `node.readOnly` | `node.isReadOnly` |
-| `node.disabled` | `node.isDisabled` |
-| `node.misfit` | `node.isMisfit` |
-| `NodeState.ShowError` | `FieldNodeState.ErrorVisible` |
-| `NodeEventType` | `FieldNodeEventType` |
-| `useSchemaNodeTracker` | `useFieldNodeTracker` |
-| `useSchemaNodeSubscribe` | `useFieldNodeSubscribe` |
-| `SchemaNodeSubscribeOptions` | `FieldNodeSubscribeOptions` |
-| `JSONSchemaError (issue type)` | `ValidationIssue` |
+| 0.x 표기                                 | 현재 API                            |
+| ---------------------------------------- | ----------------------------------- |
+| `formTypeInputDefinitions`               | `fieldInputDefinitions`             |
+| `formTypeInputMap`                       | `fieldInputMap`                     |
+| `CustomFormTypeRenderer`                 | `FieldRenderer`                     |
+| `plugin.FormGroup`                       | `plugin.FieldRenderer`              |
+| `plugin.FormLabel`                       | `plugin.FormLabelRenderer`          |
+| `plugin.FormInput`                       | `plugin.FormInputRenderer`          |
+| `plugin.FormError`                       | `plugin.FormErrorRenderer`          |
+| `plugin.formTypeInputDefinitions`        | `plugin.fieldInputDefinitions`      |
+| `Form.Group`                             | `Form.Field`                        |
+| `FormGroupProps`                         | `FormFieldProps`                    |
+| `FormTypeInputDefinition`                | `FieldInputDefinition`              |
+| `FormTypeInputMap`                       | `FieldInputMap`                     |
+| `FormTypeInputProps`                     | `FieldInputProps`                   |
+| `FormTypeInputPropsWithNode`             | `FieldInputPropsWithNode`           |
+| `FormTypeInputPropsWithSchema`           | `FieldInputPropsWithSchema`         |
+| `FormTypeTestFn`                         | `FieldInputTestFn`                  |
+| `FormTypeTestObject`                     | `FieldInputTestObject`              |
+| `FormTypeRendererProps`                  | `FieldRendererProps`                |
+| `Hint`                                   | `FieldInputHint`                    |
+| `FormTypeInputProps.ChildNodeComponents` | `FieldInputProps.ChildFields`       |
+| `ChildNodeComponentProps`                | `ChildFieldProps`                   |
+| `useChildNodeComponentMap`               | `useChildFieldMap`                  |
+| `useChildNodeErrors`                     | `useChildFieldErrors`               |
+| `SchemaNode`                             | `FieldNode`                         |
+| `InferSchemaNode`                        | `InferFieldNode`                    |
+| `isSchemaNode`                           | `isFieldNode`                       |
+| `NodeState`                              | `FieldNodeState`                    |
+| `FieldNodeState.Dirty`                   | `FieldNodeState.Edited`             |
+| `ShowError.Dirty`                        | `ErrorVisibility.AfterEdit`         |
+| `ShowError.DirtyTouched`                 | `ErrorVisibility.AfterEditAndTouch` |
+| `node.required`                          | `node.isRequired`                   |
+| `node.active`                            | `node.isActive`                     |
+| `node.visible`                           | `node.isVisible`                    |
+| `node.enabled`                           | `node.isPresent`                    |
+| `node.readOnly`                          | `node.isReadOnly`                   |
+| `node.disabled`                          | `node.isDisabled`                   |
+| `node.misfit`                            | `node.isMisfit`                     |
+| `NodeState.ShowError`                    | `FieldNodeState.ErrorVisibility`    |
+| `NodeEventType`                          | `FieldNodeEventType`                |
+| `useSchemaNodeTracker`                   | `useFieldNodeTracker`               |
+| `useSchemaNodeSubscribe`                 | `useFieldNodeSubscribe`             |
+| `SchemaNodeSubscribeOptions`             | `FieldNodeSubscribeOptions`         |
+| `JSONSchemaError (issue type)`           | `ValidationIssue`                   |
 
 혼용 대소문자 schema 별칭은 `JSONSchema`, `InferJSONSchema`로 바꾸십시오. 사용자 입력의 renderer props는 [조합 계약](./api-reference#composition)을 따르며 FieldInputProps.FieldRenderer를 자동으로 제공하지 않습니다.
 
@@ -97,7 +93,18 @@ sidebar_position: 8
 - [enum 빈 값과 checkbox·radio 이름](./schema-reference#accessibility)에 맞게 DOM 검사를 바꾸십시오.
 - virtual 입력은 [현재 test hint](./schema-reference#input-resolution)로 매칭하십시오.
 - 완전한 [검증기 객체](./validation#validator-contract)를 제공하십시오.
-- 현재 Edited·EditedTouched 상수를 사용하십시오. 기본 정책·표시 조건·Form showError prop·handle 동작은 [오류 표시](./validation#visibility)를 참조하십시오.
+- 문자열 ErrorVisibility enum과 AfterEdit·AfterEditAndTouch 정책을 사용하십시오. 기본 정책·표시 조건·Form errorVisibility prop·handle 동작은 [오류 표시](./validation#visibility)를 참조하십시오.
 - injectTo context에서 `parentJSONSchema`, `rootJSONSchema`를 사용하십시오.
 - onError callback의 추론 record에서 surface·aggregate 대신 `origin`을 읽고 [발생 계약](./error-reference#occurrences)을 따르십시오.
 - component cleanup 쓰기는 [inactive-value resolution](./api-reference#inactive-listeners)으로 바꾸고 reset·재진입 후 노드를 다시 조회하십시오.
+
+| Before                                          | After                                                                                  |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `ShowError.Always / Never`                      | `ErrorVisibility.Always / Never`                                                       |
+| `ShowError.Edited / Touched / EditedTouched`    | `ErrorVisibility.AfterEdit / AfterTouch / AfterEditAndTouch`                           |
+| `ShowError.Edited \| ShowError.Touched`         | `ErrorVisibility.AfterEditOrTouch`                                                     |
+| `showError={true}` / `showError={false}`        | `errorVisibility={ErrorVisibility.Always}` / `errorVisibility={ErrorVisibility.Never}` |
+| `handle.showError()` / `handle.showError(true)` | `handle.revealErrors()`                                                                |
+| `handle.showError(false)`                       | `handle.resetErrorVisibility()`                                                        |
+| `FieldNodeState.ErrorVisible`                   | `FieldNodeState.ErrorVisibility`                                                       |
+| `useChildFieldErrors().showError / .showErrors` | `.errorVisible / .childErrorVisibleList`                                               |

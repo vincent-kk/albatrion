@@ -5,9 +5,9 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import type { NormalizedFieldInputDefinition } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorVisibility,
   FieldRendererProps,
   FormatError,
-  ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -24,8 +24,8 @@ export interface ExternalFormContext {
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
-  /** Error display condition (default: ShowError.EditedTouched) */
-  showError?: boolean | ShowError;
+  /** Error display condition (default: ErrorVisibility.AfterEditAndTouch) */
+  errorVisibility?: ErrorVisibility;
   /** Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest) */
   validationMode?: ValidationMode;
   /** Global user-defined context, merged with user-defined context */

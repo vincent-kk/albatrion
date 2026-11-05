@@ -12,6 +12,7 @@ import type {
   FieldRendererProps,
 } from '@/schema-form';
 import { Form } from '@/schema-form';
+import { ErrorVisibility } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -325,7 +326,7 @@ describe('inputType-resolution — FieldRenderer (ReactNode)', () => {
 
     const form = await renderForm(schema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       FieldRenderer: WrapRenderer,
       fieldInputDefinitions: stringDefs,
     });

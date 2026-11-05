@@ -4,11 +4,11 @@ import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   Form,
   type FormHandle,
   type FormProps,
   type JSONSchema,
-  ShowError,
   type ValidationIssue,
   ValidationMode,
   type ValidatorFactory,
@@ -64,7 +64,7 @@ it('mount, reset, rebuild and a validator change each run one load validation af
       defaultValue={{ name: 'a' }}
       validatorFactory={validatorFactory}
       validationMode={ValidationMode.OnChange}
-      showError={ShowError.Always}
+      errorVisibility={ErrorVisibility.Always}
     />
   );
   const view = render(element(first.validatorFactory));
@@ -103,7 +103,7 @@ it('Form.Render receives the raw field errors while the display policy keeps err
       defaultValue={{ name: 'a' }}
       validatorFactory={validatorFactory}
       validationMode={ValidationMode.OnRequest}
-      showError={ShowError.Touched}
+      errorVisibility={ErrorVisibility.AfterTouch}
     >
       <Form.Render path="/name">
         {({ errors, errorVisible }) => {
@@ -133,7 +133,7 @@ it('Form children receive the raw form errors while the display policy keeps the
       defaultValue={{ name: 'a' }}
       validatorFactory={validatorFactory}
       validationMode={ValidationMode.OnRequest}
-      showError={ShowError.Touched}
+      errorVisibility={ErrorVisibility.AfterTouch}
     >
       {({ errors }) => {
         seen.push(errors?.length ?? 0);

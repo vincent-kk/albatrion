@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import { type FieldRendererProps, Form, type FormHandle } from '@/schema-form';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
@@ -39,7 +40,7 @@ it('IR-6 R-a a context commit in an async gap keeps display held until the newes
   const props = {
     jsonSchema: { type: 'string' as const },
     defaultValue: '',
-    showError: false,
+    errorVisibility: ErrorVisibility.Never,
     FieldRenderer: Renderer,
     validatorFactory: validator,
     formatError: (error: { message?: string }) => error.message ?? null,
@@ -50,7 +51,7 @@ it('IR-6 R-a a context commit in an async gap keeps display held until the newes
   asynchronous = true;
   act(() => {
     ref.current!.setValue('new');
-    ref.current!.showError();
+    ref.current!.revealErrors();
   });
   await act(async () => {
     clock.frame();
@@ -90,7 +91,7 @@ it('IR-6 R-a an async mount discarded by context still obtains an OnChange verdi
   const props = {
     jsonSchema: { type: 'string' as const },
     defaultValue: '',
-    showError: false,
+    errorVisibility: ErrorVisibility.Never,
     FieldRenderer: Renderer,
     validatorFactory: validator,
   };

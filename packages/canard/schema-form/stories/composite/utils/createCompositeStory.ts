@@ -1,14 +1,29 @@
-import { type CompositeCase, type CompositePropStage, compositeCases, playScenario } from '@aileron/schema-form-scenarios';
 import type { StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
-import { type FormHandle, ShowError, ValidationMode, VirtualizationBackfill } from '../../../src';
+import {
+  type CompositeCase,
+  type CompositePropStage,
+  compositeCases,
+  playScenario,
+} from '@aileron/schema-form-scenarios';
 
+import {
+  ErrorVisibility,
+  type FormHandle,
+  ValidationMode,
+  VirtualizationBackfill,
+} from '../../../src';
 import { isVitestBrowserMode } from '../../components/play/isVitestBrowserMode';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
-import type { FeatureFormProps, FeaturePropStage, FeatureStory, FeatureStoryProps } from '../../features/components/FeatureStory';
+import type {
+  FeatureFormProps,
+  FeaturePropStage,
+  FeatureStory,
+  FeatureStoryProps,
+} from '../../features/components/FeatureStory';
 import { createHandleProbe } from '../../features/components/createHandleProbe';
 import { createHeldValidator } from './createHeldValidator';
 import { runStoryTail } from './runStoryTail';
@@ -22,9 +37,16 @@ export interface CompositeStoryOptions {
   /** Layout drawn inside the Form instead of the default group. */
   readonly layout?: FeatureStoryProps['layout'];
   /** Consumer checks before the shared steps. */
-  readonly before?: (context: { readonly canvasElement: HTMLElement; readonly handle: FormHandle }) => Promise<void>;
+  readonly before?: (context: {
+    readonly canvasElement: HTMLElement;
+    readonly handle: FormHandle;
+  }) => Promise<void>;
   /** Consumer checks after the tail. */
-  readonly after?: (context: { readonly canvasElement: HTMLElement; readonly handle: FormHandle; readonly submitted: readonly unknown[] }) => Promise<void>;
+  readonly after?: (context: {
+    readonly canvasElement: HTMLElement;
+    readonly handle: FormHandle;
+    readonly submitted: readonly unknown[];
+  }) => Promise<void>;
 }
 
 /**
@@ -39,12 +61,16 @@ export const findCompositeCase = (name: string): CompositeCase => {
 };
 
 /**
- * Map a showError name or boolean to the Form prop.
- * @param showError - Plain value from case data.
- * @returns The Form showError prop, or undefined when the data sets none.
+ * Map a errorVisibility name or boolean to the Form prop.
+ * @param errorVisibility - Plain value from case data.
+ * @returns The Form errorVisibility prop, or undefined when the data sets none.
  */
-const toShowError = (showError: CompositePropStage['showError']): FeatureFormProps['showError'] =>
-  typeof showError === 'string' ? ShowError[showError] : showError;
+const toErrorVisibility = (
+  errorVisibility: CompositePropStage['errorVisibility'],
+): FeatureFormProps['errorVisibility'] =>
+  typeof errorVisibility === 'string'
+    ? ErrorVisibility[errorVisibility]
+    : errorVisibility;
 
 /**
  * Map a case's mount props to Form props; the errors prop goes to the first prop stage instead.
@@ -53,10 +79,20 @@ const toShowError = (showError: CompositePropStage['showError']): FeatureFormPro
  */
 const toMountProps = (props: CompositeCase['props']): FeatureFormProps => ({
   ...(props?.context && { context: props.context }),
-  ...(props?.showError !== undefined && { showError: toShowError(props.showError) }),
-  ...(props?.validationMode && { validationMode: ValidationMode[props.validationMode] }),
+  ...(props?.errorVisibility !== undefined && {
+    errorVisibility: toErrorVisibility(props.errorVisibility),
+  }),
+  ...(props?.validationMode && {
+    validationMode: ValidationMode[props.validationMode],
+  }),
   ...(props?.virtualization && {
-    virtualization: { ...props.virtualization, backfill: props.virtualization.backfill === 'idle' ? VirtualizationBackfill.Idle : VirtualizationBackfill.None },
+    virtualization: {
+      ...props.virtualization,
+      backfill:
+        props.virtualization.backfill === 'idle'
+          ? VirtualizationBackfill.Idle
+          : VirtualizationBackfill.None,
+    },
   }),
 });
 
@@ -68,7 +104,9 @@ const toMountProps = (props: CompositeCase['props']): FeatureFormProps => ({
 const toStage = (stage: CompositePropStage): FeaturePropStage => ({
   ...('errors' in stage && { errors: stage.errors }),
   ...(stage.context && { context: stage.context }),
-  ...(stage.showError !== undefined && { showError: toShowError(stage.showError) }),
+  ...(stage.errorVisibility !== undefined && {
+    errorVisibility: toErrorVisibility(stage.errorVisibility),
+  }),
 });
 
 /**
@@ -77,11 +115,16 @@ const toStage = (stage: CompositePropStage): FeaturePropStage => ({
  * @param options - Consumer wiring around the shared steps.
  * @returns The story; tail prop stages accumulate, and the first stage is the mount.
  */
-export const createCompositeStory = (name: string, options: CompositeStoryOptions = {}): StoryObj<typeof FeatureStory> => {
+export const createCompositeStory = (
+  name: string,
+  options: CompositeStoryOptions = {},
+): StoryObj<typeof FeatureStory> => {
   const item = findCompositeCase(name);
   const probe = createHandleProbe();
   const submitted: unknown[] = [];
-  const held = item.tail?.some((step) => step.act === 'holdValidation') ? createHeldValidator() : undefined;
+  const held = item.tail?.some((step) => step.act === 'holdValidation')
+    ? createHeldValidator()
+    : undefined;
   const mountProps = toMountProps(item.props);
   // Stage 0 mounts without the errors prop so the shared steps see validator issues only; the tail opens on stage 1, which
   // adds the errors prop and the tailStart value that a reset then loads, as the jsdom tail mounts with them.
@@ -90,28 +133,59 @@ export const createCompositeStory = (name: string, options: CompositeStoryOption
     ...(item.tailStart !== undefined && { defaultValue: item.tailStart }),
   };
   const opensTail = Object.keys(tailOpening).length > 0;
-  const propStages = (item.tail ?? []).reduce<FeaturePropStage[]>((stages, step) => {
-    if (step.act !== 'props') return stages;
-    return [...stages, { ...stages.at(-1), ...toStage(step.stage) }];
-  }, opensTail ? [{}, tailOpening] : [{}]);
+  const propStages = (item.tail ?? []).reduce<FeaturePropStage[]>(
+    (stages, step) => {
+      if (step.act !== 'props') return stages;
+      return [...stages, { ...stages.at(-1), ...toStage(step.stage) }];
+    },
+    opensTail ? [{}, tailOpening] : [{}],
+  );
 
   return {
     args: {
-      scenario: item.scenario, onHandle: probe.onHandle, propStages, ...(options.layout && { layout: options.layout }),
-      formProps: { ...mountProps, ...(held && { validatorFactory: held.factory }), onSubmit: (value) => { submitted.push(value); }, ...options.formProps },
+      scenario: item.scenario,
+      onHandle: probe.onHandle,
+      propStages,
+      ...(options.layout && { layout: options.layout }),
+      formProps: {
+        ...mountProps,
+        ...(held && { validatorFactory: held.factory }),
+        onSubmit: (value) => {
+          submitted.push(value);
+        },
+        ...options.formProps,
+      },
     },
-    parameters: { docs: { description: { story: item.scenario.description } }, storyPanels: { tail: item.tail ?? [], tailStart: item.tailStart, mountProps: item.props } },
+    parameters: {
+      docs: { description: { story: item.scenario.description } },
+      storyPanels: {
+        tail: item.tail ?? [],
+        tailStart: item.tailStart,
+        mountProps: item.props,
+      },
+    },
     async play({ args, canvasElement, step }) {
-      if (options.cdpSkipReason && !isVitestBrowserMode()) return skipPlay(step, options.cdpSkipReason);
+      if (options.cdpSkipReason && !isVitestBrowserMode())
+        return skipPlay(step, options.cdpSkipReason);
       if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       const handle = await probe.handle(canvasElement);
       await options.before?.({ canvasElement, handle });
       await playScenario(args.scenario, canvasElement);
       if (opensTail) {
-        await userEvent.click(canvasElement.querySelector<HTMLButtonElement>('button[aria-label="Apply next form props"]')!);
+        await userEvent.click(
+          canvasElement.querySelector<HTMLButtonElement>(
+            'button[aria-label="Apply next form props"]',
+          )!,
+        );
         if (item.tailStart !== undefined) handle.reset();
       }
-      if (item.tail) await runStoryTail(item.tail, { handle, canvasElement, submitted, held });
+      if (item.tail)
+        await runStoryTail(item.tail, {
+          handle,
+          canvasElement,
+          submitted,
+          held,
+        });
       await options.after?.({ canvasElement, handle, submitted });
     },
   };

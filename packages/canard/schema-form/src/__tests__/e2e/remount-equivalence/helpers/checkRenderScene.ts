@@ -1,7 +1,7 @@
 import {
+  ErrorVisibility,
   type FieldNode,
   type JSONSchema,
-  ShowError,
   ValidationMode,
 } from '@/schema-form';
 import { compareObservations } from '@/schema-form/__tests__/fixtures/remountEquivalence/compareObservations';
@@ -32,7 +32,7 @@ export async function checkRenderScene(scene: RemountScene) {
     defaultValue: scene.initialValue,
     context: scene.context,
     validatorFactory: createSceneValidator(scene),
-    showError: ShowError.Always,
+    errorVisibility: ErrorVisibility.Always,
     validationMode: ValidationMode.OnChange,
   });
   let firstDegraded = -1;
@@ -54,7 +54,7 @@ export async function checkRenderScene(scene: RemountScene) {
           defaultValue: updated.handle.getValue(),
           context: updated.node('')!.context,
           validatorFactory: createSceneValidator(scene),
-          showError: ShowError.Always,
+          errorVisibility: ErrorVisibility.Always,
           validationMode: ValidationMode.OnChange,
         });
         try {

@@ -1,6 +1,6 @@
 # 292라운드 닫기 — 문서 정합 PR #373 병합(0d17c3080), 정돈-1 편집자 결정 둘, 대기열 51 개설
 
-2026-10-14. 290라운드로 배정된 fairy08이 SPECIFICATION·README·QUICK_REFERENCE·docs/README·스킬 지식 파일·문서 사이트 api-reference(en·ko)를 07 엔진 코드와 줄 단위로 대조해 어긋남 18건(실제로 틀린 12, 빠진 3, 낡은 표현 3)을 고친 PR #373을 열었다. 원장 관리자가 diff를 대조했고(소스 변경은 `ShowError.Touched` 주석 세 줄과 시험 주석 한 곳뿐, 세션 줄·옛 이름 0), 남은 조각 셋(api-reference.mdx, reset()의 첨부 파일·showError 초기화 문장, 시험 주석)을 같은 PR에 넣게 한 뒤 squash 병합했다. 같은 라운드에 정돈-1 진행 중 fixy08이 올린 결정 둘을 편집자 결정으로 적는다.
+2026-10-14. 290라운드로 배정된 fairy08이 SPECIFICATION·README·QUICK_REFERENCE·docs/README·스킬 지식 파일·문서 사이트 api-reference(en·ko)를 07 엔진 코드와 줄 단위로 대조해 어긋남 18건(실제로 틀린 12, 빠진 3, 낡은 표현 3)을 고친 PR #373을 열었다. 원장 관리자가 diff를 대조했고(소스 변경은 `ErrorVisibility.AfterTouch` 주석 세 줄과 시험 주석 한 곳뿐, 세션 줄·옛 이름 0), 남은 조각 셋(api-reference.mdx, reset()의 첨부 파일·errorVisibility 초기화 문장, 시험 주석)을 같은 PR에 넣게 한 뒤 squash 병합했다. 같은 라운드에 정돈-1 진행 중 fixy08이 올린 결정 둘을 편집자 결정으로 적는다.
 
 ### 292C-01 PR #373(문서 정합)을 0d17c3080으로 1.0.0-beta에 squash 병합했다 — 동작 변경 없음, 문서 18건과 주석 넷
 

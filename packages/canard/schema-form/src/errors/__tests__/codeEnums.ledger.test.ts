@@ -55,7 +55,7 @@ describe('form error codes', () => {
       .filter(
         (line) =>
           /^ {2}> \|/.test(line) &&
-          /\| `(error|warning)` \|/.test(line) &&
+          /\|\s*`(error|warning)`\s*\|/.test(line) &&
           !/^ {2}> \| \((제외|코드 없음)/.test(line) &&
           !line.includes('오늘에만') &&
           !line.includes('INJECT_TARGET_NOT_FOUND'),
@@ -95,7 +95,7 @@ describe('form error codes', () => {
       ([code, level]) => [RENAMED.get(code) ?? code, level] as const,
     );
     console.log(`ERROR-164 live code count: ${expected.length}`);
-    expect(expected).toHaveLength(60);
+    expect(expected).toHaveLength(61);
     const live = expected.filter(([code]) => !RETIRED.has(code));
     expect(Object.values(FormErrorCode)).toEqual([
       ...live.filter(([, level]) => level === 'error').map(([code]) => code),

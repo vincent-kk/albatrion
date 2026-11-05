@@ -23,6 +23,7 @@ import {
   retainValidationRoot,
   setContext,
 } from '@/schema-form/core';
+import type { SchemaFormError } from '@/schema-form/errors';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
@@ -45,26 +46,29 @@ import { RootNodeContext } from './RootNodeContext';
 const DEFAULT_VALIDATION_MODE =
   ValidationMode.OnChange | ValidationMode.OnRequest;
 
-/** Own root construction, committed load lifetimes, and synchronous handle replacement. */
+/** Own root construction and handle replacement; React commits props before recovery in layout-effect declaration order. */
 export const RootNodeContextProvider = ({
   children,
   binding,
   onReset,
+  errorVisibilityError,
   ...props
 }: PropsWithChildren<
   FormProps & {
     binding: RefObject<RootBinding>;
     onReset: () => void;
+    errorVisibilityError?: SchemaFormError;
   }
 >) => {
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
   const { inputMapError } = useFieldInputsContext();
-  const { showError } = useFieldRendererContext();
+  const { errorVisibility } = useFieldRendererContext();
   const current: RootLoadProps = {
     ...props,
     inputMapError,
+    errorVisibilityError,
     context,
     validator:
       props.validatorFactory ??
@@ -95,9 +99,10 @@ export const RootNodeContextProvider = ({
   );
   const getSnapshot = useMemo(() => () => store.load, [store]);
   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const reportedPolicyError = useRef<SchemaFormError>(undefined);
   useLayoutEffect(() => {
-    if (load.root) commitFieldNodeRevealPolicy(load.root, showError);
-  }, [load.root, showError]);
+    if (load.root) commitFieldNodeRevealPolicy(load.root, errorVisibility);
+  }, [load.root, errorVisibility]);
   if (reporter) {
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
@@ -160,18 +165,55 @@ export const RootNodeContextProvider = ({
       setContext(store.load.root, context);
     const requested = pending.current;
     pending.current = undefined;
-    if (previous.validator !== current.validator) reset(requested?.option);
+    const policyRecovered =
+      previous.errorVisibilityError && !errorVisibilityError;
+    const validatorChanged =
+      previous.validator !== current.validator ||
+      (policyRecovered && store.load.props.validator !== current.validator);
+    const policyBlockedLoad =
+      !store.load.root && store.load.props.errorVisibilityError;
+    if (!errorVisibilityError && !policyBlockedLoad && validatorChanged)
+      reset(requested?.option);
     else if (requested) {
       const { props: used, option } = requested;
       if (
         !isSameSchema(used.jsonSchema, current.jsonSchema) ||
         !isSameSchema(used.defaultValue, current.defaultValue) ||
-        !isSameSchema(used.errors, current.errors) ||
-        used.showError !== current.showError
+        !isSameSchema(used.errors, current.errors)
       )
         reset(option);
     }
   });
+
+  useLayoutEffect(() => {
+    if (
+      errorVisibilityError &&
+      reportedPolicyError.current !== errorVisibilityError &&
+      load.error !== errorVisibilityError
+    )
+      flushRootLoad({
+        props: committed.current,
+        root: store.load.root,
+        error: errorVisibilityError,
+        records: [],
+        prepared: true,
+        reporter,
+      });
+    reportedPolicyError.current = errorVisibilityError;
+    if (
+      !errorVisibilityError &&
+      !store.load.root &&
+      store.load.props.errorVisibilityError
+    ) {
+      store.load.retired = true;
+      reporter?.beginLoad();
+      store.load = createRootLoad(committed.current, reporter);
+      binding.current.root = store.load.root;
+      onReset();
+      schedule((version) => version + 1);
+      for (const listener of store.listeners) listener();
+    }
+  }, [errorVisibilityError, load.error, store, reporter, binding, onReset]);
 
   useLayoutEffect(() => {
     const root = load.root;

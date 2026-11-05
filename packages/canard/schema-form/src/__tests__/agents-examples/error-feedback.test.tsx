@@ -4,13 +4,13 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   FieldNodeState,
   Form,
   type FormHandle,
   type FormProps,
   type JSONSchema,
-  ShowError,
   ValidationMode,
   useChildFieldErrors,
 } from '@/schema-form';
@@ -41,7 +41,7 @@ const formatError: NonNullable<FormProps['formatError']> = (
  * @param props - Branch input supplied by Form, with its current children.
  * @returns Child inputs and a list of individually eligible messages. */
 function SectionInput({ node, ChildFields }: FieldInputProps) {
-  const { showErrors, formattedErrors } = useChildFieldErrors(node);
+  const { childErrorVisibleList, formattedErrors } = useChildFieldErrors(node);
   return (
     <section>
       {ChildFields.map((Child, index) => (
@@ -49,7 +49,7 @@ function SectionInput({ node, ChildFields }: FieldInputProps) {
       ))}
       <ul aria-label="Section errors">
         {formattedErrors.map((message, index) =>
-          showErrors[index] && message != null ? (
+          childErrorVisibleList[index] && message != null ? (
             <li key={node.children![index].path}>{message}</li>
           ) : null,
         )}
@@ -75,7 +75,7 @@ it('uses keyword, locale, default and original-message fallbacks without changin
       defaultValue="ab"
       errors={[issue]}
       validationMode={ValidationMode.None}
-      showError
+      errorVisibility={ErrorVisibility.Always}
       context={{ locale: 'en' }}
     >
       <Form.Error path="" />
@@ -90,7 +90,7 @@ it('uses keyword, locale, default and original-message fallbacks without changin
       defaultValue="ab"
       errors={[issue]}
       validationMode={ValidationMode.None}
-      showError
+      errorVisibility={ErrorVisibility.Always}
       context={{ locale: 'fr' }}
     >
       <Form.Error path="" />
@@ -112,7 +112,7 @@ it('uses keyword, locale, default and original-message fallbacks without changin
       defaultValue="ab"
       errors={[issue]}
       validationMode={ValidationMode.None}
-      showError
+      errorVisibility={ErrorVisibility.Always}
     >
       <Form.Error path="" />
     </Form>,
@@ -128,7 +128,7 @@ it('renders ReactNode formatter output using node and context', () => {
       formatError={formatError}
       context={{ heading: 'Please correct' }}
       validationMode={ValidationMode.None}
-      showError
+      errorVisibility={ErrorVisibility.Always}
       errors={[{ dataPath: '', keyword: 'minLength', message: 'Too short' }]}
     >
       <Form.Error path="" />
@@ -152,7 +152,7 @@ it('shows only eligible direct-child messages and follows cleared errors', () =>
         },
       }}
       validationMode={ValidationMode.None}
-      showError={ShowError.Touched}
+      errorVisibility={ErrorVisibility.AfterTouch}
       fieldInputMap={{ '': SectionInput }}
       errors={[
         { dataPath: '/first', message: 'First issue' },

@@ -106,11 +106,11 @@ it.each([
   },
 );
 
-it('ERROR-139 skips a field whose own ErrorVisible state is false', async () => {
+it('ERROR-139 skips a field whose own ErrorVisibility state is false', async () => {
   const form = await mountNativeSubmitForm();
   act(() =>
     form.ref.current!.findNode('/a')!.setState({
-      [FieldNodeState.ErrorVisible]: false,
+      [FieldNodeState.ErrorVisibility]: false,
     }),
   );
   await form.user.click(form.button());

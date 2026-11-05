@@ -21,14 +21,14 @@ export enum FieldNodeState {
   Edited = BIT_FLAG_00,
   /** Set once the user leaves this node's input (blur) for the first time. Cleared by reset, controls.resetInteraction and clearState. */
   Touched = BIT_FLAG_01,
-  /** Request validation messages for this node. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. Only the OnChange validation mode holds errors; other modes follow the live condition. */
-  ErrorVisible = BIT_FLAG_02,
+  /** Override display eligibility for this node: undefined inherits, true allows and false suppresses. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. Only the OnChange validation mode holds errors; other modes follow the live condition. */
+  ErrorVisibility = BIT_FLAG_02,
 }
 
 /** Typed bag of boolean-like UI state flags carried by a node. */
 export type NodeStateFlags = {
   [FieldNodeState.Edited]?: boolean;
   [FieldNodeState.Touched]?: boolean;
-  [FieldNodeState.ErrorVisible]?: boolean;
+  [FieldNodeState.ErrorVisibility]?: boolean;
   [key: string]: any;
 };

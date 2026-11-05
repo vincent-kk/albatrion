@@ -4,24 +4,24 @@
 
 ## 소유자 통과
 
-| 절 | 상태 | 날짜 |
-| --- | --- | --- |
-| 1.1 핵심 엔진과 렌더 계층의 경계 | 대기 | — |
-| 1.2 구독과 마운트 정착 | 대기 | — |
-| 1.3 입력 쓰기와 유효 스키마 | 대기 | — |
-| 1.4 입력 구성 요소의 값 계약 | 대기 | — |
-| 1.5 입력별 초기화와 수명 | 대기 | — |
-| 1.6 늦은 쓰기와 재생성 | 대기 | — |
-| 1.7 잔여 키 오류 표시 | 대기 | — |
-| 1.8 입력 종류 판정과 union 기본 입력 | 대기 | — |
-| 1.9 React 지원과 플러그인 호환성 | 대기 | — |
-| 2.1 공개 이름의 원칙 | 대기 | — |
-| 2.2 공개 표면의 자리 | 대기 | — |
-| 2.3 공개 쓰기와 분기 명령 | 대기 | — |
-| 2.4 값 읽기와 핸들 | 대기 | — |
-| 2.5 노드의 공개 멤버와 신원 | 대기 | — |
-| 2.6 값 형식 불일치의 공개 이름 | 대기 | — |
-| 2.7 이벤트와 기존 공개 계약 | 대기 | — |
+| 절                                   | 상태 | 날짜 |
+| ------------------------------------ | ---- | ---- |
+| 1.1 핵심 엔진과 렌더 계층의 경계     | 대기 | —    |
+| 1.2 구독과 마운트 정착               | 대기 | —    |
+| 1.3 입력 쓰기와 유효 스키마          | 대기 | —    |
+| 1.4 입력 구성 요소의 값 계약         | 대기 | —    |
+| 1.5 입력별 초기화와 수명             | 대기 | —    |
+| 1.6 늦은 쓰기와 재생성               | 대기 | —    |
+| 1.7 잔여 키 오류 표시                | 대기 | —    |
+| 1.8 입력 종류 판정과 union 기본 입력 | 대기 | —    |
+| 1.9 React 지원과 플러그인 호환성     | 대기 | —    |
+| 2.1 공개 이름의 원칙                 | 대기 | —    |
+| 2.2 공개 표면의 자리                 | 대기 | —    |
+| 2.3 공개 쓰기와 분기 명령            | 대기 | —    |
+| 2.4 값 읽기와 핸들                   | 대기 | —    |
+| 2.5 노드의 공개 멤버와 신원          | 대기 | —    |
+| 2.6 값 형식 불일치의 공개 이름       | 대기 | —    |
+| 2.7 이벤트와 기존 공개 계약          | 대기 | —    |
 
 ## 1. React 바인딩
 
@@ -152,7 +152,7 @@ Refresh 번호는 래퍼의 React 상태(오늘의 `useFormTypeInputControl`의 
 늦은 `onFileAttach`는 노드 쓰기가 아니라 reset을 넘어 남는 Form 층 첨부 파일 맵의 쓰기이므로(오늘의 `SchemaNodeInput.tsx:61-67`), 래퍼가 맵에 쓰기 전에 노드의 폐기 표시를 읽어 폐기된 노드면 버린다(컨테이너 입력 포함)(REACT-024).
 
 **더 강한 연산은 새 이름 없이 둘이다.**(REACT-025)
-`<Form key>`는 전체 재생성(스키마 교체, 에러 바운더리 복구, 가상화 재생)으로 문서화하고, 그것이 버리는 것(핸들 인스턴스, 외부 구독, 노드 참조, `showError` 등 Form 층 상태, 첨부 파일 맵, 가상화 기록, 에러 바운더리의 fallback 상태)을 함께 적는다(REACT-025).
+`<Form key>`는 전체 재생성(스키마 교체, 에러 바운더리 복구, 가상화 재생)으로 문서화하고, 그것이 버리는 것(핸들 인스턴스, 외부 구독, 노드 참조, `errorVisibility` 등 Form 층 상태, 첨부 파일 맵, 가상화 기록, 에러 바운더리의 fallback 상태)을 함께 적는다(REACT-025).
 루트 바운더리가 fallback을 그리는 동안은 `ref`가 `null`이라 reset을 부를 수 없으므로 복구는 `key`뿐이다(TEST-020의 H5, 실행 확인 전)(REACT-025, TEST-020).
 노드 명령 `remount`는 트리를 둔 채 그 노드의 UI만 다시 마운트한다(REACT-025).
 `FormHandle`에 더하는 명령 겉면은 모양이 무엇이든 PR-7이며, 그 모양(`focus(path)`·`select(path)`를 남길지 같은 모양 하나로 합칠지)은 PR-4 착수 전에 소유자가 정한다(REACT-025, EVENT-063, EVENT-073).
@@ -257,7 +257,7 @@ UI 플러그인 넷(antd5·antd6·antd-mobile·mui)과 패키지의 기본 정�
 
 ### 2.1 공개 이름의 원칙
 
-소유자 규칙 "전체 일관성이 유지된다면 가독성 높고 명료한, 줄임말이 아닌 풀 네임"과 저장소의 기존 관례(속성 `showError`와 열거형 `ShowError`의 짝, 칸 `state`·이벤트 `UpdateState`·콜백 `onStateChange`의 삼중 짝, 쓸 수 있는 칸 `x`에는 `setX`)로 만든 제안이다(소유자 답(`reviews/round-7-convergence.md:144`), 편집자 결정(8라운드 이름 짓기, `06-conclusions.md:324`; 저장소 관례의 짝))(SURFACE-023). 소유자(7라운드): "이름은 기존 프로젝트의 네이밍 규칙에 맞게 정해도 된다 — 전체 일관성만 유지된다면 가독성 높고 명료한, 줄임말이 아닌 풀 네임."(SURFACE-023).
+소유자 규칙 "전체 일관성이 유지된다면 가독성 높고 명료한, 줄임말이 아닌 풀 네임"과 저장소의 기존 관례(속성 `errorVisibility`와 열거형 `ErrorVisibility`의 짝, 칸 `state`·이벤트 `UpdateState`·콜백 `onStateChange`의 삼중 짝, 쓸 수 있는 칸 `x`에는 `setX`)로 만든 제안이다(소유자 답(`reviews/round-7-convergence.md:144`), 편집자 결정(8라운드 이름 짓기, `06-conclusions.md:324`; 저장소 관례의 짝))(SURFACE-023). 소유자(7라운드): "이름은 기존 프로젝트의 네이밍 규칙에 맞게 정해도 된다 — 전체 일관성만 유지된다면 가독성 높고 명료한, 줄임말이 아닌 풀 네임."(SURFACE-023).
 
 `FormType…`은 노드 단위 조각과 그것을 그리는 것이고 플러그인이 등록하며 Form 속성이 덮고 스키마 `presentation`이 노드별로 고르거나 props를 준다(SURFACE-016). `…Renderer` 접미는 그리는 것이다(SURFACE-017). `Form.X`는 `path`를 받는 합성 API이고 props는 `FormXProps`다(SURFACE-018). 구성 요소를 담는 키는 파스칼(React의 구성 요소 값 관례)이고 props 객체 키는 그 props 타입의 이름을 그대로 쓴다(키와 타입의 1:1 연결)(SURFACE-019).
 
@@ -271,22 +271,22 @@ UI 플러그인 넷(antd5·antd6·antd-mobile·mui)과 패키지의 기본 정�
 
 (SURFACE-001, SURFACE-002, SURFACE-003, SURFACE-004, SURFACE-005, SURFACE-006, SURFACE-007, SURFACE-008, SURFACE-009, SURFACE-010, SURFACE-011, SURFACE-012, SURFACE-013, SURFACE-014, VALUE-029, NODE-041, BLUEPRINT-035, SURFACE-058, SURFACE-053, EVENT-063, WRITE-085, SURFACE-055, NODE-043, SURFACE-054, EVENT-073)
 
-| 자리 | 이름 | 뜻 |
-| --- | --- | --- |
-| 스키마 그룹 | `controls`, `options`, `presentation` | CONTROLS-001. 맨 키는 JSON Schema의 것 |
-| 렌더 계층(노드 단위) | `FormTypeInput`과 정의 목록 `formTypeInputDefinitions`. 렌더러 넷 `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`(넷 모두 플러그인 키이자 같은 이름의 Form 속성. 오늘의 `FormGroup`·`FormLabel`·`FormInput`·`FormError`와 `CustomFormTypeRenderer`). 공통 props `FormTypeRendererProps`, 문맥 `FormTypeRendererContext` | 15라운드 |
-| 합성 API | `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`·`Form.Render`와 props `FormGroupProps`·`FormLabelProps`·`FormInputProps`·`FormErrorProps`·`FormRenderProps`. `path`를 받아 그 노드의 일부를 그리며 `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`는 같은 이름의 `FormTypeXRenderer`를 부르고 `Form.Render`는 소비자가 직접 그린다 | 그대로 |
-| 쓰기 옵션 | `SetValueOption.Overwrite`(기본), `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites` | WRITE-015 |
-| 쓰기 | `setValue(value 또는 updater, option?)`, `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015), 배열 `push`·`pop`·`update`·`remove`·`clear` | `setSelectedBranch`는 없다 |
-| 값 읽기 | `value`(합성 값), `outputValue`(방출 값, 옛 `normalizedValue`), 노드마다 getter `inactiveValues` | `FormHandle.getValue()`는 루트의 `outputValue` |
-| 진단 | `diagnostics`, 이벤트 `UpdateDiagnostics`, Form 속성 `onDiagnosticsChange` | EVENT-043 |
-| 배치 | `batch(fn)` | EVENT-013 |
-| 경로 조회 | `find(path)`, `findNodes(path)` | 터미널 아래 경로는 노드 없음. 노드 메서드 `findAll`은 `findNodes`로 바뀐다(LANDING-049) |
-| 노드 | 상속 없는 단일 클래스 `SchemaNode`. 식별 게터 `type`과 `strategy`(`'branch'` 또는 `'terminal'`, 옛 `group`). 가드 열(`isBranchNode`·`isTerminalNode`는 `strategy`를 보며 이름을 유지한다. `isUnionNode`가 더해져 가드는 열이다) | NODE-002. 필드 `behavior`·`runtime`은 공개 형에 싣지 않는다. 멤버 목록은 공개 겉면의 `DETAIL.md`와 멤버 목록 시험이 정하며, 루트 전용 넷·명령(종류를 매개변수로 받는 메서드 하나)·`defaultValue`·`resetSubtree`·`context`는 남고 `subnodes`·`schemaPath`·`key`와 임의 사건을 내는 공개 `publish`는 빠지되, 그 메서드의 이름 후보에 명령 사건에 한정한 `publish` 부활이 들며 이름은 PR-4 착수 전에 소유자가 정한다 |
-| 명령 | `focus`, `select`, `refresh`, `remount` | 원본을 쓰지 않는다 |
-| Form 속성(렌더 계층) | `readOnly`, `disabled`(전체 잠금, 참일 때만), `unsetOnInactive`(나감 정책의 포괄 층), `disableAutomaticWrites`(억제 기본값), `onError`(검증 결과를 뺀 폼 내부의 오류와 경고를 같은 모양의 기록으로 받는 관찰자, ERROR-094. 검증 결과는 `onValidate`. 가칭 `onListenerError`를 흡수한다. `throwOnBudgetExceeded`는 없다, 17라운드 소유자 답 R17-1 나), `onDiagnosticsChange`, `validatorFactory`(그 폼만의 검증기 인스턴스, `compile` + `compileGuard`) | CONTROLS-045, WRITE-031, WRITE-015, VALIDATE-040 |
-| 검증기 플러그인 계약 | `compile`, `compileGuard`, `rejectedKey` | VALIDATE-015, FRAGMENT-020 |
-| 오류 클래스 | `JSONSchemaError`(throw), `SchemaFormError`, `ValidationError`, `UnhandledError`, 인터페이스 `ValidationIssue`, 기록 형 `FormErrorRecord`와 코드 형 `FormErrorCode`(가칭. 코드 목록은 공개 계약, ERROR-164) | ERROR-065 |
+| 자리                 | 이름                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 뜻                                                                                                                                                                                                                                                                                                                                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 스키마 그룹          | `controls`, `options`, `presentation`                                                                                                                                                                                                                                                                                                                                                                                                                  | CONTROLS-001. 맨 키는 JSON Schema의 것                                                                                                                                                                                                                                                                                                                                                                            |
+| 렌더 계층(노드 단위) | `FormTypeInput`과 정의 목록 `formTypeInputDefinitions`. 렌더러 넷 `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`(넷 모두 플러그인 키이자 같은 이름의 Form 속성. 오늘의 `FormGroup`·`FormLabel`·`FormInput`·`FormError`와 `CustomFormTypeRenderer`). 공통 props `FormTypeRendererProps`, 문맥 `FormTypeRendererContext`                                                                                | 15라운드                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 합성 API             | `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`·`Form.Render`와 props `FormGroupProps`·`FormLabelProps`·`FormInputProps`·`FormErrorProps`·`FormRenderProps`. `path`를 받아 그 노드의 일부를 그리며 `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`는 같은 이름의 `FormTypeXRenderer`를 부르고 `Form.Render`는 소비자가 직접 그린다                                                                                                             | 그대로                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 쓰기 옵션            | `SetValueOption.Overwrite`(기본), `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`                                                                                                                                                                                                                                                                                                                                                           | WRITE-015                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 쓰기                 | `setValue(value 또는 updater, option?)`, `FormHandle.reset(option?)`(억제 비트 둘만, WRITE-015), 배열 `push`·`pop`·`update`·`remove`·`clear`                                                                                                                                                                                                                                                                                                           | `setSelectedBranch`는 없다                                                                                                                                                                                                                                                                                                                                                                                        |
+| 값 읽기              | `value`(합성 값), `outputValue`(방출 값, 옛 `normalizedValue`), 노드마다 getter `inactiveValues`                                                                                                                                                                                                                                                                                                                                                       | `FormHandle.getValue()`는 루트의 `outputValue`                                                                                                                                                                                                                                                                                                                                                                    |
+| 진단                 | `diagnostics`, 이벤트 `UpdateDiagnostics`, Form 속성 `onDiagnosticsChange`                                                                                                                                                                                                                                                                                                                                                                             | EVENT-043                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 배치                 | `batch(fn)`                                                                                                                                                                                                                                                                                                                                                                                                                                            | EVENT-013                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 경로 조회            | `find(path)`, `findNodes(path)`                                                                                                                                                                                                                                                                                                                                                                                                                        | 터미널 아래 경로는 노드 없음. 노드 메서드 `findAll`은 `findNodes`로 바뀐다(LANDING-049)                                                                                                                                                                                                                                                                                                                           |
+| 노드                 | 상속 없는 단일 클래스 `SchemaNode`. 식별 게터 `type`과 `strategy`(`'branch'` 또는 `'terminal'`, 옛 `group`). 가드 열(`isBranchNode`·`isTerminalNode`는 `strategy`를 보며 이름을 유지한다. `isUnionNode`가 더해져 가드는 열이다)                                                                                                                                                                                                                        | NODE-002. 필드 `behavior`·`runtime`은 공개 형에 싣지 않는다. 멤버 목록은 공개 겉면의 `DETAIL.md`와 멤버 목록 시험이 정하며, 루트 전용 넷·명령(종류를 매개변수로 받는 메서드 하나)·`defaultValue`·`resetSubtree`·`context`는 남고 `subnodes`·`schemaPath`·`key`와 임의 사건을 내는 공개 `publish`는 빠지되, 그 메서드의 이름 후보에 명령 사건에 한정한 `publish` 부활이 들며 이름은 PR-4 착수 전에 소유자가 정한다 |
+| 명령                 | `focus`, `select`, `refresh`, `remount`                                                                                                                                                                                                                                                                                                                                                                                                                | 원본을 쓰지 않는다                                                                                                                                                                                                                                                                                                                                                                                                |
+| Form 속성(렌더 계층) | `readOnly`, `disabled`(전체 잠금, 참일 때만), `unsetOnInactive`(나감 정책의 포괄 층), `disableAutomaticWrites`(억제 기본값), `onError`(검증 결과를 뺀 폼 내부의 오류와 경고를 같은 모양의 기록으로 받는 관찰자, ERROR-094. 검증 결과는 `onValidate`. 가칭 `onListenerError`를 흡수한다. `throwOnBudgetExceeded`는 없다, 17라운드 소유자 답 R17-1 나), `onDiagnosticsChange`, `validatorFactory`(그 폼만의 검증기 인스턴스, `compile` + `compileGuard`) | CONTROLS-045, WRITE-031, WRITE-015, VALIDATE-040                                                                                                                                                                                                                                                                                                                                                                  |
+| 검증기 플러그인 계약 | `compile`, `compileGuard`, `rejectedKey`                                                                                                                                                                                                                                                                                                                                                                                                               | VALIDATE-015, FRAGMENT-020                                                                                                                                                                                                                                                                                                                                                                                        |
+| 오류 클래스          | `JSONSchemaError`(throw), `SchemaFormError`, `ValidationError`, `UnhandledError`, 인터페이스 `ValidationIssue`, 기록 형 `FormErrorRecord`와 코드 형 `FormErrorCode`(가칭. 코드 목록은 공개 계약, ERROR-164)                                                                                                                                                                                                                                            | ERROR-065                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 그룹 이름은 명사이고 수는 뜻을 따른다(SURFACE-001). 셀 수 있는 항목의 지도는 복수(`controls`, `options`), 하나의 면은 단수(`presentation`)다(SURFACE-001).
 
@@ -320,16 +320,16 @@ UI 플러그인 넷(antd5·antd6·antd-mobile·mui)과 패키지의 기본 정�
 
 (SURFACE-039, WRITE-015, WRITE-078, WRITE-090, WRITE-097, WRITE-100)
 
-| 대상 | 이름 | 비고 |
-| --- | --- | --- |
+| 대상                             | 이름                                                                                                                 | 비고                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 로드 시 예약 층의 자동 쓰기 억제 | `SetValueOption.DisableAutomaticWrites` / `SetValueOption.EnableAutomaticWrites`, Form 속성 `disableAutomaticWrites` | 06의 `DisableSchemaDefaults`를 대체. 오늘 내부 플래그 `Automatic`("폼이 스스로 쓴 값")의 어휘. 범위는 그 호출(로드와 전체 교체 쓰기, `Merge`)이 일으킨 예약 층의 쓰기 전부(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이고 로드 값 자체는 막지 않는다. 포커스 아웃 `trim`이 자른 값의 쓰기는 Form 속성으로 억제되는 자동 쓰기다. `controls.active`의 방출 제외는 쓰기가 아니라 투영이므로 범위 밖이고, 정책이 참으로 정해진 노드의 나감 비움은 범위 안이다. 둘 다 없으면 Form 속성을 따르고 둘 다 주면 억제가 이긴다 |
 
 `setValue(V)`는 로드가 아니라 전체 교체 쓰기이며, 억제 비트의 범위는 그 호출(로드와 전체 교체 쓰기, `Merge`)이 일으킨 예약 층의 쓰기 전부다(SURFACE-039, WRITE-090, WRITE-097). 포커스 아웃 `trim`이 자른 값의 쓰기도 자동 쓰기이고 억제 비트의 대상이다(SURFACE-039, WRITE-078). 다만 이 셀의 목록은 그 호출이 일으킨 쓰기이고, 뒤이은 포커스 아웃의 `trim`은 그 호출이 일으킨 것이 아니어서 호출 수준 비트에는 들지 않으며 Form 속성 `disableAutomaticWrites`에만 든다(SURFACE-039, WRITE-100). 이 범위는 문서 주석에 적는다(SURFACE-039).
 
 (SURFACE-045)
 
-| 06 | 판정 | 내용 |
-| --- | --- | --- |
+| 06                | 판정   | 내용                                                                                                                                                                                        |
+| ----------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | N2 분기 선택 명령 | 지워짐 | `setSelectedBranch`, `selectedBranch`, `activeBranch` 모두 사라진다. 오늘의 `oneOfIndex`·`anyOfIndices`도 대체물 없이 사라진다(분기의 필드는 노드이고 활성 여부는 노드의 `active`로 읽는다) |
 
 `scope`, `variant`, `oneOfIndex`, `anyOfIndices`, `initialized`는 공개 겉면에서 빠진다(SURFACE-045). 오늘 탐색이 `variant`에 기대는 점은 NODE-043이다(SURFACE-045, NODE-043).

@@ -13,6 +13,7 @@ import { afterEach, expect, inject, it, vi } from 'vitest';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { ValidationMode } from '@/schema-form/core';
 import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFormContext';
+import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 import type { FormHandle } from '../components/FormCore';
@@ -83,13 +84,15 @@ it
   (name) => expectDroppedVerdict(name, { legacyRoot: true }),
 );
 
-it('ERROR-139 FormProvider showError turned false during validation: no reveal, nothing reported', async () => {
-  let setPolicy!: (value: boolean | undefined) => void;
+it('ERROR-139 FormProvider errorVisibility turned false during validation: no reveal, nothing reported', async () => {
+  let setPolicy!: (value: ErrorVisibility | undefined) => void;
   const Policy = ({ children }: { children: ReactNode }) => {
-    const [showError, set] = useState<boolean | undefined>(undefined);
+    const [errorVisibility, set] = useState<ErrorVisibility | undefined>(
+      undefined,
+    );
     setPolicy = set;
     return (
-      <ExternalFormContextProvider showError={showError}>
+      <ExternalFormContextProvider errorVisibility={errorVisibility}>
         {children}
       </ExternalFormContextProvider>
     );
@@ -101,7 +104,7 @@ it('ERROR-139 FormProvider showError turned false during validation: no reveal, 
   form.validator.hold();
   await form.user.click(form.button());
   await waitFor(() => expect(form.validator.heldCount()).toBe(1));
-  act(() => setPolicy(false));
+  act(() => setPolicy(ErrorVisibility.Never));
   await act(async () => form.validator.release());
   await awaitNativeSubmitVerdict(validate);
   await settleValidation(() => form.ref.current?.node);
@@ -111,18 +114,18 @@ it('ERROR-139 FormProvider showError turned false during validation: no reveal, 
 });
 
 it('ERROR-139 a discarded render that turns the policy on is not read: no reveal, nothing reported', async () => {
-  let setPolicy!: (value: boolean) => void;
+  let setPolicy!: (value: ErrorVisibility) => void;
   const never = new Promise<never>(() => undefined);
   const Suspender = ({ on }: { on: boolean }) => {
     if (on) throw never;
     return null;
   };
   const Policy = ({ children }: { children: ReactNode }) => {
-    const [showError, set] = useState(false);
+    const [errorVisibility, set] = useState(ErrorVisibility.Never);
     setPolicy = set;
     return (
-      <ExternalFormContextProvider showError={showError}>
-        <Suspender on={showError} />
+      <ExternalFormContextProvider errorVisibility={errorVisibility}>
+        <Suspender on={errorVisibility === ErrorVisibility.Always} />
         {children}
       </ExternalFormContextProvider>
     );
@@ -138,7 +141,9 @@ it('ERROR-139 a discarded render that turns the policy on is not read: no reveal
   form.validator.hold();
   await form.user.click(form.button());
   await waitFor(() => expect(form.validator.heldCount()).toBe(1));
-  await act(async () => startTransition(() => setPolicy(true)));
+  await act(async () =>
+    startTransition(() => setPolicy(ErrorVisibility.Always)),
+  );
   expect(form.view.queryByText('fallback')).toBeNull();
   await act(async () => form.validator.release());
   await awaitNativeSubmitVerdict(validate);
@@ -188,5 +193,46 @@ it.skipIf(inject('reactMajor') !== '18')(
     expect(focusRequests(), 'Focus requests on the replaced /a').toBe(0);
     await settleValidation(() => handle.current?.node);
     expect(document.activeElement).not.toBe(form.field('/a'));
+  },
+);
+
+it.skipIf(inject('reactMajor') !== '18')(
+  'ERROR-139 React 18 legacy root rechecks Never after the reveal commit before requesting focus',
+  async () => {
+    let setPolicy!: (policy: ErrorVisibility) => void;
+    let armed = false;
+    const Policy = ({ children }: { children: ReactNode }) => {
+      const [policy, set] = useState(ErrorVisibility.AfterTouch);
+      setPolicy = set;
+      return (
+        <ExternalFormContextProvider errorVisibility={policy}>
+          {children}
+        </ExternalFormContextProvider>
+      );
+    };
+    const Renderer = ({ Input, errorVisible }: FieldRendererProps) => {
+      useLayoutEffect(() => {
+        if (!armed || !errorVisible) return;
+        armed = false;
+        setPolicy(ErrorVisibility.Never);
+      }, [errorVisible]);
+      return <Input />;
+    };
+    const form = await mountNativeSubmitForm({
+      legacyRoot: true,
+      wrap: (node) => <Policy>{node}</Policy>,
+      formProps: {
+        FieldRenderer: Renderer,
+        validationMode: ValidationMode.OnRequest,
+      },
+    });
+    const validate = vi.spyOn(form.ref.current!.node!, 'validate');
+    const focusRequests = form.spyFocusRequests('/a');
+    armed = true;
+    await form.user.click(form.button());
+    await awaitNativeSubmitVerdict(validate);
+    expect(armed).toBe(false);
+    expect(focusRequests()).toBe(0);
+    form.expectNothingReported();
   },
 );

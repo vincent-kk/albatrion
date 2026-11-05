@@ -7,6 +7,7 @@
 저장소: {repo}, 패키지 `packages/canard/schema-form/`. 설계 문서는 `architecture/`(커밋 165ee8948과 작업 트리의 `reviews/round-18-*` 파일). 읽기 전용이다. 저장소의 어떤 파일도 만들거나 고치거나 지우지 마라. 실험이 필요하면 `{scratch}/s1swarm/` 아래에서만 한다.
 
 ## 이미 정해진 것(소유자 답, 바꿀 수 없음. 원문은 `architecture/reviews/round-18-owner-answers.md`)
+
 - S1: "node 는 각자의 타입에 맞는 parse 함수를 가져야 합니다. 지금처럼요. 이건 값의 조작이라기보단, json or JS 의 자동형변환을 통제 가능하게 구현하는 방향이라고 보아도 좋습니다."
 - S1 이어서(나): parse는 뜻이 그대로인 변환만 한다(ajv `coerceTypes` 규칙 수준). 오늘 파서의 문자 제거, 정수 자르기, 빈 값 치환(`""`, `[]`, `{}`), 불리언 진릿값 변환은 뺀다. 소유자: "이게 정확히 내가 원하는 기능이에요. 그 이상을 하는건 나도 원치 않습니다."
 - R17-1(나): "나 허용. 망가진 값을 올리는게 더 위험하겠다." 정착 오류는 모든 환경에서 사슬 끝에서 던지고 `degraded` 동안 제출을 거부한다(`architecture/adr/0014-error-policy.md` §2·§5).
@@ -15,17 +16,20 @@
 - 오류 채널: `onError(record)`는 검증 결과를 뺀 폼 내부의 오류와 경고를 받는 관찰자다(ADR 0014 §3). 세 층: 오류, 경고, 검증 결과(노드 `errors`).
 
 ## 소유자가 이번에 제기한 우려(이번 검토의 핵심)
+
 - "node.value 는 제어컴포넌트에서 상태로 그대로 쓰인단말이지. 그래서 이걸 바꿔버리면, 제어컴포넌트 동작을 예측하기 어려워질걸?"
 - "값을 가지고 있는데 빈 값을 표현하는것도 좀 위험할거같아."
 - "만약 validator 가 연결되지 않은 경우에는? 그 경우에는 진짜 form 에러를 받고(onError로), 값이 비워져야 하는건가?"
 - "사용성에 지대한 변화가 일어날 수 있고."
 
 ## 사실(실행으로 확인됨)
+
 - 오늘의 파서 다섯(`src/core/parsers/`)과 JS 변환, ajv 8.17.1 `coerceTypes`의 비교, 노드 단위 실행: `architecture/reviews/raw-round18-s1-parse-check.md`. 오늘은 모든 쓰기(로드, `setValue`, 입력, 전파, `derived`, `injectTo`, reset)가 `__parseValue__`를 지난다. 변환 실패는 `NaN`·`""`·`[]`·`{}`가 되고, `omitEmpty` 때문에 부모에서 없음이 되어 형 에러가 `required`로 바뀌거나 사라진다.
 - ajv는 변환하지 못하면 값을 그대로 두고 형 에러를 낸다. 우리 ajv 플러그인 기본 설정(`allErrors: true, strictSchema: false`)에서는 `strictNumbers`가 켜져 `NaN`과 `Infinity`가 "must be number"로 걸린다. `strict: false`로 만든 검증기에서는 `NaN`이 통과한다. `JSON.stringify({ n: NaN })`은 `{"n":null}`이다.
 - 오늘 기본 수 입력(`src/formTypeDefinitions/FormTypeInputNumber.tsx`)은 비제어(`defaultValue`)이고 `event.target.valueAsNumber`를 보낸다(빈 칸이나 치다 만 글자는 `NaN`). UI 플러그인(`packages/canard/schema-form-*-plugin`)의 입력은 제어 컴포넌트로 `value`를 쓰는 것이 많다. 확인해서 근거로 써라.
 
 ## 후보(이것만으로 한정하지 않는다)
+
 - 가. `NaN` 같은 대체 값(오늘). 수 노드만 가능하고 다른 타입에는 대체 값이 없다.
 - 나. 그대로 둔다(ajv). 노드는 받은 입력을 그대로 들고 `value`도 그것을 돌려준다. 형 에러는 검증기가 낸다.
 - 다. 그대로 두되 읽기를 가른다. 저장은 입력, `value`는 자기 타입이나 `undefined`, 입력과 에러 여부는 따로 읽는다. 소유자가 위험하다고 본 안이다.
@@ -34,10 +38,12 @@
 - 바. 그 밖의 안.
 
 ## 모든 안을 같은 기준과 장면으로 평가한다
+
 기준: C1 저장=보임=타입(제어 컴포넌트의 예측 가능성), C2 조용한 변경 없음, C3 오류가 보임(검증기 있음), C4 오류가 보임(검증기 없음), C5 망가진 값을 올리지 않음, C6 원래 입력의 보존, C7 공개 형의 정직함, C8 모든 노드 종류에 같은 규칙(수·문자열·불리언·배열·객체·가상·터미널 객체), C9 사용자 입력 경험(치다 만 글자, IME, 제어와 비제어), C10 새 개념과 표면의 비용.
 장면: S-a 서버 로드 `{ age: "abc" }`(수 노드), 검증기 있음과 없음. S-b 호출자 `setValue("abc")`. S-c `derived`가 문자열을 냄. S-d 제어 입력(예: antd `InputNumber`)에서 사용자가 `-`를 치는 중. S-e 비제어 기본 수 입력의 빈 칸(`valueAsNumber`가 `NaN`). S-f 불리언 노드에 `"abc"`, 배열 노드에 `"a,b"`, 객체 노드에 `"x"`. S-g nullable 수 노드에 `null`, nullable 아닌 수 노드에 `null`. S-h reset과 다시 로드.
 
 ## 규칙
+
 - 규칙 1: 소유자 답은 고정이다. 소유자 답과 글자 그대로 부딪히는 결론은 결론이 아니라 소유자 질문이 된다.
 - 규칙 2: 원리로 정할 수 없고, 순위가 정해지지 않은 가치를 맞바꾸며, 사용자에게 보이는 결과를 바꾸는 것만 소유자 질문이 된다.
 - 규칙 3: 오류는 삼키지 않는다.
@@ -48,6 +54,7 @@
 **권고.** 권고: 나′입니다. 목록에 적은 변환으로 바꿀 수 있는 값만 바꿉니다. 바꿀 수 없는 값은 받은 그대로 들고, 그대로 보여 주고, 그대로 방출합니다. 값을 비우지도, 대체하지도, 쓰기를 거부하지도 않습니다. 형 불일치는 검증기가 있으면 검증 결과로, 없으면 경고 기록으로 알립니다. 입력 구성 요소는 치다 만 글자를 스스로 들고 있어야 하며, 형이 아닌 값을 유효한 상태처럼 그리지 않습니다.
 
 이 권고는 소유자께서 S1 이어서에서 직접 물으신 남은 물음(`architecture/reviews/round-18-owner-answers.md:8`, 반영 칸 '답 대기')에 대한 답입니다. 내용은 소유자께서 처음 떠올리신 안('변환 가능한 값만 변환하고, 안되면 입력값을 그냥 전달해서 need to number 같은 에러를 보여주면')을 다듬은 것입니다. 네 제안이 모두 같은 핵심을 권했습니다. 두 공격(사용성과 React, 무결성과 오류)도 핵심을 무너뜨리지 못했고 세부만 고쳤습니다. 고정된 소유자 답을 글자 그대로 모두 지키는 후보는 이것 하나입니다.
+
 - 가(`NaN`)는 받은 값을 고치므로 ADR 0013 결정 1(`architecture/adr/0013-core-does-not-rewrite-values.md:29`), 그리고 S1 이어서의 '그 이상을 하는건 원치 않습니다'와 부딪힙니다.
 - 라(거부)는 '입력을 막지 않는다'(`:29`), 그리고 통보3(`architecture/adr/0014-error-policy.md:213`)과 부딪힙니다.
 - 다(읽기 가르기)는 소유자께서 위험하다고 하신 모양 그대로입니다.
@@ -55,6 +62,7 @@
 잃는 것은 소유자께서 짚으신 '노드가 자기 타입의 값을 소유한다는 보장'입니다. 이 보장이 '변환할 수 있을 때만'으로 줄어듭니다. 다만 이 보장은 오늘도 참이 아닙니다. 오늘의 `NaN`은 JSON의 수가 아니어서 직렬화하면 `null`이 됩니다. 수 밖의 노드는 대체 값이 없어서 `""`·`[]`·`{}`·`true`로 뜻을 바꿔 왔습니다. 그 결과 형 에러가 `required`로 바뀌거나 사라졌습니다(`architecture/reviews/raw-round18-s1-parse-check.md:88`, `:94`, `:118`). 가지 노드에서는 같은 거래를 이미 받아들였습니다(`adr/0013-core-does-not-rewrite-values.md:91`, `08-design-a-to-z.md:152`, `:274`).
 
 장면별 결과입니다.
+
 - S-a 서버 로드 `{ age: "abc" }`: 원본, `value`, 방출이 모두 `"abc"`입니다.
   - 검증기 있음: `/age`에 "must be number"가 나고, 제출은 `ValidationError`로 거부됩니다. `onError`에는 가지 않습니다.
   - 검증기 없음: 트리마다 한 번 `VALIDATOR_MISSING`, 경로마다 로드당 한 번 가칭 `VALUE_TYPE_MISMATCH` 경고가 갑니다. 제출은 거부하지 않고, 서버는 `"abc"`를 받습니다.
@@ -68,6 +76,7 @@
 - S-h reset과 다시 로드: 로드와 같습니다. 깨끗한 레코드를 로드하면 앞 레코드의 값이 남지 않습니다. 경고의 중복 막기 집합이 로드마다 비워지므로, 불일치가 남아 있으면 경고가 한 번 다시 갑니다.
 
 이 권고는 네 가지 조건과 함께 가야 합니다.
+
 1. 변환 목록을 ajv보다 좁게, 이름을 붙여 적습니다. ajv는 공백만 있는 문자열을 0으로, `"0x10"`을 16으로, `"Infinity"`를 무한대로 바꾸고, 큰 정수 문자열은 정밀도를 잃습니다(`{scratch}/s1swarm/critic-integrity/coerce.cjs`로 다시 실행해 확인).
 2. `omitEmpty`의 빈 값은 형으로 판정합니다. `NumberNode.ts:120`이 가져오지 않은 전역 `isNaN`을 써서 `"abc"`까지 방출에서 뺍니다.
 3. 입력 구성 요소 계약을 둡니다.
@@ -76,9 +85,11 @@
 확신도 '높음'은 핵심 규칙과 검증기 없음에 대한 답에 대한 것입니다. 입력 구성 요소 쪽 보완(antd의 포커스 이탈 뒤 표시, 실제 브라우저의 `badInput`)은 jsdom 실험과 코드 읽기로만 확인했습니다. PR-7에서 실행으로 확인해야 합니다.
 
 **규칙.** 규칙(나′)
+
 1. 규칙은 하나이고 출처와 상관없이 같습니다. 노드에 드는 모든 쓰기는 그 노드 동작 행의 `interpret` 칸(`architecture/09-landing-and-test-strategy.md:105`)을 한 번 지납니다. 로드, 공개 `setValue`, 사용자 입력, 부모에서 자식으로의 전파, `controls.derived`·`controls.injectTo`·채움 같은 자동 쓰기, reset이 모두 그렇습니다. `interpret`는 순수하고, 던지지 않고, 모든 입력에서 값을 돌려주며, 멱등입니다(`interpret(interpret(x))`는 `interpret(x)`와 같습니다).
 
 2. 변환 목록입니다. 이것만 바꾸며, ajv `coerceTypes`의 부분집합입니다.
+
 - 수 노드: 문자열이고, 앞뒤 공백을 뺀 나머지가 비어 있지 않은 JSON 수 표기(부호 `-`, 10진 정수부, 소수부와 지수부는 있어도 되고 없어도 됨)일 때 수로 바꿉니다. 결과가 유한해야 합니다. 소수부와 지수부가 없는 정수 표기라면 결과가 안전한 정수 범위 안에 있어야 합니다.
 - 정수 노드: 위 조건에 더해 결과가 안전한 정수일 때만 바꿉니다. 이미 수인 12.7은 자르지 않습니다.
 - 문자열 노드: 유한한 수는 `String(n)`으로, 불리언은 `"true"`·`"false"`로 바꿉니다.
@@ -86,6 +97,7 @@
 - 이미 자기 형인 값은 그대로 둡니다. 공백 자르기는 `options.trim`의 `finishInput` 칸에만 남습니다.
 
 3. ajv와 이렇게 다르며, 이 차이에는 이름을 붙여 적습니다. 다음은 뜻이 바뀌므로 하지 않습니다.
+
 - `null`을 0·`""`·`false`로 바꾸기. S1 이어서가 뺀 빈 값 치환과 진릿값 변환입니다.
 - 빈 문자열이나 공백만 있는 문자열을 0으로 바꾸기.
 - 16진·2진·8진 표기 변환.
@@ -96,17 +108,20 @@
 - 로드 때 문자열을 글자 배열로 쪼개기(`src/core/nodes/ArrayNode/strategies/TerminalStrategy/TerminalStrategy.ts:273-274`)도 없앱니다.
 
 4. 변환할 수 없으면 받은 값을 그대로 원본에 둡니다.
+
 - 대체 값(`NaN`·`""`·`[]`·`{}`), 비우기, 쓰기 거부, 읽기 가르기는 없습니다.
 - `null`은 nullable 노드에서는 자기 형의 값입니다. nullable이 아닌 노드에서는 받은 그대로 듭니다.
 - 가지 노드는 이미 정한 대로 잘못된 종류의 값을 자기 원본에 듭니다(`architecture/08-design-a-to-z.md:152`, `:274`).
 
 5. 읽기와 방출은 하나입니다.
+
 - `node.value`, `FormTypeInputProps`의 `value`와 `defaultValue`, `getValue()`, 부모의 방출, 그리고 검증기와 제출이 보는 값은 모두 같은 원본에 투영 규칙을 적용한 값입니다.
 - `omitEmpty`의 빈 값은 형으로 판정합니다. 수 노드는 `undefined`만 빈 값입니다. `NaN`은 빈 값이 아니라 형 불일치입니다. 문자열 노드는 `undefined`와 문자열 `""`만 빈 값입니다.
 - 형이 맞지 않는 값은 결코 빈 값이 아닙니다.
 - `null`은 오늘처럼 `null`로 방출합니다(`src/core/nodes/NumberNode/NumberNode.ts:119`, `src/core/nodes/StringNode/StringNode.ts:85`).
 
 6. 알림입니다. 형 불일치란 자기 형이 아니고, `undefined`도 아니며, nullable 노드의 `null`도 아닌 값입니다. 수 노드의 `NaN`과 `Infinity`도 포함합니다.
+
 - 검증기가 있으면 검증 결과(노드 `errors`, 제출의 `ValidationError`)로만 드러냅니다. `onError`에는 보내지 않습니다(ADR 0014 §1, `architecture/adr/0014-error-policy.md:34`, `:95`).
 - 검증기가 없고 검증 모드가 `None`이 아니면(`VALIDATOR_MISSING`과 같은 조건, `:213`) 경고 층 기록 하나를 개발 모드 콘솔과 `onError`로 보냅니다. 코드는 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`이고, `level`은 `'warning'`, 칸은 `path`와 `details`(기대한 형, 받은 값의 종류)입니다.
 - 중복 막기는 코드와 경로로 하고, 로드마다 비웁니다(`:152`).
@@ -114,6 +129,7 @@
 - 검증 모드를 `None`으로 적으면 보내지 않습니다.
 
 7. 입력 구성 요소 계약입니다. `src/types/formTypeInput.ts:60-65`의 문서 주석에 적습니다.
+
 - (ㄱ) 초안: 치다 만 글자와 입력기 조합 중인 글자는 입력이 스스로 듭니다.
   - 노드에는 자기 형의 값이나 없음만 보냅니다. `NaN`과 치다 만 원문은 보내지 않습니다.
   - 빈 칸이면 `undefined`를 보냅니다. 비우기 조작은 nullable이면 `null`, 아니면 `undefined`를 보냅니다.
@@ -125,6 +141,7 @@
 8. 예외는 하나, 가상 노드입니다. 가상 노드는 자기 원본이 없어 받은 그대로 들 자리가 없습니다. 모양이 틀린 쓰기는 `architecture/adr/0014-error-policy.md:257`의 분류를 따릅니다. 공개 호출이면 호출자 오류, 자동 쓰기면 정착 오류입니다. 그리고 길이보다 배열인지를 먼저 봅니다(`src/core/nodes/VirtualNode/VirtualNode.ts:45`).
 
 **쓰기 출처별.**
+
 - **로드: 마운트의 `defaultValue`, 루트 전체 교체 `setValue(V)`, 그리고 그 안에서 부모가 자식에게 나눠 주는 전파.** 잎과 터미널 노드는 각각 `interpret`를 지납니다. 바꿀 수 있는 값(`"12"`)은 바꾸고, 그 밖의 값(`"abc"`, nullable이 아닌 노드의 `null`, 불리언 노드의 `"abc"`, 배열 노드의 `"a,b"`)은 받은 그대로 원본에 둡니다. 터미널 배열이 문자열을 글자로 쪼개는 동작은 없앱니다. 가지 노드는 잘못된 종류의 값을 자기 원본에 들고, 자식은 존재하되 빈 상태로 그려집니다(`architecture/08-design-a-to-z.md:274`). `value`와 방출이 곧 원본입니다. 형이 맞지 않는 값은 `omitEmpty`로 빠지지 않습니다. 입력은 `key={version}`으로 다시 마운트되어 새 `defaultValue`를 읽고(`src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:95`, `:121`), 입력 계약에 따라 형이 아닌 값을 무효 상태로 그립니다. 드러나는 자리: 검증기 있음: 로드 뒤 검증 요청 규칙(`architecture/adr/0014-error-policy.md:217`)에 따라 노드 `errors`에 형 에러가 들어가고, 제출은 `ValidationError`로 거부됩니다. `onError`에는 가지 않습니다. 칸 옆의 문구는 기본 정책 `DirtyTouched`(`src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:14`, `:65`)를 따르지만, 입력의 무효 표지는 그 정책과 상관없이 바로 보입니다. 검증기 없음: 트리마다 `VALIDATOR_MISSING` 하나와 경로마다 로드당 `VALUE_TYPE_MISMATCH` 경고 하나가 갑니다. 거부나 throw는 없고, 받은 값이 그대로 제출됩니다.
 - **공개 `setValue`: 잎에 쓰기, `Merge`, 그 밖의 호출자 쓰기.** 로드와 같은 `interpret`를 지납니다. `setValue("12")`는 12, `setValue("abc")`는 `"abc"`입니다. 형이 틀린 값은 데이터 문제이지 공개 호출의 계약 위반이 아니므로 호출자 오류로 던지지 않습니다(결정 1, `architecture/adr/0013-core-does-not-rewrite-values.md:29`). 호출자 오류로 남는 것은 계약을 어긴 호출뿐입니다. `Overwrite`와 `Merge`를 함께 주는 경우, 폐기된 노드에 쓰는 경우(`architecture/adr/0014-error-policy.md:85`), 가상 노드에 모양이 틀린 값을 쓰는 경우입니다. 자기 입력에서 온 쓰기가 아니므로 새로 고침으로 입력이 다시 마운트됩니다. 드러나는 자리: 검증기가 있으면 노드 `errors`에 형 에러가 들어가고, 제출이 거부되며, `onError`에는 가지 않습니다. 검증기가 없으면 그 경로에 `VALUE_TYPE_MISMATCH` 경고가 갑니다(로드당 한 번). 어느 쪽이든 throw는 없습니다.
 - **사용자 입력: 입력 구성 요소의 `onChange`.** 입력 계약에 따라 core에는 자기 형의 값이나 없음만 옵니다. 치다 만 글자(`-`, `1.`)와 입력기 조합 중인 글자는 입력이 듭니다. antd는 이미 그렇게 합니다(`node_modules/rc-input-number/es/InputNumber.js:300-305`). 기본 수 입력은 빈 칸이면 `undefined`를 보내고, `badInput`이면 쓰지 않으며, 포커스를 잃으면 표시를 되돌리도록 고칩니다(`src/formTypeDefinitions/FormTypeInputNumber.tsx:23`). 출처로 가르지 않으므로, 계약을 지키지 않는 제3자 입력이 원문이나 `NaN`을 보내도 같은 규칙이 적용됩니다. 곧 받은 그대로 담고, `NaN`은 형 불일치로 방출합니다. 사용자 입력은 다시 마운트하지 않으므로 커서와 치던 글자가 유지됩니다(`src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInputControl.ts:20-23`). 드러나는 자리: 빈 칸이면 필수 필드에서 `required`, 선택 필드에서 에러 없음으로 오늘과 같습니다. 계약을 어긴 제3자 입력의 `NaN`이나 원문은 검증기가 있으면 형 에러(`DirtyTouched`에 따라 보임), 없으면 경로마다 로드당 한 번 경고입니다. 치다 만 상태 자체는 오류가 아닙니다.
@@ -137,6 +154,7 @@
 값은 이렇게 됩니다. 받은 `"abc"`를 그대로 들고, `value`, 방출, 제출이 모두 `"abc"`입니다. 제출은 거부하지 않습니다. 소유자께서 드신 사용례, 곧 폼만 그리고 검증은 따로 하는 호스트(통보3)는 서버에서 실제 입력을 받아 형 에러로 잡을 수 있습니다.
 
 비우지 않는 까닭은 넷입니다.
+
 1. 비우기는 S1 이어서에서 소유자께서 빼신 '빈 값 치환'입니다. 결정 1의 '받은 값을 고치지 않는다'(`architecture/adr/0013-core-does-not-rewrite-values.md:29`)도 어깁니다.
 2. 비운 값은 `omitEmpty` 때문에 방출에서 사라집니다(`src/core/nodes/NumberNode/NumberNode.ts:119-122`). 그러면 서버가 준 값이 다시 제출될 때 조용히 없어지고, 선택 필드라면 서버 검증까지 통과합니다.
 3. ADR 0014는 폼이 호출자의 쓰기를 빼거나 바꾼 커밋을 오류 층의 조용한 데이터 손상으로 정의합니다(`architecture/adr/0014-error-policy.md:32`, `:36`). 비우는 규칙은 폼이 스스로 오류를 만들고, R17-1에 따라 그 오류를 던져야 하는 모순이 됩니다.
@@ -145,6 +163,7 @@
 오류 층으로 보내지 않는 까닭은 이렇습니다. 오류 층은 throw, 거부, 싱크 가운데 하나로 드러내야 합니다(`:32`). 정착 쪽 오류라면 `degraded`와 제출 거부로 이어집니다(`:201`, `:203`). 그러면 서버 데이터의 틀린 칸 하나 때문에 검증을 쓰지 않는 폼이 던지거나 제출을 못 하게 되어, 통보3 '오류만 내보내고 거절은 하지 마시죠'와 부딪힙니다. 값을 그대로 두면 폼의 약속이 깨지지 않으므로 경고 층의 정의('동작을 바꾸지 않는 알림', `:33`)에 맞습니다. 또 검증기 없음 알림의 수준은 소유자께서 이미 warning으로 정하셨습니다(`architecture/reviews/round-17-owner-answers.md:33`, '(가) ㄱ warning으로').
 
 알리는 방법은 이렇습니다.
+
 - 조건: 검증기가 플러그인에도 `validatorFactory`에도 없고, 검증 모드가 `None`이 아닐 때입니다. `VALIDATOR_MISSING`과 같은 조건입니다(`:213`).
 - 내용: 형이 맞지 않는 경로마다 로드당 한 번, 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`를 보냅니다. `path`, 기대한 형, 받은 값의 종류를 싣습니다.
 - 출력: 기본 출력은 개발 모드 콘솔입니다. `onError` 핸들러는 모든 환경에서 받고, 핸들러가 없으면 비용이 없습니다. 중복 막기는 코드와 경로로 하며 로드마다 비웁니다(`:152`).
@@ -157,12 +176,14 @@
 끝 사용자에게 보이는 것도 따로 챙겨야 합니다. 검증기가 없으면 화면에 검증 문구가 없습니다. 그래서 입력 구성 요소 계약('형이 아닌 값을 유효한 상태처럼 그리지 않는다')이 유일한 화면 신호이고, 기본 수 입력을 비롯한 자사 입력 보완이 이 답의 일부입니다.
 
 **제어 컴포넌트.** 먼저 사실 하나를 바로잡습니다. 문제문은 'UI 플러그인 입력은 제어 컴포넌트로 value를 쓰는 것이 많다'고 적었습니다. 그러나 수, 문자열, 여러 줄 입력은 기본 입력과 모든 플러그인에서 비제어입니다.
+
 - 수 입력: 기본 `src/formTypeDefinitions/FormTypeInputNumber.tsx:34`, `schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputNumber.tsx:52`, antd6 `:52`, mui `:100`, antd-mobile `:42`.
 - 문자열과 여러 줄 입력도 모두 `defaultValue`를 씁니다.
 
 라이브러리 자신의 입력 계약은 '비제어 + 바깥 쓰기 때 다시 마운트'입니다. `SchemaNodeInput.tsx:95`가 `defaultValue`를 `version`에 묶고, `:121`이 `key={version}`을 줍니다. 사용자 입력은 새로 고침을 내지 않으므로 치던 글자가 지워지지 않습니다(`useFormTypeInputControl.ts:20-23`). 제어 `value`를 쓰는 것은 불리언 체크박스와 스위치입니다(antd5 `FormTypeInputBoolean.tsx:36`, `FormTypeInputBooleanSwitch.tsx:61`, antd6 `:61`, antd-mobile `:46`). 그래서 어긋남이 생길 수 있는 곳은 세 군데입니다. 제3자나 사용자가 만든 제어 입력, `node.value`를 React 상태로 옮겨 쓰는 앱 코드, 불리언 입력입니다.
 
 예측 가능성은 이렇게 보장됩니다. 읽기가 하나(`value`는 원본)이고 `interpret`가 순수하고 멱등이므로 다음이 성립합니다.
+
 - 노드 형의 값을 쓰면 같은 값을 돌려받습니다. `undefined`와 nullable 노드의 `null`도 마찬가지입니다.
 - 변환할 수 없는 값을 쓰면 같은 값을 돌려받습니다.
 - 달라지는 것은 변환 목록의 경우(`"12"`는 12)뿐이고, 그 결과는 결정적입니다.
@@ -171,12 +192,14 @@
 초안은 입력이 들어야 합니다. 이 계약은 선택이 아니라 필수입니다. 치다 만 원문을 노드로 보냈다가 돌려받으면 변환이 소수점과 부호를 지웁니다. `"1."`이 1이 되어, `"1.5"`를 치면 15, `"-0.5"`를 치면 5가 되고, 공백은 0이 됩니다. 이것은 `{scratch}/s1swarm/attack-react/decimal.cjs`를 다시 실행해 확인했습니다. 그래서 제어 입력의 예측 가능성은 core 규칙만으로 생기지 않고 규칙 7의 (ㄱ)이 있어야 생깁니다. rc-input-number는 이미 그렇게 합니다(`node_modules/rc-input-number/es/InputNumber.js:300-305`). 앱 코드에는 두 가지 관례를 안내합니다. 원문은 자기 상태에 들고 노드에는 해석한 값을 씁니다. 제어 수 입력에 넘길 때는 `typeof value === 'number' ? value : ''`처럼 좁힙니다.
 
 형이 아닌 값은 유효한 상태처럼 그리지 않습니다(규칙 7의 ㄴ). 소유자께서 걱정하신 '값을 가지고 있는데 빈 값을 표현'은 어느 후보를 골라도 core만으로는 없어지지 않습니다. 입력 구성 요소의 층에 남기 때문입니다.
+
 - 브라우저의 수 입력은 `"abc"`를 빈 칸으로 정리합니다(`{scratch}/s1swarm/integrity/sanitize.cjs`).
 - antd `InputNumber`는 처음에는 `"abc"`를 보이다가, 포커스를 한 번 잃으면 `onChange` 없이 빈 칸이 됩니다(`attack-react/rcblur.cjs`, `InputNumber.js:368-384`).
 - 체크박스와 스위치는 두 상태만 그릴 수 있습니다. 기본 체크박스는 `"abc"`를 켜짐으로 그리고(`src/formTypeDefinitions/FormTypeInputBoolean.tsx:29`), 스위치는 `checked={value ?? undefined}`입니다.
 - 가(`NaN`)도 똑같이 빈 칸으로 보입니다(`InputNumber.js:171`).
 
 그래서 같은 변경 묶음(PR-7)에서 자사 입력을 고칩니다.
+
 - 수 입력: 형이 아닌 값이 있는 동안 원문과 무효 표지를 보이고, 한 번의 조작으로 비울 수 있게 합니다.
 - 체크박스: 미정 상태로 그립니다. antd5 체크박스는 이미 그렇게 합니다(`FormTypeInputBoolean.tsx:20-24`).
 - 스위치: 무효 표지를 붙입니다.
@@ -188,11 +211,13 @@
 - mui 수 입력의 `parseFloat`·`parseInt`는 문자열 앞부분만 해석하므로(`:80-86`) 문자열 전체를 해석하도록 바꿉니다.
 
 다른 후보는 제어 입력에서 더 나쁩니다.
+
 - 가(`NaN`): React는 수 입력에 느슨한 비교를 써서 `NaN`을 렌더마다 다시 쓰고(`node_modules/react-dom/cjs/react-dom-client.development.js:1661-1664`), 그때마다 치던 글자가 지워집니다.
 - 다(`undefined`): 제어 입력이 비제어로 넘어가 표시가 멈춥니다.
 - 라(거부): 거부된 키 입력을 React가 되돌려 입력이 굳은 것처럼 보입니다.
 
 **다른 후보가 지는 까닭.**
+
 - 가. `NaN` 같은 대체 값(오늘): 받은 `"abc"`를 실패 표지로 고치므로 결정 1(`architecture/adr/0013-core-does-not-rewrite-values.md:29`)과 부딪힙니다. S1 이어서의 '그 이상을 하는건 원치 않습니다'와도 부딪힙니다. 뜻이 그대로인 변환이 아니기 때문입니다. 대체 값은 수 노드에만 있어 모든 노드에 같은 규칙을 적용할 수 없습니다(C8). `omitEmpty`가 `NaN`을 없음으로 돌리므로 저장(`NaN`)과 방출(없음)이 어긋나고, 형 에러가 `required`로 바뀌거나 사라집니다(`src/core/nodes/NumberNode/NumberNode.ts:119-122`, `architecture/reviews/raw-round18-s1-parse-check.md:118`). JSON으로 직렬화하면 `null`이 되고, `strict: false`로 만든 검증기는 통과시킵니다. 화면은 빈 칸인데 값은 `NaN`이므로, 소유자께서 위험하다고 하신 '값을 가지고 있는데 빈 값을 표현하는 것'이 바로 오늘의 상태입니다(`node_modules/rc-input-number/es/InputNumber.js:171`). 제어 수 입력에서는 React가 렌더마다 다시 써서 치던 글자를 지웁니다.
 - 다. 저장은 입력, `value`는 자기 형이나 `undefined`: 소유자께서 위험하다고 하신 모양 그대로입니다. 제어 입력은 `undefined`를 받으면 비제어로 넘어가고 표시가 멈춥니다. 원본, `value`, 표시가 서로 달라집니다. 방출이 원본을 따르면 화면에 없는 값이 제출되고, `value`를 따르면 서버 값이 조용히 사라집니다. 읽기가 둘이 되어 표면 비용도 큽니다(C10).
 - 라. 쓰기 거부: 결정 1의 '그대로 들어가고', '입력을 막지 않는다'와 글자 그대로 부딪히므로 규칙 1에 따라 결론이 될 수 없고, 소유자 질문 1의 반대쪽으로만 남습니다. 로드와 reset에서 거부된 잎은 비우거나(조용한 변경) 앞 레코드의 값을 남기게 됩니다(2라운드 잠복 값 결함의 모양). 거부는 '호출자의 쓰기가 커밋에서 빠짐'이므로 오류 층이고(`architecture/adr/0014-error-policy.md:32`), throw와 `degraded` 제출 거부로 이어집니다. 그러면 검증기 없는 폼까지 서버 값 하나로 잠겨 통보3과 부딪힙니다. 제어 입력에서는 키 입력이 되돌아가고, 원래 입력도 잃습니다(C6).
@@ -207,10 +232,12 @@
 - 원본은 그대로 두되, 방출 투영에서 nullable이 아닌 잎의 `null`과 `NaN`을 없음으로 보는 안: 오늘의 결과(선택 필드는 통과, 필수 필드는 `required`)를 지키지만, 형 에러가 `required`로 바뀌거나 사라지는 결함(`raw-round18-s1-parse-check.md:118`)을 되살립니다. 저장과 방출도 어긋납니다. 객체에 대해 이미 정한 '보존·방출하고 type 에러'(`architecture/adr/0013-core-does-not-rewrite-values.md:91`)와도 다릅니다. 가장 강한 반론으로 따로 적었습니다.
 
 **소유자 질문.**
+
 - 질문 1. 변환하지 못한 값을 노드가 받은 그대로 들고 `value`로 돌려주는 나′를 S1 이어서의 남은 물음에 대한 답으로 확정하시겠습니까? 이 물음은 새로 올리는 것이 아닙니다. 소유자께서 직접 물으신 것이고(`architecture/reviews/round-18-owner-answers.md:8`, '파싱 실패시 지금처럼 NaN으로 파싱하게 하는게 좋을까요?', 반영 칸 '답 대기'), 소유자께서 말씀하신 가치가 걸려 있어 확정을 청합니다. 권고의 근거는 고정된 답(결정 1, S1 이어서, 통보3)을 글자 그대로 모두 지키는 후보가 이것 하나라는 점입니다. 맞바꾸는 것은 '노드가 자기 타입의 값을 소유한다는 보장'이며, 이 보장이 '변환할 수 있을 때만'으로 줄어듭니다. 보장을 우선하시려면 라(쓰기 거부)를 고르셔야 하고, 그 경우 세 가지가 따라옵니다. 결정 1에 이름 붙은 예외를 적어야 합니다. 로드와 reset에서 거부된 잎을 비울지(조용한 변경), 앞 값을 남길지(잠복 값) 정해야 합니다. 검증기 없는 폼도 틀린 서버 값 하나 때문에 오류 층(throw, `degraded`, 제출 거부)에 들어갑니다.
 - 질문 2. 공개 값 형의 선언을 넓히시겠습니까? 나′에서는 수 노드의 `value`와 `FormTypeInputProps`의 `value`·`defaultValue`가 실행 중에 받은 그대로의 값(예: `"abc"`)일 수 있습니다. 그러면 오늘의 선언(`src/core/nodes/NumberNode/NumberNode.ts:25`, `:51`, `src/types/formTypeInput.ts:61-65`, `InferValueType`)이 그 경우에 거짓이 됩니다. 선택지는 둘입니다. (ㄱ) 선언 형을 '그 타입, 없음, 또는 변환하지 못한 받은 값'으로 넓힙니다. 형은 정직해지고 `defaultValue.map` 같은 충돌을 컴파일러가 잡지만, 모든 사용자 정의 입력과 플러그인이 좁히는 코드를 써야 하는 큰 사용성 변화가 생깁니다. (ㄴ) 선언 형은 오늘처럼 좁게 둡니다. 대신 문서 주석, 입력 구성 요소 계약, 형 판별 함수 하나로 예외를 알리고, 자사 입력은 PR-7에서 점검과 시험으로 막습니다. 비용은 싸지만 형이 드물게 사실과 다릅니다. 형의 정직함과 생태계 호환은 순위가 정해지지 않은 가치이고, 타입스크립트 사용자가 보는 결과가 달라지므로 원리로 정할 수 없습니다. 권고는 (ㄴ)입니다. 까닭은 셋입니다. 소유자께서 사용성 변화의 크기를 걱정하셨습니다. 가지 노드에서 같은 선택을 이미 받아들였습니다(`architecture/adr/0013-core-does-not-rewrite-values.md:91`). 오늘의 형도 `NaN` 때문에 이미 JSON의 수를 보장하지 못합니다. 제안 가운데 하나(무결성 렌즈)는 (ㄱ)을 권했습니다.
 
 **가장 강한 반론.** 가장 강한 반론은 무결성 공격의 첫 항목과 사용성 공격이 함께 가리키는 것입니다. 나′는 소유자께서 걱정하신 '값을 가지고 있는데 빈 값을 표현'을 core에서 입력 구성 요소로 옮길 뿐인데, 오늘의 입력은 그 책임을 질 준비가 되어 있지 않다는 것입니다. 구체적으로는 이렇습니다.
+
 - 브라우저의 수 입력은 형이 아닌 값을 빈 칸으로 정리합니다. antd는 포커스를 한 번 잃으면 빈 칸이 됩니다(`{scratch}/s1swarm/attack-react/rcblur.cjs`). 스위치는 참이나 거짓만 그릴 수 있습니다.
 - `null`과 `NaN`이 더는 방출에서 빠지지 않으므로, 오늘 조용히 통과하던 흔한 데이터가 검증기 있는 폼에서 제출을 막습니다. 데이터베이스의 NULL을 받은 nullable이 아닌 선택 필드, 비울 때 `null`을 보내는 antd·mui 수 입력, 빈 칸에 `valueAsNumber`(`NaN`)를 보내는 제3자 입력이 그렇습니다. 모두 '빈 칸인데 형 에러'가 되고, 사용자는 이미 빈 칸을 다시 비울 방법이 없습니다.
 - 게이트와 식도 결과를 바꿉니다. `if`의 `minimum`은 수가 아닌 값에 공허하게 참입니다(`{scratch}/s1swarm/critic-integrity/guard2.cjs`: 오늘 거짓, `\"abc\"`·`null`·`\"\"`에서 참). `\"a,b\".map`처럼 식이 던지면 `EXPRESSION_THREW`로 `degraded`가 되어(`architecture/adr/0014-error-policy.md:197`) 검증기 없는 폼까지 잠급니다.
@@ -218,6 +245,7 @@
 이 반론이 내미는 대안은 원본은 그대로 두되, 결정 2가 허용한 방출 투영(`omitEmpty`)에서 nullable이 아닌 잎의 `null`과 `NaN`을 없음으로 보아 오늘의 결과를 지키는 것입니다.
 
 받아들이지 않은 까닭은 다섯입니다.
+
 1. 그 투영은 형 에러가 `required`로 바뀌거나 사라지는 결함(`architecture/reviews/raw-round18-s1-parse-check.md:118`)을 `null`에 대해 되살리고, 저장과 방출을 가릅니다.
 2. 객체에 대해 이미 정한 '보존·방출하고 type 에러'(`architecture/adr/0013-core-does-not-rewrite-values.md:91`)와 규칙이 갈립니다.
 3. 부분 갱신 방식의 백엔드에서는 `null`(지움)과 없음(그대로 둠)이 뜻이 다릅니다.
@@ -229,6 +257,7 @@
 **확신.** 높음
 
 **문서 영향.**
+
 - `architecture/reviews/round-18-owner-answers.md:7`: 반영 칸의 두 문장을 S1 이어서와 이 결정으로 바꿉니다. 바꿀 문장은 '오늘의 `src/core/parsers/`를 그대로 쓴다'와 '공개 값 형은 오늘처럼 그 타입의 값이다(수 노드는 수, 파싱 실패는 `NaN`)'입니다. `:8` 반영 칸의 '답 대기'는 소유자 확정 뒤에 닫습니다.
 - `architecture/adr/0013-core-does-not-rewrite-values.md`: `:29` 결정 1에 이름 붙은 예외(형 정규화, 변환 목록)와 '변환하지 못한 값은 받은 그대로 든다'를 적습니다. `:88` 행('타입별 파서의 강제 변환은 입력 컴포넌트로')을 'interpret의 변환 목록 + 초안은 입력 구성 요소'로 바꿉니다. `:91`의 F27을 잎과 터미널 노드로 넓히고, ajv와의 이름 붙은 차이(`null` 변환, 공백의 0 변환, 16진 등 표기, 무한대, 정밀도 손실, 불리언의 수 변환, 배열 감싸기)를 적습니다.
 - `architecture/adr/0014-error-policy.md`: §3 받는 것 목록(`:84-91`)과 §6 검증기 없음(`:213`)에 가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`와 그 조건(`VALIDATOR_MISSING`과 같음, 검증기가 있으면 보내지 않음)을 넣습니다. 코드 표(`:250` 부근)에 행을 하나 더합니다. 경고 중복 막기(`:152`)를 이 코드에 적용한다고 적습니다. `:257` 가상 노드 행에 '배열인지를 먼저 본다'를 더합니다.
@@ -250,6 +279,7 @@
 **검증기가 없을 때.** 아닙니다. 검증기가 없어도 값은 비우지 않고, 받은 그대로 두고 그대로 보이는 것을 권고드립니다. 비우지 않는 이유는 셋입니다. 첫째, 비우기는 결정 1이 금한 조용한 변경입니다(`adr/0013-core-does-not-rewrite-values.md:29`). 둘째, 소유자께서 우려하신 '값을 가지고 있는데 빈 값을 표현하는 것'을 core가 직접 만드는 일입니다. 셋째, 검증기가 없는 폼에서는 그 원래 값이 문제의 유일한 증거인데 그것을 지우게 됩니다. `onError`로는 알리되 '오류'가 아니라 '경고' 기록 하나를 보냅니다. 기록은 가칭 `SCHEMA_FORM_WARNING.UNCONVERTED_VALUE`이고 `path`, 기대 타입, 받은 값의 종류, 쓰기 출처를 담으며, 노드가 변환 불가 상태로 넘어갈 때 한 번 갑니다. 기본 출력은 개발 모드 콘솔입니다. 경고인 까닭도 있습니다. `level: 'error'`는 ADR 0014에서 사슬 끝의 throw, 프로미스 거부, 싱크, 그리고 `degraded` 동안의 제출 거부를 뜻합니다(`adr/0014-error-policy.md:32`, `:86`). 그렇게 되면 검증기가 없을 때 거절하지 말라는 통보3의 답(`:18`)과 부딪힙니다. 또 폼은 받은 것을 바꾸지 않았으므로 폼의 약속이 깨지지 않았고, 이는 경고 층의 정의에 맞습니다(`:33`, `:120`). 이 경고는 검증기가 있을 때도 보냅니다. 같은 입력이 검증기 유무에 따라 다른 길로 드러나지 않게 하려는 것입니다(G5). 검증 결과(`ValidationIssue`)를 `onError`에 섞는 것도 아닙니다. 끝 사용자에게는 입력이 원래 값을 그려 줄 때만 보이므로, 기본 수 입력의 표시를 보완하는 일이 남습니다.
 
 **위험.**
+
 - 문제문의 전제 가운데 '플러그인 입력은 제어가 많다'는 수와 문자열 입력에 대해서는 틀렸습니다(모두 `defaultValue`). 그래서 제어 환경에서 생기는 어긋남은 제3자·사용자 입력, 앱 상태, 불리언 입력에 모입니다. 18라운드 문서에 이 사실을 바로 적어 두어야 판단이 흔들리지 않습니다.
 - 브라우저의 수 입력(`type=number`, 기본 입력과 mui)은 형이 다른 값을 빈 칸으로 정리합니다(jsdom 확인). 그래서 권고안에서도 기본 입력에는 '값을 가진 채 빈 칸'이 남습니다. 형이 다른 `defaultValue`를 받으면 원래 글자를 보여 주는 텍스트 모드로 그리거나, 적어도 `aria-invalid` 표시를 하도록 기본 입력을 보완해야 합니다.
 - antd와 mui 수 입력은 칸을 비울 때 `null`을 보냅니다(rc-input-number `lib/InputNumber.js:285`, mui `FormTypeInputNumber.tsx:74-76`). 입력을 고치지 않으면 nullable이 아닌 필드를 비웠을 때 `required` 대신 형 에러가 나고 `null`이 방출됩니다. 자사 플러그인은 `nullable ? null : undefined`로 고치고, 제3자 플러그인에는 동작 변화로 알려야 합니다. 사용성 변화가 가장 크게 드러나는 곳입니다.
@@ -271,6 +301,7 @@
 **검증기가 없을 때.** 아닙니다. 검증기가 없을 때에도 값을 비우지 않고, 오류 층(`level: 'error'`)으로 보내지도 않는 것이 맞다고 판단합니다. 권고는 이렇습니다. 받은 값을 그대로 들고, `node.value`와 방출과 제출이 모두 그 값입니다. 그리고 경고 층 기록 하나(`level: 'warning'`, 가칭 `SCHEMA_FORM_WARNING.UNCONVERTIBLE_VALUE`, 경로와 기대한 형과 받은 형을 담음)를 개발 모드 콘솔과 `onError`로 보냅니다. 경로마다 로드당 한 번이며, 제출은 막지 않습니다. 까닭은 넷입니다. (1) 값을 비우는 것은 소유자가 S1 이어서 나에서 뺀 '빈 값 치환' 그 자체입니다(`architecture/reviews/round-18-owner-answers.md:8`). 게다가 비운 값은 `omitEmpty` 때문에 방출에서 사라지므로(`schema-form/src/core/nodes/NumberNode/NumberNode.ts:119-122`), 서버가 준 `\"abc\"`가 다시 제출될 때 조용히 없어집니다. 이는 ADR 0014가 오류로 정의한 '호출자의 쓰기가 커밋에서 빠지거나 바뀐' 조용한 데이터 손상입니다(`architecture/adr/0014-error-policy.md:32`, `:36`). 즉 비우면 폼이 스스로 오류를 만듭니다. (2) 오류 층으로 보내면 규칙상 사슬 끝에서 던지고, 폼 약속의 파손으로서 `degraded` 제출 거부와 한 묶음이 됩니다(`:32`, `:53`, `:203`). 그러면 서버 데이터에 틀린 칸 하나만 있어도 검증을 쓰지 않는 호스트가 제출할 수 없게 되어, 통보3의 '오류만 내보내고 거절은 하지 마시죠'와 부딪힙니다(`:213`). (3) 값을 그대로 두면 폼의 약속은 깨지지 않습니다. 그래서 이 사건은 오류가 아니라 경고 층의 '동작을 바꾸지 않는 알림'에 맞습니다(`:33`). 검증기가 없을 때만 내는 경고라는 선례도 이미 있습니다(`:214`의 조건부 스키마 경고). (4) 검증기가 있으면 같은 사실이 형 에러로 노드 `errors`와 제출 거부에 드러납니다. 그때 `onError`로도 보내면 '검증 결과는 `onError`에 가지 않는다'(`:34`, `:95`)를 어기고 두 번 알리게 되므로, 검증기가 판정하지 않는 폼(검증기 없음, 또는 검증 모드 `None`)에서만 보냅니다. 핸들러가 없는 프로덕션에서는 보이는 출력이 없다는 한계가 남습니다. 이것은 소유자가 `VALIDATOR_MISSING`에 받아들인 것과 같은 수준이며, 호스트가 `onError`를 달면 모든 환경에서 받습니다.
 
 **위험.**
+
 - 원시 `<input type="number">`는 형이 아닌 문자열을 그릴 수 없습니다(jsdom 실행: `"abc"`→`""`). 기본 수 입력(`schema-form/src/formTypeDefinitions/FormTypeInputNumber.tsx:26-38`)을 원문과 무효 표시로 그리도록 고치지 않으면 '값을 들고 빈 칸을 보임'이 기본 입력에 남습니다. 게다가 기본 표시 정책 `DirtyTouched`(`FormTypeRendererProvider.tsx:14`)에서는 로드 직후의 형 에러가 칸 옆에 보이지 않습니다.
 - 불리언 입력 가운데 참 같은 값으로 켜지는 것들이 있습니다. antd5·antd6·antd-mobile 스위치의 `checked={value ?? undefined}`(`schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:61`, `schema-form-antd6-plugin/.../FormTypeInputBooleanSwitch.tsx:61`, `schema-form-antd-mobile-plugin/.../FormTypeInputBooleanSwitch.tsx:46`, `node_modules/rc-switch/es/index.js:54`)와 기본 체크박스의 `defaultChecked`(`schema-form/src/formTypeDefinitions/FormTypeInputBoolean.tsx:29`)입니다. 이들은 `"abc"`를 켜짐으로 그려 보임과 저장된 뜻이 어긋납니다. 플러그인 수정과 입력 계약 문서화가 같은 PR에 들어가야 합니다.
 - 공개 선언 형이 변환 불가 값을 담지 않습니다(소유자 질문). 좁은 형을 그대로 두면 TypeScript 소비자가 `value`를 수로 믿고 계산하다 문자열을 만납니다. `controls.derived` 식처럼 `value`를 읽는 작성자 식도 같습니다(오늘은 `NaN`을 만났던 자리).
@@ -290,6 +321,7 @@
 **검증기가 없을 때.** 아닙니다. 값을 비우지 않고, `onError`에도 오류가 아니라 경고로 보냅니다. 첫째, 값을 비우면 조용한 변경입니다. ADR 0013 결정 1("받은 값을 고치지 않는다. 그대로 들어가고 에러로 보인다", `architecture/adr/0013-core-does-not-rewrite-values.md:29`)을 어기고, 검증 기록이 적은 '거부는 보여야 하며 없음으로 바뀌면 안 된다'(`architecture/reviews/raw-round18-s1-parse-check.md:127`)도 어깁니다. 더 구체적으로는 소유자가 든 검증기 없는 사용례, 곧 폼만 그리고 검증은 따로 하는 호스트가 가장 크게 다칩니다. 선택 필드가 비워진 채 올라가면 서버 검증을 통과해 데이터가 사라지고, `"abc"`가 그대로 올라가면 서버가 형 에러로 잡습니다. 둘째, 오류 층(`level: 'error'`)은 기본 드러남이 throw, 거부, 싱크 가운데 하나여야 합니다(`architecture/adr/0014-error-policy.md:30`). 그러면 서버 데이터 하나 때문에 폼이 던지거나 제출을 막게 되어 통보3의 "오류만 내보내고 거절은 하지 마시죠"(`:213`)와 부딪힙니다. ADR 0014의 가르는 물음 "이 사건 뒤에도 원장의 규칙이 지켜지는가"(`:33`)로 보아도, 값을 받은 그대로 두었으므로 규칙은 지켜졌고 경고 층입니다. 드러남은 이렇습니다. 검증기가 돌지 않는 커밋에서 형이 맞지 않는 노드마다 `onError`로 경고 기록(가칭 `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH`, `path`, 기대한 형, 받은 값의 종류)을 보냅니다. 로드마다 경로당 한 번이고(`:152`), 모든 환경에서 가며(`:31`), 개발 모드 콘솔에도 나갑니다. 검증기가 돌면 같은 사건이 검증 결과(노드 `errors`)이므로 `onError`에 보내지 않습니다. 소유자의 "onError 와 onValidate 를 섞는건 햇갈린다"를 지키기 위해서입니다. 최종 사용자 화면에 에러 문구가 없는 것은 검증을 끈 호스트의 선택입니다. 다만 '값을 가지고 있는데 빈 값을 표현하는' 위험을 줄이려면, 기본 수 입력은 값이 수가 아닐 때 받은 글자를 그대로 보여 주도록 렌더 계층에서 고치기를 권합니다.
 
 **위험.**
+
 - 플러그인이 선언 형을 믿고 쓴 코드가 형 밖의 값에서 렌더 중에 던질 수 있습니다. 예를 들어 `packages/canard/schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputStringCheckbox.tsx:67`과 `packages/canard/schema-form-mui-plugin/src/formTypeInputs/FormTypeInputStringCheckbox.tsx:71`의 `defaultValue.map`은 `"a,b"`에서 TypeError가 납니다. 필드 바운더리가 가두어 대체 화면과 `onError`로 보내지만(`architecture/adr/0014-error-policy.md:52`) 사용 경험이 나빠집니다. PR-7 전에 내장 입력과 플러그인 입력을 `typeof`로 방어하도록 점검해야 합니다.
 - 조용히 틀리게 보이는 곳도 있습니다. 내장 `src/formTypeDefinitions/FormTypeInputStringCheckbox.tsx:76`의 `defaultValue?.includes(rawValue)`는 문자열 `"a,b"`에서 부분 문자열 검사가 되어 `"a"`를 체크된 것으로 그립니다. 날짜 범위 입력의 `defaultValue?.length === 2`(`packages/canard/schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputDateRange.tsx:59`)는 두 글자 문자열을 범위로 읽습니다.
 - 브라우저 수 입력은 수가 아닌 `defaultValue`를 빈 칸으로 정리합니다(HTML 명세의 값 정리 규칙이며 실행하지 않은 추정입니다). 그래서 노드가 `"abc"`를 드는데 위젯은 비어 보이는 '값을 가지고 있는데 빈 값' 모습이 위젯 수준에 남습니다. 오늘의 `NaN`도 같이 빈 칸입니다. 기본 수 입력이 수가 아닌 값을 글자로 보여 주도록 고치지 않으면, 검증기가 없는 폼에서는 최종 사용자가 어긋남을 알 길이 없습니다. antd `InputNumber`가 수가 아닌 `defaultValue`를 어떻게 그리는지는 확인하지 않았습니다.
@@ -310,6 +342,7 @@
 **검증기가 없을 때.** 아닙니다. 검증기가 없어도 값을 비우지 않고, 오류 층의 기록으로 보내지도 않는 것이 맞습니다. 근거는 세 가지입니다. 첫째, 값을 비우면 그것이 곧 ADR 0014가 오류로 정의한 '호출자의 쓰기를 빼거나 바꾼 커밋', 곧 조용한 데이터 손상입니다(`architecture/adr/0014-error-policy.md:32`, `:36`). R17-1에 따르면 그런 커밋은 사슬 끝에서 던져야 하므로, 비우는 규칙은 스스로 오류를 만들어 던지는 모순이 됩니다. 둘째, 형이 맞지 않는 값은 폼이 약속을 깬 사건이 아니라 '사용자의 값이 스키마에 맞지 않음', 곧 검증 결과 층입니다(`architecture/adr/0014-error-policy.md:34`). 소유자는 검증기가 없을 때 '오류만 내보내고 거절은 하지 마시죠'라고 정했고, 그것은 이미 `VALIDATOR_MISSING` 경고로 반영되어 있습니다(`:213`). 셋째, 선행 사례도 어느 것 하나 값을 비우지 않습니다. react-jsonschema-form은 `noValidate`이면 formData를 그대로 제출하고(`node_modules/@rjsf/core/src/components/Form.tsx:1164`), JSON Forms의 `NoValidation`은 데이터를 건드리지 않습니다. 권하는 모습은 이렇습니다. 값은 `\"abc\"` 그대로 저장되고, 보이고, 방출됩니다. 제출은 거부하지 않습니다. `onError`에는 트리마다 한 번 `VALIDATOR_MISSING`이 갑니다. 여기에 더해 `VALIDATOR_MISSING`과 같은 조건(검증기가 없고 검증 모드가 `None`이 아님)에서 형이 맞지 않는 노드마다 로드당 한 번 경고 기록(`level: 'warning'`, 가칭 `VALUE_TYPE_MISMATCH`, 경로와 받은 값)을 보내기를 권합니다. parse는 검증기 없이도 변환에 실패한 사실을 알고 있으므로 계산 비용이 들지 않습니다. 검증 모드를 `None`으로 적은 폼에서는 `VALIDATOR_MISSING`처럼 이 경고도 나가지 않습니다. 이 경고를 둘지는 아래 소유자 질문 2입니다.
 
 **위험.**
+
 - 네이티브 `type=number` 입력은 형이 맞지 않는 값(`"abc"`, `"NaN"`)을 받으면 빈 칸으로 정화합니다(jsdom 실행: `{scratch}/s1swarm/lens-prior-art/dom.cjs`). 기본 수 입력(`packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputNumber.tsx:34`)과 mui 플러그인(`packages/canard/schema-form-mui-plugin/src/formTypeInputs/FormTypeInputNumber.tsx:100`)에서는 '값을 가지고 있는데 빈 칸을 보이는' 일이 표시 단계에서 생깁니다. 이 위험은 가에서도 똑같이 생깁니다(`NaN`도 빈 칸이 됩니다). 나′에서는 값과 에러가 남으므로 복구할 수 있지만, 입력 구성 요소가 형이 맞지 않는 값을 보이게 그리도록 고쳐야 합니다. rc-input-number는 원문을 그대로 표시하는 선례입니다(`InputNumber.js:170-171`)
 - 공개 값 형을 넓히면 TypeScript 소비자 코드 전반에 좁히는 코드가 필요해져, 주 버전 수준의 변화가 됩니다. 넓히지 않으면 형이 거짓이 됩니다. 어느 쪽도 비용이 있습니다(소유자 질문 1)
 - `omitEmpty`가 형이 맞지 않는 값(예: 수 노드의 `""`)을 빈 값으로 보고 생략하면, 형 에러가 `required`로 바뀌는 오늘의 결함(`architecture/reviews/raw-round18-s1-parse-check.md:118`)이 되살아납니다. 빈 값은 노드 타입별로 좁게 정의해야 합니다
@@ -325,6 +358,7 @@
 **각도.** 사용성과 React. 네 제안은 모두 같은 핵심 규칙 나′(변환할 수 있으면 변환하고, 그렇지 않으면 받은 그대로 두며, 비우지 않고, 알림은 검증 결과나 경고로 보냄)를 권합니다. 그래서 공격은 규칙 자체보다 규칙이 실제 입력 부품에 닿는 자리를 겨누었습니다. 제어 입력과 비제어 입력, 타자, 포커스 이탈, reset, 플러그인 부품입니다. 소유자의 우려인 '값을 가지고 있는데 빈 값을 표현하는 것'이 각 제안에서 실제로 없어지는지를 기준으로 보았습니다. 저장소는 고치지 않았습니다. 실험은 `{scratch}/s1swarm/attack-react/` 아래의 네 파일에서 React 19.2.6, jsdom, rc-input-number(루트 `node_modules`), ajv 8.17.1로 돌렸습니다. `decimal.cjs`는 소수 타자, `rcblur.cjs`는 antd 수 입력의 포커스 이탈, `display.cjs`는 형이 틀린 값의 표시를 봅니다. ajv 변환 경계는 `$TMPDIR/ajvc.cjs`로 확인했습니다. 제안 1이 바로잡은 사실은 제가 다시 확인했고 맞습니다. 모든 플러그인의 수, 문자열, 여러 줄 입력은 `defaultValue`를 쓰는 비제어 입력입니다(`schema-form-*-plugin/src/formTypeInputs/FormTypeInput{Number,String,Textarea}.tsx`). 제어 입력으로 쓰는 것은 불리언과 스위치입니다.
 
 **살아남은 것.**
+
 - 핵심 규칙 나′(받은 그대로 두고, 비우지 않고, 쓰기를 거부하지 않음)는 네 제안 모두에서 살아남습니다. 위 공격은 core가 값을 비우거나 대체해야 한다는 근거가 되지 않습니다. 비우면 같은 '빈 칸 표시'가 저장과 방출까지 번집니다. 가의 `NaN`도 브라우저 수 입력과 antd에서 똑같이 빈 칸으로 보입니다.
 - '검증기가 없어도 값을 비우지 않고, `onError`에는 오류가 아니라 경고로 보낸다'는 답은 네 제안 모두에서 살아남습니다. 사용성 쪽에서 반례를 찾지 못했습니다.
 - 제안 1은 가장 튼튼합니다. 플러그인 수 입력이 비제어라는 사실의 교정, React가 `NaN`, `undefined`, 거부된 쓰기를 어떻게 처리하는지에 대한 분석, 초안은 입력이 든다는 계약이 모두 버팁니다. 다만 경고 조건(검증기가 있을 때도 보냄)과 중복 억제 단위는 고쳐야 합니다.
@@ -334,8 +368,9 @@
 - 소유자의 우려 '값을 가지고 있는데 빈 값을 표현하는 것'은 어느 안으로도 core에서 없어지지 않습니다. 두 상태 부품(체크박스, 스위치)과 브라우저 수 입력의 정리 규칙 때문에 부품 층에 남습니다. 이것은 나′에 반대하는 근거가 아니라, 입력 계약과 표시 정책이 함께 가야 한다는 조건입니다.
 
 **고침.**
+
 - 입력 계약에 '형이 틀린 값을 받으면 유효한 상태처럼 그리지 않는다'를 부품별로 구체화합니다. 체크박스는 ref로 `indeterminate`를 켭니다. 스위치는 두 상태 중 어느 것도 참이 아니므로, 옆에 무효 표지를 붙이거나 형이 틀린 동안 미정 부품으로 바꿔 그립니다. 브라우저 수 입력은 형이 틀린 원래 값이 있는 동안 원문을 읽기 전용 안내로 옆에 보이고, 비우기 버튼을 둡니다. 이렇게 해야 '두 번 눌러야 거짓'과 '비울 사건이 없음'이 풀립니다.
-- 로드, `setValue`, 자동 쓰기에서 온 형 불일치는 `DirtyTouched`와 상관없이 칸 옆에 보이게 합니다. 예를 들어 `ShowError`를 켜는 식입니다. 이것은 사용자에게 보이는 결과를 바꾸므로 소유자 질문으로 올립니다.
+- 로드, `setValue`, 자동 쓰기에서 온 형 불일치는 `DirtyTouched`와 상관없이 칸 옆에 보이게 합니다. 예를 들어 `ErrorVisibility`를 켜는 식입니다. 이것은 사용자에게 보이는 결과를 바꾸므로 소유자 질문으로 올립니다.
 - antd 수 입력 플러그인은 형이 틀린 `defaultValue`를 받으면 포커스를 잃을 때 빈 칸이 되지 않게 해야 합니다. 방법은 둘입니다. `value`로 원문을 제어해 `flushInputValue`가 원문으로 되돌리게 하거나, 무효 상태(`status`)와 원문 안내를 따로 둡니다. 실제로 원문이 유지되는지는 jsdom과 브라우저에서 다시 확인해야 합니다(`rcblur.cjs`를 바꿔 실행).
 - 같은 변경 묶음에서 배열에 기대는 플러그인 부품을 모두 `Array.isArray`로 막습니다. antd5·antd6·mui 문자열 체크박스(`.map`), 기본 문자열 체크박스(`.includes`), 날짜·시간·월 범위(`.length === 2`)가 대상입니다. S-f의 '보임' 칸은 부품마다 다시 적습니다.
 - 변환 명세를 ajv보다 좁게, 이름을 붙여 적습니다. 앞뒤 공백이 없고, 비어 있지 않은 10진 표기이며, 유한한 수일 때만 변환합니다. 공백 문자열이 0이 되는 것, 16진·2진 표기, "Infinity"는 뺍니다. `null`과 같은 이유(뜻이 바뀜)로 ajv와의 차이로 기록합니다.
@@ -346,6 +381,7 @@
 - S-f 문자열판(객체나 배열을 쥔 문자열 노드)을 장면에 더하고 C1 판정을 다시 매깁니다. 원래 값이 사용자의 한 글자 편집으로 사라지는 전이를 문서에 적습니다.
 
 **공격 (12건).**
+
 - [높음] 제안 1, 제안 2, 제안 4 (antd 수 입력이 원래 값을 보여 준다는 주장: 제안 1의 S-a와 C4, 제안 2의 S-a, 제안 4의 S-a) / S-a와 S-b(검증기가 있을 때와 없을 때), antd5 플러그인. 서버가 `{ age: "abc" }`를 줍니다. 수 입력에 처음에는 "abc"가 보입니다. 사용자가 Tab으로 이 칸을 지나가기만 합니다(포커스를 얻었다가 잃음).: 포커스를 잃는 순간 입력 칸이 빈 칸이 됩니다. 그런데 `onChange`는 불리지 않으므로 노드는 "abc"를 그대로 쥡니다. 소유자가 걱정한 '값을 쥔 채 빈 칸을 보임'이 사용자가 한 번 지나가기만 해도 생깁니다. 게다가 기본 표시 정책 `DirtyTouched`는 dirty와 touched가 둘 다 참이어야 에러를 보입니다. 이 경우 dirty가 거짓이므로 "must be number"도 칸 옆에 보이지 않습니다. 검증기가 있으면 제출이 이유가 보이지 않는 채로 막힙니다. 검증기가 없으면 빈 칸처럼 보이는 곳에서 "abc"가 서버로 갑니다. 제안들이 C4의 근거로 든 'antd는 원래 값을 보여 준다'는 첫 그림에서만 참입니다. (근거: 실험 `{scratch}/s1swarm/attack-react/rcblur.cjs`의 출력은 `defaultValue "abc" shown "abc" after blur "" onChange calls []`입니다. 원인 코드는 `node_modules/rc-input-number/es/InputNumber.js:368-384`(flushInputValue)와 `:247-279`(triggerValueUpdate)입니다. 플러그인은 비제어입니다(`schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputNumber.tsx:52`). 표시 정책은 `schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:13`, `:65`에 있습니다.)
 - [높음] 네 제안 모두 (불리언 입력). 특히 제안 1의 보완(`defaultValue === true`)과 제안 2의 보완(`value === true`) / S-f. 불리언 노드가 "abc"를 쥡니다. 기본 체크박스, antd5·antd6·antd-mobile 스위치 모두 같습니다.: 체크박스와 스위치는 두 상태만 그릴 수 있어서 "abc"를 정직하게 보일 방법이 없습니다. 오늘 코드에서 기본 체크박스는 켜짐으로 그려집니다(`defaultChecked`가 참 같은 값을 켜짐으로 받음). 스위치도 `checked={value ?? undefined}`여서 켜짐입니다. 그래서 제안 3과 4는 '참'을 보이면서 "abc"를 제출합니다. 제안 1과 2의 보완은 반대로 꺼짐을 보이면서 "abc"를 쥡니다. 이것이 바로 '값을 가지고 있는데 빈 값을 표현하는 것'입니다. 사용자가 '거짓'을 원해도 칸이 이미 꺼져 보이므로 보낼 사건이 없습니다. 두 번 눌러야만 `false`가 되며, 이 방법을 알아낼 수 없습니다. antd 체크박스의 미정 상태만 예외입니다. (근거: `schema-form/src/formTypeDefinitions/FormTypeInputBoolean.tsx:29`, `schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:61`, `schema-form-antd6-plugin/src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:61`, `schema-form-antd-mobile-plugin/src/formTypeInputs/FormTypeInputBooleanSwitch.tsx:46`. 예외인 antd 체크박스는 `schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputBoolean.tsx:20-25`입니다. 실험 `display.cjs`의 출력은 `checkbox defaultChecked "abc" -> true`입니다.)
 - [높음] 제안 1, 제안 2, 제안 4 (S-f에서 보이는 값이 "a,b"라는 주장). 제안 3은 위험 항목에 적었으나 보완 범위가 부족합니다. / S-f. 항목이 문자열 enum인 체크박스 배열 노드(`formType: 'checkbox'`)에 로드나 `setValue`로 "a,b"가 옵니다.: antd5, antd6, mui 플러그인의 문자열 체크박스는 `defaultValue.map`을 부르므로 렌더 중에 TypeError로 죽습니다. 필드 경계가 대체 화면으로 가두어도 필드가 사라집니다. 기본 문자열 체크박스는 `defaultValue?.includes(rawValue)`가 부분 문자열 검사가 되어 a와 b를 체크된 상태로 그립니다. 유효한 배열 ["a","b"]처럼 보이면서 문자열 "a,b"를 제출합니다. antd의 날짜·시간·월 범위 입력은 `defaultValue?.length === 2`라서 두 글자 문자열을 범위로 읽습니다. 나′가 core에서 '받은 그대로'를 허용하는 순간, 오늘 파서가 보장하던 배열 형에 기대던 부품이 깨집니다. (근거: `schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputStringCheckbox.tsx:67`, `schema-form-antd6-plugin/src/formTypeInputs/FormTypeInputStringCheckbox.tsx:67`, `schema-form-mui-plugin/src/formTypeInputs/FormTypeInputStringCheckbox.tsx:71`, `schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox.tsx:76`, `schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputDateRange.tsx:59`, `FormTypeInputTimeRange.tsx:53`, `FormTypeInputMonthRange.tsx:58`. 실험 `display.cjs`의 출력은 `"a,b".map is not a function`과 `true,true,false`입니다.)
@@ -364,6 +400,7 @@
 **각도.** 데이터 무결성, 오류, 경계 형에 대한 적대 검토입니다. 네 제안은 모두 나′(받은 그대로 담고 그대로 보인다)를 권합니다. 그래서 공통 핵심과 제안마다 다른 세부를 따로 공격했습니다. 공격 장면은 검증기 없음, 서버 로드(`null`, `""`), `setValue`, 자동 쓰기(`derived`, `injectTo`, 게이트), nullable, 불리언, 배열, 객체, 가상 노드, `omitEmpty` 방출, 직렬화, 제출 거부입니다. 실험은 `{scratch}/s1swarm/critic-integrity/`의 `coerce.cjs`(ajv 8.17.1 `coerceTypes` 경계값), `guard.cjs`, `guard2.cjs`(가드 서브스키마의 적용 범위) 셋이며, 저장소는 고치지 않았습니다. 제안 번호는 이렇게 부릅니다. 제안 1은 제어 입력 렌즈, 제안 2는 무결성 렌즈, 제안 3은 공개 형 렌즈, 제안 4는 선행 사례 렌즈입니다.
 
 **살아남은 것.**
+
 - 살아남는 공통 핵심(네 제안 모두): 변환하지 못한 값을 비우지 않고, `NaN` 같은 대체 값을 넣지 않고, 쓰기를 거부하지 않으며, `value`가 원본 하나를 읽습니다. 검증기가 없을 때도 오류 층(throw, `degraded`, 제출 거부)으로 올리지 않습니다. 소유자의 가정('검증기가 없으면 onError로 오류를 받고 값을 비운다')에 대한 반박, 곧 비우기는 조용한 변경이고 오류 층은 통보3과 부딪힌다는 논증은 공격에도 버팁니다(`architecture/adr/0014-error-policy.md:30-36`, `:213`).
 - 제안 2의 경고 자리 원칙(검증기가 판정하는 폼에서는 `onError`에 보내지 않고, 판정하지 않는 폼에서만 경고 층으로 보냄)과 제안 4의 조건(`VALIDATOR_MISSING`과 같은 조건, 곧 모드 `None`이면 보내지 않음)을 합친 형태가 살아남습니다. 제안 1의 '검증기가 있어도 보냄'은 통보4에 걸려 떨어집니다.
 - 제안 4의 변환 규칙('문자열 전체가 유한한 수일 때만', 정수는 소수부 없음, `null`·`""`·배열·객체는 변환하지 않음)이 네 가운데 가장 안전합니다. 정밀도 조건을 더하면 살아남습니다.
@@ -371,6 +408,7 @@
 - 제안 1과 제안 4의 소유자 질문 1('수 노드가 변환하지 못한 값을 들어도 되는가')은 규칙 1에 맞게 올린 질문으로 살아남습니다.
 
 **고침.**
+
 - `null`과 빈 문자열의 방출 규칙을 소유자 질문으로 올립니다. 원본은 그대로 두되, `omitEmpty`가 켜진 잎에서는 nullable이 아닌 노드의 `null`과 문자열이 아닌 노드의 `""`을 투영에서 없음으로 보는 안입니다. 방출은 정책이고 원본을 건드리지 않으므로(`architecture/08-design-a-to-z.md:51`) 결정 1과 부딪히지 않습니다. 그러면 오늘의 결과(선택 필드는 통과하고 필수 필드는 `required`)가 유지됩니다. 반대는 형의 정직함(형 에러)입니다. 사용자에게 보이는 결과가 갈리므로 규칙 2에 해당합니다. ajv의 `null`→`""`·0·`false` 변환을 따르지 않는 것도 같은 질문에 묶어 소유자에게 확인받습니다.
 - 변환 조건을 조입니다. 수로 바꾸는 것은 결과가 유한하고, 정수 노드에서는 `Number.isSafeInteger`이며, 수로 바꾼 뒤 다시 적은 글자가 앞뒤 공백을 뺀 입력과 같을 때(정밀도를 잃지 않을 때)만 합니다. 그 밖에는 받은 문자열을 그대로 둡니다. `"Infinity"`, `"1e400"`, 큰 정수 문자열이 조용히 바뀌지 않게 하려는 것입니다(`coerce.cjs`).
 - `controls` 식 언어 명세(`architecture/08-design-a-to-z.md:488`)에 '형이 맞지 않는 원본을 식이 읽을 때의 값'을 적습니다. 식에는 투영에서 형이 맞지 않는 잎이 없음(`undefined`)으로 보이게 하는 안과, 원본을 보이고 식의 throw를 `EXPRESSION_THREW`(`degraded`)로 두는 안이 있습니다. 앞의 안은 틀린 서버 값 하나로 폼이 잠기는 것과, `null * qty = 0`처럼 그럴듯한 값이 조용히 만들어지는 것을 막습니다. 뒤의 안은 식이 받은 값을 그대로 봅니다. 둘은 소유자 질문으로 올립니다.
@@ -383,6 +421,7 @@
 - 제안 2와 3의 소유자 질문을 넓힙니다. '선언 형을 넓히는가'에 앞서 '수 노드가 수가 아닌 값을 들어도 되는가'를 먼저 묻습니다(`architecture/reviews/round-18-owner-answers.md:7-8`).
 
 **공격 (15건).**
+
 - [높음] 제안 1, 2, 3, 4 모두(S-g의 판단과 방출 규칙) / S-g 변형. 데이터베이스의 NULL이 nullable이 아닌 선택 필드(수, 문자열, 불리언)로 로드되고, 검증기가 있는 경우: 오늘은 수 노드의 `null`이 `NaN`이 되어 방출에서 빠지고(`src/core/nodes/NumberNode/NumberNode.ts:103-104`, `:119-122`), 문자열 노드의 `null`은 `""`이 되어 빠집니다(`src/core/parsers/parseString.ts:38-41`, `src/core/nodes/StringNode/StringNode.ts:85-87`). 그래서 선택 필드는 에러 없이 제출됩니다. 나′에서는 `null`이 원본과 방출에 그대로 남아, 필드마다 "must be number"·"must be string"·"must be boolean"이 나고 제출이 막힙니다. 입력은 빈 칸(체크박스는 꺼짐)으로 보이므로, 소유자가 위험하다고 본 '값을 가지고 있는데 빈 값을 표현하는' 상태를 core가 가장 흔한 서버 데이터에서 만듭니다. 이미 빈 칸은 사용자가 비울 수 없습니다. 숫자를 쳤다가 지우거나 체크했다가 풀어야만 고쳐지므로, 폼 전체가 제출할 수 없는 상태로 시작합니다. 네 제안은 이것을 '문구가 `required`에서 형 에러로 바뀜' 정도로 적었지만, 실제로는 선택 필드의 제출 성공이 제출 실패로 바뀝니다. 게다가 `null`을 `""`·0·`false`로 바꾸지 않기로 한 것은 제안자들의 결론입니다. ajv 표에서 문자열 `null`→`""`은 'a (ajv 기준)'로 분류되어 있습니다(`architecture/reviews/raw-round18-s1-parse-check.md:38`, `:52`). 소유자 답 '(ajv 규칙 수준)'과 글자가 어긋나는데도 소유자 질문으로 올리지 않았습니다(규칙 1). (근거: `src/core/nodes/NumberNode/NumberNode.ts:103-104`, `:119-122`; `src/core/parsers/parseString.ts:38-41`; `src/core/nodes/StringNode/StringNode.ts:85-87`; `architecture/reviews/raw-round18-s1-parse-check.md:30`, `:38`, `:52`; `architecture/reviews/round-18-owner-answers.md:8`; 소유자 우려 '값을 가지고 있는데 빈 값을 표현하는것도 좀 위험')
 - [중간] 제안 4(주로), 제안 1, 2, 3(정하지 않음) / S-a 변형. 폼 인코딩 방식의 백엔드가 수 노드에 `{ age: "" }`를 줌. 검증기 있음: ajv는 `""`을 수로 바꾸지 않으므로 원본은 `""`입니다. 기본 수 입력과 mui는 `type=number`라 빈 칸으로 그립니다. 제안 4는 '형이 맞지 않는 값은 빈 값이 아니다, `""`도 생략하지 않는다'라고 명시합니다. 그러면 빈 칸으로 보이는 선택 필드에 "must be number"가 나고 제출이 막힙니다. 사용자는 빈 칸을 다시 비울 수 없습니다. 제안 1, 2, 3은 수 노드의 `""`에 대한 `omitEmpty` 판정을 정하지 않아 같은 결과가 남습니다. (근거: `architecture/reviews/raw-round18-s1-parse-check.md:28`(`""`은 ajv 에러); `src/formTypeDefinitions/FormTypeInputNumber.tsx:26-34`; 제안 4 위험 항목 셋째('수 노드의 `""`를 빈 값으로 보고 생략하면 … 결함이 되살아납니다'))
 - [높음] 제안 1, 2, 3, 4 모두(S-c와 자동 쓰기의 읽기 쪽) / S-a와 S-g 뒤의 `controls.derived`, `controls.injectTo`, 게이트 식이 형이 맞지 않는 원본을 읽는 경우. 예: `../age.toFixed(1)`, `../tags.map(...)`, `../price * ../qty`: 네 제안은 S-c를 '대상에 쓰는 값'으로만 따졌습니다. 그러나 나′는 식이 읽는 값의 형 보장도 없앱니다. 오늘은 parse가 `NaN`·`[]`·`{}`를 주므로 `.toFixed`와 `.map`이 던지지 않습니다. 나′에서는 `"abc"`나 `null`에 `.toFixed`, `"a,b"`에 `.map`을 부르면 TypeError가 납니다. 이것은 `EXPRESSION_THREW`로 `degraded`가 되고, 모든 환경에서 사슬 끝 throw와 제출 거부로 이어집니다. 검증기가 없는 폼도 서버의 틀린 칸 하나로 잠깁니다. 이것은 제안들이 '라'를 버린 이유로 든 결과, 곧 '틀린 칸 하나로 제출이 막힌다'를 다른 길로 되살립니다. 던지지 않는 식은 그럴듯한 값을 조용히 만듭니다. `null * 3`과 `"" * 3`은 0이 되어 유효한 합계로 방출되고, `"abc" + 1`은 `"abc1"`이 됩니다. 오늘은 `NaN`이 전파되어 합계가 빠집니다. 검증기가 없으면 원천 필드의 경고 하나 말고는 합계가 0이 된 것을 알릴 신호가 없습니다. (근거: `architecture/adr/0014-error-policy.md:197`(식이 던지면 `degraded`), `:201`, `:231`, `:268`, `:279`; `architecture/08-design-a-to-z.md:488`(식이 읽는 값이 원본인지 투영인지는 미정); `src/core/parsers/parseNumber.ts:31-40`(오늘은 늘 수를 돌려줌))
@@ -413,28 +452,28 @@
 
 다음은 권고 동작입니다. 형 오류가 보이는 시점은 설정된 검증 시점에 따릅니다.
 
-| 쓰기 출처 | 변환 불가 입력의 처리 | 검증기가 있을 때 | 검증기가 없을 때 |
-|---|---|---|---|
-| 서버 로드 | 받은 값을 보존합니다. `{ age: "abc" }`의 `age.value`는 `"abc"`입니다. | 준비 이후 설정된 검증에서 `age.errors`에 형 오류가 생깁니다. | 검증기 부재 경고만 냅니다. 로드를 거부하거나 값을 비우지 않습니다. |
-| 공개 `setValue` | 이전 값을 새 입력으로 바꿉니다. 실패를 이유로 이전 값을 유지하지 않습니다. | 형 오류는 검증 결과입니다. 변환 불가만으로 호출이 예외를 던지지는 않습니다. | 값을 저장하며, 개별 형 오류를 자동 생성하지 않습니다. |
-| 사용자 입력 | **컴포넌트가 실제 전달한 값**에 같은 규칙을 적용합니다. | 전달된 값의 오류는 노드 `errors`로 드러납니다. | 값 보존과 입력 표시를 유지합니다. 검증 통과를 보장하지 않습니다. |
-| `derived`·`injectTo` | 정상적으로 반환·전달한 `"abc"`는 그대로 저장합니다. | 대상 노드의 형 오류입니다. | 그대로 저장합니다. |
-| `reset`·다시 로드 | 재설정 원천에도 같은 파서를 적용합니다. 잘못된 값이 다시 들어오면 다시 보존합니다. | 로드 이후 검증 규칙을 따릅니다. | 같은 스키마의 재설정에는 검증기 부재 경고를 반복하지 않습니다. |
+| 쓰기 출처            | 변환 불가 입력의 처리                                                              | 검증기가 있을 때                                                            | 검증기가 없을 때                                                   |
+| -------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 서버 로드            | 받은 값을 보존합니다. `{ age: "abc" }`의 `age.value`는 `"abc"`입니다.              | 준비 이후 설정된 검증에서 `age.errors`에 형 오류가 생깁니다.                | 검증기 부재 경고만 냅니다. 로드를 거부하거나 값을 비우지 않습니다. |
+| 공개 `setValue`      | 이전 값을 새 입력으로 바꿉니다. 실패를 이유로 이전 값을 유지하지 않습니다.         | 형 오류는 검증 결과입니다. 변환 불가만으로 호출이 예외를 던지지는 않습니다. | 값을 저장하며, 개별 형 오류를 자동 생성하지 않습니다.              |
+| 사용자 입력          | **컴포넌트가 실제 전달한 값**에 같은 규칙을 적용합니다.                            | 전달된 값의 오류는 노드 `errors`로 드러납니다.                              | 값 보존과 입력 표시를 유지합니다. 검증 통과를 보장하지 않습니다.   |
+| `derived`·`injectTo` | 정상적으로 반환·전달한 `"abc"`는 그대로 저장합니다.                                | 대상 노드의 형 오류입니다.                                                  | 그대로 저장합니다.                                                 |
+| `reset`·다시 로드    | 재설정 원천에도 같은 파서를 적용합니다. 잘못된 값이 다시 들어오면 다시 보존합니다. | 로드 이후 검증 규칙을 따릅니다.                                             | 같은 스키마의 재설정에는 검증기 부재 경고를 반복하지 않습니다.     |
 
 `derived`가 `"abc"`를 **반환하는 것**과 식이 **예외를 던지는 것**은 다릅니다. 후자는 기존 결정대로 정착 오류이며, 사슬 끝에서 드러나고 `degraded` 동안 제출을 거부합니다. 전자를 후자로 취급하면 ‘스키마에 맞지 않는 값’의 분류를 바꾸게 됩니다. [오류와 검증 결과의 구분:32](packages/canard/schema-form/architecture/adr/0014-error-policy.md:32), [정착 오류 처리:49](packages/canard/schema-form/architecture/adr/0014-error-policy.md:49), [검증기 부재·로드 검증:213](packages/canard/schema-form/architecture/adr/0014-error-policy.md:213)
 
 장면별로 적용하면 다음과 같습니다.
 
-| 장면 | 권고 결과와 한계 |
-|---|---|
-| S-a 서버의 `{ age: "abc" }` | `"abc"`를 보존합니다. 검증기가 있으면 형 오류, 없으면 개별 형 판정 없이 진행합니다. |
-| S-b `setValue("abc")` | S-a와 같습니다. 호출 경로 때문에 이전 값 유지로 바뀌지 않습니다. |
-| S-c `derived`가 문자열 반환 | `"12"`처럼 허용된 변환이면 수로 저장하고, `"abc"`이면 문자열 그대로 저장합니다. |
-| S-d 제어 수 입력에서 `-` 작성 중 | **추론:** 아직 컴포넌트 내부의 편집 문자열이면 노드에 쓰지 않습니다. 컴포넌트가 실제로 `"-"`를 전달했다면 노드는 보존합니다. 모든 키 입력을 완성된 수로 만들려고 해서는 안 됩니다. |
-| S-e 기본 수 입력의 빈 칸 | 현재 컴포넌트가 전달하는 `NaN`을 받습니다. 이를 보존해도 원래 빈 칸이나 작성 중 문자열을 복원할 수는 없습니다. 현행 `omitEmpty`를 유지하면 방출에서 빠질 수도 있습니다. |
-| S-f 불리언 `"abc"`, 배열 `"a,b"`, 객체 `"x"` | 각각 그대로 보존합니다. `true`, `[]`, `{}`로 바꾸지 않습니다. 문자열을 임의로 나누거나 배열로 감싸지도 않는 쪽을 권고합니다. |
-| S-g 수 노드의 `null` | `nullable`이면 그대로 둡니다. 아니라면 **`null` 보존과 검증 오류를 권고**합니다. 다만 ajv의 `null → 0`까지 허용할지는 마지막 소유자 질문에 남깁니다. |
-| S-h 재설정·재로드 | 같은 입력은 같은 결과가 됩니다. 새 로드가 `degraded` 기록을 초기화하는 것과 값이 유효해지는 것은 별개입니다. |
+| 장면                                         | 권고 결과와 한계                                                                                                                                                                   |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S-a 서버의 `{ age: "abc" }`                  | `"abc"`를 보존합니다. 검증기가 있으면 형 오류, 없으면 개별 형 판정 없이 진행합니다.                                                                                                |
+| S-b `setValue("abc")`                        | S-a와 같습니다. 호출 경로 때문에 이전 값 유지로 바뀌지 않습니다.                                                                                                                   |
+| S-c `derived`가 문자열 반환                  | `"12"`처럼 허용된 변환이면 수로 저장하고, `"abc"`이면 문자열 그대로 저장합니다.                                                                                                    |
+| S-d 제어 수 입력에서 `-` 작성 중             | **추론:** 아직 컴포넌트 내부의 편집 문자열이면 노드에 쓰지 않습니다. 컴포넌트가 실제로 `"-"`를 전달했다면 노드는 보존합니다. 모든 키 입력을 완성된 수로 만들려고 해서는 안 됩니다. |
+| S-e 기본 수 입력의 빈 칸                     | 현재 컴포넌트가 전달하는 `NaN`을 받습니다. 이를 보존해도 원래 빈 칸이나 작성 중 문자열을 복원할 수는 없습니다. 현행 `omitEmpty`를 유지하면 방출에서 빠질 수도 있습니다.            |
+| S-f 불리언 `"abc"`, 배열 `"a,b"`, 객체 `"x"` | 각각 그대로 보존합니다. `true`, `[]`, `{}`로 바꾸지 않습니다. 문자열을 임의로 나누거나 배열로 감싸지도 않는 쪽을 권고합니다.                                                       |
+| S-g 수 노드의 `null`                         | `nullable`이면 그대로 둡니다. 아니라면 **`null` 보존과 검증 오류를 권고**합니다. 다만 ajv의 `null → 0`까지 허용할지는 마지막 소유자 질문에 남깁니다.                               |
+| S-h 재설정·재로드                            | 같은 입력은 같은 결과가 됩니다. 새 로드가 `degraded` 기록을 초기화하는 것과 값이 유효해지는 것은 별개입니다.                                                                       |
 
 기본 수 입력은 실제로 `valueAsNumber`를 전달하고 `defaultValue`를 사용합니다. 또한 수 노드의 현행 생략 처리는 `NaN`을 부모에게 `undefined`로 전달합니다. 따라서 **파서 정책만 바꾸어 S-e를 해결했다고 말할 수 없습니다.** [기본 수 입력:23](packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputNumber.tsx:23), [수 노드 생략 처리:119](packages/canard/schema-form/src/core/nodes/NumberNode/NumberNode.ts:119)
 
@@ -460,18 +499,18 @@
 
 **5. 기준 C1–C10 판정**
 
-| 기준 | 권고안 판정 | 근거 |
-|---|---|---|
-| C1 저장=보임=타입 | **부분** | 저장과 읽기는 일치하지만 스키마 타입 보장은 포기합니다. 기존 컴포넌트의 표시도 수정이 필요합니다. |
-| C2 조용한 변경 없음 | **지킴** | 합의된 성공 변환 외에는 대체·폐기·이전 값 복귀가 없습니다. 기존 방출 정책은 별도입니다. |
-| C3 오류가 보임 — 검증기 있음 | **부분** | 보존한 형 불일치는 판정할 수 있습니다. 다만 검증 시점·방출 생략·검증기 설정까지 파서가 보장하지는 않습니다. |
-| C4 오류가 보임 — 검증기 없음 | **부분** | 검증기 부재는 알리지만 개별 형 오류는 보장하지 않습니다. |
-| C5 망가진 값을 올리지 않음 | **부분** | 정착 오류의 제출 차단은 유지합니다. 검증기 없는 폼의 잘못된 값 제출은 막지 않습니다. |
-| C6 원래 입력 보존 | **부분** | 노드가 받은 변환 불가 값은 보존합니다. `valueAsNumber`가 이미 버린 문자열까지 복구하지는 못합니다. |
-| C7 공개 형의 정직함 | **지킴 — 타입 수정 조건** | 변환 불가 값도 포함하도록 공개 타입을 넓혀야 합니다. 기존 수 타입 선언을 유지하면 어깁니다. |
-| C8 모든 노드 종류의 같은 규칙 | **부분** | 실제 데이터에는 같은 규칙을 적용합니다. 가상 노드의 참조 묶음 자체가 잘못된 경우는 별도 호출 계약입니다. |
-| C9 사용자 입력 경험 | **부분** | 원본을 지우거나 되돌리지 않지만 편집 중 상태와 표현 불가 값에 대한 입력 연결부 수정이 필요합니다. |
-| C10 새 개념과 표면 비용 | **부분** | 두 번째 값 읽기는 만들지 않지만 공개 타입과 입력 연결부의 변경 비용이 큽니다. |
+| 기준                          | 권고안 판정               | 근거                                                                                                        |
+| ----------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| C1 저장=보임=타입             | **부분**                  | 저장과 읽기는 일치하지만 스키마 타입 보장은 포기합니다. 기존 컴포넌트의 표시도 수정이 필요합니다.           |
+| C2 조용한 변경 없음           | **지킴**                  | 합의된 성공 변환 외에는 대체·폐기·이전 값 복귀가 없습니다. 기존 방출 정책은 별도입니다.                     |
+| C3 오류가 보임 — 검증기 있음  | **부분**                  | 보존한 형 불일치는 판정할 수 있습니다. 다만 검증 시점·방출 생략·검증기 설정까지 파서가 보장하지는 않습니다. |
+| C4 오류가 보임 — 검증기 없음  | **부분**                  | 검증기 부재는 알리지만 개별 형 오류는 보장하지 않습니다.                                                    |
+| C5 망가진 값을 올리지 않음    | **부분**                  | 정착 오류의 제출 차단은 유지합니다. 검증기 없는 폼의 잘못된 값 제출은 막지 않습니다.                        |
+| C6 원래 입력 보존             | **부분**                  | 노드가 받은 변환 불가 값은 보존합니다. `valueAsNumber`가 이미 버린 문자열까지 복구하지는 못합니다.          |
+| C7 공개 형의 정직함           | **지킴 — 타입 수정 조건** | 변환 불가 값도 포함하도록 공개 타입을 넓혀야 합니다. 기존 수 타입 선언을 유지하면 어깁니다.                 |
+| C8 모든 노드 종류의 같은 규칙 | **부분**                  | 실제 데이터에는 같은 규칙을 적용합니다. 가상 노드의 참조 묶음 자체가 잘못된 경우는 별도 호출 계약입니다.    |
+| C9 사용자 입력 경험           | **부분**                  | 원본을 지우거나 되돌리지 않지만 편집 중 상태와 표현 불가 값에 대한 입력 연결부 수정이 필요합니다.           |
+| C10 새 개념과 표면 비용       | **부분**                  | 두 번째 값 읽기는 만들지 않지만 공개 타입과 입력 연결부의 변경 비용이 큽니다.                               |
 
 가상 노드는 단순히 일곱 번째 데이터 타입이 아닙니다. 참조 노드에 값을 분배하며, 현행 구현은 참조 수와 다른 길이를 거부합니다. **추론:** 올바른 묶음 안의 `"abc"`는 대상 노드에 보존할 수 있지만, 어느 참조에 배정할지 정할 수 없는 묶음을 ‘형 불일치 데이터’와 같게 취급해서는 안 됩니다. 터미널 객체와 일반 객체의 잘못된 값 보존은 같은 방향으로 적용하되 내부 합성 방식은 다릅니다. [가상 노드:44](packages/canard/schema-form/src/core/nodes/VirtualNode/VirtualNode.ts:44), [객체 값 보존 결정:91](packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md:91)
 
@@ -479,13 +518,13 @@
 
 아래는 같은 기준과 장면에 대한 **추론**입니다.
 
-| 후보 | 얻는 것 | 지는 이유와 해당 장면 |
-|---|---|---|
-| 가. 대체 값 | 기존 수 타입과 일부 입력 연결을 유지하기 쉽습니다. | S-a·S-b·S-c에서 원본을 잃어 C2·C6을 어깁니다. S-f에서는 공통 실패 표지가 없어 C8을 어깁니다. `NaN`은 S-e의 생략 문제도 해결하지 못합니다. |
-| 다. 저장과 읽기 분리 | 타입에 맞춘 읽기를 제공하므로 C7을 지키기 쉽습니다. | S-a·S-b·S-f에서 실제 값이 있는데 빈 값으로 보일 수 있어 C1·C2를 훼손합니다. S-d에서는 편집 내용을 되돌릴 위험이 있고, S-h에는 어느 값을 복원하는지 새 계약이 필요해 C9·C10 비용이 큽니다. |
-| 라. 쓰기 거부 | 수용된 값에 대해서는 C1·C7이 강합니다. | S-a에는 유지할 이전 값이 없고, S-b·S-c에는 호출자가 쓴 값 대신 이전 값이 남습니다. S-d·S-e는 입력을 되돌릴 수 있습니다. C6을 잃으며 ‘입력을 막지 않는다’는 결정과 직접 충돌합니다. |
-| 마. 출처별 분리 | 사용자 입력 경험과 프로그램 쓰기를 각각 최적화할 여지가 있습니다. | S-a·S-b·S-c가 같은 값인데 서로 다른 결과가 됩니다. S-h에서 재설정·재로드가 결과를 바꾸며 C2·C8·C10이 약해집니다. 출처가 값의 의미를 바꾼다는 근거가 없습니다. |
-| 바. 항상 작동하는 최소 형 검사 | C4를 강화할 수 있습니다. | 관찰만 하면 C5는 해결되지 않습니다. 제출까지 막으면 비차단 결정과 충돌합니다. 검증 결과의 소유자와 표시 표면이 늘어 C10 비용이 생깁니다. |
+| 후보                           | 얻는 것                                                           | 지는 이유와 해당 장면                                                                                                                                                                     |
+| ------------------------------ | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 가. 대체 값                    | 기존 수 타입과 일부 입력 연결을 유지하기 쉽습니다.                | S-a·S-b·S-c에서 원본을 잃어 C2·C6을 어깁니다. S-f에서는 공통 실패 표지가 없어 C8을 어깁니다. `NaN`은 S-e의 생략 문제도 해결하지 못합니다.                                                 |
+| 다. 저장과 읽기 분리           | 타입에 맞춘 읽기를 제공하므로 C7을 지키기 쉽습니다.               | S-a·S-b·S-f에서 실제 값이 있는데 빈 값으로 보일 수 있어 C1·C2를 훼손합니다. S-d에서는 편집 내용을 되돌릴 위험이 있고, S-h에는 어느 값을 복원하는지 새 계약이 필요해 C9·C10 비용이 큽니다. |
+| 라. 쓰기 거부                  | 수용된 값에 대해서는 C1·C7이 강합니다.                            | S-a에는 유지할 이전 값이 없고, S-b·S-c에는 호출자가 쓴 값 대신 이전 값이 남습니다. S-d·S-e는 입력을 되돌릴 수 있습니다. C6을 잃으며 ‘입력을 막지 않는다’는 결정과 직접 충돌합니다.        |
+| 마. 출처별 분리                | 사용자 입력 경험과 프로그램 쓰기를 각각 최적화할 여지가 있습니다. | S-a·S-b·S-c가 같은 값인데 서로 다른 결과가 됩니다. S-h에서 재설정·재로드가 결과를 바꾸며 C2·C8·C10이 약해집니다. 출처가 값의 의미를 바꾼다는 근거가 없습니다.                             |
+| 바. 항상 작동하는 최소 형 검사 | C4를 강화할 수 있습니다.                                          | 관찰만 하면 C5는 해결되지 않습니다. 제출까지 막으면 비차단 결정과 충돌합니다. 검증 결과의 소유자와 표시 표면이 늘어 C10 비용이 생깁니다.                                                  |
 
 어느 후보든 검증기가 없으면 C3·C4가 저절로 해결되지 않습니다. 대체하거나 거부한다고 오류 표시가 자동으로 생기는 것도 아닙니다. 특히 오늘의 대체 값은 선택 필드에서 오류 자체를 사라지게 한 실행 기록이 있습니다. [실행 기록:94](packages/canard/schema-form/architecture/reviews/raw-round18-s1-parse-check.md:94)
 
@@ -513,13 +552,13 @@
 
 ### 2. 쓰기 출처별 동작과 오류가 드러나는 자리
 
-| 쓰기 출처 | 입력 예시 (수 노드 기준) | 저장되는 값 (`node.value`) | 방출 값 (`getValue`) | 오류가 드러나는 자리 (검증기 연결 시) | 오류가 드러나는 자리 (검증기 미연결 시) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **서버 로드** (마운트 시 초기값) | `{ age: "abc" }` | `"abc"` | `"abc"` | 커밋 후 준비 이펙트 단계에서 노드의 `errors`에 스키마 타입 오류(`type: number`) 표시 ([ADR 0014:217](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L217)) | 오류 없음 (마운트 시 폼 수준의 `VALIDATOR_MISSING` 경고만 1회 알림, [ADR 0014:213](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L213)) |
-| **공개 `setValue`** (호출자 주입) | `node.setValue("abc")` | `"abc"` | `"abc"` | 변경 통지 후 검증 파동에서 노드의 `errors`에 스키마 타입 오류 표시 | 오류 없음 (사슬 끝 예외 송출 없음) |
-| **사용자 입력** (`onChange`) | 치다 만 음수 부호 `"-"` 또는 `"abc"` | `"-"` 또는 `"abc"` | `"-"` 또는 `"abc"` | 실시간 검증(`OnChange`) 설정 시 노드의 `errors`에 즉시 타입 오류 표시 | 오류 없음 (입력 컴포넌트의 화면 상태 유지) |
-| **자동 쓰기** (`controls.derived`, `injectTo`) | 수식이 잘못된 문자열 `"abc"`를 반환 | `"abc"` | `"abc"` | 정착 루프는 정상 커밋되며, 검증 파동에서 노드의 `errors`에 타입 오류 표시 ([ADR 0014:194](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L194) 준수) | 오류 없음 (식이 예외를 던진 것이 아니므로 정착 오류 아님) |
-| **초기화** (`reset`) | 초기 적재 값 복원 (`"abc"`) | `"abc"` | `"abc"` | 초기화 사슬 끝에서 검증 요청 후 노드의 `errors`에 표시 ([ADR 0014:217](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L217)) | 오류 없음 |
+| 쓰기 출처                                      | 입력 예시 (수 노드 기준)             | 저장되는 값 (`node.value`) | 방출 값 (`getValue`) | 오류가 드러나는 자리 (검증기 연결 시)                                                                                                                                                | 오류가 드러나는 자리 (검증기 미연결 시)                                                                                                                            |
+| :--------------------------------------------- | :----------------------------------- | :------------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **서버 로드** (마운트 시 초기값)               | `{ age: "abc" }`                     | `"abc"`                    | `"abc"`              | 커밋 후 준비 이펙트 단계에서 노드의 `errors`에 스키마 타입 오류(`type: number`) 표시 ([ADR 0014:217](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L217)) | 오류 없음 (마운트 시 폼 수준의 `VALIDATOR_MISSING` 경고만 1회 알림, [ADR 0014:213](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L213)) |
+| **공개 `setValue`** (호출자 주입)              | `node.setValue("abc")`               | `"abc"`                    | `"abc"`              | 변경 통지 후 검증 파동에서 노드의 `errors`에 스키마 타입 오류 표시                                                                                                                   | 오류 없음 (사슬 끝 예외 송출 없음)                                                                                                                                 |
+| **사용자 입력** (`onChange`)                   | 치다 만 음수 부호 `"-"` 또는 `"abc"` | `"-"` 또는 `"abc"`         | `"-"` 또는 `"abc"`   | 실시간 검증(`OnChange`) 설정 시 노드의 `errors`에 즉시 타입 오류 표시                                                                                                                | 오류 없음 (입력 컴포넌트의 화면 상태 유지)                                                                                                                         |
+| **자동 쓰기** (`controls.derived`, `injectTo`) | 수식이 잘못된 문자열 `"abc"`를 반환  | `"abc"`                    | `"abc"`              | 정착 루프는 정상 커밋되며, 검증 파동에서 노드의 `errors`에 타입 오류 표시 ([ADR 0014:194](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L194) 준수)       | 오류 없음 (식이 예외를 던진 것이 아니므로 정착 오류 아님)                                                                                                          |
+| **초기화** (`reset`)                           | 초기 적재 값 복원 (`"abc"`)          | `"abc"`                    | `"abc"`              | 초기화 사슬 끝에서 검증 요청 후 노드의 `errors`에 표시 ([ADR 0014:217](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L217))                               | 오류 없음                                                                                                                                                          |
 
 ---
 
@@ -528,7 +567,7 @@
 소유자께서 제기하신 *"만약 검증기가 연결되지 않은 경우에는 진짜 폼 에러를 받고(`onError`로), 값이 비워져야 하는가?"*라는 물음에 대한 독립 검토자의 명확한 권고는 **"절대로 값을 비워서는 안 되며, `onError`로 치명적 오류를 발생시켜서도 안 된다"**입니다.
 
 1. **값을 비워서는 안 되는 까닭**:
-   제어 컴포넌트에서 사용자가 음수를 입력하기 위하여 `"-"`를 입력하거나 소수점을 찍는 순간, 파서는 일시적으로 수로 변환할 수 없습니다. 이때 값을 비워버리면 입력창이 빈 칸으로 리셋되어 사용자가 키보드로 값을 입력하는 행위 자체가 불가능해집니다. 이는 아키텍처 결정 기록 0013 제1결정(*"코어는 받은 값을 고치지 않는다. 입력을 막지 않는다"*, [`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))과 정면으로 충돌합니다.
+   제어 컴포넌트에서 사용자가 음수를 입력하기 위하여 `"-"`를 입력하거나 소수점을 찍는 순간, 파서는 일시적으로 수로 변환할 수 없습니다. 이때 값을 비워버리면 입력창이 빈 칸으로 리셋되어 사용자가 키보드로 값을 입력하는 행위 자체가 불가능해집니다. 이는 아키텍처 결정 기록 0013 제1결정(_"코어는 받은 값을 고치지 않는다. 입력을 막지 않는다"_, [`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))과 정면으로 충돌합니다.
 2. **`onError`로 오류를 처리해서는 안 되는 까닭**:
    타입 변환 불가는 폼 엔진의 런타임 불변식이 깨진 사건(예산 초과, 무한 루프 등)이 아니라, 데이터 자체가 스키마 제약에 맞지 않는 "검증의 영역"입니다. 17라운드 통보 3에서 소유자께서 확정하셨듯이([`round-17-owner-answers.md`](file://packages/canard/schema-form/architecture/reviews/round-17-owner-answers.md)), 검증기 없이 스키마 폼을 사용하는 사용예는 *"유효성 검증은 백엔드에서 전담하고 프론트엔드는 폼 구성과 데이터 전송만 담당하겠다"*는 명시적 선택입니다.
 3. **올바른 귀결**:
@@ -542,7 +581,7 @@
    리액트의 제어 컴포넌트([React 공식 문서: Controlled Components](https://react.dev/reference/react-dom/components/input#controlling-an-input-with-a-state-variable))는 `value` 속성으로 전달된 상태와 화면의 렌더링 결과가 1:1로 일치해야만 커서 위치가 튀지 않고 사용자 입력이 유실되지 않습니다.
    현재 코드베이스의 [SchemaNodeInput.tsx:116](file://packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx#L116) 및 Ant Design 플러그인([FormTypeInputBooleanSwitch.tsx:42, 61](file://packages/canard/schema-form-antd5-plugin/src/formTypeInputs/FormTypeInputBooleanSwitch.tsx#L42))에서 보듯, 제어 컴포넌트는 `value={node.value}`를 상태로 직접 바인딩합니다.
 2. **중간 입력 상태(Transient Input State)의 안전한 수용**:
-   사용자가 음수 `-50`을 입력할 때 거치는 `"-"`, 소수점 `12.5`를 입력할 때 거치는 `"12."`는 변환 불가능한 문자열입니다. 만약 노드가 이를 `NaN`이나 `undefined`로 바꾸어 버리면, 리액트는 다음 렌더링에서 입력창을 공백으로 덮어쓰게 되어 타이핑이 차단됩니다(소유자 우려: *"node.value는 제어컴포넌트에서 상태로 그대로 쓰이는데 이걸 바꿔버리면 예측하기 어려워질 것"*).
+   사용자가 음수 `-50`을 입력할 때 거치는 `"-"`, 소수점 `12.5`를 입력할 때 거치는 `"12."`는 변환 불가능한 문자열입니다. 만약 노드가 이를 `NaN`이나 `undefined`로 바꾸어 버리면, 리액트는 다음 렌더링에서 입력창을 공백으로 덮어쓰게 되어 타이핑이 차단됩니다(소유자 우려: _"node.value는 제어컴포넌트에서 상태로 그대로 쓰이는데 이걸 바꿔버리면 예측하기 어려워질 것"_).
 3. **선행 사례와의 일치**:
    - **웹 표준 (WHATWG HTML 명세 & MDN `HTMLInputElement.valueAsNumber`)**: `<input type="number">`는 사용자가 유효하지 않은 문자열을 입력 중일 때 DOM 내부의 텍스트 표현을 유지하며, 브라우저는 이를 `ValidityState.badInput`이라는 검증 플래그로만 다룹니다.
    - **React Hook Form**: Controller를 통하여 제어 컴포넌트를 구성할 때, 유효하지 않은 중간 입력값을 실시간으로 제거하지 않고 필드 상태에 유지한 채 유효성 검사기(Resolver)를 통해서만 에러 메시지를 노출합니다([React Hook Form 공식 문서: Controller](https://react-hook-form.com/docs/usecontroller/controller)).
@@ -554,18 +593,18 @@
 
 ### 5. 기준 C1–C10 판정 표
 
-| 기준 | 판정 | 근거 및 설명 |
-| :--- | :---: | :--- |
-| **C1. 저장=보임=타입** (제어 컴포넌트 예측 가능성) | **지킴** | 노드에 저장된 값과 `node.value`, 그리고 제어 컴포넌트가 화면에 그리는 값이 완벽히 일치하여 컴포넌트의 상태 불일치나 화면 리셋이 발생하지 않습니다. |
-| **C2. 조용한 변경 없음** | **지킴** | 오늘날 파서([`raw-round18-s1-parse-check.md`](file://packages/canard/schema-form/architecture/reviews/raw-round18-s1-parse-check.md))가 행하던 `"1e5"`→`15`, `"12abc"`→`1234`, 정수 절삭, 불리언 임의 변환, 빈 배열/객체 치환 등의 조용한 데이터 훼손이 완전히 배제됩니다. |
-| **C3. 오류가 보임** (검증기 있음) | **지킴** | 변환되지 않은 원래 값(예: `"abc"`)이 스키마 검증기(Ajv 등)에 전달되어 정확하게 `type: number` 오류를 발생시키며, 노드의 `errors`에 등록되어 사용자에게 즉시 가시화됩니다. |
-| **C4. 오류가 보임** (검증기 없음) | **지킴** | 검증기를 연결하지 않은 환경은 마운트 시 `SCHEMA_FORM_WARNING.VALIDATOR_MISSING`([ADR 0014:213](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L213))을 통해 명시적으로 고지되며, 스키마 유효성 검증을 생략하기로 한 계약에 충실합니다. |
-| **C5. 망가진 값을 올리지 않음** | **지킴** | 검증기가 있을 때는 제출 시 `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED`로 차단됩니다. 과거처럼 `NaN`이 `JSON.stringify`에서 조용히 `null`로 변질되어 서버로 유출되던 치명적 결함([`raw-round18-s1-parse-check.md:32`](file://packages/canard/schema-form/architecture/reviews/raw-round18-s1-parse-check.md#L32))이 근절됩니다. |
-| **C6. 원래 입력의 보존** | **지킴** | 아키텍처 결정 기록 0013 제1결정([`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))에 따라 호출자가 주입한 값이나 사용자가 타이핑한 문자열이 1바이트도 손실되지 않고 보존됩니다. |
-| **C7. 공개 형의 정직함** | **부분** | 타입스크립트 정적 타입상 `NumberNode.value`는 `number | undefined`로 선언되나, 런타임에 유효하지 않은 입력이 있을 때는 일시적으로 문자열을 품을 수 있습니다. 이는 정적 타입과 런타임 입력 상태 간의 불가피한 괴리이며, 문서화 및 타입 좁히기 규약으로 관리되어야 합니다 (추론). |
-| **C8. 모든 노드 종류에 같은 규칙** | **지킴** | 수 노드뿐 아니라 불리언, 문자열, 배열, 객체 노드 모두 "타입에 맞는 안전한 변환 시도 → 실패 시 원본 입력 보존"이라는 단 하나의 일관된 규칙을 따릅니다. |
-| **C9. 사용자 입력 경험** (치다 만 글자, IME) | **지킴** | 제어 컴포넌트에서 음수 부호(`"-"`), 소수점(`"."`), 한글 IME 조합 중인 글자가 입력 도중 지워지거나 튕기지 않고 브라우저에 매끄럽게 유지됩니다. |
-| **C10. 새 개념과 표면의 비용** | **지킴** | 이중 읽기 게터(`rawInput` 등)나 새로운 상태 채널을 신설하지 않고, 기존의 `node.value`와 `node.setValue` 의미론을 그대로 유지하므로 표면 증가 비용이 없습니다. |
+| 기준                                               |   판정   | 근거 및 설명                                                                                                                                                                                                                                                                                                                   |
+| :------------------------------------------------- | :------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **C1. 저장=보임=타입** (제어 컴포넌트 예측 가능성) | **지킴** | 노드에 저장된 값과 `node.value`, 그리고 제어 컴포넌트가 화면에 그리는 값이 완벽히 일치하여 컴포넌트의 상태 불일치나 화면 리셋이 발생하지 않습니다.                                                                                                                                                                             |
+| **C2. 조용한 변경 없음**                           | **지킴** | 오늘날 파서([`raw-round18-s1-parse-check.md`](file://packages/canard/schema-form/architecture/reviews/raw-round18-s1-parse-check.md))가 행하던 `"1e5"`→`15`, `"12abc"`→`1234`, 정수 절삭, 불리언 임의 변환, 빈 배열/객체 치환 등의 조용한 데이터 훼손이 완전히 배제됩니다.                                                     |
+| **C3. 오류가 보임** (검증기 있음)                  | **지킴** | 변환되지 않은 원래 값(예: `"abc"`)이 스키마 검증기(Ajv 등)에 전달되어 정확하게 `type: number` 오류를 발생시키며, 노드의 `errors`에 등록되어 사용자에게 즉시 가시화됩니다.                                                                                                                                                      |
+| **C4. 오류가 보임** (검증기 없음)                  | **지킴** | 검증기를 연결하지 않은 환경은 마운트 시 `SCHEMA_FORM_WARNING.VALIDATOR_MISSING`([ADR 0014:213](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L213))을 통해 명시적으로 고지되며, 스키마 유효성 검증을 생략하기로 한 계약에 충실합니다.                                                               |
+| **C5. 망가진 값을 올리지 않음**                    | **지킴** | 검증기가 있을 때는 제출 시 `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED`로 차단됩니다. 과거처럼 `NaN`이 `JSON.stringify`에서 조용히 `null`로 변질되어 서버로 유출되던 치명적 결함([`raw-round18-s1-parse-check.md:32`](file://packages/canard/schema-form/architecture/reviews/raw-round18-s1-parse-check.md#L32))이 근절됩니다. |
+| **C6. 원래 입력의 보존**                           | **지킴** | 아키텍처 결정 기록 0013 제1결정([`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))에 따라 호출자가 주입한 값이나 사용자가 타이핑한 문자열이 1바이트도 손실되지 않고 보존됩니다.                                                        |
+| **C7. 공개 형의 정직함**                           | **부분** | 타입스크립트 정적 타입상 `NumberNode.value`는 `number                                                                                                                                                                                                                                                                          | undefined`로 선언되나, 런타임에 유효하지 않은 입력이 있을 때는 일시적으로 문자열을 품을 수 있습니다. 이는 정적 타입과 런타임 입력 상태 간의 불가피한 괴리이며, 문서화 및 타입 좁히기 규약으로 관리되어야 합니다 (추론). |
+| **C8. 모든 노드 종류에 같은 규칙**                 | **지킴** | 수 노드뿐 아니라 불리언, 문자열, 배열, 객체 노드 모두 "타입에 맞는 안전한 변환 시도 → 실패 시 원본 입력 보존"이라는 단 하나의 일관된 규칙을 따릅니다.                                                                                                                                                                          |
+| **C9. 사용자 입력 경험** (치다 만 글자, IME)       | **지킴** | 제어 컴포넌트에서 음수 부호(`"-"`), 소수점(`"."`), 한글 IME 조합 중인 글자가 입력 도중 지워지거나 튕기지 않고 브라우저에 매끄럽게 유지됩니다.                                                                                                                                                                                  |
+| **C10. 새 개념과 표면의 비용**                     | **지킴** | 이중 읽기 게터(`rawInput` 등)나 새로운 상태 채널을 신설하지 않고, 기존의 `node.value`와 `node.setValue` 의미론을 그대로 유지하므로 표면 증가 비용이 없습니다.                                                                                                                                                                  |
 
 ---
 
@@ -575,10 +614,10 @@
    - **적용 불가능성 (C8 위반)**: 수 노드 외의 불리언, 배열, 객체 노드에는 `NaN`과 같은 센티널 값이 존재하지 않습니다.
    - **조용한 데이터 왜곡 (C2, C5 위반)**: 과거 파서 검증([`raw-round18-s1-parse-check.md`](file://packages/canard/schema-form/architecture/reviews/raw-round18-s1-parse-check.md))에서 확인되었듯, `"1e5"`가 `15`로 왜곡되고, `NaN`은 `JSON.stringify` 직렬화 시 `null`로 바뀌어 서버에 오염된 데이터가 제출됩니다.
 2. **후보 다 (원래 값 저장 후 `value`는 `undefined`로 가리는 안)가 지는 까닭**:
-   - **제어 컴포넌트 붕괴 (C1, C9 위반)**: 소유자께서 가장 정확하게 경계하셨던 안입니다(*"node.value는 제어컴포넌트 상태로 쓰이는데 바꿔버리면 동작 예측이 어렵다", "값을 가지고 있는데 빈 값을 표현하는 것은 위험하다"*). `node.value`가 `undefined`를 반환하는 순간, 제어 컴포넌트는 입력창을 빈 칸으로 리셋하여 음수 부호나 타이핑 중인 글자를 화면에서 즉시 지워버립니다.
+   - **제어 컴포넌트 붕괴 (C1, C9 위반)**: 소유자께서 가장 정확하게 경계하셨던 안입니다(_"node.value는 제어컴포넌트 상태로 쓰이는데 바꿔버리면 동작 예측이 어렵다", "값을 가지고 있는데 빈 값을 표현하는 것은 위험하다"_). `node.value`가 `undefined`를 반환하는 순간, 제어 컴포넌트는 입력창을 빈 칸으로 리셋하여 음수 부호나 타이핑 중인 글자를 화면에서 즉시 지워버립니다.
 3. **후보 라 (쓰기를 거부하고 저장하지 않는 안)가 지는 까닭**:
    - **입력 불가능 초래 (C9 위반)**: 사용자가 음수 `-10`을 입력하기 위해 첫 글자로 `"-"`를 누르는 순간 파싱이 불가능하여 쓰기가 거부되므로, 사용자는 음수를 전혀 입력할 수 없게 됩니다.
-   - **대원칙 위반**: 아키텍처 결정 기록 0013 제1결정(*"입력을 막지 않는다"*, [`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))과 정면으로 배치됩니다.
+   - **대원칙 위반**: 아키텍처 결정 기록 0013 제1결정(_"입력을 막지 않는다"_, [`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))과 정면으로 배치됩니다.
 4. **후보 마 (쓰기 출처별로 상이한 분기 규칙을 두는 안)가 지는 까닭**:
    - **복잡도 폭증 (C8, C10 위반)**: 서버 로드, 공개 설정, 사용자 입력마다 동작을 다르게 하면 동일한 값이라도 진입 경로에 따라 노드의 상태가 달라져 결정성(G5)이 깨지고 디버깅이 극도로 어려워집니다.
 
@@ -586,7 +625,7 @@
 
 지적해 주신 바를 면밀히 재검토하였으며, 귀하의 지적이 전적으로 타당함을 확인하였습니다.
 
-이전 보고서의 7번 항목에서 제시하였던 질문("검증기가 없는 환경에서 제출을 막아야 하는가")은 17라운드 통보 3에서 소유자께서 이미 확정하신 결정(*"오류만 내보내고 거절은 하지 마시죠 … 저는 jsonSchema 로 form 만 그리고, 유효성검증은 따로 하지 않는 사용예도 알고있어서요"*, [`round-17-owner-answers.md`](file://packages/canard/schema-form/architecture/reviews/round-17-owner-answers.md)) 및 아키텍처 결정 기록 0014 제6절([`0014-error-policy.md:213`](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L213))과 글자 그대로 정면 충돌합니다. 따라서 규칙 1에 따라 이미 고정된 답을 번복하는 질문은 남는 질문이 될 수 없으며, 본 검토자의 3번 항목 결론(*"어떠한 거부도 하지 않고 그대로 값을 전송한다"*)과도 명백한 자가당착이었습니다.
+이전 보고서의 7번 항목에서 제시하였던 질문("검증기가 없는 환경에서 제출을 막아야 하는가")은 17라운드 통보 3에서 소유자께서 이미 확정하신 결정(_"오류만 내보내고 거절은 하지 마시죠 … 저는 jsonSchema 로 form 만 그리고, 유효성검증은 따로 하지 않는 사용예도 알고있어서요"_, [`round-17-owner-answers.md`](file://packages/canard/schema-form/architecture/reviews/round-17-owner-answers.md)) 및 아키텍처 결정 기록 0014 제6절([`0014-error-policy.md:213`](file://packages/canard/schema-form/architecture/adr/0014-error-policy.md#L213))과 글자 그대로 정면 충돌합니다. 따라서 규칙 1에 따라 이미 고정된 답을 번복하는 질문은 남는 질문이 될 수 없으며, 본 검토자의 3번 항목 결론(_"어떠한 거부도 하지 않고 그대로 값을 전송한다"_)과도 명백한 자가당착이었습니다.
 
 해당 질문을 즉시 철회하고, 규칙 2의 엄격한 요건에 따라 사안을 다시 검토한 7번 항목의 수정 판단을 아래와 같이 보고합니다.
 
@@ -600,13 +639,14 @@
    - 17라운드 통보 3에서 소유자께서 *"검증기가 없으면 거부하지 않고 알리기만 한다"*고 이미 확정하셨습니다(규칙 1).
    - 따라서 검증기가 연결되지 않은 폼이 변환 불가 입력을 거부하지 않고 그대로 전송하는 것은 소유자의 확정 답변과 아키텍처 결정 기록 0014 제6절로부터 직접 도출되는 당연한 귀결이며, 정책 질문으로 다시 열릴 수 없습니다.
 2. **변환 불가 입력 시 `node.value`의 노출 동작**:
-   - 리액트 제어 컴포넌트의 단일 진실 공급원 원칙(기준 C1)과 사용자의 중간 타이핑(`"-"`, 소수점 등)을 보존해야 한다는 입력 경험 원칙(기준 C9), 그리고 아키텍처 결정 기록 0013 제1결정(*"코어는 받은 값을 고치지 않는다. 입력을 막지 않는다"*, [`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))에 의하여, 노드가 원래의 입력을 온전히 들고 `node.value`로 노출하는 것 외에 다른 대안은 원리적으로 성립할 수 없습니다.
+   - 리액트 제어 컴포넌트의 단일 진실 공급원 원칙(기준 C1)과 사용자의 중간 타이핑(`"-"`, 소수점 등)을 보존해야 한다는 입력 경험 원칙(기준 C9), 그리고 아키텍처 결정 기록 0013 제1결정(_"코어는 받은 값을 고치지 않는다. 입력을 막지 않는다"_, [`0013-core-does-not-rewrite-values.md:29`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L29))에 의하여, 노드가 원래의 입력을 온전히 들고 `node.value`로 노출하는 것 외에 다른 대안은 원리적으로 성립할 수 없습니다.
 3. **타입스크립트 정적 타입 선언의 엄격성 (기준 C7)**:
    - `NumberNode.value`의 정적 타입 범위를 넓힐 것인가의 문제는 타입 검사기(`tsc`)와 라이브러리 개발자에게 영향을 주는 개발 단계의 형식 체계일 뿐, 브라우저 화면에서 **사용자에게 보이는 런타임 결과를 바꾸지 않습니다**. 따라서 규칙 2의 조건("사용자에게 보이는 결과를 바꾸는 것")을 만족하지 못합니다.
 4. **빈 값(`valueAsNumber`의 `NaN`)의 해석**:
-   - 입력 필드가 비워졌을 때의 처리는 아키텍처 결정 기록 0013의 원본 변경 사건 표(D-11, `onChange(undefined)`가 빈 값) 및 제3결정(*"입력을 값으로 해석하는 일은 입력 컴포넌트의 몫이다"*, [`0013-core-does-not-rewrite-values.md:88`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L88))에 따라 입력 컴포넌트의 책임으로 이미 명확히 닫혀 있습니다.
+   - 입력 필드가 비워졌을 때의 처리는 아키텍처 결정 기록 0013의 원본 변경 사건 표(D-11, `onChange(undefined)`가 빈 값) 및 제3결정(_"입력을 값으로 해석하는 일은 입력 컴포넌트의 몫이다"_, [`0013-core-does-not-rewrite-values.md:88`](file://packages/canard/schema-form/architecture/adr/0013-core-does-not-rewrite-values.md#L88))에 따라 입력 컴포넌트의 책임으로 이미 명확히 닫혀 있습니다.
 
 #### 결론
+
 본 안건은 소유자께서 이미 내리신 결정들(에스-1, 에스-1 이어서, 알17-1 나, 통보 3)과 확립된 아키텍처 원리(결정 1, 단일 클래스 동작 행 분리, 제어 컴포넌트 불변식)를 결합할 때, **어떠한 논리적 결함이나 가치 충돌 없이 정확히 단 하나의 해법(제2항 및 제3항의 권고안)으로 완전히 수렴**합니다.
 
-따라서 소유자의 새로운 가치 판단이나 정책적 선택을 요구하는 **남는 소유자 질문은 존재하지 않으며**, 3번 항목의 직접 답(*"어떠한 거부도 하지 않고 원래 입력을 보존하여 그대로 전송한다"*)이 본 라이브러리의 최종 설계로서 완전한 내적 정합성을 갖추었음을 확인합니다.
+따라서 소유자의 새로운 가치 판단이나 정책적 선택을 요구하는 **남는 소유자 질문은 존재하지 않으며**, 3번 항목의 직접 답(_"어떠한 거부도 하지 않고 원래 입력을 보존하여 그대로 전송한다"_)이 본 라이브러리의 최종 설계로서 완전한 내적 정합성을 갖추었음을 확인합니다.

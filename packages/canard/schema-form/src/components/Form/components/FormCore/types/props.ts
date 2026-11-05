@@ -11,12 +11,12 @@ import type { FormErrorRecord } from '@/schema-form/errors';
 import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,
+  ErrorVisibility,
   FieldInputDefinition,
   FieldInputMap,
   FieldRendererProps,
   InferValueType,
   JSONSchema,
-  ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -78,16 +78,11 @@ export interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.EditedTouched).
-   * Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate.
-   * Only the OnChange validation mode holds errors; other modes follow the live condition.
-   *   - `true`: Always show
-   *   - `false`: Never show
-   *   - `ShowError.Edited`: Show after user input edits the field
-   *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
+   * Live display policy; defaults to AfterEditAndTouch after FormProvider fallback.
+   * Always/Never, AfterEdit/AfterTouch, AfterEditAndTouch/AfterEditOrTouch are string enum values.
+   * Node ErrorVisibility overrides precede the policy, without bypassing presence or OnChange release.
    */
-  showError?: boolean | ShowError;
+  errorVisibility?: ErrorVisibility;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
