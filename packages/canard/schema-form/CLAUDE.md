@@ -25,7 +25,7 @@ yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
 
-커버리지는 명시적으로 구성한 provider가 필요하며, 현재 설치된 provider는 없습니다.
+커버리지에는 `@vitest/coverage-v8` 같은 provider 패키지가 필요하며, 현재 설치되어 있지 않습니다.
 
 ## Agent Docs Injector
 

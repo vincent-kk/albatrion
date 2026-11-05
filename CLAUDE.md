@@ -110,7 +110,7 @@ When working on this monorepo:
 1. Read and follow all rules in the `.claude/rules` directory
 2. Check the specific package's CLAUDE.md for detailed guidance
 3. Use yarn workspace commands for package-specific operations
-4. Run `yarn run:all lint`, `yarn run:all typecheck`, and `yarn run:all test` before completing tasks; use the affected-workspace procedure under Important Commands to reproduce CI checks
+4. Run lint, typecheck and tests for the workspaces you changed (`yarn workspace <name> <script>`, with `--run` for Vitest), and reproduce CI with the affected-workspace procedure under Important Commands
 5. Follow the project structure and naming conventions
 6. Record releases as the change records section of `DOCUMENTATION.md` describes, and publish as `scripts/PUBLISHING.md` describes; `yarn changeset:version` needs a `GITHUB_TOKEN`
 7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)

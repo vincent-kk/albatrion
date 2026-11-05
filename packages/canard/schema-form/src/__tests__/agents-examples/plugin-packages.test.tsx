@@ -1,16 +1,17 @@
 import { createRef } from 'react';
 
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
+import { act, cleanup, render } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
+
 import {
   Form,
   type FormHandle,
   FormProvider,
   type SchemaFormPlugin,
   registerPlugin,
-} from '@canard/schema-form';
-import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
-import { act, cleanup, render } from '@testing-library/react';
-import { afterEach, expect, it } from 'vitest';
+} from '@/schema-form';
 
 afterEach(cleanup);
 
