@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef } from 'react';
+import { memo, useCallback, useInsertionEffect, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
@@ -51,6 +51,15 @@ export const FieldInputBridge = memo(
   }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || selected;
+    // Each selection gets its own generation, even when A returns after B.
+    const selection = useMemorize(() => ({ active: false }), [FieldInput]);
+    useInsertionEffect(() => {
+      // Commit before child layout writes; abandoned renders never activate.
+      selection.active = true;
+      return () => {
+        selection.active = false;
+      };
+    }, [selection]);
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
@@ -84,10 +93,11 @@ export const FieldInputBridge = memo(
     );
     const accepts = useCallback(
       () =>
+        selection.active &&
         isLive() &&
         (mountedChildren.current > 0 ||
           generation === node.revision(FieldNodeEventType.RequestRefresh)),
-      [node, generation, isLive],
+      [node, generation, isLive, selection],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = SetValueOption.Overwrite) => {

@@ -2,7 +2,6 @@ import { Fragment, memo, useMemo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent } from '@winglet/react-utils/filter';
-import { ErrorBoundary } from '@winglet/react-utils/hoc';
 import {
   useConstant,
   useReference,
@@ -28,6 +27,7 @@ import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { createFieldInputBridge } from './components/FieldInputBridge';
+import { FormatterErrorBoundary } from './components/FormatterErrorBoundary';
 import type { FieldProxyProps } from './type';
 
 const RERENDERING_EVENT =
@@ -75,10 +75,10 @@ export const FieldProxy = ({
   } = useFieldRendererContext();
 
   const Component = InputFieldRenderer || ContextFieldRenderer;
-  const FieldRenderer = useMemo(() => {
+  const [FieldRenderer, RendererBoundary] = useMemo(() => {
     const Renderer = isMemoComponent(Component) ? Component : memo(Component);
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
-    return function RendererWithErrorMessage(
+    function RendererWithErrorMessage(
       props: Omit<FieldRendererProps, 'errorMessage'>,
     ) {
       const { node, context, formatError } = props;
@@ -94,7 +94,10 @@ export const FieldProxy = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [node, refreshRef.current, context, formatError]);
       return <Renderer {...props} errorMessage={errorMessage} />;
-    };
+    }
+    // The selected renderer owns the boundary lifetime as well as its UI.
+    class RendererBoundary extends FormatterErrorBoundary {}
+    return [RendererWithErrorMessage, RendererBoundary] as const;
   }, [Component, refreshRef]);
   const Wrapper = useConstant(InputWrapper || Fragment);
   const { context } = useWorkspaceContext();
@@ -111,7 +114,7 @@ export const FieldProxy = ({
   return (
     <Wrapper key={version}>
       <div data-path={node.path} role={NONE_ROLE} style={DISPLAY_CONTENT}>
-        <ErrorBoundary onError={onError}>
+        <RendererBoundary onError={onError} formatError={contextFormatError}>
           <FieldRenderer
             {...(node.jsonSchema as JSONSchema).presentation
               ?.FieldRendererProps}
@@ -132,7 +135,7 @@ export const FieldProxy = ({
             formatError={formatError}
             context={context}
           />
-        </ErrorBoundary>
+        </RendererBoundary>
         {revealVersion !== undefined && (
           <ErrorRevealSubscriber
             node={node}
