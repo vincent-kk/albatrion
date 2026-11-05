@@ -1,9 +1,9 @@
+import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 import { FormErrorGroup } from './FormErrorGroup';
 import { JSONSchemaErrorSpecific } from './JSONSchemaErrorSpecific';
 import { SchemaFormErrorSpecific } from './SchemaFormErrorSpecific';
 import { UnhandledErrorSpecific } from './UnhandledErrorSpecific';
 import { ValidationErrorSpecific } from './ValidationErrorSpecific';
-import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 
 /**
  * Every error code the package raises, in ledger order (ERROR-164 and its supplements).
@@ -54,7 +54,7 @@ export const FormErrorCode = {
   ListenerThrew: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.ListenerThrew}`,
   /** Class: SchemaFormError; when: a dispatch chain or observer produces multiple errors. */
   MultipleErrors: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.MultipleErrors}`,
-  /** Class: SchemaFormError; when: render input-map normalization fails. */
+  /** Class: SchemaFormError; when: an input-map pattern cannot compile; the form stays in fallback and reports once with origin load, including in StrictMode. */
   FormTypeInputMap: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.FormTypeInputMap}`,
   /** Class: UnhandledError; when: global plugin registration fails outside a form instance. */
   RegisterPlugin: `${FormErrorGroup.Unhandled}.${UnhandledErrorSpecific.RegisterPlugin}`,

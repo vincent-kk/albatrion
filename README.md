@@ -129,7 +129,7 @@ This monorepo contains the following packages:
 ### Prerequisites
 
 - Node.js 18+
-- Yarn 4.9.1+
+- Yarn 4.12.0 (pinned by packageManager)
 
 ### Installation
 

@@ -21,13 +21,17 @@ Compare group-qualified `error.code` or record.code with `FormErrorCode` / `Form
 
 | origin | Operation |
 | --- | --- |
-| load | Construction, mount, reset, rebuild, or validator-replacement load chains |
+| load | Input-map pattern configuration failures; construction, mount, reset, rebuild, or validator-replacement load chains |
 | write | Value/state/array/context/external-issue writes and their notification listeners |
 | validate | Whole-schema compile, verdict, result delivery, and their listeners |
 | submit | Degraded submission rejection or a failure before the verdict first captured by native submit; excludes the schema verdict and onSubmit failures |
-| render | Renderer boundaries and render warnings |
+| render | User FieldInput and renderer exceptions caught by render boundaries, and render warnings |
 
 An already open chain retains its outer origin through nested writes/resets; tree-construction occurrences are always load. Initial external-errors application is load, later prop replacement is write, and a validator execution or compilation failure already reported inside submit retains validate origin. For schema verdicts and callback failures, see [submission](#submission). Some development console warnings have no onError record, so those channels need not match.
+
+If a `fieldInputMap` key cannot compile as a pattern, for example `/**`, the Form stays in its load fallback. After that fallback commits, `onError` receives one record with `level: 'error'`, `code: FormErrorCode.FormTypeInputMap`, and `origin: 'load'`, including under StrictMode. The input map is fixed for the Form's lifetime: `reset()` and `rebuild()` retain the error and fallback without reporting it again. Correct the map and remount the Form to recover.
+
+A user `FieldInput` that throws while rendering still reports `FormErrorCode.RenderFailed` with `origin: 'render'`, even when the thrown error itself carries `FormErrorCode.FormTypeInputMap`. Its render boundary isolates that input subtree.
 
 ## Rejections, listeners, and host failures {#host-failures}
 
@@ -77,7 +81,7 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormErrorCode.FeedbackLimitExceeded` | `SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED` | listener feedback or onChange nesting exceeds its budget. |
 | `FormErrorCode.ListenerThrew` | `SCHEMA_FORM_ERROR.LISTENER_THREW` | a subscriber or form callback throws. |
 | `FormErrorCode.MultipleErrors` | `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS` | a dispatch chain or observer produces multiple errors. |
-| `FormErrorCode.FormTypeInputMap` | `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP` | render input-map normalization fails. |
+| `FormErrorCode.FormTypeInputMap` | `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP` | an input-map key cannot compile; fatal load failure reported once after the fallback commits, with origin load. See [configuration failures](#occurrences). |
 | `FormErrorCode.RegisterPlugin` | `UNHANDLED_ERROR.REGISTER_PLUGIN` | global plugin registration fails outside a form instance. |
 | `FormErrorCode.InvalidWriteOption` | `SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION` | a public write combines incompatible options. |
 | `FormErrorCode.DisposedNodeWrite` | `SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE` | a caller writes through a disposed node reference. |
@@ -85,7 +89,7 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormErrorCode.SubmitWhileDegraded` | `SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED` | submission is attempted while diagnostics are degraded. |
 | `FormErrorCode.ValidatorCompileFailed` | `SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED` | whole-schema compilation fails. |
 | `FormErrorCode.ValidatorThrew` | `SCHEMA_FORM_ERROR.VALIDATOR_THREW` | a compiled validator throws during validation. |
-| `FormErrorCode.RenderFailed` | `SCHEMA_FORM_ERROR.RENDER_FAILED` | an injected renderer or root render throws. |
+| `FormErrorCode.RenderFailed` | `SCHEMA_FORM_ERROR.RENDER_FAILED` | a user FieldInput, injected renderer, or root render throws; origin render. |
 | `FormErrorCode.InvalidVirtualNodeValues` | `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES` | a virtual node receives values with the wrong shape. |
 | `FormErrorCode.ArrayMethodOnNonArray` | `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` | an array-only command is called on another node kind. |
 | `FormErrorCode.RecursiveShapeUnbounded` | `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED` | schema analysis finds an unbounded recursive shape. |

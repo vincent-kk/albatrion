@@ -13,16 +13,19 @@
 
 ## Commands
 
+이 명령은 `packages/canard/schema-form`에서 실행합니다. 저장소 루트에서는 `yarn workspace @canard/schema-form <command>`를 사용합니다.
+
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언 + agents-hashes.json
+yarn build             # ESM/CJS 번들 빌드, 빌드 플래그 검증, 타입 선언·에이전트 해시 생성 후 타입 검사
 yarn build:types       # 타입 선언만
 yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
 yarn test              # Vitest 테스트
-yarn test --coverage   # 커버리지 포함
-yarn test --run src/__tests__/   # 렌더 레벨(node tree + DOM) 통합 스위트만
+yarn workspace @canard/schema-form test --run --project render # 모든 React 19 렌더 테스트
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
+
+커버리지에는 `@vitest/coverage-v8` 같은 provider 패키지가 필요하며, 현재 설치되어 있지 않습니다.
 
 ## Agent Docs Injector
 

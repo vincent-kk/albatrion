@@ -46,6 +46,8 @@ Changing `jsonSchema` or `defaultValue` props alone does not replace the current
 
 Changing the `validatorFactory` reference rebuilds the Form tree, so use a stable object for an unchanged configuration. Context and input locks can change live; renderer/input configuration follows the [mount-time capture rules](./core-concepts#rendering).
 
+Neither `reset()` nor `rebuild()` replaces the mount-time input map. A [failed input-map configuration](./error-reference#occurrences) remains fatal; correct the map and remount the Form to recover.
+
 `validationMode` is selected when the tree is created. Changing the Form prop does not update the existing tree's mode. After the changed prop commits, call `handle.rebuild()` or remount the Form, for example by changing its React `key`. A `reset()` with the same schema and validator retains the tree and its mode. For the separate lifetime of the Form's `showError` policy and how to apply a new prop, see [error visibility](./validation#visibility).
 
 ## FormHandle {#form-handle}
@@ -92,7 +94,7 @@ The node prop is required in both FieldInputProps and FieldRendererProps.
 
 `SchemaFormPlugin` accepts renderer components, `fieldInputDefinitions`, `validator`, and `formatError`. Later registrations replace supplied renderer/validator/formatter fields and prepend input definitions. `registerPlugin(null)` resets plugin state to the built-in defaults. Registration affects configuration captured by subsequent mounts.
 
-`FormProvider` shares renderer defaults, input definitions, formatError, showError, validationMode, validatorFactory, and context within a subtree. Explicit Form props take precedence; Form context overlays provider context. Use the public name `FormProvider`. For validator requirements see the [validator object contract](./validation#validator-contract).
+`FormProvider` shares renderer defaults, input definitions, formatError, showError, validationMode, validatorFactory, and context within a subtree. Explicit Form props take precedence; Form context overlays provider context. Use the public name `FormProvider`. It has no `plugin` prop: pass renderer slots, `fieldInputDefinitions`, and `formatError` explicitly, and connect the plugin's validator with `validatorFactory={plugin.validator}`. For validator requirements see the [validator object contract](./validation#validator-contract).
 
 ## Node values, state, and array operations {#nodes}
 

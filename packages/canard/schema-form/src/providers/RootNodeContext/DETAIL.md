@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 입력 맵 정규화의 구성 오류는 트리를 만들지 않는 실패 load로 보관합니다. 확정된 루트 fallback의 첫 commit에서 기존 `flushRootLoad`를 통해 원래 오류·코드와 `origin: load`를 한 번 전달하며 StrictMode effect 재실행도 중복 보고하지 않습니다. 입력 맵은 폼 수명 동안 고정되므로 reset·rebuild도 이 구성 실패를 유지하고 호출자에게 거부합니다. 정상 load에는 추가 트리 순회나 구독이 없고, 실패 load와 해당 구성 props만 오류 참조를 보유합니다.
 - H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
 - 자동 로드 컴파일 실패는 공통 슬롯에서 origin validate로 한 번 보고하고 호스트에 한 번 보내며 명시적 검증의 프로미스 거부는 유지한다.
 - P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 은퇴 뒤의 engine 기록에 호스트 보고를 추가하지 않고 기존 reportOwnerlessError를 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자에 도달하지 않고, 슬롯은 예약할 때 붙잡은 load.retired로 host 보고도 생략합니다. 같은 스키마 reset과 unmount는 load가 은퇴하지 않아 늦은 슬롯 실패를 onError와 host에 한 번씩 전달합니다.
@@ -59,10 +60,11 @@ reset·rebuild·검증기 교체는 batchFieldNodeLoad로 load 사슬을 엽니�
 
 ### root-node-context-contract — 관찰 가능한 동작
 
+- 입력 맵 구성 오류는 추측성 생성 중 보고하지 않고 확정 fallback에서 한 번 보고하며, 루트 트리를 생성하거나 사용자 입력을 실행하지 않습니다.
 - Always를 포함한 모든 모드는 최초 프레임 전 로드 판정이 없으며 숨김·unmount 뒤에도 슬롯을 실행한다. OnRequest-only는 컴파일만 하고 None은 생략한다.
 - Provider cleanup은 검증 루트 retain을 해제하며 load 구독은 reset 교체 또는 GC까지 유지합니다.
 - 검증과 상태 이벤트는 대응 콜백으로 전달되며 외부 오류는 경로별로 묶어 주입합니다.
 
 ## Last Updated
 
-2026-11-02
+루트 생성·commit·오류 전달 또는 로드 수명 계약이 바뀔 때 갱신합니다.

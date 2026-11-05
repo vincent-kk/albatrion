@@ -27,7 +27,7 @@ fieldInputMap: {
 }
 ```
 
-- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). A key containing `**` is not supported: the form throws `Invalid key pattern in FieldInputMap` when it mounts, so list each depth with `*`.
+- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). A key containing `**` is not supported (`troubleshooting.md` describes the symptom), so list each depth with `*`.
 - Escape literal `/` in a property name as `~1`, `~` as `~0` — inside map keys as well (`jsonpointer.md`).
 
 ## Custom Input Contract

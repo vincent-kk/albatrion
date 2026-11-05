@@ -3,6 +3,7 @@ import { type PropsWithChildren, useMemo } from 'react';
 import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
+import { FormErrorCode, isSchemaFormError } from '@/schema-form/errors';
 import {
   normalizeFieldInputDefinitions,
   normalizeFieldInputMap,
@@ -26,15 +27,27 @@ export const FieldInputsContextProvider = ({
     fieldInputDefinitions,
     fieldInputMap,
   });
-  const value = useMemo(
-    () => ({
-      fromFieldInputDefinitions: normalizeFieldInputDefinitions(
-        constant.fieldInputDefinitions,
-      ),
-      fromFieldInputMap: normalizeFieldInputMap(constant.fieldInputMap),
-    }),
-    [constant],
-  );
+  const value = useMemo<FieldInputsContext>(() => {
+    try {
+      return {
+        fromFieldInputDefinitions: normalizeFieldInputDefinitions(
+          constant.fieldInputDefinitions,
+        ),
+        fromFieldInputMap: normalizeFieldInputMap(constant.fieldInputMap),
+      };
+    } catch (error) {
+      if (
+        !isSchemaFormError(error) ||
+        error.code !== FormErrorCode.FormTypeInputMap
+      )
+        throw error;
+      return {
+        fromFieldInputDefinitions: normalizeFieldInputDefinitions(),
+        fromFieldInputMap: normalizeFieldInputMap(),
+        inputMapError: error,
+      };
+    }
+  }, [constant]);
   return (
     <FieldInputsContext.Provider value={value}>
       {children}

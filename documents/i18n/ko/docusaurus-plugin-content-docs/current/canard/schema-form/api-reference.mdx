@@ -46,6 +46,8 @@ sidebar_position: 6
 
 `validatorFactory` 참조를 교체하면 Form 트리를 다시 만들므로 설정이 같으면 안정된 객체를 사용하십시오. context·입력 잠금은 live 변경을 지원하며 renderer·입력 설정에는 [마운트 시 캡처 규칙](./core-concepts#rendering)이 적용됩니다.
 
+`reset()`·`rebuild()`는 마운트 때 캡처한 입력 map을 교체하지 않습니다. [입력 map 구성 실패](./error-reference#occurrences)는 치명적 오류로 유지되므로 map을 고쳐 Form을 다시 마운트하십시오.
+
 `validationMode`는 트리를 만들 때 선택합니다. Form prop을 바꿔도 기존 트리의 모드는 갱신하지 않습니다. 바꾼 prop이 commit된 뒤 `handle.rebuild()`를 호출하거나 React `key` 변경 등으로 Form을 다시 마운트하십시오. 같은 schema·검증기의 `reset()`은 트리와 모드를 유지합니다. 별도의 수명을 갖는 Form `showError` 정책과 새 prop 적용 방법은 [오류 표시](./validation#visibility)를 참조하십시오.
 
 ## FormHandle {#form-handle}
@@ -92,7 +94,7 @@ FieldInputProps와 FieldRendererProps의 node prop은 모두 필수입니다.
 
 `SchemaFormPlugin`은 renderer 컴포넌트, `fieldInputDefinitions`, `validator`, `formatError`를 받습니다. 뒤의 등록은 제공한 renderer·validator·formatter를 대체하고 입력 정의를 앞에 붙입니다. `registerPlugin(null)`은 플러그인 상태를 내장 기본값으로 초기화합니다. 등록은 이후 마운트에서 캡처하는 설정에 적용됩니다.
 
-`FormProvider`는 subtree에 renderer 기본값·입력 정의·formatError·showError·validationMode·validatorFactory·context를 공유합니다. 명시적인 Form props가 우선하고 Form context는 provider context 위에 병합합니다. 공개 이름 `FormProvider`를 사용하십시오. 검증기 요구사항은 [검증기 객체 계약](./validation#validator-contract)에 있습니다.
+`FormProvider`는 subtree에 renderer 기본값·입력 정의·formatError·showError·validationMode·validatorFactory·context를 공유합니다. 명시적인 Form props가 우선하고 Form context는 provider context 위에 병합합니다. 공개 이름 `FormProvider`를 사용하십시오. `plugin` prop은 없으므로 renderer 슬롯·`fieldInputDefinitions`·`formatError`를 명시적으로 전달하고 검증기는 `validatorFactory={plugin.validator}`로 연결하십시오. 검증기 요구사항은 [검증기 객체 계약](./validation#validator-contract)에 있습니다.
 
 ## 노드 값·state·배열 연산 {#nodes}
 
