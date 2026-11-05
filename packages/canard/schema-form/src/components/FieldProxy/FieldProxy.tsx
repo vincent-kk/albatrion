@@ -5,7 +5,6 @@ import { isMemoComponent } from '@winglet/react-utils/filter';
 import { ErrorBoundary } from '@winglet/react-utils/hoc';
 import {
   useConstant,
-  useLazyConstant,
   useReference,
   useVersion,
 } from '@winglet/react-utils/hook';
@@ -75,8 +74,8 @@ export const FieldProxy = ({
     errorVisibility,
   } = useFieldRendererContext();
 
-  const FieldRenderer = useLazyConstant(() => {
-    const Component = InputFieldRenderer || ContextFieldRenderer;
+  const Component = InputFieldRenderer || ContextFieldRenderer;
+  const FieldRenderer = useMemo(() => {
     const Renderer = isMemoComponent(Component) ? Component : memo(Component);
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
     return function RendererWithErrorMessage(
@@ -96,7 +95,7 @@ export const FieldProxy = ({
       }, [node, refreshRef.current, context, formatError]);
       return <Renderer {...props} errorMessage={errorMessage} />;
     };
-  });
+  }, [Component, refreshRef]);
   const Wrapper = useConstant(InputWrapper || Fragment);
   const { context } = useWorkspaceContext();
   const [, update] = useVersion();

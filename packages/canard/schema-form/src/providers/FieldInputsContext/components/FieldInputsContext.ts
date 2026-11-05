@@ -8,7 +8,7 @@ export interface FieldInputsContext {
   fromFieldInputDefinitions: NormalizedFieldInputDefinition[];
   /** Map of FieldInputDefinition declared externally */
   fromFieldInputMap: NormalizedFieldInputDefinition[];
-  /** Fatal map configuration failure delivered by the committed root load. */
+  /** Map configuration failure reported at commit; live failures retain the valid selection. */
   inputMapError?: SchemaFormError;
 }
 

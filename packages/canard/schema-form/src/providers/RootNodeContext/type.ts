@@ -21,7 +21,7 @@ export type RootLoadProps = Pick<
 > & {
   /** Resolved validator for this load. */
   validator?: Validator;
-  /** Fixed input-map configuration failure retained by every reset and rebuild. */
+  /** Current input-map configuration failure; blocks construction without retiring a valid tree. */
   inputMapError?: SchemaFormError;
   /** Invalid display configuration blocks only initial tree construction. */
   errorVisibilityError?: SchemaFormError;

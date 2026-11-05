@@ -222,8 +222,8 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     ],
   );
   const children = useMemo(
-    () => createChildren(props.children, props.jsonSchema),
-    [props.children, props.jsonSchema],
+    () => createChildren(props.children),
+    [props.children],
   );
   return (
     <WorkspaceContextProvider

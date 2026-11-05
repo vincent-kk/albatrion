@@ -1,6 +1,9 @@
-import { type PropsWithChildren, useMemo } from 'react';
-
-import { useConstant } from '@winglet/react-utils/hook';
+import {
+  type PropsWithChildren,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { FormErrorCode, isSchemaFormError } from '@/schema-form/errors';
@@ -23,18 +26,13 @@ export const FieldInputsContextProvider = ({
   fieldInputMap,
   children,
 }: PropsWithChildren<FieldInputsContextProviderProps>) => {
-  const constant = useConstant({
-    fieldInputDefinitions,
-    fieldInputMap,
-  });
-  const value = useMemo<FieldInputsContext>(() => {
+  const fromFieldInputDefinitions = useMemo(
+    () => normalizeFieldInputDefinitions(fieldInputDefinitions),
+    [fieldInputDefinitions],
+  );
+  const normalizedMap = useMemo(() => {
     try {
-      return {
-        fromFieldInputDefinitions: normalizeFieldInputDefinitions(
-          constant.fieldInputDefinitions,
-        ),
-        fromFieldInputMap: normalizeFieldInputMap(constant.fieldInputMap),
-      };
+      return { fromFieldInputMap: normalizeFieldInputMap(fieldInputMap) };
     } catch (error) {
       if (
         !isSchemaFormError(error) ||
@@ -42,12 +40,27 @@ export const FieldInputsContextProvider = ({
       )
         throw error;
       return {
-        fromFieldInputDefinitions: normalizeFieldInputDefinitions(),
         fromFieldInputMap: normalizeFieldInputMap(),
         inputMapError: error,
       };
     }
-  }, [constant]);
+  }, [fieldInputMap]);
+  const committedMap = useRef(normalizedMap.fromFieldInputMap);
+  useLayoutEffect(() => {
+    if (!normalizedMap.inputMapError)
+      committedMap.current = normalizedMap.fromFieldInputMap;
+  }, [normalizedMap]);
+  const fromFieldInputMap = normalizedMap.inputMapError
+    ? committedMap.current
+    : normalizedMap.fromFieldInputMap;
+  const value = useMemo<FieldInputsContext>(
+    () => ({
+      fromFieldInputDefinitions,
+      fromFieldInputMap,
+      inputMapError: normalizedMap.inputMapError,
+    }),
+    [fromFieldInputDefinitions, fromFieldInputMap, normalizedMap.inputMapError],
+  );
   return (
     <FieldInputsContext.Provider value={value}>
       {children}

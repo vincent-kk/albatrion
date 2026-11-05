@@ -1,6 +1,6 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
+import { useSnapshot } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -191,31 +191,39 @@ export const ExternalFormContextProvider = ({
   validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
-  const constant = useConstant({
-    fieldInputDefinitions,
-    FieldRenderer,
-    FormLabelRenderer,
-    FormInputRenderer,
-    FormErrorRenderer,
-    formatError,
-  });
+  const fromExternalFieldInputDefinitions = useMemo(
+    () =>
+      fieldInputDefinitions
+        ? normalizeFieldInputDefinitions(fieldInputDefinitions)
+        : undefined,
+    [fieldInputDefinitions],
+  );
   const context = useSnapshot(inputContext);
   const value = useMemo(
     () => ({
-      fromExternalFieldInputDefinitions: constant.fieldInputDefinitions
-        ? normalizeFieldInputDefinitions(constant.fieldInputDefinitions)
-        : undefined,
-      FieldRenderer: constant.FieldRenderer,
-      FormLabelRenderer: constant.FormLabelRenderer,
-      FormInputRenderer: constant.FormInputRenderer,
-      FormErrorRenderer: constant.FormErrorRenderer,
-      formatError: constant.formatError,
+      fromExternalFieldInputDefinitions,
+      FieldRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError,
       errorVisibility,
       validationMode,
       validatorFactory,
       context,
     }),
-    [constant, errorVisibility, validationMode, validatorFactory, context],
+    [
+      fromExternalFieldInputDefinitions,
+      FieldRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError,
+      errorVisibility,
+      validationMode,
+      validatorFactory,
+      context,
+    ],
   );
   return (
     <ExternalFormContext.Provider value={value}>

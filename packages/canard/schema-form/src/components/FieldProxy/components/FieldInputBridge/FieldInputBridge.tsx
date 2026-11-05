@@ -78,7 +78,10 @@ export const FieldInputBridge = memo(
       hydrationCommitRef,
       FieldInput ? virtualizationManager : null,
     );
-    const defaultValue = useMemorize(() => node.value, [node, generation]);
+    const defaultValue = useMemorize(
+      () => node.value,
+      [node, generation, FieldInput],
+    );
     const accepts = useCallback(
       () =>
         isLive() &&
