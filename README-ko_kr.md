@@ -149,40 +149,7 @@ yarn workspace @canard/schema-form build
 
 ## 📋 버전 관리
 
-이 프로젝트는 버전 관리와 퍼블리싱을 위해 [Changesets](https://github.com/changesets/changesets)을 사용합니다.
-
-### Changeset 생성
-
-패키지에 변경사항을 만들 때, changeset을 생성하여 변경사항을 문서화하세요:
-
-```bash
-yarn changeset
-```
-
-이 명령은 다음을 수행합니다:
-
-1. 어떤 패키지가 변경되었는지 확인
-2. 변경 유형 확인 (major/minor/patch)
-3. 변경사항 요약 작성 (영어로 작성)
-4. changeset 파일 생성
-
-### 릴리즈
-
-다음 명령을 사용하여 수동으로 릴리즈할 수 있습니다:
-
-```bash
-# changeset을 기반으로 패키지 버전 업데이트
-yarn changeset:version
-
-# npm에 패키지 퍼블리시
-yarn changeset:publish
-```
-
-### Changeset 가이드라인
-
-- **patch**: 버그 수정, 문서 업데이트, 내부 리팩토링
-- **minor**: 새로운 기능, 새로운 export, 비호환성 없는 변경
-- **major**: 호환성이 깨지는 변경, export 제거, API 변경
+릴리스 기록은 [Changesets](https://github.com/changesets/changesets)로 남깁니다. 어떤 PR이 changeset을 추가하는지와 작성 방법은 [DOCUMENTATION.md](DOCUMENTATION.md)의 change records 절이 정합니다. `yarn changeset:version`은 대기 중인 changeset을 버전 올림과 `CHANGELOG.md` 항목으로 바꾸고(`GITHUB_TOKEN`이 필요합니다), 수동 배포 워크플로가 아직 npm에 없는 버전을 배포합니다. 절차는 [scripts/PUBLISHING.md](scripts/PUBLISHING.md)에 있습니다.
 
 ## 🔧 스크립트
 
@@ -191,7 +158,6 @@ yarn changeset:publish
 - `yarn build:all` - 모든 패키지 빌드
 - `yarn changeset` - 새로운 changeset 생성
 - `yarn changeset:version` - changeset을 기반으로 버전 업데이트
-- `yarn changeset:publish` - npm에 패키지 퍼블리시
 
 ### 패키지 태깅
 

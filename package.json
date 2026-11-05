@@ -18,7 +18,6 @@
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
     "build:all": "yarn run:all build",
     "changeset": "changeset",
-    "changeset:publish": "yarn run:all && changeset publish",
     "changeset:version": "changeset version",
     "commonUtils": "yarn workspace @winglet/common-utils",
     "dataLoader": "yarn workspace @winglet/data-loader",
