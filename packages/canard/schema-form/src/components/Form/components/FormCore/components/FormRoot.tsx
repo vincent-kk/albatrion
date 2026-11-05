@@ -55,6 +55,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     [inputPolicy],
   );
   const loads = useRef(0);
+  const policyGeneration = useRef(0);
   const mounted = useRef(false);
   const committed = useRef({
     errorVisibility: ErrorVisibility.AfterEditAndTouch,
@@ -70,18 +71,28 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const [reveal, setReveal] = useState<{
     base: ErrorVisibility;
     load: number;
+    generation: number;
   }>();
   const errorVisibility =
-    reveal?.base === basePolicy && reveal.load === loads.current
+    reveal?.base === basePolicy &&
+    reveal.load === loads.current &&
+    reveal.generation === policyGeneration.current
       ? ErrorVisibility.Always
       : basePolicy;
   useLayoutEffect(() => {
+    if (committed.current.errorVisibility !== basePolicy)
+      policyGeneration.current++;
     committed.current = {
       errorVisibility: basePolicy,
       disabled: props.disabled,
       readOnly: props.readOnly,
     };
-    if (reveal && (reveal.base !== basePolicy || reveal.load !== loads.current))
+    if (
+      reveal &&
+      (reveal.base !== basePolicy ||
+        reveal.load !== loads.current ||
+        reveal.generation !== policyGeneration.current)
+    )
       setReveal(undefined);
   }, [basePolicy, props.disabled, props.readOnly, reveal]);
   useLayoutEffect(() => {
@@ -97,10 +108,13 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const revealErrors = useCallback(() => {
     const base = committed.current.errorVisibility;
     const load = loads.current;
+    const generation = policyGeneration.current;
     setReveal((previous) =>
-      previous?.base === base && previous.load === load
+      previous?.base === base &&
+      previous.load === load &&
+      previous.generation === generation
         ? previous
-        : { base, load },
+        : { base, load, generation },
     );
   }, []);
   const resetErrorVisibility = useCallback(() => setReveal(undefined), []);
