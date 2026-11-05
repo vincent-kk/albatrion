@@ -34,7 +34,7 @@ Form의 `children`은 루트 자동 레이아웃을 대체합니다. 생략한 �
 
 기본 그룹 렌더러는 label과 오류를 직접 그립니다. `FormLabelRenderer`, `FormErrorRenderer` 교체는 조합 컴포넌트와 이를 호출하는 사용자 렌더러에 적용되며 기본 그룹 렌더러의 내용을 바꾸지 않습니다.
 
-렌더러, `formatError`, 입력 정의와 입력 map은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 컴포넌트가 같은 입력은 DOM을 보존하며 달라진 입력만 다시 마운트합니다. 렌더러 교체는 그 렌더러가 소유한 UI subtree를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
+렌더러, `formatError`, 입력 정의와 입력 map은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 입력과 그 조상 입력이 모두 같으면 DOM을 보존합니다. 부모 입력이 교체되면 선택된 자식 컴포넌트가 같아도 그 안의 DOM과 미커밋 draft는 재생성됩니다. 렌더러 교체는 그 렌더러가 소유한 UI subtree를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 
 ## 폼이 수행하는 작업 측정 {#performance}
 

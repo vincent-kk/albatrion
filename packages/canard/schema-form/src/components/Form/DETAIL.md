@@ -13,7 +13,7 @@
 
 `jsonSchema`·`defaultValue` prop 변경만으로 현재 트리나 값을 교체하지 않습니다. reset이 최신 committed props를 적용할 때까지 함수 children은 새 prop이 아니라 현재 트리의 스키마와 노드를 함께 받습니다. schema·node 쌍의 불일치가 소비자에게 아직 없는 필드를 있다고 알리는 일을 막습니다.
 
-Form의 렌더러·포맷터·입력 맵·정의와 FormProvider의 렌더러·포맷터·정의는 최신 불변 참조로 적용합니다. 입력 선택 변경은 노드·값·상태·외부 오류를 보존하며 같은 컴포넌트의 입력 DOM을 유지합니다. 렌더러 교체는 해당 렌더러의 UI subtree를 다시 만듭니다.
+Form의 렌더러·포맷터·입력 맵·정의와 FormProvider의 렌더러·포맷터·정의는 최신 불변 참조로 적용합니다. 입력 선택 변경은 노드·값·상태·외부 오류를 보존하며 선택된 입력과 조상 입력이 모두 같으면 DOM을 유지합니다. 부모 입력이 교체되면 그 내부 자식의 DOM과 미커밋 draft도 재생성합니다. 렌더러 교체는 해당 렌더러의 UI subtree를 다시 만듭니다.
 
 - 보조 렌더링 컴포넌트는 `Form.Render`·`Form.Field`·`Form.Label`·`Form.Input`·`Form.Error` 정적 멤버로 제공한다. `FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`는 내부 구현이며 이 fractal의 index가 별도 이름으로 내보내지 않는다.
 - 공개 `Roll` 형 셋은 이 fractal이 소유한다. 각 자식 fractal(`components/FormField` 등)의 `types` 칸 props 파일이 본 형(`FormFieldProps` 등)과 그 `Roll` 표현(`RolledFormFieldProps` 등)을 함께 정의하고, 자식 관문과 이 fractal의 index는 `Rolled*` 형을 내보낸다. 루트 `src/index.ts`가 `RolledFormFieldProps as FormFieldProps`처럼 공개 이름으로 바꿔 재수출한다.

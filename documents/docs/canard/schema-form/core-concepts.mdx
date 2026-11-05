@@ -34,7 +34,7 @@ A Form's `children` replaces automatic root layout. Omitted inputs are not inser
 
 The default group renderer draws its own label and errors. Replacing `FormLabelRenderer` or `FormErrorRenderer` affects composition components and custom renderers that call them; it does not rewrite the default group renderer.
 
-Renderers, `formatError`, input definitions, and input maps apply after mount when their immutable references change. Input selection preserves values, state and external errors; unchanged selected components keep their DOM, while changed components remount. A renderer replacement rebuilds the UI subtree it owns. See [configuration lifetime](./api-reference#configuration-lifetime).
+Renderers, `formatError`, input definitions, and input maps apply after mount when their immutable references change. Input selection preserves values, state and external errors; input DOM is preserved while both its selected component and its owning ancestors stay unchanged. Replacing a parent input recreates its descendants’ DOM and uncommitted drafts, even when their selected components are unchanged. A renderer replacement rebuilds the UI subtree it owns. See [configuration lifetime](./api-reference#configuration-lifetime).
 
 ## Measure the work your form performs {#performance}
 
