@@ -14,7 +14,7 @@
 
 ### Always do
 
-- 관찰 훅은 `null`·`undefined`를 구독 없는 상태로 받아들이되 실제 노드에만 구독과 catch-up을 연결한다. 선택자와 작업 훅의 필수 노드 계약은 구별한다.
+- 관찰 훅(`useFieldNodeTracker`·`useFieldNodeSubscribe`)만 `null`·`undefined`를 구독 없는 상태로 받아들이고, 실제 노드에만 구독과 catch-up을 연결한다. 렌더러 안에서 그 필드의 노드로 일하는 훅(`useChildFieldErrors`)은 노드를 필수로 둔다. 그 노드는 항상 있으므로 넓히면 부재 검사만 사용자 코드로 번진다.
 - 루트 `src/index.ts`가 재수출하는 훅은 이 fractal의 index를 거친다.
 - 훅의 구독은 언마운트 때 해제한다.
 
