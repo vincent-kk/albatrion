@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   findScenarioHandle,
-  isolationTrigger,
   playScenario,
-  pluginsFeatureScenarios,
   registerScenarioHandle,
+  isolationTrigger,
+  pluginsFeatureScenarios,
 } from '@aileron/schema-form-scenarios';
 
 import { type FieldInputProps, type JSONSchema } from '@/schema-form';
@@ -17,20 +17,9 @@ import { renderForm } from '../renderForm';
  * @param props - FieldInput props of the mapped node.
  * @returns The input element; throws on the trigger value so the field boundary catches it.
  */
-const ThrowOnTriggerInput = ({
-  path,
-  value,
-  onChange,
-}: FieldInputProps<string>) => {
-  if (value === isolationTrigger)
-    throw new Error(`input at ${path} threw on ${isolationTrigger}`);
-  return (
-    <input
-      id={path}
-      value={value ?? ''}
-      onChange={(event) => onChange(event.target.value)}
-    />
-  );
+const ThrowOnTriggerInput = ({ path, value, onChange }: FieldInputProps<string>) => {
+  if (value === isolationTrigger) throw new Error(`input at ${path} threw on ${isolationTrigger}`);
+  return <input id={path} value={value ?? ''} onChange={(event) => onChange(event.target.value)} />;
 };
 
 /**
@@ -43,11 +32,7 @@ const run = async (name: string) => {
   const scenario = pluginsFeatureScenarios.find((item) => item.name === name);
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
-  const form = await renderForm(scenario.schema as JSONSchema, {
-    defaultValue: scenario.initialValue,
-    validator: true,
-    fieldInputMap: { '/broken': ThrowOnTriggerInput },
-  });
+  const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true, fieldInputMap: { '/broken': ThrowOnTriggerInput } });
   const base = findScenarioHandle(form.container).adapter;
   const unregister = registerScenarioHandle(form.container, form.handle, {
     execute: base.execute,
@@ -59,12 +44,8 @@ const run = async (name: string) => {
       await form.validate();
       for (const [path, expected] of Object.entries(errors)) {
         const actual = form.node(path)?.errors;
-        expect(actual, `validation issue count at ${path}`).toHaveLength(
-          expected.length,
-        );
-        expect(actual, `validation issue contract at ${path}`).toMatchObject(
-          expected,
-        );
+        expect(actual, `validation issue count at ${path}`).toHaveLength(expected.length);
+        expect(actual, `validation issue contract at ${path}`).toMatchObject(expected);
       }
     },
   });

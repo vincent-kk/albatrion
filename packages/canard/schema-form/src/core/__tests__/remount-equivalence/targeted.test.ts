@@ -20,17 +20,15 @@ it('literal-star state owners match a fresh public-output mount', async ({
 
 // VALUE-031·034: 출력의 새 로드는 생략된 원본·배열 자리·union 해석 상태를 복원하지 않습니다.
 // 원본과 재로드 상태의 차이까지 동등성을 요구하므로 이 관측은 it.fails로 고정합니다.
-it.fails(
-  'projection overlays reach readers outside the overlay host',
-  async ({ task }) => {
-    const mismatches = [];
-    for (const scene of createOverlayScenes())
-      mismatches.push(...(await checkCoreScene(scene)));
-    Object.assign(task.meta, { remount: encodeValue(mismatches) });
-    expect(mismatches).toEqual([]);
-  },
-  120000,
-);
+it.fails('projection overlays reach readers outside the overlay host', async ({
+  task,
+}) => {
+  const mismatches = [];
+  for (const scene of createOverlayScenes())
+    mismatches.push(...(await checkCoreScene(scene)));
+  Object.assign(task.meta, { remount: encodeValue(mismatches) });
+  expect(mismatches).toEqual([]);
+}, 120000);
 
 it('relocated gates observe value-only changes after first locate', async ({
   task,

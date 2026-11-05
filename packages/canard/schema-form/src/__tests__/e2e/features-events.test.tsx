@@ -7,11 +7,7 @@ import {
   registerScenarioHandle,
 } from '@aileron/schema-form-scenarios';
 
-import {
-  FieldNodeEventType,
-  type JSONSchema,
-  ValidationMode,
-} from '@/schema-form';
+import { type JSONSchema, FieldNodeEventType, ValidationMode } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -27,28 +23,16 @@ const run = async (name: string) => {
   const validate = vi.fn(() => null);
   const form = await renderForm(scenario.schema as JSONSchema, {
     defaultValue: scenario.initialValue,
-    validatorFactory: {
-      compile: () => validate,
-      compileGuard: () => () => true,
-    },
+    validatorFactory: { compile: () => validate, compileGuard: () => () => true },
     validationMode: ValidationMode.OnChange,
   });
   const base = findScenarioHandle(form.container).adapter;
   let deliveries: string[] = [];
   let requests = 0;
-  const paths = Array.from(
-    form.container.querySelectorAll<HTMLElement>('[data-path]'),
-  ).map((item) => item.dataset.path!);
+  const paths = Array.from(form.container.querySelectorAll<HTMLElement>('[data-path]')).map((item) => item.dataset.path!);
   const stops = paths.flatMap((path) => {
     const node = form.node(path);
-    return node
-      ? [
-          node.subscribe((event) => {
-            if (event.type & FieldNodeEventType.UpdateValue)
-              deliveries.push(path);
-          }),
-        ]
-      : [];
+    return node ? [node.subscribe((event) => { if (event.type & FieldNodeEventType.UpdateValue) deliveries.push(path); })] : [];
   });
   const unregister = registerScenarioHandle(form.container, form.handle, {
     async execute(step) {
@@ -60,13 +44,8 @@ const run = async (name: string) => {
     async assert(observation) {
       const { deliveryOrder, validationRequestCount, ...rest } = observation;
       await base.assert(rest);
-      if (deliveryOrder)
-        expect(deliveries, 'delivery order').toEqual(deliveryOrder);
-      if (validationRequestCount !== undefined)
-        expect(
-          validate.mock.calls.length - requests,
-          'validation requests',
-        ).toBe(validationRequestCount);
+      if (deliveryOrder) expect(deliveries, 'delivery order').toEqual(deliveryOrder);
+      if (validationRequestCount !== undefined) expect(validate.mock.calls.length - requests, 'validation requests').toBe(validationRequestCount);
     },
   });
   try {

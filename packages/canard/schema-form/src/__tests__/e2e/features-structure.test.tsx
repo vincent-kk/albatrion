@@ -21,10 +21,7 @@ const run = async (name: string) => {
   const scenario = structureFeatureScenarios.find((item) => item.name === name);
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
-  const form = await renderForm(scenario.schema as JSONSchema, {
-    defaultValue: scenario.initialValue,
-    validator: true,
-  });
+  const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true });
   const base = findScenarioHandle(form.container).adapter;
   const unregister = registerScenarioHandle(form.container, form.handle, {
     execute: base.execute,
@@ -36,12 +33,8 @@ const run = async (name: string) => {
       await form.validate();
       for (const [path, expected] of Object.entries(errors)) {
         const actual = form.node(path)?.errors;
-        expect(actual, `validation issue count at ${path}`).toHaveLength(
-          expected.length,
-        );
-        expect(actual, `validation issue contract at ${path}`).toMatchObject(
-          expected,
-        );
+        expect(actual, `validation issue count at ${path}`).toHaveLength(expected.length);
+        expect(actual, `validation issue contract at ${path}`).toMatchObject(expected);
       }
     },
   });
