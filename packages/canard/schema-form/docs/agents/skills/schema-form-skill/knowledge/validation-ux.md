@@ -6,9 +6,9 @@ Use public imports from `@canard/schema-form`. These examples assume an applicat
 
 ## Choose the validation moment
 
-- `OnChange` schedules validation after loading and after value changes. Load work runs after the next frame, even with `showError={true}`, and produces the initial verdict only if no later validation request has superseded it. Continuous edits are grouped, with a trailing run when they stop and a 100 ms cap measured from the last automatic run that started.
+- `OnChange` schedules validation after loading and after value changes. Load validation, described below, produces the initial verdict only if no later validation request has superseded it. Continuous edits are grouped, with a trailing run when they stop and a 100 ms cap measured from the last automatic run that started.
 - `OnRequest` prepares validation after loading but produces no verdict until `validate()` or submit. Edits alone can leave the previous errors in place. A schema without `if` conditions still compiles in the background after the first paint.
-- A load is the start of a form's tree: first mount, same-schema `reset()`, root-replacing `reset()`, `rebuild()` or a validator change. Each load runs one load validation after the next frame, including with `showError={true}` or `ShowError.Always`.
+- A load is the start of a form's tree: first mount, same-schema `reset()`, root-replacing `reset()`, `rebuild()` or a validator change. Only the newest load runs this load work, once, after the next frame, including with `showError={true}` or `ShowError.Always`; a load replaced before that frame is not validated on its own, and `None` runs none.
 - `None` skips whole-schema validation, including explicit requests; it does not provide a successful verdict. Conditional if guards can still run while fields settle.
 
 Explicit validation and submit start immediately in validating modes. Await the result instead of reading errors immediately after render or after a change. With a validator in a validating mode, submit validates the value captured by that call; invalid input rejects its promise and does not reach `onSubmit`. In `None`, or without a validator, submit passes the captured value to `onSubmit` without a verdict. For an imperative submit flow, call `showError()` when you want to reveal untouched fields.
