@@ -16,6 +16,7 @@ import {
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
+  useFieldLifecycleContext,
   useFieldRendererContext,
   useInputControlContext,
   useWorkspaceContext,
@@ -30,6 +31,7 @@ import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 import { useChildFields } from './hooks/useChildFields';
 import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
+import { useFieldLifecycle } from './hooks/useFieldLifecycle';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputBridgeProps } from './type';
 
@@ -73,12 +75,17 @@ export const FieldInputBridge = memo(
       handleCompositionStart,
       handleCompositionEnd,
       rerender,
-    ] = useFieldInputControl(
+      releaseComposition,
+    ] = useFieldInputControl(node, mountedChildren);
+    const lifecycle = useFieldLifecycleContext();
+    const lifecycleRender = useFieldLifecycle(
       node,
-      mountedChildren,
+      ref,
       commitTerminalChildren,
+      releaseComposition,
       hydrationCommitRef,
       FieldInput ? virtualizationManager : null,
+      FieldInput ? lifecycle : null,
     );
     const defaultValue = useMemorize(
       () => node.value,
@@ -194,6 +201,7 @@ export const FieldInputBridge = memo(
             onRelease={rerender}
           />
         )}
+        {lifecycleRender}
       </div>
     );
   },
