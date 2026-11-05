@@ -2,10 +2,12 @@ import type { ComponentType } from 'react';
 
 import type { FieldInputProps, FieldInputTestFn } from '@/schema-form/types';
 
-/** Private binding props; the applied Refresh generation never reaches user input props. */
+/** Private binding props; Refresh generation and selection lifetime never reach user inputs. */
 export interface FieldInputBindingProps extends FieldInputProps {
   /** Input-only key after composition and mounted-child generation holds. */
   inputGeneration: number;
+  /** Committed selection lifetime, revoked before the raw input cleanup runs. */
+  inputSelection: { active: boolean };
 }
 
 /** Resolved input and matching predicate used only by schema-form's selection layer. */

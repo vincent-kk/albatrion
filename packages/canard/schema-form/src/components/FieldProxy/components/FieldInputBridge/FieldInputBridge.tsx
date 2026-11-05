@@ -1,4 +1,4 @@
-import { memo, useCallback, useInsertionEffect, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
@@ -53,13 +53,6 @@ export const FieldInputBridge = memo(
     const FieldInput = PreferredFieldInput || selected;
     // Each selection gets its own generation, even when A returns after B.
     const selection = useMemorize(() => ({ active: false }), [FieldInput]);
-    useInsertionEffect(() => {
-      // Commit before child layout writes; abandoned renders never activate.
-      selection.active = true;
-      return () => {
-        selection.active = false;
-      };
-    }, [selection]);
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
@@ -179,6 +172,7 @@ export const FieldInputBridge = memo(
           readOnly={rootReadOnly || node.isReadOnly || !!overrideProps.readOnly}
           disabled={rootDisabled || node.isDisabled || !!overrideProps.disabled}
           inputGeneration={generation}
+          inputSelection={selection}
           jsonSchema={node.jsonSchema as JSONSchema}
           node={node}
           type={node.type}

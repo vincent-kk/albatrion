@@ -1,4 +1,4 @@
-import { type ComponentType, memo } from 'react';
+import { type ComponentType, memo, useInsertionEffect } from 'react';
 
 import { ErrorBoundary } from '@winglet/react-utils/hoc';
 
@@ -30,9 +30,17 @@ export const withFieldInputErrorBoundary = (
    */
   const Boundary = memo(function FieldInputBoundary({
     inputGeneration,
+    inputSelection,
     ...props
   }: FieldInputBindingProps) {
     const onError = useBoundaryReporter(props.path);
+    useInsertionEffect(() => {
+      inputSelection.active = true;
+      return () => {
+        // Deletion visits this adapter before the raw input's layout cleanup.
+        inputSelection.active = false;
+      };
+    }, [inputSelection]);
     return (
       <ErrorBoundary onError={onError}>
         <Component {...props} key={inputGeneration} />

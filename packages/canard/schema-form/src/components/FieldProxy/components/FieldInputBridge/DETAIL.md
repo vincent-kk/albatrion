@@ -43,7 +43,7 @@ ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵
 ### live-configuration — 설정 교체 수명
 
 - 무관한 맵 키 변경이나 같은 컴포넌트를 고르는 정의 변경은 조상 입력도 유지되는 동안 입력 DOM을 보존합니다. 부모 입력 교체는 그 안의 자식 DOM과 미커밋 draft를 재생성하지만 노드의 값·상태·외부 오류는 유지합니다.
-- 각 커밋된 입력 선택은 독립 수명 토큰을 가집니다. 선택 교체와 언마운트는 이전 토큰을 폐기하여 늦은 onChange·onFileAttach를 버립니다. A→B→A도 이전 A의 콜백을 되살리지 않습니다. 토큰은 insertion effect에서 커밋하므로 첫 자식 layout 쓰기를 수락하고 중단된 렌더는 현재 선택을 폐기하지 않습니다.
+- 각 커밋된 입력 선택은 독립 수명 토큰을 가집니다. 선택 교체와 언마운트는 이전 토큰을 폐기하여 늦은 onChange·onFileAttach를 버립니다. A→B→A도 이전 A의 콜백을 되살리지 않습니다. 입력이 교체되거나 언마운트되기 시작하면 자신의 cleanup에서 호출한 onChange·onFileAttach도 더 이상 쓰지 못합니다. 토큰의 활성화·폐기는 실제로 삭제되는 선택 입력 어댑터의 insertion effect가 소유하여 원본 입력의 layout cleanup보다 먼저 폐기합니다. 첫 자식 layout 쓰기를 수락하고 중단된 렌더는 현재 선택을 폐기하지 않습니다.
 
 ### field-input-bridge-contract — 관찰 가능한 동작
 
