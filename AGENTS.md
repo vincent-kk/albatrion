@@ -1,3 +1,5 @@
+> The part of this file above `# Repository Requirements` mirrors `CLAUDE.md`, its canonical source. Change both together.
+
 # Claude Code Guidelines for Albatrion Project
 
 This document provides project-specific guidelines for Claude Code when working on the Albatrion monorepo. Detailed rules, skills, and commands are maintained under `.claude/`.
@@ -11,6 +13,8 @@ This is a **yarn-based monorepo** with the following structure:
 - **Workspaces**: Configured for yarn workspaces
 
 ## 📋 Important Commands
+
+The `ci` workflow uses the default `pr` tier for pull requests to every branch and pushes to `master`. Its install-free selector compares the merge base, follows workspace manifest dependencies and tracked source imports to select affected consumers, lints changed workspaces, builds their dependency closures, and runs available typechecks and per-package tests. Shared inputs select all workspaces; ordinary Markdown and unrelated tooling select none. Schema-form runs only `test --run --project unit` in its separate shard in the `pr` tier, without Chromium. The separate manual `pre-release` workflow runs the `pre-release` tier, typically on the commit about to be published: it checks every workspace and runs schema-form's complete unit, render, React 18, Storybook, verification and production suites with Chromium. Publishing remains a separate workflow. Other workspaces use the same checks in both tiers. Check jobs run Node with a 4 GB heap (`NODE_OPTIONS`) because the schema-form typecheck needs about 2.4 GB and the runner default of about 2 GB fails intermittently. The runner gives every Vitest command a 120-second test timeout to accommodate variable CI compute; a workspace whose test script finds no test files passes; each check job retains its 90-minute limit. Hooks keep Vitest's project defaults because Vitest 3.2.6 does not propagate the CLI hookTimeout option to projects; a hook timeout in GitHub Actions is the signal to revisit this limitation. To inspect a range locally, run `node scripts/ci/selectAffectedWorkspaces.mjs --tier pr --base <sha> --head <sha> --output <plan.json>`, followed by `node scripts/ci/runCheckPlan.mjs --plan <plan.json> --dry-run`. For the full pre-release plan, run `node scripts/ci/selectAffectedWorkspaces.mjs --tier pre-release --output <plan.json>` and the same dry-run command; the pre-release tier ignores base and head arguments.
 
 Use **yarn** commands (not npm) for this project:
 
@@ -60,6 +64,29 @@ Precedence: repository instructions (this document, per-package CLAUDE.md) > rep
 
 Any other slash command comes from Claude Code itself or from an installed plugin (seiri, filid, and so on); this repository does not define them.
 
+## 📐 Module Contract Principles
+
+Owner principles for every package that has adopted FCA (directories with `INTENT.md`). Per the precedence above, they outrank `.claude/rules/`.
+
+1. **`index.ts` is the contract record.** It records which interface a fractal promised, and it is the strict contract that keeps internal helpers and sub-fractal trees from multiplying complexity outward. Widening it is a contract change; it lists its exports by name, never with a wildcard.
+2. **The root is the first image.** The `index.ts` and the flat files at a fractal's root are what a reader sees first, while attention is highest. A fractal root holds its documents, its `index.ts` and at most one implementation file named after the fractal; everything else sits in a role compartment (`components/`, `utils/`, `hooks/`, `types/` and the like) or in a child fractal. Every root file and every index export must have a consumer.
+3. **A consumer is product code outside the fractal**: another fractal or another package. Tests, benchmarks and stories are not consumers.
+4. **Imports follow lineage.** Upward is open: a fractal may import its ancestors' organ files and root files directly. Downward is closed: a parent reaches a child fractal only through the child's `index.ts`. Sideways is closed: a non-lineage fractal is reached only through its own `index.ts`, like an external package. An organ has no `index.ts`; its files are imported directly, and an organ never imports a child fractal of its owner. A fractal never imports its own or an ancestor's `index.ts`.
+5. **Tests verify from inside.** A test lives in the fractal it verifies (its `__tests__/`) and imports that fractal's internal files directly, never through its own `index.ts`. Public-API tests that act as an external consumer sit in the package-level `src/__tests__/` and import the package entry point. The verification-file exemption in `filid_fractal-boundaries` §5 does not lift §3.
+6. **An unused root file or export is a defect**, on par with a broken feature. The "leave pre-existing dead code" allowance of `seiri_reuse-first` §3 does not apply to it: remove it or move it below the root.
+
+## 📝 Document Principles
+
+Owner principles for every document this repository writes for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), agent assets (`docs/agents/**`), package documentation and the documentation site. Per the precedence above, they outrank `.claude/rules/`.
+
+1. **A document carries what the code cannot say.** Every mental model, policy, invariant, rejected alternative and known limit that the code does not state is written down, each with its reason and the failure it prevents. Reasons and change permissions (`Always do`, `Ask first`, `Never do`) stay even when the behavior itself is visible in code.
+2. **Nothing the reader can derive.** Omit what the intended reader infers from what they already hold: source and tests for a maintainer, published types and names for a consumer. Restated code is a second copy that drifts.
+3. **The present, and true.** Documents describe current behavior. History lives in commit messages, so there is no `## History` section (this overrides the module-documents rule), no dated note and no "previously". A decision and its reason are present; when and how it was reached is history. Every behavioral claim holds for the current code with its conditions intact: code examples run as tests, and each stated limit names the code or test that shows it.
+4. **One home per fact.** Each fact lives in the one document its reader opens; others link to it. A required mirror, such as `AGENTS.md` for this file, names its canonical source and changes with it.
+5. **Sized for attention.** Always-loaded text stays short: an `INTENT.md` within 50 lines, an agent rule within 40. Detail sits one step away behind a route named for its purpose. A document over budget is split by reader or purpose; content is never dropped to fit.
+6. **Changed with the code.** A change that alters a documented policy updates its document in the same pull request, before the code. A mismatch between a document and the code is a defect, fixed like a bug.
+7. **Judged by a blank agent.** A document is done when an agent with no prior context, holding only the documents meant for its role, does that role's job correctly: a consumer builds the requested feature through the public API, and a maintainer makes the right change decision for the right reason. Keep the agent from material it should not see, count a task only when it actually passes, compare with a run that lacks the document to see what the document contributes, keep some tasks unseen by the writer, and fix a failure at its general cause rather than adding that task's answer.
+
 ## 🎯 Quick Reference for Claude Code
 
 When working on this monorepo:
@@ -89,6 +116,7 @@ When working on this monorepo:
 4. Run yarn lint, typecheck, and tests before completing tasks
 5. Follow the project structure and naming conventions
 6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
+7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)
 
 ### 4. **Available Packages**
 

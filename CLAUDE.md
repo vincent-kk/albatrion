@@ -73,6 +73,18 @@ Owner principles for every package that has adopted FCA (directories with `INTEN
 5. **Tests verify from inside.** A test lives in the fractal it verifies (its `__tests__/`) and imports that fractal's internal files directly, never through its own `index.ts`. Public-API tests that act as an external consumer sit in the package-level `src/__tests__/` and import the package entry point. The verification-file exemption in `filid_fractal-boundaries` §5 does not lift §3.
 6. **An unused root file or export is a defect**, on par with a broken feature. The "leave pre-existing dead code" allowance of `seiri_reuse-first` §3 does not apply to it: remove it or move it below the root.
 
+## 📝 Document Principles
+
+Owner principles for every document this repository writes for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), agent assets (`docs/agents/**`), package documentation and the documentation site. Per the precedence above, they outrank `.claude/rules/`.
+
+1. **A document carries what the code cannot say.** Every mental model, policy, invariant, rejected alternative and known limit that the code does not state is written down, each with its reason and the failure it prevents. Reasons and change permissions (`Always do`, `Ask first`, `Never do`) stay even when the behavior itself is visible in code.
+2. **Nothing the reader can derive.** Omit what the intended reader infers from what they already hold: source and tests for a maintainer, published types and names for a consumer. Restated code is a second copy that drifts.
+3. **The present, and true.** Documents describe current behavior. History lives in commit messages, so there is no `## History` section (this overrides the module-documents rule), no dated note and no "previously". A decision and its reason are present; when and how it was reached is history. Every behavioral claim holds for the current code with its conditions intact: code examples run as tests, and each stated limit names the code or test that shows it.
+4. **One home per fact.** Each fact lives in the one document its reader opens; others link to it. A required mirror, such as `AGENTS.md` for this file, names its canonical source and changes with it.
+5. **Sized for attention.** Always-loaded text stays short: an `INTENT.md` within 50 lines, an agent rule within 40. Detail sits one step away behind a route named for its purpose. A document over budget is split by reader or purpose; content is never dropped to fit.
+6. **Changed with the code.** A change that alters a documented policy updates its document in the same pull request, before the code. A mismatch between a document and the code is a defect, fixed like a bug.
+7. **Judged by a blank agent.** A document is done when an agent with no prior context, holding only the documents meant for its role, does that role's job correctly: a consumer builds the requested feature through the public API, and a maintainer makes the right change decision for the right reason. Keep the agent from material it should not see, count a task only when it actually passes, compare with a run that lacks the document to see what the document contributes, keep some tasks unseen by the writer, and fix a failure at its general cause rather than adding that task's answer.
+
 ## 🎯 Quick Reference for Claude Code
 
 When working on this monorepo:
