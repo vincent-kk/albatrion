@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useRef } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
-import { Form } from '@/schema-form/components/Form';
+import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { type FieldNode, FieldNodeRequestType } from '@/schema-form/core';
 import { FormErrorCode } from '@/schema-form/errors';
 import {
@@ -272,3 +272,38 @@ it('calls the composition cleanup and restores command subscriptions on effect r
   view.unmount();
   expect(release).toHaveBeenCalledTimes(2);
 });
+
+it.skipIf(!React.Activity)(
+  'Activity reconnect applies a composition-deferred Refresh without compositionend',
+  () => {
+    const handle = React.createRef<FormHandle>();
+    const Input = ({ value }: FieldInputProps) => (
+      <input defaultValue={String(value ?? '')} />
+    );
+    const schema = {
+      type: 'string',
+      presentation: { FieldInput: Input },
+    } as const;
+    const tree = (mode: 'visible' | 'hidden') => (
+      <React.Activity mode={mode}>
+        <Form ref={handle} jsonSchema={schema} defaultValue="committed" />
+      </React.Activity>
+    );
+    const view = render(tree('visible'));
+    const input = view.container.querySelector('input')!;
+    fireEvent.compositionStart(input);
+    fireEvent.input(input, { target: { value: '조합 중' } });
+    act(() => {
+      handle.current!.refresh();
+      handle.current!.refresh();
+    });
+    expect(view.container.querySelector('input')).toBe(input);
+    expect(input.value).toBe('조합 중');
+    act(() => view.rerender(tree('hidden')));
+    act(() => view.rerender(tree('visible')));
+    const replacement = view.container.querySelector('input')!;
+    expect(replacement).not.toBe(input);
+    expect(replacement.value).toBe('committed');
+    expect(handle.current!.getValue()).toBe('committed');
+  },
+);

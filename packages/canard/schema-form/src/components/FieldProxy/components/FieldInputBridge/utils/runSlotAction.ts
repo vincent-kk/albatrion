@@ -29,7 +29,12 @@ export const runSlotAction = (
   }
 };
 
-/** Return the first native control for a supported selector, or null without a mounted container. */
+/**
+ * Resolve a native control within this input position.
+ * @param container - Mounted input container, or null when no position is attached.
+ * @param selector - Selector restricted to supported native focus controls.
+ * @returns The first matching control, or null if the container or control is absent.
+ */
 const queryElement = (
   container: Nullable<HTMLElement>,
   selector: string,

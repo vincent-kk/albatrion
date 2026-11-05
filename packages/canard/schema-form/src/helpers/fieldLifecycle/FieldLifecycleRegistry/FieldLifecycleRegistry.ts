@@ -37,12 +37,23 @@ export class FieldLifecycleRegistry {
     return this.pendingMask;
   }
 
-  /** Whether this field has a queued handler for the supplied single lifecycle point. */
+  /**
+   * Check queued work without consuming it.
+   * @param node - Identity whose reservations are queried.
+   * @param lifecycle - One lifecycle point, never a combined mask.
+   * @returns Whether this node has a nonempty queue at that point.
+   */
   has(node: FieldNode, lifecycle: FieldLifecycle): boolean {
     return this.queues[lifecycle].has(node);
   }
 
-  /** Append a pure handler; returns an idempotent cancellation of only that reservation. */
+  /**
+   * Append a pure handler to this node's FIFO queue.
+   * @param node - Identity whose next lifecycle event consumes the reservation.
+   * @param lifecycle - One lifecycle point, never a combined mask.
+   * @param handler - Pure action producer; failures reach the nonthrowing error sink.
+   * @returns Idempotent cancellation, also effective before execution in a detached queue.
+   */
   reserve(
     node: FieldNode,
     lifecycle: FieldLifecycle,
@@ -64,7 +75,12 @@ export class FieldLifecycleRegistry {
     };
   }
 
-  /** Detach this field's queue, execute FIFO, report failures and return the combined actions. */
+  /**
+   * Detach the queue before FIFO execution so re-reservations wait for the next event.
+   * @param node - Identity whose pending queue is consumed.
+   * @param lifecycle - One lifecycle point, never a combined mask.
+   * @returns Combined actions of uncancelled successful handlers, or None for an empty queue.
+   */
   fire(node: FieldNode, lifecycle: FieldLifecycle): FieldLifecycleAction {
     const map = this.queues[lifecycle];
     const queue = map.get(node);
