@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵·정의 변경은 입력을 다시 선택하되 같은 원본 컴포넌트의 어댑터를 재사용합니다.
+
 - `createFieldInputBridge`만 `FieldNode | Nullish`를 받아 양쪽 부재에서 동일한 공유 `NULL_FUNCTION`을 반환한다. 실제 브리지(`FieldInputBridge`)와 `FieldInputProps.node`는 필수 노드로 작업하므로 부재 검사를 사용자 입력 구현에 전파하지 않는다. 구독 훅이 부재를 다루는 방식은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
@@ -37,6 +39,10 @@
 - 팩토리 `createFieldInputBridge`는 컴포넌트가 아니라 컴포넌트를 반환하는 함수이므로 `utils/`에 두고, 뿌리에는 같은 이름의 구현인 `FieldInputBridge.tsx`만 둡니다. 뿌리에는 문서, 진입점, 형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
+
+### live-configuration — 설정 교체 수명
+
+- 무관한 맵 키 변경이나 같은 컴포넌트를 고르는 정의 변경은 입력 DOM·값·상태·외부 오류를 보존합니다.
 
 ### field-input-bridge-contract — 관찰 가능한 동작
 

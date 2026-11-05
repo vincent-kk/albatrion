@@ -19,7 +19,7 @@
 ### Always do
 
 - `checkErrorVisibility`에서는 `FieldNodeState.ErrorVisibility`이라는 명시적 플래그를 먼저 평가한다(override를 지원하기 위해서다).
-- `CustomFieldRenderer`와 `formatError`는 `useConstant`로 고정해서 마운트 이후의 변경을 막는다.
+- 렌더러·포맷터의 최신 설정을 해석하고 같은 컴포넌트의 감싸개 identity를 유지한다.
 - `useFieldRendererContext`의 PluginManager fallback을 유지한다.
 
 ### Ask first

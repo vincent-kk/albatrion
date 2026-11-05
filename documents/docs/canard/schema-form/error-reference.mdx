@@ -25,7 +25,7 @@ Compare group-qualified `error.code` or record.code with `FormErrorCode` / `Form
 
 An already open chain retains its outer origin through nested writes/resets; tree-construction occurrences are always load. Initial external-errors application is load, later prop replacement is write, and a validator execution or compilation failure already reported inside submit retains validate origin. For schema verdicts and callback failures, see [submission](#submission). Some development console warnings have no onError record, so those channels need not match.
 
-If a `fieldInputMap` key cannot compile as a pattern, for example `/**`, the Form stays in its load fallback. After that fallback commits, `onError` receives one record with `level: 'error'`, `code: FormErrorCode.FormTypeInputMap`, and `origin: 'load'`, including under StrictMode. The input map is fixed for the Form's lifetime: `reset()` and `rebuild()` retain the error and fallback without reporting it again. Correct the map and remount the Form to recover.
+An input map key such as `/**` that cannot compile reports one committed record with `level: 'error'`, `code: FormErrorCode.FormTypeInputMap` and `origin: 'load'`, including in StrictMode. An invalid initial map keeps the load fallback. An invalid live replacement preserves the current tree and last valid map. Replace the map reference to re-evaluate it; a new invalid key reports once, and a valid map recovers without remounting the Form.
 
 A user `FieldInput` that throws while rendering still reports `FormErrorCode.RenderFailed` with `origin: 'render'`, even when the thrown error itself carries `FormErrorCode.FormTypeInputMap`. Its render boundary isolates that input subtree.
 

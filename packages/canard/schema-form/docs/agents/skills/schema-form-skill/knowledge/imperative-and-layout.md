@@ -70,7 +70,6 @@ Nested native form elements are invalid HTML and can also confuse submit handlin
 Declare nested data in the schema and use Form.Input/Form.Render or branch ChildFields to arrange that same tree.
 Use sibling Forms under FormProvider for independent forms sharing default renderers, input definitions, context or validation configuration; a provider does not join their values.
 
-Changing a `jsonSchema` or `defaultValue` prop alone keeps the current tree and values.
-Reset reads the latest committed props; an equivalent schema can reuse the tree, while a different schema can replace it.
+Changing `jsonSchema` or `defaultValue` alone preserves the current tree and edits. Reset reads the latest committed props; an equivalent schema can reuse the tree, while a different schema can replace it. Function children receive the schema of their current tree, including before reset applies a new schema prop.
 `rebuild()` builds a new tree from the current schema; re-read nodes from the handle afterwards. It reloads the committed `defaultValue`, so edits made before it are discarded; supplying a new validator does the same. It does not recompile validation for the same schema object and validator; a cached compile failure and its one retry are described in [validation failures](validation-failures.md).
-Keep stable schema references to avoid accidental configuration churn and clarify which schema reset will load, not because every new reference discards editing state.
+Keep stable schema references to avoid unnecessary equivalence checks and clarify which schema reset will load; prop replacement alone does not discard editing state.

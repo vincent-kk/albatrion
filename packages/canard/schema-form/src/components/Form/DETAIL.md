@@ -11,6 +11,10 @@
 
 ## API Contracts
 
+`jsonSchema`·`defaultValue` prop 변경만으로 현재 트리나 값을 교체하지 않습니다. reset이 최신 committed props를 적용할 때까지 함수 children은 새 prop이 아니라 현재 트리의 스키마와 노드를 함께 받습니다. schema·node 쌍의 불일치가 소비자에게 아직 없는 필드를 있다고 알리는 일을 막습니다.
+
+Form의 렌더러·포맷터·입력 맵·정의와 FormProvider의 렌더러·포맷터·정의는 최신 불변 참조로 적용합니다. 입력 선택 변경은 노드·값·상태·외부 오류를 보존하며 같은 컴포넌트의 입력 DOM을 유지합니다. 렌더러 교체는 해당 렌더러의 UI subtree를 다시 만듭니다.
+
 - 보조 렌더링 컴포넌트는 `Form.Render`·`Form.Field`·`Form.Label`·`Form.Input`·`Form.Error` 정적 멤버로 제공한다. `FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`는 내부 구현이며 이 fractal의 index가 별도 이름으로 내보내지 않는다.
 - 공개 `Roll` 형 셋은 이 fractal이 소유한다. 각 자식 fractal(`components/FormField` 등)의 `types` 칸 props 파일이 본 형(`FormFieldProps` 등)과 그 `Roll` 표현(`RolledFormFieldProps` 등)을 함께 정의하고, 자식 관문과 이 fractal의 index는 `Rolled*` 형을 내보낸다. 루트 `src/index.ts`가 `RolledFormFieldProps as FormFieldProps`처럼 공개 이름으로 바꿔 재수출한다.
 
@@ -27,7 +31,7 @@
 - `readOnly`·`disabled`는 렌더 계층에서 노드의 로컬 잠금과 결합하는 폼 전체 잠금이며 core의 명령형 쓰기를 막지 않는다. `unsetOnInactive`는 노드별 나감 정책이 없는 경우의 폼 기본값이고, `disableAutomaticWrites`는 자동 쓰기의 폼 기본 억제값이다(LANDING-067, WRITE-015·031–040).
 - `onError`는 폼 인스턴스의 오류 기록을 받고 `onDiagnosticsChange`는 준비 뒤 루트 진단 변경을 받는다. `validatorFactory`의 공개 형은 필수 `compile`·`compileGuard`를 가진 `{ compile, compileGuard }` 객체이며 선택 순서는 Form 속성 > FormProvider > 플러그인이다. 선택 검증기 참조가 바뀌면 트리를 재생성한다(ERROR-026, VALIDATE-044, 32C-01).
 - 렌더러 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer`의 넷이며 플러그인 키와 같은 이름을 사용한다(LANDING-035·067).
-- 작성 `jsonSchema`는 clone하지 않아 청사진·가드 캐시의 루트 identity를 유지한다. `defaultValue`는 clone하여 로드하며, 스키마와 기본값은 마운트·reset 계약에 따라 읽는다(LANDING-095, WRITE-043·044).
+- 작성 `jsonSchema`는 clone하지 않아 청사진·가드 캐시의 루트 identity를 유지한다. `defaultValue`는 clone하여 로드하며, 스키마와 기본값은 mount·reset에서 읽는다(LANDING-095, WRITE-043·044).
 - `Form.Label`은 입력 선택을 판정하지 않고 항상 `htmlFor={path}`와 id `label:${path}`를 둘 다 가진 label을 그린다. 단일 입력은 `id={path}`로, 묶음 입력은 `aria-labelledby`로 `label:${path}`를 참조해 이 제목에 이어지며, 사용자 입력·렌더러도 같은 규약을 따른다(대기열 38, 소유자 결정). 접두어 `label:`은 `/`로 시작하는 경로 id와 겹칠 수 없어, 형제 속성 이름이 `<이름>-label`이어도 id가 충돌하지 않는다.
 
 ### 오류 경계
@@ -52,6 +56,10 @@
 validationMode는 Form > FormProvider > 기본값 순서로 선택하고 commit에서 기존 root에 적용합니다. None 전환은 검증 오류만 지우며 외부 오류를 유지하고 다른 모드 전환은 오류를 보존합니다. 재활성화는 검증 문서의 공통 슬롯을 따릅니다. unsetOnInactive와 disableAutomaticWrites 변경은 다음 엔진 진입부터 적용하며 보유한 비활성 값을 소급 삭제하거나 자동 쓰기를 소급 실행하지 않습니다. 호출 옵션과 노드별 정책의 기존 우선순위는 유지합니다.
 
 ## Acceptance Criteria
+
+### live-configuration — 설정 교체 수명
+
+- Form과 Provider 설정 교체만으로 Form을 재마운트하지 않습니다.
 
 ### reset-options — 로드별 자동 쓰기 억제
 

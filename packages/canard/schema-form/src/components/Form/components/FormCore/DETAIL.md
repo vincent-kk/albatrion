@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+함수 children은 아직 교체되지 않은 prop 대신 현재 Context 루트의 스키마를 읽습니다. 구조 교체 전후와 실패 뒤에도 schema·node 쌍이 일치해야 합니다.
+
 Form과 Provider 중 실제 선택한 입력 값만 정책 해석의 기준으로 삼습니다. 가려진 Provider 변경은 같은 invalid 값의 중복 보고도 만들지 않습니다. 유효하지 않은 정책은 렌더 중 오류 객체로 보관하고 마지막 커밋의 유효 기본 정책을 유지하며, 트리 생성·복구와 origin load 보고는 RootNodeContext가 맡습니다.
 
 `revealErrors()`는 일시적으로 Always를 선택하고 `resetErrorVisibility()`는 최신 기본 정책으로 돌아갑니다. 두 명령은 검증하거나 노드 상태를 쓰지 않습니다. 실효 기본 정책 값이 바뀐 커밋에서만 정책 세대를 증가시키고, 공개 명령은 발급 당시의 세대를 저장합니다. 렌더와 정리는 현재 정책 세대와 다른 공개를 무시하여, 정책 변경 커밋에 아직 렌더된 공개가 없어도 대기 중인 명령이 이전 정책으로 돌아왔을 때 부활하지 않게 합니다. 기본 정책 변경의 커밋, reset, rebuild, 루트 교체는 Form 공개를 해제합니다. 같은 값의 재렌더나 Form prop에 가려진 Provider 변경은 공개를 유지합니다. 중단된 렌더는 정책 세대를 바꾸거나 공개를 해제하지 않습니다.
@@ -28,6 +30,10 @@ Form과 Provider 중 실제 선택한 입력 값만 정책 해석의 기준으�
 네이티브 제출의 판정 표시와 focus는 시작 load·root·validation epoch 및 연결 상태를 판정 도착과 reveal 뒤 다시 검사합니다. 비동기 실패의 capture와 host 보고는 시작 root 동일성과 epoch만 검사하여 루트 교체·은퇴와 실효 모드 전환 뒤의 실패를 차단하며, 같은 root reset이나 ordinary supersession만으로 기존 보고를 버리지 않습니다. 명시적 submit·validate의 Promise는 게시·보고 여부와 별개로 시작 snapshot의 결과나 거부로 정착합니다. 제출 callback은 호출 시작 시점의 마지막 committed props에서 읽으며, mode 전환이 이미 시작한 유효 제출의 callback까지 취소하지는 않습니다. 중단된 render는 명령 동작을 바꾸지 않습니다.
 
 ## Acceptance Criteria
+
+### live-configuration — 설정 교체 수명
+
+- schema prop 교체만으로 트리는 바뀌지 않으며 reset 전후에 함수 children이 새 schema와 옛 node를 함께 받지 않습니다.
 
 ### root-boundary — 경계와 보고기의 순서
 
