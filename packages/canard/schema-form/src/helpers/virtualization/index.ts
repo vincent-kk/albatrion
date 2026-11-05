@@ -5,3 +5,4 @@ export type {
   VirtualizationPlaceholderProps,
   VirtualizationRootMargin,
 } from './type';
+export type { DeferredGate } from './VirtualizationManager';
