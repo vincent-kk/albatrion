@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵·정의 변경은 입력을 다시 선택하되 같은 원본 컴포넌트의 어댑터를 재사용합니다.
+
 - `createFieldInputBridge`만 `FieldNode | Nullish`를 받아 양쪽 부재에서 동일한 공유 `NULL_FUNCTION`을 반환한다. 실제 브리지(`FieldInputBridge`)와 `FieldInputProps.node`는 필수 노드로 작업하므로 부재 검사를 사용자 입력 구현에 전파하지 않는다. 구독 훅이 부재를 다루는 방식은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
@@ -37,6 +39,11 @@
 - 팩토리 `createFieldInputBridge`는 컴포넌트가 아니라 컴포넌트를 반환하는 함수이므로 `utils/`에 두고, 뿌리에는 같은 이름의 구현인 `FieldInputBridge.tsx`만 둡니다. 뿌리에는 문서, 진입점, 형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
+
+### live-configuration — 설정 교체 수명
+
+- 무관한 맵 키 변경이나 같은 컴포넌트를 고르는 정의 변경은 조상 입력도 유지되는 동안 입력 DOM을 보존합니다. 부모 입력 교체는 그 안의 자식 DOM과 미커밋 draft를 재생성하지만 노드의 값·상태·외부 오류는 유지합니다.
+- 각 커밋된 입력 선택은 독립 수명 토큰을 가집니다. 선택 교체와 언마운트는 이전 토큰을 폐기하여 늦은 onChange·onFileAttach를 버립니다. A→B→A도 이전 A의 콜백을 되살리지 않습니다. 입력이 교체되거나 언마운트되기 시작하면 자신의 cleanup에서 호출한 onChange·onFileAttach도 더 이상 쓰지 못합니다. 토큰의 활성화·폐기는 실제로 삭제되는 선택 입력 어댑터의 insertion effect가 소유하여 원본 입력의 layout cleanup보다 먼저 폐기합니다. 첫 자식 layout 쓰기를 수락하고 중단된 렌더는 현재 선택을 폐기하지 않습니다.
 
 ### field-input-bridge-contract — 관찰 가능한 동작
 

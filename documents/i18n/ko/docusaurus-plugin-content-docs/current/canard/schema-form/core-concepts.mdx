@@ -3,11 +3,7 @@ sidebar_label: '핵심 개념'
 sidebar_position: 3
 ---
 
-
-
 # 핵심 개념
-
-
 
 ## 형상·형 해석·검증 {#shape-value-validation}
 
@@ -17,12 +13,12 @@ sidebar_position: 3
 
 ## 노드 종류와 전략 {#node-types}
 
-| 노드 | 의미 |
-| --- | --- |
-| StringNode / NumberNode / BooleanNode / NullNode | terminal 값이며 integer도 NumberNode입니다 |
-| ObjectNode / ArrayNode | branch 전략에서는 자식 노드, terminal 전략에서는 전체 값 입력 하나입니다 |
-| UnionNode | 여러 non-null 종류를 위한 terminal 노드입니다 |
-| VirtualNode | `options.virtual`로 기존 형제 속성을 묶는 합성 branch입니다 |
+| 노드                                             | 의미                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------ |
+| StringNode / NumberNode / BooleanNode / NullNode | terminal 값이며 integer도 NumberNode입니다                               |
+| ObjectNode / ArrayNode                           | branch 전략에서는 자식 노드, terminal 전략에서는 전체 값 입력 하나입니다 |
+| UnionNode                                        | 여러 non-null 종류를 위한 terminal 노드입니다                            |
+| VirtualNode                                      | `options.virtual`로 기존 형제 속성을 묶는 합성 branch입니다              |
 
 virtual 노드는 레이아웃 그룹이며 조건 분기 노드가 아닙니다. object·array 전략은 명시적 `options.terminal`, `presentation.FieldInput`의 컴포넌트, branch 전략 순으로 정합니다. [전략 불변 조건](./schema-reference#terminal-strategy)을 참조하십시오.
 
@@ -38,7 +34,7 @@ Form의 `children`은 루트 자동 레이아웃을 대체합니다. 생략한 �
 
 기본 그룹 렌더러는 label과 오류를 직접 그립니다. `FormLabelRenderer`, `FormErrorRenderer` 교체는 조합 컴포넌트와 이를 호출하는 사용자 렌더러에 적용되며 기본 그룹 렌더러의 내용을 바꾸지 않습니다.
 
-렌더러, `formatError`, 입력 정의, 입력 map은 마운트 때 캡처합니다. 이를 교체하려면 소유 Form 또는 FormProvider를 다시 마운트하십시오. live context·검증기 변경과의 차이는 [API 참조](./api-reference#configuration-lifetime)에 있습니다.
+렌더러, `formatError`, 입력 정의와 입력 map은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 입력과 그 조상 입력이 모두 같으면 DOM을 보존합니다. 부모 입력이 교체되면 선택된 자식 컴포넌트가 같아도 그 안의 DOM과 미커밋 draft는 재생성됩니다. 렌더러 교체는 그 렌더러가 소유한 UI subtree를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 
 ## 폼이 수행하는 작업 측정 {#performance}
 

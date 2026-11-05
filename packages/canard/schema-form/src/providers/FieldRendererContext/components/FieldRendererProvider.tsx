@@ -2,7 +2,6 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
 import { ErrorVisibility } from '@/schema-form/types';
@@ -50,31 +49,28 @@ export const FieldRendererContextProvider = ({
     () => createErrorVisibilityChecker(errorVisibility),
     [errorVisibility],
   );
-  const constant = useConstant({
+  const value = useMemo(() => {
+    const resolvedFieldRenderer = isReactComponent(FieldRenderer)
+      ? FieldRenderer
+      : ExternalFormFieldRenderer;
+    const resolvedFormatError = isFunction(formatError)
+      ? formatError
+      : externalFormatError;
+    return {
+      FieldRenderer: resolvedFieldRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError: resolvedFormatError,
+      checkErrorVisibility,
+      errorVisibility,
+    };
+  }, [
     FieldRenderer,
     FormLabelRenderer,
     FormInputRenderer,
     FormErrorRenderer,
     formatError,
-  });
-  const value = useMemo(() => {
-    const FieldRenderer = isReactComponent(constant.FieldRenderer)
-      ? constant.FieldRenderer
-      : ExternalFormFieldRenderer;
-    const formatError = isFunction(constant.formatError)
-      ? constant.formatError
-      : externalFormatError;
-    return {
-      FieldRenderer,
-      FormLabelRenderer: constant.FormLabelRenderer,
-      FormInputRenderer: constant.FormInputRenderer,
-      FormErrorRenderer: constant.FormErrorRenderer,
-      formatError,
-      checkErrorVisibility,
-      errorVisibility,
-    };
-  }, [
-    constant,
     checkErrorVisibility,
     ExternalFormFieldRenderer,
     externalFormatError,

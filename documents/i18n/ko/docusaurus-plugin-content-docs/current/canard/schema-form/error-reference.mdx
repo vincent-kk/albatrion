@@ -25,7 +25,7 @@ group-qualified `error.code`·record.code를 `FormErrorCode`, `FormWarningCode` 
 
 이미 열린 chain은 중첩 쓰기·reset에도 바깥 origin을 유지하며 트리 생성 발생은 항상 load입니다. 외부 errors의 최초 적용은 load, 이후 prop 교체는 write이며 submit 안에서 이미 보고한 검증기 실행·컴파일 실패는 validate를 유지합니다. 스키마 판정과 callback 실패는 [제출](#submission)을 참조하십시오. 일부 개발 console 경고에는 onError record가 없어 두 채널이 같지 않을 수 있습니다.
 
-`/**`처럼 `fieldInputMap` 키를 패턴으로 컴파일할 수 없으면 Form은 load fallback을 유지합니다. 해당 fallback이 commit된 뒤 `onError`에 `level: 'error'`, `code: FormErrorCode.FormTypeInputMap`, `origin: 'load'`인 record 하나를 전달하며 StrictMode에서도 한 번입니다. 입력 map은 Form 수명 동안 고정되므로 `reset()`·`rebuild()`도 오류와 fallback을 유지하고 다시 보고하지 않습니다. 복구하려면 map을 고쳐 Form을 다시 마운트하십시오.
+`/**`처럼 컴파일할 수 없는 입력 map 키는 commit 뒤 `level: 'error'`, `code: FormErrorCode.FormTypeInputMap`, `origin: 'load'` record를 StrictMode에서도 한 번 보고합니다. 처음부터 잘못된 map은 load fallback을 유지합니다. 잘못된 live 교체는 현재 트리와 마지막 유효 map을 보존합니다. map 참조를 바꾸면 다시 평가하며 새 잘못된 키는 한 번 보고하고 유효한 map으로 재마운트 없이 복구합니다.
 
 사용자 `FieldInput`이 렌더 중 던진 예외는 여전히 `FormErrorCode.RenderFailed`와 `origin: 'render'`로 보고합니다. 던진 오류 자체의 코드가 `FormErrorCode.FormTypeInputMap`이어도 같으며, render 경계는 해당 입력 subtree를 격리합니다.
 

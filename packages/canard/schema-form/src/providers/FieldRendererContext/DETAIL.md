@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+렌더러·포맷터 변경은 최신 우선순위로 적용하며 노드·값·상태를 초기화하거나 검증을 실행하지 않습니다. 동일 참조는 메모 결과를 재사용합니다.
+
 정책은 Form prop→FormProvider→기본 AfterEditAndTouch 순으로 고르며 같은 실효 값이면 checker 참조를 유지합니다. 정책 변경은 트리나 노드 상태를 덮어쓰지 않습니다.
 
 `FieldNodeState.ErrorVisibility`는 노드 재정의로 undefined는 상속, true는 표시 허용, false는 Form 공개 중에도 억제입니다. Edited/Touched를 보존하면서 상속하려면 `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })`로 그 키만 지웁니다. 렌더러와 입력은 여전히 `isPresent` 및 OnChange 해제 규칙을 따릅니다. `useChildFieldErrors`는 숨겨진 자식까지 집계하는 계약을 유지하며 presence 필터 없이 `errorVisible`·`childErrorVisibleList`를 반환합니다. 원시 오류는 표시와 무관하게 유지됩니다.
@@ -24,6 +26,10 @@
 - Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
+
+### live-configuration — 설정 교체 수명
+
+- Form·FormProvider의 렌더러와 formatError 교체가 현재 화면에 반영됩니다. Form override에 가려진 Provider 변경은 선택을 바꾸지 않습니다.
 
 ### form-type-renderer-context-contract — 관찰 가능한 동작
 

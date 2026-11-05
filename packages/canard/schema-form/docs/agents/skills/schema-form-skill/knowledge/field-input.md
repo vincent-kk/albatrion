@@ -52,13 +52,11 @@ Register this input through `fieldInputMap` or a field input definition that mat
 
 ## Keep configuration stable for a mounted form
 
-Define input definitions, input maps and renderer components outside render, or memoize their intended initial configuration.
-Form captures `fieldInputDefinitions` and `fieldInputMap` at mount and normalizes that captured configuration.
-Its renderer components and `formatError` are also captured at mount; replacing these prop references does not re-resolve the inputs or rebuild the node tree.
-`Form.Field`, `Form.Render` and `Form.Input` capture their component props at mount the same way: `FieldInput`, `FieldRenderer` and `Wrapper` on `Form.Field`; `children`, `FieldInput` and `Wrapper` on `Form.Render`; `FieldInput` on `Form.Input`. Their other props are read on every render. A `Form.Render` children function or a `FieldRenderer` keeps the closure it had at mount, so component state it closes over stays at its mount value: read changing values from the `context` prop it receives (Form's `context`) or through a hook inside it, or give the element a new `key` to replace the component.
-FormProvider likewise captures its definitions and renderers. A fresh definition array can make React render the Form again, but is not a supported way to install a different input selection.
-Remount the owner of a captured configuration to replace it: Form for local configuration, or FormProvider and its forms for shared defaults. Account for the new trees and interaction state.
-Do not mutate the captured objects in place: an initial-configuration contract is not a reactive mutation channel.
+Use immutable definitions and maps, replacing their references when configuration changes. Form and FormProvider apply renderer, formatter and input-definition changes after mount; Form also applies input-map changes. Keep references stable when unchanged to avoid repeated normalization and selection.
+Input selection preserves node values, interaction and external errors. The same selected raw component reuses its boundary adapter across map, definition and inline sources. Its DOM survives only while its owning ancestors also stay unchanged. Replacing a parent input recreates descendant DOM and uncommitted drafts, even when child components are unchanged; values, interaction state and errors remain in the nodes. An unrelated map key therefore remounts nothing. A renderer replacement rebuilds the UI subtree that renderer owns, while a formatter change reformats current errors without remounting healthy input DOM. A renderer replacement replaces its error boundary; a formatter replacement retries only a failed boundary. Callbacks retained from replaced or unmounted inputs cannot write values or files, including after A → B → A selection.
+An invalid live map reports `FormTypeInputMap` with origin `load` once and retains the last valid map and tree. Replacing it with a valid map also recovers an initial load fallback without remounting.
+
+`Form.Field`, `Form.Render` and `Form.Input` retain their own component props at mount: `FieldInput`, `FieldRenderer` and `Wrapper` on `Form.Field`; `children`, `FieldInput` and `Wrapper` on `Form.Render`; `FieldInput` on `Form.Input`. Read changing data through the received context or a hook inside those components, or replace that element's key when its local component configuration must change.
 
 `context` has a different role: it is live application data and is compared by content before propagation.
 An equal fresh plain object retains the snapshot; changed content propagates to the current tree and can affect controls and validation freshness without rebuilding it.

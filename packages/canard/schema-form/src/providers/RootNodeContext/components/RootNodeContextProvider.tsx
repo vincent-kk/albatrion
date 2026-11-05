@@ -85,7 +85,7 @@ export const RootNodeContextProvider = ({
   const committed = useRef(current);
   const committedPolicy = useRef(errorVisibility);
   // Construction belongs to the speculative render; only committed loads are prepared.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- Reset reconsumes props; input-map normalization stays fixed.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Initial construction is speculative; later configuration changes commit below.
   const initial = useMemo(() => createRootLoad(current, reporter), []);
   const store = useLazyConstant<RootLoadStore>(() => ({
     load: initial,
@@ -104,6 +104,7 @@ export const RootNodeContextProvider = ({
   const getSnapshot = useMemo(() => () => store.load, [store]);
   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const reportedPolicyError = useRef<SchemaFormError>(undefined);
+  const reportedMapError = useRef<SchemaFormError>(undefined);
   if (reporter) {
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
@@ -166,14 +167,23 @@ export const RootNodeContextProvider = ({
     };
     const requested = pending.current;
     pending.current = undefined;
-    const policyRecovered =
-      previous.errorVisibilityError && !errorVisibilityError;
+    const configurationRecovered =
+      (previous.errorVisibilityError || previous.inputMapError) &&
+      !errorVisibilityError &&
+      !inputMapError;
     const validatorChanged =
       previous.validator !== current.validator ||
-      (policyRecovered && store.load.props.validator !== current.validator);
-    const policyBlockedLoad =
-      !store.load.root && store.load.props.errorVisibilityError;
-    if (!errorVisibilityError && !policyBlockedLoad && validatorChanged)
+      (configurationRecovered &&
+        store.load.props.validator !== current.validator);
+    const configurationBlockedLoad =
+      !store.load.root &&
+      (store.load.props.errorVisibilityError || store.load.props.inputMapError);
+    if (
+      !errorVisibilityError &&
+      !inputMapError &&
+      !configurationBlockedLoad &&
+      validatorChanged
+    )
       reset(requested?.option);
     else if (requested) {
       const { props: used, option } = requested;
@@ -207,9 +217,24 @@ export const RootNodeContextProvider = ({
       });
     reportedPolicyError.current = errorVisibilityError;
     if (
+      inputMapError &&
+      reportedMapError.current !== inputMapError &&
+      load.error !== inputMapError
+    )
+      flushRootLoad({
+        props: committed.current,
+        root: store.load.root,
+        error: inputMapError,
+        records: [],
+        prepared: true,
+        reporter,
+      });
+    reportedMapError.current = inputMapError;
+    if (
       !errorVisibilityError &&
+      !inputMapError &&
       !store.load.root &&
-      store.load.props.errorVisibilityError
+      (store.load.props.errorVisibilityError || store.load.props.inputMapError)
     ) {
       store.load.retired = true;
       reporter?.beginLoad();
@@ -220,6 +245,7 @@ export const RootNodeContextProvider = ({
       for (const listener of store.listeners) listener();
     }
   }, [
+    inputMapError,
     errorVisibilityError,
     load.error,
     store,

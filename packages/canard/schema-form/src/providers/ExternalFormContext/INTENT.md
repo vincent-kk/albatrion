@@ -17,7 +17,7 @@ ExternalFormContext/
 ## Conventions
 
 - TypeScript와 React로 작성하며, Context 초기값은 빈 객체 `{} as ExternalFormContext`다.
-- `fieldInputDefinitions`는 Provider가 마운트될 때 `useConstant`로 고정하므로 런타임에 바꿀 수 없다.
+- 입력 정의와 렌더러·포맷터는 불변 참조 교체로 갱신한다.
 - `context` prop은 `useSnapshot`으로 안정화해서 불필요한 리렌더를 막는다.
 - Form 수준 props가 이 Context 값보다 항상 우선한다(`FieldRendererContextProvider`에서 병합한다).
 
@@ -25,7 +25,7 @@ ExternalFormContext/
 
 ### Always do
 
-- `fieldInputDefinitions`를 `useConstant`로 고정해서 마운트 이후의 변경을 막는다.
+- 정의 참조가 같으면 정규화 결과를 재사용하여 무관한 설정 변경이 입력을 교체하지 않게 한다.
 - `useExternalFormContext`는 `providers/` 안에서만 쓴다(`FieldRendererContext`, `RootNodeContext`, `WorkspaceContext`가 소비한다).
 
 ### Ask first

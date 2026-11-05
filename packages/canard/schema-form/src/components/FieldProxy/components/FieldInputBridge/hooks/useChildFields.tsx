@@ -11,11 +11,7 @@ import {
 } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
-import {
-  useConstant,
-  useLazyConstant,
-  useReference,
-} from '@winglet/react-utils/hook';
+import { useLazyConstant, useReference } from '@winglet/react-utils/hook';
 
 import { DeferredFieldProxy } from '@/schema-form/components/FieldProxy/components/DeferredFieldProxy';
 import type { FieldProxyProps } from '@/schema-form/components/FieldProxy/type';
@@ -111,7 +107,6 @@ export const useChildFields = (
             const onChangeRef = useReference(onChange);
             const onFileAttachRef = useReference(onFileAttach);
             const overridePropsRef = useReference(restProps);
-            const FieldRenderer = useConstant(InputFieldRenderer);
             return deferredManager !== null ? (
               <DeferredFieldProxy
                 node={node}
@@ -120,7 +115,7 @@ export const useChildFields = (
                 onChangeRef={onChangeRef}
                 onFileAttachRef={onFileAttachRef}
                 overridePropsRef={overridePropsRef}
-                FieldRenderer={FieldRenderer}
+                FieldRenderer={InputFieldRenderer}
               />
             ) : (
               <NodeProxy
@@ -128,7 +123,7 @@ export const useChildFields = (
                 onChangeRef={onChangeRef}
                 onFileAttachRef={onFileAttachRef}
                 overridePropsRef={overridePropsRef}
-                FieldRenderer={FieldRenderer}
+                FieldRenderer={InputFieldRenderer}
               />
             );
           },

@@ -24,7 +24,6 @@ interface FormChildrenRendererProps<
   Schema extends JSONSchema,
   Value extends AllowedValue,
 > {
-  jsonSchema: Schema;
   render: Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;
 }
 
@@ -32,7 +31,6 @@ const FormChildrenRendererInner = <
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >({
-  jsonSchema,
   render,
 }: FormChildrenRendererProps<Schema, Value>) => {
   const rootNode = useRootNodeContext();
@@ -40,7 +38,7 @@ const FormChildrenRendererInner = <
   return (
     <>
       {render({
-        jsonSchema,
+        jsonSchema: rootNode?.jsonSchema,
         node: rootNode,
         defaultValue: rootNode?.defaultValue,
         value: rootNode?.value,

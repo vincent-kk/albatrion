@@ -51,6 +51,8 @@ export const FieldInputBridge = memo(
   }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || selected;
+    // Each selection gets its own generation, even when A returns after B.
+    const selection = useMemorize(() => ({ active: false }), [FieldInput]);
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
@@ -78,13 +80,17 @@ export const FieldInputBridge = memo(
       hydrationCommitRef,
       FieldInput ? virtualizationManager : null,
     );
-    const defaultValue = useMemorize(() => node.value, [node, generation]);
+    const defaultValue = useMemorize(
+      () => node.value,
+      [node, generation, FieldInput],
+    );
     const accepts = useCallback(
       () =>
+        selection.active &&
         isLive() &&
         (mountedChildren.current > 0 ||
           generation === node.revision(FieldNodeEventType.RequestRefresh)),
-      [node, generation, isLive],
+      [node, generation, isLive, selection],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = SetValueOption.Overwrite) => {
@@ -166,6 +172,7 @@ export const FieldInputBridge = memo(
           readOnly={rootReadOnly || node.isReadOnly || !!overrideProps.readOnly}
           disabled={rootDisabled || node.isDisabled || !!overrideProps.disabled}
           inputGeneration={generation}
+          inputSelection={selection}
           jsonSchema={node.jsonSchema as JSONSchema}
           node={node}
           type={node.type}

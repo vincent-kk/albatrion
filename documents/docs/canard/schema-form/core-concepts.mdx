@@ -3,11 +3,7 @@ sidebar_label: 'Core Concepts'
 sidebar_position: 3
 ---
 
-
-
 # Core Concepts
-
-
 
 ## Shape, interpretation, validation {#shape-value-validation}
 
@@ -17,12 +13,12 @@ Choose between the [active and visible controls](./schema-reference#controls) fo
 
 ## Node types and strategies {#node-types}
 
-| Node | Meaning |
-| --- | --- |
-| StringNode / NumberNode / BooleanNode / NullNode | Terminal values; integer uses NumberNode |
-| ObjectNode / ArrayNode | Child nodes in branch strategy, or one whole-value input in terminal strategy |
-| UnionNode | Terminal node for multiple non-null kinds |
-| VirtualNode | Synthetic branch grouping existing sibling properties through `options.virtual` |
+| Node                                             | Meaning                                                                         |
+| ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| StringNode / NumberNode / BooleanNode / NullNode | Terminal values; integer uses NumberNode                                        |
+| ObjectNode / ArrayNode                           | Child nodes in branch strategy, or one whole-value input in terminal strategy   |
+| UnionNode                                        | Terminal node for multiple non-null kinds                                       |
+| VirtualNode                                      | Synthetic branch grouping existing sibling properties through `options.virtual` |
 
 Virtual nodes are layout groups, not conditional branches. Object/array strategy follows explicit `options.terminal` first, then a component in `presentation.FieldInput`, then branch strategy. See [strategy invariants](./schema-reference#terminal-strategy).
 
@@ -38,7 +34,7 @@ A Form's `children` replaces automatic root layout. Omitted inputs are not inser
 
 The default group renderer draws its own label and errors. Replacing `FormLabelRenderer` or `FormErrorRenderer` affects composition components and custom renderers that call them; it does not rewrite the default group renderer.
 
-Renderers, `formatError`, input definitions, and input maps are captured on mount. Remount the owning Form or FormProvider to replace them. The [API reference](./api-reference#configuration-lifetime) distinguishes this from live context and validator changes.
+Renderers, `formatError`, input definitions, and input maps apply after mount when their immutable references change. Input selection preserves values, state and external errors; input DOM is preserved while both its selected component and its owning ancestors stay unchanged. Replacing a parent input recreates its descendants’ DOM and uncommitted drafts, even when their selected components are unchanged. A renderer replacement rebuilds the UI subtree it owns. See [configuration lifetime](./api-reference#configuration-lifetime).
 
 ## Measure the work your form performs {#performance}
 

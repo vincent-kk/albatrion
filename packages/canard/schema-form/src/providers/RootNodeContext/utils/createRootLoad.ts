@@ -11,7 +11,7 @@ import type { RootLoad, RootLoadProps } from '../type';
 
 /**
  * Build a speculative root; prepared current loads deliver even while effects are disconnected.
- * @param props - Committed Form props; a fixed input-map error prevents construction, otherwise the default value is cloned before building.
+ * @param props - Committed Form props; a current input-map error prevents construction, otherwise the default value is cloned before building.
  * @param reporter - Instance reporter that receives prepared current load reports; may be absent.
  * @param mount - Mount the built tree now; `false` leaves mounting to a reset that first adopts the previous tree.
  * @returns The load; a construction or mount failure is kept in `error` instead of thrown.
