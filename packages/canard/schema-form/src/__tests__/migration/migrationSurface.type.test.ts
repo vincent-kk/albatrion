@@ -8,6 +8,7 @@ import type { Nullish } from '@aileron/declare';
 
 import type { FormErrorRecord } from '../../errors';
 import {
+  type ErrorVisibility,
   type FieldInputDefinition,
   type FieldInputMap,
   type FieldInputProps,
@@ -21,7 +22,6 @@ import {
   type FormProps,
   type InferFieldNode,
   type SetValueOption,
-  type ShowError,
   type ValidationIssue,
   ValidationMode,
   type ValidatorFactory,
@@ -52,7 +52,7 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     FieldRenderer?: ComponentType<FieldRendererProps>;
     errors?: readonly ValidationIssue[];
     formatError?: FieldRendererProps['formatError'];
-    showError?: boolean | ShowError;
+    errorVisibility?: ErrorVisibility;
     validationMode?: ValidationMode;
     validatorFactory?: ValidatorFactory;
     virtualization?: boolean | VirtualizationOptions;
@@ -105,7 +105,8 @@ it('SURFACE-059 FormHandle retains its members and adds SURFACE-063 rebuild', ()
     getErrors: () => readonly ValidationIssue[];
     getAttachedFilesMap: () => Map<string, File[]>;
     validate: () => Promise<readonly ValidationIssue[]>;
-    showError: (visible?: boolean) => void;
+    revealErrors: () => void;
+    resetErrorVisibility: () => void;
     submit: TrackableHandlerFunction;
   };
   expectTypeOf<Handle>().toEqualTypeOf<Expected>();
@@ -180,9 +181,9 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
   >();
   expectTypeOf<ReturnType<typeof useChildFieldErrors>>().toEqualTypeOf<{
     errorMessage: ReactNode;
-    showError: boolean;
+    errorVisible: boolean;
     formattedError: ReactNode;
-    showErrors: boolean[];
+    childErrorVisibleList: boolean[];
     formattedErrors: ReactNode[];
     errorMatrix: (readonly ValidationIssue[])[];
   }>();

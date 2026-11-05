@@ -11,13 +11,26 @@ import {
   registerScenarioHandle,
 } from '@aileron/schema-form-scenarios';
 
-import { type FieldInputProps, type JSONSchema, ShowError, ValidationMode, VirtualizationBackfill } from '@/schema-form';
+import {
+  ErrorVisibility,
+  type FieldInputProps,
+  type JSONSchema,
+  ValidationMode,
+  VirtualizationBackfill,
+} from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
 // Shared steps of CX-01 to CX-12. jsdom has no IntersectionObserver or idle callback; inert stubs keep placeholders deferred.
 beforeEach(() => {
-  vi.stubGlobal('IntersectionObserver', class { observe() {} unobserve() {} disconnect() {} });
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
   vi.stubGlobal('requestIdleCallback', () => 0);
   vi.stubGlobal('cancelIdleCallback', () => {});
 });
@@ -28,9 +41,20 @@ afterEach(() => vi.unstubAllGlobals());
  * @param props - FieldInput props.
  * @returns The text input; throws on pluginFormPlan.trigger.
  */
-const ThrowOnTrigger = ({ path, value, onChange }: FieldInputProps<string>): ReactNode => {
-  if (value === pluginFormPlan.trigger) throw new Error(`input at ${path} threw`);
-  return <input id={path} value={value ?? ''} onChange={(event) => onChange(event.target.value)} />;
+const ThrowOnTrigger = ({
+  path,
+  value,
+  onChange,
+}: FieldInputProps<string>): ReactNode => {
+  if (value === pluginFormPlan.trigger)
+    throw new Error(`input at ${path} threw`);
+  return (
+    <input
+      id={path}
+      value={value ?? ''}
+      onChange={(event) => onChange(event.target.value)}
+    />
+  );
 };
 
 /**
@@ -40,10 +64,24 @@ const ThrowOnTrigger = ({ path, value, onChange }: FieldInputProps<string>): Rea
  */
 const toFormProps = (props: CompositeCase['props']) => ({
   ...(props?.context && { context: props.context }),
-  ...(props?.validationMode && { validationMode: ValidationMode[props.validationMode] }),
-  ...(typeof props?.showError === 'boolean' && { showError: props.showError }),
-  ...(typeof props?.showError === 'string' && { showError: ShowError[props.showError] }),
-  ...(props?.virtualization && { virtualization: { ...props.virtualization, backfill: props.virtualization.backfill === 'idle' ? VirtualizationBackfill.Idle : VirtualizationBackfill.None } }),
+  ...(props?.validationMode && {
+    validationMode: ValidationMode[props.validationMode],
+  }),
+  ...(typeof props?.errorVisibility === 'boolean' && {
+    errorVisibility: props.errorVisibility,
+  }),
+  ...(typeof props?.errorVisibility === 'string' && {
+    errorVisibility: ErrorVisibility[props.errorVisibility],
+  }),
+  ...(props?.virtualization && {
+    virtualization: {
+      ...props.virtualization,
+      backfill:
+        props.virtualization.backfill === 'idle'
+          ? VirtualizationBackfill.Idle
+          : VirtualizationBackfill.None,
+    },
+  }),
 });
 
 /**
@@ -55,7 +93,9 @@ const toFormProps = (props: CompositeCase['props']) => ({
 const run = async (item: CompositeCase) => {
   const { scenario } = item;
   const form = await renderForm(scenario.schema as JSONSchema, {
-    defaultValue: scenario.initialValue, validator: true, ...toFormProps(item.props),
+    defaultValue: scenario.initialValue,
+    validator: true,
+    ...toFormProps(item.props),
     fieldInputMap: { '/broken': ThrowOnTrigger },
   });
   const base = findScenarioHandle(form.container).adapter;
@@ -67,7 +107,9 @@ const run = async (item: CompositeCase) => {
         await base.execute(step);
       } catch (error) {
         if (step.expect?.diagnostics?.status !== 'degraded') throw error;
-        expect(error).toMatchObject({ code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED' });
+        expect(error).toMatchObject({
+          code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED',
+        });
       }
     },
     settle: base.settle,
@@ -78,8 +120,12 @@ const run = async (item: CompositeCase) => {
       await form.validate();
       for (const [path, expected] of Object.entries(errors)) {
         const actual = form.node(path)?.errors ?? [];
-        expect(actual, `validation issue count at ${path}`).toHaveLength(expected.length);
-        expect(actual, `validation issue contract at ${path}`).toMatchObject(expected);
+        expect(actual, `validation issue count at ${path}`).toHaveLength(
+          expected.length,
+        );
+        expect(actual, `validation issue contract at ${path}`).toMatchObject(
+          expected,
+        );
       }
     },
   });
@@ -92,7 +138,11 @@ const run = async (item: CompositeCase) => {
 };
 
 describe('features — composite shared steps CX-01 to CX-12 (TEST-025)', () => {
-  it.each(compositeCases.slice(0, 12).map((item) => [item.scenario.name, item] as const))('%s', async (_, item) => {
+  it.each(
+    compositeCases
+      .slice(0, 12)
+      .map((item) => [item.scenario.name, item] as const),
+  )('%s', async (_, item) => {
     await run(item);
   });
 });

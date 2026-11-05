@@ -9,6 +9,7 @@ export const SchemaFormErrorSpecific = {
   ListenerThrew: 'LISTENER_THREW',
   MultipleErrors: 'MULTIPLE_ERRORS',
   FormTypeInputMap: 'FORM_TYPE_INPUT_MAP',
+  InvalidErrorVisibility: 'INVALID_ERROR_VISIBILITY',
   InvalidWriteOption: 'INVALID_WRITE_OPTION',
   DisposedNodeWrite: 'DISPOSED_NODE_WRITE',
   WriteInObserver: 'WRITE_IN_OBSERVER',

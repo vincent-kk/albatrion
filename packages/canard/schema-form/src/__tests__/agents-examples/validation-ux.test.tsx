@@ -11,13 +11,13 @@ import Ajv from 'ajv';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   FieldNodeState,
   type FieldRendererProps,
   Form,
   type FormHandle,
   type JSONSchema,
-  ShowError,
   type ValidationIssue,
   ValidationMode,
   type ValidatorFactory,
@@ -97,7 +97,7 @@ const formProps = {
   defaultValue: { name: 'ab' },
   validatorFactory: validator,
   validationMode: ValidationMode.OnRequest,
-  showError: ShowError.Touched,
+  errorVisibility: ErrorVisibility.AfterTouch,
   fieldInputMap: { '/name': NameInput },
   FieldRenderer: InputOnly,
 };
@@ -141,7 +141,7 @@ it('routes server errors through the form and clears them independently of schem
     { dataPath: '/name', keyword: 'server', message: 'This name is taken.' },
   ];
   view.rerender(<Form ref={formRef} {...formProps} errors={serverErrors} />);
-  act(() => formRef.current!.showError());
+  act(() => formRef.current!.revealErrors());
   await waitFor(() =>
     expect(view.getByRole('alert').textContent).toBe('This name is taken.'),
   );
@@ -150,7 +150,14 @@ it('routes server errors through the form and clears them independently of schem
   });
   expect(formRef.current!.getErrors()).toEqual(serverErrors);
   expect(formRef.current!.findNode('/name')!.errors).toEqual(serverErrors);
-  view.rerender(<Form ref={formRef} {...formProps} errors={[]} showError />);
+  view.rerender(
+    <Form
+      ref={formRef}
+      {...formProps}
+      errors={[]}
+      errorVisibility={ErrorVisibility.Always}
+    />,
+  );
   expect(formRef.current!.getErrors()).toEqual([]);
   expect(view.queryByRole('alert')).toBeNull();
 });
@@ -162,7 +169,7 @@ it('aggregates node-local server errors and clears them explicitly or on input',
       ref={formRef}
       {...formProps}
       defaultValue={{ name: 'Ada' }}
-      showError
+      errorVisibility={ErrorVisibility.Always}
     />,
   );
   const field = formRef.current!.findNode('/name')!;
@@ -207,7 +214,7 @@ it('activates a conditional required field without duplicating the condition in 
       defaultValue={{ receipt: false }}
       validatorFactory={validator}
       validationMode={ValidationMode.OnRequest}
-      showError
+      errorVisibility={ErrorVisibility.Always}
     />,
   );
   expect(formRef.current!.findNode('/email')).toBeNull();
@@ -327,7 +334,7 @@ it('submit rejects invalid input and sends a fresh valid value after explicit er
   expect(isValidationError(rejection)).toBe(true);
   expect(onSubmit).not.toHaveBeenCalled();
   expect(view.queryByRole('alert')).toBeNull();
-  act(() => formRef.current!.showError());
+  act(() => formRef.current!.revealErrors());
   await waitFor(() => expect(view.queryByRole('alert')).not.toBeNull());
   fireEvent.change(view.getByLabelText('Name'), { target: { value: 'Ada' } });
   await act(async () => {

@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
   type FieldRendererProps,
@@ -41,11 +42,12 @@ const Leaf = ({ path, errorVisible, errors }: FieldInputProps) => (
 it('IR-6 Y3 hidden children stay in the aggregate while enabled re-shows await release', async () => {
   const ref = createRef<FormHandle>();
   const Branch = ({ node, ChildFields }: FieldInputProps) => {
-    const { showErrors, formattedErrors } = useChildFieldErrors(node);
+    const { childErrorVisibleList, formattedErrors } =
+      useChildFieldErrors(node);
     return (
       <>
         <span data-testid="card">
-          {showErrors[0] ? formattedErrors[0] : null}
+          {childErrorVisibleList[0] ? formattedErrors[0] : null}
         </span>
         {ChildFields.map((Child) => (
           <Child key={Child.key} />
@@ -64,7 +66,7 @@ it('IR-6 Y3 hidden children stay in the aggregate while enabled re-shows await r
         },
       }}
       defaultValue={{ a: '', show: true }}
-      showError={true}
+      errorVisibility={ErrorVisibility.Always}
       FieldRenderer={Renderer}
       formatError={(error) => error.message ?? null}
       fieldInputDefinitions={[
@@ -103,10 +105,11 @@ it('IR-6 Y3 hidden children stay in the aggregate while enabled re-shows await r
 it('IR-6 X1 an object shared by parent and own child-error hooks survives one hook unmounting', async () => {
   const ref = createRef<FormHandle>();
   const ParentCard = ({ node }: Pick<FieldInputProps, 'node'>) => {
-    const { showErrors, formattedErrors } = useChildFieldErrors(node);
+    const { childErrorVisibleList, formattedErrors } =
+      useChildFieldErrors(node);
     return (
       <span data-testid="parent">
-        {showErrors[0] ? formattedErrors[0] : null}
+        {childErrorVisibleList[0] ? formattedErrors[0] : null}
       </span>
     );
   };
@@ -123,11 +126,11 @@ it('IR-6 X1 an object shared by parent and own child-error hooks survives one ho
     </>
   );
   const Group = ({ node, ChildFields }: FieldInputProps) => {
-    const { showError } = useChildFieldErrors(node);
+    const { errorVisible } = useChildFieldErrors(node);
     return (
       <>
         <span data-testid="own">
-          {showError ? node.errors[0]?.message : ''}
+          {errorVisible ? node.errors[0]?.message : ''}
         </span>
         {ChildFields.map((Child) => (
           <Child key={Child.key} />
@@ -144,7 +147,7 @@ it('IR-6 X1 an object shared by parent and own child-error hooks survives one ho
   const props = {
     jsonSchema: schema,
     defaultValue: { group: { a: '' } },
-    showError: true,
+    errorVisibility: ErrorVisibility.Always,
     formatError: (error: { message?: string }) => error.message ?? null,
     fieldInputDefinitions: [
       { test: (hint: { path: string }) => hint.path === '', Component: Root },
@@ -174,11 +177,12 @@ it('IR-6 X1 an object shared by parent and own child-error hooks survives one ho
 it('IR-6 Y3 a previously hidden child holds renderer and input while its hidden errors remain aggregated', async () => {
   const ref = createRef<FormHandle>();
   const Branch = ({ node, ChildFields }: FieldInputProps) => {
-    const { showErrors, formattedErrors } = useChildFieldErrors(node);
+    const { childErrorVisibleList, formattedErrors } =
+      useChildFieldErrors(node);
     return (
       <>
         <span data-testid="hidden-card">
-          {showErrors[0] ? formattedErrors[0] : null}
+          {childErrorVisibleList[0] ? formattedErrors[0] : null}
         </span>
         {ChildFields.map((Child) => (
           <Child key={Child.key} />
@@ -197,7 +201,7 @@ it('IR-6 Y3 a previously hidden child holds renderer and input while its hidden 
         },
       }}
       defaultValue={{ a: '', show: false }}
-      showError={true}
+      errorVisibility={ErrorVisibility.Always}
       FieldRenderer={Renderer}
       fieldInputDefinitions={[
         { test: { type: 'object' }, Component: Branch },
@@ -247,7 +251,7 @@ it('IR-6 Y3 limit i re-enabling the hook disabled argument reveals the current v
       properties: { a: { type: 'string' as const } },
     },
     defaultValue: { a: '' },
-    showError: true,
+    errorVisibility: ErrorVisibility.Always,
     fieldInputDefinitions: [
       { test: { type: 'object' as const }, Component: Branch },
       { test: () => true, Component: Leaf },
@@ -301,7 +305,7 @@ it('IR-6 Y3 hidden values validate but inactive children leave the error aggrega
         },
       }}
       defaultValue={{ a: 'bad', show: false, active: true }}
-      showError={true}
+      errorVisibility={ErrorVisibility.Always}
       fieldInputDefinitions={[
         { test: { type: 'object' }, Component: Branch },
         { test: () => true, Component: Leaf },

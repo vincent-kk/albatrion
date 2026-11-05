@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
   Form,
@@ -32,9 +33,9 @@ const RootErrorsInput = ({ errors }: FieldInputProps) => (
  * @param props - FieldInput props supplied by Form for the terminal root.
  * @returns The hook's list lengths. */
 const ChildErrorsInput = ({ node }: FieldInputProps) => {
-  const { showErrors, formattedErrors } = useChildFieldErrors(node);
+  const { childErrorVisibleList, formattedErrors } = useChildFieldErrors(node);
   return (
-    <p data-testid="child-errors">{`${showErrors.length}|${formattedErrors.length}`}</p>
+    <p data-testid="child-errors">{`${childErrorVisibleList.length}|${formattedErrors.length}`}</p>
   );
 };
 
@@ -55,7 +56,7 @@ it('a terminal root receives an inner-path issue in its node errors and its inpu
       validationMode={ValidationMode.OnRequest}
       validatorFactory={createRenderValidator()}
       onSubmit={onSubmit}
-      showError
+      errorVisibility={ErrorVisibility.Always}
     />,
   );
   await act(async () => {});
@@ -99,7 +100,7 @@ it('useChildFieldErrors on a childless terminal root stays empty while the root 
       defaultValue={{ name: 'ab' }}
       validationMode={ValidationMode.OnRequest}
       validatorFactory={createRenderValidator()}
-      showError
+      errorVisibility={ErrorVisibility.Always}
     />,
   );
   await act(async () => {

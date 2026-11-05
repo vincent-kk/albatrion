@@ -6,13 +6,13 @@ import { type FieldNode, FieldNodeState } from '@/schema-form/core';
  * Whether a node's own state lets it take the native-submit focus.
  * @param node - Node visited under present ancestors.
  * @returns True when it has its own errors, is neither disabled nor read-only, and does not set its
- *   own ErrorVisible to false (the renderer lets that value win over every policy).
+ *   own ErrorVisibility to false (the renderer lets that value win over every policy).
  */
 const isFocusCandidate = (node: FieldNode): boolean =>
   node.errors.length > 0 &&
   !node.isDisabled &&
   !node.isReadOnly &&
-  node.state?.[FieldNodeState.ErrorVisible] !== false;
+  node.state?.[FieldNodeState.ErrorVisibility] !== false;
 
 /**
  * Choose the node that an invalid native submit focuses, from node state alone.

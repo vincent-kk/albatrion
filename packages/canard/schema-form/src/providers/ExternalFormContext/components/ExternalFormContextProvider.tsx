@@ -7,10 +7,10 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorVisibility,
   FieldInputDefinition,
   FieldRendererProps,
   FormatError,
-  ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -30,14 +30,11 @@ export interface ExternalFormContextProviderProps {
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
-   * Error display condition (default: ShowError.EditedTouched)
-   *   - `true`: Always show errors
-   *   - `false`: Never show errors
-   *   - `ShowError.Edited`: Show after user input edits the field
-   *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
+   * Live display policy; defaults to AfterEditAndTouch after FormProvider fallback.
+   * Always/Never, AfterEdit/AfterTouch, AfterEditAndTouch/AfterEditOrTouch are string enum values.
+   * Node ErrorVisibility overrides precede the policy, without bypassing presence or OnChange release.
    */
-  showError?: boolean | ShowError;
+  errorVisibility?: ErrorVisibility;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
@@ -67,7 +64,7 @@ export interface ExternalFormContextProviderProps {
  *     <FormProvider
  *       FormLabelRenderer={CustomLabel}
  *       FormErrorRenderer={CustomError}
- *       showError={ShowError.Touched}
+ *       errorVisibility={ErrorVisibility.AfterTouch}
  *     >
  *       <MyForms />
  *     </FormProvider>
@@ -116,7 +113,7 @@ export interface ExternalFormContextProviderProps {
  *
  * <FormProvider
  *   formatError={formatError}
- *   showError={true}
+ *   errorVisibility={ErrorVisibility.Always}
  * >
  *   <MyForms />
  * </FormProvider>
@@ -158,7 +155,7 @@ export interface ExternalFormContextProviderProps {
  *
  *   // Error handling
  *   formatError={customFormatError}
- *   showError={ShowError.EditedTouched}
+ *   errorVisibility={ErrorVisibility.AfterEditAndTouch}
  *
  *   // Validation
  *   validationMode={ValidationMode.OnChange}
@@ -188,7 +185,7 @@ export const ExternalFormContextProvider = ({
   FormInputRenderer,
   FormErrorRenderer,
   formatError,
-  showError,
+  errorVisibility,
   validationMode,
   context: inputContext,
   validatorFactory,
@@ -213,12 +210,12 @@ export const ExternalFormContextProvider = ({
       FormInputRenderer: constant.FormInputRenderer,
       FormErrorRenderer: constant.FormErrorRenderer,
       formatError: constant.formatError,
-      showError,
+      errorVisibility,
       validationMode,
       validatorFactory,
       context,
     }),
-    [constant, showError, validationMode, validatorFactory, context],
+    [constant, errorVisibility, validationMode, validatorFactory, context],
   );
   return (
     <ExternalFormContext.Provider value={value}>

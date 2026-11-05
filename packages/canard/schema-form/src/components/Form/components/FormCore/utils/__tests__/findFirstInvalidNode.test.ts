@@ -73,7 +73,7 @@ it.each([
   expect(findFirstInvalidNode(root)?.path).toBe('/b');
 });
 
-it('ERROR-139 skips a node whose own ErrorVisible is false, but not its children', async () => {
+it('ERROR-139 skips a node whose own ErrorVisibility is false, but not its children', async () => {
   const root = await validatedRoot(
     {
       type: 'object',
@@ -84,8 +84,8 @@ it('ERROR-139 skips a node whose own ErrorVisible is false, but not its children
     },
     ['/a', '/g', '/g/x'],
   );
-  root.find('/a')!.setState({ [FieldNodeState.ErrorVisible]: false });
-  root.find('/g')!.setState({ [FieldNodeState.ErrorVisible]: false });
+  root.find('/a')!.setState({ [FieldNodeState.ErrorVisibility]: false });
+  root.find('/g')!.setState({ [FieldNodeState.ErrorVisibility]: false });
   expect(findFirstInvalidNode(root)?.path).toBe('/g/x');
 });
 

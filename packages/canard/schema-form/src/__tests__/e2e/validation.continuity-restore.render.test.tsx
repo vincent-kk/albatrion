@@ -4,6 +4,7 @@ import { type ReactNode, Suspense, createRef, useLayoutEffect } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
   type FieldRendererProps,
@@ -73,7 +74,7 @@ const restore = async (
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue=""
-      showError={true}
+      errorVisibility={ErrorVisibility.Always}
       FieldRenderer={Renderer}
       fieldInputMap={{ '': Input }}
       formatError={(error) => error.message ?? null}

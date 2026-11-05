@@ -4,6 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ErrorVisibility } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -55,7 +56,7 @@ it('ERROR-112 REACT-010 isolates a field formatter failure with the field path',
     <Form
       ref={ref}
       onError={onError}
-      showError
+      errorVisibility={ErrorVisibility.Always}
       jsonSchema={{
         type: 'object',
         properties: { bad: { type: 'string' }, good: { type: 'string' } },

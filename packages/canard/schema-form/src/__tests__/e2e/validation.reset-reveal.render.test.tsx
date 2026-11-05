@@ -4,11 +4,11 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
   Form,
   type FormHandle,
-  ShowError,
 } from '@/schema-form';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
@@ -20,7 +20,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 it.each([false, true])(
-  'IR-6 H Edited resetInteraction never displays too short beneath abc (pending ErrorVisible toggle=%s)',
+  'IR-6 H Edited resetInteraction never displays too short beneath abc (pending ErrorVisibility toggle=%s)',
   async (toggle) => {
     const ref = createRef<FormHandle>();
     let slow = false;
@@ -69,7 +69,7 @@ it.each([false, true])(
           },
         }}
         defaultValue={{ kind: false, a: 'a' }}
-        showError={ShowError.Edited}
+        errorVisibility={ErrorVisibility.AfterEdit}
         FieldRenderer={Renderer}
         fieldInputDefinitions={[
           { test: { type: 'object' }, Component: Branch },

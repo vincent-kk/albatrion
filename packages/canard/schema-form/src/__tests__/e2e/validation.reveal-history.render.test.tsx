@@ -10,12 +10,12 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
   Form,
   type FormHandle,
   FormProvider,
-  ShowError,
   useChildFieldErrors,
 } from '@/schema-form';
 
@@ -40,7 +40,9 @@ const Renderer = ({
 );
 const Input = () => <input aria-label="field" />;
 type Issue = { dataPath: string; message: string };
-const fixture = async (showError: boolean | ShowError = true) => {
+const fixture = async (
+  errorVisibility: ErrorVisibility = ErrorVisibility.Always,
+) => {
   const ref = createRef<FormHandle>();
   let slow = false;
   const finishes: ((issues: readonly Issue[]) => void)[] = [];
@@ -58,7 +60,7 @@ const fixture = async (showError: boolean | ShowError = true) => {
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue="ab"
-      showError={showError}
+      errorVisibility={errorVisibility}
       FieldRenderer={Renderer}
       fieldInputMap={{ '': Input }}
       validatorFactory={validator}
@@ -79,7 +81,7 @@ const fixture = async (showError: boolean | ShowError = true) => {
   };
 };
 it('IR-6 H a quiet reveal stays hidden until its release', async () => {
-  const f = await fixture(false);
+  const f = await fixture(ErrorVisibility.Never);
   act(() => f.ref.current!.node!.setState({ 4: true }));
   expect(f.text()).toBe('');
   await act(async () => {
@@ -88,7 +90,7 @@ it('IR-6 H a quiet reveal stays hidden until its release', async () => {
   });
   expect(f.text()).toBe('too short');
 });
-it('IR-6 H standalone ErrorVisible off then on never restores an earlier pending verdict', async () => {
+it('IR-6 H standalone ErrorVisibility off then on never restores an earlier pending verdict', async () => {
   const f = await fixture();
   f.slow();
   act(() => f.ref.current!.setValue('abc'));
@@ -128,7 +130,7 @@ it('IR-6 H one batch hides and re-reveals without losing an eligible painted err
   expect(f.text()).toBe('too short');
 });
 it('IR-6 D root validate releases a quiet reveal before any frame and preserves it through a write', async () => {
-  const f = await fixture(false);
+  const f = await fixture(ErrorVisibility.Never);
   act(() => f.ref.current!.node!.setState({ 4: true }));
   await act(async () => {
     await f.ref.current!.validate();
@@ -148,15 +150,15 @@ it('IR-6 D root validate releases a quiet reveal before any frame and preserves 
   });
   expect(f.text()).toBe('');
 });
-it('IR-6 H committed showError before clearState retains an eligible error during a pending write', async () => {
-  const f = await fixture(false);
+it('IR-6 H committed errorVisibility before clearState retains an eligible error during a pending write', async () => {
+  const f = await fixture(ErrorVisibility.Never);
   act(() => f.ref.current!.node!.setState({ 4: true }));
   await act(async () => {
     f.clock.frame();
     await f.clock.task();
   });
   expect(f.text()).toBe('too short');
-  act(() => f.ref.current!.showError());
+  act(() => f.ref.current!.revealErrors());
   act(() => f.ref.current!.clearState());
   f.slow();
   act(() => f.ref.current!.setValue('abc'));
@@ -172,7 +174,7 @@ it('IR-6 H committed showError before clearState retains an eligible error durin
   expect(f.text()).toBe('');
 });
 it('IR-6 H limit v a same-handler policy reveal and clearState counts the unpainted combination', async () => {
-  const f = await fixture(false);
+  const f = await fixture(ErrorVisibility.Never);
   act(() => {
     f.ref.current!.node!.setState({ 4: true });
   });
@@ -182,7 +184,7 @@ it('IR-6 H limit v a same-handler policy reveal and clearState counts the unpain
   });
   expect(f.text()).toBe('too short');
   act(() => {
-    f.ref.current!.showError();
+    f.ref.current!.revealErrors();
     f.ref.current!.clearState();
   });
   expect(f.text()).toBe('');
@@ -215,11 +217,17 @@ it('IR-6 H provider policy changes hold a pending previous verdict', async () =>
       formatError={(e) => e.message ?? null}
     />
   );
-  const view = render(<FormProvider showError={false}>{form}</FormProvider>);
+  const view = render(
+    <FormProvider errorVisibility={ErrorVisibility.Never}>{form}</FormProvider>,
+  );
   await settleValidation(() => ref.current?.node);
   const clock = createValidationFrameClock();
   act(() => ref.current!.setValue('abc'));
-  view.rerender(<FormProvider showError={true}>{form}</FormProvider>);
+  view.rerender(
+    <FormProvider errorVisibility={ErrorVisibility.Always}>
+      {form}
+    </FormProvider>,
+  );
   expect(view.getByTestId('error').textContent).toBe('');
   await act(async () => {
     clock.frame();
@@ -263,7 +271,7 @@ it('IR-6 H transition layout normalization never exposes the old verdict to a sa
         ref={ref}
         jsonSchema={{ type: 'string' }}
         defaultValue="ab"
-        showError={false}
+        errorVisibility={ErrorVisibility.Never}
         FieldRenderer={Renderer}
         fieldInputMap={{ '': Normalizer }}
         validatorFactory={validator}
@@ -289,7 +297,7 @@ it('IR-6 H transition layout normalization never exposes the old verdict to a sa
 });
 
 it('IR-6 H blur stays hidden at both frame callbacks and releases after the second task', async () => {
-  const f = await fixture(ShowError.Touched);
+  const f = await fixture(ErrorVisibility.AfterTouch);
   fireEvent.blur(f.view.getByLabelText('field'));
   await act(async () => {
     f.clock.frame();
@@ -304,7 +312,7 @@ it('IR-6 H blur stays hidden at both frame callbacks and releases after the seco
   expect(f.text()).toBe('too short');
 });
 it('IR-6 H root rebuild commits its policy before a pending handle reveal', async () => {
-  const f = await fixture(false);
+  const f = await fixture(ErrorVisibility.Never);
   const old = f.ref.current!.node;
   act(() => f.ref.current!.rebuild());
   expect(f.ref.current!.node).not.toBe(old);
@@ -317,7 +325,7 @@ it('IR-6 H root rebuild commits its policy before a pending handle reveal', asyn
   f.slow();
   act(() => {
     f.ref.current!.setValue('abc');
-    f.ref.current!.showError();
+    f.ref.current!.revealErrors();
   });
   expect(f.text()).toBe('');
   await act(async () => {
@@ -345,7 +353,7 @@ it('IR-6 H a suspended policy render cannot replace the committed engine policy'
         ref={ref}
         jsonSchema={{ type: 'string' }}
         defaultValue="ab"
-        showError={false}
+        errorVisibility={ErrorVisibility.Never}
         FieldRenderer={Renderer}
         fieldInputMap={{ '': Suspender }}
         validatorFactory={{
@@ -364,7 +372,7 @@ it('IR-6 H a suspended policy render cannot replace the committed engine policy'
   const clock = createValidationFrameClock();
   suspend = true;
   await act(async () => {
-    startTransition(() => handle.showError());
+    startTransition(() => handle.revealErrors());
   });
   await act(async () => {
     clock.frame();
@@ -376,10 +384,10 @@ it('IR-6 H a suspended policy render cannot replace the committed engine policy'
         revealPolicy?: { value: unknown };
       }
     ).revealPolicy?.value,
-  ).toBe(false);
+  ).toBe(ErrorVisibility.Never);
   suspend = false;
   act(() => {
-    handle.showError();
+    handle.revealErrors();
     handle.setValue('abc');
   });
   expect(view.getByTestId('error').textContent).toBe('');

@@ -13,17 +13,17 @@ import { useFieldRendererContext } from './useFieldRendererContext';
 
 /** Compute aggregate holds from engine history and subscribe only blocked live candidates.
  * @param nodes - Same-root aggregate entries, preserving their display indices.
- * @param conditions - Current aggregate eligibility, including checkShowError(state) from this context.
+ * @param conditions - Current aggregate eligibility, including checkErrorVisibility(state) from this context.
  * @returns Visibility across all unreleased node/policy intervals, without checking enabled. */
 export const useErrorVisibility = (
   nodes: readonly FieldNode[],
   conditions: readonly boolean[],
 ): boolean[] => {
-  const { showError } = useFieldRendererContext();
+  const { errorVisibility } = useFieldRendererContext();
   const node = nodes[0];
   const values = nodes.map(
     (item, index) =>
-      conditions[index] && isErrorRevealed(item, showError, false),
+      conditions[index] && isErrorRevealed(item, errorVisibility, false),
   );
   const candidate = nodes.some(
     (_item, index) => conditions[index] && !values[index],

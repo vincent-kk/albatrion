@@ -73,7 +73,7 @@ it('119 isolation keeps unchanged fields at zero renders for leaf, sibling and p
 it('F-B renders each field nine times for global context and error visibility changes and four times for readOnly', () => {
   for (const scenario of scenarios) {
     for (const write of [
-      'showError(true)',
+      'revealErrors()',
       'Form context prop change',
       'Form readOnly prop true',
     ]) {

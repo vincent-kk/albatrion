@@ -24,13 +24,13 @@ export const useChildFieldErrors = (
   disabled?: boolean,
 ): {
   errorMessage: ReactNode;
-  showError: boolean;
+  errorVisible: boolean;
   formattedError: ReactNode;
-  showErrors: boolean[];
+  childErrorVisibleList: boolean[];
   formattedErrors: ReactNode[];
   errorMatrix: (readonly ValidationIssue[])[];
 } => {
-  const { formatError, checkShowError } = useFieldRendererContext();
+  const { formatError, checkErrorVisibility } = useFieldRendererContext();
   const { context } = useWorkspaceContext();
   const children = node.children;
   const store = useMemo(
@@ -46,7 +46,9 @@ export const useChildFieldErrors = (
   const visibilityNodes = [node, ...(children ?? [])];
   const visible = useErrorVisibility(
     visibilityNodes,
-    visibilityNodes.map((child) => !disabled && checkShowError(child.state)),
+    visibilityNodes.map(
+      (child) => !disabled && checkErrorVisibility(child.state),
+    ),
   );
   const visibility = visible.join(':');
 
@@ -58,16 +60,16 @@ export const useChildFieldErrors = (
     const formattedErrors = mapArray(errorMatrix, (errors, index) =>
       errors.length ? formatError(errors[0], current[index], context) : null,
     );
-    const showErrors = visible.slice(1);
+    const childErrorVisibleList = visible.slice(1);
     const formattedError =
       formattedErrors.find((message) => message != null) ?? null;
-    const showError = visible.some(isTruthy);
+    const errorVisible = visible.some(isTruthy);
 
     return {
-      errorMessage: showError ? formattedError : null,
-      showError,
+      errorMessage: errorVisible ? formattedError : null,
+      errorVisible,
       formattedError,
-      showErrors,
+      childErrorVisibleList,
       formattedErrors,
       errorMatrix,
     };
@@ -77,7 +79,7 @@ export const useChildFieldErrors = (
     disabled,
     revision,
     formatError,
-    checkShowError,
+    checkErrorVisibility,
     context,
     visibility,
   ]);

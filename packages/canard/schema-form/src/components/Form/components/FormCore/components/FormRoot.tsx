@@ -30,13 +30,14 @@ import {
 } from '@/schema-form/providers/FormErrorContext';
 import type { RootBinding } from '@/schema-form/providers/RootNodeContext';
 import type { AttachedFilesMap } from '@/schema-form/types';
+import { ErrorVisibility } from '@/schema-form/types';
 
 import type { FormHandle } from '../types/handle';
 import type { FormProps } from '../types/props';
 import { createChildren } from '../utils/createChildren';
 import { findFirstInvalidNode } from '../utils/findFirstInvalidNode';
-import { isShowErrorDisabled } from '../utils/isShowErrorDisabled';
 import { reportSubmitFailure } from '../utils/reportSubmitFailure';
+import { resolveErrorVisibilityPolicy } from '../utils/resolveErrorVisibilityPolicy';
 import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
@@ -47,39 +48,70 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   }));
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
-  const [showError, setShowError] = useState(props.showError);
-  const providerShowError = useExternalFormContext().showError;
+  const providerErrorVisibility = useExternalFormContext().errorVisibility;
+  const inputPolicy = props.errorVisibility ?? providerErrorVisibility;
+  const resolvedPolicy = useMemo(
+    () => resolveErrorVisibilityPolicy(inputPolicy),
+    [inputPolicy],
+  );
   const loads = useRef(0);
   const mounted = useRef(false);
   const committed = useRef({
-    showError,
-    providerShowError,
+    errorVisibility: ErrorVisibility.AfterEditAndTouch,
     disabled: props.disabled,
     readOnly: props.readOnly,
   });
+  const policyError =
+    typeof resolvedPolicy === 'string' ? undefined : resolvedPolicy;
+  const basePolicy =
+    typeof resolvedPolicy === 'string'
+      ? resolvedPolicy
+      : committed.current.errorVisibility;
+  const [reveal, setReveal] = useState<{
+    base: ErrorVisibility;
+    load: number;
+  }>();
+  const errorVisibility =
+    reveal?.base === basePolicy && reveal.load === loads.current
+      ? ErrorVisibility.Always
+      : basePolicy;
   useLayoutEffect(() => {
     committed.current = {
-      showError,
-      providerShowError,
+      errorVisibility: basePolicy,
       disabled: props.disabled,
       readOnly: props.readOnly,
     };
-  });
+    if (reveal && (reveal.base !== basePolicy || reveal.load !== loads.current))
+      setReveal(undefined);
+  }, [basePolicy, props.disabled, props.readOnly, reveal]);
   useLayoutEffect(() => {
     mounted.current = true;
     return () => {
       mounted.current = false;
     };
   }, []);
-  const onReset = useHandle(() => {
+  const onReset = useCallback(() => {
     loads.current++;
-    setShowError(props.showError);
-  });
+    setReveal(undefined);
+  }, []);
+  const revealErrors = useCallback(() => {
+    const base = committed.current.errorVisibility;
+    const load = loads.current;
+    setReveal((previous) =>
+      previous?.base === base && previous.load === load
+        ? previous
+        : { base, load },
+    );
+  }, []);
+  const resetErrorVisibility = useCallback(() => setReveal(undefined), []);
   const submit = useHandle((native?: unknown) => {
     const isNative = native === true;
     const root = binding.current.root;
     const load = loads.current;
-    const isCurrent = () => mounted.current && loads.current === load;
+    const isCurrent = () =>
+      mounted.current &&
+      loads.current === load &&
+      binding.current.root === root;
     return submitForm(
       root,
       props.onSubmit,
@@ -89,13 +121,17 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
             const policy = committed.current;
             if (
               !isCurrent() ||
-              isShowErrorDisabled(policy.showError ?? policy.providerShowError)
+              policy.errorVisibility === ErrorVisibility.Never
             )
               return;
-            setShowError(true);
+            revealErrors();
             // A React 18 legacy root commits the reveal synchronously; its layout effects may reset.
             if (!root || !isCurrent()) return;
-            if (committed.current.disabled || committed.current.readOnly)
+            if (
+              committed.current.errorVisibility === ErrorVisibility.Never ||
+              committed.current.disabled ||
+              committed.current.readOnly
+            )
               return;
             findFirstInvalidNode(root)?.request(FieldNodeRequestType.Focus);
           }
@@ -141,11 +177,17 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       getErrors: () => binding.current.root?.globalErrors ?? [],
       getAttachedFilesMap: () => attachedFilesMap,
       validate: async () => (await binding.current.root?.validate()) ?? [],
-      showError: (visible = true) =>
-        setShowError(visible ? true : props.showError),
+      revealErrors,
+      resetErrorVisibility,
       submit: handleSubmit,
     }),
-    [attachedFilesMap, binding, handleSubmit, props.showError],
+    [
+      attachedFilesMap,
+      binding,
+      handleSubmit,
+      revealErrors,
+      resetErrorVisibility,
+    ],
   );
   const children = useMemo(
     () => createChildren(props.children, props.jsonSchema),
@@ -166,7 +208,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
           FormInputRenderer={props.FormInputRenderer}
           FormErrorRenderer={props.FormErrorRenderer}
           formatError={props.formatError}
-          showError={showError}
+          errorVisibility={errorVisibility}
         >
           <InputControlContextProvider
             readOnly={props.readOnly}
@@ -179,6 +221,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                 {...props}
                 binding={binding}
                 onReset={onReset}
+                errorVisibilityError={policyError}
               >
                 <FormRootProxy onSubmit={handleNativeSubmit}>
                   {children}
