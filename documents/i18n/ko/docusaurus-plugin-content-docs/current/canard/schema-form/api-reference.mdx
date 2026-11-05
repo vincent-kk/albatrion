@@ -136,6 +136,8 @@ resolver 안의 값 쓰기·배열 verb·batch·resetSubtree는 무시하고 개
 
 React에서는 이 binding이 hidden·unmounted를 확실히 구분할 수 없어 retained handle·node가 unmount 뒤에도 callback을 전달할 수 있으므로 소비자 구독을 정리하십시오. 숨김 동안 일반 callback은 마지막 연결 commit, onError는 최신 handler를 사용하며 React ref는 null입니다. field layout-effect 쓰기와 render warning은 다시 표시할 때 도착합니다.
 
+React가 숨겨진 폼을 다시 표시하면 입력은 현재 노드 값을 보여줍니다. 숨겨진 동안 기록한 값과 숨겨질 때 끝나지 않은 IME 조합도 여기에 포함됩니다.
+
 ## JSONPointer query와 표현식 {#paths}
 
 | token | Form query 의미 |

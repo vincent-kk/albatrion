@@ -5,7 +5,7 @@ description: 'Expert knowledge base for @canard/schema-form. Triggers on FieldIn
 
 # Schema Form Expert
 
-Knowledge base for `@canard/schema-form`. Answer questions, show usage examples, and diagnose issues by routing to the right knowledge file. For exact API shapes (props, interfaces, enums), read the installed package's `dist/index.d.ts` and README — do not guess symbol names from memory; this skill documents behavior the types cannot show.
+Knowledge base for `@canard/schema-form`. Answer questions, show usage examples, and diagnose issues by routing to the right knowledge file. For exact API shapes (props, interfaces, enums), read the installed package's `dist/index.d.ts` and the API reference linked below — do not guess symbol names from memory; this skill documents behavior the types cannot show.
 
 ## How to Use This Skill
 
@@ -75,8 +75,8 @@ Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/
 
 | Resource                              | Path                                            |
 | ------------------------------------- | ----------------------------------------------- |
-| Full specification                    | `docs/en/SPECIFICATION.md` (Korean: `docs/ko/`) |
-| Quick reference (Korean, table-first) | `docs/QUICK_REFERENCE.md`                       |
+| Consumer guide | [English](https://vincent-kk.github.io/albatrion/docs/canard/schema-form) / [Korean](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form) |
+| API behavior | [API reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference) |
 | API shapes (authoritative)            | `dist/index.d.ts`                               |
 | Storybook examples                    | `stories/*.stories.tsx` (repository)            |
 

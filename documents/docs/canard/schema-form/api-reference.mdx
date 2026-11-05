@@ -136,6 +136,8 @@ After first layout preparation, a current load delivers callbacks while hidden a
 
 React does not let this binding distinguish hidden from unmounted reliably: retained handles/nodes can still deliver callbacks after unmount, so clean up consumer subscriptions. While hidden, ordinary callbacks use the last connected commit, onError stays latest, and the React ref is null. Field layout-effect writes and render warnings arrive on showing.
 
+When React shows a hidden form again, its inputs show the current node values, including writes made while it was hidden and an IME composition left unfinished when it was hidden.
+
 ## JSONPointer queries and expressions {#paths}
 
 | Token | Form query meaning |
