@@ -23,4 +23,4 @@ After adding three rows and leaving them empty, the JSON display shows:
 | /notes | defaults | [null, null, null] |
 | /aliases | omitTrailing: true, omitEmpty: false | [] |
 
-JSON.stringify displays undefined array slots as null; these are not explicit null writes. Validation reads emitted output, so one filled row with trailing empty rows omitted is checked as length one. For branch-array row counts use node.children?.length and compare node.outputValue separately. Terminal arrays have no child nodes.
+JSON.stringify displays undefined array slots as null; these are not explicit null writes. Validation reads emitted output, so one filled row with trailing empty rows omitted is checked as length one. Read row counts and output using the [node value and children contract](../api-reference#nodes).

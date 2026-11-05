@@ -11,7 +11,7 @@ sidebar_position: 4
 
 ## 스키마 설정 그룹 {#authoring-groups}
 
-표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `presentation`은 열린 그룹입니다. `controls`, `options`의 알 수 없는 키는 `FormErrorCode.UnknownGroupKey`, 알려진 키의 잘못된 형상은 `FormErrorCode.InvalidControlShape`로 거부합니다.
+표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `presentation`은 열린 그룹입니다. `controls`, `options`의 알 수 없는 키는 `FormErrorCode.UnknownGroupKey`, controls·options 그룹 자체와 injectTo·fields·discriminator 등 명시적으로 검사하는 형상 위반은 `FormErrorCode.InvalidControlShape`로 거부합니다. 알려진 모든 키의 값 형을 런타임에서 검증한다는 뜻은 아니므로 외부 데이터의 스키마는 소비자 경계에서 검증하십시오.
 
 | 그룹 | 소비자 설정 |
 | --- | --- |
@@ -48,17 +48,17 @@ non-nullable object에 null을 쓰면 `{}`로 고치지 않고 잘못된 종류�
 
 ## controls와 선언 계층 {#controls}
 
-노드 controls의 허용 키는 아래 14개입니다. `controls.fields[].controls`와 fragment controls는 `inactiveValue`까지 첫 열 키만 받으며 `fields`, `injectTo`, `discriminator`, `watch`를 중첩하지 않습니다.
+노드 controls의 허용 키는 아래 14개입니다. `controls.fields[].controls`와 fragment controls는 아래 목록에서 `inactiveValue`까지의 처음 열 개 키만 받으며 `fields`, `injectTo`, `discriminator`, `watch`를 중첩하지 않습니다.
 
 | 키 | 의미 |
 | --- | --- |
 | `active` | 존재 gate이며 false이면 형상과 출력에서 빠집니다. |
-| `visible` | 표시 gate이며 false여도 값을 유지합니다. |
+| `visible` | 표시 gate이며 false이면 입력을 숨기고 값과 오류는 유지합니다. |
 | `readOnly` | 읽기 전용 잠금입니다. |
 | `disabled` | 표시 여부와 별개의 disabled 잠금입니다. |
 | `default` | 값 없이 새로 나타나는 노드의 literal이며 표현식으로 컴파일하지 않습니다. |
 | `derived` | 의존 값이 바뀌면 덮어쓰는 표현식이며 undefined는 쓰지 않습니다. |
-| `unsetValue` | false→true 전환에 값을 비웁니다. |
+| `unsetValue` | false→true 및 load·새 진입에서 true이면 비우며 계속 살아 있는 노드에서 true 유지만으로 반복해서 비우지는 않습니다. |
 | `resetInteraction` | false→true 및 참인 load·진입에 Edited·Touched를 지웁니다. |
 | `unsetOnInactive` | 이탈 때 retained 데이터를 버리며 노드 정책이 Form 기본값보다 우선합니다. |
 | `inactiveValue` | literal 또는 동기 retained-value resolver이며 문자열도 literal입니다. |
@@ -67,7 +67,7 @@ non-nullable object에 null을 쓰면 `{}`로 고치지 않고 잘못된 종류�
 | `discriminator` | object·nullable-object union 선택에 쓰는 비어 있지 않은 속성 이름입니다. |
 | `watch` | 순서대로 watchValues에 전달할 의존 경로 배열입니다. |
 
-표준 `readOnly`와 controls의 `readOnly`·`disabled` 계층은 OR, `visible` 계층은 AND로 결합합니다. 기본값 우선순위는 노드 `controls.default`, 부모 `fields`, fragment `controls.default`, 표준 `default` 순입니다.
+표준 `readOnly`와 controls의 `readOnly`·`disabled` 계층은 대상 노드의 지역 입력 잠금에 OR로, `visible` 계층은 AND로 결합합니다. 기본 branch object 입력은 이 지역 잠금을 자식 입력에 전파하지 않으며 branch object의 잠금 선언은 `LockOnNonTerminalObject`로 경고합니다. 직접 자식에는 `controls.fields`, 폼 전체에는 Form의 `readOnly`·`disabled`를 사용하십시오. 기본값 우선순위는 노드 `controls.default`, 부모 `fields`, fragment `controls.default`, 표준 `default` 순입니다.
 
 문자열 표현식은 폼 경로와 context를 사용합니다. [경로 표현식](./api-reference#paths)과 필요한 [CSP 조건](./quick-start#transpilation-csp)을 확인하십시오.
 
@@ -147,7 +147,7 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 | 정확히 두 enum 원소를 가진 string + inputType `switch` | string switch |
 | string·number·integer enum + inputType `radio` 또는 `radiogroup` | radio group |
 | 앞선 정의에 매칭하지 않은 array | 추가·삭제 배열 입력 |
-| string + format 또는 inputType `textarea` | 여러 줄 입력 |
+| string + (`format: 'textarea'` 또는 `presentation.inputType: 'textarea'`) | 여러 줄 입력 |
 | 남은 string | 문자열 입력이며 format `password`이면 password 표시 |
 | 남은 number·integer schemaType | 숫자 입력 |
 | 남은 boolean | checkbox |

@@ -97,7 +97,7 @@ Use [raw issue data](./validation#issues-messages) for validation results and [e
 - Update DOM tests for [enum empty values and checkbox/radio naming](./schema-reference#accessibility).
 - Match virtual inputs using the [current test hint](./schema-reference#input-resolution).
 - Supply a complete [validator object](./validation#validator-contract).
-- Use Edited / EditedTouched names. The default showError policy and bit values stay compatible with that policy; keep the Form showError prop/handle method names and check [showError(false)](./validation#visibility) semantics.
+- Use the current Edited / EditedTouched constants. Check [error visibility](./validation#visibility) for the default policy, display conditions, and Form showError prop/handle behavior.
 - Use `parentJSONSchema` and `rootJSONSchema` in injectTo context.
 - Read `origin` on the inferred onError callback record in place of surface/aggregate, using the [occurrence contract](./error-reference#occurrences).
 - Replace component cleanup writes with [inactive-value resolution](./api-reference#inactive-listeners); reacquire nodes after reset/reentry.

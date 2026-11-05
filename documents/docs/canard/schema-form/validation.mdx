@@ -11,23 +11,25 @@ sidebar_position: 5
 
 ## Validation modes and scheduling {#modes}
 
-The default is `ValidationMode.OnChange | ValidationMode.OnRequest`. `None` disables validation; `OnRequest` avoids automatic change verdicts. Explicit `validate()` and `submit()` start immediately under an enabled mode and check the value snapshot at invocation.
+The default is `ValidationMode.OnChange | ValidationMode.OnRequest`. `None` disables whole-schema validation; `OnRequest` avoids automatic change verdicts. Shape-selection `compileGuard` and guard evaluation can still run in None mode. Explicit `validate()` and `submit()` start immediately under an enabled mode and check the value snapshot at invocation. For changing the mode of an existing Form, see [configuration lifetime](./api-reference#configuration-lifetime).
 
 Automatic OnChange validation starts after the next frame, keeps a trailing run for continuous input, and caps the wait at 100 ms since the last actual automatic run. Input debounce belongs to the FieldInput. Missing frame APIs, a hidden document, or stalled frames use task / 100 ms timer fallbacks.
 
-Every root load reserves one post-frame validation slot. `None` skips compilation, `OnRequest` prepares compilation only, and OnChange's initial verdict runs only if no later write request or explicit root verdict supersedes it. An automatic load compile failure keeps the adopted tree, reports a validate-origin occurrence and host failure, and is not rethrown as a synchronous reset/rebuild error.
+Every root load reserves one post-frame validation slot. `None` skips whole-schema compilation and its verdict, `OnRequest` prepares whole-schema compilation only, and OnChange's initial verdict runs only if no later write request or explicit root verdict supersedes it. An automatic load compile failure keeps the adopted tree, reports a validate-origin occurrence and host failure, and is not rethrown as a synchronous reset/rebuild error.
 
 An initially empty error array can precede a verdict: await `validate()` when you need one. A child validation request does not cancel a pending whole-form request.
 
 ## Raw issues and error visibility {#visibility}
 
-`ShowError.Always` / true always qualifies, `Never` / false never qualifies, `Edited` and `Touched` require their interaction flags, and default `EditedTouched` requires both. A node's `FieldNodeState.ErrorVisible` overrides that policy. `handle.showError(true)` forces the Form policy; false returns to its prop policy rather than necessarily hiding errors.
+`ShowError.Always` / true always qualifies, `Never` / false never qualifies, `Edited` and `Touched` require their interaction flags, and default `EditedTouched` requires both. A node's `FieldNodeState.ErrorVisible` overrides that policy.
+
+The Form's `showError` prop initializes its local policy; changing the prop alone does not synchronize that policy. `handle.showError(true)` sets it to true. After a new prop commits, `handle.showError(false)` applies the latest Form prop rather than necessarily hiding errors; `reset()` also reapplies that prop while performing its other [load operations](./api-reference#configuration-lifetime). Remounting the Form, for example with a new React `key`, initializes the policy from the new prop. A FormProvider's `showError` can update live only while the Form's current local policy is undefined and therefore uses that fallback.
 
 OnChange holds newly eligible errors until release: eligibility must stay true continuously since the last release. Ineligibility hides errors immediately. Release occurs at pending true→false settlement, a quiet post-paint history drop, an accepted explicit root verdict, or disposal. OnRequest and None use live eligibility without this history.
 
 One public batch or subtree walk records its first state only, while separate public writes inside a React batch can record intermediate states. React remounting and virtualization do not clear node eligibility history; a continuously changing context stream can continue delaying newly visible errors.
 
-`node.errors`, `getErrors()`, function children, and `Form.Render` expose raw issues independently of display policy. Hidden fields retain values and errors; inactive paths are omitted from output and off-branch validation issues are skipped.
+When whole-schema validation runs, `validate()` returns its unfiltered verdict. `getErrors()` and Form function children expose the form-wide raw list, independently of display policy. Off-branch issues remain in these results. `node.errors` and `Form.Render` expose raw issues routed to that node. Routing skips an issue only when its schemaPath uniquely attributes it to an inactive gated oneOf/anyOf branch with an active sibling; this is not a filter on the whole verdict. For the separate active/visible policies, see [controls](./schema-reference#controls).
 
 React-only disabled toggles, delayed presence commits, and writes between release and paint can bypass the hold or show a verdict from one or two frames earlier. Use raw issues for workflow decisions and the renderer's visibility decision for presentation.
 
@@ -43,7 +45,7 @@ Use `presentation.errorMessages` for keyword/default messages and `formatError(e
 
 The engine passes the same owned root copy to compile, compileGuard, and release. Preserve `$ref`, `$id`, and anchor context and never mutate the supplied schema or value. A nonboolean guard result, compile failure, or throw fails that gate; a whole-schema compile failure does not undo guards. Release runs when a cached root is evicted and must be idempotent even for a root never registered. If both dialects are known and `$schema` differs, the form reports `DialectMismatch`.
 
-Different live roots with the same `$id` must stay isolated; the engine does not rewrite IDs. Only failures containing `already exists` or `resolves to more than one schema` are classified as `duplicateSchemaId` and retried once after another root is released.
+Different live roots with the same `$id` must stay isolated; the engine does not rewrite IDs. A failure is classified as `duplicateSchemaId` only when it is an Error whose message contains `already exists` or `resolves to more than one schema`, and the same validator actually retains a different live root with that same string `$id`. After all competing consumers release that root, the next compile/validation access retries the cached failure once. Release does not itself trigger compilation, and other compile failures do not use this retry.
 
 Guards do not support `$async`, asynchronous keywords/formats, or keywords that depend on data outside the host (`$data`, parent/sibling data). AJV plugins do not download remote refs: provide referenced schemas inside the root or in the bound instance. A custom keyword must not modify values, even if its library allows it.
 
@@ -67,7 +69,7 @@ In bare Node ESM, AJV 7's default import can be an interop namespace rather than
 
 For a custom AJV 8 instance, install `ajv@8.17.1` in the consuming application. The plugin's own AJV dependency does not select the version of your application's `import Ajv from 'ajv'`.
 
-Bind once before the first compile/registration; rebinding is not a supported lifecycle. `coerceTypes`, `useDefaults`, and `removeAdditional` cause refusal before replacing an existing binding. The native `ValidatorBindRefusedError` has group/code metadata; it is not a core `UnhandledError` instance, so do not classify it with `isUnhandledError`.
+Bind once before the first compile/registration; rebinding is not a supported lifecycle. `coerceTypes`, `useDefaults`, and `removeAdditional` cause refusal before replacing an existing binding. A native refusal error carries `group: 'UNHANDLED_ERROR'` and `code: FormErrorCode.ValidatorBindRefused`. Inspect those properties after narrowing the caught value; `isUnhandledError` does not recognize this native error.
 
 AJV 6/7 bind starts a fresh root registry. AJV 8 keeps an already registered root associated with the instance that registered it until release. Prefer `createValidator(ajv, options?)` for a Form-specific complete adapter, created outside render or memoized with stable dependencies. Independent adapters can share one nonmodifying AJV instance.
 
@@ -99,11 +101,11 @@ Keep the adapter reference stable: [validator replacement rebuilds the Form tree
 
 All three AJV adapters support `plugin.validator.configure({ directGuardCompile })`, default true. True directly compiles self-contained guards; false sends later compiles through root pointers. Omitted options retain their values, existing predicates keep their behavior, and configure does not change bound AJV settings.
 
-Reference/identifier keys or `$schema` on the root/guard force root-pointer compilation even when direct compilation is selected. A root-pointer guard can fail because of code-generation errors elsewhere in that root; a directly compiled self-contained guard is independent of those errors.
+Even with direct compilation selected, an own `$schema` on the root, or reference/identifier/anchor/`$schema` keys anywhere within the selected guard subtree, forces root-pointer compilation. For AJV 6's legacy schemaId modes that subtree check also includes `id`. A root `$id` outside that subtree, or a `$ref` elsewhere in the root, does not by itself block direct compilation. A root-pointer guard can fail because of code-generation errors elsewhere in that root; a directly compiled self-contained guard is independent of those errors.
 
 Guard sibling instances preserve the bound dialect, formats, and keywords with `allErrors: false` and `validateSchema: false`. Root meta-schema checking belongs to whole validation under the bound `validateSchema` policy. Meta-only violations outside the guard or inside it do not create a separate guard meta check, but strict, custom-keyword, and code-generation checks still apply. A strict compile failure turns both conditional branches off with `GuardFailed` rather than returning true/false.
 
-Roots with `$id` are registered in isolation; whole roots without an ID use transient copies. A self-contained direct guard does not require registering the root in AJV. Release removes the root registration, compiled results, and direct guards; an unregistered root is a no-op. A pointer that does not locate a schema throws native `GuardPointerNotSchemaError`, code `GUARD_POINTER_NOT_SCHEMA`, with root ID and pointer details.
+Roots with `$id` are registered in isolation; whole roots without an ID use transient copies. A self-contained direct guard does not require registering the root in AJV. Release removes the root registration, compiled results, and direct guards; an unregistered root is a no-op. A pointer that does not locate a schema throws a native error with `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, and `details.root` / `details.pointer`. Check these properties after narrowing the caught value.
 
 ## AJV 7/8 dynamic and recursive guard scope {#dynamic-guard-scope}
 

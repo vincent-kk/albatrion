@@ -11,7 +11,7 @@ sidebar_position: 4
 
 ## Authoring groups {#authoring-groups}
 
-Keep standard JSON Schema constraints at their standard locations. Put renderer payload in `presentation`, reactive policies in `controls`, and engine options in `options`. `presentation` is open; `controls` and `options` reject unknown keys with `FormErrorCode.UnknownGroupKey`. A known key with an invalid shape produces `FormErrorCode.InvalidControlShape`.
+Keep standard JSON Schema constraints at their standard locations. Put renderer payload in `presentation`, reactive policies in `controls`, and engine options in `options`. `presentation` is open; `controls` and `options` reject unknown keys with `FormErrorCode.UnknownGroupKey`. Malformed controls/options groups and explicitly checked shapes such as injectTo, fields, and discriminator produce `FormErrorCode.InvalidControlShape`. This does not promise runtime type validation for every known key's value; validate schemas from external data at your own boundary.
 
 | Group | Consumer use |
 | --- | --- |
@@ -48,17 +48,17 @@ Arrays are replaced even with `SetValueOption.Merge`. A parent Overwrite that om
 
 ## Controls and declaration layers {#controls}
 
-A node has the following 14 control keys. `controls.fields[].controls` and fragment controls accept only the first ten, through `inactiveValue`; they cannot nest `fields`, `injectTo`, `discriminator`, or `watch`.
+A node has the following 14 control keys. `controls.fields[].controls` and fragment controls accept only the first ten keys in the list below, ending with `inactiveValue`; they cannot nest `fields`, `injectTo`, `discriminator`, or `watch`.
 
 | Key | Meaning |
 | --- | --- |
 | `active` | Existence gate; false removes the field from shape and output. |
-| `visible` | Visibility gate; false retains the value. |
+| `visible` | Visibility gate; false hides the input while retaining values and errors. |
 | `readOnly` | Read-only lock. |
 | `disabled` | Disabled lock, independent of presence. |
 | `default` | Literal for a newly appearing node without a value; never compiled as an expression. |
 | `derived` | Expression that overwrites on dependency change; undefined writes nothing. |
-| `unsetValue` | Clears on a false-to-true transition. |
+| `unsetValue` | Clears on false-to-true, and when true at load/new entry; staying true on a continuously live node does not clear repeatedly. |
 | `resetInteraction` | Clears Edited and Touched on false-to-true, and on load/entry while true. |
 | `unsetOnInactive` | Drops retained data on exit; node policy overrides the Form default. |
 | `inactiveValue` | Literal or synchronous retained-value resolver; strings are literal. |
@@ -67,7 +67,7 @@ A node has the following 14 control keys. `controls.fields[].controls` and fragm
 | `discriminator` | Nonempty property name for object/nullable-object union selection. |
 | `watch` | Array of dependency paths passed as watchValues in order. |
 
-Standard `readOnly` and controls `readOnly`/`disabled` layers combine by OR; `visible` layers combine by AND. Default precedence is node `controls.default`, parent `fields`, fragment `controls.default`, then standard `default`.
+Standard `readOnly` and controls `readOnly`/`disabled` layers combine by OR for the target node's local input lock; `visible` layers combine by AND. The default branch-object input does not forward its local lock to child inputs; declaring that lock produces `LockOnNonTerminalObject`. Apply locks to direct children with `controls.fields`, or use Form `readOnly`/`disabled` for the whole form. Default precedence is node `controls.default`, parent `fields`, fragment `controls.default`, then standard `default`.
 
 String expressions use form paths and context; see [path expressions](./api-reference#paths). This requires the [CSP capability](./quick-start#transpilation-csp).
 
@@ -147,7 +147,7 @@ The following patterns apply to antd-mobile, antd5, antd6, and MUI. Here `inputT
 | String with exactly two enum entries + inputType `switch` | String switch |
 | String / number / integer enum + inputType `radio` or `radiogroup` | Radio group |
 | Array not matched earlier | Add/remove array input |
-| String + format or inputType `textarea` | Multiline input |
+| String + (`format: 'textarea'` or `presentation.inputType: 'textarea'`) | Multiline input |
 | Remaining string | Text input; format `password` uses password display |
 | Remaining number / integer schemaType | Number input |
 | Remaining boolean | Checkbox |

@@ -17,7 +17,7 @@ Compare group-qualified `error.code` or record.code with `FormErrorCode` / `Form
 
 ## onError occurrences and origins {#occurrences}
 
-`onError` is an occurrence channel, not the current issue list or a resolution notification. The callback receives level, group-qualified code, message, origin, and optional path/schemaPath/details/error/componentStack. Infer its parameter from `FormProps['onError']`; `FormErrorRecord` is not a named root export. Do not write back to the same Form from its onError observer.
+`onError` is an occurrence channel, not the current issue list or a resolution notification. The callback receives level, group-qualified code, message, origin, and optional path/schemaPath/details/error/componentStack. Infer the callback parameter type from `FormProps['onError']`. Do not write back to the same Form from its onError observer.
 
 | origin | Operation |
 | --- | --- |
@@ -86,7 +86,7 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormErrorCode.ChildrenTargetNotFound` | `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND` | a declared child name is absent from the schema. |
 | `FormErrorCode.TerminalOptionUnsupported` | `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` | a single-row kind declares a different terminal option. |
 | `FormErrorCode.ValidatorBindRefused` | `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED` | a plugin refuses a bound validator instance outside a form. |
-| `FormErrorCode.InvalidControlShape` | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE` | a known controls, options, or child controls key has the wrong shape. |
+| `FormErrorCode.InvalidControlShape` | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE` | a controls/options group or an explicitly checked shape such as injectTo, fields, or discriminator is malformed. |
 | `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | schema validation rejects a submission. |
 | `FormErrorCode.ReservedPropertyName` | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME` | a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` and cannot round-trip through a form pointer. |
 
@@ -102,7 +102,7 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormWarningCode.ConditionalSchemaWithoutValidator` | `SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR` | an if gate exists without a validator. |
 | `FormWarningCode.ValidatorMissing` | `SCHEMA_FORM_WARNING.VALIDATOR_MISSING` | a tree requests validation but no validator is selected. |
 | `FormWarningCode.MultipleGatedBranchesActive` | `SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE` | multiple gated oneOf branches become active. |
-| `FormWarningCode.ResetRebuiltByReference` | `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE` | a reset rebuilds a tree because the schema reference changes. |
+| `FormWarningCode.ResetRebuiltByReference` | `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE` | a reset replaces the tree because only opaque references such as functions changed while all JSON schema data remains equal. |
 | `FormWarningCode.DependentSchemasIgnoredForForm` | `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM` | dependentSchemas is unsupported for form shape. |
 | `FormWarningCode.ChildNodeComponentsOnTerminal` | `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` | a terminal input reads empty child-node components. |
 | `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM` | a terminal subtree declares a reserved key ignored by the form. |

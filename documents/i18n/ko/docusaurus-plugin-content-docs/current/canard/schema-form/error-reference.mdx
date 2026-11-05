@@ -17,7 +17,7 @@ group-qualified `error.code`·record.code를 `FormErrorCode`, `FormWarningCode` 
 
 ## onError 발생과 origin {#occurrences}
 
-`onError`는 발생 채널이며 현재 이슈 목록이나 해결 통지가 아닙니다. callback은 level·group-qualified code·message·origin과 선택적인 path·schemaPath·details·error·componentStack을 받습니다. `FormErrorRecord`는 root의 이름 있는 export가 아니므로 `FormProps['onError']`에서 매개변수 형을 추론하십시오. onError observer 안에서 같은 Form에 다시 쓰지 마십시오.
+`onError`는 발생 채널이며 현재 이슈 목록이나 해결 통지가 아닙니다. callback은 level·group-qualified code·message·origin과 선택적인 path·schemaPath·details·error·componentStack을 받습니다. callback 매개변수 형은 `FormProps['onError']`에서 추론하십시오. onError observer 안에서 같은 Form에 다시 쓰지 마십시오.
 
 | origin | 연산 |
 | --- | --- |
@@ -47,72 +47,72 @@ Enter 제출은 native form 알고리즘을 따릅니다. text-like 필드가 �
 
 | 상수 | 코드 | 발생 조건 |
 | --- | --- | --- |
-| `FormErrorCode.UnknownJsonSchema` | `JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA` | 지원 가능한 스키마 형상을 정할 수 없음입니다. |
-| `FormErrorCode.UnexpectedArraySchema` | `JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA` | 잘못된 배열 선언입니다. |
-| `FormErrorCode.AllOfTypeRedefinition` | `JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION` | 정적 allOf 형의 교차가 비어 있음입니다. |
-| `FormErrorCode.ConflictingConstValues` | `JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES` | 정적 allOf const 충돌입니다. |
-| `FormErrorCode.InvalidRange` | `JSON_SCHEMA_ERROR.INVALID_RANGE` | 정적 범위 교차가 비어 있음입니다. |
-| `FormErrorCode.EmptyEnumIntersection` | `JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION` | 정적 enum 교차가 비어 있음입니다. |
-| `FormErrorCode.VirtualFieldsNotValid` | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID` | virtual field 참조가 잘못됨입니다. |
-| `FormErrorCode.VirtualFieldsNotInProperties` | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_IN_PROPERTIES` | virtual field가 properties에 없음입니다. |
-| `FormErrorCode.CreateDynamicFunction` | `JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION` | controls 표현식 컴파일 실패입니다. |
-| `FormErrorCode.ObservedValues` | `JSON_SCHEMA_ERROR.OBSERVED_VALUES` | 관찰 값 표현식 분석 실패입니다. |
-| `FormErrorCode.UnknownGroupKey` | `JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY` | 닫힌 controls·options·child controls의 알 수 없는 키입니다. |
-| `FormErrorCode.DiscriminatorMismatch` | `JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH` | 태그 전체 누락·형 모호성·oneOf 태그 중복입니다. |
-| `FormErrorCode.SharedNodeKindConflict` | `JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT` | 정적·ungated 분기 노드 종류 충돌입니다. |
-| `FormErrorCode.TerminalStrategyMismatch` | `JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH` | 선언 간 terminal 전략 충돌입니다. |
-| `FormErrorCode.SharedNodeConflict` | `SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT` | 활성 선언이 같은 노드 종류를 공유할 수 없음입니다. |
-| `FormErrorCode.BudgetExceeded` | `SCHEMA_FORM_ERROR.BUDGET_EXCEEDED` | host·derive·transition 정착 budget 초과입니다. |
-| `FormErrorCode.ExpressionThrew` | `SCHEMA_FORM_ERROR.EXPRESSION_THREW` | 정착 중 controls 표현식 예외입니다. |
-| `FormErrorCode.GuardFailed` | `SCHEMA_FORM_ERROR.GUARD_FAILED` | guard compile·동기 평가 실패입니다. |
-| `FormErrorCode.InjectTargetMissing` | `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING` | 동적 injection 대상 부재입니다. |
-| `FormErrorCode.FeedbackLimitExceeded` | `SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED` | listener feedback·onChange 중첩 한도 초과입니다. |
-| `FormErrorCode.ListenerThrew` | `SCHEMA_FORM_ERROR.LISTENER_THREW` | subscriber·폼 callback 예외입니다. |
-| `FormErrorCode.MultipleErrors` | `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS` | dispatch chain·observer의 여러 오류입니다. |
-| `FormErrorCode.FormTypeInputMap` | `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP` | 입력 map 정규화 실패입니다. |
-| `FormErrorCode.RegisterPlugin` | `UNHANDLED_ERROR.REGISTER_PLUGIN` | 폼 인스턴스 밖의 전역 플러그인 등록 실패입니다. |
-| `FormErrorCode.InvalidWriteOption` | `SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION` | 함께 사용할 수 없는 public write 옵션입니다. |
-| `FormErrorCode.DisposedNodeWrite` | `SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE` | 폐기된 트리의 node를 통한 쓰기입니다. |
-| `FormErrorCode.WriteInObserver` | `SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER` | onError에서 자기 폼으로 쓰기입니다. |
-| `FormErrorCode.SubmitWhileDegraded` | `SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED` | degraded diagnostics 상태의 제출입니다. |
-| `FormErrorCode.ValidatorCompileFailed` | `SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED` | whole-schema compile 실패입니다. |
-| `FormErrorCode.ValidatorThrew` | `SCHEMA_FORM_ERROR.VALIDATOR_THREW` | 검증 실행 함수의 예외입니다. |
-| `FormErrorCode.RenderFailed` | `SCHEMA_FORM_ERROR.RENDER_FAILED` | 사용자 renderer·root render 예외입니다. |
-| `FormErrorCode.InvalidVirtualNodeValues` | `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES` | 잘못된 virtual 값 모양입니다. |
-| `FormErrorCode.ArrayMethodOnNonArray` | `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` | 배열 외 노드의 배열 명령입니다. |
-| `FormErrorCode.RecursiveShapeUnbounded` | `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED` | 분석 중 무한 재귀 형상입니다. |
-| `FormErrorCode.RecursiveShapeDiverged` | `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED` | 재귀 형상 확장의 정착 budget 초과입니다. |
-| `FormErrorCode.VirtualFieldsMismatch` | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH` | 선언 간 virtual fields 불일치입니다. |
-| `FormErrorCode.ChildrenTargetNotFound` | `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND` | 선언한 자식 이름을 찾을 수 없음입니다. |
-| `FormErrorCode.TerminalOptionUnsupported` | `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` | 고정 전략 종류의 반대 terminal 옵션입니다. |
-| `FormErrorCode.ValidatorBindRefused` | `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED` | 값을 변경하는 AJV instance의 bind 거부입니다. |
-| `FormErrorCode.InvalidControlShape` | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE` | 알려진 그룹 키의 잘못된 값 모양입니다. |
-| `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | 검증에 따른 제출 거부입니다. |
-| `FormErrorCode.ReservedPropertyName` | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME` | 예약된 percent 이름을 property 이름으로 사용함입니다. |
+| `FormErrorCode.UnknownJsonSchema` | `JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA` | 지원 가능한 스키마 형상을 결정할 수 없는 경우 |
+| `FormErrorCode.UnexpectedArraySchema` | `JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA` | 배열 선언이 잘못된 경우 |
+| `FormErrorCode.AllOfTypeRedefinition` | `JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION` | 정적 allOf type 교차가 비어 있는 경우 |
+| `FormErrorCode.ConflictingConstValues` | `JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES` | 정적 allOf const 값이 충돌하는 경우 |
+| `FormErrorCode.InvalidRange` | `JSON_SCHEMA_ERROR.INVALID_RANGE` | 정적 범위 교차가 비어 있는 경우 |
+| `FormErrorCode.EmptyEnumIntersection` | `JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION` | 정적 enum 교차가 비어 있는 경우 |
+| `FormErrorCode.VirtualFieldsNotValid` | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID` | virtual field 참조가 잘못된 경우 |
+| `FormErrorCode.VirtualFieldsNotInProperties` | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_IN_PROPERTIES` | virtual field가 선언된 properties에 없는 경우 |
+| `FormErrorCode.CreateDynamicFunction` | `JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION` | controls 표현식을 컴파일하지 못하는 경우 |
+| `FormErrorCode.ObservedValues` | `JSON_SCHEMA_ERROR.OBSERVED_VALUES` | 관찰 값 표현식을 분석하지 못하는 경우 |
+| `FormErrorCode.UnknownGroupKey` | `JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY` | 닫힌 controls·options·child controls에 알 수 없는 키가 있는 경우 |
+| `FormErrorCode.DiscriminatorMismatch` | `JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH` | 태그가 모두 없거나 형이 모호하거나 oneOf 태그가 중복되는 경우 |
+| `FormErrorCode.SharedNodeKindConflict` | `JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT` | 정적·ungated 분기의 노드 종류가 충돌하는 경우 |
+| `FormErrorCode.TerminalStrategyMismatch` | `JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH` | 선언 간 terminal 전략이 충돌하는 경우 |
+| `FormErrorCode.SharedNodeConflict` | `SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT` | 활성 선언이 한 노드 종류를 공유할 수 없는 경우 |
+| `FormErrorCode.BudgetExceeded` | `SCHEMA_FORM_ERROR.BUDGET_EXCEEDED` | host·derive·transition 정착 budget을 초과하는 경우 |
+| `FormErrorCode.ExpressionThrew` | `SCHEMA_FORM_ERROR.EXPRESSION_THREW` | 정착 중 controls 표현식이 예외를 던지는 경우 |
+| `FormErrorCode.GuardFailed` | `SCHEMA_FORM_ERROR.GUARD_FAILED` | guard 컴파일 또는 동기 평가가 실패하는 경우 |
+| `FormErrorCode.InjectTargetMissing` | `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING` | 동적 injection 대상이 없는 경우 |
+| `FormErrorCode.FeedbackLimitExceeded` | `SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED` | listener feedback 또는 onChange 중첩 한도를 초과하는 경우 |
+| `FormErrorCode.ListenerThrew` | `SCHEMA_FORM_ERROR.LISTENER_THREW` | subscriber 또는 폼 callback이 예외를 던지는 경우 |
+| `FormErrorCode.MultipleErrors` | `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS` | dispatch chain 또는 observer에서 여러 오류가 발생하는 경우 |
+| `FormErrorCode.FormTypeInputMap` | `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP` | 입력 map 정규화가 실패하는 경우 |
+| `FormErrorCode.RegisterPlugin` | `UNHANDLED_ERROR.REGISTER_PLUGIN` | 폼 인스턴스 밖에서 전역 플러그인 등록이 실패하는 경우 |
+| `FormErrorCode.InvalidWriteOption` | `SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION` | 함께 사용할 수 없는 public write 옵션을 지정한 경우 |
+| `FormErrorCode.DisposedNodeWrite` | `SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE` | 폐기된 트리의 노드를 통해 쓰는 경우 |
+| `FormErrorCode.WriteInObserver` | `SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER` | onError에서 같은 폼에 쓰는 경우 |
+| `FormErrorCode.SubmitWhileDegraded` | `SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED` | diagnostics가 degraded인 상태에서 제출하는 경우 |
+| `FormErrorCode.ValidatorCompileFailed` | `SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED` | 전체 스키마 컴파일이 실패하는 경우 |
+| `FormErrorCode.ValidatorThrew` | `SCHEMA_FORM_ERROR.VALIDATOR_THREW` | 검증 실행 함수가 예외를 던지는 경우 |
+| `FormErrorCode.RenderFailed` | `SCHEMA_FORM_ERROR.RENDER_FAILED` | 사용자 renderer 또는 root render가 예외를 던지는 경우 |
+| `FormErrorCode.InvalidVirtualNodeValues` | `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES` | virtual 노드에 잘못된 형상의 값을 쓰는 경우 |
+| `FormErrorCode.ArrayMethodOnNonArray` | `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` | 배열이 아닌 노드에 배열 명령을 호출하는 경우 |
+| `FormErrorCode.RecursiveShapeUnbounded` | `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED` | 분석 중 무한 재귀 형상이 발견되는 경우 |
+| `FormErrorCode.RecursiveShapeDiverged` | `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED` | 재귀 형상 확장이 정착 budget을 초과하는 경우 |
+| `FormErrorCode.VirtualFieldsMismatch` | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH` | 선언 간 virtual fields가 일치하지 않는 경우 |
+| `FormErrorCode.ChildrenTargetNotFound` | `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND` | 선언한 자식 이름을 찾을 수 없는 경우 |
+| `FormErrorCode.TerminalOptionUnsupported` | `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED` | 전략이 고정된 종류에 반대 terminal 옵션을 지정한 경우 |
+| `FormErrorCode.ValidatorBindRefused` | `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED` | 값을 변경하는 AJV instance의 bind가 거부되는 경우 |
+| `FormErrorCode.InvalidControlShape` | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE` | controls·options 그룹 또는 injectTo·fields·discriminator 등 명시적으로 검사하는 형상을 위반한 경우 |
+| `FormErrorCode.SchemaValidationFailed` | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED` | 검증에 따라 제출이 거부되는 경우 |
+| `FormErrorCode.ReservedPropertyName` | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME` | property 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40` 중 하나여서 form pointer로 round-trip할 수 없는 경우 |
 
 ## 경고 코드 {#warning-codes}
 
 | 상수 | 코드 | 발생 조건 |
 | --- | --- | --- |
-| `FormWarningCode.AllOfKeywordIgnoredForForm` | `SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM` | 렌더링 형상에서 일부 allOf 키워드 무시입니다. |
-| `FormWarningCode.NullBranchIgnoredForForm` | `SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM` | 렌더링에서 null 분기의 조건·properties 무시입니다. |
-| `FormWarningCode.VirtualizationDisabledForForm` | `SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM` | IntersectionObserver 부재로 가상화 비활성화입니다. |
-| `FormWarningCode.IfWithoutElseFalse` | `SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE` | union branch의 if에 else:false가 없는 형상 경고입니다. |
-| `FormWarningCode.LockOnNonTerminalObject` | `SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT` | branch object의 readOnly·controls.readOnly·controls.disabled 선언입니다. |
-| `FormWarningCode.ConditionalSchemaWithoutValidator` | `SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR` | 검증기 없는 if gate입니다. |
-| `FormWarningCode.ValidatorMissing` | `SCHEMA_FORM_WARNING.VALIDATOR_MISSING` | 검증 요청에 선택한 validator가 없음입니다. |
-| `FormWarningCode.MultipleGatedBranchesActive` | `SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE` | 여러 gated oneOf 분기가 동시에 활성입니다. |
-| `FormWarningCode.ResetRebuiltByReference` | `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE` | schema reference 변경에 따른 reset 재구성입니다. |
-| `FormWarningCode.DependentSchemasIgnoredForForm` | `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM` | 형상에 지원하지 않는 dependentSchemas입니다. |
-| `FormWarningCode.ChildNodeComponentsOnTerminal` | `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` | terminal에서 비어 있는 자식 컴포넌트 사용입니다. |
-| `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM` | terminal subtree의 형상용 키 무시입니다. |
-| `FormWarningCode.DiscriminatorBranchUnreachable` | `SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE` | host 형 밖이거나 빈 태그 교차입니다. |
-| `FormWarningCode.NonJsonWholeValue` | `SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE` | 개발 모드의 JSON 비호환 whole 값입니다. |
-| `FormWarningCode.FormTypeTestInvalid` | `SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID` | 입력 정의 시험 객체의 알 수 없는 키입니다. |
-| `FormWarningCode.Misfit` | `SCHEMA_FORM_WARNING.MISFIT` | 명확하게 형 변환할 수 없는 값입니다. |
-| `FormWarningCode.DialectMismatch` | `SCHEMA_FORM_WARNING.DIALECT_MISMATCH` | 스키마 $schema와 validator dialect 불일치입니다. |
-| `FormWarningCode.DetachedNodeWrite` | `SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE` | detached 노드 쓰기이며 값을 변경하지 않습니다입니다. |
-| `FormWarningCode.InactiveValueWithUnsetOnInactive` | `SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE` | 한 계층의 inactiveValue와 literal true unsetOnInactive 동시 선언입니다. |
-| `FormWarningCode.WriteInInactiveResolver` | `SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER` | inactive resolver 안의 값·배열·batch·reset 쓰기입니다. |
-| `FormWarningCode.DiscriminatorIgnoredForForm` | `SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM` | union 부재·비객체 host의 discriminator 무시입니다. |
-| `FormWarningCode.IfOnNonObjectHost` | `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST` | 객체 형을 허용하지 않는 host의 if를 &#123;&#125;로 평가입니다. |
+| `FormWarningCode.AllOfKeywordIgnoredForForm` | `SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM` | 일부 allOf keyword가 렌더링 형상에서 무시되는 경우 |
+| `FormWarningCode.NullBranchIgnoredForForm` | `SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM` | null union 분기의 properties 또는 controls.active가 렌더링에서 무시되는 경우 |
+| `FormWarningCode.VirtualizationDisabledForForm` | `SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM` | IntersectionObserver 부재로 가상화를 비활성화하는 경우 |
+| `FormWarningCode.IfWithoutElseFalse` | `SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE` | oneOf·anyOf 분기에 if가 있고 else:false가 없는 경우 |
+| `FormWarningCode.LockOnNonTerminalObject` | `SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT` | branch object에 readOnly·controls.readOnly·controls.disabled가 선언된 경우 |
+| `FormWarningCode.ConditionalSchemaWithoutValidator` | `SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR` | 검증기 없이 if gate가 있는 경우 |
+| `FormWarningCode.ValidatorMissing` | `SCHEMA_FORM_WARNING.VALIDATOR_MISSING` | 선택한 검증기 없이 검증을 요청하는 경우 |
+| `FormWarningCode.MultipleGatedBranchesActive` | `SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE` | 여러 gated oneOf 분기가 동시에 활성화된 경우 |
+| `FormWarningCode.ResetRebuiltByReference` | `SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE` | reset으로 트리를 교체할 때 JSON schema 데이터는 같고 함수 등 불투명 참조만 달라 재구성되는 경우 |
+| `FormWarningCode.DependentSchemasIgnoredForForm` | `SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM` | dependentSchemas가 폼 형상에서 무시되는 경우 |
+| `FormWarningCode.ChildNodeComponentsOnTerminal` | `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` | terminal 입력이 비어 있는 자식 컴포넌트를 읽는 경우 |
+| `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM` | terminal subtree에 폼이 무시하는 형상용 키가 선언된 경우 |
+| `FormWarningCode.DiscriminatorBranchUnreachable` | `SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE` | 분기 태그가 host의 허용 형 밖이거나 태그 교차가 비어 있는 경우 |
+| `FormWarningCode.NonJsonWholeValue` | `SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE` | 개발 모드에서 전체 값이 JSON과 호환되지 않는 경우 |
+| `FormWarningCode.FormTypeTestInvalid` | `SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID` | 입력 정의의 test 객체에 알 수 없는 키가 있는 경우 |
+| `FormWarningCode.Misfit` | `SCHEMA_FORM_WARNING.MISFIT` | 값을 활성 형으로 명확하게 변환할 수 없는 경우 |
+| `FormWarningCode.DialectMismatch` | `SCHEMA_FORM_WARNING.DIALECT_MISMATCH` | schema의 $schema와 검증기 dialect가 일치하지 않는 경우 |
+| `FormWarningCode.DetachedNodeWrite` | `SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE` | detached 노드에 쓰기를 시도한 경우(값은 변경되지 않음) |
+| `FormWarningCode.InactiveValueWithUnsetOnInactive` | `SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE` | 한 control 계층에 inactiveValue와 literal true unsetOnInactive가 함께 선언된 경우 |
+| `FormWarningCode.WriteInInactiveResolver` | `SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER` | inactive resolver 안에서 값·배열·batch·reset 쓰기를 시도한 경우 |
+| `FormWarningCode.DiscriminatorIgnoredForForm` | `SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM` | union이 없거나 host가 비객체여서 discriminator를 무시하는 경우 |
+| `FormWarningCode.IfOnNonObjectHost` | `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST` | object를 허용하지 않는 host의 if를 `{}`로 평가하는 경우 |

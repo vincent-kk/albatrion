@@ -13,7 +13,7 @@ sidebar_position: 3
 
 The form engine builds fields from participating declarations. Constraints such as `minimum` and `minItems` belong to the validator: they do not clamp every write or manufacture array data. Type interpretation can convert a value when the conversion is unambiguous. An ambiguous or unconvertible value remains a misfit for the consumer and validator to handle.
 
-`controls.active` removes a field from the current shape and output. `controls.visible` hides its input while retaining values and errors. A hidden field and an inactive field therefore have different effects on submission. See [controls](./schema-reference#controls) and [validation visibility](./validation#visibility).
+Choose between the [active and visible controls](./schema-reference#controls) for existence and display, then consult [validation visibility](./validation#visibility) for issue routing and presentation.
 
 ## Node types and strategies {#node-types}
 
@@ -28,13 +28,13 @@ Virtual nodes are layout groups, not conditional branches. Object/array strategy
 
 ## Array data and array UI {#arrays}
 
-`minItems` does not create array entries during initialization, reset, or reactivation. The built-in array input can show empty UI slots up to that minimum; an entry becomes data when its slot receives input. It hides the add button at `maxItems`, shows remove buttons independently of `minItems`, and does not read `prefixItems`. Use a custom input when tuple layout needs a different UI.
+`minItems` does not create array entries during initialization, reset, or reactivation. The core built-in array input can show empty UI slots toward that minimum, capped by `maxItems`; an entry becomes data when its slot receives input. It chooses an empty slot's control from its active item schema, falling back to `prefixItems[index]` before `items`. It hides the add button at `maxItems` and shows remove buttons independently of `minItems` when not readOnly. UI plugins supply their own array behavior; see the [tuple example](./examples/tuple-arrays) for the Antd6 input.
 
 A root empty array emits `[]`. `omitEmpty` removes empty values during propagation to a parent; it does not remove the root. See [value rules](./schema-reference#value-states) for nullable and overwrite behavior and the [array output example](./examples/array-output-filters).
 
 ## Rendering and configuration lifetime {#rendering}
 
-A Form's `children` replaces automatic root layout. Omitted inputs are not inserted elsewhere automatically. Rendering the same path twice creates two inputs; each owns a draft, so typing into one does not update the other's draft until a refresh reaches it.
+A Form's `children` replaces automatic root layout. Omitted inputs are not inserted elsewhere automatically. Rendering the same path twice creates two inputs. Built-in inputs that initialize from defaultValue and retain their own drafts do not mirror another input's typing until refreshed. A custom controlled input can instead follow the current value prop and synchronize both renderings immediately.
 
 The default group renderer draws its own label and errors. Replacing `FormLabelRenderer` or `FormErrorRenderer` affects composition components and custom renderers that call them; it does not rewrite the default group renderer.
 
@@ -42,6 +42,6 @@ Renderers, `formatError`, input definitions, and input maps are captured on moun
 
 ## Measure the work your form performs {#performance}
 
-For a large form, `ValidationMode.OnRequest` avoids whole-schema validation on every change. Compilation during load and explicit validation/submission still cost work. Rendering can dominate even when validation is deferred; evaluate [virtualization](./api-reference#virtualization) against the time until all inputs are available.
+For a large form, choose a [validation mode](./validation#modes) based on the measured cost of compilation and explicit validation/submission. Rendering can dominate even when validation is deferred; evaluate [virtualization](./api-reference#virtualization) against the time until all inputs are available.
 
 `onChange` runs synchronously. Wrap expensive consumer state updates in React `startTransition` when appropriate and measure the result in your application. CSS containment needs an intentional size and a layout check; adding a wrapper alone is not a performance guarantee.

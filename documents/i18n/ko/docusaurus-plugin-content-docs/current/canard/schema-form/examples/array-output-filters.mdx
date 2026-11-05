@@ -23,4 +23,4 @@ minItems: 3인 문자열 배열 세 개의 출력 옵션을 비교합니다. 계
 | /notes | 기본값 | [null, null, null] |
 | /aliases | omitTrailing: true, omitEmpty: false | [] |
 
-JSON.stringify는 배열의 undefined 슬롯을 null로 표시하며 명시적 null 쓰기와는 다릅니다. 검증은 방출 출력을 읽으므로 채운 행 하나와 생략된 후행 빈 행은 길이 1로 검사합니다. branch 배열의 행 수는 node.children?.length로 세고 node.outputValue와 별도로 비교하십시오. terminal 배열에는 자식 노드가 없습니다.
+JSON.stringify는 배열의 undefined 슬롯을 null로 표시하며 명시적 null 쓰기와는 다릅니다. 검증은 방출 출력을 읽으므로 채운 행 하나와 생략된 후행 빈 행은 길이 1로 검사합니다. 행 수와 출력은 [노드 값·children 계약](../api-reference#nodes)에 따라 읽으십시오.

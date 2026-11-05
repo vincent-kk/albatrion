@@ -40,11 +40,13 @@ sidebar_position: 6
 
 ## root load와 설정 수명 {#configuration-lifetime}
 
-`jsonSchema`, `defaultValue` prop만 바꿔서는 현재 트리가 교체되지 않습니다. `reset()`은 최신 committed props를 읽고 첨부 파일과 showError override를 지운 뒤 기본값을 로드합니다. 대체 값이 아니라 automatic-write override flag만 받습니다.
+`jsonSchema`, `defaultValue` prop만 바꿔서는 현재 트리가 교체되지 않습니다. `reset()`은 최신 committed props를 읽고 첨부 파일을 지운 뒤 기본값을 로드합니다. 대체 값이 아니라 automatic-write override flag만 받습니다.
 
 `rebuild()`는 schema 객체의 cached analysis를 무효화하고 reset의 load 옵션으로 이 Form의 root를 교체합니다. 같은 schema 객체를 쓰는 다른 Form은 기존 트리를 유지합니다. 교체 후에는 현재 handle에서 노드를 다시 조회하십시오.
 
-`validatorFactory` 참조를 교체하면 Form 트리를 다시 만들므로 설정이 같으면 안정된 객체를 사용하십시오. context·showError·validationMode·입력 잠금은 live 변경을 지원하며 renderer·입력 설정에는 [마운트 시 캡처 규칙](./core-concepts#rendering)이 적용됩니다.
+`validatorFactory` 참조를 교체하면 Form 트리를 다시 만들므로 설정이 같으면 안정된 객체를 사용하십시오. context·입력 잠금은 live 변경을 지원하며 renderer·입력 설정에는 [마운트 시 캡처 규칙](./core-concepts#rendering)이 적용됩니다.
+
+`validationMode`는 트리를 만들 때 선택합니다. Form prop을 바꿔도 기존 트리의 모드는 갱신하지 않습니다. 바꾼 prop이 commit된 뒤 `handle.rebuild()`를 호출하거나 React `key` 변경 등으로 Form을 다시 마운트하십시오. 같은 schema·검증기의 `reset()`은 트리와 모드를 유지합니다. 별도의 수명을 갖는 Form `showError` 정책과 새 prop 적용 방법은 [오류 표시](./validation#visibility)를 참조하십시오.
 
 ## FormHandle {#form-handle}
 
@@ -143,7 +145,7 @@ controls의 `@.prop`와 optional chaining은 live form context를 읽습니다. 
 
 segment 자체가 `*`, `..`, `.`, `@`이면 연산자로 먼저 해석합니다. literal 이름은 `%2A`, `%2E%2E`, `%2E`, `%40`으로 escape합니다. 그 밖의 percent 문자는 그대로 두고 다른 segment는 `~1`, `~0`만 decode합니다. 맨 앞의 `#`만 fragment prefix이며 내부 `#`는 일반 이름입니다. literal property 이름 `%2A`, `%2E`, `%2E%2E`, `%40` 자체는 round-trip할 수 없어 ReservedPropertyName으로 거부합니다.
 
-canonical node·inactive-value·오류 경로는 이 percent literal 표기를 사용하므로 첨부 키도 `node.path`를 그대로 쓰십시오. 검증기·`$ref`의 RFC6901 pointer에는 폼 연산자를 적용하지 않으며 표준 URI fragment는 모든 segment를 percent-decode합니다. `JSONPointer`는 라이브러리 상수를 제공하며 일반 JSON 값 reader는 아닙니다.
+canonical node·inactive-value·오류 경로는 이 percent literal 표기를 사용합니다. 첨부 키에는 [파일 전송 예제](./examples/media-registration#files)의 규칙을 적용하십시오. 검증기·`$ref`의 RFC6901 pointer에는 폼 연산자를 적용하지 않으며 표준 URI fragment는 모든 segment를 percent-decode합니다. `JSONPointer`는 라이브러리 상수를 제공하며 일반 JSON 값 reader는 아닙니다.
 
 ## 이벤트와 훅 {#events-hooks}
 

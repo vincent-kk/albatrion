@@ -97,7 +97,7 @@ sidebar_position: 8
 - [enum 빈 값과 checkbox·radio 이름](./schema-reference#accessibility)에 맞게 DOM 검사를 바꾸십시오.
 - virtual 입력은 [현재 test hint](./schema-reference#input-resolution)로 매칭하십시오.
 - 완전한 [검증기 객체](./validation#validator-contract)를 제공하십시오.
-- Edited·EditedTouched 이름을 사용하십시오. 기본 showError 정책과 bit 값은 이 정책에 맞게 유지되며 Form showError prop·handle 메서드 이름도 유지합니다. [showError(false)](./validation#visibility)의 의미를 확인하십시오.
+- 현재 Edited·EditedTouched 상수를 사용하십시오. 기본 정책·표시 조건·Form showError prop·handle 동작은 [오류 표시](./validation#visibility)를 참조하십시오.
 - injectTo context에서 `parentJSONSchema`, `rootJSONSchema`를 사용하십시오.
 - onError callback의 추론 record에서 surface·aggregate 대신 `origin`을 읽고 [발생 계약](./error-reference#occurrences)을 따르십시오.
 - component cleanup 쓰기는 [inactive-value resolution](./api-reference#inactive-listeners)으로 바꾸고 reset·재진입 후 노드를 다시 조회하십시오.

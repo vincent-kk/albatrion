@@ -40,11 +40,13 @@ See [rendering](./core-concepts#rendering), [input resolution](./schema-referenc
 
 ## Root loads and configuration lifetime {#configuration-lifetime}
 
-Changing `jsonSchema` or `defaultValue` props alone does not replace the current tree. `reset()` reads the latest committed props, clears attached files and the showError override, and reloads defaults. It accepts only an automatic-write override flag, not a replacement value.
+Changing `jsonSchema` or `defaultValue` props alone does not replace the current tree. `reset()` reads the latest committed props, clears attached files, and reloads defaults. It accepts only an automatic-write override flag, not a replacement value.
 
 `rebuild()` invalidates that schema object's cached analysis and replaces this Form's root using reset's load options. Another Form using the same schema object keeps its existing tree. Reacquire nodes from the current handle after replacement.
 
-Changing the `validatorFactory` reference rebuilds the Form tree, so use a stable object for an unchanged configuration. Context, showError, validationMode, and input locks can change live; renderer/input configuration follows the [mount-time capture rules](./core-concepts#rendering).
+Changing the `validatorFactory` reference rebuilds the Form tree, so use a stable object for an unchanged configuration. Context and input locks can change live; renderer/input configuration follows the [mount-time capture rules](./core-concepts#rendering).
+
+`validationMode` is selected when the tree is created. Changing the Form prop does not update the existing tree's mode. After the changed prop commits, call `handle.rebuild()` or remount the Form, for example by changing its React `key`. A `reset()` with the same schema and validator retains the tree and its mode. For the separate lifetime of the Form's `showError` policy and how to apply a new prop, see [error visibility](./validation#visibility).
 
 ## FormHandle {#form-handle}
 
@@ -143,7 +145,7 @@ In controls, `@.prop` and optional chaining read the live form context. A branch
 
 Segments exactly `*`, `..`, `.`, or `@` are operators first. Escape literal names as `%2A`, `%2E%2E`, `%2E`, `%40`. Other percent text remains literal; other segments decode only `~1` and `~0`. A leading `#` alone is the fragment prefix; internal `#` is an ordinary name. The literal property names `%2A`, `%2E`, `%2E%2E`, `%40` themselves cannot round-trip and are rejected with ReservedPropertyName.
 
-Canonical node, inactive-value, and error paths use those percent literal forms; use `node.path` unchanged for attachment keys. Validator and `$ref` RFC6901 pointers have no form operators, and standard URI fragments percent-decode every segment. `JSONPointer` exports the library's constants; it is not a general JSON value reader.
+Canonical node, inactive-value, and error paths use those percent literal forms. Apply the attachment-key rule in the [file submission example](./examples/media-registration#files). Validator and `$ref` RFC6901 pointers have no form operators, and standard URI fragments percent-decode every segment. `JSONPointer` exports the library's constants; it is not a general JSON value reader.
 
 ## Events and hooks {#events-hooks}
 

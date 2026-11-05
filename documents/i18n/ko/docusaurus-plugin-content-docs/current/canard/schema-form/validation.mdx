@@ -11,23 +11,25 @@ sidebar_position: 5
 
 ## 검증 모드와 실행 시점 {#modes}
 
-기본값은 `ValidationMode.OnChange | ValidationMode.OnRequest`입니다. `None`은 검증을 끄고 `OnRequest`는 변경에 따른 자동 판정을 생략합니다. 검증이 켜진 모드에서 명시적 `validate()`, `submit()`은 즉시 시작하며 호출 시점의 값 snapshot을 검사합니다.
+기본값은 `ValidationMode.OnChange | ValidationMode.OnRequest`입니다. `None`은 전체 스키마 검증을 끄고 `OnRequest`는 변경에 따른 자동 판정을 생략합니다. None에서도 형상 선택에 필요한 `compileGuard`와 guard 평가는 실행할 수 있습니다. 검증이 켜진 모드에서 명시적 `validate()`, `submit()`은 즉시 시작하며 호출 시점의 값 snapshot을 검사합니다. 기존 Form의 모드를 바꾸는 방법은 [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 
 자동 OnChange 검증은 다음 프레임 뒤 시작하고 연속 입력의 trailing 실행을 유지하며 마지막 실제 자동 실행부터 100ms 상한을 둡니다. 입력 debounce는 FieldInput이 담당합니다. 프레임 API 부재·숨김 문서·정지 프레임에서는 task·100ms timer fallback을 사용합니다.
 
-root load마다 다음 프레임 뒤의 검증 슬롯 하나를 예약합니다. `None`은 compile을 생략하고 `OnRequest`는 compile만 준비하며 OnChange 초기 판정은 이후 write 요청이나 명시적 root 판정이 대체하지 않을 때만 실행합니다. 자동 load compile 실패는 채택한 트리를 유지하고 validate-origin 발생과 host 실패를 보고하며 reset·rebuild의 동기 예외로 다시 던지지 않습니다.
+root load마다 다음 프레임 뒤의 검증 슬롯 하나를 예약합니다. `None`은 전체 스키마 compile·판정을 생략하고 `OnRequest`는 전체 스키마 compile만 준비하며 OnChange 초기 판정은 이후 write 요청이나 명시적 root 판정이 대체하지 않을 때만 실행합니다. 자동 load compile 실패는 채택한 트리를 유지하고 validate-origin 발생과 host 실패를 보고하며 reset·rebuild의 동기 예외로 다시 던지지 않습니다.
 
 초기의 빈 오류 배열은 판정 전일 수 있으므로 판정이 필요하면 `validate()`를 기다리십시오. 자식 검증 요청은 대기 중인 전체 폼 요청을 취소하지 않습니다.
 
 ## 원시 오류와 오류 표시 {#visibility}
 
-`ShowError.Always`·true는 항상, `Never`·false는 전혀 표시하지 않으며 `Edited`, `Touched`는 해당 interaction flag를 요구합니다. 기본 `EditedTouched`는 둘 다 필요합니다. 노드의 `FieldNodeState.ErrorVisible`은 이 정책을 덮어씁니다. `handle.showError(true)`는 Form 정책을 강제하고 false는 prop 정책으로 돌려주므로 반드시 숨긴다는 뜻은 아닙니다.
+`ShowError.Always`·true는 항상, `Never`·false는 전혀 표시하지 않으며 `Edited`, `Touched`는 해당 interaction flag를 요구합니다. 기본 `EditedTouched`는 둘 다 필요합니다. 노드의 `FieldNodeState.ErrorVisible`은 이 정책을 덮어씁니다.
+
+Form의 `showError` prop은 로컬 정책의 초기값이며 prop 변경만으로 현재 정책을 동기화하지 않습니다. `handle.showError(true)`는 정책을 true로 설정합니다. 새 prop이 commit된 뒤 `handle.showError(false)`를 호출하면 최신 Form prop을 적용하므로 반드시 숨긴다는 뜻은 아닙니다. `reset()`도 다른 [load 연산](./api-reference#configuration-lifetime)과 함께 해당 prop을 다시 적용합니다. 새 React `key` 등으로 Form을 다시 마운트하면 새 prop으로 정책을 초기화합니다. FormProvider의 `showError`는 Form의 현재 로컬 정책이 undefined라서 fallback을 사용할 때만 live 갱신됩니다.
 
 OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하며 마지막 release 이후 계속 적격이어야 합니다. 부적격에 따른 숨김은 즉시 적용합니다. release는 pending true→false 정착, quiet post-paint 이력 drop, 수락한 명시적 root 판정, dispose 때 발생합니다. OnRequest·None은 이력 없이 현재 적격성을 사용합니다.
 
 하나의 public batch·subtree walk는 첫 상태만 기록하지만 React batch 안의 별도 public 쓰기는 중간 상태도 기록할 수 있습니다. React remount·가상화는 노드 적격성 이력을 지우지 않으며 context가 계속 바뀌면 새 오류 표시도 계속 지연될 수 있습니다.
 
-`node.errors`, `getErrors()`, 함수 children, `Form.Render`는 표시 정책과 별개로 원시 오류를 제공합니다. 숨김 필드는 값과 오류를 유지하며 inactive 경로는 출력에서 빠지고 off-branch 검증 이슈는 건너뜁니다.
+전체 스키마 검증이 실행되면 `validate()`는 필터링하지 않은 판정을 반환합니다. `getErrors()`·Form 함수 children은 표시 정책과 별개로 폼 전체 원시 목록을 제공합니다. off-branch 이슈도 이 결과에 남습니다. `node.errors`·`Form.Render`는 해당 노드에 배분된 원시 이슈를 제공합니다. schemaPath로 비활성 gated oneOf·anyOf 분기에 유일하게 귀속되고 활성 형제 분기가 있는 이슈만 노드 배분에서 생략하며 전체 판정에서 제거하지는 않습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
 
 React-only disabled 토글, 지연된 presence commit, release와 paint 사이의 쓰기는 hold를 생략하거나 1~2프레임 전 판정을 보이게 할 수 있습니다. 업무 흐름은 원시 오류로, 표시는 렌더러의 적격성 결정으로 처리하십시오.
 
@@ -43,7 +45,7 @@ keyword·기본 메시지는 `presentation.errorMessages`, 애플리케이션별
 
 엔진은 compile·compileGuard·release에 같은 소유 root copy를 전달합니다. `$ref`, `$id`, anchor 문맥을 보존하고 전달된 schema와 값을 변경하지 마십시오. nonboolean guard 결과·compile 실패·throw는 그 gate를 실패시키며 전체 스키마 compile 실패가 guard를 되돌리지는 않습니다. release는 cache에서 root를 내보낼 때 실행하고 등록하지 않은 root에도 멱등이어야 합니다. 양쪽 dialect를 알고 `$schema`가 다르면 `DialectMismatch`로 보고합니다.
 
-같은 `$id`의 서로 다른 live root도 격리해야 하며 엔진은 ID를 다시 쓰지 않습니다. `already exists` 또는 `resolves to more than one schema` 문구를 포함한 실패만 `duplicateSchemaId`로 분류하고 다른 root 해제 뒤 한 번 재시도합니다.
+같은 `$id`의 서로 다른 live root도 격리해야 하며 엔진은 ID를 다시 쓰지 않습니다. Error instance의 메시지가 `already exists` 또는 `resolves to more than one schema`를 포함하고 같은 검증기가 같은 문자열 `$id`의 다른 live root를 실제로 보유할 때만 `duplicateSchemaId`로 분류합니다. 경쟁 root의 소비자가 모두 해제된 뒤 다음 compile·검증 접근에서 cache된 실패를 한 번 재시도합니다. 해제 자체가 compile을 실행하지 않으며 다른 compile 실패에는 이 재시도를 적용하지 않습니다.
 
 guard는 `$async`, 비동기 keyword·format, host 밖의 데이터에 의존하는 keyword(`$data`, 부모·형제 데이터)를 지원하지 않습니다. AJV 플러그인은 remote ref를 다운로드하지 않으므로 root 내부나 bound instance에 참조 schema를 준비하십시오. 검증 라이브러리가 허용하더라도 custom keyword는 값을 변경하면 안 됩니다.
 
@@ -67,7 +69,7 @@ guard는 `$async`, 비동기 keyword·format, host 밖의 데이터에 의존하
 
 사용자 AJV 8 instance를 만들 때에는 소비자 애플리케이션에 `ajv@8.17.1`을 설치하십시오. 플러그인 자체의 AJV 의존성이 애플리케이션의 `import Ajv from 'ajv'` 버전을 정하지는 않습니다.
 
-첫 compile·등록 전에 한 번 bind하십시오. 재bind는 지원하는 수명주기가 아닙니다. `coerceTypes`, `useDefaults`, `removeAdditional`은 기존 binding을 바꾸기 전에 거부합니다. native `ValidatorBindRefusedError`는 group·code metadata를 가지며 코어 `UnhandledError` instance가 아니므로 `isUnhandledError`로 분류하지 마십시오.
+첫 compile·등록 전에 한 번 bind하십시오. 재bind는 지원하는 수명주기가 아닙니다. `coerceTypes`, `useDefaults`, `removeAdditional`은 기존 binding을 바꾸기 전에 거부합니다. native 거부 오류는 `group: 'UNHANDLED_ERROR'`, `code: FormErrorCode.ValidatorBindRefused`를 가집니다. 잡은 값의 형을 좁힌 뒤 이 속성으로 구분하십시오. `isUnhandledError`는 이 native 오류를 인식하지 않습니다.
 
 AJV 6·7의 bind는 새 root registry를 시작합니다. AJV 8은 이미 등록된 root를 release까지 그 root를 등록한 instance에 연결합니다. Form별 완전한 어댑터에는 `createValidator(ajv, options?)`를 사용하고 render 밖에서 생성하거나 안정된 의존성으로 memoize하십시오. 여러 어댑터는 값을 변경하지 않는 AJV instance 하나를 공유할 수 있습니다.
 
@@ -99,11 +101,11 @@ export function EvenNumberForm() {
 
 AJV 어댑터 세 가지는 모두 `plugin.validator.configure({ directGuardCompile })`를 지원하며 기본값은 true입니다. true이면 self-contained guard를 직접 compile하고 false이면 이후 compile을 root pointer로 보냅니다. 생략한 옵션은 유지하고 기존 predicate는 바꾸지 않으며 bound AJV 설정도 변경하지 않습니다.
 
-reference·identifier 키 또는 root·guard의 `$schema`가 있으면 direct를 선택해도 root-pointer compile을 사용합니다. root 다른 부분의 code-generation 오류가 root-pointer guard를 실패시킬 수 있지만 직접 compile한 self-contained guard에는 그 오류를 전파하지 않습니다.
+direct를 선택해도 root의 own `$schema` 또는 선택한 guard subtree 안의 reference·identifier·anchor·`$schema` 키는 root-pointer compile을 요구합니다. AJV 6의 legacy schemaId 모드에서는 subtree의 `id`도 검사합니다. subtree 밖 root의 `$id`나 root의 다른 위치에 있는 `$ref`만으로는 direct compile을 막지 않습니다. root 다른 부분의 code-generation 오류가 root-pointer guard를 실패시킬 수 있지만 직접 compile한 self-contained guard에는 그 오류를 전파하지 않습니다.
 
 guard sibling instance는 bound dialect·format·keyword를 유지하면서 `allErrors: false`, `validateSchema: false`를 사용합니다. root meta-schema 검사는 bound `validateSchema` 정책에 따른 전체 검증의 일입니다. guard 밖이나 안의 meta-only 위반은 별도 guard meta 검사를 만들지 않지만 strict·custom keyword·code-generation 검사는 적용합니다. strict compile 실패는 true·false 대신 `GuardFailed`로 두 조건 분기를 모두 끕니다.
 
-`$id`가 있는 root는 격리 등록하고 ID 없는 whole root는 임시 copy를 사용합니다. self-contained direct guard는 AJV에 root를 등록할 필요가 없습니다. release는 root 등록·compiled 결과·direct guard를 정리하며 미등록 root에는 no-op입니다. schema가 아닌 pointer는 root ID·pointer details를 가진 native `GuardPointerNotSchemaError`, code `GUARD_POINTER_NOT_SCHEMA`를 던집니다.
+`$id`가 있는 root는 격리 등록하고 ID 없는 whole root는 임시 copy를 사용합니다. self-contained direct guard는 AJV에 root를 등록할 필요가 없습니다. release는 root 등록·compiled 결과·direct guard를 정리하며 미등록 root에는 no-op입니다. schema가 아닌 pointer는 `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, `details.root`·`details.pointer`를 가진 native 오류를 던집니다. 잡은 값의 형을 좁힌 뒤 이 속성을 검사하십시오.
 
 ## AJV 7·8 dynamic·recursive guard 범위 {#dynamic-guard-scope}
 
