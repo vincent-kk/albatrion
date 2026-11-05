@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type {
-  FormHandle,
-  ValidationIssue} from '@canard/schema-form';
+import type { FormHandle, ValidationIssue } from '@canard/schema-form';
 import {
   Form,
   type JSONSchema,
@@ -78,7 +76,7 @@ export const UseSubmitHandler = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
@@ -168,7 +166,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
@@ -238,7 +236,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
