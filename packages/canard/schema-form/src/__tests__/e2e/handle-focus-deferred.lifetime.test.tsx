@@ -3,7 +3,12 @@ import { createRef, useLayoutEffect, useRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type FieldRendererProps, Form, type FormHandle } from '@/schema-form';
+import {
+  type FieldInputProps,
+  type FieldRendererProps,
+  Form,
+  type FormHandle,
+} from '@/schema-form';
 
 import {
   type FormHarness,
@@ -33,6 +38,31 @@ afterEach(() => {
 
 // filid:contract exact-focus
 describe.each([false, true])('focus lifetime strict=%s', (strictMode) => {
+  it('preserves a newer focus request from the target mount layout effect', async () => {
+    const Input = ({ path }: FieldInputProps) => {
+      const requested = useRef(false);
+      useLayoutEffect(() => {
+        if (requested.current) return;
+        requested.current = true;
+        form!.handle.focus(path);
+      }, [path]);
+      return <input id={path} />;
+    };
+    const current = (form = await renderForm(focusSchema, {
+      validator: true,
+      strictMode,
+      virtualization: focusVirtualization,
+      fieldInputMap: { [focusTarget]: Input },
+    }));
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    await act(async () => current.handle.focus(focusTarget));
+    const target = current.field(focusTarget);
+    expect(target).not.toBeNull();
+    expect(document.activeElement).toBe(target);
+    expect(
+      focus.mock.contexts.filter((element) => element === target),
+    ).toHaveLength(1);
+  });
   it('cancels a pending reservation on reset', async () => {
     const current = (form = await renderForm(focusSchema, {
       validator: true,
@@ -156,4 +186,36 @@ describe.each([false, true])('focus lifetime strict=%s', (strictMode) => {
     });
     expect(document.activeElement).toBe(current.field('/first'));
   });
+});
+
+it('releases a no-gate fallback before an omitted target mounts later', async () => {
+  const handle = createRef<FormHandle>();
+  const tree = (show: boolean) => (
+    <Form
+      ref={handle}
+      jsonSchema={focusSchema}
+      virtualization={focusVirtualization}
+    >
+      {show ? <Form.Input path={focusTarget} /> : <span>omitted target</span>}
+    </Form>
+  );
+  const view = render(tree(false));
+  const target = handle.current!.findNode(focusTarget)!;
+  const request = vi.spyOn(target, 'request');
+  const add = vi.spyOn(document, 'addEventListener');
+  const remove = vi.spyOn(document, 'removeEventListener');
+  const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+  act(() => handle.current!.focus(focusTarget));
+  expect(request).not.toHaveBeenCalled();
+  await act(async () => {});
+  expect(request).toHaveBeenCalledTimes(1);
+  const listeners = add.mock.calls.filter(([name]) => name === 'focusin');
+  expect(listeners).toHaveLength(1);
+  expect(remove).toHaveBeenCalledWith('focusin', listeners[0][1], true);
+  view.rerender(tree(true));
+  const input = view.container.querySelector(`input[id="${focusTarget}"]`);
+  expect(input).not.toBeNull();
+  expect(
+    focus.mock.contexts.filter((element) => element === input),
+  ).toHaveLength(0);
 });

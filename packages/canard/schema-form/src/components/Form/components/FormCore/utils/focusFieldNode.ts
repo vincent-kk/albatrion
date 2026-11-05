@@ -33,6 +33,7 @@ export const focusFieldNode = (
   }
   const document = form.ownerDocument;
   let moved = false;
+  let mountHandled = false;
   const onFocus = () => {
     moved = true;
     document.removeEventListener('focusin', onFocus, true);
@@ -42,14 +43,18 @@ export const focusFieldNode = (
     document.removeEventListener('focusin', onFocus, true),
   );
   request.onCancel(
-    lifecycle.reserve(target, FieldLifecycle.Mount, () =>
-      request.live && !moved
+    lifecycle.reserve(target, FieldLifecycle.Mount, () => {
+      mountHandled = true;
+      return request.live && !moved
         ? FieldLifecycleAction.Focus
-        : FieldLifecycleAction.None,
-    ),
+        : FieldLifecycleAction.None;
+    }),
   );
   if (!manager.revealPath(target, () => request.cancel())) {
-    request.cancel();
-    target.request(FieldNodeRequestType.Focus);
+    queueMicrotask(() => {
+      if (!request.live || mountHandled) return;
+      request.cancel();
+      target.request(FieldNodeRequestType.Focus);
+    });
   }
 };
