@@ -39,7 +39,7 @@ Declarative rules that apply at all times. Loaded at session start.
 
 | Family    | Files                                                                                                                                                                           |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seiri_*` | `agent-legible`, `code-comments`, `cognitive-discipline`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
+| `seiri_*` | `agent-legible`, `code-comments`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
 | `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                                              |
 
 Precedence: repository instructions (this document, per-package CLAUDE.md) > repository conventions > the rules above.
