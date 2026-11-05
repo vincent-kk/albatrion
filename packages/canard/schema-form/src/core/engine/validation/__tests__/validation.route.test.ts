@@ -99,4 +99,139 @@ describe('validation issue attribution', () => {
     ]);
     expect(readFieldNodeErrors(root.structure?.value ?? root)).toHaveLength(3);
   });
+
+  describe('terminal roots', () => {
+    it('VALIDATE-043 routes an inner issue of a terminal object root to the root unchanged', () => {
+      const { root, runtime } = createDispatchTree({
+        type: 'object',
+        options: { terminal: true },
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issue = { dataPath: '/name', message: 'short' };
+      routeValidationIssues([root], [issue]);
+      expect(root.structure).toBeNull();
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+      expect(readFieldNodeErrors(root)[0].dataPath).toBe('/name');
+      expect(runtime.globalErrors).toEqual([issue]);
+    });
+
+    it('VALIDATE-043 routes an issue whose dataPath has an undecodable percent escape to a terminal root unchanged', () => {
+      const { root } = createDispatchTree({
+        type: 'object',
+        options: { terminal: true },
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issue = { dataPath: '#/na%me', message: 'malformed' };
+      routeValidationIssues([root], [issue]);
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+      expect(readFieldNodeErrors(root)[0].dataPath).toBe('#/na%me');
+    });
+
+    it('VALIDATE-051 keeps a rejected-key issue on a terminal root because it has no parent to climb to', () => {
+      const { root } = createDispatchTree({
+        type: 'object',
+        options: { terminal: true },
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issue = { dataPath: '', rejectedKey: 'extra', message: 'rejected' };
+      routeValidationIssues([root], [issue]);
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+    });
+
+    it('VALIDATE-043 routes an item issue of a terminal array root to the root', () => {
+      const { root } = createDispatchTree({
+        type: 'array',
+        items: { type: 'string' },
+        options: { terminal: true },
+      });
+      dispatchMount(root, ['a']);
+      const issue = { dataPath: '/0', message: 'item' };
+      routeValidationIssues([root], [issue]);
+      expect(root.structure).toBeNull();
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+    });
+
+    it('VALIDATE-043 routes an inner issue of a multi-kind union root to the root', () => {
+      const { root } = createDispatchTree({ type: ['object', 'string'] });
+      dispatchMount(root, { name: 'a' });
+      const issue = { dataPath: '/name', message: 'inner' };
+      routeValidationIssues([root], [issue]);
+      expect(root.structure).toBeNull();
+      expect(readFieldNodeErrors(root)).toEqual([issue]);
+    });
+
+    it('VALIDATE-043 assigns the same inner issue to a non-root terminal the same way', () => {
+      const { root } = createDispatchTree({
+        type: 'object',
+        properties: {
+          held: {
+            type: 'object',
+            options: { terminal: true },
+            properties: { name: { type: 'string' } },
+          },
+        },
+      });
+      dispatchMount(root, { held: { name: 'a' } });
+      const issue = { dataPath: '/held/name', message: 'short' };
+      routeValidationIssues([root], [issue]);
+      const held = root.structure?.held ?? root;
+      expect(held).not.toBe(root);
+      expect(readFieldNodeErrors(held)).toEqual([issue]);
+      expect(readFieldNodeErrors(root)).toEqual([]);
+    });
+
+    it('VALIDATE-043 keeps every issue once and in order on a terminal root', () => {
+      const { root, runtime } = createDispatchTree({
+        type: 'object',
+        options: { terminal: true },
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issues = [
+        { dataPath: '/name', message: 'first' },
+        { dataPath: '', message: 'second' },
+        { dataPath: '/name/deeper', message: 'third' },
+      ];
+      routeValidationIssues([root], issues);
+      expect(runtime.globalErrors).toBe(issues);
+      expect(readFieldNodeErrors(root)).toEqual(issues);
+    });
+  });
+
+  describe('unresolved paths on a branch root', () => {
+    it('VALIDATE-043 still drops an issue whose first segment names no child', () => {
+      const { root, runtime } = createDispatchTree({
+        type: 'object',
+        properties: { name: { type: 'string' } },
+      });
+      dispatchMount(root, { name: 'a' });
+      const issues = [
+        { dataPath: '/absent', message: 'ownerless' },
+        { dataPath: '/name', message: 'named' },
+      ];
+      routeValidationIssues([root], issues);
+      expect(readFieldNodeErrors(root)).toEqual([]);
+      expect(readFieldNodeErrors(root.structure?.name ?? root)).toEqual([
+        issues[1],
+      ]);
+      expect(runtime.globalErrors).toBe(issues);
+    });
+
+    it('VALIDATE-043 routes the empty-name slash path to the empty-name child', () => {
+      const { root } = createDispatchTree({
+        type: 'object',
+        properties: { '': { type: 'string' }, name: { type: 'string' } },
+      });
+      dispatchMount(root, { '': 'empty', name: 'ordinary' });
+      const issue = { dataPath: '/', message: 'empty-name issue' };
+      routeValidationIssues([root], [issue]);
+      expect(readFieldNodeErrors(root.structure?.[''] ?? root)).toEqual([
+        issue,
+      ]);
+      expect(readFieldNodeErrors(root)).toEqual([]);
+    });
+  });
 });
