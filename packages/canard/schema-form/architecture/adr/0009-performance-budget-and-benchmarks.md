@@ -2,25 +2,25 @@
 
 ## 상태
 
-| 항목 | 닫은 사람 | 라운드 |
-| --- | --- | --- |
-| GOAL-023 | 편집자 결정(3–5라운드 기록, `reviews/round-1.md:28` 측정, `adr/0009-performance-budget-and-benchmarks.md:53`) | 5 |
-| TEST-013 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:154`), 소유자 답(`reviews/round-16-owner-answers.md:13` 답 7), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; `:160`의 파서 변환 시험을 대체) | 18 |
-| TEST-026 | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:216`) | 16 |
-| TEST-027 | 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`) | 16 |
-| TEST-028 | 소유자 답(`00-goals.md:150` G6) | 1(ADR 0009 본문) |
-| TEST-029 | 원리(`00-goals.md:77` G6), 소유자 답(`00-goals.md:150` G6) | 1(ADR 0009 본문) |
-| TEST-030 | 편집자 결정(11라운드 5차 주, `adr/0009-performance-budget-and-benchmarks.md:3`) | 11 |
-| TEST-031 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:64`), 편집자 결정(16라운드, `09-landing-and-test-strategy.md:222`) | 16 |
-| TEST-032 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:71`), 편집자 결정(14라운드, `adr/0009-performance-budget-and-benchmarks.md:82`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15·18C-67·18C-81) | 18 |
-| TEST-033 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:86`) | 1 |
-| TEST-034 | 편집자 결정(1라운드 ADR 0009 본문의 관찰, `adr/0009-performance-budget-and-benchmarks.md:16`) | 1 |
-| TEST-035 | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:35`) | 1 |
-| TEST-036 | 편집자 결정(1라운드 측정 기록, `reviews/round-1.md:19`) | 1 |
-| TEST-037 | 편집자 결정(2라운드 측정 기록, `reviews/round-2.md:18`) | 2 |
-| TEST-062 | 편집자 결정(1라운드 ADR 0009 본문의 관찰, `adr/0009-performance-budget-and-benchmarks.md:104`) | 1 |
-| TEST-065 | 소유자 답(`reviews/round-18-owner-answers.md:13` 12-3), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`) | 18 |
-| VALIDATE-027 | 편집자 결정(1라운드, `adr/0004-validator-plugin-compile-guard.md:44` R18), 소유자 답(`reviews/round-18-owner-answers.md:13` 12-3), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:13` 반영 칸; 답을 가로 읽음) | 18 |
+| 항목         | 닫은 사람                                                                                                                                                                                                                                    | 라운드           |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| GOAL-023     | 편집자 결정(3–5라운드 기록, `reviews/round-1.md:28` 측정, `adr/0009-performance-budget-and-benchmarks.md:53`)                                                                                                                                | 5                |
+| TEST-013     | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:154`), 소유자 답(`reviews/round-16-owner-answers.md:13` 답 7), 소유자 답(`reviews/round-18-owner-answers.md:7` S1; `:160`의 파서 변환 시험을 대체)                                    | 18               |
+| TEST-026     | 편집자 결정(16라운드, `09-landing-and-test-strategy.md:216`)                                                                                                                                                                                 | 16               |
+| TEST-027     | 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)                                                                                                  | 16               |
+| TEST-028     | 소유자 답(`00-goals.md:150` G6)                                                                                                                                                                                                              | 1(ADR 0009 본문) |
+| TEST-029     | 원리(`00-goals.md:77` G6), 소유자 답(`00-goals.md:150` G6)                                                                                                                                                                                   | 1(ADR 0009 본문) |
+| TEST-030     | 편집자 결정(11라운드 5차 주, `adr/0009-performance-budget-and-benchmarks.md:3`)                                                                                                                                                              | 11               |
+| TEST-031     | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:64`), 편집자 결정(16라운드, `09-landing-and-test-strategy.md:222`)                                                                                         | 16               |
+| TEST-032     | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:71`), 편집자 결정(14라운드, `adr/0009-performance-budget-and-benchmarks.md:82`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-15·18C-67·18C-81) | 18               |
+| TEST-033     | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:86`)                                                                                                                                                       | 1                |
+| TEST-034     | 편집자 결정(1라운드 ADR 0009 본문의 관찰, `adr/0009-performance-budget-and-benchmarks.md:16`)                                                                                                                                                | 1                |
+| TEST-035     | 편집자 결정(1라운드 ADR 0009 본문, `adr/0009-performance-budget-and-benchmarks.md:35`)                                                                                                                                                       | 1                |
+| TEST-036     | 편집자 결정(1라운드 측정 기록, `reviews/round-1.md:19`)                                                                                                                                                                                      | 1                |
+| TEST-037     | 편집자 결정(2라운드 측정 기록, `reviews/round-2.md:18`)                                                                                                                                                                                      | 2                |
+| TEST-062     | 편집자 결정(1라운드 ADR 0009 본문의 관찰, `adr/0009-performance-budget-and-benchmarks.md:104`)                                                                                                                                               | 1                |
+| TEST-065     | 소유자 답(`reviews/round-18-owner-answers.md:13` 12-3), 편집자 결정(17라운드, 18라운드 안건으로 이관, `reviews/round-18-agenda.md:67`)                                                                                                       | 18               |
+| VALIDATE-027 | 편집자 결정(1라운드, `adr/0004-validator-plugin-compile-guard.md:44` R18), 소유자 답(`reviews/round-18-owner-answers.md:13` 12-3), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:13` 반영 칸; 답을 가로 읽음)                     | 18               |
 
 ## 결정
 
@@ -49,13 +49,13 @@ ADR 0010은 분기 관행 문서다(외부 조사 항목 아님)(VALIDATE-030).
 234파일을 넷으로 가른다(TEST-013).
 (TEST-013, WRITE-052, TEST-068)
 
-| 부류 | 기준 | 대표 | 규모 |
-| --- | --- | --- | --- |
-| 그대로 산다 | 순수 함수이거나 타입 사상, 새 엔진에 시그니처와 뜻이 그대로, 타이머 없음, LANDING-004–LANDING-046, LANDING-145, LANDING-048, LANDING-049, LANDING-149의 어느 행에도 안 걸림. 단위가 옮겨 가면 시험도 함께 옮긴다 | `helpers/jsonPointer/utils/__tests__/*`, 식 정규식 시험(옮김), 잎 교차 시험(먼저 승 관련과 `intersectEnum`·`intersectConst`·`validateRange`의 throw 단언 제외. 이 셋의 throw 단언은 '버리고 새로 쓴다'로(공집합 표시를 단언한다). `intersectConst.test.ts:40-58`의 참조 비교 단언과 `intersectPattern.test.ts:6-14`의 전방 탐색 단언도 '그대로 산다'에서 빠진다), `ArrayNode/utils/__tests__`, `InferSchemaNode.type.test.ts` | 약 30 |
-| 표면만 고친다 | 모든 단언의 기대값이 08 규칙에서 그대로 나오고 이름만 바뀐다(`computed` → `controls`, `normalizedValue` → `outputValue`, `FormGroup` → `FormTypeGroupRenderer`, `JSONSchemaError` → `ValidationIssue`). 단언마다 LANDING-004–LANDING-046, LANDING-145, LANDING-048, LANDING-049, LANDING-149와 대조한다 | 조합·옛 키 없는 렌더 시나리오 17파일(`array.mutation-identity`, `controlled-interaction`, `default-value`, `formType-resolution`, `state-management`, `validation.errors` 등). 반례: `terminal-mode`의 "터미널 아래 `find`가 터미널을 돌려준다"는 LANDING-020에 걸려 재작성. 이 17파일도 스키마와 단계는 데이터 모듈로 옮기고, 단언은 이름만 바꿔 e2e의 추가 단언으로 둔다(16라운드 답 7로 확정) | 약 25 |
-| 버리고 새로 쓴다 | 기대값이 LANDING-004–LANDING-046, LANDING-145, LANDING-048, LANDING-049, LANDING-149 이주 행(분기 자동 감지, `oneOfIndex`, `schemaPath`, 복원, 주입 순환 차단, 루트 전역, 먼저 승, 마이크로태스크 타이밍)이나 삭제될 내부를 단언한다. 노드마다 타입에 맞는 parse를 두고 뜻이 그대로인 변환만 남긴다. **상황 목록은 자산으로 옮긴다**(TEST-008의 데이터 모듈로) | `core/__tests__` 87파일 가운데 옛 표면 52·타이머 의존 78, `oneOfSchemaPath`, `AbstractNode.injectTo`, `core/parsers/__tests__`, 렌더 시나리오 `composition.*`·`computed.*` | 약 150 |
-| 미분류 | 위 세 부류의 기준으로 아직 가르지 않은 것. PR-0의 처분 목록에서 파일마다 가른다 | — | 약 29 |
-| 새로 있어야 한다 | 설계의 새 장치마다 시험이 없다 | TEST-014, TEST-069, TEST-016–TEST-020 | — |
+| 부류             | 기준                                                                                                                                                                                                                                                                                                                                                           | 대표                                                                                                                                                                                                                                                                                                                                                                                                                          | 규모   |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 그대로 산다      | 순수 함수이거나 타입 사상, 새 엔진에 시그니처와 뜻이 그대로, 타이머 없음, LANDING-004–LANDING-046, LANDING-145, LANDING-048, LANDING-049, LANDING-149의 어느 행에도 안 걸림. 단위가 옮겨 가면 시험도 함께 옮긴다                                                                                                                                               | `helpers/jsonPointer/utils/__tests__/*`, 식 정규식 시험(옮김), 잎 교차 시험(먼저 승 관련과 `intersectEnum`·`intersectConst`·`validateRange`의 throw 단언 제외. 이 셋의 throw 단언은 '버리고 새로 쓴다'로(공집합 표시를 단언한다). `intersectConst.test.ts:40-58`의 참조 비교 단언과 `intersectPattern.test.ts:6-14`의 전방 탐색 단언도 '그대로 산다'에서 빠진다), `ArrayNode/utils/__tests__`, `InferSchemaNode.type.test.ts` | 약 30  |
+| 표면만 고친다    | 모든 단언의 기대값이 08 규칙에서 그대로 나오고 이름만 바뀐다(`computed` → `controls`, `normalizedValue` → `outputValue`, `FormGroup` → `FormTypeGroupRenderer`, `JSONSchemaError` → `ValidationIssue`). 단언마다 LANDING-004–LANDING-046, LANDING-145, LANDING-048, LANDING-049, LANDING-149와 대조한다                                                        | 조합·옛 키 없는 렌더 시나리오 17파일(`array.mutation-identity`, `controlled-interaction`, `default-value`, `formType-resolution`, `state-management`, `validation.errors` 등). 반례: `terminal-mode`의 "터미널 아래 `find`가 터미널을 돌려준다"는 LANDING-020에 걸려 재작성. 이 17파일도 스키마와 단계는 데이터 모듈로 옮기고, 단언은 이름만 바꿔 e2e의 추가 단언으로 둔다(16라운드 답 7로 확정)                              | 약 25  |
+| 버리고 새로 쓴다 | 기대값이 LANDING-004–LANDING-046, LANDING-145, LANDING-048, LANDING-049, LANDING-149 이주 행(분기 자동 감지, `oneOfIndex`, `schemaPath`, 복원, 주입 순환 차단, 루트 전역, 먼저 승, 마이크로태스크 타이밍)이나 삭제될 내부를 단언한다. 노드마다 타입에 맞는 parse를 두고 뜻이 그대로인 변환만 남긴다. **상황 목록은 자산으로 옮긴다**(TEST-008의 데이터 모듈로) | `core/__tests__` 87파일 가운데 옛 표면 52·타이머 의존 78, `oneOfSchemaPath`, `AbstractNode.injectTo`, `core/parsers/__tests__`, 렌더 시나리오 `composition.*`·`computed.*`                                                                                                                                                                                                                                                    | 약 150 |
+| 미분류           | 위 세 부류의 기준으로 아직 가르지 않은 것. PR-0의 처분 목록에서 파일마다 가른다                                                                                                                                                                                                                                                                                | —                                                                                                                                                                                                                                                                                                                                                                                                                             | 약 29  |
+| 새로 있어야 한다 | 설계의 새 장치마다 시험이 없다                                                                                                                                                                                                                                                                                                                                 | TEST-014, TEST-069, TEST-016–TEST-020                                                                                                                                                                                                                                                                                                                                                                                         | —      |
 
 소유자(18라운드 S1): "S1. node 는 각자의 타입에 맞는 parse 함수를 가져야 합니다. 지금처럼요."(TEST-013)
 
@@ -91,32 +91,32 @@ ADR 0006(값의 소유), 0007(작업 루프), 0011(노드를 필요할 때 만�
 
 - **패키지 내 벤치** — `bench/*.bench.ts` 7개, `vitest bench`(node 환경, JSDOM 없음)(TEST-034). `bench:baseline`이 `bench/.results/baseline.json`을 쓰고 `bench:compare`가 그것과 비교한다(`package.json:47-50`)(TEST-034). `bench/.results/`는 git 추적 대상이 아니다(TEST-034).
 
-| 파일 | 재는 것 |
-| ---- | ------- |
-| `nodeFromJSONSchema.bench.ts` | 스키마 → 노드 트리 생성 (flat / nested / oneOf / computed) |
-| `branch-strategy-init.bench.ts` | oneOf 분기 초기화 비용 (2×3 … 10×10, 중첩 깊이 3/5) |
-| `event-cascade.bench.ts` | `setValue` → 캐스케이드 (20필드 배치 쓰기, derived 체인, oneOf 토글) |
-| `find-node.bench.ts` | `find()` 탐색 (깊이 3/7/12, 팬아웃 10/50) |
-| `compute-recalculate.bench.ts` | `ComputedPropertiesManager.recalculate()` |
-| `object-pending-read.bench.ts` | 자식 커밋이 대기 중일 때 부모 객체 읽기 비용 |
-| `render-delay.bench.ts` | 버전 간 마운트 회귀 감시 (필드 5 / 25 / 150) |
+| 파일                            | 재는 것                                                              |
+| ------------------------------- | -------------------------------------------------------------------- |
+| `nodeFromJSONSchema.bench.ts`   | 스키마 → 노드 트리 생성 (flat / nested / oneOf / computed)           |
+| `branch-strategy-init.bench.ts` | oneOf 분기 초기화 비용 (2×3 … 10×10, 중첩 깊이 3/5)                  |
+| `event-cascade.bench.ts`        | `setValue` → 캐스케이드 (20필드 배치 쓰기, derived 체인, oneOf 토글) |
+| `find-node.bench.ts`            | `find()` 탐색 (깊이 3/7/12, 팬아웃 10/50)                            |
+| `compute-recalculate.bench.ts`  | `ComputedPropertiesManager.recalculate()`                            |
+| `object-pending-read.bench.ts`  | 자식 커밋이 대기 중일 때 부모 객체 읽기 비용                         |
+| `render-delay.bench.ts`         | 버전 간 마운트 회귀 감시 (필드 5 / 25 / 150)                         |
 
 - **라이브러리 간 비교** — `packages/aileron/benchmark-form`(TEST-034). `@canard/schema-form`(워크스페이스 + 고정 버전 0.9.0–0.12.5)을 `@rjsf/core`, `react-hook-form`, `formik`, `@tanstack/react-form`과 같은 하니스(마운트 / 키 입력 / 프로그램적 `setValue`)로 비교한다(TEST-034). 공정성을 위해 문자열 필드만 있는 평면 스키마를 쓴다(TEST-034). schema-form 전용 기능은 "scale" 벤치(flat 50/100/500, nested, array 100/500/1000, oneOf 5/10/20)와 `array-node-stress`(push / applyValue / remove)가 따로 잰다(TEST-034). 통계적 회귀 게이트(`guard:baseline` / `guard:check`)가 있다(TEST-034).
 - **모바일 성능 보고서** — `docs/ko/MOBILE_PERFORMANCE_REPORT.md`(v0.10.6)(TEST-034). 문서화된 안전 임계: 필드 50개 미만, 배열 아이템 30개 미만, computed 의존 20개 미만, 중첩 깊이 8 미만, oneOf 분기당 필드 20개 미만(TEST-034).
 
 (TEST-035, TEST-030)
 
-| 장치 | 위치 | 새 구조에서 |
-| ---- | ---- | ----------- |
-| computed가 없는 노드가 공유하는 frozen sentinel | `getComputedPropertiesManager.ts:19-26` | 유지. `controls`의 식이 없는 노드는 표현식 비용이 0이어야 한다 |
-| 단순 동등식 분기의 O(1) 인덱스 조회 | `.../getSimpleEquality.ts:16-64` | 사라진다(`&if` 분기 폐지). 가드 평가는 검증기가 한다. 측정 결과 AJV에서는 대체 장치가 필요 없다(50분기의 마지막 일치도 1.25 µs) |
-| 지연 합성 값 캐시 `__composed__` | `ObjectNode/.../BranchStrategy.ts:107-110, 304-317` | 필요 없어진다. 방출 값의 메모를 쓰는 곳이 작업 루프 하나이고, 바뀐 자식이 없으면 이전 참조를 그대로 둔다 (VALUE-012, VALUE-013) |
-| 이벤트 배치와 병합 | `EventCascadeManager.ts:79-125` | 통지 1회로 대체된다 (EVENT-001) |
-| `revision(mask)` 원장 | `EventCascadeManager.ts:159-201` | 유지 |
-| `Batch` / `Isolate` 플래그로 대량 쓰기의 커밋 횟수 줄이기 | `core/types/value.ts:26-66` | "표시 N번 → 계산·커밋 1번"으로 대체된다 (SETTLE-001) |
-| 할당 없는 `schemaPath` 매칭 | `.../matchesSchemaPath.ts:29-37` | 유지. 에러 배정은 `dataPath`로 하고 `schemaPath`는 꺼진 union 분기를 표시에서 거르는 필터에서만 쓴다 (VALIDATE-043) |
-| 렌더 가상화 | `helpers/virtualization/` | 유지. 노드를 필요할 때 만드는 안(NODE-053)과 결합할 수 있다 |
-| 자식 컴포넌트 맵의 메모이제이션 | `.../useChildNodeComponents.tsx:52-113` | 유지. 캐시가 언마운트까지 무한히 자라는 문제는 함께 고친다 |
+| 장치                                                      | 위치                                                | 새 구조에서                                                                                                                     |
+| --------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| computed가 없는 노드가 공유하는 frozen sentinel           | `getComputedPropertiesManager.ts:19-26`             | 유지. `controls`의 식이 없는 노드는 표현식 비용이 0이어야 한다                                                                  |
+| 단순 동등식 분기의 O(1) 인덱스 조회                       | `.../getSimpleEquality.ts:16-64`                    | 사라진다(`&if` 분기 폐지). 가드 평가는 검증기가 한다. 측정 결과 AJV에서는 대체 장치가 필요 없다(50분기의 마지막 일치도 1.25 µs) |
+| 지연 합성 값 캐시 `__composed__`                          | `ObjectNode/.../BranchStrategy.ts:107-110, 304-317` | 필요 없어진다. 방출 값의 메모를 쓰는 곳이 작업 루프 하나이고, 바뀐 자식이 없으면 이전 참조를 그대로 둔다 (VALUE-012, VALUE-013) |
+| 이벤트 배치와 병합                                        | `EventCascadeManager.ts:79-125`                     | 통지 1회로 대체된다 (EVENT-001)                                                                                                 |
+| `revision(mask)` 원장                                     | `EventCascadeManager.ts:159-201`                    | 유지                                                                                                                            |
+| `Batch` / `Isolate` 플래그로 대량 쓰기의 커밋 횟수 줄이기 | `core/types/value.ts:26-66`                         | "표시 N번 → 계산·커밋 1번"으로 대체된다 (SETTLE-001)                                                                            |
+| 할당 없는 `schemaPath` 매칭                               | `.../matchesSchemaPath.ts:29-37`                    | 유지. 에러 배정은 `dataPath`로 하고 `schemaPath`는 꺼진 union 분기를 표시에서 거르는 필터에서만 쓴다 (VALIDATE-043)             |
+| 렌더 가상화                                               | `helpers/virtualization/`                           | 유지. 노드를 필요할 때 만드는 안(NODE-053)과 결합할 수 있다                                                                     |
+| 자식 컴포넌트 맵의 메모이제이션                           | `.../useChildNodeComponents.tsx:52-113`             | 유지. 캐시가 언마운트까지 무한히 자라는 문제는 함께 고친다                                                                      |
 
 다음은 기록이다(TEST-062). `benchmark-form/PLAN.md`에는 "oneOf 마운트 비용은 분기 수와 무관하다(활성 분기만 초기화)"는 기록이 있다(TEST-062). 구조 추적에서는 "모든 분기의 자식 노드를 생성자에서 전수 생성한다"를 확인했다(TEST-062). 생성은 전수이고 초기화만 지연이라면 둘은 양립한다(TEST-062). 확인하지 않았다(TEST-062).
 
@@ -124,18 +124,18 @@ ADR 0006(값의 소유), 0007(작업 루프), 0011(노드를 필요할 때 만�
 
 (TEST-032, TEST-030, SETTLE-045, TEST-069)
 
-| 상황 | 이미 있는 것 | 새로 필요한 것 |
-| ---- | ------------ | -------------- |
-| 대규모 쓰기 | `array-node-stress`의 applyValue, scale 벤치 | 큰 트리의 루트에 값을 통째로 쓰기 (flat 500, array 1000) |
-| 배치 작업 | `event-cascade`의 K-배치 쓰기 | 표시 N번 → 계산·커밋 1번의 비용 |
-| 빠른 연속 입력 | 하니스의 키 입력 단계 | **넓은 객체(키 1,000개)와 긴 배열(아이템 10,000개) 안에서의 키 입력** — 불변 갱신의 복사 비용 (VALUE-014의 위험) |
-| 화면 전환 | `branch-strategy-init`, oneOf 토글, 마운트 | begin/complete 두 패스와 선택 가드는 사라졌다. 새 모델의 정착 측정은 SETTLE-045·TEST-069의 PR-2 정착 시나리오와 PR-2 벤치를 가리킨다 |
-| (새 구조 고유) | — | **가드 평가** — `if`/`then`이 많은 스키마에서 쓰기당 `compileGuard` 호출 수와 시간, 검증기 구현체별(AJV, 인터프리터형) 비교. **1차 측정 완료** — TEST-036 |
-| (새 구조 고유) | — | 분석 단계(스키마 → 청사진)의 1회 비용, `$ref`가 많은 스키마 |
-| 메모리 | `benchmark-form`의 heap snapshot 도구(내용 미확인) | 노드당 메모리, 노드를 필요할 때 만드는 안(NODE-053)의 효과 |
-| (14라운드) | — | 조건부 폼(`if` 20, 필드 200)의 마운트·키 입력·토글 |
-| (14라운드) | — | `oneOf` 픽스처를 `controls.discriminator`판과 게이트 없는 판으로 나누어 잰다 |
-| (14라운드) | — | 배치 없는 연속 `setValue` M회의 검증 횟수와 시간 |
+| 상황           | 이미 있는 것                                       | 새로 필요한 것                                                                                                                                            |
+| -------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 대규모 쓰기    | `array-node-stress`의 applyValue, scale 벤치       | 큰 트리의 루트에 값을 통째로 쓰기 (flat 500, array 1000)                                                                                                  |
+| 배치 작업      | `event-cascade`의 K-배치 쓰기                      | 표시 N번 → 계산·커밋 1번의 비용                                                                                                                           |
+| 빠른 연속 입력 | 하니스의 키 입력 단계                              | **넓은 객체(키 1,000개)와 긴 배열(아이템 10,000개) 안에서의 키 입력** — 불변 갱신의 복사 비용 (VALUE-014의 위험)                                          |
+| 화면 전환      | `branch-strategy-init`, oneOf 토글, 마운트         | begin/complete 두 패스와 선택 가드는 사라졌다. 새 모델의 정착 측정은 SETTLE-045·TEST-069의 PR-2 정착 시나리오와 PR-2 벤치를 가리킨다                      |
+| (새 구조 고유) | —                                                  | **가드 평가** — `if`/`then`이 많은 스키마에서 쓰기당 `compileGuard` 호출 수와 시간, 검증기 구현체별(AJV, 인터프리터형) 비교. **1차 측정 완료** — TEST-036 |
+| (새 구조 고유) | —                                                  | 분석 단계(스키마 → 청사진)의 1회 비용, `$ref`가 많은 스키마                                                                                               |
+| 메모리         | `benchmark-form`의 heap snapshot 도구(내용 미확인) | 노드당 메모리, 노드를 필요할 때 만드는 안(NODE-053)의 효과                                                                                                |
+| (14라운드)     | —                                                  | 조건부 폼(`if` 20, 필드 200)의 마운트·키 입력·토글                                                                                                        |
+| (14라운드)     | —                                                  | `oneOf` 픽스처를 `controls.discriminator`판과 게이트 없는 판으로 나누어 잰다                                                                              |
+| (14라운드)     | —                                                  | 배치 없는 연속 `setValue` M회의 검증 횟수와 시간                                                                                                          |
 
 측정 수치는 유효하나 시나리오 이름은 옛 모델의 것이다(TEST-032, TEST-030).
 
@@ -160,15 +160,15 @@ ADR 0006(값의 소유), 0007(작업 루프), 0011(노드를 필요할 때 만�
 
 다음은 기록이다(TEST-059). 파일: `spikes/round9/oneof-if.mjs`, `oneof-if-output.txt`, `REPORT.txt`(TEST-059). 각 분기의 `if`는 `{ properties: { kind: { const } }, required: ['kind'] }`다(TEST-059).
 
-| 배치 | 올바른 값 `{kind:'a', x:'s'}` | 누락 값 `{kind:'a'}` | 어느 조건에도 맞지 않는 값 `{kind:'c'}` | 조건 프로퍼티 없음 `{x:'s'}` |
-| --- | --- | --- | --- | --- |
-| `oneOf` 분기에 `if/then`만 | 거부 | 통과 | 거부 | 거부 |
-| `oneOf` 분기에 `if/then` + `else: false` | 통과 | 거부 | 거부 | 거부 |
-| `anyOf` 분기에 `if/then`만 | 통과 | 통과 | 통과 | 통과 |
-| `anyOf` 분기에 `if/then` + `else: false` | 통과 | 거부 | 거부 | 거부 |
-| `allOf` 항목에 `if/then`만 | 통과 | 거부 | 통과 | 통과 |
-| 최상위 `if/then` 하나 | 통과 | 거부 | 통과 | 통과 |
-| 오늘 방식(`const` 판별식) | 통과 | 거부 | 거부 | 거부 |
+| 배치                                     | 올바른 값 `{kind:'a', x:'s'}` | 누락 값 `{kind:'a'}` | 어느 조건에도 맞지 않는 값 `{kind:'c'}` | 조건 프로퍼티 없음 `{x:'s'}` |
+| ---------------------------------------- | ----------------------------- | -------------------- | --------------------------------------- | ---------------------------- |
+| `oneOf` 분기에 `if/then`만               | 거부                          | 통과                 | 거부                                    | 거부                         |
+| `oneOf` 분기에 `if/then` + `else: false` | 통과                          | 거부                 | 거부                                    | 거부                         |
+| `anyOf` 분기에 `if/then`만               | 통과                          | 통과                 | 통과                                    | 통과                         |
+| `anyOf` 분기에 `if/then` + `else: false` | 통과                          | 거부                 | 거부                                    | 거부                         |
+| `allOf` 항목에 `if/then`만               | 통과                          | 거부                 | 통과                                    | 통과                         |
+| 최상위 `if/then` 하나                    | 통과                          | 거부                 | 통과                                    | 통과                         |
+| 오늘 방식(`const` 판별식)                | 통과                          | 거부                 | 거부                                    | 거부                         |
 
 `if`에서 `required`를 빼면 `else: false`를 붙인 `oneOf`·`anyOf`가 `{x:'s'}`를 통과시키고, 빈 값에서 가드 단독 판정이 모두 참이 된다(검증 §2.3)(TEST-059). 그래서 FRAGMENT-022의 컨벤션이 "`else: false`와 `required` 함께"다(TEST-059).
 
@@ -192,21 +192,21 @@ ADR 0006(값의 소유), 0007(작업 루프), 0011(노드를 필요할 때 만�
 
 (TEST-061, GOAL-015)
 
-| 항목 | 질문 | 실험 | 결정 기준 |
-| ---- | ---- | ---- | --------- |
+| 항목                      | 질문                                                                                                                                                                                                                                                | 실험                                                                                                                                                                                                                                                                                                                                                                                               | 결정 기준                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | D-15 순환 스키마의 출발점 | `if`가 `x`를 요구하고 `then`이 `x`를 선언하는 부정 없는 순환에서 `{x: 'v'}`를 로드하면 조건부 조각이 꺼진 채 출발해 `x`가 방출에서 빠지고 상태는 `stable`이다. 로드한 유효 값이 조용히 사라진다. 원인은 신호의 부재가 아니라 출발점(SETTLE-029)이다 | 프로토타입 `loop-v4d` 사본에 출발점 스위치 셋을 더한다. `minimal`(지금), `S1`(선언 키가 원본에 있는 조건부 조각을 출발점에 더함), `S2`(최소 고정점 뒤 그런 꺼진 조각을 검증기 가드로 한 번 켜 봄). 사례 E8(자기 순환 `{x:'v'}`), E8b(상호 순환 `{a:1,b:2}`), E9(선언 순서에 따라 다른 고정점에 닿던 사례), E1, E12–E14, X15, X16, 독립 모델 N1·N2·N9. 회귀 전부. 비용은 케이스마다 새 프로세스 5회 | 채택: E8 → `{x:'v'}`, E8b → `{a:1,b:2}`, E9 불변 `{a:1}`, 회귀 0, 바퀴 상한 안, 비용 5회 폭 안. 실패 기준은 회귀, 사용자가 끈 조각이 잠복 원본만으로 되살아남, E9 변화다. 실패하면 최소 출발점 유지, 개발 모드 경고(목표 C2(작성자 실수의 가시성)), 프로덕션 신호는 SURFACE-007의 새 상태 값, WRITE-018과 SETTLE-026 수정. 편집자의 손 계산으로는 S1은 E9를 바꾸고 S2는 유지한다 |
 
 D-15 순환 스키마의 출발점: 2항(조건에 쓰는 프로퍼티는 `properties`에 선언되어야 한다) 아래에서 `if`가 요구하는 `x`를 `then`이 선언하는 스키마는 컨벤션 위반이 되므로 우선순위를 낮춘다(TEST-061, GOAL-035). 실험 명세는 그대로 남긴다(TEST-061). 열린 부분은 "D-15: 컨벤션을 어긴 양의 순환 스키마에서 로드한 값이 알림 없이 빠지고 상태가 `stable`로 남는 것을 받아들이는가."였고, 소유자 답(12-10)은 "받아들입니다"다(TEST-061). 받아들인다(TEST-061). 컨벤션 문서에만 적고 경고 코드는 두지 않는다(TEST-061). A-2의 고지 의무는 이 경우에 적용하지 않는다(답 19가 이긴다)(TEST-061).
 
 다음은 기록이다(TEST-064).
 
-| 시나리오 | 3.1판 | 대조 | 출처 |
-| -------- | ----- | ---- | ---- |
-| 키 입력, 평면 1,000 | 1.39 µs | 3차안 1.35 µs | `reviews/round-4.md` §2.1 |
-| 분기 전환(4라운드 측정 시나리오) | 108 µs | 3차안 89 µs | `reviews/round-4.md` §2.1 |
-| 루트 통째 쓰기 10,000 × 5 | 12.0 ms | 현재 217 ms | `reviews/round-4.md` §2.1, `reviews/round-2.md` §2 |
-| 조건부 폼 생성 (가드 200개) | 23.0 ms (트리 585 µs + AJV 컴파일 22.4 ms) | 현재 13.4 ms | `reviews/round-2.md` §2 |
-| 진입 깊이 카운터 | 측정 스프레드 안 (3–4%) | — | `spikes/work-loop/REPORT-v4c.txt` |
+| 시나리오                         | 3.1판                                      | 대조          | 출처                                               |
+| -------------------------------- | ------------------------------------------ | ------------- | -------------------------------------------------- |
+| 키 입력, 평면 1,000              | 1.39 µs                                    | 3차안 1.35 µs | `reviews/round-4.md` §2.1                          |
+| 분기 전환(4라운드 측정 시나리오) | 108 µs                                     | 3차안 89 µs   | `reviews/round-4.md` §2.1                          |
+| 루트 통째 쓰기 10,000 × 5        | 12.0 ms                                    | 현재 217 ms   | `reviews/round-4.md` §2.1, `reviews/round-2.md` §2 |
+| 조건부 폼 생성 (가드 200개)      | 23.0 ms (트리 585 µs + AJV 컴파일 22.4 ms) | 현재 13.4 ms  | `reviews/round-2.md` §2                            |
+| 진입 깊이 카운터                 | 측정 스프레드 안 (3–4%)                    | —             | `spikes/work-loop/REPORT-v4c.txt`                  |
 
 노드별 장부가 루트 통째 쓰기를 3차안보다 58% 늦춘다(TEST-064). 조건부 폼 생성은 재설계가 지는 유일한 지점이다(TEST-064). 조건부 폼의 생성은 현재 구현보다 1.7배 느리다 — 가드 200개에 22.4 ms(TEST-064).
 
@@ -258,7 +258,6 @@ D-15 순환 스키마의 출발점: 2항(조건에 쓰는 프로퍼티는 `prope
 - `design/07-landing-and-tests.md` §2.11 (TEST-032, TEST-036, TEST-037, TEST-065)
 - `design/07-landing-and-tests.md` §2.12 (TEST-027, TEST-028)
 
-
 ## IR-6 검증 시점 보충 — 2026-10-31
 
 현행 D1은 쓰기의 다음 프레임 선행·연속 이월·quiet 후행과 마지막 실제 실행 기준100ms cap을 사용하고 동기 정착·사건·onChange를 유지합니다(VALIDATE-052).
@@ -269,14 +268,13 @@ OnChange만 이력을 기록하며 새 표시와 중간에 숨겨진 표시는 �
 정책은 root별 layout effect에서만 commit하고 렌더 중에는 엔진을 바꾸지 않으며 표시 hook은 candidate만 memoized release-version 구독과 같은 client/server getter를 사용합니다(VALIDATE-052).
 renderer/input은 enabled를 검사하고 child-errors는 hidden 자식도 집계하며 inactive 값 제거와 off-branch 오류 제외를 유지합니다(VALIDATE-052).
 현재 stamp의 commit-only 폐기는 targets를 보존해 최신 commit을 cadence로 재요청하고 explicit 반환·submit 값은 호출 시점 snapshot 계약을 유지합니다(VALIDATE-052).
-Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
+Always는 true·ErrorVisibility.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
 숨긴 reset 재생성은 원래 load별 경고 범위로 옛 기록 뒤 새 reset 기록을 chain 끝에 전달하고 handler 실패는 각각 격리하며 다른 hidden 사슬·같은-schema reset은 reconnect까지 buffer합니다(VALIDATE-052).
 한계는 hook disabled의 즉시 reveal·drop 뒤 state/enabled render의 hold 생략·commit-only stream hold·release와 paint 사이 쓰기의1~2프레임 이전 판정·한 batch 안 미표시 조합의 이력 포함이며 G는 구현하지 않습니다(VALIDATE-052).
 
 마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
 
 if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
-
 
 ## IR-7 숨김 전달 보충 — 2026-11-01
 
@@ -288,7 +286,6 @@ if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한�
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다 (VALIDATE-052). mount-time 기록이 build-time 기록보다 먼저 도착합니다 (VALIDATE-052).
 
 근거는 [IR-7 계획](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01)의 소유자 원문39–41입니다 (VALIDATE-052). reset 기록별 handler 실패는 reportErrorToHost로 격리하고 이후 기록과 binding 교체를 계속합니다 (VALIDATE-052). 구독은 첫 commit 또는 reset에서 한 번만 설치하고 effect cleanup은 검증 루트 참조만 해제합니다 (VALIDATE-052).
-
 
 ## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
 

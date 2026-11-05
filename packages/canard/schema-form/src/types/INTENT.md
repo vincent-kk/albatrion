@@ -9,7 +9,7 @@
 - 내부 형은 본명을 쓴다. 공개용 `Roll` 형은 rolled 칸에서 `Rolled` 접두사로 정의하고(`RolledNumberSchema`), 패키지 루트 index가 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 내보낸다.
 - rolled 칸의 파일은 다른 칸의 형 파일을 직접 가져오며, 이 fractal의 index를 거치지 않는다.
 - 진입점 index는 모든 칸의 이름을 이름 목록으로 재수출하며 와일드카드 재수출을 쓰지 않는다.
-- 형제 fractal(`core`·`components/FieldProxy`)의 형은 각 관문 index에서 `import type`으로 가져온다. 값은 `ShowError` 열거 하나뿐이다.
+- 형제 fractal(`core`·`components/FieldProxy`)의 형은 각 관문 index에서 `import type`으로 가져온다. 값은 `ErrorVisibility` 열거 하나뿐이다.
 - 형 계약 시험은 시험 칸에 두고 형 파일을 직접 가져온다.
 
 ## Boundaries

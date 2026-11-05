@@ -19,7 +19,7 @@
 - Provider 중첩 순서를 반드시 유지
 - `forwardRef`로 `FormHandle` ref를 외부에 노출
 - `memo`와 `withErrorBoundaryForwardRef`로 감싸 성능과 안정성 확보
-- `jsonSchema`는 최초 마운트와 `reset()` 시에만 `preprocessSchema(clone(schema))`로 복제·전처리한다. prop 변경만으로는 갱신하지 않는다
+- `jsonSchema`와 `defaultValue`는 mount·reset에서 읽으며, 함수 children에는 현재 트리와 일치하는 schema·node를 제공한다.
 
 ### Ask first
 

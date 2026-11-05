@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import {
@@ -10,18 +12,13 @@ import type { Blueprint } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 
-/** Context readers are held apart from absolute JSON Pointer dependencies. */
-
-/** Shared result for blueprints without context reads. */
-const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
-
 /**
  * Find declaration paths whose expressions or gates read the tree context token.
  * @param blueprint - Immutable analysis supplying declaration IDs and reads
  * @returns Memoized owner paths to recalculate when context changes
  */
 export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
-  if (!blueprint.capabilities.hasDependencies) return EMPTY_OWNERS;
+  if (!blueprint.capabilities.hasDependencies) return EMPTY_ARRAY;
   const cached = getBlueprintDerived<'contextOwners', readonly string[]>(
     blueprint,
   ).contextOwners;
@@ -30,8 +27,8 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   if (!ids?.length) {
     getBlueprintDerived<'contextOwners', readonly string[]>(
       blueprint,
-    ).contextOwners = EMPTY_OWNERS;
-    return EMPTY_OWNERS;
+    ).contextOwners = EMPTY_ARRAY;
+    return EMPTY_ARRAY;
   }
   const owners: string[] = [];
   const rules = getDeriveRuleTable(blueprint);

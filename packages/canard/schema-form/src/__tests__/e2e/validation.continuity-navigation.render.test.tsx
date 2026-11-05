@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
   type FieldRendererProps,
@@ -59,7 +60,7 @@ const schema = {
 const props = {
   jsonSchema: schema,
   defaultValue: { a: '', b: '', c: '', d: '' },
-  showError: true,
+  errorVisibility: ErrorVisibility.Always,
   FieldRenderer: Renderer,
   fieldInputDefinitions: [{ test: () => true, Component: Input }],
   formatError: (error: { message?: string }) => error.message ?? null,

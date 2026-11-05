@@ -2,20 +2,18 @@
 
 ## Requirements
 
-- 의존 방향은 `blueprint·record·behaviors/utils < booleanBehavior < behaviors 뿌리 < FieldNode`입니다. 이 종류 fractal은 정착·겉면·레거시를 가져오지 않으며 경계 예외가 없습니다(NODE-009·016, LANDING-159).
+불리언 해석은 [unionBehavior의 변환 표](../unionBehavior/DETAIL.md)를 공유합니다. JavaScript의 truthy/falsy 판정을 입력 규칙으로 사용하면 false라는 글도 참이 되어 사용자 의도가 바뀝니다.
 
 ## API Contracts
 
-- 진입점은 `booleanBehavior: Behavior`를 이름으로 내보냅니다. 여덟 칸은 공통 순서(`arrange`는 공유 거부 칸, 36C-01)이며 `type: 'boolean'`, `strategy: 'terminal'`, 자식 선언은 공유 빈 결과입니다(NODE-002·006·047).
-- `interpret`는 boolean을 그대로 두고 정확한 `"true"`·`"false"`, 수 `1`·`0`·`-0`만 공통 parse로 바꿉니다. 공백 있는 문자열·`"1"`·다른 수·`null`은 변환하지 않습니다. 순수·무예외·멱등이며 변환 불가 시 입력 참조를 유지합니다(WRITE-075·084·093).
-- `assemble`은 터미널 원본을 `local`로, `project`는 메모된 방출 정책의 결과를 `emit`으로 내고 원본을 바꾸지 않습니다(NODE-006, VALUE-002).
+이 행은 허용된 변환 결과만 계산하고 원본 쓰기·정합 상태 갱신은 [settle 계약](../../settle/DETAIL.md)에 맡깁니다.
 
 ## Acceptance Criteria
 
-### boolean-row — 제한 변환
+### boolean-row — 형 변환과 진릿값 판정을 구별합니다
 
-- 허용 표의 다섯 입력 표현만 변환되고 나머지는 원본 그대로 남습니다(WRITE-075·093).
+허용 표 밖의 문자열·수·객체·null은 받은 그대로 유지합니다. 불리언 행의 투영은 항등이며 잘못된 종류의 빈 값도 omitEmpty로 지우지 않습니다. 해석 실패를 false나 없음으로 바꾸면 원본 오류를 관찰할 수 없습니다.
 
 ## Last Updated
 
-2026-09-29
+불리언의 변환 범위·실패 시 보존·항등 투영이 바뀔 때 갱신합니다.

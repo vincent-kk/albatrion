@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
@@ -5,7 +6,7 @@ import type { BlueprintNode } from '../../../blueprint';
 import { getStaticChoices } from './getStaticChoices';
 
 /** Empty active-declaration list: only ungated contributions apply. */
-const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
 /** Merge options selecting the runtime effective schema. */
 const RUNTIME_MERGE_OPTIONS = { mode: 'runtime' } as const;

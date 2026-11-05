@@ -18,10 +18,15 @@ import { renderForm } from '../renderForm';
  * @returns Completion after every step expectation has been checked.
  */
 const run = async (name: string) => {
-  const scenario = validationStateFeatureScenarios.find((item) => item.name === name);
+  const scenario = validationStateFeatureScenarios.find(
+    (item) => item.name === name,
+  );
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
-  const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true });
+  const form = await renderForm(scenario.schema as JSONSchema, {
+    defaultValue: scenario.initialValue,
+    validator: true,
+  });
   const base = findScenarioHandle(form.container).adapter;
   const unregister = registerScenarioHandle(form.container, form.handle, {
     execute: base.execute,
@@ -33,8 +38,12 @@ const run = async (name: string) => {
       await form.validate();
       for (const [path, expected] of Object.entries(errors)) {
         const actual = form.node(path)?.errors;
-        expect(actual, `validation issue count at ${path}`).toHaveLength(expected.length);
-        expect(actual, `validation issue contract at ${path}`).toMatchObject(expected);
+        expect(actual, `validation issue count at ${path}`).toHaveLength(
+          expected.length,
+        );
+        expect(actual, `validation issue contract at ${path}`).toMatchObject(
+          expected,
+        );
       }
     },
   });
@@ -55,8 +64,8 @@ describe('features — validation-state shared screen runner (TEST-025)', () => 
     await run('validation-state.external-errors');
   });
 
-  it('VALIDATE-043 show-error holds a maxLength issue on the first screen', async () => {
-    await run('validation-state.show-error');
+  it('VALIDATE-043 error-visibility holds a maxLength issue on the first screen', async () => {
+    await run('validation-state.error-visibility');
   });
 
   it('REACT-026 format-error holds minLength and pattern issues in validator order', async () => {

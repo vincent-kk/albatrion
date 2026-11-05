@@ -12,6 +12,7 @@ import { releaseFieldNodeRevealHistory } from '@/schema-form/__tests__/helpers/r
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
+import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldInputProps, FieldRendererProps } from '@/schema-form/types';
 
 import { FieldRendererContextProvider } from '../components/FieldRendererProvider';
@@ -80,7 +81,10 @@ const validator = {
   compileGuard: () => () => true,
   compile: () => () => [],
 };
-const countMount = async (hydrate: boolean, showError: boolean) => {
+const countMount = async (
+  hydrate: boolean,
+  errorVisibility: ErrorVisibility,
+) => {
   actEnvironment.IS_REACT_ACT_ENVIRONMENT = false;
   const container = document.createElement('div');
   document.body.append(container);
@@ -90,7 +94,7 @@ const countMount = async (hydrate: boolean, showError: boolean) => {
       ref={ref}
       jsonSchema={schema}
       defaultValue={defaults}
-      showError={showError}
+      errorVisibility={errorVisibility}
       validatorFactory={validator}
       FieldRenderer={Renderer}
       fieldInputDefinitions={[
@@ -125,8 +129,8 @@ const countMount = async (hydrate: boolean, showError: boolean) => {
 it.each([false, true])(
   'non-candidate mount release adds no display render (hydrate=%s)',
   async (hydrate) => {
-    const hidden = await countMount(hydrate, false);
-    const always = await countMount(hydrate, true);
+    const hidden = await countMount(hydrate, ErrorVisibility.Never);
+    const always = await countMount(hydrate, ErrorVisibility.Always);
     console.info('IR6_MOUNT_RELEASE_COUNTS', { hydrate, hidden, always });
     expect(hidden).toBeGreaterThan(0);
     expect(always).toBe(hidden);
@@ -149,8 +153,8 @@ it('a release before mount passive effects adds no non-candidate display render'
   });
   const Display = ({ index }: { index: number }) => {
     const field = node.find('/field' + index)!;
-    const { checkShowError } = useFieldRendererContext();
-    useErrorVisibility([field], [checkShowError(field.state)]);
+    const { checkErrorVisibility } = useFieldRendererContext();
+    useErrorVisibility([field], [checkErrorVisibility(field.state)]);
     counts[index]++;
     return null;
   };
@@ -178,7 +182,7 @@ it('a release before mount passive effects adds no non-candidate display render'
   try {
     flushSync(() =>
       root.render(
-        <FieldRendererContextProvider showError={true}>
+        <FieldRendererContextProvider errorVisibility={ErrorVisibility.Always}>
           <Parent />
         </FieldRendererContextProvider>,
       ),

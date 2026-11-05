@@ -15,6 +15,8 @@
 
 ### Always do
 
+- Keep live settings and validation-epoch reads on the binding-only channel; never widen the package surface.
+
 - 공개 계약과 바인딩 전용 채널은 진입점에서 이름을 붙여 re-export한다.
 - 트리를 구성하고 마운트하는 동안 호스트 predicate 참조를 그대로 유지한다.
 - node 값은 공개 write 계약과 이름이 붙은 바인딩 채널로 바꾼다.
@@ -26,6 +28,6 @@
 
 ### Never do
 
-- 보존된 레거시 engine이나 애플리케이션 플러그인 레지스트리를 import하지 않는다.
+- 애플리케이션 플러그인 레지스트리를 import하지 않는다.
 - 바인딩 전용 함수를 패키지 진입점으로 노출하지 않는다.
 - 렌더러 표현을 읽거나 호출자가 소유한 스키마 데이터를 변경하지 않는다.

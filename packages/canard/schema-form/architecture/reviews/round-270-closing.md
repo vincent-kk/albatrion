@@ -2,7 +2,7 @@
 
 2026-10-14. 268C-01(codex·agy 멀티에이전트 복귀)·267C-01(중지 없이, 병합은 보고만) 아래 원장 관리자가 #365를 직접 검증하고 병합했다.
 
-### 270C-01 #365(07b-5, head 60488a5a6)를 squash 병합(17414cd4a, 원격 가지 삭제); fixy07의 판단 셋(`options.virtual` 항목 형 `BasicSchema & { fields }`, 사용처 없는 `isVirtualSchema` 삭제, 작성용 `type` 합집합에서 `'virtual'` 제거)은 265C-01의 귀결로 승인하여 대기열에 올리지 않음; verifier Low 셋과 agy 지적 셋(형 별칭·예시의 최상위 virtual, DETAIL의 ShowError·extras, 시험 제목 셋, knowledge의 `.node`, documents의 FormField)은 병합 차단 아님으로 보고 07b-7에 이월; README 1.0.0 이주 절은 마무리 단계(267C-01 5)로
+### 270C-01 #365(07b-5, head 60488a5a6)를 squash 병합(17414cd4a, 원격 가지 삭제); fixy07의 판단 셋(`options.virtual` 항목 형 `BasicSchema & { fields }`, 사용처 없는 `isVirtualSchema` 삭제, 작성용 `type` 합집합에서 `'virtual'` 제거)은 265C-01의 귀결로 승인하여 대기열에 올리지 않음; verifier Low 셋과 agy 지적 셋(형 별칭·예시의 최상위 virtual, DETAIL의 ErrorVisibility·extras, 시험 제목 셋, knowledge의 `.node`, documents의 FormField)은 병합 차단 아님으로 보고 07b-7에 이월; README 1.0.0 이주 절은 마무리 단계(267C-01 5)로
 
 - 닫는 항목: 없음(LANDING-210 보충).
 - 결정:

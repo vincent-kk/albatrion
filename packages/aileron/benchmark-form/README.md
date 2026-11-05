@@ -82,7 +82,7 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 **두 판 호환 보정.** 같은 `harness.tsx`를 0.16.1과 현재 dist로 각각 번들합니다. 필드 렌더러 속성명이 0.16.1은
 `CustomFormTypeRenderer`, 현재는 `FieldRenderer`이므로 같은 마커 렌더러를 두 이름으로 모두 넘깁니다(이전 하네스는
 `FieldRenderer`만 넘겨 0.16.1이 기본 렌더러로 라벨·오류 DOM을 더 그렸고, 그 비교의 마운트 수치는 기준판에
-불리했습니다). 오류가 키 입력만으로 보이도록 두 판 모두 `showError={true}`를 명시하고, validate 사례의 모든 형상에
+불리했습니다). 오류가 키 입력만으로 보이도록 현재 API에는 `ErrorVisibility.Always`를 전달하고 0.x 대조군에는 전용 어댑터가 해당 버전의 표시 설정을 전달하며, validate 사례의 모든 형상에
 루트 프로브 잎 `probe`(`pattern '^(?:..)*$'`, 기본값 `x`)를 더해 `/probe` 오류가 정확히 하나 생기게 합니다
 (`expectedInputs` +1, 두 판 동일). 평탄 타이핑 잎 `field_000`의 기본값은 빈 문자열(짝수 길이)로 두어 첫 키가 마커를
 0→1로 바꿉니다.
@@ -116,9 +116,10 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 
 정착 장벽은 **마이크로태스크 비움 → setImmediate → setTimeout(0) 한 번 → setImmediate**입니다.
 `setImmediate`가 없으면 `MessageChannel`을 사용합니다. `drainTicks` 자체에는 타이머가 없습니다.
-L의 `src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112,120`
+L의 0.16.1 커밋 `7b49d62c7`에 있는
+`packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112,120`
 은 배치 카운터 초기화를 매크로태스크로, 이벤트 배달을 마이크로태스크로 예약합니다.
-`src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1219`의 루트 변경 배달은
+같은 커밋의 `packages/canard/schema-form/src/core/nodes/AbstractNode/AbstractNode.ts:1219`에서 루트 변경 배달은
 `afterMicrotask`를 거쳐 타이머로 지연됩니다. 이 지연까지 지나야 다음 상호작용을 시작할 수 있습니다.
 이는 현재 픽스처의 정착 정의이며 임의의 지연 타이머 전체를 기다리는 일반 목적 idle 검출기는 아닙니다.
 

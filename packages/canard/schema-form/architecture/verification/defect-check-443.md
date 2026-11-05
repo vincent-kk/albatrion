@@ -16,19 +16,19 @@
 
 명시 validate 전의 OnChange 자동 오류도 별도 비교합니다(EVENT-002, VALIDATE-006). F가 degraded이거나 U가 처음 degraded로 바뀌는 접두사는 실패입니다. 이후 U에 남은 과거 degraded 이력만 별도로 기록합니다(VALUE-003, ERROR-204). F의 경고 (code,path)는 U의 누적 경고에 포함되어야 하며 원시 reporter 기록을 남깁니다.
 
-React는 현재 DOM의 value·checked·selected·disabled·readOnly 프로퍼티와 폼 영역 구조를 비교하고 ShowError.Always로 오류를 드러냅니다. defaultValue/defaultChecked 같은 초기 속성과 마운트 추적 속성은 현재 UI 관찰에서 제외합니다. readonly UI가 거절한 쓰기는 무시 내역에 기록합니다.
+React는 현재 DOM의 value·checked·selected·disabled·readOnly 프로퍼티와 폼 영역 구조를 비교하고 ErrorVisibility.Always로 오류를 드러냅니다. defaultValue/defaultChecked 같은 초기 속성과 마운트 추적 속성은 현재 UI 관찰에서 제외합니다. readonly UI가 거절한 쓰기는 무시 내역에 기록합니다.
 
 ### 정당한 제외와 제한된 마스크
 
-| 제외 필드 | 근거 |
-| --- | --- |
-| dirty·touched와 해당 집계 비트 | VALUE-022: 사용자 입력 이력 |
-| revision·커밋 번호·검증 세대 | EVENT-007·024, SETTLE-006: 배달/커밋 이력 |
-| 배달·listener·onChange 이력, payload.previous | EVENT-002·024·026 |
-| 노드 참조·배열 identity key·DOM React identity | NODE-044·051: 구조 연산 및 재진입 신원 |
-| defaultValue와 로드 스냅숏 | WRITE-085: U와 F의 되돌림 기준이 다름 |
-| inactiveValues | VALUE-029·VALUE-031(a): 출력에 없는 잠복 원본 |
-| 과거 경고 중복과 diagnostics의 과거 commit/iterations | ERROR-204: 폼 로드 동안 누적 기록 |
+| 제외 필드                                             | 근거                                          |
+| ----------------------------------------------------- | --------------------------------------------- |
+| dirty·touched와 해당 집계 비트                        | VALUE-022: 사용자 입력 이력                   |
+| revision·커밋 번호·검증 세대                          | EVENT-007·024, SETTLE-006: 배달/커밋 이력     |
+| 배달·listener·onChange 이력, payload.previous         | EVENT-002·024·026                             |
+| 노드 참조·배열 identity key·DOM React identity        | NODE-044·051: 구조 연산 및 재진입 신원        |
+| defaultValue와 로드 스냅숏                            | WRITE-085: U와 F의 되돌림 기준이 다름         |
+| inactiveValues                                        | VALUE-029·VALUE-031(a): 출력에 없는 잠복 원본 |
+| 과거 경고 중복과 diagnostics의 과거 commit/iterations | ERROR-204: 폼 로드 동안 누적 기록             |
 
 source와 extras는 제외하지 않습니다. 형 정규화(VALUE-031(c), WRITE-052)와 키/자식 순서는 엄격 비교합니다. 현재 계산 상태·형상·misfit·유효 스키마·watch를 이력이라는 이유로 지우지 않습니다.
 
@@ -42,11 +42,11 @@ if/then/else·dependentSchemas·oneOf·anyOf, discriminator·or·includes·문�
 
 React는 고정 간격 대신 기능/쌍 덮음을 만족하는 결정적 탐욕 표본 15장면/94접두사를 프로젝트마다 고릅니다. verify 표본은 1,024장면 안에서 다시 선택합니다. 손으로 작성한 표적 32장면도 전부 재생합니다. 기존 render adapter를 재사용하고 문맥 변경만 rerender를 추가했습니다. legacy array-valued items는 draft7, 나머지는 2020 검증기를 사용하며 U/F와 코어/React에서 같은 선택 규칙을 사용합니다.
 
-| 실행 | 시험 | 통과 | 실패 | 기존 todo | 실제 시간 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 전체 기본 프로젝트 | 5,282 | 5,264 | 17 | 1 | 155.117초 |
-| 전체 verify 프로젝트 | 4,320 | 4,306 | 13 | 1 | 124.719초 |
-| 새 검사만 unit·render·react18 | 43 | 26 | 17 | 0 | 9.481초 |
+| 실행                          |  시험 |  통과 | 실패 | 기존 todo | 실제 시간 |
+| ----------------------------- | ----: | ----: | ---: | --------: | --------: |
+| 전체 기본 프로젝트            | 5,282 | 5,264 |   17 |         1 | 155.117초 |
+| 전체 verify 프로젝트          | 4,320 | 4,306 |   13 |         1 | 124.719초 |
+| 새 검사만 unit·render·react18 |    43 |    26 |   17 |         0 |   9.481초 |
 
 60초 목표는 새 기본 검사 전체에 적용되며 React 18까지 포함하여 충족했습니다. 전체 기존 suite 시간과 혼동하지 않습니다. 타입 검사·lint·패키지 build는 종료 코드 0입니다. build의 DEVELOPMENT_FLAG_OK 및 세 런타임 번들의 GATE_SELECTION_DIST_OK가 통과했고 번들 변경은 없습니다. 실패하는 시험은 모두 새 remount 검사이며 기존 시험의 신규 실패는 없습니다. 로그/원시 JSON은 `<ns>/runs/`, 종료 코드와 소스 트리를 고정한 증거는 `<ns>/gates/`에 있습니다.
 
@@ -61,15 +61,15 @@ yarn workspace @canard/schema-form test:verify --run
 
 두 최종 전체 실행의 불일치 접두사 241건을 아래 7항목으로 연결했고 미분류는 0입니다. 이는 독립 결함 개수가 아닙니다. `<ns>/findings/mismatch-manifest.json`은 원시 시험 JSON의 assertion·접두사·모든 U/F 차이를 찾아가는 색인입니다. 아래 분류는 전부 **1차 분류, 미확정 — 코디네이터·소유자 판정 대기**입니다.
 
-| ID | 1차 분류 | 관찰 차이 | 최소 재현 자료 | 추정 영역(원인 확정 아님) |
-| --- | --- | --- | --- | --- |
-| D443-01 | (i) 제품 결함 후보 | literal-star 소유자의 visible/readOnly/disabled가 U=true, F=false | `<ns>/findings/D443-01.md` | `src/core/engine/settle/utils/templatePaths/expandTemplatePaths.ts:34`, `src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:361` |
-| D443-02 | (i) 제품 결함 후보 | overlay 투영 뒤 바깥 상태/게이트 독자가 이전 결과에 남음 | `<ns>/findings/D443-02.md` | `src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:37` |
-| D443-03 | (i) 제품 결함 후보 | 옮긴 게이트의 값 변경 뒤 /p/child가 U에만 없음 | `<ns>/findings/D443-03.md` | `src/core/engine/settle/utils/gates/getGateRegistry.ts:173` |
-| D443-04 | (i) 후보 | string items의 undefined→null 출력 왕복에서 F에만 misfit/경고 | `<ns>/findings/D443-04.md` | `src/core/engine/behaviors/arrayBehavior/utils/value/holeValue.ts:37` |
-| D443-05 | (ii) 정당한 차이 후보(U7) | type overlay 뒤 U 문자열 2/type 오류, F 숫자 2/오류 없음 | `<ns>/findings/D443-05.md` | `src/core/engine/behaviors/unionBehavior/unionBehavior.ts:11` |
-| C443-01 | (ii) 정당한 차이 후보 | omitEmpty의 raw/value만 빈 문자열/undefined로 다름 | `<ns>/findings/C443-01.md` | `src/core/engine/behaviors/utils/slots/projectEmpty.ts:7` |
-| C443-02 | (ii) 정당한 차이 후보 | omitTrailing 뒤 U에만 꼬리 /1 노드가 남음 | `<ns>/findings/C443-02.md` | `src/core/engine/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts:19` |
+| ID      | 1차 분류                  | 관찰 차이                                                         | 최소 재현 자료             | 추정 영역(원인 확정 아님)                                                                                                                     |
+| ------- | ------------------------- | ----------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| D443-01 | (i) 제품 결함 후보        | literal-star 소유자의 visible/readOnly/disabled가 U=true, F=false | `<ns>/findings/D443-01.md` | `src/core/engine/settle/utils/templatePaths/expandTemplatePaths.ts:34`, `src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:361` |
+| D443-02 | (i) 제품 결함 후보        | overlay 투영 뒤 바깥 상태/게이트 독자가 이전 결과에 남음          | `<ns>/findings/D443-02.md` | `src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:37`                                                                     |
+| D443-03 | (i) 제품 결함 후보        | 옮긴 게이트의 값 변경 뒤 /p/child가 U에만 없음                    | `<ns>/findings/D443-03.md` | `src/core/engine/settle/utils/gates/getGateRegistry.ts:173`                                                                                   |
+| D443-04 | (i) 후보                  | string items의 undefined→null 출력 왕복에서 F에만 misfit/경고     | `<ns>/findings/D443-04.md` | `src/core/engine/behaviors/arrayBehavior/utils/value/holeValue.ts:37`                                                                         |
+| D443-05 | (ii) 정당한 차이 후보(U7) | type overlay 뒤 U 문자열 2/type 오류, F 숫자 2/오류 없음          | `<ns>/findings/D443-05.md` | `src/core/engine/behaviors/unionBehavior/unionBehavior.ts:11`                                                                                 |
+| C443-01 | (ii) 정당한 차이 후보     | omitEmpty의 raw/value만 빈 문자열/undefined로 다름                | `<ns>/findings/C443-01.md` | `src/core/engine/behaviors/utils/slots/projectEmpty.ts:7`                                                                                     |
+| C443-02 | (ii) 정당한 차이 후보     | omitTrailing 뒤 U에만 꼬리 /1 노드가 남음                         | `<ns>/findings/C443-02.md` | `src/core/engine/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts:19`                                                            |
 
 D443-01~03의 근거는 CONTROLS-080·SETTLE-020/021/045입니다. 반대 가설은 공개 계약이 이 계산 상태/형상의 이력 차이를 허용한다는 것이며, 현재 원장 근거는 확인되지 않았습니다. D443-05는 VALUE-031(c)·WRITE-052에 따라 정규화를 엄격 비교했습니다. 반대 가설은 overlay가 기존 원본을 보존하는 별도 계약입니다.
 
@@ -86,11 +86,15 @@ D443-04는 VALUE-034(architecture/ledger/value.md:576)와 VALUE-033이 함께 �
 ```js
 // D443-01: key는 visible, readOnly, disabled 각각입니다.
 const star = {
-  type: 'object', properties: {
+  type: 'object',
+  properties: {
     on: { type: 'boolean' },
-    side: { type: 'object', properties: {
-      x: { type: 'string', controls: { active: '../../on === true' } },
-    } },
+    side: {
+      type: 'object',
+      properties: {
+        x: { type: 'string', controls: { active: '../../on === true' } },
+      },
+    },
     '*': { type: 'string', controls: { [key]: "../side/x === 'v'" } },
   },
 };
@@ -100,38 +104,77 @@ const star = {
 
 // D443-02
 const overlay = {
-  type: 'object', properties: {
-    source: { type: 'object', properties: {
-      flag: { type: 'boolean' }, data: { type: 'string', options: { omitEmpty: false } },
-    }, allOf: [{ controls: { active: './flag === true' },
-      properties: { data: { options: { omitEmpty: true } } } }] },
-    observer: { type: 'object', properties: {
-      state: { type: 'string', controls: { visible: "../../source/data === ''" } },
-    } },
+  type: 'object',
+  properties: {
+    source: {
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        data: { type: 'string', options: { omitEmpty: false } },
+      },
+      allOf: [
+        {
+          controls: { active: './flag === true' },
+          properties: { data: { options: { omitEmpty: true } } },
+        },
+      ],
+    },
+    observer: {
+      type: 'object',
+      properties: {
+        state: {
+          type: 'string',
+          controls: { visible: "../../source/data === ''" },
+        },
+      },
+    },
   },
 };
 // initialValue={source:{data:''}}; /source/flag.setValue(true).
 // 게이트 변형은 observer/gate/leaf.active='../../../source/data === ""'.
 
 // D443-03
-const relocated = { type: 'object', properties: {
-  p: { type: 'object', properties: {
-    child: { type: 'string', controls: { active: '#/later === true' } },
-  } },
-}, allOf: [{ controls: { active: './mode === "x"' },
-  properties: { later: { type: 'boolean' } } }] };
+const relocated = {
+  type: 'object',
+  properties: {
+    p: {
+      type: 'object',
+      properties: {
+        child: { type: 'string', controls: { active: '#/later === true' } },
+      },
+    },
+  },
+  allOf: [
+    {
+      controls: { active: './mode === "x"' },
+      properties: { later: { type: 'boolean' } },
+    },
+  ],
+};
 // initialValue={mode:'x'}; /later.setValue(true).
 
 // D443-04: schema={type:'array',items:{type:'string'}},
 // initialValue=[undefined], writes=[].
 
 // D443-05
-const typeOverlay = { type: 'object', properties: {
-  source: { type: 'object', properties: {
-    flag: { type: 'boolean' }, data: { type: ['string', 'number'] },
-  }, allOf: [{ controls: { active: './flag === true' },
-    properties: { data: { type: 'number' } } }] },
-} };
+const typeOverlay = {
+  type: 'object',
+  properties: {
+    source: {
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        data: { type: ['string', 'number'] },
+      },
+      allOf: [
+        {
+          controls: { active: './flag === true' },
+          properties: { data: { type: 'number' } },
+        },
+      ],
+    },
+  },
+};
 // initialValue={source:{data:'2'}}; /source/flag.setValue(true).
 
 // C443-01: schema={type:'string'}, initialValue='', writes=[].
@@ -143,12 +186,12 @@ const typeOverlay = { type: 'object', properties: {
 
 ## 알려진 네 틈과 검사 한계
 
-| 알려진 틈 | 결과 |
-| --- | --- |
-| `*` 이름 필드의 상태 키 독자 | 문자 * 4개 표적에서 재현(*x 대조군 4개 통과), 생성 말뭉치 family 3·6·7·8·14·15에서 재현, D443-01 |
-| overlay 투영 전용 변화 | 바깥 상태·게이트·빈값·꼬리·타입의 4개 표적, D443-02/04/05 및 C443-02 |
+| 알려진 틈                       | 결과                                                                                                                        |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `*` 이름 필드의 상태 키 독자    | 문자 * 4개 표적에서 재현(*x 대조군 4개 통과), 생성 말뭉치 family 3·6·7·8·14·15에서 재현, D443-01                            |
+| overlay 투영 전용 변화          | 바깥 상태·게이트·빈값·꼬리·타입의 4개 표적, D443-02/04/05 및 C443-02                                                        |
 | 옮긴 게이트의 첫 locate 뒤 경로 | cousin 값 전용 shallow·deep 2개 표적에서 재현, D443-03. /current/primer 값 전용 변형과 있음 대조군은 통과하여 재현되지 않음 |
-| 조상 dirty 반복 | 16장면 모두 동등, 반복 결함 미재현 |
+| 조상 dirty 반복                 | 16장면 모두 동등, 반복 결함 미재현                                                                                          |
 
 마지막 틈은 소유 깊이 0/2·읽는 거리 1/2·문맥 여부·순방향/역방향을 교차했습니다. 같은 settle tick에서 record 계수를 읽었고 깊이0은 ancestorRechecks=0/gateWheelSteps=3, 깊이2는 3/6을 명시 기대표로 모두 확인했습니다. 깊이0의 0은 실제 선택 경로이므로 미도달로 오판하지 않습니다. 이 그리드의 통과는 다른 입력에서 반복 결함이 없다는 증명이 아닙니다.
 

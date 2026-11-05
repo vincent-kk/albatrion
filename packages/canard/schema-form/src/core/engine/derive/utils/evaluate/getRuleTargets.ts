@@ -1,13 +1,11 @@
 import { filter as filterArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { DeriveRule } from '../../types/rules';
 import type { DeriveState } from '../../types/state';
 import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
-
-/** Shared frozen result when a rule resolves to no target. */
-const NO_TARGETS: readonly never[] = Object.freeze([]);
 
 /**
  * Resolve a node, parent fields entry, or fragment scope in the live shape.
@@ -25,12 +23,12 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   const children = source.structure;
   // A repeated array template addresses every live item; declaration selection filters below.
   const targets = rule.targetItems
-    ? (source.children ?? NO_TARGETS)
+    ? (source.children ?? EMPTY_ARRAY)
     : children &&
         rule.targetName !== undefined &&
         hasOwnProperty(children, rule.targetName)
       ? [children[rule.targetName]]
-      : NO_TARGETS;
+      : EMPTY_ARRAY;
 
   return filterArray(targets, (target) => {
     if (target.detached) return false;

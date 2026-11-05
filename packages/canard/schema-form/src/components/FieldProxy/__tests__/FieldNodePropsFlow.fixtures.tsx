@@ -243,12 +243,12 @@ export const resetAllMocks = () => {
 };
 
 /**
- * Default SetValueOption used by handleChange in FieldInputSlot
+ * Default SetValueOption used by handleChange in FieldInputBridge
  */
 export const HANDLE_CHANGE_OPTION = SetValueOption.Overwrite;
 
 /**
- * Events that trigger re-rendering in FieldInputSlot
+ * Events that trigger re-rendering in FieldInputBridge
  */
 export const REACTIVE_RERENDERING_EVENTS =
   FieldNodeEventType.UpdateValue |

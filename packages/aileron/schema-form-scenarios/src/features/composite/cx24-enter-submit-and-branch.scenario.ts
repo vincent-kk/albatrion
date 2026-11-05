@@ -13,7 +13,7 @@ const submitSchema = {
 export const cx24EnterSubmitAndBranch: CompositeCase = {
   scenario: {
     name: 'composite.cx24-enter-submit-and-branch',
-    description: 'Submit judges only the active branch (VALIDATE-043): with branch a missing its required ref, submit is rejected; switching to b submits; switching back to a and filling ref submits. The story presses Enter in a field for each submit; a native submit rejection reaches only the sink (ERROR-139). The shared steps show the issue moving with the branch.',
+    description: 'Submit judges only the active branch (VALIDATE-043): with branch a missing its required ref, submit is rejected; switching to b submits; switching back to a and filling ref submits. The tail submits through the handle, which rejects the invalid branch; the story then presses Enter in a field, and an invalid native submit reaches neither onError nor the sink but reveals the errors and focuses the first invalid field (ERROR-139). The shared steps show the issue moving with the branch.',
     schema: submitSchema,
     initialValue: { kind: 'a' },
     steps: [

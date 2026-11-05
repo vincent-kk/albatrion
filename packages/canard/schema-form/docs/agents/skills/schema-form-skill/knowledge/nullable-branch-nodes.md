@@ -1,6 +1,6 @@
 # Nullable Objects and Arrays
 
-What `null` means on a node that owns children (`type: ['object', 'null']`, `type: ['array', 'null']`), what turns it into an object/array, and what its fields hold meanwhile. Authoritative text: `docs/en/SPECIFICATION.md` → "Nullable Objects and Arrays".
+What `null` means on a node that owns children (`type: ['object', 'null']`, `type: ['array', 'null']`), what turns it into an object/array, and what its fields hold meanwhile. Consumer reference: [nullable, empty, and misfit values](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#value-states).
 
 ## Three States
 

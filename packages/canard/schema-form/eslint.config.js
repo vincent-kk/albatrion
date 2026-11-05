@@ -41,35 +41,18 @@ const environmentTokenRules = [
   },
 ];
 
+/** Product defaults share one frozen value; identity sentinels keep private references. */
+const emptyValueRules = [
+  {
+    selector:
+      "CallExpression[callee.object.name='Object'][callee.property.name='freeze'][arguments.length=1] > :matches(ArrayExpression[elements.length=0], ObjectExpression[properties.length=0])",
+    message:
+      'Use EMPTY_ARRAY/EMPTY_OBJECT from @winglet/common-utils/constant for shared empty values; keep identity sentinels private.',
+  },
+];
+
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
-  {
-    files: ['src/__legacy__/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          paths: [
-            {
-              name: '@/schema-form',
-              message: 'Legacy modules must use local legacy copies.',
-            },
-          ],
-          patterns: [
-            {
-              group: [
-                '@/schema-form/*',
-                '!@/schema-form/__legacy__',
-                '!@/schema-form/__legacy__/**',
-              ],
-              message:
-                'Legacy modules must use local legacy copies. Relative escapes are checked by check-legacy-isolation.mjs.',
-            },
-          ],
-        },
-      ],
-    },
-  },
   {
     files: [
       'src/core/engine/record/**/*.ts',
@@ -109,6 +92,7 @@ export default [
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
+        ...emptyValueRules,
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
           message: 'ES # private fields are forbidden in FieldNode (NODE-010).',
@@ -183,6 +167,7 @@ export default [
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
+        ...emptyValueRules,
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
           message:
@@ -197,45 +182,12 @@ export default [
     },
   },
   {
-    files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/__legacy__/**'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: [
-                '@/schema-form/__legacy__',
-                '@/schema-form/__legacy__/**',
-                '**/__legacy__',
-                '**/__legacy__/**',
-              ],
-              message:
-                'Source modules must not import the preserved legacy implementation (LANDING-159, LANDING-205).',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     files: ['src/core/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
-            {
-              group: [
-                '@/schema-form/__legacy__',
-                '@/schema-form/__legacy__/**',
-                '**/__legacy__',
-                '**/__legacy__/**',
-              ],
-              message:
-                'New engine modules must not import the preserved legacy implementation (LANDING-159).',
-            },
             {
               group: [
                 '@/schema-form/app/plugin',
@@ -270,6 +222,7 @@ export default [
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
+        ...emptyValueRules,
         // Keep the base-config entries (per-rule overrides replace, not merge).
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
@@ -292,6 +245,25 @@ export default [
             'MemberExpression[computed=true][property.value=/^__[a-zA-Z0-9]+__$/]',
           message:
             'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/**/__benchmarks__/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        ...environmentTokenRules,
+        {
+          selector: "PropertyDefinition[key.type='PrivateIdentifier']",
+          message:
+            "ES private fields (#) are not allowed. Use 'private __fieldName__' convention instead for ECMA 2022 compatibility.",
+        },
+        {
+          selector: "MethodDefinition[key.type='PrivateIdentifier']",
+          message:
+            "ES private methods (#) are not allowed. Use 'private __methodName__()' convention instead for ECMA 2022 compatibility.",
         },
       ],
     },

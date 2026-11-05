@@ -64,4 +64,7 @@ export type {
 export { readFieldNodeRevealPolicy } from './surface';
 export { readFieldNodeRevealVersion } from './surface';
 export { subscribeFieldNodeRevealReleased } from './surface';
-export { commitFieldNodeRevealPolicy } from './surface';
+export {
+  updateFieldNodeSettings,
+  readFieldNodeValidationEpoch,
+} from './surface';

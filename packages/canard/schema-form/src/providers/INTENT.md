@@ -9,7 +9,7 @@
 - 각 Context 모듈은 역할 칸인 components(Context 객체와 Provider)와 hooks(소비 훅), 필요하면 utils, 그리고 진입점 index로 이룬다. 훅 이름은 `use<ContextName>Context()` 형태로 짓는다.
 - Provider 중첩 순서는 Form.tsx를 따른다: `Workspace → FieldInputs → FieldRenderer → InputControl → Virtualization → RootNode`
 - `VirtualizationContext`의 manager는 마운트 시 `VirtualizationManager.create`로 한 번 만들어 고정한다(`useLazyConstant`는 memo와 달리 한 번만 만든다는 보장이 있다). 비활성이거나 IntersectionObserver가 없으면 null이다.
-- `ExternalFormContext`는 앱 최상단에 두는 선택적 외부 설정 레이어다. 함수와 컴포넌트 참조는 `useConstant`로 고정해 불필요한 리렌더를 막는다.
+- `ExternalFormContext`는 앱 최상단에 두는 선택적 외부 설정 레이어다. 입력 정의는 참조별로 정규화하고 렌더러·포맷터는 최신 props로 해석한다.
 
 ## Boundaries
 

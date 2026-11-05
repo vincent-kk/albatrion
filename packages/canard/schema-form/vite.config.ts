@@ -62,13 +62,11 @@ export default defineConfig({
             'src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts',
           ],
           environment: 'node',
-          include: ['src/**/*.{spec,test}.ts'],
-          exclude: [
-            ...renderTests,
-            ...verifyOnlyTests,
-            ...bundleTests,
-            'src/__legacy__/**',
+          include: [
+            'src/**/*.{spec,test}.ts',
+            'stories/components/panels/utils/__tests__/*.test.ts',
           ],
+          exclude: [...renderTests, ...verifyOnlyTests, ...bundleTests],
         },
       },
       {
@@ -80,7 +78,6 @@ export default defineConfig({
           ],
           environment: 'jsdom',
           include: renderTests,
-          exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '19' },
         },
       },
@@ -119,7 +116,6 @@ export default defineConfig({
           ],
           environment: 'jsdom',
           include: renderTests,
-          exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '18' },
           server: {
             deps: {
@@ -147,6 +143,7 @@ export default defineConfig({
                   '@testing-library/react',
                   '@testing-library/dom',
                   '@testing-library/user-event',
+                  '@canard/schema-form-antd5-plugin > antd',
                 ],
               },
             },
@@ -164,7 +161,7 @@ export default defineConfig({
           ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, ...bundleTests, 'src/__legacy__/**'],
+          exclude: [...renderTests, ...bundleTests],
         },
       },
       {
@@ -177,7 +174,6 @@ export default defineConfig({
           ],
           environment: 'jsdom',
           include: renderTests,
-          exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '19' },
         },
       },

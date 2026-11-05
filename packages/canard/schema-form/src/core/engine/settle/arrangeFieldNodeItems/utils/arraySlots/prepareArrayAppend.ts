@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
@@ -6,7 +8,7 @@ import type { ArrayAppendProof } from '../../../types/settlement';
 import { admitsStaticArrayTail } from './admitsStaticArrayTail';
 
 /** Ungated effective schemas select their immutable static contributions. */
-const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
 
 /** Shared result reporting the array length after a push or an insert. */
 const LENGTH_RESULT = { source: 'length' } as const;

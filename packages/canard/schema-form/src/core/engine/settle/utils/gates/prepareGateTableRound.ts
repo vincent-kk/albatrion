@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { Nullable } from '@aileron/declare';
 
@@ -10,9 +11,6 @@ import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
-
-/** No per-round allocation when a table has no constraint-only tag schema. */
-const NO_SCHEMA_PATHS: readonly string[] = Object.freeze([]);
 
 /**
  * Decide G1–G4 once before either root declarations or children execute this round.
@@ -70,7 +68,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
       ? mapArray(table.stableSchemaNames, (name) =>
           appendSegment(node.path, name),
         )
-      : NO_SCHEMA_PATHS,
+      : EMPTY_ARRAY,
     active: true,
   });
   if (engineModes.gateSelection === 'verify') {

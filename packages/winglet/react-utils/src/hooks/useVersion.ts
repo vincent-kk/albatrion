@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useReducer, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
@@ -253,11 +253,18 @@ import { useReference } from './useReference';
  *   - updateVersion: Function to increment version and trigger re-render
  */
 export const useVersion = (callback?: Fn) => {
-  const [version, setVersion] = useState(0);
+  const [version, update] = useReducer(increment, 0);
   const callbackRef = useReference(callback);
-  const update = useRef(() => {
+  const updateRef = useRef(() => {
     callbackRef.current?.();
-    setVersion((prev) => prev + 1);
+    update();
   });
-  return [version, update.current] as const;
+  return [version, updateRef.current] as const;
 };
+
+/**
+ * Advances a version counter without allocating a reducer per render.
+ * @param version - Current version.
+ * @returns The next version.
+ */
+const increment = (version: number) => version + 1;

@@ -11,7 +11,7 @@ Build and mount a root FieldNode tree from JSON Schema, expose the current root 
 - Schedule validation for every mount, reset, rebuild and validator replacement in the shared after-frame load slot.
 - Default to ValidationMode.OnChange | ValidationMode.OnRequest.
 - Apply the full external-error list to the current root, then group non-root issues by resolved node path.
-- Keep the Context node instance for the Provider lifetime; WorkspaceContext supplies the consumer context.
+- Keep the Context node until a structural load replaces it; WorkspaceContext supplies the consumer context.
 
 ## Boundaries
 

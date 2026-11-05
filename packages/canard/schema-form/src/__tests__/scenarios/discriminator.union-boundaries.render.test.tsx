@@ -6,6 +6,7 @@ import {
   type JSONSchema,
   ValidationMode,
 } from '@/schema-form';
+import { ErrorVisibility } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -451,7 +452,7 @@ describe('discriminator union boundaries through the public Form', () => {
       defaultValue: { kind: 'a', a: 'x' },
       validator: true,
       validationMode: ValidationMode.OnChange,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       onSubmit,
     });
     try {

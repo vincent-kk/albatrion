@@ -5,11 +5,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent } from 'storybook/test';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
   Form,
   type FormHandle,
-  ShowError,
 } from '../../../src';
 import { readFieldNodeRuntime } from '../../helpers/readFieldNodeRuntime';
 
@@ -70,7 +70,11 @@ const Harness = ({
         ref={ref}
         jsonSchema={{ type: 'string', minLength: 3 }}
         defaultValue={same ? '' : 'ab'}
-        showError={touched ? ShowError.Touched : ShowError.EditedTouched}
+        errorVisibility={
+          touched
+            ? ErrorVisibility.AfterTouch
+            : ErrorVisibility.AfterEditAndTouch
+        }
         FieldRenderer={Renderer}
         fieldInputMap={{ '': Input }}
         formatError={(error) => error.message ?? null}

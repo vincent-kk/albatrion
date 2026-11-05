@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -5,9 +6,6 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { resolveReference } from './resolveReference';
-
-/** Shared frozen empty expansion path. */
-const NO_VISITING: readonly string[] = Object.freeze([]);
 
 /**
  * Collect a slot's static conjunction, cutting reference cycles within the slot.
@@ -22,7 +20,7 @@ export const collectStaticSchemas = (
   context: AnalysisContext,
   schema: BlueprintSchema,
   schemaPath: string,
-  visiting: readonly string[] = NO_VISITING,
+  visiting: readonly string[] = EMPTY_ARRAY,
   cycle?: { found: boolean },
 ): { schema: BlueprintSchema; schemaPath: string }[] => {
   if (visiting.includes(schemaPath)) {

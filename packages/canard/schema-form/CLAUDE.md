@@ -8,20 +8,24 @@
 - Speed first, minimal computation, and the same value read twice returns the same reference — every change states its speed and memory cost.
 - For a small, fixed set of checks known at build time, use direct `&&` or `||` conditions. Hoist a constant key array when iteration is clearer; never allocate the same fixed list on every call.
 - Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
-- Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (`src/__legacy__` keeps its moved code as is; consumer-facing doc examples may show the native call).
+- Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (consumer-facing doc examples may show the native call).
+- Use `EMPTY_ARRAY`/`EMPTY_OBJECT` from `@winglet/common-utils/constant` for shared empty values, except identity sentinels.
 
 ## Commands
 
+이 명령은 `packages/canard/schema-form`에서 실행합니다. 저장소 루트에서는 `yarn workspace @canard/schema-form <command>`를 사용합니다.
+
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언 + agents-hashes.json
+yarn build             # ESM/CJS 번들 빌드, 빌드 플래그 검증, 타입 선언·에이전트 해시 생성 후 타입 검사
 yarn build:types       # 타입 선언만
 yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
 yarn test              # Vitest 테스트
-yarn test --coverage   # 커버리지 포함
-yarn test --run src/__tests__/   # 렌더 레벨(node tree + DOM) 통합 스위트만
+yarn workspace @canard/schema-form test --run --project render # 모든 React 19 렌더 테스트
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
+
+커버리지에는 `@vitest/coverage-v8` 같은 provider 패키지가 필요하며, 현재 설치되어 있지 않습니다.
 
 ## Agent Docs Injector
 
@@ -92,7 +96,7 @@ controls: {
 ```
 
 The closed key list is defined by `CONTROL_KEYS` in `src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts`: active, visible, readOnly, disabled, default, derived, unsetValue, resetInteraction, unsetOnInactive, inactiveValue, fields, injectTo, discriminator, watch. Unknown keys raise `UNKNOWN_GROUP_KEY`. Fields and fragment controls accept the first ten keys; `inactiveValue` is a literal or synchronous resolver and is never compiled as an expression.
-값의 형과 예는 `docs/en/SPECIFICATION.md`의 controls 절을 기준으로 한다.
+For control value types and examples, use the [schema reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#controls).
 
 ### Validation Modes
 
@@ -103,19 +107,17 @@ The closed key list is defined by `CONTROL_KEYS` in `src/core/engine/blueprint/b
 Applies the root `Module Contract Principles` to this package.
 
 - `src/index.ts` is the only public surface (`exports` has `"."` alone) and lists every export by name. Docs, README and agent skills show only names reachable from it. Adding a name is a contract change: enumerate the built `dist/index.d.ts` and compare before merging.
-- Standard fractal shape: the root holds `INTENT.md`, `DETAIL.md`, `index.ts` and at most one implementation file named after the fractal (`components/Form/Form.tsx`). Child fractals sit under a role compartment (`components/Form/components/FormCore/`, `components/FieldProxy/components/FieldInputSlot/`), each with `index.ts`, its documents, and its own `components/`·`utils/` for helpers only it uses. Types live in a `types/` compartment split by concern (`src/core/engine/record/types/`), not in a root `type.ts`. Compartments are organs: no `index.ts` inside them, files are imported directly (`src/constants/bitmask`, not `src/constants`). Inside one organ, entry functions follow their siblings' shape: all files or all directories, never a mix.
+- Standard fractal shape: the root holds `INTENT.md`, `DETAIL.md`, `index.ts` and at most one implementation file named after the fractal (`components/Form/Form.tsx`). Child fractals sit under a role compartment (`components/Form/components/FormCore/`, `components/FieldProxy/components/FieldInputBridge/`), each with `index.ts`, its documents, and its own `components/`·`utils/` for helpers only it uses. Types live in a `types/` compartment split by concern (`src/core/engine/record/types/`), not in a root `type.ts`. Compartments are organs: no `index.ts` inside them, files are imported directly (`src/constants/bitmask`, not `src/constants`). Inside one organ, entry functions follow their siblings' shape: all files or all directories, never a mix.
 - A fractal named after a role (`hooks`, `types`) keeps its files in topic compartments, never in a compartment that repeats the role name (`src/hooks/fieldNode/`·`src/hooks/form/`, `src/types/schema/`·`field/`·`error/`·`rolled/`; never `hooks/hooks/` or `types/types/`). Helpers extracted from a function go into a topic compartment beside their siblings, not into a directory named after the function with its own `utils/` (no `analyze/populateNodeChildren/utils/`). `src/hooks` stays a fractal because it composes `core`, `providers` and `components`; an organ may not import its owner's child fractals (model B1, guarded by `src/__tests__/importModel.test.ts`).
-- Tests live in each fractal's `__tests__/` and import that fractal's internal files directly (`../runtime/FieldNode`, not `..` or `@/schema-form/core`). A test that needs another fractal's internals moves into that fractal; a fixture shared by two fractals sits in the `__tests__/fixtures/` of their lowest common fractal. `src/__tests__/e2e`, `scenarios` and `migration` are external consumers and import the root `index.ts`. A parent-level test that must reach a child fractal's internals (for example through `vi.mock`) is declared in the parent's `DETAIL.md` (see `src/core/engine/DETAIL.md`).
-- Benchmarks live inside the nearest fractal's `__benchmarks__/` and import internals directly. The standalone legacy-comparison scripts in `bench/legacy-compare/` read internals under a scoped `.filid/config.json` exemption; `bench/` and `stories/` are ignored by filid, so reviewers check those imports by hand. A bench never justifies adding a name to an `index.ts`.
+- Tests live in each fractal's `__tests__/` and import that fractal's internal files directly (`../runtime/FieldNode`, not `..` or `@/schema-form/core`). A test that needs another fractal's internals moves into that fractal; a fixture shared by two fractals sits in the `__tests__/fixtures/` of their lowest common fractal. `src/__tests__/e2e`, `scenarios`, `migration` and `agents-examples` are external consumers and import the root `index.ts`. A parent-level test that must reach a child fractal's internals (for example through `vi.mock`) is declared in the parent's `DETAIL.md` (see `src/core/engine/DETAIL.md`).
+- Benchmarks live inside the nearest fractal's `__benchmarks__/` and import internals directly. `bench/distEngine/` loads built workspace bundles and installed 0.16.x bundles for diagnostic and version comparisons. `bench/` and `stories/` are ignored by filid, so reviewers check those imports by hand. A bench never justifies adding a name to an `index.ts`.
 - Error codes come from one place: `FormErrorCode` and `FormWarningCode` (`src/errors/`), exported from the root. Product code emits codes through these constants, never as string literals.
-- `src/__legacy__` is frozen and is deleted in stage 09. Do not extend it, and do not count its imports as consumers.
 
 ## Render-Level Test Harness (`src/__tests__/`)
 
 Vitest uses five projects: `unit` runs TypeScript core tests in Node, `render`
 runs React tests and DOM-dependent TypeScript tests in jsdom, and `storybook`
-runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Source globs
-include `src/__legacy__/**`; architecture spike tests remain outside these
+runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Architecture spike tests remain outside these
 product projects. Run `yarn test --run --project <name>` to select a project.
 The dedicated `verify-unit` and `verify-render` bundle runs shadow wheel, verify table, and derive shadow checks via `yarn workspace @canard/schema-form test:verify --run`; default `unit`, `render`, and `react18` projects exercise the shipped skip/table configuration with derive shadow disabled.
 
@@ -150,8 +152,8 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Type Utilities
 
-- `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (모두 공개 index 노출 — README `TypeScript Support` 절이 문서화)
-- `InferValueType` 은 `as const` 스키마에서만 의미 있음(없으면 `type` 이 `string` 으로 넓어져 `any`). `properties`/`items` 를 재귀하되 **모든 키를 optional** 로 내고 `Record<string, any>` 와 교차한다 — `controls.active` false·`options.omitEmpty` 가 런타임에 키를 제거하므로 required 표기는 지킬 수 없는 약속이고, 열린 타입이라야 `oneOf` 분기 키가 초과 속성으로 거부되지 않는다(`additionalProperties: false` 면 닫힘). 정확한 형태가 필요하면 `Form<Schema, Value>` / `FormHandle<Schema, Value>` 2번째 인자로 직접 주입할 것 — `defaultValue` 에 구체 객체를 넘기면 `Value` 가 그 리터럴에서 required 키로 추론돼 `FormHandle` 의 기본 `Value` 와 어긋나므로, ref 를 함께 쓸 때는 주입이 필수다
+- `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (public exports; see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript))
+- Apply `as const` for useful `InferValueType` inference; widened `type` falls back to `any`. It recurses through `properties`, finite `prefixItems` tuples and `items`. Object keys are optional because inactive or omitted fields can disappear, and objects stay open unless `additionalProperties: false` so keys from `oneOf`/`anyOf` branches are not rejected as excess properties. Finite literal `prefixItems` infer optional-position tuples (see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript) for the value contract and consumer impact). Supply `Form<Schema, Value>` / `FormHandle<Schema, Value>` explicitly when exact values are required; a concrete `defaultValue` can infer required keys that differ from the handle's default `Value`, so use the same explicit type with a ref.
 - nullable 스키마는 `type: [..., 'null']` 과 `nullable: true` 둘 다 값 타입에 `| null` 을 붙인다 — 런타임(`BranchStrategy`·`validateSchemaType`)이 null 을 허용하므로 타입도 같은 계약을 따른다. `nullable: true` 는 공식 지원 표기로 `type` 배열에 `'null'` 을 더한 것과 같으며 오류·경고가 없다
 
 ## Dependencies

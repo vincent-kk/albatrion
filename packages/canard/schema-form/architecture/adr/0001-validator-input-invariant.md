@@ -2,21 +2,21 @@
 
 ## 상태
 
-| 항목 | 닫은 사람 | 라운드 |
-| --- | --- | --- |
-| VALIDATE-001 | 소유자 답(`00-goals.md:141` G1, 방향), 원리(`03-mental-model.md:13` P1) | 1 |
-| VALIDATE-002 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-2.md:112` C5), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 세 옵션은 `bind`가 강제) | 18 |
-| VALIDATE-003 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `bind`의 거부), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90) | 18 |
-| VALIDATE-004 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 편집자 결정(2라운드, `adr/0001-validator-input-invariant.md:10` S1), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 깊은 사본) | 18 |
-| VALIDATE-005 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)) | 1 |
-| VALIDATE-006 | 편집자 결정(1라운드, `reviews/round-1.md:181` 판정의 revision 채택), 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (3)) | 11 |
-| VALIDATE-007 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98) | 18 |
-| VALIDATE-008 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`) | 1 |
-| VALIDATE-009 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:38`) | 1 |
-| VALIDATE-010 | 원리(`03-mental-model.md:13` P1) | 1 |
-| VALIDATE-011 | 원리(`03-mental-model.md:13` P1), 소유자 답(`00-goals.md:105` C2), 소유자 답(`reviews/round-2.md:112` 목표 후보 C1–C8) | 2 |
-| VALIDATE-034 | 소유자 답(`reviews/round-12-owner-answers.md:16` 8 `virtual`), 소유자 답(`reviews/round-10-owner-answers.md:31` E-4) | 12 |
-| VALIDATE-036 | 원리(`03-mental-model.md:13` P1) | 1 |
+| 항목         | 닫은 사람                                                                                                                                                                                                                                    | 라운드 |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| VALIDATE-001 | 소유자 답(`00-goals.md:141` G1, 방향), 원리(`03-mental-model.md:13` P1)                                                                                                                                                                      | 1      |
+| VALIDATE-002 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-2.md:112` C5), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 세 옵션은 `bind`가 강제)                                      | 18     |
+| VALIDATE-003 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1)), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `bind`의 거부), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90)                           | 18     |
+| VALIDATE-004 | 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 편집자 결정(2라운드, `adr/0001-validator-input-invariant.md:10` S1), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; 깊은 사본) | 18     |
+| VALIDATE-005 | 소유자 답(`reviews/round-1.md:178` 계약을 검증기 프로필로 한정하는가 (R1))                                                                                                                                                                   | 1      |
+| VALIDATE-006 | 편집자 결정(1라운드, `reviews/round-1.md:181` 판정의 revision 채택), 편집자 결정(11라운드, `adr/0001-validator-input-invariant.md:3` 5차 주 (3))                                                                                             | 11     |
+| VALIDATE-007 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)                                                   | 18     |
+| VALIDATE-008 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:11`)                                                                                                                                                                             | 1      |
+| VALIDATE-009 | 편집자 결정(1라운드, `adr/0001-validator-input-invariant.md:38`)                                                                                                                                                                             | 1      |
+| VALIDATE-010 | 원리(`03-mental-model.md:13` P1)                                                                                                                                                                                                             | 1      |
+| VALIDATE-011 | 원리(`03-mental-model.md:13` P1), 소유자 답(`00-goals.md:105` C2), 소유자 답(`reviews/round-2.md:112` 목표 후보 C1–C8)                                                                                                                       | 2      |
+| VALIDATE-034 | 소유자 답(`reviews/round-12-owner-answers.md:16` 8 `virtual`), 소유자 답(`reviews/round-10-owner-answers.md:31` E-4)                                                                                                                         | 12     |
+| VALIDATE-036 | 원리(`03-mental-model.md:13` P1)                                                                                                                                                                                                             | 1      |
 
 ## 결정
 
@@ -140,7 +140,6 @@ PR: PR-4 시험(VALIDATE-043).
 - `design/05-validation-and-errors.md` §1.4 (VALIDATE-003)
 - `design/05-validation-and-errors.md` §1.7 (VALIDATE-009, VALIDATE-011)
 
-
 ## IR-6 검증 시점 보충 — 2026-10-31
 
 현행 D1은 쓰기의 다음 프레임 선행·연속 이월·quiet 후행과 마지막 실제 실행 기준100ms cap을 사용하고 동기 정착·사건·onChange를 유지합니다(VALIDATE-052).
@@ -151,14 +150,13 @@ OnChange만 이력을 기록하며 새 표시와 중간에 숨겨진 표시는 �
 정책은 root별 layout effect에서만 commit하고 렌더 중에는 엔진을 바꾸지 않으며 표시 hook은 candidate만 memoized release-version 구독과 같은 client/server getter를 사용합니다(VALIDATE-052).
 renderer/input은 enabled를 검사하고 child-errors는 hidden 자식도 집계하며 inactive 값 제거와 off-branch 오류 제외를 유지합니다(VALIDATE-052).
 현재 stamp의 commit-only 폐기는 targets를 보존해 최신 commit을 cadence로 재요청하고 explicit 반환·submit 값은 호출 시점 snapshot 계약을 유지합니다(VALIDATE-052).
-Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
+Always는 true·ErrorVisibility.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
 숨긴 reset 재생성은 원래 load별 경고 범위로 옛 기록 뒤 새 reset 기록을 chain 끝에 전달하고 handler 실패는 각각 격리하며 다른 hidden 사슬·같은-schema reset은 reconnect까지 buffer합니다(VALIDATE-052).
 한계는 hook disabled의 즉시 reveal·drop 뒤 state/enabled render의 hold 생략·commit-only stream hold·release와 paint 사이 쓰기의1~2프레임 이전 판정·한 batch 안 미표시 조합의 이력 포함이며 G는 구현하지 않습니다(VALIDATE-052).
 
 마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
 
 if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
-
 
 ## IR-7 숨김 전달 보충 — 2026-11-01
 
@@ -170,7 +168,6 @@ if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한�
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다 (VALIDATE-052). mount-time 기록이 build-time 기록보다 먼저 도착합니다 (VALIDATE-052).
 
 근거는 [IR-7 계획](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01)의 소유자 원문39–41입니다 (VALIDATE-052). reset 기록별 handler 실패는 reportErrorToHost로 격리하고 이후 기록과 binding 교체를 계속합니다 (VALIDATE-052). 구독은 첫 commit 또는 reset에서 한 번만 설치하고 effect cleanup은 검증 루트 참조만 해제합니다 (VALIDATE-052).
-
 
 ## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
 

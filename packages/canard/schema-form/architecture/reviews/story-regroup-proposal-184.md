@@ -16,113 +16,113 @@
 
 ### G1 값과 기본 입력 (value)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| 기본 형 다섯(string·number·boolean·null·integer) 입력과 값 | 입력 → 노드 값 → 출력 값 | 신규 | 01, FormTypeInput.Default |
-| enum·const·format(date 등) | 선택지 제한과 형식 유지 | 신규 | 01 |
-| 빈 칸과 비우기(undefined, nullable이면 null) | REACT-027 계약 | 기존 value/empty-draft | 22, 09 |
-| 스키마 기본값·외부 defaultValue·부모 기본값 | 마운트 채움과 reset | 기존 fill/mount-default, nested-screen | 10 |
-| omitEmpty 출력 생략 | 출력 값에서 빈 값 제거 | 기존 value/omit-empty, union/omit-empty | 18 |
-| $ref·$defs 참조와 재귀 스키마 | 참조 해석, 재귀 깊이, 경로 이스케이프 | 기존 value/reference-schema + 신규(재귀 트리) | 16 |
-| 루트 출력과 enhanced 없는 값 계약 | getValue·submit·onChange가 같은 값 | 기존 value/root-output | 07 |
+| 스토리 테스트                                              | 단언의 핵심                           | 데이터                                        | 옛 사례 후보              |
+| ---------------------------------------------------------- | ------------------------------------- | --------------------------------------------- | ------------------------- |
+| 기본 형 다섯(string·number·boolean·null·integer) 입력과 값 | 입력 → 노드 값 → 출력 값              | 신규                                          | 01, FormTypeInput.Default |
+| enum·const·format(date 등)                                 | 선택지 제한과 형식 유지               | 신규                                          | 01                        |
+| 빈 칸과 비우기(undefined, nullable이면 null)               | REACT-027 계약                        | 기존 value/empty-draft                        | 22, 09                    |
+| 스키마 기본값·외부 defaultValue·부모 기본값                | 마운트 채움과 reset                   | 기존 fill/mount-default, nested-screen        | 10                        |
+| omitEmpty 출력 생략                                        | 출력 값에서 빈 값 제거                | 기존 value/omit-empty, union/omit-empty       | 18                        |
+| $ref·$defs 참조와 재귀 스키마                              | 참조 해석, 재귀 깊이, 경로 이스케이프 | 기존 value/reference-schema + 신규(재귀 트리) | 16                        |
+| 루트 출력과 enhanced 없는 값 계약                          | getValue·submit·onChange가 같은 값    | 기존 value/root-output                        | 07                        |
 
 ### G2 객체와 배열 구조 (structure)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| 객체 properties·required·additionalProperties | 자식 생성과 출력 | 신규 | 01, 06 |
-| 배열 push·remove·update·clear·pop | 슬롯 동일성과 값 | 기존 array/* 6건 | 27 |
-| 터미널 배열·객체 입력 대 브랜치 | 통째 쓰기와 자식 그리기 | 기존 array/terminal-verbs, union/object-array | 02 |
-| prefixItems 튜플과 열린 items | 자리별 스키마, 여분 항목 | 기존 array/items-prefix, extras-tail | 35 |
-| minItems 채움과 nullable 슬롯 | 채움·reset 상호작용 | 기존 array/render(min-items, nullable-slots) | 10, 28 |
-| omitTrailing 끝 생략 | 출력에서 끝 빈 항목 제거 | 기존 array/omit-trailing | 41 |
-| 대량 변경(batch)과 통째 쓰기 | 한 번의 통지 | 기존 array/whole-write, notify/batch | 38 |
+| 스토리 테스트                                 | 단언의 핵심              | 데이터                                        | 옛 사례 후보 |
+| --------------------------------------------- | ------------------------ | --------------------------------------------- | ------------ |
+| 객체 properties·required·additionalProperties | 자식 생성과 출력         | 신규                                          | 01, 06       |
+| 배열 push·remove·update·clear·pop             | 슬롯 동일성과 값         | 기존 array/\* 6건                             | 27           |
+| 터미널 배열·객체 입력 대 브랜치               | 통째 쓰기와 자식 그리기  | 기존 array/terminal-verbs, union/object-array | 02           |
+| prefixItems 튜플과 열린 items                 | 자리별 스키마, 여분 항목 | 기존 array/items-prefix, extras-tail          | 35           |
+| minItems 채움과 nullable 슬롯                 | 채움·reset 상호작용      | 기존 array/render(min-items, nullable-slots)  | 10, 28       |
+| omitTrailing 끝 생략                          | 출력에서 끝 빈 항목 제거 | 기존 array/omit-trailing                      | 41           |
+| 대량 변경(batch)과 통째 쓰기                  | 한 번의 통지             | 기존 array/whole-write, notify/batch          | 38           |
 
 ### G3 조건과 합성 (composition)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| oneOf 분기 전환과 값 보존 | 분기 왕복 때 공유 값 유지 | 기존 union/render(branch-round-trip) | 17 |
-| anyOf 활성 분기와 공유 필드 | 여러 분기 동시 활성 | 기존 union/render(active-anyof) | 31 |
-| 중첩 oneOf(분기 안의 분기) | 안쪽 분기 전환이 바깥에 미치는 영향 | 기존 union/render(nested-branch) + 신규(3단 중첩) | 17 |
-| oneOf와 anyOf 결합 | 두 합성의 교차 | 신규 | 17, 31 |
-| allOf 합성·required·충돌 | 병합 결과와 검증 | 기존 settle/conditional-screen 일부 + 신규 | 30 |
-| if/then/else와 const 조건 | 조건 전환과 빠른 토글 | 기존 settle/conditional-screen | 06 |
-| nullable 분기의 세 상태(null·빈·값) | 승격과 되돌림 | 기존 union/render(null-ancestor), value/null-promotion | 28, 42, 43 |
-| typeless 분기와 리터럴 속성 | type 없는 분기 판정 | 기존 union/render(typeless-*) | 43 |
-| 분기 기본값과 첫 화면 | 활성 분기의 기본값만 채움 | 기존 union/default-fill, first-screen | 17 |
+| 스토리 테스트                       | 단언의 핵심                         | 데이터                                                 | 옛 사례 후보 |
+| ----------------------------------- | ----------------------------------- | ------------------------------------------------------ | ------------ |
+| oneOf 분기 전환과 값 보존           | 분기 왕복 때 공유 값 유지           | 기존 union/render(branch-round-trip)                   | 17           |
+| anyOf 활성 분기와 공유 필드         | 여러 분기 동시 활성                 | 기존 union/render(active-anyof)                        | 31           |
+| 중첩 oneOf(분기 안의 분기)          | 안쪽 분기 전환이 바깥에 미치는 영향 | 기존 union/render(nested-branch) + 신규(3단 중첩)      | 17           |
+| oneOf와 anyOf 결합                  | 두 합성의 교차                      | 신규                                                   | 17, 31       |
+| allOf 합성·required·충돌            | 병합 결과와 검증                    | 기존 settle/conditional-screen 일부 + 신규             | 30           |
+| if/then/else와 const 조건           | 조건 전환과 빠른 토글               | 기존 settle/conditional-screen                         | 06           |
+| nullable 분기의 세 상태(null·빈·값) | 승격과 되돌림                       | 기존 union/render(null-ancestor), value/null-promotion | 28, 42, 43   |
+| typeless 분기와 리터럴 속성         | type 없는 분기 판정                 | 기존 union/render(typeless-\*)                         | 43           |
+| 분기 기본값과 첫 화면               | 활성 분기의 기본값만 채움           | 기존 union/default-fill, first-screen                  | 17           |
 
 ### G4 파생·주입·감시 (derive)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| computed visible·readOnly·disabled·active | 표현식 결과가 제어에 반영 | 기존 controls/states | 11, 29.Visible |
-| visible 대 active(값 보존 대 제거) | 숨김은 값 유지, 비활성은 제거 | 기존 controls/exit-layers, exit/* | 29.Visible |
-| watch와 derived 값 사슬 | 수동 편집 뒤 파생 재계산 | 기존 derive/render(derived-chain) | 05, 36 |
-| injectTo 형제·부모·배열·다중 대상 | 주입 범위와 순환 차단 | 기존 derive/render(sibling, parent-array), derive/injection | 39 |
-| 순환 참조와 피드백 예산 | 수렴·비수렴 종료 | 기존 derive/budget, union/feedback-* | 36 |
-| pristine 조건 | 상태 초기화와 파생 결합 | 신규 | 37 |
-| context(@) 참조 | 외부 context로 모드·권한 제어 | 신규 | 34 |
+| 스토리 테스트                             | 단언의 핵심                   | 데이터                                                      | 옛 사례 후보   |
+| ----------------------------------------- | ----------------------------- | ----------------------------------------------------------- | -------------- |
+| computed visible·readOnly·disabled·active | 표현식 결과가 제어에 반영     | 기존 controls/states                                        | 11, 29.Visible |
+| visible 대 active(값 보존 대 제거)        | 숨김은 값 유지, 비활성은 제거 | 기존 controls/exit-layers, exit/\*                          | 29.Visible     |
+| watch와 derived 값 사슬                   | 수동 편집 뒤 파생 재계산      | 기존 derive/render(derived-chain)                           | 05, 36         |
+| injectTo 형제·부모·배열·다중 대상         | 주입 범위와 순환 차단         | 기존 derive/render(sibling, parent-array), derive/injection | 39             |
+| 순환 참조와 피드백 예산                   | 수렴·비수렴 종료              | 기존 derive/budget, union/feedback-\*                       | 36             |
+| pristine 조건                             | 상태 초기화와 파생 결합       | 신규                                                        | 37             |
+| context(@) 참조                           | 외부 context로 모드·권한 제어 | 신규                                                        | 34             |
 
 ### G5 검증·상태·오류 (validation-state)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| 검증 모드 셋(OnChange·OnRequest·None) | 언제 오류가 생기는가 | 신규 | 13, 21 |
-| 외부 errors prop과 setExternalErrors | 외부 오류 표시·제거(178C-01 가드 포함) | 신규 | 13 |
-| 오류 표시 정책(showError·showErrors) | 조건부 표시 | 신규 | 21.Extended |
-| 오류 포맷·번역(formatError) | 메시지 변환 | 신규 | 21 |
-| dirty·touched·pristine과 global state | 상태 전이와 onStateChange | 기존 controls/scope 일부 + 신규 | 15, 38 |
-| submit·Enter 제출과 제출 검증 | VALIDATION_ERROR와 성공 경로 | 기존 validation/submit | 19 |
-| 하위 오류와 union 형 오류 | 노드별 오류 귀속 | 기존 validation/union-type, if-only | 21 |
+| 스토리 테스트                                         | 단언의 핵심                            | 데이터                              | 옛 사례 후보 |
+| ----------------------------------------------------- | -------------------------------------- | ----------------------------------- | ------------ |
+| 검증 모드 셋(OnChange·OnRequest·None)                 | 언제 오류가 생기는가                   | 신규                                | 13, 21       |
+| 외부 errors prop과 setExternalErrors                  | 외부 오류 표시·제거(178C-01 가드 포함) | 신규                                | 13           |
+| 오류 표시 정책(errorVisibility·childErrorVisibleList) | 조건부 표시                            | 신규                                | 21.Extended  |
+| 오류 포맷·번역(formatError)                           | 메시지 변환                            | 신규                                | 21           |
+| dirty·touched·pristine과 global state                 | 상태 전이와 onStateChange              | 기존 controls/scope 일부 + 신규     | 15, 38       |
+| submit·Enter 제출과 제출 검증                         | VALIDATION_ERROR와 성공 경로           | 기존 validation/submit              | 19           |
+| 하위 오류와 union 형 오류                             | 노드별 오류 귀속                       | 기존 validation/union-type, if-only | 21           |
 
 ### G6 입력 컴포넌트 (formtype-input)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| FormTypeInput 정의 매칭(test)과 우선순위 다섯 | 어느 정의가 이기는가 | 신규 | 03, 25 |
-| formTypeInputMap 경로·정규식·와일드카드 | 경로 매핑 | 신규(usage PathMapping 보강) | 03 |
-| 제어·비제어 입력과 blur trim | 입력 계약 | 기존 e2e controls-input + 데이터화 | 22, 24 |
-| 숫자 badInput·포매터 캐럿·IME | 브라우저 사실(G23 스토리 재사용) | 기존 browser-gates | 24 |
-| 파일 업로드(단일·다중·언마운트 정리) | 파일 값의 수명 | 기존 e2e upload-file + 데이터화 | 26 |
-| 스키마에서 renderer·input props 전달 | props 흐름 | 기존 e2e schema-node-props-flow + 데이터화 | 23, 33 |
-| ChildNodeComponents로 자식 그리기와 동적 객체 | 자식 합성 | 기존 value/package-entry-render 일부 + 신규 | 32 |
+| 스토리 테스트                                 | 단언의 핵심                      | 데이터                                      | 옛 사례 후보 |
+| --------------------------------------------- | -------------------------------- | ------------------------------------------- | ------------ |
+| FormTypeInput 정의 매칭(test)과 우선순위 다섯 | 어느 정의가 이기는가             | 신규                                        | 03, 25       |
+| formTypeInputMap 경로·정규식·와일드카드       | 경로 매핑                        | 신규(usage PathMapping 보강)                | 03           |
+| 제어·비제어 입력과 blur trim                  | 입력 계약                        | 기존 e2e controls-input + 데이터화          | 22, 24       |
+| 숫자 badInput·포매터 캐럿·IME                 | 브라우저 사실(G23 스토리 재사용) | 기존 browser-gates                          | 24           |
+| 파일 업로드(단일·다중·언마운트 정리)          | 파일 값의 수명                   | 기존 e2e upload-file + 데이터화             | 26           |
+| 스키마에서 renderer·input props 전달          | props 흐름                       | 기존 e2e schema-node-props-flow + 데이터화  | 23, 33       |
+| ChildNodeComponents로 자식 그리기와 동적 객체 | 자식 합성                        | 기존 value/package-entry-render 일부 + 신규 | 32           |
 
 ### G7 핸들·레이아웃·합성 API (imperative-layout)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| FormHandle: getValue·setValue·reset·validate | 값·오류 왕복 | 기존 settle/form-reset + 신규 | 07, 20 |
-| FormHandle: focus·select·refresh | 명령 전달 | 기존 e2e controls-focus, proxy-refresh + 데이터화 | 07 |
-| Form.Render·Form.Input·Label·Error 합성 | 경로별 레이아웃 | 기존 usage Composition 보강 | 04, 12 |
-| children 함수와 반복 children | 렌더 합성 | 기존 usage Composition | 04 |
-| 외부 Provider·설정·사용자 context | Provider 계층 | 기존 usage Provider | 14 |
-| 스키마·defaultValue 교체와 reset 로드 | 재로드 계약 | 기존 settle/form-reset, fill/nested-screen | 20 |
+| 스토리 테스트                                | 단언의 핵심     | 데이터                                            | 옛 사례 후보 |
+| -------------------------------------------- | --------------- | ------------------------------------------------- | ------------ |
+| FormHandle: getValue·setValue·reset·validate | 값·오류 왕복    | 기존 settle/form-reset + 신규                     | 07, 20       |
+| FormHandle: focus·select·refresh             | 명령 전달       | 기존 e2e controls-focus, proxy-refresh + 데이터화 | 07           |
+| Form.Render·Form.Input·Label·Error 합성      | 경로별 레이아웃 | 기존 usage Composition 보강                       | 04, 12       |
+| children 함수와 반복 children                | 렌더 합성       | 기존 usage Composition                            | 04           |
+| 외부 Provider·설정·사용자 context            | Provider 계층   | 기존 usage Provider                               | 14           |
+| 스키마·defaultValue 교체와 reset 로드        | 재로드 계약     | 기존 settle/form-reset, fill/nested-screen        | 20           |
 
 ### G8 플러그인과 격리 (plugin)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| registerPlugin과 검증기 플러그인(ajv) | 검증 결과 흐름 | 기존 usage Plugin | 14 |
-| UI 플러그인 렌더러 교체(FormGroup·Label·Input·Error) | 렌더러 자리 | 기존 usage ControlsAndPresentation | 25 |
-| 오류 경계 격리(입력 하나가 throw) | 서브트리만 fallback | 신규 | 13 |
-| 플러그인 패키지가 코어 시나리오를 자기 렌더러로 | composeStories 재사용 | 신규(08 몫) | — |
+| 스토리 테스트                                        | 단언의 핵심           | 데이터                             | 옛 사례 후보 |
+| ---------------------------------------------------- | --------------------- | ---------------------------------- | ------------ |
+| registerPlugin과 검증기 플러그인(ajv)                | 검증 결과 흐름        | 기존 usage Plugin                  | 14           |
+| UI 플러그인 렌더러 교체(FormGroup·Label·Input·Error) | 렌더러 자리           | 기존 usage ControlsAndPresentation | 25           |
+| 오류 경계 격리(입력 하나가 throw)                    | 서브트리만 fallback   | 신규                               | 13           |
+| 플러그인 패키지가 코어 시나리오를 자기 렌더러로      | composeStories 재사용 | 신규(08 몫)                        | —            |
 
 ### G9 이벤트와 통지 (notify)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| 배치와 setValue 동기성 | 통지 횟수와 순서 | 기존 notify/batch, order | 38 |
-| 구독(subscribe)과 이벤트 종류 | 이벤트 수신 | 신규 | 15 |
+| 스토리 테스트                         | 단언의 핵심         | 데이터                                       | 옛 사례 후보 |
+| ------------------------------------- | ------------------- | -------------------------------------------- | ------------ |
+| 배치와 setValue 동기성                | 통지 횟수와 순서    | 기존 notify/batch, order                     | 38           |
+| 구독(subscribe)과 이벤트 종류         | 이벤트 수신         | 신규                                         | 15           |
 | 경고 기록(onError)과 렌더 재실행 관찰 | 경고 1회, 재렌더 수 | 기존 notify/warning, e2e renderer-regression | BugReport.01 |
 
 ### G10 규모와 가상화 (scale)
 
-| 스토리 테스트 | 단언의 핵심 | 데이터 | 옛 사례 후보 |
-| --- | --- | --- | --- |
-| 가상화 지연 마운트(IO·idle·focus 노출) | placeholder → 마운트 | 기존 controls/virtualization, e2e deferred-mount | 40 |
-| 1,000개 배열 폼의 동작(수치 없음) | 스크롤·편집이 됨 | 신규 | — |
-| 표현식 비용 데모 | 큰 폼에서 computed 다수 | 신규 | 36 |
+| 스토리 테스트                          | 단언의 핵심             | 데이터                                           | 옛 사례 후보 |
+| -------------------------------------- | ----------------------- | ------------------------------------------------ | ------------ |
+| 가상화 지연 마운트(IO·idle·focus 노출) | placeholder → 마운트    | 기존 controls/virtualization, e2e deferred-mount | 40           |
+| 1,000개 배열 폼의 동작(수치 없음)      | 스크롤·편집이 됨        | 신규                                             | —            |
+| 표현식 비용 데모                       | 큰 폼에서 computed 다수 | 신규                                             | 36           |
 
 그룹 10개, 스토리 테스트 약 62건(기존 데이터 재사용 약 35건, 신규 데이터 약 27건).
 
@@ -130,15 +130,15 @@
 
 기능을 두 개 이상 묶어 실제 폼처럼 쓰는 스토리다. 각각 시나리오 데이터 하나와 play 단언을 가진다.
 
-| 번호 | 복합 사례 | 묶는 그룹 |
-| --- | --- | --- |
-| C1 | 주문서: oneOf 결제 분기 안의 배열 항목 + 파생 합계 + 제출 검증 | G3·G2·G4·G5 |
-| C2 | 조직도: $ref 재귀 트리 + 가상화 + 노드 상태(dirty) | G1·G10·G5 |
-| C3 | 프로필: nullable 주소 객체 + if/then/else + 외부 오류 + 오류 표시 정책 | G3·G5 |
-| C4 | 금액 입력: 커스텀 포매터 입력 + 숫자 badInput + Enter 제출 | G6·G5 |
-| C5 | 권한 폼: context(@) 모드 + computed readOnly·visible + injectTo | G4·G7 |
-| C6 | 플러그인 폼: antd 렌더러 + 파일 업로드 + 오류 경계 격리 | G8·G6 |
-| C7 | 설정 마법사: anyOf 다중 선택 + prefixItems 튜플 + reset 로드 | G3·G2·G7 |
+| 번호 | 복합 사례                                                              | 묶는 그룹   |
+| ---- | ---------------------------------------------------------------------- | ----------- |
+| C1   | 주문서: oneOf 결제 분기 안의 배열 항목 + 파생 합계 + 제출 검증         | G3·G2·G4·G5 |
+| C2   | 조직도: $ref 재귀 트리 + 가상화 + 노드 상태(dirty)                     | G1·G10·G5   |
+| C3   | 프로필: nullable 주소 객체 + if/then/else + 외부 오류 + 오류 표시 정책 | G3·G5       |
+| C4   | 금액 입력: 커스텀 포매터 입력 + 숫자 badInput + Enter 제출             | G6·G5       |
+| C5   | 권한 폼: context(@) 모드 + computed readOnly·visible + injectTo        | G4·G7       |
+| C6   | 플러그인 폼: antd 렌더러 + 파일 업로드 + 오류 경계 격리                | G8·G6       |
+| C7   | 설정 마법사: anyOf 다중 선택 + prefixItems 튜플 + reset 로드           | G3·G2·G7    |
 
 ## 4. 구조·데이터·검증 방식
 

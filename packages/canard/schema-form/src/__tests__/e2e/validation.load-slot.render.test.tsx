@@ -4,12 +4,12 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldRendererProps,
   Form,
   FormErrorCode,
   type FormHandle,
   type JSONSchema,
-  ShowError,
   ValidationMode,
 } from '@/schema-form';
 
@@ -105,9 +105,9 @@ it.each([false, true])(
   },
 );
 
-it.each([true, ShowError.Always])(
+it.each([ErrorVisibility.Always])(
   'T2 Always defers compile and first verdict (policy=%s)',
-  async (showError) => {
+  async (errorVisibility) => {
     const clock = createValidationFrameClock();
     const onValidate = vi.fn();
     const validate = vi.fn(() => [{ dataPath: '', message: 'required' }]);
@@ -116,7 +116,7 @@ it.each([true, ShowError.Always])(
       <StrictMode>
         <Form
           jsonSchema={{ type: 'string' }}
-          showError={showError}
+          errorVisibility={errorVisibility}
           FieldRenderer={({
             Input,
             errorVisible,

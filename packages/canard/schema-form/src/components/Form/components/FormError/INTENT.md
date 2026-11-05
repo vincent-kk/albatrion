@@ -13,7 +13,7 @@
 
 ### Always do
 
-- 오류를 보일지는 `FieldProxy`가 Form의 `showError`와 필드 상태로 정한 결과를 따릅니다.
+- 오류를 보일지는 `FieldProxy`가 Form의 `errorVisibility`와 필드 상태로 정한 결과를 따릅니다.
 
 ### Ask first
 

@@ -1,25 +1,21 @@
 import type { Dictionary } from '@aileron/declare';
 
-import {
-  BIT_FLAG_00,
-  BIT_FLAG_01,
-  BIT_FLAG_02,
-  BIT_FLAG_03,
-  BIT_FLAG_04,
-} from '@/schema-form/constants/bitmask';
 import type { ValidationIssue } from '@/schema-form/core';
 
-export enum ShowError {
-  /** Always show error */
-  Always = BIT_FLAG_00,
-  /** Never show error */
-  Never = BIT_FLAG_01,
-  /** Show after user input edits the field */
-  Edited = BIT_FLAG_02,
-  /** Show error when the input is touched */
-  Touched = BIT_FLAG_03,
-  /** Show after user input edits the field and the field was touched */
-  EditedTouched = BIT_FLAG_04,
+/** Error display eligibility, independent of validation scheduling. */
+export enum ErrorVisibility {
+  /** Always qualify for display, subject to node presence and release rules. */
+  Always = 'always',
+  /** Suppress display unless a node or Form reveal overrides it. */
+  Never = 'never',
+  /** Require an input edit. */
+  AfterEdit = 'afterEdit',
+  /** Require the input to have lost focus. */
+  AfterTouch = 'afterTouch',
+  /** Require both an input edit and a blur. */
+  AfterEditAndTouch = 'afterEditAndTouch',
+  /** Require either an input edit or a blur. */
+  AfterEditOrTouch = 'afterEditOrTouch',
 }
 
 /** Form validator prop: the core object contract requires synchronous guard compilation. */

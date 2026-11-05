@@ -1,24 +1,19 @@
-# nullBehavior — null 터미널 행
+# nullBehavior — null 계산 경계
 
 ## Purpose
 
-null 노드의 입력 멤버십과 원본 참조 방출을 소유합니다.
-
-## Conventions
-
-- 행은 `type: 'null'`, `strategy: 'terminal'` 하나입니다(NODE-047).
-- null 변환은 하지 않고 없음인 `undefined`와 구별합니다(WRITE-075·093).
+명시 null과 없음의 차이를 보존하는 항등 해석·투영을 소유합니다.
 
 ## Boundaries
 
 ### Always do
 
-- `null`을 그대로 받고 다른 값의 원본을 보존합니다(WRITE-084).
+- 잘못된 종류도 원본 그대로 돌려줍니다. 항등 반환을 멤버십 판정으로 쓰지 않습니다.
 
 ### Ask first
 
-- null의 채움·방출 의미를 바꿀 때
+- null과 undefined의 구분이나 원본 방출을 바꿀 때
 
 ### Never do
 
-- 임의 값을 null로 강제하거나 원본을 직접 쓰거나 상위 동작 표·정착·겉면을 가져오지 않습니다(NODE-006·009).
+- 임의 값을 null로 강제하거나 없음과 합치지 않습니다. 값 교정과 채움의 의미가 달라집니다.

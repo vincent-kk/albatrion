@@ -4,11 +4,11 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
   Form,
   type FormHandle,
-  ShowError,
   ValidationMode,
 } from '@/schema-form';
 
@@ -65,7 +65,7 @@ it('IR-6 a touched field never commits its previous error when the first charact
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue=""
-      showError={ShowError.EditedTouched}
+      errorVisibility={ErrorVisibility.AfterEditAndTouch}
       FieldRenderer={Renderer}
       fieldInputDefinitions={[{ test: () => true, Component: Input }]}
       formatError={(error) => error.message ?? null}
@@ -172,13 +172,13 @@ it.each([ValidationMode.None, ValidationMode.OnRequest])(
     );
     act(() => {
       ref.current!.setValue('a');
-      ref.current!.showError();
+      ref.current!.revealErrors();
     });
     expect(view.getByTestId('error').textContent).toBe('external');
   },
 );
 
-it('IR-6 no validator releases external errors revealed by showError after a write', async () => {
+it('IR-6 no validator releases external errors revealed by errorVisibility after a write', async () => {
   const ref = createRef<FormHandle>();
   const view = render(
     <Form
@@ -194,7 +194,7 @@ it('IR-6 no validator releases external errors revealed by showError after a wri
   await settleValidation(() => ref.current?.node);
   act(() => {
     ref.current!.setValue('a');
-    ref.current!.showError();
+    ref.current!.revealErrors();
   });
   expect(view.getByTestId('error').textContent).toBe('');
   await settleValidation(() => ref.current?.node);
@@ -254,7 +254,7 @@ it('IR-6 Touched mode holds the previous error when blur writes a trimmed value'
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue=" "
-      showError={ShowError.Touched}
+      errorVisibility={ErrorVisibility.AfterTouch}
       FieldRenderer={Renderer}
       fieldInputMap={{ '': TrimmingInput }}
       formatError={(error) => error.message ?? null}
@@ -304,7 +304,7 @@ it.each(['execute', 'compile'] as const)(
     if (mode === 'execute') await settleValidation(() => ref.current?.node);
     act(() => {
       ref.current!.setValue('new');
-      ref.current!.showError();
+      ref.current!.revealErrors();
     });
     expect(view.getByTestId('error').textContent).toBe('');
     await settleValidation(() => ref.current?.node);
@@ -335,7 +335,7 @@ it('IR-6 a newly enabled display during synchronous continuous input reveals at 
   for (let frame = 0; frame < 8; frame++) {
     await act(async () => {
       ref.current!.setValue(String(frame));
-      if (frame === 1) ref.current!.showError();
+      if (frame === 1) ref.current!.revealErrors();
       clock.frame();
       await clock.task();
     });
@@ -419,7 +419,7 @@ it.each([ValidationMode.None, ValidationMode.OnRequest])(
     await settleValidation(() => ref.current?.node);
     act(() => {
       ref.current!.setValue('new');
-      ref.current!.showError();
+      ref.current!.revealErrors();
     });
     expect(view.getByTestId('error').textContent).toBe('');
     view.rerender(
@@ -432,7 +432,7 @@ it.each([ValidationMode.None, ValidationMode.OnRequest])(
     );
     act(() => {
       ref.current!.reset();
-      ref.current!.showError();
+      ref.current!.revealErrors();
     });
     expect(view.getByTestId('error').textContent).toBe('external');
     await settleValidation(() => ref.current?.node);

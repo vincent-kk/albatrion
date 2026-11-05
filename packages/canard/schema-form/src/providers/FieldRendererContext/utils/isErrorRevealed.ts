@@ -10,7 +10,7 @@ import { resolveErrorVisibility } from './resolveErrorVisibility';
 const EMPTY_ENTRIES: readonly [] = [];
 
 /** Check a live display against its node and policy history since the last release.
- * @param node - Caller established checkShowError(node.state) and, when includeEnabled, node.isPresent.
+ * @param node - Caller established checkErrorVisibility(node.state) and, when includeEnabled, node.isPresent.
  * @param policy - Policy rendered by the current context.
  * @param includeEnabled - Renderer and input include node presence; child-error aggregates do not.
  * @returns Whether the error stayed eligible throughout all unreleased intervals. */

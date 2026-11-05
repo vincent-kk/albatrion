@@ -62,6 +62,17 @@ All generated paths and identifiers use `{slug}`. Never mix `expert/`, generic, 
 
 ---
 
+## Site-owned package documentation
+
+For `packages/canard/schema-form`, consumer documentation is canonical in
+`documents/docs/canard/schema-form/` and its Korean translation under
+`documents/i18n/ko/docusaurus-plugin-content-docs/current/canard/schema-form/`.
+Apply this exception before the generic artifact discovery and templates below:
+update the matching site pages, keep the package READMEs as entries, and do not
+create package specifications, a quick reference, or a docs index. This prevents
+recreating duplicate consumer contracts. The package's agent assets remain in
+`docs/agents/`; use that location instead of the generic `docs/claude/` paths.
+
 ## Phase 1: Pre-Execution Checks
 
 ### 1.1 Package Path Validation & Flag Parsing

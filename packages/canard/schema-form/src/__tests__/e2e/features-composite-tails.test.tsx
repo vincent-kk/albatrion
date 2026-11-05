@@ -4,29 +4,40 @@ import { act, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type CompositeCase, type CompositePropStage, type CompositeTailStep, compositeCases } from '@aileron/schema-form-scenarios';
+import {
+  type CompositeCase,
+  type CompositePropStage,
+  type CompositeTailStep,
+  compositeCases,
+} from '@aileron/schema-form-scenarios';
 
 import {
-  type FormHandle,
-  Form,
-  type JSONSchema,
+  ErrorVisibility,
   FieldNodeState,
+  Form,
+  type FormHandle,
+  type JSONSchema,
   SetValueOption,
-  ShowError,
   ValidationMode,
   type ValidatorFactory,
   VirtualizationBackfill,
 } from '@/schema-form';
 
-import { createRenderValidator } from '../helpers/createRenderValidator';
-
 import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
+import { createRenderValidator } from '../helpers/createRenderValidator';
 import { settleValidation } from '../helpers/settleValidation';
 
 // Consumer tails of the composite cases: each case loads its tailStart and runs the tail steps against the handle and DOM.
 // jsdom has no IntersectionObserver or idle callback; inert stubs keep placeholders deferred until a command reveals them.
 beforeEach(() => {
-  vi.stubGlobal('IntersectionObserver', class { observe() {} unobserve() {} disconnect() {} });
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
   vi.stubGlobal('requestIdleCallback', () => 0);
   vi.stubGlobal('cancelIdleCallback', () => {});
 });
@@ -40,7 +51,11 @@ const frameMs = 50;
  * @param ms - Extra wait for timer-driven work such as the touched frame.
  * @returns Completion after the act scope.
  */
-const settle = (current: () => FormHandle['node'] | undefined, ms = 0) => act(async () => { await settleValidation(current); if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms)); });
+const settle = (current: () => FormHandle['node'] | undefined, ms = 0) =>
+  act(async () => {
+    await settleValidation(current);
+    if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms));
+  });
 
 /**
  * Build a validator factory over the harness validator whose verdicts can be held until released.
@@ -54,15 +69,28 @@ const createHeldValidator = () => {
     ...base,
     compile: (schema) => {
       // A boolean schema accepts everything or nothing; the harness validator compiles object schemas only.
-      const validate = typeof schema === 'boolean' ? () => (schema ? null : [{ dataPath: '', keyword: 'false' }]) : base.compile(schema);
-      return (value) => (held ? new Promise((resolve) => { pending.push(() => resolve(validate(value))); }) : validate(value));
+      const validate =
+        typeof schema === 'boolean'
+          ? () => (schema ? null : [{ dataPath: '', keyword: 'false' }])
+          : base.compile(schema);
+      return (value) =>
+        held
+          ? new Promise((resolve) => {
+              pending.push(() => resolve(validate(value)));
+            })
+          : validate(value);
     },
   };
   return {
     factory,
     isHeld: () => held,
-    hold: () => { held = true; },
-    release: () => { held = false; pending.splice(0).forEach((resume) => resume()); },
+    hold: () => {
+      held = true;
+    },
+    release: () => {
+      held = false;
+      pending.splice(0).forEach((resume) => resume());
+    },
   };
 };
 
@@ -71,13 +99,29 @@ const createHeldValidator = () => {
  * @param stage - Accumulated plain props.
  * @returns Props to spread on the Form.
  */
-const toStagedProps = (stage: CompositePropStage & CompositeCase['props']): Record<string, unknown> => ({
+const toStagedProps = (
+  stage: CompositePropStage & CompositeCase['props'],
+): Record<string, unknown> => ({
   ...('errors' in (stage ?? {}) && { errors: stage?.errors }),
   ...(stage?.context && { context: stage.context }),
-  ...(typeof stage?.showError === 'boolean' && { showError: stage.showError }),
-  ...(typeof stage?.showError === 'string' && { showError: ShowError[stage.showError] }),
-  ...(stage?.validationMode && { validationMode: ValidationMode[stage.validationMode] }),
-  ...(stage?.virtualization && { virtualization: { ...stage.virtualization, backfill: stage.virtualization.backfill === 'idle' ? VirtualizationBackfill.Idle : VirtualizationBackfill.None } }),
+  ...(typeof stage?.errorVisibility === 'boolean' && {
+    errorVisibility: stage.errorVisibility,
+  }),
+  ...(typeof stage?.errorVisibility === 'string' && {
+    errorVisibility: ErrorVisibility[stage.errorVisibility],
+  }),
+  ...(stage?.validationMode && {
+    validationMode: ValidationMode[stage.validationMode],
+  }),
+  ...(stage?.virtualization && {
+    virtualization: {
+      ...stage.virtualization,
+      backfill:
+        stage.virtualization.backfill === 'idle'
+          ? VirtualizationBackfill.Idle
+          : VirtualizationBackfill.None,
+    },
+  }),
 });
 
 /**
@@ -91,10 +135,22 @@ const runTail = async (item: CompositeCase) => {
   const ref = createRef<FormHandle>();
   let stageProps: (next: CompositePropStage) => void = () => {};
   const Host = () => {
-    const [staged, setStaged] = useState<CompositePropStage & CompositeCase['props']>({ ...item.props });
+    const [staged, setStaged] = useState<
+      CompositePropStage & CompositeCase['props']
+    >({ ...item.props });
     stageProps = (next) => setStaged((previous) => ({ ...previous, ...next }));
-    return <Form<JSONSchema> ref={ref} jsonSchema={item.scenario.schema as JSONSchema} defaultValue={item.tailStart}
-      validatorFactory={held.factory} onSubmit={(value) => { submitted.push(value); }} {...toStagedProps(staged)} />;
+    return (
+      <Form<JSONSchema>
+        ref={ref}
+        jsonSchema={item.scenario.schema as JSONSchema}
+        defaultValue={item.tailStart}
+        validatorFactory={held.factory}
+        onSubmit={(value) => {
+          submitted.push(value);
+        }}
+        {...toStagedProps(staged)}
+      />
+    );
   };
   const { container, unmount } = render(<Host />);
   const node = (path: string) => ref.current!.findNode(path);
@@ -102,7 +158,11 @@ const runTail = async (item: CompositeCase) => {
     await settle(() => ref.current?.node);
     for (const [index, step] of (item.tail ?? []).entries()) {
       const label = `${item.scenario.name} tail ${index} ${step.act}`;
-      await runStep(step, { handle: ref.current!, node, container, held, submitted, stageProps }, label);
+      await runStep(
+        step,
+        { handle: ref.current!, node, container, held, submitted, stageProps },
+        label,
+      );
     }
   } finally {
     unmount();
@@ -132,21 +192,60 @@ interface TailContext {
  * @param label - Assertion label.
  * @returns Completion after the step settled and its expectation was checked.
  */
-const runStep = async (step: CompositeTailStep, context: TailContext, label: string) => {
+const runStep = async (
+  step: CompositeTailStep,
+  context: TailContext,
+  label: string,
+) => {
   const { handle, node, container, held, submitted, stageProps } = context;
-  if (step.act === 'write') act(() => { node(step.path)!.setValue(step.value); });
-  else if (step.act === 'type') await userEvent.type(container.querySelector<HTMLInputElement>(`input[id="${step.path}"]`)!, step.text);
-  else if (step.act === 'merge') act(() => { handle.setValue(step.value, SetValueOption.Merge); });
-  else if (step.act === 'batch') act(() => { handle.node!.batch(() => { for (const write of step.writes) node(write.path)!.setValue(write.value); }); });
-  else if (step.act === 'props') act(() => { stageProps(step.stage); });
-  else if (step.act === 'reset') act(() => { handle.reset(); });
+  if (step.act === 'write')
+    act(() => {
+      node(step.path)!.setValue(step.value);
+    });
+  else if (step.act === 'type')
+    await userEvent.type(
+      container.querySelector<HTMLInputElement>(`input[id="${step.path}"]`)!,
+      step.text,
+    );
+  else if (step.act === 'merge')
+    act(() => {
+      handle.setValue(step.value, SetValueOption.Merge);
+    });
+  else if (step.act === 'batch')
+    act(() => {
+      handle.node!.batch(() => {
+        for (const write of step.writes)
+          node(write.path)!.setValue(write.value);
+      });
+    });
+  else if (step.act === 'props')
+    act(() => {
+      stageProps(step.stage);
+    });
+  else if (step.act === 'reset')
+    act(() => {
+      handle.reset();
+    });
   else if (step.act === 'holdValidation') held.hold();
-  else if (step.act === 'releaseValidation') act(() => { held.release(); });
-  else if (step.act === 'focus') act(() => { handle.focus(step.path); });
-  else if (step.act === 'blur') act(() => { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); });
+  else if (step.act === 'releaseValidation')
+    act(() => {
+      held.release();
+    });
+  else if (step.act === 'focus')
+    act(() => {
+      handle.focus(step.path);
+    });
+  else if (step.act === 'blur')
+    act(() => {
+      if (document.activeElement instanceof HTMLElement)
+        document.activeElement.blur();
+    });
   else if (step.act === 'submit') {
     // Submit stays outside act: a rejected promise inside act leaves React's act queue open for the next test.
-    if ('rejected' in step) await expect(handle.submit(), label).rejects.toMatchObject({ specific: step.rejected });
+    if ('rejected' in step)
+      await expect(handle.submit(), label).rejects.toMatchObject({
+        specific: step.rejected,
+      });
     else {
       await handle.submit();
       expect(submitted.at(-1), label).toEqual(step.submitted);
@@ -154,26 +253,59 @@ const runStep = async (step: CompositeTailStep, context: TailContext, label: str
   }
   if (held.isHeld()) await advanceValidationFrame();
   else await settle(() => handle.node, step.act === 'blur' ? frameMs : 0);
-  if (step.act === 'values') for (const [path, value] of Object.entries(step.values)) expect(node(path)?.value, `${label} ${path}`).toEqual(value);
+  if (step.act === 'values')
+    for (const [path, value] of Object.entries(step.values))
+      expect(node(path)?.value, `${label} ${path}`).toEqual(value);
   if (step.act === 'states')
     for (const [path, expected] of Object.entries(step.states)) {
       const target = node(path)!;
       const actual = {
-        ...('edited' in expected && { edited: Boolean(target.state?.[FieldNodeState.Edited]) }),
-        ...('touched' in expected && { touched: Boolean(target.state?.[FieldNodeState.Touched]) }),
+        ...('edited' in expected && {
+          edited: Boolean(target.state?.[FieldNodeState.Edited]),
+        }),
+        ...('touched' in expected && {
+          touched: Boolean(target.state?.[FieldNodeState.Touched]),
+        }),
         ...('isReadOnly' in expected && { isReadOnly: target.isReadOnly }),
         ...('isVisible' in expected && { isVisible: target.isVisible }),
       };
       expect(actual, `${label} ${path}`).toEqual(expected);
     }
-  if (step.act === 'errors') for (const [path, keywords] of Object.entries(step.errors)) expect((node(path)?.errors ?? []).map((issue) => issue.keyword), `${label} ${path}`).toEqual(keywords);
-  if (step.act === 'globalErrors') expect(handle.getErrors().map((issue) => issue.keyword), label).toEqual(step.keywords);
-  if (step.act === 'shown') for (const [path, shown] of Object.entries(step.shown)) expect(Boolean(container.querySelector(`[data-path="${path}"] em`)?.textContent?.trim()), `${label} ${path}`).toBe(shown);
-  if (step.act === 'mounted' && !step.browserOnly) for (const [path, mounted] of Object.entries(step.mounted)) expect(Boolean(container.querySelector(`input[id="${path}"]`)), `${label} ${path}`).toBe(mounted);
+  if (step.act === 'errors')
+    for (const [path, keywords] of Object.entries(step.errors))
+      expect(
+        (node(path)?.errors ?? []).map((issue) => issue.keyword),
+        `${label} ${path}`,
+      ).toEqual(keywords);
+  if (step.act === 'globalErrors')
+    expect(
+      handle.getErrors().map((issue) => issue.keyword),
+      label,
+    ).toEqual(step.keywords);
+  if (step.act === 'shown')
+    for (const [path, shown] of Object.entries(step.shown))
+      expect(
+        Boolean(
+          container
+            .querySelector(`[data-path="${path}"] em`)
+            ?.textContent?.trim(),
+        ),
+        `${label} ${path}`,
+      ).toBe(shown);
+  if (step.act === 'mounted' && !step.browserOnly)
+    for (const [path, mounted] of Object.entries(step.mounted))
+      expect(
+        Boolean(container.querySelector(`input[id="${path}"]`)),
+        `${label} ${path}`,
+      ).toBe(mounted);
 };
 
 describe('features — composite consumer tails', () => {
-  it.each(compositeCases.filter((item) => item.tail).map((item) => [item.scenario.name, item] as const))('%s', async (_, item) => {
+  it.each(
+    compositeCases
+      .filter((item) => item.tail)
+      .map((item) => [item.scenario.name, item] as const),
+  )('%s', async (_, item) => {
     await runTail(item);
   });
 });

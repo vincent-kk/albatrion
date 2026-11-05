@@ -31,22 +31,22 @@ yarn add @canard/schema-form @canard/schema-form-ajv8-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 // Or register with custom AJV instance
 import Ajv from 'ajv';
 
-// Register the validator plugin globally
-registerPlugin(ajvValidatorPlugin);
+// Option 1: register the validator plugin globally
+registerPlugin(plugin);
 
-// When using a custom AJV instance
+// Option 2: when using a custom AJV instance (use instead of Option 1)
 const customAjv = new Ajv({
   allErrors: true,
   verbose: true,
   strict: false, // AJV 8.x specific option
 });
-ajvValidatorPlugin.bind(customAjv);
-registerPlugin(ajvValidatorPlugin);
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ---
@@ -252,7 +252,9 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // Update import
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
 
 // Note: AJV 8.x has different default behaviors
 // You might need to adjust your AJV configuration
@@ -260,23 +262,20 @@ const customAjv = new Ajv({
   strict: false, // Disable strict mode if you have compatibility issues
   validateFormats: true, // Format validation is enabled by default in AJV 8.x
 });
+
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ### From Manual AJV Usage
 
 ```typescript
-// Before (manual AJV 8.x)
 // After (with plugin)
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import Ajv from 'ajv';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 
-const ajv = new Ajv();
-const validate = ajv.compile(schema);
-const isValid = validate(data);
-
-registerPlugin(ajvValidatorPlugin);
-// Validation is now handled automatically by SchemaForm
+registerPlugin(plugin);
+// <Form> now validates through the registered plugin
 ```
 
 ---
@@ -286,7 +285,8 @@ registerPlugin(ajvValidatorPlugin);
 ### Custom Error Handling
 
 ```typescript
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
 // Create AJV instance with custom error handling
@@ -305,8 +305,8 @@ ajv.addKeyword({
 });
 
 // Bind custom instance
-ajvValidatorPlugin.bind(ajv);
-registerPlugin(ajvValidatorPlugin);
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
 ```
 
 ---

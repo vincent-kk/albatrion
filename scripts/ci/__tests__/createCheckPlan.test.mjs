@@ -64,22 +64,25 @@ test("schema-form closure bootstraps runtime and declarations before AJV and ful
     );
     assert.ok(
       labels.indexOf("Bootstrap schema-form declarations") <
-        labels.indexOf("Build AJV declarations"),
+        labels.indexOf("Build schema-form plugin declarations"),
     );
     assert.ok(
-      labels.indexOf("Build AJV declarations") <
+      labels.indexOf("Build schema-form plugin declarations") <
         labels.indexOf("Build workspace closure"),
     );
     const build = shard.steps.find(
       ({ label }) => label === "Build workspace closure",
     );
     assert.ok(build.args.includes("@canard/schema-form"));
-    if (shard.name === "main")
-      assert.ok(build.args.includes("@canard/schema-form-antd5-plugin"));
+    const plugins = shard.steps.find(
+      ({ label }) => label === "Build schema-form plugin declarations",
+    );
+    assert.ok(plugins.args.includes("@canard/schema-form-antd5-plugin"));
     for (const step of shard.steps.filter(({ label }) =>
-      ["Build schema-form prerequisites", "Build AJV declarations"].includes(
-        label,
-      ),
+      [
+        "Build schema-form prerequisites",
+        "Build schema-form plugin declarations",
+      ].includes(label),
     ))
       for (const [index, arg] of step.args.entries())
         if (arg === "--include")

@@ -2,20 +2,20 @@
 
 ## Requirements
 
-- 의존 방향은 `blueprint·record·behaviors/utils < virtualBehavior < behaviors 뿌리 < FieldNode`이다. 정착, 겉면, 레거시를 가져오지 않으며 경계 예외가 없다(NODE-009·016, LANDING-159).
+가상 노드는 실제 형제 노드의 참조 그룹이며 별도 데이터 소유자가 아닙니다. 표시 묶음을 데이터 트리에도 복제하면 같은 값에 두 쓰기 주소와 검증 위치가 생깁니다.
 
 ## API Contracts
 
-- 진입점은 `virtualBehavior: Behavior`를 이름으로 내보낸다. 공통 여덟 칸 순서(`arrange`는 공유 거부 칸, 36C-01), `type: 'virtual'`, `strategy: 'branch'`를 지킨다. `options.terminal: true`는 행을 고르는 값이 아니라 청사진 오류다(NODE-002·006·047).
-- `declareChildren`은 청사진 `fields`가 가리키는 형제 참조를 선언 순서대로 돌려주며 새 독립 노드를 만들지 않는다. `assemble`은 참조 노드의 `value`를 같은 순서의 튜플 `local`로 만든다. `value` 게터는 그 `local`을 읽고, 자체 `source`와 `emit`은 없다(NODE-034·054).
-- `project`는 방출하지 않으며, 표준 `required`·가드·검증에는 가상 이름을 넣지 않는다. `interpret`는 참조 노드로 보낼 입력을 계산할 뿐이고, 쓰기와 자식 확정은 정착이 맡는다. 가상 노드는 `isMisfit`을 켜지 않는다(NODE-006·034, VALUE-030).
+자식 참조의 확정과 쓰기 분배는 [settle 계약](../../settle/DETAIL.md), 탐색과 공개 값 읽기는 [navigation 계약](../../navigation/DETAIL.md)과 [surface 계약](../../../surface/DETAIL.md)이 소유합니다. 이 행은 선언과 로컬 튜플만 계산합니다.
 
 ## Acceptance Criteria
 
-### virtual-row — 참조 그룹
+### virtual-row — 튜플은 참조한 형제의 값입니다
 
-- 참조 자식은 별도 원본 없이 실제 형제 노드를 가리키고, `local` 튜플 순서와 방출 부재가 유지된다(NODE-034·054).
+가상 그룹의 local은 fields 선언 순서로 실제 형제의 value를 읽은 튜플입니다. emit이나 별도 원본으로 바꾸면 투영 전 편집 값을 묶는 의미가 달라집니다. 자체 방출은 만들지 않아 가상 이름이 실제 데이터와 검증의 키로 나타나지 않게 합니다.
+
+기존 길이와 각 형제 값이 엄격 동등하면 이전 튜플을 재사용합니다. 이 비교를 깊은 복사나 또 다른 소유 원본으로 대체하지 않습니다. 가상 그룹을 통째 값을 보관하는 terminal로 바꾸면 참조 그룹이라는 경계가 사라집니다.
 
 ## Last Updated
 
-2026-09-29
+참조 그룹의 값 채널·선언 순서·튜플 재사용 또는 자체 방출 부재가 바뀔 때 갱신합니다.

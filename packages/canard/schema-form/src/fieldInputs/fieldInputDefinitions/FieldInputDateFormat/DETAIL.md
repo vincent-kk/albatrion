@@ -2,25 +2,28 @@
 
 ## Requirements
 
-- 부모 `fieldInputs`의 기본 입력 계약 중 날짜 형식 입력 몫을 구현합니다(CONTROLS-051·081).
+네이티브 날짜 입력이 그릴 수 없는 기본값도 사용자가 원문을 확인할 수 있어야 합니다. 표시 실패를 빈 데이터로 바꾸지 않습니다.
 
 ## API Contracts
 
-- `presentation.FieldInputProps`의 `minimum`·`maximum`을 입력 props로 받아 `min`·`max` 속성에 씁니다. `options`는 닫힌 목록이라 이 키를 두면 청사진 오류 `UNKNOWN_GROUP_KEY`입니다(CONTROLS-081, CONTROLS-051).
-- 마운트 시 기본값이 해당 HTML 입력의 값 문법에 맞지 않으면 텍스트 입력으로 원문을 표시하며, 빈 값은 날짜 형식 입력을 유지합니다. 판정은 `utils/isRenderableDateInputValue.ts`(`DateInputType`과 값)를 씁니다.
-- 빈 칸은 `undefined`로 전달합니다(`nullable`과 무관; 444C-09). 브라우저 `badInput`이면 노드에 쓰지 않고 입력이 초안을 보유하며, 흐림에는 마지막 노드 값으로 표시를 되돌립니다(REACT-027, 444C-09).
-- `misfit` 값은 조작 요소에 `aria-invalid="true"`로 표시하며 노드 값은 바꾸지 않습니다(REACT-027, SURFACE-061).
-- `type.ts`는 이 입력의 스키마·속성 형(`DateFormatJSONSchema`·`FieldInputDateFormatProps`)을 정의합니다.
+- 빈 값과 진단의 공통 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
+- 날짜 문법에 맞지 않는 기본값은 마운트에서 텍스트 표시를 선택하며, 빈 기본값은 날짜 입력을 유지합니다. 선택한 DOM 입력 종류는 그 인스턴스에서 유지하여 편집 중 값 변화로 입력 모드가 흔들리지 않게 합니다.
 
 ## Acceptance Criteria
 
-### date-format — 범위와 표시 전환
+### CONTROLS-081 — 날짜 범위는 입력의 표현 설정입니다
 
-- `presentation.FieldInputProps.minimum`·`maximum`을 `min`·`max` 속성으로 쓰고, `options.minimum`은 청사진 오류 `UNKNOWN_GROUP_KEY`로 폼을 막습니다(CONTROLS-081·051).
-- 문법에 맞지 않는 기본값은 텍스트 입력으로 원문을 보이고, 빈 값은 날짜 입력을 유지합니다.
-- 빈 칸은 `undefined`로 전달하고, `badInput`은 초안으로 보유하다 흐림에 노드 값으로 표시를 되돌립니다(REACT-027, 444C-09).
+- `minimum`·`maximum`은 전달된 입력 props에서 읽어 브라우저의 min·max로 사용합니다. 설정의 공개 위치는 [presentation 계약](../../../types/DETAIL.md)에 두며, 입력이 options나 맨 키에서 설정을 다시 찾지 않습니다.
+- 범위 속성을 표시하는 것으로 노드 값을 보정하거나 스키마 검증을 대신하지 않습니다. 브라우저 표현과 데이터 판정을 혼동하지 않게 합니다.
+
+### REACT-027 — 날짜 초안을 삭제로 오해하지 않습니다
+
+- `badInput`은 빈 칸 처리보다 먼저 확인하여 미완성 입력을 발행하지 않습니다. 흐림에는 마지막 props 값으로 표시만 돌리며, 잘못된 표시가 노드 삭제로 이어지지 않게 합니다.
+
+### date-format — 원문과 네이티브 입력의 선택
+
+- 표현 불가능한 기본값의 텍스트 폴백은 값을 보존하며, 실제 형식의 유효성은 검증기가 판정합니다.
 
 ## Last Updated
 
-2026-10-14: 소유자 구조 리뷰 넷째 손질(기본 입력을 입력마다 fractal로 분리).
-2026-10-26: 빈 칸 undefined 전달과 badInput 초안 흐림 복귀(REACT-027, 444C-09), misfit 값 aria-invalid 표시(REACT-027, SURFACE-061).
+날짜 표시 폴백·범위 props의 책임 또는 브라우저 초안 처리 조건이 바뀔 때 갱신합니다.

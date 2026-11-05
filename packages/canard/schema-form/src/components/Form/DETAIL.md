@@ -5,11 +5,15 @@
 - `Form`은 공개 폼 컴포넌트로서 Provider를 고정 순서로 조합하고 `FormHandle` ref를 노출한다. 노드 생성은 `RootNodeContextProvider`에 맡겨 폼 조합과 트리 생성의 책임을 분리한다.
 - **폼 밖으로 나가는 값은 `rootNode.outputValue`(투영 값)이고, 폼 안으로 들어오는 값은 원본 입력이다.** `getValue`·제출·변경 방출은 투영 값을 읽고 `setValue`는 받은 값을 노드에 전달한다. 편집 중인 `value`와 방출 값을 구별한다(LANDING-067).
 - 모든 폼 콜백은 첫 commit을 마친 현행 load에서 숨김·unmount 뒤에도 engine chain 끝에 전달한다. 마운트 정착 중 변경·진단 통지는 버리며, 직전 방출 값과 같은 참조는 다시 내보내지 않는다. 마운트의 오류 기록 전달과 검증 요청은 커밋 뒤 준비 layout effect가 담당한다(REACT-007, ERROR-026, 69C-05).
-- `submit`은 진단이 `degraded`이면 모든 환경에서 `SUBMIT_WHILE_DEGRADED`로 거부한다. 명시적 제출은 거부 직전에 origin submit의 onError를 한 번 전달하고 host에는 보내지 않는다. onError가 던지면 [degraded 원인, 핸들러 예외]의 MultipleErrors로 caller에게 거부한다. native 제출도 같은 보고 통로를 사용하며 이미 보고한 거부 객체의 capture는 중복하지 않는다. 검증기가 있으나 전체 스키마 컴파일이 실패하여 검증 불가이고 모드가 `None`이 아니면 제출도 거부한다. 검증기 미등록만으로는 제출을 거부하지 않는다. 허용된 제출은 투영 값을 확정하고 필요한 검증을 수행하며, 검증 오류가 있으면 `inputOnSubmit`을 호출하지 않고 `ValidationError('SCHEMA_VALIDATION_FAILED')`의 상세에 `{value, errors, jsonSchema}`를 담는다. 네이티브 submit 경로의 거부 가운데 degraded 같은 오류 계층 원인은 `onError` 뒤 주인 없는 오류 싱크로(이미 보고한 같은 컴파일 실패 객체는 싱크만), 검증 실패(`SCHEMA_VALIDATION_FAILED`)는 기록되지 않으므로 `onError` 없이 싱크로만 전달한다(ERROR-016·019·139, LANDING-025·095).
+- `submit`은 진단이 `degraded`이면 모든 환경에서 `SUBMIT_WHILE_DEGRADED`로 거부한다. 명시적 제출은 거부 직전에 origin submit의 onError를 한 번 전달하고 host에는 보내지 않는다. onError가 던지면 [degraded 원인, 핸들러 예외]의 MultipleErrors로 caller에게 거부한다. native 제출도 같은 보고 통로를 사용하며 이미 보고한 거부 객체의 capture는 중복하지 않는다. 검증기가 있으나 전체 스키마 컴파일이 실패하여 검증 불가이고 모드가 `None`이 아니면 제출도 거부한다. 검증기 미등록만으로는 제출을 거부하지 않는다. 허용된 제출은 투영 값을 확정하고 필요한 검증을 수행하며, 검증 오류가 있으면 `inputOnSubmit`을 호출하지 않고 `ValidationError('SCHEMA_VALIDATION_FAILED')`의 상세에 `{value, errors, jsonSchema}`를 담는다. 네이티브 submit 경로의 거부 가운데 degraded 같은 오류 계층 원인은 `onError` 뒤 주인 없는 오류 싱크로(이미 보고한 같은 컴파일 실패 객체는 싱크만), `inputOnSubmit`의 실패는 `onError` 없이 싱크로만 전달한다. 네이티브 제출의 검증 실패(`SCHEMA_VALIDATION_FAILED`)는 거부가 아니라 판정이므로 `onError`에도 싱크에도 보내지 않는다. 판정이 도착했을 때 제출을 시작한 load가 그대로이고(루트 교체도 reset을 거쳐 load를 바꾼다) Form이 마운트되어 있으면, 커밋된 표시 정책(Form prop > FormProvider > 기본값)이 꺼져 있지 않은 경우 오류를 공개하고(`revealErrors()`와 같은 효과) 트리 전위 순서의 첫 후보 노드에 Focus를 요청한다. 후보는 표시 중(`isPresent`)인 조상 아래에서 자기 `errors`가 있고 `disabled`·`readOnly`가 아니며 자기 `ErrorVisibility`이 `false`가 아닌 노드이고, 루트는 다른 후보가 없을 때만 고른다. 공개 뒤 초점 직전에 같은 수명 검사를 다시 하며, Form의 `disabled`·`readOnly`가 켜져 있으면 공개만 한다. 고른 후보의 입력이 초점을 받지 못하면 초점은 그대로이고 다음 후보로 넘어가지 않는다. 명시적 `submit`은 판정도 `ValidationError`로 거부하고 공개하지 않는다(ERROR-016·019·139, LANDING-025·095).
 - Provider의 현행 중첩 순서는 계약이다. 바깥 설정과 안쪽 노드·폼 루트의 소비 관계를 유지해야 하므로 부분 렌더나 순서 변경은 허용하지 않는다.
 - 네이티브 제출 함수는 추적 제출 핸들이 같은 동안 참조를 유지하여 관계없는 Form 속성 변경이 FormRootProxy를 다시 렌더하지 않는다. 제출 이벤트의 기본 동작 억제는 유지하며 native 거부 묶음은 원인부터 핸들러 예외까지 깊이 우선·원소 순서로 host에 잎마다 전달한다. caller에게 거부하는 submit·validate 실패의 묶음은 거부 값 하나로 유지하며 그 거부를 host에 추가 보고하지 않는다. 명시적 validate 중에도 검증 결과 파동의 리스너 실패는 caller가 없는 별도 통로이므로 host에 전달하고 validate 자체는 resolve할 수 있다. 렌더 경계의 React·ErrorBoundary 로그는 잡은 값 그대로이다(121C-01 F-C).
 
 ## API Contracts
+
+`jsonSchema`·`defaultValue` prop 변경만으로 현재 트리나 값을 교체하지 않습니다. reset이 최신 committed props를 적용할 때까지 함수 children은 새 prop이 아니라 현재 트리의 스키마와 노드를 함께 받습니다. schema·node 쌍의 불일치가 소비자에게 아직 없는 필드를 있다고 알리는 일을 막습니다.
+
+Form의 렌더러·포맷터·입력 맵·정의와 FormProvider의 렌더러·포맷터·정의는 최신 불변 참조로 적용합니다. 입력 선택 변경은 노드·값·상태·외부 오류를 보존하며 선택된 입력과 조상 입력이 모두 같으면 DOM을 유지합니다. 부모 입력이 교체되면 그 내부 자식의 DOM과 미커밋 draft도 재생성합니다. 렌더러 교체는 해당 렌더러의 UI subtree를 다시 만듭니다.
 
 - 보조 렌더링 컴포넌트는 `Form.Render`·`Form.Field`·`Form.Label`·`Form.Input`·`Form.Error` 정적 멤버로 제공한다. `FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`는 내부 구현이며 이 fractal의 index가 별도 이름으로 내보내지 않는다.
 - 공개 `Roll` 형 셋은 이 fractal이 소유한다. 각 자식 fractal(`components/FormField` 등)의 `types` 칸 props 파일이 본 형(`FormFieldProps` 등)과 그 `Roll` 표현(`RolledFormFieldProps` 등)을 함께 정의하고, 자식 관문과 이 fractal의 index는 `Rolled*` 형을 내보낸다. 루트 `src/index.ts`가 `RolledFormFieldProps as FormFieldProps`처럼 공개 이름으로 바꿔 재수출한다.
@@ -27,7 +31,7 @@
 - `readOnly`·`disabled`는 렌더 계층에서 노드의 로컬 잠금과 결합하는 폼 전체 잠금이며 core의 명령형 쓰기를 막지 않는다. `unsetOnInactive`는 노드별 나감 정책이 없는 경우의 폼 기본값이고, `disableAutomaticWrites`는 자동 쓰기의 폼 기본 억제값이다(LANDING-067, WRITE-015·031–040).
 - `onError`는 폼 인스턴스의 오류 기록을 받고 `onDiagnosticsChange`는 준비 뒤 루트 진단 변경을 받는다. `validatorFactory`의 공개 형은 필수 `compile`·`compileGuard`를 가진 `{ compile, compileGuard }` 객체이며 선택 순서는 Form 속성 > FormProvider > 플러그인이다. 선택 검증기 참조가 바뀌면 트리를 재생성한다(ERROR-026, VALIDATE-044, 32C-01).
 - 렌더러 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer`의 넷이며 플러그인 키와 같은 이름을 사용한다(LANDING-035·067).
-- 작성 `jsonSchema`는 clone하지 않아 청사진·가드 캐시의 루트 identity를 유지한다. `defaultValue`는 clone하여 로드하며, 스키마와 기본값은 마운트·reset 계약에 따라 읽는다(LANDING-095, WRITE-043·044).
+- 작성 `jsonSchema`는 clone하지 않아 청사진·가드 캐시의 루트 identity를 유지한다. `defaultValue`는 clone하여 로드하며, 스키마와 기본값은 mount·reset에서 읽는다(LANDING-095, WRITE-043·044).
 - `Form.Label`은 입력 선택을 판정하지 않고 항상 `htmlFor={path}`와 id `label:${path}`를 둘 다 가진 label을 그린다. 단일 입력은 `id={path}`로, 묶음 입력은 `aria-labelledby`로 `label:${path}`를 참조해 이 제목에 이어지며, 사용자 입력·렌더러도 같은 규약을 따른다(대기열 38, 소유자 결정). 접두어 `label:`은 `/`로 시작하는 경로 id와 겹칠 수 없어, 형제 속성 이름이 `<이름>-label`이어도 id가 충돌하지 않는다.
 
 ### 오류 경계
@@ -37,7 +41,7 @@
 
 ### `FormHandle`
 
-`FormHandle`의 멤버는 `node`·`focus`·`select`·`refresh`·`remount`·`reset`·`findNode`·`findNodes`·`getState`·`setState`·`clearState`·`getValue`·`setValue`·`getErrors`·`getAttachedFilesMap`·`validate`·`showError`·`submit`의 18개이다. 현재 루트에 위임하며 공개 `publish`는 두지 않는다(EVENT-063·073, SURFACE-059, 68C-03).
+`FormHandle`의 명명한 멤버는 공개 선언에서 확인합니다. 현재 루트에 위임하며 공개 `publish`는 두지 않는다(EVENT-063·073, SURFACE-059, 68C-03).
 
 `reset(option?)`은 같은 스키마면 `reloadFieldNodeForm`으로 트리를 유지하고, 다르면 같은 호출 안에서 작성·인계·마운트·옛 트리 폐기·핸들 교체를 끝낸다. 옵션은 공개 `SetValueOption.DisableAutomaticWrites`·`EnableAutomaticWrites`만 받으며 그 로드에서 Form `disableAutomaticWrites` 속성보다 우선한다. 생략하면 속성을 따르고 둘 다 주면 억제가 이긴다. 캐스트로 전달된 다른 비트는 무시하며 로드 의미는 바뀌지 않는다(WRITE-015, LANDING-039, ADR 0013). 외부 오류와 검증 결과를 비우고 경로 키 `errors`를 재적용하며, 커밋된 속성 재대조는 Provider의 로드 계약을 따른다(WRITE-042–046, 69C-02·03).
 
@@ -47,7 +51,15 @@
 
 - 위계: `components/`에 fractal 여섯이 있다. `components/FormCore/`는 Provider 조립·핸들·오류 경계를 소유하며, 경계를 입힌 바깥 `FormCore`와 경계 없는 안쪽 `FormRoot`를 둔다. 공개 조각 다섯(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)도 각자의 fractal이다. `components/`에는 index를 두지 않으며, `Form.tsx`와 `index.ts`가 여섯 자식의 진입점(`./components/FormCore` 등)을 직접 가리킨다. `Form.tsx`는 `FormCore`에 정적 멤버 다섯을 붙여 `Form`을 만든다. 뿌리에는 문서·진입점·`Form.tsx`만 둔다(filid zero-peer-file).
 
+### form-live-defaults — 실행 설정 수명
+
+validationMode는 Form > FormProvider > 기본값 순서로 선택하고 commit에서 기존 root에 적용합니다. None 전환은 검증 오류만 지우며 외부 오류를 유지하고 다른 모드 전환은 오류를 보존합니다. 재활성화는 검증 문서의 공통 슬롯을 따릅니다. unsetOnInactive와 disableAutomaticWrites 변경은 다음 엔진 진입부터 적용하며 보유한 비활성 값을 소급 삭제하거나 자동 쓰기를 소급 실행하지 않습니다. 호출 옵션과 노드별 정책의 기존 우선순위는 유지합니다.
+
 ## Acceptance Criteria
+
+### live-configuration — 설정 교체 수명
+
+- Form과 Provider 설정 교체만으로 Form을 재마운트하지 않습니다.
 
 ### reset-options — 로드별 자동 쓰기 억제
 
@@ -73,4 +85,4 @@
 
 ## Last Updated
 
-2026-11-02
+계약·경계·검증 조건이 변경될 때 갱신합니다.
