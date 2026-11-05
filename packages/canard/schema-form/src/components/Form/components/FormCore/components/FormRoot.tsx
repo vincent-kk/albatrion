@@ -12,14 +12,18 @@ import {
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { getTrackableHandler } from '@winglet/common-utils/function';
-import { useLazyConstant } from '@winglet/react-utils/hook';
+import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
 import {
+  type FieldNode,
   FieldNodeRequestType,
   readFieldNodeValidationEpoch,
 } from '@/schema-form/core';
+import { FormErrorCode } from '@/schema-form/errors';
+import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle';
 import {
   FieldInputsContextProvider,
+  FieldLifecycleContext,
   FieldRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
@@ -53,6 +57,27 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   }));
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
+  const reportLifecycleError = useHandle((error: unknown, node: FieldNode) => {
+    try {
+      reporter?.report({
+        level: 'error',
+        code: FormErrorCode.ListenerThrew,
+        origin: 'render',
+        message: error instanceof Error ? error.message : String(error),
+        path: node.path,
+        error,
+      });
+    } catch (failure) {
+      try {
+        reportFailureToHost(failure);
+      } catch {
+        /* Both reporting paths failed; no further sink can preserve queue isolation. */
+      }
+    }
+  });
+  const lifecycle = useLazyConstant(
+    () => new FieldLifecycleRegistry(reportLifecycleError),
+  );
   const providerErrorVisibility = useExternalFormContext().errorVisibility;
   const inputPolicy = props.errorVisibility ?? providerErrorVisibility;
   const resolvedPolicy = useMemo(
@@ -251,16 +276,21 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
             <VirtualizationContextProvider
               virtualization={props.virtualization}
             >
-              <RootNodeContextProvider
-                {...props}
-                binding={binding}
-                onReset={onReset}
-                errorVisibilityError={policyError}
-              >
-                <FormRootProxy formRef={formRef} onSubmit={handleNativeSubmit}>
-                  {children}
-                </FormRootProxy>
-              </RootNodeContextProvider>
+              <FieldLifecycleContext.Provider value={lifecycle}>
+                <RootNodeContextProvider
+                  {...props}
+                  binding={binding}
+                  onReset={onReset}
+                  errorVisibilityError={policyError}
+                >
+                  <FormRootProxy
+                    formRef={formRef}
+                    onSubmit={handleNativeSubmit}
+                  >
+                    {children}
+                  </FormRootProxy>
+                </RootNodeContextProvider>
+              </FieldLifecycleContext.Provider>
             </VirtualizationContextProvider>
           </InputControlContextProvider>
         </FieldRendererContextProvider>

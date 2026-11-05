@@ -52,6 +52,9 @@ export class VirtualizationManager {
   /** Deferred placeholders awaiting reveal, in registration order */
   private readonly registry = new Map<Element, Fn>();
 
+  /** Input containers keyed by position; only focus requests search by node. */
+  private readonly inputs = new Map<Element, FieldNode>();
+
   /** Nodes revealed at least once — survives ChildComponent cache rebuilds (e.g. array renumbering) */
   private readonly revealedNodes = new WeakSet<FieldNode>();
 
@@ -110,6 +113,24 @@ export class VirtualizationManager {
     if (!this.registry.delete(element)) return;
     this.observer?.unobserve(element);
     if (this.registry.size === 0) this.stopIdlePump();
+  }
+
+  /** Register a real input container; replacing the same position is idempotent. */
+  public attachInput(element: Element, node: FieldNode): void {
+    this.inputs.set(element, node);
+  }
+
+  /** Release the input position captured by its layout effect. */
+  public detachInput(element: Element): void {
+    this.inputs.delete(element);
+  }
+
+  /** Return this field's input containers in registration order; called only on focus requests. */
+  public inputsOf(node: FieldNode): Element[] {
+    const elements: Element[] = [];
+    for (const [element, input] of this.inputs)
+      if (input === node) elements.push(element);
+    return elements;
   }
 
   /** Whether the node has been revealed before (must stay eager on re-bake) */
