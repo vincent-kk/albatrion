@@ -186,4 +186,6 @@ hydration 자체는 사용자 branch 입력의 Suspense에 추가 갱신을 보�
 
 `as const`로 schema literal을 보존하십시오. type이 string으로 넓어지면 추론이 any로 퇴화할 수 있습니다. inactive controls·omitEmpty가 키를 제거할 수 있으므로 `InferValueType`은 required와 무관하게 객체 키를 optional로 만듭니다. `additionalProperties: false`가 아니면 열린 객체입니다. 추론 값을 검증이 끝난 업무 데이터라고 가정하지 마십시오.
 
+명시적인 배열 스키마는 [`@winglet/json-schema`의 튜플 추론 계약](../../winglet/json-schema/index.mdx#tuple-inference)을 따르며, 유한한 리터럴 `prefixItems`의 optional 위치와 `items`의 rest 규칙을 적용합니다. `Form`과 `FormHandle`의 기본 `Value` 타입에 이 추론 튜플이 적용됩니다. 이는 `any[]`보다 좁으므로 자유로운 위치나 초과 항목에 의존하는 코드에는 컴파일 오류가 날 수 있습니다.
+
 정확한 소비자 형상은 `Form<Schema, Value>`, `FormHandle<Schema, Value>` 양쪽의 두 번째 generic으로 지정하십시오. 특히 구체적 defaultValue가 handle과 다르게 required 키를 추론할 때 필요합니다. `InferFieldNode`는 정적 근거가 있으면 노드 형을 추론하며 동적 reference·gate에서는 전체 노드 union이 남을 수 있습니다.

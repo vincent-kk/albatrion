@@ -186,4 +186,6 @@ Hydration itself sends no extra update into a custom branch input's Suspense. On
 
 Use `as const` to preserve schema literals; a widened type string can degrade inference to any. `InferValueType` makes all object keys optional regardless of required, because inactive controls and omitEmpty can remove them. Objects remain open unless `additionalProperties: false`. Do not treat inferred values as guaranteed validated business data.
 
+Explicit array schemas follow the [`@winglet/json-schema` tuple inference contract](../../winglet/json-schema/index.mdx#tuple-inference), including optional positions for finite literal `prefixItems` and the `items` rest rules. These tuples are the default `Value` type for `Form` and `FormHandle`. This narrows `any[]`, so code relying on unrestricted positions or extra items can encounter compile errors.
+
 Use the second generic on both `Form<Schema, Value>` and `FormHandle<Schema, Value>` for an exact consumer shape, especially when a concrete defaultValue would otherwise infer required keys differently from the handle. `InferFieldNode` infers a node type where static evidence allows it; dynamic references/gates can retain the full node union.

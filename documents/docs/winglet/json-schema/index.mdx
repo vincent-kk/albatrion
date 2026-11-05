@@ -47,6 +47,42 @@ Type-guard functions for each JSON Schema type:
 
 - `InferValueType<Schema>` — infers TypeScript type from a JSON Schema definition
 
+#### Tuple inference {#tuple-inference}
+
+Preserve schema literals with `as const`. A statically finite readonly `prefixItems` tuple is inferred recursively as a mutable tuple with optional positions. `prefixItems` does not impose a minimum length, and inference does not use `minItems`, so empty arrays and shorter prefixes remain assignable.
+
+For a string/number prefix, `items` controls only the rest:
+
+| `items` | Inferred value |
+| --- | --- |
+| `false` | `[string?, number?]` |
+| Omitted or `true` | `[string?, number?, ...any[]]` |
+| `{ type: 'boolean' }` | `[string?, number?, ...boolean[]]` |
+
+```ts
+import type { InferValueType } from '@winglet/json-schema';
+
+const pairSchema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+
+type Pair = InferValueType<typeof pairSchema>;
+// [string?, number?]
+const empty: Pair = [];
+const partial: Pair = ['label'];
+
+const restSchema = { ...pairSchema, items: { type: 'boolean' } } as const;
+type WithRest = InferValueType<typeof restSchema>;
+// [string?, number?, ...boolean[]]
+const value: WithRest = ['label', 3, true, false];
+```
+
+Widened arrays and non-literal prefixes retain the existing `items` fallback. Homogeneous `items` schemas still infer arrays of their item value type. Without a finite prefix, `items: false` and legacy draft `items` arrays with `additionalItems` still infer `any[]`; these forms do not receive tuple inference.
+
+Finite-prefix inference is narrower than `any[]`, so code relying on unrestricted positions or extra items can encounter compile errors. Supply values matching the prefix and rest schemas, or declare an explicit application value type when a different contract is needed.
+
 ## Usage Examples
 
 ```ts
