@@ -66,19 +66,17 @@ const getPool = (instance: Ajv): SchemaCompilerPool => {
  *
  * @example
  * ```typescript
- * import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
+ * import { registerPlugin } from '@canard/schema-form';
+ * import { plugin } from '@canard/schema-form-ajv7-plugin';
+ * import Ajv from 'ajv';
  *
- * // Use with custom AJV instance
- * const customAjv = new Ajv({ allErrors: false });
- * ajvValidatorPlugin.bind(customAjv);
- *
- * // Compile a validator
- * const validator = ajvValidatorPlugin.compile(schema);
- * const errors = await validator(data);
+ * // Use a custom AJV instance: bind it before registering
+ * plugin.validator.bind(new Ajv({ allErrors: false }));
+ * registerPlugin(plugin);
  * ```
  */
 export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
-  Required<Pick<ValidatorPlugin, 'compileGuard' | 'release'>> = {
+  Required<Pick<ValidatorPlugin, 'bind' | 'compileGuard' | 'release'>> = {
   /** Set direct compilation for later guards (default true); omitted options stay unchanged. */
   configure: (options) => {
     directGuardCompile = options.directGuardCompile ?? directGuardCompile;
