@@ -46,6 +46,14 @@ useEffect(
 - For re-render-on-event, `useFieldNodeTracker(node, mask)` — always pass the mask; the default is ALL events.
 - A write made inside a listener joins the same chain; the feedback depth is capped at 25 waves, and exceeding it throws `FEEDBACK_LIMIT_EXCEEDED` at the end of the outermost write.
 
+## Observation and absent nodes
+
+Both `useFieldNodeTracker` and `useFieldNodeSubscribe` accept `Node | Nullish`; `Nullish` means the non-generic union `null | undefined`. An absent node creates no subscription. The tracker snapshot is 0 on both client and server, and the subscription hook invokes neither its listener nor `onSubscribe` without a node.
+
+Changing the input releases the previous subscription, including a change to absence; a real replacement attaches a new subscription. Unmount also releases it. `onSubscribe` receives a required node with its inferred subtype, reads current state at attachment, and does not replay earlier events. Use it for state mirrors, or prefer a tracker and live getter reads during render.
+
+These are observation semantics only. Mutation methods and formatting callbacks still require a real node. A null JSON value, `NullNode`, or nullable schema is a value contract, not an absent node reference. For handles and the render needed after ref assignment, see [imperative control](imperative-and-layout.md#formhandle).
+
 ## Choose what a subscription means
 
 Subscribe to the node that owns the information you display.

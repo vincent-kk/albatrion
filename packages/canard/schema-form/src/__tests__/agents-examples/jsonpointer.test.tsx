@@ -33,7 +33,7 @@ function runFindExamples(
 rootNode.find('/user/name'); // absolute
 currentNode.find('../sibling'); // parent-relative
 currentNode.find('..'); // parent itself
-formRef.current?.findNodes('/items/*'); // wildcard needs the PLURAL form
+formRef.current?.findNodes('/items/*'); // all wildcard matches need the plural form
 }
 
 it('resolves absolute, parent-relative and wildcard lookups as documented', () => {

@@ -36,6 +36,8 @@ Declare the real names, such as `startDate` and `endDate`, in the object's `requ
 - Inside the virtual `FieldInput`, reach constituent nodes via `node.children[i]` (ordered like `fields`).
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.
 
+The virtual FieldInput's node and subtree visitors remain required, as do array operations on its constituents and virtualization `Placeholder` / `estimateHeight` callbacks. Narrow missing lookups before using them. The observation hooks' null/undefined support does not make those inputs optional, and a null JSON value, `NullNode`, or nullable schema does not mean the node reference is absent.
+
 ## Keep grouping separate from data ownership
 
 Use a virtual field when one widget edits several existing siblings.

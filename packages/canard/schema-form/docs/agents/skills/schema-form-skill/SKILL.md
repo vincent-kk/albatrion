@@ -54,8 +54,8 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | ------------------ | -------------------- | ------------------------------ | --------------- |
 | Absolute `/a/b`    | ✓                    | ✓                              | ✓               |
 | Relative `..`, `.` | ✓                    | ✓                              | ✗               |
-| Wildcard `*`       | ✗                    | ✗ (plural `findNodes` ✓)       | ✓               |
-| Context `@`        | ✓                    | bare `'@'` only → context node | ✗               |
+| Wildcard `*`       | ✗                    | ✓ (first match; `findNodes` for all)       | ✓               |
+| Context `@`        | ✓                    | ✗ (`null`; `findNodes` gives `[]`) | ✗               |
 
 ### Controls
 

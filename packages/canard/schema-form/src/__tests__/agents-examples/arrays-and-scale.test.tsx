@@ -106,7 +106,7 @@ const tupleSchema = defineSchema(
   ],
   items: false,   // closes the tuple; omit or set a schema to allow a rest type
 }
-// the value type is not inferred as a tuple; annotate it yourself if you need one
+// finite literal prefixItems infer a tuple with optional positions
 )
 
 const bulkSchema = defineSchema({

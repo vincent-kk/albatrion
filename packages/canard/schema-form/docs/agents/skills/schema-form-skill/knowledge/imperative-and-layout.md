@@ -12,12 +12,14 @@ const formRef = useRef<FormHandle<typeof schema, Value>>(null);
 - If a concrete `defaultValue` makes Form infer a narrower value type than the ref, supply the same explicit `Value` generic to Form and FormHandle. This keeps optional schema-derived keys and required default-value keys from disagreeing at the ref boundary.
 - The ref is `null` on the first render — `await waitFor(...)` in tests before using it.
 
+`FormHandle.node` is undefined while the handle's root is unavailable. Passing `formRef.current?.node` to either observation hook is accepted, but assigning a ref does not render its consumer. A later render must pass the node before observation attaches; supply that render with a React state update, including one made from a callback ref. Ref assignment alone never starts observation. Re-read the node and render again after root replacement, since a handle follows the new root without rendering its consumer. See [observation and absent nodes](event-system.md#observation-and-absent-nodes) for cleanup and catch-up.
+
 Semantics the signatures hide:
 
 - `getErrors()` reads the current list without validating; use [validation UX](validation-ux.md) to choose when to request a verdict and handle None or a missing validator.
 - Use `SetValueOption.Merge` for a partial object update; the default `Overwrite` is full replacement and drops unspecified sibling values.
-- `getAttachedFilesMap()` returns a `Map<string, File[]>` keyed by the input's **standard RFC 6901 path** (`node.path`) — extended pointer syntax never appears in keys.
-- `findNode(path)` / `findNodes(path)` — singular vs plural; `*` wildcards require the plural form.
+- `getAttachedFilesMap()` returns a `Map<string, File[]>` keyed by the input's **canonical node path** (`node.path`) — query operators are not used as attachment addresses.
+- `findNode(path)` returns the first match, including for a wildcard; `findNodes(path)` returns all matches.
 - `focus(path)` / `select(path)` reach fields even while deferred by virtualization (they force-mount).
 - Submit flows: prefer `useFormSubmit(formRef)` over separating validation from submission, so the validated snapshot is the value that reaches the submit callback.
 
@@ -55,7 +57,7 @@ Read the render function's exact `FieldRendererProps` from the installed declara
 ## Gotchas
 
 - Supplying Form children takes over the root layout; omitted inputs are not automatically filled in. If that layout also renders a branch's default children, avoid adding another Form.Input/Form.Render for the same path.
-- **Paths here are standard RFC 6901 only.** `Form.Render`/`Form.Input` `path` props do not accept the extended syntax (`..`, `.`, `*`, `@`). Array items are addressed with literal indexes: `/items/0/name`.
+- `Form.Render`/`Form.Input` paths use the same extended query as `node.find`, including relative steps and wildcards; a wildcard renders the first matching node. `@` remains a controls-expression token and resolves no node. Use literal indexes such as `/items/0/name` for a particular array item.
 - Rendering the same path twice renders the field twice — there is no dedup.
 
 ## Compose one data tree
