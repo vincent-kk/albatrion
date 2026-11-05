@@ -112,7 +112,7 @@ When working on this monorepo:
 3. Use yarn workspace commands for package-specific operations
 4. Run yarn lint, typecheck, and tests before completing tasks
 5. Follow the project structure and naming conventions
-6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
+6. Record releases as the change records section of `DOCUMENTATION.md` describes, and publish as `scripts/PUBLISHING.md` describes; `yarn changeset:version` needs a `GITHUB_TOKEN`
 7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)
 
 ### 4. **Available Packages**

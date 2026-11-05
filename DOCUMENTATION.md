@@ -4,7 +4,7 @@ This file is the only home of the principles for the documents this repository w
 
 ## Scope
 
-The principles cover every document this repository authors for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), `CLAUDE.md` and `AGENTS.md`, the repository skills and commands under `.claude/`, packaged agent documents (`packages/**/docs/agents/**`), package documentation and the documentation site. Change records (commit messages, pull request descriptions, changesets and release notes) record history by design and are outside them. The plugin-managed rule files under `.claude/rules/` and their blocks in `AGENTS.md` are outside this file. Under the precedence stated in `CLAUDE.md`, this file outranks `.claude/rules/`.
+The principles cover every document this repository authors for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), `CLAUDE.md` and `AGENTS.md`, the repository skills and commands under `.claude/`, packaged agent documents (`packages/**/docs/agents/**`), package documentation and the documentation site. Change records (commit messages, pull request descriptions, changesets, the `CHANGELOG.md` files generated from them, and release notes) record history by design and are outside them; changesets follow the change records section below. The plugin-managed rule files under `.claude/rules/` and their blocks in `AGENTS.md` are outside this file. Under the precedence stated in `CLAUDE.md`, this file outranks `.claude/rules/`.
 
 ## Principles
 
@@ -15,6 +15,18 @@ The principles cover every document this repository authors for a person or an a
 5. **Sized for attention.** Always-loaded text stays short. The fixed budgets are an `INTENT.md` within 50 lines and a rule under `packages/**/docs/agents/rules/` within 40; other always-loaded files move detail out before they grow. Detail sits one link away, in a document whose name states its purpose. A document still over budget after principle 2 has removed what its reader derives is split by reader or purpose; required content is never dropped to fit.
 6. **Changed with the code.** A change that alters a documented policy updates its document in the same pull request, before the code. A mismatch between a document and the code is a defect, fixed like a bug.
 7. **Judged by a fresh agent.** The packaged agent rules and skills and the `INTENT.md` files are done when an agent with no prior context does its role's job correctly from fixed inputs: the role's documents and what principle 2 says the role holds. A consumer builds the requested feature through the public API, advanced features included; a maintainer makes the right change decision for the right reason. When a pull request changes what these documents teach, an evaluator other than the writer runs this check: it withholds solutions, grading and anything the role does not hold, counts a task only when it actually passes, compares with a run whose inputs differ only by the absence of the document, and keeps some tasks unseen by the writer. The writer fixes a failure at its general cause rather than by adding that task's answer. Every other document, `DETAIL.md` included, is written to pass the same test.
+
+## Change records
+
+A changeset (`.changeset/*.md`, created with `yarn changeset`) is written for the consumers of a published package; at release, `yarn changeset:version` turns it into a version bump and that package's `CHANGELOG.md` entry, with a link to the pull request that added it. Its claims must be true, but the present-only rule of principle 3 does not apply to it.
+
+Until `@canard/schema-form` 1.0.0 is published, its pre-releases included, pull requests add no changesets and nobody runs `yarn changeset:version`: those releases, with the packages released alongside them, set their versions and write their release notes by hand. The changesets already in `.changeset/` describe changes that ship in the first of those releases; the pull request that sets its versions folds them into its notes and deletes them, because the next `yarn changeset:version` would otherwise release them a second time. The pull request that publishes 1.0.0 deletes this paragraph.
+
+- Every pull request that changes a published package's behavior, public API, types or shipped documentation (`README.md`, `docs/`, `docs/agents/**`) adds a changeset for each affected package. A change no consumer can observe (an internal refactor, tests, benchmarks, stories, module documents) needs none.
+- Choose the bump from the consumer's view under semantic versioning. A breaking change says so in its first sentence and shows how to migrate, with code before and after.
+- Write for a consumer who did not follow the work. The first sentence states the observable change; the rest says why it matters to them. Name only the public API, and leave out internal paths, stage or round names, ledger IDs and review discussion.
+- One entry per independent change: a pull request with two unrelated changes writes two entries, and several pull requests that build one release-line change, such as a major version, extend one entry instead of adding fragments. Such an entry links only the pull request that added it.
+- Write in English.
 
 ## Plugin status
 
@@ -28,4 +40,5 @@ Some principles are proposed as plugin rules: [vincent-kk/ogham#145](https://git
 - Principle 5 (seiri #146; filid already caps `INTENT.md` at 50 lines): delete the general clause and keep the `packages/**/docs/agents/rules/` budget.
 - Principle 6 (seiri #146; filid already updates `DETAIL.md` before code): delete.
 - Principle 7 (seiri #146): delete the general clause and keep which documents it covers and when it runs.
+- Change records, the rules for writing for consumers (seiri #146): delete the general clauses and keep what is specific to changesets here: the mechanics and the pull request link, which pull requests need one, the bump choice, the paragraph about 1.0.0 and the language.
 - Scope: specific to this repository, so it stays.
