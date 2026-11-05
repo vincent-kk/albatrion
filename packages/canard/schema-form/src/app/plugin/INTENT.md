@@ -18,7 +18,7 @@
 
 ### Always do
 
-- `compileGuard`와 `release`는 전체 `compile` 선행 없이 동일한 엔진 소유 사본으로 동작합니다. 가드 읽기는 전체 컴파일을 시작하지 않습니다(471C-01·02).
+- `compileGuard`와 `release`는 전체 `compile` 선행 없이 동일한 엔진 소유 사본으로 동작합니다. 조건 평가가 전체 검증의 준비 비용을 먼저 부담하지 않도록 합니다.
 
 - 새 플러그인 속성을 추가할 때 `SchemaFormPlugin` 인터페이스와 `PluginManager.append*` 메서드를 함께 추가
 - `ValidatorPlugin.compile()`이 반환하는 검증 함수는 유효하면 `null`, 오류가 있으면 오류 배열을 반환

@@ -2,40 +2,52 @@
 
 ## Requirements
 
-- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
-
-- D3b-1에서 값 identity 메모는 공통 이름 붙인 저장소에 모으고 노드 identity 메모는 root runtime에 둔다. 정적 선택·값 키 개수·trim 결과·정적 spec·소유 값 membership의 키와 결과는 보존한다. 공통 구조 형은 engine types가 소유하여 자식 간 역의존을 만들지 않는다. 안정 형상과 배열 선언 개수 메모는 트리별로 지연 생성하며 폼 전체 reset·폐기에서 해제한다(SURFACE-063·065).
-
-- options가 없는 유효 스키마의 선택은 생성 때 동결한 기본 choices 객체 하나에 연결합니다. 유효 스키마별 WeakMap 조회·등록과 options/propertyOrder의 해석·독립 동결 배열은 유지하며 schema 결과는 공유하지 않습니다. 속도 면에서는 기본 분기가 WeakMap에 등록하고 상수를 반환하므로 유효 스키마마다 네 필드 객체를 만들고 freeze하는 일이 없어집니다. 메모리 면에서는 기존 WeakMap 항목 수를 유지하고, 적격한 유효 스키마마다 두는 choices 객체를 모듈 상수 하나로 대체합니다(batch2 4-default-choices).
-
-- `record < 종류 fractal < behaviors 뿌리 < settle < FieldNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 살아 있는 노드의 행을 `node.behavior`로 호출하고 형상 밖 노드의 정적 해석과 빈 값 판정에는 이 fractal의 진입점을 소비합니다(NODE-016, WRITE-082·098).
-- `utils/parse/`는 독립 공개 계약이 아니라 행과 기본 union 입력의 내부 변환입니다. 그 문서 계약은 이 fractal의 DETAIL이 소유합니다(LANDING-150, NODE-056).
-- 이 fractal의 organ은 외부에서 직접 가져오지 않으며, 바인딩 전용 초안 해석은 이름 붙은 진입점의 순수 해석·멤버 판정을 재사용합니다(NODE-016, REACT-033).
+종류별 차이는 공유 계산 행에 두고, 노드별 상태와 실행 순서를 행에 넣지 않습니다. 그래야 새 종류를 더할 때 정착·쓰기·공개 클래스에 같은 분기를 반복하지 않고, 종류마다 상태 동기화나 역류 방지 장치를 만들지 않습니다.
 
 ## API Contracts
 
-- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 진입점은 표와 정적 `omitEmpty` 빈 값 판정 함수 `isOmittedEmpty`, 유효 스키마별 정적 선택 `getStaticChoices`(settle의 덧붙임 자격이 `omitTrailing`을 읽는다)를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, VALUE-034, 26C-01).
-- 표에는 배열의 `branch`·`terminal`을 포함한 열 행이 있으며, 두 배열 행의 전략 선택도 청사진이 정합니다(NODE-002·047, BLUEPRINT-043, LANDING-065, 35C-12).
-- 행의 칸은 `interpret`, `assemble`, `project`, `finishInput`, `declareChildren`, `arrange`, `type`, `strategy` 순서입니다. 모든 행은 이 칸을 같은 순서로 가지며, 공유 기본 칸 위에 종류의 칸을 덮어 키 순서를 고정합니다. 같은 뜻의 칸은 같은 함수 참조를 씁니다. 여덟 줄을 넘는 칸과 종류 전용 보조는 그 종류의 utils organ에, 두 종류 이상이 쓰는 보조는 이 fractal의 utils organ에 둡니다(NODE-006·009·014, 26C-01, 36C-01, 실행 ADR D1).
-- 배열이 아닌 행의 `arrange`는 `utils/slots/`의 거부 칸 하나를 같은 함수 참조로 씁니다. 그 칸은 모든 환경에서 `path`·`details.method`를 담은 `SchemaFormError`를 `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` 코드로 즉시 던져 겉면과 dispatch가 종류를 묻지 않게 합니다. dispatch 진입 사슬이 오류를 포착하여 사슬 끝에서 `origin: 'write'`으로 `onError`에 보고한 뒤 던집니다(NODE-014, ERROR-197, 35C-01).
-- 정적 `omitEmpty`가 적용된 값 `''`, 키 없는 평범한 `{}`, 빈 `[]`만 형상 밖 잎의 방출 없음으로 판정합니다. 유효 스키마는 정적 선언으로 합칩니다(VALUE-034, WRITE-013, 26C-14).
-- 객체 branch는 비객체 원본 아래에도 자식을 유지하고 각 자식의 `local`을 계산하지만 그 호스트는 비객체 `source`를 받은 그대로 방출하고 자식 방출만 투영에서 제외합니다. 배열 branch도 비배열 `source`를 그대로 방출합니다. `null`·비객체 원본 아래의 자식은 로드든 쓰기든 채움을 받지 않습니다(VALUE-033·036, WRITE-013·096, 38C-01, 39C-01).
-- `options`의 빈 값 생략·`trim`·키 순서 등 정적 선택은 칸 호출마다 다시 구하지 않습니다. 유효 스키마 메모가 바뀔 때 한 번 계산하고 그 메모와 함께 둡니다(NODE-006, SETTLE-042).
-- parse organ의 이름 붙은 계약은 `isMember(value: unknown, kind: UnionMemberType): boolean`, `convert(value: unknown, kind: UnionMemberType): unknown`, `interpret(value: unknown, spec: UnionSpec): unknown`입니다. `UnionSpec`은 얼린 `kinds`·`mask`·`nullable`을 갖고 기본 `kinds`는 청사진 `schemaType`과 같은 참조입니다. `convert`는 변환 불가 시 입력 참조를 그대로 돌려주고 성공 여부는 할당 없는 별도 판정으로 구별합니다. 세 함수는 순수하고 던지지 않으며 모든 입력에 결과가 있고, `interpret`는 멱등·순서 무관·할당 없음입니다(WRITE-084·093).
-- `isMember`는 JSON Schema의 형을 검사합니다. `number`는 유한수, `integer`는 `Number.isInteger`, `object`는 null·배열을 제외한 객체입니다. `null`은 종류 목록이 아닌 `nullable`이 맡습니다. `convert`는 전체가 JSON 수 표기인 문자열→유한수(정수 문자열의 안전 범위), 안전 정수로 끝나는 문자열→integer, 유한수·불리언→string, 정확한 `"true"`·`"false"` 또는 1·0→boolean만 허용합니다. object·array·null 변환은 없습니다(WRITE-075·093).
-- `interpret`는 `undefined`·`null`·이미 멤버인 값을 그대로 돌려줍니다. 나머지는 모든 종류의 변환 결과를 `===`로 중복 제거해 정확히 하나일 때만 그 결과를 쓰고, 0개 또는 둘 이상이면 원본을 그대로 둡니다. 후보 배열을 만들지 않습니다. `['string','boolean']`과 0·-0·1의 동점 12건을 그대로 둡니다. 단일 종류 행과 기본 union 입력도 같은 내부 함수를 씁니다(NODE-056, WRITE-093).
-- 종류 모듈은 `record`·`blueprint`·이 fractal의 공유 organ만 소비합니다. behaviors 뿌리, `settle`, `FieldNode`, `write`, `validation`, 앱·플러그인 및 레거시는 타입 import까지 금지합니다(NODE-009·016, LANDING-159).
+행의 형과 레코드 배치는 [record 계약](../record/DETAIL.md), 종류·전략의 결정은 [blueprint 계약](../blueprint/DETAIL.md)이 소유합니다. 이 모듈은 선택된 행의 계산을 제공하며, 결과의 확정은 [settle 계약](../settle/DETAIL.md), 입력 완료 신호와 사건 배달은 [write 계약](../write/DETAIL.md)을 따릅니다. 계산을 부르는 순서를 바꾸어 쓰기 정책을 바꾸지 않습니다.
+
+공유 해석은 이 모듈의 내부 parse 구현을 사용하고, 단일 종류 행과 union 행, 바인딩의 초안 판정이 같은 함수를 소비합니다. 변환 정책의 정본은 [unionBehavior 계약](unionBehavior/DETAIL.md)입니다. 내부 해석의 재사용을 위해 별도 파서 패키지나 입력별 변환 표를 만들지 않습니다.
 
 ## Acceptance Criteria
 
-### behavior-rows — 표와 칸
+### NODE-001 — 종류별 차이는 상속 대신 행에 둡니다
 
-- 열 행 모두 같은 키 순서를 가지며, 배열의 두 전략을 포함해 같은 계산은 같은 함수 참조를 쓰고 비배열 행의 `arrange`는 하나의 거부 칸을 공유합니다(NODE-006·014·047, ERROR-197).
+행은 종류의 계산을 나타내며 런타임 하위 클래스나 노드마다 만든 전략 객체로 대체하지 않습니다. 공유 계산이 클래스마다 갈라지거나 노드 수에 비례해 실행 객체가 늘어나는 것을 막습니다. 공개 클래스의 책임은 [surface 계약](../../surface/DETAIL.md)에 둡니다.
 
-### parse-rule-a — 변환의 경계
+### NODE-002 — 행의 정체는 게이트와 분리합니다
 
-- 변환 표, 순열, 멱등, 동점 12건과 쓰기당 할당 0을 확인합니다. 변환 불가·모호한 입력은 참조가 그대로입니다(WRITE-084·093, TEST-077).
+청사진의 종류와 전략으로 고른 행은 노드 수명 동안 고정합니다. 유효 목록이 좁아져도 행이나 전략을 다시 고르지 않아, 같은 노드의 입력 수명과 실행 경로가 게이트 평가 결과에 따라 바뀌지 않게 합니다.
+
+### NODE-006 — 계산과 효과를 구별합니다
+
+행은 입력 해석·합성·투영·입력 마침·자식 선언·배열 연산 계획을 계산하며 원본 쓰기, 되돌림 기록, 자식 연결·폐기 확정, 통지를 하지 않습니다. 계산용 메모와 증명 힌트는 갱신할 수 있지만 별도의 편집 상태가 되어서는 안 됩니다. 자식 선언이 노드 생성까지 수행하면 정착의 생성·실패 처리 순서를 우회합니다.
+
+행의 모든 칸은 같은 순서로 선언하고, 뜻이 같은 칸은 같은 함수 객체를 공유합니다. 없는 동작을 생략하거나 호출자에 종류 분기를 추가하면 행 선택만으로 실행할 수 있는 계약이 깨집니다. 비배열의 배열 연산 거부는 공유 칸에서 즉시 예외로 나타내며, 보고와 재전달은 write가 맡습니다. 이 예외를 입력 해석의 무예외 계약과 혼동하지 않습니다.
+
+### NODE-009 — 종류와 공유 보조의 소유권을 유지합니다
+
+독립 경계는 전략이 아니라 종류입니다. 한 종류의 두 전략이 쓰는 보조는 그 종류가, 여러 종류가 쓰는 보조는 이 모듈이 소유합니다. behaviors 밖에서도 필요한 보조는 실제 소비자의 공통 소유자에 두어 상위 알고리즘이 이 모듈의 내부에 묶이지 않게 합니다.
+
+종류 모듈은 상위 동작 표·settle·write·validation·surface를 값이나 타입으로 가져오지 않습니다. Behavior 형은 record에서 받고 결과의 효과는 호출자에 맡겨, 계산 행이 자신의 호출자를 다시 요구하는 순환 결합을 막습니다.
+
+### NODE-018 — 행 공유의 비용과 한계를 구별합니다
+
+같은 종류·전략의 노드는 행 객체와 칸 함수를 공유합니다. 노드마다 매니저·클로저·전략 인스턴스를 붙여 공유의 메모리 이득을 없애지 않습니다. 칸 호출은 간접 호출로 남으며, 이 배치가 모든 JavaScript 엔진의 인라인 캐시나 특정 힙 크기를 보장하지는 않습니다. 비용 판단에서 구조적 공유와 엔진별 실측을 혼동하지 않습니다.
+
+### behavior-rows — 행의 배치는 실행 계약입니다
+
+행의 칸 순서와 공유 함수 참조를 바꾸는 일은 단순 정렬이 아니라 NODE-006의 변경으로 다룹니다. 동작이 같은 행도 별도 함수로 복제하면 공유 경로와 호출 자리의 안정성을 잃습니다.
+
+### parse-rule-a — 해석 정책은 한 곳에서 유지합니다
+
+공유 parse를 바꿀 때는 unionBehavior의 WRITE-084·WRITE-093을 함께 만족시킵니다. 단일 종류와 초안 입력에 별도 규칙을 두면 같은 값이 유입 경로에 따라 달라집니다.
+
+### behavior-options — 정적 선택은 유효 스키마에 묶습니다
+
+생략·trim·키 순서 선택은 유효 스키마별로 메모하고, options가 없는 스키마만 생산 시 동결한 기본 선택을 공유합니다. 유효 스키마 자체를 합쳐 공유하거나 호출자가 소유한 options·propertyOrder를 그대로 보유하지 않습니다. 매 호출의 선택 객체·배열 할당을 줄이면서 서로 다른 스키마의 선택과 입력 소유권이 섞이지 않게 합니다. 노드별 합성 메모와 값 identity 메모의 수명은 record 계약을 따릅니다.
 
 ## Last Updated
 
-2026-10-07
+행의 경계·공유 방식·정적 선택 메모 또는 해석 정책의 소유권이 바뀔 때 갱신합니다.

@@ -2,26 +2,26 @@
 
 ## Purpose
 
-Validate that child-targeting controls reference children declared on their host.
+자식 제어가 완성된 호스트의 직계 자식 이름을 가리키는지 정적으로 검증합니다.
 
 ## Conventions
 
-- Validate after ordinary, lifted and virtual children have been constructed.
-- Check static targets regardless of the declaration's active gates.
+- 조건부·태그·가상 자식까지 구성한 뒤 검사합니다.
+- 선언의 현재 활성 여부와 무관하게 대상 존재를 판단합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Verify that fields targets name direct children of the host.
-- Report missing child targets with their authored schema location.
+- fields 대상을 호스트의 직계 자식 이름으로 해석합니다.
+- 없는 대상은 작성 위치와 함께 보고합니다.
 
 ### Ask first
 
-- Changing the scope of child-target validation.
+- 자식 대상의 범위나 검증 순서를 바꿀 때
 
 ### Never do
 
-- Accept fields targets on a terminal host as valid children.
-- Add children or evaluate gates during validation.
-- Require declarations on one node to share a discriminator key; each declaration owns its union's key.
+- terminal 호스트 아래에 대상 자식이 있다고 가정하지 않습니다.
+- 검사 중 자식을 추가하거나 게이트를 평가하지 않습니다.
+- 서로 다른 선언의 discriminator 키가 같아야 한다고 요구하지 않습니다.

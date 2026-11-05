@@ -2,45 +2,34 @@
 
 ## Requirements
 
-노드를 렌더링하는 외부 진입점은 본체 FieldProxy입니다. 경로나 노드 참조로 찾은 노드를 입력 팩토리와 오류 경계를 갖춘 렌더러에 연결하며, 입력 처리와 지연 마운트는 본체 안에서 두 부품을 조합해 처리합니다.
+노드를 렌더러에 연결하면서 사용자 표현의 실패를 그 필드에 가둡니다. 렌더 비용을 줄이는 변경도 오류의 격리 범위·입력 identity·보고 경로를 유지해야 합니다.
 
 ## API Contracts
 
-- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
-- renderer는 state와 active&&visible 이력·커밋 정책을 소비하여 오류 표시를 계산한다. unformatted errors와 렌더러 경계는 유지한다.
-
-- U2: renderer.errorVisible과 formatError 선택은 FieldRendererContext의 순수 isErrorRevealed를 사용한다. isPresent이며 live인 조건을 한 번 판정하고 held일 때만 동일 렌더 version과 passive ErrorRevealSubscriber로 해제를 따라잡는다. 기존 ErrorBoundary는 항상 첫 자식이며 구독자는 마지막 자식이므로 hold 시작·종료에도 렌더러와 입력의 identity·focus를 유지한다. checkErrorVisibility 조건은 그대로이며 엔진 기준에서 적격했던 오류만 이전 판정을 유지한다. 노드가 바뀌면 그 노드 기준을 읽고 isPresent가 거짓이면 즉시 숨긴다. renderer.errors는 보정하지 않는 unformatted 목록이다.
-
-- 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputSlot`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputSlot`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.
-- 재귀 렌더 props 계약 `FieldProxyProps`는 본체가 소유하며 `type.ts`에 선언합니다. 진입점은 이 형을 내보내지 않습니다. 부품 `FieldInputSlot`·`DeferredFieldProxy`는 `type.ts`를 타입 전용 import로만 읽고, 입력 구현은 본체 구현을 값으로 역참조하지 않습니다. 본체는 자신을 `NodeProxy` prop으로 넘겨서 재귀합니다.
-- 비활성 노드는 렌더하지 않습니다. 하위 노드는 전달받은 NodeProxy를 통해 같은 렌더 계약을 재사용합니다. 노드가 없을 때도 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.
-- 마운트된 노드는 data-path로 경로를 노출합니다. 경로 주소는 prefix container들의 UpdateChildren을 따라 다시 해석하고 구독은 React 생명주기에 맞춰 해제합니다. node·undefined·root 주소는 고정 snapshot으로 추가 구독하지 않습니다.
-- `UpdateJsonSchema`를 구독하다가 유효 스키마가 바뀌면 렌더 props와 입력 선택을 갱신합니다. 프록시 하나가 노드 추적 구독과 스냅샷 ref를 소유하고 경로 해석은 useFieldNode의 외부 저장소 구독이 소유하며, 별도의 필드 컴포넌트나 필드별 경로 Provider는 만들지 않습니다(REACT-012, 119라운드, 121C-01 F-A).
-- 렌더러 경계는 ErrorBoundary를 직접 씁니다. children이 렌더할 때마다 새 엘리먼트라 memo 비교가 항상 실패하므로 memo로 감싸지 않습니다. 소유 지점에서 한 번 선택한 렌더러가 그 내부에서 errorMessage를 계산합니다. formatError와 렌더러 예외는 원래 오류의 identity, 현재 path, componentStack, origin render를 같은 폼 보고기로 전달하고, 같은 fallback과 console.error를 유지합니다(ERROR-044·090·114).
-- Refresh는 렌더러 경계와 입력 경계의 수명을 유지하고 해당 노드의 원본 입력만 다시 마운트합니다. RequestRemount는 래퍼 key를 바꿔서 경계까지 교체합니다(REACT-019·024, EVENT-039·040, 112C-01).
-- 비용: 필드 전체를 감싸던 Provider, 감싸개, 경계, 분리 컴포넌트를 없애고 오류 메시지 계산을 렌더러 경계 안의 컴포넌트에 둡니다. 필드당 fiber를 순감소 기준으로 4개 줄이는 것이 목표이며, 별도의 필드 경계 상태와 경로 Provider는 두지 않습니다. 쓰기당 렌더 수와 DOM 반영 지연은 런타임 계수로 비교합니다.
-  - 측정값(세션 129e): 필드당 fiber는 평면 24→20, 배열 항목 21→17이고, 쓰기당 렌더·커밋·호스트 갱신·이펙트 수는 같습니다. 마운트 할당은 array-1000에서 8.8 MB 줄었습니다.
-  - 미확인: 쓰기 1회당 할당은 한 번의 실행에서는 18~56 KB 늘었지만 다른 실행에서는 방향이 반대였습니다. 다음 F2 고침부터 쓰기당 할당을 계수에 넣어 지켜봅니다(121C-01 덧붙임, Q131).
-- `request(kind)`의 focus, select, refresh, remount 사건을 실행합니다. `RequestRemount`는 래퍼 key를 바꾸며, 사용자 override는 노드 식별 정보처럼 덮어쓸 수 없는 필드를 대체하지 못합니다(EVENT-063·073).
-- 입력의 자식 프록시가 마운트되었는지 판정할 때는 본체와 가상화의 `DeferredFieldProxy` 자리를 모두 포함합니다. 입력은 실제로 자식 프록시가 마운트되어 있는지를 보고 Refresh에서 다시 마운트할지 가립니다(REACT-028).
-- 가상화의 노출(reveal) 기록은 매니저가 가진 노드 identity 기록을 가져다 씁니다. 한 번 노출된 필드는 배열 인덱스가 다시 매겨져도 placeholder가 되지 않으며, 미노출 형제의 placeholder도 현재 경로를 표시합니다(LANDING-087).
-- 런타임 계수 도우미 `__tests__/helpers/runtimeCounts.mjs`는 이 fractal의 시험과 부품 `FieldInputSlot`, 형제 `Form`의 계수 시험이 함께 씁니다(검증 코드이므로 소비자가 아닙니다). 번들 준비와 계수 CLI는 같은 시험 도우미 구획의 정본을 실행하며, 역사 자료 디렉토리의 도구를 읽지 않습니다.
+- 오류 표시의 자격·보류·해제는 [FieldRendererContext](../../providers/FieldRendererContext/DETAIL.md)와 [validation](../../core/engine/validation/DETAIL.md)의 계약을 소비합니다. 현재 `errorVisibility`와 `checkErrorVisibility(node.state)`를 사용하므로 정책을 최초 마운트 값으로 고정하지 않습니다. renderer.errors는 원본 목록이며 표시 여부로 목록을 고치지 않습니다.
+- ErrorBoundary를 항상 첫 자식에 두고 보류 해제 구독자를 그 뒤에 두어, 표시 대기가 시작·종료될 때 렌더러와 입력이 교체되지 않게 합니다.
+- 재귀 입력 수명은 [FieldInputSlot](./components/FieldInputSlot/DETAIL.md), 지연 DOM은 [DeferredFieldProxy](./components/DeferredFieldProxy/DETAIL.md)가 소유합니다. 재귀 렌더 props 형은 본체가 소유하고 NodeProxy prop으로 구현을 전달하여 자식의 역참조 순환을 막습니다.
+- 노드 값은 가지 렌더러에도 전달되는 계약이므로 UpdateValue 구독을 성능만을 이유로 제거하지 않습니다. 형제 입력이 memo여도 부모가 받는 value가 낡아질 수 있습니다.
 
 ## Acceptance Criteria
 
-### field-contract — 관찰 가능한 동작
+### GOAL-059 — 사용자 표현의 실패를 필드 경계에 가둡니다
 
-- enabled가 false인 노드는 입력과 래퍼를 남기지 않습니다.
-- 재귀 렌더링에서도 같은 노드 경로와 렌더러 연결 규칙이 적용됩니다.
-- 실제 배열 remove 버튼으로 앞쪽 아이템을 지우면 노출된 아이템의 노드와 입력 DOM identity가 유지되고, 새 경로에 placeholder가 겹치지 않습니다.
-- 미노출 형제는 현재 경로의 placeholder로 유지되고, 없어진 마지막 경로는 DOM에 남지 않습니다.
+주입한 렌더러와 formatError의 실패는 같은 필드의 fallback으로 격리하여 형제 입력을 유지합니다. errorMessage를 경계 아래에서 계산해야 포맷 예외가 경계를 건너 폼 전체로 번지지 않습니다. 입력 어댑터의 격리는 [fieldInputDefinition](../../helpers/fieldInputDefinition/DETAIL.md), Placeholder 격리는 [매니저](../../helpers/virtualization/VirtualizationManager/DETAIL.md)의 책임입니다.
 
-### field-proxy-contract — 관찰 가능한 동작
+### ERROR-090 — 해석·소유 지점에 안정된 경계를 둡니다
 
-- 렌더러와 formatError의 예외는 같은 경로와 폼 보고기로 한 번 전달되고, 형제 필드는 그대로 유지됩니다.
-- 오류 표시 조건이 거짓이면 기존 오류가 있어도 오류 메시지를 렌더러에 표시하지 않습니다.
-- 제어 입력과 비제어 입력은 필드당 fiber 수와 쓰기당 렌더 수가 서로 같고, 형제나 부모에 쓰기가 일어나도 변경되지 않은 필드는 렌더하지 않습니다.
-- Refresh 뒤에도 경계 identity는 그대로이고 해당 입력의 identity만 바뀝니다. 실패한 경계는 Refresh로 복구되지 않습니다.
+렌더러 경계는 ErrorBoundary를 직접 사용합니다. 매번 새 children 엘리먼트를 받아 memo 비교의 이득이 없으므로 경계용 memo 래퍼를 더하지 않습니다. 필드 전체의 별도 경계 상태와 경로 Provider도 만들지 않습니다. 보고기는 [FormErrorContext](../../providers/FormErrorContext/DETAIL.md)의 명시적 path 훅으로 연결하여 경로 전달만을 위한 필드별 Provider 비용을 피합니다.
+
+### field-proxy-contract — 오류 표시와 복구 수명을 구별합니다
+
+- 오류 표시가 꺼지면 포맷 결과를 숨기되 렌더 실패 경계와 원본 오류 목록은 유지합니다. 검증 표시를 숨기는 동작이 오류 격리까지 해제해서는 안 됩니다.
+- Refresh는 렌더러 경계를 유지하고 원본 입력의 재마운트 범위는 FieldInputSlot의 계약을 따릅니다. 실패한 경계를 Refresh나 형제 쓰기로 복구하지 않습니다. RequestRemount는 래퍼 key를 바꾸므로 경계까지 교체하는 별개의 복구 수단입니다.
+
+### field-contract — 재배치로 입력을 다시 지연하지 않습니다
+
+- 배열 앞쪽을 삭제해도 살아 있는 노드와 입력 DOM identity를 유지합니다. 노출 이력은 [GOAL-066](../../helpers/virtualization/VirtualizationManager/DETAIL.md#goal-066--한-번-노출한-노드를-다시-지연하지-않습니다)을 따릅니다.
+- 미노출 형제의 placeholder는 현재 경로를 표시하고 사라진 마지막 주소를 남기지 않습니다. DOM 주소를 재사용한 뒤 같은 경로에 입력과 오래된 placeholder가 겹치는 실패를 막습니다.
 
 ## Boundary Exemptions
 
@@ -48,8 +37,8 @@
 
 - **Consumers**: `**/packages/canard/schema-form/src/components/FieldProxy/components/**`
 - **Direct import**: `allowed`
-- **Reason**: 부품 `FieldInputSlot`·`DeferredFieldProxy`는 이 fractal의 자식입니다. 루트의 Module Contract Principles 4(위로는 열려 있어 조상의 뿌리 파일을 직접 가져올 수 있고, 조상의 `index.ts`는 가져올 수 없음)에 따라, 재귀 렌더 props 계약 `FieldProxyProps`를 뿌리의 `type.ts`에서 타입 전용으로 직접 읽습니다. 진입점은 이 형을 쓰는 바깥 소비자가 없어서 내보내지 않습니다. filid의 기본 판정은 자식에서 조상의 뿌리 파일로 가는 import를 경계 우회로 보기 때문에, 저장소 원칙에 따라 여기에 선언합니다.
+- **Reason**: 자식들은 재귀 렌더 props 계약을 타입 전용으로 읽습니다. 저장소의 위로 열린 import 원칙에 따라 조상의 구체 파일을 직접 쓰며, 외부 소비자가 없는 형을 진입점에 추가하지 않습니다.
 
 ## Last Updated
 
-계약·경계·검증 조건이 변경될 때 갱신합니다.
+렌더러 격리 범위, 보고 경로, 표시 구독자의 위치, Refresh·Remount 수명 또는 재배치 계약이 바뀌면 갱신합니다.

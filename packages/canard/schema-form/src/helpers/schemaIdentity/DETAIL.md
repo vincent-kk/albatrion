@@ -2,20 +2,30 @@
 
 ## Requirements
 
-WRITE-043은 JSON 값에는 순서를 따지는 구조적 동등성을, 원자 값에는 참조 동일성을 요구한다.
+작성 스키마의 동등성은 JSON 값의 동등성과 다릅니다. 프로퍼티의 순서는 필드 순서이며 함수·컴포넌트의 참조는 렌더러의 정체성이므로, 순서를 무시하는 일반 깊은 비교나 직렬화한 문자열로 대체하지 않습니다.
 
 ## API Contracts
 
-비교 함수는 참조가 같으면 바로 같다고 판정한다. 그렇지 않으면 배열과 일반 객체의 own key를 순서대로 순회한다. React 엘리먼트와 ref 형태의 객체는 더 쪼개지 않는 원자 값으로 본다.
+이 모듈은 비교와 렌더러 판정만 소유합니다. 같은 스키마를 유지하는 로드와 교체하는 로드의 선택, 검증기 변경의 처리는 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)가 소유하며, 청사진의 객체 키 재사용은 [app/cache](../../app/cache/DETAIL.md)의 별도 계약입니다.
 
-- 판정 함수 셋(`isRenderAtomic`·`isRenderTerminal`·`isSameSchema`)은 `utils/`에 있다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
+React 요소·ref와 인라인 입력 컴포넌트의 해석을 바인딩에서 끝내고 core에는 술어를 전달합니다. 엔진이 React 표식이나 렌더러 타입을 스키마 문법으로 알게 되는 결합을 막습니다.
 
 ## Acceptance Criteria
 
-### ordered-equality — Ordered structural equality
+### WRITE-043 — 동등성은 필드 순서와 원자 정체성을 보존합니다
 
-- 객체 프로퍼티 순서가 다르면 서로 다른 스키마로 본다. 같은 컴포넌트 참조는 계속 같은 것으로 본다.
+배열과 일반 객체는 own 열거 키의 순서까지 비교합니다. 같은 값의 properties라도 키 순서가 바뀌면 필드 배치가 달라지므로, 순서를 무시하는 `equals`로 이 비교를 통합하지 않습니다.
+
+참조가 같은 값은 즉시 같다고 판단하고, 다른 함수·클래스 인스턴스·React 요소·ref 객체는 내부 모양이 같아도 합치지 않습니다. 다른 렌더러나 가변 ref를 구조가 같은 JSON 객체로 취급하면 교체가 필요한 트리를 유지하게 됩니다.
+
+### ordered-equality — 같은 객체의 내부 변형은 검출하지 않습니다
+
+비교를 위해 사본이나 과거 상태를 보관하지 않습니다. 참조가 다른 입력만 크기에 비례하여 순회하므로 인라인 스키마의 동등성을 확인할 수 있지만, 같은 객체를 제자리에서 고친 사실은 알아내지 못합니다. 변경 반영을 위한 명시적 재구성은 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)가 소유합니다.
+
+### render-atomic — 원자 값의 경계는 보수적으로 잡습니다
+
+own `$$typeof` 또는 own `current`가 있으면 다른 키가 함께 있어도 원자로 취급합니다. 일반 데이터가 같은 키를 써도 내부 비교를 생략한다는 한계가 있으며, 실제 ref의 가변 내용이나 React 내부 객체를 재귀 비교하여 정체성을 잃지 않게 하는 선택입니다.
 
 ## Last Updated
 
-계약 근거: WRITE-043, execution ADR D7.
+작성 값의 동등성, 렌더러 판정 또는 바인딩과 core의 책임 경계가 바뀔 때 갱신합니다.
