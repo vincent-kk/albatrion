@@ -8,18 +8,18 @@ Driving a form from outside the schema: the `FormHandle` ref and the `Form.Input
 const formRef = useRef<FormHandle<typeof schema, Value>>(null);
 ```
 
-- Declare the schema with `as const` or type inference degrades to `any` (`troubleshooting.md`).
-- **Supply the second generic (`Value`) whenever you also pass a concrete `defaultValue`**: a literal `defaultValue` makes the inferred `Value` narrow with required keys, which then mismatches `FormHandle`'s default `Value` (inferred with all-optional keys). Injecting the same `Value` into both `Form` and `FormHandle` keeps them aligned.
+- Preserve literal schema types with `as const` when relying on schema inference; a widened schema can lose the information needed to infer a precise output.
+- If a concrete `defaultValue` makes Form infer a narrower value type than the ref, supply the same explicit `Value` generic to Form and FormHandle. This keeps optional schema-derived keys and required default-value keys from disagreeing at the ref boundary.
 - The ref is `null` on the first render — `await waitFor(...)` in tests before using it.
 
 Semantics the signatures hide:
 
-- `getErrors()` returns the current error list without validating; `validate()` re-runs validation and resolves with the errors.
-- `setValue(valueOrUpdater, option?)` accepts a functional updater and a `SetValueOption`: object partial update → `SetValueOption.Merge`; full replacement → `Overwrite` (default). The wrong option drops sibling fields or double-applies (consumer rules `onchange-semantics`).
+- `getErrors()` reads the current list without validating; use [validation UX](validation-ux.md) to choose when to request a verdict and handle None or a missing validator.
+- Use `SetValueOption.Merge` for a partial object update; the default `Overwrite` is full replacement and drops unspecified sibling values.
 - `getAttachedFilesMap()` returns a `Map<string, File[]>` keyed by the input's **standard RFC 6901 path** (`node.path`) — extended pointer syntax never appears in keys.
 - `findNode(path)` / `findNodes(path)` — singular vs plural; `*` wildcards require the plural form.
 - `focus(path)` / `select(path)` reach fields even while deferred by virtualization (they force-mount).
-- Submit flows: prefer `useFormSubmit(formRef)` over hand-rolling `validate()` + submit (consumer rules `submit-via-hook`).
+- Submit flows: prefer `useFormSubmit(formRef)` over separating validation from submission, so the validated snapshot is the value that reaches the submit callback.
 
 ## Layout Surfaces
 
@@ -48,10 +48,25 @@ Inside `<Form>`, path-scoped primitives take over layout while the plugin still 
 </Form.Render>
 ```
 
-The render function receives `FieldRendererProps` (`node`, `value`, `errors`, `errorVisible`, `Input`, `ChildFields`, …) — enumerate them from `dist/*.d.ts`.
+Its `children` function is captured at mount like the other component props; see [Keep configuration stable for a mounted form](field-input.md#keep-configuration-stable-for-a-mounted-form).
+
+Read the render function's exact `FieldRendererProps` from the installed declarations; use its resolved Input to retain the form's input selection and write handling.
 
 ## Gotchas
 
-- **Partial custom layout double-renders.** Using `Form.Input`/`Form.Render` for a path does NOT remove that field from schema-driven auto-rendering. A custom layout is all-or-nothing: render every field explicitly, or none.
+- Supplying Form children takes over the root layout; omitted inputs are not automatically filled in. If that layout also renders a branch's default children, avoid adding another Form.Input/Form.Render for the same path.
 - **Paths here are standard RFC 6901 only.** `Form.Render`/`Form.Input` `path` props do not accept the extended syntax (`..`, `.`, `*`, `@`). Array items are addressed with literal indexes: `/items/0/name`.
 - Rendering the same path twice renders the field twice — there is no dedup.
+
+## Compose one data tree
+
+One Form creates its own root, handle, error reporter and native form boundary.
+Rendering another Form inside it creates a separate tree: the inner values are not inserted into the outer value and its validation/reset are not part of the outer operation.
+Nested native form elements are invalid HTML and can also confuse submit handling, so nesting Forms is not the composition mechanism for nested data.
+Declare nested data in the schema and use Form.Input/Form.Render or branch ChildFields to arrange that same tree.
+Use sibling Forms under FormProvider for independent forms sharing default renderers, input definitions, context or validation configuration; a provider does not join their values.
+
+Changing a `jsonSchema` or `defaultValue` prop alone keeps the current tree and values.
+Reset reads the latest committed props; an equivalent schema can reuse the tree, while a different schema can replace it.
+`rebuild()` builds a new tree from the current schema; re-read nodes from the handle afterwards. It reloads the committed `defaultValue`, so edits made before it are discarded; supplying a new validator does the same. It does not recompile validation for the same schema object and validator; a cached compile failure and its one retry are described in [validation failures](validation-failures.md).
+Keep stable schema references to avoid accidental configuration churn and clarify which schema reset will load, not because every new reference discards editing state.

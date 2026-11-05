@@ -19,7 +19,10 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `controls`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `resetInteraction`, `derived`, `discriminator`, expression syntax, `oneOf`, `anyOf`, `allOf`, `if/then/else`, conditional fields, `context`, `@` references | `knowledge/expressions.md`           |
 | `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `outputValue`, performance, slow, large forms, `virtualization`                      | `knowledge/arrays-and-scale.md`      |
-| `validate`, `ValidationMode`, `errorMessages`, `formatError`, `ShowError`, `showError`, `NodeState`, `edited`, `touched`, `globalState`, `onStateChange`, `clearState`, `useChildFieldErrors`                                  | `knowledge/validation-and-state.md`  |
+| `validate`, `ValidationMode`, `ShowError`, `showError`, `errors`, `setExternalErrors`, `clearExternalErrors`                                                                                                                  | `knowledge/validation-ux.md`         |
+| `formatError`, `errorMessages`, locale messages, `useChildFieldErrors`, section errors                                                                                                                                        | `knowledge/error-feedback.md`        |
+| `onStateChange`, `getState`, `setState`, `clearState`, `isDivergent`, unsaved changes, restore interaction                                                                                                                    | `knowledge/interaction-state.md`     |
+| `onError`, record origin, compile/run failure, recovery, hidden-form diagnostics                                                                                                                                              | `knowledge/validation-failures.md`   |
 | `FormHandle`, `getValue`, `setValue`, `reset`, `submit`, `focus`, `getAttachedFilesMap`, `Form.Render`, `Form.Input`, `Form.Label`, custom layout                                                                             | `knowledge/imperative-and-layout.md` |
 | `FieldInput`, `fieldInputDefinitions`, `fieldInputMap`, `inputType`, custom input, `ChildFields`                                                                                                                              | `knowledge/field-input.md`           |
 | JSONPointer paths, `..`, `.`, `*`, `~0`/`~1` escaping, `find`, `findNodes`                                                                                                                                                    | `knowledge/jsonpointer.md`           |
@@ -34,7 +37,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 
 ### Node System
 
-- Terminal nodes: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`. Branch nodes: `ObjectNode`, `ArrayNode` (each with a Branch or Terminal strategy). Special: `VirtualNode`.
+- Terminal nodes: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`, `UnionNode`. Branch nodes: `ObjectNode`, `ArrayNode` (each with a Branch or Terminal strategy). Special: `VirtualNode`.
 - The JSON Schema is the contract; the node tree derives from it; the UI is a projection of the node tree.
 
 ### FieldInput Resolution Priority (highest → lowest)
@@ -56,7 +59,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 
 ### Controls
 
-Keys of the `controls` object (closed list, no aliases; an unknown key throws a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY` when the blueprint is built): `active` | `visible` | `readOnly` | `disabled` | `default` | `derived` | `unsetValue` | `resetInteraction` | `unsetOnInactive` | `fields` | `injectTo` | `discriminator` | `watch` (array of paths). Inside `controls.fields[].controls` and on fragment `controls` (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine are allowed; the other four throw.
+Keys of the `controls` object (closed list, no aliases; an unknown key throws a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY` when the blueprint is built): `active` | `visible` | `readOnly` | `disabled` | `default` | `derived` | `unsetValue` | `resetInteraction` | `unsetOnInactive` | `inactiveValue` | `fields` | `injectTo` | `discriminator` | `watch` (array of paths). Inside `controls.fields[].controls` and on fragment `controls` (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first ten are allowed; the other four throw. `inactiveValue` is a literal or synchronous resolver, not an expression.
 
 **active vs visible** — `active: false` removes the value from form data; `visible: false` hides UI but keeps the value. Full decision table: `knowledge/expressions.md`.
 

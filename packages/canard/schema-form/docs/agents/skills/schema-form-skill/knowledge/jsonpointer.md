@@ -21,7 +21,7 @@ formRef.current?.findNodes('/items/*'); // wildcard needs the PLURAL form
 
 ```typescript
 // property name: 'object/Node'
-fieldInputMap: { '/object~1Node': SpecialInput }
+const fieldInputMap = { '/object~1Node': SpecialInput };
 // property name: 'tilde~here'
 rootNode.find('/tilde~0here');
 ```
