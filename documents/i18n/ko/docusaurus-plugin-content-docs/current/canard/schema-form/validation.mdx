@@ -33,7 +33,7 @@ OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하�
 
 branch 노드만 거치는 경로에서 dataPath를 해석할 수 없거나 해당 자식이 없으면 이슈를 배분하지 않습니다. 최종 배분 대상이 검증한 subtree 밖에 있는 이슈도 생략합니다. schemaPath로 비활성 gated oneOf·anyOf 분기에 유일하게 귀속되고 활성 형제 분기가 있는 경우도 배분 제외 규칙 중 하나입니다. 이 규칙들은 전체 판정이나 폼 전체 원시 목록에서 이슈를 제거하지 않습니다.
 
-경로 탐색은 루트 여부와 관계없이 terminal 노드에서 멈춥니다. 객체·배열·여러 타입의 값 전체를 입력 하나로 편집하는 경우도 이에 포함됩니다. 해당 값 아래의 모든 이슈를 dataPath 변경 없이 받으며 해독할 수 없는 percent escape가 든 경로도 그대로 받습니다. 위의 비활성 union·검증 범위 제외 규칙은 계속 적용됩니다. rejectedKey가 비어 있지 않고 branch 조상이 있으면 가장 가까운 branch 조상으로 소유 대상을 옮긴 뒤 검증 범위를 검사합니다. terminal 루트는 올라갈 부모가 없으므로 rejectedKey 이슈도 그대로 받습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
+경로 탐색은 루트 여부와 관계없이 terminal 노드에서 멈춥니다. 객체·배열·여러 타입의 값 전체를 입력 하나로 편집하는 경우도 이에 포함됩니다. 비어 있지 않은 dataPath는 절대 포인터여야 하며, 탐색을 멈출 때까지 확인하는 각 조각은 속성 이름 문자열로 파싱되어야 합니다. 조각 검사는 terminal 검사보다 먼저 하므로 `#/*/na%me`의 `*`나 같은 위치의 `..` 같은 연산자는 terminal 루트에서도 이슈 배분을 막고, 이슈는 전체 판정과 폼 전체 원시 목록에 남깁니다. 이 검사들과 위의 비활성 union·검증 범위 제외 규칙을 통과하면 해당 값 아래의 이슈를 dataPath 변경 없이 받으며, `#/na%me`처럼 해독할 수 없는 percent escape가 든 경로도 이에 포함됩니다. rejectedKey가 비어 있지 않고 branch 조상이 있으면 가장 가까운 branch 조상으로 소유 대상을 옮긴 뒤 검증 범위를 검사합니다. terminal 루트는 올라갈 부모가 없으므로 rejectedKey 이슈도 그대로 받습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
 
 React-only disabled 토글, 지연된 presence commit, release와 paint 사이의 쓰기는 hold를 생략하거나 1~2프레임 전 판정을 보이게 할 수 있습니다. 업무 흐름은 원시 오류로, 표시는 렌더러의 적격성 결정으로 처리하십시오.
 
