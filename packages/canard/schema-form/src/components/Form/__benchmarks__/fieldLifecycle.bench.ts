@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // Loaded by vitest.bench.config.ts; per-sample hooks exclude preparation and disposal.
-import { flushSync } from 'react-dom';
 import { fireEvent } from '@testing-library/dom';
+import { flushSync } from 'react-dom';
 import { afterAll, bench, describe, expect, vi } from 'vitest';
 
 import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization';
@@ -121,6 +121,21 @@ describe('fieldLifecycle', () => {
             'input[id="/outer/middle/inner/target"]',
           ),
         ).not.toBeNull();
+        form.dispose();
+      },
+    ),
+  );
+  bench(
+    'focus reveal of 3 nested gates',
+    () =>
+      flushSync(() => form.handle.current?.focus('/outer/middle/inner/target')),
+    sampleOptions(
+      () => {
+        form = new LifecycleBenchForm();
+        form.mount(nestedSchema, nestedOptions);
+      },
+      () => {
+        expect(document.activeElement?.id).toBe('/outer/middle/inner/target');
         form.dispose();
       },
     ),

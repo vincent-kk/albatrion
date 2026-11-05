@@ -1,256 +1,149 @@
 import { act, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  type FieldInputProps,
-  type JSONSchema,
-  VirtualizationBackfill,
-} from '@/schema-form';
+import type { JSONSchema } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
+import { FocusRootWithSubmit } from './helpers/FocusRootWithSubmit';
+import {
+  FocusSilentObserver,
+  focusSchema,
+  focusTarget,
+  focusVirtualization,
+} from './helpers/focusFixtures';
 
-// Native-submit and handle focus share the public contract; viewport and idle reveal stay off.
-
+/** Current form with error records and host sink checked after each native submission. */
 let form: FormHarness;
-
-/** An observer that never reports an intersection. */
-class SilentObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-beforeEach(() => {
-  vi.stubGlobal('IntersectionObserver', SilentObserver);
-  vi.stubGlobal('requestIdleCallback', () => 0);
-  vi.stubGlobal('cancelIdleCallback', () => {});
-});
+beforeEach(() => vi.stubGlobal('IntersectionObserver', FocusSilentObserver));
 afterEach(() => {
   form?.unmount();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
-/** Root input: every child field, then the form's submit button. */
-const RootWithSubmit = ({ ChildFields }: FieldInputProps) => (
-  <>
-    {ChildFields.map((Child) => (
-      <Child key={Child.key} />
-    ))}
-    <button type="submit">submit</button>
-  </>
-);
-
-/** Keep the first child mounted and every following child deferred. */
-const virtualization = {
-  threshold: 2,
-  eagerCount: 1,
-  backfill: VirtualizationBackfill.None,
-};
-
-/**
- * Seven filled text fields followed by one more property.
- * @param last - Name and schema of the eighth property.
- * @returns An object schema whose last property is deferred.
- */
-const schemaEndingWith = (last: [string, object]): JSONSchema =>
-  ({
-    type: 'object',
-    properties: Object.fromEntries([
-      ...Array.from({ length: 7 }, (_, index) => [
-        `f${index}`,
-        { type: 'string', default: `v${index}` },
-      ]),
-      last,
-    ]),
-  }) as JSONSchema;
-
-/** A branch whose first input differs from the requested invalid descendant. */
-const lateBranch = {
-  type: 'object',
-  properties: {
-    first: { type: 'string', default: 'first' },
-    name: { type: 'string', minLength: 3, default: 'v' },
-  },
-} as const;
-
-// filid:contract approximate-focus
-describe.each([false, true])('deferred focus (StrictMode=%s)', (strictMode) => {
-  it('focus(path) reveals an ancestor and approximately focuses inside it once', async () => {
-    form = await renderForm(schemaEndingWith(['late', lateBranch]), {
-      virtualization: { ...virtualization, threshold: 3 },
-      strictMode,
-    });
-    expect(form.deferred('/late')).toBe(true);
-    expect(form.field('/late/name')).toBeNull();
-    const focuses: string[] = [];
-    form.container.addEventListener('focusin', (event) =>
-      focuses.push((event.target as HTMLElement).id),
-    );
-    await act(async () => form.handle.focus('/late/name'));
-    await waitFor(() => expect(form.deferred('/late')).toBe(false));
-    expect(form.field('/late/name')).not.toBeNull();
-    expect(document.activeElement).toBe(form.field('/late/first'));
-    expect(focuses).toEqual(['/late/first']);
-    expect(form.sinkErrors()).toEqual([]);
-    expect(form.errorRecords()).toEqual([]);
-  });
-
-  it('a native invalid submit reveals the ancestor and approximately focuses inside it', async () => {
-    form = await renderForm(schemaEndingWith(['late', lateBranch]), {
-      virtualization: { ...virtualization, threshold: 3 },
-      validator: true,
-      strictMode,
-      fieldInputMap: { '': RootWithSubmit },
-    });
-    expect(form.deferred('/late')).toBe(true);
-    expect(form.node('/late/name')?.errors.length).toBeGreaterThan(0);
-    const focuses: string[] = [];
-    form.container.addEventListener('focusin', (event) =>
-      focuses.push((event.target as HTMLElement).id),
-    );
-    await form.user.click(form.field('/f0')!);
-    await form.user.click(
-      form.container.querySelector<HTMLButtonElement>('button[type="submit"]')!,
-    );
-    await waitFor(() =>
-      expect(document.activeElement).toBe(form.field('/late/first')),
-    );
-    expect(form.deferred('/late')).toBe(false);
-    await form.flush();
-    expect(focuses.filter((path) => path === '/late/first')).toEqual([
-      '/late/first',
-    ]);
-    expect(form.sinkErrors()).toEqual([]);
-    expect(form.errorRecords()).toEqual([]);
-  });
-
-  it('follows a virtual group child reference to a sibling field', async () => {
-    const schema = schemaEndingWith(['startDate', { type: 'string' }]);
-    schema.options = {
-      virtual: { period: { fields: ['startDate'] } },
-    };
-    form = await renderForm(schema, { virtualization, strictMode });
-    expect(form.deferred('/period')).toBe(true);
-    expect(form.node('/period')?.children).toContain(form.node('/startDate'));
-    expect(form.node('/startDate')?.parentNode).toBe(form.handle.node);
-    await act(async () => form.handle.focus('/startDate'));
-    await waitFor(() => expect(form.deferred('/period')).toBe(false));
-    expect(document.activeElement).toBe(form.field('/startDate'));
-  });
-
-  it('reveals only the outer placeholder when the target is nested behind several gates', async () => {
-    form = await renderForm(
-      schemaEndingWith([
-        'late',
-        {
-          type: 'object',
-          properties: {
-            first: { type: 'string' },
-            inner: {
-              type: 'object',
-              properties: { name: { type: 'string' } },
-            },
-          },
-        },
-      ]),
-      { virtualization, strictMode },
-    );
-    expect(form.deferred('/late')).toBe(true);
-    expect(form.wrapper('/late/inner')).toBeNull();
-    await act(async () => form.handle.focus('/late/inner/name'));
-    await waitFor(() => expect(form.deferred('/late')).toBe(false));
-    expect(form.deferred('/late/inner')).toBe(true);
-    expect(form.field('/late/inner/name')).toBeNull();
-    expect(document.activeElement).toBe(form.field('/late/first'));
-    await form.flush();
-    expect(form.deferred('/late/inner')).toBe(true);
-  });
-
-  it('ERROR-139 native submit keeps exact focus when the target itself is a placeholder', async () => {
-    form = await renderForm(
-      schemaEndingWith(['f7', { type: 'string', minLength: 3, default: 'v' }]),
-      {
-        virtualization,
+// filid:contract exact-focus
+describe.each([false, true])('native exact focus strict=%s', (strictMode) => {
+  it.each(['enter', 'button'] as const)(
+    'focuses the exact invalid descendant after %s submission',
+    async (method) => {
+      form = await renderForm(focusSchema, {
         validator: true,
         strictMode,
-        fieldInputMap: { '': RootWithSubmit },
-      },
-    );
-    expect(form.deferred('/f7')).toBe(true);
-    const focuses: string[] = [];
-    form.container.addEventListener('focusin', (event) =>
-      focuses.push((event.target as HTMLElement).id),
-    );
-    await form.user.click(
-      form.container.querySelector<HTMLButtonElement>('button[type="submit"]')!,
-    );
-    await waitFor(() => expect(document.activeElement).toBe(form.field('/f7')));
-    await form.flush();
-    expect(focuses.filter((path) => path === '/f7')).toEqual(['/f7']);
-    expect(form.sinkErrors()).toEqual([]);
-    expect(form.errorRecords()).toEqual([]);
-  });
-
-  it('keeps direct focus on a mounted target and exact focus on a placeholder target', async () => {
-    form = await renderForm(schemaEndingWith(['f7', { type: 'string' }]), {
-      virtualization,
-      strictMode,
-    });
-    expect(form.deferred('/f7')).toBe(true);
-    await act(async () => form.handle.focus('/f0'));
-    expect(document.activeElement).toBe(form.field('/f0'));
-    expect(form.deferred('/f7')).toBe(true);
-    await act(async () => form.handle.focus('/f7'));
-    await waitFor(() => expect(document.activeElement).toBe(form.field('/f7')));
-    expect(form.deferred('/f7')).toBe(false);
-  });
-});
-
-it('does not confuse a placeholder path prefix with a child edge', async () => {
-  const schema = schemaEndingWith(['late', { type: 'string' }]);
-  schema.properties!.later = { type: 'string' };
-  form = await renderForm(schema, { virtualization });
-  expect(form.deferred('/late')).toBe(true);
-  expect(form.deferred('/later')).toBe(true);
-  await act(async () => form.handle.focus('/later'));
-  await waitFor(() =>
-    expect(document.activeElement).toBe(form.field('/later')),
+        virtualization: focusVirtualization,
+        fieldInputMap: { '': FocusRootWithSubmit },
+      });
+      if (method === 'enter') {
+        await form.user.click(form.field('/first')!);
+        await form.user.keyboard('{Enter}');
+      } else
+        await form.user.click(
+          form.container.querySelector('button[type="submit"]')!,
+        );
+      await waitFor(() => {
+        expect(form.field(focusTarget)).not.toBeNull();
+        expect(document.activeElement).toBe(form.field(focusTarget));
+      });
+      expect(form.deferred('/sibling')).toBe(true);
+      expect(form.errorRecords()).toEqual([]);
+      expect(form.sinkErrors()).toEqual([]);
+    },
   );
-  expect(form.deferred('/late')).toBe(true);
-});
-
-it('skips a non-present target in a deferred ancestor child graph', async () => {
-  form = await renderForm(
-    schemaEndingWith([
-      'late',
+  it('skips hidden and disabled invalid candidates before the deferred target', async () => {
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {
+        hidden: {
+          type: 'string',
+          minLength: 3,
+          default: 'x',
+          controls: { visible: false },
+        },
+        disabled: {
+          type: 'string',
+          minLength: 3,
+          default: 'x',
+          controls: { disabled: true },
+        },
+        ...focusSchema.properties,
+      },
+    };
+    form = await renderForm(schema, {
+      validator: true,
+      strictMode,
+      virtualization: focusVirtualization,
+      fieldInputMap: { '': FocusRootWithSubmit },
+    });
+    await form.user.click(
+      form.container.querySelector('button[type="submit"]')!,
+    );
+    await waitFor(() => {
+      expect(form.field(focusTarget)).not.toBeNull();
+      expect(document.activeElement).toBe(form.field(focusTarget));
+    });
+    expect(form.errorRecords()).toEqual([]);
+    expect(form.sinkErrors()).toEqual([]);
+  });
+  it('focuses an invalid field whose own position is deferred', async () => {
+    form = await renderForm(
       {
         type: 'object',
         properties: {
           first: { type: 'string' },
-          name: { type: 'string', controls: { visible: false } },
+          target: { type: 'string', minLength: 3, default: 'x' },
         },
       },
-    ]),
-    { virtualization },
-  );
-  expect(form.node('/late/name')?.isPresent).toBe(false);
-  await act(async () => form.handle.focus('/f0'));
-  await act(async () => form.handle.focus('/late/name'));
-  await form.flush();
-  expect(form.deferred('/late')).toBe(true);
-  expect(document.activeElement).toBe(form.field('/f0'));
-});
-
-it('searches placeholders only inside the requesting form', async () => {
-  const schema = schemaEndingWith(['late', lateBranch]);
-  const other = await renderForm(schema, { virtualization });
-  try {
-    expect(other.deferred('/late')).toBe(true);
-    form = await renderForm(schema);
-    await act(async () => form.handle.focus('/late/name'));
-    expect(document.activeElement).toBe(form.field('/late/name'));
-    expect(other.deferred('/late')).toBe(true);
-  } finally {
-    other.unmount();
-  }
+      {
+        validator: true,
+        strictMode,
+        virtualization: focusVirtualization,
+        fieldInputMap: { '': FocusRootWithSubmit },
+      },
+    );
+    expect(form.deferred('/target')).toBe(true);
+    await form.user.click(
+      form.container.querySelector('button[type="submit"]')!,
+    );
+    await waitFor(() =>
+      expect(document.activeElement).toBe(form.field('/target')),
+    );
+    expect(form.errorRecords()).toEqual([]);
+    expect(form.sinkErrors()).toEqual([]);
+  });
+  it('does not confuse a placeholder path prefix with a child edge', async () => {
+    form = await renderForm(
+      {
+        type: 'object',
+        properties: {
+          first: { type: 'string' },
+          late: { type: 'string' },
+          later: { type: 'string' },
+        },
+      },
+      { validator: true, strictMode, virtualization: focusVirtualization },
+    );
+    expect(form.deferred('/late')).toBe(true);
+    expect(form.deferred('/later')).toBe(true);
+    await act(async () => form.handle.focus('/later'));
+    expect(document.activeElement).toBe(form.field('/later'));
+    expect(form.deferred('/late')).toBe(true);
+  });
+  it('searches placeholders only inside the requesting form', async () => {
+    const other = await renderForm(focusSchema, {
+      validator: true,
+      strictMode,
+      virtualization: focusVirtualization,
+    });
+    try {
+      form = await renderForm(focusSchema, {
+        validator: true,
+        strictMode,
+        virtualization: false,
+      });
+      await act(async () => form.handle.focus(focusTarget));
+      expect(document.activeElement).toBe(form.field(focusTarget));
+      expect(other.deferred('/outer')).toBe(true);
+    } finally {
+      other.unmount();
+    }
+  });
 });

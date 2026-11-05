@@ -21,6 +21,7 @@ import {
 } from '@/schema-form/core';
 import { FormErrorCode } from '@/schema-form/errors';
 import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle';
+import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import {
   FieldInputsContextProvider,
   FieldLifecycleContext,
@@ -41,6 +42,7 @@ import { ErrorVisibility } from '@/schema-form/types';
 
 import type { FormHandle } from '../types/handle';
 import type { FormProps } from '../types/props';
+import { FocusRequest } from '../utils/FocusRequest';
 import { createChildren } from '../utils/createChildren';
 import { findFirstInvalidNode } from '../utils/findFirstInvalidNode';
 import { focusFieldNode } from '../utils/focusFieldNode';
@@ -84,7 +86,28 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     () => resolveErrorVisibilityPolicy(inputPolicy),
     [inputPolicy],
   );
+  // Mount-time options remain fixed so already mounted fields never regress to placeholders.
+  const virtualization = useLazyConstant(() => ({
+    manager: VirtualizationManager.create(props.virtualization),
+  }));
   const loads = useRef(0);
+  const focusRequest = useRef<FocusRequest>(undefined);
+  const focusNode = useHandle((target: FieldNode | null | undefined) => {
+    focusRequest.current?.cancel();
+    const load = loads.current;
+    const root = binding.current.root;
+    const request = new FocusRequest(
+      () => loads.current === load && binding.current.root === root,
+    );
+    focusRequest.current = request;
+    focusFieldNode(
+      target,
+      formRef.current,
+      virtualization.manager,
+      lifecycle,
+      request,
+    );
+  });
   const policyGeneration = useRef(0);
   const mounted = useRef(false);
   const committed = useRef({
@@ -131,9 +154,13 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     mounted.current = true;
     return () => {
       mounted.current = false;
+      queueMicrotask(() => {
+        if (!mounted.current) focusRequest.current?.cancel();
+      });
     };
   }, []);
   const onReset = useCallback(() => {
+    focusRequest.current?.cancel();
     loads.current++;
     setReveal(undefined);
   }, []);
@@ -189,12 +216,12 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                 committed.current.readOnly
               )
                 return;
-              focusFieldNode(findFirstInvalidNode(root), formRef.current);
+              focusNode(findFirstInvalidNode(root));
             }
           : undefined,
       );
     },
-    [binding, captureValidationLifetime, reporter, revealErrors],
+    [binding, captureValidationLifetime, focusNode, reporter, revealErrors],
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
   const handleNativeSubmit = useCallback(
@@ -215,8 +242,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       get node() {
         return binding.current.root;
       },
-      focus: (path) =>
-        focusFieldNode(binding.current.root?.find(path), formRef.current),
+      focus: (path) => focusNode(binding.current.root?.find(path)),
       select: (path) =>
         binding.current.root?.find(path)?.request(FieldNodeRequestType.Select),
       refresh: (path) =>
@@ -243,6 +269,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     [
       attachedFilesMap,
       binding,
+      focusNode,
       handleSubmit,
       revealErrors,
       resetErrorVisibility,
@@ -273,9 +300,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
             readOnly={props.readOnly}
             disabled={props.disabled}
           >
-            <VirtualizationContextProvider
-              virtualization={props.virtualization}
-            >
+            <VirtualizationContextProvider value={virtualization}>
               <FieldLifecycleContext.Provider value={lifecycle}>
                 <RootNodeContextProvider
                   {...props}

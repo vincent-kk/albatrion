@@ -22,7 +22,10 @@ const verifyOnlyTests = [
 ];
 
 /** Built-bundle tests run only in the production project after a build. */
-const bundleTests = ['src/core/surface/__tests__/detached.production.test.ts'];
+const bundleTests = [
+  'src/core/surface/__tests__/detached.production.test.ts',
+  'src/__tests__/e2e/exact-focus.production.test.ts',
+];
 
 const resolvePackage = createRequire(import.meta.url).resolve;
 const react18Aliases = [

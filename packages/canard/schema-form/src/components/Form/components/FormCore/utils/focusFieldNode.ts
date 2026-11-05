@@ -1,46 +1,55 @@
 import type { Nullable } from '@aileron/declare';
 
+import { type FieldNode, FieldNodeRequestType } from '@/schema-form/core';
 import {
-  type FieldNode,
-  FieldNodeRequestType,
-  isTerminalNode,
-} from '@/schema-form/core';
+  FieldLifecycle,
+  FieldLifecycleAction,
+  type FieldLifecycleRegistry,
+} from '@/schema-form/helpers/fieldLifecycle';
+import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
+
+import type { FocusRequest } from './FocusRequest';
+import { isInputMounted } from './isInputMounted';
 
 /**
- * Request focus through the first deferred rendering ancestor, or the target itself.
- * @param target - Current target node; absent paths are ignored.
- * @param form - Owning form, or null before mount; only its placeholders participate.
- * @returns Nothing. An ancestor request reveals and focuses its own slot, so the exact
- *   descendant and nested reveals are not guaranteed. No request state survives the call.
+ * Focus the exact target through a cancellable Mount reservation when a gate blocks it.
+ * @param target - Current field; absent or non-present targets are ignored.
+ * @param form - Owning form whose document observes focus movement during reveal.
+ * @param manager - Form-local virtualization coordinator, null for eager rendering.
+ * @param lifecycle - Form-local action queues, null outside the lifecycle provider.
+ * @param request - Already-owned request so synchronous reveal reentry can cancel it.
  */
 export const focusFieldNode = (
   target: Nullable<FieldNode> | undefined,
   form: Nullable<HTMLFormElement>,
+  manager: Nullable<VirtualizationManager>,
+  lifecycle: Nullable<FieldLifecycleRegistry>,
+  request: FocusRequest,
 ): void => {
-  if (!target) return;
-  const placeholders = form?.querySelectorAll<HTMLElement>(
-    '[data-deferred][data-path]',
+  if (!target || !target.isPresent) return;
+  if (!manager || !lifecycle || !form || isInputMounted(manager, target)) {
+    target.request(FieldNodeRequestType.Focus);
+    return;
+  }
+  const document = form.ownerDocument;
+  let moved = false;
+  const onFocus = () => {
+    moved = true;
+    document.removeEventListener('focusin', onFocus, true);
+  };
+  document.addEventListener('focusin', onFocus, true);
+  request.onCancel(() =>
+    document.removeEventListener('focusin', onFocus, true),
   );
-  if (placeholders)
-    for (const placeholder of placeholders) {
-      const ancestor = target.rootNode.find(
-        placeholder.getAttribute('data-path')!,
-      );
-      if (!ancestor) continue;
-      const pending: FieldNode[] = [ancestor];
-      const visited = new Set<FieldNode>();
-      while (pending.length) {
-        const node = pending.pop()!;
-        if (visited.has(node)) continue;
-        visited.add(node);
-        if (!node.isPresent) continue;
-        if (node === target) {
-          ancestor.request(FieldNodeRequestType.Focus);
-          return;
-        }
-        if (isTerminalNode(node)) continue;
-        for (const child of node.children ?? []) pending.push(child);
-      }
-    }
-  target.request(FieldNodeRequestType.Focus);
+  request.onCancel(
+    lifecycle.reserve(target, FieldLifecycle.Mount, () =>
+      request.live && !moved
+        ? FieldLifecycleAction.Focus
+        : FieldLifecycleAction.None,
+    ),
+  );
+  if (!manager.revealPath(target, () => request.cancel())) {
+    request.cancel();
+    target.request(FieldNodeRequestType.Focus);
+  }
 };
