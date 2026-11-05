@@ -14,6 +14,12 @@ import type { FormFieldProps } from './types/props';
  * typically including label, input, error messages, and any additional UI elements.
  * Allows overriding default components for specialized field types.
  *
+ * @remarks
+ * `FieldInput`, `FieldRenderer` and `Wrapper` are captured when the component mounts; later values are ignored.
+ * A `FieldRenderer` keeps the closure it had at mount, so component state it closes over stays at its mount value.
+ * To supply changing values, read them from the `context` prop the renderer receives (the `context` of `Form`), call a hook inside it, or give the element a new `key` to replace the component.
+ * The other props are read on every render.
+ *
  * @example
  * Basic field group with default rendering:
  * ```tsx

@@ -14,6 +14,12 @@ import type { FormRenderProps } from './types/props';
  * and field state, allowing for complex custom UI implementations while maintaining
  * full integration with form validation and state management.
  *
+ * @remarks
+ * `children`, `FieldInput` and `Wrapper` are captured when the component mounts; later values are ignored.
+ * The `children` function keeps the closure it had at mount, so component state it closes over stays at its mount value.
+ * To supply changing values, read them from the `context` prop the function receives (the `context` of `Form`), call a hook inside the function, or give the element a new `key` to replace the component.
+ * The other props are read on every render.
+ *
  * @example
  * Basic custom rendering:
  * ```tsx

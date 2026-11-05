@@ -48,6 +48,8 @@ Inside `<Form>`, path-scoped primitives take over layout while the plugin still 
 </Form.Render>
 ```
 
+Its `children` function is captured at mount like the other component props; see [Keep configuration stable for a mounted form](field-input.md#keep-configuration-stable-for-a-mounted-form).
+
 Read the render function's exact `FieldRendererProps` from the installed declarations; use its resolved Input to retain the form's input selection and write handling.
 
 ## Gotchas

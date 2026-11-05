@@ -16,6 +16,10 @@ import type { FormInputProps } from './types/props';
  * (text, number, boolean, select, etc.) with full validation and state management.
  * Supports overriding with custom input components and passing additional props.
  *
+ * @remarks
+ * `FieldInput` is captured when the component mounts; a later value is ignored.
+ * To replace it, give the element a new `key` so the component remounts.
+ *
  * @example
  * Basic input usage:
  * ```tsx

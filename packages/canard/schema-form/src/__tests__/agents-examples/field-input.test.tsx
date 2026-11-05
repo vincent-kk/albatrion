@@ -1,8 +1,16 @@
-import { type FC, createRef } from 'react';
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  createRef,
+  useContext,
+  useState,
+} from 'react';
 
 import {
   act,
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -182,4 +190,129 @@ it('a non-terminal object input shows its children only by rendering ChildFields
   expect(isTerminalNode(ref.current!.findNode('')!)).toBe(true);
   expect(screen.queryAllByRole('textbox')).toHaveLength(0);
   expect(screen.queryAllByRole('spinbutton')).toHaveLength(0);
+});
+
+const CountContext = createContext(0);
+
+const nameSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+/** Holds the changing state and passes it to a Form built from it.
+ * @param props - Render function that receives the current count.
+ * @returns A bump button, the live count and the provided content. */
+function Counter({ children }: { children: (count: number) => ReactNode }) {
+  const [count, setCount] = useState(0);
+  return (
+    <CountContext.Provider value={count}>
+      <button onClick={() => setCount(count + 1)}>bump</button>
+      <output data-testid="state">{count}</output>
+      {children(count)}
+    </CountContext.Provider>
+  );
+}
+
+/** Reads the changing value through a hook inside the render function.
+ * @returns The current context count. */
+const FromHook = () => (
+  <span data-testid="probe">{useContext(CountContext)}</span>
+);
+
+/** Mounts a probe form, bumps the state once and returns what the probe shows.
+ * @param children - Render function building the form from the count.
+ * @returns The live state text and the probe text after the bump. */
+async function bumpAndRead(children: (count: number) => ReactNode) {
+  render(<Counter>{children}</Counter>);
+  const probe = await screen.findByTestId('probe');
+  const before = probe.textContent;
+  fireEvent.click(screen.getByText('bump'));
+  await act(async () => {});
+  return {
+    before,
+    state: screen.getByTestId('state').textContent,
+    after: screen.getByTestId('probe').textContent,
+  };
+}
+
+it('a Form.Render children function keeps the state it closed over at mount', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Render path="/name">
+        {() => <span data-testid="probe">{count}</span>}
+      </Form.Render>
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '0' });
+});
+
+it('a Form.Render children function sees a changed Form context', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema} context={{ count }}>
+      <Form.Render path="/name">
+        {({ context }) => (
+          <span data-testid="probe">{String(context.count)}</span>
+        )}
+      </Form.Render>
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '1' });
+});
+
+it('a Form.Render children function sees a changed React context through a hook', async () => {
+  const seen = await bumpAndRead(() => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Render path="/name">{FromHook}</Form.Render>
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '1' });
+});
+
+it('a new key on Form.Render replaces the component and its closure', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Render key={count} path="/name">
+        {() => <span data-testid="probe">{count}</span>}
+      </Form.Render>
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '1' });
+});
+
+it('Form.Field keeps the FieldRenderer closure it had at mount', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Field
+        path="/name"
+        FieldRenderer={() => <span data-testid="probe">{count}</span>}
+      />
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '0' });
+});
+
+it('Form.Input keeps the FieldInput closure it had at mount while its other props follow every render', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Input
+        path="/name"
+        FieldInput={() => <span data-testid="probe">{count}</span>}
+      />
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '0' });
+
+  cleanup();
+  render(
+    <Counter>
+      {(count) => (
+        <Form jsonSchema={nameSchema}>
+          <Form.Input path="/name" placeholder={`hint ${count}`} />
+        </Form>
+      )}
+    </Counter>,
+  );
+  expect(await screen.findByPlaceholderText('hint 0')).toBeTruthy();
+  fireEvent.click(screen.getByText('bump'));
+  expect(await screen.findByPlaceholderText('hint 1')).toBeTruthy();
 });
