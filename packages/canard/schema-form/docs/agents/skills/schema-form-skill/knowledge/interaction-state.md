@@ -39,8 +39,8 @@ Use `node.setState` when only one field should change; its ancestors' aggregate 
 
 ## Observe whether the output differs from the loaded value
 
-Read `node.isDivergent` after settlement for a field, or read the root's property for the whole form.
-The comparison is against the last committed root-load output at the same path, not against Edited or an independently copied React value.
+Read `node.isDivergent` after the call that changed the value has returned for a field, or read the root's property for the whole form.
+The comparison is against the output of the form's last load (mount, `reset()`, `rebuild()` or a validator change) at the same path, not against Edited or an independently copied React value.
 Subscribe to root output/load changes as well as the node's path so array movement and output filtering cannot leave the indicator stale:
 
 ```tsx
@@ -110,7 +110,7 @@ function ProfileEditor({ loaded }: { loaded: Profile }) {
 ## Return to the loaded values and interaction state
 
 Keep the intended loaded defaults in `defaultValue` and call the handle's `reset()` to load them and clear interaction state.
-Reset reads the latest committed schema/default props; changing those props first means resetting to the newly supplied defaults, not undoing to an older load.
+Reset reads the latest committed props, as described in [imperative handle and layout](imperative-and-layout.md).
 The restored output still follows schema defaults, derivations and projection rules, so it need not be a byte-for-byte copy of the supplied defaultValue.
 If the requirement is to restore an older snapshot after props changed, supply that snapshot as defaultValue, let it commit, then reset.
 `clearState()` keeps values and the divergence baseline; it is useful for clearing interaction feedback without discarding edits.

@@ -236,6 +236,33 @@ formRef.current?.setValue((prev) => ({
   expect(FieldNodeEventType.UpdateValue).toBeGreaterThan(0);
 });
 
+it('a listener that writes again starts another delivery, so one setValue no longer notifies once', async () => {
+  const formRef = createRef<FormHandle<typeof bulkSchema>>();
+  render(
+    <Form
+      ref={formRef}
+      jsonSchema={bulkSchema}
+      fieldInputDefinitions={rowsDefinition}
+    />,
+  );
+  await act(async () => {});
+  const arrayNode = formRef.current!.findNode('/items') as ArrayNode;
+
+  let deliveries = 0;
+  let wroteAgain = false;
+  arrayNode.subscribe(() => {
+    deliveries++;
+    if (wroteAgain) return;
+    wroteAgain = true;
+    arrayNode.push({ id: -1 });
+  });
+  act(() => {
+    formRef.current!.setValue({ items: [{ id: 1 }, { id: 2 }] });
+  });
+  expect(deliveries).toBe(2);
+  expect(arrayNode.value).toHaveLength(3);
+});
+
 const ArrayInput: FC<FieldInputProps<any[]>> = ({ node, ChildFields }) => (
   <div>
     <button onClick={() => (node as ArrayNode).push()}>Add</button>
@@ -286,6 +313,25 @@ it('the same input registered as presentation.FieldInput makes the array termina
   expect(isTerminalNode(ref.current!.findNode('')!)).toBe(true);
   expect(screen.queryAllByRole('textbox')).toHaveLength(0);
   expect(screen.queryAllByText('Remove')).toHaveLength(0);
+});
+
+it('options.terminal false keeps a presentation.FieldInput array a branch with ChildFields', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'array',
+        items: { type: 'string' },
+        options: { terminal: false },
+        presentation: { FieldInput: ArrayInput },
+      }}
+      defaultValue={['a', 'b']}
+    />,
+  );
+  expect(await screen.findAllByRole('textbox')).toHaveLength(2);
+  expect(isTerminalNode(ref.current!.findNode('')!)).toBe(false);
+  expect(screen.getAllByText('Remove')).toHaveLength(2);
 });
 
 class MockIntersectionObserver {

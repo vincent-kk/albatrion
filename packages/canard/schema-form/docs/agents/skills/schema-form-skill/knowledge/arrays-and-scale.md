@@ -44,7 +44,7 @@ An array is a branch by default, whatever its item type. `options.terminal` (not
 // one input owns the whole array — no per-item node tree or per-item state
 ```
 
-A terminal object or array is a contract: the FieldInput owns the whole subtree value — see the consumer rules.
+A terminal object or array is a contract: the FieldInput owns the whole subtree value — see Terminal vs Branch Strategy above.
 
 ## Tuples
 
@@ -62,7 +62,7 @@ A terminal object or array is a contract: the FieldInput owns the whole subtree 
 
 ## Bulk Mutation
 
-Each `push()` delivers its own events, so a loop of N pushes notifies subscribers N times. Write the whole array once with `setValue`, which notifies each affected node once, or group the writes in `node.batch(fn)`:
+Each `push()` delivers its own events, so a loop of N pushes notifies subscribers N times. Write the whole array once with `setValue`, which notifies each affected node once as long as no listener writes again (a listener's write starts another delivery), or group the writes in `node.batch(fn)`:
 
 ```typescript
 // ❌ notifies 100 times
@@ -93,7 +93,7 @@ const ArrayInput: FC<FieldInputProps<any[]>> = ({ node, ChildFields }) => (
 );
 ```
 
-Register this input through `fieldInputMap` or a field input definition. A `presentation.FieldInput` on the array schema makes the array terminal (see Terminal vs Branch Strategy above), and `ChildFields` is then empty.
+Register this input through `fieldInputMap` or a field input definition. A `presentation.FieldInput` on the array schema makes the array terminal unless the schema also sets `options.terminal: false` (see Terminal vs Branch Strategy above), and `ChildFields` is then empty.
 
 ## Render-Level Virtualization (built-in)
 
@@ -148,12 +148,4 @@ Heavy controls expressions run on every dependency tick. Move reductions out of 
 
 ## Validation timing
 
-`OnChange` writes run after the next frame; continuous input carries across active frames, with a trailing run after a quiet frame and a 100 ms cap measured from the last automatic run that actually started. A cap returns to watch. Debouncing belongs to `FieldInput`. Missing frame APIs or a hidden document use a macrotask fallback; a 100 ms stalled-frame timer races the frame-backed task so it runs once. Explicit `validate()` and submit start immediately, and submit awaits the verdict.
-
-An error shows only when eligible now and continuously eligible across every engine state, isPresent value and committed Form policy since the last release. Hiding is immediate. A newly eligible error, or one hidden at any point, waits for the next release: the current verdict, or about two frames after a quiet change. Releases occur on pending true-to-false settlement, a quiet post-paint history drop, an accepted explicit root verdict, and disposal. Renderer/input include `active && visible`; `useChildFieldErrors` omits enabled. Only `OnChange` records history; other modes use live inputs. Within one public `batch()` or walk, only the first state of that write sequence enters history; intermediate states do not. Separate public calls inside one React batch still record their intermediate states. React-only remount, restore, mirror and virtualization use the same engine history. A current-stamp commit-only discard retains targets and requests the newest commit through the cadence; repeated changing context content (including fresh functions, `Date`, `Map` and class identities) can keep reveals held until the stream stops.
-
-All loads (first mount, same-schema reset, root replacement, rebuild and validator change), including Always (`true`, `ShowError.Always`, or a mask containing it), share one load-validation entry in the slot after the next frame. `None` skips compilation; OnRequest-only compiles without a verdict; `OnChange` compiles and issues the first verdict only if no write validation request or explicit root validation has occurred since this load started. Automatic load compilation failure keeps the new tree and reports once per load with `origin: 'validate'` plus one host report; reset and rebuild do not throw for it. Explicit `validate()` and submit still start immediately and reject; their record carries `origin: 'validate'`. `if` gates can still compile during construction or render. Treat a pre-verdict empty list as unknown or await `validate()`. Explicit validation and submit preserve their call-time snapshot, and subtree validation preserves pending whole-form requests.
-
-Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
-
-Known limits: the hook's React-only `disabled` argument reveals at once; state/isPresent renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/isPresent/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.
+Validation scheduling, display holds and load behavior are described in [validation UX](validation-ux.md) and [validation failures](validation-failures.md). For a large form, debounce input publication in `FieldInput`, because validation groups published edits but does not buffer local text, and expect a slow validator to delay the result.

@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { createRef, useEffect, useRef } from 'react';
 
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
@@ -8,6 +8,7 @@ import {
   type FormHandle,
   type JSONSchema,
   type ValidationIssue,
+  type ValidatorFactory,
 } from '@/schema-form';
 
 afterEach(cleanup);
@@ -102,4 +103,63 @@ it('hands Input and errorMessage to the Form.Render callback', () => {
   const box = view.container.querySelector('.password-box')!;
   expect((box.querySelector('input') as HTMLInputElement).value).toBe('abc');
   expect(box.textContent).toContain('Too short');
+});
+
+const reloadSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const satisfies JSONSchema;
+
+const validatorOne: ValidatorFactory = {
+  compile: () => () => null,
+  compileGuard: () => () => true,
+};
+
+const validatorTwo: ValidatorFactory = {
+  compile: () => () => null,
+  compileGuard: () => () => true,
+};
+
+it('rebuild() reloads the committed defaultValue and discards edits', async () => {
+  const ref = createRef<FormHandle<typeof reloadSchema>>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={reloadSchema}
+      defaultValue={{ name: 'loaded' }}
+      validatorFactory={validatorOne}
+    />,
+  );
+  await act(async () => {});
+  act(() => ref.current!.setValue({ name: 'edited' }));
+  expect(ref.current!.getValue()).toEqual({ name: 'edited' });
+
+  act(() => ref.current!.rebuild());
+  expect(ref.current!.getValue()).toEqual({ name: 'loaded' });
+});
+
+it('a new validator reloads the committed defaultValue and discards edits', async () => {
+  const ref = createRef<FormHandle<typeof reloadSchema>>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={reloadSchema}
+      defaultValue={{ name: 'loaded' }}
+      validatorFactory={validatorOne}
+    />,
+  );
+  await act(async () => {});
+  act(() => ref.current!.setValue({ name: 'edited' }));
+  expect(ref.current!.getValue()).toEqual({ name: 'edited' });
+
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={reloadSchema}
+      defaultValue={{ name: 'loaded' }}
+      validatorFactory={validatorTwo}
+    />,
+  );
+  await act(async () => {});
+  expect(ref.current!.getValue()).toEqual({ name: 'loaded' });
 });

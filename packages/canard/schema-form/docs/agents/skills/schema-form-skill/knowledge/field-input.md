@@ -48,7 +48,7 @@ const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
 );
 ```
 
-Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object schema makes the object terminal, and `ChildFields` is then empty.
+Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object schema makes the object terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
 
 ## Keep configuration stable for a mounted form
 

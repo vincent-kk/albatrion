@@ -18,7 +18,7 @@ import type { FormInputProps } from './types/props';
  *
  * @remarks
  * `FieldInput` is captured when the component mounts; a later value is ignored.
- * To replace it, give the element a new `key` so the component remounts.
+ * To supply changing values, read them from the `context` prop the input receives (the `context` of `Form`), call a hook inside it, or give the element a new `key` to replace the component.
  *
  * @example
  * Basic input usage:

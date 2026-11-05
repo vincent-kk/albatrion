@@ -78,7 +78,7 @@ function SectionInput({ node, ChildFields }: FieldInputProps) {
 }
 ```
 
-Mount this component through a branch's `presentation.FieldInput` or `fieldInputMap`.
+Mount this component through `fieldInputMap` or a field input definition that matches the branch schema. A `presentation.FieldInput` component on the branch makes it terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
 It retains ChildFields because a section owns layout, not the whole object value.
 Choose whether the section or each input owns the displayed messages to avoid duplicate feedback.
 The hook's raw `errorMatrix` is ungated and `formattedErrors` contains the first issue per child.

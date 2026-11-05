@@ -192,6 +192,28 @@ it('a non-terminal object input shows its children only by rendering ChildFields
   expect(screen.queryAllByRole('spinbutton')).toHaveLength(0);
 });
 
+it('options.terminal false keeps a presentation.FieldInput object a branch with ChildFields', async () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: { name: { type: 'string' }, age: { type: 'number' } },
+        options: { terminal: false },
+        presentation: { FieldInput: ObjectLayout },
+      }}
+    />,
+  );
+  await waitFor(() =>
+    expect(view.container.querySelector('.grid')).not.toBeNull(),
+  );
+  expect(isTerminalNode(ref.current!.findNode('')!)).toBe(false);
+  const grid = view.container.querySelector<HTMLElement>('.grid')!;
+  expect(within(grid).getAllByRole('textbox')).toHaveLength(1);
+  expect(within(grid).getAllByRole('spinbutton')).toHaveLength(1);
+});
+
 const CountContext = createContext(0);
 
 const nameSchema = {
@@ -315,4 +337,42 @@ it('Form.Input keeps the FieldInput closure it had at mount while its other prop
   expect(await screen.findByPlaceholderText('hint 0')).toBeTruthy();
   fireEvent.click(screen.getByText('bump'));
   expect(await screen.findByPlaceholderText('hint 1')).toBeTruthy();
+});
+
+/** Form.Input component reading the changing value from its `context` prop.
+ * @param props - FieldInput props supplied by Form.
+ * @returns The context count. */
+const InputFromContext = ({ context }: FieldInputProps) => (
+  <span data-testid="probe">{String(Reflect.get(context, 'count'))}</span>
+);
+
+it('a Form.Input FieldInput sees a changed Form context', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema} context={{ count }}>
+      <Form.Input path="/name" FieldInput={InputFromContext} />
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '1' });
+});
+
+it('a Form.Input FieldInput sees a changed React context through a hook', async () => {
+  const seen = await bumpAndRead(() => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Input path="/name" FieldInput={FromHook} />
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '1' });
+});
+
+it('a new key on Form.Input replaces the component and its FieldInput closure', async () => {
+  const seen = await bumpAndRead((count) => (
+    <Form jsonSchema={nameSchema}>
+      <Form.Input
+        key={count}
+        path="/name"
+        FieldInput={() => <span data-testid="probe">{count}</span>}
+      />
+    </Form>
+  ));
+  expect(seen).toEqual({ before: '0', state: '1', after: '1' });
 });

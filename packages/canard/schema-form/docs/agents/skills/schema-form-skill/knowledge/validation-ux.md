@@ -7,16 +7,17 @@ Use public imports from `@canard/schema-form`. These examples assume an applicat
 ## Choose the validation moment
 
 - `OnChange` schedules validation after loading and after value changes. Load work runs after the next frame, even with `showError={true}`, and produces the initial verdict only if no later validation request has superseded it. Continuous edits are grouped, with a trailing run when they stop and a 100 ms cap measured from the last automatic run that started.
-- `OnRequest` prepares validation after loading but produces no verdict until `validate()` or submit. Edits alone can leave the previous errors in place.
+- `OnRequest` prepares validation after loading but produces no verdict until `validate()` or submit. Edits alone can leave the previous errors in place. A schema without `if` conditions still compiles in the background after the first paint.
+- First mount, same-schema `reset()`, root-replacing `reset()`, `rebuild()` and a validator change are all loads. They share one load validation in the slot after the next frame, including with `showError={true}` or `ShowError.Always`.
 - `None` skips whole-schema validation, including explicit requests; it does not provide a successful verdict. Conditional if guards can still run while fields settle.
 
 Explicit validation and submit start immediately in validating modes. Await the result instead of reading errors immediately after render or after a change. With a validator in a validating mode, submit validates the value captured by that call; invalid input rejects its promise and does not reach `onSubmit`. In `None`, or without a validator, submit passes the captured value to `onSubmit` without a verdict. For an imperative submit flow, call `showError()` when you want to reveal untouched fields.
 
 ## Show errors after the relevant interaction
 
-Use `ShowError.Touched` for feedback after blur, or `EditedTouched` when both editing and blur should be required. Programmatic `setValue` does not mark a field edited, so it does not simulate user input in a test.
+Use `ShowError.Touched` for feedback after blur, or `EditedTouched` when both editing and blur should be required. Programmatic `setValue` does not simulate user input in a test; what marks a field edited is described in [interaction state](interaction-state.md).
 
-A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; Form records Touched one frame after blur, and this input also sets it on blur so a test can assert immediately:
+A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; this input also sets Touched on blur so a test can assert immediately (when Form records Touched itself is described in [interaction state](interaction-state.md)):
 
 ```tsx
 function NameInput({
@@ -50,7 +51,7 @@ Let this input own its message instead of drawing it again in the surrounding re
 const InputOnly = ({ Input }: FieldRendererProps) => <Input />;
 ```
 
-In `OnChange` mode, an error that newly becomes eligible to show waits until pending validation settles (about two frames when none is pending), so an older verdict never looks like the answer to new input; hiding is immediate. An already visible error can remain until the next verdict. Raw `node.errors` and `getErrors()` are not filtered by this policy. OnRequest and None use the live display policy without this hold.
+In `OnChange` mode, an error that newly becomes eligible to show waits until pending validation settles (about two frames when none is pending) or until an explicit `validate()` verdict is accepted, so an older verdict never looks like the answer to new input; hiding is immediate. An already visible error can remain until the next verdict. Raw `errors` props, the values `Form` children and `Form.Render` receive, `node.errors` and `getErrors()` are not filtered by this policy. OnRequest and None use the live display policy without this hold.
 
 ## Declare required and conditional fields
 
@@ -82,7 +83,7 @@ const receiptSchema = {
 } satisfies JSONSchema;
 ```
 
-Verify both directions: selecting receipt creates a required email input; clearing receipt removes that branch and its value from the output. Hiding with `controls.visible` alone keeps the value and does not waive required.
+Verify both directions: selecting receipt creates a required email input; clearing receipt removes that branch and its value from the output. Hiding with `controls.visible` alone keeps the value and does not waive required; a hidden field keeps its aggregate errors. Issues that belong to an inactive conditional branch are skipped.
 
 `if` guards are synchronous: asynchronous formats or keywords cannot decide conditional field participation. Whole-schema validation may be asynchronous.
 
@@ -144,6 +145,6 @@ For message copy and section summaries, read [error feedback](error-feedback.md)
 Debounce input publication in FieldInput when needed; validation scheduling groups published edits rather than buffering the widget's local text. Validation still completes in background tabs and without `requestAnimationFrame`: the form falls back to a task, and to a 100 ms timer when a frame never arrives.
 Background tabs throttle that timer, and a slow validator delays the result. Schemas with `if` compile those conditions when the form is built or a condition is first evaluated.
 
-If your application changes `context` contents on every frame, newly eligible messages in `OnChange` mode can stay hidden until those changes stop.
+If your application changes `context` contents on every frame, newly eligible messages in `OnChange` mode can stay hidden until those changes stop. Fresh functions, `Date`, `Map` and class instances count as changed content.
 
-Known display limits: when React defers a field's render (a transition, Suspense or time slicing) past the next result, its message can appear without waiting; a write between a result and the next paint can leave that result's message visible for one or two frames. Check timing-sensitive transitions in the real UI.
+Known display limits: when React defers a field's render (a transition, Suspense or time slicing) past the next result, its message can appear without waiting; a write between a result and the next paint can leave that result's message visible for one or two frames. Writes grouped in one public `node.batch()` or tree walk count as a single state for the hold, while separate public calls inside one React batch still count their intermediate states. The renderer and the input count only active and visible fields for the hold, and `useChildFieldErrors` does not take a field's enabled state into account. Check timing-sensitive transitions in the real UI.

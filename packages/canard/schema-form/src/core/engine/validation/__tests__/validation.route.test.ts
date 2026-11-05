@@ -37,6 +37,32 @@ describe('validation issue attribution', () => {
     expect(readFieldNodeErrors(root)).toEqual([]);
   });
 
+  it('VALIDATE-051 climbs a rejected-key issue from a non-root terminal object to its branch parent', () => {
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        held: {
+          type: 'object',
+          options: { terminal: true },
+          properties: { name: { type: 'string' } },
+        },
+      },
+    });
+    dispatchMount(root, { held: { name: 'a' } });
+    const held = root.structure?.held ?? root;
+    expect(held).not.toBe(root);
+    expect(held.structure).toBeNull();
+    const inner = { dataPath: '/held', message: 'inner' };
+    const rejected = {
+      dataPath: '/held',
+      rejectedKey: 'extra',
+      message: 'rejected',
+    };
+    routeValidationIssues([root], [inner, rejected]);
+    expect(readFieldNodeErrors(held)).toEqual([inner]);
+    expect(readFieldNodeErrors(root)).toEqual([rejected]);
+  });
+
   it('VALIDATE-051 keeps a union host keyword on its data node', () => {
     const { root } = createDispatchTree({ type: ['string', 'number'] });
     dispatchMount(root, 'x');
