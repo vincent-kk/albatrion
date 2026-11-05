@@ -4,7 +4,7 @@
 
 ## Recursion requires `as const`
 
-Inference into `properties` and `items` needs literal types. Without `as const` (or `satisfies`), `type: 'object'` widens to `string` and you get the unrefined fallback, not a narrowed shape. The same applies to `nullable: true`: widened to `boolean`, it infers **without** `| null`, because a static type cannot know a runtime value. That direction is deliberate — being stricter than the runtime never admits a value the consumer would reject.
+Inference into `properties`, `prefixItems` and `items` needs literal types. Without `as const` (or `satisfies`), `type: 'object'` widens to `string` and you get the unrefined fallback, not a narrowed shape. The same applies to `nullable: true`: widened to `boolean`, it infers **without** `| null`, because a static type cannot know a runtime value. That direction is deliberate — being stricter than the runtime never admits a value the consumer would reject.
 
 ## Object inference rules
 
@@ -19,7 +19,7 @@ Inference into `properties` and `items` needs literal types. Without `as const` 
 | Schema                                                                  | Inferred                        |
 | ----------------------------------------------------------------------- | ------------------------------- |
 | `properties` keyed by plain `string` (`Dictionary<JSONSchema>`)         | `Record<string, any>`           |
-| `items: false`                                                          | `any[]`                         |
+| `items: false` with no finite `prefixItems`                             | `any[]`                         |
 | no `type` at all                                                        | `any`                           |
 | `{ type: 'array' }` / `{ type: 'object' }` with no `items`/`properties` | `any[]` / `Record<string, any>` |
 
@@ -47,6 +47,18 @@ type J = InferValueType<{
   properties: { id: { type: 'number' } };
   additionalProperties: false;
 }>; // { id?: number }                          ← closed
+```
+
+## Tuple inference
+
+A finite literal `prefixItems` infers a mutable tuple whose positions are all optional, because `prefixItems` sets no minimum length; `minItems` is not used. `items: false` closes the tuple, omitted or `true` `items` adds `...any[]`, and an `items` schema types only the positions after the prefix (`...boolean[]`). This is narrower than `any[]`, and a typed `items` no longer types the prefix positions, so code that relied on free positions, extra items or rest-typed prefix positions can stop compiling. Widened or non-literal `prefixItems`, and legacy `items` arrays with `additionalItems`, keep the `items` inference.
+
+```typescript
+type K = InferValueType<{
+  type: 'array';
+  prefixItems: readonly [{ type: 'string' }, { type: 'number' }];
+  items: false;
+}>; // [string?, number?]
 ```
 
 ## The reverse direction — `InferJSONSchema`

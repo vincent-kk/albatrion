@@ -2519,7 +2519,7 @@ type Value = InferValueType<typeof jsonSchema>;
 - **nullable 스키마에는 `| null`이 붙습니다.** 타입 배열(`type: ['string', 'null']`)과 `nullable: true` 키워드 모두 `T | null`을 만듭니다. 런타임이 nullable 노드에 `null`을 허용하므로, `null`을 거부하는 타입은 폼이 정상 처리하는 `setValue({ field: null })`을 컴파일 실패로 만듭니다.
 - **길이가 유한한 `prefixItems` 튜플의 각 위치는 optional입니다.** 문자열·숫자 접두부에 `items: false`를 지정하면 `[string?, number?]`를 추론하며, `items`를 생략하거나 `true`로 두면 `...any[]`, `items: { type: 'boolean' }`이면 `...boolean[]`를 붙입니다. 값은 수정할 수 있고, `prefixItems`는 최소 길이를 강제하지 않으므로 빈 배열이나 짧은 접두부도 허용합니다. `minItems`는 추론에 사용하지 않습니다. 넓어진 배열·비리터럴 접두부는 기존 `items` 폴백을 유지하며, `additionalItems`를 쓰는 구식 `items` 배열은 튜플로 추론하지 않습니다.
 
-유한 접두부 추론은 `any[]`를 더 좁히므로, 자유로운 위치나 초과 항목에 의존하는 소비자 코드는 새 컴파일 오류가 날 수 있습니다. 접두부와 rest 스키마에 맞는 값을 사용하거나, 애플리케이션에 다른 계약이 필요하면 값 타입을 명시하세요.
+유한 접두부 추론은 `any[]`를 더 좁히므로, 자유로운 위치나 초과 항목에 의존하는 소비자 코드는 새 컴파일 오류가 날 수 있습니다. 접두부와 rest 스키마에 맞는 값을 사용하거나, 애플리케이션에 다른 계약이 필요하면 값 타입을 명시하세요. 형이 지정된 `items`를 쓰면 접두부 위치는 `items` 형이 아니라 각자의 형을 가지므로, 접두부 위치를 rest 형으로 읽던 코드는 바꿔야 합니다.
 
 `nullable: true`는 공식 지원하는 OpenAPI 3.0 호환 표기입니다. `type`에 `'null'`을 추가하는 것과 동등하여, `{ type: 'string', nullable: true }`는 `{ type: ['string', 'null'] }`를 뜻합니다. 이 표기를 사용해도 경고나 오류가 발생하지 않습니다.
 

@@ -26,6 +26,16 @@ describe('InferValueType prefixItems tuples', () => {
     expectTypeOf(values).toEqualTypeOf<Value[]>();
   });
 
+  it('infers the same tuple from a mutable finite prefix', () => {
+    expectTypeOf<
+      InferValueType<{
+        type: 'array';
+        prefixItems: [{ type: 'string' }, { type: 'number' }];
+        items: false;
+      }>
+    >().toEqualTypeOf<[string?, number?]>();
+  });
+
   it('does not infer a minimum length from minItems', () => {
     const _schema = { ...closedSchema, minItems: 2 } as const;
     expectTypeOf<InferValueType<typeof _schema>>().toEqualTypeOf<

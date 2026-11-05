@@ -21,7 +21,7 @@
 - 공개 `RolledInferJSONSchema`(재수출 이름 `InferJSONSchema`)는 사용자가 작성하는 스키마를 값 형에서 추론합니다. 내부 `InferFieldInputSchema`(`field/`)는 virtual 노드와 여러 종류의 합집합 스키마까지 아는 입력 추론으로, `FieldInputProps` 계열만 씁니다. 작성 쪽 형과 내부 형을 가를 때 이 구분이 기준입니다.
 - 형제 fractal에서 오는 형은 `@/schema-form/core`·`@/schema-form/components/FieldProxy` 관문의 `import type`입니다. 이 형들을 쓰는 형제도 이 fractal의 index를 쓰므로 형 수준의 상호 참조가 있으나 런타임 순환은 없습니다.
 - `core`는 값 형 `InferValueType` 하나를 이 fractal의 index로 가져옵니다.
-- 명시적 `type`의 값 추론은 `@winglet/json-schema`에 위임하므로 유한한 readonly `prefixItems`도 재귀 추론합니다. 위치는 최소 길이를 보장하지 않는 optional이며 `minItems`는 추론하지 않습니다. `items: false`는 닫힌 튜플, 생략·`true`는 임의 rest, 스키마는 형이 지정된 rest를 만듭니다. `any[]`보다 좁은 형이므로 자유로운 위치·길이에 의존하는 소비자 코드는 컴파일 오류가 날 수 있습니다.
+- 명시적 `type`의 값 추론은 `@winglet/json-schema`에 위임하므로, 유한 `prefixItems` 튜플 추론 규칙은 `packages/winglet/json-schema/src/DETAIL.md`의 튜플 계약을 따릅니다.
 - 공개 Form 조각 형(`FormFieldProps`·`FormInputProps`·`FormRenderProps`)의 `Roll` 표현은 이 fractal이 아니라 `components/Form`이 소유합니다. 이 fractal에 두면 `types`와 `components/Form` 사이에 형 순환이 생기기 때문입니다.
 
 ## Acceptance Criteria

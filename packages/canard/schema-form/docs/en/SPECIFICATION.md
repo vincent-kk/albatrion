@@ -1487,7 +1487,7 @@ type RootNode = InferFieldNode<typeof jsonSchema>;
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
 ```
 
-`InferValueType` requires `as const` on the schema; without it `type` widens to `string` and the result falls back to `any`. With `as const` it walks `properties` and `items`, and produces every field as **optional**, intersected with `Record<string, any>`:
+`InferValueType` requires `as const` on the schema; without it `type` widens to `string` and the result falls back to `any`. With `as const` it walks `properties`, finite `prefixItems` tuples and `items` (tuple rules: README `TypeScript Support`), and produces every field as **optional**, intersected with `Record<string, any>`:
 
 ```typescript
 const jsonSchema = {

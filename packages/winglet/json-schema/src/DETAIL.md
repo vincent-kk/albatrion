@@ -13,8 +13,9 @@
 - `resolveReference(schema)`: 내부 `$ref`를 모두 인라인한 스키마를 동기로 반환하는 헬퍼다. 내부적으로 동기 스캐너를 두 번 구동한다.
 - `filters`가 재수출하는 함수들은 각각 `schema is <Type>Schema` 형태의 타입가드다.
 - 스키마 노드 타입과 값 추론 타입도 이름 그대로 재수출한다.
-- `InferValueType`은 정적으로 길이가 유한한 readonly `prefixItems` 튜플을 가변 값 튜플로 추론합니다. 위치별 형은 재귀 추론하며 각 위치는 optional입니다. `prefixItems`는 최소 길이를 보장하지 않으므로 `minItems`는 형 추론에 사용하지 않습니다.
+- `InferValueType`은 정적으로 길이가 유한한 `prefixItems` 튜플(readonly와 mutable 모두)을 가변 값 튜플로 추론합니다. 위치별 형은 재귀 추론하며 각 위치는 optional입니다. `prefixItems`는 최소 길이를 보장하지 않으므로 `minItems`는 형 추론에 사용하지 않습니다.
 - 유한 접두부 뒤의 `items: false`는 rest를 없애고, 생략 또는 `true`는 `...any[]`, 스키마는 그 값 형의 rest를 붙입니다. 이는 `any[]`보다 좁은 형이므로 자유로운 위치·길이에 의존하는 소비자 코드는 컴파일 오류가 날 수 있습니다. 넓어진 배열·비리터럴 접두부, 접두부 없는 homogeneous `items`, 구식 `items` 배열과 `additionalItems`의 추론은 유지합니다.
+- 알려진 한계: 튜플 안에 튜플이 직접 약 30단계를 넘게 중첩되면 TypeScript의 인스턴스화 깊이 한도를 넘어 TS2589가 발생합니다.
 
 ## Acceptance Criteria
 
