@@ -5,27 +5,21 @@ sidebar_position: 10
 
 import LazyDemo from '@site/src/components/LazyDemo';
 
-# Tuple Arrays (prefixItems)
+# Tuple Arrays
 
-Demonstrates `prefixItems` from JSON Schema Draft 2020-12 for fixed-length, heterogeneous arrays. Each position in the array has its own schema with a specific type, creating structured tuples.
+A Draft 2020-12 tuple uses prefixItems to describe each position. Its validator must understand that dialect. The core built-in array input does not read prefixItems; this example supplies its tuple UI.
 
-:::info Key Features
-- `prefixItems` — positional schemas for array items
-- Coordinate: `[number, number, number]` — 3D point
-- RGB: `[number, number, number]` with `items: false` — strict tuple
-- Person: `[string, number, boolean]` — mixed types
-- Address: `[string, string, string]` with `items: false`
-:::
-
-:::caution Draft 2020-12 Requirement
-`prefixItems` is a **Draft 2020-12** keyword. To use it, you must register the `@canard/schema-form-ajv8-plugin/2020` validator plugin:
+## Select the dialect {#validator}
 
 ```ts
-import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin/2020';
-registerPlugin(ajv8Plugin);
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
+
+registerPlugin(plugin);
 ```
 
-Without this plugin, the schema validator cannot process `prefixItems`, so validation will not work. The form itself will still render normally.
-:::
+Use the 2020 entry or another complete validator supporting that dialect. For the package choices and defaults see [validation](../validation#ajv-entries).
+
+## Live example {#live-demo}
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/TupleArraysDemo')} />

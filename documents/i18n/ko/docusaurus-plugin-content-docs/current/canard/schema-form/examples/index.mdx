@@ -1,648 +1,147 @@
 ---
-sidebar_label: 'Examples'
-sidebar_position: 5
+sidebar_label: '예제'
+sidebar_position: 9
 ---
 
-import ForAI from '@site/src/components/ForAI';
 
-# Examples
 
-`@canard/schema-form`의 인터랙티브 데모와 코드 패턴을 살펴보세요.
+# 예제
 
-## 인터랙티브 데모
+대화형 예제로 동작을 확인한 뒤 아래의 완전한 소비자 예제를 응용하십시오.
 
-라이브 데모를 통해 JSON Schema 기능을 직접 체험해보세요:
+## 대화형 예제 {#interactive}
 
-### 시작하기
+- [기본 폼](./basic-form)
+- [조건부 등록](./conditional-registration)
+- [근로 계약](./employment-contract)
+- [제품 목록](./product-catalog)
+- [동적 청구](./dynamic-billing)
+- [역할별 접근](./role-based-access)
+- [중첩 프로필](./nested-profile)
+- [미디어와 파일](./media-registration)
+- [계산 필드](./auto-calculation)
+- [tuple 배열](./tuple-arrays)
+- [가상화 입력](./virtualized-form)
+- [배열 출력 필터](./array-output-filters)
 
-- [기본 폼](./basic-form) — 기본 필드 타입: 텍스트, 숫자, 날짜, 열거형, 스위치
-- [자동 계산](./auto-calculation) — `controls.derived`를 활용한 실시간 수식 계산
+## 사용자 레이아웃 {#composition}
 
-### 고급 패턴
-
-- [조건부 등록](./conditional-registration) — 다단계 if/then/else 조건 분기
-- [동적 빌링](./dynamic-billing) — 3개 필드의 캐스케이딩 조건
-- [고용 계약](./employment-contract) — oneOf와 const 기반 필드셋 전환
-- [상품 카탈로그](./product-catalog) — 중첩 oneOf를 활용한 다단계 분기
-- [미디어 등록](./media-registration) — 배열과 중첩 객체를 포함한 복합 oneOf
-- [역할 기반 접근 제어](./role-based-access) — 필드 가시성(visible)과 활성화(active) 제어
-- [중첩 프로필 & 보안](./nested-profile) — 깊은 중첩 구조와 조건부 유효성 검사
-- [튜플 배열](./tuple-arrays) — prefixItems를 활용한 고정 길이 타입 배열
-- [배열 출력 필터](./array-output-filters) — omitTrailing / omitEmpty를 활용한 꼬리 빈 값 정리
-- [가상화 폼](./virtualized-form) — 초대형 폼(300+ 필드)을 위한 렌더 레벨 가상화
-
----
-
-## 코드 예제
-
-## Basic Form — Primitive Fields
+native form 안에 조합 컴포넌트를 배치합니다. 표시할 입력은 레이아웃이 정하며 [렌더링](../core-concepts#rendering)을 참조하십시오.
 
 ```tsx
-import { Form, ShowError } from '@canard/schema-form';
+import { Form } from '@canard/schema-form';
 
 const schema = {
   type: 'object',
   properties: {
-    name: { type: 'string', title: 'Name', minLength: 1, maxLength: 100 },
-    age: { type: 'number', title: 'Age', minimum: 0, maximum: 150 },
-    email: { type: 'string', title: 'Email', format: 'email' },
-    isActive: { type: 'boolean', title: 'Active' },
-    bio: { type: 'string', title: 'Bio', maxLength: 500 },
+    title: { type: 'string' },
+    count: { type: 'number' },
+    enabled: { type: 'boolean' },
   },
-  required: ['name', 'email'],
 } as const;
 
-function BasicForm() {
+export function ComposedForm() {
   return (
-    <Form
-      jsonSchema={schema}
-      showError={ShowError.EditedTouched}
-      onSubmit={async (value) => {
-        console.log(value);
-        // value is typed as { name: string; age?: number; email: string; ... }
-      }}
-    />
-  );
-}
-```
-
-## Nullable Fields
-
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    nickname: { type: ['string', 'null'] as const }, // nullable
-    score: { type: ['number', 'null'] as const }, // nullable
-  },
-} as const;
-
-// Custom input that handles null
-const NullableTextInput: FC<FieldInputProps<string | null>> = ({
-  value,
-  onChange,
-  nullable,
-  placeholder,
-}) => (
-  <input
-    value={value ?? ''}
-    placeholder={nullable ? `${placeholder} (optional)` : placeholder}
-    onChange={(e) => onChange(e.target.value || (nullable ? null : ''))}
-  />
-);
-```
-
-## Conditional Rendering — if/then/else
-
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    accountType: {
-      type: 'string',
-      title: 'Account Type',
-      enum: ['personal', 'business'],
-    },
-  },
-  if: {
-    properties: { accountType: { const: 'business' } },
-  },
-  then: {
-    properties: {
-      companyName: { type: 'string', title: 'Company Name', minLength: 1 },
-      taxId: { type: 'string', title: 'Tax ID' },
-    },
-    required: ['companyName'],
-  },
-  else: {
-    properties: {
-      dateOfBirth: { type: 'string', title: 'Date of Birth', format: 'date' },
-    },
-  },
-} as const;
-
-function AccountForm() {
-  return <Form jsonSchema={schema} />;
-  // When accountType='business': shows companyName + taxId
-  // When accountType='personal': shows dateOfBirth
-}
-```
-
-## oneOf — Exclusive Branches
-
-각 브랜치의 `controls.active`로 브랜치 활성화를 필드 값에 바인딩합니다. 매칭되는 브랜치의 필드만 폼에 나타납니다.
-
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    paymentMethod: {
-      type: 'string',
-      title: 'Payment Method',
-      enum: ['card', 'bank', 'paypal'],
-    },
-  },
-  oneOf: [
-    {
-      controls: { active: "./paymentMethod === 'card'" },
-      properties: {
-        cardNumber: {
-          type: 'string',
-          title: 'Card Number',
-          pattern: '^[0-9]{16}$',
-        },
-        expiryDate: { type: 'string', title: 'Expiry', format: 'date' },
-        cvv: { type: 'string', title: 'CVV', pattern: '^[0-9]{3,4}$' },
-      },
-      required: ['cardNumber', 'expiryDate', 'cvv'],
-    },
-    {
-      controls: { active: "./paymentMethod === 'bank'" },
-      properties: {
-        accountNumber: { type: 'string', title: 'Account Number' },
-        routingNumber: { type: 'string', title: 'Routing Number' },
-      },
-      required: ['accountNumber', 'routingNumber'],
-    },
-    {
-      controls: { active: "./paymentMethod === 'paypal'" },
-      properties: {
-        paypalEmail: { type: 'string', title: 'PayPal Email', format: 'email' },
-      },
-      required: ['paypalEmail'],
-    },
-  ],
-} as const;
-```
-
-## anyOf — Non-Exclusive Branches
-
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    notifyBySms: { type: 'boolean', title: 'Notify by SMS' },
-    notifyByEmail: { type: 'boolean', title: 'Notify by Email' },
-  },
-  anyOf: [
-    {
-      controls: { active: './notifyBySms === true' },
-      properties: {
-        phoneNumber: { type: 'string', title: 'Phone Number', format: 'phone' },
-      },
-      required: ['phoneNumber'],
-    },
-    {
-      controls: { active: './notifyByEmail === true' },
-      properties: {
-        notificationEmail: {
-          type: 'string',
-          title: 'Notification Email',
-          format: 'email',
-        },
-      },
-      required: ['notificationEmail'],
-    },
-  ],
-} as const;
-// Both branches can be active simultaneously
-```
-
-## allOf — Schema Composition
-
-```tsx
-const basePersonSchema = {
-  properties: {
-    firstName: { type: 'string', title: 'First Name', minLength: 1 },
-    lastName: { type: 'string', title: 'Last Name', minLength: 1 },
-  },
-  required: ['firstName', 'lastName'],
-};
-
-const contactInfoSchema = {
-  properties: {
-    email: { type: 'string', title: 'Email', format: 'email' },
-    phone: { type: 'string', title: 'Phone' },
-  },
-  required: ['email'],
-};
-
-const schema = {
-  type: 'object',
-  allOf: [basePersonSchema, contactInfoSchema],
-} as const;
-```
-
-## Array Fields
-
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    tags: {
-      type: 'array',
-      title: 'Tags',
-      items: { type: 'string', minLength: 1 },
-      minItems: 1,
-      maxItems: 10,
-    },
-    addresses: {
-      type: 'array',
-      title: 'Addresses',
-      items: {
-        type: 'object',
-        properties: {
-          street: { type: 'string', title: 'Street' },
-          city: { type: 'string', title: 'City' },
-          zip: { type: 'string', title: 'ZIP' },
-        },
-        required: ['street', 'city'],
-      },
-    },
-  },
-} as const;
-
-// Access array node imperatively
-function ArrayManager({ formRef }) {
-  const addAddress = () => {
-    const node = formRef.current?.findNode('/addresses');
-    if (isArrayNode(node)) node.push();
-  };
-
-  const removeAddress = (index: number) => {
-    const node = formRef.current?.findNode('/addresses');
-    if (isArrayNode(node)) node.remove(index);
-  };
-}
-```
-
-## Controls — Reactive Fields
-
-```tsx
-const schema = {
-  type: 'object',
-  properties: {
-    isPremium: { type: 'boolean', title: 'Premium Member' },
-    discount: {
-      type: 'number',
-      title: 'Discount %',
-      minimum: 0,
-      maximum: 100,
-      controls: {
-        visible: '../isPremium === true',
-        readOnly: '../isPremium === false',
-      },
-    },
-    memberSince: {
-      type: 'string',
-      title: 'Member Since',
-      format: 'date',
-      controls: {
-        visible: '../isPremium === true',
-        watch: ['../isPremium'],
-      },
-    },
-    totalOrders: { type: 'number', title: 'Total Orders' },
-    averageOrder: {
-      type: 'number',
-      title: 'Average Order Value',
-      controls: {
-        // visible when total orders > 0
-        visible: '../totalOrders > 0',
-        watch: ['../totalOrders'],
-      },
-    },
-  },
-} as const;
-```
-
-## Custom FieldInput Component
-
-```tsx
-import type { FC } from 'react';
-
-import type { FieldInputProps } from '@canard/schema-form';
-
-// Custom rating input for { type: 'number', presentation: { inputType: 'rating' } }
-const RatingInput: FC<FieldInputProps<number>> = ({
-  value,
-  onChange,
-  readOnly,
-  disabled,
-  jsonSchema,
-}) => {
-  const max = jsonSchema.maximum ?? 5;
-  return (
-    <div className="rating">
-      {Array.from({ length: max }, (_, i) => i + 1).map((star) => (
-        <button
-          key={star}
-          type="button"
-          disabled={disabled || readOnly}
-          className={star <= (value ?? 0) ? 'active' : ''}
-          onClick={() => onChange(star)}
-        >
-          ★
-        </button>
-      ))}
-    </div>
-  );
-};
-
-// Register
-registerPlugin({
-  fieldInputDefinitions: [
-    {
-      test: (hint) => hint.inputType === 'rating',
-      Component: RatingInput,
-    },
-  ],
-});
-
-// Use in schema
-const schema = {
-  type: 'object',
-  properties: {
-    rating: { type: 'number', presentation: { inputType: 'rating' }, minimum: 1, maximum: 5 },
-  },
-};
-```
-
-## Validation and Error Display
-
-```tsx
-import { Form, ShowError, ValidationMode } from '@canard/schema-form';
-
-const schema = {
-  type: 'object',
-  properties: {
-    username: {
-      type: 'string',
-      title: 'Username',
-      minLength: 3,
-      maxLength: 20,
-      pattern: '^[a-zA-Z0-9_]+$',
-      presentation: {
-        errorMessages: {
-          minLength: 'Username must be at least 3 characters',
-          maxLength: 'Username cannot exceed 20 characters',
-          pattern:   'Only letters, numbers, and underscores allowed',
-        },
-      },
-    },
-  },
-  required: ['username'],
-} as const;
-
-// Show errors immediately (e.g., for a server-rendered form)
-<Form
-  jsonSchema={schema}
-  showError={true}
-  validationMode={ValidationMode.OnChange}
-/>
-
-// Show errors only after submission attempt
-<Form
-  jsonSchema={schema}
-  showError={ShowError.Edited}
-  validationMode={ValidationMode.OnRequest}
-  ref={formRef}
-/>
-// then: await formRef.current?.validate(); formRef.current?.showError(true);
-
-// Inject server-side errors
-<Form
-  jsonSchema={schema}
-  errors={[
-    { dataPath: '/username', keyword: 'unique', message: 'Username already taken' },
-  ]}
-  showError={true}
-/>
-```
-
-## Submit and Reset
-
-```tsx
-import { useRef } from 'react';
-
-import { Form, type FormHandle, useFormSubmit } from '@canard/schema-form';
-
-const schema = {
-  type: 'object',
-  properties: { name: { type: 'string' } },
-} as const;
-
-function MyForm() {
-  const formRef = useRef<FormHandle<typeof schema>>(null);
-  const { submit, pending } = useFormSubmit(formRef);
-
-  const handleSubmit = async (value: any) => {
-    await api.save(value);
-  };
-
-  const handleReset = () => {
-    formRef.current?.reset();
-  };
-
-  return (
-    <>
-      <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
-      <button onClick={submit} disabled={pending}>
-        {pending ? 'Saving…' : 'Save'}
-      </button>
-      <button type="button" onClick={handleReset}>
-        Reset
-      </button>
-    </>
-  );
-}
-```
-
-## Controlled vs Uncontrolled
-
-```tsx
-// ── Uncontrolled (recommended for most cases) ─────────────────
-// Use defaultValue + onChange. Form manages internal state.
-<Form
-  jsonSchema={schema}
-  defaultValue={{ name: 'Alice' }}
-  onChange={(value) => console.log(value)}
-/>;
-
-// ── Imperative (for programmatic updates) ──────────────────────
-// Use ref to read/write values imperatively.
-formRef.current?.getValue();
-formRef.current?.setValue({ name: 'Bob' });
-
-// ── FormHandle setValue with merge ────────────────────────────
-// Merge keeps keys you omit; each key you pass is replaced whole (shallow)
-formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
-```
-
-## Custom Layout with Form.Field
-
-```tsx
-const profileSchema = {
-  type: 'object',
-  properties: {
-    avatar: { type: 'string', title: 'Avatar', presentation: { inputType: 'image-upload' } },
-    firstName: { type: 'string', title: 'First Name', minLength: 1 },
-    lastName: { type: 'string', title: 'Last Name', minLength: 1 },
-    bio: { type: 'string', title: 'Bio', maxLength: 500 },
-    website: { type: 'string', title: 'Website', format: 'uri' },
-  },
-  required: ['firstName', 'lastName'],
-} as const;
-
-function ProfileForm() {
-  return (
-    <Form jsonSchema={profileSchema} onSubmit={handleSubmit}>
-      <div className="avatar-section">
-        <Form.Field path="/avatar" />
-      </div>
-      <div className="name-row">
-        <Form.Field path="/firstName" placeholder="First name" />
-        <Form.Field path="/lastName" placeholder="Last name" />
-      </div>
-      <Form.Field path="/bio" placeholder="Tell us about yourself" />
-      <Form.Field path="/website" placeholder="https://..." />
+    <Form jsonSchema={schema}>
+      {({ value }) => (
+        <>
+          <Form.Label path="/title" />
+          <Form.Input path="/title" />
+          <Form.Error path="/title" />
+          <Form.Input path="/count" />
+          <Form.Input path="/enabled" />
+          <output>{JSON.stringify(value)}</output>
+          <button type="submit">Submit</button>
+        </>
+      )}
     </Form>
   );
 }
 ```
 
-## Watching Node State in Custom Components
+## 사용자 FieldInput {#custom-input}
+
+입력 draft는 onChange로 전달하고 계산된 controls를 지키십시오. 경로 하나만 바꾸려면 정의 대신 fieldInputMap을 사용하며 [선택 규칙](../schema-reference#input-resolution)을 참조하십시오.
 
 ```tsx
-import { FieldNodeState, useFieldNodeTracker } from '@canard/schema-form';
+import { Form, type FieldInputProps } from '@canard/schema-form';
 
-function FieldStatus({ node }: { node: FieldNode }) {
-  // Re-renders on any node event
-  useFieldNodeTracker(node);
-
+function TextInput({
+  path, value, onChange, readOnly, disabled, placeholder, className,
+}: FieldInputProps<string>) {
   return (
-    <div>
-      <span>Value: {JSON.stringify(node.value)}</span>
-      <span>Edited: {node.state[FieldNodeState.Edited] ? 'yes' : 'no'}</span>
-      <span>Errors: {node.errors.length}</span>
-      <span>Visible: {node.isVisible ? 'yes' : 'no'}</span>
-    </div>
+    <textarea
+      id={path}
+      value={value ?? ''}
+      readOnly={readOnly}
+      disabled={disabled}
+      placeholder={placeholder}
+      className={className}
+      onChange={(event) => onChange(event.target.value || undefined)}
+    />
+  );
+}
+
+const schema = {
+  type: 'object',
+  properties: { text: { type: 'string', title: 'Text' } },
+} as const;
+
+export function CustomInputForm() {
+  return (
+    <Form
+      jsonSchema={schema}
+      fieldInputDefinitions={[{ test: { type: 'string' }, Component: TextInput }]}
+    />
   );
 }
 ```
 
-## Programmatic Node Access
+## 형을 지정한 handle로 제출 {#submit}
+
+버튼은 promise를 반환하는 handle을 호출하고 rejection을 처리합니다. 검증 이슈는 폼에 남기고 다른 실패는 output에 표시합니다. 명시적 Value로 defaultValue·ref 형을 맞추며 [추론](../api-reference#typescript)을 참조하십시오.
 
 ```tsx
-import { isArrayNode, isObjectNode } from '@canard/schema-form';
-
-function FormController({ formRef }) {
-  const fillDefaults = () => {
-    formRef.current?.setValue(
-      {
-        status: 'draft',
-        createdAt: new Date().toISOString(),
-      },
-      SetValueOption.Merge,
-    );
-  };
-
-  const addTag = () => {
-    const tagsNode = formRef.current?.findNode('/tags');
-    if (isArrayNode(tagsNode)) tagsNode.push('new-tag');
-  };
-
-  const clearTags = () => {
-    const tagsNode = formRef.current?.findNode('/tags');
-    if (isArrayNode(tagsNode)) tagsNode.clear();
-  };
-
-  const validateField = async () => {
-    const emailNode = formRef.current?.findNode('/email');
-    if (emailNode) {
-      const errors = await emailNode.validate();
-      console.log('Email errors:', errors);
-    }
-  };
-}
-```
-
-## Type Inference
-
-```tsx
-import type { InferValueType } from '@winglet/json-schema';
+import { useRef, useState } from 'react';
+import {
+  Form, type FormHandle, isValidationError, useFormSubmit,
+} from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 
 const schema = {
   type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' },
-    nickname: { type: ['string', 'null'] as const },
-  },
-  required: ['name'],
+  properties: { text: { type: 'string', minLength: 3 } },
+  required: ['text'],
 } as const;
+type Value = { text?: string };
 
-// Inferred type: { name: string; age?: number; nickname?: string | null }
-type FormValue = InferValueType<typeof schema>;
+export function SubmitForm() {
+  const formRef = useRef<FormHandle<typeof schema, Value>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+  const [failure, setFailure] = useState('');
 
-// Type-safe ref
-const formRef = useRef<FormHandle<typeof schema>>(null);
-// formRef.current?.getValue() returns FormValue
+  async function save() {
+    setFailure('');
+    try {
+      await submit();
+    } catch (error) {
+      if (!isValidationError(error)) setFailure(String(error));
+    }
+  }
+
+  return (
+    <>
+      <Form<typeof schema, Value>
+        ref={formRef}
+        jsonSchema={schema}
+        defaultValue={{ text: 'Ready' }}
+        validatorFactory={plugin.validator}
+        onSubmit={(value) => console.log(value)}
+      />
+      <button type="button" disabled={pending} onClick={save}>Save</button>
+      <button type="button" onClick={() => formRef.current?.reset()}>Reset</button>
+      <output>{failure}</output>
+    </>
+  );
+}
 ```
-
-<ForAI>
-
-## AI Example Patterns
-
-```ts
-// Pattern: register once at app entry
-registerPlugin(validatorPlugin); // e.g., ajvValidatorPlugin
-registerPlugin(uiPlugin);        // e.g., antd5Plugin
-
-// Pattern: minimal form
-<Form jsonSchema={schema} onSubmit={async (value) => { ... }} />
-
-// Pattern: controlled read
-<Form jsonSchema={schema} onChange={setValue} defaultValue={initial} />
-
-// Pattern: imperative ref
-const ref = useRef<FormHandle<typeof schema>>(null);
-<Form ref={ref} jsonSchema={schema} />
-await ref.current?.validate();
-ref.current?.getValue();
-ref.current?.setValue(patch, SetValueOption.Merge);
-ref.current?.focus('/fieldPath');
-ref.current?.reset();
-
-// Pattern: submit with loading
-const { submit, pending } = useFormSubmit(ref);
-<button onClick={submit} disabled={pending}>Submit</button>
-
-// Pattern: custom input component
-const MyInput: FC<FieldInputProps<string>> = ({ value, onChange, errors }) => (
-  <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
-);
-registerPlugin({ fieldInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
-
-// Pattern: conditional field (oneOf with controls.active)
-oneOf: [
-  { controls: { active: "./type === 'A'" }, properties: { fieldA: { type: 'string' } } },
-  { controls: { active: "./type === 'B'" }, properties: { fieldB: { type: 'string' } } },
-]
-
-// Pattern: reactive visibility
-controls: { visible: '../otherField === true' }
-
-// Pattern: array manipulation
-const node = ref.current?.findNode('/items');
-if (isArrayNode(node)) { node.push(); node.remove(0); node.clear(); }
-
-// Pattern: inject server errors
-<Form errors={serverErrors} showError={true} />
-
-// Pattern: path-based component override
-<Form fieldInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
-```
-
-</ForAI>

@@ -1,0 +1,103 @@
+---
+sidebar_label: 'Migration from 0.x'
+sidebar_position: 8
+---
+
+
+
+# Migration from 0.x
+
+
+
+## Migration order and silent keys {#migration-order}
+
+To use the current API, migrate schema configuration first, component/type imports next, and node state / validation issue handling last. The form engine does not alias or warn for old top-level configuration keys such as formType or computed: move them explicitly into their current groups. A separately configured validator can still reject unknown schema keywords under its own policy.
+
+Use this guide as a conversion checklist, then consult the linked current contracts rather than retaining both spellings.
+
+## Schema key mapping {#schema-keys}
+
+| 0.x spelling | Current location |
+| --- | --- |
+| `formType` | `presentation.inputType` |
+| `FormTypeInput` | `presentation.FieldInput` |
+| `FormTypeInputProps` | `presentation.FieldInputProps` |
+| `FormTypeRendererProps` | `presentation.FieldRendererProps` |
+| `errorMessages` | `presentation.errorMessages` |
+| `computed.active / &active` | `controls.active` |
+| `computed.visible / &visible` | `controls.visible` |
+| `computed.readOnly / &readOnly` | `controls.readOnly` |
+| `computed.disabled / &disabled` | `controls.disabled` |
+| `computed.derived / &derived` | `controls.derived` |
+| `computed.watch / &watch` | `controls.watch (array of paths)` |
+| `computed.pristine / &pristine` | `controls.resetInteraction` |
+| `computed.if / &if` | `controls.active (on the branch)` |
+| `injectTo` | `controls.injectTo` |
+| `terminal` | `options.terminal` |
+| `propertyKeys` | `options.propertyOrder` |
+| `virtual / type: 'virtual'` | `options.virtual: { <name>: { fields: [...] } }` |
+
+Only the [authoring groups](./schema-reference#authoring-groups) define accepted options. Move input settings to presentation.FieldInputProps and check [branch selection](./schema-reference#composition) rather than assuming oneOf chooses one form branch automatically.
+
+## Component, type, hook, and node names {#consumer-names}
+
+| 0.x spelling | Current API |
+| --- | --- |
+| `formTypeInputDefinitions` | `fieldInputDefinitions` |
+| `formTypeInputMap` | `fieldInputMap` |
+| `CustomFormTypeRenderer` | `FieldRenderer` |
+| `plugin.FormGroup` | `plugin.FieldRenderer` |
+| `plugin.FormLabel` | `plugin.FormLabelRenderer` |
+| `plugin.FormInput` | `plugin.FormInputRenderer` |
+| `plugin.FormError` | `plugin.FormErrorRenderer` |
+| `plugin.formTypeInputDefinitions` | `plugin.fieldInputDefinitions` |
+| `Form.Group` | `Form.Field` |
+| `FormGroupProps` | `FormFieldProps` |
+| `FormTypeInputDefinition` | `FieldInputDefinition` |
+| `FormTypeInputMap` | `FieldInputMap` |
+| `FormTypeInputProps` | `FieldInputProps` |
+| `FormTypeInputPropsWithNode` | `FieldInputPropsWithNode` |
+| `FormTypeInputPropsWithSchema` | `FieldInputPropsWithSchema` |
+| `FormTypeTestFn` | `FieldInputTestFn` |
+| `FormTypeTestObject` | `FieldInputTestObject` |
+| `FormTypeRendererProps` | `FieldRendererProps` |
+| `Hint` | `FieldInputHint` |
+| `FormTypeInputProps.ChildNodeComponents` | `FieldInputProps.ChildFields` |
+| `ChildNodeComponentProps` | `ChildFieldProps` |
+| `useChildNodeComponentMap` | `useChildFieldMap` |
+| `useChildNodeErrors` | `useChildFieldErrors` |
+| `SchemaNode` | `FieldNode` |
+| `InferSchemaNode` | `InferFieldNode` |
+| `isSchemaNode` | `isFieldNode` |
+| `NodeState` | `FieldNodeState` |
+| `FieldNodeState.Dirty` | `FieldNodeState.Edited` |
+| `ShowError.Dirty` | `ShowError.Edited` |
+| `ShowError.DirtyTouched` | `ShowError.EditedTouched` |
+| `node.required` | `node.isRequired` |
+| `node.active` | `node.isActive` |
+| `node.visible` | `node.isVisible` |
+| `node.enabled` | `node.isPresent` |
+| `node.readOnly` | `node.isReadOnly` |
+| `node.disabled` | `node.isDisabled` |
+| `node.misfit` | `node.isMisfit` |
+| `NodeState.ShowError` | `FieldNodeState.ErrorVisible` |
+| `NodeEventType` | `FieldNodeEventType` |
+| `useSchemaNodeTracker` | `useFieldNodeTracker` |
+| `useSchemaNodeSubscribe` | `useFieldNodeSubscribe` |
+| `SchemaNodeSubscribeOptions` | `FieldNodeSubscribeOptions` |
+| `JSONSchemaError (issue type)` | `ValidationIssue` |
+
+Replace mixed-case schema aliases with `JSONSchema` and `InferJSONSchema`. For renderer props supplied to custom inputs, follow the [composition contract](./api-reference#composition): there is no automatically supplied FieldInputProps.FieldRenderer.
+
+Use [raw issue data](./validation#issues-messages) for validation results and [error guards](./error-reference#guards) for thrown exceptions.
+
+## Behavior checks after conversion {#behavior-checks}
+
+- Check [closed options and open presentation](./schema-reference#authoring-groups) so stale plugin settings do not become UnknownGroupKey.
+- Update DOM tests for [enum empty values and checkbox/radio naming](./schema-reference#accessibility).
+- Match virtual inputs using the [current test hint](./schema-reference#input-resolution).
+- Supply a complete [validator object](./validation#validator-contract).
+- Use Edited / EditedTouched names. The default showError policy and bit values stay compatible with that policy; keep the Form showError prop/handle method names and check [showError(false)](./validation#visibility) semantics.
+- Use `parentJSONSchema` and `rootJSONSchema` in injectTo context.
+- Read `origin` on the inferred onError callback record in place of surface/aggregate, using the [occurrence contract](./error-reference#occurrences).
+- Replace component cleanup writes with [inactive-value resolution](./api-reference#inactive-listeners); reacquire nodes after reset/reentry.

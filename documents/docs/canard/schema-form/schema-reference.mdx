@@ -1,0 +1,193 @@
+---
+sidebar_label: 'Schema Reference'
+sidebar_position: 4
+---
+
+
+
+# Schema Reference
+
+
+
+## Authoring groups {#authoring-groups}
+
+Keep standard JSON Schema constraints at their standard locations. Put renderer payload in `presentation`, reactive policies in `controls`, and engine options in `options`. `presentation` is open; `controls` and `options` reject unknown keys with `FormErrorCode.UnknownGroupKey`. A known key with an invalid shape produces `FormErrorCode.InvalidControlShape`.
+
+| Group | Consumer use |
+| --- | --- |
+| `presentation` | `inputType`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; custom renderer payload is allowed |
+| `options` | Only `omitEmpty`, `trim`, `omitTrailing`, `terminal`, `propertyOrder`, `virtual` |
+| `controls` | The controls listed below; input-specific settings do not belong here |
+
+`options.trim` trims the stored string on blur, not on every keystroke. `omitTrailing` removes trailing `undefined` entries from normalized array output without deleting their raw child nodes. `omitEmpty` defaults to true; `trim` and `omitTrailing` default to false. See the [array output example](./examples/array-output-filters).
+
+`options.propertyOrder` orders emitted object keys, not fields on screen: listed keys first, then remaining declared keys, then arriving additional keys. It creates no absent values, and integer-like keys still follow JavaScript's key ordering.
+
+Declare virtual groups on an object as `options.virtual: { groupName: { fields: ['first', 'last'] } }`, using existing sibling property names. Do not author a schema with `type: 'virtual'`.
+
+## Terminal strategy invariants {#terminal-strategy}
+
+The strategy choice described in [node types](./core-concepts#node-types) must remain valid across gates. Opposite `options.terminal` settings on fixed-strategy scalar, union, or virtual nodes produce `TerminalOptionUnsupported`. A gate that could change one node between branch and terminal produces `TerminalStrategyMismatch`.
+
+Among static ungated declarations, later `options.terminal` values win; a `$ref` target is treated after the referencing declaration. An ungated `oneOf`/`anyOf` branch's terminal option does not choose the host's strategy.
+
+## Nullable, empty, and misfit values {#value-states}
+
+`nullable: true` is a supported spelling for adding `'null'` to `type`; that spelling alone does not warn. Explicit `null`, `undefined`, and empty containers are different states. `null`, `false`, and `0` are values; `undefined` clears a field, and an empty string also clears it under default `omitEmpty`. `null` is not removed by `omitEmpty` or array output filters.
+
+For a nullable object or array holding null:
+
+- Assigning a container to the node or writing a value to an active descendant promotes it to a container. `insert(0, value)` promotes a null array like a push into an empty array; other indices do not.
+- Defaults, derived values, branch restoration, and automatic `injectTo` alone do not promote it. Child inputs can remain visible without materializing a parent object.
+- Clearing a descendant or merging an empty object retains null and remembers the clearing for later promotion.
+- After loading null or a wrong-kind value, promotion leaves existing children empty; only newly created children receive defaults. Data discarded by assigning null does not return automatically.
+
+Writing null to a non-nullable object preserves the wrong-kind value as a misfit; it does not repair it to `{}`. `setValue(undefined)` clears child values and array entries without restoring child defaults.
+
+Arrays are replaced even with `SetValueOption.Merge`. A parent Overwrite that omits an array clears it, while a parent Merge that omits it retains it. See [write options](./api-reference#write-options).
+
+## Controls and declaration layers {#controls}
+
+A node has the following 14 control keys. `controls.fields[].controls` and fragment controls accept only the first ten, through `inactiveValue`; they cannot nest `fields`, `injectTo`, `discriminator`, or `watch`.
+
+| Key | Meaning |
+| --- | --- |
+| `active` | Existence gate; false removes the field from shape and output. |
+| `visible` | Visibility gate; false retains the value. |
+| `readOnly` | Read-only lock. |
+| `disabled` | Disabled lock, independent of presence. |
+| `default` | Literal for a newly appearing node without a value; never compiled as an expression. |
+| `derived` | Expression that overwrites on dependency change; undefined writes nothing. |
+| `unsetValue` | Clears on a false-to-true transition. |
+| `resetInteraction` | Clears Edited and Touched on false-to-true, and on load/entry while true. |
+| `unsetOnInactive` | Drops retained data on exit; node policy overrides the Form default. |
+| `inactiveValue` | Literal or synchronous retained-value resolver; strings are literal. |
+| `fields` | Array of &#123; targets: string[], controls &#125;; addresses direct children by name. |
+| `injectTo` | Function that writes other paths from a changed source. |
+| `discriminator` | Nonempty property name for object/nullable-object union selection. |
+| `watch` | Array of dependency paths passed as watchValues in order. |
+
+Standard `readOnly` and controls `readOnly`/`disabled` layers combine by OR; `visible` layers combine by AND. Default precedence is node `controls.default`, parent `fields`, fragment `controls.default`, then standard `default`.
+
+String expressions use form paths and context; see [path expressions](./api-reference#paths). This requires the [CSP capability](./quick-start#transpilation-csp).
+
+## Retaining values on gate exit {#inactive-values}
+
+An `inactiveValue` resolver receives the previous committed value, `dataPath`, `schemaPath`, current/parent/root schemas and values, and form context. Returning `undefined` preserves the original retained source. It runs only for a normal retained gate exit with automatic writes enabled, not load, reset, failure, budget overflow, a throwing gate, or an instance that only entered transiently during that settlement.
+
+Caller JSON wins when the write causing exit explicitly covers that path; neither `onInactive` nor the resolver runs there. A whole ancestor write covers omitted descendants, while Merge covers supplied keys only. Multi-write batch merges are shallow. Explicit coverage is the union of all caller writes; later partial/empty merges or automatic writes do not erase earlier whole coverage.
+
+After an array move, a resolver reads the preceding committed value and address but retains its result at the current address. Policy precedence is node, parent fields, then fragment; descendant results overwrite their own paths in an ancestor result. Retained results preserve undeclared keys and wrong-kind values under the usual inactive-JSON rules, and reentry consumes the overlay.
+
+`unsetOnInactive: true` skips the resolver; declaring literal true together with `inactiveValue` in the same layer warns with `InactiveValueWithUnsetOnInactive`. For imperative exit listeners and cleanup migration, see [onInactive](./api-reference#inactive-listeners).
+
+## Composition and conditional gates {#composition}
+
+`oneOf` and `anyOf` branches participate according to `controls.active` or a host discriminator. Without gates all branches participate in form shape; the validator separately checks matching. Multiple gated `oneOf` branches can be active and warn with `MultipleGatedBranchesActive`. An `allOf` fragment with `controls.active` also participates conditionally.
+
+The parent's type determines the node kind. A branch's different type does not replace it and still reaches the validator. Incompatible shared property kinds in static/ungated declarations produce `SharedNodeKindConflict`; gated declarations are not compared that way. Terminal objects skip child-kind comparisons and unreachable warnings, but retain discriminator mismatch, null-branch warnings, and static enum intersection errors.
+
+`if` synchronously tests the host value and selects `then` or `else`. Without a validator both remain off. A guard compile/evaluation failure also turns both off and records `GuardFailed`; it is not a false verdict. A missing or non-object host is tested as `{}`: include `required` in a condition that requires a value. A host that cannot admit object warns with `IfOnNonObjectHost`; move the condition to an object host.
+
+For nullable `oneOf`, include one null branch and explicitly declare `type: 'object'` on object branches so null can match exactly one branch. The null branch is validator-only: fields and active controls in it do not create form shape. The value decides nullness while gates decide the displayed object branch. The form does not warn merely because a nullable `oneOf` rejects null, so check that schema yourself; `anyOf` has no exactly-one condition.
+
+## Discriminator selection and limits {#discriminator}
+
+Declare `controls.discriminator` as a nonempty string on an object or nullable-object host. Malformed keys fail with `InvalidControlShape` before host checks; TypeScript rejects other host kinds. Each declaration selects only its own union, so declarations on one node can use different discriminator keys.
+
+| Condition | Result |
+| --- | --- |
+| No `oneOf`/`anyOf` array | Ignored, reason `union` |
+| Known non-object host | Ignored without reading the tag, reason `host` |
+| No branch gives the key a `const`/`enum` tag | `DiscriminatorMismatch`, reason `missing` |
+| Only some branches have tags | Untagged branches keep their own active controls without a discriminator gate |
+| Overlapping `oneOf` tags | Mismatch, reason `overlap` |
+| Repeated `anyOf` tags | All matching branches participate |
+| No host tag type, incompatible branch tag kinds | Mismatch, reason `kind` |
+| Host tag type is a union admitting the tag kinds | Allowed |
+| Branch tag kind lies outside host type | Unreachable warning, reason `kind`; no tag promotion |
+| Empty `const`/`enum` tag intersection | Unreachable warning, reason `empty`; always-off gate |
+
+Comparison uses `===` and combines with the branch's `controls.active` using AND. A reachable branch-only tag property is promoted to an always-mounted child. An empty tag intersection still counts as a tag, and unreachable declarations do not augment an existing host child.
+
+An untyped union host reads the tag but does not infer its own type from a gated branch. An ignored discriminator creates no gate, does not itself deactivate branchless paths, and performs no extra host-enum exclusion check.
+
+Diagnostics include `propertyName` and `reason`, not tag values. Ignored warnings report once per declaration at `controls/discriminator`; unreachable warnings point to the branch schema location.
+
+## Derived values and injection {#injection}
+
+`controls.derived` maintains a target from its dependencies. `controls.injectTo` copies a changed source to other paths without preventing later edits at the targets. It is a function, returning a path/value map, an ordered array of `[path, value]` entries, or null to skip. Relative and absolute target paths can be mixed.
+
+The handler receives the source value separately; its context contains `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, and form `context`. A nonconvergent injection cycle stops after 25 derive rounds: caller writes remain, that settlement's automatic writes roll back, and a derive-degraded diagnostic and exception remain. A throwing handler skips that round's rule, leaves expression-degraded diagnostics, and reports `ExpressionThrew` to the caller.
+
+## Input resolution {#input-resolution}
+
+Schema selection uses `presentation.FieldInput`, then Form `fieldInputMap`, Form definitions, FormProvider definitions, and plugin definitions (including built-in fallbacks). A direct `FieldInput` on a composition component overrides that slot. Within definitions the first match wins. An inputType is a component-selection hint, not an HTML input type. A fieldInputMap key such as `/items/*/price` matches one segment per wildcard. Other nonempty map keys are also tried as regular expressions after exact matching (the absolute empty-name path is an exception); use an anchored pattern such as `^/profile/name$` when you need an exclusive path match.
+
+`FieldInputTestObject` accepts a single value or list for `type`, `schemaType`, `path`, `format`, and `inputType`, plus boolean `required` and `nullable`. Omitted conditions do not restrict matching. A virtual node has `type: 'virtual'` and `schemaType: undefined`; do not match `schemaType: 'virtual'`.
+
+Input-specific settings go in `presentation.FieldInputProps`, which is forwarded to the input. Placing settings such as `lazy`, `protocols`, or `minRows` in `options` produces `UnknownGroupKey`. A direct schema `inputType` or `FieldInput` is not a substitute for the presentation group.
+
+## Custom-input accessibility {#accessibility}
+
+Use `id={path}` on a single custom input so its label can target it. Group inputs reference `label:${path}` with `aria-labelledby`. Built-in checkbox/radio choices use `${path}-${index}` and matching `htmlFor` inside a named `role="group"` container. Update DOM selectors accordingly.
+
+At a root, array item, or unlabeled composition where `label:${path}` is absent, the custom renderer must supply an accessible group name. `Form.Label` derives its id and htmlFor from the supplied path, so use the actual absolute input path for that association.
+
+The built-in enum select represents undefined as a selected, disabled empty option first in the list; an out-of-enum value gets its own disabled option. It does not silently choose the first enum item.
+
+## Official UI plugin input selection {#ui-selection}
+
+The following patterns apply to antd-mobile, antd5, antd6, and MUI. Here `inputType` means `presentation.inputType`. These are matching conditions, subject to the first-match order in [input resolution](#input-resolution).
+
+| Condition | Input |
+| --- | --- |
+| Boolean + inputType `switch` | Boolean switch |
+| String-item array with items.enum + inputType `checkbox` | Checkbox group |
+| String with exactly two enum entries + inputType `switch` | String switch |
+| String / number / integer enum + inputType `radio` or `radiogroup` | Radio group |
+| Array not matched earlier | Add/remove array input |
+| String + format or inputType `textarea` | Multiline input |
+| Remaining string | Text input; format `password` uses password display |
+| Remaining number / integer schemaType | Number input |
+| Remaining boolean | Checkbox |
+
+Antd5, antd6, and MUI also select a URI input for string `format: 'uri'` or inputType `uri`; month/date/time inputs for string format `month`/`date`/`time`; a number/integer slider for inputType `slider`; and a Select for string enums. Antd5/6 select multiple Select for string-item arrays with `items.enum`, and range inputs for string-item arrays with format `month-range`/`date-range`/`time-range` or inputType `monthRange`/`dateRange`/`timeRange`.
+
+Antd-mobile's slider uses numeric format `slider`. Its general array definition precedes its numeric-array slider test, so numeric arrays do not automatically become range sliders. Supply a suitable custom `presentation.FieldInput` or an earlier form definition for range UI; no standalone mobile slider component is exported by the plugin entry point.
+
+## Shared input settings and labels {#ui-settings}
+
+Pass input props using [presentation.FieldInputProps](#input-resolution).
+
+| Input | Antd-mobile, antd5, antd6 | MUI |
+| --- | --- | --- |
+| Boolean switch | Checked/unchecked labels through `alias: { checked, unchecked }` or `context.checkboxLabels` (context wins) | `label`, `hideLabel`, `size`; no separate checked/unchecked text |
+| Checkbox group | Enum-value labels through `alias` or `context.checkboxLabels` | Enum-value `alias` labels |
+| String switch | Enum-value labels through `alias` or `context.switchLabels` | Reads schema-level `switchLabels` tuple and `switchSize`; these are current input-specific exceptions |
+| Radio group | Enum-value labels through `alias` or `context.radioLabels` | `alias`, with schema `radioLabels` entries taking precedence |
+| Array | Add/remove buttons hidden when readOnly | Add/remove buttons hidden when readOnly |
+| Textarea | `minRows`, `maxRows` | `minRows`, `maxRows` |
+| Number | Schema `minimum`, `maximum`, `multipleOf` supply min/max/step | Same schema values; integer fallback step 1, other numbers allow any step |
+| Boolean checkbox | Undefined can display indeterminate | Undefined can display indeterminate |
+
+For mobile Boolean Switch, the context label object specifically uses `context.checkboxLabels.checked` and `.unchecked`. Do not reuse an unrelated label shape.
+
+## URI, date, and slider contracts {#date-uri-slider}
+
+| Setting | Antd5 / antd6 | MUI |
+| --- | --- | --- |
+| URI protocols | `FieldInputProps.protocols`; default `http`, `https`, `ftp`, `mailto`, `tel` | Same prop; default `http`, `https`; also handles single-colon protocols such as `mailto`, `tel` |
+| Month | `FieldInputProps.minimum` / `maximum`; `YYYY-MM` | `YYYY-MM`; month range limits are not connected |
+| Date | `FieldInputProps.minimum` / `maximum`; `YYYY-MM-DD` | Schema-level `minimum` / `maximum` become minDate/maxDate; `YYYY-MM-DD` |
+| Month / date ranges | `FieldInputProps.minimum` / `maximum`; arrays of corresponding month/date strings | No corresponding range definitions |
+| Time | dayjs format `HH:mm:00Z` | `HH:mm:ss` |
+| Time range | `FieldInputProps.minimum` / `maximum`; array of `HH:mm:00Z` values | No corresponding range definition |
+| Slider | `lazy: false` publishes each movement; omitted lazy publishes on release | `lazy` defaults false; true publishes on release; `showMarks` controls marks and value labels display automatically |
+| Number formatting | `FieldInputProps.formatter` / `parser` | Use a custom input for a different formatting contract |
+
+In this table `FieldInputProps.*` always means `presentation.FieldInputProps.*`. The Antd time format's `Z` is a timezone offset token. Its time input does not expose the range input's minimum/maximum props.
+
+Mobile sliders accept `range`, `marks`, and `lazy` in that same prop group. `lazy: false` publishes on movement; omission publishes on release. Numeric-array selection still has the [first-match restriction](#ui-selection).
+
+UI bounds guide interaction; schema validation remains responsible for accepting or rejecting the final value.
