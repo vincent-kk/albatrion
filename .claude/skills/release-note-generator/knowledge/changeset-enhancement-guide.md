@@ -218,6 +218,8 @@ Group plugin updates together:
 
 ## Integration with Workflows
 
+These workflows apply only to releases that use changesets; the change records section of `DOCUMENTATION.md` says which releases do. A release without changesets builds its notes from git change data.
+
 ### Workflow 1: Pre-Release Enhancement
 
 ```bash
@@ -243,7 +245,7 @@ Group plugin updates together:
 
 ### No Changesets Found
 
-If `.changeset/` is empty or contains only config:
+If `.changeset/` is empty or contains only config, and the release uses changesets under `DOCUMENTATION.md`:
 
 ```markdown
 # No Changes to Release

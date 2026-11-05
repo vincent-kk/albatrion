@@ -1,6 +1,6 @@
 # 09 정리와 릴리스 — 개발요청서 (원장 PR-8)
 
-> 원장 정본: LANDING-068(정의)·096(보정), LANDING-121(reset 문서), LANDING-205(레거시 삭제는 여기), TEST-026·027·031(벤치), LANDING-097(릴리스 전환 PR이 먼저). 어긋나면 원장이 이긴다.
+> 원장 정본: LANDING-068(정의)·096(보정), LANDING-121(reset 문서), LANDING-205(레거시 삭제는 여기), TEST-026·027·031(벤치), LANDING-097(릴리스 전환 PR이 먼저). 어긋나면 원장이 이긴다. 다만 릴리스 기록과 릴리스 전환(LANDING-097, TEST-045·054)은 아래 '릴리스 기록' 항목과 루트 `DOCUMENTATION.md`의 Change records가 이긴다.
 
 ## 우산 안의 자리
 
