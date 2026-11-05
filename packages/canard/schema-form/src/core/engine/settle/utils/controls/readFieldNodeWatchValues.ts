@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
@@ -8,9 +9,6 @@ import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { readStateDependency } from './readStateDependency';
 import type { EmissionSnapshot } from './readStateDependency';
-
-/** Rule-free nodes share one immutable empty result. */
-const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
 
 /** Final effective schema and emitted inputs from the preceding commit. */
 export interface WatchValuesSnapshot extends EmissionSnapshot {
@@ -41,7 +39,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
   const commit = runtime.commitNumber ?? 0;
   const memo = runtime.watchValuesMemo?.get(node);
   if (!snapshot && memo && node.detached) return memo.values;
-  if (node.detached) return EMPTY_WATCH_VALUES;
+  if (node.detached) return EMPTY_ARRAY;
   const schema = snapshot?.schema ?? node.schema.schema;
   const controls: unknown =
     typeof schema === 'object' ? schema.controls : undefined;
@@ -49,7 +47,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     controls && typeof controls === 'object'
       ? Reflect.get(controls, CONTROL_KEY.watch)
       : undefined;
-  const paths = isArray(watch) ? watch : EMPTY_WATCH_VALUES;
+  const paths = isArray(watch) ? watch : EMPTY_ARRAY;
   const reusable =
     !snapshot && memo?.commit === commit && memo.values.length === paths.length;
   const derived = getHostDerived<'watchValuesWitness', WatchValuesWitness>(
@@ -102,7 +100,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
       contextAbsent: selectedContext == null,
     };
   if (!next) return memo!.values;
-  const values = next.length ? Object.freeze(next) : EMPTY_WATCH_VALUES;
+  const values = next.length ? Object.freeze(next) : EMPTY_ARRAY;
   const cache =
     runtime.watchValuesMemo ??
     new WeakMap<object, { commit: number; values: readonly unknown[] }>();

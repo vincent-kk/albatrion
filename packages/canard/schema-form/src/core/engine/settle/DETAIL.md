@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 참조 동일성 센티널을 제외한 공유 동결 빈 배열은 `@winglet/common-utils/constant`의 `EMPTY_ARRAY`를 사용하며, 변화 없는 빈 읽기의 참조를 유지합니다.
+
 - A fresh mount may carry invocation-owned fixed-first preparation. It constructs the unconditional occurrence baseline once, then restores affected children to their ungated effective schemas on every compute epoch, including after defaults. Restoration preserves originalSchemas, dirty/changed tracking and pending publication. Sparse sites include both a nonroot if host’s parent incoming edge and the host’s affected child contribution entries; root own declarations retain the existing root-only selectNodeSchema call. It never calls selectNodeSchema separately for each host. It preserves host-wheel confirmation rounds and full guard invocation order/counts, including failed and unavailable predicates.
 - Scalar default transitions remain after the initial computation. Existing transition, schema merge, required/control, output, diagnostics, commit and delivery algorithms stay in charge; no final-value pre-evaluation or guard-error retry occurs. Output assembly is not optimized by this route.
 - Prepared witnesses are released on normal or exceptional return. Later writes/reset use ordinary settlement with the original gate registry; no persistent node flags or cached verdicts are introduced. Unsupported verifier configurations decline admission before mutation.

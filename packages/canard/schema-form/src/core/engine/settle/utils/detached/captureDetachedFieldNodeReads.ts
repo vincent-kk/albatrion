@@ -1,9 +1,10 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
-import { EMPTY_PATHS } from './emptyDetachedReads';
 
 /**
  * Retain the last committed reads before an exiting node's live path is cleared.
@@ -27,7 +28,7 @@ export const captureDetachedFieldNodeReads = <
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     isMisfit: runtime.misfitPaths.has(node.path),
-    misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
+    misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_ARRAY,
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     isVisible: node.isVisible,
     isReadOnly: node.isReadOnly,

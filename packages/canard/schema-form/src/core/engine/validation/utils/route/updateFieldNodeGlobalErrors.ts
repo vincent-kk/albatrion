@@ -1,5 +1,6 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { FieldNodeRecord } from '../../../record';
-import { EMPTY_GLOBAL_ERRORS } from './constants';
 
 /**
  * Store the form list after either root external or routed validator issues change.
@@ -16,5 +17,5 @@ export const updateFieldNodeGlobalErrors = <Self extends FieldNodeRecord<Self>>(
     ? validation?.length
       ? [...external, ...validation]
       : external
-    : (validation ?? EMPTY_GLOBAL_ERRORS);
+    : (validation ?? EMPTY_ARRAY);
 };

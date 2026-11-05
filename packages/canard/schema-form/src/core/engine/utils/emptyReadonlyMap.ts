@@ -1,5 +1,4 @@
-/** Shared immutable iterator source for feature absence results. */
-const EMPTY_ENTRIES: readonly never[] = Object.freeze([]);
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 /** Read-only empty map facade; no native mutable map is exposed or allocated. */
 export const emptyReadonlyMap: ReadonlyMap<never, never> = Object.freeze({
@@ -7,8 +6,8 @@ export const emptyReadonlyMap: ReadonlyMap<never, never> = Object.freeze({
   get: () => undefined,
   has: () => false,
   forEach: () => undefined,
-  entries: () => EMPTY_ENTRIES.values(),
-  keys: () => EMPTY_ENTRIES.values(),
-  values: () => EMPTY_ENTRIES.values(),
-  [Symbol.iterator]: () => EMPTY_ENTRIES.values(),
+  entries: () => EMPTY_ARRAY.values(),
+  keys: () => EMPTY_ARRAY.values(),
+  values: () => EMPTY_ARRAY.values(),
+  [Symbol.iterator]: () => EMPTY_ARRAY.values(),
 });

@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { Optional } from '@aileron/declare';
 
@@ -38,9 +39,6 @@ import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
 import { intersectsWatchedPath } from '../templatePaths/intersectsWatchedPath';
 import { isCanonicalArrayIndex } from '../templatePaths/isCanonicalArrayIndex';
 import { getContextOwners } from './getContextOwners';
-
-/** No reverse dependency owners for a gate-free input path. */
-const NO_OWNERS: readonly string[] = Object.freeze([]);
 
 /** Minimal injected evidence keeps dependency analysis independent of compute. */
 interface RegistrationTable {
@@ -450,7 +448,7 @@ class DependencyIndex {
       !rootIndex ||
       (rootIndex.owners.length === 0 && rootIndex.children.size === 0)
     )
-      return NO_OWNERS;
+      return EMPTY_ARRAY;
     const owners = new Set<string>();
     let current: DependencyNode[] = [rootIndex];
     const collect = (node: DependencyNode): void => {

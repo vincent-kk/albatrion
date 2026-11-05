@@ -1,6 +1,7 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { InactiveSlotCandidate } from '../../types/slots';
-import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 import { collectHostSlotValues } from './collectHostSlotValues';
 import { compareSlotOrder } from './compareSlotOrder';
 import { getSlotOrder } from './getSlotOrder';
@@ -50,5 +51,5 @@ export const materializeInactiveSlotValues = <
   }
   return (host.inactiveValuesCache = next.length
     ? Object.freeze(next)
-    : EMPTY_VALUES);
+    : EMPTY_ARRAY);
 };

@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary, Optional } from '@aileron/declare';
@@ -37,7 +38,7 @@ import type { PreparedStaticHost } from './utils/prepareStaticHost';
 import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
-const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
 /** Rejected single-declaration positions share an empty selection. */
 const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 

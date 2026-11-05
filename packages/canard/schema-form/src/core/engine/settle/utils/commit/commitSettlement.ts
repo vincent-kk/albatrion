@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import {
@@ -23,11 +25,6 @@ import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
 import { readSettlementSource } from './utils/readSettlementSource';
-
-/** Shared frozen empty list for inactive and misfit projections. */
-const EMPTY_PATHS: readonly string[] = Object.freeze([]);
-/** Shared empty warning batch. */
-const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
 
 /**
  * Publish calculated changes, lamps, memoized paths, and one commit number.
@@ -195,7 +192,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   });
   if (warningTasks)
     for (const node of context.changedNodes) warningTasks.get(node)?.();
-  runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
+  runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_ARRAY;
   const misfitsMemo =
     runtime.misfitsMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
@@ -211,7 +208,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         empty.commit = commit;
       else {
         misfitsMemo.clear();
-        misfitsMemo.set($.Root, { commit, paths: EMPTY_PATHS });
+        misfitsMemo.set($.Root, { commit, paths: EMPTY_ARRAY });
       }
     } else {
       misfitsMemo.clear();

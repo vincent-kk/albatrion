@@ -1,11 +1,9 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { CONTROL_KEY } from '../../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../../record';
 import { getStateDependencyPlan } from '../../controls/getStateDependencyPlan';
-
-/** Shared frozen result for a node without watch paths. */
-const NO_PATHS: readonly string[] = Object.freeze([]);
 
 /**
  * Resolve the final effective watch list against this live occurrence.
@@ -22,7 +20,7 @@ export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
     controls && typeof controls === 'object'
       ? Reflect.get(controls, CONTROL_KEY.watch)
       : undefined;
-  if (!isArray(watch)) return NO_PATHS;
+  if (!isArray(watch)) return EMPTY_ARRAY;
   const paths: string[] = [];
   for (const path of watch)
     if (typeof path === 'string')

@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
@@ -49,7 +51,7 @@ import {
   readFieldNodeWatchValues,
 } from '../../engine';
 import type { NodeStateFlags } from '../../engine';
-import { EMPTY_GLOBAL_ERRORS, readFieldNodeErrors } from '../../engine';
+import { readFieldNodeErrors } from '../../engine';
 import type { ValidationIssue } from '../../engine';
 import { FieldNodeState } from '../../engine';
 import { SetValueOption } from '../type';
@@ -398,7 +400,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Ordered whole-tree validator issues. */
   get globalErrors() {
-    return this.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS;
+    return this.runtime.globalErrors ?? EMPTY_ARRAY;
   }
   /** Replace this occurrence's external issues; a non-root write also replaces the root list's issues at this path. */
   setExternalErrors(errors: readonly ValidationIssue[]) {

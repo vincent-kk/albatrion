@@ -1,10 +1,9 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
-
-/** Stable empty read shared by nodes with no external or validator issues. */
-const EMPTY_ISSUES: readonly ValidationIssue[] = Object.freeze([]);
 
 /**
  * Read a node's displayed external and validator issues without recomputing them.
@@ -16,7 +15,7 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
 ): readonly ValidationIssue[] => {
   const runtime = node.rootNode.runtime;
   if (node.detached)
-    return runtime.detachedReads?.get(node)?.errors ?? EMPTY_ISSUES;
+    return runtime.detachedReads?.get(node)?.errors ?? EMPTY_ARRAY;
   const external = runtime.nodeErrors?.get(node);
   const validation = runtime.validationErrors?.get(node);
 
@@ -38,7 +37,7 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
     return true;
   };
   if (!isIssues(external))
-    return isIssues(validation) ? validation : EMPTY_ISSUES;
+    return isIssues(validation) ? validation : EMPTY_ARRAY;
   if (!isIssues(validation)) return external;
   const cached = runtime.combinedErrors?.get(node);
   if (
