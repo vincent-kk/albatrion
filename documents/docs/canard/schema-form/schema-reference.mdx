@@ -122,7 +122,9 @@ The handler receives the source value separately; its context contains `dataPath
 
 ## Input resolution {#input-resolution}
 
-Schema selection uses `presentation.FieldInput`, then Form `fieldInputMap`, Form definitions, FormProvider definitions, and plugin definitions (including built-in fallbacks). A direct `FieldInput` on a composition component overrides that slot. Within definitions the first match wins. An inputType is a component-selection hint, not an HTML input type. A fieldInputMap key such as `/items/*/price` matches one segment per wildcard. Other nonempty map keys are also tried as regular expressions after exact matching (the absolute empty-name path is an exception); use an anchored pattern such as `^/profile/name$` when you need an exclusive path match.
+Schema selection uses `presentation.FieldInput`, then Form `fieldInputMap`, Form definitions, FormProvider definitions, and plugin definitions (including built-in fallbacks). A direct `FieldInput` on a composition component overrides that slot. Within definitions the first match wins. An inputType is a component-selection hint, not an HTML input type. A fieldInputMap key such as `/items/*/price` matches exactly one segment per `*`, including array indexes and object keys. Other nonempty map keys are also tried as regular expressions after exact matching (the absolute empty-name path is an exception); use an anchored pattern such as `^/profile/name$` when you need an exclusive path match.
+
+`**` is not a recursive wildcard. A key that cannot compile, such as `/**`, prevents the Form from loading; see [input-map configuration failures](./error-reference#occurrences).
 
 `FieldInputTestObject` accepts a single value or list for `type`, `schemaType`, `path`, `format`, and `inputType`, plus boolean `required` and `nullable`. Omitted conditions do not restrict matching. A virtual node has `type: 'virtual'` and `schemaType: undefined`; do not match `schemaType: 'virtual'`.
 

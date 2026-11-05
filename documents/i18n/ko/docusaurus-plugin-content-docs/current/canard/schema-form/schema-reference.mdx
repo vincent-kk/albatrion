@@ -122,7 +122,9 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 
 ## 입력 선택 {#input-resolution}
 
-스키마 입력은 `presentation.FieldInput`, Form `fieldInputMap`, Form 정의, FormProvider 정의, 플러그인 정의와 내장 fallback 순으로 선택합니다. 조합 컴포넌트의 직접 `FieldInput`은 해당 슬롯을 덮어씁니다. 정의 목록에서는 첫 match를 사용합니다. inputType은 HTML input type이 아니라 컴포넌트 선택 hint입니다. fieldInputMap의 `/items/*/price` 같은 키는 wildcard마다 segment 하나를 매칭합니다. 다른 비어 있지 않은 map 키는 exact match 후 정규식으로도 검사하며 절대 빈 이름 경로는 예외입니다. 한 경로만 매칭하려면 `^/profile/name$`처럼 anchor를 사용하십시오.
+스키마 입력은 `presentation.FieldInput`, Form `fieldInputMap`, Form 정의, FormProvider 정의, 플러그인 정의와 내장 fallback 순으로 선택합니다. 조합 컴포넌트의 직접 `FieldInput`은 해당 슬롯을 덮어씁니다. 정의 목록에서는 첫 match를 사용합니다. inputType은 HTML input type이 아니라 컴포넌트 선택 hint입니다. fieldInputMap의 `/items/*/price` 같은 키는 `*`마다 배열 index와 객체 키를 포함한 segment 정확히 하나를 매칭합니다. 다른 비어 있지 않은 map 키는 exact match 후 정규식으로도 검사하며 절대 빈 이름 경로는 예외입니다. 한 경로만 매칭하려면 `^/profile/name$`처럼 anchor를 사용하십시오.
+
+`**`는 재귀 wildcard가 아닙니다. `/**`처럼 컴파일할 수 없는 키는 Form 로드를 막으며 [입력 map 구성 실패](./error-reference#occurrences)를 참조하십시오.
 
 `FieldInputTestObject`의 `type`, `schemaType`, `path`, `format`, `inputType`은 단일값 또는 목록을 받고 `required`, `nullable`은 boolean입니다. 생략한 조건은 제한하지 않습니다. virtual 노드는 `type: 'virtual'`, `schemaType: undefined`이며 `schemaType: 'virtual'`로 매칭하지 않습니다.
 
