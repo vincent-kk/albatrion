@@ -1,39 +1,30 @@
-# schema-form/src/errors
+# errors
 
 ## Purpose
 
-schema-form 도메인 에러 클래스와 패키지 전체의 오류·경고 코드 enum과 기록 형을 소유한다. 모든 에러 클래스는 `@winglet/common-utils/error`의 `BaseError`를 상속하여 일관된 에러 구조를 제공한다(ERROR-017·031·164).
+폼 오류·경고·입력 판정의 분류와 공개 코드, 도메인 오류 객체·관찰 기록의 데이터 계약을 소유합니다. 전달과 복구는 사건을 실행한 모듈에 남깁니다.
 
 ## Conventions
 
-- 각 에러 클래스는 `(code: <클래스>Code, message: string, details: ErrorDetails)` 생성자 패턴을 따르며, `code`는 `FormErrorCode` 중 그 클래스 그룹의 그룹 한정 값만 받는다(`SchemaFormErrorCode` 등)
-- 오류·경고 코드의 정본은 `constants/`의 object enum `FormErrorCode`·`FormWarningCode` 둘이며 키는 맨 이름의 PascalCase, 값은 실제로 발생하는 그룹 한정 문자열
-- 각 에러 클래스와 함께 `is*Error(error): error is XxxError` 타입 가드 함수를 제공한다
-- `this.name`은 클래스가 속한 그룹 상수 값(`JSON_SCHEMA_ERROR` 등)으로 설정한다.
-- `details` 에 디버깅에 필요한 컨텍스트 정보(jsonSchema, path, plugin 등)를 담는다
+- 코드 문자열은 소비자가 비교하는 공개 약속이므로 내부 구성과 독립적으로 보존합니다.
+- 오류와 경고는 사건 뒤에도 폼의 계약이 지켜지는지를 기준으로 가릅니다.
+- 도메인 오류는 공통 BaseError 구조를 사용하여 객체와 기록의 코드 해석이 어긋나지 않게 합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Delivered occurrence records require an operation origin; pending origin and delivery policy remain owned by write.
-
-- 새 에러 클래스를 추가할 때는 `BaseError`를 상속하고 `is*Error` 타입 가드를 함께 제공한다
-- `index.ts` 에 새 에러를 이름으로 나열해 넣는다
-- `details` 객체에 에러를 재현하는 데 필요한 컨텍스트를 충분히 담는다
-- 코드 enum과 기록·보고기 형은 데이터로만 두고 사슬 끝 전달·묶음은 `engine/write`가 맡는다(ERROR-004·005·029, LANDING-084).
+- 입력 판정과 폼·검증기의 실행 실패를 분리합니다.
+- 전달 기록의 origin을 발생 연산으로 해석하고, 상세와 위치의 의미를 보존합니다.
+- 새 진단의 level·상세·호환성 판단을 DETAIL의 분류 기준으로 확인합니다.
 
 ### Ask first
 
-- 기존 코드의 값 문자열을 바꾸는 경우 (외부에서 `error.code`를 비교하는 코드에 영향)
-- `BaseError` 상속 구조를 따르지 않는 에러 클래스를 도입하는 경우
+- 기존 코드 문자열을 변경·삭제하거나 공개 기록·reason의 의미를 바꿀 때.
+- 공통 오류 상속 구조를 따르지 않는 도메인 오류를 도입할 때.
 
 ### Never do
 
-- 에러 클래스에 비즈니스 로직을 추가하지 않는다 (순수한 에러 데이터 컨테이너여야 한다)
-- `details` 에 민감한 사용자 데이터를 담지 않는다
-- `Error` 를 직접 상속해 새 에러를 만들지 않는다 (반드시 `BaseError` 를 거쳐야 한다)
-
-## Dependencies
-
-- `@winglet/common-utils/error` — `BaseError`, `ErrorDetails`
+- 클래스·상수·형에 보고 사슬, 중복 억제, 검증 재시도나 폼 복구를 구현하지 않습니다.
+- 입력 검증 결과를 폼 장애 기록으로 바꾸지 않습니다.
+- 오류 상세가 자동으로 마스킹된다고 가정하지 않습니다.
