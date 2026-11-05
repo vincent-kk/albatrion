@@ -9,7 +9,7 @@
 - TypeScript와 React(TSX)로 작성한 내부 전용 모듈로, `FieldProxy`에서만 사용한다. `createFieldInputBridge`는 React 컴포넌트가 아니라 팩토리 함수이며 클로저로 node를 붙잡는다.
 - `HANDLE_CHANGE_OPTION`은 `Replace | Propagate | EmitChange | PublishUpdateEvent`이며 사용자 입력의 기본값이다.
 - FieldInput 선택 우선순위: InlineFieldInput → FieldInputMap → FieldInputDefinitions → ExternalFieldInputDefinitions → PluginManager fallback
-- `useFieldInputControl`은 `RequestRefresh`에서 version을 올리고(key가 바뀐다), `RequestFocus`에서 DOM focus를, `RequestSelect`에서 DOM select를 실행한다.
+- `useFieldInputControl`은 적용 Refresh 세대와 입력 추적을, `useFieldLifecycle`은 유일한 입력 layout effect와 명령·예약 행동을 소유합니다. effect를 더하면 일반 입력 쓰기의 고정 비용이 깨집니다.
 
 ## Boundaries
 

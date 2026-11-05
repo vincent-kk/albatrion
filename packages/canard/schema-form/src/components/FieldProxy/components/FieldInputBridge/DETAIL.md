@@ -11,7 +11,7 @@ ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵
 - `createFieldInputBridge`만 `FieldNode | Nullish`를 받아 양쪽 부재에서 동일한 공유 `NULL_FUNCTION`을 반환한다. 실제 브리지(`FieldInputBridge`)와 `FieldInputProps.node`는 필수 노드로 작업하므로 부재 검사를 사용자 입력 구현에 전파하지 않는다. 구독 훅이 부재를 다루는 방식은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
-- input도 renderer와 동일한 순수 이력 조건을 사용하며 enabled/live가 거짓이면 reveal을 읽지 않는다. held일 때만 동일 렌더 release version으로 passive 구독자를 기존 FieldInput 다음 자리에 마운트한다. useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch를 반환하며 표시 release와 composition 종료가 같은 reducer를 재사용한다. user-input batch 안 edited 설정과 resetInteraction clear는 한 write sequence로 합치며 live cleared state를 따른다. mount layout은2회·ordinary write0회다.
+- input도 renderer와 동일한 순수 이력 조건을 사용하며 enabled/live가 거짓이면 reveal을 읽지 않는다. held일 때만 동일 렌더 release version으로 passive 구독자를 기존 FieldInput 다음 자리에 마운트한다. useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch와 마지막 stable releaseComposition을 반환하며 표시 release와 composition 종료가 같은 reducer를 재사용한다. user-input batch 안 edited 설정과 resetInteraction clear는 한 write sequence로 합치며 live cleared state를 따른다. mount layout은2회·ordinary write0회다.
 
 - 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버에서 렌더한 자식과 동일한 구성을 하이드레이션에서 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. 기존 입력 commit layout effect에서 하이드레이션 커밋을 ref로 기록하여 passive 일관성 검사가 null을 유지하게 하며, 하이드레이션 완료만으로 브리지나 사용자 브랜치 입력을 다시 렌더하지 않습니다. 이후 실제 자식 변경 렌더는 폼 매니저를 적용합니다. Provider의 문맥 값은 바꾸지 않습니다.
 - 폼 매니저가 있고 실제 브리지가 커밋하면 기존 입력 commit layout effect에서 브리지 자신의 노드를 노출 원장에 기록합니다. 팩토리가 반환한 자식 컴포넌트만 커밋하고 비활성·숨김 노드가 실제 브리지를 만들지 않은 경우에는 기록하지 않습니다. 하이드레이션, eager window, 문턱 미만 마운트 모두 포함합니다. 이후 remount·isPresent 전환으로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.
@@ -28,7 +28,7 @@ ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵
 - 통합 tracker의 스냅숏 getter는 Refresh 유예가 없으면 `node.revision(INPUT_TRACKING_EVENTS)`를 한 번 읽습니다. 유예 중에는 모듈 상수로 분리한 Refresh 제외 마스크의 개정과 적용 세대 `generation.current`를 더합니다. `revision(mask)`는 선택한 비트별 전달 횟수를 합한 값이므로, 유예가 없을 때 통합해서 읽은 값은 분리해서 읽은 두 값의 합과 같습니다. 적용 세대는 렌더에서 따로 읽으며, 자식이 소유한 유예 비트, IME 억제, 구독 전 catch-up 계약은 그대로 유지합니다.
 - 통합 tracker는 리스너를 붙인 직후 React에 스냅숏 검사를 요청합니다. 마지막 렌더의 revision이 같아서 React 19 Activity 재연결에 자체 스냅숏 검사가 없어도 숨김 동안의 개정을 따라잡고, 마운트된 자식 프록시가 없으면 적용 세대·입력 key·defaultValue를 현재 값으로 갱신합니다. 검사는 연결마다 O(1) 개정 읽기와 비교를 더하며, 구독·effect·보유 객체나 일반 쓰기의 연산은 늘지 않습니다. 노드 사건이나 공개 콜백을 재생하지 않습니다.
 - 입력의 `compositionstart`부터 `compositionend`까지는 다시 마운트가 필요한 Refresh를 보류합니다. 조합 중에는 Refresh가 입력 DOM을 교체하거나 값을 복원하지 않으며, 중복 요청은 하나로 모아서 `compositionend`에서 적용합니다. 노드의 Refresh 번호와 동기 통지는 바로 진행하므로, 이전 입력에서 뒤늦게 온 조합 완료 콜백이나 변경 콜백은 번호 검사로 버립니다. 조합 중에 Refresh가 없었다면 완료된 텍스트는 평소처럼 노드에 전달합니다(EVENT-065, REACT-024).
-- React가 Activity 또는 Suspense로 입력의 layout effect를 해제하면 해당 조합의 Refresh 보류도 끝납니다. 숨김 동안 끝 이벤트가 오지 않아도 재연결한 입력은 현재 노드 값과 Refresh 세대를 따라잡으며, 활성 조합과 마운트된 자식의 보류는 유지합니다. 기존 layout 정리에 비트 해제 한 번과 cleanup 클로저 하나를 더하므로 필드당 시간·메모리 비용은 O(1)이고 구독·effect·ref는 늘지 않습니다.
+- React가 Activity 또는 Suspense로 입력의 layout effect를 해제하면 해당 조합의 Refresh 보류도 끝납니다. 숨김 동안 끝 이벤트가 오지 않아도 재연결한 입력은 현재 노드 값과 Refresh 세대를 따라잡으며, 활성 조합과 마운트된 자식의 보류는 유지합니다. useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 입력 제어와 수명 처리가 분리되고 별도 effect는 필요하지 않습니다.
 - `useFieldInput`의 메모 의존에는 유효한 `jsonSchema` 참조가 들어갑니다. `FieldInputHint`는 `{ type: node.type, schemaType: node.schemaType, nullable: node.nullable, path, required, jsonSchema, format, inputType }`이며, 입력 props에 같은 이름이 있으면 같은 값입니다. `schemaType`은 integer와 union 목록을 보존하고, 입력 props에는 `misfit`과 `watchValues`도 전달합니다(REACT-012·032, LANDING-137·181·185).
 - 객체 시험의 키는 `type`·`schemaType`·`path`·`required`·`nullable`·`format`·`inputType`입니다. 모르는 키는 대조에서 빼고, `type`이 integer인 경우도 무효 시험으로 다룹니다. 개발 모드의 `FORM_TYPE_TEST_INVALID`는 정의마다 한 번 보고합니다. union은 `{ type: 'union' }` 또는 함수 시험으로 선택합니다(REACT-032·033).
 - 터미널 입력의 `ChildFields`는 빈 배열입니다. 개발 모드(`process.env.NODE_ENV !== 'production'`)에서 object·array 노드가 인라인 입력 때문에 터미널이 된 경우에만(`hooks/utils/isDetectableTerminal`) 읽기를 감지하는 동결 빈 배열을 전달합니다. 이 배열은 첫 색인, length, 순회 읽기를 `CHILD_NODE_COMPONENTS_ON_TERMINAL`로 기록합니다. 보고는 필드 커밋 뒤 입력의 focus/select layout effect가 가장 먼저 호출하는 커밋 표시에서 하고, 로드마다 `(code, path)` 기준으로 한 번만 전달합니다. 프로덕션이거나 원래부터 터미널인 노드(string·number·boolean·null·union)는 오류 핸들러가 있어도 보통의 빈 배열을 받습니다. 컨테이너 입력이라면 자식을 그렸을 스키마에서만 빈 목록을 읽는 것이 실수이기 때문입니다(ERROR-202, 18C-73, 180라운드).
@@ -37,6 +37,15 @@ ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵
 - 재귀 NodeProxy의 props는 `FieldProxy`가 소유한 `FieldProxyProps` 계약을 타입 전용 import로 읽으며, 입력 계층은 FieldProxy 구현을 값으로 의존하지 않습니다.
 
 - 팩토리 `createFieldInputBridge`는 컴포넌트가 아니라 컴포넌트를 반환하는 함수이므로 `utils/`에 두고, 뿌리에는 같은 이름의 구현인 `FieldInputBridge.tsx`만 둡니다. 뿌리에는 문서, 진입점, 형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
+### 라이프사이클 시점
+
+- 위치는 입력 컨테이너가 있는 브리지 인스턴스입니다. 입력이 없어 null을 반환하는 브리지는 시점을 발행하지 않습니다. 유일한 layout effect는 useFieldLifecycle이 소유하며 터미널 자식 커밋, hydration 표시, 노출 기록, 가상화 입력 등록, 명령 구독 뒤 Mount와 Render를 실행합니다. cleanup은 committed를 지우고 조합·구독·입력 등록을 정리한 뒤 Unmount를 실행합니다.
+- effect 함수는 같은 의존성으로 useCallback에 고정합니다. 마지막 실행 함수와 같은 StrictMode 재실행·Activity 재표시는 Mount와 Render를 소비하지 않습니다. 숨겨진 동안 의존성이 바뀌면 재표시가 새 Mount입니다. Unmount는 cleanup에서 실행되므로 StrictMode 재실행과 Activity 숨김에도 실행되며 행동은 무시합니다.
+- 한 커밋의 Render는 Mount 뒤 한 번입니다. 다른 커밋은 committed이고 Render 예약이 있는 위치에만 감지 컴포넌트를 렌더합니다. 의존성 변경의 mutation cleanup이 committed를 지워 자식 감지기가 Mount보다 먼저 실행하지 못하게 합니다. 감지기 자신의 effect 재실행도 같은 함수 비교로 막습니다.
+- 예약만으로 렌더하지 않으며 같은 노드의 여러 위치는 커밋 순서상 먼저 실행한 위치가 큐를 가져갑니다. 한 시점의 행동은 합쳐 컨테이너에 한 번 실행하고 Focus 다음 Select 순서를 지킵니다.
+- 오류는 FormRoot의 던지지 않는 보고기로 보내 나머지 예약과 입력 트리를 유지합니다. 큐 의미는 [fieldLifecycle](../../../../helpers/fieldLifecycle/DETAIL.md)의 계약을 따릅니다.
+- 빈 경로에는 Context 읽기 하나, ref 둘, 안정된 callback 둘과 비트 확인이 늘고 새 effect·노드 리스너는 없습니다. Render 감지기의 호출과 effect는 해당 노드 예약이 있을 때만 발생합니다. 가상화 입력 Map 쓰기는 마운트·정리에만 있습니다.
 
 ## Acceptance Criteria
 

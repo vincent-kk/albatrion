@@ -1,17 +1,13 @@
 import {
   type RefObject,
   useCallback,
-  useLayoutEffect,
   useRef,
   useSyncExternalStore,
 } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
-import type { Nullable } from '@aileron/declare';
-
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
-import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
 
@@ -33,13 +29,11 @@ const CLEAR_COMPOSING_MASK = ~COMPOSING;
 const MOUNTED_CHILDREN = 2;
 
 /**
- * Controls rendering and focus/select behavior for field inputs based on FieldNode events.
+ * Controls rendering and composition deferral for field inputs based on FieldNode events.
  *
  * Event Handling:
  * - `REACTIVE_RERENDERING_EVENTS | UpdateChildren`: Re-renders the caller through the shared snapshot
  * - `RequestRefresh`: Tracks the node revision, deferring replacement until composition ends
- * - `RequestFocus`: Focuses the first focusable element (input, textarea, select, button) in container
- * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
  *
  * Usage in FieldInputBridge:
  * - The returned generation keys the input and captures its current value.
@@ -54,20 +48,11 @@ const MOUNTED_CHILDREN = 2;
  *
  * @param node - The FieldNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
- * @param commitTerminalChildren - Commit marker from `useTerminalChildren`; the focus/select layout
- *        effect calls it first, so the input keeps a single layout effect of its own
- * @param hydrationCommitRef - Hydration detector to settle in that same layout
- *        effect before React checks the server snapshot in its passive phase
- * @param virtualizationManager - Records this slot's node only when a real
- *        input is present; hidden proxies and placeholders never own this commit
- * @returns Container ref, input key, composition handlers and stable re-render dispatch shared with held-display releases
+ * @returns Container ref, input key, composition handlers and stable re-render dispatch shared with held-display releases, and composition cleanup
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
-  commitTerminalChildren: () => void,
-  hydrationCommitRef?: RefObject<boolean>,
-  virtualizationManager?: VirtualizationManager | null,
 ) => {
   const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
 
@@ -117,66 +102,15 @@ export const useFieldInputControl = <Node extends FieldNode>(
     )
       update();
   }, [mountedChildren, node, update]);
-  useLayoutEffect(() => {
-    commitTerminalChildren();
-    if (hydrationCommitRef) hydrationCommitRef.current = true;
-    virtualizationManager?.markRevealed(node);
-    if (!node) return;
-    const unsubscribe = node.subscribe(({ type }) => {
-      if (type & FieldNodeEventType.RequestFocus)
-        queryElement(ref.current, FOCUS_SELECTOR)?.focus();
-      if (type & FieldNodeEventType.RequestSelect) {
-        const element = queryElement(
-          ref.current,
-          SELECT_SELECTOR,
-        ) as SelectableElement;
-        if (element && typeof element.select === 'function') element.select();
-      }
-    });
-    return () => {
-      refreshDeferral.current &= CLEAR_COMPOSING_MASK;
-      unsubscribe();
-    };
-  }, [
-    node,
-    ref,
-    commitTerminalChildren,
-    hydrationCommitRef,
-    virtualizationManager,
-  ]);
+  const releaseComposition = useCallback(() => {
+    refreshDeferral.current &= CLEAR_COMPOSING_MASK;
+  }, []);
   return [
     ref,
     generation.current,
     handleCompositionStart,
     handleCompositionEnd,
     update,
+    releaseComposition,
   ] as const;
-};
-
-/** Focus targets, in document order: every native control, `<select>` included. */
-const FOCUS_SELECTOR = 'input, textarea, select, button' as const;
-
-/** Select targets: only controls whose text `select()` can select, so a leading button or `<select>` is passed over. */
-const SELECT_SELECTOR = 'input, textarea' as const;
-
-/** Elements whose text `select()` can select. */
-type SelectableElement = HTMLInputElement | HTMLTextAreaElement;
-/** Elements a Focus or Select request can reach. */
-type FocusableElement =
-  | SelectableElement
-  | HTMLSelectElement
-  | HTMLButtonElement;
-
-/**
- * Find the first element matching a request's selector inside an input container.
- * @param container - The slot's container element; null before mount.
- * @param selector - {@link FOCUS_SELECTOR} or {@link SELECT_SELECTOR}.
- * @returns The first match in document order, or null.
- */
-const queryElement = (
-  container: Nullable<HTMLElement>,
-  selector: string,
-): Nullable<FocusableElement> => {
-  if (!container) return null;
-  return container.querySelector<FocusableElement>(selector) ?? null;
 };

@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+
 import type { FieldNode } from '@/schema-form/core';
 import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
 import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
@@ -81,6 +83,9 @@ const createManager = (options?: Partial<ResolvedVirtualizationOptions>) =>
 const createElements = (count: number) =>
   Array.from({ length: count }, () => document.createElement('div'));
 
+/** Real field identity carried by every registered test gate. */
+const node = nodeFromJSONSchema({ jsonSchema: { type: 'string' } });
+
 describe('VirtualizationManager', () => {
   beforeEach(() => {
     MockIntersectionObserver.instances = [];
@@ -96,8 +101,8 @@ describe('VirtualizationManager', () => {
   it('creates one shared observer with the configured rootMargin and observes registered elements', () => {
     const manager = createManager({ rootMargin: '50%' });
     const [first, second] = createElements(2);
-    manager.register(first, vi.fn());
-    manager.register(second, vi.fn());
+    manager.register(first, { node, reveal: vi.fn() });
+    manager.register(second, { node, reveal: vi.fn() });
     expect(MockIntersectionObserver.instances).toHaveLength(1);
     const observer = MockIntersectionObserver.instances[0];
     expect(observer.options?.rootMargin).toBe('50%');
@@ -109,7 +114,7 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const [element] = createElements(1);
     const reveal = vi.fn();
-    manager.register(element, reveal);
+    manager.register(element, { node, reveal: reveal });
     const observer = MockIntersectionObserver.instances[0];
     observer.intersect(element);
     observer.intersect(element);
@@ -122,8 +127,8 @@ describe('VirtualizationManager', () => {
     const [element] = createElements(1);
     const stale = vi.fn();
     const fresh = vi.fn();
-    manager.register(element, stale);
-    manager.register(element, fresh);
+    manager.register(element, { node, reveal: stale });
+    manager.register(element, { node, reveal: fresh });
     MockIntersectionObserver.instances[0].intersect(element);
     expect(stale).not.toHaveBeenCalled();
     expect(fresh).toHaveBeenCalledTimes(1);
@@ -132,7 +137,7 @@ describe('VirtualizationManager', () => {
   it('unregister is idempotent and safe for unknown or already revealed elements', () => {
     const manager = createManager();
     const [registered, unknown] = createElements(2);
-    manager.register(registered, vi.fn());
+    manager.register(registered, { node, reveal: vi.fn() });
     expect(() => {
       manager.unregister(unknown);
       manager.unregister(registered);
@@ -145,9 +150,9 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const [element] = createElements(1);
     const reveal = vi.fn();
-    manager.register(element, reveal);
+    manager.register(element, { node, reveal: reveal });
     manager.unregister(element);
-    manager.register(element, reveal);
+    manager.register(element, { node, reveal: reveal });
     const observer = MockIntersectionObserver.instances[0];
     expect(observer.observed.has(element)).toBe(true);
     observer.intersect(element);
@@ -170,7 +175,7 @@ describe('VirtualizationManager', () => {
     const elements = createElements(30);
     const order: number[] = [];
     elements.forEach((element, index) =>
-      manager.register(element, () => order.push(index)),
+      manager.register(element, { node, reveal: () => order.push(index) }),
     );
     flushIdle();
     expect(order).toEqual(Array.from({ length: 25 }, (_, index) => index));
@@ -183,7 +188,7 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const elements = createElements(10);
     const reveal = vi.fn();
-    elements.forEach((element) => manager.register(element, reveal));
+    elements.forEach((element) => manager.register(element, { node, reveal: reveal }));
     let remaining = 3;
     flushIdle({ timeRemaining: () => (remaining-- > 0 ? 10 : 0) });
     expect(reveal.mock.calls.length).toBeLessThan(10);
@@ -195,14 +200,14 @@ describe('VirtualizationManager', () => {
   it('backfill none never schedules idle work', () => {
     const manager = createManager({ backfill: VirtualizationBackfill.None });
     const elements = createElements(5);
-    elements.forEach((element) => manager.register(element, vi.fn()));
+    elements.forEach((element) => manager.register(element, { node, reveal: vi.fn() }));
     expect(idleQueue).toHaveLength(0);
   });
 
   it('stops the idle pump once the registry drains', () => {
     const manager = createManager();
     const [element] = createElements(1);
-    manager.register(element, vi.fn());
+    manager.register(element, { node, reveal: vi.fn() });
     flushIdle();
     expect(idleQueue).toHaveLength(0);
   });
@@ -211,7 +216,7 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const [element] = createElements(1);
     const reveal = vi.fn();
-    manager.register(element, reveal);
+    manager.register(element, { node, reveal: reveal });
     const observer = MockIntersectionObserver.instances[0];
     manager.disconnect();
     expect(idleQueue).toHaveLength(0);
@@ -224,10 +229,10 @@ describe('VirtualizationManager', () => {
   it('resumes after disconnect: a later register restarts observation and the idle pump', () => {
     const manager = createManager();
     const [first, second] = createElements(2);
-    manager.register(first, vi.fn());
+    manager.register(first, { node, reveal: vi.fn() });
     manager.disconnect();
     const reveal = vi.fn();
-    manager.register(second, reveal);
+    manager.register(second, { node, reveal: reveal });
     const observer = MockIntersectionObserver.instances[0];
     expect(observer.observed.has(second)).toBe(true);
     flushIdle();
@@ -240,7 +245,7 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const elements = createElements(3);
     const reveal = vi.fn();
-    elements.forEach((element) => manager.register(element, reveal));
+    elements.forEach((element) => manager.register(element, { node, reveal: reveal }));
     // The Safe scheduler binds the real setImmediate/setTimeout at module
     // load, so wait for an actual macrotask turn instead of faking timers.
     await new Promise((resolve) => setTimeout(resolve, 10));

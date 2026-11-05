@@ -7,7 +7,7 @@
 ## Conventions
 
 - React 런타임 의존은 사용자 Placeholder의 오류 경계와 전용 보고 훅에 한정합니다. 일반 필드 렌더링을 끌어들이면 helpers와 소비층의 의존 방향이 뒤집힙니다.
-- 옵션 의미는 [옵션 해석](./resolveVirtualizationOptions/DETAIL.md), 자원·노출 기록은 [매니저](./VirtualizationManager/DETAIL.md)가 소유하며 집계 진입점에 복제하지 않습니다.
+- 옵션 의미는 [옵션 해석](./resolveVirtualizationOptions/DETAIL.md), 자원·입력 컨테이너·렌더 경로의 노출 기록은 [매니저](./VirtualizationManager/DETAIL.md)가 소유하며 집계 진입점에 복제하지 않습니다.
 
 ## Boundaries
 
