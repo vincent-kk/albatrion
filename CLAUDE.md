@@ -35,14 +35,14 @@ All agent assets live under `.claude/`. The lists below are the complete invento
 
 ### Rules — `.claude/rules/`
 
-Declarative rules that apply at all times. Loaded at session start.
+Declarative rules. `filid_module-documents`, `filid_verification-records` and `seiri_test-validity` load only for files matching their `paths:` frontmatter; the others load at session start.
 
-| Family    | Files                                                                                                                                                                           |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seiri_*` | `agent-legible`, `code-comments`, `cognitive-discipline`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
-| `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                                              |
+| Family    | Files                                                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `seiri_*` | `agent-legible`, `code-comments`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
+| `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                      |
 
-Precedence: repository instructions (this document, per-package CLAUDE.md) > repository conventions > the rules above.
+Precedence: repository instructions (this document, `DOCUMENTATION.md`, per-package CLAUDE.md) > repository conventions > the rules above.
 
 ### Skills — `.claude/skills/`
 
@@ -72,6 +72,17 @@ Owner principles for every package that has adopted FCA (directories with `INTEN
 4. **Imports follow lineage.** Upward is open: a fractal may import its ancestors' organ files and root files directly. Downward is closed: a parent reaches a child fractal only through the child's `index.ts`. Sideways is closed: a non-lineage fractal is reached only through its own `index.ts`, like an external package. An organ has no `index.ts`; its files are imported directly, and an organ never imports a child fractal of its owner. A fractal never imports its own or an ancestor's `index.ts`.
 5. **Tests verify from inside.** A test lives in the fractal it verifies (its `__tests__/`) and imports that fractal's internal files directly, never through its own `index.ts`. Public-API tests that act as an external consumer sit in the package-level `src/__tests__/` and import the package entry point. The verification-file exemption in `filid_fractal-boundaries` §5 does not lift §3.
 6. **An unused root file or export is a defect**, on par with a broken feature. The "leave pre-existing dead code" allowance of `seiri_reuse-first` §3 does not apply to it: remove it or move it below the root.
+
+## 📝 Documentation
+
+`DOCUMENTATION.md` holds the principles for the documents within the scope it states, and nothing else restates them. If its text is not already in your context, read it before writing or editing a document.
+
+@DOCUMENTATION.md
+
+## 📏 Repository Requirements
+
+- For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
+- Keep build outputs out of source commits: run the designated builds and artifact checks, then commit regenerated runtime bundles and adapters in their own build commit.
 
 ## 🎯 Quick Reference for Claude Code
 
