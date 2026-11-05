@@ -13,6 +13,8 @@
 - `resolveReference(schema)`: 내부 `$ref`를 모두 인라인한 스키마를 동기로 반환하는 헬퍼다. 내부적으로 동기 스캐너를 두 번 구동한다.
 - `filters`가 재수출하는 함수들은 각각 `schema is <Type>Schema` 형태의 타입가드다.
 - 스키마 노드 타입과 값 추론 타입도 이름 그대로 재수출한다.
+- `InferValueType`은 정적으로 길이가 유한한 readonly `prefixItems` 튜플을 가변 값 튜플로 추론합니다. 위치별 형은 재귀 추론하며 각 위치는 optional입니다. `prefixItems`는 최소 길이를 보장하지 않으므로 `minItems`는 형 추론에 사용하지 않습니다.
+- 유한 접두부 뒤의 `items: false`는 rest를 없애고, 생략 또는 `true`는 `...any[]`, 스키마는 그 값 형의 rest를 붙입니다. 이는 `any[]`보다 좁은 형이므로 자유로운 위치·길이에 의존하는 소비자 코드는 컴파일 오류가 날 수 있습니다. 넓어진 배열·비리터럴 접두부, 접두부 없는 homogeneous `items`, 구식 `items` 배열과 `additionalItems`의 추론은 유지합니다.
 
 ## Acceptance Criteria
 
@@ -31,10 +33,14 @@
 - 방문자의 `enter`/`exit`가 각각 프로미스를 반환하면 `scan()`은 각 콜백이 완료될 때까지 순서대로 기다린 뒤 다음 단계로 진행한다(호출 순서로 검증).
 - `scan()` 이전의 `getValue()`는 `undefined`를 반환하고, 참조가 없는 스키마를 스캔한 뒤의 `getValue()`는 원본 스키마와 동일한 값을 반환한다.
 
-## History
+### value-tuples — 유한 접두부의 위치별 값 추론
 
-- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭 제거(breaking).
+- 닫힌 문자열·숫자 접두부는 `[string?, number?]`이며 빈 값·짧은 접두부를 허용하고 잘못된 위치와 초과 항목을 거부합니다. `minItems`는 이 형을 바꾸지 않습니다.
+- 열린 접두부는 임의 rest를, 형이 지정된 `items`는 접두부 이후에만 해당 rest를 허용합니다. 빈 접두부에도 같은 규칙을 적용합니다.
+- 중첩 배열·객체·nullable 위치와 rest를 재귀 추론하고, 객체의 optional·열린 속성 및 배열의 두 nullable 표기를 유지합니다.
+- mutable·readonly로 넓어진 배열, 길이가 무한한 variadic 접두부, 선택적 접두부 선언은 기존 `items` 추론으로 돌아갑니다.
+- 접두부 없는 homogeneous 배열과 구식 튜플 추론은 바뀌지 않습니다.
 
 ## Last Updated
 
-2026-09-19 — 0.16.0 공개 별칭 제거 반영
+공개 순회·참조 해석·스키마 및 값 타입 계약이 바뀔 때 갱신합니다.

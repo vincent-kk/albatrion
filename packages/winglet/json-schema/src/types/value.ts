@@ -61,12 +61,30 @@ type InferPropertyValue<T> = T extends { type?: any }
   : AnyValue;
 
 /**
- * Infers an array schema's value type from `items`.
+ * Infers homogeneous items or the rest after a finite prefix.
  * Falls back to ArrayValue when `items` is absent.
  */
-type InferArrayValue<T> = T extends { items: infer Items }
+type InferArrayItems<T> = T extends { items: infer Items }
   ? InferPropertyValue<Items>[]
   : ArrayValue;
+
+/** Infers mutable optional positions because prefixItems sets no minimum length. */
+type InferPrefixItems<PrefixItems extends readonly unknown[]> = {
+  -readonly [Index in keyof PrefixItems]?: InferPropertyValue<
+    PrefixItems[Index]
+  >;
+};
+
+/** Infers finite prefix tuples and preserves items inference for widened arrays. */
+type InferArrayValue<T> = T extends {
+  prefixItems: infer PrefixItems extends readonly unknown[];
+}
+  ? number extends PrefixItems['length']
+    ? InferArrayItems<T>
+    : T extends { items: false }
+      ? InferPrefixItems<PrefixItems>
+      : [...InferPrefixItems<PrefixItems>, ...InferArrayItems<T>]
+  : InferArrayItems<T>;
 
 /**
  * Helper type to shape a schema's declared `properties`.
@@ -128,7 +146,7 @@ type InferNonNullableValueType<T, Type> = Type extends 'string'
  * - For the officially supported OpenAPI 3.0 `nullable: true`, also returns the value type | null
  * - For single-member arrays (e.g., ['string']), unwraps to the member's value type
  * - For pure null type, returns NullValue
- * - For 'object'/'array', recurses into `properties`/`items` when they are literal
+ * - For 'object'/'array', recurses into literal `properties`/`prefixItems`/`items`
  *   (i.e. the schema is `as const`); otherwise falls back to ObjectValue/ArrayValue
  *
  * `nullable: true` is the officially supported OpenAPI 3.0 compatible notation,

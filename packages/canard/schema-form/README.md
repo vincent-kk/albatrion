@@ -2570,7 +2570,7 @@ Deferred inputs are unavailable to find-in-page, screen readers, and browser aut
 
 Apply `as const` to the schema — without it, `type: 'object'` widens to `string` and inference falls back to `any`.
 
-With `as const`, `InferValueType` walks `properties` and `items`, so declared fields get real types:
+With `as const`, `InferValueType` walks `properties`, finite `prefixItems` tuples and `items`, so declared fields get real types:
 
 ```typescript
 const jsonSchema = {
@@ -2586,11 +2586,14 @@ type Value = InferValueType<typeof jsonSchema>;
 // { name?: string; tags?: string[] } & Record<string, any>
 ```
 
-Two properties of that result are deliberate:
+The inferred value follows these rules:
 
 - **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `controls.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
 - **The object stays open** unless the schema sets `additionalProperties: false`, which is the JSON Schema default. This is what keeps keys contributed by `oneOf`/`anyOf` branches, `if`/`then`/`else`, and `patternProperties` from being rejected as excess properties. Set `additionalProperties: false` and the inferred type closes, so typos are caught.
 - **Nullable schemas add `| null`.** Both the type array (`type: ['string', 'null']`) and the `nullable: true` keyword yield `T | null`, since the runtime accepts `null` for a nullable node. A type that rejected `null` would fail to compile a `setValue({ field: null })` the form accepts.
+- **Finite `prefixItems` tuples keep their positions optional.** A string/number prefix with `items: false` infers `[string?, number?]`; omitted or `true` items add `...any[]`, and `items: { type: 'boolean' }` adds `...boolean[]`. Values are mutable, and empty or shorter prefixes are allowed because `prefixItems` imposes no minimum length. Inference does not use `minItems`. Widened or non-literal prefixes retain the existing `items` fallback; legacy `items` arrays with `additionalItems` receive no tuple inference.
+
+Finite-prefix inference narrows `any[]`, so consumers relying on unrestricted positions or extra items can see new compile errors. Use values matching the prefix and rest schemas, or supply an explicit value type when your application needs a different contract.
 
 `nullable: true` is the OpenAPI 3.0 compatible notation and is officially supported. It is equivalent to adding `'null'` to `type`: `{ type: 'string', nullable: true }` means `{ type: ['string', 'null'] }`. No warning or error is raised for this notation.
 

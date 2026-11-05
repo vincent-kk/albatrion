@@ -21,6 +21,7 @@
 - 공개 `RolledInferJSONSchema`(재수출 이름 `InferJSONSchema`)는 사용자가 작성하는 스키마를 값 형에서 추론합니다. 내부 `InferFieldInputSchema`(`field/`)는 virtual 노드와 여러 종류의 합집합 스키마까지 아는 입력 추론으로, `FieldInputProps` 계열만 씁니다. 작성 쪽 형과 내부 형을 가를 때 이 구분이 기준입니다.
 - 형제 fractal에서 오는 형은 `@/schema-form/core`·`@/schema-form/components/FieldProxy` 관문의 `import type`입니다. 이 형들을 쓰는 형제도 이 fractal의 index를 쓰므로 형 수준의 상호 참조가 있으나 런타임 순환은 없습니다.
 - `core`는 값 형 `InferValueType` 하나를 이 fractal의 index로 가져옵니다.
+- 명시적 `type`의 값 추론은 `@winglet/json-schema`에 위임하므로 유한한 readonly `prefixItems`도 재귀 추론합니다. 위치는 최소 길이를 보장하지 않는 optional이며 `minItems`는 추론하지 않습니다. `items: false`는 닫힌 튜플, 생략·`true`는 임의 rest, 스키마는 형이 지정된 rest를 만듭니다. `any[]`보다 좁은 형이므로 자유로운 위치·길이에 의존하는 소비자 코드는 컴파일 오류가 날 수 있습니다.
 - 공개 Form 조각 형(`FormFieldProps`·`FormInputProps`·`FormRenderProps`)의 `Roll` 표현은 이 fractal이 아니라 `components/Form`이 소유합니다. 이 fractal에 두면 `types`와 `components/Form` 사이에 형 순환이 생기기 때문입니다.
 
 ## Acceptance Criteria
@@ -35,10 +36,13 @@
 - 공개 형이 내부 형의 변경을 반영하면서 `Roll` 변환을 유지합니다.
 - 공개 형을 참조해도 런타임 초기화나 상태가 생기지 않습니다.
 
-## History
+### value-tuples — 폼 값에 전달되는 튜플 추론
 
-- 2026-10-15(8단계 소유자 리뷰 1차, 332·337·338라운드): 형제 fractal `src/rolled`를 이 fractal의 `rolled/` 칸으로 강등해 합쳤습니다. 이전 역할 칸 `types/types`는 관심사별 칸 `schema/`·`field/`·`error/`로 나뉘었습니다. `rolled`가 형제였던 이유는 공개 이름 열여덟이 내부 형과 같아 한 관문에 함께 실을 수 없었기 때문이며, 공개 쪽에 `Rolled` 접두사를 붙이고 루트 index에서 이름을 바꿔 그 충돌을 없앴습니다. 정의 자리에서 `Roll`로 펴는 안은 스키마 형의 재귀 때문에 성립하지 않았습니다. `rolled`의 `form.ts`(Form 조각 형 셋)는 `components/Form`의 각 자식 fractal `types/` 칸으로 옮겼습니다.
+- `InferValueType`은 닫힌 문자열·숫자 접두부를 `[string?, number?]`로 전달하며 잘못된 위치·초과 항목을 거부합니다.
+- 기본 `FormHandle`의 읽기·쓰기 값과 `FormProps`의 `defaultValue`에 같은 위치·rest 형이 적용됩니다. 유효한 접두부와 boolean rest의 대입은 허용합니다.
+- 객체 속성의 optional·열린 형태, nullable, homogeneous 배열, virtual 값, inline `oneOf` 분기 처리와 명시적 `type`의 우선순위는 유지합니다.
+- 넓어진 배열·비리터럴 접두부와 구식 `items` 배열은 기반 패키지의 기존 폴백을 따릅니다.
 
 ## Last Updated
 
-계약 기준: 8단계 이동 묶음 1(2026-10-15), 모델 B1.
+공개 스키마·값·입력·렌더러 형의 계약이 바뀔 때 갱신합니다.
