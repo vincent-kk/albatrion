@@ -2,14 +2,14 @@
 
 ## 최종 상태 어휘 — NODE-067
 
-`FieldNodeState.Dirty`→`FieldNodeState.Edited`(bit 1), `ShowError.Dirty`→`ShowError.Edited`(bit 4), `ShowError.DirtyTouched`→`ShowError.EditedTouched`(bit 16), `required`→`isRequired`, `active`→`isActive`, `visible`→`isVisible`, `enabled`→`isPresent`, `readOnly`→`isReadOnly`, `disabled`→`isDisabled`, `misfit`→`isMisfit`로 바꾼다 (NODE-067).
+`FieldNodeState.Dirty`→`FieldNodeState.Edited`(bit 1), `ErrorVisibility.AfterEdit`→`ErrorVisibility.AfterEdit`(bit 4), `ErrorVisibility.AfterEditAndTouch`→`ErrorVisibility.AfterEditAndTouch`(bit 16), `required`→`isRequired`, `active`→`isActive`, `visible`→`isVisible`, `enabled`→`isPresent`, `readOnly`→`isReadOnly`, `disabled`→`isDisabled`, `misfit`→`isMisfit`로 바꾼다 (NODE-067).
 노드 boolean은 is 접두사를 쓰고 isRoot는 유지하며 record와 getter는 같은 이름이다 (NODE-067).
 React props·FieldInputHint·schema·controls 키와 재계산 dirty 어휘는 유지하고 옛 이름 별칭은 두지 않는다 (NODE-067).
 `isEdited`는 `!!state[FieldNodeState.Edited]`, `isTouched`는 `!!state[FieldNodeState.Touched]`이다 (NODE-067).
 사용자 입력만 Edited를 세우고 프로그램 setValue·배열 동사·fill·파생 쓰기·injectTo·unsetValue·trim은 세우지 않는다 (NODE-067).
 원래 값 복귀로 Edited가 지워지지 않으며 reset·clearSubtreeState·resetInteraction이 초기화한다 (NODE-067).
 detach 뒤 isEdited·isTouched는 마지막 커밋 상태를 유지하고 isDivergent는 isPresent·isActive처럼 현재 출력 기여를 설명하므로 false다 (NODE-067).
-ShowError의 기본 EditedTouched 정책과 비트 값은 유지하며 Submitted나 Divergent 조건을 더하지 않는다 (NODE-067).
+ErrorVisibility의 기본 EditedTouched 정책과 비트 값은 유지하며 Submitted나 Divergent 조건을 더하지 않는다 (NODE-067).
 근거는 원문 29–31·60·76–78이다 (NODE-067).
 
 ## 기준 출력 차이 — VALUE-044

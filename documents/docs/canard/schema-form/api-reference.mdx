@@ -3,38 +3,36 @@ sidebar_label: 'API Reference'
 sidebar_position: 6
 ---
 
-
-
 # API Reference
 
 Import consumer APIs from `@canard/schema-form`. Types inferred from callbacks can describe records that are not named package exports; do not import an implementation-only type by guessing its name.
 
 ## Form props {#form}
 
-| Prop | Use |
-| --- | --- |
-| `jsonSchema` | Required schema used on root load. |
-| `defaultValue` | Initial value read at root load; no controlled value prop. |
-| `onChange` | Synchronous output callback. |
-| `onSubmit` | Value callback after accepted submission; may return a promise. |
-| `onValidate` | Raw error-list changes; equal validation results are skipped. |
-| `onStateChange` | Whole-tree interaction aggregate changes. |
-| `onError` | Occurrence channel; see the error reference. |
-| `onDiagnosticsChange` | Root diagnostic changes after preparation; initial diagnostics are on handle.node. |
-| `readOnly / disabled` | Form-wide input locks, default false. |
-| `unsetOnInactive` | Default exit-removal policy, overridden by node controls. |
-| `disableAutomaticWrites` | Suppress automatic writes while allowing imperative writes. |
-| `errors` | External issues, reapplied on array-reference changes and reset. |
-| `showError / validationMode` | Policies described in Validation. |
-| `validatorFactory` | Complete validator object; see Validation. |
-| `FieldRenderer` | Group renderer for fields. |
-| `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | Composition renderers. |
-| `formatError` | Error-to-ReactNode formatter with a required node argument. |
-| `fieldInputDefinitions / fieldInputMap` | Ordered tests and path overrides; see input resolution. |
-| `virtualization` | Deferred input mounting, off by default. |
-| `context` | Live form context merged over provider context. |
-| `children` | Layout or function receiving node, jsonSchema, defaultValue, value, errors. |
-| `ref` | FormHandle for the current root. |
+| Prop                                                        | Use                                                                                |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `jsonSchema`                                                | Required schema used on root load.                                                 |
+| `defaultValue`                                              | Initial value read at root load; no controlled value prop.                         |
+| `onChange`                                                  | Synchronous output callback.                                                       |
+| `onSubmit`                                                  | Value callback after accepted submission; may return a promise.                    |
+| `onValidate`                                                | Raw error-list changes; equal validation results are skipped.                      |
+| `onStateChange`                                             | Whole-tree interaction aggregate changes.                                          |
+| `onError`                                                   | Occurrence channel; see the error reference.                                       |
+| `onDiagnosticsChange`                                       | Root diagnostic changes after preparation; initial diagnostics are on handle.node. |
+| `readOnly / disabled`                                       | Form-wide input locks, default false.                                              |
+| `unsetOnInactive`                                           | Default exit-removal policy, overridden by node controls.                          |
+| `disableAutomaticWrites`                                    | Suppress automatic writes while allowing imperative writes.                        |
+| `errors`                                                    | External issues, reapplied on array-reference changes and reset.                   |
+| `errorVisibility / validationMode`                          | Policies described in Validation.                                                  |
+| `validatorFactory`                                          | Complete validator object; see Validation.                                         |
+| `FieldRenderer`                                             | Group renderer for fields.                                                         |
+| `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | Composition renderers.                                                             |
+| `formatError`                                               | Error-to-ReactNode formatter with a required node argument.                        |
+| `fieldInputDefinitions / fieldInputMap`                     | Ordered tests and path overrides; see input resolution.                            |
+| `virtualization`                                            | Deferred input mounting, off by default.                                           |
+| `context`                                                   | Live form context merged over provider context.                                    |
+| `children`                                                  | Layout or function receiving node, jsonSchema, defaultValue, value, errors.        |
+| `ref`                                                       | FormHandle for the current root.                                                   |
 
 See [rendering](./core-concepts#rendering), [input resolution](./schema-reference#input-resolution), [validation](./validation), and [error reporting](./error-reference#occurrences) for the conditions behind these props.
 
@@ -48,23 +46,23 @@ Changing the `validatorFactory` reference rebuilds the Form tree, so use a stabl
 
 Neither `reset()` nor `rebuild()` replaces the mount-time input map. A [failed input-map configuration](./error-reference#occurrences) remains fatal; correct the map and remount the Form to recover.
 
-`validationMode` is selected when the tree is created. Changing the Form prop does not update the existing tree's mode. After the changed prop commits, call `handle.rebuild()` or remount the Form, for example by changing its React `key`. A `reset()` with the same schema and validator retains the tree and its mode. For the separate lifetime of the Form's `showError` policy and how to apply a new prop, see [error visibility](./validation#visibility).
+`validationMode` is selected when the tree is created. Changing the Form prop does not update the existing tree's mode. After the changed prop commits, call `handle.rebuild()` or remount the Form, for example by changing its React `key`. A `reset()` with the same schema and validator retains the tree and its mode. For the separate lifetime of the Form's `errorVisibility` policy and its live updates, see [error visibility](./validation#visibility).
 
 ## FormHandle {#form-handle}
 
-| Member | Use |
-| --- | --- |
-| `node` | Current root, undefined before mount. |
-| `getValue() / setValue(valueOrUpdater, options?)` | Read output / write the root. |
-| `findNode(path) / findNodes(path)` | First or all matching live nodes; no match returns null or [], respectively. |
-| `getState() / setState(flags) / clearState()` | Read aggregate flags / patch or clear the whole tree. |
-| `getErrors() / validate()` | Raw issues / a promise for a fresh verdict. |
-| `focus(path?) / select(path?)` | Request focus on the first input, textarea, select, or button in the node's input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
-| `refresh(path?) / remount(path?)` | Re-read committed input values / remount a rendered subtree. |
-| `reset(option?) / rebuild(option?)` | Root load operations described above. |
-| `showError(visible?)` | Display override; see Validation. |
-| `getAttachedFilesMap()` | Map&lt;string, File[]&gt;; see the file example. |
-| `submit()` | Promise-returning imperative submission; handler also exposes pending and subscribe. See [native and imperative submission](./error-reference#submission) for rejection and reveal behavior. |
+| Member                                            | Use                                                                                                                                                                                                                                                        |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `node`                                            | Current root, undefined before mount.                                                                                                                                                                                                                      |
+| `getValue() / setValue(valueOrUpdater, options?)` | Read output / write the root.                                                                                                                                                                                                                              |
+| `findNode(path) / findNodes(path)`                | First or all matching live nodes; no match returns null or [], respectively.                                                                                                                                                                               |
+| `getState() / setState(flags) / clearState()`     | Read aggregate flags / patch or clear the whole tree.                                                                                                                                                                                                      |
+| `getErrors() / validate()`                        | Raw issues / a promise for a fresh verdict.                                                                                                                                                                                                                |
+| `focus(path?) / select(path?)`                    | Request focus on the first input, textarea, select, or button in the node's input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
+| `refresh(path?) / remount(path?)`                 | Re-read committed input values / remount a rendered subtree.                                                                                                                                                                                               |
+| `reset(option?) / rebuild(option?)`               | Root load operations described above.                                                                                                                                                                                                                      |
+| `revealErrors()` / `resetErrorVisibility()`       | Display override; see Validation.                                                                                                                                                                                                                          |
+| `getAttachedFilesMap()`                           | Map&lt;string, File[]&gt;; see the file example.                                                                                                                                                                                                           |
+| `submit()`                                        | Promise-returning imperative submission; handler also exposes pending and subscribe. See [native and imperative submission](./error-reference#submission) for rejection and reveal behavior.                                                               |
 
 Focus/select/refresh/remount with no matching node do nothing. Before mount, `findNode` returns null, `findNodes`/`getErrors` return empty arrays, `validate()` resolves an empty array, and `getState()` returns an empty object. These empty query results do not establish a validation verdict.
 
@@ -94,7 +92,7 @@ The node prop is required in both FieldInputProps and FieldRendererProps.
 
 `SchemaFormPlugin` accepts renderer components, `fieldInputDefinitions`, `validator`, and `formatError`. Later registrations replace supplied renderer/validator/formatter fields and prepend input definitions. `registerPlugin(null)` resets plugin state to the built-in defaults. Registration affects configuration captured by subsequent mounts.
 
-`FormProvider` shares renderer defaults, input definitions, formatError, showError, validationMode, validatorFactory, and context within a subtree. Explicit Form props take precedence; Form context overlays provider context. Use the public name `FormProvider`. It has no `plugin` prop: pass renderer slots, `fieldInputDefinitions`, and `formatError` explicitly, and connect the plugin's validator with `validatorFactory={plugin.validator}`. For validator requirements see the [validator object contract](./validation#validator-contract).
+`FormProvider` shares renderer defaults, input definitions, formatError, errorVisibility, validationMode, validatorFactory, and context within a subtree. Explicit Form props take precedence; Form context overlays provider context. Use the public name `FormProvider`. It has no `plugin` prop: pass renderer slots, `fieldInputDefinitions`, and `formatError` explicitly, and connect the plugin's validator with `validatorFactory={plugin.validator}`. For validator requirements see the [validator object contract](./validation#validator-contract).
 
 ## Node values, state, and array operations {#nodes}
 
@@ -141,14 +139,14 @@ While the form is hidden, React detaches its ref, so `formRef.current` is null. 
 
 ## JSONPointer queries and expressions {#paths}
 
-| Token | Form query meaning |
-| --- | --- |
-| `#` | Absolute root |
-| Empty string | Current origin |
-| `/` or `#/` | Root's empty-name child |
-| `.` / `..` | Current / parent node |
-| `*` | Wildcard; find gives the first match and findNodes gives all |
-| `@` | Context expression token, not a queryable node; find returns null / findNodes returns [] |
+| Token        | Form query meaning                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| `#`          | Absolute root                                                                            |
+| Empty string | Current origin                                                                           |
+| `/` or `#/`  | Root's empty-name child                                                                  |
+| `.` / `..`   | Current / parent node                                                                    |
+| `*`          | Wildcard; find gives the first match and findNodes gives all                             |
+| `@`          | Context expression token, not a queryable node; find returns null / findNodes returns [] |
 
 In controls, `@.prop` and optional chaining read the live form context. A branch expression's `./` addresses host children; an ordinary node expression uses `../` to reach siblings through its parent. Calculate depth from the expression's origin.
 
@@ -162,13 +160,13 @@ Events deliver synchronously when the outermost public write ends, merging bits 
 
 `node.request` accepts one of `FieldNodeRequestType.Focus`, `Select`, `Refresh`, or `Remount` per call; do not combine these as a bit mask. `subscribe` returns cleanup and `revision(mask?)` reads the delivery revision.
 
-| Hook | Consumer contract |
-| --- | --- |
-| `useFormSubmit(ref)` | Returns submit and boolean-or-undefined pending; before binding submit resolves harmlessly. Catch rejection from event handlers. |
-| `useFieldNodeTracker(node: Node \| null \| undefined, mask?)` | Re-renders on selected delivery revisions, all by default; null or undefined creates no subscription and returns 0 on client and server. Its snapshot catches concurrent render→commit changes. |
+| Hook                                                                         | Consumer contract                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFormSubmit(ref)`                                                         | Returns submit and boolean-or-undefined pending; before binding submit resolves harmlessly. Catch rejection from event handlers.                                                                                                                          |
+| `useFieldNodeTracker(node: Node \| null \| undefined, mask?)`                | Re-renders on selected delivery revisions, all by default; null or undefined creates no subscription and returns 0 on client and server. Its snapshot catches concurrent render→commit changes.                                                           |
 | `useFieldNodeSubscribe(node: Node \| null \| undefined, listener, options?)` | Raw subscription, no automatic render. Null or undefined calls neither listener nor onSubscribe. Use `options.onSubscribe(node: Node)` with a required, inferred node subtype to catch up a mirrored state after attach; earlier events are not replayed. |
-| `useChildFieldMap(ChildFields)` | Components keyed by direct child name; missing names render nothing. |
-| `useChildFieldErrors(node, disabled?)` | Requires a FieldNode. Raw child errorMatrix, formattedErrors/formattedError, showErrors/showError, and gated errorMessage. Disabled empties child error reads and show flags. |
+| `useChildFieldMap(ChildFields)`                                              | Components keyed by direct child name; missing names render nothing.                                                                                                                                                                                      |
+| `useChildFieldErrors(node, disabled?)`                                       | Requires a FieldNode. Raw child errorMatrix, formattedErrors/formattedError, childErrorVisibleList/errorVisible, and gated errorMessage. Disabled empties child error reads and show flags.                                                               |
 
 When the node input changes, both observation hooks release the previous subscription and attach to the new node if present; unmount releases the subscription.
 
@@ -180,14 +178,14 @@ Read live node getters during render with useFieldNodeTracker instead of maintai
 
 Opt in with `virtualization: true` or an options object. The complete node tree still supplies values, validation, and submission. Offscreen input DOM can defer to placeholders; once revealed it is not deferred again.
 
-| Option | Default | Meaning |
-| --- | --- | --- |
-| threshold | 30 | Minimum rendered child count before gating a branch |
-| eagerCount | 20 | Leading children mounted immediately per gated branch |
-| rootMargin | '100%' | Viewport reveal margin, using px/% units |
-| backfill | VirtualizationBackfill.Idle | Idle reveals progressively; None waits for visibility or a focus/select command delivered to the placeholder's node |
-| estimateHeight | 40 | Number or `(node: FieldNode) => number`, in px; the node argument is required |
-| Placeholder | none | Component receiving a required FieldNode and height |
+| Option         | Default                     | Meaning                                                                                                             |
+| -------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| threshold      | 30                          | Minimum rendered child count before gating a branch                                                                 |
+| eagerCount     | 20                          | Leading children mounted immediately per gated branch                                                               |
+| rootMargin     | '100%'                      | Viewport reveal margin, using px/% units                                                                            |
+| backfill       | VirtualizationBackfill.Idle | Idle reveals progressively; None waits for visibility or a focus/select command delivered to the placeholder's node |
+| estimateHeight | 40                          | Number or `(node: FieldNode) => number`, in px; the node argument is required                                       |
+| Placeholder    | none                        | Component receiving a required FieldNode and height                                                                 |
 
 Placeholders use `data-path`, `data-deferred`, and aria-hidden with an estimated height. Deferred inputs are unavailable to page search, screen readers, and autofill until revealed; backfill has no fixed completion-time promise. For the focus limit on an invalid native submission, see [submission](./error-reference#submission).
 

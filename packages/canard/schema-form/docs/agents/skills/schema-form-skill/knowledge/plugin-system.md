@@ -24,7 +24,7 @@ Every property of the exported `SchemaFormPlugin` type is optional, so a plugin 
 
 - When multiple registered plugins define the same property, **the last one wins**.
 - Plugin-provided `fieldInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
-- A subtree can override plugin pieces locally with `FormProvider` instead of globally. It accepts `fieldInputDefinitions`, `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`, `formatError` and `validatorFactory`, which correspond to plugin members, plus `showError`, `validationMode` and `context`, which do not.
+- A subtree can override plugin pieces locally with `FormProvider` instead of globally. It accepts `fieldInputDefinitions`, `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`, `formatError` and `validatorFactory`, which correspond to plugin members, plus `errorVisibility`, `validationMode` and `context`, which do not.
 
 `FormProvider` has no `plugin` prop. Pass the members explicitly, mapping `validator` to `validatorFactory`. Import `Form`, `FormProvider`, `FormHandle` and `SchemaFormPlugin` from `@canard/schema-form`, and `createRef` from `react`:
 

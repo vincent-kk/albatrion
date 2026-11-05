@@ -34,8 +34,9 @@ leaf value; attribute visible feedback only to a marker transition before the
 next capture. Retain exact/censored/noChange/superseded counts and repeat exact
 counts. Feedback averages for typing are conditional on exact writes 2–20.
 
-The marker renderer is passed under both `FieldRenderer` and the 0.16.1 name
-`CustomFormTypeRenderer`; both builds receive `showError={true}`. Validated
+The marker renderer uses `FieldRenderer` and `ErrorVisibility.Always` for the current API.
+The isolated 0.x adapter selects the baseline renderer and display props only when
+the measured module does not export the current policy enum. Validated
 fixtures add the invalid `/probe` leaf, while typing starts from a valid value.
 Only the measured path receives a marker.
 

@@ -30,11 +30,11 @@ IR-0은 제품 코드를 바꾸지 않는 기준선입니다. 실제 Chromium, P
 
 ## 고정 관문과 기록
 
-| 관문 | 선 | 적용 |
-| --- | --- | --- |
-| 키 처리 | p95 ≤16.67ms | 각 타이핑 행; Event Timing 및 대체 handler 벽시계 출처 명시 |
-| 구조 변경 프레임 | 최장 ≤50ms | replace-200-while-typing, switch-oneOf-20 |
-| 비연타 검증 도착 | p95 ≤33.4ms | 100ms pattern 보조 행 |
+| 관문             | 선           | 적용                                                        |
+| ---------------- | ------------ | ----------------------------------------------------------- |
+| 키 처리          | p95 ≤16.67ms | 각 타이핑 행; Event Timing 및 대체 handler 벽시계 출처 명시 |
+| 구조 변경 프레임 | 최장 ≤50ms   | replace-200-while-typing, switch-oneOf-20                   |
+| 비연타 검증 도착 | p95 ≤33.4ms  | 100ms pattern 보조 행                                       |
 
 판정은 관문별 pass/fail만 쓰고 최종 문장은 `판정: 소유자 대기`입니다. 기존 jsdom update-sync/update-settled와 같은 픽스처 계열임을 설명하되 환경 사이 비율은 구하지 않습니다. 원시에는 모든 배달·이벤트·프레임·표본과 bundle SHA-256을 남기며 큰 파일은 gzip합니다. 기존 reviews와 ledger는 수정하지 않습니다. 제품 차분 0, 신규 파일 타입 검사, benchmark-form lint, gzip을 풀어 포함한 전체 차분의 기계 경로 감사를 마친 뒤 push합니다. FCA 스캔은 하지 않습니다.
 
@@ -50,13 +50,11 @@ IR-0은 제품 코드를 바꾸지 않는 기준선입니다. 실제 Chromium, P
 
 정숙 관찰 성공 뒤에는 type-flat-500, validation-flat-500-nonburst/burst, replace-200-while-typing off/on의 5행만 L/E0/A/AB 각 3예열·10새페이지로 다시 측정합니다. switch-oneOf-20은 상대 창의 최장 프레임이 50ms에 실패하거나 10% 이내(45ms 이상)일 때만 추가합니다. 부하가 프레임을 길게 하는 방향이라는 원리에 따라 여유 있는 통과는 보수적인 최대값 증거로 유지합니다. 마운트는 짝 중앙값으로 다루므로 재측정하지 않습니다. 정숙 행은 기존 상대 창을 대체하지 않고 나란히 보고합니다.
 
-
 ## IR-1b — 엄격 production 관문 (2026-10-31)
 
 엄격 production 관문은 `test:production`(NODE_ENV=production)이며 `--project production` 실행은 그것을 대신하지 않는다.
 
 [관문 수리 결과](../../verification/input-responsiveness/production-gate-repair.md)에 환경별 재현, ids 탐침과 읽기 전용 소비자, 21/21 복구 및 전체 순차 관문의 실행 SHA·계수를 보존했습니다.
-
 
 ## IR-6 D1 — 측정 전 고정 규칙 (2026-10-31)
 
@@ -93,15 +91,15 @@ first-painted는 root.render 전에 container에 childList/subtree MutationObser
 
 ### 기계 판정
 
-| 관문 | 적용 행과 문턱 |
-| --- | --- |
-| G1 | type-flat-2000-validate-nonburst의 F processing행p95≤16.67ms이고 pooled processing-p95 F/E bootstrap단측95%상한<1.00. 같은 창 L의 페이지중앙값 중앙값이6.425ms×1.10을 넘으면 F행p95×max(0.80,6.425/L중앙값)을16.67ms와 비교. L중앙값이6.425ms×1.25를 넘으면 비교불가·G1 indeterminate이며 절대 pass하지 않음. 정숙 관찰 뒤 해당 창을 한 번 재측정하고 재불확정이면 숫자를 question으로 올림. |
-| G2 | 모든 typing행의 pooled processing-p95 F/E bootstrap단측95%상한≤1.10. |
-| G3 | 모든 typing행에서 F Event Timing duration행p95≤E duration행p95+8ms(ET rounding1단계), F의50ms이상frame10페이지합≤E합+1. 모든 페이지 LoAF지원 필수. null은 handler p95 대체·출처 명시. |
-| G4 | 모든 nonburst typing행에서 F validation arrival행p95≤33.4ms, F미배달0/200. 매key verdict가 바뀌어야 하며 burst에는 적용하지 않음. |
-| G5 | mount-flat-500-validate와 mount-nested-d5-f4-validate에서 F first-painted중앙값≤E, F eager-painted중앙값≤E+16.7ms. if-flat500은 보고 전용. |
-| G6 | stream-flat-2000-validate의 모든 F페이지 validation runs≤2+ceil(stream duration/100ms), F의50ms이상frame10페이지합≤E합. FieldInput이 debounce를 소유하므로 engine은100ms 실시간성 상한을 유지함. |
-| G8 | mount-array-1000 None의 first/eager-painted중앙값 F/E 각각≤1.02, OnChange는 first/eager 각각 F≤E. 표시 layout effect 제거 뒤에도 유지하는 guard이며 일반 입력 layout effect0은 코드 관문으로 유지. |
+| 관문 | 적용 행과 문턱                                                                                                                                                                                                                                                                                                                                                                               |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1   | type-flat-2000-validate-nonburst의 F processing행p95≤16.67ms이고 pooled processing-p95 F/E bootstrap단측95%상한<1.00. 같은 창 L의 페이지중앙값 중앙값이6.425ms×1.10을 넘으면 F행p95×max(0.80,6.425/L중앙값)을16.67ms와 비교. L중앙값이6.425ms×1.25를 넘으면 비교불가·G1 indeterminate이며 절대 pass하지 않음. 정숙 관찰 뒤 해당 창을 한 번 재측정하고 재불확정이면 숫자를 question으로 올림. |
+| G2   | 모든 typing행의 pooled processing-p95 F/E bootstrap단측95%상한≤1.10.                                                                                                                                                                                                                                                                                                                         |
+| G3   | 모든 typing행에서 F Event Timing duration행p95≤E duration행p95+8ms(ET rounding1단계), F의50ms이상frame10페이지합≤E합+1. 모든 페이지 LoAF지원 필수. null은 handler p95 대체·출처 명시.                                                                                                                                                                                                        |
+| G4   | 모든 nonburst typing행에서 F validation arrival행p95≤33.4ms, F미배달0/200. 매key verdict가 바뀌어야 하며 burst에는 적용하지 않음.                                                                                                                                                                                                                                                            |
+| G5   | mount-flat-500-validate와 mount-nested-d5-f4-validate에서 F first-painted중앙값≤E, F eager-painted중앙값≤E+16.7ms. if-flat500은 보고 전용.                                                                                                                                                                                                                                                   |
+| G6   | stream-flat-2000-validate의 모든 F페이지 validation runs≤2+ceil(stream duration/100ms), F의50ms이상frame10페이지합≤E합. FieldInput이 debounce를 소유하므로 engine은100ms 실시간성 상한을 유지함.                                                                                                                                                                                             |
+| G8   | mount-array-1000 None의 first/eager-painted중앙값 F/E 각각≤1.02, OnChange는 first/eager 각각 F≤E. 표시 layout effect 제거 뒤에도 유지하는 guard이며 일반 입력 layout effect0은 코드 관문으로 유지.                                                                                                                                                                                           |
 
 모든 typing행은 L/E/F의 processing p95·duration p95·arrival p95 및 F/E·F/L을 병기하고0.16.1 대비 손실이 사라졌는지 행마다 판정합니다. first-key·None·if mount·첫1초 최장frame은 보고 전용입니다. G1–G6·G8 모두 충족하면 코드 관문 뒤 병합 가능하나 루트 병합은 소유자 몫입니다. 하나라도 실패하면 worker_done이나 완료를 보내지 않고 숫자·원인·선택지를 코디네이터 question으로 올립니다. G1 재불확정도 question입니다.
 
@@ -124,7 +122,6 @@ first-painted는 root.render 전에 container에 childList/subtree MutationObser
 첫 정식 창의 G8 FAIL은 그대로 둡니다. 다음 정식 창부터 mount-array-1000의 eager-painted 판정은 None과 OnChange 모두 F 중앙값≤E 중앙값+8.35ms(반 프레임, 16.7ms의 절반)입니다. first-painted 판정(None F/E≤1.02, OnChange F≤E)은 그대로입니다. eager-painted F/E 비와 3% 이내 여부를 판정 옆에 참고로 적습니다.
 
 - 이유: 소유자는 표시 판단을 엔진에 두는 데 드는 작은 마운트 비용을 받아들이기로 했습니다. 진단에서 hold를 완전히 없앤 V1도 E 대비 eager가 +1.65ms(None)·+0.45ms(OnChange)였고, 같은 레인의 세션 간 중앙값 차이가 2~4ms여서 1.00·1.02 비율선은 개선 정도와 무관하게 표집에 좌우됩니다(ir-6-results.md의 G2/G8 원인 진단).
-
 
 ## IR-7 — hidden-form delivery (2026-11-01)
 
@@ -153,23 +150,19 @@ T3 Adapt the existing hidden tests to the rule and name each change in the resul
 T4 Never prepared: a discarded speculative render delivers nothing (existing tests stay); an Activity initially hidden form delivers nothing until first shown, then flushes its construction records once (React 19 only; it passes on the current code and is exempt from the red-run requirement); the StrictMode replay still delivers once (`Form.binding.test.tsx`, `RootNodeContext.binding.test.tsx`, `Form.reactVersions.test.tsx`, `settle.test.tsx` stay green); an initially hidden form whose `validatorFactory` changes before first show delivers its construction records once and keeps exactly one subscription (React 19; red today through the leaked subscription).
 T5 Subscription lifetime: after a root-replacing reset made while hidden and a show, and after a same-schema reset made while hidden and a show, one change produces exactly one `onDiagnosticsChange` (red today: two in both cases); the same after hide and show cycles, and under StrictMode on both majors; after unmount the validation root's reference count returns to its value before mount.
 T6 Reset isolation: an `onError` that throws on a build-time record of a root-replacing reset (for example the development DialectMismatch warning, or another build-time record) leaves the form usable: the binding holds the new root, later records still arrive, writes succeed, and the failure reaches the host sink once; visible and hidden, both majors (red today for the visible case).
-T7 Retired load: (a) in one act, after `rebuild`, a write through a node of the old tree that was detached before the rebuild raises the development `DetachedNodeWrite` warning through the old reporter (`refuseDetachedWrite.ts:18`); it must not call `onError`  (today it calls `onError`, because the previous load stays `ready` until the re-render commit). (b) A write validation that rejects after `rebuild` calls neither `onError` nor the host, before and after the change (a guard, exempt from the red-run requirement). If (a) cannot be produced, keep only (b) and state in the ledger supplement that no engine path delivers a late record to a retired load.
+T7 Retired load: (a) in one act, after `rebuild`, a write through a node of the old tree that was detached before the rebuild raises the development `DetachedNodeWrite` warning through the old reporter (`refuseDetachedWrite.ts:18`); it must not call `onError` (today it calls `onError`, because the previous load stays `ready` until the re-render commit). (b) A write validation that rejects after `rebuild` calls neither `onError` nor the host, before and after the change (a guard, exempt from the red-run requirement). If (a) cannot be produced, keep only (b) and state in the ledger supplement that no engine path delivers a late record to a retired load.
 T8 Limits pinned: L1 (after unmount, a `setValue` through a node captured before unmount calls `onChange` once) and L2 (a callback prop changed while hidden is used only after show, while a changed `onError` is used at once; React 19).
 Each new or adapted test, except the T4 initially hidden case, must fail on the stage branch before the change for the stated reason; store the red runs from the committed test text on both majors where they run.
-
 
 ### Gates
 
 lint (0 warnings), typecheck, build; unit, render, react18, verify, storybook, production projects; the import-model test; public declaration and `src/index.ts` diff zero; FCA validate with no new finding; ledger checks; machine-path audit; existing skips and todos unchanged. No browser measurement: the hot-path change is a flag read of the same cost, and no measured row hides a form; say so in the results.
 
-
 계약 문서를 별도 커밋하고 T1–T8의 허용된 예외 외에는 단계 기준에서 실패 원시와 시험 SHA256을 보존한 뒤 C1–C7을 구현합니다. 제품·시험 커밋과 생성 번들 커밋을 분리합니다. browser 측정·benchmark는 수행하지 않습니다. hot path는 같은 비용의 flag 읽기이며 기존 측정 행은 Form을 숨기지 않습니다. 시간·메모리 비용은 load별 retired 선택 필드와 reset 또는 GC까지 유지되는 루트 구독이며 새 루프·타이머는 없습니다.
-
 
 ### IR-7 불변 guard 예외 승인 — 2026-11-01
 
 T5 hide/show cycles·StrictMode 단일 구독·검증 캐시 retain/release 균형은 기준에서도 통과하는 불변 guard로 유지합니다. 코디네이터 승인 조건에 따라 제품 머리6f1b36f22의 scratch에서 effect setup마다 cleanup 해제 없이 재구독하는 변형과 cleanup의 releaseValidationRoot를 생략하는 변형을 각각 주입했습니다. 양쪽 React major에서 구독 guard 둘과 균형 guard 하나가 모두 실패하며 mutation-runs.json에 최종 커밋 시험의 SHA256·실패 원시·변형 patch를 보존합니다. 기준 red의 부재를 숨기거나 red와 mutation red를 합산하지 않습니다. scratch는 증거 커밋 직후 Orca로 제거하고 남은 관문을 순차 수행합니다.
-
 
 ### IR-7 round b — 독립 검토 수정 (2026-11-01)
 
@@ -179,11 +172,9 @@ L3에는 개발 StrictMode replay를 포함합니다: including the development 
 
 T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
 
-
 ### Round b host 표면 정정 승인
 
 기준 stage의 visible adoption 전 compile 실패를 양쪽 React major에서 관찰한 결과 caller throw·onError1·host0이었습니다. 코디네이터가 이 기존 표면을 계약으로 승인했으며 처음 브리프의 host 보고 가정은 대체합니다. 수정 뒤 visible·hidden 모두 caller throw·onError1·host0을 검사하고 커밋 시험 텍스트의 stage visible green과 06df red를 저장합니다. never-prepared 생성 오류의 reset 끝 capture·host1 보고는 이 adoption 실패와 다른 경로이며 그대로 유지합니다.
-
 
 ### IR-7 round c — never-prepared reset 사슬 기록 (2026-11-01)
 
@@ -191,12 +182,11 @@ T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도�
 
 React19의 처음 숨긴 OnRequest Form에서 validator A를 실패하는 B로 바꾼 뒤 show하는 회귀를 stage의 compile 실패 surface·호스트 출력과 대조합니다. 최종 커밋 시험을 000f와 stage에서 실행하고, 은퇴를 try 안으로 옮기는 변형이 양쪽 major의 늦은 쓰기 단언을 깨는지 확인합니다. resetRootLoad의 효과와 RootLoad error/reported 주석도 reset 경로를 명시합니다. 순차 관문·raw·SHA256은 round c 결과에 보존합니다.
 
-
 ## IR-8 — load validation after the next frame (2026-11-01)
 
 ### Rule
 
-Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+`ErrorVisibility.Always`를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 
 ### Limits
 
@@ -229,22 +219,20 @@ Amendments 1–3: 모든 로드 시작에 stamp 증가, finally 종료 직전 lo
 
 계약 별도 커밋 → 최종 시험 텍스트 stage red·SHA256·gzip 저장 → 제품 구현 → lint(경고 0), typecheck, build, unit, render, react18, verify, storybook, production, import-model, 공개 선언·src/index 무변경, FCA 새 finding 없음, 원장 검사, machine-path·skip/todo audit를 순차 수행한다. 제품과 생성 번들은 별도 커밋한다. 브라우저·benchmark는 수행하지 않는다.
 
-
 ## IR-9 — onError record origin (2026-11-01)
 
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
 T1의 다섯 origin·T2 중첩 load·T3 옛 필드 부재, A1 reset/rebuild/validator 변경, A5 첫 오류, P3-4 write listener reset·validate wave listener·stale load 뒤 state 및 최초/prop 외부 errors를 검증합니다. 기존 whole-record 단언도 갱신합니다. f4018e82b 제품에서 시험을 red로 실행하고 committed test SHA256과 JSON gzip을 보존합니다. lint 0경고→typecheck→build→unit→render→react18→verify→storybook→production→import-model→선언·index·FCA·원장·경로·skip/todo 감사를 순차로 기록합니다.
 
-
 ## Defect round 관문 보충
 
 [결함 검증 계획](../defect-round/verification.md)의 기준 red·수정 green·세 변이와 순차 관문을 적용합니다. D4·D5의 Amendment 3 적용 전 전체 관문은 실행하지 않습니다. D9는 ERROR-023 항목 2 우선 제한으로 기록합니다.
 
-
 ## Amendment 9·10 — 결과 관문 정정
 
 DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.
+
 ## 단계 마감 측정 — 측정 전 고정 규칙
 
 ### 소유자 지시 (Quote 69, Quote 70 원문)
@@ -260,7 +248,7 @@ DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다
 
 - L: 공개 0.16.1 alias. B: `5d1348ed16054efa1ec431945eb00472f4eef7f1`. S: `facd72a71c44a798f5484827509073a27fb678a3`. F: 결함수정 라운드 병합 후 지정되는 최종 head. Phase 1 F는 smoke 전용입니다.
 - B/S는 Orca로 만든 깨끗한 체크아웃에서 빌드하고 제품 범위와 commit을 검증합니다. 제품·브라우저 번들의 SHA-256을 고정한 뒤 체크아웃을 제거합니다.
-- 기존 IR-6 18개 행과 fixture/식별자를 유지합니다. 신규 6개는 `mount-flat-500-onrequest`(validationMode 2), `mount-flat-500-always`(OnChange, showError true), `reset-flat-500-same`, `reset-flat-500-replace`, `rebuild-flat-500`, `validate-flat-500-settled`입니다.
+- 기존 IR-6 18개 행과 fixture/식별자를 유지합니다. 신규 6개는 `mount-flat-500-onrequest`(validationMode 2), `mount-flat-500-always`(OnChange, errorVisibility true), `reset-flat-500-same`, `reset-flat-500-replace`, `rebuild-flat-500`, `validate-flat-500-settled`입니다.
 - replace는 매번 루트 title이 `replace-1`부터 `replace-10`까지 다른 구조입니다. replace/rebuild 뒤 handle.node가 바뀌고 same reset 뒤 유지되어야 합니다. L의 두 reset은 버전 증가에 따른 트리 재구성이므로 모든 표에서 다른 연산임을 표시합니다. L의 rebuild는 제외합니다.
 - reset/rebuild/validate는 안정화된 mount 뒤 페이지당 10회, 1초 슬롯마다 실행합니다. 첫 연산은 별도 보고하며 페이지 값은 10회 중앙값입니다. validate는 Promise 해결 시간을 기록합니다.
 
@@ -274,16 +262,16 @@ DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다
 
 ### 병합 차단 판정
 
-| 규칙 | 고정 판정 |
-| --- | --- |
-| C0 | B를 E 역할로 넣은 원본 IR-6 G1과 등록된 L transfer. L 중앙값 8.03ms 초과이면 불확정. |
-| C1 | 8개 type 행의 handler pooled p95 F/B bootstrap 상한 ≤1.10. |
-| C2 | 8개 type 행 duration p95 F ≤B+8ms, 50ms 이상 프레임 수 F ≤B+1. |
-| C3 | nonburst type 행 arrival p95 ≤33.4ms, 200키 중 미전달 0. |
-| C4 | gated mount의 first/eager-painted는 F/B 상한 >1.10 및 중앙값 차이 상한 >8.35ms가 동시에 성립하면 실패. 1초 프레임 수 F ≤B+1. None/if mount는 보고 전용. |
-| C5 | reset/rebuild의 callDuration 상한 ≤1.10, nextPainted는 C4의 이중 조건. settled validate의 해결 시간 상한 ≤1.10. 각 행 프레임 수 F ≤B+1. |
-| C6 | stream 페이지별 validation runs ≤2+ceil(duration/100ms), 프레임 수 F ≤B. |
-| C7 | S를 E 역할로 둔 변경 없는 decideValidationAfterPaintGates, round-6 G1–G6/G8. 하나라도 실패하면 차단. |
+| 규칙 | 고정 판정                                                                                                                                               |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C0   | B를 E 역할로 넣은 원본 IR-6 G1과 등록된 L transfer. L 중앙값 8.03ms 초과이면 불확정.                                                                    |
+| C1   | 8개 type 행의 handler pooled p95 F/B bootstrap 상한 ≤1.10.                                                                                              |
+| C2   | 8개 type 행 duration p95 F ≤B+8ms, 50ms 이상 프레임 수 F ≤B+1.                                                                                          |
+| C3   | nonburst type 행 arrival p95 ≤33.4ms, 200키 중 미전달 0.                                                                                                |
+| C4   | gated mount의 first/eager-painted는 F/B 상한 >1.10 및 중앙값 차이 상한 >8.35ms가 동시에 성립하면 실패. 1초 프레임 수 F ≤B+1. None/if mount는 보고 전용. |
+| C5   | reset/rebuild의 callDuration 상한 ≤1.10, nextPainted는 C4의 이중 조건. settled validate의 해결 시간 상한 ≤1.10. 각 행 프레임 수 F ≤B+1.                 |
+| C6   | stream 페이지별 validation runs ≤2+ceil(duration/100ms), 프레임 수 F ≤B.                                                                                |
+| C7   | S를 E 역할로 둔 변경 없는 decideValidationAfterPaintGates, round-6 G1–G6/G8. 하나라도 실패하면 차단.                                                    |
 
 C1/C4/C5의 gated 지표 상한이 (1.05,1.10]이면 병합 전 profile 또는 코드 추적으로 원인을 진단하고 보고합니다. first-key 행, None/if mount, postPaintBusy, OnRequest background compile은 보고 전용입니다. F/S 및 F/L은 모든 지표를 보고하며 gate로 대체하지 않습니다.
 
@@ -294,7 +282,6 @@ D8는 F의 revisionObserved latch를 제거한 이름 있는 probe 빌드로 fla
 C4에서 None/if mount는 보고 전용입니다. C7은 별도 회귀 방어로 원본 G8의 array None 조건까지 그대로 유지합니다. C0의 L 비교 가능성 경계는 원본 수식 `6.425 × 1.25 = 8.03125ms`를 변경하지 않으며 설계의 8.03ms는 표시 정밀도입니다. B/S 체크아웃을 제거한 뒤에는 제품 해시와 commit별 source tree proof가 검증된 고정 복사본을 재사용할 수 있습니다.
 
 C5 프레임 합산의 확정 해석: 각 kept page의 모든 연산 슬롯 안에 있는 50ms 이상 프레임을 행·lane별로 전부 합산하여 F ≤ B+1을 검사합니다. 연산별 프레임 수의 페이지 중앙값은 별도로 보고합니다. 시간 지표의 10회 중앙값 규칙은 이 명시적 프레임 총합을 대체하지 않습니다. 코디네이터가 정식 창 전에 이 해석을 확정했습니다.
-
 
 ### 단계 마감 측정 — Amendments 3–7 사전등록 (Phase 2a 확정)
 
@@ -311,7 +298,6 @@ C5 프레임 합산의 확정 해석: 각 kept page의 모든 연산 슬롯 안�
 
 Amendment 4 확정: B의 지표가 모든 페이지에서 0이면 비율은 +Infinity로 취급하고 차이 bootstrap은 독립적으로 계산합니다. 차이 상한 ≤8.35ms이면 통과, >8.35ms이면 실패하며 양쪽 모두 0인 경우 차이는 0이므로 통과합니다. 최장 프레임의 관측 지원이 없으면 불확정입니다. +Infinity는 저장 시 문자열로 명시하여 JSON의 null 변환과 구별합니다.
 
-
 ### 단계 마감 측정 — Amendments 5·6 사전등록 초안 (Phase 1c)
 
 등록 버전은 closing-v3-amendment-6입니다. Phase 2의 최종 stage head 위에서 커밋하며, Phase 1b 제목 정리와 frozen-copy 재사용·C5 프레임 총합 gate·D8 probe를 이 규칙이 대체한다는 명시도 그 커밋에서 수행합니다. 이전 기록은 유지합니다.
@@ -326,7 +312,6 @@ Amendment 4 확정: B의 지표가 모든 페이지에서 0이면 비율은 +Inf
 
 Phase 2의 clean-build 기록 파일명은 inputs.json 옆의 clean-build-record.json입니다. lanes.B/S 각각 commit, cleanProductScope:true, exitCode:0, product.sha256을 기록하고 inputs의 commit/제품 해시에 묶습니다. 최종 smoke checker의 --smoke --write는 smoke-validator-work.json을 생성하고 F=B 규칙 통과를 요구하며, 이후 --smoke 실행은 같은 표를 재현합니다. 정식 결과의 validator-work.json과 tables.md도 raw에서 같은 방식으로 재현합니다.
 
-
 ### 단계 마감 측정 — Amendment 7 준비 보강 (Phase 1d)
 
 등록 값과 버전 closing-v3-amendment-6은 유지합니다. validator work 예외의 delta는 절대 차이 ≤1e-9로 비교하며 비어 있는 designCause는 예외로 인정하지 않습니다. 10개 페이지·100회 연산에서 B validate 평균 1, F 평균 1.1인 경우 delta:0.1 예외를 적용하고 예외가 없으면 FIX_REQUIRED입니다.
@@ -338,7 +323,6 @@ C5 연산 프레임의 비율 상한 1.2에서 차이 상한 12ms와 16.7ms는 �
 각 보강 테스트의 대응 변이 실패 및 복원 후 통과 근거는 results/closing-prepared-1d에 보존합니다. 기존 gate 테스트 파일의 15-case 제한을 지키기 위해 16.7ms 경계 3개는 별도 operation-frame 테스트 파일에 둡니다.
 
 Phase 2 커밋에서 clean-build 기록에도 check:browser-results --audit-base=<preregisteredCommit> 경로 감사를 실행합니다. Phase 1b 제목을 정리하면서 대체되는 다섯 구절(고정 복사본 재사용, C5 frame-total gate, D8 probe, Phase 1b의 “C5 … 8.35ms” 문장, Phase 1b의 두 파일 무결성 문장)을 모두 명시합니다. gate 코드의 formal-start 해시는 Phase 2 커밋에서 새로 고정합니다. Phase 1d에서는 커밋·B/S 빌드·정식 창을 실행하지 않습니다.
-
 
 ### 단계 마감 측정 — Phase 2a 최종 head와 대체 구절 확정
 
@@ -354,7 +338,6 @@ Phase 2 커밋에서 clean-build 기록에도 check:browser-results --audit-base
 
 Phase 2a는 사전등록 커밋, fresh B/S 및 최종 stage 제품의 F 빌드, 전체 smoke와 checker, unit·typecheck·lint까지만 승인되었습니다. 아홉 validator work 행의 F/B 불일치가 있으면 예외를 추가하지 않고 코디네이터에게 보고한 뒤 중지합니다. clean-build 기록에 check:browser-results --audit-base=<preregisteredCommit> 경로 감사를 적용합니다. 정식 측정 창은 다음 go 이후에만 시작합니다.
 
-
 ### 단계 마감 측정 — Phase 2a 준비 실행 기록
 
 최종 stage 5df0bf2ad 위의 ba49b312ca8aed6c69550bf068b3e72c6f40c0fe에 Amendments 3–7 소스·사전등록을 고정했습니다. B/S를 새 clean Orca 체크아웃에서 빌드했고 F 제품의 source tree는 최종 stage와 일치합니다. 전체 build 성공 기록과 동결 inputs를 61e4442f1aac15edd9e8d68a66b0dac522934389에 보존한 뒤 두 임시 체크아웃 및 브랜치를 제거했습니다. 초기 타입 검사 실패는 로컬 AJV/플러그인 선언 연결 문제였으며 제품 소스를 바꾸지 않고 연결을 바로잡은 전체 build 재실행은 모두 exitCode:0입니다.
@@ -364,7 +347,6 @@ Phase 2a는 사전등록 커밋, fresh B/S 및 최종 stage 제품의 F 빌드, 
 경로 감사가 커밋된 inputs의 1MiB 초과 source-tree proof diff에서 ENOBUFS로 중단되는 문제를 발견했습니다. 신규 큰 tracked addition을 끝까지 검사하는 회귀 테스트로 먼저 재현한 뒤 git diff stdout 버퍼 상한을 32MiB로 늘렸습니다. 이는 경로 검사를 생략하지 않으며 상한 초과는 계속 실패합니다. 검사 조건·등록 규칙 값·제품·브라우저 번들과 수집한 smoke는 바꾸지 않습니다. 이 도구 보완 뒤 같은 저장 자료에 --smoke --write 및 경로 감사를 적용하며 브라우저 수집은 다시 실행하지 않습니다. 정식 창은 다음 go를 기다립니다.
 
 Phase 2a 최종 검증: 전체 benchmark-form 20개 파일·132개 테스트 통과, 브라우저 typecheck 통과, lint 경고 0개입니다. 압축 smoke 보존본도 checker로 재현했으며 --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe 경로 감사에서 신규 machine path는 0개입니다. 원래 1MiB 감사 버퍼에서 새 회귀 테스트가 ENOBUFS로 실패하고 보완 후 큰 입력 통과·끝의 machine path 거절을 모두 확인했습니다. 정식 창은 실행하지 않았습니다.
-
 
 ### 단계 마감 측정 — Phase 2b 정식 결과와 Quote 71
 
@@ -376,8 +358,7 @@ raw checker는 재현에 통과했고 등록 판정은 C0–C4·C6·C7 PASS, C5 
 
 rebuild 추적에서 F의 로드 검증 토큰·after-frame 예약, load-origin batch와 교체 load reported/retired 상태 관리라는 실제 추가 작업을 확인했습니다. 개별 작업별 시간을 분리한 profile은 없으므로 상한 전체를 그 추가 작업에 귀속하지 않습니다. paired-bootstrap 꼬리 witness는 B 11.625ms·F 13.0000000596ms이고 10,000개 draw 중 835개가 1.10을 넘습니다. 위치 불균형도 그대로 기록합니다. 이 결과와 다섯 등록 진단·전체 비교 상한 (1.05,1.10] 20개 원인은 closing-results.md와 formal 증거에 보존합니다.
 
-start-*.json과 formal-start.json은 압축하지 않고 clean-build-record.json은 formal 결과 디렉터리에 둡니다. 같은 자료를 checker로 재현하고 preregisteredCommit 기준 경로 감사를 실행합니다. 증거를 커밋한 최종 head에 PR 본문을 고정하며 push하지 않습니다.
-
+start-\*.json과 formal-start.json은 압축하지 않고 clean-build-record.json은 formal 결과 디렉터리에 둡니다. 같은 자료를 checker로 재현하고 preregisteredCommit 기준 경로 감사를 실행합니다. 증거를 커밋한 최종 head에 PR 본문을 고정하며 push하지 않습니다.
 
 ## 466라운드 운영 기록 정정 — push와 #514 병합(2026-11-02)
 

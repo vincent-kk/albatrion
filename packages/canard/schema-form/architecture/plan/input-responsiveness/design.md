@@ -8,21 +8,21 @@
 
 ## 1. 지켜야 할 안정성 (불변식)
 
-| 번호 | 불변식 | 근거 |
-| --- | --- | --- |
-| S1 | 쓰기 하나는 동기로 정착·통지하고, `setValue()` 가 돌아오면 값과 controls 를 바로 읽을 수 있다 | EVENT-002 ([design/03-settle-and-events.md:288](../../design/03-settle-and-events.md#L288)), 공개 문서 [event-system.md:6-10](../../../docs/agents/skills/schema-form-skill/knowledge/event-system.md#L6-L10) |
-| S2 | 입력 중인 필드는 같은 이벤트 핸들러 안에서 다시 그려진다 (캐럿 안정) | T-1 ([design/00-goals-and-values.md:263](../../design/00-goals-and-values.md#L263)) |
-| S3 | 화면에 그려진 것은 언제나 하나의 완결된 커밋이다 (찢어짐 없음). `revision` 은 커밋 때 배달 집합 전체를 한 번에 올린다 | EVENT-007, EVENT-011 |
-| S4 | 루트 `onChange` 는 최외곽 동기 진입당 1회, 디바운스 없음 | D-10 ([design/00-goals-and-values.md:271](../../design/00-goals-and-values.md#L271)), [exitFieldNodeChain.ts:135-147](../../../src/core/engine/write/utils/chain/exitFieldNodeChain.ts#L135-L147) |
-| S5 | 검증 결과는 항상 최신 커밋의 것이다. `node.validate()` 와 제출은 지금 즉시 검증한다 | [requestFieldNodeValidation.ts:43-47](../../../src/core/engine/validation/utils/run/requestFieldNodeValidation.ts#L43-L47), [core/surface/type.ts:143](../../../src/core/surface/type.ts#L143) |
+| 번호 | 불변식                                                                                                                | 근거                                                                                                                                                                                                          |
+| ---- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1   | 쓰기 하나는 동기로 정착·통지하고, `setValue()` 가 돌아오면 값과 controls 를 바로 읽을 수 있다                         | EVENT-002 ([design/03-settle-and-events.md:288](../../design/03-settle-and-events.md#L288)), 공개 문서 [event-system.md:6-10](../../../docs/agents/skills/schema-form-skill/knowledge/event-system.md#L6-L10) |
+| S2   | 입력 중인 필드는 같은 이벤트 핸들러 안에서 다시 그려진다 (캐럿 안정)                                                  | T-1 ([design/00-goals-and-values.md:263](../../design/00-goals-and-values.md#L263))                                                                                                                           |
+| S3   | 화면에 그려진 것은 언제나 하나의 완결된 커밋이다 (찢어짐 없음). `revision` 은 커밋 때 배달 집합 전체를 한 번에 올린다 | EVENT-007, EVENT-011                                                                                                                                                                                          |
+| S4   | 루트 `onChange` 는 최외곽 동기 진입당 1회, 디바운스 없음                                                              | D-10 ([design/00-goals-and-values.md:271](../../design/00-goals-and-values.md#L271)), [exitFieldNodeChain.ts:135-147](../../../src/core/engine/write/utils/chain/exitFieldNodeChain.ts#L135-L147)             |
+| S5   | 검증 결과는 항상 최신 커밋의 것이다. `node.validate()` 와 제출은 지금 즉시 검증한다                                   | [requestFieldNodeValidation.ts:43-47](../../../src/core/engine/validation/utils/run/requestFieldNodeValidation.ts#L43-L47), [core/surface/type.ts:143](../../../src/core/surface/type.ts#L143)                |
 
 ## 2. 입력 경험이 줄어드는 지점 (손실)
 
-| 번호 | 손실 | 사실 |
-| --- | --- | --- |
-| L1 | 검증이 키 입력마다 전체 스키마에 대해 **다음 화면을 그리기 전에** 돈다 | `queueMicrotask` ([requestFieldNodeValidation.ts:28-30](../../../src/core/engine/validation/utils/run/requestFieldNodeValidation.ts#L28-L30)), `validate(node.rootNode.emit)` ([runFieldNodeValidation.ts:23](../../../src/core/engine/validation/utils/run/runFieldNodeValidation.ts#L23)). 0.16.1 은 매크로태스크 디바운스로 연타를 한 번에 묶었음(T-9). React 측정 19개 픽스처는 모두 `validationMode={0}` 이라 이 비용이 측정된 적 없음 |
-| L2 | 소비자 `onChange` 안의 무거운 상태 갱신이 같은 이벤트 안에서 동기 렌더된다 | `runtime.onChange(root.emit)` 는 동기. 비용은 소비자 쪽 |
-| L3 | 한 커밋이 많은 필드 컴포넌트를 새로 마운트하면 한 작업으로 막힌다 | array-replace-200 약 180 ms, 첫 마운트 7개 픽스처 18.8~861.7 ms. 분할 마운트(`virtualization`)는 기본 꺼짐, 가지 단위(자식 30개 이상) 로만 작동, jsdom 에서는 `IntersectionObserver` 가 없어 생성조차 안 됨 ([VirtualizationManager.ts:197-200](../../../src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts#L197-L200)) |
+| 번호 | 손실                                                                       | 사실                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ---- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L1   | 검증이 키 입력마다 전체 스키마에 대해 **다음 화면을 그리기 전에** 돈다     | `queueMicrotask` ([requestFieldNodeValidation.ts:28-30](../../../src/core/engine/validation/utils/run/requestFieldNodeValidation.ts#L28-L30)), `validate(node.rootNode.emit)` ([runFieldNodeValidation.ts:23](../../../src/core/engine/validation/utils/run/runFieldNodeValidation.ts#L23)). 0.16.1 은 매크로태스크 디바운스로 연타를 한 번에 묶었음(T-9). React 측정 19개 픽스처는 모두 `validationMode={0}` 이라 이 비용이 측정된 적 없음 |
+| L2   | 소비자 `onChange` 안의 무거운 상태 갱신이 같은 이벤트 안에서 동기 렌더된다 | `runtime.onChange(root.emit)` 는 동기. 비용은 소비자 쪽                                                                                                                                                                                                                                                                                                                                                                                     |
+| L3   | 한 커밋이 많은 필드 컴포넌트를 새로 마운트하면 한 작업으로 막힌다          | array-replace-200 약 180 ms, 첫 마운트 7개 픽스처 18.8~861.7 ms. 분할 마운트(`virtualization`)는 기본 꺼짐, 가지 단위(자식 30개 이상) 로만 작동, jsdom 에서는 `IntersectionObserver` 가 없어 생성조차 안 됨 ([VirtualizationManager.ts:197-200](../../../src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts#L197-L200))                                                                                              |
 
 키 입력 자체의 동기 구간은 0.16.1 과 같거나 짧다(최대 차이 0.17 ms 이하, [closing-results.md](../../verification/branch-switch/closing-results.md) React 표). 그래서 **엔진을 비동기로 되돌리는 길은 없다.**
 
@@ -66,12 +66,12 @@
 
 ## 5. 단계
 
-| 단계 | 내용 | 제품 변경 |
-| --- | --- | --- |
-| 0 | 브라우저 측정 레인 확장, 기준선(L·S·E) | 없음 |
-| 1 | D1 검증 슬롯 + 시험 도우미 + 지식 문서 | 엔진 1 파일, 시험 |
-| 2 | D3 작업당 예산 + 기본값 결정 | React 분할 마운트 2~3 파일 |
-| 3 | D2 안내, 계약 기록(EVENT-028·SETTLE-008 수정, 새 REACT- 계약) | 문서 |
+| 단계 | 내용                                                          | 제품 변경                  |
+| ---- | ------------------------------------------------------------- | -------------------------- |
+| 0    | 브라우저 측정 레인 확장, 기준선(L·S·E)                        | 없음                       |
+| 1    | D1 검증 슬롯 + 시험 도우미 + 지식 문서                        | 엔진 1 파일, 시험          |
+| 2    | D3 작업당 예산 + 기본값 결정                                  | React 분할 마운트 2~3 파일 |
+| 3    | D2 안내, 계약 기록(EVENT-028·SETTLE-008 수정, 새 REACT- 계약) | 문서                       |
 
 ## 6. 소유자 결정 항목
 
@@ -131,22 +131,20 @@ v2 슬롯은 `done`을 공유하고 실행 시 disposed 루트를 중단합니�
 
 기타 독립 발견(P3)은 숨은 탭 타이머의 약 1초 제한 미검증, 해제 뒤 슬롯의 disposed 확인, 절감 추정 중 메타 스키마 10.4ms는 프로세스당 1회라는 제한, 첫 화면 직후 22~77ms 컴파일 작업과 이른 입력의 경합, None reset의 컴파일 유지, 루트당 가드 형제 4~5ms 잔존입니다. 개발 모드 `compileEntryGuards`는 커밋 뒤가 아니라 렌더 중 useMemo에서 실행되며 검증 DETAIL의 해당 시점 설명도 정정 대상입니다. 공개 오류 목록이나 `node.errors`는 최소 한 프레임 늦어질 수 있지만 제출은 매번 즉시 `root.validate()`를 기다립니다.
 
-
 ## 단계 마감의 설계 상태 — 2026-10-31
 
 상단의 초안과 중간 채택 표현은 이력으로 보존하며 현행 제품은 `814d21ad4`입니다. [마감 결과](../../verification/input-responsiveness/closing-results.md)가 구현·미채택·미구현과 소유자 대기를 구별합니다.
 
-| 설계 | 현행 상태와 근거 |
-| --- | --- |
-| D0 lazy compile·개발 guard 준비 | [IR-1 Part A](../../verification/input-responsiveness/ir-1-results.md#part-b-미채택--독립-관문-후-최종-결정-2026-10-31) 채택. 보유는 컴파일하지 않고 첫 실제 읽기로 넘기며 개발 준비도 if 게이트가 있을 때만 수행합니다. None의 다른 스키마 reset과 if 가드의 전체 컴파일은 남습니다. |
-| hydration-safe virtualization | [IR-5 round3](../../verification/input-responsiveness/ir-5-results.md#round-3--실제-입력-commit만-원장에-기록) 편입. Provider 유지·서버 스냅숏·기존 commit ref·실제 입력 노출 원장을 적용해 서버 DOM·추가 렌더0·두 layout effect 계약을 보존했습니다. 소유자의 수정 수락은 별도 대기입니다. |
-| D3 작업당 예산 | [IR-1 독립 관문](../../verification/input-responsiveness/ir-1-results.md#part-b-미채택--독립-관문-후-최종-결정-2026-10-31) 뒤 미채택. 기존 가지별 eagerCount·threshold 의미와25/4 backfill을 유지합니다. |
-| AJV8 sync-first | [IR-3](../../verification/input-responsiveness/ir-3-results.md) Step0의 정상+5% 규칙 실패로 미채택. 제품 Step1·브라우저 Step2는 없습니다. |
-| D1 v2·G | 설계 정정은 준비됐으나 미구현. [IR-2](../../verification/input-responsiveness/ir-2-results.md#d1-예측과-검증-도착-위험)의 발동·원인 분해를 받아 이번 단계 D1 미구현을 권고하며 소유자 답을 기다립니다. G의 공개 플러그인 순서와 mount compile 실패 rejected→sink 표면도 미결입니다. |
-| D2·D4·기본값 | 동기 루트 onChange·입력 경로 유지. 소비자 startTransition·OnRequest·containment 지침은 [IR-4](../../verification/input-responsiveness/ir-4-results.md)에 반영했습니다. SSR blocker 제거 뒤에도 reveal 전 접근성과 전체 노출 비용 때문에 기본 off를 권고하며 확정은 소유자 대기입니다. |
+| 설계                            | 현행 상태와 근거                                                                                                                                                                                                                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D0 lazy compile·개발 guard 준비 | [IR-1 Part A](../../verification/input-responsiveness/ir-1-results.md#part-b-미채택--독립-관문-후-최종-결정-2026-10-31) 채택. 보유는 컴파일하지 않고 첫 실제 읽기로 넘기며 개발 준비도 if 게이트가 있을 때만 수행합니다. None의 다른 스키마 reset과 if 가드의 전체 컴파일은 남습니다.       |
+| hydration-safe virtualization   | [IR-5 round3](../../verification/input-responsiveness/ir-5-results.md#round-3--실제-입력-commit만-원장에-기록) 편입. Provider 유지·서버 스냅숏·기존 commit ref·실제 입력 노출 원장을 적용해 서버 DOM·추가 렌더0·두 layout effect 계약을 보존했습니다. 소유자의 수정 수락은 별도 대기입니다. |
+| D3 작업당 예산                  | [IR-1 독립 관문](../../verification/input-responsiveness/ir-1-results.md#part-b-미채택--독립-관문-후-최종-결정-2026-10-31) 뒤 미채택. 기존 가지별 eagerCount·threshold 의미와25/4 backfill을 유지합니다.                                                                                    |
+| AJV8 sync-first                 | [IR-3](../../verification/input-responsiveness/ir-3-results.md) Step0의 정상+5% 규칙 실패로 미채택. 제품 Step1·브라우저 Step2는 없습니다.                                                                                                                                                   |
+| D1 v2·G                         | 설계 정정은 준비됐으나 미구현. [IR-2](../../verification/input-responsiveness/ir-2-results.md#d1-예측과-검증-도착-위험)의 발동·원인 분해를 받아 이번 단계 D1 미구현을 권고하며 소유자 답을 기다립니다. G의 공개 플러그인 순서와 mount compile 실패 rejected→sink 표면도 미결입니다.         |
+| D2·D4·기본값                    | 동기 루트 onChange·입력 경로 유지. 소비자 startTransition·OnRequest·containment 지침은 [IR-4](../../verification/input-responsiveness/ir-4-results.md)에 반영했습니다. SSR blocker 제거 뒤에도 reveal 전 접근성과 전체 노출 비용 때문에 기본 off를 권고하며 확정은 소유자 대기입니다.       |
 
 array 첫 프레임·count-only/시간 reveal·루트 reconcile·CPU 공변량·hydration 준비 후 나중 첫 렌더·기존 결함 다섯·typing-mix 절대 규칙은 마감 결과의 미결 목록으로 넘깁니다. 이번 기록은 새 구현이나 관문 완화를 지시하지 않습니다.
-
 
 ## D1 구현 — IR-6 (2026-10-31)
 
@@ -206,7 +204,7 @@ R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국
 
 FieldProxy·FieldInputSlot·useChildFieldErrors는 순수 이력 검사와 표시당 hook을 공유합니다. node/policy generation을 병합하여 live state와 committed policy의 마지막 쌍까지 검사하고 child-errors는 enabled를 제외합니다. candidate만 release version을 구독하며 client/server snapshot은 같은 getter입니다.
 
-Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref에 반영하며 connect effect는 이 ref를 읽고 정책 변경만으로 재연결하지 않습니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
+Always는 state 없는 checkErrorVisibility()의 값을 앞선 layout effect에서 ref에 반영하며 connect effect는 이 ref를 읽고 정책 변경만으로 재연결하지 않습니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
 
 ### G8 — U2 마운트 구조 비용의 측정 조건
 
@@ -250,7 +248,6 @@ subscriber는 passive effect만 사용한다. 소유 표시가 읽은 version과
 
 실제 Form의 catch-up·DOM identity/focus·Activity와 mount/hydration 계수 시험에 지정된 실패 변이를 적용해 확인한다. 이전 정식 창의 판정은 유지하고 전체 코드 관문 뒤 E/F-old/F-new/V1 진단만 수행한다. 다음 정식 창과 G2 새 규칙 사전 등록은 코디네이터 go Phase E까지 기다린다.
 
-
 ## IR-7 — hidden-form delivery (2026-11-01)
 
 ### Owner decisions (verbatim)
@@ -278,23 +275,19 @@ T3 Adapt the existing hidden tests to the rule and name each change in the resul
 T4 Never prepared: a discarded speculative render delivers nothing (existing tests stay); an Activity initially hidden form delivers nothing until first shown, then flushes its construction records once (React 19 only; it passes on the current code and is exempt from the red-run requirement); the StrictMode replay still delivers once (`Form.binding.test.tsx`, `RootNodeContext.binding.test.tsx`, `Form.reactVersions.test.tsx`, `settle.test.tsx` stay green); an initially hidden form whose `validatorFactory` changes before first show delivers its construction records once and keeps exactly one subscription (React 19; red today through the leaked subscription).
 T5 Subscription lifetime: after a root-replacing reset made while hidden and a show, and after a same-schema reset made while hidden and a show, one change produces exactly one `onDiagnosticsChange` (red today: two in both cases); the same after hide and show cycles, and under StrictMode on both majors; after unmount the validation root's reference count returns to its value before mount.
 T6 Reset isolation: an `onError` that throws on a build-time record of a root-replacing reset (for example the development DialectMismatch warning, or another build-time record) leaves the form usable: the binding holds the new root, later records still arrive, writes succeed, and the failure reaches the host sink once; visible and hidden, both majors (red today for the visible case).
-T7 Retired load: (a) in one act, after `rebuild`, a write through a node of the old tree that was detached before the rebuild raises the development `DetachedNodeWrite` warning through the old reporter (`refuseDetachedWrite.ts:18`); it must not call `onError`  (today it calls `onError`, because the previous load stays `ready` until the re-render commit). (b) A write validation that rejects after `rebuild` calls neither `onError` nor the host, before and after the change (a guard, exempt from the red-run requirement). If (a) cannot be produced, keep only (b) and state in the ledger supplement that no engine path delivers a late record to a retired load.
+T7 Retired load: (a) in one act, after `rebuild`, a write through a node of the old tree that was detached before the rebuild raises the development `DetachedNodeWrite` warning through the old reporter (`refuseDetachedWrite.ts:18`); it must not call `onError` (today it calls `onError`, because the previous load stays `ready` until the re-render commit). (b) A write validation that rejects after `rebuild` calls neither `onError` nor the host, before and after the change (a guard, exempt from the red-run requirement). If (a) cannot be produced, keep only (b) and state in the ledger supplement that no engine path delivers a late record to a retired load.
 T8 Limits pinned: L1 (after unmount, a `setValue` through a node captured before unmount calls `onChange` once) and L2 (a callback prop changed while hidden is used only after show, while a changed `onError` is used at once; React 19).
 Each new or adapted test, except the T4 initially hidden case, must fail on the stage branch before the change for the stated reason; store the red runs from the committed test text on both majors where they run.
-
 
 ### Gates
 
 lint (0 warnings), typecheck, build; unit, render, react18, verify, storybook, production projects; the import-model test; public declaration and `src/index.ts` diff zero; FCA validate with no new finding; ledger checks; machine-path audit; existing skips and todos unchanged. No browser measurement: the hot-path change is a flag read of the same cost, and no measured row hides a form; say so in the results.
 
-
 계약 문서를 별도 커밋하고 T1–T8의 허용된 예외 외에는 단계 기준에서 실패 원시와 시험 SHA256을 보존한 뒤 C1–C7을 구현합니다. 제품·시험 커밋과 생성 번들 커밋을 분리합니다. browser 측정·benchmark는 수행하지 않습니다. hot path는 같은 비용의 flag 읽기이며 기존 측정 행은 Form을 숨기지 않습니다. 시간·메모리 비용은 load별 retired 선택 필드와 reset 또는 GC까지 유지되는 루트 구독이며 새 루프·타이머는 없습니다.
-
 
 ### IR-7 불변 guard 예외 승인 — 2026-11-01
 
 T5 hide/show cycles·StrictMode 단일 구독·검증 캐시 retain/release 균형은 기준에서도 통과하는 불변 guard로 유지합니다. 코디네이터 승인 조건에 따라 제품 머리6f1b36f22의 scratch에서 effect setup마다 cleanup 해제 없이 재구독하는 변형과 cleanup의 releaseValidationRoot를 생략하는 변형을 각각 주입했습니다. 양쪽 React major에서 구독 guard 둘과 균형 guard 하나가 모두 실패하며 mutation-runs.json에 최종 커밋 시험의 SHA256·실패 원시·변형 patch를 보존합니다. 기준 red의 부재를 숨기거나 red와 mutation red를 합산하지 않습니다. scratch는 증거 커밋 직후 Orca로 제거하고 남은 관문을 순차 수행합니다.
-
 
 ### IR-7 round b — 독립 검토 수정 (2026-11-01)
 
@@ -304,11 +297,9 @@ L3에는 개발 StrictMode replay를 포함합니다: including the development 
 
 T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
 
-
 ### Round b host 표면 정정 승인
 
 기준 stage의 visible adoption 전 compile 실패를 양쪽 React major에서 관찰한 결과 caller throw·onError1·host0이었습니다. 코디네이터가 이 기존 표면을 계약으로 승인했으며 처음 브리프의 host 보고 가정은 대체합니다. 수정 뒤 visible·hidden 모두 caller throw·onError1·host0을 검사하고 커밋 시험 텍스트의 stage visible green과 06df red를 저장합니다. never-prepared 생성 오류의 reset 끝 capture·host1 보고는 이 adoption 실패와 다른 경로이며 그대로 유지합니다.
-
 
 ### IR-7 round c — never-prepared reset 사슬 기록 (2026-11-01)
 
@@ -316,12 +307,11 @@ T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도�
 
 React19의 처음 숨긴 OnRequest Form에서 validator A를 실패하는 B로 바꾼 뒤 show하는 회귀를 stage의 compile 실패 surface·호스트 출력과 대조합니다. 최종 커밋 시험을 000f와 stage에서 실행하고, 은퇴를 try 안으로 옮기는 변형이 양쪽 major의 늦은 쓰기 단언을 깨는지 확인합니다. resetRootLoad의 효과와 RootLoad error/reported 주석도 reset 경로를 명시합니다. 순차 관문·raw·SHA256은 round c 결과에 보존합니다.
 
-
 ## IR-8 — load validation after the next frame (2026-11-01)
 
 ### Rule
 
-Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+`ErrorVisibility.Always`를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 
 ### Limits
 
@@ -366,9 +356,13 @@ C3 (engine, `validation/utils/read/hasFieldNodeValidationRequest.ts`). Generaliz
 
 C4 (engine). `adoptFieldNodeChain.ts:29` no longer calls `assertValidationRootReady`; the JSDoc `@throws` and the DETAIL sentence (validation DETAIL.md:39-40 "재생성 인계 전에 … 동기로 드러내어") are corrected. `validation/index.ts:8` keeps exporting `assertValidationRootReady` because C1 (in `write`) consumes it. `dispatchResetForm` gains `settings: { deferValidation?: boolean } = NO_MOUNT_SETTINGS`-style handling identical to `dispatchMount.ts:34-36` (sets `deferMountValidation`, adds the target only when not deferred); `reloadFieldNodeForm` passes it through. `mountFieldNode` already accepts it.
 
-C5 (provider, `providers/RootNodeContext/utils/scheduleLoadValidation.ts`, renamed from `scheduleMountValidation.ts`). 
+C5 (provider, `providers/RootNodeContext/utils/scheduleLoadValidation.ts`, renamed from `scheduleMountValidation.ts`).
+
 ```ts
-export const scheduleLoadValidation = (load: RootLoad, store: RootLoadStore): void => {
+export const scheduleLoadValidation = (
+  load: RootLoad,
+  store: RootLoadStore,
+): void => {
   const token = (load.loadValidation = {});
   scheduleValidationSlot(() => {
     if (store.load !== load || load.loadValidation !== token) return;
@@ -378,9 +372,10 @@ export const scheduleLoadValidation = (load: RootLoad, store: RootLoadStore): vo
   });
 };
 ```
+
 `RootLoad.loadValidation?: object` (type.ts) drops a slot superseded by a later load start on the same load object (same-schema reset). `startFieldNodeLoadValidation` is the new surface binding of C1 (`core/surface/utils/binding/startFieldNodeLoadValidation.ts`, exported from `core/surface/index.ts` and `core/index.ts`; its consumer is this provider file). `validateMountRoot.ts` → `validateLoadRoot.ts` and `reportMountValidationFailure.ts` → `reportLoadValidationFailure.ts` (content unchanged, JSDoc updated).
 
-C6 (provider, `RootNodeContextProvider.tsx`). Line 191-194 becomes `scheduleLoadValidation(load, store)` with no mode check and no `alwaysRef`; `always`, `alwaysRef` and the effect at :98-100 are removed if `checkShowError` has no other use in this file (`showError` at :102 stays). In the `reset` handle, after `store.unsubscribe = subscribeRootLoad(...)` (:120) and before the `throw` paths, add `if (store.load.root) scheduleLoadValidation(store.load, store)`. `resetRootLoad.ts:60` passes `{ deferValidation: true }` to `reloadFieldNodeForm` and `:78` to `mountFieldNode`. The validator-change and rebuild paths go through `reset` and need nothing else.
+C6 (provider, `RootNodeContextProvider.tsx`). Line 191-194 becomes `scheduleLoadValidation(load, store)` with no mode check and no `alwaysRef`; `always`, `alwaysRef` and the effect at :98-100 are removed if `checkErrorVisibility` has no other use in this file (`errorVisibility` at :102 stays). In the `reset` handle, after `store.unsubscribe = subscribeRootLoad(...)` (:120) and before the `throw` paths, add `if (store.load.root) scheduleLoadValidation(store.load, store)`. `resetRootLoad.ts:60` passes `{ deferValidation: true }` to `reloadFieldNodeForm` and `:78` to `mountFieldNode`. The validator-change and rebuild paths go through `reset` and need nothing else.
 
 C7 (documents, corrected in place): `core/engine/validation/INTENT.md` and `DETAIL.md` (:14, :39, :40, :46, :47, :49, :67, :68, :84: compile timing, the slot entry, failure surfaces; :67 stale duplicate of :68 is removed as the pre-existing carried-forward item), `core/engine/write/DETAIL.md:66` and the adoption sentence, `core/surface/DETAIL.md` (binding list), `core/DETAIL.md`, `core/engine/DETAIL.md`, `providers/RootNodeContext/INTENT.md` and `DETAIL.md` (:10, :21, :25, :27, :52), `docs/ko/SPECIFICATION.md:880` and `:1034`, `docs/en/SPECIFICATION.md:882` and `:1036`, `README.md:2730`, `QUICK_REFERENCE.md:576`, `docs/agents/.../validation-and-state.md:11`, `arrays-and-scale.md:154`, ADR 0004 and 0014 supplements. Ledger supplements (append only): `validate.md` VALIDATE-052 IR-8 supplement (Always after the slot; the load entry), VALIDATE-046 and `error.md` ERROR-201 IR-8 supplement (the atomic-reset rule is withdrawn: a reset whose new schema does not compile keeps the new tree and reports in the slot), the VALIDATOR_COMPILE_FAILED row (ERROR-146 to 157 range: "로드 뒤 첫 검증 요청" → "로드 뒤 다음 프레임 슬롯", surface: automatic paths `'sink'` with host, `validate()`·submit `'rejected'`), `write.md` WRITE-046 and WRITE-086 supplement (adoption no longer compiles), `event.md` EVENT-030 supplement, `react.md` supplement (provider slot for every load), `test.md` supplement naming the adapted tests. Plan records (append only): `architecture/plan/input-responsiveness/request.md` (quotes 44, 47, 48, 49 verbatim), `design.md` and `verification.md` IR-8 sections in the IR-7 section structure.
 
@@ -430,6 +425,7 @@ A7 (documents added to C7). `src/providers/DETAIL.md:12-13`; `providers/RootNode
 Where this amendment and Amendment 1 differ, this amendment wins.
 
 B1 (load start; replaces A1's placement, verifier P2-1 and codex P1-1).
+
 - In `dispatchMount` and in `dispatchResetForm`, deferred or not, immediately after the flag resets (`validationUnavailable = false; validationCompileReported = false`), advance `validationStamp` by one.
 - In `dispatchResetForm` with `deferValidation`, at the same point, also clear `validationPendingTargets` and settle the pending hold with `settleFieldNodeValidation(root)` (no stamp).
 - Both entries record `validationLoadStamp = validationStamp ?? 0` in their `finally` block immediately before `exitFieldNodeChain`, so the non-OnChange bump in `clearFieldNodeFormErrors.ts:29-32` never counts as a request. A non-deferred OnChange reset's own chain-end request does count, which is correct and unobserved (no slot in core-only use).
@@ -439,12 +435,14 @@ B1 (load start; replaces A1's placement, verifier P2-1 and codex P1-1).
 - T11 (guard): OnChange form without a validator; in one `act`, a write then `reset()`; after the slot, `isValidationPending(handle.node)` is false.
 
 B2 (duplicate reason; verifier P2-2 (a)).
+
 - `ValidationEntry` gains `readonly duplicate?: boolean`. `readValidationEntry`'s catch (`:72-74`) sets it with the existing predicate: a string `$id`, the message gate `/already exists|duplicate/i`, and another counted root with the same `$id` and count > 0 at compile time.
 - `assertValidationRootReady` keeps the message gate and uses `entry.duplicate === true ||` the existing scan.
 - Test (`validation.same-id.test.ts`, red today, green after): retain `first`, compile `second` (fails), release `first`, then `dispatchValidate(second)` rejects with `reason: 'duplicateSchemaId'`.
 - A3's rewrite of "VALIDATE-046 (iii) keeps the old chain intact": adoption proceeds without compiling, and the failure surfaces at the next compile with the reason when a same-`$id` root was counted at compile time.
 
 B3 (same-`$id` replacement; verifier P2-2 (b); a recorded behaviour change, no owner decision needed because it removes a failure).
+
 - In a visible form, the `useSyncExternalStore` re-render after `reset` commits before the slot. Its layout-effect cleanup releases the old root, and `readValidationEntry.ts:53-61` then evicts it before compiling the new one. So a root-replacing reset to a new schema object with the same `$id` compiles with a non-isolating validator, where adoption fails today.
 - Two mounted forms sharing an `$id` keep the duplicate failure.
 - `if`-gated schemas compile during the reset while the old root is retained, so they keep today's failure, with the reason (B2).
@@ -452,12 +450,14 @@ B3 (same-`$id` replacement; verifier P2-2 (b); a recorded behaviour change, no o
 - Render test: a rebuild to a same-`$id` object under a register/release-tracking validator produces no `onError` record.
 
 B4 (test labels; verifier P2-3, overrides A4 where they differ).
+
 - T4 red mechanism: `isValidationPending(handle.node)` immediately after `act(() => handle.reset())` is true today and false after. The count assertions stay as guards. `after-paint.render.test.tsx:60-90` is the existing near-equivalent.
 - T5 same-schema case: guard.
 - T8: the root-replacing variant is red (each reset throws today). The same-schema variant is a guard. Do not cite the token as a red mechanism. The token's own check is A4's manual slot release (stale callback: zero engine load entries).
 - T9's original cases: guard (first mount is covered by `after-paint.render.test.tsx:146-178` and `:243-263`). A2's case is red: today the stale `validate()` reports `'rejected'` and suppresses the reset's run report, so the host gets 0.
 
 B5 (adapted tests; verifier P2-4).
+
 - `validation.mount-always.render.test.tsx:33-72` is the pre-paint Always test that T2 replaces.
 - `validation.mount-always.render.test.tsx:97-135` becomes `'sink'` plus one host report after `clock.frame(); clock.task()`.
 - `validation.same-id.test.ts:91-115` follows A3 and B2.
@@ -466,6 +466,7 @@ B5 (adapted tests; verifier P2-4).
 - Also run and report `validation.reveal-history` (`:306`), `Form.resetCommit`, the cache-reset tests and `validation.visibility` (`:402`), which the verifier did not trace.
 
 B6 (documents; verifier P2-5, added to C7 and A7).
+
 - Package documents:
   - `src/providers/DETAIL.md:12`, `:13`, `:27`;
   - `providers/RootNodeContext/DETAIL.md:17`, `:18`, `:19`, `:28`, `:43`, `:58`;
@@ -480,12 +481,14 @@ B6 (documents; verifier P2-5, added to C7 and A7).
 - Run the ledger projection tools (sup-insert, doc-coverage) if they own those ADR and design copies, and say so in the results.
 
 B7 (exports; verifier P2-6).
+
 - Add `dispatchLoadValidation` to `core/engine/write/index.ts` and to the write block of `core/engine/index.ts`.
 - Remove `hasFieldNodeValidationRequest` from `core/engine/index.ts:45`, from `core/surface/index.ts` and from `core/index.ts`, together with the surface binding file. C1 imports it from `validation/index.ts:14`, which stays.
 - Add `failValidationCompile` to `validation/index.ts`; C1 is its consumer.
 - Update `core/engine/DETAIL.md:106`, `:118`, `:130`.
 
 B8 (advisories adopted).
+
 - (P3-1) Signature `failValidationCompile(node, failure)`. A new write-side helper `ensureValidationFailureReporter(runtime)` in `core/engine/write/utils/report/` installs `runtime.reportValidationFailure`. Both `requestFieldNodeValidationWave.ts:15` and C1 use it.
 - (P3-2) C1 sends only `ValidatorCompileFailed` to `failValidationCompile`. Any other failure, such as the `TypeError` at `readValidationEntry.ts:48-49`, goes to `runtime.reportValidationFailure` without marking validation unavailable, mirroring `requestFieldNodeValidation.ts:62-73`.
 - (P3-3) F4 corrections:
@@ -509,12 +512,14 @@ B8 (advisories adopted).
 This amendment is applied as the verifier wrote it. It wins over Amendments 1 and 2 where they differ. The design is approved for dispatch with it.
 
 C3-1 (P2-A, two core tests count stamp increments across a load start; added to B5).
+
 - `core/engine/write/__tests__/dispatch.binding-input.test.ts:210-238` ("69C-05 deferred mount omits validation while default mount requests it once"): `:233` expects `immediate.runtime.validationStamp` to be 1, and after B1 it is 2.
 - `core/engine/write/__tests__/dispatch.onChange.test.ts:35-46` ("EVENT-032 reset with unchanged emit does not call onChange"): `:44` expects `before + 1`, and after B1 it is `before + 2`.
 - Fix for both: assert the request count as `runtime.validationStamp! - runtime.validationLoadStamp!` equal to 1. `validationLoadStamp` is recorded in the `finally` block before the chain-end request, so this counts only the request.
 - Name both in the results as adapted for the load-start advance.
 
 C3-2 (P3-1, line references).
+
 - The non-OnChange bump in `clearFieldNodeFormErrors.ts` is at `:34-37`: the bump at `:35` and the settle at `:36`. This corrects A1, B1, B8 P3-3 and the codex triage.
 - `validationPendingTargets = undefined` at `:38` already runs for every reset, in every mode. B1's "also clear `validationPendingTargets`" is therefore redundant but harmless. B1's own step is the advance plus the settle.
 
@@ -529,17 +534,18 @@ C3-6 (P3-5, one regex). Define `DUPLICATE_SCHEMA_ID_MESSAGE` once, beside `readV
 C3-7 (P3-6, DETAIL wording). `core/engine/validation/DETAIL.md` W3 (`:17`) says a chain without a request "이전 대기 요청이나 더 새로운 판정을 풀지 않는다". Add one sentence there, and one to H (`:10`, `:12`), naming the deferred load-start settle as a pending true-to-false release that drops the earlier request. This is added to B6.
 
 C3-8 (P3-7, B3 render test setup).
+
 - `rebuild()` on the same schema object reuses the cached entry, and a deep-equal new object takes the same-schema path (`isSameSchema`), so neither exercises B3.
 - Set up the test this way: rerender with a new schema object that has the same `$id` and different content, then call `reset()` or `rebuild()`.
 - Use a validator that throws `Error('schema with key already exists')` while that `$id` is registered and unregisters it on `release`.
 - Expect no `onError` record, and the form validating against the new schema after the slot.
 
 C3-9 (test placement, coordinator; removes ambiguity in the brief).
+
 - T1–T6, T8, T9 and the B3 render test go in `src/__tests__/e2e/validation.load-slot.render.test.tsx`.
 - T7 goes in `src/core/__tests__/loadValidation.test.ts`.
 - T10 and T11 go in `src/__tests__/e2e/validation.after-paint.render.test.tsx`.
 - The B2 test goes in `core/engine/validation/__tests__/validation.same-id.test.ts`.
-
 
 ## IR-8 round b — results-gate 수정 (2026-11-01)
 
@@ -555,40 +561,35 @@ L6에 run-time retain 후보를 기록하고 수명 계약은 바꾸지 않는�
 
 lint·typecheck·build·unit·render·react18·verify·storybook·production·import-model을 순차 실행한다. 두 load-slot 파일의 act warning 0, FCA 새 finding 0, 원장 기준 대비 새 문제 0, machine-path 0와 skip/todo 불변을 확인하고 round-b 원시에 보존한다 (TEST-021).
 
-
 ## IR-9 — onError record origin (2026-11-01)
 
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
 `onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
 
-| origin | 연산 |
-| --- | --- |
-| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
-| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
-| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
-| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
-| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+| origin     | 연산                                                                     |
+| ---------- | ------------------------------------------------------------------------ |
+| `load`     | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬                 |
+| `write`    | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너              |
+| `submit`   | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패     |
+| `render`   | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고   |
 
 사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
 
 C1–C6와 Amendment 1 A1–A5·P3 전체를 적용합니다. src/index.ts·package version은 유지합니다. 계약→시험 red→제품→순차 관문 순서이며 측정창·벤치는 필요하지 않습니다.
 
-
 ## Defect round — Amendment 2 제품 라운드
 
 DR-1·DR-2·DR-3과 D9 제한은 [결함 설계](../defect-round/design.md)를 따릅니다. 기존 계획·측정 기록은 보존하며 D4·D5는 기준 재현 red 뒤 코디네이터 Amendment 3까지 수정하지 않습니다. D6·D7은 비재현 guard를 보존합니다. 측정과 기록 경로 정리는 별도 라운드입니다.
-
 
 ## Amendment 7·8 보충
 
 DR-13은 남은 로드 판정을 root 요청으로 충족하고 대체된 비동기 targets를 보존합니다. DR-14는 보고된 원인과 handler 예외만 담은 capture를 생략하며 degraded caller 거부는 bundle로 보존합니다. DR-15는 읽기 당시 scope와 입력 root의 수명을 지킵니다. 공개 batch/walk 이력 예외의 현행 문서를 정정합니다. IR-8의 쓰기 요청 root 가정은 [결정 보충](../../reviews/defect-round.md)으로 정정하며 기준 재현·React 두 버전·mutation·최종 관문으로 검증합니다.
 
-
 ## Amendment 9·10 — 결과 관문 정정
 
 DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.
-
 
 ## IR-10 — object value copy and guard-only compile (2026-11-04)
 
@@ -740,15 +741,15 @@ The codex design check returned FAIL; every finding was applied before implement
 
 #### 구현 차이, 계약 아님 (D5)
 
-| 항목 | ajv8 | ajv7 | ajv6 |
-| --- | --- | --- | --- |
-| 진입점과 방언 | default(draft-07)·2019·2020 진입점 | 기본 draft-07, 2019는 Ajv2019 바인딩 | draft-07만 |
-| 등록된 루트가 있을 때의 `bind` | 등록을 원래 인스턴스에 유지 | 등록소를 새로 만듦 | 등록소를 새로 만듦 |
-| 가드 반환값 검사 | `!!validate(value)` | 불리언이 아니면 TypeError | 불리언이 아니면 TypeError |
-| 동적 앵커 호출 인자 | `instancePath` | `dataPath` | 동적 어휘 없음 |
-| 기본 `allowUnionTypes` | 켬 | 플러그인 기본값이 설정하지 않음(`strict: false`) | 옵션 없음 |
-| 사례 (iv) ajv8 모양(2020) | 어휘적 진입의 답(관찰) | 해당 없음 | 해당 없음 |
-| 사례 (iv) ajv7 모양(2019) | 컴파일 거부(적합성) | 컴파일 거부(적합성) | 해당 없음 |
+| 항목                           | ajv8                               | ajv7                                             | ajv6                      |
+| ------------------------------ | ---------------------------------- | ------------------------------------------------ | ------------------------- |
+| 진입점과 방언                  | default(draft-07)·2019·2020 진입점 | 기본 draft-07, 2019는 Ajv2019 바인딩             | draft-07만                |
+| 등록된 루트가 있을 때의 `bind` | 등록을 원래 인스턴스에 유지        | 등록소를 새로 만듦                               | 등록소를 새로 만듦        |
+| 가드 반환값 검사               | `!!validate(value)`                | 불리언이 아니면 TypeError                        | 불리언이 아니면 TypeError |
+| 동적 앵커 호출 인자            | `instancePath`                     | `dataPath`                                       | 동적 어휘 없음            |
+| 기본 `allowUnionTypes`         | 켬                                 | 플러그인 기본값이 설정하지 않음(`strict: false`) | 옵션 없음                 |
+| 사례 (iv) ajv8 모양(2020)      | 어휘적 진입의 답(관찰)             | 해당 없음                                        | 해당 없음                 |
+| 사례 (iv) ajv7 모양(2019)      | 컴파일 거부(적합성)                | 컴파일 거부(적합성)                              | 해당 없음                 |
 
 AJV 동기 검증 함수는 불리언만 돌려주므로 반환값 검사의 차이는 관찰 가능한 동작 차이를 만들지 않습니다. 나머지 행은 지원 계약 밖이거나 방언 범위의 차이이며, 폼의 기대(적합성 묶음)는 세 플러그인에서 같습니다.
 

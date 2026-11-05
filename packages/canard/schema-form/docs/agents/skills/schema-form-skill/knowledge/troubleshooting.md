@@ -31,7 +31,7 @@ fieldInputMap: {
 
 Errors exist (`getErrors()` shows them) but the UI is silent:
 
-1. Display policy — set `showError` on `<Form>` (`boolean | ShowError` enum; never a string) or call `formRef.current?.showError(true)`. See `validation-ux.md`.
+1. Display policy — set `errorVisibility` on `<Form>` (`ErrorVisibility` enum; never a string) or call `formRef.current?.revealErrors()`. See `validation-ux.md`.
 2. Custom inputs must render messages and gate them with `errorVisible`; ignoring that flag can show errors at the wrong time, while omitting message rendering shows none.
 
 ## Composition (oneOf / anyOf)

@@ -1,6 +1,6 @@
 ---
 name: schema-form-skill
-description: 'Expert knowledge base for @canard/schema-form. Triggers on FieldInput, controls (controls.active/visible/readOnly/derived/watch/resetInteraction), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ShowError, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/outputValue), virtualization, context, events, troubleshooting.'
+description: 'Expert knowledge base for @canard/schema-form. Triggers on FieldInput, controls (controls.active/visible/readOnly/derived/watch/resetInteraction), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ErrorVisibility, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/outputValue), virtualization, context, events, troubleshooting.'
 ---
 
 # Schema Form Expert
@@ -19,7 +19,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `controls`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `resetInteraction`, `derived`, `discriminator`, expression syntax, `oneOf`, `anyOf`, `allOf`, `if/then/else`, conditional fields, `context`, `@` references | `knowledge/expressions.md`           |
 | `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `outputValue`, performance, slow, large forms, `virtualization`                      | `knowledge/arrays-and-scale.md`      |
-| `validate`, `ValidationMode`, `ShowError`, `showError`, `errors`, `setExternalErrors`, `clearExternalErrors`                                                                                                                  | `knowledge/validation-ux.md`         |
+| `validate`, `ValidationMode`, `ErrorVisibility`, `errorVisibility`, `errors`, `setExternalErrors`, `clearExternalErrors`                                                                                                      | `knowledge/validation-ux.md`         |
 | `formatError`, `errorMessages`, locale messages, `useChildFieldErrors`, section errors                                                                                                                                        | `knowledge/error-feedback.md`        |
 | `onStateChange`, `getState`, `setState`, `clearState`, `isDivergent`, unsaved changes, restore interaction                                                                                                                    | `knowledge/interaction-state.md`     |
 | `onError`, record origin, compile/run failure, recovery, hidden-form diagnostics                                                                                                                                              | `knowledge/validation-failures.md`   |
@@ -50,12 +50,12 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 
 ### JSONPointer Extensions by Context
 
-| Syntax             | controls expressions | `node.find()`                  | `fieldInputMap` |
-| ------------------ | -------------------- | ------------------------------ | --------------- |
-| Absolute `/a/b`    | ✓                    | ✓                              | ✓               |
-| Relative `..`, `.` | ✓                    | ✓                              | ✗               |
-| Wildcard `*`       | ✗                    | ✓ (first match; `findNodes` for all)       | ✓               |
-| Context `@`        | ✓                    | ✗ (`null`; `findNodes` gives `[]`) | ✗               |
+| Syntax             | controls expressions | `node.find()`                        | `fieldInputMap` |
+| ------------------ | -------------------- | ------------------------------------ | --------------- |
+| Absolute `/a/b`    | ✓                    | ✓                                    | ✓               |
+| Relative `..`, `.` | ✓                    | ✓                                    | ✗               |
+| Wildcard `*`       | ✗                    | ✓ (first match; `findNodes` for all) | ✓               |
+| Context `@`        | ✓                    | ✗ (`null`; `findNodes` gives `[]`)   | ✗               |
 
 ### Controls
 
@@ -73,12 +73,12 @@ Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/
 
 ## Reference Map
 
-| Resource                              | Path                                            |
-| ------------------------------------- | ----------------------------------------------- |
-| Consumer guide | [English](https://vincent-kk.github.io/albatrion/docs/canard/schema-form) / [Korean](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form) |
-| API behavior | [API reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference) |
-| API shapes (authoritative)            | `dist/index.d.ts`                               |
-| Storybook examples                    | `stories/*.stories.tsx` (repository)            |
+| Resource                   | Path                                                                                                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Consumer guide             | [English](https://vincent-kk.github.io/albatrion/docs/canard/schema-form) / [Korean](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form) |
+| API behavior               | [API reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference)                                                           |
+| API shapes (authoritative) | `dist/index.d.ts`                                                                                                                                       |
+| Storybook examples         | `stories/*.stories.tsx` (repository)                                                                                                                    |
 
 `controls.discriminator` requires an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`; other host types are TypeScript errors.
 

@@ -8,16 +8,16 @@ Use public imports from `@canard/schema-form`. These examples assume an applicat
 
 - `OnChange` schedules validation after loading and after value changes. Load validation, described below, produces the initial verdict only if no later validation request has superseded it. Continuous edits are grouped, with a trailing run when they stop and a 100 ms cap measured from the last automatic run that started.
 - `OnRequest` prepares validation after loading but produces no verdict until `validate()` or submit. Edits alone can leave the previous errors in place. A schema without `if` conditions still compiles in the background after the first paint.
-- A load is the start of a form's tree: first mount, same-schema `reset()`, root-replacing `reset()`, `rebuild()` or a validator change. Only the newest load runs this load work, once, after the next frame, including with `showError={true}` or `ShowError.Always`; a load replaced before that frame is not validated on its own, and `None` runs none.
+- A load is the start of a form's tree: first mount, same-schema `reset()`, root-replacing `reset()`, `rebuild()` or a validator change. Only the newest load runs this load work, once, after the next frame, including with `errorVisibility={ErrorVisibility.Always}` or `ErrorVisibility.Always`; a load replaced before that frame is not validated on its own, and `None` runs none.
 - `None` skips whole-schema validation, including explicit requests; it does not provide a successful verdict. Conditional if guards can still run while fields settle.
 
-Explicit validation and submit start immediately in validating modes. Await the result instead of reading errors immediately after render or after a change. With a validator in a validating mode, submit validates the value captured by that call; invalid input rejects its promise and does not reach `onSubmit`. In `None`, or without a validator, submit passes the captured value to `onSubmit` without a verdict. For an imperative submit flow, call `showError()` when you want to reveal untouched fields.
+Explicit validation and submit start immediately in validating modes. Await the result instead of reading errors immediately after render or after a change. With a validator in a validating mode, submit validates the value captured by that call; invalid input rejects its promise and does not reach `onSubmit`. In `None`, or without a validator, submit passes the captured value to `onSubmit` without a verdict. For an imperative submit flow, call `revealErrors()` when you want to reveal untouched fields.
 
-A native submission (Enter in a field, or a submit button inside the Form) handles an invalid verdict itself: the Form reveals its errors, as `showError()` does, and focuses the first invalid field in tree order. Nothing reaches `onError` or the host's `reportError`, and `onSubmit` is not called. It neither reveals nor focuses when error display is disabled: the Form's `showError`, else the FormProvider's, is `false`, or includes `ShowError.Never` without `ShowError.Always`. A field's own `ErrorVisible` state still wins over that policy. A Form with `disabled` or `readOnly` reveals without focusing, and when the chosen field's input cannot take focus (a field the layout does not render, or one inside a virtualization placeholder that has not been revealed), focus stays where it is. Tree order is screen order only for default rendering. The handle's `submit()` and `useFormSubmit` still reject with the verdict and reveal nothing.
+A native submission (Enter in a field, or a submit button inside the Form) handles an invalid verdict itself: the Form reveals its errors, as `revealErrors()` does, and focuses the first invalid field in tree order. Nothing reaches `onError` or the host's `reportError`, and `onSubmit` is not called. It neither reveals nor focuses when error display is disabled: the Form's `errorVisibility`, else the FormProvider's, is `ErrorVisibility.Never`. A field's own `ErrorVisibility` state still wins over that policy. A Form with `disabled` or `readOnly` reveals without focusing, and when the chosen field's input cannot take focus (a field the layout does not render, or one inside a virtualization placeholder that has not been revealed), focus stays where it is. Tree order is screen order only for default rendering. The handle's `submit()` and `useFormSubmit` still reject with the verdict and reveal nothing.
 
 ## Show errors after the relevant interaction
 
-Use `ShowError.Touched` for feedback after blur, or `EditedTouched` when both editing and blur should be required. Programmatic `setValue` does not simulate user input in a test; what marks a field edited is described in [interaction state](interaction-state.md).
+Use `ErrorVisibility.AfterTouch` for feedback after blur, or `ErrorVisibility.AfterEditAndTouch` when both editing and blur should be required. Programmatic `setValue` does not simulate user input in a test; what marks a field edited is described in [interaction state](interaction-state.md).
 
 A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; this input also sets Touched on blur so a test can assert immediately (when Form records Touched itself is described in [interaction state](interaction-state.md)):
 
@@ -99,7 +99,7 @@ const formProps = {
   defaultValue: { name: 'ab' },
   validatorFactory: validator,
   validationMode: ValidationMode.OnRequest,
-  showError: ShowError.Touched,
+  errorVisibility: ErrorVisibility.AfterTouch,
   fieldInputMap: { '/name': NameInput },
   FieldRenderer: InputOnly,
 };
@@ -126,14 +126,14 @@ Then type a valid name, await `validate()`, and assert the output value, an empt
 
 ## Deliver server errors through the form
 
-Pass server issues through Form's `errors` prop with a field `dataPath`. The display policy still applies; use the handle’s `showError()` to reveal them after a failed submission. In the mounted name example:
+Pass server issues through Form's `errors` prop with a field `dataPath`. The display policy still applies; use the handle’s `revealErrors()` to reveal them after a failed submission. In the mounted name example:
 
 ```tsx
 const serverErrors: ValidationIssue[] = [
   { dataPath: '/name', keyword: 'server', message: 'This name is taken.' },
 ];
 view.rerender(<Form ref={formRef} {...formProps} errors={serverErrors} />);
-act(() => formRef.current!.showError());
+act(() => formRef.current!.revealErrors());
 ```
 
 A successful schema validation does not clear external issues. Replace the prop with an empty list when the server error is no longer relevant; assert both `getErrors()` and the message after adding and clearing it.
@@ -150,3 +150,11 @@ Background tabs throttle that timer, and a slow validator delays the result. Sch
 If your application changes `context` contents on every frame, newly eligible messages in `OnChange` mode can stay hidden until those changes stop. A fresh function counts as changed content; a fresh `Date`, `Map` or class instance with equal contents does not, because Form and FormProvider compare `context` by content first.
 
 Known display limits: when React defers a field's render (a transition, Suspense or time slicing) past the next result, its message can appear without waiting; a write between a result and the next paint can leave that result's message visible for one or two frames. Writes grouped in one public `node.batch()` or `visitSubtree()` walk count as a single state for the hold, while separate public calls inside one React batch still count their intermediate states. The renderer and the input count only active and visible fields for the hold (see [error feedback](error-feedback.md) for `useChildFieldErrors`). Check timing-sensitive transitions in the real UI.
+
+The live base policy is `Form.errorVisibility ?? FormProvider.errorVisibility ?? ErrorVisibility.AfterEditAndTouch`. The string enum has six values: `Always='always'`, `Never='never'`, `AfterEdit='afterEdit'`, `AfterTouch='afterTouch'`, `AfterEditAndTouch='afterEditAndTouch'`, and `AfterEditOrTouch='afterEditOrTouch'`. Booleans, numbers and arbitrary strings are rejected.
+
+`revealErrors()` temporarily selects Always; `resetErrorVisibility()` restores the latest base policy. Neither validates nor writes node state. A committed base-policy change, reset, rebuild or root replacement clears the Form reveal. A same-value rerender or a Provider change masked by a Form prop keeps it. Returning to an earlier policy does not revive a cleared reveal; abandoned renders do not clear it.
+
+`FieldNodeState.ErrorVisibility` is a node override: undefined inherits, true allows display, and false suppresses it, including during Form reveal. Clear only this key with `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })` to inherit without clearing Edited/Touched. Renderer and input visibility still require `isPresent` and follow OnChange release rules. `useChildFieldErrors` preserves its aggregate contract including hidden children, returning `errorVisible` and `childErrorVisibleList` without a presence filter. Raw errors remain available independently of display.
+
+An invalid JavaScript policy reports `FormErrorCode.InvalidErrorVisibility` once per committed invalid value with origin `load`, without a RenderFailed boundary error. An initially invalid policy prevents tree construction and shows the load fallback; a later valid policy constructs the tree. An invalid live change preserves the current tree, values, interaction state and last valid policy; a valid replacement applies live. The next invalid occurrence after recovery reports again. Explicit Form configuration takes precedence over Provider configuration.

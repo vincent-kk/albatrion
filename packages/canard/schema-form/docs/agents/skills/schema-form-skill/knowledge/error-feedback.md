@@ -60,7 +60,7 @@ Pair each formatted message with that child's visibility when a section should s
 
 ```tsx
 function SectionInput({ node, ChildFields }: FieldInputProps) {
-  const { showErrors, formattedErrors } = useChildFieldErrors(node);
+  const { childErrorVisibleList, formattedErrors } = useChildFieldErrors(node);
   return (
     <section>
       {ChildFields.map((Child, index) => (
@@ -68,7 +68,7 @@ function SectionInput({ node, ChildFields }: FieldInputProps) {
       ))}
       <ul aria-label="Section errors">
         {formattedErrors.map((message, index) =>
-          showErrors[index] && message != null ? (
+          childErrorVisibleList[index] && message != null ? (
             <li key={node.children![index].path}>{message}</li>
           ) : null,
         )}
@@ -82,7 +82,7 @@ Mount this component through `fieldInputMap` or a field input definition that ma
 It retains ChildFields because a section owns layout, not the whole object value.
 Choose whether the section or each input owns the displayed messages to avoid duplicate feedback.
 The hook's raw `errorMatrix` is ungated and `formattedErrors` contains the first issue per child.
-`formattedError` picks the first non-null formatted child message; `showError` is true when the parent or any child is eligible.
+`formattedError` picks the first non-null formatted child message; `errorVisible` is true when the parent or any child is eligible.
 Consequently `errorMessage` can be the first child's message when a different child makes the section eligible; it is a group summary, not a per-child visibility filter.
 The hook does not exclude inactive or hidden children; check `isActive` and `isVisible` on each child yourself if they must be absent.
 Passing `true` for `disabled` returns empty errors and no visibility without changing the form's errors or validation; switching it back to `false` shows eligible messages at once, without waiting for pending validation.
@@ -93,3 +93,5 @@ Check configured keyword copy, missing-locale fallback, and a keyword using defa
 For a custom formatter, assert the returned markup and context-dependent text as well as the unchanged raw issue.
 For a section, leave its first invalid child untouched, touch a later invalid child, and check that your chosen per-child policy displays only that later message.
 Clear the source errors and check that the summary disappears; a hidden message alone does not prove the issue was removed.
+
+The child-error aggregate deliberately includes hidden children. Renderer and input `errorVisible` still require `isPresent`; the aggregate does not apply that filter.

@@ -6,9 +6,9 @@
 
 ## 이름과 상호작용
 
-`FieldNodeState.Dirty`→`FieldNodeState.Edited`(bit 1), `ShowError.Dirty`→`ShowError.Edited`(bit 4), `ShowError.DirtyTouched`→`ShowError.EditedTouched`(bit 16), `required`→`isRequired`, `active`→`isActive`, `visible`→`isVisible`, `enabled`→`isPresent`, `readOnly`→`isReadOnly`, `disabled`→`isDisabled`, `misfit`→`isMisfit`로 바꿉니다. isRoot는 유지합니다. 내부 readFieldNodeMisfit도 readFieldNodeIsMisfit으로 바꾸고 관측 노드 키·입력 상호작용 플래그도 새 이름을 씁니다. FieldInput/FieldRenderer props·FieldInputHint·schema·controls 키는 그대로이며 연결되는 노드 indexed type만 새 이름을 씁니다. DirtyPathSet·dirtyPaths 등 정착 재계산 어휘는 유지합니다.
+`FieldNodeState.Dirty`→`FieldNodeState.Edited`(bit 1), `ErrorVisibility.AfterEdit`→`ErrorVisibility.AfterEdit`(bit 4), `ErrorVisibility.AfterEditAndTouch`→`ErrorVisibility.AfterEditAndTouch`(bit 16), `required`→`isRequired`, `active`→`isActive`, `visible`→`isVisible`, `enabled`→`isPresent`, `readOnly`→`isReadOnly`, `disabled`→`isDisabled`, `misfit`→`isMisfit`로 바꿉니다. isRoot는 유지합니다. 내부 readFieldNodeMisfit도 readFieldNodeIsMisfit으로 바꾸고 관측 노드 키·입력 상호작용 플래그도 새 이름을 씁니다. FieldInput/FieldRenderer props·FieldInputHint·schema·controls 키는 그대로이며 연결되는 노드 indexed type만 새 이름을 씁니다. DirtyPathSet·dirtyPaths 등 정착 재계산 어휘는 유지합니다.
 
-`isEdited`는 `!!state[FieldNodeState.Edited]`, `isTouched`는 `!!state[FieldNodeState.Touched]`이다. 사용자 입력만 Edited를 세우고 프로그램 setValue·배열 동사·fill·파생 쓰기·injectTo·unsetValue·trim은 세우지 않는다. 원래 값 복귀로 Edited가 지워지지 않으며 reset·clearSubtreeState·resetInteraction이 초기화한다. detach 뒤 isEdited·isTouched는 마지막 커밋 상태를 유지하고 isDivergent는 isPresent·isActive처럼 현재 출력 기여를 설명하므로 false다. ShowError.Edited는 사용자 입력 편집 이후 오류를 보이고 EditedTouched는 touched까지 충족할 때 보입니다. 기본 정책·비트 값은 유지하고 새 조건은 추가하지 않습니다. 두 상태 getter는 UpdateState에서 다시 읽습니다.
+`isEdited`는 `!!state[FieldNodeState.Edited]`, `isTouched`는 `!!state[FieldNodeState.Touched]`이다. 사용자 입력만 Edited를 세우고 프로그램 setValue·배열 동사·fill·파생 쓰기·injectTo·unsetValue·trim은 세우지 않는다. 원래 값 복귀로 Edited가 지워지지 않으며 reset·clearSubtreeState·resetInteraction이 초기화한다. detach 뒤 isEdited·isTouched는 마지막 커밋 상태를 유지하고 isDivergent는 isPresent·isActive처럼 현재 출력 기여를 설명하므로 false다. ErrorVisibility.AfterEdit는 사용자 입력 편집 이후 오류를 보이고 EditedTouched는 touched까지 충족할 때 보입니다. 기본 정책·비트 값은 유지하고 새 조건은 추가하지 않습니다. 두 상태 getter는 UpdateState에서 다시 읽습니다.
 
 ## 기준 출력과 지연 읽기
 

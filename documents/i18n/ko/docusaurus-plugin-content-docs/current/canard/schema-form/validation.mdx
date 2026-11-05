@@ -3,11 +3,7 @@ sidebar_label: '검증'
 sidebar_position: 5
 ---
 
-
-
 # 검증
-
-
 
 ## 검증 모드와 실행 시점 {#modes}
 
@@ -21,9 +17,13 @@ root load마다 다음 프레임 뒤의 검증 슬롯 하나를 예약합니다.
 
 ## 원시 오류와 오류 표시 {#visibility}
 
-`ShowError.Always`·true는 항상, `Never`·false는 전혀 표시하지 않으며 `Edited`, `Touched`는 해당 interaction flag를 요구합니다. 기본 `EditedTouched`는 둘 다 필요합니다. 노드의 `FieldNodeState.ErrorVisible`은 이 정책을 덮어씁니다.
+실시간 기본 정책은 `Form.errorVisibility ?? FormProvider.errorVisibility ?? ErrorVisibility.AfterEditAndTouch`입니다. 문자열 enum의 값은 `Always='always'`, `Never='never'`, `AfterEdit='afterEdit'`, `AfterTouch='afterTouch'`, `AfterEditAndTouch='afterEditAndTouch'`, `AfterEditOrTouch='afterEditOrTouch'` 여섯 개입니다. boolean·숫자·임의 문자열은 거부합니다.
 
-Form의 `showError` prop은 로컬 정책의 초기값이며 prop 변경만으로 현재 정책을 동기화하지 않습니다. `handle.showError(true)`는 정책을 true로 설정합니다. 새 prop이 commit된 뒤 `handle.showError(false)`를 호출하면 최신 Form prop을 적용하므로 반드시 숨긴다는 뜻은 아닙니다. `reset()`도 다른 [load 연산](./api-reference#configuration-lifetime)과 함께 해당 prop을 다시 적용합니다. 새 React `key` 등으로 Form을 다시 마운트하면 새 prop으로 정책을 초기화합니다. FormProvider의 `showError`는 Form의 현재 로컬 정책이 undefined라서 fallback을 사용할 때만 live 갱신됩니다. 유효하지 않은 native 제출 후의 자동 오류 공개와 정책 예외는 [제출](./error-reference#submission)을 참조하십시오.
+`revealErrors()`는 일시적으로 Always를 선택하고 `resetErrorVisibility()`는 최신 기본 정책으로 돌아갑니다. 두 명령은 검증하거나 노드 상태를 쓰지 않습니다. 기본 정책 변경의 커밋, reset, rebuild, 루트 교체는 Form 공개를 해제합니다. 같은 값의 재렌더나 Form prop에 가려진 Provider 변경은 공개를 유지합니다. 이전 정책으로 돌아가도 해제된 공개가 되살아나지 않으며 중단된 렌더는 공개를 해제하지 않습니다.
+
+`FieldNodeState.ErrorVisibility`는 노드 재정의로 undefined는 상속, true는 표시 허용, false는 Form 공개 중에도 억제입니다. Edited/Touched를 보존하면서 상속하려면 `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })`로 그 키만 지웁니다. 렌더러와 입력은 여전히 `isPresent` 및 OnChange 해제 규칙을 따릅니다. `useChildFieldErrors`는 숨겨진 자식까지 집계하는 계약을 유지하며 presence 필터 없이 `errorVisible`·`childErrorVisibleList`를 반환합니다. 원시 오류는 표시와 무관하게 유지됩니다.
+
+JavaScript의 잘못된 정책은 커밋된 잘못된 값마다 `FormErrorCode.InvalidErrorVisibility`를 origin `load`로 한 번 보고하며 RenderFailed 경계 예외로 바꾸지 않습니다. 최초 정책이 잘못되면 트리를 구성하지 않고 load fallback을 표시하며, 유효한 정책으로 바꾸면 트리를 구성합니다. 실행 중 잘못된 값으로 바꾸면 현재 트리·값·상호작용 상태·마지막 유효 정책을 유지하고 이후 유효한 값은 실시간 적용합니다. 복구 뒤 다시 잘못된 값을 전달하면 새 발생으로 보고합니다. Form 설정이 Provider 설정보다 우선합니다.
 
 OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하며 마지막 release 이후 계속 적격이어야 합니다. 부적격에 따른 숨김은 즉시 적용합니다. release는 pending true→false 정착, quiet post-paint 이력 drop, 수락한 명시적 root 판정, dispose 때 발생합니다. OnRequest·None은 이력 없이 현재 적격성을 사용합니다.
 
@@ -55,13 +55,13 @@ guard는 `$async`, 비동기 keyword·format, host 밖의 데이터에 의존하
 
 ## AJV 버전과 dialect {#ajv-entries}
 
-| 패키지 진입점 | 기본 dialect / 설정 |
-| --- | --- |
-| `@canard/schema-form-ajv6-plugin` | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false` |
-| `@canard/schema-form-ajv7-plugin` | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false` |
-| `@canard/schema-form-ajv8-plugin` | Draft-07; `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true` |
-| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09 |
-| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12 |
+| 패키지 진입점                          | 기본 dialect / 설정                                                                                   |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `@canard/schema-form-ajv6-plugin`      | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false`                       |
+| `@canard/schema-form-ajv7-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`                                |
+| `@canard/schema-form-ajv8-plugin`      | Draft-07; `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true` |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09                                                                                         |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12                                                                                         |
 
 선택한 진입점의 `plugin`을 import하여 등록하십시오. 검증기는 `plugin.validator`입니다. AJV 6의 Draft-04·06에는 맞는 instance·meta-schema·schemaId 설정이 필요합니다. 기본 식별자는 `$id`이며 `schemaId: 'id'`·`'auto'`는 Draft-04 `id`도 인식합니다. AJV 7의 2019-09는 해당 constructor를 bound instance에 사용해야 합니다. AJV 8의 제공 진입점은 Draft-04·06의 완전 지원을 보장하지 않으므로 해당 dialect를 지원하는 검증기를 선택하십시오.
 
@@ -80,9 +80,9 @@ AJV 6·7의 bind는 새 root registry를 시작합니다. AJV 8은 이미 등록
 `createValidatorFactory(ajv)`는 compile 함수만 반환하므로 `validatorFactory`에 직접 전달하면 객체 계약을 만족하지 않습니다. AJV 6·7 factory는 임시 schema를 compile·제거하고 비동기 결과를 오류 또는 null로 정규화합니다. AJV 8은 release까지 root 등록을 재사용합니다.
 
 ```tsx
-import Ajv from 'ajv';
 import { Form } from '@canard/schema-form';
 import { createValidator } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
 
 const ajv = new Ajv({ strictSchema: false, validateFormats: false });
 ajv.addKeyword({
@@ -119,23 +119,23 @@ dynamic vocabulary instance이고 root에 dynamic·recursive 키가 있으면 �
 
 `if` 안의 inline reference는 chain resource 또는 guard 안의 lexical ancestor에서 binding해야 하며 없으면 compileGuard가 실패합니다. 선택한 선언의 `$async: true`도 거부합니다. 다음 조건은 동등성을 제한하거나 지원하지 않습니다.
 
-| 조건 | 결과 |
-| --- | --- |
-| 같은 schema 위치를 여러 dynamic scope로 진입 | guard 하나는 lexical chain을 사용하거나 compile에 실패하며 동등성 지원 밖입니다 |
-| chain 밖 resource가 먼저 binding하거나 URI 진입이 on-path resource를 건너뜀 | 전체 검증과의 동등성을 지원하지 않습니다 |
-| sibling·descendant·guard 내부 `$defs`에만 binding 존재 | inline binding을 제공하지 못합니다 |
-| resource root 밖의 `$recursiveAnchor: true` | chain table에 들지 않으며 필요한 binding이 없으면 수정 방향과 함께 거부합니다 |
-| 2019-09 non-root 외부 recursive anchor와 guard 내부 ancestor anchor 공존 | guard·전체 검증이 다를 수 있어 지원하지 않습니다 |
-| dynamic·recursive ref fragment `#/...` | anchor 이름이 아니므로 compileGuard가 거부하며 위치에는 정적 `$ref`를 사용합니다 |
-| 현재 static `$anchor`와 외부 dynamic anchor 충돌 | AJV·guard가 specification의 static 처리 대신 dynamic table을 사용할 수 있습니다 |
-| custom keyword subschema 또는 guard 내부 `$defs`를 `$ref`로만 실행하는 선언 | dynamic chain 수집에서 인식하지 않습니다 |
-| nested resource inline anchor의 상대 ref | guard는 해당 resource base URI, 전체 검증은 root base URI를 사용할 수 있습니다 |
-| chain 밖 resource의 runtime anchor | 전체 검증에 누출될 수 있으나 guard에는 없으며 chain 안 sibling 선언은 수집합니다 |
-| 전체 검증이 아직 실행하지 않은 chain resource 선언 | guard는 수집하므로 enclosing-function fallback과 다를 수 있습니다 |
-| 전체 검증이 `$id` 없는 resource를 건너뜀 | guard·전체 검증이 다를 수 있습니다 |
-| AJV가 dynamic-ref bookending을 검사하지 않음 | guard도 따르며 최초 대상이 dynamic anchor인지 별도로 보장하지 않습니다 |
-| compile 때 root anchor flag 없음 | 둘 다 table 조회 없이 enclosing compiled-function fallback을 유지합니다 |
-| DynamicRef가 `#`로 시작하지 않음 | 전체 검증·guard 모두 compile에 실패합니다 |
-| anchor 이름이 `constructor`, `toString`, `__proto__` 등 Object.prototype과 충돌 | AJV plain-object table 처리로 binding하지 못합니다 |
+| 조건                                                                            | 결과                                                                             |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 같은 schema 위치를 여러 dynamic scope로 진입                                    | guard 하나는 lexical chain을 사용하거나 compile에 실패하며 동등성 지원 밖입니다  |
+| chain 밖 resource가 먼저 binding하거나 URI 진입이 on-path resource를 건너뜀     | 전체 검증과의 동등성을 지원하지 않습니다                                         |
+| sibling·descendant·guard 내부 `$defs`에만 binding 존재                          | inline binding을 제공하지 못합니다                                               |
+| resource root 밖의 `$recursiveAnchor: true`                                     | chain table에 들지 않으며 필요한 binding이 없으면 수정 방향과 함께 거부합니다    |
+| 2019-09 non-root 외부 recursive anchor와 guard 내부 ancestor anchor 공존        | guard·전체 검증이 다를 수 있어 지원하지 않습니다                                 |
+| dynamic·recursive ref fragment `#/...`                                          | anchor 이름이 아니므로 compileGuard가 거부하며 위치에는 정적 `$ref`를 사용합니다 |
+| 현재 static `$anchor`와 외부 dynamic anchor 충돌                                | AJV·guard가 specification의 static 처리 대신 dynamic table을 사용할 수 있습니다  |
+| custom keyword subschema 또는 guard 내부 `$defs`를 `$ref`로만 실행하는 선언     | dynamic chain 수집에서 인식하지 않습니다                                         |
+| nested resource inline anchor의 상대 ref                                        | guard는 해당 resource base URI, 전체 검증은 root base URI를 사용할 수 있습니다   |
+| chain 밖 resource의 runtime anchor                                              | 전체 검증에 누출될 수 있으나 guard에는 없으며 chain 안 sibling 선언은 수집합니다 |
+| 전체 검증이 아직 실행하지 않은 chain resource 선언                              | guard는 수집하므로 enclosing-function fallback과 다를 수 있습니다                |
+| 전체 검증이 `$id` 없는 resource를 건너뜀                                        | guard·전체 검증이 다를 수 있습니다                                               |
+| AJV가 dynamic-ref bookending을 검사하지 않음                                    | guard도 따르며 최초 대상이 dynamic anchor인지 별도로 보장하지 않습니다           |
+| compile 때 root anchor flag 없음                                                | 둘 다 table 조회 없이 enclosing compiled-function fallback을 유지합니다          |
+| DynamicRef가 `#`로 시작하지 않음                                                | 전체 검증·guard 모두 compile에 실패합니다                                        |
+| anchor 이름이 `constructor`, `toString`, `__proto__` 등 Object.prototype과 충돌 | AJV plain-object table 처리로 binding하지 못합니다                               |
 
 이는 어댑터의 조건이며 임의 dynamic scope의 동등성을 보장하지 않습니다.

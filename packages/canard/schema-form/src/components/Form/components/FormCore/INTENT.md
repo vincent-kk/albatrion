@@ -13,7 +13,7 @@ Provider 고정 중첩과 `FormHandle`을 조립하고, 인스턴스 보고기�
 
 ### Always do
 
-- Provider 중첩 순서와 `FormHandle`의 18개 멤버를 부모 Form 계약대로 유지합니다.
+- Provider 중첩 순서와 공개 `FormHandle` 선언를 부모 Form 계약대로 유지합니다.
 - 인스턴스 보고기를 루트 오류 경계 바깥에 둡니다.
 
 ### Ask first

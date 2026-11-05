@@ -8,7 +8,7 @@
 
 - 형 파일은 네 칸에 있습니다. `schema/`는 `jsonSchema`·`value`·`injectTo`, `field/`는 `fieldInput`·`fieldRenderer`·`inferFieldInputSchema`, `error/`는 `error`, `rolled/`는 공개 `Roll` 형 `fieldRenderer`·`jsonSchema`를 둡니다.
 - 공개 `Roll` 형 열여덟은 `rolled/`에서 `Rolled` 접두사로 정의됩니다: `RolledFieldRendererProps`, 스키마 형 열여섯(`RolledBooleanSchema`·`RolledNumberSchema`·`RolledStringSchema`·`RolledArraySchema`·`RolledObjectSchema`와 각각의 `NonNullable`·`Nullable` 짝, `RolledNullSchema`), `RolledInferJSONSchema`.
-- 진입점은 네 칸의 형과 `ShowError`를 이름 목록으로 내보냅니다. 루트 `src/index.ts`는 `Rolled*` 형을 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 재수출합니다.
+- 진입점은 네 칸의 형과 `ErrorVisibility`를 이름 목록으로 내보냅니다. 루트 `src/index.ts`는 `Rolled*` 형을 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 재수출합니다.
 
 ## API Contracts
 
@@ -45,4 +45,4 @@
 
 ## Last Updated
 
-공개 스키마·값·입력·렌더러 형의 계약이 바뀔 때 갱신합니다.
+계약·경계·검증 조건이 변경될 때 갱신합니다.
