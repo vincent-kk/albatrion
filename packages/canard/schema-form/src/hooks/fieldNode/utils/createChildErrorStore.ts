@@ -33,11 +33,14 @@ export const createChildErrorStore = (
       disabled
         ? NOOP_FUNCTION
         : subscribeChildErrorStore(node, children, state, listener),
-    getSnapshot: () =>
-      state.subscribed
-        ? state.version === 0
-          ? state.base
-          : `${state.base}#${state.version}`
-        : readChildErrorSnapshot(node),
+    getSnapshot: () => {
+      if (!state.subscribed) {
+        const revision = readChildErrorSnapshot(node);
+        if (revision !== state.closedRevision) return revision;
+      }
+      return state.version === 0
+        ? state.base
+        : `${state.base}#${state.version}`;
+    },
   };
 };
