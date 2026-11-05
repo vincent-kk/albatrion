@@ -130,11 +130,11 @@ For a single huge array field (not a huge form), window it manually with a list-
 
 Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In IR-1, replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
 
-| Form | Off: eager paint / all revealed | On: eager paint / all revealed |
-| --- | ---: | ---: |
-| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
-| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
-| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+| Form         | Off: eager paint / all revealed | On: eager paint / all revealed |
+| ------------ | ------------------------------: | -----------------------------: |
+| flat-500     |                 51.750 / 51.750 |               31.600 / 174.250 |
+| nested-d5-f4 |                 89.250 / 89.250 |                89.700 / 89.700 |
+| array-1000   |               201.350 / 201.350 |               59.200 / 473.100 |
 
 Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. The default remains off.
 
@@ -145,7 +145,6 @@ Deferred inputs are unavailable to find-in-page, screen readers, and browser aut
 ## Expression Cost at Scale
 
 Heavy controls expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.
-
 
 ## Validation timing
 

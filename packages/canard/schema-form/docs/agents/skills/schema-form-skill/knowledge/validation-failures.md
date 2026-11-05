@@ -10,13 +10,13 @@ Read [validation UX](validation-ux.md) for verdicts and server issues, and [erro
 Inspect a record's origin together with its code and severity; origin alone does not say whether a form is unusable.
 The origin identifies the operation that opened the reporting chain, not the component that happened to receive the callback.
 
-| Origin | Where it comes from | Consumer response |
-| --- | --- | --- |
-| `load` | Construction diagnostics and the mount/reset/rebuild/validator-change load chain | Check schema, defaults and validator setup; inspect the resulting form before deciding whether to retry the load. |
-| `write` | Public value/state/array/context/external-error writes and the listeners they notify | Inspect the write or listener that failed; re-read the result rather than assuming an exception rolled back the edit. |
+| Origin     | Where it comes from                                                                            | Consumer response                                                                                                               |
+| ---------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `load`     | Construction diagnostics and the mount/reset/rebuild/validator-change load chain               | Check schema, defaults and validator setup; inspect the resulting form before deciding whether to retry the load.               |
+| `write`    | Public value/state/array/context/external-error writes and the listeners they notify           | Inspect the write or listener that failed; re-read the result rather than assuming an exception rolled back the edit.           |
 | `validate` | Whole-schema compilation, automatic or explicit validation, verdict delivery and its listeners | Distinguish validator failure from invalid input; catch explicit call rejection and correct the validator/schema configuration. |
-| `submit` | A degraded form blocking submit, or a failure first captured by native submit | Stop the submission flow, preserve input, and handle the underlying failure before retrying. |
-| `render` | Injected component boundaries and render warnings | Fix the component/configuration at the reported field; do not translate a rendering failure into a validation issue. |
+| `submit`   | A degraded form blocking submit, or a failure first captured by native submit                  | Stop the submission flow, preserve input, and handle the underlying failure before retrying.                                    |
+| `render`   | Injected component boundaries and render warnings                                              | Fix the component/configuration at the reported field; do not translate a rendering failure into a validation issue.            |
 
 Construction records remain `load` even if a different operation requested construction.
 Within an existing engine chain, nested operations keep the outer origin: a write in reset's onChange can be `load`, while reset from a write listener can be `write`.

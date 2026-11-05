@@ -15,6 +15,29 @@ const checkedDocuments = readdirSync(resolve(packageRoot, 'docs/agents'), {
   .map((file) => `docs/agents/${file.split(sep).join('/')}`)
   .sort();
 
+/** Largest uniform extra indentation, in spaces, an example may add around a document block. */
+const maxExtraIndent = 12;
+
+/**
+ * Tell whether a test source contains a document block as written.
+ * @param source - Text of one agents-examples test file.
+ * @param snippet - Document block with its fence indentation removed.
+ * @returns True when the block occurs with the same uniform extra indentation added to
+ *   every non-empty line (0, 2, 4, ... up to 12 spaces); its inner relative indentation
+ *   must match exactly, so a block whose inner indentation differs does not match.
+ */
+const containsBlock = (source: string, snippet: string): boolean => {
+  for (let indent = 0; indent <= maxExtraIndent; indent += 2) {
+    const padding = ' '.repeat(indent);
+    const indented = snippet
+      .split('\n')
+      .map((line) => (line === '' ? line : padding + line))
+      .join('\n');
+    if (source.includes(indented)) return true;
+  }
+  return false;
+};
+
 it('keeps agent examples verbatim in executable public-API tests', () => {
   expect(
     checkedDocuments.length,
@@ -68,7 +91,7 @@ it('keeps agent examples verbatim in executable public-API tests', () => {
         '',
       );
       expect(
-        examples.some((example) => example.includes(snippet)),
+        examples.some((example) => containsBlock(example, snippet)),
         `${location} must occur verbatim in an agents-examples test`,
       ).toBe(true);
     }

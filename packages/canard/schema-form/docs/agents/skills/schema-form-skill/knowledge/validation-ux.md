@@ -105,18 +105,18 @@ const formProps = {
 This Testing Library/Vitest check uses React's `createRef`. It starts with an invalid value, awaits a verdict, then blurs the field to reveal it:
 
 ```tsx
-  const formRef = createRef<FormHandle>();
-  const view = render(<Form ref={formRef} {...formProps} />);
-  expect(formRef.current!.getErrors()).toEqual([]);
-  await act(async () => {
-    await formRef.current!.validate();
-  });
-  expect(formRef.current!.getErrors()).toEqual([
-    expect.objectContaining({ dataPath: '/name', keyword: 'minLength' }),
-  ]);
-  expect(view.queryByRole('alert')).toBeNull();
-  fireEvent.blur(view.getByLabelText('Name'));
-  expect(view.getByRole('alert').textContent).not.toBe('');
+const formRef = createRef<FormHandle>();
+const view = render(<Form ref={formRef} {...formProps} />);
+expect(formRef.current!.getErrors()).toEqual([]);
+await act(async () => {
+  await formRef.current!.validate();
+});
+expect(formRef.current!.getErrors()).toEqual([
+  expect.objectContaining({ dataPath: '/name', keyword: 'minLength' }),
+]);
+expect(view.queryByRole('alert')).toBeNull();
+fireEvent.blur(view.getByLabelText('Name'));
+expect(view.getByRole('alert').textContent).not.toBe('');
 ```
 
 Then type a valid name, await `validate()`, and assert the output value, an empty error list, and no alert. For OnChange, wait for the observable verdict and message; one microtask is not proof of completion. For OnRequest, assert that editing alone produces no new verdict. For `None`, assert that `validate()` resolves to an empty list and that the validator's whole-schema `compile` is not called; do not label that case valid.
@@ -126,11 +126,11 @@ Then type a valid name, await `validate()`, and assert the output value, an empt
 Pass server issues through Form's `errors` prop with a field `dataPath`. The display policy still applies; use the handle’s `showError()` to reveal them after a failed submission. In the mounted name example:
 
 ```tsx
-  const serverErrors: ValidationIssue[] = [
-    { dataPath: '/name', keyword: 'server', message: 'This name is taken.' },
-  ];
-  view.rerender(<Form ref={formRef} {...formProps} errors={serverErrors} />);
-  act(() => formRef.current!.showError());
+const serverErrors: ValidationIssue[] = [
+  { dataPath: '/name', keyword: 'server', message: 'This name is taken.' },
+];
+view.rerender(<Form ref={formRef} {...formProps} errors={serverErrors} />);
+act(() => formRef.current!.showError());
 ```
 
 A successful schema validation does not clear external issues. Replace the prop with an empty list when the server error is no longer relevant; assert both `getErrors()` and the message after adding and clearing it.
