@@ -12,6 +12,10 @@ run의 boolean은 실제 작업 시작 여부이며 비동기 판정의 완료 �
 
 시간 계층은 검증 모드·stamp·노드·커밋·오류·요청 대상을 읽지 않습니다. [검증 계약](../validation/DETAIL.md)이 검증 요청의 유효성과 결과 수명을, [루트 로드 계약](../../../providers/RootNodeContext/DETAIL.md)이 슬롯의 로드 정체성과 모드별 작업을 소유합니다. 일회성 슬롯은 외부 취소 핸들을 반환하지 않으므로, 더는 유효하지 않은 로드의 실행을 막는 일도 호출자에게 남깁니다.
 
+### scheduling-cancel-owner — 실행 설정 수명
+
+cancel은 영구 취소입니다. 재활성화할 호출자는 취소한 cadence 참조를 버리고 새 인스턴스를 만듭니다. load와 activation의 단일 유효 슬롯·토큰·mode·epoch는 호출자가 소유하며 이 모듈에 노드나 모드 지식을 넣지 않습니다.
+
 ## Acceptance Criteria
 
 ### VALIDATE-052 — 연속 입력에서 실행 기회와 최신 요청을 함께 보존합니다

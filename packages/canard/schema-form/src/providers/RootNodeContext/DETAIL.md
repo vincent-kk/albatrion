@@ -9,9 +9,9 @@
 표시 정책은 load props 계약에 포함하지 않고 reset 재대조의 기준으로 삼지 않습니다. 유효 정책은 현재 root에 커밋하고 기존 generation 이력과 release 구독을 유지합니다. 잘못된 초기 정책은 트리 생성을 막고, 유효한 값으로 복구하면 새 load를 구성합니다. 아직 루트가 없는 복구는 명령형 reset의 caller-throw 경로를 쓰지 않습니다. 복구 때 다른 스키마 구성 오류가 드러나도 handle과 load fallback을 유지하고 새 구성 오류를 load로 보고하여, 이미 보고한 정책 오류가 렌더 경계로 다시 던져지는 일을 막습니다. 잘못된 live 정책은 기존 load를 보존하고 같은 commit의 검증기 교체를 미룹니다. 정책이 유효해지는 첫 commit은 실제 load와 최신 검증기를 재대조해 미룬 교체를 한 번 적용합니다. 검증기 구성 실패 뒤에는 검증기 참조 변경이나 명시적 reset에서 다시 시도하며 매 렌더마다 반복하지 않습니다. 잘못된 정책 오류는 origin `load`로 커밋에서 한 번 보고합니다. 표시 정책은 검증 모드나 검증 일정을 바꾸지 않습니다.
 
 - 입력 맵 정규화의 구성 오류는 트리를 만들지 않는 실패 load로 보관합니다. 확정된 루트 fallback의 첫 commit에서 기존 `flushRootLoad`를 통해 원래 오류·코드와 `origin: load`를 한 번 전달하며 StrictMode effect 재실행도 중복 보고하지 않습니다. 입력 맵은 폼 수명 동안 고정되므로 reset·rebuild도 이 구성 실패를 유지하고 호출자에게 거부합니다. 정상 load에는 추가 트리 순회나 구독이 없고, 실패 load와 해당 구성 props만 오류 참조를 보유합니다.
-- H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
+- H: no-cleanup layout commit의 통합 settings 진입이 해석된 policy를 현행 root에 기록한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
 - 자동 로드 컴파일 실패는 공통 슬롯에서 origin validate로 한 번 보고하고 호스트에 한 번 보내며 명시적 검증의 프로미스 거부는 유지한다.
-- P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 은퇴 뒤의 engine 기록에 호스트 보고를 추가하지 않고 기존 reportOwnerlessError를 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자에 도달하지 않고, 슬롯은 예약할 때 붙잡은 load.retired로 host 보고도 생략합니다. 같은 스키마 reset과 unmount는 load가 은퇴하지 않아 늦은 슬롯 실패를 onError와 host에 한 번씩 전달합니다.
+- P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 은퇴 뒤의 engine 기록에 호스트 보고를 추가하지 않고 기존 reportOwnerlessError를 유지합니다. 결과 게시와 늦은 슬롯 실패의 보고 수명은 아래 실행 설정 수명 계약을 따릅니다.
 
 - R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportFailureToHost로 잎마다 보낸 뒤 나머지 기록·binding 교체를 계속합니다. load flush도 handler 실패를 먼저 host에 보내고 원래 load 오류를 뒤에 보냅니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
 
@@ -57,6 +57,10 @@
 ### onError origin
 
 reset·rebuild·검증기 교체는 batchFieldNodeLoad로 load 사슬을 엽니다. 중첩 시 바깥 사슬의 origin을 보존합니다. 최초 applyFormErrors는 load, errors prop 변경은 write입니다. 내부 recordScopes는 공개 origin이 아닌 원래 root·warning scope를 추적합니다.
+
+### root-live-settings — 실행 설정 수명
+
+연결 commit은 최신 props를 확정하고 구조 교체를 처리한 뒤 현행 root에 실행 설정을 적용하고 context·errors를 전달합니다. 자식 layout에서 이 commit 전에 시작한 호출은 마지막 committed 설정을 사용합니다. 동일 설정의 최초 commit·StrictMode replay는 활성화를 추가 예약하지 않습니다. load와 activation은 하나의 유효 토큰만 소유하며 mode 전환으로 이전 슬롯을 무효화합니다. None→OnRequest는 다음 공통 슬롯에서 compile만 준비합니다. None 또는 OnRequest→OnChange는 다음 변경을 기다리지 않고 현재 snapshot을 한 번 판정합니다. 그 전에 전체 자동 요청이나 명시적 root.validate가 시작하면 슬롯 판정을 대체하며 subtree.validate는 대체하지 않습니다. load·activation의 catch는 시작 root 동일성과 validation epoch 및 load의 은퇴 여부로 host 보고를 판정합니다. 요청 stamp·commit·슬롯 token의 교체나 같은 root reset만으로 실행 실패 보고를 버리지 않아, 같은 epoch의 대체된 슬롯과 같은 root reset의 거부도 기존처럼 onError와 host에 한 번씩 전달합니다. 루트 교체·은퇴 또는 실효 모드 전환은 늦은 실패를 차단합니다. hidden cleanup은 설정·슬롯을 되돌리지 않습니다.
 
 ## Acceptance Criteria
 

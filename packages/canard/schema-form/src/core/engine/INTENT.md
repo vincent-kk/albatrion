@@ -15,6 +15,8 @@
 
 ### Always do
 
+- Keep live settings and validation-epoch reads on the binding-only channel; never widen the package surface.
+
 - 겉면과 외부 소비자가 필요한 이름을 진입점에서 명명해 재수출합니다.
 - 청사진부터 쓰기까지의 의존 순서와 검증 콜백의 단방향 계약을 지킵니다.
 - 기존 값·형상·리비전·검증·통지 계약을 유지합니다.

@@ -28,7 +28,7 @@
 
 - 종류·전략 가드 아홉 개는 `FieldNode | Nullish`에서 부재를 false로 판정하고 실제 노드의 subtype narrowing을 보존한다. 부재 검사만 호출당 O(1)로 더하며 추가 할당은 없다. 실제 노드 작업·visitor는 필수 노드를 유지한다. parent·terminal children·단일 탐색의 부재는 null, 복수 탐색은 빈 배열이며 생명주기 출력의 undefined와 구별한다. JSON 값 null·NullNode·nullable은 노드 참조 부재가 아니다. 구독 훅의 부재 연결과 ref 할당 제한은 [hooks 계약](../../hooks/DETAIL.md)에 따른다.
 
-- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
+- 표시 이력 읽기와 release 구독은 validation→engine→surface wrapper→core로만 잇습니다. 정책 쓰기는 통합 settings 진입이 맡아 mode 전환과 정책 설치가 서로 다른 수명으로 갈라지지 않게 합니다. src/index·공개 사건·revision은 넓히지 않습니다.
 
 - `startFieldNodeLoadValidation(node)`는 surface가 공개 노드를 좁혀 engine의 `dispatchLoadValidation`을 호출하고 core가 재수출하는 로드 슬롯 바인딩이다. 요청 조회는 validation 내부에 남는다.
 
@@ -119,23 +119,27 @@
 
 통로의 몸은 `engine/write/`의 진입 함수가 소유한다. `surface/index.ts`의 겉면은 공개 `FieldNode` 형을 받는 이름 있는 함수이며, `core/index.ts`가 와일드카드 없이 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다. 각 함수의 문서 주석은 `binding-only; not exported from src/index.ts`를 명시한다(69C-01, LANDING-064, 실행 ADR D2).
 
-| 함수                                                          | 계약                                                                                                                                                                  | 원장                      |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| `buildFieldNodeTree(props)`                                   | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않는다                                                                                                         | 70C-01, VALIDATE-010      |
-| `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받는다                                                                                                                 | 69C-01·05, LANDING-041    |
-| `reloadFieldNodeForm(root, value, option?, { deferValidation? })`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다. deferValidation은 Provider의 공통 로드 슬롯에 판정을 위임하고 기본 core-only 호출은 사슬 끝 요청을 유지한다 | WRITE-015·043·045, 69C-03 |
-| `adoptFieldNodeTree(previousRoot, nextRoot)`                  | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기한다                                                                                                  | 69C-02·03, WRITE-046      |
-| `writeFieldNodeInput(node, value, option)`                    | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별한다                                                                                                      | REACT-009·010, 69C-01     |
-| `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                | WRITE-083, 69C-01         |
-| `readFieldNodeInteractionReset(node)`                         | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽는다                                                                                                               | REACT-024, 69C-02         |
-| `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원한다                                                                                          | ERROR-113, 69C-01         |
-| `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다                                                                               | REACT-033, 69C-01         |
+| 함수                                                              | 계약                                                                                                                                                                                                                                                                               | 원장                      |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `buildFieldNodeTree(props)`                                       | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않는다                                                                                                                                                                                                                      | 70C-01, VALIDATE-010      |
+| `mountFieldNode(root, value?, option?, { deferValidation? })`     | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받는다                                                                                                                                                                                                                              | 69C-01·05, LANDING-041    |
+| `reloadFieldNodeForm(root, value, option?, { deferValidation? })` | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다. deferValidation은 Provider의 공통 로드 슬롯에 판정을 위임하고 기본 core-only 호출은 사슬 끝 요청을 유지한다 | WRITE-015·043·045, 69C-03 |
+| `adoptFieldNodeTree(previousRoot, nextRoot)`                      | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기한다                                                                                                                                                                                                               | 69C-02·03, WRITE-046      |
+| `writeFieldNodeInput(node, value, option)`                        | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별한다                                                                                                                                                                                                                   | REACT-009·010, 69C-01     |
+| `finishFieldNodeInput(node)`                                      | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                                                                                                                             | WRITE-083, 69C-01         |
+| `readFieldNodeInteractionReset(node)`                             | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽는다                                                                                                                                                                                                                            | REACT-024, 69C-02         |
+| `observeFieldNodeReports(root, deliver)`                          | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원한다                                                                                                                                                                                                       | ERROR-113, 69C-01         |
+| `interpretFieldNodeDraft(node, draft)`                            | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다                                                                                                                                                                                            | REACT-033, 69C-01         |
 
 - 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸이다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 쓴다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남는다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
 ### onError origin
 
 batchFieldNodeLoad(root, run)은 RootNodeContext가 사용하는 바인딩 전용 통로이며 dispatchBatch에 load origin을 넘깁니다. FieldNode.batch는 write를 유지하고 중첩 호출은 바깥 origin을 따릅니다. core가 이름으로 재수출하며 src/index.ts에는 노출하지 않습니다.
+
+### surface-live-settings — 실행 설정 수명
+
+updateFieldNodeSettings는 RootNodeContext가 사용하는 내부 binding 통로이며 engine write 진입에 위임합니다. validation epoch 읽기는 load·native-submit 보고 수명 검사에만 사용합니다. 공개 FieldNode 메서드와 패키지 export를 넓히지 않으며 표시 정책은 불투명 값입니다.
 
 ## Acceptance Criteria
 

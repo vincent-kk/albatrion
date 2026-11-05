@@ -10,6 +10,10 @@
 
 종류별 계산은 [behaviors](../behaviors/DETAIL.md), 원본의 선택·복원·커밋은 [settle](../settle/DETAIL.md), 사건 배달과 진입은 [write](../write/DETAIL.md), 공개 수명은 [surface](../../surface/DETAIL.md)가 소유합니다. 이 모듈은 그 구현을 실행하지 않습니다.
 
+### record-validation-settings — 실행 설정 수명
+
+검증 epoch는 모드 전환으로 폐기되는 비동기 실행 수명이며 load stamp와 다릅니다. activation stamp는 이번 활성화 뒤 전체 요청의 기준이므로 과거 load의 요청으로 대체하지 않습니다. 지연 설정 적용 콜백은 트리당 하나로 마지막 설정을 보유하며 record는 이를 실행하거나 상위 모듈을 import하지 않습니다. 새 자료는 모두 선택적 runtime 칸이며 노드 고정 칸을 추가하지 않습니다.
+
 ## Acceptance Criteria
 
 ### VALUE-001 — 원본과 노드의 수명을 일치시킵니다

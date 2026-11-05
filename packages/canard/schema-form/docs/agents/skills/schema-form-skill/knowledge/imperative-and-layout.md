@@ -23,6 +23,8 @@ Semantics the signatures hide:
 - `focus(path)` / `select(path)` reach fields even while deferred by virtualization (they force-mount).
 - Submit flows: prefer `useFormSubmit(formRef)` over separating validation from submission, so the validated snapshot is the value that reaches the submit callback.
 
+Form `unsetOnInactive` and `disableAutomaticWrites` changes apply at commit to the next engine entry. They do not erase already-retained inactive values or replay automatic writes. Node exit policy and call-local automatic-write flags keep their precedence. A reentrant entry in an open outer chain uses that chain's settings. Child layout calls before the Form settings commit use the last committed settings. For live validation-mode transitions, see [validation UX](validation-ux.md).
+
 ## Layout Surfaces
 
 Inside `<Form>`, path-scoped primitives take over layout while the plugin still renders each field:

@@ -15,6 +15,8 @@ Every root load reserves one post-frame validation slot. `None` skips whole-sche
 
 An initially empty error array can precede a verdict: await `validate()` when you need one. A child validation request does not cancel a pending whole-form request.
 
+Change modes on the existing tree without rebuilding. The same effective mode, including `OnChange` versus `OnChange | OnRequest`, does no extra work. Switching to `None` cancels scheduled and pending publication and clears only validator-produced errors, keeping external errors. `OnChange` → `OnRequest` stops automatic work and keeps errors. `None` → `OnRequest` prepares compilation in the next slot only. `None` or `OnRequest` → `OnChange` validates the current snapshot once in the next shared post-frame slot without waiting for an edit. An earlier automatic whole-root request or explicit root validation replaces that verdict; subtree validation does not. Other transitions keep errors. Already-started explicit validate/submit promises still settle with their own result or rejection, while discarded verdicts and failures do not reach the tree, onValidate, onError or the host.
+
 ## Raw issues and error visibility {#visibility}
 
 The live base policy is `Form.errorVisibility ?? FormProvider.errorVisibility ?? ErrorVisibility.AfterEditAndTouch`. The string enum has six values: `Always='always'`, `Never='never'`, `AfterEdit='afterEdit'`, `AfterTouch='afterTouch'`, `AfterEditAndTouch='afterEditAndTouch'`, and `AfterEditOrTouch='afterEditOrTouch'`. Booleans, numbers and arbitrary strings are rejected.
