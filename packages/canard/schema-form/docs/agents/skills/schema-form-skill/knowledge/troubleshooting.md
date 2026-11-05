@@ -25,19 +25,14 @@ fieldInputMap: {
 
 **`derived` yields `NaN`/garbage on partial input** — guard operands: `'(../price ?? 0) * (../quantity ?? 1)'`.
 
-**Conditional field disappears after `setValue` on the parent** — intended behavior, not a bug. A parent-level `setValue()` applies conditional filtering and drops keys whose branch is inactive; a child-level `setValue()` bypasses the filter:
-
-```typescript
-objectNode.setValue({ category: 'movie', price: 200 }); // price dropped if its branch is inactive
-objectNode.find('./price')?.setValue(999); // bypasses filtering
-```
+**Conditional field disappears after `setValue` on the parent** — a parent-level write settles conditional participation and removes inactive-branch values from the output. Writing a live child directly targets that child; it does not reactivate a missing branch. Check the controlling value and the emitted result instead of treating a child write as a bypass.
 
 ## Errors Not Displayed
 
 Errors exist (`getErrors()` shows them) but the UI is silent:
 
 1. Display policy — set `showError` on `<Form>` (`boolean | ShowError` enum; never a string) or call `formRef.current?.showError(true)`. See `validation-ux.md`.
-2. Custom inputs must render behind `errorVisible` — an input ignoring it never shows anything.
+2. Custom inputs must render messages and gate them with `errorVisible`; ignoring that flag can show errors at the wrong time, while omitting message rendering shows none.
 
 ## Composition (oneOf / anyOf)
 
@@ -63,7 +58,7 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 ## TypeScript
 
-**`getValue()` returns `any`** — the schema literal needs `as const`; then type `useRef<FormHandle<typeof schema>>`. Passing a concrete `defaultValue` additionally requires injecting the `Value` generic (`imperative-and-layout.md`).
+**The ref and defaultValue disagree on value types** — preserve schema literals when using inference, then follow [the FormHandle typing guidance](imperative-and-layout.md) when Form and its ref need the same explicit value type.
 
 ## Tests
 
@@ -72,22 +67,7 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 - Values and controls state settle synchronously inside `setValue()`; write-triggered validation results arrive after the frame that renders the edit and the error DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).
 
 
-## onError record origin
+## Diagnose operation failures
 
-onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
-
-`onError?: (record: FormErrorRecord) => void` delivers one record per occurrence. The required `origin` names the operation that produced it.
-
-| origin | Operation |
-| --- | --- |
-| `load` | Tree construction, mount, reset, rebuild, validator change and their load chain |
-| `write` | Public writes, array verbs, state, batch, context, finishInput, external errors and notified listeners |
-| `validate` | Automatic or explicit whole-schema compilation/run, verdict delivery and the listeners it notifies |
-| `submit` | SubmitWhileDegraded and any failure first surfaced by native submit capture |
-| `render` | RenderFailed boundaries and render warnings such as ChildNodeComponentsOnTerminal |
-
-Records created while building a tree (blueprint diagnostics and DialectMismatch) are always load, whoever called construction; records produced by the built tree inside a chain follow the operation that opened that chain.
-
-The outermost chain opener decides the origin. A write nested in reset's onChange keeps `load`; reset called by a node listener or form onChange in a write chain keeps `write`. A validation-result listener failure is `validate`; a separate setState listener failure after a load is `write`. Applying external errors at first commit uses `load`; changing the errors prop uses `write`. Failures already reported by dispatchValidate within submit keep `validate`. Development console warnings from warnDevelopmentIssue are not records. A bundle rejected to a submit() or validate() caller remains one rejection value; individual onError records never contain it. Validation-result listener failures remain ownerless even during an explicit validate(), which can resolve while those failures reach the host. Unowned failures reach the existing host channel one leaf at a time, depth-first in element order. Only SchemaFormError MultipleErrors with a nonempty array and every index owned by that array expands; malformed, unreadable or revisited bundles and other values are reported as themselves. Engine validation waves, automatic OnChange validation and load flush retain handler-first order; native submit and the load slot retain original-first order. React and the render ErrorBoundary log the thrown value unchanged. Capture suppresses valid nested bundles containing only already-reported errors or handler exceptions; unknown, malformed, cyclic or revisited nested bundles are still captured. Array lengths must be stable integers from 1 through 2^32 - 1; each traversal has a shared 1,000,000-element inspection budget. An unreadable, unstable or over-budget bundle remains an opaque leaf, so the host can receive a bundle. Capture also guards top-level metadata and string conversion, delivering the original value once with a fixed fallback message when inspection fails. Delivery timing, caller rejection, reentrancy and sink exception propagation remain unchanged.
-
-`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+For `onError` origins, caller rejections, host reports and hidden-form lifetimes, read [validation failures](validation-failures.md).
+Do not treat the callback as a current list of invalid fields; use the validation issue list for input correction.

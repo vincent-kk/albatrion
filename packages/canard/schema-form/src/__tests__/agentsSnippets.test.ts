@@ -9,6 +9,9 @@ const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
 /** Only documents with executable examples migrated to this harness are checked. */
 const migratedDocuments = [
   'docs/agents/skills/schema-form-skill/knowledge/validation-ux.md',
+  'docs/agents/skills/schema-form-skill/knowledge/error-feedback.md',
+  'docs/agents/skills/schema-form-skill/knowledge/interaction-state.md',
+  'docs/agents/skills/schema-form-skill/knowledge/validation-failures.md',
   'docs/agents/rules/schema-form-rule.md',
 ];
 
@@ -51,7 +54,7 @@ it('keeps migrated agent examples verbatim in executable public-API tests', () =
       const exempt = /^<!-- no-test: \S.* -->$/.test(precedingLine);
       const line = markdown.slice(0, block.index).split('\n').length;
       const location = `${document}:${line}`;
-      if (document.endsWith('/validation-ux.md'))
+      if (document.includes('/knowledge/'))
         expect(exempt, `${location} must execute without an exemption`).toBe(
           false,
         );

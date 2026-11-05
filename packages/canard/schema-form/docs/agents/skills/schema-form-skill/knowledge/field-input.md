@@ -32,7 +32,7 @@ fieldInputMap: {
 
 ## Custom Input Contract
 
-- `value` (controlled) XOR `defaultValue` (uncontrolled) — never both (consumer rules `form-type-input-contract`).
+- Use either `value` for a controlled input or `defaultValue` for an uncontrolled input; mixing them gives React two competing value owners.
 - Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
 - A custom input on a non-terminal object/array **must render `ChildFields`** — otherwise its children silently vanish:
 
@@ -47,3 +47,17 @@ const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
   </div>
 );
 ```
+
+## Keep configuration stable for a mounted form
+
+Define input definitions, input maps and renderer components outside render, or memoize their intended initial configuration.
+Form captures `fieldInputDefinitions` and `fieldInputMap` at mount and normalizes that captured configuration.
+Its renderer components and `formatError` are also captured at mount; replacing these prop references does not re-resolve the inputs or rebuild the node tree.
+FormProvider likewise captures its definitions and renderers. A fresh definition array can make React render the Form again, but is not a supported way to install a different input selection.
+Remount the owner of a captured configuration to replace it: Form for local configuration, or FormProvider and its forms for shared defaults. Account for the new trees and interaction state.
+Do not mutate the captured objects in place: an initial-configuration contract is not a reactive mutation channel.
+
+`context` has a different role: it is live application data and is compared by content before propagation.
+An equal fresh plain object retains the snapshot; changed content propagates to the current tree and can affect controls and validation freshness without rebuilding it.
+Keep callbacks and identity-sensitive values inside context stable when they have not changed, so new identities do not create artificial context changes.
+This recommendation avoids unnecessary renders/comparisons and unintended semantic updates; it is not a claim that every new prop reference destroys state.

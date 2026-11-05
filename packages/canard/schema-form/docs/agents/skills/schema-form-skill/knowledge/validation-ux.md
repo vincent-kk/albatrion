@@ -6,7 +6,7 @@ Use public imports from `@canard/schema-form`. These examples assume an applicat
 
 ## Choose the validation moment
 
-- `OnChange` validates after loading and schedules validation after value changes. Load work runs after the next frame, even with `showError={true}`. Continuous edits are grouped, with a trailing run when they stop and a 100 ms cap measured from the last automatic run that started.
+- `OnChange` schedules validation after loading and after value changes. Load work runs after the next frame, even with `showError={true}`, and produces the initial verdict only if no later validation request has superseded it. Continuous edits are grouped, with a trailing run when they stop and a 100 ms cap measured from the last automatic run that started.
 - `OnRequest` prepares validation after loading but produces no verdict until `validate()` or submit. Edits alone can leave the previous errors in place.
 - `None` skips whole-schema validation, including explicit requests; it does not provide a successful verdict. Conditional if guards can still run while fields settle.
 
@@ -135,4 +135,13 @@ A successful schema validation does not clear external issues. Replace the prop 
 
 Use an empty `dataPath` for a root issue; `/` addresses a child with an empty name. For a node-local message, use its `setExternalErrors`/`clearExternalErrors`; these issues also appear in form-wide `getErrors()`, and clearing them removes them from that aggregate. Typing into the affected field clears its server error through the input’s `onChange`.
 
-Compilation or execution failure is a rejected validation operation, not an input error. Keep it out of the server-error list, observe `onError` for the occurrence, and handle rejection from imperative validate/submit calls.
+For message copy and section summaries, read [error feedback](error-feedback.md). For interaction flags, unsaved changes and reset, read [interaction state](interaction-state.md). For `onError` origins and operation recovery, read [validation failures](validation-failures.md).
+
+## Account for display timing limits
+
+Debounce input publication in FieldInput when needed; validation scheduling groups published edits rather than buffering the widget's local text. Hidden documents or missing frame APIs use a task fallback, and a stalled frame has a timer fallback, so completion is not tied to visible animation.
+Background timer throttling and the validator's computation can still delay completion; conditional guards can still compile during render.
+
+Continuous eligibility is observed at engine-write and committed-policy boundaries, not at painted pixels. One public batch contributes its first state; separate writes inside one React batch can record intermediate states that never paint. React-only remounts do not reset this history. A current request whose commit became stale is rescheduled; continuously changing context content can keep new messages held until the stream stops.
+
+Known display limits: the child-error hook's React-only disabled switch can reveal immediately when re-enabled; a state/presence render deferred past history release can miss the hold; and a write between release and paint can leave the released verdict visible for one or two frames. Check these transitions in the actual UI if their timing matters.
