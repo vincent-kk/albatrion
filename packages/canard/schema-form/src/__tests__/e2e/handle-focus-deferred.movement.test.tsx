@@ -22,6 +22,30 @@ afterEach(() => {
 describe.each([false, true])(
   'focus leaving a control strict=%s',
   (strictMode) => {
+    it('remembers blur to the body before reveal removes the starting placeholder', async () => {
+      const Placeholder = () => <button>deferred control</button>;
+      form = await renderForm(focusSchema, {
+        strictMode,
+        virtualization: { ...focusVirtualization, Placeholder },
+      });
+      const control = form.wrapper('/outer')!.querySelector('button')!;
+      control.focus();
+      expect(document.activeElement).toBe(control);
+      const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+      await act(async () => {
+        form.handle.focus(focusTarget);
+        control.blur();
+        expect(document.activeElement).toBe(document.body);
+        expect(control.isConnected).toBe(true);
+      });
+      const target = form.field(focusTarget);
+      expect(target).not.toBeNull();
+      expect(control.isConnected).toBe(false);
+      expect(
+        focus.mock.contexts.filter((element) => element === target),
+      ).toHaveLength(0);
+      expect(document.activeElement).toBe(document.body);
+    });
     it('suppresses pending focus when blur moves focus to the page body', async () => {
       form = await renderForm(focusSchema, {
         validator: true,

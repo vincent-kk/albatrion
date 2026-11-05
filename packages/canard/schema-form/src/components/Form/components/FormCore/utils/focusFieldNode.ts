@@ -18,6 +18,7 @@ import { isInputMounted } from './isInputMounted';
  * @param manager - Form-local virtualization coordinator, null for eager rendering.
  * @param lifecycle - Form-local action queues, null outside the lifecycle provider.
  * @param request - Already-owned request so synchronous reveal reentry can cancel it.
+ * @returns Nothing; cancellation releases the reservation and document observers.
  */
 export const focusFieldNode = (
   target: Nullable<FieldNode> | undefined,
@@ -37,27 +38,31 @@ export const focusFieldNode = (
   let mountHandled = false;
   const onFocus = () => {
     moved = true;
-    document.removeEventListener('focusin', onFocus, true);
   };
+  const onFocusOut = (event: FocusEvent) => {
+    if (event.target === focused && focused?.isConnected) moved = true;
+  };
+  const hasMoved = () =>
+    moved || (!!focused?.isConnected && document.activeElement !== focused);
   document.addEventListener('focusin', onFocus, true);
-  request.onCancel(() =>
-    document.removeEventListener('focusin', onFocus, true),
-  );
+  document.addEventListener('focusout', onFocusOut, true);
+  request.onCancel(() => {
+    document.removeEventListener('focusin', onFocus, true);
+    document.removeEventListener('focusout', onFocusOut, true);
+  });
   request.onCancel(
     lifecycle.reserve(target, FieldLifecycle.Mount, () => {
       mountHandled = true;
-      return request.live &&
-        !moved &&
-        (!focused?.isConnected || document.activeElement === focused)
+      return request.live && !hasMoved()
         ? FieldLifecycleAction.Focus
         : FieldLifecycleAction.None;
     }),
   );
   if (!manager.revealPath(target, () => request.cancel())) {
     queueMicrotask(() => {
-      if (!request.live || mountHandled) return;
+      const shouldFocus = request.live && !mountHandled && !hasMoved();
       request.cancel();
-      target.request(FieldNodeRequestType.Focus);
+      if (shouldFocus) target.request(FieldNodeRequestType.Focus);
     });
   }
 };
