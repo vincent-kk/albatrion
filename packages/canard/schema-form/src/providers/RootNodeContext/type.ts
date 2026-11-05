@@ -1,6 +1,6 @@
 import type { FormHandle, FormProps } from '@/schema-form/components/Form';
 import type { FieldNode, Validator } from '@/schema-form/core';
-import type { FormErrorRecord } from '@/schema-form/errors';
+import type { FormErrorRecord, SchemaFormError } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../FormErrorContext';
 
@@ -19,7 +19,12 @@ export type RootLoadProps = Pick<
   | 'unsetOnInactive'
   | 'disableAutomaticWrites'
   | 'showError'
-> & { validator?: Validator };
+> & {
+  /** Resolved validator for this load. */
+  validator?: Validator;
+  /** Fixed input-map configuration failure retained by every reset and rebuild. */
+  inputMapError?: SchemaFormError;
+};
 
 /** A committed or speculative root and its buffered load reports. */
 export interface RootLoad {

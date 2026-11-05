@@ -10,6 +10,7 @@
 
 ## API Contracts
 
+- `FormTypeInputMap`은 입력 맵 패턴 컴파일 실패를 나타내는 치명적 구성 오류입니다. 폼은 fallback을 유지하며 확정 로드에서 `level: error`·`origin: load`로 한 번 보고합니다. 사용자 입력 컴포넌트 자체의 throw는 원래 오류에 같은 코드가 있어도 `RenderFailed`·`render`로 격리합니다.
 - `ReservedPropertyName`은 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 청사진을 `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME`으로 거부합니다. `details.property`와 작성 위치가 원인을 가리키며 기존 `UnknownJsonSchema`와 코드로 구별됩니다. 소유자가 승인한 공개 enum 멤버 하나의 확장이며 오류 생성의 시간·메모리 비용은 기존과 같습니다.
 
 - `FormErrorReason`·`FormErrorDetails`는 코드별 상세의 내부 형이며 errors index가 내보내지 않습니다. 외부 오류 관측은 진입점의 `FormErrorRecord` 계약을 사용하고, 코드별 상세 형의 계약은 이 fractal의 `__tests__`가 `type.ts`를 직접 읽어 검증합니다.
@@ -47,13 +48,13 @@ onError is an event channel: it delivers the one record of each occurrence and d
 
 `onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
 
-| origin | 연산 |
-| --- | --- |
-| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
-| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
-| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
-| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
-| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+| origin     | 연산                                                                     |
+| ---------- | ------------------------------------------------------------------------ |
+| `load`     | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬                 |
+| `write`    | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너              |
+| `submit`   | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패     |
+| `render`   | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고   |
 
 트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.
 
@@ -72,6 +73,6 @@ onError is an event channel: it delivers the one record of each occurrence and d
 
 ## Last Updated
 
-2026-11-03
+오류 코드의 의미·기록 형태·전달 계약이 바뀔 때 갱신합니다.
 
-계약 기준: LANDING-067·095, REACT-033, ERROR-110–119·164·202, 68C-08, 69C-02; 그룹·맨 이름 조합 및 클래스 이름 계약(2026-10-16).
+계약 기준: LANDING-067·095, REACT-033, ERROR-110–119·164·202, 68C-08, 69C-02; 그룹·맨 이름 조합 및 클래스 이름 계약.

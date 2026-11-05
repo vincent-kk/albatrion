@@ -8,12 +8,12 @@ Symptom → cause → fix, grouped by subsystem.
 
 ## fieldInputMap
 
-A key containing `**`, such as `/items/**/name`, is not supported: the form throws `Invalid key pattern in FieldInputMap` when it mounts. `*` matches exactly ONE segment (array indexes and dynamic object keys alike), so list each depth with `*`:
+`**` is not a recursive wildcard. A key such as `/items/**/name` that fails pattern compilation keeps the form in fallback; `onError` receives `FormErrorCode.FormTypeInputMap` with `origin: 'load'` once, including in StrictMode. `*` matches exactly ONE segment (array indexes and dynamic object keys alike), so list each depth with `*`:
 
 ```typescript
 fieldInputMap: {
   '/items/*/name': ItemNameInput,   // ✅
-  '/items/**/name': ItemNameInput,  // ❌ throws when the form mounts
+  '/items/**/name': ItemNameInput,  // ❌ invalid pattern: form stays in fallback
 }
 ```
 

@@ -26,6 +26,7 @@ import {
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
+import { useFieldInputsContext } from '../../FieldInputsContext';
 import { useFieldRendererContext } from '../../FieldRendererContext';
 import { useFormErrorContext } from '../../FormErrorContext';
 import { useWorkspaceContext } from '../../WorkspaceContext';
@@ -59,9 +60,11 @@ export const RootNodeContextProvider = ({
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
+  const { inputMapError } = useFieldInputsContext();
   const { showError } = useFieldRendererContext();
   const current: RootLoadProps = {
     ...props,
+    inputMapError,
     context,
     validator:
       props.validatorFactory ??
@@ -74,7 +77,7 @@ export const RootNodeContextProvider = ({
   };
   const committed = useRef(current);
   // Construction belongs to the speculative render; only committed loads are prepared.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- Schema/default props are consumed again only by reset.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Reset reconsumes props; input-map normalization stays fixed.
   const initial = useMemo(() => createRootLoad(current, reporter), []);
   const store = useLazyConstant<RootLoadStore>(() => ({
     load: initial,

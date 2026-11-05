@@ -3,7 +3,7 @@ import { type FC } from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { type FieldInputProps, Form } from '@/schema-form';
+import { type FieldInputProps, Form, FormErrorCode } from '@/schema-form';
 
 /** Marker input mapped by path.
  * @returns A field marked for lookup. */
@@ -26,7 +26,7 @@ const ItemsLayout: FC<FieldInputProps> = ({ ChildFields }) => (
 const mapProps = {
 fieldInputMap: {
   '/items/*/name': ItemNameInput,   // ✅
-  '/items/**/name': ItemNameInput,  // ❌ throws when the form mounts
+  '/items/**/name': ItemNameInput,  // ❌ invalid pattern: form stays in fallback
 }
 }
 
@@ -46,28 +46,35 @@ const itemsSchema = {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
-it('a key containing ** makes the form throw an invalid key pattern error on mount', async () => {
-  const reported: string[] = [];
-  vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
-    reported.push(
-      args.map((arg) => String((arg as Error)?.message ?? arg)).join(' '),
-    );
-  });
+it('rejects a map whose ** pattern cannot compile as a load configuration error', async () => {
+  const onError = vi.fn();
+  const host = vi.fn();
+  vi.stubGlobal('reportError', host);
   render(
-    <Form jsonSchema={itemsSchema} fieldInputMap={mapProps.fieldInputMap} />,
+    <Form
+      jsonSchema={itemsSchema}
+      fieldInputMap={mapProps.fieldInputMap}
+      onError={onError}
+    />,
   );
-  expect(
-    await screen.findByText('An unexpected error has occurred'),
-  ).toBeTruthy();
+  expect((await screen.findByRole('alert')).textContent).toBe(
+    'Unable to load form.',
+  );
   expect(screen.queryAllByTestId('item-name-input')).toHaveLength(0);
-  expect(
-    reported.some((line) =>
-      line.includes('Invalid key pattern in FieldInputMap'),
-    ),
-  ).toBe(true);
-  expect(reported.join('\n')).toContain("Pattern:  '/items/**/name'");
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({
+      code: FormErrorCode.FormTypeInputMap,
+      origin: 'load',
+      details: expect.objectContaining({ path: '/items/**/name' }),
+    }),
+  );
+  const record = onError.mock.calls[0][0];
+  expect(record.message).toContain('Invalid key pattern in FieldInputMap');
+  expect(record.message).toContain("Pattern:  '/items/**/name'");
+  expect(host).toHaveBeenCalledExactlyOnceWith(record.error);
 });
 
 it('listing the depth with a single star selects the input without error', async () => {

@@ -19,7 +19,7 @@ FieldInputsContext/
 - TypeScript와 React로 작성하며, Context 초기값은 `{} as FieldInputsContext`다.
 - `fieldInputDefinitions`와 `fieldInputMap`은 `useConstant`로 마운트 시점에 고정한다.
 - 정규화에는 `normalizeFieldInputDefinitions()`와 `normalizeFieldInputMap()`을 쓴다.
-- Context 값은 `{ fromFieldInputDefinitions, fromFieldInputMap }`이며, 두 배열 모두 `NormalizedFieldInputDefinition[]`다.
+- 입력 맵의 `FormTypeInputMap` 구성 오류는 루트 로드가 확정 시 보고하도록 보관하며 입력 선택으로 복구하지 않는다.
 - 선택 우선순위는 높은 쪽부터 `fieldInputMap`, `fieldInputDefinitions`, `ExternalFormContext`, `PluginManager` 순서다.
 
 ## Boundaries
