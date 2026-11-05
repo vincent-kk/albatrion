@@ -135,6 +135,7 @@ Contract — each point matters:
 
 - **The node tree is always fully built.** `getValue()`, `setValue()`, validation, and submit behave identically whether a field is mounted or deferred.
 - **Defer-once**: a mounted field never returns to a placeholder.
+- **Approximate focus**: `FormHandle.focus(path)` and native invalid-submit focus reveal the first placeholder in the form's DOM order whose current child graph reaches the target, including virtual groups with sibling references. The ancestor slot focuses its first focusable element; the exact descendant and nested placeholder reveal are not guaranteed. A target that is itself a placeholder keeps its own slot focus; mounted targets keep direct focus when no placeholder reaches them.
 - **SSR and hydration**: every field renders on the server and hydrates unchanged. Gating applies to branches and children added after hydration and requires `IntersectionObserver`. Browsers without it render eagerly with a development warning; the server does not warn.
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
 - Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.

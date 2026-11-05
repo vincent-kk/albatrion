@@ -13,6 +13,7 @@ Form과 Provider 중 실제 선택한 입력 값만 정책 해석의 기준으�
 `revealErrors()`는 일시적으로 Always를 선택하고 `resetErrorVisibility()`는 최신 기본 정책으로 돌아갑니다. 두 명령은 검증하거나 노드 상태를 쓰지 않습니다. 실효 기본 정책 값이 바뀐 커밋에서만 정책 세대를 증가시키고, 공개 명령은 발급 당시의 세대를 저장합니다. 렌더와 정리는 현재 정책 세대와 다른 공개를 무시하여, 정책 변경 커밋에 아직 렌더된 공개가 없어도 대기 중인 명령이 이전 정책으로 돌아왔을 때 부활하지 않게 합니다. 기본 정책 변경의 커밋, reset, rebuild, 루트 교체는 Form 공개를 해제합니다. 같은 값의 재렌더나 Form prop에 가려진 Provider 변경은 공개를 유지합니다. 중단된 렌더는 정책 세대를 바꾸거나 공개를 해제하지 않습니다.
 
 - 제출 어댑터 `submitForm`은 `FieldNode | Nullish`를 받고 루트가 null·undefined이면 callback을 호출하지 않고 성공 종료한다. `FormHandle.node`의 미연결 상태는 undefined, `findNode`의 부재는 null, `findNodes`의 부재는 빈 배열이다. 이 값을 구독 훅에 전달할 때의 동작과 ref 할당 제한은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
+- `FormRoot`는 기존 form의 ref를 `FormRootProxy`로 전달하고, `utils/focusFieldNode.ts`를 핸들의 focus와 네이티브 무효 제출 초점에 함께 사용합니다. 함수는 form 안의 `[data-deferred][data-path]`를 DOM 순서로 읽어 현재 루트에서 노드를 해석합니다. 현재 `children` 그래프로 대상에 도달하는 첫 placeholder 노드에 Focus를 요청하며, 없으면 대상에 직접 요청합니다. `isPresent`가 아닌 노드는 건너뛰고 terminal에서 하강을 멈추며 방문 집합으로 중복 참조를 제한합니다. 가상 그룹은 형제 필드를 참조하므로 parentNode나 경로 접두사로 렌더 조상을 판정하지 않습니다. DeferredFieldProxy의 기존 공개·자기 슬롯 재생만 사용하여 중복 재생과 장기 대기 대상을 만들지 않습니다. 최악 시간은 placeholder 수 P와 도달 그래프 V/E에 대해 O(P·(V+E)), 보조 공간은 O(V)이며 호출 사이 상태는 보존하지 않습니다.
 
 - 표시 정책 이력은 RootNodeContext가 root별 layout commit에서 기록합니다. validate 반환과 submit 값은 호출 시점 snapshot입니다.
 
@@ -38,6 +39,12 @@ Form과 Provider 중 실제 선택한 입력 값만 정책 해석의 기준으�
 ### root-boundary — 경계와 보고기의 순서
 
 - 루트 렌더 오류는 fallback 안에 가두고, `onError`에 `RENDER_FAILED` 기록으로 한 번 전달합니다. 단, 이미 보고한 원인·handler 객체와 같은 규칙의 유효한 중첩 묶음만 담은 비어 있지 않은 dense bundle 또는 bare handler 예외의 capture는 생략하며 componentStack도 전달하지 않습니다. 부모의 시험은 진입점의 `FormCore`를 직접 렌더해서 이를 확인합니다.
+
+### approximate-focus — 지연 렌더 조상의 근사 초점
+
+- 핸들과 네이티브 무효 제출은 같은 폼에서 대상에 도달하는 첫 지연 조상을 공개하고 그 슬롯의 첫 초점 가능 요소에 요청합니다.
+- 가상 그룹의 형제 참조를 따라가며 중첩 자리표시자는 바깥쪽만 공개합니다. 정확한 자손 초점은 보장하지 않습니다.
+- 대상 자체가 placeholder이면 기존 자기 슬롯 초점을 유지하고, 관련 placeholder가 없으면 대상에 직접 요청합니다.
 
 ## Boundary Exemptions
 
