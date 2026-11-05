@@ -1,4 +1,4 @@
-import { createRef, useState } from 'react';
+import { StrictMode, createRef, useState } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
 import { flushSync } from 'react-dom';
@@ -8,6 +8,70 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { SetValueOption, ValidationMode } from '@/schema-form/core';
 
 afterEach(cleanup);
+
+it.each([false, true])(
+  'keeps chain defaults for a same-root reset inside onChange (StrictMode: %s)',
+  (strict) => {
+    const ref = createRef<FormHandle>();
+    let armed = false;
+    let afterReset: unknown;
+    const schema = {
+      type: 'object',
+      properties: {
+        source: { type: 'string' },
+        target: { type: 'string', controls: { derived: '../source' } },
+      },
+    } as const;
+    const defaults = { source: 'seed', target: 'raw' };
+    const App = () => {
+      const [disabled, setDisabled] = useState(false);
+      return (
+        <Form
+          ref={ref}
+          jsonSchema={schema}
+          defaultValue={defaults}
+          validationMode={ValidationMode.None}
+          disableAutomaticWrites={disabled}
+          onChange={() => {
+            if (!armed) return;
+            armed = false;
+            ref.current!.findNode('/source')!.setValue('nested');
+            flushSync(() => setDisabled(true));
+            ref.current!.reset();
+            afterReset = ref.current!.getValue();
+            ref.current!.findNode('/source')!.setValue('last-in-outer');
+          }}
+        >
+          <span />
+        </Form>
+      );
+    };
+    render(
+      strict ? (
+        <StrictMode>
+          <App />
+        </StrictMode>
+      ) : (
+        <App />
+      ),
+    );
+    const root = ref.current!.node;
+    expect(ref.current!.getValue()).toEqual({ source: 'seed', target: 'seed' });
+    armed = true;
+    act(() => ref.current!.findNode('/source')!.setValue('outer'));
+    expect(ref.current!.node).toBe(root);
+    expect(afterReset).toEqual({ source: 'seed', target: 'seed' });
+    expect(ref.current!.getValue()).toEqual({
+      source: 'last-in-outer',
+      target: 'last-in-outer',
+    });
+    act(() => ref.current!.findNode('/source')!.setValue('after-outer'));
+    expect(ref.current!.getValue()).toEqual({
+      source: 'after-outer',
+      target: 'last-in-outer',
+    });
+  },
+);
 
 it('keeps outer onChange settings after a nested write returns', () => {
   const ref = createRef<FormHandle>();
