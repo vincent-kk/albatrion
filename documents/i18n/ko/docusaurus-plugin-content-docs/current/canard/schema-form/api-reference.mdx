@@ -57,7 +57,7 @@ sidebar_position: 6
 | `findNode(path) / findNodes(path)`                | 일치하는 live 노드 하나 또는 전부이며 없으면 각각 null 또는 []를 반환합니다.                                                                                                                               |
 | `getState() / setState(flags) / clearState()`     | aggregate flag 읽기·전체 트리 patch·clear입니다.                                                                                                                                                           |
 | `getErrors() / validate()`                        | 원시 오류·새 판정 promise입니다.                                                                                                                                                                           |
-| `focus(path?) / select(path?)`                    | 노드 입력 container의 DOM 순서상 첫 input·textarea·select·button에 focus를 요청합니다. 텍스트 선택은 button·select를 건너뛰고 첫 input·textarea에 요청하며, 해당 요소에 select 메서드가 있으면 호출합니다. |
+| `focus(path?) / select(path?)`                    | 중첩 가상화 게이트를 열어 정확한 대상 입력 container의 DOM 순서상 첫 input·textarea·select·button에 focus를 요청합니다. 텍스트 선택은 button·select를 건너뛰고 첫 input·textarea에 요청하며, 해당 요소에 select 메서드가 있으면 호출합니다. |
 | `refresh(path?) / remount(path?)`                 | committed 입력 값 재읽기·렌더 subtree 재마운트입니다.                                                                                                                                                      |
 | `reset(option?) / rebuild(option?)`               | 위에서 설명한 root load 연산입니다.                                                                                                                                                                        |
 | `revealErrors()` / `resetErrorVisibility()`       | 표시 override이며 검증 페이지를 참조하십시오.                                                                                                                                                              |
@@ -187,7 +187,11 @@ ref 할당은 소비자를 다시 렌더하지 않습니다. `formRef.current?.n
 | estimateHeight | 40                          | px 숫자 또는 `(node: FieldNode) => number`이며 노드 인자는 필수                       |
 | Placeholder    | 없음                        | 필수 FieldNode·height를 받는 컴포넌트                                                 |
 
-placeholder는 추정 높이와 `data-path`, `data-deferred`, aria-hidden을 사용합니다. 지연 입력은 공개 전까지 페이지 검색·화면 읽기·autofill에 사용할 수 없으며 backfill 완료 시간을 보장하지 않습니다. 유효하지 않은 native 제출의 focus 제한은 [제출](./error-reference#submission)을 참조하십시오.
+placeholder는 추정 높이와 `data-path`, `data-deferred`, aria-hidden을 사용합니다. 지연 입력은 공개 전까지 페이지 검색·화면 읽기·autofill에 사용할 수 없으며 backfill 완료 시간을 보장하지 않습니다. `focus(path)`와 native 무효 제출의 포커스는 중첩 게이트와 가상 그룹을 지나는 대상 렌더 경로를 한 공개 커밋에 엽니다. 포커스를 받을 입력이 이미 마운트되어 있으면 다른 조상 위치를 열지 않고 기존 요청 동작을 유지하며, 마운트된 중복 위치는 모두 요청을 받아 마지막 위치가 포커스됩니다. 같은 대상의 다른 자리표시자는 자기 구독으로 공개될 수 있습니다.
+
+새 포커스 요청, reset, 확인된 폼 언마운트 또는 게이트 소멸은 대기 중인 공개 포커스 예약을 취소합니다. 요청 뒤의 어떤 초점 이동도 행동을 막으며, 다른 곳에 갔다 돌아오는 이동과 공개된 하위 트리의 자동 포커스도 포함합니다. StrictMode의 effect 재실행은 Mount를 반복하지 않고 요청을 보존합니다.
+
+terminal 내부, 생략된 레이아웃, 숨겨진 Activity와 공개 커밋에서 Suspense로 마운트되지 않은 입력에는 도달할 수 없습니다. 숨김·disabled·inert 요소는 포커스를 무시할 수 있습니다. 주변 자리표시자 높이 변경에 따른 스크롤 이동은 보정하지 않습니다. 이미 마운트된 대상이나 막는 게이트가 없는 대상에 보낸 요청이 지연되면 나중에 마운트된 위치에도 도달하며 새 요청으로 취소할 수 없습니다. native 무효 제출은 [후보 선택 규칙](./error-reference#submission)을 유지합니다.
 
 SSR은 모든 입력을 렌더링하고 hydration은 이를 그대로 유지합니다. hydration 뒤 추가한 branch·children에 gate를 적용하며 준비된 자식은 나중에 탭·아코디언에서 처음 표시해도 준비 시의 gate 결정을 유지합니다. IntersectionObserver가 없으면 브라우저는 eager 렌더링하고 서버는 경고하지 않습니다.
 

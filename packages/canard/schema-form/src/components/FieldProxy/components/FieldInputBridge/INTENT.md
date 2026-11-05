@@ -9,6 +9,8 @@ FieldProxy 안에서 입력 컴포넌트의 선택·DOM 수명을 노드 값·�
 - createFieldInputBridge는 노드를 붙잡은 컴포넌트를 반환하는 팩토리이며 React 컴포넌트 자체가 아닙니다.
 - 입력 오류 경계는 해석 지점의 안정된 어댑터를 재사용합니다.
 
+- `useFieldInputControl`은 적용 Refresh 세대와 입력 추적을, `useFieldLifecycle`은 유일한 입력 layout effect와 명령·예약 행동을 소유합니다. effect를 더하면 일반 입력 쓰기의 고정 비용이 깨집니다.
+
 ## Boundaries
 
 ### Always do
