@@ -1,20 +1,25 @@
-import type { ComponentType, Ref } from 'react';
+import type { ComponentType, Ref } from "react";
 
 /** Observable assertions interpreted by the consumer's assertion runtime. */
 export interface ScenarioExpectation {
   /** Presence of rendered fields or nodes, indexed by JSON Pointer. */
-  readonly shape?: Readonly<Record<string, 'present' | 'absent'>>;
+  readonly shape?: Readonly<Record<string, "present" | "absent">>;
   /** Expected whole-form output after the step settles. */
   readonly outputValue?: unknown;
   /** Expected values at individual JSON Pointer paths. */
   readonly values?: Readonly<Record<string, unknown>>;
   /** Local state keys observed on nodes at JSON Pointer paths. */
-  readonly states?: Readonly<Record<string, Readonly<{
-    isVisible?: boolean;
-    isReadOnly?: boolean;
-    isDisabled?: boolean;
-    isPresent?: boolean;
-  }>>>;
+  readonly states?: Readonly<
+    Record<
+      string,
+      Readonly<{
+        isVisible?: boolean;
+        isReadOnly?: boolean;
+        isDisabled?: boolean;
+        isPresent?: boolean;
+      }>
+    >
+  >;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
   /** Synchronous result of the action, including undefined when present. */
@@ -37,33 +42,42 @@ export interface ScenarioExpectation {
   readonly onErrorCodes?: readonly string[];
   /** Expected settlement health fields on the form root. */
   readonly diagnostics?: Readonly<{
-    status: 'stable' | 'degraded';
-    cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict';
-    exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
+    status: "stable" | "degraded";
+    cause?: "budget" | "expression" | "injectTarget" | "sharedConflict";
+    exceededBudget?: "hostWheel" | "derive" | "transition" | "recursion";
     iterations?: number;
     commit?: number;
   }>;
 }
 
-/** Closed ledger vocabulary; batch interpretation belongs to the injected engine. */
+/** Closed scenario vocabulary; batch interpretation belongs to the injected engine. */
 export type FormScenarioStep = (
-  | { readonly action: 'setValue'; readonly path: string; readonly value: unknown }
-  | { readonly action: 'clear'; readonly path: string }
-  | { readonly action: 'push'; readonly path: string; readonly value?: unknown }
-  | { readonly action: 'pop'; readonly path: string }
-  | { readonly action: 'remove'; readonly path: string; readonly index: number }
-  | { readonly action: 'update'; readonly path: string; readonly index: number; readonly value: unknown }
-  | { readonly action: 'submit' }
-  | { readonly action: 'reset'; readonly automaticWrites?: 'disabled' }
-  | { readonly action: 'resetSubtree'; readonly path: string }
-  | { readonly action: 'batch'; readonly steps: readonly FormScenarioStep[] }
+  | {
+      readonly action: "setValue";
+      readonly path: string;
+      readonly value: unknown;
+    }
+  | { readonly action: "clear"; readonly path: string }
+  | { readonly action: "push"; readonly path: string; readonly value?: unknown }
+  | { readonly action: "pop"; readonly path: string }
+  | { readonly action: "remove"; readonly path: string; readonly index: number }
+  | {
+      readonly action: "update";
+      readonly path: string;
+      readonly index: number;
+      readonly value: unknown;
+    }
+  | { readonly action: "submit" }
+  | { readonly action: "reset"; readonly automaticWrites?: "disabled" }
+  | { readonly action: "resetSubtree"; readonly path: string }
+  | { readonly action: "batch"; readonly steps: readonly FormScenarioStep[] }
 ) & { readonly expect?: ScenarioExpectation };
 
 /** Pure scenario data; generic schema and value types retain consumer inference. */
 export interface FormScenario<Schema = object, Value = unknown> {
   /** Human-readable behavior used as the test and story label. */
   readonly name: string;
-  /** Ledger IDs and the behavior this scene checks. */
+  /** Stable contract labels and the behavior this scene checks. */
   readonly description?: string;
   /** Schema interpreted by the injected form engine. */
   readonly schema: Schema;
@@ -108,5 +122,8 @@ export interface ScenarioFormProps<Schema, Value, Handle extends object> {
     ref?: Ref<Handle>;
   }>;
   /** Bind user-event interaction, handle-only actions, and screen assertions. */
-  readonly createAdapter: (handle: Handle, element: HTMLElement) => ScenarioAdapter;
+  readonly createAdapter: (
+    handle: Handle,
+    element: HTMLElement,
+  ) => ScenarioAdapter;
 }

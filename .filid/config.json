@@ -2,7 +2,6 @@
   "version": "3.0",
   "language": "ko",
   "ignore": [
-    "**/architecture",
     "**/legacy",
     "**/fixtures",
     "**/__fixtures__",
@@ -22,26 +21,18 @@
   ],
   "adapters": {
     "mode": "auto",
-    "enabled": [
-      "ecmascript"
-    ]
+    "enabled": ["ecmascript"]
   },
   "rules": {
     "organ-no-intentmd": "error",
     "intent-document-contract": {
-      "exempt": [
-        "**/canard/schema-form-*-plugin/**"
-      ]
+      "exempt": ["**/canard/schema-form-*-plugin/**"]
     },
     "detail-document-contract": {
-      "exempt": [
-        "**/canard/schema-form-*-plugin/**"
-      ]
+      "exempt": ["**/canard/schema-form-*-plugin/**"]
     },
     "module-entry-point": {
-      "exempt": [
-        "**/canard/schema-form/src/app"
-      ]
+      "exempt": ["**/canard/schema-form/src/app"]
     },
     "zero-peer-file": {
       "exempt": [
@@ -82,8 +73,6 @@
       "tsconfig.json",
       "tsconfig.declarations.json"
     ],
-    "organNames": [
-      "fieldInputDefinitions"
-    ]
+    "organNames": ["fieldInputDefinitions"]
   }
 }

@@ -8,7 +8,7 @@ import { renderForm } from '../renderForm';
 
 /**
  * Execute the named shared data through the registered screen adapter.
- * @param name - Stable SCN scenario name; its description cites the ledger.
+ * @param name - Stable SCN scenario name; its description carries stable contract labels.
  * @returns Completion after every screen expectation has been checked.
  */
 const run = async (name: string) => {

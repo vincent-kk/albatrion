@@ -28,7 +28,6 @@ export function classifyChangedFile(file, workspaces) {
     return "global";
   if (!owner) return "ignored";
   const testMarkdown = [
-    "packages/canard/schema-form/architecture/ledger/error.md",
     "packages/canard/schema-form/src/core/surface/DETAIL.md",
   ];
   if (

@@ -6,7 +6,7 @@ import { UnhandledErrorSpecific } from './UnhandledErrorSpecific';
 import { ValidationErrorSpecific } from './ValidationErrorSpecific';
 
 /**
- * Every error code the package raises, in ledger order (ERROR-164 and its supplements).
+ * Every error code the package raises, in public contract order (ERROR-164).
  * Keys are the bare code in PascalCase; values are the group-qualified strings errors and records carry.
  */
 export const FormErrorCode = {

@@ -1,4 +1,4 @@
-/** Internal bare specifics for the SchemaFormError group, in ledger order. */
+/** Internal bare specifics for the SchemaFormError group, in public contract order. */
 export const SchemaFormErrorSpecific = {
   SharedNodeConflict: 'SHARED_NODE_CONFLICT',
   BudgetExceeded: 'BUDGET_EXCEEDED',

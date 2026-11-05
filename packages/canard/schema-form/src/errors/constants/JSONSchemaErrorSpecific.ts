@@ -1,4 +1,4 @@
-/** Internal bare specifics for the JSONSchemaError group, in ledger order. */
+/** Internal bare specifics for the JSONSchemaError group, in public contract order. */
 export const JSONSchemaErrorSpecific = {
   /** Property names reserved by literal operator percent spellings. */
   ReservedPropertyName: 'RESERVED_PROPERTY_NAME',

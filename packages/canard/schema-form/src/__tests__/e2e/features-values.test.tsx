@@ -17,7 +17,7 @@ import { type FormHarness, renderForm } from '../renderForm';
  * Execute one value feature scenario through the registered screen adapter with the harness validator.
  * Error expectations are partial issue contracts, matched by count and shape as in validation.test.tsx.
  * @param scenarios - The family list that owns the scenario.
- * @param name - Stable scenario name; its description cites the ledger.
+ * @param name - Stable scenario name; its description carries stable contract labels.
  * @param inspect - Extra assertions on the settled screen, run after every step passed.
  * @returns Completion after every step expectation has been checked.
  */
