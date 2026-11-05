@@ -2,13 +2,13 @@
 
 ## Purpose
 
-`@canard/schema-form` 전체에서 쓰는 React Context Provider와 훅을 모아 둔 곳이다. 폼 설정, 입력 타입 매핑, 렌더러, 입력 제어, 루트 노드, 가상화, 워크스페이스를 각각의 Context로 나눠 prop drilling을 없앤다.
+`@canard/schema-form` 전체에서 쓰는 React Context Provider와 훅을 모아 둔 곳이다. 폼 설정, 입력 타입 매핑, 렌더러, 입력 제어, 루트 노드, 가상화, 라이프사이클 예약, 워크스페이스를 각각의 Context로 나눠 prop drilling을 없앤다.
 
 ## Conventions
 
 - 각 Context 모듈은 역할 칸인 components(Context 객체와 Provider)와 hooks(소비 훅), 필요하면 utils, 그리고 진입점 index로 이룬다. 훅 이름은 `use<ContextName>Context()` 형태로 짓는다.
-- Provider 중첩 순서는 Form.tsx를 따른다: `Workspace → FieldInputs → FieldRenderer → InputControl → Virtualization → RootNode`
-- `VirtualizationContext`의 manager는 마운트 시 `VirtualizationManager.create`로 한 번 만들어 고정한다(`useLazyConstant`는 memo와 달리 한 번만 만든다는 보장이 있다). 비활성이거나 IntersectionObserver가 없으면 null이다.
+- Provider 중첩 순서는 FormRoot의 `Workspace → FieldInputs → FieldRenderer → InputControl → Virtualization → FieldLifecycle → RootNode`입니다. FieldLifecycle은 고정 컴포넌트 호출 수를 유지하기 위해 Provider 컴포넌트 없이 Context 요소를 직접 조립합니다.
+- `VirtualizationContext`의 manager는 FormRoot가 마운트 시 `VirtualizationManager.create`로 한 번 만들어 고정한다(`useLazyConstant`는 memo와 달리 한 번만 만든다는 보장이 있다). 비활성이거나 IntersectionObserver가 없으면 null이다.
 - `ExternalFormContext`는 앱 최상단에 두는 선택적 외부 설정 레이어다. 입력 정의는 참조별로 정규화하고 렌더러·포맷터는 최신 props로 해석한다.
 
 ## Boundaries
@@ -16,7 +16,7 @@
 ### Always do
 
 - 각 Context 훅은 해당 Context 파일에서만 `useContext` 호출
-- Provider 중첩 순서는 `Form.tsx`에 정의된 순서대로 유지
+- Provider 중첩 순서는 `FormRoot`에 정의된 순서대로 유지
 - `ExternalFormContext` 값과 Form 수준 prop을 병합할 때 Form 수준 값을 우선 적용
 
 ### Ask first

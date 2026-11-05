@@ -2,12 +2,12 @@
 
 ## Purpose
 
-폼 하나의 관찰 자원과 노출 기록을 소유합니다. 노드 identity에 붙은 단방향 기록으로 값 변경·배열 재배치·소비층 재생성에서 포커스와 선택이 사라지는 것을 막습니다. 자원 공유와 Placeholder 격리의 이유는 [DETAIL](./DETAIL.md)에 둡니다.
+폼 하나의 관찰 자원과 노출 기록을 소유합니다. 입력 컨테이너와 게이트의 위치를 구별하고, 노드 identity에 붙은 단방향 기록으로 값 변경·배열 재배치·소비층 재생성에서 포커스와 선택이 사라지는 것을 막습니다. 자원 공유와 Placeholder 격리의 이유는 [DETAIL](./DETAIL.md)에 둡니다.
 
 ## Conventions
 
 - 게이트 판정은 자기 자신 또는 null을 돌려주는 self-selecting 메서드(`forBranch`/`forChild`)로 노출한다. 소비하는 쪽은 옵셔널 체이닝으로 조합하고, 옵션 원값(`options`)은 비공개로 둔다.
-- IntersectionObserver 콜백과 idle tick, 이 두 reveal 트리거는 비공개 `reveal()` 한 곳으로 모은다. 이곳에서 registry 삭제, unobserve, 콜백 실행을 함께 처리한다.
+- IntersectionObserver·idle tick·경로 공개의 reveal 트리거는 비공개 `reveal()` 한 곳으로 모은다. 이곳에서 registry 삭제, unobserve, 콜백 실행을 함께 처리한다.
 - idle 백필은 `backfill === VirtualizationBackfill.Idle`일 때만 시작하며, register 시점에 조건을 확인해 시작한다.
 - idle 콜백의 reveal 개수와 잔여 예산 기준을 유지합니다. 하위 트리의 실제 작업시간 상한으로 오인하지 않도록 [DETAIL](./DETAIL.md)의 예산 한계를 따릅니다.
 

@@ -18,6 +18,7 @@
 ### Always do
 
 - `node.isPresent === false`이면 placeholder도 렌더하지 않고 `null` 반환 (`UpdateControlledProperties` 추적)
+- 경로 공개의 완료는 자식 Mount 뒤 매니저에 알리며, 위치 정리는 공개 전환과 구별합니다.
 - 노출 커밋 뒤 보류한 focus/select를 공개 `request`로 동기 재실행하여 새 입력의 layout 구독에 연결합니다.
 - placeholder를 언마운트할 때 `manager.unregister`가 반드시 호출되게 한다 (null-pattern ref)
 

@@ -18,6 +18,8 @@
 
 - 각 Context 모듈은 Context 객체와 Provider를 역할 칸 components, 소비 훅을 hooks, 그 밖의 보조를 utils에 두고 진입점 index가 이름으로 내보냅니다(원장 결정 D3). 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
+- 라이프사이클 레지스트리는 FormRoot가 소유하고 FieldLifecycleContext의 Context 요소가 전달합니다. 다른 Provider와 달리 래퍼 컴포넌트가 없으며 Form 재렌더의 고정 호출 수를 유지하기 위한 예외입니다.
+
 ## Acceptance Criteria
 
 ### providers-contract — 관찰 가능한 동작
