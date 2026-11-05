@@ -28,6 +28,7 @@ export default defineConfig({
     include: ['src/**/__benchmarks__/**/*.bench.ts'],
     benchmark: {
       include: [
+        'src/components/Form/__benchmarks__/fieldLifecycle.bench.ts',
         'src/core/__benchmarks__/{branch-strategy-init,compute-recalculate,event-cascade,find-node,nodeFromJSONSchema,object-pending-read,render-delay}.bench.ts',
       ],
       outputJson: 'bench/.results/latest.json',
