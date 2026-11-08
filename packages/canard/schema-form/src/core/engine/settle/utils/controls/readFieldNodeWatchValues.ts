@@ -48,6 +48,8 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
       ? Reflect.get(controls, CONTROL_KEY.watch)
       : undefined;
   const paths = isArray(watch) ? watch : EMPTY_ARRAY;
+  if (!snapshot && paths.length === 0 && (!memo || memo.values.length === 0))
+    return EMPTY_ARRAY;
   const reusable =
     !snapshot && memo?.commit === commit && memo.values.length === paths.length;
   const derived = getHostDerived<'watchValuesWitness', WatchValuesWitness>(
