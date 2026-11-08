@@ -54,7 +54,7 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 **Too many items, or too few** — the core neither blocks nor fills: `push()` always appends and `minItems` creates no items. Validation reports both limits; the built-in array input draws empty slots up to `minItems` in the UI only, writing nothing until the user types into one, and hides its add button at `maxItems`. A custom input that must enforce a range disables its own add/remove controls from `node.jsonSchema` and `node.children.length` (`arrays-and-scale.md`).
 
-**Large array is slow** — keep primitives on the terminal strategy, batch mutations through one `setValue`, and consider the `virtualization` prop (`arrays-and-scale.md`).
+**Large array is slow** — keep primitives on the terminal strategy, batch mutations through one `setValue`, and consider the live `virtualization` prop ([arrays and scale](./arrays-and-scale.md#render-level-virtualization-built-in)); do not reset the form or change its key to update these options.
 
 ## TypeScript
 

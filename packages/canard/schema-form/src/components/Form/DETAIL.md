@@ -12,6 +12,8 @@ Form의 설정은 불변 참조 교체로 전달합니다. `jsonSchema`·`defaul
 
 폼 전체 잠금은 [InputControlContext](../../providers/InputControlContext/DETAIL.md)의 UI 계약입니다. core 명령형 쓰기를 잠그는 정책으로 확대하지 않습니다. `onError`의 기록과 검증 판정은 [오류 계약](../../errors/DETAIL.md)에 따라 서로 다른 채널로 유지합니다(SURFACE-012).
 
+virtualization은 재마운트 없이 갱신됩니다. 단방향 공개와 옵션별 적용 범위는 [VirtualizationManager](../../helpers/virtualization/VirtualizationManager/DETAIL.md)의 live 계약을 따릅니다. FormProvider에 virtualization prop을 추가하지 않습니다.
+
 ### 가상화 초점
 
 - 핸들과 네이티브 무효 제출은 같은 정확한 포커스 흐름을 사용합니다. 포커스를 받을 입력이 마운트된 위치가 있으면 기존 명령을 보내고 다른 조상 게이트는 열지 않습니다. 마운트된 중복 위치는 모두 요청을 받아 마지막 위치가 초점을 가집니다. 대상 자신의 다른 자리표시자는 기존 명령 구독으로 공개될 수 있습니다.

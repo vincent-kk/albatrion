@@ -92,10 +92,13 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     () => resolveErrorVisibilityPolicy(inputPolicy),
     [inputPolicy],
   );
-  // Mount-time options remain fixed so already mounted fields never regress to placeholders.
+  // FormRoot owns the stable manager shared by focus requests and input positions.
   const virtualization = useLazyConstant(() => ({
     manager: VirtualizationManager.create(props.virtualization),
   }));
+  useLayoutEffect(() => {
+    virtualization.manager?.updateOptions(props.virtualization);
+  }, [virtualization, props.virtualization]);
   const loads = useRef(0);
   const focusRequest = useRef<FocusRequest>(undefined);
   const focusNode = useHandle((target: FieldNode | null | undefined) => {
@@ -109,7 +112,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     focusFieldNode(
       target,
       formRef.current,
-      virtualization.manager,
+      virtualization.manager?.enabled ? virtualization.manager : null,
       lifecycle,
       request,
     );
@@ -315,7 +318,11 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                   errorVisibilityError={policyError}
                 >
                   <FormRootProxy
-                    formRef={virtualization.manager ? formRef : null}
+                    formRef={
+                      virtualization.manager && props.virtualization
+                        ? formRef
+                        : null
+                    }
                     onSubmit={handleNativeSubmit}
                   >
                     {children}

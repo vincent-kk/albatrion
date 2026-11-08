@@ -22,6 +22,8 @@
 - 노출 커밋 뒤 보류한 focus/select를 공개 `request`로 동기 재실행하여 새 입력의 layout 구독에 연결합니다.
 - placeholder를 언마운트할 때 `manager.unregister`가 반드시 호출되게 한다 (null-pattern ref)
 
+- 대기 gate만 옵션 revision을 읽고, 옵션 공개도 같은 gate 객체의 settle 수명을 따릅니다.
+
 ### Ask first
 
 - 노출 명령 마스크(`FORCE_REVEAL_EVENT`)를 바꿀 때

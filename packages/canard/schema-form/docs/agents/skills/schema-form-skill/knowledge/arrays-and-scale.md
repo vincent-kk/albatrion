@@ -140,8 +140,12 @@ Contract — each point matters:
 - **Limits**: no focus is promised inside terminal inputs, omitted layouts, hidden Activity, or an input suspended in the reveal commit. Hidden, disabled, or inert elements can ignore focus. Focus scrolling is not corrected when neighboring placeholder heights change. Commands sent to already mounted inputs or targets with no blocking gate can be delivered later to newly mounted positions and cannot be cancelled by a newer request.
 - **SSR and hydration**: every field renders on the server and hydrates unchanged. Gating applies to branches and children added after hydration and requires `IntersectionObserver`. Browsers without it render eagerly with a development warning; the server does not warn.
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
-- Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
+- Children prepared during hydration retain their eager path even when a custom branch input first renders them later (for example, collapsed tabs or accordions): only this hydration decision is baked at preparation. Outside hydration, a prepared deferred gate catches up to the latest option revision when it first mounts; an intervening threshold or eagerCount change can therefore make it mount directly as an input.
 - Benefit scales with form size; small forms gain nothing (hence opt-in).
+
+Options on `Form` apply after mount without changing its key. Turning virtualization off reveals every waiting placeholder and stops observation/backfill; turning it back on gates only unrevealed or new nodes. Mounted fields stay mounted, including fields mounted while it was off. Threshold/eagerCount changes affect waiting and new fields; rootMargin/backfill changes restart waiting observation; estimateHeight/Placeholder changes only update placeholder presentation. Equal primitive values and callback references do not restart observation. Node values, state and errors remain unchanged. FormProvider does not expose this prop.
+
+An unrelated option change preserves a pending focus request. If an option change reveals its gate, its still-eligible target is focused in that reveal commit before the request ends; removing its position ends the request after removal is confirmed.
 
 For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildFields`.
 

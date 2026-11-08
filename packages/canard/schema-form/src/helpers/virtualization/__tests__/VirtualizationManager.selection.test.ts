@@ -24,9 +24,18 @@ describe('VirtualizationManager selection API', () => {
     vi.unstubAllGlobals();
   });
 
-  it('create returns null when virtualization is disabled', () => {
-    expect(VirtualizationManager.create(undefined)).toBeNull();
-    expect(VirtualizationManager.create(false)).toBeNull();
+  it('keeps a disabled manager and its reveal ledger when observation is supported', () => {
+    for (const input of [undefined, false]) {
+      const manager = VirtualizationManager.create(input);
+      expect(manager).toBeInstanceOf(VirtualizationManager);
+      expect(manager!.enabled).toBe(false);
+      expect(manager!.forBranch(100)).toBeNull();
+      const node = {} as FieldNode;
+      manager!.markRevealed(node);
+      manager!.updateOptions({ threshold: 1, eagerCount: 0 });
+      expect(manager!.enabled).toBe(true);
+      expect(manager!.forChild(0, node)).toBeNull();
+    }
   });
 
   it('create returns null when IntersectionObserver is unavailable', () => {

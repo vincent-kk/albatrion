@@ -98,7 +98,8 @@ export interface FormProps<
    *  - `VirtualizationOptions`: Enable with custom options
    *  - Off-screen fields render as lightweight placeholders and mount when they
    *    approach the viewport, on browser idle time, or on focus/select commands
-   *  - The node tree is always fully built; values, validation and submit are unaffected
+   *  - Options apply after mount; disabling reveals waiting fields. Already mounted
+   *    fields stay revealed. Values, state, errors, validation and submit are unaffected
    *  - Server-rendered fields hydrate unchanged and remain revealed. Gating
    *    applies to branches and children added after hydration and requires
    *    IntersectionObserver; browsers without it mount every field eagerly.
