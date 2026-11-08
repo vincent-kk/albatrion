@@ -108,3 +108,57 @@ sidebar_position: 8
 | `handle.showError(false)`                       | `handle.resetErrorVisibility()`                                                        |
 | `FieldNodeState.ErrorVisible`                   | `FieldNodeState.ErrorVisibility`                                                       |
 | `useChildFieldErrors().showError / .showErrors` | `.errorVisible / .childErrorVisibleList`                                               |
+
+제거된 이름에는 호환 별칭이 없습니다. `ErrorVisibility`는 비트 마스크가 아닌 문자열 enum입니다. enum 값을 결합하지 말고 이름이 있는 정책으로 바꾸십시오. 직접 Form을 호출하는 곳뿐 아니라 애플리케이션 래퍼, 저장된 설정, 사용자 렌더러와 테스트도 검색하십시오.
+
+## 제출과 판정 처리 {#submission}
+
+네이티브 Enter·제출 버튼과 `handle.submit()` / `useFormSubmit`을 각각 시험하십시오. 네이티브 제출의 스키마 판정이 무효이면 오류를 공개하고 첫 번째 적격 무효 필드에 초점을 주며, `onSubmit`, `onError`, 호스트 오류 통로를 호출하지 않습니다. `ErrorVisibility.Never`는 공개와 초점을 모두 막고, 폼 전체 readOnly/disabled는 초점만 막습니다. 명령형 제출은 여전히 거부되며 자동으로 공개하지 않습니다. 거부를 처리하고 필요한 UX라면 `revealErrors()`를 명시적으로 호출하십시오. 컴파일 실패, degraded 폼, 애플리케이션 콜백 실패는 무효 판정과 다르므로 [제출 실패 처리](./error-reference#submission)를 유지하십시오.
+
+terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습니다. 이를 합성 자식에 중복 배정하거나 빈 자식 트리를 검증 성공으로 해석하지 마십시오. 전체 판정에는 `getErrors()` / `validate()`, 필드 피드백에는 `node.errors`를 사용하십시오.
+
+## 마운트 이후 설정 {#live-settings}
+
+아래 수명을 확인한 뒤 설정 적용만을 위한 Form key 변경을 제거하십시오. 설정 객체·배열·콜백은 불변 참조로 교체하며, 기존 참조의 내용 변경은 지원하는 갱신 신호가 아닙니다. 명시한 Form 설정이 FormProvider 기본값보다 우선합니다. FormProvider에는 `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, `disableAutomaticWrites` prop이 없습니다.
+
+| 설정                                                                     | 이행 점검                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jsonSchema`, `defaultValue`                                             | prop을 바꿔도 `reset()`이 최신 커밋 입력을 읽기 전까지 편집을 유지합니다. `rebuild()`는 루트를 교체하고 기본값을 다시 읽습니다. 두 메서드는 대체 폼 데이터를 받지 않으므로 값 쓰기에는 `setValue`를 사용하십시오. |
+| Form 또는 FormProvider의 `validatorFactory`                              | 선택된 검증기 참조가 바뀌면 트리를 다시 만들고 편집을 버립니다. 같은 설정의 검증기 객체는 안정적으로 유지하십시오.                                                                                                |
+| Form 또는 FormProvider의 `validationMode`                                | 기존 트리에 적용합니다. `None`은 대기 작업을 취소하고 검증기 오류를 지우지만 외부 오류는 유지하며, OnChange로 전환하면 현재 값 검증을 예약합니다. [모드 전환 규칙](./validation#modes)을 확인하십시오.            |
+| `unsetOnInactive`, `disableAutomaticWrites`                              | 다음 엔진 진입부터 적용하며 지난 전환을 재실행하거나 값을 다시 채우지 않습니다. 진행 중인 쓰기 체인은 기존 설정을 유지합니다. 설정 커밋 전 자식 layout effect 호출은 직전 커밋 설정을 사용합니다.                 |
+| Form 또는 FormProvider의 `errorVisibility`                               | 커밋된 정책이 즉시 갱신됩니다. `showError`와 boolean/mask를 이름 있는 enum으로 교체하고 노드 override와 `revealErrors()` / `resetErrorVisibility()`를 확인하십시오.                                               |
+| Form 또는 FormProvider의 렌더러 슬롯과 `formatError`                     | 렌더러 교체는 자신이 소유한 UI 하위 트리를 다시 만듭니다. 포맷터 교체는 메시지를 바꾸고 실패한 포맷터 경계를 복구할 수 있으며, 정상 입력은 재마운트할 필요가 없습니다.                                            |
+| Form 또는 FormProvider의 `fieldInputDefinitions`, Form의 `fieldInputMap` | 선택을 갱신하면서 노드 값·상태·외부 오류를 유지합니다. 선택 컴포넌트가 바뀌면 해당 입력을 재마운트하고, 부모 입력 교체는 자손 DOM과 미커밋 초안도 다시 만듭니다. 선택과 조상이 그대로면 입력 DOM을 유지합니다.    |
+| `context`, Form의 `readOnly` / `disabled`                                | context와 입력 잠금은 즉시 적용됩니다. context는 내용 스냅샷을 사용하므로 내용이 같은 Date/Map/클래스 객체는 갱신을 강제하지 않습니다. 입력 잠금은 명령형 노드 쓰기를 막지 않습니다.                              |
+| Form 콜백, `errors`, `children`, `ref`                                   | 현재 커밋 콜백과 레이아웃을 사용하며 외부 오류를 다시 적용하려면 errors 배열을 교체합니다. 루트 교체 뒤 현재 핸들·노드를 다시 얻으십시오. 숨겨진 폼은 아래 콜백 수명을 따릅니다.                                  |
+| Form의 `virtualization`                                                  | 모든 옵션이 갱신되며 아래 단방향 공개·hydration 한계를 따릅니다.                                                                                                                                                  |
+
+`Form.Field`, `Form.Input`, `Form.Render`에는 별도의 마운트 고정 컴포넌트·children override가 있습니다. 이 override에는 live context, 컴포넌트 내부 hook 또는 의도적인 새 key를 사용하십시오. Form 전체 live 설정이 이 [조합 계약](./schema-reference#input-resolution)을 바꾸지는 않습니다.
+
+`/**`처럼 사용할 수 없는 맵 키는 StrictMode에서도 커밋 뒤 `FormErrorCode.FormTypeInputMap`, `origin: 'load'`를 한 번 보고합니다. 최초 실패는 load fallback을 유지하고, 실행 중 교체 실패는 트리와 마지막 유효 맵을 유지합니다. 유효한 맵 참조로 교체하면 복구합니다. 입력 컴포넌트가 렌더 중 던진 예외는 여전히 렌더 실패이므로 던진 코드만으로 분류하지 마십시오.
+
+## 관찰, 숨겨진 폼, 값 추론 {#observation-types}
+
+- 노드가 없으면 `useFieldNodeTracker`와 `useFieldNodeSubscribe`에 `null` 또는 `undefined`를 직접 전달하십시오. tracker는 구독 없이 0을 반환하고, 구독 hook은 listener와 `onSubscribe`를 호출하지 않습니다. 둘 다 노드 인자가 바뀌면 이전 구독을 해제합니다. 종류·전략 가드는 두 빈 값에 false를 반환합니다. `onSubscribe`, `visitSubtree`, 포맷터·placeholder의 필수 노드 인자는 계속 필수입니다.
+- ref 할당만으로 관찰자가 다시 렌더되지는 않습니다. `formRef.current?.node`를 읽는 hook에는 바인딩·루트 교체 뒤 소비자 재렌더가 필요하며, 그렇지 않으면 이전 노드를 계속 관찰합니다. 관찰자가 폼 내부에 속하면 Form의 함수 children을 우선하십시오.
+- 숨겨진 폼을 다시 보이면 끝나지 않은 IME 초안을 포함하여 입력을 현재 노드 값과 동기화합니다. 숨김 중에는 React가 ref를 해제하므로 보이는 상태에서 마운트한 뒤 보관한 핸들·노드로 쓰십시오. 준비된 현재 load의 콜백은 숨김 중에도 계속될 수 있고 다시 보일 때 재생하지 않습니다. 구독을 정리하고 [숨김 수명](./api-reference#hidden-lifecycle)을 확인하십시오.
+- 유한한 리터럴 `prefixItems`는 이제 `InferValueType`, Form, FormHandle에서 선택적 위치의 튜플을 추론하므로 제한 없는 인덱스나 추가 원소가 타입 오류가 될 수 있습니다. `as const`로 리터럴을 보존하고 `items`의 rest 규칙을 확인하며, 정확한 애플리케이션 형태가 필요하면 Form과 FormHandle에 같은 명시적 값 제네릭을 쓰십시오. 객체 키는 여전히 선택적이고 추론 값은 검증 증거가 아닙니다. [TypeScript 추론](./api-reference#typescript)을 확인하십시오.
+
+## 가상화와 정확한 초점 {#virtualization}
+
+가상화는 입력 DOM을 미루며 노드 트리나 제출 데이터는 미루지 않습니다. 끄면 대기 필드를 공개하고 관찰·backfill을 멈춥니다. 다시 켜기, `threshold`·`eagerCount` 변경, 자식 목록 재생성은 이미 공개된 노드를 다시 숨기지 않습니다. `rootMargin`·`backfill`은 대기 placeholder를 재설정하고 `estimateHeight`·`Placeholder`는 표현을 바꿉니다. 불필요한 재설정을 막으려면 콜백 참조를 유지하십시오.
+
+조상 초점 우회 처리를 `handle.focus(path)` / `select(path)`로 바꾸십시오. 중첩 게이트나 virtual 그룹 뒤의 대기 대상은 렌더 경로를 따라 공개되고 정확한 입력에 초점을 받습니다. 새 요청, reset·루트 교체, 확인된 언마운트, 사라진 게이트는 공개 예약을 취소합니다. 다른 곳에 갔다 돌아오거나 body로 blur하는 것을 포함한 사용자 초점 이동은 예약 행동을 막습니다. 무관한 옵션 갱신은 요청을 유지하고, 게이트를 공개하는 옵션 갱신은 그 커밋에서 전달합니다.
+
+실제 사용자 레이아웃을 시험하십시오. 생략한 입력, terminal 내부, 숨겨진 Activity, 공개 중 suspend한 입력에는 도달하지 못합니다. hidden/disabled/inert 컨트롤은 초점을 거절할 수 있고 네이티브 무효 제출은 두 번째 후보를 시도하지 않습니다. 마운트된 중복 위치는 일반 요청 동작을 유지하며 일반 노드 명령의 취소 수명은 공개 예약과 다릅니다. placeholder 높이 변화의 스크롤은 보정하지 않습니다. 지연 DOM은 공개 전까지 페이지 검색·접근성 도구·자동 완성에서 사용할 수 없고 idle backfill에는 완료 기한 보장이 없습니다.
+
+SSR은 모든 필드를 렌더하고 hydration은 이를 보존하며 이후 추가한 가지·자식에만 게이트를 적용합니다. IntersectionObserver가 없으면 즉시 렌더합니다. 초점 선택·중복 위치·React 18 hydration 한계는 [가상화](./api-reference#virtualization)를 확인하십시오.
+
+## AJV 이행 {#ajv}
+
+AJV6, AJV7, 모든 AJV8 dialect 진입점은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 `bind(instance)`를 즉시 거절합니다. 바인딩 전에 이 옵션을 끄십시오. 실패의 `group`은 `'UNHANDLED_ERROR'`, `code`는 `'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`(`FormErrorCode.ValidatorBindRefused`)이며 네이티브 플러그인 오류이므로 코어의 `isUnhandledError` 가드는 인식하지 않습니다. 거절한 인스턴스는 현재 바인딩을 교체하지 않습니다.
+
+형 변환은 명시적인 애플리케이션 입력 변환으로 옮기고, 기본값은 스키마·defaultValue와 폼 load 규칙으로 설정하며, 불필요한 키 제거는 명시적인 애플리케이션 변환으로 처리하십시오. 제출 결과를 시험하고 검증의 폼 값 변경에 의존하지 마십시오. 특히 `removeAdditional`을 켜는 것은 JSON Schema로 추가 키를 거부하는 일을 대신하지 않습니다.
+
+AJV8 기본 인스턴스는 `allowUnionTypes: true`를 설정합니다. 여러 non-null 타입에 대한 strictTypes 로그를 없애지만 union을 만족하는 값의 판정은 바꾸지 않으며 강제 변환을 켜지도 않습니다. 소비자가 바인딩한 인스턴스는 자신의 strict 옵션을 유지하므로 의도적으로 설정하십시오. AJV7의 기본값은 `strict: false`이고 AJV6에는 AJV8의 strictTypes union 경고가 없습니다. [검증기 설정과 dialect 지원](./validation#ajv-configuration)을 입력 선택과 구별하십시오.

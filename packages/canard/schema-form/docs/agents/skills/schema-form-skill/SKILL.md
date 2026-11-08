@@ -1,6 +1,6 @@
 ---
 name: schema-form-skill
-description: 'Expert knowledge base for @canard/schema-form. Triggers on FieldInput, controls (controls.active/visible/readOnly/derived/watch/resetInteraction), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ErrorVisibility, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/outputValue), virtualization, context, events, troubleshooting.'
+description: 'Expert knowledge base for @canard/schema-form. Triggers on migration from 0.x, FieldInput, controls (controls.active/visible/readOnly/derived/watch/resetInteraction), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ErrorVisibility, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/outputValue), virtualization, context, events, troubleshooting.'
 ---
 
 # Schema Form Expert
@@ -17,8 +17,9 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 
 | Topic keywords                                                                                                                                                                                                                | Knowledge file                       |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| migration, upgrade from 0.x, renamed APIs                                                                                                                                                                                     | `knowledge/migration-from-0x.md`     |
 | `controls`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `resetInteraction`, `derived`, `discriminator`, expression syntax, `oneOf`, `anyOf`, `allOf`, `if/then/else`, conditional fields, `context`, `@` references | `knowledge/expressions.md`           |
-| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `outputValue`, performance, slow, large forms, `virtualization`, live options       | `knowledge/arrays-and-scale.md`      |
+| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `outputValue`, performance, slow, large forms, `virtualization`, live options        | `knowledge/arrays-and-scale.md`      |
 | `validate`, `ValidationMode`, `ErrorVisibility`, `errorVisibility`, `errors`, `setExternalErrors`, `clearExternalErrors`                                                                                                      | `knowledge/validation-ux.md`         |
 | `formatError`, `errorMessages`, locale messages, `useChildFieldErrors`, section errors                                                                                                                                        | `knowledge/error-feedback.md`        |
 | `onStateChange`, `getState`, `setState`, `clearState`, `isDivergent`, unsaved changes, restore interaction                                                                                                                    | `knowledge/interaction-state.md`     |

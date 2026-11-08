@@ -52,3 +52,5 @@ export default function App() {
 - [예제](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/examples)
 - [0.x에서 이주](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form/migration-from-0x)
 - [코딩 에이전트 자산](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form#agent-assets)
+
+기존 애플리케이션은 위 이주 가이드를 따라 변경하십시오. 패키지에 포함된 [소비자 이주 프롬프트](./docs/agents/skills/schema-form-skill/knowledge/migration-from-0x.md)는 코딩 에이전트가 애플리케이션 수정과 검증을 수행하도록 안내합니다.
