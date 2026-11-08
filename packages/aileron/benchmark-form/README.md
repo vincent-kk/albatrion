@@ -104,11 +104,17 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1`
 은 공개 L과 작업 공간 dist E를 AB/BA로 교대하며 각 판 10예열·최소 100표본을 기록합니다.
 `--out=<path>.json`에 원시 표본, `<path>-summary.json`에 중앙값·p99·비율을 저장하고 표를 출력합니다.
+render는 `schemaLane: warm`(동일 스키마 객체 재사용)과 `schemaLane: cold`(표본마다 새 스키마 객체)를 각각 실행합니다.
+`--schema-lane=warm|cold|both`로 선택하며 기본값은 both입니다. 복제는 측정창 밖에서 수행합니다.
+이는 코드/JIT가 예열된 뒤의 스키마 냉간 비용이며 프로세스 첫 실행 비용은 아닙니다. core는 기존처럼 같은 스키마 객체를 재사용하고 항상 새 트리를 생성합니다.
+배열 사례는 `initialItems`를 원자료·요약에 기록하고 표에 함께 표시합니다. push/replace의 작업량과 최초 마운트 항목 수를 혼동하지 않습니다.
 
 ## 갱신 측정 계약
 
 - `update-sync`: 각 상호작용의 `flushSync(() => applyInteraction(...))` 구간 합(ms)입니다.
 - `update-settled`: 각 상호작용 시작부터 정착 장벽 완료까지의 경과 시간 합(ms)입니다.
+- `update-post-sync`: `update-settled - update-sync`이며 동기 반환 후 정착까지의 꼬리 구간입니다.
+  전체는 `update-settled` 또는 `update-sync + update-post-sync`입니다. `update-sync + update-settled`는 동기 구간을 두 번 세므로 합산하지 않습니다.
 - `update-idle-floor`: 동일 개수의 빈 정착 장벽을 별도로 실행한 시간 합(ms)입니다.
 - `update-settled-net`: 표본마다 `update-settled - update-idle-floor`인 보조 추정치입니다.
   음수도 그대로 보존하며, 타이머 변동 때문에 순수 작업 시간으로 해석하지 않습니다.
