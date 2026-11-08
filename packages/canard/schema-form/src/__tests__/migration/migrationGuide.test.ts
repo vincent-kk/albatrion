@@ -20,7 +20,7 @@ const guides = [
 let surfaces: Map<string, string[]>[];
 
 beforeAll(() => {
-  // The benchmark workspace declares this pinned dependency; CI installs all workspaces.
+  // This package declares the pinned 0.16.1 baseline in its own devDependencies.
   surfaces = [
     join(
       repositoryRoot,

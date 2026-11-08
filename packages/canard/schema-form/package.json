@@ -81,6 +81,7 @@
   "devDependencies": {
     "@aileron/development-helper": "workspace:*",
     "@aileron/schema-form-scenarios": "workspace:*",
+    "@canard/schema-form_0.16.1": "https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.1.tgz",
     "@slats/agents-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
