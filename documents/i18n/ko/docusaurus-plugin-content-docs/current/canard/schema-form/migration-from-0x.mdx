@@ -42,6 +42,10 @@ sidebar_position: 8
 | `formTypeInputDefinitions`               | `fieldInputDefinitions`             |
 | `formTypeInputMap`                       | `fieldInputMap`                     |
 | `CustomFormTypeRenderer`                 | `FieldRenderer`                     |
+| `FormProviderProps.FormGroupRenderer` | `FormProviderProps.FieldRenderer` |
+| `FormProviderProps.FormLabelRenderer` | `FormProviderProps.FormLabelRenderer` |
+| `FormProviderProps.FormInputRenderer` | `FormProviderProps.FormInputRenderer` |
+| `FormProviderProps.FormErrorRenderer` | `FormProviderProps.FormErrorRenderer` |
 | `plugin.FormGroup`                       | `plugin.FieldRenderer`              |
 | `plugin.FormLabel`                       | `plugin.FormLabelRenderer`          |
 | `plugin.FormInput`                       | `plugin.FormInputRenderer`          |
@@ -66,7 +70,7 @@ sidebar_position: 8
 | `InferSchemaNode`                        | `InferFieldNode`                    |
 | `isSchemaNode`                           | `isFieldNode`                       |
 | `NodeState`                              | `FieldNodeState`                    |
-| `FieldNodeState.Dirty`                   | `FieldNodeState.Edited`             |
+| `NodeState.Dirty`                   | `FieldNodeState.Edited`             |
 | `ShowError.Dirty`                        | `ErrorVisibility.AfterEdit`         |
 | `ShowError.DirtyTouched`                 | `ErrorVisibility.AfterEditAndTouch` |
 | `node.required`                          | `node.isRequired`                   |
@@ -75,7 +79,6 @@ sidebar_position: 8
 | `node.enabled`                           | `node.isPresent`                    |
 | `node.readOnly`                          | `node.isReadOnly`                   |
 | `node.disabled`                          | `node.isDisabled`                   |
-| `node.misfit`                            | `node.isMisfit`                     |
 | `NodeState.ShowError`                    | `FieldNodeState.ErrorVisibility`    |
 | `NodeEventType`                          | `FieldNodeEventType`                |
 | `useSchemaNodeTracker`                   | `useFieldNodeTracker`               |
@@ -95,21 +98,20 @@ sidebar_position: 8
 - 완전한 [검증기 객체](./validation#validator-contract)를 제공하십시오.
 - 문자열 ErrorVisibility enum과 AfterEdit·AfterEditAndTouch 정책을 사용하십시오. 기본 정책·표시 조건·Form errorVisibility prop·handle 동작은 [오류 표시](./validation#visibility)를 참조하십시오.
 - injectTo context에서 `parentJSONSchema`, `rootJSONSchema`를 사용하십시오.
-- onError callback의 추론 record에서 surface·aggregate 대신 `origin`을 읽고 [발생 계약](./error-reference#occurrences)을 따르십시오.
+- onError callback의 추론 record에서 `origin`을 읽고 [발생 계약](./error-reference#occurrences)을 따르십시오.
 - component cleanup 쓰기는 [inactive-value resolution](./api-reference#inactive-listeners)으로 바꾸고 reset·재진입 후 노드를 다시 조회하십시오.
 
 | Before                                          | After                                                                                  |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `ShowError.Always / Never`                      | `ErrorVisibility.Always / Never`                                                       |
-| `ShowError.Edited / Touched / EditedTouched`    | `ErrorVisibility.AfterEdit / AfterTouch / AfterEditAndTouch`                           |
-| `ShowError.Edited \| ShowError.Touched`         | `ErrorVisibility.AfterEditOrTouch`                                                     |
+| `ShowError.Dirty / Touched / DirtyTouched`    | `ErrorVisibility.AfterEdit / AfterTouch / AfterEditAndTouch`                           |
+| `ShowError.Dirty \| ShowError.Touched`         | `ErrorVisibility.AfterEditOrTouch`                                                     |
 | `showError={true}` / `showError={false}`        | `errorVisibility={ErrorVisibility.Always}` / `errorVisibility={ErrorVisibility.Never}` |
 | `handle.showError()` / `handle.showError(true)` | `handle.revealErrors()`                                                                |
 | `handle.showError(false)`                       | `handle.resetErrorVisibility()`                                                        |
-| `FieldNodeState.ErrorVisible`                   | `FieldNodeState.ErrorVisibility`                                                       |
-| `useChildFieldErrors().showError / .showErrors` | `.errorVisible / .childErrorVisibleList`                                               |
+| `useChildNodeErrors().showError / .showErrors` | `useChildFieldErrors().errorVisible / .childErrorVisibleList`                                               |
 
-제거된 이름에는 호환 별칭이 없습니다. `ErrorVisibility`는 비트 마스크가 아닌 문자열 enum입니다. enum 값을 결합하지 말고 이름이 있는 정책으로 바꾸십시오. 직접 Form을 호출하는 곳뿐 아니라 애플리케이션 래퍼, 저장된 설정, 사용자 렌더러와 테스트도 검색하십시오.
+0.x 이름에는 호환 별칭이 없습니다. `ErrorVisibility`는 비트 마스크가 아닌 문자열 enum입니다. enum 값을 결합하지 말고 이름이 있는 정책으로 바꾸십시오. 직접 Form을 호출하는 곳뿐 아니라 애플리케이션 래퍼, 저장된 설정, 사용자 렌더러와 테스트도 검색하십시오.
 
 ## 제출과 판정 처리 {#submission}
 
@@ -143,7 +145,7 @@ terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습�
 - 노드가 없으면 `useFieldNodeTracker`와 `useFieldNodeSubscribe`에 `null` 또는 `undefined`를 직접 전달하십시오. tracker는 구독 없이 0을 반환하고, 구독 hook은 listener와 `onSubscribe`를 호출하지 않습니다. 둘 다 노드 인자가 바뀌면 이전 구독을 해제합니다. 종류·전략 가드는 두 빈 값에 false를 반환합니다. `onSubscribe`, `visitSubtree`, 포맷터·placeholder의 필수 노드 인자는 계속 필수입니다.
 - ref 할당만으로 관찰자가 다시 렌더되지는 않습니다. `formRef.current?.node`를 읽는 hook에는 바인딩·루트 교체 뒤 소비자 재렌더가 필요하며, 그렇지 않으면 이전 노드를 계속 관찰합니다. 관찰자가 폼 내부에 속하면 Form의 함수 children을 우선하십시오.
 - 숨겨진 폼을 다시 보이면 끝나지 않은 IME 초안을 포함하여 입력을 현재 노드 값과 동기화합니다. 숨김 중에는 React가 ref를 해제하므로 보이는 상태에서 마운트한 뒤 보관한 핸들·노드로 쓰십시오. 준비된 현재 load의 콜백은 숨김 중에도 계속될 수 있고 다시 보일 때 재생하지 않습니다. 구독을 정리하고 [숨김 수명](./api-reference#hidden-lifecycle)을 확인하십시오.
-- 유한한 리터럴 `prefixItems`는 이제 `InferValueType`, Form, FormHandle에서 선택적 위치의 튜플을 추론하므로 제한 없는 인덱스나 추가 원소가 타입 오류가 될 수 있습니다. `as const`로 리터럴을 보존하고 `items`의 rest 규칙을 확인하며, 정확한 애플리케이션 형태가 필요하면 Form과 FormHandle에 같은 명시적 값 제네릭을 쓰십시오. 객체 키는 여전히 선택적이고 추론 값은 검증 증거가 아닙니다. [TypeScript 추론](./api-reference#typescript)을 확인하십시오.
+- 유한한 리터럴 `prefixItems`는 `InferValueType`, Form, FormHandle에서 선택적 위치의 튜플을 추론하므로 제한 없는 인덱스나 추가 원소가 타입 오류가 될 수 있습니다. `as const`로 리터럴을 보존하고 `items`의 rest 규칙을 확인하며, 정확한 애플리케이션 형태가 필요하면 Form과 FormHandle에 같은 명시적 값 제네릭을 쓰십시오. 객체 키는 여전히 선택적이고 추론 값은 검증 증거가 아닙니다. [TypeScript 추론](./api-reference#typescript)을 확인하십시오.
 
 ## 가상화와 정확한 초점 {#virtualization}
 
