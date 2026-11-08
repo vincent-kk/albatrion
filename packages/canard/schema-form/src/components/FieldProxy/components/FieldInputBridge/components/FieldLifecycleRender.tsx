@@ -3,10 +3,8 @@ import { type RefObject, useLayoutEffect, useRef } from 'react';
 import type { Nullable } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
-import {
-  FieldLifecycle,
-  type FieldLifecycleRegistry,
-} from '@/schema-form/helpers/fieldLifecycle';
+import { FieldLifecycle } from '@/schema-form/helpers/fieldLifecycle';
+import type { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 
 import { runSlotAction } from '../utils/runSlotAction';
 

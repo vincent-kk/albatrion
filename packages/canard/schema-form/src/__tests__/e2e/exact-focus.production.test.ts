@@ -123,3 +123,38 @@ it('calls the target input focus exactly once', async () => {
     focus.mock.contexts.filter((element) => element === input),
   ).toHaveLength(1);
 });
+
+it.each(['focusin', 'round trip', 'blur to body'] as const)(
+  'preserves user movement after a pending request: %s',
+  async (movement) => {
+    const first =
+      container.querySelector<HTMLInputElement>('input[id="/first"]')!;
+    const outside = document.body.appendChild(document.createElement('button'));
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    try {
+      first.focus();
+      handle.current!.focus(target);
+      if (movement === 'blur to body') first.blur();
+      else {
+        outside.focus();
+        if (movement === 'round trip') first.focus();
+      }
+      await vi.waitFor(() =>
+        expect(container.querySelector(`input[id="${target}"]`)).not.toBeNull(),
+      );
+      const revealed = container.querySelector(`input[id="${target}"]`);
+      expect(
+        focus.mock.contexts.filter((element) => element === revealed),
+      ).toHaveLength(0);
+      expect(document.activeElement).toBe(
+        movement === 'blur to body'
+          ? document.body
+          : movement === 'round trip'
+            ? first
+            : outside,
+      );
+    } finally {
+      outside.remove();
+    }
+  },
+);

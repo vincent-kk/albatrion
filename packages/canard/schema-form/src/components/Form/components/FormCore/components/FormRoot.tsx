@@ -20,11 +20,10 @@ import {
   readFieldNodeValidationEpoch,
 } from '@/schema-form/core';
 import { FormErrorCode } from '@/schema-form/errors';
-import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle';
+import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import {
   FieldInputsContextProvider,
-  FieldLifecycleContext,
   FieldRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
@@ -32,6 +31,7 @@ import {
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import { useExternalFormContext } from '@/schema-form/providers/ExternalFormContext';
+import { FieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
 import {
   reportFailureToHost,
   useFormErrorContext,
@@ -315,7 +315,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                   errorVisibilityError={policyError}
                 >
                   <FormRootProxy
-                    formRef={formRef}
+                    formRef={virtualization.manager ? formRef : null}
                     onSubmit={handleNativeSubmit}
                   >
                     {children}

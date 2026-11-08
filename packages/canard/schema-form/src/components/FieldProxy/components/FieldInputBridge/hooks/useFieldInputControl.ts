@@ -5,7 +5,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 
-import { useVersion } from '@winglet/react-utils/hook';
+import { useTruthyConstant, useVersion } from '@winglet/react-utils/hook';
 
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
@@ -58,7 +58,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
 
   const [, update] = useVersion();
   const ref = useRef<HTMLDivElement>(null);
-  const refreshDeferral = useRef(0);
+  const refreshDeferral = useTruthyConstant(createRefreshDeferral);
   refreshDeferral.current =
     (refreshDeferral.current & COMPOSING) |
     (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
@@ -77,7 +77,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
       onStoreChange();
       return unsubscribe;
     },
-    [node, mountedChildren],
+    [node, mountedChildren, refreshDeferral],
   );
   const getRevision = useCallback(() => {
     // revision(mask) sums per-bit delivery counts, so the combined read equals
@@ -87,13 +87,13 @@ export const useFieldInputControl = <Node extends FieldNode>(
     return (
       node.revision(INPUT_TRACKING_EVENTS_WITHOUT_REFRESH) + generation.current
     );
-  }, [node]);
+  }, [node, refreshDeferral]);
   useSyncExternalStore(subscribe, getRevision, getRevision);
   if (refreshDeferral.current === 0)
     generation.current = node.revision(FieldNodeEventType.RequestRefresh);
   const handleCompositionStart = useCallback(() => {
     refreshDeferral.current |= COMPOSING;
-  }, []);
+  }, [refreshDeferral]);
   const handleCompositionEnd = useCallback(() => {
     refreshDeferral.current &= CLEAR_COMPOSING_MASK;
     if (
@@ -101,16 +101,27 @@ export const useFieldInputControl = <Node extends FieldNode>(
       generation.current !== node.revision(FieldNodeEventType.RequestRefresh)
     )
       update();
-  }, [mountedChildren, node, update]);
-  const releaseComposition = useCallback(() => {
-    refreshDeferral.current &= CLEAR_COMPOSING_MASK;
-  }, []);
+  }, [mountedChildren, node, update, refreshDeferral]);
   return [
     ref,
     generation.current,
     handleCompositionStart,
     handleCompositionEnd,
     update,
-    releaseComposition,
+    refreshDeferral.release,
   ] as const;
+};
+
+/**
+ * Retain composition cleanup with its always-present deferral cell.
+ * @returns A fresh cell whose cleanup preserves the child-ownership bit.
+ */
+const createRefreshDeferral = () => {
+  const deferral = {
+    current: 0,
+    release: () => {
+      deferral.current &= CLEAR_COMPOSING_MASK;
+    },
+  };
+  return deferral;
 };
