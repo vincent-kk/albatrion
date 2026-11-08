@@ -26,7 +26,7 @@
 - FormRoot가 옵션을 commit에서 갱신합니다. 동일 실효 primitive·callback 참조는 revision과 관찰을 바꾸지 않습니다. 변경 비용은 폼별 옵션 snapshot·revision과 대기 gate 구독이며 값·상태·오류를 쓰지 않습니다.
 - 비활성 전환은 관찰 옵션의 비교 결과와 무관하게 observer·idle을 명시적으로 멈춘 뒤 대기 gate를 모두 엽니다. 재활성화·threshold·eagerCount는 아직 노출하지 않은 위치와 새 노드에만 적용합니다. 기존 reveal ledger를 지우거나 역전하지 않습니다.
 - rootMargin·backfill은 대기 placeholder만 재관찰합니다. estimateHeight·Placeholder는 표현만 갱신합니다. 옵션 교체로 폐기한 observer의 늦은 callback은 세대 검사로 버립니다.
-- 무관한 옵션 변경은 진행 중 공개 추적을 보존합니다. 옵션 변경이 gate를 공개하면 자식 Mount 뒤 같은 gate의 settle에서 요청을 끝내며, 위치 소멸은 기존 releaseGate의 microtask 확인으로 끝냅니다.
+- 무관한 옵션 변경은 진행 중 공개 추적을 보존합니다. 옵션 변경이 gate를 공개하면 같은 공개 커밋의 대상 Mount가 여전히 유효한 예약의 포커스를 먼저 전달하고 같은 gate의 settle에서 요청을 끝내며, 위치 소멸은 기존 releaseGate의 microtask 확인으로 끝냅니다.
 
 ## Acceptance Criteria
 
