@@ -20,7 +20,7 @@ import {
   readFieldNodeValidationEpoch,
 } from '@/schema-form/core';
 import { FormErrorCode } from '@/schema-form/errors';
-import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle';
+import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import {
   FieldInputsContextProvider,

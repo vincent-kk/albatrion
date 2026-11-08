@@ -3,10 +3,8 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import {
-  FieldLifecycle,
-  type FieldLifecycleRegistry,
-} from '@/schema-form/helpers/fieldLifecycle';
+import { FieldLifecycle } from '@/schema-form/helpers/fieldLifecycle';
+import type { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization';
 import { useFieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
 import type { FieldInputProps } from '@/schema-form/types';

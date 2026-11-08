@@ -12,8 +12,8 @@ import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 import {
   FieldLifecycle,
   FieldLifecycleAction,
-  type FieldLifecycleRegistry,
 } from '@/schema-form/helpers/fieldLifecycle';
+import type { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
 import { FieldLifecycleRender } from '../components/FieldLifecycleRender';

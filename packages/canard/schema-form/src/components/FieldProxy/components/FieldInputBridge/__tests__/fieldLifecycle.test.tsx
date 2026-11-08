@@ -11,8 +11,8 @@ import { FormErrorCode } from '@/schema-form/errors';
 import {
   FieldLifecycle,
   FieldLifecycleAction,
-  FieldLifecycleRegistry,
 } from '@/schema-form/helpers/fieldLifecycle';
+import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 import { useFieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
 import type { FieldInputProps } from '@/schema-form/types';
 
