@@ -1,5 +1,5 @@
 import type { JSONSchema, ValidateFunction, ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv';
+import AjvConstructor, { type Ajv, type Options } from 'ajv';
 
 import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
@@ -43,7 +43,7 @@ const roots: SchemaRootRegistry = createSchemaRootRegistry();
 
 /** Returns the currently bound instance, creating the default on first use. */
 const getInstance = (): Ajv => {
-  ajvInstance ??= new Ajv(defaultSettings);
+  ajvInstance ??= new AjvConstructor(defaultSettings);
   return ajvInstance;
 };
 

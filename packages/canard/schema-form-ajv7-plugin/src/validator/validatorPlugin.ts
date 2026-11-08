@@ -1,5 +1,7 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv';
+import AjvModule, { type Options } from 'ajv';
+
+import type { AjvInstance as Ajv } from './types/AjvInstance';
 
 import { createValidatorFactory } from './createValidatorFactory';
 import { createGuardCompiler } from './createGuardCompiler';
@@ -14,7 +16,7 @@ import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
  * ajv@7's `module.exports` is an ESM-interop namespace, not the class, so the
  * constructor has to be unwrapped rather than used straight off the import.
  */
-const AjvConstructor = resolveAjvConstructor(Ajv);
+const AjvConstructor = resolveAjvConstructor(AjvModule);
 
 /**
  * Default AJV7 settings optimized for schema-form validation.

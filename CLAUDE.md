@@ -130,3 +130,7 @@ Major package groups include:
 > Rules, skills, and commands live under `.claude/`. Keep this document's inventory in sync when they change — a stale pointer here misleads every agent that reads it.
 >
 > Copyright © 2025 Vincent K. Kelvin. All rights reserved.
+
+## Shared build-script verification
+
+`yarn --cwd . test:build-scripts` runs the shared aileron build scripts' node:test suite, including declaration-path rewriting and runtime environment output checks. `build:all` runs this suite once before workspace builds; CI runs it in the first check shard only. Package `build:verify:types` scripts check their own built public declarations without repeating the shared unit suite. The declaration rewriter parses TypeScript module specifiers, including import-equals references, preserves ordinary comments and string literal types, maps `.d.ts` targets to `.js` and `.d.mts` targets to `.mjs`, and resolves directory indexes without adding duplicate slashes. Triple-slash `reference path` directives retain declaration extensions because TypeScript resolves them as declaration files, not runtime modules.

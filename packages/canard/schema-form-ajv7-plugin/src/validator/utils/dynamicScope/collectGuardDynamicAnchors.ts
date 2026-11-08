@@ -1,4 +1,4 @@
-import type Ajv from 'ajv';
+import type { AjvInstance as Ajv } from '../../types/AjvInstance';
 import type { ValidateFunction } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
