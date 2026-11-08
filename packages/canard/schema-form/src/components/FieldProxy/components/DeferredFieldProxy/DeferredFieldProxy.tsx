@@ -5,12 +5,11 @@ import { useLazyConstant } from '@winglet/react-utils/hook';
 import type { Nullable } from '@aileron/declare';
 
 import { FieldNodeEventType, FieldNodeRequestType } from '@/schema-form/core';
-import type { DeferredGate } from '@/schema-form/helpers/virtualization';
 import { useFieldNodeSubscribe } from '@/schema-form/hooks';
-import { useFieldNodeTracker } from '@/schema-form/hooks';
 import { FormErrorPathContext } from '@/schema-form/providers/FormErrorContext';
 
-import type { DeferredFieldProxyProps } from './type';
+import { useDeferredRevision } from './hooks/useDeferredRevision';
+import type { DeferredFieldProxyProps, DeferredRevisionGate } from './type';
 
 /**
  * Command events that force an immediate reveal and must be replayed to the
@@ -20,10 +19,6 @@ import type { DeferredFieldProxyProps } from './type';
  */
 const FORCE_REVEAL_EVENT =
   FieldNodeEventType.RequestFocus | FieldNodeEventType.RequestSelect;
-
-/** Events that re-render the proxy when controlled properties or the path change. */
-const DEFERRED_TRACKING_EVENTS =
-  FieldNodeEventType.UpdateControlledProperties | FieldNodeEventType.UpdatePath;
 
 /**
  * Virtualization gate for a single field node.
@@ -36,25 +31,39 @@ const DEFERRED_TRACKING_EVENTS =
  */
 export const DeferredFieldProxy = ({
   manager,
+  branch,
+  preparedRevision,
   NodeProxy,
   ...proxyProps
 }: DeferredFieldProxyProps) => {
   const node = proxyProps.node;
-  const [revealed, setRevealed] = useState(() => manager.hasRevealed(node));
-  const gate = useLazyConstant<DeferredGate>(() => ({
+  const [revealed, setRevealed] = useState(
+    () =>
+      manager.hasRevealed(node) ||
+      (manager.revision() !== preparedRevision &&
+        !manager
+          .forBranch(branch.children?.length ?? 0)
+          ?.forChild(branch.children?.indexOf(node) ?? -1, node)),
+  );
+  const gate = useLazyConstant<DeferredRevisionGate>(() => ({
     node,
-    reveal: () => setRevealed(true),
+    unsubscribeOptions: revealed ? null : undefined,
+    reveal: () => {
+      gate.unsubscribeOptions?.();
+      gate.unsubscribeOptions = null;
+      setRevealed(true);
+    },
   }));
   const pendingEventsRef = useRef(0);
   const placeholderRef = useRef<Nullable<Element>>(null);
 
-  useFieldNodeTracker(node, DEFERRED_TRACKING_EVENTS);
+  useDeferredRevision(node, branch, manager, preparedRevision, gate);
 
   useFieldNodeSubscribe(revealed ? null : node, ({ type }) => {
     const forced = type & FORCE_REVEAL_EVENT;
     if (!forced) return;
     pendingEventsRef.current |= forced;
-    setRevealed(true);
+    gate.reveal();
   });
 
   useLayoutEffect(() => {

@@ -79,6 +79,8 @@ export const useChildFields = (
     const manager = snapshot ?? (hydratedRef.current ? formManager : null);
     const gateManager = manager?.forBranch(children.length) ?? null;
     const ChildFields: ChildField[] = [];
+    const branch = node;
+    const preparedRevision = manager?.revision() ?? 0;
     for (const node of children) {
       const key = String(cache.size);
       const CachedComponent = cache.get(node);
@@ -110,6 +112,8 @@ export const useChildFields = (
             return deferredManager !== null ? (
               <DeferredFieldProxy
                 node={node}
+                branch={branch}
+                preparedRevision={preparedRevision}
                 manager={deferredManager}
                 NodeProxy={NodeProxy}
                 onChangeRef={onChangeRef}

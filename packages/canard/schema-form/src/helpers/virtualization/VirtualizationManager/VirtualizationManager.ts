@@ -44,12 +44,76 @@ const MIN_IDLE_BUDGET_MS = 4;
  */
 export class VirtualizationManager {
   /** Custom placeholder visual for deferred fields, null for the bare box */
-  public readonly Placeholder: Nullable<
-    ComponentType<VirtualizationPlaceholderProps>
-  >;
+  public Placeholder: Nullable<ComponentType<VirtualizationPlaceholderProps>>;
 
-  /** Resolved virtualization options this manager was created with */
-  private readonly options: ResolvedVirtualizationOptions;
+  /** Committed options; null disables gating while preserving the reveal ledger. */
+  private options: Nullable<ResolvedVirtualizationOptions>;
+
+  /** Monotonic options revision, independent of node delivery revisions. */
+  private optionsRevision = 0;
+
+  /** Waiting gates share this form-level notification channel. */
+  private readonly listeners = new Set<Fn>();
+
+  /** Invalidates callbacks queued by a replaced or disconnected observer. */
+  private observerGeneration = 0;
+
+  /** Whether committed options enable gating and deferred focus. */
+  public get enabled(): boolean {
+    return this.options !== null;
+  }
+
+  /** Read the current options revision without allocating a snapshot. */
+  public revision = (): number => this.optionsRevision;
+
+  /** Subscribe a waiting gate; cleanup leaves the reveal ledger unchanged. */
+  public subscribe = (listener: Fn): Fn => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  /**
+   * Commit live form options while preserving manager, node and focus identities.
+   * @param input - The latest committed Form prop; falsy disables gating.
+   * @returns Nothing; unequal options notify waiting gates once.
+   */
+  public updateOptions(input: Optional<boolean | VirtualizationOptions>): void {
+    const options = resolveVirtualizationOptions(input);
+    const previous = this.options;
+    if (
+      previous === options ||
+      (previous &&
+        options &&
+        previous.threshold === options.threshold &&
+        previous.eagerCount === options.eagerCount &&
+        previous.rootMargin === options.rootMargin &&
+        previous.backfill === options.backfill &&
+        previous.estimateHeight === options.estimateHeight &&
+        previous.Placeholder === options.Placeholder)
+    )
+      return;
+    this.options = options;
+    this.optionsRevision++;
+    if (previous?.Placeholder !== options?.Placeholder)
+      this.Placeholder = this.wrapPlaceholder(options?.Placeholder);
+    if (
+      previous?.rootMargin !== options?.rootMargin ||
+      previous?.backfill !== options?.backfill
+    ) {
+      this.stopObservation();
+      if (options && this.registry.size) {
+        const observer = this.ensureObserver();
+        for (const element of this.registry.keys()) observer?.observe(element);
+        if (options.backfill === VirtualizationBackfill.Idle)
+          this.ensureIdlePump();
+      }
+    }
+    if (!options)
+      for (const element of this.registry.keys()) this.reveal(element);
+    for (const listener of [...this.listeners]) listener();
+  }
 
   /** Deferred placeholders awaiting reveal, in registration order */
   private readonly registry = new Map<Element, DeferredGate>();
@@ -80,7 +144,7 @@ export class VirtualizationManager {
    * @example `const gateManager = manager?.forBranch(children.length) ?? null;`
    */
   public forBranch(childCount: number): Nullable<VirtualizationManager> {
-    return childCount >= this.options.threshold ? this : null;
+    return this.options && childCount >= this.options.threshold ? this : null;
   }
 
   /**
@@ -92,7 +156,8 @@ export class VirtualizationManager {
     renderedIndex: number,
     node: FieldNode,
   ): Nullable<VirtualizationManager> {
-    return renderedIndex >= this.options.eagerCount &&
+    return this.options &&
+      renderedIndex >= this.options.eagerCount &&
       !this.revealedNodes.has(node)
       ? this
       : null;
@@ -100,7 +165,7 @@ export class VirtualizationManager {
 
   /** Placeholder height (px) for a node before reveal */
   public estimateHeight(node: FieldNode): number {
-    const estimate = this.options.estimateHeight;
+    const estimate = this.options?.estimateHeight ?? 0;
     return typeof estimate === 'function' ? estimate(node) : estimate;
   }
 
@@ -111,7 +176,7 @@ export class VirtualizationManager {
   public register(element: Element, gate: DeferredGate): void {
     this.registry.set(element, gate);
     this.ensureObserver()?.observe(element);
-    if (this.options.backfill === VirtualizationBackfill.Idle)
+    if (this.options?.backfill === VirtualizationBackfill.Idle)
       this.ensureIdlePump();
   }
 
@@ -240,19 +305,19 @@ export class VirtualizationManager {
     gate.reveal();
   }
 
-  private handleIntersections: IntersectionObserverCallback = (entries) => {
-    for (let index = 0, length = entries.length; index < length; index++) {
-      const entry = entries[index];
-      if (entry.isIntersecting) this.reveal(entry.target);
-    }
-  };
-
   private ensureObserver(): Nullable<IntersectionObserver> {
     if (this.observer !== null) return this.observer;
-    if (typeof IntersectionObserver === 'undefined') return null;
-    this.observer = new IntersectionObserver(this.handleIntersections, {
-      rootMargin: this.options.rootMargin,
-    });
+    if (!this.options || typeof IntersectionObserver === 'undefined')
+      return null;
+    const generation = this.observerGeneration;
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        if (generation !== this.observerGeneration) return;
+        for (const entry of entries)
+          if (entry.isIntersecting) this.reveal(entry.target);
+      },
+      { rootMargin: this.options.rootMargin },
+    );
     return this.observer;
   }
 
@@ -275,9 +340,21 @@ export class VirtualizationManager {
 
   private ensureIdlePump(): void {
     if (this.cancelIdle !== null || this.registry.size === 0) return;
-    this.cancelIdle = scheduleIdle(this.idleTick);
+    const generation = this.observerGeneration;
+    this.cancelIdle = scheduleIdle((deadline) => {
+      if (generation === this.observerGeneration) this.idleTick(deadline);
+    });
   }
 
+  /** Stop asynchronous observation without discarding waiting or opening gates. */
+  private stopObservation(): void {
+    this.observerGeneration++;
+    this.observer?.disconnect();
+    this.observer = null;
+    this.stopIdlePump();
+  }
+
+  /** Stop the current idle slice without modifying its waiting registry. */
   private stopIdlePump(): void {
     if (this.cancelIdle === null) return;
     this.cancelIdle();
@@ -287,7 +364,7 @@ export class VirtualizationManager {
   /**
    * Create a manager for the `virtualization` form prop.
    * @param input - `true` for defaults, an options object for overrides, falsy to disable
-   * @returns Manager, or null when virtualization is disabled or
+   * @returns Manager (also while disabled), or null when
    *          IntersectionObserver is unavailable (e.g. SSR) — null propagates
    *          through the context so no gate is ever created
    */
@@ -303,14 +380,21 @@ export class VirtualizationManager {
       return null;
     }
     const options = resolveVirtualizationOptions(input);
-    return options === null ? null : new VirtualizationManager(options);
+    return new VirtualizationManager(options);
   }
 
-  constructor(options: ResolvedVirtualizationOptions) {
+  constructor(options: Nullable<ResolvedVirtualizationOptions>) {
     this.options = options;
-    this.Placeholder = isReactComponent(options.Placeholder)
+    this.Placeholder = this.wrapPlaceholder(options?.Placeholder);
+  }
+
+  /** Resolve one shared error boundary only when the original visual changes. */
+  private wrapPlaceholder(
+    Placeholder: ResolvedVirtualizationOptions['Placeholder'] | undefined,
+  ) {
+    return isReactComponent(Placeholder)
       ? withErrorBoundary(
-          options.Placeholder,
+          Placeholder,
           undefined,
           usePlaceholderBoundaryReporter,
         )
