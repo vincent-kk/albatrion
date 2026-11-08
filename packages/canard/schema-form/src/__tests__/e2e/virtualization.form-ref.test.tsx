@@ -1,5 +1,3 @@
-import type { ComponentProps } from 'react';
-
 import { act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -7,23 +5,19 @@ import { liveOptions, mountVirtualization } from './helpers/liveVirtualization';
 
 const { observeFormRef } = vi.hoisted(() => ({ observeFormRef: vi.fn() }));
 
-// Observe the prop while the real proxy attaches it to the real form element.
-vi.mock(
-  '@/schema-form/components/Form/components/FormCore/components/FormRootProxy',
-  async (importOriginal) => {
-    const actual =
-      await importOriginal<
-        typeof import('@/schema-form/components/Form/components/FormCore/components/FormRootProxy')
-      >();
-    return {
-      ...actual,
-      FormRootProxy: (props: ComponentProps<typeof actual.FormRootProxy>) => {
-        observeFormRef(props.formRef);
-        return <actual.FormRootProxy {...props} />;
-      },
-    };
-  },
-);
+// Observe host refs through the real JSX runtime without importing form internals.
+vi.mock('react/jsx-dev-runtime', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react/jsx-dev-runtime')>();
+  return {
+    ...actual,
+    jsxDEV: (...args: Parameters<typeof actual.jsxDEV>) => {
+      const [type, props] = args;
+      if (type === 'form')
+        observeFormRef((props as { ref?: unknown })?.ref ?? null);
+      return actual.jsxDEV(...args);
+    },
+  };
+});
 
 describe.each([false, true])(
   'virtualization form ref (StrictMode=%s)',
