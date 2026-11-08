@@ -21,11 +21,11 @@ import { join, dirname } from 'node:path';
 
 /**
  * Matches relative import/export paths without file extensions.
- * Captures: from './foo' | from '../bar/baz' | from './foo/index'
+ * Captures static `from` and inline `import()` references, including '.' and '..'.
  * Excludes: paths that already have extensions (.js, .mjs, .cjs, .json, etc.)
  */
 const RELATIVE_IMPORT_RE =
-  /(from\s+['"])(\.\.?\/[^'"]*?)(?<!\.\w+)(['"])/g;
+  /((?:\bfrom\s+|\bimport\s*\(\s*)['"])(\.{1,2}(?:\/[^'"]*)?)(['"])/g;
 
 /**
  * Check if a path already has a known file extension.

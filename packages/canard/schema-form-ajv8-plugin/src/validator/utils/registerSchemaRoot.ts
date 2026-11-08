@@ -1,7 +1,7 @@
 /// <reference lib="es2021.weakref" />
 
 import type { JSONSchema } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';

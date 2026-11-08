@@ -1,5 +1,5 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { AjvInstance as Ajv } from './types/AjvInstance';
 
 import { transformErrors } from './utils/transformErrors';
 

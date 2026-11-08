@@ -1,7 +1,7 @@
 import type { JSONSchema, ValidateFunction, ValidatorPlugin } from '@canard/schema-form';
 // `.js` is required, not cosmetic: ajv ships no `exports` map, so Node's ESM
 // resolver takes this subpath literally and will not try extensions.
-import Ajv, { type Options } from 'ajv/dist/2019.js';
+import AjvConstructor, { type Ajv2019 as Ajv, type Options } from 'ajv/dist/2019.js';
 
 import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
@@ -45,7 +45,7 @@ const roots: SchemaRootRegistry = createSchemaRootRegistry();
 
 /** Returns the currently bound instance, creating the default on first use. */
 const getInstance = (): Ajv => {
-  ajvInstance ??= new Ajv(defaultSettings);
+  ajvInstance ??= new AjvConstructor(defaultSettings);
   return ajvInstance;
 };
 
@@ -60,7 +60,7 @@ const getInstance = (): Ajv => {
  * ```typescript
  * import { registerPlugin } from '@canard/schema-form';
  * import { plugin } from '@canard/schema-form-ajv8-plugin/2019';
- * import Ajv2019 from 'ajv/dist/2019';
+ * import Ajv2019 from 'ajv/dist/2019.js';
  *
  * // Use a custom AJV instance: bind it before registering
  * plugin.validator.bind(new Ajv2019({ allErrors: false }));

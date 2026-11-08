@@ -1,5 +1,5 @@
 /// <reference lib="es2021.weakref" />
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
