@@ -315,7 +315,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                   errorVisibilityError={policyError}
                 >
                   <FormRootProxy
-                    formRef={formRef}
+                    formRef={virtualization.manager ? formRef : null}
                     onSubmit={handleNativeSubmit}
                   >
                     {children}
