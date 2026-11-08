@@ -52,3 +52,5 @@ This uses the core fallback inputs. Register a validator plugin below when you n
 - [Examples](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/examples)
 - [Migration from 0.x](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/migration-from-0x)
 - [Coding-agent assets](https://vincent-kk.github.io/albatrion/docs/canard/schema-form#agent-assets)
+
+For an existing application, follow the migration guide above. The packaged [consumer migration prompt](./docs/agents/skills/schema-form-skill/knowledge/migration-from-0x.md) walks a coding agent through application changes and verification.

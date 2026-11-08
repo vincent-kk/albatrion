@@ -42,6 +42,10 @@ Only the [authoring groups](./schema-reference#authoring-groups) define accepted
 | `formTypeInputDefinitions`               | `fieldInputDefinitions`             |
 | `formTypeInputMap`                       | `fieldInputMap`                     |
 | `CustomFormTypeRenderer`                 | `FieldRenderer`                     |
+| `FormProviderProps.FormGroupRenderer` | `FormProviderProps.FieldRenderer` |
+| `FormProviderProps.FormLabelRenderer` | `FormProviderProps.FormLabelRenderer` |
+| `FormProviderProps.FormInputRenderer` | `FormProviderProps.FormInputRenderer` |
+| `FormProviderProps.FormErrorRenderer` | `FormProviderProps.FormErrorRenderer` |
 | `plugin.FormGroup`                       | `plugin.FieldRenderer`              |
 | `plugin.FormLabel`                       | `plugin.FormLabelRenderer`          |
 | `plugin.FormInput`                       | `plugin.FormInputRenderer`          |
@@ -66,7 +70,7 @@ Only the [authoring groups](./schema-reference#authoring-groups) define accepted
 | `InferSchemaNode`                        | `InferFieldNode`                    |
 | `isSchemaNode`                           | `isFieldNode`                       |
 | `NodeState`                              | `FieldNodeState`                    |
-| `FieldNodeState.Dirty`                   | `FieldNodeState.Edited`             |
+| `NodeState.Dirty`                   | `FieldNodeState.Edited`             |
 | `ShowError.Dirty`                        | `ErrorVisibility.AfterEdit`         |
 | `ShowError.DirtyTouched`                 | `ErrorVisibility.AfterEditAndTouch` |
 | `node.required`                          | `node.isRequired`                   |
@@ -75,7 +79,6 @@ Only the [authoring groups](./schema-reference#authoring-groups) define accepted
 | `node.enabled`                           | `node.isPresent`                    |
 | `node.readOnly`                          | `node.isReadOnly`                   |
 | `node.disabled`                          | `node.isDisabled`                   |
-| `node.misfit`                            | `node.isMisfit`                     |
 | `NodeState.ShowError`                    | `FieldNodeState.ErrorVisibility`    |
 | `NodeEventType`                          | `FieldNodeEventType`                |
 | `useSchemaNodeTracker`                   | `useFieldNodeTracker`               |
@@ -95,16 +98,93 @@ Use [raw issue data](./validation#issues-messages) for validation results and [e
 - Supply a complete [validator object](./validation#validator-contract).
 - Use the string ErrorVisibility enum and its AfterEdit / AfterEditAndTouch policies. Check [error visibility](./validation#visibility) for the default policy, display conditions, and Form errorVisibility prop/handle behavior.
 - Use `parentJSONSchema` and `rootJSONSchema` in injectTo context.
-- Read `origin` on the inferred onError callback record in place of surface/aggregate, using the [occurrence contract](./error-reference#occurrences).
+- Read `origin` on the inferred onError callback record, using the [occurrence contract](./error-reference#occurrences).
 - Replace component cleanup writes with [inactive-value resolution](./api-reference#inactive-listeners); reacquire nodes after reset/reentry.
 
 | Before                                          | After                                                                                  |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `ShowError.Always / Never`                      | `ErrorVisibility.Always / Never`                                                       |
-| `ShowError.Edited / Touched / EditedTouched`    | `ErrorVisibility.AfterEdit / AfterTouch / AfterEditAndTouch`                           |
-| `ShowError.Edited \| ShowError.Touched`         | `ErrorVisibility.AfterEditOrTouch`                                                     |
+| `ShowError.Dirty / Touched / DirtyTouched`    | `ErrorVisibility.AfterEdit / AfterTouch / AfterEditAndTouch`                           |
+| `ShowError.Dirty \| ShowError.Touched`         | `ErrorVisibility.AfterEditOrTouch`                                                     |
 | `showError={true}` / `showError={false}`        | `errorVisibility={ErrorVisibility.Always}` / `errorVisibility={ErrorVisibility.Never}` |
 | `handle.showError()` / `handle.showError(true)` | `handle.revealErrors()`                                                                |
 | `handle.showError(false)`                       | `handle.resetErrorVisibility()`                                                        |
-| `FieldNodeState.ErrorVisible`                   | `FieldNodeState.ErrorVisibility`                                                       |
-| `useChildFieldErrors().showError / .showErrors` | `.errorVisible / .childErrorVisibleList`                                               |
+| `useChildNodeErrors().showError / .showErrors` | `useChildFieldErrors().errorVisible / .childErrorVisibleList`                                               |
+
+The 0.x spellings have no compatibility aliases. `ErrorVisibility` is a string enum, not a bit mask: replace combinations with the named policy rather than combining enum values. Search application wrappers, persisted settings, custom renderers and tests as well as direct Form calls.
+
+## Submission and issue handling {#submission}
+
+Test native Enter and a submit button separately from `handle.submit()` / `useFormSubmit`. An invalid native schema verdict reveals errors and focuses the first eligible invalid field without calling `onSubmit`, `onError`, or the host error sink. `ErrorVisibility.Never` suppresses both reveal and focus; form-wide readOnly/disabled suppress focus only. Imperative submission still rejects, and does not reveal automatically: catch the rejection and explicitly call `revealErrors()` when that is your UX. Compilation failures, degraded forms and application callback failures are distinct from an invalid verdict; preserve the [submission failure handling](./error-reference#submission).
+
+A terminal object/array root receives issues for paths inside its whole value. Do not duplicate those issues onto synthetic children or interpret an empty child tree as successful validation. Use `getErrors()` / `validate()` for the verdict and `node.errors` for routed field feedback.
+
+## Settings after mount {#live-settings}
+
+Remove Form key changes used only to apply configuration, after checking the lifetime below. Replace configuration objects, arrays and callbacks immutably; mutating an existing reference is not a supported update signal. Explicit Form settings take precedence over FormProvider defaults. FormProvider has no `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, or `disableAutomaticWrites` prop.
+
+| Setting                                                                  | Migration check                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `jsonSchema`, `defaultValue`                                             | Changing props preserves edits until `reset()` reads the latest committed inputs. `rebuild()` replaces the root and rereads defaults. Neither method accepts replacement form data; use `setValue` for a value write.                                        |
+| `validatorFactory` on Form or FormProvider                               | A changed selected validator reference rebuilds the tree and discards edits. Keep an unchanged validator object stable.                                                                                                                                      |
+| `validationMode` on Form or FormProvider                                 | Changes apply to the existing tree. `None` cancels pending work and clears validator issues while preserving external issues; switching to OnChange schedules current-value validation. Check the [mode transition rules](./validation#modes).               |
+| `unsetOnInactive`, `disableAutomaticWrites`                              | Changes affect the next engine entry, without replaying earlier transitions or refilling values. An open write chain keeps its existing settings. Child layout-effect calls before settings commit use the preceding committed settings.                     |
+| `errorVisibility` on Form or FormProvider                                | The committed policy updates live. Replace `showError` and boolean/mask settings with the named enum; check node overrides and `revealErrors()` / `resetErrorVisibility()`.                                                                                  |
+| Renderer slots and `formatError` on Form or FormProvider                 | A changed renderer recreates the UI subtree it owns. A formatter update changes messages and can recover a failed formatter boundary; a healthy input need not remount.                                                                                      |
+| `fieldInputDefinitions` on Form or FormProvider, `fieldInputMap` on Form | Selection updates live, retaining node values, state and external issues. A changed selected component remounts that input; a changed parent input also recreates descendant DOM and uncommitted drafts. Stable selections and ancestors preserve input DOM. |
+| `context`, Form `readOnly` / `disabled`                                  | Context and input locks apply live. Context uses a content snapshot, so equal-content Date/Map/class objects do not force an update. Input locks do not prohibit imperative node writes.                                                                     |
+| Form callbacks, `errors`, `children`, `ref`                              | Use current committed callbacks and layout; replace the errors array to reapply external issues. Reacquire the current handle/node after root replacement. For hidden forms, follow the callback lifetime below.                                             |
+| Form `virtualization`                                                    | All options update live, subject to the one-way reveal and hydration limits below.                                                                                                                                                                           |
+
+`Form.Field`, `Form.Input`, and `Form.Render` have their own mount-fixed component/children overrides. For those overrides, use live context, hooks inside the component, or a deliberate new key; the Form-wide live settings do not change this [composition contract](./schema-reference#input-resolution).
+
+An unusable map key such as `/**` reports `FormErrorCode.FormTypeInputMap` with `origin: 'load'` once after commit, including StrictMode. An initial failure keeps the load fallback; a failed live replacement keeps the tree and last valid map. Replace the map with a valid reference to recover. An input component throwing during render remains a render failure; do not classify it by the thrown code alone.
+
+## Observation, hidden forms, and inferred values {#observation-types}
+
+- Pass `null` or `undefined` directly to `useFieldNodeTracker` and `useFieldNodeSubscribe` when a node is absent. The tracker returns 0 without subscribing; the subscription hook calls neither listener nor `onSubscribe`. Both release the old subscription when their node argument changes. Kind/strategy guards return false for either absent value. Required callback nodes, such as `onSubscribe`, `visitSubtree`, formatter and placeholder nodes, remain required.
+- Ref assignment alone does not rerender the observer. A hook reading `formRef.current?.node` needs a consumer rerender after binding or root replacement; otherwise it stays on the old node. Prefer Form's function children when the observer belongs to the form.
+- A shown form resynchronizes inputs to current node values after being hidden, including an unfinished IME draft. React detaches the ref while hidden: use a handle/node retained after visible mount to write. Callbacks from a prepared current load can continue while hidden and are not replayed on showing; clean up subscriptions. See [hidden lifecycle](./api-reference#hidden-lifecycle).
+- Literal finite `prefixItems` gives optional-position tuples in `InferValueType`, Form and FormHandle; unrestricted indexes and extra elements can become type errors. Preserve literals with `as const`, inspect the `items` rest rule, and use the same explicit value generic on Form and FormHandle when your application needs an exact shape. Object keys remain optional and inferred values are not proof of validation. See [TypeScript inference](./api-reference#typescript).
+
+## Virtualization and exact focus {#virtualization}
+
+Virtualization defers input DOM, not the node tree or submission data. Turning it off reveals waiting fields and stops observation/backfill. Re-enabling it, changing `threshold` or `eagerCount`, or recreating child lists never re-hides an already revealed node. `rootMargin` and `backfill` reconfigure waiting placeholders; `estimateHeight` and `Placeholder` change their presentation. Preserve callback references to avoid needless reconfiguration.
+
+Replace ancestor-focus workarounds with `handle.focus(path)` / `select(path)`: a pending target behind nested gates or virtual groups is revealed along its render path and focused at its exact input. A newer request, reset/root replacement, confirmed unmount or disappearing gate cancels a reveal reservation. User focus movement, including away-and-back or blur to the body, suppresses its action. An unrelated option update preserves the request; an option update revealing its gate delivers it at that commit.
+
+Test your actual custom layout: omitted inputs, terminal interiors, hidden Activity and inputs suspended during reveal cannot be reached. Hidden/disabled/inert controls may refuse focus; native invalid-submit does not try a second candidate. Mounted duplicate positions retain ordinary request behavior, and ordinary node commands have a different cancellation lifetime from reveal reservations. Placeholder height changes do not receive scroll correction. Deferred DOM is unavailable to page search, accessibility tools and autofill until revealed; idle backfill promises no completion deadline.
+
+SSR renders all fields; hydration preserves them, with gating only for later-added branches/children. Without IntersectionObserver rendering is eager. See [virtualization](./api-reference#virtualization) for focus selection, duplicate positions and React 18 hydration limits.
+
+## AJV migration {#ajv}
+
+AJV6, AJV7 and every AJV8 dialect entry refuse `bind(instance)` immediately when `coerceTypes`, `useDefaults`, or `removeAdditional` is enabled. Turn these options off before binding. The failure has `group: 'UNHANDLED_ERROR'` and `code: 'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'` (`FormErrorCode.ValidatorBindRefused`); it is a native plugin error, so the core `isUnhandledError` guard does not recognize it. A refused instance does not replace the active binding.
+
+Move coercion to an explicit application input conversion, establish defaults through schema/defaultValue and the form's load rules, and remove unwanted keys in an explicit application transformation. Test the resulting submitted value; do not depend on validation to mutate the form. In particular, enabling `removeAdditional` is not a substitute for rejecting extra keys with JSON Schema.
+
+AJV8's built-in instances set `allowUnionTypes: true`. This removes the strictTypes log for multiple non-null types without changing which values satisfy the union and without enabling coercion. A consumer-bound instance retains its own strict options; configure it deliberately. AJV7 defaults to `strict: false`; AJV6 does not have AJV8's strictTypes union warning. Keep [validator configuration and dialect support](./validation#ajv-configuration) separate from input selection.
+
+## UI plugin union inputs {#plugin-unions}
+
+Upgrade the UI plugin with the core. With core 0.16.1 and UI plugins 0.16.0, a multiple-non-null declaration such as `type: ['string', 'number']` fails schema loading; a nullable single kind is not that case. The current engine creates a terminal `UnionNode`. None of the four official UI plugins automatically selects its single-kind input for that union, so the core draft input handles it unless you provide an earlier union definition or a path/inline override.
+
+| UI plugin                                | Union migration                                                                                                                                                          | Preserved selection to check                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `@canard/schema-form-antd5-plugin`       | Replace a rejected multi-kind schema or custom workaround with an explicit union input when Ant Design styling/type selection is required; otherwise use the core draft. | Nullable strings still select Ant Design Input; integers select InputNumber.                  |
+| `@canard/schema-form-antd6-plugin`       | Use the same union decision explicitly; Ant Design 6 inputs do not become a multi-kind editor merely by upgrading.                                                       | Nullable strings still select Ant Design Input; integers select InputNumber.                  |
+| `@canard/schema-form-antd-mobile-plugin` | Provide a custom union editor when mobile input/choice UI is required; the core draft is the automatic fallback.                                                         | Nullable strings still select mobile Input; integers select Stepper.                          |
+| `@canard/schema-form-mui-plugin`         | Provide a custom union editor when Material UI presentation is required; the core draft is the automatic fallback.                                                       | Nullable strings and integers still select TextField with text and number input respectively. |
+
+Migrate custom definitions with the [input selection contract](./schema-reference#input-resolution): `Hint` becomes `FieldInputHint`; integer hints and input props have `type: 'number'`, `schemaType: 'integer'`. A `type: 'number'` test includes integers; use `schemaType: 'integer'` for integer-only matching. Multiple non-null kinds use `type: 'union'` and a schemaType array, with `nullable` separate. `FieldInputProps` supplies `misfit` for rejected interpretation; do not silently repair that value. Object-test keys are closed: unsupported keys are ignored with a development warning, so move custom matching to a predicate rather than relying on an unknown key to reject a definition. `type: 'integer'` is not a supported node-kind test.
+
+## Remaining application behavior audit {#application-audit}
+
+Use application tests to decide whether each item applies; renaming imports alone does not cover the release line.
+
+- Check null, undefined, empty strings and containers, nullable-parent promotion and array replacement against [value states](./schema-reference#value-states). `minItems` is a constraint, not a promise to create submitted entries. Empty inputs publish undefined; explicit null is intentional. `omitTrailing` filters output without deleting raw nodes, and `propertyOrder` orders output keys, not screen fields.
+- Replace timing assumptions: `onChange` and node notifications settle synchronously at the outer write boundary. Test batches and callbacks that write again, and use [event revisions and subscription catch-up](./api-reference#events-hooks) instead of waiting for an assumed microtask.
+- Audit conditional composition: ungated oneOf/anyOf branches all participate in shape; validation is separate. Use controls or a discriminator for branch selection, provide a validator for if, and test shared-property conflicts, nullable branches and terminal strategy. See [composition](./schema-reference#composition) and [discriminators](./schema-reference#discriminator).
+- Distinguish Edited/Touched from `isDivergent` and the current load baseline. Reacquire nodes on reentry/root replacement; detached nodes do not write into the live form. Replace cleanup-time writes with the [inactive resolver contract](./api-reference#inactive-listeners).
+- Use resolved custom-input locks and the [accessible naming contract](./schema-reference#accessibility). A branch object's local lock does not automatically lock all children: use `controls.fields` or a form-wide lock. Test enum empty options and radio/checkbox selectors.
+- Keep schemas and configuration immutable, clean up subscriptions, handle degraded diagnostics and execution failures separately from raw validation issues, and verify [CSP requirements](./quick-start#transpilation-csp) before deploying expression-based controls.
