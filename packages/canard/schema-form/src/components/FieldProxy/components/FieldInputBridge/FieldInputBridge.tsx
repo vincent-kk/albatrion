@@ -16,11 +16,11 @@ import {
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
-  useFieldLifecycleContext,
   useFieldRendererContext,
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import { useFieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
 import {
   ErrorRevealSubscriber,
   isErrorRevealed,

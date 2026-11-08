@@ -2,9 +2,8 @@
 import {
   type ReactNode,
   type RefObject,
-  useCallback,
   useLayoutEffect,
-  useRef,
+  useMemo,
 } from 'react';
 
 import type { Nullable, Optional } from '@aileron/declare';
@@ -40,40 +39,43 @@ export const useFieldLifecycle = (
   virtualizationManager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
 ): ReactNode => {
-  const committed = useRef(false);
-  const lastEffect = useRef<() => void>(undefined);
-  const effect = useCallback(() => {
-    commitTerminalChildren();
-    if (hydrationCommitRef) hydrationCommitRef.current = true;
-    virtualizationManager?.markRevealed(node);
-    const element = container.current;
-    if (element) virtualizationManager?.attachInput(element, node);
-    const unsubscribe = node.subscribe(({ type }) => {
-      let action = FieldLifecycleAction.None;
-      if (type & FieldNodeEventType.RequestFocus)
-        action |= FieldLifecycleAction.Focus;
-      if (type & FieldNodeEventType.RequestSelect)
-        action |= FieldLifecycleAction.Select;
-      if (action) runSlotAction(container.current, action);
-    });
-    if (lastEffect.current !== effect) {
-      lastEffect.current = effect;
-      if (lifecycle && element) {
-        if (lifecycle.pending & FieldLifecycle.Mount)
-          runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Mount));
-        if (lifecycle.pending & FieldLifecycle.Render)
-          runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Render));
+  const { committed, effect } = useMemo(() => {
+    const committed = { current: false };
+    let fired = false;
+    const effect = () => {
+      commitTerminalChildren();
+      if (hydrationCommitRef) hydrationCommitRef.current = true;
+      virtualizationManager?.markRevealed(node);
+      const element = container.current;
+      if (element) virtualizationManager?.attachInput(element, node);
+      const unsubscribe = node.subscribe(({ type }) => {
+        let action = FieldLifecycleAction.None;
+        if (type & FieldNodeEventType.RequestFocus)
+          action |= FieldLifecycleAction.Focus;
+        if (type & FieldNodeEventType.RequestSelect)
+          action |= FieldLifecycleAction.Select;
+        if (action) runSlotAction(container.current, action);
+      });
+      if (!fired) {
+        fired = true;
+        if (lifecycle && element) {
+          if (lifecycle.pending & FieldLifecycle.Mount)
+            runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Mount));
+          if (lifecycle.pending & FieldLifecycle.Render)
+            runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Render));
+        }
       }
-    }
-    committed.current = true;
-    return () => {
-      committed.current = false;
-      releaseComposition();
-      unsubscribe();
-      if (element) virtualizationManager?.detachInput(element);
-      if (element && lifecycle && lifecycle.pending & FieldLifecycle.Unmount)
-        lifecycle.fire(node, FieldLifecycle.Unmount);
+      committed.current = true;
+      return () => {
+        committed.current = false;
+        releaseComposition();
+        unsubscribe();
+        if (element) virtualizationManager?.detachInput(element);
+        if (element && lifecycle && lifecycle.pending & FieldLifecycle.Unmount)
+          lifecycle.fire(node, FieldLifecycle.Unmount);
+      };
     };
+    return { committed, effect };
   }, [
     node,
     container,

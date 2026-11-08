@@ -24,7 +24,6 @@ import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import {
   FieldInputsContextProvider,
-  FieldLifecycleContext,
   FieldRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
@@ -32,6 +31,7 @@ import {
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import { useExternalFormContext } from '@/schema-form/providers/ExternalFormContext';
+import { FieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
 import {
   reportFailureToHost,
   useFormErrorContext,
