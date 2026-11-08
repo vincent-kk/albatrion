@@ -98,20 +98,21 @@ export class VirtualizationManager {
     this.optionsRevision++;
     if (previous?.Placeholder !== options?.Placeholder)
       this.Placeholder = this.wrapPlaceholder(options?.Placeholder);
-    if (
-      previous?.rootMargin !== options?.rootMargin ||
-      previous?.backfill !== options?.backfill
+    if (!options) {
+      this.stopObservation();
+      for (const element of this.registry.keys()) this.reveal(element);
+    } else if (
+      previous?.rootMargin !== options.rootMargin ||
+      previous?.backfill !== options.backfill
     ) {
       this.stopObservation();
-      if (options && this.registry.size) {
+      if (this.registry.size) {
         const observer = this.ensureObserver();
         for (const element of this.registry.keys()) observer?.observe(element);
         if (options.backfill === VirtualizationBackfill.Idle)
           this.ensureIdlePump();
       }
     }
-    if (!options)
-      for (const element of this.registry.keys()) this.reveal(element);
     for (const listener of [...this.listeners]) listener();
   }
 
