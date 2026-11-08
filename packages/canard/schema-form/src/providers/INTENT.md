@@ -2,29 +2,24 @@
 
 ## Purpose
 
-`@canard/schema-form` 전체에서 쓰는 React Context Provider와 훅을 모아 둔 곳이다. 폼 설정, 입력 타입 매핑, 렌더러, 입력 제어, 루트 노드, 가상화, 워크스페이스를 각각의 Context로 나눠 prop drilling을 없앤다.
+폼 설정과 인스턴스별 작업공간을 Context 경계로 연결하며 노드 로드·보고·표시의 소유자를 분리합니다.
 
 ## Conventions
 
-- 각 Context 모듈은 역할 칸인 components(Context 객체와 Provider)와 hooks(소비 훅), 필요하면 utils, 그리고 진입점 index로 이룬다. 훅 이름은 `use<ContextName>Context()` 형태로 짓는다.
-- Provider 중첩 순서는 Form.tsx를 따른다: `Workspace → FieldInputs → FieldRenderer → InputControl → Virtualization → RootNode`
-- `VirtualizationContext`의 manager는 마운트 시 `VirtualizationManager.create`로 한 번 만들어 고정한다(`useLazyConstant`는 memo와 달리 한 번만 만든다는 보장이 있다). 비활성이거나 IntersectionObserver가 없으면 null이다.
-- `ExternalFormContext`는 앱 최상단에 두는 선택적 외부 설정 레이어다. 입력 정의는 참조별로 정규화하고 렌더러·포맷터는 최신 props로 해석한다.
+- 조립 순서는 FormCore, 세부 수명은 각 자식 계약에서 관리합니다. 상위에서 자식의 동작을 다시 정의하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- 각 Context 훅은 해당 Context 파일에서만 `useContext` 호출
-- Provider 중첩 순서는 `Form.tsx`에 정의된 순서대로 유지
-- `ExternalFormContext` 값과 Form 수준 prop을 병합할 때 Form 수준 값을 우선 적용
+- Form 설정이 외부 기본값을 덮는 방향을 유지하여 인스턴스별 선택을 보장합니다.
+- 폼별 상태를 Context 경계 안에 두어 여러 폼 사이의 오염을 막습니다.
 
 ### Ask first
 
-- 새 Context를 추가, 분리, 통합하거나 Provider 중첩 순서를 바꾸는 경우(하위 컨텍스트의 의존성에 영향)
-- `ExternalFormContext` 인터페이스에 새 필드를 추가하는 경우
+- Context를 추가·분리·통합하거나 조립 의존성을 바꿀 때
 
 ### Never do
 
-- 이 디렉토리에 Context와 무관한 비즈니스 로직 추가
-- Context 값을 Provider 밖에서 직접 변경하거나 Context 모듈끼리 직접 import (각 모듈의 index.ts를 거친다)
+- 엔진 상태나 자식 수명을 상위 providers에 중복 저장하지 않습니다.
+- 다른 Context의 내부 파일이나 가변 값을 직접 수정하지 않습니다.

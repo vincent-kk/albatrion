@@ -8,7 +8,7 @@ import {
 import { formatScenarioDescription } from '../formatScenarioDescription';
 
 describe('formatScenarioDescription', () => {
-  it('turns the real if-then-else ledger clauses into readable sentences', () => {
+  it('turns the authored if-then-else contract clauses into readable sentences', () => {
     const scenario = compositionFeatureScenarios.find(
       ({ name }) => name === 'composition.if-then-else-guard',
     )!;

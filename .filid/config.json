@@ -2,7 +2,6 @@
   "version": "3.0",
   "language": "ko",
   "ignore": [
-    "**/architecture",
     "**/legacy",
     "**/fixtures",
     "**/__fixtures__",

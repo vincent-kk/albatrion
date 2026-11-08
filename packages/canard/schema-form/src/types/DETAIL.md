@@ -2,47 +2,66 @@
 
 ## Requirements
 
-- Object per-kind schemas admit `controls.discriminator`; every other kind, virtual group and inferred multi-kind input schema forbids it. Untyped fragments retain child controls, and broad type arrays without a discriminator remain assignable.
-
-- B12 작성 제어 키 검증은 node·fields·fragment의 `inactiveValue`를 공통 resolver 리터럴 합집합으로 허용하며 식 제어 키 목록에는 넣지 않습니다.
-
-- 형 파일은 네 칸에 있습니다. `schema/`는 `jsonSchema`·`value`·`injectTo`, `field/`는 `fieldInput`·`fieldRenderer`·`inferFieldInputSchema`, `error/`는 `error`, `rolled/`는 공개 `Roll` 형 `fieldRenderer`·`jsonSchema`를 둡니다.
-- 공개 `Roll` 형 열여덟은 `rolled/`에서 `Rolled` 접두사로 정의됩니다: `RolledFieldRendererProps`, 스키마 형 열여섯(`RolledBooleanSchema`·`RolledNumberSchema`·`RolledStringSchema`·`RolledArraySchema`·`RolledObjectSchema`와 각각의 `NonNullable`·`Nullable` 짝, `RolledNullSchema`), `RolledInferJSONSchema`.
-- 진입점은 네 칸의 형과 `ErrorVisibility`를 이름 목록으로 내보냅니다. 루트 `src/index.ts`는 `Rolled*` 형을 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 재수출합니다.
+여러 프랙탈이 공유하는 작성 스키마·값·입력·렌더러·오류 형의 의미를 소유합니다. 런타임이 허용하는 값을 형만으로 배제하거나, 정적으로 알 수 없는 실행 결과를 형이 안다고 약속하지 않습니다.
 
 ## API Contracts
 
-- `JSONSchema`는 core의 재귀 `AuthoredSchema` 합집합을 유지합니다. 객체·nullable 객체만 판별자를 허용하되, 판별자 없는 넓은 type 배열은 계속 받습니다. `NonObjectSchemaControls`는 core 관문에서 가져오고 두 authored 보조 멤버를 공개하지 않습니다. 내부 `UnionSchema`는 기반의 type·controls를 함께 제외한 뒤 비객체 controls를 선언하여 추론된 여러 종류의 입력에 판별자가 섞이지 않게 합니다. union 존재 여부는 TypeScript 제한이 아니며, 객체 선언에 union이 없을 때의 무시 경고는 blueprint 계약입니다.
+### Roll 표현과 재귀 형
 
-- 내부 형은 본명을 쓰고, 공개 `Roll` 형만 `Rolled` 접두사를 가집니다. 공개 이름은 루트 index의 재수출에서만 생깁니다.
-- `Roll`은 공개 형을 평평한 객체로 펴서 사용자 편집기의 형 표시를 좋게 하는 것뿐이며 런타임 동작이 없습니다. 스키마 형은 `JSONSchemaChildren`을 거쳐 자기 자신을 다시 가리키는 재귀 형이라, 정의 자리에서 `Roll`로 감싸면 TypeScript가 순환 별칭으로 거부합니다. 그래서 재귀 고리 밖의 `Rolled*` 이름이 내부 형을 감쌉니다.
-- `rolled/` 파일은 다른 칸의 형 파일을 직접 가져오며 import와 export는 형 전용입니다. 런타임 값이나 초기화 동작이 없습니다.
-- `schema/jsonSchema.ts`는 `@winglet/json-schema`의 기반 스키마 형을 `Winglet*` 별칭으로 가져와 이 패키지의 스키마 형과 구분합니다. 이 파일의 스키마 형 계약은 `src/DETAIL.md`의 스키마 절이 정합니다.
-- 공개 `RolledInferJSONSchema`(재수출 이름 `InferJSONSchema`)는 사용자가 작성하는 스키마를 값 형에서 추론합니다. 내부 `InferFieldInputSchema`(`field/`)는 virtual 노드와 여러 종류의 합집합 스키마까지 아는 입력 추론으로, `FieldInputProps` 계열만 씁니다. 작성 쪽 형과 내부 형을 가를 때 이 구분이 기준입니다.
-- 형제 fractal에서 오는 형은 `@/schema-form/core`·`@/schema-form/components/FieldProxy` 관문의 `import type`입니다. 이 형들을 쓰는 형제도 이 fractal의 index를 쓰므로 형 수준의 상호 참조가 있으나 런타임 순환은 없습니다.
-- `core`는 값 형 `InferValueType` 하나를 이 fractal의 index로 가져옵니다.
-- 명시적 `type`의 값 추론은 `@winglet/json-schema`에 위임하므로, 유한 `prefixItems` 튜플 추론 규칙은 `packages/winglet/json-schema/src/DETAIL.md`의 튜플 계약을 따릅니다.
-- 공개 Form 조각 형(`FormFieldProps`·`FormInputProps`·`FormRenderProps`)의 `Roll` 표현은 이 fractal이 아니라 `components/Form`이 소유합니다. 이 fractal에 두면 `types`와 `components/Form` 사이에 형 순환이 생기기 때문입니다.
+Roll은 편집기의 형 표시를 평평하게 하는 표현이며 런타임 변환이 아닙니다. 재귀 스키마의 정의 자리에서 Roll로 감싸면 순환 별칭이 되므로 재귀 고리 밖의 Rolled 형이 내부 형을 감싸고 패키지 진입점에서 공개 이름을 부여합니다. 내부 형과 공개 표시용 형을 분리하는 이유입니다.
+
+작성 스키마를 값에서 추론하는 공개 InferJSONSchema와, virtual·여러 종류까지 아는 입력용 InferFieldInputSchema는 목적이 다릅니다. Form 조각 props의 Roll 표현은 [Form](../components/Form/DETAIL.md)이 소유하여 types와 Form 사이의 불필요한 형 순환을 막습니다. core·FieldProxy 역참조는 type import로 제한합니다.
+
+### CONTROLS-081 — 열린 표현 payload
+
+스키마 그룹은 controls·options·presentation으로 구분하고 맨 키를 입력 props의 대체 설정으로 해석하지 않습니다. presentation은 사용자 표현 확장에 열려 있으므로 낯선 키만으로 오류를 만들지 않습니다. 컴포넌트를 담는 키와 그 props 객체는 대응 이름을 유지하여 서로 다른 설정 입구를 만들지 않습니다.
+
+alias·placeholder·className·style은 presentation.FieldInputProps, 렌더러 표현은 FieldRendererProps, 입력 선택 힌트는 inputType, 오류 문구는 errorMessages의 책임입니다. 입력마다 의미가 다른 표현 payload를 core가 해석하거나 맨 키 alias와 혼합하면 제약과 표현의 경계가 흐려집니다. 전달 순서·입력 선택은 [FieldInputBridge](../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 오류 문구 해석은 [formatValidationError](../helpers/error/formatValidationError/DETAIL.md)가 소유합니다.
+
+### REACT-027 — 입력 초안과 값의 범위
+
+입력은 치다 만 글자를 자기 초안으로 보유하고 커밋할 값만 onChange로 보냅니다. 빈 입력은 undefined이며 nullable만으로 빈 칸을 null로 바꾸지 않습니다. null은 입력이 명시적으로 보낼 때만 사용합니다. 제약이나 종류에 맞지 않는 값의 표시도 입력의 책임이며 core가 JSON 값을 임의 정정한다고 가정하지 않습니다. 객체·배열 값은 불변 입력으로 다루어 전달한 원본을 제자리 수정하지 않습니다.
+
+### REACT-032 — Hint와 노드 종류
+
+Hint와 props의 type은 노드 종류이며 schemaType은 정적 선언으로 계산한 JSON 허용 종류를 보존합니다. integer는 number 노드 종류를 사용하고 virtual의 schemaType은 undefined입니다. 게이트가 좁힌 현재 허용 목록은 jsonSchema.type에서 읽으므로 정적 schemaType과 혼동하지 않습니다. Hint·props의 misfit과 required는 노드의 isMisfit·isRequired에 대응합니다. 같은 경계에서 같은 이름인 값은 같은 의미를 유지하되 노드 boolean 이름을 React props에 기계적으로 적용하지 않습니다.
+
+FieldInputTestObject는 허용된 Hint 키의 대조용 형이고 함수 시험은 전체 Hint를 읽습니다. 객체 시험의 목록은 대안 매칭이며 union 목록의 정확한 동등성이 필요하면 함수 시험을 사용합니다. 정규화·잘못된 키·integer 종류 시험의 거부는 [fieldInputDefinition](../helpers/fieldInputDefinition/DETAIL.md)이 소유합니다.
+
+### NODE-058 — 읽기 판별과 쓰기 허용
+
+일반 FieldInputProps는 Value를 매개변수로 받는 interface이며 value·defaultValue·onChange는 Optional<Value>를 사용합니다. misfit 값을 검사한다고 이 interface의 value가 자동 판별 합집합처럼 좁혀진다고 약속하지 않습니다. [surface](../core/surface/DETAIL.md)의 별도 FieldNodeInputProps는 union 입력의 판별 계약이며 misfit인 unknown 읽기가 onChange의 허용 종류까지 넓히지 않습니다.
+
+misfit은 현재 허용 종류·nullable에 맞는지의 신호이며 검증 성공이나 입력 표시 가능성의 보증이 아닙니다. 오류 목록과 errorVisible도 별개입니다. errorVisible이 잠시 보류되어도 raw 오류는 유지하며 표시 release 의미는 [FieldRendererContext](../providers/FieldRendererContext/DETAIL.md)가 소유합니다.
+
+### schema-inference — 추론과 작성 경계
+
+객체 스키마만 controls.discriminator를 허용하고 virtual·다른 종류·추론된 여러 종류의 입력 스키마에는 허용하지 않습니다. 판별자 없는 넓은 type 배열과 형 없는 fragment 자식 controls는 계속 작성할 수 있습니다. union 없는 객체의 판별자를 런타임이 어떻게 경고하는지는 [buildNodes](../core/engine/blueprint/buildNodes/DETAIL.md)가 소유하며 타입 제한으로 대신하지 않습니다. inactiveValue는 동기 resolver 또는 리터럴이며 식 제어 키로 취급하지 않습니다.
+
+명시적 type의 InferValueType은 readonly type tuple을 NormalizeType으로 정규화해 기반 패키지에 위임합니다. type이 없을 때 인라인 동종 object·array 분기와 단일 종류 const·enum만 정적으로 좁히며 참조·게이트·복합 연언을 실행한 것처럼 추측하지 않습니다. 넓어진 스키마는 느슨한 fallback을 유지하므로 정확한 값 형이 필요한 소비자는 명시적 제네릭을 사용합니다.
 
 ## Acceptance Criteria
 
 ### types-gateway — 관문으로만 소비
 
-- 이 fractal 밖의 코드는 형 파일을 경로로 가져오지 않고 index를 거칩니다.
-- 공개 형의 이름과 형 문자열은 패키지 공개 표면 스냅숏과 같습니다.
+형 소비자는 진입점을 사용하고 공개 선언과 공개 표면 시험을 함께 유지합니다. 형 전용 역참조가 런타임 초기화나 상태를 만들지 않아야 합니다.
 
 ### rolled-contract — 공개 형의 Roll 표현
 
-- 공개 형이 내부 형의 변경을 반영하면서 `Roll` 변환을 유지합니다.
-- 공개 형을 참조해도 런타임 초기화나 상태가 생기지 않습니다.
+공개 표시용 형은 내부 형의 변경을 반영하되 Roll 때문에 재귀 별칭이나 런타임 초기화가 생기지 않아야 합니다.
+
+### union-input-types — 입력 형과 값 범위
+
+NODE-058의 일반 입력 형과 노드 전용 판별 형을 구분하고 nullable·빈 값·쓰기 허용 범위를 함께 검증합니다.
+
+### public-value-inference — 정적 추론의 한계
+
+schema-inference의 인라인 분기·리터럴 추론과 넓은 fallback을 함께 유지하여 실행 시에만 정해지는 종류를 확정하지 않습니다.
 
 ### value-tuples — 폼 값에 전달되는 튜플 추론
 
-- `InferValueType`은 닫힌 문자열·숫자 접두부를 `[string?, number?]`로 전달하며 잘못된 위치·초과 항목을 거부합니다.
-- 기본 `FormHandle`의 읽기·쓰기 값과 `FormProps`의 `defaultValue`에 같은 위치·rest 형이 적용됩니다. 유효한 접두부와 boolean rest의 대입은 허용합니다.
-- 객체 속성의 optional·열린 형태, nullable, homogeneous 배열, virtual 값, inline `oneOf` 분기 처리와 명시적 `type`의 우선순위는 유지합니다.
-- 넓어진 배열·비리터럴 접두부와 구식 `items` 배열은 기반 패키지의 기존 폴백을 따릅니다.
+유한 prefixItems는 optional 위치와 rest 형을 전달하여 비활성·생략 필드가 빠질 수 있는 값 계약과 일치해야 합니다. 객체 속성은 optional이며 additionalProperties가 닫히지 않으면 열린 객체를 유지합니다. nullable의 두 표기는 null을 허용하고 명시적 type은 inline 분기 추론보다 우선합니다. 비리터럴 접두부·구식 items 배열의 fallback은 [기반 값 추론](../../../../winglet/json-schema/src/DETAIL.md)을 따릅니다. 같은 스키마라도 defaultValue가 추론하는 필수 키와 FormHandle 기본 Value가 다를 수 있으므로 ref에는 같은 명시 값 형을 사용합니다.
 
 ## Last Updated
 
-계약·경계·검증 조건이 변경될 때 갱신합니다.
+공개 형의 의미·추론 한계·표현 payload 또는 입력 작성자 계약이 바뀔 때 갱신합니다.

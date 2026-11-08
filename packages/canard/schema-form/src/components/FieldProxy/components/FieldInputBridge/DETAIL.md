@@ -2,62 +2,76 @@
 
 ## Requirements
 
-선택된 입력 컴포넌트를 노드의 값, 상태, 명령 체계에 연결합니다.
+선택된 입력의 DOM 수명을 노드의 값·상호작용·명령 수명에 연결합니다. 입력 초안과 노드 커밋은 다른 수명이므로 입력을 갱신할 때 자식·캐럿·IME·오류 경계 중 무엇을 보존하는지 구분합니다.
 
 ## API Contracts
 
-ChildFields에 전달한 렌더러는 최신 prop을 사용합니다. 입력 맵·정의 변경은 입력을 다시 선택하되 같은 원본 컴포넌트의 어댑터를 재사용합니다.
+### REACT-033 — 입력 선택과 표현 경계
 
-- `createFieldInputBridge`만 `FieldNode | Nullish`를 받아 양쪽 부재에서 동일한 공유 `NULL_FUNCTION`을 반환한다. 실제 브리지(`FieldInputBridge`)와 `FieldInputProps.node`는 필수 노드로 작업하므로 부재 검사를 사용자 입력 구현에 전파하지 않는다. 구독 훅이 부재를 다루는 방식은 [hooks 계약](../../../../hooks/DETAIL.md)에 따른다.
+인라인 입력, 경로 맵, Form 정의, Provider 정의, 플러그인 순으로 선택하며 인라인 null은 fallback 탐색을 막습니다. preferred 입력은 이 선택 대신 사용합니다. 유효 스키마·경로·입력 공급 설정 변경은 선택에 반영하고 동일 원본 컴포넌트는 [입력 해석 어댑터](../../../../helpers/fieldInputDefinition/DETAIL.md)를 재사용합니다. 무관한 맵 변경이 입력 초안을 지우지 않기 위한 정체성 계약입니다.
 
-- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·isPresent·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
-- input도 renderer와 동일한 순수 이력 조건을 사용하며 enabled/live가 거짓이면 reveal을 읽지 않는다. held일 때만 동일 렌더 release version으로 passive 구독자를 기존 FieldInput 다음 자리에 마운트한다. useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch를 반환하며 표시 release와 composition 종료가 같은 reducer를 재사용한다. user-input batch 안 edited 설정과 resetInteraction clear는 한 write sequence로 합치며 live cleared state를 따른다. mount layout은2회·ordinary write0회다.
+CONTROLS-081·REACT-032. presentation의 입력 props는 표현 payload로 전달하고 브리지에서 뜻을 재해석하지 않습니다. props 덮어쓰기 순서는 구현이 정하되 노드 신원과 실효 잠금이 임의 표현 props로 바뀌지 않아야 합니다. Hint의 형·초안·nullable·misfit 의미는 [types](../../../../types/DETAIL.md)가 소유하며 객체 시험의 정규화와 잘못된 키 경고는 입력 해석 어댑터가 소유합니다.
 
-- 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버에서 렌더한 자식과 동일한 구성을 하이드레이션에서 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. 기존 입력 commit layout effect에서 하이드레이션 커밋을 ref로 기록하여 passive 일관성 검사가 null을 유지하게 하며, 하이드레이션 완료만으로 브리지나 사용자 브랜치 입력을 다시 렌더하지 않습니다. 이후 실제 자식 변경 렌더는 폼 매니저를 적용합니다. Provider의 문맥 값은 바꾸지 않습니다.
-- 폼 매니저가 있고 실제 브리지가 커밋하면 기존 입력 commit layout effect에서 브리지 자신의 노드를 노출 원장에 기록합니다. 팩토리가 반환한 자식 컴포넌트만 커밋하고 비활성·숨김 노드가 실제 브리지를 만들지 않은 경우에는 기록하지 않습니다. 하이드레이션, eager window, 문턱 미만 마운트 모두 포함합니다. 이후 remount·isPresent 전환으로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.
-- 사용자 브랜치 입력 내부의 아직 하이드레이션되지 않은 Suspense 경계에 매니저 활성화만으로 갱신을 보내지 않습니다. React 18/19는 하이드레이션 자체 때문에 해당 경계의 서버 DOM을 교체하지 않습니다. React 18에서 경계가 하이드레이션되기 전에 도달하는 이후 갱신은 여전히 클라이언트 렌더링으로 전환할 수 있습니다.
-- 하이드레이션 중 준비한 자식을 사용자 브랜치 입력이 접힌 탭·아코디언처럼 나중에 처음 렌더하면 준비 시점의 비게이트 결정을 유지하여 게이팅하지 않습니다. 이 제한의 후속 해결은 자식별 hydration 감지로 최초 실제 마운트 때 게이트를 판정하는 것입니다.
-- 입력은 인라인 지정, 입력 맵, 내부 정의, 외부 정의, 플러그인 fallback 순서로 우선해서 고릅니다.
-- 모든 입력 공급 경로와 preferred/override 입력은 해석하는 지점에서 사설 어댑터 `withFieldInputErrorBoundary`를 한 번 적용하며, 이 어댑터의 인스턴스는 Refresh 동안 유지됩니다. 어댑터는 렌더할 때 path 보고기를 읽고 `ErrorBoundary` 하나를 직접 렌더합니다. 자동 Refresh와 명시적인 `refresh`는 실패한 경계의 상태를 풀지 않고, `RequestRemount`와 `<Form key>`만 경계를 다시 마운트해서 실패 상태를 해제합니다(EVENT-039·040·042·070, 112C-01).
-- Refresh key는 오류 경계 안에 있는 원본 사용자 입력 하나에만 적용합니다. 사설 어댑터는 `useFieldInputControl`이 반환한 적용 세대를 key로 쓰며, 세대 prop을 사용자 입력에는 넘기지 않습니다. 노드의 원시 Refresh 개정은 key로 직접 읽지 않기 때문에, IME 조합과 마운트된 자식 프록시가 보류해 둔 세대가 유지됩니다. 비제어 입력은 다시 마운트할 때 커밋된 defaultValue를 읽으며, 그 입력의 캐럿, 선택, IME 상태만 버립니다(EVENT-039·065, REACT-024·028).
-- 첫 마운트 때 자식 layout effect에서 호출한 입력 onChange도 Context의 살아 있는 노드에 기록됩니다. 부모 binding이 준비되는 순서 때문에 버리지 않습니다(WRITE-046).
-- 사용자 변경은 폼 전체 잠금과 노드의 읽기 전용·disabled 상태를 확인합니다. `handleChange`는 한 `batch` 안에서 ① `writeFieldNodeInput`으로 값 쓰기 ② 외부 오류 지우기 ③ edited 표시를 차례로 수행합니다. 세 단계 모두 사슬에 들어갈 때 입력 출처 표식을 달고 있으며, 공개 옵션 비트를 추가하지는 않습니다. 사슬 끝에서 오류가 던져져도 이미 표시한 dirty는 보존하고, 폐기된 노드에서 표식이 달린 세 단계는 조용히 버립니다(REACT-009–011, 69C-01·02).
-- 흐림 처리는 `Blurred`를 발행하지 않고 `finishFieldNodeInput`으로 입력이 끝났음을 알립니다. 문자열 행의 `finishInput`이 `options.trim` 자동 쓰기 여부를 판단하며, 외부 오류와 dirty는 그대로 둡니다(WRITE-083, LANDING-067).
-- 입력의 key와 defaultValue 메모 의존은 렌더할 때 `node.revision(RequestRefresh)`로 읽은 적용 Refresh 번호를 씁니다. 입력 속성, 자식, Refresh 마스크를 합친 `useSyncExternalStore` tracker 하나가 구독하기 전에 놓친 사건도 구독한 뒤에 따라잡습니다. 조합 중이거나 마운트된 자식 프록시가 있는 동안에는 적용 세대를 유지하며, Refresh만으로는 추가 렌더를 하지 않습니다. 자식 마운트 유예는 렌더, 구독 시작, 사건 전달 시점에 갱신하고, layout 정리만으로는 스냅숏이 바뀌지 않게 해서 마지막 배열 삭제 때 생기는 추가 커밋을 막습니다. focus/select는 지연 프록시가 다시 발행하는 사건을 받도록 layout 구독을 유지하며, 필드 하나가 노드 리스너를 네 개 가집니다. 대체된 입력은 마운트할 때 붙잡은 번호가 쓰기 시점의 번호와 다르면 늦게 도착한 `onChange`·`onFileAttach`를 버립니다. 흐림 뒤로 미룬 touched도 흐릴 때 읽은 상호작용 초기화 번호가 콜백 시점의 번호와 다르면 버립니다. 첨부 파일 맵은 컨테이너 입력에서도 폐기된 노드의 늦은 쓰기를 받지 않습니다(REACT-024·028, 69C-02, 121C-01 F-E).
-- Refresh 때 다시 마운트할지는 노드 종류만 보지 않고 자식 프록시가 실제로 마운트되어 있는지로 가립니다. 터미널, 값 전체를 다루는 브랜치, 빈 배열, 접힌 입력은 다시 마운트합니다. 자식을 그리는 기본 객체·배열 입력은 추적 스냅숏을 유지하므로 Refresh만으로는 다시 렌더링하지 않습니다. 컨테이너 입력에는 대체된 입력의 Refresh 번호 검사를 적용하지 않습니다(REACT-024·028).
-- 통합 tracker의 스냅숏 getter는 Refresh 유예가 없으면 `node.revision(INPUT_TRACKING_EVENTS)`를 한 번 읽습니다. 유예 중에는 모듈 상수로 분리한 Refresh 제외 마스크의 개정과 적용 세대 `generation.current`를 더합니다. `revision(mask)`는 선택한 비트별 전달 횟수를 합한 값이므로, 유예가 없을 때 통합해서 읽은 값은 분리해서 읽은 두 값의 합과 같습니다. 적용 세대는 렌더에서 따로 읽으며, 자식이 소유한 유예 비트, IME 억제, 구독 전 catch-up 계약은 그대로 유지합니다.
-- 통합 tracker는 리스너를 붙인 직후 React에 스냅숏 검사를 요청합니다. 마지막 렌더의 revision이 같아서 React 19 Activity 재연결에 자체 스냅숏 검사가 없어도 숨김 동안의 개정을 따라잡고, 마운트된 자식 프록시가 없으면 적용 세대·입력 key·defaultValue를 현재 값으로 갱신합니다. 검사는 연결마다 O(1) 개정 읽기와 비교를 더하며, 구독·effect·보유 객체나 일반 쓰기의 연산은 늘지 않습니다. 노드 사건이나 공개 콜백을 재생하지 않습니다.
-- 입력의 `compositionstart`부터 `compositionend`까지는 다시 마운트가 필요한 Refresh를 보류합니다. 조합 중에는 Refresh가 입력 DOM을 교체하거나 값을 복원하지 않으며, 중복 요청은 하나로 모아서 `compositionend`에서 적용합니다. 노드의 Refresh 번호와 동기 통지는 바로 진행하므로, 이전 입력에서 뒤늦게 온 조합 완료 콜백이나 변경 콜백은 번호 검사로 버립니다. 조합 중에 Refresh가 없었다면 완료된 텍스트는 평소처럼 노드에 전달합니다(EVENT-065, REACT-024).
-- React가 Activity 또는 Suspense로 입력의 layout effect를 해제하면 해당 조합의 Refresh 보류도 끝납니다. 숨김 동안 끝 이벤트가 오지 않아도 재연결한 입력은 현재 노드 값과 Refresh 세대를 따라잡으며, 활성 조합과 마운트된 자식의 보류는 유지합니다. 기존 layout 정리에 비트 해제 한 번과 cleanup 클로저 하나를 더하므로 필드당 시간·메모리 비용은 O(1)이고 구독·effect·ref는 늘지 않습니다.
-- `useFieldInput`의 메모 의존에는 유효한 `jsonSchema` 참조가 들어갑니다. `FieldInputHint`는 `{ type: node.type, schemaType: node.schemaType, nullable: node.nullable, path, required, jsonSchema, format, inputType }`이며, 입력 props에 같은 이름이 있으면 같은 값입니다. `schemaType`은 integer와 union 목록을 보존하고, 입력 props에는 `misfit`과 `watchValues`도 전달합니다(REACT-012·032, LANDING-137·181·185).
-- 객체 시험의 키는 `type`·`schemaType`·`path`·`required`·`nullable`·`format`·`inputType`입니다. 모르는 키는 대조에서 빼고, `type`이 integer인 경우도 무효 시험으로 다룹니다. 개발 모드의 `FORM_TYPE_TEST_INVALID`는 정의마다 한 번 보고합니다. union은 `{ type: 'union' }` 또는 함수 시험으로 선택합니다(REACT-032·033).
-- 터미널 입력의 `ChildFields`는 빈 배열입니다. 개발 모드(`process.env.NODE_ENV !== 'production'`)에서 object·array 노드가 인라인 입력 때문에 터미널이 된 경우에만(`hooks/utils/isDetectableTerminal`) 읽기를 감지하는 동결 빈 배열을 전달합니다. 이 배열은 첫 색인, length, 순회 읽기를 `CHILD_NODE_COMPONENTS_ON_TERMINAL`로 기록합니다. 보고는 필드 커밋 뒤 입력의 focus/select layout effect가 가장 먼저 호출하는 커밋 표시에서 하고, 로드마다 `(code, path)` 기준으로 한 번만 전달합니다. 프로덕션이거나 원래부터 터미널인 노드(string·number·boolean·null·union)는 오류 핸들러가 있어도 보통의 빈 배열을 받습니다. 컨테이너 입력이라면 자식을 그렸을 스키마에서만 빈 목록을 읽는 것이 실수이기 때문입니다(ERROR-202, 18C-73, 180라운드).
-- 자식 읽기 탐침은 감지 대상인 터미널에서만 만들고, 의존성이 같은 쓰기는 입력의 layout effect를 다시 실행하지 않습니다. 탐침은 자체 layout effect 없이 목록과 커밋 표시를 한 쌍으로 돌려주며, 입력이 커밋 표시와 focus/select 구독을 layout effect 하나에서 처리합니다. 자식 프록시마다 도는 `mountedChildren` 계수 effect는 사용자 입력이 자식을 그리는 위치를 정하기 때문에 자식 쪽에 남깁니다. 커밋 이후 첫 읽기는 당시 warning scope를 붙잡아 microtask에서 보고합니다. 그때 reporter의 root가 입력 자신의 root와 다르면 폐기한 load의 경고를 버립니다. 같은 root reset은 원래 scope에 보고하며, 실패한 rebuild도 root를 유지하되 새 scope를 이미 시작하므로 다음 읽기를 다시 보고합니다. unmount 뒤 개발용 경고는 기존처럼 마지막 onError에 도달합니다. 탐침의 첫 읽기 표시는 보고기의 로드 번호에 묶여 있어서, 같은 root를 유지하는 reset이 새 로드를 시작하면 그 로드의 첫 읽기를 한 번 더 전달합니다. 필드마다 훅이나 보유 객체를 늘리지 않습니다(121C-01 F-F, ERROR-202).
-- 같은 브랜치에 매칭한 입력 맵의 입력과 정의 목록의 입력은 같은 ChildFields를 받으며 부모 입력 인스턴스를 유지합니다. 맵의 정규식이 터미널인 자식에도 매칭되면, 그 자식에서 같은 컴포넌트를 호출할 때는 빈 ChildFields를 전달합니다(REACT-019·028, ERROR-202).
-- 재귀 NodeProxy의 props는 `FieldProxy`가 소유한 `FieldProxyProps` 계약을 타입 전용 import로 읽으며, 입력 계층은 FieldProxy 구현을 값으로 의존하지 않습니다.
+`createFieldInputBridge`만 null·undefined를 같은 공유 무동작 함수로 받습니다. 실제 브리지와 FieldInputProps.node는 필수 노드로 작업하여 부재 검사를 사용자 입력에 퍼뜨리지 않습니다.
 
-- 팩토리 `createFieldInputBridge`는 컴포넌트가 아니라 컴포넌트를 반환하는 함수이므로 `utils/`에 두고, 뿌리에는 같은 이름의 구현인 `FieldInputBridge.tsx`만 둡니다. 뿌리에는 문서, 진입점, 형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+### REACT-011 — 한 입력의 한 진입
+
+입력 값 쓰기는 내부 입력 출처 통로를 사용하여 타이핑이 자기 입력을 Refresh하지 않게 합니다. 기본 통로는 값·외부 오류 지움·Edited를 하나의 입력 진입으로 처리합니다. 소비자가 onChange를 덮어쓰면 브리지가 그 callback과 외부 오류 지움·Edited를 배치합니다. 사슬 끝 실패가 이미 표시한 상호작용을 빠뜨리지 않게 하기 위한 규칙입니다. 공개 SetValueOption에 입력 출처 비트를 더하지 않습니다.
+
+CONTROLS-083. Form과 노드의 readOnly·disabled는 사용자 값 쓰기를 차단합니다. 표현 props의 잠금 합성과 실제 브리지 진입 검사를 혼동하지 않으며, 공개·자동 쓰기를 UI 잠금으로 거부하지 않습니다. 입력 자체의 제약 집행과 초안 표현은 [fieldInputs](../../../../fieldInputs/DETAIL.md)가 소유합니다.
+
+GOAL-061·WRITE-083. blur는 입력 마침을 알리고 touched를 다음 프레임으로 미룹니다. focus는 예약을 취소하여 포커스 이동 중 오류 깜빡임을 막습니다. blur 때의 상호작용 초기화 번호가 바뀌면 늦은 touched를 버립니다. trim은 엔진의 자동 쓰기 정책을 따르며 blur 자체가 외부 오류를 지우거나 Edited를 세우지 않습니다.
+
+### REACT-024 — 늦은 입력의 수명 검사
+
+입력은 현재 binding의 살아 있는 노드, 활성 선택 토큰, 적용 Refresh 세대를 함께 검사합니다. 마운트된 자식을 가진 컨테이너에는 Refresh 세대 검사를 적용하지 않지만 노드·선택 수명 검사는 유지합니다. 첫 자식 layout 쓰기는 binding 준비 전 Context 루트로 수락합니다. 교체된 루트의 늦은 값·파일 쓰기는 현재 폼을 바꾸지 않습니다.
+
+선택 토큰은 A→B→A에서도 각 선택 수명마다 다릅니다. 선택 어댑터의 insertion effect가 원본 입력 layout cleanup보다 먼저 폐기하여 cleanup에서 호출한 값·파일 callback도 막습니다. 중단된 렌더는 현재 선택을 폐기하지 않습니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거합니다.
+
+### REACT-028 — Refresh와 자식 소유권
+
+Refresh는 실제로 마운트된 자식 프록시가 없는 입력의 원본 컴포넌트만 다시 마운트합니다. 터미널·빈 배열·접힌 입력·값 전체를 편집하는 브랜치도 이 조건을 따릅니다. 자식을 그리는 컨테이너는 입력과 자식 DOM을 보존하므로 값에서 복제한 내부 상태가 남을 수 있습니다. 그런 입력은 구독으로 동기화하거나 명시적 Remount·Form key 교체를 사용합니다. 자식이 필요한 입력을 terminal로 바꾸는 해결은 자식을 없애므로 허용하지 않습니다.
+
+EVENT-039·EVENT-040·EVENT-041. 적용 세대는 원본 입력 key와 defaultValue를 함께 갱신합니다. Refresh는 오류 경계 바깥을 교체하지 않으므로 실패 fallback을 해제하지 않습니다. Remount·Form key 교체는 경계를 포함한 수명을 다시 시작합니다. 원본 입력의 캐럿·선택·포커스는 리마운트에서 사라지며 자동 복원하지 않습니다. 포맷터의 캐럿 복구는 해당 입력의 책임입니다.
+
+### EVENT-065 — 조합과 숨김의 경계
+
+compositionstart부터 compositionend까지 Refresh를 보류하고 중복 요청을 한 번으로 모읍니다. DOM value를 프로그램으로 덮거나 입력을 교체하지 않아 IME 초안을 보존합니다. 노드 revision과 동기 통지는 계속 진행하므로 적용 뒤의 옛 callback은 세대 검사로 버립니다. Refresh가 없던 조합의 완성 텍스트는 정상 입력입니다.
+
+Activity·Suspense의 layout 해제는 조합 보류를 끝냅니다. 끝 이벤트가 오지 않는 숨김 상태에서 복귀할 때 현재 값·세대를 따라잡기 위해서입니다. 자식 소유권 보류는 유지하고 매 attach 직후 스냅숏을 검사합니다. 노드 사건·공개 callback을 재생하지 않습니다. 상태가 바뀌지 않는 연결은 추가 렌더가 없으며 재연결의 개정 확인은 O(1)입니다.
+
+### GOAL-052 — 입력 추적 비용과 명령
+
+값·속성·자식·Refresh는 통합 외부 저장소 스냅숏 하나를 사용하여 동시 마운트의 구독 공백을 막습니다. 보류가 없으면 통합 마스크를 한 번 읽고, 보류 중이면 Refresh 제외 revision과 적용 세대를 합칩니다. 자식 소유권은 렌더·attach·배달 때 갱신하고 자식 layout 정리만으로 스냅숏을 바꾸지 않아 마지막 배열 삭제의 추가 커밋을 막습니다.
+
+focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독합니다. focus는 첫 input·textarea·select·button, select는 첫 input·textarea를 대상으로 하여 앞의 버튼·select가 텍스트 선택을 가로채지 않게 합니다. 입력의 commit 작업은 같은 layout effect를 공유하고, 표시 release와 composition 종료는 useVersion의 안정된 갱신 dispatch를 공유하여 effect를 추가하지 않습니다.
+
+### GOAL-067 — 자식 캐시와 하이드레이션
+
+자식 컴포넌트는 노드 인스턴스로 캐시하고 준비할 때 게이트 여부를 고정하여 훅 구성을 수명 중 바꾸지 않습니다. ChildFields에 전달한 렌더러는 현재 prop을 읽습니다. 캐시는 StrictMode effect 재실행에서 유지되고 실제 훅 인스턴스와 함께 회수합니다.
+
+서버·하이드레이션은 null 매니저 스냅숏으로 같은 자식을 렌더합니다. 기존 입력 commit에서 hydration ref를 표시하여 매니저 활성화만으로 추가 렌더나 사용자 Suspense의 조기 갱신을 만들지 않습니다. 이후 실제 자식 변경은 매니저를 사용하며 클라이언트 전용 마운트는 처음부터 게이트할 수 있습니다. 실제 입력이 commit할 때만 자신의 노드를 노출 기록에 넣어 eager·문턱 미만·hydration 입력도 remount 후 placeholder로 돌아가지 않게 합니다. 숨겨진 프록시나 wrapper 준비만으로는 노출을 기록하지 않습니다.
+
+현재 한계는 다음과 같습니다. hydration 때 준비만 한 탭·아코디언 자식은 나중 첫 렌더에도 비게이트 결정을 재사용합니다. React 18의 아직 hydrate하지 않은 Suspense 경계에 이후 갱신이 들어가면 client rendering으로 전환할 수 있습니다. 렌더 중 공유 Map에 추가한 게이트 결정은 폐기 렌더 뒤에도 남을 수 있고, 제거된 자식 항목은 훅 수명 동안 정리하지 않아 장기 배열에서 캐시가 증가합니다. 상태 보존 Fast Refresh는 캐시의 옛 closure를 재사용할 수 있습니다. 자식 callback·override의 useReference도 렌더 중 공유 ref를 쓰므로 commit-only 격리를 보장하지 않습니다. 자식별 최초 마운트 판정·pruning·개발 세대 교체는 현재 보장이 아닙니다.
+
+### ERROR-202 — 터미널 자식 읽기 경고
+
+자식 없는 입력도 공통 구현을 쓸 수 있으므로 모든 terminal의 빈 ChildFields 읽기를 경고하지 않습니다. 개발 모드의 terminal object·array에만 탐침을 두며 명시적 terminal도 이 조건에 포함됩니다. production과 본래 terminal인 종류는 공유 빈 목록을 받습니다.
+
+첫 색인·length·순회 읽기를 감지하고 commit 전 읽기는 기존 입력 layout marker에서, commit 후 읽기는 microtask에서 보고합니다. 로드별 중복 제거는 [FormErrorContext](../../../../providers/FormErrorContext/DETAIL.md)가 맡습니다. 지연 보고는 읽은 warning scope를 보존하되 root가 교체되면 버립니다. 같은 root reset·실패 rebuild가 새 로드 scope를 시작하면 다시 읽을 수 있고, unmount만으로 마지막 보고기를 없애지는 않습니다. 탐침 자체의 effect를 추가하지 않는 이유는 필드 수에 비례하는 마운트 비용을 막기 위해서입니다.
+
+오류 표시의 이력·release 조건은 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)가 소유합니다. 입력은 isPresent와 현재 정책이 적격일 때만 reveal을 읽고 보류 중에만 release 구독자를 둡니다.
 
 ## Acceptance Criteria
 
 ### live-configuration — 설정 교체 수명
 
-- 무관한 맵 키 변경이나 같은 컴포넌트를 고르는 정의 변경은 조상 입력도 유지되는 동안 입력 DOM을 보존합니다. 부모 입력 교체는 그 안의 자식 DOM과 미커밋 draft를 재생성하지만 노드의 값·상태·외부 오류는 유지합니다.
-- 각 커밋된 입력 선택은 독립 수명 토큰을 가집니다. 선택 교체와 언마운트는 이전 토큰을 폐기하여 늦은 onChange·onFileAttach를 버립니다. A→B→A도 이전 A의 콜백을 되살리지 않습니다. 입력이 교체되거나 언마운트되기 시작하면 자신의 cleanup에서 호출한 onChange·onFileAttach도 더 이상 쓰지 못합니다. 토큰의 활성화·폐기는 실제로 삭제되는 선택 입력 어댑터의 insertion effect가 소유하여 원본 입력의 layout cleanup보다 먼저 폐기합니다. 첫 자식 layout 쓰기를 수락하고 중단된 렌더는 현재 선택을 폐기하지 않습니다.
+같은 원본을 고르는 설정 변경은 조상 입력도 유지되는 동안 DOM을 보존합니다. 부모 입력 교체는 자식 DOM·미커밋 draft를 재생성하지만 노드 값·상태·외부 오류는 유지합니다. 교체·unmount cleanup의 옛 callback과 A→B→A의 첫 A callback은 쓰지 못합니다.
 
 ### field-input-bridge-contract — 관찰 가능한 동작
 
-- 가상화가 켜진 SSR 입력은 React 18/19의 일반·StrictMode 하이드레이션에서 DOM identity와 값을 보존하고 placeholder나 recoverable error를 만들지 않습니다. 중첩 브랜치 remount 뒤에도 노출을 유지하며, 배열에 나중에 추가한 eager window 밖 항목은 지연합니다. 문턱 미만에서 실제 마운트한 항목도 문턱 도달 뒤 remount하면 계속 노출합니다.
-- 언마운트하면 해당 경로의 첨부 파일 상태를 제거합니다.
-- refresh는 자식 프록시가 마운트되어 있는지에 따라 입력 버전을 갱신하고, focus/select는 해당 입력의 DOM 명령으로 이어집니다. focus는 입력 컨테이너 안 첫 `input`·`textarea`·`select`·`button`에, select는 글자를 고를 수 있는 첫 `input`·`textarea`에 갑니다. 앞에 놓인 버튼이나 `<select>`가 select 요청을 가로채면 `select()`가 아무것도 하지 않기 때문입니다(REACT-028, EVENT-063).
-- 실패한 입력은 피어의 쓰기로 생긴 자동 Refresh와 명시적인 Refresh를 거쳐도 fallback을 유지하고, RequestRemount나 폼 key 교체 뒤에는 다시 실행됩니다. 정상 입력의 Refresh는 원본 입력만 교체하며, 피어 입력의 DOM 상태와 입력 오류 경계는 유지합니다(EVENT-039·040·042·070, 112C-01).
-- 조합 중에 Refresh가 와도 매 단계의 IME 텍스트와 입력 인스턴스를 보존하고 `value` setter를 호출하지 않습니다. `compositionend`가 한 번 오면 그 뒤에 입력을 다시 마운트하며, 이전 입력의 조합 텍스트가 노드에 뒤늦게 쓰이는 일은 없습니다(EVENT-065, REACT-024).
-- 일반·StrictMode의 React 19 Activity와 React 18/19 Suspense에서 조합 중인 입력을 숨기고 retained handle의 setValue/reset 또는 root.setValue로 쓰면, 다시 표시한 입력은 노드의 현재 값을 보이고 다음 사용자 입력도 수락합니다. 숨김 중 onChange는 한 번 전달되며 재표시만으로 재생하지 않습니다. React 18 legacy root의 일반 숨김 쓰기도 현재 값을 표시합니다.
-- 기본 문자열 입력의 focus/change/blur가 정착한 뒤 폼을 숨기고 retained handle의 setValue/reset 또는 root.setValue로 빈 객체를 쓰면 재표시한 입력은 빈 값을 보입니다. 일반·StrictMode와 React 18 Suspense에서도 동일하며 재표시 직후 refresh의 유무와 무관합니다. visible 쓰기와 change-only 쓰기도 같은 값 동기화 계약을 따릅니다.
-- Refresh 유예가 없는 스냅숏은 통합 마스크로 한 번에 읽고, 유예 중에는 Refresh 제외 개정과 적용 세대만 읽습니다. 렌더와 구독 사이에 전달된 자식·값 갱신은 화면이 따라잡습니다. 마운트된 자식이 보류한 Refresh는 자식을 해제하는 것만으로는 추가 커밋하지 않고, 다음 전달 때 한 번 적용합니다. `array-push-remove-100`의 커밋은 202회로 유지됩니다.
-- 가상화 없이 마운트한 터미널 배열 항목 하나는 라이브러리 layout effect를 두 번(부모 입력의 자식 마운트 계수, 항목 입력의 커밋) 실행합니다. H는 엔진 이력으로 표시를 계산하며 일반 입력 쓰기의 표시가 같으면 layout effect0회를 유지합니다. G8의 None·OnChange 마운트 행으로 이 비용을 정식 측정하고 기준을 넘으면 병합하지 않습니다(코디네이터 msg_cc8e08d106e0; REACT-028, ERROR-202).
-- 입력 변경 한 번에 담긴 세 단계는 한 번의 진입으로 정착하고 통지하며, 유효 스키마가 바뀌면 입력 선택에 반영됩니다. 대체되었거나 폐기된 입력이 뒤늦게 하는 값·파일 쓰기와, 초기화 뒤로 미룬 touched는 살아 있는 폼 상태를 바꾸지 않습니다(REACT-011·012·024, 69C-01·02).
+React 18/19·StrictMode의 hydration은 서버 DOM과 값을 보존하고 hydration 자체의 추가 렌더를 만들지 않습니다. 숨김 중 retained handle 쓰기는 재표시 입력에 반영하되 콜백을 재생하지 않습니다. 입력 중간 삽입·IME는 자기 타이핑으로 리마운트하지 않고, 명시 Refresh는 위 자식·조합 조건을 따릅니다. 가상화 없는 terminal 배열 항목의 라이브러리 layout은 자식 소유권과 입력 commit 두 작업이며, 표시가 같은 일반 쓰기는 추가 layout 작업을 만들지 않습니다.
 
 ## Last Updated
 
-입력 선택·값 동기화·Refresh 보류·오류 표시·가상화의 계약이 바뀔 때 갱신합니다.
+입력 선택·초안·Refresh·구독·하이드레이션 또는 오류 표시의 연결 계약이 바뀔 때 갱신합니다.

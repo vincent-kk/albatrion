@@ -5,7 +5,7 @@ import { formatScenarioDescription } from './utils/formatScenarioDescription';
 
 /**
  * Introduce a scenario using display-only prose and its first operation.
- * @param props - Optional authored scenario; its ledger-authored data stays intact.
+ * @param props - Optional authored scenario; its authored data stays intact.
  * @returns A heading, explanation and short instruction above the form.
  */
 export function DescriptionPanel({ scenario }: { scenario?: FormScenario }) {

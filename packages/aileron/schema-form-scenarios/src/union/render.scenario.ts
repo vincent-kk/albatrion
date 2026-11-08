@@ -13,7 +13,7 @@ const branchSchema = {
   ],
 };
 
-/** Ledger expectations for the composition and nullable render dispositions. */
+/** Contract expectations for the composition and nullable render dispositions. */
 export const unionRenderScenarios: readonly FormScenario[] = [
   {
     name: 'union.first-screen-active-defaults',

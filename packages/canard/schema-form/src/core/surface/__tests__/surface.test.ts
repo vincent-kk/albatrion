@@ -23,16 +23,73 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   });
 
 describe('FieldNode PR-2 surface', () => {
-  it('26C-01 PR-4 member list matches the DETAIL table exactly', () => {
+  it('26C-01 surface-members preserves runtime names and descriptors', () => {
     const detail = readFileSync(
       new URL('../DETAIL.md', import.meta.url),
       'utf8',
     );
+    expect(detail).toMatch(/^### surface-members —/m);
     const rows = [
-      ...detail.matchAll(
-        /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
-      ),
-    ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
+      { name: 'type', kind: 'getter' },
+      { name: 'strategy', kind: 'getter' },
+      { name: 'schemaType', kind: 'getter' },
+      { name: 'jsonSchema', kind: 'getter' },
+      { name: 'isRequired', kind: 'getter' },
+      { name: 'nullable', kind: 'getter' },
+      { name: 'depth', kind: 'getter' },
+      { name: 'isRoot', kind: 'getter' },
+      { name: 'rootNode', kind: 'getter' },
+      { name: 'parentNode', kind: 'getter' },
+      { name: 'name', kind: 'getter' },
+      { name: 'escapedName', kind: 'getter' },
+      { name: 'path', kind: 'getter' },
+      { name: 'children', kind: 'getter' },
+      { name: 'source', kind: 'getter' },
+      { name: 'extras', kind: 'getter' },
+      { name: 'value', kind: 'getter' },
+      { name: 'outputValue', kind: 'getter' },
+      { name: 'inactiveValues', kind: 'getter' },
+      { name: 'isActive', kind: 'getter' },
+      { name: 'isVisible', kind: 'getter' },
+      { name: 'isPresent', kind: 'getter' },
+      { name: 'isReadOnly', kind: 'getter' },
+      { name: 'isDisabled', kind: 'getter' },
+      { name: 'watchValues', kind: 'getter' },
+      { name: 'context', kind: 'getter' },
+      { name: 'isMisfit', kind: 'getter' },
+      { name: 'misfits', kind: 'getter' },
+      { name: 'diagnostics', kind: 'getter' },
+      { name: 'defaultValue', kind: 'getter' },
+      { name: 'find', kind: 'method' },
+      { name: 'findNodes', kind: 'method' },
+      { name: 'visitSubtree', kind: 'method' },
+      { name: 'setValue', kind: 'method' },
+      { name: 'push', kind: 'method' },
+      { name: 'pop', kind: 'method' },
+      { name: 'update', kind: 'method' },
+      { name: 'remove', kind: 'method' },
+      { name: 'insert', kind: 'method' },
+      { name: 'clear', kind: 'method' },
+      { name: 'resetSubtree', kind: 'method' },
+      { name: 'request', kind: 'method' },
+      { name: 'onInactive', kind: 'method' },
+      { name: 'subscribe', kind: 'method' },
+      { name: 'revision', kind: 'method' },
+      { name: 'validate', kind: 'method' },
+      { name: 'errors', kind: 'getter' },
+      { name: 'setExternalErrors', kind: 'method' },
+      { name: 'clearExternalErrors', kind: 'method' },
+      { name: 'state', kind: 'getter/setter' },
+      { name: 'isEdited', kind: 'getter' },
+      { name: 'isTouched', kind: 'getter' },
+      { name: 'isDivergent', kind: 'getter' },
+      { name: 'setState', kind: 'method' },
+      { name: 'globalState', kind: 'getter' },
+      { name: 'globalErrors', kind: 'getter' },
+      { name: 'setSubtreeState', kind: 'method' },
+      { name: 'clearSubtreeState', kind: 'method' },
+      { name: 'batch', kind: 'method' },
+    ];
     expect(rows).toHaveLength(59);
     const prototype = RuntimeFieldNode.prototype;
     expect(

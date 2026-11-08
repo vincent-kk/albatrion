@@ -3,7 +3,7 @@ import { FormWarningGroup } from './FormWarningGroup';
 import { SchemaFormWarningSpecific } from './SchemaFormWarningSpecific';
 
 /**
- * Every warning code the package reports, in ledger order (ERROR-164 and its supplements).
+ * Every warning code the package reports, in public contract order (ERROR-164).
  * Keys are the bare code in PascalCase; values are the group-qualified strings errors and records carry.
  */
 export const FormWarningCode = {

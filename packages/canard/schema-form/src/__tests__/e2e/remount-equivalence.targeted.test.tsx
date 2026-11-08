@@ -10,7 +10,7 @@ import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene
 
 for (const [group, scenes, test] of [
   ['star', createStarScenes(), it],
-  // 정당한 차이로 닫힌 핀(architecture/reviews/round-444-closing.md): C443-01(444C-01)·C443-02(444C-02)·D443-04(444C-03)·D443-05(444C-04).
+  // VALUE-031·034: 출력의 새 로드는 생략된 원본·배열 자리·union 해석 상태를 복원하지 않습니다.
   ['overlay', createOverlayScenes(), it.fails],
   ['relocated', createRelocatedScenes(), it],
   ['ancestor', createAncestorScenes(), it],

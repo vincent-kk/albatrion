@@ -166,6 +166,10 @@ batch 콜백이 실패해도 바깥 묶음은 앞서 표시한 쓰기를 정착�
 
 `onInactive` 등록은 노드 인스턴스의 수명에 묶고 옛 해제 함수가 새 등록 집합을 지우지 않게 합니다. resolver 안의 쓰기는 콜백·정착 전에 무시하고 개발 모드에서만 경고하며, 그 경고 보고 중의 재시도는 다시 보고하지 않습니다. resolver의 실행 자격·순서·실패 처분은 [settle](../settle/DETAIL.md)에 두어 보존 gate exit의 정책을 복제하지 않습니다.
 
+### ERROR-008 — 호스트 싱크 선택은 환경의 오류 통로를 따릅니다
+
+브라우저 reportError가 있으면 사용하고, 없으면 ErrorEvent를 보낼 수 있을 때 전달하여 취소 여부를 존중합니다. 그 통로가 없거나 취소되지 않으면 console.error로 노출하며 서버에서도 console.error를 사용합니다. process의 uncaughtException을 직접 발행하지 않아 폼이 호스트 프로세스의 예외 수명을 대신하지 않습니다. 묶음의 잎 분리와 caller 거부는 ownerless-leaves의 계약을 유지합니다.
+
 ## Boundary Exemptions
 
 ### `utils/report/forEachFailureLeaf.ts` — 호스트 전달 규칙의 단일 소유

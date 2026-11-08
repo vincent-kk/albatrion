@@ -5,7 +5,7 @@ import { SetValueOption } from '@/schema-form/core/surface';
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
-describe('stage 03 ledger adjudication regressions', () => {
+describe('node creation and dispatch regressions', () => {
   const selfNegatingGate = () =>
     makeFieldNodeTree({
       type: 'object',

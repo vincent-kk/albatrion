@@ -2,27 +2,26 @@
 
 ## Requirements
 
-- 부모 Form의 보조 렌더링 계약(`Form.Render`)을 구현합니다.
+Form.Render는 경로의 필드를 소비자 렌더 함수로 조합하며 폼 상태의 소유권은 추가하지 않습니다.
 
 ## API Contracts
 
-- `FormRender.tsx`는 `memo` 컴포넌트입니다. `children`·`FieldInput`·`Wrapper`는 `useConstant`로 첫 렌더 값에 고정하고, 나머지 속성은 `useReference`로 `overridePropsRef`에 담아 `FieldProxy`에 넘깁니다.
-- `types/props.ts`는 `FormRenderProps<Value>`와 그 `Roll` 표현인 `RolledFormRenderProps<Value>`를 정의합니다. `FormRenderProps`는 `ChildFieldProps`의 덧붙임 속성을 받고 구현이 씁니다. 관문은 `RolledFormRenderProps`만 내보냅니다.
+children·FieldInput·Wrapper는 mount에 고정합니다. 함수 identity 교체로 subtree를 뜻밖에 재생성하지 않기 위한 경계이며, closure로 잡은 상태도 mount 값을 유지합니다. 변하는 값은 context·내부 hook으로 읽고 의도적 교체에는 key를 사용합니다. 나머지 props는 최신 값을 전달합니다.
 
 ## Acceptance Criteria
 
 ### render-function — 렌더 함수 위임
 
-- 렌더 함수는 필드의 렌더러 속성을 받고, 마운트 뒤 바뀐 `children`·`FieldInput`·`Wrapper`는 반영하지 않습니다.
+렌더 함수는 필드 렌더러 props를 받습니다. 직접 node.setValue를 부르는 것은 명령형 쓰기이므로 입력의 edited 정책을 대신하지 않습니다. 사용자 편집 수명은 전달받은 Input과 [FieldInputBridge](../../../FieldProxy/components/FieldInputBridge/DETAIL.md)에 맡깁니다.
 
 ## Boundary Exemptions
 
-### `types/` — 형 칸 유지
+### `types/` — 공개 형의 소유
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: `RolledFormRenderProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개한다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+- **Reason**: `RolledFormRenderProps`는 이 조각의 공개 사용 계약이므로 구현 옆에 두고 부모와 패키지 진입점이 이름으로 노출합니다.
 
 ## Last Updated
 
-2026-10-14 — 소유자 구조 변경(Form의 조각을 fractal로 분리).
+이 조각의 조합·접근성·설정 수명 또는 공개 props 계약이 바뀌면 갱신합니다.

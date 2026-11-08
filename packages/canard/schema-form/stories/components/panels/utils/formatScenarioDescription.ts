@@ -1,7 +1,7 @@
 /**
- * Turn ledger-authored prose into display sentences without changing scenario data.
- * @param description - Authored prose containing ledger IDs, table references or round markers.
- * @returns Trimmed sentences with ledger markers and their empty parentheses removed.
+ * Turn authored scenario prose into display sentences without changing scenario data.
+ * @param description - Authored prose containing contract labels, table references or provenance markers.
+ * @returns Trimmed sentences with provenance markers and their empty parentheses removed.
  */
 export function formatScenarioDescription(description: string): string {
   const marker = String.raw`\b(?:[A-Z][A-Z0-9]*-\d{3,}[A-Z]?(?:-\d+)?|T-\d+|\d+C-\d+)\b(?:·\d+)*(?:\s*\(\s*\d+\s*\))*`;

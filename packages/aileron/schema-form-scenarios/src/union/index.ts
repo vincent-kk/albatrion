@@ -11,7 +11,7 @@ import { defaultFillUnionScenario } from './default-fill.scenario';
 import { convergentFeedbackScenario } from './feedback-convergent.scenario';
 import { nonconvergentFeedbackScenario } from './feedback-nonconvergent.scenario';
 
-/** Ledger-named union cases and their WRITE-099 feedback variants. */
+/** Contract-labeled union cases and their WRITE-099 feedback variants. */
 export const unionScenarios: readonly FormScenario[] = [
   entryTwoStepScenario, gatedEffectiveListScenario, ruleAScenario,
   ambiguousScenario, integerScenario, objectArrayScenario,

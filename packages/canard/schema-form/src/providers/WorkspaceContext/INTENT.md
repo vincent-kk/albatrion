@@ -2,28 +2,22 @@
 
 ## Purpose
 
-단일 `<Form>` 인스턴스의 워크스페이스 데이터를 공급하는 Context. 파일 첨부 맵(`attachedFilesMap`)과 사용자 정의 context 딕셔너리를 보유하며, Form-level context와 `ExternalFormContext.context`를 병합하여 제공한다.
+폼별 첨부 파일과 사용자 context를 공급합니다.
 
 ## Conventions
 
-- `inputContext`는 `useSnapshot(inputContext)`로 내용 기준으로 안정화한다. 참조가 바뀌어도 값이 같으면 리렌더하지 않는다.
-- `context` 병합 우선순위: `{ ...external.context, ...context }` (Form 수준 값이 ExternalFormContext 값을 덮어쓴다)
-- `attachedFilesMap`은 `Form.tsx`의 `useRef`로 생성된 Map 인스턴스를 받아야 한다. form 생명주기 동안 같은 참조가 유지되어야 한다.
+- 세부 선택·수명과 소유자 연결은 [DETAIL](DETAIL.md)에 둡니다.
 
 ## Boundaries
 
 ### Always do
 
-- `context`를 `useSnapshot`으로 안정화하여 불필요한 리렌더 방지
-- `ExternalFormContext.context`(기본값)에 Form 수준 `context`(덮어쓰는 값)를 spread로 병합
+- Form의 context 우선순위와 첨부 맵 identity를 유지하여 데이터 혼합·유실을 막습니다.
 
 ### Ask first
 
-- `AttachedFilesMap` 타입 또는 파일 첨부 저장 방식 변경 시
-- `context` 병합 전략 변경 시 (현재: `external → form-level override`, 외부 값을 Form 수준 값이 덮어쓴다)
+- context 병합 전략이나 첨부 파일 저장 방식을 바꿀 때
 
 ### Never do
 
-- `attachedFilesMap`을 Context 내부에서 생성 (반드시 `Form.tsx`의 ref에서 전달받는다)
-- `context` 딕셔너리를 직접 변경 (항상 새 객체로 교체한다)
-- 폼 노드 상태(노드 값, 에러 등)를 이 Context에 저장
+- 첨부 맵을 Context에서 새로 만들거나 노드 값·오류를 저장하지 않습니다.
