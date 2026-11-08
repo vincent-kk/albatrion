@@ -48,7 +48,7 @@
     "build-storybook": "storybook build",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
-    "build:verify:types": "node --test --test-reporter=tap ../../aileron/script/build/__tests__/fixDtsExtensions.test.mjs && node ../../aileron/script/build/verifyDeclarations.mjs",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "publish:npm": "yarn npm publish --access public",
