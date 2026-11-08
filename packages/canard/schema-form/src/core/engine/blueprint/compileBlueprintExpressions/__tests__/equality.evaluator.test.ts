@@ -4,6 +4,7 @@ import { blueprint } from '../../blueprint';
 import { createDynamicFunction } from '../createDynamicFunction';
 import { getPathManager } from '../getPathManager';
 import { recognizeEqualityExpression } from '../recognizeEqualityExpression';
+import { createEqualityEvaluator } from '../utils/createEqualityEvaluator';
 
 it('does not construct Function for proven strict equality and OR controls', () => {
   const functions = vi.spyOn(globalThis, 'Function');
@@ -93,19 +94,37 @@ it('matches compiler results throughout accepted syntax and boundary values', ()
     '\b\f\n\r\t\v',
     {},
     [],
+    [0],
+    { a: 1 },
+    '10',
+    BigInt(10),
+    Symbol('kind'),
+    'other',
   ];
+  const sources: string[] = [];
   for (const literal of literals) {
-    for (const source of [
+    sources.push(
       `./kind === ${literal}`,
       `${literal} === ./kind`,
       `((./kind)) === ((${literal}))`,
       `((./kind === ${literal}) || ('other' === ./kind));`,
       `./kind === ${literal} || ./kind === ${literal}`,
-    ]) {
-      expect(
-        recognizeEqualityExpression(source, ['./kind']),
-        source,
-      ).toBeDefined();
+    );
+  }
+  for (let start = 0; start < literals.length; start++) {
+    for (const count of [2, 3, 4]) {
+      const parts = Array.from({ length: count }, (_, offset) => {
+        const literal = literals[(start + offset) % literals.length];
+        return offset % 2 === 0
+          ? `./kind === ${literal}`
+          : `${literal} === ./kind`;
+      });
+      sources.push(parts.join(' || '), `(${parts.join(') || (')});`);
+    }
+  }
+  const functions = vi.spyOn(globalThis, 'Function');
+  try {
+    for (const source of sources) {
       for (const key of ['active', 'visible', 'derived'] as const) {
         const compiled = createDynamicFunction(
           getPathManager(),
@@ -113,18 +132,30 @@ it('matches compiler results throughout accepted syntax and boundary values', ()
           source,
           true,
         )!;
+        functions.mockClear();
+        const recognized = recognizeEqualityExpression(source, ['./kind']);
+        expect(recognized, source).toBeDefined();
+        const evaluate = createEqualityEvaluator(recognized!.literals);
         const expression = blueprint({
           type: 'string',
           controls: { [key]: source },
         }).expressions[0];
         expect(expression.dependencies, source).toEqual(['./kind']);
-        for (const value of boundaries)
-          expect(
-            expression.evaluate([value]),
-            `${key}: ${source}, ${String(value)}`,
-          ).toBe(compiled([value]));
+        for (const dependencies of [
+          ...boundaries.map((value) => [value]),
+          [],
+          [undefined, 1],
+        ]) {
+          const label = `${key}: ${source}, ${dependencies.map(String).join(',')}`;
+          const expected = compiled(dependencies);
+          expect(evaluate(dependencies), label).toBe(expected);
+          expect(expression.evaluate(dependencies), label).toBe(expected);
+          expect(functions, label).not.toHaveBeenCalled();
+        }
       }
     }
+  } finally {
+    functions.mockRestore();
   }
 });
 

@@ -5,6 +5,7 @@ import { Form } from '@/schema-form/components/Form';
 import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldRendererProps } from '@/schema-form/types';
 
+import { FormatterErrorBoundary } from '../components/FormatterErrorBoundary';
 import { getRendererBoundary } from '../utils/getRendererBoundary';
 
 afterEach(() => {
@@ -19,6 +20,30 @@ it('shares a boundary type per renderer across fields and A to B to A', () => {
   expect(getRendererBoundary(A)).toBe(first);
   expect(getRendererBoundary(B)).not.toBe(first);
   expect(getRendererBoundary(A)).toBe(first);
+});
+
+it('creates one boundary class for fields sharing a renderer through Form', () => {
+  const boundaryRenders = vi.spyOn(FormatterErrorBoundary.prototype, 'render');
+  const Renderer = ({ Input }: FieldRendererProps) => <Input />;
+  const view = render(
+    <Form
+      FieldRenderer={Renderer}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          first: { type: 'string' },
+          second: { type: 'string' },
+        },
+      }}
+    />,
+  );
+  expect(view.container.querySelectorAll('input')).toHaveLength(2);
+  const instances = (
+    boundaryRenders.mock.contexts as FormatterErrorBoundary[]
+  ).filter((instance, index, all) => all.indexOf(instance) === index);
+  expect(instances).toHaveLength(3);
+  for (const instance of instances)
+    expect(instance.constructor).toBe(instances[0].constructor);
 });
 
 it('recovers A after B without retaining failed instance state', () => {
