@@ -4,6 +4,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
+import ts from 'typescript';
 
 import { fixDtsExtensions } from '../utils/fixDtsExtensions.mjs';
 
@@ -98,4 +99,82 @@ test('preserves import-looking string literal types and comments', (context) => 
   });
   fixDtsExtensions(root);
   assert.equal(readFileSync(join(root, 'consumer.d.ts'), 'utf8'), source);
+});
+
+test('dot directory specifiers ignore adjacent declaration files', (context) => {
+  for (const extension of ['ts', 'mts']) {
+    const source = ['.', './', '..', '../', '../..'].map((path) => `export * from '${path}';`).join('\n');
+    const root = createFixture(context, {
+      [`src/utils/consumer.d.${extension}`]: source,
+      [`src/utils/index.d.${extension}`]: 'export {};',
+      [`src/index.d.${extension}`]: 'export {};',
+      [`index.d.${extension}`]: 'export {};',
+      [`src/utils.d.${extension}`]: 'export {};',
+      [`src.d.${extension}`]: 'export {};',
+    });
+    fixDtsExtensions(root);
+    const runtimeExtension = extension === 'ts' ? 'js' : 'mjs';
+    assert.equal(readFileSync(join(root, `src/utils/consumer.d.${extension}`), 'utf8'),
+      ['./index', './index', '../index', '../index', '../../index']
+        .map((path) => `export * from '${path}.${runtimeExtension}';`).join('\n'));
+    assert.deepEqual(fixDtsExtensions(root), { filesProcessed: 0, importsFixed: 0 });
+  }
+});
+
+test('rewrites import equals external module references', (context) => {
+  const source = [
+    "import foo = require('./foo');",
+    'import esm = require("./esm");',
+    "import directory = require('./directory/');",
+    "import external = require('external-package');",
+    'import alias = foo.Value;',
+  ].join('\n');
+  const root = createFixture(context, {
+    'consumer.d.ts': source,
+    'foo.d.ts': 'export type Value = string;',
+    'esm.d.mts': 'export {};',
+    'directory/index.d.ts': 'export {};',
+  });
+  assert.deepEqual(fixDtsExtensions(root), { filesProcessed: 1, importsFixed: 3 });
+  assert.equal(readFileSync(join(root, 'consumer.d.ts'), 'utf8'), source
+    .replace("'./foo'", "'./foo.js'")
+    .replace('"./esm"', '"./esm.mjs"')
+    .replace("'./directory/'", "'./directory/index.js'"));
+  assert.deepEqual(fixDtsExtensions(root), { filesProcessed: 0, importsFixed: 0 });
+});
+
+test('rewrites reference path directives to actual declarations', (context) => {
+  const source = [
+    '/// <reference path="./types" />',
+    "/// <reference path='./esm' />",
+    '/// <reference path="./directory" />',
+    '/// <reference path="./esm-directory/" />',
+    '/// <reference path="./existing.d.ts" />',
+    "import './module';",
+    '// <reference path="./types" /> is ordinary commentary.',
+    'export {};',
+  ].join('\n');
+  const root = createFixture(context, {
+    'consumer.d.ts': source,
+    'types.d.ts': 'interface FixtureType {}',
+    'esm.d.mts': 'export {};',
+    'directory/index.d.ts': 'interface DirectoryType {}',
+    'esm-directory/index.d.mts': 'export {};',
+    'existing.d.ts': 'interface ExistingType {}',
+    'module.d.ts': 'export {};',
+  });
+  assert.deepEqual(fixDtsExtensions(root), { filesProcessed: 1, importsFixed: 5 });
+  const file = join(root, 'consumer.d.ts');
+  assert.equal(readFileSync(file, 'utf8'), source
+    .replace('path="./types"', 'path="./types.d.ts"')
+    .replace("path='./esm'", "path='./esm.d.mts'")
+    .replace('path="./directory"', 'path="./directory/index.d.ts"')
+    .replace('path="./esm-directory/"', 'path="./esm-directory/index.d.mts"')
+    .replace("'./module'", "'./module.js'"));
+  const program = ts.createProgram([file], {
+    noEmit: true, types: [], module: ts.ModuleKind.NodeNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+  });
+  assert.deepEqual(ts.getPreEmitDiagnostics(program).map((diagnostic) => diagnostic.messageText), []);
+  assert.deepEqual(fixDtsExtensions(root), { filesProcessed: 0, importsFixed: 0 });
 });

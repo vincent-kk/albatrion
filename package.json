@@ -53,7 +53,7 @@
     "styleUtils": "yarn workspace @winglet/style-utils",
     "sync:docs": "yarn workspace @albatrion/documents sync-api-docs",
     "tag:packages": "./scripts/tag-packages.sh",
-    "test:build-scripts": "node --test --test-reporter=tap packages/aileron/script/build/__tests__",
+    "test:build-scripts": "node --test --test-reporter=tap packages/aileron/script/build/__tests__/*.test.mjs",
     "testbed:production": "yarn workspace @aileron/production-testbed"
   },
   "resolutions": {
