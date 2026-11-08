@@ -9,12 +9,14 @@ export interface CreateDynamicFunction {
     fieldName: string,
     rawExpression: Optional<string>,
     coerceToBoolean: true,
+    preparedExpression?: string,
   ): Optional<DynamicFunction<boolean>>;
   <ReturnType = any>(
     pathManager: PathManager,
     fieldName: string,
     rawExpression: Optional<string>,
     coerceToBoolean?: false,
+    preparedExpression?: string,
   ): Optional<DynamicFunction<ReturnType>>;
 }
 

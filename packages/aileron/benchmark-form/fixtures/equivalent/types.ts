@@ -18,6 +18,8 @@ export type EquivalentJSONSchema = JSONSchema & JSONSchema0160 & JSONSchema0161;
 
 export interface EquivalentFixture {
   name: string;
+  /** Starting array size, distinct from the number of items added by interactions. */
+  initialItems?: number;
   legacy: EquivalentJSONSchema;
   workspace: JSONSchema;
   interactions: Interaction[];

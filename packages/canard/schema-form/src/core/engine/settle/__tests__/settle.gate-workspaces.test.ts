@@ -4,7 +4,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import * as compiler from '../../blueprint/compileBlueprintExpressions';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import type { SettlementContext } from '../types/settlement';
 import { evaluateGate } from '../utils/gates/evaluateGate';
@@ -15,20 +15,26 @@ describe('compiled active gate workspace characterization', () => {
     'preserves outer dependencies across a nested read, throw=%s',
     (throws) => {
       const calls: unknown[][] = [];
-      const compile = compiler.createDynamicFunction;
+      const compile = compiler.compileBlueprintExpressions;
       let recording = false;
       const compiling = vi
-        .spyOn(compiler, 'createDynamicFunction')
-        .mockImplementation((manager, key, source, boolean) => {
-          const original = boolean
-            ? compile(manager, key, source, true)
-            : compile(manager, key, source, false);
-          if (!original) return;
-          return (dependencies: unknown[]) => {
-            if (recording && key === 'active') calls.push(dependencies.slice());
-            return original(dependencies);
-          };
-        });
+        .spyOn(compiler, 'compileBlueprintExpressions')
+        .mockImplementation((context) =>
+          compile(context).map((expression) => {
+            const wrapped = {
+              ...expression,
+              evaluate: (dependencies: unknown[]) => {
+                if (recording && expression.key === 'active')
+                  calls.push(dependencies.slice());
+                return expression.evaluate(dependencies);
+              },
+            };
+            Object.defineProperty(wrapped, 'completeReads', {
+              value: expression.completeReads,
+            });
+            return Object.freeze(wrapped);
+          }),
+        );
       try {
         const { root, blueprint } = createTestTree({
           type: 'object',

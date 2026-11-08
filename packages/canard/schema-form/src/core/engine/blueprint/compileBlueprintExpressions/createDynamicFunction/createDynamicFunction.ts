@@ -17,6 +17,7 @@ import { substituteDependencyPaths } from './utils/substituteDependencyPaths';
  * @param fieldName - Field name to create the function for
  * @param expression - Expression to evaluate, can be a JSON pointer path
  * @param coerceToBoolean - Must be true for boolean return type
+ * @param preparedExpression - Optional substitution already registered in pathManager for expression
  * @returns Compiled value or boolean function, or undefined for an empty expression
  * @throws JSONSchemaError when the generated function body has invalid syntax
  */
@@ -25,13 +26,12 @@ export const createDynamicFunction: CreateDynamicFunction = (
   fieldName: string,
   expression: Optional<string>,
   coerceToBoolean: boolean = false,
+  preparedExpression?: string,
 ) => {
   if (typeof expression !== 'string') return;
 
-  const processedExpression = substituteDependencyPaths(
-    pathManager,
-    expression,
-  );
+  const processedExpression =
+    preparedExpression ?? substituteDependencyPaths(pathManager, expression);
 
   if (processedExpression.length === 0) return;
 

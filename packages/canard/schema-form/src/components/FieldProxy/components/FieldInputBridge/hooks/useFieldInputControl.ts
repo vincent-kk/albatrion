@@ -54,7 +54,8 @@ export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
 ) => {
-  const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
+  const refreshRevision = node.revision(FieldNodeEventType.RequestRefresh);
+  const generation = useRef(refreshRevision);
 
   const [, update] = useVersion();
   const ref = useRef<HTMLDivElement>(null);
@@ -89,8 +90,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
     );
   }, [node, refreshDeferral]);
   useSyncExternalStore(subscribe, getRevision, getRevision);
-  if (refreshDeferral.current === 0)
-    generation.current = node.revision(FieldNodeEventType.RequestRefresh);
+  if (refreshDeferral.current === 0) generation.current = refreshRevision;
   const handleCompositionStart = useCallback(() => {
     refreshDeferral.current |= COMPOSING;
   }, [refreshDeferral]);

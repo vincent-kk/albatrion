@@ -15,6 +15,7 @@ import { applyInteraction } from '../../../fixtures/equivalent/utils/applyIntera
 import { mountEquivalentForm } from '../../../fixtures/equivalent/utils/mountEquivalentForm';
 import { loadCoreBenchmark } from '../../utils/loadCoreBenchmark';
 import { measureRenderUpdates } from '../../utils/measureRenderUpdates';
+import { prepareSchemaSample } from '../../utils/prepareSchemaSample';
 import { settleUpdates } from '../../utils/settleUpdates';
 import { forceGc, setupJsdom } from '../../utils/setup-env';
 import { welchTTest } from '../../utils/stats';
@@ -158,109 +159,160 @@ export async function runEquivalentBenchmarks() {
     args.find((arg) => arg.startsWith('--mode='))?.split('=')[1] ?? 'both';
   const modes = mode === 'both' ? ['core', 'render'] : [mode];
   const selected = args.find((arg) => arg.startsWith('--fixture='))?.slice(10);
+  const schemaOption =
+    args.find((arg) => arg.startsWith('--schema-lane='))?.slice(14) ?? 'both';
+  if (
+    schemaOption !== 'warm' &&
+    schemaOption !== 'cold' &&
+    schemaOption !== 'both'
+  )
+    throw new Error('--schema-lane must be warm, cold or both');
+  const schemaLanes: readonly ('warm' | 'cold')[] =
+    schemaOption === 'both' ? (['warm', 'cold'] as const) : [schemaOption];
   for (const lane of modes) {
     if (lane === 'render') setupJsdom();
-    for (const fixture of equivalentFixtures.filter(
-      (fixture) => !selected || fixture.name === selected,
-    )) {
-      const samples: Record<string, Sample[]> = { [legacy]: [], latest: [] };
-      for (let index = -warmup; index < count; index++) {
-        // Alternate AB/BA to distribute JIT and temperature drift across versions.
-        for (const version of index % 2 === 0
-          ? ([legacy, 'latest'] as const)
-          : (['latest', legacy] as const)) {
-          forceGc();
-          const sample =
-            lane === 'core'
-              ? await sampleCore(fixture, version, cores[version].create)
-              : await sampleRender(fixture, version);
-          if (index >= 0) samples[version].push(sample);
-          // React 19 development profiling retains User Timing entries across roots.
-          performance.clearMeasures();
-          performance.clearMarks();
+    for (const schemaLane of lane === 'render'
+      ? schemaLanes
+      : (['warm'] as const)) {
+      for (const fixture of equivalentFixtures.filter(
+        (fixture) => !selected || fixture.name === selected,
+      )) {
+        const samples: Record<string, Sample[]> = { [legacy]: [], latest: [] };
+        for (let index = -warmup; index < count; index++) {
+          // Alternate AB/BA to distribute JIT and temperature drift across versions.
+          for (const version of index % 2 === 0
+            ? ([legacy, 'latest'] as const)
+            : (['latest', legacy] as const)) {
+            const prepared = prepareSchemaSample(fixture, schemaLane);
+            forceGc();
+            const sample =
+              lane === 'core'
+                ? await sampleCore(prepared, version, cores[version].create)
+                : await sampleRender(prepared, version);
+            if (index >= 0) samples[version].push(sample);
+            // React 19 development profiling retains User Timing entries across roots.
+            performance.clearMeasures();
+            performance.clearMarks();
+          }
         }
-      }
-      raw.push({
-        fixture: fixture.name,
-        lane,
-        samples: Object.fromEntries(
-          Object.entries(samples).map(([version, values]) => [version, values]),
-        ),
-      });
-      for (const metric of Object.keys(samples.latest[0])) {
-        const old = summarize(samples[legacy].map((sample) => sample[metric]));
-        const current = summarize(
-          samples.latest.map((sample) => sample[metric]),
-        );
-        const isCount = metric.startsWith('commits');
-        const positive =
-          old.samples.every((value) => value > 0) &&
-          current.samples.every((value) => value > 0);
-        const welch =
-          !isCount && positive
-            ? welchTTest(
-                old.samples.map((value) => 1000 / value),
-                current.samples.map((value) => 1000 / value),
-              )
-            : null;
-        const drop = welch ? (1 - welch.meanB / welch.meanA) * 100 : null;
-        rows.push({
+        raw.push({
           fixture: fixture.name,
-          metric,
-          old: { median: old.median, p99: old.p99 },
-          new: { median: current.median, p99: current.p99 },
-          ratio: current.median / old.median,
-          p99Ratio: current.p99 / old.p99,
-          throughputDrop: drop,
-          p: welch?.pValue ?? null,
-          regression: welch ? drop! > 15 && welch.pValue < 0.05 : false,
+          lane,
+          schemaLane,
+          initialItems: fixture.initialItems,
+          samples: Object.fromEntries(
+            Object.entries(samples).map(([version, values]) => [
+              version,
+              values,
+            ]),
+          ),
         });
-      }
-      fs.mkdirSync(path.dirname(output), { recursive: true });
-      const summary = JSON.stringify(
-        {
+        for (const metric of Object.keys(samples.latest[0])) {
+          const old = summarize(
+            samples[legacy].map((sample) => sample[metric]),
+          );
+          const current = summarize(
+            samples.latest.map((sample) => sample[metric]),
+          );
+          const isCount = metric.startsWith('commits');
+          const positive =
+            old.samples.every((value) => value > 0) &&
+            current.samples.every((value) => value > 0);
+          const welch =
+            !isCount && positive
+              ? welchTTest(
+                  old.samples.map((value) => 1000 / value),
+                  current.samples.map((value) => 1000 / value),
+                )
+              : null;
+          const drop = welch ? (1 - welch.meanB / welch.meanA) * 100 : null;
+          rows.push({
+            fixture: fixture.name,
+            lane,
+            schemaLane,
+            initialItems: fixture.initialItems,
+            metric,
+            old: { median: old.median, p99: old.p99 },
+            new: { median: current.median, p99: current.p99 },
+            ratio: current.median / old.median,
+            p99Ratio: current.p99 / old.p99,
+            throughputDrop: drop,
+            p: welch?.pValue ?? null,
+            regression: welch ? drop! > 15 && welch.pValue < 0.05 : false,
+          });
+        }
+        fs.mkdirSync(path.dirname(output), { recursive: true });
+        const summary = JSON.stringify(
+          {
+            timestamp,
+            commit,
+            node: process.version,
+            react: reactVersion,
+            cpu: os.cpus()[0].model,
+            os: `${os.type()} ${os.release()} ${os.arch()}`,
+            warmup,
+            count,
+            mode,
+            legacyVersion: legacy,
+            coreBundleDigests: {
+              legacy: cores[legacy].digest,
+              workspace: cores.latest.digest,
+            },
+            updateSettlement:
+              'microtasks -> immediate/message -> timer(0) -> immediate/message',
+            updateFloor:
+              'separate empty barrier after each settled interaction; net is signed subtraction',
+            updateWindows:
+              'update-settled = update-sync + update-post-sync; never add sync to settled',
+            rows,
+          },
+          null,
+          2,
+        );
+        const timings = JSON.stringify({
           timestamp,
           commit,
-          node: process.version,
-          react: reactVersion,
-          cpu: os.cpus()[0].model,
-          os: `${os.type()} ${os.release()} ${os.arch()}`,
           warmup,
           count,
-          mode,
-          legacyVersion: legacy,
-          coreBundleDigests: {
-            legacy: cores[legacy].digest,
-            workspace: cores.latest.digest,
-          },
-          updateSettlement:
-            'microtasks -> immediate/message -> timer(0) -> immediate/message',
-          updateFloor:
-            'separate empty barrier after each settled interaction; net is signed subtraction',
-          rows,
-        },
-        null,
-        2,
-      );
-      const timings = JSON.stringify({ timestamp, commit, warmup, count, raw });
-      if (
-        Buffer.byteLength(summary) > 5_000_000 ||
-        Buffer.byteLength(timings) > 5_000_000
-      )
-        throw new Error('Measurement exceeds 5 MB');
-      fs.writeFileSync(output.replace(/\.json$/, '-summary.json'), summary);
-      fs.writeFileSync(output, timings);
-      console.log(`${lane} ${fixture.name}: ${count} paired samples saved`);
+          raw,
+        });
+        if (
+          Buffer.byteLength(summary) > 5_000_000 ||
+          Buffer.byteLength(timings) > 5_000_000
+        )
+          throw new Error('Measurement exceeds 5 MB');
+        fs.writeFileSync(output.replace(/\.json$/, '-summary.json'), summary);
+        fs.writeFileSync(output, timings);
+        console.log(
+          `${lane}/${schemaLane} ${fixture.name}${fixture.initialItems === undefined ? '' : ` (initialItems=${fixture.initialItems})`}: ${count} paired samples saved`,
+        );
+      }
     }
   }
   console.table(
-    rows.map(({ fixture, metric, old, new: current, ratio }) => ({
-      fixture,
-      metric,
-      L: old.median,
-      E: current.median,
-      'E/L': ratio,
-    })),
+    rows.map(
+      ({
+        fixture,
+        lane,
+        schemaLane,
+        initialItems,
+        metric,
+        old,
+        new: current,
+        ratio,
+      }) => ({
+        fixture:
+          initialItems === undefined
+            ? fixture
+            : `${fixture} (initialItems=${initialItems})`,
+        lane,
+        schemaLane,
+        metric,
+        L: old.median,
+        E: current.median,
+        'E/L': ratio,
+      }),
+    ),
   );
   console.log(`Saved ${output}`);
 }

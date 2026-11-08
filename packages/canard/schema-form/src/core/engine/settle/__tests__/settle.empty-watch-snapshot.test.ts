@@ -42,7 +42,10 @@ describe('watch-free exit snapshots', () => {
     });
     loadFieldNodeAtMount(root, { field: 'kept' }, WriteOption.Overwrite);
     const field = root.structure!.field;
-    const empty = readFieldNodeWatchValues(field);
+    const empty = readFieldNodeWatchValues(field, {
+      schema: field.schema.schema,
+      emit: root.emit,
+    });
     const memo = root.runtime.watchValuesMemo!.get(field);
     captureDetachedFieldNodeReads(field, {
       schema: field.schema.schema,

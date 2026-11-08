@@ -22,6 +22,7 @@ it('separates synchronous work, settled elapsed time and the empty barrier floor
   expect(result).toEqual({
     'update-sync': 6,
     'update-settled': 30,
+    'update-post-sync': 24,
     'update-idle-floor': 8,
     'update-settled-net': 22,
   });

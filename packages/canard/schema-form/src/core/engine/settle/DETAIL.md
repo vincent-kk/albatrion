@@ -625,6 +625,8 @@ misfits는 원본과 현재 유효 형상의 계산 결과이며 검증 통과�
 
 청사진 전체의 hasWatch=false만 나감의 watch 포착을 생략하는 증명입니다. 마지막 선택의 watch가 비어 있다는 이유로 생략하면 이전에 발행한 비어 있지 않은 메모가 떼어진 읽기에 남습니다.
 
+살아 있는 snapshot 없는 빈 watch 읽기는 이전 메모도 비어 있을 때 공유 EMPTY_ARRAY를 반환하며 witness·메모를 할당하지 않습니다. 이전 값이 비어 있지 않으면 정리 경로를 유지하여 detach 뒤에도 낡은 감시 값이 남지 않게 합니다. snapshot 읽기는 현재 watch와 별도로 이전 입력을 포착하므로 이 생략에 포함하지 않습니다.
+
 ### settle-projected-structure-read — 자체 노드 조회와 후퇴
 
 노드만 저장하는 비배열 null-prototype 구조에서만 직접 노드 조회를 own-key 증거로 사용합니다. 일반 prototype·배열·source·emit·extras의 임의 값에는 own-key 검사를 유지하여 상속 속성이나 undefined 방출을 노드 부재로 오인하지 않습니다.

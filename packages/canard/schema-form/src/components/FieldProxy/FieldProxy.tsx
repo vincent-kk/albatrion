@@ -27,8 +27,8 @@ import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { createFieldInputBridge } from './components/FieldInputBridge';
-import { FormatterErrorBoundary } from './components/FormatterErrorBoundary';
 import type { FieldProxyProps } from './type';
+import { getRendererBoundary } from './utils/getRendererBoundary';
 
 const RERENDERING_EVENT =
   FieldNodeEventType.UpdateValue |
@@ -95,9 +95,7 @@ export const FieldProxy = ({
       }, [node, refreshRef.current, context, formatError]);
       return <Renderer {...props} errorMessage={errorMessage} />;
     }
-    // The selected renderer owns the boundary lifetime as well as its UI.
-    class RendererBoundary extends FormatterErrorBoundary {}
-    return [RendererWithErrorMessage, RendererBoundary] as const;
+    return [RendererWithErrorMessage, getRendererBoundary(Component)] as const;
   }, [Component, refreshRef]);
   const Wrapper = useConstant(InputWrapper || Fragment);
   const { context } = useWorkspaceContext();

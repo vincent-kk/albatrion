@@ -44,6 +44,8 @@ Activity·Suspense의 layout 해제는 조합 보류를 끝냅니다. 끝 이벤
 
 값·속성·자식·Refresh는 통합 외부 저장소 스냅숏 하나를 사용하여 동시 마운트의 구독 공백을 막습니다. 보류가 없으면 통합 마스크를 한 번 읽고, 보류 중이면 Refresh 제외 revision과 적용 세대를 합칩니다. 자식 소유권은 렌더·attach·배달 때 갱신하고 자식 layout 정리만으로 스냅숏을 바꾸지 않아 마지막 배열 삭제의 추가 커밋을 막습니다.
 
+렌더가 직접 읽는 Refresh revision은 초기 세대와 적용 세대에 공유하여 렌더당 중복 조회를 피합니다. 이 호출 한정 값은 구독의 스냅숏 확인을 대체하지 않으므로 렌더와 attach 사이 변경 및 Activity 재연결을 계속 따라잡습니다.
+
 focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독합니다. focus는 첫 input·textarea·select·button, select는 첫 input·textarea를 대상으로 하여 앞의 버튼·select가 텍스트 선택을 가로채지 않게 합니다. 입력의 commit 작업은 같은 layout effect를 공유하고, 표시 release와 composition 종료는 useVersion의 안정된 갱신 dispatch를 공유하여 effect를 추가하지 않습니다.
 
 ### GOAL-067 — 자식 캐시와 하이드레이션
