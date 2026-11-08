@@ -180,8 +180,9 @@ it('preserves the scripted render invalidations for changed and identical error 
   expect(result.current.errorMatrix).toHaveLength(3);
 });
 
-it.each([false, true])(
-  'retains the cold-read token during a changed-prop reconnect (StrictMode=%s)',
+// React 18 Suspense keeps this subscription; remount creates a new store.
+it.skipIf(inject('reactMajor') === '18').each([false, true])(
+  'retains the cold-read token when Activity reconnects with changed props (StrictMode=%s)',
   (strict) => {
     const root = createRoot();
     let value: ReturnType<typeof useChildFieldErrors>;
