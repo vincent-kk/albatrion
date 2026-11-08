@@ -69,7 +69,7 @@ useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 
 ### 라이프사이클 시점
 
 - 위치는 입력 컨테이너가 있는 브리지 인스턴스입니다. 입력이 없어 null을 반환하는 브리지는 시점을 발행하지 않습니다. 유일한 layout effect는 useFieldLifecycle이 소유하며 터미널 자식 커밋, hydration 표시, 노출 기록, 가상화 입력 등록, 명령 구독 뒤 Mount와 Render를 실행합니다. cleanup은 committed를 지우고 조합·구독·입력 등록을 정리한 뒤 Unmount를 실행합니다.
-- effect 함수는 같은 의존성으로 useMemo에서 만들며 실행 여부를 그 클로저에 보존합니다. 같은 함수의 StrictMode 재실행·Activity 재표시는 Mount와 Render를 소비하지 않습니다. 숨겨진 동안 의존성이 바뀌면 재표시가 새 Mount입니다. Unmount는 cleanup에서 실행되므로 StrictMode 재실행과 Activity 숨김에도 실행되며 행동은 무시합니다.
+- effect 함수는 같은 의존성으로 useMemo에서 만들며 실행 여부를 그 클로저에 보존합니다. 같은 함수의 StrictMode 재실행·Activity 재표시는 Mount와 Render를 소비하지 않습니다. 이 재실행 방지는 React 18·19의 해당 재연결 경로처럼 의존성이 같은 동안 React가 메모된 effect를 유지한다는 전제에 의존하며, 향후 React가 이를 폐기하면 실행 여부도 초기화되어 StrictMode 재실행·Activity 재표시에서 Mount와 Render 예약을 다시 소비할 수 있습니다. 숨겨진 동안 의존성이 바뀌면 재표시가 새 Mount입니다. Unmount는 cleanup에서 실행되므로 StrictMode 재실행과 Activity 숨김에도 실행되며 행동은 무시합니다.
 - 한 커밋의 Render는 Mount 뒤 한 번입니다. 다른 커밋은 committed이고 Render 예약이 있는 위치에만 감지 컴포넌트를 렌더합니다. 의존성 변경의 mutation cleanup이 committed를 지워 자식 감지기가 Mount보다 먼저 실행하지 못하게 합니다. 감지기 자신의 effect 재실행도 같은 함수 비교로 막습니다.
 - 예약만으로 렌더하지 않으며 같은 노드의 여러 위치는 커밋 순서상 먼저 실행한 위치가 큐를 가져갑니다. 한 시점의 행동은 합쳐 컨테이너에 한 번 실행하고 Focus 다음 Select 순서를 지킵니다.
 - 오류는 FormRoot의 던지지 않는 보고기로 보내 나머지 예약과 입력 트리를 유지합니다. 큐 의미는 [fieldLifecycle](../../../../helpers/fieldLifecycle/DETAIL.md)의 계약을 따릅니다.
