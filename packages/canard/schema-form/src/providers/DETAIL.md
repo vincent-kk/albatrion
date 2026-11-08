@@ -8,6 +8,7 @@
 
 조립 순서는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. 각 Context는 설정 전달과 자기 수명만 담당하며 노드 로드·준비·reset·검증 예약·콜백 전달을 상위 providers 계약으로 복제하지 않습니다. 해당 계약은 [RootNodeContext](RootNodeContext/DETAIL.md)에 둡니다.
 
+- 라이프사이클 소비자는 FieldLifecycleContext의 진입점을 직접 사용합니다. 상위 providers가 같은 이름을 재노출하지 않아 소유 경계를 우회하는 별도 주소를 만들지 않습니다.
 - 라이프사이클 레지스트리는 FormRoot가 소유하고 FieldLifecycleContext의 Context 요소가 전달합니다. 다른 Provider와 달리 래퍼 컴포넌트가 없으며 Form 재렌더의 고정 호출 수를 유지하기 위한 예외입니다.
 
 ## Acceptance Criteria

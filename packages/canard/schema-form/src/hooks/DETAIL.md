@@ -36,7 +36,7 @@ ref 할당은 렌더를 만들지 않습니다. `formRef.current?.node`를 전�
 
 `useChildFieldErrors`는 raw 오류를 유지하며 집계 자격과 직접 자식 순서의 자격을 각각 반환합니다. 부모·자식 각 노드의 표시 이력을 사용하고 배열 위치 사이에 자격을 이전하지 않습니다. isPresent를 검사하지 않으므로 숨겨진 자식도 집계합니다. 숨김과 비활성의 값을 같은 것으로 다루면 컨테이너가 유효 오류를 잃습니다. 표시 release와 정책은 [FieldRendererContext](../providers/FieldRendererContext/DETAIL.md)가 소유합니다.
 
-구독 중 스냅숏은 O(1) 토큰입니다. 비구독 읽기·연결·정리·보유량은 직접 자식 수 C에 대해 O(C)이며 종료 revision vector 하나를 보존합니다. 같은 저장소의 변화 없는 재연결은 토큰을 유지하되 즉시 검사하고, node·children·disabled로 새 저장소가 만들어지면 React commit 검사를 사용합니다. 이렇게 해야 숨김 변화는 따라잡으면서 구독 identity 교체만으로 추가 렌더하지 않습니다.
+구독 중 스냅숏은 O(1) 토큰입니다. 비구독 읽기·연결·정리·보유량은 직접 자식 수 C에 대해 O(C)이며 종료 revision vector 하나를 보존합니다. 같은 저장소의 변화 없는 비구독 렌더 읽기와 재연결은 마지막 구독 토큰을 유지하되 연결 직후 검사하고, node·children·disabled로 새 저장소가 만들어지면 React commit 검사를 사용합니다. 이렇게 해야 숨김 변화는 따라잡으면서 구독 identity 교체만으로 추가 렌더하지 않습니다.
 
 ### EVENT-044 — 제출 핸들 위임
 
