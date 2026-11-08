@@ -43,3 +43,9 @@ yarn storybook         # Storybook development server (port 6006)
 The [validator plugin contract](../schema-form/src/app/plugin/DETAIL.md) owns the shared obligations (VALIDATE-019, VALIDATE-033, VALIDATE-044, VALIDATE-046, VALIDATE-047, VALIDATE-050, VALIDATE-051, ERROR-201).
 
 AJV keeps `refs` and `schemas` on the instance. A failed `addSchema` must restore both registries in place, including their key order and consumer string aliases, and remove the rejected copy from AJV's cache. Removing only the plugin key can delete a consumer's same-id registration or leave a rejected copy reusable. Keep this rollback paired with `registerValidationRoot` and its failure tests. Sibling instances preserve the bound constructor, options, formats, keyword definitions, bare keywords and consumer schemas, while excluding plugin-owned registrations; otherwise isolating a duplicate id changes validation meaning.
+
+## Declaration compatibility check
+
+`build:verify:types` checks every public package export from fresh built declarations in strict NodeNext and Bundler consumers with `skipLibCheck: false`; `build` runs it after declaration generation. This checks ESM consumer declarations, independently of source aliases and the workspace's Bundler-only typecheck. Build workspace dependencies first. The shared declaration fixer handles static `from` and inline `import()` references, including current and parent directory indexes.
+
+AJV7 exposes its constructor only as a CommonJS default export. The internal instance type follows that default export through module interop wrappers so NodeNext and Bundler resolve the same class. Runtime constructor extraction remains in `resolveAjvConstructor`.
