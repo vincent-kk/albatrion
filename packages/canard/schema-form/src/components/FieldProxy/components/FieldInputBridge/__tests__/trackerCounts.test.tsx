@@ -26,9 +26,6 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-/** Commit marker for a host that renders no terminal read detector. */
-const noTerminalChildren = () => {};
-
 it('F-E retains four listeners per field and unchanged input renders with Refresh, focus and select', () => {
   const probe = nodeFromJSONSchema({ jsonSchema: { type: 'string' } });
   const prototype = Object.getPrototypeOf(probe);
@@ -380,11 +377,7 @@ it('F-E defers a child-layout Refresh at subscribe without an extra caller rende
     };
     const Host = () => {
       callerRenders();
-      const [ref, generation] = useFieldInputControl(
-        node,
-        mountedChildren,
-        noTerminalChildren,
-      );
+      const [ref, generation] = useFieldInputControl(node, mountedChildren);
       return (
         <div ref={ref}>
           <Container key={generation} />

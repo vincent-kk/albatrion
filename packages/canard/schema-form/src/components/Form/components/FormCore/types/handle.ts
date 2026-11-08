@@ -21,6 +21,11 @@ export interface FormHandle<
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   node?: InferFieldNode<Schema>;
+  /**
+   * Focus the exact input through nested virtualization gates, respecting later user focus movement.
+   * Mounted positions keep ordinary node requests; newer requests, reset and confirmed unmount cancel pending reveal focus.
+   * Terminal interiors, omitted layouts and inputs suspended in the reveal commit are unreachable.
+   */
   focus: Fn<[path?: FieldNode['path']]>;
   select: Fn<[path?: FieldNode['path']]>;
   refresh: Fn<[path?: FieldNode['path']]>;

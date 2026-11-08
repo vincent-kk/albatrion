@@ -20,7 +20,7 @@ Semantics the signatures hide:
 - Use `SetValueOption.Merge` for a partial object update; the default `Overwrite` is full replacement and drops unspecified sibling values.
 - `getAttachedFilesMap()` returns a `Map<string, File[]>` keyed by the input's **canonical node path** (`node.path`) — query operators are not used as attachment addresses.
 - `findNode(path)` returns the first match, including for a wildcard; `findNodes(path)` returns all matches.
-- `focus(path)` / `select(path)` reach fields even while deferred by virtualization (they force-mount).
+- `focus(path)` reaches the exact input through nested virtualization gates; `select(path)` retains the node command behavior. Pending-focus cancellation, duplicate positions and unreachable layouts follow [arrays and scale](./arrays-and-scale.md#virtualization).
 - Submit flows: prefer `useFormSubmit(formRef)` over separating validation from submission, so the validated snapshot is the value that reaches the submit callback.
 
 Form `unsetOnInactive` and `disableAutomaticWrites` changes apply at commit to the next engine entry. They do not erase already-retained inactive values or replay automatic writes. Node exit policy and call-local automatic-write flags keep their precedence. A reentrant entry in an open outer chain uses that chain's settings. Child layout calls before the Form settings commit use the last committed settings. For live validation-mode transitions, see [validation UX](validation-ux.md).

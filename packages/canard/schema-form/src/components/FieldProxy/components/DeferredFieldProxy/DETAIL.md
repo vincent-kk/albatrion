@@ -10,6 +10,9 @@
 - Placeholder는 매니저가 소유한 경계 컴포넌트를 사용합니다. 이 자리는 현재 node.path만 경로 문맥에 제공하고, [FormErrorContext](../../../../providers/FormErrorContext/DETAIL.md)의 전용 훅이 렌더 때 보고기를 읽습니다. 여기서 다시 감싸면 경계 수명이 중복됩니다.
 - placeholder는 실제 높이를 갖는 관찰 대상입니다. display: contents로 바꾸면 공간 예약과 관찰 대상을 잃으므로 사용자 Placeholder는 wrapper 내부의 장식만 맡습니다.
 
+- 게이트 객체는 위치 수명 동안 한 번 만들고 ref와 effect 등록에서 재사용합니다. effect 정리는 공개 전환에 반응하지 않으며 위치가 사라졌음을 매니저에 알립니다. 정상 공개의 ref 해제를 위치 소멸로 오인하면 자식의 Mount 예약이 취소됩니다.
+- 공개 커밋은 노출 기록 뒤 위치 수명의 같은 게이트 객체로 settle을 알리고 기존 보류 명령을 재실행합니다. 같은 노드를 그리는 다른 위치는 이 요청을 끝내지 않습니다. 자식 layout effect가 먼저 실행되어 같은 커밋의 대상 Mount가 예약을 가져갈 수 있습니다. 경로 공개는 Focus 요청을 보내지 않으므로 이 명령 재실행에 섞이지 않습니다.
+
 ## Acceptance Criteria
 
 ### GOAL-054 — 노출한 커밋에서 명령을 다시 전달합니다

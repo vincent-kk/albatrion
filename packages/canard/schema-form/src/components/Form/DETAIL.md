@@ -4,11 +4,21 @@
 
 공개 Form은 스키마와 UI 조각의 조합 경계입니다. 노드 생성과 로드는 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md), 핸들·제출·루트 격리는 [FormCore](components/FormCore/DETAIL.md)가 소유합니다. 같은 사실을 Form에서 다시 구현하지 않아 두 진입 경로의 계약이 갈라지는 일을 막습니다.
 
+- Provider의 중첩 순서는 `Workspace → FieldInputs → FieldRenderer → InputControl → Virtualization → FieldLifecycle → RootNode`이며 FieldLifecycle은 Context 요소만 조립한다. 바깥 설정과 안쪽 노드·폼 루트의 소비 관계를 유지해야 하므로 부분 렌더나 순서 변경은 허용하지 않는다.
+
 ## API Contracts
 
 Form의 설정은 불변 참조 교체로 전달합니다. `jsonSchema`·`defaultValue`는 mount·reset 입력이며, 렌더러·포맷터·입력 맵·정의와 실행 기본값은 각 소유자의 live 계약을 따릅니다. 함수 children의 schema·node 일치는 [FormCore](components/FormCore/DETAIL.md), 입력 선택 수명은 [FieldInputsContext](../../providers/FieldInputsContext/DETAIL.md), 표시 설정은 [FieldRendererContext](../../providers/FieldRendererContext/DETAIL.md)에서 다룹니다.
 
 폼 전체 잠금은 [InputControlContext](../../providers/InputControlContext/DETAIL.md)의 UI 계약입니다. core 명령형 쓰기를 잠그는 정책으로 확대하지 않습니다. `onError`의 기록과 검증 판정은 [오류 계약](../../errors/DETAIL.md)에 따라 서로 다른 채널로 유지합니다(SURFACE-012).
+
+### 가상화 초점
+
+- 핸들과 네이티브 무효 제출은 같은 정확한 포커스 흐름을 사용합니다. 포커스를 받을 입력이 마운트된 위치가 있으면 기존 명령을 보내고 다른 조상 게이트는 열지 않습니다. 마운트된 중복 위치는 모두 요청을 받아 마지막 위치가 초점을 가집니다. 대상 자신의 다른 자리표시자는 기존 명령 구독으로 공개될 수 있습니다.
+- 마운트된 입력이 없고 렌더 경로에 막는 게이트가 있으면 대상 Mount를 예약하고 경로를 미리 공개하여 한 커밋에 정확한 대상 입력을 엽니다. 이 흐름은 Focus 명령을 보내지 않아 지연 전달이나 자리표시자의 재전달이 취소 뒤 초점을 빼앗지 않습니다. 구현 수명은 [FormCore](./components/FormCore/DETAIL.md)가 소유합니다.
+- 새 요청, reset·루트 교체, 확인된 폼 언마운트나 게이트 소멸은 예약을 끝냅니다. 요청 동안 어떤 focusin이라도 발생하면 대상 행동을 생략하며 다른 곳에 갔다 돌아오는 이동과 하위 자동 포커스도 존중합니다.
+- terminal 안쪽, 사용자 레이아웃이 생략한 입력, 숨겨진 Activity, 공개 커밋에서 Suspense로 마운트되지 않은 입력에는 도달하지 않습니다. 숨김·disabled·inert 요소는 focus를 무시할 수 있고 다음 무효 후보로 넘어가지 않습니다. 주변 자리표시자의 높이가 바뀌어 생기는 스크롤 위치 이동은 보정하지 않습니다.
+- 이미 마운트된 대상이나 막는 게이트가 없는 대상에 보낸 명령이 지연되면 이후 마운트된 위치에도 닿으며 새 요청으로 취소되지 않습니다. 이는 예약 공개와 구별되는 기존 노드 명령의 수명입니다.
 
 ## Acceptance Criteria
 

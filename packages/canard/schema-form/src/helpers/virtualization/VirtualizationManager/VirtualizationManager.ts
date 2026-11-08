@@ -17,6 +17,8 @@ import {
   type VirtualizationPlaceholderProps,
   resolveVirtualizationOptions,
 } from '../resolveVirtualizationOptions';
+import type { DeferredGate } from './types/deferredGate';
+import { findRevealPath } from './utils/findRevealPath';
 import { formatVirtualizationDisabledWarning } from './utils/formatVirtualizationDisabledWarning';
 import { type IdleDeadlineLike, scheduleIdle } from './utils/scheduleIdle';
 
@@ -50,7 +52,18 @@ export class VirtualizationManager {
   private readonly options: ResolvedVirtualizationOptions;
 
   /** Deferred placeholders awaiting reveal, in registration order */
-  private readonly registry = new Map<Element, Fn>();
+  private readonly registry = new Map<Element, DeferredGate>();
+
+  /** Gates opened but not yet removed by their commit ref callback. */
+  private readonly revealing = new Map<Element, DeferredGate>();
+
+  /** One active focus reveal, installed before a potentially synchronous commit. */
+  private trackedReveal:
+    | { element: Element; gate: DeferredGate; onSettled: Fn }
+    | undefined;
+
+  /** Input containers keyed by position; only focus requests search by node. */
+  private readonly inputs = new Map<Element, FieldNode>();
 
   /** Nodes revealed at least once — survives ChildComponent cache rebuilds (e.g. array renumbering) */
   private readonly revealedNodes = new WeakSet<FieldNode>();
@@ -95,8 +108,8 @@ export class VirtualizationManager {
    * Track a placeholder element until it is revealed.
    * @remarks Idempotent; re-registering an element replaces its reveal callback.
    */
-  public register(element: Element, reveal: Fn): void {
-    this.registry.set(element, reveal);
+  public register(element: Element, gate: DeferredGate): void {
+    this.registry.set(element, gate);
     this.ensureObserver()?.observe(element);
     if (this.options.backfill === VirtualizationBackfill.Idle)
       this.ensureIdlePump();
@@ -107,9 +120,41 @@ export class VirtualizationManager {
    * @remarks Idempotent; safe to call after the element was already revealed.
    */
   public unregister(element: Element): void {
+    this.revealing.delete(element);
     if (!this.registry.delete(element)) return;
     this.observer?.unobserve(element);
     if (this.registry.size === 0) this.stopIdlePump();
+  }
+
+  /**
+   * Register a real input container; replacing the same position is idempotent.
+   * @param element - Mounted input position, distinct from its renderer wrapper.
+   * @param node - Field rendered by this input position.
+   * @returns Nothing; focus lookup can now find this position.
+   */
+  public attachInput(element: Element, node: FieldNode): void {
+    this.inputs.set(element, node);
+  }
+
+  /**
+   * Release the input position captured by its layout effect.
+   * @param element - Position whose input effect is being cleaned up.
+   * @returns Nothing; repeated removal is harmless.
+   */
+  public detachInput(element: Element): void {
+    this.inputs.delete(element);
+  }
+
+  /**
+   * Find this field's input containers only when focus is requested.
+   * @param node - Exact field identity; paths do not distinguish duplicate positions.
+   * @returns Matching containers in registration order, empty when none are mounted.
+   */
+  public inputsOf(node: FieldNode): Element[] {
+    const elements: Element[] = [];
+    for (const [element, input] of this.inputs)
+      if (input === node) elements.push(element);
+    return elements;
   }
 
   /** Whether the node has been revealed before (must stay eager on re-bake) */
@@ -120,6 +165,57 @@ export class VirtualizationManager {
   /** Record a node as revealed (one-way, idempotent) */
   public markRevealed(node: FieldNode): void {
     this.revealedNodes.add(node);
+  }
+
+  /**
+   * Mark the target render path and open its first gate.
+   * @param target - Present field whose physical and virtual render ancestors are searched.
+   * @param onSettled - Called when the tracked gate commits or its removal is confirmed.
+   * @returns Whether a blocking gate was found, including one already opening.
+   */
+  public revealPath(target: FieldNode, onSettled: Fn): boolean {
+    const path = findRevealPath(target, this.registry, this.revealing);
+    if (!path) return false;
+    for (const node of path.renderPath) this.revealedNodes.add(node);
+    this.trackedReveal = {
+      element: path.element,
+      gate: path.gate,
+      onSettled,
+    };
+    if (this.registry.has(path.element)) this.reveal(path.element);
+    return true;
+  }
+
+  /**
+   * Settle after child input layout effects have consumed the target Mount queue.
+   * @param gate - Stable object belonging to the position that committed the reveal.
+   * @returns Nothing; another position of the same field cannot settle this request.
+   */
+  public settleReveal(gate: DeferredGate): void {
+    const tracked = this.trackedReveal;
+    if (!tracked || tracked.gate !== gate) return;
+    this.trackedReveal = undefined;
+    tracked.onSettled();
+  }
+
+  /**
+   * Confirm removal after synchronous effect replay has had a chance to register again.
+   * @param element - Placeholder position released by its owning effect cleanup.
+   * @returns Nothing; a microtask settles only the same still-absent tracked position.
+   */
+  public releaseGate(element: Element): void {
+    const tracked = this.trackedReveal;
+    if (!tracked || tracked.element !== element) return;
+    queueMicrotask(() => {
+      if (
+        this.trackedReveal !== tracked ||
+        this.registry.has(element) ||
+        this.revealing.has(element)
+      )
+        return;
+      this.trackedReveal = undefined;
+      tracked.onSettled();
+    });
   }
 
   /**
@@ -135,12 +231,13 @@ export class VirtualizationManager {
 
   /** Reveal a tracked element: drop it from the registry and run its callback */
   private reveal(element: Element): void {
-    const reveal = this.registry.get(element);
-    if (reveal === undefined) return;
+    const gate = this.registry.get(element);
+    if (gate === undefined) return;
     this.registry.delete(element);
+    this.revealing.set(element, gate);
     this.observer?.unobserve(element);
     if (this.registry.size === 0) this.stopIdlePump();
-    reveal();
+    gate.reveal();
   }
 
   private handleIntersections: IntersectionObserverCallback = (entries) => {

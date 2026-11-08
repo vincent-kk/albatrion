@@ -20,6 +20,13 @@ Provider 조립은 외부 설정을 안쪽 소비자가 읽는 고정 의존 순
 
 네이티브 판정의 공개·focus는 시작 load·root·validation epoch와 연결 상태를 판정 도착 및 공개 뒤에 다시 검사합니다. 비동기 실패의 capture·host 보고는 root 동일성과 epoch로 차단하며 같은 root reset·ordinary supersession만으로 버리지 않습니다. React 18 legacy root의 동기 공개 commit 사이에 사용자 layout effect가 reset하거나 정책을 Never로 바꿀 수 있으므로 초점 직전에도 committed 정책·잠금과 후보를 다시 읽습니다. 버려진 render 설정이 명령에 새어들지 않게 committed ref를 사용합니다.
 
+- FormRoot는 마운트 시 가상화 값과 라이프사이클 레지스트리를 고정하고 Context 요소를 직접 조립합니다. Provider 컴포넌트를 추가하지 않아 고정 렌더 수를 지킵니다. 처리기 오류는 ListenerThrew, origin render, 노드 경로로 보고하며 문자열 변환이 실패해도 고정 메시지와 원래 error 값을 보존합니다. 보고기가 던지면 호스트 오류 통로로 넘깁니다. 호스트도 던지면 더 보고할 곳이 없으므로 삼키며 나머지 큐를 계속 실행합니다.
+- 핸들과 네이티브 무효 제출은 focusNode를 공유합니다. 이전 요청을 취소하고 새 FocusRequest를 ref에 보관한 다음 공개합니다. React 18 legacy root의 공개 커밋 안에서 새 요청이 들어와도 이전 요청을 취소할 수 있어야 합니다. live는 같은 load와 루트 및 취소 여부만 보고 effect-mounted 표시는 읽지 않아 StrictMode 재실행 중 예약을 잃지 않습니다.
+- 입력 마운트 판정은 매니저가 알고 있는 입력 컨테이너의 첫 초점 요소가 존재하며 disabled가 아닌지를 봅니다. FieldProxy 감싸개에는 Input을 생략한 렌더러의 버튼도 있으므로 이를 입력으로 보지 않습니다. 마운트된 입력이 없을 때만 문서의 capture focusin·focusout 관찰과 Mount 예약을 등록한 뒤 revealPath를 호출합니다. 게이트가 없어도 진행 중인 입력 마운트가 예약을 소비할 수 있도록 microtask까지 기다립니다. 이 microtask는 Mount 처리기의 실행 여부와 관계없이 요청을 종료하여 두 리스너와 남은 예약을 해제합니다. 종료 직전까지 요청이 살아 있고 Mount 처리기가 실행되지 않았으며 초점도 이동하지 않았을 때만 기존 Focus 요청을 보냅니다.
+- 요청 뒤 focusin이 발생했거나, 요청 시작의 초점 요소가 연결된 동안 focusout을 보냈거나, 아직 연결되어 있는데 activeElement가 달라졌으면 Mount와 microtask 폴백 모두 Focus 행동을 막습니다. 본문으로 빠진 초점도 이동이며 그 뒤 공개 과정이 시작 요소를 제거해도 이동 기록을 유지합니다. 시작 요소의 제거만으로는 사용자 이동으로 보지 않습니다.
+- reset은 즉시 취소하고 마운트 effect 정리는 microtask 뒤에도 mounted가 거짓일 때 취소합니다. StrictMode cleanup과 재실행 사이의 거짓 값으로 요청을 잃지 않기 위한 확인입니다. 요청의 취소는 등록한 정리를 한 번씩 순서대로 실행하며 취소 뒤 등록한 정리도 즉시 실행합니다.
+- DOM 행동의 보장과 도달할 수 없는 입력의 범위는 부모 Form의 가상화 초점 계약을 따릅니다. 렌더 경로 탐색은 매니저에 맡기며 폼 DOM의 자리표시자를 훑지 않습니다.
+
 ## Acceptance Criteria
 
 ### live-configuration — 함수 children의 일관된 뷰
@@ -53,6 +60,12 @@ native 여부는 `true`만 인정합니다. handle.submit을 클릭 핸들러로
 ### REACT-025 — UI 재생성과 전체 폼 복구를 구분합니다
 
 노드 remount는 트리를 유지한 UI 교체이며 reset은 루트 로드 연산입니다. Form key 교체는 핸들·노드·외부 구독·첨부 파일·가상화·오류 공개·경계 fallback을 포함한 전체 인스턴스 교체입니다. 루트 렌더 경계의 fallback에서 ref가 해제되면 key로 복구합니다. RootNodeContext의 구성 실패 대체 화면은 별도 로드 복구 계약이므로 모든 fallback을 같은 상태로 설명하지 않습니다.
+
+### exact-focus — 취소 가능한 정확한 대상 초점
+
+- 핸들과 네이티브 무효 제출은 중첩 게이트 아래 대상 입력을 한 공개 커밋에 포커스하고 경로 밖 형제를 열지 않습니다. 가상 그룹의 형제 참조를 렌더 경로에 포함합니다.
+- 새 요청·사용자 초점 이동·reset·확인된 언마운트·게이트 소멸은 이전 예약의 행동을 막습니다. StrictMode 재실행은 살아 있는 요청이나 Mount를 중복 소비하지 않습니다.
+- React 18 legacy root의 동기 재진입과 쓰기 중 지연 명령에서도 예약 공개는 대상에 Focus 명령을 보내지 않아 초점을 되찾지 않습니다. production React도 대상 focus 호출이 한 번입니다.
 
 ## Boundary Exemptions
 

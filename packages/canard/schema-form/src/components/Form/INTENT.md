@@ -9,6 +9,8 @@
 - 단일 스키마 입구를 유지하는 이유와 공개 경계는 [DETAIL](DETAIL.md)에 둡니다.
 - 정적 조각은 Form에 붙이고 독립 구현 이름을 별도 공개하지 않습니다. 같은 역할의 진입점 중복을 막습니다.
 
+- FieldLifecycle은 Context 요소만 조립하여 Form 재렌더의 컴포넌트 호출 수를 유지합니다.
+
 ## Boundaries
 
 ### Always do

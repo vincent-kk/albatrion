@@ -1,35 +1,25 @@
 import { type PropsWithChildren, useEffect } from 'react';
 
-import { useLazyConstant } from '@winglet/react-utils/hook';
-
-import type { FormProps } from '@/schema-form/components/Form';
-import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
-
 import { VirtualizationContext } from './VirtualizationContext';
 
+/** FormRoot owns creation so focus requests and input positions share the same manager. */
 interface VirtualizationContextProviderProps {
-  /**
-   * Virtualization (deferred mount) option from the Form props
-   * @remarks Read once at mount; later changes are intentionally ignored so
-   *          already mounted fields never regress to placeholders.
-   */
-  virtualization: FormProps['virtualization'];
+  /** Stable mount-time value supplied by FormRoot. */
+  value: VirtualizationContext;
 }
 
+/** Share the supplied manager and release observation when this provider disconnects. */
 export const VirtualizationContextProvider = ({
-  virtualization,
+  value,
   children,
 }: PropsWithChildren<VirtualizationContextProviderProps>) => {
-  const contextValue = useLazyConstant(() => ({
-    manager: VirtualizationManager.create(virtualization),
-  }));
-  const manager = contextValue.manager;
+  const manager = value.manager;
   useEffect(() => {
     if (manager === null) return;
     return () => manager.disconnect();
   }, [manager]);
   return (
-    <VirtualizationContext.Provider value={contextValue}>
+    <VirtualizationContext.Provider value={value}>
       {children}
     </VirtualizationContext.Provider>
   );
