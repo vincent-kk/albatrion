@@ -179,3 +179,40 @@ it('preserves the scripted render invalidations for changed and identical error 
   expect(renders).toBe(initial + 4);
   expect(result.current.errorMatrix).toHaveLength(3);
 });
+
+it.each([false, true])(
+  'retains the cold-read token during a changed-prop reconnect (StrictMode=%s)',
+  (strict) => {
+    const root = createRoot();
+    let value: ReturnType<typeof useChildFieldErrors>;
+    let renders = 0;
+    const Probe = ({ tick }: { tick: number }) => {
+      renders++;
+      value = useChildFieldErrors(root);
+      return (
+        <output data-tick={tick}>{value.errorMatrix[0][0]?.message}</output>
+      );
+    };
+    const tree = (tick: number, hidden: boolean) => {
+      const content = (
+        <Wrapper>{hideCommittedForm(<Probe tick={tick} />, hidden)}</Wrapper>
+      );
+      return strict ? <StrictMode>{content}</StrictMode> : content;
+    };
+    const view = render(tree(0, false));
+    act(() =>
+      root.children![0].setExternalErrors([
+        { dataPath: '/0', message: 'retained' },
+      ]),
+    );
+    const subscribed = value!;
+    view.rerender(tree(0, true));
+    const before = renders;
+    view.rerender(tree(1, false));
+    expect(view.container.querySelector('output')!.textContent).toBe(
+      'retained',
+    );
+    expect(value!).toBe(subscribed);
+    expect(renders - before).toBe(strict ? 2 : 1);
+  },
+);
