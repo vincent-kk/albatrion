@@ -59,10 +59,16 @@ describe.each([false, true])('focus races strict=%s', (strictMode) => {
       strictMode,
       virtualization: focusVirtualization,
     });
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     await act(async () => {
       form.handle.focus(focusTarget);
       form.field('/first')!.focus();
     });
+    const revealed = form.field(focusTarget);
+    expect(revealed).not.toBeNull();
+    expect(
+      focus.mock.contexts.filter((element) => element === revealed),
+    ).toHaveLength(0);
     expect(document.activeElement).toBe(form.field('/first'));
   });
   it('remembers focus moving away and back to the starting control', async () => {
@@ -71,6 +77,7 @@ describe.each([false, true])('focus races strict=%s', (strictMode) => {
       strictMode,
       virtualization: focusVirtualization,
     });
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     const outside = document.body.appendChild(document.createElement('button'));
     try {
       form.field('/first')!.focus();
@@ -79,6 +86,11 @@ describe.each([false, true])('focus races strict=%s', (strictMode) => {
         outside.focus();
         form.field('/first')!.focus();
       });
+      const revealed = form.field(focusTarget);
+      expect(revealed).not.toBeNull();
+      expect(
+        focus.mock.contexts.filter((element) => element === revealed),
+      ).toHaveLength(0);
       expect(document.activeElement).toBe(form.field('/first'));
     } finally {
       outside.remove();
