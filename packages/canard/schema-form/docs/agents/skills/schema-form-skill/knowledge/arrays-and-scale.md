@@ -143,6 +143,10 @@ Contract — each point matters:
 - Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
 - Benefit scales with form size; small forms gain nothing (hence opt-in).
 
+Options on `Form` apply after mount without changing its key. Turning virtualization off reveals every waiting placeholder and stops observation/backfill; turning it back on gates only unrevealed or new nodes. Mounted fields stay mounted, including fields mounted while it was off. Threshold/eagerCount changes affect waiting and new fields; rootMargin/backfill changes restart waiting observation; estimateHeight/Placeholder changes only update placeholder presentation. Equal primitive values and callback references do not restart observation. Node values, state and errors remain unchanged. FormProvider does not expose this prop.
+
+An unrelated option change preserves a pending focus request. If an option change reveals its gate, the request ends after that gate's reveal commit; removing its position ends the request after removal is confirmed.
+
 For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildFields`.
 
 ## Input responsiveness at scale

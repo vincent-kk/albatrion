@@ -7,7 +7,7 @@ FormRoot가 마운트 시 한 번 만든 가상화 매니저를 전달하여 포
 ## API Contracts
 
 - 마운트 후 virtualization prop이 바뀌어도 기존 매니저를 다시 만들지 않습니다.
-- 비활성·관찰 API 부재의 null 결과를 그대로 전달하며 정리 시 disconnect를 호출합니다.
+- 관찰 API 부재의 null 결과를 그대로 전달하며 정리 시 disconnect를 호출합니다. 비활성에도 manager를 유지하여 이미 마운트한 입력의 노출 이력이 나중 활성화에서 사라지지 않게 합니다. 옵션 revision은 manager가 소유하며 Context 값은 교체하지 않습니다.
 
 - Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
@@ -20,4 +20,4 @@ FormRoot가 마운트 시 한 번 만든 가상화 매니저를 전달하여 포
 
 ## Last Updated
 
-값의 생성 책임, 마운트 고정 정책 또는 자원 정리가 바뀔 때 갱신합니다.
+값의 생성 책임, live 옵션 정책 또는 자원 정리가 바뀔 때 갱신합니다.

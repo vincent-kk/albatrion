@@ -17,7 +17,9 @@
 
 - register/unregister/disconnect는 멱등하게 유지한다. 중복 호출이나 순서가 뒤바뀐 호출에도 안전해야 한다.
 - markRevealed는 단방향(defer-once)이다. 한 번 revealed된 노드는 다시 placeholder로 되돌리지 않는다.
-- 인스턴스는 항상 `create()` 팩토리로 만든다. 비활성, SSR, IO 부재 시 null을 반환하는 로직을 재사용하기 위해서다.
+- 인스턴스는 항상 `create()` 팩토리로 만든다. SSR, IO 부재 시 null을 반환하는 로직을 재사용하기 위해서다.
+
+- 비활성에도 노출 이력을 유지하고, 옵션이 달라진 commit에서만 revision을 통지합니다.
 
 ### Ask first
 

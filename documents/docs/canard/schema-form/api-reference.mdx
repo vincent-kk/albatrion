@@ -178,6 +178,8 @@ Read live node getters during render with useFieldNodeTracker instead of maintai
 
 Opt in with `virtualization: true` or an options object. The complete node tree still supplies values, validation, and submission. Offscreen input DOM can defer to placeholders; once revealed it is not deferred again.
 
+Options apply after mount without a new Form key. Disabling reveals all waiting placeholders and stops observation/backfill; re-enabling or changing threshold/eagerCount gates only unrevealed and new nodes. rootMargin/backfill changes re-observe waiting placeholders; estimateHeight/Placeholder changes update only their presentation. Equal primitive and callback references do not restart observation. Values, node state and errors are preserved. An unrelated change preserves pending focus; a gate reveal ends its request after the reveal commit. FormProvider does not expose virtualization.
+
 | Option         | Default                     | Meaning                                                                                                             |
 | -------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | threshold      | 30                          | Minimum rendered child count before gating a branch                                                                 |

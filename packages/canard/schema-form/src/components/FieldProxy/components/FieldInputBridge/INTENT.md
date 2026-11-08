@@ -20,6 +20,8 @@ FieldProxy 안에서 입력 컴포넌트의 선택·DOM 수명을 노드 값·�
 - Refresh는 조합과 실제 자식 소유권을 존중하며, 숨김 재연결에서 현재 스냅숏을 확인합니다.
 - unmount에서 입력의 첨부 파일과 미룬 touched 예약을 정리합니다.
 
+- 비활성 중 실제 입력 commit도 단방향 노출 기록에 남기고, 옵션만 바뀌어 ChildComponent identity를 교체하지 않습니다.
+
 ### Ask first
 
 - 입력 선택 우선순위·추적 마스크·입력 쓰기 옵션 또는 Refresh 범위를 바꾸는 경우.
