@@ -64,7 +64,7 @@ focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독�
 
 useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch와 마지막 stable releaseComposition을 반환하며 표시 release와 composition 종료가 같은 reducer를 재사용한다.
 
-useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 입력 제어와 수명 처리가 분리되고 별도 effect는 필요하지 않습니다.
+useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 입력 제어와 수명 처리가 분리되고 별도 effect는 필요하지 않습니다. 조합 보류 셀과 정리 함수는 같은 입력 인스턴스에 보존합니다. 항상 참인 셀을 만드는 모듈 수준 팩토리를 기존 ref 기반 캐시로 한 번 평가하여, 매 렌더의 정리 콜백 할당과 별도 callback 훅·의존성 배열을 만들지 않습니다.
 
 ### 라이프사이클 시점
 
@@ -73,7 +73,7 @@ useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 
 - 한 커밋의 Render는 Mount 뒤 한 번입니다. 다른 커밋은 committed이고 Render 예약이 있는 위치에만 감지 컴포넌트를 렌더합니다. 의존성 변경의 mutation cleanup이 committed를 지워 자식 감지기가 Mount보다 먼저 실행하지 못하게 합니다. 감지기 자신의 effect 재실행도 같은 함수 비교로 막습니다.
 - 예약만으로 렌더하지 않으며 같은 노드의 여러 위치는 커밋 순서상 먼저 실행한 위치가 큐를 가져갑니다. 한 시점의 행동은 합쳐 컨테이너에 한 번 실행하고 Focus 다음 Select 순서를 지킵니다.
 - 오류는 FormRoot의 던지지 않는 보고기로 보내 나머지 예약과 입력 트리를 유지합니다. 큐 의미는 [fieldLifecycle](../../../../helpers/fieldLifecycle/DETAIL.md)의 계약을 따릅니다.
-- 빈 경로에도 Context 읽기, effect 메모와 의존성 비교, 안정된 composition 정리 callback 및 비트 확인 비용은 남습니다. effect 함수·committed 셀·재실행 표시는 의존성이 바뀔 때만 새로 만들며 별도의 ref 훅은 두지 않습니다. 메모 팩토리 클로저와 의존성 배열은 렌더마다 평가됩니다. 새 effect·노드 리스너는 없습니다. Render 감지기의 호출과 effect는 해당 노드 예약이 있을 때만 발생합니다. 가상화 입력 Map 쓰기는 마운트·정리에만 있습니다.
+- 빈 경로에도 Context 읽기, effect 메모와 의존성 비교, composition 보류 셀의 ref 읽기 및 비트 확인 비용은 남습니다. effect 함수·committed 셀·재실행 표시는 의존성이 바뀔 때만 새로 만들며 별도의 ref 훅은 두지 않습니다. 메모 팩토리 클로저와 의존성 배열은 렌더마다 평가됩니다. 새 effect·노드 리스너는 없습니다. Render 감지기의 호출과 effect는 해당 노드 예약이 있을 때만 발생합니다. 가상화 입력 Map 쓰기는 마운트·정리에만 있습니다.
 
 ## Acceptance Criteria
 
