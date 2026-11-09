@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { median } from '@winglet/common-utils/math';
-
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import {
   type ValidationIssue,
@@ -9,15 +7,9 @@ import {
 } from '@/schema-form/core/engine';
 import { type FieldNode } from '@/schema-form/core/surface';
 
-/** Field count held fixed across scales so the ratio isolates the per-entry rebuild cost. */
-const FIELDS = 100;
-const ISSUES = 1000;
-/** Independent measurements per scale, each with a freshly loaded root. */
-const SAMPLES = 5;
-/** Floor for the small measurement so timer noise cannot fail the ratio (ms). */
-const NOISE_FLOOR = 5;
-/** Allowed ratio between the 4n and n issue timings; a rebuild linear in the root list gives 4. */
-const LINEAR_RATIO = 8;
+/** Keep field count fixed to isolate scaling in the root issue list. */
+const FIELDS = 20;
+const ISSUES = 100;
 
 /**
  * Build a flat object tree whose root holds external issues spread over its fields.
@@ -28,7 +20,7 @@ const LINEAR_RATIO = 8;
 const createLoadedRoot = (
   fields: number,
   issues: number,
-): { root: FieldNode; fields: FieldNode[] } => {
+): { root: FieldNode; fields: FieldNode[]; external: ValidationIssue[] } => {
   const properties: Record<string, { type: 'string' }> = {};
   for (let index = 0; index < fields; index++)
     properties[`f${index}`] = { type: 'string' };
@@ -54,46 +46,58 @@ const createLoadedRoot = (
     }
   });
   expect(root.errors).toBe(external);
-  return { root, fields: nodes };
+  return { root, fields: nodes, external };
 };
 
 /**
- * Sample one clearing strategy SAMPLES times at n and 4n root issues over the same field count, using a fresh root per sample.
- * Scaling the issue list alone keeps the number of entries constant, so the ratio measures only how the per-entry rebuild grows with the root list.
- * @param clear - Clears every field of a loaded root
- * @returns Median elapsed milliseconds for the n and the 4n issue list
+ * Count membership probes of the actual root issues, excluding other runtime sets.
+ * @param clear - Clears each field, either inside a batch or independently.
+ * @returns Counts at n and 4n issues with a fixed field count.
  */
 const measure = (
   clear: (root: FieldNode, fields: FieldNode[]) => void,
 ): { small: number; large: number } => {
-  const time = (scale: number): number => {
-    const samples: number[] = [];
-    for (let sample = 0; sample < SAMPLES; sample++) {
-      const { root, fields } = createLoadedRoot(FIELDS, ISSUES * scale);
-      const start = performance.now();
+  const count = (scale: number): number => {
+    const { root, fields, external } = createLoadedRoot(FIELDS, ISSUES * scale);
+    const issues = new WeakSet<object>(external);
+    const originalHas = Set.prototype.has;
+    let probes = 0;
+    // Restore synchronously: instrumentation covers only this clearing operation.
+    Set.prototype.has = function (value: unknown) {
+      if (typeof value === 'object' && value !== null && issues.has(value))
+        probes++;
+      return originalHas.call(this, value);
+    };
+    try {
       clear(root, fields);
-      samples.push(performance.now() - start);
-      expect(root.errors).toEqual([]);
+    } finally {
+      Set.prototype.has = originalHas;
     }
-    return median(samples);
+    expect(root.errors).toEqual([]);
+    for (const field of fields) expect(field.errors).toEqual([]);
+    return probes;
   };
-  return { small: time(1), large: time(4) };
+  return { small: count(1), large: count(4) };
 };
 
-describe('external error propagation timing (188C-01 record)', () => {
-  it('clears fields holding root issues inside one batch in linear time', () => {
+describe('external error propagation work', () => {
+  it('clears fields holding root issues inside one batch in linear work', () => {
     const { small, large } = measure((root, fields) => {
       root.batch(() => {
         for (const field of fields) field.clearExternalErrors();
       });
     });
-    expect(large).toBeLessThan(Math.max(small, NOISE_FLOOR) * LINEAR_RATIO);
+    // placed and retired each inspect every issue once in the single rebuild.
+    expect(small).toBe(2 * ISSUES);
+    expect(large).toBe(4 * small);
   });
 
-  it('clears fields holding root issues one call at a time in linear time', () => {
+  it('clears fields holding root issues one call at a time in linear work', () => {
     const { small, large } = measure((_root, fields) => {
       for (const field of fields) field.clearExternalErrors();
     });
-    expect(large).toBeLessThan(Math.max(small, NOISE_FLOOR) * LINEAR_RATIO);
+    // Each call scans the remaining list; fixed FIELDS gives a linear sum in ISSUES.
+    expect(small).toBe((FIELDS + 1) * ISSUES);
+    expect(large).toBe(4 * small);
   });
 });
