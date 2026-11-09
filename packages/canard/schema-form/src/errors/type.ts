@@ -31,7 +31,7 @@ export type ValidationErrorCode = Extract<
 /** Every code a report record carries: an error or a warning code. */
 export type FormRecordCode = FormErrorCode | FormWarningCode;
 
-/** Closed reason values for the ledger codes that define one. */
+/** Closed reason values for the diagnostic codes that define one. */
 export type FormErrorReason<Code extends FormRecordCode> = Code extends
   | typeof FormErrorCode.ValidatorCompileFailed
   | typeof FormErrorCode.GuardFailed

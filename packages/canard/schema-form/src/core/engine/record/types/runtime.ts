@@ -300,6 +300,12 @@ export interface FieldNodeRuntime<Self>
   errorReporter?: FormErrorReporter;
   /** Selected validation engine, narrowed by the validation layer. */
   validator?: unknown;
+  /** Latest binding settings, deferred until the outer engine chain finishes. */
+  pendingSettings?: () => void;
+  /** Effective trigger lifetime, independent of root-load and value commits. */
+  validationEpoch?: number;
+  /** Request stamp at the latest activation; only a subsequent full request replaces its verdict. */
+  validationActivationStamp?: number;
   /** Form validation trigger policy. */
   validationMode?: ValidationMode;
   /** Host callback after a completed entry changes the emitted root value. */

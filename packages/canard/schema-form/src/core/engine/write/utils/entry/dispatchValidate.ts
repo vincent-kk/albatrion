@@ -9,6 +9,8 @@ import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import type { ValidationIssue } from '../../../validation';
 import {
+  isFieldNodeValidationCurrent,
+  isFieldNodeValidationLifetimeCurrent,
   releaseFieldNodeRevealHistory,
   retainEqualValidationIssues,
   routeValidationIssues,
@@ -16,6 +18,7 @@ import {
   settleFieldNodeValidation,
 } from '../../../validation';
 import { deliverValidationWave } from '../chain/deliverValidationWave';
+import { flushFieldNodeSettings } from '../chain/flushFieldNodeSettings';
 import { requestFieldNodeValidationWave } from '../chain/requestFieldNodeValidationWave';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { createFormErrorRecord } from '../report/createFormErrorRecord';
@@ -32,7 +35,8 @@ import { readFormErrorCode } from '../report/readFormErrorCode';
 export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): Promise<readonly ValidationIssue[]> => {
-  const runtime = node.rootNode.runtime;
+  const root = node.rootNode;
+  const runtime = root.runtime;
   if (runtime.validationMode === ValidationMode.None) return [];
   if (node.disposed || node.rootNode.disposed)
     return (await runFieldNodeValidation(node)) ?? [];
@@ -46,11 +50,13 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   if (running) runtime.validationRunning = running;
   const commit = runtime.commitNumber ?? 0;
   const loadStamp = runtime.validationLoadStamp;
+  const epoch = runtime.validationEpoch;
   let result: Nullable<readonly ValidationIssue[]>;
   try {
     result = await runFieldNodeValidation(node);
   } catch (failure) {
-    if (node.disposed || node.rootNode.disposed) throw failure;
+    if (node.disposed || !isFieldNodeValidationLifetimeCurrent(root, epoch))
+      throw failure;
     const compileFailure =
       failure instanceof SchemaFormError &&
       failure.code === FormErrorCode.ValidatorCompileFailed;
@@ -60,6 +66,8 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
       runtime.validationUnavailable = true;
       settleFieldNodeValidation(node);
     } else if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
+    if (node.disposed || !isFieldNodeValidationLifetimeCurrent(root, epoch))
+      throw failure;
     const firstReport = !compileFailure || !runtime.validationCompileReported;
     if (compileFailure) runtime.validationCompileReported = true;
     if (firstReport && runtime.errorReporter?.hasConsumer()) {
@@ -92,12 +100,14 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   } finally {
     if (running && runtime.validationRunning === running)
       runtime.validationRunning = undefined;
+    flushFieldNodeSettings(runtime);
   }
+  if (!isFieldNodeValidationCurrent(node, loadStamp, epoch, stamp))
+    return result ?? [];
   if (result === null) {
     if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return [];
   }
-  if (runtime.validationStamp !== stamp) return result;
   if ((runtime.commitNumber ?? 0) !== commit) {
     if (node === node.rootNode) {
       if ((runtime.validationMode ?? 0) & ValidationMode.OnChange)
@@ -113,6 +123,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     if (runtime.validationPending) settleFieldNodeValidation(node, stamp);
     else releaseFieldNodeRevealHistory(node);
   }
-  deliverValidationWave(node, issues, commit);
+  if (isFieldNodeValidationCurrent(node, loadStamp, epoch, stamp, commit))
+    deliverValidationWave(node, issues, commit);
   return issues;
 };

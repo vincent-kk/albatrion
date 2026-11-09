@@ -15,7 +15,7 @@ import type { BlueprintDiagnostic } from '../../../blueprint';
 /**
  * Format one observed occurrence only when a consumer is present.
  * @param consumed - Whether this event can reach a reporter
- * @param code - Full ledger code for the occurrence
+ * @param code - Full group-qualified diagnostic code for the occurrence
  * @param level - Error or warning severity
  * @param format - Deferred message formatter
  * @param fields - Optional location, details, original error and operation origin
@@ -32,7 +32,7 @@ export function createFormErrorRecord(
 /**
  * Format a queued occurrence whose enclosing operation will supply its origin.
  * @param consumed - Whether the occurrence can reach a reporter
- * @param code - Full ledger code for the occurrence
+ * @param code - Full group-qualified diagnostic code for the occurrence
  * @param level - Error or warning severity
  * @param format - Deferred formatter, called only when consumed
  * @param fields - Optional location, details, original error and origin

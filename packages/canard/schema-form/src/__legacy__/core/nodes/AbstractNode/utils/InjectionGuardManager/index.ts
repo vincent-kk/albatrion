@@ -1,1 +1,0 @@
-export { InjectionGuardManager } from './InjectionGuardManager';

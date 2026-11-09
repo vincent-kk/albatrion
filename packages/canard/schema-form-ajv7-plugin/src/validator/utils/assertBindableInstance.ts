@@ -1,4 +1,4 @@
-import type Ajv from 'ajv';
+import type { AjvInstance as Ajv } from '../types/AjvInstance';
 
 import { ValidatorBindRefusedError } from './ValidatorBindRefusedError';
 

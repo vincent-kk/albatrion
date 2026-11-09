@@ -2,31 +2,27 @@
 
 ## Purpose
 
-초대형 폼의 렌더 가상화(지연 마운트) 코어다(React 의존은 `Placeholder` 방어로 한정). Form마다 VirtualizationManager 하나가 공유 IntersectionObserver와 idle backfill 큐로, placeholder를 실제 컴포넌트로 바꾸는 일(노출, reveal)을 조율한다.
+완전한 노드 트리를 유지하면서 React 하위 트리의 마운트만 미루는 경계입니다. 첫 화면의 작업을 나누되 입력 상태·검증·제출의 의미를 바꾸지 않습니다. 전체 노출 비용과 채택 조건은 [DETAIL](./DETAIL.md)이 소유합니다.
 
 ## Conventions
 
-- React 런타임 import는 `Placeholder` 방어(`withErrorBoundary`/`isReactComponent`)에만 허용하고, 그 밖에는 type-only `ComponentType`만 허용한다.
-- 생성은 `VirtualizationManager.create(input)` 정적 팩토리로 하며, 비활성이거나 IO가 없으면 null을 반환한다.
-- 게이트 판정은 스스로 대상을 고르는 메서드(`forBranch`/`forChild`)로 노출한다. 소비층은 옵셔널 체인으로 조합하고, 옵션 원값은 공개하지 않는다.
-- reveal은 한 방향으로만 진행한다. 한 번 reveal된 노드는 되돌리지 않는다(defer-once).
-- register/unregister/disconnect는 모두 멱등이며, disconnect 뒤에도 register로 다시 시작할 수 있다(StrictMode 대응).
-- requestIdleCallback을 지원하지 않는 환경에서는 common-utils의 `scheduleCancelableMacrotaskSafe`로 폴백한다(브라우저 setTimeout 기반이라 렌더링 창을 보장한다).
+- React 런타임 의존은 사용자 Placeholder의 오류 경계와 전용 보고 훅에 한정합니다. 일반 필드 렌더링을 끌어들이면 helpers와 소비층의 의존 방향이 뒤집힙니다.
+- 옵션 의미는 [옵션 해석](./resolveVirtualizationOptions/DETAIL.md), 자원·입력 컨테이너·렌더 경로의 노출 기록은 [매니저](./VirtualizationManager/DETAIL.md)가 소유하며 집계 진입점에 복제하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- 브라우저 API(IntersectionObserver/requestIdleCallback)는 없을 수 있다고 가정하고 접근한다.
-- reveal할 때 registry 항목 제거, unobserve, markRevealed를 함께 수행한다.
+- 브라우저 API가 없어도 전체 렌더링 경로로 돌아갈 수 있게 합니다. 서버나 미지원 환경을 가상화 때문에 사용할 수 없게 만들지 않습니다.
+- 노출을 되돌려 포커스·선택을 잃지 않도록 매니저의 노드 identity 기록과 소비층의 실제 마운트 수명을 구별합니다.
 
 ### Ask first
 
-- 옵션 기본값(threshold/eagerCount/rootMargin/backfill/estimateHeight) 변경
-- idle slice마다 reveal하는 수의 상한(현재 25)이나 deadline 정책 변경
+- 기본 활성화 여부나 가지별 선택을 작업 전체의 예산으로 바꾸는 경우. 접근성·전체 노출 비용·재시도 결정성에 영향을 줍니다.
+- 옵션 의미나 idle 분할 정책을 바꾸는 경우
 
 ### Never do
 
-- React/컴포넌트 레이어를 import하지 않는다. 예외는 `Placeholder` 방어용 `withErrorBoundary`/`isReactComponent`다(의존 방향: providers/components → helpers).
+- Placeholder 방어와 전용 보고 훅 이외의 React·providers·components 런타임을 가져오지 않습니다.
 - reveal 취소나 역방향 전환 로직을 추가하지 않는다.
 - 노드 값이나 상태를 변경하지 않는다(이 모듈은 렌더 타이밍만 다룬다).

@@ -41,7 +41,7 @@ export interface ValidatorScenarioApplicability {
 interface ValidatorScenarioBase {
   /** Unique row name, stable across plugins, used as the test title and the observation key. */
   readonly id: string;
-  /** Ledger or test origin of the scenario, for the reader of a failing row. */
+  /** Contract or test label of the scenario, for the reader of a failing row. */
   readonly source: string;
   /** Dialects the schema is written for. */
   readonly drafts: readonly ValidatorScenarioDraft[];

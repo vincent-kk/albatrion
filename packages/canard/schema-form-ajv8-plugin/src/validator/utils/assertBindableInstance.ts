@@ -1,4 +1,4 @@
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
 import { ValidatorBindRefusedError } from './ValidatorBindRefusedError';
 

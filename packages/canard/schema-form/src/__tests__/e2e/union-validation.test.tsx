@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import { type FieldRendererProps, Form, type JSONSchema } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
@@ -48,7 +49,7 @@ describe('VALIDATE-010 / VALIDATE-036 split render disposition', () => {
     };
     const form = await renderForm(schema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       defaultValue: { kind: 'a', name: 'x', a: 'A' },
       children: <Views />,
     });
@@ -96,7 +97,7 @@ describe('VALIDATE-010 / VALIDATE-036 split render disposition', () => {
       },
       {
         validator: true,
-        showError: true,
+        errorVisibility: ErrorVisibility.Always,
         defaultValue: { name: 'ok', pick: true },
         children: <Views />,
       },

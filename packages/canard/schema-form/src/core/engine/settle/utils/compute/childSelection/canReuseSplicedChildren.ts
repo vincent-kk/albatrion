@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Dictionary } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -10,7 +12,7 @@ import type {
 } from '../../../types/settlement';
 
 /** Ungated effective schemas select their immutable static contributions. */
-const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
 
 /**
  * Prove an admitted middle remove's or insert's static selection from its tail positions alone.

@@ -16,26 +16,26 @@ import { settleValidation } from '../helpers/settleValidation';
 import { type FormHarness, renderForm } from '../renderForm';
 
 /**
- * State-management render suite — node *state* (Edited / Touched / ErrorVisible)
+ * State-management render suite — node *state* (Edited / Touched / ErrorVisibility)
  * vs node *value* separation, observed through the public `FormHandle` and the
  * node API, asserting BOTH the node tree AND the rendered DOM.
  *
  * Load-bearing facts (verified against src/):
  *   - Typing fires the input `onChange`, which sets `FieldNodeState.Edited` on that
- *     node (`FieldInputSlot.handleChange`). `FieldNodeState.Touched` is set on BLUR
+ *     node (`FieldInputBridge.handleChange`). `FieldNodeState.Touched` is set on BLUR
  *     via a `requestAnimationFrame` callback (`handleBlur`), so a touched
  *     assertion needs a focus-out + a macrotask drain (`flush(>16ms)`).
  *   - `handle.setState(s)` → `rootNode.setSubtreeState(s)`; `handle.clearState()`
  *     → `rootNode.clearSubtreeState()`; `handle.getState()` → `rootNode.globalState`.
- *   - `checkShowError` (FieldRendererProvider) evaluates the per-node
- *     `FieldNodeState.ErrorVisible` flag FIRST: when present it overrides the form-level
- *     `showError` mode. Default mode is `ShowError.EditedTouched`, so an invalid
- *     value is hidden until edited&touched OR an explicit `ErrorVisible` flag.
+ *   - `checkErrorVisibility` (FieldRendererProvider) evaluates the per-node
+ *     `FieldNodeState.ErrorVisibility` flag FIRST: when present it overrides the form-level
+ *     `errorVisibility` mode. Default mode is `ErrorVisibility.AfterEditAndTouch`, so an invalid
+ *     value is hidden until edited&touched OR an explicit `ErrorVisibility` flag.
  *   - `clearState()` clears flags but KEEPS values (no remount). `reset()` bumps
  *     the form version key → full remount → uncontrolled inputs revert to
  *     defaults AND flags clear. `node.resetSubtree()` resets only that subtree's
  *     values to defaults and clears its subtree state.
- *   - `FieldNodeState.Edited=1, Touched=2, ErrorVisible=4`; `node.state` is keyed by these
+ *   - `FieldNodeState.Edited=1, Touched=2, ErrorVisibility=4`; `node.state` is keyed by these
  *     numeric flags. The default renderer shows NO edited/touched indicator, so a
  *     `FieldRenderer` exposes one as `[data-indicator]` data-attributes
  *     while still rendering the uncontrolled `<Input/>` and the error `<em>`.
@@ -64,7 +64,7 @@ const StateRenderer = ({
   const state = node.state ?? {};
   const edited = state[FieldNodeState.Edited] === true;
   const touched = state[FieldNodeState.Touched] === true;
-  const showError = state[FieldNodeState.ErrorVisible] === true;
+  const errorVisibility = state[FieldNodeState.ErrorVisibility] === true;
   return (
     <div>
       <Input />
@@ -72,7 +72,7 @@ const StateRenderer = ({
         data-indicator={path}
         data-edited={String(edited)}
         data-touched={String(touched)}
-        data-show-error={String(showError)}
+        data-error-visibility={String(errorVisibility)}
       />
       <em>{errorMessage}</em>
     </div>
@@ -217,7 +217,9 @@ describe('state-management — clearState clears flags but keeps values', () => 
 
     // flags cleared (tree + indicator)
     expect(form.node('/name')?.state[FieldNodeState.Edited]).toBeFalsy();
-    expect(form.node('/address/city')?.state[FieldNodeState.Edited]).toBeFalsy();
+    expect(
+      form.node('/address/city')?.state[FieldNodeState.Edited],
+    ).toBeFalsy();
     expect(indicatorOf(form, '/name')?.dataset.edited).toBe('false');
     expect(indicatorOf(form, '/address/city')?.dataset.edited).toBe('false');
     // values KEPT (DOM + tree) — this is the clearState contract
@@ -241,11 +243,11 @@ describe('state-management — clearState clears flags but keeps values', () => 
 });
 
 // ---------------------------------------------------------------------------
-// setState ErrorVisible — error <em> appears without changing values
+// setState ErrorVisibility — error <em> appears without changing values
 // ---------------------------------------------------------------------------
 
 describe('state-management — setState drives error visibility, not value', () => {
-  it('setState({Edited,Touched,ErrorVisible}) shows the error <em> without changing values', async () => {
+  it('setState({Edited,Touched,ErrorVisibility}) shows the error <em> without changing values', async () => {
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
@@ -264,7 +266,7 @@ describe('state-management — setState drives error visibility, not value', () 
       form.handle.setState({
         [FieldNodeState.Edited]: true,
         [FieldNodeState.Touched]: true,
-        [FieldNodeState.ErrorVisible]: true,
+        [FieldNodeState.ErrorVisibility]: true,
       }),
     );
 
@@ -272,10 +274,12 @@ describe('state-management — setState drives error visibility, not value', () 
     expect(form.errorTexts()).toContain('TOO_SHORT');
     expect(form.value('/name')).toBe('ab');
     expect(form.getValue()?.name).toBe('ab');
-    expect(form.node('/name')?.state[FieldNodeState.ErrorVisible]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.ErrorVisibility]).toBe(
+      true,
+    );
   });
 
-  it('setState({ErrorVisible}) alone forces the error visible regardless of edited/touched', async () => {
+  it('setState({ErrorVisibility}) alone forces the error visible regardless of edited/touched', async () => {
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
@@ -286,7 +290,7 @@ describe('state-management — setState drives error visibility, not value', () 
     expect(form.errorTexts()).not.toContain('TOO_SHORT');
 
     await runImperative(form, () =>
-      form.handle.setState({ [FieldNodeState.ErrorVisible]: true }),
+      form.handle.setState({ [FieldNodeState.ErrorVisibility]: true }),
     );
 
     expect(form.errorTexts()).toContain('TOO_SHORT');
@@ -305,7 +309,7 @@ describe('state-management — setState drives error visibility, not value', () 
     await form.flush();
 
     await runImperative(form, () =>
-      form.handle.setState({ [FieldNodeState.ErrorVisible]: true }),
+      form.handle.setState({ [FieldNodeState.ErrorVisibility]: true }),
     );
     expect(form.errorTexts()).toContain('TOO_SHORT');
 
@@ -356,7 +360,9 @@ describe('state-management — subtree ops affect only the target subtree', () =
 
     await runImperative(form, () => form.node('/address')?.clearSubtreeState());
 
-    expect(form.node('/address/city')?.state[FieldNodeState.Edited]).toBeFalsy();
+    expect(
+      form.node('/address/city')?.state[FieldNodeState.Edited],
+    ).toBeFalsy();
     expect(form.node('/name')?.state[FieldNodeState.Edited]).toBe(true);
     // DOM mirrors the partial clear
     expect(indicatorOf(form, '/address/city')?.dataset.edited).toBe('false');
@@ -415,7 +421,9 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
     expect(form.value('/address/city')).toBe('Seoul');
     expect(form.getValue()?.address?.city).toBe('Seoul');
     expect(form.value('/name')).toBe('Jane');
-    expect(form.node('/address/city')?.state[FieldNodeState.Edited]).toBeFalsy();
+    expect(
+      form.node('/address/city')?.state[FieldNodeState.Edited],
+    ).toBeFalsy();
   });
 });
 
@@ -438,7 +446,9 @@ describe('state-management — array item subtree state by index', () => {
     );
 
     // item 1 subtree edited, item 0 untouched (tree)
-    expect(form.node('/items/1/label')?.state[FieldNodeState.Edited]).toBe(true);
+    expect(form.node('/items/1/label')?.state[FieldNodeState.Edited]).toBe(
+      true,
+    );
     expect(
       form.node('/items/0/label')?.state[FieldNodeState.Edited],
     ).toBeFalsy();

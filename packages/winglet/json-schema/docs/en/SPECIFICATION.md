@@ -443,10 +443,16 @@ InferValueType<{ type: 'array' }>              // any[]
 InferValueType<{ type: 'object' }>             // Record<string, any>
 ```
 
-`object` and `array` recurse into `properties` and `items` when those are literal — that is, when the schema is declared `as const`. Without `as const`, `type` widens to `string` and the result is `any`.
+`object` and `array` recurse into `properties`, a finite `prefixItems` tuple and `items` when those are literal — that is, when the schema is declared `as const`. Without `as const`, `type` widens to `string` and the result is `any`.
 
 ```typescript
 InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
+
+InferValueType<{
+  type: 'array';
+  prefixItems: readonly [{ type: 'string' }, { type: 'number' }];
+  items: false;
+}>; // [string?, number?]
 
 InferValueType<{
   type: 'object';
@@ -461,7 +467,9 @@ Two rules govern the object result:
 - **Every key is optional, including those in `required`.** The value described by a schema may legitimately omit a key at runtime, so a required marker here would be a promise this type cannot keep. Declare the exact shape yourself when you need one.
 - **The result is intersected with `Record<string, any>`** unless the schema sets `additionalProperties: false` — open is the JSON Schema default, and it keeps keys contributed by applicators this type does not model (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
 
-Anything not modeled falls back rather than narrowing: a non-literal `properties` (e.g. `Dictionary<JSONSchema>`) yields `Record<string, any>`, a multi-type such as `['string', 'number']` yields `any`, and `items: false` yields `any[]`.
+A finite literal `prefixItems` infers a mutable tuple whose positions are all optional, because `prefixItems` sets no minimum length; `minItems` is not used. `items: false` closes the tuple, omitted or `true` `items` adds `...any[]`, and an `items` schema types only the positions after the prefix (`...boolean[]`). This is narrower than `any[]`, and a typed `items` no longer types the prefix positions, so code that relied on free positions, extra items or rest-typed prefix positions can stop compiling. Widened or non-literal `prefixItems`, and legacy `items` arrays with `additionalItems`, keep the `items` inference.
+
+Anything not modeled falls back rather than narrowing: a non-literal `properties` (e.g. `Dictionary<JSONSchema>`) yields `Record<string, any>`, and `items: false` without a finite `prefixItems` yields `any[]`. A multi-type such as `['string', 'number']` yields `string | number`.
 
 ### Common BasicSchema Fields
 

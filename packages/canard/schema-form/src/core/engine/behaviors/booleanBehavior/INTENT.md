@@ -1,24 +1,19 @@
-# booleanBehavior — 불리언 터미널 행
+# booleanBehavior — 불리언 계산 경계
 
 ## Purpose
 
-불리언 노드의 제한된 입력 변환과 터미널 방출을 소유합니다.
-
-## Conventions
-
-- 행은 `type: 'boolean'`, `strategy: 'terminal'` 하나입니다(NODE-002·047).
-- 종류 간 변환 표는 공유 parse에서 소비합니다(NODE-056).
+불리언의 제한된 입력 해석과 원본 투영을 소유합니다.
 
 ## Boundaries
 
 ### Always do
 
-- 정확한 문자열과 수 0·1만 불리언으로 변환합니다(WRITE-075).
+- 공유 변환 표 밖의 입력을 그대로 보존합니다. 해석 실패를 false와 혼동하지 않습니다.
 
 ### Ask first
 
-- 불리언 입력의 변환 목록을 넓힐 때
+- 불리언 변환의 허용 표현을 바꿀 때
 
 ### Never do
 
-- truthy/falsy 강제 변환, 원본 쓰기 또는 상위 동작 표·정착·겉면 import를 하지 않습니다(NODE-006·009, WRITE-075).
+- truthy/falsy 강제 변환이나 빈 값 대체를 하지 않습니다. 입력의 뜻과 원본 오류를 잃습니다.

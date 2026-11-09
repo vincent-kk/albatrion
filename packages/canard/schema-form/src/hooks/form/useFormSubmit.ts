@@ -19,15 +19,23 @@ import type {
 /**
  * Hook for handling form submission with pending state management.
  * Provides a submit function and pending state synchronized with the form's internal submit handler.
+ * Every subscription checks pending on attach, including Activity reconnects.
  *
  * @example
  * ```typescript
  * const formRef = useRef<FormHandle<typeof schema>>(null);
  * const { submit, pending } = useFormSubmit(formRef);
+ * const handleClick = async () => {
+ *   try {
+ *     await submit();
+ *   } catch (error) {
+ *     // a ValidationError leaves the field errors on the form
+ *     if (!isValidationError(error)) reportError(error);
+ *   }
+ * };
  *
- * // In component
  * <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
- * <button onClick={submit} disabled={pending}>
+ * <button type="button" onClick={handleClick} disabled={pending}>
  *   {pending ? 'Submitting...' : 'Submit'}
  * </button>
  * ```
@@ -45,8 +53,12 @@ export const useFormSubmit = <
 ) => {
   const [subscribe, getSnapshot] = useMemo(
     () => [
-      (onStoreChange: Fn) =>
-        ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION,
+      (onStoreChange: Fn) => {
+        const unsubscribe =
+          ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION;
+        onStoreChange();
+        return unsubscribe;
+      },
       () => ref?.current?.submit?.pending,
     ],
     [ref],

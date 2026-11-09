@@ -48,7 +48,7 @@ Each entry is a claim that looks right, is wrong, and often type-checks anyway. 
 
 **`trackableHandler.execute()` / `.clear()` / the `onError` option** → none exist. `.execute()` and `.clear()` are the `debounce`/`throttle` surface; confusing the two families is the usual source. A trackable handler exposes only `.pending`, `.state`, and `.subscribe`, and errors from `origin` simply propagate to the caller.
 
-**`TYPE_TAGS` / `TIME_UNITS`** → neither symbol exists. `@winglet/common-utils/constant` exports the tags individually (`ARRAY_TAG`, `DATE_TAG`, `MAP_TAG`, …), the time constants individually (`MILLISECOND`, `SECOND`, `MINUTE`, `HOUR`, `DAY`), the SI and binary unit constants (`KILO`…`EXA`, `KILO_2`…`EXA_2`), and no-op function constants (`VOID_FUNCTION`, `IDENTITY_FUNCTION`, …). There is no aggregate object to index into.
+**`TYPE_TAGS` / `TIME_UNITS`** → neither symbol exists. `@winglet/common-utils/constant` exports the tags individually (`ARRAY_TAG`, `DATE_TAG`, `MAP_TAG`, …), the time constants individually (`MILLISECOND`, `SECOND`, `MINUTE`, `HOUR`, `DAY`), the SI and binary unit constants (`KILO`…`EXA`, `KILO_2`…`EXA_2`), shared frozen empty values (`EMPTY_ARRAY`, `EMPTY_OBJECT`), and no-op function constants (`VOID_FUNCTION`, `IDENTITY_FUNCTION`, …). There is no aggregate object to index into.
 
 **`polynomialHash` silently caps output at 7 characters** → the output is always exactly `length` characters, default `7`, zero-padded on the left. Requesting more than 7 is legal and returns a longer string; what caps at roughly 7 base-36 characters is the **entropy**, since the hash is a 32-bit value. Requesting fewer truncates, and discards entropy.
 

@@ -2,35 +2,28 @@
 
 ## Purpose
 
-JSON Schema의 타입과 속성에 맞춰 렌더링할 React 입력 컴포넌트를 연결하는 기본 FieldInput 정의 모음이다. 플러그인으로 확장할 수 있는 우선순위 기반 매칭 체계의 폴백 기본값이다.
+사용자 정의와 UI 플러그인이 담당하지 않는 입력을 제공하며, 기본 입력의 표현 한계와 초안 정책을 소유합니다.
 
 ## Conventions
 
-- 배열 순서가 곧 매칭 우선순위이며 앞쪽일수록 우선순위가 높다(DateFormat > Checkbox > Radio > Enum > Virtual > Array > Object > Boolean > String > Number).
-- 입력 하나마다 `fieldInputDefinitions/<이름>/` fractal 하나를 두고, 그 진입점 `index.ts`가 `Definition` 접미사가 붙은 정의(`FieldInputStringDefinition` 등)를 만들어 이름으로 내보낸다. 뿌리 `index.tsx`는 이 진입점들을 순서대로 조립하기만 한다.
-- `test` 조건은 `{ type, format, nullable }` 형태의 객체이거나 `(hint) => boolean` 함수다.
-- 컴포넌트는 `FieldInputProps` 인터페이스를 구현한다.
+- 구체적인 입력이 일반 입력에 가려지지 않도록 정의 순서를 유지합니다.
+- 기본 입력은 검증기를 대신하지 않으며, 지원하지 않는 편집은 사용자 입력으로 확장합니다.
+- 공통 정책은 DETAIL에, 입력별 한계와 이유는 해당 자식의 DETAIL에 둡니다.
 
 ## Boundaries
 
 ### Always do
 
-- 새 정의는 `fieldInputDefinitions/` 아래에 fractal(INTENT·DETAIL·`index.ts`·컴포넌트)로 만들고, `index.tsx` 배열에서 알맞은 우선순위 위치에 끼워 넣는다.
-- `test` 조건은 가능한 한 구체적으로 써서 의도하지 않은 매칭을 막는다.
-- 각 컴포넌트는 `value`, `onChange`, `node`, `errors` props를 올바르게 처리한다.
+- 새 입력의 소유 경계와 기존 정의보다 앞서야 하는 이유를 명시합니다.
+- 초안·빈 값·무효 표시를 변경할 때 DETAIL의 공통 계약과 대조합니다.
+- 입력 선택과 수명은 FieldInputBridge에, 시험 정규화는 fieldInputDefinition에 남겨 둡니다.
 
 ### Ask first
 
-- 기존 정의의 `test` 조건 변경(매칭 대상이 바뀌어 렌더링이 회귀할 수 있다)
-- 배열 순서 재정렬(우선순위가 바뀌어 전체 폼 렌더링에 영향을 준다)
-- 기본 정의 삭제(플러그인을 등록하지 않은 환경에서 렌더링에 실패할 수 있다)
+- 매칭 조건·정의 순서·기본 입력을 바꿀 때(사용자가 입력을 지정하지 않은 폼의 UI가 달라집니다)
+- 기본 union 입력이 만드는 값의 범위나 구조화된 값의 편집 지원을 넓힐 때
 
 ### Never do
 
-- `builtinFieldInputDefinitions` 배열에 UI 라이브러리에 의존하는 컴포넌트를 넣지 않는다(플러그인으로 분리해야 한다).
-- `test` 함수에서 사이드 이펙트를 일으키지 않는다.
-
-## Dependencies
-
-- `@/schema-form/types` — `FieldInputDefinition`, `FieldInputProps`
-- React (JSX)
+- 기본 정의에 외부 UI 라이브러리 의존을 넣지 않습니다.
+- 시험 함수에서 부수 효과를 만들거나 입력 렌더를 값 수리의 계기로 삼지 않습니다.

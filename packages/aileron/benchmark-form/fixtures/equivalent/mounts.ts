@@ -64,6 +64,9 @@ export const mountFixtures: EquivalentFixture[] = [
   ...[...FLAT_CASES, ...NESTED_CASES, ...ARRAY_CASES].map(
     ({ label, schema }) => ({
       name: label,
+      ...(label.startsWith('array-')
+        ? { initialItems: Number(label.slice(6)) }
+        : {}),
       legacy: schema,
       workspace: structuredClone(schema),
       interactions: label.startsWith('flat')

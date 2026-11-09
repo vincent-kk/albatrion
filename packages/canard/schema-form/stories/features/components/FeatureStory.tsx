@@ -3,19 +3,43 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
-import { Form, FormProvider, ValidationMode, registerPlugin, type FormHandle, type FormProps, type FormProviderProps, type JSONSchema } from '../../../src';
-
-import { createStoryScenarioAdapter } from '../../components/scenario/createStoryScenarioAdapter';
+import {
+  Form,
+  type FormHandle,
+  type FormProps,
+  FormProvider,
+  type FormProviderProps,
+  type JSONSchema,
+  ValidationMode,
+  registerPlugin,
+} from '../../../src';
 import { useStoryPanelsReport } from '../../components/panels/useStoryPanelsReport';
-import { describeValidationMode } from './utils/describeValidationMode';
+import { createStoryScenarioAdapter } from '../../components/scenario/createStoryScenarioAdapter';
 import type { StoryObservations } from '../../components/scenario/types';
 import { ajv8ValidationRequests, countedAjv8Plugin } from './countedAjv8Plugin';
+import { describeValidationMode } from './utils/describeValidationMode';
 
 // Feature and composite stories validate through the registered ajv8 plugin, not a validatorFactory prop.
 registerPlugin(countedAjv8Plugin);
 
 /** Form props a feature story maps from scenario case constants; the scenario type itself stays unchanged. */
-export type FeatureFormProps = Pick<FormProps, 'validationMode' | 'showError' | 'errors' | 'formatError' | 'onStateChange' | 'onSubmit' | 'context' | 'fieldInputDefinitions' | 'fieldInputMap' | 'validatorFactory' | 'FieldRenderer' | 'FormLabelRenderer' | 'FormErrorRenderer' | 'virtualization'>;
+export type FeatureFormProps = Pick<
+  FormProps,
+  | 'validationMode'
+  | 'errorVisibility'
+  | 'errors'
+  | 'formatError'
+  | 'onStateChange'
+  | 'onSubmit'
+  | 'context'
+  | 'fieldInputDefinitions'
+  | 'fieldInputMap'
+  | 'validatorFactory'
+  | 'FieldRenderer'
+  | 'FormLabelRenderer'
+  | 'FormErrorRenderer'
+  | 'virtualization'
+>;
 
 /** One staged set of Form props; a key that is absent leaves that prop to formProps. */
 export interface FeaturePropStage {
@@ -23,8 +47,8 @@ export interface FeaturePropStage {
   readonly errors?: unknown;
   /** context prop for this stage. */
   readonly context?: FormProps['context'];
-  /** showError prop for this stage. */
-  readonly showError?: FormProps['showError'];
+  /** errorVisibility prop for this stage. */
+  readonly errorVisibility?: FormProps['errorVisibility'];
   /** jsonSchema prop for this stage, replacing the scenario schema. */
   readonly jsonSchema?: unknown;
   /** defaultValue prop for this stage, replacing the scenario initial value. */
@@ -57,7 +81,15 @@ export interface FeatureStoryProps {
  * @param props - Shared scenario data plus optional form props; React owns the handle and its DOM registration.
  * @returns The form, live output readout and optional prop-stage control.
  */
-export function FeatureStory({ scenario, formProps, propStages, providerProps, layout, onChange, onHandle }: FeatureStoryProps) {
+export function FeatureStory({
+  scenario,
+  formProps,
+  propStages,
+  providerProps,
+  layout,
+  onChange,
+  onHandle,
+}: FeatureStoryProps) {
   const root = useRef<HTMLDivElement>(null);
   const [handle, setHandle] = useState<FormHandle | null>(null);
   const [stage, setStage] = useState(0);
@@ -66,47 +98,137 @@ export function FeatureStory({ scenario, formProps, propStages, providerProps, l
   const staged: Readonly<Record<string, unknown>> = {
     ...(current && 'errors' in current && { errors: current.errors }),
     ...(current?.context && { context: current.context }),
-    ...(current && 'showError' in current && { showError: current.showError }),
-    ...(current && 'jsonSchema' in current && { jsonSchema: current.jsonSchema }),
-    ...(current && 'defaultValue' in current && { defaultValue: current.defaultValue }),
+    ...(current &&
+      'errorVisibility' in current && {
+        errorVisibility: current.errorVisibility,
+      }),
+    ...(current &&
+      'jsonSchema' in current && { jsonSchema: current.jsonSchema }),
+    ...(current &&
+      'defaultValue' in current && { defaultValue: current.defaultValue }),
   };
   const [observations] = useState<StoryObservations>(() => ({
-    changes: [], errorCodes: [], get validationRequests() { return ajv8ValidationRequests.count; },
+    changes: [],
+    errorCodes: [],
+    get validationRequests() {
+      return ajv8ValidationRequests.count;
+    },
   }));
   useEffect(() => {
     const element = root.current;
     if (!element || !handle) return;
     onHandle?.(handle, element);
-    return registerScenarioHandle(element, handle, createStoryScenarioAdapter({ handle, element, observations }));
+    return registerScenarioHandle(
+      element,
+      handle,
+      createStoryScenarioAdapter({ handle, element, observations }),
+    );
   }, [handle, observations, onHandle]);
   useEffect(() => {
     report({
       value: handle ? handle.getValue() : scenario.initialValue,
       errors: handle?.getErrors() ?? [],
-      defaultValue: { initialValue: scenario.initialValue, defaultValue: current && 'defaultValue' in current ? current.defaultValue : scenario.initialValue },
-      settings: {
-        validationMode: describeValidationMode(formProps && 'validationMode' in formProps ? formProps.validationMode ?? providerProps?.validationMode ?? (ValidationMode.OnChange | ValidationMode.OnRequest) : ValidationMode.OnChange | ValidationMode.OnRequest),
-        showError: current?.showError ?? formProps?.showError ?? providerProps?.showError ?? 'EditedTouched',
-        validator: formProps?.validatorFactory || providerProps?.validatorFactory ? 'validatorFactory' : 'ajv8 plugin (counted)',
-        virtualization: formProps?.virtualization ?? false,
-        FormProvider: Boolean(providerProps), context: current?.context ?? formProps?.context ?? providerProps?.context,
-        fieldInputMap: Object.keys(formProps?.fieldInputMap ?? {}),
-        fieldInputDefinitions: (formProps?.fieldInputDefinitions ?? providerProps?.fieldInputDefinitions ?? []).map((definition) => typeof definition.test === 'function' ? definition.test.name || 'anonymous' : Object.keys(definition.test)),
+      defaultValue: {
+        initialValue: scenario.initialValue,
+        defaultValue:
+          current && 'defaultValue' in current
+            ? current.defaultValue
+            : scenario.initialValue,
       },
-      stage: { current: stage + 1, total: propStages?.length ?? 1, schema: current?.jsonSchema ?? scenario.schema },
+      settings: {
+        validationMode: describeValidationMode(
+          formProps && 'validationMode' in formProps
+            ? (formProps.validationMode ??
+                providerProps?.validationMode ??
+                ValidationMode.OnChange | ValidationMode.OnRequest)
+            : ValidationMode.OnChange | ValidationMode.OnRequest,
+        ),
+        errorVisibility:
+          current?.errorVisibility ??
+          formProps?.errorVisibility ??
+          providerProps?.errorVisibility ??
+          'EditedTouched',
+        validator:
+          formProps?.validatorFactory || providerProps?.validatorFactory
+            ? 'validatorFactory'
+            : 'ajv8 plugin (counted)',
+        virtualization: formProps?.virtualization ?? false,
+        FormProvider: Boolean(providerProps),
+        context:
+          current?.context ?? formProps?.context ?? providerProps?.context,
+        fieldInputMap: Object.keys(formProps?.fieldInputMap ?? {}),
+        fieldInputDefinitions: (
+          formProps?.fieldInputDefinitions ??
+          providerProps?.fieldInputDefinitions ??
+          []
+        ).map((definition) =>
+          typeof definition.test === 'function'
+            ? definition.test.name || 'anonymous'
+            : Object.keys(definition.test),
+        ),
+      },
+      stage: {
+        current: stage + 1,
+        total: propStages?.length ?? 1,
+        schema: current?.jsonSchema ?? scenario.schema,
+      },
     });
-  }, [report, handle, scenario, current, stage, propStages, formProps, providerProps]);
-  const form = <Form key={scenario.name} ref={setHandle} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}
-    validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} {...formProps} {...staged}
-    onChange={(value) => { observations.changes.push(value); report({ value, errors: handle?.getErrors() ?? [] }); onChange?.(value); }}
-    onValidate={(errors) => report({ errors })} onError={({ code }) => { observations.errorCodes.push(code); }}>
-    {({ value }) => <>{layout ? layout({ value }) : <Form.Field />}<output aria-label="Form output">{JSON.stringify(value)}</output></>}
-  </Form>;
-  return <section data-feature-story={scenario.name}>
-    {propStages && <button type="button" aria-label="Apply next form props" disabled={stage + 1 >= propStages.length}
-      onClick={() => setStage(stage + 1)}>Form props stage {stage + 1} / {propStages.length}</button>}
-    <div ref={root} data-scenario-name={scenario.name}>
-      {providerProps ? <FormProvider {...providerProps}>{form}</FormProvider> : form}
-    </div>
-  </section>;
+  }, [
+    report,
+    handle,
+    scenario,
+    current,
+    stage,
+    propStages,
+    formProps,
+    providerProps,
+  ]);
+  const form = (
+    <Form
+      key={scenario.name}
+      ref={setHandle}
+      jsonSchema={scenario.schema as JSONSchema}
+      defaultValue={scenario.initialValue}
+      validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
+      {...formProps}
+      {...staged}
+      onChange={(value) => {
+        observations.changes.push(value);
+        report({ value, errors: handle?.getErrors() ?? [] });
+        onChange?.(value);
+      }}
+      onValidate={(errors) => report({ errors })}
+      onError={({ code }) => {
+        observations.errorCodes.push(code);
+      }}
+    >
+      {({ value }) => (
+        <>
+          {layout ? layout({ value }) : <Form.Field />}
+          <output aria-label="Form output">{JSON.stringify(value)}</output>
+        </>
+      )}
+    </Form>
+  );
+  return (
+    <section data-feature-story={scenario.name}>
+      {propStages && (
+        <button
+          type="button"
+          aria-label="Apply next form props"
+          disabled={stage + 1 >= propStages.length}
+          onClick={() => setStage(stage + 1)}
+        >
+          Form props stage {stage + 1} / {propStages.length}
+        </button>
+      )}
+      <div ref={root} data-scenario-name={scenario.name}>
+        {providerProps ? (
+          <FormProvider {...providerProps}>{form}</FormProvider>
+        ) : (
+          form
+        )}
+      </div>
+    </section>
+  );
 }

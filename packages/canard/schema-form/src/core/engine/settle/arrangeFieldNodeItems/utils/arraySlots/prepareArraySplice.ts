@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
@@ -6,13 +8,10 @@ import type { ArraySpliceProof } from '../../../types/settlement';
 import { admitsStaticArrayTail } from './admitsStaticArrayTail';
 
 /** Ungated effective schemas select their immutable static contributions. */
-const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
 
 /** Shared result reporting the array length after an insert. */
 const LENGTH_RESULT = { source: 'length' } as const;
-
-/** A removal's splice constructs no slot; the tail is read from the live structure. */
-const NO_SLOTS: readonly never[] = Object.freeze([]);
 
 /**
  * Admit a middle remove or insert on a static array to the splice path, which rebuilds only the tail from the edited position.
@@ -58,7 +57,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
       index,
       plan: {
         kind: 'slots',
-        slots: NO_SLOTS,
+        slots: EMPTY_ARRAY,
         result: { source: 'removed', index },
       },
       valid: true,

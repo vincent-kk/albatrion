@@ -11,9 +11,9 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
 import { releaseFieldNodeRevealHistory } from '@/schema-form/core/engine/validation';
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
-  ShowError,
 } from '@/schema-form/types';
 
 afterEach(() => {
@@ -78,7 +78,7 @@ it('catches a display release between its held render and passive subscription',
       ref={ref}
       jsonSchema={schema}
       defaultValue=""
-      showError={ShowError.Edited}
+      errorVisibility={ErrorVisibility.AfterEdit}
       validationMode={ValidationMode.OnChange}
       validatorFactory={pendingValidator}
       FieldRenderer={Renderer}
@@ -121,7 +121,7 @@ it('keeps input identity, focus and both mounts through hold start and release',
       ref={ref}
       jsonSchema={schema}
       defaultValue=""
-      showError={ShowError.Edited}
+      errorVisibility={ErrorVisibility.AfterEdit}
       FieldRenderer={Renderer}
       validatorFactory={{
         compileGuard: () => () => true,
@@ -170,7 +170,7 @@ it('catches an event-free release while a held display is hidden by Activity', a
       ref={ref}
       jsonSchema={schema}
       defaultValue=""
-      showError={ShowError.Edited}
+      errorVisibility={ErrorVisibility.AfterEdit}
       validatorFactory={pendingValidator}
       FieldRenderer={Renderer}
       fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}

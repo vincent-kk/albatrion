@@ -1,7 +1,6 @@
-import type { FieldNodeRecord } from '../../../../record';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-/** Empty terminal children never allocate a call-local array. */
-const NO_CHILDREN: readonly never[] = Object.freeze([]);
+import type { FieldNodeRecord } from '../../../../record';
 
 /**
  * Assemble and project once, with separate fixed-kind behavior call sites.
@@ -11,7 +10,7 @@ const NO_CHILDREN: readonly never[] = Object.freeze([]);
 export const assembleStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
-  const children = node.children ?? NO_CHILDREN;
+  const children = node.children ?? EMPTY_ARRAY;
   let local: unknown;
   let emit: unknown;
   switch (node.behavior.type) {

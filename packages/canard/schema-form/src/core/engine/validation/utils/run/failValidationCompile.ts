@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { isFieldNodeValidationLifetimeCurrent } from '../read/isFieldNodeValidationLifetimeCurrent';
 import { settleFieldNodeValidation } from './settleFieldNodeValidation';
 
 /** Disable validation and report one compile failure for the current load.
@@ -9,10 +10,16 @@ export const failValidationCompile = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   failure: unknown,
 ): void => {
-  const runtime = node.rootNode.runtime;
+  const root = node.rootNode;
+  const runtime = root.runtime;
+  const epoch = runtime.validationEpoch;
   runtime.validationUnavailable = true;
   settleFieldNodeValidation(node);
-  if (runtime.validationCompileReported) return;
+  if (
+    !isFieldNodeValidationLifetimeCurrent(root, epoch) ||
+    runtime.validationCompileReported
+  )
+    return;
   runtime.validationCompileReported = true;
   runtime.reportValidationFailure?.(failure);
 };

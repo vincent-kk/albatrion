@@ -7,7 +7,13 @@ import { reportValidationFailure } from './reportValidationFailure';
 export const ensureValidationFailureReporter = (
   runtime: Pick<
     FieldNodeRuntime<unknown>,
-    'reportValidationFailure' | 'errorReporter' | 'reportingErrors'
+    | 'reportValidationFailure'
+    | 'errorReporter'
+    | 'reportingErrors'
+    | 'pendingSettings'
+    | 'entryDepth'
+    | 'chainRoot'
+    | 'flushingQueuedEvents'
   >,
 ): void => {
   runtime.reportValidationFailure ??= (failure) =>

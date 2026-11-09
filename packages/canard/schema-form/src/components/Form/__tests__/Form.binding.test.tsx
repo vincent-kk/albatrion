@@ -29,7 +29,7 @@ describe('Form engine binding', () => {
     expect(onChange).toHaveBeenCalledExactlyOnceWith('next');
   });
 
-  it('SURFACE-059 EVENT-073 exposes exactly nineteen handle members and optional-path commands', () => {
+  it('SURFACE-059 EVENT-073 exposes the current handle members and optional-path commands', () => {
     const ref = createRef<FormHandle>();
     render(
       <FormCore ref={ref} jsonSchema={{ type: 'string' }}>
@@ -55,7 +55,8 @@ describe('Form engine binding', () => {
         'getErrors',
         'getAttachedFilesMap',
         'validate',
-        'showError',
+        'revealErrors',
+        'resetErrorVisibility',
         'submit',
       ].sort(),
     );

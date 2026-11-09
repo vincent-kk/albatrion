@@ -13,7 +13,7 @@ import { renderForm } from '../renderForm';
 
 /**
  * Execute one events feature scenario with delivery-order and validation-request instrumentation, as notify.test.tsx does.
- * @param name - Stable scenario name; its description cites the ledger.
+ * @param name - Stable scenario name; its description carries stable contract labels.
  * @returns Completion after every step expectation has been checked.
  */
 const run = async (name: string) => {

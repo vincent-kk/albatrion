@@ -82,7 +82,7 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 **두 판 호환 보정.** 같은 `harness.tsx`를 0.16.1과 현재 dist로 각각 번들합니다. 필드 렌더러 속성명이 0.16.1은
 `CustomFormTypeRenderer`, 현재는 `FieldRenderer`이므로 같은 마커 렌더러를 두 이름으로 모두 넘깁니다(이전 하네스는
 `FieldRenderer`만 넘겨 0.16.1이 기본 렌더러로 라벨·오류 DOM을 더 그렸고, 그 비교의 마운트 수치는 기준판에
-불리했습니다). 오류가 키 입력만으로 보이도록 두 판 모두 `showError={true}`를 명시하고, validate 사례의 모든 형상에
+불리했습니다). 오류가 키 입력만으로 보이도록 현재 API에는 `ErrorVisibility.Always`를 전달하고 0.x 대조군에는 전용 어댑터가 해당 버전의 표시 설정을 전달하며, validate 사례의 모든 형상에
 루트 프로브 잎 `probe`(`pattern '^(?:..)*$'`, 기본값 `x`)를 더해 `/probe` 오류가 정확히 하나 생기게 합니다
 (`expectedInputs` +1, 두 판 동일). 평탄 타이핑 잎 `field_000`의 기본값은 빈 문자열(짝수 길이)로 두어 첫 키가 마커를
 0→1로 바꿉니다.
@@ -104,11 +104,17 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1`
 은 공개 L과 작업 공간 dist E를 AB/BA로 교대하며 각 판 10예열·최소 100표본을 기록합니다.
 `--out=<path>.json`에 원시 표본, `<path>-summary.json`에 중앙값·p99·비율을 저장하고 표를 출력합니다.
+render는 `schemaLane: warm`(동일 스키마 객체 재사용)과 `schemaLane: cold`(표본마다 새 스키마 객체)를 각각 실행합니다.
+`--schema-lane=warm|cold|both`로 선택하며 기본값은 both입니다. 복제는 측정창 밖에서 수행합니다.
+이는 코드/JIT가 예열된 뒤의 스키마 냉간 비용이며 프로세스 첫 실행 비용은 아닙니다. core는 기존처럼 같은 스키마 객체를 재사용하고 항상 새 트리를 생성합니다.
+배열 사례는 `initialItems`를 원자료·요약에 기록하고 표에 함께 표시합니다. push/replace의 작업량과 최초 마운트 항목 수를 혼동하지 않습니다.
 
 ## 갱신 측정 계약
 
 - `update-sync`: 각 상호작용의 `flushSync(() => applyInteraction(...))` 구간 합(ms)입니다.
 - `update-settled`: 각 상호작용 시작부터 정착 장벽 완료까지의 경과 시간 합(ms)입니다.
+- `update-post-sync`: `update-settled - update-sync`이며 동기 반환 후 정착까지의 꼬리 구간입니다.
+  전체는 `update-settled` 또는 `update-sync + update-post-sync`입니다. `update-sync + update-settled`는 동기 구간을 두 번 세므로 합산하지 않습니다.
 - `update-idle-floor`: 동일 개수의 빈 정착 장벽을 별도로 실행한 시간 합(ms)입니다.
 - `update-settled-net`: 표본마다 `update-settled - update-idle-floor`인 보조 추정치입니다.
   음수도 그대로 보존하며, 타이머 변동 때문에 순수 작업 시간으로 해석하지 않습니다.
@@ -116,9 +122,10 @@ N/A입니다. 8.3 ms 값은 참고용이며 UX RAIL 판정과 가중 교환비�
 
 정착 장벽은 **마이크로태스크 비움 → setImmediate → setTimeout(0) 한 번 → setImmediate**입니다.
 `setImmediate`가 없으면 `MessageChannel`을 사용합니다. `drainTicks` 자체에는 타이머가 없습니다.
-L의 `src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112,120`
+L의 0.16.1 커밋 `7b49d62c7`에 있는
+`packages/canard/schema-form/src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112,120`
 은 배치 카운터 초기화를 매크로태스크로, 이벤트 배달을 마이크로태스크로 예약합니다.
-`src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1219`의 루트 변경 배달은
+같은 커밋의 `packages/canard/schema-form/src/core/nodes/AbstractNode/AbstractNode.ts:1219`에서 루트 변경 배달은
 `afterMicrotask`를 거쳐 타이머로 지연됩니다. 이 지연까지 지나야 다음 상호작용을 시작할 수 있습니다.
 이는 현재 픽스처의 정착 정의이며 임의의 지연 타이머 전체를 기다리는 일반 목적 idle 검출기는 아닙니다.
 

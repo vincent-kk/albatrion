@@ -1,5 +1,6 @@
 import { SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
+import { flushFieldNodeSettings } from '../chain/flushFieldNodeSettings';
 import { readFormErrorCode } from './readFormErrorCode';
 import { reportOwnerlessFailure } from './reportOwnerlessFailure';
 
@@ -10,7 +11,15 @@ import { reportOwnerlessFailure } from './reportOwnerlessFailure';
  * @returns Nothing; the sink owns the uncaught asynchronous surface.
  */
 export const reportValidationFailure = (
-  runtime: Pick<FieldNodeRuntime<unknown>, 'errorReporter' | 'reportingErrors'>,
+  runtime: Pick<
+    FieldNodeRuntime<unknown>,
+    | 'errorReporter'
+    | 'reportingErrors'
+    | 'pendingSettings'
+    | 'entryDepth'
+    | 'chainRoot'
+    | 'flushingQueuedEvents'
+  >,
   failure: unknown,
 ): void => {
   if (runtime.errorReporter?.hasConsumer()) {
@@ -33,5 +42,9 @@ export const reportValidationFailure = (
       runtime.reportingErrors = wasReporting;
     }
   }
-  reportOwnerlessFailure(failure);
+  try {
+    reportOwnerlessFailure(failure);
+  } finally {
+    flushFieldNodeSettings(runtime);
+  }
 };

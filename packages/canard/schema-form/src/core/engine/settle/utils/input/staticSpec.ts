@@ -1,14 +1,15 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { UnionSpec } from '../../../record';
 import { scalarSpecs, unionSpecs } from '../../../utils/cache/valueMemos';
 
-const NO_KINDS: readonly Exclude<SchemaTypeName, 'null'>[] = Object.freeze([]);
 /** Specs for a template without a JSON type, indexed like the caches by nullable. */
 const NO_KIND_SPECS: readonly UnionSpec[] = [
-  { kinds: NO_KINDS, mask: 0, nullable: false },
-  { kinds: NO_KINDS, mask: 0, nullable: true },
+  { kinds: EMPTY_ARRAY, mask: 0, nullable: false },
+  { kinds: EMPTY_ARRAY, mask: 0, nullable: true },
 ];
 
 /**
@@ -26,7 +27,7 @@ export const staticSpec = (
   if (typeof schemaType === 'string') {
     const cached = scalarSpecs[index].get(schemaType);
     if (cached) return cached;
-    const kinds = schemaType === 'null' ? NO_KINDS : schemaType;
+    const kinds = schemaType === 'null' ? EMPTY_ARRAY : schemaType;
     const spec: UnionSpec = { kinds, mask: 0, nullable };
     scalarSpecs[index].set(schemaType, spec);
     return spec;

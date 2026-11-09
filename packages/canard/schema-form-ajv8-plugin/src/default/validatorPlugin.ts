@@ -1,5 +1,5 @@
 import type { JSONSchema, ValidateFunction, ValidatorPlugin } from '@canard/schema-form';
-import Ajv, { type Options } from 'ajv';
+import AjvConstructor, { type Ajv, type Options } from 'ajv';
 
 import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
@@ -43,7 +43,7 @@ const roots: SchemaRootRegistry = createSchemaRootRegistry();
 
 /** Returns the currently bound instance, creating the default on first use. */
 const getInstance = (): Ajv => {
-  ajvInstance ??= new Ajv(defaultSettings);
+  ajvInstance ??= new AjvConstructor(defaultSettings);
   return ajvInstance;
 };
 
@@ -58,15 +58,13 @@ const getInstance = (): Ajv => {
  *
  * @example
  * ```typescript
- * import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+ * import { registerPlugin } from '@canard/schema-form';
+ * import { plugin } from '@canard/schema-form-ajv8-plugin';
+ * import Ajv from 'ajv';
  *
- * // Use with custom AJV instance
- * const customAjv = new Ajv({ allErrors: false });
- * ajvValidatorPlugin.bind(customAjv);
- *
- * // Compile a validator
- * const validator = ajvValidatorPlugin.compile(schema);
- * const errors = await validator(data);
+ * // Use a custom AJV instance: bind it before registering
+ * plugin.validator.bind(new Ajv({ allErrors: false }));
+ * registerPlugin(plugin);
  * ```
  */
 export const ajvValidatorPlugin = {

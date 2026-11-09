@@ -31,21 +31,21 @@ yarn add @canard/schema-form @canard/schema-form-ajv7-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
 // 또는 커스텀 AJV 인스턴스와 함께 등록
 import Ajv from 'ajv';
 
-// validator 플러그인을 전역으로 등록
-registerPlugin(ajvValidatorPlugin);
+// 방법 1: validator 플러그인을 전역으로 등록
+registerPlugin(plugin);
 
-// 커스텀 AJV 인스턴스를 사용하는 경우
+// 방법 2: 커스텀 AJV 인스턴스를 사용하는 경우 (방법 1 대신 사용)
 const customAjv = new Ajv({
   allErrors: true,
   strict: false,
 });
-ajvValidatorPlugin.bind(customAjv);
-registerPlugin(ajvValidatorPlugin);
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ---
@@ -164,18 +164,12 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 ### 수동 AJV 사용에서 마이그레이션
 
 ```typescript
-// 이전 (수동 AJV)
 // 이후 (플러그인 사용)
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
-import Ajv from 'ajv';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
 
-const ajv = new Ajv();
-const validate = ajv.compile(schema);
-const isValid = validate(data);
-
-registerPlugin(ajvValidatorPlugin);
-// 이제 검증은 SchemaForm에 의해 자동으로 처리됩니다
+registerPlugin(plugin);
+// 이제 <Form>은 등록된 플러그인으로 검증합니다
 ```
 
 ### AJV 8.x로 업그레이드
@@ -189,7 +183,7 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // import 업데이트
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 ```
 
 ---

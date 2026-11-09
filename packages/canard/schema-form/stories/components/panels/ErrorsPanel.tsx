@@ -1,3 +1,4 @@
+import { ErrorsCount } from './utils/ErrorsCount';
 import { useStoryPanelsSnapshot } from './utils/useStoryPanelsSnapshot';
 
 /**
@@ -6,9 +7,9 @@ import { useStoryPanelsSnapshot } from './utils/useStoryPanelsSnapshot';
  */
 export function ErrorsPanel() {
   const { errors } = useStoryPanelsSnapshot();
-  return <fieldset><legend>Errors</legend>{errors.length ? <table>
+  return <section className="sf-panel"><h3>Errors <ErrorsCount /></h3>{errors.length ? <div className="sf-table-scroll"><table>
     <thead><tr><th>Path</th><th>Keyword</th><th>Message</th></tr></thead><tbody>
       {errors.map((error, index) => <tr key={index}><td>{error.dataPath}</td><td>{error.keyword}</td><td>{error.message}</td></tr>)}
     </tbody>
-  </table> : <p>No errors</p>}</fieldset>;
+  </table></div> : <p>No errors</p>}</section>;
 }

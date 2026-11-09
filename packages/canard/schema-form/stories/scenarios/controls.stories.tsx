@@ -31,9 +31,9 @@ export const ComputedControls: Story = {
   },
 };
 
-/** TEST-025: node-state mirrors shared SCN data in the browser. */
-export const NodeState: Story = {
-  name: 'node-state',
+/** TEST-025: field-node-state mirrors shared SCN data in the browser. */
+export const FieldNodeState: Story = {
+  name: 'field-node-state',
   args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.lock-or-visibility-and')! },
   play: async ({ args, canvasElement, step }) => {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);

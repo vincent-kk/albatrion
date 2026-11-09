@@ -1,6 +1,6 @@
 import type { FieldNode } from '@/schema-form/core';
 
-import { createShowErrorChecker } from './createShowErrorChecker';
+import { createErrorVisibilityChecker } from './createErrorVisibilityChecker';
 
 /** One pre-change node eligibility interval, ordered with policy commits. */
 type NodeEntry = {
@@ -14,7 +14,7 @@ type PolicyHistory = {
   entries: readonly { value: unknown; generation: number }[];
 };
 /** Check every eligibility combination that existed since the last release.
- * @param live - Current condition, including the same context checkShowError(state) and React-only disabled input.
+ * @param live - Current condition, including the same context checkErrorVisibility(state) and React-only disabled input.
  * @param state - Current node interaction flags.
  * @param isPresent - Current active/visible conjunction.
  * @param policy - Policy rendered by the current context.
@@ -49,7 +49,7 @@ export const resolveErrorVisibility = (
         ? history.value
         : policy;
     if (
-      !createShowErrorChecker(beforePolicy)(nodeEntry?.state ?? state) ||
+      !createErrorVisibilityChecker(beforePolicy)(nodeEntry?.state ?? state) ||
       (includeEnabled && !(nodeEntry?.isPresent ?? isPresent))
     )
       return false;

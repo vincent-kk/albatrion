@@ -76,7 +76,7 @@ export const UseSubmitHandler = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
@@ -166,7 +166,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}
@@ -236,7 +236,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
           } catch (e) {
             if (isValidationError(e))
               console.log('Error', e.message, e.details);
-            refHandle.current?.showError(true);
+            refHandle.current?.revealErrors();
           }
         }}
         disabled={pending}

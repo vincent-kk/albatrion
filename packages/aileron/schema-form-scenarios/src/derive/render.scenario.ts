@@ -1,6 +1,6 @@
 import type { FormScenario } from '../types';
 
-/** Ledger expectations for the derive/inject render dispositions. */
+/** Contract expectations for the derive/inject render dispositions. */
 export const deriveRenderScenarios: readonly FormScenario[] = [
   {
     name: 'derive.active-dependency-preserves-derived-edit',

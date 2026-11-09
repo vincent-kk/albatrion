@@ -3,6 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
   type FieldRendererProps,
@@ -50,7 +51,7 @@ it('IR-6 D React18 legacy release preserves a reentrant layout write history (Re
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue="ab"
-      showError={true}
+      errorVisibility={ErrorVisibility.Always}
       FieldRenderer={Renderer}
       fieldInputMap={{ '': Input }}
       validatorFactory={{

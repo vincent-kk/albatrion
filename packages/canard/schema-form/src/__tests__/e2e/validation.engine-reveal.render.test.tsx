@@ -4,12 +4,12 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
   Form,
   type FormHandle,
   FormProvider,
-  ShowError,
   useChildFieldErrors,
 } from '@/schema-form';
 
@@ -48,7 +48,7 @@ const fixture = async () => {
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue=""
-      showError={false}
+      errorVisibility={ErrorVisibility.Never}
       FieldRenderer={Renderer}
       fieldInputMap={{ '': Input }}
       validatorFactory={validator}
@@ -62,10 +62,10 @@ const fixture = async () => {
     view,
     clock,
     revealState: () => ref.current!.node!.setState({ 4: true }),
-    revealPolicy: () => ref.current!.showError(),
+    revealPolicy: () => ref.current!.revealErrors(),
   };
 };
-it('IR-6 Y1 a standalone ErrorVisible reveal followed by a same-task value write holds the old verdict', async () => {
+it('IR-6 Y1 a standalone ErrorVisibility reveal followed by a same-task value write holds the old verdict', async () => {
   const f = await fixture();
   act(f.revealState);
   expect(f.view.getByTestId('error').textContent).toBe('');
@@ -77,7 +77,7 @@ it('IR-6 Y1 a standalone ErrorVisible reveal followed by a same-task value write
   });
   expect(f.view.getByTestId('error').textContent).toBe('');
 });
-it('IR-6 Y1 handle showError followed by a same-task value write holds through its policy baseline', async () => {
+it('IR-6 Y1 handle errorVisibility followed by a same-task value write holds through its policy baseline', async () => {
   const f = await fixture();
   act(f.revealPolicy);
   expect(f.view.getByTestId('error').textContent).toBe('');
@@ -170,7 +170,7 @@ it('IR-6 Y3 the parent own entry cannot reveal a child aggregate until its curre
       ref={ref}
       jsonSchema={{ type: 'object', properties: { a: { type: 'string' } } }}
       defaultValue={{ a: '' }}
-      showError={false}
+      errorVisibility={ErrorVisibility.Never}
       fieldInputDefinitions={[
         { test: { type: 'object' }, Component: Branch },
         { test: () => true, Component: Input },
@@ -200,7 +200,7 @@ it('IR-6 Y1 a second React display uses an already eligible baseline during pend
   const props = {
     jsonSchema: { type: 'string' as const },
     defaultValue: '',
-    showError: true,
+    errorVisibility: ErrorVisibility.Always,
     validatorFactory: validator,
     fieldInputMap: { '': Input },
   };
@@ -227,15 +227,15 @@ it('IR-6 Y1 a second React display uses an already eligible baseline during pend
   });
 });
 
-it('IR-6 Y1 a retained handle records the current painted showError policy', async () => {
+it('IR-6 Y1 a retained handle records the current painted errorVisibility policy', async () => {
   const f = await fixture();
   const retained = f.ref.current!;
-  act(() => retained.showError());
+  act(() => retained.revealErrors());
   await act(async () => {
     f.clock.frame();
     await f.clock.task();
   });
-  act(() => retained.showError());
+  act(() => retained.revealErrors());
   act(() => retained.setValue('valid'));
   expect(f.view.getByTestId('error').textContent).toBe('old error');
   await act(async () => {
@@ -251,7 +251,7 @@ it('IR-6 Y1 StrictMode keeps an eligible verdict through replay and the next pen
         ref={ref}
         jsonSchema={{ type: 'string' }}
         defaultValue=""
-        showError={true}
+        errorVisibility={ErrorVisibility.Always}
         FieldRenderer={Renderer}
         fieldInputMap={{ '': Input }}
         validatorFactory={validator}
@@ -284,11 +284,17 @@ it('IR-6 H a FormProvider policy reveal holds the previous pending verdict', asy
       formatError={(error) => error.message ?? null}
     />
   );
-  const view = render(<FormProvider showError={false}>{form}</FormProvider>);
+  const view = render(
+    <FormProvider errorVisibility={ErrorVisibility.Never}>{form}</FormProvider>,
+  );
   await settleValidation(() => ref.current?.node);
   const clock = createValidationFrameClock();
   act(() => ref.current!.setValue('valid'));
-  view.rerender(<FormProvider showError={true}>{form}</FormProvider>);
+  view.rerender(
+    <FormProvider errorVisibility={ErrorVisibility.Always}>
+      {form}
+    </FormProvider>,
+  );
   expect(view.getByTestId('error').textContent).toBe('');
   await act(async () => {
     clock.frame();
@@ -315,7 +321,7 @@ it.each([true, false])(
           properties: { a: { type: 'string' }, b: { type: 'string' } },
         }}
         defaultValue={{ a: '', b: '' }}
-        showError={ShowError.Touched}
+        errorVisibility={ErrorVisibility.AfterTouch}
         FieldRenderer={({ Input, path, errorVisible, errorMessage }) => (
           <>
             <Input />

@@ -1,8 +1,9 @@
-import { StrictMode } from 'react';
+import { StrictMode, useState } from 'react';
 
 import { act, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { hideCommittedForm } from '../../__tests__/helpers/hideCommittedForm';
 import { useFieldNodeSubscribe } from '../fieldNode/useFieldNodeSubscribe';
 import { createHookNode } from './createHookNode';
 
@@ -57,4 +58,43 @@ describe('useFieldNodeSubscribe with a new-engine node', () => {
     act(() => node.setValue('after unmount'));
     expect(listener).toHaveBeenCalledTimes(1);
   });
+
+  it.each([false, true])(
+    'catches up on the same node after hidden writes (StrictMode=%s)',
+    (strict) => {
+      const node = createHookNode();
+      node.setValue('initial');
+      const deliveries = vi.fn();
+      const Probe = () => {
+        const [value, setValue] = useState(node.value);
+        useFieldNodeSubscribe(
+          node,
+          () => {
+            deliveries(node.value);
+            setValue(node.value);
+          },
+          { onSubscribe: (current) => setValue(current.value) },
+        );
+        return <output>{String(value ?? '')}</output>;
+      };
+      const probe = <Probe />;
+      const wrap = (hidden: boolean) => {
+        const child = hideCommittedForm(probe, hidden);
+        return strict ? <StrictMode>{child}</StrictMode> : child;
+      };
+      const view = render(wrap(false));
+      for (let cycle = 0; cycle < 20; cycle += 1) {
+        view.rerender(wrap(true));
+        deliveries.mockClear();
+        act(() => node.setValue(`hidden-${cycle}`));
+        expect(deliveries).not.toHaveBeenCalled();
+        view.rerender(wrap(false));
+        expect(view.container.querySelector('output')!.textContent).toBe(
+          node.value,
+        );
+        expect(deliveries).not.toHaveBeenCalled();
+      }
+      view.unmount();
+    },
+  );
 });

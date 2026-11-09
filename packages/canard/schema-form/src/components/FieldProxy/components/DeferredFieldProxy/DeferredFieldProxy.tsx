@@ -1,13 +1,15 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
+import { useLazyConstant } from '@winglet/react-utils/hook';
+
 import type { Nullable } from '@aileron/declare';
 
 import { FieldNodeEventType, FieldNodeRequestType } from '@/schema-form/core';
 import { useFieldNodeSubscribe } from '@/schema-form/hooks';
-import { useFieldNodeTracker } from '@/schema-form/hooks';
 import { FormErrorPathContext } from '@/schema-form/providers/FormErrorContext';
 
-import type { DeferredFieldProxyProps } from './type';
+import { useDeferredRevision } from './hooks/useDeferredRevision';
+import type { DeferredFieldProxyProps, DeferredRevisionGate } from './type';
 
 /**
  * Command events that force an immediate reveal and must be replayed to the
@@ -17,10 +19,6 @@ import type { DeferredFieldProxyProps } from './type';
  */
 const FORCE_REVEAL_EVENT =
   FieldNodeEventType.RequestFocus | FieldNodeEventType.RequestSelect;
-
-/** Events that re-render the proxy when controlled properties or the path change. */
-const DEFERRED_TRACKING_EVENTS =
-  FieldNodeEventType.UpdateControlledProperties | FieldNodeEventType.UpdatePath;
 
 /**
  * Virtualization gate for a single field node.
@@ -33,26 +31,45 @@ const DEFERRED_TRACKING_EVENTS =
  */
 export const DeferredFieldProxy = ({
   manager,
+  branch,
+  preparedRevision,
   NodeProxy,
   ...proxyProps
 }: DeferredFieldProxyProps) => {
   const node = proxyProps.node;
-  const [revealed, setRevealed] = useState(() => manager.hasRevealed(node));
+  const [revealed, setRevealed] = useState(
+    () =>
+      manager.hasRevealed(node) ||
+      (manager.revision() !== preparedRevision &&
+        !manager
+          .forBranch(branch.children?.length ?? 0)
+          ?.forChild(branch.children?.indexOf(node) ?? -1, node)),
+  );
+  const gate = useLazyConstant<DeferredRevisionGate>(() => ({
+    node,
+    unsubscribeOptions: revealed ? null : undefined,
+    reveal: () => {
+      gate.unsubscribeOptions?.();
+      gate.unsubscribeOptions = null;
+      setRevealed(true);
+    },
+  }));
   const pendingEventsRef = useRef(0);
   const placeholderRef = useRef<Nullable<Element>>(null);
 
-  useFieldNodeTracker(node, DEFERRED_TRACKING_EVENTS);
+  useDeferredRevision(node, branch, manager, preparedRevision, gate);
 
   useFieldNodeSubscribe(revealed ? null : node, ({ type }) => {
     const forced = type & FORCE_REVEAL_EVENT;
     if (!forced) return;
     pendingEventsRef.current |= forced;
-    setRevealed(true);
+    gate.reveal();
   });
 
   useLayoutEffect(() => {
     if (!revealed) return;
     manager.markRevealed(node);
+    manager.settleReveal(gate);
     const pending = pendingEventsRef.current;
     if (pending === 0) return;
     pendingEventsRef.current = 0;
@@ -62,25 +79,28 @@ export const DeferredFieldProxy = ({
       node.request(FieldNodeRequestType.Focus);
     if (pending & FieldNodeEventType.RequestSelect)
       node.request(FieldNodeRequestType.Select);
-  }, [revealed, manager, node]);
+  }, [revealed, manager, node, gate]);
 
   const handlePlaceholder = useCallback(
     (element: Nullable<HTMLDivElement>) => {
       const previous = placeholderRef.current;
       if (previous !== null) manager.unregister(previous);
       placeholderRef.current = element;
-      if (element !== null) manager.register(element, () => setRevealed(true));
+      if (element !== null) manager.register(element, gate);
     },
-    [manager],
+    [manager, gate],
   );
 
   useLayoutEffect(() => {
     const element = placeholderRef.current;
     if (element === null) return;
     // React 18 replays effects without replaying DOM refs in StrictMode.
-    manager.register(element, () => setRevealed(true));
-    return () => manager.unregister(element);
-  }, [manager, revealed, node.isPresent]);
+    manager.register(element, gate);
+    return () => {
+      manager.unregister(element);
+      manager.releaseGate(element);
+    };
+  }, [manager, gate, node.isPresent]);
 
   if (!node.isPresent) return null;
   if (revealed) return <NodeProxy {...proxyProps} />;

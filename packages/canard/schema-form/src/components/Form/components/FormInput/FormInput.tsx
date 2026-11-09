@@ -16,6 +16,10 @@ import type { FormInputProps } from './types/props';
  * (text, number, boolean, select, etc.) with full validation and state management.
  * Supports overriding with custom input components and passing additional props.
  *
+ * @remarks
+ * `FieldInput` is captured when the component mounts; a later value is ignored.
+ * To supply changing values, read them from the `context` prop the input receives (the `context` of `Form`), call a hook inside it, or give the element a new `key` to replace the component.
+ *
  * @example
  * Basic input usage:
  * ```tsx
@@ -32,21 +36,22 @@ import type { FormInputProps } from './types/props';
  * <Form.Input
  *   path="/email"
  *   placeholder="user@example.com"
- *   autoComplete="email"
- *   required
  *   className="input-email"
+ *   inputProps={{ autoComplete: 'email' }}
  * />
  * ```
+ *
+ * The built-in string input passes `inputProps` to its `<input>`; other extra props reach the field input component unchanged, so a custom `FieldInput` can read them.
  *
  * @example
  * Custom input component:
  * ```tsx
- * const ColorPicker = ({ value, onChange, ...props }) => (
+ * const ColorPicker = ({ value, onChange, disabled }: FieldInputProps<string>) => (
  *   <input
  *     type="color"
- *     value={value || '#000000'}
+ *     value={value ?? '#000000'}
  *     onChange={(e) => onChange(e.target.value)}
- *     {...props}
+ *     disabled={disabled}
  *   />
  * );
  *
@@ -57,14 +62,15 @@ import type { FormInputProps } from './types/props';
  * ```
  *
  * @example
- * Controlled input with validation feedback:
+ * Input with blur handler and validation feedback:
  * ```tsx
  * <div className="field">
  *   <Form.Input
  *     path="/username"
- *     // This Input should support onBlur handler
- *     onBlur={(e) => console.log('Field blurred:', e.target.value)}
- *     onChange={(value) => console.log('Value changed:', value)}
+ *     inputProps={{
+ *       onBlur: (e: React.FocusEvent<HTMLInputElement>) =>
+ *         console.log('Field blurred:', e.target.value),
+ *     }}
  *   />
  *   <Form.Error path="/username" />
  * </div>

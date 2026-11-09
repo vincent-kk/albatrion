@@ -1,4 +1,4 @@
-/** Internal bare specifics for the SchemaFormWarning group, in ledger order. */
+/** Internal bare specifics for the SchemaFormWarning group, in public contract order. */
 export const SchemaFormWarningSpecific = {
   AllOfKeywordIgnoredForForm: 'ALL_OF_KEYWORD_IGNORED_FOR_FORM',
   NullBranchIgnoredForForm: 'NULL_BRANCH_IGNORED_FOR_FORM',

@@ -1,5 +1,5 @@
 import type { JSONSchema } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
 import { makeSibling } from './makeSibling';
 import type { SchemaRootRegistration } from './registerSchemaRoot';

@@ -3,6 +3,8 @@ import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { createValidationCadence } from '../../../validationScheduling';
 import type { ValidationIssue } from '../../types/issue';
+import { isFieldNodeValidationCurrent } from '../read/isFieldNodeValidationCurrent';
+import { isFieldNodeValidationLifetimeCurrent } from '../read/isFieldNodeValidationLifetimeCurrent';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { failValidationCompile } from './failValidationCompile';
@@ -19,7 +21,8 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   deliver: (issues: readonly ValidationIssue[], commit: number) => void,
 ): void => {
-  const runtime = node.rootNode.runtime;
+  const root = node.rootNode;
+  const runtime = root.runtime;
   if (
     runtime.validationMode === ValidationMode.None ||
     runtime.validationUnavailable
@@ -33,8 +36,16 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationRequestStamp = runtime.validationStamp;
   (runtime.validationPendingTargets ??= new Set()).add(node);
+  const epoch = runtime.validationEpoch;
+  const load = runtime.validationLoadStamp;
   runtime.validationRun = () => {
-    if (runtime.validationStamp !== runtime.validationRequestStamp) {
+    if (
+      node.rootNode.disposed ||
+      runtime.validationEpoch !== epoch ||
+      runtime.validationLoadStamp !== load ||
+      runtime.validationMode === ValidationMode.None ||
+      runtime.validationStamp !== runtime.validationRequestStamp
+    ) {
       runtime.validationPendingTargets = undefined;
       return false;
     }
@@ -48,11 +59,11 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
       .then((result) => {
         if (runtime.validationRunning === running)
           runtime.validationRunning = undefined;
+        if (!isFieldNodeValidationCurrent(node, load, epoch, stamp)) return;
         if (result === null) {
           settleFieldNodeValidation(node, stamp);
           return;
         }
-        if (runtime.validationStamp !== stamp) return;
         if ((runtime.commitNumber ?? 0) !== commit) {
           for (const target of targets)
             (runtime.validationPendingTargets ??= new Set()).add(target);
@@ -63,13 +74,19 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
         routeValidationIssues(targets, issues);
         runtime.validationResult = { commit, issues };
         settleFieldNodeValidation(node, stamp);
-        deliver(issues, commit);
+        if (isFieldNodeValidationCurrent(node, load, epoch, stamp, commit))
+          deliver(issues, commit);
       })
       .catch((failure: unknown) => {
         if (runtime.validationRunning === running)
           runtime.validationRunning = undefined;
-        if (runtime.validationStamp !== stamp) return;
+        if (
+          !isFieldNodeValidationLifetimeCurrent(root, epoch) ||
+          runtime.validationStamp !== stamp
+        )
+          return;
         settleFieldNodeValidation(node, stamp);
+        if (!isFieldNodeValidationLifetimeCurrent(root, epoch)) return;
         if (
           failure !== null &&
           typeof failure === 'object' &&

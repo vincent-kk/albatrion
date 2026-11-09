@@ -1,8 +1,6 @@
-import type { BlueprintChildEntry } from '../../../blueprint';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Behavior } from '../../../record';
 
-/** Shared immutable result for every terminal row. */
-const NO_CHILDREN: readonly BlueprintChildEntry[] = Object.freeze([]);
-
 /** Declare no children for a terminal node. */
-export const declareNoChildren: Behavior['declareChildren'] = () => NO_CHILDREN;
+export const declareNoChildren: Behavior['declareChildren'] = () => EMPTY_ARRAY;

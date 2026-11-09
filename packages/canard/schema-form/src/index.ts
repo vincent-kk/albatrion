@@ -67,7 +67,7 @@ export {
   isUnionNode,
 } from './core';
 
-export { ShowError } from './types';
+export { ErrorVisibility } from './types';
 
 export type {
   ChildFieldProps,

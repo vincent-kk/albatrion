@@ -2,27 +2,26 @@
 
 ## Requirements
 
-- 부모 Form의 `Form.Label` 계약(대기열 38, 소유자 결정)과 렌더러 속성 계약(LANDING-035·067)을 구현합니다.
+Form.Label은 입력 선택을 몰라도 접근 가능한 제목을 연결할 수 있어야 합니다.
 
 ## API Contracts
 
-- `FormLabel.tsx`는 `memo` 컴포넌트입니다. `<label>`에 `style`·`className`·`htmlFor={path}`를 두고, `path`가 있으면 id `label:${path}`도 둡니다. 그 안에는 렌더러 문맥의 `FormLabelRenderer`로 그린 `FieldProxy`를 넣으며, 문맥에 없으면 `PluginManager.FormLabelRenderer`를 씁니다.
-- `types/props.ts`는 `FormLabelProps`(`path`·`style`·`className`)를 정의합니다.
+절대 path를 받은 label은 htmlFor와 label: 접두 id를 함께 제공합니다. 단일 입력은 path id, 묶음 입력은 aria-labelledby로 같은 제목을 사용합니다. label:는 /로 시작하는 필드 path와 겹치지 않아 형제 속성의 이름 때문에 제목 id가 충돌하지 않습니다. path가 undefined이면 두 속성도 만들지 않으므로 루트 제목이 필요하면 명시적 경로를 전달합니다.
 
 ## Acceptance Criteria
 
-### label-ids — 제목 연결
+### label-ids — 입력 종류에 독립적인 제목
 
-- 단일 입력은 `htmlFor`로, 묶음 입력은 `aria-labelledby`의 `label:${path}`로 같은 label에 연결됩니다.
+선택한 입력의 종류를 판별하여 label 규약을 바꾸지 않습니다. 기본 렌더러도 같은 규약을 따르며 현재 렌더러 선택은 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)가 소유합니다.
 
 ## Boundary Exemptions
 
-### `types/` — 형 칸 유지
+### `types/` — 공개 형의 소유
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: `FormLabelProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개한다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+- **Reason**: `FormLabelProps`는 이 조각의 공개 사용 계약이므로 구현 옆에 두고 부모와 패키지 진입점이 이름으로 노출합니다.
 
 ## Last Updated
 
-2026-10-14 — 소유자 구조 변경(Form의 조각을 fractal로 분리).
+이 조각의 조합·접근성·설정 수명 또는 공개 props 계약이 바뀌면 갱신합니다.

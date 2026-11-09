@@ -1,24 +1,20 @@
-# stringBehavior — 문자열 터미널 행
+# stringBehavior — 문자열 계산 경계
 
 ## Purpose
 
-문자열 노드의 입력 해석, 문자열 방출, 입력 마침 계산을 소유한다.
-
-## Conventions
-
-- `type: 'string'`, `strategy: 'terminal'`인 행 하나를 둔다(NODE-002·047).
-- 공통 변환은 behaviors의 공유 parse를 사용한다(NODE-056).
+문자열 입력의 제한된 해석과 방출, 입력 완료 때의 공백 자르기를 소유합니다.
 
 ## Boundaries
 
 ### Always do
 
-- 바꿀 수 없는 입력은 원본 그대로 돌려주고, `trim`은 `finishInput`에 둔다(WRITE-075·084, NODE-007).
+- trim은 입력 완료 계산에 둡니다. 입력 중 공백을 데이터로 유지해야 합니다.
+- 빈 문자열 결과와 쓰기 제안 없음인 undefined를 구별합니다. 비우기를 무동작으로 잃지 않습니다.
 
 ### Ask first
 
-- 문자열 변환 표나 빈 문자열 방출 정책을 바꿀 때
+- 문자열 변환 범위, 공백을 자르는 시점 또는 빈 문자열 방출을 바꿀 때
 
 ### Never do
 
-- 원본을 직접 쓰지 않으며, behaviors 뿌리, settle, FieldNode, 레거시를 가져오지 않는다(NODE-006·009).
+- 입력마다 trim하거나 행에서 제안한 값을 직접 쓰지 않습니다. 입력 수명과 자동 쓰기 경계는 호출자가 소유합니다.

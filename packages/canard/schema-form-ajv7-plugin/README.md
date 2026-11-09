@@ -31,21 +31,21 @@ yarn add @canard/schema-form @canard/schema-form-ajv7-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
 // Or register with custom AJV instance
 import Ajv from 'ajv';
 
-// Register the validator plugin globally
-registerPlugin(ajvValidatorPlugin);
+// Option 1: register the validator plugin globally
+registerPlugin(plugin);
 
-// When using a custom AJV instance
+// Option 2: when using a custom AJV instance (use instead of Option 1)
 const customAjv = new Ajv({
   allErrors: true,
   strict: false,
 });
-ajvValidatorPlugin.bind(customAjv);
-registerPlugin(ajvValidatorPlugin);
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
 ```
 
 ---
@@ -189,18 +189,12 @@ Please use a transpiler like Babel to transform the code for your target environ
 ### From Manual AJV Usage
 
 ```typescript
-// Before (manual AJV)
 // After (with plugin)
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv7-plugin';
-import Ajv from 'ajv';
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
 
-const ajv = new Ajv();
-const validate = ajv.compile(schema);
-const isValid = validate(data);
-
-registerPlugin(ajvValidatorPlugin);
-// Validation is now handled automatically by SchemaForm
+registerPlugin(plugin);
+// <Form> now validates through the registered plugin
 ```
 
 ### To AJV 8.x
@@ -214,7 +208,7 @@ yarn add @canard/schema-form-ajv8-plugin
 
 ```typescript
 // Update import
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 ```
 
 ---

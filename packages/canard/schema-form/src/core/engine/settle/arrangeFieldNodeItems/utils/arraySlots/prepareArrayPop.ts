@@ -1,11 +1,10 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import type { Optional } from '@aileron/declare';
 
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
 import type { ArrayPopProof } from '../../../types/settlement';
 import { admitsStaticArrayTail } from './admitsStaticArrayTail';
-
-/** A truncation plan constructs no slot; the retained prefix is never read. */
-const NO_SLOTS: readonly never[] = Object.freeze([]);
 
 /**
  * Admit a lone pop, or a remove of the last position, on a static array to the bounded truncation path without visiting its items.
@@ -35,7 +34,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
     count,
     plan: {
       kind: 'slots',
-      slots: NO_SLOTS,
+      slots: EMPTY_ARRAY,
       result: { source: 'removed', index },
     },
     local: node.local,

@@ -2,20 +2,20 @@
 
 ## Requirements
 
-- 의존 방향은 `blueprint·record·behaviors/utils < numberBehavior < behaviors 뿌리 < FieldNode`입니다. 이 종류 fractal은 정착·겉면·레거시를 가져오지 않으며 경계 예외가 없습니다(NODE-009·016, LANDING-159).
+수·정수는 같은 런타임 종류의 해석을 공유합니다. 종류를 접는 일로 integer의 제약까지 number로 넓히면 검증과 입력 해석이 어긋나므로, 행은 전달된 spec의 멤버십을 유지합니다.
 
 ## API Contracts
 
-- 진입점은 `numberBehavior: Behavior`를 이름으로 내보냅니다. 행의 여덟 칸은 공통 순서(`arrange`는 공유 거부 칸, 36C-01)이고 `type: 'number'`, `strategy: 'terminal'`이며 자식 선언은 비어 있습니다(NODE-002·006·047).
-- `schemaType: 'number'`의 멤버십은 유한수, `'integer'`의 멤버십은 `Number.isInteger`입니다. 문자열 변환은 공백을 뺀 전체가 JSON 수 표기이고 결과가 유한할 때만 하며, 정수 문자열은 안전 정수 범위를, integer 대상은 최종 결과의 안전 정수 여부를 확인합니다. 이미 수인 값은 자르지 않습니다(WRITE-075·093, NODE-057).
-- `interpret`는 공통 parse의 결과를 돌려주고 변환 불가·모호한 값은 원본 그대로 둡니다. `assemble`은 원본을 `local`로, `project`는 메모된 `omitEmpty` 정책의 결과를 방출로 내며 입력·방출 사이에 원본을 고치지 않습니다(NODE-006, WRITE-084, VALUE-034).
+변환 표와 무예외·멱등 해석은 [unionBehavior 계약](../unionBehavior/DETAIL.md), 수를 받은 뒤 정합 상태를 계산하는 일은 [settle 계약](../../settle/DETAIL.md)이 소유합니다.
 
 ## Acceptance Criteria
 
-### number-row — 수와 정수
+### number-row — 변환의 안전성과 멤버십을 구별합니다
 
-- 안전한 수 문자열만 변환하고 `NaN`·무한대·잘못된 정수는 경고등 판정용 원본으로 보존합니다(WRITE-075·093, VALUE-030).
+문자열을 정수로 바꿀 때의 안전 범위 검사와 이미 수인 값의 integer 멤버십은 다릅니다. 후자는 정수 여부를 검사하며 안전 정수 범위로 제한하지 않습니다. 이미 수인 소수·비유한 값·잘못된 종류를 자르거나 빈 값으로 대체하지 않아 원본의 오류를 숨기지 않습니다.
+
+수 행은 원본을 그대로 투영하며 omitEmpty로 잘못된 종류의 빈 값까지 제거하지 않습니다. number와 integer의 해석 차이를 빈 값 교정이나 입력 표시 정책으로 옮기지 않습니다.
 
 ## Last Updated
 
-2026-09-29
+수·정수의 멤버십, 문자열 변환의 안전 범위 또는 항등 투영이 바뀔 때 갱신합니다.

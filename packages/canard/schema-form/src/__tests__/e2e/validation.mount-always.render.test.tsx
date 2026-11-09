@@ -4,12 +4,12 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  ErrorVisibility,
   type FieldInputProps,
   type FieldRendererProps,
   Form,
   FormErrorCode,
   type FormHandle,
-  ShowError,
 } from '@/schema-form';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
@@ -47,7 +47,7 @@ it.each([false, true])(
       <Form
         ref={ref}
         jsonSchema={{ type: 'string' }}
-        showError={ShowError.Always}
+        errorVisibility={ErrorVisibility.Always}
         FieldRenderer={Renderer}
         fieldInputMap={{ '': Input }}
         formatError={(error) => error.message ?? null}
@@ -115,7 +115,7 @@ it('IR-6 an Always layout-write compile failure releases pending and reports sin
   render(
     <Form
       jsonSchema={{ type: 'string' }}
-      showError={true}
+      errorVisibility={ErrorVisibility.Always}
       fieldInputMap={{ '': Input }}
       onError={onError}
       validatorFactory={{

@@ -8,6 +8,7 @@ import {
   validationScenarios,
 } from '@aileron/schema-form-scenarios';
 
+import { ErrorVisibility } from '@/schema-form';
 import { Form, type JSONSchema, type ValidationIssue } from '@/schema-form';
 
 import { createRenderValidator } from '../helpers/createRenderValidator';
@@ -21,7 +22,7 @@ for (const scenario of validationScenarios)
     form = await renderForm(scenario.schema as JSONSchema, {
       defaultValue: scenario.initialValue,
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       children: (
         <>
           <Form.Field />
@@ -70,7 +71,7 @@ it('TEST-005 nullable-formats', async () => {
     },
     {
       defaultValue: { email: null },
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validatorFactory: {
         ...base,
         compile(schema) {
@@ -124,7 +125,7 @@ it('LANDING-115 active conditional required and maxItems errors exclude inactive
     {
       defaultValue: { enabled: true, rows: ['a', 'b'] },
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
     },
   );
   const errors = await form.validate();
@@ -161,7 +162,7 @@ it('a closed host receives its rejected extra key as rejectedKey', async () => {
     {
       defaultValue: { profile: { name: 'a', nick: 'b' } },
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
     },
   );
   await form.validate();
@@ -183,7 +184,11 @@ it('TEST-005 nullable price rejects values outside minimum and maximum', async (
         price: { type: ['number', 'null'], minimum: 0, maximum: 100 },
       },
     },
-    { defaultValue: { price: null }, validator: true, showError: true },
+    {
+      defaultValue: { price: null },
+      validator: true,
+      errorVisibility: ErrorVisibility.Always,
+    },
   );
   await form.type('/price', '-1');
   expect(await form.validate()).toEqual([

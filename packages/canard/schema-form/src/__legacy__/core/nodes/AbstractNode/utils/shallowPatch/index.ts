@@ -1,1 +1,0 @@
-export { shallowPatch } from './shallowPatch';

@@ -2,27 +2,26 @@
 
 ## Requirements
 
-- 부모 Form의 보조 렌더링 계약(`Form.Input`)과 렌더러 속성 계약(LANDING-035·067)을 구현합니다.
+Form.Input은 경로의 입력만 조합하고 입력 채널·오류 경계는 FieldProxy에 맡깁니다.
 
 ## API Contracts
 
-- `FormInput.tsx`는 `memo` 컴포넌트입니다. 렌더러 문맥의 `FormInputRenderer`를 읽고, 없으면 `PluginManager.FormInputRenderer`를 씁니다. `FieldInput`은 `useConstant`로 첫 렌더 값에 고정하고, 나머지 속성은 `useReference`로 `overridePropsRef`에 담아 `FieldProxy`에 넘깁니다.
-- `types/props.ts`는 `FormInputProps<Value>`와 그 `Roll` 표현인 `RolledFormInputProps<Value>`를 정의합니다. `FormInputProps`는 `ChildFieldProps`의 덧붙임 속성을 받고 구현이 씁니다. 관문은 `RolledFormInputProps`만 내보냅니다.
+직접 전달한 FieldInput은 mount에 고정하여 render마다 새로운 함수로 입력 인스턴스를 잃지 않게 합니다. 변하는 값은 context·입력 내부 hook으로 전달하거나 key로 교체합니다. 나머지 props는 최신 값을 입력에 전달합니다.
 
 ## Acceptance Criteria
 
-### input-renderer — 렌더러 선택
+### input-renderer — 렌더러와 입력의 다른 수명
 
-- Form 속성으로 넘긴 렌더러가 플러그인 렌더러보다 우선하고, 덧붙인 속성은 입력까지 전달됩니다.
+입력 override가 고정되어 있어도 FormInputRenderer는 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)의 최신 선택을 따릅니다. 모든 설정이 고정되거나 모든 설정이 live라고 일반화하지 않습니다.
 
 ## Boundary Exemptions
 
-### `types/` — 형 칸 유지
+### `types/` — 공개 형의 소유
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: `RolledFormInputProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개한다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+- **Reason**: `RolledFormInputProps`는 이 조각의 공개 사용 계약이므로 구현 옆에 두고 부모와 패키지 진입점이 이름으로 노출합니다.
 
 ## Last Updated
 
-2026-10-14 — 소유자 구조 변경(Form의 조각을 fractal로 분리).
+이 조각의 조합·접근성·설정 수명 또는 공개 props 계약이 바뀌면 갱신합니다.

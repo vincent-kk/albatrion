@@ -1,13 +1,13 @@
 # injectTo
 
-`injectTo` propagates a source field's value to other fields **once per change**; the targets stay user-editable afterward. Its sibling `derived` is continuous and overwrites edits — picking between them is a value-ownership decision:
+`injectTo` propagates a source field's value to other fields **once per change**; the targets stay user-editable afterward. Its sibling `derived` recomputes whenever one of its dependencies changes, replacing any value written to it; a value written to it directly stays until the next dependency change — picking between them is a value-ownership decision:
 
-|                   | `injectTo`                    | `derived`                             |
-| ----------------- | ----------------------------- | ------------------------------------- |
-| Direction         | Source → targets              | Dependencies → this field             |
-| After propagation | Target freely editable        | Recalculated — user edits overwritten |
-| Sync              | One-time per source change    | Continuous                            |
-| Use for           | Initial copy, default seeding | Always-computed values                |
+|                   | `injectTo`                    | `derived`                                               |
+| ----------------- | ----------------------------- | ------------------------------------------------------- |
+| Direction         | Source → targets              | Dependencies → this field                               |
+| After propagation | Target freely editable        | Recalculated on each dependency change, replacing edits |
+| Sync              | One-time per source change    | Continuous                                              |
+| Use for           | Initial copy, default seeding | Always-computed values                                  |
 
 ```typescript
 // injectTo: copy once, then independent
@@ -31,12 +31,14 @@ The handler returns a map of **JSONPointer path → value**; relative (`../targe
 source: {
   type: 'string',
   controls: {
-    injectTo: (value) => value.length > 5
+    injectTo: (value: string | undefined) => value !== undefined && value.length > 5
       ? { '../longTarget': value }
       : { '../shortTarget': value, '/audit/lastShort': value },
   },
 },
 ```
+
+The handler also runs when the form mounts, so it must accept an empty source value.
 
 ## Cycles
 

@@ -11,29 +11,35 @@ import { scanEqualityTokens } from './utils/scanEqualityTokens';
  * Prove a complete OR of strict reference/literal comparisons without execution.
  * @param source - Authored active expression; blocks and unsupported syntax are refused
  * @param dependencies - Compiler's ordered list, which must match fresh substitution
+ * @param preparedExpression - Optional substitution from the same source and dependency registry
  * @returns Literal evidence or undefined; never compiles or invokes authored code
  */
 export const recognizeEqualityExpression = (
   source: string,
   dependencies: readonly string[],
+  preparedExpression?: string,
 ): BlueprintExpression['equality'] => {
-  const manager = getPathManager();
-  const substituted = substituteDependencyPaths(manager, source);
-  const paths = manager.get();
-  let hasUnsupportedDependencies =
-    paths.length !== 1 || paths.length !== dependencies.length;
-  if (!hasUnsupportedDependencies) {
-    for (let index = 0, count = paths.length; index < count; index++) {
-      const path = paths[index];
+  if (dependencies.length !== 1) return;
+  let substituted = preparedExpression;
+  if (substituted === undefined) {
+    const manager = getPathManager();
+    substituted = substituteDependencyPaths(manager, source);
+    const paths = manager.get();
+    let hasUnsupportedDependencies =
+      paths.length !== 1 || paths.length !== dependencies.length;
+    if (!hasUnsupportedDependencies) {
+      for (let index = 0, count = paths.length; index < count; index++) {
+        const path = paths[index];
 
-      if (path !== dependencies[index]) {
-        hasUnsupportedDependencies = true;
-        break;
+        if (path !== dependencies[index]) {
+          hasUnsupportedDependencies = true;
+          break;
+        }
       }
     }
-  }
-  if (hasUnsupportedDependencies) {
-    return;
+    if (hasUnsupportedDependencies) {
+      return;
+    }
   }
   const tokens = scanEqualityTokens(substituted);
   if (!tokens) return;

@@ -2,77 +2,98 @@
 
 ## Requirements
 
-- B12 `inactiveValue`는 노드·fields·조각 controls 모두에서 허용하는 열 번째 자식 제어 키입니다. 문자열은 리터럴이며 식 목록에 포함하지 않습니다.
-
-- 데이터·스키마 경로는 jsonPointer 조립 API로 이름을 인코딩한다. 배열 반복 경로만 Wildcard 심볼을 쓰고, $ref는 표준 RFC 포인터 이름으로 탐색한다.
-
-
-- D3b-2에서 무조건 정규화 결과는 host 파생 레코드의 defaultEffectiveSchema 슬롯에 보관한다. 분석 소유자가 builder를 유지하며 별도 DEFAULT_NO_ACTIVE WeakMap을 내보내지 않는다.
-
-- Appending multiple templates for one named property sets the host's optional `hasPropertyCandidates` flag. Single-candidate bindings leave it absent, without a new index or cache; array candidate presence remains represented by the existing candidate lists. This construction-time proof guards candidate-owned exit cleanup (NODE-043, BLUEPRINT-044; 394C-01).
-
-- 배열의 반복 템플릿과 각 prefixItems 자리에는 build가 돌려준 fold별 후보 전부를 작성 순서로 연결한다. 기존 단일 후보 필드는 첫 후보를 가리키며, 후보별 작성 스키마 위치와 선언 소유를 보존한다(BLUEPRINT-044, 389C-03, 391C-01).
-
-- 선언 수집에서 packed gates/order를 복사할 때는 native slice를 사용한다. fragment와 declaration의 배열은 계속 각자 소유하고, 값, 순서, ID, DFS, 진단, capability는 같다. 속도 비용은 같은 원소 수에 비례하는 native 복사이며, 입력과 fragment를 iterator로 순회하던 일은 없어진다. 메모리 비용은 호출마다 기존의 네 배열과 원소 참조 수를 그대로 유지하고, 추가로 보유하는 자료는 없다(batch2 2-declaration-slice).
-
-- 자식 이름의 formatSegment는 이름마다 한 번 만든 값을 schemaPath와 data path에 재사용한다. 무게이트 경로는 지역 문자열 하나를 사용하고, 일반 집계는 기존 properties Map에 이미 인코딩한 경로와 입력을 보관하고 그 접미부를 스키마 경로에 재사용한다. 예약 이름은 퍼센트 표기를 사용하며, 그 밖의 경로와 자식·기여·게이트 순서는 같다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며, 반복되는 기여와 뒤쪽 build 순회에서 다시 escape하던 일이 없어진다. 메모리 비용은 빠른 경로에서 지역 문자열 하나, 일반 경로에서 이름마다 일시 기록 하나와 문자열 참조다. 소속 배열의 소유와 동결은 유지하며, 새로 보유하는 색인, 캐시, 공개 필드는 없다(107라운드 3-path-strings).
-
-- 무게이트 자식 빠른 경로의 입력은 기존 순서인 context, gates, inherited, hostPath, fragment, role, schema, schemaPath, order의 literal로 만든다. 실제 자식 build, binding, 독립된 소속 배열 생산은 그대로다. 속도 비용은 고정 필드를 직접 읽고 쓰는 것이며, 자식마다 base spread로 범용 키를 복사하던 일이 없어진다. 메모리 비용은 기존의 부모별 base, 자식별 입력·배열, 공개 경로 두 개를 유지하며 새로 보유하는 자료는 없다(107라운드 2-child-input-literal).
-
-- 조각 확장 키가 없는 선언은 기존의 control·type 검사와 capability, ID, fragment, 소유자, discriminator 기록을 마친 뒤 반환한다. `$ref`가 문자열이 아니고 allOf, if, oneOf, anyOf가 모두 undefined인 경우에만 visiting stack 복사와 고정 fragment keyword loop를 생략하며, 공개 청사진, 진단, DFS 순서는 같다. 속도 비용은 O(1) 고정 검사이며, 5개 keyword 반복과 배열 모양 검사 3회가 없어진다. 메모리 비용은 적격 호출에서 visiting 복사 배열이 없어지는 것이고, 기존 declaration, fragment, 소속 배열은 유지하며 새로 보유하는 색인이나 캐시는 없다. 두 모드의 59-schema differential과 105C-01 최소 크기 판정으로 확인한다(106라운드 빈 조각).
-
-- 선언 수집은 소유자별 ordered sink에 기존 DFS 순서대로 한 번씩 추가한다. ID 예약, fragment 연결, capability, 게이트, 정적 검사는 기존에 방문하던 위치를 유지하고, 가상 노드는 수집 함수가 반환한 별도 배열을 소유한다. 속도 비용은 O(선언 수) 추가이며, 재귀 반환을 flatten하던 일과 build 입력마다 다시 복사하던 일이 없어진다. 메모리 비용은 노드별 기존 집계 배열과 가상 소유 배열을 유지하되, 재귀와 일반 입력마다 만들던 중간 결과 배열만 없앤다. 기록끼리 소속 배열을 공유하지 않고, 새로 보유하는 색인, 캐시, 노드 필드도 없다. 실제 종단 시간은 105C-01 판정으로 확인한다(106라운드 선언 수집).
-
-- 단일 무게이트 연언 object는 properties의 eager `Object.entries` 스냅샷을 기존 순서 그대로 자식 build에 직접 전달한다. fields 제어 항목이 있거나, 선언이 여러 개이거나, 선언 문맥 또는 게이트 경로이면 기존 집계를 유지한다. 기존 binding 생산, DFS, 가상 자식 처리, 정적 검사와 청사진의 모든 내용은 같다. 속도 비용은 노드당 O(1) 자격 검사와 O(자식 수) 순회 한 번이며, properties Map에 넣고 조회하던 일과 두 번째 열거가 없어진다. 메모리 비용은 기존의 eager 스냅샷, 자식 입력, binding 결과를 유지하고, 적격 object에서는 properties Map과 쓰이지 않는 tuples Map을 만들지 않는다. 새로 보유하는 색인, 캐시, 노드 필드는 없으며 시간과 heap 바이트는 측정을 기다리는 중이다(105라운드 자식 열거).
-
-- 분석 문맥은 선언마다 그 선언이 수집된 구성 입력의 인덱스(`declarationInputs`)를 기록한다. 재귀에 적중해 템플릿을 다시 쓰는 연결이 가리키는 입력의 게이트를 선언별로 찾기 위해서다(211C-01). 내부 template tuple은 작성 위치, 문맥, 최초로 나타난 gate 순서로 한 번 구성하고, 같은 조각의 외부 문자열 표현을 host-bound 키에 조합한다. 두 Map의 실제 키 바이트, 조회 순서, 공개 schema·data 경로는 유지한다. 속도 비용은 입력, gate, 소유 경로, 문자열 길이에 비례하며, 전체 tuple 문자열을 다시 JSON으로 인코딩하던 일과 중간 tuple·host 배열이 없어진다. 메모리 비용은 호출 중에 쓰는 키 두 개, 인코딩 조각, 중복 판정 목록이며 새로 보유하는 캐시나 노드 필드는 없다. 종단 시간은 105C-01과 그 최소 크기 규칙으로 확인한다(106라운드 감도 판정).
-
-- 선언 수집은 controls.fields가 정의되어 있으면 분석 문맥의 hasChildTargets를 true로 바꾸며, false로 되돌리지 않는다. discriminator만으로는 이 증거를 세우지 않는다. 선언별 판별 키는 독립적이므로 자식 대상 검증에서 키를 비교하지 않는다(C12).
-
-- 노드 구성은 `constructing.has(key)`가 참인 연결에서 분석 문맥의 `hasTemplateRecursion`을 true로 바꾸며, false로 되돌리지 않는다. 어느 조회가 템플릿을 돌려주었는지로 판단하지 않는다.
-
-- 조각 순서는 properties, allOf, if/then/else, oneOf, anyOf이며, 배열 인덱스와 중첩 경로로 전순서를 정한다. 조각 문맥은 연언과 선언을 구별하고, 상속 overlay가 어느 호스트에 속하는지를 보존한다.
-
-- 형이 없는 칸은 BLUEPRINT-048·050·051에 따라 먼저 게이트 없는 oneOf·anyOf의 허용 집합을 합친다. 두 키워드가 함께 있으면 둘을 교차한 U에서 null을 뗀 F로 종류를 정한다. F가 `{object}`나 `{array}`이면 variant 호스트이고, 다른 종류와 섞이면 오류다. 게이트 분기는 U에서 제외하며, 재귀 분기와 참조는 현재 경로에 다시 들어오는 지점에서 절단한다. 분기 없는 `const`·`enum` 칸은 단일 JSON 종류의 원시 리터럴 잎이고, 분기 안의 리터럴 전용 칸은 여전히 ⊤이다. union은 터미널이며, 가상 노드를 포함한 종류는 여덟 가지다.
-
-- 명시된 discriminator만 정적 const·enum을 읽는다. 정적 allOf와 참조를 따라 태그를 교차하고, 끌어올린 선언과 자기 active의 결합을 보존하며, 작성 스키마는 바꾸지 않는다.
-
-- 판별자 모양을 먼저 검사한다(C1). 비문자열·빈 문자열은 `INVALID_CONTROL_SHAPE`이며 details는 `{ group: 'controls', key: 'discriminator', expected: 'string' }` 오류다. 정적 연언에서 알려진 비객체 호스트는 태그를 읽지 않고 키를 무시한다(C3). 호스트 형이 미정이면 union 태그를 계속 읽으며, 판별 게이트 분기로 호스트 형을 추론하지 않는다. 객체 선언에 oneOf·anyOf 배열이 없으면 그 선언의 키만 무시한다(C2). 무시한 키만으로 branchless capability를 끄지 않는다.
-- 객체 union의 어느 분기에도 태그가 없으면 `DISCRIMINATOR_MISMATCH`의 `missing` 오류다(C4). 일부만 태그가 없으면 해당 분기는 판별 게이트 없이 자기 active만 따른다(C5). 같은 oneOf의 태그 중복은 `overlap` 오류이고(C6), anyOf 중복은 해당 분기를 모두 켠다(C7). 호스트가 태그 형을 정하지 않은 경우에만 분기 태그 종류 불일치를 `kind` 오류로 보고한다(C8). 호스트가 여러 태그 종류를 포괄하면 허용한다(C9). 서로 다른 선언의 키는 각자의 union만 선택한다(C12).
-- 태그 값을 형 추론보다 먼저 교차한다. 공집합은 값 목록이 빈 판별 게이트로 기록하여 절대 켜지지 않게 하고, 태그 누락으로 세지 않는다(C11). 호스트 태그 형 밖의 분기도 도달 불가능으로 기록한다(C10). C10·C11의 태그 선언은 무게이트로 끌어올리지 않으며, 호스트에 해당 자식이 있으면 그 자식의 선언에도 넣지 않아 종류 충돌과 안정성 빠른 경로의 불필요한 탈락을 피한다. 도달 가능한 분기 안에만 있는 태그는 항상 마운트되는 자식으로 끌어올린다(C13).
-
-- controls, options, fields 항목에 허용하는 키는 닫힌 목록이다. controls의 두 목록은 `core/engine/types/controls.ts`의 `SchemaControls`·`ChildSchemaControls`와 형으로 묶여 있어서, 어느 쪽이 어긋나도 형 검사가 실패한다. 닫힌 목록 밖의 키는 UNKNOWN_GROUP_KEY, 목록 안 키의 값 모양이 틀리면 INVALID_CONTROL_SHAPE다. injectTo는 함수만 허용하며 정적 대상 분석은 하지 않는다. presentation은 불투명한 병합 데이터로만 취급한다.
+선언의 문맥·소유 호스트·게이트·전순서를 보존하여 유한 템플릿을 구성합니다. 값 평가와 런타임 노드 생성은 하지 않습니다. 작성 위치의 수와 연결 문맥을 구별해야 공유 참조의 첫 방문이 다른 사용처의 의미를 고정하지 않습니다.
 
 ## API Contracts
 
-- Discriminator classification adds a static-host/tag scan and a temporary list of tag declarations per branch. Time is proportional to the visited conjunctions and tag values, with the existing pairwise exclusive-tag overlap check retained. Temporary storage is linear in a branch's static tag declarations; unreachable descriptors retain at most two optional boolean flags and introduce no cache or runtime node.
-
-- 객체 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`이면 청사진 구축이 `RESERVED_PROPERTY_NAME`으로 거부한다. 이 이름의 경로는 왕복하면 예약 연산자 이름(`*`, `.`, `..`, `@`)으로 읽혀 값 적재·비활성 값·검증 배정이 다른 속성을 가리키기 때문이다. 오류는 속성 이름과 규칙을 메시지에 싣고 `properties` 아래 해당 이름의 작성 위치를 `schemaPath`로 가진다. 진단 코드는 공개 `FormErrorCode.ReservedPropertyName`을 사용한다.
-
-- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
-
-- 같은 종류의 그룹 판정은 engine 공통 fold 보조를 소비한다. 이 보조는 schemaType을 읽는 런타임 식별과 같은 비트 의미를 소유하므로 빌드와 정착이 number/integer·nullable·형 나열 순서를 동일하게 접는다. 청사진 노드에는 새 필드를 보관하지 않는다(BLUEPRINT-043, 389C-02, 390C-01).
-
-- 옛 표기 `items: [...]`는 자리별 `prefixItems` 템플릿으로 컴파일한다. 같은 선언의 `additionalItems`가 스키마 객체이면 그 꼬리 자리의 아이템 템플릿(`item`)으로 컴파일한다. `additionalItems`가 `false`나 `true`이거나 없으면 꼬리는 청사진이 없는 자리다. 꼬리가 닫혔는지는 검증기가 판단할 일이라 청사진은 모형으로 두지 않는다. 기존 `items` 튜플 컴파일과 그 시험은 그대로다(NODE-052, SCHEMA-001, 36C-02).
-
-- 자식 연결은 이름, 참조 템플릿, 해당 호스트의 선언과 게이트를 보존한다. 같은 참조 대상이라도 호스트별 덧씌움이나 선언 문맥이 다르면 유효 스키마의 선언 집합을 공유하지 않는다. 재귀 참조는 분석 중인 템플릿을 다시 가리키게 해서 유한하게 유지하며, 최초 방문 경로를 이후 연결의 호스트 경로로 잘못 쓰지 않는다. 재귀에 적중해 구성 중인 템플릿을 다시 가리키는 연결의 게이트는, 가리키는 입력의 게이트 뒤에 템플릿 자신의 선언 게이트를 새 경로로 다시 묶은 목록이다. 첫 방문의 절대 호스트 경로는 물려받지 않는다(FRAGMENT-003·009, 211C-01).
-
-- `BlueprintGate.evaluationReads`는 식이 읽는 자리의 정적 목록이다. 절대 경로는 `#`·`(/)`의 루트 `''`, `/p`·`#/p`의 `'/p'`처럼 절대 경로 문자열로 보존한다. 상대 경로는 선언 호스트에서 오르는 `..` 횟수(0 이상인 수)로 보존하고, `@`는 제외한다. 청사진은 유한한 작성 위치마다 템플릿을 하나만 만들며, 발생의 절대 평가 자리 L은 정하지 않는다. 정착이 각 발생을 만들 때, 그 발생 호스트와 모든 읽기 자리의 최저 공통 조상 L을 한 번 계산해 메모한다. 단일 발생의 L은 종전 정적 규칙과 같다(SETTLE-045, BLUEPRINT-030, 26C-04·07).
-
-- 내부 참조의 URI 디코딩이나 JSON Pointer 해석이 실패하면, 작성 위치와 원인을 보존한 UNKNOWN_JSON_SCHEMA로 보고한다.
+부모가 주입하는 predicate로 전략과 원자성을 판정합니다. 정적 힌트 교차는 [effectiveSchema](../effectiveSchema/DETAIL.md), 무조건 순환 검사는 [validateShape](../validateShape/DETAIL.md), 완성된 직계 자식 대상 검사는 [validateChildTargets](../validateChildTargets/DETAIL.md)가 소유합니다. 실제 게이트 충돌과 발생별 재귀 확장은 [settle](../../settle/DETAIL.md)로 넘깁니다.
 
 ## Acceptance Criteria
 
-### owned-inline-public — 생성 지점 공개·공유 값 보호
+### BLUEPRINT-004 — 호스트에 결합한 상속 overlay
 
-- 정적·runtime 유효 schema, 공개 값 11종, 공유 gate 내부가 두 모드에서 동결되고, 입력은 원래 참조와 동결 상태를 유지한다. hint style 병합은 결과만 보호하며, 작성된 React 값과 함수의 참조와 상태는 유지한다.
+then·else나 allOf 안의 선언도 본체와 같은 자식 구성 경로에 넣습니다. 손자에 닿는 overlay는 그 자식 호스트에 귀속시키되 게이트의 호스트는 조상에 남깁니다. 같은 참조 대상이라도 연결 문맥이 다르면 선언 집합을 무조건 공유하지 않으며, 재귀 연결의 게이트는 해당 입력과 템플릿 자신의 게이트를 새 호스트에 다시 묶습니다. 이를 생략하면 다른 발생의 조건과 경로를 읽습니다.
 
-### owned-inline-memberships — 기록별 소유와 개발 보호
+### BLUEPRINT-005 — 방언 전환 없이 구조 철자를 읽습니다
 
-- 59종, 가상, 재바인딩, validationOnly, fields-control, discriminator, compiled expression, 지연 slot에서 두 기록이 소속 배열을 공유하지 않는다. 내부 기록은 개발 모드에서만 동결하고 appliesWhen은 두 모드에서 보호한다. EMPTY_INDEX 공유와 node-local memo를 유지한다.
+$defs·definitions와 prefixItems·items 튜플을 모두 읽습니다. 옛 튜플의 additionalItems가 스키마 객체이면 꼬리 템플릿으로 두고, true·false·없음이면 꼬리 청사진을 만들지 않습니다. 꼬리를 허용하는지는 검증기가 결정하므로 닫힌 배열을 별도의 형상 금지로 번역하지 않습니다.
 
-- 위 두 절은 이 fractal의 시험이 직접 검증한다. 형, 조각, 판별, 게이트 위치, 재귀, 코퍼스에 대한 분석 결과는 부모 blueprint의 통합 시험이 `blueprint()`로 검증한다(부모 DETAIL의 `type-syntax`, `type-inference`, `type-static-intersection`, `discriminator`, `gate-evaluation-location`, `corpus` 절).
+### BLUEPRINT-010 — 공유 단위는 이름과 접은 종류입니다
+
+같은 이름의 정적 연언은 하나의 노드를 정합니다. 정적 소유 선언이 없는 자리는 같은 fold끼리 후보를 공유하며, 서로 다른 fold의 무게이트 선언은 SHARED_NODE_KIND_CONFLICT입니다. 게이트 후보의 동시 활성은 분석에서 추정하지 않습니다. union도 fold 집합이 같아야 같은 종류이며, number/integer·nullable·형 나열 순서는 정체성에 잘못 포함하지 않습니다. 이 규칙을 아이템·additionalItems·각 prefixItems 자리에도 적용해 뒤쪽 종류가 사라지지 않게 합니다. 단일 후보 필드는 첫 후보이며, 여러 후보를 처리하는 소비자는 작성 순서의 전체 후보를 사용합니다.
+
+### BLUEPRINT-041 — 정적 허용 집합이 종류를 결정합니다
+
+본체·게이트 없는 allOf·$ref의 type은 null을 포함하여 교차하고 integer는 number의 부분집합입니다. 빈 정적 교집합만 형 충돌이며 {null}은 null 종류입니다. 게이트는 정적 kind·schemaType·nullable·전략을 재선택하지 않고 유효 목록만 좁힙니다. 정적 소유가 있는 자리의 게이트 없는 선언 분기는 그 fold의 부분집합일 때 존재만 더하고, 밖이면 정적 공유 충돌입니다. 임의의 선언 순서로 종류가 바뀌는 일을 막습니다.
+
+### BLUEPRINT-044 — 형 표기와 종류 접기를 구별합니다
+
+알 수 없는 형·빈 type 배열·중복 원소는 UNKNOWN_JSON_SCHEMA입니다. 한 선언의 number와 integer는 number로 합치지만 교차 결과의 integer 제약은 schemaType에 남깁니다. nullable: true는 같은 객체에 type이 있을 때만 null을 더하고, 종류를 정할 때만 null을 떼고 integer를 number로 접습니다. 첫 정적 type 선언은 결과 순서의 앵커이며 의미를 우선하지 않습니다. 명시된 원시·union 호스트의 게이트 없는 분기는 검증 전용이므로 목록 밖 분기나 null 분기가 정적 목록을 바꾸지 않습니다.
+
+### BLUEPRINT-051 — 형 없는 칸의 분기 추론
+
+게이트 없는 분기마다 정적 연언의 허용 집합을 구해 키워드 안에서는 합집합, oneOf와 anyOf 사이에서는 교집합을 취한 뒤 null을 분리합니다. 순서는 첫 등장과 oneOf 쪽 앵커를 따릅니다. 게이트 분기는 추론에서 제외하며, 빈 결과나 허용 집합을 정하지 못한 분기는 type을 명시하도록 UNKNOWN_JSON_SCHEMA로 보고합니다. const·enum만 있는 분기를 임의의 형으로 추정하면 선언과 검증이 갈라지므로 허용하지 않습니다. 재귀 분기 위치는 재진입에서 절단하며 빈 결과를 성공으로 바꾸지 않습니다.
+
+### BLUEPRINT-048 — 형 없는 컨테이너 호스트의 한계
+
+분기 집합에서 null을 뺀 fold가 object 하나 또는 array 하나이면 해당 variant 호스트로 구성하고 같은 자식·전략 규칙을 사용합니다. object·array가 다른 종류와 섞인 형 없는 칸은 UNKNOWN_JSON_SCHEMA입니다. 명시적 다중 type의 터미널 union을 이 제한과 혼동하지 않습니다.
+
+### BLUEPRINT-050 — 분기 없는 원시 리터럴 추론
+
+정적 type과 게이트 없는 분기가 모두 없는 칸은 const·enum의 단일 비null 원시 종류로 추론할 수 있고 null은 nullable로 남깁니다. 여러 비null 종류나 객체·배열 리터럴은 명시적 type을 요구합니다. 이 제한된 추론을 분기 선택 자동 감지로 확대하지 않습니다.
+
+### BLUEPRINT-036 — 전략은 생성 후 고정입니다
+
+union은 object·array를 포함해도 값 전체를 담는 terminal이며 자식을 만들지 않습니다. 단일 행 종류와 맞지 않는 options.terminal은 오류입니다. object·array는 명시 terminal → 주입된 renderer 판정 → branch 기본값 순으로 결정하며, 노드가 존재하는 게이트 문맥마다 전략이 같아야 합니다. 게이트 없는 나중 선언이 이기는 경우와 게이트 전환으로 전략이 바뀌는 경우를 구별하여 편집 단위가 실행 중 갈라지지 않게 합니다. 선언 선택은 effectiveSchema의 SCHEMA-044와 일치합니다.
+
+### BLUEPRINT-017 — 명시 판별의 오류와 허용 범위
+
+controls.discriminator만 태그를 읽으며 OpenAPI discriminator나 일반 분기의 const·enum을 자동 선택에 쓰지 않습니다. 분기 스키마를 고치지 않고 판별 descriptor와 게이트를 만들므로 검증 판정은 유지됩니다. 분기 자신의 active는 별도 게이트와 함께 모두 성립해야 합니다. 예약 판별을 검증기 전용 discriminator 옵션으로 구현하지 않습니다. 그러면 폼의 형상 언어가 특정 플러그인의 지원 범위에 종속되어 같은 생성기 스키마의 수용 여부가 달라지기 때문입니다.
+
+비문자열·빈 키는 INVALID_CONTROL_SHAPE로 먼저 거부합니다. 알려진 비객체 호스트 또는 union 없는 객체 선언의 키는 무시하고 경고합니다. 객체 variant의 태그 전체 누락, 같은 oneOf의 값 중복, 호스트 태그 형이 없는데 분기 태그 종류가 다름은 DISCRIMINATOR_MISMATCH의 missing·overlap·kind 오류입니다. 일부 무태그 분기는 자기 active만 따르며 anyOf 중복·여러 종류를 포괄하는 호스트 태그·선언마다 다른 판별 키는 허용합니다. 키 하나가 다른 선언의 union까지 선택해서는 안 됩니다. details는 propertyName과 reason만 담습니다.
+
+### FRAGMENT-048 — 태그 수집과 도달 불가능 분기
+
+분기와 태그 프로퍼티의 본체·게이트 없는 allOf·$ref만 따라 const·enum을 교차하며, if/then·게이트 가진 allOf·중첩 disjunction은 태그 수집 범위 밖입니다. null 전용 분기는 판별 대상에서 제외합니다. 태그 교차가 비면 형 추론 전에 빈 값 descriptor를 남겨 절대 켜지지 않게 하고 empty 경고를 냅니다. 호스트 태그 형 밖이면 kind 경고이며, 두 경우의 태그는 끌어올리거나 기존 호스트 자식의 선언에 넣지 않습니다. 일반 정적 힌트의 공집합 오류와 구별하여 도달 불가능 분기 때문에 폼 전체가 중단되지 않게 합니다. 호스트 태그 enum 밖의 값을 별도로 판정하지 않습니다.
+
+도달 가능한 분기에만 있는 태그는 무조건 선언으로도 끌어올려 모든 분기가 꺼진 상태에서도 조건을 읽게 합니다. 태그 값의 합집합 enum이나 암묵 default는 만들지 않습니다. 터미널 객체도 판별 불일치 검사는 유지하지만 도달 불가능 경고는 수집하지 않습니다.
+
+### CONTROLS-016 — 닫힌 예약 언어와 단일 철자
+
+controls와 options의 허용 키는 선언 범위마다 닫혀 있고, 미지 키는 UNKNOWN_GROUP_KEY, 그룹·fields 항목·injectTo·판별 키의 잘못된 모양은 INVALID_CONTROL_SHAPE로 구별합니다. presentation 내부는 해석하지 않는 열린 병합 데이터입니다. 평면 &키·computed·맨 virtualRequired 등은 폼의 별칭으로 읽거나 이주 경고를 만들지 않습니다. 별칭은 우선순위·형·문서를 이중으로 만들고 미지 표준 확장 키를 가로채므로 두지 않습니다.
+
+### CONTROLS-018 — 식과 리터럴 선언을 구별합니다
+
+상태·에지 제어와 derived의 문자열은 식이며 문자열 상수는 식 안에 인용합니다. default·inactiveValue의 문자열은 리터럴, discriminator는 이름, watch는 경로, injectTo는 함수입니다. inactiveValue는 동기 resolver 또는 리터럴이며 식 컴파일·정적 의존 추적에 넣지 않습니다. injectTo의 반환 대상은 실행해야 알 수 있으므로 정적 대상 없음 오류를 만들지 않습니다.
+
+### CONTROLS-030 — 자식 제어는 한 홉의 선언입니다
+
+controls.fields의 targets는 직계 자식 이름이고 controls와 별도의 봉투를 사용합니다. 항목·조각 범위에는 자식 제어 키만 허용하며 fields·injectTo·discriminator·watch를 다시 넣지 않습니다. 조각은 자신이 직접 선언한 자식의 제어를 소유하고 일반 자손 상속으로 바꾸지 않습니다. 항목 active의 appliesWhen은 소유 선언의 게이트를 보존하며 단순 AND로 합치지 않습니다. 소유 선언이 꺼진 경우와 대상 자체를 끄는 경우를 혼동하지 않기 위해서입니다. 완성 후 대상 존재 확인은 validateChildTargets가 맡습니다.
+
+### FRAGMENT-049 — 전순서는 JSON 키 순서와 독립적입니다
+
+감싸는 선언의 순서 뒤에 properties < allOf < if/then/else < oneOf < anyOf와 배열 인덱스를 붙여 비교합니다. 같은 호스트의 모든 oneOf 분기는 모든 anyOf 분기보다 앞섭니다. 주석 병합·전략·규칙 동점·공유 충돌의 앞선 후보가 서로 다른 순서를 사용하지 않게 합니다.
+
+### BLUEPRINT-030 — 위치의 재방문과 템플릿 재귀
+
+$ref는 작성 루트 안의 표준 JSON Pointer만 해석합니다. 외부 자원·깨진 URI/포인터·스키마가 아닌 대상은 작성 위치와 원인을 가진 UNKNOWN_JSON_SCHEMA입니다. 한 호스트의 조각 확장에서 같은 작성 위치를 다시 만나면 선언의 존재가 달라지지 않으므로 확장을 멈춥니다. 자식 참조는 유한 템플릿에 연결하며, 구성 중 템플릿을 다시 만난 증거만 단조적으로 남깁니다. null 허용이나 단순 캐시 적중을 순환의 절단 또는 재귀의 증거로 오인하지 않습니다.
+
+### SCHEMA-040 — 동적 키는 정적 입력 노드가 아닙니다
+
+patternProperties·스키마 값 additionalProperties에서 자식을 생성하지 않습니다. 동적 맵의 편집은 터미널 값 전체의 입력으로 표현합니다. 동적 검증 규칙으로 노드 생성을 추정하면 검증 방언의 의미를 다시 구현하게 됩니다. 선언되지 않은 값의 보존·방출은 settle이 소유합니다.
+
+### SCHEMA-042 — 가상 이름은 고정 튜플의 신원입니다
+
+같은 호스트의 같은 가상 이름은 fields의 순서까지 같아야 하며, 게이트 배타성과 무관하게 다르면 VIRTUAL_FIELDS_MISMATCH입니다. 순서가 값의 튜플 모양이므로 조각 전환으로 이를 바꾸지 않습니다. 가상 fields는 실제 형제에 결합하고 required를 재작성하지 않습니다.
+
+### owned-inline-public — 생성 값만 보호합니다
+
+생산자가 만든 유효 스키마·schemaType 배열·공유 게이트·게이트 소유 appliesWhen은 두 모드에서 보호합니다. 작성 스키마·중첩 default·불투명 renderer 값은 빌린 참조이므로 동결하지 않습니다. 한 폼의 변조가 공유 청사진의 다른 폼으로 새는 것을 막되 소비자 값의 수명은 침범하지 않습니다.
+
+### owned-inline-memberships — 기록별 소속 배열
+
+선언·조각·바인딩은 각자 소속 배열을 소유하고 내부 기록은 개발 모드에서만 동결합니다. 게이트별 evaluationReads는 참조가 증거이므로 별도 배열로 두며 일반 불변 빈 결과와 혼용하지 않습니다. 공개 공유 값의 보호를 유지하면서 완료 그래프 재순회 비용을 피합니다.
 
 ## Last Updated
 
-2026-11-03
+선언 순서·허용 형·전략·판별자·재귀·예약 언어·값 소유권이 바뀔 때 갱신합니다.
