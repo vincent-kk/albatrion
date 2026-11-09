@@ -34,7 +34,7 @@ The same control value checks apply inside fields entries and fragments, within 
 | Group | Consumer use |
 | --- | --- |
 | `presentation` | `inputType`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; custom renderer payload is allowed |
-| `options` | Only `omitEmpty`, `trim`, `omitTrailing`, `terminal`, `propertyOrder`, `virtual` |
+| `options` | Reserved engine options use the types above; custom keys are allowed |
 | `controls` | The controls listed below; input-specific settings do not belong here |
 
 `options.trim` trims the stored string on blur, not on every keystroke. `omitTrailing` removes trailing `undefined` entries from normalized array output without deleting their raw child nodes. `omitEmpty` defaults to true; `trim` and `omitTrailing` default to false. See the [array output example](./examples/array-output-filters).

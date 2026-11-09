@@ -34,7 +34,7 @@ sidebar_position: 4
 | 그룹 | 소비자 설정 |
 | --- | --- |
 | `presentation` | `inputType`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; 사용자 렌더러 데이터도 허용합니다 |
-| `options` | `omitEmpty`, `trim`, `omitTrailing`, `terminal`, `propertyOrder`, `virtual`만 허용합니다 |
+| `options` | 예약 엔진 옵션은 위 표의 형을 따르며 사용자 키도 허용합니다 |
 | `controls` | 아래 controls 목록을 사용하며 입력별 설정은 이곳에 두지 않습니다 |
 
 `options.trim`은 타이핑마다가 아니라 blur 때 저장 문자열을 trim합니다. `omitTrailing`은 원시 자식 노드를 삭제하지 않고 정규화된 배열 출력의 뒤쪽 `undefined`를 제거합니다. `omitEmpty`의 기본값은 true, `trim`, `omitTrailing`의 기본값은 false입니다. [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.

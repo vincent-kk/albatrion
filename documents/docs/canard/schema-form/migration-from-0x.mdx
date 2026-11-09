@@ -33,7 +33,7 @@ Use this guide as a conversion checklist, then consult the linked current contra
 | `propertyKeys`                  | `options.propertyOrder`                          |
 | `virtual / type: 'virtual'`     | `options.virtual: { <name>: { fields: [...] } }` |
 
-Only the [authoring groups](./schema-reference#authoring-groups) define accepted options. Move input settings to presentation.FieldInputProps and check [branch selection](./schema-reference#composition) rather than assuming oneOf chooses one form branch automatically.
+Use the [authoring groups](./schema-reference#authoring-groups) for library settings and their extension rules. Move input settings to presentation.FieldInputProps and check [branch selection](./schema-reference#composition) rather than assuming oneOf chooses one form branch automatically.
 
 ## Component, type, hook, and node names {#consumer-names}
 
