@@ -70,11 +70,11 @@ describe('open-options authoring', () => {
     expect(collect).not.toHaveBeenCalled();
   });
 
-  it('preserves virtual shape and terminal compatibility errors', () => {
+  it('uses shallow virtual envelope errors and preserves terminal compatibility errors', () => {
     expect(() =>
       blueprint({ type: 'object', options: { virtual: [] } }),
     ).toThrow(
-      expect.objectContaining({ code: FormErrorCode.VirtualFieldsNotValid }),
+      expect.objectContaining({ code: FormErrorCode.InvalidControlShape }),
     );
     expect(() =>
       blueprint({ type: 'string', options: { terminal: false } }),
