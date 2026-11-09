@@ -93,7 +93,7 @@ Verify both directions: selecting receipt creates a required email input; cleari
 
 ## Verify value, verdict, and displayed message
 
-Configure the name example with the chosen validator and display policy:
+Configure the name example with the chosen validator and display policy. Keep `validator` stable across renders using the [validator setup guidance](./plugin-system.md#custom-validator):
 
 ```ts
 const formProps = {

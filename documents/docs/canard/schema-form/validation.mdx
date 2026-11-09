@@ -86,6 +86,7 @@ import { Form } from '@canard/schema-form';
 import { createValidator } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
+// Create the AJV instance and adapter once at module scope.
 const ajv = new Ajv({ strictSchema: false, validateFormats: false });
 ajv.addKeyword({
   keyword: 'isEven',
@@ -101,7 +102,7 @@ export function EvenNumberForm() {
 }
 ```
 
-Keep the adapter reference stable: [validator replacement rebuilds the Form tree](./api-reference#configuration-lifetime).
+Keep this setup outside the component body; follow the [validator lifetime contract](./api-reference#configuration-lifetime) for memoized setup, plugin reuse and the effects of accidental per-render creation.
 
 ## Guard compilation and root lifetime {#guard-compilation}
 

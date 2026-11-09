@@ -22,6 +22,10 @@ React의 터미널·원자 판정과 app 소유 청사진 캐시는 생성 인�
 
 동일 스키마 reset은 다른 폼이 공유 캐시를 무효화해도 이 폼의 청사진을 유지합니다. rebuild는 committed 스키마의 캐시를 무효화하고 같은 reset 옵션으로 교체 경로를 강제합니다. 캐시 무효화만으로 살아 있는 폼을 몰래 바꾸지 않기 위한 규칙입니다. 스키마·검증기 변경에 의한 reset 교체까지 금지한다는 뜻은 아닙니다.
 
+### validator-lifetime — 검증기 선택과 교체 경계
+
+마운트 후 선택된 validatorFactory 교체는 지원하는 사용이 아니며, 참조 변경은 기존 reset 재초기화 경로를 유지합니다. 소비자의 참조 안정성·초기화 효과 계약은 [API 참조](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#configuration-lifetime)가 소유합니다. 값을 유지하는 live 교체안은 채택하지 않습니다. 지원하지 않는 사용 하나를 위해 settle·게이트 registry·write chain·submission 경로의 수명 규칙까지 바꾸게 되므로, 검증기의 참조 변경을 값 보존 설정처럼 취급하여 서로 다른 트리·검증 수명을 섞는 일을 막습니다.
+
 ### REACT-007 — 준비된 load의 수명
 
 첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 확정 commit은 루트 구독과 prepared 표시 뒤 기록을 flush하고 외부 오류·로드 검증을 연결합니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
