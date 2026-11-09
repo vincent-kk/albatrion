@@ -85,3 +85,14 @@ describe('reserved control value shapes', () => {
       );
   });
 });
+
+it('validates inherited reserved values that control evaluation can read', () => {
+  expect(() =>
+    blueprint({ type: 'string', controls: Object.create({ visible: 1 }) }),
+  ).toThrow(
+    expect.objectContaining({
+      code: FormErrorCode.InvalidControlShape,
+      details: expect.objectContaining({ schemaPath: '#/controls/visible' }),
+    }),
+  );
+});
