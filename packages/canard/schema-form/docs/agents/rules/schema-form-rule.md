@@ -21,6 +21,8 @@ Use the skill's verification guidance to check the resulting form.
   read the form's value and use its input or handle operations instead.
 - A component calling a validator separately to decide form validity:
   configure schema-form validation and use its validation or submit flow.
+- A fresh `validatorFactory` object during render resets the form and loses input:
+  follow the skill's `knowledge/plugin-system.md` stable validator setup.
 - Manually creating child nodes when a condition changes:
   declare the fields and conditions in the schema instead.
 - Per-input logic deciding when validation messages may appear:

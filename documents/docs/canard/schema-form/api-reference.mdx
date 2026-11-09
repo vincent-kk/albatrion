@@ -42,7 +42,11 @@ Changing `jsonSchema` or `defaultValue` alone preserves the current tree and edi
 
 `rebuild()` invalidates that schema object's cached analysis and replaces this Form's root using reset's load options. Another Form using the same schema object keeps its existing tree. Reacquire nodes from the current handle after replacement.
 
-Changing the `validatorFactory` reference rebuilds the Form tree, so use a stable object for an unchanged configuration. Context and input locks can change live; renderer/input configuration follows the [live rendering rules](./core-concepts#rendering).
+Swapping the selected `validatorFactory` after mount is not a supported use. A changed reference on `Form`, or on `FormProvider` when the Form has no own `validatorFactory`, re-initializes the form through `reset()`: it rebuilds the tree, nodes and inputs, discards edits, and clears interaction state, attached files and pending focus requests. It uses the latest committed `jsonSchema` and `defaultValue`, including changes made before the swap, and `FormHandle.node` then points to the new root.
+
+Keep that object stable across parent renders. Creating it during render, such as `validatorFactory={createValidator(new Ajv(...))}` inline or a fresh object in the component body, changes the reference on each parent render and loses the user's input to repeated resets. Create it once at module scope, memoize it with stable inputs, or reuse the plugin's exported `plugin.validator`; see the [module-scope example](./validation#ajv-configuration).
+
+Context and input locks can change live; renderer/input configuration follows the [live rendering rules](./core-concepts#rendering).
 
 Replace an invalid input map with a valid map to recover without remounting. A failed live map change preserves the existing tree and last valid map; see [input-map errors](./error-reference#occurrences).
 

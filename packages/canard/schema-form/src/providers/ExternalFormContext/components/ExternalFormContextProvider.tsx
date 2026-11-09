@@ -123,7 +123,9 @@ export interface ExternalFormContextProviderProps {
  * Custom validation with external validator:
  * ```tsx
  * // A validator object declares both `compile` and `compileGuard`.
- * // Declare it once outside components: changing the reference rebuilds the tree.
+ * // Module scope: create this object once, outside components.
+ * // A new selected reference re-initializes the form; see the validator lifetime contract:
+ * // https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#configuration-lifetime
  * const validatorFactory: ValidatorFactory = {
  *   compile: (copy) => compileWithMyEngine(copy),
  *   compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
