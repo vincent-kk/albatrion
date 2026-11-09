@@ -64,6 +64,10 @@ Keys of the `controls` object (closed list, no aliases; an unknown key throws a 
 
 **active vs visible** — `active: false` removes the value from form data; `visible: false` hides UI but keeps the value. Full decision table: `knowledge/expressions.md`.
 
+### Options
+
+`options` accepts custom keys without an error or warning; a FieldInput or plugin can read them through `node.jsonSchema.options`. Only plain objects supply engine options. Defined `terminal`, `omitEmpty`, `omitTrailing`, and `trim` must be booleans, and `propertyOrder` must be a string array; malformed values fail at load with `INVALID_CONTROL_SHAPE` at `options/<key>`. Existing virtual declaration checks still apply. Use TypeScript completion for option names and prefer `presentation.FieldInputProps` for input payload because it is forwarded to the input. New reserved option names are contract changes because they may collide with custom keys.
+
 ### ValidationMode
 
 `ValidationMode.None | OnChange | OnRequest` — bit flags, combinable: `OnChange | OnRequest`.

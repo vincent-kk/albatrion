@@ -24,6 +24,10 @@ VALUE-021. 원시는 SameValueZero로 비교하여 NaN끼리, -0과 0을 같은 
 
 CONTROLS-077. 조각이 직접 선언한 properties·prefixItems·items·additionalItems 경로를 하나의 공통 판정으로 읽습니다. 이름의 단순 접두 일치로 itemsList 같은 다른 이름을 소유 자식으로 오인하지 않습니다. 배열의 템플릿과 구체 위치 모두 같은 소유 의미를 사용하여 청사진의 색인·정착의 제어 층·파생의 대상이 갈라지지 않게 합니다. 실제 규칙 실행은 각 자식의 계약입니다.
 
+### schema-options — 열린 작성 옵션의 형
+
+AuthoredSchema의 options는 알려진 옵션 형에 소비자 Options 제네릭과 열린 unknown 인덱스를 교차합니다. 알려진 키를 any로 넓히지 않아 자동완성과 오타 방어를 유지하며 controls의 닫힌 형은 바꾸지 않습니다. 런타임 수용·검사 정책은 [buildNodes](blueprint/buildNodes/DETAIL.md)에 둡니다.
+
 ### engine-shared-storage — 공동 보조의 비용과 경계
 
 경로 키 저장소는 native Map·Set 의미를 유지하며 항목 수 K와 깊이 D에 따른 O(KD) 접두 참조·색인 비용으로 국소 조회를 지원합니다. 인스턴스 adoption이나 메서드 패치를 하지 않습니다. 기능 부재가 정적으로 증명된 경우만 공유 읽기 전용 빈 Map·Set을 사용합니다. 공유 동결 빈 배열은 identity sentinel을 제외하고 공용 EMPTY_ARRAY를 사용하여 변화 없는 읽기에 할당을 더하지 않습니다.

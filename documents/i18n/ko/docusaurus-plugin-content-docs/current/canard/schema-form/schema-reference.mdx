@@ -11,7 +11,9 @@ sidebar_position: 4
 
 ## 스키마 설정 그룹 {#authoring-groups}
 
-표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `presentation`은 열린 그룹입니다. `controls`, `options`의 알 수 없는 키는 `FormErrorCode.UnknownGroupKey`, controls·options 그룹 자체와 injectTo·fields·discriminator 등 명시적으로 검사하는 형상 위반은 `FormErrorCode.InvalidControlShape`로 거부합니다. 알려진 모든 키의 값 형을 런타임에서 검증한다는 뜻은 아니므로 외부 데이터의 스키마는 소비자 경계에서 검증하십시오.
+표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `controls`는 닫힌 실행 영역입니다. 노드·자식·조각 제어의 미지 키는 `FormErrorCode.UnknownGroupKey`로 거부하여 오타가 가시성·값 제거·파생을 조용히 바꾸지 않게 하고 미래 제어 이름을 예약합니다. `options`와 `presentation`은 열려 있습니다. 미지 옵션 키는 오류나 경고 없이 노드 스키마를 통해 FieldInput이나 플러그인이 읽을 수 있습니다. 선택지 배열 등 평범한 객체가 아닌 `options`에서는 엔진 옵션을 읽지 않습니다. 옵션 이름의 오타는 TypeScript 자동완성으로 방어합니다. 미래 예약 옵션 이름이 사용자 키와 충돌할 수 있으므로 새 이름 추가는 계약 변경입니다.
+
+생성 시 undefined가 아닌 `options.terminal`·`omitEmpty`·`omitTrailing`·`trim`은 boolean, `propertyOrder`는 문자열 배열이어야 합니다. `undefined`는 생략을 뜻합니다. 잘못된 값은 `options/<key>` 위치와 `{ group: 'options', key, expected }` 상세를 가진 `FormErrorCode.InvalidControlShape`로 거부하며 가상 선언의 기존 검사도 유지합니다. controls 그룹 및 injectTo·fields·discriminator 등 명시적으로 검사하는 제어 형상 위반도 `InvalidControlShape`입니다. 모든 제어 값의 형을 런타임에서 검사한다는 뜻은 아니므로 외부 데이터의 스키마는 소비자 경계에서 검증하십시오.
 
 | 그룹 | 소비자 설정 |
 | --- | --- |
@@ -128,7 +130,7 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 
 `FieldInputTestObject`의 `type`, `schemaType`, `path`, `format`, `inputType`은 단일값 또는 목록을 받고 `required`, `nullable`은 boolean입니다. 생략한 조건은 제한하지 않습니다. virtual 노드는 `type: 'virtual'`, `schemaType: undefined`이며 `schemaType: 'virtual'`로 매칭하지 않습니다.
 
-입력별 설정은 실제 입력으로 전달하는 `presentation.FieldInputProps`에 둡니다. `lazy`, `protocols`, `minRows` 등을 `options`에 두면 `UnknownGroupKey`입니다. 스키마 최상위의 `inputType`, `FieldInput`은 presentation 그룹을 대체하지 않습니다.
+입력별 설정은 실제 입력으로 전달하는 `presentation.FieldInputProps`를 권장합니다. `lazy`, `protocols`, `minRows` 등을 `options`에 둘 수 있지만 입력이 노드 스키마에서 명시적으로 읽어야 합니다. 스키마 최상위의 `inputType`, `FieldInput`은 presentation 그룹을 대체하지 않습니다.
 
 ## 사용자 입력 접근성 {#accessibility}
 

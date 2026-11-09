@@ -60,7 +60,9 @@ controls.discriminator만 태그를 읽으며 OpenAPI discriminator나 일반 �
 
 ### CONTROLS-016 — 닫힌 예약 언어와 단일 철자
 
-controls와 options의 허용 키는 선언 범위마다 닫혀 있고, 미지 키는 UNKNOWN_GROUP_KEY, 그룹·fields 항목·injectTo·판별 키의 잘못된 모양은 INVALID_CONTROL_SHAPE로 구별합니다. presentation 내부는 해석하지 않는 열린 병합 데이터입니다. 평면 &키·computed·맨 virtualRequired 등은 폼의 별칭으로 읽거나 이주 경고를 만들지 않습니다. 별칭은 우선순위·형·문서를 이중으로 만들고 미지 표준 확장 키를 가로채므로 두지 않습니다.
+controls는 폼만 실행하는 예약 영역이므로 선언 범위마다 닫혀 있습니다. 미지 키는 UNKNOWN_GROUP_KEY로 거부하여 오타가 가시성·값 제거·파생을 조용히 바꾸지 않게 하고 미래 제어 이름을 예약합니다. controls 그룹·fields 항목·injectTo·판별 키의 잘못된 모양은 INVALID_CONTROL_SHAPE로 구별합니다.
+
+options는 소비자와 플러그인의 확장에 열려 있으며 미지 키에는 오류나 경고를 내지 않습니다. 평범한 객체가 아닌 options는 엔진 설정으로 읽지 않습니다. 평범한 객체에서 undefined가 아닌 terminal·omitEmpty·omitTrailing·trim은 boolean, propertyOrder는 문자열 배열이어야 하며 생성 때 options/키 위치의 INVALID_CONTROL_SHAPE로 거부합니다. virtual의 기존 선언 검사는 유지합니다. 오타 방어는 알려진 키의 TypeScript 자동완성에 맡깁니다. 미래 옵션 이름이 사용자 키와 충돌할 수 있는 비용을 받아들이므로 새 이름은 충돌을 고려하는 계약 변경입니다. 입력 payload의 권장 위치는 presentation입니다. presentation 내부는 해석하지 않는 열린 병합 데이터입니다. 평면 &키·computed·맨 virtualRequired 등은 폼의 별칭으로 읽거나 이주 경고를 만들지 않습니다. 별칭은 우선순위·형·문서를 이중으로 만들고 미지 표준 확장 키를 가로채므로 두지 않습니다.
 
 ### CONTROLS-018 — 식과 리터럴 선언을 구별합니다
 
