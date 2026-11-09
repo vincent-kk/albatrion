@@ -5,7 +5,7 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 const analysis = (handle: FormHandle) => (handle.node as unknown as { runtime: { blueprint: object } }).runtime.blueprint;
 afterEach(cleanup);
 it('mounts a fresh blueprint after CacheManager.reset without changing a live form', async () => {
-  const { CacheManager } = await import('@/schema-form/app/cache');
+  const { CacheManager } = await import('../utils/CacheManager');
   const schema = { type: 'string' as const };
   const a = createRef<FormHandle>();
   const b = createRef<FormHandle>();
