@@ -24,7 +24,7 @@ union은 다중 형을 값 전체로 담는 터미널 종류이고, oneOf·anyOf
 
 ### CONTROLS-001 — 예약 그룹은 의미로 나눕니다
 
-controls는 때에 따라 값·형상을 바꾸는 규칙과 정책, options는 정적 설정, presentation은 표현을 소유합니다. 읽는 계층만으로 그룹을 정하면 discriminator 같은 정적 준비를 하는 제어 선언이 잘못 배치됩니다. controls·options는 닫힌 언어이며 presentation은 플러그인의 열린 데이터입니다. 구체적인 허용 범위는 buildNodes의 CONTROLS-016을 따릅니다. 검증기 사본의 예약 그룹 제거는 [validation](../validation/DETAIL.md)이 소유합니다.
+controls는 때에 따라 값·형상을 바꾸는 규칙과 정책, options는 정적 설정, presentation은 표현을 소유합니다. 읽는 계층만으로 그룹을 정하면 discriminator 같은 정적 준비를 하는 제어 선언이 잘못 배치됩니다. controls는 닫힌 실행 언어이며 options와 presentation의 확장 정책은 buildNodes 계약에서 정합니다. 구체적인 허용 범위는 buildNodes의 CONTROLS-016을 따릅니다. 검증기 사본의 예약 그룹 제거는 [validation](../validation/DETAIL.md)이 소유합니다.
 
 ### FRAGMENT-019 — 검증상의 금지는 삭제 명령이 아닙니다
 

@@ -5,7 +5,7 @@ import type { DatePicker as AntdDatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { Form } from '@canard/schema-form';
+import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputMonthRangeDefinition } from '../FieldInputMonthRange';
 
@@ -70,13 +70,14 @@ it('reads minimum and maximum from presentation.FieldInputProps', () => {
   expect(disabledDate(dayjs('2024-07', FORMAT), info)).toBe(true);
 });
 
-it('rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
+it('accepts minimum under options without a schema error', () => {
   window.addEventListener('error', preventWindowError);
   const onError = vi.fn();
   render(
     <Form
       fieldInputDefinitions={[FieldInputMonthRangeDefinition]}
       onError={onError}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'object',
         properties: {
@@ -90,11 +91,6 @@ it('rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
       }}
     />,
   );
-  expect(onError).toHaveBeenCalledWith(
-    expect.objectContaining({
-      code: 'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY',
-      details: expect.objectContaining({ group: 'options', key: 'minimum' }),
-    }),
-  );
-  expect(screen.getByRole('alert').textContent).toBe('Unable to load form.');
+  expect(onError).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alert')).toBeNull();
 });

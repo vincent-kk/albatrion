@@ -33,7 +33,7 @@ Use this guide as a conversion checklist, then consult the linked current contra
 | `propertyKeys`                  | `options.propertyOrder`                          |
 | `virtual / type: 'virtual'`     | `options.virtual: { <name>: { fields: [...] } }` |
 
-Only the [authoring groups](./schema-reference#authoring-groups) define accepted options. Move input settings to presentation.FieldInputProps and check [branch selection](./schema-reference#composition) rather than assuming oneOf chooses one form branch automatically.
+Use the [authoring groups](./schema-reference#authoring-groups) for library settings and their extension rules. Move input settings to presentation.FieldInputProps and check [branch selection](./schema-reference#composition) rather than assuming oneOf chooses one form branch automatically.
 
 ## Component, type, hook, and node names {#consumer-names}
 
@@ -92,7 +92,7 @@ Use [raw issue data](./validation#issues-messages) for validation results and [e
 
 ## Behavior checks after conversion {#behavior-checks}
 
-- Check [closed options and open presentation](./schema-reference#authoring-groups) so stale plugin settings do not become UnknownGroupKey.
+- Check [open options and presentation, and closed controls](./schema-reference#authoring-groups); move plugin input settings to presentation.FieldInputProps so they reach the input, and check reserved value types in all three groups.
 - Update DOM tests for [enum empty values and checkbox/radio naming](./schema-reference#accessibility).
 - Match virtual inputs using the [current test hint](./schema-reference#input-resolution).
 - Supply a complete [validator object](./validation#validator-contract).

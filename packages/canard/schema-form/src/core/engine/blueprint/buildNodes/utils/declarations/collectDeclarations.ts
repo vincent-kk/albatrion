@@ -19,6 +19,8 @@ import { resolveReference } from '../references/resolveReference';
 import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { validateControlGroups } from './validateControlGroups';
+import { validatePresentation } from './validatePresentation';
+import { validateSchemaOptions } from './validateSchemaOptions';
 
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
@@ -55,6 +57,8 @@ export const collectDeclarations = (
     input.schemaPath,
     input.isFragment ?? false,
   );
+  validateSchemaOptions(context, schema.options, input.schemaPath);
+  validatePresentation(context, schema.presentation, input.schemaPath);
   readAllowedTypes(input.schema, input.schemaPath, context.options);
   collectSchemaCapabilities(context, input.schema);
   if (input.gates.length || input.context === 'declaration')

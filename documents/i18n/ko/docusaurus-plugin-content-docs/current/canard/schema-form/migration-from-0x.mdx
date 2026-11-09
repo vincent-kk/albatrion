@@ -33,7 +33,7 @@ sidebar_position: 8
 | `propertyKeys`                  | `options.propertyOrder`                          |
 | `virtual / type: 'virtual'`     | `options.virtual: { <name>: { fields: [...] } }` |
 
-허용 옵션은 [설정 그룹](./schema-reference#authoring-groups)을 따릅니다. 입력 설정은 presentation.FieldInputProps로 옮기고 oneOf가 폼 분기를 자동으로 하나만 고른다고 가정하지 말고 [분기 선택](./schema-reference#composition)을 확인하십시오.
+라이브러리 설정과 확장 규칙은 [설정 그룹](./schema-reference#authoring-groups)을 따릅니다. 입력 설정은 presentation.FieldInputProps로 옮기고 oneOf가 폼 분기를 자동으로 하나만 고른다고 가정하지 말고 [분기 선택](./schema-reference#composition)을 확인하십시오.
 
 ## 컴포넌트·형·훅·노드 이름 {#consumer-names}
 
@@ -92,7 +92,7 @@ sidebar_position: 8
 
 ## 변환 후 동작 확인 {#behavior-checks}
 
-- [닫힌 options·열린 presentation](./schema-reference#authoring-groups)을 확인하여 옛 플러그인 설정의 UnknownGroupKey를 피하십시오.
+- [열린 options·presentation과 닫힌 controls](./schema-reference#authoring-groups)를 확인하고, 플러그인 설정이 입력에 전달되도록 presentation.FieldInputProps로 옮기며 세 그룹의 예약 값 형을 확인하십시오.
 - [enum 빈 값과 checkbox·radio 이름](./schema-reference#accessibility)에 맞게 DOM 검사를 바꾸십시오.
 - virtual 입력은 [현재 test hint](./schema-reference#input-resolution)로 매칭하십시오.
 - 완전한 [검증기 객체](./validation#validator-contract)를 제공하십시오.

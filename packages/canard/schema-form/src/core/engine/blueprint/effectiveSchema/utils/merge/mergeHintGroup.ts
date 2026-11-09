@@ -1,6 +1,8 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
+import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
+
+import { DECLARATION_OPTION_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import { freezeCreatedHintObjects } from '../finalize/freezeCreatedHintObjects';
@@ -19,15 +21,25 @@ export const mergeHintGroup = (
   omitVirtual: boolean,
   isAtomic?: (value: unknown) => boolean,
 ): unknown => {
-  const source =
-    omitVirtual &&
-    later &&
-    typeof later === 'object' &&
-    hasOwnProperty(later, 'virtual')
-      ? Object.fromEntries(
-          filterArray(Object.entries(later), ([key]) => key !== 'virtual'),
-        )
-      : later;
+  let source = later;
+  if (omitVirtual && isPlainObject(later))
+    for (let index = 0; index < DECLARATION_OPTION_KEYS.length; index++)
+      if (hasOwnProperty(later, DECLARATION_OPTION_KEYS[index])) {
+        const entries = Object.entries(later);
+        let retained = 0;
+        for (let entry = 0; entry < entries.length; entry++) {
+          let declarationOnly = false;
+          for (let key = 0; key < DECLARATION_OPTION_KEYS.length; key++)
+            if (entries[entry][0] === DECLARATION_OPTION_KEYS[key]) {
+              declarationOnly = true;
+              break;
+            }
+          if (!declarationOnly) entries[retained++] = entries[entry];
+        }
+        entries.length = retained;
+        source = Object.fromEntries(entries);
+        break;
+      }
   if (source !== later && source && typeof source === 'object')
     ownedSchemaValues.add(source);
   if (source === undefined) return earlier;

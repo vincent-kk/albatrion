@@ -1,3 +1,5 @@
+import type { WRITE_CONTROL_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
+
 import type { BlueprintChildEntry, BlueprintNode } from '../../blueprint';
 import type { SettlementFailureCause } from '../../record';
 import type { DeriveRuleKind } from './rules';
@@ -40,7 +42,7 @@ export interface DeriveWrite<Self> {
   /** Source replacement value, including undefined for unset. */
   readonly value: unknown;
   /** Kind of rule that produced this candidate. */
-  readonly kind: 'derived' | 'unsetValue' | 'injectTo';
+  readonly kind: (typeof WRITE_CONTROL_KEYS)[number];
   /** Kind precedence calculated from derive's rank table. */
   readonly rank: number;
   /** Declaration specificity used after kind rank. */

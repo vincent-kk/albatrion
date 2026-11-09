@@ -3,8 +3,8 @@ import { createRef } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { observeErrorSink } from '@/schema-form/__tests__/helpers/observeErrorSink';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 afterEach(cleanup);
@@ -74,12 +74,12 @@ it('CONTROLS-081 reads minimum and maximum from presentation.FieldInputProps', (
   expect(input.getAttribute('max')).toBe('2024-12-31');
 });
 
-it('CONTROLS-051 rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
-  observeErrorSink();
+it('accepts minimum under options without applying it as an input prop', () => {
   const onError = vi.fn<(record: FormErrorRecord) => void>();
-  render(
+  const view = render(
     <Form
       onError={onError}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'object',
         properties: {
@@ -92,13 +92,11 @@ it('CONTROLS-051 rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
       }}
     />,
   );
-  expect(onError).toHaveBeenCalledWith(
-    expect.objectContaining({
-      code: 'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY',
-      details: expect.objectContaining({ group: 'options', key: 'minimum' }),
-    }),
-  );
-  expect(screen.getByRole('alert').textContent).toBe('Unable to load form.');
+  expect(onError).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alert')).toBeNull();
+  expect(
+    view.container.querySelector('input[type="date"]')!.getAttribute('min'),
+  ).toBeNull();
 });
 
 it('REACT-027 publishes undefined when a date input is cleared whether or not it is nullable', () => {

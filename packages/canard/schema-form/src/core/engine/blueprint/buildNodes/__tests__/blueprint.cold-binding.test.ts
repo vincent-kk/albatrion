@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { captureBlueprintObservables } from '@/schema-form/core/__tests__/fixtures/captureBlueprintObservables';
 
+import { expectOpenOptionsCapture } from '../../../__tests__/fixtures/expectOpenOptionsCapture';
 import { blueprint } from '../../blueprint';
 import type { BlueprintDiagnostic } from '../../types/blueprint';
 import type { BlueprintGate } from '../../types/node';
@@ -113,7 +114,7 @@ describe('cold blueprint child declaration binding', () => {
     expect(constructingLookups).toBeGreaterThan(59);
   });
 
-  it('preserves the 59-schema 89C-03 HEAD structure, static errors and warnings', () => {
+  it('preserves pinned structure, errors and warnings except the accepted open-options case', () => {
     expect(head.corpus).toBe(14);
     expect(head.edges).toBe(45);
     expect(head.cases).toHaveLength(59);
@@ -140,14 +141,16 @@ describe('cold blueprint child declaration binding', () => {
           diagnostics,
         };
       }
-      expect(
-        JSON.parse(
-          JSON.stringify(actual, (key, value) =>
-            key === 'stack' ? undefined : value,
+      if (sample.label === '89C-03-edge-28') expectOpenOptionsCapture(actual);
+      else
+        expect(
+          JSON.parse(
+            JSON.stringify(actual, (key, value) =>
+              key === 'stack' ? undefined : value,
+            ),
           ),
-        ),
-        sample.label,
-      ).toEqual(sample.expected);
+          sample.label,
+        ).toEqual(sample.expected);
       expect(schema, sample.label).toEqual(before);
     }
   });

@@ -153,7 +153,7 @@ const jsonSchema = {
 };
 ```
 
-0.16.0까지 Uri 입력은 `protocols` prop이 없으면 `options.protocols`를 읽었습니다. 1.0.0-beta부터 `options`는 닫힌 목록이고 입력별 설정은 `presentation.FieldInputProps`에 두면 입력 props로 펼쳐집니다. 옛 자리는 청사진 오류 `UNKNOWN_GROUP_KEY`가 됩니다.
+입력별 설정은 입력으로 전달되는 `presentation.FieldInputProps`에 둡니다. 사용자 정의 `options` 키는 오류나 경고 없이 허용하지만 이 내장 입력은 해당 그룹에서 입력 설정을 읽지 않습니다.
 
 ## 컴포넌트 우선순위
 

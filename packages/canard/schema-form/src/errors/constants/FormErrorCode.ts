@@ -30,7 +30,7 @@ export const FormErrorCode = {
   CreateDynamicFunction: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.CreateDynamicFunction}`,
   /** Class: JSONSchemaError; when: observed-value expression analysis fails. */
   ObservedValues: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ObservedValues}`,
-  /** Class: JSONSchemaError; when: a controls, options, or child controls key is outside its closed list. */
+  /** Class: JSONSchemaError; when: a node, child, or fragment controls key is outside its closed list. */
   UnknownGroupKey: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.UnknownGroupKey}`,
   /** Class: JSONSchemaError; when: no union branch tags the key, untyped tag kinds differ, or oneOf tags overlap. */
   DiscriminatorMismatch: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.DiscriminatorMismatch}`,
@@ -90,7 +90,7 @@ export const FormErrorCode = {
   TerminalOptionUnsupported: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.TerminalOptionUnsupported}`,
   /** Class: UnhandledError; when: a plugin refuses a bound validator instance outside a form. */
   ValidatorBindRefused: `${FormErrorGroup.Unhandled}.${UnhandledErrorSpecific.ValidatorBindRefused}`,
-  /** Class: JSONSchemaError; when: a known controls, options, or child controls key has the wrong shape. */
+  /** Class: JSONSchemaError; when: a controls group or reserved controls, options, or presentation value has the wrong shape. */
   InvalidControlShape: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.InvalidControlShape}`,
   /** Class: ValidationError; when: schema validation rejects a submission. */
   SchemaValidationFailed: `${FormErrorGroup.Validation}.${ValidationErrorSpecific.SchemaValidationFailed}`,

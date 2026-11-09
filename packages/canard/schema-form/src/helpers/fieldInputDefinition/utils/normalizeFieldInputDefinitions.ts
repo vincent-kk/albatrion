@@ -6,6 +6,7 @@ import {
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
+import { PRESENTATION_HINT_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { FormWarningCode } from '@/schema-form/errors';
 import type {
   FieldInputDefinition,
@@ -29,7 +30,7 @@ const testKeys = [
   'required',
   'nullable',
   'format',
-  'inputType',
+  ...PRESENTATION_HINT_KEYS,
 ] as const satisfies readonly (keyof FieldInputTestObject)[];
 /** Membership view of `testKeys` for checking arbitrary authored keys. */
 const testKeySet: ReadonlySet<string> = new Set(testKeys);

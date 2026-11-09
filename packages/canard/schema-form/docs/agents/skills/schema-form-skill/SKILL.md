@@ -64,6 +64,10 @@ Keys of the `controls` object (closed list, no aliases; an unknown key throws a 
 
 **active vs visible** — `active: false` removes the value from form data; `visible: false` hides UI but keeps the value. Full decision table: `knowledge/expressions.md`.
 
+### Options
+
+`options` accepts custom keys without an error or warning; a FieldInput or plugin can read them through `node.jsonSchema.options`. Only plain objects supply engine options. Reserved values in controls, options and presentation receive shallow type checks at blueprint load; use the [reserved-key table](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#authoring-groups) for accepted forms and `INVALID_CONTROL_SHAPE` diagnostics. Existing virtual and control scope checks still apply. Use TypeScript completion for option names and prefer `presentation.FieldInputProps` for input payload because it is forwarded to the input. New reserved option names are contract changes because they may collide with custom keys.
+
 ### ValidationMode
 
 `ValidationMode.None | OnChange | OnRequest` — bit flags, combinable: `OnChange | OnRequest`.

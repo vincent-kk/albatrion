@@ -1,10 +1,10 @@
-import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
 import { CONTROL_KEY } from '../../../constants/controlKey';
+import type { ValidatedControls } from '../../../utils/controls/readValidatedControls';
 import type { BlueprintDiagnostic } from '../../types/blueprint';
 
 /**
@@ -15,11 +15,11 @@ import type { BlueprintDiagnostic } from '../../types/blueprint';
  * @returns Nothing; literal clear conflicts are warnings rather than schema errors
  */
 export const collectInactiveValueWarnings = (
-  controls: unknown,
+  controls: ValidatedControls | undefined,
   schemaPath: string,
   emit: (diagnostic: BlueprintDiagnostic) => void,
 ): void => {
-  if (!controls || typeof controls !== 'object' || isArray(controls)) return;
+  if (!controls) return;
   if (
     hasOwnProperty(controls, CONTROL_KEY.inactiveValue) &&
     Reflect.get(controls, 'unsetOnInactive') === true
@@ -30,13 +30,13 @@ export const collectInactiveValueWarnings = (
       schemaPath: appendSegment(schemaPath, 'controls'),
       details: {},
     });
-  const fields: unknown = Reflect.get(controls, 'fields');
-  if (!isArray(fields)) return;
+  const fields = controls.fields;
+  if (!fields) return;
   for (let index = 0; index < fields.length; index++) {
-    const field: unknown = fields[index];
-    if (!field || typeof field !== 'object') continue;
+    const field = fields[index];
+    if (!field) continue;
     collectInactiveValueWarnings(
-      Reflect.get(field, 'controls'),
+      field.controls,
       appendSegment(
         appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
         index,

@@ -4,7 +4,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import type { Slider as AntdSlider } from 'antd';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { Form } from '@canard/schema-form';
+import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 
@@ -54,13 +54,14 @@ it('reads lazy from presentation.FieldInputProps', () => {
   expect(props.onChangeComplete).toBeUndefined();
 });
 
-it('rejects lazy under options as UNKNOWN_GROUP_KEY', () => {
+it('accepts lazy under options without a schema error', () => {
   window.addEventListener('error', preventWindowError);
   const onError = vi.fn();
   render(
     <Form
       fieldInputDefinitions={[FieldInputSliderDefinition]}
       onError={onError}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'object',
         properties: {
@@ -73,11 +74,6 @@ it('rejects lazy under options as UNKNOWN_GROUP_KEY', () => {
       }}
     />,
   );
-  expect(onError).toHaveBeenCalledWith(
-    expect.objectContaining({
-      code: 'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY',
-      details: expect.objectContaining({ group: 'options', key: 'lazy' }),
-    }),
-  );
-  expect(screen.getByRole('alert').textContent).toBe('Unable to load form.');
+  expect(onError).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alert')).toBeNull();
 });

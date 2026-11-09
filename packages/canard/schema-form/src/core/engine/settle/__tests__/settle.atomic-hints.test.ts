@@ -32,7 +32,7 @@ const schema = {
     enabled: { type: 'boolean' },
     field: {
       type: 'string',
-      options: { omitEmpty: { element: firstElement, ref: firstRef } },
+      options: { customPayload: { element: firstElement, ref: firstRef } },
       presentation: { element: firstElement, ref: firstRef },
     },
   },
@@ -41,7 +41,7 @@ const schema = {
     properties: {
       field: {
         type: 'string',
-        options: { omitEmpty: { element: lastElement, ref: lastRef } },
+        options: { customPayload: { element: lastElement, ref: lastRef } },
         presentation: { element: lastElement, ref: lastRef },
       },
     },
@@ -66,7 +66,7 @@ describe('runtime hint atomicity', () => {
     if (typeof effective === 'boolean')
       throw new Error('Expected object schema');
     for (const hints of [
-      Reflect.get(effective.options!, 'omitEmpty'),
+      Reflect.get(effective.options!, 'customPayload'),
       effective.presentation,
     ]) {
       expect(hints).toEqual({ element: lastElement, ref: lastRef });
@@ -86,7 +86,7 @@ describe('runtime hint atomicity', () => {
     if (typeof effective === 'boolean')
       throw new Error('Expected object schema');
     for (const hints of [
-      Reflect.get(effective.options!, 'omitEmpty'),
+      Reflect.get(effective.options!, 'customPayload'),
       effective.presentation,
     ])
       expect(hints).toEqual({

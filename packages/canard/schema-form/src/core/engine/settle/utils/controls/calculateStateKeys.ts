@@ -4,39 +4,19 @@ import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import type { Optional } from '@aileron/declare';
 
 import {
+  RESERVED_SCHEMA_KEYS,
+  STATE_CONTROL_KEYS,
+} from '@/schema-form/constants/reservedSchemaKeys';
+import {
   JSONPointer as $,
   appendSegment,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
-import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
-import type { ChildControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
-
-/** Each state key has its own identity and order-independent combination. */
-const STATE_KEYS = {
-  visible: {
-    initial: true,
-    combine: (left: boolean, right: boolean) => left && right,
-  },
-  readOnly: {
-    initial: false,
-    combine: (left: boolean, right: boolean) => left || right,
-  },
-  disabled: {
-    initial: false,
-    combine: (left: boolean, right: boolean) => left || right,
-  },
-} as const;
-/** Fixed control key order; combination does not depend on this order. */
-const KEY_NAMES = [
-  CONTROL_KEY.visible,
-  CONTROL_KEY.readOnly,
-  CONTROL_KEY.disabled,
-] as const satisfies readonly ChildControlKey[];
 
 /** Pure calculation result, including the all expressions that failed. */
 export interface CalculatedStateKeys<Self> {
@@ -107,13 +87,13 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     const schema = node.schema.schema;
-    const next: Record<keyof typeof STATE_KEYS, boolean> = {
-      visible: STATE_KEYS.visible.initial,
+    const next: Record<(typeof STATE_CONTROL_KEYS)[number], boolean> = {
+      visible: RESERVED_SCHEMA_KEYS.controls.visible.stateInitial,
       readOnly: typeof schema === 'object' && schema.readOnly === true,
-      disabled: STATE_KEYS.disabled.initial,
+      disabled: RESERVED_SCHEMA_KEYS.controls.disabled.stateInitial,
     };
     for (const group of getControlLayers(node, selectedDeclarationIds))
-      for (const key of KEY_NAMES) {
+      for (const key of STATE_CONTROL_KEYS) {
         const literal: unknown = Reflect.get(group.controls, key);
         if (literal === undefined) continue;
         let value: Optional<boolean>;
@@ -153,7 +133,9 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
           }
         }
         if (value !== undefined)
-          next[key] = STATE_KEYS[key].combine(next[key], value);
+          next[key] = RESERVED_SCHEMA_KEYS.controls[key].stateInitial
+            ? next[key] && value
+            : next[key] || value;
       }
     entries.push({ node, ...next });
   }

@@ -75,10 +75,13 @@ describe('blueprint expression compilation', () => {
     expect(root.root.childEntries[1].declarations[0].path).toBe('/b');
   });
   it('rejects wildcard dependencies and non-path watch values', () => {
-    for (const watch of ['./rows/*/value', [12]])
+    for (const [watch, code] of [
+      ['./rows/*/value', FormErrorCode.ObservedValues],
+      [[12], FormErrorCode.InvalidControlShape],
+    ])
       expect(() => blueprint({ type: 'number', controls: { watch } })).toThrow(
         expect.objectContaining({
-          code: FormErrorCode.ObservedValues,
+          code,
         }),
       );
   });

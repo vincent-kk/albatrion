@@ -58,6 +58,25 @@ interface AuthoredSchemaBase<
   Options extends Dictionary,
   Presentation extends object,
 > extends BasicSchema<unknown, Options, AuthoredSchema<Options, Presentation>> {
+  /** Open consumer metadata with typed, reserved engine options. */
+  options?: Options & {
+    /** Fix the editing strategy when the blueprint is built. */
+    terminal?: boolean;
+    /** Group sibling properties into virtual fields. */
+    virtual?: Dictionary<
+      AuthoredSchema<Options, Presentation> & { fields: readonly string[] }
+    >;
+    /** Preferred emitted property names; asterisk is a literal name. */
+    propertyOrder?: readonly string[];
+    /** Omit empty output values (default: true). */
+    omitEmpty?: boolean;
+    /** Trim trailing undefined array items from output. */
+    omitTrailing?: boolean;
+    /** Trim string input when it is finished. */
+    trim?: boolean;
+    /** Consumer extensions are not interpreted by the engine. */
+    [alt: string]: any;
+  };
   /** Opaque host binding data. */
   presentation?: Presentation;
   /** Numeric constraints retain their standard scalar types. */

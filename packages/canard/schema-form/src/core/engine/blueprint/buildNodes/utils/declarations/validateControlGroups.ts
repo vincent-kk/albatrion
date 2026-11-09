@@ -1,27 +1,25 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import {
+  CHILD_CONTROL_KEYS,
+  RESERVED_CONTROL_KEYS,
+} from '@/schema-form/constants/reservedSchemaKeys';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import { CONTROL_KEY } from '../../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
-import type {
-  ChildSchemaControls,
-  SchemaControls,
-} from '../../../../types/controls';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
-
-/** Extension groups validated at every authored position. */
-const CONTROL_GROUPS = [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const;
+import { validateControlValue } from './validateControlValue';
 
 /**
- * Validate closed extension namespaces at an authored schema position.
+ * Validate the closed executable controls namespace at an authored position.
  * @param context - Error collector and authored root
- * @param schema - Schema whose controls/options belong to this position
+ * @param schema - Schema whose controls belong to this position
  * @param schemaPath - Original diagnostic location
  * @param fragment - Whether controls are scoped to a fragment's direct children
  * @returns Nothing; malformed extension declarations throw a schema error
@@ -33,65 +31,50 @@ export const validateControlGroups = (
   fragment: boolean,
 ): void => {
   const record = readSchemaObject(schema);
-  for (const group of CONTROL_GROUPS) {
-    const value = record[group];
-    if (value === undefined) continue;
-    const allowed =
-      group === SCHEMA_GROUP.options
-        ? OPTION_KEYS
-        : fragment
-          ? CHILD_CONTROL_KEYS
-          : CONTROL_KEYS;
-    if (!value || typeof value !== 'object' || isArray(value))
+  const controls = record.controls;
+  if (controls !== undefined) {
+    const group = SCHEMA_GROUP.controls;
+    const allowed: readonly (typeof RESERVED_CONTROL_KEYS)[number][] = fragment
+      ? CHILD_CONTROL_KEYS
+      : RESERVED_CONTROL_KEYS;
+    if (!controls || typeof controls !== 'object' || isArray(controls))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
         appendSegment(schemaPath, group),
         { group, key: group, expected: 'object' },
         context.options,
       );
-    for (const key of Object.keys(value))
-      if (!allowed.includes(key))
+    for (const key of Object.keys(controls)) {
+      let isAllowed = false;
+      for (let index = 0; index < allowed.length; index++)
+        if (allowed[index] === key) {
+          isAllowed = true;
+          break;
+        }
+      if (!isAllowed)
         throwBlueprintError(
           FormErrorCode.UnknownGroupKey,
           appendSegment(appendSegment(schemaPath, group), key),
           { group, key },
           context.options,
         );
+    }
+    for (const key of RESERVED_CONTROL_KEYS)
+      validateControlValue(context, key, controls[key], schemaPath);
   }
-  const controls = record.controls;
-  if (
-    controls &&
-    typeof controls === 'object' &&
-    hasOwnProperty(controls, CONTROL_KEY.inactiveValue)
-  )
+  if (controls && hasOwnProperty(controls, CONTROL_KEY.inactiveValue))
     context.hasInactiveValues = true;
-  if (
-    controls?.injectTo !== undefined &&
-    typeof controls.injectTo !== 'function'
-  )
-    throwBlueprintError(
-      FormErrorCode.InvalidControlShape,
-      appendSegment(appendSegment(schemaPath, 'controls'), 'injectTo'),
-      { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
-      context.options,
-    );
-
   if (controls?.fields !== undefined) {
-    if (!isArray(controls.fields))
-      throwBlueprintError(
-        FormErrorCode.InvalidControlShape,
-        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
-        { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
-        context.options,
-      );
-
     const controlFields = controls.fields;
     for (let index = 0, limit = controlFields.length; index < limit; index++) {
       if (!(index in controlFields)) continue;
       const entry: any = controlFields[index];
 
       const path = appendSegment(
-        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
+        appendSegment(
+          appendSegment(schemaPath, SCHEMA_GROUP.controls),
+          'fields',
+        ),
         index,
       );
       let hasInvalidFieldEntry = !entry || typeof entry !== 'object';
@@ -100,7 +83,7 @@ export const validateControlGroups = (
         for (let index = 0, count = entryKeys.length; index < count; index++) {
           const key = entryKeys[index];
 
-          if (key !== 'targets' && key !== 'controls') {
+          if (key !== 'targets' && key !== SCHEMA_GROUP.controls) {
             hasInvalidFieldEntry = true;
             break;
           }
@@ -143,38 +126,3 @@ export const validateControlGroups = (
     }
   }
 };
-
-/** Direct-child and fragment scope controls; `satisfies` ties the set to the authoring type in both directions. */
-const CHILD_CONTROL_KEY_SET = {
-  active: true,
-  visible: true,
-  readOnly: true,
-  disabled: true,
-  default: true,
-  derived: true,
-  unsetValue: true,
-  resetInteraction: true,
-  unsetOnInactive: true,
-  inactiveValue: true,
-} satisfies Record<keyof ChildSchemaControls, true>;
-/** Node-owned controls add declarations and cross-node injection. */
-const CONTROL_KEY_SET = {
-  ...CHILD_CONTROL_KEY_SET,
-  fields: true,
-  injectTo: true,
-  discriminator: true,
-  watch: true,
-} satisfies Record<keyof SchemaControls<unknown>, true>;
-const CHILD_CONTROL_KEYS: readonly string[] = Object.keys(
-  CHILD_CONTROL_KEY_SET,
-);
-const CONTROL_KEYS: readonly string[] = Object.keys(CONTROL_KEY_SET);
-/** Static shape and projection settings consumed by the corresponding owners. */
-const OPTION_KEYS = [
-  'terminal',
-  'virtual',
-  'propertyOrder',
-  'omitEmpty',
-  'omitTrailing',
-  'trim',
-];
