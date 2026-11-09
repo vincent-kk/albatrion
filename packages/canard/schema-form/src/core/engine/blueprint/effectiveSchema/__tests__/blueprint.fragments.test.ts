@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FormErrorCode } from '../../../../../errors';
 import { blueprint } from '../../blueprint';
+import type { BlueprintSchema } from '../../types/schema';
 import { mergeEffectiveSchema } from '../utils/merge/mergeEffectiveSchema';
 
 // filid:contract fragment-declarations
@@ -210,7 +211,7 @@ describe('blueprint fragment ownership and strategies', () => {
 
   it('allows a sole gated declaration to select an inline or explicit terminal strategy', () => {
     for (const schema of [
-      { type: 'object', presentation: { FieldInput: 'inline' } },
+      { type: 'object', presentation: { FieldInput: () => null } },
       { type: 'object', options: { terminal: true } },
     ]) {
       const root = blueprint(
@@ -227,30 +228,34 @@ describe('blueprint fragment ownership and strategies', () => {
   });
 
   it('retains a static explicit strategy when a gated declaration adds an inline input', () => {
-    const root = blueprint(
-      {
-        type: 'object',
-        properties: { a: { type: 'object', options: { terminal: false } } },
-        if: {},
-        then: {
-          properties: {
-            a: { type: 'object', presentation: { FieldInput: 'inline' } },
-          },
+    const schema = {
+      type: 'object',
+      properties: { a: { type: 'object', options: { terminal: false } } },
+      if: {},
+      then: {
+        properties: {
+          a: { type: 'object', presentation: { FieldInput: () => null } },
         },
       },
-      {
-        isTerminal: (schema) =>
-          typeof schema === 'object' && schema.presentation ? true : undefined,
-      },
-    ).root;
+    };
+    const options = {
+      isTerminal: (schema: BlueprintSchema) =>
+        typeof schema === 'object' && schema.presentation ? true : undefined,
+    };
+    const root = blueprint(schema, options).root;
     expect(root.childEntries[0].node.strategy).toBe('branch');
+    expect(() =>
+      blueprint({ ...schema, properties: { a: { type: 'object' } } }, options),
+    ).toThrow(
+      expect.objectContaining({ code: FormErrorCode.TerminalStrategyMismatch }),
+    );
   });
 
   it('keeps an earlier renderer decision when a later predicate result is undefined', () => {
     const root = blueprint(
       {
         type: 'object',
-        presentation: { FieldInput: 'inline' },
+        presentation: { FieldInput: () => null },
         allOf: [{ title: 'later' }],
       },
       {

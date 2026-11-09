@@ -11,7 +11,25 @@ sidebar_position: 4
 
 ## 스키마 설정 그룹 {#authoring-groups}
 
-표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `presentation`은 열린 그룹입니다. `controls`, `options`의 알 수 없는 키는 `FormErrorCode.UnknownGroupKey`, controls·options 그룹 자체와 injectTo·fields·discriminator 등 명시적으로 검사하는 형상 위반은 `FormErrorCode.InvalidControlShape`로 거부합니다. 알려진 모든 키의 값 형을 런타임에서 검증한다는 뜻은 아니므로 외부 데이터의 스키마는 소비자 경계에서 검증하십시오.
+표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `controls`는 닫힌 실행 영역입니다. 노드·자식·조각 제어의 미지 키는 `FormErrorCode.UnknownGroupKey`로 거부하여 오타가 가시성·값 제거·파생을 조용히 바꾸지 않게 하고 미래 제어 이름을 예약합니다. `options`와 `presentation`은 열려 있습니다. 미지 옵션 키는 오류나 경고 없이 노드 스키마를 통해 FieldInput이나 플러그인이 읽을 수 있습니다. 선택지 배열 등 평범한 객체가 아닌 `options`에서는 엔진 옵션을 읽지 않습니다. 옵션 이름의 오타는 TypeScript 자동완성으로 방어합니다. 미래 예약 옵션 이름이 사용자 키와 충돌할 수 있으므로 새 이름 추가는 계약 변경입니다.
+
+청사진 생성 시 정의된 예약 값은 아래의 얕은 형을 만족해야 합니다. `undefined`는 생략이며 `FieldInput: null`도 생략입니다. 형 위반은 `<schemaPath>/<group>/<key>` 위치와 `{ group, key, expected }` 상세를 가진 `FormErrorCode.InvalidControlShape`로 거부합니다. controls 컨테이너·fields·discriminator·가상 선언·terminal 호환성의 기존 검사도 유지합니다. 중첩 payload 내용은 검사하지 않습니다. FieldInput 함수나 객체 컴포넌트를 호출하거나 React 정체성을 검사하지 않습니다.
+
+| 그룹 | 예약 키 | 허용 값 |
+| --- | --- | --- |
+| `controls` | `active`, `visible`, `readOnly`, `disabled`, `unsetValue`, `resetInteraction`, `unsetOnInactive` | boolean 또는 표현식 문자열 |
+| `controls` | `derived` | 표현식 문자열 |
+| `controls` | `watch` | 런타임은 문자열 또는 문자열 배열; 공개 형은 배열 |
+| `controls` | `default`, `inactiveValue` | 모든 값; 리터럴·resolver 의미 유지 |
+| `controls` | `fields`, `injectTo`, `discriminator` | 각각 fields 항목 배열·함수·비어 있지 않은 문자열; 기존 범위·형상 규칙 적용 |
+| `options` | `terminal`, `omitEmpty`, `omitTrailing`, `trim` | boolean |
+| `options` | `propertyOrder` | 문자열 배열; `*`는 와일드카드가 아닌 실제 속성 이름 |
+| `options` | `virtual` | 기존 fields 검사를 따르는 가상 그룹 선언 |
+| `presentation` | `inputType` | 문자열 |
+| `presentation` | `FieldInput` | 함수 또는 null이 아닌 객체; null은 생략 |
+| `presentation` | `FieldInputProps`, `FieldRendererProps`, `errorMessages` | null·배열이 아닌 객체; 중첩 값 검사 없음 |
+
+같은 제어 값 검사는 허용 키 목록 안에서 fields 항목과 조각에도 적용합니다. options·presentation 확장 키는 존재만으로 라이브러리 동작을 얻지 않습니다. 검사는 캐시되는 청사진 분석 때 수행하며 사용자 입력 때 실행하지 않습니다. 고정 키 검사는 상수 비용이고 문자열 배열 검사는 원소를 순회합니다.
 
 | 그룹 | 소비자 설정 |
 | --- | --- |
@@ -128,7 +146,7 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 
 `FieldInputTestObject`의 `type`, `schemaType`, `path`, `format`, `inputType`은 단일값 또는 목록을 받고 `required`, `nullable`은 boolean입니다. 생략한 조건은 제한하지 않습니다. virtual 노드는 `type: 'virtual'`, `schemaType: undefined`이며 `schemaType: 'virtual'`로 매칭하지 않습니다.
 
-입력별 설정은 실제 입력으로 전달하는 `presentation.FieldInputProps`에 둡니다. `lazy`, `protocols`, `minRows` 등을 `options`에 두면 `UnknownGroupKey`입니다. 스키마 최상위의 `inputType`, `FieldInput`은 presentation 그룹을 대체하지 않습니다.
+입력별 설정은 실제 입력으로 전달하는 `presentation.FieldInputProps`를 권장합니다. `lazy`, `protocols`, `minRows` 등을 `options`에 둘 수 있지만 입력이 노드 스키마에서 명시적으로 읽어야 합니다. 스키마 최상위의 `inputType`, `FieldInput`은 presentation 그룹을 대체하지 않습니다.
 
 ## 사용자 입력 접근성 {#accessibility}
 

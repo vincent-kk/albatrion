@@ -38,8 +38,6 @@ describe('blueprint diagnostic data and late collection', () => {
           fields: [{ targets: [], controls: { injectTo: () => ({}) } }],
         },
       },
-      { type: 'string', options: { unknown: true } },
-      { type: 'object', options: { propertyKeys: ['a'] } },
     ])
       expect(() => blueprint(schema)).toThrow(
         expect.objectContaining({
@@ -406,13 +404,13 @@ describe('blueprint diagnostic data and late collection', () => {
   it('reports a key outside the closed list as UNKNOWN_GROUP_KEY with group and key', () => {
     const collect = vi.fn();
     expect(() =>
-      blueprint({ type: 'string', options: { unknown: true } }, { collect }),
+      blueprint({ type: 'string', controls: { unknown: true } }, { collect }),
     ).toThrow(expect.objectContaining({ code: FormErrorCode.UnknownGroupKey }));
     expect(collect).toHaveBeenCalledWith({
       code: FormErrorCode.UnknownGroupKey,
       level: 'error',
-      schemaPath: '#/options/unknown',
-      details: { group: 'options', key: 'unknown' },
+      schemaPath: '#/controls/unknown',
+      details: { group: 'controls', key: 'unknown' },
     });
   });
   it('warns once for a union host whose inline subtree carries reserved keys, never through a reference', () => {

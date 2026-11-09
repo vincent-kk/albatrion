@@ -127,7 +127,7 @@ const jsonSchema = {
 };
 ```
 
-Up to 0.16.0 the Slider input read `options.range`, `marks` and `lazy`. From 1.0.0-beta `options` is a closed list, so these keys belong in `presentation.FieldInputProps`; under `options` they fail the schema with the blueprint error `UNKNOWN_GROUP_KEY`.
+Input settings belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
 
 ## Component Priority
 

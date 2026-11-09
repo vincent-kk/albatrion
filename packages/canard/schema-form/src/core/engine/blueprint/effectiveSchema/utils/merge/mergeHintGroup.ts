@@ -1,4 +1,5 @@
 import { filter as filterArray } from '@winglet/common-utils/array';
+import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
 
@@ -20,10 +21,7 @@ export const mergeHintGroup = (
   isAtomic?: (value: unknown) => boolean,
 ): unknown => {
   const source =
-    omitVirtual &&
-    later &&
-    typeof later === 'object' &&
-    hasOwnProperty(later, 'virtual')
+    omitVirtual && isPlainObject(later) && hasOwnProperty(later, 'virtual')
       ? Object.fromEntries(
           filterArray(Object.entries(later), ([key]) => key !== 'virtual'),
         )

@@ -87,7 +87,7 @@ describe('child selection against pinned HEAD', () => {
     });
   }, 240000);
 
-  it('preserves all 59 corpus schemas with root and every-node listeners', () => {
+  it('preserves pinned corpus observations and the open-options contract with both listener modes', () => {
     expect(headFixture.cases).toHaveLength(59);
     for (const sample of headFixture.cases) {
       for (const allListeners of [false, true]) {
@@ -109,6 +109,31 @@ describe('child selection against pinned HEAD', () => {
             entry.label === sample.label && entry.allListeners === allListeners,
         );
         assert(recorded, label);
+        if (sample.label === '89C-03-edge-28') {
+          const withoutOptions = (value: unknown) =>
+            JSON.parse(
+              JSON.stringify(value, (_key, part) =>
+                Array.isArray(part)
+                  ? part.filter(
+                      (entry) =>
+                        !(Array.isArray(entry) && entry[0] === 'options'),
+                    )
+                  : part,
+              ),
+            );
+          const optionless = working.run({
+            ...fixture,
+            schema: { type: 'string' },
+          });
+          expect(actual.results).toHaveLength(4);
+          expect(JSON.stringify(actual.results)).toContain('["unknown",true]');
+          expectSelectionEqual(
+            withoutOptions(actual),
+            withoutOptions(optionless),
+            label,
+          );
+          continue;
+        }
         const expected = recorded.observation;
         expect(expected.keptOut, label).toEqual([]);
         expect(
