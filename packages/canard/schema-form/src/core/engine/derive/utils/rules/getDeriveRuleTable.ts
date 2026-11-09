@@ -3,17 +3,15 @@ import {
   map as mapArray,
 } from '@winglet/common-utils/array';
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
-import { isArray } from '@winglet/common-utils/filter';
 
+import { DERIVE_CONTROL_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
-import { CONTROL_KEY } from '../../../constants/controlKey';
-import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
-import type { ControlKey } from '../../../types/controls';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import type { DeriveRule, DeriveRuleTable } from '../../types/rules';
 import { getWatchPaths } from './getWatchPaths';
@@ -25,14 +23,6 @@ const EMPTY_TABLE: DeriveRuleTable = Object.freeze({
   rules: EMPTY_ARRAY,
   byDeclaration: emptyReadonlyMap,
 });
-/** Keys whose string expression is evaluated by the first derive unit. */
-const RULE_KEYS = [
-  CONTROL_KEY.derived,
-  CONTROL_KEY.unsetValue,
-  CONTROL_KEY.resetInteraction,
-  CONTROL_KEY.injectTo,
-] as const satisfies readonly ControlKey[];
-
 /** One control group and one directly addressed target. */
 interface RuleGroup {
   /** Controls object containing the authored values. */
@@ -79,18 +69,15 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
   for (const node of blueprint.nodes)
     for (const declaration of node.declarations) {
       const schema = declaration.schema;
-      const controls =
-        schema && typeof schema === 'object'
-          ? Reflect.get(schema, SCHEMA_GROUP.controls)
-          : undefined;
-      if (!controls || typeof controls !== 'object' || isArray(controls))
-        continue;
+      const controls = readValidatedControls(schema);
+      if (!controls) continue;
       const groups: RuleGroup[] = [];
-      const hasOwnRules =
-        Reflect.get(controls, CONTROL_KEY.derived) !== undefined ||
-        Reflect.get(controls, CONTROL_KEY.unsetValue) !== undefined ||
-        Reflect.get(controls, CONTROL_KEY.resetInteraction) !== undefined ||
-        Reflect.get(controls, CONTROL_KEY.injectTo) !== undefined;
+      let hasOwnRules = false;
+      for (let index = 0; index < DERIVE_CONTROL_KEYS.length; index++)
+        if (controls[DERIVE_CONTROL_KEYS[index]] !== undefined) {
+          hasOwnRules = true;
+          break;
+        }
       if (hasOwnRules && declaration.scope === 'fragment') {
         // Tuple positions bind by index, apart from the repeated item template.
         const targets: FragmentTarget[] = [
@@ -137,24 +124,16 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           layer: 'node',
           targetNodes: [node],
         });
-      const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-      if (isArray(fields))
+      const fields = controls.fields;
+      if (fields)
         for (let index = 0; index < fields.length; index++) {
-          const item: unknown = fields[index];
-          if (!item || typeof item !== 'object') continue;
-          const itemControls: unknown = Reflect.get(
-            item,
-            SCHEMA_GROUP.controls,
-          );
-          const names: unknown = Reflect.get(item, 'targets');
-          if (
-            !itemControls ||
-            typeof itemControls !== 'object' ||
-            !isArray(names)
-          )
-            continue;
+          const item = fields[index];
+          if (!item) continue;
+          const itemControls = item.controls;
+          const names = item.targets;
+          if (!itemControls) continue;
           for (const name of names) {
-            if (typeof name !== 'string') continue;
+            if (name === undefined) continue;
             const targets = filterArray(
               node.childEntries,
               (entry) => entry.name === name,
@@ -179,7 +158,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           }
         }
       for (const group of groups)
-        for (const kind of RULE_KEYS) {
+        for (const kind of DERIVE_CONTROL_KEYS) {
           const literal: unknown = Reflect.get(group.controls, kind);
           if (literal === undefined) continue;
           const schemaPath = appendSegment(group.schemaPath, kind);
@@ -190,7 +169,6 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             kind,
           );
           if (typeof literal === 'string' && !expression) continue;
-          if (kind === 'injectTo' && typeof literal !== 'function') continue;
           const dependencies = [...(expression?.dependencies ?? [])];
           const watchDependencies: string[] = [];
           if (kind === 'derived')

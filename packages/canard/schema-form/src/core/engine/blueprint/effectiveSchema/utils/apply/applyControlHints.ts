@@ -1,3 +1,5 @@
+import { HINT_CONTROL_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
+
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchemaFields } from '../../types/state';
 import { isObjectRecord } from '../finalize/isObjectRecord';
@@ -16,8 +18,8 @@ export function applyControlHints(
   const previous = target.controls;
   const controls = { ...previous };
   const hints = source;
-  if (hints.watch !== undefined) controls.watch = hints.watch;
-  if (hints.default !== undefined) controls.default = hints.default;
+  for (const key of HINT_CONTROL_KEYS)
+    if (hints[key] !== undefined) controls[key] = hints[key];
   if (Object.keys(controls).length) {
     target.controls = controls;
     ownedSchemaValues.add(controls);

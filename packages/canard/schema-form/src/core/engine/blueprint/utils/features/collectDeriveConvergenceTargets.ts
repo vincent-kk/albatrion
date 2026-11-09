@@ -11,7 +11,7 @@ import {
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
-import { CONTROL_KEY } from '../../../constants/controlKey';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import type { Blueprint, BlueprintExpression } from '../../types/blueprint';
 import type { PropertyDeclaration } from '../../types/node';
 import { CompleteExpressionReads } from '../expressions/CompleteExpressionReads';
@@ -117,30 +117,27 @@ export const collectDeriveConvergenceTargets = (
       declaration++
     ) {
       const entry = node.declarations[declaration];
-      const controls =
-        typeof entry.schema === 'object' ? entry.schema.controls : undefined;
-      if (controls && typeof controls === 'object') {
-        if (typeof Reflect.get(controls, CONTROL_KEY.injectTo) === 'function')
-          reads.add(node.path);
-        const fields = Reflect.get(controls, CONTROL_KEY.fields);
-        if (isArray(fields))
+      const controls = readValidatedControls(entry.schema);
+      if (controls) {
+        if (controls.injectTo !== undefined) reads.add(node.path);
+        const fields = controls.fields;
+        if (fields)
           for (let child = 0; child < fields.length; child++) {
-            const childControls = fields[child]?.controls;
-            if (!childControls || typeof childControls !== 'object') continue;
-            if (typeof childControls.injectTo === 'function')
-              reads.add(node.path);
+            const field = fields[child];
+            if (!field) continue;
+            const childControls = readValidatedControls(field);
+            if (!childControls) continue;
+            if (childControls.injectTo !== undefined) reads.add(node.path);
             const watches = childControls.watch;
             if (watches === undefined) continue;
             const paths = isArray(watches) ? watches : [watches];
-            const targets = fields[child].targets;
-            if (!isArray(targets)) return undefined;
+            const targets = field.targets;
             for (let target = 0; target < targets.length; target++) {
               const targetPath = appendSegment(node.path, targets[target]);
               for (let watch = 0; watch < paths.length; watch++) {
                 if (
-                  typeof paths[watch] !== 'string' ||
                   readPointerSegment(paths[watch], 0) ===
-                    PointerOperator.Context
+                  PointerOperator.Context
                 )
                   return undefined;
                 reads.add(resolveRead(targetPath, paths[watch]));

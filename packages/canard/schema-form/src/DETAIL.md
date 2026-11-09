@@ -12,6 +12,14 @@ GOAL-015·017·018·019·020·022·050·051. 일관성·투명성·예측가능�
 
 GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 생산 경로의 비용을 줄이기 위해 규칙의 모든 탈락을 공개 진단으로 만들지 않으며, 제어의 로컬 범위를 조상 잠금 상속으로 넓히지 않습니다. 대신 각 소유 문서에서 선택의 한계와 이유를 명시합니다. 일반 쓰기와 로드를 혼동하여 왕복 비동등성을 재채움으로 설명하지 않습니다.
 
+### 예약 스키마 어휘의 단일 소유 / Reserved schema vocabulary
+
+예약 키와 얕은 허용 형은 `constants/reservedSchemaKeys.ts`에서만 선언합니다. 엔진과 React 바인딩의 최저 공통 소유자가 이 패키지이므로 이 상위 organ을 직접 소비하고 core의 바인딩 표면을 넓히지 않습니다. 키 추가는 작성 계약 변경이므로 검증·경고·식 목록이 따로 드리프트하지 않도록 파생하며, 작성 타입 소유자가 양방향 키 일치를 검사합니다.
+
+Reserved keys and accepted shallow shapes have one declaration in the ancestor constant. Engine and binding consumers derive their enumerations from it; adding a reserved key changes the authoring contract and must not drift between validation, warnings and expression selection. Type owners check key equality in both directions without moving authoring types or widening core.
+
+파생 키 목록은 모듈 초기화 때 준비하고 존재·소속 검사에서 호출별 콜백이나 목록을 할당하지 않습니다. 키 정본을 복제하지 않으면서 선언 수와 쓰기 횟수에 비례하는 임시 할당을 막기 위한 비용 제약입니다. 열거의 타입 복원은 공통 typed-key 유틸과 국소 키 미러 생성에만 둡니다.
+
 ## API Contracts
 
 LANDING-067·087·205. 패키지는 단일 공개 진입점에서 이름으로 계약을 조합합니다. [core](core/DETAIL.md)의 호스트 바인딩 통로는 내부 계약이며 제품 공개 이름을 자동으로 넓히지 않습니다. options·controls·presentation의 의미 변경도 공개 계약 변경입니다. 작성자가 스키마를, 호출자가 Form·명령을, 사용자가 입력을 제공한다는 구분으로 값 변경의 책임을 판단합니다(GOAL-085).

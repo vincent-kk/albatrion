@@ -228,7 +228,7 @@ type SchemaBase<Controls> = {
   options?: {
     /** Omit empty values from form data (default: true) */
     omitEmpty?: boolean;
-    [alt: string]: unknown;
+    [alt: string]: any;
   };
   [alt: string]: any;
 };

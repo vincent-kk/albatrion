@@ -68,3 +68,9 @@ it('does not let custom options change value inference', () => {
     count?: number;
   }>();
 });
+
+it('reads unparameterized consumer options as any on public schema forms', () => {
+  expectTypeOf<NonNullable<JSONSchema['options']>['custom']>().toBeAny();
+  expectTypeOf<NonNullable<StringSchema['options']>['custom']>().toBeAny();
+  expectTypeOf<NonNullable<ObjectSchema['options']>['custom']>().toBeAny();
+});

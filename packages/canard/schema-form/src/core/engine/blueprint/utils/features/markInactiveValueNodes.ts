@@ -1,9 +1,9 @@
 import { map as mapArray } from '@winglet/common-utils/array';
-import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import type { MutableNode } from '../../types/analysis';
 import type { BlueprintNode } from '../../types/node';
 
@@ -17,22 +17,17 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
     for (const declaration of node.declarations) {
       const schema = declaration.schema;
       if (typeof schema !== 'object') continue;
-      const controls: unknown = schema.controls;
-      if (!controls || typeof controls !== 'object') continue;
+      const controls = readValidatedControls(schema);
+      if (!controls) continue;
       const own = hasOwnProperty(controls, CONTROL_KEY.inactiveValue);
       if (own && declaration.scope === 'node') mark(node);
-      const fields: unknown = Reflect.get(controls, 'fields');
-      if (isArray(fields))
+      const fields = controls.fields;
+      if (fields)
         for (const field of fields) {
-          if (!field || typeof field !== 'object') continue;
-          const group: unknown = Reflect.get(field, 'controls');
-          const targets: unknown = Reflect.get(field, 'targets');
-          if (
-            !group ||
-            typeof group !== 'object' ||
-            !hasOwnProperty(group, CONTROL_KEY.inactiveValue) ||
-            !isArray(targets)
-          )
+          if (!field) continue;
+          const group = field.controls;
+          const targets = field.targets;
+          if (!group || !hasOwnProperty(group, CONTROL_KEY.inactiveValue))
             continue;
           for (const entry of node.childEntries)
             if (targets.includes(entry.name)) mark(entry.node);

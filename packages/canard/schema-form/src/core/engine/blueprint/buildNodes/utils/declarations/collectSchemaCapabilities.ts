@@ -1,5 +1,9 @@
-import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import {
+  DERIVE_CONTROL_KEYS,
+  STATE_CONTROL_KEYS,
+} from '@/schema-form/constants/reservedSchemaKeys';
 
 import { CONTROL_KEY } from '../../../../constants/controlKey';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -41,7 +45,7 @@ export const collectSchemaCapabilities = (
   const controls = record.controls;
   if (!controls) return;
   const fields = controls.fields;
-  for (let index = -1; index < (isArray(fields) ? fields.length : 0); index++) {
+  for (let index = -1; index < (fields?.length ?? 0); index++) {
     const group = index < 0 ? controls : fields[index].controls;
     if (!group) continue;
     if (
@@ -52,19 +56,16 @@ export const collectSchemaCapabilities = (
       context.staticFirstLoad = false;
     if (group.active !== undefined) capabilities.branchless = false;
     if (group.watch !== undefined) capabilities.hasWatch = true;
-    if (
-      group.visible !== undefined ||
-      group.readOnly !== undefined ||
-      group.disabled !== undefined
-    )
-      capabilities.hasState = true;
-    if (
-      group.derived !== undefined ||
-      group.unsetValue !== undefined ||
-      group.resetInteraction !== undefined ||
-      group.injectTo !== undefined
-    )
-      capabilities.hasDerive = true;
+    for (let key = 0; key < STATE_CONTROL_KEYS.length; key++)
+      if (group[STATE_CONTROL_KEYS[key]] !== undefined) {
+        capabilities.hasState = true;
+        break;
+      }
+    for (let key = 0; key < DERIVE_CONTROL_KEYS.length; key++)
+      if (group[DERIVE_CONTROL_KEYS[key]] !== undefined) {
+        capabilities.hasDerive = true;
+        break;
+      }
     if (!capabilities.hasExpressions)
       for (let key = 0; key < EXPRESSION_CONTROL_KEYS.length; key++)
         if (typeof group[EXPRESSION_CONTROL_KEYS[key]] === 'string') {

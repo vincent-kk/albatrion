@@ -1,12 +1,10 @@
+import type { DERIVE_CONTROL_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
+
 import type { BlueprintExpression } from '../../blueprint';
 import type { DeclarationLayer } from '../../types/controls';
 
 /** Authored automatic rule kinds, including the later injection rule. */
-export type DeriveRuleKind =
-  | 'derived'
-  | 'unsetValue'
-  | 'resetInteraction'
-  | 'injectTo';
+export type DeriveRuleKind = (typeof DERIVE_CONTROL_KEYS)[number];
 
 /** One static authored rule rebound to a live record during settlement. */
 export interface DeriveRule {

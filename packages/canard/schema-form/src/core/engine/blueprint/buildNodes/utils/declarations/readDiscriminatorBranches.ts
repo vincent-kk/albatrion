@@ -4,6 +4,7 @@ import { equals } from '@winglet/common-utils/object';
 
 import type { Optional } from '@aileron/declare';
 
+import { RESERVED_SCHEMA_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { FormErrorCode } from '@/schema-form/errors';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import {
@@ -48,14 +49,17 @@ export const readDiscriminatorBranches = (
     Extract<BlueprintGate, { kind: 'discriminator' }>['condition']
   >();
   if (propertyName === undefined) return result;
-  if (typeof propertyName !== 'string' || !propertyName.length)
+  if (!propertyName.length)
     return throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      appendSegment(appendSegment(schemaPath, 'controls'), 'discriminator'),
+      appendSegment(
+        appendSegment(schemaPath, SCHEMA_GROUP.controls),
+        'discriminator',
+      ),
       {
         group: SCHEMA_GROUP.controls,
         key: 'discriminator',
-        expected: 'string',
+        expected: RESERVED_SCHEMA_KEYS.controls.discriminator.shallow,
       },
       context.options,
     );

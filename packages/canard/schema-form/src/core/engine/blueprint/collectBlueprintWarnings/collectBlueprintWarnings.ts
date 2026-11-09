@@ -5,6 +5,7 @@ import type { Dictionary } from '@aileron/declare';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../errors';
+import { readValidatedControls } from '../../utils/controls/readValidatedControls';
 import type {
   Blueprint,
   BlueprintDiagnostic,
@@ -62,7 +63,7 @@ export const collectBlueprintWarnings = (
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
       const propertyName = schema.controls?.discriminator;
-      if (typeof propertyName === 'string' && propertyName.length) {
+      if (propertyName !== undefined && propertyName.length) {
         const reason =
           node.kind !== 'object' && node.kind !== 'virtual'
             ? 'host'
@@ -93,7 +94,7 @@ export const collectBlueprintWarnings = (
           details: { kind: node.kind },
         });
       collectInactiveValueWarnings(
-        schema.controls,
+        readValidatedControls(declaration.schema),
         declaration.schemaPath,
         emit,
       );

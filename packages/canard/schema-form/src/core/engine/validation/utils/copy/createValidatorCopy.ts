@@ -5,6 +5,9 @@ import type { Dictionary } from '@aileron/declare';
 import type { BlueprintSchema } from '../../../blueprint';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 
+/** Form groups are excluded together without maintaining a second vocabulary. */
+const FORM_GROUP_KEYS: readonly string[] = Object.values(SCHEMA_GROUP);
+
 /** Schema-valued keyword slots traversed as schemas rather than annotation data. */
 const SCHEMA_KEYS = new Set([
   'additionalProperties',
@@ -54,13 +57,7 @@ export const createValidatorCopy = (
     const current = pending.pop();
     if (!current) continue;
     for (const [key, value] of Object.entries(current.source)) {
-      if (
-        current.kind === 'schema' &&
-        (key === SCHEMA_GROUP.controls ||
-          key === SCHEMA_GROUP.options ||
-          key === SCHEMA_GROUP.presentation)
-      )
-        continue;
+      if (current.kind === 'schema' && FORM_GROUP_KEYS.includes(key)) continue;
       const childKind =
         current.kind === 'schema'
           ? SCHEMA_KEYS.has(key)
