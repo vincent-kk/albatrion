@@ -97,6 +97,7 @@ Enter 제출은 native form 알고리즘을 따릅니다. text-like 필드가 �
 | `FormErrorCode.InvalidControlShape`          | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE`            | controls·options 그룹 또는 injectTo·fields·discriminator 등 명시적으로 검사하는 형상을 위반한 경우                                                |
 | `FormErrorCode.SchemaValidationFailed`       | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED`          | 유효하지 않은 제출 판정. [처리는 제출 경로에 따라 다릅니다](#submission).                                                                         |
 | `FormErrorCode.ReservedPropertyName`         | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME`           | property 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40` 중 하나여서 form pointer로 round-trip할 수 없는 경우                                         |
+| `FormErrorCode.InvalidErrorVisibility` | `SCHEMA_FORM_ERROR.INVALID_ERROR_VISIBILITY` | 잘못된 표시 정책을 commit에서 origin `load`로 한 번 보고합니다. 트리 유지·복구는 [표시 정책](./validation#visibility)을 따릅니다. |
 
 ## 경고 코드 {#warning-codes}
 
@@ -124,5 +125,3 @@ Enter 제출은 native form 알고리즘을 따릅니다. text-like 필드가 �
 | `FormWarningCode.WriteInInactiveResolver`           | `SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER`            | inactive resolver 안에서 값·배열·batch·reset 쓰기를 시도한 경우                                 |
 | `FormWarningCode.DiscriminatorIgnoredForForm`       | `SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM`        | union이 없거나 host가 비객체여서 discriminator를 무시하는 경우                                  |
 | `FormWarningCode.IfOnNonObjectHost`                 | `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`                 | object를 허용하지 않는 host의 if를 `{}`로 평가하는 경우                                         |
-
-`FormErrorCode.InvalidErrorVisibility` (`SCHEMA_FORM_ERROR.INVALID_ERROR_VISIBILITY`): 잘못된 표시 정책을 commit에서 origin `load`로 한 번 보고합니다. 트리 유지·복구는 [표시 정책](./validation#visibility)을 따릅니다.

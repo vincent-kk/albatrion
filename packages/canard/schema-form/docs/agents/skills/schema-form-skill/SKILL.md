@@ -70,7 +70,7 @@ Keys of the `controls` object (closed list, no aliases; an unknown key throws a 
 
 ### Available Plugins
 
-Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/schema-form-antd5-plugin`, `-antd6-`, `-antd-mobile-`, `-mui-`. Register via `registerPlugin()` before first render, UI before validator.
+Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/schema-form-antd5-plugin`, `-antd6-`, `-antd-mobile-`, `-mui-`. Follow the [registration and conflict rules](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/quick-start#registration-rules).
 
 ## Reference Map
 

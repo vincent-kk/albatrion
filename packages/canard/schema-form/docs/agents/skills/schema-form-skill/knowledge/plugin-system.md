@@ -1,6 +1,6 @@
 # Plugin System
 
-Plugins supply the pieces the core does not ship: UI component sets and validators. Register once at app bootstrap, **before the first `<Form>` renders**, UI plugin before validator plugin — late or repeated registration makes input resolution nondeterministic.
+Plugins supply the pieces the core does not ship: UI component sets and validators. Register at app bootstrap using the [registration and conflict rules](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/quick-start#registration-rules).
 
 Each plugin package exports its plugin as `plugin`; import it under a name of your choice:
 
@@ -9,11 +9,11 @@ import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 ```
 
-Import `registerPlugin` from `@canard/schema-form`, then register the UI plugin before the validator plugin:
+Import `registerPlugin` from `@canard/schema-form`, then register the chosen plugins as described in the registration rules:
 
 ```typescript
-registerPlugin(antd5Plugin); // 1. UI
-registerPlugin(ajvValidatorPlugin); // 2. validator
+registerPlugin(antd5Plugin);
+registerPlugin(ajvValidatorPlugin);
 ```
 
 Available plugins — validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`; UI: `@canard/schema-form-antd5-plugin`, `-antd6-`, `-antd-mobile-`, `-mui-`.
@@ -22,7 +22,7 @@ Available plugins — validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `
 
 Every property of the exported `SchemaFormPlugin` type is optional, so a plugin customizes only what it needs.
 
-- When multiple registered plugins define the same property, **the last one wins**.
+- For overlapping slots and repeated registrations, follow the [registration rules](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/quick-start#registration-rules).
 - Plugin-provided `fieldInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
 - A subtree can override plugin pieces locally with `FormProvider` instead of globally. It accepts `fieldInputDefinitions`, `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`, `formatError` and `validatorFactory`, which correspond to plugin members, plus `errorVisibility`, `validationMode` and `context`, which do not.
 

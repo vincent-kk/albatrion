@@ -97,6 +97,7 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormErrorCode.InvalidControlShape`          | `JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE`            | a controls/options group or an explicitly checked shape such as injectTo, fields, or discriminator is malformed.                                            |
 | `FormErrorCode.SchemaValidationFailed`       | `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED`          | invalid submission verdict; [handling depends on the submission path](#submission).                                                                         |
 | `FormErrorCode.ReservedPropertyName`         | `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME`           | a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` and cannot round-trip through a form pointer.                                                   |
+| `FormErrorCode.InvalidErrorVisibility` | `SCHEMA_FORM_ERROR.INVALID_ERROR_VISIBILITY` | An invalid display policy reports once at commit with origin `load`. Tree retention and recovery follow the [visibility contract](./validation#visibility). |
 
 ## Warning codes {#warning-codes}
 
@@ -124,5 +125,3 @@ Enter submission follows the native form algorithm. Include a submit button when
 | `FormWarningCode.WriteInInactiveResolver`           | `SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER`            | a public value, array, batch or reset write is attempted inside an inactive resolver.                                        |
 | `FormWarningCode.DiscriminatorIgnoredForForm`       | `SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM`        | a discriminator has no union or object host and is ignored.                                                                  |
 | `FormWarningCode.IfOnNonObjectHost`                 | `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`                 | an if sits on a host whose allowed types do not include object and is evaluated against an empty object.                     |
-
-`FormErrorCode.InvalidErrorVisibility` (`SCHEMA_FORM_ERROR.INVALID_ERROR_VISIBILITY`): An invalid display policy reports once at commit with origin `load`. Tree retention and recovery follow the [visibility contract](./validation#visibility).

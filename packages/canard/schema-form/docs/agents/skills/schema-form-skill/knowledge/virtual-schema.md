@@ -25,7 +25,7 @@
 
 - The virtual field's value is a **tuple ordered by `fields`**: `[startDateValue, endDateValue]`.
 - `onChange(['2025-01-01', '2025-01-31'])` scatters the tuple back into the individual fields.
-- The underlying fields remain individually addressable (`/startDate`) and are what actually gets stored — `virtual` changes presentation, not data shape. `node.enhancedValue` on the root includes virtual fields when you need the grouped view.
+- The underlying fields remain individually addressable (`/startDate`) and are what actually gets stored — `virtual` changes presentation, not data shape. To read the grouped tuple, use `formRef.current?.findNode('/period')`, check the result with `isVirtualNode`, and read that node's `value`; the root `value` and `outputValue` retain the stored shape.
 
 ## Require the stored fields
 
@@ -43,7 +43,7 @@ The virtual FieldInput's node and subtree visitors remain required, as do array 
 Use a virtual field when one widget edits several existing siblings.
 Use a real object schema when the submitted data must contain a nested object instead.
 The distinction matters to server validation: visual grouping does not add a new property to the submitted value.
-Read ordinary Form output for submission, and use the enhanced view only when the application needs the synthetic group.
+Read ordinary Form output for submission, and read the virtual node's `value` only when the application needs the synthetic group.
 Do not submit both representations as separate sources of truth.
 
 ## Keep constituent errors actionable

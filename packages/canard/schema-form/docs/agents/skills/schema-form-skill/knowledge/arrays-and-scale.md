@@ -151,7 +151,7 @@ For a single huge array field (not a huge form), window it manually with a list-
 
 ## Input responsiveness at scale
 
-Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In IR-1, replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
+Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In the 200-item replacement measurement, the longest frame with virtualization off was 62.3 ms; with it on, no frame of 50 ms or more was detected. Same-window mount medians (ms) show the trade-off:
 
 | Form         | Off: eager paint / all revealed | On: eager paint / all revealed |
 | ------------ | ------------------------------: | -----------------------------: |
@@ -161,9 +161,9 @@ Enable `virtualization` for branches with at least `threshold` children when str
 
 Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. The default remains off.
 
-- **Validation:** cost grows with schema size. The desktop Chromium flat-2000 IR-2 diagnosis attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
+- **Validation:** cost grows with schema size. The desktop Chromium 2,000-field flat-form measurement attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
 - **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
-- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. IR-0 E lane event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
+- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. The consumer-state fixture's event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
 
 ## Expression Cost at Scale
 

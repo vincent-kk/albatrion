@@ -24,6 +24,10 @@ NODE-016·045·LANDING-067·083·084·087. core는 [engine](engine/DETAIL.md)과
 
 ## Acceptance Criteria
 
+### external-error-work — 루트 이슈 목록에 비례하는 재구성
+
+고정된 필드 수에서 외부 오류를 지우는 루트 목록 재구성의 이슈 membership 검사 횟수는 목록 길이에 비례합니다. batch 안과 개별 호출을 각각 검증하며 병렬 실행의 벽시계 지연을 연산 복잡도의 증거로 삼지 않습니다.
+
 ### factory-single-path — 같은 생성 경계
 
 Form과 코어 시나리오는 같은 surface 생성·마운트 계약을 사용합니다. 종류별 런타임 상속이나 시험 전용 제품 생성 경로를 추가하지 않습니다.

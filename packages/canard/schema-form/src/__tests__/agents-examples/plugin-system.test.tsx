@@ -76,8 +76,8 @@ const ajvValidatorPlugin: SchemaFormPlugin = {
 
 // prettier-ignore
 function registerPlugins() {
-registerPlugin(antd5Plugin); // 1. UI
-registerPlugin(ajvValidatorPlugin); // 2. validator
+registerPlugin(antd5Plugin);
+registerPlugin(ajvValidatorPlugin);
 }
 
 it('renders the registered UI plugin input and validates with the registered validator', async () => {

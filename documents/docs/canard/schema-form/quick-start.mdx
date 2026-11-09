@@ -61,4 +61,13 @@ export function BasicForm() {
 }
 ```
 
-Registration is global. Identical plugin content is deduplicated by hash; there is no fixed ordering requirement between a validator plugin and a UI plugin. Register before mounting forms so their captured configuration is ready. Use [FormProvider](./api-reference#plugins) for subtree defaults.
+### Registration rules {#registration-rules}
+
+Register plugins globally before mounting forms so their captured configuration is ready. There is no fixed UI-before-validator order: plugins supplying disjoint slots are independent. When slots overlap, registration order matters:
+
+- Renderers, `validator`, and `formatError`: the last newly registered plugin supplying that slot replaces its previous value; omitted slots stay unchanged.
+- `fieldInputDefinitions`: the new list is prepended, preserving order within it; the first matching definition wins. Earlier definitions remain as fallbacks.
+- Registrations are deduplicated by a content hash that includes function identity. Registering identical content again does nothing, even after another plugin overrides it; a new object with the same content and function references is also a duplicate. Only a hash not registered since the last reset is applied.
+- `registerPlugin(null)` restores defaults and clears the registered hashes, allowing the same plugins to be applied again.
+
+Use [FormProvider](./api-reference#plugins) for subtree defaults.

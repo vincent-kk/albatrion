@@ -64,4 +64,4 @@ fragment-root 접두사는 constants 구획의 단일 `FragmentPrefix` 상수로
 
 ## Last Updated
 
-2026-10-30
+경로 문법·정규화·조립 또는 공개 경계가 바뀔 때 갱신합니다.
