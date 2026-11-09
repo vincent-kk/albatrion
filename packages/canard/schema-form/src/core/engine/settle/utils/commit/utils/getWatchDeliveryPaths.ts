@@ -1,8 +1,8 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
-import { CONTROL_KEY } from '../../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../../record';
+import { readValidatedControls } from '../../../../utils/controls/readValidatedControls';
 import { getStateDependencyPlan } from '../../controls/getStateDependencyPlan';
 
 /**
@@ -14,18 +14,12 @@ export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly string[] => {
   const schema = node.schema.schema;
-  const controls: unknown =
-    typeof schema === 'object' ? schema.controls : undefined;
-  const watch: unknown =
-    controls && typeof controls === 'object'
-      ? Reflect.get(controls, CONTROL_KEY.watch)
-      : undefined;
+  const watch = readValidatedControls(schema)?.watch;
   if (!isArray(watch)) return EMPTY_ARRAY;
   const paths: string[] = [];
   for (const path of watch)
-    if (typeof path === 'string')
-      paths.push(
-        getStateDependencyPlan(node.runtime, node.path, path, node).path,
-      );
+    paths.push(
+      getStateDependencyPlan(node.runtime, node.path, path, node).path,
+    );
   return paths;
 };

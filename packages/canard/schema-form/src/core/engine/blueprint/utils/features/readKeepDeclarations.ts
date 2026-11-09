@@ -1,4 +1,4 @@
-import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import type { PropertyDeclaration } from '../../types/node';
 import { hasKeepFields } from './controls/hasKeepFields';
 import { isKeepControls } from './isKeepControls';
@@ -23,10 +23,7 @@ export const readKeepDeclarations = (
   let child = false;
   for (const declaration of declarations) {
     if (!declaration.schema || typeof declaration.schema !== 'object') continue;
-    const controls: unknown = Reflect.get(
-      declaration.schema,
-      SCHEMA_GROUP.controls,
-    );
+    const controls = readValidatedControls(declaration.schema);
     if (isKeepControls(controls)) {
       if (declaration.scope === 'node') own = true;
       else child = true;

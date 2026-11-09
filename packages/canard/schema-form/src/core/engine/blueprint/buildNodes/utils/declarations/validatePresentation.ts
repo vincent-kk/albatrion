@@ -1,55 +1,40 @@
-import { isArray } from '@winglet/common-utils/filter';
-
+import {
+  RESERVED_PRESENTATION_KEYS,
+  RESERVED_SCHEMA_KEYS,
+  SCHEMA_GROUP,
+} from '@/schema-form/constants/reservedSchemaKeys';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
-
-/** Reserved binding values are checked shallowly without a React dependency. */
-const PRESENTATION_KEYS = [
-  'inputType',
-  'FieldInput',
-  'FieldInputProps',
-  'FieldRendererProps',
-  'errorMessages',
-];
+import { matchesReservedShallowType } from './matchesReservedShallowType';
 
 /**
- * Check reserved presentation envelopes without inspecting their nested payloads.
- * @param context - Diagnostic collector for this analysis
- * @param presentation - Opaque authored group with optional reserved values
- * @param schemaPath - Authored position that owns the presentation group
- * @returns Nothing; invalid reserved values throw at their exact key
+ * Validate reserved presentation envelopes while keeping extension payloads opaque.
+ * @param context - Invocation-owned diagnostic collector.
+ * @param value - Authored group before shallow validation.
+ * @param schemaPath - Original position owning the group.
+ * @returns Nothing; invalid reserved values throw at their exact authored key.
  */
 export const validatePresentation = (
   context: AnalysisContext,
-  presentation: unknown,
+  value: unknown,
   schemaPath: string,
 ): void => {
-  if (!presentation || typeof presentation !== 'object') return;
-  for (const key of PRESENTATION_KEYS) {
-    if (!(key in presentation)) continue;
-    const value: unknown = Reflect.get(presentation, key);
-    if (value === undefined) continue;
-    let expected: string | undefined;
-    if (key === 'inputType') {
-      if (typeof value !== 'string') expected = 'string';
-    } else if (key === 'FieldInput') {
-      if (
-        value !== null &&
-        typeof value !== 'function' &&
-        typeof value !== 'object'
-      )
-        expected = 'function | object | null';
-    } else if (!value || typeof value !== 'object' || isArray(value)) {
-      expected = 'object';
-    }
-    if (expected)
+  if (!value || typeof value !== 'object') return;
+  for (const key of RESERVED_PRESENTATION_KEYS) {
+    const item: unknown = Reflect.get(value, key);
+    if (item === undefined) continue;
+    const expected = RESERVED_SCHEMA_KEYS.presentation[key].shallow;
+    if (!matchesReservedShallowType(item, expected))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        appendSegment(appendSegment(schemaPath, 'presentation'), key),
-        { group: 'presentation', key, expected },
+        appendSegment(
+          appendSegment(schemaPath, SCHEMA_GROUP.presentation),
+          key,
+        ),
+        { group: SCHEMA_GROUP.presentation, key, expected },
         context.options,
       );
   }

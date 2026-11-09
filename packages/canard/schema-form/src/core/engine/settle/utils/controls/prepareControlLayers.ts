@@ -1,13 +1,12 @@
 import { filter as filterArray } from '@winglet/common-utils/array';
-import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
-import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import type {
   PreparedControlGroups,
@@ -42,12 +41,8 @@ export const prepareControlLayers = (
   for (const declaration of node.declarations) {
     ids.push(declaration.id);
     if (!declaration.schema || typeof declaration.schema !== 'object') continue;
-    const controls: unknown = Reflect.get(
-      declaration.schema,
-      SCHEMA_GROUP.controls,
-    );
-    if (!controls || typeof controls !== 'object' || isArray(controls))
-      continue;
+    const controls = readValidatedControls(declaration.schema);
+    if (!controls) continue;
     hasExitControls ||= hasOwnProperty(controls, CONTROL_KEY.unsetOnInactive);
     const group: PreparedControlLayer = {
       layer: declaration.scope === 'node' ? 'node' : 'fragment',
@@ -62,20 +57,14 @@ export const prepareControlLayers = (
       if (!atPath) fragments.set(declaration.schemaPath, (atPath = []));
       atPath.push(group);
     }
-    const items: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-    if (!isArray(items)) continue;
+    const items = controls.fields;
+    if (!items) continue;
     for (let index = 0; index < items.length; index++) {
-      const item: unknown = items[index];
-      if (!item || typeof item !== 'object') continue;
-      const targets: unknown = Reflect.get(item, 'targets');
-      if (!isArray(targets)) continue;
-      const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
-      if (
-        !itemControls ||
-        typeof itemControls !== 'object' ||
-        isArray(itemControls)
-      )
-        continue;
+      const item = items[index];
+      if (!item) continue;
+      const targets = item.targets;
+      const itemControls = item.controls;
+      if (!itemControls) continue;
       const field: PreparedControlLayer = {
         layer: 'fields',
         declarationId: declaration.id,
@@ -97,7 +86,7 @@ export const prepareControlLayers = (
         CONTROL_KEY.unsetOnInactive,
       );
       for (const target of targets) {
-        if (typeof target !== 'string') continue;
+        if (target === undefined) continue;
         let addressed = fields.get(target);
         if (!addressed) fields.set(target, (addressed = []));
         if (addressed[addressed.length - 1] !== field) addressed.push(field);

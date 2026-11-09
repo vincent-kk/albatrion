@@ -36,10 +36,7 @@ export const useFieldInput = (node: FieldNode, disabled: boolean) => {
       nullable: node.nullable,
       jsonSchema: schema,
       format: typeof schema.format === 'string' ? schema.format : undefined,
-      inputType:
-        typeof schema.presentation?.inputType === 'string'
-          ? schema.presentation.inputType
-          : undefined,
+      inputType: schema.presentation?.inputType,
     };
     for (const definitions of [
       fromFieldInputMap,

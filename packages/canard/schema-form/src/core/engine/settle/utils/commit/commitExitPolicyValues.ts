@@ -1,5 +1,4 @@
 import { map as mapArray } from '@winglet/common-utils/array';
-import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -7,12 +6,12 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
-import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -100,9 +99,8 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       if (selected && selected.indexOf(declaration.id) === -1) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
-      const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
-      if (!controls || typeof controls !== 'object' || isArray(controls))
-        continue;
+      const controls = readValidatedControls(schema);
+      if (!controls) continue;
 
       if (
         declaration.scope === 'fragment' &&
@@ -134,25 +132,15 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           break;
         }
       }
-      const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-      if (!isArray(fields)) continue;
+      const fields = controls.fields;
+      if (!fields) continue;
       for (const item of fields) {
-        if (!item || typeof item !== 'object') continue;
-        const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
-        if (
-          !itemControls ||
-          typeof itemControls !== 'object' ||
-          typeof Reflect.get(itemControls, CONTROL_KEY.unsetOnInactive) !==
-            'string'
-        )
+        if (!item) continue;
+        const itemControls = item.controls;
+        if (!itemControls || typeof itemControls.unsetOnInactive !== 'string')
           continue;
-        const targets: unknown = Reflect.get(item, 'targets');
-        if (!isArray(targets)) continue;
-        for (const name of targets) {
-          if (
-            typeof name !== 'string' ||
-            !hasOwnProperty(source.structure, name)
-          )
+        for (const name of item.targets) {
+          if (name === undefined || !hasOwnProperty(source.structure, name))
             continue;
           candidates.add(source.structure[name]);
           break;

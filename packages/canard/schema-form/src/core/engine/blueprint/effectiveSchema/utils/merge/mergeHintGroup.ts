@@ -3,6 +3,8 @@ import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
 
+import { DECLARATION_OPTION_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
+
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import { freezeCreatedHintObjects } from '../finalize/freezeCreatedHintObjects';
 
@@ -21,9 +23,15 @@ export const mergeHintGroup = (
   isAtomic?: (value: unknown) => boolean,
 ): unknown => {
   const source =
-    omitVirtual && isPlainObject(later) && hasOwnProperty(later, 'virtual')
+    omitVirtual &&
+    isPlainObject(later) &&
+    DECLARATION_OPTION_KEYS.some((key) => hasOwnProperty(later, key))
       ? Object.fromEntries(
-          filterArray(Object.entries(later), ([key]) => key !== 'virtual'),
+          filterArray(
+            Object.entries(later),
+            ([key]) =>
+              !DECLARATION_OPTION_KEYS.some((reserved) => reserved === key),
+          ),
         )
       : later;
   if (source !== later && source && typeof source === 'object')

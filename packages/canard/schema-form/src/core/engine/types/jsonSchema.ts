@@ -75,7 +75,7 @@ interface AuthoredSchemaBase<
     /** Trim string input when it is finished. */
     trim?: boolean;
     /** Consumer extensions are not interpreted by the engine. */
-    [key: string]: unknown;
+    [alt: string]: any;
   };
   /** Opaque host binding data. */
   presentation?: Presentation;

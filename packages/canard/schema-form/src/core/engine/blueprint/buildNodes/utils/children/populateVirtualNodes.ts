@@ -36,16 +36,6 @@ export const populateVirtualNodes = (
     const options = readSchemaObject(declaration.schema).options;
     const virtual = isPlainObject(options) ? options.virtual : undefined;
     if (virtual === undefined) continue;
-    if (!virtual || typeof virtual !== 'object' || isArray(virtual))
-      throwBlueprintError(
-        FormErrorCode.VirtualFieldsNotValid,
-        appendSegment(
-          appendSegment(declaration.schemaPath, 'options'),
-          'virtual',
-        ),
-        {},
-        context.options,
-      );
     for (const [name, value] of Object.entries(virtual)) {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Virtual entries are authored values read before shape validation; callables and primitives reach the fields check, so a guard would narrow what is accepted.
       const schema = readSchemaObject(value as Dictionary<unknown>);

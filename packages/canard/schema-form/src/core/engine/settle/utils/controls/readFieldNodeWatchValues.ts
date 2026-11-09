@@ -4,9 +4,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Optional } from '@aileron/declare';
 
 import type { BlueprintSchema } from '../../../blueprint';
-import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import { readStateDependency } from './readStateDependency';
 import type { EmissionSnapshot } from './readStateDependency';
 
@@ -41,12 +41,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
   if (!snapshot && memo && node.detached) return memo.values;
   if (node.detached) return EMPTY_ARRAY;
   const schema = snapshot?.schema ?? node.schema.schema;
-  const controls: unknown =
-    typeof schema === 'object' ? schema.controls : undefined;
-  const watch: unknown =
-    controls && typeof controls === 'object'
-      ? Reflect.get(controls, CONTROL_KEY.watch)
-      : undefined;
+  const watch = readValidatedControls(schema)?.watch;
   const paths = isArray(watch) ? watch : EMPTY_ARRAY;
   if (!snapshot && paths.length === 0 && (!memo || memo.values.length === 0))
     return EMPTY_ARRAY;
@@ -68,21 +63,18 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     selectedContext == null;
   let next: Optional<unknown[]> = reusable ? undefined : [];
   for (let index = 0; index < paths.length; index++) {
-    const path: unknown = paths[index];
+    const path = paths[index];
     const previous = reuseAbsentContext ? memo!.values[index] : undefined;
     const absentContext =
       previous !== null && typeof previous === 'object' ? previous : undefined;
-    const value =
-      typeof path === 'string'
-        ? readStateDependency(
-            node.rootNode,
-            node.path,
-            path,
-            snapshot,
-            node,
-            absentContext,
-          )
-        : undefined;
+    const value = readStateDependency(
+      node.rootNode,
+      node.path,
+      path,
+      snapshot,
+      node,
+      absentContext,
+    );
     if (!next && !Object.is(value, memo!.values[index]))
       next = memo!.values.slice(0, index);
     next?.push(value);

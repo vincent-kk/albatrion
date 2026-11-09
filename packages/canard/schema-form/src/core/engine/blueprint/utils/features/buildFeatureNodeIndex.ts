@@ -1,26 +1,25 @@
 import { map as mapArray } from '@winglet/common-utils/array';
-import { isArray } from '@winglet/common-utils/filter';
 
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Optional } from '@aileron/declare';
 
+import { STATE_CONTROL_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
-import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
+import {
+  type ValidatedControls,
+  readValidatedControls,
+} from '../../../utils/controls/readValidatedControls';
 import type {
   Blueprint,
   BlueprintFeatureNodeIndex,
 } from '../../types/blueprint';
 
 /** Local control groups whose declared values can differ from the default keys. */
-const hasStateKeys = (controls: unknown): controls is Dictionary<unknown> =>
-  controls !== null &&
-  typeof controls === 'object' &&
-  !isArray(controls) &&
-  (Reflect.get(controls, CONTROL_KEY.visible) !== undefined ||
-    Reflect.get(controls, CONTROL_KEY.readOnly) !== undefined ||
-    Reflect.get(controls, CONTROL_KEY.disabled) !== undefined);
+const hasStateKeys = (controls: Optional<ValidatedControls>): boolean =>
+  controls !== undefined &&
+  STATE_CONTROL_KEYS.some((key) => controls[key] !== undefined);
 
 /**
  * Index possible state and watch targets without selecting gates or reading values.
@@ -66,14 +65,13 @@ export const buildFeatureNodeIndex = (
       if (declaration.validationOnly || typeof declaration.schema !== 'object')
         continue;
       const schema = declaration.schema;
-      const controls = schema.controls;
+      const controls = readValidatedControls(schema);
       if (
         schema.readOnly === true ||
         (declaration.scope === 'node' && hasStateKeys(controls))
       )
         stateKeyNodes.add(node.id);
-      if (!controls || typeof controls !== 'object' || isArray(controls))
-        continue;
+      if (!controls) continue;
       if (
         declaration.scope === 'node' &&
         Reflect.get(controls, CONTROL_KEY.watch) !== undefined
@@ -83,19 +81,12 @@ export const buildFeatureNodeIndex = (
         for (let index = 0; index < children.length; index++)
           if ((owners ??= buildOwners())[index].has(declaration.schemaPath))
             targets.add(children[index].name);
-      const groups: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-      if (isArray(groups))
+      const groups = controls.fields;
+      if (groups)
         for (const group of groups) {
-          if (
-            !group ||
-            typeof group !== 'object' ||
-            !hasStateKeys(Reflect.get(group, SCHEMA_GROUP.controls))
-          )
-            continue;
-          const names: unknown = Reflect.get(group, 'targets');
-          if (isArray(names))
-            for (const name of names)
-              if (typeof name === 'string') targets.add(name);
+          if (!group || !hasStateKeys(group.controls)) continue;
+          for (const name of group.targets)
+            if (name !== undefined) targets.add(name);
         }
     }
     for (const child of children)
@@ -106,14 +97,10 @@ export const buildFeatureNodeIndex = (
           typeof declaration.schema !== 'object'
         )
           continue;
-        const controls = declaration.schema.controls;
+        const controls = readValidatedControls(declaration.schema);
         if (declaration.schema.readOnly === true || hasStateKeys(controls))
           stateKeyNodes.add(child.node.id);
-        if (
-          controls &&
-          typeof controls === 'object' &&
-          Reflect.get(controls, CONTROL_KEY.watch) !== undefined
-        )
+        if (controls && Reflect.get(controls, CONTROL_KEY.watch) !== undefined)
           watchNodes.add(child.node.id);
       }
     if (targets.size) stateKeyChildren.set(node.id, targets);

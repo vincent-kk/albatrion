@@ -4,6 +4,7 @@ import {
 } from '@winglet/common-utils/array';
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 
+import { RESERVED_OPTION_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
@@ -14,11 +15,7 @@ import type { BlueprintSchema } from '../../types/schema';
 import { readSchemaObject } from '../../utils/analyze/readSchemaObject';
 
 /** Form-only groups that a terminal ignores. */
-const FORM_GROUP_KEYS = [
-  SCHEMA_GROUP.controls,
-  SCHEMA_GROUP.options,
-  SCHEMA_GROUP.presentation,
-];
+const FORM_GROUP_KEYS = Object.values(SCHEMA_GROUP);
 
 /** Keywords whose value maps names to child schemas. */
 const SCHEMA_MAP_KEYWORDS = [
@@ -91,12 +88,7 @@ export const collectInlineTerminalWarnings = (
             const options = record.options;
             if (
               !isPlainObject(options) ||
-              (options.terminal === undefined &&
-                options.virtual === undefined &&
-                options.propertyOrder === undefined &&
-                options.omitEmpty === undefined &&
-                options.omitTrailing === undefined &&
-                options.trim === undefined)
+              !RESERVED_OPTION_KEYS.some((key) => options[key] !== undefined)
             )
               continue;
           }

@@ -3,6 +3,7 @@ import type { CSSProperties, ComponentType } from 'react';
 import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import type { ChildField } from '@/schema-form/components/FieldProxy';
+import type { PRESENTATION_HINT_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import type {
   FieldNode,
   InferFieldNode,
@@ -177,7 +178,7 @@ type ListMatchedHintKey =
   | 'schemaType'
   | 'path'
   | 'format'
-  | 'inputType';
+  | (typeof PRESENTATION_HINT_KEYS)[number];
 
 /** Object form of a FieldInput test: each field narrows the FieldInputHint it accepts; an omitted field matches anything. */
 export type FieldInputTestObject = Partial<

@@ -1,44 +1,40 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 
+import {
+  RESERVED_OPTION_KEYS,
+  RESERVED_SCHEMA_KEYS,
+  SCHEMA_GROUP,
+} from '@/schema-form/constants/reservedSchemaKeys';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
-import { isStringList } from './isStringList';
-
-/** Boolean options share one shallow authoring contract. */
-const BOOLEAN_OPTION_KEYS = ['terminal', 'omitEmpty', 'omitTrailing', 'trim'];
+import { matchesReservedShallowType } from './matchesReservedShallowType';
 
 /**
- * Validate owned option values while leaving consumer extensions opaque.
- * @param context - Diagnostic collector for this analysis
- * @param options - Authored payload; only plain objects supply engine options
- * @param schemaPath - Authored position that owns the options group
- * @returns Nothing; malformed reserved values throw at their exact option key
+ * Validate reserved options envelopes while keeping extension payloads opaque.
+ * @param context - Invocation-owned diagnostic collector.
+ * @param value - Authored group before shallow validation.
+ * @param schemaPath - Original position owning the group.
+ * @returns Nothing; invalid reserved values throw at their exact authored key.
  */
 export const validateSchemaOptions = (
   context: AnalysisContext,
-  options: unknown,
+  value: unknown,
   schemaPath: string,
 ): void => {
-  if (!isPlainObject(options)) return;
-  for (const key of BOOLEAN_OPTION_KEYS)
-    if (options[key] !== undefined && typeof options[key] !== 'boolean')
+  if (!isPlainObject(value)) return;
+  for (const key of RESERVED_OPTION_KEYS) {
+    const item: unknown = Reflect.get(value, key);
+    if (item === undefined) continue;
+    const expected = RESERVED_SCHEMA_KEYS.options[key].shallow;
+    if (!matchesReservedShallowType(item, expected))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        appendSegment(appendSegment(schemaPath, 'options'), key),
-        { group: 'options', key, expected: 'boolean' },
+        appendSegment(appendSegment(schemaPath, SCHEMA_GROUP.options), key),
+        { group: SCHEMA_GROUP.options, key, expected },
         context.options,
       );
-  if (
-    options.propertyOrder !== undefined &&
-    !isStringList(options.propertyOrder)
-  )
-    throwBlueprintError(
-      FormErrorCode.InvalidControlShape,
-      appendSegment(appendSegment(schemaPath, 'options'), 'propertyOrder'),
-      { group: 'options', key: 'propertyOrder', expected: 'string[]' },
-      context.options,
-    );
+  }
 };
