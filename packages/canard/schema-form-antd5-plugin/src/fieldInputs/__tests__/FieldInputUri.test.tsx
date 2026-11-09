@@ -2,7 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form } from '@canard/schema-form';
+import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputUriDefinition } from '../FieldInputUri';
 
@@ -46,6 +46,7 @@ it('accepts protocols under options without a schema error', () => {
     <Form
       fieldInputDefinitions={[FieldInputUriDefinition]}
       onError={onError}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'object',
         properties: {

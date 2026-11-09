@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { default as headFixture } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
 
+import { expectOpenOptionsCapture } from '../../../__tests__/fixtures/expectOpenOptionsCapture';
 import { captureOwnedInlineObservables } from '../../__tests__/fixtures/captureOwnedInlineObservables';
 import { default as mounts } from '../../__tests__/fixtures/ownedInlineMounts.json';
 import { blueprint } from '../../blueprint';
@@ -51,13 +52,15 @@ describe('tuple key construction', () => {
     expect(headFixture.cases).toHaveLength(59);
     for (const sample of headFixture.cases) {
       for (let collect = 0; collect < 2; collect++) {
-        expect(
-          captureOwnedInlineObservables(
-            structuredClone(sample.schema) as BlueprintSchema,
-            collect === 1,
-          ),
-          `${sample.label}: collect=${collect}`,
-        ).toEqual(sample.captures[collect]);
+        const actual = captureOwnedInlineObservables(
+          structuredClone(sample.schema) as BlueprintSchema,
+          collect === 1,
+        );
+        if (sample.label === '89C-03-edge-28') expectOpenOptionsCapture(actual);
+        else
+          expect(actual, `${sample.label}: collect=${collect}`).toEqual(
+            sample.captures[collect],
+          );
       }
     }
     expect(lookups).toBeGreaterThan(118);

@@ -36,9 +36,9 @@ it('retains known option names and types while allowing extra keys in literals',
   >().toEqualTypeOf<readonly string[] | undefined>();
   // @ts-expect-error A reserved boolean option cannot be a string.
   const malformed: JSONSchema = { type: 'string', options: { trim: 'yes' } };
-  // @ts-expect-error The custom generic retains its value type.
   const genericMismatch: JSONSchema<{ custom: number }> = {
     type: 'string',
+    // @ts-expect-error The custom generic retains its value type.
     options: { custom: 'no' },
   };
   // @ts-expect-error controls remains closed.
@@ -54,7 +54,7 @@ it('retains known option names and types while allowing extra keys in literals',
 });
 
 it('does not let custom options change value inference', () => {
-  const schema = {
+  const _schema = {
     type: 'object',
     additionalProperties: false,
     properties: {
@@ -63,7 +63,7 @@ it('does not let custom options change value inference', () => {
     },
     options: { custom: ['payload'] },
   } as const satisfies JSONSchema;
-  expectTypeOf<InferValueType<typeof schema>>().toEqualTypeOf<{
+  expectTypeOf<InferValueType<typeof _schema>>().toEqualTypeOf<{
     title?: string;
     count?: number;
   }>();

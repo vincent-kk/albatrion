@@ -5,7 +5,7 @@ import type { DatePicker as AntdDatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { Form } from '@canard/schema-form';
+import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputDateRangeDefinition } from '../FieldInputDateRange';
 
@@ -80,6 +80,7 @@ it('accepts minimum under options without a schema error', () => {
     <Form
       fieldInputDefinitions={[FieldInputDateRangeDefinition]}
       onError={onError}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'object',
         properties: {

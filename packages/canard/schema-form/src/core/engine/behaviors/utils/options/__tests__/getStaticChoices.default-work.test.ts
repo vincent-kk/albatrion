@@ -29,8 +29,8 @@ it('links optionless effective schemas to one frozen default while keeping each 
   expect(Object.isFrozen(left?.propertyOrder)).toBe(true);
 });
 
-it('keeps options and filtered propertyOrder independent from the default and authored arrays', () => {
-  const keys = ['second', 1, 'first'];
+it('keeps options and validated propertyOrder independent from the default and authored arrays', () => {
+  const keys = ['second', 'first'];
   const effective = {
     schema: {
       type: 'object' as const,

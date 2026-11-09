@@ -98,11 +98,11 @@ describe('structural warning keys', () => {
   it('ERROR-196 detects reference-only schema rebuilding at adoption', () => {
     const previous = createDispatchTree({
       type: 'object',
-      controls: { visible: () => true },
+      options: { customVisibility: () => true },
     });
     previous.runtime.entryDepth = 1;
     const next = createDispatchTree(
-      { type: 'object', controls: { visible: () => true } },
+      { type: 'object', options: { customVisibility: () => true } },
       undefined,
       undefined,
       { hasConsumer: () => true, report: vi.fn() },
@@ -111,7 +111,7 @@ describe('structural warning keys', () => {
     expect([...(next.runtime.pendingWarningRecords?.values() ?? [])]).toEqual([
       expect.objectContaining({
         code: 'SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE',
-        details: { schemaPaths: ['#/controls/visible'] },
+        details: { schemaPaths: ['#/options/customVisibility'] },
       }),
     ]);
   });
@@ -119,13 +119,13 @@ describe('structural warning keys', () => {
   it('ERROR-196 skips the reference warning when JSON schema data differs', () => {
     const previous = createDispatchTree({
       type: 'object',
-      controls: { visible: () => true },
+      options: { customVisibility: () => true },
     });
     previous.runtime.entryDepth = 1;
     const next = createDispatchTree(
       {
         type: 'object',
-        controls: { visible: () => false },
+        options: { customVisibility: () => false },
         properties: { added: { type: 'string' } },
       },
       undefined,

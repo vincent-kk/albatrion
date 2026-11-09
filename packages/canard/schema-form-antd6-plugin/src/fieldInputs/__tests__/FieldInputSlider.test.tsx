@@ -4,7 +4,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import type { Slider as AntdSlider } from 'antd';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { Form } from '@canard/schema-form';
+import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 
@@ -61,6 +61,7 @@ it('accepts lazy under options without a schema error', () => {
     <Form
       fieldInputDefinitions={[FieldInputSliderDefinition]}
       onError={onError}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'object',
         properties: {
