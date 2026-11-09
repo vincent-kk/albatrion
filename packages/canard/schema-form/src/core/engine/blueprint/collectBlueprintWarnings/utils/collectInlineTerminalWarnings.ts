@@ -2,7 +2,7 @@ import {
   filter as filterArray,
   map as mapArray,
 } from '@winglet/common-utils/array';
-import { isArray } from '@winglet/common-utils/filter';
+import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -87,6 +87,19 @@ export const collectInlineTerminalWarnings = (
     if (!entry.root)
       for (const keyword of FORM_GROUP_KEYS)
         if (record[keyword] !== undefined) {
+          if (keyword === SCHEMA_GROUP.options) {
+            const options = record.options;
+            if (
+              !isPlainObject(options) ||
+              (options.terminal === undefined &&
+                options.virtual === undefined &&
+                options.propertyOrder === undefined &&
+                options.omitEmpty === undefined &&
+                options.omitTrailing === undefined &&
+                options.trim === undefined)
+            )
+              continue;
+          }
           if (!keys.includes(keyword)) keys.push(keyword);
           if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);
         }

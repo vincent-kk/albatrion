@@ -14,14 +14,12 @@ import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
-
-/** Extension groups validated at every authored position. */
-const CONTROL_GROUPS = [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const;
+import { validateControlValue } from './validateControlValue';
 
 /**
- * Validate closed extension namespaces at an authored schema position.
+ * Validate the closed executable controls namespace at an authored position.
  * @param context - Error collector and authored root
- * @param schema - Schema whose controls/options belong to this position
+ * @param schema - Schema whose controls belong to this position
  * @param schemaPath - Original diagnostic location
  * @param fragment - Whether controls are scoped to a fragment's direct children
  * @returns Nothing; malformed extension declarations throw a schema error
@@ -33,23 +31,18 @@ export const validateControlGroups = (
   fragment: boolean,
 ): void => {
   const record = readSchemaObject(schema);
-  for (const group of CONTROL_GROUPS) {
-    const value = record[group];
-    if (value === undefined) continue;
-    const allowed =
-      group === SCHEMA_GROUP.options
-        ? OPTION_KEYS
-        : fragment
-          ? CHILD_CONTROL_KEYS
-          : CONTROL_KEYS;
-    if (!value || typeof value !== 'object' || isArray(value))
+  const controls = record.controls;
+  if (controls !== undefined) {
+    const group = SCHEMA_GROUP.controls;
+    const allowed = fragment ? CHILD_CONTROL_KEYS : CONTROL_KEYS;
+    if (!controls || typeof controls !== 'object' || isArray(controls))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
         appendSegment(schemaPath, group),
         { group, key: group, expected: 'object' },
         context.options,
       );
-    for (const key of Object.keys(value))
+    for (const key of Object.keys(controls)) {
       if (!allowed.includes(key))
         throwBlueprintError(
           FormErrorCode.UnknownGroupKey,
@@ -57,8 +50,10 @@ export const validateControlGroups = (
           { group, key },
           context.options,
         );
+    }
+    for (const key of allowed)
+      validateControlValue(context, key, controls[key], schemaPath);
   }
-  const controls = record.controls;
   if (
     controls &&
     typeof controls === 'object' &&
@@ -169,12 +164,3 @@ const CHILD_CONTROL_KEYS: readonly string[] = Object.keys(
   CHILD_CONTROL_KEY_SET,
 );
 const CONTROL_KEYS: readonly string[] = Object.keys(CONTROL_KEY_SET);
-/** Static shape and projection settings consumed by the corresponding owners. */
-const OPTION_KEYS = [
-  'terminal',
-  'virtual',
-  'propertyOrder',
-  'omitEmpty',
-  'omitTrailing',
-  'trim',
-];

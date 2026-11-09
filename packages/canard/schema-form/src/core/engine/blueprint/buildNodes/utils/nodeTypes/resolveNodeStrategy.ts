@@ -1,4 +1,5 @@
 import { filter as filterArray } from '@winglet/common-utils/array';
+import { isPlainObject } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
@@ -36,7 +37,8 @@ export const resolveNodeStrategy = (
   if (kind !== 'object' && kind !== 'array') {
     const terminal = kind !== 'virtual';
     for (const declaration of relevant) {
-      const value = readSchemaObject(declaration.schema).options?.terminal;
+      const options = readSchemaObject(declaration.schema).options;
+      const value = isPlainObject(options) ? options.terminal : undefined;
       if (value !== undefined && value !== terminal)
         throwBlueprintError(
           FormErrorCode.TerminalOptionUnsupported,
@@ -72,7 +74,8 @@ export const resolveNodeStrategy = (
       }
       current = child;
     }
-    const explicit = readSchemaObject(declaration.schema).options?.terminal;
+    const options = readSchemaObject(declaration.schema).options;
+    const explicit = isPlainObject(options) ? options.terminal : undefined;
     const renderer = context.options.isTerminal?.(declaration.schema);
     if (explicit !== undefined) current.explicit = { index, value: explicit };
     if (renderer !== undefined) current.renderer = { index, value: renderer };

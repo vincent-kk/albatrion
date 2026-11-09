@@ -1,4 +1,4 @@
-import { isArray } from '@winglet/common-utils/filter';
+import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -33,7 +33,8 @@ export const populateVirtualNodes = (
     { fields: readonly string[]; declarations: PropertyDeclaration[] }
   >();
   for (const declaration of host.declarations) {
-    const virtual = readSchemaObject(declaration.schema).options?.virtual;
+    const options = readSchemaObject(declaration.schema).options;
+    const virtual = isPlainObject(options) ? options.virtual : undefined;
     if (virtual === undefined) continue;
     if (!virtual || typeof virtual !== 'object' || isArray(virtual))
       throwBlueprintError(

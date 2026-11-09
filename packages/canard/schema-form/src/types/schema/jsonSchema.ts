@@ -224,11 +224,11 @@ type SchemaBase<Controls> = {
   presentation?: SchemaPresentation;
   /** Rules and policies that change value and shape over time; any other key is a blueprint error */
   controls?: Controls;
-  /** Field options and configurations */
+  /** Open consumer metadata; reserved engine options retain their declared types. */
   options?: {
     /** Omit empty values from form data (default: true) */
     omitEmpty?: boolean;
-    [alt: string]: any;
+    [alt: string]: unknown;
   };
   [alt: string]: any;
 };
