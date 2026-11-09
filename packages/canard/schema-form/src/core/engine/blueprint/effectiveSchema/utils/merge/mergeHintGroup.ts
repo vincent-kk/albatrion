@@ -1,4 +1,3 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
@@ -22,18 +21,25 @@ export const mergeHintGroup = (
   omitVirtual: boolean,
   isAtomic?: (value: unknown) => boolean,
 ): unknown => {
-  const source =
-    omitVirtual &&
-    isPlainObject(later) &&
-    DECLARATION_OPTION_KEYS.some((key) => hasOwnProperty(later, key))
-      ? Object.fromEntries(
-          filterArray(
-            Object.entries(later),
-            ([key]) =>
-              !DECLARATION_OPTION_KEYS.some((reserved) => reserved === key),
-          ),
-        )
-      : later;
+  let source = later;
+  if (omitVirtual && isPlainObject(later))
+    for (let index = 0; index < DECLARATION_OPTION_KEYS.length; index++)
+      if (hasOwnProperty(later, DECLARATION_OPTION_KEYS[index])) {
+        const entries = Object.entries(later);
+        let retained = 0;
+        for (let entry = 0; entry < entries.length; entry++) {
+          let declarationOnly = false;
+          for (let key = 0; key < DECLARATION_OPTION_KEYS.length; key++)
+            if (entries[entry][0] === DECLARATION_OPTION_KEYS[key]) {
+              declarationOnly = true;
+              break;
+            }
+          if (!declarationOnly) entries[retained++] = entries[entry];
+        }
+        entries.length = retained;
+        source = Object.fromEntries(entries);
+        break;
+      }
   if (source !== later && source && typeof source === 'object')
     ownedSchemaValues.add(source);
   if (source === undefined) return earlier;

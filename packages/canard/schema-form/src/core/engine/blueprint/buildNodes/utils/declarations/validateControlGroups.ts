@@ -45,7 +45,13 @@ export const validateControlGroups = (
         context.options,
       );
     for (const key of Object.keys(controls)) {
-      if (!allowed.some((allowedKey) => allowedKey === key))
+      let isAllowed = false;
+      for (let index = 0; index < allowed.length; index++)
+        if (allowed[index] === key) {
+          isAllowed = true;
+          break;
+        }
+      if (!isAllowed)
         throwBlueprintError(
           FormErrorCode.UnknownGroupKey,
           appendSegment(appendSegment(schemaPath, group), key),

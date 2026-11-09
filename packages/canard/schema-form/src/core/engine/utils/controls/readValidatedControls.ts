@@ -1,6 +1,5 @@
 import type { Optional } from '@aileron/declare';
 
-import { SCHEMA_GROUP } from '../../constants/schemaGroup';
 import type { SchemaControls } from '../../types/controls';
 
 /** Load validation also accepts a scalar watch path, independently of the authored array type. */
@@ -14,8 +13,6 @@ export type ValidatedControls = Omit<SchemaControls<unknown>, 'watch'> & {
  * @returns Its existing control envelope, or undefined when absent.
  */
 export const readValidatedControls = (
-  schema: object | boolean,
+  schema: { readonly controls?: ValidatedControls } | boolean,
 ): Optional<ValidatedControls> =>
-  typeof schema === 'object'
-    ? Reflect.get(schema, SCHEMA_GROUP.controls)
-    : undefined;
+  typeof schema === 'object' ? schema.controls : undefined;

@@ -1,3 +1,5 @@
+import { getObjectKeys } from '@winglet/common-utils/object';
+
 /** Renderer-neutral reserved vocabulary; all runtime key enumerations derive from this table. */
 export const RESERVED_SCHEMA_KEYS = {
   controls: {
@@ -89,15 +91,15 @@ export type ReservedShallowType = {
     : never;
 }[keyof typeof RESERVED_SCHEMA_KEYS];
 
-/* eslint-disable @typescript-eslint/consistent-type-assertions -- Object enumeration erases literal keys; each view is constructed only from the corresponding canonical table. */
 /** Fixed node-control traversal order, allocated once at module initialization. */
-export const RESERVED_CONTROL_KEYS = Object.keys(
+export const RESERVED_CONTROL_KEYS = getObjectKeys(
   RESERVED_SCHEMA_KEYS.controls,
-) as (keyof ControlRules)[];
+);
 /** Child/fragment controls share one scope flag in the canonical declaration. */
 export const CHILD_CONTROL_KEYS = RESERVED_CONTROL_KEYS.filter(
-  (key) => RESERVED_SCHEMA_KEYS.controls[key].child,
-) as RoleKeys<ControlRules, 'child'>[];
+  (key): key is RoleKeys<ControlRules, 'child'> =>
+    RESERVED_SCHEMA_KEYS.controls[key].child,
+);
 /** Preserve authored expression compilation order independently of object property order. */
 export const EXPRESSION_CONTROL_KEYS = RESERVED_CONTROL_KEYS.filter(
   (key): key is RoleKeys<ControlRules, 'expression'> =>
@@ -140,17 +142,15 @@ export const HINT_CONTROL_KEYS = RESERVED_CONTROL_KEYS.filter(
     RESERVED_SCHEMA_KEYS.controls[right].hint,
 );
 /** Reserved option names used by shallow validation and terminal warnings. */
-export const RESERVED_OPTION_KEYS = Object.keys(
-  RESERVED_SCHEMA_KEYS.options,
-) as (keyof typeof RESERVED_SCHEMA_KEYS.options)[];
+export const RESERVED_OPTION_KEYS = getObjectKeys(RESERVED_SCHEMA_KEYS.options);
 /** Declaration-only options are excluded from effective-schema hints. */
 export const DECLARATION_OPTION_KEYS = RESERVED_OPTION_KEYS.filter(
   (key) => 'omitFromEffective' in RESERVED_SCHEMA_KEYS.options[key],
 );
 /** Reserved presentation envelopes, without binding dependencies. */
-export const RESERVED_PRESENTATION_KEYS = Object.keys(
+export const RESERVED_PRESENTATION_KEYS = getObjectKeys(
   RESERVED_SCHEMA_KEYS.presentation,
-) as (keyof typeof RESERVED_SCHEMA_KEYS.presentation)[];
+);
 /** Presentation values that participate in input-definition hint matching. */
 export const PRESENTATION_HINT_KEYS = RESERVED_PRESENTATION_KEYS.filter(
   (
@@ -159,11 +159,20 @@ export const PRESENTATION_HINT_KEYS = RESERVED_PRESENTATION_KEYS.filter(
     'inputHint' in RESERVED_SCHEMA_KEYS.presentation[key],
 );
 /** Self-valued control names retain property completion without another key declaration. */
-export const CONTROL_KEY = Object.fromEntries(
-  RESERVED_CONTROL_KEYS.map((key) => [key, key]),
-) as { readonly [Key in keyof ControlRules]: Key };
+export const CONTROL_KEY = createKeyMirror(RESERVED_CONTROL_KEYS);
 /** Form-only group names derive from the same vocabulary. */
-export const SCHEMA_GROUP = Object.fromEntries(
-  Object.keys(RESERVED_SCHEMA_KEYS).map((group) => [group, group]),
-) as { readonly [Group in keyof typeof RESERVED_SCHEMA_KEYS]: Group };
-/* eslint-enable @typescript-eslint/consistent-type-assertions */
+export const SCHEMA_GROUP = createKeyMirror(
+  getObjectKeys(RESERVED_SCHEMA_KEYS),
+);
+
+/**
+ * Preserve key/value identity while constructing module-level vocabulary views.
+ * @param keys - Complete canonical key list, with no independently authored names.
+ * @returns Each supplied key mapped to itself.
+ */
+function createKeyMirror<Key extends string>(keys: readonly Key[]) {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- fromEntries erases key/value identity; every canonical key is emitted exactly once as both name and value.
+  return Object.fromEntries(keys.map((key) => [key, key])) as {
+    readonly [Name in Key]: Name;
+  };
+}

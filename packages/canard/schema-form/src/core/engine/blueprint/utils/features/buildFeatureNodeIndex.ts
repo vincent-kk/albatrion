@@ -17,9 +17,12 @@ import type {
 } from '../../types/blueprint';
 
 /** Local control groups whose declared values can differ from the default keys. */
-const hasStateKeys = (controls: Optional<ValidatedControls>): boolean =>
-  controls !== undefined &&
-  STATE_CONTROL_KEYS.some((key) => controls[key] !== undefined);
+const hasStateKeys = (controls: Optional<ValidatedControls>): boolean => {
+  if (controls === undefined) return false;
+  for (let index = 0; index < STATE_CONTROL_KEYS.length; index++)
+    if (controls[STATE_CONTROL_KEYS[index]] !== undefined) return true;
+  return false;
+};
 
 /**
  * Index possible state and watch targets without selecting gates or reading values.

@@ -32,6 +32,8 @@ AuthoredSchema의 options는 알려진 옵션 형에 소비자 Options 제네릭
 
 공유 제어 읽기는 collectDeclarations가 validateControlGroups를 마친 선언 및 그 선언에서 만든 유효 스키마만 받습니다. 얕은 형 보증과 예외는 [buildNodes의 읽기 계약](blueprint/buildNodes/DETAIL.md#reserved-read-trust--로드-검증을-통과한-읽기--validated-reads)을 따릅니다. Read helpers trust validated declarations and their effective projections; they do not widen this guarantee to pre-validation or arbitrary external schemas. The typed view adds no copy or retained state.
 
+입력 형은 선택적인 검증된 controls 봉투를 가진 구조 또는 boolean 스키마로 제한합니다. 프로퍼티를 직접 읽어 반환 형의 보증이 Reflect.get의 any에 의존하지 않게 하며, 호출자가 형을 단언해 검증 경계를 우회하지 않습니다.
+
 ### engine-shared-storage — 공동 보조의 비용과 경계
 
 경로 키 저장소는 native Map·Set 의미를 유지하며 항목 수 K와 깊이 D에 따른 O(KD) 접두 참조·색인 비용으로 국소 조회를 지원합니다. 인스턴스 adoption이나 메서드 패치를 하지 않습니다. 기능 부재가 정적으로 증명된 경우만 공유 읽기 전용 빈 Map·Set을 사용합니다. 공유 동결 빈 배열은 identity sentinel을 제외하고 공용 EMPTY_ARRAY를 사용하여 변화 없는 읽기에 할당을 더하지 않습니다.

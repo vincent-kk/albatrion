@@ -86,11 +86,14 @@ export const collectInlineTerminalWarnings = (
         if (record[keyword] !== undefined) {
           if (keyword === SCHEMA_GROUP.options) {
             const options = record.options;
-            if (
-              !isPlainObject(options) ||
-              !RESERVED_OPTION_KEYS.some((key) => options[key] !== undefined)
-            )
-              continue;
+            if (!isPlainObject(options)) continue;
+            let hasReservedOption = false;
+            for (let index = 0; index < RESERVED_OPTION_KEYS.length; index++)
+              if (options[RESERVED_OPTION_KEYS[index]] !== undefined) {
+                hasReservedOption = true;
+                break;
+              }
+            if (!hasReservedOption) continue;
           }
           if (!keys.includes(keyword)) keys.push(keyword);
           if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);

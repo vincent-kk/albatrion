@@ -72,9 +72,12 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
       const controls = readValidatedControls(schema);
       if (!controls) continue;
       const groups: RuleGroup[] = [];
-      const hasOwnRules = DERIVE_CONTROL_KEYS.some(
-        (key) => Reflect.get(controls, key) !== undefined,
-      );
+      let hasOwnRules = false;
+      for (let index = 0; index < DERIVE_CONTROL_KEYS.length; index++)
+        if (controls[DERIVE_CONTROL_KEYS[index]] !== undefined) {
+          hasOwnRules = true;
+          break;
+        }
       if (hasOwnRules && declaration.scope === 'fragment') {
         // Tuple positions bind by index, apart from the repeated item template.
         const targets: FragmentTarget[] = [

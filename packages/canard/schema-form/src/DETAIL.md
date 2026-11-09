@@ -18,6 +18,8 @@ GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 
 
 Reserved keys and accepted shallow shapes have one declaration in the ancestor constant. Engine and binding consumers derive their enumerations from it; adding a reserved key changes the authoring contract and must not drift between validation, warnings and expression selection. Type owners check key equality in both directions without moving authoring types or widening core.
 
+파생 키 목록은 모듈 초기화 때 준비하고 존재·소속 검사에서 호출별 콜백이나 목록을 할당하지 않습니다. 키 정본을 복제하지 않으면서 선언 수와 쓰기 횟수에 비례하는 임시 할당을 막기 위한 비용 제약입니다. 열거의 타입 복원은 공통 typed-key 유틸과 국소 키 미러 생성에만 둡니다.
+
 ## API Contracts
 
 LANDING-067·087·205. 패키지는 단일 공개 진입점에서 이름으로 계약을 조합합니다. [core](core/DETAIL.md)의 호스트 바인딩 통로는 내부 계약이며 제품 공개 이름을 자동으로 넓히지 않습니다. options·controls·presentation의 의미 변경도 공개 계약 변경입니다. 작성자가 스키마를, 호출자가 Form·명령을, 사용자가 입력을 제공한다는 구분으로 값 변경의 책임을 판단합니다(GOAL-085).

@@ -56,10 +56,16 @@ export const collectSchemaCapabilities = (
       context.staticFirstLoad = false;
     if (group.active !== undefined) capabilities.branchless = false;
     if (group.watch !== undefined) capabilities.hasWatch = true;
-    if (STATE_CONTROL_KEYS.some((key) => group[key] !== undefined))
-      capabilities.hasState = true;
-    if (DERIVE_CONTROL_KEYS.some((key) => group[key] !== undefined))
-      capabilities.hasDerive = true;
+    for (let key = 0; key < STATE_CONTROL_KEYS.length; key++)
+      if (group[STATE_CONTROL_KEYS[key]] !== undefined) {
+        capabilities.hasState = true;
+        break;
+      }
+    for (let key = 0; key < DERIVE_CONTROL_KEYS.length; key++)
+      if (group[DERIVE_CONTROL_KEYS[key]] !== undefined) {
+        capabilities.hasDerive = true;
+        break;
+      }
     if (!capabilities.hasExpressions)
       for (let key = 0; key < EXPRESSION_CONTROL_KEYS.length; key++)
         if (typeof group[EXPRESSION_CONTROL_KEYS[key]] === 'string') {
