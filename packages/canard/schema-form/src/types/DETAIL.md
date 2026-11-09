@@ -14,7 +14,7 @@ Roll은 편집기의 형 표시를 평평하게 하는 표현이며 런타임 �
 
 ### CONTROLS-081 — 열린 표현 payload
 
-스키마 그룹은 controls·options·presentation으로 구분하고 맨 키를 입력 props의 대체 설정으로 해석하지 않습니다. presentation은 사용자 표현 확장에 열려 있으므로 낯선 키만으로 오류를 만들지 않습니다. options도 추가 키를 허용하면서 알려진 옵션의 형과 자동완성을 유지하고, JSONSchema의 Options 제네릭 및 값 추론에 영향을 주지 않습니다. 컴포넌트를 담는 키와 그 props 객체는 대응 이름을 유지하여 서로 다른 설정 입구를 만들지 않습니다.
+스키마 그룹은 controls·options·presentation으로 구분하고 맨 키를 입력 props의 대체 설정으로 해석하지 않습니다. presentation은 사용자 표현 확장에 열려 있으므로 낯선 키만으로 오류를 만들지 않습니다. options의 추가 키는 `[alt: string]: any`로 읽히며 알려진 옵션의 형과 자동완성, 명시 Options 제네릭 및 값 추론은 유지합니다. 소비자 확장 값을 읽을 때 불필요한 좁히기를 강제하지 않기 위한 계약입니다. Custom option keys read as `any`; reserved option types, explicit option generics and value inference remain intact so opaque consumer payloads need no library-imposed narrowing. 컴포넌트를 담는 키와 그 props 객체는 대응 이름을 유지하여 서로 다른 설정 입구를 만들지 않습니다.
 
 alias·placeholder·className·style은 presentation.FieldInputProps, 렌더러 표현은 FieldRendererProps, 입력 선택 힌트는 inputType, 오류 문구는 errorMessages의 책임입니다. 입력마다 의미가 다른 표현 payload를 core가 해석하거나 맨 키 alias와 혼합하면 제약과 표현의 경계가 흐려집니다. 전달 순서·입력 선택은 [FieldInputBridge](../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 오류 문구 해석은 [formatValidationError](../helpers/error/formatValidationError/DETAIL.md)가 소유합니다.
 

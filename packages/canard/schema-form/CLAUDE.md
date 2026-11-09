@@ -97,7 +97,7 @@ controls: {
 }
 ```
 
-The closed key list is defined by `CONTROL_KEYS` in `src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts`: active, visible, readOnly, disabled, default, derived, unsetValue, resetInteraction, unsetOnInactive, inactiveValue, fields, injectTo, discriminator, watch. Unknown keys raise `UNKNOWN_GROUP_KEY`. Fields and fragment controls accept the first ten keys; `inactiveValue` is a literal or synchronous resolver and is never compiled as an expression.
+Reserved group keys, child scope and shallow types are declared once in `src/constants/reservedSchemaKeys.ts`; validation and key enumerations derive from it. Authoring type owners check exact key parity so a new key cannot silently drift. See the package and buildNodes DETAIL contracts for ownership and read-site trust.
 For control value types and examples, use the [schema reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#controls).
 
 ### Validation Modes
