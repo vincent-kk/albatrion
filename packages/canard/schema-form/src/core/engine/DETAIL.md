@@ -26,7 +26,11 @@ CONTROLS-077. 조각이 직접 선언한 properties·prefixItems·items·additio
 
 ### schema-options — 열린 작성 옵션의 형
 
-AuthoredSchema의 options는 알려진 옵션 형에 소비자 Options 제네릭과 열린 unknown 인덱스를 교차합니다. 알려진 키를 any로 넓히지 않아 자동완성과 오타 방어를 유지하며 controls의 닫힌 형은 바꾸지 않습니다. 런타임 수용·검사 정책은 [buildNodes](blueprint/buildNodes/DETAIL.md)에 둡니다.
+AuthoredSchema의 options는 알려진 옵션 형에 소비자 Options 제네릭과 열린 any 인덱스를 교차합니다. 알려진 키를 any로 넓히지 않아 자동완성과 오타 방어를 유지하며 controls의 닫힌 형은 바꾸지 않습니다. 런타임 수용·검사 정책은 [buildNodes](blueprint/buildNodes/DETAIL.md)에 둡니다.
+
+### validated-control-reads — 검증된 선언의 읽기
+
+공유 제어 읽기는 collectDeclarations가 validateControlGroups를 마친 선언 및 그 선언에서 만든 유효 스키마만 받습니다. 얕은 형 보증과 예외는 [buildNodes의 읽기 계약](blueprint/buildNodes/DETAIL.md#reserved-read-trust--로드-검증을-통과한-읽기--validated-reads)을 따릅니다. Read helpers trust validated declarations and their effective projections; they do not widen this guarantee to pre-validation or arbitrary external schemas. The typed view adds no copy or retained state.
 
 ### engine-shared-storage — 공동 보조의 비용과 경계
 
