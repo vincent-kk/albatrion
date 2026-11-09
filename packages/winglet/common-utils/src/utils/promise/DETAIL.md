@@ -21,7 +21,7 @@
 
 ### delay-abort-contract — delay의 AbortSignal 계약
 
-- 100ms delay는 실측 경과 시간이 최소 99ms다.
+- 100ms delay는 99ms 시점에는 resolve되지 않고 100ms에 resolve된다(가상 타이머로 경계 검증).
 - 대기 중 abort되면 'Abort signal received' 메시지로 거부된다.
 - 호출 전 이미 abort된 signal을 넘기면 'Aborted before run' 메시지로 즉시 거부되고 `setTimeout`이 전혀 호출되지 않는다.
 
@@ -34,12 +34,12 @@
 ### wait-execute-vs-return — waitAndExecute와 waitAndReturn의 실행 시점 차이
 
 - `waitAndExecute`는 지정한 지연 이전에는 콜백을 호출하지 않고, 지연 도달 시점에 호출한다(가상 타이머로 경계 검증).
-- `waitAndReturn`은 콜백을 즉시 호출하고 반환만 지연한다 — 콜백 호출 시각과 반환 시각의 차이가 최소 지정한 ms다.
+- `waitAndReturn`은 시간이 흐르기 전에 콜백을 호출하고, 결과는 지정한 지연 이전에는 전달하지 않으며 지연 도달 시점에 전달한다(가상 타이머로 경계 검증).
 - 둘 다 `fn`이 `undefined`면 `undefined`로 resolve하고, 동기·비동기 콜백과 콜백이 던진 에러를 동일하게 처리(전파)한다.
 
 ### wait-and-return-rejection-safety — waitAndReturn의 거부 지연과 안전성
 
-- 콜백의 동기 throw는 지정한 대기 시간이 지난 뒤에만 거부로 드러난다.
+- 콜백의 동기 throw는 지정한 대기 시간이 지난 뒤에만 거부로 드러난다(가상 타이머로 경계 검증).
 - 콜백이 이미 거부된 Promise를 반환해도 대기 도중 `unhandledRejection`이 발생하지 않는다.
 
 ### with-timeout-race-cleanup — withTimeout의 경주 정리와 동기 throw 격리

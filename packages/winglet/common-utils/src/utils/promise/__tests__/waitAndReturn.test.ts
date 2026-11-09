@@ -3,15 +3,28 @@ import { describe, expect, it, vi } from 'vitest';
 import { waitAndReturn } from '../waitAndReturn';
 
 describe('waitAndReturn', () => {
-  it('should execute the function and wait before returning the result', async () => {
-    const fn = vi.fn().mockReturnValue('result');
-    const startTime = Date.now();
+  it('should call the function at once and deliver its result only after the delay', async () => {
+    // 실제 타이머로 경과 시간을 재면 Node 타이머가 이벤트 루프의 캐시된 시각을 기준으로
+    // 잡혀 99ms가 측정될 수 있다. 가상 타이머로 경계를 고정한다.
+    vi.useFakeTimers();
+    try {
+      const fn = vi.fn().mockReturnValue('result');
+      const delivered = vi.fn();
+      const promise = waitAndReturn(fn, 100).then(delivered);
 
-    const result = await waitAndReturn(fn, 100);
+      // fn은 마이크로태스크에서 시작하므로 시간을 흘리지 않고 큐만 비운다
+      await vi.advanceTimersByTimeAsync(0);
+      expect(fn).toHaveBeenCalledTimes(1);
 
-    expect(result).toBe('result');
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(Date.now() - startTime).toBeGreaterThanOrEqual(100);
+      await vi.advanceTimersByTimeAsync(99);
+      expect(delivered).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(1);
+      expect(delivered).toHaveBeenCalledWith('result');
+      await promise;
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should use default delay of 0 if not specified', async () => {
@@ -46,17 +59,5 @@ describe('waitAndReturn', () => {
 
     await expect(waitAndReturn(fn, 100)).rejects.toThrow('Test error');
     expect(fn).toHaveBeenCalledTimes(1);
-  });
-
-  it('should execute the function immediately but delay the return', async () => {
-    const fn = vi.fn().mockReturnValue('result');
-    const executionTime = Date.now();
-
-    const result = await waitAndReturn(fn, 100);
-    const returnTime = Date.now();
-
-    expect(result).toBe('result');
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(returnTime - executionTime).toBeGreaterThanOrEqual(100);
   });
 });
