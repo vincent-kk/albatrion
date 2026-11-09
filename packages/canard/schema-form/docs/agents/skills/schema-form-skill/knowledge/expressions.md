@@ -39,7 +39,7 @@ Choosing wrong causes silent data loss (`active` where `visible` was intended) o
 ## watch and derived
 
 - `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. A path followed by a property access must be parenthesized: `(../items).length > 0`.
-- `derived` continuously computes the field's value from its dependencies and **overwrites user edits**. For one-time propagation that stays editable, use `injectTo` instead (`inject-to.md`).
+- `derived` computes the field's value from its dependencies and recomputes whenever one of them changes, **replacing any value written to it**; a value written directly stays until the next dependency change. For one-time propagation that stays editable, use `injectTo` instead (`inject-to.md`).
 - Keep expressions to boolean/arithmetic/comparison. For list reductions, watch the source and compute inside the component:
 
 ```typescript
@@ -97,7 +97,7 @@ const schema = {
       properties: { fieldB: { type: 'number' } },
     },
   ],
-};
+} satisfies JSONSchema;
 // type='A' → { type: 'A', fieldA: … }   (fieldB is dropped)
 ```
 
@@ -128,4 +128,4 @@ TypeScript checks the object-host type; union presence is a runtime condition. A
 
 Unreachable tags outside the host tag type, with or without an explicit tag `type`, warn with `DISCRIMINATOR_BRANCH_UNREACHABLE` (`reason: 'kind'`). An empty tag `const`/`enum` intersection (including `enum: []`) warns with `reason: 'empty'` and keeps a never-active gate, so it is not missing. Neither tag is lifted; when the host owns that child, neither is added to its declarations. Both warnings and `DISCRIMINATOR_MISMATCH` use details `{ propertyName, reason }`, without values. Ignored-key warnings point to `controls/discriminator` once per declaration; unreachable warnings point to the branch schemaPath. Ignoring the key creates no gates and does not itself disable branchless construction. Host tag `enum` exclusions are not newly checked.
 
-Terminal objects (`options.terminal` or `presentation.FieldInput`) retain mismatch errors and omit unreachable warnings; ordinary static enum intersections retain `EMPTY_ENUM_INTERSECTION`. See the C1–C13 table in `docs/en/SPECIFICATION.md`.
+Terminal objects (`options.terminal` or `presentation.FieldInput`) retain mismatch errors and omit unreachable warnings; ordinary static enum intersections retain `EMPTY_ENUM_INTERSECTION`. See the [discriminator rules](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#discriminator).

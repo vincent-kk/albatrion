@@ -1,171 +1,73 @@
 ---
-sidebar_label: 'Quick Start'
+sidebar_label: '빠른 시작'
 sidebar_position: 2
 ---
 
-import ForAI from '@site/src/components/ForAI';
 
-# Quick Start
 
-## Installation
+# 빠른 시작
+
+
+
+## 설치와 플러그인 선택 {#installation}
 
 ```bash
-# Core library
 yarn add @canard/schema-form
-
-# Validator plugin (AJV 8)
-yarn add @canard/schema-form-ajv8-plugin ajv
-
-# UI plugin — pick one
-yarn add @canard/schema-form-antd5-plugin   # Ant Design 5
-yarn add @canard/schema-form-mui6-plugin    # MUI 6
+# Optional validator and UI integration:
+yarn add @canard/schema-form-ajv8-plugin @canard/schema-form-antd6-plugin
 ```
 
-## Register Plugins
+코어에는 기본 렌더러와 입력이 있어 UI 플러그인은 선택 사항입니다. 검증기를 선택하지 않으면 검증 요청은 판정 없이 경고를 내며, `if` gate에는 동기 검증기 guard가 필요합니다. 배포된 검증 플러그인을 선택하거나 완전한 `validatorFactory` 객체를 전달하십시오. [검증](./validation#validator-contract)을 참조하십시오.
 
-`<Form>`이 렌더링되기 전, 애플리케이션 진입점에서 **한 번** 플러그인을
-등록합니다. 중복 등록은 콘텐츠 해시로 자동 무시됩니다.
+Ant Design 5에는 `@canard/schema-form-antd5-plugin`, Ant Design 6에는 `@canard/schema-form-antd6-plugin`, Ant Design Mobile에는 `@canard/schema-form-antd-mobile-plugin`, MUI에는 `@canard/schema-form-mui-plugin`을 사용하십시오. MUI 패키지 이름은 `schema-form-mui-plugin`입니다. `@canard/schema-form-antd-plugin`은 `@canard/schema-form-antd5-plugin`으로 바꾸십시오.
 
-```ts title="src/main.tsx (or index.tsx)"
-import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
-import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
+## 선언된 실행 환경 요구사항 {#compatibility}
 
-registerPlugin(ajvValidatorPlugin);
-registerPlugin(antd5Plugin);
-```
+코어의 peer 범위는 `react >=18 <20`, `react-dom >=18 <20`입니다. 코어와 아래 플러그인은 `engines` 필드와 브라우저 최소 버전을 선언하지 않습니다. 문법 target만으로 특정 Node.js·브라우저가 모든 런타임 API와 UI 의존성을 지원한다고 보장할 수 없습니다.
 
-## Minimal Form
+| 패키지 | 선언된 peer와 직접 UI / 검증기 의존성 |
+| --- | --- |
+| AJV 6 / 7 / 8 플러그인 | 직접 의존성 `ajv ^6.0.0` / `^7.0.0` / `^8.0.0`; 코어 peer 선언 없음 |
+| antd-mobile | React / React DOM `>=18 <20`, dayjs `>=1`; 직접 의존성 `antd-mobile ^5.0.0`, dayjs `^1.0.0` |
+| antd5 | React / React DOM `>=18 <20`, antd `>=5.10.0`, dayjs `>=1`; 직접 의존성 antd `^5.10.0`, icons `^5.0.0` |
+| antd6 | React / React DOM `>=18 <20`, antd `>=6.0.0`, dayjs `>=1`; 직접 의존성 antd `^6.0.0`, icons `^6.0.0` |
+| MUI | React / React DOM `>=18 <20`, Material / icons `>=7.0.0`, X date pickers `>=8.0.0`, Emotion react / styled `>=11.0.0`, dayjs `>=1` |
+
+MUI 플러그인의 직접 의존성은 MUI 7, MUI X 8, Emotion 11, dayjs 1 계열입니다. UI 라이브러리와 플러그인의 계열을 맞추십시오. Ant Design의 CSS variable 기본값과 theme 설정은 [Ant Design v6 이전 문서](https://ant.design/docs/react/migration-v6/)를 따르십시오. 이 안내는 해당 의존성의 기본값을 별도로 정하지 않습니다.
+
+## 트랜스파일과 CSP {#transpilation-csp}
+
+배포된 ES2020 문법을 해석하지 못하는 환경을 대상으로 하면 코어와 실제 사용하는 외부 `@winglet` 패키지를 트랜스파일에 포함하십시오. 대상은 `@winglet/common-utils`, `@winglet/json`, `@winglet/json-schema`, `@winglet/react-utils`입니다. UI 플러그인 번들도 같은 기준으로 확인하십시오. 트랜스파일만으로 누락된 API가 생기지는 않습니다. AJV 어댑터는 `WeakRef`, `FinalizationRegistry`를 사용합니다.
+
+문자열 controls 표현식은 `new Function`으로 컴파일합니다. 동적 함수 컴파일을 금지하는 CSP에서는 해당 표현식을 그대로 실행할 수 없습니다. 표현식 기반 controls를 도입하기 전에 정책을 확인하십시오.
+
+## 렌더링 전 등록 {#registration}
 
 ```tsx
-import { Form } from '@canard/schema-form';
+import { Form, registerPlugin } from '@canard/schema-form';
+import { plugin as validatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as uiPlugin } from '@canard/schema-form-antd6-plugin';
 
-const schema = {
-  type: 'object',
-  properties: {
-    name:  { type: 'string',  title: 'Name',  minLength: 1 },
-    email: { type: 'string',  title: 'Email', format: 'email' },
-    age:   { type: 'number',  title: 'Age',   minimum: 0 },
-  },
-  required: ['name', 'email'],
-} as const;
-
-function MyForm() {
-  return (
-    <Form
-      jsonSchema={schema}
-      onSubmit={async (value) => {
-        console.log('submitted:', value);
-      }}
-    />
-  );
-}
-```
-
-## With onChange and Ref
-
-```tsx
-import { useRef, useState } from 'react';
-import { Form, type FormHandle, ShowError } from '@canard/schema-form';
-
-const schema = {
-  type: 'object',
-  properties: {
-    username: { type: 'string', title: 'Username', minLength: 3 },
-    password: { type: 'string', title: 'Password', minLength: 8 },
-  },
-  required: ['username', 'password'],
-} as const;
-
-function LoginForm() {
-  const formRef = useRef<FormHandle<typeof schema>>(null);
-  const [value, setValue] = useState<any>({});
-
-  const handleSubmit = async (data: typeof value) => {
-    await api.login(data);
-  };
-
-  return (
-    <>
-      <Form
-        ref={formRef}
-        jsonSchema={schema}
-        onChange={setValue}
-        onSubmit={handleSubmit}
-        showError={ShowError.EditedTouched}
-      />
-      <button onClick={() => formRef.current?.submit()}>
-        Login
-      </button>
-    </>
-  );
-}
-```
-
-## Custom Layout with Form.Field
-
-`Form.Field`, `Form.Label`, `Form.Input`,
-`Form.Error` 서브 컴포넌트를 사용하여 커스텀 레이아웃을 구성합니다.
-각각 JSONPointer 문자열인 `path` prop을 받습니다.
-
-```tsx
-<Form jsonSchema={schema} onSubmit={handleSubmit}>
-  <div className="form-row">
-    <Form.Field path="/firstName" />
-    <Form.Field path="/lastName" />
-  </div>
-  <Form.Field path="/email" />
-  <Form.Field path="/birthDate" />
-</Form>
-```
-
-## Using the Children Render Prop
-
-```tsx
-<Form jsonSchema={schema}>
-  {({ value, errors, node }) => (
-    <>
-      <Form.Input path="/email" />
-      <Form.Error path="/email" />
-      {value?.role === 'admin' && <Form.Field path="/permissions" />}
-      <button disabled={(errors?.length ?? 0) > 0}>Submit</button>
-    </>
-  )}
-</Form>
-```
-
-<ForAI>
-
-## AI Quick Reference
-
-```ts
-// 1. Register at app entry (once)
 registerPlugin(validatorPlugin);
 registerPlugin(uiPlugin);
 
-// 2. Render
-<Form
-  jsonSchema={schema}          // required
-  defaultValue={initialValue}  // optional
-  onChange={setValue}
-  onSubmit={async (value) => { /* validated value */ }}
-  onValidate={(errors) => { /* called after each validation */ }}
-  showError={ShowError.EditedTouched}  // default
-  validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
-  ref={formRef}
-/>
+const schema = {
+  type: 'object',
+  properties: { text: { type: 'string' } },
+} as const;
 
-// 3. Imperative API via ref
-formRef.current?.submit()
-formRef.current?.validate()     // Promise<JSONSchemaError[]>
-formRef.current?.getValue()
-formRef.current?.setValue(val)
-formRef.current?.reset()
-formRef.current?.focus('/path')
-formRef.current?.showError(true)
-
-// 4. Submit with loading state
-const { submit, pending } = useFormSubmit(formRef);
+export function BasicForm() {
+  return <Form jsonSchema={schema} onChange={console.log} />;
+}
 ```
 
-</ForAI>
+### 등록 규칙 {#registration-rules}
+
+Form이 설정을 캡처하기 전에 플러그인의 전역 등록을 마치십시오. UI를 검증기보다 먼저 등록해야 하는 고정 순서는 없으며 서로 다른 슬롯을 제공하는 플러그인은 독립적입니다. 슬롯이 겹치면 등록 순서가 영향을 줍니다.
+
+- 렌더러, `validator`, `formatError`: 해당 슬롯을 제공하는 마지막 새 등록이 기존 값을 대체하며, 생략한 슬롯은 그대로 유지합니다.
+- `fieldInputDefinitions`: 새 목록을 내부 순서 그대로 앞에 붙이고 처음 일치한 정의를 선택합니다. 앞서 등록한 정의는 대체 후보로 남습니다.
+- 함수 참조의 동일성을 포함하는 내용 해시로 중복을 제거합니다. 다른 플러그인이 덮어쓴 뒤에도 동일 내용을 재등록하면 아무 변화가 없으며, 내용과 함수 참조가 같은 새 객체도 중복입니다. 마지막 초기화 이후 등록되지 않은 해시만 새 등록으로 적용합니다.
+- `registerPlugin(null)`은 기본값을 복원하고 등록 해시를 비우므로 같은 플러그인을 다시 적용할 수 있습니다.
+
+하위 트리의 기본 설정은 [FormProvider](./api-reference#plugins)를 사용하십시오.

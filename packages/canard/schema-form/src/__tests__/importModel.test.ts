@@ -5,7 +5,7 @@
  * S1: non-lineage fractals are reached through their own index, never internals.
  * B1: organs do not import their owner's direct child fractals, subject to B7.
  * Index retention: exported names have product consumers outside their owner's subtree (stated, not asserted here).
- * D7: public-API tests under __tests__/e2e, scenarios and migration may read the root index.
+ * D7: public-API tests under __tests__/e2e, scenarios, migration and agents-examples may read the root index.
  * O and deeper non-lineage index re-exports are outside these assertions.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -30,14 +30,13 @@ interface ImportViolation {
 }
 
 /**
- * Enumerates source and contract files without legacy or generated compartments.
+ * Enumerates source and contract files without generated compartments.
  * @param directory - Existing directory beneath the package source root.
  * @returns Files available to the import-model census.
  */
 function walkFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     if (
-      entry.name.includes('__legacy__') ||
       entry.name.startsWith('.') ||
       ['node_modules', 'dist', 'build'].includes(entry.name)
     )
@@ -185,12 +184,7 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
   for (const importer of files.filter((file) => /\.tsx?$/.test(file))) {
     for (const { specifier, line } of readImports(importer)) {
       const target = resolveImport(specifier, importer);
-      if (
-        !target ||
-        !isWithin(target, sourceRoot) ||
-        target.includes('__legacy__')
-      )
-        continue;
+      if (!target || !isWithin(target, sourceRoot)) continue;
       const verdict = classifyImport(importer, target, fractals);
       if (!verdict) continue;
       const importerPath = relative(sourceRoot, importer).split(sep).join('/');
@@ -210,7 +204,7 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
       }
       if (verdict === 'U') {
         totalU++;
-        if (/^__tests__\/(e2e|scenarios|migration)\//.test(importerPath)) {
+        if (/^__tests__\/(e2e|scenarios|migration|agents-examples)\//.test(importerPath)) {
           exemptU++;
           continue;
         }
@@ -283,12 +277,7 @@ it('B1: organ files do not import a direct child fractal of their owner', () => 
     );
     for (const { specifier, line } of readImports(importer)) {
       const target = resolveImport(specifier, importer);
-      if (
-        !target ||
-        !isWithin(target, sourceRoot) ||
-        target.includes('__legacy__')
-      )
-        continue;
+      if (!target || !isWithin(target, sourceRoot)) continue;
       const child = children.find((fractal) => isWithin(target, fractal));
       if (!child || relative(owner, child).split(sep)[0] === importerOrgan)
         continue;

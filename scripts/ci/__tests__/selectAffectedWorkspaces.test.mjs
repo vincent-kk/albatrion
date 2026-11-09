@@ -99,7 +99,6 @@ test("root inputs and selector changes are global while unrelated tooling is ign
 test("agent assets and test-read markdown select owners; other markdown does not", () => {
   for (const path of [
     "packages/canard/schema-form/docs/agents/skills/x.md",
-    "packages/canard/schema-form/architecture/ledger/error.md",
     "packages/canard/schema-form/src/core/surface/DETAIL.md",
   ])
     assert.equal(

@@ -1,5 +1,5 @@
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';

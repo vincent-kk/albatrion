@@ -1,35 +1,25 @@
-# schema-form/src — 공개 패키지 경계
+# schema-form — Public package boundary
 
 ## Purpose
 
-JSON Schema 기반 폼의 공개 경계를 조합합니다. 노드·플러그인·렌더링·타입의 구현은 소유 모듈에 두며 이 루트는 구현을 소유하지 않습니다.
+Compose the public JSON Schema form contract; implementation decisions belong to the owning modules.
 
 ## Conventions
 
-- 런타임 공개 표면은 패키지 진입점에서 명명해 조합합니다. 내부 구현의 추가만으로 공개 계약이 넓어지지 않게 합니다.
-- 정적 스키마로 값의 종류를 확정할 수 있을 때만 `InferValueType`을 좁힙니다. 참조·게이트처럼 정적으로 판정할 수 없는 모양은 넓은 형을 유지합니다.
-- 폼 밖으로 나가는 값은 투영한 `outputValue`, 편집 중인 노드 값은 `value`로 구분합니다. 정제 때문에 입력 상태가 사라지지 않아야 합니다.
+Use one explicit package entry point. Keep renderer-neutral execution separate from React bindings and validator implementations.
 
 ## Boundaries
 
 ### Always do
 
-- 루트 주소와 빈 이름 주소의 뜻을 Form 입력 매핑·노드 탐색·검증에 일관되게 적용합니다.
-
-- 새 노드 타입은 소유 모듈에서 구현하고 공개할 때만 패키지 경계에 이름을 지정해 연결합니다.
-- `FieldInput` 컴포넌트는 `FieldInputProps` 계약을 지킵니다.
-- 오류는 도메인 에러로 전달하고 플러그인 등록은 `registerPlugin()`을 경유합니다.
+- Preserve predictable names and observable behavior; explain the reason, time cost and retained-memory cost of a contract change.
+- Keep schema authoring, validation and presentation responsibilities distinct; follow [the package contract](DETAIL.md).
 
 ### Ask first
 
-- 새 Context를 추가해 Provider 계층을 바꿀 때
-- 기존 노드 상태에 영향을 주는 bitmask 플래그를 바꿀 때
-- 번들 크기 20KB 제한에 영향을 줄 수 있는 의존성을 추가할 때
+- Widening the public surface, changing callback timing or accepting a measured performance regression.
 
 ### Never do
 
-- `PluginManager`의 static 상태를 `registerPlugin()`을 우회해 변경하지 않습니다.
-- 외부 컴포넌트에서 노드의 내부 `__method__`를 직접 호출하지 않습니다.
-- 공개 진입점 이외의 구현을 이 루트에 직접 두지 않습니다.
-- `src/constants`의 기존 비트 플래그를 재배치하거나 삭제하지 않습니다.
-- `src/constants`에는 상수만 두며 런타임 로직을 넣지 않습니다.
+- Expose binding-only channels, mutate caller-owned schemas or duplicate a child's contract at this boundary.
+- Add compatibility aliases or value repair that silently changes the authored meaning.

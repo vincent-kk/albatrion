@@ -24,7 +24,7 @@ describe('shared scenario families', () => {
       }
     });
 
-  it('keeps the ledger-named union scenario addresses', () => {
+  it('keeps the contract-labeled union scenario addresses', () => {
     expect(unionScenarios.map((scenario) => scenario.name)).toEqual(expect.arrayContaining([
       'union.entry-two-step', 'union.gated-effective-list', 'union.rule-a',
       'union.ambiguous', 'union.integer', 'union.object-array',
@@ -32,7 +32,7 @@ describe('shared scenario families', () => {
     ]));
   });
 
-  it('keeps the ledger-named validation scenario addresses', () => {
+  it('keeps the contract-labeled validation scenario addresses', () => {
     expect(validationScenarios.map((scenario) => scenario.name)).toEqual([
       'validation.if-only-oneof-invalid', 'validation.union-type-error-on-node',
     ]);

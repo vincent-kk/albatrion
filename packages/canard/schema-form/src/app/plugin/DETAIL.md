@@ -2,33 +2,60 @@
 
 ## Requirements
 
-외부 플러그인은 선택적 설정으로 렌더러, 입력 정의, 검증기, 오류 포맷을 확장합니다.
-전역 플러그인 상태는 static singleton인 `PluginManager`가 소유하고, 노드별 상태는 이 등록소에 섞지 않습니다.
+플러그인 등록소는 애플리케이션의 전역 기본 구성을 소유합니다. 폼별 노드·검증 진행 상태를 넣으면 서로 다른 폼의 설정과 실행 수명이 섞이므로 보관하지 않습니다.
 
 ## API Contracts
 
-- 이 fractal은 진단 문자열 포맷터 `formatRegisterPluginError`를 `utils/`에 두며, 상자 원소는 `helpers/error` 진입점에서 가져옵니다.
-- 렌더 컴포넌트는 나중에 등록한 설정이 우선합니다. 입력 정의는 등록 순서에 따른 탐색 우선순위를 유지합니다.
-- null 등록은 초기화로 처리하고, 일반 객체가 아닌 입력은 무시합니다. 등록 처리 중 오류가 나면 UnhandledError로 전달합니다.
-- 중복 판정은 모듈 수명 동안 유지되는 fingerprint factory가 맡습니다. 기본 safe 모드로 속성을 정렬해 비교하고 결과는 캐시하지 않습니다. 함수 참조는 identity를 그대로 유지하고, mutable 플러그인은 매번 다시 계산합니다. 구조와 함수 참조가 같으면 속성 순서가 달라도 중복이고, closure가 다르면 별개의 플러그인입니다. 플러그인이 깊은 불변성을 갖추었다고 가정하지 않으므로 immutable 캐시는 쓰지 않습니다.
-- 플러그인 상태는 `PluginManager.append*`와 `reset()`으로만 바꿉니다. `registerPlugin(null)`은 중복 기록과 기본 렌더·입력·검증·포맷 설정을 복원합니다.
-- 공개 `ValidatorPlugin`은 `compile`과 동기 `compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean`을 반드시 갖춰야 하고, `bind?`·`release?(root: JSONSchema): void`·`readonly dialect?: string`은 선택입니다. `compileGuard`·`release`는 전체 `compile` 실행 여부와 무관하게 동일한 엔진 소유 사본을 받으며 필요한 루트 등록은 가드가 독립 수행하고 미등록 `release`는 무해하게 끝납니다(471C-02). core `Validator`와 구조가 같은 계약을 따르며, core 형을 이 모듈로 가져오지 않습니다(VALIDATE-015·044, LANDING-036·084, 32C-01, 34C-01, 35C-07).
-- Form 속성 `validatorFactory`는 필수인 `compile`·`compileGuard`를 가진 객체입니다. 검증기는 Form 속성, FormProvider, 플러그인 순으로 우선해서 고르고, 등록소는 바인딩이 읽습니다. 선택한 참조가 바뀌면 트리를 다시 만들므로 참조를 안정적으로 유지해야 합니다. 바인딩은 선택한 결과(없으면 없음)를 core 생성 인자로 넘기며, core는 등록소를 가져오지도 `bind`를 호출하지도 않습니다(CONTROLS-075, VALIDATE-044, 32C-01).
-- 개발 모드 여부는 사용하는 곳마다 bare `process.env.NODE_ENV !== 'production'`(부정은 `=== 'production'`) 비교로 판정합니다. 기본 ESM 산출물은 호출 자리 비교를 유지하며, esbuild 0.25 기준 관찰에서 import 문이 있는 ESM 파일의 최상위 상수를 인라인하지 않으므로 모듈 상수나 함수로 빼내지 않습니다. Node 조건 산출물과 CJS 산출물은 빌드가 비교를 단일 `__SCHEMA_FORM_DEV__` 상수로 바꾸며, ESM은 첫 줄, CJS는 `"use strict"` 바로 다음에서 `NODE_ENV`를 적재 때 한 번 읽고 적재 뒤 변경은 반영하지 않습니다. 빌드 검증 스크립트는 세 산출물의 형태를 확인하며 번들러 접힘은 별도 실험으로 확인합니다. 개발 전용 코드는 `if (process.env.NODE_ENV !== 'production' && …) { … }` 안에 두거나, 함수 첫 줄에 `if (process.env.NODE_ENV === 'production') return;`을 두어 끊습니다. `useMemo` 콜백처럼 다른 문과 함께 있는 자리에서는 esbuild가 조기 반환 뒤의 코드를 남기므로 블록을 사용합니다. `eslint.config.js`의 `no-restricted-syntax`는 그 밖의 비교, 대입, 구조 분해, 단독 참조를 막습니다. define도 `process`도 없는 호스트에서 CJS와 Node 조건 산출물은 적재 때 실패하며, 기존에는 첫 호출 자리에서 실패했습니다. 해당 호스트는 define을 직접 제공해야 합니다(189라운드, 196라운드, 200C-01, 결정 61).
-- 렌더 키트와 Form 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer`라는 이름을 함께 쓰고, 입력·그룹 props에서도 그룹 렌더러를 `FieldRenderer`라고 부릅니다(LANDING-035·067, SURFACE-002).
-- 검증기와 플러그인 검증 계약의 구조가 일치하는지는 `__tests__/validatorConformance.test.ts`가, 검증기가 수명을 유지하는지와 가드를 읽는 동작은 `core/engine/validation/__tests__/validation.retain-guard.test.ts`가 검증합니다. 동기 가드 읽기는 validation 내부에서 소비하며, core·engine의 집계 진입점은 이를 다시 내보내지 않습니다.
+등록은 속성별로 합성합니다. 렌더러·검증기·포맷터는 나중 등록이 우선하고 입력 정의는 앞에 붙여 먼저 매칭합니다. null 등록은 기본 구성과 중복 기록을 함께 복원하여 같은 플러그인을 다시 등록할 수 있게 합니다.
 
-- `PluginManager`와 `registerPlugin`은 `utils/`에 있습니다. 뿌리에는 문서, 진입점, 형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+중복 지문은 속성 순서를 정렬하되 함수의 참조 정체성을 유지하고 매번 다시 계산합니다. 플러그인을 깊은 불변으로 가정하거나 결과를 캐시하면 같은 객체의 수정은 놓치고 다른 closure를 합칠 수 있으므로, immutable 지문 캐시로 바꾸지 않습니다.
+
+검증기 사본·가드·해제의 실행 의미는 [validation](../../core/engine/validation/DETAIL.md)의 계약을 따릅니다. 방언과 검증 라이브러리별 등록 격리는 해당 플러그인 구현의 책임이며, 이 등록소가 검증기를 내장하거나 bind를 대신 호출하지 않습니다.
 
 ## Acceptance Criteria
 
-### plugin-contract — 관찰 가능한 동작
+### VALIDATE-040 — factory라는 이름이 함수 호출을 뜻하지 않습니다
 
-- 같은 콘텐츠를 다시 등록해도 기존 등록 결과가 중복되지 않습니다.
-- 렌더러를 연속으로 등록하면 마지막 렌더러가 선택되고, 초기화하면 중복 등록 기록도 지워집니다.
-- 초기화한 뒤 등록한 폼에는 초기화된 플러그인의 설정이 남지 않습니다.
-- Form, Provider, 플러그인 중 어디서 고르든 검증기는 필수인 `compile`·`compileGuard`를 갖추어야 하며, 참조가 바뀌면 해당 폼 트리를 다시 만듭니다(VALIDATE-044, LANDING-036·084, 32C-01, 34C-01, 35C-07).
+Form의 validatorFactory는 compile·compileGuard를 가진 검증기 객체입니다. 이름 때문에 매 렌더 새로운 factory 결과를 만드는 사용법을 권하지 않습니다. 검증기 참조가 달라지면 캐시·등록의 소유 인스턴스도 달라지기 때문입니다.
+
+### VALIDATE-041 — 전역 기본과 폼별 선택은 같은 계약을 사용합니다
+
+검증기 우선순위는 Form 속성, FormProvider, 등록 플러그인 순서입니다. 폼별 사용자 설정을 전역 등록으로 바꿀 필요가 없게 하며, 어느 경로로 선택해도 필수 compile·동기 compileGuard 계약을 완화하지 않습니다.
+
+### VALIDATE-042 — 미등록 여부는 최종 선택 결과로 판단합니다
+
+플러그인이 없다는 이유만으로 검증기 부재를 보고하지 않습니다. 속성이나 Provider가 제공한 검증기도 포함해 선택한 결과가 없어야 부재이며, 경고와 조건 비활성의 실행 처리는 [validation](../../core/engine/validation/DETAIL.md)이 소유합니다.
+
+### VALIDATE-044 — 선택은 바인딩에서 끝내고 core에는 결과만 넘깁니다
+
+등록소 조회는 바인딩의 책임이며 core는 선택한 객체 또는 없음을 받습니다. core가 등록소나 bind를 호출하면 폼별 선택을 덮거나 공유 인스턴스를 다시 설정할 수 있으므로 금지합니다. bind는 소비자가 등록 전에 호출하는 선택 훅입니다.
+
+선택한 참조의 변경에 따른 트리 교체는 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)가 소유합니다. 공개 ValidatorPlugin과 core Validator는 구조가 맞아야 하지만, 계약을 합친다는 이유로 core가 앱의 형을 가져오지 않습니다.
+
+### VALIDATE-019 / VALIDATE-044 — 컴파일 순서가 등록 소유권을 정하지 않습니다
+
+검증기 객체는 전체 검증을 준비하기 전에도 같은 사본으로 가드를 컴파일하고 해제할 수 있어야 합니다. compile은 오류 목록 또는 null을 반환하는 검증 함수를, compileGuard는 동기 boolean 함수를 제공하며, 방언 선언과 release는 선택 계약입니다. 가드 캐시와 사본 수명은 [validation의 VALIDATE-019·048](../../core/engine/validation/DETAIL.md)이 소유하고 플러그인은 자기 등록만 관리합니다. 전체 컴파일을 등록의 필수 선행 조건으로 삼으면 검증을 요청하지 않은 폼의 조건까지 멈춥니다.
+
+### VALIDATE-033 / VALIDATE-047 — 가드 전용 경로도 같은 판정 의미를 유지합니다
+
+설정 동치와 동적 범위의 보장 조건은 [validation의 VALIDATE-033·047](../../core/engine/validation/DETAIL.md)을 따릅니다. 플러그인은 지원 방언·format·사용자 키워드와 지원하지 않는 동기 가드 문맥을 명시하여, 구현별 한계를 core가 별도 판정기로 메우지 않게 합니다. AJV의 버전별 인스턴스 복제·메타 스키마 예외는 각 플러그인의 CLAUDE.md가 소유합니다.
+
+### VALIDATE-046 / ERROR-201 — 등록 실패가 다른 살아 있는 루트를 훼손하지 않습니다
+
+같은 루트 또는 안쪽 자원 식별자가 겹쳐도 두 루트의 전체 검증·가드는 각각 자기 문맥을 사용하고, 한쪽 해제 뒤 다른 쪽의 늦은 가드 컴파일도 유지합니다. 등록을 격리할 수 없거나 컴파일이 실패하면 소비자의 기존 등록과 별칭을 보존하고 실패를 전달합니다. 정상적인 같은 식별자 공존에 새 오류 코드를 붙이지 않습니다. core의 실패 분류·재시도는 [validation의 ERROR-201](../../core/engine/validation/DETAIL.md)이 소유하며, 플러그인의 롤백은 실패한 준비가 후속 폼의 참조 해석을 오염시키지 않기 위한 계약입니다.
+
+### VALIDATE-050 / VALIDATE-051 — 검증기의 값 수정으로 형 해석을 대신하지 않습니다
+
+참조로 받는 값·스키마의 불변 계약과 사용자 정의 변경 키워드의 소비자 책임은 [validation의 VALIDATE-050](../../core/engine/validation/DETAIL.md)을 따릅니다. 플러그인은 지원하는 설정 경로에서 알려진 값 변경 옵션을 즉시 거부하고 거부된 바인딩으로 현재 인스턴스를 교체하지 않습니다. union의 편집 해석과 misfit은 폼의 계약이므로, 플러그인 설정으로 값을 고쳐 이 둘을 일치시키거나 검증마다 값 복사를 추가하지 않습니다. AJV8의 union 로그 설정은 판정 정책과 구별합니다.
+
+### SURFACE-065 — 플러그인 구성은 캐시 무효화 대상이 아닙니다
+
+등록 구성과 중복 기록은 소비자가 결정한 설정이므로 [app/cache](../cache/DETAIL.md)의 재계산 가능한 값으로 옮기지 않습니다. 청사진 clear가 검증기·렌더러 선택까지 지우면 캐시 갱신이 앱 설정 변경이 되어 버립니다.
+
+### plugin-contract — 등록의 멱등성과 실패를 보존합니다
+
+중복 등록은 설정을 다시 적용하지 않고 초기화는 중복 기록도 지웁니다. 등록 처리 중 실패는 UnhandledError로 전달하여 조용히 성공한 구성으로 오인하지 않게 합니다.
 
 ## Last Updated
 
-2026-10-14 — 정돈-1; 계약 기준: VALIDATE-044, LANDING-036·067·084, 32C-01; 정돈-2(2026-10-14).
+등록·중복 판정·선택 우선순위 또는 검증기와 core의 책임 경계가 바뀔 때 갱신합니다.

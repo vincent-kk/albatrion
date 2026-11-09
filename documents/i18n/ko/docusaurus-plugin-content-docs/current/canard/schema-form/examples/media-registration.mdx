@@ -5,16 +5,73 @@ sidebar_position: 7
 
 import LazyDemo from '@site/src/components/LazyDemo';
 
-# 미디어 등록 폼
+# 미디어 등록
 
-다단계 `oneOf` 분기를 가진 복합 미디어 카탈로그 폼입니다. 게임은 스테이지(동적 배열), 플랫폼(체크박스), 시스템 사양을 보여주고, 영화는 장르, 개봉 플랫폼, 배우 목록을 보여줍니다.
+이 미디어 목록 데모는 gate 분기·배열·enum 입력을 함께 사용합니다.
 
-:::info 주요 기능
-- `controls.active` 표현식으로 게이트하는 oneOf 브랜치
-- 중첩 객체 레벨 oneOf (details 분기)
-- 루트 레벨 oneOf (owner 필드 플레이스홀더 변경)
-- 기본값을 가진 동적 배열
-- 다중 선택을 위한 체크박스 그룹
-:::
+## 라이브 예제 {#live-demo}
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/MediaRegistrationDemo')} />
+
+## 바이너리 파일과 JSON metadata {#files}
+
+`onFileAttach`는 File·File[]를 별도 저장하며 JSON metadata를 쓰지 않습니다. 이 입력은 onChange로 파일 이름을 발행합니다. onFileAttach(undefined)는 현재 경로를 제거하고 입력 cleanup도 이를 제거합니다. 숨김 필드의 구조 유지와 실제 입력 제거는 다릅니다.
+
+handle은 단일·다중 첨부를 `Map<string, File[]>`로 정규화합니다. `/items/0/file` 같은 map 경로를 그대로 FormData 키로 쓰고 bracket 표기로 바꾸지 마십시오. endpoint는 애플리케이션 예제이며 서버에서 제공해야 합니다.
+
+```tsx
+import { useRef } from 'react';
+import { Form, type FieldInputProps, type FormHandle } from '@canard/schema-form';
+
+function FilesInput({ path, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
+  return (
+    <input
+      id={path}
+      type="file"
+      multiple
+      disabled={readOnly || disabled}
+      onChange={(event) => {
+        const files = Array.from(event.target.files ?? []);
+        onFileAttach(files.length ? files : undefined);
+        onChange(files.length ? files.map((file) => file.name) : undefined);
+      }}
+    />
+  );
+}
+
+const schema = {
+  type: 'object',
+  properties: {
+    files: {
+      type: 'array',
+      items: { type: 'string' },
+      title: 'Files',
+      presentation: { FieldInput: FilesInput },
+    },
+  },
+} as const;
+
+export function MediaUpload() {
+  const formRef = useRef<FormHandle<typeof schema>>(null);
+  return (
+    <Form
+      ref={formRef}
+      jsonSchema={schema}
+      onSubmit={async (value) => {
+        const body = new FormData();
+        body.append('value', JSON.stringify(value));
+        for (const [path, files] of formRef.current?.getAttachedFilesMap() ?? []) {
+          for (const file of files) body.append(path, file);
+        }
+        const response = await fetch('/api/media', { method: 'POST', body });
+        if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+      }}
+    >
+      <Form.Field />
+      <button type="submit">Upload</button>
+    </Form>
+  );
+}
+```
+
+대용량 파일의 진행률·취소·분할 전송은 애플리케이션 업로드 흐름에서 처리하십시오.

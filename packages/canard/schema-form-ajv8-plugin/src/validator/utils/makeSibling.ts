@@ -1,4 +1,4 @@
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 import type { Options } from 'ajv';
 
 /** Registration keys belong to this plugin and must not enter a sibling. */

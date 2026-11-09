@@ -2,76 +2,63 @@
 
 ## Requirements
 
-- B12 `InactiveValueWithUnsetOnInactive`는 동일 층의 inactiveValue와 literal true unsetOnInactive 동거 경고이며 `WriteInInactiveResolver`는 resolver 중 쓰기 무시를 알리는 개발 전용 경고입니다. ERROR-164 정본은 라운드 마감에서 갱신하며 시험 기대값에는 두 멤버를 명시합니다.
+폼의 약속이 깨진 사건, 약속은 지켜지지만 의도가 의심되는 사건, 사용자 입력에 대한 판정을 구별합니다. 입력을 고쳐 해결할 문제와 폼·검증기·소비자 코드의 실패를 같은 목록으로 보내면 소비자가 복구 방법을 잘못 선택하기 때문입니다.
 
-- `FormWarningCode.DetachedNodeWrite`는 떼어진 노드 참조의 쓰기가 무효임을 개발 모드에서 알리는 전용 경고다. 운영 모드에서는 보고하지 않는다(B11).
-
-도메인 오류는 공통 오류 구조와 타입 판별 가능성을 제공합니다. 새 엔진의 `onError` 코드 enum과 기록·보고기 형도 이 fractal의 데이터 계약입니다(ERROR-013·017·031·164, LANDING-084).
+이 모듈은 분류·공개 코드·오류 객체와 기록 형을 소유합니다. [쓰기의 보고 계약](../core/engine/write/DETAIL.md)이 기록 생성·전달·묶음·재진입을, [루트 로드 계약](../providers/RootNodeContext/DETAIL.md)이 마운트와 교체를, [렌더 보고 계약](../providers/FormErrorContext/DETAIL.md)이 경계의 보고와 중복 억제를 소유합니다. 이곳에 그 실행 정책을 다시 구현하지 않습니다.
 
 ## API Contracts
 
-- `ReservedPropertyName`은 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 청사진을 `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME`으로 거부합니다. `details.property`와 작성 위치가 원인을 가리키며 기존 `UnknownJsonSchema`와 코드로 구별됩니다. 소유자가 승인한 공개 enum 멤버 하나의 확장이며 오류 생성의 시간·메모리 비용은 기존과 같습니다.
+`FormErrorCode.InvalidErrorVisibility`는 잘못된 JavaScript 오류 표시 정책의 구성 오류입니다. 렌더 중 보관하고 커밋에서 origin `load`로 한 번 보고하며 렌더 경계의 RenderFailed로 변환하지 않습니다. 동일 invalid 값의 재렌더·StrictMode는 중복 발생이 아닙니다.
 
-- `FormErrorReason`·`FormErrorDetails`는 코드별 상세의 내부 형이며 errors index가 내보내지 않습니다. 외부 오류 관측은 진입점의 `FormErrorRecord` 계약을 사용하고, 코드별 상세 형의 계약은 이 fractal의 `__tests__`가 `type.ts`를 직접 읽어 검증합니다.
+- `FormTypeInputMap`은 입력 맵 패턴 컴파일 실패를 나타내는 치명적 구성 오류입니다. 폼은 fallback을 유지하며 확정 로드에서 `level: error`·`origin: load`로 한 번 보고합니다. 사용자 입력 컴포넌트 자체의 throw는 원래 오류에 같은 코드가 있어도 `RenderFailed`·`render`로 격리합니다.
+공개 코드의 정본은 `FormErrorCode`와 `FormWarningCode`입니다. 내부 그룹·specific 표와 그룹별 파생 표는 클래스 구성과 코드 일관성 검사를 위한 것이며 별도 공개 코드 체계가 아닙니다. 클래스의 `code`·`group`·`specific`·`name`과 기록의 코드는 같은 분류를 가리켜야, 소비자가 객체와 기록을 서로 다른 사건으로 해석하지 않습니다.
 
-- 오류 코드·메시지·상세 맥락을 보관하고 `name`은 클래스가 속한 upper snake case 그룹 상수로 설정합니다.
-- 타입 가드는 대응하는 도메인 오류를 식별하며 오류 객체는 비즈니스 동작을 실행하지 않습니다.
-- `constants/`의 object enum `FormErrorCode`·`FormWarningCode`가 패키지의 유일한 코드 정본입니다. ERROR-164의 살아 있는 새 설계 행과 후속 보충(ERROR-188–203, 25C-05, ERROR-164의 IR-11 PR-C 보충)을 원장 순서로 싣고, 키마다 부류·발생 시점의 문서 주석을 둡니다. 키는 맨 이름의 PascalCase(`UNKNOWN_JSON_SCHEMA` → `UnknownJsonSchema`), 값은 실제로 발생하는 그룹 한정 문자열이며 같은 이름의 형은 값의 닫힌 합집합입니다. level은 어느 enum에 속하는지로 정하고, 클래스별 코드 형 `JSONSchemaErrorCode`·`SchemaFormErrorCode`·`UnhandledErrorCode`·`ValidationErrorCode`는 그룹 접두어로 고른 `FormErrorCode`의 부분 집합입니다. 기록의 코드 형은 `FormErrorCode | FormWarningCode`입니다. 루트 `src/index.ts`가 두 enum을 값과 형으로 공개합니다(289라운드 D4).
-- 내부 그룹 상수 `FormErrorGroup`·`FormWarningGroup`과 그룹별 맨 이름 표를 조합해 정본 enum의 각 값을 `${group}.${specific}`으로 만듭니다. 맨 이름 표는 기존 클래스·파생 표와 이름을 맞춰 `JSONSchemaErrorSpecific`·`SchemaFormErrorSpecific`·`UnhandledErrorSpecific`·`ValidationErrorSpecific`·`SchemaFormWarningSpecific`으로 부르며, 키는 기존 PascalCase이고 값은 맨 이름의 리터럴입니다. 정본의 키·원장 순서·값·닫힌 리터럴 합집합은 보존합니다. 그룹별 코드 표도 맨 이름 표에서 조립하며 합치면 정본의 값과 개수를 보존합니다. 그룹·맨 이름 상수, 파생 표와 lookup은 errors 및 패키지 진입점에서 공개하지 않습니다.
-- 생성자는 자기 그룹의 코드를 받고, 맨 이름 표로 한 번 만든 코드→specific lookup에서 맨 이름을 찾아 `BaseError`에 넘깁니다. `error.code`·`error.group`·`error.specific`·메시지·상세 참조는 보존하고, 네 클래스의 `name`은 각각 `FormErrorGroup`의 대응 그룹 값입니다.
-- 발생시키는 곳이 없는 `PRESENTATION_KEY_SUSPECT`·`NULLABLE_ONE_OF_NULL_UNREACHABLE`·`NESTED_COMPOSITION_IGNORED_FOR_FORM`·`CONDITION_INDEX`·`CONDITION_INDICES`는 코드에 없습니다. 분기 `controls.active` 컴파일 실패는 `CREATE_DYNAMIC_FUNCTION`입니다(ERROR-162, 305C-01). 제출 검증 실패는 `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED`입니다.
-- AJV 플러그인의 bind 거부 오류는 자체 `Error`이며 `group`·`code`를 `UNHANDLED_ERROR`·`FormErrorCode.ValidatorBindRefused`로 맞춥니다. `isUnhandledError`는 이를 알아보지 못하며 호출자는 `code`로 가릅니다(32C-02). `SCHEMA_FORM_WARNING.MISFIT`이 경고등 코드이고 `VALUE_TYPE_MISMATCH`는 아니며, `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 코드 표에서 뺍니다(ERROR-031·164·188·198, SURFACE-061, CONTROLS-079).
-- `FormErrorRecord`는 level·code·message와 필수 origin, 선택 path·schemaPath·details·error·componentStack을 담습니다. origin은 load·write·validate·submit·render의 닫힌 합집합이며 details는 error.details와 같은 참조입니다. 내부 대기 기록의 origin만 선택적이며 전달 전에 확정합니다(ERROR-017·019).
-- `interface FormErrorReporter { report(record: FormErrorRecord): void; hasConsumer(): boolean }`은 core가 트리 생성 인자로 받는 형입니다. `hasConsumer()`가 거짓이면 일반 경고의 판정·서식·키 할당을 하지 않고, true이면 같은 사건의 code·level·details·origin를 환경에 따라 바꾸지 않습니다. `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고만은 `hasConsumer()`와 무관하게 개발 모드에서만 합니다(ERROR-013·021·030, WRITE-099, 31C-02).
-- 코드별 `reason`은 닫힌 값만 둡니다. `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에는 `'duplicateSchemaId'`, `MISFIT`에는 `'unconvertible' | 'ambiguous'`, `DISCRIMINATOR_MISMATCH`에는 `'missing' | 'kind' | 'overlap'`를 씁니다. 판별자의 `missing`은 union에 태그가 전혀 없음(C4), `kind`는 호스트 태그 형이 없는데 분기 종류가 다름(C8), `overlap`은 같은 oneOf의 중복(C6)입니다. 선언별 독립 키(C12)는 오류가 아니며 `key` 이유는 없습니다(ERROR-201·203).
-- `FormWarningCode.DiscriminatorIgnoredForForm`의 값은 `SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM`이며 이유는 `'union' | 'host'`입니다(C2·C3). `DiscriminatorBranchUnreachable`은 `'kind' | 'empty'`를 사용합니다(C10·C11). 두 경고와 `DiscriminatorMismatch`의 details는 `{ propertyName, reason }`만 담고 태그 값 목록을 담지 않습니다. 판별자 값 모양 오류(C1)는 `INVALID_CONTROL_SHAPE`이며 details는 `{ group: 'controls', key: 'discriminator', expected: 'string' }`이며 일반 정적 연언의 `EMPTY_ENUM_INTERSECTION`은 유지합니다. 원장이 이름 붙이지 않은 원인에는 `reason`을 만들지 않습니다.
-- `FormWarningCode.IfOnNonObjectHost`의 값은 `SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`이며 경고 코드의 마지막 항목입니다. 허용 형에 object가 없는 호스트 선언의 `if`가 `{}`에 대해 평가된다는 사실을 알리고, details는 `{ kind }`만 담으며 `reason`은 없습니다(ERROR-164 IR-11 PR-C 보충, SETTLE-021).
-- `FormErrorDetails<Code>`의 `sourcePath?: string`은 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`·`SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`에만 허용합니다. 자동 쓰기 실패의 `details.sourcePath`는 쓰기를 낸 `controls.injectTo` 선언 노드의 데이터 경로이며, `details.path`와 기록의 `path`는 대상 경로로 유지합니다. 쓰기 모양 오류의 `expectedLength`·`received`는 보존하고 호출자 경로의 쓰기 모양 오류에는 `sourcePath`를 넣지 않습니다. 오류 기록의 `details`는 이 필드를 포함한 `error.details`와 같은 참조입니다(ERROR-017·195, 59C-01).
-- 코드 enum은 패키지 전체의 공개 데이터입니다. 기록 생성·사슬 끝 전달·묶음·경고 중복 키와 전달 중 쓰기 거부는 `engine/write`가 소유하며 이 fractal의 클래스·상수·형에는 넣지 않습니다(ERROR-004·005·024·029·164, NODE-016).
-
-렌더·바인딩과 재생성 트리의 쓰기 거부는 다음 코드의 실제 발생 계약을 따릅니다(LANDING-067·095, ERROR-164·202, 68C-08, 69C-02).
-
-| 코드                                | 발생 자리와 전달 계약                                                                                                                                                                             |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SUBMIT_WHILE_DEGRADED`             | Form의 제출 진입이 degraded 진단에서 제출을 거부합니다. 네이티브 submit은 `onError`와 주인 없는 오류 싱크로 전달합니다(LANDING-095)                                                               |
-| `CHILD_NODE_COMPONENTS_ON_TERMINAL` | 터미널 입력이 빈 자식 구성 요소 배열을 처음 읽을 때 경고합니다. 개발 모드 또는 핸들러가 있는 경우 동결 배열의 읽기를 감지하고, 필드 커밋 뒤 로드마다 `(code, path)`로 한 번 보고합니다(ERROR-202) |
-| `FORM_TYPE_TEST_INVALID`            | `useFieldInput`의 정의 정규화에서 모르는 객체 시험 키와 `type`의 integer를 감지하면 개발 모드에서 정의마다 한 번 경고합니다. 모르는 키는 대조에서 제외합니다(REACT-033)                           |
-| `RENDER_FAILED`                     | 루트·필드 경계가 렌더 예외를 fallback으로 격리하고 인스턴스 보고기로 기록과 `componentStack`을 전달합니다. 다시 던지지 않습니다(ERROR-110–117, 68C-08)                                            |
-| `DISPOSED_NODE_WRITE`               | core의 쓰기 진입이 재생성 인계로 폐기된 옛 노드의 표식 없는 쓰기를 던져 거부합니다. 입력 출처 표식이 있는 늦은 쓰기는 오류 없이 버립니다(WRITE-046·086, 69C-02)                                   |
-
-- 오류 클래스 넷(`JSONSchemaError`·`SchemaFormError`·`UnhandledError`·`ValidationError`)은 `classes/`, 코드 enum 둘·그룹 상수·맨 이름 표·그룹별 파생 표는 `constants/`에, 코드 판별 함수(`isFormErrorCode`·`isFormWarningCode`)와 조립·조회 보조(`assembleCodeGroup`·`getCodeSpecific`)는 `utils/`에 있습니다. 두 organ은 상수와 보조를 가르는 관례 이름이며 `constants/`의 파생 표만 `utils/`의 조립 보조를 가져옵니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
-
-### onError origin
-
-onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
-
-`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
-
-| origin | 연산 |
-| --- | --- |
-| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
-| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
-| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
-| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
-| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
-
-트리 생성 중 만든 기록(블루프린트 진단·DialectMismatch)은 누가 생성을 불렀든 load다; 생성된 트리가 사슬 안에서 낸 기록은 그 사슬을 연 작업의 origin을 따른다.
-
-사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. submit()·validate()의 caller에게 거부되는 묶음은 거부 값 하나로 유지하며 개별 onError 기록에는 묶음을 싣지 않습니다. 명시적 validate 중 검증 결과 리스너 실패는 caller가 없는 별도 통로여서 host에 전달하고 validate 자체는 resolve할 수 있습니다. 부른 쪽이 없는 실패는 기존 호스트 채널에 깊이 우선·원소 순서로 잎마다 보냅니다. 비어 있지 않고 모든 index가 own인 배열을 가진 SchemaFormError MultipleErrors만 펼치며 형식이 어긋나거나 읽을 수 없거나 다시 만난 묶음과 그 밖의 값은 그대로 보냅니다. engine 검증 결과 파동·자동 OnChange 검증·load flush의 handler-first 순서와 native submit·load slot의 original-first 순서는 유지합니다. React와 렌더 ErrorBoundary는 던진 값을 그대로 기록합니다. 이미 보고한 오류·핸들러 예외만 담은 유효한 중첩 묶음은 capture를 생략하며 미지·malformed·순환·재방문 중첩 묶음은 기록합니다. 배열 길이는 1..2^32 − 1 정수이며 처음과 마지막 읽기가 같아야 하고 각 순회는 호출 전체에서 원소 점검 예산 1,000,000개를 공유합니다. 읽을 수 없거나 길이가 변하거나 예산을 넘은 묶음은 같은 identity의 잎이므로 host도 묶음을 받을 수 있습니다. capture는 최상위 메타데이터·문자열 변환도 보호하며 읽기 실패 때 원래 값을 고정 fallback 메시지의 기록 하나로 전달합니다. 전달 시점·호출자 거부·재진입·sink 예외 전파는 유지합니다.
+`FormErrorReporter`는 React를 모르는 core와 관찰자를 연결하는 데이터 경계입니다. 소비자 유무를 묻는 기능은 기록·경고의 불필요한 비용을 피하기 위한 것이며 오류를 무시해도 된다는 허가가 아닙니다. 실제 비용·환경 예외는 [쓰기의 보고 계약](../core/engine/write/DETAIL.md)을 따릅니다.
 
 ## Acceptance Criteria
 
-### errors-contract — 관찰 가능한 동작
+### ERROR-001 — 오류·경고·검증 결과를 분리합니다
 
-- 소비자는 코드와 타입 가드를 통해 오류 종류를 구분할 수 있습니다.
-- 모든 코드·경고 값은 해당 그룹과 맨 이름 상수의 조합이며 lookup은 모든 코드의 맨 이름을 반환합니다. 클래스 인스턴스의 `name`은 대응 그룹 상수이고, 그룹별 표와 정본의 리터럴 형은 같습니다. 공개 이름 수는 94개로 유지합니다.
-- ERROR-164의 현행 행과 후속 보충의 코드·순서·level이 두 enum과 일치하고, 클래스를 enum 값으로 만들면 `code`·`group`·`specific`이 그룹 한 번의 값·그룹·맨 이름이며, 제외·오늘 전용 행과 `INJECT_TARGET_NOT_FOUND`는 새 표에 없습니다(ERROR-164·198, CONTROLS-079).
-- 상세 정보는 생성자가 받은 진단 맥락을 별도 마스킹 없이 보관합니다. ValidationError에는 원본 form value와 jsonSchema가 포함될 수 있으므로 호출자는 이를 사용자 응답이나 로그에 노출할 때 별도로 다뤄야 합니다.
-- 같은 대상을 겨눈 서로 다른 선언의 자동 쓰기 실패는 오류와 보고 기록 모두에서 서로 다른 `details.sourcePath`로 구별할 수 있습니다. 다른 코드의 상세 형은 이 필드를 허용하지 않습니다(ERROR-017·195, 59C-01).
-- 렌더·바인딩의 코드 발생은 위 표의 자리·횟수·전달 계약을 만족하며, 경계의 React 정보는 `componentStack`만 포함합니다(REACT-033, ERROR-202, 68C-08, 69C-02).
+오류는 폼이 선언·쓰기·판정의 약속을 지키지 못했거나 호출자·소비자 코드가 계약을 어긴 사건입니다. 경고는 그 사건 뒤에도 약속이 지켜지는 알림입니다. 검증 결과는 값이 작성 스키마에 맞는지의 판정이며, 제출을 거부하는 `ValidationError`도 이 층에 속합니다. 검증 결과를 `onError`의 장애 기록에 섞지 않아 정상적인 입력 교정을 폼 장애로 집계하지 않게 합니다.
+
+### ERROR-002 — 작성 의도의 의심만으로 오류를 만들지 않습니다
+
+분류의 기준은 작성자의 의도를 추정하는 일이 아니라 사건 뒤에도 폼의 계약이 지켜지는지입니다. 값을 보존하는 변환 실패는 검증기 유무와 관계없이 경고이고, 검증기 부재도 검증 없이 폼을 사용하는 경우가 있어 경고입니다. 반대로 검증기를 제공했는데 실행할 수 없는 실패를 입력 오류나 빈 판정으로 바꾸지 않습니다. 새 진단은 이 기준으로 level을 정해 정상 사용을 중단하거나 실패를 정상으로 보이는 일을 막습니다.
+
+### ERROR-017 — 기록은 발생의 맥락을 보존합니다
+
+`FormErrorRecord`는 발생 사건의 기록이며 현재 오류 목록이나 해결 알림이 아닙니다. 전달된 기록의 필수 `origin`은 발생을 만든 연산을 뜻하며, 오류가 밖으로 드러난 경로를 뜻하지 않습니다. 내부 대기 기록만 origin을 미룰 수 있고 전달 전에는 확정해야, 중첩 쓰기와 비동기 검증을 전달 통로로 잘못 분류하지 않습니다. 연산의 귀속과 중첩 규칙은 [쓰기 계약](../core/engine/write/DETAIL.md)을 따릅니다.
+
+노드 사건의 `path`는 데이터 주소, `schemaPath`는 작성 위치입니다. 자동 주입의 대상 없음·가상 쓰기 모양 오류에서 `details.sourcePath`는 쓰기를 낸 선언 노드의 데이터 주소이고 `path`는 대상 주소로 남습니다. 같은 대상에 실패한 서로 다른 선언을 구별하려는 칸이므로, 호출자 쓰기의 모양 오류에는 붙이지 않습니다.
+
+도메인 오류 기록의 details는 원래 `error.details`와 같은 참조입니다. 오류 클래스는 상세를 마스킹하거나 정제하지 않으며, 검증 실패의 값·스키마도 포함될 수 있습니다. 로그나 사용자 응답으로 내보내는 소비자가 노출 범위를 정해야 합니다. 개별 기록은 묶음을 가리키는 칸을 갖지 않고 경계의 React 정보는 `componentStack`으로 제한하여 보고 채널을 실행 객체의 복제본으로 만들지 않습니다.
+
+### ERROR-031 — 코드 문자열은 소비자와의 약속입니다
+
+코드를 추가하면 minor, 이름·문자열을 바꾸거나 없애면 major로 다룹니다. 소비자가 문자열을 비교하므로 내부 파일 이동이나 클래스 구성 변경을 이유로 값을 바꾸지 않습니다. 메시지는 환경에 따라 번호만 남기는 축약형으로 바꾸지 않아 배포 환경에서도 원인을 읽을 수 있게 합니다.
+
+### ERROR-164 — 공개 코드의 의미와 내부 조립을 일치시킵니다
+
+제품은 두 공개 enum으로 코드를 발생시키며 별도 문자열 표를 두지 않습니다. 그룹별 클래스는 자신에게 속한 코드만 받고, 그룹 접두어를 두 번 붙이지 않습니다. 내부 specific·그룹 표는 이 일관성을 검증하고 조립하기 위해 유지하며 패키지 공개 표면으로 승격하지 않습니다. 실제 코드·순서·level의 열거는 상수와 시험에서 확인하여 문서에 두 번째 목록을 만들지 않습니다.
+
+### ERROR-198 — 발생하지 않는 진단을 공개 약속으로 만들지 않습니다
+
+`INJECT_TARGET_NOT_FOUND`를 정적 오류로 두지 않습니다. 주입 대상의 존재는 동적으로 판단하므로 실패는 `InjectTargetMissing`으로 표현합니다. 같은 식별자를 가진 루트 자체에도 별도 오류·경고 코드를 만들지 않고 실제 등록 실패의 부류를 사용합니다. 원인이 같다는 이유로 기존 실패 부류를 늘리면 소비자가 처리할 코드만 늘고 복구 의미는 흐려지기 때문입니다. 조건의 공허한 참을 별도 경고로 만들지 않는 경계는 [검증 계약](../core/engine/validation/DETAIL.md)을 따릅니다.
+
+### ERROR-201 — reason은 별도 코드가 아닌 닫힌 원인 정보입니다
+
+코드별로 정한 reason만 허용하고, 이름을 정하지 않은 일반 실패에 임의의 reason을 넣지 않습니다. `duplicateSchemaId`는 전체 컴파일 실패와 가드 실패의 상세이며 새 오류 코드가 아닙니다. 중복 등록의 판정·재시도·오분류 한계는 [검증 계약](../core/engine/validation/DETAIL.md)이 소유합니다. 플러그인의 bind 거부는 폼 밖의 코드 계약으로, 같은 `code`·`group`을 가져도 이 모듈의 `UnhandledError` 인스턴스라고 가정하지 않습니다.
+
+### ERROR-203 — 판별 진단은 계약 위반과 무효 선언을 구별합니다
+
+`DiscriminatorMismatch`의 reason은 `missing`·`kind`·`overlap`이며 선언별 독립 키를 오류로 만드는 `key`는 없습니다. 무시되는 선언과 도달할 수 없는 분기는 각각 `DiscriminatorIgnoredForForm`과 `DiscriminatorBranchUnreachable`의 경고로 구별합니다. 이 세 진단의 상세는 propertyName과 reason으로 제한하고 태그 값 목록을 덧붙이지 않습니다. 형상 결정을 막지 않는 선언까지 오류로 승격하거나 공개 상세를 임의로 넓히지 않기 위한 경계입니다. 발생 조건은 [청사진 선언 계약](../core/engine/blueprint/buildNodes/DETAIL.md)과 [경고 수집 계약](../core/engine/blueprint/collectBlueprintWarnings/DETAIL.md)을 따릅니다.
+
+`IfOnNonObjectHost`의 상세는 kind만 가지며 reason을 만들지 않습니다. 경고를 추가했다는 이유로 기존 원인 합집합까지 넓히지 않습니다.
+
+### errors-contract — 오류 객체는 진단 데이터입니다
+
+오류 클래스와 타입 가드는 사건을 식별하는 역할만 합니다. 보고·재시도·상태 복구를 클래스에 넣지 않아, 오류를 만들거나 검사하는 행위가 폼의 실행을 바꾸지 않게 합니다. 생성자가 받은 메시지와 상세 참조는 보존합니다.
 
 ## Last Updated
 
-2026-11-03
-
-계약 기준: LANDING-067·095, REACT-033, ERROR-110–119·164·202, 68C-08, 69C-02; 그룹·맨 이름 조합 및 클래스 이름 계약(2026-10-16).
+오류 분류, 공개 코드의 의미·호환성, 기록 형 또는 상세의 경계가 바뀔 때 갱신합니다.

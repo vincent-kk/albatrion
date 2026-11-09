@@ -1,5 +1,5 @@
 import type { ValidatorFactory } from '@canard/schema-form';
-import type Ajv2020 from 'ajv/dist/2020.js';
+import type { Ajv2020 } from 'ajv/dist/2020.js';
 
 import {
   type InstanceValidatorOptions,

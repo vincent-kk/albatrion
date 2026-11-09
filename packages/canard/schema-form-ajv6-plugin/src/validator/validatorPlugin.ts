@@ -44,7 +44,7 @@ const finalizer = new FinalizationRegistry<SchemaRootRegistration>(disposeSchema
  * Ajv 6 validation and synchronous guards for schema-form.
  */
 export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
-  Required<Pick<ValidatorPlugin, 'compileGuard' | 'release'>> = {
+  Required<Pick<ValidatorPlugin, 'bind' | 'compileGuard' | 'release'>> = {
   /** Set direct compilation for later guards (default true); omitted options stay unchanged. */
   configure: (options) => {
     directGuardCompile = options.directGuardCompile ?? directGuardCompile;

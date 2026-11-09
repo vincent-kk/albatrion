@@ -1,4 +1,4 @@
-import { Fragment, StrictMode, createRef } from 'react';
+import { Fragment, type ReactNode, StrictMode, createRef } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, inject, it } from 'vitest';
@@ -6,9 +6,37 @@ import { afterEach, expect, inject, it } from 'vitest';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { type FieldNode, ValidationMode } from '@/schema-form/core';
 
+import { hideCommittedForm } from '../../__tests__/helpers/hideCommittedForm';
 import { useFieldNode } from '../fieldNode/useFieldNode';
 
 afterEach(cleanup);
+
+it('rechecks a path after its node disappears while hidden', () => {
+  const ref = createRef<FormHandle>();
+  const tree = (probe: ReactNode, hidden: boolean) =>
+    hideCommittedForm(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: { items: { type: 'array', items: { type: 'string' } } },
+        }}
+        defaultValue={{ items: ['first', 'second'] }}
+        validationMode={ValidationMode.None}
+      >
+        {probe}
+      </Form>,
+      hidden,
+    );
+  const view = render(tree(<Probe input="/items/1" />, false));
+  const handle = ref.current!;
+  const probe = <Probe input="/items/1" />;
+  view.rerender(tree(probe, false));
+  view.rerender(tree(probe, true));
+  act(() => handle.node!.find('/items')!.setValue(['only']));
+  view.rerender(tree(probe, false));
+  expect(view.container.querySelector('output')!.textContent).toBe('undefined');
+});
 
 /** Read the engine's existing subscriber sets without adding an observer. */
 const listenersOf = (node: FieldNode): number => {

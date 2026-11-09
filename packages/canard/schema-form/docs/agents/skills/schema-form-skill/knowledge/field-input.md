@@ -27,12 +27,12 @@ fieldInputMap: {
 }
 ```
 
-- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). `**` does not exist.
+- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). A key containing `**` is not supported (`troubleshooting.md` describes the symptom), so list each depth with `*`.
 - Escape literal `/` in a property name as `~1`, `~` as `~0` — inside map keys as well (`jsonpointer.md`).
 
 ## Custom Input Contract
 
-- `value` (controlled) XOR `defaultValue` (uncontrolled) — never both (consumer rules `form-type-input-contract`).
+- Use either `value` for a controlled input or `defaultValue` for an uncontrolled input; mixing them gives React two competing value owners.
 - Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
 - A custom input on a non-terminal object/array **must render `ChildFields`** — otherwise its children silently vanish:
 
@@ -47,3 +47,18 @@ const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
   </div>
 );
 ```
+
+Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object schema makes the object terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
+
+## Keep configuration stable for a mounted form
+
+Use immutable definitions and maps, replacing their references when configuration changes. Form and FormProvider apply renderer, formatter and input-definition changes after mount; Form also applies input-map changes. Keep references stable when unchanged to avoid repeated normalization and selection.
+Input selection preserves node values, interaction and external errors. The same selected raw component reuses its boundary adapter across map, definition and inline sources. Its DOM survives only while its owning ancestors also stay unchanged. Replacing a parent input recreates descendant DOM and uncommitted drafts, even when child components are unchanged; values, interaction state and errors remain in the nodes. An unrelated map key therefore remounts nothing. A renderer replacement rebuilds the UI subtree that renderer owns, while a formatter change reformats current errors without remounting healthy input DOM. A renderer replacement replaces its error boundary; a formatter replacement retries only a failed boundary. Callbacks retained from replaced or unmounted inputs cannot write values or files, including after A → B → A selection.
+An invalid live map reports `FormTypeInputMap` with origin `load` once and retains the last valid map and tree. Replacing it with a valid map also recovers an initial load fallback without remounting.
+
+`Form.Field`, `Form.Render` and `Form.Input` retain their own component props at mount: `FieldInput`, `FieldRenderer` and `Wrapper` on `Form.Field`; `children`, `FieldInput` and `Wrapper` on `Form.Render`; `FieldInput` on `Form.Input`. Read changing data through the received context or a hook inside those components, or replace that element's key when its local component configuration must change.
+
+`context` has a different role: it is live application data and is compared by content before propagation.
+An equal fresh plain object retains the snapshot; changed content propagates to the current tree and can affect controls and validation freshness without rebuilding it.
+Keep callbacks and identity-sensitive values inside context stable when they have not changed, so new identities do not create artificial context changes.
+This recommendation avoids unnecessary renders/comparisons and unintended semantic updates; it is not a claim that every new prop reference destroys state.

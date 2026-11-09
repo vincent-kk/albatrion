@@ -15,18 +15,21 @@ const pushes = items.slice(0, 100).map((value) => ({
 export const arrayFixtures: EquivalentFixture[] = [
   {
     name: 'array-push-100',
+    initialItems: 0,
     legacy: buildArraySchema(0),
     workspace: buildArraySchema(0),
     interactions: pushes,
   },
   {
     name: 'array-replace-200',
+    initialItems: 0,
     legacy: buildArraySchema(0),
     workspace: buildArraySchema(0),
     interactions: [{ kind: 'set', path: '/items', value: items }],
   },
   {
     name: 'array-push-remove-100',
+    initialItems: 0,
     legacy: buildArraySchema(0),
     workspace: buildArraySchema(0),
     interactions: [

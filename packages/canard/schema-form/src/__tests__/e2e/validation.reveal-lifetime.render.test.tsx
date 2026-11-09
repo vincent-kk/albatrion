@@ -4,6 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { flushSync } from 'react-dom';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
   FieldNodeEventType,
@@ -48,10 +49,10 @@ const Leaf = ({
   return <span data-testid={'input:' + path}>{String(errorVisible)}</span>;
 };
 const Branch = ({ node, ChildFields }: FieldInputProps) => {
-  const { showErrors } = useChildFieldErrors(node);
+  const { childErrorVisibleList } = useChildFieldErrors(node);
   return (
     <>
-      <span data-testid="children">{String(showErrors[0])}</span>
+      <span data-testid="children">{String(childErrorVisibleList[0])}</span>
       {ChildFields.map((Child) => (
         <Child key={Child.key} />
       ))}
@@ -87,7 +88,7 @@ it('IR-6 W1 ancestor remount preserves renderer, input and child-errors visibili
   const ref = createRef<FormHandle>();
   const view = render(<Form ref={ref} {...props} />);
   await settleValidation(() => ref.current?.node);
-  act(() => ref.current!.showError());
+  act(() => ref.current!.revealErrors());
   await advanceValidationFrame();
   expect(view.getByTestId('children').textContent).toBe('true');
   act(() => {
@@ -107,7 +108,7 @@ it('IR-6 W1 hidden input and renderer forget their previous visible lifetime', a
   const ref = createRef<FormHandle>();
   const view = render(<Form ref={ref} {...props} />);
   await settleValidation(() => ref.current?.node);
-  act(() => ref.current!.showError());
+  act(() => ref.current!.revealErrors());
   act(() => ref.current!.setValue({ a: '', show: false }));
   expect(view.queryByTestId('input:/a')).toBeNull();
   act(() => ref.current!.setValue({ a: '', show: true }));
@@ -125,7 +126,7 @@ it('IR-6 W2 same-commit child normalization cannot promote a newly revealed old 
     <Form
       ref={ref}
       {...props}
-      showError={false}
+      errorVisibility={ErrorVisibility.Never}
       context={{ normalize: false }}
     />,
   );
@@ -135,11 +136,11 @@ it('IR-6 W2 same-commit child normalization cannot promote a newly revealed old 
     <Form
       ref={ref}
       {...props}
-      showError={false}
+      errorVisibility={ErrorVisibility.Never}
       context={{ normalize: true }}
     />,
   );
-  act(() => ref.current!.showError());
+  act(() => ref.current!.revealErrors());
   expect(view.getByTestId('renderer:/a').textContent).toBe('');
   await act(async () => {
     clock.frame();
@@ -156,7 +157,7 @@ it('IR-6 W3 flushSync during value delivery already sees pending', async () => {
   await settleValidation(() => ref.current?.node);
   const stop = ref.current!.findNode('/a')!.subscribe((event) => {
     if (event.type & FieldNodeEventType.UpdateValue)
-      flushSync(() => ref.current!.showError());
+      flushSync(() => ref.current!.revealErrors());
   });
   act(() => ref.current!.setValue({ a: 'valid', show: true }));
   expect(view.getByTestId('renderer:/a').textContent).toBe('');
@@ -171,7 +172,8 @@ it('IR-6 W3 React18 legacy root sees pending for writes outside React events (Re
   const view = render(<Form ref={ref} {...props} />, { legacyRoot: true });
   await settleValidation(() => ref.current?.node);
   const stop = ref.current!.findNode('/a')!.subscribe((event) => {
-    if (event.type & FieldNodeEventType.UpdateValue) ref.current!.showError();
+    if (event.type & FieldNodeEventType.UpdateValue)
+      ref.current!.revealErrors();
   });
   ref.current!.setValue({ a: 'valid', show: true });
   stop();

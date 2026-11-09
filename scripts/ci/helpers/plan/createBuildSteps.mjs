@@ -2,7 +2,7 @@ import { collectClosure } from "../selection/collectClosure.mjs";
 import { createTopologicalBuild } from "./helpers/createTopologicalBuild.mjs";
 
 /**
- * Emits manifest-topological builds with the schema-form/AJV declaration bootstrap.
+ * Emits manifest-topological builds with the schema-form bootstrap and the plugin packages its tests import (AJV 6/7/8, antd5).
  * @param {string[]} affected Names whose build dependencies must exist.
  * @param {object[]} workspaces Manifest dependency graph and current scripts.
  * @returns {object[]} Yarn commands restricted to eligible build workspaces.
@@ -13,8 +13,9 @@ export function createBuildSteps(affected, workspaces) {
   const ajvPlugins = [6, 7, 8].map(
     (version) => `@canard/schema-form-ajv${version}-plugin`,
   );
+  const bootstrapPlugins = [...ajvPlugins, "@canard/schema-form-antd5-plugin"];
   if (closure.includes(schemaForm)) {
-    for (const name of collectClosure(ajvPlugins, workspaces))
+    for (const name of collectClosure(bootstrapPlugins, workspaces))
       if (!closure.includes(name)) closure.push(name);
   }
   const buildNames = closure
@@ -32,12 +33,12 @@ export function createBuildSteps(affected, workspaces) {
   let remainingBuildNames = buildNames;
   if (buildNames.includes(schemaForm)) {
     const prerequisites = collectClosure(
-      [schemaForm, ...ajvPlugins],
+      [schemaForm, ...bootstrapPlugins],
       workspaces,
     ).filter(
       (name) =>
         name !== schemaForm &&
-        !ajvPlugins.includes(name) &&
+        !bootstrapPlugins.includes(name) &&
         buildNames.includes(name),
     );
     if (prerequisites.length)
@@ -47,7 +48,7 @@ export function createBuildSteps(affected, workspaces) {
           "Build schema-form prerequisites",
         ),
       );
-    // schema-form typechecks import AJV declarations, whose own types require schema-form first.
+    // schema-form typechecks and render tests import the AJV and antd5 plugin builds, whose own types require schema-form first.
     steps.push({
       kind: "build",
       label: "Bootstrap schema-form runtime",
@@ -60,12 +61,13 @@ export function createBuildSteps(affected, workspaces) {
     });
     steps.push(
       createTopologicalBuild(
-        ajvPlugins.filter((name) => buildNames.includes(name)),
-        "Build AJV declarations",
+        bootstrapPlugins.filter((name) => buildNames.includes(name)),
+        "Build schema-form plugin declarations",
       ),
     );
     remainingBuildNames = buildNames.filter(
-      (name) => !prerequisites.includes(name) && !ajvPlugins.includes(name),
+      (name) =>
+        !prerequisites.includes(name) && !bootstrapPlugins.includes(name),
     );
   }
   if (remainingBuildNames.length)

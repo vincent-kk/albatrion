@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { ErrorVisibility } from '@/schema-form';
 import type { FieldInputProps } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
@@ -117,7 +118,7 @@ describe('NODE-051 / VALUE-034 — array consumer observations', () => {
       {
         defaultValue: ['valid', 'x', undefined],
         validator: true,
-        showError: true,
+        errorVisibility: ErrorVisibility.Always,
       },
     );
     try {

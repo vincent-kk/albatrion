@@ -29,3 +29,4 @@ export { subscribeFieldNode } from './utils/read/subscribeFieldNode';
 export { createFormErrorRecord } from './utils/report/createFormErrorRecord';
 export { forEachFailureLeaf } from './utils/report/forEachFailureLeaf';
 export type { FieldNodeListener } from './types/listener';
+export { dispatchUpdateSettings } from './utils/entry/dispatchUpdateSettings';

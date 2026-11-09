@@ -11,12 +11,12 @@ import type { FormErrorRecord } from '@/schema-form/errors';
 import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,
+  ErrorVisibility,
   FieldInputDefinition,
   FieldInputMap,
   FieldRendererProps,
   InferValueType,
   JSONSchema,
-  ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -78,16 +78,11 @@ export interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.EditedTouched).
-   * Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate.
-   * Only the OnChange validation mode holds errors; other modes follow the live condition.
-   *   - `true`: Always show
-   *   - `false`: Never show
-   *   - `ShowError.Edited`: Show after user input edits the field
-   *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
+   * Live display policy; defaults to AfterEditAndTouch after FormProvider fallback.
+   * Always/Never, AfterEdit/AfterTouch, AfterEditAndTouch/AfterEditOrTouch are string enum values.
+   * Node ErrorVisibility overrides precede the policy, without bypassing presence or OnChange release.
    */
-  showError?: boolean | ShowError;
+  errorVisibility?: ErrorVisibility;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
@@ -103,7 +98,8 @@ export interface FormProps<
    *  - `VirtualizationOptions`: Enable with custom options
    *  - Off-screen fields render as lightweight placeholders and mount when they
    *    approach the viewport, on browser idle time, or on focus/select commands
-   *  - The node tree is always fully built; values, validation and submit are unaffected
+   *  - Options apply after mount; disabling reveals waiting fields. Already mounted
+   *    fields stay revealed. Values, state, errors, validation and submit are unaffected
    *  - Server-rendered fields hydrate unchanged and remain revealed. Gating
    *    applies to branches and children added after hydration and requires
    *    IntersectionObserver; browsers without it mount every field eagerly.

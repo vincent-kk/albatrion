@@ -3,12 +3,14 @@ import { createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { Form, registerPlugin } from '@canard/schema-form';
+import * as schemaForm from '@canard/schema-form';
 import type { FormHandle, JSONSchema } from '@canard/schema-form';
 import type { plugin } from '@canard/schema-form-ajv8-plugin';
 
 import type { CoreFixture } from '../../../../fixtures/core/types';
 import type { MountedCoreFixture } from '../../types';
 import { afterCorePaint } from '../afterCorePaint';
+import { createCoreFormProps } from './utils/createCoreFormProps';
 import { createCoreMarkerRenderer } from './utils/createCoreMarkerRenderer';
 
 /** Page-side callbacks of one mount. */
@@ -38,7 +40,7 @@ export async function mountCoreFixture(
 ): Promise<MountedCoreFixture> {
   registerPlugin(validatorPlugin);
   const Renderer = createCoreMarkerRenderer(fixture.measuredPath);
-  const legacyRendererProp = { CustomFormTypeRenderer: Renderer };
+  const displayProps = createCoreFormProps(schemaForm, Renderer);
   const formRef = createRef<FormHandle>();
   const root = createRoot(container);
   const firstPaint = new Promise<void>((resolve) => {
@@ -68,9 +70,7 @@ export async function mountCoreFixture(
     <Form<JSONSchema>
       ref={formRef}
       jsonSchema={fixture.schema}
-      FieldRenderer={Renderer}
-      {...legacyRendererProp}
-      showError={true}
+      {...displayProps}
       onValidate={hooks.onValidate}
       {...(fixture.defaultValidation
         ? {}

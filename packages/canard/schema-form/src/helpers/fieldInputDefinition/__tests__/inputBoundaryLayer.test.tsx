@@ -14,6 +14,7 @@ it('F-B keeps the same boundary with a direct raw input child when Refresh appli
   const Input = ({ path, defaultValue, ...props }: FieldInputProps) => {
     const [mount] = useState(() => ++mounts);
     expect(props).not.toHaveProperty('inputGeneration');
+    expect(props).not.toHaveProperty('inputSelection');
     return <input id={path} data-mount={mount} defaultValue={defaultValue} />;
   };
   const view = render(

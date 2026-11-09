@@ -244,8 +244,10 @@ it('EVENT-007 루트 리스너의 flushSync 뒤에도 자식 DOM이 최종 값�
   probe.assertDOM();
 });
 
-it('EVENT-002 10,000개 동기 구독 필드의 한 핸들러 변경이 한 React 커밋으로 배달된다', async () => {
-  const probe = await mountSubscribers(10000);
+// 1,000 independent subscriptions exercise fan-out and commit coalescing; mount scale
+// is separate from this notification contract and is covered by the root-write case.
+it('EVENT-002 1,000개 동기 구독 필드의 한 핸들러 변경이 한 React 커밋으로 배달된다', async () => {
+  const probe = await mountSubscribers(1000);
   await act(async () => form.handle.node!.batch(probe.writeAll));
   probe.assertDOM();
   expect(probe.commits()).toBe(1);

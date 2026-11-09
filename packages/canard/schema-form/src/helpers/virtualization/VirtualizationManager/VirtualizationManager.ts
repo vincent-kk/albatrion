@@ -17,6 +17,8 @@ import {
   type VirtualizationPlaceholderProps,
   resolveVirtualizationOptions,
 } from '../resolveVirtualizationOptions';
+import type { DeferredGate } from './types/deferredGate';
+import { findRevealPath } from './utils/findRevealPath';
 import { formatVirtualizationDisabledWarning } from './utils/formatVirtualizationDisabledWarning';
 import { type IdleDeadlineLike, scheduleIdle } from './utils/scheduleIdle';
 
@@ -42,15 +44,91 @@ const MIN_IDLE_BUDGET_MS = 4;
  */
 export class VirtualizationManager {
   /** Custom placeholder visual for deferred fields, null for the bare box */
-  public readonly Placeholder: Nullable<
-    ComponentType<VirtualizationPlaceholderProps>
-  >;
+  public Placeholder: Nullable<ComponentType<VirtualizationPlaceholderProps>>;
 
-  /** Resolved virtualization options this manager was created with */
-  private readonly options: ResolvedVirtualizationOptions;
+  /** Committed options; null disables gating while preserving the reveal ledger. */
+  private options: Nullable<ResolvedVirtualizationOptions>;
+
+  /** Monotonic options revision, independent of node delivery revisions. */
+  private optionsRevision = 0;
+
+  /** Waiting gates share this form-level notification channel. */
+  private readonly listeners = new Set<Fn>();
+
+  /** Invalidates callbacks queued by a replaced or disconnected observer. */
+  private observerGeneration = 0;
+
+  /** Whether committed options enable gating and deferred focus. */
+  public get enabled(): boolean {
+    return this.options !== null;
+  }
+
+  /** Read the current options revision without allocating a snapshot. */
+  public revision = (): number => this.optionsRevision;
+
+  /** Subscribe a waiting gate; cleanup leaves the reveal ledger unchanged. */
+  public subscribe = (listener: Fn): Fn => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  /**
+   * Commit live form options while preserving manager, node and focus identities.
+   * @param input - The latest committed Form prop; falsy disables gating.
+   * @returns Nothing; unequal options notify waiting gates once.
+   */
+  public updateOptions(input: Optional<boolean | VirtualizationOptions>): void {
+    const options = resolveVirtualizationOptions(input);
+    const previous = this.options;
+    if (
+      previous === options ||
+      (previous &&
+        options &&
+        previous.threshold === options.threshold &&
+        previous.eagerCount === options.eagerCount &&
+        previous.rootMargin === options.rootMargin &&
+        previous.backfill === options.backfill &&
+        previous.estimateHeight === options.estimateHeight &&
+        previous.Placeholder === options.Placeholder)
+    )
+      return;
+    this.options = options;
+    this.optionsRevision++;
+    if (previous?.Placeholder !== options?.Placeholder)
+      this.Placeholder = this.wrapPlaceholder(options?.Placeholder);
+    if (!options) {
+      this.stopObservation();
+      for (const element of this.registry.keys()) this.reveal(element);
+    } else if (
+      previous?.rootMargin !== options.rootMargin ||
+      previous?.backfill !== options.backfill
+    ) {
+      this.stopObservation();
+      if (this.registry.size) {
+        const observer = this.ensureObserver();
+        for (const element of this.registry.keys()) observer?.observe(element);
+        if (options.backfill === VirtualizationBackfill.Idle)
+          this.ensureIdlePump();
+      }
+    }
+    for (const listener of [...this.listeners]) listener();
+  }
 
   /** Deferred placeholders awaiting reveal, in registration order */
-  private readonly registry = new Map<Element, Fn>();
+  private readonly registry = new Map<Element, DeferredGate>();
+
+  /** Gates opened but not yet removed by their commit ref callback. */
+  private readonly revealing = new Map<Element, DeferredGate>();
+
+  /** One active focus reveal, installed before a potentially synchronous commit. */
+  private trackedReveal:
+    | { element: Element; gate: DeferredGate; onSettled: Fn }
+    | undefined;
+
+  /** Input containers keyed by position; only focus requests search by node. */
+  private readonly inputs = new Map<Element, FieldNode>();
 
   /** Nodes revealed at least once — survives ChildComponent cache rebuilds (e.g. array renumbering) */
   private readonly revealedNodes = new WeakSet<FieldNode>();
@@ -67,7 +145,7 @@ export class VirtualizationManager {
    * @example `const gateManager = manager?.forBranch(children.length) ?? null;`
    */
   public forBranch(childCount: number): Nullable<VirtualizationManager> {
-    return childCount >= this.options.threshold ? this : null;
+    return this.options && childCount >= this.options.threshold ? this : null;
   }
 
   /**
@@ -79,7 +157,8 @@ export class VirtualizationManager {
     renderedIndex: number,
     node: FieldNode,
   ): Nullable<VirtualizationManager> {
-    return renderedIndex >= this.options.eagerCount &&
+    return this.options &&
+      renderedIndex >= this.options.eagerCount &&
       !this.revealedNodes.has(node)
       ? this
       : null;
@@ -87,7 +166,7 @@ export class VirtualizationManager {
 
   /** Placeholder height (px) for a node before reveal */
   public estimateHeight(node: FieldNode): number {
-    const estimate = this.options.estimateHeight;
+    const estimate = this.options?.estimateHeight ?? 0;
     return typeof estimate === 'function' ? estimate(node) : estimate;
   }
 
@@ -95,10 +174,10 @@ export class VirtualizationManager {
    * Track a placeholder element until it is revealed.
    * @remarks Idempotent; re-registering an element replaces its reveal callback.
    */
-  public register(element: Element, reveal: Fn): void {
-    this.registry.set(element, reveal);
+  public register(element: Element, gate: DeferredGate): void {
+    this.registry.set(element, gate);
     this.ensureObserver()?.observe(element);
-    if (this.options.backfill === VirtualizationBackfill.Idle)
+    if (this.options?.backfill === VirtualizationBackfill.Idle)
       this.ensureIdlePump();
   }
 
@@ -107,9 +186,41 @@ export class VirtualizationManager {
    * @remarks Idempotent; safe to call after the element was already revealed.
    */
   public unregister(element: Element): void {
+    this.revealing.delete(element);
     if (!this.registry.delete(element)) return;
     this.observer?.unobserve(element);
     if (this.registry.size === 0) this.stopIdlePump();
+  }
+
+  /**
+   * Register a real input container; replacing the same position is idempotent.
+   * @param element - Mounted input position, distinct from its renderer wrapper.
+   * @param node - Field rendered by this input position.
+   * @returns Nothing; focus lookup can now find this position.
+   */
+  public attachInput(element: Element, node: FieldNode): void {
+    this.inputs.set(element, node);
+  }
+
+  /**
+   * Release the input position captured by its layout effect.
+   * @param element - Position whose input effect is being cleaned up.
+   * @returns Nothing; repeated removal is harmless.
+   */
+  public detachInput(element: Element): void {
+    this.inputs.delete(element);
+  }
+
+  /**
+   * Find this field's input containers only when focus is requested.
+   * @param node - Exact field identity; paths do not distinguish duplicate positions.
+   * @returns Matching containers in registration order, empty when none are mounted.
+   */
+  public inputsOf(node: FieldNode): Element[] {
+    const elements: Element[] = [];
+    for (const [element, input] of this.inputs)
+      if (input === node) elements.push(element);
+    return elements;
   }
 
   /** Whether the node has been revealed before (must stay eager on re-bake) */
@@ -120,6 +231,57 @@ export class VirtualizationManager {
   /** Record a node as revealed (one-way, idempotent) */
   public markRevealed(node: FieldNode): void {
     this.revealedNodes.add(node);
+  }
+
+  /**
+   * Mark the target render path and open its first gate.
+   * @param target - Present field whose physical and virtual render ancestors are searched.
+   * @param onSettled - Called when the tracked gate commits or its removal is confirmed.
+   * @returns Whether a blocking gate was found, including one already opening.
+   */
+  public revealPath(target: FieldNode, onSettled: Fn): boolean {
+    const path = findRevealPath(target, this.registry, this.revealing);
+    if (!path) return false;
+    for (const node of path.renderPath) this.revealedNodes.add(node);
+    this.trackedReveal = {
+      element: path.element,
+      gate: path.gate,
+      onSettled,
+    };
+    if (this.registry.has(path.element)) this.reveal(path.element);
+    return true;
+  }
+
+  /**
+   * Settle after child input layout effects have consumed the target Mount queue.
+   * @param gate - Stable object belonging to the position that committed the reveal.
+   * @returns Nothing; another position of the same field cannot settle this request.
+   */
+  public settleReveal(gate: DeferredGate): void {
+    const tracked = this.trackedReveal;
+    if (!tracked || tracked.gate !== gate) return;
+    this.trackedReveal = undefined;
+    tracked.onSettled();
+  }
+
+  /**
+   * Confirm removal after synchronous effect replay has had a chance to register again.
+   * @param element - Placeholder position released by its owning effect cleanup.
+   * @returns Nothing; a microtask settles only the same still-absent tracked position.
+   */
+  public releaseGate(element: Element): void {
+    const tracked = this.trackedReveal;
+    if (!tracked || tracked.element !== element) return;
+    queueMicrotask(() => {
+      if (
+        this.trackedReveal !== tracked ||
+        this.registry.has(element) ||
+        this.revealing.has(element)
+      )
+        return;
+      this.trackedReveal = undefined;
+      tracked.onSettled();
+    });
   }
 
   /**
@@ -135,27 +297,28 @@ export class VirtualizationManager {
 
   /** Reveal a tracked element: drop it from the registry and run its callback */
   private reveal(element: Element): void {
-    const reveal = this.registry.get(element);
-    if (reveal === undefined) return;
+    const gate = this.registry.get(element);
+    if (gate === undefined) return;
     this.registry.delete(element);
+    this.revealing.set(element, gate);
     this.observer?.unobserve(element);
     if (this.registry.size === 0) this.stopIdlePump();
-    reveal();
+    gate.reveal();
   }
-
-  private handleIntersections: IntersectionObserverCallback = (entries) => {
-    for (let index = 0, length = entries.length; index < length; index++) {
-      const entry = entries[index];
-      if (entry.isIntersecting) this.reveal(entry.target);
-    }
-  };
 
   private ensureObserver(): Nullable<IntersectionObserver> {
     if (this.observer !== null) return this.observer;
-    if (typeof IntersectionObserver === 'undefined') return null;
-    this.observer = new IntersectionObserver(this.handleIntersections, {
-      rootMargin: this.options.rootMargin,
-    });
+    if (!this.options || typeof IntersectionObserver === 'undefined')
+      return null;
+    const generation = this.observerGeneration;
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        if (generation !== this.observerGeneration) return;
+        for (const entry of entries)
+          if (entry.isIntersecting) this.reveal(entry.target);
+      },
+      { rootMargin: this.options.rootMargin },
+    );
     return this.observer;
   }
 
@@ -178,9 +341,21 @@ export class VirtualizationManager {
 
   private ensureIdlePump(): void {
     if (this.cancelIdle !== null || this.registry.size === 0) return;
-    this.cancelIdle = scheduleIdle(this.idleTick);
+    const generation = this.observerGeneration;
+    this.cancelIdle = scheduleIdle((deadline) => {
+      if (generation === this.observerGeneration) this.idleTick(deadline);
+    });
   }
 
+  /** Stop asynchronous observation without discarding waiting or opening gates. */
+  private stopObservation(): void {
+    this.observerGeneration++;
+    this.observer?.disconnect();
+    this.observer = null;
+    this.stopIdlePump();
+  }
+
+  /** Stop the current idle slice without modifying its waiting registry. */
   private stopIdlePump(): void {
     if (this.cancelIdle === null) return;
     this.cancelIdle();
@@ -190,7 +365,7 @@ export class VirtualizationManager {
   /**
    * Create a manager for the `virtualization` form prop.
    * @param input - `true` for defaults, an options object for overrides, falsy to disable
-   * @returns Manager, or null when virtualization is disabled or
+   * @returns Manager (also while disabled), or null when
    *          IntersectionObserver is unavailable (e.g. SSR) — null propagates
    *          through the context so no gate is ever created
    */
@@ -206,14 +381,21 @@ export class VirtualizationManager {
       return null;
     }
     const options = resolveVirtualizationOptions(input);
-    return options === null ? null : new VirtualizationManager(options);
+    return new VirtualizationManager(options);
   }
 
-  constructor(options: ResolvedVirtualizationOptions) {
+  constructor(options: Nullable<ResolvedVirtualizationOptions>) {
     this.options = options;
-    this.Placeholder = isReactComponent(options.Placeholder)
+    this.Placeholder = this.wrapPlaceholder(options?.Placeholder);
+  }
+
+  /** Resolve one shared error boundary only when the original visual changes. */
+  private wrapPlaceholder(
+    Placeholder: ResolvedVirtualizationOptions['Placeholder'] | undefined,
+  ) {
+    return isReactComponent(Placeholder)
       ? withErrorBoundary(
-          options.Placeholder,
+          Placeholder,
           undefined,
           usePlaceholderBoundaryReporter,
         )

@@ -1,4 +1,4 @@
-/** Internal bare specifics for the SchemaFormError group, in ledger order. */
+/** Internal bare specifics for the SchemaFormError group, in public contract order. */
 export const SchemaFormErrorSpecific = {
   SharedNodeConflict: 'SHARED_NODE_CONFLICT',
   BudgetExceeded: 'BUDGET_EXCEEDED',
@@ -9,6 +9,7 @@ export const SchemaFormErrorSpecific = {
   ListenerThrew: 'LISTENER_THREW',
   MultipleErrors: 'MULTIPLE_ERRORS',
   FormTypeInputMap: 'FORM_TYPE_INPUT_MAP',
+  InvalidErrorVisibility: 'INVALID_ERROR_VISIBILITY',
   InvalidWriteOption: 'INVALID_WRITE_OPTION',
   DisposedNodeWrite: 'DISPOSED_NODE_WRITE',
   WriteInObserver: 'WRITE_IN_OBSERVER',

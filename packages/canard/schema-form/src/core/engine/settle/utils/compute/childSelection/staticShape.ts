@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary, Nullable } from '@aileron/declare';
@@ -13,7 +14,7 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { staticIds } from './staticIds';
 
 /** Ungated effective schemas select their immutable static contributions. */
-const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
 /** Immutable selected static edge and its fixed schema. */
 export interface StaticShapeEntry {
   entry: BlueprintChildEntry;

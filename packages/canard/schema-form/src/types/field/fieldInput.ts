@@ -101,7 +101,7 @@ export type FieldInputPropsWithSchema<
 > = FieldInputProps<Value, Context, any[], Schema>;
 
 /**
- * Props that FieldInputPropsWithSchema must satisfy
+ * Props that FieldInputPropsWithNode must satisfy
  *
  * - `Value`: Type of value assigned to FieldInput Component
  * - `Schema`: JSONSchema type of field node assigned to FieldInput Component

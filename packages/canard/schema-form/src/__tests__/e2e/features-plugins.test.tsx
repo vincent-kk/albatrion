@@ -25,7 +25,7 @@ const ThrowOnTriggerInput = ({ path, value, onChange }: FieldInputProps<string>)
 /**
  * Execute one plugins feature scenario through the registered screen adapter with the harness validator.
  * Error expectations are partial issue contracts, matched by count and shape as in validation.test.tsx.
- * @param name - Stable scenario name; its description cites the ledger.
+ * @param name - Stable scenario name; its description carries stable contract labels.
  * @returns Completion after every step expectation has been checked.
  */
 const run = async (name: string) => {

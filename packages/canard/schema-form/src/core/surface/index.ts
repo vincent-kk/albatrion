@@ -44,6 +44,7 @@ export { readFieldNodeRevealBaseline } from './utils/binding/readFieldNodeReveal
 export { readFieldNodeRevealPolicy } from './utils/binding/readFieldNodeRevealPolicy';
 export { readFieldNodeRevealVersion } from './utils/binding/readFieldNodeRevealVersion';
 export { subscribeFieldNodeRevealReleased } from './utils/binding/subscribeFieldNodeRevealReleased';
-export { commitFieldNodeRevealPolicy } from './utils/binding/commitFieldNodeRevealPolicy';
 
 export { batchFieldNodeLoad } from './utils/binding/batchFieldNodeLoad';
+export { updateFieldNodeSettings } from './utils/binding/updateFieldNodeSettings';
+export { readFieldNodeValidationEpoch } from './utils/binding/readFieldNodeValidationEpoch';

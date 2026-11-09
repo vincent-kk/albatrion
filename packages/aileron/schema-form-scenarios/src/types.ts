@@ -45,7 +45,7 @@ export interface ScenarioExpectation {
   }>;
 }
 
-/** Closed ledger vocabulary; batch interpretation belongs to the injected engine. */
+/** Closed scenario vocabulary; batch interpretation belongs to the injected engine. */
 export type FormScenarioStep = (
   | { readonly action: 'setValue'; readonly path: string; readonly value: unknown }
   | { readonly action: 'clear'; readonly path: string }
@@ -63,7 +63,7 @@ export type FormScenarioStep = (
 export interface FormScenario<Schema = object, Value = unknown> {
   /** Human-readable behavior used as the test and story label. */
   readonly name: string;
-  /** Ledger IDs and the behavior this scene checks. */
+  /** Stable contract labels and the behavior this scene checks. */
   readonly description?: string;
   /** Schema interpreted by the injected form engine. */
   readonly schema: Schema;

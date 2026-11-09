@@ -1,30 +1,31 @@
-# record — 노드 레코드 경계
+# record — 노드 원본과 기록의 소유 경계
 
 ## Purpose
 
-노드 한 개의 고정 필드 배치, 동작 행과 생성 함수, 트리 런타임의 최소 계약, 새 엔진의 이벤트와 명령 비트 형을 소유한다(NODE-004·045, SURFACE-056·060).
+노드 인스턴스의 레코드 계약, 종류별 계산 행과 트리 런타임의 구조적 계약을 소유합니다. 원본과 공개 노드의 수명을 한 모델에 두어 별도 값 모델의 동기화를 피합니다.
 
 ## Conventions
 
-- state is only `source` and `extras`; other values are computed values or work records (VALUE-002).
-- A host owns retained inactive instances and their source overlays; record declares this ownership without selecting, settling, or reviving an inactive public lifetime.
-- 노드 인스턴스가 곧 `FieldNodeRecord<Self>`이며, 종류별 자료는 `structure` 한 칸에 둔다(NODE-004·046).
-- 경고 경로 인덱스와 얼려 둔 떼어진 읽기는 선택적 트리 저장소에 두고, 가지치기용으로 노드마다 고정 필드를 추가하지 않는다(NODE-044·045, 35C-09).
-- 넓은 범위의 노드 이름에는 `FieldNode`를 쓰고, 필드처럼 좁은 범위에서만 `node`를 쓴다(NODE-011, SURFACE-056).
+- 형상·값 계산의 입력 상태는 `source`와 `extras`입니다. 계산값·상호작용·작업 기록을 다른 값 원본으로 사용하지 않습니다.
+- 호스트가 비활성 원본과 overlay를 소유합니다. 보유 원본은 공개 형상이나 옛 공개 수명의 변경 통로가 아닙니다.
+- 공통 생성 배치를 유지하고 트리 전체 기능은 런타임에, 드문 기능은 필요한 수명에만 할당합니다.
+- 노드·행·런타임은 자기 형 매개변수로 연결하며 구체적인 공개 클래스에 역의존하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- `Behavior`와 `FieldNodeRuntime`의 칸은 소비자가 쓰는 최소 형으로 선언한다(NODE-045).
-- 이름과 경로 갱신, 상호작용 상태의 얕은 패치는 레코드 연산으로 둔다(NODE-008).
-- 커밋이 배달 비트와 페이로드를 표시할 수 있게 하되, 전달 일정과 리스너 실행은 `write`에 맡긴다(EVENT-004·007).
+- 새 행·런타임 칸의 소비 형과 소유 수명·보유 비용을 DETAIL에 먼저 정합니다.
+- 주소 갱신은 공용 경로 조립기를 사용하고 같은 상호작용 패치의 참조를 보존합니다.
+- 커밋 비교와 배달 대기의 기록 수명을 구별하며 실제 배달은 write에 맡깁니다.
 
 ### Ask first
 
-- 노드의 고정 필드 순서를 바꾸거나 행 칸을 늘려서 숨은 클래스나 의존 방향이 바뀌는 경우.
+- 공통 생성 배치나 행 계약을 바꾸어 노드당 비용 또는 의존 방향을 바꾸는 경우.
+- 원본을 별도 모델에 두거나 선택적 자료의 보유 상한·초기화 범위를 바꾸는 경우.
 
 ### Never do
 
-- `settle`, `FieldNode`, `write`, `validation`, 앱과 플러그인, 레거시를 값이나 타입으로 가져오지 않는다(NODE-045, LANDING-159).
-- 레코드 안에서 정착, 통지, 검증을 실행하지 않는다(NODE-004·006).
+- `settle`·`write`·`validation`·surface·앱·플러그인의 구현을 값이나 타입으로 가져오지 않습니다. 레코드를 소비하는 계층으로의 역의존을 막습니다.
+- 레코드 연산에서 정착·통지·검증을 실행하지 않습니다.
+- 메모나 배달 기록을 새 값 상태로 취급하거나 옛 노드 참조를 복원된 공개 수명으로 재사용하지 않습니다.

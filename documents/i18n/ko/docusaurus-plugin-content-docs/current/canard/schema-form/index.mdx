@@ -1,138 +1,46 @@
 ---
-title: '@canard/schema-form'
-sidebar_label: 'schema-form'
+sidebar_label: '@canard/schema-form'
 sidebar_position: 1
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import ForAI from '@site/src/components/ForAI';
 import LazyDemo from '@site/src/components/LazyDemo';
+
+# @canard/schema-form
+
+JSON Schema로 React 폼을 구성합니다. [설치](./quick-start) 후 [핵심 개념](./core-concepts)에서 폼 형상, 저장 값, 검증, 렌더링의 차이를 확인하십시오.
+
+## 라이브 데모 {#live-demo}
 
 <PackageHeader name="@canard/schema-form" />
 
-JSON Schema 기반 React 폼 엔진으로, 두 레이어의 플러그인 아키텍처를 제공합니다:
-JSON Schema 검증을 위한 **Validator 플러그인**과
-폼 렌더링 컴포넌트를 위한 **UI 플러그인**.
-JSON Schema에 데이터 구조를 한 번 선언하면, 라이브러리가 전체 폼 상태 트리를 자동으로 구축하고 검증합니다.
-
-## 라이브 데모
-
-아래 인터랙티브 폼을 통해 `@canard/schema-form`이 JSON Schema만으로 무엇을 만들 수 있는지 확인하세요.
-이 컨퍼런스 등록 폼은 조건부 필드, 계산 값, 10개 이상의 입력 타입을 하나의 스키마로 구현합니다.
-
 <LazyDemo load={() => import('@site/src/components/demos/showcase/HeroDemo')} />
 
-:::tip 더 많은 예제
-if/then/else, oneOf, computed values 등을 다루는 10개의 인터랙티브 예제를 [Examples](./examples) 섹션에서 확인하세요.
-:::
+조건부 폼, 배열, 계산 값, 사용자 입력은 [예제](./examples)에서 확인하십시오.
 
-:::tip UI 플러그인
-위의 모든 폼은 [antd6-plugin](../schema-form-antd6-plugin/)으로 렌더링됩니다. 개별 플러그인 페이지에서 컴포넌트 카탈로그를 확인하세요: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)
-:::
+## 필요한 계약 찾기 {#reading-guide}
 
-## Architecture
+- [스키마 참조](./schema-reference): 설정 그룹, controls, nullable 값, UI 입력 설정입니다.
+- [검증](./validation): 실행 시점, 오류 표시, 검증기 어댑터, guard 한계입니다.
+- [API 참조](./api-reference): Form, 핸들, 렌더러, 훅, 노드 수명, 경로입니다.
+- [오류 참조](./error-reference): 발생 보고, 오류 가드, 진단 코드입니다.
+- [0.x 이전 안내](./migration-from-0x): 스키마 키와 소비자 API 이름의 대응표입니다.
 
-```
-JSON Schema
-    │
-    ▼
-<Form jsonSchema>             ← builds a typed node tree
-    │
-    ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
-    ├── ObjectNode / ArrayNode                             (branch)
-    └── VirtualNode                                        (conditional / computed)
-    │
-    ▼
-Plugin System
-    ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FieldRenderer / FormLabelRenderer / FormInputRenderer / FormErrorRenderer
-                                 + fieldInputDefinitions
-    │
-    ▼
-<Form>  →  React component tree
+## 코딩 에이전트 자산 {#agent-assets}
+
+설치된 패키지는 `docs/agents`에 소비자 규칙, `schema-form-skill`, 관련 지식 문서를 포함합니다. schema-form 작업에서 스킬을 로드하거나 해당 호출을 지원하는 호스트에서 `/schema-form-skill`로 직접 호출할 수 있습니다.
+
+프로젝트에 `@slats/agents-assets-sync`를 설치한 뒤 적용 전에 주입 결과를 확인하십시오.
+
+```bash
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project --dry-run
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=codex --scope=project
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=codex --scope=user
 ```
 
-## Plugin System
+`--agent=claude`는 선택한 scope의 `.claude` 위치에 자산을 씁니다. Codex project scope는 `.agents/skills`와 `AGENTS.md`의 관리 마커 블록을 사용하고, user scope는 `~/.codex/skills`와 `~/.codex/AGENTS.md`를 사용합니다. `--dry-run`은 자산을 쓰지 않고 변경을 보여 줍니다. `--force`로 덮어쓰기 전에 로컬에서 달라진 자산을 검토하십시오.
 
-이 라이브러리는 *기본 validator와 기본 UI 컴포넌트를 제공하지 않습니다*.
-폼을 렌더링하기 전에 두 가지 모두 플러그인을 통해 제공해야 합니다.
-플러그인은 `registerPlugin()`으로 전역 등록되며 애플리케이션의 모든 `<Form>`에 영향을 줍니다.
+## 라이선스와 문의 {#support}
 
-- **Validator 플러그인** — `compile(jsonSchema)`을 구현하여 모든 검증 라이브러리(AJV, Zod, Yup 등)를 통합합니다.
-- **UI 플러그인** — `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 `fieldInputDefinitions`를 제공합니다.
-
-## Node Types
-
-| Node | Schema types | Strategy |
-|---|---|---|
-| `StringNode` | `"string"` | terminal |
-| `NumberNode` | `"number"`, `"integer"` | terminal |
-| `BooleanNode` | `"boolean"` | terminal |
-| `NullNode` | `"null"` | terminal |
-| `ObjectNode` | `"object"` | branch (BranchStrategy or TerminalStrategy) |
-| `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
-| `VirtualNode` | conditional / oneOf / anyOf branches | special |
-
-## FieldInput Resolution Order
-
-필드를 렌더링할 때, 라이브러리는 다음 우선순위로 입력 컴포넌트를 결정합니다 (높은 순):
-
-1. `Form.Field`의 직접 `FieldInput` prop
-2. `<Form>`의 `fieldInputMap` 경로 매핑
-3. 폼 레벨 `fieldInputDefinitions` prop
-4. `FormProvider` `fieldInputDefinitions`
-5. 플러그인 제공 `fieldInputDefinitions`
-
-<ForAI>
-
-## AI Reference
-
-**Package**: `@canard/schema-form` v0.10.5
-**Purpose**: JSON Schema-driven dynamic form generation for React with two-layer plugin architecture.
-
-### Plugin system
-```ts
-import type { SchemaFormPlugin } from '@canard/schema-form';
-import type { ValidatorPlugin } from '@canard/schema-form';
-import { registerPlugin } from '@canard/schema-form';
-```
-
-### Form component
-```ts
-import { Form } from '@canard/schema-form';
-import type { FormProps } from '@canard/schema-form';
-import type { FormHandle } from '@canard/schema-form';        // ref API: submit(), reset(), validate(), getValues()
-import type { FormChildrenProps } from '@canard/schema-form';  // render-prop children
-import type { FormLabelProps } from '@canard/schema-form';
-import type { FormErrorProps } from '@canard/schema-form';
-```
-
-### Node types
-```ts
-import type { FieldNode } from '@canard/schema-form';
-import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
-import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
-import type { VirtualNode } from '@canard/schema-form';                                    // conditional
-```
-
-### Enums
-```ts
-import { NodeState } from '@canard/schema-form';       // Initialized | Mounted | Unmounted
-import { ValidationMode } from '@canard/schema-form';  // OnChange | OnBlur | OnSubmit
-import { NodeEventType } from '@canard/schema-form';   // ValueChange | StateChange | ...
-import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
-```
-
-### Type guards & error utilities
-```ts
-import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
-import { isSchemaFormError, isJSONSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
-import { JSONPointer } from '@canard/schema-form';
-```
-
-### Architecture
-- No default validator or UI — both via plugins: `registerPlugin(plugin)`
-- Node tree: JSON Schema → `<Form>` → typed node tree
-- Input resolution: Direct prop > fieldInputMap > form-level > FormProvider > plugin
-
-</ForAI>
+패키지는 [MIT 라이선스](https://github.com/vincent-kk/albatrion/blob/master/LICENSE)를 사용합니다. 문의, 버그, 제안은 [GitHub Issues](https://github.com/vincent-kk/albatrion/issues)로 전달하십시오.

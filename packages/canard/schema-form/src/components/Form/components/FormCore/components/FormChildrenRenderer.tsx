@@ -24,7 +24,6 @@ interface FormChildrenRendererProps<
   Schema extends JSONSchema,
   Value extends AllowedValue,
 > {
-  jsonSchema: Schema;
   render: Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;
 }
 
@@ -32,15 +31,14 @@ const FormChildrenRendererInner = <
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >({
-  jsonSchema,
   render,
 }: FormChildrenRendererProps<Schema, Value>) => {
   const rootNode = useRootNodeContext();
-  useFieldNodeTracker(rootNode ?? null, RERENDERING_EVENT);
+  useFieldNodeTracker(rootNode, RERENDERING_EVENT);
   return (
     <>
       {render({
-        jsonSchema,
+        jsonSchema: rootNode?.jsonSchema,
         node: rootNode,
         defaultValue: rootNode?.defaultValue,
         value: rootNode?.value,
@@ -51,7 +49,7 @@ const FormChildrenRendererInner = <
 };
 
 /**
- * Bridges function children (render-prop) to the node event system with the
+ * Connects function children (render-prop) to the node event system with the
  * same tracker idiom `FieldProxy` uses: matching root events bump a
  * version and the render-prop reads live node state during render. React
  * batches version bumps raised in the same event/microtask, so one edit

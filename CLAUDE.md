@@ -16,9 +16,9 @@ The `ci` workflow uses the default `pr` tier for pull requests to every branch a
 
 Use **yarn** commands (not npm) for this project:
 
-- `yarn lint` - Check code style across all packages
-- `yarn typecheck` - Verify TypeScript types across all packages
-- `yarn test` - Run tests across all packages
+- `yarn run:all lint` - Check code style across all packages
+- `yarn run:all typecheck` - Verify TypeScript types across all packages
+- `yarn run:all test` - Run tests across all packages
 - `yarn run:all <command>` - Run command across all workspaces
 
 ## 📦 Working with Individual Packages
@@ -35,14 +35,14 @@ All agent assets live under `.claude/`. The lists below are the complete invento
 
 ### Rules — `.claude/rules/`
 
-Declarative rules that apply at all times. Loaded at session start.
+Declarative rules. `filid_module-documents`, `filid_verification-records` and `seiri_test-validity` load only for files matching their `paths:` frontmatter; the others load at session start.
 
-| Family    | Files                                                                                                                                                                           |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seiri_*` | `agent-legible`, `code-comments`, `cognitive-discipline`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
-| `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                                              |
+| Family    | Files                                                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `seiri_*` | `agent-legible`, `code-comments`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
+| `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                      |
 
-Precedence: repository instructions (this document, per-package CLAUDE.md) > repository conventions > the rules above.
+Precedence: repository instructions (this document, `DOCUMENTATION.md`, per-package CLAUDE.md) > repository conventions > the rules above.
 
 ### Skills — `.claude/skills/`
 
@@ -73,6 +73,17 @@ Owner principles for every package that has adopted FCA (directories with `INTEN
 5. **Tests verify from inside.** A test lives in the fractal it verifies (its `__tests__/`) and imports that fractal's internal files directly, never through its own `index.ts`. Public-API tests that act as an external consumer sit in the package-level `src/__tests__/` and import the package entry point. The verification-file exemption in `filid_fractal-boundaries` §5 does not lift §3.
 6. **An unused root file or export is a defect**, on par with a broken feature. The "leave pre-existing dead code" allowance of `seiri_reuse-first` §3 does not apply to it: remove it or move it below the root.
 
+## 📝 Documentation
+
+`DOCUMENTATION.md` holds the principles for the documents within the scope it states, and nothing else restates them. If its text is not already in your context, read it before writing or editing a document.
+
+@DOCUMENTATION.md
+
+## 📏 Repository Requirements
+
+- For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
+- Keep build outputs out of source commits: run the designated builds and artifact checks, then commit regenerated runtime bundles and adapters in their own build commit.
+
 ## 🎯 Quick Reference for Claude Code
 
 When working on this monorepo:
@@ -86,7 +97,7 @@ When working on this monorepo:
 ### 2. **Command Strategy**
 
 - Use `yarn` (not npm) for all commands
-- For monorepo-wide operations: `yarn <command>` (lint, typecheck, test)
+- For monorepo-wide operations: `yarn run:all <command>` (lint, typecheck, test)
 - For package-specific operations, you have two options:
   - **Full syntax**: `yarn workspace @scope/package-name <command>`
   - **Shortcut commands**: Many packages have shortcuts defined in root package.json
@@ -99,9 +110,9 @@ When working on this monorepo:
 1. Read and follow all rules in the `.claude/rules` directory
 2. Check the specific package's CLAUDE.md for detailed guidance
 3. Use yarn workspace commands for package-specific operations
-4. Run yarn lint, typecheck, and tests before completing tasks
+4. Run lint, typecheck and tests for the workspaces you changed (`yarn workspace <name> <script>`, with `--run` for Vitest), and reproduce CI with the affected-workspace procedure under Important Commands
 5. Follow the project structure and naming conventions
-6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
+6. Record releases as the change records section of `DOCUMENTATION.md` describes, and publish as `scripts/PUBLISHING.md` describes; `yarn changeset:version` needs a `GITHUB_TOKEN`
 7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)
 
 ### 4. **Available Packages**
@@ -119,3 +130,7 @@ Major package groups include:
 > Rules, skills, and commands live under `.claude/`. Keep this document's inventory in sync when they change — a stale pointer here misleads every agent that reads it.
 >
 > Copyright © 2025 Vincent K. Kelvin. All rights reserved.
+
+## Shared build-script verification
+
+`yarn --cwd . test:build-scripts` runs the shared aileron build scripts' node:test suite, including declaration-path rewriting and runtime environment output checks. `build:all` runs this suite once before workspace builds; CI runs it in the first check shard only. Package `build:verify:types` scripts check their own built public declarations without repeating the shared unit suite. The declaration rewriter parses TypeScript module specifiers, including import-equals references, preserves ordinary comments and string literal types, maps `.d.ts` targets to `.js` and `.d.mts` targets to `.mjs`, and resolves directory indexes without adding duplicate slashes. Triple-slash `reference path` directives retain declaration extensions because TypeScript resolves them as declaration files, not runtime modules.

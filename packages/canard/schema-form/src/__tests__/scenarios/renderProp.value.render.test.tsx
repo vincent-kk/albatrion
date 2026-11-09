@@ -8,7 +8,7 @@ import { renderForm } from '../renderForm';
 /**
  * Function-children (render-prop) `value` reactivity.
  *
- * Function children are bridged through `FormChildrenRenderer`, which uses
+ * Function children are routed through `FormChildrenRenderer`, which uses
  * the same `useFieldNodeTracker` idiom as `FieldProxy`: matching root
  * events (UpdateValue / UpdateGlobalError / RequestRefresh / RequestRemount)
  * bump a version and the render-prop reads live node state during render.

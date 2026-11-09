@@ -12,7 +12,11 @@ export const reportOwnerlessError = (error: unknown): void => {
     if (typeof ErrorEvent !== 'undefined') {
       if (
         !window.dispatchEvent(
-          new ErrorEvent('error', { error, message: String(error) }),
+          new ErrorEvent('error', {
+            error,
+            message: String(error),
+            cancelable: true,
+          }),
         )
       )
         return;

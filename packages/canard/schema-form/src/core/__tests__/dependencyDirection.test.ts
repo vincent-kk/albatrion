@@ -244,11 +244,11 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     ).toEqual([]);
   });
 
-  it('blocks record imports of settle, surface, write, validation, app/plugin, and legacy', () => {
+  it('blocks record imports of settle, surface, write, validation, and app/plugin', () => {
     const forbidden = edges.filter(
       ({ source, target, specifier }) =>
         owner(source) === 'engine/record' &&
-        /(?:^|\/)(?:settle|FieldNode|dispatch|write|surface|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
+        /(?:^|\/)(?:settle|FieldNode|dispatch|write|surface|validation)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
           `${target} ${specifier}`,
         ),
     );
@@ -310,21 +310,6 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
       forbidden.map(
         ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
       ),
-    ).toEqual([]);
-  });
-
-  it('keeps every new fractal independent of the legacy engine', () => {
-    expect(
-      edges
-        .filter(
-          ({ target, specifier }) =>
-            target.includes(`${sep}__legacy__${sep}`) ||
-            specifier.includes('/__legacy__/'),
-        )
-        .map(
-          ({ source, specifier }) =>
-            `${relative(CORE, source)} -> ${specifier}`,
-        ),
     ).toEqual([]);
   });
 

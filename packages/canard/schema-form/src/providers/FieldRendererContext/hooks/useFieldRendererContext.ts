@@ -23,7 +23,7 @@ export const useFieldRendererContext = () => {
       PluginManager.FormErrorRenderer,
     FieldRenderer: context.FieldRenderer || PluginManager.FieldRenderer,
     formatError: context.formatError || PluginManager.formatError,
-    checkShowError: context.checkShowError,
-    showError: context.showError,
+    checkErrorVisibility: context.checkErrorVisibility,
+    errorVisibility: context.errorVisibility,
   };
 };

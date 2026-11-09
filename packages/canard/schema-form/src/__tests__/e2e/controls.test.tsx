@@ -12,7 +12,7 @@ import type { FormHarness } from '../renderForm';
 
 /**
  * Execute the named shared data through the registered screen adapter.
- * @param name - Stable SCN scenario name; its description cites the ledger.
+ * @param name - Stable SCN scenario name; its description carries stable contract labels.
  * @param onMount - Optional consumer instrumentation before shared screen steps.
  * @returns Completion after every screen expectation has been checked.
  */

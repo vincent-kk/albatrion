@@ -5,7 +5,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import type { nodeFromJSONSchema as LegacyFactory } from '../../src/__legacy__/core/nodeFromJSONSchema';
+import type {
+  FormProps as LegacyFormProps,
+  InferSchemaNode as LegacyInferSchemaNode,
+  JSONSchema as LegacyJSONSchema,
+} from '@canard/schema-form_0.16.1';
 import type {
   AuthoredSchema,
   FieldNodeState,
@@ -47,6 +51,15 @@ type DistEngine = {
   writeFieldNodeInput: typeof writeFieldNodeInput;
   FieldNodeState: typeof FieldNodeState;
 };
+
+/** Installed 0.16.x factory contract used by the bundle comparison lane. */
+type LegacyFactory = <Schema extends LegacyJSONSchema>(
+  props: Pick<
+    LegacyFormProps<Schema>,
+    'jsonSchema' | 'defaultValue' | 'validationMode' | 'validatorFactory'
+  > &
+    Required<Pick<LegacyFormProps<Schema>, 'onChange'>>,
+) => LegacyInferSchemaNode<Schema>;
 
 const internalNames = [
   'blueprint',
@@ -172,11 +185,11 @@ export async function loadLegacyEngine(
   directory = defaultDirectory,
   version: LegacyVersion = '0.16.1',
 ): Promise<{
-  create: typeof LegacyFactory;
+  create: LegacyFactory;
   legacySha256: string;
 }> {
   const { module, digest } = await copyAndLoad<{
-    benchmarkCore: typeof LegacyFactory;
+    benchmarkCore: LegacyFactory;
   }>(
     fileURLToPath(
       version === '0.16.0'
@@ -188,7 +201,7 @@ export async function loadLegacyEngine(
     ['nodeFromJSONSchema'],
     'export { nodeFromJSONSchema as benchmarkCore };',
   );
-  const create: typeof LegacyFactory = (props) => {
+  const create: LegacyFactory = (props) => {
     const root = module.benchmarkCore(props);
     return materializeMountedValues(root);
   };

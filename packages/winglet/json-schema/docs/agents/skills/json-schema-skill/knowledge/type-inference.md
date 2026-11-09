@@ -4,7 +4,7 @@
 
 ## Recursion requires `as const`
 
-Inference into `properties` and `items` needs literal types. Without `as const` (or `satisfies`), `type: 'object'` widens to `string` and you get the unrefined fallback, not a narrowed shape. The same applies to `nullable: true`: widened to `boolean`, it infers **without** `| null`, because a static type cannot know a runtime value. That direction is deliberate — being stricter than the runtime never admits a value the consumer would reject.
+Inference into `properties`, `prefixItems` and `items` needs literal types. Without `as const` (or `satisfies`), `type: 'object'` widens to `string` and you get the unrefined fallback, not a narrowed shape. The same applies to `nullable: true`: widened to `boolean`, it infers **without** `| null`, because a static type cannot know a runtime value. That direction is deliberate — being stricter than the runtime never admits a value the consumer would reject.
 
 ## Object inference rules
 
@@ -19,11 +19,11 @@ Inference into `properties` and `items` needs literal types. Without `as const` 
 | Schema                                                                  | Inferred                        |
 | ----------------------------------------------------------------------- | ------------------------------- |
 | `properties` keyed by plain `string` (`Dictionary<JSONSchema>`)         | `Record<string, any>`           |
-| `items: false`                                                          | `any[]`                         |
+| `items: false` with no finite `prefixItems`                             | `any[]`                         |
 | no `type` at all                                                        | `any`                           |
 | `{ type: 'array' }` / `{ type: 'object' }` with no `items`/`properties` | `any[]` / `Record<string, any>` |
 
-A multi-type array is the exception to "falls back": `{ type: ['string', 'number'] }` infers `string | number`, **not** `any`. Older documentation claimed `any` here; the primary type is now extracted from every `type` array, so the union survives. A single-member array is unwrapped the same way, matching the runtime, which normalizes `['string']` to `'string'`.
+A multi-type array is the exception to "falls back": `{ type: ['string', 'number'] }` infers `string | number`, **not** `any`: the primary type is extracted from every `type` array, so the union survives. A single-member array is unwrapped the same way, matching the runtime, which normalizes `['string']` to `'string'`.
 
 ```typescript
 type A = InferValueType<{ type: 'string' }>; // string
@@ -48,6 +48,10 @@ type J = InferValueType<{
   additionalProperties: false;
 }>; // { id?: number }                          ← closed
 ```
+
+## Tuple inference
+
+A finite literal `prefixItems` infers a tuple whose positions are all optional, because `prefixItems` sets no minimum length: `items: false` closes it (`[string?, number?]`), omitted or `true` `items` leaves `...any[]`, and an `items` schema types only the positions after the prefix.
 
 ## The reverse direction — `InferJSONSchema`
 

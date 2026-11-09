@@ -5,16 +5,73 @@ sidebar_position: 7
 
 import LazyDemo from '@site/src/components/LazyDemo';
 
-# Media Registration Form
+# Media Registration
 
-A complex media catalog form with `oneOf` branching at multiple levels. Games show stages (dynamic array), platforms (checkbox), and system specs. Movies show genres, release platforms, and actor lists.
+This live media catalog combines gated branches, arrays, and enum inputs.
 
-:::info Key Features
-- oneOf branches gated by `controls.active` expressions
-- Nested object-level oneOf (details branch)
-- Root-level oneOf (owner field changes placeholder)
-- Dynamic arrays with default values
-- Checkbox groups for multi-select
-:::
+## Live example {#live-demo}
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/MediaRegistrationDemo')} />
+
+## Binary files and JSON metadata {#files}
+
+`onFileAttach` stores File or File[] separately. It does not write JSON metadata: this input publishes filenames through onChange. Calling onFileAttach(undefined) removes the current path; input cleanup removes it too. Keeping a hidden field structurally present is different from removing its input.
+
+The handle normalizes single and multiple uploads to `Map<string, File[]>`. Append each file with its map path unchanged, including paths such as `/items/0/file`; do not convert them to bracket notation. This endpoint is an application example and must be provided by your server.
+
+```tsx
+import { useRef } from 'react';
+import { Form, type FieldInputProps, type FormHandle } from '@canard/schema-form';
+
+function FilesInput({ path, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
+  return (
+    <input
+      id={path}
+      type="file"
+      multiple
+      disabled={readOnly || disabled}
+      onChange={(event) => {
+        const files = Array.from(event.target.files ?? []);
+        onFileAttach(files.length ? files : undefined);
+        onChange(files.length ? files.map((file) => file.name) : undefined);
+      }}
+    />
+  );
+}
+
+const schema = {
+  type: 'object',
+  properties: {
+    files: {
+      type: 'array',
+      items: { type: 'string' },
+      title: 'Files',
+      presentation: { FieldInput: FilesInput },
+    },
+  },
+} as const;
+
+export function MediaUpload() {
+  const formRef = useRef<FormHandle<typeof schema>>(null);
+  return (
+    <Form
+      ref={formRef}
+      jsonSchema={schema}
+      onSubmit={async (value) => {
+        const body = new FormData();
+        body.append('value', JSON.stringify(value));
+        for (const [path, files] of formRef.current?.getAttachedFilesMap() ?? []) {
+          for (const file of files) body.append(path, file);
+        }
+        const response = await fetch('/api/media', { method: 'POST', body });
+        if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+      }}
+    >
+      <Form.Field />
+      <button type="submit">Upload</button>
+    </Form>
+  );
+}
+```
+
+Upload progress, cancellation, and chunking for large files belong to the application's upload flow.

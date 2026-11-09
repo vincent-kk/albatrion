@@ -8,9 +8,13 @@ import type { BlueprintExpression } from '../types/blueprint';
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../utils/diagnostics/throwBlueprintError';
 import { EXPRESSION_CONTROL_KEYS } from '../utils/expressions/expressionControlKeys';
-import { createDynamicFunction } from './createDynamicFunction';
+import {
+  createDynamicFunction,
+  substituteDependencyPaths,
+} from './createDynamicFunction';
 import { getPathManager } from './getPathManager';
 import { recognizeEqualityExpression } from './recognizeEqualityExpression';
+import { createEqualityEvaluator } from './utils/createEqualityEvaluator';
 import { hasCompleteExpressionReads } from './utils/hasCompleteExpressionReads';
 import { registerBlueprintDependency } from './utils/registerBlueprintDependency';
 
@@ -80,11 +84,19 @@ export const compileBlueprintExpressions = (
           const schemaPath = appendSegment(groupPath, key);
           const manager = getPathManager();
           let evaluate;
+          let equality;
           try {
-            evaluate =
-              key === 'derived'
-                ? createDynamicFunction(manager, key, source)
-                : createDynamicFunction(manager, key, source, true);
+            const prepared = substituteDependencyPaths(manager, source);
+            const paths = manager.get();
+            equality =
+              paths.length === 1
+                ? recognizeEqualityExpression(source, paths, prepared)
+                : undefined;
+            evaluate = equality
+              ? createEqualityEvaluator(equality.literals)
+              : key === 'derived'
+                ? createDynamicFunction(manager, key, source, false, prepared)
+                : createDynamicFunction(manager, key, source, true, prepared);
           } catch (cause) {
             throwBlueprintError(
               FormErrorCode.CreateDynamicFunction,
@@ -102,10 +114,6 @@ export const compileBlueprintExpressions = (
               declaration,
               schemaPath,
             );
-          const equality =
-            key === 'active' && dependencies.length === 1
-              ? recognizeEqualityExpression(source, dependencies)
-              : undefined;
           const compiled: BlueprintExpression = {
             declarationId: declaration.id,
             schemaPath,
@@ -113,7 +121,7 @@ export const compileBlueprintExpressions = (
             key,
             dependencies,
             evaluate,
-            ...(equality ? { equality } : {}),
+            ...(key === 'active' && equality ? { equality } : {}),
           };
           Object.defineProperty(compiled, 'completeReads', {
             value:

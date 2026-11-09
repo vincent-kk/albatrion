@@ -2,16 +2,15 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
-import { ShowError } from '@/schema-form/types';
+import { ErrorVisibility } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
-import { createShowErrorChecker } from '../utils/createShowErrorChecker';
+import { createErrorVisibilityChecker } from '../utils/createErrorVisibilityChecker';
 import { FieldRendererContext } from './FieldRendererContext';
 
-const DEFAULT_SHOW_ERROR = ShowError.EditedTouched;
+const DEFAULT_ERROR_VISIBILITY = ErrorVisibility.AfterEditAndTouch;
 
 interface FieldRendererContextProviderProps {
   /** Custom field renderer component */
@@ -22,14 +21,11 @@ interface FieldRendererContextProviderProps {
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
-   * Error display condition (default: ShowError.EditedTouched)
-   *   - `true`: Always show errors
-   *   - `false`: Never show errors
-   *   - `ShowError.Edited`: Show after user input edits the field
-   *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
+   * Live display policy; defaults to AfterEditAndTouch after FormProvider fallback.
+   * Always/Never, AfterEdit/AfterTouch, AfterEditAndTouch/AfterEditOrTouch are string enum values.
+   * Node ErrorVisibility overrides precede the policy, without bypassing presence or OnChange release.
    */
-  showError?: FormProps['showError'];
+  errorVisibility?: FormProps['errorVisibility'];
 }
 
 export const FieldRendererContextProvider = ({
@@ -38,49 +34,47 @@ export const FieldRendererContextProvider = ({
   FormInputRenderer,
   FormErrorRenderer,
   formatError,
-  showError: inputShowError,
+  errorVisibility: inputErrorVisibility,
   children,
 }: PropsWithChildren<FieldRendererContextProviderProps>) => {
   const {
     FieldRenderer: ExternalFormFieldRenderer,
     formatError: externalFormatError,
-    showError: externalShowError,
+    errorVisibility: externalErrorVisibility,
   } = useExternalFormContext();
 
-  const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
-  const checkShowError = useMemo(
-    () => createShowErrorChecker(showError),
-    [showError],
+  const errorVisibility =
+    inputErrorVisibility ?? externalErrorVisibility ?? DEFAULT_ERROR_VISIBILITY;
+  const checkErrorVisibility = useMemo(
+    () => createErrorVisibilityChecker(errorVisibility),
+    [errorVisibility],
   );
-  const constant = useConstant({
+  const value = useMemo(() => {
+    const resolvedFieldRenderer = isReactComponent(FieldRenderer)
+      ? FieldRenderer
+      : ExternalFormFieldRenderer;
+    const resolvedFormatError = isFunction(formatError)
+      ? formatError
+      : externalFormatError;
+    return {
+      FieldRenderer: resolvedFieldRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError: resolvedFormatError,
+      checkErrorVisibility,
+      errorVisibility,
+    };
+  }, [
     FieldRenderer,
     FormLabelRenderer,
     FormInputRenderer,
     FormErrorRenderer,
     formatError,
-  });
-  const value = useMemo(() => {
-    const FieldRenderer = isReactComponent(constant.FieldRenderer)
-      ? constant.FieldRenderer
-      : ExternalFormFieldRenderer;
-    const formatError = isFunction(constant.formatError)
-      ? constant.formatError
-      : externalFormatError;
-    return {
-      FieldRenderer,
-      FormLabelRenderer: constant.FormLabelRenderer,
-      FormInputRenderer: constant.FormInputRenderer,
-      FormErrorRenderer: constant.FormErrorRenderer,
-      formatError,
-      checkShowError,
-      showError,
-    };
-  }, [
-    constant,
-    checkShowError,
+    checkErrorVisibility,
     ExternalFormFieldRenderer,
     externalFormatError,
-    showError,
+    errorVisibility,
   ]);
 
   return (

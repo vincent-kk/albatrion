@@ -1,9 +1,8 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import { getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import type { Behavior } from '../../../../record';
-
-/** Shared declaration result when an array has no templated positions. */
-const EMPTY: readonly BlueprintChildEntry[] = Object.freeze([]);
 
 /**
  * Return item entries in slot order; a new count costs O(itemCount) and replaces the memo.
@@ -18,7 +17,7 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
     template.itemCandidates === undefined &&
     template.prefixItemCandidates === undefined
   )
-    return EMPTY;
+    return EMPTY_ARRAY;
   const count = node.itemCount;
   const cached = node.runtime.arrayChildEntries?.get(node);
   if (cached?.count === count) return cached.result;
@@ -27,7 +26,7 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
     const candidates = getItemEntries(template, index);
     for (const entry of candidates) entries.push(entry);
   }
-  const result = entries.length === 0 ? EMPTY : Object.freeze(entries);
+  const result = entries.length === 0 ? EMPTY_ARRAY : Object.freeze(entries);
   (node.runtime.arrayChildEntries ??= new WeakMap()).set(node, {
     count,
     result,

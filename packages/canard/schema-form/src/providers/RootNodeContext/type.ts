@@ -1,6 +1,6 @@
 import type { FormHandle, FormProps } from '@/schema-form/components/Form';
 import type { FieldNode, Validator } from '@/schema-form/core';
-import type { FormErrorRecord } from '@/schema-form/errors';
+import type { FormErrorRecord, SchemaFormError } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../FormErrorContext';
 
@@ -18,8 +18,14 @@ export type RootLoadProps = Pick<
   | 'context'
   | 'unsetOnInactive'
   | 'disableAutomaticWrites'
-  | 'showError'
-> & { validator?: Validator };
+> & {
+  /** Resolved validator for this load. */
+  validator?: Validator;
+  /** Current input-map configuration failure; blocks construction without retiring a valid tree. */
+  inputMapError?: SchemaFormError;
+  /** Invalid display configuration blocks only initial tree construction. */
+  errorVisibilityError?: SchemaFormError;
+};
 
 /** A committed or speculative root and its buffered load reports. */
 export interface RootLoad {
@@ -62,7 +68,7 @@ export interface RootLoadStore {
   unsubscribe: () => void;
 }
 
-/** Bridge exposing current root and reset to the Form handle. */
+/** Binding that exposes the current root and reset to the Form handle. */
 export interface RootBinding {
   /** Root of the committed load; undefined while no root could be built. */
   root?: FieldNode;

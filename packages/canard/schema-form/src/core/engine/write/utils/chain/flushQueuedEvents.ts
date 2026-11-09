@@ -5,6 +5,7 @@ import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalError
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
 import { captureChainError } from './captureChainError';
 import { deliverWave } from './deliverWave';
+import { flushFieldNodeSettings } from './flushFieldNodeSettings';
 import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { runDeliveryWaves } from './runDeliveryWaves';
 
@@ -134,6 +135,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
       owner.chainErrors = previousErrors;
       owner.chainOccurrences = previousOccurrences;
       if (owner !== entryRuntime) owner.chainRoot = undefined;
+      flushFieldNodeSettings(owner);
     }
   }
 };

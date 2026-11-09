@@ -2,29 +2,42 @@
 
 ## Requirements
 
-- B12 같은 작성 층에서 정의한 `inactiveValue`와 literal true `unsetOnInactive`는 `InactiveValueWithUnsetOnInactive`로 경고합니다. fields와 조각을 포함하고 위치별 중복을 억제하며 소비자가 없으면 검사하지 않습니다.
-
-- 진단 위치는 jsonPointer의 appendSegment로 조립해 예약 이름과 구분자를 가진 속성도 다시 탐색할 수 있게 한다.
-
-관심 있는 진단 소비자에게 청사진의 인라인 종단 예약 키 경고를 수집해 전달한다.
+경고는 지원 한계나 작성 실수를 알리는 진단이며 판정·형상·정적 오류를 바꾸지 않습니다. 소비자가 없으면 조사하지 않아 사용하지 않는 진단의 순회 비용을 만들지 않습니다.
 
 ## API Contracts
 
-- 유효한 판별 키가 있는 선언마다 `controls/discriminator` 위치에서 `DiscriminatorIgnoredForForm`(`SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM`)을 수집한다. 알려진 비객체 호스트는 `reason: 'host'`(C3), 객체 선언에 oneOf·anyOf 배열이 없으면 `reason: 'union'`(C2)이며 details는 `{ propertyName, reason }`다. 동일 선언에서는 하나만 보고한다.
-- 허용 형에 `object`가 없는 호스트 선언에 `if`가 있으면 `#/…/if` 위치에서 `IfOnNonObjectHost`(`SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST`)를 수집한다. 조건은 `node.kind`가 `object`·`virtual`이 아니고, `node.schemaType`이 배열(union)이면 `object`를 포함하지 않는 것이다. `node.nullable`은 조건에 들지 않는다. details는 `{ kind: node.kind }`이며 `if`의 내용은 읽지 않는다. 새 상태는 더하지 않으며, 중복은 `collect` 호출 한 번 안에서 (code, schemaPath, details.keyword) 키로 억제된다. 이 경고의 details에는 keyword가 없으므로 같은 `#/…/if` 위치의 경고는 `collect` 호출마다 하나이고, 다른 수집기에는 캐시된 진단 재생으로 다시 전달된다. 판정은 바뀌지 않으며 가드는 SETTLE-021대로 `{}`를 받는다(ERROR-164 IR-11 PR-C 보충).
-- `DiscriminatorBranchUnreachable`은 호스트 태그 형 밖의 태그(C10, `reason: 'kind'`) 또는 const·enum 공집합(C11, `reason: 'empty'`)을 분기의 schemaPath에서 보고한다. details는 `{ propertyName, reason }`만 담고 값 목록은 담지 않는다. 빈 태그로 자식이 생성되지 않아도 비터미널 객체의 C11 경고는 수집한다. 터미널 객체는 이 경고를 보고하지 않는다. 호스트 태그 enum 밖의 값을 새로 검출하지 않는다.
-
-- 터미널 하위의 예약 키 경고는 터미널 노드의 schemaPath마다 기록 하나에 keys와 paths를 모은다. 같은 코드와 schemaPath의 중복은 억제하며, 인라인 하위만 조사하고 참조 대상은 따라가지 않는다(BLUEPRINT-044).
+한 수집 안에서 code·schemaPath·details.keyword로 중복을 억제합니다. 캐시된 청사진의 늦은 수집과 수집기별 재생은 부모가 소유하며, 이 모듈의 내부 중복 집합을 폼 전체 경고 수명으로 확대하지 않습니다. 경고 위치는 이름을 보존하는 JSON Pointer 조립을 사용합니다.
 
 ## Acceptance Criteria
 
-### blueprint-warnings — 늦은 수집과 터미널 하위 경고
+### FRAGMENT-024 — 내용 해석 없이 작성 관행을 알립니다
 
-- 진단 소비자가 없으면 경고를 검사하지 않고, 캐시된 루트에 소비자가 나중에 붙으면 루트마다 한 번 수집한다.
-- 터미널 하위의 예약 키 경고는 터미널 schemaPath마다 기록 하나에 keys와 paths를 모으고, 인라인 하위만 조사하며 참조 대상은 따라가지 않는다(BLUEPRINT-044).
-- 부모 blueprint의 `blueprint.diagnostics.test.ts`가 `blueprint()`로 이 절을 검증한다(늦은 수집, 터미널 인라인 그룹, union 호스트 사례).
-- 부모 blueprint의 `blueprint.if-host-warning.test.ts`가 문자열·배열·null 전용 호스트의 경고와, object를 허용하는 union·nullable object·배열 `items` 안의 객체 조건·객체 호스트·가상 호스트의 무경고를 검증한다.
+oneOf·anyOf 분기에 if가 있고 else가 정확히 false가 아니면 IF_WITHOUT_ELSE_FALSE를 수집합니다. if.required나 조건 프로퍼티의 적절성은 검사하지 않습니다. [부모의 FRAGMENT-022](../DETAIL.md)에 있는 공허한 참의 위험은 알리되 검증 의미를 재구현하지 않기 위해서입니다.
+
+### FRAGMENT-033 — 입력이 없는 객체 잠금을 알립니다
+
+branch object에 표준 readOnly 또는 controls.readOnly·disabled가 작성되면 LOCK_ON_NON_TERMINAL_OBJECT를 수집합니다. 해당 노드의 잠금이 자손에게 상속된다고 오해하지 않게 하기 위한 진단이며 배열과 terminal의 잠금 집행은 렌더 소유자의 책임입니다.
+
+### BLUEPRINT-044 — 터미널 하위 예약 키의 제한
+
+그릴 자식이 없는 terminal 아래 인라인 예약 그룹은 터미널 작성 위치마다 한 기록에 keys·paths를 모읍니다. $ref를 따라 경고 범위를 넓히지 않습니다. 참조 대상의 재사용 위치까지 조사하면 실제로 분석하지 않는 하위 정의의 비용과 중복 진단이 생기기 때문입니다.
+
+### discriminator-warnings — 판별 경고와 오류의 구분
+
+판별자 무시·도달 불가능 태그의 조건과 details는 [buildNodes의 BLUEPRINT-017·FRAGMENT-048](../buildNodes/DETAIL.md)을 따릅니다. 터미널 객체의 판별 불일치 오류는 남지만 도달 불가능 경고는 수집하지 않습니다. 경고를 태그 값 검증이나 호스트 enum 검사로 확대하지 않습니다.
+
+### inactive-value-warning — 같은 층의 상충 선언
+
+inactiveValue가 작성되고 같은 controls 층의 unsetOnInactive가 리터럴 true이면 INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE를 알립니다. fields·조각도 조사하지만 resolver나 식을 실행하여 충돌을 추정하지 않습니다. 사용되지 않을 대체값을 알리기 위한 진단입니다.
+
+### if-host-warning — 불투명 if의 한계
+
+object를 허용하지 않는 정적 호스트의 if는 IF_ON_NON_OBJECT_HOST로 알리고 if의 내용은 읽지 않습니다. nullable만으로 객체 호스트가 되는 것은 아닙니다. 검증기가 내는 공허한 참을 폼의 별도 판정으로 바꾸지 않습니다.
+
+### blueprint-warnings — 수집 비용과 관측 범위
+
+수집기 없는 분석은 경고를 순회하지 않고, 늦은 수집도 같은 코드·작성 위치·순서의 진단을 제공합니다. dependentSchemas·dependencies와 allOf의 미지원 키는 형상으로 번역하지 않고 경고하며, 인라인 terminal 조사는 참조를 따라가지 않습니다.
 
 ## Last Updated
 
-2026-11-04
+경고 범위·중복 기준·진단 형태·수집 비용 경계가 바뀔 때 갱신합니다.

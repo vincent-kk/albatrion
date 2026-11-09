@@ -1,0 +1,144 @@
+---
+sidebar_label: 'Validation'
+sidebar_position: 5
+---
+
+# Validation
+
+## Validation modes and scheduling {#modes}
+
+The default is `ValidationMode.OnChange | ValidationMode.OnRequest`. `None` disables whole-schema validation; `OnRequest` avoids automatic change verdicts. Shape-selection `compileGuard` and guard evaluation can still run in None mode. Explicit `validate()` and `submit()` start immediately under an enabled mode and check the value snapshot at invocation. For changing the mode of an existing Form, see [configuration lifetime](./api-reference#configuration-lifetime).
+
+Automatic OnChange validation starts after the next frame, keeps a trailing run for continuous input, and caps the wait at 100 ms since the last actual automatic run. Input debounce belongs to the FieldInput. Missing frame APIs, a hidden document, or stalled frames use task / 100 ms timer fallbacks.
+
+Every root load reserves one post-frame validation slot. `None` skips whole-schema compilation and its verdict, `OnRequest` prepares whole-schema compilation only, and OnChange's initial verdict runs only if no later write request or explicit root verdict supersedes it. An automatic load compile failure keeps the adopted tree, reports a validate-origin occurrence and host failure, and is not rethrown as a synchronous reset/rebuild error.
+
+An initially empty error array can precede a verdict: await `validate()` when you need one. A child validation request does not cancel a pending whole-form request.
+
+Change modes on the existing tree without rebuilding. The same effective mode, including `OnChange` versus `OnChange | OnRequest`, does no extra work. Switching to `None` cancels scheduled and pending publication and clears only validator-produced errors, keeping external errors. `OnChange` → `OnRequest` stops automatic work and keeps errors. `None` → `OnRequest` prepares compilation in the next slot only. `None` or `OnRequest` → `OnChange` validates the current snapshot once in the next shared post-frame slot without waiting for an edit. An earlier automatic whole-root request or explicit root validation replaces that verdict; subtree validation does not. Other transitions keep errors. Already-started explicit validate/submit promises still settle with their own result or rejection, while discarded verdicts and failures do not reach the tree, onValidate, onError or the host.
+
+## Raw issues and error visibility {#visibility}
+
+The live base policy is `Form.errorVisibility ?? FormProvider.errorVisibility ?? ErrorVisibility.AfterEditAndTouch`. The string enum has six values: `Always='always'`, `Never='never'`, `AfterEdit='afterEdit'`, `AfterTouch='afterTouch'`, `AfterEditAndTouch='afterEditAndTouch'`, and `AfterEditOrTouch='afterEditOrTouch'`. Booleans, numbers and arbitrary strings are rejected.
+
+`revealErrors()` temporarily selects Always; `resetErrorVisibility()` restores the latest base policy. Neither validates nor writes node state. A committed base-policy change, reset, rebuild or root replacement clears the Form reveal. A same-value rerender or a Provider change masked by a Form prop keeps it. Returning to an earlier policy does not revive a cleared reveal; abandoned renders do not clear it.
+
+`FieldNodeState.ErrorVisibility` is a node override: undefined inherits, true allows display, and false suppresses it, including during Form reveal. Clear only this key with `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })` to inherit without clearing Edited/Touched. Renderer and input visibility still require `isPresent` and follow OnChange release rules. `useChildFieldErrors` preserves its aggregate contract including hidden children, returning `errorVisible` and `childErrorVisibleList` without a presence filter. Raw errors remain available independently of display.
+
+An invalid JavaScript policy reports `FormErrorCode.InvalidErrorVisibility` once per committed invalid value with origin `load`, without a RenderFailed boundary error. An initially invalid policy prevents tree construction and shows the load fallback; a later valid policy constructs the tree. An invalid live change preserves the current tree, values, interaction state and last valid policy; a valid replacement applies live. The next invalid occurrence after recovery reports again. Explicit Form configuration takes precedence over Provider configuration.
+
+OnChange holds newly eligible errors until release: eligibility must stay true continuously since the last release. Ineligibility hides errors immediately. Release occurs at pending true→false settlement, a quiet post-paint history drop, an accepted explicit root verdict, or disposal. OnRequest and None use live eligibility without this history.
+
+One public batch or subtree walk records its first state only, while separate public writes inside a React batch can record intermediate states. React remounting and virtualization do not clear node eligibility history; a continuously changing context stream can continue delaying newly visible errors.
+
+When whole-schema validation runs, `validate()` returns its unfiltered verdict. `getErrors()` and Form function children expose the form-wide raw list, independently of display policy. `node.errors` and `Form.Render` expose raw issues routed to that node.
+
+For a path that traverses only branch nodes, an unresolvable dataPath or a missing child leaves the issue unassigned. Routing also omits issues whose eventual owner is outside the validated subtree. Another exclusion applies when schemaPath uniquely attributes an issue to an inactive gated oneOf/anyOf branch with an active sibling. These exclusions do not remove issues from the whole verdict or form-wide raw list.
+
+Path resolution stops at any terminal node, root or non-root, such as one input editing a whole object, array, or multi-type value. A nonempty dataPath must be an absolute pointer, and each parsed segment examined before traversal stops must be a property-name string. The segment check precedes the terminal check: an operator such as `*` in `#/*/na%me`, or `..` at that position, leaves the issue unassigned even at a terminal root, while retaining it in the full verdict and form-wide raw list. Subject to these checks and the inactive-union and scope exclusions above, the terminal receives issues under its value with dataPath unchanged, including a path with an undecodable percent escape such as `#/na%me`. A nonempty rejectedKey moves ownership to the nearest branch ancestor before the scope check when such an ancestor exists. A terminal root keeps rejectedKey issues because it has no parent to climb to. For the separate active/visible policies, see [controls](./schema-reference#controls).
+
+React-only disabled toggles, delayed presence commits, and writes between release and paint can bypass the hold or show a verdict from one or two frames earlier. Use raw issues for workflow decisions and the renderer's visibility decision for presentation.
+
+## ValidationIssue and messages {#issues-messages}
+
+A public `ValidationIssue` has `dataPath` (JSON Pointer, `''` for root), optional `keyword`, `message`, `schemaPath`, `rejectedKey`, `details`, and validator-specific `source`. It is data, separate from the exception classes in the [error reference](./error-reference).
+
+Use `presentation.errorMessages` for keyword/default messages and `formatError(error, node, context)` for application formatting. Keyword entries can be strings or detail-value dictionaries. Keep the validator's raw issues available for programmatic decisions; formatting does not change the verdict. External issues supplied by `errors` or node external-error methods also participate in the raw error list.
+
+## Validator object contract {#validator-contract}
+
+`validatorFactory` is an object with `compile(root)` and synchronous `compileGuard(root, pointer)`; `release(root)` and `dialect` are optional. `compile` returns a function that returns ordered issues, null, or a promise of either. Throws indicate execution failure, not a validation verdict. `compileGuard` returns a synchronous boolean predicate and can run before whole-schema compilation.
+
+The engine passes the same owned root copy to compile, compileGuard, and release. Preserve `$ref`, `$id`, and anchor context and never mutate the supplied schema or value. A nonboolean guard result, compile failure, or throw fails that gate; a whole-schema compile failure does not undo guards. Release runs when a cached root is evicted and must be idempotent even for a root never registered. If both dialects are known and `$schema` differs, the form reports `DialectMismatch`.
+
+Different live roots with the same `$id` must stay isolated; the engine does not rewrite IDs. A failure is classified as `duplicateSchemaId` only when it is an Error whose message contains `already exists` or `resolves to more than one schema`, and the same validator actually retains a different live root with that same string `$id`. After all competing consumers release that root, the next compile/validation access retries the cached failure once. Release does not itself trigger compilation, and other compile failures do not use this retry.
+
+Guards do not support `$async`, asynchronous keywords/formats, or keywords that depend on data outside the host (`$data`, parent/sibling data). AJV plugins do not download remote refs: provide referenced schemas inside the root or in the bound instance. A custom keyword must not modify values, even if its library allows it.
+
+## AJV versions and dialects {#ajv-entries}
+
+| Package entry                          | Default dialect / configuration                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `@canard/schema-form-ajv6-plugin`      | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false`                       |
+| `@canard/schema-form-ajv7-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`                                |
+| `@canard/schema-form-ajv8-plugin`      | Draft-07; `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true` |
+| `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09                                                                                         |
+| `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12                                                                                         |
+
+Import `plugin` from the selected entry and register it. Its validator lives at `plugin.validator`. AJV 6 Draft-04/06 use requires a matching instance, meta-schema, and schemaId setting; `$id` is the default identifier, while `schemaId: 'id'` or `'auto'` recognizes Draft-04 `id`. AJV 7's 2019-09 use requires that constructor in the bound instance. AJV 8's supplied entries do not promise full Draft-04/06 support; choose a validator supporting that dialect.
+
+Formats are disabled in the supplied defaults: do not assume `format: 'email'` alone enables an email verdict. Configure an instance with the formats you need. AJV 6 JSONPath error locations are normalized to JSON Pointer; AJV 7/8 already use native pointer paths. All adapters expose `ValidationIssue`, with `dataPath: ''` for root errors.
+
+In bare Node ESM, AJV 7's default import can be an interop namespace rather than a constructor. Use the package's default plugin, or resolve the AJV constructor according to your module environment before creating a custom instance.
+
+## Binding and per-instance adapters {#ajv-configuration}
+
+For a custom AJV 8 instance, install `ajv@8.17.1` in the consuming application. The plugin's own AJV dependency does not select the version of your application's `import Ajv from 'ajv'`.
+
+Bind once before the first compile/registration; rebinding is not a supported lifecycle. `coerceTypes`, `useDefaults`, and `removeAdditional` cause refusal before replacing an existing binding. A native refusal error carries `group: 'UNHANDLED_ERROR'` and `code: FormErrorCode.ValidatorBindRefused`. Inspect those properties after narrowing the caught value; `isUnhandledError` does not recognize this native error.
+
+AJV 6/7 bind starts a fresh root registry. AJV 8 keeps an already registered root associated with the instance that registered it until release. Prefer `createValidator(ajv, options?)` for a Form-specific complete adapter, created outside render or memoized with stable dependencies. Independent adapters can share one nonmodifying AJV instance.
+
+`createValidatorFactory(ajv)` returns only a compile function; passing it directly as `validatorFactory` does not satisfy the object contract. AJV 6/7 factory calls compile/remove a transient schema and normalize asynchronous results to issues or null. AJV 8 reuses the root registration until release.
+
+```tsx
+import { Form } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
+
+// Create the AJV instance and adapter once at module scope.
+const ajv = new Ajv({ strictSchema: false, validateFormats: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  type: 'number',
+  schemaType: 'boolean',
+  validate: (enabled: boolean, data: number) => !enabled || data % 2 === 0,
+});
+const validatorFactory = createValidator(ajv);
+const schema = { type: 'number', isEven: true } as const;
+
+export function EvenNumberForm() {
+  return <Form jsonSchema={schema} validatorFactory={validatorFactory} />;
+}
+```
+
+Keep this setup outside the component body; follow the [validator lifetime contract](./api-reference#configuration-lifetime) for memoized setup, plugin reuse and the effects of accidental per-render creation.
+
+## Guard compilation and root lifetime {#guard-compilation}
+
+All three AJV adapters support `plugin.validator.configure({ directGuardCompile })`, default true. True directly compiles self-contained guards; false sends later compiles through root pointers. Omitted options retain their values, existing predicates keep their behavior, and configure does not change bound AJV settings.
+
+Even with direct compilation selected, an own `$schema` on the root, or reference/identifier/anchor/`$schema` keys anywhere within the selected guard subtree, forces root-pointer compilation. For AJV 6's legacy schemaId modes that subtree check also includes `id`. A root `$id` outside that subtree, or a `$ref` elsewhere in the root, does not by itself block direct compilation. A root-pointer guard can fail because of code-generation errors elsewhere in that root; a directly compiled self-contained guard is independent of those errors.
+
+Guard sibling instances preserve the bound dialect, formats, and keywords with `allErrors: false` and `validateSchema: false`. Root meta-schema checking belongs to whole validation under the bound `validateSchema` policy. Meta-only violations outside the guard or inside it do not create a separate guard meta check, but strict, custom-keyword, and code-generation checks still apply. A strict compile failure turns both conditional branches off with `GuardFailed` rather than returning true/false.
+
+Roots with `$id` are registered in isolation; whole roots without an ID use transient copies. A self-contained direct guard does not require registering the root in AJV. Release removes the root registration, compiled results, and direct guards; an unregistered root is a no-op. A pointer that does not locate a schema throws a native error with `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, and `details.root` / `details.pointer`. Check these properties after narrowing the caught value.
+
+## AJV 7/8 dynamic and recursive guard scope {#dynamic-guard-scope}
+
+Prefer static `$ref`, reusable `$defs`, and `if` beneath `properties` when a condition does not need dynamic scope. Dynamic guard equivalence to whole validation requires the same first anchor binding at every relevant entry, a reproducible validation context, and a synchronous selected function.
+
+For a dynamic-vocabulary instance and a root containing dynamic/recursive keys, the adapter prepares an anchor table before compiling a root-pointer guard. The chain is the root plus `$id` resources on the pointer path, outermost first. Each name first binds in the outermost declaring resource. Collection follows schema keywords, not data in `const`, `enum`, `default`, or `examples`, and skips nested resources and the guard's own subtree. Other assertions in those resources are not added to the guard verdict. Draft-07 ignores these dynamic keys and does not apply this table/checking.
+
+An inline reference inside `if` must bind from a chain resource or its lexical ancestor inside the guard. Missing bindings fail compileGuard. Selected `$async: true` declarations are rejected. The following cases limit equivalence or are unsupported:
+
+| Condition                                                                                     | Consequence                                                                                                    |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| One schema location reached through several dynamic scopes                                    | A single guard uses its lexical chain or fails compilation; outside the supported equivalence                  |
+| An off-chain resource binds first, or URI entry skips an on-path resource                     | Whole-validation equivalence is unsupported                                                                    |
+| Binding exists only in a sibling, descendant, or guard-local `$defs`                          | Cannot supply an inline binding                                                                                |
+| `$recursiveAnchor: true` outside a resource root                                              | Does not enter the chain table; a required missing binding is rejected with a suggested correction             |
+| 2019-09 non-root external recursive anchor plus guard-local ancestor anchor                   | Guard and whole validation can differ; unsupported                                                             |
+| Dynamic/recursive ref fragment `#/...`                                                        | Not an anchor name; compileGuard rejects it; use static `$ref` for locations                                   |
+| Current static `$anchor` conflicts with outer dynamic anchor                                  | AJV and guard may use the dynamic table instead of the specification's static handling                         |
+| Custom-keyword subschemas or declarations executed only by `$ref` through guard-local `$defs` | Not recognized in dynamic chain collection                                                                     |
+| Relative ref in an inline anchor of a nested resource                                         | Guard uses that resource's base URI; whole validation may use root base URI                                    |
+| Runtime anchor of an off-chain resource                                                       | Can leak into whole validation but not guard scope; sibling declarations inside a chain resource are collected |
+| A declaration in a chain resource not yet executed by whole validation                        | Guard still collects it; enclosing-function fallback can differ                                                |
+| Whole validation skips a resource with no `$id`                                               | Guard and whole validation can differ                                                                          |
+| AJV does not check dynamic-ref bookending                                                     | Guard follows it; the initial target is not independently guaranteed to be a dynamic anchor                    |
+| Root anchor flag absent at compile time                                                       | Both keep the enclosing compiled-function fallback without a table lookup                                      |
+| DynamicRef does not start with `#`                                                            | Both whole validation and guard fail compilation                                                               |
+| Anchor name is `constructor`, `toString`, `__proto__`, or another Object.prototype collision  | AJV's plain-object table prevents binding                                                                      |
+
+These are adapter conditions, not a claim of arbitrary dynamic-scope equivalence.

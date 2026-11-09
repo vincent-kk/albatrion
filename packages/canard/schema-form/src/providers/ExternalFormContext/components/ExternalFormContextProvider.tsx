@@ -1,16 +1,16 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
+import { useSnapshot } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorVisibility,
   FieldInputDefinition,
   FieldRendererProps,
   FormatError,
-  ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -30,14 +30,11 @@ export interface ExternalFormContextProviderProps {
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
-   * Error display condition (default: ShowError.EditedTouched)
-   *   - `true`: Always show errors
-   *   - `false`: Never show errors
-   *   - `ShowError.Edited`: Show after user input edits the field
-   *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
+   * Live display policy; defaults to AfterEditAndTouch after FormProvider fallback.
+   * Always/Never, AfterEdit/AfterTouch, AfterEditAndTouch/AfterEditOrTouch are string enum values.
+   * Node ErrorVisibility overrides precede the policy, without bypassing presence or OnChange release.
    */
-  showError?: boolean | ShowError;
+  errorVisibility?: ErrorVisibility;
   /**
    * Execute Validation Mode (default: ValidationMode.OnChange | ValidationMode.OnRequest)
    *  - `ValidationMode.None`: Disable validation
@@ -67,7 +64,7 @@ export interface ExternalFormContextProviderProps {
  *     <FormProvider
  *       FormLabelRenderer={CustomLabel}
  *       FormErrorRenderer={CustomError}
- *       showError={ShowError.Touched}
+ *       errorVisibility={ErrorVisibility.AfterTouch}
  *     >
  *       <MyForms />
  *     </FormProvider>
@@ -116,7 +113,7 @@ export interface ExternalFormContextProviderProps {
  *
  * <FormProvider
  *   formatError={formatError}
- *   showError={true}
+ *   errorVisibility={ErrorVisibility.Always}
  * >
  *   <MyForms />
  * </FormProvider>
@@ -126,7 +123,9 @@ export interface ExternalFormContextProviderProps {
  * Custom validation with external validator:
  * ```tsx
  * // A validator object declares both `compile` and `compileGuard`.
- * // Declare it once outside components: changing the reference rebuilds the tree.
+ * // Module scope: create this object once, outside components.
+ * // A new selected reference re-initializes the form; see the validator lifetime contract:
+ * // https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#configuration-lifetime
  * const validatorFactory: ValidatorFactory = {
  *   compile: (copy) => compileWithMyEngine(copy),
  *   compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
@@ -158,7 +157,7 @@ export interface ExternalFormContextProviderProps {
  *
  *   // Error handling
  *   formatError={customFormatError}
- *   showError={ShowError.EditedTouched}
+ *   errorVisibility={ErrorVisibility.AfterEditAndTouch}
  *
  *   // Validation
  *   validationMode={ValidationMode.OnChange}
@@ -188,37 +187,45 @@ export const ExternalFormContextProvider = ({
   FormInputRenderer,
   FormErrorRenderer,
   formatError,
-  showError,
+  errorVisibility,
   validationMode,
   context: inputContext,
   validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
-  const constant = useConstant({
-    fieldInputDefinitions,
-    FieldRenderer,
-    FormLabelRenderer,
-    FormInputRenderer,
-    FormErrorRenderer,
-    formatError,
-  });
+  const fromExternalFieldInputDefinitions = useMemo(
+    () =>
+      fieldInputDefinitions
+        ? normalizeFieldInputDefinitions(fieldInputDefinitions)
+        : undefined,
+    [fieldInputDefinitions],
+  );
   const context = useSnapshot(inputContext);
   const value = useMemo(
     () => ({
-      fromExternalFieldInputDefinitions: constant.fieldInputDefinitions
-        ? normalizeFieldInputDefinitions(constant.fieldInputDefinitions)
-        : undefined,
-      FieldRenderer: constant.FieldRenderer,
-      FormLabelRenderer: constant.FormLabelRenderer,
-      FormInputRenderer: constant.FormInputRenderer,
-      FormErrorRenderer: constant.FormErrorRenderer,
-      formatError: constant.formatError,
-      showError,
+      fromExternalFieldInputDefinitions,
+      FieldRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError,
+      errorVisibility,
       validationMode,
       validatorFactory,
       context,
     }),
-    [constant, showError, validationMode, validatorFactory, context],
+    [
+      fromExternalFieldInputDefinitions,
+      FieldRenderer,
+      FormLabelRenderer,
+      FormInputRenderer,
+      FormErrorRenderer,
+      formatError,
+      errorVisibility,
+      validationMode,
+      validatorFactory,
+      context,
+    ],
   );
   return (
     <ExternalFormContext.Provider value={value}>

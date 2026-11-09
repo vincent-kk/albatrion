@@ -17,12 +17,10 @@ export const createChildren = <
   Value extends AllowedValue = InferValueType<Schema>,
 >(
   children: Optional<FormProps<Schema, Value>['children']>,
-  jsonSchema: Schema,
 ): ReactNode => {
   if (children == null) return null;
   if (typeof children !== 'function') return children;
   return createElement(FormChildrenRenderer<Schema, Value>, {
-    jsonSchema,
     render: children,
   });
 };

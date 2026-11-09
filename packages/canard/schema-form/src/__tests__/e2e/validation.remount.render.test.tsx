@@ -54,12 +54,12 @@ it.each([true, false])(
     );
     await settleValidation(() => ref.current?.node);
     if (visible) {
-      act(() => ref.current!.showError());
+      act(() => ref.current!.revealErrors());
       await advanceValidationFrame();
     }
     act(() => {
       ref.current!.setValue('new');
-      if (!visible) ref.current!.showError();
+      if (!visible) ref.current!.revealErrors();
     });
     expect(view.getByTestId('input-visibility').textContent).toBe(
       String(visible),

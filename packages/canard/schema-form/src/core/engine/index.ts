@@ -39,7 +39,6 @@ export {
 } from './blueprint';
 export {
   compileEntryGuards,
-  EMPTY_GLOBAL_ERRORS,
   readFieldNodeErrors,
   readValidationEntry,
   retainValidationRoot,
@@ -97,4 +96,4 @@ export type {
 export { readFieldNodeRevealPolicy } from './validation';
 export { readFieldNodeRevealVersion } from './validation';
 export { subscribeFieldNodeRevealReleased } from './validation';
-export { commitFieldNodeRevealPolicy } from './validation';
+export { dispatchUpdateSettings } from './write';

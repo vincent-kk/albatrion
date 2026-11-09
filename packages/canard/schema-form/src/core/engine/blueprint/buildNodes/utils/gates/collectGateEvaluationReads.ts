@@ -15,6 +15,7 @@ import { JSON_POINTER_PATH_REGEX } from '../../../utils/expressions/regex';
 export const collectGateEvaluationReads = (
   condition: unknown,
 ): readonly (string | number)[] => {
+  // eslint-disable-next-line no-restricted-syntax -- Per-gate ownership; evaluationReads arrays are compared by reference.
   if (typeof condition !== 'string') return Object.freeze([]);
   const reads: (string | number)[] = [];
   for (const match of condition.matchAll(JSON_POINTER_PATH_REGEX)) {

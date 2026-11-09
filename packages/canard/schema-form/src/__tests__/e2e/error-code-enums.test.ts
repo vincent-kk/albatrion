@@ -18,7 +18,7 @@ describe('root error and warning code enums', () => {
       'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
     );
     expect(FormWarningCode.Misfit).toBe('SCHEMA_FORM_WARNING.MISFIT');
-    expect(Object.keys(FormErrorCode)).toHaveLength(42);
+    expect(Object.keys(FormErrorCode)).toHaveLength(43);
     expect(FormWarningCode.DetachedNodeWrite).toBe(
       'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
     );

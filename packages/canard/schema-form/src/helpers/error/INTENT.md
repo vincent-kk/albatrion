@@ -2,24 +2,20 @@
 
 ## Purpose
 
-개발자 진단 상자의 공유 원소(`createDivider`, `getErrorMessage`)와 사용자 검증 메시지 포맷터(`formatValidationError`)를 제공합니다. 이 셋을 `index.ts`가 이름으로 내보내는 계약으로 둡니다.
-
-## Conventions
-
-- 공유 원소는 개발자 콘솔용 멀티라인 진단 상자에 사용
-- `formatValidationError`는 `FormatError` 타입 시그니처 준수
+개발자 진단 문자열의 공유 원소를 제공하고 입력 판정의 메시지 포맷터를 연결합니다. 개별 오류 도메인의 문구와 보고 정책은 소유하지 않습니다.
 
 ## Boundaries
 
 ### Always do
 
-- 개별 진단 포맷터는 그 소비자 fractal의 `utils/`에 소유
-- `formatValidationError`는 `FormatError` 인터페이스 시그니처를 반드시 준수
+- 개별 진단 포맷터는 그 진단을 소비하는 모듈에 둡니다.
+- 입력 판정의 메시지 선택·치환은 formatValidationError의 계약에 남깁니다.
 
 ### Ask first
 
-- `formatValidationError`의 `FormatError` 시그니처나 진단 박스 형식을 바꿀 때
+- 공유 진단 박스의 표현 계약이나 포맷터의 호출 경계를 바꿀 때.
 
 ### Never do
 
-- 공유 원소와 검증 메시지 포맷터에서 외부 상태 변경
+- 표현 보조에서 외부 상태를 변경하거나 오류를 보고하지 않습니다.
+- 일반 메시지 추출을 임의의 예외를 격리하는 경계로 사용하지 않습니다.

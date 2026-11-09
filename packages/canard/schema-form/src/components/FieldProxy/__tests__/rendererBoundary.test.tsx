@@ -4,6 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldInputProps } from '@/schema-form/types';
 import type { FieldRendererProps } from '@/schema-form/types';
 
@@ -59,7 +60,7 @@ it.each(['renderer', 'formatError'] as const)(
       <Form
         jsonSchema={schema}
         onError={onError}
-        showError
+        errorVisibility={ErrorVisibility.Always}
         errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
         FieldRenderer={Renderer}
         formatError={(_issue, node) => {
@@ -109,7 +110,7 @@ it.each(['renderer', 'formatError'] as const)(
     const view = render(
       <Form
         jsonSchema={schema}
-        showError
+        errorVisibility={ErrorVisibility.Always}
         errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
         FieldRenderer={Renderer}
         formatError={(_issue, node) => {
@@ -192,7 +193,7 @@ it.each(['renderer', 'formatError'] as const)(
         ref={ref}
         onError={onError}
         jsonSchema={schema}
-        showError
+        errorVisibility={ErrorVisibility.Always}
         errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
         FieldRenderer={Renderer}
         formatError={(_issue, node) => {

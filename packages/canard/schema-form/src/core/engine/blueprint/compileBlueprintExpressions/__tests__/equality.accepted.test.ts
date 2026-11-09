@@ -48,7 +48,7 @@ describe('non-executing equality recognition', () => {
           ),
         ).toBe(true);
       }
-      expect(compilerCalls).toBe(155);
+      expect(compilerCalls).toBe(0);
       expect(functions).toHaveBeenCalledTimes(compilerCalls);
       expect(evaluations).not.toHaveBeenCalled();
     } finally {

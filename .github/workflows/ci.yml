@@ -84,6 +84,9 @@ jobs:
           cache-dependency-path: yarn.lock
       - name: Install immutable dependencies
         run: yarn install --immutable
+      - name: Test shared build scripts once
+        if: strategy.job-index == 0
+        run: yarn --cwd . test:build-scripts
       - name: Read Playwright version
         id: playwright
         if: matrix.shard.browser

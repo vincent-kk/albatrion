@@ -443,10 +443,16 @@ InferValueType<{ type: 'array' }>              // any[]
 InferValueType<{ type: 'object' }>             // Record<string, any>
 ```
 
-`object`와 `array`는 `properties`와 `items`가 리터럴일 때 — 즉 스키마를 `as const`로 선언했을 때 — 재귀합니다. `as const`가 없으면 `type`이 `string`으로 넓어져 결과는 `any`입니다.
+`object`와 `array`는 `properties`, 유한한 `prefixItems` 튜플, `items`가 리터럴일 때 — 즉 스키마를 `as const`로 선언했을 때 — 재귀합니다. `as const`가 없으면 `type`이 `string`으로 넓어져 결과는 `any`입니다.
 
 ```typescript
 InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
+
+InferValueType<{
+  type: 'array';
+  prefixItems: readonly [{ type: 'string' }, { type: 'number' }];
+  items: false;
+}>; // [string?, number?]
 
 InferValueType<{
   type: 'object';
@@ -461,7 +467,9 @@ InferValueType<{
 - **`required`에 있는 키를 포함해 모든 키가 optional입니다.** 스키마가 기술하는 값은 런타임에 키를 생략할 수 있으므로, 여기서 필수로 표시하는 것은 이 타입이 지킬 수 없는 약속입니다. 정확한 형태가 필요하면 직접 정의하세요.
 - **스키마가 `additionalProperties: false`를 지정하지 않는 한 `Record<string, any>`와 교차합니다.** 열린 상태가 JSON Schema의 기본값이고, 이 덕분에 이 타입이 모델링하지 않는 applicator (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`)가 기여하는 키가 초과 속성으로 거부되지 않습니다.
 
-모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JSONSchema>`)는 `Record<string, any>`, `['string', 'number']` 같은 다중 타입은 `any`, `items: false`는 `any[]`가 됩니다.
+길이가 유한한 리터럴 `prefixItems`는 모든 위치가 optional인 가변 튜플로 추론됩니다. `prefixItems`는 최소 길이를 정하지 않으므로 `minItems`는 사용하지 않습니다. `items: false`는 튜플을 닫고, `items`를 생략하거나 `true`로 두면 `...any[]`가 붙으며, `items` 스키마는 접두부 뒤의 위치만 지정합니다(`...boolean[]`). 이는 `any[]`보다 좁은 형이고, 형이 지정된 `items`가 더 이상 접두부 위치의 형을 정하지 않으므로, 자유로운 위치·초과 항목·rest 형으로 취급한 접두부 위치에 의존하던 코드는 컴파일되지 않을 수 있습니다. 넓어졌거나 리터럴이 아닌 `prefixItems`, `additionalItems`를 쓰는 구식 `items` 배열은 기존 `items` 추론을 유지합니다.
+
+모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JSONSchema>`)는 `Record<string, any>`, 유한한 `prefixItems`가 없는 `items: false`는 `any[]`가 됩니다. `['string', 'number']` 같은 다중 타입은 `string | number`가 됩니다.
 
 ### 공통 BasicSchema 필드
 

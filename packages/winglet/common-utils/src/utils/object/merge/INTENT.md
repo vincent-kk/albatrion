@@ -2,31 +2,41 @@
 
 ## Purpose
 
-Own recursive object merging and the explicit policies that select mutation, reference retention, arrays, and opaque values.
+객체 병합과 변이·참조·배열·불투명 값의 선택 정책을 소유합니다.
+
+원자 판정은 호출자가 소유하며 범용 병합은 렌더러의 객체를 판별하지 않습니다.
+불투명한 요소·ref 내부를 설정으로 읽어 런타임 상태를 순회하는 일을 막습니다.
+
+immutable은 입력 그릇을 지키지만 반환한 모든 자식의 독립 소유를 뜻하지 않습니다.
+참조 보존은 의도적인 공유이므로 deep clone으로 해석하지 않습니다.
 
 ## Conventions
 
-- The public merge function dispatches once and contains no recursive merging logic.
-- Default and option-aware recursion are separate internal functions; neither calls the public wrapper.
-- Preserve the optionless API's behavior and keep renderer-specific atomic knowledge in the supplied predicate.
+- 공개 래퍼는 정책을 한 번 선택하며 재귀 구현을 두지 않습니다.
+- 기본 재귀와 옵션 재귀는 나누고 공개 래퍼로 재진입하지 않습니다.
+- 옵션 없는 호출의 의미를 유지하며 렌더러의 원자 지식은 주입된 판정 함수에 둡니다.
 
 ## Boundaries
 
 ### Always do
 
-- Expose the merge function and its option type through the named entry point.
-- Keep recursion, helpers, and verification inside this module.
-- Use ancestor-owned data-property primitives for the option-aware path.
-- Describe mutation and returned-reference guarantees for each policy.
+- 함수와 옵션 형은 이름을 명시한 진입점으로 노출합니다.
+- 재귀·도우미·검증은 이 모듈 안에 둡니다.
+- 옵션 경로는 조상 소유의 안전한 데이터 속성 프리미티브를 사용합니다.
+- 정책별 변이·반환 참조의 보장을 기술합니다.
+- 재귀 중 배열 정책을 고정하여 옵션 접근자가 병합 도중 정책을 바꾸지 않게 합니다.
+- 기본 재귀에는 옵션 검사를 넣지 않아 자주 쓰는 경로의 비용을 유지합니다.
+- 성능은 실제 배포 빌드로 판단합니다. 벤치 전용 변환은 가져오기 비용을 왜곡할 수 있습니다.
+- 범용 그릇 병합과 호출자의 스키마 합성 순서를 구분합니다.
 
 ### Ask first
 
-- Change the optionless merge contract or reserved-key policy.
-- Add schema-specific behavior or a runtime dependency.
+- 옵션 없는 병합 계약이나 예약 키 정책의 변경
+- 스키마 전용 동작이나 런타임 의존성의 추가
 
 ### Never do
 
-- Put recursion or policy implementation in the public wrapper or entry point.
-- Re-enter the wrapper from a recursive implementation.
-- Import through the ancestor object barrel, which re-exports this module.
-- Mutate source containers during either merge mode.
+- 공개 래퍼나 진입점에 재귀·정책 구현을 두는 일
+- 재귀 구현에서 공개 래퍼로 재진입하는 일
+- 이 모듈을 재수출하는 조상 object 배럴을 통한 가져오기
+- 어느 병합 모드에서든 source 그릇을 변이하는 일

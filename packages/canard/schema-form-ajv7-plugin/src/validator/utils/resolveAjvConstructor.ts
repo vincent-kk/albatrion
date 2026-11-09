@@ -1,4 +1,4 @@
-import type Ajv from 'ajv';
+import type { AjvInstance as Ajv } from '../types/AjvInstance';
 import type { Options } from 'ajv';
 
 type AjvConstructor = new (options?: Options) => Ajv;

@@ -30,6 +30,7 @@ export async function measureRenderUpdates(
   return {
     'update-sync': sync,
     'update-settled': settled,
+    'update-post-sync': settled - sync,
     'update-idle-floor': idle,
     'update-settled-net': settled - idle,
   };

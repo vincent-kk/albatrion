@@ -10,7 +10,6 @@ export { assertValidationRootReady } from './utils/run/assertValidationRootReady
 export { routeValidationIssues } from './utils/route/routeValidationIssues';
 export { retainEqualValidationIssues } from './utils/route/retainEqualValidationIssues';
 export { updateFieldNodeGlobalErrors } from './utils/route/updateFieldNodeGlobalErrors';
-export { EMPTY_GLOBAL_ERRORS } from './utils/route/constants';
 export { readFieldNodeErrors } from './utils/read/readFieldNodeErrors';
 export { hasFieldNodeValidationRequest } from './utils/read/hasFieldNodeValidationRequest';
 export { retainValidationRoot } from './utils/lifetime/retainValidationRoot';
@@ -23,5 +22,7 @@ export { readFieldNodeRevealBaseline } from './utils/read/readFieldNodeRevealBas
 export { readFieldNodeRevealPolicy } from './utils/read/readFieldNodeRevealPolicy';
 export { readFieldNodeRevealVersion } from './utils/read/readFieldNodeRevealVersion';
 export { subscribeFieldNodeRevealReleased } from './utils/read/subscribeFieldNodeRevealReleased';
-export { commitFieldNodeRevealPolicy } from './utils/lifetime/commitFieldNodeRevealPolicy';
 export { releaseFieldNodeRevealHistory } from './utils/lifetime/releaseFieldNodeRevealHistory';
+export { transitionFieldNodeValidation } from './utils/lifetime/transitionFieldNodeValidation';
+export { isFieldNodeValidationCurrent } from './utils/read/isFieldNodeValidationCurrent';
+export { isFieldNodeValidationLifetimeCurrent } from './utils/read/isFieldNodeValidationLifetimeCurrent';

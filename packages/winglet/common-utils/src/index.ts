@@ -1,6 +1,8 @@
 export type { MergeOptions } from './utils/object';
 
 export {
+  EMPTY_ARRAY,
+  EMPTY_OBJECT,
   VOID_FUNCTION,
   NULL_FUNCTION,
   FALSE_FUNCTION,

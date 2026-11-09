@@ -16,9 +16,8 @@
     "agentsAssetsSync": "yarn workspace @slats/agents-assets-sync",
     "benchmark": "yarn workspace @aileron/benchmark",
     "benchmark:form": "yarn workspace @aileron/benchmark-form",
-    "build:all": "yarn run:all build",
+    "build:all": "yarn --cwd . test:build-scripts && yarn --cwd . run:all build",
     "changeset": "changeset",
-    "changeset:publish": "yarn run:all && changeset publish",
     "changeset:version": "changeset version",
     "commonUtils": "yarn workspace @winglet/common-utils",
     "dataLoader": "yarn workspace @winglet/data-loader",
@@ -54,6 +53,7 @@
     "styleUtils": "yarn workspace @winglet/style-utils",
     "sync:docs": "yarn workspace @albatrion/documents sync-api-docs",
     "tag:packages": "./scripts/tag-packages.sh",
+    "test:build-scripts": "node --test --test-reporter=tap packages/aileron/script/build/__tests__/*.test.mjs",
     "testbed:production": "yarn workspace @aileron/production-testbed"
   },
   "resolutions": {

@@ -1,23 +1,30 @@
-# loadFieldNodeAtMount
+# loadFieldNodeAtMount — 최초 로드 경계
 
 ## Purpose
 
-Own first-mount input and snapshots, the ungated single-assembly loader, and the separately proven fixed-structure conditional route through ordinary settlement (SETTLE-001·003·017).
+최초 마운트의 입력·스냅숏·빠른 경로 자격을 소유하고 완성된 트리의 커밋을 일반 정착과 같은 의미로 확정합니다.
 
 ## Conventions
 
-- 범용 정착의 값 선택·커밋·배달 순서를 유지하며 자격을 증명하지 못한 입력은 부모의 쓰기 통로로 보낸다(89C-01·02).
+- 무게이트 단일 조립 로더와 조건부 fixed-first 경로의 증명을 구별합니다.
+- 자격을 증명하지 못하면 노드 변경과 커밋 예약 전에 일반 로드로 보냅니다.
+- 로드의 채움·에지·실패 의미는 부모 settle의 계약을 소비합니다.
 
 ## Boundaries
 
 ### Always do
 
-- 노드 변경과 커밋 번호 예약 전에 정적 자격을 판정하고, 전체 revision을 확정한 뒤 예약된 순서로 배달하게 한다(89C-04·05, EVENT-005·007).
+- 자격 확정 뒤 커밋 번호 하나만 예약하고 전체 리비전 확정 뒤 배달합니다.
+- 호출 소유 준비물은 정상·예외 종료 모두 해제합니다.
+- 입력 스냅숏과 최종 출력 기준의 수명을 구별합니다.
 
 ### Ask first
 
-- 정적 자격, 기본값 우선순위나 최초 커밋·배달 시점을 바꾸려는 경우.
+- 정적·조건부 자격, 기본값 우선순위 또는 최초 관측 시점을 바꾸려는 경우.
+- 지원하지 않는 검증 모드에서 준비 경로를 사용하려는 경우.
 
 ### Never do
 
-- 일반 쓰기·폼 reset의 소유권을 가져오거나, 루트 조립 중 리스너·보고기를 동기로 호출하지 않는다.
+- 최초 로드 최적화에 일반 쓰기·폼 reset의 소유권을 가져오지 않습니다.
+- 실행이 시작된 로드를 실패 뒤 다른 경로로 재시도하지 않습니다.
+- 루트 조립 도중 리스너·보고기를 호출하거나 verifier를 생략하지 않습니다.

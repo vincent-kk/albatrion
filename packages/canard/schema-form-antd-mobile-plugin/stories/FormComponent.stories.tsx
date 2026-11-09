@@ -1,3 +1,4 @@
+import { ErrorVisibility } from '@canard/schema-form';
 import {
   Form,
   FormProvider,
@@ -173,7 +174,7 @@ export const FormErrorComponent = () => {
       FormErrorRenderer={FormError}
       fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={jsonSchema} showError>
+      <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
         <Form.Error path="username" />
       </Form>
     </FormProvider>
@@ -186,7 +187,7 @@ export const FormInputComponent = () => {
       FormInputRenderer={FormInput}
       fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={jsonSchema} showError>
+      <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
         <Form.Input path="username" />
       </Form>
     </FormProvider>
@@ -199,7 +200,7 @@ export const FormLabelComponent = () => {
       FormLabelRenderer={FormLabel}
       fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={jsonSchema} showError>
+      <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
         <Form.Label path="username" />
       </Form>
     </FormProvider>
@@ -212,7 +213,11 @@ export const FormGroupComponent = () => {
       FieldRenderer={FormGroup}
       fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={bigSchema} showError context={{}} />
+      <Form
+        jsonSchema={bigSchema}
+        errorVisibility={ErrorVisibility.Always}
+        context={{}}
+      />
     </FormProvider>
   );
 };

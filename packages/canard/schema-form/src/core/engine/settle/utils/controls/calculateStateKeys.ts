@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { Optional } from '@aileron/declare';
 
@@ -14,9 +15,6 @@ import type { ChildControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
-
-/** Frozen result reused when no expression fails. */
-const NO_FAILURES: readonly [] = Object.freeze([]);
 
 /** Each state key has its own identity and order-independent combination. */
 const STATE_KEYS = {
@@ -159,5 +157,5 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
       }
     entries.push({ node, ...next });
   }
-  return { entries, failures: failures ?? NO_FAILURES };
+  return { entries, failures: failures ?? EMPTY_ARRAY };
 };

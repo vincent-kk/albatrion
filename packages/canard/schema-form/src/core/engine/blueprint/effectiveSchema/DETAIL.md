@@ -2,69 +2,74 @@
 
 ## Requirements
 
-- 쓰기 시 선언 선택은 선언별 게이트·역할을 한 순회에서 읽고 마지막 정렬의 기존 전순서를 유지합니다. 임시 배열은 선택 결과만 보유하며 추가 상주 색인을 만들지 않습니다.
-
-- 생산자 소유 값 membership은 공통 ownedSchemaValues 값 메모에 유지한다. D3b-2에서 기본 유효 스키마와 기본 병합 메모는 host 레코드의 defaultEffectiveSchema·effectiveSchemaMemo 슬롯으로 옮기고 실제 모드 변경 때 재생성한다. 소유 builder는 이 모듈에 남고 명시 caller-owned WeakMap 인수·모드/원자성 분리는 그대로 유지한다(SURFACE-063·065).
-
-활성 선언의 전순서를 따라 유효 스키마를 병합하고 소유 값의 보호와 메모 참조를 보존한다.
+유효 스키마는 렌더링 힌트이며 검증기에 넘기는 스키마가 아닙니다. 작성 값과 기존 결과를 변경하지 않고, 활성 선언의 의미가 같은 동안 참조를 재사용합니다. 새 객체를 매번 만들면 값 변화가 없어도 입력 해석과 통지가 반복됩니다.
 
 ## API Contracts
 
-- 진입점은 병합과 선언 선택 계약을 이름으로 내보낸다. buildNodes는 증명된 무조건 정규화 결과를 공통 host 레코드의 기본 유효 스키마 슬롯에 넣고 병합 소유자는 같은 슬롯을 읽는다. 저장소를 WeakMap API로 노출하지 않는다.
-
-- 유효 스키마 병합은 활성 선언을 전순서로 받아 결과 기록 `EffectiveSchema { schema, typeConflict }`를 돌려준다. 정적 모드에서 둘 이상의 기여를 교차한 결과가 공집합이면 경로가 있는 JSONSchemaError다. 선언 하나 안에서 범위가 뒤집힌 경우와 리터럴 `enum: []`은 검증기 몫이므로 그대로 둔다. 런타임에서 enum·const가 공집합이 되면 enum 빈 배열로 표시하고, 충돌한 const는 제거한다. 형 교집합이 비면 enum 빈 배열을 적지 않고 `typeConflict`로 드러내며, 형과 nullable은 정적 선언대로 남긴다(BLUEPRINT-041). 이를 정착 오류로 던지는 일은 후속 정착 계약의 몫이다. 서로 다른 키워드 사이의 모순은 판정하지 않는다.
-
-- options와 presentation은 주입된 원자 판정과 common-utils merge의 선택 인자로 병합한다. 한쪽에만 있는 값은 참조를 옮기고, 양쪽이 plain object이면 쓸 때 복사하며, 배열은 교체하고, 뒤쪽의 undefined는 앞쪽 값을 지우지 않는다. 활성 집합이 같으면 결과 기록 참조도 같다.
-
-- 유효 스키마 메모는 노드, 활성 선언 집합, 정적·런타임 모드, 원자 판정 함수의 동일성을 구분한다. 기본 메모는 노드를 약한 키로 보관하며, 호출자가 별도 메모를 제공할 수 있다. 런타임 결과를 정적 검사에 재사용해서 오류를 건너뛰는 일은 없다.
-
-- 유효 형이 좁혀지지 않으면 schemaType의 스칼라 값 또는 배열 참조를 그대로 쓴다. 게이트로 좁혀진 비어 있지 않은 형 목록은 동결 배열이며, number에서 integer로 좁혀진 E41도 `['integer']`다(BLUEPRINT-045, WRITE-099).
-
-- 서로 다른 pattern이 있으면 첫 번째는 pattern에 남기고, 나머지는 allOf의 개별 pattern으로 보존한다. required는 연언에서 합집합이 되고, 주석은 나중 값이 이긴다. 값과 동작 규칙은 합치지 않고 선언별로 보존한다.
+반환의 schema와 typeConflict를 구별합니다. 게이트 판정·활성 집합 선택·형 충돌의 실행 처분은 [settle](../../settle/DETAIL.md)이 소유하며, 이 모듈은 전달받은 활성 ID로 기여를 선택하고 합칩니다. 키워드별 잎 교차의 동등 판정은 [schemaIntersection](../../../../helpers/schemaIntersection/DETAIL.md)을 따릅니다.
 
 ## Acceptance Criteria
 
-### schema-merge-mount — 정규화 재사용의 노드 관측과 병합 수
+### SCHEMA-044 — 존재와 힌트 기여를 구별합니다
 
-- 기존 런타임 병합을 강제한 대조군과, 마운트 및 후속 쓰기의 트리, 값, 유효 스키마, 리비전, 경고, 통지를 비교한다. 마운트마다 실제 정적·런타임 병합을 따로 세고, 적격 선언에서 런타임 재병합이 없어졌는지 확인한다.
+게이트 없는 oneOf·anyOf는 존재만 더합니다. 연언 선언은 함께 기여하지만 선언 문맥의 선언은 활성 선언 중 유일한 소유 선언일 때만 그 선언 자체를 사용하고, 그 안의 then overlay는 교차하지 않습니다. 여러 분기의 const를 교차하거나 값과 무관한 분기의 title·입력·options를 고르면 검증기보다 좁거나 엉뚱한 힌트를 만들기 때문입니다. 전략 판정도 이 선택 원칙을 공유합니다. 분기 자체의 active·판별 게이트가 없으면 if와 else: false가 있어도 선언 문맥입니다. if는 then·else의 게이트이며 형제 properties 전체를 끄는 게이트로 승격하지 않습니다.
 
+### SCHEMA-007 — 병합은 같은 전순서를 사용합니다
 
-### type-gated-declarations — 게이트와 선언 문맥
+선택한 기여는 [buildNodes의 FRAGMENT-049](../buildNodes/DETAIL.md)의 전순서를 따릅니다. 연언 제약은 키워드별 교차, 주석·표현 힌트는 나중 값 우선입니다. required는 연언 기여의 합집합이며 pattern은 첫 문자열과 나머지 allOf 절로 보존합니다. 정규식 하나로 합치면 검색 위치·캡처·역참조의 뜻이 달라지므로 하지 않습니다. required의 표시·배달은 settle이 소유하고 이를 자식 생성 명령으로 쓰지 않습니다.
 
-- BLUEPRINT-045 E25–E27·E40–E42와 WRITE-099 보충을 만족한다. E26에서 좁혀지지 않은 유효 목록은 배열이 아니라 scalar schemaType 그 값이다. 정적 선언이 없는 이름을 무게이트 분기 fold가 선언해서 생기는 충돌을 검증한다.
+### SCHEMA-039 — 힌트 그룹은 쓰기 시 복사합니다
 
+options·presentation은 비원자 plain object가 양쪽 같은 키에 있을 때만 새 객체로 깊이 병합합니다. 한쪽 값은 참조를 빌리고, 배열·원자·함수·원시값은 나중 것으로 교체하며 undefined는 앞 값을 지우지 않습니다. 원자 판정은 주입받아 React 요소·ref의 의미를 코어가 소유하지 않게 합니다. options.virtual은 힌트가 아니라 자식 선언이므로 병합에서 제외합니다. 생성한 봉투와 새로 병합한 중첩 객체만 보호하고 빌린 작성 값 내부는 동결하지 않습니다.
 
-### fragment-declarations — 조각과 공유
+### SCHEMA-012 — 규칙은 하나의 합성 값으로 병합하지 않습니다
 
-- 선언·연언 문맥, 모든 키워드의 전순서, 노드 공유, 상속 overlay 귀속, 가상 fields 순서 일치를 검증한다.
+derived·injectTo·unsetValue·resetInteraction·fields·unsetOnInactive·inactiveValue는 원 선언에 남겨 대상과 층을 보존합니다. 조각 controls를 호스트의 controls에 합치면 자식 범위 규칙이 호스트 자신에게 걸립니다. node 범위의 default·watch만 단일 힌트로 나중 값을 보존하며, 의존 경로의 정적 합집합은 [compileBlueprintExpressions](../compileBlueprintExpressions/DETAIL.md)가 소유합니다. 규칙 승자와 정책 계산을 이 병합의 덮어쓰기로 대체하지 않습니다.
 
+### BLUEPRINT-016 — 정적 교차 실패와 값의 기각을 구별합니다
 
-### effective-schema — 병합과 참조
+정적 연언에서 둘 이상의 기여를 같은 키워드에 교차해 생기는 enum·const 공집합과 범위 역전은 작성 위치를 가진 청사진 오류입니다. 한 기여의 enum: [] 또는 역전 범위는 입력 스키마 자체이므로 그대로 둡니다. 범위 쌍은 앞과 현재 기여에 각각 경계가 있고 합친 결과가 역전할 때만 검사하며 서로 다른 키워드 사이의 모순은 풀지 않습니다. 일반 힌트의 교차와 판별 태그 수집의 예외는 buildNodes의 FRAGMENT-048로 구별합니다.
 
-- SCHEMA 병합표, 정적 오류와 런타임 공집합 표현, pattern 보존, 불변성, 같은 활성 집합의 참조 동일성을 검증한다.
+### SCHEMA-045 — 런타임 제약 공집합을 표현합니다
 
+런타임 enum 교차의 공집합은 enum: [], const 충돌은 const를 제거하고 enum: []로 표현합니다. 범위 역전은 합친 경계 그대로 남기며 const와 enum 사이 같은 교차 키워드 모순은 판정하지 않습니다. 선택지가 없더라도 값을 비우면 유효할 수 있으므로 제약 공집합만으로 폼 전체를 중단하지 않습니다.
 
-### unconditional-effective-schema — 무조건 선언의 정규화 재사용
+### BLUEPRINT-040 — 정적 형 정체성과 유효 목록을 구별합니다
 
-- 빠른 경로는 기존 병합과 같은 유효 스키마, 불변성, 참조를 보존한다. 형 교차, nullable, pattern, 원자 판정, 수집기, 선언 전순서가 필요한 경우는 기존 병합으로 처리하며, 경고의 내용과 순서를 유지한다.
-- 일회성 정적 정규화도 같은 선택 순서와 병합 정책을 사용한다. 59개 HEAD 스키마와 89C-03 차등에서 정적 오류, 경고, 필드, 공개 schema의 동결을 보존한다.
-- 증명된 단일 정적 기여를 직접 구성해도 모든 노드의 HEAD 유효 스키마와 키 순서가 같으며, 줄어드는 것은 범용 제약 순회 횟수뿐이다. invalid, multiple, gated, collect, isAtomic 경로의 검증·진단과 기존 메모 참조 조건은 유지한다.
+schemaType·nullable은 정적 정체성이며, 유효 schema.type은 그 정적 허용 집합에 선택된 type을 교차한 결과를 직렬화합니다. 추론한 형도 유효 type에 나타납니다. 좁혀지지 않으면 정적 scalar 또는 배열 참조를 재사용하고, 좁혀진 비어 있지 않은 목록은 동결 배열입니다. number에서 integer로 좁혀진 경우도 ['integer']입니다. null만 남으면 type은 null입니다. 형 교집합이 비면 enum 공집합으로 위장하지 않고 typeConflict를 반환하며 정적 type·nullable을 보존하여 실행 소유자가 충돌을 처리하게 합니다.
 
+### BLUEPRINT-021 — 메모는 검사 정책을 분리합니다
+
+노드·선택된 선언 집합·static/runtime 모드·원자 판정 함수 identity가 같은 결과를 공유합니다. 런타임 메모를 정적 검사에 사용하면 오류가 사라지므로 모드를 섞지 않습니다. 기본 메모와 정적 정규화 결과는 엔진의 약한 host 파생 기록에 두며 builder는 이 모듈이 소유합니다. 저장과 모드 초기화 경계는 [engine](../../DETAIL.md)이 맡고, 호출자 소유 메모도 같은 정책 분리를 지킵니다.
+
+### schema-merge-mount — 정규화 재사용의 관측 조건
+
+정적 정규화를 런타임에서 재사용해도 트리·값·유효 스키마·리비전·경고·통지는 일반 병합과 같습니다. 비용을 옮기는 일이 분석 오류나 후속 변경을 생략하는 일이 되어서는 안 됩니다.
+
+### type-gated-declarations — 게이트 형 좁힘
+
+게이트는 정적 노드 종류를 바꾸지 않습니다. 형 충돌과 제약 공집합을 구별하고, 실제로 좁혀지지 않은 목록은 같은 정적 참조를 유지합니다.
+
+### fragment-declarations — 호스트와 문맥 보존
+
+같은 참조라도 host overlay의 귀속·연언과 선언 문맥·전순서를 유지하며, 가상 fields 순서는 고정 튜플의 신원으로 취급합니다.
+
+### effective-schema — 불변 힌트의 참조
+
+같은 선택과 정책의 결과는 같은 참조이며, 작성 객체는 병합과 보호 과정에서 변형되지 않습니다. SCHEMA-007·039·045의 제한을 함께 지킵니다.
+
+### unconditional-effective-schema — 증명된 정규화만 재사용합니다
+
+무조건 단일 node 연언의 정규화는 같은 정책일 때 재사용할 수 있습니다. nullable·형 배열·pattern·원자 판정·진단 수집처럼 증명이 다루지 못하는 경로는 일반 병합과 검사를 사용합니다. 선택된 기여와 키 순서·진단·공개 값 보호가 달라지지 않아야 합니다. 선택·병합은 선언 수와 실제 기여 크기에 비례하며, 새 상주 색인이나 라이브 상태를 추가하지 않습니다.
 
 ## Boundary Exemptions
 
-### `utils/merge/` — 병합 함수 유지
+### `utils/merge/` — 병합 구현의 소유
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: `mergeEffectiveSchema`, `mergeSchemaContributions`, `selectEffectiveDeclarations`는 이름으로 진입점에 올라 blueprint 진입점과 `buildNodes`가 쓴다. 이 fractal은 뿌리에 구현 파일을 두지 않으므로 병합 구현은 `utils/merge/` 칸에 두고 진입점이 이름으로 내보낸다.
-
-### `constants/defaults.ts` — 기본 메모 유지
-
-- **Consumers**: `entry-point`
-- **Direct import**: `not allowed`
-- **Reason**: `DEFAULT_NO_ACTIVE`는 이름으로 진입점에 올라 `buildNodes`가 미리 채운다. 값은 구현이 아니라 공유 메모이므로 상수 칸에 두고 진입점이 이름으로 내보낸다.
+- **Reason**: 부모와 buildNodes가 같은 선언 선택·병합 계약을 사용하도록 구현은 이 모듈이 소유하고 진입점이 이름으로 제공합니다.
 
 ## Last Updated
 
-정돈-3 blueprint 재구성(2026-10-15)
+선언 선택·교차 표현·힌트 소유권·메모 정책·정규화 자격이 바뀔 때 갱신합니다.

@@ -1,4 +1,4 @@
-export { ShowError } from './error/error';
+export { ErrorVisibility } from './error/error';
 export type {
   ValidatorFactory,
   ValidateFunction,

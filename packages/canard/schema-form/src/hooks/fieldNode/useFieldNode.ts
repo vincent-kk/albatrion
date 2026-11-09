@@ -11,6 +11,7 @@ import { subscribeFieldNodePath } from '../utils/fieldNodePath/subscribeFieldNod
 
 /**
  * Resolve node inputs directly and follow the structure traversed by path inputs.
+ * Path subscriptions check the snapshot on every attach, including Activity reconnects.
  * @param input - Node object or path string
  * @returns Found node or null
  */
@@ -26,7 +27,9 @@ export const useFieldNode = (
   const subscribe = useCallback(
     (onStoreChange: () => void) => {
       if (fixed || typeof input !== 'string') return NOOP_FUNCTION;
-      return subscribeFieldNodePath(rootNode, input, onStoreChange);
+      const release = subscribeFieldNodePath(rootNode, input, onStoreChange);
+      onStoreChange();
+      return release;
     },
     [fixed, input, rootNode],
   );
