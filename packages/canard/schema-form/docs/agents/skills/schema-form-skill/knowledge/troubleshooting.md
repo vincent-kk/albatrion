@@ -4,7 +4,7 @@ Symptom → cause → fix, grouped by subsystem.
 
 ## Plugins
 
-**UI renders wrong or plain** — plugins registered in the wrong order or too late. Register UI plugin first, then validator, both before the first `<Form>` render (`plugin-system.md`).
+**UI renders wrong or plain** — check whether registration happened after mounting or another plugin supplies the same slot. Follow the [registration and conflict rules](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/quick-start#registration-rules).
 
 ## fieldInputMap
 

@@ -14,7 +14,7 @@ const codeSchema = {
 export const errorVisibilityScenario: FormScenario = {
   name: "validation-state.error-visibility",
   description:
-    "ErrorVisibility policies gate only the display of issues the node already holds: Always, Never, Edited after input, Touched after blur (GOAL-061 defers touched to blur), and EditedTouched after both; /tag is focused and left without input, which separates Touched from EditedTouched; the handle errorVisibility overrides the policy. Cases come from errorVisibilityCases.",
+    "ErrorVisibility policies gate only the display of issues the node already holds: Always, Never, AfterEdit after input, AfterTouch after blur (GOAL-061 defers touched to blur), AfterEditAndTouch after both, and AfterEditOrTouch after either; /tag is focused and left without input, which separates AfterTouch from AfterEditAndTouch; the handle errorVisibility overrides the policy. Cases come from errorVisibilityCases.",
   schema: codeSchema,
   initialValue: { code: "abc", tag: "abc" },
   steps: [
@@ -42,7 +42,7 @@ export interface ErrorVisibilityCase {
   readonly afterInput: boolean;
   /** Message drawn after focus leaves /code. */
   readonly afterBlur: boolean;
-  /** Message under /tag after focus leaves it without input, which separates Touched from EditedTouched. */
+  /** Message under /tag after focus leaves it without input, which separates AfterTouch from AfterEditAndTouch. */
   readonly afterTouchOnly: boolean;
 }
 

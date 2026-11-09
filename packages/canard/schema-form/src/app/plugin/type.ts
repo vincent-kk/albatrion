@@ -138,7 +138,7 @@ export interface SchemaFormPlugin {
  * through the root pointer, so a code-generation error elsewhere in the root (for
  * example an unresolved `$ref`) also fails guards whose condition is self-contained;
  * the published plugins compile self-contained conditions directly and keep that
- * shared failure to root-pointer guards (IR-10 R2, R3), so use a published plugin
+ * shared failure to root-pointer guards, so use a published plugin
  * for the full contract:
  * ```typescript
  * import Ajv from 'ajv';
@@ -161,7 +161,7 @@ export interface SchemaFormPlugin {
  * const directPlugin: ValidatorPlugin = {
  *   compile: (jsonSchema) => {
  *     const ajv = instanceOf(jsonSchema);
- *     // Well-formedness is checked only here; guards compile without it (IR-10).
+ *     // Well-formedness is checked only here; guards compile without it.
  *     if (!ajv.validateSchema(jsonSchema)) throw new Error(ajv.errorsText(ajv.errors));
  *     const validate = ajv.getSchema(ROOT_KEY)!;
  *     return (value) => {

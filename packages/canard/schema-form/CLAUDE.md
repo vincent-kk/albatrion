@@ -13,6 +13,8 @@
 
 ## Commands
 
+Before local `build` or `typecheck`, rebuild workspace dependencies, including `yarn workspace @winglet/json-schema build` after `@winglet/common-utils` and `@winglet/json`; CI builds the dependency closure first via `scripts/ci/helpers/plan/createBuildSteps.mjs`.
+
 이 명령은 `packages/canard/schema-form`에서 실행합니다. 저장소 루트에서는 `yarn workspace @canard/schema-form <command>`를 사용합니다.
 
 ```bash
@@ -70,7 +72,7 @@ User-injected render surfaces (FieldRenderer/FieldInput and virtualization Place
 - `Form.Render` — JSONPointer 경로로 커스텀 레이아웃
 - `registerPlugin()` — 플러그인 전역 등록 (렌더 전 필수)
 - `node.find('/path')` — JSONPointer 노드 탐색 (`..` 부모, `*` 와일드카드는 제한적 사용)
-- `node.value` / `node.enhancedValue` (가상 필드 포함)
+- `node.value` — read a virtual group tuple through `FormHandle.findNode('/period')`, narrow with `isVirtualNode`, then read its `value`; see [virtual schema](docs/agents/skills/schema-form-skill/knowledge/virtual-schema.md).
 - `node.outputValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useFieldNodeSubscribe`의 `onSubscribe` catch-up 사용
