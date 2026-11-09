@@ -39,7 +39,7 @@ it('reads protocols from presentation.FieldInputProps', async () => {
   expect(onChange).toHaveBeenLastCalledWith({ link: 'ftp://a' });
 });
 
-it('rejects protocols under options as UNKNOWN_GROUP_KEY', () => {
+it('accepts protocols under options without a schema error', () => {
   window.addEventListener('error', preventWindowError);
   const onError = vi.fn();
   render(
@@ -58,11 +58,8 @@ it('rejects protocols under options as UNKNOWN_GROUP_KEY', () => {
       }}
     />,
   );
-  expect(onError).toHaveBeenCalledWith(
-    expect.objectContaining({
-      code: 'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY',
-      details: expect.objectContaining({ group: 'options', key: 'protocols' }),
-    }),
-  );
-  expect(screen.getByRole('alert').textContent).toBe('Unable to load form.');
+  expect(onError).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alert')).toBeNull();
+  expect(screen.queryByText('ftp://')).toBeNull();
+  expect(screen.getByText('http://')).toBeTruthy();
 });

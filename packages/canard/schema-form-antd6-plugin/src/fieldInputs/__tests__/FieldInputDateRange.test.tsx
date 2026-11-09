@@ -73,7 +73,7 @@ it('reads minimum and maximum from presentation.FieldInputProps', () => {
   expect(disabledDate(dayjs('2024-01-21', FORMAT), info)).toBe(true);
 });
 
-it('rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
+it('accepts minimum under options without a schema error', () => {
   window.addEventListener('error', preventWindowError);
   const onError = vi.fn();
   render(
@@ -93,11 +93,6 @@ it('rejects minimum under options as UNKNOWN_GROUP_KEY', () => {
       }}
     />,
   );
-  expect(onError).toHaveBeenCalledWith(
-    expect.objectContaining({
-      code: 'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY',
-      details: expect.objectContaining({ group: 'options', key: 'minimum' }),
-    }),
-  );
-  expect(screen.getByRole('alert').textContent).toBe('Unable to load form.');
+  expect(onError).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alert')).toBeNull();
 });
