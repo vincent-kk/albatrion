@@ -13,7 +13,23 @@ sidebar_position: 4
 
 Keep standard JSON Schema constraints at their standard locations. Put renderer payload in `presentation`, reactive policies in `controls`, and engine options in `options`. `controls` is a closed executable namespace: unknown node, child, and fragment control keys fail with `FormErrorCode.UnknownGroupKey` so typos cannot silently change visibility, value clearing, or derivation, and future control names remain reserved. `options` and `presentation` are open: unknown option keys produce no error or warning and remain available through the node schema to a FieldInput or plugin. A non-plain-object `options` value, including an array of choices, supplies no engine options. TypeScript completion helps prevent misspelled option names; a future reserved option name may collide with a custom key, so adding one is a contract change.
 
-At load, defined `options.terminal`, `omitEmpty`, `omitTrailing`, and `trim` must be booleans, and `propertyOrder` must be an array of strings. `undefined` means absent. Malformed values fail with `FormErrorCode.InvalidControlShape` at `options/<key>`, with details `{ group: 'options', key, expected }`; existing virtual declaration checks still apply. Malformed controls groups and explicitly checked control shapes such as injectTo, fields, and discriminator also produce `InvalidControlShape`. This does not promise runtime type validation for every control value; validate schemas from external data at your own boundary.
+At blueprint load, a defined reserved value must have the shallow type below; `undefined` means absent, and `FieldInput: null` also means absent. A mismatch throws `FormErrorCode.InvalidControlShape` at `<schemaPath>/<group>/<key>` with details `{ group, key, expected }`. Existing controls container, fields, discriminator, virtual declaration, and terminal compatibility checks still apply. Nested payload contents are not checked. FieldInput functions and object components are not invoked or inspected for React identity.
+
+| Group | Reserved keys | Accepted values |
+| --- | --- | --- |
+| `controls` | `active`, `visible`, `readOnly`, `disabled`, `unsetValue`, `resetInteraction`, `unsetOnInactive` | boolean or expression string |
+| `controls` | `derived` | expression string |
+| `controls` | `watch` | string or array of strings at runtime; the public type uses an array |
+| `controls` | `default`, `inactiveValue` | any value; literal/resolver semantics remain unchanged |
+| `controls` | `fields`, `injectTo`, `discriminator` | fields-entry array, function, nonempty string respectively; existing scope and shape rules apply |
+| `options` | `terminal`, `omitEmpty`, `omitTrailing`, `trim` | boolean |
+| `options` | `propertyOrder` | array of strings; `*` is a literal property name, not a wildcard |
+| `options` | `virtual` | virtual-group declarations with the existing fields checks |
+| `presentation` | `inputType` | string |
+| `presentation` | `FieldInput` | function or non-null object; null means absent |
+| `presentation` | `FieldInputProps`, `FieldRendererProps`, `errorMessages` | non-null, non-array object; no nested-value checks |
+
+The same control value checks apply inside fields entries and fragments, within their allowed key lists. Options and presentation extension keys do not acquire library semantics merely by being present. Checks happen during cached blueprint analysis, not on user input; fixed-key checks have constant cost and string-array checks visit their elements.
 
 | Group | Consumer use |
 | --- | --- |
