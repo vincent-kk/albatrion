@@ -54,7 +54,7 @@ yarn npm:setup-trust               # 16개 패키지 일괄 등록
 
 1. 배포할 패키지의 버전을 올리고 커밋·푸시합니다.
    - changeset으로 기록하는 릴리스는 `yarn changeset:version`으로 올립니다(`GITHUB_TOKEN` 필요). 대기 중인 changeset이 버전 올림과 `CHANGELOG.md` 항목이 됩니다.
-   - changeset을 쓰지 않는 릴리스는 손으로 올립니다(예: `yarn workspace @winglet/json version:patch`, 또는 `yarn patch:all`). 어느 릴리스가 그런지는 루트 `DOCUMENTATION.md`의 Change records 절이 정합니다.
+   - changeset이 없는 변경을 내보내는 릴리스는 손으로 올립니다(예: `yarn workspace @winglet/json version:patch`, 또는 `yarn patch:all`).
    - 한 릴리스에서 두 방식을 섞지 않습니다. changeset이 남은 패키지를 손으로 올리면 다음 `yarn changeset:version`에서 한 번 더 오릅니다.
 2. GitHub → **Actions** 탭 → **publish-npm-packages** 워크플로 → **Run workflow**.
    - 먼저 확인만 하려면 `dry_run: true`로 한 번 돌립니다 (팩+레지스트리 대조만, 실제 배포 없음).
