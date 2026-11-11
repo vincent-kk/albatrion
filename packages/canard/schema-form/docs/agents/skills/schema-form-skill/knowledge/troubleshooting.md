@@ -23,6 +23,8 @@ fieldInputMap: {
 
 **A recalculated field loses focus or flickers on every keystroke of another field** — each `derived` or `injectTo` write remounts its input. If the input draws from `value` alone, declare `controlled: true`.
 
+**A child loses focus or a sibling edit disappears under a custom branch input** — follow the [hybrid parent update pattern and its limits](field-input.md#hybrid-parents-write-child-values-through-the-parent).
+
 ## Controls Expressions
 
 **`controls.active` / `controls.visible` not reacting** — the most common cause is path syntax: `/toggle` is an absolute path from the root; a sibling is `../toggle`.
