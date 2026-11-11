@@ -3,7 +3,7 @@ import type { FieldNodeRuntime } from '../../../record';
 /** Only collector and reporter ownership participate in failure unwinding. */
 type AbortRuntime = Pick<
   FieldNodeRuntime<unknown>,
-  'chainErrors' | 'enclosingChain' | 'errorReporter'
+  'chainErrors' | 'enclosingChain' | 'errorReporter' | 'adoptedRoot'
 >;
 
 /** An interrupted chain suppresses reporters until its outermost cleanup finishes. */
@@ -39,9 +39,29 @@ export const abortFieldNodeChain = (
   return failure;
 };
 
-/** Restore a suppressed reporter after cleanup, preserving an explicit replacement. */
+/**
+ * Narrow an adoption link before following its reporter owner during abort cleanup.
+ * @param value - Replacement link installed by chain adoption
+ * @returns Whether the link exposes the next root runtime
+ */
+const isAdoptedReporterOwner = (
+  value: unknown,
+): value is { runtime: AbortRuntime } =>
+  value !== null &&
+  typeof value === 'object' &&
+  'runtime' in value &&
+  'rootNode' in value;
+
+/** Restore reporters on their current owners after cleanup, preserving explicit replacements. */
 export const restoreChainReporters = (failure: ChainAbort): void => {
-  for (const [runtime, reporter] of failure.reporters)
-    runtime.errorReporter ??= reporter;
+  for (const [runtime, reporter] of failure.reporters) {
+    let owner = runtime;
+    let inherited = reporter;
+    while (isAdoptedReporterOwner(owner.adoptedRoot)) {
+      owner = owner.adoptedRoot.runtime;
+      inherited = failure.reporters.get(owner) ?? inherited;
+    }
+    owner.errorReporter ??= inherited;
+  }
   failure.reporters.clear();
 };

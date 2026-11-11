@@ -174,6 +174,8 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
         }
       }
     }
+    const postCallbackAbort = readChainAbort(errors);
+    if (postCallbackAbort) throw postCallbackAbort.error;
   } catch (error) {
     root = resolveFieldNodeChainRoot(root, passed);
     runtime = root.runtime;

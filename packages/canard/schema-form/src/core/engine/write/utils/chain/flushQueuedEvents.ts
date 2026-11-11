@@ -1,10 +1,13 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
+import { settleFieldNodeValidation } from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
 import { captureChainError } from './captureChainError';
+import { readChainAbort, restoreChainReporters } from './chainAbort';
 import { deliverWave } from './deliverWave';
+import { discardFieldNodeChainWork } from './discardFieldNodeChainWork';
 import { flushFieldNodeSettings } from './flushFieldNodeSettings';
 import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { runDeliveryWaves } from './runDeliveryWaves';
@@ -55,6 +58,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   const owners = new Set([entryRuntime]);
   let active = root;
   let runtime = entryRuntime;
+  let interrupted: ReturnType<typeof readChainAbort>;
   try {
     for (;;) {
       active = resolveFieldNodeChainRoot(active, owners);
@@ -123,7 +127,9 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         );
       }
     }
-    if (standalone)
+    if (standalone) {
+      const aborted = readChainAbort(runtime.chainErrors);
+      if (aborted) throw aborted.error;
       finishQueuedErrors(
         runtime,
         runtime.chainErrors ?? [],
@@ -131,6 +137,18 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         caller,
         origin,
       );
+    }
+  } catch (error) {
+    if (standalone) {
+      active = resolveFieldNodeChainRoot(active, owners);
+      runtime = active.runtime;
+      interrupted = readChainAbort(runtime.chainErrors);
+      if (interrupted) {
+        discardFieldNodeChainWork(active);
+        throw interrupted.error;
+      }
+    }
+    throw error;
   } finally {
     for (const owner of owners) {
       owner.flushingQueuedEvents = false;
@@ -139,7 +157,21 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
       owner.chainErrors = previousErrors;
       owner.chainOccurrences = previousOccurrences;
       if (owner !== entryRuntime) owner.chainRoot = undefined;
-      flushFieldNodeSettings(owner);
+      if (!interrupted) flushFieldNodeSettings(owner);
+    }
+    if (interrupted) {
+      try {
+        settleFieldNodeValidation(active);
+      } catch {
+        // The original collaborator failure takes precedence over cleanup callbacks.
+      } finally {
+        try {
+          for (const owner of owners)
+            flushFieldNodeSettings(owner, interrupted);
+        } finally {
+          restoreChainReporters(interrupted);
+        }
+      }
     }
   }
 };
