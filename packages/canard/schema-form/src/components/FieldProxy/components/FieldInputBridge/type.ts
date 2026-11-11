@@ -41,7 +41,6 @@ export type ChildField<Props extends ChildFieldProps = ChildFieldProps> =
 /** Node deliveries that refresh the props of the current input instance. */
 export const REACTIVE_RERENDERING_EVENTS =
   FieldNodeEventType.UpdateValue |
-  FieldNodeEventType.UpdateState |
   FieldNodeEventType.UpdateControlledProperties |
   FieldNodeEventType.UpdateJsonSchema |
   FieldNodeEventType.UpdatePath;

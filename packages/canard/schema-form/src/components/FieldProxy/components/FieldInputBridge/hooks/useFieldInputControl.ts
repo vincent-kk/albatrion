@@ -81,7 +81,10 @@ export const useFieldInputControl = <Node extends FieldNode>(
       const unsubscribe = node.subscribe(({ type }) => {
         if (
           !(type & INPUT_TRACKING_EVENTS) &&
-          (!(type & FieldNodeEventType.UpdateError) ||
+          (!(
+            type &
+            (FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateState)
+          ) ||
             generation.current === readFieldInputGeneration(node, controlled))
         )
           return;
