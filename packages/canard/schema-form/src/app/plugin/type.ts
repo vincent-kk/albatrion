@@ -3,11 +3,12 @@ import type { ComponentType } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type {
+  ErrorMessageRendererProps,
   FieldInputDefinition,
   FieldRendererProps,
-  LabelRendererProps,
-  ErrorMessageRendererProps,
   FormatError,
+  InputRendererProps,
+  LabelRendererProps,
   ValidateFunction,
 } from '@/schema-form/types';
 import type { JSONSchema } from '@/schema-form/types';
@@ -116,7 +117,7 @@ export interface SchemaFormPlugin {
   /** Form.Label Component */
   LabelRenderer?: ComponentType<LabelRendererProps>;
   /** Form.Input Component */
-  InputRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<InputRendererProps>;
   /** Form.ErrorMessage Component */
   ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** FieldInputDefinition */

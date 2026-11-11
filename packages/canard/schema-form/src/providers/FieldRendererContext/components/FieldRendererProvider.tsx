@@ -9,6 +9,7 @@ import { ErrorVisibility } from '@/schema-form/types';
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { createErrorVisibilityChecker } from '../utils/createErrorVisibilityChecker';
 import { FieldRendererContext } from './FieldRendererContext';
+import { InputRendererContext } from './InputRendererContext';
 
 const DEFAULT_ERROR_VISIBILITY = ErrorVisibility.AfterEditAndTouch;
 
@@ -79,7 +80,9 @@ export const FieldRendererContextProvider = ({
 
   return (
     <FieldRendererContext.Provider value={value}>
-      {children}
+      <InputRendererContext.Provider value={InputRenderer ?? null}>
+        {children}
+      </InputRendererContext.Provider>
     </FieldRendererContext.Provider>
   );
 };

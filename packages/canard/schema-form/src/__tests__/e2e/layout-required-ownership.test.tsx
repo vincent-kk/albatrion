@@ -7,6 +7,7 @@ import {
   type FieldRendererProps,
   Form,
   FormProvider,
+  type InputRendererProps,
 } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
@@ -27,6 +28,11 @@ const Renderer = ({ Input, required }: FieldRendererProps) => (
   </div>
 );
 
+/** Observe the frame's resolved display requirement without replacing the input. */
+const Frame = ({ children, required }: InputRendererProps) => (
+  <div data-renderer-required={required}>{children}</div>
+);
+
 it.each(['Input', 'Render', 'Field'])(
   'Form.%s delivers parent-only required changes to both surfaces',
   async (surface) => {
@@ -34,7 +40,7 @@ it.each(['Input', 'Render', 'Field'])(
       const [step, setStep] = useState(0);
       const required = [undefined, true, false, undefined][step];
       return (
-        <FormProvider InputRenderer={Renderer}>
+        <FormProvider InputRenderer={Frame}>
           <button type="button" onClick={() => setStep((step) => step + 1)}>
             next
           </button>

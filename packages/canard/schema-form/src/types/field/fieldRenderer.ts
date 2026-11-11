@@ -48,7 +48,7 @@ export interface FieldRendererProps {
   /** Required indicator; display overrides do not change schema validation */
   required: FieldNode['isRequired'];
   /** `FieldInput` component of the field node assigned to FieldRenderer Component */
-  Input: ComponentType<ChildFieldProps>;
+  Input: ComponentType<ChildFieldProps & { unwrapped?: boolean }>;
   /** Bound registered label; omitted children use the field name. */
   Label: ComponentType<Partial<LabelRendererProps>>;
   /** Bound registered error root; the caller supplies its message. */

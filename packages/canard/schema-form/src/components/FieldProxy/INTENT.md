@@ -17,6 +17,7 @@
 ### Always do
 
 - Label·ErrorMessage는 독립된 memo 부품으로 묶고 오류·context 구독을 추가하지 않습니다. 각 부품의 루트는 등록 렌더러가 소유합니다.
+- 오류 계산·표시·추적 범위는 FieldRendererContext와 공유하고 문구 계산은 오류 경계 아래에 둡니다.
 - 배열 조상이 있는 부품만 경로를 구독하고 재배치 때 DOM을 유지합니다. 기본 폴백만 직접 호출하며 사용자·플러그인 렌더러는 요소로 그립니다.
 
 - 외부에서는 `FieldProxy`를 통해서만 노드를 렌더링하고, 노드가 없거나 `node.isPresent === false`이면 `null` 반환
@@ -26,7 +27,7 @@
 
 ### Ask first
 
-- `RERENDERING_EVENT` 마스크(리렌더 범위)를 바꾸거나, `type.ts`의 `FieldProxyProps`를 수정하거나, 공개 프록시 prop을 추가할 때
+- FieldRendererContext가 소유한 공유 추적 마스크를 바꾸거나, `type.ts`의 `FieldProxyProps`를 수정하거나, 공개 프록시 prop을 추가할 때
 
 ### Never do
 

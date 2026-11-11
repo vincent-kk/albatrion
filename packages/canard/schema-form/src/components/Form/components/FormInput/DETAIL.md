@@ -6,6 +6,8 @@ Form.Input은 경로의 입력만 조합하고 입력 채널·오류 경계는 F
 
 ## API Contracts
 
+unwrapped는 등록된 입력 틀을 건너뛰는 조합 설정이며 실제 입력 props로 넘기지 않습니다. 값에 따라 모듈 수준의 두 내부 렌더러를 선택하므로 실행 중 전환하면 해당 필드 전체가 다시 마운트됩니다. 입력 틀 선택은 브리지에 맡기며 이 조각은 폼의 렌더러 Context를 직접 읽지 않습니다.
+
 직접 전달한 FieldInput은 mount에 고정하여 render마다 새로운 함수로 입력 인스턴스를 잃지 않게 합니다. 변하는 값은 context·입력 내부 hook으로 전달하거나 key로 교체합니다. `onChange`와 `onFileAttach`는 바인딩이 소유하므로 레이아웃 조각에 전달할 수 없고 내부 처리기를 대체하지 못합니다. 그 밖의 나머지 props는 최신 값을 입력에 전달합니다.
 
 ## Acceptance Criteria

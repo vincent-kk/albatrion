@@ -7,16 +7,18 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorMessageRendererProps,
   ErrorVisibility,
   FieldInputDefinition,
   FieldRendererProps,
-  LabelRendererProps,
-  ErrorMessageRendererProps,
   FormatError,
+  InputRendererProps,
+  LabelRendererProps,
   ValidatorFactory,
 } from '@/schema-form/types';
 
 import { ExternalFormContext } from './ExternalFormContext';
+import { ExternalInputContext } from './ExternalInputContext';
 
 export interface ExternalFormContextProviderProps {
   /** List of FieldInputDefinition declared externally */
@@ -26,7 +28,7 @@ export interface ExternalFormContextProviderProps {
   /** LabelRenderer component declared externally */
   LabelRenderer?: ComponentType<LabelRendererProps>;
   /** InputRenderer component declared externally */
-  InputRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<InputRendererProps>;
   /** ErrorMessageRenderer component declared externally */
   ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** FormatError function declared externally */
@@ -203,6 +205,10 @@ export const ExternalFormContextProvider = ({
     [fieldInputDefinitions],
   );
   const context = useSnapshot(inputContext);
+  const externalInputContext = useMemo(
+    () => ({ fromExternalFieldInputDefinitions, InputRenderer }),
+    [fromExternalFieldInputDefinitions, InputRenderer],
+  );
   const value = useMemo(
     () => ({
       fromExternalFieldInputDefinitions,
@@ -231,7 +237,9 @@ export const ExternalFormContextProvider = ({
   );
   return (
     <ExternalFormContext.Provider value={value}>
-      {children}
+      <ExternalInputContext.Provider value={externalInputContext}>
+        {children}
+      </ExternalInputContext.Provider>
     </ExternalFormContext.Provider>
   );
 };

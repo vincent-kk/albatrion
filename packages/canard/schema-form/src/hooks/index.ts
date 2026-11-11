@@ -7,3 +7,5 @@ export {
 export { useChildFieldMap } from './fieldNode/useChildFieldMap';
 export { useChildFieldErrors } from './fieldNode/useChildFieldErrors';
 export { useFormSubmit } from './form/useFormSubmit';
+
+export { useFieldErrors } from './fieldNode/useFieldErrors';

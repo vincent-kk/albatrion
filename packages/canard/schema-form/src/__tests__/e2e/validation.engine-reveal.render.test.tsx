@@ -3,6 +3,7 @@ import { StrictMode, createRef } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import {
   ErrorVisibility,
   type FieldInputProps,
@@ -21,11 +22,14 @@ afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
-const Input = ({ errorVisible, errors }: FieldInputProps) => (
-  <span data-testid="input-error">
-    {errorVisible ? errors[0]?.message : ''}
-  </span>
-);
+const Input = ({ node }: FieldInputProps) => {
+  const { errorVisible, errors } = useFieldErrors(node);
+  return (
+    <span data-testid="input-error">
+      {errorVisible ? errors[0]?.message : ''}
+    </span>
+  );
+};
 const Renderer = ({
   Input,
   errorVisible,

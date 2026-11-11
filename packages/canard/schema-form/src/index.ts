@@ -124,3 +124,5 @@ export {
   ExternalFormContextProvider as FormProvider,
   type ExternalFormContextProviderProps as FormProviderProps,
 } from './providers';
+
+export { useFieldErrors } from './hooks';

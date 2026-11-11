@@ -7,7 +7,6 @@ import type { Optional } from '@aileron/declare';
 import {
   ErrorMessageRenderer,
   FormFieldRenderer,
-  InputRenderer,
   LabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
 import { builtinFieldInputDefinitions } from '@/schema-form/fieldInputs';
@@ -17,11 +16,12 @@ import {
   normalizeFieldInputDefinitions,
 } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorMessageRendererProps,
   FieldInputDefinition,
   FieldRendererProps,
-  LabelRendererProps,
-  ErrorMessageRendererProps,
   FormatError,
+  InputRendererProps,
+  LabelRendererProps,
 } from '@/schema-form/types';
 
 import type { ValidatorPlugin } from '../type';
@@ -29,14 +29,13 @@ import type { ValidatorPlugin } from '../type';
 interface RenderKit {
   FieldRenderer: ComponentType<FieldRendererProps>;
   LabelRenderer: ComponentType<LabelRendererProps>;
-  InputRenderer: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<InputRendererProps>;
   ErrorMessageRenderer: ComponentType<ErrorMessageRendererProps>;
 }
 
 const defaultRenderKit = {
   FieldRenderer: FormFieldRenderer,
   LabelRenderer: LabelRenderer,
-  InputRenderer: InputRenderer,
   ErrorMessageRenderer: ErrorMessageRenderer,
 } as const;
 

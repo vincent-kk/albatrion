@@ -57,7 +57,7 @@ const MOUNTED_CHILDREN = BIT_FLAG_01;
  * @param node - The FieldNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
  * @param controlled - Combined declaration; only `true` stops Refresh from replacing the input
- * @returns Container ref, input key, composition handlers and stable re-render dispatch shared with held-display releases, and composition cleanup
+ * @returns Container ref, input key, composition handlers, stable re-render dispatch and composition cleanup
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
@@ -79,7 +79,16 @@ export const useFieldInputControl = <Node extends FieldNode>(
         (refreshDeferral.current & COMPOSING) |
         (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
       const unsubscribe = node.subscribe(({ type }) => {
-        if (!(type & INPUT_TRACKING_EVENTS)) return;
+        if (!(type & INPUT_TRACKING_EVENTS)) {
+          if (
+            type & FieldNodeEventType.UpdateError &&
+            mountedChildren.current === 0 &&
+            !(refreshDeferral.current & COMPOSING) &&
+            generation.current !== readFieldInputGeneration(node, controlled)
+          )
+            update();
+          return;
+        }
         refreshDeferral.current =
           (refreshDeferral.current & COMPOSING) |
           (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
@@ -88,7 +97,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
       onStoreChange();
       return unsubscribe;
     },
-    [node, mountedChildren, refreshDeferral],
+    [node, mountedChildren, refreshDeferral, controlled, update],
   );
   const getRevision = useCallback(() => {
     // revision(mask) sums per-bit delivery counts, so each undeferred read equals

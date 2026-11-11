@@ -10,10 +10,8 @@ import {
   type NormalizedFieldInputDefinition,
   withFieldInputErrorBoundary,
 } from '@/schema-form/helpers/fieldInputDefinition';
-import {
-  useExternalFormContext,
-  useFieldInputsContext,
-} from '@/schema-form/providers';
+import { useFieldInputsContext } from '@/schema-form/providers';
+import { useExternalInputContext } from '@/schema-form/providers/ExternalFormContext';
 import type { FieldInputHint, JSONSchema } from '@/schema-form/types';
 
 /**
@@ -30,7 +28,7 @@ export const useFieldInput = (
 > => {
   const { fromFieldInputMap, fromFieldInputDefinitions } =
     useFieldInputsContext();
-  const { fromExternalFieldInputDefinitions } = useExternalFormContext();
+  const { fromExternalFieldInputDefinitions } = useExternalInputContext();
   const schema = node.jsonSchema as JSONSchema;
   const path = node.path;
   const inline = schema.presentation?.FieldInput;

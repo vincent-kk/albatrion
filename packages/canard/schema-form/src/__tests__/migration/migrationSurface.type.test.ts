@@ -8,6 +8,7 @@ import type { Nullish } from '@aileron/declare';
 
 import type { FormErrorRecord } from '../../errors';
 import {
+  type ErrorMessageRendererProps,
   type ErrorVisibility,
   type FieldInputDefinition,
   type FieldInputMap,
@@ -16,13 +17,13 @@ import {
   FieldNodeEventType,
   FieldNodeRequestType,
   type FieldRendererProps,
-  type LabelRendererProps,
-  type ErrorMessageRendererProps,
   type Form,
   type FormChildrenProps,
   type FormHandle,
   type FormProps,
   type InferFieldNode,
+  type InputRendererProps,
+  type LabelRendererProps,
   type SetValueOption,
   type ValidationIssue,
   ValidationMode,
@@ -67,7 +68,7 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     disableAutomaticWrites?: boolean;
     onDiagnosticsChange?: (diagnostics: FieldNode['diagnostics']) => void;
     LabelRenderer?: ComponentType<LabelRendererProps>;
-    InputRenderer?: ComponentType<FieldRendererProps>;
+    InputRenderer?: ComponentType<InputRendererProps>;
     ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   };
   expectTypeOf<Props>().toEqualTypeOf<Expected>();

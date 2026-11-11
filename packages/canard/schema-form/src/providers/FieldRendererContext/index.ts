@@ -1,5 +1,9 @@
 export { FieldRendererContextProvider } from './components/FieldRendererProvider';
 export { useFieldRendererContext } from './hooks/useFieldRendererContext';
 export { useErrorVisibility } from './hooks/useErrorVisibility';
-export { isErrorRevealed } from './utils/isErrorRevealed';
 export { ErrorRevealSubscriber } from './components/ErrorRevealSubscriber';
+export { FIELD_ERROR_TRACKING_EVENTS } from './constants/fieldErrorTrackingEvents';
+export { resolveFieldErrorVisibility } from './utils/resolveFieldErrorVisibility';
+export { selectFieldErrorMessage } from './utils/selectFieldErrorMessage';
+export { useErrorRevealSubscription } from './hooks/useErrorRevealSubscription';
+export { useInputRendererContext } from './hooks/useInputRendererContext';

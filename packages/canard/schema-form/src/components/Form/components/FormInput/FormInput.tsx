@@ -2,12 +2,19 @@ import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
-import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
-import { useFieldRendererContext } from '@/schema-form/providers';
-import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
+import type {
+  AllowedValue,
+  FieldInputProps,
+  FieldRendererProps,
+} from '@/schema-form/types';
 
 import type { FormInputProps } from './types/props';
+
+/** Render the bound input with its selected frame. */
+const FramedInput = ({ Input }: FieldRendererProps) => <Input />;
+/** Render the bound input without a frame. */
+const UnwrappedInput = ({ Input }: FieldRendererProps) => <Input unwrapped />;
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -81,10 +88,10 @@ import type { FormInputProps } from './types/props';
 export const FormInput = memo(
   ({
     path,
+    unwrapped,
     FieldInput: InputFieldInput,
     ...restProps
   }: FormInputProps<AllowedValue>) => {
-    const { InputRenderer } = useFieldRendererContext();
     const overridePropsRef = useReference(restProps);
     const FieldInput = useConstant(
       InputFieldInput as ComponentType<FieldInputProps>,
@@ -94,7 +101,7 @@ export const FormInput = memo(
         path={path}
         overridePropsRef={overridePropsRef}
         FieldInput={FieldInput}
-        FieldRenderer={InputRenderer || PluginManager.InputRenderer}
+        FieldRenderer={unwrapped ? UnwrappedInput : FramedInput}
       />
     );
   },

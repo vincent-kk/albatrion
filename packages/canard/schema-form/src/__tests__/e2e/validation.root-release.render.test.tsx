@@ -3,6 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -25,7 +26,9 @@ it('IR-6 D React18 legacy release preserves a reentrant layout write history (Re
   const ref = createRef<FormHandle>();
   let armed = false;
   let writes = 0;
-  const Input = ({ node, errorVisible }: FieldInputProps) => {
+  const Input = ({ node }: FieldInputProps) => {
+    const { errorVisible } = useFieldErrors(node);
+
     useLayoutEffect(() => {
       if (!armed || !errorVisible) return;
       armed = false;

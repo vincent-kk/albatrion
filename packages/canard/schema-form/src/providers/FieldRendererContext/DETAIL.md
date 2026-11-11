@@ -6,7 +6,9 @@
 
 ## API Contracts
 
-LabelRenderer·ErrorMessageRenderer는 node와 내용 중심의 전용 props를 받습니다. 부품을 만드는 FieldProxy에 현재 선택을 전달하며, context나 오류를 부품에 자동 주입하지 않습니다. InputRenderer의 그룹 props 계약은 유지합니다.
+LabelRenderer·ErrorMessageRenderer는 node와 내용 중심의 전용 props를 받습니다. 부품을 만드는 FieldProxy에 현재 선택을 전달하며, context나 오류를 부품에 자동 주입하지 않습니다. InputRenderer는 전용 props로 실제 입력을 children에 받으며 전용 Context에는 Form prop만 담습니다. 소비자 위치에서 Form 값·가장 가까운 외부 Provider·플러그인 순으로 해석하여 Form 안의 중첩 Provider도 적용합니다. 기존 설정 훅도 같은 선택을 노출해 프록시의 경계 복구가 추가 구독을 만들지 않게 합니다.
+
+첫 문구·presence를 포함한 표시와 보류 버전·추적 마스크를 프록시와 useFieldErrors가 공유합니다. 표시 계산은 매번 객체를 할당하지 않습니다. 공개 구독 훅은 항상 호출하되 보류 버전이 없으면 연결하지 않고, 수동 효과에서 같은 렌더의 버전과 비교해 놓친 해제를 따라잡습니다. 프록시 문구 계산의 기존 메모 의존성과 실행 경계는 유지합니다.
 
 유효한 Form 렌더러·포맷터가 외부 설정보다 우선하고 누락 값은 플러그인으로 보완합니다. 최신 불변 참조로 해석하되 값·노드 상태를 초기화하거나 검증을 실행하지 않습니다. 기본 정책 선택·잘못된 값 보존·공개 명령 세대는 [FormCore](../../components/Form/components/FormCore/DETAIL.md)가 소유하고, 엔진의 정책 기록은 [RootNodeContext](../RootNodeContext/DETAIL.md)가 commit합니다.
 

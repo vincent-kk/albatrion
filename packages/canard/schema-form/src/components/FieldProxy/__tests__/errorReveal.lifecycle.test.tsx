@@ -10,6 +10,7 @@ import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidati
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
 import { releaseFieldNodeRevealHistory } from '@/schema-form/core/engine/validation';
+import { useFieldErrors } from '@/schema-form/hooks';
 import {
   ErrorVisibility,
   type FieldInputProps,
@@ -64,7 +65,9 @@ it('catches a display release between its held render and passive subscription',
       </>
     );
   };
-  const Input = ({ value, onChange, errorVisible }: FieldInputProps) => {
+  const Input = ({ value, onChange, node }: FieldInputProps) => {
+    const { errorVisible } = useFieldErrors(node);
+
     inputVisibility.push(errorVisible);
     return (
       <input
@@ -106,7 +109,9 @@ it('keeps input identity, focus and both mounts through hold start and release',
     rendererVisible = errorVisible;
     return <Input />;
   };
-  const Input = ({ value, onChange, errorVisible }: FieldInputProps) => {
+  const Input = ({ value, onChange, node }: FieldInputProps) => {
+    const { errorVisible } = useFieldErrors(node);
+
     useState(() => ++inputMounts);
     inputVisible = errorVisible;
     return (
@@ -156,7 +161,9 @@ it('catches an event-free release while a held display is hidden by Activity', a
     rendererVisible = errorVisible;
     return <Input />;
   };
-  const Input = ({ value, onChange, errorVisible }: FieldInputProps) => {
+  const Input = ({ value, onChange, node }: FieldInputProps) => {
+    const { errorVisible } = useFieldErrors(node);
+
     inputVisible = errorVisible;
     return (
       <input

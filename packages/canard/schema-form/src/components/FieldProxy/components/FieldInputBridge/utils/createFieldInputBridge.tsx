@@ -39,13 +39,14 @@ export const createFieldInputBridge = (
   overrideFieldInputPropsRef: Optional<RefObject<OverridableFieldInputProps>>,
   OverridePreferredFieldInput: Optional<ComponentType<FieldInputProps>>,
   NodeProxy: ComponentType<FieldProxyProps>,
-): ComponentType<ChildFieldProps> => {
+): ComponentType<ChildFieldProps & { unwrapped?: boolean }> => {
   if (node == null) return NULL_FUNCTION;
   return ({
+    unwrapped,
     onChange: preferredOnChange,
     onFileAttach: preferredOnFileAttach,
     ...preferredOverrideProps
-  }: ChildFieldProps) => {
+  }: ChildFieldProps & { unwrapped?: boolean }) => {
     const onChangeRef = useReference(preferredOnChange);
     const onFileAttachRef = useReference(preferredOnFileAttach);
     const overrideProps = useSnapshot({
@@ -68,6 +69,7 @@ export const createFieldInputBridge = (
     return (
       <FieldInputBridge
         node={node}
+        unwrapped={unwrapped}
         onChangeRef={onChangeRef}
         onFileAttachRef={onFileAttachRef}
         overrideOnChangeRef={overrideOnChangeRef}

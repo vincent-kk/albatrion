@@ -25,7 +25,7 @@ exports[`SURFACE-063 adds rebuild with the reset option contract to FormHandle 1
 ]
 `;
 
-exports[`preserves the 100-name package public surface 1`] = `
+exports[`preserves the 101-name package public surface 1`] = `
 "ArrayNode	type	ArrayNode<Item>
 ArraySchema	type	RolledArraySchema<Options>
 BooleanNode	type	BooleanNode
@@ -123,6 +123,7 @@ isVirtualNode	value	(node: FieldNode | Nullish) => node is VirtualNode
 registerPlugin	value	(plugin: Nullable<SchemaFormPlugin>) => void
 useChildFieldErrors	value	(node: FieldNode, disabled?: boolean | undefined) => { errorMessage: ReactNode; errorVisible: boolean; formattedError: ReactNode; childErrorVisibleList: boolean[]; formattedErrors: ReactNode[]; errorMatrix: (readonly ValidationIssue<unknown>[])[]; }
 useChildFieldMap	value	<Value extends Dictionary>(ChildFields: ChildField[]) => ChildFieldMap<Required<Value>>
+useFieldErrors	value	(node: FieldNode) => { errors: readonly ValidationIssue<unknown>[]; errorVisible: boolean; errorMessage: ReactNode; formatError: FormatError; }
 useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullish | Node, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
 useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullish | Node, tracking?: number) => number
 useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(ref: RefObject<Nullable<FormHandle<Schema, Value>>>) => { submit: () => Promise<void | undefined>; pending: boolean | undefined; }"

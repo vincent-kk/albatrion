@@ -6,6 +6,12 @@
 
 ## API Contracts
 
+InputRenderer는 전용 폼 Context의 Form prop, 자기 위치의 가장 가까운 좁은 외부 Context, 플러그인 순으로 선택합니다. 실제 입력의 컨테이너를 children으로 정확히 한 번 같은 커밋에 감싸고 미등록이면 기존 컨테이너만 렌더합니다. 직접 Input의 unwrapped만 틀을 건너뛰고, 부모 자식 덮어쓰기나 스키마 입력 props의 같은 키는 실제 입력으로 그대로 전달합니다. 틀에도 실제 입력과 같은 required·readOnly·disabled·context를 전달합니다.
+
+틀 변경은 입력 교체와 같은 수명입니다. defaultValue·선택 토큰·위치 등록이 새 틀을 따라 갱신되어 현재 값으로 시작하고 옛 콜백은 무효가 됩니다. 브리지 인스턴스와 자기 첨부 파일은 유지하지만 가지 입력의 자식 브리지는 다시 마운트되어 그 자식 첨부 기록은 정리됩니다.
+
+실제 입력에는 오류 목록과 표시 여부를 기본 전달하지 않습니다. 입력은 오류 설정 전체와 외부 설정 전체를 읽지 않고 외부 입력 정의만 읽으므로 오류나 인라인 포맷터 변경에 다시 렌더하지 않습니다. 상태 사건은 계속 추적합니다. 오류만 전달되면 마운트한 자식과 조합이 없고 현재 controlled 선언으로 읽은 세대가 적용 세대와 다른 경우에만 보류된 Refresh를 적용하도록 렌더를 요청합니다. 표시·문구가 필요한 입력은 useFieldErrors를 사용합니다.
+
 값과 defaultValue는 노드가 소유합니다. 렌더러와 입력의 공통 required는 Child·Form.Input·Form.Render·Form.Field의 불리언 덮어쓰기, 불리언 `presentation.required`, `node.isRequired` 순으로 결정합니다. false도 존중하고 불리언이 아닐 때만 다음 값으로 넘어갑니다. 부모만 변경되어도 두 표면에 전달되며 undefined로 돌아가면 presentation 또는 노드 값을 다시 사용합니다. `presentation.FieldInputProps.required`와 `presentation.FieldRendererProps.required`는 바인딩이 spread 뒤에서 덮으므로 영향을 주지 않습니다. 렌더러 작성자가 Input 요소에 주는 불리언 required는 해당 입력에만 우선 적용되며 undefined를 포함한 비불리언 값은 부모 값을 지우지 않고 공통 값으로 돌아갑니다. 표시 전용 해석이며 검증과 입력 선택 힌트는 스키마의 required만 따릅니다. 네이티브 요소에 required를 전달하는 입력은 브라우저 검증에 영향을 줄 수 있습니다. 공통 계산은 FieldProxy의 utils가 소유하고 브리지와 생성 팩토리가 직접 사용합니다. 부모의 공통 값 변경이 렌더러 props를 바꾸므로 별도의 Context·구독·effect·전달 채널 없이 기존 메모 경계로 전달됩니다.
 
 ### REACT-033 — 입력 선택과 표현 경계
