@@ -16,6 +16,10 @@ export interface FieldInputBridgeProps {
   node: FieldNode;
   onChangeRef: RefObject<ChildFieldProps['onChange']>;
   onFileAttachRef: RefObject<ChildFieldProps['onFileAttach']>;
+  /** Parent change callback read at invocation when the child has no override. */
+  overrideOnChangeRef?: RefObject<ChildFieldProps['onChange']>;
+  /** Parent attachment callback read at invocation when the child has no override. */
+  overrideOnFileAttachRef?: RefObject<ChildFieldProps['onFileAttach']>;
   overrideProps: OverridableFieldInputProps;
   PreferredFieldInput: Nullable<ComponentType<FieldInputBindingProps>>;
   NodeProxy: ComponentType<FieldProxyProps>;

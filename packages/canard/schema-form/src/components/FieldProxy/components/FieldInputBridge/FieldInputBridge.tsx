@@ -48,6 +48,8 @@ export const FieldInputBridge = memo(
     node,
     onChangeRef,
     onFileAttachRef,
+    overrideOnChangeRef,
+    overrideOnFileAttachRef,
     overrideProps,
     PreferredFieldInput,
     NodeProxy,
@@ -114,24 +116,40 @@ export const FieldInputBridge = memo(
           node.isDisabled
         )
           return;
-        if (!onChangeRef.current) writeFieldNodeInput(node, input, option);
+        const onChange = onChangeRef.current || overrideOnChangeRef?.current;
+        if (!onChange) writeFieldNodeInput(node, input, option);
         else
           node.batch(() => {
-            onChangeRef.current!(input, option);
+            onChange(input, option);
             node.clearExternalErrors();
             node.setState(EDITED_STATE_PATCH);
           });
       },
-      [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
+      [
+        accepts,
+        rootReadOnly,
+        rootDisabled,
+        node,
+        onChangeRef,
+        overrideOnChangeRef,
+      ],
     );
     const handleFileAttach = useCallback(
       (files: Optional<File | File[]>) => {
         if (!accepts()) return;
-        if (onFileAttachRef.current) return onFileAttachRef.current(files);
+        const onFileAttach =
+          onFileAttachRef.current || overrideOnFileAttachRef?.current;
+        if (onFileAttach) return onFileAttach(files);
         if (files === undefined) attachedFilesMap.delete(node.path);
         else attachedFilesMap.set(node.path, isArray(files) ? files : [files]);
       },
-      [accepts, node, onFileAttachRef, attachedFilesMap],
+      [
+        accepts,
+        node,
+        onFileAttachRef,
+        overrideOnFileAttachRef,
+        attachedFilesMap,
+      ],
     );
     const requestId =
       useRef<ReturnType<typeof requestAnimationFrame>>(undefined);

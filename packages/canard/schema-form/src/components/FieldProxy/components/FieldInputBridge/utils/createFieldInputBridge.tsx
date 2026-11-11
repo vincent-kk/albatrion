@@ -45,12 +45,8 @@ export const createFieldInputBridge = (
     onFileAttach: preferredOnFileAttach,
     ...preferredOverrideProps
   }: ChildFieldProps) => {
-    const onChangeRef = useReference(
-      preferredOnChange || overrideOnChangeRef?.current,
-    );
-    const onFileAttachRef = useReference(
-      preferredOnFileAttach || overrideOnFileAttachRef?.current,
-    );
+    const onChangeRef = useReference(preferredOnChange);
+    const onFileAttachRef = useReference(preferredOnFileAttach);
     const overrideProps = useSnapshot({
       ...overrideFieldInputPropsRef?.current,
       ...preferredOverrideProps,
@@ -68,6 +64,8 @@ export const createFieldInputBridge = (
         node={node}
         onChangeRef={onChangeRef}
         onFileAttachRef={onFileAttachRef}
+        overrideOnChangeRef={overrideOnChangeRef}
+        overrideOnFileAttachRef={overrideOnFileAttachRef}
         overrideProps={overrideProps}
         PreferredFieldInput={PreferredFieldInput}
         NodeProxy={NodeProxy}

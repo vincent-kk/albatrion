@@ -244,10 +244,9 @@ it('E6 keeps virtual-group child values aligned with the parent projection', asy
       {ChildFields.filter((Child) => Child.field === 'group').map((Child) => (
         <Child
           key={Child.key}
-          onChange={(input: unknown) => {
-            if (Array.isArray(input))
-              onChange({ ...value, a: input[0], b: input[1] });
-          }}
+          onChange={(input: unknown[]) =>
+            onChange({ ...value, a: input[0], b: input[1] })
+          }
         />
       ))}
     </>

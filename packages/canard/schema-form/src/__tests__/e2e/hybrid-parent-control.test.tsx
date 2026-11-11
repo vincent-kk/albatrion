@@ -66,8 +66,7 @@ it.fails(
   },
 );
 
-// Sibling bridges copy the parent callback before the sibling edit.
-it.fails.each([false, true])(
+it.each([false, true])(
   'H2 retains both sibling edits with controlled=%s',
   async (controlled) => {
     const child: JSONSchema = {
@@ -318,49 +317,43 @@ it('H11 refreshes undeclared children for caller writes and reset after hybrid t
   expect(form.value('/pair/a')).toBe('initial');
 });
 
-// The sibling bridge retains the parent attachment callback from its first render.
-it.fails(
-  'H12 reads the latest parent closure for a sibling file attachment',
-  async () => {
-    const received = vi.fn();
-    const Files = ({
-      ChildFields,
-      value,
-      onChange,
-    }: FieldInputProps<Record<string, unknown>>) => (
-      <>
-        {ChildFields.map((Child) => (
-          <Child
-            key={Child.key}
-            onChange={(input) => onChange({ ...value, [Child.field]: input })}
-            onFileAttach={(files) => received(value?.a, files)}
-          />
-        ))}
-      </>
-    );
-    const FileInput = ({ path, onFileAttach }: FieldInputProps) => (
-      <input
-        id={path}
-        type="file"
-        onChange={(event) => onFileAttach(event.target.files?.[0])}
-      />
-    );
-    form = await renderForm(
-      pairSchema(undefined, Files, {
-        type: 'string',
-        presentation: { FieldInput: FileInput },
-      }),
-    );
-    const input = form.field('/pair/b')!;
-    await form.type('/pair/a', 'x');
-    expect(form.field('/pair/b')).toBe(input);
-    const file = new File(['content'], 'attachment.txt');
-    await act(async () =>
-      fireEvent.change(input, { target: { files: [file] } }),
-    );
-    expect(received).toHaveBeenCalledExactlyOnceWith('x', file);
-  },
-);
+it('H12 reads the latest parent closure for a sibling file attachment', async () => {
+  const received = vi.fn();
+  const Files = ({
+    ChildFields,
+    value,
+    onChange,
+  }: FieldInputProps<Record<string, unknown>>) => (
+    <>
+      {ChildFields.map((Child) => (
+        <Child
+          key={Child.key}
+          onChange={(input) => onChange({ ...value, [Child.field]: input })}
+          onFileAttach={(files) => received(value?.a, files)}
+        />
+      ))}
+    </>
+  );
+  const FileInput = ({ path, onFileAttach }: FieldInputProps) => (
+    <input
+      id={path}
+      type="file"
+      onChange={(event) => onFileAttach(event.target.files?.[0])}
+    />
+  );
+  form = await renderForm(
+    pairSchema(undefined, Files, {
+      type: 'string',
+      presentation: { FieldInput: FileInput },
+    }),
+  );
+  const input = form.field('/pair/b')!;
+  await form.type('/pair/a', 'x');
+  expect(form.field('/pair/b')).toBe(input);
+  const file = new File(['content'], 'attachment.txt');
+  await act(async () => fireEvent.change(input, { target: { files: [file] } }));
+  expect(received).toHaveBeenCalledExactlyOnceWith('x', file);
+});
 
 it('H13 blocks overridden callbacks on readOnly and disabled children', async () => {
   const changed = vi.fn();
