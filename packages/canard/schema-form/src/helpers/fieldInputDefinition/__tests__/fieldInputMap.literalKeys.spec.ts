@@ -29,10 +29,18 @@ describe('literal segments and silent nonmatches', () => {
     expect(matches('/+', '/+')).toBe(true);
     expect(matches('^#/a', '/a')).toBe(false);
     expect(matches('name', '/name')).toBe(false);
+    expect(matches('#email', '/email')).toBe(false);
+    expect(matches('#email', '/contact/email')).toBe(false);
+    expect(matches('#email', '/emailBackup')).toBe(false);
     expect(warning).not.toHaveBeenCalled();
     expect(error).not.toHaveBeenCalled();
     expect(info).not.toHaveBeenCalled();
     expect(log).not.toHaveBeenCalled();
+  });
+  it('percent signs are literal within a property name', () => {
+    expect(matches('/rate(%)', '/rate(%)')).toBe(true);
+    expect(matches('/rate(%)', '/rate%')).toBe(false);
+    expect(matches('/rate(%)', '/rate(%)/child')).toBe(false);
   });
   it('wildcards consume one segment including object keys', () => {
     expect(matches('/items/*/name', '/items/0/name')).toBe(true);
@@ -80,5 +88,6 @@ describe('literal segments and silent nonmatches', () => {
       jsonSchema: { type: 'string' },
     } satisfies Parameters<(typeof definitions)[0]['test']>[0];
     expect(definitions.map(({ test }) => test(hint))).toEqual([false, true]);
+    expect(definitions[0].test({ ...hint, path: '/0' })).toBe(false);
   });
 });

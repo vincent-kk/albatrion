@@ -12,6 +12,8 @@ describe('formatFieldInputMapError', () => {
     expect(result).toContain('FieldInputMap');
     expect(result).toContain('^/invalid[pattern');
     expect(result).toContain('How to fix');
+    expect(result).toContain('Valid keys:');
+    expect(result).not.toContain('Valid patterns:');
   });
 
   describe('에러 메시지 일관성 테스트', () => {

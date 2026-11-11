@@ -163,7 +163,7 @@ Schema selection uses `presentation.FieldInput`, then Form `fieldInputMap`, Form
 | Starts with `/` or `#/`, has a segment exactly `*`, and does not end with `/` | Same segment count; each `*` consumes one segment, including array indexes and object keys. Every other segment is text. |
 | Otherwise | Exact text. Absolute pointers are canonicalized once; relative text is compared as written and matches no node. |
 
-Write names as they appear in a path in every kind of key: `/` as `~1`, `~` as `~0`, and a name exactly `*` as `%2A`. Thus `'/a~1b'` selects the property `a/b`, and `'^/a~1b$'` is its pattern equivalent. A noncanonical tilde such as `/a~b` is normalized to `/a~0b` in pointer keys; patterns see the escaped path without normalization.
+Write names as they appear in a path in every kind of key: `/` as `~1`, `~` as `~0`, and a name exactly `*` as `%2A`. `%` has no special meaning in a key: `'/rate(%)'` selects the property `rate(%)`; only a name exactly `*` uses `%2A` for the star. Thus `'/a~1b'` selects the property `a/b`, and `'^/a~1b$'` is its pattern equivalent. A noncanonical tilde such as `/a~b` is normalized to `/a~0b` in pointer keys; patterns see the escaped path without normalization.
 
 A key that can match starts with `/`, `#/` or `^`, or is the root (`''` or `'#'`); `'/'` is an empty-name child, not the root. Use the field's data path, including a validation error's data path, rather than its schema location: `#/properties/contact` does not address `/contact` (it would address a data property named `properties` containing `contact`). Another library's `contact.email` or `items[0].name` notation is text no node path equals.
 

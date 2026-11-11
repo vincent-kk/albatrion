@@ -2,7 +2,14 @@
 "@canard/schema-form": minor
 ---
 
-Breaking change: keys without a leading `^` no longer have a regular-expression fallback. Except for the existing one-segment `*` wildcard, they compare as text. There is no development warning, including for a plain key that relied on capturing descendants; that dependency cannot be detected automatically.
+Breaking change: `fieldInputMap` keys without a leading `^` no longer have a regular-expression fallback. Except for the existing one-segment `*` wildcard, they compare as text. There is no development warning, including for a plain key that relied on capturing descendants; that dependency cannot be detected automatically.
+
+```tsx
+// Before: the plain key also captured descendants.
+fieldInputMap={{ '/contact': ContactInput }}
+// After: explicitly include the node and its descendants.
+fieldInputMap={{ '/contact': ContactInput, '^/contact/': ContactInput }}
+```
 
 | Intent or 0.16 key | Write now | Matches | Does not match |
 | --- | --- | --- | --- |
@@ -16,6 +23,7 @@ Breaking change: keys without a leading `^` no longer have a regular-expression 
 | `'#/users/\\d+/profile'` as a pattern | `'^/users/\\d+/profile$'` (drop `#`) | `/users/12/profile` | `/users/a/profile`, `/users/12/profile/more` |
 | `'/name'` matched in the middle | `'/*/name'` for one depth, or `'^.*/name$'` for any depth | `/user/name` | `/user/name/child` |
 | `'contact.email'`, `'items.0.name'` relied on `.` matching `/` | `'/contact/email'`, `'/items/*/name'` | `/contact/email`, `/items/0/name` | `/contact/email/child`, `/items/0/deep/name` |
+| `'#email'` lost `#` and matched the substring `email` | The old key now matches nothing; use `'/email'` for that node or `'^.*/email$'` for that name at any depth | `/email`; the pattern also matches `/contact/email` | `/emailBackup`, `/email/child` |
 | `'email'` relied on substring matching | `'^.*/email$'`, or a definition with a `test` function | `/email`, `/contact/email` | `/emailBackup`, `/email/child` |
 | `'/name$'` relied on a suffix pattern | `'^.*/name$'` | `/name`, `/user/name` | `/username`, `/name/child` |
 | `'/items/**/name'`, `'/price['` produced compile errors | Keep them only for those literal names; they no longer throw | `/items/**/name`, `/price[` | `/items/0/name`, `/price` |

@@ -156,6 +156,7 @@ terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습�
 | 패턴 `'#/users/\\d+/profile'` | `'^/users/\\d+/profile$'` (`#` 제거) | `/users/12/profile` | `/users/a/profile`, `/users/12/profile/more` |
 | `'/name'`이 경로 중간에 일치 | 한 깊이는 `'/*/name'`, 모든 깊이는 `'^.*/name$'` | `/user/name` | `/user/name/child` |
 | `'contact.email'`, `'items.0.name'`의 `.`이 `/`에 일치 | `'/contact/email'`, `'/items/*/name'` | `/contact/email`, `/items/0/name` | `/contact/email/child`, `/items/0/deep/name` |
+| `'#email'`의 `#`가 제거되고 `email` substring에 일치 | 이제 기존 키는 비매칭; 해당 노드는 `'/email'`, 깊이에 관계없이 같은 이름은 `'^.*/email$'` | `/email`; 패턴은 `/contact/email`도 포함 | `/emailBackup`, `/email/child` |
 | `'email'`의 substring 매칭 | `'^.*/email$'` 또는 `test` 함수를 가진 정의 | `/email`, `/contact/email` | `/emailBackup`, `/email/child` |
 | `'/name$'`의 suffix 패턴 | `'^.*/name$'` | `/name`, `/user/name` | `/username`, `/name/child` |
 | `'/items/**/name'`, `'/price['`의 컴파일 오류 | 그 리터럴 이름을 의도할 때만 유지하며 더 이상 오류가 아님 | `/items/**/name`, `/price[` | `/items/0/name`, `/price` |
