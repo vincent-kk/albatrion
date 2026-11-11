@@ -12,7 +12,7 @@
 
 ### form-type-inputs-context-contract — 구성 실패와 선택 수명을 구별합니다
 
-정규화되지 않은 정의는 공급하지 않으며 맵 컴파일의 FormTypeInputMap·load와 입력 실행의 RenderFailed·render를 구별합니다. 일반 모드와 StrictMode에서 구성 실패는 커밋된 로드의 한 기록으로 보고합니다.
+정규화되지 않은 정의는 공급하지 않으며 `^` 맵 정규식 컴파일의 FormTypeInputMap·load와 입력 실행의 RenderFailed·render를 구별합니다. 일반 모드와 StrictMode에서 구성 실패는 커밋된 로드의 한 기록으로 보고합니다.
 
 맵·정의 교체는 노드 값·상태·외부 오류를 보존하고 입력만 다시 선택합니다. 선택된 원본 입력과 조상 입력이 모두 같으면 DOM을 유지하지만 부모 입력이 바뀌면 내부 자식의 DOM·미커밋 draft도 다시 만듭니다. 참조 교체가 모든 draft 보존을 보장한다고 설명하지 않습니다. 실제 선택 우선순위와 입력 채널 수명은 FieldInputBridge가 소유합니다.
 

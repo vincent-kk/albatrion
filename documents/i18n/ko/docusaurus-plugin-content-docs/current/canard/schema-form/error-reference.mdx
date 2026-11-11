@@ -25,7 +25,7 @@ group-qualified `error.code`·record.code를 `FormErrorCode`, `FormWarningCode` 
 
 이미 열린 chain은 중첩 쓰기·reset에도 바깥 origin을 유지하며 트리 생성 발생은 항상 load입니다. 외부 errors의 최초 적용은 load, 이후 prop 교체는 write이며 submit 안에서 이미 보고한 검증기 실행·컴파일 실패는 validate를 유지합니다. 스키마 판정과 callback 실패는 [제출](#submission)을 참조하십시오. 일부 개발 console 경고에는 onError record가 없어 두 채널이 같지 않을 수 있습니다.
 
-`/**`처럼 컴파일할 수 없는 입력 map 키는 commit 뒤 `level: 'error'`, `code: FormErrorCode.FormTypeInputMap`, `origin: 'load'` record를 StrictMode에서도 한 번 보고합니다. 처음부터 잘못된 map은 load fallback을 유지합니다. 잘못된 live 교체는 현재 트리와 마지막 유효 map을 보존합니다. map 참조를 바꾸면 다시 평가하며 새 잘못된 키는 한 번 보고하고 유효한 map으로 재마운트 없이 복구합니다.
+`^/invalid[`처럼 컴파일할 수 없는 명시적 입력 map 패턴은 commit 뒤 `level: 'error'`, `code: FormErrorCode.FormTypeInputMap`, `origin: 'load'` record를 StrictMode에서도 한 번 보고합니다. 처음부터 잘못된 map은 load fallback을 유지합니다. 잘못된 live 교체는 현재 트리와 마지막 유효 map을 보존합니다. map 참조를 바꾸면 다시 평가하며 새 잘못된 키는 한 번 보고하고 유효한 map으로 재마운트 없이 복구합니다.
 
 사용자 `FieldInput`이 렌더 중 던진 예외는 여전히 `FormErrorCode.RenderFailed`와 `origin: 'render'`로 보고합니다. 던진 오류 자체의 코드가 `FormErrorCode.FormTypeInputMap`이어도 같으며, render 경계는 해당 입력 subtree를 격리합니다.
 
@@ -77,7 +77,7 @@ Enter 제출은 native form 알고리즘을 따릅니다. text-like 필드가 �
 | `FormErrorCode.FeedbackLimitExceeded`        | `SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED`          | listener feedback 또는 onChange 중첩 한도를 초과하는 경우                                                                                         |
 | `FormErrorCode.ListenerThrew`                | `SCHEMA_FORM_ERROR.LISTENER_THREW`                   | subscriber 또는 폼 callback이 예외를 던지는 경우                                                                                                  |
 | `FormErrorCode.MultipleErrors`               | `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`                  | dispatch chain 또는 observer에서 여러 오류가 발생하는 경우                                                                                        |
-| `FormErrorCode.FormTypeInputMap`             | `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP`              | 입력 map 키를 컴파일할 수 없는 경우. 치명적 load 실패로 fallback commit 후 origin load로 한 번 보고하며 [구성 실패](#occurrences)를 참조하십시오. |
+| `FormErrorCode.FormTypeInputMap`             | `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP`              | `^` 입력 map 패턴을 컴파일할 수 없는 경우. 치명적 load 실패로 fallback commit 후 origin load로 한 번 보고하며 [구성 실패](#occurrences)를 참조하십시오. |
 | `FormErrorCode.RegisterPlugin`               | `UNHANDLED_ERROR.REGISTER_PLUGIN`                    | 폼 인스턴스 밖에서 전역 플러그인 등록이 실패하는 경우                                                                                             |
 | `FormErrorCode.InvalidWriteOption`           | `SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION`             | 함께 사용할 수 없는 public write 옵션을 지정한 경우                                                                                               |
 | `FormErrorCode.DisposedNodeWrite`            | `SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE`              | 폐기된 트리의 노드를 통해 쓰는 경우                                                                                                               |

@@ -24,7 +24,7 @@ it('keeps configuration failure speculative until the load is flushed once', () 
   const error = new SchemaFormError(
     FormErrorCode.FormTypeInputMap,
     'Invalid input-map pattern',
-    { path: '/**' },
+    { path: '^/**' },
   );
   const load = createRootLoad(
     { jsonSchema: { type: 'string' }, inputMapError: error },

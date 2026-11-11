@@ -141,9 +141,49 @@ The handler receives the source value separately; its context contains `dataPath
 
 ## Input resolution {#input-resolution}
 
-Schema selection uses `presentation.FieldInput`, then Form `fieldInputMap`, Form definitions, FormProvider definitions, and plugin definitions (including built-in fallbacks). A direct `FieldInput` on a composition component overrides that slot. Within definitions the first match wins. An inputType is a component-selection hint, not an HTML input type. A fieldInputMap key such as `/items/*/price` matches exactly one segment per `*`, including array indexes and object keys. Other nonempty map keys are also tried as regular expressions after exact matching (the absolute empty-name path is an exception); use an anchored pattern such as `^/profile/name$` when you need an exclusive path match.
+Schema selection uses `presentation.FieldInput`, then Form `fieldInputMap`, Form definitions, FormProvider definitions, and plugin definitions (including built-in fallbacks). A direct `FieldInput` on a composition component overrides that slot. Within definitions the first match wins. An inputType is a component-selection hint, not an HTML input type.
 
-`**` is not a recursive wildcard. A key that cannot compile, such as `/**`, prevents the Form from loading; see [input-map configuration failures](./error-reference#occurrences).
+### Path matching {#input-map-keys}
+
+`fieldInputMap` maps a node path to its input component. A key is a regular expression only when it starts with `^`; apart from the single-segment `*` wildcard, other keys are compared as text.
+
+```tsx
+<Form
+  jsonSchema={schema}
+  fieldInputMap={{
+    '/settings/theme/color': ColorInput,
+    '^/settings/': SettingsInput,
+  }}
+/>
+```
+
+| Key | Meaning |
+| --- | --- |
+| Starts with `^` | The node paths the expression finds a match in (`RegExp.test`). The leading `^` anchors the start; add `$` to anchor the end. |
+| Starts with `/` or `#/`, has a segment exactly `*`, and does not end with `/` | Same segment count; each `*` consumes one segment, including array indexes and object keys. Every other segment is text. |
+| Otherwise | Exact text. Absolute pointers are canonicalized once; relative text is compared as written and matches no node. |
+
+Write names as they appear in a path in every kind of key: `/` as `~1`, `~` as `~0`, and a name exactly `*` as `%2A`. `%` has no special meaning in a key: `'/rate(%)'` selects the property `rate(%)`; only a name exactly `*` uses `%2A` for the star. Thus `'/a~1b'` selects the property `a/b`, and `'^/a~1b$'` is its pattern equivalent. A noncanonical tilde such as `/a~b` is normalized to `/a~0b` in pointer keys; patterns see the escaped path without normalization.
+
+A key that can match starts with `/`, `#/` or `^`, or is the root (`''` or `'#'`); `'/'` is an empty-name child, not the root. Use the field's data path, including a validation error's data path, rather than its schema location: `#/properties/contact` does not address `/contact` (it would address a data property named `properties` containing `contact`). Another library's `contact.email` or `items[0].name` notation is text no node path equals.
+
+`'/user/(name|email)'` and `'/items/**/name'` select only properties literally named that way. `**` is not recursive. A wildcard key such as `'/files/*/images/(thumb|full)'` compares `(thumb|full)` literally; `'/items/*/'` is outside wildcard grammar and matches no node. These keys neither throw nor warn.
+
+Inside a `^` key every character is regular-expression syntax: `'^/items/*/name$'` matches `/items/name`, not `/items/0/name`; one nonempty segment is `[^/]+`. In a JavaScript string write a backslash twice (`'^/users/\\d+$'`), and group alternatives (`'^/(billing|shipping)/email$'`). Patterns see no fragment `#`; `'^#/a'` matches nothing and `'^$'` selects the root.
+
+| Intended selection | Key | Matches | Does not match |
+| --- | --- | --- | --- |
+| That node | `'/settings'` | `/settings` | `/settings/theme`, `/settingsBackup` |
+| Direct children | `'/settings/*'` | `/settings/theme` | `/settings`, `/settings/theme/color` |
+| Every descendant | `'^/settings/'` | `/settings/theme`, `/settings/theme/color` | `/settings`, `/settingsBackup` |
+| The node and every descendant | Two keys with the same input: `'/settings'`, `'^/settings/'` | `/settings`, `/settings/theme/color` | `/settingsBackup` |
+| A name at any depth | `'^.*/note$'` | `/note`, `/settings/theme/note` | `/notebook`, `/note/child` |
+
+Do not substitute `'^/settings'` (also `/settingsBackup`), `'/settings/'` (an empty-name child), or `'/settings/**'` (a literal `**` child) for a descendant pattern. A descendant pattern includes object and array nodes along the path: their input must render `ChildFields` or their descendants disappear; see the [custom input contract](./api-reference#hybrid-parent-inputs). To select only leaf fields, use a `fieldInputDefinitions` entry with a `test` function that checks the hint's type and path.
+
+The first matching key in `Object.keys` order wins regardless of kind; an exact key does not outrank an earlier pattern. Put exact keys before `*` keys before `^` keys. When extending a shared map, put local exceptions first and spread the shared map last.
+
+An unmatched key is ignored without diagnostics, whether caused by a typo, a renamed property, or a node not rendered yet (an empty array or inactive branch). If the input changes stored values through units, masks or normalization, cover its key with a test. Only an uncompilable `^` pattern produces `FormTypeInputMap`: the entire replacement map is rejected and the tree keeps its last committed valid map, including unchanged inputs; on first load there is no valid map and the form displays its load fallback. Replace the map reference with a valid one to recover; see [configuration failures](./error-reference#occurrences) and the [migration table](./migration-from-0x#input-map-keys).
 
 `FieldInputTestObject` accepts a single value or list for `type`, `schemaType`, `path`, `format`, and `inputType`, plus boolean `required` and `nullable`. Omitted conditions do not restrict matching. A virtual node has `type: 'virtual'` and `schemaType: undefined`; do not match `schemaType: 'virtual'`.
 

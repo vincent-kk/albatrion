@@ -168,7 +168,7 @@ it.each([false, true])(
     const view = render(element({ '/a': A }));
     const root = ref.current!.node;
     const input = view.getByLabelText('/a');
-    const invalid = { '/**': B };
+    const invalid = { '^/**': B };
     view.rerender(element(invalid));
     view.rerender(element(invalid));
     expect(onError).toHaveBeenCalledTimes(1);
@@ -180,7 +180,7 @@ it.each([false, true])(
     );
     expect(view.getByLabelText('/a')).toBe(input);
     expect(ref.current!.node).toBe(root);
-    view.rerender(element({ '/next/**': B }));
+    view.rerender(element({ '^/next/**': B }));
     expect(onError).toHaveBeenCalledTimes(2);
     view.rerender(element({ '/a': B }));
     expect(view.getByLabelText('/a').getAttribute('data-kind')).toBe('b');
@@ -202,7 +202,7 @@ it('recovers an invalid initial map when a valid map arrives', () => {
       validationMode={ValidationMode.None}
     />
   );
-  const view = render(element({ '/**': A }));
+  const view = render(element({ '^/**': A }));
   expect(ref.current!.node).toBeUndefined();
   view.rerender(element({ '/a': A }));
   expect(view.getByLabelText('/a')).toBeTruthy();
