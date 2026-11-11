@@ -40,138 +40,166 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   let root = runtime.chainRoot ?? activeRoot;
-  rebuildRootExternalErrors(root);
-  runDeliveryWaves(root);
-  flushQueuedEvents(
-    resolveFieldNodeChainRoot(root, passed),
-    true,
-    runtime.chainOrigin ?? 'write',
-  );
-  root = resolveFieldNodeChainRoot(root, passed);
-  runtime = root.runtime;
-  const occurrences = runtime.chainOccurrences ?? [];
+  let errors: unknown[];
+  let occurrences: NonNullable<Self['runtime']['chainOccurrences']>;
+  let enclosing: Self['runtime']['enclosingChain'];
   const pending: PendingFormErrorRecord[] = [];
-  const warnings = runtime.pendingWarningRecords;
-
-  if (warnings?.size) {
-    for (const [key, record] of warnings) {
-      let hasWarningOccurrence = false;
-      for (let index = 0, count = occurrences.length; index < count; index++) {
-        const item = occurrences[index];
-
-        if (item.kind === 'record' && item.record === record) {
-          hasWarningOccurrence = true;
-          break;
-        }
-      }
-      if (!hasWarningOccurrence) {
-        pending.push(record);
-      }
-      if (!runtime.warningKeys?.has(key)) {
-        const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
-        const path = isArray(parts) ? parts[1] : undefined;
-        indexFieldNodeWarning(
-          runtime,
-          key,
-          typeof path === 'string' ? path : undefined,
-          undefined,
-          true,
-        );
-      }
-    }
-    warnings.clear();
-  }
-  const guardRecords = runtime.guardFailureRecords;
-
-  if (guardRecords?.size) {
-    for (const [key, record] of guardRecords) {
-      let hasGuardFailureOccurrence = false;
-      for (let index = 0, count = occurrences.length; index < count; index++) {
-        const item = occurrences[index];
-
-        if (item.kind === 'record' && item.record === record) {
-          hasGuardFailureOccurrence = true;
-          break;
-        }
-      }
-      if (!hasGuardFailureOccurrence) {
-        pending.push(record);
-      }
-      (runtime.reportedGuardFailures ??= new Set()).add(key);
-    }
-    guardRecords.clear();
-  }
-  const changed = runtime.chainInitialEmit !== root.emit;
-  const requests = runtime.validationTargets;
-  if (prepareFieldNodeValidation(root)) {
-    if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);
-    for (const target of requests ?? []) requestFieldNodeValidationWave(target);
-  } else if (runtime.validationPendingEntryStamp !== undefined) {
-    settleFieldNodeValidation(root, runtime.validationPendingEntryStamp);
-  }
-  scheduleFieldNodeRevealDrop(root);
-  runtime.validationPendingEntryStamp = undefined;
-  runtime.validationTargets = undefined;
-  runtime.deferLoadValidation = undefined;
-  runtime.entryDepth = 0;
-  const errors = runtime.chainErrors ?? [];
-  if (runtime.stateChanged) {
-    runtime.stateChanged = false;
+  try {
     try {
-      runtime.onStateChange?.();
+      rebuildRootExternalErrors(root);
     } catch (error) {
-      errors.push(error);
-      if (runtime.errorReporter?.hasConsumer())
-        occurrences.push({ kind: 'error', error });
+      captureChainError(runtime, error);
     }
+    runDeliveryWaves(root);
+    flushQueuedEvents(
+      resolveFieldNodeChainRoot(root, passed),
+      true,
+      runtime.chainOrigin ?? 'write',
+    );
     root = resolveFieldNodeChainRoot(root, passed);
     runtime = root.runtime;
-    runtime.chainErrors = errors;
-    runtime.chainOccurrences = occurrences;
-  }
-  if (changed && runtime.onChange) {
-    if ((runtime.onChangeBudget ?? 0) >= 25) {
-      const error = new SchemaFormError(
-        FormErrorCode.FeedbackLimitExceeded,
-        'onChange nesting exceeded 25 callbacks',
-      );
-      errors.push(error);
-      if (runtime.errorReporter?.hasConsumer())
-        occurrences.push({ kind: 'error', error });
-    } else {
-      runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
+    occurrences = runtime.chainOccurrences ?? [];
+    const warnings = runtime.pendingWarningRecords;
+
+    if (warnings?.size) {
+      for (const [key, record] of warnings) {
+        let hasWarningOccurrence = false;
+        for (
+          let index = 0, count = occurrences.length;
+          index < count;
+          index++
+        ) {
+          const item = occurrences[index];
+
+          if (item.kind === 'record' && item.record === record) {
+            hasWarningOccurrence = true;
+            break;
+          }
+        }
+        if (!hasWarningOccurrence) {
+          pending.push(record);
+        }
+        if (!runtime.warningKeys?.has(key)) {
+          const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
+          const path = isArray(parts) ? parts[1] : undefined;
+          indexFieldNodeWarning(
+            runtime,
+            key,
+            typeof path === 'string' ? path : undefined,
+            undefined,
+            true,
+          );
+        }
+      }
+      warnings.clear();
+    }
+    const guardRecords = runtime.guardFailureRecords;
+
+    if (guardRecords?.size) {
+      for (const [key, record] of guardRecords) {
+        let hasGuardFailureOccurrence = false;
+        for (
+          let index = 0, count = occurrences.length;
+          index < count;
+          index++
+        ) {
+          const item = occurrences[index];
+
+          if (item.kind === 'record' && item.record === record) {
+            hasGuardFailureOccurrence = true;
+            break;
+          }
+        }
+        if (!hasGuardFailureOccurrence) {
+          pending.push(record);
+        }
+        (runtime.reportedGuardFailures ??= new Set()).add(key);
+      }
+      guardRecords.clear();
+    }
+    const changed = runtime.chainInitialEmit !== root.emit;
+    const requests = runtime.validationTargets;
+    if (prepareFieldNodeValidation(root)) {
+      if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);
+      for (const target of requests ?? [])
+        requestFieldNodeValidationWave(target);
+    } else if (runtime.validationPendingEntryStamp !== undefined) {
+      settleFieldNodeValidation(root, runtime.validationPendingEntryStamp);
+    }
+    scheduleFieldNodeRevealDrop(root);
+    runtime.validationPendingEntryStamp = undefined;
+    runtime.validationTargets = undefined;
+    runtime.deferLoadValidation = undefined;
+    runtime.entryDepth = 0;
+    errors = runtime.chainErrors ?? [];
+    if (runtime.stateChanged) {
+      runtime.stateChanged = false;
       try {
-        runtime.onChange(root.emit);
+        runtime.onStateChange?.();
       } catch (error) {
         errors.push(error);
         if (runtime.errorReporter?.hasConsumer())
           occurrences.push({ kind: 'error', error });
-      } finally {
-        const raised = new Set<Self['runtime']>();
-        root = resolveFieldNodeChainRoot(root, raised);
-        runtime = root.runtime;
-        for (const owner of raised) {
-          owner.onChangeBudget = (owner.onChangeBudget ?? 1) - 1;
-          passed.add(owner);
+      }
+      root = resolveFieldNodeChainRoot(root, passed);
+      runtime = root.runtime;
+      runtime.chainErrors = errors;
+      runtime.chainOccurrences = occurrences;
+    }
+    if (changed && runtime.onChange) {
+      if ((runtime.onChangeBudget ?? 0) >= 25) {
+        const error = new SchemaFormError(
+          FormErrorCode.FeedbackLimitExceeded,
+          'onChange nesting exceeded 25 callbacks',
+        );
+        errors.push(error);
+        if (runtime.errorReporter?.hasConsumer())
+          occurrences.push({ kind: 'error', error });
+      } else {
+        runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
+        try {
+          runtime.onChange(root.emit);
+        } catch (error) {
+          errors.push(error);
+          if (runtime.errorReporter?.hasConsumer())
+            occurrences.push({ kind: 'error', error });
+        } finally {
+          const raised = new Set<Self['runtime']>();
+          root = resolveFieldNodeChainRoot(root, raised);
+          runtime = root.runtime;
+          for (const owner of raised) {
+            owner.onChangeBudget = (owner.onChangeBudget ?? 1) - 1;
+            passed.add(owner);
+          }
         }
       }
     }
-  }
-  const enclosing = runtime.enclosingChain;
-  runtime.enclosingChain = enclosing?.outer;
-  runtime.chainErrors = enclosing?.errors;
-  runtime.chainRoot = undefined;
-  runtime.feedbackBudget = 0;
-  runtime.feedbackBlockedListeners = undefined;
-  runtime.feedbackLimitReported = false;
-  runtime.chainOccurrences = enclosing?.occurrences;
-  // Adoptions during this chain left every runtime it passed through pointing at the
-  // chain's shared error list; return them to the enclosing state as well.
-  for (const stale of passed) {
-    if (stale === runtime) continue;
-    stale.chainErrors = runtime.chainErrors;
-    stale.chainRoot = undefined;
-    stale.chainOrigin = undefined;
+  } catch (error) {
+    root = resolveFieldNodeChainRoot(root, passed);
+    runtime = root.runtime;
+    runtime.validationPendingEntryStamp = undefined;
+    runtime.validationTargets = undefined;
+    runtime.deferLoadValidation = undefined;
+    runtime.entryDepth = 0;
+    if (!runtime.enclosingChain) runtime.chainOrigin = undefined;
+    throw error;
+  } finally {
+    enclosing = runtime.enclosingChain;
+    runtime.enclosingChain = enclosing?.outer;
+    runtime.chainErrors = enclosing?.errors;
+    runtime.chainRoot = undefined;
+    runtime.feedbackBudget = 0;
+    runtime.feedbackBlockedListeners = undefined;
+    runtime.feedbackLimitReported = false;
+    runtime.chainOccurrences = enclosing?.occurrences;
+    // Adoptions during this chain left every runtime it passed through pointing at the
+    // chain's shared error list; return them to the enclosing state as well.
+    for (const stale of passed) {
+      if (stale === runtime) continue;
+      stale.chainErrors = runtime.chainErrors;
+      stale.chainRoot = undefined;
+      stale.chainOrigin = undefined;
+    }
   }
   if (enclosing) {
     enclosing.errors.push(...errors);
@@ -180,21 +208,26 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     enclosing.occurrences.push(...occurrences);
     return;
   }
-  const original = bundleChainErrors(errors);
-  collectChainRecords(
-    pending,
-    occurrences,
-    runtime.chainOrigin ?? 'write',
-    runtime.reportedGuardFailures,
-  );
-  const handlerErrors = deliverChainRecords(
-    runtime,
-    pending,
-    original,
-    true,
-    runtime.chainOrigin ?? 'write',
-  );
-  runtime.chainOrigin = undefined;
+  let original: unknown;
+  let handlerErrors: unknown[];
+  try {
+    original = bundleChainErrors(errors);
+    collectChainRecords(
+      pending,
+      occurrences,
+      runtime.chainOrigin ?? 'write',
+      runtime.reportedGuardFailures,
+    );
+    handlerErrors = deliverChainRecords(
+      runtime,
+      pending,
+      original,
+      true,
+      runtime.chainOrigin ?? 'write',
+    );
+  } finally {
+    runtime.chainOrigin = undefined;
+  }
   const exposed = !errors.length
     ? bundleChainErrors(handlerErrors)
     : handlerErrors.length

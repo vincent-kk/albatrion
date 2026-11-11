@@ -68,7 +68,11 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
       )
         break;
       if (runtime.pendingExternalErrorNodes?.size) {
-        rebuildRootExternalErrors(active);
+        try {
+          rebuildRootExternalErrors(active);
+        } catch (error) {
+          captureChainError(runtime, error);
+        }
         continue;
       }
       if (runtime.deliveries?.size) {
