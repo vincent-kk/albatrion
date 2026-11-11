@@ -7,6 +7,7 @@ import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchMount } from '../utils/entry/dispatchMount';
 import { dispatchSetExternalErrors } from '../utils/entry/dispatchSetExternalErrors';
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 
 // filid:contract EVENT-030
 it('closes a replacement when retained external errors throw during adoption', () => {
@@ -64,4 +65,18 @@ it('finishes the owner link when the injected reporter throws during adoption', 
   expect(next.runtime.entryDepth).toBe(0);
   expect(previous.runtime.adoptedRoot).toBe(next.root);
   expect(previous.root.disposed).toBe(true);
+  next.runtime.errorReporter = undefined;
+  const event = vi.fn();
+  const onChange = vi.fn();
+  subscribeFieldNode(next.root, event);
+  next.runtime.onChange = onChange;
+  dispatchSetValue(next.root, 'recovered');
+  expect(event).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledExactlyOnceWith('recovered');
+  const later = new Error('later');
+  expect(() =>
+    dispatchSetValue(next.root, () => {
+      throw later;
+    }),
+  ).toThrow(later);
 });

@@ -10,6 +10,7 @@ import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalError
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
 import { captureChainError } from './captureChainError';
+import { abortFieldNodeChain } from './chainAbort';
 import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
 
 /**
@@ -26,7 +27,12 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   assertFieldNodeWritable(previousRoot);
   assertFieldNodeWritable(nextRoot);
-  rebuildRootExternalErrors(previousRoot);
+  let aggregationFailure: { error: unknown } | undefined;
+  try {
+    rebuildRootExternalErrors(previousRoot);
+  } catch (error) {
+    aggregationFailure = { error };
+  }
   const previous = previousRoot.runtime;
   const next = nextRoot.runtime;
   next.entryDepth = previous.entryDepth;
@@ -62,6 +68,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     )
       next.adoptedExternalErrors.set(node.path, errors);
   try {
+    if (aggregationFailure) captureChainError(next, aggregationFailure.error);
     try {
       restoreAdoptedExternalErrors(nextRoot);
     } catch (error) {
@@ -105,6 +112,8 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       }
     }
     next.rebuiltReferenceSchemaPaths = undefined;
+  } catch (error) {
+    throw abortFieldNodeChain(next, error).error;
   } finally {
     previous.adoptedRoot = nextRoot;
     previous.entryDepth = 0;

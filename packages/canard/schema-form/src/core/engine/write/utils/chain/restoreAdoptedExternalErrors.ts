@@ -19,9 +19,15 @@ export const restoreAdoptedExternalErrors = <
     const node = find(root, path);
     if (!node) continue;
     (runtime.nodeErrors ??= new Map()).set(node, errors);
-    if (node === root) updateFieldNodeGlobalErrors(root);
-    else (runtime.externalContributions ??= new Map()).set(node, errors);
-    runtime.adoptedExternalErrors?.delete(path);
+    try {
+      if (node === root) updateFieldNodeGlobalErrors(root);
+      else (runtime.externalContributions ??= new Map()).set(node, errors);
+    } catch (error) {
+      runtime.nodeErrors?.delete(node);
+      throw error;
+    } finally {
+      runtime.adoptedExternalErrors?.delete(path);
+    }
     queueNonSettleEvent(node, FieldNodeEventType.UpdateError, errors);
   }
   if (!runtime.adoptedExternalErrors?.size)

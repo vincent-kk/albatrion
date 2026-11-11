@@ -1,4 +1,5 @@
 import type { FieldNodeRuntime } from '../../../record';
+import { abortFieldNodeChain, readChainAbort } from './chainAbort';
 
 /**
  * Retain a failure for both final throwing and ordered record delivery.
@@ -10,7 +11,14 @@ export const captureChainError = <Self>(
   runtime: FieldNodeRuntime<Self>,
   error: unknown,
 ): void => {
+  const aborted = readChainAbort(runtime.chainErrors);
+  if (aborted) throw aborted.error;
+  let shouldRecord: boolean | undefined;
+  try {
+    shouldRecord = runtime.errorReporter?.hasConsumer();
+  } catch (failure) {
+    throw abortFieldNodeChain(runtime, failure).error;
+  }
   runtime.chainErrors?.push(error);
-  if (runtime.errorReporter?.hasConsumer())
-    runtime.chainOccurrences?.push({ kind: 'error', error });
+  if (shouldRecord) runtime.chainOccurrences?.push({ kind: 'error', error });
 };

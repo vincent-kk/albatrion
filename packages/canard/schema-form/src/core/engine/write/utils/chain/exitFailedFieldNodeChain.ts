@@ -1,5 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
+import { abortFieldNodeChain } from './chainAbort';
 import { exitFieldNodeChain } from './exitFieldNodeChain';
+import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 
 /**
  * Close an interrupted entry without replacing the reporter failure that escaped it.
@@ -11,6 +13,10 @@ export const exitFailedFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   failure: unknown,
 ): never => {
+  failure = abortFieldNodeChain(
+    resolveFieldNodeChainRoot(node.rootNode).runtime,
+    failure,
+  ).error;
   try {
     exitFieldNodeChain(node);
   } catch {

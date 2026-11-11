@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import type { DispatchTestNode } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
@@ -11,6 +12,31 @@ import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { dispatchVisitSubtree } from '../utils/entry/dispatchVisitSubtree';
 import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
+
+/** Recovery includes public delivery and the next operation's failure, not only runtime counters. */
+const expectRecovery = (root: DispatchTestNode) => {
+  const runtime = root.runtime;
+  runtime.errorReporter = undefined;
+  runtime.listeners?.clear();
+  runtime.onStateChange = undefined;
+  const event = vi.fn();
+  const onChange = vi.fn();
+  subscribeFieldNode(root, event);
+  runtime.onChange = onChange;
+  const value =
+    typeof root.local === 'string'
+      ? 'recovered independently'
+      : { recovered: true };
+  dispatchSetValue(root, value);
+  expect(event).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledExactlyOnceWith(value);
+  const failure = new Error('later independent failure');
+  expect(() =>
+    dispatchSetValue(root, () => {
+      throw failure;
+    }),
+  ).toThrow(failure);
+};
 
 // filid:contract dispatch-report
 describe('chain exit failure recovery', () => {
@@ -83,6 +109,7 @@ describe('chain exit failure recovery', () => {
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.mountingGuardPass).toBe(false);
     expect(order).toEqual(['onChange', 'report']);
+    expectRecovery(root);
   });
 
   it('closes mount when its reporter consumer check throws', () => {
@@ -97,6 +124,7 @@ describe('chain exit failure recovery', () => {
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.mountingGuardPass).toBe(false);
+    expectRecovery(root);
   });
 
   it('restores collectors when hasConsumer throws while capturing a listener failure', () => {
@@ -183,6 +211,7 @@ describe('chain exit failure recovery', () => {
     ).toThrow(failure);
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.chainErrors).toBeUndefined();
+    expectRecovery(root);
   });
 
   it('exits a visit batch even when capturing the flush error throws in hasConsumer', () => {
@@ -213,6 +242,7 @@ describe('chain exit failure recovery', () => {
     ).toThrow(failure);
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.chainErrors).toBeUndefined();
+    expectRecovery(root);
   });
 
   it('clears the origin if a reporter consumer check throws during record delivery', () => {
@@ -237,6 +267,7 @@ describe('chain exit failure recovery', () => {
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.chainErrors).toBeUndefined();
     expect(runtime.chainOrigin).toBeUndefined();
+    expectRecovery(root);
   });
 
   it('already exits ordinary listener and onChange failures in delivery then report order', () => {
@@ -319,7 +350,7 @@ describe('chain exit failure recovery', () => {
     expect(runtime.entryDepth).toBe(0);
   });
 
-  it('keeps the outer load origin when an enclosed callback chain cannot inspect its reporter', () => {
+  it('does not report an enclosed callback chain reporter failure through its outer load', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const failure = new Error('nested consumer');
     let failConsumer = false;
@@ -344,12 +375,9 @@ describe('chain exit failure recovery', () => {
       if (root.local === 'mounted') dispatchSetValue(root, 'nested');
     };
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
-    expect(report).toHaveBeenCalledTimes(1);
-    expect(report.mock.calls[0][0]).toMatchObject({
-      origin: 'load',
-      error: failure,
-    });
+    expect(report).not.toHaveBeenCalled();
     expect(runtime.entryDepth).toBe(0);
+    expectRecovery(root);
   });
 
   it('preserves a reporter failure while unwinding a failed mount restore', () => {
@@ -379,6 +407,7 @@ describe('chain exit failure recovery', () => {
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.chainErrors).toBeUndefined();
     expect(runtime.mountingGuardPass).toBe(false);
+    expectRecovery(root);
   });
 
   it('resets validation entry state when an injected validation scheduler throws before callbacks', () => {
@@ -398,11 +427,13 @@ describe('chain exit failure recovery', () => {
     expect(runtime.validationPendingEntryStamp).toBeUndefined();
     expect(runtime.validationTargets).toBeUndefined();
     expect(runtime.deferLoadValidation).toBeUndefined();
+    expect(runtime.validationPending).toBe(false);
     runtime.validationMode = ValidationMode.None;
     runtime.validationCadence = undefined;
     const onChange = vi.fn();
     runtime.onChange = onChange;
     dispatchSetValue(root, 'recovered');
     expect(onChange).toHaveBeenCalledExactlyOnceWith('recovered');
+    expectRecovery(root);
   });
 });

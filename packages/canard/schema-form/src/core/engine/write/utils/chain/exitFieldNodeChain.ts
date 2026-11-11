@@ -15,6 +15,12 @@ import { bundleChainErrors } from '../report/bundleChainErrors';
 import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
 import { captureChainError } from './captureChainError';
+import {
+  abortFieldNodeChain,
+  readChainAbort,
+  restoreChainReporters,
+} from './chainAbort';
+import { discardFieldNodeChainWork } from './discardFieldNodeChainWork';
 import { flushFieldNodeSettings } from './flushFieldNodeSettings';
 import { flushQueuedEvents } from './flushQueuedEvents';
 import { requestFieldNodeValidationWave } from './requestFieldNodeValidationWave';
@@ -24,17 +30,14 @@ import { runDeliveryWaves } from './runDeliveryWaves';
 /**
  * Exit one public write and finish the outermost chain in contract order.
  * @param node - Record whose runtime owns this active stack
- * @param failure - Caught settlement or user callback failure, if present
  * @returns Nothing; the chain may throw its single failure or aggregate
  */
 export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  failure?: unknown,
 ): void => {
   const passed = new Set<Self['runtime']>();
   const activeRoot = resolveFieldNodeChainRoot(node.rootNode, passed);
   let runtime = activeRoot.runtime;
-  if (failure !== undefined) captureChainError(runtime, failure);
   if ((runtime.entryDepth ?? 0) > 1) {
     runtime.entryDepth = (runtime.entryDepth ?? 0) - 1;
     return;
@@ -44,7 +47,10 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   let occurrences: NonNullable<Self['runtime']['chainOccurrences']>;
   let enclosing: Self['runtime']['enclosingChain'];
   const pending: PendingFormErrorRecord[] = [];
+  let interrupted: ReturnType<typeof readChainAbort>;
   try {
+    const aborted = readChainAbort(runtime.chainErrors);
+    if (aborted) throw aborted.error;
     try {
       rebuildRootExternalErrors(root);
     } catch (error) {
@@ -137,9 +143,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       try {
         runtime.onStateChange?.();
       } catch (error) {
-        errors.push(error);
-        if (runtime.errorReporter?.hasConsumer())
-          occurrences.push({ kind: 'error', error });
+        captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
       }
       root = resolveFieldNodeChainRoot(root, passed);
       runtime = root.runtime;
@@ -152,17 +156,13 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
           FormErrorCode.FeedbackLimitExceeded,
           'onChange nesting exceeded 25 callbacks',
         );
-        errors.push(error);
-        if (runtime.errorReporter?.hasConsumer())
-          occurrences.push({ kind: 'error', error });
+        captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
       } else {
         runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
         try {
           runtime.onChange(root.emit);
         } catch (error) {
-          errors.push(error);
-          if (runtime.errorReporter?.hasConsumer())
-            occurrences.push({ kind: 'error', error });
+          captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
         } finally {
           const raised = new Set<Self['runtime']>();
           root = resolveFieldNodeChainRoot(root, raised);
@@ -177,12 +177,11 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   } catch (error) {
     root = resolveFieldNodeChainRoot(root, passed);
     runtime = root.runtime;
-    runtime.validationPendingEntryStamp = undefined;
-    runtime.validationTargets = undefined;
-    runtime.deferLoadValidation = undefined;
+    interrupted = abortFieldNodeChain(runtime, error);
+    discardFieldNodeChainWork(root);
     runtime.entryDepth = 0;
     if (!runtime.enclosingChain) runtime.chainOrigin = undefined;
-    throw error;
+    throw interrupted.error;
   } finally {
     enclosing = runtime.enclosingChain;
     runtime.enclosingChain = enclosing?.outer;
@@ -200,6 +199,21 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       stale.chainRoot = undefined;
       stale.chainOrigin = undefined;
     }
+    if (interrupted && !enclosing) {
+      try {
+        settleFieldNodeValidation(root);
+      } catch {
+        // Cleanup callbacks cannot replace the collaborator failure already propagating.
+      } finally {
+        try {
+          flushFieldNodeSettings(runtime);
+        } catch {
+          // The first collaborator failure remains the caller's exception.
+        } finally {
+          restoreChainReporters(interrupted);
+        }
+      }
+    }
   }
   if (enclosing) {
     enclosing.errors.push(...errors);
@@ -210,30 +224,41 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   }
   let original: unknown;
   let handlerErrors: unknown[];
+  let reportingFailure: ReturnType<typeof readChainAbort>;
   try {
-    original = bundleChainErrors(errors);
-    collectChainRecords(
-      pending,
-      occurrences,
-      runtime.chainOrigin ?? 'write',
-      runtime.reportedGuardFailures,
-    );
-    handlerErrors = deliverChainRecords(
-      runtime,
-      pending,
-      original,
-      true,
-      runtime.chainOrigin ?? 'write',
-    );
+    try {
+      original = bundleChainErrors(errors);
+      collectChainRecords(
+        pending,
+        occurrences,
+        runtime.chainOrigin ?? 'write',
+        runtime.reportedGuardFailures,
+      );
+      handlerErrors = deliverChainRecords(
+        runtime,
+        pending,
+        original,
+        true,
+        runtime.chainOrigin ?? 'write',
+      );
+    } catch (error) {
+      reportingFailure = abortFieldNodeChain(runtime, error, errors);
+      throw reportingFailure.error;
+    } finally {
+      runtime.chainOrigin = undefined;
+    }
+    const exposed = !errors.length
+      ? bundleChainErrors(handlerErrors)
+      : handlerErrors.length
+        ? bundleChainErrors([original, ...handlerErrors])
+        : original;
+    if (!errors.length && !handlerErrors.length) return;
+    throw exposed;
   } finally {
-    runtime.chainOrigin = undefined;
+    try {
+      flushFieldNodeSettings(runtime, reportingFailure);
+    } finally {
+      if (reportingFailure) restoreChainReporters(reportingFailure);
+    }
   }
-  const exposed = !errors.length
-    ? bundleChainErrors(handlerErrors)
-    : handlerErrors.length
-      ? bundleChainErrors([original, ...handlerErrors])
-      : original;
-  flushFieldNodeSettings(runtime);
-  if (!errors.length && !handlerErrors.length) return;
-  throw exposed;
 };
