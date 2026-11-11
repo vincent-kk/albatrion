@@ -12,6 +12,7 @@ import {
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
   readFieldNodeRevealVersion,
+  relayFieldNodeInput,
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
@@ -35,9 +36,6 @@ import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputBridgeProps } from './type';
 import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
 import { resolveControlled } from './utils/resolveControlled';
-
-/** State patch that marks the field edited after a controlled change. */
-const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
 
 /** State patch that marks the field touched after blur. */
 const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
@@ -118,12 +116,7 @@ export const FieldInputBridge = memo(
           return;
         const onChange = onChangeRef.current || overrideOnChangeRef?.current;
         if (!onChange) writeFieldNodeInput(node, input, option);
-        else
-          node.batch(() => {
-            onChange(input, option);
-            node.clearExternalErrors();
-            node.setState(EDITED_STATE_PATCH);
-          });
+        else relayFieldNodeInput(node, input, option, onChange);
       },
       [
         accepts,

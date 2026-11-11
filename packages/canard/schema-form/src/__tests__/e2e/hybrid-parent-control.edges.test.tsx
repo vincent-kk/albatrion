@@ -104,51 +104,45 @@ it('E1 refreshes reordered array items and aligns their displayed and node value
   expect(form.field('/1')).not.toBe(second);
 });
 
-// The overridden checkbox callback receives an unevaluated updater.
-it.fails(
-  'E2 evaluates the built-in checkbox updater before relaying and preserves selection and DOM',
-  async () => {
-    const received: unknown[] = [];
-    const Choices = ({
-      ChildFields,
-      onChange,
-    }: FieldInputProps<Record<string, unknown>>) => (
-      <>
-        {ChildFields.map((Child) => (
-          <Child
-            key={Child.key}
-            onChange={(input) => {
-              received.push(input);
-              onChange({ [Child.field]: input });
-            }}
-          />
-        ))}
-      </>
-    );
-    form = await renderForm(
-      schemaFor(
-        {
-          type: 'array',
-          options: { terminal: true },
-          presentation: { inputType: 'checkbox' },
-          items: { type: 'string', enum: ['red', 'blue'] },
-        },
-        Choices,
-      ),
-    );
-    const checkbox = form.container.querySelector<HTMLInputElement>(
-      'input[type="checkbox"]',
-    )!;
-    expect(checkbox).not.toBeNull();
-    await form.user.click(checkbox);
-    expect(received).toEqual([['red']]);
-    expect(form.getValue()).toEqual({ a: ['red'] });
-    expect(form.container.querySelector('input[type="checkbox"]')).toBe(
-      checkbox,
-    );
-    expect(checkbox.checked).toBe(true);
-  },
-);
+it('E2 evaluates the built-in checkbox updater before relaying and preserves selection and DOM', async () => {
+  const received: unknown[] = [];
+  const Choices = ({
+    ChildFields,
+    onChange,
+  }: FieldInputProps<Record<string, unknown>>) => (
+    <>
+      {ChildFields.map((Child) => (
+        <Child
+          key={Child.key}
+          onChange={(input) => {
+            received.push(input);
+            onChange({ [Child.field]: input });
+          }}
+        />
+      ))}
+    </>
+  );
+  form = await renderForm(
+    schemaFor(
+      {
+        type: 'array',
+        options: { terminal: true },
+        presentation: { inputType: 'checkbox' },
+        items: { type: 'string', enum: ['red', 'blue'] },
+      },
+      Choices,
+    ),
+  );
+  const checkbox = form.container.querySelector<HTMLInputElement>(
+    'input[type="checkbox"]',
+  )!;
+  expect(checkbox).not.toBeNull();
+  await form.user.click(checkbox);
+  expect(received).toEqual([['red']]);
+  expect(form.getValue()).toEqual({ a: ['red'] });
+  expect(form.container.querySelector('input[type="checkbox"]')).toBe(checkbox);
+  expect(checkbox.checked).toBe(true);
+});
 
 it('E3 refreshes the same child for a reentrant Form onChange write', async () => {
   form = await renderForm(schemaFor(), {
@@ -163,24 +157,20 @@ it('E3 refreshes the same child for a reentrant Form onChange write', async () =
   expect(form.field('/a')).not.toBe(input);
 });
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'E4 preserves a child inside a user batch and refreshes it on the next caller write',
-  async () => {
-    form = await renderForm(schemaFor());
-    const input = form.field('/a')!;
-    await act(async () =>
-      form.handle.node!.batch(() =>
-        fireEvent.change(input, { target: { value: 'x' } }),
-      ),
-    );
-    expect(form.getValue()).toEqual({ a: 'x' });
-    expect(form.field('/a')).toBe(input);
-    await form.setValue({ a: 'next' });
-    expect(form.value('/a')).toBe('next');
-    expect(form.field('/a')).not.toBe(input);
-  },
-);
+it('E4 preserves a child inside a user batch and refreshes it on the next caller write', async () => {
+  form = await renderForm(schemaFor());
+  const input = form.field('/a')!;
+  await act(async () =>
+    form.handle.node!.batch(() =>
+      fireEvent.change(input, { target: { value: 'x' } }),
+    ),
+  );
+  expect(form.getValue()).toEqual({ a: 'x' });
+  expect(form.field('/a')).toBe(input);
+  await form.setValue({ a: 'next' });
+  expect(form.value('/a')).toBe('next');
+  expect(form.field('/a')).not.toBe(input);
+});
 
 it('E5 commits a parent write before its exception and does not suppress the next refresh', async () => {
   const failure = new Error('parent callback rejected');
@@ -443,24 +433,20 @@ it('E11 aligns the child after a conditional schema changes its input declaratio
   expect(form.field('/a')!.hasAttribute('data-alternate')).toBe(true);
 });
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'E12 preserves a draft emitted through a renderer Input callback override',
-  async () => {
-    const Renderer = ({ Input, node }: FieldRendererProps) => (
-      <Input onChange={(input) => node.setValue(input)} />
-    );
-    form = await renderForm(
-      { type: 'string', presentation: { FieldInput: Draft } },
-      { FieldRenderer: Renderer },
-    );
-    const input = form.field('')!;
-    fireEvent.change(input, { target: { value: 'x' } });
-    await form.flush();
-    expect(form.getValue()).toBe('x');
-    expect(form.field('')).toBe(input);
-  },
-);
+it('E12 preserves a draft emitted through a renderer Input callback override', async () => {
+  const Renderer = ({ Input, node }: FieldRendererProps) => (
+    <Input onChange={(input) => node.setValue(input)} />
+  );
+  form = await renderForm(
+    { type: 'string', presentation: { FieldInput: Draft } },
+    { FieldRenderer: Renderer },
+  );
+  const input = form.field('')!;
+  fireEvent.change(input, { target: { value: 'x' } });
+  await form.flush();
+  expect(form.getValue()).toBe('x');
+  expect(form.field('')).toBe(input);
+});
 
 it('E13 preserves both child emissions in one event when the parent uses an updater', async () => {
   form = await renderForm(schemaFor());

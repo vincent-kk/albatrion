@@ -26,6 +26,7 @@ export {
   dispatchUpdate,
   dispatchValidate,
   dispatchVisitSubtree,
+  dispatchRelayInput,
   dispatchWriteInput,
   readFieldNodeInteractionReset,
   readFieldNodeRevision,

@@ -51,20 +51,16 @@ const pairSchema = (
   },
 });
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'H1 keeps the undeclared child and its focus after hybrid typing',
-  async () => {
-    form = await renderForm(pairSchema());
-    const input = form.field('/pair/a')!;
-    input.focus();
-    fireEvent.change(input, { target: { value: 'x' } });
-    await form.flush();
-    expect(form.getValue()).toEqual({ pair: { a: 'x' } });
-    expect(form.field('/pair/a')).toBe(input);
-    expect(document.activeElement).toBe(input);
-  },
-);
+it('H1 keeps the undeclared child and its focus after hybrid typing', async () => {
+  form = await renderForm(pairSchema());
+  const input = form.field('/pair/a')!;
+  input.focus();
+  fireEvent.change(input, { target: { value: 'x' } });
+  await form.flush();
+  expect(form.getValue()).toEqual({ pair: { a: 'x' } });
+  expect(form.field('/pair/a')).toBe(input);
+  expect(document.activeElement).toBe(input);
+});
 
 it.each([false, true])(
   'H2 retains both sibling edits with controlled=%s',
@@ -85,40 +81,36 @@ it.each([false, true])(
   },
 );
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'H3 keeps the emitting child and refreshes a computed sibling',
-  async () => {
-    const Compute = ({
-      ChildFields,
-      value,
-      onChange,
-    }: FieldInputProps<Record<string, unknown>>) => (
-      <>
-        {ChildFields.map((Child) => (
-          <Child
-            key={Child.key}
-            onChange={(input) =>
-              onChange({
-                ...value,
-                [Child.field]: input,
-                b: `computed:${input}`,
-              })
-            }
-          />
-        ))}
-      </>
-    );
-    form = await renderForm(pairSchema(undefined, Compute));
-    const a = form.field('/pair/a');
-    const b = form.field('/pair/b');
-    await form.type('/pair/a', 'x');
-    expect(form.getValue()).toEqual({ pair: { a: 'x', b: 'computed:x' } });
-    expect(form.value('/pair/b')).toBe('computed:x');
-    expect(form.field('/pair/b')).not.toBe(b);
-    expect(form.field('/pair/a')).toBe(a);
-  },
-);
+it('H3 keeps the emitting child and refreshes a computed sibling', async () => {
+  const Compute = ({
+    ChildFields,
+    value,
+    onChange,
+  }: FieldInputProps<Record<string, unknown>>) => (
+    <>
+      {ChildFields.map((Child) => (
+        <Child
+          key={Child.key}
+          onChange={(input) =>
+            onChange({
+              ...value,
+              [Child.field]: input,
+              b: `computed:${input}`,
+            })
+          }
+        />
+      ))}
+    </>
+  );
+  form = await renderForm(pairSchema(undefined, Compute));
+  const a = form.field('/pair/a');
+  const b = form.field('/pair/b');
+  await form.type('/pair/a', 'x');
+  expect(form.getValue()).toEqual({ pair: { a: 'x', b: 'computed:x' } });
+  expect(form.value('/pair/b')).toBe('computed:x');
+  expect(form.field('/pair/b')).not.toBe(b);
+  expect(form.field('/pair/a')).toBe(a);
+});
 
 it('H4 refreshes an undeclared child when its parent transforms the value', async () => {
   const Upper = ({
@@ -202,85 +194,73 @@ it('H6 refreshes a child transformed by a derived rule in the same settlement', 
   expect(form.field('/pair/a')).not.toBe(input);
 });
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'H7 keeps an array item when its parent writes the whole array',
-  async () => {
-    const ArrayParent = ({
-      ChildFields,
-      value,
-      onChange,
-    }: FieldInputProps<string[]>) => (
-      <>
-        {ChildFields.map((Child, index) => (
-          <Child
-            key={Child.key}
-            onChange={(input) =>
-              onChange(
-                (value ?? []).map((entry, position) =>
-                  position === index ? input : entry,
-                ),
-              )
-            }
-          />
-        ))}
-      </>
-    );
-    form = await renderForm(
-      {
-        type: 'array',
-        options: { terminal: false },
-        items: { type: 'string' },
-        presentation: { FieldInput: ArrayParent },
-      },
-      { defaultValue: ['', 'b'] },
-    );
-    const input = form.field('/0');
-    await form.type('/0', 'x');
-    expect(form.getValue()).toEqual(['x', 'b']);
-    expect(form.field('/0')).toBe(input);
-  },
-);
+it('H7 keeps an array item when its parent writes the whole array', async () => {
+  const ArrayParent = ({
+    ChildFields,
+    value,
+    onChange,
+  }: FieldInputProps<string[]>) => (
+    <>
+      {ChildFields.map((Child, index) => (
+        <Child
+          key={Child.key}
+          onChange={(input) =>
+            onChange(
+              (value ?? []).map((entry, position) =>
+                position === index ? input : entry,
+              ),
+            )
+          }
+        />
+      ))}
+    </>
+  );
+  form = await renderForm(
+    {
+      type: 'array',
+      options: { terminal: false },
+      items: { type: 'string' },
+      presentation: { FieldInput: ArrayParent },
+    },
+    { defaultValue: ['', 'b'] },
+  );
+  const input = form.field('/0');
+  await form.type('/0', 'x');
+  expect(form.getValue()).toEqual(['x', 'b']);
+  expect(form.field('/0')).toBe(input);
+});
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'H8 keeps the emitting grandchild through two hybrid parents',
-  async () => {
-    form = await renderForm(
-      pairSchema({
-        type: 'object',
-        options: { terminal: false },
-        presentation: { FieldInput: Parent },
-        properties: { leaf: { type: 'string' } },
-      }),
-    );
-    const input = form.field('/pair/a/leaf');
-    await form.type('/pair/a/leaf', 'x');
-    expect(form.getValue()).toEqual({ pair: { a: { leaf: 'x' } } });
-    expect(form.field('/pair/a/leaf')).toBe(input);
-  },
-);
+it('H8 keeps the emitting grandchild through two hybrid parents', async () => {
+  form = await renderForm(
+    pairSchema({
+      type: 'object',
+      options: { terminal: false },
+      presentation: { FieldInput: Parent },
+      properties: { leaf: { type: 'string' } },
+    }),
+  );
+  const input = form.field('/pair/a/leaf');
+  await form.type('/pair/a/leaf', 'x');
+  expect(form.getValue()).toEqual({ pair: { a: { leaf: 'x' } } });
+  expect(form.field('/pair/a/leaf')).toBe(input);
+});
 
-// Parent-origin writes still refresh the emitting input without a relay record.
-it.fails(
-  'H9 preserves the composing input through composition end and the next edit',
-  async () => {
-    form = await renderForm(pairSchema());
-    const input = form.field('/pair/a')!;
-    input.focus();
-    fireEvent.compositionStart(input);
-    fireEvent.change(input, { target: { value: '하' } });
-    await form.flush();
-    expect(form.field('/pair/a')).toBe(input);
-    fireEvent.compositionEnd(input);
-    await form.flush();
-    expect(form.field('/pair/a')).toBe(input);
-    fireEvent.change(input, { target: { value: '한' } });
-    await form.flush();
-    expect(form.getValue()).toEqual({ pair: { a: '한' } });
-    expect(document.activeElement).toBe(input);
-  },
-);
+it('H9 preserves the composing input through composition end and the next edit', async () => {
+  form = await renderForm(pairSchema());
+  const input = form.field('/pair/a')!;
+  input.focus();
+  fireEvent.compositionStart(input);
+  fireEvent.change(input, { target: { value: '하' } });
+  await form.flush();
+  expect(form.field('/pair/a')).toBe(input);
+  fireEvent.compositionEnd(input);
+  await form.flush();
+  expect(form.field('/pair/a')).toBe(input);
+  fireEvent.change(input, { target: { value: '한' } });
+  await form.flush();
+  expect(form.getValue()).toEqual({ pair: { a: '한' } });
+  expect(document.activeElement).toBe(input);
+});
 
 it('H10 leaves the local draft and node unchanged when the parent rejects input', async () => {
   const reject = vi.fn();

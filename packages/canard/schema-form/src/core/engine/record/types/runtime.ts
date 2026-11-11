@@ -261,6 +261,8 @@ export interface FieldNodeRuntime<Self>
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Last input emission per node, consumed by the first synchronous settlement. */
+  inputRelays?: { node: Self; path: string; value: unknown }[];
   /** Number of active nested `visitSubtree` walks on this tree. */
   visitDepth?: number;
   /** Entry whose write opened the batch held open until the outermost walk ends. */

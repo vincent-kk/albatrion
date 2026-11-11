@@ -31,6 +31,7 @@ describe('FieldNode PR-2 surface', () => {
       'readFieldNodeRevealPolicy',
       'readFieldNodeRevealVersion',
       'readFieldNodeValidationEpoch',
+      'relayFieldNodeInput',
       'reloadFieldNodeForm',
       'setContext',
       'startFieldNodeLoadValidation',

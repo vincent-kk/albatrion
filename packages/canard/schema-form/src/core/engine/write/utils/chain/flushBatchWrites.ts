@@ -22,7 +22,10 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   const runtime = root.runtime;
   const writes = runtime.batchWrites ?? [];
   runtime.batchWrites = undefined;
-  if (!writes.length) return;
+  if (!writes.length) {
+    if (runtime.inputRelays !== undefined) runtime.inputRelays = undefined;
+    return;
+  }
   let option = WriteOption.None;
   for (const write of writes) option |= write.option;
   const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
@@ -106,5 +109,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     );
   } catch (error) {
     captureChainError(runtime, error);
+  } finally {
+    if (runtime.inputRelays !== undefined) runtime.inputRelays = undefined;
   }
 };
