@@ -108,6 +108,12 @@ This plugin provides the following Ant Design Mobile components:
 
 ---
 
+## Switch keyboard access
+
+Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch through the same value mapping as a click; Space does not scroll the page. Disabled switches stay outside the Tab order and ignore activation keys.
+
+---
+
 ## Input Settings
 
 Per-input settings such as `lazy`, `marks` and `range` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
