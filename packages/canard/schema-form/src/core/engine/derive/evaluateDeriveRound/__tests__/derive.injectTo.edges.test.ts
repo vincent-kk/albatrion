@@ -21,13 +21,28 @@ describe('injectTo edge boundaries', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
-    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'A',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(injectTo).toHaveBeenCalledOnce();
     expect(root.structure?.target?.source).toBeUndefined();
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBeUndefined();
     expect(injectTo).toHaveBeenCalledTimes(2);
-    writeFieldNode(root.structure!['source'], 'C', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'C',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('C');
     expect(injectTo).toHaveBeenCalledTimes(3);
   });
@@ -144,7 +159,12 @@ describe('injectTo edge boundaries', () => {
       cause: 'expression',
       commit: 1,
     });
-    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'A',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -179,7 +199,12 @@ describe('injectTo edge boundaries', () => {
       WriteOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'A',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('manual');
     expect(injectTo).toHaveBeenCalledOnce();
   });

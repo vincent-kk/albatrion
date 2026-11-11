@@ -128,7 +128,9 @@ describe('array settlement lifecycle', () => {
       root.inactiveValues[0]?.value,
     );
     expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(sourceTree);
-    expect(root.inactiveValues).toEqual([{ path: '/items', value: sourceTree }]);
+    expect(root.inactiveValues).toEqual([
+      { path: '/items', value: sourceTree },
+    ]);
     root.find('/showHost')?.setValue(true);
     expect(root.find('/items')?.value).toEqual([
       {

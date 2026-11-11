@@ -243,7 +243,9 @@ describe('final-shape exits', () => {
         (entry) => entry.path === '/outer/value',
       ),
     ).toBe(false);
-    expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('hello');
+    expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe(
+      'hello',
+    );
     expect(hasRetainedSlotOwnSource(root, '/outer/value', 'number')).toBe(
       false,
     );
@@ -305,7 +307,9 @@ describe('final-shape exits', () => {
     expect(hasRetainedSlotOwnSource(root, '/inside/value', 'string')).toBe(
       false,
     );
-    expect(readRetainedSlotSource(root, '/outside/value', 'string')).toBe('out');
+    expect(readRetainedSlotSource(root, '/outside/value', 'string')).toBe(
+      'out',
+    );
     writeFieldNode(
       root.structure!.outside.structure!.kind,
       'a',

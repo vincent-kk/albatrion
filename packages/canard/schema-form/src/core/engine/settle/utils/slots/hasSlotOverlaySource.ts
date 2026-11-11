@@ -6,8 +6,7 @@ import type { InactiveSlotOverlay } from '../../../record';
  * @returns Whether a source, undeclared value, or descendant source remains
  */
 export const hasSlotOverlaySource = (overlay: InactiveSlotOverlay): boolean => {
-  if (overlay.source !== undefined || overlay.extras !== undefined)
-    return true;
+  if (overlay.source !== undefined || overlay.extras !== undefined) return true;
   for (const child of overlay.children?.values() ?? [])
     if (hasSlotOverlaySource(child)) return true;
   return false;

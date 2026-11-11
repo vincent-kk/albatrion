@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { BEHAVIORS,getStaticChoices } from '../../../../behaviors';
+import { BEHAVIORS, getStaticChoices } from '../../../../behaviors';
 import { StaticFirstLoadCapability } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
@@ -40,8 +40,7 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     node.source !== undefined ||
     (extrasOnly
       ? (node.children?.length ?? 0) !== 0 ||
-        (isArray(node.extras) ? node.extras.length : 0) !==
-          count
+        (isArray(node.extras) ? node.extras.length : 0) !== count
       : node.extras !== undefined ||
         !node.blueprintNode.item ||
         (node.children?.length ?? 0) !== count) ||

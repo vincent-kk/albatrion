@@ -4,6 +4,7 @@ import { equals } from '@winglet/common-utils/object';
 
 import type { Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import { RESERVED_SCHEMA_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { FormErrorCode } from '@/schema-form/errors';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -242,7 +243,7 @@ export const readDiscriminatorBranches = (
             ? { lift: false }
             : hostTagTypes !== undefined &&
                 ((mask !== undefined &&
-                  (mask & foldAllowedTypes(hostTagTypes)) === 0) ||
+                  (mask & foldAllowedTypes(hostTagTypes)) === BIT_MASK_NONE) ||
                   !values.some((value) =>
                     value === null
                       ? hostTagTypes.includes('null')

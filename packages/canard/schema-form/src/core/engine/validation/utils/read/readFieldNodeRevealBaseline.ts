@@ -7,6 +7,7 @@ import { ValidationMode } from '../../../types/state';
 export const readFieldNodeRevealBaseline = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ) =>
-  (node.rootNode.runtime.validationMode ?? 0) & ValidationMode.OnChange
+  (node.rootNode.runtime.validationMode ?? ValidationMode.None) &
+  ValidationMode.OnChange
     ? node.revealBaseline
     : undefined;

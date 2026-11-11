@@ -54,7 +54,11 @@ it('copies source channels and rebinds every active and inactive parent', () => 
     hidden.name,
     hidden.blueprintNode,
   );
-  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
+  const entry = getRetainedChildEntry(
+    root,
+    instance.name,
+    instance.blueprintNode,
+  );
   if (!hiddenEntry || !entry) throw new Error('Expected declared bindings');
   instance.inactiveSlots = new Map([[hiddenEntry, hidden]]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);

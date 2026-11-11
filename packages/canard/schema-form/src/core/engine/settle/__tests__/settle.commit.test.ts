@@ -391,7 +391,11 @@ describe('settle commit', () => {
     const initial = createTestTree(schema).root;
     loadFieldNodeAtMount(initial, source, WriteOption.Overwrite);
     const exited = createTestTree(schema).root;
-    loadFieldNodeAtMount(exited, { ...source, flag: true }, WriteOption.Overwrite);
+    loadFieldNodeAtMount(
+      exited,
+      { ...source, flag: true },
+      WriteOption.Overwrite,
+    );
     writeFieldNode(
       exited.structure!.flag,
       false,
@@ -411,9 +415,9 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     expect(initial.structure?.group?.structure?.leaf?.source).toBe('a');
-    expect(initial.structure?.group?.structure?.deep?.structure?.x?.source).toBe(
-      1,
-    );
+    expect(
+      initial.structure?.group?.structure?.deep?.structure?.x?.source,
+    ).toBe(1);
   });
 
   it('26C-13 enumerates latent leaves under a path live as another kind', () => {
@@ -572,7 +576,9 @@ describe('settle commit', () => {
     );
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.group?.structure?.leaf?.source).toBe('a');
-    expect(root.structure?.group?.structure?.deep?.structure?.x?.source).toBe(1);
+    expect(root.structure?.group?.structure?.deep?.structure?.x?.source).toBe(
+      1,
+    );
   });
 
   it('WRITE-087 ignores a detached leaf write beside retained siblings', () => {
@@ -613,7 +619,9 @@ describe('settle commit', () => {
     ).toBe(unchangedX);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.group?.structure?.leaf?.source).toBe('a');
-    expect(root.structure?.group?.structure?.deep?.structure?.x?.source).toBe(1);
+    expect(root.structure?.group?.structure?.deep?.structure?.x?.source).toBe(
+      1,
+    );
   });
 
   it('WRITE-087 lists inactive values in blueprint document order', () => {

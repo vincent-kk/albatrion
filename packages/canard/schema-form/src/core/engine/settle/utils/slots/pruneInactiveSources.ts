@@ -1,4 +1,4 @@
-import type { FieldNodeRecord,FieldNodeRuntime } from '../../../record';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { pruneSlotSources } from './pruneSlotSources';
 

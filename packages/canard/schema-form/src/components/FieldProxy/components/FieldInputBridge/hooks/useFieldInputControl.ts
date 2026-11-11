@@ -9,6 +9,11 @@ import { useTruthyConstant, useVersion } from '@winglet/react-utils/hook';
 
 import type { Optional } from '@aileron/declare';
 
+import {
+  BIT_FLAG_00,
+  BIT_FLAG_01,
+  BIT_MASK_NONE,
+} from '@/schema-form/constants/bitmask';
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
@@ -25,11 +30,11 @@ const INPUT_TRACKING_EVENTS_WITHOUT_REFRESH =
   INPUT_TRACKING_EVENTS & ~FieldNodeEventType.RequestRefresh;
 
 /** Refresh waits while the raw input owns an active IME composition. */
-const COMPOSING = 1;
+const COMPOSING = BIT_FLAG_00;
 /** Mask that clears the composing bit from the refresh deferral state. */
 const CLEAR_COMPOSING_MASK = ~COMPOSING;
 /** Refresh waits for the child ownership observed by render, subscribe or delivery. */
-const MOUNTED_CHILDREN = 2;
+const MOUNTED_CHILDREN = BIT_FLAG_01;
 
 /**
  * Controls rendering and composition deferral for field inputs based on FieldNode events.
@@ -67,17 +72,17 @@ export const useFieldInputControl = <Node extends FieldNode>(
   const refreshDeferral = useTruthyConstant(createRefreshDeferral);
   refreshDeferral.current =
     (refreshDeferral.current & COMPOSING) |
-    (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
+    (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
   const subscribe = useCallback(
     (onStoreChange: () => void) => {
       refreshDeferral.current =
         (refreshDeferral.current & COMPOSING) |
-        (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
+        (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
       const unsubscribe = node.subscribe(({ type }) => {
         if (!(type & INPUT_TRACKING_EVENTS)) return;
         refreshDeferral.current =
           (refreshDeferral.current & COMPOSING) |
-          (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
+          (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
         onStoreChange();
       });
       onStoreChange();
@@ -88,7 +93,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
   const getRevision = useCallback(() => {
     // revision(mask) sums per-bit delivery counts, so each undeferred read equals
     // the Refresh-excluded revision plus the declaration's current generation.
-    if (refreshDeferral.current !== 0)
+    if (refreshDeferral.current !== BIT_MASK_NONE)
       return (
         node.revision(INPUT_TRACKING_EVENTS_WITHOUT_REFRESH) +
         generation.current
@@ -100,7 +105,8 @@ export const useFieldInputControl = <Node extends FieldNode>(
     );
   }, [node, refreshDeferral, controlled]);
   useSyncExternalStore(subscribe, getRevision, getRevision);
-  if (refreshDeferral.current === 0) generation.current = refreshRevision;
+  if (refreshDeferral.current === BIT_MASK_NONE)
+    generation.current = refreshRevision;
   const handleCompositionStart = useCallback(() => {
     refreshDeferral.current |= COMPOSING;
   }, [refreshDeferral]);
@@ -128,7 +134,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
  */
 const createRefreshDeferral = () => {
   const deferral = {
-    current: 0,
+    current: BIT_MASK_NONE,
     release: () => {
       deferral.current &= CLEAR_COMPOSING_MASK;
     },

@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
-
 import type { FieldNode } from '@/schema-form/core';
 import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
 import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
@@ -188,7 +187,9 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const elements = createElements(10);
     const reveal = vi.fn();
-    elements.forEach((element) => manager.register(element, { node, reveal: reveal }));
+    elements.forEach((element) =>
+      manager.register(element, { node, reveal: reveal }),
+    );
     let remaining = 3;
     flushIdle({ timeRemaining: () => (remaining-- > 0 ? 10 : 0) });
     expect(reveal.mock.calls.length).toBeLessThan(10);
@@ -200,7 +201,9 @@ describe('VirtualizationManager', () => {
   it('backfill none never schedules idle work', () => {
     const manager = createManager({ backfill: VirtualizationBackfill.None });
     const elements = createElements(5);
-    elements.forEach((element) => manager.register(element, { node, reveal: vi.fn() }));
+    elements.forEach((element) =>
+      manager.register(element, { node, reveal: vi.fn() }),
+    );
     expect(idleQueue).toHaveLength(0);
   });
 
@@ -245,7 +248,9 @@ describe('VirtualizationManager', () => {
     const manager = createManager();
     const elements = createElements(3);
     const reveal = vi.fn();
-    elements.forEach((element) => manager.register(element, { node, reveal: reveal }));
+    elements.forEach((element) =>
+      manager.register(element, { node, reveal: reveal }),
+    );
     // The Safe scheduler binds the real setImmediate/setTimeout at module
     // load, so wait for an actual macrotask turn instead of faking timers.
     await new Promise((resolve) => setTimeout(resolve, 10));

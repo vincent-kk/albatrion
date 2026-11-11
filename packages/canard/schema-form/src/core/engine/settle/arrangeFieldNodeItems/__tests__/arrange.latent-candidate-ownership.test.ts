@@ -137,7 +137,9 @@ describe('tuple source-slot candidate ownership', () => {
           hasRetainedSlotOwnSource(root, `/list/${sourceIndex}/v`, kind),
         ).toBe(false);
       dispatchSetValue(getDispatchNode(root, 'kind'), kind);
-      expect(getDispatchNode(list, String(destination), 'v').source).toBe(value);
+      expect(getDispatchNode(list, String(destination), 'v').source).toBe(
+        value,
+      );
       expect(list.local).toEqual(
         operation === 'insert'
           ? [{}, { v: value }, { v: value }]
@@ -169,7 +171,9 @@ describe('tuple source-slot candidate ownership', () => {
       expect(readRetainedSlotSource(root, `/list/${source}/v`, 'string')).toBe(
         source === 0 ? 'first' : 'second',
       );
-      expect(readRetainedSlotSource(root, `/list/${source}/v`, 'number')).toBe(37);
+      expect(readRetainedSlotSource(root, `/list/${source}/v`, 'number')).toBe(
+        37,
+      );
       if (operation === 'insert') dispatchInsert(list, 0, {});
       else dispatchRemove(list, 0);
       expect(

@@ -338,12 +338,22 @@ describe('active derive declarations', () => {
       { flag: false, source: 'A', target: 'manual' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!['source'], 'C', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'C',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('manual');
   });
 
@@ -371,7 +381,12 @@ describe('active derive declarations', () => {
     );
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.source).toBe('manual');
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('B');
   });
 

@@ -32,7 +32,13 @@ const fixture = () => {
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof assembleObject>[0];
   const index = new Map<string, Map<object, number>>([
-    ['alpha', new Map([[first, 0], [replacement, 2]])],
+    [
+      'alpha',
+      new Map([
+        [first, 0],
+        [replacement, 2],
+      ]),
+    ],
     ['beta', new Map([[second, 1]])],
   ]);
   getHostDerived<'childOrderIndex', typeof index>(

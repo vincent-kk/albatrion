@@ -42,10 +42,7 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
   } else if (ownsSource || overlay.replace) {
     node.source = ownsSource ? overlay.source : undefined;
   }
-  if (
-    hasOwnProperty(overlay, 'extras') ||
-    (overlay.replace && !arrayInput)
-  )
+  if (hasOwnProperty(overlay, 'extras') || (overlay.replace && !arrayInput))
     node.extras = overlay.extras;
   if (overlay.itemCount !== undefined) node.itemCount = overlay.itemCount;
   else if (

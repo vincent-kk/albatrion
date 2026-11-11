@@ -2,6 +2,7 @@ import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
@@ -162,7 +163,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
     this.deliveryInitialized = false;
-    this.deliveryChanges = 0;
+    this.deliveryChanges = BIT_MASK_NONE;
     this.deliveryPreviousLocal = undefined;
     this.deliveryPreviousEmit = undefined;
     this.deliveryPreviousPath = undefined;
@@ -172,7 +173,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.deliveryPreviousState = undefined;
     this.deliveryWatchValues = undefined;
     this.pendingDelivery = undefined;
-    this.pendingRevision = 0;
+    this.pendingRevision = BIT_MASK_NONE;
     this.pendingNonSettleDelivery = undefined;
     this.detached = false;
     this.disposed = false;

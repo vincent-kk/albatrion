@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
@@ -83,7 +85,7 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   let local = same ? node.local : assembled;
   const baseline = node.deliveryPreviousLocal;
   const revisit =
-    (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== 0 &&
+    (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== BIT_MASK_NONE &&
     local !== baseline &&
     !(isArray(baseline) && isArray(local) && baseline.length !== local.length);
   if (

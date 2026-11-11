@@ -212,7 +212,8 @@ export const observeGateTableCase = (
         };
         return extra;
       },
-      (observation) => JSON.parse(serializeGateTableObservation(observation, compactSchemas)),
+      (observation) =>
+        JSON.parse(serializeGateTableObservation(observation, compactSchemas)),
     );
   } finally {
     dirtySpy.mockRestore();
@@ -225,10 +226,13 @@ export const observeGateTableCase = (
   }
   const surface = observeGateTableDelivery(fixture);
   return (
-    serializeGateTableObservation({
-      fixture: fixture.name,
-      observations,
-      surface,
-    }, compactSchemas) + '\n'
+    serializeGateTableObservation(
+      {
+        fixture: fixture.name,
+        observations,
+        surface,
+      },
+      compactSchemas,
+    ) + '\n'
   );
 };

@@ -1,4 +1,4 @@
-import type { FieldNodeRuntime,SettlementScratch } from '../../../record';
+import type { FieldNodeRuntime, SettlementScratch } from '../../../record';
 import { DirtyPathSet } from './DirtyPathSet';
 
 /**

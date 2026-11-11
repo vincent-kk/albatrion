@@ -79,7 +79,10 @@ const hasRetainableDescendants = (
         break;
       }
     }
-    if (!hasUnconditionalDeclaration || hasRetainableDescendants(entry.node, visited)) {
+    if (
+      !hasUnconditionalDeclaration ||
+      hasRetainableDescendants(entry.node, visited)
+    ) {
       return true;
     }
   }
@@ -94,7 +97,10 @@ const hasRetainableDescendants = (
         break;
       }
     }
-    if (!hasUnconditionalDeclaration || hasRetainableDescendants(child, visited)) {
+    if (
+      !hasUnconditionalDeclaration ||
+      hasRetainableDescendants(child, visited)
+    ) {
       return true;
     }
   }

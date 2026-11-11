@@ -27,7 +27,10 @@ describe('extras-only static array appends', () => {
     ['insert', 8000],
   ] as const)('bounds %s prefix work at %i slots', (verb, count) => {
     const { root } = createDispatchTree({ type: 'array' });
-    dispatchMount(root, Array.from({ length: count }, (_, index) => index));
+    dispatchMount(
+      root,
+      Array.from({ length: count }, (_, index) => index),
+    );
     const prepare = vi.spyOn(admission, 'prepareArrayAppend');
     const entry = vi.spyOn(blueprint, 'getItemEntry');
     const entries = vi.spyOn(blueprint, 'getItemEntries');
@@ -93,7 +96,8 @@ describe('extras-only static array appends', () => {
     const extras = root.extras;
     const local = root.local;
     const snapshot = root.runtime.loadSnapshot;
-    const revision = root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
+    const revision =
+      root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
     const delivered: number[] = [];
     subscribeFieldNode(root, ({ type }) => delivered.push(type));
     dispatchPush(root, 3);
@@ -109,23 +113,27 @@ describe('extras-only static array appends', () => {
     expect(
       delivered.some((type) => type & FieldNodeEventType.UpdateChildren),
     ).toBe(true);
-    expect(root.revisionLedger[FieldNodeEventType.UpdateChildren]).toBeGreaterThan(
-      revision,
-    );
+    expect(
+      root.revisionLedger[FieldNodeEventType.UpdateChildren],
+    ).toBeGreaterThan(revision);
   });
 
   it('keeps dense append snapshots equivalent when the old snapshot is sparse', () => {
     const snapshot = new Array(3);
     snapshot[1] = 'saved';
-    const { candidate } = compareArrayAppend({ type: 'array' }, [1, 2, 3], [
-      {
-        apply: (root) => {
-          root.runtime.loadSnapshot = snapshot;
+    const { candidate } = compareArrayAppend(
+      { type: 'array' },
+      [1, 2, 3],
+      [
+        {
+          apply: (root) => {
+            root.runtime.loadSnapshot = snapshot;
+          },
+          append: false,
         },
-        append: false,
-      },
-      { apply: (root) => dispatchPush(root, 4), append: true },
-    ]);
+        { apply: (root) => dispatchPush(root, 4), append: true },
+      ],
+    );
     expect(candidate.runtime.loadSnapshot).toStrictEqual([
       undefined,
       'saved',
@@ -143,7 +151,9 @@ describe('extras-only static array appends', () => {
         ...(scene === 'tuple tail'
           ? { prefixItems: [{ type: 'number' }] }
           : {}),
-        ...(scene === 'omitTrailing' ? { options: { omitTrailing: true } } : {}),
+        ...(scene === 'omitTrailing'
+          ? { options: { omitTrailing: true } }
+          : {}),
       };
       compareArrayAppend(schema, scene === 'whole source' ? 'source' : [1], [
         {
@@ -177,8 +187,10 @@ describe('extras-only static array appends', () => {
       ],
       (root) => root.structure!.list,
     );
-    compareArrayAppend({ type: 'array' }, [1], [
-      { apply: (root) => dispatchPop(root), append: false },
-    ]);
+    compareArrayAppend(
+      { type: 'array' },
+      [1],
+      [{ apply: (root) => dispatchPop(root), append: false }],
+    );
   });
 });

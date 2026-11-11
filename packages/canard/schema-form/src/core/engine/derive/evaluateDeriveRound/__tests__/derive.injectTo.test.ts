@@ -240,7 +240,12 @@ describe('injectTo and same-target settlement', () => {
       commit: 1,
     });
     expect(root.structure?.['source']?.source).toBe('A');
-    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'A',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -352,7 +357,12 @@ describe('injectTo and same-target settlement', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.box?.source).toBeNull();
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.box?.source).toBeNull();
     expect(root.structure?.box?.structure?.target?.source).toBe('injected');
     expect(root.emit).toEqual({ source: 'B', box: null });

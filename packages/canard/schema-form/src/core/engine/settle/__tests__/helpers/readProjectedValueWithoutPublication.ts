@@ -20,7 +20,8 @@ export const readProjectedValueWithoutPublication = <
   let node = context.root;
   const emission = (record: Self): unknown =>
     record.emit === undefined ||
-    (context.changedSource.has(record.path) && !context.changedNodes.has(record))
+    (context.changedSource.has(record.path) &&
+      !context.changedNodes.has(record))
       ? undefined
       : record.emit;
   const assertPublished = (record: Self): void => {

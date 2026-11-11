@@ -1,3 +1,5 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import type { FieldNodeRecord } from '../types/record';
 
@@ -24,5 +26,5 @@ export const clearFieldNodeChanges = <Self>(
     node.deliveryPreviousSchema = undefined;
   if (changes & FieldNodeEventType.UpdateState)
     node.deliveryPreviousState = undefined;
-  node.deliveryChanges = 0;
+  node.deliveryChanges = BIT_MASK_NONE;
 };

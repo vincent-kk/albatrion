@@ -116,7 +116,11 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
         break;
       }
     }
-    node.isActive = captureFieldNodeChange(node, 'isActive', hasActiveDeclaration);
+    node.isActive = captureFieldNodeChange(
+      node,
+      'isActive',
+      hasActiveDeclaration,
+    );
   }
   if (node.schema === effective) return false;
   node.schema = captureFieldNodeChange(node, 'schema', effective);

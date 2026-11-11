@@ -9,7 +9,10 @@ describe('property names equal to a reserved percent spelling', () => {
     'rejects %s on a plain object and names the property and the rule',
     (name) => {
       expect(() =>
-        blueprint({ type: 'object', properties: { [name]: { type: 'string' } } }),
+        blueprint({
+          type: 'object',
+          properties: { [name]: { type: 'string' } },
+        }),
       ).toThrow(
         expect.objectContaining({
           code: FormErrorCode.ReservedPropertyName,
@@ -43,7 +46,10 @@ describe('property names equal to a reserved percent spelling', () => {
     'keeps accepting the ordinary or operator-spelled name %s',
     (name) => {
       expect(() =>
-        blueprint({ type: 'object', properties: { [name]: { type: 'string' } } }),
+        blueprint({
+          type: 'object',
+          properties: { [name]: { type: 'string' } },
+        }),
       ).not.toThrow();
     },
   );

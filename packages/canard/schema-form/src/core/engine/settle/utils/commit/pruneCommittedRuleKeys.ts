@@ -1,5 +1,6 @@
-import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
+
+import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../record';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';

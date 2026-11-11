@@ -267,7 +267,9 @@ describe('per-node branch sources', () => {
       WriteOption.DisableAutomaticWrites,
     );
     expect(sourceAt(root, '/g/leaf', 'string')).toBe('L');
-    expect(readRetainedSlotSource(root, '/g', 'object')).toMatchObject({ z: 1 });
+    expect(readRetainedSlotSource(root, '/g', 'object')).toMatchObject({
+      z: 1,
+    });
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual({ flag: true, g: { leaf: 'L', z: 1 } });
   });

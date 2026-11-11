@@ -369,6 +369,11 @@ it('actually runs shadow and rejects a false proof with nonzero confirmation can
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
-    writeFieldNode(root.structure!['source'], 3, 'input', WriteOption.Overwrite),
+    writeFieldNode(
+      root.structure!['source'],
+      3,
+      'input',
+      WriteOption.Overwrite,
+    ),
   ).toThrow('Derive convergence proof failed: confirmation was not empty');
 });

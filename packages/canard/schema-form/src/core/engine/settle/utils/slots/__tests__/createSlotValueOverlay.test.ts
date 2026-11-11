@@ -30,7 +30,11 @@ it('matches an inactive merge while cloning only the patched source channels', (
   });
   const instance = getDispatchNode(root, 'group');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
+  const entry = getRetainedChildEntry(
+    root,
+    instance.name,
+    instance.blueprintNode,
+  );
   if (!entry) throw new Error('Expected binding');
   const patch = createSlotValueOverlay(
     instance.blueprintNode,
@@ -84,7 +88,11 @@ it('removes unwritten old channels on a whole replacement overlay', () => {
   });
   const instance = getDispatchNode(root, 'group');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
+  const entry = getRetainedChildEntry(
+    root,
+    instance.name,
+    instance.blueprintNode,
+  );
   if (!entry) throw new Error('Expected binding');
   const patch = createSlotValueOverlay(
     instance.blueprintNode,

@@ -1,3 +1,5 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import { FormErrorCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
@@ -48,7 +50,9 @@ export const dispatchLoadValidation = <Self extends FieldNodeRecord<Self>>(
   }
   return (
     isFieldNodeValidationCurrent(root, load, epoch, stamp, commit) &&
-    ((runtime.validationMode ?? 0) & ValidationMode.OnChange) !== 0 &&
+    ((runtime.validationMode ?? ValidationMode.None) &
+      ValidationMode.OnChange) !==
+      BIT_MASK_NONE &&
     !hasFieldNodeValidationRequest(root)
   );
 };

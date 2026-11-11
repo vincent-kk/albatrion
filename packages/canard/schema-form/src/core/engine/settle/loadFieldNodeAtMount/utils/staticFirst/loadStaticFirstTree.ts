@@ -4,6 +4,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { publishGlobalStateDeltas } from '../../../../record';
 import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
@@ -48,8 +50,9 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = root.runtime;
   const commit = (runtime.commitNumber ?? 0) + 1;
-  const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
-  const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
+  const disable =
+    (option & WriteOption.DisableAutomaticWrites) !== BIT_MASK_NONE;
+  const enable = (option & WriteOption.EnableAutomaticWrites) !== BIT_MASK_NONE;
   const suppress =
     disable || (!enable && runtime.disableAutomaticWrites === true);
   const deliveries = (runtime.deliveries ??= new Set());

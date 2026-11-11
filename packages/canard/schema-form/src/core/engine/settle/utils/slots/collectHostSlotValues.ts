@@ -27,7 +27,9 @@ export const collectHostSlotValues = <Self extends FieldNodeRecord<Self>>(
   const active = new Set<Self>();
   for (const entry of entries) {
     const baseline = host.inactiveSlotBaselines?.get(entry);
-    const instance = baseline ? baseline.instance : host.inactiveSlots?.get(entry);
+    const instance = baseline
+      ? baseline.instance
+      : host.inactiveSlots?.get(entry);
     const overlay = baseline
       ? baseline.overlay
       : host.inactiveSlotOverlays?.get(entry);

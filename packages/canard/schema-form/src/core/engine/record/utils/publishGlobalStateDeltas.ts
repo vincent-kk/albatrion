@@ -1,5 +1,7 @@
 import type { Dictionary, Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import type { FieldNodeRecord } from '../types/record';
 
@@ -27,7 +29,8 @@ export const publishGlobalStateDeltas = <Self extends FieldNodeRecord<Self>>(
   const queued = runtime.queuedNonSettleEvents ?? new Set();
   const previous = root.pendingNonSettleDelivery;
   root.pendingNonSettleDelivery = {
-    type: (previous?.type ?? 0) | FieldNodeEventType.UpdateGlobalState,
+    type:
+      (previous?.type ?? BIT_MASK_NONE) | FieldNodeEventType.UpdateGlobalState,
     payload: {
       ...previous?.payload,
       [FieldNodeEventType.UpdateGlobalState]: nextState,

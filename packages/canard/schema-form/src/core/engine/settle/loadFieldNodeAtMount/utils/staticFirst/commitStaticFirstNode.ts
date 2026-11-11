@@ -1,3 +1,5 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import {
   FieldNodeEventType,
   FieldNodeRevisionLedger,
@@ -51,5 +53,5 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       node.revisionLedger,
       type,
     );
-  node.pendingRevision = 0;
+  node.pendingRevision = BIT_MASK_NONE;
 };

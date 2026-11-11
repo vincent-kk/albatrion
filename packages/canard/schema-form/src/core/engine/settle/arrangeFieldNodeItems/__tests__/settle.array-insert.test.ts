@@ -316,7 +316,10 @@ describe('array insert', () => {
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 9, value: 'y' }),
       ).toBe(2);
-      expect(readRetainedSlotSource(root, '/list', 'array')).toEqual(['a', 'b']);
+      expect(readRetainedSlotSource(root, '/list', 'array')).toEqual([
+        'a',
+        'b',
+      ]);
       writeFieldNode(
         root.structure!.show,
         true,

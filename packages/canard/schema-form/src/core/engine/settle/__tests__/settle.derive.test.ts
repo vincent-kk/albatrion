@@ -45,7 +45,12 @@ describe('settle derivation', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('B');
   });
 
@@ -126,7 +131,12 @@ describe('settle derivation', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('B');
   });
 
@@ -189,9 +199,9 @@ describe('settle derivation', () => {
       WriteOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    expect(root.structure?.target?.interactionState[FieldNodeState.Edited]).toBe(
-      false,
-    );
+    expect(
+      root.structure?.target?.interactionState[FieldNodeState.Edited],
+    ).toBe(false);
     expect(
       root.structure?.target?.interactionState[FieldNodeState.Touched],
     ).toBe(false);
@@ -249,7 +259,12 @@ describe('settle derivation', () => {
         }),
       ]),
     );
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      'input',
+      WriteOption.Overwrite,
+    );
     expect(root.runtime.settlementTrace).not.toBe(first);
   });
 

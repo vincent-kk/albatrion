@@ -1,4 +1,9 @@
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
+import {
+  DISABLED_BIT_SHIFT,
+  READ_ONLY_BIT_SHIFT,
+  VISIBLE_BIT_SHIFT,
+} from '../constants/controlledPropertyShift';
 import type { FieldNodeRecord } from '../types/record';
 import { recordFieldNodeRevealBaseline } from './recordFieldNodeRevealBaseline';
 
@@ -34,7 +39,11 @@ export const captureFieldNodeChange = <
 ): Value => {
   if (node[field] === value || !node.deliveryInitialized || node.detached)
     return value;
-  if (field === 'interactionState' || field === 'isActive' || field === 'isVisible')
+  if (
+    field === 'interactionState' ||
+    field === 'isActive' ||
+    field === 'isVisible'
+  )
     recordFieldNodeRevealBaseline(node);
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
@@ -52,9 +61,9 @@ export const captureFieldNodeChange = <
       case FieldNodeEventType.UpdateControlledProperties:
         node.deliveryPreviousComputed =
           +node.isActive |
-          (+node.isVisible << 1) |
-          (+node.isReadOnly << 2) |
-          (+node.isDisabled << 3);
+          (+node.isVisible << VISIBLE_BIT_SHIFT) |
+          (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
+          (+node.isDisabled << DISABLED_BIT_SHIFT);
         break;
       case FieldNodeEventType.UpdateJsonSchema:
         node.deliveryPreviousSchema = node.schema;

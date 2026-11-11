@@ -29,7 +29,11 @@ it('leaves gate binding to selected entry for both source constructors', () => {
   });
   dispatchMount(root, { open: true, group: { value: 'held' } });
   const instance = getDispatchNode(root, 'group');
-  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
+  const entry = getRetainedChildEntry(
+    root,
+    instance.name,
+    instance.blueprintNode,
+  );
   if (!entry) throw new Error('Expected a retained group binding');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   const scratch = getSettlementScratch(runtime);

@@ -197,7 +197,9 @@ describe('latent descendant exit policies', () => {
       'input',
       WriteOption.DisableAutomaticWrites,
     );
-    expect(readRetainedSlotSource(root, '/branch/secret', 'string')).toBe('held');
+    expect(readRetainedSlotSource(root, '/branch/secret', 'string')).toBe(
+      'held',
+    );
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
         key.startsWith('["/branch/secret",'),

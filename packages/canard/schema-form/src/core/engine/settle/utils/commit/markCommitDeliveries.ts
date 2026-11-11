@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -11,8 +12,11 @@ import {
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import {
+  DISABLED_BIT_SHIFT,
   FieldNodeEventType,
   FieldNodeRevisionLedger,
+  READ_ONLY_BIT_SHIFT,
+  VISIBLE_BIT_SHIFT,
   advanceFieldNodeRevision,
   canOmitFieldNodePayload,
   clearFieldNodeChanges,
@@ -126,7 +130,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       value !== null &&
       typeof value === 'object' &&
       Reflect.get(value, 'runtime') === runtime;
-    let silentMask = 0;
+    let silentMask = BIT_MASK_NONE;
     const markSilent = (_node: Self, bit: FieldNodeEventType): void => {
       silentMask |= bit;
     };
@@ -223,7 +227,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           watchChanged = true;
       const silent = canOmitFieldNodePayload(node);
       mark = silent ? markSilent : markFieldNodeEvent;
-      silentMask = 0;
+      silentMask = BIT_MASK_NONE;
       if (initialized) {
         if (
           changes & FieldNodeEventType.UpdateValue &&
@@ -294,7 +298,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           runtime.stateChanged = true;
           if (
             !(
-              (node.pendingNonSettleDelivery?.type ?? 0) &
+              (node.pendingNonSettleDelivery?.type ?? BIT_MASK_NONE) &
               FieldNodeEventType.UpdateState
             )
           )
@@ -304,9 +308,9 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           (changes & FieldNodeEventType.UpdateControlledProperties &&
             node.deliveryPreviousComputed !==
               (+node.isActive |
-                (+node.isVisible << 1) |
-                (+node.isReadOnly << 2) |
-                (+node.isDisabled << 3))) ||
+                (+node.isVisible << VISIBLE_BIT_SHIFT) |
+                (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
+                (+node.isDisabled << DISABLED_BIT_SHIFT))) ||
           watchChanged
         )
           mark(node, FieldNodeEventType.UpdateControlledProperties);
@@ -376,7 +380,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
             node.revisionLedger,
             node.pendingRevision,
           );
-        node.pendingRevision = 0;
+        node.pendingRevision = BIT_MASK_NONE;
       }
     }
     globalState.finish();
@@ -392,7 +396,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       clearFieldNodeChanges(node);
       node.deliveryWatchValues = undefined;
       node.pendingDelivery = undefined;
-      node.pendingRevision = 0;
+      node.pendingRevision = BIT_MASK_NONE;
       node.pendingNonSettleDelivery = undefined;
       runtime.deliveryWatchIndex?.remove(node);
       runtime.deliveries?.delete(node);

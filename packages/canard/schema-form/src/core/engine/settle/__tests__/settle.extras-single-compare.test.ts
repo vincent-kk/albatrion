@@ -192,7 +192,8 @@ describe('single extras comparison observations', () => {
     };
     dispatchWriteInput(root, { h: { extra: { value: 2 } } }, WriteOption.Merge);
     expect(
-      (readRetainedSlotSource(root, '/h', 'object') as { extra: unknown }).extra,
+      (readRetainedSlotSource(root, '/h', 'object') as { extra: unknown })
+        .extra,
     ).toBe(previous.extra);
     dispatchWriteInput(root, { flag: true }, WriteOption.Merge);
     expect(root.emit).toEqual({

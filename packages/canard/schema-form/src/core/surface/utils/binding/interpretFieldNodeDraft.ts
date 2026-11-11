@@ -32,7 +32,11 @@ export const interpretFieldNodeDraft = (
     if (kind !== undefined && kind !== 'null' && effective.indexOf(kind) !== -1)
       kinds.push(kind);
   }
-  const value = interpret(draft, { kinds, mask: 0, nullable: node.nullable });
+  const value = interpret(draft, {
+    kinds,
+    mask: 0,
+    nullable: node.nullable,
+  });
   let isInterpretedMember = value === undefined;
   if (!isInterpretedMember) {
     let selectedResult: boolean;

@@ -221,14 +221,17 @@ describe('exit preparation preserves committed policies and document order', () 
         !clear,
       );
       if (!clear)
-        expect(readRetainedSlotSource(root, '/branch/value', 'string')).toBe('V');
+        expect(readRetainedSlotSource(root, '/branch/value', 'string')).toBe(
+          'V',
+        );
       writeFieldNode(
         root.structure!.flag,
         true,
         'input',
         WriteOption.Overwrite,
       );
-      if (!clear) expect(root.structure!.branch.structure!.value.source).toBe('V');
+      if (!clear)
+        expect(root.structure!.branch.structure!.value.source).toBe('V');
       expect(root.structure!.branch).not.toBe(old);
     },
   );

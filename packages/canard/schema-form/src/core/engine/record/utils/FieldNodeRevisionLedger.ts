@@ -3,6 +3,8 @@ import { EMPTY_REVISION_LEDGER } from '../constants/emptyRevisionLedger';
 
 /** Known event bits occupy consecutive slots rather than sparse numeric elements. */
 const KNOWN_BITS = (FieldNodeEventType.UpdateDiagnostics << 1) - 1;
+/** Number of known event bits, one counter slot per bit. */
+const KNOWN_BIT_COUNT = 32 - Math.clz32(KNOWN_BITS);
 
 /** Immutable per-bit counters with compatibility accessors for direct bit reads. */
 export class FieldNodeRevisionLedger {
@@ -23,7 +25,10 @@ export class FieldNodeRevisionLedger {
         ? []
         : previous instanceof FieldNodeRevisionLedger
           ? previous.counts.slice()
-          : Array.from({ length: 17 }, (_, index) => previous[1 << index]);
+          : Array.from(
+              { length: KNOWN_BIT_COUNT },
+              (_, index) => previous[1 << index],
+            );
     let remaining = mask & KNOWN_BITS;
     while (remaining) {
       const bit = remaining & -remaining;

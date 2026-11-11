@@ -26,10 +26,10 @@ it('keeps a gated-out final star child as a literal owner path', () => {
 });
 
 it('expands repeating array items to their current indices in order', () => {
-  const root = mountPresenceTree(
-    { type: 'array', items: { type: 'string' } },
-    ['A', 'B'],
-  );
+  const root = mountPresenceTree({ type: 'array', items: { type: 'string' } }, [
+    'A',
+    'B',
+  ]);
 
   expect(expandTemplatePaths(root, '/*')).toEqual(['/0', '/1']);
 });

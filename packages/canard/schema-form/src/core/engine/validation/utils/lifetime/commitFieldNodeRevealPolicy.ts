@@ -14,7 +14,7 @@ export const commitFieldNodeRevealPolicy = <Self extends FieldNodeRecord<Self>>(
   const runtime = root.runtime;
   if (
     root.disposed ||
-    !((runtime.validationMode ?? 0) & ValidationMode.OnChange)
+    !((runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange)
   )
     return;
   const policy = runtime.revealPolicy;

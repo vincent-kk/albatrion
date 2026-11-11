@@ -29,9 +29,13 @@ export function assertCoreScenarioExpectation(
     if (states.isVisible !== undefined)
       expect(node?.isVisible, `state ${path}.isVisible`).toBe(states.isVisible);
     if (states.isReadOnly !== undefined)
-      expect(node?.isReadOnly, `state ${path}.isReadOnly`).toBe(states.isReadOnly);
+      expect(node?.isReadOnly, `state ${path}.isReadOnly`).toBe(
+        states.isReadOnly,
+      );
     if (states.isDisabled !== undefined)
-      expect(node?.isDisabled, `state ${path}.isDisabled`).toBe(states.isDisabled);
+      expect(node?.isDisabled, `state ${path}.isDisabled`).toBe(
+        states.isDisabled,
+      );
     if (states.isPresent !== undefined)
       expect(node?.isPresent, `state ${path}.isPresent`).toBe(states.isPresent);
   }

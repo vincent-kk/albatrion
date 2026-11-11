@@ -1,37 +1,57 @@
+import {
+  BIT_FLAG_00,
+  BIT_FLAG_01,
+  BIT_FLAG_02,
+  BIT_FLAG_03,
+  BIT_FLAG_04,
+  BIT_FLAG_05,
+  BIT_FLAG_06,
+  BIT_FLAG_07,
+  BIT_FLAG_08,
+  BIT_FLAG_09,
+  BIT_FLAG_10,
+  BIT_FLAG_11,
+  BIT_FLAG_12,
+  BIT_FLAG_13,
+  BIT_FLAG_14,
+  BIT_FLAG_15,
+  BIT_FLAG_16,
+} from '@/schema-form/constants/bitmask';
+
 /** Bit positions shared by settlement delivery and later dispatch. */
 export enum FieldNodeEventType {
   /** A node completed initialization. */
-  Initialized = 1 << 0,
+  Initialized = BIT_FLAG_00,
   /** The absolute path changed. */
-  UpdatePath = 1 << 1,
+  UpdatePath = BIT_FLAG_01,
   /** The local or emitted value changed. */
-  UpdateValue = 1 << 2,
+  UpdateValue = BIT_FLAG_02,
   /** Interaction flags changed. */
-  UpdateState = 1 << 3,
+  UpdateState = BIT_FLAG_03,
   /** Aggregate interaction flags changed. */
-  UpdateGlobalState = 1 << 4,
+  UpdateGlobalState = BIT_FLAG_04,
   /** Validation issues changed. */
-  UpdateError = 1 << 5,
+  UpdateError = BIT_FLAG_05,
   /** Aggregate validation issues changed. */
-  UpdateGlobalError = 1 << 6,
+  UpdateGlobalError = BIT_FLAG_06,
   /** The direct children changed. */
-  UpdateChildren = 1 << 7,
+  UpdateChildren = BIT_FLAG_07,
   /** Calculated state or watched values changed. */
-  UpdateControlledProperties = 1 << 8,
+  UpdateControlledProperties = BIT_FLAG_08,
   /** The input gained focus. */
-  Focused = 1 << 9,
+  Focused = BIT_FLAG_09,
   /** The input lost focus. */
-  Blurred = 1 << 10,
+  Blurred = BIT_FLAG_10,
   /** Ask the input to gain focus. */
-  RequestFocus = 1 << 11,
+  RequestFocus = BIT_FLAG_11,
   /** Ask the input to select its value. */
-  RequestSelect = 1 << 12,
+  RequestSelect = BIT_FLAG_12,
   /** Ask the input to refresh its committed value. */
-  RequestRefresh = 1 << 13,
+  RequestRefresh = BIT_FLAG_13,
   /** Ask the renderer to remount this subtree. */
-  RequestRemount = 1 << 14,
+  RequestRemount = BIT_FLAG_14,
   /** The effective schema reference changed. */
-  UpdateJsonSchema = 1 << 15,
+  UpdateJsonSchema = BIT_FLAG_15,
   /** Root settlement diagnostics changed. */
-  UpdateDiagnostics = 1 << 16,
+  UpdateDiagnostics = BIT_FLAG_16,
 }

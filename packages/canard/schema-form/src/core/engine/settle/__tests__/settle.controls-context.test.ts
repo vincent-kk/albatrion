@@ -59,10 +59,10 @@ describe('context state keys', () => {
     root.runtime.context = { locked };
     loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, WriteOption.Overwrite);
     expect(locked).toHaveBeenCalledTimes(1);
-    expect([root.structure?.a?.isReadOnly, root.structure?.b?.isReadOnly]).toEqual([
-      true,
-      true,
-    ]);
+    expect([
+      root.structure?.a?.isReadOnly,
+      root.structure?.b?.isReadOnly,
+    ]).toEqual([true, true]);
   });
 
   it('ERROR-122 state key throw commits degraded and ignores that declaration', () => {

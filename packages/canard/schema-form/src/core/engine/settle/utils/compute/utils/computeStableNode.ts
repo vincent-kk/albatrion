@@ -1,7 +1,7 @@
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
-import { DirtyPathSet } from '../../scratch/DirtyPathSet';
 import { updateOutput } from '../../output/updateOutput';
+import { DirtyPathSet } from '../../scratch/DirtyPathSet';
 import { dirtyChildren } from '../dirtyChildren';
 import { selectNodeSchema } from '../selectNodeSchema';
 
@@ -21,7 +21,7 @@ export const computeStableNode = <Self extends FieldNodeRecord<Self>>(
   context.stateDirtyNodes.add(node);
   if (node.behavior.strategy === 'branch') {
     const recalculated = marked
-      ? node.children ?? []
+      ? (node.children ?? [])
       : dirtyChildren(node, context);
     for (let index = 0; index < recalculated.length; index++) {
       const child = recalculated[index];

@@ -1,5 +1,10 @@
 import { useMemo, useRef } from 'react';
 
+import {
+  BIT_FLAG_00,
+  BIT_FLAG_01,
+  BIT_MASK_NONE,
+} from '@/schema-form/constants/bitmask';
 import type { FieldNode } from '@/schema-form/core';
 import { FormWarningCode } from '@/schema-form/errors';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
@@ -14,9 +19,9 @@ const NUMERIC_KEY = /^\d+$/;
 const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 
 /** Read-detector state after the input's owning layout effect commits. */
-const COMMITTED = 1;
+const COMMITTED = BIT_FLAG_00;
 /** Read-detector state after the first observable empty-list access. */
-const ACCESSED = 2;
+const ACCESSED = BIT_FLAG_01;
 /** Mask that clears the accessed bit from the read-detector state. */
 const CLEAR_ACCESSED_MASK = ~ACCESSED;
 
@@ -40,9 +45,9 @@ const UNDETECTED: TerminalChildren = Object.freeze([EMPTY_CHILDREN, () => {}]);
  */
 export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
   const reporter = useFormErrorContext();
-  const accessed = useRef(0);
+  const accessed = useRef(BIT_MASK_NONE);
   return useMemo(() => {
-    accessed.current = 0;
+    accessed.current = BIT_MASK_NONE;
     if (
       process.env.NODE_ENV !== 'production' &&
       reporter &&
