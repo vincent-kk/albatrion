@@ -9,11 +9,10 @@ Recommended directory structure for an @canard/schema-form plugin.
 ├── src/
 │   ├── index.ts                    # Main export
 │   ├── type.ts                     # Context type definitions
-│   ├── renderers/                  # Base renderers (5 required)
+│   ├── renderers/                  # Base renderers (4 required)
 │   │   ├── FormGroup.tsx
 │   │   ├── FormLabel.tsx
-│   │   ├── FormInput.tsx
-│   │   ├── FormError.tsx
+│   │   ├── FormErrorMessage.tsx
 │   │   └── formatError.ts
 │   ├── formTypeInputs/             # FormTypeInput implementations
 │   │   ├── index.ts                # Aggregates formTypeInputDefinitions
@@ -54,20 +53,18 @@ Recommended directory structure for an @canard/schema-form plugin.
 ```typescript
 import type { SchemaFormPlugin } from '@canard/schema-form';
 
-import { FormError } from './renderers/FormError';
+import { FormErrorMessage } from './renderers/FormErrorMessage';
 import { FormGroup } from './renderers/FormGroup';
-import { FormInput } from './renderers/FormInput';
 import { FormLabel } from './renderers/FormLabel';
 import { formatError } from './renderers/formatError';
 import { formTypeInputDefinitions } from './formTypeInputs';
 
 export const plugin = {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormError,
+  FieldRenderer: FormGroup,
+  LabelRenderer: FormLabel,
+  ErrorMessageRenderer: FormErrorMessage,
   formatError,
-  formTypeInputDefinitions,
+  fieldInputDefinitions: formTypeInputDefinitions,
 } satisfies SchemaFormPlugin;
 
 // Type exports
@@ -90,12 +87,13 @@ export interface MuiContext {
 
 ### src/renderers/
 
-**5 required files**:
-1. `FormGroup.tsx` - Field group wrapper
-2. `FormLabel.tsx` - Label rendering
-3. `FormInput.tsx` - Input wrapper (passthrough)
-4. `FormError.tsx` - Error message display
-5. `formatError.ts` - Error format function
+**4 required files**:
+1. `FormGroup.tsx` - Field group composing the bound `Label`, `Input` and `ErrorMessage` parts
+2. `FormLabel.tsx` - Label rendering (owns the root `<label>`)
+3. `FormErrorMessage.tsx` - Error message display
+4. `formatError.ts` - Error format function
+
+**Optional input frame (`InputRenderer`)**: an optional frame registered under the `InputRenderer` key, `({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>`. It must render `children` exactly once, unconditionally, at an unchanging position. The plugin has no pass-through input renderer file.
 
 ### src/formTypeInputs/index.ts
 

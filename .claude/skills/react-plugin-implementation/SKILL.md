@@ -52,6 +52,7 @@ With **knowledge/test-mapping-conditions.md**:
 ```typescript
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
+import { useFieldErrors } from '@canard/schema-form';
 import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 
 interface FormTypeInput[Name]Props
@@ -71,7 +72,6 @@ const FormTypeInput[Name] = ({
   required,
   disabled,
   readOnly,
-  errors,
 
   // Value
   defaultValue,
@@ -87,6 +87,10 @@ const FormTypeInput[Name] = ({
   // Additional props
   placeholder,
 }: FormTypeInput[Name]Props) => {
+  // Error state comes from the hook, not from props
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
+
   // 1. Apply prop priority with useMemo
   const [size, variant, label] = useMemo(() => {
     return [
@@ -113,7 +117,7 @@ const FormTypeInput[Name] = ({
       size={size}
       variant={variant}
       placeholder={placeholder || jsonSchema.placeholder}
-      error={errors.length > 0}
+      error={hasError}
     />
   );
 };
@@ -130,25 +134,37 @@ export const FormTypeInput[Name]Definition = {
 // src/index.ts
 import type { SchemaFormPlugin } from "@canard/schema-form";
 
-import { FormError } from "./components/FormError";
+import { FormErrorMessage } from "./components/FormErrorMessage";
 import { FormGroup } from "./components/FormGroup";
-import { FormInput } from "./components/FormInput";
 import { FormLabel } from "./components/FormLabel";
 import { formatError } from "./components/formatError";
 import { formTypeInputDefinitions } from "./formTypeInputs";
 
 export const plugin = {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormError,
+  FieldRenderer: FormGroup,
+  LabelRenderer: FormLabel,
+  ErrorMessageRenderer: FormErrorMessage,
   formatError,
-  formTypeInputDefinitions,
+  fieldInputDefinitions: formTypeInputDefinitions,
 } satisfies SchemaFormPlugin;
 
 export type * from "./type";
 export * from "./formTypeInputs";
 ```
+
+### Optional input frame (`InputRenderer`)
+
+`InputRenderer` is an optional frame registered under the `InputRenderer` key. It must render `children` exactly once, unconditionally, at an unchanging position. The plugin has no pass-through input renderer file.
+
+```tsx
+const FormInputFrame = ({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>;
+```
+
+### Renderer Components
+
+- `FormLabel` receives `LabelRendererProps` and owns its root `<label>`: it applies `htmlFor`, `id`, `style`, `className` to the root, renders `children`, and marks the required sign `aria-hidden`.
+- `FormErrorMessage` receives `ErrorMessageRendererProps` and renders `children` in its root.
+- `FormGroup` receives `FieldRendererProps` with the bound parts `Label`, `Input`, `ErrorMessage` and `errorMessage`. It renders `<Label />`, `<Input />` and `<ErrorMessage>{errorMessage}</ErrorMessage>`. `<Input unwrapped />` skips a registered frame. Pass only reference-stable props (module-level constants) to the parts.
 
 ### formTypeInputDefinitions Priority
 
@@ -306,6 +322,7 @@ const FormTypeInputDate = ({
 // src/formTypeInputs/FormTypeInputString.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
+import { useFieldErrors } from '@canard/schema-form';
 import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 import { TextField } from '@mui/material';
 import type { TextFieldProps } from '@mui/material';
@@ -337,7 +354,6 @@ const FormTypeInputString = ({
   required,
   disabled,
   readOnly,
-  errors,
 
   // Value (uncontrolled component)
   defaultValue,
@@ -364,9 +380,9 @@ const FormTypeInputString = ({
     ];
   }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
 
-  // 5️⃣ Error handling
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  // 5️⃣ Error handling (the hook re-renders this input on its field's error changes)
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 6️⃣ Optimize the event handler with useHandle
   const handleChange = useHandle((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -457,7 +473,6 @@ describe('FormTypeInputString', () => {
         required={false}
         disabled={false}
         readOnly={false}
-        errors={[]}
         context={{}}
       />
     );
@@ -478,7 +493,6 @@ describe('FormTypeInputString', () => {
         required={false}
         disabled={false}
         readOnly={false}
-        errors={[]}
         context={{}}
       />
     );
@@ -506,6 +520,7 @@ describe('FormTypeInputString', () => {
 // src/formTypeInputs/FormTypeInputDate.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
+import { useFieldErrors } from '@canard/schema-form';
 import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -522,12 +537,12 @@ interface FormTypeInputDateProps
 
 const FormTypeInputDate = ({
   jsonSchema,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,  // ⚠️ ISO 8601 string (e.g. "2024-01-15T00:00:00.000Z")
   onChange,      // ⚠️ must be passed as an ISO 8601 string
   context,
@@ -577,8 +592,8 @@ const FormTypeInputDate = ({
     ];
   }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 4️⃣ Render the DatePicker
   return (
@@ -688,6 +703,7 @@ const handleChange = useHandle((newDate: Date | null) => {
 // src/formTypeInputs/FormTypeInputStringEnum.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
+import { useFieldErrors } from '@canard/schema-form';
 import type { FormTypeInputPropsWithSchema, FormTypeTestFn } from '@canard/schema-form';
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, FormHelperText } from '@mui/material';
 import type { MuiFormContext } from '../type';
@@ -698,12 +714,12 @@ interface FormTypeInputStringEnumProps
 
 const FormTypeInputStringEnum = ({
   jsonSchema,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,
   onChange,
   context,
@@ -734,8 +750,8 @@ const FormTypeInputStringEnum = ({
     ];
   }, [sizeProp, context.size, jsonSchema.label, jsonSchema.title, name]);
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 3️⃣ Render the RadioGroup
   return (
@@ -787,12 +803,12 @@ import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/
 
 const FormTypeInputStringEnumSelect = ({
   jsonSchema,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,
   onChange,
   context,
@@ -822,8 +838,8 @@ const FormTypeInputStringEnumSelect = ({
     ];
   }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size} fullWidth>
@@ -908,6 +924,7 @@ export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
 // src/formTypeInputs/FormTypeInputArray.tsx
 import { useMemo, useState } from 'react';
 import { useHandle } from '@winglet/react-utils';
+import { useFieldErrors } from '@canard/schema-form';
 import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -928,7 +945,6 @@ const FormTypeInputArray = ({
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,
   onChange,
   context,
@@ -959,8 +975,8 @@ const FormTypeInputArray = ({
     onChange(newValue);
   });
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 4️⃣ Rendering: render ChildNodeComponents directly
   return (
@@ -1117,6 +1133,7 @@ export interface MuiFormContext {
 // src/formTypeInputs/FormTypeInputFileUpload.tsx
 import { useState, useRef } from 'react';
 import { useHandle } from '@winglet/react-utils';
+import { useFieldErrors } from '@canard/schema-form';
 import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 import { Box, Button, Typography, LinearProgress, IconButton, Chip } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -1132,12 +1149,12 @@ interface FormTypeInputFileUploadProps
 
 const FormTypeInputFileUpload = ({
   jsonSchema,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,  // ⚠️ file URL string
   onChange,      // ⚠️ pass a file URL string
   context,
@@ -1150,8 +1167,8 @@ const FormTypeInputFileUpload = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const label = jsonSchema.label ?? jsonSchema.title ?? name;
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 1️⃣ File selection handler
   const handleFileSelect = useHandle(async (event: React.ChangeEvent<HTMLInputElement>) => {

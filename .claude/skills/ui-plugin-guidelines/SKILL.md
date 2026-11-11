@@ -12,7 +12,7 @@ You are an expert at verifying compatibility between a UI library and an @canard
 1. **Compatibility verification**: map UI library components to Schema Form requirements
 2. **Project structure design**: recommend the plugin directory structure
 3. **Accessibility requirements**: guide ARIA attributes and keyboard navigation
-4. **Renderer components**: guide the implementation of FormGroup, FormLabel, FormInput, and FormError
+4. **Renderer components**: guide the implementation of FormGroup, FormLabel, and FormErrorMessage, plus the optional input frame
 5. **Library-specific notes**: explain the patterns unique to each library
 
 ## How It Works
@@ -59,11 +59,10 @@ With **knowledge/accessibility-checklist.md**:
 ├── src/
 │   ├── index.ts                    # Main export (plugin object)
 │   ├── type.ts                     # Context type definitions
-│   ├── renderers/                  # Base renderers (5 required)
+│   ├── renderers/                  # Base renderers (4 required)
 │   │   ├── FormGroup.tsx
 │   │   ├── FormLabel.tsx
-│   │   ├── FormInput.tsx
-│   │   ├── FormError.tsx
+│   │   ├── FormErrorMessage.tsx
 │   │   └── formatError.ts
 │   ├── formTypeInputs/             # FormTypeInput implementations
 │   │   ├── index.ts                # formTypeInputDefinitions aggregation
@@ -94,89 +93,97 @@ With **knowledge/accessibility-checklist.md**:
 
 **Required handling**:
 - `depth`-based styling (indentation)
-- `isRoot` condition handling
-- Visual distinction by type (object vs array)
+- Root condition handling (`depth === 0`)
+- Visual distinction by strategy (branch vs leaf)
+- Compose the bound parts `Label`, `Input`, `ErrorMessage` and the `errorMessage` value
 
 ```typescript
 const FormGroup = ({
+  node,
   depth,
-  isRoot,
-  type,
   name,
-  children,
-}: FormTypeRendererProps) => {
-  return (
-    <Box
-      sx={{
-        pl: depth * 2,  // Indentation by depth
-        border: isRoot ? 'none' : '1px solid',
-        borderColor: 'divider',
-      }}
-    >
-      {!isRoot && (
+  Input,
+  Label,
+  ErrorMessage,
+  errorMessage,
+}: FieldRendererProps) => {
+  if (depth === 0) return <Input />;
+
+  if (node.strategy === 'branch') {
+    return (
+      <Box sx={{ pl: depth * 2, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h6">{name}</Typography>
-      )}
-      {children}
+        <Input />
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ pl: depth * 2 }}>
+      <Label />
+      <Input />
+      <ErrorMessage>{errorMessage}</ErrorMessage>
     </Box>
   );
 };
 ```
 
+`<Input unwrapped />` skips a registered input frame. Pass only reference-stable props (module-level constants) to the parts.
+
 #### 2. FormLabel
 
 **Role**: Field label rendering
 
+**Receives**: `LabelRendererProps` (`children`, `htmlFor`, `id`, `required`, `style`, `className`, `node`, `path`, `name`, `jsonSchema`)
+
 **Required handling**:
-- `htmlFor` association
-- `required` visual indicator (`*` or the library standard)
-- Label priority: `jsonSchema.label` > `jsonSchema.title` > `name`
+- Own the root `<label>`: apply `htmlFor`, `id`, `style`, `className` to it
+- Render `children` as the label content
+- `required` visual indicator (`*` or the library standard), marked `aria-hidden`
 
 ```typescript
 const FormLabel = ({
-  path,
-  name,
-  jsonSchema,
+  children,
+  htmlFor,
+  id,
   required,
-}: FormTypeRendererProps) => {
-  const label = jsonSchema.label || jsonSchema.title || name;
-  
-  return (
-    <FormLabel htmlFor={path} required={required}>
-      {label}
-    </FormLabel>
-  );
-};
+  style,
+  className,
+}: LabelRendererProps) => (
+  <label htmlFor={htmlFor} id={id} style={style} className={className}>
+    {children}
+    {required && <span aria-hidden> *</span>}
+  </label>
+);
 ```
 
-#### 3. FormInput
-
-**Role**: Input component wrapper
-
-**Implementation**: Simple passthrough
-
-```typescript
-const FormInput = ({ Input, ...props }: FormTypeRendererProps) => {
-  return <Input {...props} />;
-};
-```
-
-#### 4. FormError
+#### 3. FormErrorMessage
 
 **Role**: Error message display
 
+**Receives**: `ErrorMessageRendererProps` (`children`, `style`, `className`, `node`, `path`, `name`, `jsonSchema`, `required`)
+
 ```typescript
-const FormError = ({ errorMessage }: FormTypeRendererProps) => {
-  if (!errorMessage) return null;
-  
-  return (
-    <FormHelperText error>
-      {errorMessage}
-    </FormHelperText>
-  );
-};
+const FormErrorMessage = ({
+  children,
+  style,
+  className,
+}: ErrorMessageRendererProps) => (
+  <span style={style} className={className}>
+    {children}
+  </span>
+);
 ```
 
-#### 5. formatError
+#### Optional input frame (`InputRenderer`)
+
+`InputRenderer` is an optional frame registered under the `InputRenderer` key. It must render `children` exactly once, unconditionally, at an unchanging position.
+
+```typescript
+const FormInputFrame = ({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>;
+```
+
+#### 4. formatError
 
 **Role**: JSONSchemaError → ReactNode conversion
 
@@ -256,7 +263,7 @@ const formatError: FormatError = (error, node, context) => {
 
 ## Constraints
 
-- The 5 required renderers must be implemented
+- The 4 required renderers must be implemented
 - Accessibility attributes are required
 - Prefer native UI library components
 - Minimize custom components
@@ -379,7 +386,7 @@ Respect the user's MUI Theme:
 ```typescript
 import { useTheme } from '@mui/material/styles';
 
-const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
+const FormGroup = ({ depth, Input }: FieldRendererProps) => {
   const theme = useTheme();
 
   return (
@@ -387,7 +394,7 @@ const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
       pl: depth * theme.spacing(2),  // Use theme spacing
       borderColor: theme.palette.divider,
     }}>
-      {children}
+      <Input />
     </Box>
   );
 };
@@ -569,7 +576,7 @@ Do **not use** Ant Design's Form.Item. @canard/schema-form manages form layout a
 **Reason**:
 1. @canard/schema-form manages validation based on JSON Schema
 2. Form.Item's name and rules cause duplication/conflicts
-3. The FormGroup, FormLabel, and FormError renderers handle the layout
+3. The FormGroup, FormLabel, and FormErrorMessage renderers handle the layout
 ```
 
 **Step 2: Ant Design Special Notes**
@@ -731,23 +738,28 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 Because Ant Design's Form.Item is not used, handle the label in the FormLabel renderer:
 
 ```typescript
-const FormLabel = ({ path, name, jsonSchema, required }: FormTypeRendererProps) => {
-  const label = jsonSchema.label || jsonSchema.title || name;
-
-  return (
-    <label
-      htmlFor={path}
-      style={{
-        display: 'block',
-        marginBottom: '8px',
-        fontWeight: 500,
-      }}
-    >
-      {label}
-      {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
-    </label>
-  );
-};
+const FormLabel = ({
+  children,
+  htmlFor,
+  id,
+  required,
+  style,
+  className,
+}: LabelRendererProps) => (
+  <label
+    htmlFor={htmlFor}
+    id={id}
+    style={{ display: 'block', marginBottom: '8px', fontWeight: 500, ...style }}
+    className={className}
+  >
+    {children}
+    {required && (
+      <span aria-hidden style={{ color: 'red', marginLeft: '4px' }}>
+        *
+      </span>
+    )}
+  </label>
+);
 ```
 
 ### 🎹 Keyboard Navigation
@@ -784,7 +796,7 @@ Ant Design supports keyboard navigation by default:
 
 ### 📋 Next steps
 1. Add the dayjs dependency
-2. Implement the FormLabel and FormError renderers directly
+2. Implement the FormLabel and FormErrorMessage renderers directly
 3. Manually add ARIA attributes to every component
 4. Accessibility testing (screen reader, keyboard)
 ```
@@ -845,13 +857,14 @@ import {
   FormHelperText,
   Input,
 } from '@chakra-ui/react';
+import { useFieldErrors } from '@canard/schema-form';
 
 function FormTypeInputString(props: FormTypeInputProps<string>) {
-  const { path, name, jsonSchema, required, value, defaultValue, onChange, errors } = props;
+  const { node, path, name, jsonSchema, required, value, defaultValue, onChange } = props;
 
   const label = jsonSchema.label || jsonSchema.title || name;
-  const hasError = errors && errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   return (
     <FormControl isRequired={required} isInvalid={hasError}>
@@ -871,6 +884,8 @@ function FormTypeInputString(props: FormTypeInputProps<string>) {
   );
 }
 ```
+
+An input reads error state with `useFieldErrors(node)` instead of props. The hook makes that input re-render on its field's error changes, so call it only in inputs that display error state themselves.
 
 **Advantages of FormControl**:
 - `isRequired` → automatically shows `*` on the label
@@ -946,7 +961,7 @@ Chakra UI dark mode support:
 ```typescript
 import { useColorMode } from '@chakra-ui/react';
 
-const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
+const FormGroup = ({ depth, Input }: FieldRendererProps) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -956,7 +971,7 @@ const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
       borderColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
       bg={colorMode === 'dark' ? 'gray.800' : 'gray.50'}
     >
-      {children}
+      <Input />
     </Box>
   );
 };
@@ -1024,13 +1039,13 @@ Chakra UI's dark mode automatically guarantees WCAG contrast ratios:
 ```typescript
 import { useColorModeValue } from '@chakra-ui/react';
 
-const FormGroup = ({ children }: FormTypeRendererProps) => {
+const FormGroup = ({ Input }: FieldRendererProps) => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   return (
     <Box bg={bgColor} borderColor={borderColor}>
-      {children}
+      <Input />
     </Box>
   );
 };

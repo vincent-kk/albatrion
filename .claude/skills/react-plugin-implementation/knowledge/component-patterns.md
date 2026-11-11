@@ -353,13 +353,16 @@ const FormTypeInputStringEnum = ({
 ## Error Handling Pattern
 
 ```typescript
+import { useFieldErrors } from '@canard/schema-form';
+
 const FormTypeInputString = ({
-  errors,
+  node,
   ...props
 }: FormTypeInputStringProps) => {
-  // errors is JSONSchemaError[]
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : '';
+  // An input does not receive `errors` or `errorVisible` props.
+  // errorMessage is already null while errors must not be shown.
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   return (
     <TextField
@@ -371,7 +374,9 @@ const FormTypeInputString = ({
 };
 ```
 
-**Caution**: when FormError is implemented as a separate component, pass only the error prop here
+`useFieldErrors(node)` returns `{ errors, errorVisible, errorMessage, formatError }`.
+
+**Caution**: calling the hook makes the input re-render on its field's error changes, so call it only in inputs that display error state themselves. The field group renders the message through `FormErrorMessage`.
 
 ## Hidden Label Pattern
 
@@ -400,15 +405,18 @@ const FormTypeInputBoolean = ({
 ## Accessibility Pattern
 
 ```typescript
+import { useFieldErrors } from '@canard/schema-form';
+
 const FormTypeInputString = ({
+  node,
   path,
   name,
   jsonSchema,
   required,
-  errors,
   ...props
 }: FormTypeInputStringProps) => {
-  const hasError = errors.length > 0;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
   const describedBy = hasError ? `${path}-error` : undefined;
 
   return (
@@ -424,7 +432,7 @@ const FormTypeInputString = ({
       />
       {hasError && (
         <FormHelperText id={`${path}-error`} error>
-          {errors[0].message}
+          {errorMessage}
         </FormHelperText>
       )}
     </>
