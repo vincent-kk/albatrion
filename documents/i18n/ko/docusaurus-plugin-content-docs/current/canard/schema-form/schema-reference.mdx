@@ -26,6 +26,7 @@ sidebar_position: 4
 | `options` | `propertyOrder` | 문자열 배열; `*`는 와일드카드가 아닌 실제 속성 이름 |
 | `options` | `virtual` | 기존 fields 검사를 따르는 가상 그룹 선언 |
 | `presentation` | `inputType` | 문자열 |
+| `presentation` | `controlled` | boolean |
 | `presentation` | `FieldInput` | 함수 또는 null이 아닌 객체; null은 생략 |
 | `presentation` | `FieldInputProps`, `FieldRendererProps`, `errorMessages` | null·배열이 아닌 객체; 중첩 값 검사 없음 |
 
@@ -33,7 +34,7 @@ sidebar_position: 4
 
 | 그룹 | 소비자 설정 |
 | --- | --- |
-| `presentation` | `inputType`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; 사용자 렌더러 데이터도 허용합니다 |
+| `presentation` | `inputType`, `controlled`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; 사용자 렌더러 데이터도 허용합니다 |
 | `options` | 예약 엔진 옵션은 위 표의 형을 따르며 사용자 키도 허용합니다 |
 | `controls` | 아래 controls 목록을 사용하며 입력별 설정은 이곳에 두지 않습니다 |
 
@@ -147,6 +148,17 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 `FieldInputTestObject`의 `type`, `schemaType`, `path`, `format`, `inputType`은 단일값 또는 목록을 받고 `required`, `nullable`은 boolean입니다. 생략한 조건은 제한하지 않습니다. virtual 노드는 `type: 'virtual'`, `schemaType: undefined`이며 `schemaType: 'virtual'`로 매칭하지 않습니다.
 
 입력별 설정은 실제 입력으로 전달하는 `presentation.FieldInputProps`를 권장합니다. `lazy`, `protocols`, `minRows` 등을 `options`에 둘 수 있지만 입력이 노드 스키마에서 명시적으로 읽어야 합니다. 스키마 최상위의 `inputType`, `FieldInput`은 presentation 그룹을 대체하지 않습니다.
+
+### 제어 입력의 재마운트 생략 {#controlled}
+
+입력이 직접 쓰지 않은 값(범위와 무관한 `setValue`, reset, `refresh(path)`, `derived`, `injectTo`, `unsetValue`, 배열 조작, 부모 입력의 전체 값 쓰기)은 그 입력을 다시 마운트하여 새 `defaultValue`를 넘깁니다. 매 렌더의 `value`만으로 그리는 입력에는 이 재마운트가 필요 없습니다. `FieldInputDefinition` 또는 필드별 `presentation.controlled`에 `controlled: true`를 선언하면 DOM, 포커스, 내부 상태를 유지한 채 새 값을 `value`로 받습니다.
+
+| `controlled` | 입력이 직접 쓰지 않은 값 |
+| --- | --- |
+| 생략 또는 `false` | 새 `defaultValue`로 재마운트 |
+| `true` | 새 `value`, 재마운트 없음 |
+
+자주 다시 계산되는 필드와 마운트 비용이 큰 위젯을 위한 최적화입니다. 값의 사본을 두지 않는 컴포넌트에만 선언하십시오. 복사해 둔 초안은 reset 뒤에도 남습니다. 인라인 `presentation.FieldInput`, `fieldInputMap` 컴포넌트, `Form.Input`·`Form.Field`·`Form.Render`에 넘긴 `FieldInput`은 스키마에서만 선언할 수 있습니다. 어느 쪽이든 `false`가 이기므로 스키마에서 한 필드만 다시 재마운트 방식으로 되돌릴 수 있습니다. `onChange`로 입력한 타이핑은 그 입력을 다시 마운트하지 않으며, `remount(path)`는 선언과 무관하게 입력을 교체합니다. UI 플러그인은 `value`로 그리는 체크박스, 스위치, 스테퍼 입력에 이 선언을 달아 두었습니다.
 
 ## 사용자 입력 접근성 {#accessibility}
 

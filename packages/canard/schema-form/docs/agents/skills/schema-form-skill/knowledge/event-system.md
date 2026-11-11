@@ -17,7 +17,7 @@ After `setValue()` returns, settled values and controls can be read synchronousl
 
 Read the bit flags from the published `FieldNodeEventType` declaration. Choose a mask for the information the observer owns; value, interaction, structure and aggregate changes are distinct signals, so a value-only listener cannot stand in for all of them.
 
-- `RequestRefresh` re-syncs uncontrolled inputs; the system raises it, and `formRef.current?.refresh(path)` raises it on demand.
+- `RequestRefresh` asks an input to re-sync by remounting; the system raises it, and `formRef.current?.refresh(path)` raises it on demand. An input declaring `controlled: true` is not replaced by it (`field-input.md`).
 - `RequestRemount` is the external escape hatch for forcing a full component remount of a subtree: `formRef.current?.remount(path)`. There is no public `node.publish`.
 - `UpdateGlobalState` and `UpdateGlobalError` are root-level aggregates; `UpdateDiagnostics` reports changes of the root settlement diagnostics.
 

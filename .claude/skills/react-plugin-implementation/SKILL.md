@@ -256,6 +256,7 @@ const FormTypeInputDate = ({
 ## 성능 최적화 체크리스트
 
 - [ ] 비제어 컴포넌트 패턴 적용 (`defaultValue` 사용)
+- [ ] An input that draws from `value` alone and keeps no copy of it (checkbox, switch, stepper) declares `controlled: true` on its definition, so outside writes (`setValue`, reset, `derived`, `injectTo`) stop remounting it. Never declare it on a `defaultValue` input or one with a draft in state
 - [ ] `useMemo`로 props 연산 최적화
 - [ ] `useHandle`로 이벤트 핸들러 메모이제이션
 - [ ] Context 구독 최소화

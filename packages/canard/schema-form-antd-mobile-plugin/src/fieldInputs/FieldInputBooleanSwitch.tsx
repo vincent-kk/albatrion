@@ -54,5 +54,6 @@ const FieldInputBooleanSwitch = ({
 };
 export const FieldInputBooleanSwitchDefinition = {
   Component: FieldInputBooleanSwitch,
+  controlled: true,
   test: ({ type, inputType }) => type === 'boolean' && inputType === 'switch',
 } satisfies FieldInputDefinition;

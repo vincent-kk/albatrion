@@ -105,6 +105,7 @@ const FieldInputStringSwitch = ({
 
 export const FieldInputStringSwitchDefinition = {
   Component: FieldInputStringSwitch,
+  controlled: true,
   test: ({ type, inputType, jsonSchema }) =>
     type === 'string' &&
     inputType === 'switch' &&

@@ -17,6 +17,12 @@ fieldInputMap: {
 }
 ```
 
+## Field Inputs
+
+**An input keeps its old draft after reset or `setValue`** — it declares `controlled: true` but copies the value into state. Remove the declaration, or draw from `value` alone ([field input](field-input.md#skip-remounts-for-a-controlled-input-controlled)).
+
+**A recalculated field loses focus or flickers on every keystroke of another field** — each `derived` or `injectTo` write remounts its input. If the input draws from `value` alone, declare `controlled: true`.
+
 ## Controls Expressions
 
 **`controls.active` / `controls.visible` not reacting** — the most common cause is path syntax: `/toggle` is an absolute path from the root; a sibling is `../toggle`.

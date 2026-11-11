@@ -45,7 +45,7 @@ export const normalizeFieldInputDefinitions = (
       result.push(cache.get(definition)!);
       continue;
     }
-    const { Component, test } = definition;
+    const { Component, test, controlled } = definition;
     if (
       !isReactComponent(Component) ||
       (!isFunction(test) && !isPlainObject(test))
@@ -69,6 +69,7 @@ export const normalizeFieldInputDefinitions = (
     const normalized = {
       test: isFunction(test) ? test : fieldInputTestFnFactory(test),
       Component: withFieldInputErrorBoundary(Component),
+      controlled: typeof controlled === 'boolean' ? controlled : undefined,
     };
     cache.set(definition, normalized);
     result.push(normalized);

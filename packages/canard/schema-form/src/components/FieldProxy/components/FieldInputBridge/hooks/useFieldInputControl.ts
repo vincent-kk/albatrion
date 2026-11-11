@@ -7,9 +7,12 @@ import {
 
 import { useTruthyConstant, useVersion } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
+import { readFieldInputGeneration } from '../utils/readFieldInputGeneration';
 
 /** Input props, child lists and applied Refresh share one delivery snapshot. */
 const INPUT_TRACKING_EVENTS =
@@ -33,7 +36,7 @@ const MOUNTED_CHILDREN = 2;
  *
  * Event Handling:
  * - `REACTIVE_RERENDERING_EVENTS | UpdateChildren`: Re-renders the caller through the shared snapshot
- * - `RequestRefresh`: Tracks the node revision, deferring replacement until composition ends
+ * - `RequestRefresh`: Tracks the generation the `controlled` declaration selects, deferring replacement until composition ends
  *
  * Usage in FieldInputBridge:
  * - The returned generation keys the input and captures its current value.
@@ -48,13 +51,15 @@ const MOUNTED_CHILDREN = 2;
  *
  * @param node - The FieldNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
+ * @param controlled - Combined declaration; only `true` stops Refresh from replacing the input
  * @returns Container ref, input key, composition handlers and stable re-render dispatch shared with held-display releases, and composition cleanup
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
+  controlled?: Optional<boolean>,
 ) => {
-  const refreshRevision = node.revision(FieldNodeEventType.RequestRefresh);
+  const refreshRevision = readFieldInputGeneration(node, controlled);
   const generation = useRef(refreshRevision);
 
   const [, update] = useVersion();
@@ -81,14 +86,19 @@ export const useFieldInputControl = <Node extends FieldNode>(
     [node, mountedChildren, refreshDeferral],
   );
   const getRevision = useCallback(() => {
-    // revision(mask) sums per-bit delivery counts, so the combined read equals
-    // the Refresh-excluded revision plus the current Refresh revision.
-    if (refreshDeferral.current === 0)
-      return node.revision(INPUT_TRACKING_EVENTS);
-    return (
-      node.revision(INPUT_TRACKING_EVENTS_WITHOUT_REFRESH) + generation.current
+    // revision(mask) sums per-bit delivery counts, so each undeferred read equals
+    // the Refresh-excluded revision plus the declaration's current generation.
+    if (refreshDeferral.current !== 0)
+      return (
+        node.revision(INPUT_TRACKING_EVENTS_WITHOUT_REFRESH) +
+        generation.current
+      );
+    return node.revision(
+      controlled === true
+        ? INPUT_TRACKING_EVENTS_WITHOUT_REFRESH
+        : INPUT_TRACKING_EVENTS,
     );
-  }, [node, refreshDeferral]);
+  }, [node, refreshDeferral, controlled]);
   useSyncExternalStore(subscribe, getRevision, getRevision);
   if (refreshDeferral.current === 0) generation.current = refreshRevision;
   const handleCompositionStart = useCallback(() => {
@@ -98,10 +108,10 @@ export const useFieldInputControl = <Node extends FieldNode>(
     refreshDeferral.current &= CLEAR_COMPOSING_MASK;
     if (
       mountedChildren.current === 0 &&
-      generation.current !== node.revision(FieldNodeEventType.RequestRefresh)
+      generation.current !== readFieldInputGeneration(node, controlled)
     )
       update();
-  }, [mountedChildren, node, update, refreshDeferral]);
+  }, [mountedChildren, node, update, refreshDeferral, controlled]);
   return [
     ref,
     generation.current,

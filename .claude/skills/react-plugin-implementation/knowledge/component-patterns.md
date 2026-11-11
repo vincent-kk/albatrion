@@ -436,7 +436,7 @@ const FormTypeInputString = ({
 
 **핵심 원칙**:
 
-1. 비제어 컴포넌트 우선
+1. 비제어 컴포넌트 우선. An uncontrolled definition declares nothing. A component that draws from `value` alone and keeps no copy of it declares `controlled: true` (`{ Component, test, controlled: true }`) as an optimization: outside writes then reach it through `value` without a remount.
 2. 값 우선순위: 직접 props > context > jsonSchema
 3. useMemo로 연산 최적화
 4. useHandle로 핸들러 메모이제이션

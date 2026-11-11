@@ -34,6 +34,16 @@ Refresh는 실제로 마운트된 자식 프록시가 없는 입력의 원본 �
 
 EVENT-039·EVENT-040·EVENT-041. 적용 세대는 원본 입력 key와 defaultValue를 함께 갱신합니다. Refresh는 오류 경계 바깥을 교체하지 않으므로 실패 fallback을 해제하지 않습니다. Remount·Form key 교체는 경계를 포함한 수명을 다시 시작합니다. 원본 입력의 캐럿·선택·포커스는 리마운트에서 사라지며 자동 복원하지 않습니다. 포맷터의 캐럿 복구는 해당 입력의 책임입니다.
 
+### 값 선언과 적용 세대
+
+`controlled: true`는 입력이 매 렌더의 value만으로 그리고 값의 사본을 두지 않는다는 선언입니다. 그런 입력은 Refresh로 교체할 이유가 없으므로 적용 세대를 상수로 읽어 DOM·포커스·내부 상태를 유지하고, 값은 value로 받습니다. 선언이 없거나 false인 입력은 Refresh revision을 세대로 읽어 교체됩니다. 재마운트가 기본인 이유는 defaultValue를 읽는 입력이 선언 없이도 값을 잃지 않게 하기 위해서이며, 제어 선언은 마운트 비용을 없애는 최적화입니다.
+
+정의의 선언과 유효 스키마의 `presentation.controlled`를 결합하며 하나라도 false면 false가 이깁니다. 정의가 제어로 선언한 입력을 스키마가 필드 단위로 끌 수 있게 합니다. preferred·인라인·경로 맵 입력에는 정의 선언이 없으므로 스키마 선언만 따릅니다.
+
+제어 입력은 교체되지 않으므로 적용 세대 검사가 늦은 callback을 막지 않으며, 노드·선택 수명 검사와 명시적 Remount는 그대로 적용됩니다. 값에서 복제한 내부 상태를 가진 입력에 제어를 선언하면 리셋 뒤에도 그 상태가 남습니다.
+
+렌더·조합 종료·callback 수락은 같은 세대 읽기 함수를 사용하고, 보류가 없는 스냅숏은 그 세대에 맞는 revision 마스크를 읽으므로 함께 바뀌어야 합니다. 하나라도 다른 값을 읽으면 세대 검사가 어긋나 정상 입력을 버립니다. 선언이 마운트 중에 바뀌어 세대가 달라지면 원본 입력을 한 번 다시 마운트합니다.
+
 ### EVENT-065 — 조합과 숨김의 경계
 
 compositionstart부터 compositionend까지 Refresh를 보류하고 중복 요청을 한 번으로 모읍니다. DOM value를 프로그램으로 덮거나 입력을 교체하지 않아 IME 초안을 보존합니다. 노드 revision과 동기 통지는 계속 진행하므로 적용 뒤의 옛 callback은 세대 검사로 버립니다. Refresh가 없던 조합의 완성 텍스트는 정상 입력입니다.
@@ -87,6 +97,10 @@ useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 
 
 React 18/19·StrictMode의 hydration은 서버 DOM과 값을 보존하고 hydration 자체의 추가 렌더를 만들지 않습니다. 숨김 중 retained handle 쓰기는 재표시 입력에 반영하되 콜백을 재생하지 않습니다. 입력 중간 삽입·IME는 자기 타이핑으로 리마운트하지 않고, 명시 Refresh는 위 자식·조합 조건을 따릅니다. 가상화 없는 terminal 배열 항목의 라이브러리 layout은 자식 소유권과 입력 commit 두 작업이며, 표시가 같은 일반 쓰기는 추가 layout 작업을 만들지 않습니다.
 
+### controlled-declaration — 제어 선언
+
+`controlled: true`인 입력은 호출자 쓰기·리셋·refresh·파생에서 DOM을 유지한 채 새 value를 받고 명시적 Remount에서만 교체됩니다. 선언 없는 입력은 같은 쓰기에서 교체됩니다. 정의와 스키마의 선언이 다르면 false가 이깁니다.
+
 ## Last Updated
 
-입력 선택·초안·Refresh·구독·하이드레이션 또는 오류 표시의 연결 계약이 바뀔 때 갱신합니다.
+입력 선택·값 선언·초안·Refresh·구독·하이드레이션 또는 오류 표시의 연결 계약이 바뀔 때 갱신합니다.

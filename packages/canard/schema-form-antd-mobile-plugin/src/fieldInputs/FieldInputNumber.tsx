@@ -58,6 +58,7 @@ const FieldInputNumber = ({
 
 export const FieldInputNumberDefinition = {
   Component: FieldInputNumber,
+  controlled: true,
   test: {
     schemaType: ['number', 'integer'],
   },

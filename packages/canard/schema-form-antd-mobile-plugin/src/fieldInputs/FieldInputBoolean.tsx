@@ -43,6 +43,7 @@ const FieldInputBoolean = ({
 
 export const FieldInputBooleanDefinition = {
   Component: FieldInputBoolean,
+  controlled: true,
   test: {
     type: 'boolean',
   },

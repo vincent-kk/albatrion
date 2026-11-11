@@ -211,6 +211,12 @@ export type FieldInputHint = {
 export type FieldInputDefinition<T = unknown> = {
   test: FieldInputTestFn | FieldInputTestObject;
   Component: ComponentType<unknown extends T ? any : InferFieldInputProps<T>>;
+  /**
+   * Set `true` when the component draws from `value` alone and keeps no copy of it: a value
+   * it did not write then arrives through `value` without remounting it. Omitted or `false`:
+   * such a value remounts the component, which hands it a new `defaultValue`.
+   */
+  controlled?: boolean;
 };
 
 export type FieldInputMap<T = unknown> = {
