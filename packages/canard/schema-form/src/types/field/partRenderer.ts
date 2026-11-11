@@ -4,13 +4,13 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
-/** Shared immutable field identity for registered presentation parts. */
+/** Shared field metadata for registered presentation parts. */
 interface PartRendererBaseProps {
   /** Source node owned by the binding. */
   node: FieldNode;
   /** Current canonical field address. */
   path: FieldNode['path'];
-  /** Resolved field title. */
+  /** Field key or array index. */
   name: FieldNode['name'];
   /** Current field schema. */
   jsonSchema: FieldNode['jsonSchema'];
@@ -30,7 +30,7 @@ export interface LabelRendererProps extends PartRendererBaseProps {
   htmlFor?: string;
   /** Title address used by inputs with aria-labelledby. */
   id?: string;
-  /** Label content supplied by the bound part. */
+  /** Explicit label content, defaulting to the field key or array index. */
   children: ReactNode;
 }
 

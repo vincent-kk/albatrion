@@ -86,6 +86,44 @@ it('F-E retains four listeners per field and unchanged input renders with Refres
   expect(active.get(node)).toBe(0);
 });
 
+it('retains five listeners for a labeled field with an array ancestor', () => {
+  const probe = nodeFromJSONSchema({ jsonSchema: { type: 'string' } });
+  const prototype = Object.getPrototypeOf(probe);
+  const subscribe = prototype.subscribe;
+  const active = new Map<object, number>();
+  vi.spyOn(prototype, 'subscribe').mockImplementation(function (
+    this: object,
+    ...args: unknown[]
+  ) {
+    active.set(this, (active.get(this) ?? 0) + 1);
+    const unsubscribe = subscribe.apply(this, args);
+    return () => {
+      active.set(this, active.get(this)! - 1);
+      unsubscribe();
+    };
+  });
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      validationMode={0}
+      jsonSchema={{
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: { field: { type: 'string', title: 'Field' } },
+        },
+      }}
+      defaultValue={[{ field: 'first' }]}
+    />,
+  );
+  const node = ref.current!.findNode('/0/field')!;
+  expect(view.container.querySelector('label[for="/0/field"]')).not.toBeNull();
+  expect(active.get(node)).toBe(5);
+  view.unmount();
+  expect(active.get(node)).toBe(0);
+});
+
 it('F-E keeps one container render per array write through the last removal and still applies the next Refresh', () => {
   const ref = createRef<FormHandle>();
   const renders = vi.fn();

@@ -40,8 +40,8 @@ import type { JSONSchema } from '@/schema-form/types';
  *       <Input />
  *     </Form.Item>
  *   ),
- *   LabelRenderer: ({ jsonSchema }) => (
- *     <span>{jsonSchema.title || jsonSchema.name}</span>
+ *   LabelRenderer: ({ children, htmlFor, id }) => (
+ *     <label htmlFor={htmlFor} id={id}>{children}</label>
  *   ),
  *
  *   // Custom input types for Ant Design

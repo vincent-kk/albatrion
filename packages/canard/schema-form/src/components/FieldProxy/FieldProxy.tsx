@@ -79,8 +79,6 @@ export const FieldProxy = ({
     errorVisibility,
   } = useFieldRendererContext();
 
-  const name = node?.name;
-  const path = node?.path;
   const jsonSchema = node?.jsonSchema;
   const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
   const required = resolveRequired(
@@ -90,8 +88,8 @@ export const FieldProxy = ({
   );
   const Label = useMemo(
     () =>
-      createLabelPart(LabelRenderer, node, required, name, path, jsonSchema),
-    [LabelRenderer, node, name, path, jsonSchema, required],
+      createLabelPart(LabelRenderer, node, required, jsonSchema),
+    [LabelRenderer, node, jsonSchema, required],
   );
   const ErrorMessage = useMemo(
     () =>
@@ -99,11 +97,9 @@ export const FieldProxy = ({
         ErrorMessageRenderer,
         node,
         required,
-        name,
-        path,
         jsonSchema,
       ),
-    [ErrorMessageRenderer, node, name, path, jsonSchema, required],
+    [ErrorMessageRenderer, node, jsonSchema, required],
   );
 
   const Component = InputFieldRenderer || ContextFieldRenderer;

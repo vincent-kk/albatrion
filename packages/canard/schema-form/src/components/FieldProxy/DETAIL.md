@@ -6,7 +6,11 @@
 
 ## API Contracts
 
-Label과 ErrorMessage는 각각 자기 렌더러·node·name·path·jsonSchema·required에 고정된 memo 부품입니다. 두 정체성은 독립적이며 오류·표시·formatError·context 변경으로 교체하지 않습니다. 부품은 훅과 Context를 읽지 않고 전달된 props를 기본값 뒤에 펼치되 node는 바꿀 수 없습니다. Label의 undefined children만 name으로 대체하고 null은 비웁니다. 같은 required를 그룹에도 전달합니다. 렌더러·주소·이름·스키마·필수 여부 변경은 해당 부품만 새로 만드므로 배열 재배치의 라벨은 재마운트됩니다.
+Label과 ErrorMessage는 각각 자기 렌더러·node·jsonSchema·required에 고정된 memo 부품입니다. 두 정체성은 독립적이며 오류·표시·formatError·context 또는 경로 변경으로 교체하지 않습니다. 전달된 props를 기본값 뒤에 펼치되 node는 바꿀 수 없습니다. Label의 undefined children만 필드 키나 배열 인덱스인 name으로 대체하고 null은 비웁니다. 같은 required를 그룹에도 전달합니다. 렌더러·스키마·필수 여부 변경은 해당 부품만 새로 만듭니다.
+
+부품 생성 때 parentNode를 따라 배열 조상 유무를 한 번 판정합니다. 살아 있는 노드의 이름·주소를 바꾸는 엔진 경로는 배열 항목 재배치뿐이고 조상 종류는 고정되므로, 배열 조상이 없는 부품은 훅과 구독 없이 node.path·node.name을 읽습니다. 배열 아래 부품만 UpdatePath를 추적하여 캐시된 요소도 새 주소를 반영하고 DOM을 유지합니다. 마운트한 부품당 경로 추적 구독 하나가 필요하며 오류·Context는 읽지 않습니다.
+
+패키지의 기본 LabelRenderer·ErrorMessageRenderer와 선택 참조가 같을 때만 생성 시 직접 호출 경로를 선택합니다. [폴백의 순수 함수 계약](../FallbackComponents/DETAIL.md)에 따라 컴포넌트 층 하나를 생략합니다. 사용자·플러그인 렌더러는 항상 요소로 렌더하여 훅과 컴포넌트 수명을 React가 소유하게 합니다.
 
 실패한 필드 경계는 formatError 또는 선택된 라벨·오류 렌더러의 교체에 다시 시도합니다. 정상 경계는 같은 입력과 다른 부품의 DOM을 유지합니다.
 

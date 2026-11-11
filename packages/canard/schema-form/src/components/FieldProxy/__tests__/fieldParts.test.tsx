@@ -1,4 +1,4 @@
-import { createRef, useMemo } from 'react';
+import { createRef, memo, useId, useMemo } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
@@ -272,6 +272,140 @@ it('updates a memo-cached label address after array reordering', () => {
     view.container.querySelector<HTMLInputElement>('input[id="/0/name"]')
       ?.value,
   ).toBe('second');
+});
+
+it.each([false, true])(
+  'retains the surviving label DOM and updates its address after removal (cached: %s)',
+  (cached) => {
+    const ref = createRef<FormHandle>();
+    const Group = ({ isRoot, Input, Label }: FieldRendererProps) => {
+      const label = useMemo(() => <Label />, [Label]);
+      return isRoot ? (
+        <Input />
+      ) : (
+        <>
+          {cached ? label : <Label />}
+          <Input />
+        </>
+      );
+    };
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: { name: { type: 'string', title: 'Name' } },
+          },
+        }}
+        defaultValue={[{ name: 'first' }, { name: 'second' }]}
+        validationMode={ValidationMode.None}
+        FieldRenderer={Group}
+      />,
+    );
+    const label = view.container.querySelector('label[for="/1/name"]');
+    expect(label).not.toBeNull();
+    act(() => {
+      const node = ref.current!.node;
+      if (!node || !isArrayNode(node)) throw new Error('missing array');
+      node.remove(0);
+    });
+    const shifted = view.container.querySelector('label[for="/0/name"]');
+    expect(shifted).toBe(label);
+    expect(shifted?.getAttribute('for')).toBe('/0/name');
+    expect(shifted?.id).toBe('label:/0/name');
+    expect(view.container.querySelector('label[for="/1/name"]')).toBeNull();
+    expect(
+      view.container.querySelector<HTMLInputElement>('input[id="/0/name"]')
+        ?.value,
+    ).toBe('second');
+  },
+);
+
+it('retains a cached error part DOM and delivers its new path after removal', () => {
+  const ref = createRef<FormHandle>();
+  const Group = ({ isRoot, Input, ErrorMessage }: FieldRendererProps) => {
+    const error = useMemo(() => <ErrorMessage />, [ErrorMessage]);
+    return isRoot ? (
+      <Input />
+    ) : (
+      <>
+        <Input />
+        {error}
+      </>
+    );
+  };
+  const ErrorPath = ({ path }: ErrorMessageRendererProps) => (
+    <em data-error-path={path}>{path}</em>
+  );
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: { name: { type: 'string', title: 'Name' } },
+        },
+      }}
+      defaultValue={[{ name: 'first' }, { name: 'second' }]}
+      validationMode={ValidationMode.None}
+      FieldRenderer={Group}
+      ErrorMessageRenderer={ErrorPath}
+    />,
+  );
+  const error = view.container.querySelector('em[data-error-path="/1/name"]');
+  expect(error).not.toBeNull();
+  expect(error?.textContent).toBe('/1/name');
+  act(() => {
+    const node = ref.current!.node;
+    if (!node || !isArrayNode(node)) throw new Error('missing array');
+    node.remove(0);
+  });
+  const shifted = view.container.querySelector('em[data-error-path="/0/name"]');
+  expect(shifted).toBe(error);
+  expect(shifted?.textContent).toBe('/0/name');
+  expect(view.container.querySelector('em[data-error-path="/1/name"]')).toBeNull();
+});
+
+it('renders registered memo parts with their own React hooks', () => {
+  const Label = memo(function CustomLabel({
+    children,
+    htmlFor,
+  }: LabelRendererProps) {
+    const id = useId();
+    return (
+      <label htmlFor={htmlFor} data-hook-id={id}>
+        {children}
+      </label>
+    );
+  });
+  const ErrorMessage = memo(function CustomError({
+    children,
+  }: ErrorMessageRendererProps) {
+    const id = useId();
+    return <em data-hook-id={id}>{children}</em>;
+  });
+  const view = render(
+    <Form
+      jsonSchema={schema}
+      validationMode={ValidationMode.None}
+      FieldRenderer={Parts}
+      LabelRenderer={Label}
+      ErrorMessageRenderer={ErrorMessage}
+      errorVisibility={ErrorVisibility.Always}
+      errors={[{ dataPath: '/a', message: 'Issue' }]}
+    />,
+  );
+  const label = view.container.querySelector('label[for="/a"]');
+  const error = view.getByText('Issue');
+  expect(label).not.toBeNull();
+  expect(label?.getAttribute('data-hook-id')).toBeTruthy();
+  expect(error.getAttribute('data-hook-id')).toBeTruthy();
+  expect(label?.getAttribute('data-hook-id')).not.toBe(
+    error.getAttribute('data-hook-id'),
+  );
 });
 
 it('retains label calls and DOM through formatter, visibility, context and input changes', () => {
