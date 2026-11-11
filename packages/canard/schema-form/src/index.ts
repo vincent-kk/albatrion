@@ -7,7 +7,7 @@ export {
 export {
   Form,
   type FormChildrenProps,
-  type FormErrorProps,
+  type FormErrorMessageProps,
   type RolledFormFieldProps as FormFieldProps,
   type FormHandle,
   type RolledFormInputProps as FormInputProps,

@@ -26,7 +26,7 @@ for (const scenario of validationScenarios)
       children: (
         <>
           <Form.Field />
-          <Form.Error />
+          <Form.ErrorMessage />
         </>
       ),
     });

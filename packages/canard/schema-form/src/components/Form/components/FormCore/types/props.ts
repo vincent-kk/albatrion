@@ -68,11 +68,11 @@ export interface FormProps<
   /** Custom field renderer component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<FieldRendererProps>;
   /** Input renderer shared by Form.Input instances. */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  /** Error renderer shared by Form.Error instances. */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<FieldRendererProps>;
+  /** Error renderer shared by Form.ErrorMessage instances. */
+  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: FieldNode['globalErrors'];
   /** Custom format error function */

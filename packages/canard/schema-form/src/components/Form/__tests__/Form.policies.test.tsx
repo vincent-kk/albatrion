@@ -15,7 +15,7 @@ import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFor
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { FormCore, type FormHandle } from '../components/FormCore';
-import { FormError } from '../components/FormError';
+import { FormErrorMessage } from '../components/FormErrorMessage';
 
 afterEach(() => {
   cleanup();
@@ -114,23 +114,23 @@ it('LANDING-095 VALIDATE-044 rejects unavailable validation when validation is e
 
 it('LANDING-067 resolves specialized renderers through Form then FormProvider', () => {
   const ProviderError = () => <span>provider-error</span>;
-  const FormErrorRenderer = () => <span>form-error</span>;
+  const ErrorMessageRenderer = () => <span>form-error</span>;
   const view = render(
-    <ExternalFormContextProvider FormErrorRenderer={ProviderError}>
+    <ExternalFormContextProvider ErrorMessageRenderer={ProviderError}>
       <FormCore jsonSchema={{ type: 'string' }}>
-        <FormError />
+        <FormErrorMessage />
       </FormCore>
     </ExternalFormContextProvider>,
   );
   expect(view.container.textContent).toContain('provider-error');
   view.unmount();
   const form = render(
-    <ExternalFormContextProvider FormErrorRenderer={ProviderError}>
+    <ExternalFormContextProvider ErrorMessageRenderer={ProviderError}>
       <FormCore
         jsonSchema={{ type: 'string' }}
-        FormErrorRenderer={FormErrorRenderer}
+        ErrorMessageRenderer={ErrorMessageRenderer}
       >
-        <FormError />
+        <FormErrorMessage />
       </FormCore>
     </ExternalFormContextProvider>,
   );

@@ -78,7 +78,7 @@ it('uses keyword, locale, default and original-message fallbacks without changin
       errorVisibility={ErrorVisibility.Always}
       context={{ locale: 'en' }}
     >
-      <Form.Error path="" />
+      <Form.ErrorMessage path="" />
     </Form>,
   );
   expect(view.getByText('Use at least 3 characters: ab')).toBeTruthy();
@@ -93,7 +93,7 @@ it('uses keyword, locale, default and original-message fallbacks without changin
       errorVisibility={ErrorVisibility.Always}
       context={{ locale: 'fr' }}
     >
-      <Form.Error path="" />
+      <Form.ErrorMessage path="" />
     </Form>,
   );
   expect(view.getByText('raw')).toBeTruthy();
@@ -114,7 +114,7 @@ it('uses keyword, locale, default and original-message fallbacks without changin
       validationMode={ValidationMode.None}
       errorVisibility={ErrorVisibility.Always}
     >
-      <Form.Error path="" />
+      <Form.ErrorMessage path="" />
     </Form>,
   );
   expect(emptyKeyword.getByText('Check')).toBeTruthy();
@@ -131,7 +131,7 @@ it('renders ReactNode formatter output using node and context', () => {
       errorVisibility={ErrorVisibility.Always}
       errors={[{ dataPath: '', keyword: 'minLength', message: 'Too short' }]}
     >
-      <Form.Error path="" />
+      <Form.ErrorMessage path="" />
     </Form>,
   );
   expect(view.getByText('Please correct: form: Too short').tagName).toBe(

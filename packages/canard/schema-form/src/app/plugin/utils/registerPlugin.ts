@@ -30,9 +30,9 @@ const getPluginKey = createFingerprintFactory();
  *
  * registerPlugin({
  *   FieldRenderer: CustomFormField,
- *   FormLabelRenderer: CustomFormLabel,
- *   FormInputRenderer: CustomFormInput,
- *   FormErrorRenderer: CustomFormError,
+ *   LabelRenderer: CustomFormLabel,
+ *   InputRenderer: CustomFormInput,
+ *   ErrorMessageRenderer: CustomFormError,
  * });
  * ```
  *
@@ -114,9 +114,9 @@ const getPluginKey = createFingerprintFactory();
  * const myFormPlugin: SchemaFormPlugin = {
  *   // Custom renderer components
  *   FieldRenderer: MyFormField,
- *   FormLabelRenderer: MyFormLabel,
- *   FormInputRenderer: MyFormInput,
- *   FormErrorRenderer: MyFormError,
+ *   LabelRenderer: MyFormLabel,
+ *   InputRenderer: MyFormInput,
+ *   ErrorMessageRenderer: MyFormError,
  *
  *   // Custom input types
  *   fieldInputDefinitions: [
@@ -157,7 +157,7 @@ const getPluginKey = createFingerprintFactory();
  * ```typescript
  * // First plugin
  * registerPlugin({
- *   FormLabelRenderer: CustomLabel1,
+ *   LabelRenderer: CustomLabel1,
  *   fieldInputDefinitions: [
  *     { test: { format: 'date' }, Component: DatePicker1 }
  *   ],
@@ -165,8 +165,8 @@ const getPluginKey = createFingerprintFactory();
  *
  * // Second plugin - behavior differs by property:
  * registerPlugin({
- *   FormLabelRenderer: CustomLabel2, // REPLACES CustomLabel1
- *   FormInputRenderer: CustomInput,  // ADDS to render kit
+ *   LabelRenderer: CustomLabel2, // REPLACES CustomLabel1
+ *   InputRenderer: CustomInput,  // ADDS to render kit
  *   fieldInputDefinitions: [
  *     { test: { format: 'date' }, Component: DatePicker2 }, // PREPENDED (takes precedence)
  *     { test: { format: 'time' }, Component: TimePicker }   // ADDED
@@ -186,7 +186,7 @@ const getPluginKey = createFingerprintFactory();
  * @remarks
  * ### Plugin Merge Behavior
  * When multiple plugins are registered:
- * - **Render components** (FieldRenderer, FormLabelRenderer, FormInputRenderer, FormErrorRenderer): Last one wins (replacement)
+ * - **Render components** (FieldRenderer, LabelRenderer, InputRenderer, ErrorMessageRenderer): Last one wins (replacement)
  * - **fieldInputDefinitions**: Prepended to list (first match wins), allowing overrides
  * - **validator**: Last one wins (complete replacement)
  * - **formatError**: Last one wins (complete replacement)

@@ -126,7 +126,7 @@ describe('features — handle-layout consumer-only', () => {
             <Form.Input path={layoutPlan.repeated} />
           </div>
           <div data-error-slot={layoutPlan.error}>
-            <Form.Error path={layoutPlan.error} />
+            <Form.ErrorMessage path={layoutPlan.error} />
           </div>
           <Form.Render path={layoutPlan.render}>
             {({ value }) => (

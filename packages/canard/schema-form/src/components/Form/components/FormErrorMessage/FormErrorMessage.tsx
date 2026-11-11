@@ -4,7 +4,7 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
-import type { FormErrorProps } from './types/props';
+import type { FormErrorMessageProps } from './types/props';
 
 /**
  * Renders validation error messages for form fields.
@@ -17,13 +17,13 @@ import type { FormErrorProps } from './types/props';
  * Basic error display:
  * ```tsx
  * <Form.Input path="/email" />
- * <Form.Error path="/email" />
+ * <Form.ErrorMessage path="/email" />
  * ```
  *
  * @example
  * Styled error message:
  * ```tsx
- * <Form.Error
+ * <Form.ErrorMessage
  *   path="/password"
  *   className="error-text error-text--critical"
  *   style={{ marginTop: '4px', fontSize: '14px' }}
@@ -37,7 +37,7 @@ import type { FormErrorProps } from './types/props';
  *   <Form.Input path="/username" />
  *   <div className="error-container">
  *     <Icon name="alert" />
- *     <Form.Error path="/username" className="error-message" />
+ *     <Form.ErrorMessage path="/username" className="error-message" />
  *   </div>
  * </div>
  * ```
@@ -47,18 +47,22 @@ import type { FormErrorProps } from './types/props';
  * ```tsx
  * <Form jsonSchema={schema} errorVisibility={ErrorVisibility.AfterTouch}>
  *   <Form.Input path="/email" />
- *   <Form.Error path="/email" />
+ *   <Form.ErrorMessage path="/email" />
  * </Form>
  * ```
  */
-export const FormError = memo(({ path, style, className }: FormErrorProps) => {
-  const { FormErrorRenderer } = useFieldRendererContext();
-  return (
-    <span style={style} className={className}>
-      <FieldProxy
-        path={path}
-        FieldRenderer={FormErrorRenderer || PluginManager.FormErrorRenderer}
-      />
-    </span>
-  );
-});
+export const FormErrorMessage = memo(
+  ({ path, style, className }: FormErrorMessageProps) => {
+    const { ErrorMessageRenderer } = useFieldRendererContext();
+    return (
+      <span style={style} className={className}>
+        <FieldProxy
+          path={path}
+          FieldRenderer={
+            ErrorMessageRenderer || PluginManager.ErrorMessageRenderer
+          }
+        />
+      </span>
+    );
+  },
+);

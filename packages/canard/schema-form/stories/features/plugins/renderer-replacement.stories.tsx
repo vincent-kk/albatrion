@@ -42,7 +42,7 @@ const composedLayout = () => (
   <>
     <Form.Label path="/title" />
     <Form.Input path="/title" />
-    <Form.Error path="/title" />
+    <Form.ErrorMessage path="/title" />
   </>
 );
 

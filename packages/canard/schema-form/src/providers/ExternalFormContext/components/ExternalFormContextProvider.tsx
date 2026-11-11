@@ -21,12 +21,12 @@ export interface ExternalFormContextProviderProps {
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
-  /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
-  /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  /** LabelRenderer component declared externally */
+  LabelRenderer?: ComponentType<FieldRendererProps>;
+  /** InputRenderer component declared externally */
+  InputRenderer?: ComponentType<FieldRendererProps>;
+  /** ErrorMessageRenderer component declared externally */
+  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
@@ -62,8 +62,8 @@ export interface ExternalFormContextProviderProps {
  * function App() {
  *   return (
  *     <FormProvider
- *       FormLabelRenderer={CustomLabel}
- *       FormErrorRenderer={CustomError}
+ *       LabelRenderer={CustomLabel}
+ *       ErrorMessageRenderer={CustomError}
  *       errorVisibility={ErrorVisibility.AfterTouch}
  *     >
  *       <MyForms />
@@ -145,9 +145,9 @@ export interface ExternalFormContextProviderProps {
  * <FormProvider
  *   // Custom renderers
  *   FieldRenderer={MyFormField}
- *   FormLabelRenderer={MyFormLabel}
- *   FormInputRenderer={MyFormInput}
- *   FormErrorRenderer={MyFormError}
+ *   LabelRenderer={MyFormLabel}
+ *   InputRenderer={MyFormInput}
+ *   ErrorMessageRenderer={MyFormError}
  *
  *   // Custom input types
  *   fieldInputDefinitions={[
@@ -183,9 +183,9 @@ export interface ExternalFormContextProviderProps {
 export const ExternalFormContextProvider = ({
   fieldInputDefinitions,
   FieldRenderer,
-  FormLabelRenderer,
-  FormInputRenderer,
-  FormErrorRenderer,
+  LabelRenderer,
+  InputRenderer,
+  ErrorMessageRenderer,
   formatError,
   errorVisibility,
   validationMode,
@@ -205,9 +205,9 @@ export const ExternalFormContextProvider = ({
     () => ({
       fromExternalFieldInputDefinitions,
       FieldRenderer,
-      FormLabelRenderer,
-      FormInputRenderer,
-      FormErrorRenderer,
+      LabelRenderer,
+      InputRenderer,
+      ErrorMessageRenderer,
       formatError,
       errorVisibility,
       validationMode,
@@ -217,9 +217,9 @@ export const ExternalFormContextProvider = ({
     [
       fromExternalFieldInputDefinitions,
       FieldRenderer,
-      FormLabelRenderer,
-      FormInputRenderer,
-      FormErrorRenderer,
+      LabelRenderer,
+      InputRenderer,
+      ErrorMessageRenderer,
       formatError,
       errorVisibility,
       validationMode,

@@ -24,9 +24,9 @@ it('passes plugin members explicitly through the public FormProvider', async () 
   const form = (
     <FormProvider
       FieldRenderer={plugin.FieldRenderer}
-      FormLabelRenderer={plugin.FormLabelRenderer}
-      FormInputRenderer={plugin.FormInputRenderer}
-      FormErrorRenderer={plugin.FormErrorRenderer}
+      LabelRenderer={plugin.LabelRenderer}
+      InputRenderer={plugin.InputRenderer}
+      ErrorMessageRenderer={plugin.ErrorMessageRenderer}
       fieldInputDefinitions={plugin.fieldInputDefinitions}
       formatError={plugin.formatError}
       validatorFactory={plugin.validator}

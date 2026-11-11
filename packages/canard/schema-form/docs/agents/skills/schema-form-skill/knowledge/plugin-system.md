@@ -24,7 +24,7 @@ Every property of the exported `SchemaFormPlugin` type is optional, so a plugin 
 
 - For overlapping slots and repeated registrations, follow the [registration rules](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/quick-start#registration-rules).
 - Plugin-provided `fieldInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
-- A subtree can override plugin pieces locally with `FormProvider` instead of globally. It accepts `fieldInputDefinitions`, `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`, `formatError` and `validatorFactory`, which correspond to plugin members, plus `errorVisibility`, `validationMode` and `context`, which do not.
+- A subtree can override plugin pieces locally with `FormProvider` instead of globally. It accepts `fieldInputDefinitions`, `FieldRenderer`, `LabelRenderer`, `InputRenderer`, `ErrorMessageRenderer`, `formatError` and `validatorFactory`, which correspond to plugin members, plus `errorVisibility`, `validationMode` and `context`, which do not.
 
 `FormProvider` has no `plugin` prop. Pass the members explicitly, mapping `validator` to `validatorFactory`. Reuse the exported `ajvValidatorPlugin.validator` as below. Import `Form`, `FormProvider`, `FormHandle` and `SchemaFormPlugin` from `@canard/schema-form`, and `createRef` from `react`:
 
@@ -37,9 +37,9 @@ const ref = createRef<FormHandle>();
 const form = (
   <FormProvider
     FieldRenderer={plugin.FieldRenderer}
-    FormLabelRenderer={plugin.FormLabelRenderer}
-    FormInputRenderer={plugin.FormInputRenderer}
-    FormErrorRenderer={plugin.FormErrorRenderer}
+    LabelRenderer={plugin.LabelRenderer}
+    InputRenderer={plugin.InputRenderer}
+    ErrorMessageRenderer={plugin.ErrorMessageRenderer}
     fieldInputDefinitions={plugin.fieldInputDefinitions}
     formatError={plugin.formatError}
     validatorFactory={plugin.validator}

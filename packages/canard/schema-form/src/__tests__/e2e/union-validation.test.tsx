@@ -18,7 +18,7 @@ const Views = () => (
     <section data-view="split">
       <Form.Label path="/name" />
       <Form.Input path="/name" />
-      <Form.Error path="/name" />
+      <Form.ErrorMessage path="/name" />
     </section>
     <Form.Render>
       {({ value }: FieldRendererProps) => (

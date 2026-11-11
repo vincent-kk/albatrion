@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-export interface FormErrorProps {
+export interface FormErrorMessageProps {
   path?: string;
   style?: CSSProperties;
   className?: string;

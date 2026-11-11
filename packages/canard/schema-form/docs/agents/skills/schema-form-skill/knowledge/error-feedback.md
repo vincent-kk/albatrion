@@ -49,7 +49,7 @@ const formatError: NonNullable<FormProps['formatError']> = (
 Supply this function as Form's `formatError` and `context={{ heading: 'Please correct' }}`.
 Use the [configuration lifetime guidance](field-input.md) when choosing the formatter function.
 Read changing application data from its context argument instead of closing over an initial locale.
-A custom FieldInput that prints `errors[0].message` bypasses formatting; use Form.Error or let the FieldRenderer display its supplied formatted message.
+A custom FieldInput that prints `errors[0].message` bypasses formatting; use Form.ErrorMessage or let the FieldRenderer display its supplied formatted message.
 Keep the formatter free of writes: producing an error message must not edit the field or start another validation.
 
 ## Summarize errors for a section

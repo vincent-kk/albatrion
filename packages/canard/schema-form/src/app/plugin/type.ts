@@ -22,7 +22,7 @@ import type { JSONSchema } from '@/schema-form/types';
  * ```typescript
  * const myPlugin: SchemaFormPlugin = {
  *   FieldRenderer: CustomFormField,
- *   FormLabelRenderer: CustomFormLabel,
+ *   LabelRenderer: CustomFormLabel,
  * };
  * ```
  *
@@ -38,7 +38,7 @@ import type { JSONSchema } from '@/schema-form/types';
  *       <Input />
  *     </Form.Item>
  *   ),
- *   FormLabelRenderer: ({ jsonSchema }) => (
+ *   LabelRenderer: ({ jsonSchema }) => (
  *     <span>{jsonSchema.title || jsonSchema.name}</span>
  *   ),
  *
@@ -73,9 +73,9 @@ import type { JSONSchema } from '@/schema-form/types';
  * const fullPlugin: SchemaFormPlugin = {
  *   // Render components
  *   FieldRenderer: CustomFormField,
- *   FormLabelRenderer: CustomFormLabel,
- *   FormInputRenderer: CustomFormInput,
- *   FormErrorRenderer: CustomFormError,
+ *   LabelRenderer: CustomFormLabel,
+ *   InputRenderer: CustomFormInput,
+ *   ErrorMessageRenderer: CustomFormError,
  *
  *   // Input type definitions
  *   fieldInputDefinitions: [
@@ -112,11 +112,11 @@ export interface SchemaFormPlugin {
   /** Form.Field Component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Input Component */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  /** Form.Error Component */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<FieldRendererProps>;
+  /** Form.ErrorMessage Component */
+  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
   /** FieldInputDefinition */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */

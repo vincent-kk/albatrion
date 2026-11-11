@@ -73,8 +73,8 @@ const rendererProps = (slots: readonly RendererSlot[], source: string) => {
   const renderers = markedRenderers(source);
   return {
     ...(slots.includes('group') && { FieldRenderer: renderers.group }),
-    ...(slots.includes('label') && { FormLabelRenderer: renderers.label }),
-    ...(slots.includes('error') && { FormErrorRenderer: renderers.error }),
+    ...(slots.includes('label') && { LabelRenderer: renderers.label }),
+    ...(slots.includes('error') && { ErrorMessageRenderer: renderers.error }),
   };
 };
 
@@ -170,7 +170,7 @@ describe('features — plugins consumer-only', () => {
               <>
                 <Form.Label path="/title" />
                 <Form.Input path="/title" />
-                <Form.Error path="/title" />
+                <Form.ErrorMessage path="/title" />
               </>
             ) : undefined}
           </Form>

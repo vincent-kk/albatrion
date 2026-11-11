@@ -34,7 +34,7 @@ it.each(['Input', 'Render', 'Field'])(
       const [step, setStep] = useState(0);
       const required = [undefined, true, false, undefined][step];
       return (
-        <FormProvider FormInputRenderer={Renderer}>
+        <FormProvider InputRenderer={Renderer}>
           <button type="button" onClick={() => setStep((step) => step + 1)}>
             next
           </button>

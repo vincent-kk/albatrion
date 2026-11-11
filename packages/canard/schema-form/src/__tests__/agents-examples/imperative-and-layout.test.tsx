@@ -58,7 +58,7 @@ const layout = (
   <div className="row">
     <Form.Label path="/name" />
     <Form.Input path="/name" />
-    <Form.Error path="/name" />
+    <Form.ErrorMessage path="/name" />
   </div>
 </Form>
 );

@@ -12,7 +12,7 @@ Form.Input은 경로의 입력만 조합하고 입력 채널·오류 경계는 F
 
 ### input-renderer — 렌더러와 입력의 다른 수명
 
-입력 override가 고정되어 있어도 FormInputRenderer는 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)의 최신 선택을 따릅니다. 모든 설정이 고정되거나 모든 설정이 live라고 일반화하지 않습니다.
+입력 override가 고정되어 있어도 InputRenderer는 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)의 최신 선택을 따릅니다. 모든 설정이 고정되거나 모든 설정이 live라고 일반화하지 않습니다.
 
 ## Boundary Exemptions
 

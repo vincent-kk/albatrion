@@ -14,7 +14,7 @@ FormatError 계약을 따르며, 메시지 선택은 해당 노드의 `presentat
 
 작성한 keyword 메시지 또는 default를 선택하고, 로케일 객체이면 명시한 context.locale만 사용합니다. 선택한 keyword의 로케일이 없다고 default를 다시 탐색하거나 임의의 언어를 고르지 않습니다. 사용할 수 있는 비어 있지 않은 메시지가 없으면 원래 검증기 message를 보존하여 불완전한 번역 설정이 판정의 설명을 지우지 않게 합니다.
 
-`false schema`를 위한 내장 번역은 두지 않습니다. 작성자가 같은 이름의 errorMessages 키나 자기 formatError로 번역하게 하여, 검증기별 문구 정책을 이 기본 포맷터에 고정하지 않습니다. 잔여 키의 표시·배정은 [FormError](../../../components/Form/components/FormError/DETAIL.md)와 [검증 계약](../../../core/engine/validation/DETAIL.md)에 맡깁니다.
+`false schema`를 위한 내장 번역은 두지 않습니다. 작성자가 같은 이름의 errorMessages 키나 자기 formatError로 번역하게 하여, 검증기별 문구 정책을 이 기본 포맷터에 고정하지 않습니다. 잔여 키의 표시·배정은 [FormErrorMessage](../../../components/Form/components/FormErrorMessage/DETAIL.md)와 [검증 계약](../../../core/engine/validation/DETAIL.md)에 맡깁니다.
 
 ### format-validation-error-contract — 치환은 제한된 문자열 서식입니다
 

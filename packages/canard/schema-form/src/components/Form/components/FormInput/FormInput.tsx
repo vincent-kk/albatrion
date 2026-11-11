@@ -74,7 +74,7 @@ import type { FormInputProps } from './types/props';
  *         console.log('Field blurred:', e.target.value),
  *     }}
  *   />
- *   <Form.Error path="/username" />
+ *   <Form.ErrorMessage path="/username" />
  * </div>
  * ```
  */
@@ -84,7 +84,7 @@ export const FormInput = memo(
     FieldInput: InputFieldInput,
     ...restProps
   }: FormInputProps<AllowedValue>) => {
-    const { FormInputRenderer } = useFieldRendererContext();
+    const { InputRenderer } = useFieldRendererContext();
     const overridePropsRef = useReference(restProps);
     const FieldInput = useConstant(
       InputFieldInput as ComponentType<FieldInputProps>,
@@ -94,7 +94,7 @@ export const FormInput = memo(
         path={path}
         overridePropsRef={overridePropsRef}
         FieldInput={FieldInput}
-        FieldRenderer={FormInputRenderer || PluginManager.FormInputRenderer}
+        FieldRenderer={InputRenderer || PluginManager.InputRenderer}
       />
     );
   },

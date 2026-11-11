@@ -12,7 +12,7 @@
 
 ### fallback-components-contract — 최소 표시 경계
 
-루트는 Input만 렌더하여 불필요한 그룹을 중첩하지 않습니다. 아래 필드는 노드 strategy에 맞는 구조를 사용하고 배열 항목의 개별 label은 생략합니다. 잔여 키 전용 UI를 추가하지 않는 이유는 [FormError의 REACT-031](../Form/components/FormError/DETAIL.md)에 둡니다. 커스텀 렌더러 없이도 같은 오류 배정·표시 의미를 유지합니다.
+루트는 Input만 렌더하여 불필요한 그룹을 중첩하지 않습니다. 아래 필드는 노드 strategy에 맞는 구조를 사용하고 배열 항목의 개별 label은 생략합니다. 잔여 키 전용 UI를 추가하지 않는 이유는 [FormError의 REACT-031](../Form/components/FormErrorMessage/DETAIL.md)에 둡니다. 커스텀 렌더러 없이도 같은 오류 배정·표시 의미를 유지합니다.
 
 ## Last Updated
 

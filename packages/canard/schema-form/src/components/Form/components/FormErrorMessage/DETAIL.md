@@ -1,4 +1,4 @@
-# FormError 계약
+# FormErrorMessage 계약
 
 ## Requirements
 
@@ -24,7 +24,7 @@ rejectedKey 오류를 잔여 키 전용 UI나 존재하지 않는 자식 필드�
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: `FormErrorProps`는 이 조각의 공개 사용 계약이므로 구현 옆에 두고 부모와 패키지 진입점이 이름으로 노출합니다.
+- **Reason**: `FormErrorMessageProps`는 이 조각의 공개 사용 계약이므로 구현 옆에 두고 부모와 패키지 진입점이 이름으로 노출합니다.
 
 ## Last Updated
 

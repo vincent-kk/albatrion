@@ -7,9 +7,9 @@ export interface RendererProps {
   /** Group renderer for every node. */
   FieldRenderer?: MarkedRenderers['group'];
   /** Label renderer inside the default group. */
-  FormLabelRenderer?: MarkedRenderers['label'];
+  LabelRenderer?: MarkedRenderers['label'];
   /** Error renderer inside the default group. */
-  FormErrorRenderer?: MarkedRenderers['error'];
+  ErrorMessageRenderer?: MarkedRenderers['error'];
 }
 
 /**
@@ -20,6 +20,6 @@ export interface RendererProps {
  */
 export const toRendererProps = (slots: readonly RendererSlot[], renderers: MarkedRenderers): RendererProps => ({
   ...(slots.includes('group') && { FieldRenderer: renderers.group }),
-  ...(slots.includes('label') && { FormLabelRenderer: renderers.label }),
-  ...(slots.includes('error') && { FormErrorRenderer: renderers.error }),
+  ...(slots.includes('label') && { LabelRenderer: renderers.label }),
+  ...(slots.includes('error') && { ErrorMessageRenderer: renderers.error }),
 });

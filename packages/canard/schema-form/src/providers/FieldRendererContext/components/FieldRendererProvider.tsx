@@ -15,9 +15,9 @@ const DEFAULT_ERROR_VISIBILITY = ErrorVisibility.AfterEditAndTouch;
 interface FieldRendererContextProviderProps {
   /** Custom field renderer component */
   FieldRenderer?: FormProps['FieldRenderer'];
-  FormLabelRenderer?: FormProps['FormLabelRenderer'];
-  FormInputRenderer?: FormProps['FormInputRenderer'];
-  FormErrorRenderer?: FormProps['FormErrorRenderer'];
+  LabelRenderer?: FormProps['LabelRenderer'];
+  InputRenderer?: FormProps['InputRenderer'];
+  ErrorMessageRenderer?: FormProps['ErrorMessageRenderer'];
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
@@ -30,9 +30,9 @@ interface FieldRendererContextProviderProps {
 
 export const FieldRendererContextProvider = ({
   FieldRenderer,
-  FormLabelRenderer,
-  FormInputRenderer,
-  FormErrorRenderer,
+  LabelRenderer,
+  InputRenderer,
+  ErrorMessageRenderer,
   formatError,
   errorVisibility: inputErrorVisibility,
   children,
@@ -58,18 +58,18 @@ export const FieldRendererContextProvider = ({
       : externalFormatError;
     return {
       FieldRenderer: resolvedFieldRenderer,
-      FormLabelRenderer,
-      FormInputRenderer,
-      FormErrorRenderer,
+      LabelRenderer,
+      InputRenderer,
+      ErrorMessageRenderer,
       formatError: resolvedFormatError,
       checkErrorVisibility,
       errorVisibility,
     };
   }, [
     FieldRenderer,
-    FormLabelRenderer,
-    FormInputRenderer,
-    FormErrorRenderer,
+    LabelRenderer,
+    InputRenderer,
+    ErrorMessageRenderer,
     formatError,
     checkErrorVisibility,
     ExternalFormFieldRenderer,

@@ -54,7 +54,7 @@ import type { FormLabelProps } from './types/props';
  * ```
  */
 export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
-  const { FormLabelRenderer } = useFieldRendererContext();
+  const { LabelRenderer } = useFieldRendererContext();
   return (
     <label
       style={style}
@@ -64,7 +64,7 @@ export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
     >
       <FieldProxy
         path={path}
-        FieldRenderer={FormLabelRenderer || PluginManager.FormLabelRenderer}
+        FieldRenderer={LabelRenderer || PluginManager.LabelRenderer}
       />
     </label>
   );

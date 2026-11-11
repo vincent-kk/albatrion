@@ -11,10 +11,10 @@ const layoutSchema = {
   },
 };
 
-/** Form.Label, Form.Input, Form.Error and Form.Render place fields by path inside the children function. */
+/** Form.Label, Form.Input, Form.ErrorMessage and Form.Render place fields by path inside the children function. */
 export const layoutCompositionScenario: FormScenario = {
   name: 'handle-layout.layout-composition',
-  description: 'The Form children function receives the value and lays out Form.Label, Form.Input, Form.Error and Form.Render by path; a field left out of the layout is not drawn but its value stays in the output; two Form.Input for one path share the node, and typing into one writes the node while the other keeps its own draft, because the input owns its draft (REACT-027) and typing sends no Refresh (EVENT-042). The layout comes from layoutPlan.',
+  description: 'The Form children function receives the value and lays out Form.Label, Form.Input, Form.ErrorMessage and Form.Render by path; a field left out of the layout is not drawn but its value stays in the output; two Form.Input for one path share the node, and typing into one writes the node while the other keeps its own draft, because the input owns its draft (REACT-027) and typing sends no Refresh (EVENT-042). The layout comes from layoutPlan.',
   schema: layoutSchema,
   initialValue: { title: 'Plan', count: 1, enabled: true, note: 'n' },
   steps: [
@@ -30,7 +30,7 @@ export const layoutPlan = {
   inputs: ['/title', '/count'],
   /** Path drawn twice with Form.Input to show both copies follow one node. */
   repeated: '/title',
-  /** Path drawn with Form.Error. */
+  /** Path drawn with Form.ErrorMessage. */
   error: '/count',
   /** Path drawn with Form.Render, whose render function shows the value. */
   render: '/note',

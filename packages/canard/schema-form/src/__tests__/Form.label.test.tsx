@@ -99,7 +99,7 @@ it('omits for and id when the Form.Label path prop is undefined', () => {
         enum: ['S', 'M'],
         presentation: { inputType: 'radio' },
       }}
-      FormLabelRenderer={() => 'Size'}
+      LabelRenderer={() => 'Size'}
     >
       <Form.Label />
       <Form.Input />
@@ -145,7 +145,7 @@ it('names a root group with the label prefix when path is empty', () => {
         enum: ['S', 'M'],
         presentation: { inputType: 'radio' },
       }}
-      FormLabelRenderer={() => 'Size'}
+      LabelRenderer={() => 'Size'}
     >
       <Form.Label path="" />
       <Form.Input path="" />

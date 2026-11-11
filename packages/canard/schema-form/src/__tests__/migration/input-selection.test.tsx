@@ -21,15 +21,15 @@ it('LANDING-035 named renderer props drive the retained Form compound components
     { type: 'string' },
     {
       FieldRenderer: () => <span data-renderer="group" />,
-      FormLabelRenderer: () => <span data-renderer="label" />,
-      FormInputRenderer: () => <span data-renderer="input" />,
-      FormErrorRenderer: () => <span data-renderer="error" />,
+      LabelRenderer: () => <span data-renderer="label" />,
+      InputRenderer: () => <span data-renderer="input" />,
+      ErrorMessageRenderer: () => <span data-renderer="error" />,
       children: (
         <>
           <Form.Field />
           <Form.Label />
           <Form.Input />
-          <Form.Error />
+          <Form.ErrorMessage />
         </>
       ),
     },

@@ -1,4 +1,4 @@
-# FormError — 필드 오류 표시
+# FormErrorMessage — 필드 오류 표시
 
 ## Purpose
 

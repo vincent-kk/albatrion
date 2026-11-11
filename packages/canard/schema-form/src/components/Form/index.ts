@@ -5,7 +5,7 @@ export type {
   FormHandle,
   FormChildrenProps,
 } from './components/FormCore';
-export type { FormErrorProps } from './components/FormError';
+export type { FormErrorMessageProps } from './components/FormErrorMessage';
 export type { RolledFormFieldProps } from './components/FormField';
 export type { RolledFormInputProps } from './components/FormInput';
 export type { FormLabelProps } from './components/FormLabel';

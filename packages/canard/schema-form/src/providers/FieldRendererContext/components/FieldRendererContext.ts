@@ -15,9 +15,9 @@ export interface FieldRendererContext {
   /** CheckErrorVisibility function declared externally */
   checkErrorVisibility: Fn<[condition?: FieldNode['state']], boolean>;
   /** Optional specialized renderers supplied by this form. */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<FieldRendererProps>;
+  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
 }
 
 export const FieldRendererContext = createContext<FieldRendererContext>(

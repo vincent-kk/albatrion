@@ -38,7 +38,7 @@ import { renderForm } from '../renderForm';
  */
 
 // ---------------------------------------------------------------------------
-// Schemas (mirrored from stories 21.Validation, 13.FormError, 19.SubmitUsecase)
+// Schemas (mirrored from stories 21.Validation, 13.FormErrorMessage, 19.SubmitUsecase)
 // ---------------------------------------------------------------------------
 
 /** name(minLength) + email(pattern, required) — deterministic error messages. */
@@ -76,7 +76,7 @@ const ageSchema = {
   },
 } satisfies JSONSchema;
 
-/** Mirrors 13.FormError NoValidate / ExternalErrors story schema. */
+/** Mirrors 13.FormErrorMessage NoValidate / ExternalErrors story schema. */
 const externalSchema = {
   type: 'object',
   properties: {
@@ -199,7 +199,7 @@ describe('GAP-18 ValidationMode.None / OnRequest', () => {
 });
 
 // ---------------------------------------------------------------------------
-// External errors prop (13.FormError ExternalErrors)
+// External errors prop (13.FormErrorMessage ExternalErrors)
 // ---------------------------------------------------------------------------
 
 describe('GAP-18 external errors prop', () => {

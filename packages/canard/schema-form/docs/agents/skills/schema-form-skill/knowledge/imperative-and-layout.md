@@ -1,6 +1,6 @@
 # Imperative Control and Custom Layout
 
-Driving a form from outside the schema: the `FormHandle` ref and the `Form.Input`/`Form.Label`/`Form.Error`/`Form.Render` layout primitives. Full method/prop shapes live in `dist/*.d.ts` — this file covers what the types do not say.
+Driving a form from outside the schema: the `FormHandle` ref and the `Form.Input`/`Form.Label`/`Form.ErrorMessage`/`Form.Render` layout primitives. Full method/prop shapes live in `dist/*.d.ts` — this file covers what the types do not say.
 
 For custom focus targets and mounted-target eligibility, follow the [custom input contract](field-input.md#custom-input-contract).
 
@@ -36,7 +36,7 @@ Inside `<Form>`, path-scoped primitives take over layout while the plugin still 
   <div className="row">
     <Form.Label path="/name" />
     <Form.Input path="/name" />
-    <Form.Error path="/name" />
+    <Form.ErrorMessage path="/name" />
   </div>
 </Form>
 ```

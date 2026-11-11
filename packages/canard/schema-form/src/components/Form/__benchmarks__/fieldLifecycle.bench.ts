@@ -10,7 +10,7 @@ import { ValidationMode, isArrayNode } from '@/schema-form/core';
 import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization';
 import { ErrorVisibility } from '@/schema-form/types';
 
-import type { FormProps } from '../../Form';
+import type { FormProps } from '../components/FormCore';
 import { BenchIntersectionObserver } from './helpers/BenchIntersectionObserver';
 import { InlineFormatErrorForm } from './helpers/InlineFormatErrorForm';
 import { LifecycleBenchForm } from './helpers/LifecycleBenchForm';
