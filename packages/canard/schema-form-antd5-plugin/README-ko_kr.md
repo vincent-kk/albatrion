@@ -28,6 +28,8 @@
 
 `@canard/schema-form-antd5-plugin`은 Ant Design 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
+FormGroup은 묶인 Label, Input, ErrorMessage 부품을 조립합니다. FormLabel과 FormErrorMessage는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
+
 ---
 
 ## 안내사항

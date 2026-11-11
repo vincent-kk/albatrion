@@ -14,7 +14,8 @@ yarn storybook         # Storybook dev (port 6006)
 ## Architecture
 
 플러그인은 `SchemaFormPlugin` 객체를 export:
-- `FormGroup` / `FormLabel` / `FormInput` / `FormError` — 기본 레이아웃 컴포넌트
+- `FormGroup` composes bound input and error parts without a group label; `FormLabel` serves standalone labels.
+- `FormErrorMessage` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
 - `fieldInputDefinitions` — 15개 입력 컴포넌트 정의 (우선순위 순)
 
 **FieldInput 우선순위**: BooleanSwitch → StringCheckbox → StringSwitch → Uri → Month → Date → Time → RadioGroup → StringEnum → Array → Slider → Textarea → String → Number → Boolean

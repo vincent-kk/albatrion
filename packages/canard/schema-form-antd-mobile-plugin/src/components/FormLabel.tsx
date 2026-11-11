@@ -1,8 +1,29 @@
-import type { FieldRendererProps } from '@canard/schema-form';
+import type { CSSProperties } from 'react';
 
-export const FormLabel = ({ name, path, required }: FieldRendererProps) => (
-  <label htmlFor={path}>
-    {name}
-    {required && <span style={{ marginLeft: 4, color: 'red' }}>*</span>}
+import type { LabelRendererProps } from '@canard/schema-form';
+
+/** Preserve the required marker spacing and color. */
+const REQUIRED_STYLE: CSSProperties = { marginLeft: 4, color: 'red' };
+
+/**
+ * Render a mobile label with binding-owned addresses and caller-owned styling.
+ * @param props - Explicit content, accessibility addresses, requirement and root styling.
+ * @returns The plugin label root with an inaccessible required marker.
+ */
+export const FormLabel = ({
+  children,
+  htmlFor,
+  id,
+  required,
+  style,
+  className,
+}: LabelRendererProps) => (
+  <label htmlFor={htmlFor} id={id} style={style} className={className}>
+    {children}
+    {required && (
+      <span aria-hidden style={REQUIRED_STYLE}>
+        *
+      </span>
+    )}
   </label>
 );

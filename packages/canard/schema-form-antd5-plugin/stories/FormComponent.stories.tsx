@@ -7,9 +7,8 @@ import {
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
-import { FormError } from '../src/components/FormError';
+import { FormErrorMessage } from '../src/components/FormErrorMessage';
 import { FormGroup } from '../src/components/FormGroup';
-import { FormInput } from '../src/components/FormInput';
 import { FormLabel } from '../src/components/FormLabel';
 import { fieldInputDefinitions } from '../src/fieldInputs';
 
@@ -168,14 +167,14 @@ const bigSchema = {
   },
   required: ['user', 'settings'],
 } satisfies JSONSchema;
-export const FormErrorComponent = () => {
+export const FormErrorMessageComponent = () => {
   return (
     <FormProvider
-      FormErrorRenderer={FormError}
+      ErrorMessageRenderer={FormErrorMessage}
       fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
-        <Form.Error path="username" />
+        <Form.ErrorMessage path="username" />
       </Form>
     </FormProvider>
   );
@@ -183,10 +182,7 @@ export const FormErrorComponent = () => {
 
 export const FormInputComponent = () => {
   return (
-    <FormProvider
-      FormInputRenderer={FormInput}
-      fieldInputDefinitions={fieldInputDefinitions}
-    >
+    <FormProvider fieldInputDefinitions={fieldInputDefinitions}>
       <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
         <Form.Input path="username" />
       </Form>
@@ -197,7 +193,7 @@ export const FormInputComponent = () => {
 export const FormLabelComponent = () => {
   return (
     <FormProvider
-      FormLabelRenderer={FormLabel}
+      LabelRenderer={FormLabel}
       fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>

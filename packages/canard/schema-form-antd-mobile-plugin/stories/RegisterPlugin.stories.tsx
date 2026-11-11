@@ -545,7 +545,7 @@ export const IterableChildren = () => {
         </div>
         <div>
           name error:
-          <Form.Error path="/name" style={{ display: 'inline' }} />
+          <Form.ErrorMessage path="/name" style={{ display: 'inline' }} />
         </div>
       </Form>
     </StoryLayout>

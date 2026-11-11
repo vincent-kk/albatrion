@@ -4,13 +4,17 @@ import { isArraySchema } from '@winglet/json-schema/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
+/**
+ * Assemble mobile parts without adding Space items for absent message children.
+ * @param props - Bound field parts, node strategy and indentation depth.
+ * @returns The existing group structure composed with registered parts.
+ */
 export const FormGroup = ({
   node,
   depth,
-  path,
-  name,
-  required,
   Input,
+  Label,
+  ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
   if (depth === 0) return <Input />;
@@ -26,16 +30,15 @@ export const FormGroup = ({
       <Space direction="vertical" block>
         <div>
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <label htmlFor={path} id={`label:${path}`}>
-              {name}
-              {required && (
-                <span style={{ marginLeft: 4, color: 'red' }}>*</span>
-              )}
-            </label>
+            <Label />
           )}
           <Input />
         </div>
-        {errorMessage}
+        {errorMessage !== null &&
+          errorMessage !== undefined &&
+          typeof errorMessage !== 'boolean' && (
+            <ErrorMessage>{errorMessage}</ErrorMessage>
+          )}
       </Space>
     );
   }
