@@ -1,29 +1,29 @@
-# 접근성 체크리스트
+# Accessibility Checklist
 
-@canard/schema-form 플러그인 개발 시 필수 접근성 요구사항입니다.
+Required accessibility requirements when developing an @canard/schema-form plugin.
 
-## 필수 ARIA 속성
+## Required ARIA Attributes
 
-### 모든 Input 컴포넌트
+### Every Input Component
 
 ```typescript
 <TextField
-  // ✅ 필수 속성
-  id={path}                          // 고유 ID
-  name={name}                        // 폼 제출 시 사용
+  // ✅ Required attributes
+  id={path}                          // Unique ID
+  name={name}                        // Used on form submit
   required={required}                // HTML required
   
-  // ✅ ARIA 속성
-  aria-required={required}           // 스크린 리더용
-  aria-invalid={hasError}            // 에러 상태
-  aria-describedby={hasError ? `${path}-error` : undefined}  // 에러 메시지 연결
+  // ✅ ARIA attributes
+  aria-required={required}           // For screen readers
+  aria-invalid={hasError}            // Error state
+  aria-describedby={hasError ? `${path}-error` : undefined}  // Links the error message
   
-  // ✅ Label 연결
-  // FormLabel의 htmlFor={path}와 id={path} 연결
+  // ✅ Label association
+  // Connect FormLabel htmlFor={path} with id={path}
 />
 ```
 
-### Error 메시지 연결
+### Error Message Association
 
 ```typescript
 // Input
@@ -35,103 +35,103 @@
 
 // Error
 <FormHelperText
-  id={`${path}-error`}  // ✅ ID 매칭
+  id={`${path}-error`}  // ✅ Matching ID
   error
 >
   {errorMessage}
 </FormHelperText>
 ```
 
-### Label 연결
+### Label Association
 
 ```typescript
 // Label
 <FormLabel
-  htmlFor={path}  // ✅ Input ID와 연결
+  htmlFor={path}  // ✅ Connected to the input ID
 >
   {label}
 </FormLabel>
 
 // Input
 <TextField
-  id={path}  // ✅ Label htmlFor와 연결
+  id={path}  // ✅ Connected to the label htmlFor
 />
 ```
 
-## 키보드 네비게이션
+## Keyboard Navigation
 
-### Tab 순서
+### Tab Order
 
-- Input 요소는 자연스러운 Tab 순서 (DOM 순서)
-- `tabIndex` 사용 최소화
-- `tabIndex={-1}`: 프로그래밍 focus만 허용
-- `tabIndex={0}`: 자연스러운 Tab 순서
+- Input elements follow the natural tab order (DOM order)
+- Minimize use of `tabIndex`
+- `tabIndex={-1}`: programmatic focus only
+- `tabIndex={0}`: natural tab order
 
 ```typescript
-// ✅ 자연스러운 Tab 순서
+// ✅ Natural tab order
 <TextField id="name" />
 <TextField id="email" />
 <Button type="submit">Submit</Button>
 
-// ❌ tabIndex 남용
+// ❌ Overuse of tabIndex
 <TextField id="name" tabIndex={2} />
 <TextField id="email" tabIndex={1} />
 ```
 
-### 키보드 이벤트
+### Keyboard Events
 
-- **Enter**: 폼 제출 (button type="submit")
-- **Escape**: 모달 닫기 (해당 시)
-- **Arrow keys**: Select, Radio 등에서 옵션 선택
-- **Space**: Checkbox, Radio 토글
+- **Enter**: submit the form (button type="submit")
+- **Escape**: close a modal (when one is open)
+- **Arrow keys**: move between options in Select, Radio, and similar controls
+- **Space**: toggle Checkbox and Radio
 
-## 스크린 리더 지원
+## Screen Reader Support
 
-### 의미 있는 Label
+### Meaningful Labels
 
 ```typescript
-// ✅ 명확한 Label
+// ✅ Clear label
 <FormLabel htmlFor="email">Email Address</FormLabel>
 
-// ❌ 모호한 Label
+// ❌ Vague label
 <FormLabel htmlFor="input1">Input</FormLabel>
 ```
 
-### 에러 메시지 명확성
+### Clear Error Messages
 
 ```typescript
-// ✅ 구체적 에러
+// ✅ Specific error
 "Email address must be in format: user@example.com"
 
-// ❌ 모호한 에러
+// ❌ Vague error
 "Invalid input"
 ```
 
-### 그룹화
+### Grouping
 
 ```typescript
-// Object 타입은 fieldset으로 그룹화
+// Group object types with fieldset
 <fieldset>
   <legend>{jsonSchema.title || name}</legend>
   {/* children */}
 </fieldset>
 
-// Array 타입도 그룹화
+// Group array types as well
 <div role="group" aria-labelledby={`label:${path}`}>
   <Typography id={`label:${path}`}>{name}</Typography>
   {/* children */}
 </div>
 ```
 
-## 색상 및 대비
+## Color and Contrast
 
-### 색상 의존 방지
+### Do Not Rely on Color Alone
 
 ```typescript
-// ❌ 색상만으로 표시
+// ❌ Color alone
 <TextField sx={{ borderColor: 'red' }} />
 
-// ✅ 색상 + 아이콘/텍스트
+// ✅ Color plus icon or text
 <TextField
   error
   helperText="This field is required"
@@ -141,13 +141,13 @@
 />
 ```
 
-### 대비율
+### Contrast Ratios
 
-- **일반 텍스트**: 최소 4.5:1
-- **큰 텍스트**: 최소 3:1
-- **UI 컴포넌트**: 최소 3:1
+- **Normal text**: at least 4.5:1
+- **Large text**: at least 3:1
+- **UI components**: at least 3:1
 
-## FormTypeInput별 접근성 요구사항
+## Accessibility Requirements by FormTypeInput
 
 ### String, Number, Textarea
 
@@ -159,7 +159,7 @@
   aria-required={required}
   aria-invalid={hasError}
   aria-describedby={hasError ? `${path}-error` : undefined}
-  placeholder={placeholder}  // 추가 힌트
+  placeholder={placeholder}  // Additional hint
 />
 ```
 
@@ -177,7 +177,7 @@
       aria-describedby={hasError ? `${path}-error` : undefined}
     />
   }
-  label={label}  // ✅ Label 필수
+  label={label}  // ✅ Label is required
 />
 ```
 
@@ -191,7 +191,7 @@
   aria-required={required}
   aria-invalid={hasError}
   aria-describedby={hasError ? `${path}-error` : undefined}
-  aria-label={label}  // ✅ Label이 없는 경우
+  aria-label={label}  // ✅ When there is no label
 >
   {options.map(option => (
     <MenuItem key={option.value} value={option.value}>
@@ -222,7 +222,7 @@
 </RadioGroup>
 ```
 
-### Array (동적 항목)
+### Array (Dynamic Items)
 
 ```typescript
 <Box role="group" aria-labelledby={`label:${path}`}>
@@ -233,7 +233,7 @@
       {/* Child component */}
       
       <IconButton
-        aria-label={`Remove item ${index + 1}`}  // ✅ 명확한 label
+        aria-label={`Remove item ${index + 1}`}  // ✅ Clear label
         onClick={() => removeItem(index)}
       >
         <DeleteIcon />
@@ -242,7 +242,7 @@
   ))}
   
   <Button
-    aria-label="Add new item"  // ✅ 명확한 label
+    aria-label="Add new item"  // ✅ Clear label
     onClick={addItem}
   >
     Add
@@ -250,15 +250,15 @@
 </Box>
 ```
 
-## 접근성 테스트 도구
+## Accessibility Testing Tools
 
-### 자동 테스트
-- **axe-core**: 자동 접근성 검사
-- **jest-axe**: Jest 통합
-- **@storybook/addon-a11y**: Storybook 접근성 검사
+### Automated Tests
+- **axe-core**: automated accessibility checks
+- **jest-axe**: Jest integration
+- **@storybook/addon-a11y**: Storybook accessibility checks
 
 ```typescript
-// 예: jest-axe
+// Example: jest-axe
 import { axe } from 'jest-axe';
 
 test('FormTypeInputString should have no accessibility violations', async () => {
@@ -268,38 +268,37 @@ test('FormTypeInputString should have no accessibility violations', async () => 
 });
 ```
 
-### 수동 테스트
-- **키보드만으로 네비게이션** (마우스 사용 금지)
-- **스크린 리더** (NVDA, JAWS, VoiceOver)
-- **브라우저 개발자 도구** (Lighthouse Accessibility)
+### Manual Tests
+- **Keyboard-only navigation** (do not use a mouse)
+- **Screen readers** (NVDA, JAWS, VoiceOver)
+- **Browser developer tools** (Lighthouse Accessibility)
 
-## 접근성 체크리스트 (요약)
+## Accessibility Checklist (Summary)
 
-플러그인 배포 전 확인:
+Confirm before publishing the plugin:
 
-### 필수 항목
-- [ ] 모든 Input에 `id`, `name` 속성
-- [ ] `required` Input에 `aria-required`
-- [ ] 에러 상태에 `aria-invalid`, `aria-describedby`
-- [ ] Label과 Input `htmlFor` 연결
-- [ ] 에러 메시지 ID와 Input `aria-describedby` 매칭
-- [ ] 키보드로 모든 기능 접근 가능
-- [ ] Tab 순서가 논리적
+### Required
+- [ ] Every input has `id` and `name`
+- [ ] Required inputs have `aria-required`
+- [ ] Error states have `aria-invalid` and `aria-describedby`
+- [ ] Label and input are connected with `htmlFor`
+- [ ] Error message id matches the input `aria-describedby`
+- [ ] Every feature is reachable by keyboard
+- [ ] Tab order is logical
 
-### 권장 항목
-- [ ] 스크린 리더 테스트 완료
-- [ ] 색상 대비율 4.5:1 이상
-- [ ] 색상만으로 정보 전달하지 않음
-- [ ] 그룹화 (fieldset, role="group") 적용
-- [ ] 명확한 `aria-label` 또는 Label 텍스트
-- [ ] axe-core 테스트 통과
+### Recommended
+- [ ] Screen reader testing is complete
+- [ ] Color contrast ratio is at least 4.5:1
+- [ ] Information is not conveyed by color alone
+- [ ] Grouping is applied (fieldset, role="group")
+- [ ] A clear `aria-label` or label text is present
+- [ ] axe-core tests pass
 
 ---
 
-**핵심 원칙**:
-1. 모든 Input에 필수 ARIA 속성
-2. Label과 Input 명확히 연결
-3. 키보드로 모든 기능 접근 가능
-4. 스크린 리더 친화적 텍스트
-5. 자동 테스트 + 수동 테스트
-
+**Core principles**:
+1. Required ARIA attributes on every input
+2. A clear connection between label and input
+3. Every feature is reachable by keyboard
+4. Screen-reader-friendly text
+5. Automated tests plus manual tests

@@ -1,53 +1,53 @@
 ---
 name: react-plugin-implementation
-description: "React 기반 @canard/schema-form 플러그인 구현 패턴 전문가. 비제어 컴포넌트 패턴, test 조건 작성, 성능 최적화(useMemo, useHandle), 플러그인 구조 설계를 안내합니다."
+description: "Expert on React-based @canard/schema-form plugin implementation patterns. Guides uncontrolled component patterns, writing test conditions, performance optimization (useMemo, useHandle), and plugin structure design."
 ---
 
 # React Plugin Implementation Skill
 
-## 역할
+## Role
 
-당신은 React 기반 @canard/schema-form 플러그인 구현 패턴 전문가입니다.
+You are an expert on React-based @canard/schema-form plugin implementation patterns.
 
-## 핵심 책임
+## Core Responsibilities
 
-1. **컴포넌트 구현 패턴**: 비제어 컴포넌트 우선 패턴, 최적화 훅 사용법 제시
-2. **test 조건 작성**: FormTypeTestObject 및 FormTypeTestFn 작성 가이드
-3. **성능 최적화**: useMemo, useHandle, useCallback 활용 전략
-4. **플러그인 구조**: SchemaFormPlugin 타입 준수 구조 설계
-5. **formTypeInputDefinitions 우선순위**: 컴포넌트 배열 순서 최적화
+1. **Component implementation patterns**: uncontrolled-component-first patterns, and how to use optimization hooks
+2. **Writing test conditions**: a guide to writing FormTypeTestObject and FormTypeTestFn
+3. **Performance optimization**: strategies for using useMemo, useHandle, and useCallback
+4. **Plugin structure**: design a structure that satisfies the SchemaFormPlugin type
+5. **formTypeInputDefinitions priority**: optimize the order of the component array
 
-## 작동 방식
+## How It Works
 
-### 1. 구현 패턴 참조
+### 1. Implementation Pattern Reference
 
-**knowledge/component-patterns.md**를 통해 다음 패턴들을 제공합니다:
+**knowledge/component-patterns.md** provides these patterns:
 
-- 비제어 컴포넌트 패턴 (`defaultValue` + `onChange`)
-- 제어 컴포넌트 패턴 (실시간 validation 필요 시)
-- Array/Object 구조 컴포넌트 특수 처리
-- 값 전달 우선순위 (직접 props > context > jsonSchema)
+- Uncontrolled component pattern (`defaultValue` + `onChange`)
+- Controlled component pattern (when real-time validation is required)
+- Special handling for Array/Object structure components
+- Value-passing priority (direct props > context > jsonSchema)
 
-### 2. 최적화 전략
+### 2. Optimization Strategy
 
-**knowledge/optimization-strategies.md**를 활용하여:
+Using **knowledge/optimization-strategies.md**:
 
-- `useHandle` 훅으로 이벤트 핸들러 최적화
-- `useMemo`로 props 연산 캐싱
-- 불필요한 리렌더링 방지 전략
-- Context 구독 최적화
+- Optimize event handlers with the `useHandle` hook
+- Cache prop computation with `useMemo`
+- Strategies for preventing unnecessary re-renders
+- Optimize Context subscriptions
 
-### 3. Test 조건 작성법
+### 3. How to Write Test Conditions
 
-**knowledge/test-mapping-conditions.md**로:
+With **knowledge/test-mapping-conditions.md**:
 
-- 단순 조건: 객체 형태 사용
-- 복합 조건: 함수 형태 사용
-- 우선순위 순서 결정 (구체적 조건 → 일반적 조건)
+- Simple conditions: use the object form
+- Compound conditions: use the function form
+- Decide the priority order (specific conditions → general conditions)
 
-## 제공하는 패턴
+## Patterns Provided
 
-### 기본 컴포넌트 구조
+### Basic Component Structure
 
 ```typescript
 import { useMemo } from 'react';
@@ -57,37 +57,37 @@ import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 interface FormTypeInput[Name]Props
   extends FormTypeInputPropsWithSchema<ValueType, SchemaType, ContextType>,
           ContextType {
-  // 컴포넌트별 추가 props
+  // Additional props for this component
 }
 
 const FormTypeInput[Name] = ({
-  // Schema/Node 정보
+  // Schema/Node info
   jsonSchema,
   node,
   path,
   name,
 
-  // 상태
+  // State
   required,
   disabled,
   readOnly,
   errors,
 
-  // 값
+  // Value
   defaultValue,
   onChange,
 
   // Context
   context,
 
-  // 직접 props (Context에서도 올 수 있음)
+  // Direct props (may also come from Context)
   size: sizeProp,
   variant: variantProp,
 
-  // 추가 props
+  // Additional props
   placeholder,
 }: FormTypeInput[Name]Props) => {
-  // 1. useMemo로 props 우선순위 적용
+  // 1. Apply prop priority with useMemo
   const [size, variant, label] = useMemo(() => {
     return [
       sizeProp || context.size || 'medium',
@@ -96,19 +96,19 @@ const FormTypeInput[Name] = ({
     ];
   }, [sizeProp, context, jsonSchema, variantProp, name]);
 
-  // 2. useHandle로 이벤트 핸들러 최적화
+  // 2. Optimize the event handler with useHandle
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
 
-  // 3. 비제어 컴포넌트 패턴 사용
+  // 3. Use the uncontrolled component pattern
   return (
     <[UILibraryComponent]
       id={path}
       name={name}
       required={required}
       disabled={disabled || readOnly}
-      defaultValue={defaultValue}  // ✅ 비제어
+      defaultValue={defaultValue}  // ✅ uncontrolled
       onChange={handleChange}
       size={size}
       variant={variant}
@@ -120,11 +120,11 @@ const FormTypeInput[Name] = ({
 
 export const FormTypeInput[Name]Definition = {
   Component: FormTypeInput[Name],
-  test: { type: 'string' },  // 또는 함수 형태
+  test: { type: 'string' },  // or the function form
 } satisfies FormTypeInputDefinition;
 ```
 
-### 플러그인 구조
+### Plugin Structure
 
 ```typescript
 // src/index.ts
@@ -150,74 +150,74 @@ export type * from "./type";
 export * from "./formTypeInputs";
 ```
 
-### formTypeInputDefinitions 우선순위
+### formTypeInputDefinitions Priority
 
 ```typescript
 // src/formTypeInputs/index.ts
 import type { FormTypeInputDefinition } from "@canard/schema-form";
 
-// ⚠️ 순서가 매우 중요! 구체적 조건이 앞에 와야 함
+// ⚠️ Order is critical! More specific conditions must come first
 
 export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
-  // === Phase 1: 가장 구체적 (format + formType 등) ===
+  // === Phase 1: Most specific (format + formType, etc.) ===
   FormTypeInputPasswordDefinition, // type: string, format: password
   FormTypeInputTextareaDefinition, // type: string, format: textarea
   FormTypeInputSliderDefinition, // type: number, formType: slider
   FormTypeInputRadioGroupDefinition, // type: string, formType: radio
 
-  // === Phase 2: 중간 (format 또는 formType) ===
+  // === Phase 2: Intermediate (format or formType) ===
   FormTypeInputDateDefinition, // type: string, format: date
   FormTypeInputTimeDefinition, // type: string, format: time
 
-  // === Phase 3: Enum 조건 (함수 형태) ===
+  // === Phase 3: Enum conditions (function form) ===
   FormTypeInputStringEnumDefinition, // type: string, enum exists
   FormTypeInputNumberEnumDefinition, // type: number, enum exists
 
-  // === Phase 4: 구조 타입 ===
+  // === Phase 4: Structural types ===
   FormTypeInputArrayDefinition, // type: array
   FormTypeInputObjectDefinition, // type: object
 
-  // === Phase 5: 일반 타입 (마지막) ===
+  // === Phase 5: General types (last) ===
   FormTypeInputNumberDefinition, // type: number | integer
   FormTypeInputBooleanDefinition, // type: boolean
-  FormTypeInputStringDefinition, // type: string (가장 일반적 - 마지막!)
+  FormTypeInputStringDefinition, // type: string (most general - last!)
 ];
 ```
 
-**우선순위 원칙**:
+**Priority principles**:
 
-1. 특수 조건 (format + formType) 먼저
-2. 중간 조건 (format 또는 formType)
-3. Enum 조건 (복합 함수)
-4. 구조 타입 (array, object)
-5. 일반 타입 (type만) 마지막
+1. Specific conditions (format + formType) first
+2. Intermediate conditions (format or formType)
+3. Enum conditions (compound function)
+4. Structural types (array, object)
+5. General types (type only) last
 
-## 특수 패턴
+## Special Patterns
 
-### Array 컴포넌트 (ChildNodeComponents 사용)
+### Array Component (Using ChildNodeComponents)
 
 ```typescript
 const FormTypeInputArray = ({
   jsonSchema,
   path,
-  ChildNodeComponents,  // ✅ canard-form이 제공
+  ChildNodeComponents,  // ✅ provided by canard-form
   context,
 }: FormTypeInputArrayProps) => {
   return (
     <Box>
       {ChildNodeComponents.map((ChildComponent, index) => (
         <Box key={index} sx={{ mb: 2 }}>
-          <ChildComponent />  {/* ✅ 자동으로 props 전달됨 */}
+          <ChildComponent />  {/* ✅ props are passed automatically */}
         </Box>
       ))}
-      {/* 추가/제거 버튼만 UI 스타일링 */}
+      {/* Style only the add/remove buttons */}
       <Button onClick={/* add item */}>Add</Button>
     </Box>
   );
 };
 ```
 
-### 래퍼 컴포넌트 패턴 (DatePicker 등)
+### Wrapper Component Pattern (DatePicker, etc.)
 
 ```typescript
 const FormTypeInputDate = ({
@@ -225,7 +225,7 @@ const FormTypeInputDate = ({
   onChange,
   ...props
 }: FormTypeInputDateProps) => {
-  // 값 변환 로직
+  // Value conversion logic
   const dateValue = useMemo(() => {
     return defaultValue ? parseISO(defaultValue) : null;
   }, [defaultValue]);
@@ -253,54 +253,54 @@ const FormTypeInputDate = ({
 };
 ```
 
-## 성능 최적화 체크리스트
+## Performance Optimization Checklist
 
-- [ ] 비제어 컴포넌트 패턴 적용 (`defaultValue` 사용)
+- [ ] Apply the uncontrolled component pattern (use `defaultValue`)
 - [ ] An input that draws from `value` alone and keeps no copy of it (checkbox, switch, stepper) declares `controlled: true` on its definition, so outside writes (`setValue`, reset, `derived`, `injectTo`) stop remounting it. Never declare it on a `defaultValue` input or one with a draft in state
-- [ ] `useMemo`로 props 연산 최적화
-- [ ] `useHandle`로 이벤트 핸들러 메모이제이션
-- [ ] Context 구독 최소화
-- [ ] 조건부 렌더링 최적화
-- [ ] ChildNodeComponents는 직접 렌더링 (props 전파 금지)
+- [ ] Optimize prop computation with `useMemo`
+- [ ] Memoize event handlers with `useHandle`
+- [ ] Minimize Context subscriptions
+- [ ] Optimize conditional rendering
+- [ ] Render ChildNodeComponents directly (do not forward props)
 
-## 제약 조건
+## Constraints
 
-- 제어 컴포넌트는 **반드시 필요한 경우에만** 사용 (실시간 validation, 조건부 렌더링 등)
-- `useHandle` 훅은 `@winglet/react-utils`에서 import
-- `satisfies FormTypeInputDefinition`으로 타입 검증 필수
-- formTypeInputDefinitions 배열 순서 변경 시 반드시 우선순위 검토
+- Use controlled components **only when strictly necessary** (real-time validation, conditional rendering, etc.)
+- Import the `useHandle` hook from `@winglet/react-utils`
+- Type-check with `satisfies FormTypeInputDefinition`
+- Whenever the formTypeInputDefinitions array order changes, review the priority
 
-## 출력 형식
+## Output Format
 
-### 구현 코드 제공 시
+### When Providing Implementation Code
 
 ```markdown
-## FormTypeInput[Name] 구현
+## FormTypeInput[Name] Implementation
 
-**매핑 조건**: [조건 설명]
+**Mapping condition**: [condition description]
 
-**구현 코드**:
-[TypeScript 코드]
+**Implementation code**:
+[TypeScript code]
 
-**최적화 포인트**:
+**Optimization points**:
 
-- [최적화 1]
-- [최적화 2]
+- [optimization 1]
+- [optimization 2]
 
-**주의사항**:
+**Caveats**:
 
-- [주의사항 1]
+- [caveat 1]
 ```
 
-## 사용 시나리오
+## Usage Scenarios
 
-### 시나리오 1: FormTypeInputString 기본 구현
+### Scenario 1: Basic FormTypeInputString Implementation
 
-**상황**: MUI TextField를 사용한 가장 기본적인 문자열 입력 컴포넌트 구현
+**Situation**: Implement the most basic string input component, using MUI TextField
 
-**단계**:
+**Steps**:
 
-#### Step 1: 타입 정의 및 기본 구조
+#### Step 1: Type Definition and Basic Structure
 
 ```typescript
 // src/formTypeInputs/FormTypeInputString.tsx
@@ -310,13 +310,13 @@ import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
 import { TextField } from '@mui/material';
 import type { TextFieldProps } from '@mui/material';
 
-// 1️⃣ Context 타입 정의 (plugin의 공통 context)
+// 1️⃣ Define the Context type (the plugin's shared context)
 interface MuiFormContext {
   size?: 'small' | 'medium' | 'large';
   variant?: 'standard' | 'outlined' | 'filled';
 }
 
-// 2️⃣ Component Props = FormTypeInputPropsWithSchema + Context + 추가 props
+// 2️⃣ Component Props = FormTypeInputPropsWithSchema + Context + additional props
 interface FormTypeInputStringProps
   extends FormTypeInputPropsWithSchema<string, never, MuiFormContext>,
           MuiFormContext {
@@ -325,37 +325,37 @@ interface FormTypeInputStringProps
   rows?: number;
 }
 
-// 3️⃣ 컴포넌트 구현
+// 3️⃣ Implement the component
 const FormTypeInputString = ({
-  // Schema/Node 정보
+  // Schema/Node info
   jsonSchema,
   node,
   path,
   name,
 
-  // 상태
+  // State
   required,
   disabled,
   readOnly,
   errors,
 
-  // 값 (비제어 컴포넌트)
+  // Value (uncontrolled component)
   defaultValue,
   onChange,
 
   // Context
   context,
 
-  // 직접 props (우선순위 높음)
+  // Direct props (higher priority)
   size: sizeProp,
   variant: variantProp,
 
-  // 추가 props
+  // Additional props
   placeholder,
   multiline,
   rows,
 }: FormTypeInputStringProps) => {
-  // 4️⃣ useMemo로 props 우선순위 적용 (직접 props > context > 기본값)
+  // 4️⃣ Apply prop priority with useMemo (direct props > context > default)
   const [size, variant, label] = useMemo(() => {
     return [
       sizeProp ?? context.size ?? 'medium',
@@ -364,16 +364,16 @@ const FormTypeInputString = ({
     ];
   }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
 
-  // 5️⃣ 에러 처리
+  // 5️⃣ Error handling
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : undefined;
 
-  // 6️⃣ useHandle로 이벤트 핸들러 최적화
+  // 6️⃣ Optimize the event handler with useHandle
   const handleChange = useHandle((event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
 
-  // 7️⃣ 비제어 컴포넌트 렌더링
+  // 7️⃣ Render the uncontrolled component
   return (
     <TextField
       id={path}
@@ -381,7 +381,7 @@ const FormTypeInputString = ({
       label={label}
       required={required}
       disabled={disabled || readOnly}
-      defaultValue={defaultValue ?? ''}  // ✅ 비제어 컴포넌트
+      defaultValue={defaultValue ?? ''}  // ✅ uncontrolled component
       onChange={handleChange}
       size={size}
       variant={variant}
@@ -395,17 +395,17 @@ const FormTypeInputString = ({
   );
 };
 
-// 8️⃣ Definition 객체 (test 조건 포함)
+// 8️⃣ Definition object (includes the test condition)
 export const FormTypeInputStringDefinition = {
   Component: FormTypeInputString,
-  test: { type: 'string' },  // type이 'string'일 때 매칭
+  test: { type: 'string' },  // matches when type is 'string'
 } satisfies FormTypeInputDefinition;
 ```
 
-#### Step 2: 최적화 포인트
+#### Step 2: Optimization Points
 
 ```typescript
-// ✅ GOOD: useMemo로 props 연산 캐싱
+// ✅ GOOD: Cache prop computation with useMemo
 const [size, variant, label] = useMemo(() => {
   return [
     sizeProp ?? context.size ?? "medium",
@@ -422,22 +422,22 @@ const [size, variant, label] = useMemo(() => {
   name,
 ]);
 
-// ❌ BAD: 매 렌더링마다 연산
+// ❌ BAD: Recompute on every render
 const size = sizeProp ?? context.size ?? "medium";
 const variant = variantProp ?? context.variant ?? "outlined";
 
-// ✅ GOOD: useHandle로 이벤트 핸들러 메모이제이션
+// ✅ GOOD: Memoize the event handler with useHandle
 const handleChange = useHandle((event: React.ChangeEvent<HTMLInputElement>) => {
   onChange(event.target.value);
 });
 
-// ❌ BAD: 매 렌더링마다 새 함수 생성
+// ❌ BAD: Create a new function on every render
 const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   onChange(event.target.value);
 };
 ```
 
-#### Step 3: 테스트 작성
+#### Step 3: Writing the Test
 
 ```typescript
 // src/formTypeInputs/__tests__/FormTypeInputString.test.tsx
@@ -490,17 +490,17 @@ describe('FormTypeInputString', () => {
 });
 ```
 
-**결과**: 기본 문자열 입력 컴포넌트 완성, 비제어 패턴으로 성능 최적화
+**Result**: A complete basic string input component, with performance optimized through the uncontrolled pattern
 
 ---
 
-### 시나리오 2: FormTypeInputDate (값 변환 패턴)
+### Scenario 2: FormTypeInputDate (Value Conversion Pattern)
 
-**상황**: MUI DatePicker를 사용한 날짜 입력 컴포넌트, ISO 8601 문자열 ↔ Date 객체 변환 필요
+**Situation**: A date input component using MUI DatePicker that needs ISO 8601 string ↔ Date object conversion
 
-**단계**:
+**Steps**:
 
-#### Step 1: 날짜 변환 로직 구현
+#### Step 1: Implement the Date Conversion Logic
 
 ```typescript
 // src/formTypeInputs/FormTypeInputDate.tsx
@@ -528,15 +528,15 @@ const FormTypeInputDate = ({
   disabled,
   readOnly,
   errors,
-  defaultValue,  // ⚠️ ISO 8601 문자열 (예: "2024-01-15T00:00:00.000Z")
-  onChange,      // ⚠️ ISO 8601 문자열로 전달해야 함
+  defaultValue,  // ⚠️ ISO 8601 string (e.g. "2024-01-15T00:00:00.000Z")
+  onChange,      // ⚠️ must be passed as an ISO 8601 string
   context,
   size: sizeProp,
   variant: variantProp,
   minDate,
   maxDate,
 }: FormTypeInputDateProps) => {
-  // 1️⃣ ISO 문자열 → Date 객체 변환
+  // 1️⃣ Convert an ISO string → a Date object
   const dateValue = useMemo(() => {
     if (!defaultValue) return null;
     try {
@@ -546,7 +546,7 @@ const FormTypeInputDate = ({
     }
   }, [defaultValue]);
 
-  // 2️⃣ minDate, maxDate도 변환
+  // 2️⃣ Convert minDate and maxDate as well
   const [minDateObj, maxDateObj] = useMemo(() => {
     return [
       minDate ? parseISO(minDate) : undefined,
@@ -554,7 +554,7 @@ const FormTypeInputDate = ({
     ];
   }, [minDate, maxDate]);
 
-  // 3️⃣ Date 객체 → ISO 문자열 변환 핸들러
+  // 3️⃣ Handler that converts a Date object → an ISO string
   const handleChange = useHandle((newDate: Date | null) => {
     if (newDate === null) {
       onChange('');
@@ -580,13 +580,13 @@ const FormTypeInputDate = ({
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : undefined;
 
-  // 4️⃣ DatePicker 렌더링
+  // 4️⃣ Render the DatePicker
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
         label={label}
-        value={dateValue}  // ✅ Date 객체
-        onChange={handleChange}  // ✅ Date 객체 받아서 ISO 문자열로 변환
+        value={dateValue}  // ✅ Date object
+        onChange={handleChange}  // ✅ takes a Date object and converts it to an ISO string
         minDate={minDateObj}
         maxDate={maxDateObj}
         disabled={disabled || readOnly}
@@ -607,17 +607,17 @@ const FormTypeInputDate = ({
   );
 };
 
-// 5️⃣ Definition 객체 (format: 'date' 조건)
+// 5️⃣ Definition object (format: 'date' condition)
 export const FormTypeInputDateDefinition = {
   Component: FormTypeInputDate,
   test: { type: 'string', format: 'date' },  // type: string + format: date
 } satisfies FormTypeInputDefinition;
 ```
 
-#### Step 2: 에러 처리 및 유효성 검증
+#### Step 2: Error Handling and Validation
 
 ```typescript
-// date-fns의 isValid 사용
+// Use isValid from date-fns
 import { parseISO, formatISO, isValid } from "date-fns";
 
 const handleChange = useHandle((newDate: Date | null) => {
@@ -626,7 +626,7 @@ const handleChange = useHandle((newDate: Date | null) => {
     return;
   }
 
-  // ✅ Date 유효성 검증
+  // ✅ Validate the Date
   if (!isValid(newDate)) {
     console.warn("Invalid date:", newDate);
     onChange("");
@@ -643,10 +643,10 @@ const handleChange = useHandle((newDate: Date | null) => {
 });
 ```
 
-#### Step 3: 타임존 처리 (선택)
+#### Step 3: Timezone Handling (Optional)
 
 ```typescript
-// UTC 고정 변환이 필요한 경우
+// When the conversion must be fixed to UTC
 import { parseISO, formatISO } from "date-fns";
 import { zonedTimeToUtc, utcToZonedTime } from "date-fns-tz";
 
@@ -656,7 +656,7 @@ const handleChange = useHandle((newDate: Date | null) => {
     return;
   }
 
-  // 사용자 로컬 시간 → UTC 변환
+  // Convert the user's local time → UTC
   const utcDate = zonedTimeToUtc(
     newDate,
     Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -666,23 +666,23 @@ const handleChange = useHandle((newDate: Date | null) => {
 });
 ```
 
-**결과**: ISO 8601 문자열 ↔ Date 객체 변환이 완벽히 처리된 DatePicker 컴포넌트
+**Result**: A DatePicker component that fully handles ISO 8601 string ↔ Date object conversion
 
-**주의사항**:
+**Caveats**:
 
-- `@canard/schema-form`은 항상 ISO 8601 문자열로 값을 주고받음
-- Date 객체는 컴포넌트 내부에서만 사용, onChange에는 반드시 문자열 전달
-- `date-fns`의 `parseISO`, `formatISO` 사용 권장 (타임존 안전)
+- `@canard/schema-form` always exchanges values as ISO 8601 strings
+- Use the Date object only inside the component, and always pass a string to onChange
+- Prefer `parseISO` and `formatISO` from `date-fns` (timezone-safe)
 
 ---
 
-### 시나리오 3: FormTypeInputStringEnum (함수 형태 test 조건)
+### Scenario 3: FormTypeInputStringEnum (test Condition in Function Form)
 
-**상황**: Enum 값을 가진 문자열을 Select 또는 RadioGroup으로 표시
+**Situation**: Display a string that has enum values as a Select or a RadioGroup
 
-**단계**:
+**Steps**:
 
-#### Step 1: 복합 조건 test 함수 작성
+#### Step 1: Write a test Function for a Compound Condition
 
 ```typescript
 // src/formTypeInputs/FormTypeInputStringEnum.tsx
@@ -709,17 +709,17 @@ const FormTypeInputStringEnum = ({
   context,
   size: sizeProp,
 }: FormTypeInputStringEnumProps) => {
-  // 1️⃣ enum 값 추출 (jsonSchema.enum은 배열)
+  // 1️⃣ Extract the enum values (jsonSchema.enum is an array)
   const enumValues = useMemo(() => {
     return jsonSchema.enum as string[] ?? [];
   }, [jsonSchema.enum]);
 
-  // 2️⃣ enum 라벨 매핑 (enumLabels가 있으면 사용)
+  // 2️⃣ Map enum labels (use enumLabels when present)
   const enumLabels = useMemo(() => {
     if (jsonSchema.enumLabels) {
       return jsonSchema.enumLabels as string[];
     }
-    // enumLabels가 없으면 enum 값 그대로 사용
+    // If enumLabels is absent, use the enum values as they are
     return enumValues;
   }, [jsonSchema.enumLabels, enumValues]);
 
@@ -737,7 +737,7 @@ const FormTypeInputStringEnum = ({
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : undefined;
 
-  // 3️⃣ RadioGroup 렌더링
+  // 3️⃣ Render the RadioGroup
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size}>
       <FormLabel id={`label:${path}`}>{label}</FormLabel>
@@ -763,9 +763,9 @@ const FormTypeInputStringEnum = ({
   );
 };
 
-// 4️⃣ 함수 형태 test 조건 (복합 조건)
+// 4️⃣ test condition in function form (compound condition)
 const testStringEnum: FormTypeTestFn = ({ type, jsonSchema }) => {
-  // type이 'string'이고 enum이 있는 경우에만 true
+  // true only when type is 'string' and an enum is present
   return (
     type === 'string' &&
     Array.isArray(jsonSchema.enum) &&
@@ -775,14 +775,14 @@ const testStringEnum: FormTypeTestFn = ({ type, jsonSchema }) => {
 
 export const FormTypeInputStringEnumDefinition = {
   Component: FormTypeInputStringEnum,
-  test: testStringEnum,  // ✅ 함수 형태
+  test: testStringEnum,  // ✅ function form
 } satisfies FormTypeInputDefinition;
 ```
 
-#### Step 2: Select 버전 (대안)
+#### Step 2: Select Version (Alternative)
 
 ```typescript
-// Select를 사용하는 버전 (많은 옵션일 때 유리)
+// A version that uses Select (a better fit when there are many options)
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 
 const FormTypeInputStringEnumSelect = ({
@@ -851,18 +851,18 @@ const FormTypeInputStringEnumSelect = ({
 };
 ```
 
-#### Step 3: 선택 기준
+#### Step 3: Selection Criteria
 
 ```typescript
-// formTypeInputDefinitions 배열에서 조건 기반 선택
+// Select by condition in the formTypeInputDefinitions array
 export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
-  // === Phase 1: 가장 구체적 ===
+  // === Phase 1: Most specific ===
   FormTypeInputPasswordDefinition, // type: string, format: password
 
-  // === Phase 3: Enum 조건 (함수 형태) ===
-  // ⚠️ 순서 주의: 구체적 조건이 먼저 와야 함
+  // === Phase 3: Enum conditions (function form) ===
+  // ⚠️ Watch the order: more specific conditions must come first
 
-  // Enum이 4개 이하 → RadioGroup
+  // 4 or fewer enum values → RadioGroup
   {
     Component: FormTypeInputStringEnum,
     test: ({ type, jsonSchema }) =>
@@ -872,7 +872,7 @@ export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
       jsonSchema.enum.length <= 4,
   },
 
-  // Enum이 5개 이상 → Select
+  // 5 or more enum values → Select
   {
     Component: FormTypeInputStringEnumSelect,
     test: ({ type, jsonSchema }) =>
@@ -881,28 +881,28 @@ export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
       jsonSchema.enum.length > 4,
   },
 
-  // === Phase 5: 일반 타입 (마지막) ===
-  FormTypeInputStringDefinition, // type: string (가장 일반적 - 마지막!)
+  // === Phase 5: General types (last) ===
+  FormTypeInputStringDefinition, // type: string (most general - last!)
 ];
 ```
 
-**결과**: Enum 값의 개수에 따라 RadioGroup과 Select를 자동 선택하는 컴포넌트
+**Result**: A component that automatically chooses RadioGroup or Select from the number of enum values
 
-**주의사항**:
+**Caveats**:
 
-- test 함수는 복합 조건을 검사할 때 사용
-- 더 구체적인 조건이 앞에 와야 함 (RadioGroup → Select → String 순서)
-- `enumLabels`를 사용해 사용자 친화적 라벨 제공 가능
+- Use a test function when checking a compound condition
+- More specific conditions must come first (RadioGroup → Select → String order)
+- `enumLabels` can provide user-friendly labels
 
 ---
 
-### 시나리오 4: FormTypeInputArray (ChildNodeComponents 패턴)
+### Scenario 4: FormTypeInputArray (ChildNodeComponents Pattern)
 
-**상황**: 배열 타입 입력, ChildNodeComponents를 활용한 동적 렌더링
+**Situation**: An array-type input, rendered dynamically with ChildNodeComponents
 
-**단계**:
+**Steps**:
 
-#### Step 1: ChildNodeComponents 활용 패턴
+#### Step 1: Pattern for Using ChildNodeComponents
 
 ```typescript
 // src/formTypeInputs/FormTypeInputArray.tsx
@@ -917,7 +917,7 @@ import type { MuiFormContext } from '../type';
 interface FormTypeInputArrayProps
   extends FormTypeInputPropsWithSchema<any[], never, MuiFormContext>,
           MuiFormContext {
-  // ⚠️ ChildNodeComponents는 FormTypeInputPropsWithSchema에서 제공
+  // ⚠️ ChildNodeComponents is provided by FormTypeInputPropsWithSchema
 }
 
 const FormTypeInputArray = ({
@@ -932,11 +932,11 @@ const FormTypeInputArray = ({
   defaultValue,
   onChange,
   context,
-  ChildNodeComponents,  // ✅ @canard/schema-form이 제공하는 자식 컴포넌트 배열
+  ChildNodeComponents,  // ✅ array of child components provided by @canard/schema-form
   size: sizeProp,
 }: FormTypeInputArrayProps) => {
-  // 1️⃣ ChildNodeComponents는 현재 배열 값에 따라 자동으로 생성됨
-  // 각 ChildComponent는 이미 모든 props를 받은 상태
+  // 1️⃣ ChildNodeComponents is created automatically from the current array value
+  // Each ChildComponent already has every prop
 
   const [size, label] = useMemo(() => {
     return [
@@ -945,14 +945,14 @@ const FormTypeInputArray = ({
     ];
   }, [sizeProp, context.size, jsonSchema.label, jsonSchema.title, name]);
 
-  // 2️⃣ 아이템 추가 핸들러
+  // 2️⃣ Handler that adds an item
   const handleAdd = useHandle(() => {
     const currentValue = node.value ?? [];
-    const newValue = [...currentValue, undefined];  // undefined로 초기화
+    const newValue = [...currentValue, undefined];  // initialize with undefined
     onChange(newValue);
   });
 
-  // 3️⃣ 아이템 제거 핸들러
+  // 3️⃣ Handler that removes an item
   const handleRemove = useHandle((index: number) => {
     const currentValue = node.value ?? [];
     const newValue = currentValue.filter((_, i) => i !== index);
@@ -962,7 +962,7 @@ const FormTypeInputArray = ({
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : undefined;
 
-  // 4️⃣ 렌더링: ChildNodeComponents를 직접 렌더링
+  // 4️⃣ Rendering: render ChildNodeComponents directly
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
@@ -976,16 +976,16 @@ const FormTypeInputArray = ({
         </Typography>
       )}
 
-      {/* ✅ ChildNodeComponents 렌더링 */}
+      {/* ✅ Render ChildNodeComponents */}
       {ChildNodeComponents && ChildNodeComponents.length > 0 ? (
         ChildNodeComponents.map((ChildComponent, index) => (
           <Paper key={index} sx={{ p: 2, mb: 2, position: 'relative' }}>
             <Box sx={{ pr: 6 }}>
-              {/* ✅ ChildComponent는 이미 모든 props를 받은 상태 */}
+              {/* ✅ ChildComponent already has every prop */}
               <ChildComponent />
             </Box>
 
-            {/* 삭제 버튼 */}
+            {/* Delete button */}
             {!disabled && !readOnly && (
               <IconButton
                 aria-label="delete"
@@ -1000,11 +1000,11 @@ const FormTypeInputArray = ({
         ))
       ) : (
         <Typography variant="body2" color="text.secondary">
-          아이템이 없습니다. "추가" 버튼을 눌러 아이템을 추가하세요.
+          No items. Press the "Add" button to add an item.
         </Typography>
       )}
 
-      {/* 추가 버튼 */}
+      {/* Add button */}
       {!disabled && !readOnly && (
         <Button
           variant="outlined"
@@ -1012,11 +1012,11 @@ const FormTypeInputArray = ({
           onClick={handleAdd}
           size={size}
         >
-          추가
+          Add
         </Button>
       )}
 
-      {/* 에러 메시지 */}
+      {/* Error message */}
       {hasError && (
         <Typography variant="body2" color="error" sx={{ mt: 1 }}>
           {errorMessage}
@@ -1026,79 +1026,79 @@ const FormTypeInputArray = ({
   );
 };
 
-// 5️⃣ Definition 객체
+// 5️⃣ Definition object
 export const FormTypeInputArrayDefinition = {
   Component: FormTypeInputArray,
   test: { type: 'array' },
 } satisfies FormTypeInputDefinition;
 ```
 
-#### Step 2: ChildNodeComponents 주의사항
+#### Step 2: ChildNodeComponents Caveats
 
 ```typescript
-// ❌ WRONG: ChildComponent에 props 전달 시도
+// ❌ WRONG: Trying to pass props to ChildComponent
 {ChildNodeComponents.map((ChildComponent, index) => (
   <ChildComponent
     key={index}
-    // ❌ 이렇게 props를 전달하면 안 됨!
+    // ❌ Do not pass props this way!
     value={someValue}
     onChange={someHandler}
   />
 ))}
 
-// ✅ CORRECT: ChildComponent는 그대로 렌더링
+// ✅ CORRECT: Render ChildComponent as it is
 {ChildNodeComponents.map((ChildComponent, index) => (
   <Box key={index}>
-    {/* ✅ ChildComponent는 이미 모든 props를 받은 상태 */}
+    {/* ✅ ChildComponent already has every prop */}
     <ChildComponent />
   </Box>
 ))}
 ```
 
-**중요 개념**:
+**Key concepts**:
 
-- `ChildNodeComponents`는 `@canard/schema-form`이 자동으로 생성한 컴포넌트 배열
-- 각 `ChildComponent`는 이미 `path`, `jsonSchema`, `value`, `onChange` 등 모든 props를 받은 상태
-- FormTypeInputArray는 **UI 레이아웃만 담당**, 값 관리는 canard-form이 처리
+- `ChildNodeComponents` is the component array that `@canard/schema-form` creates automatically
+- Each `ChildComponent` already has every prop, including `path`, `jsonSchema`, `value`, and `onChange`
+- FormTypeInputArray **handles only the UI layout**, and canard-form manages the values
 
-#### Step 3: 복잡한 배열 아이템 예시
+#### Step 3: Example of a Complex Array Item
 
 ```typescript
-// JSON Schema 예시
+// JSON Schema example
 const schema = {
   type: "array",
   items: {
     type: "object",
     properties: {
-      name: { type: "string", label: "이름" },
-      age: { type: "number", label: "나이" },
-      email: { type: "string", format: "email", label: "이메일" },
+      name: { type: "string", label: "Name" },
+      age: { type: "number", label: "Age" },
+      email: { type: "string", format: "email", label: "Email" },
     },
   },
 };
 
-// ChildNodeComponents는 자동으로 각 object의 FormTypeInputObject를 생성
-// FormTypeInputObject는 다시 name, age, email의 FormTypeInput들을 렌더링
-// → 완전히 자동화된 중첩 렌더링
+// ChildNodeComponents automatically creates a FormTypeInputObject for each object
+// FormTypeInputObject in turn renders the FormTypeInputs for name, age, and email
+// → fully automated nested rendering
 ```
 
-**결과**: 배열 아이템 추가/제거 UI만 구현하면 되는 간단한 Array 컴포넌트
+**Result**: A simple Array component where you only implement the UI for adding and removing items
 
-**주의사항**:
+**Caveats**:
 
-- ChildNodeComponents에 절대 props 전달 금지
-- 값 관리는 onChange로 전체 배열 업데이트
-- 삭제 시 filter 사용, 추가 시 spread 사용
+- Never pass props to ChildNodeComponents
+- Manage the value by updating the whole array through onChange
+- Use filter to delete, and spread to add
 
 ---
 
-### 시나리오 5: FormTypeInputFileUpload (onFileAttach 통합)
+### Scenario 5: FormTypeInputFileUpload (onFileAttach Integration)
 
-**상황**: 파일 업로드 기능, `onFileAttach` 콜백 통합
+**Situation**: File upload, with the `onFileAttach` callback integrated
 
-**단계**:
+**Steps**:
 
-#### Step 1: onFileAttach 타입 정의
+#### Step 1: Define the onFileAttach Type
 
 ```typescript
 // src/type.ts
@@ -1106,12 +1106,12 @@ export interface MuiFormContext {
   size?: "small" | "medium" | "large";
   variant?: "standard" | "outlined" | "filled";
 
-  // ✅ onFileAttach 콜백 정의
-  onFileAttach?: (file: File) => Promise<string>; // 파일 업로드 후 URL 반환
+  // ✅ Define the onFileAttach callback
+  onFileAttach?: (file: File) => Promise<string>; // returns a URL after the file is uploaded
 }
 ```
 
-#### Step 2: FileUpload 컴포넌트 구현
+#### Step 2: Implement the FileUpload Component
 
 ```typescript
 // src/formTypeInputs/FormTypeInputFileUpload.tsx
@@ -1126,8 +1126,8 @@ import type { MuiFormContext } from '../type';
 interface FormTypeInputFileUploadProps
   extends FormTypeInputPropsWithSchema<string, never, MuiFormContext>,
           MuiFormContext {
-  accept?: string;  // 예: "image/*", ".pdf,.doc"
-  maxSize?: number;  // 바이트 단위
+  accept?: string;  // e.g. "image/*", ".pdf,.doc"
+  maxSize?: number;  // in bytes
 }
 
 const FormTypeInputFileUpload = ({
@@ -1138,12 +1138,12 @@ const FormTypeInputFileUpload = ({
   disabled,
   readOnly,
   errors,
-  defaultValue,  // ⚠️ 파일 URL 문자열
-  onChange,      // ⚠️ 파일 URL 문자열로 전달
+  defaultValue,  // ⚠️ file URL string
+  onChange,      // ⚠️ pass a file URL string
   context,
   size: sizeProp,
   accept,
-  maxSize = 10 * 1024 * 1024,  // 기본 10MB
+  maxSize = 10 * 1024 * 1024,  // default 10MB
 }: FormTypeInputFileUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -1153,21 +1153,21 @@ const FormTypeInputFileUpload = ({
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : undefined;
 
-  // 1️⃣ 파일 선택 핸들러
+  // 1️⃣ File selection handler
   const handleFileSelect = useHandle(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // 2️⃣ 파일 크기 검증
+    // 2️⃣ Check the file size
     if (file.size > maxSize) {
-      alert(`파일 크기는 ${maxSize / 1024 / 1024}MB를 초과할 수 없습니다.`);
+      alert(`File size cannot exceed ${maxSize / 1024 / 1024}MB.`);
       return;
     }
 
-    // 3️⃣ onFileAttach 콜백 호출 (context에서 제공)
+    // 3️⃣ Call the onFileAttach callback (supplied by context)
     if (!context.onFileAttach) {
       console.error('onFileAttach callback is not provided in context');
-      alert('파일 업로드 기능이 설정되지 않았습니다.');
+      alert('File upload is not configured.');
       return;
     }
 
@@ -1175,21 +1175,21 @@ const FormTypeInputFileUpload = ({
       setUploading(true);
       setUploadProgress(0);
 
-      // 업로드 진행 시뮬레이션 (실제로는 onFileAttach 내부에서 처리)
+      // Simulate upload progress (in practice this is handled inside onFileAttach)
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => Math.min(prev + 10, 90));
       }, 200);
 
-      // 4️⃣ 파일 업로드 (URL 반환)
+      // 4️⃣ Upload the file (returns a URL)
       const fileUrl = await context.onFileAttach(file);
 
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      // 5️⃣ onChange로 URL 전달
+      // 5️⃣ Pass the URL through onChange
       onChange(fileUrl);
 
-      // 리셋
+      // Reset
       setTimeout(() => {
         setUploading(false);
         setUploadProgress(0);
@@ -1197,23 +1197,23 @@ const FormTypeInputFileUpload = ({
 
     } catch (error) {
       console.error('File upload error:', error);
-      alert('파일 업로드 중 오류가 발생했습니다.');
+      alert('An error occurred while uploading the file.');
       setUploading(false);
       setUploadProgress(0);
     }
 
-    // input 리셋
+    // Reset the input
     if (inputRef.current) {
       inputRef.current.value = '';
     }
   });
 
-  // 6️⃣ 파일 삭제 핸들러
+  // 6️⃣ File deletion handler
   const handleDelete = useHandle(() => {
     onChange('');
   });
 
-  // 7️⃣ 업로드 버튼 클릭
+  // 7️⃣ Upload button click
   const handleButtonClick = useHandle(() => {
     inputRef.current?.click();
   });
@@ -1256,7 +1256,7 @@ const FormTypeInputFileUpload = ({
             size="small"
             onClick={() => window.open(defaultValue, '_blank')}
           >
-            보기
+            View
           </Button>
         </Box>
       ) : (
@@ -1267,7 +1267,7 @@ const FormTypeInputFileUpload = ({
           disabled={disabled || readOnly || uploading}
           size={sizeProp ?? context.size ?? 'medium'}
         >
-          {uploading ? '업로드 중...' : '파일 선택'}
+          {uploading ? 'Uploading...' : 'Select file'}
         </Button>
       )}
 
@@ -1288,28 +1288,28 @@ const FormTypeInputFileUpload = ({
   );
 };
 
-// 8️⃣ Definition 객체
+// 8️⃣ Definition object
 export const FormTypeInputFileUploadDefinition = {
   Component: FormTypeInputFileUpload,
   test: { type: 'string', format: 'file' },  // format: 'file'
 } satisfies FormTypeInputDefinition;
 ```
 
-#### Step 3: onFileAttach 구현 예시 (사용자 측)
+#### Step 3: Example onFileAttach Implementation (App Side)
 
 ```typescript
-// App.tsx에서 SchemaForm 사용
+// Using SchemaForm in App.tsx
 import { SchemaForm } from '@canard/schema-form';
 import { plugin as muiPlugin } from '@canard/schema-form-mui-plugin';
 
 const App = () => {
-  // onFileAttach 구현 (예: AWS S3 업로드)
+  // Implement onFileAttach (e.g. an AWS S3 upload)
   const handleFileAttach = async (file: File): Promise<string> => {
-    // 1. FormData 생성
+    // 1. Create FormData
     const formData = new FormData();
     formData.append('file', file);
 
-    // 2. 서버에 업로드
+    // 2. Upload to the server
     const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
@@ -1319,9 +1319,9 @@ const App = () => {
       throw new Error('Upload failed');
     }
 
-    // 3. 서버에서 반환한 파일 URL
+    // 3. File URL returned by the server
     const data = await response.json();
-    return data.fileUrl;  // 예: "https://s3.amazonaws.com/bucket/file.jpg"
+    return data.fileUrl;  // e.g. "https://s3.amazonaws.com/bucket/file.jpg"
   };
 
   return (
@@ -1331,17 +1331,17 @@ const App = () => {
       context={{
         size: 'medium',
         variant: 'outlined',
-        onFileAttach: handleFileAttach,  // ✅ context로 전달
+        onFileAttach: handleFileAttach,  // ✅ passed through context
       }}
     />
   );
 };
 ```
 
-#### Step 4: 다중 파일 업로드 (확장)
+#### Step 4: Multiple File Upload (Extension)
 
 ```typescript
-// 다중 파일 업로드 버전
+// Multiple-file upload version
 interface FormTypeInputMultiFileUploadProps
   extends FormTypeInputPropsWithSchema<string[], never, MuiFormContext>,
     MuiFormContext {
@@ -1351,145 +1351,145 @@ interface FormTypeInputMultiFileUploadProps
 }
 
 const FormTypeInputMultiFileUpload = ({
-  defaultValue, // string[] (URL 배열)
+  defaultValue, // string[] (array of URLs)
   onChange, // (urls: string[]) => void
   context,
   maxFiles = 5,
-  // ... 기타 props
+  // ... other props
 }: FormTypeInputMultiFileUploadProps) => {
   const handleFileSelect = useHandle(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(event.target.files ?? []);
 
-      // 파일 개수 검증
+      // Check the file count
       if ((defaultValue?.length ?? 0) + files.length > maxFiles) {
-        alert(`최대 ${maxFiles}개의 파일만 업로드 가능합니다.`);
+        alert(`You can upload at most ${maxFiles} files.`);
         return;
       }
 
       if (!context.onFileAttach) {
-        alert("파일 업로드 기능이 설정되지 않았습니다.");
+        alert("File upload is not configured.");
         return;
       }
 
       try {
         setUploading(true);
 
-        // 병렬 업로드
+        // Upload in parallel
         const uploadPromises = files.map((file) => context.onFileAttach!(file));
         const newUrls = await Promise.all(uploadPromises);
 
-        // 기존 URL + 새 URL
+        // Existing URLs + new URLs
         const allUrls = [...(defaultValue ?? []), ...newUrls];
         onChange(allUrls);
 
         setUploading(false);
       } catch (error) {
         console.error("Multi-file upload error:", error);
-        alert("파일 업로드 중 오류가 발생했습니다.");
+        alert("An error occurred while uploading the file.");
         setUploading(false);
       }
     },
   );
 
-  // ... 렌더링 (Chip 배열로 표시)
+  // ... rendering (shown as an array of Chips)
 };
 ```
 
-**결과**: 파일 업로드 기능이 완벽히 통합된 컴포넌트, context를 통한 콜백 주입 패턴
+**Result**: A component with file upload fully integrated, injecting the callback through context
 
-**주의사항**:
+**Caveats**:
 
-- `onFileAttach`는 반드시 context로 제공해야 함
-- 파일 업로드는 비동기이므로 loading 상태 관리 필수
-- 파일 URL은 문자열로 onChange에 전달
-- 다중 파일은 string[] 타입 사용
-
----
-
-## 다음 단계 연계
-
-- 구현 완료 후 `dependency-management` 스킬로 package.json 설정
-- UI 라이브러리 호환성 검증은 `ui-plugin-guidelines` 스킬 참조
+- `onFileAttach` must be provided through context
+- File upload is asynchronous, so the loading state must be managed
+- Pass the file URL to onChange as a string
+- Use the string[] type for multiple files
 
 ---
 
-## 에러 처리
+## Next-Step Connections
+
+- After the implementation is done, configure package.json with the `dependency-management` skill
+- For a UI library compatibility check, see the `ui-plugin-guidelines` skill
+
+---
+
+## Error Handling
 
 ```yaml
 error_handling:
   severity_high:
     conditions:
-      - 타입 정의 파일 없음 (types/index.d.ts)
-      - React 미설치
-      - @canard/schema-form 패키지 미설치
-      - UI 라이브러리 미설치 (MUI, Ant Design 등)
-      - 컴포넌트 빌드 실패 (심각한 구문 오류)
+      - Type definition file missing (types/index.d.ts)
+      - React not installed
+      - @canard/schema-form package not installed
+      - UI library not installed (MUI, Ant Design, etc.)
+      - Component build failure (severe syntax error)
     action: |
-      ❌ 치명적 오류 - 컴포넌트 구현 중단
-      → 타입 파일 확인: ls types/index.d.ts
-      → React 설치: yarn add react react-dom
-      → @canard/schema-form 설치: yarn add @canard/schema-form
-      → UI 라이브러리 설치: yarn add @mui/material (예시)
-      → 빌드 검증: yarn build
-      → 재실행: 필수 패키지 설치 후 구현 재시도
+      ❌ Fatal error - stop the component implementation
+      → Check the type file: ls types/index.d.ts
+      → Install React: yarn add react react-dom
+      → Install @canard/schema-form: yarn add @canard/schema-form
+      → Install the UI library: yarn add @mui/material (example)
+      → Verify the build: yarn build
+      → Run again: after installing the required packages, retry the implementation
     examples:
-      - condition: "타입 파일 없음"
-        message: "❌ 오류: types/index.d.ts를 찾을 수 없습니다"
-        recovery: "canard-type-system 먼저 실행하여 타입 정의 생성"
-      - condition: "UI 라이브러리 미설치"
-        message: "❌ 오류: @mui/material 패키지를 찾을 수 없습니다"
-        recovery: "설치: yarn add @mui/material @emotion/react @emotion/styled"
+      - condition: "Type file missing"
+        message: "❌ Error: cannot find types/index.d.ts"
+        recovery: "Run canard-type-system first to generate the type definitions"
+      - condition: "UI library not installed"
+        message: "❌ Error: cannot find the @mui/material package"
+        recovery: "Install: yarn add @mui/material @emotion/react @emotion/styled"
 
   severity_medium:
     conditions:
-      - 컴포넌트 타입 추론 실패
-      - Props 검증 누락
-      - UI 라이브러리 컴포넌트 매핑 불명확
-      - 성능 최적화 자동 적용 실패 (memo, useMemo)
-      - Storybook args 생성 실패
+      - Component type inference failed
+      - Props validation missing
+      - UI library component mapping is unclear
+      - Failed to apply performance optimization automatically (memo, useMemo)
+      - Failed to generate Storybook args
     action: |
-      ⚠️  경고 - 기본 구현으로 진행
-      1. 타입: any로 fallback (수동 수정 권장)
-      2. Props 검증: PropTypes 생략
-      3. UI 컴포넌트: 기본 HTML 요소 사용
-      4. 성능 최적화: 수동 적용 권장
-      5. Storybook: 기본 args만 생성
-      6. 구현 파일에 경고 추가:
+      ⚠️  Warning - continue with the default implementation
+      1. Type: fall back to any (a manual fix is recommended)
+      2. Props validation: skip PropTypes
+      3. UI component: use a plain HTML element
+      4. Performance optimization: a manual application is recommended
+      5. Storybook: generate only the default args
+      6. Add a warning to the implementation file:
          // ⚠️  WARNING: {warning_description}
          // → {action_required}
     fallback_values:
       component_type: "any"
-      ui_component: "input" # 기본 HTML
+      ui_component: "input" # plain HTML
       optimization: "none (apply manually)"
     examples:
-      - condition: "타입 추론 실패"
-        message: "⚠️  경고: FormTypeInput Props 타입을 추론할 수 없습니다"
-        fallback: "any로 대체 → 수동으로 FormTypeInputProps<string> 지정"
-      - condition: "UI 컴포넌트 매핑 불명확"
-        message: "⚠️  경고: MUI TextField를 자동으로 매핑할 수 없습니다"
-        fallback: "기본 <input> 사용 → 수동으로 <TextField> 변경"
+      - condition: "Type inference failed"
+        message: "⚠️  Warning: cannot infer the FormTypeInput Props type"
+        fallback: "Substitute any → set FormTypeInputProps<string> manually"
+      - condition: "UI component mapping is unclear"
+        message: "⚠️  Warning: cannot map MUI TextField automatically"
+        fallback: "Use a plain <input> → change it to <TextField> manually"
 
   severity_low:
     conditions:
-      - 접근성 속성 자동 생성 실패
-      - 스타일링 가이드 위반 (경미한)
-      - JSDoc 주석 누락
-      - import 순서 비표준
+      - Failed to generate accessibility attributes automatically
+      - Styling guide violation (minor)
+      - JSDoc comment missing
+      - Import order is nonstandard
     action: |
-      ℹ️  정보: 최적화 제안 - 자동 또는 수동 개선
-      → 접근성: aria-* 속성 추가 제안
-      → 스타일: Prettier 자동 수정
-      → JSDoc: 주석 추가 제안
+      ℹ️  Info: optimization suggestion - improve automatically or manually
+      → Accessibility: suggest adding aria-* attributes
+      → Style: Prettier auto-fix
+      → JSDoc: suggest adding a comment
       → import: ESLint auto-fix
     examples:
-      - condition: "접근성 속성 없음"
-        auto_handling: "aria-label, aria-describedby 추가 제안"
-      - condition: "import 순서"
-        auto_handling: "ESLint --fix로 자동 정렬"
+      - condition: "No accessibility attributes"
+        auto_handling: "Suggest adding aria-label and aria-describedby"
+      - condition: "import order"
+        auto_handling: "Sort automatically with ESLint --fix"
 ```
 
 ---
 
-> **Best Practice**: 비제어 컴포넌트 우선, 성능 최적화 항상 고려
-> **Integration**: 타입 시스템 기반 구현, 가이드라인 준수
+> **Best Practice**: Prefer uncontrolled components, and always keep performance in mind
+> **Integration**: Build on the type system, and follow the guidelines

@@ -1,192 +1,191 @@
-# UI 라이브러리 호환성 매트릭스
+# UI Library Compatibility Matrix
 
-Schema Form 요구사항과 UI 라이브러리 컴포넌트 간 매핑 및 호환성 분석 방법입니다.
+How to map Schema Form requirements to UI library components and analyze compatibility.
 
-## 호환성 등급
+## Compatibility Grades
 
-- ✅ **직접 (Direct)**: 컴포넌트를 그대로 사용 가능, 최소한의 props 매핑만 필요
-- ⚠️ **커스텀 (Custom)**: 값 변환, 래핑, 또는 추가 로직 필요
-- ❌ **없음 (Missing)**: UI 라이브러리에 해당 컴포넌트 없음, Fallback 또는 외부 라이브러리 필요
+- ✅ **Direct**: the component can be used as-is; only minimal props mapping is required
+- ⚠️ **Custom**: value conversion, wrapping, or extra logic is required
+- ❌ **Missing**: the UI library has no such component; a fallback or an external library is required
 
-## 우선순위 가이드
+## Priority Guide
 
-- **P1 (Priority 1)**: 직접 사용 가능, 즉시 구현
-- **P2 (Priority 2)**: 커스텀 필요, 초기 버전에 포함
-- **P3 (Priority 3)**: 추가 라이브러리 필요, 2차 버전
-- **P4 (Priority 4)**: 선택적 기능, 3차 버전 또는 생략
+- **P1 (Priority 1)**: usable directly; implement immediately
+- **P2 (Priority 2)**: custom work required; include in the initial version
+- **P3 (Priority 3)**: an extra library is required; second version
+- **P4 (Priority 4)**: optional; third version, or omit
 
-## Schema Form 필수 요구사항
+## Schema Form Requirements
 
-### 기본 Input (필수)
+### Basic Inputs (required)
 
-| 요구사항 | type | format | 비고 |
+| Requirement | type | format | Notes |
 |---------|------|--------|------|
-| String 입력 | string | - | 기본 텍스트 |
-| Number 입력 | number, integer | - | 숫자 입력 |
-| Boolean | boolean | - | 체크박스 |
-| Textarea | string | textarea | 여러 줄 텍스트 |
+| String input | string | - | Plain text |
+| Number input | number, integer | - | Numeric input |
+| Boolean | boolean | - | Checkbox |
+| Textarea | string | textarea | Multiline text |
 
-### Enum/Select (필수)
+### Enum/Select (required)
 
-| 요구사항 | type | 조건 | 비고 |
+| Requirement | type | Condition | Notes |
 |---------|------|------|------|
-| String Enum | string | enum exists | 단일 선택 |
-| Multi Select | array | items.enum | 다중 선택 |
+| String Enum | string | enum exists | Single selection |
+| Multi Select | array | items.enum | Multiple selection |
 
-### 구조 타입 (필수)
+### Structural Types (required)
 
-| 요구사항 | type | 비고 |
+| Requirement | type | Notes |
 |---------|------|------|
-| Array | array | 동적 항목 추가/제거 |
-| Object | object | 중첩 구조 |
+| Array | array | Add and remove items dynamically |
+| Object | object | Nested structure |
 
-### 날짜/시간 (선택적)
+### Date/Time (optional)
 
-| 요구사항 | type | format | 비고 |
+| Requirement | type | format | Notes |
 |---------|------|--------|------|
 | Date | string | date | ISO 8601 |
 | Time | string | time | HH:mm:ss |
 | DateTime | string | date-time | ISO 8601 |
 
-### 특수 입력 (선택적)
+### Special Inputs (optional)
 
-| 요구사항 | type | format/formType | 비고 |
+| Requirement | type | format/formType | Notes |
 |---------|------|-----------------|------|
-| Password | string | password | 마스킹 |
+| Password | string | password | Masked |
 | Email | string | email | validation |
 | URL | string | url | validation |
-| Color | string | color | 색상 선택기 |
-| Slider | number | slider (formType) | 범위 선택 |
-| Radio Group | string/number | radio (formType) + enum | 라디오 버튼 |
+| Color | string | color | Color picker |
+| Slider | number | slider (formType) | Range selection |
+| Radio Group | string/number | radio (formType) + enum | Radio buttons |
 
-## UI 라이브러리별 매핑
+## Mapping by UI Library
 
 ### MUI (Material-UI) v5+
 
-| Schema Form | MUI 컴포넌트 | 호환성 | 구현 방식 | 우선순위 |
+| Schema Form | MUI component | Compatibility | Implementation | Priority |
 |------------|--------------|--------|----------|---------|
-| String | TextField | ✅ 직접 | defaultValue, onChange | P1 |
-| Number | TextField (type="number") | ✅ 직접 | inputProps.type="number" | P1 |
-| Boolean | Checkbox | ✅ 직접 | defaultChecked | P1 |
-| Textarea | TextField (multiline) | ✅ 직접 | multiline, rows | P1 |
-| String Enum | Select + MenuItem | ✅ 직접 | defaultValue, map enum | P1 |
-| Multi Select | Select (multiple) | ✅ 직접 | multiple, defaultValue array | P1 |
-| Array | - | ⚠️ 커스텀 | ChildNodeComponents + IconButton | P2 |
-| Date | DatePicker (@mui/x-date-pickers) | ⚠️ 커스텀 | 값 변환 (string ↔ Date) | P2 |
-| Time | TimePicker (@mui/x-date-pickers) | ⚠️ 커스텀 | 값 변환 | P2 |
-| DateTime | DateTimePicker | ⚠️ 커스텀 | 값 변환 | P2 |
-| Password | TextField (type="password") | ✅ 직접 | type="password" | P2 |
-| Email | TextField (type="email") | ✅ 직접 | type="email", pattern | P2 |
-| Slider | Slider | ⚠️ 커스텀 | defaultValue, min/max | P2 |
-| Radio Group | RadioGroup + FormControlLabel | ✅ 직접 | map enum | P2 |
-| Color | TextField (type="color") | ⚠️ 커스텀 | 기본 input 또는 외부 라이브러리 | P3 |
-| Rich Text | - | ❌ 없음 | 외부 라이브러리 (react-quill) | P4 |
+| String | TextField | ✅ Direct | defaultValue, onChange | P1 |
+| Number | TextField (type="number") | ✅ Direct | inputProps.type="number" | P1 |
+| Boolean | Checkbox | ✅ Direct | defaultChecked | P1 |
+| Textarea | TextField (multiline) | ✅ Direct | multiline, rows | P1 |
+| String Enum | Select + MenuItem | ✅ Direct | defaultValue, map enum | P1 |
+| Multi Select | Select (multiple) | ✅ Direct | multiple, defaultValue array | P1 |
+| Array | - | ⚠️ Custom | ChildNodeComponents + IconButton | P2 |
+| Date | DatePicker (@mui/x-date-pickers) | ⚠️ Custom | Value conversion (string ↔ Date) | P2 |
+| Time | TimePicker (@mui/x-date-pickers) | ⚠️ Custom | Value conversion | P2 |
+| DateTime | DateTimePicker | ⚠️ Custom | Value conversion | P2 |
+| Password | TextField (type="password") | ✅ Direct | type="password" | P2 |
+| Email | TextField (type="email") | ✅ Direct | type="email", pattern | P2 |
+| Slider | Slider | ⚠️ Custom | defaultValue, min/max | P2 |
+| Radio Group | RadioGroup + FormControlLabel | ✅ Direct | map enum | P2 |
+| Color | TextField (type="color") | ⚠️ Custom | Native input or an external library | P3 |
+| Rich Text | - | ❌ Missing | External library (react-quill) | P4 |
 
-**특수 사항**:
-- `@mui/x-date-pickers` 별도 패키지 필요
-- `LocalizationProvider` 래퍼 필요 (DatePicker 등)
-- `slotProps`로 중첩 props 전달
+**Special notes**:
+- `@mui/x-date-pickers` is a separate package
+- A `LocalizationProvider` wrapper is required (DatePicker and similar)
+- Pass nested props through `slotProps`
 
 ### Ant Design v5+
 
-| Schema Form | Ant Design 컴포넌트 | 호환성 | 구현 방식 | 우선순위 |
+| Schema Form | Ant Design component | Compatibility | Implementation | Priority |
 |------------|---------------------|--------|----------|---------|
-| String | Input | ✅ 직접 | defaultValue, onChange | P1 |
-| Number | InputNumber | ✅ 직접 | defaultValue, onChange | P1 |
-| Boolean | Checkbox | ✅ 직접 | defaultChecked | P1 |
-| Textarea | Input.TextArea | ✅ 직접 | defaultValue, rows | P1 |
-| String Enum | Select + Option | ✅ 직접 | defaultValue, map enum | P1 |
-| Multi Select | Select (mode="multiple") | ✅ 직접 | mode="multiple" | P1 |
-| Array | - | ⚠️ 커스텀 | ChildNodeComponents + Button | P2 |
-| Date | DatePicker | ⚠️ 커스텀 | 값 변환 (string ↔ dayjs) | P2 |
-| Time | TimePicker | ⚠️ 커스텀 | 값 변환 | P2 |
-| DateTime | DatePicker (showTime) | ⚠️ 커스텀 | 값 변환 | P2 |
-| Password | Input.Password | ✅ 직접 | defaultValue | P2 |
-| Email | Input (type="email") | ✅ 직접 | type="email" | P2 |
-| Slider | Slider | ⚠️ 커스텀 | defaultValue, min/max | P2 |
-| Radio Group | Radio.Group + Radio | ✅ 직접 | map enum | P2 |
-| Color | ColorPicker (v5.5+) | ✅ 직접 | defaultValue | P3 |
-| Rich Text | - | ❌ 없음 | 외부 라이브러리 | P4 |
+| String | Input | ✅ Direct | defaultValue, onChange | P1 |
+| Number | InputNumber | ✅ Direct | defaultValue, onChange | P1 |
+| Boolean | Checkbox | ✅ Direct | defaultChecked | P1 |
+| Textarea | Input.TextArea | ✅ Direct | defaultValue, rows | P1 |
+| String Enum | Select + Option | ✅ Direct | defaultValue, map enum | P1 |
+| Multi Select | Select (mode="multiple") | ✅ Direct | mode="multiple" | P1 |
+| Array | - | ⚠️ Custom | ChildNodeComponents + Button | P2 |
+| Date | DatePicker | ⚠️ Custom | Value conversion (string ↔ dayjs) | P2 |
+| Time | TimePicker | ⚠️ Custom | Value conversion | P2 |
+| DateTime | DatePicker (showTime) | ⚠️ Custom | Value conversion | P2 |
+| Password | Input.Password | ✅ Direct | defaultValue | P2 |
+| Email | Input (type="email") | ✅ Direct | type="email" | P2 |
+| Slider | Slider | ⚠️ Custom | defaultValue, min/max | P2 |
+| Radio Group | Radio.Group + Radio | ✅ Direct | map enum | P2 |
+| Color | ColorPicker (v5.5+) | ✅ Direct | defaultValue | P3 |
+| Rich Text | - | ❌ Missing | External library | P4 |
 
-**특수 사항**:
-- `Form.Item` 사용하지 않음 (canard-form이 레이아웃 관리)
-- `dayjs` 날짜 라이브러리 사용
+**Special notes**:
+- Do not use `Form.Item` (canard-form owns layout)
+- Dates use the `dayjs` library
 
 ### Ant Design Mobile v5+
 
-| Schema Form | Ant Design Mobile | 호환성 | 구현 방식 | 우선순위 |
+| Schema Form | Ant Design Mobile | Compatibility | Implementation | Priority |
 |------------|-------------------|--------|----------|---------|
-| String | Input | ✅ 직접 | defaultValue, onChange | P1 |
-| Number | Input (type="number") | ✅ 직접 | type="number" | P1 |
-| Boolean | Checkbox | ✅ 직접 | defaultChecked | P1 |
-| Textarea | TextArea | ✅ 직접 | defaultValue, rows | P1 |
-| String Enum | Picker | ⚠️ 커스텀 | 모바일 Picker 패턴 | P1 |
-| Multi Select | CheckList | ✅ 직접 | defaultValue array | P1 |
-| Array | - | ⚠️ 커스텀 | ChildNodeComponents | P2 |
-| Date | DatePicker | ⚠️ 커스텀 | 값 변환, 모바일 UX | P2 |
-| Time | DatePicker (precision="minute") | ⚠️ 커스텀 | 값 변환 | P2 |
-| Password | Input (type="password") | ✅ 직접 | type="password" | P2 |
-| Slider | Slider | ⚠️ 커스텀 | defaultValue | P2 |
-| Radio Group | Radio.Group | ✅ 직접 | map enum | P2 |
-| Color | - | ❌ 없음 | Fallback Input | P4 |
+| String | Input | ✅ Direct | defaultValue, onChange | P1 |
+| Number | Input (type="number") | ✅ Direct | type="number" | P1 |
+| Boolean | Checkbox | ✅ Direct | defaultChecked | P1 |
+| Textarea | TextArea | ✅ Direct | defaultValue, rows | P1 |
+| String Enum | Picker | ⚠️ Custom | Mobile Picker pattern | P1 |
+| Multi Select | CheckList | ✅ Direct | defaultValue array | P1 |
+| Array | - | ⚠️ Custom | ChildNodeComponents | P2 |
+| Date | DatePicker | ⚠️ Custom | Value conversion, mobile UX | P2 |
+| Time | DatePicker (precision="minute") | ⚠️ Custom | Value conversion | P2 |
+| Password | Input (type="password") | ✅ Direct | type="password" | P2 |
+| Slider | Slider | ⚠️ Custom | defaultValue | P2 |
+| Radio Group | Radio.Group | ✅ Direct | map enum | P2 |
+| Color | - | ❌ Missing | Fallback Input | P4 |
 
-**특수 사항**:
-- 모바일 UX 패턴 (Popup Picker 등)
-- Touch 최적화
+**Special notes**:
+- Mobile UX patterns (Popup Picker and similar)
+- Touch optimization
 
 ### Chakra UI v2+
 
-| Schema Form | Chakra UI 컴포넌트 | 호환성 | 구현 방식 | 우선순위 |
+| Schema Form | Chakra UI component | Compatibility | Implementation | Priority |
 |------------|-------------------|--------|----------|---------|
-| String | Input | ✅ 직접 | defaultValue, onChange | P1 |
-| Number | NumberInput | ✅ 직접 | defaultValue, onChange | P1 |
-| Boolean | Checkbox | ✅ 직접 | defaultIsChecked | P1 |
-| Textarea | Textarea | ✅ 직접 | defaultValue | P1 |
-| String Enum | Select + option | ✅ 직접 | defaultValue, map enum | P1 |
-| Multi Select | - | ⚠️ 커스텀 | Checkbox Group 또는 외부 | P2 |
-| Array | - | ⚠️ 커스텀 | ChildNodeComponents + IconButton | P2 |
-| Date | - | ❌ 없음 | Input (type="date") Fallback | P3 |
-| Time | - | ❌ 없음 | Input (type="time") Fallback | P3 |
-| Password | Input (type="password") | ✅ 직접 | type="password" | P2 |
-| Slider | Slider | ✅ 직접 | defaultValue | P2 |
-| Radio Group | RadioGroup + Radio | ✅ 직접 | defaultValue, map enum | P2 |
-| Color | - | ❌ 없음 | Input (type="color") Fallback | P3 |
+| String | Input | ✅ Direct | defaultValue, onChange | P1 |
+| Number | NumberInput | ✅ Direct | defaultValue, onChange | P1 |
+| Boolean | Checkbox | ✅ Direct | defaultIsChecked | P1 |
+| Textarea | Textarea | ✅ Direct | defaultValue | P1 |
+| String Enum | Select + option | ✅ Direct | defaultValue, map enum | P1 |
+| Multi Select | - | ⚠️ Custom | Checkbox Group or an external library | P2 |
+| Array | - | ⚠️ Custom | ChildNodeComponents + IconButton | P2 |
+| Date | - | ❌ Missing | Input (type="date") fallback | P3 |
+| Time | - | ❌ Missing | Input (type="time") fallback | P3 |
+| Password | Input (type="password") | ✅ Direct | type="password" | P2 |
+| Slider | Slider | ✅ Direct | defaultValue | P2 |
+| Radio Group | RadioGroup + Radio | ✅ Direct | defaultValue, map enum | P2 |
+| Color | - | ❌ Missing | Input (type="color") fallback | P3 |
 
-**특수 사항**:
-- `FormControl` 래핑 권장
-- 날짜/시간 컴포넌트 없음 (외부 라이브러리 필요)
+**Special notes**:
+- Wrapping with `FormControl` is recommended
+- No date/time components (an external library is required)
 
-## 호환성 분석 체크리스트
+## Compatibility Analysis Checklist
 
-새로운 UI 라이브러리 평가 시:
+When evaluating a new UI library:
 
-### 1단계: 필수 컴포넌트 확인
-- [ ] String 입력 컴포넌트
-- [ ] Number 입력 컴포넌트
-- [ ] Boolean (Checkbox) 컴포넌트
-- [ ] Select/Dropdown 컴포넌트
+### Step 1: Confirm required components
+- [ ] String input component
+- [ ] Number input component
+- [ ] Boolean (Checkbox) component
+- [ ] Select/Dropdown component
 
-### 2단계: 비제어 컴포넌트 지원
-- [ ] `defaultValue` 지원
-- [ ] `defaultChecked` 지원 (Boolean)
-- [ ] 제어/비제어 모드 전환 가능
+### Step 2: Uncontrolled component support
+- [ ] Supports `defaultValue`
+- [ ] Supports `defaultChecked` (Boolean)
+- [ ] Can switch between controlled and uncontrolled modes
 
-### 3단계: 접근성
-- [ ] `id`, `name` 속성 지원
-- [ ] `required`, `disabled` 지원
-- [ ] ARIA 속성 지원
-- [ ] 키보드 네비게이션
+### Step 3: Accessibility
+- [ ] Supports `id` and `name`
+- [ ] Supports `required` and `disabled`
+- [ ] Supports ARIA attributes
+- [ ] Keyboard navigation
 
-### 4단계: 확장성
-- [ ] 날짜/시간 선택 컴포넌트 (또는 Fallback 가능)
-- [ ] 커스터마이징 가능한 스타일
-- [ ] TypeScript 타입 정의
+### Step 4: Extensibility
+- [ ] Date/time picker component (or a fallback is possible)
+- [ ] Customizable styles
+- [ ] TypeScript type definitions
 
 ---
 
-**평가 기준**:
-- 1단계 모두 충족: 플러그인 개발 **가능**
-- 2단계 부분 충족: 플러그인 개발 **가능** (제어 컴포넌트로 대체)
-- 3단계 부분 충족: 플러그인 개발 **가능** (접근성 수동 추가)
-- 4단계 미충족: 플러그인 개발 **가능** (Fallback 사용)
-
+**Evaluation criteria**:
+- Step 1 fully met: plugin development is **possible**
+- Step 2 partially met: plugin development is **possible** (substitute a controlled component)
+- Step 3 partially met: plugin development is **possible** (add accessibility manually)
+- Step 4 not met: plugin development is **possible** (use a fallback)
