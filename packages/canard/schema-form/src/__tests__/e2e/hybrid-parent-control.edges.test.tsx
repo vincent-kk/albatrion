@@ -256,6 +256,9 @@ it('E6 keeps virtual-group child values aligned with the parent projection', asy
   await form.type('/a', 'x');
   expect(form.getValue()).toEqual({ a: 'x', b: 'b' });
   expect([form.value('/a'), form.value('/b')]).toEqual(['x', 'b']);
+  await form.type('/b', 'y');
+  expect(form.getValue()).toEqual({ a: 'x', b: 'y' });
+  expect([form.value('/a'), form.value('/b')]).toEqual(['x', 'y']);
 });
 
 it('E7 trims on blur after hybrid input and refreshes the changed draft', async () => {
@@ -354,8 +357,9 @@ it('E9 reveals a deferred child with the latest parent callback', async () => {
   await form.type('/a', 'x');
   await act(async () => form.handle.focus('/b'));
   expect(form.deferred('/b')).toBe(false);
+  await form.type('/a', 'x2');
   await form.type('/b', 'y');
-  expect(form.getValue()).toEqual({ a: 'x', b: 'y' });
+  expect(form.getValue()).toEqual({ a: 'x2', b: 'y' });
 });
 
 it('E10 prefers the child callback and falls back to the current parent when removed', async () => {
@@ -398,10 +402,12 @@ it('E10 prefers the child callback and falls back to the current parent when rem
   expect(child).toHaveBeenCalledExactlyOnceWith('own', expect.any(Number));
   expect(parent).not.toHaveBeenCalled();
   await form.user.click(form.container.querySelector('button')!);
+  await form.type('/a', 'x2');
+  parent.mockClear();
   fireEvent.change(form.field('/b')!, { target: { value: 'fallback' } });
   await form.flush();
-  expect(parent).toHaveBeenCalledExactlyOnceWith('b', 'x', 'fallback');
-  expect(form.getValue()).toEqual({ a: 'x', b: 'fallback' });
+  expect(parent).toHaveBeenCalledExactlyOnceWith('b', 'x2', 'fallback');
+  expect(form.getValue()).toEqual({ a: 'x2', b: 'fallback' });
 });
 
 it('E11 aligns the child after a conditional schema changes its input declaration', async () => {
@@ -460,4 +466,37 @@ it('E13 preserves both child emissions in one event when the parent uses an upda
   );
   expect(form.getValue()).toEqual({ a: 'x', b: 'y' });
   expect([form.value('/a'), form.value('/b')]).toEqual(['x', 'y']);
+});
+
+it('E14 writes directly after the hybrid parent removes its onChange', async () => {
+  const received = vi.fn();
+  const EnabledParent = ({
+    ChildFields,
+    onChange,
+  }: FieldInputProps<Record<string, unknown>>) => {
+    const [enabled, setEnabled] = useState(true);
+    const parentFn = (input: unknown) => {
+      received(input);
+      onChange({ a: input });
+    };
+    return (
+      <>
+        <button type="button" onClick={() => setEnabled(false)}>
+          disable parent callback
+        </button>
+        {ChildFields.map((Child) => (
+          <Child key={Child.key} onChange={enabled ? parentFn : undefined} />
+        ))}
+      </>
+    );
+  };
+  form = await renderForm(schemaFor(undefined, EnabledParent));
+  await form.type('/a', 'x');
+  expect(received).toHaveBeenCalledExactlyOnceWith('x');
+  await form.user.click(form.container.querySelector('button')!);
+  received.mockClear();
+  await form.type('/a', 'direct');
+  expect(received).not.toHaveBeenCalled();
+  expect(form.getValue()).toEqual({ a: 'direct' });
+  expect(form.value('/a')).toBe('direct');
 });
