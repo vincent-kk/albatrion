@@ -45,7 +45,7 @@ const valueReading: FieldInputDefinition[] = [
 - Declare it only when the component keeps no copy of the value. A draft copied into state or a ref would survive a reset, and a callback the input issued before a caller write is still accepted. `formRef.current?.remount(path)` still replaces the input.
 - Leave it out for a component that reads `defaultValue`; nothing else is required of it.
 - A schema declares the same thing per field with `presentation.controlled`; that is the only place to declare it for an inline `presentation.FieldInput`, a `fieldInputMap` component, or a `FieldInput` passed to `Form.Input`, `Form.Field` or `Form.Render`. `false` on either side wins, so a schema can switch a controlled definition back to remounting for one field.
-- Typing through `onChange` never remounts the input that typed.
+- A direct input write preserves the emitting input. For a parent override, use the [hybrid parent contract](#hybrid-parents-write-child-values-through-the-parent).
 
 ## Custom Input Contract
 
@@ -65,7 +65,53 @@ const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
 );
 ```
 
-Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object schema makes the object terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
+Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object or array schema makes the branch terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
+
+## Hybrid parents: write child values through the parent
+
+A hybrid branch renders `ChildFields` and overrides each child's `onChange` to write the parent value. Use a functional parent update so two children emitting during one event or batch preserve both values; spreading the parent's rendered `value` can overwrite an earlier edit from that same event. Pass this schema to `Form`:
+
+```tsx
+const HybridObject = ({
+  ChildFields,
+  onChange,
+}: FieldInputProps<Record<string, unknown>>) => (
+  <>
+    {ChildFields.map((Child) => (
+      <Child
+        key={Child.key}
+        onChange={(input) =>
+          onChange((prev) => ({ ...prev, [Child.field]: input }))
+        }
+      />
+    ))}
+  </>
+);
+
+/** Keep the inline object input nonterminal so it can render its children. */
+const hybridSchema: JSONSchema = {
+  type: 'object',
+  options: { terminal: false },
+  presentation: { FieldInput: HybridObject },
+  properties: {
+    first: { type: 'string' },
+    last: { type: 'string' },
+  },
+};
+```
+
+The overridden child callback receives the **evaluated value**, never the updater function the child may emit. Store `input` directly. The parent is still free to call its own `onChange` with an updater, as above. Follow the [custom input registration rule](#custom-input-contract) when registering this branch input.
+
+A synchronous parent commit preserves the emitting child's DOM, focus and local draft when its final value is exactly what it emitted. Primitive values compare by value; objects and arrays must keep the same reference. Sibling callbacks use the current parent callback. Other changed children still receive their own updates.
+
+For an input without a controlled declaration, these limits apply:
+
+- **The parent transforms the value, or a `derived`/`injectTo` rule changes it:** the final value differs, so the child remounts to display it. Use an input that draws from `value` and declare `controlled: true` on its definition, or `presentation.controlled: true` on its schema ([controlled inputs](#skip-remounts-for-a-controlled-input-controlled)). The declaration alone does not make a `defaultValue` input controlled.
+- **The callback writes later, for example after a debounce:** that later write remounts the child. Commit the input value synchronously and debounce a separate side effect, or use a value-driven controlled input when delayed display is intentional.
+- **The parent copies an emitted object or array:** a new reference can remount the child even when its contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
+- **The parent rejects the input by making no write:** the node keeps its previous value, but the undeclared input's typed draft stays on screen. Rejection alone does not restore the displayed value; explicitly refresh it if that is the desired behavior.
+
+Changing only `value` or `required` on a `Child` is not an independent update channel: a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
 
 ## Keep configuration stable for a mounted form
 

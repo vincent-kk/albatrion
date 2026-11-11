@@ -103,6 +103,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   previous.entryDepth = 0;
   previous.batchDepth = 0;
   previous.batchWrites = undefined;
+  if (previous.inputRelays !== undefined) previous.inputRelays = undefined;
   previous.visitDepth = 0;
   previous.visitBatchEntry = undefined;
   previous.deliveries = undefined;

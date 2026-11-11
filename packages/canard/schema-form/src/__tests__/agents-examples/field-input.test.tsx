@@ -23,6 +23,7 @@ import {
   type FieldInputProps,
   Form,
   type FormHandle,
+  type JSONSchema,
   isTerminalNode,
 } from '@/schema-form';
 
@@ -446,4 +447,86 @@ it('remounts by the controlled declaration when a value arrives from outside', a
   await act(async () => ref.current!.setValue({ source: 'next', live: 'set' }));
 
   expect(screen.getByTestId('/live')).toBe(live);
+});
+
+/**
+ * Compose child input values against the parent's current pending value.
+ * @param props - Branch input props whose children emit already evaluated values.
+ * @returns Child inputs with a synchronous parent write for each edit.
+ */
+const HybridObject = ({
+  ChildFields,
+  onChange,
+}: FieldInputProps<Record<string, unknown>>) => (
+  <>
+    {ChildFields.map((Child) => (
+      <Child
+        key={Child.key}
+        onChange={(input) =>
+          onChange((prev) => ({ ...prev, [Child.field]: input }))
+        }
+      />
+    ))}
+  </>
+);
+
+/** Keep the inline object input nonterminal so it can render its children. */
+const hybridSchema: JSONSchema = {
+  type: 'object',
+  options: { terminal: false },
+  presentation: { FieldInput: HybridObject },
+  properties: {
+    first: { type: 'string' },
+    last: { type: 'string' },
+  },
+};
+
+it('a hybrid parent preserves focus, same-batch sibling edits and evaluated child updaters', async () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        ...hybridSchema,
+        properties: {
+          ...hybridSchema.properties,
+          tags: {
+            type: 'array',
+            items: { type: 'string', enum: ['red', 'blue'] },
+            presentation: { inputType: 'checkbox' },
+          },
+        },
+      }}
+    />,
+  );
+  await waitFor(() => expect(ref.current).not.toBeNull());
+  const first =
+    view.container.querySelector<HTMLInputElement>('[id="/first"]')!;
+  const last = view.container.querySelector<HTMLInputElement>('[id="/last"]')!;
+  first.focus();
+  fireEvent.change(first, { target: { value: 'first' } });
+  await act(async () => {});
+  expect(view.container.querySelector('[id="/first"]')).toBe(first);
+  expect(document.activeElement).toBe(first);
+
+  await act(async () => {
+    ref.current!.node!.batch(() => {
+      fireEvent.change(first, { target: { value: 'updated' } });
+      fireEvent.change(last, { target: { value: 'last' } });
+    });
+  });
+  expect(ref.current!.getValue()).toEqual({ first: 'updated', last: 'last' });
+  expect(view.container.querySelector('[id="/first"]')).toBe(first);
+  expect(view.container.querySelector('[id="/last"]')).toBe(last);
+  expect(document.activeElement).toBe(first);
+
+  fireEvent.click(screen.getByRole('checkbox', { name: 'red' }));
+  await act(async () => {});
+  expect(ref.current!.getValue()).toEqual({
+    first: 'updated',
+    last: 'last',
+    tags: ['red'],
+  });
+  expect(first.value).toBe('updated');
+  expect(last.value).toBe('last');
 });

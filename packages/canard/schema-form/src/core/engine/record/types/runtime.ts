@@ -180,6 +180,16 @@ export interface SettlementScratch<Self> {
   originalSchemas: Map<string, EffectiveSchema>;
 }
 
+/** Last input emission retained until the first synchronous settlement. */
+interface FieldNodeInputRelay<Self> {
+  /** Input occurrence whose final value is checked before omitting Refresh. */
+  node: Self;
+  /** Occurrence path at emission, which must still match at settlement. */
+  path: string;
+  /** Evaluated emitted value compared by the delivery-value identity rule. */
+  value: unknown;
+}
+
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface FieldNodeRuntime<Self>
   extends FieldNodeRootRuntimeState,
@@ -261,6 +271,8 @@ export interface FieldNodeRuntime<Self>
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Last input emission per node, consumed by the first synchronous settlement. */
+  inputRelays?: FieldNodeInputRelay<Self>[];
   /** Number of active nested `visitSubtree` walks on this tree. */
   visitDepth?: number;
   /** Entry whose write opened the batch held open until the outermost walk ends. */

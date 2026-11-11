@@ -151,14 +151,14 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 
 ### 제어 입력의 재마운트 생략 {#controlled}
 
-입력이 직접 쓰지 않은 값(범위와 무관한 `setValue`, reset, `refresh(path)`, `derived`, `injectTo`, `unsetValue`, 배열 조작, 부모 입력의 전체 값 쓰기)은 그 입력을 다시 마운트하여 새 `defaultValue`를 넘깁니다. 매 렌더의 `value`만으로 그리는 입력에는 이 재마운트가 필요 없습니다. `FieldInputDefinition` 또는 필드별 `presentation.controlled`에 `controlled: true`를 선언하면 DOM, 포커스, 내부 상태를 유지한 채 새 값을 `value`로 받습니다.
+입력이 직접 쓰지 않은 값(범위와 무관한 `setValue`, reset, `refresh(path)`, `derived`, `injectTo`, `unsetValue`, 배열 조작)은 그 입력을 다시 마운트하여 새 `defaultValue`를 넘깁니다. 매 렌더의 `value`만으로 그리는 입력에는 이 재마운트가 필요 없습니다. `FieldInputDefinition` 또는 필드별 `presentation.controlled`에 `controlled: true`를 선언하면 DOM, 포커스, 내부 상태를 유지한 채 새 값을 `value`로 받습니다.
 
 | `controlled` | 입력이 직접 쓰지 않은 값 |
 | --- | --- |
 | 생략 또는 `false` | 새 `defaultValue`로 재마운트 |
 | `true` | 새 `value`, 재마운트 없음 |
 
-자주 다시 계산되는 필드와 마운트 비용이 큰 위젯을 위한 최적화입니다. 값의 사본을 두지 않는 컴포넌트에만 선언하십시오. 복사해 둔 초안은 reset 뒤에도 남습니다. 인라인 `presentation.FieldInput`, `fieldInputMap` 컴포넌트, `Form.Input`·`Form.Field`·`Form.Render`에 넘긴 `FieldInput`은 스키마에서만 선언할 수 있습니다. 어느 쪽이든 `false`가 이기므로 스키마에서 한 필드만 다시 재마운트 방식으로 되돌릴 수 있습니다. `onChange`로 입력한 타이핑은 그 입력을 다시 마운트하지 않으며, `remount(path)`는 선언과 무관하게 입력을 교체합니다. UI 플러그인은 `value`로 그리는 체크박스, 스위치, 스테퍼 입력에 이 선언을 달아 두었습니다.
+자주 다시 계산되는 필드와 마운트 비용이 큰 위젯을 위한 최적화입니다. 값의 사본을 두지 않는 컴포넌트에만 선언하십시오. 복사해 둔 초안은 reset 뒤에도 남습니다. 인라인 `presentation.FieldInput`, `fieldInputMap` 컴포넌트, `Form.Input`·`Form.Field`·`Form.Render`에 넘긴 `FieldInput`은 스키마에서만 선언할 수 있습니다. 어느 쪽이든 `false`가 이기므로 스키마에서 한 필드만 다시 재마운트 방식으로 되돌릴 수 있습니다. 직접 입력 쓰기는 값을 내보낸 입력을 유지하며 부모의 콜백 재정의는 [하이브리드 부모 계약](./api-reference#hybrid-parent-inputs)을 따릅니다. `remount(path)`는 선언과 무관하게 입력을 교체합니다. UI 플러그인은 `value`로 그리는 체크박스, 스위치, 스테퍼 입력에 이 선언을 달아 두었습니다.
 
 ## 사용자 입력 접근성 {#accessibility}
 

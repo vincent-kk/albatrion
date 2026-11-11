@@ -24,6 +24,7 @@ import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
+import { isRelayedInput } from './utils/isRelayedInput';
 import { readSettlementSource } from './utils/readSettlementSource';
 
 /**
@@ -74,14 +75,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
+  const relays = runtime.inputRelays;
+  if (relays !== undefined) runtime.inputRelays = undefined;
   for (const path of context.changedSource) {
     if (
       loadScope &&
       (path === loadScope.path || isDescendantPath(path, loadScope.path))
     )
       continue;
-    if (readSettlementSource(context, path, true) !== 'input')
-      refreshTargets.add(path);
+    if (readSettlementSource(context, path, true) === 'input') continue;
+    if (relays !== undefined && isRelayedInput(relays, path)) continue;
+    refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
   let warnings: Optional<MisfitRecord[]>;

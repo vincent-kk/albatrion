@@ -108,6 +108,12 @@ registerPlugin(plugin);
 
 ---
 
+## 스위치 키보드 접근
+
+boolean 및 string 스위치 입력은 클릭하면 포커스를 받고 자연스러운 Tab 순서에 포함됩니다. Space와 Enter는 포커스된 스위치를 클릭과 같은 값 변환으로 누를 때마다 한 번 전환합니다. 키를 길게 눌러도 반복 전환하지 않으며, Space는 페이지를 스크롤하지 않습니다. 비활성 스위치는 클릭이나 Tab으로 포커스를 받지 않으며 활성화 키에 반응하지 않습니다.
+
+---
+
 ## 입력 설정
 
 위의 `lazy`, `marks`, `range` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
