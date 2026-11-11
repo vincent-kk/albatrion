@@ -1,9 +1,10 @@
 import { memo } from 'react';
 
-import { PluginManager } from '@/schema-form/app/plugin';
-import { FieldProxy } from '@/schema-form/components/FieldProxy';
-import { useFieldRendererContext } from '@/schema-form/providers';
+import { useReference } from '@winglet/react-utils/hook';
 
+import { FieldProxy } from '@/schema-form/components/FieldProxy';
+
+import { LabelPartRenderer } from './components/LabelPartRenderer';
 import type { FormLabelProps } from './types/props';
 
 /**
@@ -53,19 +54,21 @@ import type { FormLabelProps } from './types/props';
  * </div>
  * ```
  */
-export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
-  const { LabelRenderer } = useFieldRendererContext();
-  return (
-    <label
-      style={style}
-      className={className}
-      htmlFor={path}
-      id={path !== undefined ? 'label:' + path : undefined}
-    >
+export const FormLabel = memo(
+  ({ path, style, className, children }: FormLabelProps) => {
+    const overridePropsRef = useReference({
+      style,
+      className,
+      children,
+      htmlFor: path,
+      id: path === undefined ? undefined : 'label:' + path,
+    });
+    return (
       <FieldProxy
         path={path}
-        FieldRenderer={LabelRenderer || PluginManager.LabelRenderer}
+        overridePropsRef={overridePropsRef}
+        FieldRenderer={LabelPartRenderer}
       />
-    </label>
-  );
-});
+    );
+  },
+);

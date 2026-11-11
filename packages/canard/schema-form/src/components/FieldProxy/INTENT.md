@@ -6,7 +6,7 @@
 
 ## Conventions
 
-- TypeScript와 React(TSX)로 작성한 함수형 컴포넌트에 memo를 쓴다. `FieldProxy`가 공개 API이고, 부품 둘은 내부 구현이다.
+- FieldProxy는 노드 렌더링 경계이며 묶인 부품 생성과 자식 입력 수명의 조합을 소유합니다.
 - 노드 추적과 메모된 선택은 훅에 두며, 별도의 필드 컴포넌트나 필드 경로 Provider는 만들지 않는다.
 - 렌더러는 선택된 컴포넌트별로 감싸개를 메모하여 ErrorBoundary로 직접 감싸고, errorMessage는 그 경계 안에서 계산한다. 현재 필드 경로는 보고기 훅에 넘긴다.
 - display-contents 래퍼(`data-path`, `role="none"`)와 RequestRemount 래퍼 key를 유지한다.
@@ -15,6 +15,8 @@
 ## Boundaries
 
 ### Always do
+
+- Label·ErrorMessage는 독립된 memo 부품으로 묶고 오류·context 구독을 추가하지 않습니다. 각 부품의 루트는 등록 렌더러가 소유합니다.
 
 - 외부에서는 `FieldProxy`를 통해서만 노드를 렌더링하고, 노드가 없거나 `node.isPresent === false`이면 `null` 반환
 - 오류 표시 조건과 렌더 실패의 보고를 구별합니다. 포맷 실패와 렌더러 실패는 같은 필드 경계에 격리합니다.

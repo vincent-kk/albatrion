@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Form.Error는 경로의 오류 표시를 조합하며 검증·오류 배정·문구 생성을 소유하지 않습니다.
+Form.ErrorMessage는 경로의 오류 표시를 조합하며 검증·오류 배정·문구 생성을 소유하지 않습니다.
 
 ## Conventions
 
@@ -12,6 +12,8 @@ Form.Error는 경로의 오류 표시를 조합하며 검증·오류 배정·문
 ## Boundaries
 
 ### Always do
+
+- 바깥 span 없이 묶인 ErrorMessage를 항상 그리며 명시적 표현 props와 context만 보탭니다.
 
 - 필드 해석과 오류 격리는 FieldProxy에 맡겨 같은 정책의 이중 구현을 막습니다.
 

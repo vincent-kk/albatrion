@@ -19,6 +19,8 @@ import {
 import type {
   FieldInputDefinition,
   FieldRendererProps,
+  LabelRendererProps,
+  ErrorMessageRendererProps,
   FormatError,
 } from '@/schema-form/types';
 
@@ -26,9 +28,9 @@ import type { ValidatorPlugin } from '../type';
 
 interface RenderKit {
   FieldRenderer: ComponentType<FieldRendererProps>;
-  LabelRenderer: ComponentType<FieldRendererProps>;
+  LabelRenderer: ComponentType<LabelRendererProps>;
   InputRenderer: ComponentType<FieldRendererProps>;
-  ErrorMessageRenderer: ComponentType<FieldRendererProps>;
+  ErrorMessageRenderer: ComponentType<ErrorMessageRendererProps>;
 }
 
 const defaultRenderKit = {

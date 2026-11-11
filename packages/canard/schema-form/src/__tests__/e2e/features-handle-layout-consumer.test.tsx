@@ -206,8 +206,7 @@ describe('features — handle-layout consumer-only', () => {
         titleReadOnly: handle!.findNode('/title')!.isReadOnly,
         secretVisible: handle!.findNode('/secret')!.isVisible,
         codeMessageShown: Boolean(
-          container
-            .querySelector('[data-path="/code"] em')
+          Array.from(container.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches('[data-path="/code"]'))
             ?.textContent?.trim(),
         ),
       }).toEqual(providerLayers.expected);

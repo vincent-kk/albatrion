@@ -3,7 +3,7 @@ import { type ComponentType, createContext } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
-import type { FieldRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps, LabelRendererProps, ErrorMessageRendererProps } from '@/schema-form/types';
 
 export interface FieldRendererContext {
   /** Resolved policy rendered by this context; RootNodeContext commits it after layout. */
@@ -15,9 +15,9 @@ export interface FieldRendererContext {
   /** CheckErrorVisibility function declared externally */
   checkErrorVisibility: Fn<[condition?: FieldNode['state']], boolean>;
   /** Optional specialized renderers supplied by this form. */
-  LabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<LabelRendererProps>;
   InputRenderer?: ComponentType<FieldRendererProps>;
-  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
 }
 
 export const FieldRendererContext = createContext<FieldRendererContext>(

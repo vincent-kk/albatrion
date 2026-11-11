@@ -341,7 +341,7 @@ describe('inputType-resolution — FieldRenderer (ReactNode)', () => {
 
     // DOM: the error message is rendered inside the field's wrapper as <em>.
     const wrapper = form.container.querySelector('[data-field="/code"]');
-    expect(wrapper?.querySelector('em')).not.toBeNull();
+    expect(Array.from(wrapper?.querySelectorAll('em') ?? []).find((message) => message.closest('[data-path]')?.getAttribute('data-path') === '/code')).toBeTruthy();
     expect(form.errorTexts().length).toBeGreaterThan(0);
   });
 });

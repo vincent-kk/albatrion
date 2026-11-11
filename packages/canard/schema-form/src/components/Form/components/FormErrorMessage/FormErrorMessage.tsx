@@ -1,9 +1,10 @@
 import { memo } from 'react';
 
-import { PluginManager } from '@/schema-form/app/plugin';
-import { FieldProxy } from '@/schema-form/components/FieldProxy';
-import { useFieldRendererContext } from '@/schema-form/providers';
+import { useReference } from '@winglet/react-utils/hook';
 
+import { FieldProxy } from '@/schema-form/components/FieldProxy';
+
+import { ErrorMessagePartRenderer } from './components/ErrorMessagePartRenderer';
 import type { FormErrorMessageProps } from './types/props';
 
 /**
@@ -53,16 +54,13 @@ import type { FormErrorMessageProps } from './types/props';
  */
 export const FormErrorMessage = memo(
   ({ path, style, className }: FormErrorMessageProps) => {
-    const { ErrorMessageRenderer } = useFieldRendererContext();
+    const overridePropsRef = useReference({ style, className });
     return (
-      <span style={style} className={className}>
-        <FieldProxy
-          path={path}
-          FieldRenderer={
-            ErrorMessageRenderer || PluginManager.ErrorMessageRenderer
-          }
-        />
-      </span>
+      <FieldProxy
+        path={path}
+        overridePropsRef={overridePropsRef}
+        FieldRenderer={ErrorMessagePartRenderer}
+      />
     );
   },
 );

@@ -10,6 +10,8 @@ import type {
   ErrorVisibility,
   FieldInputDefinition,
   FieldRendererProps,
+  LabelRendererProps,
+  ErrorMessageRendererProps,
   FormatError,
   ValidatorFactory,
 } from '@/schema-form/types';
@@ -22,11 +24,11 @@ export interface ExternalFormContextProviderProps {
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** LabelRenderer component declared externally */
-  LabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<LabelRendererProps>;
   /** InputRenderer component declared externally */
   InputRenderer?: ComponentType<FieldRendererProps>;
   /** ErrorMessageRenderer component declared externally */
-  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**

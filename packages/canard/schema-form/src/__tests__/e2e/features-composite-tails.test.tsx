@@ -286,8 +286,7 @@ const runStep = async (
     for (const [path, shown] of Object.entries(step.shown))
       expect(
         Boolean(
-          container
-            .querySelector(`[data-path="${path}"] em`)
+          Array.from(container.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches(`[data-path="${path}"]`))
             ?.textContent?.trim(),
         ),
         `${label} ${path}`,

@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+LabelRenderer·ErrorMessageRenderer는 node와 내용 중심의 전용 props를 받습니다. 부품을 만드는 FieldProxy에 현재 선택을 전달하며, context나 오류를 부품에 자동 주입하지 않습니다. InputRenderer의 그룹 props 계약은 유지합니다.
+
 유효한 Form 렌더러·포맷터가 외부 설정보다 우선하고 누락 값은 플러그인으로 보완합니다. 최신 불변 참조로 해석하되 값·노드 상태를 초기화하거나 검증을 실행하지 않습니다. 기본 정책 선택·잘못된 값 보존·공개 명령 세대는 [FormCore](../../components/Form/components/FormCore/DETAIL.md)가 소유하고, 엔진의 정책 기록은 [RootNodeContext](../RootNodeContext/DETAIL.md)가 commit합니다.
 
 FieldNodeState.ErrorVisibility는 undefined일 때 상속, true일 때 허용, false일 때 Form 공개 중에도 억제합니다. 상속 복귀는 그 키만 undefined로 지워 Edited·Touched를 보존합니다. 렌더러·입력의 presence와 OnChange release 조건을 이 override로 우회하지 않습니다. 자식 오류 집계는 숨긴 자식도 포함하는 [hooks 계약](../../hooks/DETAIL.md)이므로 presence 필터를 추가하지 않습니다.

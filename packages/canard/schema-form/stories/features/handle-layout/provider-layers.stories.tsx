@@ -50,8 +50,7 @@ export const ContextAndSettings: Story = {
         titleReadOnly: handle.findNode('/title')!.isReadOnly,
         secretVisible: handle.findNode('/secret')!.isVisible,
         codeMessageShown: Boolean(
-          canvasElement
-            .querySelector('[data-path="/code"] em')
+          Array.from(canvasElement.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches('[data-path="/code"]'))
             ?.textContent?.trim(),
         ),
       }),

@@ -10,15 +10,13 @@ const LABEL_NOTE_STYLE: CSSProperties = { fontSize: '0.85em' };
 /** Space between the label text and the input. */
 const LABEL_GAP_STYLE: CSSProperties = { marginRight: 5 };
 
-/** Red marker for a required field. */
-const REQUIRED_MARK_STYLE: CSSProperties = { color: 'red' };
-
+/** Assemble the default group from bound parts while preserving branch accessibility. */
 export const FormFieldRenderer = ({
   node,
   depth,
   path,
-  name,
-  required,
+  Label,
+  ErrorMessage,
   Input,
   errorMessage,
   style,
@@ -38,7 +36,9 @@ export const FormFieldRenderer = ({
       >
         <legend id={'label:' + path}>{node.name}</legend>
         <div>
-          <em style={LABEL_NOTE_STYLE}>{errorMessage}</em>
+          {errorMessage != null && (
+            <ErrorMessage style={LABEL_NOTE_STYLE}>{errorMessage}</ErrorMessage>
+          )}
         </div>
         <div>
           <Input />
@@ -56,13 +56,13 @@ export const FormFieldRenderer = ({
         className={className}
       >
         {node.parentNode && isArraySchema(node.parentNode) === false && (
-          <label htmlFor={path} id={'label:' + path} style={LABEL_GAP_STYLE}>
-            {name} {required && <span style={REQUIRED_MARK_STYLE}>*</span>}
-          </label>
+          <Label style={LABEL_GAP_STYLE} />
         )}
         <Input />
         <br />
-        <em style={LABEL_NOTE_STYLE}>{errorMessage}</em>
+        {errorMessage != null && (
+          <ErrorMessage style={LABEL_NOTE_STYLE}>{errorMessage}</ErrorMessage>
+        )}
       </div>
     );
   }

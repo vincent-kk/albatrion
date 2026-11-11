@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+LabelRendererProps·ErrorMessageRendererProps·InputRendererProps는 node·주소·이름·스키마·표시 필수 여부를 공유하는 공개 부품 계약입니다. 공통 기반은 비공개이며 오류 정보는 기본 props가 아닙니다. 라벨·오류의 context도 자동 주입하지 않고 호출자가 필요할 때 명시합니다. 입력 틀의 children은 같은 커밋에 한 번 조건 없이 그려 입력 위치 수명을 유지해야 합니다. FieldRendererProps의 Label·ErrorMessage는 이 계약의 partial props를 받는 묶인 컴포넌트입니다.
+
 ### Roll 표현과 재귀 형
 
 Roll은 편집기의 형 표시를 평평하게 하는 표현이며 런타임 변환이 아닙니다. 재귀 스키마의 정의 자리에서 Roll로 감싸면 순환 별칭이 되므로 재귀 고리 밖의 Rolled 형이 내부 형을 감싸고 패키지 진입점에서 공개 이름을 부여합니다. 내부 형과 공개 표시용 형을 분리하는 이유입니다.

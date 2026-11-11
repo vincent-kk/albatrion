@@ -15,6 +15,8 @@ import type {
   FieldInputDefinition,
   FieldInputMap,
   FieldRendererProps,
+  LabelRendererProps,
+  ErrorMessageRendererProps,
   InferValueType,
   JSONSchema,
   ValidatorFactory,
@@ -68,11 +70,11 @@ export interface FormProps<
   /** Custom field renderer component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
-  LabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<LabelRendererProps>;
   /** Input renderer shared by Form.Input instances. */
   InputRenderer?: ComponentType<FieldRendererProps>;
   /** Error renderer shared by Form.ErrorMessage instances. */
-  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: FieldNode['globalErrors'];
   /** Custom format error function */

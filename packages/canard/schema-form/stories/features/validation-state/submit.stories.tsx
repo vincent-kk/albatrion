@@ -3,6 +3,7 @@ import {
   playScenario, submitOutcomes, submitScenario, validationStateFeatureScenarios,
 } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { readShownMessage } from './utils/readShownMessage';
 import { expect, fn, spyOn, userEvent, waitFor } from 'storybook/test';
 
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
@@ -78,9 +79,9 @@ export const EnterRejected: Story = {
     try {
       await playScenario(args.scenario, canvasElement);
       const email = canvasElement.querySelector<HTMLInputElement>('input[id="/email"]')!;
-      expect(canvasElement.querySelector('em')?.textContent ?? '').toBe('');
+      expect(readShownMessage(canvasElement, '/email')).toBe('');
       await userEvent.type(email, '{Enter}');
-      await waitFor(() => expect(canvasElement.querySelector('em')?.textContent ?? '').not.toBe(''));
+      await waitFor(() => expect(readShownMessage(canvasElement, '/email')).not.toBe(''));
       expect(document.activeElement).toBe(email);
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
       expect(sink).toEqual([]);

@@ -16,6 +16,8 @@ import {
   FieldNodeEventType,
   FieldNodeRequestType,
   type FieldRendererProps,
+  type LabelRendererProps,
+  type ErrorMessageRendererProps,
   type Form,
   type FormChildrenProps,
   type FormHandle,
@@ -64,9 +66,9 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     unsetOnInactive?: boolean;
     disableAutomaticWrites?: boolean;
     onDiagnosticsChange?: (diagnostics: FieldNode['diagnostics']) => void;
-    LabelRenderer?: ComponentType<FieldRendererProps>;
+    LabelRenderer?: ComponentType<LabelRendererProps>;
     InputRenderer?: ComponentType<FieldRendererProps>;
-    ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
+    ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   };
   expectTypeOf<Props>().toEqualTypeOf<Expected>();
   expectTypeOf<Props>().toHaveProperty('FieldRenderer');

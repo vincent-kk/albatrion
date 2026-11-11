@@ -5,6 +5,8 @@ import type { Fn } from '@aileron/declare';
 import type {
   FieldInputDefinition,
   FieldRendererProps,
+  LabelRendererProps,
+  ErrorMessageRendererProps,
   FormatError,
   ValidateFunction,
 } from '@/schema-form/types';
@@ -112,11 +114,11 @@ export interface SchemaFormPlugin {
   /** Form.Field Component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
-  LabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<LabelRendererProps>;
   /** Form.Input Component */
   InputRenderer?: ComponentType<FieldRendererProps>;
   /** Form.ErrorMessage Component */
-  ErrorMessageRenderer?: ComponentType<FieldRendererProps>;
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** FieldInputDefinition */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */

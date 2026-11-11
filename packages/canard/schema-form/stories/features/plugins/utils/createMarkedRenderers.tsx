@@ -1,10 +1,16 @@
-import type { RendererSlot } from '@aileron/schema-form-scenarios';
 import type { ComponentType } from 'react';
 
-import type { FieldRendererProps } from '../../../../src';
+import type { FieldRendererProps, LabelRendererProps, ErrorMessageRendererProps } from '../../../../src';
 
 /** Consumer renderers keyed by slot; each draws data-renderer="<source>-<slot>". */
-export type MarkedRenderers = Record<RendererSlot, ComponentType<FieldRendererProps>>;
+export interface MarkedRenderers {
+  /** Group renderer retains the bound input. */
+  group: ComponentType<FieldRendererProps>;
+  /** Label renderer owns its root. */
+  label: ComponentType<LabelRendererProps>;
+  /** Error renderer displays the supplied message. */
+  error: ComponentType<ErrorMessageRendererProps>;
+}
 
 /**
  * Build consumer renderers that mark which source drew them.
@@ -13,7 +19,6 @@ export type MarkedRenderers = Record<RendererSlot, ComponentType<FieldRendererPr
  */
 export const createMarkedRenderers = (source: string): MarkedRenderers => ({
   group: ({ Input, path, name }) => <div data-renderer={`${source}-group`} data-field={path}><span>{name}</span><Input /></div>,
-  label: ({ name, path }) => <label data-renderer={`${source}-label`} htmlFor={path}>{name}</label>,
-  error: ({ errorVisible, errors }) =>
-    errorVisible && errors?.length ? <em data-renderer={`${source}-error`}>{errors.map((issue) => issue.keyword).join(',')}</em> : null,
+  label: ({ children, htmlFor, id }) => <label data-renderer={`${source}-label`} htmlFor={htmlFor} id={id}>{children}</label>,
+  error: ({ children }) => <em data-renderer={`${source}-error`}>{children}</em>,
 });

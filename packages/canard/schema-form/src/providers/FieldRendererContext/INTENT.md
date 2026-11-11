@@ -12,6 +12,8 @@
 
 ### Always do
 
+- 라벨·오류 부품의 좁은 props 계약을 공급하고 실행과 복구는 FieldProxy에 맡깁니다.
+
 - 노드 override를 먼저 판단하고 원시 오류를 표시 상태와 분리하여 판정 손실을 막습니다.
 
 ### Ask first

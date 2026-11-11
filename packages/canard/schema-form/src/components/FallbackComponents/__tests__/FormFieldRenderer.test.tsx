@@ -1,9 +1,54 @@
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { createRef } from 'react';
+
+import { act, cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { Form } from '@/schema-form/components/Form';
+import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
+import { ErrorVisibility } from '@/schema-form/types';
 
 afterEach(cleanup);
+
+it('omits empty group errors and delegates branch messages to the registered error part', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          group: { type: 'object', properties: { child: { type: 'string' } } },
+        },
+      }}
+      validationMode={ValidationMode.None}
+      errorVisibility={ErrorVisibility.Always}
+      ErrorMessageRenderer={({ node, children }) => (
+        <em data-owner={node.path}>{children}</em>
+      )}
+    />,
+  );
+  expect(view.container.querySelectorAll('em')).toHaveLength(0);
+  act(() =>
+    ref
+      .current!.findNode('/group/child')!
+      .setExternalErrors([{ dataPath: '/group/child', message: 'Child' }]),
+  );
+  expect(view.getByText('Child').getAttribute('data-owner')).toBe(
+    '/group/child',
+  );
+  expect(
+    Array.from(view.container.querySelectorAll('em')).find(
+      (message) =>
+        message.closest('[data-path]')?.getAttribute('data-path') === '/group',
+    ),
+  ).toBeUndefined();
+  act(() =>
+    ref
+      .current!.findNode('/group')!
+      .setExternalErrors([{ dataPath: '/group', message: 'Own' }]),
+  );
+  expect(view.getByText('Own').getAttribute('data-owner')).toBe('/group');
+});
 
 it.each(['checkbox', 'radio'])(
   'names the builtin %s options group while preserving its title layout',
@@ -58,6 +103,8 @@ it('keeps a plain string title associated with its input', () => {
   expect(screen.getByText('Text').getAttribute('for')).toBe(input.id);
   expect(input.id).toBe('/Text');
   expect(screen.getByText('Text').id).toBe('label:/Text');
+  expect(screen.getByText('Text').textContent).toBe('Text');
+  expect(screen.getByText('Text').childNodes).toHaveLength(1);
 });
 
 it('keeps the title associated with a date-format input despite the radio hint', () => {

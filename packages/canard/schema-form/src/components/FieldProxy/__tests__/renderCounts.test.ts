@@ -36,12 +36,12 @@ beforeAll(() => {
   scenarios = JSON.parse(output).scenarios;
 }, 120000);
 
-it('F-B holds 19 live fibers per field in both controlled and uncontrolled forms', () => {
+it('F-B holds 18 live fibers per field in both controlled and uncontrolled forms', () => {
   expect(
     scenarios.map(({ fibersPerField }) => Object.values(fibersPerField)),
   ).toEqual([
-    [19, 19, 19, 19],
-    [19, 19, 19, 19],
+    [18, 18, 18, 18],
+    [18, 18, 18, 18],
   ]);
 });
 

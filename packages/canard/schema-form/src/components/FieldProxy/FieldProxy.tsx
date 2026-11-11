@@ -28,6 +28,8 @@ import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { createFieldInputBridge } from './components/FieldInputBridge';
 import type { FieldProxyProps } from './type';
+import { createErrorMessagePart } from './utils/createErrorMessagePart';
+import { createLabelPart } from './utils/createLabelPart';
 import { getRendererBoundary } from './utils/getRendererBoundary';
 import { resolveRequired } from './utils/resolveRequired';
 
@@ -41,7 +43,7 @@ const RERENDERING_EVENT =
 
 /** Resolve one node, track its revisions and isolate its injected rendering surfaces. */
 export const FieldProxy = ({
-  path,
+  path: inputPath,
   node: inputNode,
   onChangeRef,
   onFileAttachRef,
@@ -50,7 +52,7 @@ export const FieldProxy = ({
   FieldRenderer: InputFieldRenderer,
   Wrapper: InputWrapper,
 }: FieldProxyProps) => {
-  const node = useFieldNode(inputNode || path);
+  const node = useFieldNode(inputNode || inputPath);
   const refresh = useFieldNodeTracker(node, RERENDERING_EVENT);
   const refreshRef = useReference(refresh);
   const onError = useBoundaryReporter(node?.path);
@@ -70,10 +72,39 @@ export const FieldProxy = ({
 
   const {
     FieldRenderer: ContextFieldRenderer,
+    LabelRenderer,
+    ErrorMessageRenderer,
     formatError: contextFormatError,
     checkErrorVisibility,
     errorVisibility,
   } = useFieldRendererContext();
+
+  const name = node?.name;
+  const path = node?.path;
+  const jsonSchema = node?.jsonSchema;
+  const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
+  const required = resolveRequired(
+    overridePropsRef?.current.required,
+    presentation?.required,
+    node?.isRequired ?? false,
+  );
+  const Label = useMemo(
+    () =>
+      createLabelPart(LabelRenderer, node, required, name, path, jsonSchema),
+    [LabelRenderer, node, name, path, jsonSchema, required],
+  );
+  const ErrorMessage = useMemo(
+    () =>
+      createErrorMessagePart(
+        ErrorMessageRenderer,
+        node,
+        required,
+        name,
+        path,
+        jsonSchema,
+      ),
+    [ErrorMessageRenderer, node, name, path, jsonSchema, required],
+  );
 
   const Component = InputFieldRenderer || ContextFieldRenderer;
   const [FieldRenderer, RendererBoundary] = useMemo(() => {
@@ -104,7 +135,6 @@ export const FieldProxy = ({
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
   if (!node?.isPresent) return null;
-  const presentation = (node.jsonSchema as JSONSchema).presentation;
   const live = checkErrorVisibility(node.state);
   const errorVisible = live && isErrorRevealed(node, errorVisibility, true);
   const revealVersion =
@@ -114,7 +144,12 @@ export const FieldProxy = ({
   return (
     <Wrapper key={version}>
       <div data-path={node.path} role={NONE_ROLE} style={DISPLAY_CONTENT}>
-        <RendererBoundary onError={onError} formatError={contextFormatError}>
+        <RendererBoundary
+          onError={onError}
+          formatError={contextFormatError}
+          LabelRenderer={LabelRenderer}
+          ErrorMessageRenderer={ErrorMessageRenderer}
+        >
           <FieldRenderer
             {...presentation?.FieldRendererProps}
             {...overridePropsRef?.current}
@@ -128,12 +163,10 @@ export const FieldProxy = ({
             name={node.name}
             value={node.value}
             errors={node.errors}
-            required={resolveRequired(
-              overridePropsRef?.current.required,
-              presentation?.required,
-              node.isRequired,
-            )}
+            required={required}
             Input={Input}
+            Label={Label}
+            ErrorMessage={ErrorMessage}
             errorVisible={errorVisible}
             formatError={formatError}
             context={context}

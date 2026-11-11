@@ -14,6 +14,8 @@ import {
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldRendererProps,
+  type LabelRendererProps,
+  type ErrorMessageRendererProps,
   Form,
   type FormHandle,
   FormProvider,
@@ -44,23 +46,18 @@ const scenarioNamed = (name: string): FormScenario => {
  */
 const markedRenderers = (
   source: string,
-): Record<RendererSlot, ComponentType<FieldRendererProps>> => ({
+): { group: ComponentType<FieldRendererProps>; label: ComponentType<LabelRendererProps>; error: ComponentType<ErrorMessageRendererProps> } => ({
   group: ({ Input, path }) => (
     <div data-renderer={`${source}-group`} data-field={path}>
       <Input />
     </div>
   ),
-  label: ({ name, path }) => (
-    <label data-renderer={`${source}-label`} htmlFor={path}>
-      {name}
+  label: ({ children, htmlFor, id }) => (
+    <label data-renderer={`${source}-label`} htmlFor={htmlFor} id={id}>
+      {children}
     </label>
   ),
-  error: ({ errorVisible, errors }) =>
-    errorVisible && errors?.length ? (
-      <em data-renderer={`${source}-error`}>
-        {errors.map((issue) => issue.keyword).join(',')}
-      </em>
-    ) : null,
+  error: ({ children }) => <em data-renderer={`${source}-error`}>{children}</em>,
 });
 
 /**
