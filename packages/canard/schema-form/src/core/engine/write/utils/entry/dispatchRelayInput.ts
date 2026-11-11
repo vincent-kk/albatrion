@@ -28,18 +28,19 @@ export const dispatchRelayInput = <
   relay: (input: unknown, option: Option) => void,
 ): void => {
   if (node.disposed || node.rootNode.disposed) return;
-  const value =
-    typeof input === 'function'
-      ? input(isBatchMarking(node) ? readBatchValue(node) : node.local)
-      : input;
+  const marking = isBatchMarking(node);
   const runtime = node.rootNode.runtime;
-  const relays = (runtime.inputRelays ??= []);
-  const record = { node, path: node.path, value };
-  const index = relays.findIndex((relay) => relay.node === node);
-  if (index === -1) relays.push(record);
-  else relays[index] = record;
   try {
     dispatchBatch(node, () => {
+      const value =
+        typeof input === 'function'
+          ? input(marking ? readBatchValue(node) : node.local)
+          : input;
+      const relays = (runtime.inputRelays ??= []);
+      const record = { node, path: node.path, value };
+      const index = relays.findIndex((relay) => relay.node === node);
+      if (index === -1) relays.push(record);
+      else relays[index] = record;
       relay(value, option);
       if (node.disposed || node.rootNode.disposed) return;
       dispatchClearExternalErrors(node);

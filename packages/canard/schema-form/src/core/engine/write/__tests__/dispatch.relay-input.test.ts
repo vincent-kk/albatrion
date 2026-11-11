@@ -2,8 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { writeFieldNode } from '@/schema-form/core/engine/settle';
-import { arrangeFieldNodeItems } from '@/schema-form/core/engine/settle/arrangeFieldNodeItems';
+import { arrangeFieldNodeItems } from '@/schema-form/core/engine/settle';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { adoptFieldNodeChain } from '../utils/chain/adoptFieldNodeChain';
@@ -174,48 +173,6 @@ describe('binding input relay', () => {
     expect(root.local).toEqual(['inserted', 'x']);
     expect(readFieldNodeRevision(input, REFRESH)).toBe(before + 1);
     expect(runtime.inputRelays).toBeUndefined();
-  });
-
-  it('does not carry a detached occurrence relay into the replacement at its path', () => {
-    const { root, runtime } = createDispatchTree({
-      type: 'object',
-      properties: {
-        show: { type: 'boolean' },
-        input: { type: 'string', controls: { active: '../show' } },
-      },
-    });
-    dispatchMount(root, { show: true, input: 'x' });
-    const input = getDispatchChild(root, 'input');
-    dispatchRelayInput(input, 'x', OPTION, () => {
-      writeFieldNode(
-        getDispatchChild(root, 'show'),
-        false,
-        'callerReplace',
-        OPTION,
-      );
-      expect(input.detached).toBe(true);
-      expect(runtime.inputRelays).toBeUndefined();
-      dispatchSetValue(root, { show: true, input: 'replacement' });
-    });
-    const replacement = getDispatchChild(root, 'input');
-    expect(replacement).not.toBe(input);
-    expect(replacement.local).toBe('replacement');
-    expect(readFieldNodeRevision(replacement, REFRESH)).toBeGreaterThan(0);
-    expect(input.local).toBe('x');
-  });
-
-  it('does not apply a disposed occurrence relay to the new root commit', () => {
-    const previous = createDispatchTree({ type: 'string' });
-    dispatchMount(previous.root, 'x');
-    const next = createDispatchTree({ type: 'string' });
-    const before = readFieldNodeRevision(next.root, REFRESH);
-    dispatchRelayInput(previous.root, 'x', OPTION, () => {
-      adoptFieldNodeChain(previous.root, next.root);
-      expect(previous.root.disposed).toBe(true);
-      dispatchMount(next.root, 'x');
-    });
-    expect(next.root.local).toBe('x');
-    expect(readFieldNodeRevision(next.root, REFRESH)).toBe(before + 1);
   });
 
   it('leaves no relay in either runtime when the callback replaces the root', () => {

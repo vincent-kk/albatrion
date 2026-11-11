@@ -366,3 +366,32 @@ it('H13 blocks overridden callbacks on readOnly and disabled children', async ()
   expect(changed).not.toHaveBeenCalled();
   expect(form.getValue()).toEqual(before);
 });
+
+it('H14 refreshes a relayed child rewritten by injectTo in the same settlement', async () => {
+  const Source = ({
+    ChildFields,
+    onChange,
+  }: FieldInputProps<Record<string, unknown>>) => (
+    <>
+      {ChildFields.map((Child) => (
+        <Child
+          key={Child.key}
+          onChange={(input) => onChange({ a: input, b: input })}
+        />
+      ))}
+    </>
+  );
+  form = await renderForm(
+    pairSchema({ type: 'string' }, Source, {
+      type: 'string',
+      controls: {
+        injectTo: (value: unknown) => ({ '../a': String(value).toUpperCase() }),
+      },
+    }),
+  );
+  const input = form.field('/pair/a');
+  await form.type('/pair/a', 'x');
+  expect(form.getValue()).toEqual({ pair: { a: 'X', b: 'x' } });
+  expect(form.value('/pair/a')).toBe('X');
+  expect(form.field('/pair/a')).not.toBe(input);
+});
