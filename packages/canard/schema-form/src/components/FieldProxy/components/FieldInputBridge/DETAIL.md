@@ -84,7 +84,7 @@ focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독�
 
 첫 색인·length·순회 읽기를 감지하고 commit 전 읽기는 기존 입력 layout marker에서, commit 후 읽기는 microtask에서 보고합니다. 로드별 중복 제거는 [FormErrorContext](../../../../providers/FormErrorContext/DETAIL.md)가 맡습니다. 지연 보고는 읽은 warning scope를 보존하되 root가 교체되면 버립니다. 같은 root reset·실패 rebuild가 새 로드 scope를 시작하면 다시 읽을 수 있고, unmount만으로 마지막 보고기를 없애지는 않습니다. 탐침 자체의 effect를 추가하지 않는 이유는 필드 수에 비례하는 마운트 비용을 막기 위해서입니다.
 
-오류 표시의 이력·release 조건은 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)가 소유합니다. 입력은 isPresent와 현재 정책이 적격일 때만 reveal을 읽고 보류 중에만 release 구독자를 둡니다.
+오류 표시의 이력·release 조건은 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)가 소유합니다. 오류를 요청한 useFieldErrors 소비자의 표시·구독 계약은 [hooks](../../../../hooks/DETAIL.md)를 따릅니다.
 
 useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch와 마지막 stable releaseComposition을 반환하며 컨테이너 교체와 composition 종료가 같은 reducer를 재사용합니다.
 

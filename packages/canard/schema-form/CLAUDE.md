@@ -59,7 +59,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 ### Plugin System (`src/app/plugin/`)
 
 - Validator 플러그인: AJV7/AJV8 등 JSON Schema 검증
-- UI 컴포넌트 플러그인: `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`
+- UI plugins supply FieldRenderer and the root-owning LabelRenderer / ErrorMessageRenderer parts; optional InputRenderer frames the bound input. See [part assembly](docs/agents/skills/schema-form-skill/knowledge/field-input.md#bound-parts-and-input-frames).
 - FieldInput 플러그인: 커스텀 입력 컴포넌트
 
 ### Error Isolation (user-injected render surfaces)
@@ -149,6 +149,7 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Hooks
 
+- `useFieldErrors` observes one field’s formatted feedback; see [validation UX](docs/agents/skills/schema-form-skill/knowledge/validation-ux.md#read-one-fields-errors).
 - `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildFieldMap`, `useChildFieldErrors`, `useFormSubmit` (`useFieldNode` 는 내부 전용, 공개 index 미노출)
 
 ## Key Type Utilities

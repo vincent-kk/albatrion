@@ -43,7 +43,7 @@ function NameInput({ value, onChange, node }: FieldInputProps<string>) {
 }
 ```
 
-This input prints the validator's raw message, so `presentation.errorMessages` and `formatError` do not apply to it; to keep formatted copy, render `errorMessage` from a FieldRenderer instead ([error feedback](error-feedback.md)).
+This input prints the validator's raw message, so `presentation.errorMessages` and `formatError` do not apply to it; to keep formatted copy inside an input, use [the field error hook's errorMessage](#read-one-fields-errors).
 
 Let this input own its message instead of drawing it again in the surrounding renderer:
 
@@ -51,7 +51,7 @@ Let this input own its message instead of drawing it again in the surrounding re
 const InputOnly = ({ Input }: FieldRendererProps) => <Input />;
 ```
 
-In `OnChange` mode, an error that newly becomes eligible to show waits until pending validation settles (about two frames when none is pending) or until the form's `validate()` verdict is accepted, so an older verdict never looks like the answer to new input; hiding is immediate. An already visible error can remain until the next verdict. Raw `errors` props, the values `Form` children and `Form.Render` receive, `node.errors` and `getErrors()` are not filtered by this policy. OnRequest and None use the live display policy without this hold. A child node's `node.validate()` routes its verdict to its own subtree, keeps pending automatic validation and releases nothing.
+In `OnChange` mode, an error that newly becomes eligible to show waits until pending validation settles (about two frames when none is pending) or until the form's `validate()` verdict is accepted, so an older verdict never looks like the answer to new input; hiding is immediate. An already visible error can remain until the next verdict. Raw FieldRenderer `errors`, the values `Form` children and `Form.Render` receive, `node.errors` and `getErrors()` are not filtered by this policy. OnRequest and None use the live display policy without this hold. A child node's `node.validate()` routes its verdict to its own subtree, keeps pending automatic validation and releases nothing.
 
 ## Declare required and conditional fields
 
@@ -156,3 +156,34 @@ The live base policy is `Form.errorVisibility ?? FormProvider.errorVisibility ??
 `FieldNodeState.ErrorVisibility` is a node override: undefined inherits, true allows display, and false suppresses it, including during Form reveal. Clear only this key with `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })` to inherit without clearing Edited/Touched. Renderer and input visibility still require `isPresent` and follow OnChange release rules. `useChildFieldErrors` preserves its aggregate contract including hidden children, returning `errorVisible` and `childErrorVisibleList` without a presence filter. Raw errors remain available independently of display.
 
 An invalid JavaScript policy reports `FormErrorCode.InvalidErrorVisibility` once per committed invalid value with origin `load`, without a RenderFailed boundary error. An initially invalid policy prevents tree construction and shows the load fallback; a later valid policy constructs the tree. An invalid live change preserves the current tree, values, interaction state and last valid policy; a valid replacement applies live. The next invalid occurrence after recovery reports again. Explicit Form configuration takes precedence over Provider configuration.
+
+## Read one field's errors
+
+`useFieldErrors(node)` returns `{ errors, errorVisible, errorMessage, formatError }`. A FieldRenderer group already receives these four values as props and reads those props; calling the hook there adds an unnecessary subscription. The hook is for real inputs, frames and part renderers. errors is the raw list; errorMessage is the first non-null formatted message, or null when hidden or absent. formatError returns null while display is disallowed. Use it inside a real input, InputRenderer, LabelRenderer or ErrorMessageRenderer, under the node's own Form; another Form supplies the wrong display settings.
+
+Only the component calling the hook opts into this field's value, state, error, controls, schema and path changes and the form's renderer settings. The result object keeps its reference while all four values are Object.is-equal. An input without the hook re-renders only when its props change; an error-only or interaction-state-only change (Edited, Touched, an ErrorVisibility override) does not render it unless a deferred Refresh is applied at that moment. An input that reads errors or node.state during render uses useFieldErrors or useFieldNodeTracker. Use the hook when the input needs feedback, and choose one owner for visible messages to avoid duplicates:
+
+```tsx
+const ErrorAwareInput = ({
+  node,
+  path,
+  defaultValue,
+  onChange,
+}: FieldInputProps) => {
+  const { errorMessage } = useFieldErrors(node);
+  return (
+    <>
+      <input
+        id={path}
+        defaultValue={defaultValue}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      <span role="alert">{errorMessage}</span>
+    </>
+  );
+};
+```
+
+Import useFieldErrors and FieldInputProps from `@canard/schema-form` and supply ErrorAwareInput through the usual input selection. Unlike printing raw errors, this preserves the configured formatting.
+
+Limits: During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes; prefer its arguments. The field computes its own message with the same formatter, so a formatter that throws for a field replaces the whole field with the fallback, and replacing formatError or a part renderer retries it. Only a throw raised solely by an input’s own useFieldErrors call is caught by that input’s boundary, which replacing formatError does not retry.

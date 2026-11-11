@@ -47,7 +47,7 @@ export function ComposedForm() {
         <>
           <Form.Label path="/title" />
           <Form.Input path="/title" />
-          <Form.Error path="/title" />
+          <Form.ErrorMessage path="/title" />
           <Form.Input path="/count" />
           <Form.Input path="/enabled" />
           <output>{JSON.stringify(value)}</output>
@@ -145,3 +145,5 @@ export function SubmitForm() {
   );
 }
 ```
+
+Antd5·Antd6·Antd Mobile·MUI 플러그인은 입력 틀 없이 라벨·오류 부품을 제공합니다. 필수 표시는 aria-hidden이며 Antd Mobile은 표시하는 오류를 span 루트로 감쌉니다. 사용자 부품 조립과 오류를 쓰는 틀은 [등록 부품](../api-reference#renderer-parts)과 [useFieldErrors](../api-reference#field-errors)를 참조하십시오.

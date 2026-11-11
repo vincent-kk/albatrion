@@ -153,3 +153,62 @@ An invalid live map reports `FormTypeInputMap` with origin `load` once and retai
 An equal fresh plain object retains the snapshot; changed content propagates to the current tree and can affect controls and validation freshness without rebuilding it.
 Keep callbacks and identity-sensitive values inside context stable when they have not changed, so new identities do not create artificial context changes.
 This recommendation avoids unnecessary renders/comparisons and unintended semantic updates; it is not a claim that every new prop reference destroys state.
+
+## Bound parts and input frames
+
+A FieldRenderer assembles its supplied Label, Input and ErrorMessage. Label supplies htmlFor equal to the field path and id equal to `label:` followed by that path. A custom input uses its path as its element id to associate with the label. Label without children shows the field's name (key or array index), not the schema title; undefined children also use that name, while null empties it. ErrorMessage has no default content: pass errorMessage yourself. Explicit props override defaults even when undefined, except Label children; node always stays bound. Extra props reach the registered renderer. Label and ErrorMessage receive no context automatically: pass it explicitly when needed. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence. Reuse style objects so part memoization can skip unchanged props:
+
+```tsx
+const NOTE_STYLE = { color: 'crimson' };
+```
+
+```tsx
+const PartsGroup = ({
+  isRoot,
+  Input,
+  Label,
+  ErrorMessage,
+  errorMessage,
+  context,
+}: FieldRendererProps) =>
+  isRoot ? (
+    <Input />
+  ) : (
+    <div>
+      <Label context={context} />
+      <Input />
+      {errorMessage != null && (
+        <ErrorMessage style={NOTE_STYLE}>{errorMessage}</ErrorMessage>
+      )}
+    </div>
+  );
+```
+
+`<Input unwrapped />` and `<Form.Input unwrapped />` bypass the frame. Keep unwrapped constant per position: while a frame is selected, toggling it on a bound Input replaces the input; toggling it on Form.Input remounts the whole field even without a frame. A parent's Child component prop or `presentation.FieldInputProps.unwrapped` is ordinary input payload, not a frame switch.
+
+```tsx
+const BareField = ({ Input }: FieldRendererProps) => <Input unwrapped />;
+```
+
+The frame is chosen at the consuming position: Form's InputRenderer, then the nearest FormProvider's, then the plugin registry. A FormProvider inside Form children can supply that nearest value. A nearer FormProvider without InputRenderer hides an outer provider’s frame; selection then falls to the plugin. Render children exactly once, unconditionally at an unchanging position. Changing the element or component path from the frame root to children replaces the input: it starts from the current node value, loses focus and ends any in-progress composition. Keep the root/path stable when showing a message:
+
+A selected frame wraps every bound input, including the root (path ""), object and array fields. A group skips it per field with unwrapped, and the frame can branch on its node. The root node’s errors include every descendant’s error, so a frame that marks field error state must not mark the root. Other branches do not automatically aggregate descendant errors. In the example, root output is an intentional form-wide summary; omit that output at the root if each field owns its message:
+
+```tsx
+const ErrorFrame = ({ node, children }: InputRendererProps) => {
+  const { errors, errorVisible, errorMessage } = useFieldErrors(node);
+  return (
+    <section
+      data-frame={node.path}
+      data-field-error={
+        (!node.isRoot && errorVisible && errors.length > 0) || undefined
+      }
+    >
+      {children}
+      <output>{errorMessage}</output>
+    </section>
+  );
+};
+```
+
+This renderer requests errors with the [field error hook](validation-ux.md#read-one-fields-errors); the same hook works in label and error renderers. Parts that do not request it stay presentation-only. For standalone label/error roots, read [layout surfaces](imperative-and-layout.md#layout-surfaces).

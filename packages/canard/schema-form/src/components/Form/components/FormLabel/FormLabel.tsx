@@ -10,11 +10,11 @@ import type { FormLabelProps } from './types/props';
 /**
  * Renders an accessible label for form fields.
  *
- * Automatically generates label text from schema title or property name,
+ * Uses children when supplied, otherwise the field name (key or index),
  * associated with its input through `htmlFor={path}`. Its `id="label:${path}"`
  * also lets options groups reference the title through `aria-labelledby`.
  * Both attributes are built from `path` as given, so pass the absolute path.
- * Supports custom styling while maintaining accessibility standards.
+ * The registered LabelRenderer owns the label root; no outer label is added.
  *
  * @example
  * Basic label usage:

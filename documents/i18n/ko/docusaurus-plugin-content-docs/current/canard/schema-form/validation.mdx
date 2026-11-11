@@ -45,6 +45,8 @@ React-only disabled 토글, 지연된 presence commit, release와 paint 사이�
 
 keyword·기본 메시지는 `presentation.errorMessages`, 애플리케이션별 형식은 `formatError(error, node, context)`를 사용하십시오. keyword 항목은 문자열이나 detail 값별 사전입니다. 프로그램의 판정에는 검증기의 원시 오류를 사용하며 표시 형식은 판정을 바꾸지 않습니다. `errors` 또는 노드 external-error 메서드로 전달한 외부 오류도 원시 오류 목록에 참여합니다.
 
+필드 하나의 포맷된 피드백이 필요한 입력과 표현 부품은 [useFieldErrors](./api-reference#field-errors)를 사용합니다. 검증 판정과 표시 결정을 구별하십시오.
+
 ## 검증기 객체 계약 {#validator-contract}
 
 `validatorFactory`는 `compile(root)`와 동기 `compileGuard(root, pointer)`를 가진 객체이며 `release(root)`, `dialect`는 선택 사항입니다. `compile`은 순서 있는 오류·null 또는 그 promise를 반환하는 함수를 만듭니다. throw는 검증 판정이 아니라 실행 실패입니다. `compileGuard`는 동기 boolean predicate를 반환하며 전체 스키마 compile보다 먼저 실행될 수 있습니다.

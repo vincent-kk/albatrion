@@ -32,7 +32,7 @@ virtual 노드는 레이아웃 그룹이며 조건 분기 노드가 아닙니다
 
 Form의 `children`은 루트 자동 레이아웃을 대체합니다. 생략한 입력을 다른 곳에 자동으로 보충하지 않습니다. 같은 경로를 두 번 렌더링하면 입력 두 개가 생깁니다. defaultValue로 시작해 자체 draft를 유지하는 내장 입력은 refresh 전까지 다른 입력의 타이핑을 반영하지 않습니다. 사용자 controlled 입력은 현재 value prop을 따라 두 렌더링을 즉시 동기화할 수 있습니다.
 
-기본 그룹 렌더러는 label과 오류를 직접 그립니다. `FormLabelRenderer`, `FormErrorRenderer` 교체는 조합 컴포넌트와 이를 호출하는 사용자 렌더러에 적용되며 기본 그룹 렌더러의 내용을 바꾸지 않습니다.
+기본 그룹은 [등록된 Label·ErrorMessage 부품](./api-reference#renderer-parts)을 조립합니다. 그룹 레이아웃을 복사하지 않고 슬롯 교체로 표현을 바꿀 수 있습니다. 가지의 legend는 여전히 필드 이름을 직접 쓰고 배열 항목의 말단 라벨은 생략하므로 LabelRenderer가 그 제목을 바꾸거나 생략된 라벨을 더하지 않습니다.
 
 렌더러, `formatError`, 입력 정의와 입력 map은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 입력과 그 조상 입력이 모두 같으면 DOM을 보존합니다. 부모 입력이 교체되면 선택된 자식 컴포넌트가 같아도 그 안의 DOM과 미커밋 draft는 재생성됩니다. 렌더러 교체는 그 렌더러가 소유한 UI subtree를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 

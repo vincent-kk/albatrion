@@ -265,3 +265,5 @@ mobile Boolean Switch의 context 라벨은 정확히 `context.checkboxLabels.che
 Mobile slider는 같은 prop 그룹에 `range`, `marks`, `lazy`를 받습니다. `lazy: false`이면 이동마다, 생략하면 release 때 발행합니다. 숫자 배열 선택에는 [첫 match 제한](#ui-selection)이 그대로 적용됩니다.
 
 UI 한도는 입력 조작을 안내하며 최종 값의 허용 여부는 스키마 검증이 판정합니다.
+
+입력 props는 payload이며 틀 설정이 아닙니다. 입력에 오류 피드백이 필요하면 [위치별 unwrapped 규칙](./api-reference#input-frames)과 [필드 오류 훅](./api-reference#field-errors)을 따르십시오.

@@ -26,7 +26,7 @@ Use the skill's verification guidance to check the resulting form.
 - Manually creating child nodes when a condition changes:
   declare the fields and conditions in the schema instead.
 - Per-input logic deciding when validation messages may appear:
-  use the form's display policy and the input's resolved `errorVisible`.
+  follow the skill's `knowledge/validation-ux.md` field error hook guidance.
 - Rebuilding conditional required fields or defaults in React effects:
   declare conditional requirements and defaults in the schema instead.
 

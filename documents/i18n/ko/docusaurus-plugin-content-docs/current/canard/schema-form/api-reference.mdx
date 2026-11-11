@@ -26,7 +26,7 @@ sidebar_position: 6
 | `errorVisibility / validationMode`                          | 검증 페이지의 표시·실행 정책입니다.                                        |
 | `validatorFactory`                                          | 완전한 검증기 객체이며 검증 페이지를 참조하십시오.                         |
 | `FieldRenderer`                                             | 필드 그룹 렌더러입니다.                                                    |
-| `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | 조합 렌더러입니다.                                                         |
+| `LabelRenderer / InputRenderer / ErrorMessageRenderer` | 루트를 소유하는 부품이며 [등록 부품](#renderer-parts)을 참조하십시오.                                                         |
 | `formatError`                                               | 필수 노드 인자를 받아 오류를 ReactNode로 바꾸는 formatter입니다.           |
 | `fieldInputDefinitions / fieldInputMap` | 순서 있는 검사와 경로 재정의이며 입력 선택을 참조하십시오. 정의의 `controlled: true`는 [제어 입력의 재마운트를 생략](./schema-reference#controlled)합니다. |
 | `virtualization`                                            | 입력 마운트 지연이며 기본값은 꺼짐입니다.                                  |
@@ -84,17 +84,35 @@ visitor 실패는 이미 수행한 쓰기를 적용한 뒤 전파합니다. list
 
 ## Form 조합과 사용자 입력 {#composition}
 
-`Form.Field`는 그룹을, `Form.Label`, `Form.Input`, `Form.Error`는 개별 슬롯을 렌더링합니다. `Form.Render`의 함수 children은 `node`, `value`, `Input`, `errorVisible`, `errorMessage` 등을 가진 `FieldRendererProps`를 받습니다. 모두 Form 조상이 필요합니다. `Form.Input`, `Form.Render`의 path도 상대·wildcard를 포함한 [확장 query 규칙](#paths)을 사용합니다.
+`Form.Field`는 그룹을, `Form.Label`, `Form.Input`, `Form.ErrorMessage`는 개별 슬롯을 렌더링합니다. `Form.Render`의 함수 children은 `node`, `value`, `Input`, `errorVisible`, `errorMessage` 등을 가진 `FieldRendererProps`를 받습니다. 모두 Form 조상이 필요합니다. `Form.Input`, `Form.Render`의 path도 상대·wildcard를 포함한 [확장 query 규칙](#paths)을 사용합니다.
 
 입력 쓰기의 interaction 동작이 필요하면 사용자 렌더러에서 제공된 `Input`을 사용하십시오. 직접 `node.setValue()`는 프로그램 쓰기이므로 Edited를 표시하지 않습니다. 추가 입력 props는 선택한 입력 컴포넌트로 전달하며 native element에 자동 적용하지 않습니다. 내장 string 입력의 autoComplete 같은 native 속성은 `inputProps`에 둡니다.
 
 `Form.Input`, `Form.Render`, `Form.Field`에는 `onChange`와 `onFileAttach`를 전달할 수 없습니다. 중계 콜백은 하이브리드 부모의 `<Child>` 또는 렌더러의 `<Input>`에서 제공하십시오.
 
-`FieldInputProps`는 `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, 원시 `errors`, `errorVisible`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, presentation props를 제공합니다. 빈 입력은 undefined를, null은 의도적으로 선택할 때만 발행합니다. 계산된 입력 잠금과 [접근 가능한 이름](./schema-reference#accessibility)을 지키십시오.
+`FieldInputProps`는 `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, presentation props를 제공합니다. 빈 입력은 undefined를, null은 의도적으로 선택할 때만 발행합니다. 계산된 입력 잠금과 [접근 가능한 이름](./schema-reference#accessibility)을 지키십시오.
 
 FieldInputProps와 FieldRendererProps의 node prop은 모두 필수입니다.
 
 `ChildFields`는 key·path·field metadata가 있는 컴포넌트이며 형은 `FieldInputProps['ChildFields'][number]`로 얻습니다. `ChildFieldProps`에는 `FieldRenderer` 등 자식별 재정의가 있습니다. FieldInput에 내장 `FieldRenderer` prop을 제공하지는 않으므로 Form·Form.Field·자식 컴포넌트에서 렌더러를 선택하십시오.
+
+### 등록 부품 {#renderer-parts}
+
+Form·FormProvider·플러그인에 LabelRenderer(`LabelRendererProps`), ErrorMessageRenderer(`ErrorMessageRendererProps`), 선택적인 InputRenderer(`InputRendererProps`)를 등록합니다. 각 렌더러가 루트를 소유하며 기본 입력 틀은 없습니다. 컴포넌트 참조를 안정적으로 유지하십시오. 새 렌더러 참조는 해당 UI를 교체합니다. style 같은 객체 props도 재사용해야 메모된 부품이 props가 같을 때 재렌더링을 건너뛸 수 있습니다.
+
+FieldRenderer는 묶인 Label·Input·ErrorMessage를 받습니다. `<Label />`의 기본 내용은 스키마 title이 아닌 필드 name(키 또는 인덱스)입니다. children이 undefined여도 name을 쓰고 null이면 비웁니다. ErrorMessage에는 기본 문구가 없으므로 `<ErrorMessage>{errorMessage}</ErrorMessage>`로 전달합니다. 명시한 props는 undefined여도 기본값을 덮지만 Label children은 예외이며 node는 바꿀 수 없습니다. 추가 props는 등록 렌더러에 전달됩니다. 묶인 Label의 기본 htmlFor는 필드 path이며 id는 `label:` 뒤에 path를 붙인 값입니다. 사용자 입력은 요소 id에 자기 path를 써서 라벨과 연결합니다. Label·ErrorMessage는 호출자가 넘긴 경우에만 context를 받습니다. 기본 그룹과 번들 플러그인 그룹은 부품에 context를 넘기지 않지만 Form.Label과 Form.ErrorMessage는 폼 context를 넘깁니다. context를 읽는 렌더러는 그 값이 없어도 동작해야 합니다.
+
+Form.Label은 children을 받고 Form.ErrorMessage는 해당 필드의 포맷된 문구를 사용합니다. 둘은 바깥 label·span을 더하지 않습니다. 등록 렌더러가 그 요소와 htmlFor/id/style/className을 소유합니다. 단독 Form.ErrorMessage는 문구가 없어도 루트를 그립니다. Form.Label에 path가 없으면 htmlFor/id를 생략하며 입력 연결에는 절대 경로를 사용하십시오.
+
+### 입력 틀 {#input-frames}
+
+InputRenderer는 묶인 입력을 children으로 받고 해당 노드와 실효 required/readOnly/disabled/context를 받습니다. 소비 위치에서 Form의 값, 가장 가까운 FormProvider(Form children 안쪽도 포함), 플러그인 레지스트리 순으로 선택합니다. 더 가까운 FormProvider에 InputRenderer가 없으면 바깥 Provider의 틀을 가리고 플러그인으로 선택이 넘어갑니다.
+
+선택된 틀은 루트 필드(path ""), 객체·배열 필드까지 모든 묶인 입력을 감쌉니다. 그룹은 필드마다 unwrapped로 건너뛸 수 있고 틀은 자기 node로 분기할 수 있습니다. 루트 노드의 errors에는 모든 자손 오류가 포함되므로 필드 오류 상태를 표시하는 틀은 루트를 표시 대상으로 삼지 않아야 합니다. 다른 가지는 자손 오류를 자동 집계하지 않습니다.
+
+children을 정확히 한 번, 조건 없이 변하지 않는 위치에 그리십시오. 틀 루트와 children 사이의 요소·컴포넌트 경로가 바뀌면 입력이 교체됩니다. 새 입력은 현재 노드 값에서 시작하고 포커스를 잃으며 조합을 끝냅니다. 묶인 입력의 틀 교체에서도 해당 필드의 첨부 파일은 유지하지만 가지 입력이 교체되면 자손을 재마운트하여 그 첨부 기록은 정리합니다.
+
+`<Input unwrapped />`와 `<Form.Input unwrapped />`는 틀을 건너뜁니다. unwrapped는 위치마다 고정하십시오. 틀이 선택된 동안 묶인 Input에서 전환하면 입력이 교체됩니다. Form.Input에서 전환하면 틀이 없어도 필드 전체를 재마운트합니다. 부모가 Child에 넘긴 prop이나 presentation.FieldInputProps.unwrapped는 틀 선택이 아닌 실제 입력의 일반 payload로 전달됩니다.
 
 ### 하이브리드 부모 입력 {#hybrid-parent-inputs}
 
@@ -229,6 +247,14 @@ canonical node·inactive-value·오류 경로는 이 percent literal 표기를 �
 ref 할당은 소비자를 다시 렌더하지 않습니다. `formRef.current?.node`를 전달한 두 훅은 다음 렌더가 실제 노드를 넘길 때 연결되므로 React state 갱신으로 렌더를 일으켜야 하며 callback ref도 마찬가지입니다. `rebuild()`, 바뀐 schema를 읽는 `reset()`, validatorFactory 변경에 따른 root 교체는 소비자를 다시 렌더하지 않고 FormHandle.node를 바꿉니다. 소비자가 다시 렌더할 때까지 훅은 이전 root를 관찰합니다.
 
 가능하면 중복 이벤트 mirror 대신 useFieldNodeTracker와 render 중 live getter 읽기를 사용하십시오.
+
+### 필드 오류 훅 {#field-errors}
+
+`useFieldErrors(node)`는 노드가 속한 Form 아래에서 `{ errors, errorVisible, errorMessage, formatError }`를 반환합니다. 실제 입력 또는 InputRenderer·LabelRenderer·ErrorMessageRenderer에서 사용할 수 있습니다. FieldRenderer 그룹은 errors·errorVisible·errorMessage·formatError를 이미 props로 받으므로 해당 props를 읽습니다. 그 자리에서 훅을 호출하면 불필요한 구독이 추가됩니다. errors는 원시 목록이며 errorMessage는 null이 아닌 첫 포맷 문구, 숨김·부재 시 null입니다. 표시가 허용되지 않으면 formatError도 null을 반환합니다. 훅을 요청한 컴포넌트만 해당 필드의 값·상태·오류·제어 속성·스키마·경로와 폼의 렌더러 설정 변경을 구독합니다. 네 값이 Object.is로 같으면 반환 객체 참조를 유지합니다.
+
+훅을 쓰지 않는 입력은 props가 바뀔 때만 다시 렌더합니다. 오류만 또는 상호작용 상태(Edited·Touched·ErrorVisibility 재정의)만 바뀌면 그 순간 보류된 Refresh가 적용되는 경우를 제외하고 렌더하지 않습니다. 렌더 중 오류나 node.state를 읽는 입력은 useFieldErrors 또는 useFieldNodeTracker를 사용합니다. 입력과 그룹이 같은 문구를 중복 표시하지 않도록 표시 책임을 한곳에 두십시오.
+
+transition이나 hydration 중 React가 컴포넌트 렌더를 잠시 멈춘 사이 오류 표시가 허용되면 훅이 한 커밋 뒤처졌다가 해당 커밋 뒤에 따라잡을 수 있습니다. 구독하지 않는 형제 값·모듈 상태·시각을 읽는 포맷터는 관찰하는 노드 속성이 다음에 갱신될 때까지 결과가 다를 수 있으므로 인자에 의존하도록 작성하십시오. 필드도 같은 포맷터로 자기 문구를 계산하므로 해당 필드의 포맷터가 던지면 필드 전체가 fallback으로 바뀌고 formatError나 부품 렌더러를 교체하면 재시도합니다. 입력 자신의 useFieldErrors 호출에서만 발생한 예외에 한해 입력 경계가 잡으며 그 경우에는 formatError 교체로 재시도하지 않습니다.
 
 ## 가상화 {#virtualization}
 

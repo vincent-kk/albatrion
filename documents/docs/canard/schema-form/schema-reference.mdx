@@ -265,3 +265,5 @@ In this table `FieldInputProps.*` always means `presentation.FieldInputProps.*`.
 Mobile sliders accept `range`, `marks`, and `lazy` in that same prop group. `lazy: false` publishes on movement; omission publishes on release. Numeric-array selection still has the [first-match restriction](#ui-selection).
 
 UI bounds guide interaction; schema validation remains responsible for accepting or rejecting the final value.
+
+Input props are payload, not frame configuration. Follow the [position-specific unwrapped rules](./api-reference#input-frames) and [field error hook](./api-reference#field-errors) when an input needs feedback.

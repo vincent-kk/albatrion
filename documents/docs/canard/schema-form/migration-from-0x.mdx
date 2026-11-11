@@ -215,3 +215,81 @@ Use application tests to decide whether each item applies; renaming imports alon
 - Distinguish Edited/Touched from `isDivergent` and the current load baseline. Reacquire nodes on reentry/root replacement; detached nodes do not write into the live form. Replace cleanup-time writes with the [inactive resolver contract](./api-reference#inactive-listeners).
 - Use resolved custom-input locks and the [accessible naming contract](./schema-reference#accessibility). A branch object's local lock does not automatically lock all children: use `controls.fields` or a form-wide lock. Test enum empty options and radio/checkbox selectors.
 - Keep schemas and configuration immutable, clean up subscriptions, handle degraded diagnostics and execution failures separately from raw validation issues, and verify [CSP requirements](./quick-start#transpilation-csp) before deploying expression-based controls.
+
+## Renderer parts and input error feedback {#renderer-parts}
+
+These are breaking changes. Apply the names to Form props, FormProvider props and plugin members, and import the new dedicated prop types from @canard/schema-form. Old registration keys are silently ignored at runtime. TypeScript rejects old keys in object literals and JSX props; a plugin object typed elsewhere, such as one from an older plugin package, still compiles and its old keys are ignored. A successful render is not evidence that an old key applied. registerPlugin failure messages list the plugin’s slots by the new names.
+
+| Previous name | Current name / contract |
+| --- | --- |
+| `FormLabelRenderer` | `LabelRenderer` / `LabelRendererProps` |
+| `FormInputRenderer` | `InputRenderer` / `InputRendererProps` (frame) |
+| `FormErrorRenderer` | `ErrorMessageRenderer` / `ErrorMessageRendererProps` |
+| `Form.Error` / `FormErrorProps` | `Form.ErrorMessage` / `FormErrorMessageProps` |
+
+Form.Label and Form.ErrorMessage do not add an outer label/span. A renderer returning bare text must now own its label and apply htmlFor/id. The following snippets show the previous and current registration. Keep the component reference stable.
+
+```tsx
+// Before
+const LegacyLabel = ({ name }: FieldRendererProps) => <>{name}</>;
+registerPlugin({ FormLabelRenderer: LegacyLabel });
+```
+
+```tsx
+// After
+const Label = ({ htmlFor, id, children }: LabelRendererProps) => (
+  <label htmlFor={htmlFor} id={id}>{children}</label>
+);
+registerPlugin({ LabelRenderer: Label });
+```
+
+Replace the previous standalone slot:
+
+```tsx
+// Before
+<Form.Error path="/name" />
+```
+
+```tsx
+// After
+<Form.ErrorMessage path="/name" />
+```
+
+Real inputs no longer receive errors/errorVisible props or re-render just for error changes when no deferred Refresh is pending. Import useFieldErrors to opt into feedback. This excerpt changes only the feedback; retain your input control and its onChange.
+
+```tsx
+// Before
+const Input = ({ errors, errorVisible }: FieldInputProps) => (
+  <span>{errorVisible && errors[0]?.message}</span>
+);
+```
+
+```tsx
+// After
+const Input = ({ node }: FieldInputProps) => {
+  const { errorMessage } = useFieldErrors(node);
+  return <span>{errorMessage}</span>;
+};
+```
+
+Search all custom inputs, destructuring, member reads and prop payloads for `errors` and `errorVisible` (for example, `rg "errors|errorVisible" src`). Their @deprecated optional-never keys catch member access such as errors.map and passing values, but a bare `if (errorVisible)` can still compile and read undefined. Typecheck alone cannot finish this migration. For hook limits and ownership, read [useFieldErrors](./api-reference#field-errors).
+
+The default group renders no empty em when a message is absent. A selector such as `[data-path="/branch"] em` can therefore match a descendant’s message; check that the message element’s closest data-path is the desired field. The default group removes the non-required label’s trailing space and marks its existing required asterisk aria-hidden; a default standalone Form.Label now shows the same asterisk. Form.Label accepts children for explicit copy. These markup excerpts omit other attributes and input markup. Group label/error markup without a message:
+
+```html
+<!-- Before -->
+<label for="/name">name </label><em></em>
+<!-- After -->
+<label for="/name">name</label>
+```
+
+For a required standalone default label, the data-path div moves from inside the label to outside it; selectors such as `label > div` must change. Other attributes are omitted:
+
+```html
+<!-- Before -->
+<label for="/name"><div data-path="/name">name</div></label>
+<!-- After -->
+<div data-path="/name"><label for="/name">name <span aria-hidden="true">*</span></label></div>
+```
+
+Replace a pass-through input renderer with a deliberate frame, or omit it. Follow [the children and unwrapped lifetime contract](./api-reference#input-frames); changing the ancestor path restarts the input with the current node value and loses focus/composition. The [bound part defaults](./api-reference#renderer-parts) replace hand-drawn labels and errors.

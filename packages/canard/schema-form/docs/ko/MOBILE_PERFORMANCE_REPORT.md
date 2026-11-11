@@ -113,7 +113,7 @@ FieldProxy (memo 없음)
   ↓ [동기] priceNode: UpdateValue (immediate)
   ↓ [microtask] objectNode: UpdateValue
   ↓ [microtask] finalPriceNode: UpdateControlledProperties
-  ↓ finalPriceNode의 FieldProxy re-render (RERENDERING_EVENT에 UpdateControlledProperties 포함)
+  ↓ finalPriceNode의 FieldProxy re-render (FIELD_ERROR_TRACKING_EVENTS에 UpdateControlledProperties 포함)
 ```
 
 - price, quantity, taxRate, discountRate 중 하나를 변경하면 **변경 필드 1개 + finalPrice 1개 = 총 2개 Proxy re-render**
@@ -385,7 +385,7 @@ notifications.email 변경 (depth 5)
 userType 변경: 'guest' → 'admin'
   ↓ [동기] userTypeNode: UpdateValue (immediate)
   ↓ [microtask] 6개 의존 필드: UpdateControlledProperties (동시 발행)
-  ↓ 각 필드의 FieldProxy: RERENDERING_EVENT에 UpdateControlledProperties 포함 → re-render
+  ↓ 각 필드의 FieldProxy: FIELD_ERROR_TRACKING_EVENTS에 UpdateControlledProperties 포함 → re-render
   ↓ visible/active 상태 변경으로 일부 필드 표시/숨김 전환
 ```
 
@@ -399,13 +399,13 @@ userType 변경: 'guest' → 'admin'
 - FieldInputBridge memo를 통과하는 필드 (상태 변경분): 최대 6개 × 0.5ms = ~3ms
 - 총 userType 전환 비용: **< 5ms** — 모바일에서도 16ms 프레임 예산 내
 
-**RERENDERING_EVENT 4중 마스크 영향**:
+**FIELD_ERROR_TRACKING_EVENTS 공유 추적 마스크 영향**:
 
 이 예제에서 `UpdateControlledProperties`가 6개 필드에서 동시 발생합니다. 그러나:
 
 - 각 필드는 **자신의 노드**에서 발생한 `UpdateControlledProperties`만 수신
 - 다른 필드의 computed 변경이 전파되지 않음
-- 4중 마스크의 "불필요한 re-render" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
+- 공유 추적 마스크의 "불필요한 re-render" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
 
 **판정: PASS**
 
@@ -520,7 +520,7 @@ userType 변경: 'guest' → 'admin'
 | `src/components/Form/Form.tsx:53-56` (v0.10.6에만 있음)                                                   | `UPDATE_CHILDREN_MASK` — Form 리렌더 조건 |
 | `src/components/Form/Form.tsx:92-95` (v0.10.6에만 있음)                                                   | 스키마 전처리 (1회)                       |
 | `src/components/Form/components/FormCore/FormCore.tsx`                                                    | Form `memo` 래핑                          |
-| `src/components/FieldProxy/FieldProxy.tsx`                                                                | `RERENDERING_EVENT` 4중 마스크            |
+| `src/providers/FieldRendererContext/constants/fieldErrorTrackingEvents.ts`                                | `FIELD_ERROR_TRACKING_EVENTS` 공유 추적 마스크            |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | Proxy `memo` 미적용                       |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | Input `useMemo` 캐시                      |
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | FieldRenderer `memo` 래핑                 |
