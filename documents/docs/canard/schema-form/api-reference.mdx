@@ -138,7 +138,7 @@ For a child without a controlled declaration:
 - Copying an emitted object or array can remount the child even when the contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
 - Rejecting input without writing leaves the node's previous value and the typed draft on screen. Rejection alone does not restore an undeclared input's display; explicitly refresh it if that is the intended behavior.
 
-Changing only `value` or `required` on a `Child` is not an independent update channel: the rendered value and required state follow the node, and a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
+Changing only `value` or `required` on a `Child` is not an independent update channel: a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
 
 ## Plugins and FormProvider {#plugins}
 

@@ -65,7 +65,7 @@ const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
 );
 ```
 
-Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object schema makes the object terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
+Register this input through `fieldInputMap` or a field input definition that matches the object schema. A `presentation.FieldInput` on an object or array schema makes the branch terminal unless the schema also sets `options.terminal: false`, and `ChildFields` is then empty.
 
 ## Hybrid parents: write child values through the parent
 
@@ -100,7 +100,7 @@ const hybridSchema: JSONSchema = {
 };
 ```
 
-The overridden child callback receives the **evaluated value**, never the updater function the child may emit. Store `input` directly. The parent is still free to call its own `onChange` with an updater, as above. Keep `options.terminal: false` when an object or array uses `presentation.FieldInput`, so it has children to render.
+The overridden child callback receives the **evaluated value**, never the updater function the child may emit. Store `input` directly. The parent is still free to call its own `onChange` with an updater, as above. Follow the [custom input registration rule](#custom-input-contract) when registering this branch input.
 
 A synchronous parent commit preserves the emitting child's DOM, focus and local draft when its final value is exactly what it emitted. Primitive values compare by value; objects and arrays must keep the same reference. Sibling callbacks use the current parent callback. Other changed children still receive their own updates.
 
@@ -111,7 +111,7 @@ For an input without a controlled declaration, these limits apply:
 - **The parent copies an emitted object or array:** a new reference can remount the child even when its contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
 - **The parent rejects the input by making no write:** the node keeps its previous value, but the undeclared input's typed draft stays on screen. Rejection alone does not restore the displayed value; explicitly refresh it if that is the desired behavior.
 
-Changing only `value` or `required` on a `Child` is not an independent update channel. The rendered value and required state follow the node; a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
+Changing only `value` or `required` on a `Child` is not an independent update channel: a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
 
 ## Keep configuration stable for a mounted form
 
