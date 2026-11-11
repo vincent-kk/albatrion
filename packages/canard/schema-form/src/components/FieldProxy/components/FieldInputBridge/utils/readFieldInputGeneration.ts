@@ -1,5 +1,6 @@
 import type { Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
 /**
@@ -14,4 +15,6 @@ export const readFieldInputGeneration = (
   node: FieldNode,
   controlled: Optional<boolean>,
 ): number =>
-  controlled === true ? 0 : node.revision(FieldNodeEventType.RequestRefresh);
+  controlled === true
+    ? BIT_MASK_NONE
+    : node.revision(FieldNodeEventType.RequestRefresh);
