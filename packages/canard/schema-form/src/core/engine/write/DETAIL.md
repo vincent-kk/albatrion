@@ -170,6 +170,16 @@ batch 콜백이 실패해도 바깥 묶음은 앞서 표시한 쓰기를 정착�
 
 브라우저 reportError가 있으면 사용하고, 없으면 ErrorEvent를 보낼 수 있을 때 전달하여 취소 여부를 존중합니다. 그 통로가 없거나 취소되지 않으면 console.error로 노출하며 서버에서도 console.error를 사용합니다. process의 uncaughtException을 직접 발행하지 않아 폼이 호스트 프로세스의 예외 수명을 대신하지 않습니다. 묶음의 잎 분리와 caller 거부는 ownerless-leaves의 계약을 유지합니다.
 
+### input-relay-lifetime — 덮어쓴 입력의 동기 중계
+
+바인딩 전용 중계 진입은 함수 갱신자를 호출 자리의 배치 대기 값 또는 현재 local로 한 번 평가하고, 그 결과를 덮어쓴 콜백에 전달합니다. 노드마다 마지막 전달 값과 당시 경로를 기록하며, 콜백·외부 오류 지움·Edited 표시를 같은 배치에서 실행합니다. 콜백 뒤 노드 또는 루트가 폐기되면 나머지 상호작용 쓰기를 생략합니다.
+
+중계 진입의 finally는 진입 때 포착한 런타임의 batchDepth가 0일 때 남은 기록을 지웁니다. 사용자 배치 안의 중계는 바깥 flush까지 기록을 보존합니다. flush는 값 쓰기가 없어 돌아갈 때와 writeFieldNode 종료 뒤 남은 기록을 지웁니다. 첫 정착이 기록을 소비하므로 리스너의 후속 쓰기에는 입력 Refresh 제외가 전파되지 않습니다.
+
+### input-relay-cleanup — 배치 안의 선행 커밋과 실패
+
+배치 콜백 안의 즉시 reset도 첫 정착으로서 중계 목록을 소비하며, 뒤에 표시한 쓰기는 해당 목록으로 Refresh를 생략하지 않습니다. 표시 시 유효했던 가상 배열을 호출자가 flush 전에 변형하여 정착 진입이 실패해도 남은 중계 기록은 바깥 flush가 정리합니다.
+
 ## Boundary Exemptions
 
 ### `utils/report/forEachFailureLeaf.ts` — 호스트 전달 규칙의 단일 소유

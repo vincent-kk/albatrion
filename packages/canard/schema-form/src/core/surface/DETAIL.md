@@ -73,6 +73,10 @@ NODE-044. 같은 경로가 살아나도 옛 구독은 새 노드로 이전하지
 
 SURFACE-062. 방문은 자기 포함 전위이며 false는 그 하위만 생략합니다. 현재 형상만 걷되 떼어진 시작점은 고정된 마지막 구조를 걷습니다. 읽기만 하는 방문은 사슬을 열지 않고 첫 쓰기에서 지연 배치가 열립니다. 순회 중 읽기는 직전 커밋이며 visitor가 던져도 표시한 쓰기를 커밋한 뒤 다시 던집니다. 바깥 배치·리스너·오류 관찰자의 기존 진입 규칙을 우회하는 통로가 되어서는 안 됩니다.
 
+### binding-input-relay — 입력 중계의 바인딩 경계
+
+relayFieldNodeInput은 덮어쓴 입력 콜백을 엔진의 동기 중계 진입에 연결하는 바인딩 전용 통로입니다. 함수 갱신자의 평가와 중계 기록의 수명은 엔진이 소유합니다. inputRelays는 살아 있는 런타임의 노드 참조를 보유하는 작업 칸이므로 batchWrites와 같이 FieldNodeRuntimeSeed에서 제외합니다. FieldNode의 공개 메서드나 패키지 소비자 진입점에는 중계 이름과 입력 출처 옵션을 더하지 않습니다.
+
 ## Boundary Exemptions
 
 ### `runtime/requireRuntimeFieldNode.ts` — 검증 전용 runtime bridge
