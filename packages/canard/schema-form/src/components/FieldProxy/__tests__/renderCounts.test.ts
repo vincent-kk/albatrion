@@ -8,7 +8,13 @@ interface Scenario {
   writes: {
     write: string;
     target: string;
-    renders: { byPath: Record<string, number> };
+    renders: {
+      byPath: Record<string, number>;
+      inputComponents: {
+        bridge: Record<string, number>;
+        input: Record<string, number>;
+      };
+    };
     remounts: string[];
   }[];
 }
@@ -85,3 +91,44 @@ it('F-B renders each field nine times for global context and error visibility ch
     }
   }
 });
+
+it('pins bridge and real input calls when visible errors alone change', () => {
+  for (const scenario of scenarios) {
+    const result = scenario.writes.find(
+      ({ write }) => write === 'visible external error /a',
+    )!;
+    expect(
+      ['', '/a', '/b', '/o', '/o/x', '/o/y'].map(
+        (path) => result.renders.inputComponents.bridge[path] ?? 0,
+      ),
+    ).toEqual([1, 1, 0, 0, 0, 0]);
+    expect(
+      ['/a', '/b', '/o/x', '/o/y'].map(
+        (path) => result.renders.inputComponents.input[path] ?? 0,
+      ),
+    ).toEqual([1, 0, 0, 0]);
+    expect(result.remounts).toEqual([]);
+  }
+});
+
+it.each(['Form', 'FormProvider'])(
+  'pins bridge and real input calls for %s inline formatError changes',
+  (owner) => {
+    for (const scenario of scenarios) {
+      const result = scenario.writes.find(
+        ({ write }) => write === `${owner} re-render, new inline formatError`,
+      )!;
+      expect(
+        ['', '/a', '/b', '/o', '/o/x', '/o/y'].map(
+          (path) => result.renders.inputComponents.bridge[path] ?? 0,
+        ),
+      ).toEqual([1, 1, 1, 1, 1, 1]);
+      expect(
+        ['/a', '/b', '/o/x', '/o/y'].map(
+          (path) => result.renders.inputComponents.input[path] ?? 0,
+        ),
+      ).toEqual([0, 0, 0, 0]);
+      expect(result.remounts).toEqual([]);
+    }
+  },
+);

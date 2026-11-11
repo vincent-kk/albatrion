@@ -1,4 +1,4 @@
-// Invoked by count tests; run the diagnostic tool with a private bundle directory.
+// Invoked by count tests; all writes include visible errors and inline Form/FormProvider formatError updates.
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -7,9 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { prepareReactBundles } from './prepare-react-bundles.mjs';
 
-const packageRoot = fileURLToPath(
-  new URL('../../../../../', import.meta.url),
-);
+const packageRoot = fileURLToPath(new URL('../../../../../', import.meta.url));
 const tool = fileURLToPath(
   new URL('./measure-react-render-counts.mjs', import.meta.url),
 );
@@ -24,6 +22,7 @@ try {
       outputDirectory,
       'change',
       {
+        labelFieldInputBridge: true,
         entry: resolve(
           packageRoot,
           'src/__tests__/fixtures/runtimeCounts.entry.tsx',
