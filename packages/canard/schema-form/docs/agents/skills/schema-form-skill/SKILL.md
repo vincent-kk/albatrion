@@ -56,6 +56,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | Absolute `/a/b`    | ✓                    | ✓                                    | ✓               |
 | Relative `..`, `.` | ✓                    | ✓                                    | ✗               |
 | Wildcard `*`       | ✗                    | ✓ (first match; `findNodes` for all) | ✓               |
+| Pattern starting `^` | — | — | `RegExp.test` on escaped path |
 | Context `@`        | ✓                    | ✗ (`null`; `findNodes` gives `[]`)   | ✗               |
 
 ### Controls

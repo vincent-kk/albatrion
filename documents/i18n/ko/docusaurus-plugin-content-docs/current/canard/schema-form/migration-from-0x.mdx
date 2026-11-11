@@ -138,7 +138,31 @@ terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습�
 
 `Form.Field`, `Form.Input`, `Form.Render`에는 별도의 마운트 고정 컴포넌트·children override가 있습니다. 이 override에는 live context, 컴포넌트 내부 hook 또는 의도적인 새 key를 사용하십시오. Form 전체 live 설정이 이 [조합 계약](./schema-reference#input-resolution)을 바꾸지는 않습니다.
 
-`/**`처럼 사용할 수 없는 맵 키는 StrictMode에서도 커밋 뒤 `FormErrorCode.FormTypeInputMap`, `origin: 'load'`를 한 번 보고합니다. 최초 실패는 load fallback을 유지하고, 실행 중 교체 실패는 트리와 마지막 유효 맵을 유지합니다. 유효한 맵 참조로 교체하면 복구합니다. 입력 컴포넌트가 렌더 중 던진 예외는 여전히 렌더 실패이므로 던진 코드만으로 분류하지 마십시오.
+`^/invalid[`처럼 컴파일할 수 없는 명시적 패턴은 StrictMode에서도 커밋 뒤 `FormErrorCode.FormTypeInputMap`, `origin: 'load'`를 한 번 보고합니다. 최초 실패는 load fallback을 유지하고, 실행 중 교체 실패는 트리와 마지막 유효 맵을 유지합니다. 유효한 맵 참조로 교체하면 복구합니다. 입력 컴포넌트가 렌더 중 던진 예외는 여전히 렌더 실패이므로 던진 코드만으로 분류하지 마십시오.
+
+## 입력 맵 키 {#input-map-keys}
+
+0.16에서 호환성을 깨는 변경입니다. 선행 `^`가 없는 키는 정규식 폴백을 사용하지 않습니다. 기존 단일 세그먼트 `*` wildcard를 제외하면 텍스트로 비교합니다. 자손 캡처에 의존한 일반 경로 키를 포함해 개발 경고는 없으며, 그 의존은 자동으로 감지할 수 없습니다.
+
+| 의도 또는 0.16 키 | 새 표기 | 일치 | 비일치 |
+| --- | --- | --- | --- |
+| `'/contact'`로 한 노드를 의도 | `'/contact'` | `/contact` | `/contact/first`, `/contacts`, `/a/contact/b` |
+| 직접 자식만 | `'/contact/*'` | `/contact/first` | `/contact`, `/contact/a/b` |
+| 노드를 제외한 모든 자손 | `'^/contact/'` | `/contact/first`, `/contact/a/b` | `/contact`, `/contacts` |
+| 노드와 모든 자손 | 같은 입력을 쓰는 두 키: `'/contact'`, `'^/contact/'` | `/contact`, `/contact/a/b` | `/contacts` |
+| 경계를 제한하는 패턴 대안 | `'^/contact(?:/\|$)'` | `/contact`, `/contact/first` | `/contacts` |
+| 잘못된 자손 경계: `'^/contact'` | 위의 경계가 있는 표기 사용 | `^/contact`는 `/contacts`에도 일치 | `/a/contact`에는 비일치 |
+| 패턴 `'/user/(name\|email)'` | `'^/user/(name\|email)$'`로 이전 substring 범위를 의도적으로 축소 | `/user/name`, `/user/email` | `/a/user/name`, `/user/email/child` |
+| 패턴 `'#/users/\\d+/profile'` | `'^/users/\\d+/profile$'` (`#` 제거) | `/users/12/profile` | `/users/a/profile`, `/users/12/profile/more` |
+| `'/name'`이 경로 중간에 일치 | 한 깊이는 `'/*/name'`, 모든 깊이는 `'^.*/name$'` | `/user/name` | `/user/name/child` |
+| `'contact.email'`, `'items.0.name'`의 `.`이 `/`에 일치 | `'/contact/email'`, `'/items/*/name'` | `/contact/email`, `/items/0/name` | `/contact/email/child`, `/items/0/deep/name` |
+| `'email'`의 substring 매칭 | `'^.*/email$'` 또는 `test` 함수를 가진 정의 | `/email`, `/contact/email` | `/emailBackup`, `/email/child` |
+| `'/name$'`의 suffix 패턴 | `'^.*/name$'` | `/name`, `/user/name` | `/username`, `/name/child` |
+| `'/items/**/name'`, `'/price['`의 컴파일 오류 | 그 리터럴 이름을 의도할 때만 유지하며 더 이상 오류가 아님 | `/items/**/name`, `/price[` | `/items/0/name`, `/price` |
+| `{ '/contact': A, '/contact/first': B }`가 둘 다 A를 선택 | 유지하면 자식은 B를 선택 | `/contact`는 A, `/contact/first`는 B | A는 `/contact/first`를 캡처하지 않음 |
+| 기존 `^` 패턴과 유효한 `*` wildcard | 유지 | `'^/contact$'` → `/contact`; `'/items/*/name'` → `/items/0/name` | 각각 `/contact/child`, `/items/0/deep/name` 제외 |
+
+두 경로만 의도했다면 `'/user/(name|email)': Input`을 `'^/user/(name|email)$': Input`으로 바꿉니다. `^`만 추가하면 끝은 열린 채로 유지되지만 경로 중간 매칭은 사라집니다. 이전 substring 동작 전체를 유지하려면 `^[\s\S]*` 같은 접두사가 필요합니다(JavaScript 문자열에서는 역슬래시를 두 번 씁니다). 위의 경계를 제한하는 표기를 권합니다. 패턴은 fragment가 없는 escaped 데이터 경로를 봅니다. 순서·분기 입력·조용한 비매칭은 [경로 매칭](./schema-reference#input-map-keys)을 참조하십시오.
 
 ## 관찰, 숨겨진 폼, 값 추론 {#observation-types}
 

@@ -34,7 +34,7 @@ it.each([false, true])(
           type: 'object',
           properties: { name: { type: 'string' } },
         }}
-        fieldInputMap={{ '/**': Input }}
+        fieldInputMap={{ '^/**': Input }}
         validationMode={ValidationMode.None}
         onError={onError}
       />
@@ -48,7 +48,7 @@ it.each([false, true])(
         origin: 'load',
         error: expect.objectContaining({
           code: FormErrorCode.FormTypeInputMap,
-          details: expect.objectContaining({ path: '/**' }),
+          details: expect.objectContaining({ path: '^/**' }),
         }),
       }),
     );
@@ -121,7 +121,7 @@ it.each(['reset', 'rebuild'] as const)(
         ref={ref}
         jsonSchema={{ type: 'string' }}
         fieldInputMap={{
-          '/**': () => <input aria-label="Invalid mapped input" />,
+          '^/**': () => <input aria-label="Invalid mapped input" />,
         }}
         validationMode={ValidationMode.None}
         onError={onError}

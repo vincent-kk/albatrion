@@ -22,13 +22,20 @@ const definitions: FieldInputDefinition[] = [
 
 ```typescript
 fieldInputMap: {
-  '/items/*/name': ItemNameInput,
-  '/metadata/*': MetadataValueInput,
+  '/settings/theme/color': ColorInput,
+  '^/settings/': SettingsInput,
 }
 ```
 
-- `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). A key containing `**` is not supported (`troubleshooting.md` describes the symptom), so list each depth with `*`.
-- Escape literal `/` in a property name as `~1`, `~` as `~0` — inside map keys as well (`jsonpointer.md`).
+| Key | Meaning |
+| --- | --- |
+| Starts with `^` | `RegExp.test` against the escaped node path; add `$` to anchor the end. |
+| Starts with `/` or `#/`, contains a segment exactly `*`, and does not end with `/` | Each `*` consumes one segment (array index or object key); other segments are text. |
+| Otherwise | Exact text after canonicalizing absolute pointers; relative text matches no node. |
+
+Names use path escaping: `/` → `~1`, `~` → `~0`, a name exactly `*` → `%2A`. `''` and `'#'` are the root; `'/'` is an empty-name child. `**`, parentheses and brackets are literal in non-pattern keys; there is no recursive wildcard or warning.
+
+Inside a `^` pattern, `*` is a quantifier: use `[^/]+` for one nonempty segment. First matching key wins regardless of kind; put exact keys before wildcards before patterns, and local exceptions before spreading a shared map. Pattern-mapped branches must render `ChildFields` ([contract below](#custom-input-contract)). See the [path recipes and silent-key behavior](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#input-map-keys) and [migration table](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/migration-from-0x#input-map-keys).
 
 ## Skip Remounts for a Controlled Input (`controlled`)
 

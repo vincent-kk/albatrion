@@ -51,9 +51,9 @@ describe('normalizeFieldInputMap', () => {
   describe('정규식 패턴 매칭', () => {
     test('정규식 패턴을 key로 사용하는 경우', () => {
       const inputMap: FieldInputMap = {
-        '/user/(name|email)': TestUserNameComponent,
-        '/api/v[12]/users': TestStringComponent,
-        '/settings/\\d+': TestNumberComponent,
+        '^/user/(name|email)$': TestUserNameComponent,
+        '^/api/v[12]/users$': TestStringComponent,
+        '^/settings/\\d+$': TestNumberComponent,
         '^/admin.*': TestStringComponent,
       };
 
@@ -223,9 +223,9 @@ describe('normalizeFieldInputMap', () => {
 
     test('복잡한 정규식 패턴', () => {
       const inputMap: FieldInputMap = {
-        '/orders/\\d{4}-\\d{2}-\\d{2}': TestStringComponent, // 날짜 패턴
-        '/files/.*\\.(jpg|png|gif)$': TestStringComponent, // 이미지 파일 패턴
-        '/api/(?:users|posts)/\\d+/comments': TestStringComponent, // 비캡처 그룹
+        '^/orders/\\d{4}-\\d{2}-\\d{2}$': TestStringComponent, // 날짜 패턴
+        '^/files/.*\\.(jpg|png|gif)$': TestStringComponent, // 이미지 파일 패턴
+        '^/api/(?:users|posts)/\\d+/comments$': TestStringComponent, // 비캡처 그룹
       };
 
       const result = normalizeFieldInputMap(inputMap);
@@ -334,7 +334,7 @@ describe('normalizeFieldInputMap', () => {
     test('정규식과 정확한 경로 매칭의 우선순위', () => {
       const inputMap: FieldInputMap = {
         '/user/profile': TestUserNameComponent, // 정확한 경로
-        '/user/.*': TestStringComponent, // 정규식 패턴
+        '^/user/.*$': TestStringComponent, // 정규식 패턴
       };
 
       const result = normalizeFieldInputMap(inputMap);
@@ -381,19 +381,19 @@ describe('normalizeFieldInputMap', () => {
       // 각각 에러가 발생해야 함
       expect(() => {
         normalizeFieldInputMap({
-          '/invalid[regex': TestStringComponent, // 닫히지 않은 bracket
+          '^/invalid[regex': TestStringComponent, // 닫히지 않은 bracket
         });
       }).toThrow('Invalid key pattern in FieldInputMap.');
 
       expect(() => {
         normalizeFieldInputMap({
-          '/another(unclosed': TestStringComponent, // 닫히지 않은 parenthesis
+          '^/another(unclosed': TestStringComponent, // 닫히지 않은 parenthesis
         });
       }).toThrow('Invalid key pattern in FieldInputMap.');
 
       expect(() => {
         normalizeFieldInputMap({
-          '/invalid*+': TestStringComponent, // 잘못된 quantifier
+          '^/invalid*+': TestStringComponent, // 잘못된 quantifier
         });
       }).toThrow('Invalid key pattern in FieldInputMap.');
     });
@@ -712,10 +712,10 @@ describe('normalizeFieldInputMap', () => {
     test('정규식, 인덱스 패턴, 정확한 경로가 모두 섞인 경우', () => {
       const inputMap: FieldInputMap = {
         '/users/*/name': TestUserNameComponent, // 인덱스 패턴
-        '/users/\\d+/email': TestUserEmailComponent, // 정규식 (숫자 인덱스만)
+        '^/users/\\d+/email$': TestUserEmailComponent, // 정규식 (숫자 인덱스만)
         '/users/admin/settings': TestStringComponent, // 정확한 경로
-        '/api/v\\d+/.*': TestStringComponent, // 정규식 (버전 + 와일드카드)
-        '/files/*/images/(thumb|full)': TestStringComponent, // 인덱스 + 정규식 혼합
+        '^/api/v\\d+/.*$': TestStringComponent, // 정규식 (버전 + 와일드카드)
+        '/files/*/images/(thumb|full)': TestStringComponent, // wildcard와 리터럴 세그먼트
       };
 
       const result = normalizeFieldInputMap(inputMap);
@@ -857,19 +857,19 @@ describe('normalizeFieldInputMap', () => {
           required: true,
           jsonSchema: { type: 'string' },
         }),
-      ).toBe(false); // 'gallery'는 배열 인덱스가 아님 (정규식이 아닌 인덱스 패턴으로 처리됨)
+      ).toBe(false); // 마지막 세그먼트 '(thumb|full)'은 리터럴이므로 'thumb'와 다릅니다.
     });
 
-    test('Fragment와 정규식 조합', () => {
+    test('정규식은 fragment 없는 노드 경로를 비교', () => {
       const inputMap: FieldInputMap = {
-        '#/users/\\d+/profile': TestUserNameComponent,
-        '#/admin/(users|posts|settings)': TestStringComponent,
+        '^/users/\\d+/profile$': TestUserNameComponent,
+        '^/admin/(users|posts|settings)$': TestStringComponent,
       };
 
       const result = normalizeFieldInputMap(inputMap);
       expect(result).toHaveLength(2);
 
-      // Fragment 제거 후 정규식 매칭
+      // 정규식은 fragment 없는 경로를 검사합니다.
       expect(
         result[0].test({
           schemaType: 'string',
@@ -1210,9 +1210,9 @@ describe('normalizeFieldInputMap', () => {
 
   describe('에러 처리', () => {
     test('잘못된 경로 패턴에 대한 에러 처리', () => {
-      // pathExactMatchFnFactory에서 정규식 생성에 실패할 수 있는 패턴들
+      // 명시적인 정규식의 컴파일 실패를 검증합니다.
       const invalidPatterns: FieldInputMap = {
-        '/invalid[regex': TestStringComponent,
+        '^/invalid[regex': TestStringComponent,
       };
 
       // 에러가 발생해야 함

@@ -21,14 +21,16 @@ Invalid key pattern in FieldInputMap.
   │  Error:  ${errorMessage}
   ╰${divider}
 
-FieldInputMap keys must be valid JSONPointer paths or patterns.
-The provided pattern could not be compiled into a valid path matcher.
+Only FieldInputMap keys starting with '^' are regular expressions.
+The provided expression could not be compiled. Other keys compare as text,
+except absolute pointers with a standalone '*' segment (one segment per star).
 
 Valid patterns:
   • Exact paths:    '/property/nested'
   • Root path:      ''
   • With wildcard:  '/items/*/name'  (matches any index)
   • Fragment:       '#/definitions/User'
+  • Expression:     '^/users/(name|email)$'
 
 How to fix:
   1. Use valid JSONPointer syntax:
@@ -41,6 +43,7 @@ How to fix:
      • '/' in property names → '~1'
      • '~' in property names → '~0'
 
-  3. Check for typos or invalid regex patterns in the key
+  3. Fix the regular expression after '^'. Add '$' to anchor its end.
+     Patterns test escaped node paths and do not use a fragment '#'.
 `.trim();
 };

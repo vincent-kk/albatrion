@@ -8,12 +8,19 @@ Symptom → cause → fix, grouped by subsystem.
 
 ## fieldInputMap
 
-`**` is not a recursive wildcard. A key such as `/items/**/name` that fails pattern compilation keeps the form in fallback; `onError` receives `FormErrorCode.FormTypeInputMap` with `origin: 'load'` once, including in StrictMode. `*` matches exactly ONE segment (array indexes and dynamic object keys alike), so list each depth with `*`:
+**My mapped input is not applied** — a pattern key must start with `^`; except for the single-segment `*` wildcard, every other key is compared as text.
+
+- Use a data path such as `/contact/email`, not another library's `contact.email` or `items[0].name` notation; a schema location such as `#/properties/contact` does not mean `/contact`.
+- In a `^` pattern, `*` is a regex quantifier; use `[^/]+` for one nonempty segment. Write a backslash twice in a JavaScript string (`'^/users/\\d+$'`).
+- `''` or `'#'` selects the root; `'/'` selects an empty-name child.
+- An earlier matching key wins. A mapped object or array input must render `ChildFields` or its children disappear ([custom input contract](field-input.md#custom-input-contract)).
+
+`*` consumes exactly one segment. `**` is a literal property name, not a recursive wildcard, and neither throws nor warns:
 
 ```typescript
 fieldInputMap: {
   '/items/*/name': ItemNameInput,   // ✅
-  '/items/**/name': ItemNameInput,  // ❌ invalid pattern: form stays in fallback
+  '/items/**/name': ItemNameInput,  // literal ** name; not recursive
 }
 ```
 
