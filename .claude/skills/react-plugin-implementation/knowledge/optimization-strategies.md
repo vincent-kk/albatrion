@@ -1,20 +1,20 @@
-# 성능 최적화 전략
+# Performance Optimization Strategies
 
-@canard/schema-form 플러그인 개발 시 성능 최적화를 위한 전략들입니다.
+Strategies for performance optimization when developing an @canard/schema-form plugin.
 
-## useHandle 훅 사용
+## Using the useHandle Hook
 
-**출처**: `@winglet/react-utils`
+**Source**: `@winglet/react-utils`
 
-**목적**: 이벤트 핸들러 메모이제이션으로 불필요한 리렌더링 방지
+**Purpose**: memoize event handlers so unnecessary re-renders are avoided
 
-### 기본 사용법
+### Basic Usage
 
 ```typescript
 import { useHandle } from '@winglet/react-utils';
 
 const FormTypeInputString = ({ onChange, ...props }: Props) => {
-  // ✅ useHandle 사용 - 컴포넌트 리렌더링 시에도 동일한 참조 유지
+  // ✅ useHandle - the same reference is kept even when the component re-renders
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
@@ -23,21 +23,21 @@ const FormTypeInputString = ({ onChange, ...props }: Props) => {
 };
 ```
 
-### useCallback과의 차이
+### Difference from useCallback
 
 ```typescript
-// ❌ useCallback - 의존성 배열 관리 필요, 복잡함
+// ❌ useCallback - the dependency array must be managed, and it gets complicated
 const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
   onChange(event.target.value);
-}, [onChange]);  // onChange가 변경되면 handleChange도 재생성
+}, [onChange]);  // when onChange changes, handleChange is recreated too
 
-// ✅ useHandle - 의존성 배열 불필요, 항상 최신 값 참조
+// ✅ useHandle - no dependency array, and it always reads the latest value
 const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
   onChange(event.target.value);
 });
 ```
 
-### 복잡한 로직에서도 사용
+### Use It in Complex Logic Too
 
 ```typescript
 const FormTypeInputNumber = ({
@@ -49,7 +49,7 @@ const FormTypeInputNumber = ({
     const rawValue = event.target.value;
     let numValue = parseFloat(rawValue);
     
-    // 복잡한 validation 로직
+    // Complex validation logic
     if (isNaN(numValue)) numValue = 0;
     if (jsonSchema.minimum !== undefined) {
       numValue = Math.max(numValue, jsonSchema.minimum);
@@ -65,11 +65,11 @@ const FormTypeInputNumber = ({
 };
 ```
 
-## useMemo로 props 연산 최적화
+## Optimize Prop Computation with useMemo
 
-**목적**: 복잡한 props 연산을 캐싱하여 매 렌더링마다 재계산 방지
+**Purpose**: cache complex prop computation so it is not recalculated on every render
 
-### 기본 패턴
+### Basic Pattern
 
 ```typescript
 const FormTypeInputString = ({
@@ -80,7 +80,7 @@ const FormTypeInputString = ({
   variant: variantProp,
   label: labelProp,
 }: Props) => {
-  // ✅ 여러 props를 한 번에 계산
+  // ✅ Compute several props at once
   const [size, variant, label] = useMemo(() => {
     return [
       sizeProp || context.size || 'medium',
@@ -93,31 +93,31 @@ const FormTypeInputString = ({
 };
 ```
 
-### 언제 useMemo를 사용하지 않아도 되는가?
+### When useMemo Is Unnecessary
 
 ```typescript
-// ✅ 단순 연산은 useMemo 불필요
+// ✅ Simple computation does not need useMemo
 const FormTypeInputString = ({
   disabled,
   readOnly,
 }: Props) => {
-  // 간단한 논리 연산 - 그냥 사용
+  // A simple logical operation - just use it
   const isDisabled = disabled || readOnly;
   
   return <TextField disabled={isDisabled} />;
 };
 
-// ✅ Primitive 값은 useMemo 불필요
+// ✅ Primitive values do not need useMemo
 const FormTypeInputString = ({
   jsonSchema,
 }: Props) => {
-  const placeholder = jsonSchema.placeholder || '';  // useMemo 불필요
+  const placeholder = jsonSchema.placeholder || '';  // useMemo is unnecessary
   
   return <TextField placeholder={placeholder} />;
 };
 ```
 
-### 복잡한 객체 생성 시
+### When Creating a Complex Object
 
 ```typescript
 const FormTypeInputDate = ({
@@ -128,7 +128,7 @@ const FormTypeInputDate = ({
   disabled,
   size,
 }: Props) => {
-  // ✅ 중첩된 객체는 useMemo로 메모이제이션
+  // ✅ Memoize nested objects with useMemo
   const slotProps = useMemo(() => ({
     textField: {
       id: path,
@@ -150,42 +150,42 @@ const FormTypeInputDate = ({
 };
 ```
 
-## 비제어 컴포넌트로 리렌더링 방지
+## Prevent Re-renders with Uncontrolled Components
 
-**가장 중요한 최적화**: `defaultValue` 사용
+**The most important optimization**: use `defaultValue`
 
-### 비제어 vs 제어 성능 비교
+### Uncontrolled vs Controlled Performance
 
 ```typescript
-// ❌ 제어 컴포넌트 - 매 타이핑마다 리렌더링
+// ❌ Controlled component - re-renders on every keystroke
 const ControlledInput = ({ value, onChange }: Props) => {
-  console.log('Render');  // 매 타이핑마다 출력
+  console.log('Render');  // Prints on every keystroke
   
   return (
     <TextField
-      value={value}  // 제어
+      value={value}  // Controlled
       onChange={(e) => onChange(e.target.value)}
     />
   );
 };
 
-// ✅ 비제어 컴포넌트 - 초기 렌더링 후 리렌더링 없음
+// ✅ Uncontrolled component - no re-render after the initial render
 const UncontrolledInput = ({ defaultValue, onChange }: Props) => {
-  console.log('Render');  // 초기 1회만 출력
+  console.log('Render');  // Prints only once, on the initial render
   
   return (
     <TextField
-      defaultValue={defaultValue}  // 비제어
+      defaultValue={defaultValue}  // Uncontrolled
       onChange={(e) => onChange(e.target.value)}
     />
   );
 };
 ```
 
-### 제어 컴포넌트가 필요한 경우
+### When a Controlled Component Is Needed
 
 ```typescript
-// ✅ 실시간 validation이 필요한 경우만 제어 컴포넌트 사용
+// ✅ Use a controlled component only when real-time validation is required
 const FormTypeInputEmail = ({ value, onChange }: Props) => {
   const isValid = useMemo(() => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -193,7 +193,7 @@ const FormTypeInputEmail = ({ value, onChange }: Props) => {
   
   return (
     <TextField
-      value={value}  // 제어 컴포넌트 (실시간 validation 때문에)
+      value={value}  // Controlled component (because of real-time validation)
       onChange={(e) => onChange(e.target.value)}
       error={!isValid && value.length > 0}
       helperText={!isValid ? 'Invalid email format' : ''}
@@ -202,20 +202,20 @@ const FormTypeInputEmail = ({ value, onChange }: Props) => {
 };
 ```
 
-## Context 구독 최소화
+## Minimize Context Subscriptions
 
-**문제**: Context가 변경되면 모든 구독 컴포넌트가 리렌더링
+**Problem**: when context changes, every subscribed component re-renders
 
-### 필요한 값만 구독
+### Subscribe Only to the Values You Need
 
 ```typescript
-// ❌ 전체 Context 구독
+// ❌ Subscribe to the whole context
 const FormTypeInputString = ({ context, ...props }: Props) => {
-  // context의 어떤 값이 변경되어도 리렌더링
+  // Re-renders when any context value changes
   return <TextField size={context.size} />;
 };
 
-// ✅ 필요한 값만 추출하여 사용
+// ✅ Extract and use only the values you need
 const FormTypeInputString = ({
   context,
   size: sizeProp,
@@ -223,27 +223,27 @@ const FormTypeInputString = ({
 }: Props) => {
   const size = useMemo(() => {
     return sizeProp || context.size || 'medium';
-  }, [sizeProp, context.size]);  // context.size만 구독
+  }, [sizeProp, context.size]);  // Subscribe to context.size only
   
   return <TextField size={size} />;
 };
 ```
 
-## 조건부 렌더링 최적화
+## Optimize Conditional Rendering
 
-### Early Return 패턴
+### Early Return Pattern
 
 ```typescript
 const FormTypeInputArray = ({
   ChildNodeComponents,
   jsonSchema,
 }: Props) => {
-  // ✅ 조건을 먼저 체크하여 불필요한 연산 방지
+  // ✅ Check the condition first so unnecessary work is skipped
   if (!ChildNodeComponents || ChildNodeComponents.length === 0) {
     return <EmptyState />;
   }
   
-  // 이하 복잡한 렌더링 로직
+  // Complex rendering logic follows
   return (
     <Box>
       {ChildNodeComponents.map((Child, index) => (
@@ -254,10 +254,10 @@ const FormTypeInputArray = ({
 };
 ```
 
-### 조건부 컴포넌트 분리
+### Split Conditional Components
 
 ```typescript
-// ❌ 하나의 컴포넌트에서 조건 처리 - 복잡함
+// ❌ Handle the condition in one component - it gets complicated
 const FormTypeInputString = ({ isPassword, ...props }: Props) => {
   if (isPassword) {
     return <PasswordField {...props} />;
@@ -265,7 +265,7 @@ const FormTypeInputString = ({ isPassword, ...props }: Props) => {
   return <TextField {...props} />;
 };
 
-// ✅ 별도 컴포넌트로 분리 - 명확함
+// ✅ Split into separate components - it stays clear
 const FormTypeInputString = (props: Props) => {
   return <TextField {...props} />;
 };
@@ -274,7 +274,7 @@ const FormTypeInputPassword = (props: Props) => {
   return <PasswordField {...props} />;
 };
 
-// Definition 단계에서 분리
+// Split at the definition stage
 export const FormTypeInputStringDefinition = {
   Component: FormTypeInputString,
   test: { type: 'string' },
@@ -286,20 +286,20 @@ export const FormTypeInputPasswordDefinition = {
 };
 ```
 
-## ChildNodeComponents 최적화
+## ChildNodeComponents Optimization
 
-**중요**: ChildNodeComponents는 이미 메모이제이션된 컴포넌트
+**Important**: ChildNodeComponents are already memoized components
 
-### 올바른 사용법
+### Correct Usage
 
 ```typescript
 const FormTypeInputArray = ({ ChildNodeComponents }: Props) => {
-  // ✅ 그대로 렌더링 - props 전달 금지
+  // ✅ Render them as they are - do not pass props
   return (
     <Box>
       {ChildNodeComponents.map((Child, index) => (
         <Box key={index}>
-          <Child />  {/* ✅ props 없이 */}
+          <Child />  {/* ✅ No props */}
         </Box>
       ))}
     </Box>
@@ -307,16 +307,16 @@ const FormTypeInputArray = ({ ChildNodeComponents }: Props) => {
 };
 ```
 
-### 잘못된 사용법
+### Incorrect Usage
 
 ```typescript
 const FormTypeInputArray = ({ ChildNodeComponents, context }: Props) => {
-  // ❌ props 전달 시 메모이제이션 무효화
+  // ❌ Passing props invalidates memoization
   return (
     <Box>
       {ChildNodeComponents.map((Child, index) => (
         <Box key={index}>
-          <Child context={context} />  {/* ❌ props 전달 금지 */}
+          <Child context={context} />  {/* ❌ Do not pass props */}
         </Box>
       ))}
     </Box>
@@ -324,13 +324,13 @@ const FormTypeInputArray = ({ ChildNodeComponents, context }: Props) => {
 };
 ```
 
-## 값 변환 최적화
+## Optimize Value Conversion
 
-### 값 변환은 useMemo로
+### Convert Values with useMemo
 
 ```typescript
 const FormTypeInputDate = ({ defaultValue, onChange }: Props) => {
-  // ✅ defaultValue 변환을 메모이제이션
+  // ✅ Memoize the defaultValue conversion
   const dateValue = useMemo(() => {
     if (!defaultValue) return null;
     try {
@@ -340,7 +340,7 @@ const FormTypeInputDate = ({ defaultValue, onChange }: Props) => {
     }
   }, [defaultValue]);
   
-  // ✅ onChange 콜백은 useHandle로
+  // ✅ The onChange callback uses useHandle
   const handleChange = useHandle((newDate: Date | null) => {
     if (!newDate) {
       onChange('');
@@ -362,12 +362,12 @@ const FormTypeInputDate = ({ defaultValue, onChange }: Props) => {
 };
 ```
 
-## 성능 측정
+## Measuring Performance
 
-### React DevTools Profiler 사용
+### Using the React DevTools Profiler
 
 ```typescript
-// 개발 환경에서만 활성화
+// Enable in development only
 if (process.env.NODE_ENV === 'development') {
   const FormTypeInputString = ({ ...props }: Props) => {
     const renderCount = useRef(0);
@@ -380,52 +380,51 @@ if (process.env.NODE_ENV === 'development') {
 }
 ```
 
-## 최적화 체크리스트
+## Optimization Checklist
 
-배포 전 다음 항목들을 확인하세요:
+Confirm the following before release:
 
-- [ ] **비제어 컴포넌트 사용**: `defaultValue` 우선
-- [ ] **useHandle 사용**: 모든 이벤트 핸들러에 적용
-- [ ] **useMemo 사용**: 복잡한 props 연산, 객체 생성
-- [ ] **Context 구독 최소화**: 필요한 값만 추출
-- [ ] **조건부 렌더링 분리**: 복잡한 조건은 컴포넌트 분리
-- [ ] **ChildNodeComponents**: props 전달 금지
-- [ ] **값 변환 메모이제이션**: useMemo 사용
-- [ ] **Early Return**: 조건을 먼저 체크
-- [ ] **React DevTools Profiler**: 성능 측정
+- [ ] **Use uncontrolled components**: prefer `defaultValue`
+- [ ] **Use useHandle**: apply it to every event handler
+- [ ] **Use useMemo**: complex prop computation and object creation
+- [ ] **Minimize context subscriptions**: extract only the values you need
+- [ ] **Split conditional rendering**: split a component when the condition is complex
+- [ ] **ChildNodeComponents**: do not pass props
+- [ ] **Memoize value conversion**: use useMemo
+- [ ] **Early return**: check conditions first
+- [ ] **React DevTools Profiler**: measure performance
 
-## 안티 패턴
+## Anti-Patterns
 
-### 피해야 할 패턴들
+### Patterns to Avoid
 
 ```typescript
-// ❌ 매 렌더링마다 함수 재생성
+// ❌ Recreate the function on every render
 const handleChange = (event) => {
   onChange(event.target.value);
 };
 
-// ❌ 매 렌더링마다 객체 재생성
+// ❌ Recreate the object on every render
 const slotProps = {
   textField: { id: path, name },
 };
 
-// ❌ inline 함수
+// ❌ Inline function
 <TextField onChange={(e) => onChange(e.target.value)} />
 
-// ❌ Context 전체 구독
-const { size, variant, color, theme } = context;  // 전부 구독
+// ❌ Subscribe to the whole context
+const { size, variant, color, theme } = context;  // Subscribes to all of it
 
-// ❌ ChildNodeComponents에 props 전달
+// ❌ Pass props to ChildNodeComponents
 <Child context={context} />
 ```
 
 ---
 
-**핵심 원칙**:
-1. 비제어 컴포넌트 우선 (defaultValue)
-2. useHandle로 모든 핸들러 메모이제이션
-3. useMemo로 복잡한 연산 캐싱
-4. Context는 필요한 값만 구독
-5. ChildNodeComponents는 그대로 렌더링
-6. React DevTools로 성능 측정
-
+**Core principles**:
+1. Prefer uncontrolled components (defaultValue)
+2. Memoize every handler with useHandle
+3. Cache complex computation with useMemo
+4. Subscribe only to the context values you need
+5. Render ChildNodeComponents as they are
+6. Measure performance with React DevTools

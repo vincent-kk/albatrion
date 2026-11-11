@@ -1,24 +1,24 @@
-# 컴포넌트 구현 패턴
+# Component Implementation Patterns
 
-React 기반 @canard/schema-form 플러그인 컴포넌트 구현 시 권장되는 패턴들입니다.
+Recommended patterns when implementing React-based @canard/schema-form plugin components.
 
-## 비제어 vs 제어 컴포넌트
+## Uncontrolled vs Controlled Components
 
-### 비제어 컴포넌트 (권장)
+### Uncontrolled Components (recommended)
 
-**사용 시기**: 기본 패턴으로 항상 우선 사용
+**When to use**: always prefer this as the default pattern
 
-**장점**:
+**Benefits**:
 
-- 불필요한 리렌더링 방지
-- 성능 최적화
-- React Hook Form과 호환성 우수
+- Avoids unnecessary re-renders
+- Better performance
+- Strong compatibility with React Hook Form
 
-**패턴**:
+**Pattern**:
 
 ```typescript
 const FormTypeInputString = ({
-  defaultValue,  // ✅ defaultValue 사용
+  defaultValue,  // ✅ Use defaultValue
   onChange,
   ...props
 }: FormTypeInputStringProps) => {
@@ -28,7 +28,7 @@ const FormTypeInputString = ({
 
   return (
     <TextField
-      defaultValue={defaultValue}  // ✅ 비제어
+      defaultValue={defaultValue}  // ✅ Uncontrolled
       onChange={handleChange}
       {...props}
     />
@@ -36,23 +36,23 @@ const FormTypeInputString = ({
 };
 ```
 
-### 제어 컴포넌트 (필요시만)
+### Controlled Components (only when needed)
 
-**사용 시기**:
+**When to use**:
 
-- 실시간 validation 필요
-- 조건부 렌더링 필요
-- 값 포맷팅/변환 필요
+- Real-time validation is required
+- Conditional rendering is required
+- Value formatting or conversion is required
 
-**패턴**:
+**Pattern**:
 
 ```typescript
 const FormTypeInputEmail = ({
-  value,  // ✅ value 사용
+  value,  // ✅ Use value
   onChange,
   ...props
 }: FormTypeInputEmailProps) => {
-  // 실시간 validation
+  // Real-time validation
   const isValid = useMemo(() => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }, [value]);
@@ -63,7 +63,7 @@ const FormTypeInputEmail = ({
 
   return (
     <TextField
-      value={value}  // ✅ 제어
+      value={value}  // ✅ Controlled
       onChange={handleChange}
       error={!isValid && value.length > 0}
       helperText={!isValid ? 'Invalid email' : ''}
@@ -73,27 +73,27 @@ const FormTypeInputEmail = ({
 };
 ```
 
-## 값 전달 우선순위 패턴
+## Value Precedence Pattern
 
-props는 여러 곳에서 올 수 있습니다: 직접 props, context, jsonSchema
+Props can come from several places: direct props, context, jsonSchema
 
-**우선순위**: `직접 props` > `context` > `jsonSchema` > `기본값`
+**Precedence**: `direct props` > `context` > `jsonSchema` > `default`
 
 ```typescript
 const FormTypeInputString = ({
   jsonSchema,
   context,
   name,
-  // 직접 props
+  // Direct props
   size: sizeProp,
   variant: variantProp,
   placeholder: placeholderProp,
   label: labelProp,
 }: FormTypeInputStringProps) => {
-  // useMemo로 우선순위 적용
+  // Apply precedence with useMemo
   const [size, variant, placeholder, label] = useMemo(() => {
     return [
-      sizeProp || context.size || 'medium',  // 1순위: sizeProp
+      sizeProp || context.size || 'medium',  // 1st: sizeProp
       variantProp || context.variant || 'outlined',
       placeholderProp || jsonSchema.placeholder || '',
       labelProp || jsonSchema.label || jsonSchema.title || name,
@@ -111,23 +111,23 @@ const FormTypeInputString = ({
 };
 ```
 
-## ChildNodeComponents 패턴 (Array/Object)
+## ChildNodeComponents Pattern (Array/Object)
 
-Array와 Object 타입은 `ChildNodeComponents`를 사용하여 자식 노드를 렌더링합니다.
+Array and Object types render child nodes with `ChildNodeComponents`.
 
-### Array 컴포넌트
+### Array Component
 
 ```typescript
 const FormTypeInputArray = ({
   jsonSchema,
   path,
   name,
-  ChildNodeComponents,  // ✅ canard-form이 자동 제공
+  ChildNodeComponents,  // ✅ Provided automatically by canard-form
   onChange,
   value,
   context,
 }: FormTypeInputArrayProps) => {
-  // ChildNodeComponents는 이미 필요한 props를 받은 함수형 컴포넌트 배열
+  // ChildNodeComponents is an array of function components that already received the props they need
 
   return (
     <Box>
@@ -135,14 +135,14 @@ const FormTypeInputArray = ({
 
       {ChildNodeComponents.map((ChildComponent, index) => (
         <Paper key={index} sx={{ p: 2, mb: 2 }}>
-          {/* ✅ ChildComponent는 이미 props를 가지고 있음 */}
+          {/* ✅ ChildComponent already has its props */}
           <ChildComponent />
 
-          {/* UI 라이브러리별 스타일 적용 */}
+          {/* Apply the UI library's styles */}
           <IconButton
             size="small"
             onClick={() => {
-              // 삭제 로직은 canard-form 내부에서 처리
+              // Removal is handled inside canard-form
             }}
           >
             <DeleteIcon />
@@ -150,11 +150,11 @@ const FormTypeInputArray = ({
         </Paper>
       ))}
 
-      {/* 추가 버튼 */}
+      {/* Add button */}
       <Button
         startIcon={<AddIcon />}
         onClick={() => {
-          // 추가 로직은 canard-form 내부에서 처리
+          // Addition is handled inside canard-form
         }}
         disabled={
           jsonSchema.maxItems !== undefined &&
@@ -168,15 +168,15 @@ const FormTypeInputArray = ({
 };
 ```
 
-**주의사항**:
+**Cautions**:
 
-- `ChildNodeComponents`에 props를 직접 전달하지 **않음**
-- 추가/제거 버튼만 UI 라이브러리 스타일로 구현
-- 실제 추가/제거 로직은 canard-form 내부에서 처리됨
+- Do **not** pass props directly to `ChildNodeComponents`
+- Implement only the add and remove buttons in the UI library's style
+- The actual add and remove logic is handled inside canard-form
 
-## 값 변환 패턴 (DatePicker, TimePicker 등)
+## Value Conversion Pattern (DatePicker, TimePicker, and similar)
 
-UI 라이브러리 컴포넌트와 JSONSchema 값 형식이 다른 경우:
+When the UI library component and the JSONSchema value format differ:
 
 ```typescript
 const FormTypeInputDate = ({
@@ -184,7 +184,7 @@ const FormTypeInputDate = ({
   onChange,
   ...props
 }: FormTypeInputDateProps) => {
-  // 1. defaultValue 변환 (string → Date)
+  // 1. Convert defaultValue (string → Date)
   const dateValue = useMemo(() => {
     if (!defaultValue) return null;
     try {
@@ -194,7 +194,7 @@ const FormTypeInputDate = ({
     }
   }, [defaultValue]);
 
-  // 2. onChange 변환 (Date → string)
+  // 2. Convert onChange (Date → string)
   const handleChange = useHandle((newDate: Date | null) => {
     if (!newDate) {
       onChange('');
@@ -210,7 +210,7 @@ const FormTypeInputDate = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        value={dateValue}  // Date 객체
+        value={dateValue}  // Date object
         onChange={handleChange}
         slotProps={{
           textField: {
@@ -226,12 +226,12 @@ const FormTypeInputDate = ({
 };
 ```
 
-## 래퍼 컴포넌트 패턴
+## Wrapper Component Pattern
 
-특정 UI 라이브러리에서 추가 Provider가 필요한 경우:
+When a UI library needs an extra Provider:
 
 ```typescript
-// DatePicker - LocalizationProvider 필요
+// DatePicker - LocalizationProvider is required
 const FormTypeInputDate = ({ ...props }: FormTypeInputDateProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -240,7 +240,7 @@ const FormTypeInputDate = ({ ...props }: FormTypeInputDateProps) => {
   );
 };
 
-// RichTextEditor - 에디터 Provider 필요
+// RichTextEditor - an editor Provider is required
 const FormTypeInputRichText = ({ ...props }: FormTypeInputRichTextProps) => {
   return (
     <EditorProvider>
@@ -250,11 +250,11 @@ const FormTypeInputRichText = ({ ...props }: FormTypeInputRichTextProps) => {
 };
 ```
 
-## 조건부 props 패턴
+## Conditional Props Pattern
 
-UI 라이브러리 컴포넌트가 중첩된 props 구조를 사용하는 경우:
+When a UI library component uses a nested props structure:
 
-### MUI slotProps 패턴
+### MUI slotProps Pattern
 
 ```typescript
 const FormTypeInputDate = ({
@@ -276,7 +276,7 @@ const FormTypeInputDate = ({
           disabled,
           size,
         },
-        // 기타 slot props
+        // Other slot props
         day: {
           sx: { /* custom styles */ },
         },
@@ -287,7 +287,7 @@ const FormTypeInputDate = ({
 };
 ```
 
-### Ant Design 중첩 props 패턴
+### Ant Design Nested Props Pattern
 
 ```typescript
 const FormTypeInputUpload = ({
@@ -301,7 +301,7 @@ const FormTypeInputUpload = ({
       id={path}
       name={name}
       customRequest={(options) => {
-        // 파일 업로드 로직
+        // File upload logic
       }}
       onChange={(info) => {
         onChange(info.fileList);
@@ -314,9 +314,9 @@ const FormTypeInputUpload = ({
 };
 ```
 
-## Enum/Select 패턴
+## Enum/Select Pattern
 
-Enum 값을 Select/Radio로 렌더링:
+Render enum values as Select or Radio:
 
 ```typescript
 const FormTypeInputStringEnum = ({
@@ -350,14 +350,14 @@ const FormTypeInputStringEnum = ({
 };
 ```
 
-## Error 처리 패턴
+## Error Handling Pattern
 
 ```typescript
 const FormTypeInputString = ({
   errors,
   ...props
 }: FormTypeInputStringProps) => {
-  // errors는 JSONSchemaError[] 타입
+  // errors is JSONSchemaError[]
   const hasError = errors.length > 0;
   const errorMessage = hasError ? errors[0].message : '';
 
@@ -371,9 +371,9 @@ const FormTypeInputString = ({
 };
 ```
 
-**주의**: FormError 컴포넌트를 별도로 구현하는 경우 여기서는 error prop만 전달
+**Caution**: when FormError is implemented as a separate component, pass only the error prop here
 
-## Label 숨김 패턴
+## Hidden Label Pattern
 
 ```typescript
 const FormTypeInputBoolean = ({
@@ -397,7 +397,7 @@ const FormTypeInputBoolean = ({
 };
 ```
 
-## 접근성 패턴
+## Accessibility Pattern
 
 ```typescript
 const FormTypeInputString = ({
@@ -434,12 +434,12 @@ const FormTypeInputString = ({
 
 ---
 
-**핵심 원칙**:
+**Core principles**:
 
-1. 비제어 컴포넌트 우선
-2. 값 우선순위: 직접 props > context > jsonSchema
-3. useMemo로 연산 최적화
-4. useHandle로 핸들러 메모이제이션
-5. ChildNodeComponents는 props 전달 금지
-6. 값 변환은 명시적으로
-7. 접근성 속성 필수
+1. Prefer uncontrolled components. An uncontrolled definition declares nothing. A component that draws from `value` alone and keeps no copy of it declares `controlled: true` (`{ Component, test, controlled: true }`) as an optimization: outside writes then reach it through `value` without a remount.
+2. Value precedence: direct props > context > jsonSchema
+3. Optimize computation with useMemo
+4. Memoize handlers with useHandle
+5. Do not pass props to ChildNodeComponents
+6. Make value conversion explicit
+7. Accessibility attributes are required

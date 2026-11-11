@@ -30,9 +30,26 @@ fieldInputMap: {
 - `*` matches exactly ONE segment — and matches **any key**, not just array indexes (`/items/abc/name` matches too). A key containing `**` is not supported (`troubleshooting.md` describes the symptom), so list each depth with `*`.
 - Escape literal `/` in a property name as `~1`, `~` as `~0` — inside map keys as well (`jsonpointer.md`).
 
+## Skip Remounts for a Controlled Input (`controlled`)
+
+A value the input did not write itself (`setValue`, reset, `refresh(path)`, `derived`, `injectTo`, array operations) remounts the input, which hands it a new `defaultValue`. That is correct for any component, and costs a mount each time. A component that draws from `value` on every render does not need the remount; declare `controlled: true` and it keeps its DOM, focus and local state and receives the new value through `value`.
+
+```tsx
+const valueReading: FieldInputDefinition[] = [
+  { test: { format: 'legacy' }, Component: DefaultValueInput },
+  { test: { format: 'live' }, Component: ValueInput, controlled: true },
+];
+```
+
+- Declare it as an optimization where it pays: a field recalculated by `derived` or `injectTo` on every keystroke of another field, or a widget that is expensive to mount.
+- Declare it only when the component keeps no copy of the value. A draft copied into state or a ref would survive a reset, and a callback the input issued before a caller write is still accepted. `formRef.current?.remount(path)` still replaces the input.
+- Leave it out for a component that reads `defaultValue`; nothing else is required of it.
+- A schema declares the same thing per field with `presentation.controlled`; that is the only place to declare it for an inline `presentation.FieldInput`, a `fieldInputMap` component, or a `FieldInput` passed to `Form.Input`, `Form.Field` or `Form.Render`. `false` on either side wins, so a schema can switch a controlled definition back to remounting for one field.
+- Typing through `onChange` never remounts the input that typed.
+
 ## Custom Input Contract
 
-- Use either `value` for a controlled input or `defaultValue` for an uncontrolled input; mixing them gives React two competing value owners.
+- Read either `value` or `defaultValue`, never both; mixing them gives React two competing value owners.
 - Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
 - A custom input on a non-terminal object/array **must render `ChildFields`** — otherwise its children silently vanish:
 

@@ -8,7 +8,6 @@ import type { Optional } from '@aileron/declare';
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeState } from '@/schema-form/core';
 import {
-  FieldNodeEventType,
   SetValueOption,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
@@ -34,6 +33,8 @@ import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useFieldLifecycle } from './hooks/useFieldLifecycle';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputBridgeProps } from './type';
+import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
+import { resolveControlled } from './utils/resolveControlled';
 
 /** State patch that marks the field edited after a controlled change. */
 const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
@@ -52,7 +53,11 @@ export const FieldInputBridge = memo(
     NodeProxy,
   }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
-    const FieldInput = PreferredFieldInput || selected;
+    const FieldInput = PreferredFieldInput || (selected && selected.Component);
+    const controlled = resolveControlled(
+      PreferredFieldInput ? undefined : selected?.controlled,
+      (node.jsonSchema as JSONSchema).presentation?.controlled,
+    );
     // Each selection gets its own generation, even when A returns after B.
     const selection = useMemorize(() => ({ active: false }), [FieldInput]);
     const mountedChildren = useRef(0);
@@ -76,7 +81,7 @@ export const FieldInputBridge = memo(
       handleCompositionEnd,
       rerender,
       releaseComposition,
-    ] = useFieldInputControl(node, mountedChildren);
+    ] = useFieldInputControl(node, mountedChildren, controlled);
     const lifecycle = useFieldLifecycleContext();
     const lifecycleRender = useFieldLifecycle(
       node,
@@ -96,8 +101,8 @@ export const FieldInputBridge = memo(
         selection.active &&
         isLive() &&
         (mountedChildren.current > 0 ||
-          generation === node.revision(FieldNodeEventType.RequestRefresh)),
-      [node, generation, isLive, selection],
+          generation === readFieldInputGeneration(node, controlled)),
+      [node, generation, isLive, selection, controlled],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (input, option = SetValueOption.Overwrite) => {

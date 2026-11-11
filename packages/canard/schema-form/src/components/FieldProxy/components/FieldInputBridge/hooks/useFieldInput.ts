@@ -2,17 +2,32 @@ import { useMemo } from 'react';
 
 import { isReactComponent } from '@winglet/react-utils/filter';
 
+import type { Nullable } from '@aileron/declare';
+
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { FieldNode } from '@/schema-form/core';
-import { withFieldInputErrorBoundary } from '@/schema-form/helpers/fieldInputDefinition';
+import {
+  type NormalizedFieldInputDefinition,
+  withFieldInputErrorBoundary,
+} from '@/schema-form/helpers/fieldInputDefinition';
 import {
   useExternalFormContext,
   useFieldInputsContext,
 } from '@/schema-form/providers';
 import type { FieldInputHint, JSONSchema } from '@/schema-form/types';
 
-/** Select an input from the effective schema and ordered definition sources. */
-export const useFieldInput = (node: FieldNode, disabled: boolean) => {
+/**
+ * Select an input from the effective schema and ordered definition sources.
+ * @param node - Field whose effective schema and hint drive the selection
+ * @param disabled - True when a preferred input replaces this selection
+ * @returns The resolved component with its definition's `controlled` declaration, or null
+ */
+export const useFieldInput = (
+  node: FieldNode,
+  disabled: boolean,
+): Nullable<
+  Pick<NormalizedFieldInputDefinition, 'Component' | 'controlled'>
+> => {
   const { fromFieldInputMap, fromFieldInputDefinitions } =
     useFieldInputsContext();
   const { fromExternalFieldInputDefinitions } = useExternalFormContext();
@@ -21,7 +36,9 @@ export const useFieldInput = (node: FieldNode, disabled: boolean) => {
   const inline = schema.presentation?.FieldInput;
   const Inline = useMemo(
     () =>
-      isReactComponent(inline) ? withFieldInputErrorBoundary(inline) : null,
+      isReactComponent(inline)
+        ? { Component: withFieldInputErrorBoundary(inline) }
+        : null,
     [inline],
   );
   return useMemo(() => {
@@ -44,8 +61,8 @@ export const useFieldInput = (node: FieldNode, disabled: boolean) => {
       fromExternalFieldInputDefinitions,
       PluginManager.fieldInputDefinitions,
     ])
-      for (const { test, Component } of definitions ?? [])
-        if (test(hint)) return Component;
+      for (const definition of definitions ?? [])
+        if (definition.test(hint)) return definition;
     return null;
   }, [
     node,

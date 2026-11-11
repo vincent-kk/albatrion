@@ -40,6 +40,8 @@ source: {
 
 The handler also runs when the form mounts, so it must accept an empty source value.
 
+Each write remounts the target's input unless it declares `controlled: true` (`field-input.md`).
+
 ## Cycles
 
 A cycle is not detected. Each settlement re-runs rules until no source value changes, up to 25 rounds; a cycle that converges (the same value comes back) stops on its own, while one that keeps producing new values exceeds the budget: the caller's write is kept, every automatic write from that settlement is reverted, `diagnostics` becomes `degraded` with `exceededBudget: 'derive'`, and the write throws. Design chains as DAGs.

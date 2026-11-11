@@ -16,4 +16,6 @@ export interface NormalizedFieldInputDefinition {
   Component: ComponentType<FieldInputBindingProps>;
   /** Predicate applied to the effective schema's input hint. */
   test: FieldInputTestFn;
+  /** The definition's value-reading declaration, kept only when it is a boolean. */
+  controlled?: boolean;
 }

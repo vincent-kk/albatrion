@@ -376,3 +376,74 @@ it('a new key on Form.Input replaces the component and its FieldInput closure', 
   ));
   expect(seen).toEqual({ before: '0', state: '1', after: '1' });
 });
+
+/** Reads `defaultValue` once per mount.
+ * @param props - FieldInput props supplied by Form.
+ * @returns An uncontrolled text field. */
+const DefaultValueInput: FC<FieldInputProps<string>> = ({
+  path,
+  defaultValue,
+  onChange,
+}) => (
+  <input
+    data-testid={path}
+    defaultValue={defaultValue ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+
+/** Draws from `value` on every render.
+ * @param props - FieldInput props supplied by Form.
+ * @returns A controlled text field. */
+const ValueInput: FC<FieldInputProps<string>> = ({ path, value, onChange }) => (
+  <input
+    data-testid={path}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+
+const valueReading: FieldInputDefinition[] = [
+  { test: { format: 'legacy' }, Component: DefaultValueInput },
+  { test: { format: 'live' }, Component: ValueInput, controlled: true },
+];
+
+it('remounts by the controlled declaration when a value arrives from outside', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={valueReading}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          source: { type: 'string' },
+          legacy: {
+            type: 'string',
+            format: 'legacy',
+            controls: { derived: '../source' },
+          },
+          live: {
+            type: 'string',
+            format: 'live',
+            controls: { derived: '../source' },
+          },
+        },
+      }}
+    />,
+  );
+  await waitFor(() => expect(ref.current).not.toBeNull());
+  const legacy = screen.getByTestId('/legacy');
+  const live = screen.getByTestId('/live');
+
+  await act(async () => ref.current!.setValue({ source: 'next' }));
+
+  expect(screen.getByTestId('/legacy')).not.toBe(legacy);
+  expect(screen.getByTestId('/legacy')).toHaveProperty('value', 'next');
+  expect(screen.getByTestId('/live')).toBe(live);
+  expect(live).toHaveProperty('value', 'next');
+
+  await act(async () => ref.current!.setValue({ source: 'next', live: 'set' }));
+
+  expect(screen.getByTestId('/live')).toBe(live);
+});
