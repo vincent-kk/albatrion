@@ -67,11 +67,6 @@ export const FieldInputBridge = memo(
       PreferredFieldInput ? undefined : selected?.controlled,
       presentation?.controlled,
     );
-    // Each selection gets its own generation, even when A returns after B.
-    const selection = useMemorize(
-      () => ({ active: false }),
-      [FieldInput, Frame],
-    );
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
@@ -86,11 +81,11 @@ export const FieldInputBridge = memo(
       generation,
       handleCompositionStart,
       handleCompositionEnd,
-      ,
+      update,
       releaseComposition,
     ] = useFieldInputControl(node, mountedChildren, controlled);
     const lifecycle = useFieldLifecycleContext();
-    const lifecycleRender = useFieldLifecycle(
+    const position = useFieldLifecycle(
       node,
       ref,
       commitTerminalChildren,
@@ -98,11 +93,12 @@ export const FieldInputBridge = memo(
       hydrationCommitRef,
       FieldInput ? virtualizationManager : null,
       FieldInput ? lifecycle : null,
-      Frame,
+      update,
     );
-    const defaultValue = useMemorize(
-      () => node.value,
-      [node, generation, FieldInput, Frame],
+    // Each committed container and input selection owns its callback lifetime.
+    const selection = useMemorize(
+      () => ({ active: false }),
+      [FieldInput, position.epoch],
     );
     const accepts = useCallback(
       () =>
@@ -166,13 +162,14 @@ export const FieldInputBridge = memo(
       if (node.state[2]) return;
       requestId.current = requestAnimationFrame(() => {
         if (
+          selection.active &&
           isLive() &&
           reset === readFieldNodeInteractionReset(node) &&
           !node.state[2]
         )
           node.setState(TOUCHED_STATE_PATCH);
       });
-    }, [accepts, isLive, node]);
+    }, [accepts, isLive, node, selection]);
     useOnUnmount(() => {
       attachedFilesMap.delete(node.path);
       if (requestId.current !== undefined)
@@ -190,7 +187,7 @@ export const FieldInputBridge = memo(
       rootDisabled || node.isDisabled || !!overrideProps.disabled;
     const input = (
       <div
-        ref={ref}
+        ref={position.ref}
         role={NONE_ROLE}
         style={DISPLAY_CONTENT}
         onFocus={handleFocus}
@@ -204,7 +201,6 @@ export const FieldInputBridge = memo(
           className={undefined}
           {...inputProps}
           {...overrideProps}
-          defaultValue={defaultValue}
           value={node.value}
           required={required}
           onChange={handleChange}
@@ -225,7 +221,7 @@ export const FieldInputBridge = memo(
           ChildFields={ChildFields}
           context={context}
         />
-        {lifecycleRender}
+        {position.detector}
       </div>
     );
     return Frame ? (

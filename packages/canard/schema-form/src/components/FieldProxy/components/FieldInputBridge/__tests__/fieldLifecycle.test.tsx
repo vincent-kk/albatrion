@@ -33,7 +33,7 @@ const Position = ({
   input?: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const detector = useFieldLifecycle(
+  const position = useFieldLifecycle(
     node,
     ref,
     commit,
@@ -41,11 +41,12 @@ const Position = ({
     undefined,
     null,
     input ? registry : null,
+    noop,
   );
   return input ? (
-    <div ref={ref}>
+    <div ref={position.ref}>
       <input defaultValue="text" />
-      {detector}
+      {position.detector}
     </div>
   ) : null;
 };
@@ -262,9 +263,18 @@ it('calls the composition cleanup and restores command subscriptions on effect r
   const release = vi.fn();
   const Host = () => {
     const ref = useRef<HTMLDivElement>(null);
-    useFieldLifecycle(node, ref, noop, release, undefined, null, registry);
+    const position = useFieldLifecycle(
+      node,
+      ref,
+      noop,
+      release,
+      undefined,
+      null,
+      registry,
+      noop,
+    );
     return (
-      <div ref={ref}>
+      <div ref={position.ref}>
         <input />
       </div>
     );

@@ -79,16 +79,12 @@ export const useFieldInputControl = <Node extends FieldNode>(
         (refreshDeferral.current & COMPOSING) |
         (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
       const unsubscribe = node.subscribe(({ type }) => {
-        if (!(type & INPUT_TRACKING_EVENTS)) {
-          if (
-            type & FieldNodeEventType.UpdateError &&
-            mountedChildren.current === 0 &&
-            !(refreshDeferral.current & COMPOSING) &&
-            generation.current !== readFieldInputGeneration(node, controlled)
-          )
-            update();
+        if (
+          !(type & INPUT_TRACKING_EVENTS) &&
+          (!(type & FieldNodeEventType.UpdateError) ||
+            generation.current === readFieldInputGeneration(node, controlled))
+        )
           return;
-        }
         refreshDeferral.current =
           (refreshDeferral.current & COMPOSING) |
           (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
@@ -97,7 +93,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
       onStoreChange();
       return unsubscribe;
     },
-    [node, mountedChildren, refreshDeferral, controlled, update],
+    [node, mountedChildren, refreshDeferral, controlled],
   );
   const getRevision = useCallback(() => {
     // revision(mask) sums per-bit delivery counts, so each undeferred read equals

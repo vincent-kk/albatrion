@@ -14,7 +14,7 @@ unwrapped는 등록된 입력 틀을 건너뛰는 조합 설정이며 실제 입
 
 ### input-renderer — 렌더러와 입력의 다른 수명
 
-입력 override가 고정되어 있어도 InputRenderer는 [FieldRendererContext](../../../../providers/FieldRendererContext/DETAIL.md)의 최신 선택을 따릅니다. 모든 설정이 고정되거나 모든 설정이 live라고 일반화하지 않습니다.
+입력 override가 고정되어 있어도 InputRenderer는 브리지가 소비 위치에서 고른 Form 값, 가장 가까운 FormProvider, 플러그인 레지스트리 순의 최신 선택을 따릅니다. 모든 설정이 고정되거나 모든 설정이 live라고 일반화하지 않습니다.
 
 ## Boundary Exemptions
 

@@ -40,7 +40,11 @@ export interface ErrorMessageRendererProps extends PartRendererBaseProps {
   children?: ReactNode;
 }
 
-/** An input frame renders its children exactly once, unconditionally in the same commit. */
+/**
+ * Render children exactly once, unconditionally in the same commit.
+ * Changing the element or component path to children replaces the input with the node's current value,
+ * losing focus and any composition in progress.
+ */
 export interface InputRendererProps extends PartRendererBaseProps {
   /** Effective read-only state of the real input. */
   readOnly: boolean;
@@ -48,6 +52,6 @@ export interface InputRendererProps extends PartRendererBaseProps {
   disabled: boolean;
   /** The real input's application context. */
   context: Dictionary;
-  /** Bound real input whose placement and lifetime must be preserved. */
+  /** Bound real input whose ancestor path determines its mounted lifetime. */
   children: ReactNode;
 }

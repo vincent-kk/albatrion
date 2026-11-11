@@ -8,7 +8,7 @@
 
 실제 입력·알 수 없는 입력·자식 입력·덮어쓰기 props의 errors와 errorVisible은 optional never로 선언하여 목록 접근과 값 전달을 막습니다. 단순 진리값 검사는 TypeScript가 허용하므로 오류 정보 소비자는 useFieldErrors로 옮겨야 합니다. 묶인 Input만 직접 unwrapped를 해석하고 ChildFieldProps에는 그 키를 선언하지 않습니다.
 
-LabelRendererProps·ErrorMessageRendererProps·InputRendererProps는 node·주소·이름·스키마·표시 필수 여부를 공유하는 공개 부품 계약입니다. 공통 기반은 비공개이며 오류 정보는 기본 props가 아닙니다. 라벨·오류의 context도 자동 주입하지 않고 호출자가 필요할 때 명시합니다. 입력 틀의 children은 같은 커밋에 한 번 조건 없이 그려 입력 위치 수명을 유지해야 합니다. FieldRendererProps의 Label·ErrorMessage는 이 계약의 partial props를 받는 묶인 컴포넌트입니다.
+LabelRendererProps·ErrorMessageRendererProps·InputRendererProps는 node·주소·이름·스키마·표시 필수 여부를 공유하는 공개 부품 계약입니다. 공통 기반은 비공개이며 오류 정보는 기본 props가 아닙니다. 라벨·오류의 context도 자동 주입하지 않고 호출자가 필요할 때 명시합니다. 입력 틀은 children을 같은 커밋에 정확히 한 번 조건 없이 그립니다. 틀 루트와 children 사이의 요소·컴포넌트 경로 변경은 입력을 교체합니다. 교체된 입력은 현재 노드 값에서 시작하며 포커스와 진행 중인 조합을 잃습니다. FieldRendererProps의 Label·ErrorMessage는 이 계약의 partial props를 받는 묶인 컴포넌트입니다.
 
 ### Roll 표현과 재귀 형
 
