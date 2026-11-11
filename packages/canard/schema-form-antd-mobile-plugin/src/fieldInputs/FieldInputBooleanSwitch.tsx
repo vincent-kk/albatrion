@@ -45,6 +45,7 @@ const FieldInputBooleanSwitch = ({
   return (
     <SwitchKeyboardControl disabled={disabled}>
       <Switch
+        data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
         key={path}

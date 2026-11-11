@@ -6,7 +6,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 import {
   type FieldInputProps,
   type FieldRendererProps,
-  Form,
   type JSONSchema,
   VirtualizationBackfill,
 } from '@/schema-form';
@@ -279,47 +278,6 @@ it('E7 trims on blur after hybrid input and refreshes the changed draft', async 
   expect(form.value('/a')).toBe('word');
   expect(form.field('/a')).not.toBe(input);
 });
-
-it.each(['Input', 'Render'])(
-  'E8 uses the latest preferred callback through Form.%s',
-  async (surface) => {
-    const received = vi.fn();
-    const Layout = () => {
-      const [version, setVersion] = useState('first');
-      return (
-        <>
-          <button type="button" onClick={() => setVersion('latest')}>
-            update
-          </button>
-          {surface === 'Input' ? (
-            <Form.Input
-              path="/a"
-              FieldInput={Draft}
-              onChange={(value) => received(version, value)}
-            />
-          ) : (
-            <Form.Render
-              path="/a"
-              FieldInput={Draft}
-              onChange={(value) => received(version, value)}
-            >
-              {({ Input }) => <Input />}
-            </Form.Render>
-          )}
-        </>
-      );
-    };
-    form = await renderForm(
-      { type: 'object', properties: { a: { type: 'string' } } },
-      { children: <Layout /> },
-    );
-    const input = form.field('/a');
-    await form.user.click(form.container.querySelector('button')!);
-    expect(form.field('/a')).toBe(input);
-    await form.type('/a', 'x');
-    expect(received).toHaveBeenCalledExactlyOnceWith('latest', 'x');
-  },
-);
 
 it('E9 reveals a deferred child with the latest parent callback', async () => {
   /** Keep deferred fields hidden until the explicit focus request. */

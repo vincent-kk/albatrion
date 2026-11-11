@@ -20,6 +20,8 @@ import type { FormFieldProps } from './types/props';
  * To supply changing values, read them from the `context` prop the renderer receives (the `context` of `Form`), call a hook inside it, or give the element a new `key` to replace the component.
  * The other props are read on every render.
  *
+ * `onChange` and `onFileAttach` are binding-owned and cannot be passed to this layout component.
+ *
  * @example
  * Basic field group with default rendering:
  * ```tsx

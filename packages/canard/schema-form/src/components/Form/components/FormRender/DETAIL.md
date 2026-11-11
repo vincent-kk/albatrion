@@ -6,7 +6,7 @@ Form.Render는 경로의 필드를 소비자 렌더 함수로 조합하며 폼 �
 
 ## API Contracts
 
-children·FieldInput·Wrapper는 mount에 고정합니다. 함수 identity 교체로 subtree를 뜻밖에 재생성하지 않기 위한 경계이며, closure로 잡은 상태도 mount 값을 유지합니다. 변하는 값은 context·내부 hook으로 읽고 의도적 교체에는 key를 사용합니다. 나머지 props는 최신 값을 전달합니다.
+children·FieldInput·Wrapper는 mount에 고정합니다. 함수 identity 교체로 subtree를 뜻밖에 재생성하지 않기 위한 경계이며, closure로 잡은 상태도 mount 값을 유지합니다. 변하는 값은 context·내부 hook으로 읽고 의도적 교체에는 key를 사용합니다. `onChange`와 `onFileAttach`는 바인딩이 소유하므로 레이아웃 조각에 전달할 수 없고 내부 처리기를 대체하지 못합니다. 그 밖의 나머지 props는 최신 값을 전달합니다.
 
 ## Acceptance Criteria
 

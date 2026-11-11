@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+값과 defaultValue는 노드가 소유합니다. 렌더러와 입력의 공통 required는 Child·Form.Input·Form.Render·Form.Field의 불리언 덮어쓰기, 불리언 `presentation.required`, `node.isRequired` 순으로 결정합니다. false도 존중하고 불리언이 아닐 때만 다음 값으로 넘어갑니다. 부모만 변경되어도 두 표면에 전달되며 undefined로 돌아가면 presentation 또는 노드 값을 다시 사용합니다. `presentation.FieldInputProps.required`와 `presentation.FieldRendererProps.required`는 바인딩이 spread 뒤에서 덮으므로 영향을 주지 않습니다. 렌더러 작성자가 Input 요소에 주는 불리언 required는 해당 입력에만 우선 적용되며 undefined를 포함한 비불리언 값은 부모 값을 지우지 않고 공통 값으로 돌아갑니다. 표시 전용 해석이며 검증과 입력 선택 힌트는 스키마의 required만 따릅니다. 네이티브 요소에 required를 전달하는 입력은 브라우저 검증에 영향을 줄 수 있습니다. 공통 계산은 FieldProxy의 utils가 소유하고 브리지와 생성 팩토리가 직접 사용합니다. 부모의 공통 값 변경이 렌더러 props를 바꾸므로 별도의 Context·구독·effect·전달 채널 없이 기존 메모 경계로 전달됩니다.
+
 ### REACT-033 — 입력 선택과 표현 경계
 
 인라인 입력, 경로 맵, Form 정의, Provider 정의, 플러그인 순으로 선택하며 인라인 null은 fallback 탐색을 막습니다. preferred 입력은 이 선택 대신 사용합니다. 유효 스키마·경로·입력 공급 설정 변경은 선택에 반영하고 동일 원본 컴포넌트는 [입력 해석 어댑터](../../../../helpers/fieldInputDefinition/DETAIL.md)를 재사용합니다. 무관한 맵 변경이 입력 초안을 지우지 않기 위한 정체성 계약입니다.
@@ -16,7 +18,9 @@ CONTROLS-081·REACT-032. presentation의 입력 props는 표현 payload로 전�
 
 ### REACT-011 — 한 입력의 한 진입
 
-입력 값 쓰기는 내부 입력 출처 통로를 사용하여 타이핑이 자기 입력을 Refresh하지 않게 합니다. 기본 통로는 값·외부 오류 지움·Edited를 하나의 입력 진입으로 처리합니다. 소비자가 onChange를 덮어쓰면 브리지는 입력 중계 통로에 callback을 전달하여 값 기록과 외부 오류 지움·Edited를 같은 배치로 처리합니다. 사슬 끝 실패가 이미 표시한 상호작용을 빠뜨리지 않게 하기 위한 규칙입니다. 공개 SetValueOption에 입력 출처 비트를 더하지 않습니다.
+`onChange`와 `onFileAttach`는 바인딩이 소유하여 레이아웃 덮어쓰기가 값 저장·상호작용·파일 등록을 우회하지 못하게 합니다. 중계 콜백은 하이브리드 부모의 Child와 렌더러의 Input에서만 받습니다.
+
+입력 값 쓰기는 내부 입력 출처 통로를 사용하여 타이핑이 자기 입력을 Refresh하지 않게 합니다. 기본 통로는 값·외부 오류 지움·Edited를 하나의 입력 진입으로 처리합니다. 하이브리드 부모의 `<Child onChange>` 또는 렌더러의 `<Input onChange>`가 중계 콜백을 제공하면 브리지는 입력 중계 통로에 callback을 전달하여 값 기록과 외부 오류 지움·Edited를 같은 배치로 처리합니다. 사슬 끝 실패가 이미 표시한 상호작용을 빠뜨리지 않게 하기 위한 규칙입니다. 공개 SetValueOption에 입력 출처 비트를 더하지 않습니다.
 
 값·파일 callback은 자식 자신의 prop을 우선하고, 없으면 호출 시점의 부모 ref를 읽습니다. 부모의 재렌더만으로 메모된 형제 브리지가 다시 렌더된다고 가정하면 옛 클로저가 형제의 편집을 덮거나 첨부를 오래된 상태로 처리합니다. 자식 prop을 제거하면 현재 부모 callback으로 돌아가며, 부모 ref의 값을 브리지 렌더 시점에 복사하지 않습니다. 안정된 ref를 전달하므로 렌더마다 훅이나 할당을 추가하지 않습니다.
 
@@ -58,7 +62,7 @@ Activity·Suspense의 layout 해제는 조합 보류를 끝냅니다. 끝 이벤
 
 렌더가 직접 읽는 Refresh revision은 초기 세대와 적용 세대에 공유하여 렌더당 중복 조회를 피합니다. 이 호출 한정 값은 구독의 스냅숏 확인을 대체하지 않으므로 렌더와 attach 사이 변경 및 Activity 재연결을 계속 따라잡습니다.
 
-focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독합니다. focus는 첫 input·textarea·select·button, select는 첫 input·textarea를 대상으로 하여 앞의 버튼·select가 텍스트 선택을 가로채지 않게 합니다. 입력의 commit 작업은 같은 layout effect를 공유하고, 표시 release와 composition 종료는 useVersion의 안정된 갱신 dispatch를 공유하여 effect를 추가하지 않습니다.
+focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독합니다. focus는 문서 순서상 첫 `[data-focus-target]`·input·textarea·select·button, select는 첫 input·textarea를 대상으로 하여 앞의 버튼·select가 텍스트 선택을 가로채지 않게 합니다. 입력의 commit 작업은 같은 layout effect를 공유하고, 표시 release와 composition 종료는 useVersion의 안정된 갱신 dispatch를 공유하여 effect를 추가하지 않습니다.
 
 ### GOAL-067 — 자식 캐시와 하이드레이션
 

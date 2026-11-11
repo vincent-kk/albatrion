@@ -41,7 +41,7 @@ export interface FieldInputProps<
   readOnly: boolean;
   /** Disabled state of FieldInput Component */
   disabled: boolean;
-  /** Whether the field node assigned to FieldInput Component is required */
+  /** Required indicator; display overrides do not change schema validation */
   required: boolean;
   /** Field node assigned to FieldInput Component */
   node: Node;
@@ -153,8 +153,10 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-  defaultValue?: Value;
-  value?: Value;
+  /** Defaults belong to the node, not to a child override. */
+  defaultValue?: never;
+  /** Current values are written through the binding callback. */
+  value?: never;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: Optional<File | File[]>]>;
   FieldRenderer?: ComponentType<FieldRendererProps>;
@@ -163,10 +165,19 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   [alt: string]: any;
 };
 
-export type OverridableFieldInputProps = Omit<
-  ChildFieldProps,
-  'onChange' | 'onFileAttach' | 'FieldRenderer'
->;
+/** Presentation overrides cannot replace the binding-owned callback channels. */
+export type OverridableFieldInputProps = {
+  required?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
+  className?: string;
+  style?: CSSProperties;
+  value?: never;
+  defaultValue?: never;
+  onChange?: never;
+  onFileAttach?: never;
+  [alt: string]: any;
+};
 
 export type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
