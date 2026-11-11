@@ -29,7 +29,10 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   let option = WriteOption.None;
   for (const write of writes) option |= write.option;
   const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
-  if (!target) return;
+  if (!target) {
+    if (runtime.inputRelays !== undefined) runtime.inputRelays = undefined;
+    return;
+  }
   const input =
     writes.length === 1 ? writes[0].value : composeBatchValue(root, writes);
   const merge =

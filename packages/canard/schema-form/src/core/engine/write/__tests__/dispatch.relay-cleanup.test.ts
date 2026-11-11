@@ -65,4 +65,40 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
       readFieldNodeRevision(child, FieldNodeEventType.RequestRefresh),
     ).toBe(refresh + 1);
   });
+
+  it('clears a pending relay when the only marked target disappears before flush', () => {
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        show: { type: 'boolean' },
+        input: { type: 'string', controls: { active: '../show' } },
+        other: { type: 'string' },
+      },
+    });
+    dispatchMount(root, { show: false, other: 'old' });
+    const show = getDispatchChild(root, 'show');
+    dispatchSetValue(show, true);
+    const input = getDispatchChild(root, 'input');
+    const other = getDispatchChild(root, 'other');
+    const before = readFieldNodeRevision(
+      other,
+      FieldNodeEventType.RequestRefresh,
+    );
+    dispatchBatch(root, () => {
+      dispatchSetValue(input, 'marked');
+      dispatchResetSubtree(show);
+      expect(input.detached).toBe(true);
+      expect(root.structure?.input).toBeUndefined();
+      dispatchRelayInput(other, 'x', WriteOption.Overwrite, () => undefined);
+      expect(runtime.inputRelays).toHaveLength(1);
+      expect(runtime.batchWrites).toHaveLength(1);
+    });
+    const remainingRelays = runtime.inputRelays;
+    dispatchSetValue(other, 'x');
+    expect(other.local).toBe('x');
+    expect(
+      readFieldNodeRevision(other, FieldNodeEventType.RequestRefresh),
+    ).toBe(before + 1);
+    expect(remainingRelays).toBeUndefined();
+  });
 });
