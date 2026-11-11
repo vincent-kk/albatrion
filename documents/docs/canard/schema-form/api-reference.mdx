@@ -61,7 +61,7 @@ Replace an invalid input map with a valid map to recover without remounting. A f
 | `findNode(path) / findNodes(path)`                | First or all matching live nodes; no match returns null or [], respectively.                                                                                                                                                                               |
 | `getState() / setState(flags) / clearState()`     | Read aggregate flags / patch or clear the whole tree.                                                                                                                                                                                                      |
 | `getErrors() / validate()`                        | Raw issues / a promise for a fresh verdict.                                                                                                                                                                                                                |
-| `focus(path?) / select(path?)`                    | Focus the exact input through nested virtualization gates, using the first input, textarea, select, or button in its input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
+| `focus(path?) / select(path?)`                    | Focus the exact input through nested virtualization gates, using the first `[data-focus-target]` element, input, textarea, select, or button in its input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
 | `refresh(path?) / remount(path?)` | Re-read committed input values (an input declaring `controlled: true` is not replaced) / remount a rendered subtree.                                                                                                                                                                                               |
 | `reset(option?) / rebuild(option?)`               | Root load operations described above.                                                                                                                                                                                                                      |
 | `revealErrors()` / `resetErrorVisibility()`       | Display override; see Validation.                                                                                                                                                                                                                          |
@@ -80,11 +80,15 @@ Value writes settle once at the end, so intermediate value reads see the precedi
 
 A visitor failure applies writes already made and then propagates. When a value-writing walk runs inside a listener, its failure may be reported through the listener channel instead of returning to the direct caller. The handle has no visitSubtree method; use `handle.node`.
 
+For a non-native focusable element, add `data-focus-target`. The marker does not itself grant focusability; mounted-target detection treats `aria-disabled="true"` as disabled.
+
 ## Form composition and custom inputs {#composition}
 
 `Form.Field` renders a group; `Form.Label`, `Form.Input`, and `Form.Error` render individual slots. `Form.Render` takes function children receiving `FieldRendererProps`, including `node`, `value`, `Input`, `errorVisible`, and `errorMessage`. These components require a Form ancestor. `Form.Input` and `Form.Render` paths use the [extended query rules](#paths), including relative and wildcard paths.
 
 Use the supplied `Input` in a custom renderer when you need input-write interaction behavior. A direct `node.setValue()` is programmatic and does not mark Edited. Extra input props are forwarded to the selected input, not automatically to its native element: the built-in string input uses `inputProps` for native attributes such as autoComplete.
+
+`Form.Input`, `Form.Render`, and `Form.Field` reject `onChange` and `onFileAttach`. Supply relay callbacks through a hybrid parent’s `<Child>` or a renderer’s `<Input>`.
 
 `FieldInputProps` supplies `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, raw `errors`, `errorVisible`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, and presentation props. Empty input publishes undefined; null is published only deliberately. Honor resolved input locks and [accessible naming](./schema-reference#accessibility).
 
@@ -138,7 +142,7 @@ For a child without a controlled declaration:
 - Copying an emitted object or array can remount the child even when the contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
 - Rejecting input without writing leaves the node's previous value and the typed draft on screen. Rejection alone does not restore an undeclared input's display; explicitly refresh it if that is the intended behavior.
 
-Changing only `value` or `required` on a `Child` is not an independent update channel: a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
+`value` and `defaultValue` cannot be overridden: write values through `onChange`. The shared display-only `required` value comes from a boolean override on Child, Form.Input, Form.Render or Form.Field, then boolean `presentation.required`, then `node.isRequired`. False is respected; only non-booleans fall through. Parent-only changes after mount reach both renderer and input, including returning to undefined. `required` inside `presentation.FieldInputProps` or `presentation.FieldRendererProps` is binding-owned and has no effect. A renderer author may override only its Input with a boolean required; undefined falls through without clearing the shared value. Validation and input selection hints still follow the schema required constraint. An input that forwards `required` to a native element can still affect browser validation.
 
 ## Plugins and FormProvider {#plugins}
 

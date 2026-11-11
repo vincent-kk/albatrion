@@ -6,7 +6,7 @@ Form.Input은 경로의 입력만 조합하고 입력 채널·오류 경계는 F
 
 ## API Contracts
 
-직접 전달한 FieldInput은 mount에 고정하여 render마다 새로운 함수로 입력 인스턴스를 잃지 않게 합니다. 변하는 값은 context·입력 내부 hook으로 전달하거나 key로 교체합니다. 나머지 props는 최신 값을 입력에 전달합니다.
+직접 전달한 FieldInput은 mount에 고정하여 render마다 새로운 함수로 입력 인스턴스를 잃지 않게 합니다. 변하는 값은 context·입력 내부 hook으로 전달하거나 key로 교체합니다. `onChange`와 `onFileAttach`는 바인딩이 소유하므로 레이아웃 조각에 전달할 수 없고 내부 처리기를 대체하지 못합니다. 그 밖의 나머지 props는 최신 값을 입력에 전달합니다.
 
 ## Acceptance Criteria
 

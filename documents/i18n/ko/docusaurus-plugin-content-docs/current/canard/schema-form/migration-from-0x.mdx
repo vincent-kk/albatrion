@@ -121,6 +121,8 @@ terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습�
 
 ## 마운트 이후 설정 {#live-settings}
 
+`Form.Input`, `Form.Render`, `Form.Field`의 `onChange`와 `onFileAttach`를 제거하고 중계 콜백은 Child나 렌더러 Input에 두십시오. 자식·레이아웃의 `value`와 `defaultValue` 덮어쓰기는 제거하고 Form.defaultValue로 초기화하거나 부모 콜백·핸들로 값을 쓰십시오. `presentation.FieldInputProps.required`를 `presentation.required`로 옮기십시오. 두 props 객체 안의 required는 무시됩니다. 렌더러와 입력의 `required`는 [표시 덮어쓰기 계약](./api-reference#composition)을 따릅니다.
+
 아래 수명을 확인한 뒤 설정 적용만을 위한 Form key 변경을 제거하십시오. 설정 객체·배열·콜백은 불변 참조로 교체하며, 기존 참조의 내용 변경은 지원하는 갱신 신호가 아닙니다. 명시한 Form 설정이 FormProvider 기본값보다 우선합니다. FormProvider에는 `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, `disableAutomaticWrites` prop이 없습니다.
 
 | 설정                                                                     | 이행 점검                                                                                                                                                                                                         |

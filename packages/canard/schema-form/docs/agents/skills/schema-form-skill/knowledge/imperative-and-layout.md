@@ -2,6 +2,8 @@
 
 Driving a form from outside the schema: the `FormHandle` ref and the `Form.Input`/`Form.Label`/`Form.Error`/`Form.Render` layout primitives. Full method/prop shapes live in `dist/*.d.ts` — this file covers what the types do not say.
 
+For custom focus targets and mounted-target eligibility, follow the [custom input contract](field-input.md#custom-input-contract).
+
 ## FormHandle
 
 ```typescript

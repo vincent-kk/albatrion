@@ -70,11 +70,13 @@ const valueReading: FieldInputDefinition[] = [
 - Declare it as an optimization where it pays: a field recalculated by `derived` or `injectTo` on every keystroke of another field, or a widget that is expensive to mount.
 - Declare it only when the component keeps no copy of the value. A draft copied into state or a ref would survive a reset, and a callback the input issued before a caller write is still accepted. `formRef.current?.remount(path)` still replaces the input.
 - Leave it out for a component that reads `defaultValue`; nothing else is required of it.
+- The sibling schema key `presentation.required` controls the display indicator; see [the required override contract](#hybrid-parents-write-child-values-through-the-parent).
 - A schema declares the same thing per field with `presentation.controlled`; that is the only place to declare it for an inline `presentation.FieldInput`, a `fieldInputMap` component, or a `FieldInput` passed to `Form.Input`, `Form.Field` or `Form.Render`. `false` on either side wins, so a schema can switch a controlled definition back to remounting for one field.
 - A direct input write preserves the emitting input. For a parent override, use the [hybrid parent contract](#hybrid-parents-write-child-values-through-the-parent).
 
 ## Custom Input Contract
 
+- For a non-native focus target, add `data-focus-target` to the focusable element and provide its keyboard behavior. `focus(path)` chooses the first marked element, input, textarea, select or button in DOM order; the marker does not grant focusability. Mounted-target detection rejects `aria-disabled="true"` as well as native disabled controls.
 - Read either `value` or `defaultValue`, never both; mixing them gives React two competing value owners.
 - Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
 - A custom input on a non-terminal object/array **must render `ChildFields`** — otherwise its children silently vanish:
@@ -137,7 +139,7 @@ For an input without a controlled declaration, these limits apply:
 - **The parent copies an emitted object or array:** a new reference can remount the child even when its contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
 - **The parent rejects the input by making no write:** the node keeps its previous value, but the undeclared input's typed draft stays on screen. Rejection alone does not restore the displayed value; explicitly refresh it if that is the desired behavior.
 
-Changing only `value` or `required` on a `Child` is not an independent update channel: a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
+`value` and `defaultValue` cannot be overridden: write values through `onChange`. The shared display-only `required` value comes from a boolean override on Child, Form.Input, Form.Render or Form.Field, then boolean `presentation.required`, then `node.isRequired`. False is respected; only non-booleans fall through. Parent-only changes after mount reach both renderer and input, including returning to undefined. `required` inside `presentation.FieldInputProps` or `presentation.FieldRendererProps` is binding-owned and has no effect. A renderer author may override only its Input with a boolean required; undefined falls through without clearing the shared value. Validation and input selection hints still follow the schema required constraint. An input that forwards `required` to a native element can still affect browser validation.
 
 ## Keep configuration stable for a mounted form
 

@@ -176,13 +176,12 @@ const CustomObjectFieldInput = ({
           <Component
             key={field}
             onChange={handleFieldChange(field as keyof Value)}
-            defaultValue={defaultValue?.[field as keyof Value]}
           />
         );
       }
     });
     return components;
-  }, [ChildNodeMap, handleFieldChange, defaultValue]);
+  }, [ChildNodeMap, handleFieldChange]);
 
   const renderFields = useCallback(
     (fields: readonly (keyof Value)[]) => {

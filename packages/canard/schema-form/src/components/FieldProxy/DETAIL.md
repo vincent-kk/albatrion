@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+렌더러의 `required`는 입력과 같은 [표시 값 해석 계약](./components/FieldInputBridge/DETAIL.md#api-contracts)을 따릅니다.
+
 선택한 렌더러 컴포넌트가 바뀌면 그 렌더러가 소유한 UI만 재생성합니다. 포맷터 변경은 기존 오류를 다시 포맷하며 정상 경계의 입력 DOM을 유지합니다. 선택된 렌더러가 바뀌면 소유 경계를 교체하고, 포맷터 참조가 바뀌면 실패한 경계만 재시도합니다.
 
 - 오류 표시의 자격·보류·해제는 [FieldRendererContext](../../providers/FieldRendererContext/DETAIL.md)와 [validation](../../core/engine/validation/DETAIL.md)의 계약을 소비합니다. 현재 `errorVisibility`와 `checkErrorVisibility(node.state)`를 사용하므로 정책을 최초 마운트 값으로 고정하지 않습니다. renderer.errors는 원본 목록이며 표시 여부로 목록을 고치지 않습니다.

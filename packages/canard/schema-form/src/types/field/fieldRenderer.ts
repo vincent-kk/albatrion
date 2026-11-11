@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
@@ -8,7 +8,21 @@ import type { JSONSchemaError } from '../error/error';
 import type { ChildFieldProps } from './fieldInput';
 
 /** Props that FieldRenderer Component must satisfy */
-export interface FieldRendererProps extends ChildFieldProps {
+export interface FieldRendererProps {
+  /** Change relays belong on Input, not on renderer props. */
+  onChange?: never;
+  /** Attachment relays belong on Input, not on renderer props. */
+  onFileAttach?: never;
+  /** Default values belong to the node binding, not to renderer props. */
+  defaultValue?: never;
+  /** Optional presentation lock passed by a layout. */
+  readOnly?: boolean;
+  /** Optional presentation disable state passed by a layout. */
+  disabled?: boolean;
+  /** Renderer presentation class. */
+  className?: string;
+  /** Renderer presentation styles. */
+  style?: CSSProperties;
   /** Whether the field node assigned to FieldRenderer Component is the root node */
   isRoot: boolean;
   /** Depth of the field node assigned to FieldRenderer Component */
@@ -27,7 +41,7 @@ export interface FieldRendererProps extends ChildFieldProps {
   value: FieldNode['value'];
   /** Errors of the field node assigned to FieldRenderer Component */
   errors: FieldNode['errors'];
-  /** Whether the field node assigned to FieldRenderer Component is required */
+  /** Required indicator; display overrides do not change schema validation */
   required: FieldNode['isRequired'];
   /** `FieldInput` component of the field node assigned to FieldRenderer Component */
   Input: ComponentType<ChildFieldProps>;

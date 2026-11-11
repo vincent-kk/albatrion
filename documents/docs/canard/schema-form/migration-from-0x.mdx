@@ -121,6 +121,8 @@ A terminal object/array root receives issues for paths inside its whole value. D
 
 ## Settings after mount {#live-settings}
 
+Remove `onChange` and `onFileAttach` from `Form.Input`, `Form.Render` and `Form.Field`; relay callbacks belong on Child or renderer Input. Remove child/layout `value` and `defaultValue` overrides; initialize with Form.defaultValue and write subsequent values through the parent callback or handle. Move `presentation.FieldInputProps.required` to `presentation.required`; required in either props bag is ignored. For renderer and input `required`, follow [the display override contract](./api-reference#composition).
+
 Remove Form key changes used only to apply configuration, after checking the lifetime below. Replace configuration objects, arrays and callbacks immutably; mutating an existing reference is not a supported update signal. Explicit Form settings take precedence over FormProvider defaults. FormProvider has no `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, or `disableAutomaticWrites` prop.
 
 | Setting                                                                  | Migration check                                                                                                                                                                                                                                              |

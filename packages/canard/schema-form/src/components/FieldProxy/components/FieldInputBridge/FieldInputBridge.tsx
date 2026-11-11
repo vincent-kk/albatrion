@@ -28,6 +28,7 @@ import {
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
+import { resolveRequired } from '../../utils/resolveRequired';
 import { useChildFields } from './hooks/useChildFields';
 import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
@@ -54,9 +55,11 @@ export const FieldInputBridge = memo(
   }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || (selected && selected.Component);
+    const presentation = (node.jsonSchema as JSONSchema).presentation;
+    const inputProps = presentation?.FieldInputProps;
     const controlled = resolveControlled(
       PreferredFieldInput ? undefined : selected?.controlled,
-      (node.jsonSchema as JSONSchema).presentation?.controlled,
+      presentation?.controlled,
     );
     // Each selection gets its own generation, even when A returns after B.
     const selection = useMemorize(() => ({ active: false }), [FieldInput]);
@@ -182,16 +185,20 @@ export const FieldInputBridge = memo(
         onCompositionEnd={handleCompositionEnd}
       >
         <FieldInput
-          required={node.isRequired}
           placeholder={undefined}
           style={undefined}
           className={undefined}
-          {...(node.jsonSchema as JSONSchema).presentation?.FieldInputProps}
+          {...inputProps}
+          {...overrideProps}
           defaultValue={defaultValue}
           value={node.value}
+          required={resolveRequired(
+            overrideProps.required,
+            presentation?.required,
+            node.isRequired,
+          )}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
-          {...overrideProps}
           readOnly={rootReadOnly || node.isReadOnly || !!overrideProps.readOnly}
           disabled={rootDisabled || node.isDisabled || !!overrideProps.disabled}
           inputGeneration={generation}

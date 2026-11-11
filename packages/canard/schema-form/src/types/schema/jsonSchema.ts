@@ -63,6 +63,8 @@ export type SchemaPresentation = {
    * `false` here or on the definition wins over `true` on the other.
    */
   controlled?: boolean;
+  /** Shared required indicator; schema validation and input selection remain schema-driven. */
+  required?: boolean;
   /** Custom error messages per validation rule */
   errorMessages?: {
     [key: string]: Optional<string | Dictionary<string>>;

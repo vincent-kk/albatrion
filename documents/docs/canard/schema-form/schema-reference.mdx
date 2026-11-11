@@ -26,7 +26,7 @@ At blueprint load, a defined reserved value must have the shallow type below; `u
 | `options` | `propertyOrder` | array of strings; `*` is a literal property name, not a wildcard |
 | `options` | `virtual` | virtual-group declarations with the existing fields checks |
 | `presentation` | `inputType` | string |
-| `presentation` | `controlled` | boolean |
+| `presentation` | `controlled`, `required` | boolean |
 | `presentation` | `FieldInput` | function or non-null object; null means absent |
 | `presentation` | `FieldInputProps`, `FieldRendererProps`, `errorMessages` | non-null, non-array object; no nested-value checks |
 
@@ -34,9 +34,11 @@ The same control value checks apply inside fields entries and fragments, within 
 
 | Group | Consumer use |
 | --- | --- |
-| `presentation` | `inputType`, `controlled`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; custom renderer payload is allowed |
+| `presentation` | `inputType`, `controlled`, `required`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; custom renderer payload is allowed |
 | `options` | Reserved engine options use the types above; custom keys are allowed |
 | `controls` | The controls listed below; input-specific settings do not belong here |
+
+`presentation.required` sets the display indicator shared by renderer and input; see [the required override contract](./api-reference#composition). It is independent of `presentation.controlled`.
 
 `options.trim` trims the stored string on blur, not on every keystroke. `omitTrailing` removes trailing `undefined` entries from normalized array output without deleting their raw child nodes. `omitEmpty` defaults to true; `trim` and `omitTrailing` default to false. See the [array output example](./examples/array-output-filters).
 

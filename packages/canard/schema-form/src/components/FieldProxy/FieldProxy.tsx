@@ -29,6 +29,7 @@ import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 import { createFieldInputBridge } from './components/FieldInputBridge';
 import type { FieldProxyProps } from './type';
 import { getRendererBoundary } from './utils/getRendererBoundary';
+import { resolveRequired } from './utils/resolveRequired';
 
 const RERENDERING_EVENT =
   FieldNodeEventType.UpdateValue |
@@ -103,6 +104,7 @@ export const FieldProxy = ({
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
   if (!node?.isPresent) return null;
+  const presentation = (node.jsonSchema as JSONSchema).presentation;
   const live = checkErrorVisibility(node.state);
   const errorVisible = live && isErrorRevealed(node, errorVisibility, true);
   const revealVersion =
@@ -114,8 +116,7 @@ export const FieldProxy = ({
       <div data-path={node.path} role={NONE_ROLE} style={DISPLAY_CONTENT}>
         <RendererBoundary onError={onError} formatError={contextFormatError}>
           <FieldRenderer
-            {...(node.jsonSchema as JSONSchema).presentation
-              ?.FieldRendererProps}
+            {...presentation?.FieldRendererProps}
             {...overridePropsRef?.current}
             // Essential node properties are owned by the binding.
             node={node}
@@ -127,7 +128,11 @@ export const FieldProxy = ({
             name={node.name}
             value={node.value}
             errors={node.errors}
-            required={node.isRequired}
+            required={resolveRequired(
+              overridePropsRef?.current.required,
+              presentation?.required,
+              node.isRequired,
+            )}
             Input={Input}
             errorVisible={errorVisible}
             formatError={formatError}

@@ -10,6 +10,7 @@ Use this prompt when the task is to migrate an existing application to the insta
 
 ## Make the conversion
 
+- Remove `onChange` and `onFileAttach` from Form.Input, Form.Render and Form.Field; relay through Child or renderer Input instead. Remove child/layout `value` and `defaultValue` overrides and initialize through Form.defaultValue or write through the parent callback. Move `presentation.FieldInputProps.required` to `presentation.required`; required in either props bag is ignored. For renderer and input `required`, follow [the display override contract](field-input.md#hybrid-parents-write-child-values-through-the-parent).
 - Move schema authoring keys into presentation, controls and options using the guide. Search generated schema sources too. Unknown legacy top-level keys do not provide aliases or engine warnings; a successful render alone does not show that the settings applied.
 - Rename consumer imports, plugin members, input props, node guards/state and error-display APIs. Convert the error-display settings using the guide’s error-visibility table. Read `schemaType` for integer-specific matching; `type` is the runtime node kind. Treat multiple non-null kinds as a terminal union and provide a deliberate union input when the fallback draft does not fit the UI.
 - Replace incomplete validator functions with the full validator object contract. Disable AJV value-changing options before bind and move those transformations into explicit application code. Preserve validation verdict tests independently of warning assertions.

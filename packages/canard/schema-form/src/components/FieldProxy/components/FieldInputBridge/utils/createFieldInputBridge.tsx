@@ -19,6 +19,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { FieldProxyProps } from '../../../type';
+import { resolveRequired } from '../../../utils/resolveRequired';
 import { FieldInputBridge } from '../FieldInputBridge';
 
 /**
@@ -50,6 +51,11 @@ export const createFieldInputBridge = (
     const overrideProps = useSnapshot({
       ...overrideFieldInputPropsRef?.current,
       ...preferredOverrideProps,
+      required: resolveRequired(
+        preferredOverrideProps.required,
+        overrideFieldInputPropsRef?.current.required,
+        undefined,
+      ),
     });
     const PreferredFieldInput = useLazyConstant(() =>
       OverridePreferredFieldInput &&

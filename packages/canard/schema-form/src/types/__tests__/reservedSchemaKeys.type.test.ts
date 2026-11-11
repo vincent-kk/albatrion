@@ -21,3 +21,9 @@ it('checks binding authoring and canonical keys in both directions', () => {
     keyof typeof RESERVED_SCHEMA_KEYS.options
   >();
 });
+
+it('types presentation required as an optional boolean', () => {
+  expectTypeOf<SchemaPresentation['required']>().toEqualTypeOf<
+    boolean | undefined
+  >();
+});

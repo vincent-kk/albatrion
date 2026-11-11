@@ -1,2 +1,3 @@
-/** First native control reached by focus requests and mounted-input detection. */
-export const FOCUS_SELECTOR = 'input, textarea, select, button';
+/** First marked target or native control reached in DOM order by focus and mount checks. */
+export const FOCUS_SELECTOR =
+  '[data-focus-target], input, textarea, select, button';
