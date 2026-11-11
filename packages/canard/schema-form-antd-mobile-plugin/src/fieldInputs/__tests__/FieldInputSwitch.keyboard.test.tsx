@@ -73,14 +73,32 @@ describe.each(['boolean', 'string'])('%s switch keyboard access', (kind) => {
     },
   );
 
+  it.each([' ', 'Enter'])(
+    'ignores repeated %j keydowns until the next press',
+    (key) => {
+      const { control, ref, changed, on, off } = renderSwitch(kind);
+      control.focus();
+      fireEvent.keyDown(control, { key });
+      expect(ref.current!.getValue()).toBe(on);
+      expect(fireEvent.keyDown(control, { key, repeat: true })).toBe(false);
+      expect(ref.current!.getValue()).toBe(on);
+      expect(changed.mock.calls).toEqual([[on]]);
+      fireEvent.keyUp(control, { key });
+      fireEvent.keyDown(control, { key });
+      expect(ref.current!.getValue()).toBe(off);
+      expect(changed.mock.calls).toEqual([[on], [off]]);
+    },
+  );
+
   it('removes disabled controls from tab order and ignores activation keys', async () => {
     const { control, ref, changed, off } = renderSwitch(kind, true);
-    expect(control.getAttribute('tabindex')).toBe('-1');
     await userEvent.tab();
     expect(document.activeElement).not.toBe(control);
     expect(fireEvent.keyDown(control, { key: ' ' })).toBe(true);
     expect(fireEvent.keyDown(control, { key: 'Enter' })).toBe(true);
     await userEvent.click(control);
+    expect(document.activeElement).not.toBe(control);
+    expect(control.getAttribute('tabindex')).toBeNull();
     expect(ref.current!.getValue()).toBe(off);
     expect(changed).not.toHaveBeenCalled();
   });

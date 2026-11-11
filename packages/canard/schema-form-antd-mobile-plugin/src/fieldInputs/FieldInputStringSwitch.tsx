@@ -60,7 +60,7 @@ const FieldInputStringSwitch = ({
   return (
     <SwitchKeyboardControl disabled={disabled}>
       <Switch
-        tabIndex={disabled ? -1 : 0}
+        tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
         key={path}
         disabled={disabled}

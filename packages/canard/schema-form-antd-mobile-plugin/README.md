@@ -110,7 +110,7 @@ This plugin provides the following Ant Design Mobile components:
 
 ## Switch keyboard access
 
-Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch through the same value mapping as a click; Space does not scroll the page. Disabled switches stay outside the Tab order and ignore activation keys.
+Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch once per press through the same value mapping as a click; holding a key does not toggle repeatedly, and Space does not scroll the page. Disabled switches cannot receive focus by click or Tab and ignore activation keys.
 
 ---
 
