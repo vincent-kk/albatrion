@@ -93,22 +93,20 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
         };
       },
     );
-    try {
-      writeFieldNode(
-        target,
-        input,
-        source === 'automatic'
-          ? 'automatic'
-          : merge
-            ? 'callerPartial'
-            : 'callerReplace',
-        option,
-        source,
-        origins,
-      );
-    } catch (error) {
-      captureChainError(runtime, error);
-    }
+    writeFieldNode(
+      target,
+      input,
+      source === 'automatic'
+        ? 'automatic'
+        : merge
+          ? 'callerPartial'
+          : 'callerReplace',
+      option,
+      source,
+      origins,
+    );
+  } catch (error) {
+    captureChainError(runtime, error);
   } finally {
     if (runtime.inputRelays !== undefined) runtime.inputRelays = undefined;
   }
