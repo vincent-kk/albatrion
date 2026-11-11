@@ -92,6 +92,54 @@ The node prop is required in both FieldInputProps and FieldRendererProps.
 
 `ChildFields` contains components with key/path/field metadata; use `FieldInputProps['ChildFields'][number]` when you need their type. `ChildFieldProps` allows per-child overrides including `FieldRenderer`. A FieldInput does not receive a built-in `FieldRenderer` prop; choose the renderer on Form, Form.Field, or child components instead.
 
+### Hybrid parent inputs {#hybrid-parent-inputs}
+
+A custom branch input can render `ChildFields` and override their `onChange` to write the parent value. Use a functional parent update: two children emitting in one event or batch then preserve both values, whereas spreading the parent's rendered `value` can overwrite an earlier edit from that event. Pass this schema to `Form`:
+
+```tsx
+import type { FieldInputProps, JSONSchema } from '@canard/schema-form';
+
+const HybridObject = ({
+  ChildFields,
+  onChange,
+}: FieldInputProps<Record<string, unknown>>) => (
+  <>
+    {ChildFields.map((Child) => (
+      <Child
+        key={Child.key}
+        onChange={(input) =>
+          onChange((prev) => ({ ...prev, [Child.field]: input }))
+        }
+      />
+    ))}
+  </>
+);
+
+/** Keep the inline object input nonterminal so it can render its children. */
+const hybridSchema: JSONSchema = {
+  type: 'object',
+  options: { terminal: false },
+  presentation: { FieldInput: HybridObject },
+  properties: {
+    first: { type: 'string' },
+    last: { type: 'string' },
+  },
+};
+```
+
+The overridden child callback receives the evaluated value, never an updater function. Store `input` directly; the parent's own `onChange` can still receive an updater. An inline `presentation.FieldInput` makes an object or array terminal unless its schema sets `options.terminal: false`.
+
+If the parent commits synchronously and the child's final value is exactly what it emitted, the typing child's DOM and focus are preserved. Primitive values compare by value; objects and arrays must retain the same reference. Sibling children use the current parent callback.
+
+For a child without a controlled declaration:
+
+- A parent transformation, or a `derived`/`injectTo` rule that changes the final value, remounts the child. To preserve its DOM while displaying the transformed value, use an input that renders from `value` and declare `controlled: true` on its definition or `presentation.controlled: true` on its schema. Adding the declaration to a `defaultValue` input does not make it controlled.
+- A delayed write, such as a debounced callback, remounts the child when it arrives. Commit the value synchronously and debounce a separate side effect, or use a value-driven controlled input when delayed display is intentional.
+- Copying an emitted object or array can remount the child even when the contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
+- Rejecting input without writing leaves the node's previous value and the typed draft on screen. Rejection alone does not restore an undeclared input's display; explicitly refresh it if that is the intended behavior.
+
+Changing only `value` or `required` on a `Child` is not an independent update channel: the rendered value and required state follow the node, and a parent-only change is not delivered separately from the node's value. Write values through `onChange` and express required state through the schema or `controls.required`.
+
 ## Plugins and FormProvider {#plugins}
 
 `SchemaFormPlugin` accepts renderer components, `fieldInputDefinitions`, `validator`, and `formatError`. Later registrations replace supplied renderer/validator/formatter fields and prepend input definitions. `registerPlugin(null)` resets plugin state to the built-in defaults. Registration affects configuration captured by subsequent mounts.

@@ -151,14 +151,14 @@ Use `presentation.FieldInputProps` for input-specific settings because it is for
 
 ### Skipping remounts for a controlled input {#controlled}
 
-A value an input did not write itself (`setValue` at any scope, reset, `refresh(path)`, `derived`, `injectTo`, `unsetValue`, array operations, a parent input writing the whole value) remounts that input and hands it a new `defaultValue`. An input that draws from `value` on every render does not need the remount: declare `controlled: true` on its `FieldInputDefinition`, or per field in `presentation.controlled`, and it keeps its DOM, focus and local state while the new value arrives through `value`.
+A value an input did not write itself (`setValue` at any scope, reset, `refresh(path)`, `derived`, `injectTo`, `unsetValue`, array operations) remounts that input and hands it a new `defaultValue`. An input that draws from `value` on every render does not need the remount: declare `controlled: true` on its `FieldInputDefinition`, or per field in `presentation.controlled`, and it keeps its DOM, focus and local state while the new value arrives through `value`.
 
 | `controlled` | A value the input did not write |
 | --- | --- |
 | omitted or `false` | remount with a new `defaultValue` |
 | `true` | new `value`, no remount |
 
-This is an optimization for fields recalculated often and for widgets that are expensive to mount. Declare it only for a component that keeps no copy of the value: a copied draft would survive a reset. An inline `presentation.FieldInput`, a `fieldInputMap` component, and a `FieldInput` passed to `Form.Input`, `Form.Field` or `Form.Render` can only be declared in the schema. `false` on either side wins, so a schema can switch a controlled definition back for one field. Typing through `onChange` never remounts the input that typed, and `remount(path)` replaces an input whatever it declares. The UI plugins declare their checkbox, switch and stepper inputs that draw from `value`.
+This is an optimization for fields recalculated often and for widgets that are expensive to mount. Declare it only for a component that keeps no copy of the value: a copied draft would survive a reset. An inline `presentation.FieldInput`, a `fieldInputMap` component, and a `FieldInput` passed to `Form.Input`, `Form.Field` or `Form.Render` can only be declared in the schema. `false` on either side wins, so a schema can switch a controlled definition back for one field. A direct input write preserves the emitting input; a parent override follows the [hybrid parent contract](./api-reference#hybrid-parent-inputs). `remount(path)` replaces an input whatever it declares. The UI plugins declare their checkbox, switch and stepper inputs that draw from `value`.
 
 ## Custom-input accessibility {#accessibility}
 

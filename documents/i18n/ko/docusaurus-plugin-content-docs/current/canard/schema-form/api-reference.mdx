@@ -92,6 +92,54 @@ FieldInputProps와 FieldRendererProps의 node prop은 모두 필수입니다.
 
 `ChildFields`는 key·path·field metadata가 있는 컴포넌트이며 형은 `FieldInputProps['ChildFields'][number]`로 얻습니다. `ChildFieldProps`에는 `FieldRenderer` 등 자식별 재정의가 있습니다. FieldInput에 내장 `FieldRenderer` prop을 제공하지는 않으므로 Form·Form.Field·자식 컴포넌트에서 렌더러를 선택하십시오.
 
+### 하이브리드 부모 입력 {#hybrid-parent-inputs}
+
+사용자 정의 분기 입력은 `ChildFields`를 렌더링하고 자식의 `onChange`를 재정의하여 부모 값을 쓸 수 있습니다. 부모에는 함수 갱신자를 사용하십시오. 같은 이벤트나 배치에서 두 자식이 값을 내보내도 둘 다 보존됩니다. 부모가 렌더링할 때 받은 `value`를 펼치면 같은 이벤트의 앞선 편집을 덮어쓸 수 있습니다. 다음 스키마를 `Form`에 전달하십시오.
+
+```tsx
+import type { FieldInputProps, JSONSchema } from '@canard/schema-form';
+
+const HybridObject = ({
+  ChildFields,
+  onChange,
+}: FieldInputProps<Record<string, unknown>>) => (
+  <>
+    {ChildFields.map((Child) => (
+      <Child
+        key={Child.key}
+        onChange={(input) =>
+          onChange((prev) => ({ ...prev, [Child.field]: input }))
+        }
+      />
+    ))}
+  </>
+);
+
+/** Keep the inline object input nonterminal so it can render its children. */
+const hybridSchema: JSONSchema = {
+  type: 'object',
+  options: { terminal: false },
+  presentation: { FieldInput: HybridObject },
+  properties: {
+    first: { type: 'string' },
+    last: { type: 'string' },
+  },
+};
+```
+
+재정의된 자식 콜백은 갱신자 함수가 아닌 평가된 값을 받습니다. `input`을 그대로 저장하십시오. 부모 자신의 `onChange`에는 계속 함수 갱신자를 전달할 수 있습니다. 인라인 `presentation.FieldInput`을 지정한 객체나 배열은 스키마에 `options.terminal: false`가 없으면 단말이 됩니다.
+
+부모가 동기적으로 커밋하고 자식의 최종 값이 내보낸 값과 정확히 같으면 입력 중인 자식의 DOM과 포커스가 유지됩니다. 원시 값은 값으로 비교하고 객체와 배열은 같은 참조를 유지해야 합니다. 형제 자식은 현재 부모 콜백을 사용합니다.
+
+controlled 선언이 없는 자식에는 다음 한계가 있습니다.
+
+- 부모의 변환이나 `derived`·`injectTo` 규칙이 최종 값을 바꾸면 자식이 재마운트됩니다. 변환된 값을 표시하면서 DOM을 유지하려면 `value`로 렌더링하는 입력을 사용하고 정의에 `controlled: true` 또는 스키마에 `presentation.controlled: true`를 선언하십시오. `defaultValue` 입력에 선언만 추가한다고 controlled 입력이 되지는 않습니다.
+- 디바운스 콜백처럼 늦게 쓰는 값은 도착할 때 자식을 재마운트합니다. 값은 동기적으로 커밋하고 별도의 부수 효과를 디바운스하거나, 지연된 표시가 의도한 동작이면 `value`로 렌더링하는 controlled 입력을 사용하십시오.
+- 내보낸 객체나 배열을 복사하면 내용이 같아도 자식이 재마운트될 수 있습니다. 변환이 필요 없으면 내보낸 참조를 유지하고, 그렇지 않으면 controlled 입력을 사용하십시오.
+- 쓰지 않고 입력을 거절하면 노드에는 이전 값이, 화면에는 입력한 초안이 남습니다. 거절만으로는 controlled 선언이 없는 입력의 표시가 복구되지 않으므로, 복구가 의도한 동작이면 명시적으로 refresh하십시오.
+
+`Child`의 `value`나 `required`만 바꾸는 것은 독립적인 갱신 통로가 아닙니다. 렌더링되는 값과 필수 상태는 노드를 따르며 부모만의 변경은 노드 값과 별개로 전달되지 않습니다. 값은 `onChange`로 쓰고 필수 상태는 스키마나 `controls.required`로 표현하십시오.
+
 ## 플러그인과 FormProvider {#plugins}
 
 `SchemaFormPlugin`은 renderer 컴포넌트, `fieldInputDefinitions`, `validator`, `formatError`를 받습니다. 뒤의 등록은 제공한 renderer·validator·formatter를 대체하고 입력 정의를 앞에 붙입니다. `registerPlugin(null)`은 플러그인 상태를 내장 기본값으로 초기화합니다. 등록은 이후 마운트에서 캡처하는 설정에 적용됩니다.
