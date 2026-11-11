@@ -13,6 +13,7 @@ import { composeBatchValue } from './composeBatchValue';
 
 /**
  * Commit the final marked value of each batch target before delivery.
+ * Every exit after detaching batchWrites clears pending input relay records.
  * @param root - Tree owning marked writes
  * @returns Nothing; settlement failures stay on the current chain
  */

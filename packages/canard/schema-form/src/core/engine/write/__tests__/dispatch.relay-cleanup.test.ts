@@ -163,6 +163,38 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
     expect(next.runtime.inputRelays).toBeUndefined();
   });
 
+  it.each([false, true])(
+    'clears a record created after updater adoption with outer batch=%s',
+    (batched) => {
+      const previous = createDispatchTree({ type: 'string' });
+      const next = createDispatchTree({ type: 'string' });
+      dispatchMount(previous.root, 'old');
+      dispatchMount(next.root, 'next');
+      const emit = () =>
+        dispatchRelayInput(
+          previous.root,
+          () => {
+            adoptFieldNodeChain(previous.root, next.root);
+            expect(previous.runtime.inputRelays).toBeUndefined();
+            return 'x';
+          },
+          WriteOption.Overwrite,
+          (value) => {
+            expect(previous.runtime.inputRelays).toHaveLength(1);
+            expect(next.runtime.inputRelays).toBeUndefined();
+            dispatchSetValue(next.root, value);
+          },
+        );
+      if (batched) dispatchBatch(previous.root, emit);
+      else emit();
+      expect(previous.root.disposed).toBe(true);
+      expect(previous.root.local).toBe('old');
+      expect(next.root.local).toBe('x');
+      expect(previous.runtime.inputRelays).toBeUndefined();
+      expect(next.runtime.inputRelays).toBeUndefined();
+    },
+  );
+
   it('reports a throwing updater through the outer entry error path', () => {
     const report = vi.fn();
     const { root, runtime } = createDispatchTree(

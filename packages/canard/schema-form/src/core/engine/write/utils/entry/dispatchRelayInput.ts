@@ -12,11 +12,13 @@ const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
 
 /**
  * Relay one evaluated input through an overridden callback and its synchronous batch.
+ * Record the node's last emission in runtime.inputRelays for the first settlement;
+ * clear external errors and mark the surviving input edited in the same batch.
  * @param node - Input occurrence whose unchanged committed value may omit Refresh
  * @param input - Value or updater evaluated against the call-site pending value
  * @param option - Caller write flags passed to the callback
  * @param relay - Callback that writes the value through its owning parent
- * @returns Nothing; the outer batch owns settlement and delivery
+ * @returns Nothing; a disposed node or root returns silently, and the outer batch owns settlement and delivery
  */
 export const dispatchRelayInput = <
   Self extends FieldNodeRecord<Self>,
@@ -38,7 +40,7 @@ export const dispatchRelayInput = <
           : input;
       const relays = (runtime.inputRelays ??= []);
       const record = { node, path: node.path, value };
-      const index = relays.findIndex((relay) => relay.node === node);
+      const index = relays.findIndex((entry) => entry.node === node);
       if (index === -1) relays.push(record);
       else relays[index] = record;
       relay(value, option);

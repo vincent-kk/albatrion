@@ -14,11 +14,13 @@ import type { FieldProxyProps } from '../../type';
 
 export interface FieldInputBridgeProps {
   node: FieldNode;
+  /** Change callback passed directly to this input, preferred over its parent's callback. */
   onChangeRef: RefObject<ChildFieldProps['onChange']>;
+  /** Attachment callback passed directly to this input, preferred over its parent's callback. */
   onFileAttachRef: RefObject<ChildFieldProps['onFileAttach']>;
-  /** Parent change callback read at invocation when the child has no override. */
+  /** Parent change callback read at invocation when the direct onChangeRef callback is absent. */
   overrideOnChangeRef?: RefObject<ChildFieldProps['onChange']>;
-  /** Parent attachment callback read at invocation when the child has no override. */
+  /** Parent attachment callback read at invocation when the direct onFileAttachRef callback is absent. */
   overrideOnFileAttachRef?: RefObject<ChildFieldProps['onFileAttach']>;
   overrideProps: OverridableFieldInputProps;
   PreferredFieldInput: Nullable<ComponentType<FieldInputBindingProps>>;

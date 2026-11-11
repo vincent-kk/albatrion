@@ -1,4 +1,4 @@
-import type { FieldNodeRecord } from '../../../../record';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../../record';
 import { isSameDeliveryValue } from './isSameDeliveryValue';
 
 /**
@@ -8,7 +8,7 @@ import { isSameDeliveryValue } from './isSameDeliveryValue';
  * @returns Whether delivery-value identity permits omitting this Refresh
  */
 export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
-  relays: readonly { node: Self; path: string; value: unknown }[],
+  relays: Readonly<NonNullable<FieldNodeRuntime<Self>['inputRelays']>>,
   path: string,
 ): boolean =>
   relays.some(
