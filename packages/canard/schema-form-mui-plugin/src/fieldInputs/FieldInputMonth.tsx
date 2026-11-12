@@ -31,6 +31,7 @@ const FieldInputMonth = ({
   name,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -85,6 +86,7 @@ const FieldInputMonth = ({
         }
         onChange={handleChange}
         disabled={disabled}
+        readOnly={readOnly}
         views={['year', 'month']}
         openTo="month"
         format="YYYY-MM"

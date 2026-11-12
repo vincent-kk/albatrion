@@ -30,6 +30,8 @@ interface FieldInputMonthProps
 const FieldInputMonth = ({
   path,
   name,
+  disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -62,6 +64,7 @@ const FieldInputMonth = ({
       id={path}
       name={name}
       picker="month"
+      disabled={disabled || readOnly}
       disabledDate={disabledDate}
       defaultValue={initialValue}
       onChange={handleChange}

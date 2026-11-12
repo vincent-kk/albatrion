@@ -33,3 +33,5 @@ Components are selected automatically from the `type`, `format`, `inputType`, an
 ## Peer Dependencies
 
 `@canard/schema-form`, `antd`, `dayjs`, React
+
+Date and month pickers combine readOnly with disabled because preventing text entry alone leaves calendar selection editable. Lock updates must reach the widget.
