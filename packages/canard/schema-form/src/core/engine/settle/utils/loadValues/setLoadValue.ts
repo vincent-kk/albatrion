@@ -1,7 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { setDataProperty } from '@winglet/common-utils/object';
 
 import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { getLoadValue } from './getLoadValue';
 
@@ -20,13 +23,12 @@ export const setLoadValue = (
   if (sameValue(getLoadValue(snapshot, path), value)) return snapshot;
   if (!path) return value;
   const segments = parsePointerSegments(path);
-  for (const segment of segments)
-    if (typeof segment !== 'string') return snapshot;
+  if (!isNamedPointerSegments(segments)) return snapshot;
   const ancestors: unknown[] = [snapshot];
   let source = snapshot;
   for (const segment of segments) {
     source =
-      source !== null && typeof source === 'object'
+      source !== null && typeof source === 'object' && hasOwnProperty(source, segment)
         ? Reflect.get(source, segment)
         : undefined;
     ancestors.push(source);
@@ -39,7 +41,7 @@ export const setLoadValue = (
       : parent !== null && typeof parent === 'object'
         ? { ...parent }
         : {};
-    Reflect.set(copy, segments[index], next);
+    setDataProperty(copy, segments[index], next);
     next = copy;
   }
   return next;
