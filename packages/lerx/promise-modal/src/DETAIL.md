@@ -10,7 +10,7 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 - DOM 없는 서버 렌더에서 Provider와 공개 애니메이션 훅은 layout effect 경고를 내지 않습니다. 여러 프랙탈이 사용하는 환경별 effect 선택은 소스 루트의 hooks가 소유하며 브라우저에서는 layout 시점을 유지합니다.
 - 동일한 전역 상태 구조 버전의 패키지 사본은 같은 시스템을 사용하며 버전이 다르면 격리하고 개발 경고를 냅니다.
 - 기본 경로 훅은 Navigation API가 없을 때 살아 있는 노드가 있는 동안만 폴링합니다. 경로로 숨겨진 노드와 파괴 전 닫힌 노드도 살아 있는 동안 포함하며 마지막 파괴 시 예약을 취소합니다. 기본 훅으로 여는 노드의 initiator는 호출 순간의 pathname이므로 빈 기간의 이동도 반영합니다.
-- closeOnEscape는 모달 Esc, 모달 배경 클릭, Provider Esc, Provider 배경 클릭 순으로 상속합니다. Esc는 보이는 미확정 최상위만 취소합니다.
+- closeOnEscape는 모달 Esc, 모달 배경 클릭, Provider Esc, Provider 배경 클릭 순으로 상속합니다. Esc가 취소할 모달을 고르는 규칙은 `app/DETAIL.md`에 있습니다.
 - dimmed 모달은 포커스 이동·복원과 기본 Tab 가두기·스크롤 잠금 및 조상 경로 형제 inert를 제공합니다. 포커스 이동은 최상위 참여 모달만 처리하고 Tab 가두기는 전체 visible 미확정 최상위가 dimmed일 때만 적용합니다. trapFocus와 lockScroll은 기본 true이고 dimmed false에는 적용하지 않습니다. 사용자 프레임은 접근 가능한 이름·설명·역할을 제공합니다.
 
 - useDestroyAfter는 지속시간과 Provider 폴백이 바뀔 때만 정규화하여 동일 입력의 부모 리렌더가 경고를 반복하지 않습니다.
