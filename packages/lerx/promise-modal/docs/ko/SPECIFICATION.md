@@ -140,7 +140,7 @@ Escape는 클릭으로 순서가 바뀐 경우를 포함하여 살아 있고 보
 
 격리는 앵커의 조상 경로를 따라 `document.body`까지 각 단계의 형제 요소에 `inert` 속성을 겁니다. 기존 inert 속성은 유지하고 라이브러리가 추가한 속성만 제거합니다. 첫 참여 모달이 생기거나 root가 이동할 때 스냅샷을 만들며 이후 추가된 DOM은 건드리지 않아 body에 붙는 드롭다운 포털이 동작할 수 있습니다. 외부 포털은 래퍼의 Tab 순환 밖에 있으므로 사용자 프레임이 포털의 키보드 통합을 맡습니다.
 
-참여 모달 중 `lockScroll: true`가 하나라도 있으면 body overflow를 숨깁니다. 스크롤바 너비가 0보다 크고 100px보다 작을 때만 계산된 오른쪽 패딩에 더하여 페이지 밀림을 보정합니다. 마지막 스크롤 잠금 대상이 빠지면 원래 인라인 overflow와 오른쪽 패딩(우선순위 포함)을 복원합니다. Provider 해제와 reset은 페이지 효과와 document keydown 리스너 하나를 정리합니다.
+참여 모달 중 `lockScroll: true`가 하나라도 있으면 body overflow를 숨깁니다. 스크롤바 너비가 0보다 크고 100px보다 작을 때만 계산된 오른쪽 패딩에 더하여 페이지 밀림을 보정합니다. 마지막 스크롤 잠금 대상이 빠지면 원래 인라인 overflow와 오른쪽 패딩(우선순위 포함)을 복원합니다. Provider 해제는 페이지 효과와 document keydown 리스너 하나를 정리합니다.
 
 기본 전경은 `role="dialog"`와 `aria-modal="true"`를 제공합니다. 사용자 전경 프레임은 역할·접근 가능한 이름·설명을 직접 제공하고 래퍼가 포커스 기본선을 제공합니다. 모든 dialog에 이름을 지정합니다. 예를 들어 제목과 설명에 `aria-labelledby`·`aria-describedby`를 연결합니다. 보이는 배경은 `dimmed || closeOnBackdropClick`일 때 포인터를 받지만 클릭 취소는 `closeOnBackdropClick`이 켜진 경우만 수행합니다. 뒤 페이지를 클릭할 수 있는 토스트는 `dimmed: false, closeOnBackdropClick: false`로 설정하며 포커스 이동·복원·페이지 격리·스크롤 잠금에 참여하지 않습니다.
 

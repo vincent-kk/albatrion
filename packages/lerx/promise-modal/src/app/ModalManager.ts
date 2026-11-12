@@ -451,7 +451,7 @@ export class ModalManager {
   static getHashedClassNames(styleId: string): string {
     return `${styleId}-${ModalManager.__state__.hash}`;
   }
-  /** Fully resets test state, unlike an individual provider's detach. */
+  /** Test-only reset skips settlement to prevent cross-test callbacks; detach owns provider teardown cancellation. */
   static reset(): void {
     ModalManager.__state__.generation++;
     ModalManager.removeKeyboardListener();
