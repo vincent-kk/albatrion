@@ -48,7 +48,7 @@ const FieldInputBoolean = ({
     },
   );
 
-  // label이 없는 경우 Checkbox만 렌더링
+
   return (
     <FormControlLabel
       label={label}

@@ -261,9 +261,9 @@ const schema = {
 } satisfies JSONSchema;
 
 /**
- * `defaultValue` 로 넘기는 객체 리터럴이 Form 의 `Value` 를 required 키로 추론시켜
- * `FormHandle` 의 기본 `Value`(InferValueType — 모든 키 optional)와 어긋난다.
- * 양쪽이 같은 인스턴스화를 쓰도록 `Value` 를 여기서 고정한다.
+ * An object literal defaultValue infers required keys for Form.Value, while
+ * FormHandle defaults to InferValueType with optional keys. Fix Value here
+ * so the form and handle use the same instantiation.
  */
 type FormSchema = typeof schema;
 type FormValue = InferValueType<FormSchema>;

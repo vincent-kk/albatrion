@@ -83,7 +83,7 @@ export class StyleManager {
     this.__root__ = config?.shadowRoot || document;
     this.__isShadowDOM__ = !!config?.shadowRoot;
 
-    // 인스턴스 키는 get() 메서드에서 전달받은 것을 사용
+    // Preserve the key passed by get() so the instance matches its registry entry.
     this.__instanceKey__ = instanceKey;
   }
 
@@ -226,7 +226,7 @@ export class StyleManager {
    * ```
    */
   public destroy(): void {
-    // 1. 예약된 애니메이션 프레임 취소
+
     if (this.__frameId__) {
       cancelAnimationFrame(this.__frameId__);
       this.__frameId__ = 0;

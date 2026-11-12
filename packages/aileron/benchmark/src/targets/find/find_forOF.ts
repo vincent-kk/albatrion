@@ -3,10 +3,10 @@ import { JSONPath } from '@winglet/json/path';
 import type { FieldNode } from '@/schema-form/core';
 
 /**
- * AbstractNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
- * @param target - 검색을 시작할 루트 노드
- * @param segments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
- * @returns 찾은 노드 또는 null
+ * Finds a node by JSONPath segments in a FieldNode tree.
+ * @param target - Node at which traversal starts; null returns null.
+ * @param segments - Ordered JSONPath segments, including root or parent markers.
+ * @returns Matching node, or null when a segment cannot be resolved.
  */
 export const find = (
   target: FieldNode | null,
