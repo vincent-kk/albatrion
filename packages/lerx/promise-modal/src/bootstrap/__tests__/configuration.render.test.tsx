@@ -14,7 +14,7 @@ import { alertHandler, promptHandler } from '@/promise-modal/core';
 import { useModal } from '@/promise-modal/hooks/useModal';
 import { useModalDuration } from '@/promise-modal/hooks/useModalDuration';
 import { useConfigurationOptions } from '@/promise-modal/providers';
-import type { ModalFrameProps } from '@/promise-modal/types/modal';
+import type { ModalFrameProps } from '@/promise-modal/types/frame';
 
 import { BootstrapProvider } from '../BootstrapProvider';
 

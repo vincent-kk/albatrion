@@ -6,7 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { ModalManager } from '@/promise-modal/app';
 import { BootstrapProvider } from '@/promise-modal/bootstrap';
 import { alertHandler } from '@/promise-modal/core';
-import type { ModalFrameProps } from '@/promise-modal/types/modal';
+import type { ModalFrameProps } from '@/promise-modal/types/frame';
 
 import { useDestroyAfter } from '../useDestroyAfter';
 import { useModalAnimation } from '../useModalAnimation';

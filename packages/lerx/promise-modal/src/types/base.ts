@@ -3,7 +3,7 @@ import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { ModalBackground } from './background';
-import type { ModalFrameProps } from './modal';
+import type { ModalFrameProps } from './frame';
 import type { ModalOptions } from './option';
 
 export interface BaseModal<T, B> {
