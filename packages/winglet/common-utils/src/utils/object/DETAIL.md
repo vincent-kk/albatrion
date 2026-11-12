@@ -75,11 +75,6 @@
 - **Direct import**: `allowed`
 - **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
 
-## History
-
-- 2026-11-04 — clone own `__proto__` 보존 계약 채택. clone은 own `__proto__`를 일반 대입으로 복사해 프로토타입 변경으로 바꿨고, JSON 왕복과 `structuredClone`과 달리 스키마 복사본에서 그 속성이 사라져 AJV 컴파일이 실패했다. cloneLite와 같은 프리미티브로 정합시켰다.
-- 2026-09-19 — 0.16.0: 0.15.0에서 교체 API와 공존하던 범용 serializer 네 개를 공개 경계에서 제거했다(breaking). 내부 성능 기준 구현은 공개하지 않는다.
-- 2026-08-18 — 예약 멤버 접근 프리미티브 신설 및 cloneLite own `__proto__` 보존 계약 채택. 이전 cloneLite는 own `__proto__`를 프로토타입 대입으로 처리해 형제 키를 소실시켰다(`@winglet/json` mergePatch RC-4의 원인). RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하는 것과 `JSON.parse`가 own `__proto__` 데이터 속성을 만드는 플랫폼 동작에 정합시켰다.
 
 ## Last Updated
 

@@ -59,13 +59,6 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 국면 전이 자체의 승인 그룹(`AC-PHASE-*`)은 `ui/DETAIL.md` 로 옮겼다 — reducer 가 `ui/reducer/` 로 이동했기 때문이다.
 
-## History
-
-- 2026-08-06 — `phaseReducer` 가 `ui/reducer/` 로 이동해 이 fractal 의 계약에서 빠졌다. organ `InjectApp/utils` 가 소유자 밖 `ui/hooks/usePhase.ts` 에 소비되어 entry point 경유 경로가 없던 상태를 해소한 결과다. `AC-PHASE-*` 네 그룹도 함께 `ui/DETAIL.md` 로 옮겼다.
-- 2026-08-06 — `## API Contracts` 를 entry point 가 실제로 수출하는 심볼로 좁히고, 나머지를 `## Internal Unit Contracts` 로 분리했다. 두 계층이 한 제목 아래 섞여 무엇이 계약 변경인지 판별할 수 없었다.
-
-- 2026-08-06 — 존재하지 않는 `plan-built` 이벤트가 계약에서 제거되고, 실제 이벤트 8종(`agent-needed`, `agent-selected`, `scope-needed`, `planning-started`, `plan-step`, `plans-ready`, `apply-start`, `focus-target`)이 기록됐다. `agent-select` 국면도 함께 누락돼 있었다.
-- 2026-08-06 — 초기 국면이 `renderInjectApp` 에서 `{ kind: 'booting' }` 으로 만들어진다는 기술이 폐기됐다. `InjectApp` 이 `usePhase` 에 `resolving` 을 넘긴다.
 
 ## Last Updated
 
