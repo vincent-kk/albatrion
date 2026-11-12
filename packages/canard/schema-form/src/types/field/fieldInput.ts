@@ -41,7 +41,7 @@ export interface FieldInputProps<
   readOnly: boolean;
   /** Disabled state of FieldInput Component */
   disabled: boolean;
-  /** Whether the field node assigned to FieldInput Component is required */
+  /** Required indicator; display overrides do not change schema validation */
   required: boolean;
   /** Field node assigned to FieldInput Component */
   node: Node;
@@ -57,11 +57,10 @@ export interface FieldInputProps<
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
   nullable: Node['nullable'];
-  /** Errors of field node assigned to FieldInput Component */
-  errors: Node['errors'];
-  /** Whether to show errors for this field.
-   * Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
-  errorVisible: boolean;
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   /** Values of the paths listed in the schema's `controls.watch`, in order */
   watchValues: WatchValues;
   /** Default value of FieldInput Component */
@@ -129,9 +128,10 @@ export interface UnknownFieldInputProps {
   schemaType: FieldNode['schemaType'];
   misfit: boolean;
   nullable: boolean;
-  errors: readonly any[];
-  /** Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
-  errorVisible: boolean;
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   watchValues: readonly any[];
   defaultValue: any;
   value: any;
@@ -150,11 +150,17 @@ export type InferFieldInputProps<Value> = Value extends AllowedValue
   : UnknownFieldInputProps;
 
 export type ChildFieldProps<Value extends AllowedValue = any> = {
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-  defaultValue?: Value;
-  value?: Value;
+  /** Defaults belong to the node, not to a child override. */
+  defaultValue?: never;
+  /** Current values are written through the binding callback. */
+  value?: never;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: Optional<File | File[]>]>;
   FieldRenderer?: ComponentType<FieldRendererProps>;
@@ -163,10 +169,23 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   [alt: string]: any;
 };
 
-export type OverridableFieldInputProps = Omit<
-  ChildFieldProps,
-  'onChange' | 'onFileAttach' | 'FieldRenderer'
->;
+/** Presentation overrides cannot replace the binding-owned callback channels. */
+export type OverridableFieldInputProps = {
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
+  required?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
+  className?: string;
+  style?: CSSProperties;
+  value?: never;
+  defaultValue?: never;
+  onChange?: never;
+  onFileAttach?: never;
+  [alt: string]: any;
+};
 
 export type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
@@ -211,6 +230,12 @@ export type FieldInputHint = {
 export type FieldInputDefinition<T = unknown> = {
   test: FieldInputTestFn | FieldInputTestObject;
   Component: ComponentType<unknown extends T ? any : InferFieldInputProps<T>>;
+  /**
+   * Set `true` when the component draws from `value` alone and keeps no copy of it: a value
+   * it did not write then arrives through `value` without remounting it. Omitted or `false`:
+   * such a value remounts the component, which hands it a new `defaultValue`.
+   */
+  controlled?: boolean;
 };
 
 export type FieldInputMap<T = unknown> = {

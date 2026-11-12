@@ -3,6 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import {
   ErrorVisibility,
   type FieldInputProps,
@@ -26,7 +27,9 @@ afterEach(() => {
 });
 
 const commits: { kind: string; visible: boolean; message?: unknown }[] = [];
-const Input = ({ value, onChange, errorVisible }: FieldInputProps) => {
+const Input = ({ value, onChange, node }: FieldInputProps) => {
+  const { errorVisible } = useFieldErrors(node);
+
   useLayoutEffect(() => {
     commits.push({ kind: 'input', visible: errorVisible });
   });
@@ -348,11 +351,9 @@ it('IR-6 a newly enabled display during synchronous continuous input reveals at 
 it('IR-6 one settled delivery in 2000 fields rerenders only the holding leaf displays', async () => {
   const ref = createRef<FormHandle>();
   const counts = new Map<string, number>();
-  const CountingInput = ({
-    node,
-    ChildFields,
-    errorVisible,
-  }: FieldInputProps) => {
+  const CountingInput = ({ node, ChildFields }: FieldInputProps) => {
+    const { errorVisible } = useFieldErrors(node);
+
     useLayoutEffect(() => {
       counts.set(node.path, (counts.get(node.path) ?? 0) + 1);
     });

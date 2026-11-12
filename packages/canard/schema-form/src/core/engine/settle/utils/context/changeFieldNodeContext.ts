@@ -8,7 +8,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { computeNode } from '../compute/computeNode';
 import { getContextOwners } from '../dependencies/getContextOwners';
@@ -33,7 +33,7 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   const scratch = getSettlementScratch(root.runtime);
   const context = createSettlementContext(
     root,
-    'automatic',
+    FieldNodeWriteKind.Automatic,
     WriteOption.Overwrite,
     scratch,
   );

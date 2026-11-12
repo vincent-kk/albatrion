@@ -8,7 +8,10 @@ export const recordFieldNodeRevealBaseline = <Self>(
   node: FieldNodeRecord<Self>,
 ): void => {
   const runtime = node.runtime;
-  if (!((runtime.validationMode ?? 0) & ValidationMode.OnChange)) return;
+  if (
+    !((runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange)
+  )
+    return;
   const entries = (node.revealBaseline ??= { entries: [] }).entries;
   const sequence = runtime.revealWriteSequence ?? 0;
   if (entries.length && entries[entries.length - 1].sequence === sequence)

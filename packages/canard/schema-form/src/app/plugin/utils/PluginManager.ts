@@ -5,10 +5,9 @@ import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 import type { Optional } from '@aileron/declare';
 
 import {
-  FormErrorRenderer,
-  FormFieldRenderer,
-  FormInputRenderer,
-  FormLabelRenderer,
+  ErrorMessageRenderer,
+  FieldRenderer,
+  LabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
 import { builtinFieldInputDefinitions } from '@/schema-form/fieldInputs';
 import { formatValidationError } from '@/schema-form/helpers/error';
@@ -17,25 +16,27 @@ import {
   normalizeFieldInputDefinitions,
 } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorMessageRendererProps,
   FieldInputDefinition,
   FieldRendererProps,
   FormatError,
+  InputRendererProps,
+  LabelRendererProps,
 } from '@/schema-form/types';
 
 import type { ValidatorPlugin } from '../type';
 
 interface RenderKit {
   FieldRenderer: ComponentType<FieldRendererProps>;
-  FormLabelRenderer: ComponentType<FieldRendererProps>;
-  FormInputRenderer: ComponentType<FieldRendererProps>;
-  FormErrorRenderer: ComponentType<FieldRendererProps>;
+  LabelRenderer: ComponentType<LabelRendererProps>;
+  InputRenderer?: ComponentType<InputRendererProps>;
+  ErrorMessageRenderer: ComponentType<ErrorMessageRendererProps>;
 }
 
 const defaultRenderKit = {
-  FieldRenderer: FormFieldRenderer,
-  FormLabelRenderer: FormLabelRenderer,
-  FormInputRenderer: FormInputRenderer,
-  FormErrorRenderer: FormErrorRenderer,
+  FieldRenderer: FieldRenderer,
+  LabelRenderer: LabelRenderer,
+  ErrorMessageRenderer: ErrorMessageRenderer,
 } as const;
 
 const defaultFieldInputDefinitions = normalizeFieldInputDefinitions(
@@ -48,14 +49,14 @@ export class PluginManager {
   static get FieldRenderer() {
     return PluginManager.__renderKit__.FieldRenderer;
   }
-  static get FormLabelRenderer() {
-    return PluginManager.__renderKit__.FormLabelRenderer;
+  static get LabelRenderer() {
+    return PluginManager.__renderKit__.LabelRenderer;
   }
-  static get FormInputRenderer() {
-    return PluginManager.__renderKit__.FormInputRenderer;
+  static get InputRenderer() {
+    return PluginManager.__renderKit__.InputRenderer;
   }
-  static get FormErrorRenderer() {
-    return PluginManager.__renderKit__.FormErrorRenderer;
+  static get ErrorMessageRenderer() {
+    return PluginManager.__renderKit__.ErrorMessageRenderer;
   }
 
   static appendRenderKit(renderKit: Optional<Partial<RenderKit>>) {

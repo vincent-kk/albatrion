@@ -97,7 +97,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         name,
         selected,
       );
-      const binding = requested && getSlotBinding(instance, requested, previous);
+      const binding =
+        requested && getSlotBinding(instance, requested, previous);
       if (!binding) return previous ?? {};
       const prior = getSlotSource(instance, binding, previous);
       const children = new Map(previous?.children);

@@ -2,6 +2,7 @@ import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { getFeatureNodeIndex } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { calculateStateKeys } from '../controls/calculateStateKeys';
 import { isDependencyOwner } from '../dependencies/isDependencyOwner';
@@ -22,7 +23,7 @@ export const publishStateKeys = <Self extends FieldNodeRecord<Self>>(
     context.stateDirtyNodes,
     context.selectedDeclarationIds,
     (source) =>
-      context.kind === 'load' ||
+      context.kind === FieldNodeWriteKind.Load ||
       isDependencyOwner(context, source.path) ||
       context.shapeDirtyPaths.has(source.path),
   );

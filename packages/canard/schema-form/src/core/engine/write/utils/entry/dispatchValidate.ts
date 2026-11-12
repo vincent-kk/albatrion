@@ -110,7 +110,10 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   }
   if ((runtime.commitNumber ?? 0) !== commit) {
     if (node === node.rootNode) {
-      if ((runtime.validationMode ?? 0) & ValidationMode.OnChange)
+      if (
+        (runtime.validationMode ?? ValidationMode.None) &
+        ValidationMode.OnChange
+      )
         requestFieldNodeValidationWave(node);
       else settleFieldNodeValidation(node, stamp);
     }

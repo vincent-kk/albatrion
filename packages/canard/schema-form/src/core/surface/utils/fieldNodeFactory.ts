@@ -66,6 +66,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'slotDirtyHosts'
     | 'chainRoot'
     | 'batchWrites'
+    | 'inputRelays'
     | 'visitBatchEntry'
     | 'validationTargets'
     | 'validationChangedNodes'

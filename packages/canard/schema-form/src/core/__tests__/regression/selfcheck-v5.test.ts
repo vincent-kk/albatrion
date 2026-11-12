@@ -291,10 +291,9 @@ describe('selfcheck-v5 PR-2 regression', () => {
     root.setValue({ target: null });
     expect(root.outputValue).toEqual({ target: null });
     expect(root.find('/target')?.source).toBeNull();
-    expect(root.find('/target')?.children?.map((child) => child.source)).toEqual([
-      undefined,
-      undefined,
-    ]);
+    expect(
+      root.find('/target')?.children?.map((child) => child.source),
+    ).toEqual([undefined, undefined]);
   });
 
   it('selfcheck-v5.mjs:606 does not leak values from the object replaced by null', () => {

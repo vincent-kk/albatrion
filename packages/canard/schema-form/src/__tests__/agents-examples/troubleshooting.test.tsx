@@ -3,7 +3,7 @@ import { type FC } from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { type FieldInputProps, Form, FormErrorCode } from '@/schema-form';
+import { type FieldInputProps, Form, ValidationMode } from '@/schema-form';
 
 /** Marker input mapped by path.
  * @returns A field marked for lookup. */
@@ -26,7 +26,7 @@ const ItemsLayout: FC<FieldInputProps> = ({ ChildFields }) => (
 const mapProps = {
 fieldInputMap: {
   '/items/*/name': ItemNameInput,   // ✅
-  '/items/**/name': ItemNameInput,  // ❌ invalid pattern: form stays in fallback
+  '/items/**/name': ItemNameInput,  // literal ** name; not recursive
 }
 }
 
@@ -49,32 +49,28 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('rejects a map whose ** pattern cannot compile as a load configuration error', async () => {
+it('keeps literal double-star keys without errors or warnings', async () => {
   const onError = vi.fn();
   const host = vi.fn();
+  const warning = vi.spyOn(console, 'warn');
   vi.stubGlobal('reportError', host);
   render(
     <Form
       jsonSchema={itemsSchema}
+      defaultValue={{ items: [{ name: 'a' }] }}
       fieldInputMap={mapProps.fieldInputMap}
+      fieldInputDefinitions={[
+        { test: { type: 'array' }, Component: ItemsLayout },
+      ]}
+      validationMode={ValidationMode.None}
       onError={onError}
     />,
   );
-  expect((await screen.findByRole('alert')).textContent).toBe(
-    'Unable to load form.',
-  );
-  expect(screen.queryAllByTestId('item-name-input')).toHaveLength(0);
-  expect(onError).toHaveBeenCalledExactlyOnceWith(
-    expect.objectContaining({
-      code: FormErrorCode.FormTypeInputMap,
-      origin: 'load',
-      details: expect.objectContaining({ path: '/items/**/name' }),
-    }),
-  );
-  const record = onError.mock.calls[0][0];
-  expect(record.message).toContain('Invalid key pattern in FieldInputMap');
-  expect(record.message).toContain("Pattern:  '/items/**/name'");
-  expect(host).toHaveBeenCalledExactlyOnceWith(record.error);
+  expect(await screen.findAllByTestId('item-name-input')).toHaveLength(1);
+  expect(screen.queryByRole('alert')).toBeNull();
+  expect(onError).not.toHaveBeenCalled();
+  expect(host).not.toHaveBeenCalled();
+  expect(warning).not.toHaveBeenCalled();
 });
 
 it('listing the depth with a single star selects the input without error', async () => {

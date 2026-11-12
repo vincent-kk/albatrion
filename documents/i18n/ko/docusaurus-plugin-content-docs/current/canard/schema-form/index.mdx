@@ -21,7 +21,7 @@ JSON Schema로 React 폼을 구성합니다. [설치](./quick-start) 후 [핵심
 ## 필요한 계약 찾기 {#reading-guide}
 
 - [스키마 참조](./schema-reference): 설정 그룹, controls, nullable 값, UI 입력 설정입니다.
-- [검증](./validation): 실행 시점, 오류 표시, 검증기 어댑터, guard 한계입니다.
+- [검증](./validation): 실행 시점, 오류 표시, 검증기 어댑터, 가드 한계입니다.
 - [API 참조](./api-reference): Form, 핸들, 렌더러, 훅, 노드 수명, 경로입니다.
 - [오류 참조](./error-reference): 발생 보고, 오류 가드, 진단 코드입니다.
 - [0.x 이전 안내](./migration-from-0x): 스키마 키와 소비자 API 이름의 대응표입니다.
@@ -39,7 +39,7 @@ yarn exec inject-agents-settings --package=@canard/schema-form --agent=codex --s
 yarn exec inject-agents-settings --package=@canard/schema-form --agent=codex --scope=user
 ```
 
-`--agent=claude`는 선택한 scope의 `.claude` 위치에 자산을 씁니다. Codex project scope는 `.agents/skills`와 `AGENTS.md`의 관리 마커 블록을 사용하고, user scope는 `~/.codex/skills`와 `~/.codex/AGENTS.md`를 사용합니다. `--dry-run`은 자산을 쓰지 않고 변경을 보여 줍니다. `--force`로 덮어쓰기 전에 로컬에서 달라진 자산을 검토하십시오.
+`--agent=claude`는 선택한 스코프의 `.claude` 위치에 자산을 씁니다. Codex 프로젝트 스코프는 `.agents/skills`와 `AGENTS.md`의 관리 마커 블록을 사용하고, 사용자 스코프는 `~/.codex/skills`와 `~/.codex/AGENTS.md`를 사용합니다. `--dry-run`은 자산을 쓰지 않고 변경을 보여 줍니다. `--force`로 덮어쓰기 전에 로컬에서 달라진 자산을 검토하십시오.
 
 ## 라이선스와 문의 {#support}
 

@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -21,13 +22,16 @@ afterEach(cleanup);
 /** Lists the issues the root node hands to its own input.
  * @param props - FieldInput props supplied by Form for the terminal root.
  * @returns One list item per issue in `errors`. */
-const RootErrorsInput = ({ errors }: FieldInputProps) => (
-  <ul aria-label="root errors">
-    {errors.map((issue, index) => (
-      <li key={index}>{`${issue.dataPath}|${issue.keyword}`}</li>
-    ))}
-  </ul>
-);
+const RootErrorsInput = ({ node }: FieldInputProps) => {
+  const { errors } = useFieldErrors(node);
+  return (
+    <ul aria-label="root errors">
+      {errors.map((issue, index) => (
+        <li key={index}>{`${issue.dataPath}|${issue.keyword}`}</li>
+      ))}
+    </ul>
+  );
+};
 
 /** Reports what the child-error hook sees on a childless terminal root.
  * @param props - FieldInput props supplied by Form for the terminal root.
@@ -45,7 +49,7 @@ const schemaWith = (FieldInput: typeof RootErrorsInput): JSONSchema => ({
   properties: { name: { type: 'string', minLength: 3 } },
 });
 
-it('a terminal root receives an inner-path issue in its node errors and its input errors prop', async () => {
+it('a terminal root receives an inner-path issue in its node errors and its input error hook', async () => {
   const ref = createRef<FormHandle>();
   const onSubmit = vi.fn();
   render(

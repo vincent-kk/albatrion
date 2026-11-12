@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -35,17 +38,22 @@ describe('settle derivation', () => {
     writeFieldNode(
       root.structure!.target,
       'manual',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root,
       { source: 'A', target: 'manual' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('B');
   });
 
@@ -98,7 +106,7 @@ describe('settle derivation', () => {
     writeFieldNode(
       root.structure!.present,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target).toBeDefined();
@@ -122,11 +130,16 @@ describe('settle derivation', () => {
     writeFieldNode(
       root,
       { source: 'A', target: 'manual' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBe('B');
   });
 
@@ -149,7 +162,12 @@ describe('settle derivation', () => {
       [FieldNodeState.Touched]: true,
     });
     const revision = target.revisionLedger[FieldNodeEventType.UpdateState] ?? 0;
-    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.clear,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
     expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
     expect(
@@ -185,13 +203,13 @@ describe('settle derivation', () => {
     writeFieldNode(
       root,
       { clear: true, target: 'manual' },
-      'load',
+      FieldNodeWriteKind.Load,
       WriteOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.source).toBe('manual');
-    expect(root.structure?.target?.interactionState[FieldNodeState.Edited]).toBe(
-      false,
-    );
+    expect(
+      root.structure?.target?.interactionState[FieldNodeState.Edited],
+    ).toBe(false);
     expect(
       root.structure?.target?.interactionState[FieldNodeState.Touched],
     ).toBe(false);
@@ -249,7 +267,12 @@ describe('settle derivation', () => {
         }),
       ]),
     );
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.runtime.settlementTrace).not.toBe(first);
   });
 

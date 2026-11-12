@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -84,7 +87,7 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root,
       { user: null, target: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ user: null, target: null });
@@ -98,17 +101,27 @@ describe('per-node branch sources', () => {
       },
     });
     loadFieldNodeAtMount(root, { a: 'x', z: 1 }, WriteOption.Overwrite);
-    writeFieldNode(root.structure!.a, 'y', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.a,
+      'y',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.source).toBeUndefined();
     expect(root.extras).toEqual({ z: 1 });
     expect(sourceAt(root, '/a')).toBe('y');
     writeFieldNode(
       root,
       { a: 'y', z: 1 },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    writeFieldNode(root, { a: 'y' }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root,
+      { a: 'y' },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(root.source).toBeUndefined();
     expect(root.extras).toEqual({ z: 1 });
   });
@@ -121,12 +134,27 @@ describe('per-node branch sources', () => {
       },
     });
     loadFieldNodeAtMount(root, { z: 1, a: 2, m: 3 }, WriteOption.Overwrite);
-    writeFieldNode(root, { q: 4 }, 'callerPartial', WriteOption.Merge);
-    writeFieldNode(root, { z: 9 }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root,
+      { q: 4 },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
+    writeFieldNode(
+      root,
+      { z: 9 },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(Object.keys(root.extras ?? {})).toEqual(['z', 'm', 'q']);
     expect(Object.keys(root.emit ?? {})).toEqual(['a', 'z', 'm', 'q']);
     const extras = root.extras;
-    writeFieldNode(root, root.emit, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      root.emit,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.extras).toBe(extras);
     expect(root.runtime.refreshTargets?.size).toBe(0);
   });
@@ -158,22 +186,37 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     const old = root.structure!.g;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const input = Object.freeze({
       g: Object.freeze({ deep: Object.freeze({ x: 2 }), f: 3 }),
     });
-    writeFieldNode(root, input, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root,
+      input,
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(sourceAt(root, '/g/leaf', 'string')).toBe('a');
     expect(sourceAt(root, '/g/deep/x', 'number')).toBe(2);
     expect(sourceAt(root, '/g/deep/y', 'number')).toBe(2);
     writeFieldNode(
       old,
       { deep: { x: 2 }, f: 3 },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(input.g.deep.x).toBe(2);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual({
       flag: true,
       g: { leaf: 'a', deep: { x: 2, y: 2 }, e: 1, f: 3 },
@@ -201,12 +244,37 @@ describe('per-node branch sources', () => {
       { on: true, show: true, a: 'x', g: { secret: 'S' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.on, false, 'input', WriteOption.Overwrite);
-    writeFieldNode(root, { a: 'y' }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root.structure!.show,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.on,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root,
+      { a: 'y' },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(sourceAt(root, '/g/secret', 'string')).toBe('S');
-    writeFieldNode(root.structure!.on, true, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.show, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.on,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.show,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(sourceAt(root, '/g/secret')).toBe('S');
   });
 
@@ -223,18 +291,23 @@ describe('per-node branch sources', () => {
       { flag: true, secret: 'old' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     writeFieldNode(
       root,
       { flag: true, secret: 'new' },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(sourceAt(root, '/secret')).toBe('new');
     writeFieldNode(
       root,
       { flag: false },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(sourceAt(root, '/secret', 'string')).toBeUndefined();
@@ -263,12 +336,19 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root.structure!.flag,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.DisableAutomaticWrites,
     );
     expect(sourceAt(root, '/g/leaf', 'string')).toBe('L');
-    expect(readRetainedSlotSource(root, '/g', 'object')).toMatchObject({ z: 1 });
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    expect(readRetainedSlotSource(root, '/g', 'object')).toMatchObject({
+      z: 1,
+    });
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual({ flag: true, g: { leaf: 'L', z: 1 } });
   });
 
@@ -310,7 +390,7 @@ describe('per-node branch sources', () => {
       writeFieldNode(
         root,
         { t: true, x: 0 },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -340,7 +420,7 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root,
       { user: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const user = root.structure!.user;
@@ -348,16 +428,31 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       user.structure!.name,
       undefined,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(user.source).toBeNull();
-    writeFieldNode(user, {}, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      user,
+      {},
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(user.source).toBeNull();
-    writeFieldNode(user, { z: 1 }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      user,
+      { z: 1 },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(user.source).toBeNull();
     expect(user.extras).toEqual({ z: 1 });
-    writeFieldNode(user.structure!.name, 'N', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      user.structure!.name,
+      'N',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(user.source).toBeUndefined();
     expect(user.structure?.sibling?.source).toBeUndefined();
     expect(root.emit).toEqual({ user: { name: 'N', z: 1 } });
@@ -386,17 +481,27 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root.structure!.g.structure!.leaf,
       'new',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.g.structure!.other,
       undefined,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.g?.structure?.leaf?.source).toBe('new');
     expect(root.structure?.g?.structure?.other?.source).toBeUndefined();
     expect(root.structure?.g?.extras).toEqual({ z: 1 });
@@ -415,7 +520,12 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.visible?.source).toBe('V');
-    writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      {},
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.visible).toBeUndefined();
   });
 
@@ -447,7 +557,12 @@ describe('per-node branch sources', () => {
       { kind: 'a', group: { leaf: 'kept' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      'b',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/group', 'object')).toBe(false);
     expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/group/leaf', value: 'kept' },
@@ -464,7 +579,12 @@ describe('per-node branch sources', () => {
     });
     loadFieldNodeAtMount(root, { flag: false, n: '3' }, WriteOption.Overwrite);
     expect(sourceAt(root, '/n', 'number')).toBe(3);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(sourceAt(root, '/n')).toBe(3);
   });
 
@@ -514,13 +634,23 @@ describe('per-node branch sources', () => {
       { flag: false, g: { leaf: 'L' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.g?.structure?.leaf?.source).toBe('L');
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     writeFieldNode(
       root,
       { flag: true },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.g?.structure?.leaf?.source).toBe('D');
@@ -546,7 +676,12 @@ describe('per-node branch sources', () => {
       { flag: true, branch: { kept: 'K', z: 1 } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/branch', 'object')).toBe(false);
     expect(sourceAt(root, '/branch/kept', 'string')).toBeUndefined();
   });
@@ -573,7 +708,7 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root,
       { flag: true, secret: 'new' },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(sourceAt(root, '/secret', 'string')).toBe('new');
@@ -611,12 +746,17 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     const detachedString = root.structure!.item;
-    writeFieldNode(root.structure!.mode, 'off', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.mode,
+      'off',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(sourceAt(root, '/item', 'string')).toBe('old');
     writeFieldNode(
       root,
       { item: { leaf: 'new' } },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(sourceAt(root, '/item/leaf', 'string')).toBe('new');
@@ -625,7 +765,7 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       detachedString,
       'late',
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(readRetainedSlotSource(root, '/item', 'string')).toBeUndefined();
@@ -651,14 +791,14 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root,
       { g: { leaf: '' } },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(readRetainedSlotSource(root, '/g', 'object')).toBeNull();
     writeFieldNode(
       root,
       { g: { leaf: 'shown' } },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     const host = readRetainedSlotSource(root, '/g', 'object');
@@ -708,15 +848,25 @@ describe('per-node branch sources', () => {
       { flag: true, mode: 'string', g: { value: 'old' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     writeFieldNode(
       root.structure!.mode,
       'number',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(sourceAt(root, '/g/value', 'string')).toBe('old');
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.g?.structure?.value?.source).toBe(7);
     expect(readRetainedSlotSource(root, '/g/value', 'string')).toBe('old');
   });
@@ -741,7 +891,12 @@ describe('per-node branch sources', () => {
       },
     });
     loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.g?.structure?.secret).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/g/secret', 'string')).toBe(false);
   });
@@ -767,14 +922,14 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root.structure!.box.structure!.b,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.secret?.source).toBe('held');
     writeFieldNode(
       root.structure!.grp.structure!.x,
       'typed',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     resetFieldNodeSubtree(root.structure!.box, WriteOption.Overwrite);
@@ -785,7 +940,7 @@ describe('per-node branch sources', () => {
     writeFieldNode(
       root.structure!.box.structure!.b,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.secret?.source).toBe('held');

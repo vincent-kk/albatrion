@@ -61,7 +61,7 @@ it('REACT-033 ignores unknown test keys and warns once per definition', () => {
   );
   expect(
     warning.mock.calls.filter((args) =>
-      JSON.stringify(args).includes('FORM_TYPE_TEST_INVALID'),
+      JSON.stringify(args).includes('FIELD_INPUT_TEST_INVALID'),
     ),
   ).toHaveLength(1);
 });

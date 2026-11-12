@@ -3,7 +3,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { markCommitDeliveries } from '../../utils/commit/markCommitDeliveries';
@@ -95,7 +98,7 @@ describe('static first load assembly', () => {
     const revision = root.revisionLedger;
     const context = createSettlementContext(
       root,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
       getSettlementScratch(root.runtime),
     );
@@ -131,7 +134,7 @@ describe('static first load assembly', () => {
     writeFieldNode(
       root.structure!.value,
       'next',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readDefault(root.structure!.value, new Map())).toBe('control');
@@ -157,10 +160,10 @@ describe('static first load assembly', () => {
     const value = root.local;
     const children = root.children;
     const revision = child.revisionLedger[FieldNodeEventType.UpdateValue];
-    writeFieldNode(child, 7, 'input', WriteOption.Overwrite);
+    writeFieldNode(child, 7, FieldNodeWriteKind.Input, WriteOption.Overwrite);
     expect(root.local).toBe(value);
     expect(root.children).toBe(children);
-    writeFieldNode(child, 8, 'input', WriteOption.Overwrite);
+    writeFieldNode(child, 8, FieldNodeWriteKind.Input, WriteOption.Overwrite);
     expect(child.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );

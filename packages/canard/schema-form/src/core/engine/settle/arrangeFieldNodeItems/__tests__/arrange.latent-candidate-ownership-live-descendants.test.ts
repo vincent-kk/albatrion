@@ -57,7 +57,9 @@ it.each([
     const path = `/list/${destination}/` + names.join('/');
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
-    expect(getDispatchNode(list, String(destination), ...names).source).toBe(37);
+    expect(getDispatchNode(list, String(destination), ...names).source).toBe(
+      37,
+    );
     expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
@@ -78,7 +80,9 @@ it.each([
     await dispatchValidate(root);
     expect(inputs.at(-1)).toEqual(expected);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(destination), ...names).source).toBe(37);
+    expect(getDispatchNode(list, String(destination), ...names).source).toBe(
+      37,
+    );
   },
 );
 

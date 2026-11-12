@@ -12,6 +12,7 @@ export const sampleOptions = (
 ): BenchOptions => ({
   iterations: 10,
   setup: (task) => {
+    task.bench.throws = true;
     task.opts.beforeEach = prepare;
     task.opts.afterEach = dispose;
   },

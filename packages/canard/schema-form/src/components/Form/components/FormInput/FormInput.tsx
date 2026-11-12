@@ -2,12 +2,19 @@ import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
-import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
-import { useFieldRendererContext } from '@/schema-form/providers';
-import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
+import type {
+  AllowedValue,
+  FieldInputProps,
+  FieldRendererProps,
+} from '@/schema-form/types';
 
 import type { FormInputProps } from './types/props';
+
+/** Render the bound input with its selected frame. */
+const FramedInput = ({ Input }: FieldRendererProps) => <Input />;
+/** Render the bound input without a frame. */
+const UnwrappedInput = ({ Input }: FieldRendererProps) => <Input unwrapped />;
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -19,6 +26,8 @@ import type { FormInputProps } from './types/props';
  * @remarks
  * `FieldInput` is captured when the component mounts; a later value is ignored.
  * To supply changing values, read them from the `context` prop the input receives (the `context` of `Form`), call a hook inside it, or give the element a new `key` to replace the component.
+ *
+ * `onChange` and `onFileAttach` are binding-owned and cannot be passed to this layout component.
  *
  * @example
  * Basic input usage:
@@ -72,17 +81,17 @@ import type { FormInputProps } from './types/props';
  *         console.log('Field blurred:', e.target.value),
  *     }}
  *   />
- *   <Form.Error path="/username" />
+ *   <Form.ErrorMessage path="/username" />
  * </div>
  * ```
  */
 export const FormInput = memo(
   ({
     path,
+    unwrapped,
     FieldInput: InputFieldInput,
     ...restProps
   }: FormInputProps<AllowedValue>) => {
-    const { FormInputRenderer } = useFieldRendererContext();
     const overridePropsRef = useReference(restProps);
     const FieldInput = useConstant(
       InputFieldInput as ComponentType<FieldInputProps>,
@@ -92,7 +101,7 @@ export const FormInput = memo(
         path={path}
         overridePropsRef={overridePropsRef}
         FieldInput={FieldInput}
-        FieldRenderer={FormInputRenderer || PluginManager.FormInputRenderer}
+        FieldRenderer={unwrapped ? UnwrappedInput : FramedInput}
       />
     );
   },

@@ -1,5 +1,6 @@
 import { clone } from '@winglet/common-utils/object';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import {
   SetValueOption,
   adoptFieldNodeTree,
@@ -40,7 +41,7 @@ export const resetRootLoad = (
     | typeof SetValueOption.EnableAutomaticWrites,
   rebuild = false,
 ): RootLoad => {
-  const automaticWrites = (option ?? 0) & AUTOMATIC_WRITES_MASK;
+  const automaticWrites = (option ?? BIT_MASK_NONE) & AUTOMATIC_WRITES_MASK;
   const loadOption =
     automaticWrites ||
     (props.disableAutomaticWrites

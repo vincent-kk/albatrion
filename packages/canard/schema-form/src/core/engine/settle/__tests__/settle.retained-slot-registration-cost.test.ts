@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { createChildNode } from '../utils/compute/createChildNode';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
@@ -29,13 +29,17 @@ it('leaves gate binding to selected entry for both source constructors', () => {
   });
   dispatchMount(root, { open: true, group: { value: 'held' } });
   const instance = getDispatchNode(root, 'group');
-  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
+  const entry = getRetainedChildEntry(
+    root,
+    instance.name,
+    instance.blueprintNode,
+  );
   if (!entry) throw new Error('Expected a retained group binding');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
     scratch,
   );

@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -128,7 +131,9 @@ describe('array settlement lifecycle', () => {
       root.inactiveValues[0]?.value,
     );
     expect(readRetainedSlotSource(root, '/items', 'array')).toEqual(sourceTree);
-    expect(root.inactiveValues).toEqual([{ path: '/items', value: sourceTree }]);
+    expect(root.inactiveValues).toEqual([
+      { path: '/items', value: sourceTree },
+    ]);
     root.find('/showHost')?.setValue(true);
     expect(root.find('/items')?.value).toEqual([
       {
@@ -319,7 +324,12 @@ describe('array settlement lifecycle', () => {
       ],
     });
     expect(() =>
-      writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
+      writeFieldNode(
+        root,
+        { a: 0 },
+        FieldNodeWriteKind.CallerReplace,
+        WriteOption.Overwrite,
+      ),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       cause: 'budget',
@@ -372,7 +382,7 @@ describe('array settlement lifecycle', () => {
     writeFieldNode(
       root,
       { a: 'stable', flag: false, items: ['before'], tuple: ['kept', 'extra'] },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const host = root.structure!.items;
@@ -384,7 +394,7 @@ describe('array settlement lifecycle', () => {
       writeFieldNode(
         root,
         { a: 0, flag: true, items: ['before'], tuple: ['kept', 'extra'] },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();

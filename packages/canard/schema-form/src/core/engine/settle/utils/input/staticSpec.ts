@@ -2,14 +2,16 @@ import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { UnionSpec } from '../../../record';
 import { scalarSpecs, unionSpecs } from '../../../utils/cache/valueMemos';
 
 /** Specs for a template without a JSON type, indexed like the caches by nullable. */
 const NO_KIND_SPECS: readonly UnionSpec[] = [
-  { kinds: EMPTY_ARRAY, mask: 0, nullable: false },
-  { kinds: EMPTY_ARRAY, mask: 0, nullable: true },
+  { kinds: EMPTY_ARRAY, mask: BIT_MASK_NONE, nullable: false },
+  { kinds: EMPTY_ARRAY, mask: BIT_MASK_NONE, nullable: true },
 ];
 
 /**
@@ -28,7 +30,7 @@ export const staticSpec = (
     const cached = scalarSpecs[index].get(schemaType);
     if (cached) return cached;
     const kinds = schemaType === 'null' ? EMPTY_ARRAY : schemaType;
-    const spec: UnionSpec = { kinds, mask: 0, nullable };
+    const spec: UnionSpec = { kinds, mask: BIT_MASK_NONE, nullable };
     scalarSpecs[index].set(schemaType, spec);
     return spec;
   }
@@ -41,7 +43,7 @@ export const staticSpec = (
   }
   const spec: UnionSpec = {
     kinds: kinds.length === 1 ? kinds[0] : kinds,
-    mask: 0,
+    mask: BIT_MASK_NONE,
     nullable,
   };
   unionSpecs[index].set(schemaType, spec);

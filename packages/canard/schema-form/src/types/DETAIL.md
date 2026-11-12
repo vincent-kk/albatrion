@@ -6,6 +6,10 @@
 
 ## API Contracts
 
+실제 입력·알 수 없는 입력·자식 입력·덮어쓰기 props의 errors와 errorVisible은 optional never로 선언하여 목록 접근과 값 전달을 막습니다. 단순 진리값 검사는 TypeScript가 허용하므로 오류 정보 소비자는 useFieldErrors로 옮겨야 합니다. 묶인 Input만 직접 unwrapped를 해석하고 ChildFieldProps에는 그 키를 선언하지 않습니다.
+
+LabelRendererProps·ErrorMessageRendererProps·InputRendererProps는 node·주소·이름·스키마·표시 필수 여부를 공유하는 공개 부품 계약입니다. 공통 기반은 비공개이며 오류 정보는 기본 props가 아닙니다. 라벨·오류의 context도 자동 주입하지 않고 호출자가 필요할 때 명시합니다. 입력 틀은 children을 같은 커밋에 정확히 한 번 조건 없이 그립니다. 틀 루트와 children 사이의 요소·컴포넌트 경로 변경은 입력을 교체합니다. 교체된 입력은 현재 노드 값에서 시작하며 포커스와 진행 중인 조합을 잃습니다. FieldRendererProps의 Label·ErrorMessage는 이 계약의 partial props를 받는 묶인 컴포넌트입니다.
+
 ### Roll 표현과 재귀 형
 
 Roll은 편집기의 형 표시를 평평하게 하는 표현이며 런타임 변환이 아닙니다. 재귀 스키마의 정의 자리에서 Roll로 감싸면 순환 별칭이 되므로 재귀 고리 밖의 Rolled 형이 내부 형을 감싸고 패키지 진입점에서 공개 이름을 부여합니다. 내부 형과 공개 표시용 형을 분리하는 이유입니다.
@@ -14,9 +18,9 @@ Roll은 편집기의 형 표시를 평평하게 하는 표현이며 런타임 �
 
 ### CONTROLS-081 — 열린 표현 payload
 
-스키마 그룹은 controls·options·presentation으로 구분하고 맨 키를 입력 props의 대체 설정으로 해석하지 않습니다. presentation은 사용자 표현 확장에 열려 있으므로 낯선 키만으로 오류를 만들지 않습니다. options의 추가 키는 `[alt: string]: any`로 읽히며 알려진 옵션의 형과 자동완성, 명시 Options 제네릭 및 값 추론은 유지합니다. 소비자 확장 값을 읽을 때 불필요한 좁히기를 강제하지 않기 위한 계약입니다. Custom option keys read as `any`; reserved option types, explicit option generics and value inference remain intact so opaque consumer payloads need no library-imposed narrowing. 컴포넌트를 담는 키와 그 props 객체는 대응 이름을 유지하여 서로 다른 설정 입구를 만들지 않습니다.
+스키마 그룹은 controls·options·presentation으로 구분하고 맨 키를 입력 props의 대체 설정으로 해석하지 않습니다. presentation은 사용자 표현 확장에 열려 있으므로 낯선 키만으로 오류를 만들지 않습니다. options의 추가 키는 `[alt: string]: any`로 읽히며 알려진 옵션의 형과 자동완성, 명시 Options 제네릭 및 값 추론은 유지합니다. 소비자 확장 값을 읽을 때 불필요한 좁히기를 강제하지 않기 위한 계약입니다. 컴포넌트를 담는 키와 그 props 객체는 대응 이름을 유지하여 서로 다른 설정 입구를 만들지 않습니다.
 
-alias·placeholder·className·style은 presentation.FieldInputProps, 렌더러 표현은 FieldRendererProps, 입력 선택 힌트는 inputType, 오류 문구는 errorMessages의 책임입니다. 입력마다 의미가 다른 표현 payload를 core가 해석하거나 맨 키 alias와 혼합하면 제약과 표현의 경계가 흐려집니다. 전달 순서·입력 선택은 [FieldInputBridge](../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 오류 문구 해석은 [formatValidationError](../helpers/error/formatValidationError/DETAIL.md)가 소유합니다.
+alias·placeholder·className·style은 presentation.FieldInputProps, 렌더러 표현은 FieldRendererProps, 입력 선택 힌트는 inputType, 오류 문구는 errorMessages의 책임입니다. 입력이 값을 읽는 방식의 선언은 presentation.controlled와 입력 정의의 controlled이며, presentation.required는 불리언 표시 설정입니다. 두 설정의 뜻은 FieldInputBridge가 소유하며 required는 입력 선택 힌트가 아닙니다. 입력마다 의미가 다른 표현 payload를 core가 해석하거나 맨 키 alias와 혼합하면 제약과 표현의 경계가 흐려집니다. 전달 순서·입력 선택은 [FieldInputBridge](../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 오류 문구 해석은 [formatValidationError](../helpers/error/formatValidationError/DETAIL.md)가 소유합니다.
 
 ### REACT-027 — 입력 초안과 값의 범위
 
@@ -24,9 +28,11 @@ alias·placeholder·className·style은 presentation.FieldInputProps, 렌더러 
 
 ### REACT-032 — Hint와 노드 종류
 
-Hint와 props의 type은 노드 종류이며 schemaType은 정적 선언으로 계산한 JSON 허용 종류를 보존합니다. integer는 number 노드 종류를 사용하고 virtual의 schemaType은 undefined입니다. 게이트가 좁힌 현재 허용 목록은 jsonSchema.type에서 읽으므로 정적 schemaType과 혼동하지 않습니다. Hint·props의 misfit과 required는 노드의 isMisfit·isRequired에 대응합니다. 같은 경계에서 같은 이름인 값은 같은 의미를 유지하되 노드 boolean 이름을 React props에 기계적으로 적용하지 않습니다.
+Hint와 props의 type은 노드 종류이며 schemaType은 정적 선언으로 계산한 JSON 허용 종류를 보존합니다. integer는 number 노드 종류를 사용하고 virtual의 schemaType은 undefined입니다. 게이트가 좁힌 현재 허용 목록은 jsonSchema.type에서 읽으므로 정적 schemaType과 혼동하지 않습니다. Hint의 misfit과 required는 노드의 isMisfit·isRequired에 대응합니다. 입력·렌더러 props의 required는 [표시 값 해석 계약](../components/FieldProxy/components/FieldInputBridge/DETAIL.md#api-contracts)을 따릅니다. 같은 경계에서 같은 이름인 값은 같은 의미를 유지하되 노드 boolean 이름을 React props에 기계적으로 적용하지 않습니다.
 
 FieldInputTestObject는 허용된 Hint 키의 대조용 형이고 함수 시험은 전체 Hint를 읽습니다. 객체 시험의 목록은 대안 매칭이며 union 목록의 정확한 동등성이 필요하면 함수 시험을 사용합니다. 정규화·잘못된 키·integer 종류 시험의 거부는 [fieldInputDefinition](../helpers/fieldInputDefinition/DETAIL.md)이 소유합니다.
+
+렌더러 props는 입력 중계 콜백이나 기본값을 소유하지 않으므로 `onChange`, `onFileAttach`, `defaultValue`를 명시적으로 금지합니다. 열린 표현 색인 서명이 이 속성들을 any로 허용하여 입력과 렌더러의 쓰기 경계를 흐리지 않아야 합니다.
 
 ### NODE-058 — 읽기 판별과 쓰기 허용
 

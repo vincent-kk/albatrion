@@ -8,17 +8,14 @@ const SELECT_SELECTOR = 'input, textarea';
 
 /** Native text controls understood by the Select action. */
 type SelectableElement = HTMLInputElement | HTMLTextAreaElement;
-/** Native controls understood by the Focus action. */
-type FocusableElement =
-  | SelectableElement
-  | HTMLSelectElement
-  | HTMLButtonElement;
+/** Marked custom targets and native controls share the HTMLElement focus contract. */
+type FocusableElement = HTMLElement;
 
 /**
  * Apply combined actions once, preserving focus-before-selection command ordering.
  * @param container - This input position's container, null before mount or after removal.
  * @param action - Combined actions returned by the detached lifecycle queue or node command.
- * @returns Nothing; native controls receive the selected actions synchronously.
+ * @returns Nothing; eligible input elements receive the selected actions synchronously.
  */
 export const runSlotAction = (
   container: Nullable<HTMLElement>,

@@ -2,6 +2,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../record';
 import type { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind } from '../../types/value';
 import { prepareGateSelection } from '../utils/compute/childSelection/prepareGateSelection';
 import { setLoadValue } from '../utils/loadValues/setLoadValue';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -35,7 +36,7 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
     if (canLoadStaticFirstTree(root, value)) loadStaticFirstTree(root, option);
     else if (canLoadFixedFirstTree(root, value))
       loadFixedFirstTree(root, option);
-    else writeFieldNode(root, value, 'load', option);
+    else writeFieldNode(root, value, FieldNodeWriteKind.Load, option);
   } finally {
     if (root.runtime.revisionTransitions !== previousTransitions)
       root.runtime.revisionTransitions = previousTransitions;

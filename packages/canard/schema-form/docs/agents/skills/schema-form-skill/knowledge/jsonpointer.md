@@ -35,3 +35,5 @@ rootNode.find('/tilde~0here');
 - `Form.Render` / `Form.Input` `path` props use the same extended query as `node.find`, including relative steps and first-match wildcards; see [imperative layout](imperative-and-layout.md#gotchas).
 - `getAttachedFilesMap()` keys are canonical node paths, not wildcard or relative queries.
 - Expressions cannot use `*`; `fieldInputMap` cannot use `..`/`.`/`@` (see the SKILL.md matrix).
+
+For Form.Label's htmlFor/id addresses and standalone error placement, follow [standalone part roots](imperative-and-layout.md#standalone-part-roots).

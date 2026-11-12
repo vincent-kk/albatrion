@@ -18,7 +18,7 @@ const Views = () => (
     <section data-view="split">
       <Form.Label path="/name" />
       <Form.Input path="/name" />
-      <Form.Error path="/name" />
+      <Form.ErrorMessage path="/name" />
     </section>
     <Form.Render>
       {({ value }: FieldRendererProps) => (
@@ -56,7 +56,7 @@ describe('VALIDATE-010 / VALIDATE-036 split render disposition', () => {
     try {
       expect((await form.validate()).length).toBeGreaterThan(0);
       expect(
-        form.container.querySelector('[data-view="split"] em')?.textContent,
+        Array.from(form.container.querySelector('[data-view="split"]')?.querySelectorAll('em') ?? []).find((message) => message.closest('[data-path]')?.getAttribute('data-path') === '/name')?.textContent,
       ).toBeTruthy();
       await form.setValue({ kind: 'b', name: 'valid', b: 'B' });
       expect(await form.validate()).toEqual([]);

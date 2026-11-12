@@ -52,7 +52,11 @@ export const findRevealPath = (
   for (const entries of [registry, revealing])
     for (const [element, gate] of entries) {
       if (!path.has(gate.node)) continue;
-      if (!result || element.compareDocumentPosition(result.element) & 4)
+      if (
+        !result ||
+        element.compareDocumentPosition(result.element) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+      )
         result = { element, gate, renderPath: [] };
     }
   if (result) result.renderPath = Array.from(path);

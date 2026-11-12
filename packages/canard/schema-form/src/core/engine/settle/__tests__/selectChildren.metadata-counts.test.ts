@@ -1,9 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import * as recognizer from '../../blueprint/compileBlueprintExpressions/recognizeEqualityExpression';
 import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectChildren';
@@ -36,6 +40,23 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           return (dependencies) => {
             if (key === 'active' && branch) evaluations[Number(branch[1])]++;
             return evaluate(dependencies);
+          };
+        },
+      );
+      const recognize = recognizer.recognizeEqualityExpression;
+      vi.spyOn(recognizer, 'recognizeEqualityExpression').mockImplementation(
+        (...args) => {
+          const recognized = recognize(...args);
+          const branch = /kind_(\d+)/.exec(String(recognized?.literals[0]));
+          if (!recognized || !branch) return recognized;
+          // A recognized comparison bypasses createDynamicFunction; each evaluation reads its one literal once.
+          return {
+            literals: new Proxy(recognized.literals, {
+              get(target, property, receiver) {
+                if (property === '0') evaluations[Number(branch[1])]++;
+                return Reflect.get(target, property, receiver);
+              },
+            }),
           };
         },
       );
@@ -100,7 +121,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         writeFieldNode(
           root.structure!.common,
           'new common',
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
         expect(builds.plans).toHaveLength(1);
@@ -118,7 +139,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           writeFieldNode(
             root.structure!.kind,
             kind,
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           expect(builds.hosts).toEqual([root.blueprintNode]);
@@ -169,7 +190,12 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           (disabled ? WriteOption.DisableAutomaticWrites : 0);
         loadFieldNodeAtMount(root, { kind: 'off' }, option);
         for (const kind of ['on', 'off', 'on'])
-          writeFieldNode(root.structure!.kind, kind, 'input', option);
+          writeFieldNode(
+            root.structure!.kind,
+            kind,
+            FieldNodeWriteKind.Input,
+            option,
+          );
         expect(builds.plans).toHaveLength(0);
         expect(root.runtime.diagnostics.status).toBe('stable');
       } finally {
@@ -187,7 +213,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         writeFieldNode(
           root.structure!.kind,
           kind,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
       expect(builds.plans).toHaveLength(0);

@@ -1,25 +1,25 @@
-# schema-form — Public package boundary
+# schema-form — 공개 패키지 경계
 
 ## Purpose
 
-Compose the public JSON Schema form contract; implementation decisions belong to the owning modules.
+공개 JSON Schema 폼 계약을 조합합니다. 구현 결정은 각 소유 모듈에 둡니다.
 
 ## Conventions
 
-Use one explicit package entry point. Keep renderer-neutral execution separate from React bindings and validator implementations.
+명시적인 패키지 진입점 하나를 사용합니다. 렌더러와 독립적인 실행을 React 바인딩·검증기 구현과 분리합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Preserve predictable names and observable behavior; explain the reason, time cost and retained-memory cost of a contract change.
-- Keep schema authoring, validation and presentation responsibilities distinct; follow [the package contract](DETAIL.md).
+- 예측 가능한 이름과 관찰 가능한 동작을 보존하고 계약 변경의 이유·시간 비용·보유 메모리 비용을 설명합니다.
+- 스키마 작성·검증·표현의 책임을 구별하고 [패키지 계약](DETAIL.md)을 따릅니다.
 
 ### Ask first
 
-- Widening the public surface, changing callback timing or accepting a measured performance regression.
+- 공개 표면을 넓히거나 콜백 시점을 바꾸거나 실측 성능 회귀를 수용할 때.
 
 ### Never do
 
-- Expose binding-only channels, mutate caller-owned schemas or duplicate a child's contract at this boundary.
-- Add compatibility aliases or value repair that silently changes the authored meaning.
+- 바인딩 전용 채널을 노출하거나 호출자 소유 스키마를 변경하거나 이 경계에 자식 계약을 중복하지 않습니다.
+- 작성된 의미를 조용히 바꾸는 호환 별칭이나 값 수리를 추가하지 않습니다.

@@ -202,7 +202,7 @@ it('REACT-028 preserves a branch input with mounted child proxies on refresh', (
   expect(mounts).toBe(before);
 });
 
-it('REACT-019 ERROR-202 an unanchored input map also matches terminal descendants', () => {
+it('REACT-019 ERROR-202 an explicit prefix pattern also matches terminal descendants', () => {
   const counts = new Map<string, number>();
   const Container = ({ path, ChildFields }: FieldInputProps) => {
     counts.set(path, ChildFields.length);
@@ -222,7 +222,7 @@ it('REACT-019 ERROR-202 an unanchored input map also matches terminal descendant
           o: { type: 'object', properties: { s: { type: 'string' } } },
         },
       }}
-      fieldInputMap={{ '/o': Container }}
+      fieldInputMap={{ '^/o': Container }}
       validationMode={ValidationMode.None}
       onError={vi.fn()}
     />,

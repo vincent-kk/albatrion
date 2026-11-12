@@ -86,7 +86,7 @@ it.for([
     expect(old.unknownTest.marker).toBeUndefined();
     expect(next.unknownTest.marker).toBe('probe');
     expect(next.warning).toContain(
-      'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID',
+      'SCHEMA_FORM_WARNING.FIELD_INPUT_TEST_INVALID',
     );
   },
 );

@@ -1,4 +1,5 @@
 export { dispatchSetValue } from './utils/entry/dispatchSetValue';
+export { dispatchRelayInput } from './utils/entry/dispatchRelayInput';
 export { dispatchWriteInput } from './utils/entry/dispatchWriteInput';
 export { dispatchFinishInput } from './utils/entry/dispatchFinishInput';
 export { readFieldNodeInteractionReset } from './utils/read/readFieldNodeInteractionReset';

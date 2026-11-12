@@ -36,7 +36,7 @@ export const FieldInputsContextProvider = ({
     } catch (error) {
       if (
         !isSchemaFormError(error) ||
-        error.code !== FormErrorCode.FormTypeInputMap
+        error.code !== FormErrorCode.FieldInputMap
       )
         throw error;
       return {

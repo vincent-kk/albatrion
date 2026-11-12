@@ -4,6 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { flushSync } from 'react-dom';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -39,10 +40,12 @@ const Renderer = ({
 );
 const Leaf = ({
   path,
-  errorVisible,
   onChange,
   context,
+  node,
 }: FieldInputProps<any, { normalize?: boolean }>) => {
+  const { errorVisible } = useFieldErrors(node);
+
   useLayoutEffect(() => {
     if (context.normalize && errorVisible && path === '/a') onChange('valid');
   }, [context.normalize, errorVisible, path, onChange]);

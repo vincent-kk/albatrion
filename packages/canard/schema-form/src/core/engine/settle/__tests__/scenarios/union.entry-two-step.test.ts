@@ -4,7 +4,10 @@ import type { FormScenario } from '@aileron/schema-form-scenarios';
 
 import { runScenario } from '@/schema-form/core/__tests__/scenarios/utils/runScenario';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
@@ -59,7 +62,7 @@ describe('union.entry-two-step', () => {
           writeFieldNode(
             root,
             step.value,
-            'callerReplace',
+            FieldNodeWriteKind.CallerReplace,
             WriteOption.Overwrite,
           );
       },
@@ -116,7 +119,7 @@ describe('union.entry-two-step', () => {
           writeFieldNode(
             root,
             step.value,
-            'callerReplace',
+            FieldNodeWriteKind.CallerReplace,
             WriteOption.Overwrite,
           );
       },
@@ -169,7 +172,7 @@ describe('union.entry-two-step', () => {
             writeFieldNode(
               root,
               step.value,
-              'callerReplace',
+              FieldNodeWriteKind.CallerReplace,
               WriteOption.Overwrite,
             ),
           ).toThrow();

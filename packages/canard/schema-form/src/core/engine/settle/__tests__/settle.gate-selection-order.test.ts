@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
@@ -72,7 +75,7 @@ describe('gate selection original-site shadow precondition', () => {
     writeFieldNode(
       root.structure!.kind,
       'kind_4',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const value = root.emit;
@@ -152,7 +155,7 @@ describe('gate selection original-site shadow precondition', () => {
       writeFieldNode(
         root.structure!.kind,
         'kind_4',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
     } finally {

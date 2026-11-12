@@ -8,7 +8,7 @@
 
 - `SchemaFormPlugin`의 모든 필드는 선택이다.
 - `ValidatorPlugin`은 `compile(jsonSchema)`와 동기 `compileGuard(root, pointer)`가 필수이다. `bind(instance)`는 소비자가 등록하기 전에 인스턴스를 주입하는 선택 훅이며, 코어는 이를 호출하지 않는다.
-- 렌더 컴포넌트는 `ComponentType<FieldRendererProps>` 타입을 따른다.
+- 그룹·입력 렌더러는 FieldRendererProps를, 라벨·오류 렌더러는 각 부품의 좁은 props를 받습니다. 부품이 자기 루트 요소를 소유합니다.
 - 플러그인 병합 규칙: 렌더 컴포넌트는 마지막에 등록한 것이 우선하고, `fieldInputDefinitions`는 나중에 등록한 정의를 목록 앞에 붙여(prepend) 먼저 매칭한다.
 - `PluginManager`는 전역 상태를 유지하는 static singleton이며 노드별 상태는 저장하지 않는다.
 - 플러그인 중복은 구조와 함수 identity를 함께 비교해서 판정한다.

@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -33,7 +36,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(
         root,
         { kind: 'a', x: 1 },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -57,7 +60,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(
         root,
         { a: 1, b: 2 },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -126,12 +129,22 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     const former = root.structure!.secret;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.secret).toBeUndefined();
     expect(former.source).toBe('held');
     expect(former.detached).toBe(true);
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.secret).not.toBe(former);
     expect(root.structure?.secret?.source).toBe('fresh');
   });
@@ -164,7 +177,12 @@ describe('settle exits and budgets', () => {
       { flag: true, other: false, secret: 'old' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
@@ -189,12 +207,22 @@ describe('settle exits and budgets', () => {
       { flag: true, branch: { drop: 'D', keep: 'K' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
     expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.branch?.structure?.drop?.source).toBeUndefined();
     expect(root.structure?.branch?.structure?.keep?.source).toBe('K');
   });
@@ -233,11 +261,16 @@ describe('settle exits and budgets', () => {
     writeFieldNode(
       root.structure!.branch.structure!.show,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readRetainedSlotSource(root, '/branch/drop', 'string')).toBe('D');
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
@@ -276,7 +309,12 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.addr?.structure?.zip?.source).toBe('Z');
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.addr).toBeDefined();
     expect(root.structure?.addr?.structure?.zip).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
@@ -301,7 +339,12 @@ describe('settle exits and budgets', () => {
     );
     const former = root.structure!.branch;
     const extras = former.extras;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(former.extras).toBe(extras);
     expect(former.extras).toEqual({ extra: 'E' });
   });
@@ -324,7 +367,12 @@ describe('settle exits and budgets', () => {
       ],
     });
     expect(() =>
-      writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
+      writeFieldNode(
+        root,
+        { a: 0 },
+        FieldNodeWriteKind.CallerReplace,
+        WriteOption.Overwrite,
+      ),
     ).toThrow();
     expect(root.structure?.a?.source).toBe(0);
     expect(root.runtime.misfitPaths.has('/a')).toBe(true);
@@ -335,7 +383,12 @@ describe('settle exits and budgets', () => {
       iterations: expect.any(Number),
       commit: 1,
     });
-    writeFieldNode(root.structure!.a, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.a,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.runtime.diagnostics.status).toBe('degraded');
     resetFieldNodeForm(root, { a: 'x' }, WriteOption.Overwrite);
     expect(root.runtime.diagnostics.status).toBe('stable');
@@ -367,7 +420,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(
         root,
         { hasChild: true },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -390,7 +443,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(
         root,
         { a: true, b: true },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -419,7 +472,7 @@ describe('settle exits and budgets', () => {
         writeFieldNode(
           root,
           { a: true, b: true },
-          'callerReplace',
+          FieldNodeWriteKind.CallerReplace,
           WriteOption.Overwrite,
         ),
       ).toThrow();
@@ -432,12 +485,22 @@ describe('settle exits and budgets', () => {
 
   it('SETTLE-047 reuses cleared work containers after success and failure', () => {
     const ordinary = createTestTree({ type: 'string' }).root;
-    writeFieldNode(ordinary, 'first', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      ordinary,
+      'first',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const scratch = ordinary.runtime.settlementScratch;
     expect(scratch?.inUse).toBe(false);
     expect(scratch?.entered.size).toBe(0);
     expect(scratch?.writtenInputs.size).toBe(0);
-    writeFieldNode(ordinary, 'second', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      ordinary,
+      'second',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(ordinary.runtime.settlementScratch).toBe(scratch);
 
     const unstable = createTestTree({
@@ -451,7 +514,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(
         unstable,
         { a: true, b: true },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();

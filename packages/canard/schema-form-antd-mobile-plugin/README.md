@@ -12,6 +12,8 @@
 
 `@canard/schema-form-antd-mobile-plugin` is a plugin for `@canard/schema-form` that provides Ant Design Mobile components.
 
+FieldRenderer composes the bound Label, Input, and ErrorMessage parts. LabelRenderer and ErrorMessageRenderer own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
+
 ---
 
 ## Notice
@@ -105,6 +107,14 @@ This plugin provides the following Ant Design Mobile components:
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
 - **Additional features**: Support for `indeterminate` state for `undefined` values
+
+---
+
+## Switch keyboard access
+
+`formRef.current.focus(path)` reaches the switch’s `data-focus-target` element.
+
+Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch once per press through the same value mapping as a click; holding a key does not toggle repeatedly, and Space does not scroll the page. Disabled switches cannot receive focus by click or Tab and ignore activation keys.
 
 ---
 

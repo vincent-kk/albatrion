@@ -5,38 +5,35 @@ import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
 import type { Optional } from '@aileron/declare';
 
+import { PluginManager } from '@/schema-form/app/plugin';
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeState } from '@/schema-form/core';
 import {
-  FieldNodeEventType,
   SetValueOption,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
-  readFieldNodeRevealVersion,
+  relayFieldNodeInput,
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
-  useFieldRendererContext,
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import { useExternalInputContext } from '@/schema-form/providers/ExternalFormContext';
 import { useFieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
-import {
-  ErrorRevealSubscriber,
-  isErrorRevealed,
-} from '@/schema-form/providers/FieldRendererContext';
+import { useInputRendererContext } from '@/schema-form/providers/FieldRendererContext';
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
+import { resolveRequired } from '../../utils/required/resolveRequired';
 import { useChildFields } from './hooks/useChildFields';
 import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useFieldLifecycle } from './hooks/useFieldLifecycle';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputBridgeProps } from './type';
-
-/** State patch that marks the field edited after a controlled change. */
-const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
+import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
+import { resolveControlled } from './utils/resolveControlled';
 
 /** State patch that marks the field touched after blur. */
 const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
@@ -45,26 +42,36 @@ const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
 export const FieldInputBridge = memo(
   ({
     node,
+    unwrapped,
     onChangeRef,
     onFileAttachRef,
+    overrideOnChangeRef,
+    overrideOnFileAttachRef,
     overrideProps,
     PreferredFieldInput,
     NodeProxy,
   }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
-    const FieldInput = PreferredFieldInput || selected;
-    // Each selection gets its own generation, even when A returns after B.
-    const selection = useMemorize(() => ({ active: false }), [FieldInput]);
+    const FieldInput = PreferredFieldInput || (selected && selected.Component);
+    const formInputRenderer = useInputRendererContext();
+    const { InputRenderer: externalInputRenderer } = useExternalInputContext();
+    const InputRenderer =
+      formInputRenderer ||
+      externalInputRenderer ||
+      PluginManager.InputRenderer ||
+      null;
+    const Frame = FieldInput && !unwrapped ? InputRenderer : null;
+    const presentation = (node.jsonSchema as JSONSchema).presentation;
+    const inputProps = presentation?.FieldInputProps;
+    const controlled = resolveControlled(
+      PreferredFieldInput ? undefined : selected?.controlled,
+      presentation?.controlled,
+    );
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { checkErrorVisibility, errorVisibility } = useFieldRendererContext();
-    const live = node.isPresent && checkErrorVisibility(node.state);
-    const errorVisible = live && isErrorRevealed(node, errorVisibility, true);
-    const revealVersion =
-      live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
@@ -74,11 +81,11 @@ export const FieldInputBridge = memo(
       generation,
       handleCompositionStart,
       handleCompositionEnd,
-      rerender,
+      update,
       releaseComposition,
-    ] = useFieldInputControl(node, mountedChildren);
+    ] = useFieldInputControl(node, mountedChildren, controlled);
     const lifecycle = useFieldLifecycleContext();
-    const lifecycleRender = useFieldLifecycle(
+    const position = useFieldLifecycle(
       node,
       ref,
       commitTerminalChildren,
@@ -86,21 +93,23 @@ export const FieldInputBridge = memo(
       hydrationCommitRef,
       FieldInput ? virtualizationManager : null,
       FieldInput ? lifecycle : null,
+      update,
     );
-    const defaultValue = useMemorize(
-      () => node.value,
-      [node, generation, FieldInput],
+    // Each committed container and input selection owns its callback lifetime.
+    const selection = useMemorize(
+      () => ({ active: false }),
+      [FieldInput, position.epoch],
     );
     const accepts = useCallback(
       () =>
         selection.active &&
         isLive() &&
         (mountedChildren.current > 0 ||
-          generation === node.revision(FieldNodeEventType.RequestRefresh)),
-      [node, generation, isLive, selection],
+          generation === readFieldInputGeneration(node, controlled)),
+      [node, generation, isLive, selection, controlled],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = SetValueOption.Overwrite) => {
+      (value, option = SetValueOption.Overwrite) => {
         if (
           !accepts() ||
           rootReadOnly ||
@@ -109,24 +118,35 @@ export const FieldInputBridge = memo(
           node.isDisabled
         )
           return;
-        if (!onChangeRef.current) writeFieldNodeInput(node, input, option);
-        else
-          node.batch(() => {
-            onChangeRef.current!(input, option);
-            node.clearExternalErrors();
-            node.setState(EDITED_STATE_PATCH);
-          });
+        const onChange = onChangeRef.current || overrideOnChangeRef?.current;
+        if (!onChange) writeFieldNodeInput(node, value, option);
+        else relayFieldNodeInput(node, value, option, onChange);
       },
-      [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
+      [
+        accepts,
+        rootReadOnly,
+        rootDisabled,
+        node,
+        onChangeRef,
+        overrideOnChangeRef,
+      ],
     );
     const handleFileAttach = useCallback(
       (files: Optional<File | File[]>) => {
         if (!accepts()) return;
-        if (onFileAttachRef.current) return onFileAttachRef.current(files);
+        const onFileAttach =
+          onFileAttachRef.current || overrideOnFileAttachRef?.current;
+        if (onFileAttach) return onFileAttach(files);
         if (files === undefined) attachedFilesMap.delete(node.path);
         else attachedFilesMap.set(node.path, isArray(files) ? files : [files]);
       },
-      [accepts, node, onFileAttachRef, attachedFilesMap],
+      [
+        accepts,
+        node,
+        onFileAttachRef,
+        overrideOnFileAttachRef,
+        attachedFilesMap,
+      ],
     );
     const requestId =
       useRef<ReturnType<typeof requestAnimationFrame>>(undefined);
@@ -142,22 +162,32 @@ export const FieldInputBridge = memo(
       if (node.state[2]) return;
       requestId.current = requestAnimationFrame(() => {
         if (
+          selection.active &&
           isLive() &&
           reset === readFieldNodeInteractionReset(node) &&
           !node.state[2]
         )
           node.setState(TOUCHED_STATE_PATCH);
       });
-    }, [accepts, isLive, node]);
+    }, [accepts, isLive, node, selection]);
     useOnUnmount(() => {
       attachedFilesMap.delete(node.path);
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
     if (!FieldInput) return null;
-    return (
+    const required = resolveRequired(
+      overrideProps.required,
+      presentation?.required,
+      node.isRequired,
+    );
+    const readOnly =
+      rootReadOnly || node.isReadOnly || !!overrideProps.readOnly;
+    const disabled =
+      rootDisabled || node.isDisabled || !!overrideProps.disabled;
+    const input = (
       <div
-        ref={ref}
+        ref={position.ref}
         role={NONE_ROLE}
         style={DISPLAY_CONTENT}
         onFocus={handleFocus}
@@ -166,18 +196,17 @@ export const FieldInputBridge = memo(
         onCompositionEnd={handleCompositionEnd}
       >
         <FieldInput
-          required={node.isRequired}
           placeholder={undefined}
           style={undefined}
           className={undefined}
-          {...(node.jsonSchema as JSONSchema).presentation?.FieldInputProps}
-          defaultValue={defaultValue}
+          {...inputProps}
+          {...overrideProps}
           value={node.value}
+          required={required}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
-          {...overrideProps}
-          readOnly={rootReadOnly || node.isReadOnly || !!overrideProps.readOnly}
-          disabled={rootDisabled || node.isDisabled || !!overrideProps.disabled}
+          readOnly={readOnly}
+          disabled={disabled}
           inputGeneration={generation}
           inputSelection={selection}
           jsonSchema={node.jsonSchema as JSONSchema}
@@ -188,21 +217,28 @@ export const FieldInputBridge = memo(
           name={node.name}
           path={node.path}
           nullable={node.nullable}
-          errors={node.errors}
-          errorVisible={errorVisible}
           watchValues={node.watchValues}
           ChildFields={ChildFields}
           context={context}
         />
-        {revealVersion !== undefined && (
-          <ErrorRevealSubscriber
-            node={node}
-            version={revealVersion}
-            onRelease={rerender}
-          />
-        )}
-        {lifecycleRender}
+        {position.detector}
       </div>
+    );
+    return Frame ? (
+      <Frame
+        node={node}
+        path={node.path}
+        name={node.name}
+        jsonSchema={node.jsonSchema}
+        required={required}
+        readOnly={readOnly}
+        disabled={disabled}
+        context={context}
+      >
+        {input}
+      </Frame>
+    ) : (
+      input
     );
   },
 );

@@ -1,6 +1,7 @@
 import { type ComponentType, memo, useInsertionEffect } from 'react';
 
 import { ErrorBoundary } from '@winglet/react-utils/hoc';
+import { useMemorize } from '@winglet/react-utils/hook';
 
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldInputProps } from '@/schema-form/types';
@@ -33,6 +34,10 @@ export const withFieldInputErrorBoundary = (
     inputSelection,
     ...props
   }: FieldInputBindingProps) {
+    const defaultValue = useMemorize(
+      () => props.node.value,
+      [props.node, inputGeneration],
+    );
     const onError = useBoundaryReporter(props.path);
     useInsertionEffect(() => {
       inputSelection.active = true;
@@ -43,7 +48,11 @@ export const withFieldInputErrorBoundary = (
     }, [inputSelection]);
     return (
       <ErrorBoundary onError={onError}>
-        <Component {...props} key={inputGeneration} />
+        <Component
+          {...props}
+          defaultValue={defaultValue}
+          key={inputGeneration}
+        />
       </ErrorBoundary>
     );
   });

@@ -13,36 +13,36 @@ TypeScript 프로젝트를 위한 CSS 및 스타일 관리 유틸리티입니다
 Shadow DOM을 지원하는 스코프 스타일 주입, CSS 압축,
 className 연결 헬퍼를 런타임 의존성 없이 제공합니다.
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @winglet/style-utils
 ```
 
-## Sub-path Exports
+## 서브패스 내보내기 {#sub-path-exports}
 
-| Import path | Contents |
+| 가져오기 경로 | 내용 |
 |---|---|
-| `@winglet/style-utils` | All exports |
+| `@winglet/style-utils` | 모든 내보내기 |
 | `@winglet/style-utils/style-manager` | `styleManagerFactory`, `destroyScope` |
 | `@winglet/style-utils/util` | `cx`, `cxLite`, `compressCss` |
 
-## Key Exports
+## 주요 내보내기 {#key-exports}
 
-### Style Manager (`/style-manager`)
+### 스타일 관리자 (`/style-manager`) {#style-manager-style-manager}
 
-- `styleManagerFactory(scopeId, options?)` — returns a scoped `addStyle` function that injects CSS into the document (or Shadow Root)
-- `destroyScope(scopeId)` — removes all styles and cleans up the scope
+- `styleManagerFactory(scopeId, options?)`는 문서(또는 Shadow Root)에 CSS를 주입하는 스코프 지정 `addStyle` 함수를 반환합니다.
+- `destroyScope(scopeId)`는 모든 스타일을 제거하고 스코프를 정리합니다.
 
-Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` element injection. Updates batched via `requestAnimationFrame`.
+최신 브라우저에서는 `adoptedStyleSheets`를 사용하며, 지원하지 않으면 `<style>` 요소 주입으로 폴백합니다. 업데이트는 `requestAnimationFrame`으로 일괄 처리합니다.
 
-### Class Name Utilities (`/util`)
+### 클래스 이름 유틸리티 (`/util`) {#class-name-utilities-util}
 
-- `cx(...inputs)` — concatenates class names; accepts strings, objects, and arrays
-- `cxLite(...inputs)` — lightweight variant filtering truthy strings only
-- `compressCss(css)` — single-pass CSS compression
+- `cx(...inputs)`는 클래스 이름을 연결하며 문자열, 객체, 배열을 받습니다.
+- `cxLite(...inputs)`는 참으로 평가되는 문자열만 필터링하는 경량 변형입니다.
+- `compressCss(css)`는 한 번의 순회로 CSS를 압축합니다.
 
-## Usage Examples
+## 사용 예제 {#usage-examples}
 
 ```ts
 import { cx, cxLite } from '@winglet/style-utils/util';
@@ -79,28 +79,28 @@ const addStyle = styleManagerFactory('shadow-scope', {
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@winglet/style-utils` v0.10.0
-**Purpose**: Scoped CSS injection, CSS compression, and className utilities.
+**패키지**: `@winglet/style-utils` v0.10.0
+**목적**: 스코프 지정 CSS 주입, CSS 압축 및 className 유틸리티입니다.
 
-### Key exports
+### 주요 내보내기 {#key-exports-1}
 ```
 ./style-manager → styleManagerFactory(scopeId, options?) → addStyle(key, css) → removeStyle()
                   destroyScope(scopeId)
-./util          → cx(...inputs)          — className concat (strings, objects, arrays)
-                  cxLite(...inputs)       — lightweight (truthy strings only)
-                  compressCss(css)        — single-pass CSS compression
+./util          → cx(...inputs)          — className 연결 (문자열, 객체, 배열)
+                  cxLite(...inputs)       — 경량 변형 (참으로 평가되는 문자열만)
+                  compressCss(css)        — 한 번의 순회로 CSS 압축
 ```
 
-### styleManagerFactory options
+### styleManagerFactory 옵션 {#stylemanagerfactory-options}
 ```ts
 { shadowRoot?: ShadowRoot }  // Enable Shadow DOM support
 ```
 
-### Behaviors
-- Uses `adoptedStyleSheets` in modern browsers, falls back to `<style>` injection
-- Style updates batched via `requestAnimationFrame`
-- `destroyScope()` removes all styles + cleans up for the given scopeId
+### 동작 {#behaviors}
+- 최신 브라우저에서는 `adoptedStyleSheets`를 사용하며, 지원하지 않으면 `<style>` 주입으로 폴백합니다.
+- 스타일 업데이트는 `requestAnimationFrame`으로 일괄 처리합니다.
+- `destroyScope()`는 지정한 scopeId의 모든 스타일을 제거하고 스코프를 정리합니다.
 
 </ForAI>

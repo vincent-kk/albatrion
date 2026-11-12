@@ -77,9 +77,9 @@ describe('slot syntax caches without source caching', () => {
     expect(resolveSlotSource(root, '/value', text.blueprintNode).instance).toBe(
       text,
     );
-    expect(resolveSlotSource(root, '/value', number.blueprintNode).instance).toBe(
-      number,
-    );
+    expect(
+      resolveSlotSource(root, '/value', number.blueprintNode).instance,
+    ).toBe(number);
     const before = resolveSlotSource(root, '/value', text.blueprintNode);
     decoder.mockClear();
     expect(
@@ -89,9 +89,9 @@ describe('slot syntax caches without source caching', () => {
     expect(after.instance).toBe(text);
     expect(after.overlay).toBeDefined();
     expect(after.overlay).not.toBe(before.overlay);
-    expect(resolveSlotSource(root, '/value', number.blueprintNode).instance).toBe(
-      number,
-    );
+    expect(
+      resolveSlotSource(root, '/value', number.blueprintNode).instance,
+    ).toBe(number);
     expect(decoder).not.toHaveBeenCalled();
     dispatchSetValue(getDispatchNode(root, 'kind'), 'text');
     const reentered = getDispatchNode(root, 'value');
@@ -121,9 +121,9 @@ describe('slot syntax caches without source caching', () => {
     dispatchRemove(rows, 0);
     expect(old.path).toBe('/rows/1/value');
     const currentPath = '/rows/0/value';
-    expect(resolveSlotSource(root, currentPath, old.blueprintNode).instance).toBe(
-      old,
-    );
+    expect(
+      resolveSlotSource(root, currentPath, old.blueprintNode).instance,
+    ).toBe(old);
     decoder.mockClear();
     expect(
       writeSlotPath(root, currentPath, old.blueprintNode, 'moved', true),

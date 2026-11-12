@@ -4,7 +4,10 @@ import { createTestTree } from '@/schema-form/core/engine/__tests__/fixtures/cre
 import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle';
 import { resetFieldNodeSubtree } from '@/schema-form/core/engine/settle';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 // filid:contract derive-rank derive-inject-to
 describe('injectTo and same-target settlement', () => {
@@ -34,12 +37,17 @@ describe('injectTo and same-target settlement', () => {
     writeFieldNode(
       root.structure!.target,
       'manual',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
     expect(injectTo).toHaveBeenCalledOnce();
-    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.clear,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target?.source).toBeUndefined();
   });
 
@@ -67,7 +75,7 @@ describe('injectTo and same-target settlement', () => {
     writeFieldNode(
       root,
       { first: 'C', second: 'D' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('second');
@@ -240,7 +248,12 @@ describe('injectTo and same-target settlement', () => {
       commit: 1,
     });
     expect(root.structure?.['source']?.source).toBe('A');
-    writeFieldNode(root.structure!['source'], 'A', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'A',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -263,7 +276,7 @@ describe('injectTo and same-target settlement', () => {
     writeFieldNode(
       root.structure!.enabled,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('latent');
@@ -293,7 +306,7 @@ describe('injectTo and same-target settlement', () => {
     writeFieldNode(
       root.structure!.enabled,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledOnce();
@@ -322,7 +335,7 @@ describe('injectTo and same-target settlement', () => {
     writeFieldNode(
       root.structure!.target,
       'manual',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     resetFieldNodeSubtree(root.structure!.group, WriteOption.Overwrite);
@@ -352,7 +365,12 @@ describe('injectTo and same-target settlement', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.box?.source).toBeNull();
-    writeFieldNode(root.structure!['source'], 'B', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!['source'],
+      'B',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.box?.source).toBeNull();
     expect(root.structure?.box?.structure?.target?.source).toBe('injected');
     expect(root.emit).toEqual({ source: 'B', box: null });

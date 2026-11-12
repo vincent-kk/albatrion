@@ -10,6 +10,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
+
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
 };
@@ -56,20 +58,25 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <Switch
-      aria-invalid={misfit || undefined}
-      key={path}
-      disabled={disabled}
-      checked={value === checked}
-      checkedText={checkedLabel}
-      uncheckedText={uncheckedLabel}
-      onChange={handleChange}
-    />
+    <SwitchKeyboardControl disabled={disabled}>
+      <Switch
+        data-focus-target
+        tabIndex={disabled ? undefined : 0}
+        aria-invalid={misfit || undefined}
+        key={path}
+        disabled={disabled}
+        checked={value === checked}
+        checkedText={checkedLabel}
+        uncheckedText={uncheckedLabel}
+        onChange={handleChange}
+      />
+    </SwitchKeyboardControl>
   );
 };
 
 export const FieldInputStringSwitchDefinition = {
   Component: FieldInputStringSwitch,
+  controlled: true,
   test: ({ type, inputType, jsonSchema }) =>
     type === 'string' &&
     inputType === 'switch' &&

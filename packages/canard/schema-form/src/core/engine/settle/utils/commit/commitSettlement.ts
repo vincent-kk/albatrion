@@ -11,6 +11,7 @@ import {
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
@@ -24,6 +25,7 @@ import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
+import { isRelayedInput } from './utils/isRelayedInput';
 import { readSettlementSource } from './utils/readSettlementSource';
 
 /**
@@ -42,7 +44,10 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   if (development) {
     if (context.traceRounds?.length) finalizeDeriveTrace(context);
     runtime.settlementTrace = {
-      entry: { api: context.entryApi ?? context.kind, option: context.option },
+      entry: {
+        api: context.entryApi ?? context.kind,
+        option: context.option,
+      },
       rounds: context.traceRounds ?? [],
       ...(context.deriveBudgetRules
         ? { budget: context.deriveBudgetRules }
@@ -73,15 +78,20 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     };
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
-  const loadScope = context.kind === 'load' ? context.loadScope : undefined;
+  const loadScope =
+    context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
+  const relays = runtime.inputRelays;
+  if (relays !== undefined) runtime.inputRelays = undefined;
   for (const path of context.changedSource) {
     if (
       loadScope &&
       (path === loadScope.path || isDescendantPath(path, loadScope.path))
     )
       continue;
-    if (readSettlementSource(context, path, true) !== 'input')
-      refreshTargets.add(path);
+    if (readSettlementSource(context, path, true) === FieldNodeWriteKind.Input)
+      continue;
+    if (relays !== undefined && isRelayedInput(relays, path)) continue;
+    refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
   let warnings: Optional<MisfitRecord[]>;
@@ -125,7 +135,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           ...(ambiguous ? { candidates } : {}),
           source: context.filledNodes.has(node)
             ? 'fill'
-            : context.kind === 'load' && context.entered.has(node)
+            : context.kind === FieldNodeWriteKind.Load &&
+                context.entered.has(node)
               ? 'load'
               : context.changedSource.has(node.path)
                 ? context.kind

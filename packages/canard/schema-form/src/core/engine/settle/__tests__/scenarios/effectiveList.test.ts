@@ -4,7 +4,10 @@ import type { FormScenario } from '@aileron/schema-form-scenarios';
 
 import { runScenario } from '@/schema-form/core/__tests__/scenarios/utils/runScenario';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
@@ -43,7 +46,9 @@ describe('core effective-list scenario', () => {
           writeFieldNode(
             step.path === '' ? root : root.structure!.enabled,
             step.value,
-            step.path === '' ? 'callerReplace' : 'input',
+            step.path === ''
+              ? FieldNodeWriteKind.CallerReplace
+              : FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
       },

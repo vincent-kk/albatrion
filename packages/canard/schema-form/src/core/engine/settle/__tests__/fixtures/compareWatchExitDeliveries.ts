@@ -145,7 +145,12 @@ export const compareWatchExitDeliveries = (
   }
   const [candidate, oracle] = histories;
   // Listeners receive a wave in document order, so only each node's own mark order is observable.
-  const shared = ({ marks, delivered, emit, watchers }: WatchExitObservation) => ({
+  const shared = ({
+    marks,
+    delivered,
+    emit,
+    watchers,
+  }: WatchExitObservation) => ({
     marks: [...marks].sort((left, right) =>
       pathOf(left).localeCompare(pathOf(right)),
     ),

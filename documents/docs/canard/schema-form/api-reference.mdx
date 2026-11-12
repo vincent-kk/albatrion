@@ -26,9 +26,9 @@ Import consumer APIs from `@canard/schema-form`. Types inferred from callbacks c
 | `errorVisibility / validationMode`                          | Policies described in Validation.                                                  |
 | `validatorFactory`                                          | Complete validator object; see Validation.                                         |
 | `FieldRenderer`                                             | Group renderer for fields.                                                         |
-| `FormLabelRenderer / FormInputRenderer / FormErrorRenderer` | Composition renderers.                                                             |
+| `LabelRenderer / InputRenderer / ErrorMessageRenderer` | Root-owning parts; see [registered parts](#renderer-parts).                                                             |
 | `formatError`                                               | Error-to-ReactNode formatter with a required node argument.                        |
-| `fieldInputDefinitions / fieldInputMap`                     | Ordered tests and path overrides; see input resolution.                            |
+| `fieldInputDefinitions / fieldInputMap` | Ordered tests and path overrides; see input resolution. A definition's `controlled: true` [skips remounts for a controlled input](./schema-reference#controlled). |
 | `virtualization`                                            | Deferred input mounting, off by default.                                           |
 | `context`                                                   | Live form context merged over provider context.                                    |
 | `children`                                                  | Layout or function receiving node, jsonSchema, defaultValue, value, errors.        |
@@ -61,8 +61,8 @@ Replace an invalid input map with a valid map to recover without remounting. A f
 | `findNode(path) / findNodes(path)`                | First or all matching live nodes; no match returns null or [], respectively.                                                                                                                                                                               |
 | `getState() / setState(flags) / clearState()`     | Read aggregate flags / patch or clear the whole tree.                                                                                                                                                                                                      |
 | `getErrors() / validate()`                        | Raw issues / a promise for a fresh verdict.                                                                                                                                                                                                                |
-| `focus(path?) / select(path?)`                    | Focus the exact input through nested virtualization gates, using the first input, textarea, select, or button in its input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
-| `refresh(path?) / remount(path?)`                 | Re-read committed input values / remount a rendered subtree.                                                                                                                                                                                               |
+| `focus(path?) / select(path?)`                    | Focus the exact input through nested virtualization gates, using the first `[data-focus-target]` element, input, textarea, select, or button in its input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
+| `refresh(path?) / remount(path?)` | Re-read committed input values (an input declaring `controlled: true` is not replaced) / remount a rendered subtree.                                                                                                                                                                                               |
 | `reset(option?) / rebuild(option?)`               | Root load operations described above.                                                                                                                                                                                                                      |
 | `revealErrors()` / `resetErrorVisibility()`       | Display override; see Validation.                                                                                                                                                                                                                          |
 | `getAttachedFilesMap()`                           | Map&lt;string, File[]&gt;; see the file example.                                                                                                                                                                                                           |
@@ -80,17 +80,87 @@ Value writes settle once at the end, so intermediate value reads see the precedi
 
 A visitor failure applies writes already made and then propagates. When a value-writing walk runs inside a listener, its failure may be reported through the listener channel instead of returning to the direct caller. The handle has no visitSubtree method; use `handle.node`.
 
+For a non-native focusable element, add `data-focus-target`. The marker does not itself grant focusability; mounted-target detection treats `aria-disabled="true"` as disabled.
+
 ## Form composition and custom inputs {#composition}
 
-`Form.Field` renders a group; `Form.Label`, `Form.Input`, and `Form.Error` render individual slots. `Form.Render` takes function children receiving `FieldRendererProps`, including `node`, `value`, `Input`, `errorVisible`, and `errorMessage`. These components require a Form ancestor. `Form.Input` and `Form.Render` paths use the [extended query rules](#paths), including relative and wildcard paths.
+`Form.Field` renders a group; `Form.Label`, `Form.Input`, and `Form.ErrorMessage` render individual slots. `Form.Render` takes function children receiving `FieldRendererProps`, including `node`, `value`, `Input`, `errorVisible`, and `errorMessage`. These components require a Form ancestor. `Form.Input` and `Form.Render` paths use the [extended query rules](#paths), including relative and wildcard paths.
 
 Use the supplied `Input` in a custom renderer when you need input-write interaction behavior. A direct `node.setValue()` is programmatic and does not mark Edited. Extra input props are forwarded to the selected input, not automatically to its native element: the built-in string input uses `inputProps` for native attributes such as autoComplete.
 
-`FieldInputProps` supplies `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, raw `errors`, `errorVisible`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, and presentation props. Empty input publishes undefined; null is published only deliberately. Honor resolved input locks and [accessible naming](./schema-reference#accessibility).
+`Form.Input`, `Form.Render`, and `Form.Field` reject `onChange` and `onFileAttach`. Supply relay callbacks through a hybrid parent’s `<Child>` or a renderer’s `<Input>`.
+
+`FieldInputProps` supplies `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, and presentation props. Empty input publishes undefined; null is published only deliberately. Honor resolved input locks and [accessible naming](./schema-reference#accessibility).
 
 The node prop is required in both FieldInputProps and FieldRendererProps.
 
 `ChildFields` contains components with key/path/field metadata; use `FieldInputProps['ChildFields'][number]` when you need their type. `ChildFieldProps` allows per-child overrides including `FieldRenderer`. A FieldInput does not receive a built-in `FieldRenderer` prop; choose the renderer on Form, Form.Field, or child components instead.
+
+### Registered parts {#renderer-parts}
+
+Register LabelRenderer (`LabelRendererProps`), ErrorMessageRenderer (`ErrorMessageRendererProps`) and an optional InputRenderer (`InputRendererProps`) on Form, FormProvider or a plugin. Each owns its root; there is no default input frame. Keep component references stable: a new renderer reference replaces its UI. Use stable object props such as style so memoized parts can skip re-rendering when their props are unchanged.
+
+FieldRenderer receives bound Label, Input and ErrorMessage. `<Label />` defaults to the field's name (key or index), not its schema title. Undefined Label children use that name; null leaves it empty. ErrorMessage has no default message: use `<ErrorMessage>{errorMessage}</ErrorMessage>`. Explicit props override defaults even when undefined, except Label children; node cannot be replaced. Extra props reach the registered renderer. Bound Label defaults htmlFor to the field path and id to `label:` followed by that path; a custom input uses its path as its element id to associate with the label. Label and ErrorMessage receive context only when their caller passes it. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence.
+
+Form.Label accepts children and Form.ErrorMessage uses the field's formatted message. Neither adds an outer label or span: the registered renderer owns that element and its htmlFor/id/style/className. Standalone Form.ErrorMessage still renders its root when empty. Form.Label without a path omits htmlFor/id; use an absolute path for its label association.
+
+### Input frames {#input-frames}
+
+InputRenderer receives the bound input as children, with its field node and effective required/readOnly/disabled/context. Selection at the consumer is Form's value, then the nearest FormProvider (including one inside Form children), then the plugin registry. A nearer FormProvider without InputRenderer hides an outer provider’s frame; selection then falls to the plugin.
+
+A selected frame wraps every bound input, including the root field (path ""), object fields and array fields. A group skips it per field with unwrapped, and the frame can branch on its node. The root node’s errors include every descendant’s error, so a frame that marks field error state should not mark the root. Other branches do not automatically aggregate descendant errors.
+
+Render children exactly once and unconditionally at an unchanging position. Changing the element or component path between the frame root and children replaces the input: it starts from the node's current value, loses focus and ends composition. The field's own attached files survive a bound input frame change; a replaced branch input remounts its descendants and clears their attachments.
+
+`<Input unwrapped />` and `<Form.Input unwrapped />` skip the frame. Keep unwrapped constant per position: while a frame is selected, toggling it on a bound Input replaces the input; toggling it on Form.Input remounts the whole field even without a frame. A parent's Child prop or presentation.FieldInputProps.unwrapped is ordinary payload forwarded to the real input, not a frame switch.
+
+### Hybrid parent inputs {#hybrid-parent-inputs}
+
+A custom branch input can render `ChildFields` and override their `onChange` to write the parent value. Use a functional parent update: two children emitting in one event or batch then preserve both values, whereas spreading the parent's rendered `value` can overwrite an earlier edit from that event. Pass this schema to `Form`:
+
+```tsx
+import type { FieldInputProps, JSONSchema } from '@canard/schema-form';
+
+const HybridObject = ({
+  ChildFields,
+  onChange,
+}: FieldInputProps<Record<string, unknown>>) => (
+  <>
+    {ChildFields.map((Child) => (
+      <Child
+        key={Child.key}
+        onChange={(input) =>
+          onChange((prev) => ({ ...prev, [Child.field]: input }))
+        }
+      />
+    ))}
+  </>
+);
+
+/** Keep the inline object input nonterminal so it can render its children. */
+const hybridSchema: JSONSchema = {
+  type: 'object',
+  options: { terminal: false },
+  presentation: { FieldInput: HybridObject },
+  properties: {
+    first: { type: 'string' },
+    last: { type: 'string' },
+  },
+};
+```
+
+The overridden child callback receives the evaluated value, never an updater function. Store `input` directly; the parent's own `onChange` can still receive an updater. An inline `presentation.FieldInput` makes an object or array terminal unless its schema sets `options.terminal: false`.
+
+If the parent commits synchronously and the child's final value is exactly what it emitted, the typing child's DOM and focus are preserved. Primitive values compare by value; objects and arrays must retain the same reference. Sibling children use the current parent callback.
+
+For a child without a controlled declaration:
+
+- A parent transformation, or a `derived`/`injectTo` rule that changes the final value, remounts the child. To preserve its DOM while displaying the transformed value, use an input that renders from `value` and declare `controlled: true` on its definition or `presentation.controlled: true` on its schema. Adding the declaration to a `defaultValue` input does not make it controlled.
+- A delayed write, such as a debounced callback, remounts the child when it arrives. Commit the value synchronously and debounce a separate side effect, or use a value-driven controlled input when delayed display is intentional.
+- Copying an emitted object or array can remount the child even when the contents are equal. Preserve the emitted reference when no transformation is needed; otherwise use a controlled input.
+- Rejecting input without writing leaves the node's previous value and the typed draft on screen. Rejection alone does not restore an undeclared input's display; explicitly refresh it if that is the intended behavior.
+
+`value` and `defaultValue` cannot be overridden: write values through `onChange`. The shared display-only `required` value comes from a boolean override on Child, Form.Input, Form.Render or Form.Field, then boolean `presentation.required`, then `node.isRequired`. False is respected; only non-booleans fall through. Parent-only changes after mount reach both renderer and input, including returning to undefined. `required` inside `presentation.FieldInputProps` or `presentation.FieldRendererProps` is binding-owned and has no effect. A renderer author may override only its Input with a boolean required; undefined falls through without clearing the shared value. Validation and input selection hints still follow the schema required constraint. An input that forwards `required` to a native element can still affect browser validation.
 
 ## Plugins and FormProvider {#plugins}
 
@@ -177,6 +247,14 @@ When the node input changes, both observation hooks release the previous subscri
 Assigning a ref does not re-render its consumer. With `formRef.current?.node`, these hooks attach only when a later render supplies the node; trigger that render with a React state update, including when using a callback ref. Root replacement through `rebuild()`, `reset()` with a changed schema, or a validatorFactory change updates FormHandle.node without re-rendering the consumer. The hooks keep observing the old root until the consumer renders again.
 
 Read live node getters during render with useFieldNodeTracker instead of maintaining a redundant event mirror when possible.
+
+### Field error hook {#field-errors}
+
+`useFieldErrors(node)` returns `{ errors, errorVisible, errorMessage, formatError }` under the node's own Form. It works in a real input or in an InputRenderer, LabelRenderer or ErrorMessageRenderer. A FieldRenderer group already receives errors, errorVisible, errorMessage and formatError as props and reads those props; calling the hook there adds an unnecessary subscription. errors stays raw; errorMessage is the first non-null formatted message, or null when hidden/absent; formatError returns null while display is disallowed. Only the component opting into the hook re-renders for its field's value/state/errors/controls/schema/path and the form's renderer settings. The result keeps its reference while its four values are Object.is-equal.
+
+An input without the hook re-renders only when its props change; an error-only or interaction-state-only change (Edited, Touched, an ErrorVisibility override) does not render it unless a deferred Refresh is applied at that moment. An input that reads errors or node.state during render uses useFieldErrors or useFieldNodeTracker. Choose one message owner to avoid displaying feedback both in the input and its group.
+
+During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes; prefer its arguments. The field computes its own message with the same formatter, so a formatter that throws for a field replaces the whole field with the fallback, and replacing formatError or a part renderer retries it. Only a throw raised solely by an input’s own useFieldErrors call is caught by that input’s boundary, which replacing formatError does not retry.
 
 ## Virtualization {#virtualization}
 

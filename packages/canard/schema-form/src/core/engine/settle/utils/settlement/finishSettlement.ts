@@ -2,6 +2,7 @@ import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { commitSettlement } from '../commit/commitSettlement';
 import { effectiveType } from '../commit/effectiveType';
@@ -75,7 +76,10 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     context.arrayCounts.size > 0
   )
     finalizeExits(context);
-  if (context.kind !== 'load' && context.arrayCounts.size > 0) {
+  if (
+    context.kind !== FieldNodeWriteKind.Load &&
+    context.arrayCounts.size > 0
+  ) {
     const append = context.arrayAppend;
     const pop = context.arrayPop;
     // The append's or pop's tail application already published a dense slot per item.
@@ -99,7 +103,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
         resized.push(host);
     alignArraySnapshotSlots(resized);
   }
-  if (context.kind === 'load')
+  if (context.kind === FieldNodeWriteKind.Load)
     for (const path of context.target.runtime.misfitPaths)
       if (
         !context.target.path ||

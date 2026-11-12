@@ -9,6 +9,7 @@ import {
 
 import type { Nullable } from '@aileron/declare';
 
+import { FOCUS_SELECTOR } from '@/schema-form/constants/focus';
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { fillArraySlot } from '../utils/fillArraySlot';
@@ -78,7 +79,7 @@ export const ArrayItems = memo(function ArrayItems({
     if (focusRow.current === null || focusRow.current >= childCount) return;
     const row = container.current?.children[focusRow.current];
     focusRow.current = null;
-    row?.querySelector<HTMLElement>('input, select, textarea, button')?.focus();
+    row?.querySelector<HTMLElement>(FOCUS_SELECTOR)?.focus();
   });
   const rows: ReactElement[] = [];
   for (let index = 0; ChildFields && index < ChildFields.length; index++) {

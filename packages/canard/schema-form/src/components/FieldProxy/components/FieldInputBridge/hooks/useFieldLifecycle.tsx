@@ -28,7 +28,8 @@ import { runSlotAction } from '../utils/runSlotAction';
  * @param hydrationCommitRef - Server snapshot marker settled before passive consistency checks.
  * @param virtualizationManager - Form manager only when this position renders an input.
  * @param lifecycle - Form registry only when this position renders an input.
- * @returns A detector only while this committed field has Render reservations.
+ * @param update - Stable bridge dispatch used after a committed container replacement.
+ * @returns Stable position with its callback ref, replacement epoch and optional Render detector.
  */
 export const useFieldLifecycle = (
   node: FieldNode,
@@ -38,15 +39,28 @@ export const useFieldLifecycle = (
   hydrationCommitRef: Optional<RefObject<boolean>>,
   virtualizationManager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
-): ReactNode => {
-  const { committed, effect } = useMemo(() => {
+  update: () => void,
+) => {
+  const position = useMemo(() => {
     const committed = { current: false };
+    let registered: Nullable<HTMLDivElement> = null;
     let fired = false;
+    const ref = (element: Nullable<HTMLDivElement>) => {
+      container.current = element;
+      if (!element || !committed.current || element === registered) return;
+      releaseComposition();
+      if (registered) virtualizationManager?.detachInput(registered);
+      virtualizationManager?.attachInput(element, node);
+      registered = element;
+      position.epoch++;
+      update();
+    };
     const effect = () => {
       commitTerminalChildren();
       if (hydrationCommitRef) hydrationCommitRef.current = true;
       virtualizationManager?.markRevealed(node);
       const element = container.current;
+      registered = element;
       if (element) virtualizationManager?.attachInput(element, node);
       const unsubscribe = node.subscribe(({ type }) => {
         let action = FieldLifecycleAction.None;
@@ -70,12 +84,24 @@ export const useFieldLifecycle = (
         committed.current = false;
         releaseComposition();
         unsubscribe();
-        if (element) virtualizationManager?.detachInput(element);
-        if (element && lifecycle && lifecycle.pending & FieldLifecycle.Unmount)
+        if (registered) virtualizationManager?.detachInput(registered);
+        if (
+          registered &&
+          lifecycle &&
+          lifecycle.pending & FieldLifecycle.Unmount
+        )
           lifecycle.fire(node, FieldLifecycle.Unmount);
+        registered = null;
       };
     };
-    return { committed, effect };
+    const position = {
+      committed,
+      effect,
+      ref,
+      epoch: 0,
+      detector: null as ReactNode,
+    };
+    return position;
   }, [
     node,
     container,
@@ -84,17 +110,21 @@ export const useFieldLifecycle = (
     hydrationCommitRef,
     virtualizationManager,
     lifecycle,
+    update,
   ]);
+  const { effect } = position;
   useLayoutEffect(effect, [effect]);
-  return lifecycle &&
-    committed.current &&
+  position.detector =
+    lifecycle &&
+    position.committed.current &&
     lifecycle.pending & FieldLifecycle.Render &&
     lifecycle.has(node, FieldLifecycle.Render) ? (
-    <FieldLifecycleRender
-      node={node}
-      container={container}
-      committed={committed}
-      lifecycle={lifecycle}
-    />
-  ) : null;
+      <FieldLifecycleRender
+        node={node}
+        container={container}
+        committed={position.committed}
+        lifecycle={lifecycle}
+      />
+    ) : null;
+  return position;
 };

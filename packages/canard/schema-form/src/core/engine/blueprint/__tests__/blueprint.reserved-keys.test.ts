@@ -1,6 +1,10 @@
 import { expect, it } from 'vitest';
 
-import { RESERVED_SCHEMA_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
+import {
+  PRESENTATION_HINT_KEYS,
+  RESERVED_PRESENTATION_KEYS,
+  RESERVED_SCHEMA_KEYS,
+} from '@/schema-form/constants/reservedSchemaKeys';
 
 import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
@@ -89,4 +93,27 @@ it('rejects invalid control envelopes at load before hint merging', () => {
   expect(() =>
     blueprint({ type: 'string', controls: undefined }),
   ).not.toThrow();
+});
+
+it('reserves presentation required as a boolean without making it a selection hint', () => {
+  expect(RESERVED_PRESENTATION_KEYS).toContain('required');
+  expect(PRESENTATION_HINT_KEYS).not.toContain('required');
+  for (const required of [false, true, undefined])
+    expect(() =>
+      blueprint({ type: 'string', presentation: { required } }),
+    ).not.toThrow();
+});
+
+it('rejects a non-boolean presentation required at its authored path', () => {
+  expect(() =>
+    blueprint({ type: 'string', presentation: { required: 'true' } }),
+  ).toThrow(
+    expect.objectContaining({
+      code: FormErrorCode.InvalidControlShape,
+      details: expect.objectContaining({
+        schemaPath: '#/presentation/required',
+        expected: 'boolean',
+      }),
+    }),
+  );
 });

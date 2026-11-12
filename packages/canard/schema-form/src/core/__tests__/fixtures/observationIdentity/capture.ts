@@ -299,12 +299,7 @@ export function captureObservation(
     referenceMatrix.push({ preRequested: codec.id(preRequested) });
   const retain = () =>
     known
-      .flatMap((node) => [
-        node.children,
-        node.extras,
-        node.local,
-        node.emit,
-      ])
+      .flatMap((node) => [node.children, node.extras, node.local, node.emit])
       .concat([root.runtime.loadSnapshot]);
   const run = (action: () => unknown) => {
     const containers = retain();

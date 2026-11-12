@@ -7,7 +7,7 @@ import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization
 import type { JSONSchema } from '@/schema-form/types';
 
 import { Form } from '../../Form';
-import type { FormHandle } from '../../components/FormCore';
+import type { FormHandle, FormProps } from '../../components/FormCore';
 
 /** A connected form whose setup and disposal run outside each timed sample. */
 export class LifecycleBenchForm {
@@ -19,12 +19,17 @@ export class LifecycleBenchForm {
   readonly handle = createRef<FormHandle>();
 
   /** Mount the supplied schema synchronously; measure this only in mount cases. */
-  mount(schema: JSONSchema, virtualization?: VirtualizationOptions | boolean) {
+  mount(
+    schema: JSONSchema,
+    virtualization?: VirtualizationOptions | boolean,
+    props?: Omit<FormProps, 'jsonSchema' | 'virtualization'>,
+  ) {
     flushSync(() => {
       this.root.render(
         createElement(Form, {
           jsonSchema: schema,
           virtualization,
+          ...props,
           ref: this.handle,
         }),
       );

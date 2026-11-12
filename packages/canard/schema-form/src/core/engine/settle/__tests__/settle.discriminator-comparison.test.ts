@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -24,7 +27,7 @@ describe('판별 게이트의 엄격 비교', () => {
     writeFieldNode(
       root,
       { kind: -0, payload: '선택됨' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.kind?.emit).toBe(-0);
@@ -53,7 +56,7 @@ describe('판별 게이트의 엄격 비교', () => {
     writeFieldNode(
       root,
       { kind: value, payload: '선택됨' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.payload?.emit).toBe('선택됨');
@@ -84,7 +87,7 @@ describe('판별 게이트의 엄격 비교', () => {
     writeFieldNode(
       root,
       { kind: 1, numeric: '수', textual: '문자열' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.numeric?.emit).toBe('수');
@@ -93,7 +96,7 @@ describe('판별 게이트의 엄격 비교', () => {
     writeFieldNode(
       root,
       { kind: '1', numeric: '수', textual: '문자열' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.numeric).toBeUndefined();
@@ -125,7 +128,7 @@ describe('판별 게이트의 엄격 비교', () => {
     writeFieldNode(
       root,
       { kind: NaN, nan: '숨김', finite: '숨김' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.nan).toBeUndefined();

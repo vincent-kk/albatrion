@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -35,7 +38,12 @@ describe('derive baseline alongside exit policy', () => {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
-    writeFieldNode(target, 'b', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      target,
+      'b',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(target.source).toBe('b');
     expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
   });

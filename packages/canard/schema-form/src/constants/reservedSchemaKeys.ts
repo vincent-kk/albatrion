@@ -67,6 +67,8 @@ export const RESERVED_SCHEMA_KEYS = {
   },
   presentation: {
     inputType: { shallow: 'string', inputHint: true },
+    controlled: { shallow: 'boolean' },
+    required: { shallow: 'boolean' },
     FieldInput: { shallow: 'function | object | null' },
     FieldInputProps: { shallow: 'object' },
     FieldRendererProps: { shallow: 'object' },

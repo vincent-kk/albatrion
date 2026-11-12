@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -32,7 +35,12 @@ describe('gate-form-one-key confirmation wheel counts', () => {
     const selecting = vi.spyOn(selection, 'selectChildren');
     const evaluating = vi.spyOn(gates, 'evaluateGate');
     try {
-      writeFieldNode(root.structure!.sw, 2, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.sw,
+        2,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       expect(selecting).toHaveBeenCalledTimes(1);
       expect(evaluating).toHaveBeenCalledTimes(count);
       expect(root.runtime.diagnostics.status).toBe('stable');

@@ -20,6 +20,11 @@ export type {
   AttachedFilesMap,
 } from './field/fieldInput';
 export type { FieldRendererProps, FormatError } from './field/fieldRenderer';
+export type {
+  LabelRendererProps,
+  ErrorMessageRendererProps,
+  InputRendererProps,
+} from './field/partRenderer';
 export type { InjectToHandler } from './schema/injectTo';
 export type {
   SchemaPresentation,

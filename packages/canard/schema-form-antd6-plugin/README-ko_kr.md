@@ -20,6 +20,8 @@ Ant Design v5를 사용하신다면 [`@canard/schema-form-antd5-plugin`](../sche
 
 `@canard/schema-form-antd6-plugin`은 Ant Design v6 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
+FieldRenderer는 묶인 Label, Input, ErrorMessage 부품을 조립합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
+
 ---
 
 ## 요구 사항

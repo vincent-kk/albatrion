@@ -27,11 +27,15 @@ describe('copyObjectValue', () => {
 
   it('keeps an own __proto__ key as a data property', () => {
     const marker = { polluted: true };
-    const source = JSON.parse('{"before":1,"__proto__":{"polluted":true},"after":2}');
+    const source = JSON.parse(
+      '{"before":1,"__proto__":{"polluted":true},"after":2}',
+    );
     const copy = copyObjectValue(source, 3);
     expect(Object.getPrototypeOf(copy)).toBe(Object.prototype);
     expect(Object.keys(copy)).toEqual(['before', '__proto__', 'after']);
-    expect(Object.getOwnPropertyDescriptor(copy, '__proto__')?.value).toEqual(marker);
+    expect(Object.getOwnPropertyDescriptor(copy, '__proto__')?.value).toEqual(
+      marker,
+    );
     expect(Reflect.get(copy, 'polluted')).toBeUndefined();
   });
 

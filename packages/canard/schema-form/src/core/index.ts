@@ -19,6 +19,7 @@ export {
   mountFieldNode,
   reloadFieldNodeForm,
   adoptFieldNodeTree,
+  relayFieldNodeInput,
   writeFieldNodeInput,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,

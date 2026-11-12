@@ -6,7 +6,7 @@ import { formatRegisterPluginError } from '../formatRegisterPluginError';
 describe('formatRegisterPluginError', () => {
   it('플러그인 등록 에러 메시지를 포맷해야 합니다', () => {
     const plugin = {
-      renderKit: { FormInputRenderer: () => null },
+      renderKit: { InputRenderer: () => null },
     } as SchemaFormPlugin;
     const error = new Error('Invalid component');
     const result = formatRegisterPluginError(plugin, error);
@@ -16,13 +16,13 @@ describe('formatRegisterPluginError', () => {
     expect(result).toContain('How to fix');
   });
 
-  it('lists a plugin FieldRenderer as FormField', () => {
+  it('lists FieldRenderer by its registered slot name', () => {
     const result = formatRegisterPluginError(
       { FieldRenderer: () => null } as SchemaFormPlugin,
       new Error('Invalid component'),
     );
 
-    expect(result).toContain('FormField');
+    expect(result).toContain('FieldRenderer');
     expect(result).not.toContain('FormGroup');
   });
 
@@ -50,8 +50,8 @@ describe('formatRegisterPluginError', () => {
   describe('에러 메시지 스냅샷', () => {
     it('formatRegisterPluginError 스냅샷', () => {
       const mockPlugin: SchemaFormPlugin = {
-        FormInputRenderer: () => null,
-        FormLabelRenderer: () => null,
+        InputRenderer: () => null,
+        LabelRenderer: () => null,
         fieldInputDefinitions: [
           { test: { type: 'string' }, Component: () => null },
         ],

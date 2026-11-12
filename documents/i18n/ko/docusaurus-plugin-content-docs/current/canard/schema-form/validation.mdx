@@ -7,57 +7,59 @@ sidebar_position: 5
 
 ## 검증 모드와 실행 시점 {#modes}
 
-기본값은 `ValidationMode.OnChange | ValidationMode.OnRequest`입니다. `None`은 전체 스키마 검증을 끄고 `OnRequest`는 변경에 따른 자동 판정을 생략합니다. None에서도 형상 선택에 필요한 `compileGuard`와 guard 평가는 실행할 수 있습니다. 검증이 켜진 모드에서 명시적 `validate()`, `submit()`은 즉시 시작하며 호출 시점의 값 snapshot을 검사합니다. 기존 Form의 모드를 바꾸는 방법은 [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
+기본값은 `ValidationMode.OnChange | ValidationMode.OnRequest`입니다. `None`은 전체 스키마 검증을 끄고 `OnRequest`는 변경에 따른 자동 판정을 생략합니다. None에서도 형상 선택에 필요한 `compileGuard`와 가드 평가는 실행할 수 있습니다. 검증이 켜진 모드에서 명시적 `validate()`, `submit()`은 즉시 시작하며 호출 시점의 값 스냅샷을 검사합니다. 기존 Form의 모드를 바꾸는 방법은 [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 
-자동 OnChange 검증은 다음 프레임 뒤 시작하고 연속 입력의 trailing 실행을 유지하며 마지막 실제 자동 실행부터 100ms 상한을 둡니다. 입력 debounce는 FieldInput이 담당합니다. 프레임 API 부재·숨김 문서·정지 프레임에서는 task·100ms timer fallback을 사용합니다.
+자동 OnChange 검증은 다음 프레임 뒤 시작하고 연속 입력의 trailing 실행을 유지하며 마지막 실제 자동 실행부터 100ms 상한을 둡니다. 입력 debounce는 FieldInput이 담당합니다. 프레임 API 부재·숨김 문서·정지 프레임에서는 task·100ms 타이머 폴백을 사용합니다.
 
-root load마다 다음 프레임 뒤의 검증 슬롯 하나를 예약합니다. `None`은 전체 스키마 compile·판정을 생략하고 `OnRequest`는 전체 스키마 compile만 준비하며 OnChange 초기 판정은 이후 write 요청이나 명시적 root 판정이 대체하지 않을 때만 실행합니다. 자동 load compile 실패는 채택한 트리를 유지하고 validate-origin 발생과 host 실패를 보고하며 reset·rebuild의 동기 예외로 다시 던지지 않습니다.
+루트 로드마다 다음 프레임 뒤의 검증 슬롯 하나를 예약합니다. `None`은 전체 스키마 컴파일·판정을 생략하고 `OnRequest`는 전체 스키마 컴파일만 준비하며 OnChange 초기 판정은 이후 write 요청이나 명시적 루트 판정이 대체하지 않을 때만 실행합니다. 자동 로드 컴파일 실패는 채택한 트리를 유지하고 validate-origin 발생과 호스트 실패를 보고하며 reset·rebuild의 동기 예외로 다시 던지지 않습니다.
 
 초기의 빈 오류 배열은 판정 전일 수 있으므로 판정이 필요하면 `validate()`를 기다리십시오. 자식 검증 요청은 대기 중인 전체 폼 요청을 취소하지 않습니다.
 
-모드는 기존 트리를 재생성하지 않고 변경합니다. 같은 실효 모드(`OnChange`와 `OnChange | OnRequest` 포함)는 추가 작업을 하지 않습니다. `None` 전환은 예약·pending·이전 결과와 실패의 게시를 취소하고 검증이 만든 오류만 지우며 외부 오류를 유지합니다. `OnChange`→`OnRequest`는 자동 작업을 멈추고 오류를 유지합니다. `None`→`OnRequest`는 다음 슬롯에서 compile만 준비합니다. `None`·`OnRequest`→`OnChange`는 다음 변경을 기다리지 않고 다음 프레임 뒤 공통 슬롯에서 현재 snapshot을 한 번 검증합니다. 그 전에 전체 자동 요청이나 명시적 루트 검증이 시작하면 이를 대체하며 하위 검증은 대체하지 않습니다. 다른 전환은 오류를 지우지 않습니다. 취소된 명시적 validate·submit도 자체 결과·거부로 정착하지만 지난 판정·실패는 tree·onValidate·onError·host에 전달하지 않습니다.
+모드는 기존 트리를 재생성하지 않고 변경합니다. 같은 실효 모드(`OnChange`와 `OnChange | OnRequest` 포함)는 추가 작업을 하지 않습니다. `None` 전환은 예약·pending·이전 결과와 실패의 게시를 취소하고 검증이 만든 오류만 지우며 외부 오류를 유지합니다. `OnChange`→`OnRequest`는 자동 작업을 멈추고 오류를 유지합니다. `None`→`OnRequest`는 다음 슬롯에서 컴파일만 준비합니다. `None`·`OnRequest`→`OnChange`는 다음 변경을 기다리지 않고 다음 프레임 뒤 공통 슬롯에서 현재 스냅샷을 한 번 검증합니다. 그 전에 전체 자동 요청이나 명시적 루트 검증이 시작하면 이를 대체하며 하위 검증은 대체하지 않습니다. 다른 전환은 오류를 지우지 않습니다. 취소된 명시적 validate·submit도 자체 결과·거부로 정착하지만 지난 판정·실패는 트리·onValidate·onError·호스트에 전달하지 않습니다.
 
 ## 원시 오류와 오류 표시 {#visibility}
 
 실시간 기본 정책은 `Form.errorVisibility ?? FormProvider.errorVisibility ?? ErrorVisibility.AfterEditAndTouch`입니다. 문자열 enum의 값은 `Always='always'`, `Never='never'`, `AfterEdit='afterEdit'`, `AfterTouch='afterTouch'`, `AfterEditAndTouch='afterEditAndTouch'`, `AfterEditOrTouch='afterEditOrTouch'` 여섯 개입니다. boolean·숫자·임의 문자열은 거부합니다.
 
-`revealErrors()`는 일시적으로 Always를 선택하고 `resetErrorVisibility()`는 최신 기본 정책으로 돌아갑니다. 두 명령은 검증하거나 노드 상태를 쓰지 않습니다. 기본 정책 변경의 커밋, reset, rebuild, 루트 교체는 Form 공개를 해제합니다. 같은 값의 재렌더나 Form prop에 가려진 Provider 변경은 공개를 유지합니다. 이전 정책으로 돌아가도 해제된 공개가 되살아나지 않으며 중단된 렌더는 공개를 해제하지 않습니다.
+`revealErrors()`는 일시적으로 Always를 선택하고 `resetErrorVisibility()`는 최신 기본 정책으로 돌아갑니다. 두 명령은 검증하거나 노드 상태를 쓰지 않습니다. 기본 정책 변경의 커밋, reset, rebuild, 루트 교체는 Form 공개를 해제합니다. 같은 값의 다시 렌더링나 Form 속성에 가려진 Provider 변경은 공개를 유지합니다. 이전 정책으로 돌아가도 해제된 공개가 되살아나지 않으며 중단된 렌더는 공개를 해제하지 않습니다.
 
-`FieldNodeState.ErrorVisibility`는 노드 재정의로 undefined는 상속, true는 표시 허용, false는 Form 공개 중에도 억제입니다. Edited/Touched를 보존하면서 상속하려면 `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })`로 그 키만 지웁니다. 렌더러와 입력은 여전히 `isPresent` 및 OnChange 해제 규칙을 따릅니다. `useChildFieldErrors`는 숨겨진 자식까지 집계하는 계약을 유지하며 presence 필터 없이 `errorVisible`·`childErrorVisibleList`를 반환합니다. 원시 오류는 표시와 무관하게 유지됩니다.
+`FieldNodeState.ErrorVisibility`는 노드 재정의로 undefined는 상속, true는 표시 허용, false는 Form 공개 중에도 억제입니다. Edited/Touched를 보존하면서 상속하려면 `node.setState({ [FieldNodeState.ErrorVisibility]: undefined })`로 그 키만 지웁니다. 렌더러와 입력은 여전히 `isPresent` 및 OnChange 해제 규칙을 따릅니다. `useChildFieldErrors`는 숨겨진 자식까지 집계하는 계약을 유지하며 존재 상태 필터 없이 `errorVisible`·`childErrorVisibleList`를 반환합니다. 원시 오류는 표시와 무관하게 유지됩니다.
 
-JavaScript의 잘못된 정책은 커밋된 잘못된 값마다 `FormErrorCode.InvalidErrorVisibility`를 origin `load`로 한 번 보고하며 RenderFailed 경계 예외로 바꾸지 않습니다. 최초 정책이 잘못되면 트리를 구성하지 않고 load fallback을 표시하며, 유효한 정책으로 바꾸면 트리를 구성합니다. 실행 중 잘못된 값으로 바꾸면 현재 트리·값·상호작용 상태·마지막 유효 정책을 유지하고 이후 유효한 값은 실시간 적용합니다. 복구 뒤 다시 잘못된 값을 전달하면 새 발생으로 보고합니다. Form 설정이 Provider 설정보다 우선합니다.
+JavaScript의 잘못된 정책은 커밋된 잘못된 값마다 `FormErrorCode.InvalidErrorVisibility`를 origin `load`로 한 번 보고하며 RenderFailed 경계 예외로 바꾸지 않습니다. 최초 정책이 잘못되면 트리를 구성하지 않고 load 폴백을 표시하며, 유효한 정책으로 바꾸면 트리를 구성합니다. 실행 중 잘못된 값으로 바꾸면 현재 트리·값·상호작용 상태·마지막 유효 정책을 유지하고 이후 유효한 값은 실시간 적용합니다. 복구 뒤 다시 잘못된 값을 전달하면 새 발생으로 보고합니다. Form 설정이 Provider 설정보다 우선합니다.
 
-OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하며 마지막 release 이후 계속 적격이어야 합니다. 부적격에 따른 숨김은 즉시 적용합니다. release는 pending true→false 정착, quiet post-paint 이력 drop, 수락한 명시적 root 판정, dispose 때 발생합니다. OnRequest·None은 이력 없이 현재 적격성을 사용합니다.
+OnChange에서는 새로 표시 적격이 된 오류를 release까지 보류하며 마지막 release 이후 계속 적격이어야 합니다. 부적격에 따른 숨김은 즉시 적용합니다. release는 pending true→false 정착, 화면 표시 후 조용한 시점 이력 제거, 수락한 명시적 루트 판정, dispose 때 발생합니다. OnRequest·None은 이력 없이 현재 적격성을 사용합니다.
 
-하나의 public batch·subtree walk는 첫 상태만 기록하지만 React batch 안의 별도 public 쓰기는 중간 상태도 기록할 수 있습니다. React remount·가상화는 노드 적격성 이력을 지우지 않으며 context가 계속 바뀌면 새 오류 표시도 계속 지연될 수 있습니다.
+하나의 공개 배치·하위 트리 순회는 첫 상태만 기록하지만 React 배치 안의 별도 공개 쓰기는 중간 상태도 기록할 수 있습니다. React 재마운트·가상화는 노드 적격성 이력을 지우지 않으며 context가 계속 바뀌면 새 오류 표시도 계속 지연될 수 있습니다.
 
 전체 스키마 검증이 실행되면 `validate()`는 필터링하지 않은 판정을 반환합니다. `getErrors()`·Form 함수 children은 표시 정책과 별개로 폼 전체 원시 목록을 제공합니다. `node.errors`·`Form.Render`는 해당 노드에 배분된 원시 이슈를 제공합니다.
 
-branch 노드만 거치는 경로에서 dataPath를 해석할 수 없거나 해당 자식이 없으면 이슈를 배분하지 않습니다. 최종 배분 대상이 검증한 subtree 밖에 있는 이슈도 생략합니다. schemaPath로 비활성 gated oneOf·anyOf 분기에 유일하게 귀속되고 활성 형제 분기가 있는 경우도 배분 제외 규칙 중 하나입니다. 이 규칙들은 전체 판정이나 폼 전체 원시 목록에서 이슈를 제거하지 않습니다.
+분기 노드만 거치는 경로에서 dataPath를 해석할 수 없거나 해당 자식이 없으면 이슈를 배분하지 않습니다. 최종 배분 대상이 검증한 하위 트리 밖에 있는 이슈도 생략합니다. schemaPath로 비활성 게이트가 있는 oneOf·anyOf 분기에 유일하게 귀속되고 활성 형제 분기가 있는 경우도 배분 제외 규칙 중 하나입니다. 이 규칙들은 전체 판정이나 폼 전체 원시 목록에서 이슈를 제거하지 않습니다.
 
-경로 탐색은 루트 여부와 관계없이 terminal 노드에서 멈춥니다. 객체·배열·여러 타입의 값 전체를 입력 하나로 편집하는 경우도 이에 포함됩니다. 비어 있지 않은 dataPath는 절대 포인터여야 하며, 탐색을 멈출 때까지 확인하는 각 조각은 속성 이름 문자열로 파싱되어야 합니다. 조각 검사는 terminal 검사보다 먼저 하므로 `#/*/na%me`의 `*`나 같은 위치의 `..` 같은 연산자는 terminal 루트에서도 이슈 배분을 막고, 이슈는 전체 판정과 폼 전체 원시 목록에 남깁니다. 이 검사들과 위의 비활성 union·검증 범위 제외 규칙을 통과하면 해당 값 아래의 이슈를 dataPath 변경 없이 받으며, `#/na%me`처럼 해독할 수 없는 percent escape가 든 경로도 이에 포함됩니다. rejectedKey가 비어 있지 않고 branch 조상이 있으면 가장 가까운 branch 조상으로 소유 대상을 옮긴 뒤 검증 범위를 검사합니다. terminal 루트는 올라갈 부모가 없으므로 rejectedKey 이슈도 그대로 받습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
+경로 탐색은 루트 여부와 관계없이 말단 노드에서 멈춥니다. 객체·배열·여러 타입의 값 전체를 입력 하나로 편집하는 경우도 이에 포함됩니다. 비어 있지 않은 dataPath는 절대 포인터여야 하며, 탐색을 멈출 때까지 확인하는 각 조각은 속성 이름 문자열로 파싱되어야 합니다. 조각 검사는 말단 검사보다 먼저 하므로 `#/*/na%me`의 `*`나 같은 위치의 `..` 같은 연산자는 말단 루트에서도 이슈 배분을 막고, 이슈는 전체 판정과 폼 전체 원시 목록에 남깁니다. 이 검사들과 위의 비활성 유니온·검증 범위 제외 규칙을 통과하면 해당 값 아래의 이슈를 dataPath 변경 없이 받으며, `#/na%me`처럼 해독할 수 없는 퍼센트 escape가 든 경로도 이에 포함됩니다. rejectedKey가 비어 있지 않고 분기 조상이 있으면 가장 가까운 분기 조상으로 소유 대상을 옮긴 뒤 검증 범위를 검사합니다. 말단 루트는 올라갈 부모가 없으므로 rejectedKey 이슈도 그대로 받습니다. 별도의 active·visible 정책은 [controls](./schema-reference#controls)를 참조하십시오.
 
-React-only disabled 토글, 지연된 presence commit, release와 paint 사이의 쓰기는 hold를 생략하거나 1~2프레임 전 판정을 보이게 할 수 있습니다. 업무 흐름은 원시 오류로, 표시는 렌더러의 적격성 결정으로 처리하십시오.
+React에서만 바꾸는 disabled 토글, 지연된 존재 상태 커밋, release와 화면 표시 사이의 쓰기는 보류를 생략하거나 1~2프레임 전 판정을 보이게 할 수 있습니다. 업무 흐름은 원시 오류로, 표시는 렌더러의 적격성 결정으로 처리하십시오.
 
 ## ValidationIssue와 메시지 {#issues-messages}
 
-공개 `ValidationIssue`는 `dataPath`(JSON Pointer이며 root는 `''`), 선택적인 `keyword`, `message`, `schemaPath`, `rejectedKey`, `details`, 검증기별 `source`를 가집니다. 이는 데이터이며 [오류 참조](./error-reference)의 예외 클래스와 구분합니다.
+공개 `ValidationIssue`는 `dataPath`(JSON Pointer이며 루트는 `''`), 선택적인 `keyword`, `message`, `schemaPath`, `rejectedKey`, `details`, 검증기별 `source`를 가집니다. 이는 데이터이며 [오류 참조](./error-reference)의 예외 클래스와 구분합니다.
 
-keyword·기본 메시지는 `presentation.errorMessages`, 애플리케이션별 형식은 `formatError(error, node, context)`를 사용하십시오. keyword 항목은 문자열이나 detail 값별 사전입니다. 프로그램의 판정에는 검증기의 원시 오류를 사용하며 표시 형식은 판정을 바꾸지 않습니다. `errors` 또는 노드 external-error 메서드로 전달한 외부 오류도 원시 오류 목록에 참여합니다.
+keyword·기본 메시지는 `presentation.errorMessages`, 애플리케이션별 형식은 `formatError(error, node, context)`를 사용하십시오. keyword 항목은 문자열이나 detail 값별 사전입니다. 프로그램의 판정에는 검증기의 원시 오류를 사용하며 표시 형식은 판정을 바꾸지 않습니다. `errors` 또는 노드 외부 오류 메서드로 전달한 외부 오류도 원시 오류 목록에 참여합니다.
+
+필드 하나의 포맷된 피드백이 필요한 입력과 표현 부품은 [useFieldErrors](./api-reference#field-errors)를 사용합니다. 검증 판정과 표시 결정을 구별하십시오.
 
 ## 검증기 객체 계약 {#validator-contract}
 
-`validatorFactory`는 `compile(root)`와 동기 `compileGuard(root, pointer)`를 가진 객체이며 `release(root)`, `dialect`는 선택 사항입니다. `compile`은 순서 있는 오류·null 또는 그 promise를 반환하는 함수를 만듭니다. throw는 검증 판정이 아니라 실행 실패입니다. `compileGuard`는 동기 boolean predicate를 반환하며 전체 스키마 compile보다 먼저 실행될 수 있습니다.
+`validatorFactory`는 `compile(root)`와 동기 `compileGuard(root, pointer)`를 가진 객체이며 `release(root)`, `dialect`는 선택 사항입니다. `compile`은 순서 있는 오류·null 또는 그 프로미스를 반환하는 함수를 만듭니다. 예외 발생은 검증 판정이 아니라 실행 실패입니다. `compileGuard`는 동기 boolean 판정 함수를 반환하며 전체 스키마 컴파일보다 먼저 실행될 수 있습니다.
 
-엔진은 compile·compileGuard·release에 같은 소유 root copy를 전달합니다. `$ref`, `$id`, anchor 문맥을 보존하고 전달된 schema와 값을 변경하지 마십시오. nonboolean guard 결과·compile 실패·throw는 그 gate를 실패시키며 전체 스키마 compile 실패가 guard를 되돌리지는 않습니다. release는 cache에서 root를 내보낼 때 실행하고 등록하지 않은 root에도 멱등이어야 합니다. 양쪽 dialect를 알고 `$schema`가 다르면 `DialectMismatch`로 보고합니다.
+엔진은 compile·compileGuard·release에 같은 소유 루트 복사본을 전달합니다. `$ref`, `$id`, anchor 문맥을 보존하고 전달된 스키마와 값을 변경하지 마십시오. 불리언을 반환하지 않는 가드 결과·컴파일 실패·예외 발생은 그 게이트를 실패시키며 전체 스키마 컴파일 실패가 가드를 되돌리지는 않습니다. release는 캐시에서 루트를 내보낼 때 실행하고 등록하지 않은 루트에도 멱등이어야 합니다. 양쪽 방언을 알고 `$schema`가 다르면 `DialectMismatch`로 보고합니다.
 
-같은 `$id`의 서로 다른 live root도 격리해야 하며 엔진은 ID를 다시 쓰지 않습니다. Error instance의 메시지가 `already exists` 또는 `resolves to more than one schema`를 포함하고 같은 검증기가 같은 문자열 `$id`의 다른 live root를 실제로 보유할 때만 `duplicateSchemaId`로 분류합니다. 경쟁 root의 소비자가 모두 해제된 뒤 다음 compile·검증 접근에서 cache된 실패를 한 번 재시도합니다. 해제 자체가 compile을 실행하지 않으며 다른 compile 실패에는 이 재시도를 적용하지 않습니다.
+같은 `$id`의 서로 다른 연결된 루트도 격리해야 하며 엔진은 ID를 다시 쓰지 않습니다. Error 인스턴스의 메시지가 `already exists` 또는 `resolves to more than one schema`를 포함하고 같은 검증기가 같은 문자열 `$id`의 다른 연결된 루트를 실제로 보유할 때만 `duplicateSchemaId`로 분류합니다. 경쟁 루트의 소비자가 모두 해제된 뒤 다음 컴파일·검증 접근에서 캐시된 실패를 한 번 재시도합니다. 해제 자체가 컴파일을 실행하지 않으며 다른 컴파일 실패에는 이 재시도를 적용하지 않습니다.
 
-guard는 `$async`, 비동기 keyword·format, host 밖의 데이터에 의존하는 keyword(`$data`, 부모·형제 데이터)를 지원하지 않습니다. AJV 플러그인은 remote ref를 다운로드하지 않으므로 root 내부나 bound instance에 참조 schema를 준비하십시오. 검증 라이브러리가 허용하더라도 custom keyword는 값을 변경하면 안 됩니다.
+가드는 `$async`, 비동기 keyword·format, 호스트 밖의 데이터에 의존하는 keyword(`$data`, 부모·형제 데이터)를 지원하지 않습니다. AJV 플러그인은 원격 참조를 다운로드하지 않으므로 루트 내부나 바인딩된 인스턴스에 참조 스키마를 준비하십시오. 검증 라이브러리가 허용하더라도 사용자 정의 키워드는 값을 변경하면 안 됩니다.
 
-## AJV 버전과 dialect {#ajv-entries}
+## AJV 버전과 방언 {#ajv-entries}
 
-| 패키지 진입점                          | 기본 dialect / 설정                                                                                   |
+| 패키지 진입점                          | 기본 방언 / 설정                                                                                   |
 | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `@canard/schema-form-ajv6-plugin`      | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false`                       |
 | `@canard/schema-form-ajv7-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`                                |
@@ -65,21 +67,21 @@ guard는 `$async`, 비동기 keyword·format, host 밖의 데이터에 의존하
 | `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09                                                                                         |
 | `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12                                                                                         |
 
-선택한 진입점의 `plugin`을 import하여 등록하십시오. 검증기는 `plugin.validator`입니다. AJV 6의 Draft-04·06에는 맞는 instance·meta-schema·schemaId 설정이 필요합니다. 기본 식별자는 `$id`이며 `schemaId: 'id'`·`'auto'`는 Draft-04 `id`도 인식합니다. AJV 7의 2019-09는 해당 constructor를 bound instance에 사용해야 합니다. AJV 8의 제공 진입점은 Draft-04·06의 완전 지원을 보장하지 않으므로 해당 dialect를 지원하는 검증기를 선택하십시오.
+선택한 진입점의 `plugin`을 가져와 등록하십시오. 검증기는 `plugin.validator`입니다. AJV 6의 Draft-04·06에는 맞는 인스턴스·메타 스키마·schemaId 설정이 필요합니다. 기본 식별자는 `$id`이며 `schemaId: 'id'`·`'auto'`는 Draft-04 `id`도 인식합니다. AJV 7의 2019-09는 해당 생성자를 바인딩된 인스턴스에 사용해야 합니다. AJV 8의 제공 진입점은 Draft-04·06의 완전 지원을 보장하지 않으므로 해당 방언을 지원하는 검증기를 선택하십시오.
 
-기본 제공 설정에서는 format 검증이 꺼져 있으므로 `format: 'email'`만으로 이메일 판정을 기대하지 마십시오. 필요한 format을 갖춘 instance를 구성하십시오. AJV 6의 JSONPath 오류 위치는 JSON Pointer로 정규화하고 AJV 7·8은 원래 pointer 경로를 사용합니다. 모든 어댑터는 `ValidationIssue`를 제공하며 root 오류는 `dataPath: ''`입니다.
+기본 제공 설정에서는 format 검증이 꺼져 있으므로 `format: 'email'`만으로 이메일 판정을 기대하지 마십시오. 필요한 format을 갖춘 인스턴스를 구성하십시오. AJV 6의 JSONPath 오류 위치는 JSON Pointer로 정규화하고 AJV 7·8은 원래 pointer 경로를 사용합니다. 모든 어댑터는 `ValidationIssue`를 제공하며 루트 오류는 `dataPath: ''`입니다.
 
-번들러 없는 Node ESM에서 AJV 7 기본 import는 constructor 대신 interop namespace일 수 있습니다. 기본 플러그인을 사용하거나 해당 모듈 환경에 맞게 AJV constructor를 해석한 뒤 custom instance를 만드십시오.
+번들러 없는 Node ESM에서 AJV 7 기본 가져오기는 생성자 대신 상호 운용 네임스페이스일 수 있습니다. 기본 플러그인을 사용하거나 해당 모듈 환경에 맞게 AJV 생성자를 해석한 뒤 사용자 정의 인스턴스를 만드십시오.
 
-## binding과 instance별 어댑터 {#ajv-configuration}
+## 바인딩과 인스턴스별 어댑터 {#ajv-configuration}
 
-사용자 AJV 8 instance를 만들 때에는 소비자 애플리케이션에 `ajv@8.17.1`을 설치하십시오. 플러그인 자체의 AJV 의존성이 애플리케이션의 `import Ajv from 'ajv'` 버전을 정하지는 않습니다.
+사용자 AJV 8 인스턴스를 만들 때에는 소비자 애플리케이션에 `ajv@8.17.1`을 설치하십시오. 플러그인 자체의 AJV 의존성이 애플리케이션의 `import Ajv from 'ajv'` 버전을 정하지는 않습니다.
 
-첫 compile·등록 전에 한 번 bind하십시오. 재bind는 지원하는 수명주기가 아닙니다. `coerceTypes`, `useDefaults`, `removeAdditional`은 기존 binding을 바꾸기 전에 거부합니다. native 거부 오류는 `group: 'UNHANDLED_ERROR'`, `code: FormErrorCode.ValidatorBindRefused`를 가집니다. 잡은 값의 형을 좁힌 뒤 이 속성으로 구분하십시오. `isUnhandledError`는 이 native 오류를 인식하지 않습니다.
+첫 컴파일·등록 전에 한 번 bind하십시오. 재bind는 지원하는 수명주기가 아닙니다. `coerceTypes`, `useDefaults`, `removeAdditional`은 기존 바인딩을 바꾸기 전에 거부합니다. 네이티브 거부 오류는 `group: 'UNHANDLED_ERROR'`, `code: FormErrorCode.ValidatorBindRefused`를 가집니다. 잡은 값의 형을 좁힌 뒤 이 속성으로 구분하십시오. `isUnhandledError`는 이 네이티브 오류를 인식하지 않습니다.
 
-AJV 6·7의 bind는 새 root registry를 시작합니다. AJV 8은 이미 등록된 root를 release까지 그 root를 등록한 instance에 연결합니다. Form별 완전한 어댑터에는 `createValidator(ajv, options?)`를 사용하고 render 밖에서 생성하거나 안정된 의존성으로 memoize하십시오. 여러 어댑터는 값을 변경하지 않는 AJV instance 하나를 공유할 수 있습니다.
+AJV 6·7의 bind는 새 루트 레지스트리를 시작합니다. AJV 8은 이미 등록된 루트를 release까지 그 루트를 등록한 인스턴스에 연결합니다. Form별 완전한 어댑터에는 `createValidator(ajv, options?)`를 사용하고 렌더링 밖에서 생성하거나 안정된 의존성으로 메모이제이션하십시오. 여러 어댑터는 값을 변경하지 않는 AJV 인스턴스 하나를 공유할 수 있습니다.
 
-`createValidatorFactory(ajv)`는 compile 함수만 반환하므로 `validatorFactory`에 직접 전달하면 객체 계약을 만족하지 않습니다. AJV 6·7 factory는 임시 schema를 compile·제거하고 비동기 결과를 오류 또는 null로 정규화합니다. AJV 8은 release까지 root 등록을 재사용합니다.
+`createValidatorFactory(ajv)`는 컴파일 함수만 반환하므로 `validatorFactory`에 직접 전달하면 객체 계약을 만족하지 않습니다. AJV 6·7 팩토리는 임시 스키마를 컴파일·제거하고 비동기 결과를 오류 또는 null로 정규화합니다. AJV 8은 release까지 루트 등록을 재사용합니다.
 
 ```tsx
 import { Form } from '@canard/schema-form';
@@ -104,41 +106,41 @@ export function EvenNumberForm() {
 
 이 설정은 컴포넌트 본문 밖에 두십시오. 메모이제이션·플러그인 재사용과 실수로 렌더마다 생성했을 때의 효과는 [검증기 수명 계약](./api-reference#configuration-lifetime)을 따르십시오.
 
-## guard compile과 root 수명 {#guard-compilation}
+## 가드 컴파일과 루트 수명 {#guard-compilation}
 
-AJV 어댑터 세 가지는 모두 `plugin.validator.configure({ directGuardCompile })`를 지원하며 기본값은 true입니다. true이면 self-contained guard를 직접 compile하고 false이면 이후 compile을 root pointer로 보냅니다. 생략한 옵션은 유지하고 기존 predicate는 바꾸지 않으며 bound AJV 설정도 변경하지 않습니다.
+AJV 어댑터 세 가지는 모두 `plugin.validator.configure({ directGuardCompile })`를 지원하며 기본값은 true입니다. true이면 독립적인 가드를 직접 컴파일하고 false이면 이후 컴파일을 루트 포인터로 보냅니다. 생략한 옵션은 유지하고 기존 판정 함수는 바꾸지 않으며 바인딩된 AJV 설정도 변경하지 않습니다.
 
-direct를 선택해도 root의 own `$schema` 또는 선택한 guard subtree 안의 reference·identifier·anchor·`$schema` 키는 root-pointer compile을 요구합니다. AJV 6의 legacy schemaId 모드에서는 subtree의 `id`도 검사합니다. subtree 밖 root의 `$id`나 root의 다른 위치에 있는 `$ref`만으로는 direct compile을 막지 않습니다. root 다른 부분의 code-generation 오류가 root-pointer guard를 실패시킬 수 있지만 직접 compile한 self-contained guard에는 그 오류를 전파하지 않습니다.
+직접 방식을 선택해도 루트의 자체 `$schema` 또는 선택한 가드 하위 트리 안의 참조·식별자·anchor·`$schema` 키는 루트 포인터 컴파일을 요구합니다. AJV 6의 레거시 schemaId 모드에서는 하위 트리의 `id`도 검사합니다. 하위 트리 밖 루트의 `$id`나 루트의 다른 위치에 있는 `$ref`만으로는 직접 컴파일을 막지 않습니다. 루트 다른 부분의 코드 생성 오류가 루트 포인터 가드를 실패시킬 수 있지만 직접 컴파일한 독립적인 가드에는 그 오류를 전파하지 않습니다.
 
-guard sibling instance는 bound dialect·format·keyword를 유지하면서 `allErrors: false`, `validateSchema: false`를 사용합니다. root meta-schema 검사는 bound `validateSchema` 정책에 따른 전체 검증의 일입니다. guard 밖이나 안의 meta-only 위반은 별도 guard meta 검사를 만들지 않지만 strict·custom keyword·code-generation 검사는 적용합니다. strict compile 실패는 true·false 대신 `GuardFailed`로 두 조건 분기를 모두 끕니다.
+가드용 형제 인스턴스는 바인딩된 방언·format·keyword를 유지하면서 `allErrors: false`, `validateSchema: false`를 사용합니다. 루트 메타 스키마 검사는 바인딩된 `validateSchema` 정책에 따른 전체 검증의 일입니다. 가드 밖이나 안의 메타 전용 위반은 별도 가드 메타 스키마 검사를 만들지 않지만 strict·사용자 정의 키워드·코드 생성 검사는 적용합니다. 엄격한 컴파일 실패는 true·false 대신 `GuardFailed`로 두 조건 분기를 모두 끕니다.
 
-`$id`가 있는 root는 격리 등록하고 ID 없는 whole root는 임시 copy를 사용합니다. self-contained direct guard는 AJV에 root를 등록할 필요가 없습니다. release는 root 등록·compiled 결과·direct guard를 정리하며 미등록 root에는 no-op입니다. schema가 아닌 pointer는 `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, `details.root`·`details.pointer`를 가진 native 오류를 던집니다. 잡은 값의 형을 좁힌 뒤 이 속성을 검사하십시오.
+`$id`가 있는 루트는 격리 등록하고 ID 없는 전체 루트는 임시 복사본을 사용합니다. 독립적인 직접 가드는 AJV에 루트를 등록할 필요가 없습니다. release는 루트 등록·컴파일된 결과·직접 가드를 정리하며 미등록 루트에는 아무 작업도 하지 않습니다. 스키마가 아닌 pointer는 `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, `details.root`·`details.pointer`를 가진 네이티브 오류를 던집니다. 잡은 값의 형을 좁힌 뒤 이 속성을 검사하십시오.
 
-## AJV 7·8 dynamic·recursive guard 범위 {#dynamic-guard-scope}
+## AJV 7·8 동적·재귀 가드 범위 {#dynamic-guard-scope}
 
-조건에 dynamic scope가 필요하지 않으면 정적 `$ref`, 재사용 `$defs`, `properties` 아래 `if`를 우선하십시오. guard가 전체 검증과 동등하려면 관련 진입마다 첫 anchor binding이 같고 검증 context를 재현할 수 있으며 선택한 함수가 동기여야 합니다.
+조건에 동적 범위가 필요하지 않으면 정적 `$ref`, 재사용 `$defs`, `properties` 아래 `if`를 우선하십시오. 가드가 전체 검증과 동등하려면 관련 진입마다 첫 앵커 바인딩이 같고 검증 context를 재현할 수 있으며 선택한 함수가 동기여야 합니다.
 
-dynamic vocabulary instance이고 root에 dynamic·recursive 키가 있으면 어댑터는 root-pointer guard compile 전에 anchor table을 준비합니다. chain은 root와 pointer 경로의 `$id` resource이며 바깥부터 읽고 각 이름은 가장 바깥 선언 resource에서 먼저 binding합니다. schema keyword를 따라 수집하며 `const`, `enum`, `default`, `examples` 데이터, nested resource, guard 자체 subtree는 내려가지 않습니다. resource의 다른 assertion은 guard 판정에 더하지 않습니다. Draft-07은 dynamic 키를 무시하고 이 table·검사를 적용하지 않습니다.
+동적 어휘 인스턴스이고 루트에 동적·재귀 키가 있으면 어댑터는 루트 포인터 가드 컴파일 전에 앵커 테이블을 준비합니다. 체인은 루트와 pointer 경로의 `$id` 리소스이며 바깥부터 읽고 각 이름은 가장 바깥 선언 리소스에서 먼저 바인딩합니다. 스키마 키워드를 따라 수집하며 `const`, `enum`, `default`, `examples` 데이터, 중첩 리소스, 가드 자체 하위 트리는 내려가지 않습니다. 리소스의 다른 단언은 가드 판정에 더하지 않습니다. Draft-07은 동적 키를 무시하고 이 테이블·검사를 적용하지 않습니다.
 
-`if` 안의 inline reference는 chain resource 또는 guard 안의 lexical ancestor에서 binding해야 하며 없으면 compileGuard가 실패합니다. 선택한 선언의 `$async: true`도 거부합니다. 다음 조건은 동등성을 제한하거나 지원하지 않습니다.
+`if` 안의 인라인 참조는 체인 리소스 또는 가드 안의 어휘적 조상에서 바인딩해야 하며 없으면 compileGuard가 실패합니다. 선택한 선언의 `$async: true`도 거부합니다. 다음 조건은 동등성을 제한하거나 지원하지 않습니다.
 
 | 조건                                                                            | 결과                                                                             |
 | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 같은 schema 위치를 여러 dynamic scope로 진입                                    | guard 하나는 lexical chain을 사용하거나 compile에 실패하며 동등성 지원 밖입니다  |
-| chain 밖 resource가 먼저 binding하거나 URI 진입이 on-path resource를 건너뜀     | 전체 검증과의 동등성을 지원하지 않습니다                                         |
-| sibling·descendant·guard 내부 `$defs`에만 binding 존재                          | inline binding을 제공하지 못합니다                                               |
-| resource root 밖의 `$recursiveAnchor: true`                                     | chain table에 들지 않으며 필요한 binding이 없으면 수정 방향과 함께 거부합니다    |
-| 2019-09 non-root 외부 recursive anchor와 guard 내부 ancestor anchor 공존        | guard·전체 검증이 다를 수 있어 지원하지 않습니다                                 |
-| dynamic·recursive ref fragment `#/...`                                          | anchor 이름이 아니므로 compileGuard가 거부하며 위치에는 정적 `$ref`를 사용합니다 |
-| 현재 static `$anchor`와 외부 dynamic anchor 충돌                                | AJV·guard가 specification의 static 처리 대신 dynamic table을 사용할 수 있습니다  |
-| custom keyword subschema 또는 guard 내부 `$defs`를 `$ref`로만 실행하는 선언     | dynamic chain 수집에서 인식하지 않습니다                                         |
-| nested resource inline anchor의 상대 ref                                        | guard는 해당 resource base URI, 전체 검증은 root base URI를 사용할 수 있습니다   |
-| chain 밖 resource의 runtime anchor                                              | 전체 검증에 누출될 수 있으나 guard에는 없으며 chain 안 sibling 선언은 수집합니다 |
-| 전체 검증이 아직 실행하지 않은 chain resource 선언                              | guard는 수집하므로 enclosing-function fallback과 다를 수 있습니다                |
-| 전체 검증이 `$id` 없는 resource를 건너뜀                                        | guard·전체 검증이 다를 수 있습니다                                               |
-| AJV가 dynamic-ref bookending을 검사하지 않음                                    | guard도 따르며 최초 대상이 dynamic anchor인지 별도로 보장하지 않습니다           |
-| compile 때 root anchor flag 없음                                                | 둘 다 table 조회 없이 enclosing compiled-function fallback을 유지합니다          |
-| DynamicRef가 `#`로 시작하지 않음                                                | 전체 검증·guard 모두 compile에 실패합니다                                        |
-| anchor 이름이 `constructor`, `toString`, `__proto__` 등 Object.prototype과 충돌 | AJV plain-object table 처리로 binding하지 못합니다                               |
+| 같은 스키마 위치를 여러 동적 범위로 진입                                    | 가드 하나는 어휘적 체인을 사용하거나 컴파일에 실패하며 동등성 지원 밖입니다  |
+| 체인 밖 리소스가 먼저 바인딩하거나 URI 진입이 경로상 리소스를 건너뜀     | 전체 검증과의 동등성을 지원하지 않습니다                                         |
+| 형제·자손·가드 내부 `$defs`에만 바인딩 존재                          | 인라인 바인딩을 제공하지 못합니다                                               |
+| 리소스 루트 밖의 `$recursiveAnchor: true`                                     | 체인 테이블에 들지 않으며 필요한 바인딩이 없으면 수정 방향과 함께 거부합니다    |
+| 2019-09 루트가 아닌 외부 재귀 앵커와 가드 내부 조상 앵커 공존        | 가드·전체 검증이 다를 수 있어 지원하지 않습니다                                 |
+| 동적·재귀 참조 프래그먼트 `#/...`                                          | 앵커 이름이 아니므로 compileGuard가 거부하며 위치에는 정적 `$ref`를 사용합니다 |
+| 현재 정적 `$anchor`와 외부 동적 앵커 충돌                                | AJV·가드가 명세의 정적 처리 대신 동적 테이블을 사용할 수 있습니다  |
+| 사용자 정의 키워드의 하위 스키마 또는 가드 내부 `$defs`를 `$ref`로만 실행하는 선언     | 동적 체인 수집에서 인식하지 않습니다                                         |
+| 중첩 리소스 인라인 앵커의 상대 ref                                        | 가드는 해당 리소스 기준 URI, 전체 검증은 루트 기준 URI를 사용할 수 있습니다   |
+| 체인 밖 리소스의 런타임 앵커                                              | 전체 검증에 누출될 수 있으나 가드에는 없으며 체인 안 형제 선언은 수집합니다 |
+| 전체 검증이 아직 실행하지 않은 체인 리소스 선언                              | 가드는 수집하므로 감싸는 함수의 폴백과 다를 수 있습니다                |
+| 전체 검증이 `$id` 없는 리소스를 건너뜀                                        | 가드·전체 검증이 다를 수 있습니다                                               |
+| AJV가 동적 참조의 양끝 조건을 검사하지 않음                                    | 가드도 따르며 최초 대상이 동적 앵커인지 별도로 보장하지 않습니다           |
+| 컴파일 때 루트 앵커 플래그 없음                                                | 둘 다 테이블 조회 없이 감싸는 컴파일된 함수의 폴백을 유지합니다          |
+| DynamicRef가 `#`로 시작하지 않음                                                | 전체 검증·가드 모두 컴파일에 실패합니다                                        |
+| 앵커 이름이 `constructor`, `toString`, `__proto__` 등 Object.prototype과 충돌 | AJV 일반 객체 테이블 처리로 바인딩하지 못합니다                               |
 
-이는 어댑터의 조건이며 임의 dynamic scope의 동등성을 보장하지 않습니다.
+이는 어댑터의 조건이며 임의 동적 범위의 동등성을 보장하지 않습니다.

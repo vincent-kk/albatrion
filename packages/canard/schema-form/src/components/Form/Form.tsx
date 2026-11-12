@@ -1,5 +1,5 @@
 import { FormCore } from './components/FormCore';
-import { FormError } from './components/FormError';
+import { FormErrorMessage } from './components/FormErrorMessage';
 import { FormField } from './components/FormField';
 import { FormInput } from './components/FormInput';
 import { FormLabel } from './components/FormLabel';
@@ -37,7 +37,7 @@ import { FormRender } from './components/FormRender';
  *   <div className="form-row">
  *     <Form.Label path="/name" />
  *     <Form.Input path="/name" />
- *     <Form.Error path="/name" />
+ *     <Form.ErrorMessage path="/name" />
  *   </div>
  * </Form>
  * ```
@@ -63,7 +63,7 @@ import { FormRender } from './components/FormRender';
  * - **Form.Field**: See {@link FormField} export - Grouped field with label and input
  * - **Form.Label**: See {@link FormLabel} export - Field label rendering
  * - **Form.Input**: See {@link FormInput} export - Field input rendering
- * - **Form.Error**: See {@link FormError} export - Field error rendering
+ * - **Form.ErrorMessage**: See {@link FormErrorMessage} export - Field error rendering
  *
  * ### Design Philosophy
  *
@@ -133,10 +133,10 @@ export const Form = Object.assign(FormCore, {
    * Displays validation messages with customizable formatting
    * and conditional visibility based on field state.
    *
-   * **For comprehensive documentation and examples, see:** {@link FormError}
+   * **For comprehensive documentation and examples, see:** {@link FormErrorMessage}
    *
-   * @param props - FormError properties including path and styling
+   * @param props - FormErrorMessage properties including path and styling
    * @returns Error message element
    */
-  Error: FormError,
+  ErrorMessage: FormErrorMessage,
 });

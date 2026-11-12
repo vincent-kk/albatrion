@@ -68,7 +68,7 @@ export const runStoryTail = async (tail: readonly CompositeTailStep[], context: 
       await expectEventually(() => Object.fromEntries(Object.keys(step.errors).map((path) => [path, (node(path)?.errors ?? []).map((issue) => issue.keyword)])), step.errors, label);
     if (step.act === 'globalErrors') await expectEventually(() => handle.getErrors().map((issue) => issue.keyword), step.keywords, label);
     if (step.act === 'shown')
-      await expectEventually(() => Object.fromEntries(Object.keys(step.shown).map((path) => [path, Boolean(canvasElement.querySelector(`[data-path="${path}"] em`)?.textContent?.trim())])), step.shown, label);
+      await expectEventually(() => Object.fromEntries(Object.keys(step.shown).map((path) => [path, Boolean(Array.from(canvasElement.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches(`[data-path="${path}"]`))?.textContent?.trim())])), step.shown, label);
     if (step.act === 'mounted') await expectEventually(() => Object.fromEntries(Object.keys(step.mounted).map((path) => [path, Boolean(input(path))])), step.mounted, label);
   }
 };

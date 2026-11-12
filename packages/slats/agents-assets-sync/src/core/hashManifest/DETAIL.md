@@ -53,13 +53,13 @@
 - `schemaVersion` 이 1이면 파싱된 매니페스트가 반환된다.
 - `schemaVersion` 이 1이 아니면 호출이 throw 하고, 그 메시지가 실행의 진단으로 표면화된다.
 - `hashSource: 'manifest'` 인 채 `dist/agents-hashes.json` 이 없는 타깃은 실행이 그 사실을 보고하고 건너뛴다. 어느 타깃이 그 출처를 받는지는 호출자가 정한다 — `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-HASH-SOURCE`.
-- Verified by `src/__tests__/json.test.ts`, `src/__tests__/cli.test.ts`.
+- 검증: `src/__tests__/json.test.ts`, `src/__tests__/cli.test.ts`.
 
 ### AC-MANIFEST-NAMESPACE — orphan 탐색은 관리 중인 네임스페이스로 제한된다
 
 - `skills/<name>/...` 경로들은 중복 없는 `skills/<name>/` 접두사 집합이 된다.
 - `skills/` 로 시작하지 않는 경로는 접두사를 만들지 않으므로 그 위치는 orphan 스캔 대상이 되지 않는다.
-- Verified by `core/agentTarget/__tests__/agentTarget.test.ts` (`resolveDestinations` 의 `namespacePrefixes` 소비 경로).
+- 검증: `core/agentTarget/__tests__/agentTarget.test.ts` (`resolveDestinations` 의 `namespacePrefixes` 소비 경로).
 
 ### AC-MANIFEST-COMPUTE — 계산된 매니페스트는 빌드된 것과 같다
 
@@ -68,7 +68,7 @@
 - 잡음 파일(`.DS_Store`, `*.log`, `.omc/**`)은 두 경로 모두에서 빠진다.
 - 키는 중첩 디렉터리에서도 항상 `/` 구분자이며 사전순으로 정렬된다. 정렬은 `sortManifestFiles` 가 맡는다 — `readdir` 순서는 플랫폼이 정하므로, 정렬되지 않은 입력을 직접 주는 것만이 이 절에 부하를 거는 방법이다. 매니페스트는 사람이 읽고 diff 하는 파일이고, 디렉터리를 돌려주는 순서가 달라졌다는 이유로 항목이 움직이면 변경이 아닌 것이 변경으로 보인다.
 - 계산된 매니페스트의 `assetRoot` 는 `packageRoot` 기준 상대 경로를 담는다.
-- Verified by `__tests__/computeHashManifest.spec.ts` (`filid:contract AC-MANIFEST-COMPUTE`).
+- 검증: `__tests__/computeHashManifest.spec.ts` (`filid:contract AC-MANIFEST-COMPUTE`).
 
 ### AC-MANIFEST-GATE — 빌드가 필요한 target 은 한 곳에서 판정된다
 
@@ -76,7 +76,7 @@
 - `hashSource: 'directory'` 는 `hashesPresent` 와 무관하게 언제나 `false` 다 — `dist/` 를 읽지 않으므로 그 부재가 이 target 에 대해 아무것도 말하지 않는다.
 - 호출자는 하나다 — dispatcher 가 렌더러를 고르기 전에 묻는다. 세 렌더러가 각자 묻던 때에는 술어는 하나였지만 그 답을 실행 판정으로 옮기는 규칙이 셋이었고, 그래서 같은 입력이 출력 형식에 따라 다른 exit code 를 냈다. 판정은 `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT` 가 소유한다.
 - 이 술어는 출처를 정하지 않고 종료 코드도 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 진단은 그렇게 읽혀야 한다.
-- Verified by `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
+- 검증: `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
 
 ## History
 

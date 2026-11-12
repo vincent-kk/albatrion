@@ -9,6 +9,8 @@ import { assertFieldNodeWritable, disposeFieldNodeTree } from '../../../settle';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
+import { captureChainError } from './captureChainError';
+import { abortFieldNodeChain } from './chainAbort';
 import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
 
 /**
@@ -25,7 +27,12 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   assertFieldNodeWritable(previousRoot);
   assertFieldNodeWritable(nextRoot);
-  rebuildRootExternalErrors(previousRoot);
+  let aggregationFailure: { error: unknown } | undefined;
+  try {
+    rebuildRootExternalErrors(previousRoot);
+  } catch (error) {
+    aggregationFailure = { error };
+  }
   const previous = previousRoot.runtime;
   const next = nextRoot.runtime;
   next.entryDepth = previous.entryDepth;
@@ -60,57 +67,68 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       typeof node.path === 'string'
     )
       next.adoptedExternalErrors.set(node.path, errors);
-  restoreAdoptedExternalErrors(nextRoot);
-  if (previous.pendingWarningRecords)
-    for (const [key, record] of previous.pendingWarningRecords) {
-      const parts: unknown =
-        record.path === undefined ? undefined : JSON.parse(key);
-      indexFieldNodeWarning(
-        next,
-        key,
-        isArray(parts) && typeof parts[1] === 'string' ? parts[1] : undefined,
-        record,
-      );
+  try {
+    if (aggregationFailure) captureChainError(next, aggregationFailure.error);
+    try {
+      restoreAdoptedExternalErrors(nextRoot);
+    } catch (error) {
+      captureChainError(next, error);
     }
-  if (next.errorReporter?.hasConsumer()) {
-    const paths =
-      next.rebuiltReferenceSchemaPaths ??
-      readReferenceOnlySchemaPaths(
-        previous.blueprint?.schema,
-        next.blueprint?.schema,
-      );
-    if (paths.length) {
-      const code = FormWarningCode.ResetRebuiltByReference;
-      const record = dedupeWarningRecord(
-        (next.warningKeys ??= new Set()),
-        code,
-        $.Root,
-        $.Root,
-        () => 'Form reset rebuilt the schema by reference',
-        { details: { schemaPaths: paths } },
-      );
-      if (record) {
-        (next.pendingWarningRecords ??= new Map()).set(
-          JSON.stringify([code, $.Root]),
+    if (previous.pendingWarningRecords)
+      for (const [key, record] of previous.pendingWarningRecords) {
+        const parts: unknown =
+          record.path === undefined ? undefined : JSON.parse(key);
+        indexFieldNodeWarning(
+          next,
+          key,
+          isArray(parts) && typeof parts[1] === 'string' ? parts[1] : undefined,
           record,
         );
-        next.chainOccurrences?.push({ kind: 'record', record });
+      }
+    if (next.errorReporter?.hasConsumer()) {
+      const paths =
+        next.rebuiltReferenceSchemaPaths ??
+        readReferenceOnlySchemaPaths(
+          previous.blueprint?.schema,
+          next.blueprint?.schema,
+        );
+      if (paths.length) {
+        const code = FormWarningCode.ResetRebuiltByReference;
+        const record = dedupeWarningRecord(
+          (next.warningKeys ??= new Set()),
+          code,
+          $.Root,
+          $.Root,
+          () => 'Form reset rebuilt the schema by reference',
+          { details: { schemaPaths: paths } },
+        );
+        if (record) {
+          (next.pendingWarningRecords ??= new Map()).set(
+            JSON.stringify([code, $.Root]),
+            record,
+          );
+          next.chainOccurrences?.push({ kind: 'record', record });
+        }
       }
     }
+    next.rebuiltReferenceSchemaPaths = undefined;
+  } catch (error) {
+    throw abortFieldNodeChain(next, error).error;
+  } finally {
+    previous.adoptedRoot = nextRoot;
+    previous.entryDepth = 0;
+    previous.batchDepth = 0;
+    previous.batchWrites = undefined;
+    if (previous.inputRelays !== undefined) previous.inputRelays = undefined;
+    previous.visitDepth = 0;
+    previous.visitBatchEntry = undefined;
+    previous.deliveries = undefined;
+    previous.queuedNonSettleEvents = undefined;
+    previous.stateChanged = undefined;
+    previous.chainOccurrences = undefined;
+    previous.enclosingChain = undefined;
+    previous.pendingWarningRecords = undefined;
+    previous.warningKeysByPath = undefined;
+    disposeFieldNodeTree(previousRoot);
   }
-  next.rebuiltReferenceSchemaPaths = undefined;
-  previous.adoptedRoot = nextRoot;
-  previous.entryDepth = 0;
-  previous.batchDepth = 0;
-  previous.batchWrites = undefined;
-  previous.visitDepth = 0;
-  previous.visitBatchEntry = undefined;
-  previous.deliveries = undefined;
-  previous.queuedNonSettleEvents = undefined;
-  previous.stateChanged = undefined;
-  previous.chainOccurrences = undefined;
-  previous.enclosingChain = undefined;
-  previous.pendingWarningRecords = undefined;
-  previous.warningKeysByPath = undefined;
-  disposeFieldNodeTree(previousRoot);
 };

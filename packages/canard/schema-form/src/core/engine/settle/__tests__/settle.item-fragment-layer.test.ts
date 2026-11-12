@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -63,7 +66,12 @@ const latentItem = (root: TestRoot, index: number) =>
  * @param root - Settled tree root whose `/flag` gates the fragment
  */
 const turnOff = (root: TestRoot) =>
-  writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.flag,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
 
 /** Fragment state keys that differ from every item's initial keys. */
 const LOCKED = { readOnly: true, disabled: true, visible: false };

@@ -9,6 +9,7 @@ import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { captureFieldNodeChange } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -29,7 +30,8 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  const scope = context.kind === 'load' ? context.loadScope : undefined;
+  const scope =
+    context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
   const inLoadScope = (node: Self): boolean =>
     scope !== undefined &&
     (!scope.path ||
@@ -70,7 +72,11 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           });
         if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
         departing.detached = true;
-        departing.isActive = captureFieldNodeChange(departing, 'isActive', false);
+        departing.isActive = captureFieldNodeChange(
+          departing,
+          'isActive',
+          false,
+        );
       },
       { owned: true },
     );

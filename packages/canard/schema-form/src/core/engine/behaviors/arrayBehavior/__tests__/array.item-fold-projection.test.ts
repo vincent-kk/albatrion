@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount, writeFieldNode } from '../../../settle';
-import { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 
 it.each(['items', 'prefixItems'] satisfies readonly (
   | 'items'
@@ -41,7 +41,7 @@ it.each(['items', 'prefixItems'] satisfies readonly (
   writeFieldNode(
     list.structure!['0'],
     null,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
   expect(list.emit).toEqual([null]);

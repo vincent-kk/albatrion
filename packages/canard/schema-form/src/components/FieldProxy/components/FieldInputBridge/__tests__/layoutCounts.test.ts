@@ -4,10 +4,7 @@ import { expect, it } from 'vitest';
 
 it('F-F runs zero layout effects for one input write', () => {
   const tool = fileURLToPath(
-    new URL(
-      '../../../__tests__/helpers/runtimeCounts.mjs',
-      import.meta.url,
-    ),
+    new URL('../../../__tests__/helpers/runtimeCounts.mjs', import.meta.url),
   );
   const report = JSON.parse(
     execFileSync(process.execPath, [tool, 'current', '--counts-only'], {

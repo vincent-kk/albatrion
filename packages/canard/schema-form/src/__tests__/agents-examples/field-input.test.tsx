@@ -23,6 +23,7 @@ import {
   type FieldInputProps,
   Form,
   type FormHandle,
+  type JSONSchema,
   isTerminalNode,
 } from '@/schema-form';
 
@@ -375,4 +376,157 @@ it('a new key on Form.Input replaces the component and its FieldInput closure', 
     </Form>
   ));
   expect(seen).toEqual({ before: '0', state: '1', after: '1' });
+});
+
+/** Reads `defaultValue` once per mount.
+ * @param props - FieldInput props supplied by Form.
+ * @returns An uncontrolled text field. */
+const DefaultValueInput: FC<FieldInputProps<string>> = ({
+  path,
+  defaultValue,
+  onChange,
+}) => (
+  <input
+    data-testid={path}
+    defaultValue={defaultValue ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+
+/** Draws from `value` on every render.
+ * @param props - FieldInput props supplied by Form.
+ * @returns A controlled text field. */
+const ValueInput: FC<FieldInputProps<string>> = ({ path, value, onChange }) => (
+  <input
+    data-testid={path}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+
+const valueReading: FieldInputDefinition[] = [
+  { test: { format: 'legacy' }, Component: DefaultValueInput },
+  { test: { format: 'live' }, Component: ValueInput, controlled: true },
+];
+
+it('remounts by the controlled declaration when a value arrives from outside', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={valueReading}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          source: { type: 'string' },
+          legacy: {
+            type: 'string',
+            format: 'legacy',
+            controls: { derived: '../source' },
+          },
+          live: {
+            type: 'string',
+            format: 'live',
+            controls: { derived: '../source' },
+          },
+        },
+      }}
+    />,
+  );
+  await waitFor(() => expect(ref.current).not.toBeNull());
+  const legacy = screen.getByTestId('/legacy');
+  const live = screen.getByTestId('/live');
+
+  await act(async () => ref.current!.setValue({ source: 'next' }));
+
+  expect(screen.getByTestId('/legacy')).not.toBe(legacy);
+  expect(screen.getByTestId('/legacy')).toHaveProperty('value', 'next');
+  expect(screen.getByTestId('/live')).toBe(live);
+  expect(live).toHaveProperty('value', 'next');
+
+  await act(async () => ref.current!.setValue({ source: 'next', live: 'set' }));
+
+  expect(screen.getByTestId('/live')).toBe(live);
+});
+
+/**
+ * Compose child input values against the parent's current pending value.
+ * @param props - Branch input props whose children emit already evaluated values.
+ * @returns Child inputs with a synchronous parent write for each edit.
+ */
+const HybridObject = ({
+  ChildFields,
+  onChange,
+}: FieldInputProps<Record<string, unknown>>) => (
+  <>
+    {ChildFields.map((Child) => (
+      <Child
+        key={Child.key}
+        onChange={(input) =>
+          onChange((prev) => ({ ...prev, [Child.field]: input }))
+        }
+      />
+    ))}
+  </>
+);
+
+/** Keep the inline object input nonterminal so it can render its children. */
+const hybridSchema: JSONSchema = {
+  type: 'object',
+  options: { terminal: false },
+  presentation: { FieldInput: HybridObject },
+  properties: {
+    first: { type: 'string' },
+    last: { type: 'string' },
+  },
+};
+
+it('a hybrid parent preserves focus, same-batch sibling edits and evaluated child updaters', async () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        ...hybridSchema,
+        properties: {
+          ...hybridSchema.properties,
+          tags: {
+            type: 'array',
+            items: { type: 'string', enum: ['red', 'blue'] },
+            presentation: { inputType: 'checkbox' },
+          },
+        },
+      }}
+    />,
+  );
+  await waitFor(() => expect(ref.current).not.toBeNull());
+  const first =
+    view.container.querySelector<HTMLInputElement>('[id="/first"]')!;
+  const last = view.container.querySelector<HTMLInputElement>('[id="/last"]')!;
+  first.focus();
+  fireEvent.change(first, { target: { value: 'first' } });
+  await act(async () => {});
+  expect(view.container.querySelector('[id="/first"]')).toBe(first);
+  expect(document.activeElement).toBe(first);
+
+  await act(async () => {
+    ref.current!.node!.batch(() => {
+      fireEvent.change(first, { target: { value: 'updated' } });
+      fireEvent.change(last, { target: { value: 'last' } });
+    });
+  });
+  expect(ref.current!.getValue()).toEqual({ first: 'updated', last: 'last' });
+  expect(view.container.querySelector('[id="/first"]')).toBe(first);
+  expect(view.container.querySelector('[id="/last"]')).toBe(last);
+  expect(document.activeElement).toBe(first);
+
+  fireEvent.click(screen.getByRole('checkbox', { name: 'red' }));
+  await act(async () => {});
+  expect(ref.current!.getValue()).toEqual({
+    first: 'updated',
+    last: 'last',
+    tags: ['red'],
+  });
+  expect(first.value).toBe('updated');
+  expect(last.value).toBe('last');
 });

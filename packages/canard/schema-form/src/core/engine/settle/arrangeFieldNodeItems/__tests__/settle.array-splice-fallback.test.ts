@@ -2,7 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getItemEntry } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   dispatchBatch,
   dispatchInsert,
@@ -427,7 +430,7 @@ describe('the splice admission reads the shared static admission and the tail', 
       try {
         const context = createSettlementContext(
           root,
-          'callerReplace',
+          FieldNodeWriteKind.CallerReplace,
           WriteOption.Overwrite,
           scratch,
         );
@@ -531,7 +534,7 @@ describe('the splice selection proof reads only the tail', () => {
     try {
       const context = createSettlementContext(
         root,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
         scratch,
       );

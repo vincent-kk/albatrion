@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFailedFieldNodeChain } from '../chain/exitFailedFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
@@ -37,7 +38,11 @@ export const dispatchBatch = <Self extends FieldNodeRecord<Self>>(
     const activeRoot = resolveFieldNodeChainRoot(node.rootNode);
     const active = activeRoot.runtime;
     active.batchDepth = (active.batchDepth ?? 1) - 1;
-    if (!active.batchDepth) flushBatchWrites(activeRoot);
+    try {
+      if (!active.batchDepth) flushBatchWrites(activeRoot);
+    } catch (error) {
+      exitFailedFieldNodeChain(node, error);
+    }
     exitFieldNodeChain(node);
   }
 };

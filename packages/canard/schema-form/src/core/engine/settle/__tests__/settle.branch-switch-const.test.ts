@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import type { BlueprintGate, BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as relocation from '../utils/compute/relocatedGates';
@@ -80,7 +80,12 @@ describe('branch-switch constant-factor regression records', () => {
       counts.push(paths.get('/p') ?? 0);
       return changed;
     });
-    writeFieldNode(root.structure!.s, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.s,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(Math.max(...counts)).toBe(2);
     expect(root.structure!.p).toBe(original);
     expect(original.local).toBe('keep');
@@ -104,7 +109,12 @@ describe('branch-switch constant-factor regression records', () => {
         unrelated.push(args[0][0]);
       return Reflect.apply(stringify, JSON, args);
     });
-    writeFieldNode(root.structure!.kind, 9, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      9,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.local).toEqual({ kind: 9, payload_9: 'value_9' });
     expect(unrelated).toEqual([]);
   });
@@ -144,7 +154,12 @@ describe('branch-switch constant-factor regression records', () => {
     });
     armed = true;
     expect(() =>
-      writeFieldNode(root.structure!.t, true, 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.t,
+        true,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('Gate evaluation failed');
     expect(exits).toContain(true);
     expect({
@@ -235,7 +250,12 @@ describe('branch-switch constant-factor regression records', () => {
         },
       );
       for (const input of writes)
-        writeFieldNode(root, input, 'input', WriteOption.Overwrite);
+        writeFieldNode(
+          root,
+          input,
+          FieldNodeWriteKind.Input,
+          WriteOption.Overwrite,
+        );
       expect(observed.length).toBeGreaterThan(0);
       expect(observed).toMatchSnapshot();
     },
@@ -262,7 +282,12 @@ describe('branch-switch constant-factor regression records', () => {
         return original(host, blueprint, gates, runtime);
       },
     );
-    writeFieldNode(root.structure!.kind, 9, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      9,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(seen.some((gates) => gates[gates.length - 1] === extra)).toBe(true);
     expect(
       seen.every(
@@ -271,7 +296,12 @@ describe('branch-switch constant-factor regression records', () => {
     ).toBe(true);
     present = false;
     seen.length = 0;
-    writeFieldNode(root.structure!.kind, 0, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      0,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(seen.length).toBeGreaterThan(0);
     expect(seen.every((gates) => !gates.includes(extra))).toBe(true);
   });

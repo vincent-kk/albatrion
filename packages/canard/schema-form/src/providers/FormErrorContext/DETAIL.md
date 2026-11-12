@@ -30,7 +30,7 @@ onError는 발생 기록의 사건 채널입니다. 현재 오류 목록을 보�
 
 ## Acceptance Criteria
 
-### reporting — Single isolated error report
+### reporting — 격리된 오류의 단일 보고
 
 - 다시 실행된 effect는 이미 커밋된 로드 경고를 다시 보내지 않는다.
 

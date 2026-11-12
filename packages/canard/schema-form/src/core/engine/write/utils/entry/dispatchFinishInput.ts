@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
-import { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -38,9 +38,9 @@ export const dispatchFinishInput = <Self extends FieldNodeRecord<Self>>(
         node,
         value,
         option,
-        source: 'automatic',
+        source: FieldNodeWriteKind.Automatic,
       });
-    else writeFieldNode(node, value, 'automatic', option);
+    else writeFieldNode(node, value, FieldNodeWriteKind.Automatic, option);
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);

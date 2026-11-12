@@ -2,6 +2,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { clearTreeMemoStores } from '../../../utils/cache/clearTreeMemoStores';
 import { setLoadValue } from '../loadValues/setLoadValue';
 import { writeFieldNode } from '../write/writeFieldNode';
@@ -24,7 +25,7 @@ export const resetFieldNodeForm = <Self extends FieldNodeRecord<Self>>(
   root.runtime.diagnostics = { status: 'stable' };
   clearSubtreeState(root);
   try {
-    writeFieldNode(root, value, 'load', option);
+    writeFieldNode(root, value, FieldNodeWriteKind.Load, option);
   } finally {
     root.runtime.loadSnapshot = nextSnapshot;
   }

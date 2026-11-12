@@ -8,7 +8,9 @@ import { omitEmptyObject } from './omitEmptyObject';
 export const projectObject: Behavior['project'] = (node, local) => {
   if (
     node.source !== undefined &&
-    (node.source === null || typeof node.source !== 'object' || isArray(node.source))
+    (node.source === null ||
+      typeof node.source !== 'object' ||
+      isArray(node.source))
   )
     return node.source;
   return getStaticChoices(node.schema).omitEmpty

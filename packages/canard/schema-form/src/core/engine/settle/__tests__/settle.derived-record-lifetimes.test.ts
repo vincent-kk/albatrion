@@ -6,7 +6,7 @@ import {
   blueprint,
   getItemEntries,
 } from '../../blueprint';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { readAdmittedEdgeSchema } from '../utils/compute/childSelection/readAdmittedEdgeSchema';
@@ -104,7 +104,7 @@ it('keeps the by-entry derivative lazy after preparing a static shape', () => {
   expect(memo.byEntry).toBeUndefined();
   const context = createSettlementContext(
     root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
     getSettlementScratch(root.runtime),
   );
@@ -139,13 +139,13 @@ it('owns presence traversal memos in separate settlement contexts, outside the s
   const scratch = getSettlementScratch(root.runtime);
   const first = createSettlementContext(
     root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
     scratch,
   );
   const second = createSettlementContext(
     root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
     scratch,
   );

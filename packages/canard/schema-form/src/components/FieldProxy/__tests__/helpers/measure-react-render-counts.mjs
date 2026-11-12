@@ -48,7 +48,9 @@ const countsOnly = options['counts-only'] === true;
 const allWrites = options['all-writes'] === true;
 const layoutEffects = options['layout-effects'] === true;
 if (version === 'current')
-  await prepareReactBundles(packageRoot, outputDirectory, 'change');
+  await prepareReactBundles(packageRoot, outputDirectory, 'change', {
+    labelFieldInputBridge: true,
+  });
 assert(
   !bundleOverride || version !== 'current',
   '--bundle measures an existing bundle; current rebuilds fa-change',
@@ -231,7 +233,12 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
       scenario === 'flat'
         ? ['/a', '/b', '/o/x', '/o/y']
         : ['/arr/0', '/arr/1', '/arr/2'];
-    const write = (label, target, run) => ({ label, target, run });
+    const write = (label, target, run, prepare) => ({
+      label,
+      target,
+      run,
+      prepare,
+    });
     const writes =
       scenario === 'flat'
         ? [
@@ -266,6 +273,36 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
                     api.setHostProps({ readOnly: true }),
                   ),
                   write('reset()', null, () => handle().reset()),
+                  write(
+                    'visible external error /a',
+                    null,
+                    () =>
+                      handle()
+                        .findNode('/a')
+                        .setExternalErrors([
+                          { dataPath: '/a', message: 'visible external error' },
+                        ]),
+                    () => {
+                      handle().revealErrors();
+                      handle()
+                        .findNode('/a')
+                        .setExternalErrors([
+                          { dataPath: '/a', message: 'initial external error' },
+                        ]);
+                    },
+                  ),
+                  write(
+                    'FormProvider re-render, new inline formatError',
+                    null,
+                    () => api.rerenderProvider(),
+                    () => api.rerenderProvider(),
+                  ),
+                  write(
+                    'Form re-render, new inline formatError',
+                    null,
+                    () => api.setHostProps({ inlineFormatError: true }),
+                    () => api.setHostProps({ inlineFormatError: true }),
+                  ),
                 ]),
           ]
         : [
@@ -292,6 +329,10 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
           ];
     const results = [];
     for (const operation of writes) {
+      if (operation.prepare) {
+        flushSync(operation.prepare);
+        await drain();
+      }
       const before = [...mounted.container.querySelectorAll('[data-path]')].map(
         (element) => element.getAttribute('data-path'),
       );
@@ -300,6 +341,8 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
       flushSync(operation.run);
       await drain();
       counting = false;
+      if (operation.label === 'visible external error /a')
+        assert.match(mounted.container.textContent, /visible external error/);
       const renders = log.filter((event) => event.kind === 'render');
       const byPath = {},
         byComponent = {};
@@ -316,7 +359,16 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
         write: operation.label,
         target: operation.target,
         commits: log.filter((event) => event.kind === 'commit').length,
-        renders: { total: renders.length, byPath, byComponent },
+        renders: {
+          total: renders.length,
+          byPath,
+          byComponent,
+          inputComponents: {
+            bridge: byComponent['memo:FieldInputBridge'] ?? {},
+            input:
+              byComponent[mode === 'ctl' ? 'CtlInput' : 'UnctlInput'] ?? {},
+          },
+        },
         ...(layoutEffects
           ? {
               layoutEffects: log.filter((event) => event.kind === 'layout')

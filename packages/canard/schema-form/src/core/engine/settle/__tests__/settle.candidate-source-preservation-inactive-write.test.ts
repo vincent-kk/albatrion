@@ -73,7 +73,9 @@ it('replaces nested off-write array scope on a partial parent write', () => {
   dispatchSetValue(root, { host: { list: [8] } }, WriteOption.Merge);
   expect(hasRetainedSlotOwnSource(root, '/host/list/1', 'number')).toBe(false);
   expect(readRetainedSlotSource(root, '/host/list/0', 'number')).toBe(8);
-  expect(readRetainedSlotSource(root, '/host/list', 'array')).toEqual([undefined]);
+  expect(readRetainedSlotSource(root, '/host/list', 'array')).toEqual([
+    undefined,
+  ]);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(root.emit).toEqual({
@@ -212,7 +214,9 @@ it.each([false, true])(
       list: [7, ...tail],
     });
     const kind = reversed ? 'string' : 'number';
-    expect(readRetainedSlotSource(root, '/list/0', kind)).toBe(reversed ? '7' : 7);
+    expect(readRetainedSlotSource(root, '/list/0', kind)).toBe(
+      reversed ? '7' : 7,
+    );
     dispatchSetValue(getDispatchNode(root, reversed ? 'a' : 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
     expect(getDispatchNode(root, 'list').emit).toEqual([null, ...tail]);

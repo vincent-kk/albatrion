@@ -31,7 +31,9 @@ it('G recovery leaves every guard outcome intact when the whole compile fails', 
   const root = { type: 'object' };
   const failure = new Error('whole schema unavailable');
   const validator: Validator = {
-    compile: () => { throw failure; },
+    compile: () => {
+      throw failure;
+    },
     compileGuard: () => () => true,
   };
   const entry = readValidationEntry(validator, root);

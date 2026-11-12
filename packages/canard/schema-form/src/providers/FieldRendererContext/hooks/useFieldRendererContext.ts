@@ -9,18 +9,18 @@ export const useFieldRendererContext = () => {
   const context = useContext(FieldRendererContext);
   const external = useExternalFormContext();
   return {
-    FormLabelRenderer:
-      context.FormLabelRenderer ||
-      external.FormLabelRenderer ||
-      PluginManager.FormLabelRenderer,
-    FormInputRenderer:
-      context.FormInputRenderer ||
-      external.FormInputRenderer ||
-      PluginManager.FormInputRenderer,
-    FormErrorRenderer:
-      context.FormErrorRenderer ||
-      external.FormErrorRenderer ||
-      PluginManager.FormErrorRenderer,
+    LabelRenderer:
+      context.LabelRenderer ||
+      external.LabelRenderer ||
+      PluginManager.LabelRenderer,
+    InputRenderer:
+      context.InputRenderer ||
+      external.InputRenderer ||
+      PluginManager.InputRenderer,
+    ErrorMessageRenderer:
+      context.ErrorMessageRenderer ||
+      external.ErrorMessageRenderer ||
+      PluginManager.ErrorMessageRenderer,
     FieldRenderer: context.FieldRenderer || PluginManager.FieldRenderer,
     formatError: context.formatError || PluginManager.formatError,
     checkErrorVisibility: context.checkErrorVisibility,

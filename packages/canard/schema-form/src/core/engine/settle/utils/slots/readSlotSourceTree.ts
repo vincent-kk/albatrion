@@ -86,7 +86,8 @@ export const readSlotSourceTree = <Self extends FieldNodeRecord<Self>>(
         active,
         getSlotSource(instance, binding, overlay).overlay,
       );
-    } else source = readSlotSourceTree(entry.node, child.instance, child.overlay);
+    } else
+      source = readSlotSourceTree(entry.node, child.instance, child.overlay);
     if (source === undefined) continue;
     Object.defineProperty(value, entry.name, {
       value: source,

@@ -10,6 +10,7 @@ Use this prompt when the task is to migrate an existing application to the insta
 
 ## Make the conversion
 
+- Remove `onChange` and `onFileAttach` from Form.Input, Form.Render and Form.Field; relay through Child or renderer Input instead. Remove child/layout `value` and `defaultValue` overrides and initialize through Form.defaultValue or write through the parent callback. Move `presentation.FieldInputProps.required` to `presentation.required`; required in either props bag is ignored. For renderer and input `required`, follow [the display override contract](field-input.md#hybrid-parents-write-child-values-through-the-parent).
 - Move schema authoring keys into presentation, controls and options using the guide. Search generated schema sources too. Unknown legacy top-level keys do not provide aliases or engine warnings; a successful render alone does not show that the settings applied.
 - Rename consumer imports, plugin members, input props, node guards/state and error-display APIs. Convert the error-display settings using the guide’s error-visibility table. Read `schemaType` for integer-specific matching; `type` is the runtime node kind. Treat multiple non-null kinds as a terminal union and provide a deliberate union input when the fallback draft does not fit the UI.
 - Replace incomplete validator functions with the full validator object contract. Disable AJV value-changing options before bind and move those transformations into explicit application code. Preserve validation verdict tests independently of warning assertions.
@@ -33,3 +34,13 @@ For provider-based wiring and other examples, read `plugin-system.md`, `field-in
 ## Completion evidence
 
 Run the application's lint, strict typecheck, unit and UI tests. Add focused cases for each changed behavior: submitted values, conditional fields, empty/null values, external issues, invalid native and imperative submissions, dynamic settings, reset/rebuild, and custom input selection. Test the React version(s) the application supports. Report changed call sites, exact commands and results, unresolved compatibility decisions, and any remaining old spellings with their reason. Completion requires working application behavior, not only a search with no matches.
+
+## Renderer and input feedback conversion
+
+Rename the previous registration keys FormLabelRenderer, FormInputRenderer and FormErrorRenderer to LabelRenderer, InputRenderer and ErrorMessageRenderer, using their dedicated prop types. The previous Form.Error/FormErrorProps names become Form.ErrorMessage/FormErrorMessageProps. Old registration keys are silently ignored at runtime. TypeScript rejects old keys in object literals and JSX props; a plugin object typed elsewhere, such as one from an older plugin package, still compiles and its old keys are ignored. A render without an error does not prove registration worked. registerPlugin failure messages list the plugin’s slots by the new names.
+
+Search application sources for `errors` and `errorVisible` in FieldInput destructuring, member access, Child overrides and presentation payloads. Replace those reads with [useFieldErrors(node)](validation-ux.md#read-one-fields-errors). Their deprecated optional-never declarations reject member access and values, but a bare truthiness check can still compile and read undefined. Verify actual error presentation rather than trusting typecheck alone.
+
+Convert a text-only label renderer into a renderer that owns its label and applies htmlFor/id. Remove wrappers that compensate for the previous Form.Label/Form.Error outer elements. Follow [standalone roots](imperative-and-layout.md#standalone-part-roots) and the [frame contract](field-input.md#bound-parts-and-input-frames), not a pass-through input renderer.
+
+The default group omits an empty em when no message exists, removes the non-required label’s trailing space and marks its required asterisk aria-hidden; a default standalone Form.Label now shows the same asterisk. A selector such as `[data-path="/branch"] em` can now select a descendant's error; scope it to an element whose closest data-path is the intended field. The [migration guide](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/migration-from-0x#renderer-parts) contains before/after conversions.

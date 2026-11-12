@@ -4,6 +4,7 @@ import { useLazyConstant } from '@winglet/react-utils/hook';
 
 import type { Nullable } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import { FieldNodeEventType, FieldNodeRequestType } from '@/schema-form/core';
 import { useFieldNodeSubscribe } from '@/schema-form/hooks';
 import { FormErrorPathContext } from '@/schema-form/providers/FormErrorContext';
@@ -54,7 +55,7 @@ export const DeferredFieldProxy = ({
       setRevealed(true);
     },
   }));
-  const pendingEventsRef = useRef(0);
+  const pendingEventsRef = useRef(BIT_MASK_NONE);
   const placeholderRef = useRef<Nullable<Element>>(null);
 
   useDeferredRevision(node, branch, manager, preparedRevision, gate);
@@ -71,8 +72,8 @@ export const DeferredFieldProxy = ({
     manager.markRevealed(node);
     manager.settleReveal(gate);
     const pending = pendingEventsRef.current;
-    if (pending === 0) return;
-    pendingEventsRef.current = 0;
+    if (pending === BIT_MASK_NONE) return;
+    pendingEventsRef.current = BIT_MASK_NONE;
     // Synchronous re-publish: the inner control subscribed in a child layout
     // effect of this very commit, so the command cannot be lost or looped.
     if (pending & FieldNodeEventType.RequestFocus)

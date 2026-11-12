@@ -2,8 +2,28 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form } from '../components/Form';
+import { ValidationMode } from '../core';
 
 afterEach(cleanup);
+
+it('owns one associated label root, honors children and shows a hidden required marker', () => {
+  const view = render(<Form jsonSchema={{ type: 'object', required: ['name'], properties: { name: { type: 'string' } } }} validationMode={ValidationMode.None}><Form.Label path="/name">Custom</Form.Label><Form.Input path="/name" /><Form.Label path="/missing" /></Form>);
+  const label = view.getByText('Custom').closest('label')!;
+  expect(view.container.querySelectorAll('label')).toHaveLength(1);
+  expect(label.control).toBe(view.container.querySelector('input'));
+  expect(label.querySelector('span')?.getAttribute('aria-hidden')).toBe('true');
+  expect(label.textContent).toBe('Custom *');
+});
+
+it('keeps standalone presentation overrides explicit and forwards its own context', () => {
+  const view = render(<Form jsonSchema={{ type: 'string', presentation: { FieldRendererProps: { className: 'schema-class', style: { color: 'red' } } } }} validationMode={ValidationMode.None} context={{ source: 'form' }} LabelRenderer={({ children, className, style, htmlFor, id, context }) => <label className={className} style={style} htmlFor={htmlFor} id={id} data-context={context.source}>{children}</label>}><Form.Label>Own</Form.Label></Form>);
+  const label = view.getByText('Own');
+  expect(label.getAttribute('class')).toBeNull();
+  expect(label.getAttribute('style')).toBeNull();
+  expect(label.getAttribute('data-context')).toBe('form');
+  expect(label.getAttribute('for')).toBeNull();
+  expect(label.getAttribute('id')).toBeNull();
+});
 
 it.each(['checkbox', 'radio'])(
   'associates Form.Label with the builtin %s group',
@@ -99,7 +119,7 @@ it('omits for and id when the Form.Label path prop is undefined', () => {
         enum: ['S', 'M'],
         presentation: { inputType: 'radio' },
       }}
-      FormLabelRenderer={() => 'Size'}
+      LabelRenderer={({ htmlFor, id }) => <label htmlFor={htmlFor} id={id}>Size</label>}
     >
       <Form.Label />
       <Form.Input />
@@ -145,7 +165,7 @@ it('names a root group with the label prefix when path is empty', () => {
         enum: ['S', 'M'],
         presentation: { inputType: 'radio' },
       }}
-      FormLabelRenderer={() => 'Size'}
+      LabelRenderer={({ htmlFor, id }) => <label htmlFor={htmlFor} id={id}>Size</label>}
     >
       <Form.Label path="" />
       <Form.Input path="" />

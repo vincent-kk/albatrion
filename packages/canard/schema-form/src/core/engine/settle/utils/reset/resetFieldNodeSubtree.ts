@@ -1,5 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { getLoadValue } from '../loadValues/getLoadValue';
 import { setLoadValue } from '../loadValues/setLoadValue';
 import { writeFieldNode } from '../write/writeFieldNode';
@@ -23,5 +24,5 @@ export const resetFieldNodeSubtree = <Self extends FieldNodeRecord<Self>>(
     value,
   );
   clearSubtreeState(node);
-  writeFieldNode(node, value, 'load', option);
+  writeFieldNode(node, value, FieldNodeWriteKind.Load, option);
 };

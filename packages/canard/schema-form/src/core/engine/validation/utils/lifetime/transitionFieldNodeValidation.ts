@@ -46,6 +46,6 @@ export const transitionFieldNodeValidation = <
 const effectiveMode = (mode: ValidationMode | undefined): number =>
   mode === ValidationMode.None
     ? 0
-    : (mode ?? 0) & ValidationMode.OnChange
+    : (mode ?? ValidationMode.None) & ValidationMode.OnChange
       ? 2
       : 1;

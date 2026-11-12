@@ -19,11 +19,18 @@ export const hasAdditionalInactiveSources = <
   overlay: Optional<InactiveSlotOverlay> = instance.retainedSourceOverlay,
 ): boolean => {
   const own = overlay && hasOwnProperty(overlay, 'source');
-  const source = own ? overlay.source : overlay?.replace ? undefined : instance.source;
+  const source = own
+    ? overlay.source
+    : overlay?.replace
+      ? undefined
+      : instance.source;
   if (instance.behavior.strategy === 'terminal') return source !== undefined;
   if (instance.behavior.type === 'array' && !own && !overlay?.replace)
     return true;
-  if (source !== undefined && isMisfit(source, instance.schemaType, instance.nullable))
+  if (
+    source !== undefined &&
+    isMisfit(source, instance.schemaType, instance.nullable)
+  )
     return true;
   if (overlay?.replace) return false;
   for (const child of instance.children ?? []) {

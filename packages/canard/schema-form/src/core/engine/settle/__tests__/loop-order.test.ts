@@ -1,6 +1,9 @@
 import { expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -33,7 +36,12 @@ it('retains integer property order and untouched references across static select
   const value = nested.local;
   const children = root.children;
   const revision = nested.revisionLedger;
-  writeFieldNode(root.structure!['2'], 'next', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!['2'],
+    'next',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.local).toEqual({
     '2': 'next',
     '10': 'ten',

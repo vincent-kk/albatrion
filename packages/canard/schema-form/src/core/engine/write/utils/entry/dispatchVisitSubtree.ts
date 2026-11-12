@@ -2,6 +2,7 @@ import { visitFieldNodes } from '../../../navigation';
 import { advanceFieldNodeRevealSequence } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { captureChainError } from '../chain/captureChainError';
+import { exitFailedFieldNodeChain } from '../chain/exitFailedFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
@@ -37,7 +38,11 @@ export const dispatchVisitSubtree = <Self extends FieldNodeRecord<Self>>(
     if (entry !== undefined) {
       active.visitBatchEntry = undefined;
       active.batchDepth = (active.batchDepth ?? 1) - 1;
-      if (!active.batchDepth) flushBatchWrites(activeRoot);
+      try {
+        if (!active.batchDepth) flushBatchWrites(activeRoot);
+      } catch (error) {
+        exitFailedFieldNodeChain(entry, error);
+      }
       exitFieldNodeChain(entry);
     }
   }

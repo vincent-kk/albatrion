@@ -9,15 +9,16 @@ import { ErrorVisibility } from '@/schema-form/types';
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { createErrorVisibilityChecker } from '../utils/createErrorVisibilityChecker';
 import { FieldRendererContext } from './FieldRendererContext';
+import { InputRendererContext } from './InputRendererContext';
 
 const DEFAULT_ERROR_VISIBILITY = ErrorVisibility.AfterEditAndTouch;
 
 interface FieldRendererContextProviderProps {
   /** Custom field renderer component */
   FieldRenderer?: FormProps['FieldRenderer'];
-  FormLabelRenderer?: FormProps['FormLabelRenderer'];
-  FormInputRenderer?: FormProps['FormInputRenderer'];
-  FormErrorRenderer?: FormProps['FormErrorRenderer'];
+  LabelRenderer?: FormProps['LabelRenderer'];
+  InputRenderer?: FormProps['InputRenderer'];
+  ErrorMessageRenderer?: FormProps['ErrorMessageRenderer'];
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
@@ -30,15 +31,15 @@ interface FieldRendererContextProviderProps {
 
 export const FieldRendererContextProvider = ({
   FieldRenderer,
-  FormLabelRenderer,
-  FormInputRenderer,
-  FormErrorRenderer,
+  LabelRenderer,
+  InputRenderer,
+  ErrorMessageRenderer,
   formatError,
   errorVisibility: inputErrorVisibility,
   children,
 }: PropsWithChildren<FieldRendererContextProviderProps>) => {
   const {
-    FieldRenderer: ExternalFormFieldRenderer,
+    FieldRenderer: ExternalFieldRenderer,
     formatError: externalFormatError,
     errorVisibility: externalErrorVisibility,
   } = useExternalFormContext();
@@ -52,34 +53,36 @@ export const FieldRendererContextProvider = ({
   const value = useMemo(() => {
     const resolvedFieldRenderer = isReactComponent(FieldRenderer)
       ? FieldRenderer
-      : ExternalFormFieldRenderer;
+      : ExternalFieldRenderer;
     const resolvedFormatError = isFunction(formatError)
       ? formatError
       : externalFormatError;
     return {
       FieldRenderer: resolvedFieldRenderer,
-      FormLabelRenderer,
-      FormInputRenderer,
-      FormErrorRenderer,
+      LabelRenderer,
+      InputRenderer,
+      ErrorMessageRenderer,
       formatError: resolvedFormatError,
       checkErrorVisibility,
       errorVisibility,
     };
   }, [
     FieldRenderer,
-    FormLabelRenderer,
-    FormInputRenderer,
-    FormErrorRenderer,
+    LabelRenderer,
+    InputRenderer,
+    ErrorMessageRenderer,
     formatError,
     checkErrorVisibility,
-    ExternalFormFieldRenderer,
+    ExternalFieldRenderer,
     externalFormatError,
     errorVisibility,
   ]);
 
   return (
     <FieldRendererContext.Provider value={value}>
-      {children}
+      <InputRendererContext.Provider value={InputRenderer ?? null}>
+        {children}
+      </InputRendererContext.Provider>
     </FieldRendererContext.Provider>
   );
 };

@@ -20,6 +20,8 @@ import type { FormRenderProps } from './types/props';
  * To supply changing values, read them from the `context` prop the function receives (the `context` of `Form`), call a hook inside the function, or give the element a new `key` to replace the component.
  * The other props are read on every render.
  *
+ * `onChange` and `onFileAttach` are binding-owned and cannot be passed to this layout component.
+ *
  * @example
  * Basic custom rendering:
  * ```tsx

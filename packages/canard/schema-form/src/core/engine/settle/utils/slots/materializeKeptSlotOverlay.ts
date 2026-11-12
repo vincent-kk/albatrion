@@ -21,7 +21,9 @@ export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
 ): InactiveSlotOverlay => {
   const inherited = overlay?.replace ? undefined : instance;
   const source =
-    overlay && hasOwnProperty(overlay, 'source') ? overlay.source : inherited?.source;
+    overlay && hasOwnProperty(overlay, 'source')
+      ? overlay.source
+      : inherited?.source;
   const extras =
     overlay && hasOwnProperty(overlay, 'extras')
       ? overlay.extras

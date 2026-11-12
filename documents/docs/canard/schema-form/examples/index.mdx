@@ -47,7 +47,7 @@ export function ComposedForm() {
         <>
           <Form.Label path="/title" />
           <Form.Input path="/title" />
-          <Form.Error path="/title" />
+          <Form.ErrorMessage path="/title" />
           <Form.Input path="/count" />
           <Form.Input path="/enabled" />
           <output>{JSON.stringify(value)}</output>
@@ -145,3 +145,5 @@ export function SubmitForm() {
   );
 }
 ```
+
+The Antd5, Antd6, Antd Mobile and MUI plugins supply label/error parts without an input frame. Required marks are aria-hidden; Antd Mobile wraps a shown error in a span root. For custom part assembly and an error-aware frame, follow [registered parts](../api-reference#renderer-parts) and [useFieldErrors](../api-reference#field-errors).

@@ -4,6 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
@@ -19,6 +20,13 @@ import { inferLiteralTypes } from './inferLiteralTypes';
 
 /** Authored disjunctions examined in S3 order without per-call allocation. */
 const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
+
+/** Kind mask of a node that is only an object. */
+const OBJECT_KIND_MASK = foldAllowedTypes('object');
+/** Kind mask of a node that is only an array. */
+const ARRAY_KIND_MASK = foldAllowedTypes('array');
+/** Container kinds, which cannot share a node with any other kind. */
+const CONTAINER_KIND_MASK = OBJECT_KIND_MASK | ARRAY_KIND_MASK;
 
 /**
  * Resolve S0-S3 for one authored slot without evaluating branch guards.
@@ -134,7 +142,11 @@ export const inferAllowedTypes = (
   }
   if (inferred?.length) {
     const kindMask = foldAllowedTypes(inferred);
-    if ((kindMask & 24) !== 0 && kindMask !== 8 && kindMask !== 16)
+    if (
+      (kindMask & CONTAINER_KIND_MASK) !== BIT_MASK_NONE &&
+      kindMask !== OBJECT_KIND_MASK &&
+      kindMask !== ARRAY_KIND_MASK
+    )
       return throwBlueprintError(
         FormErrorCode.UnknownJsonSchema,
         schemaPath,

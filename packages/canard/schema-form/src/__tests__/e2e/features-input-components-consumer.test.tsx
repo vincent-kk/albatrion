@@ -179,7 +179,7 @@ describe('features — input-components consumer-only', () => {
     },
   );
 
-  it('fieldInputMap matches an exact pointer, an unanchored pattern, and `*` over items and declared children', async () => {
+  it('fieldInputMap matches an exact pointer, an explicit prefix pattern, and `*` over items and declared children', async () => {
     const scenario = scenarioNamed('input-components.input-map');
     const form = await renderForm(scenario.schema as JSONSchema, {
       defaultValue: scenario.initialValue,

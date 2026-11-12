@@ -144,9 +144,7 @@ it('rebuilds extras and key insertion/deletion through the existing path', () =>
     unknown
   >;
   expect(hint.incremental).toBe(false);
-  expect(result.extra).toBe(
-    (node.extras as Record<string, unknown>).extra,
-  );
+  expect(result.extra).toBe((node.extras as Record<string, unknown>).extra);
   node.local = result;
   children[4].emit = undefined!;
   hint.incremental = false;

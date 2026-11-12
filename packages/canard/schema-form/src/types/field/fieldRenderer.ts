@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
@@ -6,9 +6,27 @@ import type { FieldNode } from '@/schema-form/core';
 
 import type { JSONSchemaError } from '../error/error';
 import type { ChildFieldProps } from './fieldInput';
+import type {
+  ErrorMessageRendererProps,
+  LabelRendererProps,
+} from './partRenderer';
 
 /** Props that FieldRenderer Component must satisfy */
-export interface FieldRendererProps extends ChildFieldProps {
+export interface FieldRendererProps {
+  /** Change relays belong on Input, not on renderer props. */
+  onChange?: never;
+  /** Attachment relays belong on Input, not on renderer props. */
+  onFileAttach?: never;
+  /** Default values belong to the node binding, not to renderer props. */
+  defaultValue?: never;
+  /** Optional presentation lock passed by a layout. */
+  readOnly?: boolean;
+  /** Optional presentation disable state passed by a layout. */
+  disabled?: boolean;
+  /** Renderer presentation class. */
+  className?: string;
+  /** Renderer presentation styles. */
+  style?: CSSProperties;
   /** Whether the field node assigned to FieldRenderer Component is the root node */
   isRoot: boolean;
   /** Depth of the field node assigned to FieldRenderer Component */
@@ -27,10 +45,14 @@ export interface FieldRendererProps extends ChildFieldProps {
   value: FieldNode['value'];
   /** Errors of the field node assigned to FieldRenderer Component */
   errors: FieldNode['errors'];
-  /** Whether the field node assigned to FieldRenderer Component is required */
+  /** Required indicator; display overrides do not change schema validation */
   required: FieldNode['isRequired'];
   /** `FieldInput` component of the field node assigned to FieldRenderer Component */
-  Input: ComponentType<ChildFieldProps>;
+  Input: ComponentType<ChildFieldProps & { unwrapped?: boolean }>;
+  /** Bound registered label; omitted children use the field name. */
+  Label: ComponentType<Partial<LabelRendererProps>>;
+  /** Bound registered error root; the caller supplies its message. */
+  ErrorMessage: ComponentType<Partial<ErrorMessageRendererProps>>;
   /** Whether to show errors for the field node assigned to FieldRenderer Component.
    * Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
   errorVisible: boolean;

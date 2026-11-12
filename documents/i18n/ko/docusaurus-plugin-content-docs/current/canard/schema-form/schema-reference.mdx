@@ -13,19 +13,20 @@ sidebar_position: 4
 
 표준 JSON Schema 제약은 표준 위치에 둡니다. 렌더러 데이터는 `presentation`, 반응형 정책은 `controls`, 엔진 옵션은 `options`에 둡니다. `controls`는 닫힌 실행 영역입니다. 노드·자식·조각 제어의 미지 키는 `FormErrorCode.UnknownGroupKey`로 거부하여 오타가 가시성·값 제거·파생을 조용히 바꾸지 않게 하고 미래 제어 이름을 예약합니다. `options`와 `presentation`은 열려 있습니다. 미지 옵션 키는 오류나 경고 없이 노드 스키마를 통해 FieldInput이나 플러그인이 읽을 수 있습니다. 선택지 배열 등 평범한 객체가 아닌 `options`에서는 엔진 옵션을 읽지 않습니다. 사용자 옵션 키는 `any`로 읽히며 예약 키의 선언 타입과 자동완성은 유지됩니다. 옵션 이름의 오타는 TypeScript 자동완성으로 방어합니다. 미래 예약 옵션 이름이 사용자 키와 충돌할 수 있으므로 새 이름 추가는 계약 변경입니다.
 
-청사진 생성 시 정의된 예약 값은 아래의 얕은 형을 만족해야 합니다. `undefined`는 생략이며 `FieldInput: null`도 생략입니다. 형 위반은 `<schemaPath>/<group>/<key>` 위치와 `{ group, key, expected }` 상세를 가진 `FormErrorCode.InvalidControlShape`로 거부합니다. controls 컨테이너·fields·discriminator·가상 선언·terminal 호환성의 기존 검사도 유지합니다. 중첩 payload 내용은 검사하지 않습니다. FieldInput 함수나 객체 컴포넌트를 호출하거나 React 정체성을 검사하지 않습니다.
+청사진 생성 시 정의된 예약 값은 아래의 얕은 형을 만족해야 합니다. `undefined`는 생략이며 `FieldInput: null`도 생략입니다. 형 위반은 `<schemaPath>/<group>/<key>` 위치와 `{ group, key, expected }` 상세를 가진 `FormErrorCode.InvalidControlShape`로 거부합니다. controls 컨테이너·fields·discriminator·가상 선언·말단 호환성의 기존 검사도 유지합니다. 중첩 페이로드 내용은 검사하지 않습니다. FieldInput 함수나 객체 컴포넌트를 호출하거나 React 정체성을 검사하지 않습니다.
 
 | 그룹 | 예약 키 | 허용 값 |
 | --- | --- | --- |
 | `controls` | `active`, `visible`, `readOnly`, `disabled`, `unsetValue`, `resetInteraction`, `unsetOnInactive` | boolean 또는 표현식 문자열 |
 | `controls` | `derived` | 표현식 문자열 |
 | `controls` | `watch` | 런타임은 문자열 또는 문자열 배열; 공개 형은 배열 |
-| `controls` | `default`, `inactiveValue` | 모든 값; 리터럴·resolver 의미 유지 |
+| `controls` | `default`, `inactiveValue` | 모든 값; 리터럴·해석기 의미 유지 |
 | `controls` | `fields`, `injectTo`, `discriminator` | 각각 fields 항목 배열·함수·비어 있지 않은 문자열; 기존 범위·형상 규칙 적용 |
 | `options` | `terminal`, `omitEmpty`, `omitTrailing`, `trim` | boolean |
 | `options` | `propertyOrder` | 문자열 배열; `*`는 와일드카드가 아닌 실제 속성 이름 |
 | `options` | `virtual` | 기존 fields 검사를 따르는 가상 그룹 선언 |
 | `presentation` | `inputType` | 문자열 |
+| `presentation` | `controlled`, `required` | boolean |
 | `presentation` | `FieldInput` | 함수 또는 null이 아닌 객체; null은 생략 |
 | `presentation` | `FieldInputProps`, `FieldRendererProps`, `errorMessages` | null·배열이 아닌 객체; 중첩 값 검사 없음 |
 
@@ -33,9 +34,11 @@ sidebar_position: 4
 
 | 그룹 | 소비자 설정 |
 | --- | --- |
-| `presentation` | `inputType`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; 사용자 렌더러 데이터도 허용합니다 |
+| `presentation` | `inputType`, `controlled`, `required`, `FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`; 사용자 렌더러 데이터도 허용합니다 |
 | `options` | 예약 엔진 옵션은 위 표의 형을 따르며 사용자 키도 허용합니다 |
 | `controls` | 아래 controls 목록을 사용하며 입력별 설정은 이곳에 두지 않습니다 |
+
+`presentation.required`는 렌더러와 입력의 공통 필수 표시를 설정하며 [required 덮어쓰기 계약](./api-reference#composition)을 따릅니다. `presentation.controlled`와는 독립적입니다.
 
 `options.trim`은 타이핑마다가 아니라 blur 때 저장 문자열을 trim합니다. `omitTrailing`은 원시 자식 노드를 삭제하지 않고 정규화된 배열 출력의 뒤쪽 `undefined`를 제거합니다. `omitEmpty`의 기본값은 true, `trim`, `omitTrailing`의 기본값은 false입니다. [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
 
@@ -43,11 +46,11 @@ sidebar_position: 4
 
 object의 virtual 그룹은 `options.virtual: { groupName: { fields: ['first', 'last'] } }`처럼 기존 형제 속성 이름으로 선언합니다. `type: 'virtual'` 스키마를 직접 작성하지 마십시오.
 
-## terminal 전략 불변 조건 {#terminal-strategy}
+## 말단 전략 불변 조건 {#terminal-strategy}
 
-[노드 종류](./core-concepts#node-types)의 전략 선택은 gate가 바뀌어도 유효해야 합니다. 전략이 고정된 scalar·union·virtual에 반대 `options.terminal`을 지정하면 `TerminalOptionUnsupported`, gate에 따라 한 노드가 branch와 terminal 사이에서 바뀔 수 있으면 `TerminalStrategyMismatch`입니다.
+[노드 종류](./core-concepts#node-types)의 전략 선택은 게이트가 바뀌어도 유효해야 합니다. 전략이 고정된 스칼라·유니온·virtual에 반대 `options.terminal`을 지정하면 `TerminalOptionUnsupported`, 게이트에 따라 한 노드가 분기와 말단 사이에서 바뀔 수 있으면 `TerminalStrategyMismatch`입니다.
 
-정적인 ungated 선언끼리는 뒤의 `options.terminal`이 우선하며 `$ref` 대상은 참조 선언보다 뒤로 취급합니다. ungated `oneOf`·`anyOf` 분기의 terminal 옵션은 host 전략을 정하지 않습니다.
+정적인 게이트 없는 선언끼리는 뒤의 `options.terminal`이 우선하며 `$ref` 대상은 참조 선언보다 뒤로 취급합니다. 게이트 없는 `oneOf`·`anyOf` 분기의 말단 옵션은 호스트 전략을 정하지 않습니다.
 
 ## nullable·빈 값·misfit {#value-states}
 
@@ -60,93 +63,144 @@ nullable object·array가 null일 때의 규칙입니다.
 - 자손 비우기와 빈 객체 Merge는 null을 유지하며 비운 사실을 이후 승격에 반영합니다.
 - null이나 잘못된 종류를 로드한 뒤 승격하면 기존 자식은 비어 있고 새로 생긴 자식만 기본값을 받습니다. null 대입으로 버린 데이터는 자동 복원하지 않습니다.
 
-non-nullable object에 null을 쓰면 `{}`로 고치지 않고 잘못된 종류의 misfit 값으로 유지합니다. `setValue(undefined)`는 자식 값과 배열 항목을 비우며 자식 기본값을 복원하지 않습니다.
+null을 허용하지 않는 object에 null을 쓰면 `{}`로 고치지 않고 잘못된 종류의 misfit 값으로 유지합니다. `setValue(undefined)`는 자식 값과 배열 항목을 비우며 자식 기본값을 복원하지 않습니다.
 
 배열은 `SetValueOption.Merge`에서도 대입합니다. 배열을 생략한 부모 Overwrite는 배열을 비우고 부모 Merge는 그대로 둡니다. [쓰기 옵션](./api-reference#write-options)을 참조하십시오.
 
 ## controls와 선언 계층 {#controls}
 
-노드 controls의 허용 키는 아래 14개입니다. `controls.fields[].controls`와 fragment controls는 아래 목록에서 `inactiveValue`까지의 처음 열 개 키만 받으며 `fields`, `injectTo`, `discriminator`, `watch`를 중첩하지 않습니다.
+노드 controls의 허용 키는 아래 14개입니다. `controls.fields[].controls`와 프래그먼트 controls는 아래 목록에서 `inactiveValue`까지의 처음 열 개 키만 받으며 `fields`, `injectTo`, `discriminator`, `watch`를 중첩하지 않습니다.
 
 | 키 | 의미 |
 | --- | --- |
-| `active` | 존재 gate이며 false이면 형상과 출력에서 빠집니다. |
-| `visible` | 표시 gate이며 false이면 입력을 숨기고 값과 오류는 유지합니다. |
+| `active` | 존재 게이트이며 false이면 형상과 출력에서 빠집니다. |
+| `visible` | 표시 게이트이며 false이면 입력을 숨기고 값과 오류는 유지합니다. |
 | `readOnly` | 읽기 전용 잠금입니다. |
 | `disabled` | 표시 여부와 별개의 disabled 잠금입니다. |
-| `default` | 값 없이 새로 나타나는 노드의 literal이며 표현식으로 컴파일하지 않습니다. |
+| `default` | 값 없이 새로 나타나는 노드의 리터럴이며 표현식으로 컴파일하지 않습니다. |
 | `derived` | 의존 값이 바뀌면 덮어쓰는 표현식이며 undefined는 쓰지 않습니다. |
 | `unsetValue` | false→true 및 load·새 진입에서 true이면 비우며 계속 살아 있는 노드에서 true 유지만으로 반복해서 비우지는 않습니다. |
 | `resetInteraction` | false→true 및 참인 load·진입에 Edited·Touched를 지웁니다. |
-| `unsetOnInactive` | 이탈 때 retained 데이터를 버리며 노드 정책이 Form 기본값보다 우선합니다. |
-| `inactiveValue` | literal 또는 동기 retained-value resolver이며 문자열도 literal입니다. |
+| `unsetOnInactive` | 이탈 때 보존된 데이터를 버리며 노드 정책이 Form 기본값보다 우선합니다. |
+| `inactiveValue` | 리터럴 또는 동기 보존 값 해석기이며 문자열도 리터럴입니다. |
 | `fields` | &#123; targets: string[], controls &#125; 배열이며 직접 자식을 이름으로 지정합니다. |
-| `injectTo` | source 변경을 다른 경로에 쓰는 함수입니다. |
-| `discriminator` | object·nullable-object union 선택에 쓰는 비어 있지 않은 속성 이름입니다. |
+| `injectTo` | 원본 변경을 다른 경로에 쓰는 함수입니다. |
+| `discriminator` | object·nullable-object 유니온 선택에 쓰는 비어 있지 않은 속성 이름입니다. |
 | `watch` | 순서대로 watchValues에 전달할 의존 경로 배열입니다. |
 
-표준 `readOnly`와 controls의 `readOnly`·`disabled` 계층은 대상 노드의 지역 입력 잠금에 OR로, `visible` 계층은 AND로 결합합니다. 기본 branch object 입력은 이 지역 잠금을 자식 입력에 전파하지 않으며 branch object의 잠금 선언은 `LockOnNonTerminalObject`로 경고합니다. 직접 자식에는 `controls.fields`, 폼 전체에는 Form의 `readOnly`·`disabled`를 사용하십시오. 기본값 우선순위는 노드 `controls.default`, 부모 `fields`, fragment `controls.default`, 표준 `default` 순입니다.
+표준 `readOnly`와 controls의 `readOnly`·`disabled` 계층은 대상 노드의 지역 입력 잠금에 논리합으로, `visible` 계층은 논리곱으로 결합합니다. 기본 분기 객체 입력은 이 지역 잠금을 자식 입력에 전파하지 않으며 분기 객체의 잠금 선언은 `LockOnNonTerminalObject`로 경고합니다. 직접 자식에는 `controls.fields`, 폼 전체에는 Form의 `readOnly`·`disabled`를 사용하십시오. 기본값 우선순위는 노드 `controls.default`, 부모 `fields`, 프래그먼트 `controls.default`, 표준 `default` 순입니다.
 
 문자열 표현식은 폼 경로와 context를 사용합니다. [경로 표현식](./api-reference#paths)과 필요한 [CSP 조건](./quick-start#transpilation-csp)을 확인하십시오.
 
-## gate 이탈의 값 보존 {#inactive-values}
+## 게이트 이탈의 값 보존 {#inactive-values}
 
-`inactiveValue` resolver는 직전 commit의 값, `dataPath`, `schemaPath`, 현재·부모·루트 schema와 값, form context를 받습니다. `undefined` 반환은 retained 원본을 유지합니다. 자동 쓰기가 켜진 정상 retained gate 이탈에서만 실행하며 load·reset·실패·budget 초과·throwing gate·같은 정착에서 잠시 진입한 instance에는 실행하지 않습니다.
+`inactiveValue` 해석기는 직전 커밋의 값, `dataPath`, `schemaPath`, 현재·부모·루트 스키마와 값, 폼 `context`를 받습니다. `undefined` 반환은 보존된 원본을 유지합니다. 자동 쓰기가 켜진 정상 보존 게이트 이탈에서만 실행하며 load·reset·실패·예산 초과·예외를 던지는 게이트·같은 정착에서 잠시 진입한 인스턴스에는 실행하지 않습니다.
 
-이탈을 일으킨 caller JSON이 해당 경로를 명시적으로 덮으면 caller 값이 우선하고 `onInactive`와 resolver 모두 실행하지 않습니다. 조상 전체 쓰기는 생략한 자손도 덮고 Merge는 주어진 키만 덮습니다. multi-write batch의 Merge는 shallow입니다. explicit coverage는 caller 쓰기 전체의 합집합이므로 뒤의 partial·empty merge나 자동 쓰기가 앞의 whole coverage를 없애지 않습니다.
+이탈을 일으킨 호출자 JSON이 해당 경로를 명시적으로 덮으면 호출자 값이 우선하고 `onInactive`와 해석기 모두 실행하지 않습니다. 조상 전체 쓰기는 생략한 자손도 덮고 Merge는 주어진 키만 덮습니다. 다중 쓰기 배치의 Merge는 얕은 병합입니다. 명시적 범위는 호출자 쓰기 전체의 합집합이므로 뒤의 부분·빈 병합나 자동 쓰기가 앞의 전체 범위를 없애지 않습니다.
 
-배열 이동 뒤 resolver는 직전 commit의 값과 주소를 읽고 결과는 현재 주소에 보존합니다. 정책은 node·parent fields·fragment 순으로 우선하며 자손 결과는 조상 결과의 자기 경로를 덮습니다. retained 결과는 기존 inactive JSON 규칙대로 미선언 키와 잘못된 종류를 유지하고 재진입에서 overlay를 소비합니다.
+배열 이동 뒤 해석기는 직전 커밋의 값과 주소를 읽고 결과는 현재 주소에 보존합니다. 정책은 node·부모 fields·fragment 순으로 우선하며 자손 결과는 조상 결과의 자기 경로를 덮습니다. 보존된 결과는 기존 비활성 JSON 규칙대로 미선언 키와 잘못된 종류를 유지하고 재진입에서 오버레이를 소비합니다.
 
-`unsetOnInactive: true`는 resolver를 건너뜁니다. 같은 계층에 literal true와 `inactiveValue`가 함께 있으면 `InactiveValueWithUnsetOnInactive`로 경고합니다. 명령형 이탈 listener와 cleanup 이전은 [onInactive](./api-reference#inactive-listeners)를 참조하십시오.
+`unsetOnInactive: true`는 해석기를 건너뜁니다. 같은 계층에 리터럴 true와 `inactiveValue`가 함께 있으면 `InactiveValueWithUnsetOnInactive`로 경고합니다. 명령형 이탈 리스너와 정리 이전은 [onInactive](./api-reference#inactive-listeners)를 참조하십시오.
 
-## 조합과 조건 gate {#composition}
+## 조합과 조건 게이트 {#composition}
 
-`oneOf`, `anyOf` 분기는 `controls.active` 또는 host discriminator에 따라 참여합니다. gate가 없으면 모든 분기가 폼 형상에 참여하고 일치 여부는 검증기가 별도로 판정합니다. gated `oneOf`가 여러 개 켜질 수도 있으며 `MultipleGatedBranchesActive`로 경고합니다. `controls.active`를 가진 `allOf` fragment도 조건에 따라 참여합니다.
+`oneOf`, `anyOf` 분기는 `controls.active` 또는 호스트 discriminator에 따라 참여합니다. 게이트가 없으면 모든 분기가 폼 형상에 참여하고 일치 여부는 검증기가 별도로 판정합니다. 게이트가 있는 `oneOf`가 여러 개 켜질 수도 있으며 `MultipleGatedBranchesActive`로 경고합니다. `controls.active`를 가진 `allOf` 프래그먼트도 조건에 따라 참여합니다.
 
-부모 type이 노드 종류를 정합니다. 분기의 다른 type은 이를 바꾸지 않으며 검증기에 그대로 전달합니다. 정적·ungated 선언의 공유 속성 종류가 호환되지 않으면 `SharedNodeKindConflict`이며 gated 선언은 같은 방식으로 비교하지 않습니다. terminal object는 자식 종류 비교와 unreachable 경고를 생략하지만 discriminator mismatch·null branch 경고·정적 enum 교차 오류는 유지합니다.
+부모 type이 노드 종류를 정합니다. 분기의 다른 type은 이를 바꾸지 않으며 검증기에 그대로 전달합니다. 정적·게이트 없는 선언의 공유 속성 종류가 호환되지 않으면 `SharedNodeKindConflict`이며 게이트가 있는 선언은 같은 방식으로 비교하지 않습니다. 말단 object는 자식 종류 비교와 도달 불가 경고를 생략하지만 discriminator 불일치·null 분기 경고·정적 enum 교차 오류는 유지합니다.
 
-`if`는 host 값으로 동기 판정하여 `then` 또는 `else`를 선택합니다. 검증기가 없으면 둘 다 꺼집니다. guard compile·평가 실패도 둘 다 끄고 `GuardFailed`를 기록하며 false 판정과 다릅니다. 값이 없거나 host가 비객체이면 `{}`로 검사하므로 값이 필요한 조건에는 `required`를 함께 두십시오. object를 허용하지 않는 host는 `IfOnNonObjectHost`로 경고하며 조건을 object host로 옮겨야 합니다.
+`if`는 호스트 값으로 동기 판정하여 `then` 또는 `else`를 선택합니다. 검증기가 없으면 둘 다 꺼집니다. 가드 컴파일·평가 실패도 둘 다 끄고 `GuardFailed`를 기록하며 false 판정과 다릅니다. 값이 없거나 호스트가 비객체이면 `{}`로 검사하므로 값이 필요한 조건에는 `required`를 함께 두십시오. object를 허용하지 않는 호스트는 `IfOnNonObjectHost`로 경고하며 조건을 object 호스트로 옮겨야 합니다.
 
-nullable `oneOf`에는 null 분기 하나를 두고 object 분기에 `type: 'object'`를 명시하여 null이 정확히 하나에 일치하도록 하십시오. null 분기는 검증 전용이며 그 안의 필드와 active는 폼 형상을 만들지 않습니다. 값은 null 여부를, gate는 표시할 object 분기를 정합니다. nullable `oneOf`가 null 검증에 실패한다고 폼이 경고하지는 않으므로 스키마를 직접 점검하십시오. `anyOf`에는 정확히 하나 조건이 없습니다.
+nullable `oneOf`에는 null 분기 하나를 두고 object 분기에 `type: 'object'`를 명시하여 null이 정확히 하나에 일치하도록 하십시오. null 분기는 검증 전용이며 그 안의 필드와 active는 폼 형상을 만들지 않습니다. 값은 null 여부를, 게이트는 표시할 object 분기를 정합니다. nullable `oneOf`가 null 검증에 실패한다고 폼이 경고하지는 않으므로 스키마를 직접 점검하십시오. `anyOf`에는 정확히 하나 조건이 없습니다.
 
 ## discriminator 선택과 한계 {#discriminator}
 
-object·nullable-object host에 `controls.discriminator`를 비어 있지 않은 문자열로 선언하십시오. 잘못된 키는 host 검사보다 먼저 `InvalidControlShape`로 거부하고 다른 host 종류는 TypeScript가 거부합니다. 선언마다 자기 union만 선택하므로 같은 노드의 별도 선언에서 서로 다른 키를 사용할 수 있습니다.
+object·nullable-object 호스트에 `controls.discriminator`를 비어 있지 않은 문자열로 선언하십시오. 잘못된 키는 호스트 검사보다 먼저 `InvalidControlShape`로 거부하고 다른 호스트 종류는 TypeScript가 거부합니다. 선언마다 자기 유니온만 선택하므로 같은 노드의 별도 선언에서 서로 다른 키를 사용할 수 있습니다.
 
 | 조건 | 결과 |
 | --- | --- |
 | `oneOf`·`anyOf` 배열 없음 | reason `union`으로 무시합니다 |
-| 알려진 비객체 host | tag를 읽지 않고 reason `host`로 무시합니다 |
-| 어느 분기도 키에 `const`·`enum` tag를 주지 않음 | reason `missing`의 `DiscriminatorMismatch`입니다 |
-| 일부 분기만 tag 있음 | 무태그 분기는 discriminator gate 없이 자기 active를 따릅니다 |
-| `oneOf` tag 중복 | reason `overlap`의 mismatch입니다 |
-| `anyOf` tag 중복 | 일치하는 모든 분기가 참여합니다 |
-| host tag type이 없고 분기 tag 종류가 호환되지 않음 | reason `kind`의 mismatch입니다 |
-| host tag type이 각 종류를 허용하는 union | 허용합니다 |
-| 분기 tag가 host type 밖임 | reason `kind`의 unreachable 경고이며 tag를 끌어올리지 않습니다 |
-| `const`·`enum` 교차가 비어 있음 | reason `empty`의 unreachable 경고이며 항상 꺼진 gate입니다 |
+| 알려진 비객체 호스트 | 태그를 읽지 않고 reason `host`로 무시합니다 |
+| 어느 분기도 키에 `const`·`enum` 태그를 주지 않음 | reason `missing`의 `DiscriminatorMismatch`입니다 |
+| 일부 분기만 태그 있음 | 무태그 분기는 discriminator 게이트 없이 자기 active를 따릅니다 |
+| `oneOf` 태그 중복 | reason `overlap`의 불일치입니다 |
+| `anyOf` 태그 중복 | 일치하는 모든 분기가 참여합니다 |
+| 호스트 태그의 type이 없고 분기 태그 종류가 호환되지 않음 | reason `kind`의 불일치입니다 |
+| 호스트 태그의 type이 각 종류를 허용하는 유니온 | 허용합니다 |
+| 분기 태그가 호스트 type 밖임 | reason `kind`의 도달 불가 경고이며 태그를 끌어올리지 않습니다 |
+| `const`·`enum` 교차가 비어 있음 | reason `empty`의 도달 불가 경고이며 항상 꺼진 게이트입니다 |
 
-tag는 `===`로 비교하고 분기의 `controls.active`와 AND로 결합합니다. 도달 가능한 tag 속성이 분기에만 있으면 항상 마운트되는 자식으로 끌어올립니다. 빈 tag 교차도 tag 존재로 세며 unreachable 선언은 기존 host 자식을 보강하지 않습니다.
+태그는 `===`로 비교하고 분기의 `controls.active`와 논리곱으로 결합합니다. 도달 가능한 태그 속성이 분기에만 있으면 항상 마운트되는 자식으로 끌어올립니다. 빈 태그 교차도 태그 존재로 세며 도달 불가 선언은 기존 호스트 자식을 보강하지 않습니다.
 
-형 미정 union host는 tag를 읽지만 gated branch로 자기 type을 추론하지 않습니다. 무시한 discriminator는 gate를 만들거나 자체로 branchless 경로를 비활성화하지 않으며 host enum 배제 조건도 추가 검사하지 않습니다.
+형 미정 유니온 호스트는 태그를 읽지만 게이트가 있는 분기로 자기 type을 추론하지 않습니다. 무시한 discriminator는 게이트를 만들거나 자체로 분기 없는 경로를 비활성화하지 않으며 호스트 enum 배제 조건도 추가 검사하지 않습니다.
 
-진단에는 tag 값 없이 `propertyName`, `reason`을 넣습니다. ignored 경고는 선언마다 `controls/discriminator`에 한 번, unreachable 경고는 분기 schema 위치에 보고합니다.
+진단에는 태그 값 없이 `propertyName`, `reason`을 넣습니다. 무시된 경고는 선언마다 `controls/discriminator`에 한 번, 도달 불가 경고는 분기 스키마 위치에 보고합니다.
 
 ## derived와 주입 {#injection}
 
-`controls.derived`는 의존 값으로 target을 유지합니다. `controls.injectTo`는 source 변경을 다른 경로에 복사하며 target을 이후에도 편집할 수 있습니다. 함수는 경로·값 map, 순서 있는 `[path, value]` 배열, 또는 건너뛰기 위한 null을 반환합니다. 상대·절대 target 경로를 섞을 수 있습니다.
+`controls.derived`는 의존 값으로 대상을 유지합니다. `controls.injectTo`는 원본 변경을 다른 경로에 복사하며 대상을 이후에도 편집할 수 있습니다. 함수는 경로·값 맵, 순서 있는 `[path, value]` 배열, 또는 건너뛰기 위한 null을 반환합니다. 상대·절대 대상 경로를 섞을 수 있습니다.
 
-handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, form `context`를 제공합니다. 주입 cycle이 수렴하지 않으면 25 derive round 후 caller 쓰기는 유지하고 그 정착의 자동 쓰기를 되돌리며 derive degraded 진단과 예외를 남깁니다. handler가 throw하면 그 round의 규칙을 건너뛰고 expression degraded 진단과 `ExpressionThrew`를 caller에 보고합니다.
+핸들러는 원본 값을 별도 인수로 받으며 context는 `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, 폼 `context`를 제공합니다. 주입 순환이 수렴하지 않으면 25 파생 라운드 후 호출자 쓰기는 유지하고 그 정착의 자동 쓰기를 되돌리며 derive의 degraded 진단과 예외를 남깁니다. 핸들러가 예외를 던지면 그 round의 규칙을 건너뛰고 expression의 degraded 진단과 `ExpressionThrew`를 호출자에 보고합니다.
 
 ## 입력 선택 {#input-resolution}
 
-스키마 입력은 `presentation.FieldInput`, Form `fieldInputMap`, Form 정의, FormProvider 정의, 플러그인 정의와 내장 fallback 순으로 선택합니다. 조합 컴포넌트의 직접 `FieldInput`은 해당 슬롯을 덮어씁니다. 정의 목록에서는 첫 match를 사용합니다. inputType은 HTML input type이 아니라 컴포넌트 선택 hint입니다. fieldInputMap의 `/items/*/price` 같은 키는 `*`마다 배열 index와 객체 키를 포함한 segment 정확히 하나를 매칭합니다. 다른 비어 있지 않은 map 키는 exact match 후 정규식으로도 검사하며 절대 빈 이름 경로는 예외입니다. 한 경로만 매칭하려면 `^/profile/name$`처럼 anchor를 사용하십시오.
+스키마 입력은 `presentation.FieldInput`, Form `fieldInputMap`, Form 정의, FormProvider 정의, 플러그인 정의와 내장 폴백 순으로 선택합니다. 조합 컴포넌트의 직접 `FieldInput`은 해당 슬롯을 덮어씁니다. 정의 목록에서는 첫 일치를 사용합니다. inputType은 HTML input 타입이 아니라 컴포넌트 선택 힌트입니다.
 
-`**`는 재귀 wildcard가 아닙니다. `/**`처럼 컴파일할 수 없는 키는 Form 로드를 막으며 [입력 map 구성 실패](./error-reference#occurrences)를 참조하십시오.
+### 경로 매칭 {#input-map-keys}
+
+`fieldInputMap`은 노드 경로를 입력 컴포넌트에 연결합니다. `^`로 시작하는 키만 정규식이며, 단일 세그먼트 `*` 와일드카드를 제외한 나머지 키는 텍스트로 비교합니다.
+
+```tsx
+<Form
+  jsonSchema={schema}
+  fieldInputMap={{
+    '/settings/theme/color': ColorInput,
+    '^/settings/': SettingsInput,
+  }}
+/>
+```
+
+| 키 | 의미 |
+| --- | --- |
+| `^`로 시작 | 표현식이 일치하는 노드 경로를 고릅니다(`RegExp.test`). 선행 `^`는 시작을 고정하며 끝을 고정하려면 `$`를 추가합니다. |
+| `/` 또는 `#/`로 시작하고 정확히 `*`인 세그먼트가 있으며 `/`로 끝나지 않음 | 세그먼트 수가 같아야 하며 각 `*`는 배열 index나 객체 키 한 세그먼트를 소비합니다. 나머지 세그먼트는 텍스트입니다. |
+| 그 밖 | 정확한 텍스트입니다. 절대 포인터만 한 번 표준화하며 상대 텍스트는 그대로 비교하므로 어떤 노드에도 일치하지 않습니다. |
+
+모든 종류의 키에서 이름은 경로 표기를 사용합니다. `/`는 `~1`, `~`는 `~0`, 정확히 `*`인 이름은 `%2A`입니다. `%` 자체는 키에서 특별한 의미가 없으므로 `'/rate(%)'`는 이름이 `rate(%)`인 속성입니다. 별표 이름을 `%2A`로 쓰는 규칙은 이름 전체가 `*`일 때만 적용합니다. `'/a~1b'`는 이름이 `a/b`인 속성을 선택하며 정규식은 `'^/a~1b$'`입니다. 포인터 키의 비표준 tilde `/a~b`는 `/a~0b`로 표준화하지만 패턴은 표준화 없이 이스케이프된 경로를 봅니다.
+
+일치 가능한 키는 `/`, `#/`, `^`로 시작하거나 루트(`''`, `'#'`)입니다. `'/'`는 루트가 아니라 빈 이름 자식입니다. 검증 오류의 데이터 경로처럼 필드의 데이터 경로를 사용하고 스키마 위치와 구별하십시오. `#/properties/contact`는 `/contact`를 가리키지 않습니다(데이터에 이름이 `properties`인 속성이 있고 그 아래 `contact`가 있다면 그 경로입니다). 다른 라이브러리의 `contact.email`, `items[0].name` 표기는 어떤 노드 경로와도 같지 않은 텍스트입니다.
+
+`'/user/(name|email)'`, `'/items/**/name'`은 해당 이름을 그대로 가진 속성만 고릅니다. `**`는 재귀 연산자가 아닙니다. `'/files/*/images/(thumb|full)'`의 `(thumb|full)`도 리터럴이며, `'/items/*/'`는 와일드카드 문법 밖이므로 어떤 노드에도 일치하지 않습니다. 이 키들은 오류나 경고를 내지 않습니다.
+
+`^` 키 안의 모든 문자는 정규식 문법입니다. `'^/items/*/name$'`은 `/items/name`에 일치하며 `/items/0/name`에는 일치하지 않습니다. 비어 있지 않은 한 세그먼트는 `[^/]+`입니다. JavaScript 문자열에서는 역슬래시를 두 번 쓰고(`'^/users/\\d+$'`), 대안은 그룹으로 묶습니다(`'^/(billing|shipping)/email$'`). 패턴이 보는 경로에는 프래그먼트 `#`가 없으므로 `'^#/a'`는 일치하지 않으며 `'^$'`는 루트입니다.
+
+| 선택 의도 | 키 | 일치 | 비일치 |
+| --- | --- | --- | --- |
+| 해당 노드 | `'/settings'` | `/settings` | `/settings/theme`, `/settingsBackup` |
+| 직접 자식 | `'/settings/*'` | `/settings/theme` | `/settings`, `/settings/theme/color` |
+| 모든 자손 | `'^/settings/'` | `/settings/theme`, `/settings/theme/color` | `/settings`, `/settingsBackup` |
+| 해당 노드와 모든 자손 | 같은 입력을 쓰는 두 키: `'/settings'`, `'^/settings/'` | `/settings`, `/settings/theme/color` | `/settingsBackup` |
+| 모든 깊이의 특정 이름 | `'^.*/note$'` | `/note`, `/settings/theme/note` | `/notebook`, `/note/child` |
+
+자손 패턴 대신 `'^/settings'`(`/settingsBackup`도 포함), `'/settings/'`(빈 이름 자식), `'/settings/**'`(리터럴 `**` 자식)를 쓰지 마십시오. 자손 패턴은 도중의 객체·배열 노드도 포함하므로 입력이 `ChildFields`를 렌더하지 않으면 그 아래 자손이 사라집니다. [사용자 입력 계약](./api-reference#hybrid-parent-inputs)을 따르십시오. 리프 필드만 선택하려면 힌트의 type과 path를 확인하는 `test` 함수를 가진 `fieldInputDefinitions` 항목을 사용합니다.
+
+종류와 무관하게 `Object.keys` 순서의 첫 일치가 이깁니다. 정확 키가 앞선 패턴보다 우선하지 않습니다. 정확 키, `*` 키, `^` 키 순서로 두고 공유 맵을 확장할 때는 로컬 예외를 먼저 쓴 뒤 공유 맵을 마지막에 펼칩니다.
+
+일치하지 않는 키는 진단 없이 무시합니다. 오타, 이름이 바뀐 속성, 아직 렌더되지 않는 노드(빈 배열이나 비활성 분기) 모두 같습니다. 입력이 단위·마스크·정규화로 저장 값을 바꾼다면 키를 테스트로 검증하십시오. 컴파일할 수 없는 `^` 패턴만 `FormErrorCode.FieldInputMap`을 만듭니다. 이때 새 맵 전체가 거부되며 기존 트리는 마지막으로 커밋된 유효 맵과 기존 입력을 유지합니다. 최초 로드에는 유효 맵이 없어 load 폴백을 표시합니다. 유효한 새 맵 참조로 교체하면 복구합니다. [구성 실패](./error-reference#occurrences)와 [이전 표](./migration-from-0x#input-map-keys)를 참조하십시오.
 
 `FieldInputTestObject`의 `type`, `schemaType`, `path`, `format`, `inputType`은 단일값 또는 목록을 받고 `required`, `nullable`은 boolean입니다. 생략한 조건은 제한하지 않습니다. virtual 노드는 `type: 'virtual'`, `schemaType: undefined`이며 `schemaType: 'virtual'`로 매칭하지 않습니다.
 
 입력별 설정은 실제 입력으로 전달하는 `presentation.FieldInputProps`를 권장합니다. `lazy`, `protocols`, `minRows` 등을 `options`에 둘 수 있지만 입력이 노드 스키마에서 명시적으로 읽어야 합니다. 스키마 최상위의 `inputType`, `FieldInput`은 presentation 그룹을 대체하지 않습니다.
+
+### 제어 입력의 재마운트 생략 {#controlled}
+
+입력이 직접 쓰지 않은 값(범위와 무관한 `setValue`, reset, `refresh(path)`, `derived`, `injectTo`, `unsetValue`, 배열 조작)은 그 입력을 다시 마운트하여 새 `defaultValue`를 넘깁니다. 매 렌더의 `value`만으로 그리는 입력에는 이 재마운트가 필요 없습니다. `FieldInputDefinition` 또는 필드별 `presentation.controlled`에 `controlled: true`를 선언하면 DOM, 포커스, 내부 상태를 유지한 채 새 값을 `value`로 받습니다.
+
+| `controlled` | 입력이 직접 쓰지 않은 값 |
+| --- | --- |
+| 생략 또는 `false` | 새 `defaultValue`로 재마운트 |
+| `true` | 새 `value`, 재마운트 없음 |
+
+자주 다시 계산되는 필드와 마운트 비용이 큰 위젯을 위한 최적화입니다. 값의 사본을 두지 않는 컴포넌트에만 선언하십시오. 복사해 둔 초안은 reset 뒤에도 남습니다. 인라인 `presentation.FieldInput`, `fieldInputMap` 컴포넌트, `Form.Input`·`Form.Field`·`Form.Render`에 넘긴 `FieldInput`은 스키마에서만 선언할 수 있습니다. 어느 쪽이든 `false`가 이기므로 스키마에서 한 필드만 다시 재마운트 방식으로 되돌릴 수 있습니다. 직접 입력 쓰기는 값을 내보낸 입력을 유지하며 부모의 콜백 재정의는 [하이브리드 부모 계약](./api-reference#hybrid-parent-inputs)을 따릅니다. `remount(path)`는 선언과 무관하게 입력을 교체합니다. UI 플러그인은 `value`로 그리는 체크박스, 스위치, 스테퍼 입력에 이 선언을 달아 두었습니다.
 
 ## 사용자 입력 접근성 {#accessibility}
 
@@ -154,60 +208,62 @@ handler는 source 값을 별도 인수로 받으며 context는 `dataPath`, `sche
 
 루트·배열 항목·label 없는 조합에서 `label:${path}`가 없으면 사용자 렌더러가 접근 가능한 그룹 이름을 제공해야 합니다. `Form.Label`은 전달된 path로 id와 htmlFor를 만들므로 연결에는 실제 입력의 절대 경로를 사용하십시오.
 
-내장 enum select는 undefined를 목록 맨 앞의 선택된 빈 disabled option으로 표시하고 enum 밖 값도 별도의 disabled option으로 표시합니다. 첫 enum 값을 자동 선택하지 않습니다.
+내장 enum select는 undefined를 목록 맨 앞의 선택된 빈 비활성 선택지로 표시하고 enum 밖 값도 별도의 비활성 선택지로 표시합니다. 첫 enum 값을 자동 선택하지 않습니다.
 
 ## 공식 UI 플러그인의 입력 선택 {#ui-selection}
 
-다음 패턴은 antd-mobile·antd5·antd6·MUI에 공통입니다. 여기서 `inputType`은 `presentation.inputType`입니다. 아래는 매칭 조건이며 [입력 선택](#input-resolution)의 첫 match 순서를 따릅니다.
+다음 패턴은 antd-mobile·antd5·antd6·MUI에 공통입니다. 여기서 `inputType`은 `presentation.inputType`입니다. 아래는 매칭 조건이며 [입력 선택](#input-resolution)의 첫 일치 순서를 따릅니다.
 
 | 조건 | 입력 |
 | --- | --- |
-| boolean + inputType `switch` | boolean switch |
-| string items·items.enum 배열 + inputType `checkbox` | checkbox group |
-| 정확히 두 enum 원소를 가진 string + inputType `switch` | string switch |
-| string·number·integer enum + inputType `radio` 또는 `radiogroup` | radio group |
+| boolean + inputType `switch` | 불리언 스위치 |
+| string 항목·items.enum 배열 + inputType `checkbox` | 체크박스 그룹 |
+| 정확히 두 enum 원소를 가진 string + inputType `switch` | 문자열 스위치 |
+| string·number·integer enum + inputType `radio` 또는 `radiogroup` | 라디오 그룹 |
 | 앞선 정의에 매칭하지 않은 array | 추가·삭제 배열 입력 |
 | string + (`format: 'textarea'` 또는 `presentation.inputType: 'textarea'`) | 여러 줄 입력 |
 | 남은 string | 문자열 입력이며 format `password`이면 password 표시 |
 | 남은 number·integer schemaType | 숫자 입력 |
 | 남은 boolean | checkbox |
 
-antd5·antd6·MUI는 string의 `format: 'uri'` 또는 inputType `uri`에 URI 입력, string format `month`·`date`·`time`에 월·날짜·시간 입력, number·integer의 inputType `slider`에 slider, string enum에 Select도 선택합니다. antd5·6은 `items.enum`이 있는 string items 배열에 multiple Select를, format `month-range`·`date-range`·`time-range` 또는 inputType `monthRange`·`dateRange`·`timeRange`에 범위 입력을 선택합니다.
+antd5·antd6·MUI는 string의 `format: 'uri'` 또는 inputType `uri`에 URI 입력, string format `month`·`date`·`time`에 월·날짜·시간 입력, number·integer의 inputType `slider`에 slider, string enum에 Select도 선택합니다. antd5·6은 `items.enum`이 있는 문자열 항목 배열에 다중 Select를, format `month-range`·`date-range`·`time-range` 또는 inputType `monthRange`·`dateRange`·`timeRange`에 범위 입력을 선택합니다.
 
-antd-mobile slider는 숫자 format `slider`로 선택합니다. 일반 배열 정의가 숫자 배열 slider 검사보다 앞서므로 숫자 배열은 자동으로 range slider가 되지 않습니다. 범위 UI에는 적절한 사용자 `presentation.FieldInput`이나 앞선 Form 정의를 제공하십시오. 플러그인 진입점은 개별 mobile slider 컴포넌트를 내보내지 않습니다.
+antd-mobile slider는 숫자 format `slider`로 선택합니다. 일반 배열 정의가 숫자 배열 slider 검사보다 앞서므로 숫자 배열은 자동으로 범위 슬라이더가 되지 않습니다. 범위 UI에는 적절한 사용자 `presentation.FieldInput`이나 앞선 Form 정의를 제공하십시오. 플러그인 진입점은 개별 모바일 슬라이더 컴포넌트를 내보내지 않습니다.
 
 ## 공통 입력 설정과 라벨 {#ui-settings}
 
-입력 props는 [presentation.FieldInputProps](#input-resolution)로 전달하십시오.
+입력 속성은 [presentation.FieldInputProps](#input-resolution)로 전달하십시오.
 
 | 입력 | Antd-mobile·antd5·antd6 | MUI |
 | --- | --- | --- |
-| Boolean switch | `alias: { checked, unchecked }` 또는 `context.checkboxLabels`로 상태 라벨 설정하며 context가 우선 | `label`, `hideLabel`, `size`; checked·unchecked별 문구 없음 |
-| Checkbox group | `alias` 또는 `context.checkboxLabels`로 enum 값 라벨 설정 | enum 값의 `alias` 라벨 |
-| String switch | `alias` 또는 `context.switchLabels`로 enum 값 라벨 설정 | 스키마 최상위 `switchLabels` 튜플·`switchSize`를 읽는 입력별 예외 |
-| Radio group | `alias` 또는 `context.radioLabels`로 enum 값 라벨 설정 | `alias`를 사용하며 schema `radioLabels` 원소가 우선 |
+| 불리언 스위치 | `alias: { checked, unchecked }` 또는 `context.checkboxLabels`로 상태 라벨 설정하며 context가 우선 | `label`, `hideLabel`, `size`; checked·unchecked별 문구 없음 |
+| 체크박스 그룹 | `alias` 또는 `context.checkboxLabels`로 enum 값 라벨 설정 | enum 값의 `alias` 라벨 |
+| 문자열 스위치 | `alias` 또는 `context.switchLabels`로 enum 값 라벨 설정 | 스키마 최상위 `switchLabels` 튜플·`switchSize`를 읽는 입력별 예외 |
+| 라디오 그룹 | `alias` 또는 `context.radioLabels`로 enum 값 라벨 설정 | `alias`를 사용하며 스키마 `radioLabels` 원소가 우선 |
 | Array | readOnly이면 추가·삭제 버튼 숨김 | readOnly이면 추가·삭제 버튼 숨김 |
 | Textarea | `minRows`, `maxRows` | `minRows`, `maxRows` |
-| Number | schema `minimum`, `maximum`, `multipleOf`를 min·max·step으로 사용 | 같은 schema 값을 쓰며 integer 기본 step은 1, 다른 숫자는 any |
-| Boolean checkbox | undefined를 indeterminate로 표시 가능 | undefined를 indeterminate로 표시 가능 |
+| Number | 스키마 `minimum`, `maximum`, `multipleOf`를 min·max·step으로 사용 | 같은 스키마 값을 쓰며 integer 기본 step은 1, 다른 숫자는 any |
+| 불리언 체크박스 | undefined를 `indeterminate` 상태로 표시 가능 | undefined를 `indeterminate` 상태로 표시 가능 |
 
-mobile Boolean Switch의 context 라벨은 정확히 `context.checkboxLabels.checked`, `.unchecked`입니다. 다른 모양의 라벨 객체를 사용하지 마십시오.
+모바일 불리언 스위치의 context 라벨은 정확히 `context.checkboxLabels.checked`, `.unchecked`입니다. 다른 모양의 라벨 객체를 사용하지 마십시오.
 
 ## URI·날짜·slider 계약 {#date-uri-slider}
 
 | 설정 | Antd5 / antd6 | MUI |
 | --- | --- | --- |
-| URI protocols | `FieldInputProps.protocols`; 기본 `http`, `https`, `ftp`, `mailto`, `tel` | 같은 prop이며 기본 `http`, `https`; `mailto`, `tel` 같은 single-colon protocol도 처리 |
+| URI 프로토콜 | `FieldInputProps.protocols`; 기본 `http`, `https`, `ftp`, `mailto`, `tel` | 같은 속성이며 기본 `http`, `https`; `mailto`, `tel` 같은 콜론 하나를 사용하는 프로토콜도 처리 |
 | 월 | `FieldInputProps.minimum` / `maximum`; `YYYY-MM` | `YYYY-MM`; 월 범위 제한은 연결되지 않음 |
-| 날짜 | `FieldInputProps.minimum` / `maximum`; `YYYY-MM-DD` | schema 최상위 `minimum` / `maximum`을 minDate·maxDate로 사용; `YYYY-MM-DD` |
+| 날짜 | `FieldInputProps.minimum` / `maximum`; `YYYY-MM-DD` | 스키마 최상위 `minimum` / `maximum`을 minDate·maxDate로 사용; `YYYY-MM-DD` |
 | 월·날짜 범위 | `FieldInputProps.minimum` / `maximum`; 해당 월·날짜 문자열 배열 | 대응 범위 정의 없음 |
 | 시간 | dayjs 형식 `HH:mm:00Z` | `HH:mm:ss` |
 | 시간 범위 | `FieldInputProps.minimum` / `maximum`; `HH:mm:00Z` 값 배열 | 대응 범위 정의 없음 |
-| Slider | `lazy: false`이면 이동마다, 생략하면 release 때 발행 | `lazy` 기본값 false이며 true이면 release 때 발행; `showMarks`로 mark 표시, value label은 자동 표시 |
+| Slider | `lazy: false`이면 이동마다, 생략하면 드래그 종료 때 발행 | `lazy` 기본값 false이며 true이면 드래그 종료 때 발행; `showMarks`로 눈금 표시, 값 라벨은 자동 표시 |
 | 숫자 형식 | `FieldInputProps.formatter` / `parser` | 다른 형식 계약은 사용자 입력으로 구성 |
 
-이 표의 `FieldInputProps.*`는 항상 `presentation.FieldInputProps.*`를 뜻합니다. Antd 시간 형식의 `Z`는 timezone offset token입니다. 단일 시간 입력에는 범위 입력의 minimum·maximum props가 없습니다.
+이 표의 `FieldInputProps.*`는 항상 `presentation.FieldInputProps.*`를 뜻합니다. Antd 시간 형식의 `Z`는 시간대 오프셋 토큰입니다. 단일 시간 입력에는 범위 입력의 minimum·maximum 속성이 없습니다.
 
-Mobile slider는 같은 prop 그룹에 `range`, `marks`, `lazy`를 받습니다. `lazy: false`이면 이동마다, 생략하면 release 때 발행합니다. 숫자 배열 선택에는 [첫 match 제한](#ui-selection)이 그대로 적용됩니다.
+모바일 슬라이더는 같은 속성 그룹에 `range`, `marks`, `lazy`를 받습니다. `lazy: false`이면 이동마다, 생략하면 드래그 종료 때 발행합니다. 숫자 배열 선택에는 [첫 일치 제한](#ui-selection)이 그대로 적용됩니다.
 
 UI 한도는 입력 조작을 안내하며 최종 값의 허용 여부는 스키마 검증이 판정합니다.
+
+입력 속성은 페이로드이며 틀 설정이 아닙니다. 입력에 오류 피드백이 필요하면 [위치별 unwrapped 규칙](./api-reference#input-frames)과 [필드 오류 훅](./api-reference#field-errors)을 따르십시오.

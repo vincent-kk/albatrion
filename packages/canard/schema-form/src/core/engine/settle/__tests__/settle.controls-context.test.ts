@@ -3,7 +3,10 @@ import { describe, expect, it, vi } from 'vitest';
 import * as arrayUtils from '@winglet/common-utils/array';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -59,10 +62,10 @@ describe('context state keys', () => {
     root.runtime.context = { locked };
     loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, WriteOption.Overwrite);
     expect(locked).toHaveBeenCalledTimes(1);
-    expect([root.structure?.a?.isReadOnly, root.structure?.b?.isReadOnly]).toEqual([
-      true,
-      true,
-    ]);
+    expect([
+      root.structure?.a?.isReadOnly,
+      root.structure?.b?.isReadOnly,
+    ]).toEqual([true, true]);
   });
 
   it('ERROR-122 state key throw commits degraded and ignores that declaration', () => {
@@ -119,7 +122,7 @@ describe('state-key failures during settlement', () => {
       writeFieldNode(
         root.structure!.flag,
         false,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       ),
     ).toThrow('State key expression failed');

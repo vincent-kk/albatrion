@@ -32,7 +32,7 @@ A root empty array emits `[]`. `omitEmpty` removes empty values during propagati
 
 A Form's `children` replaces automatic root layout. Omitted inputs are not inserted elsewhere automatically. Rendering the same path twice creates two inputs. Built-in inputs that initialize from defaultValue and retain their own drafts do not mirror another input's typing until refreshed. A custom controlled input can instead follow the current value prop and synchronize both renderings immediately.
 
-The default group renderer draws its own label and errors. Replacing `FormLabelRenderer` or `FormErrorRenderer` affects composition components and custom renderers that call them; it does not rewrite the default group renderer.
+The default group assembles the [registered Label and ErrorMessage parts](./api-reference#renderer-parts), so replacing a slot changes its presentation without copying the group layout. Branch legends still use the field name directly, and labels are omitted for array-item leaves; a LabelRenderer does not change those titles or add those omitted labels.
 
 Renderers, `formatError`, input definitions, and input maps apply after mount when their immutable references change. Input selection preserves values, state and external errors; input DOM is preserved while both its selected component and its owning ancestors stay unchanged. Replacing a parent input recreates its descendants’ DOM and uncommitted drafts, even when their selected components are unchanged. A renderer replacement rebuilds the UI subtree it owns. See [configuration lifetime](./api-reference#configuration-lifetime).
 

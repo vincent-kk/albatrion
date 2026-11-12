@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -31,7 +34,12 @@ describe('settled exit policy layers', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
@@ -54,7 +62,12 @@ describe('settled exit policy layers', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
@@ -76,7 +89,12 @@ describe('settled exit policy layers', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
@@ -99,7 +117,12 @@ describe('settled exit policy layers', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
@@ -126,7 +149,12 @@ describe('settled exit policy layers', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
@@ -161,7 +189,12 @@ describe('settled exit policy layers', () => {
       { flag: true, addr: { city: 'C', zip: 'Z', extra: 'E' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.addr?.structure?.city?.source).toBe('C');
     expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
     expect(root.structure?.addr?.extras).toEqual({ extra: 'E' });
@@ -195,7 +228,12 @@ describe('settled exit policy layers', () => {
       { flag: true, branch: { drop: 'D', keep: 'K' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
@@ -242,10 +280,15 @@ describe('settled exit policy layers', () => {
     writeFieldNode(
       root.structure!.branch.structure!.show,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
       false,
     );
@@ -283,10 +326,15 @@ describe('settled exit policy layers', () => {
     writeFieldNode(
       root.structure!.branch.structure!.show,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(readRetainedSlotSource(root, '/branch/keep', 'string')).toBe('K');
   });
 
@@ -312,8 +360,18 @@ describe('settled exit policy layers', () => {
       { flag: true, clear: false, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.clear,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
@@ -349,7 +407,12 @@ describe('settled exit policy layers', () => {
       commit: 1,
     });
     const calls = explode.mock.calls.length;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(explode).toHaveBeenCalledTimes(calls);
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
@@ -378,7 +441,12 @@ describe('settled exit policy layers', () => {
         key.startsWith('["/secret",'),
       ),
     ).toBe(true);
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
         key.startsWith('["/secret",'),
@@ -430,7 +498,12 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     const calls = read.mock.calls.length;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(read).toHaveBeenCalledTimes(calls);
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });

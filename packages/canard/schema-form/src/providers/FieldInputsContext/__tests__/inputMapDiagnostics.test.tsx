@@ -34,7 +34,7 @@ it.each([false, true])(
           type: 'object',
           properties: { name: { type: 'string' } },
         }}
-        fieldInputMap={{ '/**': Input }}
+        fieldInputMap={{ '^/**': Input }}
         validationMode={ValidationMode.None}
         onError={onError}
       />
@@ -44,11 +44,11 @@ it.each([false, true])(
     expect(onError).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         level: 'error',
-        code: FormErrorCode.FormTypeInputMap,
+        code: FormErrorCode.FieldInputMap,
         origin: 'load',
         error: expect.objectContaining({
-          code: FormErrorCode.FormTypeInputMap,
-          details: expect.objectContaining({ path: '/**' }),
+          code: FormErrorCode.FieldInputMap,
+          details: expect.objectContaining({ path: '^/**' }),
         }),
       }),
     );
@@ -62,7 +62,7 @@ it.each([false, true])(
   'keeps a throwing user input as a render failure (StrictMode=%s)',
   (strict) => {
     const error = new SchemaFormError(
-      FormErrorCode.FormTypeInputMap,
+      FormErrorCode.FieldInputMap,
       'User input threw during render',
       { path: '/name' },
     );
@@ -121,7 +121,7 @@ it.each(['reset', 'rebuild'] as const)(
         ref={ref}
         jsonSchema={{ type: 'string' }}
         fieldInputMap={{
-          '/**': () => <input aria-label="Invalid mapped input" />,
+          '^/**': () => <input aria-label="Invalid mapped input" />,
         }}
         validationMode={ValidationMode.None}
         onError={onError}

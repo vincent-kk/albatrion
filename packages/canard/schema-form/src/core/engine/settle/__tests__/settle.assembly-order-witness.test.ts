@@ -5,12 +5,17 @@ import { getSlotChildIndex } from '../utils/slots/getSlotChildIndex';
 
 // filid:contract settle-assembly-order-witness
 it('connects the real slot order writer to object assembly without dormant visits', () => {
-  const first = {}, second = {}, replacement = {};
+  const first = {},
+    second = {},
+    replacement = {};
   const entries = [
     { name: 'alpha', node: first },
     { name: 'beta', node: second },
     { name: 'alpha', node: replacement },
-    ...Array.from({ length: 80 }, (_, rank) => ({ name: 'dormant' + rank, node: {} })),
+    ...Array.from({ length: 80 }, (_, rank) => ({
+      name: 'dormant' + rank,
+      node: {},
+    })),
   ];
   let reads = 0;
   const observed = new Proxy(entries, {
@@ -20,11 +25,19 @@ it('connects the real slot order writer to object assembly without dormant visit
     },
   });
   const node = {
-    runtime: {}, local: {}, extras: undefined,
+    runtime: {},
+    local: {},
+    extras: undefined,
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof objectBehavior.branch.assemble>[0];
-  expect(getSlotChildIndex(node.blueprintNode, 'alpha', node.blueprintNode.childEntries[0].node)).toBe(0);
+  expect(
+    getSlotChildIndex(
+      node.blueprintNode,
+      'alpha',
+      node.blueprintNode.childEntries[0].node,
+    ),
+  ).toBe(0);
   expect(reads).toBeGreaterThan(0);
   reads = 0;
   const result = objectBehavior.branch.assemble(node, [

@@ -1,6 +1,7 @@
 import type { FormErrorOrigin } from '../../../../../errors';
 import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
+import { abortFieldNodeChain } from '../chain/chainAbort';
 import { bundleChainErrors } from './bundleChainErrors';
 import { collectChainRecords } from './collectChainRecords';
 import { deliverChainRecords } from './deliverChainRecords';
@@ -17,7 +18,11 @@ import { deliverChainRecords } from './deliverChainRecords';
 export const finishQueuedErrors = (
   runtime: Pick<
     FieldNodeRuntime<unknown>,
-    'errorReporter' | 'reportingErrors' | 'reportedGuardFailures'
+    | 'errorReporter'
+    | 'reportingErrors'
+    | 'reportedGuardFailures'
+    | 'chainErrors'
+    | 'enclosingChain'
   >,
   errors: readonly unknown[],
   occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
@@ -32,13 +37,18 @@ export const finishQueuedErrors = (
     origin,
     runtime.reportedGuardFailures,
   );
-  const handlerErrors = deliverChainRecords(
-    runtime,
-    pending,
-    original,
-    caller,
-    origin,
-  );
+  let handlerErrors: unknown[];
+  try {
+    handlerErrors = deliverChainRecords(
+      runtime,
+      pending,
+      original,
+      caller,
+      origin,
+    );
+  } catch (error) {
+    throw abortFieldNodeChain(runtime, error).error;
+  }
   if (caller && (errors.length || handlerErrors.length))
     throw errors.length && handlerErrors.length
       ? bundleChainErrors([original, ...handlerErrors])

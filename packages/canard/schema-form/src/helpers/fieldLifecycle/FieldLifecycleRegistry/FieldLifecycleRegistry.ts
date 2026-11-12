@@ -1,5 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import type { FieldNode } from '@/schema-form/core';
 
 import { FieldLifecycle } from '../constants/FieldLifecycle';
@@ -23,7 +24,7 @@ export class FieldLifecycleRegistry {
     [FieldLifecycle.Render]: new Map<FieldNode, Entry[]>(),
   };
   /** Updated on queue changes so idle consumers perform only a property read. */
-  private pendingMask = 0;
+  private pendingMask = BIT_MASK_NONE;
   /** Consumer-owned nonthrowing error sink. */
   private readonly onHandlerError: (error: unknown, node: FieldNode) => void;
 

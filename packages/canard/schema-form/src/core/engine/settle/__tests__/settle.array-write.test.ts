@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { patchFieldNodeInteractionState } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
@@ -20,14 +23,19 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      ['a', 'b'],
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     const first = root.children![0];
     const second = root.children![1];
     patchFieldNodeInteractionState(second, { touched: true, edited: true });
     writeFieldNode(
       root,
       ['x', 'y', 'z'],
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.children![0]).toBe(first);
@@ -115,7 +123,7 @@ describe('array settlement writes', () => {
     writeFieldNode(
       root,
       ['a', 2, 'c', 'd'],
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.itemCount).toBe(4);
@@ -174,12 +182,17 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a'], 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      ['a'],
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     const old = root.children![0];
     writeFieldNode(
       root,
       { 0: 'wrong' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.source).toEqual({ 0: 'wrong' });
@@ -187,7 +200,12 @@ describe('array settlement writes', () => {
     expect(root.children).toEqual([]);
     expect(root.extras).toBeUndefined();
     expect(old.detached).toBe(true);
-    writeFieldNode(root, ['b'], 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      ['b'],
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.children![0].itemKey).toBeGreaterThan(old.itemKey!);
   });
 
@@ -209,14 +227,14 @@ describe('array settlement writes', () => {
     writeFieldNode(
       transient.root,
       [undefined],
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.DisableAutomaticWrites,
     );
     const pending = transient.root.children![0];
     const scratch = getSettlementScratch(transient.root.runtime);
     const context = createSettlementContext(
       transient.root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
       scratch,
     );

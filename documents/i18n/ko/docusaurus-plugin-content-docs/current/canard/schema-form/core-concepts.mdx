@@ -15,29 +15,29 @@ sidebar_position: 3
 
 | 노드                                             | 의미                                                                     |
 | ------------------------------------------------ | ------------------------------------------------------------------------ |
-| StringNode / NumberNode / BooleanNode / NullNode | terminal 값이며 integer도 NumberNode입니다                               |
-| ObjectNode / ArrayNode                           | branch 전략에서는 자식 노드, terminal 전략에서는 전체 값 입력 하나입니다 |
-| UnionNode                                        | 여러 non-null 종류를 위한 terminal 노드입니다                            |
-| VirtualNode                                      | `options.virtual`로 기존 형제 속성을 묶는 합성 branch입니다              |
+| StringNode / NumberNode / BooleanNode / NullNode | 말단 값이며 integer도 NumberNode입니다                               |
+| ObjectNode / ArrayNode                           | 분기 전략에서는 자식 노드, 말단 전략에서는 전체 값 입력 하나입니다 |
+| UnionNode                                        | null이 아닌 여러 종류를 위한 말단 노드입니다                            |
+| VirtualNode                                      | `options.virtual`로 기존 형제 속성을 묶는 합성 분기입니다              |
 
-virtual 노드는 레이아웃 그룹이며 조건 분기 노드가 아닙니다. object·array 전략은 명시적 `options.terminal`, `presentation.FieldInput`의 컴포넌트, branch 전략 순으로 정합니다. [전략 불변 조건](./schema-reference#terminal-strategy)을 참조하십시오.
+virtual 노드는 레이아웃 그룹이며 조건 분기 노드가 아닙니다. object·array 전략은 명시적 `options.terminal`, `presentation.FieldInput`의 컴포넌트, 분기 전략 순으로 정합니다. [전략 불변 조건](./schema-reference#terminal-strategy)을 참조하십시오.
 
 ## 배열 데이터와 배열 UI {#arrays}
 
-`minItems`는 초기화·reset·재활성화 때 배열 항목을 만들지 않습니다. 코어 내장 배열 입력은 `maxItems`를 넘지 않는 범위에서 최소 개수에 맞춘 빈 UI 슬롯을 표시할 수 있고, 슬롯에 입력이 들어오면 그 위치를 데이터로 기록합니다. 빈 슬롯의 입력 종류는 활성 항목 schema를 우선하고, 없으면 `prefixItems[index]`, `items` 순으로 정합니다. `maxItems`에서는 추가 버튼을 숨기고 readOnly가 아니면 `minItems`와 무관하게 제거 버튼을 표시합니다. UI 플러그인은 자체 배열 동작을 제공하며 Antd6 입력은 [tuple 예제](./examples/tuple-arrays)를 참조하십시오.
+`minItems`는 초기화·reset·재활성화 때 배열 항목을 만들지 않습니다. 코어 내장 배열 입력은 `maxItems`를 넘지 않는 범위에서 최소 개수에 맞춘 빈 UI 슬롯을 표시할 수 있고, 슬롯에 입력이 들어오면 그 위치를 데이터로 기록합니다. 빈 슬롯의 입력 종류는 활성 항목 스키마를 우선하고, 없으면 `prefixItems[index]`, `items` 순으로 정합니다. `maxItems`에서는 추가 버튼을 숨기고 readOnly가 아니면 `minItems`와 무관하게 제거 버튼을 표시합니다. UI 플러그인은 자체 배열 동작을 제공하며 Antd6 입력은 [튜플 예제](./examples/tuple-arrays)를 참조하십시오.
 
 루트의 빈 배열은 `[]`를 방출합니다. `omitEmpty`는 부모에 전파할 때 빈 값을 제거하며 루트를 제거하지 않습니다. nullable·덮어쓰기 동작은 [값 규칙](./schema-reference#value-states), 필터 사용은 [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
 
 ## 렌더링과 설정 수명 {#rendering}
 
-Form의 `children`은 루트 자동 레이아웃을 대체합니다. 생략한 입력을 다른 곳에 자동으로 보충하지 않습니다. 같은 경로를 두 번 렌더링하면 입력 두 개가 생깁니다. defaultValue로 시작해 자체 draft를 유지하는 내장 입력은 refresh 전까지 다른 입력의 타이핑을 반영하지 않습니다. 사용자 controlled 입력은 현재 value prop을 따라 두 렌더링을 즉시 동기화할 수 있습니다.
+Form의 `children`은 루트 자동 레이아웃을 대체합니다. 생략한 입력을 다른 곳에 자동으로 보충하지 않습니다. 같은 경로를 두 번 렌더링하면 입력 두 개가 생깁니다. defaultValue로 시작해 자체 초안을 유지하는 내장 입력은 refresh 전까지 다른 입력의 타이핑을 반영하지 않습니다. 사용자 controlled 입력은 현재 value 속성을 따라 두 렌더링을 즉시 동기화할 수 있습니다.
 
-기본 그룹 렌더러는 label과 오류를 직접 그립니다. `FormLabelRenderer`, `FormErrorRenderer` 교체는 조합 컴포넌트와 이를 호출하는 사용자 렌더러에 적용되며 기본 그룹 렌더러의 내용을 바꾸지 않습니다.
+기본 그룹은 [등록된 Label·ErrorMessage 부품](./api-reference#renderer-parts)을 조립합니다. 그룹 레이아웃을 복사하지 않고 슬롯 교체로 표현을 바꿀 수 있습니다. 분기의 legend는 여전히 필드 이름을 직접 쓰고 배열 항목의 말단 라벨은 생략하므로 LabelRenderer가 그 제목을 바꾸거나 생략된 라벨을 더하지 않습니다.
 
-렌더러, `formatError`, 입력 정의와 입력 map은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 입력과 그 조상 입력이 모두 같으면 DOM을 보존합니다. 부모 입력이 교체되면 선택된 자식 컴포넌트가 같아도 그 안의 DOM과 미커밋 draft는 재생성됩니다. 렌더러 교체는 그 렌더러가 소유한 UI subtree를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
+렌더러, `formatError`, 입력 정의와 입력 맵은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 입력과 그 조상 입력이 모두 같으면 DOM을 보존합니다. 부모 입력이 교체되면 선택된 자식 컴포넌트가 같아도 그 안의 DOM과 미커밋 초안은 재생성됩니다. 렌더러 교체는 그 렌더러가 소유한 UI 하위 트리를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 
 ## 폼이 수행하는 작업 측정 {#performance}
 
-큰 폼은 compile과 명시적 검증·제출 비용을 측정한 뒤 [검증 모드](./validation#modes)를 선택하십시오. 검증을 미뤄도 렌더링이 큰 비용일 수 있으므로 [가상화](./api-reference#virtualization)를 평가할 때 모든 입력을 사용할 수 있을 때까지의 시간도 측정하십시오.
+큰 폼은 컴파일과 명시적 검증·제출 비용을 측정한 뒤 [검증 모드](./validation#modes)를 선택하십시오. 검증을 미뤄도 렌더링이 큰 비용일 수 있으므로 [가상화](./api-reference#virtualization)를 평가할 때 모든 입력을 사용할 수 있을 때까지의 시간도 측정하십시오.
 
-`onChange`는 동기 실행합니다. 적절한 경우 비용이 큰 소비자 state 갱신을 React `startTransition`으로 감싸고 애플리케이션에서 결과를 측정하십시오. CSS containment에는 의도한 크기와 레이아웃 검증이 필요하며 wrapper 추가만으로 성능을 보장하지 않습니다.
+`onChange`는 동기 실행합니다. 적절한 경우 비용이 큰 소비자 상태 갱신을 React `startTransition`으로 감싸고 애플리케이션에서 결과를 측정하십시오. CSS 격리에는 의도한 크기와 레이아웃 검증이 필요하며 래퍼 추가만으로 성능을 보장하지 않습니다.

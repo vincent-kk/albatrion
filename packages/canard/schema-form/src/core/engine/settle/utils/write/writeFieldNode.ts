@@ -2,7 +2,8 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Blueprint } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { FieldNodeWriteKind, WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
@@ -46,7 +47,8 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (node.detached) return;
   const root = node.rootNode;
-  if (source === 'input' && (node.disposed || root.disposed)) return;
+  if (source === FieldNodeWriteKind.Input && (node.disposed || root.disposed))
+    return;
   const schema = node.schema.schema;
   const inputType = typeof input;
   const scalarWrite =
@@ -55,9 +57,9 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     !root.disposed &&
     root.runtime.blueprint.capabilities.branchless &&
     !root.runtime.blueprint.capabilities.hasDerive &&
-    (kind === 'input' ||
-      kind === 'callerReplace' ||
-      kind === 'callerPartial') &&
+    (kind === FieldNodeWriteKind.Input ||
+      kind === FieldNodeWriteKind.CallerReplace ||
+      kind === FieldNodeWriteKind.CallerPartial) &&
     (inputType === 'string' ||
       inputType === 'boolean' ||
       inputType === 'number') &&
@@ -72,17 +74,18 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     assertFieldNodeWritable(node);
     if (
       node.behavior.type === 'virtual' &&
-      kind !== 'load' &&
-      kind !== 'automatic'
+      kind !== FieldNodeWriteKind.Load &&
+      kind !== FieldNodeWriteKind.Automatic
     )
       assertVirtualWriteShape(node, input);
   }
   const scratch = getSettlementScratch(root.runtime);
   const replaces = scalarWrite
-    ? kind !== 'input'
-    : kind === 'callerReplace' ||
-      (kind === 'input' && node.behavior.strategy === 'branch') ||
-      (kind === 'callerPartial' &&
+    ? kind !== FieldNodeWriteKind.Input
+    : kind === FieldNodeWriteKind.CallerReplace ||
+      (kind === FieldNodeWriteKind.Input &&
+        node.behavior.strategy === 'branch') ||
+      (kind === FieldNodeWriteKind.CallerPartial &&
         (input === null ||
           typeof input !== 'object' ||
           isArray(input) ||
@@ -95,7 +98,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     scratch,
     replaces && !batch,
   );
-  if (kind === 'load' && fixedFirstLoadPlan)
+  if (kind === FieldNodeWriteKind.Load && fixedFirstLoadPlan)
     context.fixedFirstLoad = { plan: fixedFirstLoadPlan, hosts: new Map() };
   context.source = source;
   context.writeOrigins = writeOrigins;
@@ -104,12 +107,12 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   try {
     if (context.hasGates)
       getGateRegistry(context.root.runtime).register(context.root);
-    if (!scalarWrite && (replaces || kind === 'load')) {
+    if (!scalarWrite && (replaces || kind === FieldNodeWriteKind.Load)) {
       const pruneSources = prepareSourcePruner(node);
       if (batch) {
         for (let index = 0; index < writeOrigins.length; index++) {
           const origin = writeOrigins[index];
-          if (origin.source === 'automatic') continue;
+          if (origin.source === FieldNodeWriteKind.Automatic) continue;
           pruneSources(node.runtime, origin.path, origin.keys, context);
           if (origin.fields)
             for (const field of origin.fields)
@@ -124,7 +127,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     )
       context.dirtyPaths.beginPostOrder();
     markWrite(node, input, context);
-    if (kind !== 'load' && kind !== 'automatic')
+    if (
+      kind !== FieldNodeWriteKind.Load &&
+      kind !== FieldNodeWriteKind.Automatic
+    )
       markWrongKindAncestors(node, context);
     registerRecalculation(context);
     computeNode(context.root, context);

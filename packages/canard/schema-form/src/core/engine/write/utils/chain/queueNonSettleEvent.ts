@@ -1,3 +1,5 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeEventType, FieldNodeRequestType } from '../../../record';
 
@@ -17,7 +19,7 @@ export const queueNonSettleEvent = <Self extends FieldNodeRecord<Self>>(
   const queued = runtime.queuedNonSettleEvents ?? new Set();
   const previous = node.pendingNonSettleDelivery;
   node.pendingNonSettleDelivery = {
-    type: (previous?.type ?? 0) | bit,
+    type: (previous?.type ?? BIT_MASK_NONE) | bit,
     payload:
       payload === undefined
         ? previous?.payload

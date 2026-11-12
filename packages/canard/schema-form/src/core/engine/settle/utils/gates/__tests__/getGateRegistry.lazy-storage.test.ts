@@ -115,9 +115,7 @@ it('allocates only two registration Maps across the 502-node conditional fixture
   class CountingMap<K, V> extends OriginalMap<K, V> {
     constructor(entries?: Iterable<readonly [K, V]> | null) {
       super(entries);
-      if (
-        new Error().stack?.split('\n')[2]?.includes('GateRegistry.register')
-      )
+      if (new Error().stack?.split('\n')[2]?.includes('GateRegistry.register'))
         allocations++;
     }
   }

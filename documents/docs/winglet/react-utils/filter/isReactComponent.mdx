@@ -57,7 +57,7 @@ const ForwardComp = forwardRef<HTMLDivElement>((props, ref) =>
 console.log(isReactComponent(FunctionComp)); // true
 console.log(isReactComponent(ClassComp)); // true
 console.log(isReactComponent(MemoComp)); // true
-console.log(isReactComponent(ForwardComp)); // false (현재 구현에서는 forwardRef 미지원)
+console.log(isReactComponent(ForwardComp)); // false (the implementation does not support forwardRef)
 console.log(isReactComponent('not a component')); // false
 console.log(isReactComponent({})); // false
 ```
@@ -130,7 +130,7 @@ const ForwardComp = forwardRef<HTMLDivElement>((props, ref) =>
 console.log(isReactComponent(FunctionComp)); // true
 console.log(isReactComponent(ClassComp)); // true
 console.log(isReactComponent(MemoComp)); // true
-console.log(isReactComponent(ForwardComp)); // false (현재 구현에서는 forwardRef 미지원)
+console.log(isReactComponent(ForwardComp)); // false (the implementation does not support forwardRef)
 console.log(isReactComponent('not a component')); // false
 console.log(isReactComponent({})); // false`}
 />

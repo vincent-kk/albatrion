@@ -16,11 +16,15 @@ The principles cover every document this repository authors for a person or an a
 6. **Changed with the code.** A change that alters a documented policy updates its document in the same pull request, before the code. A mismatch between a document and the code is a defect, fixed like a bug.
 7. **Judged by a fresh agent.** The packaged agent rules and skills and the `INTENT.md` files are done when an agent with no prior context does its role's job correctly from fixed inputs: the role's documents and what principle 2 says the role holds. A consumer builds the requested feature through the public API, advanced features included; a maintainer makes the right change decision for the right reason. When a pull request changes what these documents teach, an evaluator other than the writer runs this check: it withholds solutions, grading and anything the role does not hold, counts a task only when it actually passes, compares with a run whose inputs differ only by the absence of the document, and keeps some tasks unseen by the writer. The writer fixes a failure at its general cause rather than by adding that task's answer. Every other document, `DETAIL.md` included, is written to pass the same test.
 
+## Language
+
+Each document has one language: the language its explanation is written in. `INTENT.md` and `DETAIL.md` are written in Korean. `CLAUDE.md`, `AGENTS.md`, this file, everything under `.claude/`, packaged agent documents and code comments are written in English. A `README`, a site page and any other document take the language of their file name or tree (`README-ko_kr.md`, `docs/ko` and `documents/i18n/ko` are Korean).
+
+The rule binds prose, not every word. Headings, code and the comments inside it, identifiers, commands, paths, literal values, established technical terms and references to other documents or standards may stay in English in a document of any language, as they commonly do; translating a name breaks search and the link to the thing it names. A document breaks the rule only when its explanation switches language: a sentence, list item or table cell of prose written in a language other than its document's, which makes the reader change languages in the middle of one explanation.
+
 ## Change records
 
 A changeset (`.changeset/*.md`, created with `yarn changeset`) is written for the consumers of a published package; at release, `yarn changeset:version` turns it into a version bump and that package's `CHANGELOG.md` entry, with a link to the pull request that added it. Its claims must be true, but the present-only rule of principle 3 does not apply to it.
-
-Until `@canard/schema-form` 1.0.0 is published, its pre-releases included, pull requests add no changesets and nobody runs `yarn changeset:version`: those releases, with the packages released alongside them, set their versions and write their release notes by hand. The changesets already in `.changeset/` describe changes that ship in the first of those releases; the pull request that sets its versions folds them into its notes and deletes them, because the next `yarn changeset:version` would otherwise release them a second time. The pull request that publishes 1.0.0 deletes this paragraph.
 
 - Every pull request that changes a published package's behavior, public API, types or shipped documentation (`README.md`, `docs/`, `docs/agents/**`) adds a changeset for each affected package. A change no consumer can observe (an internal refactor, tests, benchmarks, stories, module documents) needs none.
 - Choose the bump from the consumer's view under semantic versioning. A breaking change says so in its first sentence and shows how to migrate, with code before and after.
@@ -40,5 +44,5 @@ Some principles are proposed as plugin rules: [vincent-kk/ogham#145](https://git
 - Principle 5 (seiri #146; filid already caps `INTENT.md` at 50 lines): delete the general clause and keep the `packages/**/docs/agents/rules/` budget.
 - Principle 6 (seiri #146; filid already updates `DETAIL.md` before code): delete.
 - Principle 7 (seiri #146): delete the general clause and keep which documents it covers and when it runs.
-- Change records, the rules for writing for consumers (seiri #146): delete the general clauses and keep what is specific to changesets here: the mechanics and the pull request link, which pull requests need one, the bump choice, the paragraph about 1.0.0 and the language.
-- Scope: specific to this repository, so it stays.
+- Change records, the rules for writing for consumers (seiri #146): delete the general clauses and keep what is specific to changesets here: the mechanics and the pull request link, which pull requests need one, the bump choice and the language.
+- Scope and Language: specific to this repository, so they stay.

@@ -3,6 +3,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { readSlotSourceTree } from './readSlotSourceTree';
 import { resolveSlotSource } from './resolveSlotSource';
+
 /**
  * Recompose a gated-out item from its retained own-kind latent sources.
  * @param context - Settlement retaining sources by actual occurrence path and kind

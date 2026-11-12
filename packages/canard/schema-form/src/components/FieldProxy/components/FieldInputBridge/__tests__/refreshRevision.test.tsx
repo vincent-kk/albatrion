@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
@@ -26,4 +26,21 @@ it('reads the Refresh revision once per render and keeps the subscribe catch-up'
     ),
   ).toHaveLength(renders);
   expect(revision.mock.calls.length).toBeGreaterThan(renders);
+});
+
+it('rekeys the input once when its controlled declaration changes the generation', () => {
+  const node = nodeFromJSONSchema({ jsonSchema: { type: 'string' } });
+  const children = { current: 0 };
+  const Host = ({ controlled }: { controlled?: boolean }) => {
+    const [, generation] = useFieldInputControl(node, children, controlled);
+    return <output>{generation}</output>;
+  };
+  const view = render(<Host controlled={false} />);
+  act(() => node.setValue('written'));
+  const uncontrolled = view.container.textContent;
+
+  view.rerender(<Host controlled />);
+
+  expect(uncontrolled).not.toBe('0');
+  expect(view.container.textContent).toBe('0');
 });

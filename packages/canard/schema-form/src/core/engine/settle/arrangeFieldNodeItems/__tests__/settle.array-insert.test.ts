@@ -5,7 +5,10 @@ import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testField
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   dispatchInsert,
   dispatchPush,
@@ -299,14 +302,14 @@ describe('array insert', () => {
       writeFieldNode(
         root,
         { show: true, list: ['a', 'b'] },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       const former = root.structure!.list;
       writeFieldNode(
         root.structure!.show,
         false,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       expect(former.detached).toBe(true);
@@ -316,11 +319,14 @@ describe('array insert', () => {
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 9, value: 'y' }),
       ).toBe(2);
-      expect(readRetainedSlotSource(root, '/list', 'array')).toEqual(['a', 'b']);
+      expect(readRetainedSlotSource(root, '/list', 'array')).toEqual([
+        'a',
+        'b',
+      ]);
       writeFieldNode(
         root.structure!.show,
         true,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       expect(root.structure!.list.local).toEqual(['a', 'b']);

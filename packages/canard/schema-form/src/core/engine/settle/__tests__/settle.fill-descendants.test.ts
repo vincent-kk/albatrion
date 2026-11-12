@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
@@ -19,7 +22,7 @@ const loadGeneric = (
     .spyOn(independentDefaults, 'hasIndependentLeafDefaults')
     .mockReturnValue(false);
   try {
-    writeFieldNode(root, input, 'load', option);
+    writeFieldNode(root, input, FieldNodeWriteKind.Load, option);
   } finally {
     generic.mockRestore();
   }

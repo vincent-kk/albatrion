@@ -10,6 +10,7 @@ import {
 import Ajv from 'ajv';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import {
   ErrorVisibility,
   type FieldInputProps,
@@ -64,13 +65,9 @@ const nameSchema = {
 /** Render the library's resolved display decision beside a custom input.
  * @param props - FieldInput props supplied by Form; publishes edits and blur state.
  * @returns The editable field and its eligible first error. */
-function NameInput({
-  value,
-  onChange,
-  node,
-  errors,
-  errorVisible,
-}: FieldInputProps<string>) {
+function NameInput({ value, onChange, node }: FieldInputProps<string>) {
+  const { errors, errorVisible } = useFieldErrors(node);
+
   return (
     <>
       <input

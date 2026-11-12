@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import {
   type FieldInputProps,
   type FieldRendererProps,
@@ -14,9 +15,10 @@ import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
 import { settleValidation } from '../helpers/settleValidation';
 
 afterEach(cleanup);
-const Input = ({ errorVisible }: FieldInputProps) => (
-  <span data-testid="input-visibility">{String(errorVisible)}</span>
-);
+const Input = ({ node }: FieldInputProps) => {
+  const { errorVisible } = useFieldErrors(node);
+  return <span data-testid="input-visibility">{String(errorVisible)}</span>;
+};
 const Renderer = ({
   Input,
   errorVisible,

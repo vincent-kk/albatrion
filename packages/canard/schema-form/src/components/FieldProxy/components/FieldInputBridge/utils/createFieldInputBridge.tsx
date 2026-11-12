@@ -19,6 +19,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { FieldProxyProps } from '../../../type';
+import { resolveRequired } from '../../../utils/required/resolveRequired';
 import { FieldInputBridge } from '../FieldInputBridge';
 
 /**
@@ -38,22 +39,24 @@ export const createFieldInputBridge = (
   overrideFieldInputPropsRef: Optional<RefObject<OverridableFieldInputProps>>,
   OverridePreferredFieldInput: Optional<ComponentType<FieldInputProps>>,
   NodeProxy: ComponentType<FieldProxyProps>,
-): ComponentType<ChildFieldProps> => {
+): ComponentType<ChildFieldProps & { unwrapped?: boolean }> => {
   if (node == null) return NULL_FUNCTION;
   return ({
+    unwrapped,
     onChange: preferredOnChange,
     onFileAttach: preferredOnFileAttach,
     ...preferredOverrideProps
-  }: ChildFieldProps) => {
-    const onChangeRef = useReference(
-      preferredOnChange || overrideOnChangeRef?.current,
-    );
-    const onFileAttachRef = useReference(
-      preferredOnFileAttach || overrideOnFileAttachRef?.current,
-    );
+  }: ChildFieldProps & { unwrapped?: boolean }) => {
+    const onChangeRef = useReference(preferredOnChange);
+    const onFileAttachRef = useReference(preferredOnFileAttach);
     const overrideProps = useSnapshot({
       ...overrideFieldInputPropsRef?.current,
       ...preferredOverrideProps,
+      required: resolveRequired(
+        preferredOverrideProps.required,
+        overrideFieldInputPropsRef?.current.required,
+        undefined,
+      ),
     });
     const PreferredFieldInput = useLazyConstant(() =>
       OverridePreferredFieldInput &&
@@ -66,8 +69,11 @@ export const createFieldInputBridge = (
     return (
       <FieldInputBridge
         node={node}
+        unwrapped={unwrapped}
         onChangeRef={onChangeRef}
         onFileAttachRef={onFileAttachRef}
+        overrideOnChangeRef={overrideOnChangeRef}
+        overrideOnFileAttachRef={overrideOnFileAttachRef}
         overrideProps={overrideProps}
         PreferredFieldInput={PreferredFieldInput}
         NodeProxy={NodeProxy}

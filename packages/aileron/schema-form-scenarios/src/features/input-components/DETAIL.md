@@ -12,6 +12,8 @@
 
 `useChildFieldErrors`의 표시 관찰은 `errorVisible`·`childErrorVisibleList`를 사용하고 원시 `errorMatrix`와 구별합니다. 자식의 오류가 남아 있어도 정책이 표시를 가릴 수 있으므로, 메시지 유무만으로 자식 상태나 오류 보유를 추정하지 않습니다.
 
+경로 맵 장면은 정확 키, `^`로 명시한 정규식, 단일 세그먼트 `*`를 구별합니다. 작성한 키보다 넓은 범위를 암묵적으로 선택하는 동작에 기대지 않습니다.
+
 ## Acceptance Criteria
 
 ### input-components-scene-data — 공유 장면 경계

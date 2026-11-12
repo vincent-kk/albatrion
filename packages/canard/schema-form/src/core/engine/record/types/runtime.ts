@@ -180,6 +180,16 @@ export interface SettlementScratch<Self> {
   originalSchemas: Map<string, EffectiveSchema>;
 }
 
+/** Last input emission retained until the first synchronous settlement. */
+interface FieldNodeInputRelay<Self> {
+  /** Input occurrence whose final value is checked before omitting Refresh. */
+  node: Self;
+  /** Occurrence path at emission, which must still match at settlement. */
+  path: string;
+  /** Evaluated emitted value compared by the delivery-value identity rule. */
+  value: unknown;
+}
+
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface FieldNodeRuntime<Self>
   extends FieldNodeRootRuntimeState,
@@ -261,6 +271,8 @@ export interface FieldNodeRuntime<Self>
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Last input emission per node, consumed by the first synchronous settlement. */
+  inputRelays?: FieldNodeInputRelay<Self>[];
   /** Number of active nested `visitSubtree` walks on this tree. */
   visitDepth?: number;
   /** Entry whose write opened the batch held open until the outermost walk ends. */
@@ -270,7 +282,7 @@ export interface FieldNodeRuntime<Self>
     node: Self;
     value: unknown;
     option: WriteOption;
-    source?: 'input' | 'automatic';
+    source?: FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic;
   }[];
   /** Load defers validation until the binding's slot. */
   deferLoadValidation?: boolean;
@@ -476,8 +488,8 @@ export type SettlementBudget =
   | 'transition'
   | 'recursion';
 
-/** Entry that started a settlement: a write kind, or a binding entry without one. */
-export type SettlementEntryApi = FieldNodeWriteKind | 'setContext';
+/** Name of the entry that started a settlement: a write kind, or a binding entry without one. */
+export type SettlementEntryApi = `${FieldNodeWriteKind}` | 'setContext';
 
-/** Write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the source. */
-export type MisfitSource = FieldNodeWriteKind | 'fill' | 'gate';
+/** Name of the write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the source. */
+export type MisfitSource = `${FieldNodeWriteKind}` | 'fill' | 'gate';

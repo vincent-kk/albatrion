@@ -30,7 +30,7 @@ AuthoredSchema의 options는 알려진 옵션 형에 소비자 Options 제네릭
 
 ### validated-control-reads — 검증된 선언의 읽기
 
-공유 제어 읽기는 collectDeclarations가 validateControlGroups를 마친 선언 및 그 선언에서 만든 유효 스키마만 받습니다. 얕은 형 보증과 예외는 [buildNodes의 읽기 계약](blueprint/buildNodes/DETAIL.md#reserved-read-trust--로드-검증을-통과한-읽기--validated-reads)을 따릅니다. Read helpers trust validated declarations and their effective projections; they do not widen this guarantee to pre-validation or arbitrary external schemas. The typed view adds no copy or retained state.
+공유 제어 읽기는 collectDeclarations가 validateControlGroups를 마친 선언 및 그 선언에서 만든 유효 스키마만 받습니다. 얕은 형 보증과 예외는 [buildNodes의 읽기 계약](blueprint/buildNodes/DETAIL.md#reserved-read-trust--로드-검증을-통과한-읽기--validated-reads)을 따릅니다. Read 헬퍼는 검증된 선언과 그 유효 투영을 신뢰하며, 이 보증을 검증 전 선언이나 임의의 외부 스키마로 넓히지 않습니다. 타입 뷰는 복사나 보유 상태를 추가하지 않습니다.
 
 입력 형은 선택적인 검증된 controls 봉투를 가진 구조 또는 boolean 스키마로 제한합니다. 프로퍼티를 직접 읽어 반환 형의 보증이 Reflect.get의 any에 의존하지 않게 하며, 호출자가 형을 단언해 검증 경계를 우회하지 않습니다.
 

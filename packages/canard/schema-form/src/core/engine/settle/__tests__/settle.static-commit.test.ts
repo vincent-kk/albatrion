@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import * as declarationKeys from '../../utils/controls/getCommittedDeclarationKey';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
@@ -35,7 +35,12 @@ it('does not revisit 1000 retained required flags and bounds declaration-key wor
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.type, 'b', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.type,
+    'b',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   let requiredReads = 0;
   for (let index = 0; index < 1000; index++) {
     const child = root.structure![`pad_${index}`];
@@ -53,7 +58,12 @@ it('does not revisit 1000 retained required flags and bounds declaration-key wor
     });
   }
   const keys = vi.spyOn(declarationKeys, 'getCommittedDeclarationKey');
-  writeFieldNode(root.structure!.type, 'a', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.type,
+    'a',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(requiredReads).toBe(0);
   expect(keys.mock.calls.length).toBeLessThanOrEqual(16);
 });
@@ -71,7 +81,12 @@ it('reads static control and default declarations without a committed-key lookup
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const get = vi.spyOn(root.runtime.committedDeclarationIds!, 'get');
   const fixed = root.structure!.fixed;
   expect(getControlLayers(fixed, new Map()).length).toBeGreaterThan(0);
@@ -92,10 +107,20 @@ it('updates existing required flags when branch required identities differ', () 
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const shared = root.structure!.shared;
   expect(shared.isRequired).toBe(false);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.structure!.shared).toBe(shared);
   expect(shared.isRequired).toBe(true);
-  writeFieldNode(root.structure!.kind, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(shared.isRequired).toBe(false);
 });
 
@@ -111,7 +136,12 @@ it('sets required on newly entering children when the required array is retained
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   expect(root.structure!.a.isRequired).toBe(true);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.structure!.b.isRequired).toBe(true);
 });
 
@@ -126,7 +156,12 @@ it('passes only each host own entering children to the required subset', () => {
   loadFieldNodeAtMount(root, { left: {}, right: {} }, WriteOption.Overwrite);
   const { left, right } = root.structure!;
   const scratch = getSettlementScratch(root.runtime);
-  const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+  const context = createSettlementContext(
+    root,
+    FieldNodeWriteKind.CallerReplace,
+    0,
+    scratch,
+  );
   context.changedNodes.add(left).add(right);
   context.entered.add(left.structure!.a).add(right.structure!.b);
   left.deliveryChanges |= FieldNodeEventType.UpdateChildren;

@@ -5,6 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { useFieldErrors } from '@/schema-form/hooks';
 import { useChildFieldErrors } from '@/schema-form/hooks';
 import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldInputProps } from '@/schema-form/types';
@@ -38,9 +39,10 @@ const Branch = ({ node, ChildFields }: FieldInputProps) => {
     </>
   );
 };
-const Leaf = ({ errorVisible }: FieldInputProps) => (
-  <span>{String(errorVisible)}</span>
-);
+const Leaf = ({ node }: FieldInputProps) => {
+  const { errorVisible } = useFieldErrors(node);
+  return <span>{String(errorVisible)}</span>;
+};
 
 it('IR-6 W13 only the three holding displays subscribe and receive a 2000-field settle', async () => {
   const ref = createRef<FormHandle>();

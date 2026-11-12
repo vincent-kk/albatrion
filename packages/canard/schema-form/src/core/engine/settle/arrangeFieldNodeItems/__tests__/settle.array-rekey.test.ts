@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import { SchemaFormError } from '@/schema-form/errors';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
@@ -30,7 +33,7 @@ describe('array path movement', () => {
         { show: true, hidden: 'visible' },
         { show: false, hidden: 'secret', count: 'wrong' },
       ],
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const shifted = root.children![1];
@@ -55,7 +58,7 @@ describe('array path movement', () => {
     writeFieldNode(
       shifted.structure!.show,
       true,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(shifted.structure!.hidden.local).toBe('secret');
@@ -66,16 +69,31 @@ describe('array path movement', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      ['a', 'b'],
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     const popped = root.children![1];
     expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
-    writeFieldNode(popped, 'latent', 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      popped,
+      'latent',
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(readRetainedSlotSource(root, '/1', 'string')).toBeUndefined();
     const removed = root.children![0];
     arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
     const commit = root.runtime.commitNumber;
-    writeFieldNode(removed, 'ignored', 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      removed,
+      'ignored',
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.runtime.commitNumber).toBe(commit);
     expect(root.local).toEqual(['c']);
     expect(hasRetainedSlotOwnSource(root, '/0', 'string')).toBe(false);
@@ -96,14 +114,14 @@ describe('array path movement', () => {
     writeFieldNode(
       root,
       { show: true, list: ['a'] },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const former = root.structure!.list;
     writeFieldNode(
       root.structure!.show,
       false,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(former.detached).toBe(true);
@@ -112,7 +130,7 @@ describe('array path movement', () => {
     writeFieldNode(
       root.structure!.show,
       true,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure!.list.local).toEqual(['a']);
@@ -146,7 +164,12 @@ describe('array path movement', () => {
     });
     let caught: unknown;
     try {
-      writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite);
+      writeFieldNode(
+        root,
+        { a: 0 },
+        FieldNodeWriteKind.CallerReplace,
+        WriteOption.Overwrite,
+      );
     } catch (error) {
       caught = error;
     }

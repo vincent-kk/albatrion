@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { sameValue } from '../../utils/compute/sameValue';
@@ -39,11 +42,16 @@ describe('settle value equivalence', () => {
   it('18C-50 keeps an equal terminal source reference at the write boundary', () => {
     const { root } = createTestTree({ type: 'string' });
     const first = { nested: { value: 1 } };
-    writeFieldNode(root, first, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      first,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     writeFieldNode(
       root,
       { nested: { value: 1 } },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.source).toBe(first);

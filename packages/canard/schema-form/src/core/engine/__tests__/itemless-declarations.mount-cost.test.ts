@@ -1,8 +1,8 @@
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 
-import * as entries from '../blueprint';
-import { buildFieldNodeTree, mountFieldNode } from '../../surface';
 import { isTestFieldNode } from '../../__tests__/fixtures/testFieldNode';
+import { buildFieldNodeTree, mountFieldNode } from '../../surface';
+import * as entries from '../blueprint';
 
 /** Per-form observations emitted for the independent fail-first evidence parser. */
 const rows: unknown[] = [];
@@ -36,7 +36,8 @@ describe('generic itemless mounts bound empty declaration queries', () => {
     });
     mountFieldNode(root);
     const target = host === 'root' ? root : root.find('/list')!;
-    if (!isTestFieldNode(target)) throw new Error('Missing array runtime record');
+    if (!isTestFieldNode(target))
+      throw new Error('Missing array runtime record');
     expect(root.value).toStrictEqual(caller);
     expect(caller).toStrictEqual(before);
     expect(target.children).toEqual([]);

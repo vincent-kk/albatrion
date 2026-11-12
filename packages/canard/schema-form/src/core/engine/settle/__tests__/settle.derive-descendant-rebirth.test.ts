@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -32,7 +35,7 @@ describe('settle descendant rebirth regression', () => {
     writeFieldNode(
       root.structure!.present,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.group).toBeUndefined();
@@ -45,7 +48,7 @@ describe('settle descendant rebirth regression', () => {
     writeFieldNode(
       root.structure!.present,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.runtime.settlementTrace?.rounds.flat()).toEqual(
@@ -88,7 +91,7 @@ describe('settle descendant rebirth regression', () => {
     writeFieldNode(
       root.structure!.present,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(
@@ -100,7 +103,7 @@ describe('settle descendant rebirth regression', () => {
     writeFieldNode(
       root.structure!.present,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.runtime.settlementTrace?.rounds.flat()).toEqual(

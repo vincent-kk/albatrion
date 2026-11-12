@@ -11,6 +11,7 @@ import type {
   BlueprintNode,
 } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
+import { FieldNodeWriteKind } from '../../../../../types/value';
 import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
 import { engineModes } from '../../../../../utils/cache/engineModes';
 import type { GateSelectionTable } from '../../../../types/gateSelectionTable';
@@ -58,7 +59,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
   );
   if (
     node.behavior.type !== 'object' ||
-    context.kind === 'load' ||
+    context.kind === FieldNodeWriteKind.Load ||
     context.distributedInputs.has(node) ||
     context.pathChanges.length > 0 ||
     hasRelocated ||

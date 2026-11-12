@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   dispatchInsert,
   dispatchMount,
@@ -346,7 +349,7 @@ describe('static array selection matches the full route', () => {
     writeFieldNode(
       root,
       Array.from({ length: 100 }, (_, value) => ({ value })),
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const prefix = [...(root.children ?? [])];

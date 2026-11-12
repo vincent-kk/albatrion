@@ -14,7 +14,7 @@ export const SchemaFormWarningSpecific = {
   TerminalSubtreeKeyIgnoredForForm: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
   DiscriminatorBranchUnreachable: 'DISCRIMINATOR_BRANCH_UNREACHABLE',
   NonJsonWholeValue: 'NON_JSON_WHOLE_VALUE',
-  FormTypeTestInvalid: 'FORM_TYPE_TEST_INVALID',
+  FieldInputTestInvalid: 'FIELD_INPUT_TEST_INVALID',
   Misfit: 'MISFIT',
   DialectMismatch: 'DIALECT_MISMATCH',
   DetachedNodeWrite: 'DETACHED_NODE_WRITE',

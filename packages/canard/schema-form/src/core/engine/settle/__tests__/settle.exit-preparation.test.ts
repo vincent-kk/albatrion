@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getCommittedDeclarationKey } from '../../utils/controls/getCommittedDeclarationKey';
 import { emptyReadonlyMap } from '../../utils/emptyReadonlyMap';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
@@ -115,7 +115,7 @@ describe('exit preparation preserves committed policies and document order', () 
     writeFieldNode(
       root.structure!.clear,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readUnsetPolicy(secret, true)).toBe(false);
@@ -149,7 +149,12 @@ describe('exit preparation preserves committed policies and document order', () 
     );
     const branch = root.structure!.branch;
     const searches = vi.spyOn(Array.prototype, 'findIndex');
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(
       searches.mock.contexts.filter(
         (value) => value === branch.blueprintNode.childEntries,
@@ -214,21 +219,24 @@ describe('exit preparation preserves committed policies and document order', () 
       writeFieldNode(
         root.structure!.flag,
         false,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       expect(hasRetainedSlotOwnSource(root, '/branch/value', 'string')).toBe(
         !clear,
       );
       if (!clear)
-        expect(readRetainedSlotSource(root, '/branch/value', 'string')).toBe('V');
+        expect(readRetainedSlotSource(root, '/branch/value', 'string')).toBe(
+          'V',
+        );
       writeFieldNode(
         root.structure!.flag,
         true,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      if (!clear) expect(root.structure!.branch.structure!.value.source).toBe('V');
+      if (!clear)
+        expect(root.structure!.branch.structure!.value.source).toBe('V');
       expect(root.structure!.branch).not.toBe(old);
     },
   );

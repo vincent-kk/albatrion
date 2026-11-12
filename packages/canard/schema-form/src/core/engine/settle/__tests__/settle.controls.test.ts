@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { blueprint } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import { fieldNodeFactory } from '@/schema-form/core/surface';
 
@@ -117,7 +120,7 @@ describe('settled controls', () => {
     writeFieldNode(
       root.structure!.flag,
       true,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect([
@@ -151,14 +154,14 @@ describe('settled controls', () => {
     writeFieldNode(
       root.structure!.x,
       true,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.child?.isVisible).toBe(true);
     writeFieldNode(
       root.structure!.unrelated,
       'b',
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.child?.isVisible).toBe(true);
@@ -203,7 +206,7 @@ describe('settled controls', () => {
     writeFieldNode(
       root.structure!.unrelated,
       'b',
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(publishedChildren).toBe(0);
@@ -279,14 +282,14 @@ describe('settled controls', () => {
     writeFieldNode(
       root.structure!.target,
       'manual',
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
     writeFieldNode(
       root.structure!['source'],
       'b',
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('b');
@@ -357,7 +360,7 @@ describe('settled controls', () => {
     writeFieldNode(
       root.structure!.shown,
       false,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(child.detached).toBe(true);

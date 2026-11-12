@@ -1,3 +1,5 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { isMisfit } from './isMisfit';
@@ -18,7 +20,7 @@ export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
     if (kind === 'null') continue;
     const converted = node.behavior.interpret(node.source, {
       kinds: kind,
-      mask: 0,
+      mask: BIT_MASK_NONE,
       nullable: node.nullable,
     });
     if (

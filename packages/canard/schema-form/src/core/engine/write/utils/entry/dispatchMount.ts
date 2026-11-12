@@ -6,6 +6,7 @@ import { ValidationMode } from '../../../types/state';
 import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFailedFieldNodeChain } from '../chain/exitFailedFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
@@ -37,33 +38,45 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
     (root.runtime.validationTargets ??= new Set()).add(root);
   root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
   try {
-    loadFieldNodeAtMount(root, value, option);
-  } catch (error) {
-    captureChainError(root.runtime, error);
-  } finally {
-    restoreAdoptedExternalErrors(root);
-    root.runtime.adoptedExternalErrors = undefined;
-    const runtime = root.runtime;
-    if (
-      runtime.errorReporter?.hasConsumer() &&
-      !runtime.validator &&
-      runtime.validationMode !== ValidationMode.None &&
-      !runtime.warningKeys?.has(FormWarningCode.ValidatorMissing)
-    ) {
-      (runtime.warningKeys ??= new Set()).add(FormWarningCode.ValidatorMissing);
-      const record: PendingFormErrorRecord = {
-        level: 'warning',
-        code: FormWarningCode.ValidatorMissing,
-        message: 'Validation is disabled because no validator was selected',
-      };
-      (runtime.pendingWarningRecords ??= new Map()).set(
-        FormWarningCode.ValidatorMissing,
-        record,
-      );
-      runtime.chainOccurrences?.push({ kind: 'record', record });
+    try {
+      loadFieldNodeAtMount(root, value, option);
+    } catch (error) {
+      captureChainError(root.runtime, error);
+    } finally {
+      try {
+        restoreAdoptedExternalErrors(root);
+      } catch (error) {
+        captureChainError(root.runtime, error);
+      }
+      root.runtime.adoptedExternalErrors = undefined;
+      const runtime = root.runtime;
+      if (
+        runtime.errorReporter?.hasConsumer() &&
+        !runtime.validator &&
+        runtime.validationMode !== ValidationMode.None &&
+        !runtime.warningKeys?.has(FormWarningCode.ValidatorMissing)
+      ) {
+        (runtime.warningKeys ??= new Set()).add(
+          FormWarningCode.ValidatorMissing,
+        );
+        const record: PendingFormErrorRecord = {
+          level: 'warning',
+          code: FormWarningCode.ValidatorMissing,
+          message: 'Validation is disabled because no validator was selected',
+        };
+        (runtime.pendingWarningRecords ??= new Map()).set(
+          FormWarningCode.ValidatorMissing,
+          record,
+        );
+        runtime.chainOccurrences?.push({ kind: 'record', record });
+      }
     }
+  } catch (error) {
     root.runtime.mountingGuardPass = false;
     root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
-    exitFieldNodeChain(root);
+    exitFailedFieldNodeChain(root, error);
   }
+  root.runtime.mountingGuardPass = false;
+  root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
+  exitFieldNodeChain(root);
 };

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { JSON_POINTER_PATH_REGEX } from '../../../utils/expressions/regex';
-import { substituteDependencyPaths } from '../utils/substituteDependencyPaths';
 import { getPathManager } from '../../getPathManager';
+import { substituteDependencyPaths } from '../utils/substituteDependencyPaths';
 
 describe('dependency substitution identity', () => {
   it.each([

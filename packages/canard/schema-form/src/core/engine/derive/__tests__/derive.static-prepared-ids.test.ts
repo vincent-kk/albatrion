@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount, writeFieldNode } from '../../settle';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { getSelectedDeclarationIds } from '../utils/evaluate/getSelectedDeclarationIds';
 import { createFragmentLoadState } from './fixtures/createFragmentLoadState';
@@ -23,7 +23,12 @@ it('prefers current selections, then static witnesses, then the committed fallba
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const fixed = root.structure!.fixed;
   const selected = new Map<typeof fixed, readonly number[]>();
   const state = {

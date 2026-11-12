@@ -6,6 +6,7 @@ import type { NormalizedFieldInputDefinition } from '../type';
 import { fieldInputTestFnFactory } from './fieldInputTestFnFactory';
 import { hasWildcardPath } from './hasWildcardPath';
 import { pathExactMatchFnFactory } from './pathExactMatchFnFactory';
+import { pathPatternMatchFnFactory } from './pathPatternMatchFnFactory';
 import { withFieldInputErrorBoundary } from './withFieldInputErrorBoundary';
 
 /**
@@ -22,7 +23,12 @@ export const normalizeFieldInputMap = (
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     const Component = fieldInputMap[k];
     if (!isReactComponent(Component)) continue;
-    if (hasWildcardPath(k))
+    if (k.startsWith('^'))
+      result.push({
+        test: pathPatternMatchFnFactory(k),
+        Component: withFieldInputErrorBoundary(Component),
+      });
+    else if (hasWildcardPath(k))
       result.push({
         test: fieldInputTestFnFactory(k),
         Component: withFieldInputErrorBoundary(Component),

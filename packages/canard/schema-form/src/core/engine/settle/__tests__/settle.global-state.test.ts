@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -26,21 +29,21 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     writeFieldNode(
       root,
       { flag: true, target: 'value' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({ [FieldNodeState.Edited]: true });
     writeFieldNode(
       root.structure!.flag,
       false,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({});
     writeFieldNode(
       root.structure!.flag,
       true,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({ [FieldNodeState.Edited]: true });

@@ -2,8 +2,8 @@ import { expect, it } from 'vitest';
 
 import { createTestTree } from '../../../../__tests__/fixtures/createTestTree';
 import { WriteOption } from '../../../../types/value';
-import { loadFieldNodeAtMount } from '../../../loadFieldNodeAtMount';
 import { mountPresenceTree } from '../../../__tests__/helpers/mountPresenceTree';
+import { loadFieldNodeAtMount } from '../../../loadFieldNodeAtMount';
 import { getDependencyIndex } from '../getDependencyIndex';
 
 it('registers a fragment-derived array item watch under the wildcard operator', () => {

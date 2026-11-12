@@ -1,8 +1,5 @@
 export type { FieldNodeRecord, FieldNodeDelivery } from './types/record';
-export type {
-  InactiveSlotBaseline,
-  InactiveSlotOverlay,
-} from './types/slots';
+export type { InactiveSlotBaseline, InactiveSlotOverlay } from './types/slots';
 export type {
   Behavior,
   ArrayOperation,
@@ -24,6 +21,11 @@ export { advanceFieldNodeRevision } from './utils/advanceFieldNodeRevision';
 export { canOmitFieldNodePayload } from './utils/canOmitFieldNodePayload';
 export { FieldNodeEventType } from './constants/FieldNodeEventType';
 export { FieldNodeRequestType } from './constants/FieldNodeRequestType';
+export {
+  DISABLED_BIT_SHIFT,
+  READ_ONLY_BIT_SHIFT,
+  VISIBLE_BIT_SHIFT,
+} from './constants/controlledPropertyShift';
 export { markFieldNodeEvent } from './utils/markFieldNodeEvent';
 export { indexFieldNodeWarning } from './utils/indexFieldNodeWarning';
 export { updateFieldNodeNameAndPath } from './utils/updateFieldNodeNameAndPath';

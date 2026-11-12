@@ -43,13 +43,13 @@ Use the [authoring groups](./schema-reference#authoring-groups) for library sett
 | `formTypeInputMap`                       | `fieldInputMap`                     |
 | `CustomFormTypeRenderer`                 | `FieldRenderer`                     |
 | `FormProviderProps.FormGroupRenderer` | `FormProviderProps.FieldRenderer` |
-| `FormProviderProps.FormLabelRenderer` | `FormProviderProps.FormLabelRenderer` |
-| `FormProviderProps.FormInputRenderer` | `FormProviderProps.FormInputRenderer` |
-| `FormProviderProps.FormErrorRenderer` | `FormProviderProps.FormErrorRenderer` |
+| `FormProviderProps.FormLabelRenderer` | `FormProviderProps.LabelRenderer` |
+| `FormProviderProps.FormInputRenderer` | `FormProviderProps.InputRenderer` |
+| `FormProviderProps.FormErrorRenderer` | `FormProviderProps.ErrorMessageRenderer` |
 | `plugin.FormGroup`                       | `plugin.FieldRenderer`              |
-| `plugin.FormLabel`                       | `plugin.FormLabelRenderer`          |
-| `plugin.FormInput`                       | `plugin.FormInputRenderer`          |
-| `plugin.FormError`                       | `plugin.FormErrorRenderer`          |
+| `plugin.FormLabel`                       | `plugin.LabelRenderer`          |
+| `plugin.FormInput`                       | `plugin.InputRenderer`          |
+| `plugin.FormError`                       | `plugin.ErrorMessageRenderer`          |
 | `plugin.formTypeInputDefinitions`        | `plugin.fieldInputDefinitions`      |
 | `Form.Group`                             | `Form.Field`                        |
 | `FormGroupProps`                         | `FormFieldProps`                    |
@@ -85,6 +85,7 @@ Use the [authoring groups](./schema-reference#authoring-groups) for library sett
 | `useSchemaNodeSubscribe`                 | `useFieldNodeSubscribe`             |
 | `SchemaNodeSubscribeOptions`             | `FieldNodeSubscribeOptions`         |
 | `JSONSchemaError (issue type)`           | `ValidationIssue`                   |
+| `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP`  | `FormErrorCode.FieldInputMap`            |
 
 Replace mixed-case schema aliases with `JSONSchema` and `InferJSONSchema`. For renderer props supplied to custom inputs, follow the [composition contract](./api-reference#composition): there is no automatically supplied FieldInputProps.FieldRenderer.
 
@@ -121,6 +122,8 @@ A terminal object/array root receives issues for paths inside its whole value. D
 
 ## Settings after mount {#live-settings}
 
+Remove `onChange` and `onFileAttach` from `Form.Input`, `Form.Render` and `Form.Field`; relay callbacks belong on Child or renderer Input. Remove child/layout `value` and `defaultValue` overrides; initialize with Form.defaultValue and write subsequent values through the parent callback or handle. Move `presentation.FieldInputProps.required` to `presentation.required`; required in either props bag is ignored. For renderer and input `required`, follow [the display override contract](./api-reference#composition).
+
 Remove Form key changes used only to apply configuration, after checking the lifetime below. Replace configuration objects, arrays and callbacks immutably; mutating an existing reference is not a supported update signal. Explicit Form settings take precedence over FormProvider defaults. FormProvider has no `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, or `disableAutomaticWrites` prop.
 
 | Setting                                                                  | Migration check                                                                                                                                                                                                                                              |
@@ -138,7 +141,32 @@ Remove Form key changes used only to apply configuration, after checking the lif
 
 `Form.Field`, `Form.Input`, and `Form.Render` have their own mount-fixed component/children overrides. For those overrides, use live context, hooks inside the component, or a deliberate new key; the Form-wide live settings do not change this [composition contract](./schema-reference#input-resolution).
 
-An unusable map key such as `/**` reports `FormErrorCode.FormTypeInputMap` with `origin: 'load'` once after commit, including StrictMode. An initial failure keeps the load fallback; a failed live replacement keeps the tree and last valid map. Replace the map with a valid reference to recover. An input component throwing during render remains a render failure; do not classify it by the thrown code alone.
+An uncompilable explicit pattern such as `^/invalid[` reports `FormErrorCode.FieldInputMap` with `origin: 'load'` once after commit, including StrictMode. An initial failure keeps the load fallback; a failed live replacement keeps the tree and last valid map. Replace the map with a valid reference to recover. An input component throwing during render reports a render failure; do not classify it by the thrown code alone.
+
+## Input-map keys {#input-map-keys}
+
+This is a breaking change from 0.16: keys without a leading `^` no longer have a regular-expression fallback. Except for the existing one-segment `*` wildcard, they compare as text. There is no development warning, including for a plain key that relied on capturing descendants; that dependency cannot be detected automatically.
+
+| Intent or 0.16 key | Write now | Matches | Does not match |
+| --- | --- | --- | --- |
+| `'/contact'` meant one node | `'/contact'` | `/contact` | `/contact/first`, `/contacts`, `/a/contact/b` |
+| Direct children only | `'/contact/*'` | `/contact/first` | `/contact`, `/contact/a/b` |
+| Every descendant, excluding the node | `'^/contact/'` | `/contact/first`, `/contact/a/b` | `/contact`, `/contacts` |
+| The node and every descendant | Two keys with the same input: `'/contact'`, `'^/contact/'` | `/contact`, `/contact/a/b` | `/contacts` |
+| Bounded pattern alternative | `'^/contact(?:/\|$)'` | `/contact`, `/contact/first` | `/contacts` |
+| Mistake: `'^/contact'` as a subtree boundary | Use the bounded forms above | `^/contact` also matches `/contacts` | It does not match `/a/contact` |
+| `'/user/(name\|email)'` as a pattern | `'^/user/(name\|email)$'` deliberately narrows the old substring match | `/user/name`, `/user/email` | `/a/user/name`, `/user/email/child` |
+| `'#/users/\\d+/profile'` as a pattern | `'^/users/\\d+/profile$'` (drop `#`) | `/users/12/profile` | `/users/a/profile`, `/users/12/profile/more` |
+| `'/name'` matched in the middle | `'/*/name'` for one depth, or `'^.*/name$'` for any depth | `/user/name` | `/user/name/child` |
+| `'contact.email'`, `'items.0.name'` relied on `.` matching `/` | `'/contact/email'`, `'/items/*/name'` | `/contact/email`, `/items/0/name` | `/contact/email/child`, `/items/0/deep/name` |
+| `'#email'` lost `#` and matched the substring `email` | The old key now matches nothing; use `'/email'` for that node or `'^.*/email$'` for that name at any depth | `/email`; the pattern also matches `/contact/email` | `/emailBackup`, `/email/child` |
+| `'email'` relied on substring matching | `'^.*/email$'`, or a definition with a `test` function | `/email`, `/contact/email` | `/emailBackup`, `/email/child` |
+| `'/name$'` relied on a suffix pattern | `'^.*/name$'` | `/name`, `/user/name` | `/username`, `/name/child` |
+| `'/items/**/name'`, `'/price['` produced compile errors | Keep them only for those literal names; they no longer throw | `/items/**/name`, `/price[` | `/items/0/name`, `/price` |
+| `{ '/contact': A, '/contact/first': B }` gave A to both | Keep the map to give B to the child | A at `/contact`, B at `/contact/first` | A no longer captures `/contact/first` |
+| Existing `^` patterns and recognized `*` wildcards | Keep them | `'^/contact$'` → `/contact`; `'/items/*/name'` → `/items/0/name` | Those keys exclude `/contact/child` and `/items/0/deep/name` respectively |
+
+For example, migrate `'/user/(name|email)': Input` to `'^/user/(name|email)$': Input` when only those two paths are intended. Adding `^` alone preserves an open end but removes middle-of-path matches. Preserving the entire old substring behavior would require a prefix such as `^[\s\S]*` (double the backslashes in a JavaScript string); prefer the bounded recipes above instead. Patterns match escaped data paths, not fragment-prefixed paths. See [path matching](./schema-reference#input-map-keys) for order, branch inputs and silent nonmatches.
 
 ## Observation, hidden forms, and inferred values {#observation-types}
 
@@ -188,3 +216,81 @@ Use application tests to decide whether each item applies; renaming imports alon
 - Distinguish Edited/Touched from `isDivergent` and the current load baseline. Reacquire nodes on reentry/root replacement; detached nodes do not write into the live form. Replace cleanup-time writes with the [inactive resolver contract](./api-reference#inactive-listeners).
 - Use resolved custom-input locks and the [accessible naming contract](./schema-reference#accessibility). A branch object's local lock does not automatically lock all children: use `controls.fields` or a form-wide lock. Test enum empty options and radio/checkbox selectors.
 - Keep schemas and configuration immutable, clean up subscriptions, handle degraded diagnostics and execution failures separately from raw validation issues, and verify [CSP requirements](./quick-start#transpilation-csp) before deploying expression-based controls.
+
+## Renderer parts and input error feedback {#renderer-parts}
+
+These are breaking changes. Apply the names to Form props, FormProvider props and plugin members, and import the new dedicated prop types from @canard/schema-form. Old registration keys are silently ignored at runtime. TypeScript rejects old keys in object literals and JSX props; a plugin object typed elsewhere, such as one from an older plugin package, still compiles and its old keys are ignored. A successful render is not evidence that an old key applied. registerPlugin failure messages list the plugin’s slots by the new names.
+
+| Previous name | Current name / contract |
+| --- | --- |
+| `FormLabelRenderer` | `LabelRenderer` / `LabelRendererProps` |
+| `FormInputRenderer` | `InputRenderer` / `InputRendererProps` (frame) |
+| `FormErrorRenderer` | `ErrorMessageRenderer` / `ErrorMessageRendererProps` |
+| `Form.Error` / `FormErrorProps` | `Form.ErrorMessage` / `FormErrorMessageProps` |
+
+Form.Label and Form.ErrorMessage do not add an outer label/span. A renderer returning bare text must now own its label and apply htmlFor/id. The following snippets show the previous and current registration. Keep the component reference stable.
+
+```tsx
+// Before
+const LegacyLabel = ({ name }: FieldRendererProps) => <>{name}</>;
+registerPlugin({ FormLabelRenderer: LegacyLabel });
+```
+
+```tsx
+// After
+const Label = ({ htmlFor, id, children }: LabelRendererProps) => (
+  <label htmlFor={htmlFor} id={id}>{children}</label>
+);
+registerPlugin({ LabelRenderer: Label });
+```
+
+Replace the previous standalone slot:
+
+```tsx
+// Before
+<Form.Error path="/name" />
+```
+
+```tsx
+// After
+<Form.ErrorMessage path="/name" />
+```
+
+Real inputs no longer receive errors/errorVisible props or re-render just for error changes when no deferred Refresh is pending. Import useFieldErrors to opt into feedback. This excerpt changes only the feedback; retain your input control and its onChange.
+
+```tsx
+// Before
+const Input = ({ errors, errorVisible }: FieldInputProps) => (
+  <span>{errorVisible && errors[0]?.message}</span>
+);
+```
+
+```tsx
+// After
+const Input = ({ node }: FieldInputProps) => {
+  const { errorMessage } = useFieldErrors(node);
+  return <span>{errorMessage}</span>;
+};
+```
+
+Search all custom inputs, destructuring, member reads and prop payloads for `errors` and `errorVisible` (for example, `rg "errors|errorVisible" src`). Their @deprecated optional-never keys catch member access such as errors.map and passing values, but a bare `if (errorVisible)` can still compile and read undefined. Typecheck alone cannot finish this migration. For hook limits and ownership, read [useFieldErrors](./api-reference#field-errors).
+
+The default group renders no empty em when a message is absent. A selector such as `[data-path="/branch"] em` can therefore match a descendant’s message; check that the message element’s closest data-path is the desired field. The default group removes the non-required label’s trailing space and marks its existing required asterisk aria-hidden; a default standalone Form.Label now shows the same asterisk. Form.Label accepts children for explicit copy. These markup excerpts omit other attributes and input markup. Group label/error markup without a message:
+
+```html
+<!-- Before -->
+<label for="/name">name </label><em></em>
+<!-- After -->
+<label for="/name">name</label>
+```
+
+For a required standalone default label, the data-path div moves from inside the label to outside it; selectors such as `label > div` must change. Other attributes are omitted:
+
+```html
+<!-- Before -->
+<label for="/name"><div data-path="/name">name</div></label>
+<!-- After -->
+<div data-path="/name"><label for="/name">name <span aria-hidden="true">*</span></label></div>
+```
+
+Replace a pass-through input renderer with a deliberate frame, or omit it. Follow [the children and unwrapped lifetime contract](./api-reference#input-frames); changing the ancestor path restarts the input with the current node value and loses focus/composition. The [bound part defaults](./api-reference#renderer-parts) replace hand-drawn labels and errors.

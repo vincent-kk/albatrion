@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
@@ -63,7 +66,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
           writeFieldNode(
             root.structure!.kind,
             transition.kind,
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           expect(evaluations).toBe(transition.calls);

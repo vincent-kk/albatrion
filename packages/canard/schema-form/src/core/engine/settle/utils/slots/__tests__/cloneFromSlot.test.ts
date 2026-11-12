@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import * as blueprints from '../../../../blueprint';
-import { WriteOption } from '../../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../../types/value';
 import {
   dispatchMount,
   dispatchSetState,
@@ -54,7 +54,11 @@ it('copies source channels and rebinds every active and inactive parent', () => 
     hidden.name,
     hidden.blueprintNode,
   );
-  const entry = getRetainedChildEntry(root, instance.name, instance.blueprintNode);
+  const entry = getRetainedChildEntry(
+    root,
+    instance.name,
+    instance.blueprintNode,
+  );
   if (!hiddenEntry || !entry) throw new Error('Expected declared bindings');
   instance.inactiveSlots = new Map([[hiddenEntry, hidden]]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
@@ -62,7 +66,7 @@ it('copies source channels and rebinds every active and inactive parent', () => 
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
     scratch,
   );

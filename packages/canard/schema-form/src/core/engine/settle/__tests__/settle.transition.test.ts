@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -23,7 +26,12 @@ describe('settle transitions and loads', () => {
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.name?.source).toBe('filled');
-    writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      {},
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.name?.source).toBeUndefined();
     resetFieldNodeForm(root, {}, WriteOption.Overwrite);
     expect(root.structure?.name?.source).toBe('filled');
@@ -50,7 +58,7 @@ describe('settle transitions and loads', () => {
     writeFieldNode(
       root,
       { flag: true },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.name?.source).toBeUndefined();
@@ -84,11 +92,16 @@ describe('settle transitions and loads', () => {
     writeFieldNode(
       root,
       { a: 'new', flag: true },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.emit).toEqual({ a: 'new', b: 'B', flag: true, gated: 'new' });
-    writeFieldNode(root, null, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root,
+      null,
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(root.source).toBeNull();
     expect(root.structure?.a?.source).toBeUndefined();
     expect(root.runtime.misfitPaths.has('')).toBe(true);
@@ -164,13 +177,13 @@ describe('settle transitions and loads', () => {
     writeFieldNode(
       root.structure!.left.structure!.a,
       'changed',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.right,
       'changed',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     resetFieldNodeSubtree(root.structure!.left, WriteOption.Overwrite);
@@ -211,7 +224,7 @@ describe('settle transitions and loads', () => {
     writeFieldNode(
       root,
       { user: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.user?.structure?.name?.source).toBeUndefined();
@@ -241,7 +254,7 @@ describe('settle transitions and loads', () => {
     writeFieldNode(
       written,
       { account: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     for (const root of [loaded, written]) {
@@ -252,7 +265,7 @@ describe('settle transitions and loads', () => {
       writeFieldNode(
         account.structure!.first!,
         'typed',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       expect(root.emit).toEqual({ account: { first: 'typed' } });
@@ -288,10 +301,20 @@ describe('settle transitions and loads', () => {
       WriteOption.Overwrite,
     );
     const emitted = root.emit;
-    writeFieldNode(root, emitted, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      emitted,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual(emitted);
     const afterFirst = root.emit;
-    writeFieldNode(root, afterFirst, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      afterFirst,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toBe(afterFirst);
     expect(root.runtime.refreshTargets?.size).toBe(0);
   });
@@ -310,7 +333,12 @@ describe('settle transitions and loads', () => {
     });
     loadFieldNodeAtMount(root, { flag: true }, WriteOption.Overwrite);
     expect(root.structure?.appeared).toBeUndefined();
-    writeFieldNode(root, undefined, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      undefined,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.flag?.source).toBeUndefined();
     expect(root.structure?.appeared?.source).toBe('A');
   });
@@ -329,13 +357,28 @@ describe('settle transitions and loads', () => {
       WriteOption.Overwrite,
     );
     const former = root.structure!.secret;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const commit = root.runtime.commitNumber;
-    writeFieldNode(former, 'new', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      former,
+      'new',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(former.source).toBe('old');
     expect(root.runtime.commitNumber).toBe(commit);
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('old');
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.secret?.source).toBe('old');
   });
 

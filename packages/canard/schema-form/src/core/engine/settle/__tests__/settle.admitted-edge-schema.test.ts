@@ -2,7 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { mergeEffectiveSchema } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -155,7 +158,12 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
     const spy = vi.spyOn(admitted, 'readAdmittedEdgeSchema');
     loadFieldNodeAtMount(root, { k: 0, x: 'v' }, WriteOption.Overwrite);
     expect(spy.mock.calls.map(([entry]) => entry.name)).not.toContain('x');
-    writeFieldNode(root.structure!.k, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.k,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(spy.mock.calls.map(([entry]) => entry.name)).toContain('x');
   });
 
@@ -195,8 +203,13 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
     );
     const a = root.structure!.a;
     const schema = a.schema;
-    writeFieldNode(root.structure!.c, 'C2', 'input', WriteOption.Overwrite);
-    writeFieldNode(a, 'A2', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.c,
+      'C2',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(a, 'A2', FieldNodeWriteKind.Input, WriteOption.Overwrite);
     expect(a.schema).toBe(schema);
     const served = spy.mock.calls.flatMap(([entry], index) =>
       entry.name === 'a' ? [spy.mock.results[index].value?.schema] : [],

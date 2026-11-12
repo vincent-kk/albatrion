@@ -11,12 +11,15 @@ import type { FormErrorRecord } from '@/schema-form/errors';
 import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,
+  ErrorMessageRendererProps,
   ErrorVisibility,
   FieldInputDefinition,
   FieldInputMap,
   FieldRendererProps,
   InferValueType,
+  InputRendererProps,
   JSONSchema,
+  LabelRendererProps,
   ValidatorFactory,
 } from '@/schema-form/types';
 
@@ -68,11 +71,11 @@ export interface FormProps<
   /** Custom field renderer component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<LabelRendererProps>;
   /** Input renderer shared by Form.Input instances. */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  /** Error renderer shared by Form.Error instances. */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<InputRendererProps>;
+  /** Error renderer shared by Form.ErrorMessage instances. */
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: FieldNode['globalErrors'];
   /** Custom format error function */

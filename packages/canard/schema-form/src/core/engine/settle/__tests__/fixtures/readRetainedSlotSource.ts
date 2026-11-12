@@ -87,8 +87,11 @@ export const hasRetainedSlotOwnSource = (
   if (!retained) return false;
   if (retained.template.kind === 'array')
     return (
-      readSlotSourceTree(retained.template, retained.instance, retained.overlay) !==
-      undefined
+      readSlotSourceTree(
+        retained.template,
+        retained.instance,
+        retained.overlay,
+      ) !== undefined
     );
   const { instance, overlay } = retained;
   const source =

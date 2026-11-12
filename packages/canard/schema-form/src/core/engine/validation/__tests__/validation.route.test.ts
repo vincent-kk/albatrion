@@ -67,14 +67,17 @@ describe('validation issue attribution', () => {
   it('VALIDATE-051 keeps a union host keyword on its data node', () => {
     const { root } = createDispatchTree({ type: ['string', 'number'] });
     dispatchMount(root, 'x');
-    routeValidationIssues([root], [
-      {
-        dataPath: '',
-        keyword: 'oneOf',
-        schemaPath: '#/oneOf',
-        message: 'host',
-      },
-    ]);
+    routeValidationIssues(
+      [root],
+      [
+        {
+          dataPath: '',
+          keyword: 'oneOf',
+          schemaPath: '#/oneOf',
+          message: 'host',
+        },
+      ],
+    );
     expect(readFieldNodeErrors(root).map((issue) => issue.message)).toEqual([
       'host',
     ]);
@@ -89,14 +92,20 @@ describe('validation issue attribution', () => {
       then: { properties: { value: { pattern: '^A' } } },
     });
     dispatchMount(root, { flag: true, value: 'b' });
-    routeValidationIssues([root], [
-      {
-        dataPath: '/value',
-        schemaPath: '#/allOf/0/properties/value/minLength',
-      },
-      { dataPath: '/value', schemaPath: '#/then/properties/value/pattern' },
-      { dataPath: '/value', schemaPath: '#/properties/value/controls/active' },
-    ]);
+    routeValidationIssues(
+      [root],
+      [
+        {
+          dataPath: '/value',
+          schemaPath: '#/allOf/0/properties/value/minLength',
+        },
+        { dataPath: '/value', schemaPath: '#/then/properties/value/pattern' },
+        {
+          dataPath: '/value',
+          schemaPath: '#/properties/value/controls/active',
+        },
+      ],
+    );
     expect(readFieldNodeErrors(root.structure?.value ?? root)).toHaveLength(3);
   });
 

@@ -6,7 +6,10 @@ import type { DispatchTestNode } from '@/schema-form/core/engine/__tests__/fixtu
 import { FieldNodeEventType as E } from '@/schema-form/core/engine/record';
 import type { FieldNodeDelivery } from '@/schema-form/core/engine/record';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { runDeliveryWaves } from '../utils/chain/runDeliveryWaves';
 import { dispatchRemove } from '../utils/entry/dispatchRemove';
@@ -18,7 +21,12 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** Commit without draining, reproducing multiple commits inside one delivery boundary. */
 const commit = (node: DispatchTestNode, value: unknown) =>
-  writeFieldNode(node, value, 'callerReplace', WriteOption.Overwrite);
+  writeFieldNode(
+    node,
+    value,
+    FieldNodeWriteKind.CallerReplace,
+    WriteOption.Overwrite,
+  );
 
 /** Observe the public value payload without depending on pending envelope layout. */
 const value = (event: FieldNodeDelivery) => event.payload?.[E.UpdateValue];
@@ -74,7 +82,7 @@ describe('payload boundary differential characterization', () => {
     expect(events).toHaveLength(1);
     expect(value(events[0])).toEqual({ previous: 'A', current: 'C' });
     expect(events[0].options?.[E.UpdateValue]).toEqual({
-      source: 'callerReplace',
+      source: FieldNodeWriteKind.CallerReplace,
     });
   });
 

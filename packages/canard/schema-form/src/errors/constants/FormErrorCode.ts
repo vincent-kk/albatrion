@@ -55,7 +55,7 @@ export const FormErrorCode = {
   /** Class: SchemaFormError; when: a dispatch chain or observer produces multiple errors. */
   MultipleErrors: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.MultipleErrors}`,
   /** Class: SchemaFormError; when: an input-map pattern cannot compile; the form stays in fallback and reports once with origin load, including in StrictMode. */
-  FormTypeInputMap: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.FormTypeInputMap}`,
+  FieldInputMap: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.FieldInputMap}`,
   /** Class: SchemaFormError; when: a committed display policy is not an ErrorVisibility value. */
   InvalidErrorVisibility: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.InvalidErrorVisibility}`,
   /** Class: UnhandledError; when: global plugin registration fails outside a form instance. */
