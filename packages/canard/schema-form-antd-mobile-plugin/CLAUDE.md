@@ -18,7 +18,7 @@ The plugin exports a `SchemaFormPlugin` object:
 - `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
 - `fieldInputDefinitions` — 10 mobile input component definitions (in priority order)
 
-**FieldInput priority**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Array → Slider → Textarea → String → Number → Boolean
+**FieldInput priority**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Slider → Array → Textarea → String → Number → Boolean
 
 ## Schema → Component Mapping
 
