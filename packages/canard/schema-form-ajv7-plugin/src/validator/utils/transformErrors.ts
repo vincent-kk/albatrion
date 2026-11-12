@@ -3,7 +3,10 @@ import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
 
-const JSON_POINTER_SEPARATOR = '/';
+/** Escape tilde before slash when a required-property name needs encoding. */
+const TILDE = /~/g;
+/** Escape slash after tilde when encoding a required-property name. */
+const SLASH = /\//g;
 
 /**
  * Transforms AJV7 error objects to schema-form error format.
@@ -71,9 +74,11 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
  */
 const transformDataPath = (error: ErrorObject): string => {
   const dataPath = error.dataPath || '';
+  if (error.keyword !== 'required') return dataPath;
   const missingProperty = error.params?.missingProperty;
-  const hasMissingProperty = error.keyword === 'required' && typeof missingProperty === 'string';
-  return hasMissingProperty
-    ? dataPath + JSON_POINTER_SEPARATOR + String(missingProperty).replace(/~/g, '~0').replace(/\//g, '~1')
-    : dataPath;
+  if (typeof missingProperty !== 'string') return dataPath;
+  const name = missingProperty.indexOf('~') === -1 && missingProperty.indexOf('/') === -1
+    ? missingProperty
+    : missingProperty.replace(TILDE, '~0').replace(SLASH, '~1');
+  return dataPath + '/' + name;
 };
