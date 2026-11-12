@@ -740,6 +740,9 @@ Opens a simple alert modal to display information to the user.
   - `dimmed?`: Whether to dim the background (boolean)
   - `manualDestroy?`: Enable manual destroy mode (boolean)
   - `closeOnBackdropClick?`: Whether to close on backdrop click (boolean)
+  - `closeOnEscape?`: Escape override (see Accessibility for inheritance)
+  - `trapFocus?`: Trap Tab when the top visible pending modal is dimmed (default `true`)
+  - `lockScroll?`: Lock body scrolling for a pending dimmed modal (default `true`)
   - `ForegroundComponent?`: Custom foreground component
   - `BackgroundComponent?`: Custom background component
 
@@ -978,6 +981,16 @@ function Component() {
   return <main>{portal}</main>;
 }
 ```
+
+### Accessibility
+
+Escape cancels only the top visible pending modal. `closeOnEscape` resolves in this order: the call's Escape option, the call's `closeOnBackdropClick`, the Provider's Escape option, then the Provider's backdrop click option (default `true`). `useModal` configuration counts as call data; `undefined` inherits. Set `closeOnEscape: false` to keep Escape from cancelling a request. IME composition and events with `preventDefault()` are ignored.
+
+For `alive && visible && dimmed && !settled` modals, the library moves focus into the top participant (preserving frame `autoFocus`), traps Tab only when the top visible pending modal is dimmed, and restores connected openers on settlement. `trapFocus` and `lockScroll` default to `true` at Provider and call level; set either to `false` to delegate that responsibility. When a nondimmed modal is on top, native Tab order applies while page isolation remains. Disabling the trap still moves focus initially. `dimmed: false` modals do not take focus, isolate the page, or lock scrolling.
+
+The default frame supplies `role="dialog"` and `aria-modal="true"`. Custom foreground frames supply their own role, accessible name, and description; the library wrapper supplies focus behavior. Give every dialog an accessible name, for example with `aria-labelledby` referencing its visible title. A visible dimmed backdrop blocks page pointers even with `closeOnBackdropClick: false`. For a pass-through toast, set both `dimmed` and `closeOnBackdropClick` to `false`.
+
+See [the accessibility contract](./docs/en/SPECIFICATION.md#accessibility) for isolation, scroll restoration, nested roots, and portal limits.
 
 ### Configuration and public interface
 

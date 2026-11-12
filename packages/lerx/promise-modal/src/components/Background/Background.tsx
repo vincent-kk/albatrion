@@ -39,7 +39,7 @@ export const BackgroundFrame = ({
     <div
       className={cxLite(
         background,
-        modal.closeOnBackdropClick && modal.visible && active,
+        modal.visible && (modal.closeOnBackdropClick || modal.dimmed) && active,
         (modal.manualDestroy ? modal.alive : modal.visible) && visible,
       )}
       onClick={handleClose}

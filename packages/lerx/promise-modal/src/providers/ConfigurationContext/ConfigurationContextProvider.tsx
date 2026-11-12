@@ -42,7 +42,11 @@ const DEFAULT_OPTIONS = {
   backdrop: { backgroundColor: DEFAULT_BACKDROP_COLOR },
   closeOnBackdropClick: true,
   manualDestroy: false,
-} satisfies Required<ConfigurationContextProps['options']>;
+  trapFocus: true,
+  lockScroll: true,
+} satisfies Required<
+  Omit<ConfigurationContextProps['options'], 'closeOnEscape'>
+>;
 
 export interface ConfigurationContextProviderProps {
   BackgroundComponent?: BackgroundComponent;

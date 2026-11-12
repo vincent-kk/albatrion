@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- trapFocus와 lockScroll의 기본값은 true입니다. closeOnEscape는 Provider의 boolean 또는 undefined를 그대로 전달하며 기본값을 미리 넣지 않아 모달별 배경 클릭 설정을 존중합니다.
+
 - Provider의 전경 컴포넌트 타입은 모달별 전경 타입과 동일하게 children을 포함합니다. 배경 타입은 children을 약속하지 않습니다.
 - 옵션은 undefined를 무시하고 기본값과 결합하며 0과 false를 보존합니다. duration은 숫자 밀리초 또는 ms·s 문자열을 렌더 시 ms 문자열로 정규화하고 잘못된 값은 기본값과 개발 경고로 처리합니다.
 - 컴포넌트 props는 마운트 시 정해져 열린 prompt가 재마운트되지 않습니다. 개발 모드에서 정체 변경을 prop당 한 번 경고하며 운영에서는 경고하지 않습니다.

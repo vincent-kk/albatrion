@@ -171,6 +171,20 @@ AbstractNode (기본 클래스)
 - Promise 해결 처리
 - 생명주기 관리
 
+### 접근성
+
+Escape는 클릭으로 순서가 바뀐 경우를 포함하여 살아 있고 보이며 미확정인 모달 중 쌓임 순서가 가장 높은 것에 적용합니다. 그 노드의 유효 `closeOnEscape`가 true일 때만 취소하며 닫을 수 없는 최상위 모달을 건너뛰어 아래 모달을 닫지 않습니다. 순서는 호출별 `closeOnEscape`, 호출별 `closeOnBackdropClick`, Provider `closeOnEscape`, Provider `closeOnBackdropClick`(기본 true)입니다. `useModal` 기본값도 호출 데이터입니다. 명시적 undefined는 상속합니다. 기본 방지 이벤트, `isComposing`, 키 코드 229를 무시하고 root 분리 중에는 키보드 처리를 보류합니다. Escape는 일반 취소 값을 반환하며 prompt는 `returnOnCancel`을 켜지 않으면 `null`입니다.
+
+`alive && visible && dimmed && !settled`인 모달만 포커스·inert 격리·스크롤 잠금에 참여합니다. 표시하거나 경로에 복귀하면 최상위 참여 모달의 첫 탭 가능 요소 또는 바깥 래퍼(`tabIndex={-1}`)로 포커스를 한 번 옮기되 `autoFocus`를 포함한 기존 내부 포커스는 유지합니다. 보이는 미확정 최상위 모달이 dimmed이고 `trapFocus`가 true일 때만 Tab과 Shift+Tab을 순환시킵니다. 최상위가 dimmed false 모달이면 기본 Tab 순서를 유지하며 기존 inert 격리는 페이지를 계속 보호합니다. Provider와 호출별 `trapFocus`·`lockScroll`은 기본 true이며 일반 undefined 상속 병합을 따릅니다. `trapFocus: false`는 순환만 끄며 최초 포커스 이동과 페이지 격리는 유지합니다.
+
+확정 시 페이지 효과를 재평가한 뒤 연결된 열기 전 요소로 포커스를 돌립니다. 다른 미확정 모달 안에 포커스가 있으면 유지합니다. 다른 dimmed 모달 때문에 열기 전 요소가 여전히 inert이면 남은 최상위 dimmed 모달로 이동합니다. 연결이 끊긴 대상은 무시합니다. 경로 숨김·닫힘·파괴는 수동 종료 애니메이션 중에도 즉시 참여에서 빠집니다. 다시 표시하거나 초기화하면 대기 노드를 재평가합니다. 분리된(`root={null}`) 앵커는 페이지 격리나 스크롤 잠금을 수행하지 않습니다.
+
+격리는 앵커의 조상 경로를 따라 `document.body`까지 각 단계의 형제 요소에 `inert` 속성을 겁니다. 기존 inert 속성은 유지하고 라이브러리가 추가한 속성만 제거합니다. 첫 참여 모달이 생기거나 root가 이동할 때 스냅샷을 만들며 이후 추가된 DOM은 건드리지 않아 body에 붙는 드롭다운 포털이 동작할 수 있습니다. 외부 포털은 래퍼의 Tab 순환 밖에 있으므로 사용자 프레임이 포털의 키보드 통합을 맡습니다.
+
+참여 모달 중 `lockScroll: true`가 하나라도 있으면 body overflow를 숨깁니다. 스크롤바 너비가 0보다 크고 100px보다 작을 때만 계산된 오른쪽 패딩에 더하여 페이지 밀림을 보정합니다. 마지막 스크롤 잠금 대상이 빠지면 원래 인라인 overflow와 오른쪽 패딩(우선순위 포함)을 복원합니다. Provider 해제와 reset은 페이지 효과와 document keydown 리스너 하나를 정리합니다.
+
+기본 전경은 `role="dialog"`와 `aria-modal="true"`를 제공합니다. 사용자 전경 프레임은 역할·접근 가능한 이름·설명을 직접 제공하고 래퍼가 포커스 기본선을 제공합니다. 모든 dialog에 이름을 지정합니다. 예를 들어 제목과 설명에 `aria-labelledby`·`aria-describedby`를 연결합니다. 보이는 배경은 `dimmed || closeOnBackdropClick`일 때 포인터를 받지만 클릭 취소는 `closeOnBackdropClick`이 켜진 경우만 수행합니다. 뒤 페이지를 클릭할 수 있는 토스트는 `dimmed: false, closeOnBackdropClick: false`로 설정하며 포커스 이동·복원·페이지 격리·스크롤 잠금에 참여하지 않습니다.
+
 ### 설정 우선순위
 
 Provider의 컴포넌트 props(`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`)는 부모 리렌더가 열린 prompt를 재마운트하지 않도록 마운트 시점에 고정합니다. 변경은 무시하며 개발 환경에서 변경된 prop마다 한 번 경고하고 운영 환경에서는 경고하지 않습니다. 바뀌는 데이터는 `context`로 전달하며 options는 반응형으로 갱신합니다.
@@ -236,6 +250,9 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>;
 | `subtype`              | `'info' \| 'success' \| 'warning' \| 'error'`   | `'info'` | 모달 타입                                      |
 | `dimmed`               | `boolean`                                       | `true`   | 배경 어둡게                                    |
 | `closeOnBackdropClick` | `boolean`                                       | `true`   | 배경 클릭 시 닫기                              |
+| `closeOnEscape` | `boolean` | 상속 | Esc 취소; 접근성 절 참고 |
+| `trapFocus` | `boolean` | `true` | 보이는 미확정 최상위 모달이 dimmed일 때 Tab 순환 |
+| `lockScroll` | `boolean` | `true` | dimmed 모달 body 스크롤 잠금 |
 | `manualDestroy`        | `boolean`                                       | `false`  | 수동 제거 모드                                 |
 | `duration`             | `number \| string`                              | -        | 애니메이션 지속 시간 (Handler 레벨 오버라이드) |
 | `background`           | `ModalBackground<B>`                            | -        | 배경 설정                                      |
@@ -603,6 +620,9 @@ function useModalOptions(): {
   backdrop: CSSProperties;
   manualDestroy: boolean;
   closeOnBackdropClick: boolean;
+  closeOnEscape?: boolean;
+  trapFocus: boolean;
+  lockScroll: boolean;
   zIndex: number;
 };
 ```
@@ -652,6 +672,9 @@ interface ModalOptions {
   backdrop?: string | CSSProperties; // 배경 오버레이 색상
   manualDestroy?: boolean; // 수동 제거 모드
   closeOnBackdropClick?: boolean; // 배경 클릭 시 닫기
+  closeOnEscape?: boolean;
+  trapFocus?: boolean;
+  lockScroll?: boolean;
 }
 ```
 

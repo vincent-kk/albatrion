@@ -15,6 +15,8 @@ ModalManager 싱글톤 클래스를 통해 모달의 전역 상태, DOM 앵커�
 
 ### Always do
 
+- 키보드·포커스·inert·스크롤 자원은 매니저만 소유하고 해제와 reset에서 복원
+
 - ModalManager의 static 인터페이스 유지
 - `reset()`은 전체 상태를 초기화하고 스타일 관리자는 다음 적용 시 지연 생성
 - 스타일 시트 정의 시 `compressCss` 적용
