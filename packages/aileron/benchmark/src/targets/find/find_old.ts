@@ -1,6 +1,6 @@
 import { JSONPath } from '@winglet/json/path';
 
-import type { FieldNode } from '@/schema-form/core/nodes/type';
+import type { FieldNode } from '@/schema-form/core';
 
 export const find = (target: FieldNode, path: string[]): FieldNode | null => {
   const [currPath, ...rest] = path;
@@ -13,11 +13,11 @@ export const find = (target: FieldNode, path: string[]): FieldNode | null => {
     return find(target?.parentNode as FieldNode, rest);
   } else if (target?.children) {
     const children = target.children;
-    const found = children.find((e) => e.node.name === currPath);
+    const found = children.find((e) => e.name === currPath);
     if (found && rest.length > 0) {
-      return find(found.node, rest);
+      return find(found, rest);
     }
-    return found?.node || null;
+    return found || null;
   }
   return null;
 };
