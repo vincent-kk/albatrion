@@ -9,7 +9,7 @@ import type { FieldNode } from '@/schema-form/core';
  * @returns 찾은 노드 또는 null
  */
 export const find = (
-  target: any | null,
+  target: FieldNode | null,
   segments: string[],
 ): FieldNode | null => {
   if (!target) return null;
@@ -28,8 +28,8 @@ export const find = (
       if (!children?.length) return null;
       let found = false;
       for (const child of children) {
-        if (child.node.name !== segment) continue;
-        cursor = child.node;
+        if (child.name !== segment) continue;
+        cursor = child;
         found = true;
         break;
       }

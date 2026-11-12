@@ -125,4 +125,4 @@ export const node = nodeFromJSONSchema({
   onChange: () => {},
 });
 
-export const targetPath = '$.user.profile.preferences.notifications';
+export const targetPath = '$.title';
