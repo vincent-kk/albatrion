@@ -96,9 +96,16 @@ it('R7 inherits useModal defaults while preserving explicit zero and false', () 
   });
 });
 
-it.each([300, '300.0ms', '0.3s', 0.5, '0.5ms', '0.0005s'] as const)(
-  'R8 normalizes provider duration %s to milliseconds',
-  (duration) => {
+it.each([
+  { duration: 300, expected: '300ms' },
+  { duration: '300.0ms', expected: '300ms' },
+  { duration: '0.3s', expected: '300ms' },
+  { duration: 0.5, expected: '0.5ms' },
+  { duration: '0.5ms', expected: '0.5ms' },
+  { duration: '0.0005s', expected: '0.5ms' },
+] as const)(
+  'R8 normalizes provider duration $duration to $expected',
+  ({ duration, expected }) => {
     function Frame({ id, children }: PropsWithChildren<ModalFrameProps>) {
       const global = useConfigurationOptions();
       const local = useModalDuration(id);
@@ -118,21 +125,15 @@ it.each([300, '300.0ms', '0.3s', 0.5, '0.5ms', '0.0005s'] as const)(
     act(() => {
       alertHandler({});
     });
-    const expected =
-      typeof duration === 'number'
-        ? duration
-        : duration.endsWith('ms')
-          ? parseFloat(duration)
-          : parseFloat(duration) * 1000;
     expect(screen.getByTestId('duration').dataset).toMatchObject({
-      global: `${expected}ms`,
-      local: `${expected}ms`,
+      global: expected,
+      local: expected,
     });
     expect(
       document
         .querySelector('[style*="--transition-duration"]')
         ?.getAttribute('style'),
-    ).toContain(`--transition-duration: ${expected}ms`);
+    ).toContain(`--transition-duration: ${expected}`);
   },
 );
 

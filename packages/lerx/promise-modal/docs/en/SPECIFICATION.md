@@ -1,177 +1,136 @@
 # @lerx/promise-modal Specification
 
-> Universal React Modal Utility with Promise-based API
+Start with the [README](../../README.md) for installation, results, components, roots, configuration, and animation. This reference covers integration choices; use the published declarations for exact prop shapes. Each TypeScript block below is a standalone example.
 
-## Overview
+## Public API and results
 
-`@lerx/promise-modal` is a React-based universal modal utility that provides:
+Use `alert`, `confirm`, and `prompt` in browser event handlers or browser utilities. `alert` returns `Promise<void>`, `confirm` returns `Promise<boolean>`, and `prompt<T>` returns `Promise<T | undefined | null>`. Confirmation returns the current prompt value without conversion; ordinary cancellation returns null. `returnOnCancel: true` instead returns the current value, including undefined, or defaultValue before rendering. A pre-aborted signal creates no modal. Rendering and opening failures reject rather than cancel.
 
-- **Promise-based interactions**: Alert, confirm, and prompt modals that return promises
-- **Universal usage**: Can be used both inside and outside React components
-- **High customizability**: Every component can be customized
-- **Automatic lifecycle management**: Handles mount/unmount and animations
+### Application wrappers
 
----
-
-## Table of Contents
-
-1. [Installation](#installation)
-2. [Quick Start](#quick-start)
-3. [Architecture](#architecture)
-4. [Core API](#core-api)
-   - [alert](#alert)
-   - [confirm](#confirm)
-   - [prompt](#prompt)
-5. [Hooks](#hooks)
-   - [useModal](#usemodal)
-   - [useActiveModalCount](#useactivemodalcount)
-   - [useModalAnimation](#usemodalanimation)
-   - [useModalDuration](#usemodalduration)
-   - [useDestroyAfter](#usedestroyafter)
-   - [useSubscribeModal](#usesubscribemodal)
-   - [useInitializeModal](#useinitializemodal)
-   - [useModalOptions](#usemodaloptions)
-   - [useModalBackdrop](#usemodalbackdrop)
-6. [Components](#components)
-   - [ModalProvider](#modalprovider)
-   - [Custom Components](#custom-components)
-7. [Type Definitions](#type-definitions)
-8. [Usage Patterns](#usage-patterns)
-9. [Advanced Examples](#advanced-examples)
-10. [AbortSignal Support](#abortsignal-support)
-
----
-
-## Installation
-
-```bash
-# Using yarn
-yarn add @lerx/promise-modal
-
-# Using npm
-npm install @lerx/promise-modal
-```
-
-### Peer Dependencies
-
-- React 18-19
-- React DOM 18-19
-
-### Compatibility
-
-- Node.js 16.11.0 or later
-- Modern browsers (Chrome 94+, Firefox 93+, Safari 15+)
-
----
-
-## Quick Start
-
-### 1. Setup Provider
+Exported Props types let wrappers preserve the public call contract. `AlertProps` and `ConfirmProps` require a background type argument; `PromptProps<T>` can use its default background type. Nodes and their mutation methods are internal.
 
 ```tsx
-import { ModalProvider } from '@lerx/promise-modal';
+import {
+  type AlertProps,
+  type ConfirmProps,
+  type PromptProps,
+  alert,
+  confirm,
+  prompt,
+} from '@lerx/promise-modal';
 
-function App() {
+export const notify = (props: AlertProps<unknown>) => alert(props);
+export const ask = (props: ConfirmProps<unknown>) => confirm(props);
+export const read = <T,>(props: PromptProps<T>) => prompt<T>(props);
+```
+
+### Prompt controls and footers
+
+Input values and validators remain possibly undefined even with a defaultValue. Use controlled inputs initialized from `value`, so a Provider handoff or remount displays the current node value. `defaultValue` remains the original seed. Functional updates accumulate, and same-event confirmation reads the latest value. A custom footer must honor `disabled` itself; programmatic confirmation does not run validation. `PromptContentProps` has confirmation, cancellation, and context, without input value or change handlers; those belong to Input and the per-call prompt footer.
+
+```tsx
+import { prompt } from '@lerx/promise-modal';
+
+export function editQuantity() {
+  return prompt<number>({
+    title: 'Quantity',
+    defaultValue: 0,
+    Input: ({ value, onChange }) => (
+      <input
+        aria-label="Quantity"
+        type="number"
+        value={value ?? 0}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+    ),
+    footer: ({ value, onChange, onConfirm, onCancel, disabled }) => (
+      <>
+        <span>{value}</span>
+        <button
+          onClick={() => {
+            onChange((current) => (current ?? 0) + 1);
+            onConfirm();
+          }}
+        >
+          Add and confirm
+        </button>
+        <button disabled={disabled} onClick={onConfirm}>
+          Confirm
+        </button>
+        <button onClick={onCancel}>Cancel</button>
+      </>
+    ),
+  });
+}
+```
+
+## Hooks
+
+Hooks follow React’s unconditional top-level calling rules. The modal tree consists of frame, content, input, footer, and wrapper components rendered through the portal; ordinary Provider children are outside its configuration contexts.
+
+| Hook                                   | Contract and location                                                                                                                                                                                                           |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useModal(config?)`                    | Any component; stable functions, mount-time config, cancels pending requests on caller unmount and releases settled handles.                                                                                                    |
+| `useActiveModalCount(validate?)`       | Any component; defaults to visible nodes. A custom predicate replaces the default, so include `node.visible` to count only visible matches. Hidden or settled but alive nodes remain available to predicates. SSR returns zero. |
+| `useSubscribeModal(id)`                | Any component; returns a publication version, not modal state. Missing/destroyed ids return -1; SSR returns zero. Read frame props for state; this does not expose nodes.                                                       |
+| `useModalOptions()`                    | Modal tree only; normalized Provider options, not effective per-modal overrides.                                                                                                                                                |
+| `useModalBackdrop()`                   | Modal tree only; Provider backdrop as CSS properties.                                                                                                                                                                           |
+| `useModalDuration(id?)`                | Modal tree only; normalized ms string and milliseconds. Omit id for Provider timing; pass a live id for that modal’s timing. Missing ids fall back to Provider timing.                                                          |
+| `useDestroyAfter(id, delay)`           | Modal tree only; destroys a settled alive node after a number or ms/s delay. Route hiding does not start it; a changed delay reschedules it. Use for custom manual destruction.                                                 |
+| `useModalAnimation(visible, handlers)` | Any component; visibility callbacks run on the next animation frame, using committed callbacks; obsolete frames cancel. Does not destroy.                                                                                       |
+| `useInitializeModal(props?)`           | Any component; initializes the system and returns portal plus initialize(element). Render the portal. Use instead of an additional ModalProvider.                                                                               |
+
+Configuration hooks and `useDestroyAfter` throw an explanatory Error outside the modal tree, including ordinary Provider children.
+
+```tsx
+import {
+  type ModalNodeView,
+  useActiveModalCount,
+  useSubscribeModal,
+} from '@lerx/promise-modal';
+
+const visibleEditors = (node: ModalNodeView) =>
+  node.visible && node.group === 'editor';
+
+export function ModalStatus({ id }: { id: number }) {
+  const total = useActiveModalCount();
+  const editors = useActiveModalCount(visibleEditors);
+  const version = useSubscribeModal(id);
   return (
-    <ModalProvider>
-      <YourApp />
-    </ModalProvider>
+    <output>
+      {total} visible, {editors} editors, subscription version {version}
+    </output>
   );
 }
 ```
 
-### 2. Use Modal Functions
-
 ```tsx
-import { alert, confirm, prompt } from '@lerx/promise-modal';
+import {
+  type ModalFrameProps,
+  useModalBackdrop,
+  useModalDuration,
+  useModalOptions,
+} from '@lerx/promise-modal';
 
-// Alert
-await alert({
-  title: 'Notice',
-  content: 'Operation completed.',
-});
-
-// Confirm
-const result = await confirm({
-  title: 'Confirm',
-  content: 'Are you sure?',
-});
-
-// Prompt
-const name = await prompt<string>({
-  title: 'Enter Name',
-  defaultValue: '',
-  Input: ({ value, onChange }) => (
-    <input value={value} onChange={(e) => onChange(e.target.value)} />
-  ),
-});
+export function FrameDetails({ id }: ModalFrameProps) {
+  const options = useModalOptions();
+  const backdrop = useModalBackdrop();
+  const { duration, milliseconds } = useModalDuration(id);
+  return (
+    <aside style={backdrop}>
+      Provider duration: {options.duration}; this modal: {duration} (
+      {milliseconds}ms)
+    </aside>
+  );
+}
 ```
 
----
+## Configuration and components
 
-## Architecture
+Precedence, duration normalization, mount-time component identity, and typed frame/footer examples live in the README. `backdrop` controls shared backdrop CSS, while `background: { data }` carries application data to the optional custom background. It is not an arbitrary CSS object. `footer: false` hides the footer; label options accept React nodes. Provider FooterComponent receives labels and callbacks; per-call footer functions receive modal-kind callbacks instead of label props. No footer receives onClose, and onConfirm takes no arguments.
 
-### Layer Structure
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Your Application                        │
-├─────────────────────────────────────────────────────────────┤
-│  Core API Layer                                             │
-│  ├── alert()                                                │
-│  ├── confirm()                                              │
-│  └── prompt()                                               │
-├─────────────────────────────────────────────────────────────┤
-│  Application Layer                                          │
-│  └── ModalManager (Singleton)                               │
-│      ├── DOM anchoring                                      │
-│      ├── Style injection                                    │
-│      └── Modal lifecycle                                    │
-├─────────────────────────────────────────────────────────────┤
-│  Bootstrap Layer                                            │
-│  └── ModalProvider                                          │
-│      ├── Initialization                                     │
-│      └── Component setup                                    │
-├─────────────────────────────────────────────────────────────┤
-│  Provider Layer                                             │
-│  ├── ModalManagerContext                                    │
-│  ├── ConfigurationContext                                   │
-│  └── UserDefinedContext                                     │
-├─────────────────────────────────────────────────────────────┤
-│  Component Layer                                            │
-│  ├── Anchor                                                 │
-│  ├── Background                                             │
-│  ├── Foreground                                             │
-│  └── Fallback Components                                    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Design Patterns
-
-| Pattern               | Usage                               |
-| --------------------- | ----------------------------------- |
-| **Promise-based API** | Modal functions return promises     |
-| **Provider Pattern**  | Context providers for configuration |
-| **Factory Pattern**   | Node factory for modal types        |
-| **Observer Pattern**  | Subscription system for state       |
-| **Singleton Pattern** | ModalManager for global state       |
-
-### Modal Node System
-
-```
-AbstractNode (Base Class)
-├── AlertNode    → Simple notifications
-├── ConfirmNode  → Yes/no confirmations
-└── PromptNode   → Input collection
-```
-
-Each node provides:
-
-- Subscription-based state management
-- Promise resolution handling
-- Lifecycle management
-
-### Accessibility
+## Accessibility
 
 Escape acts on the highest stacking order among alive, visible, unsettled modals, including after click reordering. It cancels only when that node's effective `closeOnEscape` is true; it never skips a nonclosable top modal to close a lower one. The resolution order is per-call `closeOnEscape`, per-call `closeOnBackdropClick`, Provider `closeOnEscape`, Provider `closeOnBackdropClick` (default true). `useModal` defaults are per-call data. Explicit undefined inherits. Prevented events, `isComposing`, and key code 229 are ignored; detaching the root suspends keyboard handling. Escape returns the ordinary cancellation result, including `null` for a prompt unless `returnOnCancel` is enabled.
 
@@ -185,1012 +144,114 @@ While any participating modal has `lockScroll: true`, body overflow is hidden. S
 
 The fallback foreground supplies `role="dialog"` and `aria-modal="true"`. Custom foreground frames supply their own role, accessible name, and description; the wrapper supplies the focus baseline. Label every dialog, for example using `aria-labelledby` and `aria-describedby` tied to its title and description. A visible backdrop receives pointers when `dimmed || closeOnBackdropClick`, but clicks cancel only with `closeOnBackdropClick`. Use `dimmed: false, closeOnBackdropClick: false` for pass-through toasts; they do not move or restore focus, isolate the page, or lock scrolling.
 
-### Configuration Priority
+## Ownership and route visibility
 
-Provider component props (`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`) are captured at mount so parent rerenders do not remount open prompts. Changes are ignored, with one warning per changed prop in development and no warning in production. Pass changing data through `context`; options remain reactive.
+One ModalProvider or useInitializeModal bootstrap owns the portal. Additional bootstraps warn once in development and wait; cleanup removes only that bootstrap’s ownership or waiting registration. The first waiter takes over when the owner leaves. With no waiter, a microtask cancels alive nodes unless the system reinitializes during the same commit. Pre-mount queued requests remain queued, so keep a browser bootstrap mounted to process them.
 
-Option precedence is defaults, Provider options, `useModal(config)`, then per-call arguments. `undefined` inherits; `0` and `false` override. `useModal(config)` captures mount-time defaults. Provider and per-call `duration` accept nonnegative milliseconds (`300`, `0.5`), milliseconds strings (`'300ms'`, `'0.5ms'`), or seconds strings (`'0.3s'`). Invalid values fall back to the default (the Provider duration for per-call overrides), with a development warning. `useModalOptions().duration` and `useModalDuration(id?).duration` return normalized milliseconds strings; use them directly in CSS without appending another `ms`.
+`alive` means retained in the store, `visible` means displayed, and `settled` means the first result or error is final. Route hiding preserves pending results; only pending nodes can reappear. Abort and caller cleanup cancel even hidden requests. A manual closed node may remain alive for exit animation but cannot show again. `useDestroyAfter` starts only after settlement.
 
-`useModalOptions`, `useModalBackdrop`, `useModalDuration`, and `useDestroyAfter` belong inside modal frame, content, or footer components. Calling them in ordinary Provider children or outside the modal tree throws an error explaining the required location. `useModalBackdrop` returns CSS properties. Frames receive `group`, `subtype`, and `settled`, and alert content receives `context`. Use exported `AlertProps`, `ConfirmProps`, `PromptProps`, and `OverridableHandleProps` to type application wrappers. Frame `onClose` and content/footer `onCancel` both cancel the request; AbortSignal also resolves with its cancellation value rather than rejecting.
-
-Configuration is applied hierarchically, with lower levels overriding higher levels:
-
-```
-Provider Settings (lowest) < Hook Settings < Handler Settings (highest)
-```
-
-| Level        | Location                        | Description               |
-| ------------ | ------------------------------- | ------------------------- |
-| **Provider** | `ModalProvider` props           | App-wide default settings |
-| **Hook**     | `useModal(config)`              | Component-level settings  |
-| **Handler**  | `alert/confirm/prompt(options)` | Per-modal settings        |
-
-#### Example
-
-```typescript
-// Provider level: global defaults
-<ModalProvider options={{ duration: '500ms', closeOnBackdropClick: true }}>
-  <App />
-</ModalProvider>
-
-// Hook level: component defaults (overrides Provider settings)
-const modal = useModal({
-  ForegroundComponent: CustomForeground,
-});
-
-// Handler level: individual modal (overrides Hook settings)
-modal.alert({
-  title: 'Notice',
-  duration: 200, // 500ms → 200ms override
-  ForegroundComponent: SpecialForeground, // CustomForeground override
-});
-```
-
----
-
-## Core API
-
-### alert
-
-Opens a simple notification modal.
-
-#### Signature
-
-```typescript
-function alert<B = any>(options: AlertProps<B>): Promise<void>;
-```
-
-#### Parameters
-
-| Option                 | Type                                            | Default  | Description                                 |
-| ---------------------- | ----------------------------------------------- | -------- | ------------------------------------------- |
-| `title`                | `ReactNode`                                     | -        | Modal title                                 |
-| `subtitle`             | `ReactNode`                                     | -        | Subtitle below title                        |
-| `content`              | `ReactNode \| ComponentType<AlertContentProps>` | -        | Modal content                               |
-| `subtype`              | `'info' \| 'success' \| 'warning' \| 'error'`   | `'info'` | Modal type                                  |
-| `dimmed`               | `boolean`                                       | `true`   | Dim background                              |
-| `closeOnBackdropClick` | `boolean`                                       | `true`   | Close on backdrop                           |
-| `closeOnEscape` | `boolean` | Inherited | Escape cancellation; see Accessibility |
-| `trapFocus` | `boolean` | `true` | Tab cycle when the top visible pending modal is dimmed |
-| `lockScroll` | `boolean` | `true` | Body scroll lock for dimmed modals |
-| `manualDestroy`        | `boolean`                                       | `false`  | Manual destroy mode                         |
-| `duration`             | `number \| string`                              | -        | Animation duration (Handler level override) |
-| `background`           | `ModalBackground<B>`                            | -        | Background settings                         |
-| `footer`               | `AlertFooterRender \| FooterOptions \| false`   | -        | Footer config                               |
-| `ForegroundComponent`  | `ComponentType<ModalFrameProps>`                | -        | Custom foreground                           |
-| `BackgroundComponent`  | `ComponentType<ModalFrameProps>`                | -        | Custom background                           |
-| `signal`               | `AbortSignal`                                   | -        | AbortSignal for canceling modal             |
-
-#### Example
-
-```typescript
-await alert({
-  title: 'Success',
-  content: 'Your changes have been saved.',
-  subtype: 'success',
-  footer: { confirm: 'OK' },
-});
-```
-
----
-
-### confirm
-
-Opens a confirmation modal for user decisions.
-
-#### Signature
-
-```typescript
-function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>;
-```
-
-#### Parameters
-
-All options from `alert`, plus:
-
-| Option   | Type                                            | Default | Description   |
-| -------- | ----------------------------------------------- | ------- | ------------- |
-| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | -       | Footer config |
-
-#### FooterOptions for confirm
-
-```typescript
-interface FooterOptions {
-  confirm?: string;
-  cancel?: string;
-  hideConfirm?: boolean;
-  hideCancel?: boolean;
-}
-```
-
-#### Returns
-
-- `true` - User clicked confirm button
-- `false` - User clicked cancel or backdrop
-
-#### Example
-
-```typescript
-const shouldDelete = await confirm({
-  title: 'Delete Item',
-  content: 'This action cannot be undone.',
-  subtype: 'warning',
-  footer: {
-    confirm: 'Delete',
-    cancel: 'Keep',
-  },
-});
-
-if (shouldDelete) {
-  await deleteItem();
-}
-```
-
----
-
-### prompt
-
-Confirmation returns the current input unchanged, including `undefined` when no value is supplied. Ordinary cancellation returns `null`. With `returnOnCancel: true`, cancellation returns the current value (or `defaultValue` before rendering), including `undefined`. Set `defaultValue: ''` when untouched confirmation should return an empty string. Check `result === null` for ordinary cancellation rather than relying on truthiness.
-
-Opens a prompt modal to collect user input.
-
-#### Signature
-
-```typescript
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>;
-```
-
-#### Parameters
-
-All options from `alert`, plus:
-
-| Option | Type | Required | Description | | ---------------- | ------------------------------------------- | ---------------------- | ------------------------------------------------- | --------------- | | `Input` | `(props: PromptInputProps<T>) => ReactNode` | Yes | Input component | | `defaultValue` | `T` | No | Default value | | `disabled` | `(value: T                                  | undefined) => boolean` | No | Disable confirm | | `returnOnCancel` | `boolean` | No | Resolve current value on cancel (instead of null) |
-
-#### PromptInputProps
-
-```typescript
-interface PromptInputProps<T> {
-  value?: T;
-  defaultValue?: T;
-  onChange: (value: T | undefined) => void;
-  onConfirm: () => void;
-  onCancel: () => void;
-  context: any;
-}
-```
-
-#### Example
-
-```typescript
-// Simple input
-const email = await prompt<string>({
-  title: 'Enter Email',
-  defaultValue: '',
-  Input: ({ value, onChange }) => (
-    <input
-      type="email"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  ),
-  disabled: (value) => !value?.includes('@'),
-});
-
-// Complex object
-interface UserData {
-  name: string;
-  age: number;
-}
-
-const userData = await prompt<UserData>({
-  title: 'User Info',
-  defaultValue: { name: '', age: 0 },
-  Input: ({ value = { name: '', age: 0 }, onChange }) => (
-    <form>
-      <input
-        value={value.name}
-        onChange={(e) => onChange({ ...value, name: e.target.value })}
-      />
-      <input
-        type="number"
-        value={value.age}
-        onChange={(e) => onChange({ ...value, age: Number(e.target.value) })}
-      />
-    </form>
-  ),
-});
-```
-
----
-
-## Hooks
-
-### useModal
-
-Returns modal handlers tied to component lifecycle.
-
-```typescript
-function useModal(config?: Partial<ModalOptions>): {
-  alert: typeof alert;
-  confirm: typeof confirm;
-  prompt: typeof prompt;
-};
-```
-
-#### Key Feature
-
-Modals automatically cleanup when the component unmounts.
-
-#### Comparison
-
-| Feature   | Static Functions | useModal Hook     |
-| --------- | ---------------- | ----------------- |
-| Lifecycle | Independent      | Tied to component |
-| Cleanup   | Manual           | Automatic         |
-| Usage     | Anywhere         | Inside components |
-
-#### Example
-
-```typescript
-function DeleteButton({ id }) {
-  const modal = useModal();
-
-  const handleDelete = async () => {
-    if (await modal.confirm({ content: 'Delete?' })) {
-      await deleteItem(id);
-    }
-  };
-
-  return <button onClick={handleDelete}>Delete</button>;
-}
-```
-
----
-
-### Platform integration
-
-Copies of the package with the same internal state version share one modal system in the same JavaScript realm. An `alert`, `confirm`, or `prompt` imported by another copy reaches the active Provider; style identity, ownership, and cleanup are shared. Incompatible state versions stay independent and warn in development. Keep one compatible package version across the application; different windows or realms do not share a system.
-
-The default pathname hook uses the Navigation API when available. Otherwise it polls only while a modal is alive, including route-hidden modals and closed modals awaiting destruction. Requests opened after an idle route change belong to the pathname at opening time. Custom `usePathname` hooks continue to follow their router's pathname.
-
-React 18 and 19 are supported. Both ESM and CommonJS bundles start with `'use client'` so React Server Component tooling recognizes the client boundary. DOM-free import and server rendering remain supported without layout-effect warnings in React 18, including when `useModalAnimation` runs in a server-rendered component; call modal functions only in the browser.
-
-### Lifecycle and ownership
-
-Modal results settle once. Navigating away through `usePathname` hides pending modals without settling them; returning restores them. Abort and `useModal` owner cleanup still cancel a hidden modal. A settled modal never appears again, including with `manualDestroy: true`.
-
-Only one `ModalProvider` (or `useInitializeModal` bootstrap) owns the portal. Additional providers wait and warn once in development. When the owner unmounts, the first waiting provider takes over the open modals. With no waiter, open modals settle with their cancellation values: `alert` completes, `confirm` returns `false`, and `prompt` returns `null` (or its current value with `returnOnCancel: true`). Same-commit remounts, including StrictMode checks, preserve pending results and prompt input.
-
-A content, input, or frame render error rejects that modal's Promise with the caught error; handle rejection with `try`/`catch`. Other modals and later requests continue working. Destroying a pending modal also cancels it before removing its frame.
-
-`useModal` releases completed requests as soon as they settle and cancels only pending requests when its component unmounts. Static calls outlive their calling component, but still follow provider ownership and cancellation.
-
-`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Changing the delay reschedules destruction using the latest value.
-
-The package can be imported without a DOM and `ModalProvider` can render on the server. Call `alert`, `confirm`, and `prompt` only in the browser; server rendering has no modal portal and reports an active count of zero.
-
-### useActiveModalCount
-
-Returns the count of active modals.
-
-```typescript
-function useActiveModalCount(
-  validate?: (modal: ModalNodeView) => boolean | undefined,
-): number;
-```
-
-#### Parameters
-
-| Parameter  | Type                 | Description     |
-| ---------- | -------------------- | --------------- |
-| `validate` | `(modal) => boolean` | Filter function |
-
-#### Example
-
-```typescript
-function ModalCounter() {
-  const total = useActiveModalCount();
-  const alerts = useActiveModalCount((m) => m?.type === 'alert');
-
-  return <div>Total: {total}, Alerts: {alerts}</div>;
-}
-```
-
----
-
-### useModalAnimation
-
-Provides animation state callbacks.
-
-```typescript
-function useModalAnimation(
-  visible: boolean,
-  options: {
-    onVisible?: () => void;
-    onHidden?: () => void;
-  },
-): void;
-```
-
-#### Features
-
-- Uses `requestAnimationFrame` for optimal timing
-- Separates enter/exit animations
-- Works with CSS transitions
-
-#### Example
-
-```typescript
-function AnimatedModal({ visible, children }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useModalAnimation(visible, {
-    onVisible: () => {
-      ref.current?.classList.add('fade-in');
-    },
-    onHidden: () => {
-      ref.current?.classList.remove('fade-in');
-    },
-  });
-
-  return <div ref={ref}>{children}</div>;
-}
-```
-
----
-
-### useModalDuration
-
-Returns modal animation duration.
-
-```typescript
-function useModalDuration(modalId?: number): {
-  duration: `${number}ms`; // e.g., '300ms'
-  milliseconds: number; // e.g., 300
-};
-```
-
----
-
-### useDestroyAfter
-
-Destroys an already settled modal after the specified delay.
-
-```typescript
-function useDestroyAfter(modalId: number, duration: number | `${number}ms` | `${number}s`): void;
-```
-
-#### Behavior
-
-- Starts the timer only when the result is settled and the node is alive
-- Route hiding leaves pending modals intact
-- Removes the frame after the latest delay
-
-#### Example
-
-```typescript
-function ToastMessage({ id }) {
-  useDestroyAfter(id, 300); // Destroy 300ms after settlement
-  return <div>Toast</div>;
-}
-```
-
----
-
-### useSubscribeModal
-
-Subscribes to modal state changes.
-
-```typescript
-function useSubscribeModal(modalId: number): number;
-```
-
-#### Returns
-
-Version number that increments on each state change.
-
-#### Example
-
-```typescript
-function ModalDebugger({ id, visible }) {
-  const version = useSubscribeModal(id);
-
-  useEffect(() => {
-    console.log('State changed:', visible);
-  }, [version]);
-}
-```
-
----
-
-### useInitializeModal
-
-`root` selects the portal location: omit it for `document.body`, pass an element for that container, or pass `null` to defer. A ref alone still initializes automatically. `initialize(element)` selects a root imperatively; the last call or `root` prop change wins. The same anchor moves between containers, preserving open input and Promises. Changing to `null` detaches the anchor, preserves mounted modals, and queues new requests; restoring an element reattaches it and processes the queue. An initially null root creates no anchor. `useInitializeModal` accepts the same `root`; `mode: 'manual'` defers its initial root until `initialize(element)` or a later root change. Always render its returned `portal`.
-
-```typescript
-function useInitializeModal(options?: ModalProviderProps & { mode?: 'auto' | 'manual' }): {
-  initialize: (element: HTMLElement) => void;
-  portal: ReactPortal | null;
-};
-```
-
----
-
-### useModalOptions
-
-Reads normalized Provider options inside the modal tree.
-
-```typescript
-function useModalOptions(): {
-  duration: `${number}ms`;
-  backdrop: CSSProperties;
-  manualDestroy: boolean;
-  closeOnBackdropClick: boolean;
-  closeOnEscape?: boolean;
-  trapFocus: boolean;
-  lockScroll: boolean;
-  zIndex: number;
-};
-```
-
----
-
-### useModalBackdrop
-
-Reads backdrop CSS properties inside the modal tree.
+The default pathname hook uses Navigation API events when available, otherwise polls only with alive nodes, including hidden requests and exit frames. Default requests use pathname at opening time. Supply a router hook returning `{ pathname }` to track your router; the following example uses context so both the page and modal content can change the same route.
 
 ```tsx
-function BackdropInfo() {
-  const backdrop = useModalBackdrop();
-  return <div style={backdrop} />;
+import { createContext, useContext, useState } from 'react';
+
+import { ModalProvider, alert } from '@lerx/promise-modal';
+
+const Route = createContext('/editor');
+function useAppPathname() {
+  return { pathname: useContext(Route) };
 }
-```
 
----
-
-## Components
-
-### ModalProvider
-
-Main provider component for initialization.
-
-```typescript
-interface ModalProviderProps {
-  children: ReactNode;
-  ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
-  BackgroundComponent?: ComponentType<ModalFrameProps>;
-  TitleComponent?: ComponentType<WrapperComponentProps>;
-  SubtitleComponent?: ComponentType<WrapperComponentProps>;
-  ContentComponent?: ComponentType<WrapperComponentProps>;
-  FooterComponent?: ComponentType<FooterComponentProps>;
-  options?: ModalOptions;
-  context?: Record<string, any>;
-  usePathname?: () => { pathname: string }; // Router integration
-  root?: HTMLElement | null; // Custom root element
-}
-```
-
-#### ModalOptions
-
-```typescript
-interface ModalOptions {
-  duration?: number | `${number}ms` | `${number}s`;
-  backdrop?: string | CSSProperties;
-  manualDestroy?: boolean;
-  closeOnBackdropClick?: boolean;
-  closeOnEscape?: boolean;
-  trapFocus?: boolean;
-  lockScroll?: boolean;
-}
-```
-
-#### usePathname (Router Integration)
-
-The `usePathname` prop enables router integration. Route changes hide pending modals without settling their results; returning restores them.
-
-```typescript
-import { useLocation } from 'react-router-dom';
-
-<ModalProvider
-  usePathname={useLocation}  // react-router-dom integration
-  // ...
->
-  <App />
-</ModalProvider>
-```
-
-#### Example
-
-```typescript
-import { useLocation } from 'react-router-dom';
-
-<ModalProvider
-  usePathname={useLocation}
-  ForegroundComponent={CustomForeground}
-  TitleComponent={CustomTitle}
-  SubtitleComponent={CustomSubtitle}
-  ContentComponent={CustomContent}
-  FooterComponent={CustomFooter}
-  options={{
-    duration: '200ms',
-    backdrop: 'rgba(0, 0, 0, 0.35)',
-    manualDestroy: true,
-    closeOnBackdropClick: true,
-  }}
-  context={{
-    theme: 'dark',
-    locale: 'en-US',
-  }}
->
-  <App />
-</ModalProvider>
-```
-
----
-
-### Custom Components
-
-#### ModalFrameProps
-
-Props passed to Foreground/Background components.
-
-```typescript
-interface ModalFrameProps<Context = any, B = any> {
-  id: number;
-  type: 'alert' | 'confirm' | 'prompt';
-  group?: string;
-  subtype?: 'info' | 'success' | 'warning' | 'error';
-  settled: boolean;
-  alive: boolean;
-  visible: boolean;
-  initiator: string;
-  manualDestroy: boolean;
-  closeOnBackdropClick: boolean;
-  background?: ModalBackground<B>;
-  onConfirm: () => void;
-  onClose: () => void;
-  onChange: (value: any) => void;
-  onDestroy: () => void;
-  onChangeOrder: Function;
-  context: Context;
-  children: ReactNode;
-}
-```
-
-#### FooterComponentProps
-
-Props for footer components.
-
-```typescript
-interface FooterComponentProps {
-  type: 'alert' | 'confirm' | 'prompt';
-  onConfirm: (value?: any) => void;
-  onClose: () => void;
-  onCancel?: () => void;
-  disabled?: boolean;
-  footer?: FooterOptions;
-  context: any;
-}
-```
-
-#### WrapperComponentProps
-
-Props for title/subtitle/content components.
-
-```typescript
-interface WrapperComponentProps {
-  children: ReactNode;
-  context: any;
-}
-```
-
-#### Custom Component Example
-
-```typescript
-const CustomForeground: FC<ModalFrameProps> = ({
-  id,
-  visible,
-  children,
-  onClose,
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { duration } = useModalDuration();
-
-  useModalAnimation(visible, {
-    onVisible: () => ref.current?.classList.add('visible'),
-    onHidden: () => ref.current?.classList.remove('visible'),
-  });
-
-  useDestroyAfter(id, duration);
-
+export function RoutedApp() {
+  const [pathname, setPathname] = useState('/editor');
   return (
-    <div
-      ref={ref}
-      style={{
-        background: 'white',
-        borderRadius: 12,
-        padding: 24,
-        opacity: 0,
-        transition: `opacity ${duration}`,
-      }}
-    >
-      {children}
-    </div>
+    <Route.Provider value={pathname}>
+      <ModalProvider usePathname={useAppPathname}>
+        <button onClick={() => setPathname('/editor')}>Editor</button>
+        <button
+          onClick={() =>
+            void alert({
+              title: 'Editor request',
+              content: () => (
+                <button onClick={() => setPathname('/other')}>
+                  Hide by changing route
+                </button>
+              ),
+            })
+          }
+        >
+          Open
+        </button>
+      </ModalProvider>
+    </Route.Provider>
   );
-};
-```
-
----
-
-## Type Definitions
-
-### Modal Types
-
-```typescript
-type ModalType = 'alert' | 'confirm' | 'prompt';
-type ModalSubtype = 'info' | 'success' | 'warning' | 'error';
-```
-
-### ModalBackground
-
-```typescript
-interface ModalBackground<T = any> {
-  data?: T;
-  [key: string]: any;
 }
 ```
 
-### Content Props
+## AbortSignal cancellation
 
-```typescript
-interface AlertContentProps {
-  onConfirm: () => void;
-  context: any;
-}
+Abort resolves ordinary cancellation: alert completes, confirm is false, prompt is null unless returnOnCancel returns the current input. One signal can cancel several requests. Pre-aborted requests skip creation; queued requests are removed before rendering. Settlement removes the abort listener, so later aborts do nothing. A manual abort button on the page is inert behind a dimmed modal; put it inside the modal, use an external event/timer, or deliberately use a nondimmed presentation.
 
-interface ConfirmContentProps {
-  onConfirm: () => void;
-  onCancel: () => void;
-  context: any;
-}
+```tsx
+import { confirm } from '@lerx/promise-modal';
 
-interface PromptContentProps<T> {
-  value?: T;
-  onChange: (value: T) => void;
-  onConfirm: () => void;
-  onCancel: () => void;
-  context: any;
-}
-```
-
----
-
-## Usage Patterns
-
-### Pattern 1: Static API (Simplest)
-
-```typescript
-import { alert, confirm, prompt } from '@lerx/promise-modal';
-
-// Use anywhere, even outside React
-async function handleSubmit() {
-  if (await confirm({ content: 'Save changes?' })) {
-    await saveData();
-    await alert({ content: 'Saved!' });
+export async function cancelAfterDelay() {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3000);
+  try {
+    return await confirm({ title: 'Continue?', signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
   }
 }
 ```
 
-### Pattern 2: useModal Hook (Recommended for Components)
+## Toasts
 
-```typescript
-function EditForm() {
-  const modal = useModal();
+A timeout that calls frame onClose closes the request; useDestroyAfter alone does not. This toast uses automatic destruction and no page isolation. If adding an exit animation, use the manual frame pattern in the README.
 
-  const handleSave = async () => {
-    if (await modal.confirm({ content: 'Save?' })) {
-      // Modals auto-cleanup if component unmounts
-    }
-  };
-}
-```
+```tsx
+import { type PropsWithChildren, type ReactNode, useEffect } from 'react';
 
-### Pattern 3: Full Customization
+import { type ModalFrameProps, alert } from '@lerx/promise-modal';
 
-```typescript
-<ModalProvider
-  ForegroundComponent={CustomForeground}
-  FooterComponent={CustomFooter}
-  options={{ duration: 400 }}
-  context={{ theme: 'dark' }}
->
-  <App />
-</ModalProvider>
-```
-
-### Pattern 4: Per-Modal Override
-
-```typescript
-await alert({
-  content: 'Special modal',
-  ForegroundComponent: SpecialForeground,
-  background: { variant: 'special' },
-});
-```
-
----
-
-## Advanced Examples
-
-### Toast Notifications
-
-```typescript
-const ToastForeground: FC<ModalFrameProps> = ({
-  id,
-  visible,
-  children,
-  onClose,
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { duration } = useModalDuration();
-
+function ToastFrame({ children, onClose }: PropsWithChildren<ModalFrameProps>) {
   useEffect(() => {
     const timer = setTimeout(onClose, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
-
-  useModalAnimation(visible, {
-    onVisible: () => ref.current?.classList.add('visible'),
-    onHidden: () => ref.current?.classList.remove('visible'),
-  });
-
-  useDestroyAfter(id, duration);
-
   return (
-    <div
-      ref={ref}
+    <aside
+      role="status"
       style={{
         position: 'fixed',
         bottom: 20,
-        left: '50%',
-        transform: 'translateX(-50%) translateY(100px)',
-        opacity: 0,
-        transition: `all ${duration}`,
+        background: '#222',
+        color: 'white',
       }}
     >
       {children}
-    </div>
+    </aside>
   );
-};
+}
 
-export const toast = (message: ReactNode) => {
+export function toast(message: ReactNode) {
   return alert({
     content: message,
-    ForegroundComponent: ToastForeground,
     footer: false,
     dimmed: false,
     closeOnBackdropClick: false,
+    ForegroundComponent: ToastFrame,
   });
-};
-```
-
-### Multi-Step Wizard
-
-```typescript
-async function registrationWizard() {
-  // Step 1: Terms acceptance
-  const accepted = await confirm({
-    title: 'Terms of Service',
-    content: <TermsContent />,
-    footer: { confirm: 'I Accept', cancel: 'Decline' },
-  });
-
-  if (!accepted) return null;
-
-  // Step 2: User information
-  const userInfo = await prompt<{
-    name: string;
-    email: string;
-  }>({
-    title: 'Your Information',
-    defaultValue: { name: '', email: '' },
-    Input: RegistrationForm,
-    disabled: (v) => !v?.name || !v?.email.includes('@'),
-  });
-
-  if (!userInfo) return null;
-
-  // Step 3: Confirmation
-  await alert({
-    title: 'Welcome!',
-    content: `Account created for ${userInfo.name}`,
-    subtype: 'success',
-  });
-
-  return userInfo;
 }
 ```
 
-### Custom Anchor (Iframe/Portal)
+## Render failures
 
-```typescript
-function IframedModals() {
-  const { initialize, portal } = useInitializeModal({ mode: 'manual' });
-  const containerRef = useRef<HTMLDivElement>(null);
+Catch opening and render failures at the requesting call. A presenter failure rejects and destroys only that modal; peers and future requests survive. A shared anchor failure rejects and destroys all alive nodes, then retries only when another modal registers. Cancellation and rejection are distinct; do not record a failed confirmation render as a user declining.
 
-  useEffect(() => {
-    if (containerRef.current) {
-      initialize(containerRef.current);
-    }
-  }, [initialize]);
+## Platform integration
 
-  return (
-    <div style={{ position: 'relative', height: 600 }}>
-      <div ref={containerRef} style={{ height: '100%' }} />
-      <ModalTriggerButtons />
-      {portal}
-    </div>
-  );
-}
-```
+React 18 and 19 share the same public contract. Both runtime bundles start with use client; DOM-free import and server rendering remain supported without layout-effect warnings. Server rendering creates no portal, counts zero modals, and must not call browser modal functions.
 
----
-
-## Lifecycle
-
-```
-Creation → Show → Hide → Destroy
-    ↓        ↓       ↓       ↓
- open()   visible  onHide  onDestroy
-    ↓      true     ↓        ↓
- nodeFactory  ↓   visible   alive
-    ↓         ↓    false    false
-  Promise   animation  ↓        ↓
-    ↓       starts   duration  removed
-   ...        ↓      passes    from DOM
-              ↓         ↓
-           interaction  destroy
-              ↓
-            resolve
-```
-
----
-
-## Best Practices
-
-1. **Wrap app with ModalProvider** at the root level
-2. **Use useModal in components** for automatic cleanup
-3. **Use static API for utilities** outside React
-4. **Customize at provider level** for consistent styling
-5. **Use subtype for semantics** (info, success, warning, error)
-6. **Always await or handle** promise rejections
-7. **Keep modal content simple** - avoid complex state
-8. **Test accessibility** - ensure keyboard navigation
-
----
-
-## AbortSignal Support
-
-Provides `AbortSignal` support for programmatically canceling modals.
-
-### Basic Usage
-
-```typescript
-const controller = new AbortController();
-
-alert({
-  title: 'Cancelable Modal',
-  content: 'This will auto-close in 3 seconds.',
-  signal: controller.signal,
-});
-
-// Cancel modal after 3 seconds
-setTimeout(() => {
-  controller.abort();
-}, 3000);
-```
-
-### Manual Abort Control
-
-```typescript
-function ManualAbortControl() {
-  const [controller, setController] = useState<AbortController | null>(null);
-
-  const handleOpen = () => {
-    const newController = new AbortController();
-    setController(newController);
-
-    alert({
-      title: 'Manual Cancel',
-      content: 'Click "Cancel" button to close this modal.',
-      signal: newController.signal,
-      closeOnBackdropClick: false,
-    }).then(() => {
-      setController(null);
-    });
-  };
-
-  const handleAbort = () => {
-    if (controller) {
-      controller.abort();
-    }
-  };
-
-  return (
-    <div>
-      <button onClick={handleOpen} disabled={!!controller}>
-        Open Modal
-      </button>
-      <button onClick={handleAbort} disabled={!controller}>
-        Cancel Modal
-      </button>
-    </div>
-  );
-}
-```
-
-### Batch Cancel Multiple Modals
-
-```typescript
-function MultipleModalsAbort() {
-  const [controllers, setControllers] = useState<AbortController[]>([]);
-
-  const handleOpenMultiple = () => {
-    const newControllers: AbortController[] = [];
-
-    for (let i = 0; i < 3; i++) {
-      const controller = new AbortController();
-      newControllers.push(controller);
-
-      alert({
-        title: `Modal ${i + 1}`,
-        content: `This is modal number ${i + 1}.`,
-        signal: controller.signal,
-        closeOnBackdropClick: false,
-      });
-    }
-
-    setControllers(newControllers);
-  };
-
-  const handleAbortAll = () => {
-    controllers.forEach((controller) => controller.abort());
-    setControllers([]);
-  };
-
-  return (
-    <div>
-      <button onClick={handleOpenMultiple}>Open 3 Modals</button>
-      <button onClick={handleAbortAll}>Cancel All Modals</button>
-    </div>
-  );
-}
-```
-
-### Pre-Aborted Signal Handling
-
-```typescript
-// If the signal is already aborted, the modal closes immediately
-const controller = new AbortController();
-controller.abort(); // Abort first
-
-alert({
-  title: 'Instant Close',
-  content: 'Signal is already aborted, closing immediately.',
-  signal: controller.signal,
-}).then(() => {
-  console.log('Modal closed immediately.');
-});
-```
-
----
-
-## License
-
-MIT License
-
----
-
-## Version
-
-Current: See package.json
+Compatible internal state versions share a system within one JavaScript realm, including requests, style identity, ownership, keyboard, and page effects. Incompatible versions remain isolated and warn in development. Other windows/realms are not shared: root examples target elements in the current document, not an iframe document. CommonJS TypeScript-specific .d.cts declarations are not supplied.

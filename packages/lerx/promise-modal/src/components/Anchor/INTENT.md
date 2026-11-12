@@ -15,7 +15,7 @@
 
 ### Always do
 
-- ModalManager.anchored 상태 확인 후 렌더링
+- 매니저가 제공한 앵커의 포털 안에서만 렌더링하여 DOM 소유권을 유지
 - Portal 기반 렌더링으로 DOM 격리 유지
 
 ### Ask first

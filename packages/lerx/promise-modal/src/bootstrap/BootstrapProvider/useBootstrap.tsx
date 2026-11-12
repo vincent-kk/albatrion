@@ -8,161 +8,35 @@ import { useInitialize } from './hooks/useInitialize';
 import type { BootstrapProviderProps } from './type';
 
 /**
- * Hook for bootstrapping the promise-modal system without a provider component.
- *
- * Provides the same functionality as BootstrapProvider but as a hook, allowing
- * more flexible integration patterns. Returns a portal element and an initialize
- * function for manual control.
- *
- * @param props - Configuration options (same as BootstrapProvider)
- * @param props.root - Undefined uses body; null defers or detaches without losing input
- * @param props.mode - 'auto' for automatic initialization, 'manual' for explicit control
- * @returns Object containing portal element and initialize function
- *
+ * Initializes the modal system when the caller renders the returned portal.
+ * @param props - Provider configuration plus auto/manual mode. Manual mode defers the initial root.
+ * @returns A portal to render and initialize(element), which selects the effective root.
+ * @remarks
+ * An omitted root uses body; null detaches and queues new requests while preserving mounted modals.
+ * The last root prop change or initialize call wins. Component props stay fixed at mount;
+ * pass changing data through context. Additional bootstraps wait for the portal owner.
  * @example
- * Basic usage with automatic initialization:
  * ```tsx
+ * import { useEffect, useRef } from 'react';
+ * import { confirm, useInitializeModal } from '@lerx/promise-modal';
+ *
  * function App() {
- *   const { portal } = useInitializeModal({
- *     options: {
- *       duration: 200,
- *       backdrop: 'rgba(0, 0, 0, 0.8)',
- *     },
- *   });
- *
- *   return (
- *     <>
- *       <button onClick={() => alert({ title: 'Hello!' })}>Alert</button>
- *       <button onClick={() => confirm({ title: 'Confirm?' })}>Confirm</button>
- *       {portal}
- *     </>
- *   );
- * }
- * ```
- *
- * @example
- * Manual initialization with custom container:
- * ```tsx
- * function CustomModalApp() {
+ *   const root = useRef<HTMLDivElement>(null);
  *   const { portal, initialize } = useInitializeModal({
  *     mode: 'manual',
- *     ForegroundComponent: CustomModal,
- *     options: {
- *       closeOnBackdropClick: false,
- *     },
+ *     FooterComponent: ({ onConfirm, onCancel }) => <footer>
+ *       {onCancel && <button onClick={onCancel}>Cancel</button>}
+ *       <button onClick={onConfirm}>Confirm</button>
+ *     </footer>,
  *   });
- *
- *   useEffect(() => {
- *     const container = document.getElementById('modal-root');
- *     if (container) {
- *       initialize(container);
- *     }
- *   }, [initialize]);
- *
- *   return (
- *     <div>
- *       <main>App Content</main>
- *       <div id="modal-root" />
- *       {portal}
- *     </div>
- *   );
+ *   useEffect(() => { if (root.current) initialize(root.current); }, [initialize]);
+ *   return <>
+ *     <div ref={root} />
+ *     <button onClick={() => void confirm({ title: 'Continue?' })}>Open</button>
+ *     {portal}
+ *   </>;
  * }
  * ```
- *
- * @example
- * Integration with state management:
- * ```tsx
- * function ConnectedApp() {
- *   const user = useSelector(selectCurrentUser);
- *   const theme = useSelector(selectTheme);
- *
- *   const { portal } = useInitializeModal({
- *     context: { userId: user?.id, theme },
- *     ContentComponent: ({ children, context }) => (
- *       <div data-theme={context.theme}>
- *         {children}
- *       </div>
- *     ),
- *   });
- *
- *   const handleDelete = async () => {
- *     const confirmed = await confirm({
- *       title: 'Delete Account',
- *       content: `Are you sure, ${user.name}?`,
- *     });
- *     if (confirmed) {
- *       dispatch(deleteAccount());
- *     }
- *   };
- *
- *   return (
- *     <>
- *       <button onClick={handleDelete}>Delete Account</button>
- *       {portal}
- *     </>
- *   );
- * }
- * ```
- *
- * @example
- * With custom hooks for specific modal types:
- * ```tsx
- * function useConfirmDialog() {
- *   const { portal } = useInitializeModal({
- *     TitleComponent: ({ children }) => (
- *       <h3 className="confirm-title">
- *         <Icon name="warning" />
- *         {children}
- *       </h3>
- *     ),
- *     FooterComponent: ({ onConfirm, onCancel }) => (
- *       <div className="confirm-footer">
- *         <button onClick={onCancel}>Cancel</button>
- *         <button onClick={onConfirm} className="danger">
- *           Confirm
- *         </button>
- *       </div>
- *     ),
- *   });
- *
- *   const confirmAction = useCallback(
- *     (title: string, content: string) => {
- *       return confirm({ title, content });
- *     },
- *     [],
- *   );
- *
- *   return { portal, confirmAction };
- * }
- *
- * function App() {
- *   const { portal, confirmAction } = useConfirmDialog();
- *
- *   const handleDelete = async () => {
- *     const confirmed = await confirmAction(
- *       'Delete Item',
- *       'This action cannot be undone.',
- *     );
- *     if (confirmed) {
- *       // Perform deletion
- *     }
- *   };
- *
- *   return (
- *     <>
- *       <button onClick={handleDelete}>Delete</button>
- *       {portal}
- *     </>
- *   );
- * }
- * ```
- *
- * @remarks
- * - Use `mode: 'manual'` when you need to control the initialization timing
- * - The portal element must be rendered in your component tree
- * - One bootstrap owns the portal; additional bootstraps wait for ownership
- * - Removing the last bootstrap cancels pending modals after the current commit
- * - Context changes update open modals; component props stay fixed at mount
  */
 export const useBootstrap = ({
   usePathname: useExternalPathname,

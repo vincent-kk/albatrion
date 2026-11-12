@@ -8,7 +8,7 @@ const getServerSnapshot = () => 0;
 /**
  * Subscribes to one modal by id, without requiring a modal context.
  * @param modalId - Frame id supplied to a custom modal component.
- * @returns A version that changes when this node publishes or leaves the store.
+ * @returns Publication version, -1 for a missing node, or zero during server rendering.
  * @example
  * function Frame({ id, visible }: ModalFrameProps) {
  *   const version = useSubscribeModal(id);
