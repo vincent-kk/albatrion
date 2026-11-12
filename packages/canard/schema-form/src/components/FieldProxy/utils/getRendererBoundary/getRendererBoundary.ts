@@ -1,5 +1,5 @@
-import { FormatterErrorBoundary } from '../components/FormatterErrorBoundary';
-import type { FieldProxyProps } from '../type';
+import type { FieldProxyProps } from '../../type';
+import { FormatterErrorBoundary } from './components/FormatterErrorBoundary';
 
 /** React renderer identities own boundary types without retaining discarded renderers. */
 const boundaryTypes = new WeakMap<

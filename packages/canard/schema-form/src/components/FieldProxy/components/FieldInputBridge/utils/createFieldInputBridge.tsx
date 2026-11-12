@@ -19,7 +19,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { FieldProxyProps } from '../../../type';
-import { resolveRequired } from '../../../utils/resolveRequired';
+import { resolveRequired } from '../../../utils/required/resolveRequired';
 import { FieldInputBridge } from '../FieldInputBridge';
 
 /**

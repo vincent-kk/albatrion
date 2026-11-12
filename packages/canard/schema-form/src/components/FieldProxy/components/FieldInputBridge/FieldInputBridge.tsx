@@ -25,7 +25,7 @@ import { useInputRendererContext } from '@/schema-form/providers/FieldRendererCo
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
-import { resolveRequired } from '../../utils/resolveRequired';
+import { resolveRequired } from '../../utils/required/resolveRequired';
 import { useChildFields } from './hooks/useChildFields';
 import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';

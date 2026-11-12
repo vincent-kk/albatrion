@@ -31,7 +31,7 @@
 
 ### Never do
 
-- `FieldInputBridge`·`DeferredFieldProxy`를 이 fractal 바깥에서 직접 import
+- `FieldInputBridge`·`DeferredFieldProxy`·`getRendererBoundary`를 이 fractal 바깥에서 직접 import
 - 프록시에서 필드 노드를 만들거나 변경, 소비자 props로 노드 식별 props를 덮어쓰기
 - 필드 전체에 중복 경계나 경로 Provider를 추가하는 것. 오류를 소유한 경계와 수명이 중복되어서는 안 됩니다.
 - `type.ts`의 `FieldProxyProps` 계약에 렌더 컴포넌트 구현을 import (부품은 형만 읽는다)

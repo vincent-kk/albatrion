@@ -27,10 +27,10 @@ import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { createFieldInputBridge } from './components/FieldInputBridge';
 import type { FieldProxyProps } from './type';
-import { createErrorMessagePart } from './utils/createErrorMessagePart';
-import { createLabelPart } from './utils/createLabelPart';
 import { getRendererBoundary } from './utils/getRendererBoundary';
-import { resolveRequired } from './utils/resolveRequired';
+import { createErrorMessagePart } from './utils/parts/createErrorMessagePart';
+import { createLabelPart } from './utils/parts/createLabelPart';
+import { resolveRequired } from './utils/required/resolveRequired';
 
 /** Resolve one node, track its revisions and isolate its injected rendering surfaces. */
 export const FieldProxy = ({

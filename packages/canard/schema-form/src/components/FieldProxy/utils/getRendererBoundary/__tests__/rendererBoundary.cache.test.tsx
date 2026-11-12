@@ -6,7 +6,7 @@ import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 import { FormatterErrorBoundary } from '../components/FormatterErrorBoundary';
-import { getRendererBoundary } from '../utils/getRendererBoundary';
+import { getRendererBoundary } from '../getRendererBoundary';
 
 afterEach(() => {
   cleanup();
