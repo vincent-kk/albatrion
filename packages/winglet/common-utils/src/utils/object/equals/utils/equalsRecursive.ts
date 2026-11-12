@@ -64,8 +64,10 @@ export const equalsRecursive = (
     }
   }
 
-  const keys = Object.keys(left);
-  const rightKeys = Object.keys(right);
+  const leftObject = left as Record<PropertyKey, unknown>;
+  const rightObject = right as Record<PropertyKey, unknown>;
+  const keys = Object.keys(leftObject);
+  const rightKeys = Object.keys(rightObject);
   const length = keys.length;
 
   if (omits === null) {
@@ -78,8 +80,8 @@ export const equalsRecursive = (
   for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
     if (omits?.has(k)) continue;
     if (
-      !hasOwnProperty(right, k) ||
-      !equalsRecursive((left as any)[k], (right as any)[k], omits)
+      !hasOwnProperty(rightObject, k) ||
+      !equalsRecursive(leftObject[k], rightObject[k], omits)
     )
       return false;
   }
