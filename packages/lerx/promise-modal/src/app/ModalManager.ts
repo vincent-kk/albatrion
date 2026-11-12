@@ -299,8 +299,9 @@ export class ModalManager {
   }
   /**
    * Applies isolation before moving focus; detached roots do not affect the page.
-   * @param moveFocus - True only after frame DOM commits or anchor attachment,
-   * so route reappearance does not focus controls with stale hidden styles.
+   * @param moveFocus - Node publication alone only updates page effects; after
+   * DOM commit, the frame layout effect moves focus once on route reappearance.
+   * Anchor attachment also permits focus movement into already committed UI.
    */
   private static updateAccessibility(moveFocus = false): void {
     if (typeof document === 'undefined') return;
@@ -316,15 +317,15 @@ export class ModalManager {
     ModalManager.updateInert(nodes.length > 0 ? root : null);
     ModalManager.updateScrollLock(nodes.some((node) => node.lockScroll));
     if (!moveFocus) return;
-    for (const node of nodes)
-      if (
-        !ModalManager.__focused__.has(node.id) &&
-        ModalManager.__frames__.get(node.id)?.isConnected
-      ) {
-        ModalManager.__focused__.add(node.id);
-        ModalManager.focusFrame(node.id);
-        break;
-      }
+    const top = nodes[0];
+    if (
+      top &&
+      !ModalManager.__focused__.has(top.id) &&
+      ModalManager.__frames__.get(top.id)?.isConnected
+    ) {
+      ModalManager.__focused__.add(top.id);
+      ModalManager.focusFrame(top.id);
+    }
   }
   /**
    * Snapshots ancestor-path siblings once, leaving later portal nodes interactive.
@@ -411,8 +412,8 @@ export class ModalManager {
           closeModal(nodes[0]);
         }
       } else if (event.key === 'Tab') {
-        const top = nodes.find((node) => node.dimmed);
-        if (top?.trapFocus) ModalManager.trapTab(event, top.id);
+        const top = nodes[0];
+        if (top?.dimmed && top.trapFocus) ModalManager.trapTab(event, top.id);
       }
     };
     document.addEventListener('keydown', ModalManager.__keydown__);

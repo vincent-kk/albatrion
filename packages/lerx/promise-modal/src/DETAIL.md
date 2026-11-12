@@ -7,7 +7,7 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 ## API Contracts
 
 - closeOnEscape는 모달 Esc, 모달 배경 클릭, Provider Esc, Provider 배경 클릭 순으로 상속합니다. Esc는 보이는 미확정 최상위만 취소합니다.
-- dimmed 모달은 포커스 이동·복원과 기본 Tab 가두기·스크롤 잠금 및 조상 경로 형제 inert를 제공합니다. trapFocus와 lockScroll은 기본 true이고 dimmed false에는 적용하지 않습니다. 사용자 프레임은 접근 가능한 이름·설명·역할을 제공합니다.
+- dimmed 모달은 포커스 이동·복원과 기본 Tab 가두기·스크롤 잠금 및 조상 경로 형제 inert를 제공합니다. 포커스 이동은 최상위 참여 모달만 처리하고 Tab 가두기는 전체 visible 미확정 최상위가 dimmed일 때만 적용합니다. trapFocus와 lockScroll은 기본 true이고 dimmed false에는 적용하지 않습니다. 사용자 프레임은 접근 가능한 이름·설명·역할을 제공합니다.
 
 - useDestroyAfter는 지속시간과 Provider 폴백이 바뀔 때만 정규화하여 동일 입력의 부모 리렌더가 경고를 반복하지 않습니다.
 - 설정 병합은 기본값, Provider, useModal 설정, 호출 인자 순이며 undefined는 상속하고 0과 false는 보존합니다.

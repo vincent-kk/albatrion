@@ -175,7 +175,7 @@ Each node provides:
 
 Escape acts on the highest stacking order among alive, visible, unsettled modals, including after click reordering. It cancels only when that node's effective `closeOnEscape` is true; it never skips a nonclosable top modal to close a lower one. The resolution order is per-call `closeOnEscape`, per-call `closeOnBackdropClick`, Provider `closeOnEscape`, Provider `closeOnBackdropClick` (default true). `useModal` defaults are per-call data. Explicit undefined inherits. Prevented events, `isComposing`, and key code 229 are ignored; detaching the root suspends keyboard handling. Escape returns the ordinary cancellation result, including `null` for a prompt unless `returnOnCancel` is enabled.
 
-Only `alive && visible && dimmed && !settled` modals participate in focus, inert isolation, and scroll locking. On appearance, focus moves to the first tabbable control or the outer wrapper (`tabIndex={-1}`); existing internal focus, including `autoFocus`, remains. The top dimmed modal cycles Tab and Shift+Tab when `trapFocus` is true. Provider and per-call `trapFocus` and `lockScroll` default to true and use ordinary undefined-inheriting option merging. `trapFocus: false` disables cycling, not initial focus movement or page isolation.
+Only `alive && visible && dimmed && !settled` modals participate in focus, inert isolation, and scroll locking. On appearance or route return, focus moves once into the top participant, to its first tabbable control or outer wrapper (`tabIndex={-1}`); existing internal focus, including `autoFocus`, remains. Tab and Shift+Tab cycle only when the top visible pending modal is dimmed and its `trapFocus` is true. A nondimmed modal on top keeps native Tab order; existing inert isolation still protects the page. Provider and per-call `trapFocus` and `lockScroll` default to true and use ordinary undefined-inheriting option merging. `trapFocus: false` disables cycling, not initial focus movement or page isolation.
 
 On settlement, page effects update before focus returns to the connected opener. Focus already inside another pending modal remains there. If the opener is still inert because another dimmed modal remains, focus moves to the top remaining dimmed modal. A disconnected opener is ignored. Hiding by route, closing, and destruction release participation immediately, even during a manual exit animation. Reappearance and reinitialization reevaluate the pending store. A detached (`root={null}`) anchor neither isolates nor locks the page.
 
@@ -251,7 +251,7 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>;
 | `dimmed`               | `boolean`                                       | `true`   | Dim background                              |
 | `closeOnBackdropClick` | `boolean`                                       | `true`   | Close on backdrop                           |
 | `closeOnEscape` | `boolean` | Inherited | Escape cancellation; see Accessibility |
-| `trapFocus` | `boolean` | `true` | Tab cycle for the top dimmed modal |
+| `trapFocus` | `boolean` | `true` | Tab cycle when the top visible pending modal is dimmed |
 | `lockScroll` | `boolean` | `true` | Body scroll lock for dimmed modals |
 | `manualDestroy`        | `boolean`                                       | `false`  | Manual destroy mode                         |
 | `duration`             | `number \| string`                              | -        | Animation duration (Handler level override) |

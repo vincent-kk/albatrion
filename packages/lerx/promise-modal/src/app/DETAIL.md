@@ -8,7 +8,10 @@
 
 - ModalManager는 소유자당 document keydown 리스너 하나로 Esc와 Tab을 처리합니다. Esc는 기본 방지·IME 이벤트와 분리된 앵커를 무시하고 보이는 미확정 최상위 노드만 취소합니다.
 - 포커스 대상은 등록 시 보관하고 확정 시 환경 복원 뒤 되돌립니다. 다른 열린 모달의 포커스는 유지하며 대상이 inert이면 남은 최상위 dimmed 모달로 이동합니다.
+- Tab 가두기는 전체 visible 미확정 최상위 노드가 dimmed이고 trapFocus가 true일 때만 수행합니다. 최상위가 토스트이면 기본 Tab 순서를 유지하며 기존 dimmed 모달의 inert는 유지합니다.
+- 최초·복귀 포커스 이동은 dimmed 참여 목록의 최상위만 대상으로 하고 이미 처리한 최상위 아래로 내려가지 않습니다. 노드 publish는 환경만 재평가하고 전경의 layout effect가 DOM 반영 뒤 한 번 이동합니다. 내부에서 사용자가 옮긴 포커스는 재렌더에도 유지합니다.
 - alive && visible && dimmed && !settled인 노드만 포커스 이동·가두기와 페이지 격리에 참여합니다. trapFocus와 lockScroll은 기본 true이며 dimmed false는 전역 환경을 바꾸지 않습니다.
+- 탭 순서는 양수 tabindex 오름차순 뒤 0 요소의 DOM 순서이며 같은 순위의 비교 결과는 0으로 정합니다.
 - 전경 래퍼는 setFrameElement로 등록합니다. 첫 탭 가능 요소 또는 래퍼로 포커스를 이동하며 autoFocus가 잡은 내부 포커스는 유지합니다.
 - 첫 대상이 생길 때 앵커에서 body까지 각 조상 경로의 형제를 inert로 만들고 기존 속성은 보존합니다. 이후 추가 요소는 격리하지 않으며 root 이동과 재초기화는 현재 저장소를 재평가합니다.
 - 스크롤 잠금은 body의 overflow와 padding-right를 복원 가능하게 보관하고 0보다 크고 100보다 작은 스크롤바 너비만 보정합니다. 해제와 reset은 키보드·격리·스크롤·포커스 자원을 정리합니다.

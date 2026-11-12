@@ -32,8 +32,9 @@ export const getTabbableElements = (frame: HTMLElement): HTMLElement[] => {
       }
       return true;
     })
-    .sort(
-      (left, right) =>
-        (left.tabIndex || Infinity) - (right.tabIndex || Infinity),
-    );
+    .sort((left, right) => {
+      const leftRank = left.tabIndex > 0 ? left.tabIndex : Infinity;
+      const rightRank = right.tabIndex > 0 ? right.tabIndex : Infinity;
+      return leftRank === rightRank ? 0 : leftRank - rightRank;
+    });
 };
