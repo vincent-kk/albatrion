@@ -16,6 +16,7 @@ import { closeModal } from '@/promise-modal/helpers/closeModal';
 import { hideModal } from '@/promise-modal/helpers/hideModal';
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
 import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
+import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 import { useConfigurationOptions } from '@/promise-modal/providers/ConfigurationContext';
 import type { Modal } from '@/promise-modal/types';
 
@@ -58,14 +59,17 @@ export const ModalManagerContextProvider = memo(
             closeOnBackdropClick,
           duration: parseFloat(normalizeDuration(data.duration, duration)),
           id: ModalManager.nextId(),
-          initiator: initiator.current,
+          initiator:
+            usePathname === useDefaultPathname
+              ? window.location.pathname
+              : initiator.current,
         });
         ModalManager.register(node);
         return node;
       };
       ModalManager.openHandler = openHandler;
       return () => ModalManager.releaseOpenHandler(openHandler);
-    }, [optionsRef]);
+    }, [optionsRef, usePathname]);
 
     useLayoutEffect(() => {
       for (const id of ModalManager.ids) {

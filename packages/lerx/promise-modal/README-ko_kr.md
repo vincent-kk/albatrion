@@ -999,6 +999,14 @@ Provider의 컴포넌트 props(`ForegroundComponent`, `BackgroundComponent`, `Ti
 
 `useModalOptions`, `useModalBackdrop`, `useModalDuration`, `useDestroyAfter`는 모달 프레임·내용·푸터 안에서 사용합니다. Provider의 일반 자식이나 모달 트리 밖에서 호출하면 필요한 위치를 설명하는 오류를 던집니다. `useModalBackdrop`은 CSS 속성 객체를 반환합니다. 프레임은 `group`, `subtype`, `settled`를 받고 alert 내용도 `context`를 받습니다. 애플리케이션 래퍼 타입에는 공개 `AlertProps`, `ConfirmProps`, `PromptProps`, `OverridableHandleProps`를 사용합니다. 프레임의 `onClose`와 내용·푸터의 `onCancel`은 모두 요청을 취소하며 AbortSignal도 거부가 아닌 취소 값으로 완료됩니다.
 
+### 플랫폼 통합
+
+같은 JavaScript 영역에서 내부 상태 버전이 같은 패키지 사본은 모달 시스템 하나를 공유합니다. 다른 사본에서 가져온 `alert`, `confirm`, `prompt`도 현재 Provider가 처리하며 스타일 식별자·소유권·정리를 공유합니다. 호환되지 않는 상태 버전은 독립적으로 동작하고 개발 모드에서 경고합니다. 애플리케이션의 패키지 버전을 호환되게 맞추십시오. 서로 다른 창이나 JavaScript 영역은 시스템을 공유하지 않습니다.
+
+기본 경로 훅은 Navigation API를 사용할 수 있으면 이를 사용합니다. 그 외에는 살아 있는 모달이 있을 때만 폴링하며 경로로 숨겨진 모달과 파괴를 기다리는 닫힌 모달도 포함합니다. 모달이 없는 동안 경로를 바꿔도 새 요청은 여는 순간의 pathname에 속합니다. 사용자 `usePathname` 훅은 해당 라우터의 pathname을 따릅니다.
+
+React 18과 19를 지원합니다. ESM과 CommonJS 번들은 모두 `'use client'`로 시작하므로 React Server Component 도구가 클라이언트 경계를 인식합니다. DOM 없는 가져오기와 서버 렌더 지원은 유지하며 모달 열기 함수는 브라우저에서만 호출합니다.
+
 ### 수명주기와 소유권
 
 모달 결과는 한 번만 확정됩니다. `usePathname`에 따른 경로 이동은 대기 중인 모달을 결과 확정 없이 숨기고, 복귀하면 다시 표시합니다. 숨겨진 모달도 AbortSignal 중단과 `useModal` 소유 컴포넌트 정리로 취소됩니다. 확정된 모달은 `manualDestroy: true`여도 다시 표시되지 않습니다.

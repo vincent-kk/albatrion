@@ -1,12 +1,26 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState, useSyncExternalStore } from 'react';
 
+import { ModalManager } from '@/promise-modal/app';
+
+/** The store removes dead nodes, including manually destroyed exit frames. */
+const getHasAliveNodes = () => ModalManager.ids.length > 0;
+/** Server rendering has no browser polling work. */
+const getServerSnapshot = () => false;
+
+/**
+ * Observes the browser pathname for the default router integration.
+ * Navigation API events are preferred; fallback polling runs only with alive nodes.
+ * @returns The latest observed pathname; callers stamp new requests at opening time.
+ */
 export const usePathname = () => {
   const [pathname, setPathname] = useState(window.location.pathname);
+  const hasAliveNodes = useSyncExternalStore(
+    ModalManager.subscribe,
+    getHasAliveNodes,
+    getServerSnapshot,
+  );
   useLayoutEffect(() => {
     const handleChange = () => setPathname(window.location.pathname);
-    // Navigation API observes SPA pushState/replaceState without polling;
-    // requestAnimationFrame polling remains as the fallback for browsers
-    // (and test environments) without it.
     const navigation = (window as { navigation?: EventTarget }).navigation;
     if (navigation) {
       navigation.addEventListener('currententrychange', handleChange);
@@ -16,16 +30,17 @@ export const usePathname = () => {
         window.removeEventListener('popstate', handleChange);
       };
     }
+    if (!hasAliveNodes) return;
+    handleChange();
     let requestId: number;
     const checkPathname = () => {
-      if (pathname !== window.location.pathname)
-        setPathname(window.location.pathname);
-      else requestId = requestAnimationFrame(checkPathname);
+      handleChange();
+      requestId = requestAnimationFrame(checkPathname);
     };
     requestId = requestAnimationFrame(checkPathname);
     return () => {
       cancelAnimationFrame(requestId);
     };
-  }, [pathname]);
+  }, [hasAliveNodes]);
   return { pathname };
 };

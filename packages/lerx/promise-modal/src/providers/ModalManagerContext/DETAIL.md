@@ -6,6 +6,7 @@ Context는 변하지 않는 조작 함수만 담고 별도 노드 목록을 보�
 
 ## API Contracts
 
+- 기본 경로 훅에서는 요청 처리 순간의 window.location.pathname을 initiator로 사용합니다. 사용자 경로 훅은 마지막으로 반영한 pathname을 유지하여 라우터 고유 경로 계약을 보존합니다.
 - closeOnEscape는 병합 전 데이터에서 모달 Esc, 모달 배경 클릭, Provider Esc, Provider 배경 클릭 순으로 첫 정의값을 선택합니다. trapFocus와 lockScroll은 일반 undefined 상속 병합을 따릅니다.
 
 - Provider 위에 호출 데이터를 undefined를 건너뛰어 병합하고 호출 duration을 안전하게 정규화합니다. 명시적 0과 false는 상속을 덮습니다.

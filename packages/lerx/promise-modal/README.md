@@ -1000,6 +1000,14 @@ Option precedence is defaults, Provider options, `useModal(config)`, then per-ca
 
 `useModalOptions`, `useModalBackdrop`, `useModalDuration`, and `useDestroyAfter` belong inside modal frame, content, or footer components. Calling them in ordinary Provider children or outside the modal tree throws an error explaining the required location. `useModalBackdrop` returns CSS properties. Frames receive `group`, `subtype`, and `settled`, and alert content receives `context`. Use exported `AlertProps`, `ConfirmProps`, `PromptProps`, and `OverridableHandleProps` to type application wrappers. Frame `onClose` and content/footer `onCancel` both cancel the request; AbortSignal also resolves with its cancellation value rather than rejecting.
 
+### Platform integration
+
+Copies of the package with the same internal state version share one modal system in the same JavaScript realm. An `alert`, `confirm`, or `prompt` imported by another copy reaches the active Provider; style identity, ownership, and cleanup are shared. Incompatible state versions stay independent and warn in development. Keep one compatible package version across the application; different windows or realms do not share a system.
+
+The default pathname hook uses the Navigation API when available. Otherwise it polls only while a modal is alive, including route-hidden modals and closed modals awaiting destruction. Requests opened after an idle route change belong to the pathname at opening time. Custom `usePathname` hooks continue to follow their router's pathname.
+
+React 18 and 19 are supported. Both ESM and CommonJS bundles start with `'use client'` so React Server Component tooling recognizes the client boundary. DOM-free import and server rendering remain supported; call modal functions only in the browser.
+
 ### Lifecycle and ownership
 
 Modal results settle once. Navigating away through `usePathname` hides pending modals without settling them; returning restores them. Abort and `useModal` owner cleanup still cancel a hidden modal. A settled modal never appears again, including with `manualDestroy: true`.
