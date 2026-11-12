@@ -5,7 +5,7 @@ import {
   useConfigurationContext,
   useModalManager,
 } from '@/promise-modal/providers';
-import type { ModalOptions } from '@/promise-modal/types';
+import type { ModalOptions } from '@/promise-modal/types/option';
 
 import { useSubscribeModal } from './useSubscribeModal';
 

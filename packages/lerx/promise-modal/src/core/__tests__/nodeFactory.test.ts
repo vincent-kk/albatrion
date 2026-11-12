@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ManagedModal } from '../../types';
+import type { ManagedModal } from '../../types/modal';
 import { AlertNode } from '../node/ModalNode/AlertNode';
 import { ConfirmNode } from '../node/ModalNode/ConfirmNode';
 import { PromptNode } from '../node/ModalNode/PromptNode';

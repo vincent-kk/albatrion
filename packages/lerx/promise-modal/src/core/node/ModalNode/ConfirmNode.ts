@@ -1,12 +1,12 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { FooterOptions } from '@/promise-modal/types/base';
 import type {
   ConfirmContentProps,
   ConfirmFooterRender,
   ConfirmModal,
-  FooterOptions,
-  ManagedEntity,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/confirm';
+import type { ManagedEntity } from '@/promise-modal/types/modal';
 
 import { AbstractNode } from './AbstractNode';
 

@@ -27,9 +27,9 @@ import type {
   BackgroundComponent,
   FooterComponentProps,
   ForegroundComponent,
-  ModalOptions,
   WrapperComponentProps,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/base';
+import type { ModalOptions } from '@/promise-modal/types/option';
 
 import {
   ConfigurationContext,

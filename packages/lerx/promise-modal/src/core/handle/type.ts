@@ -5,17 +5,23 @@ import type { Fn } from '@aileron/declare';
 import type {
   AlertContentProps,
   AlertFooterRender,
+} from '@/promise-modal/types/alert';
+import type { ModalBackground } from '@/promise-modal/types/background';
+import type {
   BackgroundComponent,
-  ConfirmContentProps,
-  ConfirmFooterRender,
   FooterOptions,
   ForegroundComponent,
-  ModalBackground,
-  ModalOptions,
+} from '@/promise-modal/types/base';
+import type {
+  ConfirmContentProps,
+  ConfirmFooterRender,
+} from '@/promise-modal/types/confirm';
+import type { ModalOptions } from '@/promise-modal/types/option';
+import type {
   PromptContentProps,
   PromptFooterRender,
   PromptInputProps,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/prompt';
 
 export interface OverridableHandleProps {
   /** Modal group identifier for managing related modals */

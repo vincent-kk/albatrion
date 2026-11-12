@@ -10,7 +10,7 @@ import {
   useModalManager,
   useModalManagerContext,
 } from '@/promise-modal/providers';
-import type { PresenterProps } from '@/promise-modal/types';
+import type { PresenterProps } from '@/promise-modal/types/modal';
 
 import { presenter } from './style';
 

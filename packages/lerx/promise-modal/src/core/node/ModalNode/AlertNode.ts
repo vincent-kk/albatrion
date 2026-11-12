@@ -4,9 +4,9 @@ import type {
   AlertContentProps,
   AlertFooterRender,
   AlertModal,
-  FooterOptions,
-  ManagedEntity,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/alert';
+import type { FooterOptions } from '@/promise-modal/types/base';
+import type { ManagedEntity } from '@/promise-modal/types/modal';
 
 import { AbstractNode } from './AbstractNode';
 

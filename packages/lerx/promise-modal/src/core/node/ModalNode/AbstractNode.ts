@@ -3,13 +3,13 @@ import type { ReactNode } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
+import type { ModalBackground } from '@/promise-modal/types/background';
 import type {
   BackgroundComponent,
   BaseModal,
   ForegroundComponent,
-  ManagedEntity,
-  ModalBackground,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/base';
+import type { ManagedEntity } from '@/promise-modal/types/modal';
 
 type AbstractNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
 

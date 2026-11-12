@@ -7,7 +7,7 @@ import {
   nodeFactory,
   promptHandler,
 } from '@/promise-modal/core';
-import type { Modal } from '@/promise-modal/types';
+import type { Modal } from '@/promise-modal/types/modal';
 
 import { ModalManager } from '../ModalManager';
 

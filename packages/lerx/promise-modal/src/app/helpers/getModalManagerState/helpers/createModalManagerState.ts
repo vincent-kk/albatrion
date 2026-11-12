@@ -1,7 +1,7 @@
 import { polynomialHash } from '@winglet/common-utils/hash';
 import { getRandomString } from '@winglet/common-utils/lib';
 
-import type { Modal } from '@/promise-modal/types';
+import type { Modal } from '@/promise-modal/types/modal';
 
 import type { ModalManagerState } from '../../../types/ModalManagerState';
 
