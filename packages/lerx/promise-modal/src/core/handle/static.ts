@@ -61,7 +61,7 @@ export const alert = <BackgroundValue = any>(
  *   footer: {
  *     confirm: 'Delete Account',
  *     cancel: 'Keep Account',
- *     confirmDanger: true,
+ *     subtype: 'warning',
  *   },
  * });
  * ```

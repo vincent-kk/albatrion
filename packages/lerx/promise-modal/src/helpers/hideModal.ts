@@ -1,9 +1,8 @@
-import { ModalManager } from '@/promise-modal/app';
 import type { ModalNode } from '@/promise-modal/core';
 
-export const hideModal = (modalNode: ModalNode, refresh = true) => {
+/** Hides a completed node and schedules its automatic destruction. */
+export const hideModal = (modalNode: ModalNode) => {
   modalNode.onHide();
-  if (refresh) ModalManager.refresh();
-  if (modalNode.manualDestroy || modalNode.alive === false) return;
+  if (modalNode.manualDestroy || !modalNode.alive) return;
   return setTimeout(() => modalNode.onDestroy(), modalNode.duration);
 };

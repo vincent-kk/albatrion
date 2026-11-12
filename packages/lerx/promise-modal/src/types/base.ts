@@ -7,6 +7,8 @@ import type { ModalFrameProps } from './modal';
 
 export interface BaseModal<T, B> {
   group?: string;
+  /** Presentation variant shared by all modal kinds. */
+  subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
   subtitle?: ReactNode;
   background?: ModalBackground<B>;
@@ -20,6 +22,8 @@ export interface BaseModal<T, B> {
    * their wiring; not part of the public props surface.
    */
   handleResolve?: Fn<[result: T | null]>;
+  /** @internal Rejects a request that cannot be rendered. */
+  handleReject?: Fn<[error: unknown]>;
   ForegroundComponent?: ForegroundComponent;
   BackgroundComponent?: BackgroundComponent;
 }

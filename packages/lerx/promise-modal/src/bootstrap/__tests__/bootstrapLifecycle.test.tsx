@@ -112,8 +112,7 @@ describe('bootstrap lifecycle (real rendering)', () => {
     });
     fireEvent.click(screen.getByText('Confirm'));
 
-    // PromptInner defers onConfirm by a frame; settle inside act to cover the
-    // state updates it triggers.
+    // Confirmation consumes the synchronously updated node value.
     await act(async () => {
       await expect(promiseHandler).resolves.toBe('Vincent');
     });

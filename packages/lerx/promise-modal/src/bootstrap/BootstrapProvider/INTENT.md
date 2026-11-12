@@ -16,7 +16,7 @@
 
 - Provider 중첩 순서: Configuration → ModalManager → UserDefined
 - ModalManager.anchor() 호출로 DOM 앵커 보장
-- 언마운트 시 초기화의 역연산 보장 (앵커 제거 + ModalManager.reset(), 단 자신이 초기화한 경우만)
+- 언마운트 시 자신의 소유권 또는 대기 등록만 해제하고 reset과 구분
 
 ### Ask first
 

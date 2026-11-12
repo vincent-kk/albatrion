@@ -8,7 +8,7 @@ ModalManager 싱글톤 클래스를 통해 모달의 전역 상태, DOM 앵커�
 
 - 모든 상태는 static 멤버로 관리 (싱글톤 패턴)
 - `@winglet/style-utils`로 스코프된 CSS 주입 (polynomial hashing)
-- `@winglet/common-utils`로 고유 ID 생성
+- 고유 id와 쌓임 순서는 static 저장소에서 발급
 - prerender 큐: 마운트 전 open 요청을 `{ modal, dispatch }`로 큐잉, `openHandler` 설정 시 큐를 flush하여 Promise 배선을 유지
 
 ## Boundaries
@@ -16,7 +16,7 @@ ModalManager 싱글톤 클래스를 통해 모달의 전역 상태, DOM 앵커�
 ### Always do
 
 - ModalManager의 static 인터페이스 유지
-- `reset()`은 `initialize`의 완전한 역연산 보장 (styleManager 재바인딩 포함)
+- `reset()`은 전체 상태를 초기화하고 스타일 관리자는 다음 적용 시 지연 생성
 - 스타일 시트 정의 시 `compressCss` 적용
 - 외부 소비자는 `@/promise-modal/app` entry point로 import
 

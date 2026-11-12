@@ -2,20 +2,18 @@
 
 ## Requirements
 
-공개 ModalProvider가 모달 시스템의 초기화와 Context 구성을 담당합니다.
+공개 ModalProvider는 내부 BootstrapProvider를 연결합니다. 포털은 소유자만 렌더하고 초기화와 해제는 매니저를 거칩니다.
 
 ## API Contracts
 
-- BootstrapProvider의 공개 이름과 초기화 훅의 공개 이름은 내부 구현 이름과 구분합니다.
-- 하위 Context는 설정, 매니저 상태, 사용자 지정 값의 의존 순서로 연결합니다.
+- StrictMode와 같은 커밋 재마운트는 열린 Promise를 취소하지 않습니다.
 
 ## Acceptance Criteria
 
 ### bootstrap-contract — 관찰 가능한 동작
 
-- 공개 Provider 사용만으로 하위 모달 소비자가 필요한 Context를 얻습니다.
-- 초기화 책임을 일반 렌더 컴포넌트로 분산하지 않습니다.
+- 일반 마운트와 StrictMode 마운트가 같은 요청 결과를 유지합니다.
 
 ## Last Updated
 
-2026-09-16
+결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.

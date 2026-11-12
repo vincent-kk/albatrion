@@ -37,12 +37,14 @@ export class AlertNode<B = any> extends AbstractNode<null, B> {
     manualDestroy,
     closeOnBackdropClick,
     handleResolve,
+    handleReject,
     ForegroundComponent,
     BackgroundComponent,
   }: AlertNodeProps<B>) {
     super({
       id,
       group,
+      subtype,
       initiator,
       title,
       subtitle,
@@ -52,6 +54,7 @@ export class AlertNode<B = any> extends AbstractNode<null, B> {
       manualDestroy,
       closeOnBackdropClick,
       handleResolve,
+      handleReject,
       ForegroundComponent,
       BackgroundComponent,
     });

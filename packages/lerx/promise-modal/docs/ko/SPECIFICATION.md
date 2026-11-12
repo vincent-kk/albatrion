@@ -424,23 +424,35 @@ function DeleteButton({ id }) {
 
 ---
 
+### 수명주기와 소유권
+
+모달 결과는 한 번만 확정됩니다. `usePathname`에 따른 경로 이동은 대기 중인 모달을 결과 확정 없이 숨기고, 복귀하면 다시 표시합니다. 숨겨진 모달도 AbortSignal 중단과 `useModal` 소유 컴포넌트 정리로 취소됩니다. 확정된 모달은 `manualDestroy: true`여도 다시 표시되지 않습니다.
+
+`ModalProvider` 또는 `useInitializeModal` 초기화 주체 하나만 포털을 소유합니다. 추가 Provider는 대기하며 개발 환경에서 한 번 경고합니다. 소유자가 언마운트되면 첫 대기자가 열린 모달을 이어받습니다. 대기자가 없으면 열린 모달은 취소 값으로 완료됩니다. `alert`는 완료되고, `confirm`은 `false`, `prompt`는 `null`을 반환합니다(`returnOnCancel: true`이면 현재 입력값). StrictMode 점검을 포함한 같은 커밋의 재마운트는 대기 중인 결과와 prompt 입력값을 유지합니다.
+
+내용·입력·프레임의 렌더 오류는 해당 모달의 Promise를 잡힌 오류로 거부하므로 `try`/`catch`로 처리합니다. 다른 모달과 이후 요청은 계속 동작합니다. 대기 중인 모달의 파괴도 먼저 취소한 뒤 프레임을 제거합니다.
+
+`useModal`은 확정된 요청을 즉시 추적 목록에서 제거하고, 컴포넌트 언마운트 때 미확정 요청만 취소합니다. 정적 호출은 호출 컴포넌트보다 오래 유지되지만 Provider 소유권과 취소 규칙은 따릅니다.
+
+`useActiveModalCount`와 `useSubscribeModal(id)`는 공용 저장소를 읽으므로 Provider의 일반 자식과 Provider 밖에서도 동작합니다. 개수 판별 함수는 읽기 전용 `ModalNodeView`를 받으며 refresh key 없이 노드 변경을 반영합니다. `useDestroyAfter`는 모달 프레임 안에서 사용하고, 이미 확정됐지만 살아 있는 모달을 지연 시간 뒤 파괴합니다. 경로 숨김만으로는 타이머가 시작되지 않습니다. 지연 시간은 마운트 시점에 고정됩니다.
+
+DOM 없이 패키지를 가져오고 서버에서 `ModalProvider`를 렌더할 수 있습니다. `alert`, `confirm`, `prompt`는 브라우저에서만 호출합니다. 서버 렌더에는 모달 포털이 없고 활성 개수는 0입니다.
+
 ### useActiveModalCount
 
 활성 모달의 개수를 반환합니다.
 
 ```typescript
 function useActiveModalCount(
-  validate?: (modal?: ModalNode) => boolean,
-  refreshKey?: string | number,
+  validate?: (modal: ModalNodeView) => boolean | undefined,
 ): number;
 ```
 
 #### 매개변수
 
-| 매개변수     | 타입                 | 설명             |
-| ------------ | -------------------- | ---------------- |
-| `validate`   | `(modal) => boolean` | 필터 함수        |
-| `refreshKey` | `string \| number`   | 강제 새로고침 키 |
+| 매개변수   | 타입                 | 설명      |
+| ---------- | -------------------- | --------- |
+| `validate` | `(modal) => boolean` | 필터 함수 |
 
 #### 예제
 
@@ -511,7 +523,7 @@ function useModalDuration(modalId?: number): {
 
 ### useDestroyAfter
 
-지정된 시간 후 모달을 자동으로 제거합니다.
+결과가 확정된 모달을 지정한 지연 시간 뒤 파괴합니다.
 
 ```typescript
 function useDestroyAfter(modalId: number, duration: string | number): void;
@@ -519,15 +531,15 @@ function useDestroyAfter(modalId: number, duration: string | number): void;
 
 #### 동작
 
-- 모달이 숨겨지면 타이머 시작
-- 모달이 다시 보이면 타이머 취소
-- 지속 시간 후 DOM에서 모달 제거
+- 결과가 확정되고 살아 있을 때만 타이머 시작
+- 경로 숨김은 미확정 모달을 유지
+- 마운트 시 고정한 지연 시간 뒤 프레임 제거
 
 #### 예제
 
 ```typescript
 function ToastMessage({ id }) {
-  useDestroyAfter(id, 300); // 숨겨진 후 300ms 후 제거
+  useDestroyAfter(id, 300); // Destroy 300ms after settlement
   return <div>토스트</div>;
 }
 ```
@@ -539,7 +551,7 @@ function ToastMessage({ id }) {
 모달 상태 변경을 구독합니다.
 
 ```typescript
-function useSubscribeModal(modal?: ModalNode): number;
+function useSubscribeModal(modalId: number): number;
 ```
 
 #### 반환값
@@ -549,11 +561,11 @@ function useSubscribeModal(modal?: ModalNode): number;
 #### 예제
 
 ```typescript
-function ModalDebugger({ modal }) {
-  const version = useSubscribeModal(modal);
+function ModalDebugger({ id, visible }) {
+  const version = useSubscribeModal(id);
 
   useEffect(() => {
-    console.log('상태 변경:', modal?.visible);
+    console.log('State changed:', visible);
   }, [version]);
 }
 ```
@@ -672,7 +684,7 @@ interface ModalOptions {
 
 #### usePathname (라우터 통합)
 
-`usePathname` prop을 사용하면 라우터와 통합할 수 있습니다. 경로가 변경되면 모달이 자동으로 닫힙니다.
+`usePathname` prop을 사용하면 라우터와 통합할 수 있습니다. 경로가 변경되면 미확정 모달을 숨기고 복귀하면 다시 표시하며, 결과는 확정하지 않습니다.
 
 ```typescript
 import { useLocation } from 'react-router-dom';

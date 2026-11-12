@@ -26,11 +26,17 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
 
   private __value__: T | undefined;
 
+  /** Current value survives presentation remounts. */
+  get value() {
+    return this.__value__;
+  }
+
   constructor({
     id,
     group,
     initiator,
     type,
+    subtype,
     title,
     subtitle,
     content,
@@ -45,12 +51,14 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
     manualDestroy,
     closeOnBackdropClick,
     handleResolve,
+    handleReject,
     ForegroundComponent,
     BackgroundComponent,
   }: PromptNodeProps<T, B>) {
     super({
       id,
       group,
+      subtype,
       initiator,
       title,
       subtitle,
@@ -60,6 +68,7 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
       manualDestroy,
       closeOnBackdropClick,
       handleResolve,
+      handleReject,
       ForegroundComponent,
       BackgroundComponent,
     });

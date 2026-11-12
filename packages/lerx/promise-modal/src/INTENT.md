@@ -12,7 +12,7 @@
 
 - TypeScript + React, ES2022 타겟
 - 경로 별칭: `@/promise-modal` → `./src`
-- Promise 기반 API: 모달 함수는 Promise를 반환하여 사용자 인터랙션 결과를 resolve
+- Promise 기반 API: 모달 함수는 Promise를 반환하여 최초 결과를 resolve하거나 렌더 오류를 reject
 - Provider 패턴: 설정/상태를 Context로 분리
 - `@winglet/*` 유틸리티 의존 (common-utils, react-utils, style-utils)
 

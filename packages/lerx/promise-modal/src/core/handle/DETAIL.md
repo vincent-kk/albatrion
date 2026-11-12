@@ -2,20 +2,18 @@
 
 ## Requirements
 
-내부 요청 핸들과 공개 Promise API를 분리하면서 마운트 전 요청을 지원합니다.
+반환 핸들의 modalNode는 큐 처리 뒤 실제 노드를 읽는 getter입니다. resolve와 reject 배선은 모달 데이터에 실어 큐를 통과합니다.
 
 ## API Contracts
 
-- 내부 핸들은 modalNode의 live getter, promiseHandler와 큐 취소 수단을 제공합니다.
-- 공개 static 래퍼는 promiseHandler만 반환하며 완료 연결은 큐에 보관된 모달 데이터로 전달합니다.
+- 확정은 한 번만 유효하며 확인·취소·거부 시 AbortSignal 리스너를 정리합니다. 경로로 숨겨져도 중단은 취소 값으로 완료됩니다.
 
 ## Acceptance Criteria
 
 ### handle-contract — 관찰 가능한 동작
 
-- 마운트 전 undefined였던 modalNode는 큐 처리 후 실제 노드 참조를 제공합니다.
-- 요청이 큐에 머물렀더라도 호출자에게 반환한 Promise가 해당 모달 결과로 완료됩니다.
+- 큐 처리와 오류 뒤에도 최초 반환한 Promise가 정확히 한 번 완료되며 중단 리스너가 남지 않습니다.
 
 ## Last Updated
 
-2026-09-16
+결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.

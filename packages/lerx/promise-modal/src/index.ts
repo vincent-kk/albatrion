@@ -21,6 +21,7 @@ export { alert, confirm, prompt } from './core';
 
 export type {
   ModalOptions,
+  ModalNodeView,
   ModalFrameProps,
   FooterComponentProps,
   ModalBackground,

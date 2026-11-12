@@ -40,17 +40,20 @@ interface ModalIdProps {
   modalId: ModalNode['id'];
 }
 
-export interface PresenterProps extends ModalIdProps {
-  getValue: Fn<[], number>;
-  increment: Fn<[], number>;
-  reset: Fn<[], number>;
-}
+/** Identifies one independently subscribed modal presenter. */
+export type PresenterProps = ModalIdProps;
 
 export interface ModalLayerProps extends ModalIdProps {
   onChangeOrder: Fn;
 }
 
 export interface ModalHandlersWithId {
+  /** Rejects one failed presentation without affecting peers. */
+  onReject: Fn<[modalId: number, error: unknown]>;
+  /** Rejects all alive nodes after an anchor-level failure. */
+  onRejectAll: Fn<[error: unknown]>;
+  /** Raises a node through the store-owned stacking order. */
+  onChangeOrder: Fn<[modalId: number]>;
   onConfirm: Fn<[modalId: ModalNode['id']]>;
   onClose: Fn<[modalId: ModalNode['id']]>;
   onChange: Fn<[modalId: ModalNode['id'], value: any]>;
@@ -64,3 +67,22 @@ export type ModalActions = {
   onChange: Fn<[value: any]>;
   onDestroy: Fn;
 };
+
+/** Read-only metadata for application predicates, without mutation methods. */
+export type ModalNodeView = Readonly<
+  Pick<
+    ModalNode,
+    | 'id'
+    | 'type'
+    | 'group'
+    | 'subtype'
+    | 'initiator'
+    | 'alive'
+    | 'visible'
+    | 'settled'
+    | 'dimmed'
+    | 'manualDestroy'
+    | 'closeOnBackdropClick'
+    | 'duration'
+  >
+>;
