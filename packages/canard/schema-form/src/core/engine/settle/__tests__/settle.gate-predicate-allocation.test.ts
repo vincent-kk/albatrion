@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import type { GatePredicateInputs } from '../types/gatePredicate';
@@ -60,7 +60,7 @@ describe('gate predicate allocation bounds', () => {
         writeFieldNode(
           root.structure!.kind,
           tag,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
       expect(
@@ -116,7 +116,7 @@ describe('gate predicate allocation bounds', () => {
         writeFieldNode(
           root.structure!.kind,
           tag,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         ),
       ).toThrow();
@@ -136,7 +136,7 @@ describe('gate predicate allocation bounds', () => {
     writeFieldNode(
       root.structure!.kind,
       'tag_79',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const view = vi.spyOn(views, 'readGateHostView');
@@ -150,7 +150,12 @@ describe('gate predicate allocation bounds', () => {
       },
     );
     for (const tag of ['tag_0', 'tag_79', 'tag_0'])
-      writeFieldNode(root.structure!.kind, tag, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.kind,
+        tag,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
     expect(view).not.toHaveBeenCalled();
     expect(lists.size).toBe(1);
     expect([...lists][0]).toHaveLength(0);

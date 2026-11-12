@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { engineModes } from '../../utils/cache/engineModes';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
@@ -37,7 +40,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S3 shape dirty differs after registration');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -54,7 +62,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S4 entry/revival must already be dirty');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -69,7 +82,12 @@ describe('table invariants reject actual positional violations', () => {
     });
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S1');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -87,7 +105,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S2');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -107,7 +130,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S2');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -125,7 +153,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S2');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -142,7 +175,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S5');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -158,7 +196,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S2');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });
@@ -175,7 +218,12 @@ describe('table invariants reject actual positional violations', () => {
     );
     const before = gateSelectionTable.violations;
     expect(() =>
-      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.kind,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('S5');
     expect(gateSelectionTable.violations).toBe(before + 1);
   });

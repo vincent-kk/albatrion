@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
@@ -22,7 +25,7 @@ const loadGeneric = (
     .spyOn(independentDefaults, 'hasIndependentLeafDefaults')
     .mockReturnValue(false);
   try {
-    writeFieldNode(root, input, 'load', option);
+    writeFieldNode(root, input, FieldNodeWriteKind.Load, option);
   } finally {
     generic.mockRestore();
   }
@@ -116,7 +119,12 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
       },
     });
     expect(() =>
-      writeFieldNode(root, undefined, 'load', WriteOption.Overwrite),
+      writeFieldNode(
+        root,
+        undefined,
+        FieldNodeWriteKind.Load,
+        WriteOption.Overwrite,
+      ),
     ).toThrow(
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED',
@@ -283,7 +291,12 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
     });
     expect(transitionCap.getTransitionCap(root.runtime.blueprint)).toBe(3);
     expect(() =>
-      writeFieldNode(root, { allow: true }, 'load', WriteOption.Overwrite),
+      writeFieldNode(
+        root,
+        { allow: true },
+        FieldNodeWriteKind.Load,
+        WriteOption.Overwrite,
+      ),
     ).toThrow(
       expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED' }),
     );

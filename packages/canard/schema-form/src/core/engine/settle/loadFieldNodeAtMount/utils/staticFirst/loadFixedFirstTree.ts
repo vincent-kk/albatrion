@@ -1,5 +1,6 @@
 import type { FieldNodeRecord } from '../../../../record';
 import type { WriteOption } from '../../../../types/value';
+import { FieldNodeWriteKind } from '../../../../types/value';
 import { writeFieldNode } from '../../../utils/write/writeFieldNode';
 
 /**
@@ -15,9 +16,9 @@ export const loadFixedFirstTree = <Self extends FieldNodeRecord<Self>>(
   writeFieldNode(
     root,
     undefined,
-    'load',
+    FieldNodeWriteKind.Load,
     option,
-    'load',
+    FieldNodeWriteKind.Load,
     undefined,
     root.runtime.blueprint.fixedFirstLoadPlan,
   );

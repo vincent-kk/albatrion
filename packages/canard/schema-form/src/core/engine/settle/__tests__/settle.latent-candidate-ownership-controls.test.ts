@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import {
   dispatchMount,
   dispatchResetForm,
@@ -71,7 +71,12 @@ describe('candidate cleanup preserves broad clearing contracts', () => {
           dispatchSetValue(box, { v: undefined }, WriteOption.Merge);
           break;
         case 'load':
-          writeFieldNode(box, {}, 'load', WriteOption.Overwrite);
+          writeFieldNode(
+            box,
+            {},
+            FieldNodeWriteKind.Load,
+            WriteOption.Overwrite,
+          );
           break;
         case 'subtree-reset':
           dispatchResetSubtree(box);

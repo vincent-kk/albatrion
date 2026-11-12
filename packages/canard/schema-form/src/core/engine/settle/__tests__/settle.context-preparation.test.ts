@@ -1,7 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -33,7 +36,7 @@ it('does not prepare absent gates or virtual references on first or later writes
     writeFieldNode(
       root.structure!.value,
       value,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
@@ -134,7 +137,7 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     writeFieldNode(
       leaf,
       value,
-      'input',
+      FieldNodeWriteKind.Input,
       index === 0
         ? WriteOption.DisableAutomaticWrites
         : WriteOption.EnableAutomaticWrites,
@@ -145,7 +148,7 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     ).toEqual({ previous, current: value });
     expect(
       leaf.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'input' });
+    ).toEqual({ source: FieldNodeWriteKind.Input });
     expect(leaf.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
@@ -160,7 +163,12 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     previous = value;
   }
   const emit = root.emit;
-  writeFieldNode(leaf, previous, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    leaf,
+    previous,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.emit).toBe(emit);
 });
 
@@ -183,12 +191,17 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
   const cap = vi.spyOn(caps, 'getTransitionCap');
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
   const instance = root.structure!['source'];
-  writeFieldNode(instance, 2, 'input', WriteOption.Overwrite);
+  writeFieldNode(instance, 2, FieldNodeWriteKind.Input, WriteOption.Overwrite);
   expect(root.emit).toEqual({ source: 2, derived: 3, gated: 'filled' });
   expect(cap).toHaveBeenCalled();
   expect(reference).toHaveBeenCalled();
   expect(() =>
-    writeFieldNode(instance, -1, 'input', WriteOption.Overwrite),
+    writeFieldNode(
+      instance,
+      -1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    ),
   ).toThrow();
   const scratch = root.runtime.settlementScratch!;
   expect(scratch.inUse).toBe(false);
@@ -196,7 +209,12 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
     if (container instanceof Map || container instanceof Set)
       expect(container.size).toBe(0);
   expect(() =>
-    writeFieldNode(instance, 3, 'input', WriteOption.Overwrite),
+    writeFieldNode(
+      instance,
+      3,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    ),
   ).not.toThrow();
   expect(root.runtime.settlementScratch).toBe(scratch);
   expect(root.emit).toEqual({ source: 3, derived: 4, gated: 'filled' });
@@ -207,14 +225,14 @@ it('keeps nested scratch independent and resets an empty postorder mode', () => 
   const outer = getSettlementScratch(root.runtime);
   const first = createSettlementContext(
     root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.DisableAutomaticWrites,
     outer,
   );
   const inner = getSettlementScratch(root.runtime);
   const nested = createSettlementContext(
     root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.EnableAutomaticWrites,
     inner,
   );
@@ -236,7 +254,7 @@ it('keeps nested scratch independent and resets an empty postorder mode', () => 
   const reused = getSettlementScratch(root.runtime);
   const later = createSettlementContext(
     root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
     reused,
   );

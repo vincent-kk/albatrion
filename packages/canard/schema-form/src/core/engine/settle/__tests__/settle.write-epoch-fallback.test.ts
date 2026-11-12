@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import {
   dispatchBatch,
   dispatchMount,
@@ -57,7 +57,7 @@ describe('whole-write epoch entry guards', () => {
         writeFieldNode(
           root,
           { h: { v: 4, w: 5 }, s: 6 },
-          'automatic',
+          FieldNodeWriteKind.Automatic,
           WriteOption.Overwrite,
         ),
     ],

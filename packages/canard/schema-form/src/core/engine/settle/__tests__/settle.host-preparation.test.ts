@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -58,11 +58,26 @@ describe('host lifetime preparation', () => {
 
   it('does not recheck gate expressions or budget membership on repeated writes', () => {
     const { root } = createHost(0, 80);
-    writeFieldNode(root.structure!.kind, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const caps = vi.spyOn(budget, 'getHostWheelBudgetCap');
     const reads = vi.spyOn(expressions, 'getGateExpression');
-    writeFieldNode(root.structure!.kind, 2, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.kind, 3, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      2,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.kind,
+      3,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(caps).not.toHaveBeenCalled();
     expect(reads.mock.calls.length).toBeLessThanOrEqual(2);
     expect(root.structure!.payload_3.source).toBe(3);
@@ -73,7 +88,12 @@ describe('host lifetime preparation', () => {
     'does not republish static declaration IDs with %i fixed siblings',
     (siblings) => {
       const { root } = createHost(siblings);
-      writeFieldNode(root.structure!.kind, 1, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.kind,
+        1,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       const fixed = root.structure!.kind;
       const original = Map.prototype.set;
       let publications = 0;
@@ -86,7 +106,12 @@ describe('host lifetime preparation', () => {
         return original.call(this, key, value);
       });
       try {
-        writeFieldNode(fixed, 0, 'input', WriteOption.Overwrite);
+        writeFieldNode(
+          fixed,
+          0,
+          FieldNodeWriteKind.Input,
+          WriteOption.Overwrite,
+        );
       } finally {
         sets.mockRestore();
       }
@@ -98,14 +123,24 @@ describe('host lifetime preparation', () => {
 
   it('keeps previously published children, structure and value unchanged', () => {
     const { root } = createHost(100);
-    writeFieldNode(root.structure!.kind, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const structure = root.structure!;
     const children = root.children!;
     const value = root.emit;
     const names = Object.keys(structure);
     const previousChildren = [...children];
     const previousValue = { ...(value as object) };
-    writeFieldNode(root.structure!.kind, 0, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      0,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(Object.keys(structure)).toEqual(names);
     expect(children).toEqual(previousChildren);
     expect(value).toEqual(previousValue);
@@ -114,14 +149,29 @@ describe('host lifetime preparation', () => {
 
   it('discards static occurrence preparation on load and prepares a fresh witness', () => {
     const { root } = createHost(4);
-    writeFieldNode(root.structure!.kind, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const previous = Reflect.get(getHostDerived(root), 'preparedStaticHost');
     expect(previous).toBeDefined();
-    writeFieldNode(root, { kind: 0 }, 'load', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      { kind: 0 },
+      FieldNodeWriteKind.Load,
+      WriteOption.Overwrite,
+    );
     expect(
       Reflect.get(getHostDerived(root), 'preparedStaticHost'),
     ).toBeUndefined();
-    writeFieldNode(root.structure!.kind, 1, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      1,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(Reflect.get(getHostDerived(root), 'preparedStaticHost')).not.toBe(
       previous,
     );
@@ -132,12 +182,22 @@ describe('host lifetime preparation', () => {
     engineModes.setMode('gateSelection', 'verify');
     try {
       const { root } = createHost(4);
-      writeFieldNode(root.structure!.kind, 1, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.kind,
+        1,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       const prepared = Reflect.get(getHostDerived(root), 'preparedStaticHost');
       expect(prepared).toBeDefined();
       root.structure!.fixed_0.detached = true;
       expect(() =>
-        writeFieldNode(root.structure!.kind, 0, 'input', WriteOption.Overwrite),
+        writeFieldNode(
+          root.structure!.kind,
+          0,
+          FieldNodeWriteKind.Input,
+          WriteOption.Overwrite,
+        ),
       ).toThrow(/static.*witness/i);
     } finally {
       engineModes.setMode('gateSelection', mode);

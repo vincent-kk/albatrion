@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -21,10 +24,20 @@ describe('pure gate projection baseline', () => {
     loadFieldNodeAtMount(root, { kind: 'a' }, WriteOption.Overwrite);
     expect(root.emit).toEqual({ kind: 'a', a: 'a' });
     expect(root.emit).toBe(root.emit);
-    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      'b',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual({ kind: 'b', b: 'b' });
     const emitted = root.emit;
-    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      'b',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toBe(emitted);
   });
 
@@ -52,7 +65,7 @@ describe('pure gate projection baseline', () => {
       writeFieldNode(
         root,
         { kind: 'b' },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -85,7 +98,7 @@ describe('pure gate projection baseline', () => {
     writeFieldNode(
       root.structure!.toggle,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ kind: 'a', toggle: true, payload: 'P' });
@@ -124,7 +137,7 @@ describe('pure gate projection baseline', () => {
       writeFieldNode(
         root.structure!.toggle,
         true,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       ),
     ).toThrow();
@@ -132,7 +145,7 @@ describe('pure gate projection baseline', () => {
     writeFieldNode(
       root.structure!.toggle,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ kind: 'a', toggle: false, payload: 'P' });

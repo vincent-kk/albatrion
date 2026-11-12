@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import * as sourceTree from '../../utils/slots/readSourceTree';
@@ -291,7 +294,7 @@ describe('array prefix retained source work', () => {
     writeFieldNode(
       root,
       [{ value: 'a' }, { value: 'b' }],
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const read = vi.spyOn(sourceTree, 'readSourceTree');

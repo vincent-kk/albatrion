@@ -6,7 +6,10 @@ import type {
   Blueprint,
   BlueprintSchema,
 } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
@@ -91,7 +94,12 @@ export const runDeriveConvergenceCase = (
             let target = root;
             const segments = write.path.split('/').filter(isTruthy);
             for (const segment of segments) target = target.structure![segment];
-            writeFieldNode(target, write.value, 'input', WriteOption.Overwrite);
+            writeFieldNode(
+              target,
+              write.value,
+              FieldNodeWriteKind.Input,
+              WriteOption.Overwrite,
+            );
           }
         } catch (cause) {
           error = cause instanceof Error ? cause.message : String(cause);

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { dispatchBatch } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { FieldNodeWriteKind } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
@@ -22,7 +23,12 @@ describe('commit candidate Set work', () => {
     loadFieldNodeAtMount(root, { a: 'A', b: 'B', c: 'C' }, 0);
     dispatchBatch(root, () => {});
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     for (const node of [...root.children!, root]) {
       context.changedNodes.add(node);
       context.stateDirtyNodes.add(node);
@@ -55,7 +61,12 @@ describe('commit candidate Set work', () => {
     const a = root.structure!.a;
     a.detached = true;
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.exited.add(a);
     const nativeAdd = Set.prototype.add;
     let adds = 0;

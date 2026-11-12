@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { GateWheelFrame } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
 import { dirtyChildren } from '../compute/dirtyChildren';
@@ -33,7 +34,7 @@ export const canSkipGateWheel = <Self extends FieldNodeRecord<Self>>(
     context.gateThrowVersion !== frame.throwVersion ||
     (context.pendingOutputs?.size ?? 0) !== 0 ||
     !frame.consistent ||
-    context.kind === 'load' ||
+    context.kind === FieldNodeWriteKind.Load ||
     context.distributedInputs.has(node) ||
     context.exceededBudget
   )

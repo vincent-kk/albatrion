@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -47,7 +50,7 @@ describe('gate dependency read work', () => {
       writeFieldNode(
         root.structure!.a,
         'other',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       expect(root.emit).toEqual({ a: 'other', b: 'B' });

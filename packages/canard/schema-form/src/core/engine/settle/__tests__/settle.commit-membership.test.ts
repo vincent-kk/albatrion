@@ -6,6 +6,7 @@ import {
 } from '@/schema-form/core/engine/record';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { FieldNodeWriteKind } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
@@ -27,7 +28,12 @@ describe('commit candidate membership', () => {
       b = root.structure!.b,
       extra = root.structure!.extra;
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.changedNodes.add(b);
     context.changedNodes.add(root);
     context.stateDirtyNodes.add(a);
@@ -50,7 +56,12 @@ describe('commit candidate membership', () => {
     const { root } = createTestTree({ type: 'string' });
     loadFieldNodeAtMount(root, 'before', 0);
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.changedNodes.add(root);
     const NativeSet = Set;
     let copies = 0;

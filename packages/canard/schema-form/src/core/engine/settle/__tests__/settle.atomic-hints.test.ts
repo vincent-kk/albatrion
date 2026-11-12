@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { blueprint } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -59,7 +62,7 @@ describe('runtime hint atomicity', () => {
     writeFieldNode(
       root.structure!.enabled,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const effective = root.structure!.field.schema.schema;

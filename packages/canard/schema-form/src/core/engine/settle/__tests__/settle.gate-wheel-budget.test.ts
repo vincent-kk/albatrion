@@ -1,6 +1,9 @@
 import { expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import { FormErrorCode } from '@/schema-form/errors';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
@@ -23,7 +26,12 @@ it('P1 retains BudgetExceeded when a changed wheel consumes the complete cap', (
   const cap = vi.spyOn(budget, 'getHostWheelBudgetCap').mockReturnValue(1);
   try {
     expect(() =>
-      writeFieldNode(root.structure!.sw, 2, 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.sw,
+        2,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow(expect.objectContaining({ code: FormErrorCode.BudgetExceeded }));
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',

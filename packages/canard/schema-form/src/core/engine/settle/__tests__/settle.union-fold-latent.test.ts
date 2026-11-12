@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createUnionFoldTree } from './fixtures/createUnionFoldTree';
@@ -36,7 +36,7 @@ describe('union fold pending exits and retained source', () => {
       writeFieldNode(
         root,
         { [from]: false, [to]: true },
-        'callerPartial',
+        FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
       expect(root.structure?.shared?.source).toBeUndefined();
@@ -44,13 +44,13 @@ describe('union fold pending exits and retained source', () => {
       writeFieldNode(
         root.structure!.shared,
         second,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
         root,
         { [from]: true, [to]: false },
-        'callerPartial',
+        FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
       expect(root.structure?.shared?.source).toBe(first);
@@ -58,7 +58,7 @@ describe('union fold pending exits and retained source', () => {
       writeFieldNode(
         root,
         { [from]: false, [to]: true },
-        'callerPartial',
+        FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
       expect(root.structure?.shared?.source).toBe(second);
@@ -79,18 +79,33 @@ describe('union fold pending exits and retained source', () => {
         WriteOption.Overwrite,
       );
       const original = root.structure!.shared.blueprintNode;
-      writeFieldNode(root.structure!.tag, to, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.tag,
+        to,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       expect(root.structure?.shared?.blueprintNode).not.toBe(original);
       expect(root.structure?.shared?.source).toBeUndefined();
       writeFieldNode(
         root.structure!.shared,
         second,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      writeFieldNode(root.structure!.tag, from, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.tag,
+        from,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       expect(root.structure?.shared?.source).toBe(first);
-      writeFieldNode(root.structure!.tag, to, 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.tag,
+        to,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       expect(root.structure?.shared?.source).toBe(second);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
@@ -107,17 +122,22 @@ describe('union fold pending exits and retained source', () => {
     writeFieldNode(
       root,
       { left: false, right: true },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(detached.detached).toBe(true);
-    writeFieldNode(detached, 31, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      detached,
+      31,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.shared?.source).toBeUndefined();
     expect(readRetainedSlotSource(root, '/shared', 'union:3')).toBe(17);
     writeFieldNode(
       root,
       { left: true, right: false },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.structure?.shared?.source).toBe(17);

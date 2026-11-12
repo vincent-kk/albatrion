@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -49,7 +52,7 @@ describe('root declaration tables retain selection and warning observations', ()
             writeFieldNode(
               root.structure!.kind,
               kind,
-              'input',
+              FieldNodeWriteKind.Input,
               WriteOption.Overwrite,
             );
             history.push({

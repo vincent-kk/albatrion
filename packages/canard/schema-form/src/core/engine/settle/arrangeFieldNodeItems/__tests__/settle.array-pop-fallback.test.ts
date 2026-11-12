@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   dispatchBatch,
   dispatchMount,
@@ -308,7 +311,7 @@ describe('the truncation proof reads only facts a later write could move', () =>
     try {
       const context = createSettlementContext(
         root,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
         scratch,
       );

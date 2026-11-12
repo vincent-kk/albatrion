@@ -1,6 +1,8 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
 import type { PreparedStaticHost } from '../../utils/compute/childSelection/utils/prepareStaticHost';
@@ -19,12 +21,22 @@ export const createPreparedPublicationFixture = () => {
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const prepared = getHostDerived<
     'preparedStaticHost',
     PreparedStaticHost<PlainNode>
   >(root).preparedStaticHost!;
   const scratch = getSettlementScratch(root.runtime);
-  const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+  const context = createSettlementContext(
+    root,
+    FieldNodeWriteKind.CallerReplace,
+    BIT_MASK_NONE,
+    scratch,
+  );
   return { root, prepared, scratch, context };
 };

@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   adoptFieldNodeChain,
   dispatchBatch,
@@ -50,7 +53,12 @@ describe('committed relay eligibility', () => {
     const input = root.structure!.input;
     dispatchRelayInput(input, 'x', OPTION, () => {
       const relays = runtime.inputRelays!;
-      writeFieldNode(root.structure!.show, false, 'callerReplace', OPTION);
+      writeFieldNode(
+        root.structure!.show,
+        false,
+        FieldNodeWriteKind.CallerReplace,
+        OPTION,
+      );
       expect(input.detached).toBe(true);
       expect(input.disposed).toBeFalsy();
       expect(input.local).toBe('x');

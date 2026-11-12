@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as buckets from '../utils/compute/childSelection/gateSelection/readGateBucket';
@@ -161,7 +161,7 @@ describe('gate predicate reference and shadow modes', () => {
           writeFieldNode(
             root.structure!.kind,
             tag,
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           snapshots.push({

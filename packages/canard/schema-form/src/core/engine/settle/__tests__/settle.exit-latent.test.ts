@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -42,7 +45,7 @@ describe('latent descendant exit policies', () => {
         writeFieldNode(
           root.structure!.flag,
           false,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
         return parse.mock.calls.length;
@@ -78,7 +81,7 @@ describe('latent descendant exit policies', () => {
     writeFieldNode(
       root,
       { flag: false, clear: true },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.structure?.secret).toBeUndefined();
@@ -105,8 +108,18 @@ describe('latent descendant exit policies', () => {
       { flag: true, clear: false, secret: 'held' },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.clear,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
@@ -148,11 +161,16 @@ describe('latent descendant exit policies', () => {
     writeFieldNode(
       root.structure!.outer.structure!.kind,
       'b',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('held');
-    writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.show,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('held');
   });
 
@@ -194,7 +212,7 @@ describe('latent descendant exit policies', () => {
     writeFieldNode(
       root.structure!.branch.structure!.gate,
       false,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.DisableAutomaticWrites,
     );
     expect(readRetainedSlotSource(root, '/branch/secret', 'string')).toBe(
@@ -205,7 +223,12 @@ describe('latent descendant exit policies', () => {
         key.startsWith('["/branch/secret",'),
       ),
     ).toBe(false);
-    writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.show,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(hasRetainedSlotOwnSource(root, '/branch/secret', 'string')).toBe(
       false,
     );

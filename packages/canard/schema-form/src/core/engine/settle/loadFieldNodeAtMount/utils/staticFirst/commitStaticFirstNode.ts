@@ -7,6 +7,7 @@ import {
   canOmitFieldNodePayload,
 } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
+import { FieldNodeWriteKind } from '../../../../types/value';
 
 /** Delivery type of a static first load: a value update plus a refresh request. */
 const STATIC_FIRST_DELIVERY_TYPE =
@@ -41,7 +42,9 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       },
       options: {
         [FieldNodeEventType.UpdateValue]: {
-          source: automatic ? 'automatic' : 'load',
+          source: automatic
+            ? FieldNodeWriteKind.Automatic
+            : FieldNodeWriteKind.Load,
         },
       },
     };

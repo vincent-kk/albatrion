@@ -1,5 +1,6 @@
 import { StaticFirstLoadCapability } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { FieldNodeWriteKind } from '../../../../types/value';
 import { engineModes } from '../../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../../types/settlement';
 import { watchWriteEpoch } from './watchWriteEpoch';
@@ -19,7 +20,8 @@ export const prepareWriteEpoch = <Self extends FieldNodeRecord<Self>>(
     node.detached ||
     node.disposed ||
     context.replaceScope !== node ||
-    (context.kind !== 'callerReplace' && context.kind !== 'input') ||
+    (context.kind !== FieldNodeWriteKind.CallerReplace &&
+      context.kind !== FieldNodeWriteKind.Input) ||
     context.replacePaths !== undefined ||
     runtime.batchDepth ||
     runtime.visitDepth ||

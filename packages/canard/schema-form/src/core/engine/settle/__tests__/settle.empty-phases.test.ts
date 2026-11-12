@@ -1,6 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -37,7 +40,7 @@ it('does not enter any empty phase on first or later singleton writes', () => {
     writeFieldNode(
       root.structure!.value,
       value,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
@@ -59,13 +62,23 @@ it('keeps appearance fills and array finalization when their inputs exist', () =
   const exit = vi.spyOn(exits, 'finalizeExits');
   const align = vi.spyOn(alignment, 'alignArraySnapshotSlots');
   const run = vi.spyOn(derive, 'runDeriveRounds');
-  writeFieldNode(root, [{}], 'callerReplace', WriteOption.Overwrite);
+  writeFieldNode(
+    root,
+    [{}],
+    FieldNodeWriteKind.CallerReplace,
+    WriteOption.Overwrite,
+  );
   expect(root.emit).toEqual([{ value: 'filled' }]);
   expect(fill).toHaveBeenCalledTimes(1);
   expect(exit).toHaveBeenCalledTimes(1);
   expect(align).toHaveBeenCalledTimes(1);
   const departed = root.children![0];
-  writeFieldNode(root, [], 'callerReplace', WriteOption.Overwrite);
+  writeFieldNode(
+    root,
+    [],
+    FieldNodeWriteKind.CallerReplace,
+    WriteOption.Overwrite,
+  );
   expect(root.emit).toEqual([]);
   expect(departed.detached).toBe(true);
   expect(exit).toHaveBeenCalledTimes(2);
@@ -94,7 +107,12 @@ it('does not skip gates, rule evaluation or rule commits with actual work', () =
   const commit = vi.spyOn(rules, 'commitDeriveRules');
   const policy = vi.spyOn(exitRules, 'commitExitPolicyValues');
   const exit = vi.spyOn(exits, 'finalizeExits');
-  writeFieldNode(root.structure!['source'], 0, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!['source'],
+    0,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.emit).toEqual({ source: 0, target: 1 });
   expect(run).toHaveBeenCalledTimes(1);
   expect(run.mock.calls[0][0].deriveRounds).toBe(1);

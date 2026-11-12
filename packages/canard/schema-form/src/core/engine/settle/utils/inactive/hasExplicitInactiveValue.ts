@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Nullable } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { readExplicitWriteKind } from './readExplicitWriteKind';
@@ -20,7 +21,7 @@ export const hasExplicitInactiveValue = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): boolean => {
   if (
-    context.kind === 'automatic' ||
+    context.kind === FieldNodeWriteKind.Automatic ||
     !context.writtenInputs.has(context.target)
   )
     return false;
@@ -36,9 +37,9 @@ export const hasExplicitInactiveValue = <Self extends FieldNodeRecord<Self>>(
       const source = readExplicitWriteKind(context, current.path);
       if (
         source !== undefined &&
-        source !== 'automatic' &&
+        source !== FieldNodeWriteKind.Automatic &&
         (current === node ||
-          source !== 'callerPartial' ||
+          source !== FieldNodeWriteKind.CallerPartial ||
           input === null ||
           typeof input !== 'object' ||
           isArray(input))

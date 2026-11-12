@@ -1,6 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -31,7 +34,7 @@ it('keeps dirty work and child post-order without per-node shape or appearance m
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       leaf,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
       scratch,
     );
@@ -75,7 +78,7 @@ it('retains child selection and fills for a branchless shape change', () => {
   writeFieldNode(
     root.structure!.rows,
     [{}],
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
   expect(select.mock.calls.length).toBeGreaterThan(0);
@@ -96,11 +99,21 @@ it('retains gate visits, appearance fills and exit when a declaration changes', 
   });
   loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
   const select = vi.spyOn(selections, 'selectChildren');
-  writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.flag,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(select.mock.calls.length).toBeGreaterThan(0);
   expect(root.emit).toEqual({ flag: true, gated: 'filled' });
   const gated = root.structure!.gated;
-  writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.flag,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(gated.detached).toBe(true);
   expect(root.emit).toEqual({ flag: false });
 });

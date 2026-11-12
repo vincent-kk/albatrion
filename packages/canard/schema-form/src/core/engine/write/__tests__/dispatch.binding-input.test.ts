@@ -6,7 +6,10 @@ import {
   FieldNodeState,
   ValidationMode,
 } from '@/schema-form/core/engine/types/state';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchFinishInput } from '../utils/entry/dispatchFinishInput';
@@ -39,7 +42,7 @@ describe('binding input entries', () => {
     expect(input.local).toBe('typed');
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'input' });
+    ).toEqual({ source: FieldNodeWriteKind.Input });
     expect(runtime.refreshTargets?.has(input.path)).toBe(false);
     expect(runtime.refreshTargets?.has('/other')).toBe(true);
   });
@@ -63,7 +66,7 @@ describe('binding input entries', () => {
     });
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'input' });
+    ).toEqual({ source: FieldNodeWriteKind.Input });
     expect(runtime.refreshTargets?.has(input.path)).toBe(false);
     expect(runtime.refreshTargets?.has(caller.path)).toBe(true);
     dispatchBatch(root, () => {
@@ -72,7 +75,7 @@ describe('binding input entries', () => {
     });
     expect(
       listener.mock.lastCall![0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'callerReplace' });
+    ).toEqual({ source: FieldNodeWriteKind.CallerReplace });
     expect(runtime.refreshTargets?.has(input.path)).toBe(true);
   });
 
@@ -91,7 +94,7 @@ describe('binding input entries', () => {
     expect(root.local).toBe('new');
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'automatic' });
+    ).toEqual({ source: FieldNodeWriteKind.Automatic });
     expect(runtime.refreshTargets?.has('')).toBe(true);
   });
 
@@ -128,7 +131,7 @@ describe('binding input entries', () => {
     dispatchWriteInput(input, 'new');
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'input' });
+    ).toEqual({ source: FieldNodeWriteKind.Input });
     expect(
       readFieldNodeRevision(input, FieldNodeEventType.RequestRefresh),
     ).toBe(refresh);
@@ -145,7 +148,7 @@ describe('binding input entries', () => {
     dispatchBatch(root, () => dispatchWriteInput(root, 'new'));
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'input' });
+    ).toEqual({ source: FieldNodeWriteKind.Input });
     expect(runtime.refreshTargets?.size).toBe(0);
   });
 
@@ -174,7 +177,7 @@ describe('binding input entries', () => {
     );
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'automatic' });
+    ).toEqual({ source: FieldNodeWriteKind.Automatic });
   });
 
   it('WRITE-083 unchanged finish makes no commit or delivery', () => {

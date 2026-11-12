@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getBlueprintNodeIdentity } from '../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectChildren';
@@ -58,7 +58,12 @@ describe('same-name union fold selection', () => {
       },
     );
 
-    writeFieldNode(root.structure!.t, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.t,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
 
     expect(
       factory.mock.calls.filter(
@@ -111,7 +116,7 @@ describe('same-name union fold selection', () => {
         writeFieldNode(
           root,
           { [from]: false, [to]: true },
-          'callerPartial',
+          FieldNodeWriteKind.CallerPartial,
           WriteOption.Merge,
         ),
       ).not.toThrow();
@@ -125,7 +130,7 @@ describe('same-name union fold selection', () => {
         writeFieldNode(
           root,
           { [from]: true, [to]: false },
-          'callerPartial',
+          FieldNodeWriteKind.CallerPartial,
           WriteOption.Merge,
         ),
       ).not.toThrow();
@@ -146,7 +151,12 @@ describe('same-name union fold selection', () => {
     const later = root.structure!.shared;
     let conflict: unknown;
     try {
-      writeFieldNode(root, { left: true }, 'callerPartial', WriteOption.Merge);
+      writeFieldNode(
+        root,
+        { left: true },
+        FieldNodeWriteKind.CallerPartial,
+        WriteOption.Merge,
+      );
     } catch (error) {
       conflict = error;
     }

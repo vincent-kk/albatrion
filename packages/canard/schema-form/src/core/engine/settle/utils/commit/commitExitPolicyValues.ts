@@ -8,6 +8,7 @@ import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
@@ -71,7 +72,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-  if (context.kind === 'load' && context.loadScope)
+  if (context.kind === FieldNodeWriteKind.Load && context.loadScope)
     visitFieldNodes(
       context.loadScope,
       (node) => {
@@ -83,7 +84,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   for (const source of context.stateDirtyNodes) {
     if (source.detached || !source.structure) continue;
     if (
-      context.kind !== 'load' &&
+      context.kind !== FieldNodeWriteKind.Load &&
       !isDependencyOwner(context, source.path) &&
       !context.shapeDirtyPaths.has(source.path)
     )

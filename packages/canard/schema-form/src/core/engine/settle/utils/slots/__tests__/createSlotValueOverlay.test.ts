@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '../../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../../../write';
 import { getDispatchNode } from '../../../__tests__/fixtures/getDispatchNode';
 import { getSettlementScratch } from '../../scratch/getSettlementScratch';
@@ -54,7 +54,7 @@ it('matches an inactive merge while cloning only the patched source channels', (
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
     scratch,
   );
@@ -106,7 +106,7 @@ it('removes unwritten old channels on a whole replacement overlay', () => {
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
     scratch,
   );

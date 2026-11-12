@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
@@ -81,7 +84,7 @@ describe('mount-time gate selection preparation', () => {
     writer.writeFieldNode(
       root.structure!.kind,
       'kind_4',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(builds).not.toHaveBeenCalled();
@@ -161,7 +164,7 @@ describe('mount-time gate selection preparation', () => {
     writer.writeFieldNode(
       root,
       { kind: 'kind_0' },
-      'load',
+      FieldNodeWriteKind.Load,
       WriteOption.Overwrite,
     );
     expect(
@@ -171,7 +174,7 @@ describe('mount-time gate selection preparation', () => {
     writer.writeFieldNode(
       root.structure!.kind,
       'kind_4',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(

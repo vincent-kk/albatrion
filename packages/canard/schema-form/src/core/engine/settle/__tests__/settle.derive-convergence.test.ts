@@ -1,7 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -372,7 +375,7 @@ it('actually runs shadow and rejects a false proof with nonzero confirmation can
     writeFieldNode(
       root.structure!['source'],
       3,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     ),
   ).toThrow('Derive convergence proof failed: confirmation was not empty');

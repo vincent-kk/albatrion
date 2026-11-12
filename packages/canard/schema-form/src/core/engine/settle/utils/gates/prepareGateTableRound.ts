@@ -6,6 +6,7 @@ import type { Nullable } from '@aileron/declare';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
@@ -27,7 +28,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   context.gateSelectionRounds?.delete(node);
   if (
     engineModes.gateSelection === 'off' ||
-    (context.kind === 'load' &&
+    (context.kind === FieldNodeWriteKind.Load &&
       !getHostDerived(node.blueprintNode).directChildSelectionPlan) ||
     !context.hasGates ||
     node.behavior.type !== 'object'

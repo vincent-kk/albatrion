@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
@@ -295,7 +298,7 @@ describe('44C-01 array settlement scaling', () => {
         first: { value: 'entered' },
         current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
       },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     // SETTLE-045 re-evaluates the relocated reader in root rounds after current
@@ -793,11 +796,16 @@ describe('44C-01 array settlement scaling', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      ['a', 'b'],
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
       scratch,
     );
@@ -827,13 +835,13 @@ describe('44C-01 array settlement scaling', () => {
     writeFieldNode(
       root,
       { '': 'a', 'a/b': 'b' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
       scratch,
     );

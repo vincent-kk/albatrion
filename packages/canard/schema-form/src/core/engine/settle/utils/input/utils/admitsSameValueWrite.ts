@@ -1,5 +1,6 @@
 import { StaticFirstLoadCapability } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { FieldNodeWriteKind } from '../../../../types/value';
 import type { SettlementContext } from '../../../types/settlement';
 
 /**
@@ -16,8 +17,8 @@ export const admitsSameValueWrite = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.runtime;
   const scope = context.target.path;
   return !(
-    context.kind === 'load' ||
-    context.kind === 'automatic' ||
+    context.kind === FieldNodeWriteKind.Load ||
+    context.kind === FieldNodeWriteKind.Automatic ||
     context.automatic ||
     context.hasGates ||
     context.loadScope !== undefined ||

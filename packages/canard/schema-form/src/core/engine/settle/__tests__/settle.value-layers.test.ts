@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -28,7 +31,7 @@ describe('settled value rule layers', () => {
     writeFieldNode(
       root.structure!['source'],
       'second',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
@@ -135,7 +138,7 @@ describe('settled value rule layers', () => {
     writeFieldNode(
       root.structure!.trigger,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);

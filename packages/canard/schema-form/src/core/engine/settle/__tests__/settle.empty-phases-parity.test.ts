@@ -1,7 +1,10 @@
 import { expect, it } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -27,7 +30,12 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
     const value = index === 0 ? 'first' : 'later';
     const revision = leaf.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
     expect(() =>
-      writeFieldNode(leaf, value, 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        leaf,
+        value,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).not.toThrow();
     expect(root.emit).toEqual({ value, sibling: 3 });
     expect(root.runtime.diagnostics.status).toBe('stable');
@@ -37,7 +45,7 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
     ).toEqual({ previous, current: value });
     expect(
       leaf.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
-    ).toEqual({ source: 'input' });
+    ).toEqual({ source: FieldNodeWriteKind.Input });
     expect(leaf.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
@@ -65,7 +73,12 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
     node.pendingDelivery = undefined;
   root.runtime.deliveries?.clear();
   const revision = target.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
-  writeFieldNode(root.structure!['source'], 2, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!['source'],
+    2,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.emit).toEqual({ source: 2, target: 3 });
   expect(root.runtime.commitNumber).toBe(2);
   expect(target.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
@@ -76,7 +89,7 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
   ).toEqual({ previous: 2, current: 3 });
   expect(
     target.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
-  ).toEqual({ source: 'automatic' });
+  ).toEqual({ source: FieldNodeWriteKind.Automatic });
   expect(root.runtime.settlementTrace?.rounds).toHaveLength(2);
   expect(root.runtime.settlementTrace?.rounds[0]).toEqual([
     expect.objectContaining({

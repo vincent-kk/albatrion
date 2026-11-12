@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createUnionFoldTree } from './fixtures/createUnionFoldTree';
@@ -38,7 +38,7 @@ describe('union fold committed rule identities', () => {
     writeFieldNode(
       root,
       { left: false, right: true, source: 'second' },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.structure?.shared?.source).toBe('second');
@@ -85,13 +85,13 @@ describe('union fold committed rule identities', () => {
     writeFieldNode(
       root,
       { left: false, right: true },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     writeFieldNode(
       root,
       { clear: true, shared: true },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(
@@ -99,10 +99,20 @@ describe('union fold committed rule identities', () => {
         .map((key) => JSON.parse(key))
         .some((key) => key[0] === '/shared' && key[1] === 'union:5'),
     ).toBe(true);
-    writeFieldNode(root, { right: false }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root,
+      { right: false },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(hasRetainedSlotOwnSource(root, '/shared', 'union:5')).toBe(false);
     expect(readRetainedSlotSource(root, '/shared', 'union:3')).toBe(17);
-    writeFieldNode(root, { left: true }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(
+      root,
+      { left: true },
+      FieldNodeWriteKind.CallerPartial,
+      WriteOption.Merge,
+    );
     expect(root.structure?.shared?.source).toBe(17);
   });
 

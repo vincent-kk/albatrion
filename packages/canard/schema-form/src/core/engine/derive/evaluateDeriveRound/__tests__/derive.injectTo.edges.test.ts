@@ -4,7 +4,10 @@ import { createTestTree } from '@/schema-form/core/engine/__tests__/fixtures/cre
 import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle';
 import { resetFieldNodeSubtree } from '@/schema-form/core/engine/settle';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import { FormErrorCode } from '@/schema-form/errors';
 
 // filid:contract derive-edge
@@ -24,7 +27,7 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!['source'],
       'A',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledOnce();
@@ -32,7 +35,7 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!['source'],
       'B',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBeUndefined();
@@ -40,7 +43,7 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!['source'],
       'C',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('C');
@@ -162,7 +165,7 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!['source'],
       'A',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledOnce();
@@ -202,7 +205,7 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!['source'],
       'A',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.source).toBe('manual');
@@ -251,13 +254,13 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!.group.structure!.child,
       'B',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.target,
       'manual',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const before = injectTo.mock.calls.length;
@@ -366,7 +369,7 @@ describe('injectTo edge boundaries', () => {
     writeFieldNode(
       root.structure!.enabled,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const newTarget = root.structure!.target;
@@ -415,15 +418,20 @@ describe('injectTo edge boundaries', () => {
     );
     const target = root.structure!.target;
     expect(target.blueprintNode.kind).toBe('number');
-    writeFieldNode(target, 99, 'input', WriteOption.Overwrite);
+    writeFieldNode(target, 99, FieldNodeWriteKind.Input, WriteOption.Overwrite);
     writeFieldNode(
       root.structure!.a,
       'changed',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(target.source).toBe(99);
-    writeFieldNode(root.structure!.b, 'C', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.b,
+      'C',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(target.source).toBe(10);
   });
 });

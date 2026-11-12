@@ -1,7 +1,7 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
-import { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -21,10 +21,14 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   option: WriteOption = WriteOption.Overwrite,
-  source?: 'input',
+  source?: FieldNodeWriteKind.Input,
 ): void => {
   if (refuseDetachedWrite(node)) return;
-  if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
+  if (
+    source === FieldNodeWriteKind.Input &&
+    (node.disposed || node.rootNode.disposed)
+  )
+    return;
   if (!enterFieldNodeChain(node)) return;
   try {
     if (option & WriteOption.Overwrite && option & WriteOption.Merge)
@@ -54,7 +58,9 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
       writeFieldNode(
         node,
         value,
-        merge ? 'callerPartial' : 'callerReplace',
+        merge
+          ? FieldNodeWriteKind.CallerPartial
+          : FieldNodeWriteKind.CallerReplace,
         option,
         source,
       );
