@@ -1005,7 +1005,7 @@ Provider의 컴포넌트 props(`ForegroundComponent`, `BackgroundComponent`, `Ti
 
 기본 경로 훅은 Navigation API를 사용할 수 있으면 이를 사용합니다. 그 외에는 살아 있는 모달이 있을 때만 폴링하며 경로로 숨겨진 모달과 파괴를 기다리는 닫힌 모달도 포함합니다. 모달이 없는 동안 경로를 바꿔도 새 요청은 여는 순간의 pathname에 속합니다. 사용자 `usePathname` 훅은 해당 라우터의 pathname을 따릅니다.
 
-React 18과 19를 지원합니다. ESM과 CommonJS 번들은 모두 `'use client'`로 시작하므로 React Server Component 도구가 클라이언트 경계를 인식합니다. DOM 없는 가져오기와 서버 렌더 지원은 유지하며 모달 열기 함수는 브라우저에서만 호출합니다.
+React 18과 19를 지원합니다. ESM과 CommonJS 번들은 모두 `'use client'`로 시작하므로 React Server Component 도구가 클라이언트 경계를 인식합니다. DOM 없는 가져오기와 서버 렌더를 지원하며 React 18에서도 layout effect 경고를 내지 않습니다. 서버에서 렌더하는 컴포넌트의 `useModalAnimation`도 경고를 내지 않으며 모달 열기 함수는 브라우저에서만 호출합니다.
 
 ### 수명주기와 소유권
 

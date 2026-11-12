@@ -1006,7 +1006,7 @@ Copies of the package with the same internal state version share one modal syste
 
 The default pathname hook uses the Navigation API when available. Otherwise it polls only while a modal is alive, including route-hidden modals and closed modals awaiting destruction. Requests opened after an idle route change belong to the pathname at opening time. Custom `usePathname` hooks continue to follow their router's pathname.
 
-React 18 and 19 are supported. Both ESM and CommonJS bundles start with `'use client'` so React Server Component tooling recognizes the client boundary. DOM-free import and server rendering remain supported; call modal functions only in the browser.
+React 18 and 19 are supported. Both ESM and CommonJS bundles start with `'use client'` so React Server Component tooling recognizes the client boundary. DOM-free import and server rendering remain supported without layout-effect warnings in React 18, including when `useModalAnimation` runs in a server-rendered component; call modal functions only in the browser.
 
 ### Lifecycle and ownership
 

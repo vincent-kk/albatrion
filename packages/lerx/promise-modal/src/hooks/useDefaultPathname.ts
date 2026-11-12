@@ -1,6 +1,8 @@
-import { useLayoutEffect, useState, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 
 import { ModalManager } from '@/promise-modal/app';
+
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 /** The store removes dead nodes, including manually destroyed exit frames. */
 const getHasAliveNodes = () => ModalManager.ids.length > 0;
@@ -19,7 +21,7 @@ export const usePathname = () => {
     getHasAliveNodes,
     getServerSnapshot,
   );
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const handleChange = () => setPathname(window.location.pathname);
     const navigation = (window as { navigation?: EventTarget }).navigation;
     if (navigation) {
