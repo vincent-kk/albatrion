@@ -11,7 +11,7 @@ import {
 import type { ModalLayerProps } from '@/promise-modal/types/modal';
 
 import { AlertInner, ConfirmInner, PromptInner } from './components';
-import { active, foreground, visible } from './style';
+import { active, foreground, visible } from './styles/style';
 
 export const ForegroundFrame = ({
   modalId,

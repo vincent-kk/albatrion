@@ -13,7 +13,7 @@ import { ModalManager } from '@/promise-modal/app';
 import {
   active,
   background,
-} from '@/promise-modal/components/Background/style';
+} from '@/promise-modal/components/Background/styles/style';
 import { confirmHandler } from '@/promise-modal/core';
 
 import { BootstrapProvider } from '../BootstrapProvider';

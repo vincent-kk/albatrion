@@ -12,7 +12,7 @@ import {
 } from '@/promise-modal/providers';
 import type { PresenterProps } from '@/promise-modal/types/modal';
 
-import { presenter } from './style';
+import { presenter } from './styles/style';
 
 /** Presents one node and routes render failures through context operations. */
 export const Presenter = memo(({ modalId }: PresenterProps) => {
