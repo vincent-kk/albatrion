@@ -1,5 +1,5 @@
 import type { ValidationIssue } from '@canard/schema-form';
-import { convertJSONPathToPointer } from '@winglet/json/path-common';
+import { toJSONPointer } from './dataPath/toJSONPointer';
 import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
@@ -9,8 +9,7 @@ export const transformDataPath = (errors: ErrorObject[], root?: object): Validat
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
-    let convertedDataPath = convertJSONPathToPointer(ajvError.dataPath || '');
-    if (convertedDataPath === '/') convertedDataPath = '';
+    let convertedDataPath = toJSONPointer(ajvError.dataPath || '');
     let rejectedKey: string | undefined;
     if (
       ajvError.keyword === 'required' &&
