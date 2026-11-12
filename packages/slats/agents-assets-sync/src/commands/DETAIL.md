@@ -36,9 +36,6 @@
 - 비대화형 경로에서 `--scope` 나 `--agent` 가 없으면 묻지 않고 2로 종료한다.
 - 검증: `src/__tests__/cli.test.ts`, `src/__tests__/json.test.ts`.
 
-## History
-
-- 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. 이제 `renderJSON` 이라는 독립 렌더러가 있고, `renderOrFallback` 에서 `--json` 분기가 TTY 분기보다 먼저 온다.
 
 ## Last Updated
 

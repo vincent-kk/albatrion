@@ -2,6 +2,8 @@
 
 ## Requirements
 
+스코프 선택의 기본값은 주로 수행하는 프로젝트 주입에 맞추고 목록 순서는 유지합니다. 기본값 조정이 익숙한 행 위치까지 바꾸어 선택 실수를 만들지 않게 하기 위한 기준입니다.
+
 - TTY 전용 계층이다. 호출자(`renderOrFallback`)가 이 모듈을 동적 import 하기 전에 TTY 이고 프롬프트가 허용됨을 보장한다 — `--json` 도 아니고 `--no-interactive` 도 아닌 실행에서만 여기 도달한다.
 - `renderInjectApp(input)` 은 `core/**` 프리미티브를 직접 조합해 Ink 가상 DOM 을 구동한다. `process.stdout` / `process.stderr` 에 직접 쓰지 않는다.
 - 파이프라인은 훅으로 나뉜다. `useInjectSession` 이 전이를 구동하고, `useResolveStep` → `usePlanStep` → `useForceConfirmStep` → `useApplyStep` 이 각 단계를 맡는다.
@@ -97,11 +99,6 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 - 화살표 없이 enter 만 오면 `project` 로 확정된다.
 - 검증: `__tests__/scopePicker.test.tsx`.
 
-## History
-
-- 2026-08-06 — `ScopePicker` 의 초기 선택이 `user` 에서 `project` 로 옮겨졌다. 이 도구를 쓰는 거의 모든 실행이 project 주입이라 기본값이 흔한 쪽을 가리켜야 했다. 목록 순서는 그대로 두었다 — 순서를 뒤집으면 커서 위치와 함께 행 위치까지 움직여, 이미 손에 익은 사용자가 두 가지를 한꺼번에 다시 배우게 된다.
-- 2026-08-06 — `resolveScope` 를 조합한다는 기술이 폐기됐다. 그 함수는 `resolveProjectRoot` + `resolveAgentTarget` 으로 대체되어 더 이상 존재하지 않으며, 이 계층은 `resolveAgentTarget` 을 통해 루트에 도달한다.
-- 2026-08-06 — 진행률을 `useInterval` 로 ~10Hz 로 합친다는 기술이 폐기됐다. 실제로는 `useApplyStep` 이 액션 완료마다 `apply-progress` 를 보낸다.
 
 ## Last Updated
 

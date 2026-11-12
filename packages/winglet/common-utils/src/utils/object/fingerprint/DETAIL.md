@@ -58,9 +58,6 @@ strict compact 후보는 중간 토큰·노드 배열 없이 참조 번호와 �
 - 각 fingerprint mode가 담당하는 workload에서 기준 경로와 속도를 비교합니다.
 - 계약 차이와 신뢰구간을 기록하고 미달 경로를 숨기지 않습니다.
 
-## History
-
-- 2026-09-19 — 0.16.0 공개 serializer 제거 뒤에도 fingerprint별 출력 계약과 성능 비교 기준을 독립적으로 유지하도록 계약을 정리했다.
 
 ## Last Updated
 

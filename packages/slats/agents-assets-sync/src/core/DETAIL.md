@@ -90,12 +90,6 @@
 - 같은 항목에 `--force`를 지정하고 액션을 나누어 적용하면 목적지는 원본 내용을 다시 가진다.
 - `core/injectDocs/__tests__/applyActions.test.ts`에서 검증한다.
 
-## History
-
-- 2026-08-05 — codex가 공유 `AGENTS.md` 안의 블록으로 규칙을 보관하므로, 판정이 곧 파일을 뜻하지 않게 `ActionKind`와 `ActionTarget`을 분리했다. 액션마다 `dstAbs`를 두는 형태로는 이를 표현할 수 없었다.
-- 2026-08-05 — `resolveScope`/`ScopeResolution`을 제거하고 `resolveProjectRoot`와 `resolveAgentTarget`으로 대체했다. 기존 함수는 `.claude`를 고정해 두 에이전트에 응답할 수 없었다.
-- 2026-08-05 — `codex` 옆에 `agents`를 추가했다. 둘은 프로젝트 배치를 공유하지만, 공급자와 독립적인 `.agents` 홈을 읽는 도구가 Codex라고 주장하지 않고 지정될 수 있도록 `agents`를 둔다.
-- 2026-08-05 — `--force`가 내용이 달라진 항목을 덮어쓰게 했다. CLI는 덮어쓰기를 안내했지만 `applyAction`은 `copy`와 `delete`만 처리하여 내용이 달라진 파일을 조용히 남겨 두었다.
 
 ## Last Updated
 
