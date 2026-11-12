@@ -41,11 +41,11 @@ const FieldInputStringCheckbox = ({
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
       ? map(jsonSchema.items.enum, (rawValue: string | null) => {
-          const value = '' + rawValue;
+          const value = JSON.stringify(rawValue);
           return {
             value,
             rawValue,
-            label: labels[value] || value,
+            label: labels['' + rawValue] || '' + rawValue,
           };
         })
       : [];
@@ -54,7 +54,7 @@ const FieldInputStringCheckbox = ({
   const initialValue = useMemo(() => {
     return isArray(defaultValue) &&
       defaultValue.every((v) => v === null || typeof v === 'string')
-      ? map(defaultValue, (v) => '' + v)
+      ? map(defaultValue, (v) => JSON.stringify(v))
       : undefined;
   }, [defaultValue]);
 
