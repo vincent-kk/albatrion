@@ -365,7 +365,7 @@ export class ModalManager {
   private static trapTab(event: KeyboardEvent, id: number): void {
     const frame = ModalManager.__state__.frames.get(id);
     if (!frame?.isConnected) return;
-    const controls = getTabbableElements(frame);
+    const controls = getTabbableElements(frame, event.shiftKey);
     const first = controls[0] ?? frame;
     const last = controls[controls.length - 1] ?? frame;
     const current = document.activeElement;
