@@ -18,4 +18,4 @@ object/array 속성은 모든 키에 대해 writable/enumerable/configurable인 
 
 ## Last Updated
 
-2026-09-18
+wire 검증·자원 한도 또는 안전한 객체 복원 계약이 바뀌면 갱신합니다.

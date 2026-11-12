@@ -55,4 +55,4 @@
 
 ## Last Updated
 
-2026-09-20 — 루트 판정을 2단으로 바꿨다. pnpm workspace 멤버에 도구가 만든 `.claude` 가 있으면 "가장 가까운 anchor" 규칙이 멤버를 프로젝트 루트로 삼았기 때문이다. `PROJECT_ROOT_MARKERS` 를 추가하고 `findNearestAnchorAncestor` · `hasAnchor` 를 `findProjectRoot` · `findMarkerRoot` · `findNearestOwner` 로 대체했다. marker 단계에는 홈 디렉터리 천장을 둔다. `PROJECT_ANCHORS` 의 값은 그대로다.
+프로젝트 마커·홈 경계 또는 루트 탐색 기준이 바뀌면 갱신합니다.

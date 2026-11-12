@@ -62,4 +62,4 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 ## Last Updated
 
-2026-08-06 — `phaseReducer` 이동에 맞춰 계약을 좁혔다. 공개 계약은 entry point 표면(`renderInjectApp`, `InjectApp`)만 담고, 국면 전이 승인 그룹은 `ui/DETAIL.md` 로 넘겼다.
+Ink 진입점, 화면 조립 또는 phase 소비 책임이 바뀌면 갱신합니다.

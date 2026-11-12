@@ -39,4 +39,4 @@
 
 ## Last Updated
 
-2026-08-06 — 계약을 현행 구현에 맞춰 재작성. `--agent`, `--asset`, `--yes`, `--no-interactive` 를 플래그 목록에 추가하고, `resolve*Flag` / `parse*Flag` 두 형태의 존재 이유를 명시하고, Acceptance Criteria 를 도입했다.
+인자 해석, 렌더러 선택 또는 종료 코드 계약이 바뀌면 갱신합니다.

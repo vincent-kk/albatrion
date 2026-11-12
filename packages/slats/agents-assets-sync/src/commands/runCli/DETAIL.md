@@ -160,4 +160,4 @@
 
 ## Last Updated
 
-2026-09-20 — install root 해석을 추가하고 `AC-RUNCLI-INSTALL-ROOTS` 를 신설. pnpm workspace 루트에서 `resolvePackage` 와 `resolveScopeAlias` 가 모두 빈손이던 문제의 수정이다. 이전 갱신: 게이트 판정을 action 으로 올리고 `AC-RUNCLI-GATE-VERDICT` 를 추가. `resolveTargets` 가 `strict` 를 값으로 돌려주고 `selectInjectableTargets` 가 걸러내므로, 렌더러는 해시를 댈 수 없는 타깃을 보지 못한다. 이전 갱신: 해석이 `createRequire` 가 보는 범위까지라는 한계를 `AC-RUNCLI-RESOLVE` 에 명시했고, 해시 출처 판정을 `resolveHashSource` 로 떼어내며 `AC-RUNCLI-HASH-SOURCE` 를 추가했다.
+대상 해석, 입력 거부 또는 렌더러 이전 실패 계약이 바뀌면 갱신합니다.
