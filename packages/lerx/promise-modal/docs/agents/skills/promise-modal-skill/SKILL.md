@@ -35,7 +35,7 @@ The package supports DOM-free import and server rendering, but call modal functi
 
 With `returnOnCancel: true`, an edited prompt returns its current value on user cancel, abort, caller cleanup, or provider removal. Before rendering it returns `defaultValue` (including `undefined`). Abort is cancellation, not rejection.
 
-Functional `onChange` calls accumulate in event order. Calling `onConfirm` in that same event consumes the latest node value synchronously. `disabled` controls the confirm button; it is not a validation-message mechanism.
+Functional `onChange` calls accumulate in event order. Calling `onConfirm` in that same event consumes the latest node value synchronously. `disabled` controls the confirm button; it is not a validation-message mechanism. Its argument and `Input` value remain possibly undefined even when `defaultValue` is supplied: guard validation callbacks and provide destructuring defaults before reading object fields. Prompt results also retain undefined in their type; check cancellation and missing input before reading result fields.
 
 ## Configuration and hooks
 

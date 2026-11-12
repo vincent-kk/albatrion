@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import type { ComponentProps, PropsWithChildren } from 'react';
 
 import {
   type AlertProps,
@@ -6,6 +6,7 @@ import {
   type ModalFrameProps,
   type ModalNodeView,
   ModalProvider,
+  type ModalProviderProps,
   type OverridableHandleProps,
   type PromptProps,
   alert,
@@ -103,6 +104,18 @@ it('published hooks count and subscribe from their public arguments', async () =
 
 /** Consumes public wrapper types exactly as an application does. */
 it('publishes wrapper props, prompt result types and frame metadata', async () => {
+  const inlineProviderProps: ModalProviderProps = {
+    ForegroundComponent: ({ children }) => <section>{children}</section>,
+  };
+  expectTypeOf(inlineProviderProps).toMatchTypeOf<ModalProviderProps>();
+  expectTypeOf<
+    ComponentProps<NonNullable<ModalProviderProps['ForegroundComponent']>>
+  >().toEqualTypeOf<PropsWithChildren<ModalFrameProps>>();
+  expectTypeOf<
+    NonNullable<ModalProviderProps['BackgroundComponent']>
+  >().toEqualTypeOf<
+    NonNullable<OverridableHandleProps['BackgroundComponent']>
+  >();
   const overrides: OverridableHandleProps = {
     duration: '0.5s',
     group: 'typed',

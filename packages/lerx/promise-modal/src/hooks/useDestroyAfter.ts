@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import {
@@ -26,8 +26,9 @@ export const useDestroyAfter = (
   const { options } = useConfigurationContext('useDestroyAfter');
   const { modal, onDestroy } = useModalManager(modalId);
   const tick = useSubscribeModal(modalId);
-  const milliseconds = parseFloat(
-    normalizeDuration(duration, options.duration),
+  const milliseconds = useMemo(
+    () => parseFloat(normalizeDuration(duration, options.duration)),
+    [duration, options.duration],
   );
   useEffect(() => {
     if (!modal?.settled || !modal.alive) return;

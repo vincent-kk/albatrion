@@ -24,8 +24,9 @@ import {
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
 import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import type {
+  BackgroundComponent,
   FooterComponentProps,
-  ModalFrameProps,
+  ForegroundComponent,
   ModalOptions,
   WrapperComponentProps,
 } from '@/promise-modal/types';
@@ -44,8 +45,8 @@ const DEFAULT_OPTIONS = {
 } satisfies Required<ConfigurationContextProps['options']>;
 
 export interface ConfigurationContextProviderProps {
-  BackgroundComponent?: ComponentType<ModalFrameProps>;
-  ForegroundComponent?: ComponentType<ModalFrameProps>;
+  BackgroundComponent?: BackgroundComponent;
+  ForegroundComponent?: ForegroundComponent;
   TitleComponent?: ComponentType<WrapperComponentProps>;
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
   ContentComponent?: ComponentType<WrapperComponentProps>;

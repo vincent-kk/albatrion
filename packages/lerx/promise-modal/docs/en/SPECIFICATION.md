@@ -368,7 +368,7 @@ interface UserData {
 const userData = await prompt<UserData>({
   title: 'User Info',
   defaultValue: { name: '', age: 0 },
-  Input: ({ value, onChange }) => (
+  Input: ({ value = { name: '', age: 0 }, onChange }) => (
     <form>
       <input
         value={value.name}
@@ -629,7 +629,7 @@ Main provider component for initialization.
 ```typescript
 interface ModalProviderProps {
   children: ReactNode;
-  ForegroundComponent?: ComponentType<ModalFrameProps>;
+  ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
   TitleComponent?: ComponentType<WrapperComponentProps>;
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
@@ -964,7 +964,7 @@ async function registrationWizard() {
     title: 'Your Information',
     defaultValue: { name: '', email: '' },
     Input: RegistrationForm,
-    disabled: (v) => !v.name || !v.email?.includes('@'),
+    disabled: (v) => !v?.name || !v?.email.includes('@'),
   });
 
   if (!userInfo) return null;

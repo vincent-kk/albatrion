@@ -85,3 +85,32 @@ it('keeps animation callbacks from the last committed render during suspension',
   });
   expect(called).toHaveBeenCalledWith(false);
 });
+
+it('normalizes invalid destruction duration only when its input or fallback changes', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  let duration = JSON.parse('"invalid"');
+  function Frame({ id }: ModalFrameProps) {
+    useDestroyAfter(id, duration);
+    return null;
+  }
+  const mount = (tick: number, fallback = 30) => (
+    <BootstrapProvider
+      ForegroundComponent={Frame}
+      context={{ tick }}
+      options={{ duration: fallback, manualDestroy: true }}
+    />
+  );
+  const view = render(mount(0));
+  act(() => {
+    alertHandler({});
+  });
+  expect(warn).toHaveBeenCalledTimes(1);
+  view.rerender(mount(1));
+  view.rerender(mount(2));
+  expect(warn).toHaveBeenCalledTimes(1);
+  duration = JSON.parse('"also invalid"');
+  view.rerender(mount(3));
+  expect(warn).toHaveBeenCalledTimes(2);
+  view.rerender(mount(4, 60));
+  expect(warn).toHaveBeenCalledTimes(3);
+});

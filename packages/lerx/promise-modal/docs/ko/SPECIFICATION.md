@@ -368,7 +368,7 @@ interface UserData {
 const userData = await prompt<UserData>({
   title: '사용자 정보',
   defaultValue: { name: '', age: 0 },
-  Input: ({ value, onChange }) => (
+  Input: ({ value = { name: '', age: 0 }, onChange }) => (
     <form>
       <input
         value={value.name}
@@ -631,7 +631,7 @@ function BackdropInfo() {
 ```typescript
 interface ModalProviderProps {
   children: ReactNode;
-  ForegroundComponent?: ComponentType<ModalFrameProps>;
+  ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
   TitleComponent?: ComponentType<WrapperComponentProps>;
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
@@ -969,7 +969,7 @@ async function registrationWizard() {
     title: '사용자 정보',
     defaultValue: { name: '', email: '' },
     Input: RegistrationForm,
-    disabled: (v) => !v.name || !v.email?.includes('@'),
+    disabled: (v) => !v?.name || !v?.email.includes('@'),
   });
 
   if (!userInfo) return null;

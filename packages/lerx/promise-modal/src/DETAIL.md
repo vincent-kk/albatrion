@@ -6,6 +6,7 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 
 ## API Contracts
 
+- useDestroyAfter는 지속시간과 Provider 폴백이 바뀔 때만 정규화하여 동일 입력의 부모 리렌더가 경고를 반복하지 않습니다.
 - 설정 병합은 기본값, Provider, useModal 설정, 호출 인자 순이며 undefined는 상속하고 0과 false는 보존합니다.
 - duration은 밀리초 숫자 또는 ms·s 문자열을 받으며 공개 설정 훅은 정규화된 ms 문자열을 제공합니다. 설정 훅과 파괴 훅은 모달 트리 안에서만 사용하며 밖에서는 사용 위치를 설명하는 오류를 냅니다.
 - prompt 확인은 현재 값 그대로이며 입력이 없으면 undefined입니다. 일반 취소만 null이고 returnOnCancel 취소는 현재 값입니다.

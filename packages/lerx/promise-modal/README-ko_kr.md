@@ -187,38 +187,38 @@ async function showPrompt() {
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="이름을 입력하세요”
+          placeholder="이름을 입력하세요"
         />
       );
     },
     // 입력 값을 검증하여 확인 버튼을 제어합니다
-    disabled: (value) => value.length < 2,
+    disabled: (value) => (value?.length ?? 0) < 2,
   });
 
   console.log('입력된 이름:', name);
 
   // 복잡한 데이터 입력
-const userInfo = await prompt<{ name: string; age: number }>({
+  const userInfo = await prompt<{ name: string; age: number }>({
     title: '사용자 정보',
     defaultValue: { name: '', age: 0 },
-    입력: ({ value, onChange }) => (
+    Input: ({ value = { name: '', age: 0 }, onChange }) => (
       <div>
         <input
           value={value.name}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
-          placeholder=“이름”
+          placeholder="이름"
         />
         <input
-          type=”number”
+          type="number"
           value={value.age}
           onChange={(e) => onChange({ ...value, age: Number(e.target.value) })}
-          placeholder="Age”
+          placeholder="Age"
         />
       </div>
     ),
   });
 
-console.log(‘User info:’, userInfo);
+  console.log('사용자 정보:', userInfo);
 }
 ```
 
@@ -827,9 +827,9 @@ const value = await prompt<string>({
 **프로퍼티:**
 
 - `ForegroundComponent?`: 사용자 정의 포그라운드 구성 요소
-- `(props: WrapperComponentProps) => ReactNode`
+  - `(props: PropsWithChildren<ModalFrameProps>) => ReactNode`
 - `BackgroundComponent?`: 사용자 정의 배경 구성 요소
-  - `(props: WrapperComponentProps) => ReactNode`
+  - `(props: ModalFrameProps) => ReactNode`
 - `TitleComponent?`: 사용자 정의 제목 컴포넌트
 - `SubtitleComponent?`: 사용자 정의 부제목 컴포넌트
 - `ContentComponent?`: 사용자 정의 콘텐츠 컴포넌트
@@ -1235,7 +1235,7 @@ async function promptWithNestedModal() {
   const value = await prompt<{ title: string; description: string }>({
     title: '콘텐츠 생성',
     defaultValue: { title: '', description: '' },
-    Input: ({ value, onChange }) => {
+    Input: ({ value = { title: '', description: '' }, onChange }) => {
       // 도움말 버튼이 클릭되면 도움말 모달 표시
       const showHelp = () => {
         alert({
@@ -1262,13 +1262,13 @@ async function promptWithNestedModal() {
               }
             />
           </div>
-          <button type=“button” onClick={showHelp}>
+          <button type="button" onClick={showHelp}>
 도움말
           </button>
         </div>
       );
     },
-    disabled: (value) => !value.title,
+    disabled: (value) => !value?.title,
   });
 
   console.log('입력 값:', value);

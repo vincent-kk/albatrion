@@ -192,7 +192,7 @@ async function showPrompt() {
       );
     },
     // Validate input to control the confirmation button
-    disabled: (value) => value.length < 2,
+    disabled: (value) => (value?.length ?? 0) < 2,
   });
 
   console.log('Entered name:', name);
@@ -201,7 +201,7 @@ async function showPrompt() {
   const userInfo = await prompt<{ name: string; age: number }>({
     title: 'User Information',
     defaultValue: { name: '', age: 0 },
-    Input: ({ value, onChange }) => (
+    Input: ({ value = { name: '', age: 0 }, onChange }) => (
       <div>
         <input
           value={value.name}
@@ -828,9 +828,9 @@ Component that initializes and provides the modal service.
 **Props:**
 
 - `ForegroundComponent?`: Custom foreground component
-  - `(props: WrapperComponentProps) => ReactNode`
+  - `(props: PropsWithChildren<ModalFrameProps>) => ReactNode`
 - `BackgroundComponent?`: Custom background component
-  - `(props: WrapperComponentProps) => ReactNode`
+  - `(props: ModalFrameProps) => ReactNode`
 - `TitleComponent?`: Custom title component
 - `SubtitleComponent?`: Custom subtitle component
 - `ContentComponent?`: Custom content component
@@ -1235,7 +1235,7 @@ async function promptWithNestedModal() {
   const value = await prompt<{ title: string; description: string }>({
     title: 'Create Content',
     defaultValue: { title: '', description: '' },
-    Input: ({ value, onChange }) => {
+    Input: ({ value = { title: '', description: '' }, onChange }) => {
       // Show help modal when help button is clicked
       const showHelp = () => {
         alert({
@@ -1268,7 +1268,7 @@ async function promptWithNestedModal() {
         </div>
       );
     },
-    disabled: (value) => !value.title,
+    disabled: (value) => !value?.title,
   });
 
   console.log('Input value:', value);
