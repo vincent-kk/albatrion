@@ -9,7 +9,7 @@ import {
 } from '@/promise-modal/providers';
 
 import { AnchorErrorBoundary } from './components/AnchorErrorBoundary';
-import { anchor, backdrop } from './style';
+import { anchor, backdrop } from './styles/style';
 
 /** Stable server membership avoids leaking browser modal state during SSR. */
 const EMPTY_IDS: readonly number[] = [];

@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+스타일 등록은 이 컴포넌트 내부가 소유하고 역할 구획에 둡니다. 로드 시 등록 효과와 클래스 정체성을 유지하며 스타일을 독립 공개 계약으로 내보내지 않습니다.
+
 - 보이는 모달은 closeOnBackdropClick 또는 dimmed가 true이면 포인터를 차단합니다. 클릭 취소는 closeOnBackdropClick이 true일 때만 수행하므로 어두운 비취소 모달 뒤의 페이지가 클릭되지 않습니다.
 
 - 사용자 배경 프레임에 group·subtype·settled를 전달하여 같은 모달 메타데이터를 읽게 합니다.

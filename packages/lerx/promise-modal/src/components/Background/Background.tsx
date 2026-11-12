@@ -9,7 +9,7 @@ import {
 } from '@/promise-modal/providers';
 import type { ModalLayerProps } from '@/promise-modal/types/modal';
 
-import { active, background, visible } from './style';
+import { active, background, visible } from './styles/style';
 
 export const BackgroundFrame = ({
   modalId,
