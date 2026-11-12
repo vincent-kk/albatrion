@@ -1,6 +1,6 @@
 # Project Structure Guide
 
-Recommended directory structure for an @canard/schema-form plugin.
+Scaffold destinations for a new @canard/schema-form plugin. Example-only input names describe files to create, not existing repository modules.
 
 ## Standard Project Structure
 
@@ -9,27 +9,26 @@ Recommended directory structure for an @canard/schema-form plugin.
 ├── src/
 │   ├── index.ts                    # Main export
 │   ├── type.ts                     # Context type definitions
-│   ├── renderers/                  # Base renderers (4 required)
-│   │   ├── FormGroup.tsx
-│   │   ├── FormLabel.tsx
-│   │   ├── FormErrorMessage.tsx
-│   │   └── formatError.ts
-│   ├── formTypeInputs/             # FormTypeInput implementations
-│   │   ├── index.ts                # Aggregates formTypeInputDefinitions
-│   │   ├── FormTypeInputString.tsx
-│   │   ├── FormTypeInputNumber.tsx
-│   │   ├── FormTypeInputBoolean.tsx
-│   │   ├── FormTypeInputArray.tsx
-│   │   ├── FormTypeInputStringEnum.tsx
-│   │   ├── FormTypeInputPassword.tsx
-│   │   ├── FormTypeInputTextarea.tsx
-│   │   ├── FormTypeInputDate.tsx   # Optional
+│   ├── components/                  # Registered renderer components
+│   │   ├── FieldRenderer.tsx
+│   │   ├── LabelRenderer.tsx
+│   │   └── ErrorMessageRenderer.tsx
+│   ├── fieldInputs/             # FieldInput implementations
+│   │   ├── index.ts                # Aggregates fieldInputDefinitions
+│   │   ├── FieldInputString.tsx
+│   │   ├── FieldInputNumber.tsx
+│   │   ├── FieldInputBoolean.tsx
+│   │   ├── FieldInputArray.tsx
+│   │   ├── FieldInputStringEnum.tsx
+│   │   ├── FieldInputPassword.tsx
+│   │   ├── FieldInputTextarea.tsx
+│   │   ├── FieldInputDate.tsx   # Optional
 │   │   └── ...
 │   └── utils/                      # Shared utilities (optional)
 │       └── valueConversion.ts
-├── coverage/                       # Storybook stories & E2E
-│   ├── FormTypeInputString.stories.tsx
-│   ├── FormTypeInputString.tsx     # Test wrapper
+├── stories/                       # Storybook stories & E2E
+│   ├── FieldInputString.stories.tsx
+│   ├── FieldInputString.tsx     # Test wrapper
 │   └── ...
 ├── dist/                           # Build output (gitignore)
 ├── node_modules/                   # Dependencies (gitignore)
@@ -53,24 +52,17 @@ Recommended directory structure for an @canard/schema-form plugin.
 ```typescript
 import type { SchemaFormPlugin } from '@canard/schema-form';
 
-import { FormErrorMessage } from './renderers/FormErrorMessage';
-import { FormGroup } from './renderers/FormGroup';
-import { FormLabel } from './renderers/FormLabel';
-import { formatError } from './renderers/formatError';
-import { formTypeInputDefinitions } from './formTypeInputs';
+import { ErrorMessageRenderer } from './components/ErrorMessageRenderer';
+import { FieldRenderer } from './components/FieldRenderer';
+import { LabelRenderer } from './components/LabelRenderer';
+import { fieldInputDefinitions } from './fieldInputs';
 
 export const plugin = {
-  FieldRenderer: FormGroup,
-  LabelRenderer: FormLabel,
-  ErrorMessageRenderer: FormErrorMessage,
-  formatError,
-  fieldInputDefinitions: formTypeInputDefinitions,
+  FieldRenderer,
+  LabelRenderer,
+  ErrorMessageRenderer,
+  fieldInputDefinitions,
 } satisfies SchemaFormPlugin;
-
-// Type exports
-export type * from './type';
-// Component exports (optional)
-export * from './formTypeInputs';
 ```
 
 ### src/type.ts
@@ -79,57 +71,59 @@ export * from './formTypeInputs';
 
 ```typescript
 export interface MuiContext {
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium';
   variant?: 'outlined' | 'filled' | 'standard';
-  color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success';
+  fullWidth?: boolean;
 }
 ```
 
-### src/renderers/
+### src/components/
 
-**4 required files**:
-1. `FormGroup.tsx` - Field group composing the bound `Label`, `Input` and `ErrorMessage` parts
-2. `FormLabel.tsx` - Label rendering (owns the root `<label>`)
-3. `FormErrorMessage.tsx` - Error message display
-4. `formatError.ts` - Error format function
+**Renderer components** (register the parts the plugin customizes):
+
+1. `FieldRenderer.tsx` - Field group composing bound terminal parts and direct branch legends
+2. `LabelRenderer.tsx` - Label rendering (owns the root `<label>`)
+3. `ErrorMessageRenderer.tsx` - Error message display
+
+An optional formatError callback formats validation issues; SchemaFormPlugin allows partial plugins.
 
 **Optional input frame (`InputRenderer`)**: an optional frame registered under the `InputRenderer` key, `({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>`. It must render `children` exactly once, unconditionally, at an unchanging position. The plugin has no pass-through input renderer file.
 
-### src/formTypeInputs/index.ts
+### src/fieldInputs/index.ts
 
-**Role**: Aggregates the formTypeInputDefinitions array
+**Role**: Aggregates the fieldInputDefinitions array
 
 ```typescript
-import type { FormTypeInputDefinition } from '@canard/schema-form';
+import type { FieldInputDefinition } from '@canard/schema-form';
 
-import { FormTypeInputPasswordDefinition } from './FormTypeInputPassword';
-import { FormTypeInputStringEnumDefinition } from './FormTypeInputStringEnum';
+import { FieldInputPasswordDefinition } from './FieldInputPassword';
+import { FieldInputStringEnumDefinition } from './FieldInputStringEnum';
 // ... imports
 
-export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
+export const fieldInputDefinitions: FieldInputDefinition[] = [
   // Specific conditions, then general conditions
-  FormTypeInputPasswordDefinition,
-  FormTypeInputStringEnumDefinition,
+  FieldInputPasswordDefinition,
+  FieldInputStringEnumDefinition,
   // ...
-  FormTypeInputStringDefinition,  // Last
+  FieldInputStringDefinition,  // Last
 ];
 
 // Individual exports (optional, for reuse)
-export * from './FormTypeInputString';
-export * from './FormTypeInputNumber';
+export { FieldInputStringDefinition } from './FieldInputString';
+export { FieldInputNumberDefinition } from './FieldInputNumber';
 // ...
 ```
 
-### src/formTypeInputs/FormTypeInput*.tsx
+### src/fieldInputs/FieldInput*.tsx
 
 **Role**: Input component for each type
 
 **Naming rules**:
 - PascalCase
-- `FormTypeInput` + `{Type}`
-- Examples: `FormTypeInputString`, `FormTypeInputNumber`
+- `FieldInput` + `{Type}`
+- Examples: `FieldInputString`, `FieldInputNumber`
 
-### coverage/
+### stories/
 
 **Role**: Storybook stories and E2E tests
 
@@ -140,13 +134,13 @@ export * from './FormTypeInputNumber';
 ## Naming Rules
 
 ### Directories
-- **lowercase + hyphen**: `form-type-inputs/` (do not use)
-- **camelCase**: `formTypeInputs/` (use)
+- **lowercase + hyphen**: `field-inputs/` (do not use)
+- **camelCase**: `fieldInputs/` (use)
 
 ### Files
 - **Components**: PascalCase (`.tsx`)
-  - `FormTypeInputString.tsx`
-  - `FormGroup.tsx`
+  - `FieldInputString.tsx`
+  - `FieldRenderer.tsx`
 - **Utilities**: camelCase (`.ts`)
   - `valueConversion.ts`
   - `formatError.ts`
@@ -159,8 +153,7 @@ export * from './FormTypeInputNumber';
 ### Exports
 - **Prefer named exports**:
   ```typescript
-  export const FormTypeInputString = ...
-  export const FormTypeInputStringDefinition = ...
+  export { FieldInputStringDefinition } from './FieldInputString';
   ```
 - **Avoid default exports**: for clarity
 
@@ -169,12 +162,12 @@ export * from './FormTypeInputNumber';
 ### Absolute paths (internal packages)
 ```typescript
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputProps } from '@canard/schema-form';
+import type { FieldInputProps } from '@canard/schema-form';
 ```
 
 ### Relative paths (same package)
 ```typescript
-import { FormGroup } from './renderers/FormGroup';
+import { FieldRenderer } from './components/FieldRenderer';
 import type { MuiContext } from './type';
 ```
 

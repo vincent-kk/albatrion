@@ -12,7 +12,7 @@ You are an expert at verifying compatibility between a UI library and an @canard
 1. **Compatibility verification**: map UI library components to Schema Form requirements
 2. **Project structure design**: recommend the plugin directory structure
 3. **Accessibility requirements**: guide ARIA attributes and keyboard navigation
-4. **Renderer components**: guide the implementation of FormGroup, FormLabel, and FormErrorMessage, plus the optional input frame
+4. **Renderer components**: guide the implementation of FieldRenderer, LabelRenderer, and ErrorMessageRenderer, plus the optional input frame
 5. **Library-specific notes**: explain the patterns unique to each library
 
 ## How It Works
@@ -54,28 +54,29 @@ With **knowledge/accessibility-checklist.md**:
 
 ### Recommended Project Structure
 
+Scaffold paths are destinations for a new plugin. Repository references point to the antd5 and MUI plugins; example-only inputs follow the FieldInput naming pattern.
+
 ```
 @canard/schema-form-{ui-library}-plugin/
 ├── src/
 │   ├── index.ts                    # Main export (plugin object)
 │   ├── type.ts                     # Context type definitions
-│   ├── renderers/                  # Base renderers (4 required)
-│   │   ├── FormGroup.tsx
-│   │   ├── FormLabel.tsx
-│   │   ├── FormErrorMessage.tsx
-│   │   └── formatError.ts
-│   ├── formTypeInputs/             # FormTypeInput implementations
-│   │   ├── index.ts                # formTypeInputDefinitions aggregation
-│   │   ├── FormTypeInputString.tsx
-│   │   ├── FormTypeInputNumber.tsx
-│   │   ├── FormTypeInputBoolean.tsx
-│   │   ├── FormTypeInputArray.tsx
-│   │   ├── FormTypeInputStringEnum.tsx
+│   ├── components/                  # Registered renderer components
+│   │   ├── FieldRenderer.tsx
+│   │   ├── LabelRenderer.tsx
+│   │   └── ErrorMessageRenderer.tsx
+│   ├── fieldInputs/             # FieldInput implementations
+│   │   ├── index.ts                # fieldInputDefinitions aggregation
+│   │   ├── FieldInputString.tsx
+│   │   ├── FieldInputNumber.tsx
+│   │   ├── FieldInputBoolean.tsx
+│   │   ├── FieldInputArray.tsx
+│   │   ├── FieldInputStringEnum.tsx
 │   │   └── ...
 │   └── utils/                      # Shared utilities (optional)
 │       └── valueConversion.ts      # Value conversion helpers
-├── coverage/                       # Storybook stories
-│   ├── FormTypeInputString.stories.tsx
+├── stories/                       # Storybook stories
+│   ├── FieldInputString.stories.tsx
 │   └── ...
 ├── package.json
 ├── tsconfig.json
@@ -85,11 +86,11 @@ With **knowledge/accessibility-checklist.md**:
 └── README-ko_kr.md
 ```
 
-### Required Renderer Components
+### Renderer Components
 
-#### 1. FormGroup
+#### 1. FieldRenderer
 
-**Role**: Field group wrapper (object, array types)
+**Role**: Field wrapper, composing terminal labels and branch legends
 
 **Required handling**:
 - `depth`-based styling (indentation)
@@ -98,7 +99,7 @@ With **knowledge/accessibility-checklist.md**:
 - Compose the bound parts `Label`, `Input`, `ErrorMessage` and the `errorMessage` value
 
 ```typescript
-const FormGroup = ({
+const FieldRenderer = ({
   node,
   depth,
   name,
@@ -112,8 +113,7 @@ const FormGroup = ({
   if (node.strategy === 'branch') {
     return (
       <Box sx={{ pl: depth * 2, border: '1px solid', borderColor: 'divider' }}>
-        <Typography variant="h6">{name}</Typography>
-        <Input />
+        <fieldset><legend>{name}</legend><Input /></fieldset>
       </Box>
     );
   }
@@ -128,9 +128,9 @@ const FormGroup = ({
 };
 ```
 
-`<Input unwrapped />` skips a registered input frame. Pass only reference-stable props (module-level constants) to the parts.
+Branch titles are direct legends; the registered LabelRenderer applies to terminal labels. `<Input unwrapped />` skips a registered input frame. Pass only reference-stable props (module-level constants) to the parts.
 
-#### 2. FormLabel
+#### 2. LabelRenderer
 
 **Role**: Field label rendering
 
@@ -142,7 +142,7 @@ const FormGroup = ({
 - `required` visual indicator (`*` or the library standard), marked `aria-hidden`
 
 ```typescript
-const FormLabel = ({
+const LabelRenderer = ({
   children,
   htmlFor,
   id,
@@ -157,14 +157,14 @@ const FormLabel = ({
 );
 ```
 
-#### 3. FormErrorMessage
+#### 3. ErrorMessageRenderer
 
 **Role**: Error message display
 
 **Receives**: `ErrorMessageRendererProps` (`children`, `style`, `className`, `node`, `path`, `name`, `jsonSchema`, `required`)
 
 ```typescript
-const FormErrorMessage = ({
+const ErrorMessageRenderer = ({
   children,
   style,
   className,
@@ -183,7 +183,7 @@ const FormErrorMessage = ({
 const FormInputFrame = ({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>;
 ```
 
-#### 4. formatError
+#### Optional formatError
 
 **Role**: JSONSchemaError → ReactNode conversion
 
@@ -263,7 +263,7 @@ const formatError: FormatError = (error, node, context) => {
 
 ## Constraints
 
-- The 4 required renderers must be implemented
+- Implement the registered parts the plugin customizes; SchemaFormPlugin allows partial plugins
 - Accessibility attributes are required
 - Prefer native UI library components
 - Minimize custom components
@@ -293,7 +293,7 @@ const formatError: FormatError = (error, node, context) => {
 ## Next-Step Linkage
 
 - After compatibility analysis, implement with the `react-plugin-implementation` skill
-- After setting up the project structure, continue development with the `phased-development` skill
+- After setting up the project structure, plan the implementation using the verified compatibility priorities
 
 ## Usage Scenarios
 
@@ -317,8 +317,8 @@ const formatError: FormatError = (error, node, context) => {
 | String (Multiline) | TextField (multiline) | ✅ Direct | multiline prop | - |
 | StringEnum (Radio) | RadioGroup | ✅ Direct | - | - |
 | StringEnum (Select) | Select | ✅ Direct | - | - |
-| Array (basic) | - | ✅ Renderer | ChildNodeComponents | Wrap with FormGroup |
-| Object (basic) | - | ✅ Renderer | ChildNodeComponents | Wrap with FormGroup |
+| Array (basic) | - | ✅ Renderer | ChildFields | Wrap with FieldRenderer |
+| Object (basic) | - | ✅ Renderer | ChildFields | Wrap with FieldRenderer |
 
 ### ⚠️ Customization required (Priority 2)
 
@@ -339,7 +339,7 @@ const formatError: FormatError = (error, node, context) => {
 | Slider (Range) | Slider | ⚠️ Custom | value/onChange mapping | Single-value/range handling |
 
 **Recommended implementation order**:
-1. P1 (9 basic FormTypes) - 1-2 days
+1. P1 (9 basic input kinds) - 1-2 days
 2. P2 (DatePicker, Autocomplete, etc.) - 2-3 days
 3. P3 (Rich Text, etc.) - Optional
 
@@ -352,12 +352,15 @@ const formatError: FormatError = (error, node, context) => {
 ## MUI v6 Special Notes
 
 ### 1. DatePicker slotProps pattern
-MUI DatePicker uses TextField internally, so pass accessibility attributes through slotProps:
+MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values and accessibility attributes through slotProps:
 
 ```typescript
 <DatePicker
-  value={value ? new Date(value) : null}
-  onChange={(newDate) => onChange(newDate?.toISOString())}
+  value={value ? dayjs(value) : null}
+  onChange={(newDate: Dayjs | null) => {
+    if (newDate === null) onChange(undefined);
+    else if (newDate.isValid()) onChange(newDate.format('YYYY-MM-DD'));
+  }}
   slotProps={{
     textField: {
       id: path,
@@ -386,12 +389,12 @@ Respect the user's MUI Theme:
 ```typescript
 import { useTheme } from '@mui/material/styles';
 
-const FormGroup = ({ depth, Input }: FieldRendererProps) => {
+const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
   const theme = useTheme();
 
   return (
     <Box sx={{
-      pl: depth * theme.spacing(2),  // Use theme spacing
+      pl: theme.spacing(depth * 2),  // Use theme spacing
       borderColor: theme.palette.divider,
     }}>
       <Input />
@@ -404,8 +407,8 @@ const FormGroup = ({ depth, Input }: FieldRendererProps) => {
 ```json
 {
   "peerDependencies": {
-    "@mui/material": ">=6.0.0 <7.0.0",
-    "@mui/x-date-pickers": ">=7.0.0 <8.0.0",  // When using DatePicker
+    "@mui/material": ">=7.0.0",
+    "@mui/x-date-pickers": ">=8.0.0",  // When using DatePicker
     "react": ">=18.0.0",
     "@canard/schema-form": "*"
   }
@@ -463,7 +466,7 @@ const FormGroup = ({ depth, Input }: FieldRendererProps) => {
         key={option.value}
         value={option.value}
         control={<Radio />}
-        label={option.label}  {/* ✅ Each radio label */}
+        label={option.label}
       />
     ))}
   </RadioGroup>
@@ -503,15 +506,15 @@ const FormGroup = ({ depth, Input }: FieldRendererProps) => {
 ## MUI v6 plugin development ready
 
 ### ✅ Verified items
-- 9 basic FormTypes can be supported directly
-- 5 additional FormTypes such as DatePicker can be supported with customization
+- 9 basic input kinds can be supported directly
+- 5 additional input kinds such as DatePicker can be supported with customization
 - All accessibility requirements can be met
 - MUI Theme integration is possible
 
 ### 📋 Next steps
 1. Set up the project structure (use the recommended structure)
-2. Implement the 9 P1 FormTypes (react-plugin-implementation skill)
-3. Implement custom FormTypes such as the P2 DatePicker
+2. Implement the 9 P1 input kinds (react-plugin-implementation skill)
+3. Implement custom input kinds such as the P2 DatePicker
 4. Write Storybook stories
 5. Accessibility testing
 
@@ -576,7 +579,7 @@ Do **not use** Ant Design's Form.Item. @canard/schema-form manages form layout a
 **Reason**:
 1. @canard/schema-form manages validation based on JSON Schema
 2. Form.Item's name and rules cause duplication/conflicts
-3. The FormGroup, FormLabel, and FormErrorMessage renderers handle the layout
+3. The FieldRenderer, LabelRenderer, and ErrorMessageRenderer renderers handle the layout
 ```
 
 **Step 2: Ant Design Special Notes**
@@ -603,19 +606,20 @@ Ant Design v5 uses dayjs for date handling (moment.js removed):
 
 **DatePicker implementation**:
 ```typescript
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
+import type { FieldInputProps } from '@canard/schema-form';
 import { DatePicker } from 'antd';
 
-function FormTypeInputDate(props: FormTypeInputProps<string>) {
-  const { value, defaultValue, onChange, ...rest } = props;
-
+function FieldInputDate({ path, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
   return (
     <DatePicker
-      {...rest}
-      defaultValue={defaultValue ? dayjs(defaultValue) : undefined}
-      value={value ? dayjs(value) : null}
+      id={path}
+      name={name}
+      disabled={disabled || readOnly}
+      defaultValue={defaultValue ? dayjs(defaultValue) : null}
       onChange={(date: Dayjs | null) => {
-        onChange(date ? date.toISOString() : undefined);
+        if (date === null) onChange(undefined);
+        else if (date.isValid()) onChange(date.format('YYYY-MM-DD'));
       }}
     />
   );
@@ -652,13 +656,14 @@ const { token } = theme.useToken();
 
 ### 4. Special handling for the Upload component
 
-Upload wires onFileAttach through customRequest:
+Upload wires onFileAttach through customRequest; this value-driven definition declares controlled: true:
 
 ```typescript
 import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import type { FieldInputDefinition, FieldInputProps } from '@canard/schema-form';
 
-function FormTypeInputFile(props: FormTypeInputProps<string>) {
+function FieldInputFile(props: FieldInputProps<string>) {
   const { onChange, onFileAttach, value } = props;
 
   return (
@@ -679,6 +684,12 @@ function FormTypeInputFile(props: FormTypeInputProps<string>) {
     </Upload>
   );
 }
+
+export const FieldInputFileDefinition = {
+  Component: FieldInputFile,
+  test: { type: 'string', format: 'file' },
+  controlled: true,
+} satisfies FieldInputDefinition;
 ```
 ```
 
@@ -733,12 +744,12 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 </Select>
 ```
 
-### ⚠️ Caution: FormLabel must be implemented directly
+### ⚠️ Caution: LabelRenderer must be implemented directly
 
-Because Ant Design's Form.Item is not used, handle the label in the FormLabel renderer:
+Because Ant Design's Form.Item is not used, handle the label in the LabelRenderer renderer:
 
 ```typescript
-const FormLabel = ({
+const LabelRenderer = ({
   children,
   htmlFor,
   id,
@@ -774,7 +785,7 @@ Ant Design supports keyboard navigation by default:
 
 - [ ] Confirm id, name, and aria-required on every Input
 - [ ] When an error occurs, add aria-invalid and aria-describedby
-- [ ] Confirm FormLabel is associated with Input via htmlFor
+- [ ] Confirm LabelRenderer is associated with Input via htmlFor
 - [ ] Test that every field is reachable by keyboard alone
 - [ ] Test that a screen reader reads labels and error messages
 ```
@@ -784,7 +795,7 @@ Ant Design supports keyboard navigation by default:
 ## Ant Design v5 plugin development ready
 
 ### ✅ Verified items
-- 9 basic FormTypes supported (DatePicker uses dayjs conversion)
+- 9 basic input kinds supported (DatePicker uses dayjs conversion)
 - ColorPicker supported by default (v5.5+)
 - Upload component can be supported with customization
 
@@ -796,7 +807,7 @@ Ant Design supports keyboard navigation by default:
 
 ### 📋 Next steps
 1. Add the dayjs dependency
-2. Implement the FormLabel and FormErrorMessage renderers directly
+2. Implement the LabelRenderer and ErrorMessageRenderer renderers directly
 3. Manually add ARIA attributes to every component
 4. Accessibility testing (screen reader, keyboard)
 ```
@@ -845,7 +856,7 @@ Ant Design supports keyboard navigation by default:
 ```markdown
 ## Chakra UI v2 Special Notes
 
-### 1. FormControl wrapping pattern (required)
+### 1. FormControl wrapping pattern
 
 Chakra UI wraps fields with FormControl so accessibility is handled automatically:
 
@@ -857,12 +868,12 @@ import {
   FormHelperText,
   Input,
 } from '@chakra-ui/react';
-import { useFieldErrors } from '@canard/schema-form';
+import { useFieldErrors, type FieldInputProps } from '@canard/schema-form';
 
-function FormTypeInputString(props: FormTypeInputProps<string>) {
-  const { node, path, name, jsonSchema, required, value, defaultValue, onChange } = props;
+function FieldInputString(props: FieldInputProps<string>) {
+  const { node, path, name, jsonSchema, required, value, onChange } = props;
 
-  const label = jsonSchema.label || jsonSchema.title || name;
+  const label = jsonSchema.title || name;
   const { errorMessage } = useFieldErrors(node);
   const hasError = errorMessage != null;
 
@@ -872,9 +883,8 @@ function FormTypeInputString(props: FormTypeInputProps<string>) {
       <Input
         id={path}
         name={name}
-        defaultValue={defaultValue}
         value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value === '' ? undefined : e.target.value)}
       />
       {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
       {jsonSchema.description && (
@@ -885,7 +895,7 @@ function FormTypeInputString(props: FormTypeInputProps<string>) {
 }
 ```
 
-An input reads error state with `useFieldErrors(node)` instead of props. The hook makes that input re-render on its field's error changes, so call it only in inputs that display error state themselves.
+The value-driven input declares controlled: true on its FieldInputDefinition. An input reads error state with `useFieldErrors(node)` instead of props. The hook makes that input re-render on its field's error changes, so call it only in inputs that display error state themselves.
 
 **Advantages of FormControl**:
 - `isRequired` → automatically shows `*` on the label
@@ -901,9 +911,8 @@ NumberInput is a compound component:
 import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 
 <NumberInput
-  defaultValue={defaultValue}
-  value={value ?? undefined}
-  onChange={(valueString, valueNumber) => onChange(valueNumber)}
+  value={value ?? ''}
+  onChange={(text, number) => onChange(text === '' ? undefined : Number.isFinite(number) ? number : undefined)}
   min={jsonSchema.minimum}
   max={jsonSchema.maximum}
 >
@@ -921,6 +930,7 @@ Chakra UI has no DatePicker, so wrap react-datepicker in a Chakra style:
 
 ```typescript
 import ReactDatePicker from 'react-datepicker';
+import dayjs from 'dayjs';
 import { Input, useColorMode } from '@chakra-ui/react';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -929,9 +939,9 @@ function ChakraDatePicker({ value, onChange, ...props }: any) {
 
   return (
     <ReactDatePicker
-      selected={value ? new Date(value) : null}
+      selected={value ? dayjs(value).toDate() : null}
       onChange={(date: Date | null) => {
-        onChange(date ? date.toISOString() : undefined);
+        onChange(date ? dayjs(date).format('YYYY-MM-DD') : undefined);
       }}
       customInput={
         <Input
@@ -961,7 +971,7 @@ Chakra UI dark mode support:
 ```typescript
 import { useColorMode } from '@chakra-ui/react';
 
-const FormGroup = ({ depth, Input }: FieldRendererProps) => {
+const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -1034,12 +1044,12 @@ Chakra UI supports complete keyboard navigation:
 
 ### 🌗 Dark mode accessibility
 
-Chakra UI's dark mode automatically guarantees WCAG contrast ratios:
+Check contrast for the selected light and dark colors:
 
 ```typescript
 import { useColorModeValue } from '@chakra-ui/react';
 
-const FormGroup = ({ Input }: FieldRendererProps) => {
+const FieldRenderer = ({ Input }: FieldRendererProps) => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
@@ -1233,7 +1243,7 @@ error_handling:
     conditions:
       - UI library not installed (peer dependency missing)
       - Compatibility matrix missing (knowledge/ file missing)
-      - Required renderer cannot be implemented (FormGroup, FormLabel, etc.)
+      - Required renderer cannot be implemented (FieldRenderer, LabelRenderer, etc.)
       - Project structure setup failed
       - Accessibility requirements cannot be met
     action: |
@@ -1248,32 +1258,32 @@ error_handling:
         message: "❌ Error: @mui/material is not installed"
         recovery: "Install the peer dependency: npm install @mui/material @mui/x-date-pickers"
       - condition: "Required renderer unavailable"
-        message: "❌ Error: FormGroup component cannot be implemented (depth prop unsupported)"
+        message: "❌ Error: FieldRenderer component cannot be implemented (depth prop unsupported)"
         recovery: "Replace the UI library or implement a custom wrapper"
 
   severity_medium:
     conditions:
-      - Some FormTypes are incompatible (DatePicker, RichText, etc.)
+      - Some input kinds are incompatible (DatePicker, RichText, etc.)
       - Some accessibility attributes are missing (ARIA)
       - UI library version compatibility warning
       - Storybook setup failed
       - Test coverage is low
     action: |
       ⚠️  Warning - partial plugin implementation
-      1. Replace incompatible FormTypes with a Fallback or an external library
+      1. Replace incompatible input kinds with a Fallback or an external library
       2. Manually add the missing ARIA attributes
       3. Updating the UI library version is recommended
       4. Proceed without Storybook (manual testing)
       5. Add a warning to the plugin:
-         > ⚠️  WARNING: some FormTypes are unsupported
+         > ⚠️  WARNING: some input kinds are unsupported
          > → {unsupported_types}
     fallback_values:
-      unsupported_formtype: "Fallback or external library"
+      unsupported_input_kind: "Fallback or external library"
       missing_aria: "Manual addition required"
       storybook_enabled: false
     examples:
-      - condition: "FormType incompatible"
-        message: "⚠️  Warning: RichText FormType is unsupported (no component)"
+      - condition: "input kind incompatible"
+        message: "⚠️  Warning: RichText input kind is unsupported (no component)"
         fallback: "Using the react-quill external library is recommended"
       - condition: "ARIA attribute missing"
         message: "⚠️  Warning: aria-required is missing on the Select component"
@@ -1281,19 +1291,19 @@ error_handling:
 
   severity_low:
     conditions:
-      - Optional FormTypes not implemented (ColorPicker, Slider, etc.)
+      - Optional input kinds not implemented (ColorPicker, Slider, etc.)
       - UI library Theme integration warning
       - Some Storybook stories are missing
       - Documentation is insufficient
     action: |
       ℹ️  Info: optional items omitted - implement the core plugin
-      → Optional FormTypes: defer to Priority 3
+      → Optional input kinds: defer to Priority 3
       → Theme integration: use the default styles
       → Storybook: write only the required stories
       → Documentation: provide a minimal README
     examples:
       - condition: "ColorPicker not implemented"
-        auto_handling: "Priority 3 FormType → optional implementation (not required)"
+        auto_handling: "Priority 3 input kind → optional implementation (not required)"
       - condition: "Theme integration warning"
         auto_handling: "Theme not integrated → use default styles (some inconsistency possible)"
 ```
