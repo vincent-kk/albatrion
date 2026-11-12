@@ -57,6 +57,7 @@ export const AlertInner = memo(
           ) : (
             renderComponent(content, {
               onConfirm: handleConfirm,
+              context: userDefinedContext,
             })
           ))}
         {footer !== false &&

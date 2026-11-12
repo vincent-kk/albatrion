@@ -143,8 +143,7 @@ describe('PromptNode', () => {
       });
 
       nodeWithoutDefault.onConfirm();
-      // undefined ?? null = null
-      expect(localHandleResolve).toHaveBeenCalledWith(null);
+      expect(localHandleResolve).toHaveBeenCalledWith(undefined);
     });
   });
 

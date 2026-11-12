@@ -224,7 +224,9 @@ export const useModalAnimation = (
   handler: ModalAnimationHandler,
 ) => {
   const handlerRef = useRef(handler);
-  handlerRef.current = handler;
+  useLayoutEffect(() => {
+    handlerRef.current = handler;
+  }, [handler]);
   useLayoutEffect(() => {
     if (!handlerRef.current) return;
     let frame: ReturnType<typeof requestAnimationFrame>;

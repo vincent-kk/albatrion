@@ -1,12 +1,12 @@
 import type { CSSProperties } from 'react';
 
-import type { Color, Duration } from '@aileron/declare';
+import type { Color } from '@aileron/declare';
 
 export interface ModalOptions {
   /** Modal z-index */
   zIndex?: number;
-  /** Modal transition time(ms, s) */
-  duration?: Duration;
+  /** Nonnegative milliseconds or a decimal ms/s duration string. */
+  duration?: number | `${number}ms` | `${number}s`;
   /** Modal backdrop color */
   backdrop?: Color | CSSProperties;
   /** Whether to destroy the modal manually */

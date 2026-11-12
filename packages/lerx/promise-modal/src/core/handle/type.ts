@@ -11,6 +11,7 @@ import type {
   FooterOptions,
   ForegroundComponent,
   ModalBackground,
+  ModalOptions,
   PromptContentProps,
   PromptFooterRender,
   PromptInputProps,
@@ -23,8 +24,8 @@ export interface OverridableHandleProps {
   subtype?: 'info' | 'success' | 'warning' | 'error';
   /** Whether to dim the background */
   dimmed?: boolean;
-  /** Modal animation duration in milliseconds */
-  duration?: number;
+  /** Nonnegative milliseconds or a decimal ms/s duration string. */
+  duration?: ModalOptions['duration'];
   /** If true, keeps modal in DOM after closing (for animations) */
   manualDestroy?: boolean;
   /** Whether to close modal on backdrop click */

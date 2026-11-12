@@ -10,6 +10,8 @@
 
 ## Conventions
 
+- 공개 Props와 프레임 메타데이터는 소비자의 래퍼 선언을 지원하며 prompt는 미입력 undefined와 일반 취소 null을 구별합니다.
+
 - TypeScript + React, ES2022 타겟
 - 경로 별칭: `@/promise-modal` → `./src`
 - Promise 기반 API: 모달 함수는 Promise를 반환하여 최초 결과를 resolve하거나 렌더 오류를 reject

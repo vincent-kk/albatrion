@@ -13,6 +13,7 @@ import {
   promptHandler,
 } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
+import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
 
 /**
  * Opens component-owned modals and releases completed request handles immediately.
@@ -32,7 +33,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
 
   const alertRef = useRef(<Background = any>(args: AlertProps<Background>) => {
     const result = alertHandler<Background>(
-      baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
+      mergeDefined(baseArgsRef.current ?? {}, args),
     );
     modalResultsRef.current.push(result);
     const remove = () => {
@@ -46,7 +47,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
   const confirmRef = useRef(
     <Background = any>(args: ConfirmProps<Background>) => {
       const result = confirmHandler<Background>(
-        baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
+        mergeDefined(baseArgsRef.current ?? {}, args),
       );
       modalResultsRef.current.push(result);
       const remove = () => {
@@ -61,7 +62,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
   const promptRef = useRef(
     <Value, Background = any>(args: PromptProps<Value, Background>) => {
       const result = promptHandler<Value, Background>(
-        baseArgsRef.current ? { ...baseArgsRef.current, ...args } : args,
+        mergeDefined(baseArgsRef.current ?? {}, args),
       );
       modalResultsRef.current.push(result);
       const remove = () => {

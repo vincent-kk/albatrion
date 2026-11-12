@@ -6,6 +6,8 @@
 
 ## Conventions
 
+- root 변경은 같은 앵커를 옮기며 null은 열린 트리를 보존하고 새 요청만 대기시킵니다.
+
 - forwardRef + useImperativeHandle로 외부 핸들 제공
 - 내부 훅과 헬퍼는 하위 organ 디렉토리에 격리
 - Props를 통해 커스텀 설정, 배경, 래퍼 컴포넌트 주입 가능

@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- prompt 결과는 현재 값 그대로이며 입력 없는 확인과 returnOnCancel 취소는 undefined입니다. 일반 취소만 null입니다.
 - 렌더 오류의 거부 채널은 모달 데이터와 함께 큐를 통과합니다.
 
 ## Acceptance Criteria
@@ -16,4 +17,4 @@
 
 ## Last Updated
 
-결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

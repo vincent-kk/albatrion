@@ -61,7 +61,6 @@ export const alert = <BackgroundValue = any>(
  *   footer: {
  *     confirm: 'Delete Account',
  *     cancel: 'Keep Account',
- *     subtype: 'warning',
  *   },
  * });
  * ```
@@ -76,7 +75,7 @@ export const confirm = <BackgroundValue = any>(
  * @typeParam InputValue - Type of the value collected from user input
  * @typeParam BackgroundValue - Type of background data passed to BackgroundComponent
  * @param args - Prompt modal configuration options
- * @returns Promise that resolves with the user input value on confirm, or null
+ * @returns Promise that resolves with the current input (undefined if untouched) on confirm, or null
  *   on cancel. With returnOnCancel: true, cancel resolves with the input value
  *   at cancel time (initially defaultValue) instead of null.
  *

@@ -48,6 +48,9 @@ export const BackgroundFrame = ({
         <Background
           id={modal.id}
           type={modal.type}
+          subtype={modal.subtype}
+          group={modal.group}
+          settled={modal.settled}
           alive={modal.alive}
           visible={modal.visible}
           initiator={modal.initiator}

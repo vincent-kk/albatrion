@@ -6,7 +6,6 @@ import {
   useRef,
 } from 'react';
 
-import { convertMsFromDuration } from '@winglet/common-utils/convert';
 import { useReference } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
@@ -15,6 +14,8 @@ import { ModalManager } from '@/promise-modal/app';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
 import { hideModal } from '@/promise-modal/helpers/hideModal';
+import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import { useConfigurationOptions } from '@/promise-modal/providers/ConfigurationContext';
 import type { Modal } from '@/promise-modal/types';
 
@@ -39,11 +40,13 @@ export const ModalManagerContextProvider = memo(
       const openHandler = (data: Modal) => {
         const { duration, manualDestroy, closeOnBackdropClick } =
           optionsRef.current;
+        const merged = mergeDefined(
+          { manualDestroy, closeOnBackdropClick },
+          data,
+        );
         const node = nodeFactory({
-          duration: convertMsFromDuration(duration),
-          manualDestroy,
-          closeOnBackdropClick,
-          ...data,
+          ...merged,
+          duration: parseFloat(normalizeDuration(data.duration, duration)),
           id: ModalManager.nextId(),
           initiator: initiator.current,
         });

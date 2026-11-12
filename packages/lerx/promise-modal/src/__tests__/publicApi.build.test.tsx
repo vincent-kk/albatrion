@@ -1,9 +1,13 @@
 import type { PropsWithChildren } from 'react';
 
 import {
+  type AlertProps,
+  type ConfirmProps,
   type ModalFrameProps,
   type ModalNodeView,
   ModalProvider,
+  type OverridableHandleProps,
+  type PromptProps,
   alert,
   confirm,
   prompt,
@@ -17,7 +21,7 @@ import {
   render,
   screen,
 } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, expectTypeOf, it } from 'vitest';
 
 /**
  * Exercises the built `dist/` output rather than `src/`.
@@ -95,4 +99,70 @@ it('published hooks count and subscribe from their public arguments', async () =
   await expect(result).resolves.toBeUndefined();
   expect(screen.getByRole('status').textContent).toBe('0');
   expect(screen.getByTestId('public-frame').dataset.version).not.toBe(initial);
+});
+
+/** Consumes public wrapper types exactly as an application does. */
+it('publishes wrapper props, prompt result types and frame metadata', async () => {
+  const overrides: OverridableHandleProps = {
+    duration: '0.5s',
+    group: 'typed',
+    subtype: 'warning',
+    manualDestroy: true,
+  };
+  const alertProps: AlertProps<unknown> = {
+    ...overrides,
+    content: ({ context, onConfirm }) => (
+      <button onClick={onConfirm}>
+        {String('label' in context ? context.label : '')}
+      </button>
+    ),
+  };
+  const confirmProps: ConfirmProps<unknown> = { title: 'typed confirm' };
+  const promptProps: PromptProps<string> = { Input: () => null };
+  expectTypeOf<ReturnType<typeof prompt<string>>>().toEqualTypeOf<
+    Promise<string | undefined | null>
+  >();
+  expectTypeOf(promptProps).toMatchTypeOf<PromptProps<string>>();
+  expectTypeOf(confirmProps).toMatchTypeOf<OverridableHandleProps>();
+  function Frame({
+    group,
+    subtype,
+    settled,
+    children,
+  }: PropsWithChildren<ModalFrameProps>) {
+    return (
+      <section
+        data-testid="metadata"
+        data-group={group}
+        data-subtype={subtype}
+        data-settled={settled}
+      >
+        {children}
+      </section>
+    );
+  }
+  render(
+    <ModalProvider
+      ForegroundComponent={Frame}
+      BackgroundComponent={Frame}
+      context={{ label: 'context passed' }}
+    />,
+  );
+  let pending!: Promise<void>;
+  act(() => {
+    pending = alert(alertProps);
+  });
+  const frames = screen
+    .getAllByTestId('metadata')
+    .filter((frame) => frame.dataset.group === 'typed');
+  expect(frames).toHaveLength(2);
+  for (const frame of frames)
+    expect(frame.dataset).toMatchObject({
+      group: 'typed',
+      subtype: 'warning',
+      settled: 'false',
+    });
+  fireEvent.click(screen.getByText('context passed'));
+  await pending;
+  for (const frame of frames) expect(frame.dataset.settled).toBe('true');
 });

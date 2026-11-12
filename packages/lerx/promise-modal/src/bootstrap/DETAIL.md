@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- root가 undefined이면 document.body, 요소이면 그 요소, null이면 대기합니다. ref의 존재는 자동 초기화를 막지 않으며 initialize는 유효 root를 정합니다.
 - StrictMode와 같은 커밋 재마운트는 열린 Promise를 취소하지 않습니다.
 
 ## Acceptance Criteria
@@ -16,4 +17,4 @@
 
 ## Last Updated
 
-결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

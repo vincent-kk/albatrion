@@ -1,6 +1,4 @@
-import { useCallback, useMemo } from 'react';
-
-import { useOnMount } from '@winglet/react-utils/hook';
+import { useMemo } from 'react';
 
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
@@ -16,6 +14,7 @@ import type { BootstrapProviderProps } from './type';
  * function for manual control.
  *
  * @param props - Configuration options (same as BootstrapProvider)
+ * @param props.root - Undefined uses body; null defers or detaches without losing input
  * @param props.mode - 'auto' for automatic initialization, 'manual' for explicit control
  * @returns Object containing portal element and initialize function
  *
@@ -23,7 +22,7 @@ import type { BootstrapProviderProps } from './type';
  * Basic usage with automatic initialization:
  * ```tsx
  * function App() {
- *   const { portal } = useBootstrap({
+ *   const { portal } = useInitializeModal({
  *     options: {
  *       duration: 200,
  *       backdrop: 'rgba(0, 0, 0, 0.8)',
@@ -44,7 +43,7 @@ import type { BootstrapProviderProps } from './type';
  * Manual initialization with custom container:
  * ```tsx
  * function CustomModalApp() {
- *   const { portal, initialize } = useBootstrap({
+ *   const { portal, initialize } = useInitializeModal({
  *     mode: 'manual',
  *     ForegroundComponent: CustomModal,
  *     options: {
@@ -76,7 +75,7 @@ import type { BootstrapProviderProps } from './type';
  *   const user = useSelector(selectCurrentUser);
  *   const theme = useSelector(selectTheme);
  *
- *   const { portal } = useBootstrap({
+ *   const { portal } = useInitializeModal({
  *     context: { userId: user?.id, theme },
  *     ContentComponent: ({ children, context }) => (
  *       <div data-theme={context.theme}>
@@ -108,7 +107,7 @@ import type { BootstrapProviderProps } from './type';
  * With custom hooks for specific modal types:
  * ```tsx
  * function useConfirmDialog() {
- *   const { portal } = useBootstrap({
+ *   const { portal } = useInitializeModal({
  *     TitleComponent: ({ children }) => (
  *       <h3 className="confirm-title">
  *         <Icon name="warning" />
@@ -162,7 +161,7 @@ import type { BootstrapProviderProps } from './type';
  * - The portal element must be rendered in your component tree
  * - One bootstrap owns the portal; additional bootstraps wait for ownership
  * - Removing the last bootstrap cancels pending modals after the current commit
- * - Context changes will affect all modals created after the change
+ * - Context changes update open modals; component props stay fixed at mount
  */
 export const useBootstrap = ({
   usePathname: useExternalPathname,
@@ -175,25 +174,14 @@ export const useBootstrap = ({
   options,
   context,
   mode = 'auto',
+  root,
 }: BootstrapProviderProps & { mode?: 'manual' | 'auto' } = {}) => {
   const usePathname = useMemo(
     () => useExternalPathname || useDefaultPathname,
     [useExternalPathname],
   );
 
-  const { anchorRef, handleInitialize, handleReset } = useInitialize();
-
-  useOnMount(() => {
-    if (mode === 'auto') handleInitialize();
-    return handleReset;
-  });
-
-  const initialize = useCallback(
-    (element: HTMLElement) => {
-      if (mode === 'manual') handleInitialize(element);
-    },
-    [mode, handleInitialize],
-  );
+  const { anchorRef, handleInitialize: initialize } = useInitialize(root, mode);
 
   const portal =
     anchorRef.current &&

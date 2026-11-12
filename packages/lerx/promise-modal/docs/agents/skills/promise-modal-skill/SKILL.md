@@ -31,20 +31,24 @@ The package supports DOM-free import and server rendering, but call modal functi
 
 ## Results and input
 
-`alert` completes without a value. `confirm` resolves `true` for confirmation and `false` for cancellation. `prompt` resolves the current input on confirmation, mapping missing input to `null`; cancellation also returns `null` unless `returnOnCancel` is true. Set `defaultValue` when those outcomes must be distinguished.
+`alert` completes without a value. `confirm` resolves `true` for confirmation and `false` for cancellation. `prompt<T>` returns `Promise<T | undefined | null>`: confirmation preserves the current input, including missing input as `undefined`; ordinary cancellation returns `null`. Set `defaultValue` to control untouched confirmation and use `result === null` to identify ordinary cancellation.
 
-With `returnOnCancel: true`, an edited prompt returns its current value on user cancel, abort, caller cleanup, or provider removal. Before rendering it returns `defaultValue ?? null`. Abort is cancellation, not rejection.
+With `returnOnCancel: true`, an edited prompt returns its current value on user cancel, abort, caller cleanup, or provider removal. Before rendering it returns `defaultValue` (including `undefined`). Abort is cancellation, not rejection.
 
 Functional `onChange` calls accumulate in event order. Calling `onConfirm` in that same event consumes the latest node value synchronously. `disabled` controls the confirm button; it is not a validation-message mechanism.
 
 ## Configuration and hooks
 
-Configuration precedence is provider defaults, then `useModal(config)`, then per-call arguments. These layers use object spreads, so an explicit `undefined` can replace an earlier setting; omit optional keys when inheriting. `useModal(config)` captures its configuration at mount, so use call arguments for changing values.
+Configuration precedence is provider defaults, then `useModal(config)`, then per-call arguments. These layers ignore `undefined` while preserving `0` and `false`. `useModal(config)` captures its configuration at mount, so use call arguments for changing values.
 
 `useActiveModalCount(validate?)` works anywhere and receives read-only `ModalNodeView` metadata. It updates on node publications without a refresh key. `useSubscribeModal(id)` likewise works without a provider context; pass the frame id rather than a node instance.
 
-Use `useDestroyAfter(id, delay)` inside a frame to destroy an already settled modal after its exit animation. It does not close a modal or start on route hiding, and it captures the delay at mount. Automatic destruction already handles non-manual modals; use this hook for a custom `manualDestroy` lifecycle. `useModalAnimation` supplies animation callbacks separately; neither hook requires the other.
+Use `useDestroyAfter(id, delay)` inside a frame to destroy an already settled modal after its exit animation. It does not close a modal or start on route hiding, and changing the delay reschedules destruction. Automatic destruction already handles non-manual modals; use this hook for a custom `manualDestroy` lifecycle. `useModalAnimation` supplies animation callbacks separately; neither hook requires the other.
 
-`useInitializeModal({ mode: 'manual' })` returns `initialize(element)` and `portal`; render the portal and initialize the intended element. The default mode initializes on mount. A `ModalProvider` ref uses explicit initialization; passing a ref suppresses automatic initialization. Custom frames receive operations such as `onClose`, `onConfirm`, and `onDestroy`; use those operations instead of mutating nodes.
+`useInitializeModal({ mode: 'manual' })` returns `initialize(element)` and `portal`; render the portal and initialize the intended element. The default mode initializes on mount. A `ModalProvider` ref does not defer initialization. Use `root={null}` to defer; undefined means body and an element selects that container. The last root prop change or `initialize(element)` call wins. Root movement preserves the same anchor and open input; null detaches it and queues new requests until an element returns. Manual hook mode defers only the initial root. Custom frames receive operations such as `onClose`, `onConfirm`, and `onDestroy`; use those operations instead of mutating nodes.
 
 Published API shapes live in the package declarations, setup and customization examples in `README.md`, and hook behavior in `docs/en/SPECIFICATION.md`.
+
+Provider component props stay fixed at mount to preserve open inputs; identity changes warn once per prop in development. Send changing data through `context`. Options remain reactive. Provider and per-call durations accept nonnegative numbers (milliseconds) or decimal ms/s strings; invalid values fall back to defaults with a development warning. Duration hooks return normalized ms strings, ready for CSS without another suffix.
+
+Configuration hooks and `useDestroyAfter` require the modal frame, content, or footer tree; ordinary Provider children are outside that tree and throw. Frame `onClose` and content/footer `onCancel` both cancel. Alert content receives `context`, and frames receive `group`, `subtype`, and `settled`. Use public Props types for application wrappers. Animation callbacks observe the last committed render, including during suspended transitions.

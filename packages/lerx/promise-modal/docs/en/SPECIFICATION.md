@@ -173,6 +173,12 @@ Each node provides:
 
 ### Configuration Priority
 
+Provider component props (`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`) are captured at mount so parent rerenders do not remount open prompts. Changes are ignored, with one warning per changed prop in development and no warning in production. Pass changing data through `context`; options remain reactive.
+
+Option precedence is defaults, Provider options, `useModal(config)`, then per-call arguments. `undefined` inherits; `0` and `false` override. `useModal(config)` captures mount-time defaults. Provider and per-call `duration` accept nonnegative milliseconds (`300`, `0.5`), milliseconds strings (`'300ms'`, `'0.5ms'`), or seconds strings (`'0.3s'`). Invalid values fall back to the default (the Provider duration for per-call overrides), with a development warning. `useModalOptions().duration` and `useModalDuration(id?).duration` return normalized milliseconds strings; use them directly in CSS without appending another `ms`.
+
+`useModalOptions`, `useModalBackdrop`, `useModalDuration`, and `useDestroyAfter` belong inside modal frame, content, or footer components. Calling them in ordinary Provider children or outside the modal tree throws an error explaining the required location. `useModalBackdrop` returns CSS properties. Frames receive `group`, `subtype`, and `settled`, and alert content receives `context`. Use exported `AlertProps`, `ConfirmProps`, `PromptProps`, and `OverridableHandleProps` to type application wrappers. Frame `onClose` and content/footer `onCancel` both cancel the request; AbortSignal also resolves with its cancellation value rather than rejecting.
+
 Configuration is applied hierarchically, with lower levels overriding higher levels:
 
 ```
@@ -307,12 +313,14 @@ if (shouldDelete) {
 
 ### prompt
 
+Confirmation returns the current input unchanged, including `undefined` when no value is supplied. Ordinary cancellation returns `null`. With `returnOnCancel: true`, cancellation returns the current value (or `defaultValue` before rendering), including `undefined`. Set `defaultValue: ''` when untouched confirmation should return an empty string. Check `result === null` for ordinary cancellation rather than relying on truthiness.
+
 Opens a prompt modal to collect user input.
 
 #### Signature
 
 ```typescript
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | null>;
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>;
 ```
 
 #### Parameters
@@ -432,7 +440,7 @@ A content, input, or frame render error rejects that modal's Promise with the ca
 
 `useModal` releases completed requests as soon as they settle and cancels only pending requests when its component unmounts. Static calls outlive their calling component, but still follow provider ownership and cancellation.
 
-`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Its delay is captured at mount.
+`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Changing the delay reschedules destruction using the latest value.
 
 The package can be imported without a DOM and `ModalProvider` can render on the server. Call `alert`, `confirm`, and `prompt` only in the browser; server rendering has no modal portal and reports an active count of zero.
 
@@ -512,7 +520,7 @@ Returns modal animation duration.
 
 ```typescript
 function useModalDuration(modalId?: number): {
-  duration: string; // e.g., '300ms'
+  duration: `${number}ms`; // e.g., '300ms'
   milliseconds: number; // e.g., 300
 };
 ```
@@ -524,14 +532,14 @@ function useModalDuration(modalId?: number): {
 Destroys an already settled modal after the specified delay.
 
 ```typescript
-function useDestroyAfter(modalId: number, duration: string | number): void;
+function useDestroyAfter(modalId: number, duration: number | `${number}ms` | `${number}s`): void;
 ```
 
 #### Behavior
 
 - Starts the timer only when the result is settled and the node is alive
 - Route hiding leaves pending modals intact
-- Removes the frame after the delay captured at mount
+- Removes the frame after the latest delay
 
 #### Example
 
@@ -572,76 +580,41 @@ function ModalDebugger({ id, visible }) {
 
 ### useInitializeModal
 
-Manually initializes modal service.
+`root` selects the portal location: omit it for `document.body`, pass an element for that container, or pass `null` to defer. A ref alone still initializes automatically. `initialize(element)` selects a root imperatively; the last call or `root` prop change wins. The same anchor moves between containers, preserving open input and Promises. Changing to `null` detaches the anchor, preserves mounted modals, and queues new requests; restoring an element reattaches it and processes the queue. An initially null root creates no anchor. `useInitializeModal` accepts the same `root`; `mode: 'manual'` defers its initial root until `initialize(element)` or a later root change. Always render its returned `portal`.
 
 ```typescript
-function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
-  initialize: (anchor?: HTMLElement) => void;
+function useInitializeModal(options?: ModalProviderProps & { mode?: 'auto' | 'manual' }): {
+  initialize: (element: HTMLElement) => void;
   portal: ReactPortal | null;
 };
 ```
-
-#### Modes
-
-| Mode     | Description                     |
-| -------- | ------------------------------- |
-| `auto`   | Initializes automatically       |
-| `manual` | Requires calling `initialize()` |
 
 ---
 
 ### useModalOptions
 
-Returns modal options configuration.
+Reads normalized Provider options inside the modal tree.
 
 ```typescript
-function useModalOptions(): ModalOptions;
-```
-
-#### Returns
-
-```typescript
-interface ModalOptions {
-  duration?: number | string; // Animation duration
-  backdrop?: string; // Backdrop overlay color
-  manualDestroy?: boolean; // Manual destroy mode
-  closeOnBackdropClick?: boolean; // Close on backdrop click
-  zIndex?: number; // CSS z-index
-}
-```
-
-#### Example
-
-```typescript
-function ModalDebugInfo() {
-  const options = useModalOptions();
-
-  return (
-    <div>
-      <p>Duration: {options.duration}</p>
-      <p>Backdrop: {options.backdrop}</p>
-    </div>
-  );
-}
+function useModalOptions(): {
+  duration: `${number}ms`;
+  backdrop: CSSProperties;
+  manualDestroy: boolean;
+  closeOnBackdropClick: boolean;
+  zIndex: number;
+};
 ```
 
 ---
 
 ### useModalBackdrop
 
-Returns only modal backdrop configuration.
+Reads backdrop CSS properties inside the modal tree.
 
-```typescript
-function useModalBackdrop(): string | CSSProperties;
-```
-
-#### Example
-
-```typescript
+```tsx
 function BackdropInfo() {
   const backdrop = useModalBackdrop();
-
-  return <p>Current backdrop: {backdrop}</p>;
+  return <div style={backdrop} />;
 }
 ```
 
@@ -665,7 +638,7 @@ interface ModalProviderProps {
   options?: ModalOptions;
   context?: Record<string, any>;
   usePathname?: () => { pathname: string }; // Router integration
-  root?: HTMLElement; // Custom root element
+  root?: HTMLElement | null; // Custom root element
 }
 ```
 
@@ -673,8 +646,8 @@ interface ModalProviderProps {
 
 ```typescript
 interface ModalOptions {
-  duration?: number | string;
-  backdrop?: string;
+  duration?: number | `${number}ms` | `${number}s`;
+  backdrop?: string | CSSProperties;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
 }
@@ -734,6 +707,9 @@ Props passed to Foreground/Background components.
 interface ModalFrameProps<Context = any, B = any> {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
+  group?: string;
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  settled: boolean;
   alive: boolean;
   visible: boolean;
   initiator: string;
@@ -804,7 +780,7 @@ const CustomForeground: FC<ModalFrameProps> = ({
         borderRadius: 12,
         padding: 24,
         opacity: 0,
-        transition: `opacity ${duration}ms`,
+        transition: `opacity ${duration}`,
       }}
     >
       {children}
@@ -948,7 +924,7 @@ const ToastForeground: FC<ModalFrameProps> = ({
         left: '50%',
         transform: 'translateX(-50%) translateY(100px)',
         opacity: 0,
-        transition: `all ${duration}ms`,
+        transition: `all ${duration}`,
       }}
     >
       {children}
@@ -1008,7 +984,7 @@ async function registrationWizard() {
 
 ```typescript
 function IframedModals() {
-  const { initialize } = useInitializeModal({ mode: 'manual' });
+  const { initialize, portal } = useInitializeModal({ mode: 'manual' });
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1021,6 +997,7 @@ function IframedModals() {
     <div style={{ position: 'relative', height: 600 }}>
       <div ref={containerRef} style={{ height: '100%' }} />
       <ModalTriggerButtons />
+      {portal}
     </div>
   );
 }

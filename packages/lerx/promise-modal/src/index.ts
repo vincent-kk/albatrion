@@ -18,6 +18,12 @@ export { useModalDuration } from './hooks/useModalDuration';
 export { useSubscribeModal } from './hooks/useSubscribeModal';
 
 export { alert, confirm, prompt } from './core';
+export type {
+  AlertProps,
+  ConfirmProps,
+  PromptProps,
+  OverridableHandleProps,
+} from './core';
 
 export type {
   ModalOptions,

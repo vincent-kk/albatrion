@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import type {
   BackgroundComponent,
   BaseModal,
@@ -53,8 +54,8 @@ export abstract class AbstractNode<T, B> {
     return this.__visible__;
   }
 
-  private __handleResolve__?: Fn<[result: T | null]>;
-  set handleResolve(handleResolve: Fn<[result: T | null]>) {
+  private __handleResolve__?: Fn<[result: T | undefined | null]>;
+  set handleResolve(handleResolve: Fn<[result: T | undefined | null]>) {
     this.__handleResolve__ = handleResolve;
   }
 
@@ -86,7 +87,7 @@ export abstract class AbstractNode<T, B> {
     this.background = background;
 
     this.dimmed = dimmed;
-    this.duration = duration;
+    this.duration = parseFloat(normalizeDuration(duration, '0ms'));
     this.manualDestroy = manualDestroy;
     this.closeOnBackdropClick = closeOnBackdropClick;
 
@@ -103,7 +104,7 @@ export abstract class AbstractNode<T, B> {
   abstract onConfirm(): void;
 
   /** Commits the first result and publishes the settled transition. */
-  protected onResolve(result: T | null) {
+  protected onResolve(result: T | undefined | null) {
     if (this.__settled__) return;
     this.__settled__ = true;
     this.__handleResolve__?.(result);

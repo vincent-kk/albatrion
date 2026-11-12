@@ -105,6 +105,7 @@ describe('ModalManager', () => {
         ...modal,
       }));
 
+      ModalManager.anchor();
       ModalManager.openHandler = customHandler;
 
       const modal = {
@@ -127,6 +128,7 @@ describe('ModalManager', () => {
       ModalManager.open({ type: 'alert', title: 'Test' });
       expect(ModalManager.prerender.length).toBeGreaterThan(0);
 
+      ModalManager.anchor();
       // openHandler 설정
       ModalManager.openHandler = vi.fn();
 
