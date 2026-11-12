@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^",
+    "@winglet/json-schema": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "antd-mobile": "^5.0.0",
     "dayjs": "^1.0.0"
