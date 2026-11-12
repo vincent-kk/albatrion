@@ -152,7 +152,7 @@ it('LANDING-186 unknown test keys are ignored and reported in development', asyn
   );
   expect(form.field('')?.dataset.selected).toBe('yes');
   expect(warning).toHaveBeenCalledWith(
-    'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID',
+    'SCHEMA_FORM_WARNING.FIELD_INPUT_TEST_INVALID',
     expect.objectContaining({ invalid: ['typo'] }),
   );
 });

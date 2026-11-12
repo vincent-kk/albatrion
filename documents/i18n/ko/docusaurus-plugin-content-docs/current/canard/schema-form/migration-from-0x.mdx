@@ -7,7 +7,7 @@ sidebar_position: 8
 
 ## 이전 순서와 무시되는 키 {#migration-order}
 
-현재 API를 사용하려면 schema 설정, component·type import, node state·validation issue 처리 순서로 이전하십시오. 폼 엔진은 formType·computed 같은 옛 최상위 설정 키의 별칭이나 경고를 제공하지 않으므로 현재 그룹으로 직접 옮겨야 합니다. 별도로 구성한 검증기는 자기 정책에 따라 알 수 없는 schema keyword를 거부할 수 있습니다.
+현재 API를 사용하려면 스키마 설정, component·타입 가져오기, 노드 상태·검증 이슈 처리 순서로 이전하십시오. 폼 엔진은 formType·계산된 같은 옛 최상위 설정 키의 별칭이나 경고를 제공하지 않으므로 현재 그룹으로 직접 옮겨야 합니다. 별도로 구성한 검증기는 자기 정책에 따라 알 수 없는 스키마 키워드를 거부할 수 있습니다.
 
 이 문서를 변환 체크리스트로 사용하고 두 표기를 함께 남기는 대신 연결된 현재 계약을 참조하십시오.
 
@@ -85,23 +85,24 @@ sidebar_position: 8
 | `useSchemaNodeSubscribe`                 | `useFieldNodeSubscribe`             |
 | `SchemaNodeSubscribeOptions`             | `FieldNodeSubscribeOptions`         |
 | `JSONSchemaError (issue type)`           | `ValidationIssue`                   |
+| `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP`  | `FormErrorCode.FieldInputMap`            |
 
-혼용 대소문자 schema 별칭은 `JSONSchema`, `InferJSONSchema`로 바꾸십시오. 사용자 입력의 renderer props는 [조합 계약](./api-reference#composition)을 따르며 FieldInputProps.FieldRenderer를 자동으로 제공하지 않습니다.
+혼용 대소문자 스키마 별칭은 `JSONSchema`, `InferJSONSchema`로 바꾸십시오. 사용자 입력의 렌더러 속성은 [조합 계약](./api-reference#composition)을 따르며 FieldInputProps.FieldRenderer를 자동으로 제공하지 않습니다.
 
-검증 결과는 [원시 issue 데이터](./validation#issues-messages), thrown 예외는 [오류 guard](./error-reference#guards)를 사용하십시오.
+검증 결과는 [원시 issue 데이터](./validation#issues-messages), 던져진 예외는 [오류 가드](./error-reference#guards)를 사용하십시오.
 
 ## 변환 후 동작 확인 {#behavior-checks}
 
 - [열린 options·presentation과 닫힌 controls](./schema-reference#authoring-groups)를 확인하고, 플러그인 설정이 입력에 전달되도록 presentation.FieldInputProps로 옮기며 세 그룹의 예약 값 형을 확인하십시오.
 - [enum 빈 값과 checkbox·radio 이름](./schema-reference#accessibility)에 맞게 DOM 검사를 바꾸십시오.
-- virtual 입력은 [현재 test hint](./schema-reference#input-resolution)로 매칭하십시오.
+- virtual 입력은 [현재 검사 힌트](./schema-reference#input-resolution)로 매칭하십시오.
 - 완전한 [검증기 객체](./validation#validator-contract)를 제공하십시오.
-- 문자열 ErrorVisibility enum과 AfterEdit·AfterEditAndTouch 정책을 사용하십시오. 기본 정책·표시 조건·Form errorVisibility prop·handle 동작은 [오류 표시](./validation#visibility)를 참조하십시오.
+- 문자열 ErrorVisibility enum과 AfterEdit·AfterEditAndTouch 정책을 사용하십시오. 기본 정책·표시 조건·Form errorVisibility 속성·handle 동작은 [오류 표시](./validation#visibility)를 참조하십시오.
 - injectTo context에서 `parentJSONSchema`, `rootJSONSchema`를 사용하십시오.
-- onError callback의 추론 record에서 `origin`을 읽고 [발생 계약](./error-reference#occurrences)을 따르십시오.
-- component cleanup 쓰기는 [inactive-value resolution](./api-reference#inactive-listeners)으로 바꾸고 reset·재진입 후 노드를 다시 조회하십시오.
+- onError 콜백의 추론 레코드에서 `origin`을 읽고 [발생 계약](./error-reference#occurrences)을 따르십시오.
+- 컴포넌트 정리 쓰기는 [비활성 값 해석](./api-reference#inactive-listeners)으로 바꾸고 reset·재진입 후 노드를 다시 조회하십시오.
 
-| Before                                          | After                                                                                  |
+| 변경 전                                          | 변경 후                                                                                  |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `ShowError.Always / Never`                      | `ErrorVisibility.Always / Never`                                                       |
 | `ShowError.Dirty / Touched / DirtyTouched`    | `ErrorVisibility.AfterEdit / AfterTouch / AfterEditAndTouch`                           |
@@ -117,34 +118,34 @@ sidebar_position: 8
 
 네이티브 Enter·제출 버튼과 `handle.submit()` / `useFormSubmit`을 각각 시험하십시오. 네이티브 제출의 스키마 판정이 무효이면 오류를 공개하고 첫 번째 적격 무효 필드에 초점을 주며, `onSubmit`, `onError`, 호스트 오류 통로를 호출하지 않습니다. `ErrorVisibility.Never`는 공개와 초점을 모두 막고, 폼 전체 readOnly/disabled는 초점만 막습니다. 명령형 제출은 여전히 거부되며 자동으로 공개하지 않습니다. 거부를 처리하고 필요한 UX라면 `revealErrors()`를 명시적으로 호출하십시오. 컴파일 실패, degraded 폼, 애플리케이션 콜백 실패는 무효 판정과 다르므로 [제출 실패 처리](./error-reference#submission)를 유지하십시오.
 
-terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습니다. 이를 합성 자식에 중복 배정하거나 빈 자식 트리를 검증 성공으로 해석하지 마십시오. 전체 판정에는 `getErrors()` / `validate()`, 필드 피드백에는 `node.errors`를 사용하십시오.
+말단 객체·배열 루트는 전체 값 내부 경로의 오류를 받습니다. 이를 합성 자식에 중복 배정하거나 빈 자식 트리를 검증 성공으로 해석하지 마십시오. 전체 판정에는 `getErrors()` / `validate()`, 필드 피드백에는 `node.errors`를 사용하십시오.
 
 ## 마운트 이후 설정 {#live-settings}
 
-`Form.Input`, `Form.Render`, `Form.Field`의 `onChange`와 `onFileAttach`를 제거하고 중계 콜백은 Child나 렌더러 Input에 두십시오. 자식·레이아웃의 `value`와 `defaultValue` 덮어쓰기는 제거하고 Form.defaultValue로 초기화하거나 부모 콜백·핸들로 값을 쓰십시오. `presentation.FieldInputProps.required`를 `presentation.required`로 옮기십시오. 두 props 객체 안의 required는 무시됩니다. 렌더러와 입력의 `required`는 [표시 덮어쓰기 계약](./api-reference#composition)을 따릅니다.
+`Form.Input`, `Form.Render`, `Form.Field`의 `onChange`와 `onFileAttach`를 제거하고 중계 콜백은 Child나 렌더러 Input에 두십시오. 자식·레이아웃의 `value`와 `defaultValue` 덮어쓰기는 제거하고 Form.defaultValue로 초기화하거나 부모 콜백·핸들로 값을 쓰십시오. `presentation.FieldInputProps.required`를 `presentation.required`로 옮기십시오. 두 속성 객체 안의 required는 무시됩니다. 렌더러와 입력의 `required`는 [표시 덮어쓰기 계약](./api-reference#composition)을 따릅니다.
 
-아래 수명을 확인한 뒤 설정 적용만을 위한 Form key 변경을 제거하십시오. 설정 객체·배열·콜백은 불변 참조로 교체하며, 기존 참조의 내용 변경은 지원하는 갱신 신호가 아닙니다. 명시한 Form 설정이 FormProvider 기본값보다 우선합니다. FormProvider에는 `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, `disableAutomaticWrites` prop이 없습니다.
+아래 수명을 확인한 뒤 설정 적용만을 위한 Form key 변경을 제거하십시오. 설정 객체·배열·콜백은 불변 참조로 교체하며, 기존 참조의 내용 변경은 지원하는 갱신 신호가 아닙니다. 명시한 Form 설정이 FormProvider 기본값보다 우선합니다. FormProvider에는 `fieldInputMap`, `virtualization`, `readOnly`, `disabled`, `unsetOnInactive`, `disableAutomaticWrites` 속성이 없습니다.
 
 | 설정                                                                     | 이행 점검                                                                                                                                                                                                         |
 | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `jsonSchema`, `defaultValue`                                             | prop을 바꿔도 `reset()`이 최신 커밋 입력을 읽기 전까지 편집을 유지합니다. `rebuild()`는 루트를 교체하고 기본값을 다시 읽습니다. 두 메서드는 대체 폼 데이터를 받지 않으므로 값 쓰기에는 `setValue`를 사용하십시오. |
-| Form 또는 FormProvider의 `validatorFactory`                              | 마운트 후 교체는 지원하지 않습니다. 선택된 참조가 바뀌면 reset 경로로 다시 초기화하여 편집값을 버리고 committed 스키마·기본값 변경을 적용합니다. 렌더마다 객체를 생성하지 마십시오. [전체 초기화 효과와 안정된 설정](./api-reference#configuration-lifetime)을 참고하십시오. |
+| `jsonSchema`, `defaultValue`                                             | 속성을 바꿔도 `reset()`이 최신 커밋 입력을 읽기 전까지 편집을 유지합니다. `rebuild()`는 루트를 교체하고 기본값을 다시 읽습니다. 두 메서드는 대체 폼 데이터를 받지 않으므로 값 쓰기에는 `setValue`를 사용하십시오. |
+| Form 또는 FormProvider의 `validatorFactory`                              | 마운트 후 교체는 지원하지 않습니다. 선택된 참조가 바뀌면 reset 경로로 다시 초기화하여 편집값을 버리고 커밋된 스키마·기본값 변경을 적용합니다. 렌더마다 객체를 생성하지 마십시오. [전체 초기화 효과와 안정된 설정](./api-reference#configuration-lifetime)을 참고하십시오. |
 | Form 또는 FormProvider의 `validationMode`                                | 기존 트리에 적용합니다. `None`은 대기 작업을 취소하고 검증기 오류를 지우지만 외부 오류는 유지하며, OnChange로 전환하면 현재 값 검증을 예약합니다. [모드 전환 규칙](./validation#modes)을 확인하십시오.            |
-| `unsetOnInactive`, `disableAutomaticWrites`                              | 다음 엔진 진입부터 적용하며 지난 전환을 재실행하거나 값을 다시 채우지 않습니다. 진행 중인 쓰기 체인은 기존 설정을 유지합니다. 설정 커밋 전 자식 layout effect 호출은 직전 커밋 설정을 사용합니다.                 |
+| `unsetOnInactive`, `disableAutomaticWrites`                              | 다음 엔진 진입부터 적용하며 지난 전환을 재실행하거나 값을 다시 채우지 않습니다. 진행 중인 쓰기 체인은 기존 설정을 유지합니다. 설정 커밋 전 자식 레이아웃 이펙트 호출은 직전 커밋 설정을 사용합니다.                 |
 | Form 또는 FormProvider의 `errorVisibility`                               | 커밋된 정책이 즉시 갱신됩니다. `showError`와 boolean/mask를 이름 있는 enum으로 교체하고 노드 override와 `revealErrors()` / `resetErrorVisibility()`를 확인하십시오.                                               |
 | Form 또는 FormProvider의 렌더러 슬롯과 `formatError`                     | 렌더러 교체는 자신이 소유한 UI 하위 트리를 다시 만듭니다. 포맷터 교체는 메시지를 바꾸고 실패한 포맷터 경계를 복구할 수 있으며, 정상 입력은 재마운트할 필요가 없습니다.                                            |
 | Form 또는 FormProvider의 `fieldInputDefinitions`, Form의 `fieldInputMap` | 선택을 갱신하면서 노드 값·상태·외부 오류를 유지합니다. 선택 컴포넌트가 바뀌면 해당 입력을 재마운트하고, 부모 입력 교체는 자손 DOM과 미커밋 초안도 다시 만듭니다. 선택과 조상이 그대로면 입력 DOM을 유지합니다.    |
 | `context`, Form의 `readOnly` / `disabled`                                | context와 입력 잠금은 즉시 적용됩니다. context는 내용 스냅샷을 사용하므로 내용이 같은 Date/Map/클래스 객체는 갱신을 강제하지 않습니다. 입력 잠금은 명령형 노드 쓰기를 막지 않습니다.                              |
 | Form 콜백, `errors`, `children`, `ref`                                   | 현재 커밋 콜백과 레이아웃을 사용하며 외부 오류를 다시 적용하려면 errors 배열을 교체합니다. 루트 교체 뒤 현재 핸들·노드를 다시 얻으십시오. 숨겨진 폼은 아래 콜백 수명을 따릅니다.                                  |
-| Form의 `virtualization`                                                  | 모든 옵션이 갱신되며 아래 단방향 공개·hydration 한계를 따릅니다.                                                                                                                                                  |
+| Form의 `virtualization`                                                  | 모든 옵션이 갱신되며 아래 단방향 공개·하이드레이션 한계를 따릅니다.                                                                                                                                                  |
 
-`Form.Field`, `Form.Input`, `Form.Render`에는 별도의 마운트 고정 컴포넌트·children override가 있습니다. 이 override에는 live context, 컴포넌트 내부 hook 또는 의도적인 새 key를 사용하십시오. Form 전체 live 설정이 이 [조합 계약](./schema-reference#input-resolution)을 바꾸지는 않습니다.
+`Form.Field`, `Form.Input`, `Form.Render`에는 별도의 마운트 고정 컴포넌트·children 재정의가 있습니다. 이 override에는 실시간 `context`, 컴포넌트 내부 훅 또는 의도적인 새 key를 사용하십시오. Form 전체 연결된 설정이 이 [조합 계약](./schema-reference#input-resolution)을 바꾸지는 않습니다.
 
-`^/invalid[`처럼 컴파일할 수 없는 명시적 패턴은 StrictMode에서도 커밋 뒤 `FormErrorCode.FormTypeInputMap`, `origin: 'load'`를 한 번 보고합니다. 최초 실패는 load fallback을 유지하고, 실행 중 교체 실패는 트리와 마지막 유효 맵을 유지합니다. 유효한 맵 참조로 교체하면 복구합니다. 입력 컴포넌트가 렌더 중 던진 예외는 여전히 렌더 실패이므로 던진 코드만으로 분류하지 마십시오.
+`^/invalid[`처럼 컴파일할 수 없는 명시적 패턴은 StrictMode에서도 커밋 뒤 `FormErrorCode.FieldInputMap`, `origin: 'load'`를 한 번 보고합니다. 최초 실패는 load 폴백을 유지하고, 실행 중 교체 실패는 트리와 마지막 유효 맵을 유지합니다. 유효한 맵 참조로 교체하면 복구합니다. 입력 컴포넌트가 렌더 중 던진 예외는 렌더 실패이므로 던진 코드만으로 분류하지 마십시오.
 
 ## 입력 맵 키 {#input-map-keys}
 
-0.16에서 호환성을 깨는 변경입니다. 선행 `^`가 없는 키는 정규식 폴백을 사용하지 않습니다. 기존 단일 세그먼트 `*` wildcard를 제외하면 텍스트로 비교합니다. 자손 캡처에 의존한 일반 경로 키를 포함해 개발 경고는 없으며, 그 의존은 자동으로 감지할 수 없습니다.
+0.16에서 호환성을 깨는 변경입니다. 선행 `^`가 없는 키는 정규식 폴백을 사용하지 않습니다. 기존 단일 세그먼트 `*` 와일드카드를 제외하면 텍스트로 비교합니다. 자손 캡처에 의존한 일반 경로 키를 포함해 개발 경고는 없으며, 그 의존은 자동으로 감지할 수 없습니다.
 
 | 의도 또는 0.16 키 | 새 표기 | 일치 | 비일치 |
 | --- | --- | --- | --- |
@@ -154,25 +155,25 @@ terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습�
 | 노드와 모든 자손 | 같은 입력을 쓰는 두 키: `'/contact'`, `'^/contact/'` | `/contact`, `/contact/a/b` | `/contacts` |
 | 경계를 제한하는 패턴 대안 | `'^/contact(?:/\|$)'` | `/contact`, `/contact/first` | `/contacts` |
 | 잘못된 자손 경계: `'^/contact'` | 위의 경계가 있는 표기 사용 | `^/contact`는 `/contacts`에도 일치 | `/a/contact`에는 비일치 |
-| 패턴 `'/user/(name\|email)'` | `'^/user/(name\|email)$'`로 이전 substring 범위를 의도적으로 축소 | `/user/name`, `/user/email` | `/a/user/name`, `/user/email/child` |
+| 패턴 `'/user/(name\|email)'` | `'^/user/(name\|email)$'`로 이전 부분 문자열 범위를 의도적으로 축소 | `/user/name`, `/user/email` | `/a/user/name`, `/user/email/child` |
 | 패턴 `'#/users/\\d+/profile'` | `'^/users/\\d+/profile$'` (`#` 제거) | `/users/12/profile` | `/users/a/profile`, `/users/12/profile/more` |
 | `'/name'`이 경로 중간에 일치 | 한 깊이는 `'/*/name'`, 모든 깊이는 `'^.*/name$'` | `/user/name` | `/user/name/child` |
 | `'contact.email'`, `'items.0.name'`의 `.`이 `/`에 일치 | `'/contact/email'`, `'/items/*/name'` | `/contact/email`, `/items/0/name` | `/contact/email/child`, `/items/0/deep/name` |
-| `'#email'`의 `#`가 제거되고 `email` substring에 일치 | 이제 기존 키는 비매칭; 해당 노드는 `'/email'`, 깊이에 관계없이 같은 이름은 `'^.*/email$'` | `/email`; 패턴은 `/contact/email`도 포함 | `/emailBackup`, `/email/child` |
-| `'email'`의 substring 매칭 | `'^.*/email$'` 또는 `test` 함수를 가진 정의 | `/email`, `/contact/email` | `/emailBackup`, `/email/child` |
-| `'/name$'`의 suffix 패턴 | `'^.*/name$'` | `/name`, `/user/name` | `/username`, `/name/child` |
+| `'#email'`의 `#`가 제거되고 `email` 부분 문자열에 일치 | 이제 기존 키는 비매칭; 해당 노드는 `'/email'`, 깊이에 관계없이 같은 이름은 `'^.*/email$'` | `/email`; 패턴은 `/contact/email`도 포함 | `/emailBackup`, `/email/child` |
+| `'email'`의 부분 문자열 매칭 | `'^.*/email$'` 또는 `test` 함수를 가진 정의 | `/email`, `/contact/email` | `/emailBackup`, `/email/child` |
+| `'/name$'`의 접미사 패턴 | `'^.*/name$'` | `/name`, `/user/name` | `/username`, `/name/child` |
 | `'/items/**/name'`, `'/price['`의 컴파일 오류 | 그 리터럴 이름을 의도할 때만 유지하며 더 이상 오류가 아님 | `/items/**/name`, `/price[` | `/items/0/name`, `/price` |
 | `{ '/contact': A, '/contact/first': B }`가 둘 다 A를 선택 | 유지하면 자식은 B를 선택 | `/contact`는 A, `/contact/first`는 B | A는 `/contact/first`를 캡처하지 않음 |
-| 기존 `^` 패턴과 유효한 `*` wildcard | 유지 | `'^/contact$'` → `/contact`; `'/items/*/name'` → `/items/0/name` | 각각 `/contact/child`, `/items/0/deep/name` 제외 |
+| 기존 `^` 패턴과 유효한 `*` 와일드카드 | 유지 | `'^/contact$'` → `/contact`; `'/items/*/name'` → `/items/0/name` | 각각 `/contact/child`, `/items/0/deep/name` 제외 |
 
-두 경로만 의도했다면 `'/user/(name|email)': Input`을 `'^/user/(name|email)$': Input`으로 바꿉니다. `^`만 추가하면 끝은 열린 채로 유지되지만 경로 중간 매칭은 사라집니다. 이전 substring 동작 전체를 유지하려면 `^[\s\S]*` 같은 접두사가 필요합니다(JavaScript 문자열에서는 역슬래시를 두 번 씁니다). 위의 경계를 제한하는 표기를 권합니다. 패턴은 fragment가 없는 escaped 데이터 경로를 봅니다. 순서·분기 입력·조용한 비매칭은 [경로 매칭](./schema-reference#input-map-keys)을 참조하십시오.
+두 경로만 의도했다면 `'/user/(name|email)': Input`을 `'^/user/(name|email)$': Input`으로 바꿉니다. `^`만 추가하면 끝은 열린 채로 유지되지만 경로 중간 매칭은 사라집니다. 이전 부분 문자열 동작 전체를 유지하려면 `^[\s\S]*` 같은 접두사가 필요합니다(JavaScript 문자열에서는 역슬래시를 두 번 씁니다). 위의 경계를 제한하는 표기를 권합니다. 패턴은 프래그먼트가 없는 이스케이프된 데이터 경로를 봅니다. 순서·분기 입력·조용한 비매칭은 [경로 매칭](./schema-reference#input-map-keys)을 참조하십시오.
 
 ## 관찰, 숨겨진 폼, 값 추론 {#observation-types}
 
-- 노드가 없으면 `useFieldNodeTracker`와 `useFieldNodeSubscribe`에 `null` 또는 `undefined`를 직접 전달하십시오. tracker는 구독 없이 0을 반환하고, 구독 hook은 listener와 `onSubscribe`를 호출하지 않습니다. 둘 다 노드 인자가 바뀌면 이전 구독을 해제합니다. 종류·전략 가드는 두 빈 값에 false를 반환합니다. `onSubscribe`, `visitSubtree`, 포맷터·placeholder의 필수 노드 인자는 계속 필수입니다.
-- ref 할당만으로 관찰자가 다시 렌더되지는 않습니다. `formRef.current?.node`를 읽는 hook에는 바인딩·루트 교체 뒤 소비자 재렌더가 필요하며, 그렇지 않으면 이전 노드를 계속 관찰합니다. 관찰자가 폼 내부에 속하면 Form의 함수 children을 우선하십시오.
+- 노드가 없으면 `useFieldNodeTracker`와 `useFieldNodeSubscribe`에 `null` 또는 `undefined`를 직접 전달하십시오. tracker는 구독 없이 0을 반환하고, 구독 훅은 리스너와 `onSubscribe`를 호출하지 않습니다. 둘 다 노드 인자가 바뀌면 이전 구독을 해제합니다. 종류·전략 가드는 두 빈 값에 false를 반환합니다. `onSubscribe`, `visitSubtree`, 포맷터·placeholder의 필수 노드 인자는 계속 필수입니다.
+- ref 할당만으로 관찰자가 다시 렌더링되지는 않습니다. `formRef.current?.node`를 읽는 훅에는 바인딩·루트 교체 뒤 소비자 다시 렌더링가 필요하며, 그렇지 않으면 이전 노드를 계속 관찰합니다. 관찰자가 폼 내부에 속하면 Form의 함수 children을 우선하십시오.
 - 숨겨진 폼을 다시 보이면 끝나지 않은 IME 초안을 포함하여 입력을 현재 노드 값과 동기화합니다. 숨김 중에는 React가 ref를 해제하므로 보이는 상태에서 마운트한 뒤 보관한 핸들·노드로 쓰십시오. 준비된 현재 load의 콜백은 숨김 중에도 계속될 수 있고 다시 보일 때 재생하지 않습니다. 구독을 정리하고 [숨김 수명](./api-reference#hidden-lifecycle)을 확인하십시오.
-- 유한한 리터럴 `prefixItems`는 `InferValueType`, Form, FormHandle에서 선택적 위치의 튜플을 추론하므로 제한 없는 인덱스나 추가 원소가 타입 오류가 될 수 있습니다. `as const`로 리터럴을 보존하고 `items`의 rest 규칙을 확인하며, 정확한 애플리케이션 형태가 필요하면 Form과 FormHandle에 같은 명시적 값 제네릭을 쓰십시오. 객체 키는 여전히 선택적이고 추론 값은 검증 증거가 아닙니다. [TypeScript 추론](./api-reference#typescript)을 확인하십시오.
+- 유한한 리터럴 `prefixItems`는 `InferValueType`, Form, FormHandle에서 선택적 위치의 튜플을 추론하므로 제한 없는 인덱스나 추가 원소가 타입 오류가 될 수 있습니다. `as const`로 리터럴을 보존하고 `items`의 나머지 항목 규칙을 확인하며, 정확한 애플리케이션 형태가 필요하면 Form과 FormHandle에 같은 명시적 값 제네릭을 쓰십시오. 객체 키는 여전히 선택적이고 추론 값은 검증 증거가 아닙니다. [TypeScript 추론](./api-reference#typescript)을 확인하십시오.
 
 ## 가상화와 정확한 초점 {#virtualization}
 
@@ -180,45 +181,45 @@ terminal 객체·배열 루트는 전체 값 내부 경로의 오류를 받습�
 
 조상 초점 우회 처리를 `handle.focus(path)` / `select(path)`로 바꾸십시오. 중첩 게이트나 virtual 그룹 뒤의 대기 대상은 렌더 경로를 따라 공개되고 정확한 입력에 초점을 받습니다. 새 요청, reset·루트 교체, 확인된 언마운트, 사라진 게이트는 공개 예약을 취소합니다. 다른 곳에 갔다 돌아오거나 body로 blur하는 것을 포함한 사용자 초점 이동은 예약 행동을 막습니다. 무관한 옵션 갱신은 요청을 유지하고, 게이트를 공개하는 옵션 갱신은 그 커밋에서 전달합니다.
 
-실제 사용자 레이아웃을 시험하십시오. 생략한 입력, terminal 내부, 숨겨진 Activity, 공개 중 suspend한 입력에는 도달하지 못합니다. hidden/disabled/inert 컨트롤은 초점을 거절할 수 있고 네이티브 무효 제출은 두 번째 후보를 시도하지 않습니다. 마운트된 중복 위치는 일반 요청 동작을 유지하며 일반 노드 명령의 취소 수명은 공개 예약과 다릅니다. placeholder 높이 변화의 스크롤은 보정하지 않습니다. 지연 DOM은 공개 전까지 페이지 검색·접근성 도구·자동 완성에서 사용할 수 없고 idle backfill에는 완료 기한 보장이 없습니다.
+실제 사용자 레이아웃을 시험하십시오. 생략한 입력, 말단 내부, 숨겨진 Activity, 공개 중 suspend한 입력에는 도달하지 못합니다. hidden/disabled/inert 컨트롤은 초점을 거절할 수 있고 네이티브 무효 제출은 두 번째 후보를 시도하지 않습니다. 마운트된 중복 위치는 일반 요청 동작을 유지하며 일반 노드 명령의 취소 수명은 공개 예약과 다릅니다. placeholder 높이 변화의 스크롤은 보정하지 않습니다. 지연 DOM은 공개 전까지 페이지 검색·접근성 도구·자동 완성에서 사용할 수 없고 유휴 시간 후속 채우기에는 완료 기한 보장이 없습니다.
 
-SSR은 모든 필드를 렌더하고 hydration은 이를 보존하며 이후 추가한 가지·자식에만 게이트를 적용합니다. IntersectionObserver가 없으면 즉시 렌더합니다. 초점 선택·중복 위치·React 18 hydration 한계는 [가상화](./api-reference#virtualization)를 확인하십시오.
+SSR은 모든 필드를 렌더하고 하이드레이션은 이를 보존하며 이후 추가한 분기·자식에만 게이트를 적용합니다. IntersectionObserver가 없으면 즉시 렌더합니다. 초점 선택·중복 위치·React 18 하이드레이션 한계는 [가상화](./api-reference#virtualization)를 확인하십시오.
 
 ## AJV 이행 {#ajv}
 
-AJV6, AJV7, 모든 AJV8 dialect 진입점은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 `bind(instance)`를 즉시 거절합니다. 바인딩 전에 이 옵션을 끄십시오. 실패의 `group`은 `'UNHANDLED_ERROR'`, `code`는 `'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`(`FormErrorCode.ValidatorBindRefused`)이며 네이티브 플러그인 오류이므로 코어의 `isUnhandledError` 가드는 인식하지 않습니다. 거절한 인스턴스는 현재 바인딩을 교체하지 않습니다.
+AJV6, AJV7, 모든 AJV8 방언 진입점은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 `bind(instance)`를 즉시 거절합니다. 바인딩 전에 이 옵션을 끄십시오. 실패의 `group`은 `'UNHANDLED_ERROR'`, `code`는 `'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`(`FormErrorCode.ValidatorBindRefused`)이며 네이티브 플러그인 오류이므로 코어의 `isUnhandledError` 가드는 인식하지 않습니다. 거절한 인스턴스는 현재 바인딩을 교체하지 않습니다.
 
 형 변환은 명시적인 애플리케이션 입력 변환으로 옮기고, 기본값은 스키마·defaultValue와 폼 load 규칙으로 설정하며, 불필요한 키 제거는 명시적인 애플리케이션 변환으로 처리하십시오. 제출 결과를 시험하고 검증의 폼 값 변경에 의존하지 마십시오. 특히 `removeAdditional`을 켜는 것은 JSON Schema로 추가 키를 거부하는 일을 대신하지 않습니다.
 
-AJV8 기본 인스턴스는 `allowUnionTypes: true`를 설정합니다. 여러 non-null 타입에 대한 strictTypes 로그를 없애지만 union을 만족하는 값의 판정은 바꾸지 않으며 강제 변환을 켜지도 않습니다. 소비자가 바인딩한 인스턴스는 자신의 strict 옵션을 유지하므로 의도적으로 설정하십시오. AJV7의 기본값은 `strict: false`이고 AJV6에는 AJV8의 strictTypes union 경고가 없습니다. [검증기 설정과 dialect 지원](./validation#ajv-configuration)을 입력 선택과 구별하십시오.
+AJV8 기본 인스턴스는 `allowUnionTypes: true`를 설정합니다. null이 아닌 여러 타입에 대한 strictTypes 로그를 없애지만 유니온을 만족하는 값의 판정은 바꾸지 않으며 강제 변환을 켜지도 않습니다. 소비자가 바인딩한 인스턴스는 자신의 strict 옵션을 유지하므로 의도적으로 설정하십시오. AJV7의 기본값은 `strict: false`이고 AJV6에는 AJV8의 strictTypes 유니온 경고가 없습니다. [검증기 설정과 방언 지원](./validation#ajv-configuration)을 입력 선택과 구별하십시오.
 
-## UI 플러그인의 union 입력 {#plugin-unions}
+## UI 플러그인의 유니온 입력 {#plugin-unions}
 
-코어와 UI 플러그인을 함께 올리십시오. 코어 0.16.1과 UI 플러그인 0.16.0에서 `type: ['string', 'number']` 같은 여러 non-null 타입 선언은 스키마 로드에 실패하며, nullable 단일 종류는 여기에 해당하지 않습니다. 현재 엔진은 terminal `UnionNode`를 만듭니다. 공식 UI 플러그인 네 종류 모두 이 union에 단일 종류 입력을 자동 선택하지 않으므로, 더 앞선 union 정의나 경로·인라인 override가 없으면 코어 초안 입력이 처리합니다.
+코어와 UI 플러그인을 함께 올리십시오. 코어 0.16.1과 UI 플러그인 0.16.0에서 `type: ['string', 'number']` 같은 null이 아닌 여러 타입 선언은 스키마 로드에 실패하며, nullable 단일 종류는 여기에 해당하지 않습니다. 현재 엔진은 말단 `UnionNode`를 만듭니다. 공식 UI 플러그인 네 종류 모두 이 유니온에 단일 종류 입력을 자동 선택하지 않으므로, 더 앞선 유니온 정의나 경로·인라인 override가 없으면 코어 초안 입력이 처리합니다.
 
 | UI 플러그인                              | Union 이행                                                                                                                                                           | 유지되는 선택 점검                                                              |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `@canard/schema-form-antd5-plugin`       | 거부되던 여러 종류 스키마나 사용자 우회 처리를 바꾸면서 Ant Design 스타일·타입 선택이 필요하면 명시적 union 입력을 제공하고, 그렇지 않으면 코어 초안을 사용하십시오. | Nullable 문자열은 계속 Ant Design Input, 정수는 InputNumber를 선택합니다.       |
-| `@canard/schema-form-antd6-plugin`       | 같은 union 결정을 명시하십시오. 버전만 올려도 Ant Design 6 입력이 여러 종류 편집기가 되지는 않습니다.                                                                | Nullable 문자열은 계속 Ant Design Input, 정수는 InputNumber를 선택합니다.       |
-| `@canard/schema-form-antd-mobile-plugin` | 모바일 입력·선택 UI가 필요하면 사용자 union 편집기를 제공하십시오. 자동 fallback은 코어 초안입니다.                                                                  | Nullable 문자열은 계속 mobile Input, 정수는 Stepper를 선택합니다.               |
-| `@canard/schema-form-mui-plugin`         | Material UI 표현이 필요하면 사용자 union 편집기를 제공하십시오. 자동 fallback은 코어 초안입니다.                                                                     | Nullable 문자열과 정수는 계속 TextField의 text와 number 입력을 각각 선택합니다. |
+| `@canard/schema-form-antd5-plugin`       | 거부되던 여러 종류 스키마나 사용자 우회 처리를 바꾸면서 Ant Design 스타일·타입 선택이 필요하면 명시적 유니온 입력을 제공하고, 그렇지 않으면 코어 초안을 사용하십시오. | null을 허용하는 문자열은 계속 Ant Design Input, 정수는 InputNumber를 선택합니다.       |
+| `@canard/schema-form-antd6-plugin`       | 같은 유니온 결정을 명시하십시오. 버전만 올려도 Ant Design 6 입력이 여러 종류 편집기가 되지는 않습니다.                                                                | null을 허용하는 문자열은 계속 Ant Design Input, 정수는 InputNumber를 선택합니다.       |
+| `@canard/schema-form-antd-mobile-plugin` | 모바일 입력·선택 UI가 필요하면 사용자 유니온 편집기를 제공하십시오. 자동 폴백은 코어 초안입니다.                                                                  | null을 허용하는 문자열은 계속 모바일 Input, 정수는 Stepper를 선택합니다.               |
+| `@canard/schema-form-mui-plugin`         | Material UI 표현이 필요하면 사용자 유니온 편집기를 제공하십시오. 자동 폴백은 코어 초안입니다.                                                                     | null을 허용하는 문자열과 정수는 계속 TextField의 text와 number 입력을 각각 선택합니다. |
 
-사용자 정의는 [입력 선택 계약](./schema-reference#input-resolution)에 맞춰 옮기십시오. `Hint`는 `FieldInputHint`가 되고, 정수 hint·입력 props는 `type: 'number'`, `schemaType: 'integer'`입니다. `type: 'number'` 시험은 정수도 포함하며 정수만 고르려면 `schemaType: 'integer'`를 사용합니다. 여러 non-null 종류는 `type: 'union'`과 schemaType 배열을 쓰고 `nullable`은 별도입니다. `FieldInputProps`의 `misfit`은 해석 불일치를 알리므로 값을 조용히 복구하지 마십시오. 객체 시험 키는 닫혀 있으며 지원하지 않는 키는 개발 경고와 함께 무시합니다. 알 수 없는 키로 정의가 거부되기를 기대하지 말고 사용자 조건을 predicate로 옮기십시오. `type: 'integer'`는 지원하는 노드 종류 시험이 아닙니다.
+사용자 정의는 [입력 선택 계약](./schema-reference#input-resolution)에 맞춰 옮기십시오. `Hint`는 `FieldInputHint`가 되고, 정수 힌트·입력 속성은 `type: 'number'`, `schemaType: 'integer'`입니다. `type: 'number'` 시험은 정수도 포함하며 정수만 고르려면 `schemaType: 'integer'`를 사용합니다. null이 아닌 여러 종류는 `type: 'union'`과 schemaType 배열을 쓰고 `nullable`은 별도입니다. `FieldInputProps`의 `misfit`은 해석 불일치를 알리므로 값을 조용히 복구하지 마십시오. 객체 시험 키는 닫혀 있으며 지원하지 않는 키는 개발 경고와 함께 무시합니다. 알 수 없는 키로 정의가 거부되기를 기대하지 말고 사용자 조건을 판정 함수로 옮기십시오. `type: 'integer'`는 지원하는 노드 종류 시험이 아닙니다.
 
 ## 나머지 애플리케이션 동작 점검 {#application-audit}
 
-각 항목의 해당 여부를 애플리케이션 테스트로 확인하십시오. import 이름 변경만으로 릴리스 전체 이행이 끝나지는 않습니다.
+각 항목의 해당 여부를 애플리케이션 테스트로 확인하십시오. 가져오기 이름 변경만으로 릴리스 전체 이행이 끝나지는 않습니다.
 
 - null·undefined·빈 문자열·컨테이너, nullable 부모 승격과 배열 교체를 [값 상태](./schema-reference#value-states)에 대조하십시오. `minItems`는 제약이며 제출 항목 생성 약속이 아닙니다. 빈 입력은 undefined를 내고 명시적 null은 의도적인 값입니다. `omitTrailing`은 원시 노드를 지우지 않고 출력을 거르며 `propertyOrder`는 화면이 아닌 출력 키 순서입니다.
-- 시점 가정을 바꾸십시오. `onChange`와 노드 알림은 가장 바깥 쓰기 경계에서 동기적으로 정착합니다. batch와 다시 쓰는 콜백을 시험하고, 임의 microtask를 기다리기보다 [이벤트 리비전과 구독 catch-up](./api-reference#events-hooks)을 사용하십시오.
-- 조건부 조합을 점검하십시오. 게이트 없는 oneOf/anyOf 가지는 모두 형태에 참여하고 검증은 별도입니다. 가지 선택에는 controls 또는 discriminator를 사용하고 if에는 검증기를 제공하며, 공유 속성 충돌·nullable 가지·terminal 전략을 시험하십시오. [조합](./schema-reference#composition)과 [discriminator](./schema-reference#discriminator)를 확인하십시오.
-- Edited/Touched와 `isDivergent`·현재 load 기준값을 구별하십시오. 재진입·루트 교체 때 노드를 다시 얻으십시오. 분리된 노드는 살아 있는 폼에 쓰지 않습니다. 정리 단계의 쓰기는 [비활성 resolver 계약](./api-reference#inactive-listeners)으로 바꾸십시오.
-- 해석된 사용자 입력 잠금과 [접근성 이름 계약](./schema-reference#accessibility)을 사용하십시오. 가지 객체의 로컬 잠금은 자식 전체를 자동 잠그지 않으므로 `controls.fields`나 폼 전체 잠금을 사용합니다. enum 빈 옵션과 radio/checkbox 선택자를 시험하십시오.
+- 시점 가정을 바꾸십시오. `onChange`와 노드 알림은 가장 바깥 쓰기 경계에서 동기적으로 정착합니다. batch와 다시 쓰는 콜백을 시험하고, 임의 마이크로태스크를 기다리기보다 [이벤트 리비전과 구독 따라잡기](./api-reference#events-hooks)을 사용하십시오.
+- 조건부 조합을 점검하십시오. 게이트 없는 oneOf/anyOf 분기는 모두 형태에 참여하고 검증은 별도입니다. 분기 선택에는 controls 또는 discriminator를 사용하고 if에는 검증기를 제공하며, 공유 속성 충돌·nullable 분기·말단 전략을 시험하십시오. [조합](./schema-reference#composition)과 [discriminator](./schema-reference#discriminator)를 확인하십시오.
+- Edited/Touched와 `isDivergent`·현재 load 기준값을 구별하십시오. 재진입·루트 교체 때 노드를 다시 얻으십시오. 분리된 노드는 살아 있는 폼에 쓰지 않습니다. 정리 단계의 쓰기는 [비활성 해석기 계약](./api-reference#inactive-listeners)으로 바꾸십시오.
+- 해석된 사용자 입력 잠금과 [접근성 이름 계약](./schema-reference#accessibility)을 사용하십시오. 분기 객체의 로컬 잠금은 자식 전체를 자동 잠그지 않으므로 `controls.fields`나 폼 전체 잠금을 사용합니다. enum 빈 옵션과 radio/checkbox 선택자를 시험하십시오.
 - 스키마·설정을 불변으로 유지하고 구독을 정리하며, degraded 진단·실행 실패와 원시 검증 오류를 구별하고, 표현식 controls 배포 전에 [CSP 요구사항](./quick-start#transpilation-csp)을 검증하십시오.
 
 ## 렌더러 부품과 입력 오류 피드백 {#renderer-parts}
 
-호환성이 깨지는 변경입니다. Form·FormProvider props와 플러그인 멤버를 함께 바꾸고 전용 props 형을 @canard/schema-form에서 가져오십시오. 옛 등록 키는 실행 중 오류 없이 무시됩니다. TypeScript는 객체 리터럴과 JSX props의 옛 키를 거절하지만, 이전 플러그인 패키지에서 받은 객체처럼 다른 곳에서 형이 정해진 플러그인 객체는 여전히 컴파일되며 옛 키는 무시됩니다. 렌더가 성공해도 옛 키가 적용됐다는 뜻은 아닙니다. registerPlugin 등록 실패 메시지는 플러그인의 슬롯을 새 이름으로 나열합니다.
+호환성이 깨지는 변경입니다. Form·FormProvider 속성과 플러그인 멤버를 함께 바꾸고 전용 속성 형을 @canard/schema-form에서 가져오십시오. 옛 등록 키는 실행 중 오류 없이 무시됩니다. TypeScript는 객체 리터럴과 JSX 속성의 옛 키를 거절하지만, 이전 플러그인 패키지에서 받은 객체처럼 다른 곳에서 형이 정해진 플러그인 객체는 여전히 컴파일되며 옛 키는 무시됩니다. 렌더가 성공해도 옛 키가 적용됐다는 뜻은 아닙니다. registerPlugin 등록 실패 메시지는 플러그인의 슬롯을 새 이름으로 나열합니다.
 
 | 이전 이름 | 현재 이름 / 계약 |
 | --- | --- |
@@ -255,7 +256,7 @@ registerPlugin({ LabelRenderer: Label });
 <Form.ErrorMessage path="/name" />
 ```
 
-실제 입력은 errors/errorVisible props를 받지 않으며 보류된 Refresh가 없을 때 오류만 바뀌어도 다시 렌더하지 않습니다. 피드백이 필요하면 useFieldErrors를 가져와 요청하십시오. 다음 발췌는 피드백만 바꾸므로 실제 입력과 onChange는 유지하십시오.
+실제 입력은 errors/errorVisible 속성을 받지 않으며 보류된 Refresh가 없을 때 오류만 바뀌어도 다시 렌더링하지 않습니다. 피드백이 필요하면 useFieldErrors를 가져와 요청하십시오. 다음 발췌는 피드백만 바꾸므로 실제 입력과 onChange는 유지하십시오.
 
 ```tsx
 // 변경 전
@@ -272,7 +273,7 @@ const Input = ({ node }: FieldInputProps) => {
 };
 ```
 
-사용자 입력의 구조 분해·멤버 읽기·props payload 전체에서 `errors`와 `errorVisible`을 검색하십시오(예: `rg "errors|errorVisible" src`). @deprecated optional-never 키는 errors.map 같은 멤버 접근과 값 전달을 막지만 `if (errorVisible)` 같은 단순 진리값 검사는 컴파일되어 undefined를 읽을 수 있습니다. 타입 검사만으로 이전을 끝낼 수 없습니다. 훅의 한계와 소유권은 [useFieldErrors](./api-reference#field-errors)를 참조하십시오.
+사용자 입력의 구조 분해·멤버 읽기·속성 페이로드 전체에서 `errors`와 `errorVisible`을 검색하십시오(예: `rg "errors|errorVisible" src`). @deprecated 선택적 never 키는 errors.map 같은 멤버 접근과 값 전달을 막지만 `if (errorVisible)` 같은 단순 진리값 검사는 컴파일되어 undefined를 읽을 수 있습니다. 타입 검사만으로 이전을 끝낼 수 없습니다. 훅의 한계와 소유권은 [useFieldErrors](./api-reference#field-errors)를 참조하십시오.
 
 기본 그룹은 문구가 없으면 빈 em을 그리지 않습니다. 따라서 `[data-path="/branch"] em`은 자손의 문구를 집을 수 있으므로 문구 요소의 가장 가까운 data-path가 원하는 필드인지 확인하십시오. 기본 그룹은 필수가 아닌 라벨의 끝 공백을 없애고 기존 필수 별표에 aria-hidden을 적용합니다. 단독 기본 Form.Label에도 같은 별표가 표시됩니다. Form.Label은 명시적인 내용용 children을 받습니다. 다음 발췌는 다른 속성과 입력 마크업을 생략합니다. 문구가 없는 그룹 라벨·오류의 마크업입니다:
 

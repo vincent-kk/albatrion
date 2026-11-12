@@ -41,7 +41,7 @@ describe('explicit pattern grammar and recipes', () => {
   });
   it('reports a compile failure through the existing map error code', () => {
     expect(() => matches('^/invalid[', '/invalid[')).toThrow(
-      expect.objectContaining({ code: FormErrorCode.FormTypeInputMap }),
+      expect.objectContaining({ code: FormErrorCode.FieldInputMap }),
     );
   });
   it('a slash-bounded prefix selects descendants at any depth but not the node', () => {

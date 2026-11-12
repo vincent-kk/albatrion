@@ -36,7 +36,7 @@ export const FormWarningCode = {
   /** Class: warning record; when: a development-mode whole value is not JSON-compatible. */
   NonJsonWholeValue: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.NonJsonWholeValue}`,
   /** Class: warning record; when: an input definition test object has an unknown key. */
-  FormTypeTestInvalid: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.FormTypeTestInvalid}`,
+  FieldInputTestInvalid: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.FieldInputTestInvalid}`,
   /** Class: warning record; when: a value cannot be converted to the active type unambiguously. */
   Misfit: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.Misfit}`,
   /** Class: warning record; when: a schema dialect differs from the selected validator dialect. */

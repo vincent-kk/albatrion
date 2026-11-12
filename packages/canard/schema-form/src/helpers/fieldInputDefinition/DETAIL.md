@@ -19,7 +19,7 @@
 - 정규식은 escaped 노드 경로를 검사하며 작성자가 지정한 anchor를 유지합니다. 맵은 `Object.keys` 순서의 첫 일치가 우선이고, 구체적인 경로라는 이유로 순서를 바꾸지 않습니다.
 - 정확 키는 절대 포인터일 때만 포인터 헬퍼로 한 번 표준화하여 같은 이름의 wildcard 비교와 일치시킵니다. 상대 키를 조립하면 작성하지 않은 선행 `/`가 생기므로 상대 텍스트는 그대로 비교합니다. 해석 시에는 문자열 비교 하나만 하며 정규식을 생성하거나 실행하지 않습니다.
 - `**`와 정규식처럼 보이는 비패턴 키는 리터럴입니다. 일치하지 않는 키는 조용히 무시하며 개발 경고나 별도 오류를 만들지 않습니다. 키의 의도를 추측해 진단하면 합법적인 속성 이름까지 잘못된 설정으로 취급하기 때문입니다.
-- `^` 맵 패턴 컴파일이 실패하면 `FormErrorCode.FormTypeInputMap`을 던집니다. 이를 유효하지 않은 입력 정의처럼 건너뛰면 잘못된 맵을 정상 폴백으로 오인하므로, 구성 오류의 보관과 확정 로드 보고는 [FieldInputsContext 계약](../../providers/FieldInputsContext/DETAIL.md)에 맡깁니다.
+- `^` 맵 패턴 컴파일이 실패하면 `FormErrorCode.FieldInputMap`을 던집니다. 이를 유효하지 않은 입력 정의처럼 건너뛰면 잘못된 맵을 정상 폴백으로 오인하므로, 구성 오류의 보관과 확정 로드 보고는 [FieldInputsContext 계약](../../providers/FieldInputsContext/DETAIL.md)에 맡깁니다.
 
 ## Acceptance Criteria
 
@@ -49,7 +49,7 @@
 
 ### REACT-033 — 잘못된 시험을 진단하되 자유 키로 넓히지 않습니다
 
-- 객체 시험의 모르는 키는 비교에서 빼고 `type: 'integer'`와 함께 개발 모드 `FormTypeTestInvalid` 경고로 알립니다. 허용 키에는 `inputType`이 있고 `misfit`은 없으므로, 값의 무효 상태를 객체 시험의 선택 축으로 삼지 않습니다.
+- 객체 시험의 모르는 키는 비교에서 빼고 `type: 'integer'`와 함께 개발 모드 `FieldInputTestInvalid` 경고로 알립니다. 허용 키에는 `inputType`이 있고 `misfit`은 없으므로, 값의 무효 상태를 객체 시험의 선택 축으로 삼지 않습니다.
 - 경고는 정의 객체마다 한 번이며 프로덕션에서는 내지 않습니다. 모르는 키만 있으면 비교 조건이 비어 모든 Hint에 맞으므로, 경고를 정의 제외나 안전한 비매칭으로 해석하지 않습니다.
 
 ### form-type-input-definition-contract — 입력 해석 지점에서 한 번 격리합니다

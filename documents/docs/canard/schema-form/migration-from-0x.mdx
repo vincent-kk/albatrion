@@ -85,6 +85,7 @@ Use the [authoring groups](./schema-reference#authoring-groups) for library sett
 | `useSchemaNodeSubscribe`                 | `useFieldNodeSubscribe`             |
 | `SchemaNodeSubscribeOptions`             | `FieldNodeSubscribeOptions`         |
 | `JSONSchemaError (issue type)`           | `ValidationIssue`                   |
+| `SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP`  | `FormErrorCode.FieldInputMap`            |
 
 Replace mixed-case schema aliases with `JSONSchema` and `InferJSONSchema`. For renderer props supplied to custom inputs, follow the [composition contract](./api-reference#composition): there is no automatically supplied FieldInputProps.FieldRenderer.
 
@@ -140,7 +141,7 @@ Remove Form key changes used only to apply configuration, after checking the lif
 
 `Form.Field`, `Form.Input`, and `Form.Render` have their own mount-fixed component/children overrides. For those overrides, use live context, hooks inside the component, or a deliberate new key; the Form-wide live settings do not change this [composition contract](./schema-reference#input-resolution).
 
-An uncompilable explicit pattern such as `^/invalid[` reports `FormErrorCode.FormTypeInputMap` with `origin: 'load'` once after commit, including StrictMode. An initial failure keeps the load fallback; a failed live replacement keeps the tree and last valid map. Replace the map with a valid reference to recover. An input component throwing during render remains a render failure; do not classify it by the thrown code alone.
+An uncompilable explicit pattern such as `^/invalid[` reports `FormErrorCode.FieldInputMap` with `origin: 'load'` once after commit, including StrictMode. An initial failure keeps the load fallback; a failed live replacement keeps the tree and last valid map. Replace the map with a valid reference to recover. An input component throwing during render reports a render failure; do not classify it by the thrown code alone.
 
 ## Input-map keys {#input-map-keys}
 

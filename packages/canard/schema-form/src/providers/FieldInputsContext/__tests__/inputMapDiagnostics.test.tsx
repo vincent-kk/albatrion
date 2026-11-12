@@ -44,10 +44,10 @@ it.each([false, true])(
     expect(onError).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         level: 'error',
-        code: FormErrorCode.FormTypeInputMap,
+        code: FormErrorCode.FieldInputMap,
         origin: 'load',
         error: expect.objectContaining({
-          code: FormErrorCode.FormTypeInputMap,
+          code: FormErrorCode.FieldInputMap,
           details: expect.objectContaining({ path: '^/**' }),
         }),
       }),
@@ -62,7 +62,7 @@ it.each([false, true])(
   'keeps a throwing user input as a render failure (StrictMode=%s)',
   (strict) => {
     const error = new SchemaFormError(
-      FormErrorCode.FormTypeInputMap,
+      FormErrorCode.FieldInputMap,
       'User input threw during render',
       { path: '/name' },
     );

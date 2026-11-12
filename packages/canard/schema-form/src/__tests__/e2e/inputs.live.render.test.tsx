@@ -174,7 +174,7 @@ it.each([false, true])(
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        code: FormErrorCode.FormTypeInputMap,
+        code: FormErrorCode.FieldInputMap,
         origin: 'load',
       }),
     );
