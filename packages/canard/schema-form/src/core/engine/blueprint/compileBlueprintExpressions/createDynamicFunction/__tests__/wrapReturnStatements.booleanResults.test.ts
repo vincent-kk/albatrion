@@ -18,7 +18,7 @@ describe('wrapReturnStatements', () => {
 
       truthyExpressions.forEach((expr) => {
         const result = wrapReturnStatements(expr);
-        expect(result).toMatch(/return !!\(.+\);/);
+        expect(new Function(result)()).toBe(true);
       });
     });
 
@@ -35,7 +35,7 @@ describe('wrapReturnStatements', () => {
 
       falsyExpressions.forEach((expr) => {
         const result = wrapReturnStatements(expr);
-        expect(result).toMatch(/return !!\(.+\);/);
+        expect(new Function(result)()).toBe(false);
       });
     });
   });

@@ -1,35 +1,33 @@
-import { describe, expect, it } from 'vitest';
+import { expectBooleanBody } from './fixtures/expectBooleanBody';
+import { describe, it } from 'vitest';
 
 import { wrapReturnStatements } from '../utils/wrapReturnStatements';
 
 describe('wrapReturnStatements', () => {
   describe('whitespace handling', () => {
     it('should trim expression value', () => {
-      expect(wrapReturnStatements('return   value  ;')).toBe(
-        'return !!(value);',
-      );
+      expectBooleanBody('return   value  ;', wrapReturnStatements('return   value  ;'));
     });
 
     it('should handle multiple spaces after return', () => {
-      expect(wrapReturnStatements('return    x;')).toBe('return !!(x);');
+      expectBooleanBody('return    x;', wrapReturnStatements('return    x;'));
     });
 
     it('should handle tab after return', () => {
-      expect(wrapReturnStatements('return\tx;')).toBe('return !!(x);');
+      expectBooleanBody('return\tx;', wrapReturnStatements('return\tx;'));
     });
 
     it('should handle mixed tabs and spaces', () => {
-      expect(wrapReturnStatements('return \t  \t x;')).toBe('return !!(x);');
+      expectBooleanBody('return \t  \t x;', wrapReturnStatements('return \t  \t x;'));
     });
 
     it('should preserve indentation before return', () => {
-      expect(wrapReturnStatements('  return x;')).toBe('  return !!(x);');
+      expectBooleanBody('  return x;', wrapReturnStatements('  return x;'));
     });
 
     it('should handle multiline with proper indentation', () => {
       const input = '  if (a) {\n    return x;\n  }';
-      const expected = '  if (a) {\n    return !!(x);\n  }';
-      expect(wrapReturnStatements(input)).toBe(expected);
+      expectBooleanBody(input, wrapReturnStatements(input));
     });
   });
 });
