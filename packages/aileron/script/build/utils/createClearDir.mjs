@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 /** @type {(callerUrl: string) => (dir: string) => void} */
 export const createClearDir = (callerUrl) => (dir) => {
-  // 입력 검증
+
   if (!dir) throw new Error('Directory name is required');
 
   if (typeof dir !== 'string')

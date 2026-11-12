@@ -12,7 +12,7 @@ export default async () => {
   clearDir('dist');
 
   return [
-    // ESM 단일 번들
+
     await bundleBuildOptions({
       entry: mainEntry.source,
       format: 'esm',
@@ -20,7 +20,7 @@ export default async () => {
       sourcemap: false,
       minify: false,
     }),
-    // CJS 단일 번들
+
     await bundleBuildOptions({
       entry: mainEntry.source,
       format: 'cjs',

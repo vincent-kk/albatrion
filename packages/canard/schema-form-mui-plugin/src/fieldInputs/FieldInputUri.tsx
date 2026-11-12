@@ -33,28 +33,28 @@ interface FieldInputUriProps
 
 const DEFAULT_PROTOCOLS = ['http', 'https'];
 
-// 프로토콜 정규화: '://' 또는 ':' 제거하여 순수 프로토콜명으로 변환
+
 const normalizeProtocol = (protocol: string): string => {
   return protocol.replace(/:\/\/$/, '').replace(/:$/, '');
 };
 
-// 프로토콜별 구분자 결정
+
 const getProtocolSeparator = (protocol: string): string => {
   const normalizedProtocol = normalizeProtocol(protocol);
-  // mailto, tel 등은 ':' 사용, 나머지는 '://' 사용
+
   return ['mailto', 'tel'].includes(normalizedProtocol) ? ':' : '://';
 };
 
-// 표시용 프로토콜 문자열 생성
+
 const formatProtocolDisplay = (protocol: string): string => {
   const normalizedProtocol = normalizeProtocol(protocol);
   const separator = getProtocolSeparator(normalizedProtocol);
   return `${normalizedProtocol}${separator}`;
 };
 
-// URI 파싱용 정규식 (mailto: 형태와 http:// 형태 모두 지원)
+
 const parseUri = (uri: string) => {
-  // mailto:, tel: 등 단일 콜론 형태
+
   const singleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(.*)$/);
   if (singleColonMatch && ['mailto', 'tel'].includes(singleColonMatch[1])) {
     return {
@@ -63,7 +63,7 @@ const parseUri = (uri: string) => {
     };
   }
 
-  // http://, https:// 등 더블 콜론 형태
+
   const doubleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
   if (doubleColonMatch) {
     return {
@@ -117,19 +117,19 @@ const FieldInputUri = ({
     hideLabel,
   ]);
 
-  // 프로토콜 배열 정규화 및 준비
+
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocolsProp || DEFAULT_PROTOCOLS;
     return rawProtocols.map(normalizeProtocol);
   }, [protocolsProp]);
 
-  // TextField 참조를 위한 ref
+
   const textFieldRef = useRef<HTMLInputElement>(null);
 
-  // 프로토콜만 내부 상태로 관리, URI는 비제어 컴포넌트로 유지
+  // Only the protocol is stateful; the URI input remains uncontrolled.
   const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
 
-  // defaultValue에서 초기 프로토콜과 URI 추출
+
   const { initialProtocol, initialUri } = useMemo(() => {
     if (typeof defaultValue !== 'string' || !defaultValue) {
       return {
@@ -155,7 +155,7 @@ const FieldInputUri = ({
     };
   }, [defaultValue, normalizedProtocols]);
 
-  // 초기 프로토콜 설정
+
   useEffect(() => {
     setProtocol(initialProtocol);
   }, [initialProtocol]);
@@ -163,7 +163,7 @@ const FieldInputUri = ({
   const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
     const newProtocol = event.target.value;
     setProtocol(newProtocol);
-    // 현재 TextField에 입력된 값을 ref로 읽어오기
+
     const currentUri = textFieldRef.current?.value || '';
     const separator = getProtocolSeparator(newProtocol);
     const newValue = currentUri

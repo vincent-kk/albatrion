@@ -24,10 +24,10 @@ const REMOVE_TRAILING_SEMICOLON = /;\s*$/g;
 export const compressCss = (css: string): string => {
   if (!css || css.length === 0) return '';
   return css
-    .replace(/\/\*[\s\S]*?\*\//g, '') // 주석 제거
-    .replace(/\s+/g, ' ') // 공백 압축
-    .replace(/\s*([{}:;,>+~])\s*/g, '$1') // 특수문자 주변 공백 제거
-    .replace(/;+/g, ';') // 중복 세미콜론 제거
-    .replace(/;\s*}/g, '}') // }앞 세미콜론 제거
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+    .replace(/;+/g, ';')
+    .replace(/;\s*}/g, '}')
     .trim();
 };

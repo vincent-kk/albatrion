@@ -121,9 +121,9 @@ export const getArrayData = (size: number): unknown[] => {
   const result: unknown[] = [];
 
   for (let i = 0; i < size; i++) {
-    // 대부분은 숫자 또는 문자열
+
     if (i % 100 === 0) {
-      // 특이한 타입 삽입
+
       switch (i % 700) {
         case 0:
           result.push(null);
@@ -151,7 +151,7 @@ export const getArrayData = (size: number): unknown[] => {
           break;
       }
     } else {
-      // 일반적인 타입
+
       result.push(i % 2 === 0 ? i : `str-${i}`);
     }
   }
@@ -160,7 +160,7 @@ export const getArrayData = (size: number): unknown[] => {
 };
 
 export const mixedData = {
-  // 기본 배열
+
   numbers: Array.from({ length: 1000 }, (_, i) => i),
   strings: Array.from({ length: 1000 }, (_, i) => `string-${i}`),
 
@@ -174,7 +174,7 @@ export const mixedData = {
   float32Array: new Float32Array(1000),
   float64Array: new Float64Array(1000),
 
-  // Date 객체
+
   dates: Array.from(
     { length: 100 },
     (_, i) => new Date(Date.now() + i * 86400000),
@@ -208,7 +208,7 @@ export const mixedData = {
   // File/Blob
   blob: new Blob(['Hello, World!'.repeat(100)], { type: 'text/plain' }),
 
-  // Error 객체들
+
   errors: [
     new Error('Standard Error'),
     new TypeError('Type Error'),
@@ -217,7 +217,7 @@ export const mixedData = {
     new SyntaxError('Syntax Error'),
   ],
 
-  // 중첩된 객체
+
   nested: {
     level1: {
       level2: {
@@ -239,7 +239,7 @@ export const mixedData = {
     },
   },
 
-  // 순환 참조
+
   circular: (() => {
     const circular = {
       self: null as any,

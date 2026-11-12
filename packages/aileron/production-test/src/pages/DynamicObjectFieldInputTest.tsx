@@ -164,7 +164,7 @@ const CustomObjectFieldInput = ({
     );
   }, [defaultValue, layoutMode]);
 
-  // 각 필드별 컴포넌트를 메모이제이션하여 안정적으로 유지
+
   const fieldComponents = useMemo(() => {
     const components: Partial<Record<keyof Value, ReactNode>> = {};
     Object.keys(ChildNodeMap).forEach((field) => {
@@ -192,7 +192,7 @@ const CustomObjectFieldInput = ({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      {/* 레이아웃 컨트롤 */}
+      {}
       <div
         style={{
           padding: "16px",
@@ -261,7 +261,7 @@ const CustomObjectFieldInput = ({
         </div>
       </div>
 
-      {/* 레이아웃별 필드 렌더링 */}
+      {}
       {layoutMode === "grid" ? (
         <div
           style={{

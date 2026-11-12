@@ -5,14 +5,14 @@ export const jsonSchema = {
   additionalProperties: false,
   required: ["marketplace", "analytics", "system"],
   properties: {
-    // 레벨 1: 마켓플레이스 데이터
+
     marketplace: {
       type: "object",
       description: "마켓플레이스 전체 정보",
       additionalProperties: false,
       required: ["stores", "categories", "campaigns"],
       properties: {
-        // 레벨 2: 스토어들
+
         stores: {
           type: "array",
           description: "플랫폼 내 스토어 목록",
@@ -76,7 +76,7 @@ export const jsonSchema = {
                               pattern: "^\\+?[1-9]\\d{1,14}$",
                               default: "+1234567890",
                             },
-                            // 레벨 6: 전화번호 검증 기록
+
                             verification: {
                               type: "object",
                               description: "번호 검증 상태",
@@ -105,7 +105,7 @@ export const jsonSchema = {
                   },
                 },
               },
-              // 레벨 3: 제품들
+
               products: {
                 type: "array",
                 description: "스토어 제품 목록",
@@ -127,7 +127,7 @@ export const jsonSchema = {
                       maxLength: 200,
                       default: "Premium Wireless Headphones",
                     },
-                    // 레벨 4: 가격 정보
+
                     pricing: {
                       type: "object",
                       description: "제품 가격 정보",
@@ -145,7 +145,7 @@ export const jsonSchema = {
                           pattern: "^[A-Z]{3}$",
                           default: "USD",
                         },
-                        // 레벨 5: 할인 정보
+
                         discounts: {
                           type: "array",
                           minItems: 1,
@@ -171,7 +171,7 @@ export const jsonSchema = {
                                 minimum: 0,
                                 default: 15,
                               },
-                              // 레벨 6: 할인 조건
+
                               conditions: {
                                 type: "object",
                                 description: "할인 적용 조건",
@@ -208,14 +208,14 @@ export const jsonSchema = {
                         },
                       },
                     },
-                    // 레벨 4: 재고 정보
+
                     inventory: {
                       type: "object",
                       description: "재고 관리 정보",
                       additionalProperties: false,
                       required: ["warehouses"],
                       properties: {
-                        // 레벨 5: 창고별 재고
+
                         warehouses: {
                           type: "array",
                           description: "창고별 재고 현황",
@@ -259,7 +259,7 @@ export const jsonSchema = {
                                         maximum: 180,
                                         default: -122.4194,
                                       },
-                                      // 레벨 6: 위치 정확도 정보
+
                                       accuracy: {
                                         type: "object",
                                         description: "좌표 정확도 정보",
@@ -306,7 +306,7 @@ export const jsonSchema = {
                                     minimum: 0,
                                     default: 5,
                                   },
-                                  // 레벨 6: 재고 히스토리
+
                                   history: {
                                     type: "array",
                                     minItems: 1,
@@ -360,7 +360,7 @@ export const jsonSchema = {
             },
           },
         },
-        // 레벨 2: 카테고리 분류
+
         categories: {
           type: "array",
           description: "제품 카테고리 계층구조",
@@ -402,7 +402,7 @@ export const jsonSchema = {
             },
           },
         },
-        // 레벨 2: 마케팅 캠페인
+
         campaigns: {
           type: "array",
           description: "진행중인 마케팅 캠페인",
@@ -421,14 +421,14 @@ export const jsonSchema = {
                 type: "string",
                 default: "Holiday Sale 2024",
               },
-              // 레벨 3: 타겟 설정
+
               targets: {
                 type: "object",
                 description: "캠페인 타겟 설정",
                 additionalProperties: false,
                 required: ["demographics"],
                 properties: {
-                  // 레벨 4: 인구통계학적 타겟
+
                   demographics: {
                     type: "object",
                     description: "타겟 인구통계",
@@ -443,7 +443,7 @@ export const jsonSchema = {
                           max: { type: "integer", maximum: 120, default: 65 },
                         },
                       },
-                      // 레벨 5: 관심사 기반 세분화
+
                       interests: {
                         type: "array",
                         description: "관심사 카테고리",
@@ -469,7 +469,7 @@ export const jsonSchema = {
                               maximum: 1,
                               default: 0.8,
                             },
-                            // 레벨 6: 관심사 세부 키워드
+
                             keywords: {
                               type: "array",
                               description: "관련 키워드 목록",
@@ -508,14 +508,14 @@ export const jsonSchema = {
         },
       },
     },
-    // 레벨 1: 분석 데이터
+
     analytics: {
       type: "object",
       description: "플랫폼 분석 정보",
       additionalProperties: false,
       required: ["metrics", "reports"],
       properties: {
-        // 레벨 2: 메트릭스
+
         metrics: {
           type: "object",
           description: "주요 성과 지표",
@@ -536,7 +536,7 @@ export const jsonSchema = {
             },
           },
         },
-        // 레벨 2: 리포트
+
         reports: {
           type: "array",
           description: "생성된 분석 리포트",
@@ -561,7 +561,7 @@ export const jsonSchema = {
         },
       },
     },
-    // 레벨 1: 시스템 정보
+
     system: {
       type: "object",
       description: "시스템 메타데이터",

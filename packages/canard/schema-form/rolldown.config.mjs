@@ -31,7 +31,7 @@ export default async () => {
   });
 
   return [
-    // ESM 단일 번들
+
     await bundleBuildOptions({
       entry: mainEntry.source,
       format: 'esm',

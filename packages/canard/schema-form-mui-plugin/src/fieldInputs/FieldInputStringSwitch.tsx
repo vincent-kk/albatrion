@@ -13,7 +13,7 @@ import type {
 import type { MuiContext } from '../type';
 
 type StringSwitchJSONSchema = StringSchema & {
-  enum: [string | null, string | null]; // 정확히 2개의 값만 허용
+  enum: [string | null, string | null];
   switchSize?: 'small' | 'medium';
   switchLabels?: [string, string];
   hideLabel?: boolean;
