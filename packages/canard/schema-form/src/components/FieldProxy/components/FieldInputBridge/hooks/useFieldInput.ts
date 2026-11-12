@@ -31,6 +31,8 @@ export const useFieldInput = (
   const { fromExternalFieldInputDefinitions } = useExternalInputContext();
   const schema = node.jsonSchema as JSONSchema;
   const path = node.path;
+  const misfit = node.isMisfit;
+  const required = node.isRequired;
   const inline = schema.presentation?.FieldInput;
   const Inline = useMemo(
     () =>
@@ -45,9 +47,9 @@ export const useFieldInput = (
     const hint: FieldInputHint = {
       type: node.type,
       schemaType: node.schemaType,
-      misfit: node.isMisfit,
+      misfit,
       path,
-      required: node.isRequired,
+      required,
       nullable: node.nullable,
       jsonSchema: schema,
       format: typeof schema.format === 'string' ? schema.format : undefined,
@@ -66,6 +68,8 @@ export const useFieldInput = (
     node,
     schema,
     path,
+    misfit,
+    required,
     disabled,
     inline,
     Inline,
