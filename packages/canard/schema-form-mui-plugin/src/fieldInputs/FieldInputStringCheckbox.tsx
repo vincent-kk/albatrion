@@ -10,22 +10,19 @@ import type {
   ArraySchema,
   FieldInputDefinition,
   FieldInputPropsWithSchema,
+  StringSchema,
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
 
 type StringCheckboxJSONSchema = ArraySchema & {
   type: 'array';
-  items: {
-    type: 'string';
-    enum: string[];
-    nullable: false;
-  };
+  items: StringSchema;
 };
 
 interface FieldInputStringCheckboxProps
   extends FieldInputPropsWithSchema<
-      string[],
+      Array<string | null>,
       StringCheckboxJSONSchema,
       MuiContext
     >,
@@ -60,11 +57,11 @@ const FieldInputStringCheckbox = ({
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];
     return enumValues.map((rawValue) => {
-      const value = '' + rawValue;
+      const value = JSON.stringify(rawValue);
       return {
         value,
         rawValue,
-        label: alias?.[value] || value,
+        label: alias?.['' + rawValue] || '' + rawValue,
       };
     });
   }, [jsonSchema, alias]);
@@ -72,7 +69,7 @@ const FieldInputStringCheckbox = ({
   const [value, setValue] = useState<string[]>(() =>
     isArray(defaultValue) &&
     defaultValue.every((v) => v === null || typeof v === 'string')
-      ? defaultValue.map((v) => '' + v)
+      ? defaultValue.map((v) => JSON.stringify(v))
       : [],
   );
 
@@ -88,7 +85,7 @@ const FieldInputStringCheckbox = ({
     }
 
     setValue(newValues);
-    onChange(newValues);
+    onChange(newValues.map((token) => options.find((option) => option.value === token)?.rawValue).filter((rawValue) => rawValue !== undefined));
   });
 
   return (

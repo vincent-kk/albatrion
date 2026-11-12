@@ -38,3 +38,5 @@ The plugin exports a `SchemaFormPlugin` object:
 ## Peer Dependencies
 
 `@canard/schema-form`, `antd-mobile`, `dayjs`, React
+
+Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.

@@ -51,8 +51,8 @@ const FieldInputStringEnum = ({
   const options = useMemo(() => {
     return schema.enum
       ? map(schema.enum, (rawValue) => {
-          const value = '' + rawValue;
-          return { value, rawValue, label: alias?.['' + value] || value };
+          const value = JSON.stringify(rawValue);
+          return { value, rawValue, label: alias?.['' + rawValue] || '' + rawValue };
         })
       : [];
   }, [alias, schema]);
@@ -72,10 +72,10 @@ const FieldInputStringEnum = ({
       return defaultValue.every(
         (value) => value === null || typeof value === 'string',
       )
-        ? defaultValue.map((value) => '' + value)
+        ? defaultValue.map((value) => JSON.stringify(value))
         : undefined;
     return defaultValue === null || typeof defaultValue === 'string'
-      ? '' + defaultValue
+      ? JSON.stringify(defaultValue)
       : undefined;
   }, [defaultValue]);
 

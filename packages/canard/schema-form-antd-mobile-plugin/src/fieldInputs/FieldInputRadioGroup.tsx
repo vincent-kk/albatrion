@@ -39,11 +39,11 @@ const FieldInputRadioGroup = ({
     const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
       ? map(jsonSchema.enum, (rawValue: string | number | null) => {
-          const value = '' + rawValue;
+          const value = JSON.stringify(rawValue);
           return {
             value,
             rawValue,
-            label: labels[value] || value,
+            label: labels['' + rawValue] || '' + rawValue,
           };
         })
       : [];

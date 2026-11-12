@@ -33,3 +33,5 @@ Components are selected automatically from the `type`, `format`, `inputType`, an
 `@canard/schema-form`, `@mui/material ^7`, `@mui/x-date-pickers ^8`, `@mui/icons-material ^7`, `@emotion/react`, `@emotion/styled`, `dayjs`, React
 
 Date, month and time pickers receive both disabled and readOnly from the form binding, including later lock changes. MUI owns the read-only interaction behavior.
+
+Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.

@@ -71,11 +71,11 @@ const FieldInputStringEnum = ({
   const options = useMemo(
     () =>
       jsonSchema.enum?.map((rawValue) => {
-        const value = '' + rawValue;
+        const value = JSON.stringify(rawValue);
         return {
           value,
           rawValue,
-          label: alias?.[value] || value,
+          label: alias?.['' + rawValue] || '' + rawValue,
         };
       }) || [],
     [jsonSchema, alias],
@@ -92,8 +92,8 @@ const FieldInputStringEnum = ({
   const labelId = useMemo(() => `label-${path}`, [path]);
 
   const initialValue = useMemo(() => {
-    if (defaultValue === null) return '' + null;
-    if (typeof defaultValue === 'string') return defaultValue;
+    if (defaultValue === null) return JSON.stringify(null);
+    if (typeof defaultValue === 'string') return JSON.stringify(defaultValue);
     return undefined;
   }, [defaultValue]);
 
