@@ -4,10 +4,12 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import ts from 'typescript';
 
+import { getDeclarationEntries } from './utils/getDeclarationEntries.mjs';
+
 const packageDir = process.cwd();
 const manifest = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
-const entries = Object.entries(manifest.exports).filter(([, target]) => target.types);
-if (!entries.length) throw new Error(`${manifest.name}: no typed public exports found`);
+const { entries, blocked } = getDeclarationEntries(manifest);
+for (const key of blocked) console.log(`${manifest.name}: blocked export ${key}`);
 
 const scratch = mkdtempSync(join(tmpdir(), 'declaration-consumer-'));
 try {
