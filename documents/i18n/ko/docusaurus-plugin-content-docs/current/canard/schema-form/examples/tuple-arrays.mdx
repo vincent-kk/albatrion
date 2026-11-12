@@ -1,17 +1,17 @@
 ---
-sidebar_label: 'tuple 배열'
+sidebar_label: '튜플 배열'
 sidebar_position: 10
 ---
 
 import LazyDemo from '@site/src/components/LazyDemo';
 
-# tuple 배열
+# 튜플 배열 {#tuple-배열}
 
-Draft 2020-12 tuple은 prefixItems로 위치별 schema를 지정합니다. 검증기는 해당 dialect를 지원해야 합니다. 이 데모는 Antd6의 기본 배열 입력과 2020 검증기를 사용하며 Add 동작으로 항목을 만듭니다. 항목 생성과 UI 슬롯의 차이는 [배열 데이터와 UI](../core-concepts#arrays)를 참조하십시오.
+Draft 2020-12 튜플은 prefixItems로 위치별 스키마를 지정합니다. 검증기는 해당 방언을 지원해야 합니다. 이 데모는 Antd6의 기본 배열 입력과 2020 검증기를 사용하며 Add 동작으로 항목을 만듭니다. 항목 생성과 UI 슬롯의 차이는 [배열 데이터와 UI](../core-concepts#arrays)를 참조하십시오.
 
 튜플 값 추론과 정적 길이 검사의 한계는 [TypeScript 추론](../api-reference#typescript)을 참조하십시오.
 
-## dialect 선택 {#validator}
+## 방언 선택 {#validator}
 
 ```ts
 import { registerPlugin } from '@canard/schema-form';
@@ -20,7 +20,7 @@ import { plugin } from '@canard/schema-form-ajv8-plugin/2020';
 registerPlugin(plugin);
 ```
 
-2020 진입점 또는 해당 dialect를 지원하는 완전한 검증기를 사용하십시오. 패키지 선택과 기본값은 [검증](../validation#ajv-entries)에 있습니다.
+2020 진입점 또는 해당 방언을 지원하는 완전한 검증기를 사용하십시오. 패키지 선택과 기본값은 [검증](../validation#ajv-entries)에 있습니다.
 
 ## 라이브 예제 {#live-demo}
 

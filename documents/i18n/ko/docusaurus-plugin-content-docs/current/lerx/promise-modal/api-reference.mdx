@@ -1,21 +1,21 @@
 ---
-sidebar_label: 'API Reference'
+sidebar_label: 'API 참조'
 sidebar_position: 2
 ---
 
 import ForAI from '@site/src/components/ForAI';
 
-# API Reference
+# API 참조 {#api-reference}
 
 내보낸 모든 함수, 컴포넌트, 훅, 타입에 대한 전체 레퍼런스입니다.
 
 ---
 
-## Core Functions
+## 핵심 함수 {#core-functions}
 
 ### `alert(options)`
 
-알림 모달을 표시합니다. 사용자가 모달을 닫으면 resolve되는 프로미스를 반환합니다.
+알림 모달을 표시합니다. 사용자가 모달을 닫으면 이행되는 프로미스를 반환합니다.
 
 ```ts
 function alert<B = any>(options: AlertProps<B>): Promise<void>
@@ -23,22 +23,22 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>
 
 **`AlertProps`**
 
-| Property | Type | Default | Description |
+| 속성 | 타입 | 기본값 | 설명 |
 |---|---|---|---|
-| `title` | `ReactNode` | — | Modal title |
-| `subtitle` | `ReactNode` | — | Modal subtitle |
-| `content` | `ReactNode \| ComponentType<AlertContentProps>` | — | Modal body content |
-| `subtype` | `'info' \| 'success' \| 'warning' \| 'error'` | — | Semantic type passed to components |
-| `footer` | `AlertFooterRender \| { confirm?: ReactNode; hideConfirm?: boolean } \| false` | — | Footer config; `false` hides footer |
-| `background` | `ModalBackground<B>` | — | Data passed to `BackgroundComponent` |
-| `dimmed` | `boolean` | — | Whether to dim backdrop |
-| `duration` | `number` | — | Per-modal animation duration override (ms) |
-| `manualDestroy` | `boolean` | `false` | If `true`, modal is not destroyed automatically after closing animation |
-| `closeOnBackdropClick` | `boolean` | `true` | Close when backdrop is clicked |
-| `group` | `string` | — | Group identifier for ordering |
-| `handleResolve` | `(result: void \| null) => void` | — | Called when promise resolves |
-| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | — | Per-modal foreground override |
-| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | — | Per-modal background override |
+| `title` | `ReactNode` | — | 모달 제목 |
+| `subtitle` | `ReactNode` | — | 모달 부제목 |
+| `content` | `ReactNode \| ComponentType<AlertContentProps>` | — | 모달 본문 내용 |
+| `subtype` | `'info' \| 'success' \| 'warning' \| 'error'` | — | 컴포넌트에 전달하는 의미적 타입 |
+| `footer` | `AlertFooterRender \| { confirm?: ReactNode; hideConfirm?: boolean } \| false` | — | 푸터 설정이며, `false`이면 푸터를 숨깁니다. |
+| `background` | `ModalBackground<B>` | — | `BackgroundComponent`에 전달하는 데이터 |
+| `dimmed` | `boolean` | — | 백드롭을 어둡게 할지 여부 |
+| `duration` | `number` | — | 모달별 애니메이션 지속 시간 재정의 (밀리초) |
+| `manualDestroy` | `boolean` | `false` | `true`이면 닫기 애니메이션 후 모달을 자동으로 제거하지 않습니다. |
+| `closeOnBackdropClick` | `boolean` | `true` | 백드롭을 클릭하면 닫습니다. |
+| `group` | `string` | — | 순서 지정을 위한 그룹 식별자 |
+| `handleResolve` | `(result: void \| null) => void` | — | 프로미스가 이행되면 호출합니다. |
+| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | — | 모달별 전경 재정의 |
+| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | — | 모달별 배경 재정의 |
 
 ```ts
 await alert({
@@ -53,17 +53,17 @@ await alert({
 
 ### `confirm(options)`
 
-확인 모달을 표시합니다. 확인 시 `true`, 취소 시 `false`로 resolve되는 프로미스를 반환합니다.
+확인 모달을 표시합니다. 확인 시 `true`, 취소 시 `false`로 이행되는 프로미스를 반환합니다.
 
 ```ts
 function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>
 ```
 
-**`ConfirmProps`** extends `AlertProps` with:
+**`ConfirmProps`**는 `AlertProps`를 확장하여 다음 속성을 추가합니다:
 
-| Property | Type | Default | Description |
+| 속성 | 타입 | 기본값 | 설명 |
 |---|---|---|---|
-| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | — | Footer config |
+| `footer` | `ConfirmFooterRender \| FooterOptions \| false` | — | 푸터 설정 |
 
 **`FooterOptions`**
 
@@ -89,21 +89,21 @@ if (confirmed) await deleteItem();
 
 ### `prompt<T>(options)`
 
-입력 모달을 표시합니다. 사용자가 입력한 값으로 resolve되거나, 취소 시 `undefined`를 반환합니다 (`returnOnCancel` 설정 시 기본값 반환).
+입력 모달을 표시합니다. 사용자가 입력한 값으로 이행되거나, 취소 시 `undefined`를 반환합니다 (`returnOnCancel` 설정 시 기본값 반환).
 
 ```ts
 function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
 ```
 
-**`PromptProps<T>`** extends `AlertProps` with:
+**`PromptProps<T>`**는 `AlertProps`를 확장하여 다음 속성을 추가합니다:
 
-| Property | Type | Default | Description |
+| 속성 | 타입 | 기본값 | 설명 |
 |---|---|---|---|
-| `Input` | `(props: PromptInputProps<T>) => ReactNode` | **required** | Input component renderer |
-| `defaultValue` | `T` | — | Initial value |
-| `disabled` | `(value: T \| undefined) => boolean` | — | Disables confirm button when returns `true` |
-| `returnOnCancel` | `boolean` | `false` | If `true`, resolves with `defaultValue` on cancel |
-| `footer` | `PromptFooterRender<T> \| FooterOptions \| false` | — | Footer config |
+| `Input` | `(props: PromptInputProps<T>) => ReactNode` | **필수** | 입력 컴포넌트 렌더러 |
+| `defaultValue` | `T` | — | 초기 값 |
+| `disabled` | `(value: T \| undefined) => boolean` | — | `true`를 반환하면 확인 버튼을 비활성화합니다. |
+| `returnOnCancel` | `boolean` | `false` | `true`이면 취소 시 `defaultValue`로 이행됩니다. |
+| `footer` | `PromptFooterRender<T> \| FooterOptions \| false` | — | 푸터 설정 |
 
 **`PromptInputProps<T>`**
 
@@ -131,7 +131,7 @@ const name = await prompt<string>({
 
 ---
 
-## Components
+## 컴포넌트 {#components}
 
 ### `ModalProvider`
 
@@ -141,22 +141,22 @@ const name = await prompt<string>({
 import { ModalProvider, type ModalProviderProps, type ModalProviderHandle } from '@lerx/promise-modal';
 ```
 
-**Props (`ModalProviderProps`)**
+**속성 (`ModalProviderProps`)**
 
-| Prop | Type | Description |
+| 속성 | 타입 | 설명 |
 |---|---|---|
-| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | Global modal container/card component |
-| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | Global backdrop component |
-| `TitleComponent` | `ComponentType<WrapperComponentProps>` | Global title wrapper |
-| `SubtitleComponent` | `ComponentType<WrapperComponentProps>` | Global subtitle wrapper |
-| `ContentComponent` | `ComponentType<WrapperComponentProps>` | Global content wrapper |
-| `FooterComponent` | `ComponentType<FooterComponentProps>` | Global footer component |
-| `options` | `ModalOptions` | Global defaults for all modals |
-| `context` | `Record<string, any>` | Arbitrary data passed to every component slot |
-| `usePathname` | `() => { pathname: string }` | Custom hook for route-aware modal cleanup |
-| `root` | `HTMLElement \| null` | DOM element to mount modals into |
+| `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | 전역 모달 컨테이너/카드 컴포넌트 |
+| `BackgroundComponent` | `ComponentType<ModalFrameProps>` | 전역 백드롭 컴포넌트 |
+| `TitleComponent` | `ComponentType<WrapperComponentProps>` | 전역 제목 래퍼 |
+| `SubtitleComponent` | `ComponentType<WrapperComponentProps>` | 전역 부제목 래퍼 |
+| `ContentComponent` | `ComponentType<WrapperComponentProps>` | 전역 콘텐츠 래퍼 |
+| `FooterComponent` | `ComponentType<FooterComponentProps>` | 전역 푸터 컴포넌트 |
+| `options` | `ModalOptions` | 모든 모달의 전역 기본값 |
+| `context` | `Record<string, any>` | 모든 컴포넌트 슬롯에 전달하는 임의의 데이터 |
+| `usePathname` | `() => { pathname: string }` | 경로를 인식하여 모달을 정리하는 사용자 정의 훅 |
+| `root` | `HTMLElement \| null` | 모달을 마운트할 DOM 요소 |
 
-**Handle (`ModalProviderHandle`)** — accessed via `ref`:
+**핸들 (`ModalProviderHandle`)** — `ref`로 접근합니다:
 
 ```ts
 interface ModalProviderHandle {
@@ -174,7 +174,7 @@ ref.current?.initialize(containerElement);
 
 ---
 
-## Hooks
+## 훅 {#hooks}
 
 ### `useModal(configuration?)`
 
@@ -188,7 +188,7 @@ function useModal(configuration?: OverridableHandleProps): {
 }
 ```
 
-The optional `configuration` object provides default values merged into every call from this hook instance.
+선택 사항인 `configuration` 객체는 이 훅 인스턴스의 모든 호출에 병합되는 기본값을 제공합니다.
 
 ---
 
@@ -266,7 +266,7 @@ function useModalAnimation(
 
 ### `useDestroyAfter(modalId, delayMs)`
 
-지정된 지연 시간 후 모달을 자동으로 제거합니다. 커스텀 foreground 컴포넌트(예: 토스트 알림)에서 사용합니다.
+지정된 지연 시간 후 모달을 자동으로 제거합니다. 커스텀 전경 컴포넌트(예: 토스트 알림)에서 사용합니다.
 
 ```ts
 function useDestroyAfter(modalId: number, delayMs: number): void
@@ -276,7 +276,7 @@ function useDestroyAfter(modalId: number, delayMs: number): void
 
 ### `useSubscribeModal(modal)`
 
-모달 노드의 상태 변경을 구독하고 현재 버전 번호를 반환합니다. 모달이 업데이트될 때 컴포넌트를 리렌더링합니다.
+모달 노드의 상태 변경을 구독하고 현재 버전 번호를 반환합니다. 모달이 업데이트될 때 컴포넌트를 다시 렌더링합니다.
 
 ```ts
 function useSubscribeModal(modal: ModalNode): number
@@ -284,11 +284,11 @@ function useSubscribeModal(modal: ModalNode): number
 
 ---
 
-## Types
+## 타입 {#types}
 
 ### `ModalFrameProps<Context, B>`
 
-Props received by `ForegroundComponent` and `BackgroundComponent`.
+`ForegroundComponent`와 `BackgroundComponent`가 받는 속성입니다.
 
 ```ts
 interface ModalFrameProps<Context = object, B = any> {
@@ -311,7 +311,7 @@ interface ModalFrameProps<Context = object, B = any> {
 
 ### `FooterComponentProps<Context>`
 
-Props received by `FooterComponent`.
+`FooterComponent`가 받는 속성입니다.
 
 ```ts
 interface FooterComponentProps<Context = object> {
@@ -328,7 +328,7 @@ interface FooterComponentProps<Context = object> {
 
 ### `WrapperComponentProps<Context>`
 
-Props received by `TitleComponent`, `SubtitleComponent`, `ContentComponent`.
+`TitleComponent`, `SubtitleComponent`, `ContentComponent`가 받는 속성입니다.
 
 ```ts
 type WrapperComponentProps<Context = object> = PropsWithChildren<{
@@ -358,7 +358,7 @@ interface ModalOptions {
 
 ### `AlertContentProps`, `ConfirmContentProps`, `PromptContentProps`
 
-Props received by a `content` component when passed as a `ComponentType`.
+`content` 컴포넌트가 `ComponentType`으로 전달될 때 받는 속성입니다.
 
 ```ts
 // AlertContentProps
@@ -379,9 +379,9 @@ type ConfirmContentProps<Context = object> = {
 
 <ForAI>
 
-## AI Agent Reference — Full API Signatures
+## AI 에이전트 참조 — 전체 API 시그니처 {#ai-agent-reference--full-api-signatures}
 
-### Exports
+### 내보내기 {#exports}
 
 ```ts
 // Core functions (usable outside React)
@@ -411,7 +411,7 @@ export type { PromptInputProps, AlertContentProps, ConfirmContentProps, PromptCo
 export type { WrapperComponentProps }
 ```
 
-### BaseModal fields (shared by alert/confirm/prompt)
+### BaseModal 필드 (alert/confirm/prompt 공통) {#basemodal-fields-shared-by-alertconfirmprompt}
 
 ```ts
 interface BaseModal<T, B> {
@@ -429,13 +429,13 @@ interface BaseModal<T, B> {
 }
 ```
 
-### Key behavioral rules
+### 주요 동작 규칙 {#key-behavioral-rules}
 
-- `alert` resolves `void` when any close action fires.
-- `confirm` resolves `true` on confirm, `false` on cancel or backdrop click.
-- `prompt` resolves the current input value on confirm, `undefined` on cancel (or `defaultValue` if `returnOnCancel: true`).
-- `manualDestroy: true` keeps the modal node alive after `onClose`; the caller must call `onDestroy` to remove it from the DOM.
-- Static `alert`/`confirm`/`prompt` are singletons that persist across component unmounts. `useModal` variants are closed on unmount.
-- Custom `ForegroundComponent` receives `visible` (boolean) for driving enter/exit animations and `onDestroy` for deferred cleanup.
+- `alert`는 어떤 닫기 동작이 발생하든 `void`로 이행됩니다.
+- `confirm`은 확인 시 `true`, 취소 또는 백드롭 클릭 시 `false`로 이행됩니다.
+- `prompt`는 확인 시 현재 입력 값으로, 취소 시 `undefined`로 이행됩니다 (`returnOnCancel: true`이면 `defaultValue`로 이행됩니다).
+- `manualDestroy: true`는 `onClose` 이후에도 모달 노드를 유지합니다. DOM에서 제거하려면 호출자가 `onDestroy`를 호출해야 합니다.
+- 정적 `alert`/`confirm`/`prompt`는 컴포넌트가 언마운트되어도 유지되는 싱글턴입니다. `useModal` 변형은 언마운트 시 닫힙니다.
+- 사용자 정의 `ForegroundComponent`는 진입/퇴장 애니메이션을 구동하는 `visible`(불리언)과 지연 정리를 위한 `onDestroy`를 받습니다.
 
 </ForAI>

@@ -10,13 +10,13 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
-`@canard/schema-form`를 위한 Ant Design Mobile UI 플러그인입니다.
+`@canard/schema-form`을 위한 Ant Design Mobile UI 플러그인입니다.
 `antd-mobile ^5.0.0` 기반의 10개 터치 최적화 폼 입력 컴포넌트를 제공합니다.
 모바일 웹 애플리케이션을 위해 설계되었으며, 데스크탑 방식의 입력 대신 스위치와 슬라이더를 선호합니다.
 
 ## 컴포넌트 카탈로그
 
-### Preview
+### 미리보기 {#preview}
 
 <LazyDemo load={() => import('@site/src/components/demos/showcase/AntdMobileQuickDemo')} />
 
@@ -24,21 +24,21 @@ import LazyDemo from '@site/src/components/LazyDemo';
 10개 컴포넌트 전체를 [컴포넌트 카탈로그](./demos) 페이지에서 확인하세요.
 :::
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@>=5.0.0
 ```
 
-### Peer Dependencies
+### 피어 의존성 {#peer-dependencies}
 
 ```bash
 yarn add dayjs@>=1 react@>=18 react-dom@>=18
 ```
 
-Note: `antd-mobile` is a direct dependency of this plugin, not a peer dependency.
+참고: `antd-mobile`은 이 플러그인의 피어 의존성이 아닌 직접 의존성입니다.
 
-## Quick Setup
+## 빠른 설정 {#quick-setup}
 
 ```ts
 import { registerPlugin } from '@canard/schema-form';
@@ -47,26 +47,26 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 registerPlugin(plugin);
 ```
 
-## Component Mapping
+## 컴포넌트 매핑 {#component-mapping}
 
-Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+컴포넌트는 JSON Schema 속성에 따라 자동으로 선택됩니다. 우선순위는 아래 목록 순서와 같으며, 맨 위가 가장 높습니다.
 
-| Component | type | format | inputType | enum | Notes |
+| 컴포넌트 | type | format | inputType | enum | 참고 사항 |
 |---|---|---|---|---|---|
-| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle with custom labels |
-| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
-| `FieldInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
-| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio group |
-| `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
-| `FieldInputSlider` | `number` \| `integer` | `"slider"` | — | — | Slider; also supports range slider for numeric-item arrays |
-| `FieldInputTextarea` | `string` | `"textarea"` or inputType `"textarea"` | — | — | Multi-line textarea |
-| `FieldInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
-| `FieldInputNumber` | `number` \| `integer` | — | — | — | Stepper component |
-| `FieldInputBoolean` | `boolean` | — | — | — | Checkbox with indeterminate state |
+| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | 사용자 정의 라벨을 사용하는 스위치 토글 |
+| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | 체크박스 그룹이며, items는 문자열 스키마여야 합니다. |
+| `FieldInputStringSwitch` | `string` | — | `"switch"` | 값 2개 | 두 enum 값 사이를 전환합니다. |
+| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` 또는 `"radiogroup"` | 필수 | 라디오 그룹 |
+| `FieldInputArray` | `array` | — | — | — | 추가/제거가 가능한 동적 목록 |
+| `FieldInputSlider` | `number` \| `integer` | `"slider"` | — | — | 슬라이더이며, 숫자 항목 배열의 범위 슬라이더도 지원합니다. |
+| `FieldInputTextarea` | `string` | `"textarea"` 또는 inputType `"textarea"` | — | — | 여러 줄 텍스트 영역 |
+| `FieldInputString` | `string` | — | — | — | 기본 텍스트 입력 (`format: "password"`로 비밀번호 지원) |
+| `FieldInputNumber` | `number` \| `integer` | — | — | — | Stepper 컴포넌트 |
+| `FieldInputBoolean` | `boolean` | — | — | — | `indeterminate` 상태를 지원하는 체크박스 |
 
-### Slider Range Support
+### 슬라이더 범위 지원 {#slider-range-support}
 
-`FieldInputSlider` activates for numeric range arrays:
+`FieldInputSlider`는 숫자 범위 배열에 대해 활성화됩니다:
 
 ```ts
 // Single value slider
@@ -80,7 +80,7 @@ Components are selected automatically based on JSON Schema properties. Priority 
 }
 ```
 
-## Schema Extension Properties
+## 스키마 확장 속성 {#schema-extension-properties}
 
 ```ts
 {
@@ -89,7 +89,7 @@ Components are selected automatically based on JSON Schema properties. Priority 
 }
 ```
 
-## Usage Example
+## 사용 예제 {#usage-example}
 
 ```tsx
 import { Form } from '@canard/schema-form';
@@ -112,7 +112,7 @@ const schema = {
 <Form jsonSchema={schema} onChange={setValue} />
 ```
 
-## Context: Custom Switch Labels
+## 컨텍스트: 사용자 정의 스위치 라벨 {#context-custom-switch-labels}
 
 ```tsx
 // Pass checkboxLabels through context for BooleanSwitch
@@ -124,41 +124,41 @@ const schema = {
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
-**Purpose**: Ant Design Mobile UI plugin — 10 touch-optimized form components for mobile web.
+**패키지**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
+**목적**: Ant Design Mobile UI 플러그인으로, 모바일 웹을 위한 터치 최적화 폼 컴포넌트 10개를 제공합니다.
 
-### Exports
+### 내보내기 {#exports}
 ```ts
 import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 ```
 
-### Peer dependencies
-`antd-mobile@>=5.0.0` (direct dep), `dayjs@>=1`, `react@>=18`
+### 피어 의존성 {#peer-dependencies-1}
+`antd-mobile@>=5.0.0` (직접 의존성), `dayjs@>=1`, `react@>=18`
 
-### Component mapping (priority order, high → low)
-| Component | Trigger |
+### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
+| 컴포넌트 | 선택 조건 |
 |---|---|
 | BooleanSwitch | `boolean` + `inputType: "switch"` |
 | StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
-| StringSwitch | `string` + `inputType: "switch"` + 2 enum values |
+| StringSwitch | `string` + `inputType: "switch"` + enum 값 2개 |
 | RadioGroup | `string\|number` + `inputType: "radio"` + enum |
-| Array | `array` (dynamic list) |
-| Slider | `number` + `format: "slider"` (also supports range arrays) |
+| Array | `array` (동적 목록) |
+| Slider | `number` + `format: "slider"` (범위 배열도 지원) |
 | Textarea | `string` + `format: "textarea"` |
-| String | `string` (default) |
-| Number | `number\|integer` (Stepper component) |
-| Boolean | `boolean` (default checkbox with indeterminate) |
+| String | `string` (기본값) |
+| Number | `number\|integer` (Stepper 컴포넌트) |
+| Boolean | `boolean` (`indeterminate` 상태를 지원하는 기본 체크박스) |
 
-### Context: custom switch labels
+### 컨텍스트: 사용자 정의 스위치 라벨 {#context-custom-switch-labels-1}
 ```ts
 context={{ checkboxLabels: { fieldName: { true: 'On', false: 'Off' } } }}
 ```
 
-### Key differences from antd5/antd6
-- No Date/Time/Month/URI pickers (mobile-specific)
-- Number uses Stepper component (not text input)
-- Slider supports range arrays: `{ type: 'array', format: 'slider', items: { type: 'number' } }`
+### antd5/antd6와의 주요 차이점 {#key-differences-from-antd5antd6}
+- 날짜/시간/월/URI 선택기를 제공하지 않습니다 (모바일 전용).
+- Number는 텍스트 입력 대신 Stepper 컴포넌트를 사용합니다.
+- Slider는 범위 배열을 지원합니다: `{ type: 'array', format: 'slider', items: { type: 'number' } }`
 
 </ForAI>

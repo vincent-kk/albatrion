@@ -9,24 +9,24 @@ import ForAI from '@site/src/components/ForAI';
 
 <PackageHeader name="@canard/schema-form-ajv7-plugin" />
 
-`@canard/schema-form`를 위한 AJV 7.x 검증 플러그인입니다.
+`@canard/schema-form`을 위한 AJV 7.x 검증 플러그인입니다.
 JSON Schema Draft-07과 Draft 2019-09를 지원합니다.
 AJV 6에서 AJV 8로의 마이그레이션 단계로 유용하며,
 AJV 8으로 업그레이드하지 않고 Draft 2019-09 지원이 필요한 경우에 사용하세요.
 
 :::tip 공식 문서
-- [AJV Documentation](https://ajv.js.org/)
+- [AJV 문서](https://ajv.js.org/)
 - [JSON Schema Draft 2019-09](https://json-schema.org/draft/2019-09/release-notes)
 :::
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @canard/schema-form-ajv7-plugin
 # ajv@^7 is bundled as a direct dependency
 ```
 
-## Quick Setup
+## 빠른 설정 {#quick-setup}
 
 ```ts
 import { registerPlugin } from '@canard/schema-form';
@@ -35,7 +35,7 @@ import { plugin } from '@canard/schema-form-ajv7-plugin';
 registerPlugin(plugin);
 ```
 
-## Default Configuration
+## 기본 설정 {#default-configuration}
 
 ```ts
 // Internal defaults applied when no custom AJV instance is bound
@@ -46,7 +46,7 @@ registerPlugin(plugin);
 }
 ```
 
-## Custom AJV Instance
+## 사용자 정의 AJV 인스턴스 {#custom-ajv-instance}
 
 ```ts
 import Ajv from 'ajv';
@@ -57,7 +57,7 @@ const ajv = new Ajv({ allErrors: true, strict: false });
 plugin.validator.bind(ajv);
 ```
 
-## Using `createValidatorFactory` Directly
+## `createValidatorFactory` 직접 사용하기 {#using-createvalidatorfactory-directly}
 
 ```ts
 import Ajv from 'ajv';
@@ -69,38 +69,38 @@ const validate = createValidatorFactory(ajv)(myJSONSchema);
 const errors = await validate(formData); // null | ValidationError[]
 ```
 
-## AJV 7.x Notes
+## AJV 7.x 참고 사항 {#ajv-7x-notes}
 
-- Error paths use **JSONPointer** format natively — no path transformation needed (unlike AJV 6).
-- `strict: false` is set by default for compatibility with schemas that use custom keywords.
-- Does not support Draft 2020-12. Use `@canard/schema-form-ajv8-plugin/2020` for that.
+- 오류 경로는 기본적으로 **JSONPointer** 형식을 사용하므로 AJV 6과 달리 경로 변환이 필요하지 않습니다.
+- 사용자 정의 키워드를 사용하는 스키마와의 호환성을 위해 기본적으로 `strict: false`를 설정합니다.
+- Draft 2020-12는 지원하지 않습니다. 해당 Draft에는 `@canard/schema-form-ajv8-plugin/2020`을 사용하십시오.
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@canard/schema-form-ajv7-plugin` v0.10.0
-**Purpose**: AJV 7.x validator plugin — Draft-07 and Draft 2019-09 support.
+**패키지**: `@canard/schema-form-ajv7-plugin` v0.10.0
+**목적**: AJV 7.x 검증 플러그인으로, Draft-07과 Draft 2019-09를 지원합니다.
 
-### Exports
+### 내보내기 {#exports}
 ```ts
 import { plugin } from '@canard/schema-form-ajv7-plugin';
 import { createValidatorFactory } from '@canard/schema-form-ajv7-plugin';
 ```
 
-### Usage
+### 사용법 {#usage}
 ```ts
 registerPlugin(plugin);                         // use default AJV config
 plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
 createValidatorFactory(ajv)(schema);            // standalone usage without plugin
 ```
 
-### Default AJV config
+### 기본 AJV 설정 {#default-ajv-config}
 `{ allErrors: true, strict: false, validateFormats: false }`
 
-### Key behaviors
-- Native JSONPointer error paths (no transform needed unlike AJV 6)
-- `strict: false` for custom keyword compatibility
-- Does NOT support Draft 2020-12 → use ajv8-plugin/2020
+### 주요 동작 {#key-behaviors}
+- 기본적으로 JSONPointer 오류 경로를 사용합니다 (AJV 6과 달리 변환이 필요하지 않습니다).
+- 사용자 정의 키워드와의 호환성을 위해 `strict: false`를 사용합니다.
+- Draft 2020-12는 지원하지 않으므로 ajv8-plugin/2020을 사용하십시오.
 
 </ForAI>
