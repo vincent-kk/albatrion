@@ -17,6 +17,12 @@ export interface BaseModal<T, B> {
   duration?: ModalOptions['duration'];
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  /** Escape override; otherwise inherits the same-level backdrop click setting. */
+  closeOnEscape?: boolean;
+  /** Traps Tab within the top pending dimmed modal; defaults to true. */
+  trapFocus?: boolean;
+  /** Locks body scrolling while a pending dimmed modal is visible; defaults to true. */
+  lockScroll?: boolean;
   /**
    * @internal Promise settlement channel injected by the handle layer
    * (dispatchModal). Travels with the modal data so prerendered modals keep

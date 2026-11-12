@@ -38,14 +38,24 @@ export const ModalManagerContextProvider = memo(
 
     useLayoutEffect(() => {
       const openHandler = (data: Modal) => {
-        const { duration, manualDestroy, closeOnBackdropClick } =
-          optionsRef.current;
+        const {
+          duration,
+          manualDestroy,
+          closeOnBackdropClick,
+          trapFocus,
+          lockScroll,
+        } = optionsRef.current;
         const merged = mergeDefined(
-          { manualDestroy, closeOnBackdropClick },
+          { manualDestroy, closeOnBackdropClick, trapFocus, lockScroll },
           data,
         );
         const node = nodeFactory({
           ...merged,
+          closeOnEscape:
+            data.closeOnEscape ??
+            data.closeOnBackdropClick ??
+            optionsRef.current.closeOnEscape ??
+            closeOnBackdropClick,
           duration: parseFloat(normalizeDuration(data.duration, duration)),
           id: ModalManager.nextId(),
           initiator: initiator.current,

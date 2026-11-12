@@ -29,6 +29,8 @@ export const FallbackForegroundFrame = forwardRef(
     return (
       <div
         ref={ref}
+        role="dialog"
+        aria-modal="true"
         onClick={onChangeOrder}
         style={{
           marginBottom: `calc(25vh + ${level}px)`,

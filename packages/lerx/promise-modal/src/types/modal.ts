@@ -89,6 +89,7 @@ export type ModalNodeView = Readonly<
     | 'dimmed'
     | 'manualDestroy'
     | 'closeOnBackdropClick'
+    | 'closeOnEscape'
     | 'duration'
   >
 >;

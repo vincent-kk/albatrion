@@ -40,6 +40,12 @@ export abstract class AbstractNode<T, B> {
   readonly duration: number;
   readonly manualDestroy: boolean;
   readonly closeOnBackdropClick: boolean;
+  /** Effective Escape behavior resolved before provider and modal data merge. */
+  readonly closeOnEscape: boolean;
+  /** Whether the top dimmed frame keeps keyboard navigation inside. */
+  readonly trapFocus: boolean;
+  /** Whether this pending dimmed modal locks body scrolling. */
+  readonly lockScroll: boolean;
 
   readonly ForegroundComponent?: ForegroundComponent;
   readonly BackgroundComponent?: BackgroundComponent;
@@ -73,6 +79,9 @@ export abstract class AbstractNode<T, B> {
     duration = 0,
     manualDestroy = false,
     closeOnBackdropClick = true,
+    closeOnEscape = closeOnBackdropClick,
+    trapFocus = true,
+    lockScroll = true,
     handleResolve,
     handleReject,
     ForegroundComponent,
@@ -90,6 +99,9 @@ export abstract class AbstractNode<T, B> {
     this.duration = parseFloat(normalizeDuration(duration, '0ms'));
     this.manualDestroy = manualDestroy;
     this.closeOnBackdropClick = closeOnBackdropClick;
+    this.closeOnEscape = closeOnEscape;
+    this.trapFocus = trapFocus;
+    this.lockScroll = lockScroll;
 
     this.ForegroundComponent = ForegroundComponent;
     this.BackgroundComponent = BackgroundComponent;

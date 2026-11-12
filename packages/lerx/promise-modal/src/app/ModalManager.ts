@@ -10,7 +10,10 @@ import { compressCss } from '@winglet/style-utils/util';
 import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
+import { closeModal } from '@/promise-modal/helpers/closeModal';
 import type { Modal } from '@/promise-modal/types';
+
+import { getTabbableElements } from './utils/getTabbableElements';
 
 /** Queued requests retain both Promise channels while no portal is attached. */
 interface PrerenderEntry {
@@ -25,6 +28,25 @@ interface BootstrapOwner {
 
 /** Owns global DOM effects and the external modal store; styles are lazy for SSR. */
 export class ModalManager {
+  /** Rendered wrappers provide focus boundaries without imposing frame semantics. */
+  private static __frames__ = new Map<number, HTMLElement>();
+  /** Registration captures the opener until the request first settles. */
+  private static __focusTargets__ = new Map<number, Element | null>();
+  /** Visible intervals receive initial focus only once. */
+  private static __focused__ = new Set<number>();
+  /** Only attributes introduced by this manager are removed on release. */
+  private static __inertElements__: Element[] = [];
+  /** The root where the current inert snapshot starts. */
+  private static __inertRoot__: HTMLElement | null = null;
+  /** Original inline properties, including priorities, survive scroll locking. */
+  private static __scrollStyle__?: {
+    overflow: string;
+    overflowPriority: string;
+    padding: string;
+    paddingPriority: string;
+  };
+  /** The exact installed callback is shared by Escape and Tab handling. */
+  private static __keydown__?: (event: KeyboardEvent) => void;
   /** The portal container belongs to the active bootstrap. */
   private static __anchor__: HTMLElement | null = null;
   /** A stable style scope survives provider handoffs. */
@@ -101,11 +123,17 @@ export class ModalManager {
     if (ModalManager.__nodes__.has(node.id)) return;
     node.order = ++ModalManager.__order__;
     ModalManager.__nodes__.set(node.id, node);
+    if (typeof document !== 'undefined')
+      ModalManager.__focusTargets__.set(node.id, document.activeElement);
     ModalManager.__ids__ = [...ModalManager.__nodes__.keys()];
     ModalManager.__registrationVersion__++;
     ModalManager.__nodeCleanups__.set(
       node.id,
       node.subscribe(() => {
+        const restore =
+          node.settled && ModalManager.__focusTargets__.has(node.id);
+        const target = ModalManager.__focusTargets__.get(node.id);
+        if (restore) ModalManager.__focusTargets__.delete(node.id);
         if (!node.alive) {
           ModalManager.__nodeCleanups__.get(node.id)?.();
           ModalManager.__nodeCleanups__.delete(node.id);
@@ -113,9 +141,12 @@ export class ModalManager {
           ModalManager.__ids__ = [...ModalManager.__nodes__.keys()];
           if (!ModalManager.__ids__.length) ModalManager.__order__ = 0;
         }
+        ModalManager.updateAccessibility();
+        if (restore && node.dimmed) ModalManager.restoreFocus(node.id, target);
         ModalManager.notify();
       }),
     );
+    ModalManager.updateAccessibility();
     ModalManager.notify();
   }
   /** Brings an existing node forward without publishing when already on top. */
@@ -160,6 +191,8 @@ export class ModalManager {
     if (root === null) {
       if (ModalManager.__owner__ === identity) {
         ModalManager.__bootstraps__.set(identity, { root, notify });
+        ModalManager.releasePageEffects();
+        ModalManager.__focused__.clear();
         ModalManager.__anchor__?.remove();
       } else ModalManager.__bootstraps__.delete(identity);
       return;
@@ -180,6 +213,8 @@ export class ModalManager {
     ModalManager.__generation__++;
     const anchor = ModalManager.anchor({ root });
     ModalManager.applyStyleSheet();
+    ModalManager.installKeyboardListener();
+    ModalManager.updateAccessibility(true);
     notify(anchor);
   }
   /** Detaches only this bootstrap; defers cancellation to preserve same-commit remounts. */
@@ -188,6 +223,9 @@ export class ModalManager {
     ModalManager.__bootstraps__.delete(identity);
     if (ModalManager.__owner__ !== identity) return;
     ModalManager.__owner__ = null;
+    ModalManager.removeKeyboardListener();
+    ModalManager.releasePageEffects();
+    ModalManager.__focused__.clear();
     ModalManager.__anchor__?.remove();
     ModalManager.__anchor__ = null;
     ModalManager.destroyStyleSheet();
@@ -203,6 +241,208 @@ export class ModalManager {
       for (const node of [...ModalManager.__nodes__.values()])
         if (node.alive) node.onDestroy();
     });
+  }
+  /**
+   * Registers the library-owned focus boundary and reevaluates committed UI.
+   * @param id - Registered modal identity supplied by its foreground presenter.
+   * @param element - Mounted outer wrapper, or null to release its reference.
+   */
+  static setFrameElement(id: number, element: HTMLElement | null): void {
+    if (element) ModalManager.__frames__.set(id, element);
+    else ModalManager.__frames__.delete(id);
+    ModalManager.updateAccessibility(true);
+  }
+  /** Reads pending visible nodes in descending visual order. */
+  private static visibleNodes(): ModalNode[] {
+    return [...ModalManager.__nodes__.values()]
+      .filter((node) => node.alive && node.visible && !node.settled)
+      .sort((left, right) => right.order - left.order);
+  }
+  /**
+   * Focuses a frame's first control, preserving an existing internal focus target.
+   * @param id - Pending dimmed modal whose wrapper may already be registered.
+   */
+  private static focusFrame(id: number): void {
+    const frame = ModalManager.__frames__.get(id);
+    if (!frame?.isConnected || frame.contains(document.activeElement)) return;
+    (getTabbableElements(frame)[0] ?? frame).focus();
+  }
+  /**
+   * Restores an opener after page effects change, without stealing a peer's focus.
+   * @param id - Settled or released modal to exclude from pending peer checks.
+   * @param target - Registration-time opener; disconnected elements are ignored.
+   */
+  private static restoreFocus(
+    id: number,
+    target: Element | null | undefined,
+  ): void {
+    if (typeof document === 'undefined') return;
+    const pending = ModalManager.visibleNodes().filter(
+      (node) => node.id !== id,
+    );
+    const remaining = pending.filter((node) => node.dimmed);
+    if (
+      pending.some((node) =>
+        ModalManager.__frames__.get(node.id)?.contains(document.activeElement),
+      )
+    )
+      return;
+    if (
+      target?.isConnected &&
+      !target.closest('[inert]') &&
+      'focus' in target &&
+      typeof target.focus === 'function'
+    )
+      target.focus();
+    else if (target?.closest('[inert]') && remaining[0])
+      ModalManager.focusFrame(remaining[0].id);
+  }
+  /**
+   * Applies isolation before moving focus; detached roots do not affect the page.
+   * @param moveFocus - True only after frame DOM commits or anchor attachment,
+   * so route reappearance does not focus controls with stale hidden styles.
+   */
+  private static updateAccessibility(moveFocus = false): void {
+    if (typeof document === 'undefined') return;
+    const root = ModalManager.__anchor__?.isConnected
+      ? ModalManager.__anchor__.parentElement
+      : null;
+    const nodes = root
+      ? ModalManager.visibleNodes().filter((node) => node.dimmed)
+      : [];
+    for (const id of ModalManager.__focused__)
+      if (!nodes.some((node) => node.id === id))
+        ModalManager.__focused__.delete(id);
+    ModalManager.updateInert(nodes.length > 0 ? root : null);
+    ModalManager.updateScrollLock(nodes.some((node) => node.lockScroll));
+    if (!moveFocus) return;
+    for (const node of nodes)
+      if (
+        !ModalManager.__focused__.has(node.id) &&
+        ModalManager.__frames__.get(node.id)?.isConnected
+      ) {
+        ModalManager.__focused__.add(node.id);
+        ModalManager.focusFrame(node.id);
+        break;
+      }
+  }
+  /**
+   * Snapshots ancestor-path siblings once, leaving later portal nodes interactive.
+   * @param root - Attached anchor parent, or null to release owned attributes.
+   */
+  private static updateInert(root: HTMLElement | null): void {
+    if (ModalManager.__inertRoot__ === root) return;
+    for (const element of ModalManager.__inertElements__)
+      element.removeAttribute('inert');
+    ModalManager.__inertElements__ = [];
+    ModalManager.__inertRoot__ = root;
+    if (!root) return;
+    let branch = ModalManager.__anchor__;
+    while (branch && branch !== document.body) {
+      const parent = branch.parentElement;
+      if (!parent) break;
+      for (const sibling of parent.children)
+        if (sibling !== branch && !sibling.hasAttribute('inert')) {
+          sibling.setAttribute('inert', '');
+          ModalManager.__inertElements__.push(sibling);
+        }
+      branch = parent;
+    }
+  }
+  /**
+   * Preserves inline CSS and compensates only plausible browser scrollbar widths.
+   * @param locked - Whether any visible pending dimmed modal requests a lock.
+   */
+  private static updateScrollLock(locked: boolean): void {
+    const style = document.body.style;
+    const previous = ModalManager.__scrollStyle__;
+    if (locked && !previous) {
+      ModalManager.__scrollStyle__ = {
+        overflow: style.getPropertyValue('overflow'),
+        overflowPriority: style.getPropertyPriority('overflow'),
+        padding: style.getPropertyValue('padding-right'),
+        paddingPriority: style.getPropertyPriority('padding-right'),
+      };
+      const width = window.innerWidth - document.documentElement.clientWidth;
+      if (width > 0 && width < 100)
+        style.setProperty(
+          'padding-right',
+          `${(parseFloat(window.getComputedStyle(document.body).paddingRight) || 0) + width}px`,
+        );
+      style.setProperty('overflow', 'hidden');
+    } else if (!locked && previous) {
+      if (previous.overflow)
+        style.setProperty(
+          'overflow',
+          previous.overflow,
+          previous.overflowPriority,
+        );
+      else style.removeProperty('overflow');
+      if (previous.padding)
+        style.setProperty(
+          'padding-right',
+          previous.padding,
+          previous.paddingPriority,
+        );
+      else style.removeProperty('padding-right');
+      ModalManager.__scrollStyle__ = undefined;
+    }
+  }
+  /** Reverts page mutations before detach, root changes, or test reset. */
+  private static releasePageEffects(): void {
+    ModalManager.updateInert(null);
+    if (typeof document !== 'undefined') ModalManager.updateScrollLock(false);
+  }
+  /** Installs exactly one bubbling document listener so controls may prevent defaults. */
+  private static installKeyboardListener(): void {
+    if (ModalManager.__keydown__) return;
+    ModalManager.__keydown__ = (event) => {
+      if (
+        !ModalManager.__anchor__?.isConnected ||
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.keyCode === 229
+      )
+        return;
+      const nodes = ModalManager.visibleNodes();
+      if (event.key === 'Escape') {
+        if (nodes[0]?.closeOnEscape) {
+          event.preventDefault();
+          closeModal(nodes[0]);
+        }
+      } else if (event.key === 'Tab') {
+        const top = nodes.find((node) => node.dimmed);
+        if (top?.trapFocus) ModalManager.trapTab(event, top.id);
+      }
+    };
+    document.addEventListener('keydown', ModalManager.__keydown__);
+  }
+  /**
+   * Cycles the top frame's keyboard boundary; native navigation handles middle items.
+   * @param event - Unprevented non-composing Tab event from the shared listener.
+   * @param id - Top participating modal with focus trapping enabled.
+   */
+  private static trapTab(event: KeyboardEvent, id: number): void {
+    const frame = ModalManager.__frames__.get(id);
+    if (!frame?.isConnected) return;
+    const controls = getTabbableElements(frame);
+    const first = controls[0] ?? frame;
+    const last = controls[controls.length - 1] ?? frame;
+    const current = document.activeElement;
+    if (
+      !frame.contains(current) ||
+      current === frame ||
+      (event.shiftKey ? current === first : current === last)
+    ) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    }
+  }
+  /** Releases the same callback installed by the current owner. */
+  private static removeKeyboardListener(): void {
+    if (!ModalManager.__keydown__) return;
+    document.removeEventListener('keydown', ModalManager.__keydown__);
+    ModalManager.__keydown__ = undefined;
   }
   /** Provides a read-only copy of requests waiting for initialization. */
   static get prerender(): Modal[] {
@@ -276,6 +516,13 @@ export class ModalManager {
   /** Fully resets test state, unlike an individual provider's detach. */
   static reset(): void {
     ModalManager.__generation__++;
+    ModalManager.removeKeyboardListener();
+    ModalManager.releasePageEffects();
+    for (const [id, target] of [...ModalManager.__focusTargets__].reverse())
+      if (ModalManager.node(id)?.dimmed) ModalManager.restoreFocus(id, target);
+    ModalManager.__focusTargets__.clear();
+    ModalManager.__frames__.clear();
+    ModalManager.__focused__.clear();
     ModalManager.__anchor__?.remove();
     ModalManager.__anchor__ = null;
     ModalManager.destroyStyleSheet();

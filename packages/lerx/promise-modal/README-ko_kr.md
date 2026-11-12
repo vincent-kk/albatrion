@@ -740,6 +740,9 @@ async function showModalWithBackground() {
 - `dimmed?`: 배경 흐림 여부 (boolean)
 - `manualDestroy?`: 수동 파괴 모드 활성화 (boolean)
   - `closeOnBackdropClick?`: 배경 클릭 시 닫기 여부 (부울)
+  - `closeOnEscape?`: Esc 옵션(상속 순서는 접근성 절 참고)
+  - `trapFocus?`: 최상위 dimmed 모달의 Tab 가두기(기본 `true`)
+  - `lockScroll?`: 미확정 dimmed 모달의 body 스크롤 잠금(기본 `true`)
 - `ForegroundComponent?`: 사용자 정의 포그라운드 컴포넌트
 - `BackgroundComponent?`: 사용자 정의 배경 컴포넌트
 
@@ -977,6 +980,16 @@ function Component() {
   return <main>{portal}</main>;
 }
 ```
+
+### 접근성
+
+Escape는 보이는 미확정 모달 중 가장 위의 모달만 취소합니다. `closeOnEscape`는 호출의 Esc 옵션, 호출의 `closeOnBackdropClick`, Provider의 Esc 옵션, Provider의 배경 클릭 옵션(기본 `true`) 순으로 정합니다. `useModal` 설정도 호출 데이터이며 `undefined`는 상속합니다. Esc 취소를 막으려면 `closeOnEscape: false`를 지정합니다. IME 조합 중이거나 `preventDefault()`된 이벤트는 무시합니다.
+
+`alive && visible && dimmed && !settled` 모달은 내부로 포커스를 이동하고(프레임의 `autoFocus`는 유지), 최상위 dimmed 모달 안에서 Tab을 가두며, 확정 시 연결된 열기 전 요소로 포커스를 복원합니다. `trapFocus`와 `lockScroll`은 Provider와 호출 수준에서 기본 `true`이며 해당 책임을 직접 처리하려면 `false`로 지정합니다. 가두기를 꺼도 최초 포커스 이동은 수행합니다. `dimmed: false` 모달은 포커스를 가져가거나 페이지를 비활성화하거나 스크롤을 잠그지 않습니다.
+
+기본 프레임은 `role="dialog"`와 `aria-modal="true"`를 제공합니다. 사용자 전경 프레임은 역할·접근 가능한 이름·설명을 직접 제공하고 라이브러리 래퍼가 포커스 동작을 제공합니다. 모든 dialog에 접근 가능한 이름을 지정합니다. 예를 들어 보이는 제목을 `aria-labelledby`로 연결합니다. 보이는 어두운 배경은 `closeOnBackdropClick: false`여도 페이지 포인터를 막습니다. 뒤 페이지를 클릭할 수 있는 토스트는 `dimmed`와 `closeOnBackdropClick`을 모두 `false`로 지정합니다.
+
+격리·스크롤 복원·중첩 root·포털 제한은 [접근성 계약](./docs/ko/SPECIFICATION.md#접근성)을 확인합니다.
 
 ### 설정과 공개 인터페이스
 

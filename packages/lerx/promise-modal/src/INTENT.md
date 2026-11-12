@@ -22,6 +22,8 @@
 
 ### Always do
 
+- 접근성 기본선의 전역 효과는 매니저가 소유하고 사용자 프레임은 이름·설명·역할을 제공
+
 - 새 모달 타입 추가 시 core/node에 노드 클래스, core/handle에 핸들러 함수 구현
 - 공개 API 변경 시 `src/index.ts` export 업데이트
 - `yarn test`, `yarn lint`, `yarn typecheck` 통과 확인

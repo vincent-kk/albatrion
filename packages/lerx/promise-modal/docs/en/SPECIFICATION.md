@@ -171,6 +171,20 @@ Each node provides:
 - Promise resolution handling
 - Lifecycle management
 
+### Accessibility
+
+Escape acts on the highest stacking order among alive, visible, unsettled modals, including after click reordering. It cancels only when that node's effective `closeOnEscape` is true; it never skips a nonclosable top modal to close a lower one. The resolution order is per-call `closeOnEscape`, per-call `closeOnBackdropClick`, Provider `closeOnEscape`, Provider `closeOnBackdropClick` (default true). `useModal` defaults are per-call data. Explicit undefined inherits. Prevented events, `isComposing`, and key code 229 are ignored; detaching the root suspends keyboard handling. Escape returns the ordinary cancellation result, including `null` for a prompt unless `returnOnCancel` is enabled.
+
+Only `alive && visible && dimmed && !settled` modals participate in focus, inert isolation, and scroll locking. On appearance, focus moves to the first tabbable control or the outer wrapper (`tabIndex={-1}`); existing internal focus, including `autoFocus`, remains. The top dimmed modal cycles Tab and Shift+Tab when `trapFocus` is true. Provider and per-call `trapFocus` and `lockScroll` default to true and use ordinary undefined-inheriting option merging. `trapFocus: false` disables cycling, not initial focus movement or page isolation.
+
+On settlement, page effects update before focus returns to the connected opener. Focus already inside another pending modal remains there. If the opener is still inert because another dimmed modal remains, focus moves to the top remaining dimmed modal. A disconnected opener is ignored. Hiding by route, closing, and destruction release participation immediately, even during a manual exit animation. Reappearance and reinitialization reevaluate the pending store. A detached (`root={null}`) anchor neither isolates nor locks the page.
+
+Isolation sets the `inert` attribute on siblings along the anchor's ancestor path up to `document.body`. Existing inert attributes are preserved, and only attributes introduced by the library are removed. The snapshot is taken when the first participating modal appears or its root moves; later DOM additions remain untouched so dropdown portals appended to body keep working. Such external portals are outside the wrapper's Tab cycle; custom frames own their portal keyboard integration.
+
+While any participating modal has `lockScroll: true`, body overflow is hidden. Scrollbar widths strictly between 0 and 100px are added to computed right padding to avoid page movement. The original inline overflow and right padding (including priorities) return when the last scroll-lock participant leaves. Provider removal and reset release page effects and the single document keydown listener.
+
+The fallback foreground supplies `role="dialog"` and `aria-modal="true"`. Custom foreground frames supply their own role, accessible name, and description; the wrapper supplies the focus baseline. Label every dialog, for example using `aria-labelledby` and `aria-describedby` tied to its title and description. A visible backdrop receives pointers when `dimmed || closeOnBackdropClick`, but clicks cancel only with `closeOnBackdropClick`. Use `dimmed: false, closeOnBackdropClick: false` for pass-through toasts; they do not move or restore focus, isolate the page, or lock scrolling.
+
 ### Configuration Priority
 
 Provider component props (`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`) are captured at mount so parent rerenders do not remount open prompts. Changes are ignored, with one warning per changed prop in development and no warning in production. Pass changing data through `context`; options remain reactive.
@@ -236,6 +250,9 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>;
 | `subtype`              | `'info' \| 'success' \| 'warning' \| 'error'`   | `'info'` | Modal type                                  |
 | `dimmed`               | `boolean`                                       | `true`   | Dim background                              |
 | `closeOnBackdropClick` | `boolean`                                       | `true`   | Close on backdrop                           |
+| `closeOnEscape` | `boolean` | Inherited | Escape cancellation; see Accessibility |
+| `trapFocus` | `boolean` | `true` | Tab cycle for the top dimmed modal |
+| `lockScroll` | `boolean` | `true` | Body scroll lock for dimmed modals |
 | `manualDestroy`        | `boolean`                                       | `false`  | Manual destroy mode                         |
 | `duration`             | `number \| string`                              | -        | Animation duration (Handler level override) |
 | `background`           | `ModalBackground<B>`                            | -        | Background settings                         |
@@ -601,6 +618,9 @@ function useModalOptions(): {
   backdrop: CSSProperties;
   manualDestroy: boolean;
   closeOnBackdropClick: boolean;
+  closeOnEscape?: boolean;
+  trapFocus: boolean;
+  lockScroll: boolean;
   zIndex: number;
 };
 ```
@@ -650,6 +670,9 @@ interface ModalOptions {
   backdrop?: string | CSSProperties;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  closeOnEscape?: boolean;
+  trapFocus?: boolean;
+  lockScroll?: boolean;
 }
 ```
 
