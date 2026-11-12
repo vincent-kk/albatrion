@@ -16,6 +16,12 @@ The principles cover every document this repository authors for a person or an a
 6. **Changed with the code.** A change that alters a documented policy updates its document in the same pull request, before the code. A mismatch between a document and the code is a defect, fixed like a bug.
 7. **Judged by a fresh agent.** The packaged agent rules and skills and the `INTENT.md` files are done when an agent with no prior context does its role's job correctly from fixed inputs: the role's documents and what principle 2 says the role holds. A consumer builds the requested feature through the public API, advanced features included; a maintainer makes the right change decision for the right reason. When a pull request changes what these documents teach, an evaluator other than the writer runs this check: it withholds solutions, grading and anything the role does not hold, counts a task only when it actually passes, compares with a run whose inputs differ only by the absence of the document, and keeps some tasks unseen by the writer. The writer fixes a failure at its general cause rather than by adding that task's answer. Every other document, `DETAIL.md` included, is written to pass the same test.
 
+## Language
+
+Each document has one language: the language its explanation is written in. `INTENT.md` and `DETAIL.md` are written in Korean. `CLAUDE.md`, `AGENTS.md`, this file, everything under `.claude/`, packaged agent documents and code comments are written in English. A `README`, a site page and any other document take the language of their file name or tree (`README-ko_kr.md`, `docs/ko` and `documents/i18n/ko` are Korean).
+
+The rule binds prose, not every word. Headings, code and the comments inside it, identifiers, commands, paths, literal values, established technical terms and references to other documents or standards may stay in English in a document of any language, as they commonly do; translating a name breaks search and the link to the thing it names. A document breaks the rule only when its explanation switches language: a sentence, list item or table cell of prose written in a language other than its document's, which makes the reader change languages in the middle of one explanation.
+
 ## Change records
 
 A changeset (`.changeset/*.md`, created with `yarn changeset`) is written for the consumers of a published package; at release, `yarn changeset:version` turns it into a version bump and that package's `CHANGELOG.md` entry, with a link to the pull request that added it. Its claims must be true, but the present-only rule of principle 3 does not apply to it.
@@ -39,4 +45,4 @@ Some principles are proposed as plugin rules: [vincent-kk/ogham#145](https://git
 - Principle 6 (seiri #146; filid already updates `DETAIL.md` before code): delete.
 - Principle 7 (seiri #146): delete the general clause and keep which documents it covers and when it runs.
 - Change records, the rules for writing for consumers (seiri #146): delete the general clauses and keep what is specific to changesets here: the mechanics and the pull request link, which pull requests need one, the bump choice and the language.
-- Scope: specific to this repository, so it stays.
+- Scope and Language: specific to this repository, so they stay.
