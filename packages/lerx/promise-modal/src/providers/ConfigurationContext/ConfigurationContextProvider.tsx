@@ -3,9 +3,7 @@ import {
   type ComponentType,
   type PropsWithChildren,
   memo,
-  useEffect,
   useMemo,
-  useRef,
 } from 'react';
 
 import { isPlainObject, isString } from '@winglet/common-utils/filter';
@@ -66,45 +64,6 @@ export const ConfigurationContextProvider = memo(
     options: inputOptions,
     children,
   }: PropsWithChildren<ConfigurationContextProviderProps>) => {
-    const initialComponents = useMemorize(() => ({
-      ForegroundComponent,
-      BackgroundComponent,
-      TitleComponent,
-      SubtitleComponent,
-      ContentComponent,
-      FooterComponent,
-    }));
-    const warned = useRef(new Set<string>());
-    useEffect(() => {
-      if (process.env.NODE_ENV === 'production') return;
-      const current = {
-        ForegroundComponent,
-        BackgroundComponent,
-        TitleComponent,
-        SubtitleComponent,
-        ContentComponent,
-        FooterComponent,
-      };
-      for (const name of Object.keys(current) as Array<keyof typeof current>) {
-        if (
-          current[name] === initialComponents[name] ||
-          warned.current.has(name)
-        )
-          continue;
-        warned.current.add(name);
-        console.warn(
-          `[promise-modal] ${name} is fixed at mount; pass changing data through context instead.`,
-        );
-      }
-    }, [
-      ForegroundComponent,
-      BackgroundComponent,
-      TitleComponent,
-      SubtitleComponent,
-      ContentComponent,
-      FooterComponent,
-      initialComponents,
-    ]);
     const constant = useMemorize(() => ({
       BackgroundComponent,
       ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,

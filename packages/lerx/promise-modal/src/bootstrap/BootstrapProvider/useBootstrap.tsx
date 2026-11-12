@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
 import { bootstrap } from './helpers/bootstrap';
+import { useInitialComponents } from './hooks/useInitialComponents';
 import { useInitialize } from './hooks/useInitialize';
 import type { BootstrapProviderProps } from './type';
 
@@ -181,18 +182,22 @@ export const useBootstrap = ({
     [useExternalPathname],
   );
 
+  const components = useInitialComponents({
+    ForegroundComponent,
+    BackgroundComponent,
+    TitleComponent,
+    SubtitleComponent,
+    ContentComponent,
+    FooterComponent,
+  });
+
   const { anchorRef, handleInitialize: initialize } = useInitialize(root, mode);
 
   const portal =
     anchorRef.current &&
     bootstrap({
+      ...components,
       usePathname,
-      ForegroundComponent,
-      BackgroundComponent,
-      TitleComponent,
-      SubtitleComponent,
-      ContentComponent,
-      FooterComponent,
       options,
       context,
       anchor: anchorRef.current,

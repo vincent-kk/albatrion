@@ -214,3 +214,38 @@ it('R17 warns once per changed component prop and keeps prompt input mounted', (
     ),
   ).toHaveLength(1);
 });
+
+it('R17 captures component props at bootstrap mount even while root is null', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const InitialContent = ({ children }: PropsWithChildren) => (
+    <article data-testid="initial-content">{children}</article>
+  );
+  const LaterContent = ({ children }: PropsWithChildren) => (
+    <aside>{children}</aside>
+  );
+  const view = render(
+    <BootstrapProvider root={null} ContentComponent={InitialContent} />,
+  );
+  view.rerender(
+    <BootstrapProvider root={null} ContentComponent={LaterContent} />,
+  );
+  expect(
+    warn.mock.calls.filter(([message]) =>
+      String(message).includes('ContentComponent'),
+    ),
+  ).toHaveLength(1);
+  view.rerender(
+    <BootstrapProvider root={document.body} ContentComponent={LaterContent} />,
+  );
+  act(() => {
+    alertHandler({ content: 'initial component' });
+  });
+  expect(screen.getByTestId('initial-content').textContent).toBe(
+    'initial component',
+  );
+  expect(
+    warn.mock.calls.filter(([message]) =>
+      String(message).includes('ContentComponent'),
+    ),
+  ).toHaveLength(1);
+});

@@ -10,6 +10,7 @@ import {
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
 import { bootstrap } from './helpers/bootstrap';
+import { useInitialComponents } from './hooks/useInitialComponents';
 import { useInitialize } from './hooks/useInitialize';
 import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
 
@@ -158,6 +159,15 @@ export const BootstrapProvider = memo(
         [useExternalPathname],
       );
 
+      const components = useInitialComponents({
+        ForegroundComponent,
+        BackgroundComponent,
+        TitleComponent,
+        SubtitleComponent,
+        ContentComponent,
+        FooterComponent,
+      });
+
       const { anchorRef, handleInitialize } = useInitialize(root);
 
       useImperativeHandle(
@@ -173,12 +183,7 @@ export const BootstrapProvider = memo(
           {children}
           {anchorRef.current &&
             bootstrap({
-              ForegroundComponent,
-              BackgroundComponent,
-              TitleComponent,
-              SubtitleComponent,
-              ContentComponent,
-              FooterComponent,
+              ...components,
               usePathname,
               options,
               context,
