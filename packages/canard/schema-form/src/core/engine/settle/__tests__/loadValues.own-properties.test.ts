@@ -18,3 +18,12 @@ describe('load snapshot own properties', () => {
     expect(Object.getOwnPropertyDescriptor(Object.prototype, 'items')).toBeUndefined();
   });
 });
+
+it('never uses an arbitrary inherited key as a load ancestor', () => {
+  const inherited = { nested: { value: 1 } };
+  const snapshot: object = Object.create(inherited);
+  expect(getLoadValue(snapshot, '/nested/value')).toBeUndefined();
+  const result = setLoadValue(snapshot, '/nested/value', 2);
+  expect(getLoadValue(result, '/nested/value')).toBe(2);
+  expect(inherited.nested.value).toBe(1);
+});
