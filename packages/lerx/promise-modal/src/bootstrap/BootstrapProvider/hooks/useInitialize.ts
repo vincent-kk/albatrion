@@ -1,8 +1,9 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
 import { ModalManager } from '@/promise-modal/app';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
 /**
  * Connects a bootstrap to its last declared or imperative root.
@@ -30,7 +31,7 @@ export const useInitialize = (
     },
   );
   const handleReset = useRef(() => ModalManager.detach(identity.current));
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (previousRoot.current !== root) effectiveRoot.current = root;
     previousRoot.current = root;
     handleInitialize.current(
@@ -39,7 +40,7 @@ export const useInitialize = (
         : effectiveRoot.current,
     );
   }, [root]);
-  useLayoutEffect(() => handleReset.current, []);
+  useIsomorphicLayoutEffect(() => handleReset.current, []);
   const initialize: (element: HTMLElement) => void = handleInitialize.current;
   return {
     anchorRef,

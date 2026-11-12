@@ -1,5 +1,4 @@
 import { map } from '@winglet/common-utils/array';
-import { polynomialHash } from '@winglet/common-utils/hash';
 import { getRandomString } from '@winglet/common-utils/lib';
 import {
   destroyScope,
@@ -13,133 +12,64 @@ import type { ModalNode } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
 import type { Modal } from '@/promise-modal/types';
 
+import { getModalManagerState } from './helpers/getModalManagerState/getModalManagerState';
 import { getTabbableElements } from './utils/getTabbableElements';
-
-/** Queued requests retain both Promise channels while no portal is attached. */
-interface PrerenderEntry {
-  modal: Modal;
-  dispatch?: Fn;
-}
-/** A bootstrap's identity and notification channel, independent of React trees. */
-interface BootstrapOwner {
-  root: HTMLElement | null;
-  notify: Fn<[HTMLElement | null]>;
-}
 
 /** Owns global DOM effects and the external modal store; styles are lazy for SSR. */
 export class ModalManager {
-  /** Rendered wrappers provide focus boundaries without imposing frame semantics. */
-  private static __frames__ = new Map<number, HTMLElement>();
-  /** Registration captures the opener until the request first settles. */
-  private static __focusTargets__ = new Map<number, Element | null>();
-  /** Visible intervals receive initial focus only once. */
-  private static __focused__ = new Set<number>();
-  /** Only attributes introduced by this manager are removed on release. */
-  private static __inertElements__: Element[] = [];
-  /** The root where the current inert snapshot starts. */
-  private static __inertRoot__: HTMLElement | null = null;
-  /** Original inline properties, including priorities, survive scroll locking. */
-  private static __scrollStyle__?: {
-    overflow: string;
-    overflowPriority: string;
-    padding: string;
-    paddingPriority: string;
-  };
-  /** The exact installed callback is shared by Escape and Tab handling. */
-  private static __keydown__?: (event: KeyboardEvent) => void;
-  /** The portal container belongs to the active bootstrap. */
-  private static __anchor__: HTMLElement | null = null;
-  /** A stable style scope survives provider handoffs. */
-  private static __scope__ = `promise-modal-${getRandomString(36)}`;
-  /** CSS class identity is computed without browser globals. */
-  private static __hash__ = polynomialHash(ModalManager.__scope__);
-  /** The scope manager exists only between browser attach and detach. */
-  private static __styleManager__?: ReturnType<typeof styleManagerFactory>;
-  /** Canonical CSS definitions survive detach for later initialization. */
-  private static __styleSheetDefinition__ = new Map<string, string>();
-  /** Alive nodes remain independent of the provider render tree. */
-  private static __nodes__ = new Map<number, ModalNode>();
-  /** Each registered node has one store-owned subscription. */
-  private static __nodeCleanups__ = new Map<number, Fn>();
-  /** Membership snapshot changes only on registration or removal. */
-  private static __ids__: readonly number[] = [];
-  /** External-store listeners observe node publications. */
-  private static __listeners__ = new Set<Fn>();
-  /** Ids remain unique across provider instances until test reset. */
-  private static __id__ = 0;
-  /** Stack positions increase until the store becomes empty. */
-  private static __order__ = 0;
-  /** Boundary recovery advances only when a new node registers. */
-  private static __registrationVersion__ = 0;
-  /** Initialization invalidates a previously scheduled detach cancellation. */
-  private static __generation__ = 0;
-  /** One identity at a time may render the portal. */
-  private static __owner__: object | null = null;
-  /** Development ownership warnings are limited to once per bootstrap. */
-  private static __warned__ = new WeakSet<object>();
-  /** Insertion order determines the next waiting owner. */
-  private static __bootstraps__ = new Map<object, BootstrapOwner>();
-  /** Pre-mount requests retain their settlement channels. */
-  private static __prerenderList__: PrerenderEntry[] = [];
-  /** Queue mode preserves requests while no React handler is installed. */
-  private static __defaultOpenHandler__: Fn<[Modal], ModalNode | undefined> = (
-    modal,
-  ) => {
-    ModalManager.__prerenderList__.push({ modal });
-    return undefined;
-  };
-  /** The active layout effect owns this handler until its guarded cleanup. */
-  private static __openHandler__ = ModalManager.__defaultOpenHandler__;
+  /** Compatible package copies resolve to one runtime-owned state object. */
+  private static readonly __state__ = getModalManagerState();
 
   /** Returns stable ids until membership changes. */
   static get ids(): readonly number[] {
-    return ModalManager.__ids__;
+    return ModalManager.__state__.ids;
   }
   /** Advances only on registration, so an error boundary cannot reset on cleanup. */
   static get registrationVersion() {
-    return ModalManager.__registrationVersion__;
+    return ModalManager.__state__.registrationVersion;
   }
   /** Returns a live node without exposing the mutable dictionary. */
   static node(id: number) {
-    return ModalManager.__nodes__.get(id);
+    return ModalManager.__state__.nodes.get(id);
   }
   /** Allocates ids across provider handoffs and remounts. */
   static nextId() {
-    return ModalManager.__id__++;
+    return ModalManager.__state__.id++;
   }
   /** Subscribes React readers to publications and membership changes. */
   static subscribe(listener: Fn): Fn {
-    ModalManager.__listeners__.add(listener);
+    ModalManager.__state__.listeners.add(listener);
     return () => {
-      ModalManager.__listeners__.delete(listener);
+      ModalManager.__state__.listeners.delete(listener);
     };
   }
   /** Publishes the external store after a node or membership change. */
   private static notify() {
-    for (const listener of ModalManager.__listeners__) listener();
+    for (const listener of ModalManager.__state__.listeners) listener();
   }
   /** Tracks a node until destruction, including changes to hidden nodes. */
   static register(node: ModalNode): void {
-    if (ModalManager.__nodes__.has(node.id)) return;
-    node.order = ++ModalManager.__order__;
-    ModalManager.__nodes__.set(node.id, node);
+    if (ModalManager.__state__.nodes.has(node.id)) return;
+    node.order = ++ModalManager.__state__.order;
+    ModalManager.__state__.nodes.set(node.id, node);
     if (typeof document !== 'undefined')
-      ModalManager.__focusTargets__.set(node.id, document.activeElement);
-    ModalManager.__ids__ = [...ModalManager.__nodes__.keys()];
-    ModalManager.__registrationVersion__++;
-    ModalManager.__nodeCleanups__.set(
+      ModalManager.__state__.focusTargets.set(node.id, document.activeElement);
+    ModalManager.__state__.ids = [...ModalManager.__state__.nodes.keys()];
+    ModalManager.__state__.registrationVersion++;
+    ModalManager.__state__.nodeCleanups.set(
       node.id,
       node.subscribe(() => {
         const restore =
-          node.settled && ModalManager.__focusTargets__.has(node.id);
-        const target = ModalManager.__focusTargets__.get(node.id);
-        if (restore) ModalManager.__focusTargets__.delete(node.id);
+          node.settled && ModalManager.__state__.focusTargets.has(node.id);
+        const target = ModalManager.__state__.focusTargets.get(node.id);
+        if (restore) ModalManager.__state__.focusTargets.delete(node.id);
         if (!node.alive) {
-          ModalManager.__nodeCleanups__.get(node.id)?.();
-          ModalManager.__nodeCleanups__.delete(node.id);
-          ModalManager.__nodes__.delete(node.id);
-          ModalManager.__ids__ = [...ModalManager.__nodes__.keys()];
-          if (!ModalManager.__ids__.length) ModalManager.__order__ = 0;
+          ModalManager.__state__.nodeCleanups.get(node.id)?.();
+          ModalManager.__state__.nodeCleanups.delete(node.id);
+          ModalManager.__state__.nodes.delete(node.id);
+          ModalManager.__state__.ids = [...ModalManager.__state__.nodes.keys()];
+          if (!ModalManager.__state__.ids.length)
+            ModalManager.__state__.order = 0;
         }
         ModalManager.updateAccessibility();
         if (restore && node.dimmed) ModalManager.restoreFocus(node.id, target);
@@ -152,8 +82,8 @@ export class ModalManager {
   /** Brings an existing node forward without publishing when already on top. */
   static raise(id: number): void {
     const node = ModalManager.node(id);
-    if (!node || node.order === ModalManager.__order__) return;
-    node.order = ++ModalManager.__order__;
+    if (!node || node.order === ModalManager.__state__.order) return;
+    node.order = ++ModalManager.__state__.order;
     node.publish();
   }
   /** Creates or moves the one anchor; callers never perform global DOM effects. */
@@ -167,20 +97,20 @@ export class ModalManager {
       prefix = 'promise-modal',
       root = document.body,
     } = options || {};
-    if (!ModalManager.__anchor__) {
+    if (!ModalManager.__state__.anchor) {
       const node = document.createElement(tag);
       node.id = `${prefix}-${getRandomString(36)}`;
-      node.className = ModalManager.__scope__;
-      ModalManager.__anchor__ = node;
+      node.className = ModalManager.__state__.scope;
+      ModalManager.__state__.anchor = node;
     }
-    if (ModalManager.__anchor__.parentElement !== root)
-      root.appendChild(ModalManager.__anchor__);
+    if (ModalManager.__state__.anchor.parentElement !== root)
+      root.appendChild(ModalManager.__state__.anchor);
     ModalManager.flushPrerender();
-    return ModalManager.__anchor__;
+    return ModalManager.__state__.anchor;
   }
   /** Whether an anchor exists for the current owner. */
   static get anchored() {
-    return ModalManager.__anchor__ !== null;
+    return ModalManager.__state__.anchor !== null;
   }
   /** Registers an owner or waiter and notifies only the active bootstrap. */
   static attach(
@@ -189,28 +119,31 @@ export class ModalManager {
     notify: Fn<[HTMLElement | null]>,
   ): void {
     if (root === null) {
-      if (ModalManager.__owner__ === identity) {
-        ModalManager.__bootstraps__.set(identity, { root, notify });
+      if (ModalManager.__state__.owner === identity) {
+        ModalManager.__state__.bootstraps.set(identity, { root, notify });
         ModalManager.releasePageEffects();
-        ModalManager.__focused__.clear();
-        ModalManager.__anchor__?.remove();
-      } else ModalManager.__bootstraps__.delete(identity);
+        ModalManager.__state__.focused.clear();
+        ModalManager.__state__.anchor?.remove();
+      } else ModalManager.__state__.bootstraps.delete(identity);
       return;
     }
-    ModalManager.__bootstraps__.set(identity, { root, notify });
-    if (ModalManager.__owner__ && ModalManager.__owner__ !== identity) {
+    ModalManager.__state__.bootstraps.set(identity, { root, notify });
+    if (
+      ModalManager.__state__.owner &&
+      ModalManager.__state__.owner !== identity
+    ) {
       if (
-        !ModalManager.__warned__.has(identity) &&
+        !ModalManager.__state__.warned.has(identity) &&
         process.env.NODE_ENV !== 'production'
       )
         console.warn(
           '[promise-modal] Another provider owns the portal; this provider waits until its owner unmounts.',
         );
-      ModalManager.__warned__.add(identity);
+      ModalManager.__state__.warned.add(identity);
       return;
     }
-    ModalManager.__owner__ = identity;
-    ModalManager.__generation__++;
+    ModalManager.__state__.owner = identity;
+    ModalManager.__state__.generation++;
     const anchor = ModalManager.anchor({ root });
     ModalManager.applyStyleSheet();
     ModalManager.installKeyboardListener();
@@ -219,26 +152,26 @@ export class ModalManager {
   }
   /** Detaches only this bootstrap; defers cancellation to preserve same-commit remounts. */
   static detach(identity: object): void {
-    const bootstrap = ModalManager.__bootstraps__.get(identity);
-    ModalManager.__bootstraps__.delete(identity);
-    if (ModalManager.__owner__ !== identity) return;
-    ModalManager.__owner__ = null;
+    const bootstrap = ModalManager.__state__.bootstraps.get(identity);
+    ModalManager.__state__.bootstraps.delete(identity);
+    if (ModalManager.__state__.owner !== identity) return;
+    ModalManager.__state__.owner = null;
     ModalManager.removeKeyboardListener();
     ModalManager.releasePageEffects();
-    ModalManager.__focused__.clear();
-    ModalManager.__anchor__?.remove();
-    ModalManager.__anchor__ = null;
+    ModalManager.__state__.focused.clear();
+    ModalManager.__state__.anchor?.remove();
+    ModalManager.__state__.anchor = null;
     ModalManager.destroyStyleSheet();
     bootstrap?.notify(null);
-    const next = ModalManager.__bootstraps__.entries().next().value;
+    const next = ModalManager.__state__.bootstraps.entries().next().value;
     if (next) {
       ModalManager.attach(next[0], next[1].root, next[1].notify);
       return;
     }
-    const generation = ModalManager.__generation__;
+    const generation = ModalManager.__state__.generation;
     queueMicrotask(() => {
-      if (generation !== ModalManager.__generation__) return;
-      for (const node of [...ModalManager.__nodes__.values()])
+      if (generation !== ModalManager.__state__.generation) return;
+      for (const node of [...ModalManager.__state__.nodes.values()])
         if (node.alive) node.onDestroy();
     });
   }
@@ -248,13 +181,13 @@ export class ModalManager {
    * @param element - Mounted outer wrapper, or null to release its reference.
    */
   static setFrameElement(id: number, element: HTMLElement | null): void {
-    if (element) ModalManager.__frames__.set(id, element);
-    else ModalManager.__frames__.delete(id);
+    if (element) ModalManager.__state__.frames.set(id, element);
+    else ModalManager.__state__.frames.delete(id);
     ModalManager.updateAccessibility(true);
   }
   /** Reads pending visible nodes in descending visual order. */
   private static visibleNodes(): ModalNode[] {
-    return [...ModalManager.__nodes__.values()]
+    return [...ModalManager.__state__.nodes.values()]
       .filter((node) => node.alive && node.visible && !node.settled)
       .sort((left, right) => right.order - left.order);
   }
@@ -263,7 +196,7 @@ export class ModalManager {
    * @param id - Pending dimmed modal whose wrapper may already be registered.
    */
   private static focusFrame(id: number): void {
-    const frame = ModalManager.__frames__.get(id);
+    const frame = ModalManager.__state__.frames.get(id);
     if (!frame?.isConnected || frame.contains(document.activeElement)) return;
     (getTabbableElements(frame)[0] ?? frame).focus();
   }
@@ -283,7 +216,9 @@ export class ModalManager {
     const remaining = pending.filter((node) => node.dimmed);
     if (
       pending.some((node) =>
-        ModalManager.__frames__.get(node.id)?.contains(document.activeElement),
+        ModalManager.__state__.frames
+          .get(node.id)
+          ?.contains(document.activeElement),
       )
     )
       return;
@@ -305,25 +240,25 @@ export class ModalManager {
    */
   private static updateAccessibility(moveFocus = false): void {
     if (typeof document === 'undefined') return;
-    const root = ModalManager.__anchor__?.isConnected
-      ? ModalManager.__anchor__.parentElement
+    const root = ModalManager.__state__.anchor?.isConnected
+      ? ModalManager.__state__.anchor.parentElement
       : null;
     const nodes = root
       ? ModalManager.visibleNodes().filter((node) => node.dimmed)
       : [];
-    for (const id of ModalManager.__focused__)
+    for (const id of ModalManager.__state__.focused)
       if (!nodes.some((node) => node.id === id))
-        ModalManager.__focused__.delete(id);
+        ModalManager.__state__.focused.delete(id);
     ModalManager.updateInert(nodes.length > 0 ? root : null);
     ModalManager.updateScrollLock(nodes.some((node) => node.lockScroll));
     if (!moveFocus) return;
     const top = nodes[0];
     if (
       top &&
-      !ModalManager.__focused__.has(top.id) &&
-      ModalManager.__frames__.get(top.id)?.isConnected
+      !ModalManager.__state__.focused.has(top.id) &&
+      ModalManager.__state__.frames.get(top.id)?.isConnected
     ) {
-      ModalManager.__focused__.add(top.id);
+      ModalManager.__state__.focused.add(top.id);
       ModalManager.focusFrame(top.id);
     }
   }
@@ -332,20 +267,20 @@ export class ModalManager {
    * @param root - Attached anchor parent, or null to release owned attributes.
    */
   private static updateInert(root: HTMLElement | null): void {
-    if (ModalManager.__inertRoot__ === root) return;
-    for (const element of ModalManager.__inertElements__)
+    if (ModalManager.__state__.inertRoot === root) return;
+    for (const element of ModalManager.__state__.inertElements)
       element.removeAttribute('inert');
-    ModalManager.__inertElements__ = [];
-    ModalManager.__inertRoot__ = root;
+    ModalManager.__state__.inertElements = [];
+    ModalManager.__state__.inertRoot = root;
     if (!root) return;
-    let branch = ModalManager.__anchor__;
+    let branch = ModalManager.__state__.anchor;
     while (branch && branch !== document.body) {
       const parent = branch.parentElement;
       if (!parent) break;
       for (const sibling of parent.children)
         if (sibling !== branch && !sibling.hasAttribute('inert')) {
           sibling.setAttribute('inert', '');
-          ModalManager.__inertElements__.push(sibling);
+          ModalManager.__state__.inertElements.push(sibling);
         }
       branch = parent;
     }
@@ -356,9 +291,9 @@ export class ModalManager {
    */
   private static updateScrollLock(locked: boolean): void {
     const style = document.body.style;
-    const previous = ModalManager.__scrollStyle__;
+    const previous = ModalManager.__state__.scrollStyle;
     if (locked && !previous) {
-      ModalManager.__scrollStyle__ = {
+      ModalManager.__state__.scrollStyle = {
         overflow: style.getPropertyValue('overflow'),
         overflowPriority: style.getPropertyPriority('overflow'),
         padding: style.getPropertyValue('padding-right'),
@@ -386,7 +321,7 @@ export class ModalManager {
           previous.paddingPriority,
         );
       else style.removeProperty('padding-right');
-      ModalManager.__scrollStyle__ = undefined;
+      ModalManager.__state__.scrollStyle = undefined;
     }
   }
   /** Reverts page mutations before detach, root changes, or test reset. */
@@ -396,10 +331,10 @@ export class ModalManager {
   }
   /** Installs exactly one bubbling document listener so controls may prevent defaults. */
   private static installKeyboardListener(): void {
-    if (ModalManager.__keydown__) return;
-    ModalManager.__keydown__ = (event) => {
+    if (ModalManager.__state__.keydown) return;
+    ModalManager.__state__.keydown = (event) => {
       if (
-        !ModalManager.__anchor__?.isConnected ||
+        !ModalManager.__state__.anchor?.isConnected ||
         event.defaultPrevented ||
         event.isComposing ||
         event.keyCode === 229
@@ -416,7 +351,7 @@ export class ModalManager {
         if (top?.dimmed && top.trapFocus) ModalManager.trapTab(event, top.id);
       }
     };
-    document.addEventListener('keydown', ModalManager.__keydown__);
+    document.addEventListener('keydown', ModalManager.__state__.keydown);
   }
   /**
    * Cycles the top frame's keyboard boundary; native navigation handles middle items.
@@ -424,7 +359,7 @@ export class ModalManager {
    * @param id - Top participating modal with focus trapping enabled.
    */
   private static trapTab(event: KeyboardEvent, id: number): void {
-    const frame = ModalManager.__frames__.get(id);
+    const frame = ModalManager.__state__.frames.get(id);
     if (!frame?.isConnected) return;
     const controls = getTabbableElements(frame);
     const first = controls[0] ?? frame;
@@ -441,114 +376,120 @@ export class ModalManager {
   }
   /** Releases the same callback installed by the current owner. */
   private static removeKeyboardListener(): void {
-    if (!ModalManager.__keydown__) return;
-    document.removeEventListener('keydown', ModalManager.__keydown__);
-    ModalManager.__keydown__ = undefined;
+    if (!ModalManager.__state__.keydown) return;
+    document.removeEventListener('keydown', ModalManager.__state__.keydown);
+    ModalManager.__state__.keydown = undefined;
   }
   /** Provides a read-only copy of requests waiting for initialization. */
   static get prerender(): Modal[] {
-    return map(ModalManager.__prerenderList__, (entry) => entry.modal);
+    return map(ModalManager.__state__.prerenderList, (entry) => entry.modal);
   }
   /** Installs a handler and delivers queued requests with their original Promise channels. */
   static set openHandler(handler: Fn<[Modal], ModalNode>) {
-    ModalManager.__openHandler__ = handler;
+    ModalManager.__state__.openHandler = handler;
     ModalManager.flushPrerender();
   }
   /** Restores queueing only if the effect being cleaned up still owns the handler. */
   static releaseOpenHandler(handler: Fn<[Modal], ModalNode>): void {
-    if (ModalManager.__openHandler__ === handler)
-      ModalManager.__openHandler__ = ModalManager.__defaultOpenHandler__;
+    if (ModalManager.__state__.openHandler === handler)
+      ModalManager.__state__.openHandler =
+        ModalManager.__state__.defaultOpenHandler;
   }
   /** Flushes independent queue items, forwarding errors rather than swallowing them. */
   private static flushPrerender(): void {
     if (
-      ModalManager.__openHandler__ === ModalManager.__defaultOpenHandler__ ||
-      !ModalManager.__anchor__?.parentElement
+      ModalManager.__state__.openHandler ===
+        ModalManager.__state__.defaultOpenHandler ||
+      !ModalManager.__state__.anchor?.parentElement
     )
       return;
-    const entries = ModalManager.__prerenderList__;
-    ModalManager.__prerenderList__ = [];
+    const entries = ModalManager.__state__.prerenderList;
+    ModalManager.__state__.prerenderList = [];
     for (const entry of entries)
       try {
         if (entry.dispatch) entry.dispatch();
-        else ModalManager.__openHandler__(entry.modal);
+        else ModalManager.__state__.openHandler(entry.modal);
       } catch (error) {
         entry.modal.handleReject?.(error);
       }
   }
   /** Adds a live-node dispatcher to an already queued request. */
   static bindPrerender(modal: Modal, dispatch: Fn): void {
-    const entry = ModalManager.__prerenderList__.find(
+    const entry = ModalManager.__state__.prerenderList.find(
       (entry) => entry.modal === modal,
     );
     if (entry) entry.dispatch = dispatch;
   }
   /** Removes a pre-mount request after cancellation. */
   static cancelPrerender(modal: Modal): boolean {
-    const index = ModalManager.__prerenderList__.findIndex(
+    const index = ModalManager.__state__.prerenderList.findIndex(
       (entry) => entry.modal === modal,
     );
     if (index < 0) return false;
-    ModalManager.__prerenderList__.splice(index, 1);
+    ModalManager.__state__.prerenderList.splice(index, 1);
     return true;
   }
   /** Records compressed CSS without reading the DOM. */
   static defineStyleSheet(styleId: string, css: string): void {
-    ModalManager.__styleSheetDefinition__.set(styleId, compressCss(css));
+    ModalManager.__state__.styleSheetDefinition.set(styleId, compressCss(css));
   }
   /** Creates a style manager only at browser initialization. */
   static applyStyleSheet(): void {
-    ModalManager.__styleManager__ ??= styleManagerFactory(
-      ModalManager.__scope__,
+    ModalManager.__state__.styleManager ??= styleManagerFactory(
+      ModalManager.__state__.scope,
     );
-    for (const [styleId, css] of ModalManager.__styleSheetDefinition__)
-      ModalManager.__styleManager__(styleId, css, true);
+    for (const [styleId, css] of ModalManager.__state__.styleSheetDefinition)
+      ModalManager.__state__.styleManager(styleId, css, true);
   }
   /** Discards the captured scope manager so a later attach can rebuild styles. */
   private static destroyStyleSheet(): void {
-    if (!ModalManager.__styleManager__) return;
-    destroyScope(ModalManager.__scope__);
-    ModalManager.__styleManager__ = undefined;
+    if (!ModalManager.__state__.styleManager) return;
+    destroyScope(ModalManager.__state__.scope);
+    ModalManager.__state__.styleManager = undefined;
   }
   /** Computes class names in browser and server environments alike. */
   static getHashedClassNames(styleId: string): string {
-    return `${styleId}-${ModalManager.__hash__}`;
+    return `${styleId}-${ModalManager.__state__.hash}`;
   }
   /** Fully resets test state, unlike an individual provider's detach. */
   static reset(): void {
-    ModalManager.__generation__++;
+    ModalManager.__state__.generation++;
     ModalManager.removeKeyboardListener();
     ModalManager.releasePageEffects();
-    for (const [id, target] of [...ModalManager.__focusTargets__].reverse())
+    for (const [id, target] of [
+      ...ModalManager.__state__.focusTargets,
+    ].reverse())
       if (ModalManager.node(id)?.dimmed) ModalManager.restoreFocus(id, target);
-    ModalManager.__focusTargets__.clear();
-    ModalManager.__frames__.clear();
-    ModalManager.__focused__.clear();
-    ModalManager.__anchor__?.remove();
-    ModalManager.__anchor__ = null;
+    ModalManager.__state__.focusTargets.clear();
+    ModalManager.__state__.frames.clear();
+    ModalManager.__state__.focused.clear();
+    ModalManager.__state__.anchor?.remove();
+    ModalManager.__state__.anchor = null;
     ModalManager.destroyStyleSheet();
-    ModalManager.__prerenderList__ = [];
-    ModalManager.__openHandler__ = ModalManager.__defaultOpenHandler__;
-    for (const cleanup of ModalManager.__nodeCleanups__.values()) cleanup();
-    ModalManager.__nodeCleanups__.clear();
-    ModalManager.__nodes__.clear();
-    ModalManager.__ids__ = [];
-    ModalManager.__id__ =
-      ModalManager.__order__ =
-      ModalManager.__registrationVersion__ =
+    ModalManager.__state__.prerenderList = [];
+    ModalManager.__state__.openHandler =
+      ModalManager.__state__.defaultOpenHandler;
+    for (const cleanup of ModalManager.__state__.nodeCleanups.values())
+      cleanup();
+    ModalManager.__state__.nodeCleanups.clear();
+    ModalManager.__state__.nodes.clear();
+    ModalManager.__state__.ids = [];
+    ModalManager.__state__.id =
+      ModalManager.__state__.order =
+      ModalManager.__state__.registrationVersion =
         0;
-    ModalManager.__owner__ = null;
-    for (const bootstrap of ModalManager.__bootstraps__.values())
+    ModalManager.__state__.owner = null;
+    for (const bootstrap of ModalManager.__state__.bootstraps.values())
       bootstrap.notify(null);
-    ModalManager.__bootstraps__.clear();
-    ModalManager.__warned__ = new WeakSet();
+    ModalManager.__state__.bootstraps.clear();
+    ModalManager.__state__.warned = new WeakSet();
     ModalManager.notify();
-    ModalManager.__listeners__.clear();
+    ModalManager.__state__.listeners.clear();
   }
   /** Opens through the current handler or queues until one is installed. */
   static open(modal: Modal): ModalNode | undefined {
-    return ModalManager.__anchor__?.parentElement
-      ? ModalManager.__openHandler__(modal)
-      : ModalManager.__defaultOpenHandler__(modal);
+    return ModalManager.__state__.anchor?.parentElement
+      ? ModalManager.__state__.openHandler(modal)
+      : ModalManager.__state__.defaultOpenHandler(modal);
   }
 }

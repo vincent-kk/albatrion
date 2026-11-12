@@ -29,6 +29,14 @@ Handle render failures with `try`/`catch`: a failing content, input, or frame re
 
 The package supports DOM-free import and server rendering, but call modal functions only in the browser. Server rendering has no portal and counts zero active modals.
 
+## Platform integration
+
+Copies of the package with the same internal state version share one modal system in the same JavaScript realm. An `alert`, `confirm`, or `prompt` imported by another copy reaches the active Provider; style identity, ownership, and cleanup are shared. Incompatible state versions stay independent and warn in development. Keep one compatible package version across the application; different windows or realms do not share a system.
+
+The default pathname hook uses the Navigation API when available. Otherwise it polls only while a modal is alive, including route-hidden modals and closed modals awaiting destruction. Requests opened after an idle route change belong to the pathname at opening time. Custom `usePathname` hooks continue to follow their router's pathname.
+
+React 18 and 19 are supported. Both ESM and CommonJS bundles start with `'use client'` so React Server Component tooling recognizes the client boundary. DOM-free import and server rendering remain supported without layout-effect warnings in React 18, including when `useModalAnimation` runs in a server-rendered component; call modal functions only in the browser.
+
 ## Results and input
 
 `alert` completes without a value. `confirm` resolves `true` for confirmation and `false` for cancellation. `prompt<T>` returns `Promise<T | undefined | null>`: confirmation preserves the current input, including missing input as `undefined`; ordinary cancellation returns `null`. Set `defaultValue` to control untouched confirmation and use `result === null` to identify ordinary cancellation.

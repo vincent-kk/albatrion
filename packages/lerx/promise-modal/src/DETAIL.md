@@ -6,6 +6,10 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 
 ## API Contracts
 
+- React 18과 19에서 같은 공개 동작을 제공하고 ESM·CJS 배포 번들은 첫 문장으로 'use client'를 선언합니다. DOM 없는 가져오기와 서버 렌더 지원은 유지합니다.
+- DOM 없는 서버 렌더에서 Provider와 공개 애니메이션 훅은 layout effect 경고를 내지 않습니다. 여러 프랙탈이 사용하는 환경별 effect 선택은 소스 루트의 hooks가 소유하며 브라우저에서는 layout 시점을 유지합니다.
+- 동일한 전역 상태 구조 버전의 패키지 사본은 같은 시스템을 사용하며 버전이 다르면 격리하고 개발 경고를 냅니다.
+- 기본 경로 훅은 Navigation API가 없을 때 살아 있는 노드가 있는 동안만 폴링합니다. 경로로 숨겨진 노드와 파괴 전 닫힌 노드도 살아 있는 동안 포함하며 마지막 파괴 시 예약을 취소합니다. 기본 훅으로 여는 노드의 initiator는 호출 순간의 pathname이므로 빈 기간의 이동도 반영합니다.
 - closeOnEscape는 모달 Esc, 모달 배경 클릭, Provider Esc, Provider 배경 클릭 순으로 상속합니다. Esc는 보이는 미확정 최상위만 취소합니다.
 - dimmed 모달은 포커스 이동·복원과 기본 Tab 가두기·스크롤 잠금 및 조상 경로 형제 inert를 제공합니다. 포커스 이동은 최상위 참여 모달만 처리하고 Tab 가두기는 전체 visible 미확정 최상위가 dimmed일 때만 적용합니다. trapFocus와 lockScroll은 기본 true이고 dimmed false에는 적용하지 않습니다. 사용자 프레임은 접근 가능한 이름·설명·역할을 제공합니다.
 
@@ -19,6 +23,12 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 - 개수와 상태 구독은 Provider 밖에서도 저장소를 읽습니다. 개수 판별 함수는 읽기 전용 ModalNodeView를 받으며 refreshKey를 사용하지 않습니다.
 
 ## Acceptance Criteria
+
+### platform-compatibility — 배포 경계와 경로 감지
+
+- 두 번들의 첫 문장은 use client이며 React 18 테스트는 같은 공개 동작을 검증합니다.
+- React 18의 서버 렌더도 소스와 배포 진입점에서 console.error 없이 Provider와 공개 애니메이션 훅을 렌더합니다.
+- 모달이 없으면 기본 폴링은 예약되지 않고 첫 요청은 현재 경로를 기록합니다.
 
 ### modal-results — 모달별 완료 결과
 

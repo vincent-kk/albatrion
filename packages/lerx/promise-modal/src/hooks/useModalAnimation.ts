@@ -1,6 +1,8 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
+
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 interface ModalAnimationHandler {
   onVisible?: Fn;
@@ -213,7 +215,7 @@ interface ModalAnimationHandler {
  * ```
  *
  * @remarks
- * - Uses useLayoutEffect to ensure DOM updates before animations
+ * - Uses layout effects in the browser and passive effects without a DOM
  * - Callbacks are wrapped in requestAnimationFrame for optimal timing
  * - Handler reference is kept fresh without causing re-renders
  * - Automatically cancels pending animation frames on cleanup
@@ -224,10 +226,10 @@ export const useModalAnimation = (
   handler: ModalAnimationHandler,
 ) => {
   const handlerRef = useRef(handler);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     handlerRef.current = handler;
   }, [handler]);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!handlerRef.current) return;
     let frame: ReturnType<typeof requestAnimationFrame>;
     if (visible)
