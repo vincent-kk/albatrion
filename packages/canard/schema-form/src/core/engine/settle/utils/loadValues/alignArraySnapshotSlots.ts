@@ -1,4 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { setDataProperty } from '@winglet/common-utils/object';
 
 import {
   JSONPointer as $,
@@ -75,7 +77,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
         break;
       }
       probe =
-        probe !== null && typeof probe === 'object'
+        probe !== null && typeof probe === 'object' && hasOwnProperty(probe, segment)
           ? Reflect.get(probe, segment)
           : undefined;
     }
@@ -89,14 +91,14 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
       parentPath = appendSegment(parentPath, segments[index]);
-      const child = draftCopy(Reflect.get(parent, segment), parentPath);
+      const child = draftCopy(hasOwnProperty(parent, segment) ? Reflect.get(parent, segment) : undefined, parentPath);
       if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
-      Reflect.set(parent, segment, child);
+      setDataProperty(parent, segment, child);
       parent = child;
     }
     const segment = segments[segments.length - 1];
     if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
-    Reflect.set(parent, segment, slots);
+    setDataProperty(parent, segment, slots);
   }
   runtime.loadSnapshot = draft;
 };

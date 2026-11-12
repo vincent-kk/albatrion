@@ -2,6 +2,8 @@
 
 ## Requirements
 
+로드 스냅숏 경로는 own 속성만 읽고 예약 멤버도 own 데이터로 기록합니다. 배열 슬롯 정렬도 같은 규칙을 사용하여 기본값 조회·부분 reset이 상속 속성이나 프로토타입을 값으로 취급하지 않게 합니다. 경로 깊이에 비례한 확인과 기존 얕은 사본 비용을 유지합니다.
+
 정착은 명시적 쓰기를 받은 원본에서 형상과 방출을 동기적으로 확정하는 경계입니다. 계산 도중의 형상은 작업 상태이며, 사건은 확정 결과를 전달합니다. 같은 원본에서도 직전 화면에 따라 다른 고정점을 고르는 최적화는 허용하지 않습니다.
 
 원본의 저장 책임은 [record](../record/DETAIL.md), 종류별 순수 해석·합성·투영은 [behaviors](../behaviors/DETAIL.md), 자동 규칙의 승자·에지는 [derive](../derive/DETAIL.md)가 소유합니다. 이 모듈은 그 결과를 적용하는 순서와 범위, 원본 보존 및 실패 시 커밋을 소유합니다. 사건의 배달과 진입 사슬은 [write](../write/DETAIL.md), 검증 판정과 예약은 각각 [validation](../validation/DETAIL.md)과 [validationScheduling](../validationScheduling/DETAIL.md)의 계약을 따릅니다.

@@ -1,3 +1,5 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import {
   type PointerSegment,
   parsePointerSegments,
@@ -19,7 +21,7 @@ export const getLoadValue = (
   let value = snapshot;
   for (const name of segments ?? parsePointerSegments(path)) {
     if (value === null || typeof value !== 'object') return undefined;
-    if (typeof name !== 'string') return undefined;
+    if (typeof name !== 'string' || !hasOwnProperty(value, name)) return undefined;
     value = Reflect.get(value, name);
   }
   return value;
