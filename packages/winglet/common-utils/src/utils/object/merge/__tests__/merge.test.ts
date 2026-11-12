@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { merge } from '../index';
+import { merge } from '../merge';
 
 describe('merge', () => {
   it('should merge properties from source object into target object', () => {

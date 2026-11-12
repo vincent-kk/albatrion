@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { merge } from '../index';
+import { merge } from '../merge';
 
 // filid:contract explicit-policies
 describe('merge options', () => {
