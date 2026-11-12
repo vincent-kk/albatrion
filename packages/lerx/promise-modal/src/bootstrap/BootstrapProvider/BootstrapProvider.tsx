@@ -7,11 +7,10 @@ import {
   useMemo,
 } from 'react';
 
-import { useOnMount } from '@winglet/react-utils/hook';
-
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 
 import { bootstrap } from './helpers/bootstrap';
+import { useInitialComponents } from './hooks/useInitialComponents';
 import { useInitialize } from './hooks/useInitialize';
 import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
 
@@ -20,7 +19,7 @@ import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
  *
  * Sets up the modal rendering infrastructure by creating a portal anchor point
  * and managing the lifecycle of modal components. Can be initialized automatically
- * on mount or manually via ref handle.
+ * on mount, deferred with root={null}, or moved via the ref handle.
  *
  * @example
  * Basic usage with automatic initialization:
@@ -125,8 +124,9 @@ import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
  * ```
  *
  * @remarks
- * - Without a ref, the provider initializes automatically on mount
- * - With a ref, you must call `initialize()` manually with target element
+ * - root defaults to document.body; root={null} defers initialization
+ * - A ref does not defer initialization; initialize(element) selects the root
+ * - The last root prop change or initialize call determines the effective root
  * - Additional providers wait until the current portal owner unmounts
  * - Removing the last provider cancels pending modals after the current commit
  * - Same-commit remounts preserve pending results and prompt input
@@ -148,6 +148,7 @@ export const BootstrapProvider = memo(
         ContentComponent,
         FooterComponent,
         options,
+        root,
         context,
         children,
       },
@@ -158,7 +159,16 @@ export const BootstrapProvider = memo(
         [useExternalPathname],
       );
 
-      const { anchorRef, handleInitialize, handleReset } = useInitialize();
+      const components = useInitialComponents({
+        ForegroundComponent,
+        BackgroundComponent,
+        TitleComponent,
+        SubtitleComponent,
+        ContentComponent,
+        FooterComponent,
+      });
+
+      const { anchorRef, handleInitialize } = useInitialize(root);
 
       useImperativeHandle(
         handleRef,
@@ -168,27 +178,12 @@ export const BootstrapProvider = memo(
         [handleInitialize],
       );
 
-      useOnMount(() => {
-        /**
-         * NOTE: `handleRef` being null indicates that no `ref` was provided.
-         *   In this case, the `ModalProvider`(=`BootstrapProvider`) is not receiving the `ref`,
-         *   so it should be initialized automatically.
-         */
-        if (handleRef === null) handleInitialize();
-        return handleReset;
-      });
-
       return (
         <Fragment>
           {children}
           {anchorRef.current &&
             bootstrap({
-              ForegroundComponent,
-              BackgroundComponent,
-              TitleComponent,
-              SubtitleComponent,
-              ContentComponent,
-              FooterComponent,
+              ...components,
               usePathname,
               options,
               context,

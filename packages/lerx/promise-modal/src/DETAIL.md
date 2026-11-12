@@ -6,6 +6,11 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 
 ## API Contracts
 
+- useDestroyAfter는 지속시간과 Provider 폴백이 바뀔 때만 정규화하여 동일 입력의 부모 리렌더가 경고를 반복하지 않습니다.
+- 설정 병합은 기본값, Provider, useModal 설정, 호출 인자 순이며 undefined는 상속하고 0과 false는 보존합니다.
+- duration은 밀리초 숫자 또는 ms·s 문자열을 받으며 공개 설정 훅은 정규화된 ms 문자열을 제공합니다. 설정 훅과 파괴 훅은 모달 트리 안에서만 사용하며 밖에서는 사용 위치를 설명하는 오류를 냅니다.
+- prompt 확인은 현재 값 그대로이며 입력이 없으면 undefined입니다. 일반 취소만 null이고 returnOnCancel 취소는 현재 값입니다.
+- 공개 Props 타입은 애플리케이션 래퍼의 선언에 사용합니다. 프레임은 group·subtype·settled를 받고 alert 내용도 context를 받습니다.
 - alive는 저장소에 남는 생명주기, visible은 경로에 따른 표시, settled는 결과 확정을 나타냅니다. 경로 숨김은 결과를 확정하지 않습니다.
 - Provider 해제는 열린 노드를 마이크로태스크 뒤 취소하며 같은 커밋의 재마운트는 입력값과 Promise를 유지합니다. DOM 없는 가져오기와 서버 렌더는 가능합니다. 서버에서는 모달 열기 함수를 호출하지 않습니다.
 - 개수와 상태 구독은 Provider 밖에서도 저장소를 읽습니다. 개수 판별 함수는 읽기 전용 ModalNodeView를 받으며 refreshKey를 사용하지 않습니다.
@@ -26,4 +31,4 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 
 ## Last Updated
 
-결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

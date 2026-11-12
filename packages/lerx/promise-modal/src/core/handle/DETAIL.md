@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- prompt 반환 타입은 Promise<T | undefined | null>이며 확인과 returnOnCancel 취소는 값을 변환하지 않습니다. 렌더 전 returnOnCancel 취소는 defaultValue이고 일반 취소는 null입니다.
+- 호출 duration은 숫자 밀리초 또는 ms·s 문자열을 받으며 undefined는 상속합니다. AbortSignal은 거부가 아닌 취소로 처리합니다.
 - 확정은 한 번만 유효하며 확인·취소·거부 시 AbortSignal 리스너를 정리합니다. 경로로 숨겨져도 중단은 취소 값으로 완료됩니다.
 
 ## Acceptance Criteria
@@ -16,4 +18,4 @@
 
 ## Last Updated
 
-결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

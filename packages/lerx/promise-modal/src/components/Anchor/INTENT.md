@@ -6,6 +6,8 @@
 
 ## Conventions
 
+- 앵커 정체를 유지하여 root 이동에도 열린 입력과 Promise를 보존합니다.
+
 - ModalManager.anchor()가 생성한 DOM 노드에 React Portal로 모달 렌더링
 - BootstrapProvider 내부에서만 사용
 

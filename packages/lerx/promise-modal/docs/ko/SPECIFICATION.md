@@ -173,6 +173,12 @@ AbstractNode (기본 클래스)
 
 ### 설정 우선순위
 
+Provider의 컴포넌트 props(`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`)는 부모 리렌더가 열린 prompt를 재마운트하지 않도록 마운트 시점에 고정합니다. 변경은 무시하며 개발 환경에서 변경된 prop마다 한 번 경고하고 운영 환경에서는 경고하지 않습니다. 바뀌는 데이터는 `context`로 전달하며 options는 반응형으로 갱신합니다.
+
+설정 우선순위는 기본값, Provider 옵션, `useModal(config)`, 호출 인자 순입니다. `undefined`는 상속하고 `0`과 `false`는 덮어씁니다. `useModal(config)`는 마운트 시점 기본값을 보관합니다. Provider와 모달별 `duration`은 음수가 아닌 밀리초 숫자(`300`, `0.5`), 밀리초 문자열(`'300ms'`, `'0.5ms'`), 초 문자열(`'0.3s'`)을 받습니다. 잘못된 값은 기본값으로 대체하고 개발 경고를 냅니다. 모달별 잘못된 값은 Provider 지속시간으로 대체합니다. `useModalOptions().duration`과 `useModalDuration(id?).duration`은 정규화된 밀리초 문자열을 반환하므로 CSS에 `ms`를 덧붙이지 않습니다.
+
+`useModalOptions`, `useModalBackdrop`, `useModalDuration`, `useDestroyAfter`는 모달 프레임·내용·푸터 안에서 사용합니다. Provider의 일반 자식이나 모달 트리 밖에서 호출하면 필요한 위치를 설명하는 오류를 던집니다. `useModalBackdrop`은 CSS 속성 객체를 반환합니다. 프레임은 `group`, `subtype`, `settled`를 받고 alert 내용도 `context`를 받습니다. 애플리케이션 래퍼 타입에는 공개 `AlertProps`, `ConfirmProps`, `PromptProps`, `OverridableHandleProps`를 사용합니다. 프레임의 `onClose`와 내용·푸터의 `onCancel`은 모두 요청을 취소하며 AbortSignal도 거부가 아닌 취소 값으로 완료됩니다.
+
 설정은 계층적으로 적용되며, 하위 레벨이 상위 레벨을 덮어씁니다:
 
 ```
@@ -307,12 +313,14 @@ if (shouldDelete) {
 
 ### prompt
 
+확인은 현재 입력값을 그대로 반환하며 값이 없으면 `undefined`입니다. 일반 취소는 `null`입니다. `returnOnCancel: true`이면 취소도 현재 값(렌더 전에는 `defaultValue`)을 반환하며 `undefined`도 보존합니다. 미입력 확인을 빈 문자열로 받으려면 `defaultValue: ''`를 지정합니다. 일반 취소 판별은 truthiness 대신 `result === null`을 사용합니다.
+
 사용자 입력을 수집하는 프롬프트 모달을 엽니다.
 
 #### 시그니처
 
 ```typescript
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | null>;
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>;
 ```
 
 #### 매개변수
@@ -360,7 +368,7 @@ interface UserData {
 const userData = await prompt<UserData>({
   title: '사용자 정보',
   defaultValue: { name: '', age: 0 },
-  Input: ({ value, onChange }) => (
+  Input: ({ value = { name: '', age: 0 }, onChange }) => (
     <form>
       <input
         value={value.name}
@@ -434,7 +442,7 @@ function DeleteButton({ id }) {
 
 `useModal`은 확정된 요청을 즉시 추적 목록에서 제거하고, 컴포넌트 언마운트 때 미확정 요청만 취소합니다. 정적 호출은 호출 컴포넌트보다 오래 유지되지만 Provider 소유권과 취소 규칙은 따릅니다.
 
-`useActiveModalCount`와 `useSubscribeModal(id)`는 공용 저장소를 읽으므로 Provider의 일반 자식과 Provider 밖에서도 동작합니다. 개수 판별 함수는 읽기 전용 `ModalNodeView`를 받으며 refresh key 없이 노드 변경을 반영합니다. `useDestroyAfter`는 모달 프레임 안에서 사용하고, 이미 확정됐지만 살아 있는 모달을 지연 시간 뒤 파괴합니다. 경로 숨김만으로는 타이머가 시작되지 않습니다. 지연 시간은 마운트 시점에 고정됩니다.
+`useActiveModalCount`와 `useSubscribeModal(id)`는 공용 저장소를 읽으므로 Provider의 일반 자식과 Provider 밖에서도 동작합니다. 개수 판별 함수는 읽기 전용 `ModalNodeView`를 받으며 refresh key 없이 노드 변경을 반영합니다. `useDestroyAfter`는 모달 프레임 안에서 사용하고, 이미 확정됐지만 살아 있는 모달을 지연 시간 뒤 파괴합니다. 경로 숨김만으로는 타이머가 시작되지 않습니다. 지연 시간이 바뀌면 최신 값으로 파괴를 다시 예약합니다.
 
 DOM 없이 패키지를 가져오고 서버에서 `ModalProvider`를 렌더할 수 있습니다. `alert`, `confirm`, `prompt`는 브라우저에서만 호출합니다. 서버 렌더에는 모달 포털이 없고 활성 개수는 0입니다.
 
@@ -514,7 +522,7 @@ function AnimatedModal({ visible, children }) {
 
 ```typescript
 function useModalDuration(modalId?: number): {
-  duration: string; // 예: '300ms'
+  duration: `${number}ms`; // 예: '300ms'
   milliseconds: number; // 예: 300
 };
 ```
@@ -526,14 +534,14 @@ function useModalDuration(modalId?: number): {
 결과가 확정된 모달을 지정한 지연 시간 뒤 파괴합니다.
 
 ```typescript
-function useDestroyAfter(modalId: number, duration: string | number): void;
+function useDestroyAfter(modalId: number, duration: number | `${number}ms` | `${number}s`): void;
 ```
 
 #### 동작
 
 - 결과가 확정되고 살아 있을 때만 타이머 시작
 - 경로 숨김은 미확정 모달을 유지
-- 마운트 시 고정한 지연 시간 뒤 프레임 제거
+- 최신 지연 시간 뒤 프레임 제거
 
 #### 예제
 
@@ -574,76 +582,41 @@ function ModalDebugger({ id, visible }) {
 
 ### useInitializeModal
 
-모달 서비스를 수동으로 초기화합니다.
+`root`를 생략하면 `document.body`, 요소를 주면 해당 컨테이너, `null`이면 초기화를 기다립니다. ref만 넘겨도 자동 초기화합니다. `initialize(element)`는 명령형으로 root를 정하며 마지막 호출 또는 `root` prop 변경이 우선합니다. 같은 앵커를 컨테이너 사이에서 옮기므로 열린 입력과 Promise를 유지합니다. `null`로 바꾸면 앵커를 떼고 마운트된 모달은 보존하며 새 요청은 대기시킵니다. 요소로 복귀하면 앵커를 붙이고 대기열을 처리합니다. 처음부터 null이면 앵커를 만들지 않습니다. `useInitializeModal`도 같은 `root`를 받으며 `mode: 'manual'`은 `initialize(element)` 또는 이후 root 변경까지 초기 root를 보류합니다. 반환된 `portal`은 항상 렌더합니다.
 
 ```typescript
-function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
-  initialize: (anchor?: HTMLElement) => void;
+function useInitializeModal(options?: ModalProviderProps & { mode?: 'auto' | 'manual' }): {
+  initialize: (element: HTMLElement) => void;
   portal: ReactPortal | null;
 };
 ```
-
-#### 모드
-
-| 모드     | 설명                     |
-| -------- | ------------------------ |
-| `auto`   | 자동 초기화              |
-| `manual` | `initialize()` 호출 필요 |
 
 ---
 
 ### useModalOptions
 
-모달 옵션 설정을 반환합니다.
+모달 트리 안에서 정규화된 Provider 옵션을 읽습니다.
 
 ```typescript
-function useModalOptions(): ModalOptions;
-```
-
-#### 반환값
-
-```typescript
-interface ModalOptions {
-  duration?: number | string; // 애니메이션 지속 시간
-  backdrop?: string; // 배경 오버레이 색상
-  manualDestroy?: boolean; // 수동 제거 모드
-  closeOnBackdropClick?: boolean; // 배경 클릭 시 닫기
-  zIndex?: number; // CSS z-index
-}
-```
-
-#### 예제
-
-```typescript
-function ModalDebugInfo() {
-  const options = useModalOptions();
-
-  return (
-    <div>
-      <p>Duration: {options.duration}</p>
-      <p>Backdrop: {options.backdrop}</p>
-    </div>
-  );
-}
+function useModalOptions(): {
+  duration: `${number}ms`;
+  backdrop: CSSProperties;
+  manualDestroy: boolean;
+  closeOnBackdropClick: boolean;
+  zIndex: number;
+};
 ```
 
 ---
 
 ### useModalBackdrop
 
-모달 배경 설정만 반환합니다.
+모달 트리 안에서 배경 CSS 속성을 읽습니다.
 
-```typescript
-function useModalBackdrop(): string | CSSProperties;
-```
-
-#### 예제
-
-```typescript
+```tsx
 function BackdropInfo() {
   const backdrop = useModalBackdrop();
-
-  return <p>현재 배경: {backdrop}</p>;
+  return <div style={backdrop} />;
 }
 ```
 
@@ -658,7 +631,7 @@ function BackdropInfo() {
 ```typescript
 interface ModalProviderProps {
   children: ReactNode;
-  ForegroundComponent?: ComponentType<ModalFrameProps>;
+  ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
   TitleComponent?: ComponentType<WrapperComponentProps>;
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
@@ -667,7 +640,7 @@ interface ModalProviderProps {
   options?: ModalOptions;
   context?: Record<string, any>;
   usePathname?: () => { pathname: string }; // 라우터 통합
-  root?: HTMLElement; // 커스텀 루트 엘리먼트
+  root?: HTMLElement | null; // 커스텀 루트 엘리먼트
 }
 ```
 
@@ -675,8 +648,8 @@ interface ModalProviderProps {
 
 ```typescript
 interface ModalOptions {
-  duration?: number | string; // 애니메이션 지속 시간
-  backdrop?: string; // 배경 오버레이 색상
+  duration?: number | `${number}ms` | `${number}s`; // 애니메이션 지속 시간
+  backdrop?: string | CSSProperties; // 배경 오버레이 색상
   manualDestroy?: boolean; // 수동 제거 모드
   closeOnBackdropClick?: boolean; // 배경 클릭 시 닫기
 }
@@ -806,7 +779,7 @@ const CustomForeground: FC<ModalFrameProps> = ({
         borderRadius: 12,
         padding: 24,
         opacity: 0,
-        transition: `opacity ${duration}ms`,
+        transition: `opacity ${duration}`,
       }}
     >
       {children}
@@ -953,7 +926,7 @@ const ToastForeground: FC<ModalFrameProps> = ({
         left: '50%',
         transform: 'translateX(-50%) translateY(100px)',
         opacity: 0,
-        transition: `all ${duration}ms`,
+        transition: `all ${duration}`,
       }}
     >
       {children}
@@ -996,7 +969,7 @@ async function registrationWizard() {
     title: '사용자 정보',
     defaultValue: { name: '', email: '' },
     Input: RegistrationForm,
-    disabled: (v) => !v.name || !v.email?.includes('@'),
+    disabled: (v) => !v?.name || !v?.email.includes('@'),
   });
 
   if (!userInfo) return null;
@@ -1016,7 +989,7 @@ async function registrationWizard() {
 
 ```typescript
 function IframedModals() {
-  const { initialize } = useInitializeModal({ mode: 'manual' });
+  const { initialize, portal } = useInitializeModal({ mode: 'manual' });
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1029,6 +1002,7 @@ function IframedModals() {
     <div style={{ position: 'relative', height: 600 }}>
       <div ref={containerRef} style={{ height: '100%' }} />
       <ModalTriggerButtons />
+      {portal}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { ModalBackground } from './background';
 import type { ModalFrameProps } from './modal';
+import type { ModalOptions } from './option';
 
 export interface BaseModal<T, B> {
   group?: string;
@@ -13,7 +14,7 @@ export interface BaseModal<T, B> {
   subtitle?: ReactNode;
   background?: ModalBackground<B>;
   dimmed?: boolean;
-  duration?: number;
+  duration?: ModalOptions['duration'];
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
   /**
@@ -21,7 +22,7 @@ export interface BaseModal<T, B> {
    * (dispatchModal). Travels with the modal data so prerendered modals keep
    * their wiring; not part of the public props surface.
    */
-  handleResolve?: Fn<[result: T | null]>;
+  handleResolve?: Fn<[result: T | undefined | null]>;
   /** @internal Rejects a request that cannot be rendered. */
   handleReject?: Fn<[error: unknown]>;
   ForegroundComponent?: ForegroundComponent;

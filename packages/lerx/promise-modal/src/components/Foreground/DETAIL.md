@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 전경 프레임에 group·subtype·settled를 전달하고 alert 내용에 context를 전달합니다.
 - prompt 함수형 변경은 최신 값에서 순서대로 누적되고 확인은 동기적으로 노드의 현재 값을 확정합니다. Input 오류는 모달 단위 오류 경계로 전달합니다.
 
 ## Acceptance Criteria
@@ -16,4 +17,4 @@
 
 ## Last Updated
 
-결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

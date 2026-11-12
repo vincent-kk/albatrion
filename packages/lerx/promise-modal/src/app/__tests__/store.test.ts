@@ -46,6 +46,7 @@ it('forwards errors from queue entries without dispatchers and continues the que
   const error = new Error('queue failure');
   ModalManager.open({ type: 'alert', title: 'bad', handleReject: reject });
   ModalManager.open({ type: 'alert', title: 'good', handleResolve: resolve });
+  ModalManager.anchor();
   ModalManager.openHandler = (modal) => {
     if (modal.title === 'bad') throw error;
     const node = nodeFactory({

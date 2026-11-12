@@ -87,11 +87,11 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
   }
 
   onConfirm() {
-    this.onResolve(this.__value__ ?? null);
+    this.onResolve(this.__value__);
   }
 
   onClose() {
-    if (this.returnOnCancel) this.onResolve(this.__value__ ?? null);
+    if (this.returnOnCancel) this.onResolve(this.__value__);
     else this.onResolve(null);
   }
 }

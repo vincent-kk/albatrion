@@ -22,6 +22,12 @@ export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 export type ModalFrameProps<Context extends Dictionary = object, B = any> = {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
+  /** Presentation variant, independent of modal kind. */
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  /** Application-defined grouping key. */
+  group?: string;
+  /** Whether the result has been confirmed, cancelled, or rejected. */
+  settled: boolean;
   alive: boolean;
   visible: boolean;
   initiator: string;

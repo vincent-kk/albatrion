@@ -21,9 +21,12 @@ import {
   FallbackSubtitle,
   FallbackTitle,
 } from '@/promise-modal/components/FallbackComponents';
+import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import type {
+  BackgroundComponent,
   FooterComponentProps,
-  ModalFrameProps,
+  ForegroundComponent,
   ModalOptions,
   WrapperComponentProps,
 } from '@/promise-modal/types';
@@ -42,8 +45,8 @@ const DEFAULT_OPTIONS = {
 } satisfies Required<ConfigurationContextProps['options']>;
 
 export interface ConfigurationContextProviderProps {
-  BackgroundComponent?: ComponentType<ModalFrameProps>;
-  ForegroundComponent?: ComponentType<ModalFrameProps>;
+  BackgroundComponent?: BackgroundComponent;
+  ForegroundComponent?: ForegroundComponent;
   TitleComponent?: ComponentType<WrapperComponentProps>;
   SubtitleComponent?: ComponentType<WrapperComponentProps>;
   ContentComponent?: ComponentType<WrapperComponentProps>;
@@ -82,7 +85,14 @@ export const ConfigurationContextProvider = memo(
         SubtitleComponent: constant.SubtitleComponent,
         ContentComponent: constant.ContentComponent,
         FooterComponent: constant.FooterComponent,
-        options: { ...defaultOptions, ...options, backdrop },
+        options: {
+          ...mergeDefined(defaultOptions, options ?? {}),
+          backdrop,
+          duration: normalizeDuration(
+            options?.duration,
+            DEFAULT_ANIMATION_DURATION,
+          ),
+        },
       };
     }, [constant, options]);
     return (

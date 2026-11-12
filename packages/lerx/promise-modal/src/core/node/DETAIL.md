@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- prompt의 미입력 값 undefined는 확인과 returnOnCancel 취소에서도 보존합니다.
 - 생성된 노드는 결과 확정과 표시·생존 상태를 독립적으로 유지합니다.
 
 ## Acceptance Criteria
@@ -16,4 +17,4 @@
 
 ## Last Updated
 
-결과 확정, 자원 소유권 또는 표시 계약이 바뀔 때 갱신합니다.
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

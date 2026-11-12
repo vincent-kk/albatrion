@@ -187,38 +187,38 @@ async function showPrompt() {
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="이름을 입력하세요”
+          placeholder="이름을 입력하세요"
         />
       );
     },
     // 입력 값을 검증하여 확인 버튼을 제어합니다
-    disabled: (value) => value.length < 2,
+    disabled: (value) => (value?.length ?? 0) < 2,
   });
 
   console.log('입력된 이름:', name);
 
   // 복잡한 데이터 입력
-const userInfo = await prompt<{ name: string; age: number }>({
+  const userInfo = await prompt<{ name: string; age: number }>({
     title: '사용자 정보',
     defaultValue: { name: '', age: 0 },
-    입력: ({ value, onChange }) => (
+    Input: ({ value = { name: '', age: 0 }, onChange }) => (
       <div>
         <input
           value={value.name}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
-          placeholder=“이름”
+          placeholder="이름"
         />
         <input
-          type=”number”
+          type="number"
           value={value.age}
           onChange={(e) => onChange({ ...value, age: Number(e.target.value) })}
-          placeholder="Age”
+          placeholder="Age"
         />
       </div>
     ),
   });
 
-console.log(‘User info:’, userInfo);
+  console.log('사용자 정보:', userInfo);
 }
 ```
 
@@ -433,6 +433,8 @@ async function showCustomAlert() {
 
 ### 4. 커스텀 앵커 및 초기화 사용
 
+`root`를 생략하면 `document.body`, 요소를 주면 해당 컨테이너, `null`이면 초기화를 기다립니다. ref만 넘겨도 자동 초기화합니다. `initialize(element)`는 명령형으로 root를 정하며 마지막 호출 또는 `root` prop 변경이 우선합니다. 같은 앵커를 컨테이너 사이에서 옮기므로 열린 입력과 Promise를 유지합니다. `null`로 바꾸면 앵커를 떼고 마운트된 모달은 보존하며 새 요청은 대기시킵니다. 요소로 복귀하면 앵커를 붙이고 대기열을 처리합니다. 처음부터 null이면 앵커를 만들지 않습니다. `useInitializeModal`도 같은 `root`를 받으며 `mode: 'manual'`은 `initialize(element)` 또는 이후 root 변경까지 초기 root를 보류합니다. 반환된 `portal`은 항상 렌더합니다.
+
 모달이 렌더링될 DOM 요소를 지정할 수 있습니다:
 
 ```tsx
@@ -582,8 +584,8 @@ return (
         transform: translateX(-50%) translateY(100px);
         opacity: 0;
         transition:
-          transform ${duration}ms,
-          opacity ${duration}ms;
+          transform ${duration},
+          opacity ${duration};
         &.visible {
           transform: translateX(-50%) translateY(0);
           opacity: 1;
@@ -797,7 +799,9 @@ const result = await confirm({
 - `returnOnCancel?`: 취소 시 null 대신 현재 입력값을 반환할지 여부 (boolean)
 - `footer?`: 푸터 설정 (확인 모달과 유사)
 
-**반환 값:** `Promise<T | null>` - 확인 시 입력 값, 취소 시 null로 해결됩니다
+**반환 값:** `Promise<T | undefined | null>`
+
+확인은 현재 입력값을 그대로 반환하며 값이 없으면 `undefined`입니다. 일반 취소는 `null`입니다. `returnOnCancel: true`이면 취소도 현재 값(렌더 전에는 `defaultValue`)을 반환하며 `undefined`도 보존합니다. 미입력 확인을 빈 문자열로 받으려면 `defaultValue: ''`를 지정합니다. 일반 취소 판별은 truthiness 대신 `result === null`을 사용합니다.
 
 ```typescript
 // 예시
@@ -810,7 +814,7 @@ const value = await prompt<string>({
       onChange={(e) => onChange(e.target.value)}
     />
   ),
-  disabled: (value) => value.trim() === '',
+  disabled: (value) => (value ?? '').trim() === '',
 });
 ```
 
@@ -823,24 +827,25 @@ const value = await prompt<string>({
 **프로퍼티:**
 
 - `ForegroundComponent?`: 사용자 정의 포그라운드 구성 요소
-- `(props: WrapperComponentProps) => ReactNode`
+  - `(props: PropsWithChildren<ModalFrameProps>) => ReactNode`
 - `BackgroundComponent?`: 사용자 정의 배경 구성 요소
-  - `(props: WrapperComponentProps) => ReactNode`
+  - `(props: ModalFrameProps) => ReactNode`
 - `TitleComponent?`: 사용자 정의 제목 컴포넌트
 - `SubtitleComponent?`: 사용자 정의 부제목 컴포넌트
 - `ContentComponent?`: 사용자 정의 콘텐츠 컴포넌트
 - `FooterComponent?`: 사용자 정의 푸터 컴포넌트
 - `(props: FooterComponentProps) => ReactNode`
 - `options?`: 글로벌 모달 옵션
-  - `duration?`: 애니메이션 지속 시간 (밀리초)
+  - `duration?`: 밀리초 숫자 또는 소수 ms/s 문자열
 - `backdrop?`: 배경 클릭 처리
 - 기타 옵션...
 - `context?`: 모달 컴포넌트에 전달할 컨텍스트 객체
+- `root?`: 포털 컨테이너로 undefined는 body, null은 대기
 - `usePathname?`: 사용자 정의 경로 이름 훅 함수
 
 **처리:**
 
-- `initialize`: 모달 서비스를 수동으로 초기화하는 메서드
+- `initialize(element)`: 포털 root를 정하는 메서드
 
 ```typescript
 // ref를 사용하여 제어하는 예시
@@ -851,7 +856,7 @@ function App() {
   const modalProviderRef = useRef<ModalProviderHandle>(null);
 
   const handleInitialize = () => {
-    modalProviderRef.current?.initialize();
+    modalProviderRef.current?.initialize(document.body);
   };
 
   return (
@@ -973,6 +978,14 @@ function Component() {
 }
 ```
 
+### 설정과 공개 인터페이스
+
+Provider의 컴포넌트 props(`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`)는 부모 리렌더가 열린 prompt를 재마운트하지 않도록 마운트 시점에 고정합니다. 변경은 무시하며 개발 환경에서 변경된 prop마다 한 번 경고하고 운영 환경에서는 경고하지 않습니다. 바뀌는 데이터는 `context`로 전달하며 options는 반응형으로 갱신합니다.
+
+설정 우선순위는 기본값, Provider 옵션, `useModal(config)`, 호출 인자 순입니다. `undefined`는 상속하고 `0`과 `false`는 덮어씁니다. `useModal(config)`는 마운트 시점 기본값을 보관합니다. Provider와 모달별 `duration`은 음수가 아닌 밀리초 숫자(`300`, `0.5`), 밀리초 문자열(`'300ms'`, `'0.5ms'`), 초 문자열(`'0.3s'`)을 받습니다. 잘못된 값은 기본값으로 대체하고 개발 경고를 냅니다. 모달별 잘못된 값은 Provider 지속시간으로 대체합니다. `useModalOptions().duration`과 `useModalDuration(id?).duration`은 정규화된 밀리초 문자열을 반환하므로 CSS에 `ms`를 덧붙이지 않습니다.
+
+`useModalOptions`, `useModalBackdrop`, `useModalDuration`, `useDestroyAfter`는 모달 프레임·내용·푸터 안에서 사용합니다. Provider의 일반 자식이나 모달 트리 밖에서 호출하면 필요한 위치를 설명하는 오류를 던집니다. `useModalBackdrop`은 CSS 속성 객체를 반환합니다. 프레임은 `group`, `subtype`, `settled`를 받고 alert 내용도 `context`를 받습니다. 애플리케이션 래퍼 타입에는 공개 `AlertProps`, `ConfirmProps`, `PromptProps`, `OverridableHandleProps`를 사용합니다. 프레임의 `onClose`와 내용·푸터의 `onCancel`은 모두 요청을 취소하며 AbortSignal도 거부가 아닌 취소 값으로 완료됩니다.
+
 ### 수명주기와 소유권
 
 모달 결과는 한 번만 확정됩니다. `usePathname`에 따른 경로 이동은 대기 중인 모달을 결과 확정 없이 숨기고, 복귀하면 다시 표시합니다. 숨겨진 모달도 AbortSignal 중단과 `useModal` 소유 컴포넌트 정리로 취소됩니다. 확정된 모달은 `manualDestroy: true`여도 다시 표시되지 않습니다.
@@ -983,7 +996,7 @@ function Component() {
 
 `useModal`은 확정된 요청을 즉시 추적 목록에서 제거하고, 컴포넌트 언마운트 때 미확정 요청만 취소합니다. 정적 호출은 호출 컴포넌트보다 오래 유지되지만 Provider 소유권과 취소 규칙은 따릅니다.
 
-`useActiveModalCount`와 `useSubscribeModal(id)`는 공용 저장소를 읽으므로 Provider의 일반 자식과 Provider 밖에서도 동작합니다. 개수 판별 함수는 읽기 전용 `ModalNodeView`를 받으며 refresh key 없이 노드 변경을 반영합니다. `useDestroyAfter`는 모달 프레임 안에서 사용하고, 이미 확정됐지만 살아 있는 모달을 지연 시간 뒤 파괴합니다. 경로 숨김만으로는 타이머가 시작되지 않습니다. 지연 시간은 마운트 시점에 고정됩니다.
+`useActiveModalCount`와 `useSubscribeModal(id)`는 공용 저장소를 읽으므로 Provider의 일반 자식과 Provider 밖에서도 동작합니다. 개수 판별 함수는 읽기 전용 `ModalNodeView`를 받으며 refresh key 없이 노드 변경을 반영합니다. `useDestroyAfter`는 모달 프레임 안에서 사용하고, 이미 확정됐지만 살아 있는 모달을 지연 시간 뒤 파괴합니다. 경로 숨김만으로는 타이머가 시작되지 않습니다. 지연 시간이 바뀌면 최신 값으로 파괴를 다시 예약합니다.
 
 DOM 없이 패키지를 가져오고 서버에서 `ModalProvider`를 렌더할 수 있습니다. `alert`, `confirm`, `prompt`는 브라우저에서만 호출합니다. 서버 렌더에는 모달 포털이 없고 활성 개수는 0입니다.
 
@@ -1074,6 +1087,9 @@ useModalAnimation(visible, {
 interface ModalFrameProps<Context = any, B = any> {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
+  group?: string;
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  settled: boolean;
   alive: boolean;
   visible: boolean;
   initiator: string;
@@ -1219,7 +1235,7 @@ async function promptWithNestedModal() {
   const value = await prompt<{ title: string; description: string }>({
     title: '콘텐츠 생성',
     defaultValue: { title: '', description: '' },
-    Input: ({ value, onChange }) => {
+    Input: ({ value = { title: '', description: '' }, onChange }) => {
       // 도움말 버튼이 클릭되면 도움말 모달 표시
       const showHelp = () => {
         alert({
@@ -1246,13 +1262,13 @@ async function promptWithNestedModal() {
               }
             />
           </div>
-          <button type=“button” onClick={showHelp}>
+          <button type="button" onClick={showHelp}>
 도움말
           </button>
         </div>
       );
     },
-    disabled: (value) => !value.title,
+    disabled: (value) => !value?.title,
   });
 
   console.log('입력 값:', value);

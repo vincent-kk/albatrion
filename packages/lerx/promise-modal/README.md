@@ -192,7 +192,7 @@ async function showPrompt() {
       );
     },
     // Validate input to control the confirmation button
-    disabled: (value) => value.length < 2,
+    disabled: (value) => (value?.length ?? 0) < 2,
   });
 
   console.log('Entered name:', name);
@@ -201,7 +201,7 @@ async function showPrompt() {
   const userInfo = await prompt<{ name: string; age: number }>({
     title: 'User Information',
     defaultValue: { name: '', age: 0 },
-    Input: ({ value, onChange }) => (
+    Input: ({ value = { name: '', age: 0 }, onChange }) => (
       <div>
         <input
           value={value.name}
@@ -433,6 +433,8 @@ async function showCustomAlert() {
 
 ### 4. Using Custom Anchors and Initialization
 
+`root` selects the portal location: omit it for `document.body`, pass an element for that container, or pass `null` to defer. A ref alone still initializes automatically. `initialize(element)` selects a root imperatively; the last call or `root` prop change wins. The same anchor moves between containers, preserving open input and Promises. Changing to `null` detaches the anchor, preserves mounted modals, and queues new requests; restoring an element reattaches it and processes the queue. An initially null root creates no anchor. `useInitializeModal` accepts the same `root`; `mode: 'manual'` defers its initial root until `initialize(element)` or a later root change. Always render its returned `portal`.
+
 You can specify the DOM element where modals will be rendered:
 
 ```tsx
@@ -582,8 +584,8 @@ const ToastForeground = ({
         transform: translateX(-50%) translateY(100px);
         opacity: 0;
         transition:
-          transform ${duration}ms,
-          opacity ${duration}ms;
+          transform ${duration},
+          opacity ${duration};
         &.visible {
           transform: translateX(-50%) translateY(0);
           opacity: 1;
@@ -797,9 +799,10 @@ Opens a prompt modal to receive input from the user.
   - `returnOnCancel?`: If true, cancel resolves with the current input value instead of null (boolean)
   - `footer?`: Footer settings (similar to confirm)
 
-**Returns:** `Promise<T | null>` - Resolves to the input value on confirm, or null on cancel
+**Returns:** `Promise<T | undefined | null>`
 
-> **Upgrade note:** `prompt()` now types cancellation explicitly — the return is `Promise<T | null>` and the `disabled` callback receives `T | undefined`. Consumers that previously annotated these as non-null may hit new TypeScript errors on upgrade; the runtime behaviour (cancel resolves `null`) is unchanged.
+Confirmation returns the current input unchanged, including `undefined` when no value is supplied. Ordinary cancellation returns `null`. With `returnOnCancel: true`, cancellation returns the current value (or `defaultValue` before rendering), including `undefined`. Set `defaultValue: ''` when untouched confirmation should return an empty string. Check `result === null` for ordinary cancellation rather than relying on truthiness.
+
 
 ```typescript
 // Example
@@ -812,7 +815,7 @@ const value = await prompt<string>({
       onChange={(e) => onChange(e.target.value)}
     />
   ),
-  disabled: (value) => value.trim() === '',
+  disabled: (value) => (value ?? '').trim() === '',
 });
 ```
 
@@ -825,24 +828,25 @@ Component that initializes and provides the modal service.
 **Props:**
 
 - `ForegroundComponent?`: Custom foreground component
-  - `(props: WrapperComponentProps) => ReactNode`
+  - `(props: PropsWithChildren<ModalFrameProps>) => ReactNode`
 - `BackgroundComponent?`: Custom background component
-  - `(props: WrapperComponentProps) => ReactNode`
+  - `(props: ModalFrameProps) => ReactNode`
 - `TitleComponent?`: Custom title component
 - `SubtitleComponent?`: Custom subtitle component
 - `ContentComponent?`: Custom content component
 - `FooterComponent?`: Custom footer component
   - `(props: FooterComponentProps) => ReactNode`
 - `options?`: Global modal options
-  - `duration?`: Animation duration (milliseconds)
+  - `duration?`: Milliseconds as a number or a decimal `ms`/`s` string
   - `backdrop?`: Backdrop click handling
   - Other options...
 - `context?`: Context object to pass to modal components
+- `root?`: Portal container; `undefined` uses body and `null` defers
 - `usePathname?`: Custom pathname hook function
 
 **Handle:**
 
-- `initialize`: Method to manually initialize modal service
+- `initialize(element)`: Select the portal root
 
 ```typescript
 // Example using ref for control
@@ -853,7 +857,7 @@ function App() {
   const modalProviderRef = useRef<ModalProviderHandle>(null);
 
   const handleInitialize = () => {
-    modalProviderRef.current?.initialize();
+    modalProviderRef.current?.initialize(document.body);
   };
 
   return (
@@ -956,7 +960,7 @@ Read modal backdrop settings.
 import { useModalBackdrop } from '@lerx/promise-modal';
 
 function Component() {
-  // backdrop is Color(#000000~#ffffff or rgba(0,0,0,0.5))
+  // backdrop is a CSSProperties object
   const backdrop = useModalBackdrop();
   // ...
 }
@@ -975,6 +979,14 @@ function Component() {
 }
 ```
 
+### Configuration and public interface
+
+Provider component props (`ForegroundComponent`, `BackgroundComponent`, `TitleComponent`, `SubtitleComponent`, `ContentComponent`, `FooterComponent`) are captured at mount so parent rerenders do not remount open prompts. Changes are ignored, with one warning per changed prop in development and no warning in production. Pass changing data through `context`; options remain reactive.
+
+Option precedence is defaults, Provider options, `useModal(config)`, then per-call arguments. `undefined` inherits; `0` and `false` override. `useModal(config)` captures mount-time defaults. Provider and per-call `duration` accept nonnegative milliseconds (`300`, `0.5`), milliseconds strings (`'300ms'`, `'0.5ms'`), or seconds strings (`'0.3s'`). Invalid values fall back to the default (the Provider duration for per-call overrides), with a development warning. `useModalOptions().duration` and `useModalDuration(id?).duration` return normalized milliseconds strings; use them directly in CSS without appending another `ms`.
+
+`useModalOptions`, `useModalBackdrop`, `useModalDuration`, and `useDestroyAfter` belong inside modal frame, content, or footer components. Calling them in ordinary Provider children or outside the modal tree throws an error explaining the required location. `useModalBackdrop` returns CSS properties. Frames receive `group`, `subtype`, and `settled`, and alert content receives `context`. Use exported `AlertProps`, `ConfirmProps`, `PromptProps`, and `OverridableHandleProps` to type application wrappers. Frame `onClose` and content/footer `onCancel` both cancel the request; AbortSignal also resolves with its cancellation value rather than rejecting.
+
 ### Lifecycle and ownership
 
 Modal results settle once. Navigating away through `usePathname` hides pending modals without settling them; returning restores them. Abort and `useModal` owner cleanup still cancel a hidden modal. A settled modal never appears again, including with `manualDestroy: true`.
@@ -985,7 +997,7 @@ A content, input, or frame render error rejects that modal's Promise with the ca
 
 `useModal` releases completed requests as soon as they settle and cancels only pending requests when its component unmounts. Static calls outlive their calling component, but still follow provider ownership and cancellation.
 
-`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Its delay is captured at mount.
+`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Changing the delay reschedules destruction using the latest value.
 
 The package can be imported without a DOM and `ModalProvider` can render on the server. Call `alert`, `confirm`, and `prompt` only in the browser; server rendering has no modal portal and reports an active count of zero.
 
@@ -1075,6 +1087,9 @@ Properties passed to the modal frame component.
 interface ModalFrameProps<Context = any, B = any> {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
+  group?: string;
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  settled: boolean;
   alive: boolean;
   visible: boolean;
   initiator: string;
@@ -1220,7 +1235,7 @@ async function promptWithNestedModal() {
   const value = await prompt<{ title: string; description: string }>({
     title: 'Create Content',
     defaultValue: { title: '', description: '' },
-    Input: ({ value, onChange }) => {
+    Input: ({ value = { title: '', description: '' }, onChange }) => {
       // Show help modal when help button is clicked
       const showHelp = () => {
         alert({
@@ -1253,7 +1268,7 @@ async function promptWithNestedModal() {
         </div>
       );
     },
-    disabled: (value) => !value.title,
+    disabled: (value) => !value?.title,
   });
 
   console.log('Input value:', value);

@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 사용자 배경 프레임에 group·subtype·settled를 전달하여 같은 모달 메타데이터를 읽게 합니다.
 - 모달이 없으면 null을 반환하며 사용자 배경 설정과 기본 배경을 선택합니다.
 - 배경 클릭은 현재 모달이 visible이고 closeOnBackdropClick이 켜져 있을 때만 닫기로 연결합니다.
 
@@ -18,4 +19,4 @@
 
 ## Last Updated
 
-2026-09-16
+공개 결과·설정·초기화 또는 표시 계약이 바뀔 때 갱신합니다.

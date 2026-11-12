@@ -92,7 +92,7 @@ describe('bootstrap lifecycle (real rendering)', () => {
   it('prompt: 입력 후 Confirm 시 입력값으로 resolve되어야 함', async () => {
     render(<BootstrapProvider>{null}</BootstrapProvider>);
 
-    let promiseHandler!: Promise<string | null>;
+    let promiseHandler!: Promise<string | undefined | null>;
     act(() => {
       promiseHandler = prompt<string>({
         title: 'Name Prompt',
@@ -121,7 +121,7 @@ describe('bootstrap lifecycle (real rendering)', () => {
   it('prompt: Cancel 클릭 시 null로 resolve되어야 함', async () => {
     render(<BootstrapProvider>{null}</BootstrapProvider>);
 
-    let promiseHandler!: Promise<string | null>;
+    let promiseHandler!: Promise<string | undefined | null>;
     act(() => {
       promiseHandler = prompt<string>({
         title: 'Cancelable Prompt',

@@ -19,7 +19,7 @@ interface PrerenderEntry {
 }
 /** A bootstrap's identity and notification channel, independent of React trees. */
 interface BootstrapOwner {
-  root: HTMLElement;
+  root: HTMLElement | null;
   notify: Fn<[HTMLElement | null]>;
 }
 
@@ -154,9 +154,16 @@ export class ModalManager {
   /** Registers an owner or waiter and notifies only the active bootstrap. */
   static attach(
     identity: object,
-    root: HTMLElement,
+    root: HTMLElement | null,
     notify: Fn<[HTMLElement | null]>,
   ): void {
+    if (root === null) {
+      if (ModalManager.__owner__ === identity) {
+        ModalManager.__bootstraps__.set(identity, { root, notify });
+        ModalManager.__anchor__?.remove();
+      } else ModalManager.__bootstraps__.delete(identity);
+      return;
+    }
     ModalManager.__bootstraps__.set(identity, { root, notify });
     if (ModalManager.__owner__ && ModalManager.__owner__ !== identity) {
       if (
@@ -213,7 +220,10 @@ export class ModalManager {
   }
   /** Flushes independent queue items, forwarding errors rather than swallowing them. */
   private static flushPrerender(): void {
-    if (ModalManager.__openHandler__ === ModalManager.__defaultOpenHandler__)
+    if (
+      ModalManager.__openHandler__ === ModalManager.__defaultOpenHandler__ ||
+      !ModalManager.__anchor__?.parentElement
+    )
       return;
     const entries = ModalManager.__prerenderList__;
     ModalManager.__prerenderList__ = [];
@@ -289,6 +299,8 @@ export class ModalManager {
   }
   /** Opens through the current handler or queues until one is installed. */
   static open(modal: Modal): ModalNode | undefined {
-    return ModalManager.__openHandler__(modal);
+    return ModalManager.__anchor__?.parentElement
+      ? ModalManager.__openHandler__(modal)
+      : ModalManager.__defaultOpenHandler__(modal);
   }
 }
