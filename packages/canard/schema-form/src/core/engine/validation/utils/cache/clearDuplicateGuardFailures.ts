@@ -1,5 +1,5 @@
+import type { ValidationEntry } from '../../types/validationEntry';
 import { DUPLICATE_SCHEMA_ID_MESSAGE } from './constants';
-import type { ValidationEntry } from './readValidationEntry';
 
 /** Remove recoverable guard registration failures after whole-schema compilation succeeds.
  * @param entry - Shared cache whose successful guards and unrelated failures must stay intact.

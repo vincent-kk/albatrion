@@ -1,8 +1,8 @@
 import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
+import type { ValidationEntry } from '../../types/validationEntry';
 import type { Validator } from '../../types/validator';
-import type { ValidationEntry } from '../cache/readValidationEntry';
 
 /**
  * Precompile every authored if once for a development cache entry.
