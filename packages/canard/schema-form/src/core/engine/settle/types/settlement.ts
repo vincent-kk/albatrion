@@ -19,10 +19,10 @@ import type {
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
 import type { DependencyPresenceMemo } from '../utils/dependencies/getDependencyIndex';
-import type { GateHostView } from '../utils/gates/readGateHostView';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { FixedFirstLoadPreparation } from './fixedFirstLoad';
+import type { GateHostView } from './gateHostView';
 import type { GateSelectionRound } from './gateSelectionRound';
 import type { GateWheelFrame, RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
