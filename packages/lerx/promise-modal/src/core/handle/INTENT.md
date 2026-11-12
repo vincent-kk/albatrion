@@ -6,6 +6,8 @@ Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈.
 
 ## Conventions
 
+- 컴포넌트 소유 요청 훅의 보유·정착·unmount 취소를 관리하며 React 훅 사용과 렌더 컴포넌트 가져오기를 구별합니다.
+
 - prompt 확인은 현재 값 그대로이며 미입력 undefined와 일반 취소 null을 구별합니다.
 
 - 각 핸들러는 dispatchModal 결과 `{ modalNode, promiseHandler, cancel }`를 그대로 반환 (`cancel`은 마운트 전 큐 항목 취소용)

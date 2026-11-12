@@ -6,6 +6,8 @@ Context는 변하지 않는 조작 함수만 담고 별도 노드 목록을 보�
 
 ## API Contracts
 
+전환 시간·확정 후 파괴 훅은 이 Context 안에서만 유효합니다. 밖에서는 호출 위치를 설명하는 오류를 내며, alive·settled 판정과 timer 취소·재예약 및 duration 정규화의 메모 조건은 유지합니다. node 참조는 정체성을 그대로 전달하고 별도 목록이나 사본을 만들지 않습니다.
+
 - 기본 경로 훅에서는 요청 처리 순간의 window.location.pathname을 initiator로 사용합니다. 사용자 경로 훅은 마지막으로 반영한 pathname을 유지하여 라우터 고유 경로 계약을 보존합니다.
 - closeOnEscape는 병합 전 데이터에서 모달 Esc, 모달 배경 클릭, Provider Esc, Provider 배경 클릭 순으로 첫 정의값을 선택합니다. trapFocus와 lockScroll은 일반 undefined 상속 병합을 따릅니다.
 

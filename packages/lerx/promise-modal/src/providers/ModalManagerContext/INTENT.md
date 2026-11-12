@@ -6,6 +6,8 @@
 
 ## Conventions
 
+- Context 범위의 전환 시간·확정 후 파괴 훅을 소유하며 저장소 자체 구독은 app에 위임합니다.
+
 - useModalManagerContext: 전체 Context 값 접근
 - useModalManager: 모달 관리 전용 인터페이스
 - ModalManager 싱글톤과 연동하여 상태 동기화
