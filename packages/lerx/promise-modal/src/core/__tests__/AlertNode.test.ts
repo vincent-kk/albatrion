@@ -84,9 +84,9 @@ describe('AlertNode', () => {
       node.onHide();
       expect(listener).toHaveBeenCalledTimes(3);
 
-      // manualDestroy가 false이므로 onDestroy는 publish하지 않음
+      // Destruction publishes both settlement and the alive transition.
       node.onDestroy();
-      expect(listener).toHaveBeenCalledTimes(3);
+      expect(listener).toHaveBeenCalledTimes(5);
     });
   });
 

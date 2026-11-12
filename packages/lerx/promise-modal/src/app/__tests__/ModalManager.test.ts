@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { nodeFactory } from '@/promise-modal/core';
+
 import { ModalManager } from '../ModalManager';
 
 describe('ModalManager', () => {
@@ -133,18 +135,27 @@ describe('ModalManager', () => {
     });
   });
 
-  describe('rerenderHandler', () => {
-    it('rerenderHandler를 설정할 수 있어야 함', () => {
+  describe('store subscriptions', () => {
+    it('notifies subscribers and removes destroyed nodes immediately', () => {
       const handler = vi.fn();
-      ModalManager.refreshHandler = handler;
-
-      ModalManager.refresh();
-
-      expect(handler).toHaveBeenCalledTimes(1);
+      const unsubscribe = ModalManager.subscribe(handler);
+      const node = nodeFactory({
+        type: 'alert',
+        id: ModalManager.nextId(),
+        initiator: '/test',
+      });
+      ModalManager.register(node);
+      expect(ModalManager.ids).toEqual([node.id]);
+      node.onDestroy();
+      expect(ModalManager.ids).toEqual([]);
+      expect(handler).toHaveBeenCalled();
+      unsubscribe();
     });
-
-    it('rerenderHandler가 없으면 rerender()가 에러를 발생시키지 않아야 함', () => {
-      expect(() => ModalManager.refresh()).not.toThrow();
+    it('unsubscribes readers without leaving callbacks behind', () => {
+      const handler = vi.fn();
+      ModalManager.subscribe(handler)();
+      ModalManager.reset();
+      expect(handler).not.toHaveBeenCalled();
     });
   });
 

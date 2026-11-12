@@ -422,23 +422,35 @@ function DeleteButton({ id }) {
 
 ---
 
+### Lifecycle and ownership
+
+Modal results settle once. Navigating away through `usePathname` hides pending modals without settling them; returning restores them. Abort and `useModal` owner cleanup still cancel a hidden modal. A settled modal never appears again, including with `manualDestroy: true`.
+
+Only one `ModalProvider` (or `useInitializeModal` bootstrap) owns the portal. Additional providers wait and warn once in development. When the owner unmounts, the first waiting provider takes over the open modals. With no waiter, open modals settle with their cancellation values: `alert` completes, `confirm` returns `false`, and `prompt` returns `null` (or its current value with `returnOnCancel: true`). Same-commit remounts, including StrictMode checks, preserve pending results and prompt input.
+
+A content, input, or frame render error rejects that modal's Promise with the caught error; handle rejection with `try`/`catch`. Other modals and later requests continue working. Destroying a pending modal also cancels it before removing its frame.
+
+`useModal` releases completed requests as soon as they settle and cancels only pending requests when its component unmounts. Static calls outlive their calling component, but still follow provider ownership and cancellation.
+
+`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Its delay is captured at mount.
+
+The package can be imported without a DOM and `ModalProvider` can render on the server. Call `alert`, `confirm`, and `prompt` only in the browser; server rendering has no modal portal and reports an active count of zero.
+
 ### useActiveModalCount
 
 Returns the count of active modals.
 
 ```typescript
 function useActiveModalCount(
-  validate?: (modal?: ModalNode) => boolean,
-  refreshKey?: string | number,
+  validate?: (modal: ModalNodeView) => boolean | undefined,
 ): number;
 ```
 
 #### Parameters
 
-| Parameter    | Type                 | Description       |
-| ------------ | -------------------- | ----------------- |
-| `validate`   | `(modal) => boolean` | Filter function   |
-| `refreshKey` | `string \| number`   | Force refresh key |
+| Parameter  | Type                 | Description     |
+| ---------- | -------------------- | --------------- |
+| `validate` | `(modal) => boolean` | Filter function |
 
 #### Example
 
@@ -509,7 +521,7 @@ function useModalDuration(modalId?: number): {
 
 ### useDestroyAfter
 
-Auto-destroys modal after specified time.
+Destroys an already settled modal after the specified delay.
 
 ```typescript
 function useDestroyAfter(modalId: number, duration: string | number): void;
@@ -517,15 +529,15 @@ function useDestroyAfter(modalId: number, duration: string | number): void;
 
 #### Behavior
 
-- Starts timer when modal becomes hidden
-- Cancels timer if modal becomes visible again
-- Removes modal from DOM after duration
+- Starts the timer only when the result is settled and the node is alive
+- Route hiding leaves pending modals intact
+- Removes the frame after the delay captured at mount
 
 #### Example
 
 ```typescript
 function ToastMessage({ id }) {
-  useDestroyAfter(id, 300); // Destroy 300ms after hidden
+  useDestroyAfter(id, 300); // Destroy 300ms after settlement
   return <div>Toast</div>;
 }
 ```
@@ -537,7 +549,7 @@ function ToastMessage({ id }) {
 Subscribes to modal state changes.
 
 ```typescript
-function useSubscribeModal(modal?: ModalNode): number;
+function useSubscribeModal(modalId: number): number;
 ```
 
 #### Returns
@@ -547,11 +559,11 @@ Version number that increments on each state change.
 #### Example
 
 ```typescript
-function ModalDebugger({ modal }) {
-  const version = useSubscribeModal(modal);
+function ModalDebugger({ id, visible }) {
+  const version = useSubscribeModal(id);
 
   useEffect(() => {
-    console.log('State changed:', modal?.visible);
+    console.log('State changed:', visible);
   }, [version]);
 }
 ```
@@ -670,7 +682,7 @@ interface ModalOptions {
 
 #### usePathname (Router Integration)
 
-The `usePathname` prop enables router integration. Modals will automatically close when the route changes.
+The `usePathname` prop enables router integration. Route changes hide pending modals without settling their results; returning restores them.
 
 ```typescript
 import { useLocation } from 'react-router-dom';

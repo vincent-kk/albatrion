@@ -24,7 +24,7 @@ interface DispatchModalOptions<Result> {
  * @returns modalNode - live getter: undefined while the modal is queued before
  *   mount, then the node created by the flush (late reads see the real node)
  * @returns promiseHandler - settles on user interaction or abort; rejects only
- *   when the open handler itself throws
+ *   when opening or rendering fails
  */
 export const dispatchModal = <Node extends ModalNode, Result>(
   modal: Modal,
@@ -44,7 +44,15 @@ export const dispatchModal = <Node extends ModalNode, Result>(
       cleanupAbort = null;
       resolve(mapResult(result));
     };
+    const fail = (error: unknown) => {
+      if (settled) return;
+      settled = true;
+      cleanupAbort?.();
+      cleanupAbort = null;
+      reject(error);
+    };
     modal.handleResolve = settle;
+    modal.handleReject = fail;
     cancel = () => {
       if (ModalManager.cancelPrerender(modal)) settle(cancelResult());
     };
@@ -86,16 +94,12 @@ export const dispatchModal = <Node extends ModalNode, Result>(
             const flushed = ModalManager.open(modal) as Node | undefined;
             if (flushed) wire(flushed);
           } catch (error) {
-            settled = true;
-            cleanupAbort?.();
-            cleanupAbort = null;
-            reject(error);
+            fail(error);
           }
         });
       }
     } catch (error) {
-      cleanupAbort?.();
-      reject(error);
+      fail(error);
     }
   });
   return {

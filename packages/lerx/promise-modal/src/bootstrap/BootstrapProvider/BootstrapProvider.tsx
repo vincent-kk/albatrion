@@ -127,6 +127,9 @@ import type { BootstrapProviderHandle, BootstrapProviderProps } from './type';
  * @remarks
  * - Without a ref, the provider initializes automatically on mount
  * - With a ref, you must call `initialize()` manually with target element
+ * - Additional providers wait until the current portal owner unmounts
+ * - Removing the last provider cancels pending modals after the current commit
+ * - Same-commit remounts preserve pending results and prompt input
  * - All modals created within this provider share the same configuration
  * - The provider creates a portal for rendering modals outside the React tree
  */
@@ -172,12 +175,7 @@ export const BootstrapProvider = memo(
          *   so it should be initialized automatically.
          */
         if (handleRef === null) handleInitialize();
-        return () => {
-          // Only the instance that actually initialized owns the singleton state.
-          if (anchorRef.current === null) return;
-          anchorRef.current.remove();
-          handleReset();
-        };
+        return handleReset;
       });
 
       return (

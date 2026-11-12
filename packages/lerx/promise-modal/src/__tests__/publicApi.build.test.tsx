@@ -1,4 +1,15 @@
-import { ModalProvider, alert, confirm, prompt } from '@lerx/promise-modal';
+import type { PropsWithChildren } from 'react';
+
+import {
+  type ModalFrameProps,
+  type ModalNodeView,
+  ModalProvider,
+  alert,
+  confirm,
+  prompt,
+  useActiveModalCount,
+  useSubscribeModal,
+} from '@lerx/promise-modal';
 import {
   act,
   cleanup,
@@ -17,8 +28,7 @@ import { afterEach, describe, expect, it } from 'vitest';
  * relatively, and therefore only ever sees `src/`.
  *
  * What it guards: this package publishes a single bundled file, and bundling is
- * where module-evaluation semantics can shift — top-level side effects (the
- * style manager touches `document` at import time), class declaration form, and
+ * where module-evaluation semantics can shift — DOM-independent module evaluation, class declaration form, and
  * dead-code elimination. Driving one real modal round-trip through the bundle
  * covers all three; a surface-only check would not.
  *
@@ -49,4 +59,40 @@ describe('@lerx/promise-modal 빌드 산출물', () => {
     fireEvent.click(confirmButton);
     await expect(pending).resolves.toBeUndefined();
   });
+});
+
+/** Exercises the published read-only predicate and id subscription contracts. */
+function PublicFrame({ id, children }: PropsWithChildren<ModalFrameProps>) {
+  const version = useSubscribeModal(id);
+  return (
+    <section data-testid="public-frame" data-version={version}>
+      {children}
+    </section>
+  );
+}
+
+it('published hooks count and subscribe from their public arguments', async () => {
+  const Count = () => (
+    <output>
+      {useActiveModalCount(
+        (node: ModalNodeView) => node.visible && node.group === 'public',
+      )}
+    </output>
+  );
+  render(
+    <ModalProvider ForegroundComponent={PublicFrame}>
+      <Count />
+    </ModalProvider>,
+  );
+  expect(screen.getByRole('status').textContent).toBe('0');
+  let result!: Promise<void>;
+  act(() => {
+    result = alert({ group: 'public' });
+  });
+  expect(screen.getByRole('status').textContent).toBe('1');
+  const initial = screen.getByTestId('public-frame').dataset.version;
+  fireEvent.click(screen.getByText('Confirm'));
+  await expect(result).resolves.toBeUndefined();
+  expect(screen.getByRole('status').textContent).toBe('0');
+  expect(screen.getByTestId('public-frame').dataset.version).not.toBe(initial);
 });

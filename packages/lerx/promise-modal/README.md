@@ -970,16 +970,24 @@ Initializes the modal service. Usually called automatically by `ModalProvider`.
 import { useInitializeModal } from '@lerx/promise-modal';
 
 function Component() {
-  const { initialize } = useInitializeModal();
-
-  // Manually initialize if needed
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  // ...
+  const { portal } = useInitializeModal();
+  return <main>{portal}</main>;
 }
 ```
+
+### Lifecycle and ownership
+
+Modal results settle once. Navigating away through `usePathname` hides pending modals without settling them; returning restores them. Abort and `useModal` owner cleanup still cancel a hidden modal. A settled modal never appears again, including with `manualDestroy: true`.
+
+Only one `ModalProvider` (or `useInitializeModal` bootstrap) owns the portal. Additional providers wait and warn once in development. When the owner unmounts, the first waiting provider takes over the open modals. With no waiter, open modals settle with their cancellation values: `alert` completes, `confirm` returns `false`, and `prompt` returns `null` (or its current value with `returnOnCancel: true`). Same-commit remounts, including StrictMode checks, preserve pending results and prompt input.
+
+A content, input, or frame render error rejects that modal's Promise with the caught error; handle rejection with `try`/`catch`. Other modals and later requests continue working. Destroying a pending modal also cancels it before removing its frame.
+
+`useModal` releases completed requests as soon as they settle and cancels only pending requests when its component unmounts. Static calls outlive their calling component, but still follow provider ownership and cancellation.
+
+`useActiveModalCount` and `useSubscribeModal(id)` read the shared store and work in ordinary provider children or outside the provider. The count predicate receives a read-only `ModalNodeView`; it updates on node publications without a refresh key. `useDestroyAfter` belongs inside a modal frame and destroys an already settled, alive modal after the delay. Route hiding alone never starts that timer. Its delay is captured at mount.
+
+The package can be imported without a DOM and `ModalProvider` can render on the server. Call `alert`, `confirm`, and `prompt` only in the browser; server rendering has no modal portal and reports an active count of zero.
 
 #### `useSubscribeModal`
 
@@ -988,9 +996,8 @@ Subscribes to modal state changes.
 ```typescript
 import { useSubscribeModal } from '@lerx/promise-modal';
 
-function Component({ modal }) {
-  // Component rerenders when modal state changes
-  const version = useSubscribeModal(modal);
+function Component({ id }) {
+  const version = useSubscribeModal(id);
 
   // ...
 }
@@ -998,13 +1005,13 @@ function Component({ modal }) {
 
 #### `useDestroyAfter`
 
-Automatically destroys a modal after specified time.
+Destroys an already settled modal after the specified delay.
 
 ```typescript
 import { useDestroyAfter } from '@lerx/promise-modal';
 
 function Component({ modalId }) {
-  // Auto-close modal after 3 seconds
+  // Destroy 3 seconds after settlement
   useDestroyAfter(modalId, 3000);
 
   // ...

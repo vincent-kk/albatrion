@@ -1,91 +1,50 @@
 ---
 name: promise-modal-skill
-description: '@lerx/promise-modal expert — Promise-based React modals (alert, confirm, prompt), ModalProvider setup, useModal, custom foreground/background components, toasts, and AbortSignal cancellation.'
+description: '@lerx/promise-modal expert — Promise results, provider ownership, custom frames, path hiding, animation cleanup, and AbortSignal cancellation.'
 ---
 
-# @lerx/promise-modal — Promise-returning modals driven by a node registry
+# Promise-returning modals
 
-Applies when working in a project that depends on `@lerx/promise-modal`: opening modals from inside or outside React, configuring `ModalProvider`, writing custom modal components, or explaining why a modal's promise settled with the value it did.
+Use this skill when opening or customizing `@lerx/promise-modal` modals. Read the published declarations for shapes and the README for complete setup examples.
 
-## Mental Model
+## Lifecycle decisions
 
-**The promise belongs to the node, not to the React tree.** `alert`/`confirm`/`prompt` create a modal node in the `ModalManager` singleton and return a promise. The settlement channel travels with the modal data, so a modal opened _before_ `ModalProvider` mounts is queued, flushed at mount, and still settles that same promise (`src/core/handle/dispatchModal.ts`). React renders the node; it does not own it.
+A Promise belongs to a modal request rather than its calling React component. Static `alert`, `confirm`, and `prompt` calls may outlive that component. Use `useModal` when unmounting the caller should cancel its pending requests; completed requests leave its tracking list immediately, including rejected requests.
 
-**Two independent lifecycle axes.** Every node carries `alive` and `visible`, both starting `true` (`src/core/node/ModalNode/AbstractNode.ts:79-80`):
+Keep three states separate:
 
-| Axis      | `false` means                                           | Set by                   |
-| --------- | ------------------------------------------------------- | ------------------------ |
-| `visible` | Off screen, but still mounted and still in the registry | `onClose()` / `onHide()` |
-| `alive`   | Removed from the registry and unmounted                 | `onDestroy()`            |
+| State     | Meaning                                                                                  |
+| --------- | ---------------------------------------------------------------------------------------- |
+| `alive`   | The modal remains in the store and its frame can stay mounted.                           |
+| `visible` | The modal is displayed on its initiating route.                                          |
+| `settled` | Its first result or error is final; subsequent confirmation and cancellation do nothing. |
 
-Closing and destroying are separate events, and the gap between them is where exit animations run — a node that is `!visible && alive` is mid-exit. Only a _close_ settles the promise; hiding does not.
+Route hiding changes visibility without settling the result. Returning restores only pending modals. Hidden pending modals still respond to abort and caller cleanup. A closed `manualDestroy` modal stays alive until destruction but never reappears on route return. Destroying a pending modal first settles its cancellation result.
 
-**Config merges in one direction, later wins:**
+## Ownership and failures
 
-```
-ModalProvider props  <  useModal(config)  <  alert/confirm/prompt(options)
-```
+Mount one `ModalProvider` or `useInitializeModal` bootstrap for the application. Extra bootstraps wait, warn once in development, and take over in registration order when the owner unmounts. With no waiter, provider removal cancels open modals after the current commit. Same-commit remounts and StrictMode checks preserve pending requests and prompt input. Requests queued before mounting retain their original Promise.
 
-The provider's `duration`, `manualDestroy` and `closeOnBackdropClick` are spread first, then overwritten by the modal's own data (`src/providers/ModalManagerContext/ModalManagerContextProvider.tsx:51-58`); `useModal`'s config is spread underneath each call's args (`src/hooks/useModal.ts:31`).
+Handle render failures with `try`/`catch`: a failing content, input, or frame rejects only its modal's Promise. Peers and future requests continue rendering. A failure in the shared anchor rejects and destroys every alive modal; the anchor retries only when another modal registers, preventing an immediate retry loop.
 
-## Decision Guide
+The package supports DOM-free import and server rendering, but call modal functions only in the browser. Server rendering has no portal and counts zero active modals.
 
-|               | Static `alert`/`confirm`/`prompt`           | `useModal()`                                     |
-| ------------- | ------------------------------------------- | ------------------------------------------------ |
-| Callable from | Anywhere — event handlers, plain modules    | Inside a React component only                    |
-| On unmount    | Nothing; the modal outlives its caller      | Every modal it opened is closed and settled      |
-| Shared config | Per call                                    | Once, applied to every call from that hook       |
-| Use when      | Utility code, fire-and-forget confirmations | The modal is meaningless once the component dies |
+## Results and input
 
-`useModal`'s cleanup settles rather than strands: mounted modals go through `closeModal`, still-queued ones are cancelled, so an awaiting caller receives the cancel value instead of a promise that never resolves (`src/hooks/useModal.ts:57-67`).
+`alert` completes without a value. `confirm` resolves `true` for confirmation and `false` for cancellation. `prompt` resolves the current input on confirmation, mapping missing input to `null`; cancellation also returns `null` unless `returnOnCancel` is true. Set `defaultValue` when those outcomes must be distinguished.
 
-## Invariants & Gotchas
+With `returnOnCancel: true`, an edited prompt returns its current value on user cancel, abort, caller cleanup, or provider removal. Before rendering it returns `defaultValue ?? null`. Abort is cancellation, not rejection.
 
-**`returnOnCancel: true` resolves with different values depending on where the cancel came from.** Two code paths exist, and they disagree once the user has typed:
+Functional `onChange` calls accumulate in event order. Calling `onConfirm` in that same event consumes the latest node value synchronously. `disabled` controls the confirm button; it is not a validation-message mechanism.
 
-| Cancel path                                                                                                    | Resolves with                            | Source                                                     |
-| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------- |
-| Anything after the modal mounted — user close, backdrop click, `useModal` unmount, **and `AbortSignal` abort** | current input value, `__value__ ?? null` | `PromptNode.ts:85`, reached via `closeModal` → `onClose()` |
-| Cancel before the modal ever mounted — signal already aborted at call time, or aborted while still queued      | `defaultValue ?? null`                   | `prompt.ts:52`, via `dispatchModal.ts:49,67,76`            |
+## Configuration and hooks
 
-`__value__` is initialized to `defaultValue`, so both paths agree until the first `onChange`. Do not tell users "abort yields `defaultValue`" — a mounted, edited prompt yields the edit. With the default `returnOnCancel: false`, both paths yield `null`.
+Configuration precedence is provider defaults, then `useModal(config)`, then per-call arguments. These layers use object spreads, so an explicit `undefined` can replace an earlier setting; omit optional keys when inheriting. `useModal(config)` captures its configuration at mount, so use call arguments for changing values.
 
-**`usePathname` hides and restores modals; it does not close them.** On every pathname change each live node is compared against its `initiator` — the pathname captured when the modal was opened — and gets `onShow()` if they match, `onHide()` otherwise (`ModalManagerContextProvider.tsx:74-83`, `initiator` assigned at line 57). Navigating away therefore parks a modal off screen with its promise still pending, and navigating back restores it. This is the one `ModalProvider` prop whose behavior cannot be guessed from its type, and it is documented nowhere else — the README lists it only as "Custom pathname hook function".
+`useActiveModalCount(validate?)` works anywhere and receives read-only `ModalNodeView` metadata. It updates on node publications without a refresh key. `useSubscribeModal(id)` likewise works without a provider context; pass the frame id rather than a node instance.
 
-**Animate-then-unmount requires both hooks.** `useModalAnimation(visible, { onVisible, onHidden })` fires its callbacks in a `requestAnimationFrame` inside `useLayoutEffect`, and `useDestroyAfter(id, duration)` destroys the node `duration` ms after it becomes hidden-but-alive. Neither alone works: without the second the node lingers; without the first there is nothing to watch. `useDestroyAfter` captures `duration` once in a ref initializer, so a value that changes after mount is ignored.
+Use `useDestroyAfter(id, delay)` inside a frame to destroy an already settled modal after its exit animation. It does not close a modal or start on route hiding, and it captures the delay at mount. Automatic destruction already handles non-manual modals; use this hook for a custom `manualDestroy` lifecycle. `useModalAnimation` supplies animation callbacks separately; neither hook requires the other.
 
-**`useModal(config)` captures its config once.** `baseArgsRef = useRef(configuration)` (`useModal.ts:27`) — passing a freshly built object each render has no effect after the first. Per-call options are the reactive layer.
+`useInitializeModal({ mode: 'manual' })` returns `initialize(element)` and `portal`; render the portal and initialize the intended element. The default mode initializes on mount. A `ModalProvider` ref uses explicit initialization; passing a ref suppresses automatic initialization. Custom frames receive operations such as `onClose`, `onConfirm`, and `onDestroy`; use those operations instead of mutating nodes.
 
-**Dismissing the previous toast** means capturing the foreground's `onDestroy` into a module-level variable, since `ForegroundComponent` receives the full `ModalFrameProps` (`types/base.ts:27`, `types/modal.ts:22-37`):
-
-```tsx
-let dismissPrevious: (() => void) | undefined;
-
-export const toast = (content: ReactNode) => {
-  dismissPrevious?.();
-  return alert({
-    content,
-    footer: false,
-    dimmed: false,
-    closeOnBackdropClick: false,
-    ForegroundComponent: (props) => {
-      dismissPrevious = props.onDestroy;
-      return <ToastForeground {...props} />;
-    },
-  });
-};
-```
-
-**`disabled: (value) => boolean` gates the confirm button**, re-evaluated on every input change and forwarded to the footer as a plain boolean (`components/Foreground/components/PromptInner.tsx:61-64`, `FallbackComponents/FallbackFooter.tsx:15`). It is a gate, not a validator — it produces no message.
-
-**The package exports nine hooks**, not eight: `useModal`, `useActiveModalCount`, `useDestroyAfter`, `useModalAnimation`, `useModalDuration`, `useSubscribeModal`, `useModalOptions`, `useModalBackdrop`, `useInitializeModal` (`src/index.ts`). `useInitializeModal` is the one usually forgotten — it is what manual-mode anchoring (`{ mode: 'manual' }`, rendering the returned `portal`) depends on.
-
-## API Truth
-
-Read shapes; do not reconstruct them from memory. This package's `README.md` is exhaustive and ships in `node_modules/@lerx/promise-modal/`:
-
-- **Options, props, hook signatures, type definitions** — `README.md` §API Reference (core functions, `ModalProvider`, all nine hooks, `ModalFrameProps`/`FooterComponentProps`/`PromptInputProps`).
-- **Worked examples** — `README.md` §How to Use (provider setup, custom components, custom anchors, toasts) and §Advanced Usage Examples (nested modals).
-- **Authoritative signatures** — `dist/*.d.ts`.
-
-Entry points: `alert`, `confirm`, `prompt`, `ModalProvider`, the nine hooks, and the type exports listed in `src/index.ts`.
+Published API shapes live in the package declarations, setup and customization examples in `README.md`, and hook behavior in `docs/en/SPECIFICATION.md`.

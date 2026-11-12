@@ -115,9 +115,9 @@ import type { BootstrapProviderProps } from './type';
  *         {children}
  *       </h3>
  *     ),
- *     FooterComponent: ({ onConfirm, onClose }) => (
+ *     FooterComponent: ({ onConfirm, onCancel }) => (
  *       <div className="confirm-footer">
- *         <button onClick={onClose}>Cancel</button>
+ *         <button onClick={onCancel}>Cancel</button>
  *         <button onClick={onConfirm} className="danger">
  *           Confirm
  *         </button>
@@ -160,8 +160,8 @@ import type { BootstrapProviderProps } from './type';
  * @remarks
  * - Use `mode: 'manual'` when you need to control the initialization timing
  * - The portal element must be rendered in your component tree
- * - The modal system is a singleton: mount exactly one bootstrap
- *   (ModalProvider or useBootstrap) at a time
+ * - One bootstrap owns the portal; additional bootstraps wait for ownership
+ * - Removing the last bootstrap cancels pending modals after the current commit
  * - Context changes will affect all modals created after the change
  */
 export const useBootstrap = ({
@@ -185,12 +185,7 @@ export const useBootstrap = ({
 
   useOnMount(() => {
     if (mode === 'auto') handleInitialize();
-    return () => {
-      // Only the instance that actually initialized owns the singleton state.
-      if (anchorRef.current === null) return;
-      anchorRef.current.remove();
-      handleReset();
-    };
+    return handleReset;
   });
 
   const initialize = useCallback(

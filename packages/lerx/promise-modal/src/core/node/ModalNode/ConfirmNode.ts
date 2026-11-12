@@ -34,12 +34,14 @@ export class ConfirmNode<B = any> extends AbstractNode<boolean, B> {
     manualDestroy,
     closeOnBackdropClick,
     handleResolve,
+    handleReject,
     ForegroundComponent,
     BackgroundComponent,
   }: ConfirmNodeProps<B>) {
     super({
       id,
       group,
+      subtype,
       initiator,
       title,
       subtitle,
@@ -49,6 +51,7 @@ export class ConfirmNode<B = any> extends AbstractNode<boolean, B> {
       manualDestroy,
       closeOnBackdropClick,
       handleResolve,
+      handleReject,
       ForegroundComponent,
       BackgroundComponent,
     });
