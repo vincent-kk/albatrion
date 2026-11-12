@@ -17,13 +17,13 @@ export type {
   Modal,
   ManagedEntity,
   ManagedModal,
-  ModalFrameProps,
   PresenterProps,
   ModalLayerProps,
   ModalHandlersWithId,
   ModalActions,
   ModalNodeView,
 } from './modal';
+export type { ModalFrameProps } from './frame';
 export type {
   PromptFooterRender,
   PromptInputProps,
