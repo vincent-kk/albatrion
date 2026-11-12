@@ -9,6 +9,7 @@ import {
 import type { Nullable, Optional } from '@aileron/declare';
 
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
+import type { AttachedFilesStore } from '@/schema-form/providers/WorkspaceContext';
 import {
   FieldLifecycle,
   FieldLifecycleAction,
@@ -29,6 +30,7 @@ import { runSlotAction } from '../utils/runSlotAction';
  * @param virtualizationManager - Form manager only when this position renders an input.
  * @param lifecycle - Form registry only when this position renders an input.
  * @param update - Stable bridge dispatch used after a committed container replacement.
+ * @param attachedFiles - Form-owned records projected on committed path deliveries.
  * @returns Stable position with its callback ref, replacement epoch and optional Render detector.
  */
 export const useFieldLifecycle = (
@@ -40,6 +42,7 @@ export const useFieldLifecycle = (
   virtualizationManager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
   update: () => void,
+  attachedFiles?: AttachedFilesStore,
 ) => {
   const position = useMemo(() => {
     const committed = { current: false };
@@ -63,6 +66,7 @@ export const useFieldLifecycle = (
       registered = element;
       if (element) virtualizationManager?.attachInput(element, node);
       const unsubscribe = node.subscribe(({ type }) => {
+        if (type & FieldNodeEventType.UpdatePath) attachedFiles?.synchronize();
         let action = FieldLifecycleAction.None;
         if (type & FieldNodeEventType.RequestFocus)
           action |= FieldLifecycleAction.Focus;
@@ -111,6 +115,7 @@ export const useFieldLifecycle = (
     virtualizationManager,
     lifecycle,
     update,
+    attachedFiles,
   ]);
   const { effect } = position;
   useLayoutEffect(effect, [effect]);

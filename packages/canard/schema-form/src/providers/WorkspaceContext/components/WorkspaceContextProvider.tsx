@@ -3,14 +3,14 @@ import { type PropsWithChildren, useMemo } from 'react';
 import { useSnapshot } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
-import type { AttachedFilesMap } from '@/schema-form/types';
+import type { AttachedFilesStore } from '../utils/AttachedFilesStore';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { WorkspaceContext } from './WorkspaceContext';
 
 interface UserDefinedContextProviderProps {
   /** File map, used to attach files for each input */
-  attachedFilesMap: AttachedFilesMap;
+  attachedFilesMap: AttachedFilesStore;
   /** User-defined context, merged with global user-defined context */
   context: FormProps['context'];
 }
