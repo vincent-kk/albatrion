@@ -5,7 +5,10 @@ import type {
   BlueprintSchema,
 } from '@/schema-form/core/engine/blueprint';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   dispatchMount,
   dispatchSetValue,
@@ -90,7 +93,7 @@ const compare = (
   let oracleError: unknown;
   let actualError: unknown;
   try {
-    writeFieldNode(oracle, input, 'load', option);
+    writeFieldNode(oracle, input, FieldNodeWriteKind.Load, option);
   } catch (error) {
     oracleError = error;
   }
@@ -128,13 +131,13 @@ it('matches flat defaults, integer and escaped names, required and subsequent wr
     writeFieldNode(
       actual.structure!['a/b'],
       value,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       oracle.structure!['a/b'],
       value,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(observe(actual)).toEqual(observe(oracle));

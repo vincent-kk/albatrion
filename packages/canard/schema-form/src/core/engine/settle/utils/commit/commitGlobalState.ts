@@ -8,6 +8,7 @@ import {
   publishGlobalStateDeltas,
 } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
@@ -35,7 +36,7 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   }
   let loadNodes: Optional<Set<Self>>;
   if (
-    context.kind === 'load' &&
+    context.kind === FieldNodeWriteKind.Load &&
     context.loadScope &&
     !context.loadScope.detached
   ) {

@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import type { Validator } from '@/schema-form/core/engine/validation';
 import { SchemaFormError } from '@/schema-form/errors';
 
@@ -36,7 +39,7 @@ describe('round 55 direct settlement regression', () => {
       writeFieldNode(
         root,
         { left: 0, right: 0 },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
     } catch (error) {
@@ -75,7 +78,7 @@ describe('round 55 direct settlement regression', () => {
       writeFieldNode(
         root,
         { input: 'value' },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
     } catch (error) {
@@ -127,7 +130,7 @@ describe('round 55 direct settlement regression', () => {
       writeFieldNode(
         root,
         { input: 'value' },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow(

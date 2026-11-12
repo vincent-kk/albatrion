@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import type { PreparedStaticHost } from '../utils/compute/childSelection/utils/prepareStaticHost';
@@ -34,7 +34,12 @@ it('does not enumerate the previous 1000-sibling shape on a steady switch', () =
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.type, 'b', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.type,
+    'b',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   let scans = 0;
   root.structure = new Proxy(root.structure!, {
     ownKeys(target) {
@@ -42,7 +47,12 @@ it('does not enumerate the previous 1000-sibling shape on a steady switch', () =
       return Reflect.ownKeys(target);
     },
   });
-  writeFieldNode(root.structure.type, 'a', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure.type,
+    'a',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(scans).toBe(0);
   expect(root.local).toMatchObject({ type: 'a', x: 'a', pad_999: 999 });
 });
@@ -64,14 +74,24 @@ it('keeps actual multi-round dynamic key order instead of authored admission ord
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const counts = observePresenceChangeNames();
-  writeFieldNode(root.structure!.type, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.type,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(
     Reflect.get(getHostDerived(root).preparedStaticHost!, 'dynamicNames'),
   ).toEqual(
     Object.keys(root.structure!).filter((name) => name === 'p' || name === 'q'),
   );
   expect(root.local).toEqual({ type: true, p: 'p', q: 'on' });
-  writeFieldNode(root.structure!.type, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.type,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(counts.bounded).toBeGreaterThan(0);
 });
 
@@ -94,8 +114,18 @@ it('matches full presence traversal across a 1000-sibling switch', () => {
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   const counts = observePresenceChangeNames();
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
+  writeFieldNode(
+    root.structure!.kind,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(counts.bounded).toBeGreaterThan(0);
 });
 
@@ -109,10 +139,20 @@ it('matches full presence traversal when a nullable prepared host is nullified a
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const counts = observePresenceChangeNames();
-  writeFieldNode(root, null, 'input', WriteOption.Overwrite);
-  writeFieldNode(root, { kind: false }, 'input', WriteOption.Overwrite);
+  writeFieldNode(root, null, FieldNodeWriteKind.Input, WriteOption.Overwrite);
+  writeFieldNode(
+    root,
+    { kind: false },
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(counts.calls).toBeGreaterThan(0);
   expect(counts.null + counts.missing).toBeGreaterThan(0);
 });
@@ -141,12 +181,22 @@ it('matches full presence traversal when a prepared host exits and re-enters', (
   writeFieldNode(
     root.structure!.host.structure!.kind,
     true,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   const counts = observePresenceChangeNames();
-  writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
-  writeFieldNode(root.structure!.show, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.show,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
+  writeFieldNode(
+    root.structure!.show,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(root.structure!.host.structure!.kind).toBeDefined();
   expect(
     counts.missing + counts.entered + counts.exited + counts.revived,
@@ -163,10 +213,20 @@ it('matches full presence traversal after the prepared witness is deleted', () =
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   delete getHostDerived(root).preparedStaticHost;
   const counts = observePresenceChangeNames();
-  writeFieldNode(root.structure!.kind, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(counts.calls).toBeGreaterThan(0);
   expect(getHostDerived(root).preparedStaticHost).toBeDefined();
 });
@@ -181,7 +241,12 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
     })),
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const derived = getHostDerived<
     'preparedStaticHost',
     PreparedStaticHost<PlainNode>
@@ -190,7 +255,12 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
   expect(prepared).toBeDefined();
   const structure = root.structure!;
   const scratch = getSettlementScratch(root.runtime);
-  const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+  const context = createSettlementContext(
+    root,
+    FieldNodeWriteKind.CallerReplace,
+    0,
+    scratch,
+  );
   context.preparedStaticHosts = new Set([root]);
   context.presenceSelections = new Map([
     [root, { structure, names: prepared.dynamicNames }],

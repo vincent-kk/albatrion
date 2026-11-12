@@ -2,7 +2,7 @@ import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
-import type { FieldNodeWriteKind } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { WriteOption } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { prepareGateSelection } from '../compute/childSelection/prepareGateSelection';
@@ -34,7 +34,7 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
   const enable = (option & WriteOption.EnableAutomaticWrites) !== BIT_MASK_NONE;
   const hasSplitRegistration =
     !blueprint.capabilities.branchless &&
-    prepareGateSelection(blueprint, kind !== 'load');
+    prepareGateSelection(blueprint, kind !== FieldNodeWriteKind.Load);
   const context: SettlementContext<Self> = {
     root,
     previousEmit: root.emit,
@@ -49,7 +49,7 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
       : getVirtualReferenceIndex(blueprint),
     suppressAutomaticWrites:
       disable || (!enable && runtime.disableAutomaticWrites === true),
-    loadScope: kind === 'load' ? node : undefined,
+    loadScope: kind === FieldNodeWriteKind.Load ? node : undefined,
     replaceScope: replaces ? node : undefined,
     entered: scratch.entered,
     revived: scratch.revived,

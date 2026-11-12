@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getCommittedDeclarationKey } from '../../utils/controls/getCommittedDeclarationKey';
 import { dispatchMount, dispatchWriteInput } from '../../write';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -84,7 +84,7 @@ describe('direct exit-policy child ownership', () => {
       try {
         const context = createSettlementContext(
           root,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
           scratch,
         );

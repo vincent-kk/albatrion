@@ -8,6 +8,7 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { captureFieldNodeChange } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
@@ -75,7 +76,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       : null;
   const direct =
     cached === undefined
-      ? context.kind === 'load'
+      ? context.kind === FieldNodeWriteKind.Load
         ? null
         : getDirectChildSelectionPlan(
             node.blueprintNode,

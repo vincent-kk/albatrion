@@ -8,6 +8,7 @@ import {
 import { dispatchBatch } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { FieldNodeWriteKind } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createWatchDeliveryIndex } from '../utils/commit/utils/createWatchDeliveryIndex';
@@ -62,7 +63,12 @@ describe('commit source visit characterization', () => {
       root,
     ];
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     for (const node of nodes) {
       context.changedNodes.add(node);
       context.stateDirtyNodes.add(node);
@@ -100,7 +106,12 @@ describe('commit source visit characterization', () => {
       arbitrary: true,
     });
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.entered.add(b);
     context.changedNodes.add(a);
     context.stateDirtyNodes.add(b);
@@ -122,7 +133,12 @@ describe('commit source visit characterization', () => {
     const root = fixture();
     const { a, b, c } = root.structure!;
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'load', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.Load,
+      0,
+      scratch,
+    );
     context.changedNodes.add(b);
     context.stateDirtyNodes.add(a);
     const order: string[] = [];
@@ -149,7 +165,12 @@ describe('commit source visit characterization', () => {
     };
     root.deliveryPreviousSchema = root.schema;
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.changedNodes.add(root);
     context.stateDirtyNodes.add(b);
     const revision = a.revisionLedger[E.UpdateControlledProperties] ?? 0;
@@ -167,7 +188,12 @@ describe('commit source visit characterization', () => {
   it('commits diagnostics on a root outside changedNodes after the changed leaf', () => {
     const root = fixture();
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.changedNodes.add(root.structure!.b);
     root.runtime.diagnostics = { status: 'degraded', cause: 'budget' };
     const before = root.revisionLedger[E.UpdateDiagnostics] ?? 0;
@@ -192,7 +218,12 @@ describe('commit source visit characterization', () => {
     root.runtime.context = { next: true };
     root.runtime.deliveryAffectedPaths = new Set(['/b', '/old']);
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.changedNodes.add(a);
     context.pathChanges.push({ node: b, previous: '/old', current: '/b' });
     c.detached = true;
@@ -216,7 +247,7 @@ describe('commit source visit characterization', () => {
       const scratch = getSettlementScratch(root.runtime);
       const context = createSettlementContext(
         root,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         0,
         scratch,
       );
@@ -272,7 +303,12 @@ describe('commit source visit characterization', () => {
     const { a, b } = root.structure!;
     markFieldNodeEvent(a, E.RequestFocus);
     const scratch = getSettlementScratch(root.runtime);
-    const first = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const first = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     first.changedNodes.add(b);
     const failure = new Error('visitor failure');
     try {
@@ -286,7 +322,12 @@ describe('commit source visit characterization', () => {
     }
     dispatchBatch(root, () => {});
     const nextScratch = getSettlementScratch(root.runtime);
-    const next = createSettlementContext(root, 'callerReplace', 0, nextScratch);
+    const next = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      nextScratch,
+    );
     next.changedNodes.add(b);
     const order: string[] = [];
     try {
@@ -305,7 +346,12 @@ describe('commit source visit characterization', () => {
     markFieldNodeEvent(a, E.RequestFocus);
     a.detached = true;
     const scratch = getSettlementScratch(root.runtime);
-    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+    const context = createSettlementContext(
+      root,
+      FieldNodeWriteKind.CallerReplace,
+      0,
+      scratch,
+    );
     context.exited.add(a);
     context.stateDirtyNodes.add(b);
     const order: string[] = [];

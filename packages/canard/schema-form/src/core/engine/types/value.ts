@@ -53,10 +53,19 @@ export interface ResetOptions<Value = unknown> {
   fallbackValue?: Nullable<Value>;
 }
 
-/** Origin of a write before calculation and transition phases. */
-export type FieldNodeWriteKind =
-  | 'input'
-  | 'callerPartial'
-  | 'callerReplace'
-  | 'load'
-  | 'automatic';
+/**
+ * Origin of a write before calculation and transition phases.
+ * @remarks The member values are the names delivery options, misfit warnings and the settlement trace carry.
+ */
+export enum FieldNodeWriteKind {
+  /** The bound input wrote the value. */
+  Input = 'input',
+  /** A caller wrote object keys and kept the ones it omitted. */
+  CallerPartial = 'callerPartial',
+  /** A caller replaced the addressed value. */
+  CallerReplace = 'callerReplace',
+  /** A load started a new source lifetime. */
+  Load = 'load',
+  /** The form produced the value by itself. */
+  Automatic = 'automatic',
+}

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -91,7 +94,7 @@ describe('shared declaration conflicts', () => {
       writeFieldNode(
         root.structure!.enabled,
         true,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
     } catch (error) {
@@ -180,7 +183,7 @@ describe('shared declaration conflicts', () => {
       writeFieldNode(
         root,
         { first: true, second: true, stay: false, source: 'B' },
-        'callerPartial',
+        FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       );
     } catch (error) {
@@ -214,7 +217,7 @@ describe('shared declaration conflicts', () => {
       writeFieldNode(
         root,
         { enabled: true, value: 3 },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
@@ -246,7 +249,7 @@ describe('shared declaration conflicts', () => {
       writeFieldNode(
         root,
         { shared: 1 },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');

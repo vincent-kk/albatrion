@@ -1,4 +1,7 @@
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
@@ -19,7 +22,7 @@ export const gateTableScene = () => {
   const scratch = getSettlementScratch(tree.root.runtime);
   const context = createSettlementContext(
     tree.root,
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
     scratch,
   );

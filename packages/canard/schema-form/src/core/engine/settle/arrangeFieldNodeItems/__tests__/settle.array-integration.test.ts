@@ -7,7 +7,10 @@ import {
   publishGlobalStateDeltas,
   updateFieldNodeNameAndPath,
 } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
@@ -51,7 +54,7 @@ describe('array integration runtime stores', () => {
       writeFieldNode(
         root,
         { a: 0, list: [1, 2] },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
     } catch (error) {
@@ -84,7 +87,7 @@ describe('array integration runtime stores', () => {
     writeFieldNode(
       root,
       [{ n: 1 }, { n: 2 }],
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
@@ -96,7 +99,7 @@ describe('array integration runtime stores', () => {
     try {
       const context = createSettlementContext(
         root,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
         scratch,
       );
@@ -133,7 +136,7 @@ describe('array integration runtime stores', () => {
       writeFieldNode(
         root,
         [{ n: 1 }, { n: 2 }],
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       const item = root.children![kind === 'pop' ? 1 : 0];
@@ -166,7 +169,12 @@ describe('array integration runtime stores', () => {
         properties: { n: { type: 'number', controls: { watch: ['.'] } } },
       },
     });
-    writeFieldNode(root, [{ n: 1 }], 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      [{ n: 1 }],
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     const item = root.children![0];
     const leaf = item.structure!.n;
     const runtime = root.runtime;
@@ -266,7 +274,12 @@ describe('array integration runtime stores', () => {
     });
     let caught: unknown;
     try {
-      writeFieldNode(root, [1, 2, 3], 'callerReplace', WriteOption.Overwrite);
+      writeFieldNode(
+        root,
+        [1, 2, 3],
+        FieldNodeWriteKind.CallerReplace,
+        WriteOption.Overwrite,
+      );
     } catch (error) {
       caught = error;
     }

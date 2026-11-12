@@ -23,6 +23,7 @@ import {
   markFieldNodeEvent,
 } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
@@ -47,7 +48,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   const previousTransitions = runtime.revisionTransitions;
   try {
     const refreshTargets = runtime.refreshTargets;
-    const loadScope = context.kind === 'load' ? context.loadScope : undefined;
+    const loadScope =
+      context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
     const automaticNodes = new Set<Self>();
     for (let index = 0; index < context.automaticLog.length; index++)
       automaticNodes.add(context.automaticLog[index].node);
@@ -253,7 +255,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
             const payload = { previous: oldValue, current };
             const source =
               automaticNodes.has(node) || context.filledNodes.has(node)
-                ? 'automatic'
+                ? FieldNodeWriteKind.Automatic
                 : readSettlementSource(context, node.path);
             mark(
               node,
@@ -349,7 +351,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           const payload = { previous: undefined, current };
           const source =
             automaticNodes.has(node) || context.filledNodes.has(node)
-              ? 'automatic'
+              ? FieldNodeWriteKind.Automatic
               : readSettlementSource(context, node.path);
           mark(
             node,

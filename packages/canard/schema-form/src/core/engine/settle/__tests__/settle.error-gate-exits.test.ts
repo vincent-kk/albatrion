@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -61,7 +64,12 @@ describe('throwing gate exit isolation', () => {
       { k: true, h: { d: 'D', e: 'E' } },
       WriteOption.Overwrite,
     );
-    writeFieldNode(root.structure!.k, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.k,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
     root.runtime.context = {
       gate: () => {
@@ -69,7 +77,12 @@ describe('throwing gate exit isolation', () => {
       },
     };
     expect(() =>
-      writeFieldNode(root, { z: 'go' }, 'callerPartial', WriteOption.Merge),
+      writeFieldNode(
+        root,
+        { z: 'go' },
+        FieldNodeWriteKind.CallerPartial,
+        WriteOption.Merge,
+      ),
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.h).toBeUndefined();
     expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
@@ -116,7 +129,7 @@ describe('throwing gate exit isolation', () => {
       writeFieldNode(
         root,
         { flag: false, source: 'C' },
-        'callerPartial',
+        FieldNodeWriteKind.CallerPartial,
         WriteOption.Merge,
       ),
     ).toThrow('Gate evaluation failed');

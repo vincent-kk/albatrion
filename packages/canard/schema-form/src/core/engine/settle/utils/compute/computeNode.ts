@@ -1,6 +1,7 @@
 import type { Optional } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { GateWheelFrame } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
@@ -67,7 +68,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   }
   if (
     node === context.root &&
-    context.kind === 'load' &&
+    context.kind === FieldNodeWriteKind.Load &&
     node.behavior.type === 'object' &&
     node.behavior.strategy === 'branch' &&
     !node.deliveryInitialized &&
@@ -169,7 +170,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     computeNode(initialDirty[index], context);
   const deferBaseline =
     wheelPlan?.baselineEligible === true &&
-    context.kind !== 'load' &&
+    context.kind !== FieldNodeWriteKind.Load &&
     !context.distributedInputs.has(node) &&
     context.pathChanges.length === 0;
   if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);
@@ -194,7 +195,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     const roundLocal = node.local;
     const roundEmit = node.emit;
     const frame: Optional<GateWheelFrame> =
-      gates.length > 0 && context.kind !== 'load'
+      gates.length > 0 && context.kind !== FieldNodeWriteKind.Load
         ? {
             inputs: new Map(),
             consistent: true,
@@ -273,7 +274,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     const publishedChanged =
       !outputChanged &&
-      context.kind !== 'load' &&
+      context.kind !== FieldNodeWriteKind.Load &&
       (node.local !== roundLocal || node.emit !== roundEmit) &&
       scheduleChangedRelocatedGates(currentRelocated, context);
     const wheelChanged =

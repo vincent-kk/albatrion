@@ -1,6 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -26,7 +29,7 @@ it('keeps a still-empty mismatch row as built, without clearing or reinserting t
     writeFieldNode(
       root.structure!.value,
       value,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
@@ -55,7 +58,12 @@ it('clears ancestor rows on mismatch recovery and retains its warning and commit
     WriteOption.Overwrite,
   );
   const leaf = root.structure!.group.structure!.value;
-  writeFieldNode(leaf, { invalid: true }, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    leaf,
+    { invalid: true },
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const memo = root.runtime.misfitsMemo!;
   expect(memo.get('/group')?.paths).toEqual(['/group/value']);
   expect(root.runtime.misfitRecords).toEqual([
@@ -63,7 +71,12 @@ it('clears ancestor rows on mismatch recovery and retains its warning and commit
   ]);
   const clear = vi.spyOn(memo, 'clear');
   const set = vi.spyOn(memo, 'set');
-  writeFieldNode(leaf, 'recovered', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    leaf,
+    'recovered',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(clear).toHaveBeenCalledTimes(1);
   expect(set).toHaveBeenCalledTimes(1);
   expect([...memo.keys()]).toEqual(['']);
@@ -88,7 +101,7 @@ it('resets additional subtree memo rows instead of keeping an older commit', () 
   writeFieldNode(
     root.structure!.value,
     'after',
-    'input',
+    FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   expect(clear).toHaveBeenCalledTimes(1);

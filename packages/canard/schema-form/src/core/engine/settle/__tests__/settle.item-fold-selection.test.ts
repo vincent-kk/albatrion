@@ -6,7 +6,7 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import { createItemFoldTree } from '../../__tests__/fixtures/createItemFoldTree';
 import type { FieldNodeDelivery } from '../../record';
 import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { Validator } from '../../validation';
 import {
   dispatchInsert,
@@ -300,7 +300,7 @@ describe('array item fold selection', () => {
       writeFieldNode(
         root,
         { a: true, b: false, list: ['first'] },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       expect(list.structure!['0'].blueprintNode.kind).toBe('string');
@@ -308,7 +308,7 @@ describe('array item fold selection', () => {
       writeFieldNode(
         root,
         { a: false, b: true, list: [8] },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       expect(list.structure!['0'].blueprintNode.kind).toBe('number');
@@ -333,14 +333,14 @@ describe('array item fold selection', () => {
       writeFieldNode(
         root.structure!.b,
         false,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       const scratch = getSettlementScratch(root.runtime);
       try {
         const context = createSettlementContext(
           root,
-          'callerReplace',
+          FieldNodeWriteKind.CallerReplace,
           WriteOption.Overwrite,
           scratch,
         );
@@ -379,7 +379,7 @@ describe('array item fold selection', () => {
         writeFieldNode(
           root.structure![later ? 'a' : 'b'],
           true,
-          'callerReplace',
+          FieldNodeWriteKind.CallerReplace,
           WriteOption.Overwrite,
         ),
       ).toThrowError(
@@ -415,13 +415,13 @@ describe('array item fold selection', () => {
       writeFieldNode(
         root.structure!.a,
         false,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       writeFieldNode(
         root.structure!.b,
         true,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       const list = root.structure!.list;
@@ -430,13 +430,13 @@ describe('array item fold selection', () => {
       writeFieldNode(
         root.structure!.b,
         false,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       writeFieldNode(
         root.structure!.a,
         true,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       expect(list.structure!['0'].source).toBe('retained');

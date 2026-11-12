@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -41,7 +44,7 @@ describe('split registration preserves the settlement contract', () => {
     writeFieldNode(
       root.structure!.kind,
       'kind_79',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(rows.length).toBeGreaterThan(0);
@@ -129,7 +132,12 @@ describe('split registration preserves the settlement contract', () => {
         });
       },
     );
-    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.kind,
+      'b',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(stages).toContainEqual({
       living: true,
       pending: false,

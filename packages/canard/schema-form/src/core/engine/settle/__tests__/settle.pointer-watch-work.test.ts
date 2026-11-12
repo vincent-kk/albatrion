@@ -5,7 +5,7 @@ import * as pointer from '@/schema-form/helpers/jsonPointer';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getCachedPointerSegments } from '../../utils/paths/getCachedPointerSegments';
 import * as dependencyPaths from '../../utils/paths/resolveDependencyPath';
 import { dispatchMount, dispatchRemove, dispatchSetValue } from '../../write';
@@ -198,7 +198,7 @@ describe('watch dependency syntax ownership', () => {
     try {
       const settlement = createSettlementContext(
         root,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
         scratch,
       );
@@ -227,7 +227,7 @@ describe('watch dependency syntax ownership', () => {
     try {
       const settlement = createSettlementContext(
         root,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
         cleanup,
       );

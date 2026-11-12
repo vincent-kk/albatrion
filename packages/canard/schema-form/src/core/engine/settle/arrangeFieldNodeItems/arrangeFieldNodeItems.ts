@@ -5,7 +5,7 @@ import type {
   ArrayOperation,
   FieldNodeRecord,
 } from '../../record';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { computeNode } from '../utils/compute/computeNode';
 import { registerRecalculation } from '../utils/dependencies/registerRecalculation';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
@@ -79,14 +79,19 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       isArray(node.source) && plan.result.source === 'removed'
         ? node.source[plan.result.index]
         : undefined;
-    writeFieldNode(node, plan.source, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      node,
+      plan.source,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     return resultOf(node, plan, previous);
   }
   if (plan.kind === 'update' && !node.structure?.[String(plan.index)]) {
     const scratch = getSettlementScratch(node.rootNode.runtime);
     const context = createSettlementContext(
       node,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
       scratch,
     );
@@ -98,14 +103,19 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     }
     const copy = isArray(oldSource) ? oldSource.slice() : [];
     copy[plan.index] = plan.value;
-    writeFieldNode(node, copy, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      node,
+      copy,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     const item = node.structure?.[String(plan.index)];
     if (item) return item.local;
     const readScratch = getSettlementScratch(node.rootNode.runtime);
     try {
       const readContext = createSettlementContext(
         node,
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
         readScratch,
       );
@@ -118,14 +128,19 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   if (plan.kind === 'update') {
     const item = node.structure?.[String(plan.index)];
     if (!item) return undefined;
-    writeFieldNode(item, plan.value, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      item,
+      plan.value,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     return item.local;
   }
 
   const scratch = getSettlementScratch(node.rootNode.runtime);
   const context = createSettlementContext(
     node,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
     scratch,
   );

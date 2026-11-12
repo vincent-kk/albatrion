@@ -1,6 +1,6 @@
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import type { BlueprintSchema } from '../../../blueprint';
-import { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
 import { getSettlementScratch } from '../../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../../utils/scratch/releaseSettlementScratch';
@@ -21,7 +21,7 @@ export const createGateReadFixture = (
   const scratch = getSettlementScratch(root.runtime);
   const context = createSettlementContext(
     root,
-    'callerReplace',
+    FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
     scratch,
   );

@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeState } from '../../../types/state';
 import type { WriteOption } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { dispatchBatch } from './dispatchBatch';
 import { dispatchClearExternalErrors } from './dispatchClearExternalErrors';
 import { dispatchSetState } from './dispatchSetState';
@@ -23,7 +24,7 @@ export const dispatchWriteInput = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (node.disposed || node.rootNode.disposed) return;
   dispatchBatch(node, () => {
-    dispatchSetValue(node, input, option, 'input');
+    dispatchSetValue(node, input, option, FieldNodeWriteKind.Input);
     if (node.disposed || node.rootNode.disposed) return;
     dispatchClearExternalErrors(node);
     dispatchSetState(node, EDITED_STATE_PATCH);

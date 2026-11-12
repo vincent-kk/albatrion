@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -24,7 +27,7 @@ describe('settlement reference revival against the previous commit', () => {
     writeFieldNode(
       root,
       { group: { value: 0 }, watcher: 'fixed' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const group = root.structure!.group;
@@ -38,7 +41,12 @@ describe('settlement reference revival against the previous commit', () => {
       watcher.revisionLedger[FieldNodeEventType.UpdateControlledProperties] ??
       0;
 
-    writeFieldNode(value, 1, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      value,
+      1,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
 
     expect(group.local).toEqual({ value: 0 });
     expect(group.local).toBe(committedLocal);
@@ -76,7 +84,7 @@ describe('settlement reference revival against the previous commit', () => {
     writeFieldNode(
       root,
       { group: { value: 0 }, other: 1, watcher: 'fixed' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const group = root.structure!.group;
@@ -97,7 +105,7 @@ describe('settlement reference revival against the previous commit', () => {
     writeFieldNode(
       group.structure!.value,
       1,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 
@@ -148,7 +156,7 @@ describe('settlement reference revival against the previous commit', () => {
     writeFieldNode(
       root,
       { outer: { group: { value: 0 } }, other: 1 },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const outer = root.structure!.outer;
@@ -161,7 +169,7 @@ describe('settlement reference revival against the previous commit', () => {
     writeFieldNode(
       group.structure!.value,
       1,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 

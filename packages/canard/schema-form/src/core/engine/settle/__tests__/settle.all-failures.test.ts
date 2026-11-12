@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import type { Validator } from '@/schema-form/core/engine/validation';
 import { SchemaFormError } from '@/schema-form/errors';
 
@@ -82,7 +85,12 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
       const { root } = createTestTree(schema, validator);
       let caught: unknown;
       try {
-        writeFieldNode(root, value, 'callerReplace', WriteOption.Overwrite);
+        writeFieldNode(
+          root,
+          value,
+          FieldNodeWriteKind.CallerReplace,
+          WriteOption.Overwrite,
+        );
       } catch (error) {
         caught = error;
       }
@@ -115,7 +123,7 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
       writeFieldNode(
         root,
         { a: { shared: 1 } },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrowError(

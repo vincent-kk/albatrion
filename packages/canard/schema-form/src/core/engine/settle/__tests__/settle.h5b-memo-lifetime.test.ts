@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
+import { FieldNodeWriteKind } from '../../types/value';
 import { dispatchMount } from '../../write';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
@@ -15,7 +16,12 @@ it('releases an active bit-only transition memo when the commit visitor throws',
   dispatchMount(root, { child: 0 }, undefined, { deferValidation: true });
   const child = root.children![0];
   const scratch = getSettlementScratch(runtime);
-  const context = createSettlementContext(root, 'load', 0, scratch);
+  const context = createSettlementContext(
+    root,
+    FieldNodeWriteKind.Load,
+    0,
+    scratch,
+  );
   context.loadScope = root;
   context.changedNodes.add(root).add(child);
   const failure = new Error('visitor failed after the first revision');

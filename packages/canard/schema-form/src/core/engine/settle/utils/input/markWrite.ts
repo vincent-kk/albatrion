@@ -5,6 +5,7 @@ import type { Optional } from '@aileron/declare';
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -47,16 +48,20 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   if (
     node.behavior.type === 'virtual' &&
     !context.automatic &&
-    context.kind !== 'load'
+    context.kind !== FieldNodeWriteKind.Load
   )
     assertVirtualWriteShape(node, input);
   if (context.loadScope) {
     context.entered.add(node);
   }
-  if (context.kind === 'load') context.changedNodes.add(node);
-  if (context.kind === 'load' && node.behavior.strategy === 'branch')
+  if (context.kind === FieldNodeWriteKind.Load) context.changedNodes.add(node);
+  if (
+    context.kind === FieldNodeWriteKind.Load &&
+    node.behavior.strategy === 'branch'
+  )
     context.shapeDirtyPaths.add(node.path);
-  const isMerge = context.kind === 'callerPartial' && !context.automatic;
+  const isMerge =
+    context.kind === FieldNodeWriteKind.CallerPartial && !context.automatic;
   if (!context.automatic) context.writtenInputs.set(node, input);
   else
     context.automaticLog.push({
@@ -85,7 +90,11 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     for (let index = 0; index < fields.length; index++) {
       const sibling = node.parent?.structure?.[fields[index]];
       if (!sibling) continue;
-      if (!context.automatic && context.kind !== 'load' && !isMerge) {
+      if (
+        !context.automatic &&
+        context.kind !== FieldNodeWriteKind.Load &&
+        !isMerge
+      ) {
         (context.virtualReplacePaths ??= []).push(sibling.path);
         pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }

@@ -3,7 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -42,7 +42,12 @@ it.each(['table', 'verify'] as const)(
       })),
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    writeFieldNode(root.structure!.type, 'b', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.type,
+      'b',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(
       getHostDerived(root.blueprintNode).directChildSelectionPlan,
     ).toBeNull();
@@ -70,7 +75,12 @@ it.each(['table', 'verify'] as const)(
       if (object === root.structure) fullEnumerations++;
       return values(object);
     });
-    writeFieldNode(root.structure!.type, 'a', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.type,
+      'a',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     const work = {
       callbacks,
       comparisons: comparisons.mock.calls.length,
@@ -116,11 +126,21 @@ it('publishes ordinary shapes in numeric-key order with reserved static names', 
     ],
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    true,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   const structure = root.structure!;
   const names = Object.keys(structure);
   const children = [...root.children!];
-  writeFieldNode(root.structure!.kind, false, 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    root.structure!.kind,
+    false,
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(Object.keys(root.structure!)).toEqual(['1', '2', 'kind', '__proto__']);
   expect(root.children!.map((child) => child.name)).toEqual([
     '1',

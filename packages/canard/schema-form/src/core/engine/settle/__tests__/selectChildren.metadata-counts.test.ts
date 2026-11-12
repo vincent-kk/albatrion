@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
@@ -118,7 +121,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         writeFieldNode(
           root.structure!.common,
           'new common',
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
         expect(builds.plans).toHaveLength(1);
@@ -136,7 +139,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           writeFieldNode(
             root.structure!.kind,
             kind,
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           expect(builds.hosts).toEqual([root.blueprintNode]);
@@ -187,7 +190,12 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           (disabled ? WriteOption.DisableAutomaticWrites : 0);
         loadFieldNodeAtMount(root, { kind: 'off' }, option);
         for (const kind of ['on', 'off', 'on'])
-          writeFieldNode(root.structure!.kind, kind, 'input', option);
+          writeFieldNode(
+            root.structure!.kind,
+            kind,
+            FieldNodeWriteKind.Input,
+            option,
+          );
         expect(builds.plans).toHaveLength(0);
         expect(root.runtime.diagnostics.status).toBe('stable');
       } finally {
@@ -205,7 +213,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         writeFieldNode(
           root.structure!.kind,
           kind,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
       expect(builds.plans).toHaveLength(0);

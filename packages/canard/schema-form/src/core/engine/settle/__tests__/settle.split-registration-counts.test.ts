@@ -1,6 +1,9 @@
 import { expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -82,7 +85,7 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
           writeFieldNode(
             root.structure!.kind,
             `kind_${count - 1}`,
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
         } finally {

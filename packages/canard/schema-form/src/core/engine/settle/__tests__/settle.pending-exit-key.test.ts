@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -79,7 +82,7 @@ describe('pending-exit keys are built only while an exit is pending', () => {
     writeFieldNode(
       root.structure!.kind,
       'none_2',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(encodings.count).toBe(0);
@@ -113,7 +116,12 @@ describe('pending-exit keys are built only while an exit is pending', () => {
     loadFieldNodeAtMount(root, { g: 'G' }, WriteOption.Overwrite);
     armed = true;
     expect(() =>
-      writeFieldNode(root.structure!.t, true, 'input', WriteOption.Overwrite),
+      writeFieldNode(
+        root.structure!.t,
+        true,
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.g).toBeUndefined();
     expect(root.local).toEqual({ t: true, a: 1 });
@@ -144,7 +152,12 @@ describe('pending-exit keys are built only while an exit is pending', () => {
         return original(node, rest, context);
       },
     );
-    writeFieldNode(root.structure!.s, 'off', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.s,
+      'off',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(injected).toBe(true);
     expect(root.structure?.keep === keep).toBe(true);
     expect(keep.detached).toBe(false);

@@ -1,6 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -25,7 +28,12 @@ it('removes fixed writable, latent, wrong-kind and effective-type work on normal
   const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
   const effective = vi.spyOn(types, 'effectiveType');
   for (const value of ['first', 'later']) {
-    writeFieldNode(leaf, value, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      leaf,
+      value,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual({ value, sibling: 3 });
   }
   expect(assertWritable).not.toHaveBeenCalled();
@@ -48,13 +56,23 @@ it('retains general checks and derived writes when their inputs exist', () => {
   const leaf = root.structure!.value;
   const assertWritable = vi.spyOn(writable, 'assertFieldNodeWritable');
   const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
-  writeFieldNode(leaf, 'after', 'input', WriteOption.Overwrite);
+  writeFieldNode(
+    leaf,
+    'after',
+    FieldNodeWriteKind.Input,
+    WriteOption.Overwrite,
+  );
   expect(assertWritable).toHaveBeenCalledTimes(1);
   expect(release).toHaveBeenCalledTimes(1);
   expect(root.emit).toEqual({ value: 'after', copy: 'after' });
   leaf.disposed = true;
   expect(() =>
-    writeFieldNode(leaf, 'retired', 'callerReplace', WriteOption.Overwrite),
+    writeFieldNode(
+      leaf,
+      'retired',
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    ),
   ).toThrow('Cannot write disposed node');
   expect(root.emit).toEqual({ value: 'after', copy: 'after' });
 });

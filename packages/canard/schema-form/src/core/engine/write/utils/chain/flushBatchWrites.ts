@@ -6,7 +6,7 @@ import type { Optional } from '@aileron/declare';
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
-import type { FieldNodeWriteKind } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
 import { WriteOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
@@ -39,25 +39,27 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     for (let index = 0, count = writes.length; index < count; index++) {
       const write = writes[index];
 
-      if (!(write.source === 'input')) {
+      if (!(write.source === FieldNodeWriteKind.Input)) {
         allMatch = false;
         break;
       }
     }
-    let source: Optional<'input' | 'automatic'>;
+    let source: Optional<
+      FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic
+    >;
     if (allMatch) {
-      source = 'input';
+      source = FieldNodeWriteKind.Input;
     } else {
       let allMatch2 = true;
       for (let index = 0, count = writes.length; index < count; index++) {
         const write = writes[index];
 
-        if (!(write.source === 'automatic')) {
+        if (!(write.source === FieldNodeWriteKind.Automatic)) {
           allMatch2 = false;
           break;
         }
       }
-      source = allMatch2 ? 'automatic' : undefined;
+      source = allMatch2 ? FieldNodeWriteKind.Automatic : undefined;
     }
 
     const origins = mapArray(
@@ -75,7 +77,11 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
           !(write.option & WriteOption.Replace);
         return {
           path: write.node.path,
-          source: write.source ?? (partial ? 'callerPartial' : 'callerReplace'),
+          source:
+            write.source ??
+            (partial
+              ? FieldNodeWriteKind.CallerPartial
+              : FieldNodeWriteKind.CallerReplace),
           keys:
             partial &&
             write.value !== null &&
@@ -96,11 +102,11 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     writeFieldNode(
       target,
       value,
-      source === 'automatic'
-        ? 'automatic'
+      source === FieldNodeWriteKind.Automatic
+        ? FieldNodeWriteKind.Automatic
         : merge
-          ? 'callerPartial'
-          : 'callerReplace',
+          ? FieldNodeWriteKind.CallerPartial
+          : FieldNodeWriteKind.CallerReplace,
       option,
       source,
       origins,

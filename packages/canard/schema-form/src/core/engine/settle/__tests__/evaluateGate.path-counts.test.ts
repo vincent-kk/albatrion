@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
@@ -104,7 +107,7 @@ describe('gate path resolution runtime visits', () => {
           writeFieldNode(
             root.structure!.kind,
             kind,
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           const expected = expectedGateSelectionCalls(

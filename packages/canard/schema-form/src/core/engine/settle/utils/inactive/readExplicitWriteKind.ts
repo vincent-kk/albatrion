@@ -7,7 +7,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { FieldNodeWriteKind } from '../../../types/value';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
@@ -43,7 +43,7 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (matchesReplacementPath) {
-    return 'callerReplace';
+    return FieldNodeWriteKind.CallerReplace;
   }
   for (let index = origins.length - 1; index >= 0; index--) {
     const origin = origins[index];
@@ -59,12 +59,13 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
       if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
         continue;
     }
-    if (origin.source === 'automatic') return 'automatic';
-    if (!origin.keys) return 'callerReplace';
+    if (origin.source === FieldNodeWriteKind.Automatic)
+      return FieldNodeWriteKind.Automatic;
+    if (!origin.keys) return FieldNodeWriteKind.CallerReplace;
     // A single-write merge is deep; a batched merge replaces each received key whole.
     return origins.length === 1 || inputPath === path
-      ? 'callerPartial'
-      : 'callerReplace';
+      ? FieldNodeWriteKind.CallerPartial
+      : FieldNodeWriteKind.CallerReplace;
   }
   return undefined;
 };

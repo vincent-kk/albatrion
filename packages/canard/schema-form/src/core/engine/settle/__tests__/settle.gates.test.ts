@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -18,7 +21,12 @@ describe('settle gate calculation', () => {
       },
     });
     expect(() =>
-      writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite),
+      writeFieldNode(
+        root,
+        {},
+        FieldNodeWriteKind.CallerReplace,
+        WriteOption.Overwrite,
+      ),
     ).toThrow('Gate evaluation failed');
     expect(root.source).toBeUndefined();
     expect(root.runtime.diagnostics).toMatchObject({
@@ -43,7 +51,7 @@ describe('settle gate calculation', () => {
       writeFieldNode(
         root,
         { enabled: true },
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).toThrow('Gate evaluation failed');
@@ -65,12 +73,17 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { flag: true, target: 'shown' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.target?.isActive).toBe(true);
     expect(root.emit).toEqual({ flag: true, target: 'shown' });
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.target).toBeUndefined();
     expect(root.emit).toEqual({ flag: false });
   });
@@ -90,13 +103,13 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { user: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root,
       { user: { mode: 'on' } },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.structure?.user?.source).toBeNull();
@@ -124,13 +137,13 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { user: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root,
       { user: { enabled: true } },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.structure?.user?.source).toBeNull();
@@ -157,13 +170,13 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { user: null },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     writeFieldNode(
       root,
       { user: { mode: 'off' } },
-      'callerPartial',
+      FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
     expect(root.structure?.user?.source).toBeNull();
@@ -187,7 +200,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root.structure!.child,
       'D',
-      'automatic',
+      FieldNodeWriteKind.Automatic,
       WriteOption.Overwrite,
     );
     expect(root.source).toBeNull();
@@ -212,11 +225,16 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { flag: true, gated: 'on' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ flag: true, gated: 'on' });
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual({ flag: false });
   });
 
@@ -239,7 +257,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { flag: true, p: { child: 'yes' } },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(
@@ -265,7 +283,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { p: { child: 'yes' } },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const p = root.structure!.p;
@@ -297,7 +315,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { flag: true, next: { flag: true, next: { flag: false } } },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const first = blueprint.root.childEntries[1];
@@ -332,11 +350,16 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { p: { child: 'yes' }, flag: 1 },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.p?.structure?.child).toBeUndefined();
-    writeFieldNode(root.structure!.flag, '0', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      '0',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.structure?.p?.structure?.child?.isActive).toBe(true);
     expect(root.emit).toEqual({ p: { child: 'yes' }, flag: 0 });
   });
@@ -364,7 +387,7 @@ describe('settle gate calculation', () => {
         p: { flag: false, child: 'hidden' },
         q: { flag: true, child: 'shown' },
       },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({
@@ -391,7 +414,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { 'p/q~r': { enabled: true, child: 'shown' } },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.['p/q~r']?.structure?.child?.emit).toBe('shown');
@@ -413,12 +436,22 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { flag: true, value: 'x' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const first = root.emit;
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     expect(root.emit).toEqual(first);
   });
 
@@ -433,7 +466,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { a: true, b: true },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.children).toEqual([]);
@@ -451,7 +484,7 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { a: true, b: true },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.children?.map((child) => child.name)).toEqual(['a']);
@@ -476,14 +509,14 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { kind: 'x', enabled: false, onlyX: 'value' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.onlyX).toBeUndefined();
     writeFieldNode(
       root.structure!.enabled,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.onlyX?.emit).toBe('value');
@@ -505,14 +538,14 @@ describe('settle gate calculation', () => {
     writeFieldNode(
       root,
       { p: { child: 'visible' }, group: { flag: true } },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.p?.structure?.child?.emit).toBe('visible');
     writeFieldNode(
       root.structure!.group,
       { flag: false },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.structure?.p?.structure?.child).toBeUndefined();

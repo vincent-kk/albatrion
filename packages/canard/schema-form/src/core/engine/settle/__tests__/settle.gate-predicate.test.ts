@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import { FormErrorCode } from '@/schema-form/errors';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
@@ -60,7 +63,7 @@ describe('unified gate predicates', () => {
       writeFieldNode(
         root.structure!.kind,
         'tag_79',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       calls.mockClear();
@@ -69,7 +72,7 @@ describe('unified gate predicates', () => {
       writeFieldNode(
         root.structure!.kind,
         'tag_0',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       expect(root.emit).toEqual({
@@ -110,7 +113,7 @@ describe('unified gate predicates', () => {
       .find((entry) => entry.kind === 'if')!;
     const context = {
       root,
-      kind: 'input',
+      kind: FieldNodeWriteKind.Input,
       changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
@@ -139,7 +142,7 @@ describe('unified gate predicates', () => {
       .find((entry) => entry.kind === 'if')!;
     const context = {
       root,
-      kind: 'input',
+      kind: FieldNodeWriteKind.Input,
       changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
@@ -189,7 +192,7 @@ describe('unified gate predicates', () => {
     writeFieldNode(
       root.structure!.kind,
       'tag_2',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({
@@ -316,7 +319,7 @@ describe('unified gate predicates', () => {
     writeFieldNode(
       root.structure!.enabled,
       true,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(rounds.flat()).toContainEqual({ enabled: true, a: 'A' });
@@ -355,7 +358,7 @@ describe('unified gate predicates', () => {
     )[0];
     const context = {
       root,
-      kind: 'input',
+      kind: FieldNodeWriteKind.Input,
       changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
@@ -385,7 +388,7 @@ describe('unified gate predicates', () => {
     const registry = getGateRegistry(root.runtime);
     const context = {
       root,
-      kind: 'input',
+      kind: FieldNodeWriteKind.Input,
       changedSource: new Set(),
       changedNodes: new Set(),
       pendingOutputs: new Set(),
@@ -444,7 +447,7 @@ describe('unified gate predicates', () => {
       writeFieldNode(
         root.structure!.kind,
         'tag_1',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
     } catch (cause) {

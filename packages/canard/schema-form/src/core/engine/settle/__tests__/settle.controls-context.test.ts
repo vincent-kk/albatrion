@@ -3,7 +3,10 @@ import { describe, expect, it, vi } from 'vitest';
 import * as arrayUtils from '@winglet/common-utils/array';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -119,7 +122,7 @@ describe('state-key failures during settlement', () => {
       writeFieldNode(
         root.structure!.flag,
         false,
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       ),
     ).toThrow('State key expression failed');

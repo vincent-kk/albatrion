@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -32,11 +35,26 @@ describe('derive rule locality', () => {
       WriteOption.Overwrite,
     );
     const observed = [root.structure?.x?.source];
-    writeFieldNode(root.structure!.x, 'manual', 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.x,
+      'manual',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     observed.push(root.structure?.x?.source);
-    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      false,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     observed.push(root.structure?.x?.source);
-    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.flag,
+      true,
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
     observed.push(root.structure?.x?.source);
     expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
@@ -75,14 +93,19 @@ describe('derive rule locality', () => {
       writeFieldNode(
         root.structure!.H.structure!.x,
         'manual',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      writeFieldNode(root.structure!.s, 'b', 'input', WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.s,
+        'b',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
       writeFieldNode(
         root.structure!.H.structure!.y,
         'Y',
-        'input',
+        FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       expect(root.structure?.H?.structure?.x?.source).toBe('manual');
@@ -114,7 +137,7 @@ describe('derive rule locality', () => {
         writeFieldNode(
           root.structure!.changed,
           'B',
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
         expect(root.runtime.committedRuleValues).toBe(baselines);
@@ -163,7 +186,7 @@ describe('derive rule locality', () => {
     writeFieldNode(
       root.structure!.left.structure!['source'],
       'B',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(root.structure?.left?.structure?.target?.source).toBe('B');

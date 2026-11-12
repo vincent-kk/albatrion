@@ -1,6 +1,7 @@
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
@@ -17,7 +18,7 @@ export const collectReplacePaths = <Self extends FieldNodeRecord<Self>>(
   const paths: string[] = [];
   for (let index = 0; index < writeOrigins.length; index++) {
     const origin = writeOrigins[index];
-    if (origin.source === 'automatic') continue;
+    if (origin.source === FieldNodeWriteKind.Automatic) continue;
     if (origin.keys)
       for (let key = 0; key < origin.keys.length; key++)
         paths.push(appendSegment(origin.path, origin.keys[key]));

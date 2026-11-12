@@ -1,7 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -33,7 +36,7 @@ it('does not run shadow with the internal flag off even when NODE_ENV is test', 
     writeFieldNode(
       root.structure!['source'],
       3,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     ),
   ).not.toThrow();

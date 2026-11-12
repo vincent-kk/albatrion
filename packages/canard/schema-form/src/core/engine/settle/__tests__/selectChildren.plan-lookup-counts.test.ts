@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -71,7 +74,12 @@ describe('child selection plan lookup runtime counts', () => {
       const perWrite: number[] = [];
       for (const kind of ['on', 'off', 'on', 'off', 'on']) {
         calls.count = 0;
-        writeFieldNode(root.structure!.kind, kind, 'input', option);
+        writeFieldNode(
+          root.structure!.kind,
+          kind,
+          FieldNodeWriteKind.Input,
+          option,
+        );
         perWrite.push(calls.count);
       }
       expect(perWrite[0]).toBeGreaterThan(0);
@@ -187,7 +195,7 @@ describe('child selection plan lookup runtime counts', () => {
         writeFieldNode(
           root.structure!.kind,
           kind,
-          'input',
+          FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
         );
         perWrite.push(calls.count);

@@ -8,6 +8,7 @@ import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
+import { FieldNodeWriteKind } from '../../../../types/value';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
@@ -215,7 +216,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       : null;
   const direct =
     cached === undefined
-      ? context.kind === 'load'
+      ? context.kind === FieldNodeWriteKind.Load
         ? null
         : getDirectChildSelectionPlan(
             node.blueprintNode,
@@ -227,7 +228,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     ? node.blueprintNode.childEntries
     : (prepared?.dynamicEntries ?? node.behavior.declareChildren(node));
   const count = direct ? direct.steps.length : entries.length;
-  const flushReads = immediate && (!direct || context.kind === 'load');
+  const flushReads =
+    immediate && (!direct || context.kind === FieldNodeWriteKind.Load);
   const frame: ChildSelectionFrame<Self> = {
     preparedStatic: prepared,
     preparedDynamic: dynamic,
@@ -272,7 +274,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     if (
       selectionTarget[entry.name] ||
       seen.has(entry.name) ||
-      (context.kind !== 'load' && hasOwnProperty(prior, entry.name))
+      (context.kind !== FieldNodeWriteKind.Load &&
+        hasOwnProperty(prior, entry.name))
     )
       continue;
     seen.set(entry.name, entry.node);

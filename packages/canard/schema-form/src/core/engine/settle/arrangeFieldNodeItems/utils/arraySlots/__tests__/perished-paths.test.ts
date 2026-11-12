@@ -2,7 +2,10 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 import {
   dispatchMount,
   dispatchPop,
@@ -69,7 +72,7 @@ const truncateTail = (count: number) => {
   try {
     const context = createSettlementContext(
       root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
       scratch,
     );

@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -16,12 +19,17 @@ describe('bounded settlement traversal', () => {
       ]),
     );
     const { root, visits } = createTestTree({ type: 'object', properties });
-    writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      {},
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     visits.length = 0;
     writeFieldNode(
       root.structure!.field0,
       'changed',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(visits).toEqual(['/field0', '']);
@@ -49,14 +57,14 @@ describe('bounded settlement traversal', () => {
     writeFieldNode(
       root,
       { flag: false },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     visits.length = 0;
     writeFieldNode(
       root.structure!.field49,
       'changed',
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(visits).toEqual(['/field49', '']);
@@ -82,14 +90,14 @@ describe('bounded settlement traversal', () => {
     writeFieldNode(
       root,
       { left: {}, right: {} },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     visits.length = 0;
     writeFieldNode(
       root.structure!.left,
       { field0: 'changed' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(

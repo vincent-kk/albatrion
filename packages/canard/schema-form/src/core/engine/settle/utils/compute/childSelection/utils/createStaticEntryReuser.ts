@@ -8,6 +8,7 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import type { BlueprintChildEntry } from '../../../../../blueprint';
 import { HostStaticPartition } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
+import { FieldNodeWriteKind } from '../../../../../types/value';
 import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../../../types/settlement';
 import { staticShape } from '../staticShape';
@@ -37,7 +38,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
 ): Optional<(entry: BlueprintChildEntry) => boolean> => {
   if (
     node.behavior.type !== 'object' ||
-    context.kind === 'load' ||
+    context.kind === FieldNodeWriteKind.Load ||
     context.distributedInputs.has(node) ||
     context.pathChanges.length > 0 ||
     hasRelocated

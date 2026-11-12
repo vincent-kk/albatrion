@@ -282,7 +282,7 @@ export interface FieldNodeRuntime<Self>
     node: Self;
     value: unknown;
     option: WriteOption;
-    source?: 'input' | 'automatic';
+    source?: FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic;
   }[];
   /** Load defers validation until the binding's slot. */
   deferLoadValidation?: boolean;
@@ -488,8 +488,8 @@ export type SettlementBudget =
   | 'transition'
   | 'recursion';
 
-/** Entry that started a settlement: a write kind, or a binding entry without one. */
-export type SettlementEntryApi = FieldNodeWriteKind | 'setContext';
+/** Name of the entry that started a settlement: a write kind, or a binding entry without one. */
+export type SettlementEntryApi = `${FieldNodeWriteKind}` | 'setContext';
 
-/** Write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the source. */
-export type MisfitSource = FieldNodeWriteKind | 'fill' | 'gate';
+/** Name of the write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the source. */
+export type MisfitSource = `${FieldNodeWriteKind}` | 'fill' | 'gate';

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -30,7 +33,7 @@ describe('child list array retention across reselection', () => {
     writeFieldNode(
       root,
       { host: { flag: false }, s0: 'a', s1: 'b', s2: 'c' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const host = root.structure!.host;
@@ -40,7 +43,7 @@ describe('child list array retention across reselection', () => {
     writeFieldNode(
       host.structure!.flag,
       true,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 
@@ -55,7 +58,7 @@ describe('child list array retention across reselection', () => {
     writeFieldNode(
       root,
       { host: { flag: true }, s0: 'a', s1: 'b', s2: 'c' },
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     const host = root.structure!.host;
@@ -64,7 +67,7 @@ describe('child list array retention across reselection', () => {
     writeFieldNode(
       host.structure!.flag,
       false,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 

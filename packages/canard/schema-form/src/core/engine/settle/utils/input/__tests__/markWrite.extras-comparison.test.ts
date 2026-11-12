@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '../../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../../types/value';
 import * as equality from '../../../../utils/compute/sameValue';
 import { dispatchMount } from '../../../../write';
 import { getSettlementScratch } from '../../scratch/getSettlementScratch';
@@ -26,7 +26,9 @@ describe('extras comparison admission', () => {
       const scratch = getSettlementScratch(root.runtime);
       const context = createSettlementContext(
         root,
-        merge ? 'callerPartial' : 'callerReplace',
+        merge
+          ? FieldNodeWriteKind.CallerPartial
+          : FieldNodeWriteKind.CallerReplace,
         merge ? WriteOption.Merge : WriteOption.Overwrite,
         scratch,
       );
@@ -55,7 +57,7 @@ describe('extras comparison admission', () => {
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
       scratch,
     );

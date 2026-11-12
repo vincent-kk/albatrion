@@ -5,7 +5,10 @@ import type {
   ArrayArrangePlan,
   ArrayOperation,
 } from '@/schema-form/core/engine/record';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import type { PlainNode } from '../../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../../__tests__/fixtures/createTestTree';
@@ -37,7 +40,12 @@ export const compareArrayTail = (
   const actual = createTestTree(schema).root;
   const oracle = createTestTree(schema).root;
   for (const root of [actual, oracle]) {
-    writeFieldNode(root, input, 'callerReplace', WriteOption.Overwrite);
+    writeFieldNode(
+      root,
+      input,
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
     root.runtime.loadSnapshot = input;
     prepare?.(root);
     if (plan) root.behavior.arrange = () => plan;

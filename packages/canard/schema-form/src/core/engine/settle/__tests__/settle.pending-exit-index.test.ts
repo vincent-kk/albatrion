@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -74,7 +77,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
       scratch,
     );
@@ -103,7 +106,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
     expect(scratch.pendingExitPaths?.size).toBe(0);
     const next = createSettlementContext(
       root,
-      'input',
+      FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
       getSettlementScratch(root.runtime),
     );

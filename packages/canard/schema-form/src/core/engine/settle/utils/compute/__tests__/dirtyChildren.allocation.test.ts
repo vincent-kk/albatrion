@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
-import { WriteOption } from '../../../../types/value';
+import { FieldNodeWriteKind, WriteOption } from '../../../../types/value';
 import { dispatchMount } from '../../../../write';
 import { getSettlementScratch } from '../../scratch/getSettlementScratch';
 import { createSettlementContext } from '../../settlement/createSettlementContext';
@@ -22,7 +22,7 @@ describe('dirty child membership allocation', () => {
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.None,
       scratch,
     );
@@ -60,7 +60,7 @@ describe('dirty child membership allocation', () => {
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
-      'callerReplace',
+      FieldNodeWriteKind.CallerReplace,
       WriteOption.None,
       scratch,
     );

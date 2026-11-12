@@ -4,7 +4,10 @@ import { createTestTree } from '@/schema-form/core/engine/__tests__/fixtures/cre
 import { blueprint } from '@/schema-form/core/engine/blueprint';
 import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { getDeriveSourceNodes } from '../utils/evaluate/getDeriveSourceNodes';
 import { getDeriveRuleTable } from '../utils/rules/getDeriveRuleTable';
@@ -162,7 +165,7 @@ describe('derive expression failures', () => {
       writeFieldNode(
         root.structure!.target,
         'X',
-        'callerReplace',
+        FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       ),
     ).not.toThrow();

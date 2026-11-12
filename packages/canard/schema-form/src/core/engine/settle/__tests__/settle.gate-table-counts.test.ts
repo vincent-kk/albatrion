@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -57,7 +60,7 @@ describe('untimed attribution at the fixed-width first switch', () => {
           writeFieldNode(
             root.structure!.kind,
             'kind_79',
-            'input',
+            FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
         } finally {
