@@ -47,7 +47,12 @@ export const createValidatorCopy = (
 ): BlueprintSchema => {
   if (typeof authored !== 'object' || authored === null) return authored;
   const copy: Dictionary<unknown> = {};
-  const seen = new Map<object, object>([[authored, copy]]);
+  const seen = {
+    schema: new Map<object, object>([[authored, copy]]),
+    map: new Map<object, object>(),
+    array: new Map<object, object>(),
+    data: new Map<object, object>(),
+  };
   const pending: {
     source: object;
     target: object;
@@ -81,10 +86,10 @@ export const createValidatorCopy = (
         });
         continue;
       }
-      let child = seen.get(value);
+      let child = seen[childKind].get(value);
       if (!child) {
         child = isArray(value) ? [] : {};
-        seen.set(value, child);
+        seen[childKind].set(value, child);
         pending.push({ source: value, target: child, kind: childKind });
       }
       Object.defineProperty(current.target, key, {
