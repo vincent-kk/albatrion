@@ -66,6 +66,7 @@
     "@mui/material": "^7.0.0",
     "@mui/x-date-pickers": "^8.0.0",
     "@winglet/common-utils": "workspace:^",
+    "@winglet/json-schema": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "dayjs": "^1.0.0"
   },

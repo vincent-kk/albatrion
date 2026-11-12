@@ -61,6 +61,7 @@
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "@winglet/common-utils": "workspace:^",
+    "@winglet/json-schema": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "antd": "^6.0.0",
     "dayjs": "^1.0.0"
