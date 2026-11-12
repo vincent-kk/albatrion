@@ -62,6 +62,9 @@
   "dependencies": {
     "ajv": "^7.0.0"
   },
+  "peerDependencies": {
+    "@canard/schema-form": "workspace:^"
+  },
   "devDependencies": {
     "@aileron/schema-form-scenarios": "workspace:*",
     "@canard/schema-form": "workspace:^",
