@@ -72,7 +72,7 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
 const transformDataPath = (error: ErrorObject): string => {
   const dataPath = error.dataPath || '';
   const missingProperty = error.params?.missingProperty;
-  const hasMissingProperty = error.keyword === 'required' && missingProperty;
+  const hasMissingProperty = error.keyword === 'required' && typeof missingProperty === 'string';
   return hasMissingProperty
     ? dataPath + JSON_POINTER_SEPARATOR + String(missingProperty).replace(/~/g, '~0').replace(/\//g, '~1')
     : dataPath;
