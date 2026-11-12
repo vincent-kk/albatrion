@@ -2031,6 +2031,8 @@ __metadata:
     rolldown: "npm:^1.2.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    "@canard/schema-form": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -2049,6 +2051,8 @@ __metadata:
     rolldown: "npm:^1.2.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    "@canard/schema-form": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -2068,6 +2072,8 @@ __metadata:
     rolldown: "npm:^1.2.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    "@canard/schema-form": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -2091,6 +2097,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
+    "@canard/schema-form": "workspace:^"
     dayjs: ">=1"
     react: ">=18 <20"
     react-dom: ">=18 <20"
@@ -2118,6 +2125,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
+    "@canard/schema-form": "workspace:^"
     antd: ">=5.10.0"
     dayjs: ">=1"
     react: ">=18 <20"
@@ -2146,6 +2154,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
+    "@canard/schema-form": "workspace:^"
     antd: ">=6.0.0"
     dayjs: ">=1"
     react: ">=18 <20"
@@ -2177,6 +2186,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
+    "@canard/schema-form": "workspace:^"
     "@emotion/react": ">=11.0.0"
     "@emotion/styled": ">=11.0.0"
     "@mui/icons-material": ">=7.0.0"
