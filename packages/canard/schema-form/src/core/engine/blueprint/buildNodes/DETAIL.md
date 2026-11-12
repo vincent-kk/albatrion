@@ -64,11 +64,9 @@ controls는 폼만 실행하는 예약 영역이므로 선언 범위마다 닫�
 
 options는 소비자와 플러그인의 확장에 열려 있으며 미지 키에는 오류나 경고를 내지 않습니다. 평범한 객체가 아닌 options는 엔진 설정으로 읽지 않습니다. 평범한 객체에서 undefined가 아닌 terminal·omitEmpty·omitTrailing·trim은 boolean, propertyOrder는 문자열 배열이어야 하며 생성 때 options/키 위치의 INVALID_CONTROL_SHAPE로 거부합니다. virtual은 null·배열이 아닌 객체 봉투인지 같은 위치에서 검사하고 내부 선언 검사는 유지합니다. 오타 방어는 알려진 키의 TypeScript 자동완성에 맡깁니다. 미래 옵션 이름이 사용자 키와 충돌할 수 있는 비용을 받아들이므로 새 이름은 충돌을 고려하는 계약 변경입니다. 입력 payload의 권장 위치는 presentation입니다. controls의 상태·에지·unsetOnInactive는 boolean 또는 표현식 문자열, derived는 문자열, watch는 문자열 또는 문자열 배열을 받습니다. fields·조각에도 같은 얕은 검사를 적용하며 default·inactiveValue의 값은 제한하지 않습니다. presentation은 열린 병합 데이터이며 controlled·required는 불리언, inputType은 문자열, FieldInput은 함수·객체 또는 생략을 뜻하는 null, FieldInputProps·FieldRendererProps·errorMessages는 null·배열이 아닌 객체인지 생성 때 검사합니다. 중첩 값과 React 정체성은 검사하지 않아 코어가 바인딩 구현을 소유하지 않습니다. 잘못된 예약 값은 그룹/키 위치와 group·key·expected 상세를 가진 INVALID_CONTROL_SHAPE입니다. 검사는 청사진 분석에만 있고 입력 경로에는 없으며 고정 키당 상수 비용, 문자열 배열 원소 수에 비례하는 비용입니다. 평면 &키·computed·맨 virtualRequired 등은 폼의 별칭으로 읽거나 이주 경고를 만들지 않습니다. 별칭은 우선순위·형·문서를 이중으로 만들고 미지 표준 확장 키를 가로채므로 두지 않습니다.
 
-### reserved-read-trust — 로드 검증을 통과한 읽기 / Validated reads
+### reserved-read-trust — 로드 검증을 통과한 읽기
 
-예약 키 목록과 얕은 형의 소유는 [패키지 계약](../../../../DETAIL.md)에 있습니다. collectDeclarations는 제어·옵션·표현의 얕은 검사를 마친 뒤 선언을 배포합니다. 모든 진입 경로가 이 검사를 거치는 읽기는 같은 형을 재검사하지 않습니다. 검증 전 순회·외부 플러그인의 임의 스키마·런타임 생성 스키마는 이 보증 밖이며 가드를 유지합니다. 허용 형 간 선택과 중첩 payload 검사는 얕은 보증을 넘으므로 유지합니다.
-
-collectDeclarations validates reserved shallow values before publishing declarations. Reads reached exclusively through that validation trust it to avoid duplicated checks and diverging acceptance rules. Pre-validation walks, arbitrary plugin schemas and runtime-created schemas retain guards; accepted-form selection and nested payload checks remain outside this shallow guarantee. Validation stays at load time, with module-initialized key views and no per-input allocation.
+예약 키 목록과 얕은 형의 소유는 [패키지 계약](../../../../DETAIL.md)에 있습니다. collectDeclarations는 제어·옵션·표현의 얕은 검사를 마친 뒤 선언을 배포합니다. 모든 진입 경로가 이 검사를 거치는 읽기는 중복 검사와 수용 규칙의 불일치를 막기 위해 같은 형을 재검사하지 않습니다. 검증 전 순회·외부 플러그인의 임의 스키마·런타임 생성 스키마는 이 보증 밖이며 가드를 유지합니다. 허용 형 간 선택과 중첩 payload 검사는 얕은 보증을 넘으므로 유지합니다. 검증은 로드 때 수행하고 키 뷰는 모듈 초기화 때 준비하며 입력마다 할당하지 않습니다.
 
 ### CONTROLS-018 — 식과 리터럴 선언을 구별합니다
 

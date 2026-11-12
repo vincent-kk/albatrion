@@ -299,9 +299,9 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       >
         <FieldRendererContextProvider
           FieldRenderer={props.FieldRenderer}
-          FormLabelRenderer={props.FormLabelRenderer}
-          FormInputRenderer={props.FormInputRenderer}
-          FormErrorRenderer={props.FormErrorRenderer}
+          LabelRenderer={props.LabelRenderer}
+          InputRenderer={props.InputRenderer}
+          ErrorMessageRenderer={props.ErrorMessageRenderer}
           formatError={props.formatError}
           errorVisibility={errorVisibility}
         >

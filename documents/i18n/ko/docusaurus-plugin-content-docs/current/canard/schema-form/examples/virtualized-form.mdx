@@ -7,13 +7,13 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 # 가상화 폼
 
-이 client 렌더링 예제에서 입력 마운트 지연을 확인하십시오. 일부 입력 DOM을 지연해도 노드 트리는 완전하게 유지합니다.
+이 클라이언트 렌더링 예제에서 입력 마운트 지연을 확인하십시오. 일부 입력 DOM을 지연해도 노드 트리는 완전하게 유지합니다.
 
 ## 라이브 예제 {#live-demo}
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/VirtualizedFormDemo')} />
 
-이 데모는 VirtualizationBackfill.None을 사용하여 스크롤로 지연 입력을 공개합니다. 기본값·DOM 사용 가능성·SSR·hydration·IntersectionObserver fallback·Suspense 한계는 [가상화 계약](../api-reference#virtualization)을 참조하십시오.
+이 데모는 VirtualizationBackfill.None을 사용하여 스크롤로 지연 입력을 공개합니다. 기본값·DOM 사용 가능성·SSR·하이드레이션·IntersectionObserver 폴백·Suspense 한계는 [가상화 계약](../api-reference#virtualization)을 참조하십시오.
 
 ## 사용과 평가 {#usage}
 
@@ -44,4 +44,4 @@ export function DeferredForm() {
 }
 ```
 
-첫 상호작용과 모든 입력을 사용할 수 있을 때까지의 시간을 나누어 측정하십시오. 가상화는 초기 DOM 작업을 줄이는 대신 이후 공개 작업을 더할 수 있으며 폼 크기·모바일 시간 보장은 아닙니다. 측정된 비용에 맞으면 [요청 검증과 소비자 scheduling](../core-concepts#performance)을 사용하십시오.
+첫 상호작용과 모든 입력을 사용할 수 있을 때까지의 시간을 나누어 측정하십시오. 가상화는 초기 DOM 작업을 줄이는 대신 이후 공개 작업을 더할 수 있으며 폼 크기·모바일 시간 보장은 아닙니다. 측정된 비용에 맞으면 [요청 검증과 소비자 예약](../core-concepts#performance)을 사용하십시오.

@@ -7,26 +7,30 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
+  ErrorMessageRendererProps,
   ErrorVisibility,
   FieldInputDefinition,
   FieldRendererProps,
   FormatError,
+  InputRendererProps,
+  LabelRendererProps,
   ValidatorFactory,
 } from '@/schema-form/types';
 
 import { ExternalFormContext } from './ExternalFormContext';
+import { ExternalInputContext } from './ExternalInputContext';
 
 export interface ExternalFormContextProviderProps {
   /** List of FieldInputDefinition declared externally */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
-  /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
-  /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  /** LabelRenderer component declared externally */
+  LabelRenderer?: ComponentType<LabelRendererProps>;
+  /** InputRenderer component declared externally */
+  InputRenderer?: ComponentType<InputRendererProps>;
+  /** ErrorMessageRenderer component declared externally */
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
@@ -62,8 +66,8 @@ export interface ExternalFormContextProviderProps {
  * function App() {
  *   return (
  *     <FormProvider
- *       FormLabelRenderer={CustomLabel}
- *       FormErrorRenderer={CustomError}
+ *       LabelRenderer={CustomLabel}
+ *       ErrorMessageRenderer={CustomError}
  *       errorVisibility={ErrorVisibility.AfterTouch}
  *     >
  *       <MyForms />
@@ -145,9 +149,9 @@ export interface ExternalFormContextProviderProps {
  * <FormProvider
  *   // Custom renderers
  *   FieldRenderer={MyFormField}
- *   FormLabelRenderer={MyFormLabel}
- *   FormInputRenderer={MyFormInput}
- *   FormErrorRenderer={MyFormError}
+ *   LabelRenderer={MyFormLabel}
+ *   InputRenderer={MyFormInput}
+ *   ErrorMessageRenderer={MyFormError}
  *
  *   // Custom input types
  *   fieldInputDefinitions={[
@@ -183,9 +187,9 @@ export interface ExternalFormContextProviderProps {
 export const ExternalFormContextProvider = ({
   fieldInputDefinitions,
   FieldRenderer,
-  FormLabelRenderer,
-  FormInputRenderer,
-  FormErrorRenderer,
+  LabelRenderer,
+  InputRenderer,
+  ErrorMessageRenderer,
   formatError,
   errorVisibility,
   validationMode,
@@ -201,13 +205,17 @@ export const ExternalFormContextProvider = ({
     [fieldInputDefinitions],
   );
   const context = useSnapshot(inputContext);
+  const externalInputContext = useMemo(
+    () => ({ fromExternalFieldInputDefinitions, InputRenderer }),
+    [fromExternalFieldInputDefinitions, InputRenderer],
+  );
   const value = useMemo(
     () => ({
       fromExternalFieldInputDefinitions,
       FieldRenderer,
-      FormLabelRenderer,
-      FormInputRenderer,
-      FormErrorRenderer,
+      LabelRenderer,
+      InputRenderer,
+      ErrorMessageRenderer,
       formatError,
       errorVisibility,
       validationMode,
@@ -217,9 +225,9 @@ export const ExternalFormContextProvider = ({
     [
       fromExternalFieldInputDefinitions,
       FieldRenderer,
-      FormLabelRenderer,
-      FormInputRenderer,
-      FormErrorRenderer,
+      LabelRenderer,
+      InputRenderer,
+      ErrorMessageRenderer,
       formatError,
       errorVisibility,
       validationMode,
@@ -229,7 +237,9 @@ export const ExternalFormContextProvider = ({
   );
   return (
     <ExternalFormContext.Provider value={value}>
-      {children}
+      <ExternalInputContext.Provider value={externalInputContext}>
+        {children}
+      </ExternalInputContext.Provider>
     </ExternalFormContext.Provider>
   );
 };

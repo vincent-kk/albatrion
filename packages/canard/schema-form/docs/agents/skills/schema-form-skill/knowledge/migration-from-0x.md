@@ -34,3 +34,13 @@ For provider-based wiring and other examples, read `plugin-system.md`, `field-in
 ## Completion evidence
 
 Run the application's lint, strict typecheck, unit and UI tests. Add focused cases for each changed behavior: submitted values, conditional fields, empty/null values, external issues, invalid native and imperative submissions, dynamic settings, reset/rebuild, and custom input selection. Test the React version(s) the application supports. Report changed call sites, exact commands and results, unresolved compatibility decisions, and any remaining old spellings with their reason. Completion requires working application behavior, not only a search with no matches.
+
+## Renderer and input feedback conversion
+
+Rename the previous registration keys FormLabelRenderer, FormInputRenderer and FormErrorRenderer to LabelRenderer, InputRenderer and ErrorMessageRenderer, using their dedicated prop types. The previous Form.Error/FormErrorProps names become Form.ErrorMessage/FormErrorMessageProps. Old registration keys are silently ignored at runtime. TypeScript rejects old keys in object literals and JSX props; a plugin object typed elsewhere, such as one from an older plugin package, still compiles and its old keys are ignored. A render without an error does not prove registration worked. registerPlugin failure messages list the plugin’s slots by the new names.
+
+Search application sources for `errors` and `errorVisible` in FieldInput destructuring, member access, Child overrides and presentation payloads. Replace those reads with [useFieldErrors(node)](validation-ux.md#read-one-fields-errors). Their deprecated optional-never declarations reject member access and values, but a bare truthiness check can still compile and read undefined. Verify actual error presentation rather than trusting typecheck alone.
+
+Convert a text-only label renderer into a renderer that owns its label and applies htmlFor/id. Remove wrappers that compensate for the previous Form.Label/Form.Error outer elements. Follow [standalone roots](imperative-and-layout.md#standalone-part-roots) and the [frame contract](field-input.md#bound-parts-and-input-frames), not a pass-through input renderer.
+
+The default group omits an empty em when no message exists, removes the non-required label’s trailing space and marks its required asterisk aria-hidden; a default standalone Form.Label now shows the same asterisk. A selector such as `[data-path="/branch"] em` can now select a descendant's error; scope it to an element whose closest data-path is the intended field. The [migration guide](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/migration-from-0x#renderer-parts) contains before/after conversions.

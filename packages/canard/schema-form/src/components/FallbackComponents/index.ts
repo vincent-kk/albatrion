@@ -1,4 +1,3 @@
-export { FormInputRenderer } from './components/FormInputRenderer';
-export { FormFieldRenderer } from './components/FormFieldRenderer';
-export { FormLabelRenderer } from './components/FormLabelRenderer';
-export { FormErrorRenderer } from './components/FormErrorRenderer';
+export { FieldRenderer } from './components/FieldRenderer';
+export { LabelRenderer } from './components/LabelRenderer';
+export { ErrorMessageRenderer } from './components/ErrorMessageRenderer';

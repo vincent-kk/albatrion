@@ -12,6 +12,8 @@
 
 `@canard/schema-form-mui-plugin`은 Material-UI (MUI) 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
+FieldRenderer는 그룹 라벨 없이 묶인 Input과 ErrorMessage 부품을 조립하며, 단독 라벨은 LabelRenderer를 사용합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
+
 ---
 
 ## 안내사항

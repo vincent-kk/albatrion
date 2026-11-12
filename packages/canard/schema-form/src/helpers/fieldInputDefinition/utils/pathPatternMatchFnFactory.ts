@@ -7,7 +7,7 @@ import { formatFieldInputMapError } from './formatFieldInputMapError';
  * Compile an explicitly selected regular expression once at normalization.
  * @param pattern - Authored key starting with `^`; anchors are preserved.
  * @returns A predicate testing the escaped canonical node path.
- * @throws FormTypeInputMap when the expression cannot compile.
+ * @throws FieldInputMap when the expression cannot compile.
  */
 export const pathPatternMatchFnFactory = (
   pattern: string,
@@ -17,7 +17,7 @@ export const pathPatternMatchFnFactory = (
     return (hint) => regex.test(hint.path);
   } catch (error) {
     throw new SchemaFormError(
-      FormErrorCode.FormTypeInputMap,
+      FormErrorCode.FieldInputMap,
       formatFieldInputMapError(pattern, error),
       { path: pattern, error },
     );

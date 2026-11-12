@@ -4,6 +4,7 @@ import { type ReactNode, Suspense, createRef, useLayoutEffect } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -47,7 +48,9 @@ const restore = async (
 ) => {
   let normalize = false;
   const ref = createRef<FormHandle>();
-  const Input = ({ errorVisible, errors, onChange }: FieldInputProps) => {
+  const Input = ({ onChange, node }: FieldInputProps) => {
+    const { errorVisible, errors } = useFieldErrors(node);
+
     useLayoutEffect(() => {
       if (normalize) onChange('valid');
     }, [onChange]);

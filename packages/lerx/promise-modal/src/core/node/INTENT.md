@@ -8,7 +8,7 @@
 
 - Factory 패턴: `modal.type`에 따라 switch 분기로 적절한 노드 생성
 - 모든 노드는 AbstractNode 기반 (구독, Promise 해결, 생명주기)
-- 알 수 없는 타입은 Error throw (unreachable by design)
+- 알 수 없는 타입은 Error를 던짐 (설계상 도달 불가)
 
 ## Boundaries
 

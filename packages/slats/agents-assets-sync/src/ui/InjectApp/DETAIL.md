@@ -3,7 +3,7 @@
 ## Requirements
 
 - `Phase` 는 `kind` 로 판별되는 union 이다. reducer 는 `useInjectSession` 이 보내는 `InjectEvent` 에 반응해 kind 사이를 전이한다. 알 수 없는 이벤트는 무시하고 현재 국면을 그대로 돌려준다.
-- Phase kind:
+- Phase의 kind:
   - `booting` — 초기 union 멤버. 화면에서는 `resolving` 과 같은 분기로 그려진다.
   - `resolving` — target 해석 중. `InjectApp` 이 실제로 시작하는 국면이다.
   - `agent-select` — Ink `AgentPicker` 대기. `pending: (agents) => void` 보유

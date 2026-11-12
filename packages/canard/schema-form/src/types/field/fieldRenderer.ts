@@ -6,6 +6,10 @@ import type { FieldNode } from '@/schema-form/core';
 
 import type { JSONSchemaError } from '../error/error';
 import type { ChildFieldProps } from './fieldInput';
+import type {
+  ErrorMessageRendererProps,
+  LabelRendererProps,
+} from './partRenderer';
 
 /** Props that FieldRenderer Component must satisfy */
 export interface FieldRendererProps {
@@ -44,7 +48,11 @@ export interface FieldRendererProps {
   /** Required indicator; display overrides do not change schema validation */
   required: FieldNode['isRequired'];
   /** `FieldInput` component of the field node assigned to FieldRenderer Component */
-  Input: ComponentType<ChildFieldProps>;
+  Input: ComponentType<ChildFieldProps & { unwrapped?: boolean }>;
+  /** Bound registered label; omitted children use the field name. */
+  Label: ComponentType<Partial<LabelRendererProps>>;
+  /** Bound registered error root; the caller supplies its message. */
+  ErrorMessage: ComponentType<Partial<ErrorMessageRendererProps>>;
   /** Whether to show errors for the field node assigned to FieldRenderer Component.
    * Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
   errorVisible: boolean;

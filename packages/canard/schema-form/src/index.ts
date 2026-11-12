@@ -7,7 +7,7 @@ export {
 export {
   Form,
   type FormChildrenProps,
-  type FormErrorProps,
+  type FormErrorMessageProps,
   type RolledFormFieldProps as FormFieldProps,
   type FormHandle,
   type RolledFormInputProps as FormInputProps,
@@ -79,6 +79,9 @@ export type {
   FieldInputTestFn,
   FieldInputTestObject,
   FormatError,
+  LabelRendererProps,
+  ErrorMessageRendererProps,
+  InputRendererProps,
   FieldInputHint,
   FieldNodeType,
   JSONSchema,
@@ -121,3 +124,5 @@ export {
   ExternalFormContextProvider as FormProvider,
   type ExternalFormContextProviderProps as FormProviderProps,
 } from './providers';
+
+export { useFieldErrors } from './hooks';

@@ -42,7 +42,7 @@ const composedLayout = () => (
   <>
     <Form.Label path="/title" />
     <Form.Input path="/title" />
-    <Form.Error path="/title" />
+    <Form.ErrorMessage path="/title" />
   </>
 );
 
@@ -102,6 +102,12 @@ const createRendererStory = (label: string): Story => {
 export const FormLabelAndError: Story = createRendererStory(
   'form label and error',
 );
+
+/** Registered Form parts also apply to the fallback group. */
+export const FormPartsInDefaultGroup: Story = createRendererStory('form parts in default group');
+
+/** Provider parts supply the fallback group when Form has no override. */
+export const ProviderPartsInDefaultGroup: Story = createRendererStory('provider parts in default group');
 
 /** Case `provider group`. */
 export const ProviderGroup: Story = createRendererStory('provider group');

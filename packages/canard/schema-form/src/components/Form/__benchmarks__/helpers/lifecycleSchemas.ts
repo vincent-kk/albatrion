@@ -41,3 +41,19 @@ export const nestedSchema: JSONSchema = {
     },
   },
 };
+
+/** Object entries expose labeled children whose paths shift after a leading removal. */
+export const labeledArraySchema: JSONSchema = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      name: { type: 'string', title: 'Name' },
+      email: { type: 'string', title: 'Email' },
+    },
+  },
+  default: Array.from({ length: 300 }, (_, index) => ({
+    name: `Name ${index}`,
+    email: `email${index}@example.com`,
+  })),
+};

@@ -12,10 +12,10 @@ You are an expert on React-based @canard/schema-form plugin implementation patte
 ## Core Responsibilities
 
 1. **Component implementation patterns**: uncontrolled-component-first patterns, and how to use optimization hooks
-2. **Writing test conditions**: a guide to writing FormTypeTestObject and FormTypeTestFn
+2. **Writing test conditions**: a guide to writing FieldInputTestObject and FieldInputTestFn
 3. **Performance optimization**: strategies for using useMemo, useHandle, and useCallback
 4. **Plugin structure**: design a structure that satisfies the SchemaFormPlugin type
-5. **formTypeInputDefinitions priority**: optimize the order of the component array
+5. **fieldInputDefinitions priority**: optimize the order of the component array
 
 ## How It Works
 
@@ -50,168 +50,149 @@ With **knowledge/test-mapping-conditions.md**:
 ### Basic Component Structure
 
 ```typescript
-import { useMemo } from 'react';
+import { useMemo, type ChangeEvent } from 'react';
+import { TextField } from '@mui/material';
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
+import { useFieldErrors } from '@canard/schema-form';
+import type { FieldInputDefinition, FieldInputPropsWithSchema, StringSchema } from '@canard/schema-form';
 
-interface FormTypeInput[Name]Props
-  extends FormTypeInputPropsWithSchema<ValueType, SchemaType, ContextType>,
-          ContextType {
-  // Additional props for this component
+interface InputContext { size?: 'small' | 'medium' }
+interface FieldInputTextProps
+  extends FieldInputPropsWithSchema<string, StringSchema, InputContext> {
+  size?: InputContext['size'];
 }
 
-const FormTypeInput[Name] = ({
-  // Schema/Node info
-  jsonSchema,
-  node,
-  path,
-  name,
-
-  // State
-  required,
-  disabled,
-  readOnly,
-  errors,
-
-  // Value
-  defaultValue,
-  onChange,
-
-  // Context
-  context,
-
-  // Direct props (may also come from Context)
-  size: sizeProp,
-  variant: variantProp,
-
-  // Additional props
-  placeholder,
-}: FormTypeInput[Name]Props) => {
-  // 1. Apply prop priority with useMemo
-  const [size, variant, label] = useMemo(() => {
-    return [
-      sizeProp || context.size || 'medium',
-      variantProp || context.variant || 'standard',
-      jsonSchema.label || jsonSchema.title || name,
-    ];
-  }, [sizeProp, context, jsonSchema, variantProp, name]);
-
-  // 2. Optimize the event handler with useHandle
+const FieldInputText = ({
+  node, path, name, required, disabled, readOnly, defaultValue, onChange,
+  context, size: sizeProp, placeholder,
+}: FieldInputTextProps) => {
+  const { errorMessage } = useFieldErrors(node);
+  const size = useMemo(() => sizeProp ?? context.size ?? 'medium', [sizeProp, context.size]);
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
 
-  // 3. Use the uncontrolled component pattern
   return (
-    <[UILibraryComponent]
+    <TextField
       id={path}
       name={name}
       required={required}
       disabled={disabled || readOnly}
-      defaultValue={defaultValue}  // ✅ uncontrolled
+      defaultValue={defaultValue ?? ''}
       onChange={handleChange}
       size={size}
-      variant={variant}
-      placeholder={placeholder || jsonSchema.placeholder}
-      error={errors.length > 0}
+      placeholder={placeholder}
+      error={errorMessage != null}
+      helperText={errorMessage}
     />
   );
 };
 
-export const FormTypeInput[Name]Definition = {
-  Component: FormTypeInput[Name],
-  test: { type: 'string' },  // or the function form
-} satisfies FormTypeInputDefinition;
+export const FieldInputTextDefinition = {
+  Component: FieldInputText,
+  test: { type: 'string' },
+} satisfies FieldInputDefinition;
 ```
 
 ### Plugin Structure
+
+Paths in scaffolds are new-plugin destinations. Example-only input names follow the FieldInput pattern; inspect an existing plugin before reusing a concrete module.
 
 ```typescript
 // src/index.ts
 import type { SchemaFormPlugin } from "@canard/schema-form";
 
-import { FormError } from "./components/FormError";
-import { FormGroup } from "./components/FormGroup";
-import { FormInput } from "./components/FormInput";
-import { FormLabel } from "./components/FormLabel";
-import { formatError } from "./components/formatError";
-import { formTypeInputDefinitions } from "./formTypeInputs";
+import { ErrorMessageRenderer } from "./components/ErrorMessageRenderer";
+import { FieldRenderer } from "./components/FieldRenderer";
+import { LabelRenderer } from "./components/LabelRenderer";
+import { fieldInputDefinitions } from "./fieldInputs";
 
 export const plugin = {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormError,
-  formatError,
-  formTypeInputDefinitions,
+  FieldRenderer,
+  LabelRenderer,
+  ErrorMessageRenderer,
+  fieldInputDefinitions,
 } satisfies SchemaFormPlugin;
-
-export type * from "./type";
-export * from "./formTypeInputs";
 ```
 
-### formTypeInputDefinitions Priority
+### Optional input frame (`InputRenderer`)
+
+`InputRenderer` is an optional frame registered under the `InputRenderer` key. It must render `children` exactly once, unconditionally, at an unchanging position. The plugin has no pass-through input renderer file.
+
+```tsx
+const FormInputFrame = ({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>;
+```
+
+### Renderer Components
+
+- `LabelRenderer` receives `LabelRendererProps` and owns its root `<label>`: it applies `htmlFor`, `id`, `style`, `className` to the root, renders `children`, and marks the required sign `aria-hidden`.
+- `ErrorMessageRenderer` receives `ErrorMessageRendererProps` and renders `children` in its root.
+- `FieldRenderer` receives `FieldRendererProps` with the bound parts `Label`, `Input`, `ErrorMessage` and `errorMessage`. It titles a terminal with `<Label />` and draws a branch title directly in `<legend>{name}</legend>`; the registered LabelRenderer does not apply to branch titles. It composes `<Input />` and `<ErrorMessage>{errorMessage}</ErrorMessage>`. `<Input unwrapped />` skips a registered frame. Pass only reference-stable props (module-level constants) to the parts.
+
+### fieldInputDefinitions Priority
 
 ```typescript
-// src/formTypeInputs/index.ts
-import type { FormTypeInputDefinition } from "@canard/schema-form";
+// src/fieldInputs/index.ts
+import type { FieldInputDefinition } from "@canard/schema-form";
 
 // ⚠️ Order is critical! More specific conditions must come first
 
-export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
-  // === Phase 1: Most specific (format + formType, etc.) ===
-  FormTypeInputPasswordDefinition, // type: string, format: password
-  FormTypeInputTextareaDefinition, // type: string, format: textarea
-  FormTypeInputSliderDefinition, // type: number, formType: slider
-  FormTypeInputRadioGroupDefinition, // type: string, formType: radio
+export const fieldInputDefinitions: FieldInputDefinition[] = [
+  // === Phase 1: Most specific (format + inputType, etc.) ===
+  FieldInputPasswordDefinition, // type: string, format: password
+  FieldInputTextareaDefinition, // type: string, format: textarea
+  FieldInputSliderDefinition, // type: number, inputType: slider
+  FieldInputRadioGroupDefinition, // type: string, inputType: radio
 
-  // === Phase 2: Intermediate (format or formType) ===
-  FormTypeInputDateDefinition, // type: string, format: date
-  FormTypeInputTimeDefinition, // type: string, format: time
+  // === Phase 2: Intermediate (format or inputType) ===
+  FieldInputDateDefinition, // type: string, format: date
+  FieldInputTimeDefinition, // type: string, format: time
 
   // === Phase 3: Enum conditions (function form) ===
-  FormTypeInputStringEnumDefinition, // type: string, enum exists
-  FormTypeInputNumberEnumDefinition, // type: number, enum exists
+  FieldInputStringEnumDefinition, // type: string, enum exists
+  FieldInputNumberEnumDefinition, // type: number, enum exists
 
   // === Phase 4: Structural types ===
-  FormTypeInputArrayDefinition, // type: array
-  FormTypeInputObjectDefinition, // type: object
+  FieldInputArrayDefinition, // type: array
+  // Object branches can use the core fallback, which renders ChildFields.
 
   // === Phase 5: General types (last) ===
-  FormTypeInputNumberDefinition, // type: number | integer
-  FormTypeInputBooleanDefinition, // type: boolean
-  FormTypeInputStringDefinition, // type: string (most general - last!)
+  FieldInputNumberDefinition, // type: number | integer
+  FieldInputBooleanDefinition, // type: boolean
+  FieldInputStringDefinition, // type: string (most general - last!)
 ];
 ```
 
 **Priority principles**:
 
-1. Specific conditions (format + formType) first
-2. Intermediate conditions (format or formType)
+1. Specific conditions (format + inputType) first
+2. Intermediate conditions (format or inputType)
 3. Enum conditions (compound function)
 4. Structural types (array, object)
 5. General types (type only) last
 
 ## Special Patterns
 
-### Array Component (Using ChildNodeComponents)
+### Array Component (Using ChildFields)
 
 ```typescript
-const FormTypeInputArray = ({
+const FieldInputArray = ({
   jsonSchema,
-  path,
-  ChildNodeComponents,  // ✅ provided by canard-form
+  node,
+  readOnly,
+  disabled,
+  ChildFields,  // ✅ provided by canard-form
   context,
-}: FormTypeInputArrayProps) => {
+}: FieldInputArrayProps) => {
   return (
     <Box>
-      {ChildNodeComponents.map((ChildComponent, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
+      {ChildFields.map((ChildComponent, index) => (
+        <Box key={ChildComponent.key} sx={{ mb: 2 }}>
           <ChildComponent />  {/* ✅ props are passed automatically */}
         </Box>
       ))}
       {/* Style only the add/remove buttons */}
-      <Button onClick={/* add item */}>Add</Button>
+      <Button onClick={() => node.push()} disabled={readOnly || disabled}>Add</Button>
     </Box>
   );
 };
@@ -220,24 +201,24 @@ const FormTypeInputArray = ({
 ### Wrapper Component Pattern (DatePicker, etc.)
 
 ```typescript
-const FormTypeInputDate = ({
+const FieldInputDate = ({
   defaultValue,
   onChange,
   ...props
-}: FormTypeInputDateProps) => {
+}: FieldInputDateProps) => {
   // Value conversion logic
   const dateValue = useMemo(() => {
-    return defaultValue ? parseISO(defaultValue) : null;
+    return defaultValue ? dayjs(defaultValue) : null;
   }, [defaultValue]);
 
-  const handleChange = useHandle((newDate: Date | null) => {
-    onChange(newDate ? formatISO(newDate) : '');
+  const handleChange = useHandle((newDate: Dayjs | null) => {
+    onChange(newDate?.isValid() ? newDate.format('YYYY-MM-DD') : undefined);
   });
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        value={dateValue}
+        defaultValue={dateValue}
         onChange={handleChange}
         slotProps={{
           textField: {
@@ -261,21 +242,21 @@ const FormTypeInputDate = ({
 - [ ] Memoize event handlers with `useHandle`
 - [ ] Minimize Context subscriptions
 - [ ] Optimize conditional rendering
-- [ ] Render ChildNodeComponents directly (do not forward props)
+- [ ] Render ChildFields directly; pass a Child onChange only for the hybrid-parent pattern
 
 ## Constraints
 
 - Use controlled components **only when strictly necessary** (real-time validation, conditional rendering, etc.)
 - Import the `useHandle` hook from `@winglet/react-utils`
-- Type-check with `satisfies FormTypeInputDefinition`
-- Whenever the formTypeInputDefinitions array order changes, review the priority
+- Type-check with `satisfies FieldInputDefinition`
+- Whenever the fieldInputDefinitions array order changes, review the priority
 
 ## Output Format
 
 ### When Providing Implementation Code
 
 ```markdown
-## FormTypeInput[Name] Implementation
+## FieldInput[Name] Implementation
 
 **Mapping condition**: [condition description]
 
@@ -294,7 +275,7 @@ const FormTypeInputDate = ({
 
 ## Usage Scenarios
 
-### Scenario 1: Basic FormTypeInputString Implementation
+### Scenario 1: Basic FieldInputString Implementation
 
 **Situation**: Implement the most basic string input component, using MUI TextField
 
@@ -303,30 +284,30 @@ const FormTypeInputDate = ({
 #### Step 1: Type Definition and Basic Structure
 
 ```typescript
-// src/formTypeInputs/FormTypeInputString.tsx
+// src/fieldInputs/FieldInputString.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
+import { useFieldErrors } from '@canard/schema-form';
+import type { FieldInputDefinition, FieldInputPropsWithSchema, StringSchema } from '@canard/schema-form';
 import { TextField } from '@mui/material';
 import type { TextFieldProps } from '@mui/material';
 
 // 1️⃣ Define the Context type (the plugin's shared context)
-interface MuiFormContext {
-  size?: 'small' | 'medium' | 'large';
+interface MuiContext {
+  size?: 'small' | 'medium';
   variant?: 'standard' | 'outlined' | 'filled';
 }
 
-// 2️⃣ Component Props = FormTypeInputPropsWithSchema + Context + additional props
-interface FormTypeInputStringProps
-  extends FormTypeInputPropsWithSchema<string, never, MuiFormContext>,
-          MuiFormContext {
-  placeholder?: string;
+// 2️⃣ Component Props = FieldInputPropsWithSchema + Context + additional props
+interface FieldInputStringProps
+  extends FieldInputPropsWithSchema<string, StringSchema, MuiContext>,
+          MuiContext {
   multiline?: boolean;
   rows?: number;
 }
 
 // 3️⃣ Implement the component
-const FormTypeInputString = ({
+const FieldInputString = ({
   // Schema/Node info
   jsonSchema,
   node,
@@ -337,7 +318,6 @@ const FormTypeInputString = ({
   required,
   disabled,
   readOnly,
-  errors,
 
   // Value (uncontrolled component)
   defaultValue,
@@ -354,23 +334,23 @@ const FormTypeInputString = ({
   placeholder,
   multiline,
   rows,
-}: FormTypeInputStringProps) => {
+}: FieldInputStringProps) => {
   // 4️⃣ Apply prop priority with useMemo (direct props > context > default)
   const [size, variant, label] = useMemo(() => {
     return [
       sizeProp ?? context.size ?? 'medium',
       variantProp ?? context.variant ?? 'outlined',
-      jsonSchema.label ?? jsonSchema.title ?? name,
+      jsonSchema.title ?? name,
     ];
-  }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
+  }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.title, name]);
 
-  // 5️⃣ Error handling
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  // 5️⃣ Error handling (the hook re-renders this input on its field's error changes)
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 6️⃣ Optimize the event handler with useHandle
   const handleChange = useHandle((event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
 
   // 7️⃣ Render the uncontrolled component
@@ -385,7 +365,7 @@ const FormTypeInputString = ({
       onChange={handleChange}
       size={size}
       variant={variant}
-      placeholder={placeholder ?? jsonSchema.placeholder}
+      placeholder={placeholder ?? jsonSchema.presentation?.FieldInputProps?.placeholder}
       error={hasError}
       helperText={errorMessage ?? jsonSchema.description}
       multiline={multiline}
@@ -396,10 +376,10 @@ const FormTypeInputString = ({
 };
 
 // 8️⃣ Definition object (includes the test condition)
-export const FormTypeInputStringDefinition = {
-  Component: FormTypeInputString,
+export const FieldInputStringDefinition = {
+  Component: FieldInputString,
   test: { type: 'string' },  // matches when type is 'string'
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
 #### Step 2: Optimization Points
@@ -410,14 +390,13 @@ const [size, variant, label] = useMemo(() => {
   return [
     sizeProp ?? context.size ?? "medium",
     variantProp ?? context.variant ?? "outlined",
-    jsonSchema.label ?? jsonSchema.title ?? name,
+    jsonSchema.title ?? name,
   ];
 }, [
   sizeProp,
   context.size,
   variantProp,
   context.variant,
-  jsonSchema.label,
   jsonSchema.title,
   name,
 ]);
@@ -428,63 +407,39 @@ const variant = variantProp ?? context.variant ?? "outlined";
 
 // ✅ GOOD: Memoize the event handler with useHandle
 const handleChange = useHandle((event: React.ChangeEvent<HTMLInputElement>) => {
-  onChange(event.target.value);
+  onChange(event.target.value === '' ? undefined : event.target.value);
 });
 
 // ❌ BAD: Create a new function on every render
 const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  onChange(event.target.value);
+  onChange(event.target.value === '' ? undefined : event.target.value);
 };
 ```
 
 #### Step 3: Writing the Test
 
 ```typescript
-// src/formTypeInputs/__tests__/FormTypeInputString.test.tsx
+// src/fieldInputs/__tests__/FieldInputString.test.tsx
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormTypeInputString } from '../FormTypeInputString';
+import { vi } from 'vitest';
+import { Form } from '@canard/schema-form';
+import { FieldInputStringDefinition } from '../FieldInputString';
 
-describe('FormTypeInputString', () => {
+const definitions = [FieldInputStringDefinition];
+const schema = { type: 'string' } as const;
+
+describe('FieldInputString', () => {
   it('renders with defaultValue', () => {
-    render(
-      <FormTypeInputString
-        jsonSchema={{ type: 'string' }}
-        path="test"
-        name="test"
-        defaultValue="initial value"
-        onChange={jest.fn()}
-        required={false}
-        disabled={false}
-        readOnly={false}
-        errors={[]}
-        context={{}}
-      />
-    );
-
+    render(<Form jsonSchema={schema} defaultValue="initial value" fieldInputDefinitions={definitions} />);
     expect(screen.getByDisplayValue('initial value')).toBeInTheDocument();
   });
 
   it('calls onChange when user types', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const user = userEvent.setup();
-
-    render(
-      <FormTypeInputString
-        jsonSchema={{ type: 'string' }}
-        path="test"
-        name="test"
-        onChange={onChange}
-        required={false}
-        disabled={false}
-        readOnly={false}
-        errors={[]}
-        context={{}}
-      />
-    );
-
+    render(<Form jsonSchema={schema} fieldInputDefinitions={definitions} onChange={onChange} />);
     await user.type(screen.getByRole('textbox'), 'hello');
-
     expect(onChange).toHaveBeenCalled();
   });
 });
@@ -494,53 +449,54 @@ describe('FormTypeInputString', () => {
 
 ---
 
-### Scenario 2: FormTypeInputDate (Value Conversion Pattern)
+### Scenario 2: FieldInputDate (Value Conversion Pattern)
 
-**Situation**: A date input component using MUI DatePicker that needs ISO 8601 string ↔ Date object conversion
+**Situation**: A date input component using MUI DatePicker that needs ISO date string ↔ Dayjs value conversion
 
 **Steps**:
 
 #### Step 1: Implement the Date Conversion Logic
 
 ```typescript
-// src/formTypeInputs/FormTypeInputDate.tsx
+// src/fieldInputs/FieldInputDate.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
+import { useFieldErrors } from '@canard/schema-form';
+import type { FieldInputDefinition, FieldInputPropsWithSchema, StringSchema } from '@canard/schema-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { parseISO, formatISO } from 'date-fns';
-import type { MuiFormContext } from '../type';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { type Dayjs } from 'dayjs';
+import type { MuiContext } from '../type';
 
-interface FormTypeInputDateProps
-  extends FormTypeInputPropsWithSchema<string, never, MuiFormContext>,
-          MuiFormContext {
+interface FieldInputDateProps
+  extends FieldInputPropsWithSchema<string, StringSchema, MuiContext>,
+          MuiContext {
   minDate?: string;
   maxDate?: string;
 }
 
-const FormTypeInputDate = ({
+const FieldInputDate = ({
   jsonSchema,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
-  defaultValue,  // ⚠️ ISO 8601 string (e.g. "2024-01-15T00:00:00.000Z")
+  defaultValue,  // ⚠️ ISO 8601 date string (e.g. "2024-01-15")
   onChange,      // ⚠️ must be passed as an ISO 8601 string
   context,
   size: sizeProp,
   variant: variantProp,
   minDate,
   maxDate,
-}: FormTypeInputDateProps) => {
-  // 1️⃣ Convert an ISO string → a Date object
+}: FieldInputDateProps) => {
+  // 1️⃣ Convert an ISO string → a Dayjs value
   const dateValue = useMemo(() => {
     if (!defaultValue) return null;
     try {
-      return parseISO(defaultValue);
+      return dayjs(defaultValue);
     } catch {
       return null;
     }
@@ -549,23 +505,24 @@ const FormTypeInputDate = ({
   // 2️⃣ Convert minDate and maxDate as well
   const [minDateObj, maxDateObj] = useMemo(() => {
     return [
-      minDate ? parseISO(minDate) : undefined,
-      maxDate ? parseISO(maxDate) : undefined,
+      minDate ? dayjs(minDate) : undefined,
+      maxDate ? dayjs(maxDate) : undefined,
     ];
   }, [minDate, maxDate]);
 
-  // 3️⃣ Handler that converts a Date object → an ISO string
-  const handleChange = useHandle((newDate: Date | null) => {
+  // 3️⃣ Handler that converts a Dayjs value → an ISO string
+  const handleChange = useHandle((newDate: Dayjs | null) => {
     if (newDate === null) {
-      onChange('');
+      onChange(undefined);
       return;
     }
 
     try {
-      const isoString = formatISO(newDate);
+      if (!newDate.isValid()) return;
+      const isoString = newDate.format('YYYY-MM-DD');
       onChange(isoString);
     } catch {
-      onChange('');
+      onChange(undefined);
     }
   });
 
@@ -573,20 +530,20 @@ const FormTypeInputDate = ({
     return [
       sizeProp ?? context.size ?? 'medium',
       variantProp ?? context.variant ?? 'outlined',
-      jsonSchema.label ?? jsonSchema.title ?? name,
+      jsonSchema.title ?? name,
     ];
-  }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
+  }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.title, name]);
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 4️⃣ Render the DatePicker
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
         label={label}
-        value={dateValue}  // ✅ Date object
-        onChange={handleChange}  // ✅ takes a Date object and converts it to an ISO string
+        defaultValue={dateValue}  // ✅ Dayjs value
+        onChange={handleChange}  // ✅ takes a Dayjs value and converts it to an ISO string
         minDate={minDateObj}
         maxDate={maxDateObj}
         disabled={disabled || readOnly}
@@ -608,141 +565,120 @@ const FormTypeInputDate = ({
 };
 
 // 5️⃣ Definition object (format: 'date' condition)
-export const FormTypeInputDateDefinition = {
-  Component: FormTypeInputDate,
+export const FieldInputDateDefinition = {
+  Component: FieldInputDate,
   test: { type: 'string', format: 'date' },  // type: string + format: date
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
 #### Step 2: Error Handling and Validation
 
 ```typescript
-// Use isValid from date-fns
-import { parseISO, formatISO, isValid } from "date-fns";
-
-const handleChange = useHandle((newDate: Date | null) => {
+const handleChange = useHandle((newDate: Dayjs | null) => {
   if (newDate === null) {
-    onChange("");
+    onChange(undefined);
     return;
   }
-
-  // ✅ Validate the Date
-  if (!isValid(newDate)) {
-    console.warn("Invalid date:", newDate);
-    onChange("");
-    return;
-  }
-
-  try {
-    const isoString = formatISO(newDate);
-    onChange(isoString);
-  } catch (error) {
-    console.error("Date conversion error:", error);
-    onChange("");
-  }
+  if (!newDate.isValid()) return;
+  onChange(newDate.format('YYYY-MM-DD'));
 });
 ```
 
 #### Step 3: Timezone Handling (Optional)
 
 ```typescript
-// When the conversion must be fixed to UTC
-import { parseISO, formatISO } from "date-fns";
-import { zonedTimeToUtc, utcToZonedTime } from "date-fns-tz";
-
-const handleChange = useHandle((newDate: Date | null) => {
+// A date-time input publishes an instant; a date-only input keeps YYYY-MM-DD.
+const handleDateTimeChange = useHandle((newDate: Dayjs | null) => {
   if (newDate === null) {
-    onChange("");
+    onChange(undefined);
     return;
   }
-
-  // Convert the user's local time → UTC
-  const utcDate = zonedTimeToUtc(
-    newDate,
-    Intl.DateTimeFormat().resolvedOptions().timeZone,
-  );
-  const isoString = formatISO(utcDate);
-  onChange(isoString);
+  if (!newDate.isValid()) return;
+  onChange(newDate.toISOString());
 });
 ```
 
-**Result**: A DatePicker component that fully handles ISO 8601 string ↔ Date object conversion
+**Result**: A DatePicker component that fully handles ISO date string ↔ Dayjs value conversion
 
 **Caveats**:
 
-- `@canard/schema-form` always exchanges values as ISO 8601 strings
-- Use the Date object only inside the component, and always pass a string to onChange
-- Prefer `parseISO` and `formatISO` from `date-fns` (timezone-safe)
+- These date inputs exchange ISO 8601 strings; other inputs use their schema value types
+- Use the Dayjs value only inside the component, and always pass a string to onChange
+- Use AdapterDayjs with Dayjs values; calendar dates keep YYYY-MM-DD, while date-time inputs publish ISO instants
 
 ---
 
-### Scenario 3: FormTypeInputStringEnum (test Condition in Function Form)
+### Scenario 3: FieldInputStringEnum (test Condition in Function Form)
 
 **Situation**: Display a string that has enum values as a Select or a RadioGroup
+
+An input draws its own title only when the plugin's FieldRenderer does not draw Label for that field.
 
 **Steps**:
 
 #### Step 1: Write a test Function for a Compound Condition
 
 ```typescript
-// src/formTypeInputs/FormTypeInputStringEnum.tsx
+// src/fieldInputs/FieldInputStringEnum.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputPropsWithSchema, FormTypeTestFn } from '@canard/schema-form';
+import { useFieldErrors } from '@canard/schema-form';
+import type { FieldInputDefinition, FieldInputPropsWithSchema, FieldInputTestFn, StringSchema } from '@canard/schema-form';
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, FormHelperText } from '@mui/material';
-import type { MuiFormContext } from '../type';
+import type { MuiContext } from '../type';
 
-interface FormTypeInputStringEnumProps
-  extends FormTypeInputPropsWithSchema<string, never, MuiFormContext>,
-          MuiFormContext {}
+interface FieldInputStringEnumProps
+  extends FieldInputPropsWithSchema<string, StringSchema, MuiContext>,
+          MuiContext {
+  alias?: Record<string, string>;
+}
 
-const FormTypeInputStringEnum = ({
+const FieldInputStringEnum = ({
   jsonSchema,
+  alias,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,
   onChange,
   context,
   size: sizeProp,
-}: FormTypeInputStringEnumProps) => {
+}: FieldInputStringEnumProps) => {
   // 1️⃣ Extract the enum values (jsonSchema.enum is an array)
   const enumValues = useMemo(() => {
-    return jsonSchema.enum as string[] ?? [];
+    return (jsonSchema.enum ?? []).filter((value): value is string => typeof value === 'string');
   }, [jsonSchema.enum]);
 
-  // 2️⃣ Map enum labels (use enumLabels when present)
+  // 2️⃣ Map labels from the alias prop
   const enumLabels = useMemo(() => {
-    if (jsonSchema.enumLabels) {
-      return jsonSchema.enumLabels as string[];
-    }
-    // If enumLabels is absent, use the enum values as they are
-    return enumValues;
-  }, [jsonSchema.enumLabels, enumValues]);
+    if (alias) return alias;
+    // Without aliases, use the enum values as labels
+    return Object.fromEntries(enumValues.map(value => [value, value]));
+  }, [alias, enumValues]);
 
   const handleChange = useHandle((event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
 
   const [size, label] = useMemo(() => {
     return [
       sizeProp ?? context.size ?? 'medium',
-      jsonSchema.label ?? jsonSchema.title ?? name,
+      jsonSchema.title ?? name,
     ];
-  }, [sizeProp, context.size, jsonSchema.label, jsonSchema.title, name]);
+  }, [sizeProp, context.size, jsonSchema.title, name]);
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 3️⃣ Render the RadioGroup
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size}>
-      <FormLabel id={`label:${path}`}>{label}</FormLabel>
+      <FormLabel id={`label-${path}`}>{label}</FormLabel>
       <RadioGroup
-        aria-labelledby={`label:${path}`}
+        aria-labelledby={`label-${path}`}
         name={name}
         defaultValue={defaultValue ?? ''}
         onChange={handleChange}
@@ -752,7 +688,7 @@ const FormTypeInputStringEnum = ({
             key={value}
             value={value}
             control={<Radio />}
-            label={enumLabels[index] ?? value}
+            label={enumLabels[value] ?? value}
           />
         ))}
       </RadioGroup>
@@ -764,7 +700,7 @@ const FormTypeInputStringEnum = ({
 };
 
 // 4️⃣ test condition in function form (compound condition)
-const testStringEnum: FormTypeTestFn = ({ type, jsonSchema }) => {
+const testStringEnum: FieldInputTestFn = ({ type, jsonSchema }) => {
   // true only when type is 'string' and an enum is present
   return (
     type === 'string' &&
@@ -773,63 +709,62 @@ const testStringEnum: FormTypeTestFn = ({ type, jsonSchema }) => {
   );
 };
 
-export const FormTypeInputStringEnumDefinition = {
-  Component: FormTypeInputStringEnum,
+export const FieldInputStringEnumDefinition = {
+  Component: FieldInputStringEnum,
   test: testStringEnum,  // ✅ function form
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
 #### Step 2: Select Version (Alternative)
 
 ```typescript
 // A version that uses Select (a better fit when there are many options)
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent } from '@mui/material';
 
-const FormTypeInputStringEnumSelect = ({
+const FieldInputStringEnumSelect = ({
   jsonSchema,
+  alias,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,
   onChange,
   context,
   size: sizeProp,
   variant: variantProp,
-}: FormTypeInputStringEnumProps) => {
+}: FieldInputStringEnumProps) => {
   const enumValues = useMemo(() => {
-    return jsonSchema.enum as string[] ?? [];
+    return (jsonSchema.enum ?? []).filter((value): value is string => typeof value === 'string');
   }, [jsonSchema.enum]);
 
   const enumLabels = useMemo(() => {
-    if (jsonSchema.enumLabels) {
-      return jsonSchema.enumLabels as string[];
-    }
-    return enumValues;
-  }, [jsonSchema.enumLabels, enumValues]);
+    if (alias) return alias;
+    return Object.fromEntries(enumValues.map(value => [value, value]));
+  }, [alias, enumValues]);
 
   const handleChange = useHandle((event: SelectChangeEvent<string>) => {
-    onChange(event.target.value);
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
 
   const [size, variant, label] = useMemo(() => {
     return [
       sizeProp ?? context.size ?? 'medium',
       variantProp ?? context.variant ?? 'outlined',
-      jsonSchema.label ?? jsonSchema.title ?? name,
+      jsonSchema.title ?? name,
     ];
-  }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.label, jsonSchema.title, name]);
+  }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.title, name]);
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size} fullWidth>
-      <InputLabel id={`label:${path}`}>{label}</InputLabel>
+      <InputLabel id={`label-${path}`}>{label}</InputLabel>
       <Select
-        labelId={`label:${path}`}
+        labelId={`label-${path}`}
         id={path}
         name={name}
         label={label}
@@ -839,7 +774,7 @@ const FormTypeInputStringEnumSelect = ({
       >
         {enumValues.map((value, index) => (
           <MenuItem key={value} value={value}>
-            {enumLabels[index] ?? value}
+            {enumLabels[value] ?? value}
           </MenuItem>
         ))}
       </Select>
@@ -854,17 +789,17 @@ const FormTypeInputStringEnumSelect = ({
 #### Step 3: Selection Criteria
 
 ```typescript
-// Select by condition in the formTypeInputDefinitions array
-export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
+// Select by condition in the fieldInputDefinitions array
+export const fieldInputDefinitions: FieldInputDefinition[] = [
   // === Phase 1: Most specific ===
-  FormTypeInputPasswordDefinition, // type: string, format: password
+  FieldInputPasswordDefinition, // type: string, format: password
 
   // === Phase 3: Enum conditions (function form) ===
   // ⚠️ Watch the order: more specific conditions must come first
 
   // 4 or fewer enum values → RadioGroup
   {
-    Component: FormTypeInputStringEnum,
+    Component: FieldInputStringEnum,
     test: ({ type, jsonSchema }) =>
       type === "string" &&
       Array.isArray(jsonSchema.enum) &&
@@ -874,15 +809,15 @@ export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
 
   // 5 or more enum values → Select
   {
-    Component: FormTypeInputStringEnumSelect,
+    Component: FieldInputStringEnumSelect,
     test: ({ type, jsonSchema }) =>
-      jsonSchematype === "string" &&
+      type === "string" &&
       Array.isArray(jsonSchema.enum) &&
       jsonSchema.enum.length > 4,
   },
 
   // === Phase 5: General types (last) ===
-  FormTypeInputStringDefinition, // type: string (most general - last!)
+  FieldInputStringDefinition, // type: string (most general - last!)
 ];
 ```
 
@@ -892,35 +827,36 @@ export const formTypeInputDefinitions: FormTypeInputDefinition[] = [
 
 - Use a test function when checking a compound condition
 - More specific conditions must come first (RadioGroup → Select → String order)
-- `enumLabels` can provide user-friendly labels
+- `presentation.FieldInputProps.alias` can provide user-friendly labels
 
 ---
 
-### Scenario 4: FormTypeInputArray (ChildNodeComponents Pattern)
+### Scenario 4: FieldInputArray (ChildFields Pattern)
 
-**Situation**: An array-type input, rendered dynamically with ChildNodeComponents
+**Situation**: An array-type input, rendered dynamically with ChildFields
 
 **Steps**:
 
-#### Step 1: Pattern for Using ChildNodeComponents
+#### Step 1: Pattern for Using ChildFields
 
 ```typescript
-// src/formTypeInputs/FormTypeInputArray.tsx
+// src/fieldInputs/FieldInputArray.tsx
 import { useMemo, useState } from 'react';
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
+import { useFieldErrors } from '@canard/schema-form';
+import type { FieldInputDefinition, FieldInputPropsWithSchema, ArraySchema } from '@canard/schema-form';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { MuiFormContext } from '../type';
+import type { MuiContext } from '../type';
 
-interface FormTypeInputArrayProps
-  extends FormTypeInputPropsWithSchema<any[], never, MuiFormContext>,
-          MuiFormContext {
-  // ⚠️ ChildNodeComponents is provided by FormTypeInputPropsWithSchema
+interface FieldInputArrayProps
+  extends FieldInputPropsWithSchema<any[], ArraySchema, MuiContext>,
+          MuiContext {
+  // ⚠️ ChildFields is provided by FieldInputPropsWithSchema
 }
 
-const FormTypeInputArray = ({
+const FieldInputArray = ({
   jsonSchema,
   node,
   path,
@@ -928,41 +864,36 @@ const FormTypeInputArray = ({
   required,
   disabled,
   readOnly,
-  errors,
   defaultValue,
   onChange,
   context,
-  ChildNodeComponents,  // ✅ array of child components provided by @canard/schema-form
+  ChildFields,  // ✅ array of child components provided by @canard/schema-form
   size: sizeProp,
-}: FormTypeInputArrayProps) => {
-  // 1️⃣ ChildNodeComponents is created automatically from the current array value
+}: FieldInputArrayProps) => {
+  // 1️⃣ ChildFields is created automatically from the current array value
   // Each ChildComponent already has every prop
 
   const [size, label] = useMemo(() => {
     return [
       sizeProp ?? context.size ?? 'medium',
-      jsonSchema.label ?? jsonSchema.title ?? name,
+      jsonSchema.title ?? name,
     ];
-  }, [sizeProp, context.size, jsonSchema.label, jsonSchema.title, name]);
+  }, [sizeProp, context.size, jsonSchema.title, name]);
 
   // 2️⃣ Handler that adds an item
   const handleAdd = useHandle(() => {
-    const currentValue = node.value ?? [];
-    const newValue = [...currentValue, undefined];  // initialize with undefined
-    onChange(newValue);
+    node.push();
   });
 
   // 3️⃣ Handler that removes an item
   const handleRemove = useHandle((index: number) => {
-    const currentValue = node.value ?? [];
-    const newValue = currentValue.filter((_, i) => i !== index);
-    onChange(newValue);
+    node.remove(index);
   });
 
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
-  // 4️⃣ Rendering: render ChildNodeComponents directly
+  // 4️⃣ Rendering: render ChildFields directly
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
@@ -976,10 +907,10 @@ const FormTypeInputArray = ({
         </Typography>
       )}
 
-      {/* ✅ Render ChildNodeComponents */}
-      {ChildNodeComponents && ChildNodeComponents.length > 0 ? (
-        ChildNodeComponents.map((ChildComponent, index) => (
-          <Paper key={index} sx={{ p: 2, mb: 2, position: 'relative' }}>
+      {/* ✅ Render ChildFields */}
+      {ChildFields && ChildFields.length > 0 ? (
+        ChildFields.map((ChildComponent, index) => (
+          <Paper key={ChildComponent.key} sx={{ p: 2, mb: 2, position: 'relative' }}>
             <Box sx={{ pr: 6 }}>
               {/* ✅ ChildComponent already has every prop */}
               <ChildComponent />
@@ -1027,28 +958,27 @@ const FormTypeInputArray = ({
 };
 
 // 5️⃣ Definition object
-export const FormTypeInputArrayDefinition = {
-  Component: FormTypeInputArray,
+export const FieldInputArrayDefinition = {
+  Component: FieldInputArray,
   test: { type: 'array' },
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-#### Step 2: ChildNodeComponents Caveats
+#### Step 2: ChildFields Caveats
 
 ```typescript
-// ❌ WRONG: Trying to pass props to ChildComponent
-{ChildNodeComponents.map((ChildComponent, index) => (
+// ❌ WRONG: Trying to replace a Child value
+{ChildFields.map((ChildComponent, index) => (
   <ChildComponent
-    key={index}
-    // ❌ Do not pass props this way!
+    key={ChildComponent.key}
+    // ❌ value is typed never on a Child; write values through onChange
     value={someValue}
-    onChange={someHandler}
   />
 ))}
 
 // ✅ CORRECT: Render ChildComponent as it is
-{ChildNodeComponents.map((ChildComponent, index) => (
-  <Box key={index}>
+{ChildFields.map((ChildComponent, index) => (
+  <Box key={ChildComponent.key}>
     {/* ✅ ChildComponent already has every prop */}
     <ChildComponent />
   </Box>
@@ -1057,9 +987,9 @@ export const FormTypeInputArrayDefinition = {
 
 **Key concepts**:
 
-- `ChildNodeComponents` is the component array that `@canard/schema-form` creates automatically
+- `ChildFields` is the component array that `@canard/schema-form` creates automatically
 - Each `ChildComponent` already has every prop, including `path`, `jsonSchema`, `value`, and `onChange`
-- FormTypeInputArray **handles only the UI layout**, and canard-form manages the values
+- FieldInputArray **handles only the UI layout**, and canard-form manages the values
 
 #### Step 3: Example of a Complex Array Item
 
@@ -1070,15 +1000,15 @@ const schema = {
   items: {
     type: "object",
     properties: {
-      name: { type: "string", label: "Name" },
-      age: { type: "number", label: "Age" },
-      email: { type: "string", format: "email", label: "Email" },
+      name: { type: "string", title: "Name" },
+      age: { type: "number", title: "Age" },
+      email: { type: "string", format: "email", title: "Email" },
     },
   },
 };
 
-// ChildNodeComponents automatically creates a FormTypeInputObject for each object
-// FormTypeInputObject in turn renders the FormTypeInputs for name, age, and email
+// Each object child uses a branch input that renders its bound ChildFields
+// The core fallback supports objects without a plugin-specific object input
 // → fully automated nested rendering
 ```
 
@@ -1086,72 +1016,73 @@ const schema = {
 
 **Caveats**:
 
-- Never pass props to ChildNodeComponents
-- Manage the value by updating the whole array through onChange
-- Use filter to delete, and spread to add
+- Never pass value or defaultValue to a Child; override its onChange only for the hybrid-parent pattern (packages/canard/schema-form/docs/agents/skills/schema-form-skill/knowledge/field-input.md)
+- Use node.push() and node.remove(index) for structural edits
+- Keep each ChildComponent.key as its React key to preserve surviving inputs
 
 ---
 
-### Scenario 5: FormTypeInputFileUpload (onFileAttach Integration)
+### Scenario 5: FieldInputFileUpload (uploadFile Integration)
 
-**Situation**: File upload, with the `onFileAttach` callback integrated
+**Situation**: A custom context.uploadFile service stores URLs; the core onFileAttach prop only attaches File objects
 
 **Steps**:
 
-#### Step 1: Define the onFileAttach Type
+#### Step 1: Define the uploadFile Type
 
 ```typescript
 // src/type.ts
-export interface MuiFormContext {
-  size?: "small" | "medium" | "large";
+export interface MuiContext {
+  size?: "small" | "medium";
   variant?: "standard" | "outlined" | "filled";
 
-  // ✅ Define the onFileAttach callback
-  onFileAttach?: (file: File) => Promise<string>; // returns a URL after the file is uploaded
+  // ✅ Define the uploadFile callback
+  uploadFile?: (file: File) => Promise<string>; // returns a URL after the file is uploaded
 }
 ```
 
 #### Step 2: Implement the FileUpload Component
 
 ```typescript
-// src/formTypeInputs/FormTypeInputFileUpload.tsx
+// src/fieldInputs/FieldInputFileUpload.tsx
 import { useState, useRef } from 'react';
 import { useHandle } from '@winglet/react-utils';
-import type { FormTypeInputPropsWithSchema } from '@canard/schema-form';
+import { useFieldErrors } from '@canard/schema-form';
+import type { FieldInputDefinition, FieldInputPropsWithSchema, StringSchema, ArraySchema } from '@canard/schema-form';
 import { Box, Button, Typography, LinearProgress, IconButton, Chip } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { MuiFormContext } from '../type';
+import type { MuiContext } from '../type';
 
-interface FormTypeInputFileUploadProps
-  extends FormTypeInputPropsWithSchema<string, never, MuiFormContext>,
-          MuiFormContext {
+interface FieldInputFileUploadProps
+  extends FieldInputPropsWithSchema<string, StringSchema, MuiContext>,
+          MuiContext {
   accept?: string;  // e.g. "image/*", ".pdf,.doc"
   maxSize?: number;  // in bytes
 }
 
-const FormTypeInputFileUpload = ({
+const FieldInputFileUpload = ({
   jsonSchema,
+  node,
   path,
   name,
   required,
   disabled,
   readOnly,
-  errors,
-  defaultValue,  // ⚠️ file URL string
+  value,  // ⚠️ file URL string
   onChange,      // ⚠️ pass a file URL string
   context,
   size: sizeProp,
   accept,
   maxSize = 10 * 1024 * 1024,  // default 10MB
-}: FormTypeInputFileUploadProps) => {
+}: FieldInputFileUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const label = jsonSchema.label ?? jsonSchema.title ?? name;
-  const hasError = errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const label = jsonSchema.title ?? name;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   // 1️⃣ File selection handler
   const handleFileSelect = useHandle(async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1164,9 +1095,9 @@ const FormTypeInputFileUpload = ({
       return;
     }
 
-    // 3️⃣ Call the onFileAttach callback (supplied by context)
-    if (!context.onFileAttach) {
-      console.error('onFileAttach callback is not provided in context');
+    // 3️⃣ Call the uploadFile callback (supplied by context)
+    if (!context.uploadFile) {
+      console.error('uploadFile callback is not provided in context');
       alert('File upload is not configured.');
       return;
     }
@@ -1175,13 +1106,13 @@ const FormTypeInputFileUpload = ({
       setUploading(true);
       setUploadProgress(0);
 
-      // Simulate upload progress (in practice this is handled inside onFileAttach)
+      // Simulate upload progress (in practice this is handled inside uploadFile)
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => Math.min(prev + 10, 90));
       }, 200);
 
       // 4️⃣ Upload the file (returns a URL)
-      const fileUrl = await context.onFileAttach(file);
+      const fileUrl = await context.uploadFile(file);
 
       clearInterval(progressInterval);
       setUploadProgress(100);
@@ -1210,7 +1141,7 @@ const FormTypeInputFileUpload = ({
 
   // 6️⃣ File deletion handler
   const handleDelete = useHandle(() => {
-    onChange('');
+    onChange(undefined);
   });
 
   // 7️⃣ Upload button click
@@ -1242,10 +1173,10 @@ const FormTypeInputFileUpload = ({
       />
 
       {/* Upload button or file info */}
-      {defaultValue ? (
+      {value ? (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Chip
-            label={defaultValue.split('/').pop() ?? 'Uploaded file'}
+            label={value.split('/').pop() ?? 'Uploaded file'}
             onDelete={!disabled && !readOnly ? handleDelete : undefined}
             deleteIcon={<DeleteIcon />}
             color="primary"
@@ -1254,7 +1185,7 @@ const FormTypeInputFileUpload = ({
           <Button
             variant="text"
             size="small"
-            onClick={() => window.open(defaultValue, '_blank')}
+            onClick={() => window.open(value, '_blank')}
           >
             View
           </Button>
@@ -1289,21 +1220,27 @@ const FormTypeInputFileUpload = ({
 };
 
 // 8️⃣ Definition object
-export const FormTypeInputFileUploadDefinition = {
-  Component: FormTypeInputFileUpload,
+export const FieldInputFileUploadDefinition = {
+  Component: FieldInputFileUpload,
+  controlled: true,
   test: { type: 'string', format: 'file' },  // format: 'file'
-} satisfies FormTypeInputDefinition;
+} satisfies FieldInputDefinition;
 ```
 
-#### Step 3: Example onFileAttach Implementation (App Side)
+#### Step 3: Example uploadFile Implementation (App Side)
 
 ```typescript
-// Using SchemaForm in App.tsx
-import { SchemaForm } from '@canard/schema-form';
+// App.tsx: FieldInputFileUploadDefinition is the custom definition above
+import { Form, registerPlugin } from '@canard/schema-form';
+import type { JSONSchema } from '@canard/schema-form';
 import { plugin as muiPlugin } from '@canard/schema-form-mui-plugin';
 
+registerPlugin(muiPlugin);
+const schema = { type: 'string', format: 'file' } satisfies JSONSchema;
+const definitions = [FieldInputFileUploadDefinition];
+
 const App = () => {
-  // Implement onFileAttach (e.g. an AWS S3 upload)
+  // Implement uploadFile (e.g. an AWS S3 upload)
   const handleFileAttach = async (file: File): Promise<string> => {
     // 1. Create FormData
     const formData = new FormData();
@@ -1325,13 +1262,13 @@ const App = () => {
   };
 
   return (
-    <SchemaForm
-      schema={schema}
-      plugin={muiPlugin}
+    <Form
+      jsonSchema={schema}
+      fieldInputDefinitions={definitions}
       context={{
         size: 'medium',
         variant: 'outlined',
-        onFileAttach: handleFileAttach,  // ✅ passed through context
+        uploadFile: handleFileAttach,  // ✅ passed through context
       }}
     />
   );
@@ -1342,32 +1279,33 @@ const App = () => {
 
 ```typescript
 // Multiple-file upload version
-interface FormTypeInputMultiFileUploadProps
-  extends FormTypeInputPropsWithSchema<string[], never, MuiFormContext>,
-    MuiFormContext {
+interface FieldInputMultiFileUploadProps
+  extends FieldInputPropsWithSchema<string[], ArraySchema, MuiContext>,
+    MuiContext {
   accept?: string;
   maxSize?: number;
   maxFiles?: number;
 }
 
-const FormTypeInputMultiFileUpload = ({
-  defaultValue, // string[] (array of URLs)
+const FieldInputMultiFileUpload = ({
+  value, // string[] (array of URLs)
   onChange, // (urls: string[]) => void
   context,
   maxFiles = 5,
   // ... other props
-}: FormTypeInputMultiFileUploadProps) => {
+}: FieldInputMultiFileUploadProps) => {
+  const [uploading, setUploading] = useState(false);
   const handleFileSelect = useHandle(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(event.target.files ?? []);
 
       // Check the file count
-      if ((defaultValue?.length ?? 0) + files.length > maxFiles) {
+      if ((value?.length ?? 0) + files.length > maxFiles) {
         alert(`You can upload at most ${maxFiles} files.`);
         return;
       }
 
-      if (!context.onFileAttach) {
+      if (!context.uploadFile) {
         alert("File upload is not configured.");
         return;
       }
@@ -1376,11 +1314,11 @@ const FormTypeInputMultiFileUpload = ({
         setUploading(true);
 
         // Upload in parallel
-        const uploadPromises = files.map((file) => context.onFileAttach!(file));
+        const uploadPromises = files.map((file) => context.uploadFile!(file));
         const newUrls = await Promise.all(uploadPromises);
 
         // Existing URLs + new URLs
-        const allUrls = [...(defaultValue ?? []), ...newUrls];
+        const allUrls = [...(value ?? []), ...newUrls];
         onChange(allUrls);
 
         setUploading(false);
@@ -1400,7 +1338,7 @@ const FormTypeInputMultiFileUpload = ({
 
 **Caveats**:
 
-- `onFileAttach` must be provided through context
+- `uploadFile` must be provided through context
 - File upload is asynchronous, so the loading state must be managed
 - Pass the file URL to onChange as a string
 - Use the string[] type for multiple files
@@ -1409,7 +1347,7 @@ const FormTypeInputMultiFileUpload = ({
 
 ## Next-Step Connections
 
-- After the implementation is done, configure package.json with the `dependency-management` skill
+- After the implementation is done, configure package.json using `packages/canard/schema-form-antd5-plugin/package.json` as the repository reference
 - For a UI library compatibility check, see the `ui-plugin-guidelines` skill
 
 ---
@@ -1420,14 +1358,14 @@ const FormTypeInputMultiFileUpload = ({
 error_handling:
   severity_high:
     conditions:
-      - Type definition file missing (types/index.d.ts)
+      - Type definition file missing (packages/canard/schema-form/src/types/field/fieldInput.ts)
       - React not installed
       - @canard/schema-form package not installed
       - UI library not installed (MUI, Ant Design, etc.)
       - Component build failure (severe syntax error)
     action: |
       ❌ Fatal error - stop the component implementation
-      → Check the type file: ls types/index.d.ts
+      → Check the type file: ls packages/canard/schema-form/src/types/field/fieldInput.ts
       → Install React: yarn add react react-dom
       → Install @canard/schema-form: yarn add @canard/schema-form
       → Install the UI library: yarn add @mui/material (example)
@@ -1435,8 +1373,8 @@ error_handling:
       → Run again: after installing the required packages, retry the implementation
     examples:
       - condition: "Type file missing"
-        message: "❌ Error: cannot find types/index.d.ts"
-        recovery: "Run canard-type-system first to generate the type definitions"
+        message: "❌ Error: cannot find packages/canard/schema-form/src/types/field/fieldInput.ts"
+        recovery: "Read packages/canard/schema-form/src/index.ts and packages/canard/schema-form/src/types/field/fieldInput.ts"
       - condition: "UI library not installed"
         message: "❌ Error: cannot find the @mui/material package"
         recovery: "Install: yarn add @mui/material @emotion/react @emotion/styled"
@@ -1464,8 +1402,8 @@ error_handling:
       optimization: "none (apply manually)"
     examples:
       - condition: "Type inference failed"
-        message: "⚠️  Warning: cannot infer the FormTypeInput Props type"
-        fallback: "Substitute any → set FormTypeInputProps<string> manually"
+        message: "⚠️  Warning: cannot infer the FieldInput Props type"
+        fallback: "Substitute any → set FieldInputProps<string> manually"
       - condition: "UI component mapping is unclear"
         message: "⚠️  Warning: cannot map MUI TextField automatically"
         fallback: "Use a plain <input> → change it to <TextField> manually"

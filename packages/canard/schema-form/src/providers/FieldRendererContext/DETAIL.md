@@ -6,6 +6,10 @@
 
 ## API Contracts
 
+LabelRenderer·ErrorMessageRenderer는 node와 내용 중심의 전용 props를 받습니다. 부품을 만드는 FieldProxy에 현재 선택을 전달하며, context나 오류를 부품에 자동 주입하지 않습니다. InputRenderer는 전용 props로 실제 입력을 children에 받으며 전용 Context에는 Form prop만 담습니다. 소비자 위치에서 Form 값·가장 가까운 외부 Provider·플러그인 순으로 해석하여 Form 안의 중첩 Provider도 적용합니다. 기존 설정 훅도 같은 선택을 노출해 프록시의 경계 복구가 추가 구독을 만들지 않게 합니다.
+
+첫 문구·presence를 포함한 표시와 보류 버전·추적 마스크를 프록시와 useFieldErrors가 공유합니다. 표시 계산은 매번 객체를 할당하지 않습니다. 공개 구독 훅은 항상 호출하되 보류 버전이 없으면 연결하지 않고, 수동 효과에서 같은 렌더의 버전과 비교해 놓친 해제를 따라잡습니다. 프록시 문구 계산의 기존 메모 의존성과 실행 경계는 유지합니다.
+
 유효한 Form 렌더러·포맷터가 외부 설정보다 우선하고 누락 값은 플러그인으로 보완합니다. 최신 불변 참조로 해석하되 값·노드 상태를 초기화하거나 검증을 실행하지 않습니다. 기본 정책 선택·잘못된 값 보존·공개 명령 세대는 [FormCore](../../components/Form/components/FormCore/DETAIL.md)가 소유하고, 엔진의 정책 기록은 [RootNodeContext](../RootNodeContext/DETAIL.md)가 commit합니다.
 
 FieldNodeState.ErrorVisibility는 undefined일 때 상속, true일 때 허용, false일 때 Form 공개 중에도 억제합니다. 상속 복귀는 그 키만 undefined로 지워 Edited·Touched를 보존합니다. 렌더러·입력의 presence와 OnChange release 조건을 이 override로 우회하지 않습니다. 자식 오류 집계는 숨긴 자식도 포함하는 [hooks 계약](../../hooks/DETAIL.md)이므로 presence 필터를 추가하지 않습니다.
@@ -28,7 +32,7 @@ OnChange 오류는 현재 live 조건을 만족하고 마지막 release 이후 �
 
 ### error-release-limits — 표시 지연의 한계
 
-OnChange 밖에서는 live 조건을 사용합니다. hook disabled 변경의 즉시 표시, drop보다 늦게 렌더된 상태·presence의 hold 생략, commit-only 연속의 hold, release와 paint 사이 쓰기로 판정이 1~2프레임 보일 수 있는 한계를 유지합니다. 새 표시의 일반 release 대기는 약 두 프레임이며 reducer 통지는 현재 React 우선순위를 따르므로 노드 사건 없는 release는 한 paint 더 늦을 수 있습니다. transition 통지는 transition lane, passive catch-up은 default 우선순위를 따르며 오류 사건의 tracker는 동기 갱신합니다. 매 render가 이력을 다시 읽으므로 배달 순서만으로 표시를 확정하지 않습니다.
+OnChange 밖에서는 live 조건을 사용합니다. hook disabled 변경의 즉시 표시, drop보다 늦게 렌더된 상태·presence의 hold 생략, commit-only 연속의 hold, release와 paint 사이 쓰기로 판정이 1~2프레임 보일 수 있는 한계를 유지합니다. 새 표시의 일반 release 대기는 약 두 프레임이며 reducer 통지는 현재 React 우선순위를 따르므로 노드 사건 없는 release는 한 paint 더 늦을 수 있습니다. transition 통지는 transition 레인, passive 효과의 따라잡기는 default 우선순위를 따르며 오류 사건의 tracker는 동기 갱신합니다. 매 render가 이력을 다시 읽으므로 배달 순서만으로 표시를 확정하지 않습니다.
 
 ## Boundary Exemptions
 

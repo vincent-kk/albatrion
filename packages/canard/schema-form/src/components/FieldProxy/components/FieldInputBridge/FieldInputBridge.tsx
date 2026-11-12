@@ -5,26 +5,23 @@ import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
 import type { Optional } from '@aileron/declare';
 
+import { PluginManager } from '@/schema-form/app/plugin';
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeState } from '@/schema-form/core';
 import {
   SetValueOption,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
-  readFieldNodeRevealVersion,
   relayFieldNodeInput,
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
-  useFieldRendererContext,
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import { useExternalInputContext } from '@/schema-form/providers/ExternalFormContext';
 import { useFieldLifecycleContext } from '@/schema-form/providers/FieldLifecycleContext';
-import {
-  ErrorRevealSubscriber,
-  isErrorRevealed,
-} from '@/schema-form/providers/FieldRendererContext';
+import { useInputRendererContext } from '@/schema-form/providers/FieldRendererContext';
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
@@ -45,6 +42,7 @@ const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
 export const FieldInputBridge = memo(
   ({
     node,
+    unwrapped,
     onChangeRef,
     onFileAttachRef,
     overrideOnChangeRef,
@@ -55,24 +53,25 @@ export const FieldInputBridge = memo(
   }: FieldInputBridgeProps) => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || (selected && selected.Component);
+    const formInputRenderer = useInputRendererContext();
+    const { InputRenderer: externalInputRenderer } = useExternalInputContext();
+    const InputRenderer =
+      formInputRenderer ||
+      externalInputRenderer ||
+      PluginManager.InputRenderer ||
+      null;
+    const Frame = FieldInput && !unwrapped ? InputRenderer : null;
     const presentation = (node.jsonSchema as JSONSchema).presentation;
     const inputProps = presentation?.FieldInputProps;
     const controlled = resolveControlled(
       PreferredFieldInput ? undefined : selected?.controlled,
       presentation?.controlled,
     );
-    // Each selection gets its own generation, even when A returns after B.
-    const selection = useMemorize(() => ({ active: false }), [FieldInput]);
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { checkErrorVisibility, errorVisibility } = useFieldRendererContext();
-    const live = node.isPresent && checkErrorVisibility(node.state);
-    const errorVisible = live && isErrorRevealed(node, errorVisibility, true);
-    const revealVersion =
-      live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
@@ -82,11 +81,11 @@ export const FieldInputBridge = memo(
       generation,
       handleCompositionStart,
       handleCompositionEnd,
-      rerender,
+      update,
       releaseComposition,
     ] = useFieldInputControl(node, mountedChildren, controlled);
     const lifecycle = useFieldLifecycleContext();
-    const lifecycleRender = useFieldLifecycle(
+    const position = useFieldLifecycle(
       node,
       ref,
       commitTerminalChildren,
@@ -94,10 +93,12 @@ export const FieldInputBridge = memo(
       hydrationCommitRef,
       FieldInput ? virtualizationManager : null,
       FieldInput ? lifecycle : null,
+      update,
     );
-    const defaultValue = useMemorize(
-      () => node.value,
-      [node, generation, FieldInput],
+    // Each committed container and input selection owns its callback lifetime.
+    const selection = useMemorize(
+      () => ({ active: false }),
+      [FieldInput, position.epoch],
     );
     const accepts = useCallback(
       () =>
@@ -108,7 +109,7 @@ export const FieldInputBridge = memo(
       [node, generation, isLive, selection, controlled],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = SetValueOption.Overwrite) => {
+      (value, option = SetValueOption.Overwrite) => {
         if (
           !accepts() ||
           rootReadOnly ||
@@ -118,8 +119,8 @@ export const FieldInputBridge = memo(
         )
           return;
         const onChange = onChangeRef.current || overrideOnChangeRef?.current;
-        if (!onChange) writeFieldNodeInput(node, input, option);
-        else relayFieldNodeInput(node, input, option, onChange);
+        if (!onChange) writeFieldNodeInput(node, value, option);
+        else relayFieldNodeInput(node, value, option, onChange);
       },
       [
         accepts,
@@ -161,22 +162,32 @@ export const FieldInputBridge = memo(
       if (node.state[2]) return;
       requestId.current = requestAnimationFrame(() => {
         if (
+          selection.active &&
           isLive() &&
           reset === readFieldNodeInteractionReset(node) &&
           !node.state[2]
         )
           node.setState(TOUCHED_STATE_PATCH);
       });
-    }, [accepts, isLive, node]);
+    }, [accepts, isLive, node, selection]);
     useOnUnmount(() => {
       attachedFilesMap.delete(node.path);
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
     if (!FieldInput) return null;
-    return (
+    const required = resolveRequired(
+      overrideProps.required,
+      presentation?.required,
+      node.isRequired,
+    );
+    const readOnly =
+      rootReadOnly || node.isReadOnly || !!overrideProps.readOnly;
+    const disabled =
+      rootDisabled || node.isDisabled || !!overrideProps.disabled;
+    const input = (
       <div
-        ref={ref}
+        ref={position.ref}
         role={NONE_ROLE}
         style={DISPLAY_CONTENT}
         onFocus={handleFocus}
@@ -190,17 +201,12 @@ export const FieldInputBridge = memo(
           className={undefined}
           {...inputProps}
           {...overrideProps}
-          defaultValue={defaultValue}
           value={node.value}
-          required={resolveRequired(
-            overrideProps.required,
-            presentation?.required,
-            node.isRequired,
-          )}
+          required={required}
           onChange={handleChange}
           onFileAttach={handleFileAttach}
-          readOnly={rootReadOnly || node.isReadOnly || !!overrideProps.readOnly}
-          disabled={rootDisabled || node.isDisabled || !!overrideProps.disabled}
+          readOnly={readOnly}
+          disabled={disabled}
           inputGeneration={generation}
           inputSelection={selection}
           jsonSchema={node.jsonSchema as JSONSchema}
@@ -211,21 +217,28 @@ export const FieldInputBridge = memo(
           name={node.name}
           path={node.path}
           nullable={node.nullable}
-          errors={node.errors}
-          errorVisible={errorVisible}
           watchValues={node.watchValues}
           ChildFields={ChildFields}
           context={context}
         />
-        {revealVersion !== undefined && (
-          <ErrorRevealSubscriber
-            node={node}
-            version={revealVersion}
-            onRelease={rerender}
-          />
-        )}
-        {lifecycleRender}
+        {position.detector}
       </div>
+    );
+    return Frame ? (
+      <Frame
+        node={node}
+        path={node.path}
+        name={node.name}
+        jsonSchema={node.jsonSchema}
+        required={required}
+        readOnly={readOnly}
+        disabled={disabled}
+        context={context}
+      >
+        {input}
+      </Frame>
+    ) : (
+      input
     );
   },
 );

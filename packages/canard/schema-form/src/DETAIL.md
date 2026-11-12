@@ -12,11 +12,9 @@ GOAL-015·017·018·019·020·022·050·051. 일관성·투명성·예측가능�
 
 GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 생산 경로의 비용을 줄이기 위해 규칙의 모든 탈락을 공개 진단으로 만들지 않으며, 제어의 로컬 범위를 조상 잠금 상속으로 넓히지 않습니다. 대신 각 소유 문서에서 선택의 한계와 이유를 명시합니다. 일반 쓰기와 로드를 혼동하여 왕복 비동등성을 재채움으로 설명하지 않습니다.
 
-### 예약 스키마 어휘의 단일 소유 / Reserved schema vocabulary
+### 예약 스키마 어휘의 단일 소유
 
-예약 키와 얕은 허용 형은 `constants/reservedSchemaKeys.ts`에서만 선언합니다. 엔진과 React 바인딩의 최저 공통 소유자가 이 패키지이므로 이 상위 organ을 직접 소비하고 core의 바인딩 표면을 넓히지 않습니다. 키 추가는 작성 계약 변경이므로 검증·경고·식 목록이 따로 드리프트하지 않도록 파생하며, 작성 타입 소유자가 양방향 키 일치를 검사합니다.
-
-Reserved keys and accepted shallow shapes have one declaration in the ancestor constant. Engine and binding consumers derive their enumerations from it; adding a reserved key changes the authoring contract and must not drift between validation, warnings and expression selection. Type owners check key equality in both directions without moving authoring types or widening core.
+예약 키와 얕은 허용 형은 `constants/reservedSchemaKeys.ts`에서만 선언합니다. 엔진과 React 바인딩의 최저 공통 소유자가 이 패키지이므로 이 상위 organ을 직접 소비하고 core의 바인딩 표면을 넓히지 않습니다. 키 추가는 작성 계약 변경이므로 검증·경고·식 목록이 따로 드리프트하지 않도록 파생하며, 작성 타입 소유자는 작성 타입을 이동하거나 core를 넓히지 않고 양방향 키 일치를 검사합니다.
 
 파생 키 목록은 모듈 초기화 때 준비하고 존재·소속 검사에서 호출별 콜백이나 목록을 할당하지 않습니다. 키 정본을 복제하지 않으면서 선언 수와 쓰기 횟수에 비례하는 임시 할당을 막기 위한 비용 제약입니다. 열거의 타입 복원은 공통 typed-key 유틸과 국소 키 미러 생성에만 둡니다.
 
@@ -62,7 +60,7 @@ TEST-065. 검증기 구현의 속도를 폼이 보증하거나 특정 구현의 
 
 ### migration-guide-identifiers — 소비자가 찾을 수 있는 이행 이름
 
-이행 안내의 소비자 이름·오류 표시 표는 0.16.1 배포 선언의 이름을 출발점으로, 현재 공개 진입점에서 도달하는 이름을 도착점으로 사용합니다. 주석이나 구현 중간 이름은 선언의 증거가 아닙니다. 두 언어의 표는 같은 대응을 유지하며 Form·FormProvider의 이름이 바뀐 prop을 빠뜨리지 않습니다.
+이행 안내의 소비자 이름·오류 표시 표는 배포된 기준 버전의 공개 선언 이름을 출발점으로, 현재 공개 진입점에서 도달하는 이름을 도착점으로 사용합니다. 오류 코드 문자열 행은 기준 배포 번들이 구성하는 그룹 포함 코드 집합과 대조합니다. 주석이나 구현 중간 이름은 선언의 증거가 아닙니다. 두 언어의 표는 같은 대응을 유지하며 Form·FormProvider의 이름이 바뀐 prop을 빠뜨리지 않습니다.
 
 ### conditional-static-load-render — 공개 관측 동등성
 

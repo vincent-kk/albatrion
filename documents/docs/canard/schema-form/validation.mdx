@@ -45,6 +45,8 @@ A public `ValidationIssue` has `dataPath` (JSON Pointer, `''` for root), optiona
 
 Use `presentation.errorMessages` for keyword/default messages and `formatError(error, node, context)` for application formatting. Keyword entries can be strings or detail-value dictionaries. Keep the validator's raw issues available for programmatic decisions; formatting does not change the verdict. External issues supplied by `errors` or node external-error methods also participate in the raw error list.
 
+Inputs and presentation parts that need one field’s formatted feedback use [useFieldErrors](./api-reference#field-errors). Keep validation verdicts separate from that display decision.
+
 ## Validator object contract {#validator-contract}
 
 `validatorFactory` is an object with `compile(root)` and synchronous `compileGuard(root, pointer)`; `release(root)` and `dialect` are optional. `compile` returns a function that returns ordered issues, null, or a promise of either. Throws indicate execution failure, not a validation verdict. `compileGuard` returns a synchronous boolean predicate and can run before whole-schema compilation.

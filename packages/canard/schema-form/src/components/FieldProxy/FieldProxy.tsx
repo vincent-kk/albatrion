@@ -9,10 +9,7 @@ import {
 } from '@winglet/react-utils/hook';
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
-import {
-  FieldNodeEventType,
-  readFieldNodeRevealVersion,
-} from '@/schema-form/core';
+import { FieldNodeEventType } from '@/schema-form/core';
 import { useFieldNode } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import {
@@ -21,27 +18,23 @@ import {
 } from '@/schema-form/providers';
 import {
   ErrorRevealSubscriber,
-  isErrorRevealed,
+  FIELD_ERROR_TRACKING_EVENTS,
+  resolveFieldErrorVisibility,
+  selectFieldErrorMessage,
 } from '@/schema-form/providers/FieldRendererContext';
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { createFieldInputBridge } from './components/FieldInputBridge';
 import type { FieldProxyProps } from './type';
+import { createErrorMessagePart } from './utils/createErrorMessagePart';
+import { createLabelPart } from './utils/createLabelPart';
 import { getRendererBoundary } from './utils/getRendererBoundary';
 import { resolveRequired } from './utils/resolveRequired';
 
-const RERENDERING_EVENT =
-  FieldNodeEventType.UpdateValue |
-  FieldNodeEventType.UpdateState |
-  FieldNodeEventType.UpdateError |
-  FieldNodeEventType.UpdateControlledProperties |
-  FieldNodeEventType.UpdateJsonSchema |
-  FieldNodeEventType.UpdatePath;
-
 /** Resolve one node, track its revisions and isolate its injected rendering surfaces. */
 export const FieldProxy = ({
-  path,
+  path: inputPath,
   node: inputNode,
   onChangeRef,
   onFileAttachRef,
@@ -50,8 +43,8 @@ export const FieldProxy = ({
   FieldRenderer: InputFieldRenderer,
   Wrapper: InputWrapper,
 }: FieldProxyProps) => {
-  const node = useFieldNode(inputNode || path);
-  const refresh = useFieldNodeTracker(node, RERENDERING_EVENT);
+  const node = useFieldNode(inputNode || inputPath);
+  const refresh = useFieldNodeTracker(node, FIELD_ERROR_TRACKING_EVENTS);
   const refreshRef = useReference(refresh);
   const onError = useBoundaryReporter(node?.path);
 
@@ -70,10 +63,30 @@ export const FieldProxy = ({
 
   const {
     FieldRenderer: ContextFieldRenderer,
+    LabelRenderer,
+    ErrorMessageRenderer,
+    InputRenderer,
     formatError: contextFormatError,
     checkErrorVisibility,
     errorVisibility,
   } = useFieldRendererContext();
+
+  const jsonSchema = node?.jsonSchema;
+  const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
+  const required = resolveRequired(
+    overridePropsRef?.current.required,
+    presentation?.required,
+    node?.isRequired ?? false,
+  );
+  const Label = useMemo(
+    () => createLabelPart(LabelRenderer, node, required, jsonSchema),
+    [LabelRenderer, node, jsonSchema, required],
+  );
+  const ErrorMessage = useMemo(
+    () =>
+      createErrorMessagePart(ErrorMessageRenderer, node, required, jsonSchema),
+    [ErrorMessageRenderer, node, jsonSchema, required],
+  );
 
   const Component = InputFieldRenderer || ContextFieldRenderer;
   const [FieldRenderer, RendererBoundary] = useMemo(() => {
@@ -84,13 +97,7 @@ export const FieldProxy = ({
     ) {
       const { node, context, formatError } = props;
       const errorMessage = useMemo(() => {
-        const errors = node.errors;
-        if (!errors) return null;
-        for (let index = 0; index < errors.length; index++) {
-          const message = formatError(errors[index], node, context);
-          if (message !== null) return message;
-        }
-        return null;
+        return selectFieldErrorMessage(node, context, formatError);
         // The revision snapshot invalidates formatting for the same live node identity.
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [node, refreshRef.current, context, formatError]);
@@ -104,17 +111,25 @@ export const FieldProxy = ({
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
   if (!node?.isPresent) return null;
-  const presentation = (node.jsonSchema as JSONSchema).presentation;
-  const live = checkErrorVisibility(node.state);
-  const errorVisible = live && isErrorRevealed(node, errorVisibility, true);
-  const revealVersion =
-    live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
+  const visibility = resolveFieldErrorVisibility(
+    node,
+    checkErrorVisibility,
+    errorVisibility,
+  );
+  const errorVisible = visibility === true;
+  const revealVersion = typeof visibility === 'number' ? visibility : undefined;
   const formatError = errorVisible ? contextFormatError : NULL_FUNCTION;
 
   return (
     <Wrapper key={version}>
       <div data-path={node.path} role={NONE_ROLE} style={DISPLAY_CONTENT}>
-        <RendererBoundary onError={onError} formatError={contextFormatError}>
+        <RendererBoundary
+          onError={onError}
+          formatError={contextFormatError}
+          LabelRenderer={LabelRenderer}
+          ErrorMessageRenderer={ErrorMessageRenderer}
+          InputRenderer={InputRenderer}
+        >
           <FieldRenderer
             {...presentation?.FieldRendererProps}
             {...overridePropsRef?.current}
@@ -128,12 +143,10 @@ export const FieldProxy = ({
             name={node.name}
             value={node.value}
             errors={node.errors}
-            required={resolveRequired(
-              overridePropsRef?.current.required,
-              presentation?.required,
-              node.isRequired,
-            )}
+            required={required}
             Input={Input}
+            Label={Label}
+            ErrorMessage={ErrorMessage}
             errorVisible={errorVisible}
             formatError={formatError}
             context={context}

@@ -36,8 +36,8 @@ export type FeatureFormProps = Pick<
   | 'fieldInputMap'
   | 'validatorFactory'
   | 'FieldRenderer'
-  | 'FormLabelRenderer'
-  | 'FormErrorRenderer'
+  | 'LabelRenderer'
+  | 'ErrorMessageRenderer'
   | 'virtualization'
 >;
 

@@ -50,14 +50,14 @@ How to map Schema Form requirements to UI library components and analyze compati
 
 ### Special Inputs (optional)
 
-| Requirement | type | format/formType | Notes |
+| Requirement | type | format/inputType | Notes |
 |---------|------|-----------------|------|
 | Password | string | password | Masked |
 | Email | string | email | validation |
 | URL | string | url | validation |
 | Color | string | color | Color picker |
-| Slider | number | slider (formType) | Range selection |
-| Radio Group | string/number | radio (formType) + enum | Radio buttons |
+| Slider | number | slider (inputType) | Range selection |
+| Radio Group | string/number | radio (inputType) + enum | Radio buttons |
 
 ## Mapping by UI Library
 
@@ -71,7 +71,7 @@ How to map Schema Form requirements to UI library components and analyze compati
 | Textarea | TextField (multiline) | ✅ Direct | multiline, rows | P1 |
 | String Enum | Select + MenuItem | ✅ Direct | defaultValue, map enum | P1 |
 | Multi Select | Select (multiple) | ✅ Direct | multiple, defaultValue array | P1 |
-| Array | - | ⚠️ Custom | ChildNodeComponents + IconButton | P2 |
+| Array | - | ⚠️ Custom | ChildFields + IconButton | P2 |
 | Date | DatePicker (@mui/x-date-pickers) | ⚠️ Custom | Value conversion (string ↔ Date) | P2 |
 | Time | TimePicker (@mui/x-date-pickers) | ⚠️ Custom | Value conversion | P2 |
 | DateTime | DateTimePicker | ⚠️ Custom | Value conversion | P2 |
@@ -97,7 +97,7 @@ How to map Schema Form requirements to UI library components and analyze compati
 | Textarea | Input.TextArea | ✅ Direct | defaultValue, rows | P1 |
 | String Enum | Select + Option | ✅ Direct | defaultValue, map enum | P1 |
 | Multi Select | Select (mode="multiple") | ✅ Direct | mode="multiple" | P1 |
-| Array | - | ⚠️ Custom | ChildNodeComponents + Button | P2 |
+| Array | - | ⚠️ Custom | ChildFields + Button | P2 |
 | Date | DatePicker | ⚠️ Custom | Value conversion (string ↔ dayjs) | P2 |
 | Time | TimePicker | ⚠️ Custom | Value conversion | P2 |
 | DateTime | DatePicker (showTime) | ⚠️ Custom | Value conversion | P2 |
@@ -122,7 +122,7 @@ How to map Schema Form requirements to UI library components and analyze compati
 | Textarea | TextArea | ✅ Direct | defaultValue, rows | P1 |
 | String Enum | Picker | ⚠️ Custom | Mobile Picker pattern | P1 |
 | Multi Select | CheckList | ✅ Direct | defaultValue array | P1 |
-| Array | - | ⚠️ Custom | ChildNodeComponents | P2 |
+| Array | - | ⚠️ Custom | ChildFields | P2 |
 | Date | DatePicker | ⚠️ Custom | Value conversion, mobile UX | P2 |
 | Time | DatePicker (precision="minute") | ⚠️ Custom | Value conversion | P2 |
 | Password | Input (type="password") | ✅ Direct | type="password" | P2 |
@@ -144,7 +144,7 @@ How to map Schema Form requirements to UI library components and analyze compati
 | Textarea | Textarea | ✅ Direct | defaultValue | P1 |
 | String Enum | Select + option | ✅ Direct | defaultValue, map enum | P1 |
 | Multi Select | - | ⚠️ Custom | Checkbox Group or an external library | P2 |
-| Array | - | ⚠️ Custom | ChildNodeComponents + IconButton | P2 |
+| Array | - | ⚠️ Custom | ChildFields + IconButton | P2 |
 | Date | - | ❌ Missing | Input (type="date") fallback | P3 |
 | Time | - | ❌ Missing | Input (type="time") fallback | P3 |
 | Password | Input (type="password") | ✅ Direct | type="password" | P2 |

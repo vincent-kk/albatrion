@@ -61,7 +61,7 @@ export const normalizeFieldInputDefinitions = (
         : [test.type];
       if (types.includes('integer')) invalid.push('type:integer');
       if (invalid.length && process.env.NODE_ENV !== 'production')
-        console.warn(FormWarningCode.FormTypeTestInvalid, {
+        console.warn(FormWarningCode.FieldInputTestInvalid, {
           definition,
           invalid,
         });

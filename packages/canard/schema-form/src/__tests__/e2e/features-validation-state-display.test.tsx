@@ -49,7 +49,7 @@ const scenarioNamed = (name: string) => {
  * @returns Trimmed message text, or an empty string when nothing is drawn.
  */
 const shown = (container: Element, path: string) =>
-  container.querySelector(`[data-path="${path}"] em`)?.textContent?.trim() ??
+  Array.from(container.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches(`[data-path="${path}"]`))?.textContent?.trim() ??
   '';
 
 /**

@@ -47,7 +47,7 @@ fieldInputMap: {
 Errors exist (`getErrors()` shows them) but the UI is silent:
 
 1. Display policy — set `errorVisibility` on `<Form>` (`ErrorVisibility` enum; never a string) or call `formRef.current?.revealErrors()`. See `validation-ux.md`.
-2. Custom inputs must render messages and gate them with `errorVisible`; ignoring that flag can show errors at the wrong time, while omitting message rendering shows none.
+2. Decide which component owns the message. An input that needs feedback follows [useFieldErrors](validation-ux.md#read-one-fields-errors); a layout can use Form.ErrorMessage. Do not read error props from the input.
 
 ## Composition (oneOf / anyOf)
 

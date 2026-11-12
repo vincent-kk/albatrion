@@ -1,25 +1,25 @@
-# core — Engine and surface composition
+# core — 엔진과 표면의 조합
 
 ## Purpose
 
-Compose the renderer-neutral execution engine and node surface for host bindings.
+호스트 바인딩을 위해 렌더러와 독립적인 실행 엔진과 노드 표면을 조합합니다.
 
 ## Conventions
 
-Name re-exports explicitly. Keep runtime implementation in its owner and presentation values opaque.
+재수출 이름을 명시합니다. 런타임 구현은 소유 모듈에 두고 표현 값은 불투명하게 유지합니다.
 
 ## Boundaries
 
 ### Always do
 
-- Preserve the same tree construction and mount channels for core hosts and React bindings.
-- Keep binding-only settings, validation epochs and lifecycle channels outside the package surface.
+- 코어 호스트와 React 바인딩에 같은 트리 생성·마운트 채널을 유지합니다.
+- 바인딩 전용 설정·검증 epoch·수명 채널은 패키지 표면에 노출하지 않습니다.
 
 ### Ask first
 
-- Changing the host boundary, public node contract, option bits or event timing.
+- 호스트 경계·공개 노드 계약·옵션 비트·사건 시점을 바꿀 때.
 
 ### Never do
 
-- Import React or the application plugin registry, serialize inline presentation values, or mutate caller-owned schemas.
-- Introduce global type augmentation to supply a renderer's schema vocabulary.
+- React나 애플리케이션 플러그인 레지스트리를 가져오거나 인라인 표현 값을 직렬화하거나 호출자 소유 스키마를 변경하지 않습니다.
+- 렌더러의 스키마 어휘를 공급하기 위한 전역 타입 보강을 도입하지 않습니다.

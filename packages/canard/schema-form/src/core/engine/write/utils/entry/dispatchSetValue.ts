@@ -12,14 +12,14 @@ import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
 /**
  * Commit a public value write or mark it within the current batch.
  * @param node - Live or retained target occurrence
- * @param value - Input value or updater evaluated at its call site
+ * @param input - Value or updater evaluated at its call site
  * @param option - Replacement, merge, and automatic-write flags
  * @param source - Binding-only origin carried independently of public flags
  * @returns Nothing; outer entry owns notification and failures
  */
 export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  value: unknown,
+  input: unknown,
   option: WriteOption = WriteOption.Overwrite,
   source?: 'input',
 ): void => {
@@ -34,16 +34,16 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
         { path: node.path, option },
       );
     const marking = isBatchMarking(node);
-    const input =
-      typeof value === 'function'
-        ? value(marking ? readBatchValue(node) : node.local)
-        : value;
+    const value =
+      typeof input === 'function'
+        ? input(marking ? readBatchValue(node) : node.local)
+        : input;
     if (marking) {
       if (node.behavior.type === 'virtual')
-        assertVirtualWriteShape(node, input);
+        assertVirtualWriteShape(node, value);
       (node.rootNode.runtime.batchWrites ??= []).push({
         node,
-        value: input,
+        value,
         option,
         source,
       });
@@ -53,7 +53,7 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
         !(option & WriteOption.Replace);
       writeFieldNode(
         node,
-        input,
+        value,
         merge ? 'callerPartial' : 'callerReplace',
         option,
         source,

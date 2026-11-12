@@ -1,6 +1,6 @@
 # Accessibility Checklist
 
-Required accessibility requirements when developing an @canard/schema-form plugin.
+Accessibility requirements for an @canard/schema-form plugin. Label fragments use the bound Label from FieldRendererProps; options groups reference the title supplied by that bound Label.
 
 ## Required ARIA Attributes
 
@@ -12,14 +12,14 @@ Required accessibility requirements when developing an @canard/schema-form plugi
   id={path}                          // Unique ID
   name={name}                        // Used on form submit
   required={required}                // HTML required
-  
+
   // ✅ ARIA attributes
   aria-required={required}           // For screen readers
   aria-invalid={hasError}            // Error state
   aria-describedby={hasError ? `${path}-error` : undefined}  // Links the error message
-  
+
   // ✅ Label association
-  // Connect FormLabel htmlFor={path} with id={path}
+  // Connect LabelRenderer htmlFor={path} with id={path}
 />
 ```
 
@@ -46,11 +46,11 @@ Required accessibility requirements when developing an @canard/schema-form plugi
 
 ```typescript
 // Label
-<FormLabel
+<Label
   htmlFor={path}  // ✅ Connected to the input ID
 >
   {label}
-</FormLabel>
+</Label>
 
 // Input
 <TextField
@@ -91,10 +91,10 @@ Required accessibility requirements when developing an @canard/schema-form plugi
 
 ```typescript
 // ✅ Clear label
-<FormLabel htmlFor="email">Email Address</FormLabel>
+<Label>Email Address</Label>
 
 // ❌ Vague label
-<FormLabel htmlFor="input1">Input</FormLabel>
+<Label>Input</Label>
 ```
 
 ### Clear Error Messages
@@ -147,7 +147,7 @@ Required accessibility requirements when developing an @canard/schema-form plugi
 - **Large text**: at least 3:1
 - **UI components**: at least 3:1
 
-## Accessibility Requirements by FormTypeInput
+## Accessibility Requirements by FieldInput
 
 ### String, Number, Textarea
 
@@ -210,7 +210,6 @@ Required accessibility requirements when developing an @canard/schema-form plugi
   aria-describedby={hasError ? `${path}-error` : undefined}
   aria-required={required}
 >
-  <FormLabel id={`label:${path}`}>{label}</FormLabel>
   {options.map(option => (
     <FormControlLabel
       key={option.value}
@@ -227,11 +226,11 @@ Required accessibility requirements when developing an @canard/schema-form plugi
 ```typescript
 <Box role="group" aria-labelledby={`label:${path}`}>
   <Typography id={`label:${path}`}>{label}</Typography>
-  
+
   {items.map((item, index) => (
     <Box key={index} role="listitem">
       {/* Child component */}
-      
+
       <IconButton
         aria-label={`Remove item ${index + 1}`}  // ✅ Clear label
         onClick={() => removeItem(index)}
@@ -240,7 +239,7 @@ Required accessibility requirements when developing an @canard/schema-form plugi
       </IconButton>
     </Box>
   ))}
-  
+
   <Button
     aria-label="Add new item"  // ✅ Clear label
     onClick={addItem}
@@ -261,8 +260,8 @@ Required accessibility requirements when developing an @canard/schema-form plugi
 // Example: jest-axe
 import { axe } from 'jest-axe';
 
-test('FormTypeInputString should have no accessibility violations', async () => {
-  const { container } = render(<FormTypeInputString {...props} />);
+test('FieldInputString should have no accessibility violations', async () => {
+  const { container } = render(<FieldInputString {...props} />);
   const results = await axe(container);
   expect(results).toHaveNoViolations();
 });

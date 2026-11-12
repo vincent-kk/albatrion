@@ -1,12 +1,14 @@
 // Bundled by runtimeCounts.mjs; this current API fixture drives the archived count diagnostic.
 
 /* eslint-disable react-refresh/only-export-components -- Bundled for Node profiling diagnostics without HMR. */
-import { createRef, useState } from 'react';
+import { type PropsWithChildren, createRef, useState } from 'react';
 
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/profiling';
 
 import { Form } from '@/schema-form/components/Form';
+import { ExternalFormContextProvider as FormProvider } from '@/schema-form/providers';
+import type { FormatError } from '@/schema-form/types';
 
 export const registry = new Map<string, (value: unknown) => void>();
 
@@ -56,6 +58,8 @@ const arraySchema = {
   properties: { arr: { type: 'array', items: { type: 'string' } } },
 } as const;
 export let setHostProps: (props: any) => void = () => {};
+/** Request a provider-only update with a fresh formatter on its next render. */
+export let rerenderProvider: () => void = () => {};
 
 /**
  * Mount the Form surface for controlled or uncontrolled scripted writes.
@@ -80,17 +84,48 @@ export function mount(mode: 'ctl' | 'unctl', scenario: 'flat' | 'array') {
     onChange: () => {},
     context: { k: 1 },
   };
+  /** Keep the Form element stable while the wrapping provider changes its formatter. */
+  function ProviderHost({ children }: PropsWithChildren) {
+    const [version, setVersion] = useState(0);
+    rerenderProvider = () => setVersion((previous) => previous + 1);
+    return (
+      <FormProvider
+        formatError={version ? (error) => error.message : undefined}
+      >
+        {children}
+      </FormProvider>
+    );
+  }
   /** Render the form with the current diagnostic overrides. */
   function Host() {
-    const [overrides, setOverrides] = useState({});
+    const [overrides, setOverrides] = useState<{ inlineFormatError?: boolean }>(
+      {},
+    );
     setHostProps = (next) =>
       setOverrides((previous) => ({ ...previous, ...next }));
-    return <Form ref={ref} {...props} {...overrides} />;
+    return (
+      <Form
+        ref={ref}
+        {...props}
+        {...overrides}
+        formatError={
+          overrides.inlineFormatError
+            ? (error: Parameters<FormatError>[0]) => error.message
+            : undefined
+        }
+      />
+    );
   }
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = createRoot(container);
-  flushSync(() => root.render(<Host />));
+  flushSync(() =>
+    root.render(
+      <ProviderHost>
+        <Host />
+      </ProviderHost>,
+    ),
+  );
   return {
     ref,
     container,

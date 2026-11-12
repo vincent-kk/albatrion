@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -33,21 +34,19 @@ const Renderer = ({
     </span>
   </>
 );
-const Input = ({
-  path,
-  ChildFields,
-  errorVisible,
-  errors,
-}: FieldInputProps) => (
-  <>
-    <span data-testid={'input:' + path} data-visible={String(errorVisible)}>
-      {errorVisible ? errors[0]?.message : ''}
-    </span>
-    {ChildFields.map((Child) => (
-      <Child key={Child.key} />
-    ))}
-  </>
-);
+const Input = ({ path, ChildFields, node }: FieldInputProps) => {
+  const { errorVisible, errors } = useFieldErrors(node);
+  return (
+    <>
+      <span data-testid={'input:' + path} data-visible={String(errorVisible)}>
+        {errorVisible ? errors[0]?.message : ''}
+      </span>
+      {ChildFields.map((Child) => (
+        <Child key={Child.key} />
+      ))}
+    </>
+  );
+};
 const schema = {
   type: 'object',
   properties: {

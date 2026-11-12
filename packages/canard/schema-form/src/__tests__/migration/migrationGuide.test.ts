@@ -4,6 +4,7 @@ import { beforeAll, expect, it } from 'vitest';
 
 import { hasMigrationIdentifier } from './helpers/hasMigrationIdentifier';
 import { parseMigrationIdentifiers } from './helpers/parseMigrationIdentifiers';
+import { readConstructedErrorCodes } from './helpers/readConstructedErrorCodes';
 import { readDeclarationSurface } from './helpers/readDeclarationSurface';
 import { readMigrationRows } from './helpers/readMigrationRows';
 
@@ -18,6 +19,8 @@ const guides = [
 ].map((path) => readMigrationRows(join(repositoryRoot, path)));
 /** One compiler program per release keeps the check's memory and startup cost bounded. */
 let surfaces: Map<string, string[]>[];
+/** Bundle constructor calls provide evidence for error strings absent from declarations. */
+let legacyErrorCodes: Set<string>;
 
 beforeAll(() => {
   // This package declares the pinned 0.16.1 baseline in its own devDependencies.
@@ -28,22 +31,30 @@ beforeAll(() => {
     ),
     join(packageRoot, 'src/index.ts'),
   ].map((entry) => readDeclarationSurface(entry, packageRoot));
+  legacyErrorCodes = readConstructedErrorCodes(
+    join(
+      repositoryRoot,
+      'node_modules/@canard/schema-form_0.16.1/dist/index.mjs',
+    ),
+  );
 }, 60000);
 
 it('keeps Korean API conversion rows identical to English', () => {
   expect(guides[1]).toEqual(guides[0]);
 });
 
-it('resolves every old and new API identifier in both migration tables and languages', () => {
+it('resolves API identifiers and constructed error codes in both migration tables and languages', () => {
   const missing: string[] = [];
   for (const [language, rows] of guides.entries())
     for (const row of rows)
       for (const [side, cell] of row.entries())
-        for (const identifier of parseMigrationIdentifiers(cell))
+        for (const identifier of parseMigrationIdentifiers(cell)) {
+          if (side === 0 && legacyErrorCodes.has(identifier)) continue;
           if (!hasMigrationIdentifier(surfaces[side], identifier, side === 0))
             missing.push(
               `${language === 0 ? 'en' : 'ko'} ${side === 0 ? '0.x' : 'current'}: ${identifier}`,
             );
+        }
   expect(missing).toEqual([]);
 });
 

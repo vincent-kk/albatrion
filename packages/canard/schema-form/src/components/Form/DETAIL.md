@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+Form.Label과 Form.ErrorMessage는 자기 FieldProxy의 묶인 부품을 사용하며 바깥 label·span을 만들지 않습니다. 노드가 없으면 빈 라벨도 남기지 않습니다. 조각의 context는 명시적으로 부품에 전달하고 표현 override의 생략과 undefined를 구별합니다.
+
 Form의 설정은 불변 참조 교체로 전달합니다. `jsonSchema`·`defaultValue`는 mount·reset 입력이며, 렌더러·포맷터·입력 맵·정의와 실행 기본값은 각 소유자의 live 계약을 따릅니다. 함수 children의 schema·node 일치는 [FormCore](components/FormCore/DETAIL.md), 입력 선택 수명은 [FieldInputsContext](../../providers/FieldInputsContext/DETAIL.md), 표시 설정은 [FieldRendererContext](../../providers/FieldRendererContext/DETAIL.md)에서 다룹니다.
 
 폼 전체 잠금은 [InputControlContext](../../providers/InputControlContext/DETAIL.md)의 UI 계약입니다. core 명령형 쓰기를 잠그는 정책으로 확대하지 않습니다. `onError`의 기록과 검증 판정은 [오류 계약](../../errors/DETAIL.md)에 따라 서로 다른 채널로 유지합니다(SURFACE-012).

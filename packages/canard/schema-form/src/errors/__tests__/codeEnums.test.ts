@@ -5,6 +5,10 @@ import { FormWarningCode } from '../constants/FormWarningCode';
 
 describe('public diagnostic code strings, order and severity', () => {
   it('ERROR-164 preserves the ordered error code contract', () => {
+    expect(FormErrorCode).toHaveProperty(
+      'FieldInputMap',
+      'SCHEMA_FORM_ERROR.FIELD_INPUT_MAP',
+    );
     expect(Object.values(FormErrorCode)).toEqual([
       'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA',
       'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA',
@@ -28,7 +32,7 @@ describe('public diagnostic code strings, order and severity', () => {
       'SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED',
       'SCHEMA_FORM_ERROR.LISTENER_THREW',
       'SCHEMA_FORM_ERROR.MULTIPLE_ERRORS',
-      'SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP',
+      'SCHEMA_FORM_ERROR.FIELD_INPUT_MAP',
       'SCHEMA_FORM_ERROR.INVALID_ERROR_VISIBILITY',
       'UNHANDLED_ERROR.REGISTER_PLUGIN',
       'SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION',
@@ -53,6 +57,10 @@ describe('public diagnostic code strings, order and severity', () => {
   });
 
   it('ERROR-164 / ERROR-199 preserves the ordered warning code contract', () => {
+    expect(FormWarningCode).toHaveProperty(
+      'FieldInputTestInvalid',
+      'SCHEMA_FORM_WARNING.FIELD_INPUT_TEST_INVALID',
+    );
     expect(Object.values(FormWarningCode)).toEqual([
       'SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM',
       'SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM',
@@ -68,7 +76,7 @@ describe('public diagnostic code strings, order and severity', () => {
       'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
       'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE',
       'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE',
-      'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID',
+      'SCHEMA_FORM_WARNING.FIELD_INPUT_TEST_INVALID',
       'SCHEMA_FORM_WARNING.MISFIT',
       'SCHEMA_FORM_WARNING.DIALECT_MISMATCH',
       'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',

@@ -13,6 +13,8 @@ Form.Label은 입력 선택을 몰라도 접근 가능한 제목을 연결할 �
 
 ### Always do
 
+- 바깥 label 없이 묶인 Label에 명시적 주소·표현 props·context를 전달하여 중첩을 막습니다.
+
 - 필드 해석과 오류 격리는 FieldProxy에 맡겨 같은 정책의 이중 구현을 막습니다.
 
 ### Ask first

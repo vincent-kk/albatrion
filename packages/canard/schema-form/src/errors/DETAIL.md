@@ -10,7 +10,7 @@
 
 `FormErrorCode.InvalidErrorVisibility`는 잘못된 JavaScript 오류 표시 정책의 구성 오류입니다. 렌더 중 보관하고 커밋에서 origin `load`로 한 번 보고하며 렌더 경계의 RenderFailed로 변환하지 않습니다. 동일 invalid 값의 재렌더·StrictMode는 중복 발생이 아닙니다.
 
-- `FormTypeInputMap`은 `^`로 시작한 입력 맵 정규식의 컴파일 실패를 나타내는 치명적 구성 오류입니다. 폼은 fallback을 유지하며 확정 로드에서 `level: error`·`origin: load`로 한 번 보고합니다. 사용자 입력 컴포넌트 자체의 throw는 원래 오류에 같은 코드가 있어도 `RenderFailed`·`render`로 격리합니다.
+- `FieldInputMap`은 `^`로 시작한 입력 맵 정규식의 컴파일 실패를 나타내는 치명적 구성 오류입니다. 폼은 fallback을 유지하며 확정 로드에서 `level: error`·`origin: load`로 한 번 보고합니다. 사용자 입력 컴포넌트 자체의 throw는 원래 오류에 같은 코드가 있어도 `RenderFailed`·`render`로 격리합니다.
 공개 코드의 정본은 `FormErrorCode`와 `FormWarningCode`입니다. 내부 그룹·specific 표와 그룹별 파생 표는 클래스 구성과 코드 일관성 검사를 위한 것이며 별도 공개 코드 체계가 아닙니다. 클래스의 `code`·`group`·`specific`·`name`과 기록의 코드는 같은 분류를 가리켜야, 소비자가 객체와 기록을 서로 다른 사건으로 해석하지 않습니다.
 
 `FormErrorReporter`는 React를 모르는 core와 관찰자를 연결하는 데이터 경계입니다. 소비자 유무를 묻는 기능은 기록·경고의 불필요한 비용을 피하기 위한 것이며 오류를 무시해도 된다는 허가가 아닙니다. 실제 비용·환경 예외는 [쓰기의 보고 계약](../core/engine/write/DETAIL.md)을 따릅니다.

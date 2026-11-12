@@ -57,11 +57,10 @@ export interface FieldInputProps<
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
   nullable: Node['nullable'];
-  /** Errors of field node assigned to FieldInput Component */
-  errors: Node['errors'];
-  /** Whether to show errors for this field.
-   * Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
-  errorVisible: boolean;
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   /** Values of the paths listed in the schema's `controls.watch`, in order */
   watchValues: WatchValues;
   /** Default value of FieldInput Component */
@@ -129,9 +128,10 @@ export interface UnknownFieldInputProps {
   schemaType: FieldNode['schemaType'];
   misfit: boolean;
   nullable: boolean;
-  errors: readonly any[];
-  /** Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
-  errorVisible: boolean;
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   watchValues: readonly any[];
   defaultValue: any;
   value: any;
@@ -150,6 +150,10 @@ export type InferFieldInputProps<Value> = Value extends AllowedValue
   : UnknownFieldInputProps;
 
 export type ChildFieldProps<Value extends AllowedValue = any> = {
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
@@ -167,6 +171,10 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
 
 /** Presentation overrides cannot replace the binding-owned callback channels. */
 export type OverridableFieldInputProps = {
+  /** @deprecated Use useFieldErrors(node). */
+  errors?: never;
+  /** @deprecated Use useFieldErrors(node). */
+  errorVisible?: never;
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;

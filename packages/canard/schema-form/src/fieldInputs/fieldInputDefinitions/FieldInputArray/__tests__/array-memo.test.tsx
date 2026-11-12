@@ -81,8 +81,6 @@ it('skips list rendering for value-only props and observes style and schema prop
     name: '',
     path: '',
     nullable: false,
-    errors: [],
-    errorVisible: false,
     watchValues: [],
     defaultValue: undefined,
     value: ['a'],

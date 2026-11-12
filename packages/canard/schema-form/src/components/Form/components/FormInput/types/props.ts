@@ -10,6 +10,8 @@ import type {
 
 export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
+  /** Skip the registered input frame; changing this remounts the field. */
+  unwrapped?: boolean;
   FieldInput?: ComponentType<FieldInputProps<Value>>;
 } & OverridableFieldInputProps;
 

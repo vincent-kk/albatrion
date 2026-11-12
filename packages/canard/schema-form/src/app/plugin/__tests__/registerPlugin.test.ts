@@ -70,10 +70,10 @@ describe('registerPlugin', () => {
   it('동일 플러그인의 변경된 함수 참조를 다시 반영한다', () => {
     const first = () => null;
     const second = () => null;
-    const mutable = { FormLabelRenderer: first };
+    const mutable = { LabelRenderer: first };
     registerPlugin(mutable);
-    mutable.FormLabelRenderer = second;
+    mutable.LabelRenderer = second;
     registerPlugin(mutable);
-    expect(PluginManager.FormLabelRenderer).toBe(second);
+    expect(PluginManager.LabelRenderer).toBe(second);
   });
 });

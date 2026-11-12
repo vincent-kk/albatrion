@@ -1,25 +1,25 @@
 # CLAUDE.md
 
-`@lerx/promise-modal` — Promise 기반 React 모달 유틸리티. `alert`, `confirm`, `prompt`를 React 컴포넌트 내외부에서 모두 사용 가능.
+`@lerx/promise-modal` is a Promise-based React modal utility. Use `alert`, `confirm`, and `prompt` both inside and outside React components.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트 (jsdom, development React) — 루트 vitest에 위임
-yarn test:prod         # 전체 스위트를 production React로 재실행 (*.prod.test.* 포함)
-yarn lint              # ESLint (루트 바이너리 필요 시 `yarn run -T eslint` 사용)
+yarn build             # ESM + CJS build + type declarations
+yarn test              # Vitest tests (jsdom, development React) — Delegates to root Vitest
+yarn test:prod         # Runs the entire suite with production React (including *.prod.test.*)
+yarn lint              # ESLint (use `yarn run -T eslint` when the root binary is needed)
 yarn storybook         # Storybook dev (port 6006)
-yarn size-limit        # 번들 크기 확인
+yarn size-limit        # Checks bundle size
 ```
 
-> test/test:prod 스크립트는 `yarn run -T`로 루트 워크스페이스의 vitest 바이너리에
-> 위임됩니다(빌드 도구 일원화 설계). 서브패키지 분리 시 devDependencies로 전환하세요.
+> The test/test:prod scripts delegate to the root workspace Vitest binary through `yarn run -T`
+> to centralize build tooling. Switch to devDependencies when separating the subpackage.
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user
@@ -30,27 +30,27 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Architecture
 
 ```
 src/
 ├── index.ts                      # Public API
-├── core/handle/                  # alert / confirm / prompt 함수
+├── core/handle/                  # alert / confirm / prompt functions
 ├── core/node/                    # AbstractNode, AlertNode, ConfirmNode, PromptNode
-├── app/ModalManager.ts           # 싱글톤 — 모달 생명주기, DOM 앵커, 스타일 주입
-├── bootstrap/BootstrapProvider/  # ModalProvider 컴포넌트
-├── providers/                    # Context 분리 (설정, 모달 관리, 사용자 데이터)
-└── components/                   # Anchor, Background, Foreground 등 UI
+├── app/ModalManager.ts           # Singleton — modal lifecycle, DOM anchors, style injection
+├── bootstrap/BootstrapProvider/  # ModalProvider component
+├── providers/                    # Separate contexts (configuration, modal management, user data)
+└── components/                   # UI including Anchor, Background, Foreground
 ```
 
 ## Key Design
 
-- **Promise API**: 모달 함수가 Promise 반환 → 사용자 인터랙션으로 resolve
-- **Singleton**: `ModalManager`가 전역 상태 관리
-- **Styling**: `@winglet/style-utils`로 런타임 CSS 주입 (polynomial hashing 스코핑)
+- **Promise API**: Modal functions return Promises → resolve through user interaction
+- **Singleton**: `ModalManager` manages global state
+- **Styling**: Runtime CSS injection through `@winglet/style-utils` (polynomial hashing scoping)
 
 ## Dependencies
 

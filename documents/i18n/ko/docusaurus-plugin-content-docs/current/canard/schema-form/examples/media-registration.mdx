@@ -7,17 +7,17 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 # 미디어 등록
 
-이 미디어 목록 데모는 gate 분기·배열·enum 입력을 함께 사용합니다.
+이 미디어 목록 데모는 게이트 분기·배열·enum 입력을 함께 사용합니다.
 
 ## 라이브 예제 {#live-demo}
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/MediaRegistrationDemo')} />
 
-## 바이너리 파일과 JSON metadata {#files}
+## 바이너리 파일과 JSON 메타데이터 {#files}
 
-`onFileAttach`는 File·File[]를 별도 저장하며 JSON metadata를 쓰지 않습니다. 이 입력은 onChange로 파일 이름을 발행합니다. onFileAttach(undefined)는 현재 경로를 제거하고 입력 cleanup도 이를 제거합니다. 숨김 필드의 구조 유지와 실제 입력 제거는 다릅니다.
+`onFileAttach`는 File·File[]를 별도 저장하며 JSON 메타데이터를 쓰지 않습니다. 이 입력은 onChange로 파일 이름을 발행합니다. onFileAttach(undefined)는 현재 경로를 제거하고 입력 정리도 이를 제거합니다. 숨김 필드의 구조 유지와 실제 입력 제거는 다릅니다.
 
-handle은 단일·다중 첨부를 `Map<string, File[]>`로 정규화합니다. `/items/0/file` 같은 map 경로를 그대로 FormData 키로 쓰고 bracket 표기로 바꾸지 마십시오. endpoint는 애플리케이션 예제이며 서버에서 제공해야 합니다.
+handle은 단일·다중 첨부를 `Map<string, File[]>`로 정규화합니다. `/items/0/file` 같은 맵 경로를 그대로 FormData 키로 쓰고 대괄호 표기로 바꾸지 마십시오. 엔드포인트는 애플리케이션 예제이며 서버에서 제공해야 합니다.
 
 ```tsx
 import { useRef } from 'react';

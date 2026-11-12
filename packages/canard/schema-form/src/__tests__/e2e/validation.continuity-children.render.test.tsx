@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -33,11 +34,14 @@ const Renderer = ({
     </span>
   </>
 );
-const Leaf = ({ path, errorVisible, errors }: FieldInputProps) => (
-  <span data-testid={'input:' + path}>
-    {errorVisible ? errors[0]?.message : ''}
-  </span>
-);
+const Leaf = ({ path, node }: FieldInputProps) => {
+  const { errorVisible, errors } = useFieldErrors(node);
+  return (
+    <span data-testid={'input:' + path}>
+      {errorVisible ? errors[0]?.message : ''}
+    </span>
+  );
+};
 
 it('IR-6 Y3 hidden children stay in the aggregate while enabled re-shows await release', async () => {
   const ref = createRef<FormHandle>();

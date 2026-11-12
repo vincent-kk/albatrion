@@ -39,7 +39,7 @@
 
 ### serialization-surface — 직렬화 공개 경계
 
-- 일반 JSON 직렬화는 플랫폼 API를 사용하고, 패키지는 graph codec과 목적별 fingerprint 생성기만 object/root named export로 제공합니다. 별도 package subpath는 추가하지 않습니다.
+- 일반 JSON 직렬화는 플랫폼 API를 사용하고, 패키지는 graph codec과 목적별 fingerprint 생성기만 object/root에서 이름을 명시한 내보내기로 제공합니다. 별도 package subpath는 추가하지 않습니다.
 - graph token 생성은 serialization 내부가 소유하며 fingerprint runtime은 graph encoder나 parser에 의존하지 않습니다.
 - 0.16.0에서 제거한 범용 serializer 이름과 구현 helper는 공개 object/root 배럴에 노출하지 않습니다.
 

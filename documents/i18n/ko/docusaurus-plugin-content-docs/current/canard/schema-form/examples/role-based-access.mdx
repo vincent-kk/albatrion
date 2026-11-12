@@ -12,10 +12,10 @@ import LazyDemo from '@site/src/components/LazyDemo';
 :::info 주요 기능
 - `controls.visible` — UI에서 숨김, 데이터는 보존
 - `controls.active` — UI에서 숨김, 데이터도 제거
-- Guest: 최소한의 필드만 표시
-- Member: 멤버십 관련 필드 표시
-- Admin: 관리자 권한 및 코드 필드 표시
-- Form values를 비교하여 데이터 차이 확인
+- 게스트(`guest`): 최소한의 필드만 표시
+- 회원(`member`): 멤버십 관련 필드 표시
+- 관리자(`admin`): 관리자 권한 및 코드 필드 표시
+- Form 값을 비교하여 데이터 차이 확인
 :::
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/RoleBasedAccessDemo')} />

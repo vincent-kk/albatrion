@@ -8,7 +8,7 @@
 
 parseGraph는 unknown을 반환합니다. 잘못된 JSON 문법은 SyntaxError, 형식·payload·reference·중복·자원 한도 위반은 TypeError입니다. UTF-8 16 MiB 검사는 JSON.parse 이전에 수행하며 wire 전체 검증 후 복원 node를 할당합니다. node 100,000개, entry 1,000,000개, 단일/누적 array length 1,000,000을 제한하며 hole과 도달 불가능 node도 합산합니다.
 
-object/array 속성은 모든 키에 대해 writable/enumerable/configurable own data property로 정의합니다. RegExp.lastIndex는 intrinsic 슬롯에 복원합니다. 사용자 constructor/reviver를 실행하지 않습니다. 검증·복원 함수는 이 프랙탈 내부에서만 사용합니다.
+object/array 속성은 모든 키에 대해 writable/enumerable/configurable인 자체 데이터 속성으로 정의합니다. RegExp.lastIndex는 intrinsic 슬롯에 복원합니다. 사용자 constructor/reviver를 실행하지 않습니다. 검증·복원 함수는 이 프랙탈 내부에서만 사용합니다.
 
 ## Acceptance Criteria
 

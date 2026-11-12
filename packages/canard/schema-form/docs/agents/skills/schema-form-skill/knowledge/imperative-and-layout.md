@@ -1,6 +1,6 @@
 # Imperative Control and Custom Layout
 
-Driving a form from outside the schema: the `FormHandle` ref and the `Form.Input`/`Form.Label`/`Form.Error`/`Form.Render` layout primitives. Full method/prop shapes live in `dist/*.d.ts` — this file covers what the types do not say.
+Driving a form from outside the schema: the `FormHandle` ref and the `Form.Input`/`Form.Label`/`Form.ErrorMessage`/`Form.Render` layout primitives. Full method/prop shapes live in `dist/*.d.ts` — this file covers what the types do not say.
 
 For custom focus targets and mounted-target eligibility, follow the [custom input contract](field-input.md#custom-input-contract).
 
@@ -36,7 +36,7 @@ Inside `<Form>`, path-scoped primitives take over layout while the plugin still 
   <div className="row">
     <Form.Label path="/name" />
     <Form.Input path="/name" />
-    <Form.Error path="/name" />
+    <Form.ErrorMessage path="/name" />
   </div>
 </Form>
 ```
@@ -75,3 +75,7 @@ Use sibling Forms under FormProvider for independent forms sharing default rende
 Changing `jsonSchema` or `defaultValue` alone preserves the current tree and edits. Reset reads the latest committed props; an equivalent schema can reuse the tree, while a different schema can replace it. Function children receive the schema of their current tree, including before reset applies a new schema prop.
 `rebuild()` builds a new tree from the current schema; re-read nodes from the handle afterwards. It reloads the committed `defaultValue`, so edits made before it are discarded; supplying a new validator does the same. It does not recompile validation for the same schema object and validator; a cached compile failure and its one retry are described in [validation failures](validation-failures.md).
 Keep stable schema references to avoid unnecessary equivalence checks and clarify which schema reset will load; prop replacement alone does not discard editing state.
+
+## Standalone part roots
+
+Form.Label accepts children for explicit label content. Form.Label and Form.ErrorMessage use the registered part's own root; neither adds an outer label or span. If a path is absent, Form.Label omits htmlFor and id; pass an absolute path to associate a label with an input. Form.ErrorMessage renders its root even without a message, unlike the default group. For bound-part defaults and frame bypass, follow [part assembly](field-input.md#bound-parts-and-input-frames).

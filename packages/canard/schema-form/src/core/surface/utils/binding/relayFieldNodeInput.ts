@@ -14,6 +14,6 @@ export const relayFieldNodeInput = (
   node: FieldNode,
   input: unknown,
   option: SetValueOption,
-  relay: (input: unknown, option: SetValueOption) => void,
+  relay: (value: unknown, option: SetValueOption) => void,
 ): void =>
   dispatchRelayInput(requireRuntimeFieldNode(node), input, option, relay);

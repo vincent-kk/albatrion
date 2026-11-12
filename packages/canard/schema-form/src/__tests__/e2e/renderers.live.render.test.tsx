@@ -60,18 +60,18 @@ it.each(['form', 'provider'] as const)(
 );
 
 it.each([
-  'FormLabelRenderer',
-  'FormInputRenderer',
-  'FormErrorRenderer',
+  'LabelRenderer',
+  'InputRenderer',
+  'ErrorMessageRenderer',
 ] as const)('updates %s from Form and Provider', (key) => {
   const PieceA = () => <span>piece-a</span>;
   const PieceB = () => <span>piece-b</span>;
   const Piece =
-    key === 'FormLabelRenderer'
+    key === 'LabelRenderer'
       ? Form.Label
-      : key === 'FormInputRenderer'
+      : key === 'InputRenderer'
         ? Form.Input
-        : Form.Error;
+        : Form.ErrorMessage;
   const element = (local: FormProps, external: FormProps) => (
     <FormProvider {...external}>
       <Form {...local} validationMode={ValidationMode.None}>

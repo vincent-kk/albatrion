@@ -3,9 +3,12 @@ import type { ComponentType } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type {
+  ErrorMessageRendererProps,
   FieldInputDefinition,
   FieldRendererProps,
   FormatError,
+  InputRendererProps,
+  LabelRendererProps,
   ValidateFunction,
 } from '@/schema-form/types';
 import type { JSONSchema } from '@/schema-form/types';
@@ -22,7 +25,7 @@ import type { JSONSchema } from '@/schema-form/types';
  * ```typescript
  * const myPlugin: SchemaFormPlugin = {
  *   FieldRenderer: CustomFormField,
- *   FormLabelRenderer: CustomFormLabel,
+ *   LabelRenderer: CustomFormLabel,
  * };
  * ```
  *
@@ -38,8 +41,8 @@ import type { JSONSchema } from '@/schema-form/types';
  *       <Input />
  *     </Form.Item>
  *   ),
- *   FormLabelRenderer: ({ jsonSchema }) => (
- *     <span>{jsonSchema.title || jsonSchema.name}</span>
+ *   LabelRenderer: ({ children, htmlFor, id }) => (
+ *     <label htmlFor={htmlFor} id={id}>{children}</label>
  *   ),
  *
  *   // Custom input types for Ant Design
@@ -73,9 +76,9 @@ import type { JSONSchema } from '@/schema-form/types';
  * const fullPlugin: SchemaFormPlugin = {
  *   // Render components
  *   FieldRenderer: CustomFormField,
- *   FormLabelRenderer: CustomFormLabel,
- *   FormInputRenderer: CustomFormInput,
- *   FormErrorRenderer: CustomFormError,
+ *   LabelRenderer: CustomFormLabel,
+ *   InputRenderer: CustomFormInput,
+ *   ErrorMessageRenderer: CustomFormError,
  *
  *   // Input type definitions
  *   fieldInputDefinitions: [
@@ -112,11 +115,11 @@ export interface SchemaFormPlugin {
   /** Form.Field Component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  LabelRenderer?: ComponentType<LabelRendererProps>;
   /** Form.Input Component */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
-  /** Form.Error Component */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  InputRenderer?: ComponentType<InputRendererProps>;
+  /** Form.ErrorMessage Component */
+  ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   /** FieldInputDefinition */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */

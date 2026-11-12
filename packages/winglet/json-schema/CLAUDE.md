@@ -44,8 +44,8 @@ yarn publish:npm
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json-schema --agent=claude --scope=user
@@ -56,8 +56,8 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/json-
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Architecture Overview
 

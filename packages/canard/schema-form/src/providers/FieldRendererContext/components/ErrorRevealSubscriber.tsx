@@ -1,10 +1,6 @@
-import { useEffect } from 'react';
+import type { FieldNode } from '@/schema-form/core';
 
-import {
-  type FieldNode,
-  readFieldNodeRevealVersion,
-  subscribeFieldNodeRevealReleased,
-} from '@/schema-form/core';
+import { useErrorRevealSubscription } from '../hooks/useErrorRevealSubscription';
 
 /** Same-render history snapshot and stable owner trigger for a held display. */
 interface ErrorRevealSubscriberProps {
@@ -24,10 +20,6 @@ export const ErrorRevealSubscriber = ({
   version,
   onRelease,
 }: ErrorRevealSubscriberProps) => {
-  useEffect(() => {
-    const unsubscribe = subscribeFieldNodeRevealReleased(node, onRelease);
-    if (readFieldNodeRevealVersion(node) !== version) onRelease();
-    return unsubscribe;
-  }, [node, version, onRelease]);
+  useErrorRevealSubscription(node, version, onRelease);
   return null;
 };

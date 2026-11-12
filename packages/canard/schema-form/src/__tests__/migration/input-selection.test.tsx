@@ -21,15 +21,15 @@ it('LANDING-035 named renderer props drive the retained Form compound components
     { type: 'string' },
     {
       FieldRenderer: () => <span data-renderer="group" />,
-      FormLabelRenderer: () => <span data-renderer="label" />,
-      FormInputRenderer: () => <span data-renderer="input" />,
-      FormErrorRenderer: () => <span data-renderer="error" />,
+      LabelRenderer: () => <span data-renderer="label" />,
+      InputRenderer: () => <span data-renderer="input" />,
+      ErrorMessageRenderer: () => <span data-renderer="error" />,
       children: (
         <>
           <Form.Field />
           <Form.Label />
           <Form.Input />
-          <Form.Error />
+          <Form.ErrorMessage />
         </>
       ),
     },
@@ -152,7 +152,7 @@ it('LANDING-186 unknown test keys are ignored and reported in development', asyn
   );
   expect(form.field('')?.dataset.selected).toBe('yes');
   expect(warning).toHaveBeenCalledWith(
-    'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID',
+    'SCHEMA_FORM_WARNING.FIELD_INPUT_TEST_INVALID',
     expect.objectContaining({ invalid: ['typo'] }),
   );
 });

@@ -355,7 +355,7 @@ Expert knowledge for {topic} features in @{package-name}.
 
 Consumer-facing rules are **perspective-level**: they describe the mental model, invariants, and anti-patterns required to use the package correctly. They do not duplicate API shapes from the skill.
 
-**Reference original**: `packages/canard/schema-form/docs/claude/rules/schema-form-rule.md`.
+**Reference original**: `packages/canard/schema-form/docs/agents/rules/schema-form-rule.md`.
 
 **Structure**:
 
@@ -418,7 +418,7 @@ Reject these on sight.
 
 - For {adjacent topic A}, invoke the `{adjacent-skill}` skill.
 - For topics outside the `{slug}-skill` skill's coverage → consult `{package-path}/docs/en/SPECIFICATION.md`.
-- For package-internal structural rules (FCA) → see `.claude/rules/filid_fca-policy.md`. Scope is disjoint: this document is for consumers.
+- For package-internal structural rules (FCA) → see `.claude/rules/filid_fractal-boundaries.md`. Scope is disjoint: this document is for consumers.
 ```
 
 **Rules content policy**
@@ -690,9 +690,9 @@ All documentation follows a consistent language policy:
 
 ## Related Commands
 
-- `/code-review` — Review code changes
-- `/create-pr` — Create pull request
-- `/analyze-requirements` — Requirements analysis
+- Review changes against the package contract and repository documentation principles.
+- Prepare a pull request using the repository development workflow.
+- Clarify the intended consumer task before generating documentation.
 
 ---
 

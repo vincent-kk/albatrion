@@ -8,6 +8,7 @@ import type { Nullish } from '@aileron/declare';
 
 import type { FormErrorRecord } from '../../errors';
 import {
+  type ErrorMessageRendererProps,
   type ErrorVisibility,
   type FieldInputDefinition,
   type FieldInputMap,
@@ -21,6 +22,8 @@ import {
   type FormHandle,
   type FormProps,
   type InferFieldNode,
+  type InputRendererProps,
+  type LabelRendererProps,
   type SetValueOption,
   type ValidationIssue,
   ValidationMode,
@@ -64,9 +67,9 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     unsetOnInactive?: boolean;
     disableAutomaticWrites?: boolean;
     onDiagnosticsChange?: (diagnostics: FieldNode['diagnostics']) => void;
-    FormLabelRenderer?: ComponentType<FieldRendererProps>;
-    FormInputRenderer?: ComponentType<FieldRendererProps>;
-    FormErrorRenderer?: ComponentType<FieldRendererProps>;
+    LabelRenderer?: ComponentType<LabelRendererProps>;
+    InputRenderer?: ComponentType<InputRendererProps>;
+    ErrorMessageRenderer?: ComponentType<ErrorMessageRendererProps>;
   };
   expectTypeOf<Props>().toEqualTypeOf<Expected>();
   expectTypeOf<Props>().toHaveProperty('FieldRenderer');
@@ -210,5 +213,5 @@ it('SURFACE-059 Form compound component names remain available', () => {
   expectTypeOf<typeof Form>().not.toHaveProperty('Group');
   expectTypeOf<typeof Form>().toHaveProperty('Label');
   expectTypeOf<typeof Form>().toHaveProperty('Input');
-  expectTypeOf<typeof Form>().toHaveProperty('Error');
+  expectTypeOf<typeof Form>().toHaveProperty('ErrorMessage');
 });

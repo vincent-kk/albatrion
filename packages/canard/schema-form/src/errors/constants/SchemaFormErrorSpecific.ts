@@ -8,7 +8,7 @@ export const SchemaFormErrorSpecific = {
   FeedbackLimitExceeded: 'FEEDBACK_LIMIT_EXCEEDED',
   ListenerThrew: 'LISTENER_THREW',
   MultipleErrors: 'MULTIPLE_ERRORS',
-  FormTypeInputMap: 'FORM_TYPE_INPUT_MAP',
+  FieldInputMap: 'FIELD_INPUT_MAP',
   InvalidErrorVisibility: 'INVALID_ERROR_VISIBILITY',
   InvalidWriteOption: 'INVALID_WRITE_OPTION',
   DisposedNodeWrite: 'DISPOSED_NODE_WRITE',

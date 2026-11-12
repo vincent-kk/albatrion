@@ -98,6 +98,9 @@ export async function prepareReactBundles(packageRoot, outputRoot, variant = 'bo
             const pinned = name === 'head';
             let contents = pinned ? childProcess.execFileSync('git', ['show', `${head}:${path}`],
               { cwd: worktree, encoding: 'utf8', timeout: 10000 }) : readFileSync(args.path, 'utf8');
+            // The bridge's anonymous memo callback needs a name only in the profiling fixture bundle.
+            if (options.labelFieldInputBridge && path.endsWith('/FieldInputBridge/FieldInputBridge.tsx'))
+              contents += '\nFieldInputBridge.type.displayName = "FieldInputBridge";\n';
             // The verdict's mount-active column spans exactly the harness's own mountMs interval.
             if (harness && path.endsWith('/mountEquivalentForm.tsx')) {
               assert.equal(contents.split('const start = performance.now();').length, 2);

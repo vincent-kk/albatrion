@@ -12,14 +12,12 @@ Strategies for performance optimization when developing an @canard/schema-form p
 
 ```typescript
 import { useHandle } from '@winglet/react-utils';
-
-const FormTypeInputString = ({ onChange, ...props }: Props) => {
+const FieldInputString = ({ onChange, ...props }: Props) => {
   // ✅ useHandle - the same reference is kept even when the component re-renders
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
-  
-  return <TextField onChange={handleChange} {...props} />;
+  return <TextField onChange={handleChange} id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 ```
 
@@ -28,39 +26,41 @@ const FormTypeInputString = ({ onChange, ...props }: Props) => {
 ```typescript
 // ❌ useCallback - the dependency array must be managed, and it gets complicated
 const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-  onChange(event.target.value);
+  onChange(event.target.value === '' ? undefined : event.target.value);
 }, [onChange]);  // when onChange changes, handleChange is recreated too
-
 // ✅ useHandle - no dependency array, and it always reads the latest value
 const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-  onChange(event.target.value);
+  onChange(event.target.value === '' ? undefined : event.target.value);
 });
 ```
 
 ### Use It in Complex Logic Too
 
 ```typescript
-const FormTypeInputNumber = ({
+const FieldInputNumber = ({
   onChange,
   jsonSchema,
   context,
 }: Props) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const rawValue = event.target.value;
-    let numValue = parseFloat(rawValue);
-    
-    // Complex validation logic
-    if (isNaN(numValue)) numValue = 0;
+    if (event.target.validity.badInput) return;
+    if (rawValue === '') {
+      onChange(undefined);
+      return;
+    }
+    let numValue = Number(rawValue);
+    if (!Number.isFinite(numValue)) return;
     if (jsonSchema.minimum !== undefined) {
       numValue = Math.max(numValue, jsonSchema.minimum);
     }
     if (jsonSchema.maximum !== undefined) {
       numValue = Math.min(numValue, jsonSchema.maximum);
     }
-    
+
     onChange(numValue);
   });
-  
+
   return <TextField type="number" onChange={handleChange} />;
 };
 ```
@@ -72,7 +72,7 @@ const FormTypeInputNumber = ({
 ### Basic Pattern
 
 ```typescript
-const FormTypeInputString = ({
+const FieldInputString = ({
   jsonSchema,
   context,
   name,
@@ -85,10 +85,10 @@ const FormTypeInputString = ({
     return [
       sizeProp || context.size || 'medium',
       variantProp || context.variant || 'outlined',
-      labelProp || jsonSchema.label || jsonSchema.title || name,
+      labelProp || jsonSchema.title || name,
     ];
   }, [sizeProp, context, jsonSchema, variantProp, labelProp, name]);
-  
+
   return <TextField size={size} variant={variant} label={label} />;
 };
 ```
@@ -97,22 +97,22 @@ const FormTypeInputString = ({
 
 ```typescript
 // ✅ Simple computation does not need useMemo
-const FormTypeInputString = ({
+const FieldInputString = ({
   disabled,
   readOnly,
 }: Props) => {
   // A simple logical operation - just use it
   const isDisabled = disabled || readOnly;
-  
+
   return <TextField disabled={isDisabled} />;
 };
 
 // ✅ Primitive values do not need useMemo
-const FormTypeInputString = ({
+const FieldInputString = ({
   jsonSchema,
 }: Props) => {
-  const placeholder = jsonSchema.placeholder || '';  // useMemo is unnecessary
-  
+  const placeholder = jsonSchema.presentation?.FieldInputProps?.placeholder || '';  // useMemo is unnecessary
+
   return <TextField placeholder={placeholder} />;
 };
 ```
@@ -120,7 +120,7 @@ const FormTypeInputString = ({
 ### When Creating a Complex Object
 
 ```typescript
-const FormTypeInputDate = ({
+const FieldInputDate = ({
   jsonSchema,
   path,
   name,
@@ -145,34 +145,34 @@ const FormTypeInputDate = ({
       },
     },
   }), [path, name, required, disabled, size, jsonSchema.highlightColor]);
-  
+
   return <DatePicker slotProps={slotProps} />;
 };
 ```
 
-## Prevent Re-renders with Uncontrolled Components
+## Prefer Uncontrolled Components
 
-**The most important optimization**: use `defaultValue`
+**Default pattern**: use defaultValue for a component that owns its draft; controlled: true is for definitions that draw from value alone
 
 ### Uncontrolled vs Controlled Performance
 
 ```typescript
-// ❌ Controlled component - re-renders on every keystroke
+// Controlled component - the DOM value follows the value prop
 const ControlledInput = ({ value, onChange }: Props) => {
   console.log('Render');  // Prints on every keystroke
-  
+
   return (
     <TextField
-      value={value}  // Controlled
+      value={value ?? ''}  // Controlled
       onChange={(e) => onChange(e.target.value)}
     />
   );
 };
 
-// ✅ Uncontrolled component - no re-render after the initial render
+// ✅ Uncontrolled component - the DOM owns the draft
 const UncontrolledInput = ({ defaultValue, onChange }: Props) => {
-  console.log('Render');  // Prints only once, on the initial render
-  
+  console.log('Render');  // Also prints on every value change: the binding passes the new value
+
   return (
     <TextField
       defaultValue={defaultValue}  // Uncontrolled
@@ -184,18 +184,20 @@ const UncontrolledInput = ({ defaultValue, onChange }: Props) => {
 
 ### When a Controlled Component Is Needed
 
+This value-driven email input declares controlled: true on its definition.
+
 ```typescript
 // ✅ Use a controlled component only when real-time validation is required
-const FormTypeInputEmail = ({ value, onChange }: Props) => {
+const FieldInputEmail = ({ value, onChange }: Props) => {
   const isValid = useMemo(() => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value ?? '');
   }, [value]);
-  
+
   return (
     <TextField
-      value={value}  // Controlled component (because of real-time validation)
+      value={value ?? ''}  // Controlled component (because of real-time validation)
       onChange={(e) => onChange(e.target.value)}
-      error={!isValid && value.length > 0}
+      error={!isValid && (value?.length ?? 0) > 0}
       helperText={!isValid ? 'Invalid email format' : ''}
     />
   );
@@ -204,27 +206,27 @@ const FormTypeInputEmail = ({ value, onChange }: Props) => {
 
 ## Minimize Context Subscriptions
 
-**Problem**: when context changes, every subscribed component re-renders
+**Problem**: a changed context prop can re-render the input; useMemo only avoids recomputing derived props
 
-### Subscribe Only to the Values You Need
+### Depend Only on the Values You Read
 
 ```typescript
 // ❌ Subscribe to the whole context
-const FormTypeInputString = ({ context, ...props }: Props) => {
+const FieldInputString = ({ context, ...props }: Props) => {
   // Re-renders when any context value changes
   return <TextField size={context.size} />;
 };
 
 // ✅ Extract and use only the values you need
-const FormTypeInputString = ({
+const FieldInputString = ({
   context,
   size: sizeProp,
   ...props
 }: Props) => {
   const size = useMemo(() => {
     return sizeProp || context.size || 'medium';
-  }, [sizeProp, context.size]);  // Subscribe to context.size only
-  
+  }, [sizeProp, context.size]);  // Recompute only when these values change
+
   return <TextField size={size} />;
 };
 ```
@@ -234,20 +236,20 @@ const FormTypeInputString = ({
 ### Early Return Pattern
 
 ```typescript
-const FormTypeInputArray = ({
-  ChildNodeComponents,
+const FieldInputArray = ({
+  ChildFields,
   jsonSchema,
 }: Props) => {
   // ✅ Check the condition first so unnecessary work is skipped
-  if (!ChildNodeComponents || ChildNodeComponents.length === 0) {
+  if (!ChildFields || ChildFields.length === 0) {
     return <EmptyState />;
   }
-  
+
   // Complex rendering logic follows
   return (
     <Box>
-      {ChildNodeComponents.map((Child, index) => (
-        <Child key={index} />
+      {ChildFields.map((Child, index) => (
+        <Child key={Child.key} />
       ))}
     </Box>
   );
@@ -258,47 +260,47 @@ const FormTypeInputArray = ({
 
 ```typescript
 // ❌ Handle the condition in one component - it gets complicated
-const FormTypeInputString = ({ isPassword, ...props }: Props) => {
+const FieldInputString = ({ isPassword, ...props }: Props) => {
   if (isPassword) {
-    return <PasswordField {...props} />;
+    return <PasswordField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
   }
-  return <TextField {...props} />;
+  return <TextField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 
 // ✅ Split into separate components - it stays clear
-const FormTypeInputString = (props: Props) => {
-  return <TextField {...props} />;
+const FieldInputString = (props: Props) => {
+  return <TextField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 
-const FormTypeInputPassword = (props: Props) => {
-  return <PasswordField {...props} />;
+const FieldInputPassword = (props: Props) => {
+  return <PasswordField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 
 // Split at the definition stage
-export const FormTypeInputStringDefinition = {
-  Component: FormTypeInputString,
+export const FieldInputStringDefinition = {
+  Component: FieldInputString,
   test: { type: 'string' },
 };
 
-export const FormTypeInputPasswordDefinition = {
-  Component: FormTypeInputPassword,
+export const FieldInputPasswordDefinition = {
+  Component: FieldInputPassword,
   test: { type: 'string', format: 'password' },
 };
 ```
 
-## ChildNodeComponents Optimization
+## ChildFields Optimization
 
-**Important**: ChildNodeComponents are already memoized components
+**Important**: ChildFields are already memoized components
 
 ### Correct Usage
 
 ```typescript
-const FormTypeInputArray = ({ ChildNodeComponents }: Props) => {
+const FieldInputArray = ({ ChildFields }: Props) => {
   // ✅ Render them as they are - do not pass props
   return (
     <Box>
-      {ChildNodeComponents.map((Child, index) => (
-        <Box key={index}>
+      {ChildFields.map((Child, index) => (
+        <Box key={Child.key}>
           <Child />  {/* ✅ No props */}
         </Box>
       ))}
@@ -310,12 +312,12 @@ const FormTypeInputArray = ({ ChildNodeComponents }: Props) => {
 ### Incorrect Usage
 
 ```typescript
-const FormTypeInputArray = ({ ChildNodeComponents, context }: Props) => {
+const FieldInputArray = ({ ChildFields, context }: Props) => {
   // ❌ Passing props invalidates memoization
   return (
     <Box>
-      {ChildNodeComponents.map((Child, index) => (
-        <Box key={index}>
+      {ChildFields.map((Child, index) => (
+        <Box key={Child.key}>
           <Child context={context} />  {/* ❌ Do not pass props */}
         </Box>
       ))}
@@ -329,33 +331,34 @@ const FormTypeInputArray = ({ ChildNodeComponents, context }: Props) => {
 ### Convert Values with useMemo
 
 ```typescript
-const FormTypeInputDate = ({ defaultValue, onChange }: Props) => {
+const FieldInputDate = ({ defaultValue, onChange }: Props) => {
   // ✅ Memoize the defaultValue conversion
   const dateValue = useMemo(() => {
     if (!defaultValue) return null;
     try {
-      return parseISO(defaultValue);
+      return dayjs(defaultValue);
     } catch {
       return null;
     }
   }, [defaultValue]);
-  
+
   // ✅ The onChange callback uses useHandle
-  const handleChange = useHandle((newDate: Date | null) => {
+  const handleChange = useHandle((newDate: Dayjs | null) => {
     if (!newDate) {
-      onChange('');
+      onChange(undefined);
       return;
     }
+    if (!newDate.isValid()) return;
     try {
-      onChange(formatISO(newDate, { representation: 'date' }));
+      onChange(newDate.format('YYYY-MM-DD'));
     } catch {
-      onChange('');
+      onChange(undefined);
     }
   });
-  
+
   return (
     <DatePicker
-      value={dateValue}
+      defaultValue={dateValue}
       onChange={handleChange}
     />
   );
@@ -369,13 +372,13 @@ const FormTypeInputDate = ({ defaultValue, onChange }: Props) => {
 ```typescript
 // Enable in development only
 if (process.env.NODE_ENV === 'development') {
-  const FormTypeInputString = ({ ...props }: Props) => {
+  const FieldInputString = ({ ...props }: Props) => {
     const renderCount = useRef(0);
     renderCount.current += 1;
-    
-    console.log(`FormTypeInputString rendered ${renderCount.current} times`);
-    
-    return <TextField {...props} />;
+
+    console.log(`FieldInputString rendered ${renderCount.current} times`);
+
+    return <TextField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
   };
 }
 ```
@@ -389,7 +392,7 @@ Confirm the following before release:
 - [ ] **Use useMemo**: complex prop computation and object creation
 - [ ] **Minimize context subscriptions**: extract only the values you need
 - [ ] **Split conditional rendering**: split a component when the condition is complex
-- [ ] **ChildNodeComponents**: do not pass props
+- [ ] **ChildFields**: do not pass props
 - [ ] **Memoize value conversion**: use useMemo
 - [ ] **Early return**: check conditions first
 - [ ] **React DevTools Profiler**: measure performance
@@ -401,7 +404,7 @@ Confirm the following before release:
 ```typescript
 // ❌ Recreate the function on every render
 const handleChange = (event) => {
-  onChange(event.target.value);
+  onChange(event.target.value === '' ? undefined : event.target.value);
 };
 
 // ❌ Recreate the object on every render
@@ -413,9 +416,9 @@ const slotProps = {
 <TextField onChange={(e) => onChange(e.target.value)} />
 
 // ❌ Subscribe to the whole context
-const { size, variant, color, theme } = context;  // Subscribes to all of it
+const { size, variant, color, theme } = context;  // Destructuring does not create selective subscriptions
 
-// ❌ Pass props to ChildNodeComponents
+// ❌ Pass props to ChildFields
 <Child context={context} />
 ```
 
@@ -425,6 +428,6 @@ const { size, variant, color, theme } = context;  // Subscribes to all of it
 1. Prefer uncontrolled components (defaultValue)
 2. Memoize every handler with useHandle
 3. Cache complex computation with useMemo
-4. Subscribe only to the context values you need
-5. Render ChildNodeComponents as they are
+4. Keep memo dependencies limited to the values the computation reads
+5. Render ChildFields as they are
 6. Measure performance with React DevTools

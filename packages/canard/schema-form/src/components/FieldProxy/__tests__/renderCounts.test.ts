@@ -8,7 +8,13 @@ interface Scenario {
   writes: {
     write: string;
     target: string;
-    renders: { byPath: Record<string, number> };
+    renders: {
+      byPath: Record<string, number>;
+      inputComponents: {
+        bridge: Record<string, number>;
+        input: Record<string, number>;
+      };
+    };
     remounts: string[];
   }[];
 }
@@ -30,12 +36,12 @@ beforeAll(() => {
   scenarios = JSON.parse(output).scenarios;
 }, 120000);
 
-it('F-B holds 19 live fibers per field in both controlled and uncontrolled forms', () => {
+it('F-B holds 17 live fibers per field in both controlled and uncontrolled forms', () => {
   expect(
     scenarios.map(({ fibersPerField }) => Object.values(fibersPerField)),
   ).toEqual([
-    [19, 19, 19, 19],
-    [19, 19, 19, 19],
+    [17, 17, 17, 17],
+    [17, 17, 17, 17],
   ]);
 });
 
@@ -70,7 +76,7 @@ it('119 isolation keeps unchanged fields at zero renders for leaf, sibling and p
   }
 });
 
-it('F-B renders each field nine times for global context and error visibility changes and four times for readOnly', () => {
+it('F-B renders each field nine times for context, five for error visibility and four for readOnly', () => {
   for (const scenario of scenarios) {
     for (const write of [
       'revealErrors()',
@@ -80,8 +86,57 @@ it('F-B renders each field nine times for global context and error visibility ch
       const result = scenario.writes.find((item) => item.write === write)!;
       expect(
         ['/a', '/b', '/o/x', '/o/y'].map((path) => result.renders.byPath[path]),
-      ).toEqual(Array(4).fill(write === 'Form readOnly prop true' ? 4 : 9));
+      ).toEqual(
+        Array(4).fill(
+          write === 'Form readOnly prop true'
+            ? 4
+            : write === 'revealErrors()'
+              ? 5
+              : 9,
+        ),
+      );
       expect(result.remounts).toEqual([]);
     }
   }
 });
+
+it('pins bridge and real input calls when visible errors alone change', () => {
+  for (const scenario of scenarios) {
+    const result = scenario.writes.find(
+      ({ write }) => write === 'visible external error /a',
+    )!;
+    expect(
+      ['', '/a', '/b', '/o', '/o/x', '/o/y'].map(
+        (path) => result.renders.inputComponents.bridge[path] ?? 0,
+      ),
+    ).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(
+      ['/a', '/b', '/o/x', '/o/y'].map(
+        (path) => result.renders.inputComponents.input[path] ?? 0,
+      ),
+    ).toEqual([0, 0, 0, 0]);
+    expect(result.remounts).toEqual([]);
+  }
+});
+
+it.each(['Form', 'FormProvider'])(
+  'pins bridge and real input calls for %s inline formatError changes',
+  (owner) => {
+    for (const scenario of scenarios) {
+      const result = scenario.writes.find(
+        ({ write }) => write === `${owner} re-render, new inline formatError`,
+      )!;
+      expect(
+        ['', '/a', '/b', '/o', '/o/x', '/o/y'].map(
+          (path) => result.renders.inputComponents.bridge[path] ?? 0,
+        ),
+      ).toEqual([0, 0, 0, 0, 0, 0]);
+      expect(
+        ['/a', '/b', '/o/x', '/o/y'].map(
+          (path) => result.renders.inputComponents.input[path] ?? 0,
+        ),
+      ).toEqual([0, 0, 0, 0]);
+      expect(result.remounts).toEqual([]);
+    }
+  },
+);
