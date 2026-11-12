@@ -135,6 +135,49 @@ export const KeyboardAndScroll = () => {
   );
 };
 
+/** Stacks a nondimmed request above a dimmed one so Tab stays in the browser's own order. */
+export const NondimmedAboveDimmed = () => {
+  const [result, setResult] = useState('Ready');
+  const openNondimmed = () =>
+    void alert({
+      title: 'Nondimmed request above',
+      dimmed: false,
+      closeOnBackdropClick: false,
+      content: (
+        <>
+          <button>Upper first control</button>
+          <button>Upper last control</button>
+        </>
+      ),
+    });
+  return (
+    <ModalProvider ForegroundComponent={HardeningFrame}>
+      <p>
+        Open the dimmed confirm, then the nondimmed request from inside it. Tab
+        in the upper request follows the browser order; the page stays
+        unreachable. Escape cancels the dimmed confirm while the nondimmed
+        request above stays open.
+      </p>
+      <button
+        onClick={() =>
+          void confirm({
+            title: 'Dimmed request below',
+            content: (
+              <>
+                <input aria-label="Lower first control" />
+                <button onClick={openNondimmed}>Open nondimmed above</button>
+              </>
+            ),
+          }).then((value) => setResult(`Confirmed: ${value}`))
+        }
+      >
+        Open dimmed confirm
+      </button>
+      <output>{result}</output>
+    </ModalProvider>
+  );
+};
+
 /** Catches rejection at the request while leaving a peer and later requests usable. */
 export const RenderErrorRejection = () => {
   const [result, setResult] = useState('Ready');

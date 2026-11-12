@@ -65,7 +65,7 @@ Configuration hooks and `useDestroyAfter` require the modal frame, content, or f
 
 ## Accessibility decisions
 
-Escape cancels only the top visible pending modal and respects prevented or IME events. Resolve `closeOnEscape` from call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true); `useModal` defaults count as call data. A nonclosable top modal blocks Escape from reaching lower modals.
+Escape walks visible pending modals from top to bottom, cancels the first accepting node, and prevents the event, closing at most one modal per press. It skips non-accepting nondimmed nodes and stops at a non-accepting dimmed node without preventing the event. It respects prevented or IME events. Resolve `closeOnEscape` from call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true); `useModal` defaults count as call data. A dimmed modal with Escape disabled blocks Escape from reaching lower modals.
 
 Only alive, visible, dimmed, unsettled modals participate in focus and page isolation. The library wrapper moves focus into the top participant on appearance or route return without overriding existing `autoFocus`, and restores a connected opener after settlement. By default it cycles Tab only when the top visible pending modal is dimmed. If another pending modal owns focus, leave it there; if an opener stays inert, focus the top remaining dimmed modal. A nondimmed modal on top keeps native Tab order while existing inert isolation remains. `trapFocus: false` delegates cycling but keeps initial focus movement and isolation. `lockScroll: false` delegates body scroll locking. Both options default true and accept Provider or call overrides.
 

@@ -13,7 +13,11 @@ export interface ModalOptions {
   manualDestroy?: boolean;
   /** Whether to close the modal when the backdrop is clicked */
   closeOnBackdropClick?: boolean;
-  /** Escape override; otherwise inherits the same-level backdrop click setting. */
+  /**
+   * Escape override; otherwise inherits the same-level backdrop click setting.
+   * Escape closes the first accepting visible pending modal from the top.
+   * Non-accepting nondimmed modals are skipped; non-accepting dimmed modals shield those below.
+   */
   closeOnEscape?: boolean;
   /** Traps Tab only when the top visible pending modal is dimmed; defaults to true. */
   trapFocus?: boolean;
