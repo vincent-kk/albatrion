@@ -81,4 +81,4 @@
 
 ## Last Updated
 
-2026-08-06 — 게이트 술어가 실행 판정을 소유하지 않음을 `AC-MANIFEST-GATE` 에 명시하고 호출자를 dispatcher 하나로 정정했다. 이전 갱신: `'directory'` 출처가 `--asset-path` 에 매이지 않음을 Requirements 에 반영했다.
+해시 원본 선택과 매니페스트·디렉터리 계산 계약이 바뀌면 갱신합니다.

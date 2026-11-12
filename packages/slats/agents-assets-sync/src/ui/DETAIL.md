@@ -102,4 +102,4 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 ## Last Updated
 
-2026-08-06 — `ScopePicker` 의 기본 선택이 `project` 임을 계약에 적고 `AC-UI-SCOPE-DEFAULT` 를 추가했다.
+TTY 선택 기본값, 진행률 또는 UI 전이 계약이 바뀌면 갱신합니다.

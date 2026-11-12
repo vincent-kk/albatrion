@@ -46,4 +46,4 @@ accessor 거부는 일반 데이터 객체의 descriptor 검사에 대한 보장
 
 ## Last Updated
 
-2026-09-19
+graph wire, 지원 데이터 또는 참조 보존 계약이 바뀌면 갱신합니다.

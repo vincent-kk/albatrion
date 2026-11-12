@@ -93,4 +93,4 @@
 
 ## Last Updated
 
-2026-08-05 — `agentTarget`과 `markerBlock`을 추가하고 여러 에이전트의 목적지를 위해 `scope`, `buildPlan`, `injectDocs`를 재구성했다.
+에이전트 대상, 계획 또는 적용 책임의 경계가 바뀌면 갱신합니다.
