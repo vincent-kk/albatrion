@@ -9,7 +9,7 @@ import {
   useConfigurationContext,
   useUserDefinedContext,
 } from '@/promise-modal/providers';
-import type { ModalActions } from '@/promise-modal/types';
+import type { ModalActions } from '@/promise-modal/types/modal';
 
 interface ConfirmInnerProps<B> {
   modal: ConfirmNode<B>;

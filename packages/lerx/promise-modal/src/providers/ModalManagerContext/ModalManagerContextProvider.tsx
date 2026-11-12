@@ -18,7 +18,7 @@ import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
 import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
 import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 import { useConfigurationOptions } from '@/promise-modal/providers/ConfigurationContext';
-import type { Modal } from '@/promise-modal/types';
+import type { Modal } from '@/promise-modal/types/modal';
 
 import { ModalManagerContext } from './ModalManagerContext';
 

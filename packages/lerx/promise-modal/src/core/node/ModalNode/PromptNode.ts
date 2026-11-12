@@ -2,14 +2,14 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import type { FooterOptions } from '@/promise-modal/types/base';
+import type { ManagedEntity } from '@/promise-modal/types/modal';
 import type {
-  FooterOptions,
-  ManagedEntity,
   PromptContentProps,
   PromptFooterRender,
   PromptInputProps,
   PromptModal,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/prompt';
 
 import { AbstractNode } from './AbstractNode';
 

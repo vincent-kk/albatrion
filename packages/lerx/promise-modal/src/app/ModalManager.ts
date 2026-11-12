@@ -10,7 +10,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
-import type { Modal } from '@/promise-modal/types';
+import type { Modal } from '@/promise-modal/types/modal';
 
 import { getModalManagerState } from './helpers/getModalManagerState/getModalManagerState';
 import { getTabbableElements } from './utils/getTabbableElements';

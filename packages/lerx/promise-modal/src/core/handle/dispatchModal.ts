@@ -3,7 +3,7 @@ import type { Fn } from '@aileron/declare';
 import { ModalManager } from '@/promise-modal/app';
 import type { ModalNode } from '@/promise-modal/core/node';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
-import type { Modal } from '@/promise-modal/types';
+import type { Modal } from '@/promise-modal/types/modal';
 
 interface DispatchModalOptions<Result> {
   /** Abort signal that cancels the modal (before or after mount). */

@@ -6,7 +6,7 @@ import {
 } from 'react';
 
 import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
-import type { ModalFrameProps } from '@/promise-modal/types';
+import type { ModalFrameProps } from '@/promise-modal/types/modal';
 
 const MAX_MODAL_COUNT = 5;
 const MAX_MODAL_LEVEL = 3;

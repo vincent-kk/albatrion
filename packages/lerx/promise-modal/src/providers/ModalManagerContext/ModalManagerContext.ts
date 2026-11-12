@@ -3,7 +3,10 @@ import { createContext } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core';
-import type { ModalActions, ModalHandlersWithId } from '@/promise-modal/types';
+import type {
+  ModalActions,
+  ModalHandlersWithId,
+} from '@/promise-modal/types/modal';
 
 export interface ModalManagerContextProps extends ModalHandlersWithId {
   getModal: Fn<[id: ModalNode['id'] | undefined], ModalActions>;
