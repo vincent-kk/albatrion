@@ -1,9 +1,9 @@
 import type { BlueprintSchema } from '../../../blueprint';
+import type { ValidationEntry } from '../../types/validationEntry';
 import type { Validator } from '../../types/validator';
 import { evictSameIdRoots } from '../lifetime/evictSameIdRoots';
 import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
 import { clearDuplicateGuardFailures } from './clearDuplicateGuardFailures';
-import type { ValidationEntry } from './readValidationEntry';
 
 /** Retry one cached collision only after competing committed consumers disappear.
  * @param validator - Registration owner supporting recompilation of the same copy after guard calls.
