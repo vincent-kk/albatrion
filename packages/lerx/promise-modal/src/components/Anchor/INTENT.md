@@ -6,6 +6,8 @@
 
 ## Conventions
 
+- 앵커 정체를 유지하여 root 이동에도 열린 입력과 Promise를 보존합니다.
+
 - ModalManager.anchor()가 생성한 DOM 노드에 React Portal로 모달 렌더링
 - BootstrapProvider 내부에서만 사용
 
@@ -13,7 +15,7 @@
 
 ### Always do
 
-- ModalManager.anchored 상태 확인 후 렌더링
+- 매니저가 제공한 앵커의 포털 안에서만 렌더링하여 DOM 소유권을 유지
 - Portal 기반 렌더링으로 DOM 격리 유지
 
 ### Ask first

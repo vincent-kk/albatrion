@@ -2,12 +2,12 @@
 
 ## Purpose
 
-모달 매니저 상태를 React Context로 제공. 열린 모달 목록 관리, 모달 open/close 핸들러 제공.
+모달 매니저 상태를 React Context로 제공. 저장소에 연결하는 안정된 모달 조작 함수 제공.
 
 ## Conventions
 
 - useModalManagerContext: 전체 Context 값 접근
-- useModalManager: 모달 관리 전용 인터페이스 (open, close, refresh)
+- useModalManager: 모달 관리 전용 인터페이스
 - ModalManager 싱글톤과 연동하여 상태 동기화
 
 ## Boundaries
@@ -24,5 +24,5 @@
 
 ### Never do
 
-- Context 외부에서 모달 목록 직접 조작
+- ModalManager를 우회하여 별도 모달 목록 조작
 - ModalManager 상태와 Context 상태 불일치 허용

@@ -1,57 +1,39 @@
-# CLAUDE.md
+# promise-modal contributor guidance
 
-`@lerx/promise-modal` is a Promise-based React modal utility. Use `alert`, `confirm`, and `prompt` both inside and outside React components.
+Read the repository-level `CLAUDE.md` and `DOCUMENTATION.md` first. Module boundaries
+and acceptance criteria live in the relevant `INTENT.md` and `DETAIL.md` files.
 
 ## Commands
 
-```bash
-yarn build             # ESM + CJS build + type declarations
-yarn test              # Vitest tests (jsdom, development React) — Delegates to root Vitest
-yarn test:prod         # Runs the entire suite with production React (including *.prod.test.*)
-yarn lint              # ESLint (use `yarn run -T eslint` when the root binary is needed)
-yarn storybook         # Storybook dev (port 6006)
-yarn size-limit        # Checks bundle size
-```
+Use `yarn workspace @lerx/promise-modal <script>` from the repository root.
 
-> The test/test:prod scripts delegate to the root workspace Vitest binary through `yarn run -T`
-> to centralize build tooling. Switch to devDependencies when separating the subpackage.
+- `build`: bundle ESM/CJS, generate declarations and agent hashes, and typecheck.
+- `test --run`: development React with jsdom; build first for public artifact tests.
+- `test:prod`: production React without Testing Library render suites.
+- `test:react18`: the same development contract using package-local React 18 aliases.
+- `typecheck`: source and stories.
+- `lint`: source and tests.
+- `storybook`: development server on port 6006.
+- `build-storybook`: static Storybook verification; keep output out of commits.
 
-## Agent Docs Injector
+Vitest and Storybook are root-owned tools. Their scripts use `yarn run -T` so Yarn
+resolves the root workspace binary rather than expecting a package-local dependency.
+Build `@winglet/common-utils`, `@winglet/style-utils`, and `@winglet/react-utils`
+before this package in a fresh worktree.
 
-Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
+## Runtime boundaries
 
-```bash
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=codex --scope=project
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude,codex --scope=user --dry-run
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user --force --yes
-```
+The public names and props are declared by `src/index.ts`; node classes and the
+manager are internal. The manager owns global DOM effects and shared runtime state.
+DOM-free import and server rendering must remain effect-free; open modals only in
+the browser. Preserve both React 18 and 19 behavior.
 
-### Isolation Guardrails
+## Packaged agent assets
 
-- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
-- **Never add `./docs/*` to `exports`.**
+`docs/agents/**` supplies consumer integration guidance through
+`@slats/agents-assets-sync`. Read the skill alongside the published declarations;
+keep its behavioral advice aligned with the English README and its translation.
 
-## Architecture
-
-```
-src/
-├── index.ts                      # Public API
-├── core/handle/                  # alert / confirm / prompt functions
-├── core/node/                    # AbstractNode, AlertNode, ConfirmNode, PromptNode
-├── app/ModalManager.ts           # Singleton — modal lifecycle, DOM anchors, style injection
-├── bootstrap/BootstrapProvider/  # ModalProvider component
-├── providers/                    # Separate contexts (configuration, modal management, user data)
-└── components/                   # UI including Anchor, Background, Foreground
-```
-
-## Key Design
-
-- **Promise API**: Modal functions return Promises → resolve through user interaction
-- **Singleton**: `ModalManager` manages global state
-- **Styling**: Runtime CSS injection through `@winglet/style-utils` (polynomial hashing scoping)
-
-## Dependencies
-
-`@winglet/common-utils`, `@winglet/react-utils`, `@winglet/style-utils`, React 18-19 (peer)
+- Source must not import `docs/**` or `@slats/agents-assets-sync`.
+- Never add a `./docs/*` package export.
+- Do not commit generated runtime bundles or Storybook output in source changes.

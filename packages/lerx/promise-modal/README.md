@@ -1,1266 +1,362 @@
 # @lerx/promise-modal
 
-[![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
-[![Javascript](https://img.shields.io/badge/javascript-✔-yellow.svg)]()
-[![React](https://img.shields.io/badge/react-✔-61DAFB.svg)]()
+Promise-based React modals, inside or outside components. See the [specification](./docs/en/SPECIFICATION.md) for lifecycle and integration contracts.
 
----
+## Installation and compatibility
 
-## Overview
-
-`@lerx/promise-modal` is a universal modal utility based on React.
-
-Key features include:
-
-- Can be used even in places not included in React components
-- After opening a modal, you can retrieve the result as a promise
-- Supports various modal types (alert, confirm, prompt)
-- Highly customizable component structure
-
----
-
-## Installation
-
-```bash
+```sh
 yarn add @lerx/promise-modal
 ```
 
-or
+Use matching React and React DOM versions, 18 or 19. Browser interaction requires a DOM; page isolation uses the browser’s `inert` support. Both ESM and CommonJS bundles declare `'use client'`. DOM-free import and server rendering are supported without React 18 layout-effect warnings; call modal functions only in the browser. Server rendering has no modal portal and reports zero active modals.
 
-```bash
-npm install @lerx/promise-modal
-```
-
----
-
-## Compatibility
-
-**Supported environments:**
-
-- Node.js 16.11.0 or later
-- Modern browsers (Chrome 94+, Firefox 93+, Safari 15+)
-
-**For legacy environment support:**
-Please use a transpiler like Babel to transform the code for your target environment.
-
----
-
-## How to Use
-
-### 1. Setting up the Modal Provider
-
-Install `ModalProvider` at the root of your application:
+## Setup
 
 ```tsx
-import { ModalProvider } from '@lerx/promise-modal';
+import { ModalProvider, alert } from '@lerx/promise-modal';
 
-function App() {
+export function App() {
   return (
-    <ModalProvider>
-      <YourApp />
+    <ModalProvider options={{ duration: '250ms' }}>
+      <button onClick={() => void alert({ title: 'Hello' })}>Open alert</button>
     </ModalProvider>
   );
 }
 ```
 
-You can also apply custom options and components:
+## Results and input
+
+`alert` completes without a value; `confirm` resolves `true` on confirmation and `false` on cancellation. `prompt<T>` returns `Promise<T | undefined | null>`: confirmation preserves the current input, including `undefined`; ordinary cancellation returns `null`. With `returnOnCancel: true`, cancellation returns the current value, or `defaultValue` before rendering. Set `defaultValue: ''` for an untouched empty string. Guard both `null` and `undefined` before using result fields.
 
 ```tsx
-import { ModalProvider } from '@lerx/promise-modal';
+import { alert, confirm, prompt } from '@lerx/promise-modal';
+
+export async function editName() {
+  if (!(await confirm({ title: 'Edit name?' }))) return;
+  const name = await prompt<string>({
+    title: 'Name',
+    defaultValue: '',
+    Input: ({ value, onChange }) => (
+      <input
+        aria-label="Name"
+        value={value ?? ''}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    ),
+    disabled: (value) => !value?.trim(),
+  });
+  if (name === null || name === undefined) return;
+  await alert({ title: 'Saved', content: name, subtype: 'success' });
+}
+```
+
+Functional `onChange` updates accumulate in event order, and confirmation in the same event reads the latest value. `disabled` controls the confirmation button; it does not guard calls to `onConfirm` from custom controls.
+
+## Custom components
+
+Use the exported props types rather than copying their shapes. A foreground receives `children`; a background receives frame metadata and optional `background.data`, without children or an `onClick` prop. A Provider footer receives labels, hide flags, optional `onCancel`, and argument-free `onConfirm`; it receives neither `type` nor `onClose`. Render a cancel button only when `onCancel` exists. Frame `onClose` cancels; content and footer use `onCancel`.
+
+```tsx
+import type { PropsWithChildren } from 'react';
 
 import {
-  CustomBackground,
-  CustomContent,
-  CustomFooter,
-  CustomForeground,
-  CustomSubtitle,
-  CustomTitle,
-} from './components';
+  type FooterComponentProps,
+  type ModalFrameProps,
+  ModalProvider,
+  type WrapperComponentProps,
+  confirm,
+} from '@lerx/promise-modal';
 
-function App() {
+function Frame({ id, children }: PropsWithChildren<ModalFrameProps>) {
+  return (
+    <section
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`title-${id}`}
+      style={{ background: 'white', padding: 24 }}
+    >
+      <h2 id={`title-${id}`}>Review changes</h2>
+      {children}
+    </section>
+  );
+}
+
+function Content({ children }: WrapperComponentProps) {
+  return <div>{children}</div>;
+}
+
+function Footer({
+  onConfirm,
+  onCancel,
+  disabled,
+  confirmLabel,
+  cancelLabel,
+  hideConfirm,
+  hideCancel,
+}: FooterComponentProps) {
+  return (
+    <footer>
+      {!hideCancel && onCancel && (
+        <button onClick={onCancel}>{cancelLabel ?? 'Cancel'}</button>
+      )}
+      {!hideConfirm && (
+        <button onClick={onConfirm} disabled={disabled}>
+          {confirmLabel ?? 'Confirm'}
+        </button>
+      )}
+    </footer>
+  );
+}
+
+function Background({ background }: ModalFrameProps<object, string>) {
+  return <span>{background?.data}</span>;
+}
+
+export function CustomApp() {
   return (
     <ModalProvider
-      ForegroundComponent={CustomForeground}
-      BackgroundComponent={CustomBackground}
-      TitleComponent={CustomTitle}
-      SubtitleComponent={CustomSubtitle}
-      ContentComponent={CustomContent}
-      FooterComponent={CustomFooter}
-      options={{
-        duration: '250ms', // Animation duration
-        backdrop: 'rgba(0, 0, 0, 0.35)', // Background overlay color
-        manualDestroy: false, // Default auto-destroy behavior
-        closeOnBackdropClick: true, // Default backdrop click behavior
-      }}
-      context={{
-        // Context values accessible in all modal components
-        theme: 'light',
-        locale: 'en-US',
-      }}
+      ForegroundComponent={Frame}
+      BackgroundComponent={Background}
+      ContentComponent={Content}
+      FooterComponent={Footer}
+      context={{ theme: 'light' }}
     >
-      <YourApp />
+      <button
+        onClick={() =>
+          void confirm({ content: 'Save?', background: { data: 'review' } })
+        }
+      >
+        Review
+      </button>
     </ModalProvider>
   );
 }
 ```
 
-### 2. Using Basic Modals
+Provider component props are fixed at mount to preserve open prompt input. Identity changes are ignored and warn once per prop in development; production does not warn. Pass changing data through `context`; options remain reactive for their consumers and future requests, while existing nodes retain their resolved per-modal options. Frames receive `group`, `subtype`, and `settled`; alert content also receives `context`. String titles, subtitles, and content use the corresponding Provider wrappers; React elements render directly.
 
-#### Alert Modal
+### Per-call footers and nested modals
 
-Alert modals provide simple information display with a confirmation button.
-
-```tsx
-import { alert } from '@lerx/promise-modal';
-
-// Basic usage
-async function showAlert() {
-  await alert({
-    title: 'Notification',
-    content: 'The task has been completed.',
-  });
-  console.log('User closed the modal.');
-}
-
-// Using various options
-async function showDetailedAlert() {
-  await alert({
-    subtype: 'success', // 'info' | 'success' | 'warning' | 'error'
-    title: 'Success',
-    subtitle: 'Details',
-    content: 'The task has been successfully completed.',
-    dimmed: true, // Dim the background
-    closeOnBackdropClick: true, // Close on backdrop click
-    // If use close animation, you need to set manualDestroy to true
-    manualDestroy: false, // Auto-destroy (false: auto, true: manual)
-    // Data to pass to the background
-    background: {
-      data: 'custom-data',
-    },
-  });
-}
-```
-
-#### Confirm Modal
-
-Confirm modals are used for actions that require user confirmation.
+A per-call footer has the callbacks for that modal kind. Alert has confirmation only; confirm has confirmation and cancellation; prompt additionally has `value`, functional `onChange`, and `disabled`. Callback arguments do not set the result: confirm returns its boolean and prompt reads its current input.
 
 ```tsx
 import { confirm } from '@lerx/promise-modal';
 
-async function showConfirm() {
-  const result = await confirm({
-    title: 'Confirm',
-    content: 'Are you sure you want to delete this?',
-    // Custom footer text
-    footer: {
-      confirm: 'Delete',
-      cancel: 'Cancel',
-    },
-  });
-
-  if (result) {
-    console.log('User clicked confirm.');
-    // Execute delete logic
-  } else {
-    console.log('User clicked cancel.');
-  }
-}
-```
-
-#### Prompt Modal
-
-Prompt modals are used to receive input from users.
-
-```tsx
-import { prompt } from '@lerx/promise-modal';
-
-async function showPrompt() {
-  // Text input
-  const name = await prompt<string>({
-    title: 'Enter Name',
-    content: 'Please enter your name.',
-    defaultValue: '', // Default value
-    Input: ({ value, onChange }) => {
-      // Important: value is the current value, onChange is the function to update the value
-      return (
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Enter name"
-        />
-      );
-    },
-    // Validate input to control the confirmation button
-    disabled: (value) => value.length < 2,
-  });
-
-  console.log('Entered name:', name);
-
-  // Complex data input
-  const userInfo = await prompt<{ name: string; age: number }>({
-    title: 'User Information',
-    defaultValue: { name: '', age: 0 },
-    Input: ({ value, onChange }) => (
-      <div>
-        <input
-          value={value.name}
-          onChange={(e) => onChange({ ...value, name: e.target.value })}
-          placeholder="Name"
-        />
-        <input
-          type="number"
-          value={value.age}
-          onChange={(e) => onChange({ ...value, age: Number(e.target.value) })}
-          placeholder="Age"
-        />
-      </div>
+export function nestedConfirmation() {
+  return confirm({
+    title: 'Review',
+    footer: ({ onConfirm, onCancel }) => (
+      <>
+        <button onClick={onCancel}>Cancel</button>
+        <button
+          onClick={async () => {
+            if (
+              await confirm({
+                title: 'Are you sure?',
+                closeOnBackdropClick: false,
+              })
+            ) {
+              onConfirm();
+            } else {
+              onCancel();
+            }
+          }}
+        >
+          Continue
+        </button>
+      </>
     ),
   });
-
-  console.log('User info:', userInfo);
 }
 ```
 
-### 3. Using Custom Components
+## Roots and initialization
 
-You can customize the appearance and behavior of modals:
+Omit `root` for `document.body`, pass an element for that container, or pass `null` to defer. A ref alone does not defer initialization. `initialize(element)` selects a root imperatively; the last root prop change or initialize call wins. Moving the same anchor preserves input and Promises. Switching to null detaches it and queues new requests while retaining mounted modals; restoring an element resumes them. An initially null root creates no anchor.
 
 ```tsx
-import { css } from '@emotion/css';
-import { ModalProvider, alert, confirm } from '@lerx/promise-modal';
+import { useState } from 'react';
 
-// Custom foreground component
-const CustomForegroundComponent = ({ children, type, ...props }) => {
+import { ModalProvider, prompt } from '@lerx/promise-modal';
+
+export function ContainerApp() {
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
   return (
-    <div
-      className={css`
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-        width: 90%;
-        max-width: 500px;
-        padding: 24px;
-        position: relative;
-      `}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Custom background component (utilizing background data)
-const CustomBackgroundComponent = ({ children, onClick, background }) => {
-  // Apply different styles based on background data
-  const getBgColor = () => {
-    if (background?.data === 'alert') return 'rgba(0, 0, 0, 0.7)';
-    if (background?.data === 'confirm') return 'rgba(0, 0, 0, 0.5)';
-    if (background?.data === 'prompt') return 'rgba(0, 0, 0, 0.6)';
-    return 'rgba(0, 0, 0, 0.4)';
-  };
-
-  return (
-    <div
-      className={css`
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: ${getBgColor()};
-        z-index: 1000;
-      `}
-      onClick={onClick}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Custom title component
-const CustomTitleComponent = ({ children, context }) => {
-  return (
-    <h2
-      className={css`
-        font-size: 24px;
-        margin-bottom: 8px;
-        color: ${context?.theme === 'dark' ? '#ffffff' : '#333333'};
-      `}
-    >
-      {children}
-    </h2>
-  );
-};
-
-// Custom subtitle component
-const CustomSubtitleComponent = ({ children, context }) => {
-  return (
-    <h3
-      className={css`
-        font-size: 16px;
-        margin-bottom: 16px;
-        color: ${context?.theme === 'dark' ? '#cccccc' : '#666666'};
-      `}
-    >
-      {children}
-    </h3>
-  );
-};
-
-// Custom content component
-const CustomContentComponent = ({ children, context }) => {
-  return (
-    <div
-      className={css`
-        margin-bottom: 24px;
-        color: ${context?.theme === 'dark' ? '#eeeeee' : '#444444'};
-      `}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Custom footer component
-const CustomFooterComponent = ({
-  onConfirm,
-  onClose,
-  onCancel,
-  type,
-  disabled,
-}) => {
-  return (
-    <div
-      className={css`
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        margin-top: 24px;
-      `}
-    >
-      {/* Display cancel button for confirm and prompt modals */}
-      {(type === 'confirm' || type === 'prompt') && (
-        <button
-          className={css`
-            padding: 8px 16px;
-            border: 1px solid #ccc;
-            background: none;
-            border-radius: 4px;
-            cursor: pointer;
-            &:hover {
-              background-color: #f3f3f3;
-            }
-          `}
-          onClick={type === 'confirm' ? () => onConfirm(false) : onCancel}
-        >
-          Cancel
-        </button>
-      )}
+    <ModalProvider root={root}>
+      <div ref={setRoot} />
       <button
-        className={css`
-          padding: 8px 16px;
-          background-color: #4a90e2;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: ${disabled ? 'not-allowed' : 'pointer'};
-          opacity: ${disabled ? 0.6 : 1};
-          &:hover {
-            background-color: ${disabled ? '#4a90e2' : '#357ac7'};
-          }
-        `}
-        onClick={() => onConfirm(type === 'confirm' ? true : undefined)}
-        disabled={disabled}
+        onClick={() =>
+          void prompt<string>({
+            title: 'Container prompt',
+            defaultValue: '',
+            Input: ({ value, onChange }) => (
+              <input
+                aria-label="Value"
+                value={value ?? ''}
+                onChange={(event) => onChange(event.target.value)}
+              />
+            ),
+          })
+        }
       >
-        Confirm
+        Open in container
       </button>
-    </div>
-  );
-};
-
-// Global setup in provider
-function App() {
-  return (
-    <ModalProvider
-      ForegroundComponent={CustomForegroundComponent}
-      BackgroundComponent={CustomBackgroundComponent}
-      TitleComponent={CustomTitleComponent}
-      SubtitleComponent={CustomSubtitleComponent}
-      ContentComponent={CustomContentComponent}
-      FooterComponent={CustomFooterComponent}
-      options={{
-        duration: 300, // Animation duration (ms)
-      }}
-      context={{
-        // Context accessible in all modals
-        theme: 'light',
-        locale: 'en-US',
-      }}
-    >
-      <YourApp />
     </ModalProvider>
   );
 }
-
-// Applying custom components to specific modals
-async function showCustomAlert() {
-  await alert({
-    title: 'Notification',
-    content: 'Content',
-    // Custom component only for this modal
-    ForegroundComponent: ({ children }) => (
-      <div
-        className={css`
-          background-color: #f0f8ff;
-          padding: 30px;
-          border-radius: 16px;
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        `}
-      >
-        {children}
-      </div>
-    ),
-    // Pass background data
-    background: {
-      data: 'custom-alert',
-    },
-  });
-}
 ```
 
-### 4. Using Custom Anchors and Initialization
-
-You can specify the DOM element where modals will be rendered:
+`useInitializeModal` accepts the same root. Manual mode defers only its initial root, until `initialize(element)` or a later root change. Always render the returned portal.
 
 ```tsx
 import { useEffect, useRef } from 'react';
 
-import {
-  ModalProvider,
-  ModalProviderHandle,
-  alert,
-  useInitializeModal,
-} from '@lerx/promise-modal';
+import { alert, useInitializeModal } from '@lerx/promise-modal';
 
-// Using refs
-function CustomAnchorExample() {
-  // Modal provider handle reference
-  const modalProviderRef = useRef<ModalProviderHandle>(null);
-  // Container reference for modal display
-  const modalContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Initialize modal when container is ready
-    if (modalContainerRef.current && modalProviderRef.current) {
-      modalProviderRef.current.initialize(modalContainerRef.current);
-    }
-  }, []);
-
-  return (
-    <ModalProvider ref={modalProviderRef}>
-      <div>
-        {/* Modals will render inside this div */}
-        <div
-          ref={modalContainerRef}
-          style={{
-            backgroundColor: '#f0f0f0',
-            width: '100%',
-            height: '500px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        />
-
-        <button
-          onClick={() =>
-            alert({ title: 'Notice', content: 'Displayed in custom anchor.' })
-          }
-        >
-          Show Modal
-        </button>
-      </div>
-    </ModalProvider>
-  );
-}
-
-// Using the useInitializeModal hook
-function CustomAnchorWithHookExample() {
-  // useInitializeModal hook (manual mode: manual initialization)
+export function ManualApp() {
+  const container = useRef<HTMLDivElement>(null);
   const { initialize, portal } = useInitializeModal({ mode: 'manual' });
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    if (containerRef.current) {
-      // Initialize modal with container element
-      initialize(containerRef.current);
-    }
+    if (container.current) initialize(container.current);
   }, [initialize]);
-
   return (
-    <div>
-      {/* Container for modal rendering */}
-      <div
-        ref={containerRef}
-        style={{
-          backgroundColor: '#f0f0f0',
-          width: '100%',
-          height: '500px',
-        }}
-      />
-
-      <button
-        onClick={() =>
-          alert({ title: 'Notice', content: 'Displayed in custom anchor.' })
-        }
-      >
-        Show Modal
-      </button>
-
-      {/* Portal rendering in another location (optional) */}
-      <div id="another-container">{portal}</div>
-    </div>
+    <>
+      <div ref={container} />
+      <button onClick={() => void alert({ title: 'Hello' })}>Open</button>
+      {portal}
+    </>
   );
 }
 ```
 
-### 5. Implementing Toast Messages
+## Component ownership and options
 
-You can implement toast message functionality using `promise-modal`. This example is based on actual implementation in the project:
+Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
 
 ```tsx
-import React, { type ReactNode, useEffect, useRef } from 'react';
+import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';
 
-import { css } from '@emotion/css';
+const defaults: OverridableHandleProps = { group: 'editor', duration: '0.3s' };
+
+export function SaveButton() {
+  const modal = useModal(defaults);
+  return (
+    <button
+      onClick={async () => {
+        const accepted = await modal.confirm({ title: 'Save?', duration: 150 });
+        console.log(accepted);
+      }}
+    >
+      Save
+    </button>
+  );
+}
+```
+
+Precedence is library defaults, Provider options, `useModal` configuration, then call arguments. `undefined` inherits; `0` and `false` override. `duration` accepts nonnegative numbers in milliseconds, decimal ms strings, or decimal s strings: `300`, `'300ms'`, `'0.3s'`. Invalid values fall back to the Provider duration for a call, or the library default for a Provider, with a development warning. Use normalized duration strings directly in CSS without appending `ms`. The [hook reference](./docs/en/SPECIFICATION.md#hooks) distinguishes Provider timing from per-modal timing.
+
+## Animation and destruction
+
+Automatic destruction removes a closed non-manual modal after its resolved duration. For an exit animation, set `manualDestroy: true` and have the frame destroy after settlement. `useDestroyAfter` never closes a request and never starts from route hiding alone; changing its delay reschedules destruction. `useModalAnimation` runs committed visibility callbacks on the next animation frame and cancels obsolete scheduled callbacks. These hooks are independent.
+
+```tsx
+import { type PropsWithChildren, useRef } from 'react';
+
 import {
-  ModalFrameProps,
+  type ModalFrameProps,
+  ModalProvider,
   alert,
   useDestroyAfter,
   useModalAnimation,
   useModalDuration,
 } from '@lerx/promise-modal';
 
-// Toast foreground component definition
-const ToastForeground = ({
+function AnimatedFrame({
   id,
   visible,
   children,
-  onClose,
-  hideAfterMs = 3000,
-}) => {
-  const modalRef = useRef(null);
-  const { duration } = useModalDuration();
-
-  // Auto-close after specified time
-  useEffect(() => {
-    const timer = setTimeout(onClose, hideAfterMs);
-    return () => clearTimeout(timer);
-  }, [onClose, hideAfterMs]);
-
-  // Animation handling
+}: PropsWithChildren<ModalFrameProps>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { duration } = useModalDuration(id);
   useModalAnimation(visible, {
     onVisible: () => {
-      modalRef.current?.classList.add('visible');
+      if (ref.current) ref.current.style.opacity = '1';
     },
     onHidden: () => {
-      modalRef.current?.classList.remove('visible');
+      if (ref.current) ref.current.style.opacity = '0';
     },
   });
-
-  // Destroy after closing
   useDestroyAfter(id, duration);
-
   return (
-    <div
-      ref={modalRef}
-      className={css`
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%) translateY(100px);
-        opacity: 0;
-        transition:
-          transform ${duration}ms,
-          opacity ${duration}ms;
-        &.visible {
-          transform: translateX(-50%) translateY(0);
-          opacity: 1;
-        }
-      `}
+    <section
+      ref={ref}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Notification"
+      aria-hidden={!visible}
+      style={{
+        opacity: 0,
+        transition: `opacity ${duration}`,
+        background: 'white',
+        padding: 24,
+      }}
     >
       {children}
-    </div>
+    </section>
   );
-};
-
-// Toast message interface
-interface ToastProps {
-  message: ReactNode;
-  duration?: number;
 }
 
-// Handler to remove previous toast
-let onDestroyPrevToast: () => void;
-
-// Toast display function
-export const toast = ({ message, duration = 1250 }: ToastProps) => {
-  // Remove previous toast if exists
-  onDestroyPrevToast?.();
-
-  return alert({
-    content: message,
-    ForegroundComponent: (props: ModalFrameProps) => {
-      // Store destroy function of new toast
-      onDestroyPrevToast = props.onDestroy;
-      return <ToastForeground {...props} hideAfterMs={duration} />;
-    },
-    footer: false, // Hide footer
-    dimmed: false, // Disable background dim
-    closeOnBackdropClick: false, // Disable closing on backdrop click
-  });
-};
-
-// Usage example
-function showToastExample() {
-  toast({
-    message: (
-      <div
-        className={css`
-          background-color: #333;
-          color: white;
-          padding: 12px 24px;
-          border-radius: 8px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        `}
-      >
-        Task completed!
-      </div>
-    ),
-    duration: 2000, // Auto-close after 2 seconds
-  });
-}
-```
-
-### 6. Various Modal Configuration Options
-
-Examples utilizing various modal configuration options:
-
-```tsx
-import { alert, confirm } from '@lerx/promise-modal';
-
-// Basic alert modal
-async function showBasicAlert() {
-  await alert({
-    title: 'Basic Notification',
-    content: 'This is an alert modal with default settings.',
-  });
-}
-
-// Modal settings by type
-async function showModalByType() {
-  // Success notification
-  await alert({
-    title: 'Success',
-    content: 'Task completed successfully.',
-    subtype: 'success',
-    dimmed: true,
-  });
-
-  // Warning confirmation
-  const result = await confirm({
-    title: 'Warning',
-    content: 'This action cannot be undone. Continue?',
-    subtype: 'warning',
-    closeOnBackdropClick: false, // Prevent closing by backdrop click
-  });
-
-  // Error notification
-  await alert({
-    title: 'Error',
-    content: 'Unable to complete the task.',
-    subtype: 'error',
-    // Custom footer text
-    footer: {
-      confirm: 'I understand',
-    },
-  });
-}
-
-// Using manual destroy mode
-async function showManualDestroyModal() {
-  await alert({
-    title: 'Notification',
-    content:
-      "This modal won't close on backdrop click and requires confirmation button to close.",
-    manualDestroy: true, // Enable manual destroy mode
-    closeOnBackdropClick: false, // Prevent closing by backdrop click
-  });
-}
-
-// Using background data
-async function showModalWithBackground() {
-  await alert({
-    title: 'Background Data Usage',
-    content: 'This modal passes data to the background component.',
-    background: {
-      data: 'custom-background-data',
-      opacity: 0.8,
-      blur: '5px',
-    },
-  });
-}
-```
-
----
-
-## API Reference
-
-### Core Functions
-
-#### `alert(options)`
-
-Opens a simple alert modal to display information to the user.
-
-**Parameters:**
-
-- `options`: Alert modal configuration object
-  - `title?`: Modal title (ReactNode)
-  - `subtitle?`: Subtitle (ReactNode)
-  - `content?`: Modal content (ReactNode or component)
-  - `subtype?`: Modal type ('info' | 'success' | 'warning' | 'error')
-  - `background?`: Background settings (ModalBackground object)
-  - `footer?`: Footer settings
-    - Function: `(props: FooterComponentProps) => ReactNode`
-    - Object: `{ confirm?: string; hideConfirm?: boolean }`
-    - `false`: Hide footer
-  - `dimmed?`: Whether to dim the background (boolean)
-  - `manualDestroy?`: Enable manual destroy mode (boolean)
-  - `closeOnBackdropClick?`: Whether to close on backdrop click (boolean)
-  - `ForegroundComponent?`: Custom foreground component
-  - `BackgroundComponent?`: Custom background component
-
-**Returns:** `Promise<void>` - Resolved when the modal is closed
-
-```typescript
-// Example
-await alert({
-  title: 'Notification',
-  content: 'Content',
-  subtype: 'info',
-  closeOnBackdropClick: true,
-});
-```
-
-#### `confirm(options)`
-
-Opens a confirmation modal that requests user confirmation.
-
-**Parameters:**
-
-- `options`: Confirm modal configuration
-  - Same options as `alert`, plus:
-  - `footer?`: Footer settings
-    - Function: `(props: FooterComponentProps) => ReactNode`
-    - Object: `{ confirm?: string; cancel?: string; hideConfirm?: boolean; hideCancel?: boolean }`
-    - `false`: Hide footer
-
-**Returns:** `Promise<boolean>` - Resolves to true if confirmed, false if canceled
-
-```typescript
-// Example
-const result = await confirm({
-  title: 'Confirm',
-  content: 'Do you want to proceed?',
-  footer: {
-    confirm: 'Confirm',
-    cancel: 'Cancel',
-  },
-});
-```
-
-#### `prompt<T>(options)`
-
-Opens a prompt modal to receive input from the user.
-
-**Parameters:**
-
-- `options`: Prompt modal configuration object
-  - Same options as `alert`, plus:
-  - `Input`: Function to render input field
-    - `(props: PromptInputProps<T>) => ReactNode`
-    - props: `{ value: T; onChange: (value: T) => void }`
-  - `defaultValue?`: Default value (T)
-  - `disabled?`: Function to determine if confirm button should be disabled
-    - `(value: T | undefined) => boolean`
-  - `returnOnCancel?`: If true, cancel resolves with the current input value instead of null (boolean)
-  - `footer?`: Footer settings (similar to confirm)
-
-**Returns:** `Promise<T | null>` - Resolves to the input value on confirm, or null on cancel
-
-> **Upgrade note:** `prompt()` now types cancellation explicitly — the return is `Promise<T | null>` and the `disabled` callback receives `T | undefined`. Consumers that previously annotated these as non-null may hit new TypeScript errors on upgrade; the runtime behaviour (cancel resolves `null`) is unchanged.
-
-```typescript
-// Example
-const value = await prompt<string>({
-  title: 'Input',
-  defaultValue: '',
-  Input: ({ value, onChange }) => (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  ),
-  disabled: (value) => value.trim() === '',
-});
-```
-
-### Components
-
-#### `ModalProvider` (or `BootstrapProvider`)
-
-Component that initializes and provides the modal service.
-
-**Props:**
-
-- `ForegroundComponent?`: Custom foreground component
-  - `(props: WrapperComponentProps) => ReactNode`
-- `BackgroundComponent?`: Custom background component
-  - `(props: WrapperComponentProps) => ReactNode`
-- `TitleComponent?`: Custom title component
-- `SubtitleComponent?`: Custom subtitle component
-- `ContentComponent?`: Custom content component
-- `FooterComponent?`: Custom footer component
-  - `(props: FooterComponentProps) => ReactNode`
-- `options?`: Global modal options
-  - `duration?`: Animation duration (milliseconds)
-  - `backdrop?`: Backdrop click handling
-  - Other options...
-- `context?`: Context object to pass to modal components
-- `usePathname?`: Custom pathname hook function
-
-**Handle:**
-
-- `initialize`: Method to manually initialize modal service
-
-```typescript
-// Example using ref for control
-import { useRef } from 'react';
-import { ModalProvider, ModalProviderHandle } from '@lerx/promise-modal';
-
-function App() {
-  const modalProviderRef = useRef<ModalProviderHandle>(null);
-
-  const handleInitialize = () => {
-    modalProviderRef.current?.initialize();
-  };
-
+export function AnimatedApp() {
   return (
-    <ModalProvider ref={modalProviderRef}>
-      <YourApp />
+    <ModalProvider
+      ForegroundComponent={AnimatedFrame}
+      options={{ manualDestroy: true }}
+    >
+      <button
+        onClick={() => void alert({ title: 'Animated', duration: '0.3s' })}
+      >
+        Open
+      </button>
     </ModalProvider>
   );
 }
 ```
 
-### Hooks
+## Accessibility
 
-#### `useModal`
+Escape walks visible pending modals from top to bottom and cancels the first whose effective `closeOnEscape` is true, preventing the event's default behavior. It skips non-accepting nondimmed modals and stops at a non-accepting dimmed modal without preventing the event. The resolution order is call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true). `useModal` defaults count as call data. Prevented and IME events are ignored. A dimmed modal with Escape disabled blocks Escape from reaching lower modals.
 
-Returns modal handler functions that share the component's lifecycle.
+Visible pending dimmed modals move focus inside, isolate the page, and by default trap Tab and lock body scrolling. `trapFocus: false` disables cycling, not initial focus or isolation; `lockScroll: false` disables scroll locking. Both options accept Provider and call overrides. Nondimmed modals do not take or restore focus, isolate the page, or lock scrolling. Custom foregrounds supply role, accessible name, and description; the library wrapper supplies focus behavior. The fallback frame supplies dialog role and aria-modal but still needs an accessible name from the application. See the [accessibility contract](./docs/en/SPECIFICATION.md#accessibility) for stacks, roots, and external portal limits.
 
-**Key Features:**
+A visible dimmed backdrop blocks pointers even with `closeOnBackdropClick: false`. For pass-through toasts, set both `dimmed` and `closeOnBackdropClick` to false.
 
-Unlike static handlers (`alert`, `confirm`, `prompt`), modals created with `useModal` automatically clean up when the component unmounts. This is useful when you want to ensure that modals opened within a specific component are automatically closed when that component is removed.
+## Failures and lifecycle
 
-**Returns:**
-
-- `alert`: Alert modal handler function
-- `confirm`: Confirm modal handler function
-- `prompt`: Prompt modal handler function
-
-```typescript
-import { useModal } from '@lerx/promise-modal';
-
-function MyComponent() {
-  const modal = useModal();
-
-  const handleShowAlert = async () => {
-    // Modal will be automatically cleaned up when MyComponent unmounts
-    await modal.alert({
-      title: 'Notice',
-      content: 'This modal is tied to the component lifecycle.',
-    });
-  };
-
-  const handleShowConfirm = async () => {
-    const result = await modal.confirm({
-      title: 'Confirm',
-      content: 'Do you want to proceed?',
-    });
-    console.log('Result:', result);
-  };
-
-  return (
-    <div>
-      <button onClick={handleShowAlert}>Show Alert</button>
-      <button onClick={handleShowConfirm}>Show Confirm</button>
-    </div>
-  );
-}
-```
-
-**Comparison with Static Handlers:**
-
-| Feature        | Static Handlers               | useModal Hook                |
-| -------------- | ----------------------------- | ---------------------------- |
-| Lifecycle      | Independent of components     | Tied to component lifecycle  |
-| Cleanup        | Manual cleanup required       | Automatic cleanup on unmount |
-| Usage Location | Anywhere (even outside React) | Inside React components only |
-
-#### `useModalOptions`
-
-Read global options for modals.
-
-```typescript
-import { useModalOptions } from '@lerx/promise-modal';
-
-function Component() {
-  // ConfigurationContextProps
-  const options = useModalOptions();
-
-  // ...
-}
-```
-
-#### `useModalDuration`
-
-Read modal animation duration.
-
-```typescript
-import { useModalDuration } from '@lerx/promise-modal';
-
-function Component() {
-  // duration is 300ms, milliseconds is 300
-  const { duration, milliseconds } = useModalDuration();
-  // ...
-}
-```
-
-#### `useModalBackdrop`
-
-Read modal backdrop settings.
-
-```typescript
-import { useModalBackdrop } from '@lerx/promise-modal';
-
-function Component() {
-  // backdrop is Color(#000000~#ffffff or rgba(0,0,0,0.5))
-  const backdrop = useModalBackdrop();
-  // ...
-}
-```
-
-#### `useInitializeModal`
-
-Initializes the modal service. Usually called automatically by `ModalProvider`.
-
-```typescript
-import { useInitializeModal } from '@lerx/promise-modal';
-
-function Component() {
-  const { initialize } = useInitializeModal();
-
-  // Manually initialize if needed
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  // ...
-}
-```
-
-#### `useSubscribeModal`
-
-Subscribes to modal state changes.
-
-```typescript
-import { useSubscribeModal } from '@lerx/promise-modal';
-
-function Component({ modal }) {
-  // Component rerenders when modal state changes
-  const version = useSubscribeModal(modal);
-
-  // ...
-}
-```
-
-#### `useDestroyAfter`
-
-Automatically destroys a modal after specified time.
-
-```typescript
-import { useDestroyAfter } from '@lerx/promise-modal';
-
-function Component({ modalId }) {
-  // Auto-close modal after 3 seconds
-  useDestroyAfter(modalId, 3000);
-
-  // ...
-}
-```
-
-#### `useActiveModalCount`
-
-Returns the number of currently active modals.
-
-```typescript
-import { useActiveModalCount } from '@lerx/promise-modal';
-
-function Component() {
-  const count = useActiveModalCount();
-
-  return (
-    <div>
-      Currently open modals: {count}
-    </div>
-  );
-}
-```
-
-#### `useModalAnimation`
-
-Provides modal animation state and control.
-
-```typescript
-import { useModalAnimation } from '@lerx/promise-modal';
-
-export const Foreground = ({
-  id,
-  visible,
-  children,
-  onClose,
-  hideAfterMs,
-}: PropsWithChildren<ForegroundProps>) => {
-  const modalRef = useRef<HTMLDivElement>(null);
-  useModalAnimation(visible, {
-    onVisible: () => {
-      modalRef.current?.classList.add(styles.visible);
-    },
-    onHidden: () => {
-      modalRef.current?.classList.remove(styles.visible);
-    },
-  });
-  ...
-}
-```
-
-### Type Definitions
-
-The library provides various types for TypeScript compatibility:
-
-#### `ModalFrameProps`
-
-Properties passed to the modal frame component.
-
-```typescript
-interface ModalFrameProps<Context = any, B = any> {
-  id: number;
-  type: 'alert' | 'confirm' | 'prompt';
-  alive: boolean;
-  visible: boolean;
-  initiator: string;
-  manualDestroy: boolean;
-  closeOnBackdropClick: boolean;
-  background?: ModalBackground<B>;
-  onConfirm: () => void;
-  onClose: () => void;
-  onChange: (value: any) => void;
-  onDestroy: () => void;
-  onChangeOrder: Function;
-  context: Context;
-}
-```
-
-#### `FooterComponentProps`
-
-Properties passed to the footer component.
-
-```typescript
-interface FooterComponentProps {
-  onConfirm: () => void;
-  onClose: () => void;
-  // Other props...
-}
-```
-
-#### `PromptInputProps<T>`
-
-Properties passed to the input component in prompt modals.
-
-```typescript
-interface PromptInputProps<T> {
-  value: T;
-  onChange: (value: T) => void;
-}
-```
-
-Additional types provided:
-
-- `ModalBackground`: Modal background settings type
-- `AlertContentProps`: Alert modal content component props
-- `ConfirmContentProps`: Confirm modal content component props
-- `PromptContentProps`: Prompt modal content component props
-- `WrapperComponentProps`: Modal wrapper component props
-
----
-
-## Advanced Usage Examples
-
-### 1. Nested Modals (Opening Modals inside Other Modals)
-
-You can open modals inside other modals to create complex user interactions.
+Results settle once. Render failures in content, input, or a frame reject that request; catch errors at the call site. Peers and later requests continue working. Destroying a pending modal cancels it before removing its frame. AbortSignal resolves with the cancellation result, rather than rejecting.
 
 ```tsx
-import { alert, confirm, prompt } from '@lerx/promise-modal';
+import { alert } from '@lerx/promise-modal';
 
-// Multi-step modal workflow example
-async function multiStepProcess() {
-  // First modal: confirm to proceed
-  const shouldProceed = await confirm({
-    title: 'Start Task',
-    content: 'This task involves multiple steps. Do you want to continue?',
-    footer: {
-      confirm: 'Proceed',
-      cancel: 'Cancel',
-    },
-  });
-
-  if (!shouldProceed) return;
-
-  // Second modal: get user input
-  const userName = await prompt<string>({
-    title: 'User Information',
-    content: 'Please enter your name.',
-    defaultValue: '',
-    Input: ({ value, onChange }) => (
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Name"
-      />
-    ),
-  });
-
-  if (!userName) return;
-
-  // Third modal: final confirmation
-  const confirmed = await confirm({
-    title: 'Final Confirmation',
-    content: `${userName}, are you sure you want to proceed?`,
-    subtype: 'warning',
-  });
-
-  if (confirmed) {
-    // Last modal: completion notification
+export async function showBrokenContent() {
+  try {
     await alert({
-      title: 'Complete',
-      content: `${userName}, the task has been completed successfully.`,
-      subtype: 'success',
+      content: () => {
+        throw new Error('Cannot render');
+      },
     });
+  } catch (error) {
+    console.error('Modal failed', error);
   }
-}
-
-// Opening modal from within a footer
-async function nestedModalInFooter() {
-  const result = await confirm({
-    title: 'Confirmation Required',
-    content: 'Do you want to proceed with this task?',
-    // Custom footer that opens another modal
-    footer: ({ onConfirm, onClose }) => {
-      const handleConfirm = async () => {
-        // Open another modal when confirm button is clicked
-        const isConfirmed = await confirm({
-          title: 'Final Confirmation',
-          content: 'Are you really sure? This action cannot be undone.',
-          closeOnBackdropClick: false,
-          // Apply different design to second modal
-          ForegroundComponent: CustomForegroundComponent,
-        });
-
-        // Process first modal result based on second modal result
-        if (isConfirmed) onConfirm();
-        else onClose();
-      };
-
-      return (
-        <div>
-          <button onClick={onClose}>Cancel</button>
-          <button onClick={handleConfirm}>Next Step</button>
-        </div>
-      );
-    },
-  });
-
-  if (result) {
-    console.log('Proceeding with the task.');
-  }
-}
-
-// Opening modal from within a prompt modal
-async function promptWithNestedModal() {
-  const value = await prompt<{ title: string; description: string }>({
-    title: 'Create Content',
-    defaultValue: { title: '', description: '' },
-    Input: ({ value, onChange }) => {
-      // Show help modal when help button is clicked
-      const showHelp = () => {
-        alert({
-          title: 'Help',
-          content: 'Enter a title and description. Title is required.',
-        });
-      };
-
-      return (
-        <div>
-          <div>
-            <label>Title</label>
-            <input
-              value={value.title}
-              onChange={(e) => onChange({ ...value, title: e.target.value })}
-            />
-          </div>
-          <div>
-            <label>Description</label>
-            <textarea
-              value={value.description}
-              onChange={(e) =>
-                onChange({ ...value, description: e.target.value })
-              }
-            />
-          </div>
-          <button type="button" onClick={showHelp}>
-            Help
-          </button>
-        </div>
-      );
-    },
-    disabled: (value) => !value.title,
-  });
-
-  console.log('Input value:', value);
+  await alert({ title: 'Other requests still work' });
 }
 ```
 
----
+Route navigation hides pending requests without settling them; returning restores them. Hidden modals still respond to abort and caller cleanup. A settled modal never reappears, including in manual destruction mode. One bootstrap owns the portal; extra Providers wait and warn once in development. When the owner unmounts, the first waiter takes over; with no waiter, open requests cancel after the current commit. Same-commit remounts and StrictMode checks preserve pending results and prompt input. Queued pre-mount requests remain queued.
+
+## Further reference
+
+See the [specification](./docs/en/SPECIFICATION.md) for all hooks, cancellation, routing, toasts, and public wrapper types. The published declarations are the source of truth for prop shapes; no node classes are public. The packaged [agent skill](./docs/agents/skills/promise-modal-skill/SKILL.md) explains integration decisions.
 
 ## License
 
-This repository is licensed under the MIT License. Please refer to the [`LICENSE`](./LICENSE) file for details.
-
----
-
-## Contact
-
-For inquiries or suggestions related to the project, please create an issue.
+MIT.

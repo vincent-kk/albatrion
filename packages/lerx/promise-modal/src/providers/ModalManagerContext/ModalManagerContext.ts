@@ -6,7 +6,6 @@ import type { ModalNode } from '@/promise-modal/core';
 import type { ModalActions, ModalHandlersWithId } from '@/promise-modal/types';
 
 export interface ModalManagerContextProps extends ModalHandlersWithId {
-  modalIds: ModalNode['id'][];
   getModal: Fn<[id: ModalNode['id'] | undefined], ModalActions>;
   getModalNode: Fn<[id: ModalNode['id'] | undefined], ModalNode | undefined>;
 }

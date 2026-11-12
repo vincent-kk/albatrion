@@ -11,6 +11,7 @@ import type {
   FooterOptions,
   ForegroundComponent,
   ModalBackground,
+  ModalOptions,
   PromptContentProps,
   PromptFooterRender,
   PromptInputProps,
@@ -19,16 +20,22 @@ import type {
 export interface OverridableHandleProps {
   /** Modal group identifier for managing related modals */
   group?: string;
-  /** Alert subtype that affects UI styling */
+  /** Presentation subtype shared by all modal kinds */
   subtype?: 'info' | 'success' | 'warning' | 'error';
   /** Whether to dim the background */
   dimmed?: boolean;
-  /** Modal animation duration in milliseconds */
-  duration?: number;
-  /** If true, keeps modal in DOM after closing (for animations) */
+  /** Nonnegative milliseconds or a decimal ms/s duration string. */
+  duration?: ModalOptions['duration'];
+  /** Retains the closed frame until onDestroy; a custom frame must finish its cleanup */
   manualDestroy?: boolean;
   /** Whether to close modal on backdrop click */
   closeOnBackdropClick?: boolean;
+  /** Escape override; otherwise inherits the same-level backdrop click setting. */
+  closeOnEscape?: boolean;
+  /** Traps Tab only when the top visible pending modal is dimmed; defaults to true. */
+  trapFocus?: boolean;
+  /** Locks body scrolling while a pending dimmed modal is visible; defaults to true. */
+  lockScroll?: boolean;
   /** Custom foreground component */
   ForegroundComponent?: ForegroundComponent;
   /** Custom background component */

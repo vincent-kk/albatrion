@@ -26,11 +26,17 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
 
   private __value__: T | undefined;
 
+  /** Current value survives presentation remounts. */
+  get value() {
+    return this.__value__;
+  }
+
   constructor({
     id,
     group,
     initiator,
     type,
+    subtype,
     title,
     subtitle,
     content,
@@ -44,13 +50,18 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
     duration,
     manualDestroy,
     closeOnBackdropClick,
+    closeOnEscape,
+    trapFocus,
+    lockScroll,
     handleResolve,
+    handleReject,
     ForegroundComponent,
     BackgroundComponent,
   }: PromptNodeProps<T, B>) {
     super({
       id,
       group,
+      subtype,
       initiator,
       title,
       subtitle,
@@ -59,7 +70,11 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
       duration,
       manualDestroy,
       closeOnBackdropClick,
+      closeOnEscape,
+      trapFocus,
+      lockScroll,
       handleResolve,
+      handleReject,
       ForegroundComponent,
       BackgroundComponent,
     });
@@ -78,11 +93,11 @@ export class PromptNode<T = any, B = any> extends AbstractNode<T, B> {
   }
 
   onConfirm() {
-    this.onResolve(this.__value__ ?? null);
+    this.onResolve(this.__value__);
   }
 
   onClose() {
-    if (this.returnOnCancel) this.onResolve(this.__value__ ?? null);
+    if (this.returnOnCancel) this.onResolve(this.__value__);
     else this.onResolve(null);
   }
 }

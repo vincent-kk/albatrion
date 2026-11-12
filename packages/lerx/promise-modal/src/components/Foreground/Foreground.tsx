@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { cxLite } from '@winglet/style-utils/util';
 
+import { ModalManager } from '@/promise-modal/app';
 import {
   useConfigurationContext,
   useModalManager,
@@ -16,6 +17,14 @@ export const ForegroundFrame = ({
   modalId,
   onChangeOrder,
 }: ModalLayerProps) => {
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const setFrameElement = useCallback(
+    (element: HTMLDivElement | null) => {
+      frameRef.current = element;
+      ModalManager.setFrameElement(modalId, element);
+    },
+    [modalId],
+  );
   const { ForegroundComponent } = useConfigurationContext();
   const { context: userDefinedContext } = useUserDefinedContext();
   const { modal, onChange, onConfirm, onClose, onDestroy } =
@@ -26,10 +35,16 @@ export const ForegroundFrame = ({
     [ForegroundComponent, modal],
   );
 
+  useLayoutEffect(() => {
+    ModalManager.setFrameElement(modalId, frameRef.current);
+  });
+
   if (!modal) return null;
 
   return (
     <div
+      ref={setFrameElement}
+      tabIndex={-1}
       className={cxLite(
         foreground,
         modal.visible && active,
@@ -39,6 +54,9 @@ export const ForegroundFrame = ({
       <Foreground
         id={modal.id}
         type={modal.type}
+        subtype={modal.subtype}
+        group={modal.group}
+        settled={modal.settled}
         alive={modal.alive}
         visible={modal.visible}
         initiator={modal.initiator}

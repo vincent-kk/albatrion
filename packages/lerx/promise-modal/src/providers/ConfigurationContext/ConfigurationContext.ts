@@ -16,10 +16,14 @@ export interface ConfigurationContextProps {
   ContentComponent: ComponentType<WrapperComponentProps>;
   FooterComponent: ComponentType<FooterComponentProps>;
   options: Required<
-    Omit<ModalOptions, 'backdrop'> & { backdrop: CSSProperties }
-  >;
+    Omit<ModalOptions, 'backdrop' | 'duration' | 'closeOnEscape'> & {
+      backdrop: CSSProperties;
+      duration: `${number}ms`;
+    }
+  > &
+    Pick<ModalOptions, 'closeOnEscape'>;
 }
 
-export const ConfigurationContext = createContext<ConfigurationContextProps>(
-  {} as ConfigurationContextProps,
-);
+export const ConfigurationContext = createContext<
+  ConfigurationContextProps | undefined
+>(undefined);

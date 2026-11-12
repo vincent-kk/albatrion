@@ -4,11 +4,9 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 
-import { convertMsFromDuration } from '@winglet/common-utils/convert';
-import { useOnMountLayout, useReference } from '@winglet/react-utils/hook';
+import { useReference } from '@winglet/react-utils/hook';
 
 import type { Fn } from '@aileron/declare';
 
@@ -16,6 +14,9 @@ import { ModalManager } from '@/promise-modal/app';
 import { type ModalNode, nodeFactory } from '@/promise-modal/core';
 import { closeModal } from '@/promise-modal/helpers/closeModal';
 import { hideModal } from '@/promise-modal/helpers/hideModal';
+import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
+import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
 import { useConfigurationOptions } from '@/promise-modal/providers/ConfigurationContext';
 import type { Modal } from '@/promise-modal/types';
 
@@ -30,50 +31,49 @@ export const ModalManagerContextProvider = memo(
     usePathname,
     children,
   }: PropsWithChildren<ModalManagerContextProviderProps>) => {
-    const modalDictionary = useRef<Map<ModalNode['id'], ModalNode>>(new Map());
-
-    const [modalIds, setModalIds] = useState<ModalNode['id'][]>([]);
-    const modalIdsRef = useReference(modalIds);
     const { pathname } = usePathname();
-
     const initiator = useRef(pathname);
-    const modalIdSequence = useRef(0);
 
     const options = useConfigurationOptions();
     const optionsRef = useReference(options);
 
-    useOnMountLayout(() => {
-      // Registering the handler also flushes the prerender queue, so modals
-      // opened before mount are created here with their promise wiring intact.
-      ModalManager.openHandler = (data: Modal) => {
-        const { duration, manualDestroy, closeOnBackdropClick } =
-          optionsRef.current;
-        const modalNode = nodeFactory({
-          duration: convertMsFromDuration(duration),
+    useLayoutEffect(() => {
+      const openHandler = (data: Modal) => {
+        const {
+          duration,
           manualDestroy,
           closeOnBackdropClick,
-          ...data,
-          id: modalIdSequence.current++,
-          initiator: initiator.current,
+          trapFocus,
+          lockScroll,
+        } = optionsRef.current;
+        const merged = mergeDefined(
+          { manualDestroy, closeOnBackdropClick, trapFocus, lockScroll },
+          data,
+        );
+        const node = nodeFactory({
+          ...merged,
+          closeOnEscape:
+            data.closeOnEscape ??
+            data.closeOnBackdropClick ??
+            optionsRef.current.closeOnEscape ??
+            closeOnBackdropClick,
+          duration: parseFloat(normalizeDuration(data.duration, duration)),
+          id: ModalManager.nextId(),
+          initiator:
+            usePathname === useDefaultPathname
+              ? window.location.pathname
+              : initiator.current,
         });
-        modalDictionary.current.set(modalNode.id, modalNode);
-        setModalIds((ids) => {
-          const aliveIds: number[] = [];
-          for (let i = 0, l = ids.length; i < l; i++) {
-            const id = ids[i];
-            const destroyed = !modalDictionary.current.get(id)?.alive;
-            if (destroyed) modalDictionary.current.delete(id);
-            else aliveIds.push(id);
-          }
-          return [...aliveIds, modalNode.id];
-        });
-        return modalNode;
+        ModalManager.register(node);
+        return node;
       };
-    });
+      ModalManager.openHandler = openHandler;
+      return () => ModalManager.releaseOpenHandler(openHandler);
+    }, [optionsRef, usePathname]);
 
     useLayoutEffect(() => {
-      for (const id of modalIdsRef.current) {
-        const modal = modalDictionary.current.get(id);
+      for (const id of ModalManager.ids) {
+        const modal = ModalManager.node(id);
         if (!modal?.alive) continue;
         if (modal.initiator === pathname) modal.onShow();
         else modal.onHide();
@@ -83,14 +83,13 @@ export const ModalManagerContextProvider = memo(
     }, [pathname]);
 
     const getModalNodeRef = useRef((modalId?: ModalNode['id']) =>
-      modalId !== undefined ? modalDictionary.current.get(modalId) : undefined,
+      modalId !== undefined ? ModalManager.node(modalId) : undefined,
     );
 
     const onDestroyRef = useRef((modalId?: ModalNode['id']) => {
       const modal = getModalNodeRef.current(modalId);
       if (!modal) return;
       modal.onDestroy();
-      ModalManager.refresh();
     });
 
     const onChangeRef = useRef(
@@ -103,7 +102,7 @@ export const ModalManagerContextProvider = memo(
 
     const onConfirmRef = useRef((modalId?: ModalNode['id']) => {
       const modal = getModalNodeRef.current(modalId);
-      if (!modal) return;
+      if (!modal || modal.settled) return;
       modal.onConfirm();
       hideModal(modal);
     });
@@ -124,15 +123,29 @@ export const ModalManagerContextProvider = memo(
 
     const value = useMemo(() => {
       return {
-        modalIds,
         getModalNode: getModalNodeRef.current,
         onChange: onChangeRef.current,
         onConfirm: onConfirmRef.current,
         onClose: onCloseRef.current,
         onDestroy: onDestroyRef.current,
         getModal: getModalRef.current,
+        onChangeOrder: ModalManager.raise,
+        onReject: (id: number, error: unknown) => {
+          const node = ModalManager.node(id);
+          if (!node) return;
+          node.onReject(error);
+          node.onDestroy();
+        },
+        onRejectAll: (error: unknown) => {
+          for (const id of ModalManager.ids) {
+            const node = ModalManager.node(id);
+            if (!node?.alive) continue;
+            node.onReject(error);
+            node.onDestroy();
+          }
+        },
       };
-    }, [modalIds]);
+    }, []);
 
     return (
       <ModalManagerContext.Provider value={value}>

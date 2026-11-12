@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { ModalProvider, alert, confirm, prompt } from '../src';
+import { Background } from './components/Background';
 import { Foreground } from './components/Foreground';
 
 export default {
@@ -57,10 +58,8 @@ export const NormalUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
-        // eslint-disable-next-line no-unreachable
-        return <div>Input</div>;
       },
-    });
+    }).catch((error: unknown) => console.error('Modal render rejected', error));
   };
 
   return (
@@ -116,7 +115,11 @@ export const NestedModalProviderUsecase = () => {
       <button onClick={handleConfirm}>Open Confirm</button>
       <button onClick={handlePrompt}>Open Prompt: {value}</button>
       <ModalProvider SubtitleComponent={() => <div>Nested Modal</div>}>
-        <button onClick={handleAlert}>Open Inner Provider Alert</button>
+        <p>
+          The nested Provider waits; this request uses the active outer
+          Provider.
+        </p>
+        <button onClick={handleAlert}>Open through active Provider</button>
       </ModalProvider>
     </div>
   );
@@ -160,7 +163,7 @@ export const MultiModalUsecase = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       for (let i = 0; i < 10; i++) {
         alert({
           title: 'Hello, world!',
@@ -182,6 +185,7 @@ export const MultiModalUsecase = () => {
         setValue(value ?? '');
       });
     }, 250);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -239,10 +243,8 @@ export const PreferredFrameUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
-        // eslint-disable-next-line no-unreachable
-        return <div>Input</div>;
       },
-    });
+    }).catch((error: unknown) => console.error('Modal render rejected', error));
   };
 
   const handleAltForegroundAlert = () => {
@@ -261,6 +263,8 @@ export const PreferredFrameUsecase = () => {
     alert({
       title: 'Hello, world!',
       content: 'This is a test alert, with alt background.',
+      BackgroundComponent: Background,
+      background: { data: 'alternative background' },
       closeOnBackdropClick: false,
     }).then((result) => {
       console.log(result);
