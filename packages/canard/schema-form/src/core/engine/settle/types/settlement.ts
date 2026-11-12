@@ -18,7 +18,7 @@ import type {
   SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
-import type { DependencyPresenceMemo } from '../utils/dependencies/getDependencyIndex';
+import type { DependencyPresenceMemo } from '../utils/dependencies/trie/DependencyIndex';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { FixedFirstLoadPreparation } from './fixedFirstLoad';
