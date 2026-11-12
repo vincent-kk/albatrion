@@ -27,7 +27,7 @@ export const dispatchRelayInput = <
   node: Self,
   input: unknown,
   option: Option,
-  relay: (input: unknown, option: Option) => void,
+  relay: (value: unknown, option: Option) => void,
 ): void => {
   if (node.disposed || node.rootNode.disposed) return;
   const marking = isBatchMarking(node);

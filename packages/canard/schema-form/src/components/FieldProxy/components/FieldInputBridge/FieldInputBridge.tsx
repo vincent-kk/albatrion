@@ -109,7 +109,7 @@ export const FieldInputBridge = memo(
       [node, generation, isLive, selection, controlled],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
-      (input, option = SetValueOption.Overwrite) => {
+      (value, option = SetValueOption.Overwrite) => {
         if (
           !accepts() ||
           rootReadOnly ||
@@ -119,8 +119,8 @@ export const FieldInputBridge = memo(
         )
           return;
         const onChange = onChangeRef.current || overrideOnChangeRef?.current;
-        if (!onChange) writeFieldNodeInput(node, input, option);
-        else relayFieldNodeInput(node, input, option, onChange);
+        if (!onChange) writeFieldNodeInput(node, value, option);
+        else relayFieldNodeInput(node, value, option, onChange);
       },
       [
         accepts,
