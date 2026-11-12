@@ -19,8 +19,10 @@ export const cloneInstance = (
   const clone = new Constructor({ ...instance._opts, allErrors, validateSchema });
   for (const [name, format] of Object.entries(instance._formats))
     clone.addFormat(name, format);
+  for (const name of Object.keys(clone.RULES.keywords))
+    if (!instance.RULES.keywords[name]) clone.removeKeyword(name);
   for (const name of Object.keys(instance.RULES.custom)) {
-    if (clone.getKeyword(name)) continue;
+    if (clone.getKeyword(name)) clone.removeKeyword(name);
     clone.addKeyword(name, instance.RULES.custom[name].definition);
   }
   for (const name of Object.keys(instance.RULES.keywords))
