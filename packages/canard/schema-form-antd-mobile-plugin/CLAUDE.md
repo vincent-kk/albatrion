@@ -1,28 +1,28 @@
 # CLAUDE.md
 
-`@canard/schema-form-antd-mobile-plugin` — Ant Design Mobile UI 컴포넌트를 `@canard/schema-form`에 연결하는 모바일 최적화 플러그인.
+`@canard/schema-form-antd-mobile-plugin` connects Ant Design Mobile UI components to `@canard/schema-form` with mobile optimization.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
+yarn build             # ESM + CJS build + type declarations
+yarn test              # Vitest tests
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
 
 ## Architecture
 
-플러그인은 `SchemaFormPlugin` 객체를 export:
-- `FormGroup` composes bound input and error parts; `FormLabel` owns the label root.
-- `FormErrorMessage` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
-- `fieldInputDefinitions` — 10개 모바일 입력 컴포넌트 정의 (우선순위 순)
+The plugin exports a `SchemaFormPlugin` object:
+- `FieldRenderer` composes bound input and error parts; `LabelRenderer` owns the label root.
+- `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
+- `fieldInputDefinitions` — 10 mobile input component definitions (in priority order)
 
-**FieldInput 우선순위**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Array → Slider → Textarea → String → Number → Boolean
+**FieldInput priority**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Array → Slider → Textarea → String → Number → Boolean
 
-## Schema → Component 매핑
+## Schema → Component Mapping
 
-| 조건 | 컴포넌트 |
+| Condition | Component |
 |------|---------|
 | `type: boolean`, `inputType: switch` | Switch |
 | `type: string`, `inputType: checkbox` | Checkbox Group |

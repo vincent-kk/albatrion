@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-`@canard/schema-form` — JSON Schema 기반 React 폼 라이브러리. 노드 트리 기반 상태 관리, 플러그인 시스템, 비동기 검증 지원.
+`@canard/schema-form` is a JSON Schema-based React form library with node-tree state management, a plugin system, and asynchronous validation.
 
 ## Design Values
 
@@ -15,24 +15,24 @@
 
 Before local `build` or `typecheck`, rebuild workspace dependencies, including `yarn workspace @winglet/json-schema build` after `@winglet/common-utils` and `@winglet/json`; CI builds the dependency closure first via `scripts/ci/helpers/plan/createBuildSteps.mjs`.
 
-이 명령은 `packages/canard/schema-form`에서 실행합니다. 저장소 루트에서는 `yarn workspace @canard/schema-form <command>`를 사용합니다.
+Run these commands from `packages/canard/schema-form`. From the repository root, use `yarn workspace @canard/schema-form <command>`.
 
 ```bash
-yarn build             # ESM/CJS 번들 빌드, 빌드 플래그 검증, 타입 선언·에이전트 해시 생성 후 타입 검사
-yarn build:types       # 타입 선언만
-yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
-yarn test              # Vitest 테스트
-yarn workspace @canard/schema-form test --run --project render # 모든 React 19 렌더 테스트
+yarn build             # Build ESM/CJS bundles, verify build flags, generate declarations and agent hashes, then typecheck
+yarn build:types       # Type declarations only
+yarn build:hashes      # Regenerate only the docs/agents/** hash manifest
+yarn test              # Vitest tests
+yarn workspace @canard/schema-form test --run --project render # All React 19 render tests
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
 
-커버리지에는 `@vitest/coverage-v8` 같은 provider 패키지가 필요하며, 현재 설치되어 있지 않습니다.
+Coverage requires a provider package such as `@vitest/coverage-v8`, which is not installed.
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
@@ -43,24 +43,24 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Architecture
 
 ### Node System
 
-- **런타임 클래스는 `FieldNode` 하나** (`src/core/surface/runtime/FieldNode.ts`). 종류별 노드는 클래스가 아니라 `type`으로 가르는 공개 판별 합집합 형이다(`src/core/surface/type.ts`).
-- **Terminal**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`, `UnionNode`(여러 종류를 담은 `type`)
-- **Branch**: `ObjectNode`, `ArrayNode`, `VirtualNode`(`options.virtual`로 묶은 형제 필드). `object`·`array`는 `options.terminal: true`면 terminal이 된다. 판정은 스키마에서 한 번 정하고 실행 중 바뀌지 않는다.
-- **판별**: `isStringNode` 등 가드와 `node.strategy`(`'branch'` | `'terminal'`)로 가른다.
-- 노드 생성: `<Form>`이 `jsonSchema`·`defaultValue`로 트리를 만들고 마운트한다. 외부 접근은 `FormHandle.node`·`findNode`·`findNodes`, `children` 함수의 `node`, FieldInput의 `node` prop. 트리를 직접 만드는 통로는 공개하지 않는다(시험·벤치는 `src/__tests__/fixtures/nodeFromJSONSchema.ts`를 쓴다).
+- **`FieldNode` is the single runtime class** (`src/core/surface/runtime/FieldNode.ts`). Node kinds are public discriminated union types distinguished by `type`, rather than separate classes (`src/core/surface/type.ts`).
+- **Terminal**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`, `UnionNode` (`type` holds several kinds)
+- **Branch**: `ObjectNode`, `ArrayNode`, `VirtualNode` (sibling fields grouped with `options.virtual`). An `object` or `array` is terminal when `options.terminal: true`. The schema determines this once; it does not change during execution.
+- **Discrimination**: Use guards such as `isStringNode` and `node.strategy` (`'branch'` | `'terminal'`).
+- Node creation: `<Form>` creates and mounts the tree from `jsonSchema` and `defaultValue`. External access uses `FormHandle.node`, `findNode`, `findNodes`, the `node` in the `children` function, and the FieldInput `node` prop. Direct tree creation is not public (tests and benchmarks use `src/__tests__/fixtures/nodeFromJSONSchema.ts`).
 
 ### Plugin System (`src/app/plugin/`)
 
-- Validator 플러그인: AJV7/AJV8 등 JSON Schema 검증
+- Validator plugins: JSON Schema validation through AJV7/AJV8 and other validators
 - UI plugins supply FieldRenderer and the root-owning LabelRenderer / ErrorMessageRenderer parts; optional InputRenderer frames the bound input. See [part assembly](docs/agents/skills/schema-form-skill/knowledge/field-input.md#bound-parts-and-input-frames).
-- FieldInput 플러그인: 커스텀 입력 컴포넌트
+- FieldInput plugins: Custom input components
 
 ### Error Isolation (user-injected render surfaces)
 
@@ -68,32 +68,32 @@ User-injected render surfaces (FieldRenderer/FieldInput and virtualization Place
 
 ### Key APIs
 
-- `Form` — 메인 진입점
-- `Form.Render` — JSONPointer 경로로 커스텀 레이아웃
-- `registerPlugin()` — 플러그인 전역 등록 (렌더 전 필수)
-- `node.find('/path')` — JSONPointer 노드 탐색 (`..` 부모, `*` 와일드카드는 제한적 사용)
+- `Form` — Main entry point
+- `Form.Render` — Custom layout through JSONPointer paths
+- `registerPlugin()` — Global plugin registration (required before rendering)
+- `node.find('/path')` — JSONPointer node lookup (`..` for the parent; `*` wildcard support is limited)
 - `node.value` — read a virtual group tuple through `FormHandle.findNode('/period')`, narrow with `isVirtualNode`, then read its `value`; see [virtual schema](docs/agents/skills/schema-form-skill/knowledge/virtual-schema.md).
-- `node.outputValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
+- `node.outputValue` — Value refined by schema options. `FormHandle.getValue`/`submit`, root emission, and parent-side hydration snapshots read this value. `ArrayNode` applies `options.omitTrailing` trimming here (`omitEmpty` applies only to the parent propagation path).
 - `node.validate()` / `node.errors`
-- `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useFieldNodeSubscribe`의 `onSubscribe` catch-up 사용
-- `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useFieldNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
+- `node.subscribe()` — Subscribes to node events (returns a cleanup function). Events delivered before subscription are not replayed; state mirrors use the `onSubscribe` catch-up in `useFieldNodeSubscribe`.
+- `node.revision(mask?)` — Monotonic revision of delivered event batches (counted regardless of listeners to detect gaps for late subscribers; `useFieldNodeTracker` uses it as the useSyncExternalStore snapshot)
 - `virtualization` prop — deferred mounting for large forms. The node tree stays complete; branches at `threshold` defer children beyond `eagerCount` behind `[data-path][data-deferred]` placeholders until intersection, idle backfill, or Focus/Select reveals them once. `useChildFields` bakes gates and `VirtualizationManager` coordinates them. Style placeholders with `[data-deferred]` CSS or `Placeholder`; `estimateHeight` owns reserved space. SSR renders every field and hydrates unchanged; only branches and children added after hydration are gated. Hydration itself schedules no extra branch render, including custom branch inputs containing Suspense in React 18 and 19.
 
-### FieldInput 우선순위 (높음 → 낮음)
+### FieldInput Priority (High → Low)
 
-1. 스키마 `presentation.FieldInput` 직접 지정
-2. `fieldInputMap` 경로 매핑
-3. Form 레벨 `fieldInputDefinitions`
+1. Direct schema `presentation.FieldInput` declaration
+2. `fieldInputMap` path mapping
+3. Form-level `fieldInputDefinitions`
 4. Provider `fieldInputDefinitions`
-5. 플러그인 제공 정의
+5. Plugin-provided definitions
 
-### Controls (조건·파생 속성)
+### Controls (Conditional and Derived Properties)
 
 ```typescript
 controls: {
   visible: '../category === "premium"',
   readOnly: '../locked === true',
-  watch: ['../category'],   // 명시적 의존성
+  watch: ['../category'],   // Explicit dependency
 }
 ```
 
@@ -150,13 +150,13 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 ## Key Hooks
 
 - `useFieldErrors` observes one field’s formatted feedback; see [validation UX](docs/agents/skills/schema-form-skill/knowledge/validation-ux.md#read-one-fields-errors).
-- `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildFieldMap`, `useChildFieldErrors`, `useFormSubmit` (`useFieldNode` 는 내부 전용, 공개 index 미노출)
+- `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildFieldMap`, `useChildFieldErrors`, `useFormSubmit` (`useFieldNode` is internal and absent from the public index)
 
 ## Key Type Utilities
 
 - `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (public exports; see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript))
 - Apply `as const` for useful `InferValueType` inference; widened `type` falls back to `any`. It recurses through `properties`, finite `prefixItems` tuples and `items`. Object keys are optional because inactive or omitted fields can disappear, and objects stay open unless `additionalProperties: false` so keys from `oneOf`/`anyOf` branches are not rejected as excess properties. Finite literal `prefixItems` infer optional-position tuples (see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript) for the value contract and consumer impact). Supply `Form<Schema, Value>` / `FormHandle<Schema, Value>` explicitly when exact values are required; a concrete `defaultValue` can infer required keys that differ from the handle's default `Value`, so use the same explicit type with a ref.
-- nullable 스키마는 `type: [..., 'null']` 과 `nullable: true` 둘 다 값 타입에 `| null` 을 붙인다 — 런타임(`BranchStrategy`·`validateSchemaType`)이 null 을 허용하므로 타입도 같은 계약을 따른다. `nullable: true` 는 공식 지원 표기로 `type` 배열에 `'null'` 을 더한 것과 같으며 오류·경고가 없다
+- Nullable schemas add `| null` to the value type for both `type: [..., 'null']` and `nullable: true`. The runtime (`BranchStrategy` and `validateSchemaType`) accepts null, so the types follow the same contract. `nullable: true` is officially supported, equivalent to adding `'null'` to the `type` array, and produces no error or warning.
 
 ## Dependencies
 
