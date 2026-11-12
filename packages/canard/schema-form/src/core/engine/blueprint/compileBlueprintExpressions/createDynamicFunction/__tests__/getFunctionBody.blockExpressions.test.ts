@@ -1,3 +1,4 @@
+import { expectBooleanBody } from './fixtures/expectBooleanBody';
 import { describe, expect, it } from 'vitest';
 
 import { getFunctionBody } from '../utils/getFunctionBody';
@@ -54,75 +55,52 @@ describe('getFunctionBody', () => {
 
     describe('coerceToBoolean = true', () => {
       it('should wrap single return with !!', () => {
-        expect(getFunctionBody('{ return value; }', true)).toBe(
-          'return !!(value);',
-        );
+        expectBooleanBody(getFunctionBody('{ return value; }', false), getFunctionBody('{ return value; }', true));
       });
 
       it('should wrap multiple returns with !!', () => {
-        expect(getFunctionBody('{ if (a) return b; return c; }', true)).toBe(
-          'if (a) return !!(b); return !!(c);',
-        );
+        expectBooleanBody(getFunctionBody('{ if (a) return b; return c; }', false), getFunctionBody('{ if (a) return b; return c; }', true));
       });
 
       it('should convert empty return to return false', () => {
-        expect(getFunctionBody('{ return; }', true)).toBe('return false;');
+        expectBooleanBody(getFunctionBody('{ return; }', false), getFunctionBody('{ return; }', true));
       });
 
       it('should handle mixed empty and value returns', () => {
-        expect(getFunctionBody('{ if (a) return; return value; }', true)).toBe(
-          'if (a) return false; return !!(value);',
-        );
+        expectBooleanBody(getFunctionBody('{ if (a) return; return value; }', false), getFunctionBody('{ if (a) return; return value; }', true));
       });
 
       it('should wrap object literal return with !!', () => {
-        expect(getFunctionBody('{ return { key: v }; }', true)).toBe(
-          'return !!({ key: v });',
-        );
+        expectBooleanBody(getFunctionBody('{ return { key: v }; }', false), getFunctionBody('{ return { key: v }; }', true));
       });
 
       it('should wrap array literal return with !!', () => {
-        expect(getFunctionBody('{ return [1, 2]; }', true)).toBe(
-          'return !!([1, 2]);',
-        );
+        expectBooleanBody(getFunctionBody('{ return [1, 2]; }', false), getFunctionBody('{ return [1, 2]; }', true));
       });
 
       it('should wrap ternary return with !!', () => {
-        expect(getFunctionBody('{ return a ? b : c; }', true)).toBe(
-          'return !!(a ? b : c);',
-        );
+        expectBooleanBody(getFunctionBody('{ return a ? b : c; }', false), getFunctionBody('{ return a ? b : c; }', true));
       });
 
       it('should wrap complex expression return with !!', () => {
-        expect(
-          getFunctionBody(
-            '{ return dependencies[0] && dependencies[1]; }',
-            true,
-          ),
-        ).toBe('return !!(dependencies[0] && dependencies[1]);');
+        expectBooleanBody(getFunctionBody('{ return dependencies[0] && dependencies[1]; }', false), getFunctionBody('{ return dependencies[0] && dependencies[1]; }', true));
       });
 
       it('should handle guard clause pattern', () => {
         const input = '{ if (!x) return; if (!y) return; return x + y; }';
-        const expected =
-          'if (!x) return false; if (!y) return false; return !!(x + y);';
-        expect(getFunctionBody(input, true)).toBe(expected);
+        expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
       });
 
       it('should handle visibility check pattern', () => {
         const input =
           '{ if (dependencies[0] === "premium") return true; return false; }';
-        const expected =
-          'if (dependencies[0] === "premium") return !!(true); return !!(false);';
-        expect(getFunctionBody(input, true)).toBe(expected);
+        expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
       });
 
       it('should handle null check pattern', () => {
         const input =
           '{ if (dependencies[0] == null) return; return dependencies[0].active; }';
-        const expected =
-          'if (dependencies[0] == null) return false; return !!(dependencies[0].active);';
-        expect(getFunctionBody(input, true)).toBe(expected);
+        expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
       });
 
       it('should handle multiline block with coercion', () => {
@@ -133,12 +111,7 @@ describe('getFunctionBody', () => {
     return false;
   }
 }`;
-        const expected = `if (dependencies[0]) {
-    return !!(true);
-  } else {
-    return !!(false);
-  }`;
-        expect(getFunctionBody(input, true)).toBe(expected);
+        expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
       });
     });
   });

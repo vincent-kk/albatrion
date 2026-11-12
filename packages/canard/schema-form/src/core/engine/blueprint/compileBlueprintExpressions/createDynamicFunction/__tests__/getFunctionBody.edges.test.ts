@@ -1,3 +1,4 @@
+import { expectBooleanBody } from './fixtures/expectBooleanBody';
 import { describe, expect, it } from 'vitest';
 
 import { getFunctionBody } from '../utils/getFunctionBody';
@@ -5,7 +6,6 @@ import { getFunctionBody } from '../utils/getFunctionBody';
 describe('getFunctionBody', () => {
   describe('edge cases', () => {
     it('should distinguish block from object starting expression', () => {
-      // Object literal that looks like a block but isn't (doesn't end with })
       const objectExpr = '{ key: value';
       expect(getFunctionBody(objectExpr, false)).toBe('return { key: value');
     });
@@ -32,9 +32,7 @@ describe('getFunctionBody', () => {
 
     it('should handle nested braces in block with coercion', () => {
       const input = '{ const obj = { a: 1 }; return obj; }';
-      expect(getFunctionBody(input, true)).toBe(
-        'const obj = { a: 1 }; return !!(obj);',
-      );
+      expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
     });
 
     it('should handle empty expression', () => {
@@ -49,7 +47,7 @@ describe('getFunctionBody', () => {
 
     it('should handle block with only whitespace', () => {
       expect(getFunctionBody('{    }', false)).toBe('');
-      expect(getFunctionBody('{    }', true)).toBe('');
+      expectBooleanBody(getFunctionBody('{    }', false), getFunctionBody('{    }', true));
     });
   });
 });

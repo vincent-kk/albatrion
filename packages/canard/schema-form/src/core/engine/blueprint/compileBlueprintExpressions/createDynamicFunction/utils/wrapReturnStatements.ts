@@ -1,13 +1,7 @@
 /**
- * Wraps return statement values with !!() for boolean coercion in block expressions.
- * - `return expr;` → `return !!(expr);`
- * - `return;` → `return false;`
- * @param body - Block body content (outer braces already removed)
- * @returns Transformed block body
+ * Coerce the final result of an authored statement body without rewriting JavaScript.
+ * @param body - Valid JavaScript statements with optional returns and nested functions
+ * @returns A function body returning a boolean, including false for implicit undefined
  */
 export const wrapReturnStatements = (body: string): string =>
-  body.replace(RETURN_PATTERN, (_, __, ___, expression) =>
-    expression ? 'return !!(' + expression.trim() + ')' : 'return false',
-  );
-
-const RETURN_PATTERN = /\breturn([ \t]*)(?:([ \t]+)(.+?))?(?=;|\n|$)/g;
+  'return !!(() => {\n' + body + '\n})();';

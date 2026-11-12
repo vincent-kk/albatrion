@@ -1,3 +1,4 @@
+import { expectBooleanBody } from './fixtures/expectBooleanBody';
 import { describe, expect, it } from 'vitest';
 
 import { getFunctionBody } from '../utils/getFunctionBody';
@@ -14,9 +15,7 @@ describe('getFunctionBody', () => {
       it('should handle block visibility logic', () => {
         const input =
           '{ if (dependencies[0] === "admin") return true; if (dependencies[1] > 100) return true; return false; }';
-        const expected =
-          'if (dependencies[0] === "admin") return !!(true); if (dependencies[1] > 100) return !!(true); return !!(false);';
-        expect(getFunctionBody(input, true)).toBe(expected);
+        expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
       });
     });
 
@@ -46,9 +45,7 @@ describe('getFunctionBody', () => {
       it('should handle block validation with early return', () => {
         const input =
           '{ if (!dependencies[0]) return; return dependencies[0].length >= 3; }';
-        const expected =
-          'if (!dependencies[0]) return false; return !!(dependencies[0].length >= 3);';
-        expect(getFunctionBody(input, true)).toBe(expected);
+        expectBooleanBody(getFunctionBody(input, false), getFunctionBody(input, true));
       });
     });
   });
