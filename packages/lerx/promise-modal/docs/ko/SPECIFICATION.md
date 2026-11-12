@@ -132,7 +132,7 @@ export function FrameDetails({ id }: ModalFrameProps) {
 
 ## 접근성
 
-Escape는 클릭으로 순서가 바뀐 경우를 포함하여 살아 있고 보이며 미확정인 모달 중 쌓임 순서가 가장 높은 것에 적용합니다. 그 노드의 유효 `closeOnEscape`가 true일 때만 취소하며 닫을 수 없는 최상위 모달을 건너뛰어 아래 모달을 닫지 않습니다. 순서는 호출별 `closeOnEscape`, 호출별 `closeOnBackdropClick`, Provider `closeOnEscape`, Provider `closeOnBackdropClick`(기본 true)입니다. `useModal` 기본값도 호출 데이터입니다. 명시적 undefined는 상속합니다. 기본 방지 이벤트, `isComposing`, 키 코드 229를 무시하고 root 분리 중에는 키보드 처리를 보류합니다. Escape는 일반 취소 값을 반환하며 prompt는 `returnOnCancel`을 켜지 않으면 `null`입니다.
+Escape는 클릭으로 순서가 바뀐 경우를 포함하여 살아 있고 보이며 미확정인 모달을 쌓임 순서 위에서 아래로 살핍니다. 유효 `closeOnEscape`가 true인 첫 노드를 취소하고 이벤트의 기본 동작을 방지하며 한 번에 최대 하나만 닫습니다. Escape를 받지 않는 nondimmed 노드는 건너뛰고, Escape를 받지 않는 dimmed 노드에서는 기본 동작을 방지하지 않고 멈추어 아래 모달을 보호합니다. 순서는 호출별 `closeOnEscape`, 호출별 `closeOnBackdropClick`, Provider `closeOnEscape`, Provider `closeOnBackdropClick`(기본 true)입니다. `useModal` 기본값도 호출 데이터입니다. 명시적 undefined는 상속합니다. 기본 방지 이벤트, `isComposing`, 키 코드 229를 무시하고 root 분리 중에는 키보드 처리를 보류합니다. Escape는 일반 취소 값을 반환하며 prompt는 `returnOnCancel`을 켜지 않으면 `null`입니다.
 
 `alive && visible && dimmed && !settled`인 모달만 포커스·inert 격리·스크롤 잠금에 참여합니다. 표시하거나 경로에 복귀하면 최상위 참여 모달의 첫 탭 가능 요소 또는 바깥 래퍼(`tabIndex={-1}`)로 포커스를 한 번 옮기되 `autoFocus`를 포함한 기존 내부 포커스는 유지합니다. 보이는 미확정 최상위 모달이 dimmed이고 `trapFocus`가 true일 때만 Tab과 Shift+Tab을 순환시킵니다. 최상위가 dimmed false 모달이면 기본 Tab 순서를 유지하며 기존 inert 격리는 페이지를 계속 보호합니다. Provider와 호출별 `trapFocus`·`lockScroll`은 기본 true이며 일반 undefined 상속 병합을 따릅니다. `trapFocus: false`는 순환만 끄며 최초 포커스 이동과 페이지 격리는 유지합니다.
 

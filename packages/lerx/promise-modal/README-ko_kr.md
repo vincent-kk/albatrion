@@ -324,7 +324,7 @@ export function AnimatedApp() {
 
 ## 접근성
 
-Escape는 유효 `closeOnEscape`가 false인 경우를 제외하고 보이는 미확정 최상위 모달만 취소합니다. 호출 Esc, 호출 배경 클릭, Provider Esc, Provider 배경 클릭(기본 true) 순으로 정하며 `useModal` 기본값도 호출 데이터입니다. 기본 방지 이벤트와 IME 이벤트는 무시합니다. 닫을 수 없는 최상위 모달이 있으면 하위 모달을 닫지 않습니다.
+Escape는 보이는 미확정 모달을 위에서 아래로 살피며 유효 `closeOnEscape`가 true인 첫 모달만 취소하고 이벤트의 기본 동작을 방지합니다. Escape를 받지 않는 nondimmed 모달은 건너뛰고, Escape를 받지 않는 dimmed 모달에서는 기본 동작을 방지하지 않고 멈춥니다. 호출 Esc, 호출 배경 클릭, Provider Esc, Provider 배경 클릭(기본 true) 순으로 정하며 `useModal` 기본값도 호출 데이터입니다. 기본 방지 이벤트와 IME 이벤트는 무시합니다. Escape를 받지 않는 dimmed 모달은 Escape가 하위 모달에 도달하지 못하게 합니다.
 
 보이는 미확정 dimmed 모달은 내부로 포커스를 옮기고 페이지를 격리하며 기본으로 Tab 가두기와 body 스크롤 잠금을 수행합니다. `trapFocus: false`는 순환만 끄고 최초 포커스 이동과 격리는 유지합니다. `lockScroll: false`는 스크롤 잠금을 끕니다. 둘 다 Provider와 호출별로 지정할 수 있습니다. dimmed false 모달은 포커스 이동·복원·격리·스크롤 잠금에 참여하지 않습니다. 사용자 전경은 역할·접근 가능한 이름·설명을 제공하고 라이브러리 래퍼가 포커스 동작을 제공합니다. 기본 프레임은 dialog 역할과 aria-modal을 제공하지만 접근 가능한 이름은 애플리케이션이 지정해야 합니다. 스택·root·외부 포털 제한은 [접근성 계약](./docs/ko/SPECIFICATION.md#접근성)을 확인하십시오.
 

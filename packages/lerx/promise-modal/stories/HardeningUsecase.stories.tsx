@@ -155,7 +155,8 @@ export const NondimmedAboveDimmed = () => {
       <p>
         Open the dimmed confirm, then the nondimmed request from inside it. Tab
         in the upper request follows the browser order; the page stays
-        unreachable.
+        unreachable. Escape cancels the dimmed confirm while the nondimmed
+        request above stays open.
       </p>
       <button
         onClick={() =>

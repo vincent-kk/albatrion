@@ -324,7 +324,7 @@ export function AnimatedApp() {
 
 ## Accessibility
 
-Escape cancels only the top visible pending modal, unless its effective `closeOnEscape` is false. The resolution order is call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true). `useModal` defaults count as call data. Prevented and IME events are ignored. A nonclosable top modal blocks Escape from reaching lower modals.
+Escape walks visible pending modals from top to bottom and cancels the first whose effective `closeOnEscape` is true, preventing the event's default behavior. It skips non-accepting nondimmed modals and stops at a non-accepting dimmed modal without preventing the event. The resolution order is call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true). `useModal` defaults count as call data. Prevented and IME events are ignored. A dimmed modal with Escape disabled blocks Escape from reaching lower modals.
 
 Visible pending dimmed modals move focus inside, isolate the page, and by default trap Tab and lock body scrolling. `trapFocus: false` disables cycling, not initial focus or isolation; `lockScroll: false` disables scroll locking. Both options accept Provider and call overrides. Nondimmed modals do not take or restore focus, isolate the page, or lock scrolling. Custom foregrounds supply role, accessible name, and description; the library wrapper supplies focus behavior. The fallback frame supplies dialog role and aria-modal but still needs an accessible name from the application. See the [accessibility contract](./docs/en/SPECIFICATION.md#accessibility) for stacks, roots, and external portal limits.
 

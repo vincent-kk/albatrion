@@ -342,9 +342,13 @@ export class ModalManager {
         return;
       const nodes = ModalManager.visibleNodes();
       if (event.key === 'Escape') {
-        if (nodes[0]?.closeOnEscape) {
-          event.preventDefault();
-          closeModal(nodes[0]);
+        for (const node of nodes) {
+          if (node.closeOnEscape) {
+            event.preventDefault();
+            closeModal(node);
+            break;
+          }
+          if (node.dimmed) break;
         }
       } else if (event.key === 'Tab') {
         const top = nodes[0];
