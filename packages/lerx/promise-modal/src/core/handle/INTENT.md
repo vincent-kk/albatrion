@@ -11,7 +11,7 @@ Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈.
 - 각 핸들러는 dispatchModal 결과 `{ modalNode, promiseHandler, cancel }`를 그대로 반환 (`cancel`은 마운트 전 큐 항목 취소용)
 - `modalNode`는 라이브 getter: 마운트 전 undefined, 큐 flush 후 실제 노드 참조
 - Promise 배선은 modal 데이터의 `handleResolve`·`handleReject` 채널로 전달 (prerender에도 유효)
-- static.ts에서 핸들러를 래핑하여 `.promiseHandler`만 노출
+- utils/static.ts에서 핸들러를 래핑하여 `.promiseHandler`만 노출
 - 제네릭 타입: `BackgroundValue`(배경 데이터), `InputValue`(prompt 입력값)
 
 ## Boundaries
@@ -19,7 +19,7 @@ Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈.
 ### Always do
 
 - 새 핸들러 추가 시 동일한 패턴(handler → static wrapper) 준수
-- Props 타입은 `type.ts`에 정의
+- Props 타입은 `types/type.ts`에 정의
 - JSDoc 주석에 사용 예제 포함
 
 ### Ask first
@@ -29,5 +29,5 @@ Promise 기반 모달 API 함수(alert, confirm, prompt)를 제공하는 모듈.
 
 ### Never do
 
-- static.ts에서 핸들러 내부 구현 세부사항 노출
+- utils/static.ts에서 핸들러 내부 구현 세부사항 노출
 - 핸들러에서 React 컴포넌트 직접 import

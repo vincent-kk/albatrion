@@ -1,5 +1,5 @@
-import type { FingerprintOptions } from './type';
-import { writeFastFingerprint } from './utils/writeFastFingerprint';
+import type { FingerprintOptions } from '../types/type';
+import { writeFastFingerprint } from './writeFastFingerprint';
 
 /**
  * Creates a fast, shallow key using reverse root-key order.

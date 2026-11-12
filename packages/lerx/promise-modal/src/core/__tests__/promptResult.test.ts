@@ -2,7 +2,7 @@ import { afterEach, expect, it } from 'vitest';
 
 import { ModalManager } from '@/promise-modal/app';
 
-import { promptHandler } from '../handle/prompt';
+import { promptHandler } from '../handle/utils/prompt';
 import { PromptNode } from '../node/ModalNode/PromptNode';
 
 afterEach(() => ModalManager.reset());

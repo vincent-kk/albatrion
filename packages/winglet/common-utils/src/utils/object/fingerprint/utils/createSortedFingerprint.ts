@@ -1,5 +1,5 @@
-import type { FingerprintOptions } from './type';
-import { writeSortedFingerprint } from './utils/writeSortedFingerprint';
+import type { FingerprintOptions } from '../types/type';
+import { writeSortedFingerprint } from './writeSortedFingerprint';
 
 /**
  * Creates a sorted flattened-path key with cycle markers.
