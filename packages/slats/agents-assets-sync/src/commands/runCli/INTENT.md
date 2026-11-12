@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Sole `inject-agents-settings` CLI driver. Parses `--package <name...>` from argv — each value is a scope alias (`@<scope>`), a scoped package (`@<scope>/<name>`), or an unscoped package (`<name>`). Resolves every target, then hands off to exactly one of three renderers.
+유일한 `inject-agents-settings` CLI 구동부입니다. argv에서 `--package <name...>`를 읽으며 각 값은 스코프 별칭(`@<scope>`), 스코프가 있는 패키지(`@<scope>/<name>`), 스코프가 없는 패키지(`<name>`) 중 하나입니다. 모든 대상을 해석한 뒤 세 렌더러 중 정확히 하나에 넘깁니다.
 
 ## Conventions
 

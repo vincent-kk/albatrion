@@ -85,7 +85,7 @@
 
 - `@<scope>` 는 scope alias, `@<scope>/<name>` 은 scoped 패키지, `<name>` 은 unscoped 패키지로 분류된다.
 - 빈 문자열, 단독 `@`, scope 나 name 이 빠진 형태, 여분의 슬래시, 대문자를 포함한 이름은 모두 invalid 다.
-- Verified by `__tests__/classifyTarget.spec.ts` (`filid:contract AC-RUNCLI-CLASSIFY`).
+- 검증: `__tests__/classifyTarget.spec.ts` (`filid:contract AC-RUNCLI-CLASSIFY`).
 
 ### AC-RUNCLI-RESOLVE — 단일 패키지 해석은 cwd 를 먼저 본다
 
@@ -96,7 +96,7 @@
 - asset 루트가 packageRoot 밖으로 해석되면 출처와 무관하게 거부한다 — `../` 로 나가는 선언도, 밖을 가리키는 심볼릭 링크도 마찬가지다.
 - packageRoot 안에 있지만 디렉터리가 아닌 경로는 "디렉터리가 아니다" 로 거부한다. 봉쇄 위반과 같은 문구를 쓰면 사용자는 경로를 패키지 안으로 옮기려 드는데, 정작 고칠 것은 디렉터리를 가리키는 일이다. 이 구분은 두 출처 모두에 적용된다.
 - 해석은 `createRequire` 가 보는 것까지만 닿는다. `exports` 가 `./package.json` 을 막고 main 진입점마저 `import` 조건만 가진 ESM 전용 패키지는 두 단계 모두 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패해 2로 종료한다 — `node_modules` 를 걷는 것은 이 organ 의 몫이 아니기 때문이다. 엔진 자신이 그런 패키지였으므로, 엔진은 자기 `package.json` 을 export 해서 자기 dispatcher 의 타깃이 된다.
-- Verified by `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
+- 검증: `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
 
 ### AC-RUNCLI-SCOPE-ALIAS — scope 열거의 권위는 선언된 이름이다
 
@@ -105,7 +105,7 @@
 - 점으로 시작하는 항목, `package.json` 이 없거나 깨진 항목, `name` 이 문자열이 아닌 항목은 건너뛴다.
 - 중복은 nearest-wins 로 제거되고 발견 순서(가까운 조상 우선)가 유지된다.
 - 일치가 0건이면 2로 종료한다.
-- Verified by `__tests__/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
+- 검증: `__tests__/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
 
 ### AC-RUNCLI-INSTALL-ROOTS — workspace 루트에서도 멤버가 설치한 패키지에 닿는다
 
@@ -113,7 +113,7 @@
 - 멤버만 설치한 패키지가 workspace 루트와 다른 멤버의 cwd 에서 해석된다. hoist 디렉터리에만 있는 패키지도 해석되지만, 같은 이름이 멤버에 있으면 멤버 쪽이 이긴다.
 - root marker 를 가진 조상이 없으면 cwd 아래를 걷지 않고 기존대로 2로 종료한다.
 - scope alias 는 멤버와 hoist 디렉터리의 scope 를 함께 열거한다. hoist 디렉터리는 어떤 멤버도 직접 선언하지 않은 전이 의존성까지 담으며, 이는 yarn 의 루트 hoist 가 열거해 주던 범위와 같다.
-- Verified by `__tests__/installRoots.spec.ts` (`filid:contract AC-RUNCLI-INSTALL-ROOTS`).
+- 검증: `__tests__/installRoots.spec.ts` (`filid:contract AC-RUNCLI-INSTALL-ROOTS`).
 
 ### AC-RUNCLI-ASSET-PATH — `--asset-path` 는 선언을 이기고 디렉터리를 진실로 만든다
 
@@ -122,7 +122,7 @@
 - 선언이 없는 패키지에 주면 해석에 성공한다 — 부재 검사를 건너뛰기 때문이다.
 - 존재하지 않는 디렉터리는 단일 타깃에서 2로 종료하고, 배치(`skipMissingAsset`)에서는 `null` 로 건너뛴다. packageRoot 밖으로 나가는 경로의 거부는 `AC-RUNCLI-RESOLVE` 가 두 출처 공통으로 소유한다.
 - 플래그가 해시 출처에 미치는 영향은 `AC-RUNCLI-HASH-SOURCE` 가 소유한다.
-- Verified by `__tests__/assetPathOverride.spec.ts` (`filid:contract AC-RUNCLI-ASSET-PATH`), `src/__tests__/cli.test.ts`.
+- 검증: `__tests__/assetPathOverride.spec.ts` (`filid:contract AC-RUNCLI-ASSET-PATH`), `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-HASH-SOURCE — 해시 출처는 답할 수 있는 쪽으로 정해진다
 
@@ -130,7 +130,7 @@
 - 선언된 asset 경로에 `dist/agents-hashes.json` 이 있으면 `'manifest'` 이고 `hashesPresent` 는 `true` 다.
 - 선언된 asset 경로에 매니페스트가 없고 그 디렉터리가 있으면 `'directory'` 로 내려간다 — 빌드 없이 계획된다.
 - 매니페스트도 디렉터리도 없으면 `'manifest'` 인 채 `hashesPresent: false` 로 남아 게이트(`AC-MANIFEST-GATE`)에 걸린다. 그 뒤의 실행 판정은 `AC-RUNCLI-GATE-VERDICT` 가 소유한다.
-- Verified by `__tests__/hashSource.spec.ts` (`filid:contract AC-RUNCLI-HASH-SOURCE`), `src/__tests__/cli.test.ts`.
+- 검증: `__tests__/hashSource.spec.ts` (`filid:contract AC-RUNCLI-HASH-SOURCE`), `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-GATE-VERDICT — 게이트 판정은 실행의 것이지 렌더러의 것이 아니다
 
@@ -138,7 +138,7 @@
 - 패키지 이름 하나만 지목한 실행에서 그 하나가 걸리면 2로 종료한다. `--json` 이든 아니든 같다 — `--json` 은 렌더러 이전 실패의 관례대로 stdout 이 비고 진단은 stderr 로 간다.
 - 서로 다른 값이 여럿이거나 scope alias 인 실행은 사유를 남기고 0으로 끝난다. `--json` 은 그 사유를 `errors` 에 싣고 나머지 타깃의 `units` 를 낸다. `--json` 이든 아니든 같다.
 - 같은 패키지를 두 번 적어도(`--package=X,X`) 판정은 물러지지 않는다. 이 절은 `agents.assetPath` 부재에도 같이 적용된다 — 두 실패가 한 분기를 공유하기 때문이다.
-- Verified by `src/__tests__/cli.test.ts`.
+- 검증: `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-DISPATCH — 렌더러 분기와 무프롬프트 구동
 
@@ -148,14 +148,14 @@
 - `--agent=claude,codex` 는 agent 당 하나씩의 구간을 전사(transcript)에 낸다.
 - `--asset=skills` 는 `AGENTS.md` 항목을 계획에서 통째로 없앤다.
 - `--asset` 과 `--asset-path` 를 함께 줘도 서로의 값을 삼키지 않는다.
-- Verified by `src/__tests__/cli.test.ts`.
+- 검증: `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-JSON-STREAM — `--json` 은 stdout 을 독점한다
 
 - `--json` 실행의 stdout 전체가 하나의 JSON 객체로 파싱된다.
 - 플래그 오류는 느슨한 텍스트가 아니라 `exitCode: 2` 인 문서로 보고된다.
 - 렌더러에 닿기 전에 실패하면 stdout 은 비고 진단은 stderr 로만 나간다.
-- Verified by `src/__tests__/json.test.ts`.
+- 검증: `src/__tests__/json.test.ts`.
 
 ## History
 

@@ -13,7 +13,7 @@
 
 ### Always do
 
-- Keep live settings and validation-epoch reads on the binding-only channel; never widen the package surface.
+- 실행 중 설정과 검증 epoch 읽기는 바인딩 전용 채널에 유지하고 패키지 표면을 넓히지 않습니다.
 - 파동의 사건과 리스너 목록을 고정하고, 리스너별 실패를 격리하여 남은 배달을 마칩니다.
 - 검증 요청을 `onChange`보다 먼저 내고, 오류 기록 전달과 최종 throw는 사슬 끝에 둡니다. 중첩 쓰기의 최신 요청과 커밋을 잃지 않아야 합니다.
 - 루트를 인계하면 예산과 수집기를 이어받고 활성 루트에서 종료합니다. 옛 런타임에 열린 사슬을 남기지 않습니다.

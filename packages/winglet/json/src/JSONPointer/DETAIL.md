@@ -34,7 +34,7 @@
 
 ## History
 
-- 2026-08-18 — 예약 멤버 의미론을 "차단(silent skip / throw)"에서 RFC 정합 own 데이터 취급으로 전환. 판별·접근을 `@winglet/common-utils` 데이터 속성 프리미티브 한 벌로 수렴시키면서 패키지 내부 판별자 `isForbiddenKey`와 `isPrototypeModification`은 소비자가 사라져 제거했다. 근거: RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하고, `JSON.parse`가 이미 own `__proto__` 데이터 속성을 만든다.
+- 2026-08-18 — 예약 멤버 의미론을 "차단(조용히 생략 / 예외 발생)"에서 RFC 정합 own 데이터 취급으로 전환. 판별·접근을 `@winglet/common-utils` 데이터 속성 프리미티브 한 벌로 수렴시키면서 패키지 내부 판별자 `isForbiddenKey`와 `isPrototypeModification`은 소비자가 사라져 제거했다. 근거: RFC 6901/6902/7396이 멤버 이름을 불투명 문자열로 규정하고, `JSON.parse`가 이미 own `__proto__` 데이터 속성을 만든다.
 - 2026-08-18 — `isForbiddenKey`를 manipulator 내부에서 이 fractal의 utils organ으로 승격(0.13.4). 이후 위 전환으로 같은 날 제거됨.
 
 ## Last Updated

@@ -8,17 +8,17 @@
 
 모든 예제가 동일한 라이브러리를 사용하므로 번들 사이즈는 공통입니다.
 
-| 패키지                             | Raw (unminified) | Gzip       | Brotli     |
+| 패키지                             | 원본 (비축소) | Gzip       | Brotli     |
 | ---------------------------------- | ---------------- | ---------- | ---------- |
 | `@canard/schema-form`              | 231 KB           | 42.8 KB    | 35.4 KB    |
 | `@canard/schema-form-antd6-plugin` | 27 KB            | 4.4 KB     | —          |
 | **합계**                           | **258 KB**       | **~47 KB** | **~40 KB** |
 
 - Brotli 기준 ~40KB → 3G에서도 ~0.1초 전송
-- 외부 런타임 의존성 0개 (React/ReactDOM만 peer dependency)
+- 외부 런타임 의존성 0개 (React/ReactDOM만 동료 의존성)
 - 현재 `minify: false` 상태 (`rolldown.config.mjs:21`). 활성화 시 추가 절감 가능
 
-**판정: PASS** (전체 예제 공통)
+**판정: 통과** (전체 예제 공통)
 
 ---
 
@@ -40,29 +40,29 @@ FieldProxy (memo 없음)
        ├─ useChildFields: Map 캐시 + memo 래핑된 자식
        ├─ useCallback: handleChange, handleFileAttach, handleFocus, handleBlur
        ├─ useFieldInputControl: ref + version
-       └─ FieldInput (plugin) ← 실제 DOM 생성
+       └─ FieldInput (플러그인) ← 실제 DOM 생성
 ```
 
-### FieldProxy가 re-render되더라도 발생하는 비용
+### FieldProxy가 다시 렌더링되더라도 발생하는 비용
 
 1. `useFieldNodeTracker` — 비트마스크 비교 1회 (O(1))
-2. `useMemo(Input)` — deps 비교 (node 참조 동일 → skip)
+2. `useMemo(Input)` — 의존성 비교 (node 참조 동일 → 생략)
 3. `useMemorize(FieldRenderer)` — 이미 생성된 인스턴스 반환
 4. `useConstant(Wrapper)` — 캐시된 값 반환
-5. `useMemo(errorMessage)` — deps 비교 (refresh 미변경 → skip)
-6. `FieldInputBridge` — **`memo`로 래핑**, props 동일 시 완전 skip
+5. `useMemo(errorMessage)` — 의존성 비교 (refresh 미변경 → 생략)
+6. `FieldInputBridge` — **`memo`로 래핑**, props 동일 시 완전히 생략
 
-**결론**: FieldProxy의 re-render 비용은 hooks deps 비교 5-6회 + JSX 객체 생성 1회로, **~0.01ms 수준**입니다. `FieldInputBridge`이 `memo`로 래핑되어 있어 실제 DOM 갱신은 발생하지 않습니다.
+**결론**: FieldProxy의 다시 렌더링 비용은 훅 의존성 비교 5-6회 + JSX 객체 생성 1회로, **~0.01ms 수준**입니다. `FieldInputBridge`가 `memo`로 래핑되어 있어 실제 DOM 갱신은 발생하지 않습니다.
 
-### 어떤 경우에 FieldProxy가 불필요하게 re-render되는가
+### 어떤 경우에 FieldProxy가 불필요하게 다시 렌더링되는가
 
 | 트리거                | 발생 조건                                      | 모든 Proxy에 전파?   |
 | --------------------- | ---------------------------------------------- | -------------------- |
-| `children` state 변경 | `UPDATE_CHILDREN_MASK` (Error/Refresh/Remount) | YES                  |
-| children 함수 패턴    | `<Form>{({ value }) => ...}</Form>`            | YES                  |
-| value 변경            | `onChange` → `setValues()`                     | **NO** (Form은 memo) |
+| `children` state 변경 | `UPDATE_CHILDREN_MASK` (Error/Refresh/Remount) | 예                  |
+| children 함수 패턴    | `<Form>{({ value }) => ...}</Form>`            | 예                  |
+| value 변경            | `onChange` → `setValues()`                     | **아니요** (Form은 memo) |
 
-일반적인 value 변경 시에는 Form-level re-render가 발생하지 않으므로, FieldProxy의 불필요한 re-render 자체가 트리거되지 않습니다. **모든 예제가 children 함수 패턴을 사용하지 않으므로 이 문제는 해당 없습니다.**
+일반적인 value 변경 시에는 폼 수준 다시 렌더링이 발생하지 않으므로, FieldProxy의 불필요한 다시 렌더링 자체가 트리거되지 않습니다. **모든 예제가 children 함수 패턴을 사용하지 않으므로 이 문제는 해당 없습니다.**
 
 ---
 
@@ -76,7 +76,7 @@ FieldProxy (memo 없음)
 
 | 항목             | 값                            |
 | ---------------- | ----------------------------- |
-| 필드 수          | 7 (flat)                      |
+| 필드 수          | 7 (평면)                      |
 | 중첩 깊이        | 1                             |
 | computed         | 없음                          |
 | 조건부 스키마    | 없음                          |
@@ -85,9 +85,9 @@ FieldProxy (memo 없음)
 | `new Function()` | 0회                           |
 | 의존성 구독      | 0                             |
 
-**리렌더 분석**: 키스트로크당 변경 필드 1개만 re-render. 나머지 6필드는 독립 구독으로 영향 없음.
+**리렌더 분석**: 키스트로크당 변경 필드 1개만 다시 렌더링. 나머지 6필드는 독립 구독으로 영향 없음.
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -97,7 +97,7 @@ FieldProxy (memo 없음)
 
 | 항목             | 값                                                                                             |
 | ---------------- | ---------------------------------------------------------------------------------------------- |
-| 필드 수          | 5 (flat)                                                                                       |
+| 필드 수          | 5 (평면)                                                                                       |
 | 중첩 깊이        | 1                                                                                              |
 | computed         | `finalPrice.derived` — 4개 의존성 (`../price`, `../quantity`, `../taxRate`, `../discountRate`) |
 | 조건부 스키마    | 없음                                                                                           |
@@ -110,19 +110,19 @@ FieldProxy (memo 없음)
 
 ```
 사용자가 price 변경
-  ↓ [동기] priceNode: UpdateValue (immediate)
+  ↓ [동기] priceNode: UpdateValue (즉시)
   ↓ [microtask] objectNode: UpdateValue
   ↓ [microtask] finalPriceNode: UpdateControlledProperties
-  ↓ finalPriceNode의 FieldProxy re-render (FIELD_ERROR_TRACKING_EVENTS에 UpdateControlledProperties 포함)
+  ↓ finalPriceNode의 FieldProxy 다시 렌더링 (FIELD_ERROR_TRACKING_EVENTS에 UpdateControlledProperties 포함)
 ```
 
-- price, quantity, taxRate, discountRate 중 하나를 변경하면 **변경 필드 1개 + finalPrice 1개 = 총 2개 Proxy re-render**
-- finalPrice를 직접 수정하면 해당 필드 1개만 re-render
+- price, quantity, taxRate, discountRate 중 하나를 변경하면 **변경 필드 1개 + finalPrice 1개 = 총 2개 Proxy 다시 렌더링**
+- finalPrice를 직접 수정하면 해당 필드 1개만 다시 렌더링
 - computed derived 표현식은 산술 연산만 포함하여 실행 비용 < 0.01ms
 
 **CSP**: `new Function()` 1회 호출. 엄격한 CSP 환경에서는 `'unsafe-eval'` 필요.
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -132,7 +132,7 @@ FieldProxy (memo 없음)
 
 | 항목             | 값                                                                                     |
 | ---------------- | -------------------------------------------------------------------------------------- |
-| 필드 수          | 8 (flat)                                                                               |
+| 필드 수          | 8 (평면)                                                                               |
 | 중첩 깊이        | 1                                                                                      |
 | computed         | 없음                                                                                   |
 | 조건부 스키마    | **if-then-else 3단 중첩** (participantType × participantRegion 조합으로 required 변경) |
@@ -145,13 +145,13 @@ FieldProxy (memo 없음)
 
 **리렌더 분석**:
 
-- participantType/participantRegion 변경 시: 해당 필드 1개 re-render + 조건 평가 후 required 변경
-- required 변경은 `UpdateState` 이벤트를 발행 → 영향받는 필드의 Proxy가 re-render
-- 그러나 `FieldInputBridge`이 `memo`이므로, required 마커 표시 변경만 일어나고 input 위젯 자체의 re-render는 최소화
+- participantType/participantRegion 변경 시: 해당 필드 1개 다시 렌더링 + 조건 평가 후 required 변경
+- required 변경은 `UpdateState` 이벤트를 발행 → 영향받는 필드의 Proxy가 다시 렌더링
+- 그러나 `FieldInputBridge`가 `memo`이므로, required 마커 표시 변경만 일어나고 input 위젯 자체의 다시 렌더링은 최소화
 
 **조건 평가 비용**: JSON Schema의 `const`/`enum` 비교는 표준 AJV 검증 경로를 따르지만, 이 예제에서는 validator 플러그인이 미등록이므로 순수 노드 레벨의 조건 평가만 수행 → < 1ms
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -161,7 +161,7 @@ FieldProxy (memo 없음)
 
 | 항목             | 값                                                                              |
 | ---------------- | ------------------------------------------------------------------------------- |
-| 필드 수          | 10 (flat)                                                                       |
+| 필드 수          | 10 (평면)                                                                       |
 | 중첩 깊이        | 1                                                                               |
 | computed         | 없음                                                                            |
 | 조건부 스키마    | **if-then-else 3단 중첩** (accountType × subscriptionPlan × paymentMethod 조합) |
@@ -174,11 +174,11 @@ FieldProxy (memo 없음)
 
 **리렌더 분석**:
 
-- accountType 변경 → 해당 필드 1개 re-render + required 상태 변경으로 영향받는 필드들 re-render
+- accountType 변경 → 해당 필드 1개 다시 렌더링 + required 상태 변경으로 영향받는 필드들 다시 렌더링
 - 최대 6개 필드가 required 변경 대상 (`business + invoice` → 6필드 required)
-- 각 필드의 `FieldInputBridge`이 `memo`이므로 실제 DOM 갱신은 required 마커 변경분만
+- 각 필드의 `FieldInputBridge`가 `memo`이므로 실제 DOM 갱신은 required 마커 변경분만
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -189,9 +189,9 @@ FieldProxy (memo 없음)
 | 항목             | 값                                                                     |
 | ---------------- | ---------------------------------------------------------------------- |
 | 필드 수          | 가변 (full_time: 7, part_time: 4, contractor: 4)                       |
-| 중첩 깊이        | 2 (root → benefits object)                                             |
+| 중첩 깊이        | 2 (root → benefits 객체)                                             |
 | computed         | `commonField.active/visible`, `contractor.workingHours.active`         |
-| 조건부 스키마    | **root-level oneOf** (3개 분기: full_time / part_time / contractor)    |
+| 조건부 스키마    | **루트 수준 oneOf** (3개 분기: full_time / part_time / contractor)    |
 | 배열             | 없음                                                                   |
 | 노드 수          | ~18 (활성 분기에 따라 가변, 비활성 분기 노드는 `enabled=false`)        |
 | `new Function()` | **3회** (commonField.active, commonField.visible, workingHours.active) |
@@ -212,17 +212,17 @@ employmentType 변경: 'full_time' → 'part_time'
 
 - 분기 전환 시 비활성 노드는 `if (!node?.enabled) return null` (`FieldProxy.tsx:85`)로 빠르게 반환
 - 새 분기 노드의 마운트 비용: 2-4개 필드 × (Proxy + Input + FieldInput) ≈ 6-12개 컴포넌트
-- full_time 분기의 `benefits` object는 중첩 ObjectNode + 2개 Boolean — 추가 깊이지만 부담 없는 수준
+- full_time 분기의 `benefits` 객체는 중첩 ObjectNode + 2개 Boolean — 추가 깊이지만 부담 없는 수준
 
 **computed 연쇄 반응**:
 
 - `commonField`은 `employmentType`에 의존 → employmentType 변경 시 commonField의 visible/active 재평가
 - `workingHours`는 `contractType`에 의존 → contractor 분기 내에서만 active 상태 전환
-- 의존성 체인이 단순 (1-hop)하여 연쇄 비용 < 1ms
+- 의존성 체인이 단순 (1홉)하여 연쇄 비용 < 1ms
 
 **FieldProxy 비용**: oneOf 전환 시 `UPDATE_CHILDREN_MASK`에 해당하는 이벤트가 발생할 수 있으나, `FieldInputBridge`의 `memo`가 실질적 DOM 갱신을 방어. enabled=false 노드는 즉시 null 반환하여 비용 최소.
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -235,16 +235,16 @@ employmentType 변경: 'full_time' → 'part_time'
 | 필드 수          | 가변 (game: ~12, movie: ~8)                                                                             |
 | 중첩 깊이        | **3** (root → details → stages[]/specs)                                                                 |
 | computed         | `&if` 표현식 4개 (root oneOf ×2, details oneOf ×2)                                                      |
-| 조건부 스키마    | **2중 oneOf** (root-level + details 내부)                                                               |
-| 배열             | **stages** (object items), **platforms** (checkbox), **genres** (enum items), **actors** (string items) |
+| 조건부 스키마    | **2중 oneOf** (루트 수준 + details 내부)                                                               |
+| 배열             | **stages** (객체 항목), **platforms** (checkbox), **genres** (enum 항목), **actors** (문자열 항목) |
 | 노드 수          | ~35 (양쪽 분기 모두 포함, 비활성 분기 enabled=false)                                                    |
 | `new Function()` | **4회** (`&if` 표현식)                                                                                  |
 | 의존성 구독      | 4 (각 `&if` 표현식 → type 필드)                                                                         |
 
 **이 예제가 가장 까다로운 이유**:
 
-1. **2중 oneOf**: root-level oneOf (game/movie owner) + details 내부 oneOf (game details/movie details)
-2. **배열 필드 다수**: stages(object array), platforms(checkbox), genres/actors
+1. **2중 oneOf**: 루트 수준 oneOf (game/movie의 owner) + details 내부 oneOf (game의 details/movie의 details)
+2. **배열 필드 다수**: stages(객체 배열), platforms(checkbox), genres/actors
 3. **중첩 깊이 3**: root → details → stages → {label, name, description}
 
 **리렌더 분석 — type 전환 (game → movie)**:
@@ -254,11 +254,11 @@ type 변경: 'game' → 'movie'
   ↓ [동기] typeNode: UpdateValue
   ↓ [microtask] root oneOf 재평가: owner 필드 전환 (Developer → Director)
   ↓ [microtask] details oneOf 재평가: game 분기 비활성 → movie 분기 활성
-  ↓ game 분기 노드들 (stages array, platforms, specs): enabled = false → null 반환
+  ↓ game 분기 노드들 (stages 배열, platforms, specs): enabled = false → null 반환
   ↓ movie 분기 노드들 (genres, platforms, actors): enabled = true → 마운트
 ```
 
-- 비활성화되는 노드: ~15개 (stages array items 포함)
+- 비활성화되는 노드: ~15개 (stages 배열 항목 포함)
 - 활성화되는 노드: ~8개
 - 총 전환 비용: 비활성 노드 null 반환 (~15 × 0.01ms) + 새 노드 마운트 (~8 × 0.5ms) ≈ **< 5ms**
 
@@ -267,13 +267,13 @@ type 변경: 'game' → 'movie'
 - `stages`: 기본 1개 아이템 (label, name, description). 사용자가 추가할 수 있지만 일반적으로 < 20개
 - `platforms`: checkbox 형태, 고정 2-3개 enum
 - `genres`: enum 기반, 고정 7개 선택지
-- `actors`: string array, 동적 추가 가능
+- `actors`: 문자열 배열, 동적 추가 가능
 
 배열 아이템 추가 시 `useChildFields`의 `Map` 캐시가 기존 아이템의 컴포넌트 참조를 유지하므로, 새 아이템만 생성됩니다.
 
-**FieldProxy 비용**: 2중 oneOf 전환은 `UpdateChildren` 이벤트를 발생시키지만, `UPDATE_CHILDREN_MASK`에 `UpdateChildren`이 **포함되지 않으므로** Form-level re-render는 발생하지 않습니다. 각 Proxy는 자신의 노드 이벤트만 수신.
+**FieldProxy 비용**: 2중 oneOf 전환은 `UpdateChildren` 이벤트를 발생시키지만, `UPDATE_CHILDREN_MASK`에 `UpdateChildren`이 **포함되지 않으므로** 폼 수준 다시 렌더링은 발생하지 않습니다. 각 Proxy는 자신의 노드 이벤트만 수신.
 
-**판정: PASS** — 가장 복잡한 예제이지만, 활성 필드 수가 ~12개 수준으로 모바일에서 충분히 처리 가능
+**판정: 통과** — 가장 복잡한 예제이지만, 활성 필드 수가 ~12개 수준으로 모바일에서 충분히 처리 가능
 
 ---
 
@@ -287,7 +287,7 @@ type 변경: 'game' → 'movie'
 | 중첩 깊이        | **5** (root → user → profile → preferences → notifications)                           |
 | computed         | `gender.active: '../age >= 18'`                                                       |
 | 조건부 스키마    | profile 내 **if-then-else** (type에 따라 required 변경), privacy **oneOf** (const 값) |
-| 배열             | **backupCodes** (string items, minItems: 5, maxItems: 10)                             |
+| 배열             | **backupCodes** (문자열 항목, minItems: 5, maxItems: 10)                             |
 | 노드 수          | ~30 (ObjectNode 7 + Terminal ~18 + Array 1 + 배열 아이템 5)                           |
 | `new Function()` | **1회** (gender.active)                                                               |
 | 의존성 구독      | 1 (gender → age)                                                                      |
@@ -298,7 +298,7 @@ type 변경: 'game' → 'movie'
 
 ```
 notifications.email 변경 (depth 5)
-  ↓ [동기] emailNode: UpdateValue (immediate)
+  ↓ [동기] emailNode: UpdateValue (즉시)
   ↓ [microtask] notificationsNode: UpdateValue (depth 4)
   ↓ [microtask] preferencesNode: UpdateValue (depth 3)
   ↓ [microtask] profileNode: UpdateValue (depth 2)
@@ -306,13 +306,13 @@ notifications.email 변경 (depth 5)
   ↓ [microtask] rootNode: UpdateValue + onChange 콜백
 ```
 
-- 각 중간 ObjectNode의 UpdateValue는 해당 ObjectNode를 구독하는 Proxy만 re-render
+- 각 중간 ObjectNode의 UpdateValue는 해당 ObjectNode를 구독하는 Proxy만 다시 렌더링
 - 중간 ObjectNode의 Proxy는 `FieldInputBridge`의 `memo`로 인해 실질적 DOM 갱신 없음
-- **깊이 5의 value 전파 비용**: microtask 5회 ≈ < 1ms (이벤트 배칭)
+- **깊이 5의 value 전파 비용**: 마이크로태스크 5회 ≈ < 1ms (이벤트 배칭)
 
 **backupCodes 배열 (minItems: 5)**:
 
-- 초기화 시 5개 string input 자동 생성
+- 초기화 시 5개 문자열 입력 자동 생성
 - 각 아이템은 Terminal Node → 5개 FieldProxy + FieldInputBridge
 - 최대 10개까지 추가 가능 (maxItems: 10)
 - 10개 아이템이어도 총 노드 ~35개 수준 — 가상화 불필요
@@ -321,9 +321,9 @@ notifications.email 변경 (depth 5)
 
 - age 변경 시 gender 필드의 active 상태 재평가
 - `../age >= 18` 표현식 실행 < 0.01ms
-- active가 false → true 전환 시 gender 필드의 Proxy re-render → enabled 상태 변경으로 렌더링/null 전환
+- active가 false → true 전환 시 gender 필드의 Proxy 다시 렌더링 → enabled 상태 변경으로 렌더링/null 전환
 
-**판정: PASS** — 깊은 중첩은 microtask 체인을 길게 하지만, 각 단계의 비용이 매우 낮아 모바일에서도 지연 체감 없음
+**판정: 통과** — 깊은 중첩은 마이크로태스크 연쇄를 길게 하지만, 각 단계의 비용이 매우 낮아 모바일에서도 지연 체감 없음
 
 ---
 
@@ -337,7 +337,7 @@ notifications.email 변경 (depth 5)
 | 중첩 깊이        | **3** (root → product → shipping)                                                          |
 | computed         | `computed.if` 5개 (product oneOf ×3, shipping oneOf ×2)                                    |
 | 조건부 스키마    | **2중 oneOf** — product 레벨 (physical/digital/service) + shipping 레벨 (standard/express) |
-| 배열             | **availability** (enum array, service 분기)                                                |
+| 배열             | **availability** (enum 배열, service 분기)                                                |
 | 노드 수          | ~30 (비활성 분기 포함)                                                                     |
 | `new Function()` | **5회**                                                                                    |
 | 의존성 구독      | 5 (각 `computed.if` → productType 또는 method)                                             |
@@ -353,12 +353,12 @@ notifications.email 변경 (depth 5)
 **리렌더 분석 — shipping method 전환 (physical 분기 내)**:
 
 - standard → express: cost 필드 유지, days → hours 전환
-- 영향 범위가 shipping object 내부로 한정 → 2-3개 필드만 전환
-- 상위 product, root에는 re-render 전파 없음
+- 영향 범위가 shipping 객체 내부로 한정 → 2-3개 필드만 전환
+- 상위 product, root에는 다시 렌더링 전파 없음
 
-**FieldProxy 비용**: 2중 oneOf 전환이 발생해도 각 level의 Proxy는 자신의 노드만 구독. shipping 전환이 productType Proxy를 re-render시키지 않음.
+**FieldProxy 비용**: 2중 oneOf 전환이 발생해도 각 수준의 Proxy는 자신의 노드만 구독. shipping 전환이 productType Proxy를 다시 렌더링시키지 않음.
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -368,11 +368,11 @@ notifications.email 변경 (depth 5)
 
 | 항목             | 값                                                          |
 | ---------------- | ----------------------------------------------------------- |
-| 필드 수          | 8 (flat)                                                    |
+| 필드 수          | 8 (평면)                                                    |
 | 중첩 깊이        | 1                                                           |
 | computed         | **`&visible` 3개, `&active` 3개** — 모두 `../userType` 의존 |
 | 조건부 스키마    | 없음                                                        |
-| 배열             | **adminPermissions** (enum checkbox array)                  |
+| 배열             | **adminPermissions** (enum 체크박스 배열)                  |
 | 노드 수          | 10 (ObjectNode 1 + Terminal 7 + Array 1 + 배열 아이템)      |
 | `new Function()` | **6회**                                                     |
 | 의존성 구독      | **6** (6개 필드 → userType)                                 |
@@ -383,19 +383,19 @@ notifications.email 변경 (depth 5)
 
 ```
 userType 변경: 'guest' → 'admin'
-  ↓ [동기] userTypeNode: UpdateValue (immediate)
+  ↓ [동기] userTypeNode: UpdateValue (즉시)
   ↓ [microtask] 6개 의존 필드: UpdateControlledProperties (동시 발행)
-  ↓ 각 필드의 FieldProxy: FIELD_ERROR_TRACKING_EVENTS에 UpdateControlledProperties 포함 → re-render
+  ↓ 각 필드의 FieldProxy: FIELD_ERROR_TRACKING_EVENTS에 UpdateControlledProperties 포함 → 다시 렌더링
   ↓ visible/active 상태 변경으로 일부 필드 표시/숨김 전환
 ```
 
-- **최대 동시 re-render**: userType 1개 + 의존 필드 6개 = **7개 Proxy re-render**
+- **최대 동시 다시 렌더링**: userType 1개 + 의존 필드 6개 = **7개 Proxy 다시 렌더링**
 - 이 중 visible=false가 되는 필드: `if (!node?.enabled) return null` → 즉시 반환
 - visible=true가 되는 필드: FieldInputBridge `memo` 통과 시 FieldInput 마운트
 
 **이것이 모바일에서 문제가 되는가?**
 
-- 7개 Proxy 동시 re-render: 7 × 0.01ms (Proxy 자체 비용) = ~0.07ms
+- 7개 Proxy 동시 다시 렌더링: 7 × 0.01ms (Proxy 자체 비용) = ~0.07ms
 - FieldInputBridge memo를 통과하는 필드 (상태 변경분): 최대 6개 × 0.5ms = ~3ms
 - 총 userType 전환 비용: **< 5ms** — 모바일에서도 16ms 프레임 예산 내
 
@@ -405,9 +405,9 @@ userType 변경: 'guest' → 'admin'
 
 - 각 필드는 **자신의 노드**에서 발생한 `UpdateControlledProperties`만 수신
 - 다른 필드의 computed 변경이 전파되지 않음
-- 공유 추적 마스크의 "불필요한 re-render" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
+- 공유 추적 마스크의 "불필요한 다시 렌더링" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -417,31 +417,31 @@ userType 변경: 'guest' → 'admin'
 
 | 항목             | 값                                                               |
 | ---------------- | ---------------------------------------------------------------- |
-| 필드 수          | 12 (4개 tuple × 3개 아이템)                                      |
+| 필드 수          | 12 (4개 튜플 × 3개 아이템)                                      |
 | 중첩 깊이        | 2 (root → array → items)                                         |
 | computed         | 없음                                                             |
 | 조건부 스키마    | 없음                                                             |
-| 배열             | **4개 고정 크기 tuple** (prefixItems, items: false, minItems: 3) |
+| 배열             | **4개 고정 크기 튜플** (prefixItems, items: false, minItems: 3) |
 | 노드 수          | 17 (ObjectNode 1 + ArrayNode 4 + Terminal 12)                    |
 | `new Function()` | 0회                                                              |
 | 의존성 구독      | 0                                                                |
 | 검증 플러그인    | **@canard/schema-form-ajv8-plugin/2020**                         |
 
-**핵심 특성**: 유일하게 AJV 검증 플러그인을 사용하는 예제. `items: false` + `minItems: 3`으로 고정 크기 tuple.
+**핵심 특성**: 유일하게 AJV 검증 플러그인을 사용하는 예제. `items: false` + `minItems: 3`으로 고정 크기 튜플.
 
 **리렌더 분석**:
 
-- tuple 아이템은 `prefixItems`로 고정 → 동적 추가/삭제 없음
-- 각 아이템 변경 시: 해당 Terminal Node Proxy 1개 + 부모 ArrayNode Proxy 1개 re-render
-- 부모 ArrayNode의 `FieldInputBridge`은 `memo`이므로, children이 변경되지 않으면 하위 아이템 re-render 안 됨
+- 튜플 아이템은 `prefixItems`로 고정 → 동적 추가/삭제 없음
+- 각 아이템 변경 시: 해당 Terminal Node Proxy 1개 + 부모 ArrayNode Proxy 1개 다시 렌더링
+- 부모 ArrayNode의 `FieldInputBridge`는 `memo`이므로, children이 변경되지 않으면 하위 아이템 다시 렌더링 안 됨
 
 **AJV 검증 비용**:
 
 - 기본 validationMode가 `OnChange`이면 매 값 변경마다 AJV 실행
-- 그러나 tuple 스키마 (number range, string pattern)에 대한 AJV 검증은 < 0.1ms
+- 그러나 튜플 스키마 (숫자 범위, 문자열 패턴)에 대한 AJV 검증은 < 0.1ms
 - `OnRequest` 모드로 전환하면 검증 오버헤드 0
 
-**판정: PASS**
+**판정: 통과**
 
 ---
 
@@ -449,16 +449,16 @@ userType 변경: 'guest' → 'admin'
 
 | 예제                     | 필드 | 깊이 | computed | oneOf | 배열       | 노드 | 판정     |
 | ------------------------ | ---- | ---- | -------- | ----- | ---------- | ---- | -------- |
-| Basic Form               | 7    | 1    | 0        | —     | —          | 8    | **PASS** |
-| Auto Calculation         | 5    | 1    | 1        | —     | —          | 6    | **PASS** |
-| Conditional Registration | 8    | 1    | 0        | —     | —          | 9    | **PASS** |
-| Dynamic Billing          | 10   | 1    | 0        | —     | —          | 11   | **PASS** |
-| Employment Contract      | 4-7  | 2    | 3        | 3분기 | —          | ~18  | **PASS** |
-| Media Registration       | 8-12 | 3    | 4        | 2중   | 4개        | ~35  | **PASS** |
-| Nested Profile           | ~16  | 5    | 1        | —     | 1개(5항목) | ~30  | **PASS** |
-| Product Catalog          | 5-10 | 3    | 5        | 2중   | 1개        | ~30  | **PASS** |
-| Role-Based Access        | 8    | 1    | 6        | —     | 1개        | 10   | **PASS** |
-| Tuple Arrays             | 12   | 2    | 0        | —     | 4개(고정)  | 17   | **PASS** |
+| Basic Form               | 7    | 1    | 0        | —     | —          | 8    | **통과** |
+| Auto Calculation         | 5    | 1    | 1        | —     | —          | 6    | **통과** |
+| Conditional Registration | 8    | 1    | 0        | —     | —          | 9    | **통과** |
+| Dynamic Billing          | 10   | 1    | 0        | —     | —          | 11   | **통과** |
+| Employment Contract      | 4-7  | 2    | 3        | 3분기 | —          | ~18  | **통과** |
+| Media Registration       | 8-12 | 3    | 4        | 2중   | 4개        | ~35  | **통과** |
+| Nested Profile           | ~16  | 5    | 1        | —     | 1개(5항목) | ~30  | **통과** |
+| Product Catalog          | 5-10 | 3    | 5        | 2중   | 1개        | ~30  | **통과** |
+| Role-Based Access        | 8    | 1    | 6        | —     | 1개        | 10   | **통과** |
+| Tuple Arrays             | 12   | 2    | 0        | —     | 4개(고정)  | 17   | **통과** |
 
 ---
 
@@ -466,32 +466,32 @@ userType 변경: 'guest' → 'admin'
 
 ### 왜 memo 없이도 괜찮은가
 
-1. **Form-level 방어**: `UPDATE_CHILDREN_MASK`가 value 변경을 포함하지 않아, 일반적인 사용자 입력 시 Form → children → Proxy cascade가 발생하지 않음
+1. **폼 수준 방어**: `UPDATE_CHILDREN_MASK`가 value 변경을 포함하지 않아, 일반적인 사용자 입력 시 Form → children → Proxy 연쇄 전파가 발생하지 않음
 
 2. **노드별 독립 구독**: `useFieldNodeTracker`가 각 Proxy를 자신의 노드에만 바인딩. 다른 필드의 이벤트가 전파되지 않음
 
 3. **내부 memo 방어**:
-   - `FieldInputBridge`: `memo` 래핑 — props 동일 시 완전 skip
+   - `FieldInputBridge`: `memo` 래핑 — props 동일 시 완전히 생략
    - `FieldRenderer`: `useMemorize(() => memo(withErrorBoundary(...)))` — 최초 1회만 생성
-   - `useChildFields`: `Map` 캐시 + 각 child를 `memo` 래핑
+   - `useChildFields`: `Map` 캐시 + 각 자식을 `memo` 래핑
    - `createFieldInputBridge` 내부: `useReference`로 ref 안정화
 
-4. **Proxy 자체의 re-render 비용이 극히 낮음**: hooks deps 비교 5-6회 + 조건부 null 반환. DOM 접근 없음.
+4. **Proxy 자체의 다시 렌더링 비용이 극히 낮음**: 훅 의존성 비교 5-6회 + 조건부 null 반환. DOM 접근 없음.
 
 ### 예제별 검증 결과
 
-| 예제                     | Proxy 불필요 re-render 발생?   | 발생 시 비용 | 판정 |
+| 예제                     | Proxy의 불필요한 다시 렌더링 발생 여부   | 발생 시 비용 | 판정 |
 | ------------------------ | ------------------------------ | ------------ | ---- |
-| Basic Form               | NO                             | —            | OK   |
-| Auto Calculation         | NO (computed는 해당 노드만)    | —            | OK   |
-| Conditional Registration | 가능 (required 변경 시)        | ~0.07ms      | OK   |
-| Dynamic Billing          | 가능 (required 변경 시)        | ~0.1ms       | OK   |
-| Employment Contract      | 가능 (oneOf 전환 시)           | ~0.15ms      | OK   |
-| Media Registration       | 가능 (2중 oneOf 전환 시)       | ~0.2ms       | OK   |
-| Nested Profile           | NO (깊은 중첩이지만 독립 구독) | —            | OK   |
-| Product Catalog          | 가능 (2중 oneOf 전환 시)       | ~0.2ms       | OK   |
-| Role-Based Access        | NO (computed는 해당 노드만)    | —            | OK   |
-| Tuple Arrays             | NO                             | —            | OK   |
+| Basic Form               | 아니요                             | —            | 양호   |
+| Auto Calculation         | 아니요 (computed는 해당 노드만)    | —            | 양호   |
+| Conditional Registration | 가능 (required 변경 시)        | ~0.07ms      | 양호   |
+| Dynamic Billing          | 가능 (required 변경 시)        | ~0.1ms       | 양호   |
+| Employment Contract      | 가능 (oneOf 전환 시)           | ~0.15ms      | 양호   |
+| Media Registration       | 가능 (2중 oneOf 전환 시)       | ~0.2ms       | 양호   |
+| Nested Profile           | 아니요 (깊은 중첩이지만 독립 구독) | —            | 양호   |
+| Product Catalog          | 가능 (2중 oneOf 전환 시)       | ~0.2ms       | 양호   |
+| Role-Based Access        | 아니요 (computed는 해당 노드만)    | —            | 양호   |
+| Tuple Arrays             | 아니요                             | —            | 양호   |
 
 **모든 예제에서 FieldProxy의 memo 미적용은 성능 문제를 일으키지 않습니다.** 내부 컴포넌트의 빡빡한 memo 처리가 실질적인 렌더링 비용을 효과적으로 차단하고 있습니다.
 
@@ -506,7 +506,7 @@ userType 변경: 'guest' → 'admin'
 | 총 필드 수         | < 50      | 50-100+   | 폼 분할 또는 탭/스텝 UI       |
 | 배열 아이템 수     | < 30      | 30-100+   | `react-window` 가상화         |
 | computed 의존성    | < 20      | 20-50+    | 표현식 복잡도 최소화          |
-| 중첩 깊이          | < 8       | 8-15+     | microtask 체인 지연 모니터링  |
+| 중첩 깊이          | < 8       | 8-15+     | 마이크로태스크 연쇄 지연 모니터링  |
 | oneOf 분기 내 필드 | < 20      | 20+       | 분기 전환 시 프레임 드롭 체크 |
 
 ---
@@ -527,11 +527,11 @@ userType 변경: 'guest' → 'admin'
 | `src/components/FieldProxy/FieldProxy.tsx`                                                                | `enabled=false` 시 null 반환              |
 | `src/components/FieldProxy/components/FieldInputBridge/FieldInputBridge.tsx`                              | FieldInputBridge `memo` 래핑              |
 | `src/components/FieldProxy/components/FieldInputBridge/utils/createFieldInputBridge.tsx`                  | `useReference` ref 안정화                 |
-| `src/components/FieldProxy/components/FieldInputBridge/hooks/useChildFields.tsx`                          | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/FieldProxy/components/FieldInputBridge/hooks/useChildFields.tsx`                          | `Map` 캐시 + 자식 `memo` 래핑            |
 | `src/components/FieldProxy/components/FieldInputBridge/hooks/useFieldInputControl.ts`                     | RequestRefresh/Focus/Select 구독          |
 | `src/components/FieldProxy/components/FieldInputBridge/type.ts`                                           | `REACTIVE_RERENDERING_EVENTS`             |
 | `src/hooks/fieldNode/useFieldNodeTracker.ts`                                                              | 노드별 독립 구독 메커니즘                 |
-| `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` (v0.10.6에만 있음) | microtask 배칭                            |
+| `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` (v0.10.6에만 있음) | 마이크로태스크 일괄 처리                            |
 | `src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/createDynamicFunction.ts`    | `new Function()` — CSP 관련               |
 | `rolldown.config.mjs`                                                                                     | `minify: false` 설정                      |
 | `package.json:84-93` (v0.10.6에만 있음)                                                                   | size-limit 설정 (20KB)                    |

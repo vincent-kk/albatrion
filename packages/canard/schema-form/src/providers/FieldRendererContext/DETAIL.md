@@ -32,7 +32,7 @@ OnChange 오류는 현재 live 조건을 만족하고 마지막 release 이후 �
 
 ### error-release-limits — 표시 지연의 한계
 
-OnChange 밖에서는 live 조건을 사용합니다. hook disabled 변경의 즉시 표시, drop보다 늦게 렌더된 상태·presence의 hold 생략, commit-only 연속의 hold, release와 paint 사이 쓰기로 판정이 1~2프레임 보일 수 있는 한계를 유지합니다. 새 표시의 일반 release 대기는 약 두 프레임이며 reducer 통지는 현재 React 우선순위를 따르므로 노드 사건 없는 release는 한 paint 더 늦을 수 있습니다. transition 통지는 transition lane, passive catch-up은 default 우선순위를 따르며 오류 사건의 tracker는 동기 갱신합니다. 매 render가 이력을 다시 읽으므로 배달 순서만으로 표시를 확정하지 않습니다.
+OnChange 밖에서는 live 조건을 사용합니다. hook disabled 변경의 즉시 표시, drop보다 늦게 렌더된 상태·presence의 hold 생략, commit-only 연속의 hold, release와 paint 사이 쓰기로 판정이 1~2프레임 보일 수 있는 한계를 유지합니다. 새 표시의 일반 release 대기는 약 두 프레임이며 reducer 통지는 현재 React 우선순위를 따르므로 노드 사건 없는 release는 한 paint 더 늦을 수 있습니다. transition 통지는 transition 레인, passive 효과의 따라잡기는 default 우선순위를 따르며 오류 사건의 tracker는 동기 갱신합니다. 매 render가 이력을 다시 읽으므로 배달 순서만으로 표시를 확정하지 않습니다.
 
 ## Boundary Exemptions
 
