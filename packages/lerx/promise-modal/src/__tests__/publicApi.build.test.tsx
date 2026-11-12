@@ -28,9 +28,8 @@ import { afterEach, describe, expect, expectTypeOf, it } from 'vitest';
  * Exercises the built `dist/` output rather than `src/`.
  *
  * Importing by the published specifier resolves through package.json `exports`,
- * so this is the only suite that runs what consumers actually install. Every
- * other test in this package imports through the `@/promise-modal` alias or
- * relatively, and therefore only ever sees `src/`.
+ * so these interactions run the package consumers install; the server-import
+ * and client-boundary suites also inspect the published artifacts.
  *
  * What it guards: this package publishes a single bundled file, and bundling is
  * where module-evaluation semantics can shift — DOM-independent module evaluation, class declaration form, and
@@ -104,10 +103,6 @@ it('published hooks count and subscribe from their public arguments', async () =
 
 /** Consumes public wrapper types exactly as an application does. */
 it('publishes wrapper props, prompt result types and frame metadata', async () => {
-  const inlineProviderProps: ModalProviderProps = {
-    ForegroundComponent: ({ children }) => <section>{children}</section>,
-  };
-  expectTypeOf(inlineProviderProps).toMatchTypeOf<ModalProviderProps>();
   expectTypeOf<
     ComponentProps<NonNullable<ModalProviderProps['ForegroundComponent']>>
   >().toEqualTypeOf<PropsWithChildren<ModalFrameProps>>();
@@ -130,13 +125,15 @@ it('publishes wrapper props, prompt result types and frame metadata', async () =
       </button>
     ),
   };
-  const confirmProps: ConfirmProps<unknown> = { title: 'typed confirm' };
-  const promptProps: PromptProps<string> = { Input: () => null };
   expectTypeOf<ReturnType<typeof prompt<string>>>().toEqualTypeOf<
     Promise<string | undefined | null>
   >();
-  expectTypeOf(promptProps).toMatchTypeOf<PromptProps<string>>();
-  expectTypeOf(confirmProps).toMatchTypeOf<OverridableHandleProps>();
+  expectTypeOf<Parameters<typeof prompt<string>>[0]>().toEqualTypeOf<
+    PromptProps<string>
+  >();
+  expectTypeOf<Parameters<typeof confirm<unknown>>[0]>().toEqualTypeOf<
+    ConfirmProps<unknown>
+  >();
   function Frame({
     group,
     subtype,

@@ -20,13 +20,13 @@ import type {
 export interface OverridableHandleProps {
   /** Modal group identifier for managing related modals */
   group?: string;
-  /** Alert subtype that affects UI styling */
+  /** Presentation subtype shared by all modal kinds */
   subtype?: 'info' | 'success' | 'warning' | 'error';
   /** Whether to dim the background */
   dimmed?: boolean;
   /** Nonnegative milliseconds or a decimal ms/s duration string. */
   duration?: ModalOptions['duration'];
-  /** If true, keeps modal in DOM after closing (for animations) */
+  /** Retains the closed frame until onDestroy; a custom frame must finish its cleanup */
   manualDestroy?: boolean;
   /** Whether to close modal on backdrop click */
   closeOnBackdropClick?: boolean;

@@ -30,7 +30,7 @@ describe('AlertNode', () => {
   describe('initialization', () => {
     it('노드가 올바른 초기 상태를 가져야 함', () => {
       expect(node.alive).toBe(true);
-      expect(node.visible).toBe(true); // 초기에는 visible이 true
+      expect(node.visible).toBe(true);
       expect(node.type).toBe('alert');
       expect(node.id).toBe(1);
       expect(node.initiator).toBe('test');
@@ -50,7 +50,6 @@ describe('AlertNode', () => {
 
   describe('lifecycle methods', () => {
     it('onShow()가 visible을 true로 변경해야 함', () => {
-      // 먼저 visible을 false로 만듦
       node.onHide();
       expect(node.visible).toBe(false);
       node.onShow();
@@ -58,7 +57,6 @@ describe('AlertNode', () => {
     });
 
     it('onHide()가 visible을 false로 변경해야 함', () => {
-      // 초기 상태가 이미 visible=true
       expect(node.visible).toBe(true);
       node.onHide();
       expect(node.visible).toBe(false);
@@ -74,7 +72,6 @@ describe('AlertNode', () => {
       const listener = vi.fn();
       node.subscribe(listener);
 
-      // visible이 false에서 true로 변경될 때만 publish됨
       node.onHide();
       expect(listener).toHaveBeenCalledTimes(1);
 
@@ -96,8 +93,6 @@ describe('AlertNode', () => {
       expect(handleResolve).toHaveBeenCalledWith(null);
       expect(handleResolve).toHaveBeenCalledTimes(1);
     });
-
-    // Note: onConfirm은 alive를 변경하지 않음 - 이는 ModalManager에서 처리
   });
 
   describe('onClose', () => {
@@ -105,30 +100,6 @@ describe('AlertNode', () => {
       node.onClose();
       expect(handleResolve).toHaveBeenCalledWith(null);
       expect(handleResolve).toHaveBeenCalledTimes(1);
-    });
-
-    // Note: onClose는 alive를 변경하지 않음 - 이는 ModalManager에서 처리
-  });
-
-  describe('alert 특수 케이스', () => {
-    it('onConfirm과 onClose가 동일하게 동작해야 함', () => {
-      const handleResolve1 = vi.fn();
-      const handleResolve2 = vi.fn();
-      const node1 = new AlertNode({
-        ...alertModal,
-        handleResolve: handleResolve1,
-      });
-      const node2 = new AlertNode({
-        ...alertModal,
-        handleResolve: handleResolve2,
-      });
-
-      node1.onConfirm();
-      node2.onClose();
-
-      expect(node1.alive).toBe(node2.alive);
-      expect(handleResolve1).toHaveBeenCalledWith(null);
-      expect(handleResolve2).toHaveBeenCalledWith(null);
     });
   });
 

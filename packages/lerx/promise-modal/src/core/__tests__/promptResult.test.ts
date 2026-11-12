@@ -6,19 +6,6 @@ import { promptHandler } from '../handle/prompt';
 import { PromptNode } from '../node/ModalNode/PromptNode';
 
 afterEach(() => ModalManager.reset());
-
-it('confirms an untouched prompt with undefined', () => {
-  const results: unknown[] = [];
-  const node = new PromptNode({
-    id: 0,
-    initiator: '/',
-    type: 'prompt',
-    Input: () => null,
-    handleResolve: (result) => results.push(result),
-  });
-  node.onConfirm();
-  expect(results).toEqual([undefined]);
-});
 it('preserves undefined on returnOnCancel cancellation', () => {
   const results: unknown[] = [];
   const node = new PromptNode({

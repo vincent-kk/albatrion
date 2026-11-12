@@ -62,11 +62,8 @@ export const NormalUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
-
-        // eslint-disable-next-line no-unreachable
-        return <div>Input</div>;
       },
-    });
+    }).catch((error: unknown) => console.error('Modal render rejected', error));
   };
   const modalHandle = useRef<ModalProviderHandle>(null);
   const modalRoot = useRef<HTMLDivElement>(null);
@@ -95,7 +92,7 @@ export const NormalUsecase = () => {
   );
 };
 
-export const NestedModalProviderUsecase = () => {
+export const ProviderInSubtreeUsecase = () => {
   const handleAlert = () => {
     alert({
       title: 'Hello, world!',
@@ -193,21 +190,8 @@ export const ModalInitializeHookUsecase = () => {
       content: 'Error will be thrown from Input',
       Input: () => {
         throw new Error('Error from Prompt Input');
-
-        // eslint-disable-next-line no-unreachable
-        return <div>Input</div>;
       },
-    });
-  };
-
-  const CustomComponent = () => {
-    const { portal } = useInitializeModal();
-    return (
-      <div>
-        Custom Component
-        <div id="modal-inner-root"> {portal}</div>
-      </div>
-    );
+    }).catch((error: unknown) => console.error('Modal render rejected', error));
   };
 
   const { initialize, portal } = useInitializeModal({ mode: 'manual' });
@@ -234,7 +218,6 @@ export const ModalInitializeHookUsecase = () => {
       <div id="modal-outer-root">
         <Context.Provider value={{ data: 'outer' }}>{portal}</Context.Provider>
       </div>
-      <CustomComponent />
     </div>
   );
 };

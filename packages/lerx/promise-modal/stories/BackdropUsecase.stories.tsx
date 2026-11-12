@@ -205,7 +205,7 @@ export const BlurBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}
@@ -248,7 +248,7 @@ export const StrongBlurBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}
@@ -289,7 +289,7 @@ export const BlurWithSaturationBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}
@@ -330,7 +330,7 @@ export const GrayscaleFilterBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}
@@ -371,7 +371,7 @@ export const SepiaFilterBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}
@@ -412,7 +412,7 @@ export const InvertFilterBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}
@@ -455,7 +455,7 @@ export const CombinedFiltersBackdrop = () => {
             right: 0,
             bottom: 0,
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1557683316-973673baf926?w=1200)',
+              'repeating-linear-gradient(45deg, #667eea 0 40px, #f0abfc 40px 80px)',
             backgroundSize: 'cover',
             zIndex: -1,
           }}

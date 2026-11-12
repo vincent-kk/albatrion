@@ -20,7 +20,7 @@ export const Foreground = forwardRef(
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const { duration } = useModalDuration();
+    const { duration } = useModalDuration(id);
 
     useModalAnimation(visible, {
       onVisible: () => {
