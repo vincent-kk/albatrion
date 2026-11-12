@@ -1,4 +1,4 @@
-import type { FingerprintOptions } from '../type';
+import type { FingerprintOptions } from '../types/type';
 import { isOmitted } from './isOmitted';
 
 /** Creates a direct segment writer whose opaque references live within this closure. */

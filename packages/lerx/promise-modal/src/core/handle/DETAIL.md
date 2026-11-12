@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+공개 진입점은 이름과 시그니처를 유지하며 구현은 내부 역할 구획이 소유합니다. 이 배치는 구현 파일의 위치가 독립 공개 계약으로 오해되는 것을 막고, 소비자는 기존 진입점을 계속 사용합니다.
+
 - 공개 호출은 closeOnEscape·trapFocus·lockScroll을 받아 Provider 기본값을 모달별로 재정의합니다.
 
 - prompt 반환 타입은 Promise<T | undefined | null>이며 확인과 returnOnCancel 취소는 값을 변환하지 않습니다. 렌더 전 returnOnCancel 취소는 defaultValue이고 일반 취소는 null입니다.

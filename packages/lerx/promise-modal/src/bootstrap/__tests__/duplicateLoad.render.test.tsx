@@ -25,7 +25,7 @@ it("renders and settles another evaluated copy's alert through the existing prov
   // Both package copies must use the application's one React runtime.
   vi.doMock('react', () => React);
   vi.resetModules();
-  const { alert } = await import('@/promise-modal/core/handle/static');
+  const { alert } = await import('@/promise-modal/core/handle/utils/static');
   let result!: Promise<void>;
   act(() => {
     result = alert({ title: 'Another package copy' });

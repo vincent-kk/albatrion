@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ModalManager } from '../../app/ModalManager';
-import { promptHandler } from '../handle/prompt';
-import { prompt } from '../handle/static';
+import { promptHandler } from '../handle/utils/prompt';
+import { prompt } from '../handle/utils/static';
 import { nodeFactory } from '../node/nodeFactory';
 
 describe('Modal Handlers', () => {

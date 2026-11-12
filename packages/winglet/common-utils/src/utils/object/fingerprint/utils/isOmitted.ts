@@ -1,4 +1,4 @@
-import type { FingerprintOptions } from '../type';
+import type { FingerprintOptions } from '../types/type';
 
 /** Tests an exclusion collection without allocating a Set for a one-off array. */
 export function isOmitted(

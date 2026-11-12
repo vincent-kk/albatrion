@@ -1,5 +1,5 @@
-import type { SafeFingerprintOptions } from './type';
-import { createSafeWriter } from './utils/createSafeWriter';
+import type { SafeFingerprintOptions } from '../types/type';
+import { createSafeWriter } from './createSafeWriter';
 
 /** Module-lifetime identity scope for the standalone safe generator. */
 const write = createSafeWriter();

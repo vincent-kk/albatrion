@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+공개 진입점은 이름과 시그니처를 유지하며 구현은 내부 역할 구획이 소유합니다. 이 배치는 구현 파일의 위치가 독립 공개 계약으로 오해되는 것을 막고, 소비자는 기존 진입점을 계속 사용합니다.
+
 세 함수는 각각 다른 목적의 키 생성기입니다. createFingerprint는 빠른 shallow 키를 생성하며 top-level 속성만 omit하고 중첩 값에는 native JSON을 사용합니다. 속성 삽입 순서에 민감하고 native JSON의 손실·예외·toJSON 동작을 따릅니다. createSortedFingerprint는 경로 flatten 정렬을 사용하며 재귀 omit과 순환 marker를 제공합니다. 두 경로는 delimiter·타입·빈 컨테이너 구분이 모호할 수 있으며 Map/Set payload를 비교하지 않습니다.
 
 createSafeFingerprint는 정렬·순환 처리 키입니다. plain object/array의 내용을 비교하고 Date/RegExp는 값을, Map/Set/함수/사용자 인스턴스/symbol 값은 참조 identity를 비교합니다. Map/Set 내부 mutation은 키를 바꾸지 않습니다. standalone 함수의 opaque identity 범위는 module 수명이며 factory는 독립 범위입니다. factory 간 또는 프로세스 간 opaque 키 비교는 보장하지 않습니다. safe는 순환 종료와 타입/문자열 경계 구분의 의미이며 암호학적 hash나 복원 형식이 아닙니다.

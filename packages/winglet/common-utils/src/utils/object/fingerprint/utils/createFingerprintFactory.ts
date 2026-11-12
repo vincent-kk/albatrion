@@ -1,7 +1,7 @@
-import type { FingerprintFactoryOptions, FingerprintGenerator } from './type';
-import { createSafeWriter } from './utils/createSafeWriter';
-import { writeFastFingerprint } from './utils/writeFastFingerprint';
-import { writeSortedFingerprint } from './utils/writeSortedFingerprint';
+import type { FingerprintFactoryOptions, FingerprintGenerator } from '../types/type';
+import { createSafeWriter } from './createSafeWriter';
+import { writeFastFingerprint } from './writeFastFingerprint';
+import { writeSortedFingerprint } from './writeSortedFingerprint';
 
 /**
  * Selects a key algorithm and owns optional immutable-result caching and opaque identities.

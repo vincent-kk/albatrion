@@ -1,10 +1,10 @@
-export { alertHandler } from './alert';
-export { confirmHandler } from './confirm';
-export { promptHandler } from './prompt';
-export { alert, confirm, prompt } from './static';
+export { alertHandler } from './utils/alert';
+export { confirmHandler } from './utils/confirm';
+export { promptHandler } from './utils/prompt';
+export { alert, confirm, prompt } from './utils/static';
 export type {
   AlertProps,
   ConfirmProps,
   OverridableHandleProps,
   PromptProps,
-} from './type';
+} from './types/type';
