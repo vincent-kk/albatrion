@@ -31,3 +31,5 @@ Components are selected automatically from the `type`, `format`, `inputType`, an
 ## Peer Dependencies
 
 `@canard/schema-form`, `@mui/material ^7`, `@mui/x-date-pickers ^8`, `@mui/icons-material ^7`, `@emotion/react`, `@emotion/styled`, `dayjs`, React
+
+Date, month and time pickers receive both disabled and readOnly from the form binding, including later lock changes. MUI owns the read-only interaction behavior.

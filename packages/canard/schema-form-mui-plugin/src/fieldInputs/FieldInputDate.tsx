@@ -34,6 +34,7 @@ const FieldInputDate = ({
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -101,6 +102,7 @@ const FieldInputDate = ({
         }
         onChange={handleChange}
         disabled={disabled}
+        readOnly={readOnly}
         minDate={minDate}
         maxDate={maxDate}
         shouldDisableDate={disableDate}

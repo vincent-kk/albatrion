@@ -33,6 +33,7 @@ const FieldInputTime = ({
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -97,6 +98,7 @@ const FieldInputTime = ({
         defaultValue={timeValue}
         onChange={handleChange}
         disabled={disabled}
+        readOnly={readOnly}
         ampm={ampm}
         slotProps={{
           textField: {
