@@ -34,7 +34,7 @@ FieldRenderer composes the bound Label, Input, and ErrorMessage parts. LabelRend
 
 ## Notice
 
-⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design Mobile environments.
+⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design 5 environments.
 
 📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
 
