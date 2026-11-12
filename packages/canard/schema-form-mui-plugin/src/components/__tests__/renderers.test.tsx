@@ -1,44 +1,30 @@
-import { cleanup, render, screen } from '@testing-library/react';
+// @vitest-environment jsdom
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { ErrorVisibility, Form, registerPlugin } from '@canard/schema-form';
 
 import { plugin } from '../../index';
-import { FormErrorMessage } from '../FormErrorMessage';
-import { FormGroup } from '../FormGroup';
-import { FormLabel } from '../FormLabel';
+import { ErrorMessageRenderer } from '../ErrorMessageRenderer';
+import { FieldRenderer } from '../FieldRenderer';
+import { LabelRenderer } from '../LabelRenderer';
 
 afterEach(() => {
   cleanup();
   registerPlugin(null);
 });
 
-it('names builtin radio options through the mobile field title', () => {
-  render(
+it('keeps the mui group free of a separate label', () => {
+  const view = render(
     <Form
-      FieldRenderer={FormGroup}
-      LabelRenderer={FormLabel}
-      ErrorMessageRenderer={FormErrorMessage}
-      jsonSchema={{
-        type: 'object',
-        properties: {
-          Size: {
-            type: 'string',
-            enum: ['S', 'M'],
-            presentation: { inputType: 'radio' },
-          },
-        },
-      }}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
+      jsonSchema={{ type: 'object', properties: { Text: { type: 'string' } } }}
     />,
   );
-  expect(screen.getByRole('group').getAttribute('aria-labelledby')).toBe(
-    'label:/Size',
-  );
-  const group = screen.getByRole('group', { name: 'Size' });
-  expect(group.getAttribute('aria-labelledby')).toBe('label:/Size');
-  const label = screen.getByText('Size').closest('label')!;
-  expect(label.id).toBe('label:/Size');
-  expect(label.getAttribute('for')).toBe('/Size');
+  expect(view.container.querySelector('label')).toBeNull();
+  expect(view.container.querySelector('input[id="/Text"]')).not.toBeNull();
 });
 
 it('forwards standalone label content, addresses and root styling without nesting labels', () => {
@@ -50,7 +36,7 @@ it('forwards standalone label content, addresses and root styling without nestin
         properties: { Text: { type: 'string' } },
       }}
       validationMode={0}
-      LabelRenderer={FormLabel}
+      LabelRenderer={LabelRenderer}
     >
       <Form.Label
         path="/Text"
@@ -80,7 +66,7 @@ it('forwards standalone error children and root styling', () => {
       validationMode={0}
       errorVisibility={ErrorVisibility.Always}
       errors={[{ dataPath: '/Text', message: 'Issue' }]}
-      ErrorMessageRenderer={FormErrorMessage}
+      ErrorMessageRenderer={ErrorMessageRenderer}
     >
       <Form.ErrorMessage
         path="/Text"
@@ -95,8 +81,8 @@ it('forwards standalone error children and root styling', () => {
 });
 
 it('registers the label and error parts without an input frame', () => {
-  expect(plugin).toHaveProperty('LabelRenderer', FormLabel);
-  expect(plugin).toHaveProperty('ErrorMessageRenderer', FormErrorMessage);
+  expect(plugin).toHaveProperty('LabelRenderer', LabelRenderer);
+  expect(plugin).toHaveProperty('ErrorMessageRenderer', ErrorMessageRenderer);
   expect(plugin).not.toHaveProperty('InputRenderer');
   registerPlugin(plugin);
   const view = render(
@@ -120,38 +106,28 @@ it('omits a separate label for direct array items', () => {
       jsonSchema={{ type: 'array', items: { type: 'string' } }}
       defaultValue={['value']}
       validationMode={0}
-      FieldRenderer={FormGroup}
-      LabelRenderer={FormLabel}
-      ErrorMessageRenderer={FormErrorMessage}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
     />,
   );
   expect(view.container.querySelector('label[for="/0"]')).toBeNull();
   expect(view.container.querySelector('input[id="/0"]')).not.toBeNull();
 });
 
-it.each([null, undefined, false, true, ''])(
-  'preserves mobile Space item count for an empty message %s',
-  (message) => {
-    const view = render(
-      <Form
-        jsonSchema={{
-          type: 'object',
-          properties: { Text: { type: 'string' } },
-        }}
-        validationMode={0}
-        errorVisibility={ErrorVisibility.Always}
-        errors={[{ dataPath: '/Text', message: 'Issue' }]}
-        formatError={() => message}
-        FieldRenderer={FormGroup}
-        LabelRenderer={FormLabel}
-        ErrorMessageRenderer={FormErrorMessage}
-      />,
-    );
-    const space = view.container.querySelector(
-      '[data-path="/Text"] > .adm-space',
-    )!;
-    expect(space.querySelectorAll(':scope > .adm-space-item')).toHaveLength(
-      message === '' ? 2 : 1,
-    );
-  },
-);
+it('retains the empty error root and its existing layout', () => {
+  const view = render(
+    <Form
+      jsonSchema={{ type: 'object', properties: { Text: { type: 'string' } } }}
+      validationMode={0}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
+    />,
+  );
+  const error = view.container.querySelector(
+    '[data-path="/Text"] .MuiFormHelperText-root',
+  );
+  expect(error).not.toBeNull();
+  expect(error?.textContent).toBe('');
+});

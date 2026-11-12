@@ -39,7 +39,7 @@ export const FieldRendererContextProvider = ({
   children,
 }: PropsWithChildren<FieldRendererContextProviderProps>) => {
   const {
-    FieldRenderer: ExternalFormFieldRenderer,
+    FieldRenderer: ExternalFieldRenderer,
     formatError: externalFormatError,
     errorVisibility: externalErrorVisibility,
   } = useExternalFormContext();
@@ -53,7 +53,7 @@ export const FieldRendererContextProvider = ({
   const value = useMemo(() => {
     const resolvedFieldRenderer = isReactComponent(FieldRenderer)
       ? FieldRenderer
-      : ExternalFormFieldRenderer;
+      : ExternalFieldRenderer;
     const resolvedFormatError = isFunction(formatError)
       ? formatError
       : externalFormatError;
@@ -73,7 +73,7 @@ export const FieldRendererContextProvider = ({
     ErrorMessageRenderer,
     formatError,
     checkErrorVisibility,
-    ExternalFormFieldRenderer,
+    ExternalFieldRenderer,
     externalFormatError,
     errorVisibility,
   ]);

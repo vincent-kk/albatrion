@@ -15,7 +15,7 @@ const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
  * @param props - Bound field parts, node strategy and indentation depth.
  * @returns The existing group structure composed with registered parts.
  */
-export const FormGroup = ({
+export const FieldRenderer = ({
   node,
   depth,
   name,

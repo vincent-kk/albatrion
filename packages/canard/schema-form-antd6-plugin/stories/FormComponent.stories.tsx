@@ -7,9 +7,9 @@ import {
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
-import { FormErrorMessage } from '../src/components/FormErrorMessage';
-import { FormGroup } from '../src/components/FormGroup';
-import { FormLabel } from '../src/components/FormLabel';
+import { ErrorMessageRenderer } from '../src/components/ErrorMessageRenderer';
+import { FieldRenderer } from '../src/components/FieldRenderer';
+import { LabelRenderer } from '../src/components/LabelRenderer';
 import { fieldInputDefinitions } from '../src/fieldInputs';
 
 registerPlugin(ajv8Plugin);
@@ -170,7 +170,7 @@ const bigSchema = {
 export const FormErrorMessageComponent = () => {
   return (
     <FormProvider
-      ErrorMessageRenderer={FormErrorMessage}
+      ErrorMessageRenderer={ErrorMessageRenderer}
       fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
@@ -193,7 +193,7 @@ export const FormInputComponent = () => {
 export const FormLabelComponent = () => {
   return (
     <FormProvider
-      LabelRenderer={FormLabel}
+      LabelRenderer={LabelRenderer}
       fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
@@ -203,10 +203,10 @@ export const FormLabelComponent = () => {
   );
 };
 
-export const FormGroupComponent = () => {
+export const FieldRendererComponent = () => {
   return (
     <FormProvider
-      FieldRenderer={FormGroup}
+      FieldRenderer={FieldRenderer}
       fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form

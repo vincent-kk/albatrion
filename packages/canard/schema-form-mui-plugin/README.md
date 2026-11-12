@@ -12,7 +12,7 @@
 
 `@canard/schema-form-mui-plugin` is a plugin for `@canard/schema-form` that provides Material-UI (MUI) components.
 
-FormGroup composes the bound Input and ErrorMessage parts without a group label; standalone labels use FormLabel. FormLabel and FormErrorMessage own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
+FieldRenderer composes the bound Input and ErrorMessage parts without a group label; standalone labels use LabelRenderer. LabelRenderer and ErrorMessageRenderer own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
 
 ---
 

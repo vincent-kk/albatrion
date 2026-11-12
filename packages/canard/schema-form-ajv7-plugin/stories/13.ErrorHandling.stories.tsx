@@ -18,7 +18,7 @@ import StoryLayout from './components/StoryLayout';
 registerPlugin(plugin);
 
 export default {
-  title: 'Form/13. FormError',
+  title: 'Form/13. ErrorHandling',
 };
 
 export const LiveErrorVisibility = () => {

@@ -6,7 +6,7 @@ import type { Optional } from '@aileron/declare';
 
 import {
   ErrorMessageRenderer,
-  FormFieldRenderer,
+  FieldRenderer,
   LabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
 import { builtinFieldInputDefinitions } from '@/schema-form/fieldInputs';
@@ -34,7 +34,7 @@ interface RenderKit {
 }
 
 const defaultRenderKit = {
-  FieldRenderer: FormFieldRenderer,
+  FieldRenderer: FieldRenderer,
   LabelRenderer: LabelRenderer,
   ErrorMessageRenderer: ErrorMessageRenderer,
 } as const;

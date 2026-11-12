@@ -10,7 +10,7 @@ const REQUIRED_STYLE: CSSProperties = { marginLeft: 4, color: 'red' };
  * @param props - Explicit content, accessibility addresses, requirement and root styling.
  * @returns The plugin label root with an inaccessible required marker.
  */
-export const FormLabel = ({
+export const LabelRenderer = ({
   children,
   htmlFor,
   id,

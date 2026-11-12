@@ -94,7 +94,7 @@ it('EVENT-073 refresh remounts the addressed input and retains its node', async 
   expect(form.value('/text')).toBe('same');
 });
 
-it('TEST-020 FormFieldRenderer consumes node.strategy for branch and terminal rendering', async () => {
+it('TEST-020 FieldRenderer consumes node.strategy for branch and terminal rendering', async () => {
   const Group = ({ node, Input }: FieldRendererProps) => (
     <section data-strategy={node.strategy}>
       <Input />

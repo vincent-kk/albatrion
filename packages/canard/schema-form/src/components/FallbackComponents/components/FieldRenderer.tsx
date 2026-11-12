@@ -11,7 +11,7 @@ const LABEL_NOTE_STYLE: CSSProperties = { fontSize: '0.85em' };
 const LABEL_GAP_STYLE: CSSProperties = { marginRight: 5 };
 
 /** Assemble the default group from bound parts while preserving branch accessibility. */
-export const FormFieldRenderer = ({
+export const FieldRenderer = ({
   node,
   depth,
   path,

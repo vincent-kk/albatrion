@@ -28,7 +28,7 @@
 
 `@canard/schema-form-antd5-plugin` is a plugin for `@canard/schema-form` that provides Ant Design components.
 
-FormGroup composes the bound Label, Input, and ErrorMessage parts. FormLabel and FormErrorMessage own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
+FieldRenderer composes the bound Label, Input, and ErrorMessage parts. LabelRenderer and ErrorMessageRenderer own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
 
 ---
 

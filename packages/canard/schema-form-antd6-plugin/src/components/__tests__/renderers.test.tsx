@@ -1,30 +1,33 @@
-// @vitest-environment jsdom
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { ErrorVisibility, Form, registerPlugin } from '@canard/schema-form';
 
 import { plugin } from '../../index';
-import { FormErrorMessage } from '../FormErrorMessage';
-import { FormGroup } from '../FormGroup';
-import { FormLabel } from '../FormLabel';
+import { ErrorMessageRenderer } from '../ErrorMessageRenderer';
+import { FieldRenderer } from '../FieldRenderer';
+import { LabelRenderer } from '../LabelRenderer';
 
 afterEach(() => {
   cleanup();
   registerPlugin(null);
 });
 
-it('keeps the mui group free of a separate label', () => {
-  const view = render(
+it('gives the field title its label id while preserving for', () => {
+  render(
     <Form
-      FieldRenderer={FormGroup}
-      LabelRenderer={FormLabel}
-      ErrorMessageRenderer={FormErrorMessage}
-      jsonSchema={{ type: 'object', properties: { Text: { type: 'string' } } }}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
+      jsonSchema={{
+        type: 'object',
+        properties: { Text: { type: 'string' } },
+      }}
     />,
   );
-  expect(view.container.querySelector('label')).toBeNull();
-  expect(view.container.querySelector('input[id="/Text"]')).not.toBeNull();
+  const label = screen.getByText('Text').closest('label')!;
+  expect(label.id).toBe('label:/Text');
+  expect(label.getAttribute('for')).toBe('/Text');
 });
 
 it('forwards standalone label content, addresses and root styling without nesting labels', () => {
@@ -36,7 +39,7 @@ it('forwards standalone label content, addresses and root styling without nestin
         properties: { Text: { type: 'string' } },
       }}
       validationMode={0}
-      LabelRenderer={FormLabel}
+      LabelRenderer={LabelRenderer}
     >
       <Form.Label
         path="/Text"
@@ -66,7 +69,7 @@ it('forwards standalone error children and root styling', () => {
       validationMode={0}
       errorVisibility={ErrorVisibility.Always}
       errors={[{ dataPath: '/Text', message: 'Issue' }]}
-      ErrorMessageRenderer={FormErrorMessage}
+      ErrorMessageRenderer={ErrorMessageRenderer}
     >
       <Form.ErrorMessage
         path="/Text"
@@ -81,8 +84,8 @@ it('forwards standalone error children and root styling', () => {
 });
 
 it('registers the label and error parts without an input frame', () => {
-  expect(plugin).toHaveProperty('LabelRenderer', FormLabel);
-  expect(plugin).toHaveProperty('ErrorMessageRenderer', FormErrorMessage);
+  expect(plugin).toHaveProperty('LabelRenderer', LabelRenderer);
+  expect(plugin).toHaveProperty('ErrorMessageRenderer', ErrorMessageRenderer);
   expect(plugin).not.toHaveProperty('InputRenderer');
   registerPlugin(plugin);
   const view = render(
@@ -106,9 +109,9 @@ it('omits a separate label for direct array items', () => {
       jsonSchema={{ type: 'array', items: { type: 'string' } }}
       defaultValue={['value']}
       validationMode={0}
-      FieldRenderer={FormGroup}
-      LabelRenderer={FormLabel}
-      ErrorMessageRenderer={FormErrorMessage}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
     />,
   );
   expect(view.container.querySelector('label[for="/0"]')).toBeNull();
@@ -120,13 +123,13 @@ it('retains the empty error root and its existing layout', () => {
     <Form
       jsonSchema={{ type: 'object', properties: { Text: { type: 'string' } } }}
       validationMode={0}
-      FieldRenderer={FormGroup}
-      LabelRenderer={FormLabel}
-      ErrorMessageRenderer={FormErrorMessage}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
     />,
   );
   const error = view.container.querySelector(
-    '[data-path="/Text"] .MuiFormHelperText-root',
+    '[data-path="/Text"] .ant-typography-danger',
   );
   expect(error).not.toBeNull();
   expect(error?.textContent).toBe('');

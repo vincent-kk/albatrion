@@ -23,7 +23,7 @@ import { renderForm } from '../renderForm';
  * Load-bearing facts (verified against src/):
  *   - Default `validationMode` is `OnChange | OnRequest`; `ValidationMode.None`
  *     disables the validator entirely (`ValidationManager.enabled === false`).
- *   - `<em>` (FormFieldRenderer) only shows non-empty text when
+ *   - `<em>` (FieldRenderer) only shows non-empty text when
  *     `errorVisible` is true — every test passes `errorVisibility: ErrorVisibility.Always`
  *     (→ `ErrorVisibility.Always`) so the DOM mirror is observable.
  *   - The default `formatValidationError` resolves `jsonSchema.errorMessages`
@@ -38,7 +38,7 @@ import { renderForm } from '../renderForm';
  */
 
 // ---------------------------------------------------------------------------
-// Schemas (mirrored from stories 21.Validation, 13.FormErrorMessage, 19.SubmitUsecase)
+// Schemas (mirrored from stories 21.Validation, 13.ErrorHandling, 19.SubmitUsecase)
 // ---------------------------------------------------------------------------
 
 /** name(minLength) + email(pattern, required) — deterministic error messages. */
@@ -76,7 +76,7 @@ const ageSchema = {
   },
 } satisfies JSONSchema;
 
-/** Mirrors 13.FormErrorMessage NoValidate / ExternalErrors story schema. */
+/** Mirrors 13.ErrorHandling NoValidate / ExternalErrors story schema. */
 const externalSchema = {
   type: 'object',
   properties: {
@@ -199,7 +199,7 @@ describe('GAP-18 ValidationMode.None / OnRequest', () => {
 });
 
 // ---------------------------------------------------------------------------
-// External errors prop (13.FormErrorMessage ExternalErrors)
+// External errors prop (13.ErrorHandling ExternalErrors)
 // ---------------------------------------------------------------------------
 
 describe('GAP-18 external errors prop', () => {

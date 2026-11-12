@@ -7,7 +7,7 @@ import type { FieldRendererProps } from '@canard/schema-form';
  * @param props - Bound field parts, node strategy and indentation depth.
  * @returns The existing group structure composed with registered parts.
  */
-export const FormGroup = ({
+export const FieldRenderer = ({
   node,
   depth,
   Input,

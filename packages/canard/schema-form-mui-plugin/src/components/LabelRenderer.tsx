@@ -7,7 +7,7 @@ import type { LabelRendererProps } from '@canard/schema-form';
  * @param props - Explicit content, accessibility addresses, requirement and root styling.
  * @returns The plugin label root with an inaccessible required marker.
  */
-export const FormLabel = ({
+export const LabelRenderer = ({
   children,
   htmlFor,
   id,

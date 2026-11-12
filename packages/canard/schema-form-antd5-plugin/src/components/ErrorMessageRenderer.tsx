@@ -12,7 +12,7 @@ const ERROR_STYLE: CSSProperties = { wordBreak: 'unset' };
  * @param props - Explicit message content and root styling.
  * @returns The plugin error root, including an empty root when called without content.
  */
-export const FormErrorMessage = ({
+export const ErrorMessageRenderer = ({
   children,
   style,
   className,
