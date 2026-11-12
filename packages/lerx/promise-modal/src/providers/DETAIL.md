@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+전환 시간과 확정 후 파괴 훅은 ModalManagerContext의 소비 훅으로 재노출합니다. 저장소 구독은 app에서 받아 fallback component와 Context 사이에 hook 집계 순환을 만들지 않습니다.
+
 - 기본값 위의 옵션과 모달별 옵션은 undefined를 건너뛰어 결합합니다. 설정 훅은 포털 내부의 모달 트리에서만 유효합니다.
 - 매니저 Context는 변하지 않는 조작 함수를 전달하며 노드 저장소의 소유권은 ModalManager에 둡니다.
 

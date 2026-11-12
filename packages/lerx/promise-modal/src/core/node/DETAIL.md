@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+읽기 전용 뷰와 살아 있는 노드 조작 타입은 실제 노드 합집합에서 유도합니다. 취소·숨김 helper도 이 경계가 소유하며 최초 확정·표시 전환·자동 파괴 timer의 순서와 지연을 그대로 유지합니다. 외부 app·handle·provider는 node 진입점에서 이를 사용합니다.
+
 - prompt의 미입력 값 undefined는 확인과 returnOnCancel 취소에서도 보존합니다.
 - 생성된 노드는 결과 확정과 표시·생존 상태를 독립적으로 유지합니다.
 
