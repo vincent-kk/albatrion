@@ -43,6 +43,12 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
     if (typeof name !== 'string') return undefined;
+    if (!atNode) {
+      if (value === null || typeof value !== 'object' || !hasOwnProperty(value, name))
+        return undefined;
+      value = Reflect.get(value, name);
+      continue;
+    }
     if (
       node.behavior.strategy === 'branch' &&
       node.source !== undefined &&
