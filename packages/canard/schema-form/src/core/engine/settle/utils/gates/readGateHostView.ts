@@ -3,19 +3,10 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Dictionary } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
+import type { GateHostView } from '../../types/gateHostView';
 import type { SettlementContext } from '../../types/settlement';
 import { readGateProjectedExtra } from './readGateProjectedExtra';
 import { readProjectedValue } from './readProjectedValue';
-
-/** One immutable projection interval shared by gates at the same bound host. */
-export interface GateHostView {
-  /** Host publication identity before copying into the validator view. */
-  readonly projected: unknown;
-  /** Extras identity, including absence beneath blocking source ancestors. */
-  readonly extra: unknown;
-  /** Complete current input; never reused after either source identity changes. */
-  readonly value: Dictionary<unknown>;
-}
 
 /**
  * Share one full input view while immediate publication keeps both identities equal.
