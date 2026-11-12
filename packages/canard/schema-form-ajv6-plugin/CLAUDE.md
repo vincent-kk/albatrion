@@ -26,3 +26,5 @@ The [validator plugin contract](../schema-form/src/app/plugin/DETAIL.md) owns th
 ## Declaration compatibility check
 
 `build:verify:types` checks every public package export from fresh built declarations in strict NodeNext and Bundler consumers with `skipLibCheck: false`; `build` runs it after declaration generation. This checks ESM consumer declarations, independently of source aliases and the workspace's Bundler-only typecheck. Build workspace dependencies first. The shared declaration fixer handles static `from`, side-effect imports and inline `import()` references, including current and parent directory indexes. It preserves string literal types/comments and emits `.js` for `.d.ts` targets or `.mjs` for `.d.mts` targets. Its unit tests run once through the root `test:build-scripts` command, not in each package build.
+
+Sibling profiles preserve removed and replaced built-in keywords as well as custom keywords; constructor defaults must not restore a consumer-removed rule or override its replacement.

@@ -20,10 +20,12 @@ export const cloneInstance = (
   const clone = new Constructor({ ...instance.opts, allErrors, validateSchema });
   for (const [name, format] of Object.entries(instance.formats))
     if (format !== undefined) clone.addFormat(name, format);
+  for (const name of Object.keys(clone.RULES.keywords))
+    clone.removeKeyword(name);
   for (const name of Object.keys(instance.RULES.keywords)) {
     if (clone.RULES.keywords[name]) continue;
     const definition = instance.getKeyword(name);
-    if (definition && typeof definition === 'object') clone.addKeyword(definition);
+    if (definition && typeof definition === 'object') clone.addKeyword({ ...definition, keyword: name, implements: undefined });
     else clone.addKeyword(name);
   }
   for (const [key, env] of Object.entries(instance.schemas))

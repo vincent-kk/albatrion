@@ -20,13 +20,14 @@ export const makeSibling = (
   const sibling = new Constructor({ ...baseAjv.opts, allErrors, validateSchema });
   for (const [name, format] of Object.entries(baseAjv.formats))
     if (format !== undefined) sibling.addFormat(name, format);
-  for (const name of Object.keys(baseAjv.RULES.all)) {
+  for (const name of Object.keys(sibling.RULES.keywords))
+    sibling.removeKeyword(name);
+  for (const name of Object.keys(baseAjv.RULES.keywords)) {
     if (sibling.getKeyword(name)) continue;
     const keyword = baseAjv.getKeyword(name);
-    if (typeof keyword === 'object') sibling.addKeyword(keyword);
+    if (typeof keyword === 'object') sibling.addKeyword({ ...keyword, keyword: name, implements: undefined });
+    else sibling.addKeyword(name);
   }
-  for (const name of Object.keys(baseAjv.RULES.keywords))
-    if (!sibling.RULES.keywords[name]) sibling.addKeyword(name);
   for (const [key, env] of Object.entries(baseAjv.schemas))
     if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !sibling.schemas[key])
       sibling.addSchema(env.schema, key);
