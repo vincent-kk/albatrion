@@ -37,7 +37,7 @@ import {
   useFormErrorContext,
 } from '@/schema-form/providers/FormErrorContext';
 import type { RootBinding } from '@/schema-form/providers/RootNodeContext';
-import type { AttachedFilesMap } from '@/schema-form/types';
+import { AttachedFilesStore } from '@/schema-form/providers/WorkspaceContext';
 import { ErrorVisibility } from '@/schema-form/types';
 
 import type { FormHandle } from '../types/handle';
@@ -57,7 +57,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
     current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
   }));
-  const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
+  const attachedFilesMap = useLazyConstant(() => new AttachedFilesStore());
   const reporter = useFormErrorContext();
   const reportLifecycleError = useHandle((error: unknown, node: FieldNode) => {
     let message: string;

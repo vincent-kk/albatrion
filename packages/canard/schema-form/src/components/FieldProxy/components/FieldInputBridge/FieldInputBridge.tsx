@@ -73,6 +73,7 @@ export const FieldInputBridge = memo(
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     const { attachedFilesMap, context } = useWorkspaceContext();
+    const attachmentOwner = useRef({});
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
     const isLive = useLiveNode(node);
@@ -94,6 +95,7 @@ export const FieldInputBridge = memo(
       FieldInput ? virtualizationManager : null,
       FieldInput ? lifecycle : null,
       update,
+      attachedFilesMap,
     );
     // Each committed container and input selection owns its callback lifetime.
     const selection = useMemorize(
@@ -137,8 +139,8 @@ export const FieldInputBridge = memo(
         const onFileAttach =
           onFileAttachRef.current || overrideOnFileAttachRef?.current;
         if (onFileAttach) return onFileAttach(files);
-        if (files === undefined) attachedFilesMap.delete(node.path);
-        else attachedFilesMap.set(node.path, isArray(files) ? files : [files]);
+        attachedFilesMap.attach(attachmentOwner.current, node,
+          files === undefined ? undefined : isArray(files) ? files : [files]);
       },
       [
         accepts,
@@ -171,7 +173,7 @@ export const FieldInputBridge = memo(
       });
     }, [accepts, isLive, node, selection]);
     useOnUnmount(() => {
-      attachedFilesMap.delete(node.path);
+      attachedFilesMap.detach(attachmentOwner.current);
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
