@@ -72,7 +72,10 @@ export const useChildFields = (
     getSnapshot,
     getNoManager,
   );
-  const cache = useLazyConstant(() => new Map<FieldNode, ChildField>());
+  const cache = useLazyConstant(() => ({
+    fields: new WeakMap<FieldNode, ChildField>(),
+    nextKey: 0,
+  }));
 
   const ChildFields = useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
@@ -82,13 +85,13 @@ export const useChildFields = (
     const branch = node;
     const preparedRevision = manager?.revision() ?? 0;
     for (const node of children) {
-      const key = String(cache.size);
-      const CachedComponent = cache.get(node);
+      const CachedComponent = cache.fields.get(node);
       if (CachedComponent) {
         CachedComponent.path = node.path;
         CachedComponent.field = node.name;
         ChildFields.push(CachedComponent);
       } else {
+        const key = String(cache.nextKey++);
         // Deferrable is baked at creation so the component's hook set stays
         // static; revealed-ness itself is resolved dynamically by the gate.
         const deferredManager =
@@ -137,7 +140,7 @@ export const useChildFields = (
         ChildComponent.path = node.path;
         ChildComponent.field = node.name;
 
-        cache.set(node, ChildComponent);
+        cache.fields.set(node, ChildComponent);
         ChildFields.push(ChildComponent);
       }
     }
