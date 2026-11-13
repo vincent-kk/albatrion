@@ -2,6 +2,7 @@
 import { pluginsFeatureScenarios, validatorSourceCases } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { FeatureStory } from '../components/FeatureStory';
 import { createFeatureStory } from '../components/createFeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -22,7 +23,7 @@ export const Plugin: Story = createFeatureStory(scenario);
 /** The Form validatorFactory prop precedes the registered plugin; the 'none' cases run in e2e, where no plugin is global. */
 export const FactoryOverPlugin: Story = {
   args: { scenario, formProps: { validatorFactory: createKeywordFactory(factoryCase.factoryKeyword!) }, onHandle: probe.onHandle },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ canvasElement }) {
     const handle = await probe.handle(canvasElement);
     await handle.validate();

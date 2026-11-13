@@ -3,6 +3,7 @@ import { interactionStateStages, playScenario, validationStateFeatureScenarios }
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent } from 'storybook/test';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -25,7 +26,7 @@ const onStateChange = fn();
 /** Shared scenario `validation-state.interaction-state`, driven through interactionStateStages. */
 export const EditedTouchedAndNotifications: Story = {
   args: { scenario, formProps: { onStateChange }, onHandle: probe.onHandle },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     onStateChange.mockClear();

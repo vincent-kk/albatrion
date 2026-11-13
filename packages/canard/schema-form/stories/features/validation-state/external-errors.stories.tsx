@@ -10,6 +10,7 @@ import {
 } from '@aileron/schema-form-scenarios';
 
 import { ErrorVisibility } from '../../../src';
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -42,7 +43,7 @@ export const ErrorsPropStages: Story = {
     propStages: externalErrorStages.map((stage) => ({ errors: stage.errors })),
     onHandle: errorsPropProbe.onHandle,
   },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

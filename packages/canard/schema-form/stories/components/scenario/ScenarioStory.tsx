@@ -55,10 +55,8 @@ export function ScenarioStory({ scenario }: { scenario: FormScenario }) {
     report({
       value: handle ? handle.getValue() : scenario.initialValue,
       errors: handle?.getErrors() ?? [],
-      defaultValue: {
-        initialValue: scenario.initialValue,
-        defaultValue: scenario.initialValue,
-      },
+      initialValue: scenario.initialValue,
+      defaultValue: scenario.initialValue,
       settings: {
         validator: 'ajv validatorFactory (counted)',
         validationMode: 'OnChange | OnRequest',

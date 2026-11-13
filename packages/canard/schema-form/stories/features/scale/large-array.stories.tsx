@@ -3,6 +3,7 @@ import { largeArrayTyped, playScenario, scaleFeatureScenarios } from '@aileron/s
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -21,7 +22,7 @@ const probe = createHandleProbe();
 /** Shared scenario `scale.large-array` under default virtualization, then a scroll to the end and typing into the last item. */
 export const EditAtBothEnds: Story = {
   args: { scenario, formProps: { virtualization: true }, onHandle: probe.onHandle },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

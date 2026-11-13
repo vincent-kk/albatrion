@@ -14,6 +14,7 @@ import {
   ValidationMode,
   VirtualizationBackfill,
 } from '../../../src';
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { isVitestBrowserMode } from '../../components/play/isVitestBrowserMode';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
@@ -157,7 +158,13 @@ export const createCompositeStory = (
       },
     },
     parameters: {
-      docs: { description: { story: item.scenario.description } },
+      docs: {
+        description: {
+          story:
+            item.scenario.description &&
+            formatScenarioDescription(item.scenario.description),
+        },
+      },
       storyPanels: {
         tail: item.tail ?? [],
         tailStart: item.tailStart,

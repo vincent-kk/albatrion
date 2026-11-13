@@ -10,6 +10,7 @@ import {
 
 import { ErrorVisibility } from '../../../src';
 import { Form } from '../../../src';
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -65,7 +66,7 @@ export const PathLayout: Story = {
     formProps: { errorVisibility: ErrorVisibility.Always },
     onHandle: probe.onHandle,
   },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

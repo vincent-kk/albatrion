@@ -62,7 +62,8 @@ export interface FeatureStoryProps {
   /** Form props for the whole story; validationMode defaults to OnChange | OnRequest. */
   formProps?: FeatureFormProps;
   /**
-   * Prop values applied one stage at a time by the "Apply next form props" button, starting at the first stage.
+   * Prop values applied one stage at a time by the "Apply next form props" button, starting at the first stage;
+   * the stage bar and its button render only when there are two or more stages.
    * errors stays untyped so a story can stage input the prop type forbids (178C-01), as an untyped JavaScript caller would.
    */
   propStages?: readonly FeaturePropStage[];
@@ -95,6 +96,7 @@ export function FeatureStory({
   const [stage, setStage] = useState(0);
   const report = useStoryPanelsReport();
   const current = propStages?.[stage];
+  const next = propStages?.[stage + 1];
   const staged: Readonly<Record<string, unknown>> = {
     ...(current && 'errors' in current && { errors: current.errors }),
     ...(current?.context && { context: current.context }),
@@ -128,13 +130,11 @@ export function FeatureStory({
     report({
       value: handle ? handle.getValue() : scenario.initialValue,
       errors: handle?.getErrors() ?? [],
-      defaultValue: {
-        initialValue: scenario.initialValue,
-        defaultValue:
-          current && 'defaultValue' in current
-            ? current.defaultValue
-            : scenario.initialValue,
-      },
+      initialValue: scenario.initialValue,
+      defaultValue:
+        current && 'defaultValue' in current
+          ? current.defaultValue
+          : scenario.initialValue,
       settings: {
         validationMode: describeValidationMode(
           formProps && 'validationMode' in formProps
@@ -212,15 +212,25 @@ export function FeatureStory({
   );
   return (
     <section data-feature-story={scenario.name}>
-      {propStages && (
-        <button
-          type="button"
-          aria-label="Apply next form props"
-          disabled={stage + 1 >= propStages.length}
-          onClick={() => setStage(stage + 1)}
-        >
-          Form props stage {stage + 1} / {propStages.length}
-        </button>
+      {propStages && propStages.length > 1 && (
+        <div className="sf-stage" role="group" aria-label="Form props stages">
+          <span className="sf-stage-label">
+            Props stage {stage + 1} of {propStages.length}
+          </span>
+          <span className="sf-stage-next">
+            {next
+              ? `Next stage sets: ${Object.keys(next).join(', ') || 'no props'}`
+              : 'All stages applied'}
+          </span>
+          <button
+            type="button"
+            aria-label="Apply next form props"
+            disabled={!next}
+            onClick={() => setStage(stage + 1)}
+          >
+            Apply next form props
+          </button>
+        </div>
       )}
       <div ref={root} data-scenario-name={scenario.name}>
         {providerProps ? (

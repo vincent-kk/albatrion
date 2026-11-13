@@ -10,6 +10,7 @@ import {
   playScenario,
 } from '@aileron/schema-form-scenarios';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -41,7 +42,7 @@ const scenario = findScenario(
 /** Shared scenario `input-components.child-components`: a card input draws children and reports their errors. */
 export const CardWithChildErrors: Story = {
   args: { scenario, formProps: { fieldInputDefinitions: childDefinitions } },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
@@ -87,7 +88,7 @@ export const OpenObjectAsTerminal: Story = {
     formProps: { fieldInputDefinitions: childDefinitions },
     onHandle: mapProbe.onHandle,
   },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

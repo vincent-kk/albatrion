@@ -10,6 +10,7 @@ import {
   validationStateFeatureScenarios,
 } from '@aileron/schema-form-scenarios';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -46,7 +47,7 @@ const policyStory = (policy: ErrorVisibilityName): Story => {
     },
     parameters: {
       docs: {
-        description: { story: `${scenario.description} Policy: ${policy}.` },
+        description: { story: `${formatScenarioDescription(scenario.description ?? '')} Policy: ${policy}.` },
       },
     },
     async play({ args, canvasElement, step }) {
@@ -98,7 +99,7 @@ export const HandleOverridesPolicy: Story = {
   parameters: {
     docs: {
       description: {
-        story: `${scenario.description} Policy: ${forcedRevealErrorsCase.policy}, then the handle's errorVisibility.`,
+        story: `${formatScenarioDescription(scenario.description ?? '')} Policy: ${forcedRevealErrorsCase.policy}, then the handle's errorVisibility.`,
       },
     },
   },

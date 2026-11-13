@@ -4,6 +4,7 @@ import { eventsFeatureScenarios, playScenario, subscriptionStages } from '@ailer
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -25,7 +26,7 @@ const changes: unknown[] = [];
 /** Shared scenario `events.subscription-kinds`, driven through subscriptionStages. */
 export const EventKinds: Story = {
   args: { scenario, onHandle: probe.onHandle, onChange: (value) => { changes.push(value); } },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

@@ -2,6 +2,7 @@
 import { type ValidationModeName, playScenario, validationModeCases, validationStateFeatureScenarios } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -28,7 +29,7 @@ const modeStory = (mode: ValidationModeName): Story => {
   const probe = createHandleProbe();
   return {
     args: { scenario, formProps: { validationMode: toValidationMode(mode) }, onHandle: probe.onHandle },
-    parameters: { docs: { description: { story: `${scenario.description} Mode: ${mode}.` } } },
+    parameters: { docs: { description: { story: `${formatScenarioDescription(scenario.description ?? '')} Mode: ${mode}.` } } },
     async play({ args, canvasElement, step }) {
       if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);

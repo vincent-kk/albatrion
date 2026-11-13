@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 import { ErrorVisibility } from '../../../src';
 import {
@@ -28,39 +28,48 @@ const fileDefinitions = [
 /**
  * Render a shared-data form and record imperative method calls made by its buttons.
  * @param props - Scenario data and the group of public handle methods to demonstrate.
- * @returns A Form, method buttons and a Call log table containing immutable snapshots.
+ * @returns A Form card, a labelled group of method buttons and a Call log table of immutable
+ * snapshots; Completion reads `sync`, `async` or `throw` as text inside a coloured badge.
  */
 export function HandleWorkbench({ scenario, example }: HandleWorkbenchProps) {
   const handle = useRef<FormHandle>(null);
   const root = useRef<HTMLDivElement>(null);
+  const methodsHeading = useId();
   const [calls, setCalls] = useState<HandleCall[]>([]);
   const [pending, setPending] = useState(false);
   const actions = getHandleActions(example);
   return (
-    <section ref={root}>
-      <Form
-        ref={handle}
-        jsonSchema={scenario.schema as JSONSchema}
-        defaultValue={scenario.initialValue}
-        validatorFactory={ajvValidatorPlugin}
-        validationMode={ValidationMode.OnRequest}
-        errorVisibility={ErrorVisibility.Never}
-        fieldInputDefinitions={
-          example === 'AttachedFiles' ? fileDefinitions : undefined
-        }
-        onSubmit={(value) => {
-          setCalls((records) => [
-            ...records,
-            {
-              method: 'onSubmit',
-              args: toDisplayJSON([value]),
-              result: toDisplayJSON(value),
-              kind: 'sync',
-            },
-          ]);
-        }}
-      />
-      <div>
+    <section ref={root} className="sf-workbench">
+      <div className="sf-form">
+        <Form
+          ref={handle}
+          jsonSchema={scenario.schema as JSONSchema}
+          defaultValue={scenario.initialValue}
+          validatorFactory={ajvValidatorPlugin}
+          validationMode={ValidationMode.OnRequest}
+          errorVisibility={ErrorVisibility.Never}
+          fieldInputDefinitions={
+            example === 'AttachedFiles' ? fileDefinitions : undefined
+          }
+          onSubmit={(value) => {
+            setCalls((records) => [
+              ...records,
+              {
+                method: 'onSubmit',
+                args: toDisplayJSON([value]),
+                result: toDisplayJSON(value),
+                kind: 'sync',
+              },
+            ]);
+          }}
+        />
+      </div>
+      <h3 id={methodsHeading}>Handle methods</h3>
+      <div
+        className="sf-toolbar"
+        role="group"
+        aria-labelledby={methodsHeading}
+      >
         {actions.map((action) => (
           <button
             key={action.label}
@@ -105,32 +114,47 @@ export function HandleWorkbench({ scenario, example }: HandleWorkbenchProps) {
           </button>
         ))}
       </div>
-      <table aria-label="Call log">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Method</th>
-            <th>Arguments</th>
-            <th>Result</th>
-            <th>Completion</th>
-          </tr>
-        </thead>
-        <tbody>
-          {calls.map((call, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{call.method}</td>
-              <td>
-                <pre>{call.args}</pre>
-              </td>
-              <td>
-                <pre>{call.result}</pre>
-              </td>
-              <td>{call.kind}</td>
+      <h3>Call log</h3>
+      <div className="sf-table-scroll">
+        <table aria-label="Call log">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Method</th>
+              <th scope="col">Arguments</th>
+              <th scope="col">Result</th>
+              <th scope="col">Completion</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {calls.map((call, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>
+                  <code>{call.method}</code>
+                </td>
+                <td>
+                  <pre>{call.args}</pre>
+                </td>
+                <td>
+                  <pre>{call.result}</pre>
+                </td>
+                <td>
+                  <span className={`sf-badge sf-kind-${call.kind}`}>
+                    {call.kind}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {calls.length === 0 && (
+        <p className="sf-muted">
+          No calls yet. Click a handle method to record its arguments, result
+          and completion.
+        </p>
+      )}
     </section>
   );
 }

@@ -11,9 +11,10 @@ type Story = StoryObj<typeof Form>;
 export const Composition: Story = {
   args: { jsonSchema: packageEntryRenderScenario.schema as JSONSchema, defaultValue: packageEntryRenderScenario.initialValue },
   render: (args) => <Form {...args}>{({ value }) => <>
-    <Form.Label path="/title" /><Form.Input path="/title" /><Form.ErrorMessage path="/title" />
-    <Form.Input path="/count" /><Form.Input path="/enabled" />
-    <output>{JSON.stringify(value)}</output><button type="submit">Submit</button>
+    <div><Form.Label path="/title" /><Form.Input path="/title" /><Form.ErrorMessage path="/title" /></div>
+    <div><Form.Label path="/count" /><Form.Input path="/count" /></div>
+    <div><Form.Input path="/enabled" /> <Form.Label path="/enabled" /></div>
+    <output aria-label="Children value">{JSON.stringify(value)}</output><button type="submit">Submit</button>
   </>}</Form>,
 };
 

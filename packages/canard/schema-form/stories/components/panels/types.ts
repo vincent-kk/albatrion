@@ -16,7 +16,9 @@ export interface StoryPanelsParameters {
 export interface StoryPanelsState {
   /** Most recent public form output. */
   value: unknown;
-  /** Scenario defaults together with the currently staged defaults. */
+  /** Initial value authored by the scenario. */
+  initialValue: unknown;
+  /** defaultValue prop of the current stage; the Value panel compares the output against it. */
   defaultValue: unknown;
   /** Ordered whole-form validation issues. */
   errors: ReturnType<FormHandle['getErrors']>;

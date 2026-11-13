@@ -3,6 +3,7 @@ import { playScenario, pluginsFeatureScenarios } from '@aileron/schema-form-scen
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -19,7 +20,7 @@ const scenario = findScenario(pluginsFeatureScenarios, 'plugins.error-isolation'
 /** Shared scenario `plugins.error-isolation` with /broken mapped to an input that throws on the trigger value. */
 export const ThrowingInputFallsBackAlone: Story = {
   args: { scenario, formProps: { fieldInputMap: { '/broken': ThrowOnTriggerInput } } },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

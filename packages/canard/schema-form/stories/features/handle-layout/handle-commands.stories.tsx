@@ -2,6 +2,7 @@
 import { handleCommandStages, handleLayoutFeatureScenarios, playScenario } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -20,7 +21,7 @@ const probe = createHandleProbe();
 /** Shared scenario `handle-layout.handle-commands`, driven through handleCommandStages. */
 export const FocusSelectRefresh: Story = {
   args: { scenario, onHandle: probe.onHandle },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

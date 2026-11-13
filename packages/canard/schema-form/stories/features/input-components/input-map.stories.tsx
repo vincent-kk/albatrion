@@ -2,6 +2,7 @@
 import { inputComponentsFeatureScenarios, inputMapCase, playScenario } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -20,7 +21,7 @@ const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components
 /** Shared scenario `input-components.input-map` with exact, pattern, and wildcard keys from inputMapCase. */
 export const ExactPatternAndWildcard: Story = {
   args: { scenario, formProps: { fieldInputMap: toInputMap(inputMapCase.map) } },
-  parameters: { docs: { description: { story: `${scenario.description} Map: ${JSON.stringify(inputMapCase.map)}.` } } },
+  parameters: { docs: { description: { story: `${formatScenarioDescription(scenario.description ?? '')} Map: ${JSON.stringify(inputMapCase.map)}.` } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

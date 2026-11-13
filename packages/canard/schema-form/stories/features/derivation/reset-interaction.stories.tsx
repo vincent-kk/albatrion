@@ -3,6 +3,7 @@ import { derivationFeatureScenarios, playScenario, resetInteractionStages } from
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -22,7 +23,7 @@ const probe = createHandleProbe();
 /** Shared scenario `derivation.reset-interaction`, driven through resetInteractionStages. */
 export const ClearEdgeResetsState: Story = {
   args: { scenario, onHandle: probe.onHandle },
-  parameters: { docs: { description: { story: scenario.description } } },
+  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

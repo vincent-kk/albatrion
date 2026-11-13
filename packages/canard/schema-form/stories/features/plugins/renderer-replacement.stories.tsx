@@ -10,6 +10,7 @@ import {
 
 import { ErrorVisibility } from '../../../src';
 import { Form } from '../../../src';
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -71,7 +72,7 @@ const createRendererStory = (label: string): Story => {
     },
     parameters: {
       docs: {
-        description: { story: `${scenario.description} Case: ${item.label}.` },
+        description: { story: `${formatScenarioDescription(scenario.description ?? '')} Case: ${item.label}.` },
       },
     },
     async play({ args, canvasElement, step }) {

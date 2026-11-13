@@ -9,6 +9,7 @@ import {
 } from '@aileron/schema-form-scenarios';
 
 import { ErrorVisibility } from '../../../src';
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -49,7 +50,7 @@ const catalogStory = (label: string): Story => {
     parameters: {
       docs: {
         description: {
-          story: `${scenario.description} Catalog: ${JSON.stringify(item.catalog)}.`,
+          story: `${formatScenarioDescription(scenario.description ?? '')} Catalog: ${JSON.stringify(item.catalog)}.`,
         },
       },
     },
@@ -84,7 +85,7 @@ export const DefaultMessage: Story = {
   parameters: {
     docs: {
       description: {
-        story: `${scenario.description} No formatError: the default formatter draws the validator message.`,
+        story: `${formatScenarioDescription(scenario.description ?? '')} No formatError: the default formatter draws the validator message.`,
       },
     },
   },

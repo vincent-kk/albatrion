@@ -69,7 +69,7 @@ function HandleExample() {
       >
         Validate
       </button>
-      <output>{JSON.stringify(snapshot)}</output>
+      <output aria-label="Last read result">{JSON.stringify(snapshot)}</output>
     </>
   );
 }
@@ -78,7 +78,11 @@ export default {
   title: 'Usage/Form handle',
   component: HandleExample,
 } satisfies Meta<typeof HandleExample>;
-/** Documentation only; interaction assertions belong to shared scenarios. */
+/**
+ * Each button calls the live ref handle: read the output, write and focus `/title`, show errors,
+ * clear interaction state, reset from props, or validate; read and validate results print below.
+ * Documentation only: interaction assertions belong to the shared scenarios and the stories below.
+ */
 export const Handle: StoryObj<typeof HandleExample> = {};
 
 /** CSF story shape preserving the existing Usage/Form handle meta and Handle export. */

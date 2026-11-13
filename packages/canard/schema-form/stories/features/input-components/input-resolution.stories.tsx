@@ -4,6 +4,7 @@ import {
 } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
 import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
@@ -42,7 +43,7 @@ const resolutionStory = (label: string): Story => {
       },
       ...(item.provider && { providerProps: { fieldInputDefinitions: toDefinitions(item.provider) } }),
     },
-    parameters: { docs: { description: { story: `${scenario.description} Case: ${label}.` } } },
+    parameters: { docs: { description: { story: `${formatScenarioDescription(scenario.description ?? '')} Case: ${label}.` } } },
     async play({ args, canvasElement, step }) {
       if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);
