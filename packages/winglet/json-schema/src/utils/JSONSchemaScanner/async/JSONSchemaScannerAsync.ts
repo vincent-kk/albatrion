@@ -4,16 +4,13 @@ import { setValue } from '@winglet/json/pointer';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { JSONScannerOptionsAsync, SchemaVisitor } from '../type';
+import { ScanEngine } from '../utils/engine/ScanEngine';
+import type { ScanConfig } from '../utils/engine/type';
 import {
   DEFAULT_KEYWORDS,
   DEFAULT_KEYWORD_MAP,
   buildKeywordMap,
 } from '../utils/keywordDescriptors';
-import {
-  Effect,
-  type ScanConfig,
-  scannerFactory,
-} from '../utils/scannerFactory';
 
 interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -319,15 +316,9 @@ export class JSONSchemaScannerAsync<
   }
 
   /**
-   * Internal logic that asynchronously traverses the schema using depth-first search (DFS) and resolves references.
-   *
-   * Drives the shared {@link scannerFactory} generator: every time the core needs a
-   * user callback it yields a request, which this driver executes and — only
-   * when the callback actually returns a thenable — awaits before resuming the
-   * generator. Synchronous callbacks incur no microtask hop.
-   *
-   * @param {Schema} schema - The schema node to start traversal from.
-   * @private
+   * Run the shared direct-call machine with this driver's waiting policy.
+   * @param schema Root schema to traverse; callback errors propagate to scan's state reset.
+   * @returns Nothing once traversal completes asynchronously.
    */
   private async __run__(this: this, schema: Schema): Promise<void> {
     const options = this.__options__;
@@ -349,52 +340,8 @@ export class JSONSchemaScannerAsync<
       resolveReference: options.resolveReference,
     };
 
-    const generator = scannerFactory<Schema, ContextType>(schema, config);
-    let step = generator.next();
-    while (!step.done) {
-      const request = step.value;
-      let result: unknown;
-      switch (request.type) {
-        case Effect.Filter: {
-          const value = config.filter!(request.entry, context);
-          result = isThenable(value) ? await value : value;
-          break;
-        }
-        case Effect.Mutate: {
-          const value = config.mutate!(request.entry, context);
-          result = isThenable(value) ? await value : value;
-          break;
-        }
-        case Effect.Enter: {
-          const value = config.enter!(request.entry, context);
-          if (isThenable(value)) await value;
-          result = undefined;
-          break;
-        }
-        case Effect.Resolve: {
-          const value = config.resolveReference!(
-            request.reference,
-            request.entry,
-            context,
-          );
-          result = isThenable(value) ? await value : value;
-          break;
-        }
-        case Effect.Exit: {
-          const value = config.exit!(request.entry, context);
-          if (isThenable(value)) await value;
-          result = undefined;
-          break;
-        }
-      }
-      step = generator.next(result);
-    }
+    const engine = new ScanEngine(schema, config, true);
+    let pending = engine.run();
+    while (pending !== undefined) pending = engine.run(await pending);
   }
 }
-
-/** Narrow guard used by the async driver to avoid a needless microtask hop when
- * a user callback happens to be synchronous. */
-const isThenable = (value: unknown): value is PromiseLike<unknown> =>
-  value !== null &&
-  (typeof value === 'object' || typeof value === 'function') &&
-  typeof (value as { then?: unknown }).then === 'function';

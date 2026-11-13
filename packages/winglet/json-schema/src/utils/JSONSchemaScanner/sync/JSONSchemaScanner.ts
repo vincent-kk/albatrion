@@ -4,16 +4,13 @@ import { setValue } from '@winglet/json/pointer';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { JSONScannerOptions, SchemaVisitor } from '../type';
+import { ScanEngine } from '../utils/engine/ScanEngine';
+import type { ScanConfig } from '../utils/engine/type';
 import {
   DEFAULT_KEYWORDS,
   DEFAULT_KEYWORD_MAP,
   buildKeywordMap,
 } from '../utils/keywordDescriptors';
-import {
-  Effect,
-  type ScanConfig,
-  scannerFactory,
-} from '../utils/scannerFactory';
 
 interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -176,7 +173,7 @@ interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
  *
  * @remarks
  * **Traversal:** A single stack-based (non-recursive) depth-first pass driven by
- * a shared generator core. Each node is visited once — filtering, mutation,
+ * a shared resumable direct-call core. Each node is visited once — filtering, mutation,
  * `enter`, `$ref` resolution and child discovery are fused — and revisited once
  * on exit only if it has children. The sync scanner runs the core to completion
  * synchronously; the async scanner awaits callbacks that return thenables.
@@ -294,14 +291,9 @@ export class JSONSchemaScanner<
   }
 
   /**
-   * Internal logic that traverses the schema using depth-first search (DFS) and resolves references.
-   *
-   * Drives the shared {@link scannerFactory} generator synchronously: every time the
-   * core needs a user callback it yields a request, which this driver executes
-   * immediately (no awaiting) and feeds the result back into the generator.
-   *
-   * @param {Schema} schema - The schema node to start traversal from.
-   * @private
+   * Run the shared direct-call machine with this driver's waiting policy.
+   * @param schema Root schema to traverse; callback errors propagate to scan's state reset.
+   * @returns Nothing once traversal completes synchronously.
    */
   private __run__(this: this, schema: Schema): void {
     const options = this.__options__;
@@ -323,35 +315,6 @@ export class JSONSchemaScanner<
       resolveReference: options.resolveReference,
     };
 
-    const generator = scannerFactory<Schema, ContextType>(schema, config);
-    let step = generator.next();
-    while (!step.done) {
-      const request = step.value;
-      let result: unknown;
-      switch (request.type) {
-        case Effect.Filter:
-          result = config.filter!(request.entry, context);
-          break;
-        case Effect.Mutate:
-          result = config.mutate!(request.entry, context);
-          break;
-        case Effect.Enter:
-          config.enter!(request.entry, context);
-          result = undefined;
-          break;
-        case Effect.Resolve:
-          result = config.resolveReference!(
-            request.reference,
-            request.entry,
-            context,
-          );
-          break;
-        case Effect.Exit:
-          config.exit!(request.entry, context);
-          result = undefined;
-          break;
-      }
-      step = generator.next(result);
-    }
+    new ScanEngine(schema, config, false).run();
   }
 }
