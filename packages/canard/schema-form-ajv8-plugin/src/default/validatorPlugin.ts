@@ -1,5 +1,11 @@
-import type { JSONSchema, ValidateFunction, ValidatorPlugin } from '@canard/schema-form';
+import type {
+  JSONSchema,
+  ValidateFunction,
+  ValidatorPlugin,
+} from '@canard/schema-form';
 import AjvConstructor, { type Ajv, type Options } from 'ajv';
+
+import type { Fn } from '@aileron/declare';
 
 import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
@@ -76,8 +82,19 @@ export const ajvValidatorPlugin = {
     assertBindableInstance(instance);
     ajvInstance = instance;
   },
-  compile: (jsonSchema: JSONSchema): ValidateFunction => createValidatorFactory(getInstance(), roots)(jsonSchema),
-  compileGuard: (root: JSONSchema, pointer: string): ((value: unknown) => boolean) => createGuardCompiler(getInstance(), roots, root, pointer, directGuardCompile),
+  compile: (jsonSchema: JSONSchema): ValidateFunction =>
+    createValidatorFactory(getInstance(), roots)(jsonSchema),
+  compileGuard: (
+    root: JSONSchema,
+    pointer: string,
+  ): Fn<[value: unknown], boolean> =>
+    createGuardCompiler(
+      getInstance(),
+      roots,
+      root,
+      pointer,
+      directGuardCompile,
+    ),
   release: (root: JSONSchema): void => releaseSchemaRoot(roots, root),
   dialect: 'http://json-schema.org/draft-07/schema#',
 } satisfies ConfigurableValidatorPlugin;

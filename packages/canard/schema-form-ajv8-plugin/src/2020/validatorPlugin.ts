@@ -1,7 +1,16 @@
-import type { JSONSchema, ValidateFunction, ValidatorPlugin } from '@canard/schema-form';
+import type {
+  JSONSchema,
+  ValidateFunction,
+  ValidatorPlugin,
+} from '@canard/schema-form';
 // `.js` is required, not cosmetic: ajv ships no `exports` map, so Node's ESM
 // resolver takes this subpath literally and will not try extensions.
-import AjvConstructor, { type Ajv2020 as Ajv, type Options } from 'ajv/dist/2020.js';
+import AjvConstructor, {
+  type Ajv2020 as Ajv,
+  type Options,
+} from 'ajv/dist/2020.js';
+
+import type { Fn } from '@aileron/declare';
 
 import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
@@ -76,8 +85,19 @@ export const ajvValidatorPlugin = {
     assertBindableInstance(instance);
     ajvInstance = instance;
   },
-  compile: (jsonSchema: JSONSchema): ValidateFunction => createValidatorFactory(getInstance(), roots)(jsonSchema),
-  compileGuard: (root: JSONSchema, pointer: string): ((value: unknown) => boolean) => createGuardCompiler(getInstance(), roots, root, pointer, directGuardCompile),
+  compile: (jsonSchema: JSONSchema): ValidateFunction =>
+    createValidatorFactory(getInstance(), roots)(jsonSchema),
+  compileGuard: (
+    root: JSONSchema,
+    pointer: string,
+  ): Fn<[value: unknown], boolean> =>
+    createGuardCompiler(
+      getInstance(),
+      roots,
+      root,
+      pointer,
+      directGuardCompile,
+    ),
   release: (root: JSONSchema): void => releaseSchemaRoot(roots, root),
   dialect: 'https://json-schema.org/draft/2020-12/schema',
 } satisfies ConfigurableValidatorPlugin;

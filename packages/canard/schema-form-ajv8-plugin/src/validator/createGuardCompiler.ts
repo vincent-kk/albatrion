@@ -2,7 +2,7 @@ import type { JSONSchema } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 import type { ValidateFunction } from 'ajv';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
@@ -33,7 +33,7 @@ export const createGuardCompiler = (
   root: JSONSchema,
   pointer: string,
   directGuardCompile: boolean,
-): ((value: unknown) => boolean) => {
+): Fn<[value: unknown], boolean> => {
   const registration = registerSchemaRoot(registry, ajv, root);
   const rootId = typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
@@ -59,11 +59,13 @@ export const createGuardCompiler = (
   const guard = registerSchemaGuard(ajv, root, registration);
   // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
   // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
-  const dynamicAnchors: Dictionary<ValidateFunction> = guard.opts.dynamicRef && registration.hasDynamicKeywords
-    ? collectGuardDynamicAnchors(root, registration.key, pointer, guard)
-    : {};
+  const dynamicAnchors: Dictionary<ValidateFunction> =
+    guard.opts.dynamicRef && registration.hasDynamicKeywords
+      ? collectGuardDynamicAnchors(root, registration.key, pointer, guard)
+      : {};
   const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
-  if (Object.keys(dynamicAnchors).length === 0) return (value) => !!validate(value);
+  if (Object.keys(dynamicAnchors).length === 0)
+    return (value) => !!validate(value);
   return (value) =>
     !!validate(value, {
       instancePath: '',
