@@ -1,5 +1,7 @@
 import type Ajv from 'ajv';
 
+import type { Fn } from '@aileron/declare';
+
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { cloneInstance } from './utils/cloneInstance';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
@@ -27,7 +29,7 @@ export const createGuardCompiler = (
   root: object,
   directGuardCompile: boolean,
   finalizer: FinalizationRegistry<SchemaRootRegistration>,
-): ((value: unknown) => boolean) => {
+): Fn<[value: unknown], boolean> => {
   const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
