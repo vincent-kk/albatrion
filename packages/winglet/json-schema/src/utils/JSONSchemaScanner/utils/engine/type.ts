@@ -2,9 +2,9 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import type { SchemaEntry } from '../../type';
-import type { KeywordMap } from '../keywordDescriptors';
+import type { Dialect, SchemaEntry } from '../../type';
 import type { OutputOperation } from '../output/type';
+import type { KeywordMap } from '../vocabulary/type';
 
 /** An active Brent checkpoint; frame index identifies its owner without inspecting public entry metadata on exit. */
 export interface PhysicalCheckpoint {
@@ -29,6 +29,8 @@ export interface ScanConfig<
   cloneResolvedSchema: boolean;
   /** Whether resolver results, including undefined, are memoized by reference string. */
   cacheResolvedReference: boolean;
+  /** Root fallback when no known resource metaschema is declared. */
+  defaultDialect?: Dialect;
   /** Ordered vocabulary assembled by the driver before traversal. */
   keywordMap: KeywordMap;
   /** Driver-owned mutations and inlined references, applied by getValue. */
@@ -46,4 +48,20 @@ export interface ScanConfig<
     [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
     unknown
   >;
+}
+
+/** Engine-owned mutable view; callbacks receive the read-only schema property through SchemaEntry. */
+export type EngineEntry<Schema extends UnknownSchema = UnknownSchema> = Omit<
+  SchemaEntry<Schema>,
+  'schema'
+> & {
+  schema: Schema | boolean;
+};
+
+/** Resource dialect restored when its owner frame exits; allocated only for a known dialect change. */
+export interface DialectScope {
+  /** Stable owner frame index. */
+  frame: number;
+  /** Enclosing resource's dialect bit. */
+  previous: number;
 }

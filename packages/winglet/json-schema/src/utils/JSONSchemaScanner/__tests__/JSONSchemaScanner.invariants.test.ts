@@ -106,9 +106,15 @@ describe('JSONSchemaScanner - invariants', () => {
         options: {
           mutate: (e) => {
             if (e.path === '#/$defs/a~1b')
-              return { ...e.schema, title: 'SLASH' };
+              return {
+                ...(typeof e.schema === 'object' ? e.schema : {}),
+                title: 'SLASH',
+              };
             if (e.path === '#/$defs/c~0d')
-              return { ...e.schema, title: 'TILDE' };
+              return {
+                ...(typeof e.schema === 'object' ? e.schema : {}),
+                title: 'TILDE',
+              };
             return undefined;
           },
         },
@@ -150,13 +156,13 @@ describe('JSONSchemaScanner - invariants', () => {
     });
   });
 
-  describe('subschema guards — object-only policy (R5)', () => {
-    it('does not visit boolean items:false as a garbage node', () => {
+  describe('subschema guards — object and boolean policy (R5)', () => {
+    it('visits boolean items:false as a leaf', () => {
       const visited: string[] = [];
       new JSONSchemaScanner({
         visitor: { enter: (e) => visited.push(e.path) },
       }).scan({ type: 'array', items: false });
-      expect(visited).toEqual(['#']);
+      expect(visited).toEqual(['#', '#/items']);
     });
 
     it('does not explode a non-object properties value into index entries', () => {
@@ -170,14 +176,14 @@ describe('JSONSchemaScanner - invariants', () => {
       expect(visited).toEqual(['#']);
     });
 
-    it('skips non-object composition elements but keeps object ones', () => {
+    it('skips non-schema composition elements but keeps objects and booleans', () => {
       const visited: string[] = [];
       new JSONSchemaScanner({
         visitor: { enter: (e) => visited.push(e.path) },
       }).scan({
         allOf: [{ type: 'string' }, false, 'x'],
       } as unknown as UnknownSchema);
-      expect(visited).toEqual(['#', '#/allOf/0']);
+      expect(visited).toEqual(['#', '#/allOf/0', '#/allOf/1']);
     });
 
     it('does not crash on null / primitive property values', () => {
@@ -196,11 +202,6 @@ describe('JSONSchemaScanner - invariants', () => {
     it('honors a mutate that returns a valid falsy schema (false)', () => {
       const out = new JSONSchemaScanner({
         options: {
-          // JSON Schema's boolean form (`false`) is a valid schema and the scanner
-          // honors it, but UnknownSchema models object schemas only — so `mutate`'s
-          // declared return type cannot express it. Kept as an expected error so
-          // widening that type later surfaces here instead of going unnoticed.
-          // @ts-expect-error — boolean-form schema is outside UnknownSchema
           mutate: (e) => (e.path === '#/properties/a' ? false : undefined),
         },
       })

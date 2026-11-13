@@ -21,6 +21,7 @@ describe.each<[string, ScannerConstructor]>([
     const trace: unknown[] = [];
     const schema: UnknownSchema = {
       get not() {
+        // @ts-expect-error — malicious runtime mutation exercises capture stability beyond the readonly contract.
         parent.schema = { type: 'null' };
         parent.path = '#/changed';
         parent.dataPath = '/changed';

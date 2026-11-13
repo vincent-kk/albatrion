@@ -1,66 +1,100 @@
-import { isArray, isObject } from '@winglet/common-utils/filter';
-
-import type { KeywordDescriptor, SchemaEntry } from '../../../../../type';
+import type { SchemaEntry } from '../../../../../type';
+import type { OrderedKeywordDescriptor } from '../../../../vocabulary/type';
 import { appendListChildren } from './appendKeywordChildren/appendListChildren';
 import { appendMapChildren } from './appendKeywordChildren/appendMapChildren';
 
 /**
- * Capture one applicator's object children while preserving keyword-specific paths and variants.
- * @param entries Stack receiving fresh entries; no existing frame is changed.
- * @param schema Parent schema captured before reading any applicator values.
- * @param descriptor Matched vocabulary item in visit order.
+ * Capture one applicator's union-vocabulary children without visiting malformed array schemas.
+ * @param entries Engine stack receiving fresh child entries.
+ * @param schema Parent object captured before any applicator getter runs.
+ * @param descriptor Precompiled kind, escaped keyword and dialect membership.
  * @param path Captured parent schema path.
  * @param dataPath Captured parent data path.
- * @param depth Captured child depth, shared by all siblings.
- * @returns Nothing; malformed containers and non-object children are skipped.
+ * @param depth Captured child depth.
+ * @param dialect Current resource dialect bit.
+ * @param inheritedInert Whether an ancestor is already outside schema positions.
+ * @param visitBooleans Whether callbacks can observe boolean leaves.
+ * @returns Nothing; unsupported positions are visited as inert, malformed values are skipped.
  */
 export function appendKeywordChildren<Entry extends SchemaEntry>(
   entries: Entry[],
-  schema: Entry['schema'],
-  descriptor: KeywordDescriptor,
+  schema: Record<string, unknown>,
+  descriptor: OrderedKeywordDescriptor,
   path: string,
   dataPath: string,
   depth: number,
+  dialect: number,
+  inheritedInert: boolean,
+  visitBooleans: boolean,
 ): void {
   const { keyword, kind } = descriptor;
   const node = schema[keyword];
+  const inert = inheritedInert || (descriptor.mask & dialect) === 0;
   switch (kind) {
     case 'schemaMap':
     case 'objectMap':
       appendMapChildren(
         entries,
         node,
-        keyword,
+        descriptor,
         path,
         dataPath,
         depth,
         kind === 'objectMap',
+        inert,
+        dialect === 1,
+        visitBooleans,
       );
       break;
     case 'schemaList':
-      if (isArray(node))
+      if (Array.isArray(node))
         appendListChildren(
           entries,
           node,
-          keyword,
+          descriptor,
           path,
           dataPath,
           depth,
           false,
+          inert,
+          dialect === 1,
+          visitBooleans,
         );
       break;
     case 'items':
     case 'schema':
-      if (kind === 'items' && isArray(node))
-        appendListChildren(entries, node, keyword, path, dataPath, depth, true);
-      else if (isObject(node))
-        entries.push({
+      if (kind === 'items' && Array.isArray(node))
+        appendListChildren(
+          entries,
+          node,
+          descriptor,
+          path,
+          dataPath,
+          depth,
+          true,
+          inert || (keyword === 'items' && dialect === 16),
+          dialect === 1,
+          visitBooleans,
+        );
+      else if (
+        (node !== null && typeof node === 'object' && !Array.isArray(node)) ||
+        (visitBooleans && typeof node === 'boolean')
+      ) {
+        const child = {
           schema: node,
-          path: path + '/' + keyword,
+          path: path + '/' + descriptor.path,
           keyword,
           dataPath,
           depth,
-        } as Entry);
+        } as Entry;
+        if (
+          inert ||
+          (kind === 'items' && keyword === 'prefixItems') ||
+          (dialect === 1 && typeof node === 'boolean')
+        )
+          child.inert = true;
+        entries.push(child);
+      }
       break;
   }
 }

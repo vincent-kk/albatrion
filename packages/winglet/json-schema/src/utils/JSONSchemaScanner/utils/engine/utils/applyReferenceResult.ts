@@ -1,8 +1,7 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import type { SchemaEntry } from '../../../type';
 import { cloneSchema } from '../../output/cloneSchema';
-import type { ScanConfig } from '../type';
+import type { EngineEntry, ScanConfig } from '../type';
 
 /**
  * Apply one resolver result to its frame, preserving truthy-target and clone/cache semantics.
@@ -15,7 +14,7 @@ import type { ScanConfig } from '../type';
  * @returns Whether traversal should descend into the resulting schema.
  */
 export function applyReferenceResult<Schema extends UnknownSchema, ContextType>(
-  entry: SchemaEntry<Schema>,
+  entry: EngineEntry<Schema>,
   reference: string,
   result: unknown,
   config: ScanConfig<Schema, ContextType>,

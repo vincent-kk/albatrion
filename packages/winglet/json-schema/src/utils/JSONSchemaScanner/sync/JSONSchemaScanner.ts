@@ -3,12 +3,12 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import type { JSONScannerOptions, SchemaVisitor } from '../type';
 import { ScanEngine } from '../utils/engine/ScanEngine';
 import type { ScanConfig } from '../utils/engine/type';
+import { ScanOutput } from '../utils/output/ScanOutput';
+import { buildKeywordMap } from '../utils/vocabulary/buildKeywordMap';
 import {
   DEFAULT_KEYWORDS,
   DEFAULT_KEYWORD_MAP,
-  buildKeywordMap,
-} from '../utils/keywordDescriptors';
-import { ScanOutput } from '../utils/output/ScanOutput';
+} from '../utils/vocabulary/defaultKeywords';
 
 interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -222,7 +222,7 @@ export class JSONSchemaScanner<
    * @param {Schema} schema - The JSON schema object to scan.
    * @returns {this} The current JSONSchemaScanner instance (allows method chaining).
    */
-  public scan(this: this, schema: Schema): this {
+  public scan(this: this, schema: Schema | boolean): this {
     this.__output__.begin(schema);
     try {
       this.__run__(schema);
@@ -257,9 +257,9 @@ export class JSONSchemaScanner<
    * const result = scanner.scan(mySchema).getValue<ResolvedSchema>();
    * ```
    */
-  public getValue<OutputSchema extends UnknownSchema = Schema>(
-    this: this,
-  ): OutputSchema | undefined {
+  public getValue<
+    OutputSchema extends UnknownSchema | boolean = Schema | boolean,
+  >(this: this): OutputSchema | undefined {
     return this.__output__.getValue() as OutputSchema | undefined;
   }
 
@@ -268,7 +268,7 @@ export class JSONSchemaScanner<
    * @param schema Root schema to traverse; callback errors propagate to scan's state reset.
    * @returns Nothing once traversal completes synchronously.
    */
-  private __run__(this: this, schema: Schema): void {
+  private __run__(this: this, schema: Schema | boolean): void {
     const options = this.__options__;
     const visitor = this.__visitor__;
     const context = options.context;
@@ -277,9 +277,16 @@ export class JSONSchemaScanner<
       maxDepth: options.maxDepth,
       cloneResolvedSchema: options.cloneResolvedSchema !== false,
       cacheResolvedReference: options.cacheResolvedReference === true,
-      keywordMap: options.additionalKeywords
-        ? buildKeywordMap(DEFAULT_KEYWORDS.concat(options.additionalKeywords))
-        : DEFAULT_KEYWORD_MAP,
+      defaultDialect: options.defaultDialect,
+      keywordMap:
+        options.keywords !== undefined ||
+        options.additionalKeywords !== undefined
+          ? buildKeywordMap(
+              (options.keywords ?? DEFAULT_KEYWORDS).concat(
+                options.additionalKeywords ?? [],
+              ),
+            )
+          : DEFAULT_KEYWORD_MAP,
       operations: this.__output__.operations,
       filter: options.filter,
       mutate: options.mutate,

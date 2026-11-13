@@ -16,7 +16,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -59,7 +63,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -151,7 +159,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -216,7 +228,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -332,7 +348,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -417,7 +437,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -487,7 +511,11 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },

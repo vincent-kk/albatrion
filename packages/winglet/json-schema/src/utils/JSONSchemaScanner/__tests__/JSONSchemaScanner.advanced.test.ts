@@ -774,7 +774,11 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     new JSONSchemaScanner({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -850,7 +854,11 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     new JSONSchemaScanner({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -945,7 +953,11 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     new JSONSchemaScanner({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -1017,7 +1029,11 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     new JSONSchemaScanner({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },
@@ -1100,7 +1116,11 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     new JSONSchemaScanner({
       visitor: {
         exit: ({ schema, hasReference }) => {
-          if (hasReference && typeof schema.$ref === 'string')
+          if (
+            hasReference &&
+            typeof schema !== 'boolean' &&
+            typeof schema.$ref === 'string'
+          )
             defs.set(schema.$ref, getValue(jsonSchema, schema.$ref));
         },
       },

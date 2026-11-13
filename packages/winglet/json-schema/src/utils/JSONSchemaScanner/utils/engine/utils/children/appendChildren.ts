@@ -1,7 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { KeywordDescriptor, SchemaEntry } from '../../../../type';
-import type { KeywordMap } from '../../../keywordDescriptors';
+import type { SchemaEntry } from '../../../../type';
+import type {
+  KeywordMap,
+  OrderedKeywordDescriptor,
+} from '../../../vocabulary/type';
 import { appendKeywordChildren } from './utils/appendKeywordChildren';
 
 /**
@@ -11,18 +14,24 @@ import { appendKeywordChildren } from './utils/appendKeywordChildren';
  * @param keywords Vocabulary lookup carrying descriptor positions.
  * @param ordered Descriptors indexed by position; later overrides can leave holes.
  * @param masks Reusable engine-owned words for positions beyond the first 32; consumed and cleared here.
+ * @param dialect Enclosing resource dialect bit, already resolved before child capture.
+ * @param visitBooleans Whether callbacks can observe boolean leaves.
  * @returns Nothing; the caller reverses only the appended span for DFS.
  */
 export function appendChildren<Schema extends SchemaEntry>(
   entries: Schema[],
   parent: Schema,
   keywords: KeywordMap,
-  ordered: readonly KeywordDescriptor[],
+  ordered: readonly OrderedKeywordDescriptor[],
   masks: number[],
+  dialect: number,
+  visitBooleans: boolean,
 ): void {
   const { schema, path, dataPath, depth } = parent;
-  if (schema === null || typeof schema !== 'object') return;
+  if (schema === null || typeof schema !== 'object' || Array.isArray(schema))
+    return;
   const childDepth = depth + 1;
+  const inert = !!parent.inert;
   let mask = 0;
   for (const key in schema) {
     const descriptor = keywords.get(key);
@@ -40,6 +49,9 @@ export function appendChildren<Schema extends SchemaEntry>(
       path,
       dataPath,
       childDepth,
+      dialect,
+      inert,
+      visitBooleans,
     );
   }
   for (let word = 0; word < masks.length; word++) {
@@ -55,6 +67,9 @@ export function appendChildren<Schema extends SchemaEntry>(
         path,
         dataPath,
         childDepth,
+        dialect,
+        inert,
+        visitBooleans,
       );
     }
   }

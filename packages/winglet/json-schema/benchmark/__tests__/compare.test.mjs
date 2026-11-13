@@ -14,8 +14,10 @@ import { test } from 'vitest';
 
 import { assertFreshBuild, loadScanners, packageRoot } from '../_lib.mjs';
 import { compareBuilds } from '../compare/compareBuilds.mjs';
+import { createWorkload } from '../compare/createWorkload.mjs';
 import { evaluateComparison } from '../compare/evaluateComparison.mjs';
 import { measurePair } from '../compare/measurePair.mjs';
+import { genBooleanHeavy } from '../compare/utils/genBooleanHeavy.mjs';
 
 test('actual comparison CLI rejects simulated slow measurements without a success marker', () => {
   const result = spawnSync(
@@ -153,4 +155,14 @@ test('freshness includes nested source files and checks both runtime entries', (
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+test('boolean-heavy callback-free fingerprints count the object frames actually traversed', async () => {
+  const build = await loadScanners();
+  const schema = genBooleanHeavy(100);
+  const workload = createWorkload(build, { group: 'noCallback', schema });
+  assert.deepEqual(await workload.fingerprint(), {
+    visits: 21,
+    outputBytes: Buffer.byteLength(JSON.stringify(schema)),
+  });
 });

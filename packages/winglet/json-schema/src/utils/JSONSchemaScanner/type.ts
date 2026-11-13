@@ -2,23 +2,13 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-export const $DEFS = '$defs';
-export const DEFINITIONS = 'definitions';
-export const PROPERTIES = 'properties';
-export const ADDITIONAL_PROPERTIES = 'additionalProperties';
-export const ITEMS = 'items';
-export const PREFIX_ITEMS = 'prefixItems';
-
-export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
-export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
-
-export type DefinitionKeyword = typeof $DEFS | typeof DEFINITIONS;
-export type ConditionalKeyword = (typeof CONDITIONAL_KEYWORDS)[number];
-export type CompositionKeyword = (typeof COMPOSITION_KEYWORDS)[number];
-
-export type PropertiesKeyword = typeof PROPERTIES;
-export type AdditionalPropertiesKeyword = typeof ADDITIONAL_PROPERTIES;
-export type ItemsKeyword = typeof ITEMS | typeof PREFIX_ITEMS;
+/** JSON Schema dialect used to recognize schema positions inside each resource. */
+export type Dialect =
+  | 'draft-04'
+  | 'draft-06'
+  | 'draft-07'
+  | '2019-09'
+  | '2020-12';
 
 /**
  * How a keyword's value maps to child subschemas during traversal.
@@ -40,11 +30,19 @@ export type KeywordKind =
 export interface KeywordDescriptor {
   keyword: string;
   kind: KeywordKind;
+  /** Accepted schema-position dialects; omission accepts every supported dialect. */
+  dialects?: readonly Dialect[];
 }
 
 export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
   /** The schema node being processed */
-  schema: Schema;
+  readonly schema: Schema | boolean;
+  /** Union-vocabulary position that is not a schema in the enclosing dialect. */
+  inert?: boolean;
+  /** Applicator name; custom vocabulary names are preserved without narrowing. */
+  keyword?: string;
+  /** Original map key or list index, independent of the applicator name. */
+  variant?: string | number;
   /** JSON pointer path of the current node */
   path: string;
   /** Data pointer path corresponding to the current node */
@@ -64,24 +62,7 @@ export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
   referencePath?: string;
   /** Whether reference is resolved */
   referenceResolved?: boolean;
-} & (
-  | {
-      keyword: CompositionKeyword;
-      variant: number;
-    }
-  | {
-      keyword: ItemsKeyword;
-      variant?: number;
-    }
-  | {
-      keyword: DefinitionKeyword | PropertiesKeyword;
-      variant: string;
-    }
-  | {
-      keyword: ConditionalKeyword | AdditionalPropertiesKeyword;
-    }
-  | { keyword?: never }
-);
+};
 
 export interface SchemaVisitor<
   Schema extends UnknownSchema = UnknownSchema,
@@ -102,7 +83,7 @@ export interface JSONScannerOptions<
   /** Function to mutate schema */
   mutate?: Fn<
     [entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | void
+    Schema | boolean | void
   >;
   /** Function to resolve $ref references */
   resolveReference?: Fn<
@@ -139,19 +120,12 @@ export interface JSONScannerOptions<
    * introduces shared references into the output.
    */
   cacheResolvedReference?: boolean;
-  /**
-   * Extra applicator keywords to descend into, appended after the built-in
-   * vocabulary. Opt-in: descriptors are appended after the built-ins, and the
-   * two lists are merged by `keyword`. If a descriptor's `keyword` equals a
-   * built-in keyword (e.g. `properties`), the later (consumer) entry
-   * overrides the built-in's `kind` and ordering — do NOT reuse a built-in
-   * keyword name unless you intend to override it. Use the shared
-   * `EXTENDED_KEYWORDS` preset for draft 2019-09 / 2020-12 keywords
-   * (`patternProperties`, `propertyNames`, `contains`, `dependentSchemas`,
-   * `unevaluatedProperties`, …) or supply your own descriptors (e.g. vendor
-   * `x-*` keywords).
-   */
-  additionalKeywords?: KeywordDescriptor[];
+  /** Dialect used when the document root has no known $schema; defaults to 2020-12. */
+  defaultDialect?: Dialect;
+  /** Ordered vocabulary replacing the complete built-in vocabulary. */
+  keywords?: readonly KeywordDescriptor[];
+  /** Descriptors appended to the selected vocabulary; the last duplicate wins. */
+  additionalKeywords?: readonly KeywordDescriptor[];
   /** Context object passed to visitors and filters */
   context?: ContextType;
 }
@@ -171,7 +145,7 @@ export interface JSONScannerOptionsAsync<
   /** Function to mutate schema (may be async) */
   mutate?: Fn<
     [entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | void | Promise<Schema | void>
+    Schema | boolean | void | Promise<Schema | boolean | void>
   >;
   /** Function to resolve $ref references (may be async) */
   resolveReference?: Fn<

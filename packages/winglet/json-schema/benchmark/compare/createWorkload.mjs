@@ -4,6 +4,7 @@ import { getByPointer } from '../_lib.mjs';
  * Adapt a benchmark case to one build; resolver factories and legacy callbacks do equivalent work.
  * @param {object} build Scanner constructors and optional built-in resolver factory.
  * @param {object} scenario Named workload with schema, group and optional density/reuse settings.
+ * Callback-free fingerprints count object frames because boolean frames are elided in that measured path.
  * @returns {object} Batch preparation/execution functions and an untimed correctness fingerprint.
  */
 export function createWorkload(build, scenario) {
@@ -53,7 +54,12 @@ export function createWorkload(build, scenario) {
     async fingerprint() {
       let visits = 0;
       const scanner = new Scanner({
-        visitor: { enter: () => visits++ },
+        visitor: {
+          enter: (entry) => {
+            if (group !== 'noCallback' || typeof entry.schema !== 'boolean')
+              visits++;
+          },
+        },
         options: options(),
       });
       await scanner.scan(schema);

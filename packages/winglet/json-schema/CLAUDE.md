@@ -98,7 +98,9 @@ The heart of the library is the schema traversal system located in `src/utils/JS
 - `resolveReference`: Custom $ref resolution logic
 - `cloneResolvedSchema` (default `true`): Deep-clones each resolved `$ref` at inline time for reference isolation; a default behavior change from the previous alias-sharing, so set `false` to restore the old behavior or avoid clone overhead
 - `cacheResolvedReference` (default `false`): Memoizes `resolveReference` results per reference string, useful for expensive or remote resolvers
-- `additionalKeywords`: Opt-in extra applicator keywords appended to the built-in vocabulary (`DEFAULT_KEYWORDS`); use the `EXTENDED_KEYWORDS` preset for draft 2019-09/2020-12 keywords, or supply custom `KeywordDescriptor`s
+- `keywords` replaces the built-in union vocabulary; `additionalKeywords` appends custom descriptors, with the last duplicate winning
+- `defaultDialect` sets the fallback dialect; resource-root `$schema` declarations determine which visited positions are inert
+- Boolean schema leaves receive callbacks; array values are never schema nodes
 - `context`: Shared context across visitor callbacks
 
 ### Build System

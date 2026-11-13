@@ -176,8 +176,9 @@ describe('JSONSchemaScanner', () => {
       };
 
       // 'number' 타입만 방문
-      const filter = ({ schema }: { schema: UnknownSchema }) =>
-        schema.type === 'number' || schema.type === 'object';
+      const filter = ({ schema }: { schema: UnknownSchema | boolean }) =>
+        typeof schema !== 'boolean' &&
+        (schema.type === 'number' || schema.type === 'object');
 
       const scanner = new JSONSchemaScanner({
         visitor: { enter, exit },
@@ -385,8 +386,8 @@ describe('JSONSchemaScanner', () => {
 
       const schemaMap = new Map<string, UnknownSchema>();
       const visitor = {
-        enter: vi.fn(({ schema }: { schema: UnknownSchema }) => {
-          if ('$ref' in schema) {
+        enter: vi.fn(({ schema }: { schema: UnknownSchema | boolean }) => {
+          if (typeof schema !== 'boolean' && '$ref' in schema) {
             schemaMap.set(schema.$ref, getValue(jsonSchema, schema.$ref));
           }
         }),
@@ -419,8 +420,14 @@ describe('JSONSchemaScanner', () => {
       const defsMap = new Map<string, UnknownSchema>();
       const visitor = {
         enter: vi.fn(
-          ({ schema, path }: { schema: UnknownSchema; path: string }) => {
-            if ('$defs' in schema) {
+          ({
+            schema,
+            path,
+          }: {
+            schema: UnknownSchema | boolean;
+            path: string;
+          }) => {
+            if (typeof schema !== 'boolean' && '$defs' in schema) {
               for (const [key, value] of Object.entries(schema.$defs)) {
                 defsMap.set(path + '/$defs/' + key, value as UnknownSchema);
               }
@@ -463,11 +470,17 @@ describe('JSONSchemaScanner', () => {
 
       const visitor = {
         enter: vi.fn(
-          ({ schema, path }: { schema: UnknownSchema; path: string }) => {
-            if ((schema as any).$ref) {
+          ({
+            schema,
+            path,
+          }: {
+            schema: UnknownSchema | boolean;
+            path: string;
+          }) => {
+            if (typeof schema !== 'boolean' && schema.$ref) {
               schemaMap.set(path, schema);
             }
-            if ((schema as any).$defs) {
+            if (typeof schema !== 'boolean' && schema.$defs) {
               for (const [key, value] of Object.entries(
                 (schema as any).$defs,
               )) {

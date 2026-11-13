@@ -1,10 +1,10 @@
 // Correctness / bug invariants. Each check returns { pass, detail }.
 // On CURRENT code several are expected to FAIL; after fixes all must PASS.
 import {
-  loadScanners,
   getByPointer,
+  loadScanners,
   makeOriginalRefResolver,
-} from "./_lib.mjs";
+} from './_lib.mjs';
 
 const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
 
@@ -29,23 +29,23 @@ async function checkAsync(id, title, fn) {
 // Build a schema whose resolver returns ORIGINAL subtrees (real-world pattern).
 function refSchema() {
   return {
-    type: "object",
+    type: 'object',
     properties: {
-      x: { $ref: "#/definitions/A" },
-      y: { $ref: "#/definitions/A" }, // same ref twice → aliasing probe
+      x: { $ref: '#/definitions/A' },
+      y: { $ref: '#/definitions/A' }, // same ref twice → aliasing probe
     },
     definitions: {
       A: {
-        type: "object",
-        properties: { b: { $ref: "#/definitions/B" } },
+        type: 'object',
+        properties: { b: { $ref: '#/definitions/B' } },
       },
-      B: { type: "string" },
+      B: { type: 'string' },
     },
   };
 }
 
 // V1: scan()+getValue() must NOT mutate the original schema.
-check("V1", "original schema unchanged after scan+getValue", () => {
+check('V1', 'original schema unchanged after scan+getValue', () => {
   const schema = refSchema();
   const before = JSON.stringify(schema);
   const scanner = new JSONSchemaScanner({
@@ -57,13 +57,13 @@ check("V1", "original schema unchanged after scan+getValue", () => {
     pass: before === after,
     detail:
       before === after
-        ? "original preserved"
+        ? 'original preserved'
         : `MUTATED: definitions.A.properties.b = ${JSON.stringify(schema.definitions.A.properties.b)}`,
   };
 });
 
 // V2: output subtree must not be the same reference as original definitions.A
-check("V2", "output not aliased to original definitions subtree", () => {
+check('V2', 'output not aliased to original definitions subtree', () => {
   const schema = refSchema();
   const out = new JSONSchemaScanner({
     options: { resolveReference: makeOriginalRefResolver(() => schema) },
@@ -74,13 +74,13 @@ check("V2", "output not aliased to original definitions subtree", () => {
   return {
     pass: !shared,
     detail: shared
-      ? "output.properties.x === original definitions.A"
-      : "distinct refs",
+      ? 'output.properties.x === original definitions.A'
+      : 'distinct refs',
   };
 });
 
 // V3: same $ref twice → outputs must not be aliased to each other
-check("V3", "multiple occurrences of same ref not aliased in output", () => {
+check('V3', 'multiple occurrences of same ref not aliased in output', () => {
   const schema = refSchema();
   const out = new JSONSchemaScanner({
     options: { resolveReference: makeOriginalRefResolver(() => schema) },
@@ -90,79 +90,75 @@ check("V3", "multiple occurrences of same ref not aliased in output", () => {
   const aliased = out.properties.x === out.properties.y;
   return {
     pass: !aliased,
-    detail: aliased ? "x and y share reference" : "x and y distinct",
+    detail: aliased ? 'x and y share reference' : 'x and y distinct',
   };
 });
 
 // V4: definition keys containing '/' and '~' must be RFC6901-escaped in path
-check("V4", "definition keys escaped in visited paths", () => {
+check('V4', 'definition keys escaped in visited paths', () => {
   const schema = {
-    type: "object",
-    definitions: { "a/b": { type: "string" }, "c~d": { type: "number" } },
+    type: 'object',
+    definitions: { 'a/b': { type: 'string' }, 'c~d': { type: 'number' } },
   };
   const paths = [];
   new JSONSchemaScanner({ visitor: { enter: (e) => paths.push(e.path) } }).scan(
     schema,
   );
-  const okSlash = paths.includes("#/definitions/a~1b");
-  const okTilde = paths.includes("#/definitions/c~0d");
+  const okSlash = paths.includes('#/definitions/a~1b');
+  const okTilde = paths.includes('#/definitions/c~0d');
   return {
     pass: okSlash && okTilde,
     detail: `paths=${JSON.stringify(paths)}`,
   };
 });
 
-// V5a: additionalProperties:false must be skipped (already true) —
-//      items:false must be treated consistently (object-only policy → skipped)
-check("V5a", "boolean subschemas (items:false) not visited as garbage", () => {
-  const schema = { type: "array", items: false };
+// V5a: boolean subschemas receive leaf callbacks.
+check('V5a', 'boolean items:false is visited as a leaf', () => {
   const visited = [];
   new JSONSchemaScanner({
     visitor: { enter: (e) => visited.push(e.path) },
-  }).scan(schema);
-  // policy: only non-null object subschemas are visited; items:false → no child entry
-  const visitedItems = visited.includes("#/items");
+  }).scan({ type: 'array', items: false });
   return {
-    pass: !visitedItems,
+    pass: JSON.stringify(visited) === JSON.stringify(['#', '#/items']),
     detail: `visited=${JSON.stringify(visited)}`,
   };
 });
 
 // V5b: properties as a string must not explode into index garbage entries
 check(
-  "V5b",
-  "non-object properties value does not create garbage entries",
+  'V5b',
+  'non-object properties value does not create garbage entries',
   () => {
-    const schema = { type: "object", properties: "abc" };
+    const schema = { type: 'object', properties: 'abc' };
     const visited = [];
     new JSONSchemaScanner({
       visitor: { enter: (e) => visited.push(e.path) },
     }).scan(schema);
-    const garbage = visited.some((p) => p.startsWith("#/properties/"));
+    const garbage = visited.some((p) => p.startsWith('#/properties/'));
     return { pass: !garbage, detail: `visited=${JSON.stringify(visited)}` };
   },
 );
 
-// V5c: composition array with boolean/non-object element must not create garbage
-check("V5c", "non-object composition element guarded", () => {
-  const schema = { allOf: [{ type: "string" }, false, "x"] };
+// V5c: composition accepts boolean schemas and rejects non-schema primitives.
+check('V5c', 'composition accepts boolean leaves and guards primitives', () => {
+  const schema = { allOf: [{ type: 'string' }, false, 'x'] };
   const visited = [];
   new JSONSchemaScanner({
     visitor: { enter: (e) => visited.push(e.path) },
   }).scan(schema);
   const badElem =
-    visited.includes("#/allOf/1") || visited.includes("#/allOf/2");
+    !visited.includes('#/allOf/1') || visited.includes('#/allOf/2');
   return { pass: !badElem, detail: `visited=${JSON.stringify(visited)}` };
 });
 
 // V5d: mutate returning a valid falsy schema (false) is honored (not confused with void)
-check("V5d", "mutate distinguishes void from falsy schema (documented)", () => {
+check('V5d', 'mutate distinguishes void from falsy schema (documented)', () => {
   // Under object-only policy, false schema has no children; mutate false should
   // still be recorded in resolves so getValue reflects it.
-  const schema = { type: "object", properties: { a: { type: "string" } } };
+  const schema = { type: 'object', properties: { a: { type: 'string' } } };
   const out = new JSONSchemaScanner({
     options: {
-      mutate: (e) => (e.path === "#/properties/a" ? false : undefined),
+      mutate: (e) => (e.path === '#/properties/a' ? false : undefined),
     },
   })
     .scan(schema)
@@ -175,14 +171,14 @@ check("V5d", "mutate distinguishes void from falsy schema (documented)", () => {
 
 // V6: throwing resolver → state reset; getValue() === undefined; rescan works
 check(
-  "V6",
-  "failed scan resets state (getValue undefined) and rescan works",
+  'V6',
+  'failed scan resets state (getValue undefined) and rescan works',
   () => {
     const schema = refSchema();
     const scanner = new JSONSchemaScanner({
       options: {
         resolveReference: () => {
-          throw new Error("boom");
+          throw new Error('boom');
         },
       },
     });
@@ -190,29 +186,29 @@ check(
     try {
       scanner.scan(schema);
     } catch (e) {
-      threw = e.message === "boom";
+      threw = e.message === 'boom';
     }
     const gv = scanner.getValue();
     // rescan with a benign scanner on same instance-like flow
     const scanner2 = new JSONSchemaScanner();
-    const rescan = scanner2.scan({ type: "string" }).getValue();
+    const rescan = scanner2.scan({ type: 'string' }).getValue();
     return {
       pass: threw && gv === undefined && !!rescan,
-      detail: `threw=${threw} getValue=${gv === undefined ? "undefined" : JSON.stringify(gv)} rescanOk=${!!rescan}`,
+      detail: `threw=${threw} getValue=${gv === undefined ? 'undefined' : JSON.stringify(gv)} rescanOk=${!!rescan}`,
     };
   },
 );
 
 // V7: async mutate must be awaited (result must not be a Promise)
 await checkAsync(
-  "V7",
-  "async mutate awaited (schema not a Promise)",
+  'V7',
+  'async mutate awaited (schema not a Promise)',
   async () => {
-    const schema = { type: "object", properties: { a: { type: "string" } } };
+    const schema = { type: 'object', properties: { a: { type: 'string' } } };
     const scanner = new JSONSchemaScannerAsync({
       options: {
         mutate: async (e) => {
-          if (e.path === "#/properties/a") return { ...e.schema, title: "T" };
+          if (e.path === '#/properties/a') return { ...e.schema, title: 'T' };
           return undefined;
         },
       },
@@ -220,48 +216,48 @@ await checkAsync(
     await scanner.scan(schema);
     const out = scanner.getValue();
     const a = out.properties.a;
-    const isPromise = a && typeof a.then === "function";
+    const isPromise = a && typeof a.then === 'function';
     return {
-      pass: !isPromise && a.title === "T",
+      pass: !isPromise && a.title === 'T',
       detail: isPromise
-        ? "a is a Promise (await missing)"
+        ? 'a is a Promise (await missing)'
         : `a=${JSON.stringify(a)}`,
     };
   },
 );
 
 // V8: async filter works at runtime (documented — should already pass)
-await checkAsync("V8", "async filter awaited at runtime", async () => {
+await checkAsync('V8', 'async filter awaited at runtime', async () => {
   const schema = {
-    type: "object",
-    properties: { a: { type: "string" }, b: { type: "number" } },
+    type: 'object',
+    properties: { a: { type: 'string' }, b: { type: 'number' } },
   };
   const visited = [];
   const scanner = new JSONSchemaScannerAsync({
     visitor: { enter: (e) => visited.push(e.path) },
-    options: { filter: async (e) => e.path !== "#/properties/b" },
+    options: { filter: async (e) => e.path !== '#/properties/b' },
   });
   await scanner.scan(schema);
   return {
     pass:
-      visited.includes("#/properties/a") && !visited.includes("#/properties/b"),
+      visited.includes('#/properties/a') && !visited.includes('#/properties/b'),
     detail: `visited=${JSON.stringify(visited)}`,
   };
 });
 
 // V9: resolver call count for the same ref appearing multiple times (baseline: no cache)
 check(
-  "V9",
-  "resolver call count for repeated ref (records caching behavior)",
+  'V9',
+  'resolver call count for repeated ref (records caching behavior)',
   () => {
     const schema = {
-      type: "object",
+      type: 'object',
       properties: {
-        x: { $ref: "#/definitions/A" },
-        y: { $ref: "#/definitions/A" },
-        z: { $ref: "#/definitions/A" },
+        x: { $ref: '#/definitions/A' },
+        y: { $ref: '#/definitions/A' },
+        z: { $ref: '#/definitions/A' },
       },
-      definitions: { A: { type: "string" } },
+      definitions: { A: { type: 'string' } },
     };
     let calls = 0;
     new JSONSchemaScanner({

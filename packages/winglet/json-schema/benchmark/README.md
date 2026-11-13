@@ -43,6 +43,9 @@ yarn workspace @winglet/json-schema test --run benchmark/__tests__
 unknown names and malformed snapshots fail even when allowances are supplied.
 
 `compare.mjs` reports baseline/current median time ratios (larger means faster).
+The boolean-heavy corpus measures the callback-free path: both builds elide boolean frames.
+Its correctness fingerprint counts object visits and output bytes, so the counting
+callback does not turn newly observable boolean leaves into unequal timed work.
 `--min noCallback=1.15,noopEnterExit=1.4` constrains group geometric means;
 `--max-slowdown` and `--max-speedup` constrain every individual case. It measures
 scan-only traversal, sparse/dense mutation, reference resolution with resolver

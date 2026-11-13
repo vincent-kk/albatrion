@@ -41,7 +41,7 @@ describe('JSONSchemaScanner callback result characterization', () => {
 
   it('does not inspect then on mutation results', () => {
     const trap = createThenTrap();
-    let visited: UnknownSchema | undefined;
+    let visited: UnknownSchema | boolean | undefined;
     new JSONSchemaScanner({
       options: { mutate: () => trap },
       visitor: {

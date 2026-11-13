@@ -25,9 +25,9 @@ export {
 } from './utils/JSONSchemaScanner/async';
 export {
   DEFAULT_KEYWORDS,
-  EXTENDED_KEYWORDS,
   JSONSchemaScanner,
   type JSONScannerOptions,
+  type Dialect,
   type KeywordDescriptor,
   type KeywordKind,
   type SchemaEntry,

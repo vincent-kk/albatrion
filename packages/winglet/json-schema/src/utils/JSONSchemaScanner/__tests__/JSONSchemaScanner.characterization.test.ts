@@ -56,7 +56,7 @@ describe.each<[string, ScannerConstructor]>([
         third: removed,
       },
     };
-    const visited = new Map<string, UnknownSchema>();
+    const visited = new Map<string, UnknownSchema | boolean>();
     await new Scanner({
       visitor: {
         enter: (entry) => {

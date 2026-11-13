@@ -10,7 +10,11 @@ export const resolveReference = (
   new JSONSchemaScanner({
     visitor: {
       exit: ({ schema, hasReference }) => {
-        if (hasReference && typeof schema.$ref === 'string')
+        if (
+          hasReference &&
+          typeof schema !== 'boolean' &&
+          typeof schema.$ref === 'string'
+        )
           definitionMap.set(schema.$ref, getValue(jsonSchema, schema.$ref));
       },
     },
@@ -21,5 +25,5 @@ export const resolveReference = (
     },
   })
     .scan(jsonSchema)
-    .getValue();
+    .getValue<UnknownSchema>();
 };

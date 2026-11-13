@@ -5,10 +5,9 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import { EXTENDED_KEYWORDS } from '../utils/keywordDescriptors';
 
 describe('JSONSchemaScanner - extensions', () => {
-  describe('additionalKeywords (E1) — opt-in, non-breaking', () => {
+  describe('built-in and custom vocabulary', () => {
     const schema: UnknownSchema = {
       type: 'object',
       properties: { a: { type: 'string' } },
@@ -28,18 +27,24 @@ describe('JSONSchemaScanner - extensions', () => {
       return paths;
     };
 
-    it('does NOT traverse extended keywords by default', () => {
+    it('traverses the union vocabulary by default', () => {
       const paths = visitedPaths();
-      expect(paths).toEqual(['#', '#/properties/a']);
+      expect(paths).toEqual([
+        '#',
+        '#/properties/a',
+        '#/patternProperties/^x-',
+        '#/dependentSchemas/a',
+        '#/propertyNames',
+        '#/contains',
+        '#/unevaluatedProperties',
+      ]);
     });
 
-    it('traverses extended keywords when EXTENDED_KEYWORDS is opted in', () => {
-      const paths = visitedPaths({ additionalKeywords: EXTENDED_KEYWORDS });
-      expect(paths).toContain('#/patternProperties/^x-');
-      expect(paths).toContain('#/propertyNames');
-      expect(paths).toContain('#/contains');
-      expect(paths).toContain('#/dependentSchemas/a');
-      expect(paths).toContain('#/unevaluatedProperties');
+    it('uses keywords to replace the built-in vocabulary', () => {
+      const paths = visitedPaths({
+        keywords: [{ keyword: 'properties', kind: 'objectMap' }],
+      });
+      expect(paths).toEqual(['#', '#/properties/a']);
     });
 
     it('supports a custom vendor keyword descriptor', () => {
@@ -59,7 +64,9 @@ describe('JSONSchemaScanner - extensions', () => {
     });
 
     it('keeps default properties traversal unchanged when extending', () => {
-      const paths = visitedPaths({ additionalKeywords: EXTENDED_KEYWORDS });
+      const paths = visitedPaths({
+        additionalKeywords: [{ keyword: 'vendor', kind: 'schema' }],
+      });
       expect(paths[0]).toBe('#');
       expect(paths).toContain('#/properties/a');
     });

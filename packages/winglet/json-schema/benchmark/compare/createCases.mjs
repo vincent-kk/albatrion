@@ -5,6 +5,7 @@ import {
   genRefHeavy,
   genWide,
 } from '../_lib.mjs';
+import { genBooleanHeavy } from './utils/genBooleanHeavy.mjs';
 
 /**
  * Create deterministic workloads shared by both builds, without timed corpus construction.
@@ -36,5 +37,10 @@ export function createCases() {
         density,
         schema: genWide(2000),
       });
+  cases.push({
+    name: 'noCallback/booleanHeavy(10000)',
+    group: 'noCallback',
+    schema: genBooleanHeavy(10000),
+  });
   return cases;
 }
