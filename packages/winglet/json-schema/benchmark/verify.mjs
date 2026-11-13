@@ -287,4 +287,4 @@ const summary = {
   results,
 };
 console.log(JSON.stringify(summary, null, 2));
-process.exit(0);
+process.exit(failed.length > 0 ? 1 : 0);

@@ -1,15 +1,68 @@
 // Shared measurement library for JSONSchemaScanner before/after evaluation.
-// Loads the BUILT scanner via the package's own subpath exports (self-
-// reference), so this runs from a checkout without any absolute paths.
+// Loads the BUILT scanner entry points relative to this package or a supplied dist directory.
 // Run `yarn build` first so dist is current, then e.g. `node benchmark/bench.mjs`.
+import { readdirSync, statSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export async function loadScanners() {
-  const sync = await import('@winglet/json-schema/scanner');
-  const asyncM = await import('@winglet/json-schema/async-scanner');
+/** Package location is bound to this harness file, independent of the caller's cwd. */
+export const packageRoot = fileURLToPath(new URL('../', import.meta.url));
+
+/**
+ * Load a built package's scanner entry points and optional resolver adapter.
+ * @param {string} buildDirectory Absolute or cwd-relative dist directory; defaults to this package's dist.
+ * @returns {Promise<object>} Scanner constructors and available resolver factory.
+ * @throws When a build is missing or its entry points cannot be imported.
+ */
+export async function loadScanners(
+  buildDirectory = resolve(packageRoot, 'dist'),
+) {
+  const build = pathToFileURL(resolve(buildDirectory) + '/');
+  const sync = await import(
+    new URL('utils/JSONSchemaScanner/sync/index.mjs', build)
+  );
+  const asyncM = await import(
+    new URL('utils/JSONSchemaScanner/async/index.mjs', build)
+  );
+  const main = await import(new URL('index.mjs', build));
   return {
     JSONSchemaScanner: sync.JSONSchemaScanner,
     JSONSchemaScannerAsync: asyncM.JSONSchemaScannerAsync,
+    createReferenceResolver: main.createReferenceResolver,
   };
+}
+
+/**
+ * Refuse stale runtime entry points before making a claim about current source.
+ * @param {string} root Package root containing src and dist; defaults to this harness's package.
+ * @returns {void}
+ * @throws When either scanner build is missing or any source file is newer.
+ */
+export function assertFreshBuild(root = packageRoot) {
+  const newestSource = latestModification(resolve(root, 'src'));
+  for (const driver of ['sync', 'async']) {
+    const entry = resolve(
+      root,
+      `dist/utils/JSONSchemaScanner/${driver}/index.mjs`,
+    );
+    if (newestSource > statSync(entry).mtimeMs)
+      throw new Error(
+        `Stale build: src is newer than ${entry}; run yarn workspace @winglet/json-schema build`,
+      );
+  }
+}
+
+/** Return the newest file timestamp beneath a source directory; filesystem errors propagate. */
+function latestModification(directory) {
+  return Math.max(
+    0,
+    ...readdirSync(directory, { withFileTypes: true }).map((entry) => {
+      const path = resolve(directory, entry.name);
+      return entry.isDirectory()
+        ? latestModification(path)
+        : statSync(path).mtimeMs;
+    }),
+  );
 }
 
 // --- JSON Pointer navigation returning the ORIGINAL subtree by reference ---

@@ -112,4 +112,4 @@ results.push(
 
 const anyLeak = results.some((r) => r.leakSuspected);
 console.log(JSON.stringify({ anyLeak, results }, null, 2));
-process.exit(0);
+process.exit(anyLeak ? 1 : 0);
