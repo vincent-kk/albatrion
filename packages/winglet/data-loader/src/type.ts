@@ -4,6 +4,8 @@ import type { AsyncFn, Fn } from '@aileron/declare';
  * Function type that loads data in batches
  * @template Key - The key type for values to load
  * @template Value - The type of values to return
+ * @param keys - Array of keys to load
+ * @returns Promise of an array of loaded values or errors
  */
 export type BatchLoader<Key, Value> = AsyncFn<
   [keys: ReadonlyArray<Key>],
