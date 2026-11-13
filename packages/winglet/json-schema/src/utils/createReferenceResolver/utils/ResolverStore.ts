@@ -11,8 +11,8 @@ import type {
   ReferenceKeyword,
   ReferenceStep,
 } from '../../JSONSchemaScanner/type';
-import { cloneSchema } from '../../JSONSchemaScanner/utils/output/cloneSchema';
 import { detectDialect } from '../../dialect/detectDialect';
+import { cloneSchema } from '../../schemaCopy/cloneSchema';
 import { buildKeywordMap } from '../../vocabulary/buildKeywordMap';
 import { resolveURI } from './resolveURI';
 import { shortestReference } from './shortestReference';

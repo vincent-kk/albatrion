@@ -1,4 +1,4 @@
-# resolveReference — 내부 $ref 인라인 해석
+# resolveReference — 내장 해소기를 이용한 일괄 참조 해석
 
 ## Purpose
 

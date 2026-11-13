@@ -87,7 +87,7 @@ export class JSONSchemaScanner<
    * @returns The processed final schema typed as `OutputSchema`.
    *   Returns `undefined` if called before scanning.
    *   Returns the original schema if no output operation was recorded.
-   *   Otherwise returns copied output; opted-out, unchanged resolver targets retain their aliases.
+   *   Otherwise returns copied output with separately copied resolver target occurrences.
    *
    * @example
    * ```typescript

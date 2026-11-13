@@ -2,10 +2,10 @@ import { isArrayIndex } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { clone } from '@winglet/common-utils/object';
 
-import { cloneSchema } from './cloneSchema';
+import { cloneSchema } from '../../../schemaCopy/cloneSchema';
+import { writeProperty } from '../../../schemaCopy/writeProperty';
 import type { OperationNode, OutputOperation } from './type';
 import { buildOperationTree } from './utils/buildOperationTree';
-import { writeProperty } from './utils/writeProperty';
 
 /** One output-owned continuation; input values and overlays stay read-only. */
 interface CopyTask {

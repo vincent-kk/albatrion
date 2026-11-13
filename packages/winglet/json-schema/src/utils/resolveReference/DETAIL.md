@@ -13,7 +13,7 @@
 
 ### legacy-definitions — legacy definitions 표기 해석
 
-- `definitions`(draft-07 방식) 아래 정의를 가리키는 `$ref`가 여러 개 있는 스키마에서, 모든 `$ref`가 각각의 정의 내용으로 치환된 스키마를 반환함을 검증한다.
+- `definitions`(draft-07 방식) 아래 정의를 가리키는 `$ref`가 여러 개 있는 스키마에서, 정의 바깥의 각 사용 위치가 정의 내용으로 치환되고 정의 위치의 참조는 보존됨을 검증한다.
 
 ### cyclic-definitions — 순환 정의 안전 해석
 

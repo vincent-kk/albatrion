@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { DIALECT_FLAGS } from '../../../../../dialect/dialectFlags';
+import { cloneSchema } from '../../../../../schemaCopy/cloneSchema';
 import type {
   ReferenceKeyword,
   ReferenceResolver,
@@ -10,7 +11,6 @@ import type {
   ReferenceStep,
 } from '../../../../type';
 import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
-import { cloneSchema } from '../../../output/cloneSchema';
 import type { EngineEntry, ScanConfig } from '../../type';
 import { getReferenceKeywords } from '../getReferenceKeywords';
 import { isThenable } from '../isThenable';

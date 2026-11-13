@@ -1,8 +1,8 @@
 import { clone } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
-import { writeProperty } from './utils/writeProperty';
+import { JSONSchemaScanError } from '../JSONSchemaScanner/utils/error/JSONSchemaScanError';
+import { writeProperty } from './writeProperty';
 
 /** A checkpoint belongs to one active container on the clone's explicit DFS stack. */
 interface CloneCheckpoint {
@@ -14,7 +14,8 @@ interface CloneCheckpoint {
 
 /**
  * Clone plain JSON containers iteratively, with separate copies for repeated occurrences.
- * @param input Value to copy; non-plain values delegate to the existing generic clone.
+ * @param input Value to copy; non-plain values delegate to the generic clone.
+ * @param inspect Optional preparation hook called before copying each plain container.
  * @returns A copy retaining array holes and own __proto__ data, without symbol keys on plain containers.
  * @throws JSONSchemaScanError when a plain-container ancestry contains a physical cycle.
  */

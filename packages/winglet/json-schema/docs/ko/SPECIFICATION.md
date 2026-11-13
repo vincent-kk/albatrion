@@ -1,735 +1,433 @@
-# @winglet/json-schema — 명세서
+# @winglet/json-schema — 동작 명세
 
-**버전:** 0.10.0 **라이선스:** MIT
+[빠른 시작](../../README.md) · [English](../en/SPECIFICATION.md)
 
----
+## 범위
 
-## 목차
+스캐너는 스키마 분석과 변환에 사용합니다. 데이터 인스턴스를 검증하는 작업은 별도 검증기가 담당합니다. 런타임 가드는 타입 표기를 판별하고, 추론한 TypeScript 값 타입은 검증을 증명하지 않는 부분 모델입니다. 아래 예제는 각각 독립 실행할 수 있습니다. 패키지는 ES2020 구문의 ESM과 CommonJS를 제공합니다. URI 해석에는 호스트의 URL 구현이 필요합니다.
 
-1. [개요](#개요)
-2. [설치](#설치)
-3. [빠른 시작](#빠른-시작)
-4. [아키텍처 — Visitor 패턴](#아키텍처--visitor-패턴)
-5. [JSONSchemaScanner API](#jsonschemaScanner-api)
-6. [JSONSchemaScannerAsync API](#jsonschemascannerasync-api)
-7. [스키마 필터](#스키마-필터)
-8. [타입 정의](#타입-정의)
-9. [resolveReference 유틸리티](#resolvereference-유틸리티)
-10. [사용 패턴](#사용-패턴)
-11. [호환성](#호환성)
+## 순회와 출력 소유권
 
----
+노드는 `filter` → `mutate` → `enter` → 참조 처리 → 자식 확정 → `exit` 순서로 처리합니다. filter가 false이면 해당 노드와 후손을 가지치기하고 enter/exit도 호출하지 않습니다. `maxDepth`는 루트 깊이 0부터 경계 깊이를 포함하며, 경계 노드의 처리는 그대로 실행합니다. 자식 출현의 객체 포인터는 부모 처리가 끝난 뒤 첫 자식 방문 전에 확정합니다. 키워드 순서는 어휘 순서, 맵 내부는 자기 키 나열 순서, 목록은 인덱스 순서입니다. 배열 컨테이너 자체는 스키마 노드가 아닙니다. boolean 스키마는 false를 포함해 콜백이 받는 잎입니다.
 
-## 개요
+`path`는 `#`에서 시작하는 이스케이프된 스키마 포인터이고, `dataPath`는 빈 값에서 시작해 properties와 튜플 위치에서 늘어납니다. enter와 exit는 같은 entry 객체를 받으므로 앞선 내용을 보관하려면 별도 스냅샷을 만드세요. 엔진은 enter 뒤에 `references`를 채우며 exit에서 완료된 체인 결과를 읽을 수 있습니다.
 
-`@winglet/json-schema`는 JSON Schema 조작을 위한 TypeScript 라이브러리입니다. 다음 기능을 제공합니다.
+스캔은 입력·mutate 반환값·해소기 대상을 쓰지 않고 변환을 기록합니다. 첫 `getValue()`가 결과를 만들어 false까지 캐시합니다. 연산이 없으면 입력과 같은 참조를 반환합니다. 연산이 있으면 평범한 JSON 컨테이너를 복사하고 같은 객체의 반복 출현도 각각 복사합니다. 두 스캐너의 `getValue()`는 동기 함수입니다. 실패한 스캔은 상태를 비우며 성공한 스캔이 없으면 getValue는 undefined입니다. 스캔 중 같은 인스턴스의 scan/getValue는 `scan-in-progress`를 던집니다. 독립 작업에는 다른 인스턴스를 사용하세요.
 
-- **스키마 순회** — enter/exit 콜백을 통한 JSON Schema 트리의 깊이 우선 탐색
-- **$ref 해석** — JSON Schema `$ref` 포인터의 동기 및 비동기 해석
-- **스키마 필터링** — nullable 변형을 포함한 모든 JSON Schema 타입에 대한 런타임 타입 가드
-- **스키마 변환** — 순회 중 스키마 노드 변형 및 자동 결과 조합
-- **순환 참조 감지** — 자기 참조 스키마에 대한 스택 기반 순환 방지
-
-라이브러리는 4개의 서브 경로 내보내기를 통해 트리 쉐이킹이 가능하며, ESM과 CJS 빌드를 모두 제공합니다.
-
----
-
-## 설치
-
-```bash
-# yarn (이 모노레포에서 권장)
-yarn add @winglet/json-schema
-
-# npm
-npm install @winglet/json-schema
-```
-
-### 서브 경로 임포트
-
-```typescript
-// 전체 내보내기
-import { JSONSchemaScanner, isObjectSchema, resolveReference } from '@winglet/json-schema';
-
-// 동기 스캐너만
-import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
-
-// 비동기 스캐너만
-import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
-
-// 타입 가드 함수만
-import { isObjectSchema, isStringSchema, isCompatibleSchemaType } from '@winglet/json-schema/filter';
-```
-
-라이브러리의 일부만 필요한 경우 서브 경로 임포트를 사용하면 번들 크기를 줄일 수 있습니다.
-
----
-
-## 빠른 시작
-
-### 스키마를 순회하며 필드 경로 수집
+<!-- example: walk -->
 
 ```typescript
 import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string', minLength: 1 },
-    age: { type: 'number', minimum: 0 },
-    address: {
-      type: 'object',
-      properties: {
-        city: { type: 'string' },
-        zip: { type: 'string' },
-      },
-    },
-  },
-  required: ['name'],
-};
-
-const fieldPaths: string[] = [];
-
-new JSONSchemaScanner({
+const paths: string[] = [];
+const schema = { properties: { name: { type: 'string' }, denied: false } };
+const scanner = new JSONSchemaScanner({
   visitor: {
-    enter: ({ keyword, dataPath }) => {
-      if (keyword === 'properties') fieldPaths.push(dataPath);
+    enter(entry) {
+      if (entry.keyword === 'properties') paths.push(entry.dataPath);
+      if (typeof entry.schema === 'boolean') return;
+      console.assert(typeof entry.schema === 'object');
     },
   },
-}).scan(schema);
-
-console.log(fieldPaths);
-// ['/name', '/age', '/address', '/address/city', '/address/zip']
+});
+console.assert(scanner.scan(schema).getValue() === schema);
+console.assert(paths.join(',') === '/name,/denied');
 ```
 
-### 런타임에 스키마 타입 확인
+## 변환
+
+mutate에서는 `entry.schema`를 직접 쓰지 말고 교체 값을 반환합니다. undefined만 현재 노드 유지이며 false는 실제 교체입니다. 자식은 교체 값에서 확정합니다. inert 노드도 콜백을 받지만 그 교체는 출력에 기록되지 않으므로 의미 있는 위치만 바꾸려면 `entry.inert`를 확인하세요.
+
+현재 노드의 `$id`, `id`, `$schema`, `$anchor`, `$dynamicAnchor`, `$recursiveAnchor`를 추가·제거·변경하면 `identifier-mutation`입니다. 교체 값 아래에 새로 넣은 식별자는 등록되지 않습니다. 해소기는 생성할 때 제공한 문서를 색인하므로 식별자 구조 변경은 해소기 생성 전에 수행하고, 해소기를 재사용할 동안 공급한 문서를 불변으로 다루세요.
+
+<!-- example: mutate -->
+
+```typescript
+import { JSONSchemaScanner } from '@winglet/json-schema';
+
+const schema = { properties: { name: { type: 'string' }, denied: false } };
+const output = new JSONSchemaScanner({
+  options: {
+    mutate(entry) {
+      if (entry.inert || typeof entry.schema === 'boolean') return;
+      if (entry.schema.type === 'string')
+        return { ...entry.schema, minLength: 1 };
+    },
+  },
+})
+  .scan(schema)
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.properties.name.minLength === 1);
+console.assert(!('minLength' in schema.properties.name));
+```
+
+## 내장 해소기
+
+`resolveReference(schema, options)`는 동기 편의 함수입니다. 콜백이나 스캔 옵션이 필요하면 스캐너와 해소기 생성 함수를 함께 사용합니다. 루트는 생성 시 색인하고, 절대 조회 URI로 등록한 `resources` 문서는 처음 조회할 때 색인합니다. 익명 루트에는 `baseURI`로 주소를 줄 수 있습니다. `$id`는 자원의 기준 URI를 만들며 draft-04는 `id`도 사용합니다. 2019-09와 2020-12에서는 `$anchor`로 정적 조각을 선언합니다. draft-06/07은 조각 이름만 가진 `$id`, draft-04는 `id`도 사용합니다. 앵커와 JSON Pointer는 정규 위치로 해석하므로 같은 위치의 별칭은 같은 순환 정체성을 가집니다. 조각을 한 번 퍼센트 디코딩한 뒤 토큰의 `~1`, `~0`을 해제하며 자기 속성만 따라갑니다.
+
+대상은 호스트 자원에서 의미가 유지되는 사본으로 준비하며, 안전한 이동에 필요하면 참조 문자열을 다시 씁니다. 이 준비는 공개 filter/maxDepth와 무관하게 대상 전체를 조사합니다. 대상·호스트 쌍의 템플릿은 해소기가 캐시하고 인라인 출현마다 복사해 출력의 별칭 공유를 막습니다. 정의 컨테이너는 주소 보관소로 유지합니다.
+
+<!-- example: inline -->
 
 ```typescript
 import {
-  isArraySchema,
-  isObjectSchema,
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '@winglet/json-schema';
+import type { ReferenceOutcome } from '@winglet/json-schema';
+
+const schema = {
+  $id: 'https://schemas.example/root.json',
+  properties: { name: { $ref: 'types.json#/$defs/Text' } },
+};
+const resolver = createReferenceResolver(schema, {
+  resources: {
+    'https://schemas.example/types.json': {
+      $defs: { Text: { type: 'string' } },
+    },
+  },
+});
+const outcomes: ReferenceOutcome[] = [];
+const scanner = new JSONSchemaScanner({
+  options: { resolveReference: resolver },
+  visitor: { exit: (entry) => outcomes.push(...(entry.references ?? [])) },
+});
+const output = scanner.scan(schema).getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.properties.name.type === 'string');
+console.assert(outcomes.some((outcome) => outcome.resolved));
+console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
+```
+
+## 비동기 문서 공급
+
+패키지는 스스로 문서를 가져오지 않습니다. 동기 해소기는 루트와 등록 자원만 사용합니다. 비동기 해소기는 등록 자원으로 충족되지 않은 절대 문서 URI를 조각 없이 load에 전달합니다. 없는 문서는 undefined로 반환합니다. 진행 중 요청과 완료·미발견 결과는 해당 해소기에서 URI별로 공유하며 공급 함수의 오류는 전파합니다. 공급 문서 집합이 바뀌면 새 해소기를 만드세요.
+
+`JSONSchemaScannerAsync.scan()`을 기다린 뒤 동기 getValue를 호출합니다. 콜백과 해소기의 resolve는 순차적으로 기다리고 root/child/dialect는 동기입니다. 동기 스캐너는 콜백 반환값을 기다리지 않습니다. async 방문자가 void 콜백 타입에 대입되어도 대기가 필요하면 비동기 스캐너를 사용하세요. 동기 스캐너에 Promise를 돌려주는 사용자 해소기는 잘못된 결과입니다. 가져오기·재시도·인증·취소는 호출자의 공급 함수가 담당합니다.
+
+<!-- example: load -->
+
+```typescript
+import {
+  JSONSchemaScannerAsync,
+  createReferenceResolverAsync,
+} from '@winglet/json-schema';
+import type { UnknownSchema } from '@winglet/json-schema';
+
+const schema = {
+  $id: 'https://schemas.example/root.json',
+  properties: { first: { $ref: 'deny.json' }, second: { $ref: 'deny.json' } },
+};
+const documents: Record<string, UnknownSchema | boolean> = {
+  'https://schemas.example/deny.json': false,
+};
+const requested: string[] = [];
+const resolver = createReferenceResolverAsync(schema, {
+  load: async (uri) => {
+    requested.push(uri);
+    return documents[uri];
+  },
+});
+const scanner = new JSONSchemaScannerAsync({
+  options: { resolveReference: resolver },
+});
+await scanner.scan(schema);
+const output = scanner.getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(
+  output.properties.first === false && output.properties.second === false,
+);
+console.assert(requested.join(',') === 'https://schemas.example/deny.json');
+```
+
+## 사용자 해소기 프로토콜
+
+공개 `ReferenceResolver` 또는 `ReferenceResolverAsync` 타입을 사용합니다. root는 어휘적 문맥을 만들고 선택적인 child는 원래 문서의 자식으로 진입합니다. 문맥이 같으면 같은 객체를 반환하고 child를 생략하면 루트 문맥을 계속 사용합니다. dialect는 유효한 자원 방언을 반환합니다.
+
+resolve는 스키마나 undefined 자체가 아니라 태그 있는 결과를 반환합니다. resolved의 uri는 정규 정체성이므로 같은 대상의 별칭은 같은 uri를 반환해야 순환 추적이 작동합니다. target은 이미 호스트 위치에서 같은 의미여야 하며 엔진은 대상의 식별자 범위로 다시 진입하지 않습니다. 사용자 해소기는 이동·동적 범위 안전성을 책임지므로 이 보장이 필요하면 내장 해소기를 사용하세요. 다음 레지스트리 예제의 정규 대상에는 식별자나 상대 참조가 없습니다.
+
+<!-- example: custom -->
+
+```typescript
+import { JSONSchemaScanner } from '@winglet/json-schema';
+import type { ReferenceResolver, UnknownSchema } from '@winglet/json-schema';
+
+const registry = new Map<string, UnknownSchema | boolean>([
+  ['urn:example:Text', { type: 'string' }],
+]);
+const resolver: ReferenceResolver<void> = {
+  root: () => undefined,
+  dialect: () => '2020-12',
+  resolve(reference) {
+    const target = registry.get(reference);
+    return target === undefined
+      ? { status: 'skipped', reason: 'unresolved' }
+      : { status: 'resolved', uri: reference, target };
+  },
+};
+const output = new JSONSchemaScanner({
+  options: { resolveReference: resolver },
+})
+  .scan({ $ref: 'urn:example:Text' })
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.type === 'string');
+```
+
+## 방언과 inert 위치
+
+기본 폴백은 2020-12입니다. `$ref`는 모든 지원 방언에서, `$dynamicRef`는 2020-12에서만, `$recursiveRef`는 2019-09에서만 인식합니다. 인식한 루트·자원 `$schema`가 방언을 정하며 지원 URI의 HTTP/HTTPS와 마지막 # 차이는 정규화합니다. 해소기의 dialects로 사용자 메타스키마 URI를 지원 방언에 매핑할 수 있습니다. 모르는 선언은 둘러싼 방언 또는 폴백을 따릅니다. 내장 자원은 알려진 선언이 없으면 부모의 방언을 잇습니다. 해소기를 사용하면 그 폴백도 설정하세요. 스캐너의 defaultDialect는 해소기가 방언을 공급하지 않을 때의 폴백입니다.
+
+순회는 draft-04·draft-06·draft-07·2019-09·2020-12의 스키마 위치 합집합을 사용합니다. 해소나 변형이 없을 때 `$schema`는 방문 경로·순서 대신 inert 여부를 바꿉니다. 해당 방언의 스키마 위치가 아닌 노드와 그 후손은 inert=true이며 콜백은 실행하지만 참조·출력 연산을 억제하고 식별자를 색인하지 않습니다. draft-04에서는 boolean 잎도 inert입니다. contains는 draft-06부터, prefixItems는 2020-12에서, 튜플 형태 items는 2019-09까지 활성입니다. 현대 방언에서도 definitions와 스키마 값 dependencies는 스키마 위치이고 문자열 배열 dependencies는 스키마가 아닙니다.
+
+<!-- example: inert -->
+
+```typescript
+import { JSONSchemaScanner } from '@winglet/json-schema';
+
+const inactive: string[] = [];
+new JSONSchemaScanner({
+  options: { defaultDialect: 'draft-04' },
+  visitor: {
+    enter: (entry) => {
+      if (entry.inert) inactive.push(entry.path);
+    },
+  },
+}).scan({ contains: { type: 'string' }, additionalProperties: false });
+console.assert(inactive.includes('#/contains'));
+console.assert(inactive.includes('#/additionalProperties'));
+```
+
+## 어휘 선택
+
+기본 어휘는 합성·조건·객체/배열 applicator·정의 컨테이너·스키마 값 dependencies를 포함합니다. keywords는 전체를 대체하고 additionalKeywords는 선택된 어휘 뒤에 덧붙입니다. 중복은 마지막 서술자의 종류와 위치가 이깁니다. 서술자 dialects는 발견 여부 대신 inert 여부를 정합니다. objectMap은 키를 dataPath에 덧붙이고 schemaMap은 덧붙이지 않습니다. 스키마 목록은 컨테이너 대신 원소를 방문합니다.
+
+색인·이동 검사·공개 순회가 일치하도록 내장 해소기와 스캐너에 같은 어휘 옵션을 주세요. 편의 함수 resolveReference는 어휘를 양쪽에 전달합니다. 사용자 키워드 이름과 맵 키도 JSON Pointer로 이스케이프합니다.
+
+<!-- example: keywords -->
+
+```typescript
+import {
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '@winglet/json-schema';
+import type { KeywordDescriptor } from '@winglet/json-schema';
+
+const additionalKeywords: KeywordDescriptor[] = [
+  { keyword: 'x/schema', kind: 'schema' },
+];
+const schema = {
+  'x/schema': { type: 'string' },
+  properties: { value: { $ref: '#/x~1schema' } },
+};
+const resolver = createReferenceResolver(schema, { additionalKeywords });
+const visited: string[] = [];
+const output = new JSONSchemaScanner({
+  options: { additionalKeywords, resolveReference: resolver },
+  visitor: { enter: (entry) => visited.push(entry.path) },
+})
+  .scan(schema)
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(visited.includes('#/x~1schema'));
+console.assert(output.properties.value.type === 'string');
+```
+
+## 참조 보존과 형제 키워드
+
+정의 바깥의 인라인 가능한 체인은 끝까지 처리하고, 참조 정체성은 현재 조상 경로에서만 활성입니다. 같은 대상을 쓰는 독립 형제는 각각 처리합니다. 결과를 감사하려면 exit의 entry.references를 순회하세요. 각 결과는 작성된 reference와 keyword, 알 수 있으면 정규 uri, resolved 및 보존 이유 skipped를 담습니다.
+
+| skipped      | 의미                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------ |
+| `definition` | 해소기를 쓰는 순회에서 정의 컨테이너 또는 그 후손의 참조입니다. 정의는 주소 보관소로 유지합니다. |
+| `cycle`      | 인라인 가능한 정규 대상이 현재 조상 경로에서 이미 활성입니다.                                    |
+| `unresolved` | 해소기가 없거나 주소·문서를 찾지 못했습니다.                                                     |
+| `dynamic`    | 동적 앵커나 recursive anchor가 필요한 조회이므로 정적으로 고정하지 않습니다.                     |
+| `relocation` | 대상을 호스트로 옮겨도 의미와 기존 주소를 보존함을 보장할 수 없습니다.                           |
+| `invalid`    | 대상이나 합성 위치가 인라인에 유효하지 않습니다. 잘못된 프로토콜 반환과는 구분합니다.            |
+
+unresolvedReference의 기본은 keep이며 throw는 unresolved 결과만 실패시킵니다. 다른 보존 이유까지 제거하는 옵션은 아닙니다. inert 위치에서는 참조를 처리하지 않아 결과가 없을 수 있습니다.
+
+### draft-07 이하
+
+`$ref`의 형제는 평가에서 무시됩니다. 참조를 남겨도 형제의 자식은 방문하며, definitions와 $defs 아래는 평소의 정의 위치이고 다른 형제의 후손은 inert입니다. 그 inert 영역의 식별자는 색인하지 않습니다. `$ref` 노드 자체의 형제 식별자도 무시합니다.
+
+인라인 전에 다른 자기 키를 분류합니다. `$schema`, definitions, $defs는 유지합니다. 그 외 키는 값이 문자열·숫자·null일 때만 버립니다. 어느 키 아래든 boolean·객체·배열이면 기존 포인터 주소를 없애거나 무시되던 평가를 활성화할 수 있어 참조를 relocation으로 남깁니다. 유지할 키만 있으면 `{ ...유지할 키, allOf: [대상 사본] }`으로 감싸고, 남길 키도 없으면 노드를 대상 사본으로 교체합니다.
+
+<!-- example: relocation -->
+
+```typescript
+import {
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '@winglet/json-schema';
+
+const schema = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $ref: '#/definitions/Text',
+  hidden: false,
+  definitions: { Text: { type: 'string' } },
+};
+const reasons: string[] = [];
+const output = new JSONSchemaScanner({
+  options: { resolveReference: createReferenceResolver(schema) },
+  visitor: {
+    exit: (entry) => {
+      for (const outcome of entry.references ?? [])
+        if (outcome.skipped) reasons.push(outcome.skipped);
+    },
+  },
+})
+  .scan(schema)
+  .getValue();
+console.assert(output === schema);
+console.assert(reasons.includes('relocation'));
+```
+
+### 2019-09 이상
+
+형제는 유지하고 적용합니다. 다른 키가 없는 단일 참조는 교체하고, 나머지는 인라인한 키워드만 빼고 대상 가지를 기존 allOf 끝에 붙입니다. 기존 allOf가 배열이 아니면 invalid로 보존합니다.
+
+### 내장 해소기의 이동 경계
+
+다음 조건에서는 원래 참조를 보존합니다.
+
+- 대상이 inert 또는 인식되지 않은 스키마 위치에 있거나 그 아래인 경우
+- 이동으로 대상 또는 제거할 자원 경계의 방언이 호스트와 달라지는 경우
+- 다시 쓸 사본에 `$recursiveRef`가 있거나 제거할 자원이 `$dynamicAnchor`/`$recursiveAnchor` 범위를 가진 경우
+- 인식한 스키마 위치와 default/const/enum/examples 데이터 바깥의 참조·식별자를 안전하게 다시 쓸 수 없는 경우
+- URI 재작성이 불가능하거나 다른 자원에서 주소 없는 익명 문서를 가리켜야 하는 경우
+
+같은 자원의 식별자 없는 대상은 단순 복사가 가능합니다. 다른 이동은 식별자 경계를 제거하고 참조 URI를 원래 기준에서 다시 씁니다. 데이터 키워드 값은 다시 쓰지 않습니다. `$dynamicRef`의 첫 조각이 `$dynamicAnchor`로 선언된 것이면 dynamic으로 남고, 그 외에는 `$ref`처럼 동작합니다. `$recursiveRef`는 대상에 `$recursiveAnchor`:true가 있으면 dynamic으로 남습니다.
+
+계층이 없는 기준 URI에서는 상대 문서 경로를 구성할 수 없습니다. 절대 참조 또는 계층적인 baseURI를 제공하세요. 이 예제는 미해결 결과를 보여 줍니다.
+
+<!-- example: opaque -->
+
+```typescript
+import { createReferenceResolver } from '@winglet/json-schema';
+
+const schema = { $ref: 'child.json' };
+const resolver = createReferenceResolver(schema, {
+  baseURI: 'urn:example:root',
+  resources: { 'urn:example:child.json': { type: 'string' } },
+});
+const context = resolver.root(schema);
+const relative = resolver.resolve('child.json', '$ref', context);
+const absolute = resolver.resolve('urn:example:child.json', '$ref', context);
+console.assert(
+  relative.status === 'skipped' && relative.reason === 'unresolved',
+);
+console.assert(absolute.status === 'resolved');
+```
+
+## 상한과 오류
+
+limits.referenceChain은 한 위치의 교체 체인을 기본 32로, limits.inlinedNodes는 스캔에서 인라인되는 전체 스키마 노드를 기본 1,000,000으로 제한합니다. 이는 maxDepth와 별개이고 공개 방문에서 잘린 대상의 전체 준비도 수행할 수 있습니다.
+
+JSONSchemaScanError의 code로 실패를 구분합니다. 사용자 콜백과 load의 예외는 그대로 전파됩니다.
+
+| code                      | 의미                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| `duplicate-identifier`    | 서로 다른 위치가 같은 식별자를 선언했습니다.                                 |
+| `reference-chain-limit`   | 한 위치의 교체 체인 상한을 넘었습니다.                                       |
+| `inlined-node-limit`      | 스캔의 인라인 노드 상한을 넘었습니다.                                        |
+| `unresolved-reference`    | throw 정책에서 참조를 찾지 못했습니다.                                       |
+| `invalid-resolver-result` | 프로토콜 태그·URI·대상이 잘못되었거나 동기 해소기가 thenable을 반환했습니다. |
+| `identifier-mutation`     | mutate가 현재 노드의 식별자 키워드를 바꿨습니다.                             |
+| `schema-cycle`            | 순회 또는 평범한 컨테이너 복제에 물리 순환이 있습니다.                       |
+| `scan-in-progress`        | 실행 중 같은 인스턴스의 scan/getValue를 호출했습니다.                        |
+
+<!-- example: errors -->
+
+```typescript
+import { JSONSchemaScanError, JSONSchemaScanner } from '@winglet/json-schema';
+
+const scanner = new JSONSchemaScanner({
+  options: { unresolvedReference: 'throw' },
+});
+let caught = false;
+try {
+  scanner.scan({ $ref: '#/missing' });
+} catch (error) {
+  if (!(error instanceof JSONSchemaScanError)) throw error;
+  caught = true;
+  console.assert(error.code === 'unresolved-reference');
+}
+console.assert(caught && scanner.getValue() === undefined);
+```
+
+## 깊이 안전의 범위
+
+순회와 평범한 객체·배열의 복제는 호출 스택 재귀를 사용하지 않습니다. 반복 별칭은 순환으로 보지 않고, 실제 조상 순환은 schema-cycle입니다. 희소 배열의 구멍과 자기 **proto** 데이터 키는 유지하고 평범한 컨테이너의 symbol 키는 복사하지 않습니다. 비평범한 값은 범용 복제기로 위임하므로 클래스 인스턴스·사용자 getter·콜백·공급 함수까지 깊이 안전을 보장하는 것은 아닙니다. 깊이 자체의 고정 상한 대신 메모리와 명시한 참조 예산이 적용됩니다. 데이터 키워드 안의 순환은 실제로 사본을 만들 때 발견될 수 있으며, 변환 없는 getValue는 복제 없이 입력을 반환합니다.
+
+## 스키마 가드와 추론
+
+가드는 type을 판별합니다. 겸용 가드는 nullable 배열 표기와 일반 타입을 모두 받고 number 가드는 integer도 받습니다. nullable 전용 가드는 type 배열의 null을 확인하며, OpenAPI nullable:true는 가드의 기준이 아닙니다. 비교 함수는 별도 정책으로 OpenAPI nullable:true를 정규화합니다. hasNullInType은 순수 type:null이 아니라 배열 안의 null을 검사합니다.
+
+<!-- example: guards -->
+
+```typescript
+import {
+  hasNullInType,
+  isCompatibleSchemaType,
+  isIdenticalSchemaType,
   isStringSchema,
 } from '@winglet/json-schema/filter';
 
-const s = { type: ['string', 'null'], minLength: 1 };
-
-if (isStringSchema(s)) {
-  // s는 StringSchema로 타입이 좁혀짐
-  console.log(s.minLength); // 1
-}
+console.assert(isStringSchema({ type: ['string', 'null'] }));
+console.assert(!hasNullInType({ type: 'null' }));
+console.assert(
+  isIdenticalSchemaType(
+    { type: ['string', 'null'] },
+    { type: 'string', nullable: true },
+  ),
+);
+console.assert(!isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }));
+console.assert(isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }));
 ```
 
----
+리터럴 정보를 유지하려면 as const를 사용하세요. InferValueType은 부분 값을 위한 모델이므로 required를 포함한 객체 키는 optional이고, additionalProperties:false가 없으면 열린 객체입니다. 읽기 전용 스키마에서도 값은 가변입니다. 적용하지 않는 합성·참조 제약을 정적으로 검증했다고 가정하지 말고, 검증된 필수 형태가 필요하면 별도 값 타입과 검증을 사용하세요. InferJSONSchema는 값 타입에서 스키마 계열을 선택하며 객체의 properties를 자동 생성하지 않습니다.
 
-## 아키텍처 — Visitor 패턴
-
-`JSONSchemaScanner`는 **비재귀 스택 기반 DFS** 순회 엔진을 구현합니다. 재귀 호출 대신 명시적인 `Entry[]` 스택을 유지하고, 각 항목을 4개 단계로 구성된 상태 머신을 통해 진행시킵니다.
-
-```
-스키마 트리 노드 생명주기:
-  스택에 추가
-       │
-  ┌────▼─────┐
-  │  Enter   │  ← filter() 검사, mutate(), visitor.enter() 호출
-  └────┬─────┘
-       │
-  ┌────▼─────────┐
-  │  Reference   │  ← $ref 감지, resolveReference() 호출, 순환 참조 검사
-  └────┬─────────┘
-       │
-  ┌────▼──────────────┐
-  │  ChildEntries     │  ← maxDepth 검사, 자식 노드를 스택에 추가
-  └────┬──────────────┘
-       │
-  ┌────▼─────┐
-  │   Exit   │  ← visitor.exit() 호출, 순환 참조 추적 정리
-  └────┬─────┘
-       │
-  스택에서 제거
-```
-
-**핵심 설계 특성:**
-
-- **스택 안전** — 스택 오버플로우 없이 임의 깊이의 스키마 처리 가능
-- **지연 해석** — `$ref` 노드는 실제로 만날 때만 해석됨
-- **지연 변형** — `mutate()` 결과는 수집되어 `getValue()` 호출 시 단일 딥 클론으로 적용됨
-- **쓰기 시 복사** — 순회 중에는 원본 스키마가 절대 수정되지 않음
-- **스캔별 격리** — 각 `scan()` 호출이 모든 내부 상태를 초기화함
-
-### 자식 노드 발견 순서
-
-모든 스키마 노드 내에서 자식 노드는 다음 고정 순서로 발견되고 방문됩니다.
-
-`$defs` → `definitions` → `additionalProperties` → `not/if/then/else` → `allOf/anyOf/oneOf` → `prefixItems` → `items` → `properties`
-
----
-
-## JSONSchemaScanner API
-
-### 생성자
+<!-- example: types -->
 
 ```typescript
-new JSONSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType = void>(
-  props?: {
-    visitor?: SchemaVisitor<Schema, ContextType>;
-    options?: JSONScannerOptions<Schema, ContextType>;
-  }
-)
+import type { InferJSONSchema, InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'object',
+  properties: { id: { type: 'number' } },
+  required: ['id'],
+  additionalProperties: false,
+} as const;
+type Value = InferValueType<typeof schema>;
+const partial: Value = {};
+partial.id = 1;
+const nameSchema: InferJSONSchema<string> = { type: 'string', minLength: 1 };
+console.assert(nameSchema.type === 'string');
 ```
 
-### SchemaVisitor
+유한한 prefixItems는 optional 위치의 가변 튜플입니다. items:false는 닫고, 생략/true는 any[] rest, 스키마는 접두부 뒤 rest의 형을 정합니다. minItems는 추론에 쓰지 않습니다. 넓어진 prefixItems와 구식 items 배열은 이 유한 튜플 추론 대상이 아니며, 모델링하지 않은 형태는 넓은 폴백을 사용합니다. 재귀 타입은 TypeScript의 일반적인 인스턴스화 한도를 확장하지 않습니다.
+
+<!-- example: tuple -->
 
 ```typescript
-interface SchemaVisitor<Schema, ContextType> {
-  enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
-  exit?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
-}
+import type { InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+type Pair = InferValueType<typeof schema>;
+const empty: Pair = [];
+const pair: Pair = ['name', 1];
+pair[0] = 'changed';
+console.assert(empty.length === 0 && pair[0] === 'changed');
 ```
-
-- `enter` — 노드를 처음 방문할 때 호출되며, 자식 노드가 스택에 추가되기 전에 실행됨
-- `exit` — 노드의 모든 자손이 처리된 후 호출됨
-
-### JSONScannerOptions
-
-| 옵션               | 타입                                            | 설명                                                |
-| ------------------ | ----------------------------------------------- | --------------------------------------------------- |
-| `filter`           | `(entry, context?) => boolean`                  | `false` 반환 시 노드와 모든 자손 건너뜀             |
-| `mutate`           | `(entry, context?) => Schema \| void`           | 새 스키마 반환 시 노드 교체 (getValue()에서 적용됨) |
-| `resolveReference` | `(ref, entry, context?) => Schema \| undefined` | `$ref` 포인터를 스키마 객체로 해석                  |
-| `maxDepth`         | `number`                                        | 최대 순회 깊이 (루트 = 깊이 0)                      |
-| `context`          | `ContextType`                                   | 모든 콜백에 전달되는 공유 변경 가능 컨텍스트        |
-
-### scan(schema)
-
-```typescript
-scan(schema: Schema): this
-```
-
-루트 스키마 노드부터 순회를 시작합니다. 순회 전에 모든 내부 상태를 초기화합니다. 메서드 체이닝을 위해 `this`를 반환합니다.
-
-### getValue()
-
-```typescript
-getValue<OutputSchema extends UnknownSchema = Schema>(): OutputSchema | undefined
-```
-
-순회 후 처리된 스키마를 반환합니다.
-
-- `scan()` 이전에 호출하면 `undefined` 반환
-- 변형이나 해석된 참조가 없으면 원본 스키마 참조 반환
-- 그렇지 않으면 모든 변형과 인라인 참조가 적용된 딥 클론 스키마 반환
-- 결과를 캐싱하며, 이후 호출에서는 동일한 객체 반환
-
-### SchemaEntry
-
-```typescript
-type SchemaEntry<Schema> = {
-  schema: Schema; // 현재 스키마 노드
-  path: string; // JSON 포인터: "#/properties/name"
-  dataPath: string; // 데이터 경로: "/name"
-  depth: number; // 루트에서 0
-  hasReference?: boolean; // true: $ref 발견됐지만 해석되지 않음
-  referencePath?: string; // 해석된 경우 원본 $ref 값
-  referenceResolved?: boolean; // true: resolveReference() 성공
-  keyword?: string; // 이 항목을 생성한 구조적 키워드
-  variant?: string | number; // 프로퍼티 이름 또는 배열 인덱스
-};
-```
-
-**keyword 값:** `'properties'`, `'$defs'`, `'definitions'`, `'items'`, `'prefixItems'`, `'additionalProperties'`, `'not'`, `'if'`, `'then'`, `'else'`, `'allOf'`, `'anyOf'`, `'oneOf'`
-
-### 순환 참조 감지
-
-스캐너는 `scan()` 호출마다 `Set<string>`에 해석된 `$ref` 경로를 추적합니다.
-
-1. `$ref`가 해석되면 해당 경로가 Set에 추가됨
-2. 해석된 스키마의 서브트리 순회 중 동일한 경로를 다시 만나면, 해당 노드는 `hasReference: true`로 표시되고 자식 노드 탐색을 건너뜀
-3. 원본 해석된 노드가 exit될 때 해당 경로가 Set에서 제거되어 다른 브랜치에서 동일한 `$ref` 허용
-
----
-
-## JSONSchemaScannerAsync API
-
-`JSONSchemaScannerAsync`는 완전한 async/await 지원을 갖춘 스캐너의 병렬 구현입니다. 동일한 아키텍처를 공유하지만 모든 콜백이 `Promise<void>`를 반환할 수 있으며 `resolveReference`는 `Promise<Schema | undefined>`를 반환할 수 있습니다.
-
-### 생성자
-
-```typescript
-new JSONSchemaScannerAsync<Schema, ContextType>(
-  props?: {
-    visitor?: SchemaVisitor<Schema, ContextType>;  // 콜백이 async 가능
-    options?: JSONScannerOptionsAsync<Schema, ContextType>;
-  }
-)
-```
-
-`JSONScannerOptionsAsync`는 `resolveReference`가 `Promise`를 반환할 수 있다는 점을 제외하면 `JSONScannerOptions`와 동일합니다.
-
-### scan(schema)
-
-```typescript
-async scan(schema: Schema): Promise<this>
-```
-
-순회가 완료된 후 `this`로 resolve되는 `Promise`를 반환합니다. `getValue()` 호출 전에 반드시 await해야 합니다.
-
-### getValue()
-
-동기 스캐너와 동일합니다. `scan()`을 await한 후 호출하세요.
-
-```typescript
-const scanner = new JSONSchemaScannerAsync({
-  /* ... */
-});
-const result = await scanner.scan(schema).then((s) => s.getValue());
-```
-
-### 비동기 사용 사례
-
-- **원격 $ref 해석** — 외부 URL에서 스키마 `fetch()`
-- **데이터베이스 기반 스키마** — 데이터베이스에서 스키마 조각 조회
-- **비동기 유효성 검사** — 순회 중 외부 API 호출
-- **비동기 로깅** — visitor에서 데이터베이스나 메시지 큐에 쓰기
-- **서비스 메시 스키마** — 서비스 디스커버리를 통한 마이크로서비스 스키마 해석
-
----
-
-## 스키마 필터
-
-모든 타입 가드는 `@winglet/json-schema/filter`에서 사용 가능합니다.
-
-### 유니온 가드 (권장)
-
-nullable과 non-nullable 스키마를 모두 처리합니다.
-
-| 함수                 | 매칭 대상                                                  |
-| -------------------- | ---------------------------------------------------------- |
-| `isObjectSchema(s)`  | `{ type: 'object' }` 또는 `{ type: ['object', 'null'] }`   |
-| `isArraySchema(s)`   | `{ type: 'array' }` 또는 `{ type: ['array', 'null'] }`     |
-| `isStringSchema(s)`  | `{ type: 'string' }` 또는 `{ type: ['string', 'null'] }`   |
-| `isNumberSchema(s)`  | `{ type: 'number'\|'integer' }` 또는 nullable 변형         |
-| `isBooleanSchema(s)` | `{ type: 'boolean' }` 또는 `{ type: ['boolean', 'null'] }` |
-| `isNullSchema(s)`    | `{ type: 'null' }` (순수 null, nullable 아님)              |
-
-모든 가드는 인수의 TypeScript 타입을 좁혀 타입별 필드(`properties`, `items`, `pattern` 등)에 접근할 수 있게 합니다.
-
-### 특정 변형 가드
-
-nullable과 non-nullable을 구분해야 하는 경우:
-
-```typescript
-isNonNullableObjectSchema(s); // { type: 'object' } 만
-isNullableObjectSchema(s); // { type: ['object', 'null'] } 만
-
-isNonNullableStringSchema(s); // { type: 'string' } 만
-isNullableStringSchema(s); // { type: ['string', 'null'] } 만
-
-// array, number, boolean도 동일한 패턴
-```
-
-### hasNullInType
-
-```typescript
-hasNullInType(schema: UnknownSchema): boolean
-```
-
-`schema.type`이 `'null'`을 포함하는 배열일 때 `true`를 반환합니다. `{ type: 'null' }`에는 매칭되지 않습니다.
-
-```typescript
-hasNullInType({ type: ['string', 'null'] }); // true
-hasNullInType({ type: 'null' }); // false
-```
-
-### 스키마 비교
-
-#### isIdenticalSchemaType
-
-```typescript
-isIdenticalSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
-```
-
-nullable을 인식하는 엄격한 동등성 비교입니다. JSON Schema 배열 형식과 OpenAPI 3.0의 `nullable: true`를 모두 지원합니다.
-
-```typescript
-isIdenticalSchemaType({ type: 'string' }, { type: 'string' }); // true
-isIdenticalSchemaType(
-  { type: ['string', 'null'] },
-  { type: 'string', nullable: true },
-); // true
-isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }); // false
-```
-
-#### isCompatibleSchemaType
-
-```typescript
-isCompatibleSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
-```
-
-느슨한 검사입니다. `number`와 `integer`는 호환 가능한 것으로 처리됩니다. nullable 차이는 무시됩니다.
-
-```typescript
-isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }); // true
-isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }); // true
-isCompatibleSchemaType({ type: [] }, { type: [] }); // false (빈 배열)
-```
-
----
-
-## 타입 정의
-
-### 핵심 스키마 타입
-
-```typescript
-// 기본 타입 — 모든 스키마 객체
-type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any };
-
-// 전체 JSON Schema 유니온
-type JSONSchema<Options = object> =
-  | NonNullableNumberSchema
-  | NullableNumberSchema
-  | NonNullableStringSchema
-  | NullableStringSchema
-  | NonNullableBooleanSchema
-  | NullableBooleanSchema
-  | NonNullableArraySchema
-  | NullableArraySchema
-  | NonNullableObjectSchema
-  | NullableObjectSchema
-  | NullSchema;
-
-// $ref 노드
-interface RefSchema {
-  type?: undefined;
-  $ref: string;
-}
-```
-
-### 스키마 제네릭 파라미터
-
-모든 스키마 타입은 두 가지 제네릭 파라미터를 허용합니다.
-
-```typescript
-ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema>
-```
-
-- `Options` — `schema.options` 확장 필드의 형태
-- `Schema` — 중첩 스키마를 위한 재귀적 자기 참조
-
-### InferJSONSchema
-
-TypeScript 값 타입을 해당 스키마 인터페이스에 매핑합니다.
-
-```typescript
-type InferJSONSchema<Value, Options = object, Schema = JSONSchema>
-
-// 예시
-InferJSONSchema<string>          // NonNullableStringSchema
-InferJSONSchema<string | null>   // NullableStringSchema
-InferJSONSchema<null>            // NullSchema
-InferJSONSchema<number[]>        // NonNullableArraySchema
-```
-
-### InferValueType
-
-스키마 타입 정의를 런타임 값 타입으로 매핑합니다.
-
-```typescript
-type InferValueType<T extends { type?: string | readonly string[] }>
-
-// 예시
-InferValueType<{ type: 'string' }>             // string
-InferValueType<{ type: ['string', 'null'] }>   // string | null
-InferValueType<{ type: 'integer' }>            // number
-InferValueType<{ type: 'array' }>              // any[]
-InferValueType<{ type: 'object' }>             // Record<string, any>
-```
-
-`object`와 `array`는 `properties`, 유한한 `prefixItems` 튜플, `items`가 리터럴일 때 — 즉 스키마를 `as const`로 선언했을 때 — 재귀합니다. `as const`가 없으면 `type`이 `string`으로 넓어져 결과는 `any`입니다.
-
-```typescript
-InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
-
-InferValueType<{
-  type: 'array';
-  prefixItems: readonly [{ type: 'string' }, { type: 'number' }];
-  items: false;
-}>; // [string?, number?]
-
-InferValueType<{
-  type: 'object';
-  properties: { id: { type: 'number' } };
-  required: ['id'];
-}>;
-// { id?: number } & Record<string, any>
-```
-
-객체 결과에는 두 가지 규칙이 적용됩니다:
-
-- **`required`에 있는 키를 포함해 모든 키가 optional입니다.** 스키마가 기술하는 값은 런타임에 키를 생략할 수 있으므로, 여기서 필수로 표시하는 것은 이 타입이 지킬 수 없는 약속입니다. 정확한 형태가 필요하면 직접 정의하세요.
-- **스키마가 `additionalProperties: false`를 지정하지 않는 한 `Record<string, any>`와 교차합니다.** 열린 상태가 JSON Schema의 기본값이고, 이 덕분에 이 타입이 모델링하지 않는 applicator (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`)가 기여하는 키가 초과 속성으로 거부되지 않습니다.
-
-길이가 유한한 리터럴 `prefixItems`는 모든 위치가 optional인 가변 튜플로 추론됩니다. `prefixItems`는 최소 길이를 정하지 않으므로 `minItems`는 사용하지 않습니다. `items: false`는 튜플을 닫고, `items`를 생략하거나 `true`로 두면 `...any[]`가 붙으며, `items` 스키마는 접두부 뒤의 위치만 지정합니다(`...boolean[]`). 이는 `any[]`보다 좁은 형이고, 형이 지정된 `items`가 더 이상 접두부 위치의 형을 정하지 않으므로, 자유로운 위치·초과 항목·rest 형으로 취급한 접두부 위치에 의존하던 코드는 컴파일되지 않을 수 있습니다. 넓어졌거나 리터럴이 아닌 `prefixItems`, `additionalItems`를 쓰는 구식 `items` 배열은 기존 `items` 추론을 유지합니다.
-
-모델링하지 않은 것은 좁히지 않고 폴백합니다. 리터럴이 아닌 `properties`(예: `Dictionary<JSONSchema>`)는 `Record<string, any>`, 유한한 `prefixItems`가 없는 `items: false`는 `any[]`가 됩니다. `['string', 'number']` 같은 다중 타입은 `string | number`가 됩니다.
-
-### 공통 BasicSchema 필드
-
-모든 타입 스키마는 `BasicSchema`에서 상속된 다음 공통 필드를 포함합니다.
-
-| 필드                | 타입                 | 설명                        |
-| ------------------- | -------------------- | --------------------------- |
-| `$defs`             | `Dictionary<Schema>` | 재사용 가능한 스키마 정의   |
-| `if/then/else`      | `Partial<Schema>`    | 조건부 스키마               |
-| `not`               | `Partial<Schema>`    | 부정 스키마                 |
-| `allOf/anyOf/oneOf` | `Partial<Schema>[]`  | 합성 스키마                 |
-| `const`             | `Nullable<Type>`     | 상수 값 제약                |
-| `default`           | `Nullable<Type>`     | 기본값                      |
-| `enum`              | `Nullable<Type>[]`   | 허용 값 목록                |
-| `nullable`          | `boolean`            | OpenAPI 3.0 nullable 플래그 |
-| `readOnly`          | `boolean`            | 읽기 전용 힌트              |
-| `disabled`          | `boolean`            | 비활성화 힌트               |
-| `options`           | `Options`            | 커스텀 확장 옵션            |
-
-### 타입별 추가 필드
-
-#### NumberSchema
-
-```typescript
-minimum?: number;           // 포함 최솟값
-maximum?: number;           // 포함 최댓값
-exclusiveMinimum?: number;  // 제외 최솟값
-exclusiveMaximum?: number;  // 제외 최댓값
-multipleOf?: number;
-format?: string;            // 'float' | 'double' | 커스텀
-```
-
-#### StringSchema
-
-```typescript
-minLength?: number;
-maxLength?: number;
-pattern?: string;   // 정규식
-format?: string;    // 'email' | 'date' | 'uri' | 'uuid' | 커스텀
-```
-
-#### ArraySchema
-
-```typescript
-items?:           Schema | false;      // 모든 배열 항목의 스키마
-prefixItems?:     Schema[];            // 튜플 항목 스키마 (JSON Schema 2020+)
-contains?:        Partial<Schema>;
-minItems?:        number;
-maxItems?:        number;
-uniqueItems?:     boolean;
-additionalItems?: Partial<Schema> | boolean;
-```
-
-#### ObjectSchema
-
-```typescript
-properties?:           Dictionary<Schema>;          // 명명된 프로퍼티 스키마
-patternProperties?:    Dictionary<Schema>;          // 정규식 키 프로퍼티 스키마
-additionalProperties?: boolean | Partial<Schema>;  // 추가 프로퍼티 스키마
-required?:             string[];                   // 필수 프로퍼티 목록
-minProperties?:        number;
-maxProperties?:        number;
-dependentRequired?:    Dictionary<string[]>;
-dependentSchemas?:     Dictionary<Partial<Schema>>;
-```
-
----
-
-## resolveReference 유틸리티
-
-```typescript
-import { resolveReference } from '@winglet/json-schema';
-
-function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined;
-```
-
-자기 완결적인 스키마(모든 참조를 `$defs` 또는 `definitions`에 정의하는 스키마)의 모든 내부 `$ref` 포인터를 해석하는 편의 유틸리티입니다.
-
-**작동 방식 (2단계):**
-
-1. 스키마를 스캔하여 해석되지 않은 모든 `$ref` 노드를 찾습니다. `@winglet/json` JSON 포인터의 `getValue`를 사용하여 스키마 내에서 각 ref를 조회합니다. `Map<refPath, resolvedSchema>`를 빌드합니다.
-2. 1단계의 맵을 `resolveReference` 옵션으로 사용하여 재스캔하고 모든 ref를 인라인으로 만들어 처리된 스키마를 `getValue()`로 반환합니다.
-
-**사용 시기:**
-
-- 스키마가 자기 완결적인 경우 (모든 `$ref`가 `#/definitions/...` 또는 `#/$defs/...`를 가리킴)
-- `$ref`가 없는 완전히 인라인된 스키마가 필요한 경우
-- 커스텀 해석 로직이 필요 없는 경우
-
-**커스텀 해석이 필요한 경우** `JSONSchemaScanner`를 직접 사용하세요.
-
-```typescript
-const inlined = new JSONSchemaScanner({
-  options: {
-    resolveReference: (ref, entry, context) => myCustomResolver(ref),
-  },
-})
-  .scan(schema)
-  .getValue();
-```
-
----
-
-## 사용 패턴
-
-### 패턴 1: 스키마 분석
-
-아무것도 수정하지 않고 스키마를 순회하며 보고서를 작성합니다.
-
-```typescript
-const paths: string[] = [];
-const required: string[] = [];
-
-new JSONSchemaScanner({
-  visitor: {
-    enter: ({ keyword, dataPath, schema }) => {
-      if (keyword !== 'properties') return;
-      paths.push(dataPath);
-      if (hasNullInType(schema)) return; // nullable은 선택 사항일 가능성이 높음
-    },
-  },
-}).scan(schema);
-```
-
-### 패턴 2: 스키마 변환
-
-순회 중 추가 메타데이터로 스키마를 보강합니다.
-
-```typescript
-import { isNumberSchema, isStringSchema } from '@winglet/json-schema/filter';
-
-const enriched = new JSONSchemaScanner({
-  options: {
-    mutate: ({ schema, dataPath }) => {
-      if (isStringSchema(schema) && !schema.title)
-        return { ...schema, title: dataPath.split('/').pop() };
-      if (isNumberSchema(schema) && schema.minimum === undefined)
-        return { ...schema, minimum: 0 };
-    },
-  },
-})
-  .scan(schema)
-  .getValue();
-```
-
-### 패턴 3: 커스텀 리졸버로 $ref 인라인화
-
-외부 레지스트리에서 참조를 해석합니다.
-
-```typescript
-const registry: Record<string, UnknownSchema> = {
-  '#/definitions/Address': {
-    type: 'object',
-    properties: { city: { type: 'string' } },
-  },
-};
-
-const inlined = new JSONSchemaScanner({
-  options: {
-    resolveReference: (ref) => registry[ref],
-  },
-})
-  .scan(schema)
-  .getValue();
-```
-
-### 패턴 4: 비동기 스키마 합성
-
-순회 중 원격 스키마를 가져와 복합 스키마를 빌드합니다.
-
-```typescript
-import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
-
-const schemaCache = new Map<string, UnknownSchema>();
-
-const scanner = new JSONSchemaScannerAsync({
-  options: {
-    resolveReference: async (ref) => {
-      if (schemaCache.has(ref)) return schemaCache.get(ref)!;
-      const schema = await fetch(ref).then((r) => r.json());
-      schemaCache.set(ref, schema);
-      return schema;
-    },
-  },
-});
-
-const composed = await scanner.scan(rootSchema).then((s) => s.getValue());
-```
-
-### 패턴 5: 조건부 순회
-
-`filter`를 사용하여 스키마 속성에 따라 전체 서브트리를 건너뜁니다.
-
-```typescript
-const scanner = new JSONSchemaScanner({
-  options: {
-    // 읽기 전용 필드와 그 자손 건너뛰기
-    filter: ({ schema }) => !schema.readOnly,
-  },
-  visitor: {
-    enter: ({ path }) => console.log('방문 중', path),
-  },
-});
-```
-
-### 패턴 6: 타입 안전 스키마 빌딩
-
-`InferJSONSchema`를 사용하여 컴파일 타임 타입 검사로 스키마를 작성합니다.
-
-```typescript
-import type { InferJSONSchema } from '@winglet/json-schema';
-
-interface FormFieldOptions {
-  placeholder?: string;
-  autocomplete?: string;
-}
-
-// 값 타입으로부터 스키마 타입 추론
-const nameSchema: InferJSONSchema<string, FormFieldOptions> = {
-  type: 'string',
-  minLength: 1,
-  options: { placeholder: '이름 입력', autocomplete: 'name' },
-};
-
-const ageSchema: InferJSONSchema<number | null, FormFieldOptions> = {
-  type: ['number', 'null'],
-  minimum: 0,
-  options: { placeholder: '나이 입력' },
-};
-```
-
-### 패턴 7: 스캐너 인스턴스 재사용
-
-`scan()`은 각 호출 시 내부 상태를 초기화합니다. 동일한 스캐너 인스턴스를 안전하게 재사용할 수 있습니다.
-
-```typescript
-const scanner = new JSONSchemaScanner({
-  visitor: myVisitor,
-  options: myOptions,
-});
-
-const result1 = scanner.scan(schema1).getValue();
-const result2 = scanner.scan(schema2).getValue();
-// result1과 result2는 독립적
-```
-
----
-
-## 호환성
-
-| 환경    | 최소 버전 |
-| ------- | --------- |
-| Node.js | 16.11.0   |
-| Chrome  | 94        |
-| Firefox | 93        |
-| Safari  | 15        |
-
-ESM(`import`)과 CommonJS(`require`) 빌드가 모두 포함됩니다. 레거시 환경의 경우 Babel 또는 SWC를 사용하여 ES2022 구문을 트랜스파일하세요.
-
-**의존성:**
-
-- `@winglet/common-utils` — 객체 클로닝, 유틸리티 함수
-- `@winglet/json` — JSON 포인터 연산 (`getValue`, `setValue`, `escapeSegment`)
