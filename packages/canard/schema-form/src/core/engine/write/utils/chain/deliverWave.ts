@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { prepareFieldNodeValidation } from '../../../validation';
 import { captureChainError } from './captureChainError';
@@ -32,7 +34,7 @@ export const deliverWave = <Self extends FieldNodeRecord<Self>>(
   const fixed: {
     node: Self;
     event: FieldNodeDelivery;
-    listeners: ((event: FieldNodeDelivery) => void)[];
+    listeners: Fn<[event: FieldNodeDelivery]>[];
   }[] = [];
   for (const [candidate, event] of pending) {
     if (!isWaveNode<Self>(candidate, runtime)) continue;

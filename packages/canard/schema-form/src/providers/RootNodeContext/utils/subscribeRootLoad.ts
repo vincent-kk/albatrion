@@ -1,5 +1,7 @@
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
+import type { Fn } from '@aileron/declare';
+
 import { FieldNodeEventType } from '@/schema-form/core';
 
 import type { RootLoad, RootLoadStore } from '../type';
@@ -11,10 +13,7 @@ import { reportRootLoadValidation } from './reportRootLoadValidation';
  * @param store - Provider-owned validation report retained across root replacements
  * @returns A cleanup function that releases the root subscription
  */
-export const subscribeRootLoad = (
-  load: RootLoad,
-  store: RootLoadStore,
-): (() => void) =>
+export const subscribeRootLoad = (load: RootLoad, store: RootLoadStore): Fn =>
   load.root?.subscribe(({ type }) => {
     if (!load.prepared || load.retired || !load.root) return;
     if (type & FieldNodeEventType.UpdateGlobalError)

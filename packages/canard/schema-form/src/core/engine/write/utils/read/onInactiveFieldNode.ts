@@ -1,5 +1,7 @@
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { InactiveValueResolver } from '../../../types/controls';
 
@@ -12,7 +14,7 @@ import type { InactiveValueResolver } from '../../../types/controls';
 export const onInactiveFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   listener: InactiveValueResolver<unknown>,
-): (() => void) => {
+): Fn => {
   if (node.disposed || node.rootNode.disposed) return NOOP_FUNCTION;
   const runtime = node.runtime;
   const listeners = (runtime.inactiveListeners ??= new Map());

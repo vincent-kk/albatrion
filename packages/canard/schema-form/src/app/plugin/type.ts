@@ -263,14 +263,17 @@ export interface ValidatorPlugin {
    */
   bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
-  compile: (jsonSchema: JSONSchema) => ValidateFunction;
+  compile: Fn<[jsonSchema: JSONSchema], ValidateFunction>;
   /**
    * Compile a synchronous guard for an authored schema pointer in the copy.
    * @param root - Engine-owned copy root, whether or not `compile` has run for it.
    * @param pointer - Authored schema location preserved in the copy.
    * @returns A boolean predicate; registers the root independently without modifying it.
    */
-  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  compileGuard(
+    root: JSONSchema,
+    pointer: string,
+  ): Fn<[value: unknown], boolean>;
   /**
    * Release a root's validator resources when its cache entry is evicted.
    * @param root - Engine-owned copy root, whether or not `compile` has run for it.

@@ -7,10 +7,10 @@ export class FocusRequest {
   /** Request-local listener and reservation disposals, in registration order. */
   private readonly cleanups: Fn[] = [];
   /** Load identity ignores the temporary unmounted state during effect replay. */
-  private readonly isCurrentLoad: () => boolean;
+  private readonly isCurrentLoad: Fn<[], boolean>;
 
   /** @param isCurrentLoad - Checks the issued load and root, never effect-mounted state. */
-  constructor(isCurrentLoad: () => boolean) {
+  constructor(isCurrentLoad: Fn<[], boolean>) {
     this.isCurrentLoad = isCurrentLoad;
   }
   /** True only while uncancelled and still bound to the issued load. */

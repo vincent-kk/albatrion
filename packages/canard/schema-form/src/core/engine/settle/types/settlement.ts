@@ -1,4 +1,4 @@
-import type { Dictionary, Nullable } from '@aileron/declare';
+import type { Dictionary, Fn, Nullable } from '@aileron/declare';
 
 import type { SchemaFormError } from '../../../../errors';
 import type {
@@ -250,7 +250,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Per-host eligibility and watched values for the current wheel round only. */
   gateSelectionRounds?: Map<Self, GateSelectionRound>;
   /** Restore the verify-only dirty observer even when a settlement throws. */
-  restoreGateSelectionDirty?: () => void;
+  restoreGateSelectionDirty?: Fn;
   /** Monotone clock shared by every source registration call site. */
   registrationEpoch?: number;
   /** Latest source registration hit of each immutable split bucket. */
@@ -264,7 +264,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     owners: Set<string>;
     registering: boolean;
     supplementInsertions: number;
-    restore: () => void;
+    restore: Fn;
   };
   /** Only the independent verification pass takes the old source registration path. */
   shadowRegistration?: boolean;

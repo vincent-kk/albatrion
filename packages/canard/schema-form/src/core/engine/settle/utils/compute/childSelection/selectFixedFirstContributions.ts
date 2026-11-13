@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
@@ -22,7 +22,7 @@ export const selectFixedFirstContributions = <
   node: Self,
   context: SettlementContext<Self>,
   prior: Dictionary<Self>,
-  computeChild: (child: Self) => void,
+  computeChild: Fn<[child: Self]>,
   immediate: boolean,
   publication?: { flushed: boolean },
 ): boolean | undefined => {

@@ -1,6 +1,6 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import {
   JSONPointer as $,
@@ -95,7 +95,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   }
   runtime.refreshTargets = refreshTargets;
   let warnings: Optional<MisfitRecord[]>;
-  let warningTasks: Optional<Map<Self, () => void>>;
+  let warningTasks: Optional<Map<Self, Fn>>;
   markCommitDeliveries(context, (node) => {
     if (!context.changedNodes.has(node) || node.detached) return;
     const schemaType = node.schemaType;

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 
 /**
@@ -12,7 +14,7 @@ import type { FieldNodeRecord } from '../../../record';
  */
 export const visitFieldNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
-  visit: (node: Self) => boolean | void,
+  visit: Fn<[node: Self], boolean | void>,
   options?: { readonly owned?: boolean },
 ): void => {
   const owned = options?.owned === true;

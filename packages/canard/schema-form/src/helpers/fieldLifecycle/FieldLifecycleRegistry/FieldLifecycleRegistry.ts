@@ -26,10 +26,10 @@ export class FieldLifecycleRegistry {
   /** Updated on queue changes so idle consumers perform only a property read. */
   private pendingMask = BIT_MASK_NONE;
   /** Consumer-owned nonthrowing error sink. */
-  private readonly onHandlerError: (error: unknown, node: FieldNode) => void;
+  private readonly onHandlerError: Fn<[error: unknown, node: FieldNode]>;
 
   /** @param onHandlerError - Reports handler failures and must never throw. */
-  constructor(onHandlerError: (error: unknown, node: FieldNode) => void) {
+  constructor(onHandlerError: Fn<[error: unknown, node: FieldNode]>) {
     this.onHandlerError = onHandlerError;
   }
 

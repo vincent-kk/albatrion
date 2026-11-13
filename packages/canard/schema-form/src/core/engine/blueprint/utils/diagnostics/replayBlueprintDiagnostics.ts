@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type {
   Blueprint,
   BlueprintCacheEntry,
@@ -9,10 +11,7 @@ import type {
 export function replayBlueprintDiagnostics(
   entry: BlueprintCacheEntry,
   collect: BlueprintOptions['collect'],
-  gather: (
-    blueprint: Blueprint,
-    collector: BlueprintOptions['collect'],
-  ) => void,
+  gather: Fn<[blueprint: Blueprint, collector: BlueprintOptions['collect']]>,
 ): void {
   if (!collect || entry.collectors.has(collect)) return;
   if (!entry.diagnostics) {

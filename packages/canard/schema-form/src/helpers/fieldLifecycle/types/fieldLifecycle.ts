@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 
 import type { FieldLifecycle } from '../constants/FieldLifecycle';
@@ -12,6 +14,7 @@ export interface FieldLifecycleEvent {
 }
 
 /** Pure reader of the event and its closure; returns actions without writing form or DOM state. */
-export type FieldLifecycleHandler = (
-  event: FieldLifecycleEvent,
-) => FieldLifecycleAction;
+export type FieldLifecycleHandler = Fn<
+  [event: FieldLifecycleEvent],
+  FieldLifecycleAction
+>;

@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -50,7 +50,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   prior: Dictionary<Self>,
-  computeChild: (child: Self) => void,
+  computeChild: Fn<[child: Self]>,
   immediate: boolean,
   hasRelocated = true,
   preserveStructure = true,

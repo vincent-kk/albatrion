@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
 import { readFieldNodePathPrefixes } from './readFieldNodePathPrefixes';
@@ -10,9 +12,9 @@ import { readFieldNodePathPrefixes } from './readFieldNodePathPrefixes';
 export const subscribeFieldNodePath = (
   root: FieldNode,
   path: string,
-  onStoreChange: () => void,
-): (() => void) => {
-  const releases: (() => void)[] = [];
+  onStoreChange: Fn,
+): Fn => {
+  const releases: Fn[] = [];
   const release = () => {
     for (const unsubscribe of releases.splice(0)) unsubscribe();
   };

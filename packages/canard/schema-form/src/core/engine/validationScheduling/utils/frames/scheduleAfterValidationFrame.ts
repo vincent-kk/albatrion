@@ -1,5 +1,7 @@
 import { scheduleCancelableMacrotask } from '@winglet/common-utils/scheduler';
 
+import type { Fn } from '@aileron/declare';
+
 import { VALIDATION_FRAME_TIMEOUT_MS } from '../constants';
 import { canScheduleValidationFrame } from './canScheduleValidationFrame';
 
@@ -9,12 +11,12 @@ import { canScheduleValidationFrame } from './canScheduleValidationFrame';
  * @returns Cancellation of every frame, timer and task owned by this slot.
  */
 export const scheduleAfterValidationFrame = (
-  run: (fallback: boolean) => void,
-): (() => void) => {
+  run: Fn<[fallback: boolean]>,
+): Fn => {
   if (!canScheduleValidationFrame())
     return scheduleCancelableMacrotask(() => run(true));
   let done = false;
-  let cancelTask: (() => void) | undefined;
+  let cancelTask: Fn | undefined;
   const cancelFrame = cancelAnimationFrame;
   const cancel = () => {
     done = true;

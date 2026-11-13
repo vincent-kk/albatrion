@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /** Revision base and notification counter owned by one hook subscription. */
 export interface ChildErrorStoreState {
   /** Revision vector establishing the current notification token. */
@@ -13,7 +15,7 @@ export interface ChildErrorStoreState {
 /** React external-store surface owned by one child-error hook instance. */
 export interface ChildErrorStore {
   /** Register one listener and return its complete cleanup. */
-  subscribe(listener: () => void): () => void;
+  subscribe(listener: Fn): Fn;
   /** Read the live token, retaining it while a cold vector is unchanged. */
   getSnapshot(): string;
 }

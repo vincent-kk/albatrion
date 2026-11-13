@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FormHandle, FormProps } from '@/schema-form/components/Form';
 import type { FieldNode, Validator } from '@/schema-form/core';
 import type { FormErrorRecord, SchemaFormError } from '@/schema-form/errors';
@@ -63,9 +65,9 @@ export interface RootLoadStore {
   /** Last aggregate delivered to the consumer, absent before the first report. */
   lastReportedErrors?: FieldNode['globalErrors'];
   /** React subscribers notified when reset replaces the current load. */
-  listeners: Set<() => void>;
+  listeners: Set<Fn>;
   /** Release the active root's validation and diagnostics subscription. */
-  unsubscribe: () => void;
+  unsubscribe: Fn;
 }
 
 /** Binding that exposes the current root and reset to the Form handle. */

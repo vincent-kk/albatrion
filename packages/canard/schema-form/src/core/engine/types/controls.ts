@@ -1,4 +1,4 @@
-import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Nullable, Optional } from '@aileron/declare';
 
 /**
  * Arguments the derive round passes to an authored `injectTo` handler (getInjectToContext).
@@ -35,10 +35,10 @@ export type InactiveValueContext = InjectToContext<
  * @param context - Preceding paths, schemas, parent/root values and form context
  * @returns Replacement retained value; undefined preserves the existing source
  */
-export type InactiveValueResolver<V = unknown> = (
-  value: V,
-  context: InactiveValueContext,
-) => Optional<V>;
+export type InactiveValueResolver<V = unknown> = Fn<
+  [value: V, context: InactiveValueContext],
+  Optional<V>
+>;
 
 /** Literal retained value or its synchronous exit resolver. */
 export type InactiveValue<V = unknown> = V | InactiveValueResolver<V>;

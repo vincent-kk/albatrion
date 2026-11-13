@@ -1,5 +1,7 @@
 import { type CSSProperties, type ChangeEvent, memo } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type { SlotKind } from '../utils/readSlotKind';
 
 /** One empty array row laid out horizontally. */
@@ -23,7 +25,7 @@ export const EmptySlot = memo(function EmptySlot({
   kind: SlotKind;
   readOnly?: boolean;
   disabled?: boolean;
-  onWrite: (index: number, value: unknown) => void;
+  onWrite: Fn<[index: number, value: unknown]>;
 }) {
   if (kind === 'fill')
     return (

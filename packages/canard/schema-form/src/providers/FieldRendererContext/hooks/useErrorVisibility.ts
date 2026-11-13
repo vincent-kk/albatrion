@@ -2,6 +2,8 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   type FieldNode,
   readFieldNodeRevealVersion,
@@ -34,7 +36,7 @@ export const useErrorVisibility = (
     [node, candidate],
   );
   const subscribe = useCallback(
-    (listener: () => void) => {
+    (listener: Fn) => {
       if (!node || !candidate) return NOOP_FUNCTION;
       const unsubscribe = subscribeFieldNodeRevealReleased(node, listener);
       listener();

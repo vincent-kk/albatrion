@@ -7,7 +7,7 @@ import {
 
 import { useTruthyConstant, useVersion } from '@winglet/react-utils/hook';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import {
   BIT_FLAG_00,
@@ -74,7 +74,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
     (refreshDeferral.current & COMPOSING) |
     (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
   const subscribe = useCallback(
-    (onStoreChange: () => void) => {
+    (onStoreChange: Fn) => {
       refreshDeferral.current =
         (refreshDeferral.current & COMPOSING) |
         (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);

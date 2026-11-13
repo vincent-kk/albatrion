@@ -1,4 +1,4 @@
-import type { Nullish } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
@@ -18,8 +18,8 @@ export const subscribeChildErrorStore = (
   node: FieldNode,
   children: readonly FieldNode[] | Nullish,
   state: ChildErrorStoreState,
-  listener: () => void,
-): (() => void) => {
+  listener: Fn,
+): Fn => {
   const revision = readChildErrorSnapshot(node);
   const reconnect = state.closedRevision !== undefined;
   if (!reconnect || revision !== state.closedRevision) {

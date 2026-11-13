@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { visitFieldNodes } from '../../../navigation';
 import { advanceFieldNodeRevealSequence } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
@@ -18,7 +20,7 @@ import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
  */
 export const dispatchVisitSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  visitor: (node: Self) => boolean | void,
+  visitor: Fn<[node: Self], boolean | void>,
 ): void => {
   const runtime = resolveFieldNodeChainRoot(node.rootNode).runtime;
   advanceFieldNodeRevealSequence(node);

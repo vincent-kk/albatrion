@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode } from '../../type';
 
@@ -9,10 +11,7 @@ import type { FieldNode } from '../../type';
  * @returns Nothing; restores the preceding scope even when delivery throws
  * @throws The callback's exception after restoring the observer scope
  */
-export const observeFieldNodeReports = (
-  root: FieldNode,
-  deliver: () => void,
-): void => {
+export const observeFieldNodeReports = (root: FieldNode, deliver: Fn): void => {
   const runtime = requireRuntimeFieldNode(root, true).runtime;
   const previous = runtime.reportingErrors;
   runtime.reportingErrors = true;

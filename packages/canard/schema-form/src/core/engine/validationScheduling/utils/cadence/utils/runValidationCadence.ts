@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { ValidationCadenceState } from '../../../types/validationCadence';
 import { scheduleValidationCadenceFrame } from './scheduleValidationCadenceFrame';
 
@@ -9,8 +11,8 @@ import { scheduleValidationCadenceFrame } from './scheduleValidationCadenceFrame
  * @returns Nothing; callback failures propagate through the host task. */
 export const runValidationCadence = (
   state: ValidationCadenceState,
-  onFrame: () => void,
-  onRun: (fallback: boolean) => void,
+  onFrame: Fn,
+  onRun: Fn<[fallback: boolean]>,
   fallback: boolean,
 ): void => {
   if (state.cancelled) return;

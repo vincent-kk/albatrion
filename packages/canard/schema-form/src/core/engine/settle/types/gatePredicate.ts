@@ -1,4 +1,4 @@
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import type { GateWheelInput } from './gateWheel';
 
@@ -23,7 +23,7 @@ export interface GatePredicate {
   /** Whether input equality proves that reusing the last result is valid. */
   readonly memoizable: boolean;
   /** Execute the expression, strict tag predicate, or lazily bound validator. */
-  readonly evaluate: (inputs: GatePredicateInputs) => Optional<boolean>;
+  readonly evaluate: Fn<[inputs: GatePredicateInputs], Optional<boolean>>;
 }
 
 /** Last successful predicate result, owned by one registered occurrence. */

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { dispatchRelayInput } from '../../../engine';
 import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode, SetValueOption } from '../../type';
@@ -14,6 +16,6 @@ export const relayFieldNodeInput = (
   node: FieldNode,
   input: unknown,
   option: SetValueOption,
-  relay: (value: unknown, option: SetValueOption) => void,
+  relay: Fn<[value: unknown, option: SetValueOption]>,
 ): void =>
   dispatchRelayInput(requireRuntimeFieldNode(node), input, option, relay);

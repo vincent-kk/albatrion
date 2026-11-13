@@ -1,5 +1,7 @@
 import { scheduleCancelableMacrotask } from '@winglet/common-utils/scheduler';
 
+import type { Fn } from '@aileron/declare';
+
 import type { ValidationCadenceState } from '../../../types/validationCadence';
 import { decideValidationCadence } from './decideValidationCadence';
 import { scheduleValidationCadenceFrame } from './scheduleValidationCadenceFrame';
@@ -11,8 +13,8 @@ import { scheduleValidationCadenceFrame } from './scheduleValidationCadenceFrame
  * @returns Nothing; schedules or releases the next host handle. */
 export const observeValidationCadenceFrame = (
   state: ValidationCadenceState,
-  onFrame: () => void,
-  onRun: (fallback: boolean) => void,
+  onFrame: Fn,
+  onRun: Fn<[fallback: boolean]>,
 ): void => {
   if (state.cancelled) return;
   state.cancelPending = undefined;

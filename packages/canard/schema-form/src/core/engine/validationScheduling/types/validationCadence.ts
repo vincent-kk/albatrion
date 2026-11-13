@@ -1,17 +1,19 @@
+import type { Fn } from '@aileron/declare';
+
 /** Domain-free lifetime owned by the caller. */
 export interface ValidationCadence {
   /** Record every incoming request, including requests while a run is pending. */
-  request: () => void;
+  request: Fn;
   /** Permanently stop all future callbacks and pending work. */
-  cancel: () => void;
+  cancel: Fn;
 }
 
 /** Internal phase and host ownership; no validation-domain state enters this record. */
 export interface ValidationCadenceState {
   /** Synchronous start of the caller's work; completion is owned by the caller. */
-  run: () => boolean;
+  run: Fn<[], boolean>;
   /** Injected monotone clock in milliseconds. */
-  now: () => number;
+  now: Fn<[], number>;
   /** Current timing phase. */
   phase: 'idle' | 'leading' | 'watch' | 'carry' | 'running' | 'fallback';
   /** A request since the most recent run start or observed frame. */
@@ -21,5 +23,5 @@ export interface ValidationCadenceState {
   /** Permanent cancellation state. */
   cancelled: boolean;
   /** All currently pending host handles, cancelled together. */
-  cancelPending?: () => void;
+  cancelPending?: Fn;
 }

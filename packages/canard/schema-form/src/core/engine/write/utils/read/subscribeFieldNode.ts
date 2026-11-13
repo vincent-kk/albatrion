@@ -1,5 +1,7 @@
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeListener } from '../../types/listener';
 
@@ -12,7 +14,7 @@ import type { FieldNodeListener } from '../../types/listener';
 export const subscribeFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   listener: FieldNodeListener,
-): (() => void) => {
+): Fn => {
   if (node.disposed || node.rootNode.disposed) return NOOP_FUNCTION;
   const runtime = node.rootNode.runtime;
   const listeners = runtime.listeners ?? new Map();

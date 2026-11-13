@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
@@ -22,7 +24,7 @@ import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
  */
 export const dispatchBatch = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  fn: () => void,
+  fn: Fn,
   origin: 'load' | 'write' = 'write',
 ): void => {
   if (!enterFieldNodeChain(node, origin)) return;

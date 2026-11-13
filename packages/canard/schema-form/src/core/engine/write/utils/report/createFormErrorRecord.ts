@@ -1,4 +1,4 @@
-import type { OmitPartial, Optional } from '@aileron/declare';
+import type { Fn, OmitPartial, Optional } from '@aileron/declare';
 
 import {
   JSONSchemaError,
@@ -25,7 +25,7 @@ export function createFormErrorRecord(
   consumed: boolean,
   code: FormRecordCode,
   level: FormErrorRecord['level'],
-  format: () => string,
+  format: Fn<[], string>,
   fields: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'> &
     Pick<FormErrorRecord, 'origin'>,
 ): Optional<FormErrorRecord>;
@@ -42,7 +42,7 @@ export function createFormErrorRecord(
   consumed: boolean,
   code: FormRecordCode,
   level: FormErrorRecord['level'],
-  format: () => string,
+  format: Fn<[], string>,
   fields?: OmitPartial<PendingFormErrorRecord, 'code' | 'level' | 'message'>,
 ): Optional<PendingFormErrorRecord>;
 /**
@@ -61,7 +61,7 @@ export function createFormErrorRecord(
   consumed: boolean,
   code: FormRecordCode | BlueprintDiagnostic,
   levelOrError?: FormErrorRecord['level'] | unknown,
-  format?: () => string,
+  format?: Fn<[], string>,
   fields?: OmitPartial<PendingFormErrorRecord, 'code' | 'level' | 'message'>,
 ): Optional<PendingFormErrorRecord> {
   if (!consumed) return undefined;

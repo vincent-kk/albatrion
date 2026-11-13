@@ -2,6 +2,8 @@ import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
 
+import type { Fn } from '@aileron/declare';
+
 import { DECLARATION_OPTION_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
@@ -19,7 +21,7 @@ export const mergeHintGroup = (
   earlier: unknown,
   later: unknown,
   omitVirtual: boolean,
-  isAtomic?: (value: unknown) => boolean,
+  isAtomic?: Fn<[value: unknown], boolean>,
 ): unknown => {
   let source = later;
   if (omitVirtual && isPlainObject(later))

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeState } from '../../../types/state';
 import type { WriteOption } from '../../../types/value';
@@ -27,7 +29,7 @@ export const dispatchRelayInput = <
   node: Self,
   input: unknown,
   option: Option,
-  relay: (value: unknown, option: Option) => void,
+  relay: Fn<[value: unknown, option: Option]>,
 ): void => {
   if (node.disposed || node.rootNode.disposed) return;
   const marking = isBatchMarking(node);
