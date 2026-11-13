@@ -2,21 +2,20 @@ import React from 'react';
 
 import type { Decorator, Preview } from '@storybook/react-vite';
 
-import '../stories/styles/tokens.css';
-import '../stories/styles/form.css';
-import '../stories/styles/frame.css';
-
-import { withStoryPanels } from '../stories/components/panels/withStoryPanels';
-
 import {
   LOCAL_STORAGE_THEME_KEY,
   Theme,
 } from '../../../aileron/constants/storybook';
+import { withStoryPanels } from '../stories/components/panels/withStoryPanels';
+import '../stories/styles/form.css';
+import '../stories/styles/frame.css';
+import '../stories/styles/tokens.css';
 
 const preview: Preview = {
   parameters: {
     controls: {
-      exclude: /^(scenario|propStages|formProps|providerProps|layout|on[A-Z]\w*)$/,
+      exclude:
+        /^(scenario|propStages|formProps|providerProps|layout|on[A-Z]\w*)$/,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,

@@ -9,7 +9,7 @@ import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCa
 
 // filid:contract settle-gate-table-loading
 describe('gate table load and reset observations', () => {
-  it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])(
+  it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])(
     'load/reset fixture %i',
     async (index) => {
       const fixture = gateTableLoadingCases[index];

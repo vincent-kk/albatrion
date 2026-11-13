@@ -5,16 +5,21 @@ import {
   WriteOption,
 } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { engineModes } from '../../utils/cache/engineModes';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
 import * as registration from '../utils/dependencies/registerRecalculation';
 import * as supplementation from '../utils/dependencies/supplementSplitOwner';
+import * as flushing from '../utils/gates/flushPendingGateReads';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import * as expressions from '../utils/gates/getGateExpression';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import * as reads from '../utils/gates/readProjectedValue';
 import * as inputs from '../utils/gates/recordGateInput';
+import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { gateTableLoadingCases } from './fixtures/gate-table/gateTableLoadingCases';
 import { gateTableScene } from './fixtures/gateTableScene';
 
 const previousMode = engineModes.gateSelection;
@@ -138,6 +143,37 @@ describe('table invariants reject actual positional violations', () => {
       ),
     ).toThrow('S2');
     expect(gateSelectionTable.violations).toBe(before + 1);
+  });
+
+  it('S2 rejects a load pre-publication that adds a changed node', () => {
+    const previousWheel = engineModes.gateWheel;
+    try {
+      engineModes.setMode('gateWheel', 'skip');
+      engineModes.setMode('gateSelection', 'verify');
+      const { root } = createTestTree(gateTableLoadingCases[14].schema);
+      loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
+      writeFieldNode(
+        root.structure!.country,
+        'US',
+        FieldNodeWriteKind.Input,
+        WriteOption.Overwrite,
+      );
+      const { root: outsider } = createTestTree({ type: 'string' });
+      const flush = flushing.flushPendingGateReads;
+      vi.spyOn(flushing, 'flushPendingGateReads').mockImplementation(
+        (node, path, context) => {
+          flush(node, path, context);
+          if (path === '/concierge') context.changedNodes.add(outsider);
+        },
+      );
+      const before = gateSelectionTable.violations;
+      expect(() =>
+        resetFieldNodeForm(root, undefined, WriteOption.Overwrite),
+      ).toThrow('S2 table pre-publication: /concierge');
+      expect(gateSelectionTable.violations).toBe(before + 1);
+    } finally {
+      engineModes.setMode('gateWheel', previousWheel);
+    }
   });
 
   it('S2 rejects even a transient dirty mark between original gate sites', () => {

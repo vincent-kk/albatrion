@@ -323,10 +323,10 @@ export interface BasicSchema<
   $defs?: Dictionary<Schema>;
   /** Conditional schema (if-then-else) */
   if?: Partial<Schema>;
-  /** Schema to apply if 'if' is valid */
-  then?: Partial<Schema>;
-  /** Schema to apply if 'if' is invalid */
-  else?: Partial<Schema>;
+  /** Schema to apply if 'if' is valid; a boolean schema accepts (`true`) or rejects (`false`) every value */
+  then?: Partial<Schema> | boolean;
+  /** Schema to apply if 'if' is invalid; `else: false` makes a failed guard reject the value */
+  else?: Partial<Schema> | boolean;
   /** Schema that must NOT be valid */
   not?: Partial<Schema>;
   /** All schemas must be valid */

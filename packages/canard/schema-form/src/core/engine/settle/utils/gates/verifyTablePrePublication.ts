@@ -7,12 +7,14 @@ import { flushPendingGateReads } from './flushPendingGateReads';
 import { verifyGateSelection } from './verifyGateSelection';
 
 /**
- * Verify that a table step's load publication cannot change the state before its read.
+ * Verify that a table step's load publication adds no node to `changedNodes`.
+ * Publishing removes hosts from `pendingOutputs` by design, so that set is not compared:
+ * an `if` or discriminator gate flushes its whole host even when nothing new changes.
  * Keep shadow publication-call counts unchanged; this S2′-style check is skip-only.
  * @param node - Eligible host whose baseline terminal is already in its structure
  * @param context - Verify-mode skip load with pending outputs before the authored gate site
  * @param entry - Table step whose inherited gate reads that baseline terminal
- * @returns Nothing; checks both ordered sets and throws if publication has an effect
+ * @returns Nothing; throws if publication changes the `changedNodes` sequence
  */
 export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -20,32 +22,11 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   entry: BlueprintChildEntry,
 ): void => {
   const path = appendSegment(node.path, entry.name);
-  const pending = [...context.pendingOutputs!];
   const changed = [...context.changedNodes];
   flushPendingGateReads(entry.node, path, context);
-  const afterPending = [...(context.pendingOutputs ?? [])];
   const afterChanged = [...context.changedNodes];
-  let matches = pending.length === afterPending.length;
-  if (matches) {
-    for (let index = 0, count = pending.length; index < count; index++) {
-      const host = pending[index];
-
-      if (!(host === afterPending[index])) {
-        matches = false;
-        break;
-      }
-    }
-  }
-  let matches2 = matches && changed.length === afterChanged.length;
-  if (matches2) {
-    for (let index = 0, count = changed.length; index < count; index++) {
-      const host = changed[index];
-
-      if (!(host === afterChanged[index])) {
-        matches2 = false;
-        break;
-      }
-    }
-  }
-  verifyGateSelection(matches2, 'S2 table pre-publication: ' + path);
+  let matches = changed.length === afterChanged.length;
+  for (let index = 0; matches && index < changed.length; index++)
+    matches = changed[index] === afterChanged[index];
+  verifyGateSelection(matches, 'S2 table pre-publication: ' + path);
 };

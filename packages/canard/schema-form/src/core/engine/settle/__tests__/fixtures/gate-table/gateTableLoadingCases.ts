@@ -127,4 +127,32 @@ export const gateTableLoadingCases: (typeof gateSelectionCases)[number][] = [
     input: { kind: 'a', pa: 1 },
     writes: [{ value: { pa: 1, pb: 2 }, reset: 'form' }],
   },
+  {
+    name: 'load reset after an earlier if rule re-enters',
+    schema: {
+      type: 'object',
+      properties: {
+        country: { type: 'string', default: 'KR' },
+        membership: { type: 'string', default: 'basic' },
+      },
+      allOf: [
+        {
+          if: { properties: { country: { const: 'KR' } }, required: ['country'] },
+          then: { properties: { postalCode: { type: 'string' } } },
+        },
+        {
+          if: {
+            properties: { membership: { const: 'premium' } },
+            required: ['membership'],
+          },
+          then: { properties: { concierge: { type: 'string' } } },
+        },
+      ],
+    },
+    input: undefined,
+    writes: [
+      { path: '/country', value: 'US' },
+      { value: undefined, reset: 'form' },
+    ],
+  },
 ];
