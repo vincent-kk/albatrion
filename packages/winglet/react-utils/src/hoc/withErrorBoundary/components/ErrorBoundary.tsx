@@ -1,15 +1,19 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import { FallbackMessage } from './FallbackMessage';
 
 /** Reports a caught render error with only React's component stack. */
-export type ErrorBoundaryReporter = (
-  error: unknown,
-  info: { componentStack?: string },
-) => void;
+export type ErrorBoundaryReporter = Fn<
+  [error: unknown, info: { componentStack?: string }]
+>;
 
 /** Reads an optional render error reporter from the current React context. */
-export type UseErrorBoundaryReporter = () => ErrorBoundaryReporter | undefined;
+export type UseErrorBoundaryReporter = Fn<
+  [],
+  ErrorBoundaryReporter | undefined
+>;
 
 interface Props {
   children: ReactNode;
