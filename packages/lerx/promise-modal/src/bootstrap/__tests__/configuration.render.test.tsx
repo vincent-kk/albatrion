@@ -11,9 +11,9 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { ModalManager } from '@/promise-modal/app';
 import { alertHandler, promptHandler } from '@/promise-modal/core';
-import { useModal } from '@/promise-modal/hooks/useModal';
-import { useModalDuration } from '@/promise-modal/hooks/useModalDuration';
+import { useModal } from '@/promise-modal/core/handle';
 import { useConfigurationOptions } from '@/promise-modal/providers';
+import { useModalDuration } from '@/promise-modal/providers/ModalManagerContext';
 import type { ModalFrameProps } from '@/promise-modal/types/frame';
 
 import { BootstrapProvider } from '../BootstrapProvider';

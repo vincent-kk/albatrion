@@ -11,7 +11,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { ModalManager } from '@/promise-modal/app';
 import { confirmHandler, promptHandler } from '@/promise-modal/core';
-import { useModal } from '@/promise-modal/hooks/useModal';
+import { useModal } from '@/promise-modal/core/handle';
 
 import { BootstrapProvider } from '../BootstrapProvider';
 

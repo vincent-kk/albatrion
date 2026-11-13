@@ -4,12 +4,12 @@ import { isString } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 import { renderComponent } from '@winglet/react-utils/render';
 
-import type { AlertNode } from '@/promise-modal/core';
+import type { AlertNode } from '@/promise-modal/core/node';
+import type { ModalActions } from '@/promise-modal/core/node';
 import {
   useConfigurationContext,
   useUserDefinedContext,
 } from '@/promise-modal/providers';
-import type { ModalActions } from '@/promise-modal/types/modal';
 
 interface AlertInnerProps<B> {
   modal: AlertNode<B>;

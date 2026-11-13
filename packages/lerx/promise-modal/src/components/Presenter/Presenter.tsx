@@ -2,9 +2,9 @@ import { memo, useCallback } from 'react';
 
 import { ErrorBoundary } from '@winglet/react-utils/hoc';
 
+import { useSubscribeModal } from '@/promise-modal/app';
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';
-import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
 import {
   useConfigurationOptions,
   useModalManager,

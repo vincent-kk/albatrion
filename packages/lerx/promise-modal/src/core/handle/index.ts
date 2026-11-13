@@ -8,3 +8,4 @@ export type {
   OverridableHandleProps,
   PromptProps,
 } from './types/type';
+export { useModal } from './hooks/useModal';

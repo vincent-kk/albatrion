@@ -2,7 +2,7 @@ import type { styleManagerFactory } from '@winglet/style-utils/style-manager';
 
 import type { Fn } from '@aileron/declare';
 
-import type { ModalNode } from '@/promise-modal/core';
+import type { ModalNode } from '@/promise-modal/core/node';
 import type { Modal } from '@/promise-modal/types/modal';
 
 /** Queued requests retain both Promise channels while no portal is attached. */

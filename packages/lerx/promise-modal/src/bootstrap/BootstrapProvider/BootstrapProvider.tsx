@@ -7,7 +7,7 @@ import {
   useMemo,
 } from 'react';
 
-import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
+import { usePathname as useDefaultPathname } from '@/promise-modal/app';
 
 import { bootstrap } from './helpers/bootstrap';
 import { useInitialComponents } from './hooks/useInitialComponents';

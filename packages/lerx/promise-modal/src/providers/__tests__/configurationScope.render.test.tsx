@@ -6,8 +6,8 @@ import {
   useConfigurationOptions,
 } from '@/promise-modal/providers';
 
-import { useDestroyAfter } from '../useDestroyAfter';
-import { useModalDuration } from '../useModalDuration';
+import { useDestroyAfter } from '../ModalManagerContext/hooks/useDestroyAfter';
+import { useModalDuration } from '../ModalManagerContext/hooks/useModalDuration';
 
 it.each([
   ['useModalOptions', () => useConfigurationOptions()],

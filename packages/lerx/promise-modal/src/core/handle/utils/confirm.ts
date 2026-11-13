@@ -1,7 +1,7 @@
-import type { ConfirmNode } from '@/promise-modal/core';
+import type { ConfirmNode } from '@/promise-modal/core/node';
 
-import { dispatchModal } from './dispatchModal';
 import type { ConfirmProps } from '../types/type';
+import { dispatchModal } from './dispatchModal';
 
 /**
  * Creates and manages a Confirm modal.

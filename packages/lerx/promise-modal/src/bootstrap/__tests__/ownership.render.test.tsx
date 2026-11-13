@@ -10,12 +10,12 @@ import {
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { ModalManager } from '@/promise-modal/app';
+import { useActiveModalCount } from '@/promise-modal/app';
 import {
   alertHandler,
   confirmHandler,
   promptHandler,
 } from '@/promise-modal/core';
-import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 
 import { BootstrapProvider } from '../BootstrapProvider';
 
@@ -127,7 +127,7 @@ it('R10 leaves an existing frame untouched when another modal opens', () => {
     ({
       children,
     }: import('react').PropsWithChildren<
-      import('@/promise-modal/types').ModalFrameProps
+      import('@/promise-modal/types/frame').ModalFrameProps
     >) => <div>{children}</div>,
   );
   render(<BootstrapProvider ForegroundComponent={frame} />);

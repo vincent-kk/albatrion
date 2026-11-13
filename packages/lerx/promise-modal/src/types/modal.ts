@@ -1,7 +1,5 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import type { ModalNode } from '@/promise-modal/core';
-
 import type { AlertModal } from './alert';
 import type { ConfirmModal } from './confirm';
 import type { PromptModal } from './prompt';
@@ -19,7 +17,7 @@ export type ManagedEntity = {
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
 interface ModalIdProps {
-  modalId: ModalNode['id'];
+  modalId: ManagedEntity['id'];
 }
 
 /** Identifies one independently subscribed modal presenter. */
@@ -36,36 +34,8 @@ export interface ModalHandlersWithId {
   onRejectAll: Fn<[error: unknown]>;
   /** Raises a node through the store-owned stacking order. */
   onChangeOrder: Fn<[modalId: number]>;
-  onConfirm: Fn<[modalId: ModalNode['id']]>;
-  onClose: Fn<[modalId: ModalNode['id']]>;
-  onChange: Fn<[modalId: ModalNode['id'], value: any]>;
-  onDestroy: Fn<[modalId: ModalNode['id']]>;
+  onConfirm: Fn<[modalId: ManagedEntity['id']]>;
+  onClose: Fn<[modalId: ManagedEntity['id']]>;
+  onChange: Fn<[modalId: ManagedEntity['id'], value: any]>;
+  onDestroy: Fn<[modalId: ManagedEntity['id']]>;
 }
-
-export type ModalActions = {
-  modal: ModalNode | undefined;
-  onConfirm: Fn;
-  onClose: Fn;
-  onChange: Fn<[value: any]>;
-  onDestroy: Fn;
-};
-
-/** Read-only metadata for application predicates, without mutation methods. */
-export type ModalNodeView = Readonly<
-  Pick<
-    ModalNode,
-    | 'id'
-    | 'type'
-    | 'group'
-    | 'subtype'
-    | 'initiator'
-    | 'alive'
-    | 'visible'
-    | 'settled'
-    | 'dimmed'
-    | 'manualDestroy'
-    | 'closeOnBackdropClick'
-    | 'closeOnEscape'
-    | 'duration'
-  >
->;
