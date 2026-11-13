@@ -9,9 +9,6 @@ import type { LabelRendererProps } from '@/schema-form/types';
 
 import { hasArrayAncestor } from './hasArrayAncestor';
 
-/** Only address deliveries invalidate a mounted label part. */
-const RERENDERING_EVENT = FieldNodeEventType.UpdatePath;
-
 /**
  * Bind a label, tracking mutable addresses and directly rendering the pure fallback.
  * @param Renderer - Registered component that owns the label root.
@@ -54,7 +51,7 @@ export const createLabelPart = (
   return memo(
     hasArrayAncestor(node)
       ? function Label(props: Partial<LabelRendererProps>) {
-          useFieldNodeTracker(node, RERENDERING_EVENT);
+          useFieldNodeTracker(node, FieldNodeEventType.UpdatePath);
           return render(props);
         }
       : render,

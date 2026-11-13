@@ -9,9 +9,6 @@ import type { ErrorMessageRendererProps } from '@/schema-form/types';
 
 import { hasArrayAncestor } from './hasArrayAncestor';
 
-/** Only address deliveries invalidate a mounted error part. */
-const RERENDERING_EVENT = FieldNodeEventType.UpdatePath;
-
 /**
  * Bind an error part, tracking mutable addresses and directly rendering the pure fallback.
  * @param Renderer - Registered component that owns the error root.
@@ -48,7 +45,7 @@ export const createErrorMessagePart = (
   return memo(
     hasArrayAncestor(node)
       ? function ErrorMessage(props: Partial<ErrorMessageRendererProps>) {
-          useFieldNodeTracker(node, RERENDERING_EVENT);
+          useFieldNodeTracker(node, FieldNodeEventType.UpdatePath);
           return render(props);
         }
       : render,
