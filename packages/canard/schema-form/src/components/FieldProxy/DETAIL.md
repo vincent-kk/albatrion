@@ -23,6 +23,8 @@ Label과 ErrorMessage는 각각 자기 렌더러·node·jsonSchema·required에 
 - 재귀 입력 수명은 [FieldInputBridge](./components/FieldInputBridge/DETAIL.md), 지연 DOM은 [DeferredFieldProxy](./components/DeferredFieldProxy/DETAIL.md)가 소유합니다. 재귀 렌더 props 형은 본체가 소유하고 NodeProxy prop으로 구현을 전달하여 자식의 역참조 순환을 막습니다.
 - 노드 값은 가지 렌더러에도 전달되는 계약이므로 UpdateValue 구독을 성능만을 이유로 제거하지 않습니다. 형제 입력이 memo여도 부모가 받는 value가 낡아질 수 있습니다.
 
+부모의 자식 재수출과 FieldInputBridge의 조상 props·required 구획 참조는 저장소 원칙 4의 위로 열린 의존입니다. 개별 구현 파일이 부모 배럴을 역참조하지 않으므로 두 모듈을 합친 집계 순환에만 좁은 예외를 둡니다. 이 예외는 부모 진입점의 역참조나 새 형제 내부 참조를 허용하지 않습니다.
+
 ## Acceptance Criteria
 
 ### bound-parts — 독립적인 부품 정체성과 좁은 전달

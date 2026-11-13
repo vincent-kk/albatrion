@@ -26,6 +26,8 @@ accessor 거부는 일반 데이터 객체의 descriptor 검사에 대한 보장
 
 일반 JSON에 대해 JSON.stringify보다 빠르다는 보장은 없습니다. graph 검증·태그·참조 보존 비용을 키 생성과 분리하여 측정합니다. stringify, parse, roundtrip, omit을 각각 측정하며 입력 생성은 측정 밖에 둡니다. 밀집 배열 실험 형식은 공개 계약에 포함하지 않습니다. wire 버전 변경은 기존 저장 문자열의 복원 호환성을 검토한 뒤 결정합니다.
 
+parser가 encoder의 wire 타입을 읽고 encoder가 조상의 직렬화 정책 타입을 읽는 방향은 저장소 원칙 4를 따릅니다. 부모의 재수출까지 합친 세 소유 경계의 집계 순환에만 예외를 두어, 공유 정책을 자식 구현에 복제하거나 부모 배럴을 역참조하지 않습니다.
+
 ## Acceptance Criteria
 
 ### graph-primitives — 스칼라 보존

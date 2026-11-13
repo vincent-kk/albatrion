@@ -61,6 +61,58 @@
         "**/winglet/style-utils/src/styleManager",
         "**/winglet/style-utils/src/utils/cx"
       ]
+    },
+    "spec-document-case-cap": {
+      "exempt": [
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/array.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/controls.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/derive.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/differential.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/exit.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/fill.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/notify.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/settle.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/union.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/validation.spec.ts",
+        "**/packages/canard/schema-form/src/core/__tests__/scenarios/value.spec.ts"
+      ]
+    },
+    "test-record-case-cap": {
+      "exempt": [
+        "**/packages/canard/schema-form-ajv6-plugin/src/__tests__/parity.guard.test.ts",
+        "**/packages/canard/schema-form-ajv6-plugin/src/__tests__/parity.lifetime.test.ts",
+        "**/packages/canard/schema-form-ajv6-plugin/src/__tests__/parity.validation.test.ts",
+        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.guard.dynamic.test.ts",
+        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.guard.test.ts",
+        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.lifetime.test.ts",
+        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.validation.test.ts",
+        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.guard.dynamic.test.ts",
+        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.guard.test.ts",
+        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.lifetime.test.ts",
+        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.validation.test.ts",
+        "**/packages/canard/schema-form/src/__tests__/e2e/features-composite-shared-1.test.tsx",
+        "**/packages/canard/schema-form/src/__tests__/e2e/features-composite-shared-2.test.tsx",
+        "**/packages/canard/schema-form/src/__tests__/e2e/features-composite-tails.test.tsx",
+        "**/packages/canard/schema-form/src/__tests__/e2e/features-input-components-consumer.test.tsx",
+        "**/packages/canard/schema-form/src/__tests__/e2e/features-validation-state-display.test.tsx",
+        "**/packages/canard/schema-form/src/__tests__/e2e/features-validation-state-timing.test.tsx",
+        "**/packages/canard/schema-form/src/components/FieldProxy/components/FieldInputBridge/__tests__/refreshBoundary.test.tsx",
+        "**/packages/canard/schema-form/src/components/FieldProxy/components/FieldInputBridge/__tests__/refreshGeneration.test.tsx",
+        "**/packages/canard/schema-form/src/core/engine/settle/__tests__/settle.gate-wheel-differential.test.ts"
+      ]
+    },
+    "circular-dependency": {
+      "exempt": [
+        "**/packages/canard/schema-form-mui-plugin/src",
+        "**/packages/canard/schema-form-mui-plugin/src/fieldInputs",
+        "**/packages/canard/schema-form/src/components/FieldProxy",
+        "**/packages/canard/schema-form/src/components/FieldProxy/components/FieldInputBridge",
+        "**/packages/winglet/common-utils/src/utils/object",
+        "**/packages/winglet/common-utils/src/utils/object/merge",
+        "**/packages/winglet/common-utils/src/utils/object/serialization",
+        "**/packages/winglet/common-utils/src/utils/object/serialization/parseGraph",
+        "**/packages/winglet/common-utils/src/utils/object/serialization/utils/encodeGraph"
+      ]
     }
   },
   "structure": {
