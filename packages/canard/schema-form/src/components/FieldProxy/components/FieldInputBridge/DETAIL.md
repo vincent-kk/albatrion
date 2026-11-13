@@ -76,11 +76,11 @@ focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독�
 
 ### GOAL-067 — 자식 캐시와 하이드레이션
 
-자식 컴포넌트는 노드 인스턴스로 캐시하고 준비할 때 게이트 컴포넌트의 사용 여부를 고정하여 훅 구성을 수명 중 바꾸지 않습니다. 준비된 대기 gate는 옵션 revision을 구독하여 새 threshold·eagerCount를 읽으며 ChildComponent identity는 유지합니다. ChildFields에 전달한 렌더러는 현재 prop을 읽습니다. 캐시는 StrictMode effect 재실행에서 유지되고 실제 훅 인스턴스와 함께 회수합니다.
+자식 컴포넌트는 노드 인스턴스로 캐시하고 준비할 때 게이트 컴포넌트의 사용 여부를 고정하여 훅 구성을 수명 중 바꾸지 않습니다. 준비된 대기 gate는 옵션 revision을 구독하여 새 threshold·eagerCount를 읽으며 ChildComponent identity는 유지합니다. ChildFields에 전달한 렌더러는 현재 prop을 읽습니다. 캐시는 StrictMode effect 재실행에서 유지되고 노드 identity별 컴포넌트 type과 key를 보존합니다. 훅 수명의 WeakMap과 단조 증가하는 키 카운터를 함께 보관하고, key는 cache miss에서만 발급하며 비어짐·숨김·effect 재실행에서 초기화하지 않습니다. cache 자체는 더 이상 도달할 수 없는 노드와 그 closure를 강하게 붙잡지 않습니다. 실제 회수는 GC의 도달 가능성 판단에 따르며 즉시 삭제나 수거 시점은 보장하지 않습니다. tree·retained slot·소비자·React 작업이 node나 ChildComponent를 보관하면 그 수명이 유지됩니다.
 
 서버·하이드레이션은 null 매니저 스냅숏으로 같은 자식을 렌더합니다. 기존 입력 commit에서 hydration ref를 표시하여 매니저 활성화만으로 추가 렌더나 사용자 Suspense의 조기 갱신을 만들지 않습니다. 이후 실제 자식 변경은 매니저를 사용하며 클라이언트 전용 마운트는 처음부터 게이트할 수 있습니다. 가상화 비활성 동안에도 실제 입력이 commit할 때만 자신의 노드를 노출 기록에 넣어 eager·문턱 미만·hydration 입력도 remount 후 placeholder로 돌아가지 않게 합니다. 숨겨진 프록시나 wrapper 준비만으로는 노출을 기록하지 않습니다.
 
-현재 한계는 다음과 같습니다. hydration 때 준비만 한 탭·아코디언 자식은 나중 첫 렌더에도 비게이트 결정을 재사용합니다. React 18의 아직 hydrate하지 않은 Suspense 경계에 이후 갱신이 들어가면 client rendering으로 전환할 수 있습니다. 렌더 중 공유 Map에 추가한 게이트 결정은 폐기 렌더 뒤에도 남을 수 있고, 제거된 자식 항목은 훅 수명 동안 정리하지 않아 장기 배열에서 캐시가 증가합니다. 상태 보존 Fast Refresh는 캐시의 옛 closure를 재사용할 수 있습니다. 자식 callback·override의 useReference도 렌더 중 공유 ref를 쓰므로 commit-only 격리를 보장하지 않습니다. 자식별 최초 마운트 판정·pruning·개발 세대 교체는 현재 보장이 아닙니다.
+현재 한계는 다음과 같습니다. hydration 때 준비만 한 탭·아코디언 자식은 나중 첫 렌더에도 비게이트 결정을 재사용합니다. React 18의 아직 hydrate하지 않은 Suspense 경계에 이후 갱신이 들어가면 client rendering으로 전환할 수 있습니다. 렌더 중 공유 cache에 추가한 게이트 결정은 해당 노드나 컴포넌트가 도달 가능한 동안 폐기 렌더 뒤에도 남을 수 있습니다. 상태 보존 Fast Refresh는 캐시의 옛 closure를 재사용할 수 있습니다. 자식 callback·override의 useReference도 렌더 중 공유 ref를 쓰므로 commit-only 격리를 보장하지 않습니다. 자식별 최초 마운트 판정·pruning·개발 세대 교체는 현재 보장이 아닙니다.
 
 ### ERROR-202 — 터미널 자식 읽기 경고
 
