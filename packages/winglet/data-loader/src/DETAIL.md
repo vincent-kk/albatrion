@@ -19,6 +19,8 @@
 - `batchScheduler`는 기본값 `scheduleNextTick`이며 함수가 아니면 `DataLoaderError`. `cacheKeyFn`은 기본값이 identity 함수이며 함수가 아니면 `DataLoaderError`.
 - 패키지의 유일한 export는 `DataLoader` 클래스와 `DataLoaderOptions` 타입이다.
 
+배치 실행의 함수형 표기는 콜백 인자·반환값과 실패 전달을 그대로 표현합니다. 함수형 별칭을 쓴다는 이유로 동기 예외와 Promise 거부의 처리 경계를 합치지 않습니다.
+
 ## Acceptance Criteria
 
 ### batching-scheduling — 배치 수집·스케줄링 계약
