@@ -1,7 +1,6 @@
+import type { Dictionary, Fn } from '@aileron/declare';
+
 import type { AjvInstance as Ajv } from './types/AjvInstance';
-
-import type { Dictionary } from '@aileron/declare';
-
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { cloneInstance } from './utils/cloneInstance';
 import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
@@ -32,7 +31,7 @@ export const createGuardCompiler = (
   root: object,
   directGuardCompile: boolean,
   finalizer: FinalizationRegistry<SchemaRootRegistration>,
-): ((value: unknown) => boolean) => {
+): Fn<[value: unknown], boolean> => {
   const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
@@ -55,9 +54,10 @@ export const createGuardCompiler = (
     : registerSchemaGuard(root, instance, registration);
   // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
   // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
-  const dynamicAnchors = direct || !guard.opts.dynamicRef || !registration.hasDynamicKeywords
-    ? {}
-    : collectGuardDynamicAnchors(root, registration.rootId, fragment, guard);
+  const dynamicAnchors =
+    direct || !guard.opts.dynamicRef || !registration.hasDynamicKeywords
+      ? {}
+      : collectGuardDynamicAnchors(root, registration.rootId, fragment, guard);
   const validate = guard.compile(
     direct ? schema : { $ref: `${registration.rootId}${fragment}` },
   );

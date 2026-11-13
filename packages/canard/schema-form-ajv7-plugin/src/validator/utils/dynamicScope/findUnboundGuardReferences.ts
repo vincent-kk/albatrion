@@ -1,7 +1,12 @@
+import type { Fn } from '@aileron/declare';
+
 import { visitSchemaObjects } from './visitSchemaObjects';
 
 /** Name maps whose subschemas run only through `$ref`, so their references and declarations are not inline. */
-const DEFINITION_KEYWORDS: ReadonlySet<string> = new Set(['$defs', 'definitions']);
+const DEFINITION_KEYWORDS: ReadonlySet<string> = new Set([
+  '$defs',
+  'definitions',
+]);
 
 /**
  * Find the anchor names a guard references inline that neither its chain nor an ancestor of the reference binds.
@@ -16,24 +21,39 @@ const DEFINITION_KEYWORDS: ReadonlySet<string> = new Set(['$defs', 'definitions'
  */
 export const findUnboundGuardReferences = (
   guard: unknown,
-  isBound: (name: string) => boolean,
+  isBound: Fn<[name: string], boolean>,
 ): string[] => {
   const unbound = new Set<string>();
-  visitSchemaObjects(guard, (schema, _pointer, ancestors) => {
-    for (const name of readReferenceNames(schema))
-      if (!isBound(name) && ![...ancestors, schema].some((scope) => declaresAnchor(scope, name)))
-        unbound.add(name);
-    return true;
-  }, DEFINITION_KEYWORDS);
+  visitSchemaObjects(
+    guard,
+    (schema, _pointer, ancestors) => {
+      for (const name of readReferenceNames(schema))
+        if (
+          !isBound(name) &&
+          ![...ancestors, schema].some((scope) => declaresAnchor(scope, name))
+        )
+          unbound.add(name);
+      return true;
+    },
+    DEFINITION_KEYWORDS,
+  );
   return [...unbound];
 };
 
 /** The anchor names a schema object references dynamically; `$dynamicRef` and `$recursiveRef` are read independently. */
 const readReferenceNames = (schema: object): string[] => {
   const names: string[] = [];
-  if ('$dynamicRef' in schema && typeof schema.$dynamicRef === 'string' && schema.$dynamicRef.startsWith('#'))
+  if (
+    '$dynamicRef' in schema &&
+    typeof schema.$dynamicRef === 'string' &&
+    schema.$dynamicRef.startsWith('#')
+  )
     names.push(schema.$dynamicRef.slice(1));
-  if ('$recursiveRef' in schema && typeof schema.$recursiveRef === 'string' && schema.$recursiveRef.startsWith('#'))
+  if (
+    '$recursiveRef' in schema &&
+    typeof schema.$recursiveRef === 'string' &&
+    schema.$recursiveRef.startsWith('#')
+  )
     names.push(schema.$recursiveRef.slice(1));
   return names;
 };
