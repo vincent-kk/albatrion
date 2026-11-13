@@ -1,12 +1,9 @@
 // Correctness / bug invariants. Each check returns { pass, detail }.
-// On CURRENT code several are expected to FAIL; after fixes all must PASS.
-import {
-  getByPointer,
-  loadScanners,
-  makeOriginalRefResolver,
-} from './_lib.mjs';
+import { loadScanners } from './_lib.mjs';
+import { observeResolver } from './observeResolver.mjs';
 
-const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync, createReferenceResolver } =
+  await loadScanners();
 
 const results = [];
 function check(id, title, fn) {
@@ -26,7 +23,7 @@ async function checkAsync(id, title, fn) {
   }
 }
 
-// Build a schema whose resolver returns ORIGINAL subtrees (real-world pattern).
+// Repeated references exercise target isolation and complete chains.
 function refSchema() {
   return {
     type: 'object',
@@ -49,7 +46,7 @@ check('V1', 'original schema unchanged after scan+getValue', () => {
   const schema = refSchema();
   const before = JSON.stringify(schema);
   const scanner = new JSONSchemaScanner({
-    options: { resolveReference: makeOriginalRefResolver(() => schema) },
+    options: { resolveReference: createReferenceResolver(schema) },
   });
   scanner.scan(schema).getValue();
   const after = JSON.stringify(schema);
@@ -66,7 +63,7 @@ check('V1', 'original schema unchanged after scan+getValue', () => {
 check('V2', 'output not aliased to original definitions subtree', () => {
   const schema = refSchema();
   const out = new JSONSchemaScanner({
-    options: { resolveReference: makeOriginalRefResolver(() => schema) },
+    options: { resolveReference: createReferenceResolver(schema) },
   })
     .scan(schema)
     .getValue();
@@ -83,7 +80,7 @@ check('V2', 'output not aliased to original definitions subtree', () => {
 check('V3', 'multiple occurrences of same ref not aliased in output', () => {
   const schema = refSchema();
   const out = new JSONSchemaScanner({
-    options: { resolveReference: makeOriginalRefResolver(() => schema) },
+    options: { resolveReference: createReferenceResolver(schema) },
   })
     .scan(schema)
     .getValue();
@@ -177,9 +174,12 @@ check(
     const schema = refSchema();
     const scanner = new JSONSchemaScanner({
       options: {
-        resolveReference: () => {
-          throw new Error('boom');
-        },
+        resolveReference: observeResolver(
+          createReferenceResolver(schema),
+          () => {
+            throw new Error('boom');
+          },
+        ),
       },
     });
     let threw = false;
@@ -245,7 +245,7 @@ await checkAsync('V8', 'async filter awaited at runtime', async () => {
   };
 });
 
-// V9: resolver call count for the same ref appearing multiple times (baseline: no cache)
+// V9: template caching does not suppress per-occurrence provider calls.
 check(
   'V9',
   'resolver call count for repeated ref (records caching behavior)',
@@ -262,15 +262,17 @@ check(
     let calls = 0;
     new JSONSchemaScanner({
       options: {
-        resolveReference: (ref) => {
-          calls++;
-          return getByPointer(schema, ref);
-        },
+        resolveReference: observeResolver(
+          createReferenceResolver(schema),
+          () => {
+            calls++;
+          },
+        ),
       },
     })
       .scan(schema)
       .getValue();
-    // This is a behavior record, not a pass/fail on baseline (default = no cache).
+    // The separate template cache does not alter the public resolve call count.
     return { pass: true, detail: `resolver calls (default) = ${calls}` };
   },
 );

@@ -5,6 +5,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
 import type { JSONScannerOptions } from '../type';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 /** The common result surface exercises depth safety in both independent drivers. */
 type ScannerConstructor = new (config: { options: JSONScannerOptions }) => {
@@ -36,7 +37,7 @@ describe.each<[string, ScannerConstructor]>([
     let output = scanner.getValue()!;
     let original = schema;
     for (let depth = 0; depth < 20000; depth++) {
-        expect(output === original).toBe(false);
+      expect(output === original).toBe(false);
       output = output.properties.child;
       original = original.properties.child;
     }
@@ -47,11 +48,11 @@ describe.each<[string, ScannerConstructor]>([
   it('copies a deep resolver target without recursive cloning', async () => {
     const target = deepSchema(20000);
     const scanner = new Scanner({
-      options: { resolveReference: () => target },
+      options: { resolveReference: createTestResolver(() => target) },
     });
     await scanner.scan({ $ref: '#/target' });
     let output = scanner.getValue()!;
-      expect(output === target).toBe(false);
+    expect(output === target).toBe(false);
     for (let depth = 0; depth < 20000; depth++)
       output = output.properties.child;
     expect(output.type).toBe('string');

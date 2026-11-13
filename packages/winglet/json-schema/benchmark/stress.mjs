@@ -8,11 +8,15 @@ import {
   genDeep,
   genRefHeavy,
   genWide,
-  getByPointer,
   loadScanners,
 } from './_lib.mjs';
 
-const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
+const {
+  JSONSchemaScanner,
+  JSONSchemaScannerAsync,
+  createReferenceResolver,
+  createReferenceResolverAsync,
+} = await loadScanners();
 
 const cases = {};
 function run(name, fn, budgetMs = 20000) {
@@ -80,7 +84,7 @@ run('self-cycle-ref', () => {
     },
   };
   const out = new JSONSchemaScanner({
-    options: { resolveReference: (ref) => getByPointer(schema, ref) },
+    options: { resolveReference: createReferenceResolver(schema) },
   })
     .scan(schema)
     .getValue();
@@ -100,7 +104,7 @@ run('mutual-cycle-ref', () => {
   let n = 0;
   new JSONSchemaScanner({
     visitor: { enter: () => n++ },
-    options: { resolveReference: (ref) => getByPointer(schema, ref) },
+    options: { resolveReference: createReferenceResolver(schema) },
   })
     .scan(schema)
     .getValue();
@@ -111,7 +115,7 @@ run('mutual-cycle-ref', () => {
 run('refHeavy-2k+getValue', () => {
   const schema = genRefHeavy(2000, 3, 3);
   const s = new JSONSchemaScanner({
-    options: { resolveReference: (ref) => getByPointer(schema, ref) },
+    options: { resolveReference: createReferenceResolver(schema) },
   });
   s.scan(schema);
   const out = s.getValue();
@@ -153,11 +157,11 @@ run('reused-instance-1000x', () => {
   return `stable; lastKeys=${last}`;
 });
 
-// 9. Async: deep + remote-ish resolver (must not overflow / hang)
+// 9. Async driver and provider suspend on static resource references.
 await runAsync('async-deep-refs', async () => {
   const schema = genRefHeavy(500, 2, 3);
   const s = new JSONSchemaScannerAsync({
-    options: { resolveReference: async (ref) => getByPointer(schema, ref) },
+    options: { resolveReference: createReferenceResolverAsync(schema) },
   });
   await s.scan(schema);
   const out = s.getValue();
@@ -192,9 +196,14 @@ run('deep-20k-mutate-getValue', () => {
 run('deep-20k-resolver-target', () => {
   const target = genDeep(20000);
   const output = new JSONSchemaScanner({
-    options: { resolveReference: () => target },
+    options: {
+      resolveReference: createReferenceResolver(
+        {},
+        { resources: { 'https://stress.test/target': target } },
+      ),
+    },
   })
-    .scan({ $ref: '#/target' })
+    .scan({ $ref: 'https://stress.test/target' })
     .getValue();
   let originalNode = target;
   let outputNode = output;

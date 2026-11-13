@@ -61,3 +61,13 @@ Comparison failures, failed invariants in `verify.mjs`, and suspected leaks in
 `memleak.mjs` exit non-zero. Memory probes require `--expose-gc`.
 
 Not published to npm (only `dist`, `docs`, `README.md` ship).
+
+Reference workloads use `createReferenceResolver` from the measured current build.
+The frozen-build adapter uses its pointer callback API; `refHeavy/createResolver`
+includes indexing and template construction, while `refHeavy/reuseResolver`
+retains the provider and its per-target/per-host template cache between scans.
+Both adapters must have identical visit counts and serialized output sizes.
+`observeResolver.mjs` forwards the full context protocol while counting calls;
+provider calls still occur once per reference occurrence even when a template is cached.
+The equivalence snapshot retains the existing exit-field projection for compatibility,
+deriving it from `entry.references` in the current build.

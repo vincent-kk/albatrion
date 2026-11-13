@@ -78,6 +78,7 @@
   },
   "devDependencies": {
     "@slats/agents-assets-sync": "workspace:^",
+    "ajv": "^8.17.1",
     "eslint": "8.57.1",
     "rolldown": "^1.2.0",
     "tsc-alias": "^1.8.16",

@@ -10282,6 +10282,7 @@ __metadata:
     "@slats/agents-assets-sync": "workspace:^"
     "@winglet/common-utils": "workspace:^"
     "@winglet/json": "workspace:^"
+    ajv: "npm:^8.17.1"
     eslint: "npm:8.57.1"
     rolldown: "npm:^1.2.0"
     tsc-alias: "npm:^1.8.16"

@@ -5,6 +5,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScanner Advanced Features', () => {
   describe('복합 키워드 테스트', () => {
@@ -237,7 +238,7 @@ describe('JSONSchemaScanner Advanced Features', () => {
 
       const scanner = new JSONSchemaScanner({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
       scanner.scan(schema);
 
@@ -250,10 +251,7 @@ describe('JSONSchemaScanner Advanced Features', () => {
           depth: 1,
           keyword: 'prefixItems',
           variant: 0,
-          referenceResolved: true,
-          referencePath: '#/$defs/stringType',
         }),
-        undefined,
       );
 
       expect(resolveReference).toHaveBeenCalledWith(
@@ -264,37 +262,46 @@ describe('JSONSchemaScanner Advanced Features', () => {
           depth: 1,
           keyword: 'prefixItems',
           variant: 1,
-          referenceResolved: true,
-          referencePath: '#/$defs/numberType',
         }),
-        undefined,
       );
 
       // Check that resolved schemas are visited
       expect(visitor.enter).toHaveBeenCalledWith(
         {
+          references: [
+            {
+              keyword: '$ref',
+              reference: '#/$defs/stringType',
+              uri: '#/$defs/stringType',
+              resolved: true,
+            },
+          ],
           schema: resolvedStringSchema,
           path: `${JSONPointer.Fragment}/prefixItems/0`,
           dataPath: `/0`,
           depth: 1,
           keyword: 'prefixItems',
           variant: 0,
-          referenceResolved: true,
-          referencePath: '#/$defs/stringType',
         },
         undefined,
       );
 
       expect(visitor.enter).toHaveBeenCalledWith(
         {
+          references: [
+            {
+              keyword: '$ref',
+              reference: '#/$defs/numberType',
+              uri: '#/$defs/numberType',
+              resolved: true,
+            },
+          ],
           schema: resolvedNumberSchema,
           path: `${JSONPointer.Fragment}/prefixItems/1`,
           dataPath: `/1`,
           depth: 1,
           keyword: 'prefixItems',
           variant: 1,
-          referenceResolved: true,
-          referencePath: '#/$defs/numberType',
         },
         undefined,
       );
@@ -337,7 +344,7 @@ describe('JSONSchemaScanner Advanced Features', () => {
 
       const scanner = new JSONSchemaScanner({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
       scanner.scan(schema);
 
@@ -377,7 +384,6 @@ describe('JSONSchemaScanner Advanced Features', () => {
           keyword: 'properties',
           variant: 'address',
         }),
-        undefined,
       );
     });
 
@@ -476,7 +482,7 @@ describe('JSONSchemaScanner Advanced Features', () => {
 
       const scanner = new JSONSchemaScanner({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
       scanner.scan(schema);
 
@@ -488,7 +494,6 @@ describe('JSONSchemaScanner Advanced Features', () => {
           keyword: 'prefixItems',
           variant: 0,
         }),
-        undefined,
       );
 
       expect(resolveReference).toHaveBeenCalledWith(
@@ -498,7 +503,6 @@ describe('JSONSchemaScanner Advanced Features', () => {
           keyword: 'prefixItems',
           variant: 1,
         }),
-        undefined,
       );
 
       // Verify resolved schema properties are visited
@@ -634,7 +638,7 @@ describe('JSONSchemaScannerAsync Advanced Features', () => {
 
       const scanner = new JSONSchemaScannerAsync({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
 
       await expect(scanner.scan(schema)).rejects.toThrow('Failed to resolve');
@@ -698,7 +702,7 @@ describe('JSONSchemaScanner/JSONSchemaScannerAsync 스펙 테스트', () => {
     const resolveReference = vi.fn().mockReturnValue(schema);
     const scanner = new JSONSchemaScanner({
       visitor,
-      options: { resolveReference },
+      options: { resolveReference: createTestResolver(resolveReference) },
     });
     scanner.scan(schema);
     // 무한루프 없이 한 번만 방문
@@ -723,16 +727,22 @@ describe('JSONSchemaScanner/JSONSchemaScannerAsync 스펙 테스트', () => {
     const schema: UnknownSchema = { $ref: '#/ref' };
     const scanner = new JSONSchemaScannerAsync({
       visitor,
-      options: { filter, resolveReference, context },
+      options: {
+        filter,
+        resolveReference: createTestResolver(resolveReference),
+        context,
+      },
     });
     await scanner.scan(schema);
     expect(visitor.enter).toHaveBeenCalledWith(
       {
+        references: [
+          { keyword: '$ref', reference: '#/ref', uri: '#/ref', resolved: true },
+        ],
         schema: {
           type: 'string',
         },
-        referencePath: '#/ref',
-        referenceResolved: true,
+
         path: JSONPointer.Fragment,
         dataPath: JSONPointer.Root,
         depth: 0,
@@ -741,11 +751,13 @@ describe('JSONSchemaScanner/JSONSchemaScannerAsync 스펙 테스트', () => {
     );
     expect(filter).toHaveBeenCalledWith(
       {
+        references: [
+          { keyword: '$ref', reference: '#/ref', uri: '#/ref', resolved: true },
+        ],
         depth: 0,
         path: '#',
         dataPath: JSONPointer.Root,
-        referencePath: '#/ref',
-        referenceResolved: true,
+
         schema: {
           type: 'string',
         },
@@ -760,7 +772,7 @@ describe('JSONSchemaScanner/JSONSchemaScannerAsync 스펙 테스트', () => {
     const schema: UnknownSchema = { $ref: '#/fail' };
     const scanner = new JSONSchemaScannerAsync({
       visitor,
-      options: { resolveReference },
+      options: { resolveReference: createTestResolver(resolveReference) },
     });
     await expect(scanner.scan(schema)).rejects.toThrow('fail');
   });
@@ -773,9 +785,9 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -809,7 +821,7 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -853,9 +865,9 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -891,7 +903,7 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -952,9 +964,9 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -982,7 +994,7 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -1028,9 +1040,9 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -1065,7 +1077,7 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -1115,9 +1127,9 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -1147,7 +1159,7 @@ describe('prefixItems $ref 참조 스키마 처리 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)

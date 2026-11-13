@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import { createTestResolver } from '../../__tests__/fixtures/createTestResolver';
 import { JSONSchemaScannerAsync } from '../JSONSchemaScannerAsync';
 
 it('resumes after every awaited callback without replaying any completed stage', async () => {
@@ -17,11 +18,11 @@ it('resumes after every awaited callback without replaying any completed stage',
         await Promise.resolve();
         trace.push(`mutate ${entry.path}`);
       },
-      resolveReference: async (reference, entry) => {
+      resolveReference: createTestResolver(async (reference, entry) => {
         await Promise.resolve();
         trace.push(`resolve ${entry.path} ${reference}`);
         return { properties: { child: { type: 'string' } } };
-      },
+      }),
     },
     visitor: {
       enter: async (entry) => {

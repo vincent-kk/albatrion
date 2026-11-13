@@ -49,19 +49,8 @@ export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
   dataPath: string;
   /** Traversal depth */
   depth: number;
-  /** Whether there is a reference */
-  hasReference?: boolean;
-  /**
-   * When `hasReference` is `true`, why the `$ref` was left in place instead of
-   * being inlined: `'cycle'` (already being resolved on the current path),
-   * `'unresolved'` (resolver returned nothing), or `'definition'` (the node
-   * lives under `$defs`/`definitions`, so it is intentionally not resolved).
-   */
-  referenceSkipped?: 'cycle' | 'unresolved' | 'definition';
-  /** Processed reference path */
-  referencePath?: string;
-  /** Whether reference is resolved */
-  referenceResolved?: boolean;
+  /** Outcomes for each reference keyword and replacement-chain step handled at this position. */
+  references?: ReferenceOutcome[];
 };
 
 export interface SchemaVisitor<
@@ -85,41 +74,14 @@ export interface JSONScannerOptions<
     [entry: SchemaEntry<Schema>, context?: ContextType],
     Schema | boolean | void
   >;
-  /** Function to resolve $ref references */
-  resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | undefined
-  >;
-  /** Maximum traversal depth */
+  /** Context-aware provider of targets valid at the current host position. */
+  resolveReference?: ReferenceResolver<any>;
+  /** Missing targets remain by default; throw fails the entire scan instead. */
+  unresolvedReference?: 'keep' | 'throw';
+  /** Limits on replacement-chain length and total inlined schema nodes. */
+  limits?: { referenceChain?: number; inlinedNodes?: number };
+  /** Inclusive maximum traversal depth, independent of template preparation. */
   maxDepth?: number;
-  /**
-   * Whether to deep-clone the schema returned by `resolveReference` before
-   * inlining it into the traversal and the processed output.
-   *
-   * Defaults to `true`. Cloning isolates the resolved subtree so that
-   * (1) the original schema passed to `resolveReference` is never mutated,
-   * and (2) multiple occurrences of the same `$ref` do not become aliased
-   * in the processed output. Set to `false` only when the resolver already
-   * returns a freshly-owned object and the extra clone is pure overhead.
-   *
-   * @remarks
-   * Versions before this option existed behaved as if it were `false`: the
-   * resolved schema was assigned in place with no clone, so repeated
-   * occurrences of the same `$ref` shared one aliased object. The current
-   * default (`true`) deep-clones each resolved `$ref` instead; pass `false`
-   * to restore the previous aliased behavior.
-   */
-  cloneResolvedSchema?: boolean;
-  /**
-   * Whether to memoize `resolveReference` results per reference string.
-   *
-   * Defaults to `false` (each occurrence invokes the resolver). Enable to
-   * avoid redundant resolver calls (e.g. remote fetches) when the same
-   * reference appears multiple times. The raw resolver result is cached and
-   * cloned at inline time (see `cloneResolvedSchema`) so caching never
-   * introduces shared references into the output.
-   */
-  cacheResolvedReference?: boolean;
   /** Dialect used when the document root has no known $schema; defaults to 2020-12. */
   defaultDialect?: Dialect;
   /** Ordered vocabulary replacing the complete built-in vocabulary. */
@@ -147,9 +109,67 @@ export interface JSONScannerOptionsAsync<
     [entry: SchemaEntry<Schema>, context?: ContextType],
     Schema | boolean | void | Promise<Schema | boolean | void>
   >;
-  /** Function to resolve $ref references (may be async) */
-  resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | Promise<Schema | undefined> | undefined
-  >;
+  /** Context-aware provider whose resolve operation alone may suspend. */
+  resolveReference?: ReferenceResolverAsync<any>;
+}
+
+/** Reference applicators selected by the enclosing resource dialect. */
+export type ReferenceKeyword = '$ref' | '$dynamicRef' | '$recursiveRef';
+/** Explicit reasons a reference remains in output. */
+export type ReferenceSkipReason =
+  | 'definition'
+  | 'cycle'
+  | 'unresolved'
+  | 'dynamic'
+  | 'relocation'
+  | 'invalid';
+/** A resolver supplies a host-valid target or a supported preservation reason. */
+export type ReferenceStep =
+  | { status: 'resolved'; uri: string; target: UnknownSchema | boolean }
+  | {
+      status: 'skipped';
+      uri?: string;
+      reason: 'unresolved' | 'dynamic' | 'relocation' | 'invalid';
+    };
+/** Observable result for an original reference or one replacement-chain step. */
+export interface ReferenceOutcome {
+  /** Reference keyword in the effective dialect. */
+  keyword: ReferenceKeyword;
+  /** Written value before canonicalization. */
+  reference: string;
+  /** Canonical target location when the provider knows it. */
+  uri?: string;
+  /** Whether a target was inlined at this step. */
+  resolved: boolean;
+  /** Why a reference remains instead of being inlined. */
+  skipped?: ReferenceSkipReason;
+}
+/** Lexical resource context and host-valid synchronous target protocol. */
+export interface ReferenceResolver<Context = unknown> {
+  /** Establish the document-root context without entering its identifier twice. */
+  root(schema: UnknownSchema | boolean): Context;
+  /** Enter an original lexical child; absent means the root context is fixed. */
+  child?(
+    parent: Context,
+    keyword: string,
+    schema: UnknownSchema | boolean,
+  ): Context;
+  /** Return the effective dialect for a context. */
+  dialect(context: Context): Dialect;
+  /** Resolve a written reference and return a target whose meaning already fits the host. */
+  resolve(
+    reference: string,
+    keyword: ReferenceKeyword,
+    context: Context,
+  ): ReferenceStep;
+}
+/** Async protocol changes only resolve; root, child and dialect stay synchronous. */
+export interface ReferenceResolverAsync<Context = unknown>
+  extends Omit<ReferenceResolver<Context>, 'resolve'> {
+  /** Resolve using caller-controlled asynchronous document loading if needed. */
+  resolve(
+    reference: string,
+    keyword: ReferenceKeyword,
+    context: Context,
+  ): ReferenceStep | PromiseLike<ReferenceStep>;
 }

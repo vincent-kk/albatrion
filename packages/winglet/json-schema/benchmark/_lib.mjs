@@ -29,6 +29,7 @@ export async function loadScanners(
     JSONSchemaScanner: sync.JSONSchemaScanner,
     JSONSchemaScannerAsync: asyncM.JSONSchemaScannerAsync,
     createReferenceResolver: main.createReferenceResolver,
+    createReferenceResolverAsync: main.createReferenceResolverAsync,
   };
 }
 
@@ -66,8 +67,7 @@ function latestModification(directory) {
 }
 
 // --- JSON Pointer navigation returning the ORIGINAL subtree by reference ---
-// Mirrors @canard/schema-form getReferenceTable pattern (returns original ref,
-// no clone) so the R1 original-mutation / aliasing bug is exercised faithfully.
+// Used only by the frozen-build adapter, whose callback API accepts original targets.
 export function unescapeSegment(seg) {
   return seg.replace(/~1/g, '/').replace(/~0/g, '~');
 }
@@ -83,11 +83,6 @@ export function getByPointer(root, pointer) {
     cur = cur[s];
   }
   return cur;
-}
-
-// Resolver that returns the ORIGINAL subtree by reference (real-world pattern).
-export function makeOriginalRefResolver(rootGetter) {
-  return (ref) => getByPointer(rootGetter(), ref);
 }
 
 // --- deterministic schema generators (no Math.random) ---

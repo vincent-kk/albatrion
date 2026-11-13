@@ -26,10 +26,15 @@ export function appendKeywordChildren<Entry extends SchemaEntry>(
   dialect: number,
   inheritedInert: boolean,
   visitBooleans: boolean,
+  legacyMode: 0 | 1 | 2,
 ): void {
   const { keyword, kind } = descriptor;
   const node = schema[keyword];
-  const inert = inheritedInert || (descriptor.mask & dialect) === 0;
+  const keep =
+    legacyMode > 0 && (keyword === 'definitions' || keyword === '$defs');
+  const inert =
+    inheritedInert ||
+    (!keep && ((descriptor.mask & dialect) === 0 || legacyMode === 1));
   switch (kind) {
     case 'schemaMap':
     case 'objectMap':

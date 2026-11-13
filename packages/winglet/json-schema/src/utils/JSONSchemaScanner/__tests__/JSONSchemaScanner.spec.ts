@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScanner 실제 데이터 테스트', () => {
   afterEach(() => {
@@ -15,9 +16,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -33,7 +34,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -62,9 +63,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -106,7 +107,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -158,9 +159,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -193,7 +194,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -227,9 +228,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -274,7 +275,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -347,9 +348,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -386,7 +387,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -435,9 +436,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -469,7 +470,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -508,9 +509,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -546,7 +547,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)
@@ -607,9 +608,9 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     new JSONSchemaScanner({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -645,7 +646,7 @@ describe('JSONSchemaScanner 실제 데이터 테스트', () => {
 
     const finalSchema = new JSONSchemaScanner({
       options: {
-        resolveReference: (path) => defs.get(path),
+        resolveReference: createTestResolver((path) => defs.get(path)),
       },
     })
       .scan(jsonSchema)

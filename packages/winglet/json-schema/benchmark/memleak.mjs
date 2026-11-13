@@ -2,17 +2,17 @@
 // For each scenario: warm, gc, record baseline retained heap, then run many
 // iterations in batches, gc + sample heap after each batch. A leak = monotonic
 // retained-heap growth across batches beyond noise. Emits JSON.
-import {
-  loadScanners,
-  genBranchy,
-  genRefHeavy,
-  getByPointer,
-} from "./_lib.mjs";
+import { genBranchy, genRefHeavy, loadScanners } from './_lib.mjs';
 
-const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
+const {
+  JSONSchemaScanner,
+  JSONSchemaScannerAsync,
+  createReferenceResolver,
+  createReferenceResolverAsync,
+} = await loadScanners();
 
-if (typeof globalThis.gc !== "function") {
-  console.log(JSON.stringify({ error: "run with --expose-gc" }));
+if (typeof globalThis.gc !== 'function') {
+  console.log(JSON.stringify({ error: 'run with --expose-gc' }));
   process.exit(2);
 }
 const gc = globalThis.gc;
@@ -63,7 +63,7 @@ const results = [];
 
 // 1. new instance each iteration, discarded
 results.push(
-  await scenario("new-instance-scan", () => {
+  await scenario('new-instance-scan', () => {
     new JSONSchemaScanner({ visitor: { enter: () => {} } }).scan(branchy);
   }),
 );
@@ -72,7 +72,7 @@ results.push(
 {
   const scanner = new JSONSchemaScanner({ visitor: { enter: () => {} } });
   results.push(
-    await scenario("reused-instance-scan", () => {
+    await scenario('reused-instance-scan', () => {
       scanner.scan(branchy);
     }),
   );
@@ -81,10 +81,10 @@ results.push(
 // 3. refHeavy scan + getValue (clone/inlining churn — exercises R1)
 results.push(
   await scenario(
-    "refHeavy-scan-getValue",
+    'refHeavy-scan-getValue',
     () => {
       const s = new JSONSchemaScanner({
-        options: { resolveReference: (ref) => getByPointer(refSchema, ref) },
+        options: { resolveReference: createReferenceResolver(refSchema) },
       });
       s.scan(refSchema);
       s.getValue();
@@ -96,11 +96,11 @@ results.push(
 // 4. async scan + getValue
 results.push(
   await scenario(
-    "async-scan-getValue",
+    'async-scan-getValue',
     async () => {
       const s = new JSONSchemaScannerAsync({
         options: {
-          resolveReference: async (ref) => getByPointer(refSchema, ref),
+          resolveReference: createReferenceResolverAsync(refSchema),
         },
       });
       await s.scan(refSchema);

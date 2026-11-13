@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import { createTestResolver } from '../../__tests__/fixtures/createTestResolver';
 import { JSONSchemaScanner } from '../JSONSchemaScanner';
 
 /** Make a schema-compatible result whose then getter records accidental promise detection. */
@@ -56,7 +57,7 @@ describe('JSONSchemaScanner callback result characterization', () => {
   it('does not inspect then on resolver results', () => {
     const trap = createThenTrap();
     const output = new JSONSchemaScanner<UnknownSchema>({
-      options: { resolveReference: () => trap },
+      options: { resolveReference: createTestResolver(() => trap) },
     })
       .scan({ $ref: '#/target' })
       .getValue();

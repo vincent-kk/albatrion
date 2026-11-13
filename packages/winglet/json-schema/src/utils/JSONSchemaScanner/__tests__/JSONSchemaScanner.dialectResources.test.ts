@@ -5,6 +5,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
 import type { JSONScannerOptions, SchemaVisitor } from '../type';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 /** Driver-independent constructor avoids intersecting private class state in shared tests. */
 type ScannerConstructor = new (config: {
@@ -83,10 +84,10 @@ describe.each<[string, ScannerConstructor]>([
                 title: 'inert replacement',
               }
             : undefined,
-        resolveReference: () => {
+        resolveReference: createTestResolver(() => {
           resolves++;
           return { type: 'null' };
-        },
+        }),
       },
       visitor: {
         enter: (e) => {
@@ -109,14 +110,15 @@ describe.each<[string, ScannerConstructor]>([
     const scanner = new Scanner({
       options: {
         additionalKeywords: [{ keyword: 'vendor', kind: 'schemaMap' }],
-        resolveReference: (ref) => {
+        resolveReference: createTestResolver((ref) => {
           calls.push(ref);
           return { type: 'null' };
-        },
+        }),
       },
       visitor: {
         exit: (e) => {
-          if (e.hasReference) skips.push([e.path, e.referenceSkipped]);
+          if (e.references?.some((outcome) => !outcome.resolved))
+            skips.push([e.path, e.references?.slice(-1)[0]?.skipped]);
         },
       },
     });

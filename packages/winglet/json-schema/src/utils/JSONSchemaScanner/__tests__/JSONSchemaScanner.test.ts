@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScanner', () => {
   describe('기본 동작 테스트', () => {
@@ -212,53 +213,15 @@ describe('JSONSchemaScanner', () => {
 
       const scanner = new JSONSchemaScanner({
         visitor: { enter, exit },
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
 
       const result = scanner.scan(schema).getValue();
 
-      // $ref가 resolve되어 type: 'string' 노드를 방문
-      // expect(enter).toHaveBeenCalledWith(
-      //   {
-      //     depth: 0,
-      //     path: '#',
-      //     schema: {
-      //       $ref: '#/definitions/Bar',
-      //       definitions: {
-      //         Bar: { type: 'string' },
-      //       },
-      //     },
-      //   },
-      //   undefined,
-      // );
-      // expect(enter).toHaveBeenCalledWith(
-      //   {
-      //     depth: 1,
-      //     path: '#',
-      //     referencePath: '#/definitions/Bar',
-      //     schema: {
-      //       type: 'number',
-      //     },
-      //   },
-      //   undefined,
-      // );
-      // expect(enter).toHaveBeenCalledWith(
-      //   {
-      //     depth: 0,
-      //     path: '#',
-      //     referenceResolved: true,
-      //     schema: {
-      //       $ref: '#/definitions/Bar',
-      //       definitions: {
-      //         Bar: {
-      //           type: 'string',
-      //         },
-      //       },
-      //     },
-      //   },
-      //   undefined,
-      // );
-      expect(result).toEqual({ type: 'number' });
+      expect(result).toEqual({
+        definitions: schema.definitions,
+        allOf: [{ type: 'number' }],
+      });
     });
 
     it('context 옵션이 콜백에 전달되는지 확인', () => {
@@ -304,26 +267,19 @@ describe('JSONSchemaScanner', () => {
 
       const scanner = new JSONSchemaScanner({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
       scanner.scan(schema);
 
-      expect(resolveReference).toHaveBeenCalledWith(
-        '#/definitions/string',
-        {
-          dataPath: '/ref',
-          depth: 1,
-          keyword: 'properties',
-          path: '#/properties/ref',
-          referencePath: '#/definitions/string',
-          referenceResolved: true,
-          schema: {
-            type: 'string',
-          },
-          variant: 'ref',
-        },
-        undefined,
-      );
+      expect(resolveReference).toHaveBeenCalledWith('#/definitions/string', {
+        dataPath: '/ref',
+        depth: 1,
+        keyword: 'properties',
+        path: '#/properties/ref',
+
+        schema: { $ref: '#/definitions/string' },
+        variant: 'ref',
+      });
       expect(visitor.enter).toHaveBeenCalledWith(
         {
           depth: 0,
@@ -342,11 +298,18 @@ describe('JSONSchemaScanner', () => {
       );
       expect(visitor.enter).toHaveBeenCalledWith(
         {
+          references: [
+            {
+              keyword: '$ref',
+              reference: '#/definitions/string',
+              uri: '#/definitions/string',
+              resolved: true,
+            },
+          ],
           depth: 1,
           path: '#/properties/ref',
           dataPath: `/ref`,
-          referencePath: '#/definitions/string',
-          referenceResolved: true,
+
           keyword: 'properties',
           variant: 'ref',
           schema: {

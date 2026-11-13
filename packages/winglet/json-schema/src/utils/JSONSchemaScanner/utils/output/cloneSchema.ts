@@ -1,4 +1,5 @@
 import { clone } from '@winglet/common-utils/object';
+import { escapeSegment } from '@winglet/json/pointer';
 
 import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
 import { writeProperty } from './utils/writeProperty';
@@ -17,7 +18,15 @@ interface CloneCheckpoint {
  * @returns A copy retaining array holes and own __proto__ data, without symbol keys on plain containers.
  * @throws JSONSchemaScanError when a plain-container ancestry contains a physical cycle.
  */
-export function cloneSchema<Type>(input: Type): Type {
+export function cloneSchema<Type>(
+  input: Type,
+  inspect?: (
+    source: object,
+    target: object,
+    path: string,
+    keys: readonly string[],
+  ) => void,
+): Type {
   if (input === null || typeof input !== 'object') return input;
   const prototype = Object.getPrototypeOf(input);
   if (
@@ -37,6 +46,9 @@ export function cloneSchema<Type>(input: Type): Type {
   const output = target;
   let keys = Object.keys(source);
   let index = 0;
+  let path = '#';
+  let paths: string[] | undefined;
+  if (inspect) inspect(source, target, path, keys);
   let sources: Record<string, unknown>[] | undefined;
   let targets: Record<string, unknown>[] | undefined;
   let keyLists: string[][] | undefined;
@@ -59,6 +71,7 @@ export function cloneSchema<Type>(input: Type): Type {
       target = targets!.pop()!;
       keys = keyLists!.pop()!;
       index = indices!.pop()!;
+      if (inspect) path = paths!.pop()!;
       depth--;
       continue;
     }
@@ -106,10 +119,15 @@ export function cloneSchema<Type>(input: Type): Type {
     targets!.push(target);
     keyLists!.push(keys);
     indices!.push(index);
+    if (inspect) {
+      (paths ??= []).push(path);
+      path += '/' + escapeSegment(key);
+    }
     source = value as Record<string, unknown>;
     target = child;
     keys = Object.keys(source);
     index = 0;
+    if (inspect) inspect(source, target, path, keys);
     depth++;
   }
 }

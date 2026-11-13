@@ -26,6 +26,7 @@ export function appendChildren<Schema extends SchemaEntry>(
   masks: number[],
   dialect: number,
   visitBooleans: boolean,
+  legacyMode: 0 | 1 | 2 = 0,
 ): void {
   const { schema, path, dataPath, depth } = parent;
   if (schema === null || typeof schema !== 'object' || Array.isArray(schema))
@@ -52,6 +53,7 @@ export function appendChildren<Schema extends SchemaEntry>(
       dialect,
       inert,
       visitBooleans,
+      legacyMode,
     );
   }
   for (let word = 0; word < masks.length; word++) {
@@ -70,6 +72,7 @@ export function appendChildren<Schema extends SchemaEntry>(
         dialect,
         inert,
         visitBooleans,
+        legacyMode,
       );
     }
   }

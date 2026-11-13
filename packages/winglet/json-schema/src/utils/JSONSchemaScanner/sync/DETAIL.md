@@ -3,7 +3,7 @@
 ## Requirements
 
 - `scan(schema)`은 인스턴스를 반환해 체이닝 가능하며, 실패(예외) 시 원본·처리된 스키마·수집된 참조 상태를 모두 초기화한 뒤 예외를 다시 던진다.
-- `getValue()`는 공통 출력 계약을 따른다. 연산이 없으면 입력 참조를 그대로 반환하고, 연산이 있으면 입력과 콜백 반환값에 쓰지 않고 출력 사본을 만든다. `cloneResolvedSchema: false`로 인라인한 대상의 별칭 공유는 유지한다.
+- `getValue()`는 공통 출력 계약을 따른다. 연산이 없으면 입력 참조를 그대로 반환하고, 연산이 있으면 입력과 콜백 반환값에 쓰지 않고 출력 사본을 만든다. 해석된 대상은 출현마다 분리한다.
 - `getValue()`의 결과는 최초 호출 시 계산되어 캐시되고, `false`를 포함한 이후 재호출은 같은 캐시를 반환한다.
 - 동기 콜백 안에서 같은 인스턴스의 `scan` 또는 `getValue`를 호출하면 `scan-in-progress` 오류를 던진다. 이 오류를 콜백이 처리하면 바깥 스캔은 계속할 수 있다.
 - `keywords`는 내장 어휘를 대체하고 `additionalKeywords`는 그 뒤에 이어붙인다. 같은 이름은 나중 항목의 순서·종류·방언을 사용한다. 방언과 boolean·inert·정의 역할은 루트의 공통 순회 계약을 따른다.
@@ -11,18 +11,23 @@
 
 ## API Contracts
 
-- `new JSONSchemaScanner(props?)`: `props.visitor`(`enter`/`exit`)와 `props.options`를 받는다. `options.cloneResolvedSchema`는 기본값 `true`(해석된 하위 스키마를 인라인 시점에 깊은 복제), `options.cacheResolvedReference`는 기본값 `false`(참조 문자열별 재해석 결과 메모이제이션)다.
 - `scan(schema): this`: 동기로 순회를 완료한 뒤 `this`를 반환한다.
 - `getValue<OutputSchema>(): OutputSchema | undefined`: 처리된 최종 스키마를 반환한다.
 - entry point는 순회 어휘 상수도 이름으로 재수출한다 — 상수 값 자체는 상위 organ 소유다.
 
 공개 클래스 이름은 `JSONSchemaScanner`이며 이전 표기의 별칭은 제공하지 않습니다. 두 이름으로 같은 계약이 갈라지는 것을 막습니다.
 
+참조 프로토콜은 root·어휘적 child·dialect·resolve를 분리합니다. 해소된 정규 URI로 순환을 검사하고, 순수 교체 체인과 allOf 가지의 정체성 소유자를 나눠 독립 형제를 순환으로 오인하지 않습니다. 동기 스캐너의 Promise 해소 결과는 잘못된 프로토콜 결과로 거절합니다.
+
+구방언에서 안전한 원시 형제만 버리고 정의 주소 컨테이너를 남겨 감싸며, 다른 객체·배열·boolean 형제가 있으면 relocation으로 보존합니다. 남은 참조의 형제도 방문하되 구방언의 정의 컨테이너 외 후손은 inert입니다. 현대 방언은 형제를 유지하고 새 가지를 기존 allOf 뒤에 붙입니다.
+
+참조 체인과 인라인 노드에는 유한 상한이 있으며, 식별자를 바꾸는 mutate는 거절합니다. 새 하위 트리의 식별자를 다시 등록하지 않습니다.
+
 ## Acceptance Criteria
 
 ### real-schema-resolution — 실제 스키마 데이터로 검증한 참조 해석
 
-- exit 방문자에서 수집한 `$ref` → 정의 Map을 `resolveReference` 옵션으로 되돌려주면, `getValue()`가 참조를 정의 내용으로 치환한 스키마를 반환함을 단일 `$defs`·중첩된 `$defs`·`oneOf` 내부 `$ref` 시나리오별로 검증한다.
+- 내장 해소기 또는 명시적인 객체 프로토콜로 참조 대상을 제공하면, `getValue()`가 참조를 정의 내용으로 치환한 스키마를 반환함을 단일 `$defs`·중첩된 `$defs`·`oneOf` 내부 `$ref` 시나리오별로 검증한다.
 - `additionalProperties: false`처럼 해석과 무관한 키워드는 결과 스키마에 원본 그대로 유지됨을 검증한다.
 
 ### cycle-safety — 순환 참조 안전 종료

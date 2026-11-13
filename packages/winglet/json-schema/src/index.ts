@@ -70,3 +70,16 @@ export type {
 } from './types/value';
 
 export { resolveReference } from './utils/resolveReference';
+
+export {
+  createReferenceResolver,
+  createReferenceResolverAsync,
+  type ReferenceResolverOptions,
+  type ReferenceResolverAsyncOptions,
+  type ReferenceResolver,
+  type ReferenceResolverAsync,
+  type ReferenceStep,
+  type ReferenceOutcome,
+  type ReferenceKeyword,
+  type ReferenceSkipReason,
+} from './utils/createReferenceResolver';

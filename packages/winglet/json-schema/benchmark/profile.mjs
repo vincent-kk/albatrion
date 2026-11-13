@@ -1,14 +1,14 @@
 // CPU profile driver: run a heavy mixed workload in a tight loop.
 import {
-  loadScanners,
-  genWide,
   genBranchy,
   genMixed,
   genRefHeavy,
-  getByPointer,
-} from "./_lib.mjs";
+  genWide,
+  loadScanners,
+} from './_lib.mjs';
 
-const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync, createReferenceResolver } =
+  await loadScanners();
 
 const wide = genWide(10000);
 const branchy = genBranchy(6, 5);
@@ -22,9 +22,9 @@ for (let i = 0; i < ROUNDS; i++) {
   new JSONSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(branchy);
   new JSONSchemaScanner({ visitor: { enter: noop, exit: noop } }).scan(mixed);
   const s = new JSONSchemaScanner({
-    options: { resolveReference: (r) => getByPointer(refHeavy, r) },
+    options: { resolveReference: createReferenceResolver(refHeavy) },
   });
   s.scan(refHeavy);
   s.getValue();
 }
-console.log("done", ROUNDS, "rounds");
+console.log('done', ROUNDS, 'rounds');

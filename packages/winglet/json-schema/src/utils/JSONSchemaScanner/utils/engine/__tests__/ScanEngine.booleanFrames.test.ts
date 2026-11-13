@@ -10,8 +10,7 @@ import { appendChildren } from '../utils/children/appendChildren';
 const config: ScanConfig = {
   maxDepth: undefined,
   context: undefined,
-  cloneResolvedSchema: true,
-  cacheResolvedReference: false,
+
   keywordMap: DEFAULT_KEYWORD_MAP,
   operations: [],
 };

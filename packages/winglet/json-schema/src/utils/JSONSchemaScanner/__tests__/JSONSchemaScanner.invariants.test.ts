@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 /**
  * Resolver that returns the ORIGINAL subtree by reference — the real-world
@@ -26,7 +27,9 @@ describe('JSONSchemaScanner - invariants', () => {
       };
       const before = JSON.stringify(schema);
       new JSONSchemaScanner({
-        options: { resolveReference: originalRefResolver(schema) },
+        options: {
+          resolveReference: createTestResolver(originalRefResolver(schema)),
+        },
       })
         .scan(schema)
         .getValue();
@@ -42,7 +45,9 @@ describe('JSONSchemaScanner - invariants', () => {
         },
       };
       const out = new JSONSchemaScanner({
-        options: { resolveReference: originalRefResolver(schema) },
+        options: {
+          resolveReference: createTestResolver(originalRefResolver(schema)),
+        },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
@@ -59,14 +64,16 @@ describe('JSONSchemaScanner - invariants', () => {
         definitions: { A: { type: 'object' } },
       };
       const out = new JSONSchemaScanner({
-        options: { resolveReference: originalRefResolver(schema) },
+        options: {
+          resolveReference: createTestResolver(originalRefResolver(schema)),
+        },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
       expect(out.properties.x).not.toBe(out.properties.y);
     });
 
-    it('cloneResolvedSchema:false opts out of cloning (shares the resolver result)', () => {
+    it('always isolates the resolver result', () => {
       const schema: UnknownSchema = {
         type: 'object',
         properties: { x: { $ref: '#/definitions/A' } },
@@ -74,13 +81,12 @@ describe('JSONSchemaScanner - invariants', () => {
       };
       const out = new JSONSchemaScanner({
         options: {
-          cloneResolvedSchema: false,
-          resolveReference: originalRefResolver(schema),
+          resolveReference: createTestResolver(originalRefResolver(schema)),
         },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
-      expect(out.properties.x).toBe(schema.definitions.A);
+      expect(out.properties.x).not.toBe(schema.definitions.A);
     });
   });
 
@@ -139,9 +145,9 @@ describe('JSONSchemaScanner - invariants', () => {
       // `never`, which would narrow scan()'s parameter to `never`.
       const scanner = new JSONSchemaScanner<UnknownSchema>({
         options: {
-          resolveReference: () => {
+          resolveReference: createTestResolver(() => {
             throw new Error('boom');
-          },
+          }),
         },
       });
       expect(() => scanner.scan(schema)).toThrow('boom');
@@ -224,10 +230,10 @@ describe('JSONSchemaScanner - invariants', () => {
       const out = new JSONSchemaScanner({
         options: {
           maxDepth: 1,
-          resolveReference: (ref) => {
+          resolveReference: createTestResolver((ref) => {
             calls++;
             return getValue(schema, ref);
-          },
+          }),
         },
       })
         .scan(schema)
@@ -248,7 +254,9 @@ describe('JSONSchemaScanner - invariants', () => {
         },
       };
       const out = new JSONSchemaScanner({
-        options: { resolveReference: (ref) => getValue(schema, ref) },
+        options: {
+          resolveReference: createTestResolver((ref) => getValue(schema, ref)),
+        },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;

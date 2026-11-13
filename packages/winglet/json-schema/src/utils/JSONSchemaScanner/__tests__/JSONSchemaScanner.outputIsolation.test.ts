@@ -5,6 +5,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
 import type { JSONScannerOptions } from '../type';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 /** Common result surface keeps both drivers' private state out of the test contract. */
 type ScannerConstructor = new (config?: { options?: JSONScannerOptions }) => {
@@ -75,7 +76,7 @@ describe.each<[string, ScannerConstructor]>([
     expect(scanner.getValue()).toBe(false);
   });
 
-  it('copies untouched objects separately while preserving opted-out resolver aliases', async () => {
+  it('isolates resolver targets and untouched input objects', async () => {
     const shared = { nested: { value: 1 } };
     const schema: UnknownSchema = {
       default: { first: shared, second: shared },
@@ -83,23 +84,22 @@ describe.each<[string, ScannerConstructor]>([
     };
     const target = { type: 'object' };
     const scanner = new Scanner({
-      options: { cloneResolvedSchema: false, resolveReference: () => target },
+      options: { resolveReference: createTestResolver(() => target) },
     });
     await scanner.scan(schema);
     const output = scanner.getValue()!;
-    expect(output.properties.ref).toBe(target);
+    expect(output.properties.ref).not.toBe(target);
     expect(output.default.first).not.toBe(shared);
     expect(output.default.first).not.toBe(output.default.second);
   });
 
-  it('copies containers on a nested mutation path even when resolver cloning is disabled', async () => {
+  it('isolates every target container during a nested mutation', async () => {
     const target = {
       properties: { child: { type: 'string' }, untouched: { type: 'boolean' } },
     };
     const scanner = new Scanner({
       options: {
-        cloneResolvedSchema: false,
-        resolveReference: () => target,
+        resolveReference: createTestResolver(() => target),
         mutate: (entry) =>
           entry.path === '#/properties/ref/properties/child'
             ? { type: 'number' }
@@ -112,7 +112,7 @@ describe.each<[string, ScannerConstructor]>([
     expect(output.properties.ref.properties.child.type).toBe('number');
     expect(output.properties.ref).not.toBe(target);
     expect(output.properties.ref.properties).not.toBe(target.properties);
-    expect(output.properties.ref.properties.untouched).toBe(
+    expect(output.properties.ref.properties.untouched).not.toBe(
       target.properties.untouched,
     );
   });

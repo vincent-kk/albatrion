@@ -2,7 +2,7 @@
 
 ## Purpose
 
-JSON Schema 순회 스캐너(동기·비동기), 스키마 타입 판별자, $ref 인라인 해석 유틸리티를 하나의 공개 표면으로 묶어 재수출하는 패키지 루트다. 순회 엔진은 하위 sync·async 두 변형 fractal이, 타입 판별은 filters fractal이, $ref 해석은 resolveReference fractal이 각각 소유한다 — 이 fractal은 각 계약을 원래 이름 그대로 재수출하고 서로 어긋나지 않게 유지하는 책임만 진다.
+JSON Schema 순회 스캐너(동기·비동기), 스키마 타입 판별자, $ref 인라인 해석 유틸리티를 하나의 공개 표면으로 묶어 재수출하는 패키지 루트다. 순회 엔진은 하위 sync·async 두 변형 fractal이, 타입 판별은 filters fractal이, 참조 주소 색인과 사본 준비는 createReferenceResolver fractal이, 일괄 해석은 resolveReference fractal이 각각 소유한다 — 이 fractal은 각 계약을 원래 이름 그대로 재수출하고 서로 어긋나지 않게 유지하는 책임만 진다.
 
 스키마 노드 타입 정의(JSON Schema/OpenAPI 겸용)도 이 fractal이 직접 소유하며 하위 fractal에 위임하지 않는다.
 

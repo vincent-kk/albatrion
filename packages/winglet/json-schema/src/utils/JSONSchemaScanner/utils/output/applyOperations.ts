@@ -13,7 +13,7 @@ interface CopyTask {
   value: unknown;
   /** Remaining operations beneath this exact source position. */
   overlay: OperationNode;
-  /** Whether untouched values are already isolated or explicitly shared. */
+  /** Whether untouched values are already privately owned. */
   borrow: boolean;
   /** Output-owned container that receives this task's result. */
   parent: Record<string, unknown>;
@@ -25,7 +25,7 @@ interface CopyTask {
  * Apply recorded replacements by copying addressed containers and cloning untouched caller subtrees.
  * @param original Input root, returned by identity when there are no operations.
  * @param operations Ordered replacement records with explicit value ownership.
- * @returns Isolated output, except reference targets explicitly opted out of cloning.
+ * @returns Isolated output whenever an operation is recorded.
  * @throws Clone cycle errors or invalid pointer errors; never writes to inputs or targets.
  */
 export function applyOperations(

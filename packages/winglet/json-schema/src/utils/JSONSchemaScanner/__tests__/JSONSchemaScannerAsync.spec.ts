@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
   afterEach(() => {
@@ -15,9 +16,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -34,7 +35,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
         },
       }).scan(jsonSchema)
     ).getValue();
@@ -62,9 +63,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -107,7 +108,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
         },
       }).scan(jsonSchema)
     ).getValue();
@@ -158,9 +159,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -194,7 +195,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
         },
       }).scan(jsonSchema)
     ).getValue();
@@ -227,9 +228,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -275,7 +276,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
         },
       }).scan(jsonSchema)
     ).getValue();
@@ -347,9 +348,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -387,7 +388,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
           maxDepth: 2,
         },
       }).scan(jsonSchema)
@@ -436,9 +437,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -471,7 +472,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
           maxDepth: 2,
         },
       }).scan(jsonSchema)
@@ -510,9 +511,9 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const defs = new Map<string, UnknownSchema>();
     const scanner = new JSONSchemaScannerAsync({
       visitor: {
-        exit: ({ schema, hasReference }) => {
+        exit: ({ schema, references }) => {
           if (
-            hasReference &&
+            references &&
             typeof schema !== 'boolean' &&
             typeof schema.$ref === 'string'
           )
@@ -550,7 +551,7 @@ describe('JSONSchemaScannerAsync 실제 데이터 테스트', () => {
     const finalSchema = (
       await new JSONSchemaScannerAsync({
         options: {
-          resolveReference: (path) => defs.get(path),
+          resolveReference: createTestResolver((path) => defs.get(path)),
           maxDepth: 2,
         },
       }).scan(jsonSchema)
@@ -676,26 +677,19 @@ describe('JSONSchemaScannerAsync', () => {
 
       const scanner = new JSONSchemaScannerAsync({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
       await scanner.scan(schema);
 
-      expect(resolveReference).toHaveBeenCalledWith(
-        '#/definitions/string',
-        {
-          dataPath: '/ref',
-          depth: 1,
-          keyword: 'properties',
-          path: '#/properties/ref',
-          referencePath: '#/definitions/string',
-          referenceResolved: true,
-          schema: {
-            type: 'string',
-          },
-          variant: 'ref',
-        },
-        undefined,
-      );
+      expect(resolveReference).toHaveBeenCalledWith('#/definitions/string', {
+        dataPath: '/ref',
+        depth: 1,
+        keyword: 'properties',
+        path: '#/properties/ref',
+
+        schema: { $ref: '#/definitions/string' },
+        variant: 'ref',
+      });
       // 루트 객체 방문 확인
       expect(visitor.enter).toHaveBeenCalledWith(
         {
@@ -713,23 +707,20 @@ describe('JSONSchemaScannerAsync', () => {
         },
         undefined,
       );
-      // $ref 노드 방문 확인 ($ref 해결 전)
-      // expect(visitor.enter).toHaveBeenCalledWith(
-      //   {
-      //     depth: 1,
-      //     path: '#/properties/ref',
-      //     schema: { $ref: '#/definitions/string' },
-      //   },
-      //   undefined,
-      // );
-      // $ref 해결 후 방문 확인 (referenceResolved 플래그와 해결된 스키마 확인)
       expect(visitor.enter).toHaveBeenCalledWith(
         {
+          references: [
+            {
+              keyword: '$ref',
+              reference: '#/definitions/string',
+              uri: '#/definitions/string',
+              resolved: true,
+            },
+          ],
           depth: 1,
           path: '#/properties/ref',
           dataPath: `/ref`,
-          referencePath: '#/definitions/string',
-          referenceResolved: true,
+
           keyword: 'properties',
           variant: 'ref',
           schema: { type: 'string' }, // 해결된 스키마
@@ -754,7 +745,7 @@ describe('JSONSchemaScannerAsync', () => {
 
       const scanner = new JSONSchemaScannerAsync({
         visitor,
-        options: { resolveReference },
+        options: { resolveReference: createTestResolver(resolveReference) },
       });
       await scanner.scan(schema);
 
@@ -763,16 +754,12 @@ describe('JSONSchemaScannerAsync', () => {
         {
           dataPath: '/ref',
           depth: 1,
-          hasReference: true,
-          referenceSkipped: 'unresolved',
+
           keyword: 'properties',
           path: '#/properties/ref',
-          schema: {
-            $ref: '#/definitions/nonexistent',
-          },
+          schema: { $ref: '#/definitions/nonexistent' },
           variant: 'ref',
         },
-        undefined,
       );
       // Should not visit undefined reference
       expect(visitor.enter).not.toHaveBeenCalledWith(

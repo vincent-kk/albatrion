@@ -16,208 +16,25 @@ interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
 }
 
 /**
- * An advanced asynchronous JSON Schema traversal engine with comprehensive
- * async support for remote reference resolution and async visitor operations.
- *
- * Extends the synchronous JSONSchemaScanner with full async/await support,
- * enabling complex scenarios like fetching remote schemas, async validation,
- * database lookups during traversal, and async schema transformations.
- * Maintains all the power of the sync version while supporting async workflows.
- *
- * @template ContextType - Custom context type passed to visitors and processors
+ * Traverse union-vocabulary schema positions with isolated reference expansion and lazy output.
+ * Callbacks receive read-only schema views; mutate returns the replacement value.
+ * A configured provider owns lexical contexts and canonical target identities.
  *
  * @example
- * Async schema traversal with remote reference resolution:
  * ```typescript
- * import { JSONSchemaScannerAsync } from '@winglet/json-schema';
- *
- * const schemaWithRemoteRefs = {
- *   type: 'object',
- *   properties: {
- *     user: { $ref: 'https://api.example.com/schemas/user.json' },
- *     profile: { $ref: 'https://api.example.com/schemas/profile.json' }
- *   }
- * };
- *
- * const asyncScanner = new JSONSchemaScannerAsync({
- *   visitor: {
- *     enter: async (entry) => {
- *       console.log(`Processing: ${entry.path}`);
- *       // Async operations like logging to database
- *       await logToDatabase('schema_traversal', entry.path);
- *     },
- *     exit: async (entry) => {
- *       if (entry.referenceResolved) {
- *         await logToDatabase('reference_resolved', entry.referencePath!);
- *       }
- *     }
- *   },
- *   options: {
- *     resolveReference: async (refPath) => {
- *       // Fetch remote schemas
- *       const response = await fetch(refPath);
- *       return await response.json();
- *     },
- *     maxDepth: 5
- *   }
+ * const resolver = createReferenceResolverAsync(schema, { load });
+ * const scanner = new JSONSchemaScannerAsync({
+ *   options: { resolveReference: resolver },
+ *   visitor: { exit: entry => console.log(entry.path, entry.references) },
  * });
- *
- * const resolvedSchema = await asyncScanner.scan(schemaWithRemoteRefs).then(scanner =>
- *   scanner.getValue()
- * );
- * ```
- *
- * @example
- * Async schema validation with database lookups:
- * ```typescript
- * import { isStringSchema, isObjectSchema } from '@winglet/json-schema/filter';
- *
- * interface ValidationContext {
- *   validatedPaths: string[];
- *   errors: string[];
- * }
- *
- * const validationScanner = new JSONSchemaScannerAsync<ValidationContext>({
- *   options: {
- *     context: { validatedPaths: [], errors: [] },
- *     filter: async (entry, context) => {
- *       // Async filtering based on database rules
- *       const shouldProcess = await checkProcessingRules(entry.path);
- *       return shouldProcess;
- *     },
- *     mutate: async (entry, context) => {
- *       // Async mutation with external API calls
- *       // Use isStringSchema() to handle both { type: 'string' } and { type: ['string', 'null'] }
- *       if (isStringSchema(entry.schema) && entry.schema.format === 'email') {
- *         const domainValidation = await validateEmailDomain(entry.schema.pattern);
- *         if (!domainValidation.valid) {
- *           context.errors.push(`Invalid email pattern at ${entry.path}`);
- *         }
- *         return {
- *           ...entry.schema,
- *           description: `Validated email field: ${domainValidation.message}`
- *         };
- *       }
- *     }
- *   },
- *   visitor: {
- *     enter: async (entry, context) => {
- *       context.validatedPaths.push(entry.path);
- *
- *       // Async validation against external service
- *       // Use isObjectSchema() to handle both { type: 'object' } and { type: ['object', 'null'] }
- *       if (isObjectSchema(entry.schema)) {
- *         const validationResult = await validateSchemaStructure(entry.schema);
- *         if (!validationResult.valid) {
- *           context.errors.push(`Schema structure invalid at ${entry.path}`);
- *         }
- *       }
- *     }
- *   }
- * });
- *
- * await validationScanner.scan(complexSchema);
- * const context = validationScanner.options.context;
- * console.log(`Validated ${context.validatedPaths.length} paths with ${context.errors.length} errors`);
- * ```
- *
- * @example
- * Distributed schema composition with async references:
- * ```typescript
- * const distributedSchema = {
- *   type: 'object',
- *   properties: {
- *     userService: { $ref: 'service://user-service/schema' },
- *     orderService: { $ref: 'service://order-service/schema' },
- *     paymentService: { $ref: 'service://payment-service/schema' }
- *   }
- * };
- *
- * const serviceResolver = new JSONSchemaScannerAsync({
- *   options: {
- *     resolveReference: async (serviceRef) => {
- *       const [, , serviceName] = serviceRef.split('/');
- *
- *       // Async service discovery and schema fetching
- *       const serviceEndpoint = await discoverService(serviceName);
- *       const schemaResponse = await fetch(`${serviceEndpoint}/api/schema`);
- *       const schema = await schemaResponse.json();
- *
- *       // Cache for performance
- *       await cacheSchema(serviceRef, schema);
- *
- *       return schema;
- *     },
- *     context: { resolvedServices: new Set<string>() }
- *   },
- *   visitor: {
- *     enter: async (entry, context) => {
- *       if (entry.referenceResolved && entry.referencePath?.startsWith('service://')) {
- *         context.resolvedServices.add(entry.referencePath);
- *         await notifyServiceUsage(entry.referencePath);
- *       }
- *     }
- *   }
- * });
- *
- * const composedSchema = await serviceResolver.scan(distributedSchema)
- *   .then(scanner => scanner.getValue());
- * ```
- *
- * @example
- * Progressive schema loading with batched async operations:
- * ```typescript
- * const batchingScanner = new JSONSchemaScannerAsync({
- *   options: {
- *     resolveReference: async (refPath, context) => {
- *       // Batch reference resolution for performance
- *       if (!context.pendingRefs) context.pendingRefs = [];
- *       context.pendingRefs.push(refPath);
- *
- *       if (context.pendingRefs.length >= 10) {
- *         const resolvedBatch = await resolveBatchedReferences(context.pendingRefs);
- *         context.pendingRefs = [];
- *         return resolvedBatch[refPath];
- *       }
- *
- *       // Handle single reference
- *       return await resolveSingleReference(refPath);
- *     }
- *   },
- *   visitor: {
- *     exit: async (entry, context) => {
- *       // Flush remaining batched operations at the end
- *       if (entry.depth === 0 && context.pendingRefs?.length > 0) {
- *         await resolveBatchedReferences(context.pendingRefs);
- *         context.pendingRefs = [];
- *       }
- *     }
- *   }
- * });
+ * const output = (await scanner.scan(schema)).getValue();
  * ```
  *
  * @remarks
- * **Async Capabilities:**
- * - **Async Reference Resolution**: Fetch schemas from remote sources
- * - **Async Visitors**: Perform async operations during traversal
- * - **Async Filtering**: Dynamic filtering based on async conditions
- * - **Async Mutation**: Transform schemas using async data sources
- *
- * **Use Cases:**
- * - **Remote Schema Composition**: Combine schemas from multiple services
- * - **Dynamic Schema Validation**: Validate against external rules
- * - **Schema Analytics**: Collect metrics with async logging
- * - **Progressive Loading**: Load schema parts on demand
- * - **Database Integration**: Enrich schemas with database data
- *
- * **Performance Notes:**
- * - Maintains non-blocking traversal with proper async/await handling
- * - Supports batched operations for efficiency
- * - Provides same caching benefits as sync version
- * - Handles concurrent async operations safely
- *
- * This async scanner is essential for modern microservice architectures,
- * distributed schema systems, and complex validation workflows.
+ * Sync callbacks run directly; the asynchronous driver awaits thenable results.
+ * Inert positions remain observable but produce no output operations.
+ * Reference templates are prepared independently of public depth and filtering.
+ * Canonical cycles remain as references; finite budgets bound fresh-identity expansion.
  */
 export class JSONSchemaScannerAsync<
   Schema extends UnknownSchema = UnknownSchema,
@@ -300,8 +117,6 @@ export class JSONSchemaScannerAsync<
     const config: ScanConfig<Schema, ContextType> = {
       context,
       maxDepth: options.maxDepth,
-      cloneResolvedSchema: options.cloneResolvedSchema !== false,
-      cacheResolvedReference: options.cacheResolvedReference === true,
       defaultDialect: options.defaultDialect,
       keywordMap:
         options.keywords !== undefined ||
@@ -318,6 +133,8 @@ export class JSONSchemaScannerAsync<
       enter: visitor.enter,
       exit: visitor.exit,
       resolveReference: options.resolveReference,
+      unresolvedReference: options.unresolvedReference,
+      limits: options.limits,
     };
 
     const engine = new ScanEngine(schema, config, true);

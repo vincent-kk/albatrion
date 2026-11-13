@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScannerAsync - Schema Mutation', () => {
   describe('비동기 환경에서 mutate 옵션으로 schema 변경', () => {
@@ -95,7 +96,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
 
       const scanner = new JSONSchemaScannerAsync({
         options: {
-          resolveReference: async (refPath) => {
+          resolveReference: createTestResolver(async (refPath) => {
             // 비동기 참조 해결 시뮬레이션
             await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -122,7 +123,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             }
 
             return undefined;
-          },
+          }),
           mutate: ({ schema, path }) => {
             // 해결된 User 스키마의 email 필드에 제약 추가
             if (path.endsWith('/properties/email')) {

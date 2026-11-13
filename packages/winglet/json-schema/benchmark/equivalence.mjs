@@ -1,9 +1,15 @@
 // Visit-sequence + resolver-call + output snapshot for a battery of schemas.
 // Emits a deterministic JSON snapshot used as the behavior-equivalence GATE:
-// the E2 refactor / P2 / P3(default off) / E1(default) must reproduce it.
-import { loadScanners, getByPointer } from "./_lib.mjs";
+// Non-reference cases retain their frozen compatibility projection; reference cases exercise the built-in provider.
+import { loadScanners } from './_lib.mjs';
+import { observeResolver } from './observeResolver.mjs';
 
-const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
+const {
+  JSONSchemaScanner,
+  JSONSchemaScannerAsync,
+  createReferenceResolver,
+  createReferenceResolverAsync,
+} = await loadScanners();
 
 function snapshotCase(schema, options = {}) {
   const enterSeq = [];
@@ -12,10 +18,10 @@ function snapshotCase(schema, options = {}) {
   const opts = { ...options };
   if (opts.__withResolver) {
     delete opts.__withResolver;
-    opts.resolveReference = (ref, entry) => {
-      resolverCalls.push(ref);
-      return getByPointer(schema, ref);
-    };
+    opts.resolveReference = observeResolver(
+      createReferenceResolver(schema),
+      (ref) => resolverCalls.push(ref),
+    );
   }
   const scanner = new JSONSchemaScanner({
     visitor: {
@@ -29,8 +35,10 @@ function snapshotCase(schema, options = {}) {
       exit: (e) =>
         exitSeq.push({
           path: e.path,
-          hasReference: e.hasReference ?? false,
-          referenceResolved: e.referenceResolved ?? false,
+          hasReference:
+            e.references?.some((outcome) => !outcome.resolved) ?? false,
+          referenceResolved:
+            e.references?.some((outcome) => outcome.resolved) ?? false,
         }),
     },
     options: opts,
@@ -47,10 +55,10 @@ async function snapshotCaseAsync(schema, options = {}) {
   const opts = { ...options };
   if (opts.__withResolver) {
     delete opts.__withResolver;
-    opts.resolveReference = (ref) => {
-      resolverCalls.push(ref);
-      return getByPointer(schema, ref);
-    };
+    opts.resolveReference = observeResolver(
+      createReferenceResolverAsync(schema),
+      (ref) => resolverCalls.push(ref),
+    );
   }
   const scanner = new JSONSchemaScannerAsync({
     visitor: {
@@ -64,8 +72,10 @@ async function snapshotCaseAsync(schema, options = {}) {
       exit: (e) =>
         exitSeq.push({
           path: e.path,
-          hasReference: e.hasReference ?? false,
-          referenceResolved: e.referenceResolved ?? false,
+          hasReference:
+            e.references?.some((outcome) => !outcome.resolved) ?? false,
+          referenceResolved:
+            e.references?.some((outcome) => outcome.resolved) ?? false,
         }),
     },
     options: opts,
@@ -78,55 +88,55 @@ async function snapshotCaseAsync(schema, options = {}) {
 const cases = {
   simpleObject: () =>
     snapshotCase({
-      type: "object",
-      properties: { a: { type: "string" }, b: { type: "number" } },
+      type: 'object',
+      properties: { a: { type: 'string' }, b: { type: 'number' } },
     }),
   nested: () =>
     snapshotCase({
-      type: "object",
+      type: 'object',
       properties: {
-        a: { type: "object", properties: { c: { type: "string" } } },
-        b: { type: "array", items: { type: "number" } },
+        a: { type: 'object', properties: { c: { type: 'string' } } },
+        b: { type: 'array', items: { type: 'number' } },
       },
     }),
   tupleItems: () =>
     snapshotCase({
-      type: "array",
-      prefixItems: [{ type: "string" }, { type: "number" }],
-      items: { type: "boolean" },
+      type: 'array',
+      prefixItems: [{ type: 'string' }, { type: 'number' }],
+      items: { type: 'boolean' },
     }),
   composition: () =>
     snapshotCase({
-      allOf: [{ type: "object" }],
-      anyOf: [{ type: "string" }, { type: "number" }],
-      oneOf: [{ type: "boolean" }],
+      allOf: [{ type: 'object' }],
+      anyOf: [{ type: 'string' }, { type: 'number' }],
+      oneOf: [{ type: 'boolean' }],
     }),
   conditional: () =>
     snapshotCase({
-      if: { type: "object" },
-      then: { type: "string" },
-      else: { type: "number" },
-      not: { type: "null" },
+      if: { type: 'object' },
+      then: { type: 'string' },
+      else: { type: 'number' },
+      not: { type: 'null' },
     }),
   additionalProps: () =>
     snapshotCase({
-      type: "object",
-      properties: { a: { type: "string" } },
-      additionalProperties: { type: "number" },
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      additionalProperties: { type: 'number' },
     }),
   defs: () =>
     snapshotCase({
-      type: "object",
-      $defs: { E: { type: "string" } },
-      definitions: { A: { type: "number" } },
+      type: 'object',
+      $defs: { E: { type: 'string' } },
+      definitions: { A: { type: 'number' } },
     }),
   refResolve: () =>
     snapshotCase(
       {
-        type: "object",
-        properties: { x: { $ref: "#/definitions/A" } },
+        type: 'object',
+        properties: { x: { $ref: '#/definitions/A' } },
         definitions: {
-          A: { type: "object", properties: { n: { type: "string" } } },
+          A: { type: 'object', properties: { n: { type: 'string' } } },
         },
       },
       { __withResolver: true },
@@ -134,11 +144,11 @@ const cases = {
   refChain: () =>
     snapshotCase(
       {
-        type: "object",
-        properties: { x: { $ref: "#/definitions/A" } },
+        type: 'object',
+        properties: { x: { $ref: '#/definitions/A' } },
         definitions: {
-          A: { $ref: "#/definitions/B" },
-          B: { type: "string" },
+          A: { $ref: '#/definitions/B' },
+          B: { type: 'string' },
         },
       },
       { __withResolver: true },
@@ -146,12 +156,12 @@ const cases = {
   refCycle: () =>
     snapshotCase(
       {
-        type: "object",
-        properties: { x: { $ref: "#/definitions/A" } },
+        type: 'object',
+        properties: { x: { $ref: '#/definitions/A' } },
         definitions: {
           A: {
-            type: "object",
-            properties: { self: { $ref: "#/definitions/A" } },
+            type: 'object',
+            properties: { self: { $ref: '#/definitions/A' } },
           },
         },
       },
@@ -160,17 +170,17 @@ const cases = {
   filterSkip: () =>
     snapshotCase(
       {
-        type: "object",
-        properties: { a: { type: "string" }, b: { type: "number" } },
+        type: 'object',
+        properties: { a: { type: 'string' }, b: { type: 'number' } },
       },
-      { filter: (e) => e.path !== "#/properties/b" },
+      { filter: (e) => e.path !== '#/properties/b' },
     ),
   maxDepth: () =>
     snapshotCase(
       {
-        type: "object",
+        type: 'object',
         properties: {
-          a: { type: "object", properties: { deep: { type: "string" } } },
+          a: { type: 'object', properties: { deep: { type: 'string' } } },
         },
       },
       { maxDepth: 2 },
@@ -181,25 +191,25 @@ const asyncCases = {
   asyncRefResolve: () =>
     snapshotCaseAsync(
       {
-        type: "object",
-        properties: { x: { $ref: "#/definitions/A" } },
-        definitions: { A: { type: "string" } },
+        type: 'object',
+        properties: { x: { $ref: '#/definitions/A' } },
+        definitions: { A: { type: 'string' } },
       },
       { __withResolver: true },
     ),
   asyncFilter: () =>
     snapshotCaseAsync(
       {
-        type: "object",
-        properties: { a: { type: "string" }, b: { type: "number" } },
+        type: 'object',
+        properties: { a: { type: 'string' }, b: { type: 'number' } },
       },
-      { filter: (e) => e.path !== "#/properties/b" },
+      { filter: (e) => e.path !== '#/properties/b' },
     ),
   asyncNested: () =>
     snapshotCaseAsync({
-      type: "object",
+      type: 'object',
       properties: {
-        a: { type: "object", properties: { c: { type: "string" } } },
+        a: { type: 'object', properties: { c: { type: 'string' } } },
       },
     }),
 };

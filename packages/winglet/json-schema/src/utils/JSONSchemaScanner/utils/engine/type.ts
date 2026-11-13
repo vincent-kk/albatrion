@@ -2,7 +2,12 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import type { Dialect, SchemaEntry } from '../../type';
+import type {
+  Dialect,
+  ReferenceResolver,
+  ReferenceResolverAsync,
+  SchemaEntry,
+} from '../../type';
 import type { OutputOperation } from '../output/type';
 import type { KeywordMap } from '../vocabulary/type';
 
@@ -25,10 +30,6 @@ export interface ScanConfig<
   context: ContextType | undefined;
   /** Inclusive traversal depth bound; reference resolution still runs at the boundary. */
   maxDepth: number | undefined;
-  /** Whether each resolved occurrence receives its own cloned target. */
-  cloneResolvedSchema: boolean;
-  /** Whether resolver results, including undefined, are memoized by reference string. */
-  cacheResolvedReference: boolean;
   /** Root fallback when no known resource metaschema is declared. */
   defaultDialect?: Dialect;
   /** Ordered vocabulary assembled by the driver before traversal. */
@@ -43,11 +44,12 @@ export interface ScanConfig<
   enter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], unknown>;
   /** Visit the same entry after all captured descendants complete. */
   exit?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], unknown>;
-  /** Supply a reference target; definitions and active reference strings skip this callback. */
-  resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
-    unknown
-  >;
+  /** Context-aware reference provider, absent on the ordinary traversal path. */
+  resolveReference?: ReferenceResolver<any> | ReferenceResolverAsync<any>;
+  /** Missing target policy, independent of the provider. */
+  unresolvedReference?: 'keep' | 'throw';
+  /** Explicit termination limits for reference expansion. */
+  limits?: { referenceChain?: number; inlinedNodes?: number };
 }
 
 /** Engine-owned mutable view; callbacks receive the read-only schema property through SchemaEntry. */

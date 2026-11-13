@@ -12,9 +12,11 @@ import type {
   ScanConfig,
 } from './type';
 import { ScanStage } from './utils/ScanStage';
-import { applyReferenceResult } from './utils/applyReferenceResult';
+import { assertIdentifiersUnchanged } from './utils/assertIdentifiersUnchanged';
 import { appendChildren } from './utils/children/appendChildren';
+import { getReferenceKeywords } from './utils/getReferenceKeywords';
 import { isThenable } from './utils/isThenable';
+import { ReferenceMachine } from './utils/references/ReferenceMachine';
 
 /** Match the compiled vocabulary snapshot even when callers mutate the publicly exposed descriptor array. */
 const defaultOrderedKeywords = Array.from(DEFAULT_KEYWORD_MAP.values());
@@ -31,10 +33,8 @@ export class ScanEngine<
   private readonly entries: EngineEntry<Schema>[];
   /** Next stage per frame; only suspension or descent writes a continuation. */
   private readonly stages: ScanStage[] = [ScanStage.Filter];
-  /** Reference strings active along the current DFS ancestry. */
-  private readonly active = new Set<string>();
-  /** Optional original resolver results memoized for this scan. */
-  private readonly cache: Map<string, UnknownSchema | undefined> | undefined;
+  /** Reference-only state does not exist when no provider is configured. */
+  private readonly references: ReferenceMachine | undefined;
   /** Vocabulary positions used by allocation-free bit-mask ordering. */
   private readonly ordered: readonly OrderedKeywordDescriptor[];
   /** Reused words for vocabulary positions beyond the first 32; empty on the default path. */
@@ -47,8 +47,6 @@ export class ScanEngine<
   private readonly hasEnter: boolean;
   /** Whether exit callbacks must be invoked after each accepted frame. */
   private readonly hasExit: boolean;
-  /** Written reference awaiting application after an async resolver suspension. */
-  private reference: string | undefined;
   /** Power-of-two ancestor checkpoints, allocated only when a child-bearing frame reaches depth 256. */
   private checkpoints: PhysicalCheckpoint[] | undefined;
 
@@ -90,13 +88,19 @@ export class ScanEngine<
             } as EngineEntry<Schema>,
           ];
     this.dialect = DIALECT_FLAGS[config.defaultDialect ?? '2020-12'];
+    this.references =
+      config.resolveReference === undefined
+        ? undefined
+        : new ReferenceMachine(schema, config, awaitCallbacks, (target) =>
+            this.countNodes(target),
+          );
+    if (this.references) this.dialect = this.references.dialect;
     if (
       this.entries.length &&
       typeof schema === 'boolean' &&
       this.dialect === 1
     )
       this.entries[0].inert = true;
-    this.cache = config.cacheResolvedReference ? new Map() : undefined;
     if (config.keywordMap === DEFAULT_KEYWORD_MAP)
       this.ordered = defaultOrderedKeywords;
     else {
@@ -121,8 +125,7 @@ export class ScanEngine<
       stages,
       config,
       awaitCallbacks,
-      active,
-      cache,
+      references,
       hasFilter,
       hasMutate,
       hasEnter,
@@ -136,6 +139,9 @@ export class ScanEngine<
       const top = entries.length - 1;
       const entry = entries[top];
       const stage = stages[top];
+      let legacyMode: 0 | 1 | 2 = 0;
+      if (stage === ScanStage.Filter && references !== undefined)
+        references.enter(entry, top);
       if (
         stage === ScanStage.Filter &&
         resolveReference !== undefined &&
@@ -154,6 +160,8 @@ export class ScanEngine<
         if (hasFilter && !result) {
           if (resolveReference !== undefined && this.definitionFrame === top)
             this.definitionFrame = undefined;
+          if (references !== undefined && references.releaseFrame === top)
+            references.leave(top);
           entries.pop();
           stages.pop();
           continue;
@@ -168,6 +176,7 @@ export class ScanEngine<
           }
         }
         if (hasMutate && result !== undefined) {
+          assertIdentifiersUnchanged(entry.schema, result);
           entry.schema = result as Schema;
           if (!entry.inert)
             config.operations.push({
@@ -185,75 +194,72 @@ export class ScanEngine<
           return result;
         }
       }
-      if (stage <= ScanStage.Reference) {
+      if (stage <= ScanStage.ReferenceResult) {
         const schema = entry.schema;
-        this.reference = undefined;
-        if (
-          !entry.inert &&
-          schema !== null &&
-          typeof schema === 'object' &&
-          typeof schema.$schema === 'string' &&
-          (top === 0 ||
-            typeof schema.$id === 'string' ||
-            (this.dialect === 1 && typeof schema.id === 'string'))
-        ) {
-          const dialect = detectDialect(schema.$schema);
-          if (dialect !== undefined && dialect !== this.dialect) {
-            (this.dialectScopes ??= []).push({
-              frame: top,
-              previous: this.dialect,
-            });
-            this.dialect = dialect;
-          }
-        }
-        if (
-          !entry.inert &&
-          schema !== null &&
-          typeof schema === 'object' &&
-          typeof schema.$ref === 'string'
-        ) {
-          const reference = schema.$ref;
-          if (active.has(reference)) {
-            entry.hasReference = true;
-            entry.referenceSkipped = 'cycle';
-            stages[top] = ScanStage.Exit;
-            continue;
-          }
-          const isDefinition =
-            config.resolveReference !== undefined &&
-            this.definitionFrame !== undefined;
-          if (config.resolveReference === undefined || isDefinition) {
-            entry.hasReference = true;
-            entry.referenceSkipped = isDefinition ? 'definition' : 'unresolved';
-            stages[top] = ScanStage.Exit;
-            continue;
-          }
-          this.reference = reference;
-          if (cache !== undefined && cache.has(reference))
-            result = cache.get(reference);
-          else {
-            result = config.resolveReference(reference, entry, context);
-            if (awaitCallbacks && isThenable(result)) {
+        if (references !== undefined) {
+          this.dialect = references.dialect;
+          if (
+            !entry.inert &&
+            schema !== null &&
+            typeof schema === 'object' &&
+            (typeof schema.$ref === 'string' ||
+              (this.dialect === 16 && typeof schema.$dynamicRef === 'string') ||
+              (this.dialect === 8 && typeof schema.$recursiveRef === 'string'))
+          ) {
+            const pending = references.run(
+              entry,
+              top,
+              this.definitionFrame !== undefined,
+              resumed,
+            );
+            if (pending !== undefined) {
               stages[top] = ScanStage.ReferenceResult;
-              return result;
+              return pending;
+            }
+            legacyMode = references.legacyMode;
+          }
+        } else if (
+          !entry.inert &&
+          schema !== null &&
+          typeof schema === 'object'
+        ) {
+          if (
+            typeof schema.$schema === 'string' &&
+            (top === 0 ||
+              ((this.dialect >= 8 || typeof schema.$ref !== 'string') &&
+                (typeof schema.$id === 'string' ||
+                  (this.dialect === 1 && typeof schema.id === 'string'))))
+          ) {
+            const dialect = detectDialect(schema.$schema);
+            if (dialect !== undefined && dialect !== this.dialect) {
+              (this.dialectScopes ??= []).push({
+                frame: top,
+                previous: this.dialect,
+              });
+              this.dialect = dialect;
             }
           }
+          if (
+            typeof schema.$ref === 'string' ||
+            (this.dialect === 16 && typeof schema.$dynamicRef === 'string') ||
+            (this.dialect === 8 && typeof schema.$recursiveRef === 'string')
+          ) {
+            const keys = getReferenceKeywords(schema, this.dialect);
+            entry.references = keys.map((keyword) => ({
+              keyword,
+              reference: schema[keyword] as string,
+              resolved: false,
+              skipped: 'unresolved',
+            }));
+            if (config.unresolvedReference === 'throw')
+              throw new JSONSchemaScanError(
+                'unresolved-reference',
+                schema[keys[0]] as string,
+              );
+            if (this.dialect < 8 && typeof schema.$ref === 'string')
+              legacyMode = 1;
+          }
         }
-      }
-      if (
-        stage <= ScanStage.ReferenceResult &&
-        this.reference !== undefined &&
-        !applyReferenceResult(
-          entry,
-          this.reference,
-          result,
-          config,
-          active,
-          cache,
-        )
-      ) {
-        stages[top] = ScanStage.Exit;
-        continue;
       }
       if (stage <= ScanStage.Children) {
         if (
@@ -276,7 +282,9 @@ export class ScanEngine<
             this.masks,
             this.dialect,
             this.visitBooleans,
+            legacyMode,
           );
+        references?.bind(entries, start, top);
         const end = entries.length;
         if (end > start) {
           const depth = entry.depth;
@@ -302,12 +310,8 @@ export class ScanEngine<
           return result;
         }
       }
-      if (
-        entry.referenceResolved &&
-        entry.referencePath &&
-        active.has(entry.referencePath)
-      )
-        active.delete(entry.referencePath);
+      if (references !== undefined && references.releaseFrame === top)
+        references.leave(top);
       if (checkpoint !== undefined && checkpoint.frame === top) {
         checkpoints!.pop();
         checkpoint = checkpoints![checkpoints!.length - 1];
@@ -319,9 +323,40 @@ export class ScanEngine<
         this.dialect = scope.previous;
         this.dialectScopes!.pop();
       }
+      if (references) this.dialect = references.dialect;
       entries.pop();
       stages.pop();
     }
     return undefined;
+  }
+  /**
+   * Count complete inlined schema work using this same engine without user callbacks or resolution.
+   * Property order matches both driver configurations to keep hot configuration loads monomorphic.
+   * @param schema Immutable provider template; user maxDepth and filter do not constrain the count.
+   * @returns Number of schema occurrences, including boolean leaves.
+   */
+  private countNodes(schema: UnknownSchema | boolean): number {
+    let count = 0;
+    new ScanEngine(
+      schema,
+      {
+        context: undefined,
+        maxDepth: undefined,
+        defaultDialect: this.config.defaultDialect,
+        keywordMap: this.config.keywordMap,
+        operations: [],
+        filter: undefined,
+        mutate: undefined,
+        enter: () => {
+          count++;
+        },
+        exit: undefined,
+        resolveReference: undefined,
+        unresolvedReference: undefined,
+        limits: undefined,
+      },
+      false,
+    ).run();
+    return count;
   }
 }
