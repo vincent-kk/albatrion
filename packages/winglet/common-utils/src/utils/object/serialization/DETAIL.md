@@ -44,6 +44,14 @@ accessor 거부는 일반 데이터 객체의 descriptor 검사에 대한 보장
 
 - 재귀 제외, getter 회피, 배열 hole, 변경 가능한 omit의 변경 및 제외 후 참조 관계를 지킵니다.
 
+## Boundary Exemptions
+
+### `type.ts` — 직렬화 정책의 상위 공통 타입
+
+- **Consumers**: `**/packages/winglet/common-utils/src/utils/object/serialization/stringifyGraph/stringifyGraph.ts`, `**/packages/winglet/common-utils/src/utils/object/serialization/utils/encodeGraph/type.ts`
+- **Direct import**: `allowed`
+- **Reason**: 저장과 순회가 함께 사용하는 SerializationOptions는 상위 직렬화 계약이 소유합니다. 자식은 저장소 Module Contract Principle 4에 따라 조상의 구체 타입을 읽습니다. parser가 encoder 진입점의 wire 타입을 읽는 간선과 부모의 재수출을 합친 모듈 그래프는 왕복하지만, 상위 타입 파일은 자식 구현을 import하지 않습니다.
+
 ## Last Updated
 
 graph wire, 지원 데이터 또는 참조 보존 계약이 바뀌면 갱신합니다.
