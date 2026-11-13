@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import {
   SCHEMA_ARRAY_KEYWORDS,
   SCHEMA_DICTIONARY_KEYWORDS,
@@ -18,12 +20,16 @@ const NO_SKIPPED_KEYWORDS: ReadonlySet<string> = new Set();
  */
 export const visitSchemaObjects = (
   schema: unknown,
-  visit: (schema: object, pointer: string, ancestors: readonly object[]) => boolean,
+  visit: Fn<
+    [schema: object, pointer: string, ancestors: readonly object[]],
+    boolean
+  >,
   skipKeywords: ReadonlySet<string> = NO_SKIPPED_KEYWORDS,
   pointer = '',
   ancestors: readonly object[] = [],
 ): void => {
-  if (typeof schema !== 'object' || schema === null || Array.isArray(schema)) return;
+  if (typeof schema !== 'object' || schema === null || Array.isArray(schema))
+    return;
   if (!visit(schema, pointer, ancestors)) return;
   const inner = [...ancestors, schema];
   for (const [keyword, value] of Object.entries(schema)) {
@@ -31,12 +37,30 @@ export const visitSchemaObjects = (
     const at = `${pointer}/${keyword.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     if (Array.isArray(value)) {
       if (SCHEMA_ARRAY_KEYWORDS.has(keyword))
-        value.forEach((item, index) => visitSchemaObjects(item, visit, skipKeywords, `${at}/${index}`, inner));
+        value.forEach((item, index) =>
+          visitSchemaObjects(
+            item,
+            visit,
+            skipKeywords,
+            `${at}/${index}`,
+            inner,
+          ),
+        );
     } else if (SCHEMA_VALUE_KEYWORDS.has(keyword)) {
       visitSchemaObjects(value, visit, skipKeywords, at, inner);
-    } else if (SCHEMA_DICTIONARY_KEYWORDS.has(keyword) && typeof value === 'object' && value !== null) {
+    } else if (
+      SCHEMA_DICTIONARY_KEYWORDS.has(keyword) &&
+      typeof value === 'object' &&
+      value !== null
+    ) {
       for (const [name, item] of Object.entries(value))
-        visitSchemaObjects(item, visit, skipKeywords, `${at}/${name.replace(/~/g, '~0').replace(/\//g, '~1')}`, inner);
+        visitSchemaObjects(
+          item,
+          visit,
+          skipKeywords,
+          `${at}/${name.replace(/~/g, '~0').replace(/\//g, '~1')}`,
+          inner,
+        );
     }
   }
 };
