@@ -16,6 +16,8 @@
   - 비배열 컨텍스트에서 기존 키 값이 `undefined`로 바뀌면 REMOVE로 처리된다. 배열 원소가 `undefined`로 바뀌는 것은 일반 값 변경(REPLACE)이다 — 배열은 원소의 위치이지 존재 여부가 아니기 때문이다.
   - `target`에만 있고 값이 `undefined`인 새 키는 ADD를 생성하지 않는다 — 추가해도 결과가 달라지지 않는다.
 
+직렬화 훅은 표준 `toJSON`만 인식합니다. 대소문자를 달리한 비표준 별칭은 호출하지 않습니다.
+
 ## Acceptance Criteria
 
 ### rfc6902-diff — 기본 diff 생성
@@ -48,10 +50,6 @@
 - **Direct import**: `allowed`
 - **Reason**: entry point가 재수출하지 않는 내부 전용 구현이다 — 진입점 `compare`와 재귀 코어는 한 몸의 두 파일이라 organ 재배치는 경로 깊이만 늘리고 경계를 바꾸지 못한다. flat root peer가 의도된 형태다.
 
-## History
-
-- 2026-09-19 — 0.16.0: 비표준 대소문자 직렬화 훅 별칭 지원 종료, `toJSON`만 인식(breaking).
-
 ## Last Updated
 
-2026-09-19 — 0.16.0 직렬화 훅 계약 반영
+compare의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

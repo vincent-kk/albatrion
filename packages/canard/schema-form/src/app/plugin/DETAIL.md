@@ -36,19 +36,19 @@ Form의 validatorFactory는 compile·compileGuard를 가진 검증기 객체입�
 
 선택한 참조의 변경에 따른 트리 교체는 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)가 소유합니다. 공개 ValidatorPlugin과 core Validator는 구조가 맞아야 하지만, 계약을 합친다는 이유로 core가 앱의 형을 가져오지 않습니다.
 
-### VALIDATE-019 / VALIDATE-044 — 컴파일 순서가 등록 소유권을 정하지 않습니다
+### plugin-compile-order — 컴파일 순서가 등록 소유권을 정하지 않습니다
 
 검증기 객체는 전체 검증을 준비하기 전에도 같은 사본으로 가드를 컴파일하고 해제할 수 있어야 합니다. compile은 오류 목록 또는 null을 반환하는 검증 함수를, compileGuard는 동기 boolean 함수를 제공하며, 방언 선언과 release는 선택 계약입니다. 가드 캐시와 사본 수명은 [validation의 VALIDATE-019·048](../../core/engine/validation/DETAIL.md)이 소유하고 플러그인은 자기 등록만 관리합니다. 전체 컴파일을 등록의 필수 선행 조건으로 삼으면 검증을 요청하지 않은 폼의 조건까지 멈춥니다.
 
-### VALIDATE-033 / VALIDATE-047 — 가드 전용 경로도 같은 판정 의미를 유지합니다
+### plugin-guard-parity — 가드 전용 경로도 같은 판정 의미를 유지합니다
 
 설정 동치와 동적 범위의 보장 조건은 [validation의 VALIDATE-033·047](../../core/engine/validation/DETAIL.md)을 따릅니다. 플러그인은 지원 방언·format·사용자 키워드와 지원하지 않는 동기 가드 문맥을 명시하여, 구현별 한계를 core가 별도 판정기로 메우지 않게 합니다. AJV의 버전별 인스턴스 복제·메타 스키마 예외는 각 플러그인의 CLAUDE.md가 소유합니다.
 
-### VALIDATE-046 / ERROR-201 — 등록 실패가 다른 살아 있는 루트를 훼손하지 않습니다
+### plugin-registration-isolation — 등록 실패가 다른 살아 있는 루트를 훼손하지 않습니다
 
 같은 루트 또는 안쪽 자원 식별자가 겹쳐도 두 루트의 전체 검증·가드는 각각 자기 문맥을 사용하고, 한쪽 해제 뒤 다른 쪽의 늦은 가드 컴파일도 유지합니다. 등록을 격리할 수 없거나 컴파일이 실패하면 소비자의 기존 등록과 별칭을 보존하고 실패를 전달합니다. 정상적인 같은 식별자 공존에 새 오류 코드를 붙이지 않습니다. core의 실패 분류·재시도는 [validation의 ERROR-201](../../core/engine/validation/DETAIL.md)이 소유하며, 플러그인의 롤백은 실패한 준비가 후속 폼의 참조 해석을 오염시키지 않기 위한 계약입니다.
 
-### VALIDATE-050 / VALIDATE-051 — 검증기의 값 수정으로 형 해석을 대신하지 않습니다
+### plugin-input-immutability — 검증기의 값 수정으로 형 해석을 대신하지 않습니다
 
 참조로 받는 값·스키마의 불변 계약과 사용자 정의 변경 키워드의 소비자 책임은 [validation의 VALIDATE-050](../../core/engine/validation/DETAIL.md)을 따릅니다. 플러그인은 지원하는 설정 경로에서 알려진 값 변경 옵션을 즉시 거부하고 거부된 바인딩으로 현재 인스턴스를 교체하지 않습니다. union의 편집 해석과 misfit은 폼의 계약이므로, 플러그인 설정으로 값을 고쳐 이 둘을 일치시키거나 검증마다 값 복사를 추가하지 않습니다. AJV8의 union 로그 설정은 판정 정책과 구별합니다.
 

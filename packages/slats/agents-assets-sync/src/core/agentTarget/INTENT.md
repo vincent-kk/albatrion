@@ -4,21 +4,12 @@
 
 에이전트별 주입 자산의 보관 위치를 결정합니다. `(agent, scope)` 쌍 하나를 구체적인 위치로 해석한 뒤 매니페스트의 각 경로를 복사된 파일·공유 `AGENTS.md`의 마커 블록·지원할 위치가 없다는 명시적 결과 중 하나로 정합니다. 에이전트별 규약을 아는 유일한 프랙탈입니다.
 
-## Structure
-
-- `index.ts` — 배럴 재수출
-- `agentTarget.ts` — `resolveAgentTarget`, `isValidAgent`
-- `type.ts` — `AgentType`, `AssetKind`, `AgentTarget`, `Destination`, `OrphanScan`
-- `utils/splitAssetKind.ts` — 매니페스트 경로 → `{ kind, rest }`
-- `utils/resolveDestinations.ts` — 경로 → 목적지 + 고아 항목 탐색
-- `__tests__/` — 이 프랙탈의 검증 파일
-
 ## Conventions
 
-- claude는 모든 종류의 루트를 `<projectRoot>/.claude` 아래에 둡니다.
-- codex와 agents는 rules를 `AGENTS.md`에 병합하고 skills를 `skills/` 디렉터리에 두며 commands 위치는 없습니다. `project` 스코프에서는 같습니다(`<projectRoot>/.agents/skills` + 저장소의 `AGENTS.md`). `user` 스코프에서는 codex가 `~/.codex`를, agents가 `~/.agents`를 읽습니다.
+- claude는 모든 종류의 루트를 프로젝트 루트의 `.claude` 아래에 둡니다.
+- codex와 agents는 규칙을 `AGENTS.md`에 병합하고 스킬은 별도 디렉터리에 두며 명령 위치는 없습니다. 프로젝트 스코프의 목적지는 같지만 사용자 스코프에서는 codex 전용 루트와 중립 agents 루트로 나뉩니다. 이 차이가 같은 자산의 중복 적용 여부를 결정합니다.
 - `agents`는 제품이 아닌 규약이며 `.agents`를 읽는 도구를 위한 것입니다.
-- 루트는 `scope/`에, 블록 ID는 `markerBlock/`에 각각의 `index.ts`를 통해 의존하며 `buildPlan/`이 이 모듈을 소비합니다.
+- 루트 선택과 마커 블록 식별은 각 소유 모듈에 위임합니다. 이 모듈은 에이전트별 목적지만 계산하고 복사·삭제 계획은 소비자가 만듭니다.
 
 ## Boundaries
 
@@ -36,4 +27,4 @@
 ### Never do
 
 - 이곳에서 자산 파일을 만들거나 읽거나 쓰지 않습니다. 이 프랙탈은 경로를 계산합니다.
-- `buildPlan/`, `injectDocs/`, `commands/`, `ui/`에서 가져오지 않습니다.
+- 계획·적용·명령·화면 계층에 역으로 의존하지 않습니다.

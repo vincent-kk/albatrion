@@ -5,12 +5,12 @@
 - 매니페스트의 출처는 둘이며 `resolveHashManifest` 가 `hashSource` 로 가른다. `'manifest'` 는 `readHashManifest`, `'directory'` 는 asset 디렉터리 런타임 해싱이다.
 - `readHashManifest` 는 `<packageRoot>/dist/agents-hashes.json` 을 읽는다. `hashSource: 'manifest'` 인 타깃에게 이 파일이 source 쪽 해시의 유일한 진실 공급원이다.
 - `hashSource: 'directory'` 는 asset 루트 자체가 진실인 타깃이다. 저장된 매니페스트는 읽지 않고 그 디렉터리를 그 자리에서 훑어 메모리 매니페스트를 만들며, 빌드 산출물이 필요 없다. 어느 타깃이 이 출처를 받는지는 호출자가 정한다 — `--asset-path` 로 지정된 경우(저장된 매니페스트가 다른 트리를 기술할 수 있으므로), 그리고 선언된 asset 디렉터리는 있는데 빌드가 돌지 않은 경우.
-- 런타임 계산은 `scripts/buildHashes.mjs` 와 같은 잡음 필터(`.omc/`, `.DS_Store`, `*.log`), 같은 POSIX 키, 같은 키 정렬을 쓴다. 같은 트리에 대해 두 경로의 `files` 는 같아야 한다. 두 구현이 갈라진 것은 `scripts/` 가 rolldown 이 import 할 수 있도록 순수 Node ESM 으로 남아야 해서이며, 그 대가를 동등성 검사가 치른다.
+- 런타임 계산은 `scripts/buildHashes.mjs` 와 같은 잡음 필터(자산 루트 아래의 `.omc` 구획, `.DS_Store`, `*.log`), 같은 POSIX 키, 같은 키 정렬을 쓴다. 같은 트리에 대해 두 경로의 `files` 는 같아야 한다. 두 구현이 갈라진 것은 `scripts/` 가 rolldown 이 import 할 수 있도록 순수 Node ESM 으로 남아야 해서이며, 그 대가를 동등성 검사가 치른다.
 - `schemaVersion !== 1` 은 조용히 넘어가지 않고 명시적 `Error` 로 거부한다. 메시지는 `[agents-assets-sync]` 접두사와 발견된 버전을 포함한다.
 - 파일이 없거나 JSON 이 깨진 경우의 오류는 그대로 전파된다. 호출자가 "빌드가 필요하다" 는 진단으로 바꾸는 것은 렌더러의 몫이다.
 - 어느 출처든 매니페스트는 런타임에서 읽기 전용 표면으로만 다룬다. 디스크 쓰기는 `scripts/buildHashes.mjs` 전담이며 이 fractal 은 파일을 쓰지 않는다.
 - `generatedAt` 은 필수 인자다. 이 fractal 은 시계를 읽지 않으며, 같은 입력이면 언제 불러도 같은 결과를 낸다. 시각은 렌더러가 실행 시작에 한 번 잡아 그 실행 내내 쓴다 — 계산된 매니페스트는 각 쌍이 해셔에 닿은 시각이 아니라 실행이 들여다본 시각을 기록한다.
-- `computeNamespacePrefixes` 는 orphan 탐색 범위를 정한다. `skills/` 로 시작하고 세그먼트가 3개 이상인 경로에서만 `skills/<name>/` 접두사를 모으며, 중복은 제거된다.
+- `computeNamespacePrefixes` 는 orphan 탐색 범위를 정한다. 스킬 디렉터리 로 시작하고 세그먼트가 3개 이상인 경로에서만 `skills/<name>/` 접두사를 모으며, 중복은 제거된다.
 - 이 접두사 집합이 orphan 삭제 후보의 상한이다. 다른 kind 나 다른 네임스페이스는 집합에 들어오지 않으므로 삭제 제안 대상이 되지 않는다.
 - `previousVersions` 는 schema v1 에서 항상 빈 객체이며 예약 필드다.
 - `core/` 안의 리프다. `buildPlan/`, `injectDocs/`, `commands/` 에서 import 하지 않는다.
@@ -52,18 +52,18 @@
 
 - `schemaVersion` 이 1이면 파싱된 매니페스트가 반환된다.
 - `schemaVersion` 이 1이 아니면 호출이 throw 하고, 그 메시지가 실행의 진단으로 표면화된다.
-- `hashSource: 'manifest'` 인 채 `dist/agents-hashes.json` 이 없는 타깃은 실행이 그 사실을 보고하고 건너뛴다. 어느 타깃이 그 출처를 받는지는 호출자가 정한다 — `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-HASH-SOURCE`.
+- `hashSource: 'manifest'` 인 채 빌드 출력 디렉터리의 `agents-hashes.json` 이 없는 타깃은 실행이 그 사실을 보고하고 건너뛴다. 어느 타깃이 그 출처를 받는지는 호출자가 정한다 — `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-HASH-SOURCE`.
 - 검증: `src/__tests__/json.test.ts`, `src/__tests__/cli.test.ts`.
 
 ### AC-MANIFEST-NAMESPACE — orphan 탐색은 관리 중인 네임스페이스로 제한된다
 
 - `skills/<name>/...` 경로들은 중복 없는 `skills/<name>/` 접두사 집합이 된다.
-- `skills/` 로 시작하지 않는 경로는 접두사를 만들지 않으므로 그 위치는 orphan 스캔 대상이 되지 않는다.
+- 스킬 디렉터리 로 시작하지 않는 경로는 접두사를 만들지 않으므로 그 위치는 orphan 스캔 대상이 되지 않는다.
 - 검증: `core/agentTarget/__tests__/agentTarget.test.ts` (`resolveDestinations` 의 `namespacePrefixes` 소비 경로).
 
 ### AC-MANIFEST-COMPUTE — 계산된 매니페스트는 빌드된 것과 같다
 
-- `hashSource: 'directory'` 는 `dist/agents-hashes.json` 이 없어도 성공하며, `hashSource: 'manifest'` 는 그 파일이 없으면 실패한다.
+- `hashSource: 'directory'` 는 빌드 출력 디렉터리의 `agents-hashes.json` 이 없어도 성공하며, `hashSource: 'manifest'` 는 그 파일이 없으면 실패한다.
 - 같은 asset 트리에 대해 계산 경로의 `files` 는 `scripts/buildHashes.mjs` 가 만든 `files` 와 완전히 같다.
 - 잡음 파일(`.DS_Store`, `*.log`, `.omc/**`)은 두 경로 모두에서 빠진다.
 - 키는 중첩 디렉터리에서도 항상 `/` 구분자이며 사전순으로 정렬된다. 정렬은 `sortManifestFiles` 가 맡는다 — `readdir` 순서는 플랫폼이 정하므로, 정렬되지 않은 입력을 직접 주는 것만이 이 절에 부하를 거는 방법이다. 매니페스트는 사람이 읽고 diff 하는 파일이고, 디렉터리를 돌려주는 순서가 달라졌다는 이유로 항목이 움직이면 변경이 아닌 것이 변경으로 보인다.
@@ -73,7 +73,7 @@
 ### AC-MANIFEST-GATE — 빌드가 필요한 target 은 한 곳에서 판정된다
 
 - `hashSource: 'manifest'` 이고 매니페스트가 없으면 `needsBuiltManifest` 가 `true` 다. 매니페스트가 있으면 `false`.
-- `hashSource: 'directory'` 는 `hashesPresent` 와 무관하게 언제나 `false` 다 — `dist/` 를 읽지 않으므로 그 부재가 이 target 에 대해 아무것도 말하지 않는다.
+- `hashSource: 'directory'` 는 `hashesPresent` 와 무관하게 언제나 `false` 다 — 빌드 출력 디렉터리 를 읽지 않으므로 그 부재가 이 target 에 대해 아무것도 말하지 않는다.
 - 호출자는 하나다 — dispatcher 가 렌더러를 고르기 전에 묻는다. 세 렌더러가 각자 묻던 때에는 술어는 하나였지만 그 답을 실행 판정으로 옮기는 규칙이 셋이었고, 그래서 같은 입력이 출력 형식에 따라 다른 exit code 를 냈다. 판정은 `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT` 가 소유한다.
 - 이 술어는 출처를 정하지 않고 종료 코드도 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 진단은 그렇게 읽혀야 한다.
 - 검증: `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).

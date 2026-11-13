@@ -14,6 +14,8 @@
 - `getValue<OutputSchema>(): OutputSchema | undefined`.
 - entry point는 순회 어휘 상수는 재수출하지 않는다 — 상수는 sync fractal에서만 재수출된다.
 
+공개 클래스 이름은 `JSONSchemaScannerAsync`이며 이전 표기의 별칭은 제공하지 않습니다. 두 이름으로 같은 계약이 갈라지는 것을 막습니다.
+
 ## Acceptance Criteria
 
 ### callback-sequencing — 콜백 await 순서 보장
@@ -39,10 +41,6 @@
 - **Direct import**: `allowed`
 - **Reason**: sync와 대칭적인 배치다 — 디렉터리명이 이미 변형을 구분하므로 파일명은 클래스명을 그대로 쓴다. 이 클래스는 sync를 상속하지 않는 별도 구현이면서 동일한 순회 코어를 공유하므로, 파일명이 클래스 export를 직접 가리켜야 두 구현을 나란히 비교하기 쉽다.
 
-## History
-
-- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭 제거(breaking).
-
 ## Last Updated
 
-2026-09-19 — 0.16.0 공개 별칭 제거 반영
+async의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

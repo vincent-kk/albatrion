@@ -5,9 +5,9 @@
 - `core/**`는 순수하고 상태 없는 기본 연산의 모음이다. 드문 파일 연결 해제 실패를 위한 `injectDocs/utils/applyAction.ts` 안의 `logger.warn` 한 곳을 제외하고 이 트리의 어떤 함수도 `process.stdout`/`process.stderr`에 쓰지 않는다.
 - 스코프 해석은 결정적이다. `resolveProjectRoot`는 `cwd`와 `homedir`만 읽는다. `user`는 홈 디렉터리를 반환하고 `project`는 `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나를 가진 가장 가까운 조상을 반환하며 없으면 `cwd`를 사용한다. `cwd`보다 위에서 찾으면 `autoLocated`를 보고한다. 앵커의 존재로 판단하며 `AGENTS.md`는 파일이고 워크트리 안의 `.git`도 파일이다.
 - 선택된 모든 에이전트는 프로젝트 루트 하나를 사용하므로 여러 에이전트를 지정한 실행이 두 프로젝트에 걸칠 수 없다.
-- `resolveAgentTarget`은 `(agent, scope)`를 자산 위치로 매핑한다. claude는 모든 종류의 루트를 `<projectRoot>/.claude` 아래에 둔다. codex와 agents는 skills를 `skills/` 디렉터리에 두고 rules를 `AGENTS.md`에 병합하며 `commands`는 지원하지 않는다고 보고한다. `project` 스코프에서는 같다(`<projectRoot>/.agents/skills`와 `<projectRoot>/AGENTS.md`). `user` 스코프에서만 codex는 `~/.codex`, agents는 `~/.agents`를 사용한다.
+- `resolveAgentTarget`은 `(agent, scope)`를 자산 위치로 매핑한다. claude는 모든 종류의 루트를 `<projectRoot>/.claude` 아래에 둔다. codex와 agents는 skills를 스킬 디렉터리 디렉터리에 두고 rules를 `AGENTS.md`에 병합하며 `commands`는 지원하지 않는다고 보고한다. `project` 스코프에서는 같다(`<projectRoot>/.agents/skills`와 `<projectRoot>/AGENTS.md`). `user` 스코프에서만 codex는 `~/.codex`, agents는 `~/.agents`를 사용한다.
 - `resolveDestinations`는 종류가 미지이거나 필터에서 제외된 매니페스트 경로를 생략한다. 이 부재로 종류를 필터한 실행이 요청 범위 밖 항목을 보고하거나 삭제하지 못하게 한다.
-- 첫 세그먼트가 `.`로 시작하는 스킬 디렉터리는 오류로 거부한다. 에이전트가 소유한 이름 공간이기 때문이다. Codex는 `skills/.system/` 아래에 기본 스킬을 배포한다.
+- 첫 세그먼트가 `.`로 시작하는 스킬 디렉터리는 오류로 거부한다. 에이전트가 소유한 이름 공간이기 때문이다. Codex는 스킬 디렉터리 아래의 `.system` 구획 아래에 기본 스킬을 배포한다.
 - 계획 생성은 읽기 전용이다. `buildPlan`은 원본 해시와 목적지를 비교하여 `InjectPlan`을 반환하며 쓰지 않는다.
 - 블록도 파일과 같은 방식으로 판정한다. `blockBodyMatches`는 마커 사이의 본문과 매니페스트 해시를 비교하며 원본에 끝 개행이 없을 때 `upsertBlock`이 추가하는 개행 하나를 허용한다.
 - `warn-diverged`와 `--force` 없이 발견한 모든 고아 항목은 `requiresForce`를 설정한다. `skip-unsupported`는 설정하지 않는다.
@@ -15,7 +15,7 @@
 - `partitionActions`는 `force`가 허용된 경우에만 `warn-diverged`를 실행 가능하게 한다. CLI가 약속하는 "--force overwrites"는 이곳에서 지킨다.
 - 해시 계산은 결정적이며 `hashContent`/`hashFile`은 Node의 `crypto` 모듈만 사용한다.
 - `readHashManifest`는 `schemaVersion !== 1`을 명시적 오류로 거부한다.
-- 대상의 원본 해시는 저장된 `dist/agents-hashes.json` 또는 실행 시 해시를 계산한 자산 디렉터리 중 하나에서 오며 `resolveHashManifest`가 `hashSource`로 선택한다. 선택은 명령 분배기의 책임이다. `--asset-path`는 항상 디렉터리를 사용하며, 선언된 자산 경로는 빌드된 매니페스트가 없을 때 디렉터리를 사용한다.
+- 대상의 원본 해시는 저장된 빌드 출력 디렉터리의 `agents-hashes.json` 또는 실행 시 해시를 계산한 자산 디렉터리 중 하나에서 오며 `resolveHashManifest`가 `hashSource`로 선택한다. 선택은 명령 분배기의 책임이다. `--asset-path`는 항상 디렉터리를 사용하며, 선언된 자산 경로는 빌드된 매니페스트가 없을 때 디렉터리를 사용한다.
 - 고아 항목 탐색은 호출자가 제공한 탐색만 실행한다. 블록 탐색은 지정된 패키지 소유의 블록만 고려하므로 다른 패키지나 도구의 블록을 삭제 대상으로 제안하지 않는다.
 
 ## API Contracts
