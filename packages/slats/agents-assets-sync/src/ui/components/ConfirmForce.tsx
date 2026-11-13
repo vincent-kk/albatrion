@@ -1,16 +1,18 @@
-import type React from 'react';
 import { useState } from 'react';
 import { Box, Text } from 'ink';
+import type React from 'react';
 import SelectInput from 'ink-select-input';
 
-import type { Warning } from '../types/index.js';
+import type { Fn } from '@aileron/declare';
+
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 import { limits } from '../theme/layout.js';
+import type { Warning } from '../types/index.js';
 
 interface ConfirmForceProps {
   readonly warnings: readonly Warning[];
-  readonly onAnswer: (ok: boolean) => void;
+  readonly onAnswer: Fn<[ok: boolean]>;
 }
 
 type Choice = 'accept' | 'cancel' | 'expand';
@@ -20,7 +22,8 @@ export function ConfirmForce({
   onAnswer,
 }: ConfirmForceProps): React.ReactElement {
   const [expanded, setExpanded] = useState(false);
-  const showAll = expanded || warnings.length <= limits.maxWarningsBeforeCollapse;
+  const showAll =
+    expanded || warnings.length <= limits.maxWarningsBeforeCollapse;
   const shown = showAll
     ? warnings
     : warnings.slice(0, limits.maxWarningsBeforeCollapse);
@@ -51,10 +54,14 @@ export function ConfirmForce({
         {shown.map((warning) => (
           <Box key={`${warning.packageName}:${warning.relPath}`}>
             <Text
-              color={warning.kind === 'warn-diverged' ? colors.warn : colors.accent}
+              color={
+                warning.kind === 'warn-diverged' ? colors.warn : colors.accent
+              }
               bold
             >
-              {warning.kind === 'warn-diverged' ? icons.warning : icons.question}{' '}
+              {warning.kind === 'warn-diverged'
+                ? icons.warning
+                : icons.question}{' '}
             </Text>
             <Text color={colors.muted} dimColor>
               [{warning.packageName}]{' '}

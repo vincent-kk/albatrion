@@ -1,3 +1,5 @@
+import type { AsyncFn } from '@aileron/declare';
+
 /**
  * Executes async functions with a concurrency limit.
  * Returns PromiseSettledResult[] for error isolation.
@@ -5,7 +7,7 @@
 export async function asyncPool<T, R>(
   limit: number,
   items: T[],
-  fn: (item: T) => Promise<R>,
+  fn: AsyncFn<[item: T], R>,
 ): Promise<PromiseSettledResult<R>[]> {
   const results: PromiseSettledResult<R>[] = [];
   const executing = new Set<Promise<void>>();

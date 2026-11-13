@@ -1,5 +1,7 @@
 import { relative } from 'node:path';
 
+import type { AsyncFn } from '@aileron/declare';
+
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
 import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
 import {
@@ -57,7 +59,7 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
 async function classify(
   destination: Destination,
   srcHash: Sha256Hex,
-  readDocument: (fileAbs: string) => Promise<string | null>,
+  readDocument: AsyncFn<[fileAbs: string], string | null>,
 ): Promise<ActionKind> {
   if (destination.kind === 'unsupported') return 'skip-unsupported';
   if (destination.kind === 'file') {
@@ -78,7 +80,7 @@ async function classify(
 async function* findOrphans(
   scan: OrphanScan,
   known: ReadonlySet<string>,
-  readDocument: (fileAbs: string) => Promise<string | null>,
+  readDocument: AsyncFn<[fileAbs: string], string | null>,
 ): AsyncGenerator<{ relPath: string; target: Destination }> {
   if (scan.kind === 'directory') {
     for await (const abs of walkFiles(scan.scanRoot)) {

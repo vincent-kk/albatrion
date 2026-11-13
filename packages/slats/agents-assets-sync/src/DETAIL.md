@@ -41,6 +41,8 @@
 - `AgentType`, `AssetKind`, `AgentTarget`, `Destination`, `OrphanScan`
 - `HashManifest`, `InjectReport`
 
+작업 함수와 화면 사건의 함수형 표기는 인자·반환 Promise·실패 전파를 보존합니다. 공통 별칭은 호출 감싸개가 아니므로 pool의 동시 실행이나 명령 종료 코드의 소유권을 바꾸지 않습니다.
+
 ## Acceptance Criteria
 
 ### AC-JSON — 기계가 읽는 출력은 문서 하나입니다
