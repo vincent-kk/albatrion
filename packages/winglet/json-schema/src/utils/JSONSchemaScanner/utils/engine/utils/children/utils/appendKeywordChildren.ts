@@ -1,5 +1,5 @@
+import type { OrderedKeywordDescriptor } from '../../../../../../vocabulary/type';
 import type { SchemaEntry } from '../../../../../type';
-import type { OrderedKeywordDescriptor } from '../../../../vocabulary/type';
 import { appendListChildren } from './appendKeywordChildren/appendListChildren';
 import { appendMapChildren } from './appendKeywordChildren/appendMapChildren';
 

@@ -48,13 +48,14 @@ export function applyOperations(
     const operation = task.overlay.replacement;
     const value = operation === undefined ? task.value : operation.value;
     const borrow = operation === undefined ? task.borrow : !operation.copy;
-    if (task.overlay.children.size === 0) {
+    const children = task.overlay.children;
+    if (children === undefined || children.size === 0) {
       writeProperty(task.parent, task.key, borrow ? value : cloneSchema(value));
       continue;
     }
     const source = (value == null ? {} : value) as Record<string, unknown>;
     const prototype = Object.getPrototypeOf(source);
-    const firstKey = task.overlay.children.keys().next().value!;
+    const firstKey = children.keys().next().value!;
     const target = (
       Array.isArray(value)
         ? new Array(value.length)
@@ -68,10 +69,10 @@ export function applyOperations(
     ) as Record<string, unknown>;
     writeProperty(task.parent, task.key, target);
     const keys = Object.keys(source);
-    for (const key of task.overlay.children.keys())
+    for (const key of children.keys())
       if (!hasOwnProperty(source, key)) keys.push(key);
     for (const key of keys) {
-      const child = task.overlay.children.get(key);
+      const child = children.get(key);
       const childValue = hasOwnProperty(source, key) ? source[key] : undefined;
       if (child === undefined)
         writeProperty(

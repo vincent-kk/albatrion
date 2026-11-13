@@ -1,5 +1,5 @@
+import { buildKeywordMap } from '../../../vocabulary/buildKeywordMap';
 import type { Dialect, KeywordDescriptor } from '../../type';
-import { buildKeywordMap } from './buildKeywordMap';
 
 /** Object schema locations accepted throughout all supported dialects. */
 const all: readonly Dialect[] = [

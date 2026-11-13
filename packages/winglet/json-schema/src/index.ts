@@ -26,6 +26,7 @@ export {
 export {
   DEFAULT_KEYWORDS,
   JSONSchemaScanner,
+  JSONSchemaScanError,
   type JSONScannerOptions,
   type Dialect,
   type KeywordDescriptor,

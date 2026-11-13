@@ -5,12 +5,15 @@ import { assertFreshBuild, loadScanners } from './_lib.mjs';
 import { compareBuilds } from './compare/compareBuilds.mjs';
 import { createCases } from './compare/createCases.mjs';
 import { evaluateComparison } from './compare/evaluateComparison.mjs';
+import { selectCases } from './compare/selectCases.mjs';
 import { summarizeGroups } from './compare/summarizeGroups.mjs';
 
 try {
   const { values } = parseArgs({
     options: {
       baseline: { type: 'string' },
+      groups: { type: 'string' },
+      order: { type: 'string' },
       min: { type: 'string', default: '' },
       'max-slowdown': { type: 'string' },
       'max-speedup': { type: 'string' },
@@ -45,7 +48,10 @@ try {
     loadScanners(values.baseline),
     loadScanners(),
   ]);
-  const cases = await compareBuilds(builds, createCases());
+  const cases = await compareBuilds(
+    builds,
+    selectCases(createCases(), values.groups, values.order),
+  );
   const groups = summarizeGroups(cases);
   console.log(
     JSON.stringify(

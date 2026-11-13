@@ -1,17 +1,19 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONSchemaScanner } from '../../JSONSchemaScanner/sync';
+import {
+  DEFAULT_KEYWORDS,
+  JSONSchemaScanError,
+  JSONSchemaScanner,
+} from '../../JSONSchemaScanner/sync';
 import type {
   Dialect,
   ReferenceKeyword,
   ReferenceStep,
 } from '../../JSONSchemaScanner/type';
-import { detectDialect } from '../../JSONSchemaScanner/utils/dialect/detectDialect';
-import { JSONSchemaScanError } from '../../JSONSchemaScanner/utils/error/JSONSchemaScanError';
 import { cloneSchema } from '../../JSONSchemaScanner/utils/output/cloneSchema';
-import { buildKeywordMap } from '../../JSONSchemaScanner/utils/vocabulary/buildKeywordMap';
-import { DEFAULT_KEYWORDS } from '../../JSONSchemaScanner/utils/vocabulary/defaultKeywords';
+import { detectDialect } from '../../dialect/detectDialect';
+import { buildKeywordMap } from '../../vocabulary/buildKeywordMap';
 import { resolveURI } from './resolveURI';
 import { shortestReference } from './shortestReference';
 import type {

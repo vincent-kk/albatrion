@@ -1,10 +1,10 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import { buildKeywordMap } from '../../vocabulary/buildKeywordMap';
 import type { JSONScannerOptions, SchemaVisitor } from '../type';
 import { ScanEngine } from '../utils/engine/ScanEngine';
 import type { ScanConfig } from '../utils/engine/type';
 import { ScanOutput } from '../utils/output/ScanOutput';
-import { buildKeywordMap } from '../utils/vocabulary/buildKeywordMap';
 import {
   DEFAULT_KEYWORDS,
   DEFAULT_KEYWORD_MAP,

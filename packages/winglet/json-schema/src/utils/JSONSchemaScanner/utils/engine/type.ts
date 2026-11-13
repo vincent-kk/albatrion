@@ -2,6 +2,7 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import type { KeywordMap } from '../../../vocabulary/type';
 import type {
   Dialect,
   ReferenceResolver,
@@ -9,7 +10,6 @@ import type {
   SchemaEntry,
 } from '../../type';
 import type { OutputOperation } from '../output/type';
-import type { KeywordMap } from '../vocabulary/type';
 
 /** An active Brent checkpoint; frame index identifies its owner without inspecting public entry metadata on exit. */
 export interface PhysicalCheckpoint {

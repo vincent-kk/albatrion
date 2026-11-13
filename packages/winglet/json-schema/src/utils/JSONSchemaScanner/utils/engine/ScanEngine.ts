@@ -1,10 +1,10 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { detectDialect } from '../dialect/detectDialect';
-import { DIALECT_FLAGS } from '../dialect/dialectFlags';
+import { detectDialect } from '../../../dialect/detectDialect';
+import { DIALECT_FLAGS } from '../../../dialect/dialectFlags';
+import type { OrderedKeywordDescriptor } from '../../../vocabulary/type';
 import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
 import { DEFAULT_KEYWORD_MAP } from '../vocabulary/defaultKeywords';
-import type { OrderedKeywordDescriptor } from '../vocabulary/type';
 import type {
   DialectScope,
   EngineEntry,

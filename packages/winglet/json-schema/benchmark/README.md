@@ -71,3 +71,25 @@ Both adapters must have identical visit counts and serialized output sizes.
 provider calls still occur once per reference occurrence even when a template is cached.
 The equivalence snapshot retains the existing exit-field projection for compatibility,
 deriving it from `entry.references` in the current build.
+
+CPU profiles use the comparison workloads, including both resolver adapters and
+sparse/dense output cases. Select a group or an exact case; `getValue` profiles
+include its preparation scan, so inspect output functions separately from scanning.
+Pass `--build <dist>` to profile a frozen or immediately preceding build with the
+same workload and profiler settings.
+
+To diagnose cross-group type feedback, `compare.mjs --groups` selects a comma-separated
+group list and `--order reverse` reverses group order while retaining each group's case
+order. An explicit `--order` lists every selected group once. Omit both flags for the
+unchanged gate order and complete corpus; neither option changes paired sampling.
+From the repository root:
+
+```bash
+node packages/winglet/json-schema/benchmark/compare.mjs --baseline .seiri/tasks/json-schema-scanner-overhaul/baseline/dist-t4 --groups noopEnterExit,asyncNoop
+node packages/winglet/json-schema/benchmark/compare.mjs --baseline .seiri/tasks/json-schema-scanner-overhaul/baseline/dist-t4 --order reverse
+```
+
+```bash
+node --cpu-prof --cpu-prof-dir=/tmp --cpu-prof-name=mutation.cpuprofile benchmark/profile.mjs --group mutation --rounds 1000
+node --cpu-prof --cpu-prof-dir=/tmp --cpu-prof-name=deep.cpuprofile benchmark/profile.mjs --case 'noCallback/deep(400)' --rounds 10000
+```

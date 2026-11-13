@@ -2,13 +2,13 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import { DIALECT_FLAGS } from '../../../../../dialect/dialectFlags';
 import type {
   ReferenceKeyword,
   ReferenceResolver,
   ReferenceResolverAsync,
   ReferenceStep,
 } from '../../../../type';
-import { DIALECT_FLAGS } from '../../../dialect/dialectFlags';
 import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
 import { cloneSchema } from '../../../output/cloneSchema';
 import type { EngineEntry, ScanConfig } from '../../type';

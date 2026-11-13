@@ -1,5 +1,5 @@
 import type { ReferenceResolver, ReferenceStep, SchemaEntry } from '../../type';
-import { detectDialect } from '../../utils/dialect/detectDialect';
+import { detectDialect } from '../../../dialect/detectDialect';
 import { contextForChild } from './utils/contextForChild';
 
 /** Convert a fixture source value into the public tagged result; native promises remain pending protocol results. */

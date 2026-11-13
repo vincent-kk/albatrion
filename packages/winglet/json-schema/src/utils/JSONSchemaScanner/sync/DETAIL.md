@@ -13,7 +13,8 @@
 
 - `scan(schema): this`: 동기로 순회를 완료한 뒤 `this`를 반환한다.
 - `getValue<OutputSchema>(): OutputSchema | undefined`: 처리된 최종 스키마를 반환한다.
-- entry point는 순회 어휘 상수도 이름으로 재수출한다 — 상수 값 자체는 상위 organ 소유다.
+- entry point는 순회 어휘 상수와 오류 클래스도 이름으로 재수출한다 — 구현은 상위 organ 소유다.
+- 방언 판별과 어휘 구성은 루트 공통 organ이 소유한다. 이 진입점은 공개 scanner 하위 경로이므로 내부 헬퍼를 재수출하지 않는다.
 
 공개 클래스 이름은 `JSONSchemaScanner`이며 이전 표기의 별칭은 제공하지 않습니다. 두 이름으로 같은 계약이 갈라지는 것을 막습니다.
 

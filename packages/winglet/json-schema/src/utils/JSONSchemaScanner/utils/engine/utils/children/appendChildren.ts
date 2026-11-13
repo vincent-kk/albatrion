@@ -1,10 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaEntry } from '../../../../type';
 import type {
   KeywordMap,
   OrderedKeywordDescriptor,
-} from '../../../vocabulary/type';
+} from '../../../../../vocabulary/type';
+import type { SchemaEntry } from '../../../../type';
 import { appendKeywordChildren } from './utils/appendKeywordChildren';
 
 /**

@@ -1,4 +1,4 @@
-import type { Dialect } from '../../type';
+import type { Dialect } from '../JSONSchemaScanner/type';
 
 /** One bit per supported dialect; descriptor masks test schema positions without URI parsing. */
 export const DIALECT_FLAGS: Readonly<Record<Dialect, number>> = {

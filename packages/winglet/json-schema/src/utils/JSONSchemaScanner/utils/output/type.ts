@@ -29,6 +29,6 @@ export type OutputOperation = ReplaceOperation | WrapOperation;
 export interface OperationNode {
   /** Last replacement at this path supersedes older descendant operations. */
   replacement?: OutputOperation;
-  /** Child overlays are keyed by decoded pointer tokens, including reserved names. */
-  children: Map<string, OperationNode>;
+  /** Descendant overlays are allocated only for nodes with child operations. */
+  children?: Map<string, OperationNode>;
 }

@@ -1,4 +1,4 @@
-import type { KeywordDescriptor } from '../../type';
+import type { KeywordDescriptor } from '../JSONSchemaScanner/type';
 
 /** Descriptor compiled once for own-key discovery and allocation-free ordering. */
 export interface OrderedKeywordDescriptor extends KeywordDescriptor {
