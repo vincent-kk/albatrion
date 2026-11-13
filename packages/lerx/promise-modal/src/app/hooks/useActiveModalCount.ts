@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type { ModalNodeView } from '@/promise-modal/core/node';
 
 import { ModalManager } from '../ModalManager';
@@ -17,7 +19,7 @@ const getServerSnapshot = () => 0;
  * const count = useActiveModalCount(node => node.visible && node.group === 'checkout');
  */
 export const useActiveModalCount = (
-  validate: (node: ModalNodeView) => boolean | undefined = defaultValidate,
+  validate: Fn<[node: ModalNodeView], boolean | undefined> = defaultValidate,
 ): number =>
   useSyncExternalStore(
     ModalManager.subscribe,

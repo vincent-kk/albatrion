@@ -2,6 +2,8 @@ import { useRef } from 'react';
 
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
+import type { Fn } from '@aileron/declare';
+
 import type { ModalNode } from '@/promise-modal/core/node';
 import { closeModal } from '@/promise-modal/core/node';
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
@@ -27,7 +29,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
   const modalResultsRef = useRef<
     Array<{
       readonly modalNode: ModalNode | undefined;
-      readonly cancel: () => void;
+      readonly cancel: Fn;
     }>
   >([]);
   const baseArgsRef = useRef(configuration);

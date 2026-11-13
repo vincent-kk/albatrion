@@ -2,6 +2,8 @@ import { useRef } from 'react';
 
 import { useVersion } from '@winglet/react-utils/hook';
 
+import type { Fn } from '@aileron/declare';
+
 import { ModalManager } from '@/promise-modal/app';
 import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
@@ -41,7 +43,7 @@ export const useInitialize = (
     );
   }, [root]);
   useIsomorphicLayoutEffect(() => handleReset.current, []);
-  const initialize: (element: HTMLElement) => void = handleInitialize.current;
+  const initialize: Fn<[element: HTMLElement]> = handleInitialize.current;
   return {
     anchorRef,
     handleInitialize: initialize,
