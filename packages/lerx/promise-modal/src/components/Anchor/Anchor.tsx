@@ -1,8 +1,8 @@
 import { type CSSProperties, memo, useSyncExternalStore } from 'react';
 
 import { ModalManager } from '@/promise-modal/app';
+import { useActiveModalCount } from '@/promise-modal/app';
 import { Presenter } from '@/promise-modal/components/Presenter';
-import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
 import {
   useConfigurationOptions,
   useModalManagerContext,

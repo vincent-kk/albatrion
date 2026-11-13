@@ -4,7 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { ModalManager } from '@/promise-modal/app';
 import { nodeFactory } from '@/promise-modal/core';
 
-import { usePathname } from '../useDefaultPathname';
+import { usePathname } from '../hooks/useDefaultPathname';
 
 /** Captured frames let route detection run without real animation timing. */
 let frames: Map<number, FrameRequestCallback>;

@@ -1,7 +1,7 @@
-import type { AlertNode } from '@/promise-modal/core';
+import type { AlertNode } from '@/promise-modal/core/node';
 
-import { dispatchModal } from './dispatchModal';
 import type { AlertProps } from '../types/type';
+import { dispatchModal } from './dispatchModal';
 
 /**
  * Creates and manages an Alert modal.

@@ -1,7 +1,7 @@
-import type { PromptNode } from '@/promise-modal/core';
+import type { PromptNode } from '@/promise-modal/core/node';
 
-import { dispatchModal } from './dispatchModal';
 import type { PromptProps } from '../types/type';
+import { dispatchModal } from './dispatchModal';
 
 /**
  * Creates and manages a Prompt modal.

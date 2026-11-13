@@ -15,8 +15,8 @@ import {
   confirmHandler,
   promptHandler,
 } from '@/promise-modal/core';
-import { useDestroyAfter } from '@/promise-modal/hooks/useDestroyAfter';
-import { useModal } from '@/promise-modal/hooks/useModal';
+import { useModal } from '@/promise-modal/core/handle';
+import { useDestroyAfter } from '@/promise-modal/providers/ModalManagerContext';
 
 import { BootstrapProvider } from '../BootstrapProvider';
 
@@ -72,7 +72,7 @@ it('R15 destroying before close resolves the cancellation value', async () => {
         onDestroy,
         children,
       }: import('react').PropsWithChildren<
-        import('@/promise-modal/types').ModalFrameProps
+        import('@/promise-modal/types/frame').ModalFrameProps
       >) => (
         <div>
           <button onClick={onDestroy}>destroy</button>
@@ -183,7 +183,7 @@ it('R5 preserves an unsettled route-hidden modal using useDestroyAfter', async (
   const Frame = ({
     id,
     children,
-  }: import('@/promise-modal/types').ModalFrameProps & {
+  }: import('@/promise-modal/types/frame').ModalFrameProps & {
     children?: import('react').ReactNode;
   }) => {
     useDestroyAfter(id, 0);

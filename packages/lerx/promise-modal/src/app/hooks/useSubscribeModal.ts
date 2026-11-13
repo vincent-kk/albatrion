@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-import { ModalManager } from '@/promise-modal/app';
+import { ModalManager } from '../ModalManager';
 
 /** Provides a stable snapshot when no browser store is available. */
 const getServerSnapshot = () => 0;

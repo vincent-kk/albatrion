@@ -1,7 +1,8 @@
 import { useSyncExternalStore } from 'react';
 
-import { ModalManager } from '@/promise-modal/app';
-import type { ModalNodeView } from '@/promise-modal/types/modal';
+import type { ModalNodeView } from '@/promise-modal/core/node';
+
+import { ModalManager } from '../ModalManager';
 
 /** Counts visible nodes unless an application supplies a metadata predicate. */
 const defaultValidate = (node: ModalNodeView) => node.visible;

@@ -1,8 +1,7 @@
-import type { ModalNode } from '@/promise-modal/core';
-import {
-  useConfigurationDuration,
-  useModalManager,
-} from '@/promise-modal/providers';
+import type { ModalNode } from '@/promise-modal/core/node';
+
+import { useConfigurationDuration } from '../../ConfigurationContext';
+import { useModalManager } from '../useModalManagerContext';
 
 /**
  * Reads normalized transition timing inside a modal frame, content, or footer.

@@ -1,8 +1,8 @@
 import { useState, useSyncExternalStore } from 'react';
 
-import { ModalManager } from '@/promise-modal/app';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
+import { ModalManager } from '../ModalManager';
 
 /** The store removes dead nodes, including manually destroyed exit frames. */
 const getHasAliveNodes = () => ModalManager.ids.length > 0;

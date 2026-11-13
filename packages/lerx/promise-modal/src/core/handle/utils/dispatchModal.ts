@@ -2,7 +2,7 @@ import type { Fn } from '@aileron/declare';
 
 import { ModalManager } from '@/promise-modal/app';
 import type { ModalNode } from '@/promise-modal/core/node';
-import { closeModal } from '@/promise-modal/helpers/closeModal';
+import { closeModal } from '@/promise-modal/core/node';
 import type { Modal } from '@/promise-modal/types/modal';
 
 interface DispatchModalOptions<Result> {

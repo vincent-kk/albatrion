@@ -2,18 +2,19 @@ import { useRef } from 'react';
 
 import { useOnUnmount } from '@winglet/react-utils/hook';
 
-import {
-  type AlertProps,
-  type ConfirmProps,
-  type ModalNode,
-  type OverridableHandleProps,
-  type PromptProps,
-  alertHandler,
-  confirmHandler,
-  promptHandler,
-} from '@/promise-modal/core';
-import { closeModal } from '@/promise-modal/helpers/closeModal';
+import type { ModalNode } from '@/promise-modal/core/node';
+import { closeModal } from '@/promise-modal/core/node';
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+
+import type {
+  AlertProps,
+  ConfirmProps,
+  OverridableHandleProps,
+  PromptProps,
+} from '../types/type';
+import { alertHandler } from '../utils/alert';
+import { confirmHandler } from '../utils/confirm';
+import { promptHandler } from '../utils/prompt';
 
 /**
  * Opens component-owned modals and releases completed request handles immediately.

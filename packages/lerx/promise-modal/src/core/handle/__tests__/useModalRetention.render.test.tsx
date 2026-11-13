@@ -1,9 +1,10 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import * as core from '@/promise-modal/core';
-
-import { useModal } from '../useModal';
+import { useModal } from '../hooks/useModal';
+import * as alertModule from '../utils/alert';
+import * as confirmModule from '../utils/confirm';
+import * as promptModule from '../utils/prompt';
 
 afterEach(() => {
   cleanup();
@@ -14,7 +15,7 @@ it.each([false, true])(
   async (rejected) => {
     const read = vi.fn();
     const error = new Error('request failed');
-    vi.spyOn(core, 'alertHandler').mockImplementation(() => ({
+    vi.spyOn(alertModule, 'alertHandler').mockImplementation(() => ({
       get modalNode() {
         read();
         return undefined;
@@ -22,7 +23,7 @@ it.each([false, true])(
       cancel: vi.fn(),
       promiseHandler: rejected ? Promise.reject(error) : Promise.resolve(),
     }));
-    vi.spyOn(core, 'confirmHandler').mockImplementation(() => ({
+    vi.spyOn(confirmModule, 'confirmHandler').mockImplementation(() => ({
       get modalNode() {
         read();
         return undefined;
@@ -30,7 +31,7 @@ it.each([false, true])(
       cancel: vi.fn(),
       promiseHandler: rejected ? Promise.reject(error) : Promise.resolve(false),
     }));
-    vi.spyOn(core, 'promptHandler').mockImplementation(() => ({
+    vi.spyOn(promptModule, 'promptHandler').mockImplementation(() => ({
       get modalNode() {
         read();
         return undefined;

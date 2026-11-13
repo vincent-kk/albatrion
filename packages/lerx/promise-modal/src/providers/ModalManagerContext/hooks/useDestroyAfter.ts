@@ -1,13 +1,11 @@
 import { useEffect, useMemo } from 'react';
 
+import { useSubscribeModal } from '@/promise-modal/app';
 import { normalizeDuration } from '@/promise-modal/helpers/normalizeDuration';
-import {
-  useConfigurationContext,
-  useModalManager,
-} from '@/promise-modal/providers';
 import type { ModalOptions } from '@/promise-modal/types/option';
 
-import { useSubscribeModal } from './useSubscribeModal';
+import { useConfigurationContext } from '../../ConfigurationContext';
+import { useModalManager } from '../useModalManagerContext';
 
 /**
  * Destroys an already settled modal after its closing animation; never closes it.

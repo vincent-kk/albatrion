@@ -1,5 +1,5 @@
+// @vitest-environment node
 import { execFileSync } from 'node:child_process';
-import { resolve } from 'node:path';
 import { expect, it } from 'vitest';
 
 it.each([
@@ -11,7 +11,7 @@ it.each([
   (first, second) => {
     const output = execFileSync(
       process.execPath,
-      [resolve('src/__tests__/fixtures/runModuleCopies.mjs'), first, second],
+      [`${process.cwd()}/src/__tests__/fixtures/runModuleCopies.mjs`, first, second],
       { encoding: 'utf8' },
     );
     expect(output).toContain(

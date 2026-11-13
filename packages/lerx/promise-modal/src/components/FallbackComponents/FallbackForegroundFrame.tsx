@@ -5,7 +5,7 @@ import {
   useMemo,
 } from 'react';
 
-import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
+import { useActiveModalCount } from '@/promise-modal/app';
 import type { ModalFrameProps } from '@/promise-modal/types/frame';
 
 const MAX_MODAL_COUNT = 5;
