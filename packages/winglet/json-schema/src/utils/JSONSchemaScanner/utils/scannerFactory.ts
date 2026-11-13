@@ -2,6 +2,8 @@ import { isObject } from '@winglet/common-utils/filter';
 import { clone } from '@winglet/common-utils/object';
 import { JSONPointer } from '@winglet/json/pointer';
 
+import type { Fn } from '@aileron/declare';
+
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { SchemaEntry } from '../type';
@@ -44,15 +46,14 @@ export interface ScanConfig<
   cacheResolvedReference: boolean;
   keywordMap: KeywordMap;
   resolves: Array<[path: string, schema: UnknownSchema]>;
-  filter?: (entry: SchemaEntry<Schema>, context?: ContextType) => unknown;
-  mutate?: (entry: SchemaEntry<Schema>, context?: ContextType) => unknown;
-  enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => unknown;
-  exit?: (entry: SchemaEntry<Schema>, context?: ContextType) => unknown;
-  resolveReference?: (
-    reference: string,
-    entry: SchemaEntry<Schema>,
-    context?: ContextType,
-  ) => unknown;
+  filter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], unknown>;
+  mutate?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], unknown>;
+  enter?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], unknown>;
+  exit?: Fn<[entry: SchemaEntry<Schema>, context?: ContextType], unknown>;
+  resolveReference?: Fn<
+    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
+    unknown
+  >;
 }
 
 interface Frame<Schema extends UnknownSchema> {
