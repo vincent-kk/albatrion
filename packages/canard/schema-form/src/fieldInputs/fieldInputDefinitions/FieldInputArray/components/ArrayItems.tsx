@@ -17,20 +17,18 @@ import { readSlotKind } from '../utils/readSlotKind';
 import { Button } from './Button';
 import { EmptySlot } from './EmptySlot';
 
-/** One array row laid out horizontally. */
-const FLEX_ROW_STYLE: CSSProperties = { display: 'flex' };
-
-/** Right-aligned clickable row holding the add-item button. */
-const ADD_BUTTON_ROW_STYLE: CSSProperties = {
+/**
+ * One array row: the item, then its remove button on the item's first text line.
+ * Top alignment would pin the button to a fieldset's legend line; centring drifts it towards the next item.
+ */
+const ROW_STYLE: CSSProperties = {
   display: 'flex',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  cursor: 'pointer',
-  marginBottom: 5,
+  alignItems: 'baseline',
+  gap: 5,
 };
 
-/** Space between the add-item text and its button. */
-const ADD_LABEL_STYLE: CSSProperties = { marginRight: 10 };
+/** Keeps the add button at its own width in the column list instead of stretching to the full row. */
+const ADD_BUTTON_STYLE: CSSProperties = { alignSelf: 'flex-start' };
 
 /** Rebuild rows only when their identity, structure or presentation changes. */
 export const ArrayItems = memo(function ArrayItems({
@@ -86,12 +84,12 @@ export const ArrayItems = memo(function ArrayItems({
     const ChildField = ChildFields[index];
     const key = ChildField.key;
     rows.push(
-      <div key={key} style={FLEX_ROW_STYLE}>
+      <div key={key} style={ROW_STYLE}>
         <ChildField key={key} />
         {!readOnly && (
           <Button
             title="remove item"
-            label="x"
+            label="Remove"
             disabled={disabled}
             index={index}
             onClick={handleRemoveClick}
@@ -126,16 +124,13 @@ export const ArrayItems = memo(function ArrayItems({
     >
       {rows}
       {!readOnly && (jsonSchema.maxItems ?? Infinity) > childCount && (
-        <label style={ADD_BUTTON_ROW_STYLE}>
-          <div style={ADD_LABEL_STYLE}>Add New Item</div>
-          <Button
-            title="add item"
-            label="+"
-            disabled={disabled}
-            onClick={handleClick}
-            fontSize="1rem"
-          />
-        </label>
+        <Button
+          title="add item"
+          label="Add item"
+          disabled={disabled}
+          onClick={handleClick}
+          style={ADD_BUTTON_STYLE}
+        />
       )}
     </div>
   );

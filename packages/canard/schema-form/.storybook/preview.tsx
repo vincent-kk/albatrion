@@ -1,3 +1,4 @@
+/// <reference path="./css.d.ts" />
 import React from 'react';
 
 import type { Decorator, Preview } from '@storybook/react-vite';
@@ -36,7 +37,6 @@ const preview: Preview = {
       toolbar: {
         icon: 'circlehollow',
         items: [Theme.LIGHT, Theme.DARK],
-        showName: true,
       },
     },
   },

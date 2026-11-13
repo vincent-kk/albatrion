@@ -36,7 +36,7 @@ export const EmptySlot = memo(function EmptySlot({
           disabled={disabled || readOnly}
           onClick={() => onWrite(index, undefined)}
         >
-          +
+          Fill item
         </button>
       </div>
     );

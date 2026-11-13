@@ -1,8 +1,8 @@
 /*
  * Loaded by the core Storybook preview; styles the forms that stories render.
- * The built-in fallback renderer writes inline styles (depth indents, array buttons), so the
- * rules that restyle it use !important and select it by its stable markup: `[data-path]`
- * wrappers and the `title` of the array buttons ("remove item", "add item").
+ * The built-in fallback renderer writes inline styles (depth indents, array list and row gaps),
+ * so the rules that restyle them use !important and select by stable markup: `[data-path]`
+ * wrappers and the `title` of the array buttons ("remove item", "add item", "fill item").
  */
 
 /* Labels and text controls. */
@@ -114,19 +114,19 @@
 :is(.sf-form, .sf-usage) fieldset > div:last-child > [role='none'] > [data-path]:last-child > * { margin-bottom: 0 !important; }
 :is(.sf-form, .sf-usage) em { color: var(--sf-danger); font-style: normal; }
 
-/* Array lists: each row is an item beside its remove button; the add row closes the list. */
-:is(.sf-form, .sf-usage) div:has(> div > button[title='remove item'], > label > button[title='add item']) { gap: var(--sf-space-3) !important; }
-:is(.sf-form, .sf-usage) div:has(> label:first-child > button[title='add item'])::before {
+/* Array lists: rows of an item beside its Remove button, empty minItems slots, then Add item. */
+:is(.sf-form, .sf-usage) div:has(> div > button[title='remove item'], > button[title='add item']) { gap: var(--sf-space-3) !important; }
+:is(.sf-form, .sf-usage) div:has(> button[title='add item']:first-child)::before {
   content: 'No items yet.';
   color: var(--sf-text-muted);
   font-size: var(--sf-text-sm);
 }
 /* minItems slots that hold no item yet: an id-less input, dashed so it reads as an open place. */
-:is(.sf-form, .sf-usage) div:has(> div > button[title='remove item'], > label > button[title='add item']) > div > input:not([id], [type='checkbox']) {
+:is(.sf-form, .sf-usage) div:has(> div > button[title='remove item'], > button[title='add item']) > div > input:not([id], [type='checkbox']) {
   border-style: dashed;
   background: var(--sf-surface);
 }
-:is(.sf-form, .sf-usage) div:has(> button[title='remove item']) { align-items: flex-start; gap: var(--sf-space-2); }
+:is(.sf-form, .sf-usage) div:has(> button[title='remove item']) { gap: var(--sf-space-2) !important; }
 :is(.sf-form, .sf-usage) div:has(> button[title='remove item']) > [data-path] > :is(fieldset, div) {
   flex: 1 1 auto;
   min-width: 0;
@@ -141,56 +141,8 @@
   font-family: var(--sf-font-mono);
   font-size: var(--sf-text-xs);
 }
-:is(.sf-form, .sf-usage) div:has(> [data-path] > fieldset) > button[title='remove item'] { margin-top: var(--sf-space-3); }
-:is(.sf-form, .sf-usage) div:has(> [data-path] > div) > button[title='remove item'] { margin-top: var(--sf-space-1); }
 
-:is(.sf-form, .sf-usage) button[title='remove item'] {
-  flex: none;
-  width: 32px !important;
-  height: 32px !important;
-  border: 1px solid var(--sf-border-strong) !important;
-  border-radius: var(--sf-radius-sm) !important;
-  background: var(--sf-bg);
-  color: var(--sf-text-muted);
-  transition: color var(--sf-duration), background-color var(--sf-duration), border-color var(--sf-duration);
-}
-:is(.sf-form, .sf-usage) button[title='remove item']:hover:not(:disabled) {
-  border-color: var(--sf-danger) !important;
-  background: var(--sf-danger-surface);
-  color: var(--sf-danger);
-}
-:is(.sf-form, .sf-usage) button[title='remove item'] > span { font-size: var(--sf-text-sm) !important; font-weight: 600; }
-
-:is(.sf-form, .sf-usage) label:has(> button[title='add item']) {
-  display: inline-flex !important;
-  flex-direction: row-reverse;
-  justify-content: flex-end !important;
-  align-items: center;
-  align-self: flex-start;
-  gap: var(--sf-space-2);
-  min-height: 36px;
-  margin: 0 !important;
-  padding: var(--sf-space-1) var(--sf-space-3) var(--sf-space-1) var(--sf-space-2);
-  border: 1px dashed var(--sf-border-strong);
-  border-radius: var(--sf-radius-md);
-  color: var(--sf-accent);
-  font-weight: 500;
-  transition: background-color var(--sf-duration), border-color var(--sf-duration);
-}
-:is(.sf-form, .sf-usage) label:has(> button[title='add item']:not(:disabled)):hover { border-color: var(--sf-accent); background: var(--sf-accent-surface); }
-:is(.sf-form, .sf-usage) label:has(> button[title='add item']:disabled) { opacity: 0.55; cursor: not-allowed !important; }
-:is(.sf-form, .sf-usage) label:has(> button[title='add item']) > div { margin-right: 0 !important; }
-:is(.sf-form, .sf-usage) button[title='add item'] {
-  flex: none;
-  width: 22px !important;
-  height: 22px !important;
-  border-radius: var(--sf-radius-pill) !important;
-  background: var(--sf-accent);
-  color: var(--sf-on-accent);
-}
-:is(.sf-form, .sf-usage) button[title='add item'] > span { font-size: var(--sf-text-md) !important; font-weight: 600; }
-
-/* Plain buttons authored by stories (inline-styled fallback array buttons are restyled above). */
+/* Plain buttons, including the fallback array's Remove and Fill item buttons. */
 :is(.sf-form, .sf-usage) button:not([style]) {
   min-height: 36px;
   padding: 6px 14px;
@@ -214,6 +166,29 @@
 :is(.sf-form, .sf-usage) button[type='submit']:not([style]):hover:not(:disabled) {
   background: color-mix(in srgb, var(--sf-accent), var(--sf-text) 8%);
 }
+
+/* Fallback array buttons, placed after the plain-button rules they refine. */
+:is(.sf-form, .sf-usage) button:is([title='remove item'], [title='fill item']) { min-height: 32px; padding: var(--sf-space-1) var(--sf-space-3); background: var(--sf-bg); color: var(--sf-text-muted); }
+:is(.sf-form, .sf-usage) button[title='remove item'] { flex: none; font-size: var(--sf-text-xs); }
+:is(.sf-form, .sf-usage) button[title='remove item']:hover:not(:disabled) {
+  border-color: var(--sf-danger);
+  background: var(--sf-danger-surface);
+  color: var(--sf-danger);
+}
+:is(.sf-form, .sf-usage) button[title='add item'] {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px dashed var(--sf-border-strong);
+  border-radius: var(--sf-radius-md);
+  background: transparent;
+  color: var(--sf-accent);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--sf-duration), border-color var(--sf-duration);
+}
+:is(.sf-form, .sf-usage) button[title='add item']:hover:not(:disabled) { border-color: var(--sf-accent); background: var(--sf-accent-surface); }
 
 /* Native file pickers: the picker button matches the story buttons. */
 :is(.sf-form, .sf-usage) input[type='file'] { max-width: 100%; color: var(--sf-text-muted); font: inherit; font-size: var(--sf-text-sm); }
