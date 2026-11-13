@@ -50,7 +50,7 @@ type DateTimeCase = readonly [
   formatted: string,
 ];
 
-const cases: DateTimeCase[] = [
+it.each([
   [
     'Date',
     FieldInputDateDefinition,
@@ -75,9 +75,7 @@ const cases: DateTimeCase[] = [
     dayjs('2024-03-05T08:09:10'),
     '08:09:10',
   ],
-];
-
-it.each(cases)(
+] as DateTimeCase[])(
   '%s maps null to undefined, skips an invalid Dayjs and formats a valid one',
   (_, definition, jsonSchema, initial, valid, formatted) => {
     const ref = createRef<FormHandle>();

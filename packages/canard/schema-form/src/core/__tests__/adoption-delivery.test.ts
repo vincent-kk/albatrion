@@ -160,50 +160,45 @@ describe('adoption during an event delivery', () => {
   );
 });
 
-const CALLBACK_ADOPTIONS: readonly [
-  string,
-  (previous: Tree, next: Tree) => void,
-][] = [
-  [
-    'onChange',
-    (previous, next) => {
-      Reflect.set(previous.runtime, 'onChange', () =>
-        adoptFieldNodeTree(previous.root, next.root),
-      );
-      previous.root.find('/second')?.setValue('c');
-    },
-  ],
-  [
-    'onChange through a batch, as a form reset does',
-    (previous, next) => {
-      Reflect.set(previous.runtime, 'onChange', () =>
-        previous.root.batch(() => adoptAndFeed(previous, next)),
-      );
-      previous.root.find('/second')?.setValue('c');
-    },
-  ],
-  [
-    'onStateChange at a chain exit',
-    (previous, next) => {
-      Reflect.set(previous.runtime, 'onStateChange', () =>
-        adoptFieldNodeTree(previous.root, next.root),
-      );
-      previous.root.batch(() => touchFirst(previous));
-    },
-  ],
-  [
-    'onStateChange in a standalone delivery',
-    (previous, next) => {
-      Reflect.set(previous.runtime, 'onStateChange', () =>
-        adoptFieldNodeTree(previous.root, next.root),
-      );
-      touchFirst(previous);
-    },
-  ],
-];
-
 describe('adoption from a form callback or a nested chain', () => {
-  it.each(CALLBACK_ADOPTIONS)(
+  it.each([
+    [
+      'onChange',
+      (previous, next) => {
+        Reflect.set(previous.runtime, 'onChange', () =>
+          adoptFieldNodeTree(previous.root, next.root),
+        );
+        previous.root.find('/second')?.setValue('c');
+      },
+    ],
+    [
+      'onChange through a batch, as a form reset does',
+      (previous, next) => {
+        Reflect.set(previous.runtime, 'onChange', () =>
+          previous.root.batch(() => adoptAndFeed(previous, next)),
+        );
+        previous.root.find('/second')?.setValue('c');
+      },
+    ],
+    [
+      'onStateChange at a chain exit',
+      (previous, next) => {
+        Reflect.set(previous.runtime, 'onStateChange', () =>
+          adoptFieldNodeTree(previous.root, next.root),
+        );
+        previous.root.batch(() => touchFirst(previous));
+      },
+    ],
+    [
+      'onStateChange in a standalone delivery',
+      (previous, next) => {
+        Reflect.set(previous.runtime, 'onStateChange', () =>
+          adoptFieldNodeTree(previous.root, next.root),
+        );
+        touchFirst(previous);
+      },
+    ],
+  ] as readonly [string, (previous: Tree, next: Tree) => void][])(
     'adoption from %s leaves both runtimes resting',
     (_, run) => {
       const previous = createTree();

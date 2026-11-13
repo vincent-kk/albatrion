@@ -38,7 +38,7 @@ type MisfitCase = readonly [
   good: unknown,
 ];
 
-const cases: MisfitCase[] = [
+it.each([
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
   [
@@ -187,9 +187,7 @@ const cases: MisfitCase[] = [
     { toString: 'oops' },
     'a',
   ],
-];
-
-it.each(cases)(
+] as MisfitCase[])(
   '%s marks a misfit value in the DOM and clears it for a valid one',
   (name, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
@@ -238,7 +236,7 @@ it.each(cases)(
   },
 );
 
-const arrayCases: MisfitCase[] = [
+it.each([
   [
     'StringEnum with an uncoercible element',
     FieldInputStringEnumDefinition,
@@ -257,9 +255,7 @@ const arrayCases: MisfitCase[] = [
     ['a', { toString: 'oops' }],
     ['a'],
   ],
-];
-
-it.each(arrayCases)(
+] as MisfitCase[])(
   '%s keeps the input and node value without marking the array parent',
   (_, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();

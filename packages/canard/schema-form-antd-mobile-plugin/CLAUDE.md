@@ -40,3 +40,7 @@ The plugin exports a `SchemaFormPlugin` object:
 `@canard/schema-form`, `antd-mobile`, `dayjs`, React
 
 Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
+
+## Verification tables
+
+Keep local parameter tables as static array literals at the Vitest each call so the case count can be audited without executing tests. Preserve case names, row order and assertions when relocating tables or splitting files by behavior. Shared scenario runners keep their canonical imported data rather than copying it into each runner.

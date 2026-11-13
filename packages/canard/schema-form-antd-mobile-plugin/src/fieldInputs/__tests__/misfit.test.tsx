@@ -30,7 +30,10 @@ type MisfitCase = readonly [
   good: unknown,
 ];
 
-const cases: MisfitCase[] = [
+const INVALID_CONTROL =
+  'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]';
+
+it.each([
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
   [
@@ -109,12 +112,7 @@ const cases: MisfitCase[] = [
     { toString: 'oops' },
     3,
   ],
-];
-
-const INVALID_CONTROL =
-  'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]';
-
-it.each(cases)(
+] as MisfitCase[])(
   '%s marks a misfit value in the DOM and clears it for a valid one',
   (_, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
@@ -144,7 +142,7 @@ it.each(cases)(
   },
 );
 
-const rangeCases: MisfitCase[] = [
+it.each([
   [
     'Range Slider with an uncoercible element',
     FieldInputSliderDefinition,
@@ -157,9 +155,7 @@ const rangeCases: MisfitCase[] = [
     [1, { toString: 'oops' }],
     [1, 3],
   ],
-];
-
-it.each(rangeCases)(
+] as MisfitCase[])(
   '%s keeps the input and node value without marking the array parent',
   (_, definition, jsonSchema, bad) => {
     const ref = createRef<FormHandle>();
@@ -179,7 +175,7 @@ it.each(rangeCases)(
   },
 );
 
-const checkboxElementCases: MisfitCase[] = [
+it.each([
   [
     'StringCheckbox with an uncoercible element',
     FieldInputStringCheckboxDefinition,
@@ -191,9 +187,7 @@ const checkboxElementCases: MisfitCase[] = [
     ['a', { toString: 'oops' }],
     ['a'],
   ],
-];
-
-it.each(checkboxElementCases)(
+] as MisfitCase[])(
   '%s renders both checkboxes unchecked and keeps the node value without throwing',
   (_, definition, jsonSchema, bad) => {
     const ref = createRef<FormHandle>();

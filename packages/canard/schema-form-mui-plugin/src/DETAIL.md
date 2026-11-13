@@ -8,6 +8,8 @@ MUI 입력은 schema-form이 해석한 값과 상태를 표시합니다. 플러�
 
 날짜·시간 입력도 disabled와 readOnly의 후속 변경을 MUI에 전달하며, 읽기 전용 상호작용은 MUI가 소유합니다. enum 선택 identity는 원래 JSON 스칼라를 인코딩하므로 null과 문자열 null을 합치지 않습니다.
 
+로컬 검증 표는 각 parameter 호출에 정적 배열로 두어 실행 없이 사례 수를 셀 수 있게 합니다. 표를 옮겨도 사례 이름·순서·단언을 보존하며, 공유 시나리오를 복제하지 않습니다.
+
 ## Acceptance Criteria
 
 ### mui-binding — 폼 상태 전달

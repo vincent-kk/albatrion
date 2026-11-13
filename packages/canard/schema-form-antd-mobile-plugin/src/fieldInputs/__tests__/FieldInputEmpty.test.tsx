@@ -17,9 +17,10 @@ afterEach(cleanup);
 
 const KEY = 'text';
 
-const cases: ReadonlyArray<
-  readonly [string, string, FieldInputDefinition, JSONSchema]
-> = [
+const readKey = (value: unknown) =>
+  value !== null && typeof value === 'object' ? Reflect.get(value, KEY) : value;
+
+it.each([
   [
     'String',
     'non-nullable',
@@ -48,12 +49,9 @@ const cases: ReadonlyArray<
       options: { omitEmpty: false },
     },
   ],
-];
-
-const readKey = (value: unknown) =>
-  value !== null && typeof value === 'object' ? Reflect.get(value, KEY) : value;
-
-it.each(cases)(
+] as ReadonlyArray<
+  readonly [string, string, FieldInputDefinition, JSONSchema]
+>)(
   'publishes undefined when %s is cleared (%s)',
   (_, __, definition, property) => {
     const ref = createRef<FormHandle>();

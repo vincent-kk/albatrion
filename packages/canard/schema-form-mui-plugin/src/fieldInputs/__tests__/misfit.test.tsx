@@ -35,7 +35,16 @@ type MisfitCase = readonly [
   good: unknown,
 ];
 
-const cases: MisfitCase[] = [
+const ariaOnlyNames = [
+  'RadioGroup',
+  'Boolean',
+  'BooleanSwitch',
+  'StringSwitch',
+  'StringCheckbox',
+  'Slider',
+];
+
+it.each([
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
   [
@@ -128,9 +137,98 @@ const cases: MisfitCase[] = [
     ['10:00:00'],
     '10:00:00',
   ],
-];
+  [
+    'RadioGroup',
+    FieldInputRadioGroupDefinition,
+    {
+      type: 'string',
+      enum: ['a', 'b'],
+      presentation: { inputType: 'radio' },
+    },
+    { toString: 'oops' },
+    'a',
+  ],
+  [
+    'Boolean',
+    FieldInputBooleanDefinition,
+    { type: 'boolean' },
+    { toString: 'oops' },
+    true,
+  ],
+  [
+    'BooleanSwitch',
+    FieldInputBooleanSwitchDefinition,
+    { type: 'boolean', presentation: { inputType: 'switch' } },
+    { toString: 'oops' },
+    true,
+  ],
+  [
+    'StringSwitch',
+    FieldInputStringSwitchDefinition,
+    {
+      type: 'string',
+      enum: ['on', 'off'],
+      presentation: { inputType: 'switch' },
+    },
+    { toString: 'oops' },
+    'on',
+  ],
+  [
+    'StringCheckbox',
+    FieldInputStringCheckboxDefinition,
+    {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    { toString: 'oops' },
+    ['a'],
+  ],
+  [
+    'Slider',
+    FieldInputSliderDefinition,
+    { type: 'number', presentation: { inputType: 'slider' } },
+    { toString: 'oops' },
+    5,
+  ],
+] as MisfitCase[])(
+  '%s marks a misfit value with aria-invalid and clears it for a valid one',
+  (name, definition, jsonSchema, bad, good) => {
+    const ref = createRef<FormHandle>();
+    const { container } = render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[definition]}
+        jsonSchema={jsonSchema}
+        defaultValue={good as never}
+        onError={() => {}}
+      />,
+    );
+    const invalid = () =>
+      container.querySelector(
+        'input:not([aria-hidden="true"])[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
+      );
+    const supportsError = !ariaOnlyNames.includes(name);
+    const visible = () => container.querySelector('.Mui-error');
+    expect(invalid()).toBeNull();
+    expect(visible()).toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
+    act(() => ref.current!.setValue(bad as never));
+    expect(invalid()).not.toBeNull();
+    if (supportsError) {
+      expect(visible()).not.toBeNull();
+    } else {
+      expect(visible()).toBeNull();
+    }
+    expect(ref.current!.getValue()).toEqual(bad);
+    act(() => ref.current!.setValue(good as never));
+    expect(invalid()).toBeNull();
+    expect(visible()).toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
+  },
+);
 
-const uncoercibleCases: MisfitCase[] = [
+it.each([
   [
     'String',
     FieldInputStringDefinition,
@@ -187,112 +285,7 @@ const uncoercibleCases: MisfitCase[] = [
     { toString: 'oops' },
     'https://a.b',
   ],
-];
-
-const uncoercibleAriaOnlyCases: MisfitCase[] = [
-  [
-    'RadioGroup',
-    FieldInputRadioGroupDefinition,
-    {
-      type: 'string',
-      enum: ['a', 'b'],
-      presentation: { inputType: 'radio' },
-    },
-    { toString: 'oops' },
-    'a',
-  ],
-  [
-    'Boolean',
-    FieldInputBooleanDefinition,
-    { type: 'boolean' },
-    { toString: 'oops' },
-    true,
-  ],
-  [
-    'BooleanSwitch',
-    FieldInputBooleanSwitchDefinition,
-    { type: 'boolean', presentation: { inputType: 'switch' } },
-    { toString: 'oops' },
-    true,
-  ],
-  [
-    'StringSwitch',
-    FieldInputStringSwitchDefinition,
-    {
-      type: 'string',
-      enum: ['on', 'off'],
-      presentation: { inputType: 'switch' },
-    },
-    { toString: 'oops' },
-    'on',
-  ],
-  [
-    'StringCheckbox',
-    FieldInputStringCheckboxDefinition,
-    {
-      type: 'array',
-      items: { type: 'string', enum: ['a', 'b'] },
-      presentation: { inputType: 'checkbox' },
-    },
-    { toString: 'oops' },
-    ['a'],
-  ],
-  [
-    'Slider',
-    FieldInputSliderDefinition,
-    { type: 'number', presentation: { inputType: 'slider' } },
-    { toString: 'oops' },
-    5,
-  ],
-];
-
-const ariaOnlyNames = [
-  'RadioGroup',
-  'Boolean',
-  'BooleanSwitch',
-  'StringSwitch',
-  'StringCheckbox',
-  'Slider',
-];
-
-it.each([...cases, ...uncoercibleAriaOnlyCases])(
-  '%s marks a misfit value with aria-invalid and clears it for a valid one',
-  (name, definition, jsonSchema, bad, good) => {
-    const ref = createRef<FormHandle>();
-    const { container } = render(
-      <Form
-        ref={ref}
-        fieldInputDefinitions={[definition]}
-        jsonSchema={jsonSchema}
-        defaultValue={good as never}
-        onError={() => {}}
-      />,
-    );
-    const invalid = () =>
-      container.querySelector(
-        'input:not([aria-hidden="true"])[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
-      );
-    const supportsError = !ariaOnlyNames.includes(name);
-    const visible = () => container.querySelector('.Mui-error');
-    expect(invalid()).toBeNull();
-    expect(visible()).toBeNull();
-    expect(ref.current!.getValue()).toEqual(good);
-    act(() => ref.current!.setValue(bad as never));
-    expect(invalid()).not.toBeNull();
-    if (supportsError) {
-      expect(visible()).not.toBeNull();
-    } else {
-      expect(visible()).toBeNull();
-    }
-    expect(ref.current!.getValue()).toEqual(bad);
-    act(() => ref.current!.setValue(good as never));
-    expect(invalid()).toBeNull();
-    expect(visible()).toBeNull();
-    expect(ref.current!.getValue()).toEqual(good);
-  },
-);
-
-it.each(uncoercibleCases)(
+] as MisfitCase[])(
   '%s renders an uncoercible object without throwing, sets aria-invalid="true" and .Mui-error, clears them on a valid value, and keeps the node value intact',
   (_, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
