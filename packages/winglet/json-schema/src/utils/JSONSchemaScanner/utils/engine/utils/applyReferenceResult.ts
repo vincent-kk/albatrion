@@ -1,8 +1,7 @@
-import { clone } from '@winglet/common-utils/object';
-
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { SchemaEntry } from '../../../type';
+import { cloneSchema } from '../../output/cloneSchema';
 import type { ScanConfig } from '../type';
 
 /**
@@ -30,8 +29,13 @@ export function applyReferenceResult<Schema extends UnknownSchema, ContextType>(
     entry.referenceSkipped = 'unresolved';
     return false;
   }
-  const inlined = config.cloneResolvedSchema ? clone(resolved) : resolved;
-  config.resolves.push([entry.path, inlined]);
+  const inlined = config.cloneResolvedSchema ? cloneSchema(resolved) : resolved;
+  config.operations.push({
+    kind: 'replace',
+    path: entry.path,
+    value: inlined,
+    copy: false,
+  });
   entry.schema = inlined as Schema;
   entry.referencePath = reference;
   entry.referenceResolved = true;

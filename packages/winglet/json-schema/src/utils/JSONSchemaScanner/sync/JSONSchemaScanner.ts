@@ -1,6 +1,3 @@
-import { clone } from '@winglet/common-utils/object';
-import { setValue } from '@winglet/json/pointer';
-
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { JSONScannerOptions, SchemaVisitor } from '../type';
@@ -11,6 +8,7 @@ import {
   DEFAULT_KEYWORD_MAP,
   buildKeywordMap,
 } from '../utils/keywordDescriptors';
+import { ScanOutput } from '../utils/output/ScanOutput';
 
 interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;
@@ -205,12 +203,8 @@ export class JSONSchemaScanner<
   private readonly __visitor__: SchemaVisitor<Schema, ContextType>;
   /** Scan options: includes maximum traversal depth, filtering functions, reference resolution functions, etc. */
   private readonly __options__: JSONScannerOptions<Schema, ContextType>;
-  /** Original JSON schema passed to the `scan` method. */
-  private __originalSchema__: UnknownSchema | undefined;
-  /** Final schema with references resolved. Computed on first call to `getValue`. */
-  private __processedSchema__: UnknownSchema | undefined;
-  /** Array of references resolved during `__run__` execution but not yet applied to the final schema ([path, resolved schema]). */
-  private __resolves__: Array<[path: string, schema: UnknownSchema]> = [];
+  /** Shared operation ledger, lifecycle guard and lazy output cache. */
+  private readonly __output__ = new ScanOutput();
 
   /**
    * Creates a JSONSchemaScanner instance.
@@ -223,23 +217,18 @@ export class JSONSchemaScanner<
 
   /**
    * Scans the given JSON schema and updates internal state.
-   * Executes visitor hooks and collects resolved reference information to store in `__resolves__`.
+   * Executes visitor hooks and collects resolved reference information in the shared output ledger.
    *
    * @param {Schema} schema - The JSON schema object to scan.
    * @returns {this} The current JSONSchemaScanner instance (allows method chaining).
    */
   public scan(this: this, schema: Schema): this {
-    this.__originalSchema__ = schema;
-    this.__processedSchema__ = undefined;
-    this.__resolves__ = [];
+    this.__output__.begin(schema);
     try {
-      this.__run__(this.__originalSchema__ as Schema);
+      this.__run__(schema);
+      this.__output__.finish();
     } catch (error) {
-      // Reset state so a failed scan cannot report partial results.
-      // The exception itself still propagates to the caller (current behavior).
-      this.__originalSchema__ = undefined;
-      this.__processedSchema__ = undefined;
-      this.__resolves__ = [];
+      this.__output__.reset();
       throw error;
     }
     return this;
@@ -248,16 +237,16 @@ export class JSONSchemaScanner<
   /**
    * Returns the final schema with scanning and reference resolution completed.
    *
-   * On first call: Applies references stored in `__resolves__` to a deep copy of the original schema
-   * to create the final schema and cache it.
+   * On first call: Applies recorded output operations without writing to caller-owned values
+   * and caches the result independently of its truthiness.
    * From second call onwards: Returns the cached final schema.
    *
    * @template OutputSchema - The expected output schema type. Defaults to the class-level Schema type.
    *   Use this to narrow or widen the return type when the processed schema structure differs from input.
    * @returns The processed final schema typed as `OutputSchema`.
    *   Returns `undefined` if called before scanning.
-   *   Returns a reference to the original schema if no references were resolved,
-   *   otherwise returns a deep copy with all `$ref` references inlined.
+   *   Returns the original schema if no output operation was recorded.
+   *   Otherwise returns copied output; opted-out, unchanged resolver targets retain their aliases.
    *
    * @example
    * ```typescript
@@ -271,23 +260,7 @@ export class JSONSchemaScanner<
   public getValue<OutputSchema extends UnknownSchema = Schema>(
     this: this,
   ): OutputSchema | undefined {
-    if (!this.__originalSchema__) return undefined;
-    if (this.__processedSchema__)
-      return this.__processedSchema__ as OutputSchema;
-    const resolves = this.__resolves__;
-    const resolvesLength = resolves.length;
-    if (resolvesLength === 0) {
-      this.__processedSchema__ = this.__originalSchema__;
-      return this.__processedSchema__ as OutputSchema;
-    }
-    let processedSchema = clone(this.__originalSchema__);
-    for (let i = 0; i < resolvesLength; i++) {
-      const [path, resolvedSchema] = resolves[i];
-      processedSchema = setValue(processedSchema, path, resolvedSchema);
-    }
-    this.__resolves__ = [];
-    this.__processedSchema__ = processedSchema;
-    return processedSchema as OutputSchema;
+    return this.__output__.getValue() as OutputSchema | undefined;
   }
 
   /**
@@ -307,7 +280,7 @@ export class JSONSchemaScanner<
       keywordMap: options.additionalKeywords
         ? buildKeywordMap(DEFAULT_KEYWORDS.concat(options.additionalKeywords))
         : DEFAULT_KEYWORD_MAP,
-      resolves: this.__resolves__,
+      operations: this.__output__.operations,
       filter: options.filter,
       mutate: options.mutate,
       enter: visitor.enter,

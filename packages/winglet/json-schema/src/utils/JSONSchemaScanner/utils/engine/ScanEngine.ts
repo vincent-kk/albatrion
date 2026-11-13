@@ -3,9 +3,10 @@ import { isObject } from '@winglet/common-utils/filter';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import type { KeywordDescriptor, SchemaEntry } from '../../type';
+import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
 import { isDefinitionSchema } from '../isDefinitionSchema';
 import { DEFAULT_KEYWORD_MAP } from '../keywordDescriptors';
-import type { ScanConfig } from './type';
+import type { PhysicalCheckpoint, ScanConfig } from './type';
 import { ScanStage } from './utils/ScanStage';
 import { applyReferenceResult } from './utils/applyReferenceResult';
 import { appendChildren } from './utils/children/appendChildren';
@@ -44,6 +45,8 @@ export class ScanEngine<
   private readonly hasExit: boolean;
   /** Written reference awaiting application after an async resolver suspension. */
   private reference: string | undefined;
+  /** Power-of-two ancestor checkpoints, allocated only when a child-bearing frame reaches depth 256. */
+  private checkpoints: PhysicalCheckpoint[] | undefined;
 
   /**
    * Initialize a scan without invoking user callbacks.
@@ -95,6 +98,8 @@ export class ScanEngine<
     } = this;
     const { context, maxDepth } = config;
     let result = resumed;
+    let checkpoints = this.checkpoints;
+    let checkpoint = checkpoints?.[checkpoints.length - 1];
     while (entries.length > 0) {
       const top = entries.length - 1;
       const entry = entries[top];
@@ -123,7 +128,12 @@ export class ScanEngine<
         }
         if (hasMutate && result !== undefined) {
           entry.schema = result as Schema;
-          config.resolves.push([entry.path, result as UnknownSchema]);
+          config.operations.push({
+            kind: 'replace',
+            path: entry.path,
+            value: result,
+            copy: true,
+          });
         }
       }
       if (stage <= ScanStage.Enter && hasEnter) {
@@ -181,6 +191,16 @@ export class ScanEngine<
         continue;
       }
       if (stage <= ScanStage.Children) {
+        if (
+          entry.depth > 256 &&
+          checkpoint !== undefined &&
+          entry.depth > checkpoint.depth &&
+          entry.schema === checkpoint.schema
+        )
+          throw new JSONSchemaScanError(
+            'schema-cycle',
+            'Physical cycle in schema ancestry',
+          );
         const start = entries.length;
         if (!(maxDepth !== undefined && entry.depth + 1 > maxDepth))
           appendChildren(
@@ -192,6 +212,12 @@ export class ScanEngine<
           );
         const end = entries.length;
         if (end > start) {
+          const depth = entry.depth;
+          if (depth >= 256 && (depth & (depth - 1)) === 0) {
+            checkpoint = { depth, schema: entry.schema, frame: top };
+            if (checkpoints === undefined) this.checkpoints = checkpoints = [];
+            checkpoints.push(checkpoint);
+          }
           stages[top] = ScanStage.Exit;
           for (let i = start, j = end - 1; i < j; i++, j--) {
             const swap = entries[i];
@@ -215,6 +241,10 @@ export class ScanEngine<
         active.has(entry.referencePath)
       )
         active.delete(entry.referencePath);
+      if (checkpoint !== undefined && checkpoint.frame === top) {
+        checkpoints!.pop();
+        checkpoint = checkpoints![checkpoints!.length - 1];
+      }
       entries.pop();
       stages.pop();
     }
