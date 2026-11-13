@@ -1,5 +1,7 @@
-import type { ConsumerPackage } from '../../types/index.js';
+import type { Fn } from '@aileron/declare';
+
 import type { AgentType, InjectReport, Scope } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import type {
   ApplyProgress,
   PlanStepState,
@@ -16,13 +18,13 @@ export type Phase =
   | {
       readonly kind: 'agent-select';
       readonly targets: readonly ConsumerPackage[];
-      readonly pending: (agents: readonly AgentType[]) => void;
+      readonly pending: Fn<[agents: readonly AgentType[]]>;
     }
   | {
       readonly kind: 'scope-select';
       readonly targets: readonly ConsumerPackage[];
       readonly agents: readonly AgentType[];
-      readonly pending: (scope: Scope) => void;
+      readonly pending: Fn<[scope: Scope]>;
     }
   | {
       readonly kind: 'planning';
@@ -41,7 +43,7 @@ export type Phase =
       readonly kind: 'force-confirm';
       readonly plans: readonly TargetPlan[];
       readonly warnings: readonly Warning[];
-      readonly pending: (ok: boolean) => void;
+      readonly pending: Fn<[ok: boolean]>;
       readonly scope: Scope;
     }
   | {

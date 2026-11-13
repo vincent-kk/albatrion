@@ -1,5 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
+import type { AsyncFn } from '@aileron/declare';
+
 /**
  * Read a shared document once per plan, remembering absent files.
  *
@@ -9,9 +11,10 @@ import { readFile } from 'node:fs/promises';
  *
  * @returns a reader that answers `null` for a document that does not exist
  */
-export function createDocumentReader(): (
-  fileAbs: string,
-) => Promise<string | null> {
+export function createDocumentReader(): AsyncFn<
+  [fileAbs: string],
+  string | null
+> {
   const cache = new Map<string, Promise<string | null>>();
   return (fileAbs) => {
     const hit = cache.get(fileAbs);

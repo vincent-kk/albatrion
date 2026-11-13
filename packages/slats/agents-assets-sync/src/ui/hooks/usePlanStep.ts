@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   type AgentType,
   type AssetKind,
@@ -20,11 +22,10 @@ interface UsePlanStepOptions {
   readonly originCwd: string;
   readonly assetKinds: ReadonlySet<AssetKind>;
   readonly force: boolean;
-  readonly dispatch: (event: InjectEvent) => void;
-  readonly onPlansReady: (
-    plans: readonly TargetPlan[],
-    warnings: readonly Warning[],
-  ) => void;
+  readonly dispatch: Fn<[event: InjectEvent]>;
+  readonly onPlansReady: Fn<
+    [plans: readonly TargetPlan[], warnings: readonly Warning[]]
+  >;
 }
 
 /** Build one plan per (package, agent) pair, reporting progress per pair. */
