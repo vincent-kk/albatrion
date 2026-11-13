@@ -289,7 +289,7 @@ export class MessageChannelScheduler {
    * @returns Message event handler for task execution
    * @private
    */
-  private __createMessageHandler__(): (event: MessageEvent<number[]>) => void {
+  private __createMessageHandler__(): Fn<[event: MessageEvent<number[]>]> {
     const pendingTasks = this.__pendingTasks__;
     return (event: MessageEvent<number[]>) => {
       this.__idle__ = true;

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { SerializationOptions } from '../../type';
 
 /** Tagged scalar or graph reference, independent of user property names. */
@@ -9,7 +11,7 @@ export interface TraversalOptions extends SerializationOptions {
   /** Sort property names for deterministic structural keys. */
   sorted?: boolean;
   /** Resolve unsupported identities inside a key factory. */
-  opaque?: (value: object | symbol) => number;
+  opaque?: Fn<[value: object | symbol], number>;
 }
 /** Mutable state owned by one traversal, never shared between calls. */
 export interface TraversalState {

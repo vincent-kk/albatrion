@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /** Key generation policy selected once when constructing a factory. */
 export type FingerprintMode = 'fast' | 'sorted' | 'safe';
 
@@ -31,7 +33,7 @@ export type FingerprintFactoryOptions = FactoryPolicy &
   );
 
 /** Generates keys in one identity/cache scope with per-call property exclusions. */
-export type FingerprintGenerator = (
-  value: unknown,
-  options?: Pick<FingerprintOptions, 'omit'>,
-) => string;
+export type FingerprintGenerator = Fn<
+  [value: unknown, options?: Pick<FingerprintOptions, 'omit'>],
+  string
+>;

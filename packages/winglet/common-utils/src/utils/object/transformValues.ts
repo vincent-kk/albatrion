@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Transforms object values while preserving keys and structure.
  *
@@ -301,7 +303,7 @@ export const transformValues = <
   Value,
 >(
   object: Type,
-  getValue: (value: Type[Key], key: Key, object: Type) => Value,
+  getValue: Fn<[value: Type[Key], key: Key, object: Type], Value>,
 ): Record<Key, Value> => {
   const keys = Object.keys(object);
   // Prototype-free so a source key like `__proto__` is stored rather than

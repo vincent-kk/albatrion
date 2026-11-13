@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import {
   DATE_TAG,
   MAP_TAG,
@@ -35,7 +37,7 @@ export const equalsBuiltin = (
   left: object,
   right: object,
   tag: string,
-  compare: (left: unknown, right: unknown) => boolean,
+  compare: Fn<[left: unknown, right: unknown], boolean>,
 ): boolean | undefined => {
   if (tag === DATE_TAG) {
     const leftTime = (left as Date).getTime();
