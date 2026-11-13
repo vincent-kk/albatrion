@@ -90,6 +90,8 @@ React 18·19의 StrictMode와 검증 바인딩 교체에서 중복 마운트·�
 - **Direct import**: `allowed`
 - **Reason**: 공개 API로 관찰할 수 없는 슬롯 시점·폐기·진입 횟수를 확인하기 위해 이 두 시험만 scheduleValidationSlot·startFieldNodeLoadValidation을 vi.mock으로 감쌉니다. 다른 e2e에는 확대하지 않습니다.
 
+로컬 검증 표는 parameter 호출의 정적 리터럴로 표현하되 실행 사례·순서·단언을 유지합니다. 공유 시나리오 runner와 여러 시험이 소비하는 공급 경로·게이트 fixture는 정본 데이터를 import합니다. 감사기의 정적 행 계산을 위해 이 공유 데이터를 복제하지 않습니다.
+
 ## Last Updated
 
 패키지의 가치 선택·공개 조합 경계·검증 층·성능 판정 원칙이 바뀔 때 갱신합니다.

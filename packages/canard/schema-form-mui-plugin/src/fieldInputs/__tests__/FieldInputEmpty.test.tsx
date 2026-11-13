@@ -25,7 +25,7 @@ type EmptyCase = readonly [
   typedValue: string,
 ];
 
-const cases: EmptyCase[] = [
+it.each([
   [
     'String (non-nullable)',
     FieldInputStringDefinition,
@@ -68,9 +68,7 @@ const cases: EmptyCase[] = [
     'input#\\/field',
     'http://abc',
   ],
-];
-
-it.each(cases)(
+] as EmptyCase[])(
   '%s publishes undefined when typed text is cleared',
   async (_, definition, fieldSchema, selector, typedValue) => {
     const ref = createRef<FormHandle>();

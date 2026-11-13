@@ -37,3 +37,7 @@ Components are selected automatically from the `type`, `format`, `inputType`, an
 Date and month pickers combine readOnly with disabled because preventing text entry alone leaves calendar selection editable. Lock updates must reach the widget.
 
 Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
+
+## Verification tables
+
+Keep local parameter tables as static array literals at the Vitest each call so the case count can be audited without executing tests. Preserve case names, row order and assertions when relocating tables or splitting files by behavior. Shared scenario runners keep their canonical imported data rather than copying it into each runner.

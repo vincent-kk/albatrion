@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 import {
   Form,
   FormErrorCode,
-  type FormProps,
   type FormHandle,
+  type FormProps,
   type JSONSchema,
   ValidationMode,
   isJSONSchemaError,
@@ -15,58 +15,55 @@ import {
 
 import { observeErrorSink } from '../helpers/observeErrorSink';
 
-/** Runtime-authored invalid schemas pin the remaining public mount errors. */
-const errors = [
-  {
-    id: 'E1 C1',
-    schema: { type: 'object', controls: { discriminator: '' } },
-    code: FormErrorCode.InvalidControlShape,
-    schemaPath: '#/controls/discriminator',
-    details: { group: 'controls', key: 'discriminator', expected: 'string' },
-  },
-  {
-    id: 'E2 C4',
-    schema: {
-      type: 'object',
-      controls: { discriminator: 'kind' },
-      oneOf: [{ properties: { first: { type: 'string' } } }],
-    },
-    code: FormErrorCode.DiscriminatorMismatch,
-    schemaPath: '#',
-    details: { propertyName: 'kind', reason: 'missing' },
-  },
-  {
-    id: 'E3 C6',
-    schema: {
-      type: 'object',
-      controls: { discriminator: 'kind' },
-      oneOf: [
-        { properties: { kind: { const: 'a' } } },
-        { properties: { kind: { const: 'a' } } },
-      ],
-    },
-    code: FormErrorCode.DiscriminatorMismatch,
-    schemaPath: '#/oneOf/1',
-    details: { propertyName: 'kind', reason: 'overlap' },
-  },
-  {
-    id: 'E4 C8',
-    schema: {
-      type: 'object',
-      controls: { discriminator: 'kind' },
-      oneOf: [
-        { properties: { kind: { const: 'a' } } },
-        { properties: { kind: { const: 1 } } },
-      ],
-    },
-    code: FormErrorCode.DiscriminatorMismatch,
-    schemaPath: '#/oneOf/1',
-    details: { propertyName: 'kind', reason: 'kind' },
-  },
-];
-
 describe('remaining discriminator mount errors through Form', () => {
-  it.each(errors)(
+  it.each([
+    {
+      id: 'E1 C1',
+      schema: { type: 'object', controls: { discriminator: '' } },
+      code: FormErrorCode.InvalidControlShape,
+      schemaPath: '#/controls/discriminator',
+      details: { group: 'controls', key: 'discriminator', expected: 'string' },
+    },
+    {
+      id: 'E2 C4',
+      schema: {
+        type: 'object',
+        controls: { discriminator: 'kind' },
+        oneOf: [{ properties: { first: { type: 'string' } } }],
+      },
+      code: FormErrorCode.DiscriminatorMismatch,
+      schemaPath: '#',
+      details: { propertyName: 'kind', reason: 'missing' },
+    },
+    {
+      id: 'E3 C6',
+      schema: {
+        type: 'object',
+        controls: { discriminator: 'kind' },
+        oneOf: [
+          { properties: { kind: { const: 'a' } } },
+          { properties: { kind: { const: 'a' } } },
+        ],
+      },
+      code: FormErrorCode.DiscriminatorMismatch,
+      schemaPath: '#/oneOf/1',
+      details: { propertyName: 'kind', reason: 'overlap' },
+    },
+    {
+      id: 'E4 C8',
+      schema: {
+        type: 'object',
+        controls: { discriminator: 'kind' },
+        oneOf: [
+          { properties: { kind: { const: 'a' } } },
+          { properties: { kind: { const: 1 } } },
+        ],
+      },
+      code: FormErrorCode.DiscriminatorMismatch,
+      schemaPath: '#/oneOf/1',
+      details: { propertyName: 'kind', reason: 'kind' },
+    },
+  ])(
     '$id reports the original schema error, location and details before rendering the fallback',
     ({ schema, code, schemaPath, details }) => {
       const sink = observeErrorSink();
@@ -82,9 +79,7 @@ describe('remaining discriminator mount errors through Form', () => {
         />,
       );
       expect(ref.current?.node).toBeUndefined();
-      expect(view.container.textContent).toContain(
-        'Unable to load form.',
-      );
+      expect(view.container.textContent).toContain('Unable to load form.');
       expect(view.container.querySelector('[data-path]')).toBeNull();
       expect(records).toHaveLength(1);
       const failure = records[0];
