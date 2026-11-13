@@ -14,6 +14,8 @@
 - `getValue<OutputSchema>(): OutputSchema | undefined`: 처리된 최종 스키마를 반환한다.
 - entry point는 순회 어휘 상수도 이름으로 재수출한다 — 상수 값 자체는 상위 organ 소유다.
 
+공개 클래스 이름은 `JSONSchemaScanner`이며 이전 표기의 별칭은 제공하지 않습니다. 두 이름으로 같은 계약이 갈라지는 것을 막습니다.
+
 ## Acceptance Criteria
 
 ### real-schema-resolution — 실제 스키마 데이터로 검증한 참조 해석
@@ -33,10 +35,6 @@
 - **Direct import**: `allowed`
 - **Reason**: 디렉터리명이 이미 async 변형과의 구분자 역할을 하므로, 파일명은 담고 있는 클래스명을 그대로 쓴다 — 디렉터리명으로 다시 감싸면 이름이 중복된다. 클래스 본체가 root에 그대로 남아 있어야 파일 경로만으로 클래스 정의를 바로 찾을 수 있다.
 
-## History
-
-- 2026-09-19 — 0.16.0: 0.15.0에서 유지하던 이전 표기 공개 별칭 제거(breaking).
-
 ## Last Updated
 
-2026-09-19 — 0.16.0 공개 별칭 제거 반영
+sync의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

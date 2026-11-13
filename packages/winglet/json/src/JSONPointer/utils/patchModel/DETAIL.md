@@ -23,6 +23,8 @@ entry point는 `index.ts`이며 이름 지정 재export만 담는다.
 
 `BasePatch`(`op`·`path`)는 비공개다 — 여섯 형태의 공통 필드일 뿐 소비자가 직접 다룰 대상이 아니다.
 
+공유 패치 어휘는 적용 구현과 분리하여 자식에서 부모 패치 배럴로 되돌아가는 의존을 만들지 않습니다. 패키지 진입점으로 패치를 구성하는 소비자도 런타임 연산 이름을 사용할 수 있도록 `Operation`을 공개합니다.
+
 ## Acceptance Criteria
 
 ### operation-runtime — 연산 이름은 런타임에 남는다
@@ -42,4 +44,4 @@ entry point는 `index.ts`이며 이름 지정 재export만 담는다.
 
 ## Last Updated
 
-2026-08-17 — `patch/type.ts`에서 분리해 신규 fractal로 만들었다. `patch/index.ts`가 자식을 재export하는 동시에 자식들이 `patch/type.ts`를 참조해 `patch ↔ applyPatch` 순환이 닫혀 있었고(`filid_fractal-boundaries §6`), 공유 어휘를 형제 fractal로 빼내 복귀 변을 제거했다. `Operation`은 이때 `patch/index.ts`의 공개 표면에도 추가되었다 — 벤치마크가 패키지 entry point만으로 패치를 구성할 수 있어야 했기 때문이다.
+패치 어휘·공개 형 또는 단방향 의존 경계가 바뀔 때 갱신합니다.

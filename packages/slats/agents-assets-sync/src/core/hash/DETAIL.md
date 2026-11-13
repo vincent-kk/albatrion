@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 다이제스트는 SHA-256 이고 출력은 소문자 hex 다. `dist/agents-hashes.json` (schema v1) 이 기록하는 형식과 같아야 매니페스트 해시와 직접 비교된다.
+- 다이제스트는 SHA-256 이고 출력은 소문자 hex 다. 빌드 출력 디렉터리의 `agents-hashes.json` (schema v1) 이 기록하는 형식과 같아야 매니페스트 해시와 직접 비교된다.
 - `hashContent` 는 `Buffer` 와 `string` 을 모두 받는다. 파일 복사 경로는 바이트를, marker block 경로는 문자열 본문을 넘긴다.
 - `hashFile` 은 파일이 없으면(`ENOENT`) 던지지 않고 `null` 을 답한다. 이 soft miss 가 `buildPlan` 에서 "아직 설치되지 않음 → copy" 판정의 근거다.
 - `ENOENT` 이외의 오류는 삼키지 않고 그대로 전파한다.
