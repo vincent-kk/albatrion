@@ -84,17 +84,6 @@
     },
     "test-record-case-cap": {
       "exempt": [
-        "**/packages/canard/schema-form-ajv6-plugin/src/__tests__/parity.guard.test.ts",
-        "**/packages/canard/schema-form-ajv6-plugin/src/__tests__/parity.lifetime.test.ts",
-        "**/packages/canard/schema-form-ajv6-plugin/src/__tests__/parity.validation.test.ts",
-        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.guard.dynamic.test.ts",
-        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.guard.test.ts",
-        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.lifetime.test.ts",
-        "**/packages/canard/schema-form-ajv7-plugin/src/__tests__/parity.validation.test.ts",
-        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.guard.dynamic.test.ts",
-        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.guard.test.ts",
-        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.lifetime.test.ts",
-        "**/packages/canard/schema-form-ajv8-plugin/src/__tests__/parity.validation.test.ts",
         "**/packages/canard/schema-form/src/__tests__/e2e/features-composite-shared-1.test.tsx",
         "**/packages/canard/schema-form/src/__tests__/e2e/features-composite-shared-2.test.tsx",
         "**/packages/canard/schema-form/src/__tests__/e2e/features-composite-tails.test.tsx",

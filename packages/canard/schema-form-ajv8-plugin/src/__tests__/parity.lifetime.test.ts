@@ -1,5 +1,5 @@
 // Shared validator parity, lifetime scenarios: rows come from @aileron/schema-form-scenarios/validator.
-import { type ParityRow, indexDeclaredRows, lifetimeScenarios } from '@aileron/schema-form-scenarios/validator';
+import { indexDeclaredRows, lifetimeScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, it } from 'vitest';
 
 import { loadParityValidator } from './utils/loadParityValidator';
@@ -38,9 +38,9 @@ const rows = [
   ['lifetime.consumer-schema-kept', '2019', 'custom', true],
   ['lifetime.consumer-schema-kept', '2020', 'custom', true],
   ['lifetime.consumer-meta-schema-kept', 'default', 'custom', true],
-] as const satisfies readonly ParityRow[];
+] as const;
 
-const scenarios = indexDeclaredRows(rows, lifetimeScenarios, support);
+const scenarios = indexDeclaredRows(rows.map((row) => row), lifetimeScenarios, support);
 
 describe('validator parity: lifetime scenarios (ajv8)', () => {
   it.each(rows)('%s [%s %s directGuardCompile=%s]', async (id, entry, profile, directGuardCompile) => {
