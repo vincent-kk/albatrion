@@ -17,7 +17,12 @@
     "**/aileron/benchmark",
     "**/aileron/benchmark-form",
     "**/aileron/development-helper",
-    "**/aileron/production-test"
+    "**/aileron/production-test",
+    "**/eslint.config.js",
+    "**/eslint.config.mjs",
+    "**/benchmark",
+    "**/packages/lerx/promise-modal/vitest.react18.config.ts",
+    "**/packages/canard/schema-form/src/__tests__/e2e/exact-focus.production.test.ts"
   ],
   "adapters": {
     "mode": "auto",
@@ -131,10 +136,39 @@
       "vite.config.ts",
       "vitest.prod.config.ts",
       "tsconfig.json",
-      "tsconfig.declarations.json"
+      "tsconfig.declarations.json",
+      {
+        "basename": "function.d.ts",
+        "paths": [
+          "**/packages/aileron/common/declare"
+        ]
+      },
+      {
+        "basename": "object.d.ts",
+        "paths": [
+          "**/packages/aileron/common/declare"
+        ]
+      },
+      {
+        "basename": "utility.d.ts",
+        "paths": [
+          "**/packages/aileron/common/declare"
+        ]
+      },
+      {
+        "basename": "unit.d.ts",
+        "paths": [
+          "**/packages/aileron/common/declare"
+        ]
+      }
     ],
     "organNames": [
       "fieldInputDefinitions"
-    ]
+    ],
+    "entryPointOverrides": {
+      "ecmascript": [
+        "index.d.ts"
+      ]
+    }
   }
 }
