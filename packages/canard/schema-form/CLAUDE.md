@@ -143,7 +143,7 @@ The dedicated `verify-unit` and `verify-render` bundle runs shadow wheel, verify
   verify DOM behavior. Harness skeleton tests and empty families claim no engine
   behavior coverage.
 
-Filid case-cap exemptions name only runners consuming canonical shared scenario data or shared fixtures. Keep those imports so one data source serves every engine and renderer; copying the catalogue into each runner would let coverage drift. Local literal parity rows use ordinary case caps once their declaration and read-only uses are statically countable. The exact exempt file list belongs in `.filid/config.json`, and the ownership contract records the reason.
+Filid case-cap exemptions name only runners consuming canonical shared scenario data or shared fixtures. Keep those imports so one data source serves every engine and renderer; copying the catalogue into each runner would let coverage drift. Local literal parity rows use ordinary case caps once their declaration and read-only uses are statically countable. Literal validator parity tables keep `as const`; catalogue validation receives a one-parameter identity projection so the static counter can prove the table binding does not escape while `indexDeclaredRows` still type-checks and validates every declared row against the shared catalogue. The exact exempt file list belongs in `.filid/config.json`, and the ownership contract records the reason.
 
 ## Class Member Ordering (Domain-First)
 

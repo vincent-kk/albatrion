@@ -1,5 +1,5 @@
 // Shared validator parity, whole-validation scenarios: rows come from @aileron/schema-form-scenarios/validator.
-import { type ParityRow, indexDeclaredRows, wholeValidationScenarios } from '@aileron/schema-form-scenarios/validator';
+import { indexDeclaredRows, wholeValidationScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, expect, it } from 'vitest';
 
 import { copyOf } from './utils/copyOf';
@@ -32,9 +32,9 @@ const rows = [
   ['validation.allow-union-types', 'default', 'default', true],
   ['validation.allow-union-types', '2019', 'default', true],
   ['validation.allow-union-types', '2020', 'default', true],
-] as const satisfies readonly ParityRow[];
+] as const;
 
-const scenarios = indexDeclaredRows(rows, wholeValidationScenarios, support);
+const scenarios = indexDeclaredRows(rows.map((row) => row), wholeValidationScenarios, support);
 
 describe('validator parity: whole-validation scenarios (ajv8)', () => {
   it.each(rows)('%s [%s %s directGuardCompile=%s]', async (id, entry, profile, directGuardCompile) => {

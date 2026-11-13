@@ -1,6 +1,6 @@
 // Shared validator parity, guard scenarios, dynamic-scope entries: rows come from @aileron/schema-form-scenarios/validator.
 // Observation rows assert nothing; they print a table row only when PARITY_OBSERVE is set (read from process.env).
-import { type ParityRow, indexDeclaredRows, guardScenarios } from '@aileron/schema-form-scenarios/validator';
+import { indexDeclaredRows, guardScenarios } from '@aileron/schema-form-scenarios/validator';
 import { describe, expect, it } from 'vitest';
 
 import { copyOf } from './utils/copyOf';
@@ -42,9 +42,9 @@ const rows = [
   ['guard.host-anchor-ancestor.2020.missing-ok', '2020', 'default', true],
   ['guard.two-scopes-off-chain.2019', '2019', 'default', true],
   ['observe.non-root-anchor-with-inner-ancestor.2019', '2019', 'default', true],
-] as const satisfies readonly ParityRow[];
+] as const;
 
-const scenarios = indexDeclaredRows(rows, guardScenarios, support);
+const scenarios = indexDeclaredRows(rows.map((row) => row), guardScenarios, support);
 
 /**
  * Compile and evaluate one guard, turning a compile exception into its message.
