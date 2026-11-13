@@ -245,7 +245,7 @@ export type FieldInputMap<T = unknown> = {
 };
 
 export type SetStateFnWithOptions<S = unknown> = Fn<
-  [value: S | ((prevState: S) => S), options?: SetValueOption]
+  [value: S | Fn<[prevState: S], S>, options?: SetValueOption]
 >;
 
 export type AttachedFilesMap = Map<FieldNode['path'], File[]>;

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { dispatchBatch } from '../../../engine';
 import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode } from '../../type';
@@ -8,5 +10,5 @@ import type { FieldNode } from '../../type';
  * @param run - Synchronous reset, mount or first-commit external-error work
  * @returns Nothing; dispatch delivers and rethrows collected failures
  */
-export const batchFieldNodeLoad = (root: FieldNode, run: () => void): void =>
+export const batchFieldNodeLoad = (root: FieldNode, run: Fn): void =>
   dispatchBatch(requireRuntimeFieldNode(root, true), run, 'load');

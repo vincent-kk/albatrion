@@ -1,6 +1,6 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import {
   JSONPointer as $,
@@ -40,7 +40,7 @@ interface SplitRunState {
 /** Dirty paths retain descendant order or close an ungated post-order frontier. */
 export class DirtyPathSet extends Set<string> {
   /** Verify-only cleanup runs before scratch clears the dirty containers. */
-  restoreRegistrationObserver?: () => void;
+  restoreRegistrationObserver?: Fn;
   /** Shared blueprint lookup; attaching it does not enumerate dormant members. */
   private splitOwners?: ReadonlyMap<string, SplitOwner>;
   /** Call-local compressed run state. */

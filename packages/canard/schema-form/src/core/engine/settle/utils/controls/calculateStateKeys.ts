@@ -1,7 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import {
   RESERVED_SCHEMA_KEYS,
@@ -47,7 +47,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   stateDirtyNodes: ReadonlySet<Self>,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
-  expandFrom: (source: Self) => boolean,
+  expandFrom: Fn<[source: Self], boolean>,
 ): CalculatedStateKeys<Self> => {
   const blueprint = root.runtime.blueprint;
   const index = getFeatureNodeIndex(blueprint);

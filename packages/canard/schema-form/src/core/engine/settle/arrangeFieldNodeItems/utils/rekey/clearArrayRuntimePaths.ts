@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   appendSegment,
   readPointerSegment,
@@ -21,7 +23,7 @@ import { getRuntimePathStores } from '../../../utils/pathStores/getRuntimePathSt
 const keysBeneath = (
   index: PathKeyedSet['pathIndex'],
   hostPath: string,
-  keep: (slot: string) => boolean,
+  keep: Fn<[slot: string], boolean>,
 ): Set<string> => {
   const keys = new Set<string>();
   for (const slot of [...index.tail(hostPath, 0)])

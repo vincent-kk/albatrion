@@ -1,4 +1,4 @@
-import type { Nullish, Optional } from '@aileron/declare';
+import type { Fn, Nullish, Optional } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import {
@@ -21,9 +21,9 @@ import {
  */
 export const submitForm = async (
   root: FieldNode | Nullish,
-  onSubmit?: (value: any) => void | Promise<void>,
-  onFailure?: (error: unknown) => void,
-  onInvalid?: (verdict: ValidationError) => void,
+  onSubmit?: Fn<[value: any], void | Promise<void>>,
+  onFailure?: Fn<[error: unknown]>,
+  onInvalid?: Fn<[verdict: ValidationError]>,
 ): Promise<void> => {
   if (root == null) return;
   let value: unknown;

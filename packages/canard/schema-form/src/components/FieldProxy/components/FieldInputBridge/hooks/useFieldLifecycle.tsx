@@ -6,16 +6,16 @@ import {
   useMemo,
 } from 'react';
 
-import type { Nullable, Optional } from '@aileron/declare';
+import type { Fn, Nullable, Optional } from '@aileron/declare';
 
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
-import type { AttachedFilesStore } from '@/schema-form/providers/WorkspaceContext';
 import {
   FieldLifecycle,
   FieldLifecycleAction,
 } from '@/schema-form/helpers/fieldLifecycle';
 import type { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
+import type { AttachedFilesStore } from '@/schema-form/providers/WorkspaceContext';
 
 import { FieldLifecycleRender } from '../components/FieldLifecycleRender';
 import { runSlotAction } from '../utils/runSlotAction';
@@ -36,12 +36,12 @@ import { runSlotAction } from '../utils/runSlotAction';
 export const useFieldLifecycle = (
   node: FieldNode,
   container: RefObject<Nullable<HTMLDivElement>>,
-  commitTerminalChildren: () => void,
-  releaseComposition: () => void,
+  commitTerminalChildren: Fn,
+  releaseComposition: Fn,
   hydrationCommitRef: Optional<RefObject<boolean>>,
   virtualizationManager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
-  update: () => void,
+  update: Fn,
   attachedFiles?: AttachedFilesStore,
 ) => {
   const position = useMemo(() => {

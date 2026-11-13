@@ -1,5 +1,7 @@
 import { scheduleCancelableMacrotask } from '@winglet/common-utils/scheduler';
 
+import type { Fn } from '@aileron/declare';
+
 import type { ValidationCadenceState } from '../../../types/validationCadence';
 import { canScheduleValidationFrame } from '../../frames/canScheduleValidationFrame';
 import { scheduleAfterValidationFrame } from '../../frames/scheduleAfterValidationFrame';
@@ -9,7 +11,7 @@ import { scheduleAfterValidationFrame } from '../../frames/scheduleAfterValidati
  * @returns Nothing; retains at most one pending slot or observation. */
 export const requestValidationCadence = (
   state: ValidationCadenceState,
-  onRun: (fallback: boolean) => void,
+  onRun: Fn<[fallback: boolean]>,
 ): void => {
   if (state.cancelled) return;
   state.requested = true;

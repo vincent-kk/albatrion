@@ -1,4 +1,4 @@
-import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Nullable, Optional } from '@aileron/declare';
 
 import type {
   FormErrorLevel,
@@ -92,7 +92,7 @@ export interface BlueprintExpression {
   /** Whole-expression strict comparisons proven without executing authored code. */
   readonly equality?: { readonly literals: readonly EqualityLiteral[] };
   /** Pure compiled callable; execution belongs to settlement, never blueprint. */
-  readonly evaluate: (dependencies: any[]) => any;
+  readonly evaluate: Fn<[dependencies: any[]], any>;
 }
 
 /** Caller-owned cached result keyed by schema and renderer predicate identity. */
@@ -112,11 +112,11 @@ export interface BlueprintCacheEntry {
 /** Explicit dependencies and diagnostics; no process-global cache is used. */
 export interface BlueprintOptions {
   /** Return a renderer's terminal decision; undefined leaves earlier hints intact. */
-  readonly isTerminal?: (schema: BlueprintSchema) => Optional<boolean>;
+  readonly isTerminal?: Fn<[schema: BlueprintSchema], Optional<boolean>>;
   /** Identify opaque renderer values without importing renderer implementation code. */
-  readonly isAtomic?: (value: unknown) => boolean;
+  readonly isAtomic?: Fn<[value: unknown], boolean>;
   /** Receive diagnostic data; absence avoids warning scans entirely. */
-  readonly collect?: (diagnostic: BlueprintDiagnostic) => void;
+  readonly collect?: Fn<[diagnostic: BlueprintDiagnostic]>;
   /** Cache owned by the caller; object roots only. */
   readonly cache?: WeakMap<object, BlueprintCacheEntry[]>;
 }

@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import type { FieldNodeRuntime } from '../../../../record';
 import { updateCommittedRuleValue } from '../../../utils/commit/updateCommittedRuleValue';
@@ -17,7 +17,7 @@ import type { ArrayPathMove } from '../../types/pathMoves';
 export const rekeyCommittedRules = <Self>(
   runtime: FieldNodeRuntime<Self>,
   moves: readonly ArrayPathMove[],
-  mapPath: (path: string) => Optional<string>,
+  mapPath: Fn<[path: string], Optional<string>>,
 ): void => {
   const { rules } = getRuntimePathStores(runtime);
   const keys = new Set<string>();

@@ -1,7 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -32,10 +32,10 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   prior: Dictionary<Self>,
   context: SettlementContext<Self>,
   next: Dictionary<Self>,
-  computeChild?: (child: Self) => void,
+  computeChild?: Fn<[child: Self]>,
   immediate = false,
   hasRelocated = true,
-): Optional<(entry: BlueprintChildEntry) => boolean> => {
+): Optional<Fn<[entry: BlueprintChildEntry], boolean>> => {
   if (
     node.behavior.type !== 'object' ||
     context.kind === FieldNodeWriteKind.Load ||

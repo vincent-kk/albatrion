@@ -1,5 +1,7 @@
 import { scheduleCancelableMacrotask } from '@winglet/common-utils/scheduler';
 
+import type { Fn } from '@aileron/declare';
+
 import type { ValidationCadenceState } from '../../../types/validationCadence';
 import { canScheduleValidationFrame } from '../../frames/canScheduleValidationFrame';
 import { queueValidationFrame } from '../../frames/queueValidationFrame';
@@ -9,8 +11,8 @@ import { queueValidationFrame } from '../../frames/queueValidationFrame';
  * @returns Nothing; one frame or fallback now owns the next transition. */
 export const scheduleValidationCadenceFrame = (
   state: ValidationCadenceState,
-  onFrame: () => void,
-  onRun: (fallback: boolean) => void,
+  onFrame: Fn,
+  onRun: Fn<[fallback: boolean]>,
 ): void => {
   if (!canScheduleValidationFrame()) {
     if (state.phase === 'watch' && !state.requested) {

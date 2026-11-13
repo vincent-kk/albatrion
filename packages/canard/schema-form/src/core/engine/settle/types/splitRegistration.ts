@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /** A maximal owner-rank interval with no owner outside this host between members. */
 export interface SplitRun {
   /** Host-wide run number keeps same-epoch buckets' anchor keys distinct. */
@@ -37,7 +39,7 @@ export interface SplitAnchorEvent {
   /** Original owner rank where this anchor replaces the first absent key. */
   readonly rank: number;
   /** Insert only when rank-ordered emission reaches this event. */
-  readonly insert: () => void;
+  readonly insert: Fn;
 }
 
 /** Registration effects supplied by the settlement, independent of trie traversal. */

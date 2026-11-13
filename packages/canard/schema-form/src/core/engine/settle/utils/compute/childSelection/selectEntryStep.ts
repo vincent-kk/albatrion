@@ -2,7 +2,7 @@ import { map as mapArray } from '@winglet/common-utils/array';
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -57,7 +57,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Shape retained before the host wheel's ungated start. */
   readonly prior: Dictionary<Self>;
   /** Recursive computation called immediately for a dirty admitted child. */
-  readonly computeChild: (child: Self) => void;
+  readonly computeChild: Fn<[child: Self]>;
   /** Whether entry changes queue host projection before later gates. */
   readonly immediate: boolean;
   /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
@@ -71,7 +71,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Whether a general-path entry must flush pending gate reads first. */
   readonly flushReads: boolean;
   /** Prepared once by selectChildren; table and general paths share this entry predicate. */
-  readonly reuseStatic?: (entry: BlueprintChildEntry) => boolean;
+  readonly reuseStatic?: Fn<[entry: BlueprintChildEntry], boolean>;
   /** Present only for a table step; its pure recognized expression cannot throw. */
   tableVerdict?: boolean;
   /** A table predicate failed at its original first evaluation position. */

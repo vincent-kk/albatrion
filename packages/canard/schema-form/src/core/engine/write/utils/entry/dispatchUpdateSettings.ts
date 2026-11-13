@@ -1,6 +1,8 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import {
@@ -23,7 +25,7 @@ export const dispatchUpdateSettings = <Self extends FieldNodeRecord<Self>>(
     Self['runtime'],
     'validationMode' | 'unsetOnInactive' | 'disableAutomaticWrites'
   > & { errorVisibility?: unknown },
-  onModeChange?: () => void,
+  onModeChange?: Fn,
 ): void => {
   if (root.disposed) return;
   const runtime = root.runtime;

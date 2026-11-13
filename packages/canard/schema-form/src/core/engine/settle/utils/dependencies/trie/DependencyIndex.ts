@@ -1,7 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import {
   JSONPointer as $,
@@ -348,7 +348,7 @@ export class DependencyIndex {
     const emitted = new Set<string>();
     const hostsEmitted = new Set<string>();
     const collect = (node: DependencyNode): void => {
-      const events: { rank: number; emit: () => void }[] = [];
+      const events: { rank: number; emit: Fn }[] = [];
       for (const { rank, entry } of node.plainOwners ??
         mapArray(node.owners, (entry, rank) => ({ entry, rank }))) {
         const path = entry.bindable
@@ -736,4 +736,3 @@ export class DependencyIndex {
     }
   }
 }
-

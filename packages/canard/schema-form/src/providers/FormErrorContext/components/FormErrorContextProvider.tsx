@@ -1,5 +1,7 @@
 import { type PropsWithChildren, useInsertionEffect, useState } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 import { createFormErrorService } from '../utils/createFormErrorService';
@@ -10,7 +12,7 @@ export const FormErrorContextProvider = ({
   onError,
   children,
 }: PropsWithChildren<{
-  onError?: (record: FormErrorRecord) => void;
+  onError?: Fn<[record: FormErrorRecord]>;
 }>) => {
   const [reporter] = useState(() => {
     const service = createFormErrorService();

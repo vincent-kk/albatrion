@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { scheduleAfterValidationFrame } from '../frames/scheduleAfterValidationFrame';
 
 /**
@@ -5,6 +7,6 @@ import { scheduleAfterValidationFrame } from '../frames/scheduleAfterValidationF
  * @param run - Work to execute exactly once; the host owns frame APIs and visibility.
  * @returns Nothing; the slot cancels its losing frame, timer and task handles.
  */
-export const scheduleValidationSlot = (run: () => void): void => {
+export const scheduleValidationSlot = (run: Fn): void => {
   scheduleAfterValidationFrame(run);
 };

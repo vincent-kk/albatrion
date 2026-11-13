@@ -4,7 +4,7 @@ import {
 } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import {
   PointerOperator,
@@ -39,11 +39,10 @@ import { populateVirtualNodes } from './populateVirtualNodes';
 export const populateNodeChildren = (
   context: AnalysisContext,
   node: MutableNode,
-  build: (
-    context: AnalysisContext,
-    inputs: readonly SchemaInput[],
-    path: string,
-  ) => MutableNode[],
+  build: Fn<
+    [context: AnalysisContext, inputs: readonly SchemaInput[], path: string],
+    MutableNode[]
+  >,
 ): void => {
   if (node.kind === 'object' && node.declarations.length === 1) {
     const declaration = node.declarations[0];

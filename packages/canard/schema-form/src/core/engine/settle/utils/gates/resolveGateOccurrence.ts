@@ -1,5 +1,7 @@
 import { maxLite } from '@winglet/common-utils/math';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   type PointerSegment,
   joinPointer,
@@ -24,9 +26,10 @@ export const resolveGateOccurrence = (
   templatePath: string,
   occurrencePath: string,
   childHostPath?: string,
-  readSegments: (
-    path: string,
-  ) => readonly PointerSegment[] = parsePointerSegments,
+  readSegments: Fn<
+    [path: string],
+    readonly PointerSegment[]
+  > = parsePointerSegments,
 ): GateOccurrence => {
   const hostPath = bindGateHostPath(
     gate,

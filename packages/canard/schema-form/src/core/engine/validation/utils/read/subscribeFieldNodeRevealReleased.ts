@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 
 /** Subscribe one held display or aggregate candidate to eligibility releases without public events.
@@ -8,8 +10,8 @@ export const subscribeFieldNodeRevealReleased = <
   Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
-  listener: () => void,
-): (() => void) => {
+  listener: Fn,
+): Fn => {
   const listeners = (node.rootNode.runtime.revealReleaseListeners ??=
     new Set());
   listeners.add(listener);

@@ -1,4 +1,4 @@
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import type { blueprint } from '@/schema-form/core';
 
@@ -11,7 +11,7 @@ export interface CacheDomainEntry<Value> {
 /** Weak-key ownership boundary; invalidation never changes previously resolved values. */
 export interface CacheDomain<Key extends object, Value> {
   readonly name: string;
-  resolve(key: Key, build: () => Value): CacheDomainEntry<Value>;
+  resolve(key: Key, build: Fn<[], Value>): CacheDomainEntry<Value>;
   peek(key: Key): Optional<CacheDomainEntry<Value>>;
   invalidate(key: Key): boolean;
   clear(): void;

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { subscribeFieldNodeRevealReleased as operation } from '../../../engine';
 import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode } from '../../type';
@@ -8,5 +10,5 @@ import type { FieldNode } from '../../type';
  * @returns The engine operation result without widening the public node. */
 export const subscribeFieldNodeRevealReleased = (
   node: FieldNode,
-  listener: () => void,
+  listener: Fn,
 ) => operation(requireRuntimeFieldNode(node), listener);

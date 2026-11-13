@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { readFailureBundle } from './readFailureBundle';
 
 /**
@@ -8,7 +10,7 @@ import { readFailureBundle } from './readFailureBundle';
  */
 export const forEachFailureLeaf = (
   failure: unknown,
-  visit: (leaf: unknown) => void,
+  visit: Fn<[leaf: unknown]>,
 ): void => {
   const budget = { remaining: 1_000_000 };
   const root = readFailureBundle(failure, budget);

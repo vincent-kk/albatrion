@@ -1,6 +1,6 @@
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import type { Nullish } from '@aileron/declare';
+import type { Fn, Nullish } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
@@ -29,7 +29,7 @@ export const createChildErrorStore = (
     subscribed: false,
   };
   return {
-    subscribe: (listener: () => void) =>
+    subscribe: (listener: Fn) =>
       disabled
         ? NOOP_FUNCTION
         : subscribeChildErrorStore(node, children, state, listener),

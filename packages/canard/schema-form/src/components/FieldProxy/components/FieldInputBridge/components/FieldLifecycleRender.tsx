@@ -1,6 +1,6 @@
 import { type RefObject, useLayoutEffect, useRef } from 'react';
 
-import type { Nullable } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import { FieldLifecycle } from '@/schema-form/helpers/fieldLifecycle';
@@ -27,7 +27,7 @@ export const FieldLifecycleRender = ({
   committed,
   lifecycle,
 }: Props) => {
-  const lastEffect = useRef<() => void>(undefined);
+  const lastEffect = useRef<Fn>(undefined);
   const effect = () => {
     if (lastEffect.current === effect) return;
     lastEffect.current = effect;

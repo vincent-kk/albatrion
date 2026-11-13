@@ -1,7 +1,7 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import {
@@ -41,7 +41,7 @@ import { readSettlementSource } from './utils/readSettlementSource';
  */
 export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
-  visit?: (node: Self) => void,
+  visit?: Fn<[node: Self]>,
 ): void => {
   const runtime = context.root.runtime;
   runtime.deliveries ??= new Set<Self>();
@@ -136,12 +136,14 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const markSilent = (_node: Self, bit: FieldNodeEventType): void => {
       silentMask |= bit;
     };
-    let mark: (
-      node: Self,
-      bit: FieldNodeEventType,
-      payload?: unknown,
-      options?: unknown,
-    ) => void = markFieldNodeEvent;
+    let mark: Fn<
+      [
+        node: Self,
+        bit: FieldNodeEventType,
+        payload?: unknown,
+        options?: unknown,
+      ]
+    > = markFieldNodeEvent;
     for (const node of runtime.revisionNodes ?? []) candidates.add(node);
     if (
       runtime.deliveredDiagnostics &&

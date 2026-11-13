@@ -1,4 +1,4 @@
-import type { Nullable, Optional } from '@aileron/declare';
+import type { Fn, Nullable, Optional } from '@aileron/declare';
 
 import type {
   BlueprintChildEntry,
@@ -80,9 +80,12 @@ export interface Behavior<Self = unknown> {
 }
 
 /** Per-tree creation callback supplied by the composition root. */
-export type FieldNodeFactory<Self> = (
-  entry: BlueprintChildEntry | BlueprintNode,
-  parent: Nullable<Self>,
-  runtime: FieldNodeRuntime<Self>,
-  instance?: Self,
-) => Self;
+export type FieldNodeFactory<Self> = Fn<
+  [
+    entry: BlueprintChildEntry | BlueprintNode,
+    parent: Nullable<Self>,
+    runtime: FieldNodeRuntime<Self>,
+    instance?: Self,
+  ],
+  Self
+>;

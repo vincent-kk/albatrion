@@ -1,5 +1,6 @@
 import type {
   Dictionary,
+  Fn,
   Nullable as NullableValue,
   Nullish,
   Optional,
@@ -128,7 +129,7 @@ export interface NodeSurface<
    * `resetSubtree()` still settle their load at once. Inside an enclosing batch, everything waits
    * for that batch's end instead.
    */
-  visitSubtree(visitor: (node: FieldNode) => void | boolean): void;
+  visitSubtree(visitor: Fn<[node: FieldNode], void | boolean>): void;
   setValue(value: unknown, option?: SetValueOption): void;
   resetSubtree(option?: SetValueOption): void;
   /** Local interaction flags, patched through the dispatcher on assignment. */
@@ -156,9 +157,9 @@ export interface NodeSurface<
   /** Request a fresh whole-schema validation verdict. */
   validate(): Promise<readonly ValidationIssue[]>;
   /** Subscribe to future event deliveries. */
-  subscribe(listener: FieldNodeListener): () => void;
+  subscribe(listener: FieldNodeListener): Fn;
   /** Resolve the retained value synchronously at this instance's normal keep-policy gate exit; returns cleanup. */
-  onInactive(listener: InactiveValueResolver<unknown>): () => void;
+  onInactive(listener: InactiveValueResolver<unknown>): Fn;
   /** Read the accumulated delivery revision for selected event bits. */
   revision(mask?: FieldNodeEventType): number;
   /** Request one renderer action. */
@@ -170,7 +171,7 @@ export interface NodeSurface<
    * and mark the resulting array. Settlement at the end of the batch is a whole
    * write, so item keys carry over by position.
    */
-  batch(fn: () => void): void;
+  batch(fn: Fn): void;
 }
 
 export type StringNode = NodeSurface<
@@ -292,20 +293,24 @@ export type FieldNodeInputProps<
       readonly value: Optional<
         ValueForKind<Types[number]> | (Nullable extends true ? null : never)
       >;
-      readonly onChange: (
-        value: Optional<
-          ValueForKind<Types[number]> | (Nullable extends true ? null : never)
-        >,
-      ) => void;
+      readonly onChange: Fn<
+        [
+          value: Optional<
+            ValueForKind<Types[number]> | (Nullable extends true ? null : never)
+          >,
+        ]
+      >;
     }
   | {
       readonly misfit: true;
       readonly value: unknown;
-      readonly onChange: (
-        value: Optional<
-          ValueForKind<Types[number]> | (Nullable extends true ? null : never)
-        >,
-      ) => void;
+      readonly onChange: Fn<
+        [
+          value: Optional<
+            ValueForKind<Types[number]> | (Nullable extends true ? null : never)
+          >,
+        ]
+      >;
     };
 
 /** Public type discrimination is independent of the single runtime class. */

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { FormErrorCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
@@ -19,7 +21,7 @@ import { settleFieldNodeValidation } from './settleFieldNodeValidation';
  */
 export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  deliver: (issues: readonly ValidationIssue[], commit: number) => void,
+  deliver: Fn<[issues: readonly ValidationIssue[], commit: number]>,
 ): void => {
   const root = node.rootNode;
   const runtime = root.runtime;

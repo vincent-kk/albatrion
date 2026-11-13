@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -13,7 +15,7 @@ import type { FieldNodeRecord } from '../../../record';
  */
 export const createValidationScope = <Self extends FieldNodeRecord<Self>>(
   targets: readonly Self[],
-): ((node: Self) => boolean) => {
+): Fn<[node: Self], boolean> => {
   const only = targets.length === 1 ? targets[0] : undefined;
   if (only)
     return (node) => node === only || isDescendantPath(node.path, only.path);

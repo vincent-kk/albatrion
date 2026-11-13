@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { VALIDATION_FRAME_TIMEOUT_MS } from '../constants';
 
 /**
@@ -6,10 +8,7 @@ import { VALIDATION_FRAME_TIMEOUT_MS } from '../constants';
  * @param onStall - Work after the frame timeout, without a frame.
  * @returns Cancellation using the same host that owns the frame handle.
  */
-export const queueValidationFrame = (
-  onFrame: () => void,
-  onStall: () => void,
-): (() => void) => {
+export const queueValidationFrame = (onFrame: Fn, onStall: Fn): Fn => {
   let done = false;
   const cancelFrame = cancelAnimationFrame;
   const cancel = () => {
@@ -17,7 +16,7 @@ export const queueValidationFrame = (
     clearTimeout(timeout);
     cancelFrame(frame);
   };
-  const finish = (run: () => void) => {
+  const finish = (run: Fn) => {
     if (done) return;
     cancel();
     run();

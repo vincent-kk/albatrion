@@ -14,7 +14,7 @@ import {
   useVersion,
 } from '@winglet/react-utils/hook';
 
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import { blueprintCacheDomain } from '@/schema-form/app/cache';
 import { PluginManager } from '@/schema-form/app/plugin';
@@ -59,7 +59,7 @@ export const RootNodeContextProvider = ({
 }: PropsWithChildren<
   FormProps & {
     binding: RefObject<RootBinding>;
-    onReset: () => void;
+    onReset: Fn;
     errorVisibilityError?: SchemaFormError;
   }
 >) => {
@@ -89,11 +89,11 @@ export const RootNodeContextProvider = ({
   const initial = useMemo(() => createRootLoad(current, reporter), []);
   const store = useLazyConstant<RootLoadStore>(() => ({
     load: initial,
-    listeners: new Set<() => void>(),
+    listeners: new Set<Fn>(),
     unsubscribe: NOOP_FUNCTION,
   }));
   const subscribe = useMemo(
-    () => (listener: () => void) => {
+    () => (listener: Fn) => {
       store.listeners.add(listener);
       return () => {
         store.listeners.delete(listener);

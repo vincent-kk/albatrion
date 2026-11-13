@@ -4,6 +4,8 @@ import {
 } from '@winglet/common-utils/array';
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 
+import type { Fn } from '@aileron/declare';
+
 import { RESERVED_OPTION_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -51,7 +53,7 @@ const SCHEMA_SINGLE_KEYWORDS = [
  */
 export const collectInlineTerminalWarnings = (
   node: BlueprintNode,
-  emit: (diagnostic: BlueprintDiagnostic) => void,
+  emit: Fn<[diagnostic: BlueprintDiagnostic]>,
 ): void => {
   const pending: {
     schema: BlueprintSchema;

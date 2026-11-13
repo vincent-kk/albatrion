@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import type {
   FormErrorReporter,
@@ -258,15 +258,15 @@ export interface FieldNodeRuntime<Self>
   /** Schema locations supplied by a binding after reference-only reset rebuilding. */
   rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
-  listeners?: Map<unknown, Set<(event: FieldNodeDelivery) => void>>;
+  listeners?: Map<unknown, Set<Fn<[event: FieldNodeDelivery]>>>;
   /** Instance-bound exit resolvers; allocated only for registered nodes. */
   inactiveListeners?: Map<unknown, Set<InactiveValueResolver<unknown>>>;
   /** True only while a synchronous exit resolver is executing. */
   resolvingInactiveValue?: boolean;
   /** Subscriber currently producing a delivery callback. */
-  currentListener?: (event: FieldNodeDelivery) => void;
+  currentListener?: Fn<[event: FieldNodeDelivery]>;
   /** Feedback producers already stopped at this chain's wave budget. */
-  feedbackBlockedListeners?: Set<(event: FieldNodeDelivery) => void>;
+  feedbackBlockedListeners?: Set<Fn<[event: FieldNodeDelivery]>>;
   /** Whether this chain already recorded its feedback limit failure. */
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
@@ -313,7 +313,7 @@ export interface FieldNodeRuntime<Self>
   /** Selected validation engine, narrowed by the validation layer. */
   validator?: unknown;
   /** Latest binding settings, deferred until the outer engine chain finishes. */
-  pendingSettings?: () => void;
+  pendingSettings?: Fn;
   /** Effective trigger lifetime, independent of root-load and value commits. */
   validationEpoch?: number;
   /** Request stamp at the latest activation; only a subsequent full request replaces its verdict. */
@@ -321,9 +321,9 @@ export interface FieldNodeRuntime<Self>
   /** Form validation trigger policy. */
   validationMode?: ValidationMode;
   /** Host callback after a completed entry changes the emitted root value. */
-  onChange?: (value: unknown) => void;
+  onChange?: Fn<[value: unknown]>;
   /** Host callback after an entry changes interaction flags. */
-  onStateChange?: () => void;
+  onStateChange?: Fn;
   /** Most recent validation request/result version. */
   validationStamp?: number;
   /** Request stamp at the current load start; also identifies the load generation. */
@@ -343,11 +343,11 @@ export interface FieldNodeRuntime<Self>
   /** Whether this load has reported its one whole-schema compilation failure. */
   validationCompileReported?: boolean;
   /** Dispatcher-owned path for asynchronous execution and delivery failures. */
-  reportValidationFailure?: (failure: unknown) => void;
+  reportValidationFailure?: Fn<[failure: unknown]>;
   /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
   validationCadence?: ValidationCadence;
   /** Latest domain callback selected by the cadence without inspecting its contents. */
-  validationRun?: () => boolean;
+  validationRun?: Fn<[], boolean>;
   /** A write-triggered verdict is still pending. */
   validationPending?: boolean;
   /** Only occurrences that currently hold a reveal baseline. */
@@ -370,7 +370,7 @@ export interface FieldNodeRuntime<Self>
   /** Stamp owned by the active chain's pre-delivery pending record. */
   validationPendingEntryStamp?: number;
   /** Internal display listeners notified, from a copy, after every release. */
-  revealReleaseListeners?: Set<() => void>;
+  revealReleaseListeners?: Set<Fn>;
   /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
   /** Newest started cadence or root run still owing target routing; handed to its successor before supersession. */

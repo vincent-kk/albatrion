@@ -1,5 +1,7 @@
 import { useMemo, useRef } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   BIT_FLAG_00,
   BIT_FLAG_01,
@@ -29,7 +31,7 @@ const CLEAR_ACCESSED_MASK = ~ACCESSED;
  * The input's child list and the marker its owning layout effect calls on every commit
  * where the pair changes; the marker reports a child read made before that commit.
  */
-type TerminalChildren = readonly [children: ChildField[], commit: () => void];
+type TerminalChildren = readonly [children: ChildField[], commit: Fn];
 
 /** Child list and commit marker of an input whose children need no read detector. */
 const UNDETECTED: TerminalChildren = Object.freeze([EMPTY_CHILDREN, () => {}]);

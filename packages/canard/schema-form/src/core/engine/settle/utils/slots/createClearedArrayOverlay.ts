@@ -1,4 +1,4 @@
-import type { Optional } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
@@ -10,17 +10,20 @@ import { materializeKeptSlotOverlay } from './materializeKeptSlotOverlay';
 import { readSlotSourceTree } from './readSlotSourceTree';
 
 /** Recursive exit resolver supplied by the owner to keep dependencies acyclic. */
-type ResolveExit<Self extends FieldNodeRecord<Self>> = (
-  node: Self,
-  inherited: boolean,
-  applyPolicy: boolean,
-  previous?: InactiveSlotOverlay,
-  context?: SettlementContext<Self>,
-  sourceContext?: SettlementContext<Self>,
-) => {
-  readonly overlay: Optional<InactiveSlotOverlay>;
-  readonly hasSource: boolean;
-};
+type ResolveExit<Self extends FieldNodeRecord<Self>> = Fn<
+  [
+    node: Self,
+    inherited: boolean,
+    applyPolicy: boolean,
+    previous?: InactiveSlotOverlay,
+    context?: SettlementContext<Self>,
+    sourceContext?: SettlementContext<Self>,
+  ],
+  {
+    readonly overlay: Optional<InactiveSlotOverlay>;
+    readonly hasSource: boolean;
+  }
+>;
 
 /**
  * Pack only items whose recursively resolved exit preserves a source.

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import { dispatchUpdateSettings } from '../../../engine';
 import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode } from '../../type';
@@ -12,7 +14,7 @@ import type { FieldNode } from '../../type';
 export const updateFieldNodeSettings = (
   root: FieldNode,
   settings: Parameters<typeof dispatchUpdateSettings>[1],
-  onModeChange?: () => void,
+  onModeChange?: Fn,
 ): void =>
   dispatchUpdateSettings(
     requireRuntimeFieldNode(root, true),

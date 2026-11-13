@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 
 import { useErrorRevealSubscription } from '../hooks/useErrorRevealSubscription';
@@ -9,7 +11,7 @@ interface ErrorRevealSubscriberProps {
   /** Version read by the owner in the same render as the history holding the display. */
   version: number;
   /** Owner's stable re-render trigger. */
-  onRelease: () => void;
+  onRelease: Fn;
 }
 
 /** Re-render a held display after the engine releases its eligibility history.

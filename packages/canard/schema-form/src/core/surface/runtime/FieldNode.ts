@@ -1,6 +1,6 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+import type { Dictionary, Fn, Nullable, Optional } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
@@ -339,7 +339,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     return findNodes<FieldNode>(this, pointer);
   }
   /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
-  visitSubtree(visitor: (node: FieldNode) => void | boolean) {
+  visitSubtree(visitor: Fn<[node: FieldNode], void | boolean>) {
     return dispatchVisitSubtree<FieldNode>(this, visitor);
   }
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
@@ -432,7 +432,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     return dispatchRequest<FieldNode>(this, kind);
   }
   /** Group synchronous writes in one outer delivery boundary. */
-  batch(fn: () => void) {
+  batch(fn: Fn) {
     return dispatchBatch<FieldNode>(this, fn);
   }
 }

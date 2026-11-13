@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Fn } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
@@ -17,7 +19,7 @@ import type { BlueprintDiagnostic } from '../../types/blueprint';
 export const collectInactiveValueWarnings = (
   controls: ValidatedControls | undefined,
   schemaPath: string,
-  emit: (diagnostic: BlueprintDiagnostic) => void,
+  emit: Fn<[diagnostic: BlueprintDiagnostic]>,
 ): void => {
   if (!controls) return;
   if (

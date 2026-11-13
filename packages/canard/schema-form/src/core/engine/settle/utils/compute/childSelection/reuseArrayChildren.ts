@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Fn } from '@aileron/declare';
 
 import { getItemEntry } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
@@ -20,7 +20,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   prior: Dictionary<Self>,
-  computeChild: (child: Self) => void,
+  computeChild: Fn<[child: Self]>,
 ): void => {
   const append = context.arrayAppend;
   if (append?.host === node && append.valid) {

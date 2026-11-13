@@ -2,7 +2,7 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import type { Nullable } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import { type FieldNode, isFieldNode } from '@/schema-form/core';
 import { useRootNodeContext } from '@/schema-form/providers';
@@ -25,7 +25,7 @@ export const useFieldNode = (
       ? rootNode
       : undefined;
   const subscribe = useCallback(
-    (onStoreChange: () => void) => {
+    (onStoreChange: Fn) => {
       if (fixed || typeof input !== 'string') return NOOP_FUNCTION;
       const release = subscribeFieldNodePath(rootNode, input, onStoreChange);
       onStoreChange();

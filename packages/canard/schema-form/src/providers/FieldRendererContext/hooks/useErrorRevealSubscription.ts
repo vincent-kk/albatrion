@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import {
   type FieldNode,
   readFieldNodeRevealVersion,
@@ -16,7 +18,7 @@ import {
 export const useErrorRevealSubscription = (
   node: FieldNode,
   version: number | undefined,
-  onRelease: () => void,
+  onRelease: Fn,
 ): void => {
   useEffect(() => {
     if (version === undefined) return;

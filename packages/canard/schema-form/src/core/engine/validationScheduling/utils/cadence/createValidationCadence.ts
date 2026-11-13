@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type {
   ValidationCadence,
   ValidationCadenceState,
@@ -14,8 +16,8 @@ import { runValidationCadence } from './utils/runValidationCadence';
  * @returns Every-request recording and permanent cancellation functions.
  */
 export const createValidationCadence = (
-  run: () => boolean,
-  now: () => number,
+  run: Fn<[], boolean>,
+  now: Fn<[], number>,
 ): ValidationCadence => {
   const state: ValidationCadenceState = {
     run,

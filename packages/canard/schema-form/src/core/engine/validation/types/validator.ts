@@ -1,4 +1,4 @@
-import type { Nullable } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import type { BlueprintSchema } from '../../blueprint';
 import type { ValidationIssue } from './issue';
@@ -8,17 +8,18 @@ import type { ValidationIssue } from './issue';
  * @param value - Emitted value to check without modification.
  * @returns Whether this value satisfies the guard.
  */
-export type GuardFunction = (value: unknown) => boolean;
+export type GuardFunction = Fn<[value: unknown], boolean>;
 
 /**
  * Returns the verdict for its input and never throws; a throw is an execution failure.
  * @param data - Emitted value to check without modifying it.
  * @returns Ordered issues, or null when the value is valid.
  */
-export type ValidateFunction<Value = unknown> = (
-  data: Value,
-) => Nullable<
-  Promise<Nullable<readonly ValidationIssue[]>> | readonly ValidationIssue[]
+export type ValidateFunction<Value = unknown> = Fn<
+  [data: Value],
+  Nullable<
+    Promise<Nullable<readonly ValidationIssue[]>> | readonly ValidationIssue[]
+  >
 >;
 
 /**
