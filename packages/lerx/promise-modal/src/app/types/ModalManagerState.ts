@@ -43,7 +43,7 @@ export interface ModalManagerState {
     paddingPriority: string;
   };
   /** The exact installed callback is shared by Escape and Tab handling. */
-  keydown?: (event: KeyboardEvent) => void;
+  keydown?: Fn<[event: KeyboardEvent]>;
   /** The portal container belongs to the active bootstrap. */
   anchor: HTMLElement | null;
   /** A stable style scope survives provider handoffs and duplicate loads. */

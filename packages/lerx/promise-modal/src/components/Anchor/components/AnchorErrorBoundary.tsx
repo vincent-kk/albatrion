@@ -1,9 +1,11 @@
 import { Component, type PropsWithChildren } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 /** Registration identity prevents immediate retries of a failed anchor render. */
 interface Props {
   resetKey: number;
-  onError: (error: unknown) => void;
+  onError: Fn<[error: unknown]>;
 }
 /** Stores the registration that last reset this boundary. */
 interface State {

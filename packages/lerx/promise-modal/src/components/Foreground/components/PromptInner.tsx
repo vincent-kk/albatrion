@@ -4,6 +4,8 @@ import { isFunction, isString } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 import { renderComponent } from '@winglet/react-utils/render';
 
+import type { Fn } from '@aileron/declare';
+
 import type { PromptNode } from '@/promise-modal/core/node';
 import type { ModalActions } from '@/promise-modal/core/node';
 import {
@@ -47,7 +49,7 @@ export const PromptInner = memo(
 
     const handleClose = useHandle(onClose);
     const handleChange = useHandle(
-      (inputValue?: T | ((prevState: T | undefined) => T | undefined)) => {
+      (inputValue?: T | Fn<[prevState: T | undefined], T | undefined>) => {
         const input = isFunction(inputValue)
           ? inputValue(valueRef.current)
           : inputValue;
