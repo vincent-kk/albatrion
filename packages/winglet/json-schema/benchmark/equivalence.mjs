@@ -219,5 +219,7 @@ for (const [name, fn] of Object.entries(cases)) snapshot[name] = fn();
 for (const [name, fn] of Object.entries(asyncCases))
   snapshot[name] = await fn();
 
-console.log(JSON.stringify(snapshot, null, 2));
-process.exit(0);
+// Exit only after the pipe has drained; exiting earlier truncates the snapshot where pipes are asynchronous.
+process.stdout.write(`${JSON.stringify(snapshot, null, 2)}\n`, () =>
+  process.exit(0),
+);
