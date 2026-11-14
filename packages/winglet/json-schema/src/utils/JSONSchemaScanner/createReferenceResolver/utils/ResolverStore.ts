@@ -1,8 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import { Dialect } from '../../../../keyword';
-import { DEFAULT_KEYWORDS, JSONSchemaScanner } from '../../sync';
+import { DEFAULT_KEYWORDS, Dialect } from '../../../../keyword';
+import { JSONSchemaScanner } from '../../sync';
 import { DEFAULT_DIALECT } from '../../utils/dialectFlag/defaultDialect';
 import { detectDialect } from '../../utils/dialectFlag/detectDialect';
 import { DIALECT_NAMES } from '../../utils/dialectFlag/dialectNames';

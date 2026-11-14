@@ -10,5 +10,4 @@ export type {
   ReferenceStep,
   ReferenceOutcome,
   ReferenceKeyword,
-  ReferenceSkipReason,
 } from '../utils/type';

@@ -1,5 +1,5 @@
 import { DEFAULT_KEYWORDS } from '../../../../keyword';
 import { buildKeywordMap } from './buildKeywordMap';
 
-/** Shared compiled default path, independent of later mutations to the public descriptor list. */
+/** Default vocabulary compiled once when the scanner module first loads; later changes to the descriptor list do not reach it. */
 export const DEFAULT_KEYWORD_MAP = buildKeywordMap(DEFAULT_KEYWORDS);
