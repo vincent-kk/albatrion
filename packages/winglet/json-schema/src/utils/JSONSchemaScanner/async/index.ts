@@ -5,3 +5,4 @@ export type {
   SchemaEntry,
 } from '../type';
 export type { KeywordDescriptor, KeywordKind } from '../type';
+export { Dialect } from '../../dialect/Dialect';

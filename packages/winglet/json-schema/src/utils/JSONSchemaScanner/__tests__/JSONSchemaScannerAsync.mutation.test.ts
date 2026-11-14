@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScannerAsync - Schema Mutation', () => {
   describe('비동기 환경에서 mutate 옵션으로 schema 변경', () => {
@@ -22,7 +23,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             // 이메일 필드에 포맷 유효성 검사 추가
             if (path.endsWith('/properties/email')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 format: 'email',
                 description: 'User email address',
               };
@@ -31,7 +32,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             // 비밀번호 필드에 최소 길이 제약 추가
             if (path.endsWith('/properties/password')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 8,
                 pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$',
                 description: 'Password with requirements',
@@ -95,7 +96,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
 
       const scanner = new JSONSchemaScannerAsync({
         options: {
-          resolveReference: async (refPath) => {
+          resolveReference: createTestResolver(async (refPath) => {
             // 비동기 참조 해결 시뮬레이션
             await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -122,12 +123,12 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             }
 
             return undefined;
-          },
+          }),
           mutate: ({ schema, path }) => {
             // 해결된 User 스키마의 email 필드에 제약 추가
             if (path.endsWith('/properties/email')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 format: 'email',
                 description: 'User email from resolved reference',
               };
@@ -136,7 +137,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             // 해결된 Post 스키마의 title 필드에 제약 추가
             if (path.endsWith('/properties/title')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 maxLength: 200,
                 description: 'Post title with constraints',
@@ -246,7 +247,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             // 깊이 중첩된 name 필드 변경
             if (path.endsWith('/properties/name')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 maxLength: 100,
                 description: 'User display name',
@@ -256,7 +257,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             // 테마 설정에 enum 추가
             if (path.endsWith('/properties/theme')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 enum: ['light', 'dark', 'auto', 'system'],
                 default: 'system',
                 description: 'UI theme setting',
@@ -266,7 +267,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             // 언어 설정에 패턴 추가
             if (path.endsWith('/properties/language')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 pattern: '^[a-z]{2}(-[A-Z]{2})?$',
                 default: 'en-US',
                 description: 'Language locale code',
@@ -358,7 +359,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             if (path.endsWith('/properties/syncField')) {
               mutatedPaths.push(path);
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 description: 'Sync field with constraints',
               };
@@ -367,7 +368,7 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
             if (path.endsWith('/properties/asyncField')) {
               mutatedPaths.push(path);
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minimum: 0,
                 maximum: 1000,
                 description: 'Async field with range',
@@ -420,7 +421,10 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
         options: {
           filter: (entry) => {
             // x-exclude가 있는 필드는 제외
-            if (entry.schema['x-exclude']) {
+            if (
+              typeof entry.schema !== 'boolean' &&
+              entry.schema['x-exclude']
+            ) {
               return false;
             }
 
@@ -428,9 +432,9 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
           },
           mutate: ({ schema, path }) => {
             // 모든 string 필드에 기본 제약 추가
-            if (schema.type === 'string') {
+            if (typeof schema !== 'boolean' && schema.type === 'string') {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 description: `Processed field at ${path}`,
               };
@@ -482,16 +486,16 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
         new JSONSchemaScannerAsync({
           options: {
             mutate: ({ schema }) => {
-              if (schema.type === 'string') {
+              if (typeof schema !== 'boolean' && schema.type === 'string') {
                 return {
-                  ...schema,
+                  ...(typeof schema === 'object' ? schema : {}),
                   description: 'String field mutation',
                 };
               }
 
-              if (schema.type === 'number') {
+              if (typeof schema !== 'boolean' && schema.type === 'number') {
                 return {
-                  ...schema,
+                  ...(typeof schema === 'object' ? schema : {}),
                   description: 'Number field mutation',
                 };
               }
@@ -562,16 +566,16 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
         new JSONSchemaScannerAsync({
           options: {
             mutate: ({ schema }) => {
-              if (schema.type === 'string') {
+              if (typeof schema !== 'boolean' && schema.type === 'string') {
                 return {
-                  ...schema,
+                  ...(typeof schema === 'object' ? schema : {}),
                   description: `String field - ${identifier}`,
                 };
               }
 
-              if (schema.type === 'number') {
+              if (typeof schema !== 'boolean' && schema.type === 'number') {
                 return {
-                  ...schema,
+                  ...(typeof schema === 'object' ? schema : {}),
                   description: `Number field - ${identifier}`,
                 };
               }
@@ -628,7 +632,10 @@ describe('JSONSchemaScannerAsync - Schema Mutation', () => {
           mutate: async ({ schema, path }) => {
             await new Promise((resolve) => setTimeout(resolve, 5));
             if (path.endsWith('/properties/a'))
-              return { ...schema, title: 'awaited' };
+              return {
+                ...(typeof schema === 'object' ? schema : {}),
+                title: 'awaited',
+              };
             return undefined;
           },
         },

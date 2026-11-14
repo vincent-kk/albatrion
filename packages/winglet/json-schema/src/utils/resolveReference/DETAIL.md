@@ -2,19 +2,18 @@
 
 ## Requirements
 
-- 스키마 안의 모든 `$ref`(legacy `definitions` 표기, `$defs` 표기 모두)를 가리키는 정의로 치환한 스키마를 동기로 반환한다.
-- 자기 자신 또는 조상 정의를 가리키는 순환 `$ref`가 있어도 무한 루프 없이 종료하며, 순환 지점은 1레벨만 인라인하고 더 깊은 재귀 지점은 `$ref`로 남긴다.
-- 참조 대상을 찾지 못한 `$ref`가 있어도 예외를 던지지 않는다.
+- 지원하는 참조는 정확한 대상으로 인라인하거나 이유를 남겨 보존하거나 명시적으로 실패합니다.
+- 미발견 참조는 기본으로 남기며 입력을 변경하지 않습니다.
 
 ## API Contracts
 
-- `resolveReference(jsonSchema)`: 1차로 동기 스캐너를 돌려 exit 시점에 `hasReference`와 문자열 `$ref`를 가진 노드의 참조 경로를 원본 위치의 값과 함께 Map에 모으고, 2차로 그 Map 조회 함수를 `resolveReference` 옵션에 넘겨 다시 스캔해 `getValue()`로 최종 스키마를 반환한다.
+`resolveReference(schema, options?)`는 내장 동기 해소기를 구성하고 동기 스캐너를 한 번 실행한 출력입니다. boolean 입력·출력을 지원하고 URI·자원·앵커·사본 안전 판단은 해소기의 계약을 따릅니다. 순환과 정의 위치의 참조는 남을 수 있으므로 모든 참조를 없애는 함수로 해석하지 않습니다.
 
 ## Acceptance Criteria
 
 ### legacy-definitions — legacy definitions 표기 해석
 
-- `definitions`(draft-07 방식) 아래 정의를 가리키는 `$ref`가 여러 개 있는 스키마에서, 모든 `$ref`가 각각의 정의 내용으로 치환된 스키마를 반환함을 검증한다.
+- `definitions`(draft-07 방식) 아래 정의를 가리키는 `$ref`가 여러 개 있는 스키마에서, 정의 바깥의 각 사용 위치가 정의 내용으로 치환되고 정의 위치의 참조는 보존됨을 검증한다.
 
 ### cyclic-definitions — 순환 정의 안전 해석
 

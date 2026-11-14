@@ -2,23 +2,10 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-export const $DEFS = '$defs';
-export const DEFINITIONS = 'definitions';
-export const PROPERTIES = 'properties';
-export const ADDITIONAL_PROPERTIES = 'additionalProperties';
-export const ITEMS = 'items';
-export const PREFIX_ITEMS = 'prefixItems';
+import type { Dialect } from '../dialect/Dialect';
+import type { ReferenceSkipReason } from '../referenceOutcome/ReferenceSkipReason';
 
-export const CONDITIONAL_KEYWORDS = ['not', 'if', 'then', 'else'] as const;
-export const COMPOSITION_KEYWORDS = ['allOf', 'anyOf', 'oneOf'] as const;
-
-export type DefinitionKeyword = typeof $DEFS | typeof DEFINITIONS;
-export type ConditionalKeyword = (typeof CONDITIONAL_KEYWORDS)[number];
-export type CompositionKeyword = (typeof COMPOSITION_KEYWORDS)[number];
-
-export type PropertiesKeyword = typeof PROPERTIES;
-export type AdditionalPropertiesKeyword = typeof ADDITIONAL_PROPERTIES;
-export type ItemsKeyword = typeof ITEMS | typeof PREFIX_ITEMS;
+export type { Dialect };
 
 /**
  * How a keyword's value maps to child subschemas during traversal.
@@ -40,48 +27,28 @@ export type KeywordKind =
 export interface KeywordDescriptor {
   keyword: string;
   kind: KeywordKind;
+  /** Accepted schema-position dialects; omission accepts every supported dialect. */
+  dialects?: readonly Dialect[];
 }
 
 export type SchemaEntry<Schema extends UnknownSchema = UnknownSchema> = {
   /** The schema node being processed */
-  schema: Schema;
+  readonly schema: Schema | boolean;
+  /** Union-vocabulary position that is not a schema in the enclosing dialect. */
+  inert?: boolean;
+  /** Applicator name; custom vocabulary names are preserved without narrowing. */
+  keyword?: string;
+  /** Original map key or list index, independent of the applicator name. */
+  variant?: string | number;
   /** JSON pointer path of the current node */
   path: string;
   /** Data pointer path corresponding to the current node */
   dataPath: string;
   /** Traversal depth */
   depth: number;
-  /** Whether there is a reference */
-  hasReference?: boolean;
-  /**
-   * When `hasReference` is `true`, why the `$ref` was left in place instead of
-   * being inlined: `'cycle'` (already being resolved on the current path),
-   * `'unresolved'` (resolver returned nothing), or `'definition'` (the node
-   * lives under `$defs`/`definitions`, so it is intentionally not resolved).
-   */
-  referenceSkipped?: 'cycle' | 'unresolved' | 'definition';
-  /** Processed reference path */
-  referencePath?: string;
-  /** Whether reference is resolved */
-  referenceResolved?: boolean;
-} & (
-  | {
-      keyword: CompositionKeyword;
-      variant: number;
-    }
-  | {
-      keyword: ItemsKeyword;
-      variant?: number;
-    }
-  | {
-      keyword: DefinitionKeyword | PropertiesKeyword;
-      variant: string;
-    }
-  | {
-      keyword: ConditionalKeyword | AdditionalPropertiesKeyword;
-    }
-  | { keyword?: never }
-);
+  /** Outcomes for each reference keyword and replacement-chain step handled at this position. */
+  references?: ReferenceOutcome[];
+};
 
 export interface SchemaVisitor<
   Schema extends UnknownSchema = UnknownSchema,
@@ -102,56 +69,22 @@ export interface JSONScannerOptions<
   /** Function to mutate schema */
   mutate?: Fn<
     [entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | void
+    Schema | boolean | void
   >;
-  /** Function to resolve $ref references */
-  resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | undefined
-  >;
-  /** Maximum traversal depth */
+  /** Context-aware provider of targets valid at the current host position. */
+  resolveReference?: ReferenceResolver<any>;
+  /** Missing targets remain by default; throw fails the entire scan instead. */
+  unresolvedReference?: 'keep' | 'throw';
+  /** Limits on replacement-chain length and total inlined schema nodes. */
+  limits?: { referenceChain?: number; inlinedNodes?: number };
+  /** Inclusive maximum traversal depth, independent of template preparation. */
   maxDepth?: number;
-  /**
-   * Whether to deep-clone the schema returned by `resolveReference` before
-   * inlining it into the traversal and the processed output.
-   *
-   * Defaults to `true`. Cloning isolates the resolved subtree so that
-   * (1) the original schema passed to `resolveReference` is never mutated,
-   * and (2) multiple occurrences of the same `$ref` do not become aliased
-   * in the processed output. Set to `false` only when the resolver already
-   * returns a freshly-owned object and the extra clone is pure overhead.
-   *
-   * @remarks
-   * Versions before this option existed behaved as if it were `false`: the
-   * resolved schema was assigned in place with no clone, so repeated
-   * occurrences of the same `$ref` shared one aliased object. The current
-   * default (`true`) deep-clones each resolved `$ref` instead; pass `false`
-   * to restore the previous aliased behavior.
-   */
-  cloneResolvedSchema?: boolean;
-  /**
-   * Whether to memoize `resolveReference` results per reference string.
-   *
-   * Defaults to `false` (each occurrence invokes the resolver). Enable to
-   * avoid redundant resolver calls (e.g. remote fetches) when the same
-   * reference appears multiple times. The raw resolver result is cached and
-   * cloned at inline time (see `cloneResolvedSchema`) so caching never
-   * introduces shared references into the output.
-   */
-  cacheResolvedReference?: boolean;
-  /**
-   * Extra applicator keywords to descend into, appended after the built-in
-   * vocabulary. Opt-in: descriptors are appended after the built-ins, and the
-   * two lists are merged by `keyword`. If a descriptor's `keyword` equals a
-   * built-in keyword (e.g. `properties`), the later (consumer) entry
-   * overrides the built-in's `kind` and ordering — do NOT reuse a built-in
-   * keyword name unless you intend to override it. Use the shared
-   * `EXTENDED_KEYWORDS` preset for draft 2019-09 / 2020-12 keywords
-   * (`patternProperties`, `propertyNames`, `contains`, `dependentSchemas`,
-   * `unevaluatedProperties`, …) or supply your own descriptors (e.g. vendor
-   * `x-*` keywords).
-   */
-  additionalKeywords?: KeywordDescriptor[];
+  /** Dialect used when the document root has no known $schema; defaults to 2020-12. */
+  defaultDialect?: Dialect;
+  /** Ordered vocabulary replacing the complete built-in vocabulary. */
+  keywords?: readonly KeywordDescriptor[];
+  /** Descriptors appended to the selected vocabulary; the last duplicate wins. */
+  additionalKeywords?: readonly KeywordDescriptor[];
   /** Context object passed to visitors and filters */
   context?: ContextType;
 }
@@ -171,11 +104,62 @@ export interface JSONScannerOptionsAsync<
   /** Function to mutate schema (may be async) */
   mutate?: Fn<
     [entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | void | Promise<Schema | void>
+    Schema | boolean | void | Promise<Schema | boolean | void>
   >;
-  /** Function to resolve $ref references (may be async) */
-  resolveReference?: Fn<
-    [reference: string, entry: SchemaEntry<Schema>, context?: ContextType],
-    Schema | Promise<Schema | undefined> | undefined
-  >;
+  /** Context-aware provider whose resolve operation alone may suspend. */
+  resolveReference?: ReferenceResolverAsync<any>;
+}
+
+/** Reference applicators selected by the enclosing resource dialect. */
+export type ReferenceKeyword = '$ref' | '$dynamicRef' | '$recursiveRef';
+export type { ReferenceSkipReason };
+/** A resolver supplies a host-valid target or a supported preservation reason. */
+export type ReferenceStep =
+  | { status: 'resolved'; uri: string; target: UnknownSchema | boolean }
+  | {
+      status: 'skipped';
+      uri?: string;
+      reason: Exclude<ReferenceSkipReason, 'definition' | 'cycle'>;
+    };
+/** Observable result for an original reference or one replacement-chain step. */
+export interface ReferenceOutcome {
+  /** Reference keyword in the effective dialect. */
+  keyword: ReferenceKeyword;
+  /** Written value before canonicalization. */
+  reference: string;
+  /** Canonical target location when the provider knows it. */
+  uri?: string;
+  /** Whether a target was inlined at this step. */
+  resolved: boolean;
+  /** Why a reference remains instead of being inlined. */
+  skipped?: ReferenceSkipReason;
+}
+/** Lexical resource context and host-valid synchronous target protocol. */
+export interface ReferenceResolver<Context = unknown> {
+  /** Establish the document-root context without entering its identifier twice. */
+  root(schema: UnknownSchema | boolean): Context;
+  /** Enter an original lexical child; absent means the root context is fixed. */
+  child?(
+    parent: Context,
+    keyword: string,
+    schema: UnknownSchema | boolean,
+  ): Context;
+  /** Return the effective dialect for a context. */
+  dialect(context: Context): Dialect;
+  /** Resolve a written reference and return a target whose meaning already fits the host. */
+  resolve(
+    reference: string,
+    keyword: ReferenceKeyword,
+    context: Context,
+  ): ReferenceStep;
+}
+/** Async protocol changes only resolve; root, child and dialect stay synchronous. */
+export interface ReferenceResolverAsync<Context = unknown>
+  extends Omit<ReferenceResolver<Context>, 'resolve'> {
+  /** Resolve using caller-controlled asynchronous document loading if needed. */
+  resolve(
+    reference: string,
+    keyword: ReferenceKeyword,
+    context: Context,
+  ): ReferenceStep | PromiseLike<ReferenceStep>;
 }

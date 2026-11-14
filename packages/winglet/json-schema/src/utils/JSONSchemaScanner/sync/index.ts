@@ -1,7 +1,7 @@
 export { JSONSchemaScanner } from './JSONSchemaScanner';
 export type { JSONScannerOptions, SchemaVisitor, SchemaEntry } from '../type';
 export type { KeywordDescriptor, KeywordKind } from '../type';
-export {
-  DEFAULT_KEYWORDS,
-  EXTENDED_KEYWORDS,
-} from '../utils/keywordDescriptors';
+export { Dialect } from '../../dialect/Dialect';
+export { DEFAULT_KEYWORDS } from '../utils/vocabulary/defaultKeywords';
+export { JSONSchemaScanError } from '../../error/JSONSchemaScanError';
+export { JSONSchemaScanErrorCode } from '../../error/JSONSchemaScanErrorCode';

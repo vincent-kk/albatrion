@@ -1,25 +1,27 @@
-import { getValue } from '@winglet/json/pointer';
-
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
-import { JSONSchemaScanner } from '@/json-schema/utils/JSONSchemaScanner/sync';
 
-export const resolveReference = (
-  jsonSchema: UnknownSchema,
-): UnknownSchema | undefined => {
-  const definitionMap = new Map<string, UnknownSchema>();
-  new JSONSchemaScanner({
-    visitor: {
-      exit: ({ schema, hasReference }) => {
-        if (hasReference && typeof schema.$ref === 'string')
-          definitionMap.set(schema.$ref, getValue(jsonSchema, schema.$ref));
-      },
-    },
-  }).scan(jsonSchema);
+import { JSONSchemaScanner } from '../JSONSchemaScanner/sync';
+import { createReferenceResolver } from '../createReferenceResolver';
+import type { ReferenceResolverOptions } from '../createReferenceResolver';
+
+/**
+ * Resolve a document in one public scan using the built-in indexed provider.
+ * @param schema Original JSON schema or boolean root.
+ * @param options Explicit source, dialect and vocabulary configuration.
+ * @returns Processed schema without modifying the original; unsafe or cyclic references may remain.
+ */
+export function resolveReference(
+  schema: UnknownSchema | boolean,
+  options: ReferenceResolverOptions = {},
+): UnknownSchema | boolean | undefined {
   return new JSONSchemaScanner({
     options: {
-      resolveReference: (path) => definitionMap.get(path),
+      resolveReference: createReferenceResolver(schema, options),
+      keywords: options.keywords,
+      additionalKeywords: options.additionalKeywords,
+      defaultDialect: options.defaultDialect,
     },
   })
-    .scan(jsonSchema)
+    .scan(schema)
     .getValue();
-};
+}
