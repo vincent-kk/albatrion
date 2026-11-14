@@ -159,12 +159,12 @@ export class ResolverStore {
       paths: new Map(),
     };
     const dialect = this.dialect(
-      isObject(schema) ? schema.$schema : undefined,
+      typeof schema === 'object' ? schema.$schema : undefined,
       fallback,
     );
     let uri = retrieval;
     if (
-      isObject(schema) &&
+      typeof schema === 'object' &&
       !(dialect.startsWith('draft-') && isString(schema.$ref))
     ) {
       const id = isString(schema.$id)
@@ -237,7 +237,7 @@ export class ResolverStore {
             inert: !!entry.inert,
           };
           document.paths.set(entry.path, location);
-          if (!entry.inert && isObject(entry.schema))
+          if (!entry.inert && typeof entry.schema === 'object')
             this.registerAnchors(location);
           stack.push({ depth: entry.depth, context });
         },
@@ -474,7 +474,7 @@ export class ResolverStore {
     if (
       (keyword === '$dynamicRef' && found.dynamic) ||
       (keyword === '$recursiveRef' &&
-        isObject(location.schema) &&
+        typeof location.schema === 'object' &&
         location.schema.$recursiveAnchor === true)
     )
       return {
@@ -569,7 +569,7 @@ export class ResolverStore {
       },
       visitor: {
         enter: (entry) => {
-          if (isObject(entry.schema))
+          if (typeof entry.schema === 'object')
             for (const key of Object.keys(entry.schema)) {
               const descriptor = vocabulary.get(key),
                 value = entry.schema[key];
@@ -594,7 +594,7 @@ export class ResolverStore {
               context.resource.dynamic)
           )
             safe = false;
-          if (isObject(entry.schema))
+          if (typeof entry.schema === 'object')
             for (const key of dataKeywords)
               if (hasOwnProperty(entry.schema, key))
                 data.push(entry.path + '/' + key);
