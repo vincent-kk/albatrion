@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { createReferenceResolver } from '../../createReferenceResolver';
+import { createReferenceResolver } from '../createReferenceResolver';
 import { visitPaths } from './fixtures/visitPaths';
 
 describe('dialect-independent reference visitation', () => {

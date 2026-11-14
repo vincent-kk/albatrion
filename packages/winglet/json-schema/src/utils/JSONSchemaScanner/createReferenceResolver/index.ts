@@ -11,4 +11,4 @@ export type {
   ReferenceOutcome,
   ReferenceKeyword,
   ReferenceSkipReason,
-} from '../JSONSchemaScanner/type';
+} from '../utils/type';

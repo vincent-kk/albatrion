@@ -1,7 +1,7 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { OrderedKeywordDescriptor } from '../../../../../../../vocabulary/type';
-import type { SchemaEntry } from '../../../../../../type';
+import type { OrderedKeywordDescriptor } from '../../../../../keywordMap/type';
+import type { SchemaEntry } from '../../../../../type';
 
 /**
  * Capture own map values while preserving key order and escaped schema/data paths.

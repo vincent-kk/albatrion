@@ -1,4 +1,4 @@
-import type { ReferenceResolverAsync } from '../../JSONSchemaScanner/type';
+import type { ReferenceResolverAsync } from '../../utils/type';
 import { ResolverStore } from './ResolverStore';
 import type {
   ReferenceResolverAsyncOptions,

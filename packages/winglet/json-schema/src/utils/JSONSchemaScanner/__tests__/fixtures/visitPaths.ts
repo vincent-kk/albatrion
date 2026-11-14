@@ -1,7 +1,7 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScanner } from '../../sync/JSONSchemaScanner';
-import type { JSONScannerOptions } from '../../type';
+import type { JSONScannerOptions } from '../../utils/type';
 
 /** Capture both callback phases and inert status so missed descendants cannot hide behind matching enters. */
 export function visitPaths(

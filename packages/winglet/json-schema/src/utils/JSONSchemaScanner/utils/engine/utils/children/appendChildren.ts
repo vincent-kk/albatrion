@@ -3,8 +3,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type {
   KeywordMap,
   OrderedKeywordDescriptor,
-} from '../../../../../vocabulary/type';
-import type { SchemaEntry } from '../../../../type';
+} from '../../../keywordMap/type';
+import type { SchemaEntry } from '../../../type';
 import { LegacyMode } from '../LegacyMode';
 import { appendKeywordChildren } from './utils/appendKeywordChildren';
 

@@ -1,6 +1,6 @@
-import { DialectFlag } from '../../../../../../dialect/DialectFlag';
-import type { OrderedKeywordDescriptor } from '../../../../../../vocabulary/type';
-import type { SchemaEntry } from '../../../../../type';
+import { DialectFlag } from '../../../../dialectFlag/DialectFlag';
+import type { OrderedKeywordDescriptor } from '../../../../keywordMap/type';
+import type { SchemaEntry } from '../../../../type';
 import { LegacyMode } from '../../LegacyMode';
 import { appendListChildren } from './appendKeywordChildren/appendListChildren';
 import { appendMapChildren } from './appendKeywordChildren/appendMapChildren';

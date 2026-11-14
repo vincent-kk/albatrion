@@ -1,5 +1,5 @@
-import { DialectFlag } from '../../../../dialect/DialectFlag';
-import type { ReferenceKeyword } from '../../../type';
+import { DialectFlag } from '../../dialectFlag/DialectFlag';
+import type { ReferenceKeyword } from '../../type';
 
 /** Index bits of referenceKeywordLists: one per reference applicator present on a node. */
 const enum ReferenceBit {

@@ -1,14 +1,12 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { buildKeywordMap } from '../../vocabulary/buildKeywordMap';
-import type { JSONScannerOptionsAsync, SchemaVisitor } from '../type';
+import { DEFAULT_KEYWORDS } from '../../../keyword';
 import { ScanEngine } from '../utils/engine/ScanEngine';
 import type { ScanConfig } from '../utils/engine/type';
+import { buildKeywordMap } from '../utils/keywordMap/buildKeywordMap';
+import { DEFAULT_KEYWORD_MAP } from '../utils/keywordMap/defaultKeywordMap';
 import { ScanOutput } from '../utils/output/ScanOutput';
-import {
-  DEFAULT_KEYWORDS,
-  DEFAULT_KEYWORD_MAP,
-} from '../utils/vocabulary/defaultKeywords';
+import type { JSONScannerOptionsAsync, SchemaVisitor } from '../utils/type';
 
 interface JSONSchemaScannerProps<Schema extends UnknownSchema, ContextType> {
   visitor?: SchemaVisitor<Schema, ContextType>;

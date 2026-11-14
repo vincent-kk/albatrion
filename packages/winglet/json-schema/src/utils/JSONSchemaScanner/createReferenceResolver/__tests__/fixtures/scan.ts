@@ -1,10 +1,7 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { JSONSchemaScanner } from '../../../JSONSchemaScanner/sync';
-import type {
-  JSONScannerOptions,
-  ReferenceOutcome,
-} from '../../../JSONSchemaScanner/type';
+import { JSONSchemaScanner } from '../../../sync';
+import type { JSONScannerOptions, ReferenceOutcome } from '../../../utils/type';
 import { createReferenceResolver } from '../../createReferenceResolver';
 import type { ReferenceResolverOptions } from '../../utils/type';
 

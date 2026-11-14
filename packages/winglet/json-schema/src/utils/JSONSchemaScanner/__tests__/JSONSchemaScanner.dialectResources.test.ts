@@ -4,7 +4,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import type { JSONScannerOptions, SchemaVisitor } from '../type';
+import type { JSONScannerOptions, SchemaVisitor } from '../utils/type';
 import { createTestResolver } from './fixtures/createTestResolver';
 
 /** Driver-independent constructor avoids intersecting private class state in shared tests. */

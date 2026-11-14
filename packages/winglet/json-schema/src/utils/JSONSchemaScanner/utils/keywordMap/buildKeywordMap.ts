@@ -1,8 +1,8 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { KeywordDescriptor } from '../JSONSchemaScanner/type';
-import { DialectMask } from '../dialect/DialectFlag';
-import { DIALECT_FLAGS } from '../dialect/dialectFlags';
+import type { KeywordDescriptor } from '../../../../keyword';
+import { DialectMask } from '../dialectFlag/DialectFlag';
+import { DIALECT_FLAGS } from '../dialectFlag/dialectFlags';
 import type { KeywordMap } from './type';
 
 /**

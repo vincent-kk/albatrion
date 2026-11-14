@@ -1,6 +1,5 @@
-import { Dialect } from '../../../dialect/Dialect';
-import { buildKeywordMap } from '../../../vocabulary/buildKeywordMap';
-import type { KeywordDescriptor } from '../../type';
+import type { KeywordDescriptor } from '../types/KeywordDescriptor';
+import { Dialect } from './Dialect';
 
 /** Object schema locations accepted throughout all supported dialects. */
 const all: readonly Dialect[] = [
@@ -58,6 +57,3 @@ export const DEFAULT_KEYWORDS: readonly KeywordDescriptor[] = [
   { keyword: 'contentSchema', kind: 'schema', dialects: modern },
   { keyword: 'dependencies', kind: 'schemaMap', dialects: all },
 ];
-
-/** Shared compiled default path, independent of later mutations to the public descriptor list. */
-export const DEFAULT_KEYWORD_MAP = buildKeywordMap(DEFAULT_KEYWORDS);

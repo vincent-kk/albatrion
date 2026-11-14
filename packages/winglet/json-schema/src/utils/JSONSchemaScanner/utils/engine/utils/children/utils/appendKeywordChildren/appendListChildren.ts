@@ -1,5 +1,5 @@
-import type { OrderedKeywordDescriptor } from '../../../../../../../vocabulary/type';
-import type { SchemaEntry } from '../../../../../../type';
+import type { OrderedKeywordDescriptor } from '../../../../../keywordMap/type';
+import type { SchemaEntry } from '../../../../../type';
 
 /**
  * Capture list and tuple elements in index order, excluding holes and array-valued schemas.

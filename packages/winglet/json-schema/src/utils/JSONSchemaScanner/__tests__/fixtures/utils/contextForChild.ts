@@ -1,6 +1,6 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaEntry } from '../../../type';
+import type { SchemaEntry } from '../../../utils/type';
 
 /**
  * Build source provenance for hand-written resolver fixtures, without exposing visitor entries to production providers.

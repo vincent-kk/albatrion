@@ -205,7 +205,7 @@ console.assert(inactive.includes('#/additionalProperties'));
 
 ## Vocabulary selection
 
-The default vocabulary includes composition, conditionals, object/array applicators, definition containers and schema-valued dependencies. `keywords` replaces that entire vocabulary; `additionalKeywords` appends to the selected one. The last duplicate wins in both kind and position. Descriptor dialects control inertness, not discovery. `objectMap` extends dataPath with its key; `schemaMap` does not. Schema lists visit their elements without visiting the container.
+The default vocabulary includes composition, conditionals, object/array applicators, definition containers and schema-valued dependencies. `keywords` replaces that entire vocabulary; `additionalKeywords` appends to the selected one. The last duplicate wins in both kind and position. Descriptor dialects control inertness, not discovery. `objectMap` extends dataPath with its key; `schemaMap` does not. Schema lists visit their elements without visiting the container. `DEFAULT_KEYWORDS`, `Dialect`, `KeywordDescriptor` and `KeywordKind` are also exported from `@winglet/json-schema/keyword`, which loads no scanner code.
 
 Use identical vocabulary options for the built-in resolver and scanner so indexing, relocation checks and public traversal agree. The convenience resolveReference function passes its vocabulary to both. Keyword names and map keys are JSON Pointer escaped, including custom names.
 

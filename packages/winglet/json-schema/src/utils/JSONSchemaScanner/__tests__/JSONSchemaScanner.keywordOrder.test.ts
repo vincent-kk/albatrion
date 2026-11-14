@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import type { KeywordDescriptor } from '../../../keyword';
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import type { KeywordDescriptor, SchemaEntry, SchemaVisitor } from '../type';
+import type { SchemaEntry, SchemaVisitor } from '../utils/type';
 
 /** Shared driver surface for checking vocabulary order across bit-word boundaries. */
 type ScannerConstructor = new (config: {

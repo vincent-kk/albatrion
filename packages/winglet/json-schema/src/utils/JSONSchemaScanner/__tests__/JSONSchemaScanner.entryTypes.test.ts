@@ -2,15 +2,14 @@ import { expect, expectTypeOf, it } from 'vitest';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import type { Dialect, KeywordDescriptor } from '../../../keyword';
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
 import type {
-  Dialect,
   JSONScannerOptions,
   JSONScannerOptionsAsync,
-  KeywordDescriptor,
   SchemaEntry,
-} from '../type';
+} from '../utils/type';
 
 it('exposes a read-only object-or-boolean schema and custom keyword/variant types', () => {
   expectTypeOf<Pick<SchemaEntry, 'schema'>>().toEqualTypeOf<{

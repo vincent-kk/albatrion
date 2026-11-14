@@ -1,5 +1,5 @@
-import { JSONSchemaScanError } from '../../../../error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../../../error/JSONSchemaScanErrorCode';
+import { JSONSchemaScanError } from '../../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../error/JSONSchemaScanErrorCode';
 
 /** Identity-bearing keywords cannot change through a visitor's replacement value. */
 const identifiers = [

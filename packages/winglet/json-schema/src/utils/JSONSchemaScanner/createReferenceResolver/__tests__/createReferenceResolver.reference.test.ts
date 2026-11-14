@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
 
-import { JSONSchemaScanner } from '../../JSONSchemaScanner/sync';
+import { JSONSchemaScanner } from '../../sync';
 import { createReferenceResolver } from '../createReferenceResolver';
 
 describe('reference resolution and address preservation', () => {

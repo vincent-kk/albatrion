@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 
-import type { SchemaEntry } from '../../../type';
-import { DEFAULT_KEYWORD_MAP } from '../../vocabulary/defaultKeywords';
+import { DEFAULT_KEYWORD_MAP } from '../../keywordMap/defaultKeywordMap';
+import type { SchemaEntry } from '../../type';
 import { ScanEngine } from '../ScanEngine';
 import type { ScanConfig } from '../type';
 import { appendChildren } from '../utils/children/appendChildren';

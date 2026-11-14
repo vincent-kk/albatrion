@@ -2,8 +2,8 @@ import { isArrayIndex } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { clone } from '@winglet/common-utils/object';
 
-import { cloneSchema } from '../../../schemaCopy/cloneSchema';
-import { writeProperty } from '../../../schemaCopy/writeProperty';
+import { cloneSchema } from '../schemaCopy/cloneSchema';
+import { writeProperty } from '../schemaCopy/writeProperty';
 import type { OperationNode, OutputOperation } from './type';
 import { buildOperationTree } from './utils/buildOperationTree';
 

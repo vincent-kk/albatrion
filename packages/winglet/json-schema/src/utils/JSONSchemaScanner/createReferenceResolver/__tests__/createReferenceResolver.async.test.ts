@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { JSONSchemaScannerAsync } from '../../JSONSchemaScanner/async';
+import { JSONSchemaScannerAsync } from '../../async';
 import { createReferenceResolver } from '../createReferenceResolver';
 import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
 

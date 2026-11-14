@@ -34,7 +34,7 @@ console.assert(schema.properties.value.$ref === '#/$defs/Allowed');
 
 - 방문·필터·변형이 필요하면 `JSONSchemaScanner`와 `createReferenceResolver`를 함께 사용합니다. 해소기를 설정하지 않으면 참조를 인라인하지 않습니다.
 - 문서 공급이나 콜백을 기다려야 하면 `JSONSchemaScannerAsync`와 `createReferenceResolverAsync`를 사용합니다. 문서 공급은 호출자가 제공한 `load` 함수가 담당합니다. 패키지는 스스로 네트워크나 파일에 접근하지 않습니다.
-- 스키마 타입 판별은 `@winglet/json-schema/filter`, 동기 순회는 `/scanner`, 비동기 순회는 `/async-scanner` 하위 경로에서도 가져올 수 있습니다. 해소기 구성 함수는 루트에서 가져옵니다.
+- 스키마 타입 판별은 `@winglet/json-schema/filter`, 동기 순회는 `/scanner`, 비동기 순회는 `/async-scanner` 하위 경로에서도 가져올 수 있습니다. `Dialect`, `DEFAULT_KEYWORDS`와 키워드 서술 형은 스캐너 코드를 불러오지 않는 `/keyword` 하위 경로에서도 가져올 수 있습니다. 해소기 구성 함수는 루트에서 가져옵니다.
 
 ## 동작과 한계 읽기
 
