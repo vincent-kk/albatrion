@@ -1,7 +1,9 @@
 import { clone } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { JSONSchemaScanError } from '../JSONSchemaScanner/utils/error/JSONSchemaScanError';
+import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../error/JSONSchemaScanErrorCode';
+import { ScanLimit } from '../limits/ScanLimit';
 import { writeProperty } from './writeProperty';
 
 /** A checkpoint belongs to one active container on the clone's explicit DFS stack. */
@@ -60,7 +62,7 @@ export function cloneSchema<Type>(
   while (true) {
     if (index === keys.length) {
       if (
-        depth >= 256 &&
+        depth >= ScanLimit.CycleCheckMinDepth &&
         checkpoint !== undefined &&
         checkpoint.depth === depth
       ) {
@@ -97,14 +99,14 @@ export function cloneSchema<Type>(
       keyLists = [];
       indices = [];
     }
-    if (depth >= 256) {
+    if (depth >= ScanLimit.CycleCheckMinDepth) {
       if ((depth & (depth - 1)) === 0 && checkpoint?.depth !== depth) {
         checkpoint = { depth, schema: source };
         (checkpoints ??= []).push(checkpoint);
       }
       if (checkpoint !== undefined && value === checkpoint.schema)
         throw new JSONSchemaScanError(
-          'schema-cycle',
+          JSONSchemaScanErrorCode.SchemaCycle,
           'Physical cycle while copying a schema value',
         );
     }

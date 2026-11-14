@@ -1,4 +1,5 @@
-import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
+import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../../error/JSONSchemaScanErrorCode';
 import { applyOperations } from './applyOperations';
 import type { OutputOperation } from './type';
 
@@ -23,7 +24,7 @@ export class ScanOutput {
   public begin(schema: unknown): void {
     if (this.running)
       throw new JSONSchemaScanError(
-        'scan-in-progress',
+        JSONSchemaScanErrorCode.ScanInProgress,
         'A scan is already in progress on this instance',
       );
     this.original = schema;
@@ -57,7 +58,7 @@ export class ScanOutput {
   public getValue(): unknown {
     if (this.running)
       throw new JSONSchemaScanError(
-        'scan-in-progress',
+        JSONSchemaScanErrorCode.ScanInProgress,
         'Output is unavailable while scanning this instance',
       );
     if (!this.computed) {

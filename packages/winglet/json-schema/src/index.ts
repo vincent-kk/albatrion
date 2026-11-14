@@ -19,6 +19,10 @@ export {
   isObjectSchema,
   isStringSchema,
 } from './filters';
+export { JSONSchemaScanError } from './utils/error/JSONSchemaScanError';
+export { JSONSchemaScanErrorCode } from './utils/error/JSONSchemaScanErrorCode';
+export { Dialect } from './utils/dialect/Dialect';
+export { ReferenceSkipReason } from './utils/referenceOutcome/ReferenceSkipReason';
 export {
   JSONSchemaScannerAsync,
   type JSONScannerOptionsAsync,
@@ -26,9 +30,7 @@ export {
 export {
   DEFAULT_KEYWORDS,
   JSONSchemaScanner,
-  JSONSchemaScanError,
   type JSONScannerOptions,
-  type Dialect,
   type KeywordDescriptor,
   type KeywordKind,
   type SchemaEntry,
@@ -82,5 +84,4 @@ export {
   type ReferenceStep,
   type ReferenceOutcome,
   type ReferenceKeyword,
-  type ReferenceSkipReason,
 } from './utils/createReferenceResolver';

@@ -2,13 +2,10 @@ import type { Fn } from '@aileron/declare';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-/** JSON Schema dialect used to recognize schema positions inside each resource. */
-export type Dialect =
-  | 'draft-04'
-  | 'draft-06'
-  | 'draft-07'
-  | '2019-09'
-  | '2020-12';
+import type { Dialect } from '../dialect/Dialect';
+import type { ReferenceSkipReason } from '../referenceOutcome/ReferenceSkipReason';
+
+export type { Dialect };
 
 /**
  * How a keyword's value maps to child subschemas during traversal.
@@ -115,21 +112,14 @@ export interface JSONScannerOptionsAsync<
 
 /** Reference applicators selected by the enclosing resource dialect. */
 export type ReferenceKeyword = '$ref' | '$dynamicRef' | '$recursiveRef';
-/** Explicit reasons a reference remains in output. */
-export type ReferenceSkipReason =
-  | 'definition'
-  | 'cycle'
-  | 'unresolved'
-  | 'dynamic'
-  | 'relocation'
-  | 'invalid';
+export type { ReferenceSkipReason };
 /** A resolver supplies a host-valid target or a supported preservation reason. */
 export type ReferenceStep =
   | { status: 'resolved'; uri: string; target: UnknownSchema | boolean }
   | {
       status: 'skipped';
       uri?: string;
-      reason: 'unresolved' | 'dynamic' | 'relocation' | 'invalid';
+      reason: Exclude<ReferenceSkipReason, 'definition' | 'cycle'>;
     };
 /** Observable result for an original reference or one replacement-chain step. */
 export interface ReferenceOutcome {

@@ -16,7 +16,11 @@
 - 유한 접두부 뒤의 `items: false`는 rest를 없애고, 생략 또는 `true`는 `...any[]`, 스키마는 그 값 형의 rest를 붙입니다. 이는 `any[]`보다 좁은 형이므로 자유로운 위치·길이에 의존하는 소비자 코드는 컴파일 오류가 날 수 있습니다. 넓어진 배열·비리터럴 접두부, 접두부 없는 homogeneous `items`, 구식 `items` 배열과 `additionalItems`의 추론은 유지합니다.
 - 튜플의 재귀 추론은 TypeScript의 인스턴스화 한도를 확장하지 않습니다. 지원하는 유한 접두부와 중첩 형태는 [튜플 타입 검증](types/__tests__/InferValueType.tuple.type.test.ts)으로 확인합니다.
 
-방문자·필터·mutate의 동기 반환과 Promise 반환 허용 범위를 구분합니다. `JSONSchemaScanError`는 패키지에서 공개해 호출자가 `instanceof`와 안정적인 오류 코드로 실패를 구분할 수 있습니다.
+방문자·필터·mutate의 동기 반환과 Promise 반환 허용 범위를 구분합니다. `JSONSchemaScanError`는 패키지에서 공개해 호출자가 `instanceof`와 안정적인 오류 코드로 실패를 구분할 수 있습니다. 오류 코드는 `utils/error/JSONSchemaScanErrorCode.ts`의 표 한 곳에만 정의하고, 던지는 쪽은 문자열 대신 그 표의 항목을 씁니다. 코드를 흩어 적으면 어떤 코드가 있는지 한눈에 볼 수 없고 오타가 컴파일을 통과하기 때문입니다. 오류 클래스와 표는 스캐너·해소기·복제가 함께 쓰므로 루트의 공통 organ에 둡니다.
+
+값의 집합은 이름 붙인 상수 한 곳에 두고 코드에는 날 숫자와 날 문자열을 쓰지 않습니다. 호출자가 비교하는 값(`JSONSchemaScanErrorCode`, `Dialect`, `ReferenceSkipReason`)은 `as const` 객체와 거기서 유도한 형으로 공개합니다. 내부에서만 쓰는 비트와 상한(`DialectFlag`, `DialectMask`, `ScanLimit`, `LegacyMode`, `ScanStage`)은 `const enum`으로 둡니다. 빌드가 `const enum` 항목을 숫자로 치환하므로 노드마다 도는 경로에서 비용이 없기 때문이며, 같은 값을 모듈 상수로 가져와 복제 루프에서 읽으면 참조 인라인 묶음이 느려지는 것이 측정되었습니다. 한 `const enum`이 다른 파일의 `const enum`을 참조하면 치환되지 않고 런타임 객체가 남으므로, 서로 참조하는 `const enum`은 한 파일에 둡니다.
+
+형 검사는 `@winglet/common-utils/filter`의 `isString`·`isObject`·`isArray` 등을 씁니다. 예외는 노드마다 도는 `utils/JSONSchemaScanner/utils/engine/`과 `utils/schemaCopy/cloneSchema.ts`이며, 여기서는 `typeof`와 `Array.isArray`를 직접 씁니다. 엔진에 필터 호출을 넣으면 순회 묶음이 4%에서 5% 느려지는 것이 `benchmark/compare`의 두 빌드 교대 측정으로 확인되었습니다.
 
 방언 인식·어휘 컴파일·스키마 복제와 속성 쓰기는 스캐너와 해소기의 최저 공통 소유자인 루트의 공통 organ에 둡니다. 공개 scanner 하위 경로는 내부 헬퍼를 노출하지 않습니다.
 

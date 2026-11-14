@@ -181,7 +181,7 @@ console.assert(output.type === 'string');
 
 ## 방언과 inert 위치
 
-기본 폴백은 2020-12입니다. `$ref`는 모든 지원 방언에서, `$dynamicRef`는 2020-12에서만, `$recursiveRef`는 2019-09에서만 인식합니다. 인식한 루트·자원 `$schema`가 방언을 정하며 지원 URI의 HTTP/HTTPS와 마지막 # 차이는 정규화합니다. 해소기의 dialects로 사용자 메타스키마 URI를 지원 방언에 매핑할 수 있습니다. 모르는 선언은 둘러싼 방언 또는 폴백을 따릅니다. 내장 자원은 알려진 선언이 없으면 부모의 방언을 잇습니다. 해소기를 사용하면 그 폴백도 설정하세요. 스캐너의 defaultDialect는 해소기가 방언을 공급하지 않을 때의 폴백입니다.
+기본 폴백은 2020-12입니다. 공개된 Dialect 표가 지원 방언에 이름을 붙이며(Dialect.Draft04부터 Dialect.Draft202012까지), 항목의 값은 같은 문자열이므로 방언을 받는 자리에는 어느 표기든 쓸 수 있습니다. `$ref`는 모든 지원 방언에서, `$dynamicRef`는 2020-12에서만, `$recursiveRef`는 2019-09에서만 인식합니다. 인식한 루트·자원 `$schema`가 방언을 정하며 지원 URI의 HTTP/HTTPS와 마지막 # 차이는 정규화합니다. 해소기의 dialects로 사용자 메타스키마 URI를 지원 방언에 매핑할 수 있습니다. 모르는 선언은 둘러싼 방언 또는 폴백을 따릅니다. 내장 자원은 알려진 선언이 없으면 부모의 방언을 잇습니다. 해소기를 사용하면 그 폴백도 설정하세요. 스캐너의 defaultDialect는 해소기가 방언을 공급하지 않을 때의 폴백입니다.
 
 순회는 draft-04·draft-06·draft-07·2019-09·2020-12의 스키마 위치 합집합을 사용합니다. 해소나 변형이 없을 때 `$schema`는 방문 경로·순서 대신 inert 여부를 바꿉니다. 해당 방언의 스키마 위치가 아닌 노드와 그 후손은 inert=true이며 콜백은 실행하지만 참조·출력 연산을 억제하고 식별자를 색인하지 않습니다. draft-04에서는 boolean 잎도 inert입니다. contains는 draft-06부터, prefixItems는 2020-12에서, 튜플 형태 items는 2019-09까지 활성입니다. 현대 방언에서도 definitions와 스키마 값 dependencies는 스키마 위치이고 문자열 배열 dependencies는 스키마가 아닙니다.
 
@@ -241,7 +241,7 @@ console.assert(output.properties.value.type === 'string');
 
 ## 참조 보존과 형제 키워드
 
-정의 바깥의 인라인 가능한 체인은 끝까지 처리하고, 참조 정체성은 현재 조상 경로에서만 활성입니다. 같은 대상을 쓰는 독립 형제는 각각 처리합니다. 결과를 감사하려면 exit의 entry.references를 순회하세요. 각 결과는 작성된 reference와 keyword, 알 수 있으면 정규 uri, resolved 및 보존 이유 skipped를 담습니다.
+정의 바깥의 인라인 가능한 체인은 끝까지 처리하고, 참조 정체성은 현재 조상 경로에서만 활성입니다. 같은 대상을 쓰는 독립 형제는 각각 처리합니다. 결과를 감사하려면 exit의 entry.references를 순회하세요. 각 결과는 작성된 reference와 keyword, 알 수 있으면 정규 uri, resolved 및 보존 이유 skipped를 담습니다. 공개된 ReferenceSkipReason 표가 모든 skipped 값에 이름을 붙입니다(예: ReferenceSkipReason.Relocation).
 
 | skipped      | 의미                                                                                             |
 | ------------ | ------------------------------------------------------------------------------------------------ |
@@ -331,7 +331,7 @@ console.assert(absolute.status === 'resolved');
 
 limits.referenceChain은 한 위치의 교체 체인을 기본 32로, limits.inlinedNodes는 스캔에서 인라인되는 전체 스키마 노드를 기본 1,000,000으로 제한합니다. 이는 maxDepth와 별개이고 공개 방문에서 잘린 대상의 전체 준비도 수행할 수 있습니다.
 
-JSONSchemaScanError의 code로 실패를 구분합니다. 사용자 콜백과 load의 예외는 그대로 전파됩니다.
+JSONSchemaScanError의 code로 실패를 구분합니다. 공개된 JSONSchemaScanErrorCode 표가 모든 code에 이름을 붙이므로, 문자열을 직접 쓰지 말고 JSONSchemaScanErrorCode.SchemaCycle 같은 항목과 비교합니다. 사용자 콜백과 load의 예외는 그대로 전파됩니다.
 
 | code                      | 의미                                                                         |
 | ------------------------- | ---------------------------------------------------------------------------- |
@@ -347,7 +347,11 @@ JSONSchemaScanError의 code로 실패를 구분합니다. 사용자 콜백과 lo
 <!-- example: errors -->
 
 ```typescript
-import { JSONSchemaScanError, JSONSchemaScanner } from '@winglet/json-schema';
+import {
+  JSONSchemaScanError,
+  JSONSchemaScanErrorCode,
+  JSONSchemaScanner,
+} from '@winglet/json-schema';
 
 const scanner = new JSONSchemaScanner({
   options: { unresolvedReference: 'throw' },
@@ -358,7 +362,7 @@ try {
 } catch (error) {
   if (!(error instanceof JSONSchemaScanError)) throw error;
   caught = true;
-  console.assert(error.code === 'unresolved-reference');
+  console.assert(error.code === JSONSchemaScanErrorCode.UnresolvedReference);
 }
 console.assert(caught && scanner.getValue() === undefined);
 ```

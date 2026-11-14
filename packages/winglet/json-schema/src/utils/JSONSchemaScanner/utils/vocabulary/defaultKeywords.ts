@@ -1,31 +1,36 @@
+import { Dialect } from '../../../dialect/Dialect';
 import { buildKeywordMap } from '../../../vocabulary/buildKeywordMap';
-import type { Dialect, KeywordDescriptor } from '../../type';
+import type { KeywordDescriptor } from '../../type';
 
 /** Object schema locations accepted throughout all supported dialects. */
 const all: readonly Dialect[] = [
-  'draft-04',
-  'draft-06',
-  'draft-07',
-  '2019-09',
-  '2020-12',
+  Dialect.Draft04,
+  Dialect.Draft06,
+  Dialect.Draft07,
+  Dialect.Draft201909,
+  Dialect.Draft202012,
 ];
 /** Locations introduced with boolean schemas and draft-06 applicators. */
 const since06: readonly Dialect[] = [
-  'draft-06',
-  'draft-07',
-  '2019-09',
-  '2020-12',
+  Dialect.Draft06,
+  Dialect.Draft07,
+  Dialect.Draft201909,
+  Dialect.Draft202012,
 ];
 /** Conditional applicators introduced in draft-07. */
-const since07: readonly Dialect[] = ['draft-07', '2019-09', '2020-12'];
+const since07: readonly Dialect[] = [
+  Dialect.Draft07,
+  Dialect.Draft201909,
+  Dialect.Draft202012,
+];
 /** Modern schema locations, including legacy locations retained by modern metaschemas. */
-const modern: readonly Dialect[] = ['2019-09', '2020-12'];
+const modern: readonly Dialect[] = [Dialect.Draft201909, Dialect.Draft202012];
 /** Tuple-tail schema position retained through 2019-09. */
 const tuple: readonly Dialect[] = [
-  'draft-04',
-  'draft-06',
-  'draft-07',
-  '2019-09',
+  Dialect.Draft04,
+  Dialect.Draft06,
+  Dialect.Draft07,
+  Dialect.Draft201909,
 ];
 
 /** Union vocabulary in observable visit order; dialect membership changes inertness, never discovery. */
@@ -40,7 +45,7 @@ export const DEFAULT_KEYWORDS: readonly KeywordDescriptor[] = [
   { keyword: 'allOf', kind: 'schemaList', dialects: all },
   { keyword: 'anyOf', kind: 'schemaList', dialects: all },
   { keyword: 'oneOf', kind: 'schemaList', dialects: all },
-  { keyword: 'prefixItems', kind: 'items', dialects: ['2020-12'] },
+  { keyword: 'prefixItems', kind: 'items', dialects: [Dialect.Draft202012] },
   { keyword: 'items', kind: 'items', dialects: all },
   { keyword: 'properties', kind: 'objectMap', dialects: all },
   { keyword: 'patternProperties', kind: 'schemaMap', dialects: all },

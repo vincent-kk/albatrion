@@ -1,17 +1,28 @@
+import {
+  isArray,
+  isBoolean,
+  isObject,
+  isString,
+} from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
 import {
   DEFAULT_KEYWORDS,
-  JSONSchemaScanError,
   JSONSchemaScanner,
 } from '../../JSONSchemaScanner/sync';
 import type {
-  Dialect,
   ReferenceKeyword,
   ReferenceStep,
 } from '../../JSONSchemaScanner/type';
+import { Dialect } from '../../dialect/Dialect';
+import { DEFAULT_DIALECT } from '../../dialect/defaultDialect';
 import { detectDialect } from '../../dialect/detectDialect';
+import { DIALECT_NAMES } from '../../dialect/dialectNames';
+import { normalizeSchemaUri } from '../../dialect/normalizeSchemaUri';
+import { JSONSchemaScanError } from '../../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../error/JSONSchemaScanErrorCode';
+import { ReferenceSkipReason } from '../../referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../schemaCopy/cloneSchema';
 import { buildKeywordMap } from '../../vocabulary/buildKeywordMap';
 import { resolveURI } from './resolveURI';
@@ -25,14 +36,6 @@ import type {
   SchemaValue,
 } from './type';
 
-/** Built-in URI aliases map to the scanner's compiled dialect bits. */
-const dialectNames: Record<number, Dialect> = {
-  1: 'draft-04',
-  2: 'draft-06',
-  4: 'draft-07',
-  8: '2019-09',
-  16: '2020-12',
-};
 /** These fields affect source scope and are removed only from proven relocatable template copies. */
 const identifiers = [
   '$id',
@@ -77,14 +80,11 @@ export class ResolverStore {
     private readonly options: ReferenceResolverOptions = {},
   ) {
     for (const [uri, dialect] of Object.entries(options.dialects ?? {}))
-      this.dialectAliases.set(
-        uri.replace(/^https:/, 'http:').replace(/#$/, ''),
-        dialect,
-      );
+      this.dialectAliases.set(normalizeSchemaUri(uri), dialect);
     this.initial = this.index(
       schema,
       resolveURI('', options.baseURI ?? '')?.split('#')[0] ?? '',
-      options.defaultDialect ?? '2020-12',
+      options.defaultDialect ?? DEFAULT_DIALECT,
     );
   }
 
@@ -95,19 +95,17 @@ export class ResolverStore {
    * @returns Parent or a cached context for a resource-bearing original child.
    */
   public child(parent: ResolverContext, schema: SchemaValue): ResolverContext {
-    if (typeof schema === 'boolean') return parent;
+    if (isBoolean(schema)) return parent;
     const old =
-      parent.resource.dialect === 'draft-04' ||
-      parent.resource.dialect === 'draft-06' ||
-      parent.resource.dialect === 'draft-07';
-    if (old && typeof schema.$ref === 'string') return parent;
-    const id =
-      typeof schema.$id === 'string'
-        ? schema.$id
-        : parent.resource.dialect === 'draft-04' &&
-            typeof schema.id === 'string'
-          ? schema.id
-          : undefined;
+      parent.resource.dialect === Dialect.Draft04 ||
+      parent.resource.dialect === Dialect.Draft06 ||
+      parent.resource.dialect === Dialect.Draft07;
+    if (old && isString(schema.$ref)) return parent;
+    const id = isString(schema.$id)
+      ? schema.$id
+      : parent.resource.dialect === Dialect.Draft04 && isString(schema.id)
+        ? schema.id
+        : undefined;
     if (id === undefined) return parent;
     const absolute = resolveURI(id, parent.resource.uri);
     if (absolute === undefined) return parent;
@@ -138,13 +136,10 @@ export class ResolverStore {
    * @returns Recognized declaration or the fallback.
    */
   private dialect(uri: unknown, fallback: Dialect): Dialect {
-    return typeof uri === 'string'
-      ? (dialectNames[detectDialect(uri) ?? 0] ??
-          this.dialectAliases.get(
-            uri.replace(/^https:/, 'http:').replace(/#$/, ''),
-          ) ??
-          fallback)
-      : fallback;
+    if (!isString(uri)) return fallback;
+    const flag = detectDialect(uri);
+    if (flag !== undefined) return DIALECT_NAMES[flag];
+    return this.dialectAliases.get(normalizeSchemaUri(uri)) ?? fallback;
   }
 
   /**
@@ -164,20 +159,19 @@ export class ResolverStore {
       paths: new Map(),
     };
     const dialect = this.dialect(
-      typeof schema === 'object' ? schema.$schema : undefined,
+      isObject(schema) ? schema.$schema : undefined,
       fallback,
     );
     let uri = retrieval;
     if (
-      typeof schema === 'object' &&
-      !(dialect.startsWith('draft-') && typeof schema.$ref === 'string')
+      isObject(schema) &&
+      !(dialect.startsWith('draft-') && isString(schema.$ref))
     ) {
-      const id =
-        typeof schema.$id === 'string'
-          ? schema.$id
-          : dialect === 'draft-04' && typeof schema.id === 'string'
-            ? schema.id
-            : undefined;
+      const id = isString(schema.$id)
+        ? schema.$id
+        : dialect === Dialect.Draft04 && isString(schema.id)
+          ? schema.id
+          : undefined;
       if (id !== undefined)
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
@@ -206,7 +200,7 @@ export class ResolverStore {
             dialect: (context: ResolverContext) => context.resource.dialect,
             resolve: (): ReferenceStep => ({
               status: 'skipped',
-              reason: 'unresolved',
+              reason: ReferenceSkipReason.Unresolved,
             }),
           };
     new JSONSchemaScanner({
@@ -243,7 +237,7 @@ export class ResolverStore {
             inert: !!entry.inert,
           };
           document.paths.set(entry.path, location);
-          if (!entry.inert && typeof entry.schema === 'object')
+          if (!entry.inert && isObject(entry.schema))
             this.registerAnchors(location);
           stack.push({ depth: entry.depth, context });
         },
@@ -292,7 +286,7 @@ export class ResolverStore {
    */
   private duplicate(uri: string, first: string, second: string): never {
     throw new JSONSchemaScanError(
-      'duplicate-identifier',
+      JSONSchemaScanErrorCode.DuplicateIdentifier,
       uri + ' declared at ' + first + ' and ' + second,
     );
   }
@@ -304,24 +298,24 @@ export class ResolverStore {
    */
   private registerAnchors(location: Location): void {
     const schema = location.schema;
-    if (typeof schema === 'boolean') return;
+    if (isBoolean(schema)) return;
     const resource = location.context.resource,
       dialect = resource.dialect;
-    if (schema.$recursiveAnchor === true && dialect === '2019-09')
+    if (schema.$recursiveAnchor === true && dialect === Dialect.Draft201909)
       resource.dynamic = true;
     const declarations: Array<[string, boolean]> = [];
     if (
-      (dialect === '2019-09' || dialect === '2020-12') &&
-      typeof schema.$anchor === 'string'
+      (dialect === Dialect.Draft201909 || dialect === Dialect.Draft202012) &&
+      isString(schema.$anchor)
     )
       declarations.push([schema.$anchor, false]);
-    if (dialect === '2020-12' && typeof schema.$dynamicAnchor === 'string') {
+    if (dialect === Dialect.Draft202012 && isString(schema.$dynamicAnchor)) {
       declarations.push([schema.$dynamicAnchor, true]);
       resource.dynamic = true;
     }
-    if (dialect.startsWith('draft-') && typeof schema.$ref !== 'string') {
-      const id = dialect === 'draft-04' ? schema.id : schema.$id;
-      if (typeof id === 'string') {
+    if (dialect.startsWith('draft-') && !isString(schema.$ref)) {
+      const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
+      if (isString(id)) {
         const absolute = resolveURI(id, resource.uri);
         if (absolute?.includes('#')) {
           try {
@@ -356,7 +350,11 @@ export class ResolverStore {
     if (this.resources.has(uri)) return true;
     const source = this.options.resources;
     if (source && hasOwnProperty(source, uri)) {
-      this.index(source[uri], uri, this.options.defaultDialect ?? '2020-12');
+      this.index(
+        source[uri],
+        uri,
+        this.options.defaultDialect ?? DEFAULT_DIALECT,
+      );
       return this.resources.has(uri);
     }
     return false;
@@ -370,7 +368,7 @@ export class ResolverStore {
    */
   public add(uri: string, schema: SchemaValue): void {
     if (!this.resources.has(uri))
-      this.index(schema, uri, this.options.defaultDialect ?? '2020-12');
+      this.index(schema, uri, this.options.defaultDialect ?? DEFAULT_DIALECT);
   }
 
   /**
@@ -415,20 +413,14 @@ export class ResolverStore {
       context: ResolverContext = { resource },
       pointer = resource.path;
     for (const raw of fragment ? fragment.slice(1).split('/') : []) {
-      if (value === null || typeof value !== 'object') return;
+      if (!isObject(value)) return;
       const key = unescapeSegment(raw);
       if (!hasOwnProperty(value, key)) return;
       value = (value as Record<string, unknown>)[key];
       pointer += '/' + escapeSegment(key);
       context = resource.document.paths.get(pointer)?.context ?? context;
     }
-    if (
-      !(
-        typeof value === 'boolean' ||
-        (value !== null && typeof value === 'object' && !Array.isArray(value))
-      )
-    )
-      return;
+    if (!(isBoolean(value) || (isObject(value) && !isArray(value)))) return;
     const location: Location = {
       schema: value as SchemaValue,
       path,
@@ -457,12 +449,20 @@ export class ResolverStore {
     if (prepared) return prepared;
     const absolute = resolveURI(reference, host.resource.uri);
     if (absolute === undefined)
-      return { status: 'skipped', reason: 'unresolved' };
+      return { status: 'skipped', reason: ReferenceSkipReason.Unresolved };
     if (keyword === '$recursiveRef' && reference !== '#')
-      return { status: 'skipped', reason: 'invalid', uri: absolute };
+      return {
+        status: 'skipped',
+        reason: ReferenceSkipReason.Invalid,
+        uri: absolute,
+      };
     const found = this.locate(absolute);
     if (!found)
-      return { status: 'skipped', reason: 'unresolved', uri: absolute };
+      return {
+        status: 'skipped',
+        reason: ReferenceSkipReason.Unresolved,
+        uri: absolute,
+      };
     const location = found.location;
     if (!location.uri)
       location.uri =
@@ -474,10 +474,14 @@ export class ResolverStore {
     if (
       (keyword === '$dynamicRef' && found.dynamic) ||
       (keyword === '$recursiveRef' &&
-        typeof location.schema === 'object' &&
+        isObject(location.schema) &&
         location.schema.$recursiveAnchor === true)
     )
-      return { status: 'skipped', reason: 'dynamic', uri: location.uri };
+      return {
+        status: 'skipped',
+        reason: ReferenceSkipReason.Dynamic,
+        uri: location.uri,
+      };
     let hosts = this.templates.get(location);
     const cached = hosts?.get(host.resource);
     const result = cached ?? this.template(location, host.resource);
@@ -497,7 +501,7 @@ export class ResolverStore {
   private template(location: Location, host: Resource): ReferenceStep {
     const relocation: ReferenceStep = {
       status: 'skipped',
-      reason: 'relocation',
+      reason: ReferenceSkipReason.Relocation,
       uri: location.uri,
     };
     if (location.inert) return relocation;
@@ -554,7 +558,7 @@ export class ResolverStore {
       dialect: (context: ResolverContext) => context.resource.dialect,
       resolve: (): ReferenceStep => ({
         status: 'skipped',
-        reason: 'unresolved',
+        reason: ReferenceSkipReason.Unresolved,
       }),
     };
     new JSONSchemaScanner({
@@ -565,7 +569,7 @@ export class ResolverStore {
       },
       visitor: {
         enter: (entry) => {
-          if (typeof entry.schema === 'object')
+          if (isObject(entry.schema))
             for (const key of Object.keys(entry.schema)) {
               const descriptor = vocabulary.get(key),
                 value = entry.schema[key];
@@ -573,9 +577,8 @@ export class ResolverStore {
                 descriptor &&
                 (descriptor.kind === 'schemaMap' ||
                   descriptor.kind === 'objectMap') &&
-                value !== null &&
-                typeof value === 'object' &&
-                !Array.isArray(value)
+                isObject(value) &&
+                !isArray(value)
               )
                 containers.add(entry.path + '/' + escapeSegment(key));
             }
@@ -591,7 +594,7 @@ export class ResolverStore {
               context.resource.dynamic)
           )
             safe = false;
-          if (typeof entry.schema === 'object')
+          if (isObject(entry.schema))
             for (const key of dataKeywords)
               if (hasOwnProperty(entry.schema, key))
                 data.push(entry.path + '/' + key);
@@ -625,8 +628,9 @@ export class ResolverStore {
       for (const key of identifiers) delete item.copy[key];
       for (const key of ['$ref', '$dynamicRef']) {
         if (
-          typeof item.source[key] !== 'string' ||
-          (key === '$dynamicRef' && context.resource.dialect !== '2020-12')
+          !isString(item.source[key]) ||
+          (key === '$dynamicRef' &&
+            context.resource.dialect !== Dialect.Draft202012)
         )
           continue;
         const uri = resolveURI(

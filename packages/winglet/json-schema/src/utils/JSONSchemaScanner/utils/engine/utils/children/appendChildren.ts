@@ -5,7 +5,18 @@ import type {
   OrderedKeywordDescriptor,
 } from '../../../../../vocabulary/type';
 import type { SchemaEntry } from '../../../../type';
+import { LegacyMode } from '../LegacyMode';
 import { appendKeywordChildren } from './utils/appendKeywordChildren';
+
+/** Layout of the 32-bit words that record which keywords a node carries, indexed by descriptor order. */
+const enum MaskWord {
+  /** Keyword orders one word holds. */
+  Bits = 32,
+  /** Shift that turns a descriptor order into its word index. */
+  IndexShift = 5,
+  /** Highest bit position in a word; also the mask of an order's position inside its word. */
+  LastBit = Bits - 1,
+}
 
 /**
  * Append captured children in vocabulary order without allocating intermediate frame arrays.
@@ -26,7 +37,7 @@ export function appendChildren<Schema extends SchemaEntry>(
   masks: number[],
   dialect: number,
   visitBooleans: boolean,
-  legacyMode: 0 | 1 | 2 = 0,
+  legacyMode: LegacyMode = LegacyMode.None,
 ): void {
   const { schema, path, dataPath, depth } = parent;
   if (schema === null || typeof schema !== 'object' || Array.isArray(schema))
@@ -37,8 +48,10 @@ export function appendChildren<Schema extends SchemaEntry>(
   for (const key in schema) {
     const descriptor = keywords.get(key);
     if (descriptor === undefined || !hasOwnProperty(schema, key)) continue;
-    if (descriptor.order < 32) mask |= 1 << descriptor.order;
-    else masks[(descriptor.order >>> 5) - 1] |= 1 << (descriptor.order & 31);
+    if (descriptor.order < MaskWord.Bits) mask |= 1 << descriptor.order;
+    else
+      masks[(descriptor.order >>> MaskWord.IndexShift) - 1] |=
+        1 << (descriptor.order & MaskWord.LastBit);
   }
   while (mask !== 0) {
     const bit = mask & -mask;
@@ -46,7 +59,7 @@ export function appendChildren<Schema extends SchemaEntry>(
     appendKeywordChildren(
       entries,
       schema,
-      ordered[31 - Math.clz32(bit)],
+      ordered[MaskWord.LastBit - Math.clz32(bit)],
       path,
       dataPath,
       childDepth,
@@ -65,7 +78,9 @@ export function appendChildren<Schema extends SchemaEntry>(
       appendKeywordChildren(
         entries,
         schema,
-        ordered[(word + 1) * 32 + 31 - Math.clz32(bit)],
+        ordered[
+          (word + 1) * MaskWord.Bits + MaskWord.LastBit - Math.clz32(bit)
+        ],
         path,
         dataPath,
         childDepth,

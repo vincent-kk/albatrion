@@ -1,5 +1,7 @@
+import { DialectFlag } from '../../../../../../dialect/DialectFlag';
 import type { OrderedKeywordDescriptor } from '../../../../../../vocabulary/type';
 import type { SchemaEntry } from '../../../../../type';
+import { LegacyMode } from '../../LegacyMode';
 import { appendListChildren } from './appendKeywordChildren/appendListChildren';
 import { appendMapChildren } from './appendKeywordChildren/appendMapChildren';
 
@@ -26,15 +28,18 @@ export function appendKeywordChildren<Entry extends SchemaEntry>(
   dialect: number,
   inheritedInert: boolean,
   visitBooleans: boolean,
-  legacyMode: 0 | 1 | 2,
+  legacyMode: LegacyMode,
 ): void {
   const { keyword, kind } = descriptor;
   const node = schema[keyword];
   const keep =
-    legacyMode > 0 && (keyword === 'definitions' || keyword === '$defs');
+    legacyMode !== LegacyMode.None &&
+    (keyword === 'definitions' || keyword === '$defs');
   const inert =
     inheritedInert ||
-    (!keep && ((descriptor.mask & dialect) === 0 || legacyMode === 1));
+    (!keep &&
+      ((descriptor.mask & dialect) === 0 ||
+        legacyMode === LegacyMode.ReferenceKept));
   switch (kind) {
     case 'schemaMap':
     case 'objectMap':
@@ -47,7 +52,7 @@ export function appendKeywordChildren<Entry extends SchemaEntry>(
         depth,
         kind === 'objectMap',
         inert,
-        dialect === 1,
+        dialect === DialectFlag.Draft04,
         visitBooleans,
       );
       break;
@@ -62,7 +67,7 @@ export function appendKeywordChildren<Entry extends SchemaEntry>(
           depth,
           false,
           inert,
-          dialect === 1,
+          dialect === DialectFlag.Draft04,
           visitBooleans,
         );
       break;
@@ -77,8 +82,8 @@ export function appendKeywordChildren<Entry extends SchemaEntry>(
           dataPath,
           depth,
           true,
-          inert || (keyword === 'items' && dialect === 16),
-          dialect === 1,
+          inert || (keyword === 'items' && dialect === DialectFlag.Draft202012),
+          dialect === DialectFlag.Draft04,
           visitBooleans,
         );
       else if (
@@ -95,7 +100,7 @@ export function appendKeywordChildren<Entry extends SchemaEntry>(
         if (
           inert ||
           (kind === 'items' && keyword === 'prefixItems') ||
-          (dialect === 1 && typeof node === 'boolean')
+          (dialect === DialectFlag.Draft04 && typeof node === 'boolean')
         )
           child.inert = true;
         entries.push(child);

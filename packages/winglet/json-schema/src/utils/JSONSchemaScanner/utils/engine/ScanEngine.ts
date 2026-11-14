@@ -1,9 +1,13 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import { DialectFlag, DialectMask } from '../../../dialect/DialectFlag';
+import { DEFAULT_DIALECT } from '../../../dialect/defaultDialect';
 import { detectDialect } from '../../../dialect/detectDialect';
 import { DIALECT_FLAGS } from '../../../dialect/dialectFlags';
+import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../../error/JSONSchemaScanErrorCode';
+import { ScanLimit } from '../../../limits/ScanLimit';
 import type { OrderedKeywordDescriptor } from '../../../vocabulary/type';
-import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
 import { DEFAULT_KEYWORD_MAP } from '../vocabulary/defaultKeywords';
 import type {
   DialectScope,
@@ -11,6 +15,7 @@ import type {
   PhysicalCheckpoint,
   ScanConfig,
 } from './type';
+import { LegacyMode } from './utils/LegacyMode';
 import { ScanStage } from './utils/ScanStage';
 import { assertIdentifiersUnchanged } from './utils/assertIdentifiersUnchanged';
 import { appendChildren } from './utils/children/appendChildren';
@@ -87,7 +92,7 @@ export class ScanEngine<
               depth: 0,
             } as EngineEntry<Schema>,
           ];
-    this.dialect = DIALECT_FLAGS[config.defaultDialect ?? '2020-12'];
+    this.dialect = DIALECT_FLAGS[config.defaultDialect ?? DEFAULT_DIALECT];
     this.references =
       config.resolveReference === undefined
         ? undefined
@@ -98,7 +103,7 @@ export class ScanEngine<
     if (
       this.entries.length &&
       typeof schema === 'boolean' &&
-      this.dialect === 1
+      this.dialect === DialectFlag.Draft04
     )
       this.entries[0].inert = true;
     if (config.keywordMap === DEFAULT_KEYWORD_MAP)
@@ -139,7 +144,7 @@ export class ScanEngine<
       const top = entries.length - 1;
       const entry = entries[top];
       const stage = stages[top];
-      let legacyMode: 0 | 1 | 2 = 0;
+      let legacyMode: LegacyMode = LegacyMode.None;
       if (stage === ScanStage.Filter && references !== undefined)
         references.enter(entry, top);
       if (
@@ -203,8 +208,10 @@ export class ScanEngine<
             schema !== null &&
             typeof schema === 'object' &&
             (typeof schema.$ref === 'string' ||
-              (this.dialect === 16 && typeof schema.$dynamicRef === 'string') ||
-              (this.dialect === 8 && typeof schema.$recursiveRef === 'string'))
+              (this.dialect === DialectFlag.Draft202012 &&
+                typeof schema.$dynamicRef === 'string') ||
+              (this.dialect === DialectFlag.Draft201909 &&
+                typeof schema.$recursiveRef === 'string'))
           ) {
             const pending = references.run(
               entry,
@@ -226,9 +233,11 @@ export class ScanEngine<
           if (
             typeof schema.$schema === 'string' &&
             (top === 0 ||
-              ((this.dialect >= 8 || typeof schema.$ref !== 'string') &&
+              (((this.dialect & DialectMask.Legacy) === 0 ||
+                typeof schema.$ref !== 'string') &&
                 (typeof schema.$id === 'string' ||
-                  (this.dialect === 1 && typeof schema.id === 'string'))))
+                  (this.dialect === DialectFlag.Draft04 &&
+                    typeof schema.id === 'string'))))
           ) {
             const dialect = detectDialect(schema.$schema);
             if (dialect !== undefined && dialect !== this.dialect) {
@@ -241,8 +250,10 @@ export class ScanEngine<
           }
           if (
             typeof schema.$ref === 'string' ||
-            (this.dialect === 16 && typeof schema.$dynamicRef === 'string') ||
-            (this.dialect === 8 && typeof schema.$recursiveRef === 'string')
+            (this.dialect === DialectFlag.Draft202012 &&
+              typeof schema.$dynamicRef === 'string') ||
+            (this.dialect === DialectFlag.Draft201909 &&
+              typeof schema.$recursiveRef === 'string')
           ) {
             const keys = getReferenceKeywords(schema, this.dialect);
             entry.references = keys.map((keyword) => ({
@@ -253,23 +264,26 @@ export class ScanEngine<
             }));
             if (config.unresolvedReference === 'throw')
               throw new JSONSchemaScanError(
-                'unresolved-reference',
+                JSONSchemaScanErrorCode.UnresolvedReference,
                 schema[keys[0]] as string,
               );
-            if (this.dialect < 8 && typeof schema.$ref === 'string')
-              legacyMode = 1;
+            if (
+              (this.dialect & DialectMask.Legacy) !== 0 &&
+              typeof schema.$ref === 'string'
+            )
+              legacyMode = LegacyMode.ReferenceKept;
           }
         }
       }
       if (stage <= ScanStage.Children) {
         if (
-          entry.depth > 256 &&
+          entry.depth > ScanLimit.CycleCheckMinDepth &&
           checkpoint !== undefined &&
           entry.depth > checkpoint.depth &&
           entry.schema === checkpoint.schema
         )
           throw new JSONSchemaScanError(
-            'schema-cycle',
+            JSONSchemaScanErrorCode.SchemaCycle,
             'Physical cycle in schema ancestry',
           );
         const start = entries.length;
@@ -288,7 +302,10 @@ export class ScanEngine<
         const end = entries.length;
         if (end > start) {
           const depth = entry.depth;
-          if (depth >= 256 && (depth & (depth - 1)) === 0) {
+          if (
+            depth >= ScanLimit.CycleCheckMinDepth &&
+            (depth & (depth - 1)) === 0
+          ) {
             checkpoint = { depth, schema: entry.schema as object, frame: top };
             if (checkpoints === undefined) this.checkpoints = checkpoints = [];
             checkpoints.push(checkpoint);

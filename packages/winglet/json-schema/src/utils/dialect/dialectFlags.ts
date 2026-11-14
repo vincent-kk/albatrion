@@ -1,10 +1,11 @@
-import type { Dialect } from '../JSONSchemaScanner/type';
+import { Dialect } from './Dialect';
+import { DialectFlag } from './DialectFlag';
 
-/** One bit per supported dialect; descriptor masks test schema positions without URI parsing. */
-export const DIALECT_FLAGS: Readonly<Record<Dialect, number>> = {
-  'draft-04': 1,
-  'draft-06': 2,
-  'draft-07': 4,
-  '2019-09': 8,
-  '2020-12': 16,
+/** Dialect name to its bit, for callers that hold a name from options or a resolver. */
+export const DIALECT_FLAGS: Readonly<Record<Dialect, DialectFlag>> = {
+  [Dialect.Draft04]: DialectFlag.Draft04,
+  [Dialect.Draft06]: DialectFlag.Draft06,
+  [Dialect.Draft07]: DialectFlag.Draft07,
+  [Dialect.Draft201909]: DialectFlag.Draft201909,
+  [Dialect.Draft202012]: DialectFlag.Draft202012,
 };

@@ -181,7 +181,7 @@ console.assert(output.type === 'string');
 
 ## Dialects and inert positions
 
-The default fallback is 2020-12. `$ref` is recognized in every supported dialect, `$dynamicRef` only in 2020-12, and `$recursiveRef` only in 2019-09. A recognized root/resource `$schema` selects its dialect; supported HTTP/HTTPS spellings and trailing # are normalized. Resolver `dialects` can map custom metaschema URIs to supported dialects. Unknown declarations inherit the surrounding/fallback dialect. An embedded resource inherits its parent unless it declares a known dialect. With a resolver, configure its fallback too; scanner defaultDialect is the fallback when no provider supplies a dialect.
+The default fallback is 2020-12. The exported Dialect table names the supported dialects (Dialect.Draft04 through Dialect.Draft202012); its entries are the same strings, so either spelling is accepted wherever a dialect is expected. `$ref` is recognized in every supported dialect, `$dynamicRef` only in 2020-12, and `$recursiveRef` only in 2019-09. A recognized root/resource `$schema` selects its dialect; supported HTTP/HTTPS spellings and trailing # are normalized. Resolver `dialects` can map custom metaschema URIs to supported dialects. Unknown declarations inherit the surrounding/fallback dialect. An embedded resource inherits its parent unless it declares a known dialect. With a resolver, configure its fallback too; scanner defaultDialect is the fallback when no provider supplies a dialect.
 
 Traversal uses the union of schema positions from draft-04, draft-06, draft-07, 2019-09 and 2020-12. Without resolution or mutation, changing `$schema` changes inertness rather than the visit paths/order. Positions outside the resource’s dialect and their descendants have inert=true: callbacks still run, but references and output operations are suppressed and identifiers are not indexed. Boolean leaves are inert in draft-04. For example, contains is active from draft-06, prefixItems in 2020-12, and tuple-form items through 2019-09. Modern dialects still recognize definitions and schema-valued dependencies; string-array dependencies are not schemas.
 
@@ -241,7 +241,7 @@ console.assert(output.properties.value.type === 'string');
 
 ## Reference preservation and sibling keywords
 
-Inlinable chains outside definitions are followed to completion. Canonical identities are active only on the ancestor path; independent siblings can use the same target. Audit exit’s entry.references: each outcome carries the written reference and keyword, canonical uri when known, resolved, and skipped when preserved.
+Inlinable chains outside definitions are followed to completion. Canonical identities are active only on the ancestor path; independent siblings can use the same target. Audit exit’s entry.references: each outcome carries the written reference and keyword, canonical uri when known, resolved, and skipped when preserved. The exported ReferenceSkipReason table names every skipped value, for example ReferenceSkipReason.Relocation.
 
 | skipped      | Meaning                                                                                                                       |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -331,7 +331,7 @@ console.assert(absolute.status === 'resolved');
 
 limits.referenceChain bounds a replacement chain at one position (default 32); limits.inlinedNodes bounds total inlined schema nodes per scan (default 1,000,000). These are independent of maxDepth and public pruning does not constrain full target preparation.
 
-Use JSONSchemaScanError.code to distinguish failures. User callback and loader exceptions propagate unchanged.
+Use JSONSchemaScanError.code to distinguish failures. The exported JSONSchemaScanErrorCode table names every code; compare against its entries, such as JSONSchemaScanErrorCode.SchemaCycle, rather than typing the string. User callback and loader exceptions propagate unchanged.
 
 | code                      | Meaning                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------ |
@@ -347,7 +347,11 @@ Use JSONSchemaScanError.code to distinguish failures. User callback and loader e
 <!-- example: errors -->
 
 ```typescript
-import { JSONSchemaScanError, JSONSchemaScanner } from '@winglet/json-schema';
+import {
+  JSONSchemaScanError,
+  JSONSchemaScanErrorCode,
+  JSONSchemaScanner,
+} from '@winglet/json-schema';
 
 const scanner = new JSONSchemaScanner({
   options: { unresolvedReference: 'throw' },
@@ -358,7 +362,7 @@ try {
 } catch (error) {
   if (!(error instanceof JSONSchemaScanError)) throw error;
   caught = true;
-  console.assert(error.code === 'unresolved-reference');
+  console.assert(error.code === JSONSchemaScanErrorCode.UnresolvedReference);
 }
 console.assert(caught && scanner.getValue() === undefined);
 ```

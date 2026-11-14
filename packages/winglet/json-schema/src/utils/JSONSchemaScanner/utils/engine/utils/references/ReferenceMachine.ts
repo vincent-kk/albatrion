@@ -2,7 +2,12 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
+import { DialectFlag, DialectMask } from '../../../../../dialect/DialectFlag';
 import { DIALECT_FLAGS } from '../../../../../dialect/dialectFlags';
+import { JSONSchemaScanError } from '../../../../../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../../../../error/JSONSchemaScanErrorCode';
+import { ScanLimit } from '../../../../../limits/ScanLimit';
+import { ReferenceSkipReason } from '../../../../../referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../../../../schemaCopy/cloneSchema';
 import type {
   ReferenceKeyword,
@@ -10,8 +15,8 @@ import type {
   ReferenceResolverAsync,
   ReferenceStep,
 } from '../../../../type';
-import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
 import type { EngineEntry, ScanConfig } from '../../type';
+import { LegacyMode } from '../LegacyMode';
 import { getReferenceKeywords } from '../getReferenceKeywords';
 import { isThenable } from '../isThenable';
 
@@ -42,7 +47,7 @@ export class ReferenceMachine {
   /** Current resource's compiled dialect bit. */
   public dialect: number;
   /** Old-dialect discovery mode: retained reference or KEEP wrapper. */
-  public legacyMode: 0 | 1 | 2 = 0;
+  public legacyMode: LegacyMode = LegacyMode.None;
   /** Deepest frame with a context or canonical identity to release; ordinary frames skip leave entirely. */
   public releaseFrame = -1;
   /** Identity-owning frame stack; sibling indices are removed before their peers enter. */
@@ -89,7 +94,7 @@ export class ReferenceMachine {
   ) {
     const resolver = config.resolveReference;
     if (
-      !resolver ||
+      resolver === null ||
       typeof resolver !== 'object' ||
       typeof resolver.root !== 'function' ||
       typeof resolver.dialect !== 'function' ||
@@ -149,7 +154,7 @@ export class ReferenceMachine {
     definition: boolean,
     resumed?: unknown,
   ): PromiseLike<unknown> | undefined {
-    this.legacyMode = 0;
+    this.legacyMode = LegacyMode.None;
     let state = this.progress;
     if (state === undefined) {
       const schema = entry.schema;
@@ -157,8 +162,10 @@ export class ReferenceMachine {
       if (
         !(
           typeof schema.$ref === 'string' ||
-          (this.dialect === 16 && typeof schema.$dynamicRef === 'string') ||
-          (this.dialect === 8 && typeof schema.$recursiveRef === 'string')
+          (this.dialect === DialectFlag.Draft202012 &&
+            typeof schema.$dynamicRef === 'string') ||
+          (this.dialect === DialectFlag.Draft201909 &&
+            typeof schema.$recursiveRef === 'string')
         )
       )
         return;
@@ -185,7 +192,7 @@ export class ReferenceMachine {
       >[number];
       (entry.references ??= []).push(outcome);
       if (definition) {
-        outcome.skipped = 'definition';
+        outcome.skipped = ReferenceSkipReason.Definition;
         state.index++;
         continue;
       }
@@ -209,7 +216,7 @@ export class ReferenceMachine {
           (result as ReferenceStep).status !== 'skipped')
       )
         throw new JSONSchemaScanError(
-          'invalid-resolver-result',
+          JSONSchemaScanErrorCode.InvalidResolverResult,
           'Expected a ReferenceStep',
         );
       const step = result as ReferenceStep;
@@ -221,16 +228,19 @@ export class ReferenceMachine {
           (step.uri !== undefined && typeof step.uri !== 'string')
         )
           throw new JSONSchemaScanError(
-            'invalid-resolver-result',
+            JSONSchemaScanErrorCode.InvalidResolverResult,
             'Invalid skipped reference result',
           );
         outcome.uri = step.uri;
         outcome.skipped = step.reason;
         if (
-          step.reason === 'unresolved' &&
+          step.reason === ReferenceSkipReason.Unresolved &&
           this.config.unresolvedReference === 'throw'
         )
-          throw new JSONSchemaScanError('unresolved-reference', reference);
+          throw new JSONSchemaScanError(
+            JSONSchemaScanErrorCode.UnresolvedReference,
+            reference,
+          );
         state.index++;
         continue;
       }
@@ -244,16 +254,16 @@ export class ReferenceMachine {
         )
       )
         throw new JSONSchemaScanError(
-          'invalid-resolver-result',
+          JSONSchemaScanErrorCode.InvalidResolverResult,
           'Invalid resolved reference result',
         );
       outcome.uri = step.uri;
       if (this.active.has(step.uri)) {
-        outcome.skipped = 'cycle';
+        outcome.skipped = ReferenceSkipReason.Cycle;
         state.index++;
         continue;
       }
-      const legacy = this.dialect < 8;
+      const legacy = (this.dialect & DialectMask.Legacy) !== 0;
       const own = Object.keys(schema);
       const sole = own.length === 0 || (own.length === 1 && own[0] === keyword);
       let keep = false;
@@ -296,17 +306,23 @@ export class ReferenceMachine {
         this.counts.set(step.target as object, count);
       }
       this.inlined += count;
-      if (this.inlined > (this.config.limits?.inlinedNodes ?? 1000000))
+      if (
+        this.inlined >
+        (this.config.limits?.inlinedNodes ?? ScanLimit.InlinedNodes)
+      )
         throw new JSONSchemaScanError(
-          'inlined-node-limit',
+          JSONSchemaScanErrorCode.InlinedNodeLimit,
           'Inlining exceeds the node limit',
         );
       const copy = cloneSchema(step.target);
       outcome.resolved = true;
       if ((legacy && !keep) || (!legacy && state.keys.length === 1 && sole)) {
-        if (++state.replacements > (this.config.limits?.referenceChain ?? 32))
+        if (
+          ++state.replacements >
+          (this.config.limits?.referenceChain ?? ScanLimit.ReferenceChain)
+        )
           throw new JSONSchemaScanError(
-            'reference-chain-limit',
+            JSONSchemaScanErrorCode.ReferenceChainLimit,
             'Reference replacement chain exceeds the limit',
           );
         this.ownedUris.push(step.uri);
@@ -337,7 +353,7 @@ export class ReferenceMachine {
       schema !== null &&
       typeof schema === 'object'
     ) {
-      const legacy = this.dialect < 8;
+      const legacy = (this.dialect & DialectMask.Legacy) !== 0;
       const wrapper: UnknownSchema = {};
       for (const key of Object.keys(schema))
         if (
@@ -368,14 +384,14 @@ export class ReferenceMachine {
         removed: state.removed!,
         branches: state.branches.map((branch) => branch.value),
       });
-      if (legacy) this.legacyMode = 2;
+      if (legacy) this.legacyMode = LegacyMode.Wrapped;
     } else if (
-      this.dialect < 8 &&
+      (this.dialect & DialectMask.Legacy) !== 0 &&
       schema !== null &&
       typeof schema === 'object' &&
       typeof schema.$ref === 'string'
     )
-      this.legacyMode = 1;
+      this.legacyMode = LegacyMode.ReferenceKept;
     this.progress = undefined;
     return undefined;
   }
